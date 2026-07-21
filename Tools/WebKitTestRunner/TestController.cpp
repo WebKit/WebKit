@@ -1065,6 +1065,15 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
 WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(const TestOptions& options)
 {
     if (!m_context || !m_mainWebView || !m_mainWebView->viewSupportsOptions(options)) {
+        // Terminate the singleton GPU process (if any) so the new context's
+        // GPUProcessCreationParameters (including overrideLanguages) apply
+        // when it respawns. Without this, per-test settings such as language=
+        // only reach newly spawned WebProcesses; the persistent GPU process
+        // retains its previous state and drives media-track selection with
+        // stale preferences.
+        if (m_context)
+            WKContextTerminateGPUProcess(m_context.get());
+
         auto contextConfiguration = generateContextConfiguration(options);
         if (options.siteIsolationEnabled())
             WKContextConfigurationSetPrewarmsProcessesAutomatically(contextConfiguration.get(), false);

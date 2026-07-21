@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import collections
 import logging
 import os
 import re
@@ -392,8 +393,127 @@ class MacPort(DarwinPort):
 
         return configuration
 
+    # Fig note names that --media-logging turns on, keyed by preference domain.
+    #
+    # 'fig_notes' is the master switch: with it unset, none of the per-area notes below emit
+    # anything. On macOS its default sink is os_log, so notes land in the unified log rather than
+    # on the tests' stderr -- which matters, because stderr is compared against expectations.
+    # 'automatic_fig_notes' re-enables the notes Fig ships on-by-default, in case a machine has
+    # previously opted out of them. Both are switches rather than levels, so they get 1.
+    #
+    # The per-area names come from Fig's note registry (Fig.git
+    # Sources/Utilities/Tests/fignote_registry.txt) cross-checked against the fig_note_initialize()
+    # calls in the Fig sources themselves. Neither is complete on its own: the registry omits
+    # several on-by-default notes and still lists at least one whose source file is gone, while the
+    # AVFoundation notes are declared in a different repository. Every name below was confirmed in
+    # one or the other. Some are already on by default, but they are listed anyway so that the set
+    # enabled here does not depend on which build of CoreMedia is installed.
+    #
+    # Their values are verbosity ceilings, not booleans: FigNote.h gates each note on
+    # 'level <= value', so 1 would enable only the least detailed notes. See
+    # --media-logging-level.
+    #
+    # Domains are case-sensitive -- Fig reads CFSTR("com.apple.coremedia"), all lower case.
+    MEDIA_LOGGING_SWITCHES = ['fig_notes', 'automatic_fig_notes']
+
+    MEDIA_LOGGING_DEFAULTS = collections.OrderedDict([
+        ('com.apple.coremedia', MEDIA_LOGGING_SWITCHES + [
+            # HLS: playlist parsing, variant/alternate selection, and the segment pump.
+            'playlist_trace',               # <<<< StreamPlaylist >>>>, off by default
+            'alt_trace',                    # <<<< Alt >>>>
+            'fhttpchunk_trace',             # <SEGPUMP>
+            'fhttpchunk_reachable_trace',   # segment pump reachability, off by default
+            'stream_trace',                 # <<<< FigStreamPlayer >>>>
+            # Where the bytes come from, including WebKit's custom URL handler.
+            'curl_handling_trace',          # <<<< FigCustomURLHandling >>>>
+            'custombyteflume_trace',        # CustomURLFlume, off by default
+            'urlasset_trace',               # <<< URLAsset >>>, off by default
+            'cfhttp_trace',
+            'httprequest_trace',
+            # Bandwidth estimation and network path evaluation.
+            'bandwidthtracker_trace',
+            'bw_mediator_trace',
+            'byterate_trace',
+            'fig_nw_path_eval_trace',       # << FigNwPathEval >>
+        ]),
+        ('com.apple.avfoundation', [
+            'avasset_trace',
+            'assetinspectorloader_trace',   # <<<< AVAssetInspectorLoader >>>>
+            'avassetresourceloader_trace',  # the resource loader WebKit installs
+            'avplayer_trace',
+            'avplayeritem_trace',           # AVPlayerItem status transitions
+            'avsamplebufferdisplaylayer_trace',
+        ]),
+    ])
+
+    DEFAULT_MEDIA_LOGGING_DOMAIN = 'com.apple.coremedia'
+
+    def _media_logging_defaults(self):
+        """Returns an ordered {domain: [note, ...]} of the notes to toggle, including any
+        --media-logging-note additions."""
+        defaults = collections.OrderedDict(
+            (domain, list(notes)) for domain, notes in self.MEDIA_LOGGING_DEFAULTS.items())
+
+        for note in self.get_option('media_logging_note') or []:
+            domain, _, name = note.rpartition(':')
+            domain = domain or self.DEFAULT_MEDIA_LOGGING_DOMAIN
+            if not name:
+                _log.warning('Ignoring malformed --media-logging-note value "{}"'.format(note))
+                continue
+            defaults.setdefault(domain, [])
+            if name not in defaults[domain]:
+                defaults[domain].append(name)
+
+        return defaults
+
+    def _default_is_set(self, domain, key):
+        try:
+            self._executive.run_command(['defaults', 'read', domain, key])
+            return True
+        except ScriptError as e:
+            # 'defaults' returns 1 if the key or the domain does not exist.
+            if e.exit_code != 1:
+                raise e
+            return False
+
+    def _enable_media_logging(self):
+        """Turns the notes on, recording which ones this run added so that cleanup can remove
+        exactly those.
+
+        A note that is already set is left alone rather than overwritten. These domains are shared
+        with the rest of the system, so a developer who has configured a note deliberately keeps
+        their value -- and, because nothing is ever overwritten, a run that is killed outright
+        cannot lose someone's settings. The residue in that case is a few extra keys, which the
+        next run skips as already-set."""
+        level = str(self.get_option('media_logging_level') or 5)
+        self._added_media_logging_defaults = []
+
+        for domain, notes in self._media_logging_defaults().items():
+            for note in notes:
+                if self._default_is_set(domain, note):
+                    continue
+                value = '1' if note in self.MEDIA_LOGGING_SWITCHES else level
+                self._executive.run_command(['defaults', 'write', domain, note, '-int', value])
+                self._added_media_logging_defaults.append((domain, note))
+
+    def _restore_media_logging(self):
+        """Removes only what this run added, so a value that was already present survives."""
+        for domain, note in getattr(self, '_added_media_logging_defaults', []):
+            try:
+                self._executive.run_command(['defaults', 'delete', domain, note])
+            except ScriptError as e:
+                if e.exit_code != 1:
+                    raise e
+        self._added_media_logging_defaults = []
+
     def setup_test_run(self, device_type=None):
         super(MacPort, self).setup_test_run(device_type)
+
+        # Written before any driver launches, since CoreMedia reads these once per process.
+        if self.get_option('media_logging'):
+            _log.debug('Enabling CoreMedia and AVFoundation logging')
+            self._enable_media_logging()
+
         # Warm up only when multiple workers will spawn concurrently (webkit.org/b/242106):
         # with one worker the first real test does the same first-run binary verification.
         # Also skipped under --no-timeout so `lldb --wait-for --attach-name ...` doesn't
@@ -407,6 +527,15 @@ class MacPort(DarwinPort):
         webarchive_test_path = self.layout_tests_dir() + '/webarchive/loading/resources/quarantined_top.webarchive'
         if os.path.exists(webarchive_test_path):
             self.host.executive.run_command(['/usr/bin/xattr', '-w', 'com.apple.quarantine', '1', webarchive_test_path]).rstrip()
+
+    def clean_up_test_run(self):
+        # Restored unconditionally: leaving these set would make every later media test on this
+        # machine log verbosely, including runs that did not ask for it.
+        if self.get_option('media_logging'):
+            _log.debug('Restoring CoreMedia and AVFoundation log levels')
+            self._restore_media_logging()
+
+        super(MacPort, self).clean_up_test_run()
 
 
 class MacCatalystPort(MacPort):
