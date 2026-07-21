@@ -358,7 +358,7 @@ public:
         NeedStopTheWorld = 1 << 1, // FIXME rdar://161576886
     };
 
-    bool hasAnyEntryScopeServiceRequest() { return m_entryScopeServicesRawBits; }
+    bool hasAnyEntryScopeServiceRequest() { return m_entryScopeServicesRawBits || hasTimeZoneChange() || hasLanguageChange(); }
     void executeEntryScopeServicesOnEntry();
     void executeEntryScopeServicesOnExit();
 
@@ -951,6 +951,7 @@ public:
 #endif
 
     bool hasTimeZoneChange() { return dateCache.hasTimeZoneChange(); }
+    bool hasLanguageChange();
 
     RegExpCache* regExpCache() LIFETIME_BOUND { return m_regExpCache.get(); }
 

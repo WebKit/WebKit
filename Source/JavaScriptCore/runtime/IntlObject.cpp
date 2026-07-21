@@ -762,7 +762,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        localesArray->push(globalObject, locales);
+        localesArray->putDirectIndex(globalObject, 0, locales);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
 
         localesObject = localesArray;

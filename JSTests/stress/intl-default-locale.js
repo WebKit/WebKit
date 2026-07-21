@@ -14,6 +14,10 @@ shouldBe(Intl.getCanonicalLocales(new Intl.NumberFormat().resolvedOptions().loca
 shouldBe(Intl.getCanonicalLocales(new Intl.Collator().resolvedOptions().locale)[0], new Intl.NumberFormat().resolvedOptions().locale);
 
 $vm.setUserPreferredLanguages([ "fr-FR" ]);
-shouldBe(new Intl.DateTimeFormat().resolvedOptions().locale, 'fr-FR');
-shouldBe(new Intl.NumberFormat().resolvedOptions().locale, 'fr-FR');
-shouldBe(new Intl.Collator().resolvedOptions().locale, 'fr-FR');
+// Intl.DateTimeFormat caches its resolved formatter and only revalidates it on VM entry, so a
+// language change takes effect on the next task turn rather than synchronously within this one.
+setTimeout(() => {
+    shouldBe(new Intl.DateTimeFormat().resolvedOptions().locale, 'fr-FR');
+    shouldBe(new Intl.NumberFormat().resolvedOptions().locale, 'fr-FR');
+    shouldBe(new Intl.Collator().resolvedOptions().locale, 'fr-FR');
+}, 0);
