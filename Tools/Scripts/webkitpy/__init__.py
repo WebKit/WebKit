@@ -97,12 +97,13 @@ AutoInstall.register(
             wheel=True,
             )
 )
-AutoInstall.register(Package('pytest_asyncio', Version(1, 1, 1), pypi_name='pytest-asyncio', implicit_deps=['pytest'], wheel=True))
+AutoInstall.register(Package('pytest_asyncio', Version(1, 1, 1), pypi_name='pytest-asyncio', implicit_deps=['pytest'] + (['backports.asyncio_runner'] if sys.version_info < (3, 11) else []), wheel=True))
 AutoInstall.register(Package('pytest_timeout', Version(2, 4, 0), pypi_name='pytest-timeout', implicit_deps=['pytest'], wheel=True))
 AutoInstall.register(Package('websockets', Version(12, 0), wheel=True))
 
 if sys.version_info < (3, 11):
     AutoInstall.register(Package('exceptiongroup', Version(1, 1, 0), wheel=True))
+    AutoInstall.register(Package('backports.asyncio_runner', Version(1, 2, 0), pypi_name="backports-asyncio-runner", wheel=True))
 
 AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
 AutoInstall.register(Package('typing_extensions', Version(4, 12, 2), wheel=True))
