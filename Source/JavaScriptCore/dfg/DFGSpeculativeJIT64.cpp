@@ -6467,6 +6467,7 @@ void SpeculativeJIT::compile(Node* node)
                     isLittleEndian.link(this);
                 }
 
+#if USE(BIGINT32)
                 flushRegisters();
                 GPRFlushedCallResult result(this);
                 GPRReg resultGPR = result.gpr();
@@ -6476,6 +6477,22 @@ void SpeculativeJIT::compile(Node* node)
                     callOperation(operationUInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2);
                 exceptionCheck();
                 jsValueResult(resultGPR, node);
+#else
+                GPRTemporary result(this);
+                GPRTemporary scratch(this);
+                GPRReg resultGPR = result.gpr();
+                GPRReg scratchGPR = scratch.gpr();
+
+                JumpList slowCases;
+                emitAllocateJSBigInt64(vm(), resultGPR, t2, scratchGPR, t1, TrustedImmPtr(m_graph.registerStructure(vm().bigIntStructure.get())), data.isSigned, slowCases);
+
+                if (data.isSigned)
+                    addSlowPathGenerator(slowPathCall(slowCases, this, operationInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2));
+                else
+                    addSlowPathGenerator(slowPathCall(slowCases, this, operationUInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2));
+
+                jsValueResult(resultGPR, node);
+#endif
                 break;
             }
             default:
