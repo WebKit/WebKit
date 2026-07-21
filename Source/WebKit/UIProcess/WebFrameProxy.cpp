@@ -598,7 +598,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
 
     page->inspectorController().didCreateProvisionalFrame(provisionalFrame);
 
-    auto continuation = [networkProcess = Ref { protect(page->websiteDataStore())->networkProcess() }, process = Ref { process }, mainFrameDomain, weakProvisionalFrame = WeakPtr { m_provisionalFrame }, pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] () mutable {
+    auto continuation = [page = Ref { *page }, process = Ref { process }, mainFrameDomain, weakProvisionalFrame = WeakPtr { m_provisionalFrame }, pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] () mutable {
         RefPtr provisionalFrame = weakProvisionalFrame.get();
         bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
         if (cancelled) {
@@ -606,7 +606,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
             return;
         }
 
-        networkProcess->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), pageID, completionHandler = WTF::move(completionHandler)] mutable {
+        page->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), pageID, completionHandler = WTF::move(completionHandler)] mutable {
             RefPtr provisionalFrame = weakProvisionalFrame.get();
             bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
             if (cancelled) {
