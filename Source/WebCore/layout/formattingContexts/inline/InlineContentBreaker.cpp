@@ -107,7 +107,7 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
     ASSERT(!std::isnan(lineStatus.availableWidth));
     ASSERT(isMinimumInIntrinsicWidthMode() || candidateContent.logicalWidth() > lineStatus.availableWidth);
 
-    if (auto result = simplifiedMinimumInstrinsicWidthBreak(candidateContent, lineStatus))
+    if (auto result = simplifiedMinimumIntrinsicWidthBreak(candidateContent, lineStatus))
         return *result;
 
     auto result = processOverflowingContent(candidateContent, lineStatus);
@@ -317,7 +317,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMinimumInstrinsicWidthBreak(const ContinuousContent& candidateContent, const LineStatus& lineStatus) const
+std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMinimumIntrinsicWidthBreak(const ContinuousContent& candidateContent, const LineStatus& lineStatus) const
 {
     if (!isMinimumInIntrinsicWidthMode() || !candidateContent.isTextOnlyContent())
         return { };
@@ -906,7 +906,7 @@ EnumSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBeha
         return { WordBreakRule::AtArbitraryPositionWithinWords };
 
     auto includeHyphenationIfAllowed = [&](std::optional<InlineContentBreaker::WordBreakRule> wordBreakRule) -> EnumSet<InlineContentBreaker::WordBreakRule> {
-        auto hyphenationIsAllowed = !n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(Style::toPlatform(style.computedLocale()));
+        auto hyphenationIsAllowed = !m_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(Style::toPlatform(style.computedLocale()));
         if (hyphenationIsAllowed) {
             if (wordBreakRule)
                 return { *wordBreakRule, WordBreakRule::AtHyphenationOpportunities };
