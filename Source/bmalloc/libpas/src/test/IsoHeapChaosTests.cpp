@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,8 @@
 #include "iso_test_heap_config.h"
 #include "jit_heap.h"
 #include "jit_heap_config.h"
+#include <algorithm>
+#include <functional>
 #include <map>
 #include "minalign32_heap.h"
 #include "minalign32_heap_config.h"
@@ -52,6 +54,8 @@
 #include "pas_epoch.h"
 #include "pas_get_page_base.h"
 #include "pas_heap.h"
+#include "pas_internal_config.h"
+#include "pas_page_malloc.h"
 #include "pas_root.h"
 #include "pas_segregated_page.h"
 #include "pas_thread_local_cache.h"
@@ -75,6 +79,7 @@ constexpr bool verbose = false;
 
 const pas_heap_config* selectedHeapConfig;
 void* (*selectedAllocateCommonPrimitive)(size_t size, pas_allocation_mode allocation_mode);
+void* (*selectedAllocateCommonPrimitiveZeroed)(size_t size, pas_allocation_mode allocation_mode);
 void* (*selectedAllocate)(pas_heap_ref* heapRef, pas_allocation_mode allocation_mode);
 void* (*selectedAllocateArray)(pas_heap_ref* heapRef, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
 void (*selectedShrink)(void* ptr, size_t newSize);
@@ -370,6 +375,89 @@ void enumeratorRecorder(pas_enumerator* enumerator,
     recordedRanges[kind].insert(range);
 }
 
+// Zeroing takes the VA path (madvise(MADV_ZERO)/mmap) at/above this size, memset below; we
+// inject huge allocations past it to exercise that path.
+constexpr size_t vaZeroThreshold = (size_t)1 << PAS_VA_BASED_ZERO_MEMORY_SHIFT;
+constexpr size_t hugeObjectMaxSize = vaZeroThreshold * 16;
+constexpr size_t maxSampledPages = 64;
+
+// Per-sampled-page overlap marker for large objects -- one word, a cheap window. Large-object
+// overlap coverage is loose by design; small objects are stamped in full.
+constexpr size_t sampledStampMarkerBytes = 8;
+
+// ~1/4 of common-primitive allocations are zeroed and born-dirty checked; ~1/250 of those are
+// upsized into the VA regime.
+constexpr unsigned zeroedAllocationRarity = 4;
+constexpr unsigned hugeAllocationRarity = 250;
+
+// In-place Fisher-Yates shuffle using the seeded test RNG.
+template<typename T>
+void seededShuffle(vector<T>& values)
+{
+    for (size_t i = values.size(); i-- > 1;) {
+        size_t j = deterministicRandomNumber(static_cast<unsigned>(i + 1));
+        T temp = values[i];
+        values[i] = values[j];
+        values[j] = temp;
+    }
+}
+
+// A bounded, shuffled subset of a large object's page offsets, rotated by seed so different
+// seeds cover different pages (no permanent blind spot). Shuffling first-faults them out of
+// order, as a hashtable faults its buckets.
+vector<size_t> sampledPageOffsets(size_t size, unsigned seed)
+{
+    size_t pageSize = pas_page_malloc_alignment();
+    size_t numPages = (size + pageSize - 1) / pageSize;
+    size_t numSamples = std::min(numPages, maxSampledPages);
+    size_t base = seed % numPages;
+
+    vector<size_t> offsets;
+    offsets.reserve(numSamples);
+    for (size_t k = 0; k < numSamples; ++k) {
+        size_t page = (k * numPages / numSamples + base) % numPages;
+        offsets.push_back(page * pageSize);
+    }
+    seededShuffle(offsets);
+    return offsets;
+}
+
+// The ranges carrying an object's stamp: the whole buffer when small, else the leading word of
+// each sampled page. Seeded by startValue so a stamp and its later check agree.
+void forEachStampRange(size_t size, uint8_t startValue,
+                       const std::function<void(size_t offset, size_t length)>& func)
+{
+    if (size < vaZeroThreshold) {
+        func(0, size);
+        return;
+    }
+    for (size_t offset : sampledPageOffsets(size, startValue)) {
+        // The last page may hold fewer than sampledStampMarkerBytes bytes.
+        size_t remaining = size - offset;
+        func(offset, std::min(remaining, sampledStampMarkerBytes));
+    }
+}
+
+// The ranges to scan for zero on a fresh allocation: the whole buffer when small, else whole
+// sampled pages, chosen randomly so a large object's covered pages rotate across allocations.
+// Whole pages are affordable -- touching one to check faults it regardless.
+void forEachZeroCheckRange(size_t size,
+                           const std::function<void(size_t offset, size_t length)>& func)
+{
+    if (size < vaZeroThreshold) {
+        func(0, size);
+        return;
+    }
+    size_t pageSize = pas_page_malloc_alignment();
+    for (size_t offset : sampledPageOffsets(size, deterministicRandomNumber(0xffffffff))) {
+        // Yield before a random subset of page faults to vary where migration may occur.
+        if (!deterministicRandomNumber(8))
+            sched_yield();
+        size_t remaining = size - offset;
+        func(offset, std::min(pageSize, remaining));
+    }
+}
+
 unsigned uniformlyRandomUpTo5000()
 {
     return deterministicRandomNumber(5000);
@@ -427,6 +515,38 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
     vector<thread> threads;
     unsigned totalSize;
 
+    // Track only large allocations, and check every allocation for overlap with a tracked one. The
+    // stamp covers small objects in full but only samples large ones, so overlap onto a large object
+    // can otherwise go unnoticed. Called with lock held.
+    map<uintptr_t, size_t> largeLiveRanges;
+    auto recordLiveRange = [&] (void* ptr, size_t size) {
+        // Size 0 owns no bytes, and the allocator may share a sentinel across size-0 requests.
+        if (!size)
+            return;
+        uintptr_t base = reinterpret_cast<uintptr_t>(ptr);
+        auto next = largeLiveRanges.lower_bound(base);
+        auto conflict = largeLiveRanges.end();
+        if (next != largeLiveRanges.end() && next->first < base + size)
+            conflict = next;
+        else if (next != largeLiveRanges.begin()) {
+            auto prev = next;
+            --prev;
+            if (prev->first + prev->second > base)
+                conflict = prev;
+        }
+        if (conflict != largeLiveRanges.end()) {
+            cout << "  double handout: [" << ptr << ", +" << size << ") overlaps live ["
+                 << reinterpret_cast<void*>(conflict->first) << ", +" << conflict->second << ")\n";
+            CHECK(!"allocation overlaps a live allocation");
+        }
+        if (size >= vaZeroThreshold)
+            largeLiveRanges[base] = size;
+    };
+    auto forgetLiveRange = [&] (void* ptr, size_t size) {
+        if (size >= vaZeroThreshold)
+            largeLiveRanges.erase(reinterpret_cast<uintptr_t>(ptr));
+    };
+
     vector<OptionalObject> optionalObjects;
     if (testEnumerator) {
         pas_scavenger_did_start_callback = scavengerDidStart;
@@ -451,8 +571,12 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             uint8_t startValue = static_cast<uint8_t>(deterministicRandomNumber(255));
 
             auto populateObject = [&] () {
-                for (unsigned i = 0; i < size; ++i)
-                    static_cast<uint8_t*>(ptr)[i] = static_cast<uint8_t>(startValue + i);
+                uint8_t* bytes = static_cast<uint8_t*>(ptr);
+                forEachStampRange(size, startValue,
+                    [&] (size_t offset, size_t length) {
+                        for (size_t k = 0; k < length; ++k)
+                            bytes[offset + k] = static_cast<uint8_t>(startValue + offset + k);
+                    });
             };
 
             if (!testEnumerator)
@@ -470,6 +594,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                     optionalObjects[threadIndex] = OptionalObject();
                 objects.push_back(Object(ptr, size, startValue));
                 totalSize += size;
+                recordLiveRange(ptr, size);
             }
         };
 
@@ -482,14 +607,64 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                 optionalObjects[threadIndex] = OptionalObject(nullptr, size);
             }
         };
-    
+
+    auto firstNonZeroByte = [] (const void* ptr, size_t size) -> size_t {
+        const uint8_t* bytes = static_cast<const uint8_t*>(ptr);
+        PAS_ASSERT(pas_is_aligned(reinterpret_cast<uintptr_t>(bytes), sizeof(uint64_t)));
+        size_t i = 0;
+        for (; i + sizeof(uint64_t) <= size; i += sizeof(uint64_t)) {
+            if (*reinterpret_cast<const uint64_t*>(bytes + i)) {
+                for (size_t b = i; b < i + sizeof(uint64_t); ++b) {
+                    if (bytes[b])
+                        return b;
+                }
+            }
+        }
+        for (; i < size; ++i) {
+            if (bytes[i])
+                return i;
+        }
+        return size;
+    };
+
+    // Verify a freshly zeroed allocation reads back zero. The buffer is thread-private until
+    // addObject publishes it, so the scan is lock-free; we lock only to report a failure.
+    auto verifyZeroed = [&] (unsigned threadIndex, void* ptr, size_t size) {
+        const uint8_t* bytes = static_cast<const uint8_t*>(ptr);
+        forEachZeroCheckRange(size,
+            [&] (size_t offset, size_t length) {
+                size_t nonZero = firstNonZeroByte(bytes + offset, length);
+                if (nonZero < length) {
+                    lock_guard<mutex> locker(lock);
+                    cout << "  born-dirty: thread=" << threadIndex << " size=" << size
+                         << " offset=" << (offset + nonZero) << " value=0x" << hex
+                         << static_cast<unsigned>(bytes[offset + nonZero]) << dec << "\n";
+                    CHECK(!bytes[offset + nonZero]);
+                }
+            });
+    };
+
     auto allocateSomething = [&] (unsigned threadIndex) {
         unsigned heapIndex = deterministicRandomNumber(static_cast<unsigned>(isolatedHeaps.size() + 1));
         unsigned size = chooseSize();
 
         if (heapIndex == isolatedHeaps.size()) {
+            // A fraction of common-primitive allocations go through the zeroed API (null for
+            // configs without one) for born-dirty checking.
+            bool zeroed = selectedAllocateCommonPrimitiveZeroed && !deterministicRandomNumber(zeroedAllocationRarity);
+            // A rarer fraction are upsized past the VA-zeroing line to reach the large heap.
+            if (zeroed && !deterministicRandomNumber(hugeAllocationRarity)) {
+                size = static_cast<unsigned>(
+                    vaZeroThreshold + deterministicRandomNumber(
+                        static_cast<unsigned>(hugeObjectMaxSize - vaZeroThreshold)));
+            }
             logOptionalObject(threadIndex, size);
-            void* ptr = selectedAllocateCommonPrimitive(size, pas_non_compact_allocation_mode);
+            void* ptr;
+            if (zeroed) {
+                ptr = selectedAllocateCommonPrimitiveZeroed(size, pas_non_compact_allocation_mode);
+                verifyZeroed(threadIndex, ptr, size);
+            } else
+                ptr = selectedAllocateCommonPrimitive(size, pas_non_compact_allocation_mode);
             addObject(threadIndex, ptr, size);
             return;
         }
@@ -517,10 +692,14 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         Object object;
 
         auto validateObject = [&] () {
-            for (unsigned i = 0; i < object.size; ++i) {
-                CHECK_EQUAL(static_cast<unsigned>(static_cast<uint8_t*>(object.ptr)[i]),
-                            static_cast<unsigned>(static_cast<uint8_t>(object.startValue + i)));
-            }
+            const uint8_t* bytes = static_cast<const uint8_t*>(object.ptr);
+            forEachStampRange(object.size, object.startValue,
+                [&] (size_t offset, size_t length) {
+                    for (size_t k = 0; k < length; ++k) {
+                        CHECK_EQUAL(static_cast<unsigned>(bytes[offset + k]),
+                                    static_cast<unsigned>(static_cast<uint8_t>(object.startValue + offset + k)));
+                    }
+                });
         };
 
         {
@@ -532,6 +711,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             objects[index] = objects.back();
             objects.pop_back();
             totalSize -= object.size;
+            forgetLiveRange(object.ptr, object.size);
 
             if (verbose)
                 cout << "Freeing object " << object.ptr << "\n";
@@ -574,6 +754,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             objects[index] = objects.back();
             objects.pop_back();
             totalSize -= object.size;
+            forgetLiveRange(object.ptr, object.size);
 
             if (verbose)
                 cout << "Shrinking object " << object.ptr << "\n";
@@ -589,6 +770,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         {
             lock_guard<mutex> locker(lock);
             objects.push_back(object);
+            recordLiveRange(object.ptr, object.size);
         }
     };
 
@@ -909,7 +1091,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         cout << "    Test done; did " << numEnumerations << " enumerations.\n";
     
     CHECK_EQUAL(numThreadsStopped, threads.size());
-    
+
     vector<pas_heap*> heaps;
     heaps.push_back(selectedCommonPrimitiveHeap);
     for (pas_heap_ref* heapRef : isolatedHeaps)
@@ -980,6 +1162,7 @@ void addIsoTests()
             [] () {
                 selectedHeapConfig = &iso_heap_config;
                 selectedAllocateCommonPrimitive = iso_try_allocate_common_primitive;
+                selectedAllocateCommonPrimitiveZeroed = iso_try_allocate_common_primitive_zeroed;
                 selectedAllocate = iso_try_allocate;
                 selectedAllocateArray = iso_try_allocate_array_by_count;
                 selectedDeallocate = iso_deallocate;
@@ -1117,6 +1300,7 @@ void addAllTests()
             [] () {
                 selectedHeapConfig = &bmalloc_heap_config;
                 selectedAllocateCommonPrimitive = bmalloc_allocate;
+                selectedAllocateCommonPrimitiveZeroed = bmalloc_allocate_zeroed;
                 selectedAllocate = bmalloc_iso_allocate;
                 selectedAllocateArray = bmalloc_iso_allocate_array_by_count_with_alignment;
                 selectedDeallocate = bmalloc_deallocate;
@@ -1126,6 +1310,18 @@ void addAllTests()
             });
     
         addSpotTests(true);
+
+        {
+            // Also run under aggressive background scavenging, racing decommit against alloc/free.
+            TestScope frequentScavenging(
+                "frequent-scavenging",
+                [] () {
+                    pas_scavenger_period_in_milliseconds = 1.;
+                    pas_scavenger_max_epoch_delta = -1ll * 1000ll * 1000ll;
+                });
+
+            addSpotTests(false);
+        }
     }
 
     {
