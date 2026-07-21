@@ -1406,6 +1406,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Test that glVertexAttribPointer call that changes only the format works.
+TEST_P(VertexAttributeOORTest, FormatOnlyChangeRefreshesElementLimit)
+{
+    // The front-end per-attribute cache is bypassed when the backend exposes robust buffer access.
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"));
+
+    constexpr char kVS[] = R"(attribute vec4 a;
+void main()
+{
+    gl_Position = a;
+    gl_PointSize = 8.0;
+})";
+    constexpr char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    const GLint attribLoc = glGetAttribLocation(program, "a");
+    ASSERT_NE(-1, attribLoc);
+
+    // Pre-fill the 32-byte buffer so every in-bounds vertex maps to gl_Position = (0, 0, 0, 1):
+    //   - 4xFLOAT vertex 0 reads bytes [0, 16) -> (0.0, 0.0, 0.0, 1.0).
+    //   - 1xBYTE  vertex 0 reads byte 0 (X = 0); default Y/Z/W give (0, 0, 0, 1).
+    //   - 1xBYTE  vertex 1 reads byte 28 (X = 0); default Y/Z/W give (0, 0, 0, 1).
+    GLfloat data[8] = {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(attribLoc);
+
+    const GLint centerX = getWindowWidth() / 2;
+    const GLint centerY = getWindowHeight() / 2;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // 1xBYTE (attrib size = 1).
+    // Element limit = (32 - 0 - 1) / 28 + 1 = 2.
+    glVertexAttribPointer(attribLoc, 1, GL_BYTE, GL_FALSE, 28, nullptr);
+    glDrawArrays(GL_POINTS, 0, 2);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(centerX, centerY, GLColor::green);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // 4xFLOAT (attrib size = 16).
+    // Element limit = (32 - 0 - 16) / 28 + 1 = 1.
+    glVertexAttribPointer(attribLoc, 4, GL_FLOAT, GL_FALSE, 28, nullptr);
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(centerX, centerY, GLColor::green);
+
+    // Two vertices is out-of-bounds for the new (4xFLOAT) format.
+    glDrawArrays(GL_POINTS, 0, 2);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glVertexAttribPointer(attribLoc, 1, GL_BYTE, GL_FALSE, 28, nullptr);
+    glDrawArrays(GL_POINTS, 0, 2);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(centerX, centerY, GLColor::green);
+}
+
 // Test that enabling a buffer in an unused attribute doesn't crash.  There should be an active
 // attribute after that.
 TEST_P(RobustVertexAttributeTest, BoundButUnusedBuffer)
