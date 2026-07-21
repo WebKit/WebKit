@@ -103,6 +103,10 @@
 #include "CachedApplicationManifest.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <pal/system/ios/Device.h>
 #endif
@@ -611,6 +615,12 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
             return false;
         }
 
+        if (isNoCorsCrossOriginRequestToURLSchemeHandler(type, url, options)) {
+            CACHEDRESOURCELOADER_RELEASE_LOG("canRequest: cross-origin no-cors subresource load to URL scheme handler is not allowed");
+            printAccessDeniedMessage(url);
+            return false;
+        }
+
         bool shouldReportViolationAsConsoleMessage = forPreload == ForPreload::No || isLinkPreload;
         if (!allowedByContentSecurityPolicy(type, url, options, ContentSecurityPolicy::RedirectResponseReceived::No, { }, shouldReportViolationAsConsoleMessage))
             return false;
@@ -653,6 +663,12 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 
         if (options.mode == FetchOptions::Mode::SameOrigin && !protect(document->securityOrigin())->canRequest(url, OriginAccessPatternsForWebProcess::singleton())) {
             CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: URL was not allowed by SecurityOrigin::canRequest");
+            printAccessDeniedMessage(url);
+            return false;
+        }
+
+        if (isNoCorsCrossOriginRequestToURLSchemeHandler(type, url, options)) {
+            CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: cross-origin no-cors redirect to URL scheme handler is not allowed");
             printAccessDeniedMessage(url);
             return false;
         }
@@ -865,6 +881,64 @@ bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(Cache
     auto message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from document with Content-Disposition: attachment at URL "_s, document->url().stringCenterEllipsizedToLength(), '.');
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
     return false;
+}
+
+bool CachedResourceLoader::isNoCorsCrossOriginRequestToURLSchemeHandler(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options) const
+{
+    RefPtr document = m_document;
+    if (!document)
+        return false;
+
+#if PLATFORM(COCOA)
+    // Compatibility safety net layered on top of the provenance checks below: apps linked before this
+    // enforcement shipped keep the historical permissive behavior.
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::CustomSchemeCORSEnforcement))
+        return false;
+#endif
+
+    if (type == CachedResource::Type::MainResource)
+        return false;
+
+    if (options.mode != FetchOptions::Mode::NoCors)
+        return false;
+
+    auto protocol = url.protocol();
+    if (!LegacySchemeRegistry::schemeIsHandledBySchemeHandler(protocol))
+        return false;
+
+    // http(s) URLs handled by a WKURLSchemeHandler follow the regular web fetch rules, not this block.
+    if (url.protocolIsInHTTPFamily())
+        return false;
+
+    if (LegacySchemeRegistry::isBuiltInWebKitHandledScheme(protocol))
+        return false;
+
+    // An app controls all loading within its own custom scheme, even across hosts, so only a differing
+    // scheme is subject to this block.
+    Ref origin = document->securityOrigin();
+    auto originProtocol = origin->protocol();
+    if (equalIgnoringASCIICase(originProtocol, protocol))
+        return false;
+
+    // App-controlled content is exempt: a substitute-data document (loadData:/loadHTMLString:, including with
+    // an http(s) baseURL), a file: origin, an app-registered custom scheme, or an opaque origin (loadData:
+    // without a baseURL, or a data: subframe of app content). The frame-tree check below scopes opaque frames
+    // to app-content trees; http(s) is never a scheme handler, so network content only qualifies via substitute data.
+    bool originIsAppProvidedScheme = LegacySchemeRegistry::schemeIsHandledBySchemeHandler(originProtocol)
+        && !LegacySchemeRegistry::isBuiltInWebKitHandledScheme(originProtocol);
+    bool isSubstituteDataDocument = document->loader() && document->loader()->substituteData().isValid();
+    if (origin->isOpaque() || originProtocol == "file"_s || originIsAppProvidedScheme || isSubstituteDataDocument) {
+        if (RefPtr frame = document->frame()) {
+            if (!frame->tree().parent() && !frame->opener() && document->sandboxFlags().isEmpty())
+                return false;
+
+            Ref topFrame = frame->tree().top();
+            if (equalIgnoringASCIICase(topFrame->frameURLProtocol(), protocol))
+                return false;
+        }
+    }
+
+    return !origin->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 }
 
 bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest& request, CachedResource& resource, ResourceError& error)

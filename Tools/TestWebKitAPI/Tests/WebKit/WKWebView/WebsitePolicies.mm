@@ -1964,45 +1964,20 @@ TEST(WebpagePreferences, HttpPageContentBlockers)
     };
 
     TestWebKitAPI::HTTPServer server({
-        { "/index.html"_s, { 
+        { "/index.html"_s, {
             R"INDEX(<script>
                 window.results = [];
                 window.addEventListener('message', function(event) {
                     window.results.push(event.data);
                     alert();
                 });
+                window.results.push(window.location.href);
             </script>
-            <script src='test:///script.js'></script>
             <iframe src='/subframe.html'></iframe>)INDEX"_s } },
-        { "/subframe.html"_s, { "<script src='test:///script_subframe.js'></script>"_s } },
+        { "/subframe.html"_s, { "<script>window.parent.postMessage(window.location.href, '*');</script>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
-    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        NSString *path = task.request.URL.path;
-        NSString *type = nil;
-        NSString *result = nil;
-        if ([path hasSuffix:@"script.js"]) {
-            result = @"window.results.push(window.location.href);";
-            type = @"text/javascript";
-        } else if ([path hasSuffix:@"script_subframe.js"]) {
-            result = @"window.parent.postMessage(window.location.href, '*');";
-            type = @"text/javascript";
-        }
-
-        if (!result) {
-            [task didFailWithError:[NSError errorWithDomain:@"TestWebKitAPI" code:1 userInfo:nil]];
-            return;
-        }
-
-        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:type expectedContentLength:[result length] textEncodingName:nil]);
-        [task didReceiveResponse:response.get()];
-        [task didReceiveData:[result dataUsingEncoding:NSUTF8StringEncoding]];
-        [task didFinish];
-    }];
-
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
 
     doneCompiling = false;
     NSString* contentBlocker = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"resource-type\":[\"script\"]}}]";
