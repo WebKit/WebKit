@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script>
+        function runTest()
+        {
+            description("Test that removing an iframe whose &lt;audio&gt; is connected as a MediaElementAudioSourceNode in the parent document does not crash, even if the audio render thread is mid-render when HTMLMediaElement::clearMediaPlayer() runs.");
+            jsTestIsAsync = true;
+
+            const context = new AudioContext({ sampleRate: 44100 });
+
+            const frame = document.createElement("iframe");
+            frame.src = "resources/mediaelementsource-clear-detached-frame-iframe.html";
+            frame.onload = async function() {
+                const audio = frame.contentDocument.querySelector("audio");
+                const source = context.createMediaElementSource(audio);
+                source.connect(context.destination);
+                audio.play().catch(() => { });
+
+                await new Promise(resolve => setTimeout(resolve, 200));
+
+                frame.remove();
+
+                setTimeout(function() {
+                    testPassed("Did not crash after detaching iframe whose audio element is connected to a MediaElementAudioSourceNode.");
+                    finishJSTest();
+                }, 100);
+            };
+            document.body.appendChild(frame);
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
