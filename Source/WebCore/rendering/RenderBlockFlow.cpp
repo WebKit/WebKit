@@ -3501,6 +3501,76 @@ static float lineHeightForEmptyContent(auto& style)
     return ascent + (style.computedLineHeight() - fontHeight) / 2.f;
 }
 
+// Translates a baseline expressed as a logical offset within the multicol container's flow thread
+// (as if all its content lived in one tall column) into the corresponding offset within the
+// multicol container's own local coordinate space, i.e. the visual column that offset ends up in.
+static std::optional<LayoutUnit> multiColumnFlowThreadOffsetToContainerOffset(RenderMultiColumnFlow& fragmentedFlow, LayoutUnit flowThreadLogicalOffset)
+{
+    auto logicalPoint = fragmentedFlow.isHorizontalWritingMode() ? LayoutPoint(0_lu, flowThreadLogicalOffset) : LayoutPoint(flowThreadLogicalOffset, 0_lu);
+    auto physicalPoint = fragmentedFlow.flipForWritingMode(logicalPoint);
+    CheckedPtr fragment = fragmentedFlow.physicalTranslationFromFlowToFragment(physicalPoint);
+    if (!fragment)
+        return { };
+    auto pointInFragment = fragment->flipForWritingMode(physicalPoint);
+    auto offsetInFragment = fragment->isHorizontalWritingMode() ? pointInFragment.y() : pointInFragment.x();
+    return fragment->logicalTop() + offsetInFragment;
+}
+
+// The first baseline set of a multi-column container is the first baseline set of the column or
+// multi-column spanner with the highest (block-start-most) baseline. See
+// https://drafts.csswg.org/css-align/#baseline-export. Columns and spanners are visited in flow
+// order (which is visual top-to-bottom order for non-reversed progression), so the first one found
+// to contribute a baseline is the one we want.
+static std::optional<LayoutUnit> multiColumnFirstLineBaseline(const RenderBlockFlow& multicolBlockFlow)
+{
+    CheckedPtr fragmentedFlow = multicolBlockFlow.multiColumnFlow();
+    ASSERT(fragmentedFlow);
+
+    RenderFragmentedFlow* fragmentedFlowAsFragmentedFlow = fragmentedFlow.get();
+    auto flowThreadBaseline = fragmentedFlow->firstLineBaseline();
+    CheckedPtr resolvedFragment = flowThreadBaseline ? fragmentedFlowAsFragmentedFlow->fragmentAtBlockOffset(fragmentedFlow.get(), *flowThreadBaseline, true) : nullptr;
+
+    for (RenderBox* candidate = fragmentedFlow->firstColumnSetOrSpanner(); candidate; candidate = RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf(candidate)) {
+        if (dynamicDowncast<RenderMultiColumnSet>(*candidate)) {
+            if (candidate == resolvedFragment.get())
+                return multiColumnFlowThreadOffsetToContainerOffset(*fragmentedFlow, *flowThreadBaseline);
+            continue;
+        }
+        // The sibling chain can also contain non-column-set boxes that aren't spanners (e.g. a <legend>); skip those.
+        if (!fragmentedFlow->findColumnSpannerPlaceholder(*candidate))
+            continue;
+        if (auto baseline = candidate->firstLineBaseline())
+            return candidate->logicalTop() + *baseline;
+    }
+    return { };
+}
+
+// Analogous to multiColumnFirstLineBaseline(), but for the last baseline set: uses the lowest
+// (block-end-most) baseline, and visits columns and spanners in reverse flow order.
+static std::optional<LayoutUnit> multiColumnLastLineBaseline(const RenderBlockFlow& multicolBlockFlow)
+{
+    CheckedPtr fragmentedFlow = multicolBlockFlow.multiColumnFlow();
+    ASSERT(fragmentedFlow);
+
+    RenderFragmentedFlow* fragmentedFlowAsFragmentedFlow = fragmentedFlow.get();
+    auto flowThreadBaseline = fragmentedFlow->lastLineBaseline();
+    CheckedPtr resolvedFragment = flowThreadBaseline ? fragmentedFlowAsFragmentedFlow->fragmentAtBlockOffset(fragmentedFlow.get(), *flowThreadBaseline, true) : nullptr;
+
+    for (RenderBox* candidate = multicolBlockFlow.lastChildBox(); candidate; candidate = RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(candidate)) {
+        if (dynamicDowncast<RenderMultiColumnSet>(*candidate)) {
+            if (candidate == resolvedFragment.get())
+                return multiColumnFlowThreadOffsetToContainerOffset(*fragmentedFlow, *flowThreadBaseline);
+            continue;
+        }
+        // The sibling chain can also contain non-column-set boxes that aren't spanners (e.g. a <legend>); skip those.
+        if (!fragmentedFlow->findColumnSpannerPlaceholder(*candidate))
+            continue;
+        if (auto baseline = candidate->lastLineBaseline())
+            return candidate->logicalTop() + *baseline;
+    }
+    return { };
+}
+
 std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
@@ -3508,6 +3578,9 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 
     if (shouldApplyLayoutContainment())
         return { };
+
+    if (multiColumnFlow())
+        return multiColumnFirstLineBaseline(*this);
 
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
@@ -3528,6 +3601,9 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
 
     if (shouldApplyLayoutContainment())
         return { };
+
+    if (multiColumnFlow())
+        return multiColumnLastLineBaseline(*this);
 
     if (!childrenInline())
         return RenderBlock::lastLineBaseline();
