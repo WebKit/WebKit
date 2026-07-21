@@ -32,7 +32,13 @@ enum class WebCore::ContactProperty : uint8_t {
 
 header: <WebCore/IDBResultData.h>
 
-enum class WebCore::IPAddressSpace : bool;
+header: <WebCore/IPAddressSpace.h>
+
+enum class WebCore::IPAddressSpace : uint8_t {
+    Public,
+    Local,
+    Loopback
+};
 
 enum class WebCore::NotificationEventType : bool;
 

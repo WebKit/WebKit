@@ -27,14 +27,30 @@
 
 namespace WebCore {
 
-enum class IPAddressSpace : bool {
+enum class IPAddressSpace : uint8_t {
     Public,
-    Local
+    Local,
+    Loopback
 };
 
-WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
+constexpr uint8_t publicnessRank(IPAddressSpace space)
+{
+    switch (space) {
+    case IPAddressSpace::Loopback:
+        return 0;
+    case IPAddressSpace::Local:
+        return 1;
+    case IPAddressSpace::Public:
+        return 2;
+    }
+    return 2;
+}
 
-WEBCORE_EXPORT bool isLocalIPAddressSpace(IPAddressSpace);
-WEBCORE_EXPORT bool isLocalIPAddressSpace(const WTF::URL&);
+inline bool isLessPublicThan(IPAddressSpace a, IPAddressSpace b)
+{
+    return publicnessRank(a) < publicnessRank(b);
+}
+
+WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
 
 } // namespace WebCore

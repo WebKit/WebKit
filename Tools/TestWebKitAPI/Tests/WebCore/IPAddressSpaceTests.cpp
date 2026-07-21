@@ -33,10 +33,10 @@ namespace TestWebKitAPI {
 // Test IPv4 loopback addresses (127.0.0.0/8)
 TEST(IPAddressSpace, IPv4Loopback)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.2/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.255.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://127.1.2.3:8080/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.1/"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.2/"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.255.255.255/"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://127.1.2.3:8080/"_s)), WebCore::IPAddressSpace::Loopback);
 }
 
 // Test IPv4 private address ranges
@@ -115,8 +115,8 @@ TEST(IPAddressSpace, IPv4PublicAddresses)
 // Test IPv6 loopback (::1/128)
 TEST(IPAddressSpace, IPv6Loopback)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::1]:8080/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::1]/"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::1]:8080/"_s)), WebCore::IPAddressSpace::Loopback);
 }
 
 // Test IPv6 Unique Local addresses (fc00::/7)
@@ -150,7 +150,8 @@ TEST(IPAddressSpace, IPv6LinkLocal)
 TEST(IPAddressSpace, IPv6MappedIPv4DottedDecimal)
 {
     // Local IPv4 addresses mapped to IPv6
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:127.0.0.1]/"_s)), WebCore::IPAddressSpace::Local);
+    // ::ffff:127.0.0.1 maps to a loopback address, so it's classified as ::Loopback, not ::Local.
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:127.0.0.1]/"_s)), WebCore::IPAddressSpace::Loopback);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:10.0.0.1]/"_s)), WebCore::IPAddressSpace::Local);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:192.168.1.1]/"_s)), WebCore::IPAddressSpace::Local);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::ffff:172.16.0.1]:443/"_s)), WebCore::IPAddressSpace::Local);
@@ -219,15 +220,13 @@ TEST(IPAddressSpace, EdgeCasesAndMalformed)
 // Test the utility functions
 TEST(IPAddressSpace, UtilityFunctions)
 {
-    // Test isLocalIPAddressSpace(const URL&)
-    EXPECT_TRUE(WebCore::isLocalIPAddressSpace(URL("http://127.0.0.1/"_s)));
-    EXPECT_TRUE(WebCore::isLocalIPAddressSpace(URL("http://192.168.1.1/"_s)));
-    EXPECT_TRUE(WebCore::isLocalIPAddressSpace(URL("http://[::1]/"_s)));
-    EXPECT_TRUE(WebCore::isLocalIPAddressSpace(URL("http://[fc00::1]/"_s)));
-
-    EXPECT_FALSE(WebCore::isLocalIPAddressSpace(URL("http://8.8.8.8/"_s)));
-    EXPECT_FALSE(WebCore::isLocalIPAddressSpace(URL("https://www.example.com/"_s)));
-    EXPECT_FALSE(WebCore::isLocalIPAddressSpace(URL("http://[2001:db8::1]/"_s)));
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.1/"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_TRUE(WebCore::isLessPublicThan(WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Local));
+    EXPECT_TRUE(WebCore::isLessPublicThan(WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Public));
+    EXPECT_TRUE(WebCore::isLessPublicThan(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Public));
+    EXPECT_FALSE(WebCore::isLessPublicThan(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Local));
+    EXPECT_FALSE(WebCore::isLessPublicThan(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Loopback));
+    EXPECT_FALSE(WebCore::isLessPublicThan(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Public));
 }
 
 // Test different URL schemes
@@ -254,9 +253,9 @@ TEST(IPAddressSpace, DifferentURLSchemes)
 TEST(IPAddressSpace, URLsWithPorts)
 {
     // Local addresses with various ports
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.1:8080/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.1:8080/"_s)), WebCore::IPAddressSpace::Loopback);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.1:443/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::1]:3000/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::1]:3000/"_s)), WebCore::IPAddressSpace::Loopback);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fc00::1]:8443/"_s)), WebCore::IPAddressSpace::Local);
 
     // Public addresses with ports
