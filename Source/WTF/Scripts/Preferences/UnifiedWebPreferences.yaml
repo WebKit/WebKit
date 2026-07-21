@@ -9749,7 +9749,7 @@ WasmMemoryToBufferAPIsEnabled:
 
 WasmMultiMemoryEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "WebAssembly Multi-Memory"
   humanReadableDescription: "Allow wasm code to access multiple linear memories"
@@ -9758,7 +9758,7 @@ WasmMultiMemoryEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 WasmRelaxedSIMDEnabled:
   type: bool

@@ -529,7 +529,6 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         throwException(globalObject, scope, error);
     };
 
-    // FIXME(wasm-multimemory): will need to change this to make BBQ/OMG work with multiple memories
     // FIXME(wasm-multimemory): should we get rid of hasMemoryImport()?
     if (moduleInformation.hasMemoryImport()) {
         // Usually at this point the module's code block in any memory mode should be

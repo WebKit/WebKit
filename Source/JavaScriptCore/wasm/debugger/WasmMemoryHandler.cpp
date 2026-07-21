@@ -131,7 +131,7 @@ bool MemoryHandler::readMemoryData(VirtualAddress address, size_t length, String
         return false;
     }
 
-    // FIXME(wasm-multimemory): Need to support WASM multiple memories once it's enabled.
+    // FIXME(wasm-multimemory): Should the debugger eventually support multiple linear memories?
     void* memoryBase = jsInstance->memory(0)->basePointer();
     size_t size = jsInstance->memory(0)->memory().size();
     if (!memoryBase || offset + length > size) {
@@ -190,7 +190,7 @@ void MemoryHandler::handleWasmMemoryRegionInfo(VirtualAddress address, uint32_t 
 {
     JSWebAssemblyInstance* instance = m_debugServer.m_moduleManager->jsInstance(instanceId);
     if (instance) {
-        // FIXME(wasm-multimemory): Need to support WASM multiple memories once it's enabled.
+        // FIXME(wasm-multimemory): Should the debugger eventually support multiple linear memories?
         size_t memorySize = instance->memory(0)->memory().size();
         if (offset < memorySize) {
             // Address is within WASM memory - return the memory region
@@ -330,7 +330,7 @@ void MemoryHandler::write(StringView packet)
         return;
     }
 
-    // FIXME(wasm-multimemory): Need to support WASM multiple memories once it's enabled.
+    // FIXME(wasm-multimemory): Should the debugger eventually support multiple linear memories?
     void* memoryBase = jsInstance->memory(0)->basePointer();
     size_t memorySize = jsInstance->memory(0)->memory().size();
     if (!memoryBase || offset + length > memorySize) {

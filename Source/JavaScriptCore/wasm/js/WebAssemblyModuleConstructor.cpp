@@ -153,7 +153,6 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
         break;
     }
     case Wasm::ExternalKind::Memory: {
-        // FIXME(wasm-multimemory): double check this code
         const auto& memory = module->moduleInformation().memory(impOrExp.kindIndex);
         PageCount maximum = memory.maximum();
         if (maximum.isValid()) {

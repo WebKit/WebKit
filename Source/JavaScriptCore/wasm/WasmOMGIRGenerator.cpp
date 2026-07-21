@@ -6262,7 +6262,6 @@ auto OMGIRGenerator::emitDirectCall(unsigned callProfileIndex, FunctionSpaceInde
     auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, signature, wasmCalleeInfo, args);
     emitUnlinkedWasmToWasmCall(patchpoint, handle, prepareForCall);
     // We need to clobber the size register since the IPInt always bounds checks
-    // FIXME(wasm-multimemory): is this the right way to handle a memoryCount of 0?
     if (useSignalingMemory0() || (m_info.memoryCount() && m_info.memory(0).isShared()))
         patchpoint->clobberLate(RegisterSet { GPRInfo::wasmBoundsCheckingSizeRegister });
 
