@@ -3329,20 +3329,6 @@ FixedFontFamily:
     WebCore:
       default: '""_str'
 
-FlexFormattingContextIntegrationEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Next-generation flex layout integration (FFC)"
-  humanReadableDescription: "Enable next-generation flex layout integration (FFC)"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 FontFaceSetConstructorEnabled:
   type: bool
   status: developer

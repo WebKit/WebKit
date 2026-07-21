@@ -1331,8 +1331,8 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*this); renderBlock && renderBlock->createsNewFormattingContext()) {
         if (CheckedPtr blockBox = dynamicDowncast<RenderBlockFlow>(*renderBlock))
             stream << (blockBox->childrenInline() && LayoutIntegration::canUseForLineLayout(*blockBox) ? "M" : "L");
-        else if (CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(*renderBlock))
-            stream << (LayoutIntegration::canUseForFlexLayout(*flexBox) ? "M" : "L");
+        else if (is<RenderFlexibleBox>(*renderBlock))
+            stream << "M";
         else
             stream << "L";
     } else

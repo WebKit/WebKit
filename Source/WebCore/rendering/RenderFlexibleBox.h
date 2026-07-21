@@ -31,26 +31,21 @@
 #pragma once
 
 #include <WebCore/BaselineAlignment.h>
-#include <WebCore/FlexLayoutUtils.h>
+#include <WebCore/FlexFormattingContext.h>
+#include <WebCore/FlexFormattingUtils.h>
+#include <WebCore/LayoutIntegrationFlexLayout.h>
 #include <WebCore/OrderIterator.h>
 #include <WebCore/RenderBlock.h>
-#include <WebCore/RenderFlexLayout.h>
 #include <wtf/Range.h>
 #include <wtf/SetForScope.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
-namespace LayoutIntegration {
-class FlexLayout;
-}
-
 class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFlexibleBox);
 public:
-    const FlexLayoutUtils& flexLayoutUtils() const LIFETIME_BOUND { return m_flexLayoutUtils; }
-
     RenderFlexibleBox(Type, Element&, Style::ComputedStyle&&);
     RenderFlexibleBox(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderFlexibleBox();
@@ -77,6 +72,19 @@ public:
 
     virtual bool isFlexibleBoxImpl() const { return false; };
 
+    // Flex-container queries used by non-flex layout code (RenderBox/RenderBlock/RenderBlockFlow/InspectorOverlay);
+    // thin proxies to FlexFormattingUtils, which stays internal to the flex formatting context.
+    using GapType = FlexFormattingUtils::GapType;
+    bool useContentBasedMinimumBlockSize(const RenderBox& flexItem) const;
+    bool hasStretchedFlexItemWithAspectRatio() const;
+    LayoutUnit computeGap(GapType) const;
+    bool isHorizontalFlow() const;
+    bool isMultiline() const;
+    bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const;
+    Style::FlexBasis flexBasisForFlexItem(const RenderBox& flexItem) const;
+    ItemPosition alignmentForFlexItem(const RenderBox& flexItem) const;
+    bool hasDefiniteCrossSizeForFlexItem(const RenderBox& flexItem) const;
+
     std::optional<LayoutUnit> usedFlexItemOverridingLogicalHeightForPercentageResolution(const RenderBox&);
     bool canUseFlexItemForPercentageResolution(const RenderBox&);
 
@@ -86,19 +94,10 @@ public:
     LayoutUnit flexItemContentLogicalHeight(const RenderBox& flexItem) const;
     void setFlexItemContentLogicalHeightIfNeeded(const RenderBox& flexItem, LayoutUnit height);
 
-    LayoutUnit staticMainAxisPositionForPositionedFlexItem(const RenderBox&);
-    LayoutUnit staticCrossAxisPositionForPositionedFlexItem(const RenderBox&);
-
-    LayoutUnit staticInlinePositionForPositionedFlexItem(const RenderBox&);
-    LayoutUnit staticBlockPositionForPositionedFlexItem(const RenderBox&);
-
-    // Returns true if the position changed. In that case, the flexItem will have to
-    // be laid out again.
+    // Returns true if the position changed. In that case, the flexItem will have to be laid out again.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
     bool isComputingFlexBaseSizes() const { return m_isComputingFlexBaseSizes; }
-
-    bool hasModernLayout() const { return m_hasFlexFormattingContextLayout && *m_hasFlexFormattingContextLayout; }
 
     bool shouldResetFlexItemLogicalHeightBeforeLayout() const { return m_shouldResetFlexItemLogicalHeightBeforeLayout; }
     bool isInCrossAxisStretchLayout() const { return m_inLayout && m_afterCrossAxisItemSizing; }
@@ -136,8 +135,9 @@ protected:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
 private:
-    friend class FlexLayout;
-    friend class FlexLayoutUtils;
+    friend class FlexFormattingContext;
+    friend class FlexFormattingUtils;
+    friend class LayoutIntegration::FlexLayout;
 
     enum class SizeDefiniteness : uint8_t { Definite, Indefinite, Unknown };
 
@@ -154,23 +154,13 @@ private:
 
     void clearFlexItemOverridingSizes();
 
-    const RenderBox* flexItemForFirstBaseline() const;
-    const RenderBox* flexItemForLastBaseline() const;
-    const RenderBox* firstBaselineCandidateOnLine(OrderIterator, size_t numberOfItemsOnLine) const;
-    const RenderBox* lastBaselineCandidateOnLine(OrderIterator, size_t numberOfItemsOnLine) const;
-
     void prepareOrderIteratorAndMargins();
 
-    // Builds this container's flex items (its formatting-context children) for FlexLayout to lay out.
-    FlexLayoutItems collectFlexItems(RelayoutChildren);
-    FlexLayoutConstraints flexLayoutConstraints();
-    LayoutUnit mainAxisAvailableSpace();
     FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
-    void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
 
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
 
-    // The flex layout pipeline (FlexLayout) reaches the container's layout-phase state through these
+    // The flex layout pipeline (FlexFormattingContext) reaches the container's layout-phase state through these
     // rather than writing the members directly, so the state stays owned by RenderFlexibleBox.
     SetForScope<bool> scopedComputingFlexBaseSizes() { return SetForScope(m_isComputingFlexBaseSizes, true); }
     SetForScope<bool> scopedAfterMainAxisItemSizing() { return SetForScope(m_afterMainAxisItemSizing, true); }
@@ -196,8 +186,6 @@ private:
     void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.m_itemsOnFirstFlexLine.add(flexItem); }
     void addItemOnLastFlexLine(const RenderBox& flexItem) { m_marginTrimItems.m_itemsOnLastFlexLine.add(flexItem); }
 
-    bool layoutUsingFlexFormattingContext();
-
     // Inner main size for flex items where main axis is the item's block axis (column flex or orthogonal).
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_blockAxisSize;
 
@@ -213,7 +201,9 @@ private:
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 
     mutable OrderIterator m_orderIterator { *this };
-    const FlexLayoutUtils m_flexLayoutUtils { *this };
+    // The flex formatting context integration: RenderFlexibleBox owns it and befriends it so it can reach the
+    // container's layout-phase state.
+    LayoutIntegration::FlexLayout m_flexLayout { *this };
     size_t m_numberOfFlexItemsOnFirstLine { 0 };
     size_t m_numberOfFlexItemsOnLastLine { 0 };
 
@@ -237,7 +227,6 @@ private:
     mutable bool m_inFlexItemIntrinsicWidthComputation { false };
     bool m_shouldResetFlexItemLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
-    std::optional<bool> m_hasFlexFormattingContextLayout;
 };
 
 } // namespace WebCore

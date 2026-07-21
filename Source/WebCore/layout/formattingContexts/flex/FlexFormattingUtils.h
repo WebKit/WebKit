@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,122 @@
 
 #pragma once
 
-#include "FormattingGeometry.h"
+#include <WebCore/LayoutUnit.h>
+#include <optional>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
-namespace Layout {
 
-class FlexFormattingContext;
-class LogicalFlexItem;
+enum class ContentDistribution : uint8_t;
+enum class ContentPosition : uint8_t;
+enum class FlowDirection : uint8_t;
+enum class ItemPosition : uint8_t;
+enum class Overflow : uint8_t;
+enum class OverflowAlignment : uint8_t;
+enum class TextDirection : bool;
 
-// Helper class for flex layout.
+namespace Style {
+struct FlexBasis;
+struct PreferredSize;
+struct MinimumSize;
+struct MaximumSize;
+class ComputedStyle;
+}
+
+class RenderBox;
+class RenderFlexibleBox;
+class StyleContentAlignmentData;
+
+// Stateless geometry and query helpers for the flex formatting context (mirrors the render-side
+// FlexLayoutUtils). These read the flex container and its items through the container reference;
+// RenderFlexibleBox befriends this class so the helpers can reach the container's flow-direction
+// queries. Shared helpers are duplicated from FlexLayoutUtils so the formatting context is self-contained.
 class FlexFormattingUtils {
 public:
-    FlexFormattingUtils(const FlexFormattingContext&);
+    FlexFormattingUtils(const RenderFlexibleBox&);
 
-    static bool NODELETE isMainAxisParallelWithInlineAxis(const ElementBox& flexContainer);
-    static bool NODELETE isMainReversedToContentDirection(const ElementBox& flexContainer);
-    static bool NODELETE areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer);
+    LayoutUnit flowAwareBorderStart() const;
+    LayoutUnit flowAwareBorderEnd() const;
+    LayoutUnit flowAwareBorderBefore() const;
+    LayoutUnit flowAwareBorderAfter() const;
+    LayoutUnit flowAwarePaddingStart() const;
+    LayoutUnit flowAwarePaddingEnd() const;
+    LayoutUnit flowAwarePaddingBefore() const;
+    LayoutUnit flowAwarePaddingAfter() const;
 
-    // FIXME: These values should probably be computed by FlexFormattingContext and get passed in to FlexLayout.
-    static LayoutUnit mainAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth);
-    static LayoutUnit crossAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight);
+    LayoutUnit flowAwareMarginStartForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit flowAwareMarginEndForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit flowAwareMarginBeforeForFlexItem(const RenderBox& flexItem) const;
 
-    static ContentPosition NODELETE logicalJustifyContentPosition(const ElementBox& flexContainer, ContentPosition);
+    LayoutUnit crossAxisExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit mainAxisExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit mainAxisExtent() const;
+    static LayoutUnit crossAxisContentExtent(const RenderFlexibleBox&);
 
-    LayoutUnit usedMinimumSizeInMainAxis(const LogicalFlexItem&) const;
-    std::optional<LayoutUnit> NODELETE usedMaximumSizeInMainAxis(const LogicalFlexItem&) const;
-    LayoutUnit usedMaxContentSizeInMainAxis(const LogicalFlexItem&) const;
-    LayoutUnit usedSizeInCrossAxis(const LogicalFlexItem&, LayoutUnit maxAxisConstraint) const;
+    enum class GapType : uint8_t { BetweenLines, BetweenItems };
+    static LayoutUnit computeGap(const RenderFlexibleBox&, GapType);
+
+    LayoutUnit mainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
+    static LayoutUnit crossAxisMarginExtentForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+
+    LayoutUnit crossAxisScrollbarExtent() const;
+    LayoutUnit mainAxisScrollbarExtent() const;
+
+    static const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem LIFETIME_BOUND);
+    static const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem LIFETIME_BOUND);
+    const Style::MaximumSize& maxMainSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
+    static const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem LIFETIME_BOUND);
+    const Style::MinimumSize& minCrossSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
+    const Style::MaximumSize& maxCrossSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
+
+    static Overflow mainAxisOverflowForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    OverflowAlignment overflowAlignmentForFlexItem(const RenderBox& flexItem) const;
+    static bool hasAutoMarginsInCrossAxis(const RenderFlexibleBox&, const RenderBox& flexItem);
+    static bool useContentBasedMinimumSize(const RenderFlexibleBox&, const RenderBox& flexItem);
+    double preferredAspectRatioForFlexItem(const RenderBox& flexItem) const;
+
+    static bool flexItemHasAspectRatio(const RenderBox& flexItem);
+    static bool canResolveFullyConstrainedLogicalHeight(const RenderFlexibleBox&);
+    bool flexItemHasComputableAspectRatio(const RenderBox& flexItem) const;
+    bool needToStretchFlexItemLogicalHeight(const RenderBox& flexItem) const;
+    static LayoutUnit innerCrossSizeForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    LayoutUnit columnInnerMainSize(LayoutUnit hypotheticalMainSize) const;
+    LayoutUnit availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem, LayoutUnit crossSize) const;
+    LayoutUnit marginBoxAscentForFlexItem(const RenderBox& flexItem, LayoutUnit crossSize) const;
+
+    FlowDirection crossAxisDirection() const;
+    FlowDirection transformedBlockFlowDirection() const;
+    static bool NODELETE isHorizontalFlow(const RenderFlexibleBox&);
+    static bool NODELETE isColumnFlow(const RenderFlexibleBox&);
+    bool isColumnOrRowReverse() const;
+    static bool isWrapReverse(const RenderFlexibleBox&);
+    static bool isMultiline(const RenderFlexibleBox&);
+    bool isLeftToRightFlow() const;
+    static bool mainAxisIsFlexItemInlineAxis(const RenderFlexibleBox&, const RenderBox& flexItem);
+    static Style::FlexBasis flexBasisForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    static ItemPosition alignmentForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    static bool hasDefiniteCrossSizeForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    static bool hasDefiniteLogicalWidthForAspectRatioCrossSize(const RenderFlexibleBox&);
+    static std::optional<TextDirection> leftRightAxisDirectionFromStyle(const Style::ComputedStyle&);
+
+    bool shouldTrimMainAxisMarginStart() const;
+    bool shouldTrimMainAxisMarginEnd() const;
+    bool shouldTrimCrossAxisMarginStart() const;
+    bool shouldTrimCrossAxisMarginEnd() const;
+
+    static const StyleContentAlignmentData& contentAlignmentNormalBehavior();
+    static ContentPosition resolveLeftRightAlignment(ContentPosition, const StyleContentAlignmentData&, const Style::ComputedStyle&, bool isReversed);
+    static LayoutUnit initialJustifyContentOffset(const Style::ComputedStyle&, LayoutUnit availableFreeSpace, unsigned numberOfFlexItems, bool isReversed);
+    static LayoutUnit justifyContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfFlexItems);
+    static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition, std::optional<LayoutUnit> ascent, std::optional<LayoutUnit> maxAscent, bool isWrapReverse);
+    static LayoutUnit contentAlignmentStartOverflow(LayoutUnit availableFreeSpace, ContentPosition, ContentDistribution, OverflowAlignment safety, bool isReverse);
+    static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition, ContentDistribution, OverflowAlignment safety, unsigned numberOfLines, bool isReversed);
+    static LayoutUnit alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfLines);
 
 private:
-    const FlexFormattingContext& formattingContext() const LIFETIME_BOUND { return m_flexFormattingContext; }
+    const RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
 
-private:
-    const FlexFormattingContext& m_flexFormattingContext;
+    const CheckedRef<const RenderFlexibleBox> m_flexBox;
 };
 
-}
-}
-
+} // namespace WebCore

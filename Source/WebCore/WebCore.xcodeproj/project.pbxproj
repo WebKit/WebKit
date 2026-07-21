@@ -2831,7 +2831,6 @@
 		6ED878C5147493F4004C3597 /* RenderTableCaption.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED878C3147493F4004C3597 /* RenderTableCaption.h */; };
 		6ED8C37A183BFF8C009E53BD /* BoxLayoutShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED8C378183BFF8C009E53BD /* BoxLayoutShape.h */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
-		6F047A9228453EDB00C25EE7 /* FlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F047A9128453EDB00C25EE7 /* FlexLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F0CD695229ED32700C5994E /* InlineLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0CD694229ED32700C5994E /* InlineLine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F15522126476B5C00E353C6 /* TableWrapperBlockFormattingQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F15522026476B5B00E353C6 /* TableWrapperBlockFormattingQuirks.h */; };
@@ -2866,13 +2865,10 @@
 		6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
 		6FAAE71326A2814B00E07502 /* InlineLevelBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FAAE71126A2814A00E07502 /* InlineLevelBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6FAC251F281326580045683F /* LayoutIntegrationFlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FAC251E281326570045683F /* LayoutIntegrationFlexLayout.h */; };
+		6FAC251F281326580045683F /* LayoutIntegrationFlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FAC251E281326570045683F /* LayoutIntegrationFlexLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FB11B5C21783FD000E2A574 /* TextUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB11B5921783FCF00E2A574 /* TextUtil.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6FB17476283A8FF40067D8CA /* FlexFormattingConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB17475283A8FF40067D8CA /* FlexFormattingConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FB2400523DFF12800796458 /* InlineLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB2400323DFF12700796458 /* InlineLineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FB5E214221F2453003989CF /* ContentChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB5E212221F2447003989CF /* ContentChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6FB7D2DD250FD828000207AA /* FlexFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB7D2D9250FD7FC000207AA /* FlexFormattingContext.h */; };
-		6FB9105C2830BC8A00004929 /* FlexRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB9105B2830BC8A00004929 /* FlexRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FC3F9472516756700A49BEA /* InlineDisplayBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FC3F9452516756600A49BEA /* InlineDisplayBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FCBDB97265DF2C80021EA7B /* LayoutContainingBlockChainIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FCBDB95265DF2C70021EA7B /* LayoutContainingBlockChainIterator.h */; };
 		6FCE698028B7DD3900956401 /* LayoutIntegrationInlineContentPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FCE697F28B7DD3800956401 /* LayoutIntegrationInlineContentPainter.h */; };
@@ -2881,7 +2877,6 @@
 		6FE198172178397C00446F08 /* InlineContentBreaker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE198152178397C00446F08 /* InlineContentBreaker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FE636E82647962900F0951E /* InlineQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE636E72647962900F0951E /* InlineQuirks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FE7CFA22177EEF2005B1573 /* InlineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE7CFA02177EEF1005B1573 /* InlineItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6FF911F726487FC8002021DF /* FlexFormattingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FF911F626487FC8002021DF /* FlexFormattingUtils.h */; };
 		6FFDC442212EFF1700A9CA91 /* FloatAvoider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FFDC440212EFF1600A9CA91 /* FloatAvoider.h */; };
 		7005AB0F1B9EA8615D741AF3 /* UnifiedSource25-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EC5387B1B81D685AF55472D /* UnifiedSource25-header-RenderStyleGetters.cpp */; };
 		709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */; };
@@ -6310,7 +6305,6 @@
 		DDA3D5CF2A7D844D000ECEE1 /* TextOnlySimpleLineBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA3D5CE2A7D844D000ECEE1 /* TextOnlySimpleLineBuilder.h */; };
 		DDB04F3A278E5539008D3678 /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDB04F39278E5531008D3678 /* libWTF.a */; };
 		DDBF8DAF2AB51FC100B3318A /* RubyFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = DDBF8DAE2AB51FC100B3318A /* RubyFormattingContext.h */; };
-		DDC8E9562A3DE60400FF8ECF /* LogicalFlexItem.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC8E9552A3DE60400FF8ECF /* LogicalFlexItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDCF765D2C7F85E2005DDAFF /* StyleBlockEllipsis.h in Headers */ = {isa = PBXBuildFile; fileRef = DDCF765C2C7F85E2005DDAFF /* StyleBlockEllipsis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDD517EC2A9FC5440069AF81 /* LineLayoutResult.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD517EB2A9FC5440069AF81 /* LineLayoutResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDD5F55C2C703DFC00E1C692 /* TextBoxTrimmer.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD5F55B2C703DFC00E1C692 /* TextBoxTrimmer.h */; };
@@ -7500,8 +7494,8 @@
 		FE0BCF3427C0661000BFB2DB /* ExtendedDOMIsoSubspaces.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0BCF3127C0660F00BFB2DB /* ExtendedDOMIsoSubspaces.h */; };
 		FE0BCF3527C0661000BFB2DB /* ExtendedDOMClientIsoSubspaces.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0BCF3327C0661000BFB2DB /* ExtendedDOMClientIsoSubspaces.h */; };
 		FE0D84E910484348001A179E /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0D84E810484348001A179E /* WebEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE1A2B3C4D5E6F0011112203 /* FlexLayoutUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112202 /* FlexLayoutUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE1A2B3C4D5E6F0011112303 /* RenderFlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112302 /* RenderFlexLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1A2B3C4D5E6F0011112303 /* FlexFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112302 /* FlexFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1A2B3C4D5E6F0011112403 /* FlexFormattingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1116C7826400F887C1 /* ChangeVersionData.h */; };
 		FE36FD1716C7826500F887C1 /* SQLTransactionStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1316C7826400F887C1 /* SQLTransactionStateMachine.h */; };
 		FE36FD1816C7826500F887C1 /* SQLTransactionState.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1416C7826400F887C1 /* SQLTransactionState.h */; };
@@ -14001,8 +13995,6 @@
 		6ED8C378183BFF8C009E53BD /* BoxLayoutShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxLayoutShape.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
-		6F047A9028453ED200C25EE7 /* FlexLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FlexLayout.cpp; sourceTree = "<group>"; };
-		6F047A9128453EDB00C25EE7 /* FlexLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexLayout.h; sourceTree = "<group>"; };
 		6F0830DF20B46951008A945B /* BlockFormattingGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockFormattingGeometry.cpp; sourceTree = "<group>"; };
 		6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutInlineTextBox.h; sourceTree = "<group>"; };
 		6F0B98B623F2690600EEC2F2 /* LayoutInlineTextBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutInlineTextBox.cpp; sourceTree = "<group>"; };
@@ -14040,7 +14032,6 @@
 		6F6DF36E264722EA0093E834 /* BlockMarginCollapse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockMarginCollapse.h; sourceTree = "<group>"; };
 		6F6EE74126D44EE200374CDA /* InlineLineBoxVerticalAligner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBoxVerticalAligner.h; sourceTree = "<group>"; };
 		6F6EE74426D44F0300374CDA /* InlineLineBoxVerticalAligner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLineBoxVerticalAligner.cpp; sourceTree = "<group>"; };
-		6F70DEDD251126F300F0FC78 /* FlexFormattingUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FlexFormattingUtils.cpp; sourceTree = "<group>"; };
 		6F73918C2106CEDD006AF262 /* LayoutUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutUnits.h; sourceTree = "<group>"; };
 		6F7B8CEC23626E6600C9FF15 /* InlineItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineItem.cpp; sourceTree = "<group>"; };
 		6F7CA3C4208C2956002F29AB /* LayoutState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
@@ -14082,13 +14073,9 @@
 		6FB0ED112427B6C6002737E6 /* LayoutInitialContainingBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutInitialContainingBlock.cpp; sourceTree = "<group>"; };
 		6FB11B5921783FCF00E2A574 /* TextUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtil.h; sourceTree = "<group>"; };
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
-		6FB17475283A8FF40067D8CA /* FlexFormattingConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingConstraints.h; sourceTree = "<group>"; };
 		6FB22E30230097E300C20866 /* TableGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableGrid.h; sourceTree = "<group>"; };
 		6FB2400323DFF12700796458 /* InlineLineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBox.h; sourceTree = "<group>"; };
 		6FB5E212221F2447003989CF /* ContentChangeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentChangeObserver.h; sourceTree = "<group>"; };
-		6FB7D2D7250FD7E5000207AA /* FlexFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FlexFormattingContext.cpp; sourceTree = "<group>"; };
-		6FB7D2D9250FD7FC000207AA /* FlexFormattingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingContext.h; sourceTree = "<group>"; };
-		6FB9105B2830BC8A00004929 /* FlexRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexRect.h; sourceTree = "<group>"; };
 		6FBB860520B464B600DAD938 /* FormattingGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingGeometry.cpp; sourceTree = "<group>"; };
 		6FC3F9452516756600A49BEA /* InlineDisplayBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineDisplayBox.h; sourceTree = "<group>"; };
 		6FC53AEB24AF7A8E006059FE /* TableFormattingQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableFormattingQuirks.cpp; sourceTree = "<group>"; };
@@ -14109,7 +14096,6 @@
 		6FE7CFA02177EEF1005B1573 /* InlineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineItem.h; sourceTree = "<group>"; };
 		6FE9F09222211035004C5082 /* ContentChangeObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentChangeObserver.cpp; sourceTree = "<group>"; };
 		6FEFE81D22F9D22A00114927 /* LayoutPhase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutPhase.h; sourceTree = "<group>"; };
-		6FF911F626487FC8002021DF /* FlexFormattingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingUtils.h; sourceTree = "<group>"; };
 		6FF9F1BE246D966C00435083 /* TableLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableLayout.cpp; sourceTree = "<group>"; };
 		6FFDC43E212EFF1600A9CA91 /* FloatAvoider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatAvoider.cpp; sourceTree = "<group>"; };
 		6FFDC440212EFF1600A9CA91 /* FloatAvoider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatAvoider.h; sourceTree = "<group>"; };
@@ -21863,7 +21849,6 @@
 		DDB04F39278E5531008D3678 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDBF8DAE2AB51FC100B3318A /* RubyFormattingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RubyFormattingContext.h; sourceTree = "<group>"; };
 		DDBF8DB02AB51FD100B3318A /* RubyFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RubyFormattingContext.cpp; sourceTree = "<group>"; };
-		DDC8E9552A3DE60400FF8ECF /* LogicalFlexItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalFlexItem.h; sourceTree = "<group>"; };
 		DDCF765C2C7F85E2005DDAFF /* StyleBlockEllipsis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBlockEllipsis.h; sourceTree = "<group>"; };
 		DDD517EB2A9FC5440069AF81 /* LineLayoutResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutResult.h; sourceTree = "<group>"; };
 		DDD5F55A2C703DF200E1C692 /* TextBoxTrimmer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextBoxTrimmer.cpp; sourceTree = "<group>"; };
@@ -23935,10 +23920,10 @@
 		FE0BCF3327C0661000BFB2DB /* ExtendedDOMClientIsoSubspaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedDOMClientIsoSubspaces.h; sourceTree = "<group>"; };
 		FE0D84E810484348001A179E /* WebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEvent.h; sourceTree = "<group>"; };
 		FE0D84EA1048436E001A179E /* WebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEvent.mm; sourceTree = "<group>"; };
-		FE1A2B3C4D5E6F0011112201 /* FlexLayoutUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexLayoutUtils.cpp; sourceTree = "<group>"; };
-		FE1A2B3C4D5E6F0011112202 /* FlexLayoutUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexLayoutUtils.h; sourceTree = "<group>"; };
-		FE1A2B3C4D5E6F0011112301 /* RenderFlexLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlexLayout.cpp; sourceTree = "<group>"; };
-		FE1A2B3C4D5E6F0011112302 /* RenderFlexLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexLayout.h; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112301 /* FlexFormattingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexFormattingContext.cpp; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112302 /* FlexFormattingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingContext.h; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112401 /* FlexFormattingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexFormattingUtils.cpp; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingUtils.h; sourceTree = "<group>"; };
 		FE36FD1116C7826400F887C1 /* ChangeVersionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionData.h; sourceTree = "<group>"; };
 		FE36FD1216C7826400F887C1 /* SQLTransactionStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionStateMachine.cpp; sourceTree = "<group>"; };
 		FE36FD1316C7826400F887C1 /* SQLTransactionStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionStateMachine.h; sourceTree = "<group>"; };
@@ -31572,15 +31557,10 @@
 		6FB7D2D5250FD7B5000207AA /* flex */ = {
 			isa = PBXGroup;
 			children = (
-				6FB17475283A8FF40067D8CA /* FlexFormattingConstraints.h */,
-				6FB7D2D7250FD7E5000207AA /* FlexFormattingContext.cpp */,
-				6FB7D2D9250FD7FC000207AA /* FlexFormattingContext.h */,
-				6F70DEDD251126F300F0FC78 /* FlexFormattingUtils.cpp */,
-				6FF911F626487FC8002021DF /* FlexFormattingUtils.h */,
-				6F047A9028453ED200C25EE7 /* FlexLayout.cpp */,
-				6F047A9128453EDB00C25EE7 /* FlexLayout.h */,
-				6FB9105B2830BC8A00004929 /* FlexRect.h */,
-				DDC8E9552A3DE60400FF8ECF /* LogicalFlexItem.h */,
+				FE1A2B3C4D5E6F0011112301 /* FlexFormattingContext.cpp */,
+				FE1A2B3C4D5E6F0011112302 /* FlexFormattingContext.h */,
+				FE1A2B3C4D5E6F0011112401 /* FlexFormattingUtils.cpp */,
+				FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */,
 			);
 			path = flex;
 			sourceTree = "<group>";
@@ -42147,8 +42127,6 @@
 				E4A8D21422578DA000A8463C /* EventRegion.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
-				FE1A2B3C4D5E6F0011112201 /* FlexLayoutUtils.cpp */,
-				FE1A2B3C4D5E6F0011112202 /* FlexLayoutUtils.h */,
 				9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */,
 				9A528E8217D7F52F00AA9518 /* FloatingObjects.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
@@ -42273,8 +42251,6 @@
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
 				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
 				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
-				FE1A2B3C4D5E6F0011112301 /* RenderFlexLayout.cpp */,
-				FE1A2B3C4D5E6F0011112302 /* RenderFlexLayout.h */,
 				D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */,
 				D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */,
 				BCE93F461517C6D5008CCF74 /* RenderFragmentContainerSet.cpp */,
@@ -45497,12 +45473,8 @@
 				494BDBDF2E16156A0079E324 /* FindRevealAlgorithms.h in Headers */,
 				F44CD9F52D29DBB600276C79 /* FixedContainerEdges.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
-				6FB17476283A8FF40067D8CA /* FlexFormattingConstraints.h in Headers */,
-				6FB7D2DD250FD828000207AA /* FlexFormattingContext.h in Headers */,
-				6FF911F726487FC8002021DF /* FlexFormattingUtils.h in Headers */,
-				6F047A9228453EDB00C25EE7 /* FlexLayout.h in Headers */,
-				FE1A2B3C4D5E6F0011112203 /* FlexLayoutUtils.h in Headers */,
-				6FB9105C2830BC8A00004929 /* FlexRect.h in Headers */,
+				FE1A2B3C4D5E6F0011112303 /* FlexFormattingContext.h in Headers */,
+				FE1A2B3C4D5E6F0011112403 /* FlexFormattingUtils.h in Headers */,
 				6FFDC442212EFF1700A9CA91 /* FloatAvoider.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				115CFA86208B9066001E6991 /* FloatingContext.h in Headers */,
@@ -47263,7 +47235,6 @@
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				E3C788EE2D035C9500D6C13D /* LogClient.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
-				DDC8E9562A3DE60400FF8ECF /* LogicalFlexItem.h in Headers */,
 				9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */,
 				CD9E01772E860CD6002B5029 /* LogicalSelectionOffsetCachesInlines.h in Headers */,
 				0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */,
@@ -48137,7 +48108,6 @@
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
-				FE1A2B3C4D5E6F0011112303 /* RenderFlexLayout.h in Headers */,
 				D70AD65813E1342B005B50B4 /* RenderFragmentContainer.h in Headers */,
 				BCE93F451517C567008CCF74 /* RenderFragmentContainerSet.h in Headers */,
 				508CCA4F13CF106B003151F3 /* RenderFragmentedFlow.h in Headers */,

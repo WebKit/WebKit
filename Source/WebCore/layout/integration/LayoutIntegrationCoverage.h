@@ -28,13 +28,11 @@
 namespace WebCore {
 
 class RenderBlockFlow;
-class RenderFlexibleBox;
 class RenderGrid;
 
 namespace LayoutIntegration {
 
 bool NODELETE canUseForLineLayout(const RenderBlockFlow&);
-bool canUseForFlexLayout(const RenderFlexibleBox&);
 bool canUseForGridLayout(const RenderGrid&);
 
 bool canUseForIntrinsicWidthComputation(const RenderBlockFlow&);

@@ -1758,12 +1758,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h
     layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.h
 
-    layout/formattingContexts/flex/FlexFormattingConstraints.h
     layout/formattingContexts/flex/FlexFormattingContext.h
     layout/formattingContexts/flex/FlexFormattingUtils.h
-    layout/formattingContexts/flex/FlexLayout.h
-    layout/formattingContexts/flex/FlexRect.h
-    layout/formattingContexts/flex/LogicalFlexItem.h
 
     layout/formattingContexts/grid/AxisConstraint.h
     layout/formattingContexts/grid/GridAreaLines.h
@@ -3000,7 +2996,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/ClipRect.h
     rendering/EllipsisBoxPainter.h
     rendering/EventRegion.h
-    rendering/FlexLayoutUtils.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
     rendering/GlyphDisplayListCacheRemoval.h
@@ -3040,7 +3035,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderElementInlines.h
     rendering/RenderElementStyleInlines.h
     rendering/RenderEmbeddedObject.h
-    rendering/RenderFlexLayout.h
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
     rendering/RenderFrameBase.h

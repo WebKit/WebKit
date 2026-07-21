@@ -791,8 +791,6 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h
     layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.h
 
-    layout/formattingContexts/flex/FlexFormattingContext.h
-    layout/formattingContexts/flex/FlexFormattingUtils.h
 
     layout/formattingContexts/grid/AxisConstraint.h
     layout/formattingContexts/grid/GridAreaLines.h
