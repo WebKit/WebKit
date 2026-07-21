@@ -100,12 +100,18 @@ void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>&
 void serialize(StringBuilder& builder, const ContainerQuery& query)
 {
     auto name = query.name;
-    if (!name.isEmpty()) {
-        serializeIdentifier(builder, name);
-        builder.append(' ');
-    }
+    // No-op if empty.
+    serializeIdentifier(builder, name);
 
-    serialize(builder, query.condition);
+    StringBuilder conditionString;
+    serialize(conditionString, query.condition);
+
+    // If the name and condition are both non-empty, put a space in-between to separate them.
+    if (!name.isEmpty() && !conditionString.isEmpty())
+        builder.append(' ');
+
+    // No-op if empty.
+    builder.append(conditionString);
 }
 
 }
