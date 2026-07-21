@@ -83,6 +83,7 @@ private:
 
     [[nodiscard]] PartialResult validateElementTableIdx(uint32_t, Type);
     [[nodiscard]] PartialResult parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
+    [[nodiscard]] PartialResult parseI64InitExprForElementSection(std::optional<I64InitExpr>&);
     [[nodiscard]] PartialResult parseElementKind(uint8_t& elementKind);
     [[nodiscard]] PartialResult parseIndexCountForElementSection(uint32_t&, const unsigned);
     [[nodiscard]] PartialResult parseElementSegmentVectorOfExpressions(Type, Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);

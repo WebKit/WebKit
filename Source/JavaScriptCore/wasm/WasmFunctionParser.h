@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WasmOps.h"
 #include <wtf/Platform.h>
 
 #if ENABLE(WEBASSEMBLY)
@@ -2183,7 +2184,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         TypedExpression index;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.get"_s);
-        WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "table.get index to type "_s, index.type(), " expected "_s, TypeKind::I32);
+        Wasm::TypeKind tableAddressType = m_info.tables[tableIndex].addressType().asWasmTypeKind();
+        WASM_VALIDATOR_FAIL_IF(tableAddressType != index.type().kind, "table.get index to type "_s, index.type(), " expected "_s, tableAddressType);
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addTableGet(tableIndex, index, result));
@@ -2199,7 +2201,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         TypedExpression value, index;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "table.set"_s);
         WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.set"_s);
-        WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "table.set index to type "_s, index.type(), " expected "_s, TypeKind::I32);
+        Wasm::TypeKind tableAddressType = m_info.tables[tableIndex].addressType().asWasmTypeKind();
+        WASM_VALIDATOR_FAIL_IF(tableAddressType != index.type().kind, "table.set index to type "_s, index.type(), " expected "_s, tableAddressType);
         Type type = m_info.tables[tableIndex].wasmType();
         WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), type), "table.set value to type "_s, value.type(), " expected "_s, type);
         RELEASE_ASSERT(m_info.tables[tableIndex].type() == TableElementType::Externref || m_info.tables[tableIndex].type() == TableElementType::Funcref);
@@ -2226,7 +2229,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(srcOffset, "table.init"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "table.init"_s);
 
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind, "table.init dst_offset to type "_s, dstOffset.type(), " expected "_s, TypeKind::I32);
+            Wasm::TypeKind tableAddressType = m_info.tables[immediates.tableIndex].addressType().asWasmTypeKind();
+            WASM_VALIDATOR_FAIL_IF(dstOffset.type().kind != tableAddressType, "table.init dst_offset to type "_s, dstOffset.type(), " expected "_s, tableAddressType);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind, "table.init src_offset to type "_s, srcOffset.type(), " expected "_s, TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind, "table.init length to type "_s, length.type(), " expected "_s, TypeKind::I32);
 
@@ -2246,7 +2250,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addTableSize(tableIndex, result));
-            m_expressionStack.constructAndAppend(Types::I32, result);
+
+            Wasm::Type tableAddressType = m_info.table(tableIndex).addressType().asWasmType();
+            m_expressionStack.constructAndAppend(tableAddressType, result);
             break;
         }
         case Ext1OpType::TableGrow: {
@@ -2260,11 +2266,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             Type tableType = m_info.tables[tableIndex].wasmType();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(fill.type(), tableType), "table.grow expects fill value of type "_s, tableType, " got "_s, fill.type());
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != delta.type().kind, "table.grow expects an i32 delta value, got "_s, delta.type());
+            AddressType addressType = m_info.table(tableIndex).addressType();
+            WASM_VALIDATOR_FAIL_IF(delta.type().kind != addressType.asWasmTypeKind(), "table.grow expects an "_s, addressType.is64Bit() ? "i64"_s : "i32"_s, " delta value, got "_s, delta.type());
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addTableGrow(tableIndex, fill, delta, result));
-            m_expressionStack.constructAndAppend(Types::I32, result);
+
+            Wasm::Type tableAddressType = m_info.table(tableIndex).addressType().asWasmType();
+            m_expressionStack.constructAndAppend(tableAddressType, result);
             break;
         }
         case Ext1OpType::TableFill: {
@@ -2276,10 +2285,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(fill, "table.fill"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "table.fill"_s);
 
-            Type tableType = m_info.tables[tableIndex].wasmType();
+            auto table = m_info.tables[tableIndex];
+            auto tableType = table.wasmType();
+            auto addressTypeKind = table.addressType().asWasmTypeKind();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(fill.type(), tableType), "table.fill expects fill value of type "_s, tableType, " got "_s, fill.type());
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "table.fill expects an i32 offset value, got "_s, offset.type());
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "table.fill expects an i32 count value, got "_s, count.type());
+            WASM_VALIDATOR_FAIL_IF(offset.type().kind != addressTypeKind, "table.fill expects an "_s, addressTypeKind, " offset value, got "_s, offset.type());
+            WASM_VALIDATOR_FAIL_IF(count.type().kind != addressTypeKind, "table.fill expects an "_s, addressTypeKind, " count value, got "_s, count.type());
 
             WASM_TRY_ADD_TO_CONTEXT(addTableFill(tableIndex, offset, fill, count));
             break;
@@ -2299,9 +2310,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(srcOffset, "table.copy"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "table.copy"_s);
 
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind, "table.copy dst_offset to type "_s, dstOffset.type(), " expected "_s, TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind, "table.copy src_offset to type "_s, srcOffset.type(), " expected "_s, TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I32);
+            auto dstTableAddressType = m_info.tables[immediates.dstTableIndex].addressType();
+            auto srcTableAddressType = m_info.tables[immediates.srcTableIndex].addressType();
+            WASM_VALIDATOR_FAIL_IF(dstOffset.type().kind != dstTableAddressType.asWasmTypeKind(), "table.copy dst_offset to type "_s, dstOffset.type(), " expected "_s, dstTableAddressType.asWasmTypeKind());
+            WASM_VALIDATOR_FAIL_IF(srcOffset.type().kind != srcTableAddressType.asWasmTypeKind(), "table.copy src_offset to type "_s, srcOffset.type(), " expected "_s, srcTableAddressType.asWasmTypeKind());
+
+            if (dstTableAddressType.is64Bit() && srcTableAddressType.is64Bit())
+                WASM_VALIDATOR_FAIL_IF(length.type().kind != TypeKind::I64, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I64);
+            else
+                WASM_VALIDATOR_FAIL_IF(length.type().kind != TypeKind::I32, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addTableCopy(immediates.dstTableIndex, immediates.srcTableIndex, dstOffset, srcOffset, length));
             break;
@@ -3367,7 +3384,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's index.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size() - m_currentStackBegin, "call_indirect expects "_s, argumentCount, " arguments, but the expression stack currently holds "_s, m_expressionStack.size() - m_currentStackBegin, " values"_s);
 
-        WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isI32(), "non-i32 call_indirect index "_s, m_expressionStack.last().type());
+        Wasm::Type tableAddressType = m_info.table(tableIndex).addressType().asWasmType();
+        WASM_VALIDATOR_FAIL_IF(tableAddressType!= m_expressionStack.last().type(), "call_indirect index to type "_s, m_expressionStack.last().type().kind, " expected "_s, tableAddressType.kind);
 
         ArgumentList args;
         WASM_ALLOCATOR_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for "_s, argumentCount, " call_indirect arguments"_s);

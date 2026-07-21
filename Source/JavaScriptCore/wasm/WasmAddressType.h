@@ -34,6 +34,7 @@ enum TypeKind : uint32_t;
 
 namespace Wasm {
 enum class TypeKind : int8_t;
+struct Type;
 
 class AddressType {
 public:
@@ -52,6 +53,7 @@ public:
 
     AddressType::Kind type() const { return m_type; }
     TypeKind NODELETE asWasmTypeKind() const;
+    Wasm::Type asWasmType() const;
     B3::TypeKind NODELETE asB3TypeKind() const;
 
     friend bool NODELETE operator==(const AddressType& lhs, const AddressType& rhs);

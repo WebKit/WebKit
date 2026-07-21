@@ -80,6 +80,18 @@ TypeKind AddressType::asWasmTypeKind() const
     RELEASE_ASSERT_NOT_REACHED(invalidAddressTypeConversion);
 }
 
+Wasm::Type AddressType::asWasmType() const
+{
+    switch (m_type) {
+    case AddressType::I32:
+        return Type { TypeKind::I32, 0 };
+    case AddressType::I64:
+        return Type { TypeKind::I64, 0 };
+    }
+
+    RELEASE_ASSERT_NOT_REACHED(invalidAddressTypeConversion);
+}
+
 #if !PLATFORM(PLAYSTATION)
 B3::TypeKind AddressType::asB3TypeKind() const
 {

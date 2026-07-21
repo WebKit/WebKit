@@ -82,8 +82,8 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(rethrow_exception, CallFrame*, unsigned tryDep
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_ref, CallFrame* callFrame, EncodedJSValue exnref);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, unsigned);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, uint64_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, uint64_t index, EncodedJSValue value);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata);

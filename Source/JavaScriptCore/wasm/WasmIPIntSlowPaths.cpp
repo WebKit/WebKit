@@ -45,6 +45,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmDebugServer.h"
+#include "WasmExceptionType.h"
 #include "WasmExecutionHandler.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmModuleInformation.h"
@@ -54,6 +55,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmWorklist.h"
 #include "WebAssemblyFunction.h"
 #include <bit>
+#include <limits>
 #include <wtf/LEBDecoder.h>
 
 namespace JSC { namespace IPInt {
@@ -552,50 +554,85 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_ref, CallFrame* callFrame, EncodedJSValue exnre
     WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, unsigned index)
+static ALWAYS_INLINE std::optional<uint32_t> checkedTableOperand(uint64_t value, bool isTable64)
 {
-    EncodedJSValue result = Wasm::tableGet(instance, tableIndex, index);
+    if (!isTable64)
+        value = static_cast<uint32_t>(value);
+    if (value > std::numeric_limits<int32_t>::max()) [[unlikely]]
+        return std::nullopt;
+    return static_cast<uint32_t>(value);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, uint64_t index)
+{
+    const auto& info = instance->module().moduleInformation();
+    auto checkedIndex = checkedTableOperand(index, info.table(tableIndex).addressType().is64Bit());
+    if (!checkedIndex)
+        IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+
+    EncodedJSValue result = Wasm::tableGet(instance, tableIndex, *checkedIndex);
     if (!result)
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     IPINT_RETURN(result);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value)
+WASM_IPINT_EXTERN_CPP_DECL(table_set, unsigned tableIndex, uint64_t index, EncodedJSValue value)
 {
-    if (!Wasm::tableSet(instance, tableIndex, index, value))
+    const auto& info = instance->module().moduleInformation();
+    auto checkedIndex = checkedTableOperand(index, info.table(tableIndex).addressType().is64Bit());
+    if (!checkedIndex)
+        IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+
+    if (!Wasm::tableSet(instance, tableIndex, *checkedIndex, value))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     IPINT_END();
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* metadata)
 {
+    const auto& info = instance->module().moduleInformation();
+
     int32_t n = sp[0].i32;
     int32_t src = sp[1].i32;
-    int32_t dst = sp[2].i32;
+    auto dst = checkedTableOperand(sp[2].i64, info.table(metadata->tableIndex).addressType().is64Bit());
+
+    if (!dst)
+        IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
 
     WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
-    if (!Wasm::tableInit(instance, metadata->elementIndex, metadata->tableIndex, dst, src, n))
+    if (!Wasm::tableInit(instance, metadata->elementIndex, metadata->tableIndex, *dst, src, n))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     IPINT_END();
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* metadata)
 {
-    int32_t n = sp[0].i32;
-    EncodedJSValue fill = sp[1].ref;
-    int32_t offset = sp[2].i32;
+    const auto& info = instance->module().moduleInformation();
+    const bool isTable64 = info.table(metadata->tableIndex).addressType().is64Bit();
 
-    if (!Wasm::tableFill(instance, metadata->tableIndex, offset, fill, n))
+    auto n = checkedTableOperand(sp[0].i64, isTable64);
+    EncodedJSValue fill = sp[1].ref;
+    auto offset = checkedTableOperand(sp[2].i64, isTable64);
+
+    if (!n || !offset)
+        IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+
+    if (!Wasm::tableFill(instance, metadata->tableIndex, *offset, fill, *n))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     IPINT_END();
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata)
 {
-    int32_t n = sp[0].i32;
+    const auto& info = instance->module().moduleInformation();
+
+    auto n = checkedTableOperand(sp[0].i64, info.table(metadata->tableIndex).addressType().is64Bit());
     EncodedJSValue fill = sp[1].ref;
 
-    WASM_RETURN_TWO(std::bit_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, fill, n)), 0);
+    if (!n)
+        IPINT_RETURN(static_cast<intptr_t>(-1));
+
+    WASM_RETURN_TWO(std::bit_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, fill, *n)), 0);
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(memory_grow, int64_t delta, uint8_t memoryIndex)
@@ -664,11 +701,18 @@ WASM_IPINT_EXTERN_CPP_DECL(elem_drop, int32_t dataIndex)
 
 WASM_IPINT_EXTERN_CPP_DECL(table_copy, IPIntStackEntry* sp, TableCopyMetadata* metadata)
 {
-    int32_t n = sp[0].i32;
-    int32_t src = sp[1].i32;
-    int32_t dst = sp[2].i32;
+    const auto& info = instance->module().moduleInformation();
+    const bool dstIsTable64 = info.table(metadata->dstTableIndex).addressType().is64Bit();
+    const bool srcIsTable64 = info.table(metadata->srcTableIndex).addressType().is64Bit();
 
-    if (!Wasm::tableCopy(instance, metadata->dstTableIndex, metadata->srcTableIndex, dst, src, n))
+    auto n = checkedTableOperand(sp[0].i64, dstIsTable64 && srcIsTable64);
+    auto src = checkedTableOperand(sp[1].i64, srcIsTable64);
+    auto dst = checkedTableOperand(sp[2].i64, dstIsTable64);
+
+    if (!n || !src || !dst)
+        IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+
+    if (!Wasm::tableCopy(instance, metadata->dstTableIndex, metadata->srcTableIndex, *dst, *src, *n))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     IPINT_END();
 }
@@ -1136,16 +1180,22 @@ static ALWAYS_INLINE UGPRPair prepareCallIndirectImpl(JSWebAssemblyInstance* ins
     auto& callProfile = instance->ensureBaselineData(callee->functionIndex()).at(callProfileIndex);
     callProfile.incrementCount();
 
+    auto checkedIndex = checkedTableOperand(*std::bit_cast<uint64_t*>(functionIndex), instance->module().moduleInformation().table(tableIndex).addressType().is64Bit());
+    if (!checkedIndex) [[unlikely]]
+        IPINT_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
+
+    Wasm::FunctionSpaceIndex callIndex(*checkedIndex);
+
     const Wasm::FuncRefTable::Function* function = nullptr;
     if (!tableIndex) {
-        if (*functionIndex >= instance->cachedTable0Length()) [[unlikely]]
+        if (callIndex >= instance->cachedTable0Length()) [[unlikely]]
             IPINT_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
-        function = &instance->cachedTable0Buffer()[*functionIndex];
+        function = &instance->cachedTable0Buffer()[callIndex];
     } else {
         Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
-        if (*functionIndex >= table->length()) [[unlikely]]
+        if (callIndex >= table->length()) [[unlikely]]
             IPINT_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
-        function = &table->function(*functionIndex);
+        function = &table->function(callIndex);
     }
 
     if (!function->rtt) [[unlikely]]
@@ -1155,7 +1205,7 @@ static ALWAYS_INLINE UGPRPair prepareCallIndirectImpl(JSWebAssemblyInstance* ins
         IPINT_THROW(Wasm::ExceptionType::BadSignature);
 
     auto boxedCallee = function->boxedCallee.encodedBits();
-    Wasm::FunctionSpaceIndex savedFunctionIndex = *functionIndex;
+    Wasm::FunctionSpaceIndex savedFunctionIndex = callIndex;
     Register* calleeReturn = std::bit_cast<Register*>(functionIndex);
     *calleeReturn = boxedCallee;
 

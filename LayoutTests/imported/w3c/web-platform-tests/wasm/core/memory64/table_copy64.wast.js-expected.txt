@@ -19,28 +19,28 @@ PASS #17 Test that WebAssembly compilation succeeds (table_copy64.wast:1303)
 PASS #18 Test that WebAssembly compilation succeeds (table_copy64.wast:1395)
 PASS #19 Test that WebAssembly compilation succeeds (table_copy64.wast:1487)
 PASS #20 Test that WebAssembly compilation succeeds (table_copy64.wast:1579)
-FAIL #21 Test that WebAssembly compilation succeeds (table_copy64.wast:1671) assert_equals: expected false but got true
-FAIL #22 Test that WebAssembly compilation succeeds (table_copy64.wast:1696) assert_equals: expected false but got true
-FAIL #23 Test that WebAssembly compilation succeeds (table_copy64.wast:1721) assert_equals: expected false but got true
-FAIL #24 Test that WebAssembly compilation succeeds (table_copy64.wast:1746) assert_equals: expected false but got true
-FAIL #25 Test that WebAssembly compilation succeeds (table_copy64.wast:1771) assert_equals: expected false but got true
-FAIL #26 Test that WebAssembly compilation succeeds (table_copy64.wast:1796) assert_equals: expected false but got true
-FAIL #27 Test that WebAssembly compilation succeeds (table_copy64.wast:1821) assert_equals: expected false but got true
-FAIL #28 Test that WebAssembly compilation succeeds (table_copy64.wast:1846) assert_equals: expected false but got true
-FAIL #29 Test that WebAssembly compilation succeeds (table_copy64.wast:1871) assert_equals: expected false but got true
-FAIL #30 Test that WebAssembly compilation succeeds (table_copy64.wast:1896) assert_equals: expected false but got true
-FAIL #31 Test that WebAssembly compilation succeeds (table_copy64.wast:1921) assert_equals: expected false but got true
-FAIL #32 Test that WebAssembly compilation succeeds (table_copy64.wast:1946) assert_equals: expected false but got true
-FAIL #33 Test that WebAssembly compilation succeeds (table_copy64.wast:1971) assert_equals: expected false but got true
-FAIL #34 Test that WebAssembly compilation succeeds (table_copy64.wast:1996) assert_equals: expected false but got true
-FAIL #35 Test that WebAssembly compilation succeeds (table_copy64.wast:2021) assert_equals: expected false but got true
-FAIL #36 Test that WebAssembly compilation succeeds (table_copy64.wast:2046) assert_equals: expected false but got true
-FAIL #37 Test that WebAssembly compilation succeeds (table_copy64.wast:2071) assert_equals: expected false but got true
-FAIL #38 Test that WebAssembly compilation succeeds (table_copy64.wast:2096) assert_equals: expected false but got true
-FAIL #39 Test that WebAssembly compilation succeeds (table_copy64.wast:2121) assert_equals: expected false but got true
-FAIL #40 Test that WebAssembly compilation succeeds (table_copy64.wast:2146) assert_equals: expected false but got true
-FAIL #41 Test that WebAssembly compilation succeeds (table_copy64.wast:2171) assert_equals: expected false but got true
-FAIL #42 Test that WebAssembly compilation succeeds (table_copy64.wast:2196) assert_equals: expected false but got true
+PASS #21 Test that WebAssembly compilation succeeds (table_copy64.wast:1671)
+PASS #22 Test that WebAssembly compilation succeeds (table_copy64.wast:1696)
+PASS #23 Test that WebAssembly compilation succeeds (table_copy64.wast:1721)
+PASS #24 Test that WebAssembly compilation succeeds (table_copy64.wast:1746)
+PASS #25 Test that WebAssembly compilation succeeds (table_copy64.wast:1771)
+PASS #26 Test that WebAssembly compilation succeeds (table_copy64.wast:1796)
+PASS #27 Test that WebAssembly compilation succeeds (table_copy64.wast:1821)
+PASS #28 Test that WebAssembly compilation succeeds (table_copy64.wast:1846)
+PASS #29 Test that WebAssembly compilation succeeds (table_copy64.wast:1871)
+PASS #30 Test that WebAssembly compilation succeeds (table_copy64.wast:1896)
+PASS #31 Test that WebAssembly compilation succeeds (table_copy64.wast:1921)
+PASS #32 Test that WebAssembly compilation succeeds (table_copy64.wast:1946)
+PASS #33 Test that WebAssembly compilation succeeds (table_copy64.wast:1971)
+PASS #34 Test that WebAssembly compilation succeeds (table_copy64.wast:1996)
+PASS #35 Test that WebAssembly compilation succeeds (table_copy64.wast:2021)
+PASS #36 Test that WebAssembly compilation succeeds (table_copy64.wast:2046)
+PASS #37 Test that WebAssembly compilation succeeds (table_copy64.wast:2071)
+PASS #38 Test that WebAssembly compilation succeeds (table_copy64.wast:2096)
+PASS #39 Test that WebAssembly compilation succeeds (table_copy64.wast:2121)
+PASS #40 Test that WebAssembly compilation succeeds (table_copy64.wast:2146)
+PASS #41 Test that WebAssembly compilation succeeds (table_copy64.wast:2171)
+PASS #42 Test that WebAssembly compilation succeeds (table_copy64.wast:2196)
 PASS #43 Test that WebAssembly compilation succeeds (table_copy64.wast:2221)
 PASS #44 Test that WebAssembly compilation succeeds (table_copy64.wast:2282)
 PASS #45 Test that WebAssembly compilation succeeds (table_copy64.wast:2343)
@@ -1189,160 +1189,72 @@ PASS #1187 Test that a WebAssembly code returns a specific result (table_copy64.
 PASS #1188 Test that a WebAssembly code traps (table_copy64.wast:1667)
 PASS #1189 Test that a WebAssembly code traps (table_copy64.wast:1668)
 PASS #1190 Test that a WebAssembly code traps (table_copy64.wast:1669)
-FAIL #1191 Test that WebAssembly compilation succeeds (table_copy64.wast:1671) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1192 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3418:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1193 Test that a WebAssembly code traps (table_copy64.wast:1694) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3421:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1194 Test that WebAssembly compilation succeeds (table_copy64.wast:1696) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1195 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3427:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1196 Test that a WebAssembly code traps (table_copy64.wast:1719) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3430:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1197 Test that WebAssembly compilation succeeds (table_copy64.wast:1721) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1198 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3436:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1199 Test that a WebAssembly code traps (table_copy64.wast:1744) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3439:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1200 Test that WebAssembly compilation succeeds (table_copy64.wast:1746) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1201 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3445:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1202 Test that a WebAssembly code traps (table_copy64.wast:1769) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3448:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1203 Test that WebAssembly compilation succeeds (table_copy64.wast:1771) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1204 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3454:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1205 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3457:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1206 Test that WebAssembly compilation succeeds (table_copy64.wast:1796) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1207 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3463:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1208 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3466:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1209 Test that WebAssembly compilation succeeds (table_copy64.wast:1821) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1210 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3472:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1211 Test that a WebAssembly code traps (table_copy64.wast:1844) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3475:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1212 Test that WebAssembly compilation succeeds (table_copy64.wast:1846) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1213 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3481:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1214 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3484:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1215 Test that WebAssembly compilation succeeds (table_copy64.wast:1871) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1216 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3490:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1217 Test that a WebAssembly code traps (table_copy64.wast:1894) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3493:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1218 Test that WebAssembly compilation succeeds (table_copy64.wast:1896) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1219 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3499:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1220 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3502:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1221 Test that WebAssembly compilation succeeds (table_copy64.wast:1921) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1222 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3508:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1223 Test that a WebAssembly code traps (table_copy64.wast:1944) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3511:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1224 Test that WebAssembly compilation succeeds (table_copy64.wast:1946) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1225 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3517:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1226 Test that a WebAssembly code traps (table_copy64.wast:1969) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3520:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1227 Test that WebAssembly compilation succeeds (table_copy64.wast:1971) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1228 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3526:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1229 Test that a WebAssembly code traps (table_copy64.wast:1994) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3529:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1230 Test that WebAssembly compilation succeeds (table_copy64.wast:1996) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1231 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3535:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1232 Test that a WebAssembly code traps (table_copy64.wast:2019) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3538:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1233 Test that WebAssembly compilation succeeds (table_copy64.wast:2021) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1234 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3544:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1235 Test that a WebAssembly code traps (table_copy64.wast:2044) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3547:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1236 Test that WebAssembly compilation succeeds (table_copy64.wast:2046) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1237 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3553:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1238 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3556:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1239 Test that WebAssembly compilation succeeds (table_copy64.wast:2071) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1240 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3562:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1241 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3565:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1242 Test that WebAssembly compilation succeeds (table_copy64.wast:2096) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1243 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3571:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1244 Test that a WebAssembly code traps (table_copy64.wast:2119) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3574:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1245 Test that WebAssembly compilation succeeds (table_copy64.wast:2121) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1246 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3580:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1247 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3583:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1248 Test that WebAssembly compilation succeeds (table_copy64.wast:2146) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1249 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3589:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1250 Test that a WebAssembly code traps (table_copy64.wast:2169) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3592:12
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1251 Test that WebAssembly compilation succeeds (table_copy64.wast:2171) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1252 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3598:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1253 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@async_index.js:260:29
-table_copy64_wast_js@table_copy64.wast.js:3601:4
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1254 Test that WebAssembly compilation succeeds (table_copy64.wast:2196) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Element init_expr must produce an i32 at {loc} expected true got false
-FAIL #1255 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@async_index.js:219:29
-table_copy64_wast_js@table_copy64.wast.js:3607:19
-global code@table_copy64.wast.js:5343:3 expected true got false
-FAIL #1256 Test that a WebAssembly code traps (table_copy64.wast:2219) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@async_index.js:281:29
-table_copy64_wast_js@table_copy64.wast.js:3610:12
-global code@table_copy64.wast.js:5343:3 expected true got false
+PASS #1191 Test that WebAssembly compilation succeeds (table_copy64.wast:1671)
+PASS #1192 Test that WebAssembly instantiation succeeds (table_copy64.wast:1671)
+PASS #1193 Test that a WebAssembly code traps (table_copy64.wast:1694)
+PASS #1194 Test that WebAssembly compilation succeeds (table_copy64.wast:1696)
+PASS #1195 Test that WebAssembly instantiation succeeds (table_copy64.wast:1696)
+PASS #1196 Test that a WebAssembly code traps (table_copy64.wast:1719)
+PASS #1197 Test that WebAssembly compilation succeeds (table_copy64.wast:1721)
+PASS #1198 Test that WebAssembly instantiation succeeds (table_copy64.wast:1721)
+PASS #1199 Test that a WebAssembly code traps (table_copy64.wast:1744)
+PASS #1200 Test that WebAssembly compilation succeeds (table_copy64.wast:1746)
+PASS #1201 Test that WebAssembly instantiation succeeds (table_copy64.wast:1746)
+PASS #1202 Test that a WebAssembly code traps (table_copy64.wast:1769)
+PASS #1203 Test that WebAssembly compilation succeeds (table_copy64.wast:1771)
+PASS #1204 Test that WebAssembly instantiation succeeds (table_copy64.wast:1771)
+PASS #1205 Run a WebAssembly test without special assertions (table_copy64.wast:1794)
+PASS #1206 Test that WebAssembly compilation succeeds (table_copy64.wast:1796)
+PASS #1207 Test that WebAssembly instantiation succeeds (table_copy64.wast:1796)
+PASS #1208 Run a WebAssembly test without special assertions (table_copy64.wast:1819)
+PASS #1209 Test that WebAssembly compilation succeeds (table_copy64.wast:1821)
+PASS #1210 Test that WebAssembly instantiation succeeds (table_copy64.wast:1821)
+PASS #1211 Test that a WebAssembly code traps (table_copy64.wast:1844)
+PASS #1212 Test that WebAssembly compilation succeeds (table_copy64.wast:1846)
+PASS #1213 Test that WebAssembly instantiation succeeds (table_copy64.wast:1846)
+PASS #1214 Run a WebAssembly test without special assertions (table_copy64.wast:1869)
+PASS #1215 Test that WebAssembly compilation succeeds (table_copy64.wast:1871)
+PASS #1216 Test that WebAssembly instantiation succeeds (table_copy64.wast:1871)
+PASS #1217 Test that a WebAssembly code traps (table_copy64.wast:1894)
+PASS #1218 Test that WebAssembly compilation succeeds (table_copy64.wast:1896)
+PASS #1219 Test that WebAssembly instantiation succeeds (table_copy64.wast:1896)
+PASS #1220 Run a WebAssembly test without special assertions (table_copy64.wast:1919)
+PASS #1221 Test that WebAssembly compilation succeeds (table_copy64.wast:1921)
+PASS #1222 Test that WebAssembly instantiation succeeds (table_copy64.wast:1921)
+PASS #1223 Test that a WebAssembly code traps (table_copy64.wast:1944)
+PASS #1224 Test that WebAssembly compilation succeeds (table_copy64.wast:1946)
+PASS #1225 Test that WebAssembly instantiation succeeds (table_copy64.wast:1946)
+PASS #1226 Test that a WebAssembly code traps (table_copy64.wast:1969)
+PASS #1227 Test that WebAssembly compilation succeeds (table_copy64.wast:1971)
+PASS #1228 Test that WebAssembly instantiation succeeds (table_copy64.wast:1971)
+PASS #1229 Test that a WebAssembly code traps (table_copy64.wast:1994)
+PASS #1230 Test that WebAssembly compilation succeeds (table_copy64.wast:1996)
+PASS #1231 Test that WebAssembly instantiation succeeds (table_copy64.wast:1996)
+PASS #1232 Test that a WebAssembly code traps (table_copy64.wast:2019)
+PASS #1233 Test that WebAssembly compilation succeeds (table_copy64.wast:2021)
+PASS #1234 Test that WebAssembly instantiation succeeds (table_copy64.wast:2021)
+PASS #1235 Test that a WebAssembly code traps (table_copy64.wast:2044)
+PASS #1236 Test that WebAssembly compilation succeeds (table_copy64.wast:2046)
+PASS #1237 Test that WebAssembly instantiation succeeds (table_copy64.wast:2046)
+PASS #1238 Run a WebAssembly test without special assertions (table_copy64.wast:2069)
+PASS #1239 Test that WebAssembly compilation succeeds (table_copy64.wast:2071)
+PASS #1240 Test that WebAssembly instantiation succeeds (table_copy64.wast:2071)
+PASS #1241 Run a WebAssembly test without special assertions (table_copy64.wast:2094)
+PASS #1242 Test that WebAssembly compilation succeeds (table_copy64.wast:2096)
+PASS #1243 Test that WebAssembly instantiation succeeds (table_copy64.wast:2096)
+PASS #1244 Test that a WebAssembly code traps (table_copy64.wast:2119)
+PASS #1245 Test that WebAssembly compilation succeeds (table_copy64.wast:2121)
+PASS #1246 Test that WebAssembly instantiation succeeds (table_copy64.wast:2121)
+PASS #1247 Run a WebAssembly test without special assertions (table_copy64.wast:2144)
+PASS #1248 Test that WebAssembly compilation succeeds (table_copy64.wast:2146)
+PASS #1249 Test that WebAssembly instantiation succeeds (table_copy64.wast:2146)
+PASS #1250 Test that a WebAssembly code traps (table_copy64.wast:2169)
+PASS #1251 Test that WebAssembly compilation succeeds (table_copy64.wast:2171)
+PASS #1252 Test that WebAssembly instantiation succeeds (table_copy64.wast:2171)
+PASS #1253 Run a WebAssembly test without special assertions (table_copy64.wast:2194)
+PASS #1254 Test that WebAssembly compilation succeeds (table_copy64.wast:2196)
+PASS #1255 Test that WebAssembly instantiation succeeds (table_copy64.wast:2196)
+PASS #1256 Test that a WebAssembly code traps (table_copy64.wast:2219)
 PASS #1257 Test that WebAssembly compilation succeeds (table_copy64.wast:2221)
 PASS #1258 Test that WebAssembly instantiation succeeds (table_copy64.wast:2221)
 PASS #1259 Test that a WebAssembly code traps (table_copy64.wast:2247)
