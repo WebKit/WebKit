@@ -330,6 +330,7 @@
         SYS_read_nocancel
         SYS_readlink
         SYS_rename
+        SYS_renameat
         SYS_sem_close
         SYS_sem_open
         SYS_sendto
