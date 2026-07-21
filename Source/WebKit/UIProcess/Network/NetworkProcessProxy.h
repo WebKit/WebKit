@@ -71,6 +71,7 @@ class SessionID;
 
 namespace WebCore {
 class AuthenticationChallenge;
+class CertificateInfo;
 class SharedBuffer;
 class ProtectionSpace;
 class ResourceRequest;
@@ -343,6 +344,8 @@ public:
     void openWindowFromServiceWorker(PAL::SessionID, const String& urlString, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&&);
 
     void navigateServiceWorkerClient(WebCore::FrameIdentifier, WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
+
+    void receivedMainResourceResponseWithCertificateInfo(WebCore::FrameIdentifier, String&& hostAndPort, WebCore::CertificateInfo&&);
 
     void cookiesDidChange(PAL::SessionID);
 

@@ -41,6 +41,8 @@
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
+#include "NetworkProcessProxyMessages.h"
+#include "PageLoadState.h"
 #include "ProvisionalFrameCreationParameters.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
@@ -58,6 +60,7 @@
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentSyncData.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusController.h>
@@ -340,7 +343,7 @@ void WebFrameProxy::didFailProvisionalLoad()
         m_navigateCallback({ }, { });
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations)
+void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations)
 {
     m_frameLoadState.didCommitLoad();
 
@@ -349,7 +352,6 @@ void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::Cert
 
     m_title = String();
     m_MIMEType = contentType;
-    m_certificateInfo = certificateInfo;
     m_containsPluginDocument = containsPluginDocument;
     m_documentSecurityPolicy = WTF::move(documentSecurityPolicy);
     m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(cspOriginsThatUpgradeInsecureNavigations);
@@ -618,7 +620,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
         continuation();
 }
 
-void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, const CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
+void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
@@ -635,7 +637,7 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
             page->inspectorController().didCommitProvisionalFrame(*this, oldProcessID, oldPageID, newProcessID);
     }
 
-    protect(page())->didCommitLoadForFrame(connection, frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
+    protect(page())->didCommitLoadForFrame(connection, frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
@@ -1225,6 +1227,58 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator, ForInit
     }
 
     m_documentSecurityOrigin = SecurityOrigin::create(url());
+}
+
+void WebFrameProxy::waitForCertificateInfoFromNetworkProcess(const String& hostAndPort)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+    RefPtr networkProcess = page->websiteDataStore().networkProcessIfExists();
+    if (!networkProcess)
+        return;
+    RefPtr connection = networkProcess->connection();
+    if (!connection)
+        return;
+    // The message should already be queued at this point. Drain ReceivedMainResourceResponseWithCertificateInfo
+    // entries until our frame's hostAndPort appears in the map, since the singleton receiver no longer
+    // filters by frame destination.
+    while (!m_hostAndPortToCertificateInfo.contains(hostAndPort)) {
+        if (connection->waitForAndDispatchImmediately<Messages::NetworkProcessProxy::ReceivedMainResourceResponseWithCertificateInfo>(0, 0_s) != IPC::Error::NoError) {
+            RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info from IPC");
+            return;
+        }
+    }
+}
+
+void WebFrameProxy::commitCertificateInfo(const URL& url)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    String hostAndPort = url.hostAndPort();
+    CertificateInfo certificateInfo;
+    if (decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort)) {
+        certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
+        if (certificateInfo.isEmpty() && url.protocolIsSecure()) {
+            waitForCertificateInfoFromNetworkProcess(hostAndPort);
+            certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
+            if (certificateInfo.isEmpty())
+            RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info");
+        }
+    }
+
+    m_certificateInfo = WTF::move(certificateInfo);
+}
+
+void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
+{
+    // FIXME: This has no corresponding remove call. If we know a host is not being used by the back/forward
+    // cache and is not being navigated to, we could clean up this map. Since we don't re-use main frames for
+    // multiple hosts, this would only affect iframes that navigate to many hosts.
+    if (decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
+        m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
 }
 
 } // namespace WebKit
