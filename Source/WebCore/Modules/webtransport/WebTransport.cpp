@@ -46,6 +46,7 @@
 #include "ReadableStream.h"
 #include "ScriptExecutionContextInlines.h"
 #include "SocketProvider.h"
+#include "TaskSource.h"
 #include "WebTransportBidirectionalStreamSource.h"
 #include "WebTransportCloseInfo.h"
 #include "WebTransportCongestionControl.h"
@@ -212,10 +213,8 @@ bool WebTransport::virtualHasPendingActivity() const
 
 void WebTransport::suspend(ReasonForSuspension why)
 {
-    if (why == ReasonForSuspension::BackForwardCache) {
-        if (RefPtr context = scriptExecutionContext())
-            cleanupContext(*context);
-    }
+    if (why == ReasonForSuspension::BackForwardCache)
+        cleanupContext();
 }
 
 void WebTransport::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<Exception>&& exception)
@@ -456,15 +455,17 @@ void WebTransport::cleanupWithSessionError()
     }), std::nullopt);
 }
 
-void WebTransport::cleanupContext(ScriptExecutionContext& context)
+void WebTransport::cleanupContext()
 {
     // https://www.w3.org/TR/webtransport/#web-transport-context-cleanup-steps
+    // Use a suspendable event-loop task, not postTask: postTask would run during back/forward cache entry
+    // (frame detached, null global object) and drop the rejection; this instead runs on resume.
     if (m_state == State::Connected) {
         m_state = State::Failed;
         if (auto session = std::exchange(m_session, nullptr))
             session->terminate(0, { });
-        context.postTask([protectedThis = Ref { *this }] (auto&) {
-            protectedThis->cleanupWithSessionError();
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& transport) {
+            transport.cleanupWithSessionError();
         });
     }
     if (m_state == State::Connecting)

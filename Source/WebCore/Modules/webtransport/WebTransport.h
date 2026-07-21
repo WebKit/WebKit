@@ -102,7 +102,7 @@ public:
 
     RefPtr<WebTransportSession> NODELETE session();
     void datagramsWritableCreated(WebTransportDatagramsWritable&);
-    void cleanupContext(ScriptExecutionContext&);
+    void cleanupContext();
 
     void sendStreamClosed(WebTransportStreamIdentifier);
     void receiveStreamClosed(WebTransportStreamIdentifier);

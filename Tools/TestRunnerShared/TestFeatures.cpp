@@ -148,7 +148,8 @@ static bool shouldEnableSiteIsolation(const std::string& pathOrURL)
 static bool shouldUseBackForwardCache(const std::string& pathOrURL)
 {
     return pathContains(pathOrURL, "navigation-api/")
-        || pathContains(pathOrURL, "websockets/back-forward-cache");
+        || pathContains(pathOrURL, "websockets/back-forward-cache")
+        || pathContains(pathOrURL, "webtransport/back-forward-cache");
 }
 
 static bool shouldDisableMutationEvents(const std::string& pathOrURL)
