@@ -249,11 +249,14 @@ static RefPtr<DOMPromise> cancelReadableStream(JSDOMGlobalObject& globalObject, 
     if (!internalReadableStream)
         return stream.cancel(globalObject, reason);
 
-    auto value = internalReadableStream->cancel(globalObject, reason);
-    if (!value)
-        return nullptr;
+    auto valueOrException = internalReadableStream->cancel(globalObject, reason);
+    if (valueOrException.hasException()) {
+        auto [promise, deferred] = createPromiseAndWrapper(globalObject);
+        deferred->reject(valueOrException.releaseException());
+        return WTF::move(promise);
+    }
 
-    auto* promise = dynamicDowncast<JSC::JSPromise>(value);
+    auto* promise = dynamicDowncast<JSC::JSPromise>(valueOrException.releaseReturnValue());
     if (!promise)
         return nullptr;
 
@@ -306,10 +309,13 @@ void StreamPipeToState::handleSignal()
                 if (!globalObject)
                     return nullptr;
 
-                auto value = internalWritableStream->abort(*globalObject, signal->reason().getValue());
-                if (!value)
-                    return nullptr;
-                auto* promise = downcast<JSC::JSPromise>(value);
+                auto valueOrException = internalWritableStream->abort(*globalObject, signal->reason().getValue());
+                if (valueOrException.hasException()) {
+                    auto [rejectedPromise, deferred] = createPromiseAndWrapper(*globalObject);
+                    deferred->reject(valueOrException.releaseException());
+                    return WTF::move(rejectedPromise);
+                }
+                auto* promise = downcast<JSC::JSPromise>(valueOrException.releaseReturnValue());
                 if (!promise)
                     return nullptr;
 
@@ -413,10 +419,13 @@ void StreamPipeToState::errorsMustBePropagatedForward(JSDOMGlobalObject& globalO
                     return nullptr;
 
                 Ref internalWritableStream = protectedThis->m_destination->internalWritableStream();
-                auto value = internalWritableStream->abort(*globalObject, error.get());
-                if (!value)
-                    return nullptr;
-                auto* promise = dynamicDowncast<JSC::JSPromise>(value);
+                auto valueOrException = internalWritableStream->abort(*globalObject, error.get());
+                if (valueOrException.hasException()) {
+                    auto [rejectedPromise, deferred] = createPromiseAndWrapper(*globalObject);
+                    deferred->reject(valueOrException.releaseException());
+                    return WTF::move(rejectedPromise);
+                }
+                auto* promise = dynamicDowncast<JSC::JSPromise>(valueOrException.releaseReturnValue());
                 if (!promise) {
                     auto [result, deferred] = createPromiseAndWrapper(*globalObject);
                     deferred->resolve();
@@ -485,11 +494,11 @@ void StreamPipeToState::errorsMustBePropagatedBackward()
 
     if (m_destination->state() == WritableStream::State::Errored) {
         // FIXME: Check whether ok to take a strong.
-        auto errorOrException = Ref { m_destination->internalWritableStream() }->storedError();
-        if (errorOrException.hasException())
+        auto error = protect(m_destination->internalWritableStream())->storedError();
+        if (!error)
             return;
 
-        propagateErrorSteps(JSC::Strong<JSC::Unknown> { Ref { m_destination->internalWritableStream().globalObject()->vm() }, errorOrException.releaseReturnValue() });
+        propagateErrorSteps(JSC::Strong<JSC::Unknown> { Ref { m_destination->internalWritableStream().globalObject()->vm() }, error });
         return;
     }
 
@@ -555,16 +564,19 @@ void StreamPipeToState::closingMustBePropagatedBackward()
             Ref vm = globalObject->vm();
             // FIXME: Check whether ok to take a strong.
             JSC::Strong<JSC::Unknown> error { vm, getError(*globalObject) };
-            auto value = internalReadableStream->cancel(*globalObject, error.get());
-            if (!value)
-                return nullptr;
+            auto valueOrException = internalReadableStream->cancel(*globalObject, error.get());
+            if (valueOrException.hasException()) {
+                auto [rejectedPromise, deferred] = createPromiseAndWrapper(*globalObject);
+                deferred->reject(valueOrException.releaseException());
+                return WTF::move(rejectedPromise);
+            }
 
             auto getError2 = [error = WTF::move(error)](auto&) {
                 return error.get();
             };
 
             auto [result, deferred] = createPromiseAndWrapper(*globalObject);
-            auto* promise = dynamicDowncast<JSC::JSPromise>(value);
+            auto* promise = dynamicDowncast<JSC::JSPromise>(valueOrException.releaseReturnValue());
             if (!promise)
                 deferred->rejectWithCallback(WTF::move(getError2), RejectAsHandled::Yes);
             else {

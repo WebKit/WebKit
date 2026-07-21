@@ -46,7 +46,7 @@ public:
     void cancel(Exception&&);
     ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>> tee(bool shouldClone);
 
-    JSC::JSValue cancel(JSC::JSGlobalObject&, JSC::JSValue);
+    ExceptionOr<JSC::JSValue> cancel(JSC::JSGlobalObject&, JSC::JSValue);
 
     enum class State : uint8_t { Readable, Closed, Errored };
     State state() const;
