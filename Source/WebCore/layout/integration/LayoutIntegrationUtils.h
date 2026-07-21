@@ -47,12 +47,13 @@ public:
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint = { }, std::optional<LayoutUnit> heightConstraint = { }) const;
     LayoutUnit maxContentWidth(const ElementBox&) const;
     LayoutUnit minContentWidth(const ElementBox&) const;
+    LayoutUnit minContentWidthForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
     LayoutUnit minContentHeight(const ElementBox&) const;
     LayoutUnit minContentHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
     LayoutUnit minContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
     LayoutUnit maxContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
-    LayoutUnit minContentLogicalWidthContribution(const ElementBox&) const;
-    LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
+    LayoutUnit minContentLogicalWidthContribution(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
+    LayoutUnit maxContentLogicalWidthContribution(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
 
     static BlockLayoutState::MarginState NODELETE toMarginState(const RenderBlockFlow::MarginInfo&);

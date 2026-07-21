@@ -470,7 +470,7 @@ TrackSizes GridLayout::sizeColumnTracks(const PlacedGridItems& placedGridItems, 
     });
 
     return TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
-        layoutConstraints.inlineAxis, GridItemSizingFunctions::inlineAxis(formattingContext().integrationUtils()),
+        layoutConstraints.inlineAxis, GridItemSizingFunctions::inlineAxis(formattingContext().integrationUtils(), columnTrackSizingFunctionsList, layoutState.usedColumnGap),
         layoutState.usedColumnGap, layoutState.usedJustifyContent);
 }
 

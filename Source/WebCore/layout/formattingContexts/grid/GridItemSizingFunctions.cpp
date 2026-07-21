@@ -31,18 +31,22 @@
 namespace WebCore {
 namespace Layout {
 
-GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
+GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils, const TrackSizingFunctionsList& columnTrackSizingFunctions, LayoutUnit columnGap)
 {
     return {
-        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
-            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        [&integrationUtils, &columnTrackSizingFunctions, columnGap](const PlacedGridItem& gridItem, LayoutUnit) {
+            auto gridAreaInlineSize = GridLayoutUtils::definiteInlineGridAreaSize(gridItem, columnTrackSizingFunctions, columnGap);
+            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, gridAreaInlineSize, integrationUtils);
         },
-        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
-            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        [&integrationUtils, &columnTrackSizingFunctions, columnGap](const PlacedGridItem& gridItem, LayoutUnit) {
+            auto gridAreaInlineSize = GridLayoutUtils::definiteInlineGridAreaSize(gridItem, columnTrackSizingFunctions, columnGap);
+            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, gridAreaInlineSize, integrationUtils);
         },
-        [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit blockAxisConstraint) {
-            UNUSED_PARAM(blockAxisConstraint);
-            return GridLayoutUtils::inlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, integrationUtils);
+        [&integrationUtils, columnGap](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit) {
+            // The item's inline grid area is definite when it spans only definitely-sized columns; its
+            // percentages then resolve against that size, and against zero (std::nullopt) otherwise.
+            auto gridAreaInlineSize = GridLayoutUtils::definiteInlineGridAreaSize(gridItem, trackSizingFunctions, columnGap);
+            return GridLayoutUtils::inlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, gridAreaInlineSize, integrationUtils);
         }
     };
 }

@@ -53,7 +53,7 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPaddin
 LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
 LayoutUnit stretchedBlockSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
 
-LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
+LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, std::optional<LayoutUnit> gridAreaInlineSize, const IntegrationUtils&);
 LayoutUnit blockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
 LayoutUnit inlineMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit blockMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
@@ -62,9 +62,11 @@ LayoutUnit blockUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&,
 
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
 LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
+bool hasDefiniteInlineGridAreaSize(const PlacedGridItem&, const TrackSizingFunctionsList&);
+std::optional<LayoutUnit> definiteInlineGridAreaSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit gap);
 
-LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem&, LayoutUnit blockAxisConstraint, const IntegrationUtils&);
-LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit blockAxisConstraint, const IntegrationUtils&);
+LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem&, std::optional<LayoutUnit> gridAreaInlineSize, const IntegrationUtils&);
+LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem&, std::optional<LayoutUnit> gridAreaInlineSize, const IntegrationUtils&);
 
 LayoutUnit blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
 LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);

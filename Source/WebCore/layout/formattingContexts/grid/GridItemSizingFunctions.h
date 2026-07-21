@@ -50,7 +50,7 @@ struct GridItemSizingFunctions {
     {
     }
 
-    static GridItemSizingFunctions inlineAxis(const IntegrationUtils&);
+    static GridItemSizingFunctions inlineAxis(const IntegrationUtils&, const TrackSizingFunctionsList& columnTrackSizingFunctions, LayoutUnit columnGap);
     static GridItemSizingFunctions blockAxis(const GridFormattingContext&);
 
     Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContribution;
