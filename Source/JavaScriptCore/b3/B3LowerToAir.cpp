@@ -4463,7 +4463,7 @@ private:
             // This pattern is super useful on both x86 and ARM64, since the inversion of the CAS result
             // can be done with zero cost on x86 (just flip the set from E to NE) and it's a progression
             // on ARM64 (since STX returns 0 on success, so ordinarily we have to flip it).
-            if (right->isInt(1) && left->opcode() == AtomicWeakCAS && canBeInternal(left)) {
+            if (right->isInt(1) && left->opcode() == AtomicWeakCAS && canBeInternal(left) && !crossesInterference(left)) {
                 commitInternal(left);
                 appendCAS(left, true);
                 return;
@@ -5915,10 +5915,11 @@ private:
             if (m_value->child(0)->opcode() == AtomicStrongCAS
                 && m_value->child(0)->as<AtomicValue>()->isCanonicalWidth()
                 && m_value->child(0)->child(0) == m_value->child(1)
-                && canBeInternal(m_value->child(0))) {
+                && canBeInternal(m_value->child(0))
+                && !crossesInterference(m_value->child(0))) {
                 ASSERT(!m_locked.contains(m_value->child(0)->child(1)));
                 ASSERT(!m_locked.contains(m_value->child(1)));
-                
+
                 commitInternal(m_value->child(0));
                 appendCAS(m_value->child(0), m_value->opcode() == NotEqual);
                 return;
@@ -6551,22 +6552,26 @@ private:
                     break;
                 }
                 case AtomicWeakCAS:
-                    commitInternal(branchChild);
-                    appendCAS(branchChild, false);
-                    return;
-                    
+                    if (!crossesInterference(branchChild)) {
+                        commitInternal(branchChild);
+                        appendCAS(branchChild, false);
+                        return;
+                    }
+                    break;
+
                 case AtomicStrongCAS:
                     // A branch is a comparison to zero.
                     // FIXME: Teach this to match patterns that arise from subwidth CAS.
                     // https://bugs.webkit.org/show_bug.cgi?id=169250
                     if (branchChild->child(0)->isInt(0)
-                        && branchChild->as<AtomicValue>()->isCanonicalWidth()) {
+                        && branchChild->as<AtomicValue>()->isCanonicalWidth()
+                        && !crossesInterference(branchChild)) {
                         commitInternal(branchChild);
                         appendCAS(branchChild, true);
                         return;
                     }
                     break;
-                    
+
                 case Equal:
                 case NotEqual:
                     // FIXME: Teach this to match patterns that arise from subwidth CAS.
@@ -6574,7 +6579,8 @@ private:
                     if (branchChild->child(0)->opcode() == AtomicStrongCAS
                         && branchChild->child(0)->as<AtomicValue>()->isCanonicalWidth()
                         && canBeInternal(branchChild->child(0))
-                        && branchChild->child(0)->child(0) == branchChild->child(1)) {
+                        && branchChild->child(0)->child(0) == branchChild->child(1)
+                        && !crossesInterference(branchChild->child(0))) {
                         commitInternal(branchChild);
                         commitInternal(branchChild->child(0));
                         appendCAS(branchChild->child(0), branchChild->opcode() == NotEqual);
