@@ -2707,6 +2707,22 @@ DigitalCredentialsEnabled:
   disableInLockdownMode: true
   richJavaScript: true
 
+DigitalCredentialsOpenID4VPEnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "OpenID4VP for Digital Credentials API"
+  humanReadableDescription: "Enable the OpenID4VP presentation protocols for the Digital Credentials API"
+  condition: ENABLE(WEB_AUTHN)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  disableInLockdownMode: true
+
 DirectoryUploadEnabled:
   type: bool
   status: embedder

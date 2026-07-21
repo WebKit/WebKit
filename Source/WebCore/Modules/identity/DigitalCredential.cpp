@@ -45,6 +45,7 @@
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
 #include "PermissionsPolicy.h"
+#include "Settings.h"
 #include "VisibilityState.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSONObject.h>
@@ -68,6 +69,23 @@ DigitalCredential::DigitalCredential(JSC::Strong<JSC::JSObject>&& data, DigitalC
     , m_protocol(protocol)
     , m_data(WTF::move(data))
 {
+}
+
+bool DigitalCredential::userAgentAllowsProtocol(const Document& document, const String& protocol)
+{
+    if (protocol == "org-iso-mdoc"_s)
+        return true;
+
+    // The OpenID4VP protocols are gated behind an off-by-default setting while their request
+    // validation and wallet plumbing are still under development, so that the API does not
+    // advertise support for a protocol it cannot yet fulfill.
+    if (document.settings().digitalCredentialsOpenID4VPEnabled()) {
+        return protocol == "openid4vp-v1-unsigned"_s
+            || protocol == "openid4vp-v1-signed"_s
+            || protocol == "openid4vp-v1-multisigned"_s;
+    }
+
+    return false;
 }
 
 static std::optional<DigitalCredentialPresentationProtocol> convertProtocolString(const String& protocolString)

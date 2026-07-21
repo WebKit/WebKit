@@ -364,7 +364,10 @@ struct WebCore::DigitalCredentialsResponseData {
 };
 
 [Nested] enum class WebCore::DigitalCredentialPresentationProtocol : uint8_t {
-    OrgIsoMdoc
+    OrgIsoMdoc,
+    Openid4vpV1Unsigned,
+    Openid4vpV1Signed,
+    Openid4vpV1Multisigned
 };
 
 #endif // ENABLE(WEB_AUTHN)

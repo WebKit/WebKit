@@ -29,6 +29,9 @@ namespace WebCore {
 
 enum class DigitalCredentialPresentationProtocol : uint8_t {
     OrgIsoMdoc,
+    Openid4vpV1Unsigned,
+    Openid4vpV1Signed,
+    Openid4vpV1Multisigned,
 };
 
 } // namespace WebCore
