@@ -159,6 +159,14 @@ video {
     content: normal !important;
 }
 
+/* As discussed in rdar://177547927, use standard by default as we
+ iterate on the overall physically based rendering appearance */
+#if defined(ENABLE_GPU_PROCESS_MODEL) && ENABLE_GPU_PROCESS_MODEL
+model {
+    dynamic-range-limit: standard;
+}
+#endif
+
 audio {
     width: 200px;
     height: 25px;
