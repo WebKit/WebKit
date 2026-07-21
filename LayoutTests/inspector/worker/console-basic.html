@@ -65,6 +65,19 @@ function test()
         })
     }
 
+    suite.addTestCase({
+        name: "Worker.Console.LoggingChannels",
+        description: "Logging channel commands should only exist for supported targets.",
+        test(resolve) {
+            InspectorTest.expectTrue(mainTarget.hasCommand("Console.getLoggingChannels"), "Page target should expose Console.getLoggingChannels.");
+            InspectorTest.expectTrue(mainTarget.hasCommand("Console.setLoggingChannelLevel"), "Page target should expose Console.setLoggingChannelLevel.");
+
+            InspectorTest.expectFalse(workerTarget.hasCommand("Console.getLoggingChannels"), "Worker target should not expose Console.getLoggingChannels.");
+            InspectorTest.expectFalse(workerTarget.hasCommand("Console.setLoggingChannelLevel"), "Worker target should not expose Console.setLoggingChannelLevel.");
+            resolve();
+        },
+    });
+
     addConsoleTestCase({
         name: "Worker.Console.log",
         description: "console.log with multiple values should work.",

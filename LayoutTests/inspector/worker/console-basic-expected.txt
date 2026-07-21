@@ -2,6 +2,12 @@ Test for ConsoleAgent in a Worker.
 
 
 == Running test suite: Worker.Console.basic
+-- Running test case: Worker.Console.LoggingChannels
+PASS: Page target should expose Console.getLoggingChannels.
+PASS: Page target should expose Console.setLoggingChannelLevel.
+PASS: Worker target should not expose Console.getLoggingChannels.
+PASS: Worker target should not expose Console.setLoggingChannelLevel.
+
 -- Running test case: Worker.Console.log
 PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
 {

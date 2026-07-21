@@ -59,7 +59,7 @@ WI.LoggingChannel = class LoggingChannel
         this._level = level;
 
         for (let target of WI.targets) {
-            if (target.hasDomain("Console"))
+            if (WI.ConsoleManager.supportsLogChannels(target))
                 target.ConsoleAgent.setLoggingChannelLevel(this._source, this._level);
         }
     }

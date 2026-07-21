@@ -151,8 +151,8 @@ InspectorBackend.registerEnum("Console.ConsoleMessageType", {Log: "log", Dir: "d
 InspectorBackend.registerCommand("Console.enable", null, [], []);
 InspectorBackend.registerCommand("Console.disable", null, [], []);
 InspectorBackend.registerCommand("Console.clearMessages", null, [], []);
-InspectorBackend.registerCommand("Console.getLoggingChannels", null, [], ["channels"]);
-InspectorBackend.registerCommand("Console.setLoggingChannelLevel", null, [{"name": "source", "type": "string"}, {"name": "level", "type": "string"}], []);
+InspectorBackend.registerCommand("Console.getLoggingChannels", ["page"], [], ["channels"]);
+InspectorBackend.registerCommand("Console.setLoggingChannelLevel", ["page"], [{"name": "source", "type": "string"}, {"name": "level", "type": "string"}], []);
 InspectorBackend.registerEvent("Console.messageAdded", null, ["message"]);
 InspectorBackend.registerEvent("Console.messageRepeatCountUpdated", null, ["count"]);
 InspectorBackend.registerEvent("Console.messagesCleared", null, []);

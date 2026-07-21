@@ -1256,6 +1256,7 @@
         {
             "name": "getLoggingChannels",
             "description": "List of the different message sources that are non-default logging channels.",
+            "targetTypes": ["frame", "page"],
             "returns": [
                 { "name": "channels", "type": "array", "items": { "$ref": "Channel"}, "description": "Logging channels." }
             ]
@@ -1263,6 +1264,7 @@
          {
             "name": "setLoggingChannelLevel",
             "description": "Modify the level of a channel.",
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "source", "$ref": "ChannelSource", "description": "Logging channel to modify." },
                 { "name": "level", "$ref": "ChannelLevel", "description": "New level." }

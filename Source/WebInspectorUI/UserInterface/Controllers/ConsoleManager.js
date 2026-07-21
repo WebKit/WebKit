@@ -70,9 +70,9 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     // Static
 
-    static supportsLogChannels()
+    static supportsLogChannels(target)
     {
-        return InspectorBackend.hasCommand("Console.getLoggingChannels");
+        return (target || InspectorBackend).hasCommand("Console.setLoggingChannelLevel");
     }
 
     static issueMatchSourceCode(issue, sourceCode)
@@ -100,8 +100,10 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         this._setConsoleClearAPIEnabled(target);
 
-        for (let channel of this._customLoggingChannels)
-            target.ConsoleAgent.setLoggingChannelLevel(channel.source, channel.level);
+        if (WI.ConsoleManager.supportsLogChannels(target)) {
+            for (let channel of this._customLoggingChannels)
+                target.ConsoleAgent.setLoggingChannelLevel(channel.source, channel.level);
+        }
     }
 
     // Public
@@ -274,7 +276,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
     {
         console.assert(target.hasDomain("Console"));
 
-        if (!WI.ConsoleManager.supportsLogChannels())
+        if (!WI.ConsoleManager.supportsLogChannels(target))
             return;
 
         if (this._customLoggingChannels.length)
