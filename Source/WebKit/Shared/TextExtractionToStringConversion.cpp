@@ -1121,7 +1121,7 @@ static std::pair<Vector<String>, String> recognizedClassesAndIdForItem(const Tex
     if (item.classNames.isEmpty() && item.idAttribute.isEmpty())
         return { };
 
-    if (!item.accessibilityRole.isEmpty() || !item.title.isEmpty())
+    if (!item.title.isEmpty())
         return { };
 
     if (!item.ariaAttributes.isEmpty() || !item.clientAttributes.isEmpty())
@@ -1163,11 +1163,10 @@ static std::pair<Vector<String>, String> recognizedClassesAndIdForItem(const Tex
         return { };
 
     if (item.children.size() == 1) {
-        auto* textData = std::get_if<TextExtraction::TextItemData>(&item.children[0].data);
-        if (!textData)
-            return { };
-        if (textData->content.trim(isASCIIWhitespace).length() > 2)
-            return { };
+        if (auto* textData = std::get_if<TextExtraction::TextItemData>(&item.children[0].data)) {
+            if (textData->content.trim(isASCIIWhitespace).length() > 2)
+                return { };
+        }
     }
 
 #if PLATFORM(COCOA)

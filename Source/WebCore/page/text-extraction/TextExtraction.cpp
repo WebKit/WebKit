@@ -1971,6 +1971,30 @@ static Node* findNodeAtRootViewLocation(const LocalFrameView& view, Document& do
     return document.hitTest(defaultHitTestOptions, result) ? result.innerNode() : nullptr;
 }
 
+static RefPtr<Element> frontmostHitTestedElementInSubtree(const LocalFrameView& view, Document& document, FloatPoint locationInRootView, const Element& target)
+{
+    static constexpr OptionSet listBasedHitTestOptions {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::DisallowUserAgentShadowContent,
+        HitTestRequest::Type::CollectMultipleElements,
+        HitTestRequest::Type::IncludeAllElementsUnderPoint,
+    };
+
+    HitTestResult result { view.rootViewToContents(roundedIntPoint(locationInRootView)) };
+    document.hitTest(listBasedHitTestOptions, result);
+
+    for (auto& node : result.listBasedTestResult()) {
+        RefPtr element = dynamicDowncast<Element>(node.get());
+        if (!element)
+            element = node->parentElementInComposedTree();
+
+        if (element && (element == &target || element->isShadowIncludingDescendantOf(target)))
+            return element;
+    }
+
+    return nullptr;
+}
+
 struct ResolvedMouseTarget {
     Ref<Element> element;
     Ref<LocalFrame> frame;
@@ -2062,8 +2086,11 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
 
     UserGestureIndicator indicator { IsProcessingUserGesture::Yes, document.ptr() };
 
-    // Fall back to dispatching a programmatic click.
-    if (protect(element)->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents))
+    Ref clickTarget = element;
+    if (RefPtr descendant = frontmostHitTestedElementInSubtree(view, document, centerInRootView, element))
+        clickTarget = descendant.releaseNonNull();
+
+    if (protect(clickTarget)->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents))
         completion(true, { });
     else
         completion(false, "Failed to click (tried falling back to dispatching programmatic click since target could not be hit-tested)"_s);

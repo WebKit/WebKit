@@ -395,6 +395,32 @@ TEST(TextExtractionTests, InteractionDescriptionUsesAdjacentTextForUnlabeledIcon
     EXPECT_NULL(error);
 }
 
+TEST(TextExtractionTests, InteractionClicksThroughOccludingOverlay)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<a aria-label='Log in' href='#' style='position:absolute; top:10px; left:10px; width:80px; height:60px;'>"
+        "<span id='login-button' role='button' style='display:block; width:100%; height:100%;'>"
+        "<svg width='36' height='36' viewBox='0 0 36 36'><circle cx='18' cy='18' r='18' fill='black'></circle></svg>"
+        "</span></a>"
+        "<div style='position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.1);'></div>"
+        "<script>window.loginClicked = false;"
+        "document.getElementById('login-button').addEventListener('click', () => { window.loginClicked = true; });</script>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr loginLinkID = extractNodeIdentifier(debugText, @"Log in");
+    EXPECT_NOT_NULL(loginLinkID);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:loginLinkID];
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.loginClicked"] boolValue]);
+}
+
 TEST(TextExtractionTests, InteractionDebugDescriptionWithStaleNodeIdentifier)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
