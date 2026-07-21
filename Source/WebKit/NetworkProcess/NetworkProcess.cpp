@@ -230,6 +230,7 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
     m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
+    m_allowedWebPageProxyIdentifiers.remove(connection.webProcessIdentifier());
     auto completionHandlers = m_webProcessConnectionCloseHandlers.take(connection.webProcessIdentifier());
     for (auto& completionHandler : completionHandlers)
         completionHandler();
@@ -436,6 +437,9 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     m_pagesWithRelaxedThirdPartyCookieBlocking.addAll(parameters.pagesWithRelaxedThirdPartyCookieBlocking);
 
+    for (auto pageID : parameters.allowedWebPageProxyIdentifiers)
+        addAllowedWebPageProxyIdentifier(identifier, pageID);
+
     // Apply CORS-disabling patterns supplied by the UIProcess at connection-creation time. This covers the case
     // where _corsDisablingPatterns was set on a WebPageProxy before the NetworkProcess was launched, so no
     // SetCORSDisablingPatternsForPage IPC could reach this process.
@@ -533,6 +537,31 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     auto result = set.contains(firstPartyDomain);
     ASSERT(result || terminateOrDisallow == AllowCookieAccess::Disallow);
     return result ? AllowCookieAccess::Allow : terminateOrDisallow;
+}
+
+void NetworkProcess::addAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, WebPageProxyIdentifier pageID)
+{
+    if (!HashSet<WebPageProxyIdentifier>::isValidValue(pageID)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_allowedWebPageProxyIdentifiers.ensure(processIdentifier, [] {
+        return HashSet<WebPageProxyIdentifier> { };
+    }).iterator->value.add(pageID);
+}
+
+bool NetworkProcess::allowsWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, std::optional<WebPageProxyIdentifier> pageID) const
+{
+    // A null identifier carries no page context (several endpoints accept std::optional<WebPageProxyIdentifier>), so
+    // there is nothing to validate; let it through and let the endpoint handle the absent page itself.
+    if (!pageID)
+        return true;
+    if (!decltype(m_allowedWebPageProxyIdentifiers)::isValidKey(processIdentifier) || !HashSet<WebPageProxyIdentifier>::isValidValue(*pageID))
+        return false;
+    auto iterator = m_allowedWebPageProxyIdentifiers.find(processIdentifier);
+    if (iterator == m_allowedWebPageProxyIdentifiers.end())
+        return false;
+    return iterator->value.contains(*pageID);
 }
 
 #if PLATFORM(COCOA)
@@ -3410,6 +3439,9 @@ void NetworkProcess::removeWebPageNetworkParameters(PAL::SessionID sessionID, We
     }
 
     m_pagesWithRelaxedThirdPartyCookieBlocking.remove(pageID);
+
+    for (auto& pages : m_allowedWebPageProxyIdentifiers.values())
+        pages.remove(pageID);
 }
 
 void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, CompletionHandler<void(uint64_t)>&& completionHandler)

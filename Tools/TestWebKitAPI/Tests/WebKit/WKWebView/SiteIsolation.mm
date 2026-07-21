@@ -10071,4 +10071,178 @@ TEST(SiteIsolation, CrossSiteTargetBlankDownloadDoesNotCrashNetworkProcess)
     EXPECT_FALSE(processCrashed);
 }
 
+// A page with _shouldRelaxThirdPartyCookieBlocking must keep that relaxation for its cross-origin,
+// out-of-process (site-isolated) subframes.
+static void runRelaxThirdPartyCookieBlockingSubframeTest(bool shouldRelax)
+{
+    bool thirdPartySubframeRequestSawCookie = false;
+    bool sawSubframeResourceRequest = false;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/main"_s) {
+                // Top document (example.com) embeds a cross-origin webkit.org subframe (separate process).
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/subframe'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/subframe"_s) {
+                // The subframe (webkit.org) issues a credentialed request back to webkit.org. Relative to the
+                // example.com top document this is a third-party cookie context, blocked by ITP unless relaxed.
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch('https://webkit.org/resource', { credentials: 'include' }).then(() => { alert('fetched'); }).catch(() => { alert('error'); });</script>"_s).serialize());
+                continue;
+            }
+            if (path == "/resource"_s) {
+                sawSubframeResourceRequest = true;
+                thirdPartySubframeRequestSawCookie = contains(request.span(), "Cookie: a=b"_span);
+                co_await connection.awaitableSend(HTTPResponse({ { { "Access-Control-Allow-Origin"_s, "https://webkit.org"_s } }, "hi"_s }).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr dataStore = [configuration websiteDataStore];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    if (shouldRelax)
+        [configuration _setShouldRelaxThirdPartyCookieBlocking:YES];
+
+    // Seed webkit.org's cross-origin cookie.
+    __block bool setCookie = false;
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookieName: @"a",
+        NSHTTPCookieValue: @"b",
+        NSHTTPCookieDomain: @"webkit.org",
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieSecure: @YES,
+    }];
+    [dataStore.get().httpCookieStore setCookie:cookie.get() completionHandler:^{
+        setCookie = true;
+    }];
+    Util::run(&setCookie);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "fetched");
+
+    // The webkit.org subframe must be in a different process than the example.com main frame.
+    EXPECT_NE(findFramePID(frameTrees(webView.get()).get(), FrameType::Remote), [webView _webProcessIdentifier]);
+
+    EXPECT_TRUE(sawSubframeResourceRequest);
+    // With relaxation, the out-of-process subframe keeps third-party cookie access (no over-block). Without
+    // it, the cookie is blocked as before.
+    EXPECT_EQ(thirdPartySubframeRequestSawCookie, shouldRelax);
+}
+
+TEST(SiteIsolation, RelaxThirdPartyCookieBlockingSubframe)
+{
+    runRelaxThirdPartyCookieBlockingSubframeTest(true);
+    runRelaxThirdPartyCookieBlockingSubframeTest(false);
+}
+
+// A compromised WebContent must not read another page's relaxed third-party cookies by spoofing that page's
+// WebPageProxyIdentifier over IPC. Victim WKWebView has _setShouldRelaxThirdPartyCookieBlocking:YES; attacker
+// WKWebView (separate WebContent, IPCTestingAPI enabled) uses CoreIPC to send GetRawCookies carrying the
+// victim's WebPageProxyIdentifier. The NetworkProcess must reject via the per-process allow-list and return
+// no cookies.
+TEST(SiteIsolation, ThirdPartyCookieBlockingSpoofedWebPageProxyID)
+{
+    RetainPtr coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    RetainPtr coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL.get()];
+    RetainPtr coreIPCString = adoptNS([[NSString alloc] initWithData:coreIPCData.get() encoding:NSUTF8StringEncoding]);
+    String coreIPC { coreIPCString.get() };
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/victim"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/sub'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/sub"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch('https://webkit.org/ping', { credentials: 'include' }).then(() => alert('victim-fetched')).catch(() => alert('victim-error'));</script>"_s).serialize());
+                continue;
+            }
+            if (path == "/ping"_s) {
+                co_await connection.awaitableSend(HTTPResponse({ { { "Access-Control-Allow-Origin"_s, "https://webkit.org"_s } }, "hi"_s }).serialize());
+                continue;
+            }
+            if (path == "/attacker"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<!DOCTYPE html><script src='/coreipc.js'></script><body></body>"_s).serialize());
+                continue;
+            }
+            if (path == "/coreipc.js"_s) {
+                co_await connection.awaitableSend(HTTPResponse({ { { "Content-Type"_s, "text/javascript"_s } }, coreIPC }).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr victimConfiguration = server.httpsProxyConfiguration();
+    RetainPtr dataStore = [victimConfiguration websiteDataStore];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [victimConfiguration _setShouldRelaxThirdPartyCookieBlocking:YES];
+
+    __block bool setCookie = false;
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookieName: @"a",
+        NSHTTPCookieValue: @"b",
+        NSHTTPCookieDomain: @"webkit.org",
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieSecure: @YES,
+    }];
+    [dataStore.get().httpCookieStore setCookie:cookie.get() completionHandler:^{
+        setCookie = true;
+    }];
+    Util::run(&setCookie);
+
+    auto [victimView, victimDelegate] = siteIsolatedViewAndDelegate(victimConfiguration);
+    [victimView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/victim"]]];
+    EXPECT_WK_STREQ([victimView _test_waitForAlert], "victim-fetched");
+    uint64_t victimPageProxyID = [victimView _webPageProxyIdentifierForTesting];
+
+    RetainPtr attackerConfiguration = adoptNS([victimConfiguration copy]);
+    [attackerConfiguration _setShouldRelaxThirdPartyCookieBlocking:NO];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[attackerConfiguration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    auto [attackerView, attackerDelegate] = siteIsolatedViewAndDelegate(attackerConfiguration);
+    [attackerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://attacker.example/attacker"]]];
+    [attackerDelegate waitForDidFinishNavigation];
+
+    EXPECT_NE([attackerView _webProcessIdentifier], [victimView _webProcessIdentifier]);
+
+    // firstParty must be in the attacker WebContent's allowed-first-parties set, or the earlier
+    // `allowsFirstPartyForCookies` MESSAGE_CHECK terminates the process before our WebPageProxyID
+    // check runs. Use attacker.example (the attacker's own origin) as firstParty and webkit.org as
+    // the target URL - a third-party cookie context that is only unlocked by relaxation from the
+    // spoofed victim WebPageProxyIdentifier.
+    NSString *attackScript = [NSString stringWithFormat:
+        @"const CoreIPC = new CoreIPCClass();"
+        "const reply = await new Promise(resolve => CoreIPC.Networking.NetworkConnectionToWebProcess.GetRawCookies(0, {"
+        "  firstParty: { string: 'https://attacker.example/' },"
+        "  sameSiteInfo: { isSameSite: false, isTopSite: false, isSafeHTTPMethod: true },"
+        "  url: { string: 'https://webkit.org/' },"
+        "  frameID: { optionalValue: BigInt(IPC.frameID) },"
+        "  pageID: { optionalValue: BigInt(IPC.pageID) },"
+        "  webPageProxyID: { optionalValue: %llun },"
+        "}, resolve));"
+        "const cookies = reply && reply.cookies ? reply.cookies : [];"
+        "return Array.isArray(cookies) ? cookies.length : Object.keys(cookies).length;", (unsigned long long)victimPageProxyID];
+    __block bool completed = false;
+    __block RetainPtr<NSNumber> cookieCount;
+    [attackerView callAsyncJavaScript:attackScript arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
+        cookieCount = [result isKindOfClass:NSNumber.class] ? result : nil;
+        completed = true;
+    }];
+    Util::run(&completed);
+    EXPECT_EQ([cookieCount unsignedIntegerValue], 0u);
+}
+
 }

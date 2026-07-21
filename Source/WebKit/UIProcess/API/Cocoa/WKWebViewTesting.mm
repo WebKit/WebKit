@@ -373,6 +373,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return networkProcess ? networkProcess->processID() : 0;
 }
 
+- (uint64_t)_webPageProxyIdentifierForTesting
+{
+    return _page->identifier().toUInt64();
+}
+
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
 {
 }

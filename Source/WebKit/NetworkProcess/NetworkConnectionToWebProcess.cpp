@@ -546,6 +546,10 @@ void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& r
 {
     MESSAGE_CHECK(request.url().isValid());
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) != NetworkProcess::AllowCookieAccess::Terminate);
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "createSocketChannel: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return;
+    }
 
     ASSERT(!m_networkSocketChannels.contains(identifier));
     if (RefPtr channel = NetworkSocketChannel::create(*this, m_sessionID, request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByDedicatedWorker))
@@ -603,6 +607,10 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
         RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8().data(), loadParameters.request.url().string().utf8().data());
 
     MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
+        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: dropping load from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return;
+    }
 
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0, existingLoaderToResume ? existingLoaderToResume->toUInt64() : 0);
 
@@ -680,6 +688,10 @@ void NetworkConnectionToWebProcess::terminateForInvalidLoaderResumeClaim()
 void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
 {
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
+        RELEASE_LOG_ERROR(Loading, "performSynchronousLoad: dropping load from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return reply({ }, { }, { });
+    }
     CONNECTION_RELEASE_LOG(Loading, "performSynchronousLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0);
 
     auto identifier = loadParameters.identifier;
@@ -702,6 +714,10 @@ void NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingFo
 void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters)
 {
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
+        RELEASE_LOG_ERROR(Loading, "loadPing: dropping ping from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return;
+    }
     CONNECTION_RELEASE_LOG(Loading, "loadPing: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0);
 
     auto completionHandler = [connection = m_connection, identifier = *loadParameters.identifier] (const ResourceError& error, const ResourceResponse& response) {
@@ -901,6 +917,10 @@ void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const S
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler({ }, false));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "cookiesForDOM: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler({ }, false);
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler({ }, false);
     if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
@@ -925,6 +945,10 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, con
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "setCookiesFromDOM: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return;
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return;
     if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
@@ -954,6 +978,10 @@ void NetworkConnectionToWebProcess::cookiesEnabled(const URL& firstParty, const 
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(false));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "cookiesEnabled: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler(false);
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler(false);
 
@@ -971,6 +999,10 @@ void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const URL& fir
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler({ }, false));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "cookieRequestHeaderFieldValue: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler({ }, false);
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler({ }, false);
     if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
@@ -989,6 +1021,10 @@ void NetworkConnectionToWebProcess::getRawCookies(const URL& firstParty, const S
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler({ }));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "getRawCookies: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler({ });
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler({ });
     if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
@@ -1046,6 +1082,10 @@ void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, co
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(std::nullopt));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "cookiesForDOMAsync: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler(std::nullopt);
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler(std::nullopt);
     if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
@@ -1070,6 +1110,10 @@ void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty,
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(false));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "setCookieFromDOMAsync: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler(false);
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler(false);
     if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
@@ -1113,6 +1157,10 @@ void NetworkConnectionToWebProcess::subscribeToCookieChangeNotifications(const U
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(false));
+    if (!m_networkProcess->allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
+        RELEASE_LOG_ERROR(IPC, "subscribeToCookieChangeNotifications: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
+        return completionHandler(false);
+    }
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
         return completionHandler({ });
 

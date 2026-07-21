@@ -120,6 +120,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 @property (nonatomic, readonly) pid_t _networkProcessIdentifier;
 
+@property (nonatomic, readonly) uint64_t _webPageProxyIdentifierForTesting;
+
 @property (nonatomic, readonly) unsigned long _countOfUpdatesWithLayerChanges;
 
 - (void)_processWillSuspendForTesting:(void (^)(void))completionHandler;

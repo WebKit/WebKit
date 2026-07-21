@@ -335,6 +335,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 #endif
     parameters.sharedPreferencesForWebProcess = *webProcessProxy.sharedPreferencesForWebProcess();
     for (Ref page : webProcessProxy.mainPages()) {
+        parameters.allowedWebPageProxyIdentifiers.append(page->identifier());
         if (page->configuration().shouldRelaxThirdPartyCookieBlocking() == ShouldRelaxThirdPartyCookieBlocking::Yes)
             parameters.pagesWithRelaxedThirdPartyCookieBlocking.append(page->identifier());
         if (!page->corsDisablingPatterns().isEmpty())
@@ -2055,6 +2056,15 @@ void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webPro
         sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(webProcessProxy.coreProcessIdentifier(), firstPartyForCookies, loadedWebArchive), WTF::move(completionHandler));
     else
         completionHandler();
+}
+
+void NetworkProcessProxy::addAllowedWebPageProxyIdentifier(WebProcessProxy& webProcessProxy, WebPageProxyIdentifier pageID)
+{
+    auto& pages = m_allowedWebPageProxyIdentifiers.ensure(webProcessProxy, [] {
+        return HashSet<WebPageProxyIdentifier> { };
+    }).iterator->value;
+    if (pages.add(pageID).isNewEntry)
+        send(Messages::NetworkProcess::AddAllowedWebPageProxyIdentifier(webProcessProxy.coreProcessIdentifier(), pageID), 0);
 }
 
 void NetworkProcessProxy::addAllowedFilePaths(WebProcessProxy& webProcessProxy, const Vector<String>& paths)
