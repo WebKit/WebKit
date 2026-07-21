@@ -676,16 +676,19 @@ void SkRegion::translate(int dx, int dy, SkRegion* dst) const {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool SkRegion::setRects(const SkIRect rects[], int count) {
-    if (0 == count) {
-        this->setEmpty();
-    } else {
-        this->setRect(rects[0]);
-        for (int i = 1; i < count; i++) {
-            this->op(rects[i], kUnion_Op);
-        }
+bool SkRegion::setRects(SkSpan<const SkIRect> rects) {
+    if (rects.empty()) {
+        return this->setEmpty();
     }
-    return !this->isEmpty();
+    if (rects.size() == 1) {
+        return this->setRect(rects[0]);
+    }
+    // The depth here is O(log_2(count)) so we shouldn't run out of stackframes.
+    int mid = rects.size() / 2;
+    SkRegion left, right;
+    left.setRects(rects.first(mid));
+    right.setRects(rects.subspan(mid));
+    return this->op(left, right, kUnion_Op);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -795,10 +798,20 @@ struct spanRec {
     }
 };
 
+/**
+ *  Returns the distance to the next X-sentinel.
+ *
+ *  The runs pointer points to the first interval [Left, Right].
+ *  The value at runs[-1] is the number of intervals for this scanline.
+ *  This is safe because the caller has already advanced the runs pointer
+ *  past the interval-count.
+ *
+ *  The scanline layout is: [Bottom-Y] [IntervalCount] [L1, R1, L2, R2, ...] [X-Sentinel]
+ */
 static int distance_to_sentinel(const SkRegionPriv::RunType* runs) {
-    const SkRegionPriv::RunType* ptr = runs;
-    while (*ptr != SkRegion_kRunTypeSentinel) { ptr += 2; }
-    return ptr - runs;
+    int intervals = runs[-1];
+    SkASSERT_RELEASE(runs[intervals * 2] == SkRegion_kRunTypeSentinel);
+    return intervals * 2;
 }
 
 static int operate_on_span(const SkRegionPriv::RunType a_runs[],

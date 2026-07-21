@@ -10,7 +10,7 @@
 #include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/ContextOptions.h"
 #include "include/gpu/graphite/dawn/DawnBackendContext.h"
-#include "src/gpu/graphite/Log.h"
+#include "include/private/base/SkLog.h"
 #include "src/gpu/graphite/dawn/DawnGraphicsPipeline.h"
 #include "src/gpu/graphite/dawn/DawnResourceProvider.h"
 
@@ -111,7 +111,7 @@ void DawnSharedContext::deviceTick(Context* context) {
 void DawnSharedContext::createUniformBuffersBindGroupLayout() {
     const Caps* caps = this->caps();
 
-    std::array<wgpu::BindGroupLayoutEntry, DawnGraphicsPipeline::kNumUniformBuffers> entries;
+    std::array<wgpu::BindGroupLayoutEntry, DawnGraphicsPipeline::kMaxNumUniformBuffers> entries;
     entries[0].binding = DawnGraphicsPipeline::kIntrinsicUniformBufferIndex;
     entries[0].visibility = wgpu::ShaderStage::Vertex | wgpu::ShaderStage::Fragment;
     entries[0].buffer.type = wgpu::BufferBindingType::Uniform;

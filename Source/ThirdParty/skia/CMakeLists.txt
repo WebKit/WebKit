@@ -369,6 +369,7 @@ add_library(Skia STATIC
     src/gpu/ganesh/GrSurfaceProxyView.cpp
     src/gpu/ganesh/GrTexture.cpp
     src/gpu/ganesh/GrTextureProxy.cpp
+    src/gpu/ganesh/GrTextureProxyCacheAccess.cpp
     src/gpu/ganesh/GrTextureRenderTargetProxy.cpp
     src/gpu/ganesh/GrTextureResolveRenderTask.cpp
     src/gpu/ganesh/GrThreadSafeCache.cpp

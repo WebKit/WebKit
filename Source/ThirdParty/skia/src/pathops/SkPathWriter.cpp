@@ -56,6 +56,7 @@ void SkPathWriter::cubicTo(const SkPoint& pt1, const SkPoint& pt2, const SkOpPtT
 }
 
 bool SkPathWriter::deferredLine(const SkOpPtT* pt) {
+    SkASSERT(pt);
     SkASSERT(fFirstPtT);
     SkASSERT(fDefer[0]);
     if (fDefer[0] == pt) {
@@ -78,6 +79,7 @@ bool SkPathWriter::deferredLine(const SkOpPtT* pt) {
 }
 
 void SkPathWriter::deferredMove(const SkOpPtT* pt) {
+    SkASSERT(pt);
     if (!fDefer[1]) {
         fFirstPtT = fDefer[0] = pt;
         return;
@@ -161,6 +163,7 @@ void SkPathWriter::quadTo(const SkPoint& pt1, const SkOpPtT* pt2) {
 // if last point to be written matches the current path's first point, alter the
 // last to avoid writing a degenerate lineTo when the path is closed
 SkPoint SkPathWriter::update(const SkOpPtT* pt) {
+    SkASSERT(pt);
     if (!fDefer[1]) {
         this->moveTo();
     } else if (!this->matchedLast(fDefer[0])) {
@@ -180,6 +183,7 @@ bool SkPathWriter::someAssemblyRequired() {
 }
 
 bool SkPathWriter::changedSlopes(const SkOpPtT* ptT) const {
+    SkASSERT(ptT);
     if (matchedLast(fDefer[0])) {
         return false;
     }
@@ -214,7 +218,15 @@ void SkPathWriter::assemble() {
     SkOpPtT const* const* runs = fEndPtTs.begin();  // starts, ends of partial contours
     int endCount = fEndPtTs.size(); // all starts and ends
     SkASSERT(endCount > 0);
-    SkASSERT(endCount == fPartials.size() * 2);
+    SkASSERT(endCount == (int)fPartials.size() * 2);
+
+    // Limit the number of partial contours to avoid O(N^2) complexity and integer overflows.
+    // 10,000 partial contours results in 20,000 ends and ~200,000,000 distance entries.
+    constexpr int kMaxPartialContours = 10000;
+    if (endCount > kMaxPartialContours * 2) {
+        return;
+    }
+
 #if DEBUG_ASSEMBLE
     for (int index = 0; index < endCount; index += 2) {
         const SkOpPtT* eStart = runs[index];
@@ -251,7 +263,7 @@ void SkPathWriter::assemble() {
             *runsPtr = opPtT;
         } while (true);
         partWriter.finishContour();
-        const TArray<SkPathBuilder>& partPartials = partWriter.partials();
+        const TArray<SkPathBuilder>& partPartials = partWriter.fPartials;
         if (partPartials.empty()) {
             continue;
         }
@@ -267,13 +279,14 @@ void SkPathWriter::assemble() {
             partial = reverse;
         }
     }
-    SkTDArray<int> sLink, eLink;
+    STArray<8, int, true> sLink, eLink;
     int linkCount = endCount / 2; // number of partial contours
-    sLink.append(linkCount);
-    eLink.append(linkCount);
+    sLink.reserve_exact(linkCount);
+    eLink.reserve_exact(linkCount);
     int rIndex, iIndex;
     for (rIndex = 0; rIndex < linkCount; ++rIndex) {
-        sLink[rIndex] = eLink[rIndex] = SK_MaxS32;
+        sLink.push_back(SK_MaxS32);
+        eLink.push_back(SK_MaxS32);
     }
     const int entries = endCount * (endCount - 1) / 2;  // folded triangle
     STArray<8, double, true> distances(entries);
@@ -364,7 +377,10 @@ void SkPathWriter::assemble() {
                 if (forward) {
                     next = contourPts.empty() ? SkPoint{0, 0} : contourPts.front();
                 } else {
-                    SkASSERT(!contourPts.empty());
+                    if (contourPts.empty()) {
+                        SkDEBUGFAIL("unexpected empty contour");
+                        return;
+                    }
                     next = contourPts.back();
                 }
                 if (*prior != next) {

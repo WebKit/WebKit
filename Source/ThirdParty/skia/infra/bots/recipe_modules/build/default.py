@@ -266,6 +266,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
       'skia_use_libpng_encode':        'false',
       'skia_use_libwebp_decode':       'false',
       'skia_use_libwebp_encode':       'false',
+      'skia_use_partition_alloc':      'false',
       'skia_use_vulkan':               'false',
       'skia_use_wuffs':                'false',
       'skia_use_zlib':                 'false',
@@ -331,7 +332,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
     'sanitize': sanitize,
     'target_cpu': target_arch,
     'target_os': 'ios' if any('iOS' in t for t in extra_tokens) else '',
-    'win_sdk': win_toolchain + '/win_sdk' if 'Win' in os else '',
+    'win_sdk': win_toolchain + '/Windows Kits/10' if 'Win' in os else '',
     'win_vc': win_toolchain + '/VC' if 'Win' in os else '',
     'skia_dwritecore_sdk': dwritecore if 'DWriteCore' in extra_tokens else '',
   }.items():

@@ -8,8 +8,8 @@
 #include "src/gpu/graphite/dawn/DawnCommandBuffer.h"
 
 #include "include/gpu/graphite/TextureInfo.h"
+#include "include/private/base/SkLog.h"
 #include "src/gpu/graphite/ContextUtils.h"
-#include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/UniformManager.h"
@@ -69,7 +69,7 @@ DawnCommandBuffer::~DawnCommandBuffer() {}
 
 bool DawnCommandBuffer::startStatsQuery(GpuStatsFlags) {
     if (fHasStatsQuery) {
-        SKGPU_LOG_W(
+        SKIA_LOG_W(
                 "startTimerQuery called more than once for the same command "
                 "buffer. Currently, stats queries are only supported when "
                 "each recording gets its own submission.");
@@ -82,7 +82,7 @@ bool DawnCommandBuffer::startStatsQuery(GpuStatsFlags) {
                                                             AccessPattern::kHostVisible,
                                                             "TimerQuery");
     if (!buffer) {
-        SKGPU_LOG_W("Failed to create buffer for resolving results, timer query will "
+        SKIA_LOG_W("Failed to create buffer for resolving results, timer query will "
                     "not be reported.");
         return false;
     }
@@ -93,7 +93,7 @@ bool DawnCommandBuffer::startStatsQuery(GpuStatsFlags) {
                                                                AccessPattern::kHostVisible,
                                                                "TimerQueryXfer");
         if (!xferBuffer) {
-            SKGPU_LOG_W("Failed to create buffer for transferring timestamp results, timer "
+            SKIA_LOG_W("Failed to create buffer for transferring timestamp results, timer "
                         "query will not be reported.");
             return false;
         }
@@ -106,7 +106,7 @@ bool DawnCommandBuffer::startStatsQuery(GpuStatsFlags) {
         descriptor.nextInChain = nullptr;
         querySet = fSharedContext->device().CreateQuerySet(&descriptor);
         if (!querySet) {
-            SKGPU_LOG_W("Failed to create query set, timer query will not be reported.");
+            SKIA_LOG_W("Failed to create query set, timer query will not be reported.");
             return false;
         }
     }
@@ -174,7 +174,7 @@ std::optional<GpuStats> DawnCommandBuffer::gpuStats() {
     }
     uint64_t* results = static_cast<uint64_t*>(buffer->map());
     if (!results) {
-        SKGPU_LOG_W("Failed to get timer query results because buffer couldn't be mapped.");
+        SKIA_LOG_W("Failed to get timer query results because buffer couldn't be mapped.");
         return {};
     }
     if (results[1] < results[0]) {
@@ -602,7 +602,7 @@ bool DawnCommandBuffer::doBlitWithDraw(const wgpu::RenderPassEncoder& renderEnco
             fResourceProvider->findOrCreateBlitWithDrawEncoder(frontendRenderPassDescKey,
                                                                srcSampleCount);
     if (!blit) {
-        SKGPU_LOG_E("Unable to create pipeline to blit with draw");
+        SKIA_LOG_E("Unable to create pipeline to blit with draw");
         return false;
     }
 
@@ -763,7 +763,7 @@ bool DawnCommandBuffer::addDrawPass(DrawPass* drawPass) {
                 break;
             }
             case DrawPassCommands::Type::kAddBarrier: {
-                SKGPU_LOG_E("DawnCommandBuffer does not support the addition of barriers.");
+                SKIA_LOG_E("DawnCommandBuffer does not support the addition of barriers.");
                 break;
             }
         }
@@ -797,8 +797,10 @@ bool DawnCommandBuffer::bindGraphicsPipeline(const GraphicsPipeline* graphicsPip
         // not also every other time the textures are changed).
         const auto* texture = static_cast<const DawnTexture*>(fDstCopy.first);
         const auto* sampler = static_cast<const DawnSampler*>(fDstCopy.second);
+
         wgpu::BindGroup bindGroup =
                 fResourceProvider->findOrCreateSingleTextureSamplerBindGroup(sampler, texture);
+
         fActiveRenderPassEncoder.SetBindGroup(
                 DawnGraphicsPipeline::kTextureBindGroupIndex, bindGroup);
     }
@@ -879,6 +881,9 @@ void DawnCommandBuffer::bindTextureAndSamplers(
     }
 #endif
 
+    const auto& groupLayouts = fActiveGraphicsPipeline->dawnGroupLayouts();
+    wgpu::BindGroupLayout groupLayout = groupLayouts[DawnGraphicsPipeline::kTextureBindGroupIndex];
+
     wgpu::BindGroup bindGroup;
     // Optimize for single texture with dynamic sampling.
     if (numTexturesAndSamplers == 1 && !usingSingleStaticSampler) {
@@ -887,6 +892,7 @@ void DawnCommandBuffer::bindTextureAndSamplers(
 
         const auto* texture = static_cast<const DawnTexture*>(command.fTextures[0]->texture());
         const auto* sampler = this->getSampler(command, 0);
+
         bindGroup = fResourceProvider->findOrCreateSingleTextureSamplerBindGroup(sampler, texture);
     } else {
         std::vector<wgpu::BindGroupEntry> entries;
@@ -938,56 +944,73 @@ void DawnCommandBuffer::bindTextureAndSamplers(
             entries.push_back(textureEntry);
         }
 
-        wgpu::BindGroupDescriptor desc;
-        const auto& groupLayouts = fActiveGraphicsPipeline->dawnGroupLayouts();
-        desc.layout = groupLayouts[DawnGraphicsPipeline::kTextureBindGroupIndex];
-        desc.entryCount = entries.size();
-        desc.entries = entries.data();
-
-        bindGroup = fSharedContext->device().CreateBindGroup(&desc);
+        bindGroup = fResourceProvider->createBindGroup(entries, groupLayout);
     }
 
     fActiveRenderPassEncoder.SetBindGroup(DawnGraphicsPipeline::kTextureBindGroupIndex, bindGroup);
 }
 
 void DawnCommandBuffer::syncUniformBuffers() {
-    static constexpr int kNumBuffers = DawnGraphicsPipeline::kNumUniformBuffers;
+    if (!fBoundUniformBuffersDirty) {
+        return;
+    }
+    fBoundUniformBuffersDirty = false;
 
-    if (fBoundUniformBuffersDirty) {
-        fBoundUniformBuffersDirty = false;
+    bool usePushConstants = fSharedContext->dawnCaps()->
+            resourceBindingRequirements().fUsePushConstantsForIntrinsicConstants;
 
-        std::array<uint32_t, kNumBuffers> dynamicOffsets;
-        std::array<std::pair<const DawnBuffer*, uint32_t>, kNumBuffers> boundBuffersAndSizes;
+    // We expect to have up to 3 uniforms in this bind group.
+    static constexpr int kMaxUniformsInGroup = 3;
+    // Until/unless uniform bind group structure gets reorganized, this should be equivalent to the
+    // size of our bound uniform array.
+    SkASSERT(kMaxUniformsInGroup == fBoundUniforms.size());
 
-        std::array<bool, kNumBuffers> enabled = {
-                !fSharedContext->dawnCaps()
-                         ->resourceBindingRequirements()
-                         .fUsePushConstantsForIntrinsicConstants,  // intrinsic uniforms
-                fActiveGraphicsPipeline->hasCombinedUniforms(),    // paint AND renderstep uniforms!
-                fActiveGraphicsPipeline->hasGradientBuffer(),      // gradient SSBO
+    wgpu::BindGroup bindGroup;
+    std::array<uint32_t, kMaxUniformsInGroup> dynamicOffsets {0};
+    // Check if we can use an optimized route for single-uniform buffer bind groups:
+    if (usePushConstants &&
+        !fActiveGraphicsPipeline->hasGradientBuffer() &&
+        fActiveGraphicsPipeline->hasCombinedUniforms()) {
+        const BindBufferInfo& bufferInfo =
+                fBoundUniforms[DawnGraphicsPipeline::kCombinedUniformIndex];
+        bindGroup = fResourceProvider->findOrCreateSingleUniformBindGroup(bufferInfo);
+        dynamicOffsets[DawnGraphicsPipeline::kCombinedUniformIndex] = bufferInfo.fOffset;
+    } else {
+        std::array<bool, kMaxUniformsInGroup> enabled = {
+                !usePushConstants,                              // intrinsic uniforms
+                fActiveGraphicsPipeline->hasCombinedUniforms(), // paint AND renderstep uniforms!
+                fActiveGraphicsPipeline->hasGradientBuffer(),   // gradient SSBO
+        };
+        constexpr uint32_t kBindingIndices[] = {
+            DawnGraphicsPipeline::kIntrinsicUniformBufferIndex,
+            DawnGraphicsPipeline::kCombinedUniformIndex,
+            DawnGraphicsPipeline::kGradientBufferIndex,
         };
 
-        for (int i = 0; i < kNumBuffers; ++i) {
+        std::array<wgpu::BindGroupEntry, kMaxUniformsInGroup> bindGroupEntries {};
+        for (int i = 0; i < kMaxUniformsInGroup; ++i) {
+            bindGroupEntries[i].binding = kBindingIndices[i];
             if (enabled[i] && fBoundUniforms[i]) {
-                boundBuffersAndSizes[i].first =
-                        static_cast<const DawnBuffer*>(fBoundUniforms[i].fBuffer);
-                boundBuffersAndSizes[i].second = fBoundUniforms[i].fSize;
+                bindGroupEntries[i].size = fBoundUniforms[i].fSize;
+                bindGroupEntries[i].buffer =
+                        static_cast<const DawnBuffer*>(fBoundUniforms[i].fBuffer)->dawnBuffer();
                 dynamicOffsets[i] = fBoundUniforms[i].fOffset;
             } else {
                 // Unused or null binding
-                boundBuffersAndSizes[i].first = nullptr;
-                dynamicOffsets[i] = 0;
+                bindGroupEntries[i].buffer = fResourceProvider->getOrCreateNullBuffer();
             }
         }
 
-        auto bindGroup =
-                fResourceProvider->findOrCreateUniformBuffersBindGroup(boundBuffersAndSizes);
-
-        fActiveRenderPassEncoder.SetBindGroup(DawnGraphicsPipeline::kUniformBufferBindGroupIndex,
-                                              bindGroup,
-                                              dynamicOffsets.size(),
-                                              dynamicOffsets.data());
+        const auto& groupLayouts = fActiveGraphicsPipeline->dawnGroupLayouts();
+        bindGroup = fResourceProvider->createBindGroup(
+                bindGroupEntries,
+                groupLayouts[DawnGraphicsPipeline::kUniformBufferBindGroupIndex]);
     }
+
+    fActiveRenderPassEncoder.SetBindGroup(DawnGraphicsPipeline::kUniformBufferBindGroupIndex,
+                                          bindGroup,
+                                          dynamicOffsets.size(),
+                                          dynamicOffsets.data());
 }
 
 void DawnCommandBuffer::setScissor(const Scissor& scissor) {

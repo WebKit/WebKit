@@ -9,8 +9,9 @@
 
 #include "include/core/SkTraceMemoryDump.h"
 #include "include/gpu/MutableTextureState.h"
+#include "include/private/base/SkLog.h"
 #include "src/core/SkMipmap.h"
-#include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/Sampler.h"
 #include "src/gpu/graphite/TextureUtils.h"
 #include "src/gpu/graphite/dawn/DawnCaps.h"
 #include "src/gpu/graphite/dawn/DawnGraphiteUtils.h"
@@ -24,7 +25,7 @@ wgpu::Texture DawnTexture::MakeDawnTexture(const DawnSharedContext* sharedContex
     const auto* caps = sharedContext->dawnCaps();
     if (dimensions.width() > caps->maxTextureSize() ||
         dimensions.height() > caps->maxTextureSize()) {
-        SKGPU_LOG_E("Texture creation failure: dimensions %d x %d too large.",
+        SKIA_LOG_E("Texture creation failure: dimensions %d x %d too large.",
                     dimensions.width(), dimensions.height());
         return {};
     }
@@ -185,7 +186,7 @@ sk_sp<Texture> DawnTexture::MakeWrapped(const DawnSharedContext* sharedContext,
                                         wgpu::Texture texture,
                                         std::string_view label) {
     if (!texture) {
-        SKGPU_LOG_E("No valid texture passed into MakeWrapped\n");
+        SKIA_LOG_E("No valid texture passed into MakeWrapped\n");
         return {};
     }
 
@@ -206,7 +207,7 @@ sk_sp<Texture> DawnTexture::MakeWrapped(const DawnSharedContext* sharedContext,
                                         const wgpu::TextureView& textureView,
                                         std::string_view label) {
     if (!textureView) {
-        SKGPU_LOG_E("No valid texture view passed into MakeWrapped\n");
+        SKIA_LOG_E("No valid texture view passed into MakeWrapped\n");
         return {};
     }
     return sk_sp<Texture>(new DawnTexture(sharedContext,
@@ -249,6 +250,22 @@ void DawnTexture::setBackendLabel(char const* label) {
         fSampleTextureView.SetLabel(SkStringPrintf("%s_%s", label, "_SampleTextureView").c_str());
         fRenderTextureView.SetLabel(SkStringPrintf("%s_%s", label, "_RenderTextureView").c_str());
     }
+}
+
+const wgpu::BindGroup* DawnTexture::getCachedSingleTextureBindGroup(const Sampler* sampler) const {
+    SkASSERT(sampler);
+    for (auto& cachedGroup : fCachedSingleTextureBindGroups) {
+        if (cachedGroup.first->uniqueID() == sampler->uniqueID()) {
+            return &cachedGroup.second;
+        }
+    }
+    return nullptr;
+}
+
+void DawnTexture::addCachedSingleTextureBindGroup(wgpu::BindGroup bindGroup,
+                                                  const Sampler* sampler) const {
+    SkASSERT(sampler);
+    fCachedSingleTextureBindGroups.push_back({sampler, bindGroup});
 }
 
 } // namespace skgpu::graphite
