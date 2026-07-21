@@ -951,7 +951,7 @@ public:
 #endif
 
     bool hasTimeZoneChange() { return dateCache.hasTimeZoneChange(); }
-    bool hasLanguageChange();
+    JS_EXPORT_PRIVATE bool hasLanguageChange();
 
     RegExpCache* regExpCache() LIFETIME_BOUND { return m_regExpCache.get(); }
 
