@@ -35,6 +35,7 @@ class WebTransport;
 class WebTransportSendGroup;
 class WebTransportSendStreamSink;
 
+struct WebTransportSendStreamOptions;
 struct WebTransportSendStreamStats;
 struct WebTransportStreamIdentifierType;
 
@@ -42,7 +43,7 @@ using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifi
 
 class WebTransportSendStream : public WritableStream {
 public:
-    static ExceptionOr<Ref<WebTransportSendStream>> create(WebTransport&, JSDOMGlobalObject&, Ref<WebTransportSendStreamSink>&&);
+    static ExceptionOr<Ref<WebTransportSendStream>> create(WebTransport&, JSDOMGlobalObject&, Ref<WebTransportSendStreamSink>&&, const WebTransportSendStreamOptions&);
     ~WebTransportSendStream();
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);

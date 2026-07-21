@@ -1,5 +1,5 @@
 
-FAIL WebTransport client should be able to create and handle a bidirectional stream with sendOrder assert_equals: expected (number) 3 but got (object) null
-FAIL WebTransport client should be able to modify unset sendOrder after stream creation assert_equals: expected (number) 0 but got (object) null
-FAIL WebTransport client should be able to modify existing sendOrder after stream creation assert_equals: expected (number) 3 but got (object) null
+PASS WebTransport client should be able to create and handle a bidirectional stream with sendOrder
+PASS WebTransport client should be able to modify unset sendOrder after stream creation
+PASS WebTransport client should be able to modify existing sendOrder after stream creation
 
