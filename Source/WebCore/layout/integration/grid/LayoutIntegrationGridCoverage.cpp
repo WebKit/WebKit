@@ -72,7 +72,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasBorder,
-    GridItemHasPadding,
+    GridItemHasPercentOrCalcPadding,
     GridItemHasMargin,
     GridItemHasBorderBoxSizing,
     GridItemHasVerticalWritingMode,
@@ -511,13 +511,17 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItemStyle->border().hasBorder())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorder, reasons, reasonCollectionMode);
 
-        auto gridItemHasPadding = [&] {
+        // Fixed padding is threaded into item and track sizing as part of the border-box size and lays
+        // out identically to legacy RenderGrid. Percentage and calc() padding resolve against the grid
+        // item's grid area, which needs additional plumbing, so keep those items on the legacy path.
+        // FIXME: Support percentage and calc() padding on grid items and remove this restriction.
+        auto gridItemHasUnsupportedPadding = [&] {
             return gridItemStyle->paddingBox().anyOf([](const Style::PaddingEdge& paddingEdge) {
-                return !paddingEdge.isPossiblyZero();
+                return paddingEdge.isPercentOrCalculated();
             });
         };
-        if (gridItemHasPadding())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasPadding, reasons, reasonCollectionMode);
+        if (gridItemHasUnsupportedPadding())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasPercentOrCalcPadding, reasons, reasonCollectionMode);
 
         auto gridItemHasMargins = [&] {
             return gridItemStyle->marginBox().anyOf([](const Style::MarginEdge& marginEdge) {
@@ -774,8 +778,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemHasBorder:
         stream << "grid item has border";
         break;
-    case GridAvoidanceReason::GridItemHasPadding:
-        stream << "grid item has padding";
+    case GridAvoidanceReason::GridItemHasPercentOrCalcPadding:
+        stream << "grid item has percent or calc padding";
         break;
     case GridAvoidanceReason::GridItemHasMargin:
         stream << "grid item has margin";
