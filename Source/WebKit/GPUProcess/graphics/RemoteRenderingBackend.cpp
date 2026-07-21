@@ -118,6 +118,7 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_streamConnection(WTF::move(streamConnection))
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_sharedResourceCache(gpuConnectionToWebProcess.sharedResourceCache())
+    , m_sharedPreferencesForWebProcess(gpuConnectionToWebProcess.sharedPreferencesForWebProcessValue())
     , m_renderingBackendIdentifier(identifier)
     , m_shapeDetectionObjectHeap(ShapeDetection::ObjectHeap::create())
 {
@@ -143,7 +144,7 @@ void RemoteRenderingBackend::stopListeningForIPC()
 
 std::optional<SharedPreferencesForWebProcess> RemoteRenderingBackend::sharedPreferencesForWebProcess() const
 {
-    return m_gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+    return m_sharedPreferencesForWebProcess;
 }
 
 void RemoteRenderingBackend::workQueueInitialize()
@@ -293,7 +294,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     RefPtr<ImageBuffer> imageBuffer;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && creationContext.dynamicContentScalingResourceCache)
+    if (m_sharedPreferencesForWebProcess.useCGDisplayListsForDOMRendering && creationContext.dynamicContentScalingResourceCache)
         imageBuffer = allocateImageBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, bufferFormat, creationContext);
 #endif
 
@@ -706,7 +707,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::imageBuffer(RenderingResourceIdentif
 bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
 {
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
-    return (m_gpuConnectionToWebProcess->isLockdownSafeFontParserEnabled() && m_gpuConnectionToWebProcess->isLockdownModeEnabled()) || (m_gpuConnectionToWebProcess->isForceLockdownSafeFontParserEnabled());
+    return (m_sharedPreferencesForWebProcess.lockdownFontParserEnabled && m_gpuConnectionToWebProcess->isLockdownModeEnabled()) || m_sharedPreferencesForWebProcess.forceLockdownFontParserEnabled;
 #else
     return false;
 #endif

@@ -50,6 +50,7 @@
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "ShapeDetectionIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
@@ -95,7 +96,6 @@ class RemoteSnapshotRecorder;
 struct BufferIdentifierSet;
 struct ImageBufferSetPrepareBufferForDisplayInputData;
 struct ImageBufferSetPrepareBufferForDisplayOutputData;
-struct SharedPreferencesForWebProcess;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 namespace ShapeDetection {
@@ -207,6 +207,9 @@ private:
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     const Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
+    // Snapshot taken on the main thread at construction and only ever read on the work queue,
+    // so it needs no locking. See sharedPreferencesForWebProcess().
+    const SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     RemoteResourceCache m_remoteResourceCache;
     WebCore::ProcessIdentity m_resourceOwner;
     RemoteRenderingBackendIdentifier m_renderingBackendIdentifier;
