@@ -86,6 +86,7 @@ float FixedTableLayout::calcWidthArray()
     // iterate over all <col> elements
     unsigned nEffCols = m_table->numEffCols();
     m_width.fill(Style::PreferredSize { CSS::Keyword::Auto { } }, nEffCols);
+    m_columnBorderPadding.fill(0, nEffCols);
 
     unsigned currentEffectiveColumn = 0;
     for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
@@ -113,12 +114,14 @@ float FixedTableLayout::calcWidthArray()
                 m_table->appendColumn(span);
                 nEffCols++;
                 m_width.append(CSS::Keyword::Auto { });
+                m_columnBorderPadding.append(0);
                 spanInCurrentEffectiveColumn = span;
             } else {
                 if (span < m_table->spanOfEffCol(currentEffectiveColumn)) {
                     m_table->splitColumn(currentEffectiveColumn, span);
                     nEffCols++;
                     m_width.append(CSS::Keyword::Auto { });
+                    m_columnBorderPadding.append(0);
                 }
                 spanInCurrentEffectiveColumn = m_table->spanOfEffCol(currentEffectiveColumn);
             }
@@ -162,10 +165,18 @@ float FixedTableLayout::calcWidthArray()
                 if (auto fixedLogicalWidth = logicalWidth.tryFixed()) {
                     // Zoom was applied when we called adjustBorderBoxLogicalWidthForBoxSizing
                     m_width[currentColumn] = Style::PreferredSize::Fixed { fixedLogicalWidth->resolveZoom(Style::ZoomFactor { 1.0f }) * eSpan / span };
-                }
-                else if (auto percentageLogicalWidth = logicalWidth.tryPercentage())
+                    usedWidth += fixedBorderBoxLogicalWidth * eSpan / span;
+                } else if (auto percentageLogicalWidth = logicalWidth.tryPercentage()) {
                     m_width[currentColumn] = Style::PreferredSize::Percentage { percentageLogicalWidth->value * eSpan / span };
-                usedWidth += fixedBorderBoxLogicalWidth * eSpan / span;
+                    // A percentage resolves against the table width and gives the content-box
+                    // size; the cell's border and padding must be reserved on top of it. With
+                    // box-sizing: border-box the percentage is already the border-box size.
+                    // Cells spanning multiple columns distribute only their width, not their
+                    // border and padding.
+                    float borderPadding = span == 1 && cell->style().boxSizing() == BoxSizing::ContentBox ? cell->borderAndPaddingLogicalWidth().toFloat() : 0;
+                    m_columnBorderPadding[currentColumn] = borderPadding * eSpan / span;
+                    usedWidth += borderPadding * eSpan / span;
+                }
             }
             usedSpan += eSpan;
             ++currentColumn;
@@ -241,7 +252,8 @@ void FixedTableLayout::layout()
             calcWidth[i] = Style::evaluate<float>(*fixedWidth, Style::ZoomFactor { 1.0f });
             totalFixedWidth += calcWidth[i];
         } else if (auto percentageWidth = m_width[i].tryPercentage()) {
-            calcWidth[i] = Style::evaluate<float>(*percentageWidth, tableLogicalWidth);
+            float borderPadding = i < m_columnBorderPadding.size() ? m_columnBorderPadding[i] : 0;
+            calcWidth[i] = Style::evaluate<float>(*percentageWidth, tableLogicalWidth) + borderPadding;
             totalPercentWidth += calcWidth[i];
             totalPercent += percentageWidth->value;
         } else if (m_width[i].isAuto()) {
@@ -267,10 +279,24 @@ void FixedTableLayout::layout()
                 }
             }
             if (totalPercent) {
+                // Distribute the space left after fixed columns to the percentage columns in
+                // proportion to their desired width (the resolved percentage plus any reserved
+                // border and padding). When no border/padding is reserved this reduces to
+                // scaling by the raw percentage.
+                float remainingForPercent = tableLogicalWidth - totalFixedWidth;
+                float totalPercentDesired = 0;
+                for (unsigned i = 0; i < nEffCols; i++) {
+                    if (auto percentageWidth = m_width[i].tryPercentage()) {
+                        float borderPadding = i < m_columnBorderPadding.size() ? m_columnBorderPadding[i] : 0;
+                        totalPercentDesired += Style::evaluate<float>(*percentageWidth, tableLogicalWidth) + borderPadding;
+                    }
+                }
                 totalPercentWidth = 0;
                 for (unsigned i = 0; i < nEffCols; i++) {
                     if (auto percentageWidth = m_width[i].tryPercentage()) {
-                        calcWidth[i] = percentageWidth->value * (tableLogicalWidth - totalFixedWidth) / totalPercent;
+                        float borderPadding = i < m_columnBorderPadding.size() ? m_columnBorderPadding[i] : 0;
+                        float desired = Style::evaluate<float>(*percentageWidth, tableLogicalWidth) + borderPadding;
+                        calcWidth[i] = totalPercentDesired ? desired * remainingForPercent / totalPercentDesired : 0;
                         totalPercentWidth += calcWidth[i];
                     }
                 }
