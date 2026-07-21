@@ -380,6 +380,23 @@ String MediaControlsHost::externalDeviceDisplayName() const
 #endif
 }
 
+String MediaControlsHost::externalDeviceRouteName() const
+{
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    RefPtr player = m_mediaElement->player();
+    if (!player) {
+        LOG(Media, "MediaControlsHost::externalDeviceRouteName - returning \"\" because player is NULL");
+        return emptyString();
+    }
+
+    String name = player->wirelessPlaybackRouteName();
+    LOG(Media, "MediaControlsHost::externalDeviceRouteName - returning \"%s\"", name.utf8().data());
+    return name;
+#else
+    return emptyString();
+#endif
+}
+
 auto MediaControlsHost::externalDeviceType() const -> DeviceType
 {
 #if !ENABLE(WIRELESS_PLAYBACK_TARGET)

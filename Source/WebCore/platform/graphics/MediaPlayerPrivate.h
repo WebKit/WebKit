@@ -224,6 +224,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
     virtual String wirelessPlaybackTargetName() const { return emptyString(); }
+    virtual String wirelessPlaybackRouteName() const { return emptyString(); }
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone; }
 
     virtual bool wirelessVideoPlaybackDisabled() const { return true; }

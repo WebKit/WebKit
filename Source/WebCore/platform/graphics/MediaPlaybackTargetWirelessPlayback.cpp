@@ -74,6 +74,13 @@ String MediaPlaybackTargetWirelessPlayback::deviceName() const
     return { };
 }
 
+String MediaPlaybackTargetWirelessPlayback::routeName() const
+{
+    if (RefPtr route = m_route)
+        return route->routeName();
+    return { };
+}
+
 bool MediaPlaybackTargetWirelessPlayback::operator==(const MediaPlaybackTarget& other) const
 {
     RefPtr otherWirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(other);

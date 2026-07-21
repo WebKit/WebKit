@@ -120,6 +120,7 @@ public:
     void requiresTextTrackRepresentationChanged();
 
     String externalDeviceDisplayName() const;
+    String externalDeviceRouteName() const;
 
     enum class DeviceType { None, Airplay, Tvout };
     DeviceType externalDeviceType() const;

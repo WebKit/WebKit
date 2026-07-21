@@ -629,6 +629,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.movieLoadType = state.movieLoadType;
     m_cachedState.wirelessPlaybackTargetType = state.wirelessPlaybackTargetType;
     m_cachedState.wirelessPlaybackTargetName = state.wirelessPlaybackTargetName;
+    m_cachedState.wirelessPlaybackRouteName = state.wirelessPlaybackRouteName;
 
     m_cachedState.startDate = state.startDate;
     m_cachedState.startTime = state.startTime;
@@ -1228,6 +1229,11 @@ bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
 String MediaPlayerPrivateRemote::wirelessPlaybackTargetName() const
 {
     return m_cachedState.wirelessPlaybackTargetName;
+}
+
+String MediaPlayerPrivateRemote::wirelessPlaybackRouteName() const
+{
+    return m_cachedState.wirelessPlaybackRouteName;
 }
 
 MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateRemote::wirelessPlaybackTargetType() const

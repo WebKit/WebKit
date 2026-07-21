@@ -46,6 +46,7 @@ using namespace WebCore;
 
 MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const MediaPlaybackTarget& target)
     : m_deviceName { target.deviceName() }
+    , m_routeName { target.routeName() }
     , m_hasActiveRoute { target.hasActiveRoute() }
     , m_supportsRemoteVideoPlayback { target.supportsRemoteVideoPlayback() }
     , m_targetType { is<MediaPlaybackTargetSerialized>(target) ? downcast<MediaPlaybackTargetSerialized>(target).context().targetType() : target.type() }
@@ -80,8 +81,9 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const
 }
 
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, CoreIPCAVOutputContext&& context, std::optional<WTF::UUID>&& identifier)
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, String&& routeName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, CoreIPCAVOutputContext&& context, std::optional<WTF::UUID>&& identifier)
     : m_deviceName { WTF::move(deviceName) }
+    , m_routeName { WTF::move(routeName) }
     , m_hasActiveRoute { hasActiveRoute }
     , m_supportsRemoteVideoPlayback { supportsRemoteVideoPlayback }
     , m_targetType { targetType }
@@ -91,8 +93,9 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(Strin
 {
 }
 #else
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, String&& contextID, String&& contextType, std::optional<WTF::UUID>&& identifier)
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, String&& routeName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, String&& contextID, String&& contextType, std::optional<WTF::UUID>&& identifier)
     : m_deviceName(WTF::move(deviceName))
+    , m_routeName(WTF::move(routeName))
     , m_hasActiveRoute(hasActiveRoute)
     , m_supportsRemoteVideoPlayback(supportsRemoteVideoPlayback)
     , m_targetType(targetType)

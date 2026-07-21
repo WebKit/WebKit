@@ -61,6 +61,11 @@ String MediaPlaybackTargetCocoa::deviceName() const
     return [outputDeviceNames componentsJoinedByString:@" + "];
 }
 
+String MediaPlaybackTargetCocoa::routeName() const
+{
+    return { };
+}
+
 bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 {
     if ([m_outputContext supportsMultipleOutputDevices]) {

@@ -104,6 +104,7 @@ private:
     DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
     static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
     String wirelessPlaybackTargetName() const final;
+    String wirelessPlaybackRouteName() const final;
     MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
     bool wirelessVideoPlaybackDisabled() const final { return !m_allowsWirelessVideoPlayback; }
     void setWirelessVideoPlaybackDisabled(bool disabled) final { m_allowsWirelessVideoPlayback = !disabled; }

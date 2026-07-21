@@ -41,6 +41,7 @@ header: <WebCore/MediaPlaybackTarget.h>
 header: "MediaPlaybackTargetContextSerialized.h"
 [CustomHeader] class WebKit::MediaPlaybackTargetContextSerialized {
     String deviceName();
+    String routeName();
     bool hasActiveRoute();
     bool supportsRemoteVideoPlayback();
     WebCore::MediaPlaybackTargetType targetType();
