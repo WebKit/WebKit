@@ -2535,7 +2535,9 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
     for (auto& rootFrame : m_rootFrames)
         finalizeRenderingUpdateForRootFrame(Ref { rootFrame.get() }, flags);
 
-    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
+    // A site-isolated Page can have no local root frame with a view to consume the per-root-frame steps.
+    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty()
+        || (settings().siteIsolationEnabled() && m_renderingUpdateRemainingSteps.last() == perRootFrameRenderingUpdateSteps));
     renderingUpdateCompleted();
 }
 

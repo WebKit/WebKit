@@ -57,6 +57,7 @@
 #include "ScheduledAction.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
+#include "Site.h"
 #include "StyleMedia.h"
 #include "VisualViewport.h"
 #include "WebCoreOpaqueRoot.h"
@@ -972,7 +973,8 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
         return String();
     Ref activeOrigin = protect(activeWindow.document())->securityOrigin();
     const Ref targetOrigin = localDocument ? localDocument->securityOrigin() : remoteFrame->frameDocumentSecurityOriginOrOpaque();
-    ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin));
+    // A remote frame with an empty site may legitimately appear as same-origin.
+    ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin) || (remoteFrame && Site { activeOrigin->data() }.isEmpty()));
 
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
     String message;

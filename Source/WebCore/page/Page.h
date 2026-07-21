@@ -364,12 +364,14 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::AdjustVisibility,
 };
 
-constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {
+constexpr auto perRootFrameRenderingUpdateSteps = OptionSet<RenderingUpdateStep> {
     RenderingUpdateStep::LayerFlush,
 #if ENABLE(ASYNC_SCROLLING)
     RenderingUpdateStep::ScrollingTreeUpdate,
 #endif
 };
+
+constexpr auto allRenderingUpdateSteps = updateRenderingSteps | perRootFrameRenderingUpdateSteps;
 
 using WeakElementEdges = RectEdges<WeakPtr<Element, WeakPtrImplWithEventTargetData>>;
 

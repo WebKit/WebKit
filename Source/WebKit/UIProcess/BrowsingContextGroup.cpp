@@ -166,7 +166,14 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
         return;
     auto& site = *process.site();
     for (Ref page : m_pages) {
-        if (site == Site(URL(page->currentURL())))
+        // Under site isolation, a same-site page should be hosted in the same process and
+        // shouldn't need a remote page. Empty sites are the exception as they can span
+        // multiple processes but they appear as same-site.
+        // So for an empty site, only skip when the page really is in this process.
+        bool sameSite = site == Site(URL(page->currentURL()));
+        RefPtr mainFrame = page->mainFrame();
+        bool pageIsInThisProcess = mainFrame && mainFrame->process().coreProcessIdentifier() == process.process().coreProcessIdentifier();
+        if (sameSite && (!site.isEmpty() || pageIsInThisProcess))
             continue;
         createRemotePageIfNeeded(page, site);
     }
