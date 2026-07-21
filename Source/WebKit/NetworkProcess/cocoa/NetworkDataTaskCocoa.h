@@ -86,6 +86,8 @@ public:
 
     bool isInitiatedByDedicatedWorker() const final { return m_isInitiatedByDedicatedWorker; }
 
+    bool navigationLosesFrameSpecificStorageAccess() const final { return m_navigationLosesFrameSpecificStorageAccess; }
+
     String description() const override;
 
     void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) override;
@@ -118,6 +120,7 @@ private:
     Markable<WebPageProxyIdentifier> m_webPageProxyID;
 
     bool m_isForMainResourceNavigationForAnyFrame { false };
+    bool m_navigationLosesFrameSpecificStorageAccess { false };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
     uint64_t m_requiredCookiesVersion { 0 };
 };

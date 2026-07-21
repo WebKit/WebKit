@@ -70,6 +70,7 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
 
     void removeStorageAccess();
+    void removeStorageAccessOnCommit(WebCore::DocumentLoader&);
 
 private:
     bool hasHTMLView() const final;

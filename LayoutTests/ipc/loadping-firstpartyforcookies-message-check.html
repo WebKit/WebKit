@@ -58,6 +58,7 @@ promise_test(async (t) => {
         shouldClearReferrerOnHTTPSToHTTPRedirect: true,
         needsCertificateInfo: false,
         isMainFrameNavigation: false,
+        navigationLosesFrameSpecificStorageAccess: false,
         mainResourceNavigationDataForAnyFrame: {},
         shouldPreconnectOnly: 0,
         isNavigatingToAppBoundDomain: {},

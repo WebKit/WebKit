@@ -242,8 +242,8 @@ public:
     WEBCORE_EXPORT bool NODELETE trackingPreventionEnabled() const;
     WEBCORE_EXPORT void NODELETE setTrackingPreventionDebugLoggingEnabled(bool);
     bool trackingPreventionDebugLoggingEnabled() const { return m_isTrackingPreventionDebugLoggingEnabled; }
-    WEBCORE_EXPORT ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const ResourceRequest&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker, bool isInitiatedByDedicatedWorker = false) const;
-    ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const URL& firstPartyForCookies, const URL& resource, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker, bool isInitiatedByDedicatedWorker = false) const;
+    WEBCORE_EXPORT ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const ResourceRequest&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker, bool isInitiatedByDedicatedWorker = false, bool navigationLosesFrameSpecificStorageAccess = false) const;
+    ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const URL& firstPartyForCookies, const URL& resource, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker, bool isInitiatedByDedicatedWorker = false, bool navigationLosesFrameSpecificStorageAccess = false) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const;
     WEBCORE_EXPORT bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;

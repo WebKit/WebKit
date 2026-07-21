@@ -70,6 +70,7 @@ struct NetworkResourceLoadParameters {
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool needsCertificateInfo { false };
     bool isMainFrameNavigation { false };
+    bool navigationLosesFrameSpecificStorageAccess { false };
     std::optional<NavigationActionData> mainResourceNavigationDataForAnyFrame { };
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
