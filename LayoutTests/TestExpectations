@@ -345,6 +345,8 @@ imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html?r
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?interop-2026 [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?rest [ Pass Failure ]
 
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-video-element-loadedmetadata-event.html [ Pass Failure ]
+
 # The addstream event is not supported anymore.
 imported/w3c/web-platform-tests/webrtc/legacy/onaddstream.https.html [ Skip ]
 
