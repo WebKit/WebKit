@@ -50,17 +50,17 @@ class URLPattern final : public RefCounted<URLPattern> {
 public:
     using URLPatternInput = Variant<String, URLPatternInit>;
 
-    static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
-    static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, URLPatternOptions&&);
+    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
+    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, URLPatternOptions&&);
 
     using Compatible = Variant<String, URLPatternInit, Ref<URLPattern>>;
     static ExceptionOr<Ref<URLPattern>> create(Compatible&&, const String&);
 
-    ~URLPattern();
+    WEBCORE_EXPORT ~URLPattern();
 
-    ExceptionOr<bool> test(URLPatternInput&&, String&& baseURL) const;
+    WEBCORE_EXPORT ExceptionOr<bool> test(URLPatternInput&&, String&& baseURL) const;
 
-    ExceptionOr<std::optional<URLPatternResult>> exec(URLPatternInput&&, String&& baseURL) const;
+    WEBCORE_EXPORT ExceptionOr<std::optional<URLPatternResult>> exec(URLPatternInput&&, String&& baseURL) const;
 
     const String& protocol() const LIFETIME_BOUND { return m_protocolComponent.patternString(); }
     const String& username() const LIFETIME_BOUND { return m_usernameComponent.patternString(); }
@@ -71,7 +71,7 @@ public:
     const String& search() const LIFETIME_BOUND { return m_searchComponent.patternString(); }
     const String& hash() const LIFETIME_BOUND { return m_hashComponent.patternString(); }
 
-    bool NODELETE hasRegExpGroups() const;
+    WEBCORE_EXPORT bool NODELETE hasRegExpGroups() const;
     bool shouldIgnoreCase() const { return m_shouldIgnoreCase; }
 
 private:
