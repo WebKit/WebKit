@@ -118,6 +118,12 @@ _BASE_FILTER_RULES = [
     '-runtime/threadsafe_fn',
     '-runtime/rtti',
     '-whitespace/blank_line',
+
+    # WebKit's importer drops some files (e.g. manual tests), causing these rules to trip
+    # when such missing files are the only match for entries in a WEB_FEATURES.yml file:
+    '-wpt/lint/missing_web_features_file',
+    '-wpt/lint/unnecessary_exclusion_in_web_features_file',
+
     # List Python pep8 categories last.
     #
     # Because much of WebKit's Python code base does not abide by the

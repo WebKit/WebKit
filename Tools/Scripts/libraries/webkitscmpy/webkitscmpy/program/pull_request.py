@@ -500,6 +500,24 @@ class PullRequest(Command):
             for issue in commit.issues
         ]
 
+        unreviewed_match = re.compile(r'(Unreviewed|Versioning.)', re.IGNORECASE)
+        bad_commits = [c for c in commits if c.message and unreviewed_match.search(c.message) and 'Reviewed by' in c.message]
+        if bad_commits:
+            if len(bad_commits) > 1:
+                sys.stderr.write("Multiple commits are marked 'Unreviewed' or 'Versioning' but contain a 'Reviewed by' line, please fix before posting\n")
+                return 1
+            response = Terminal.choose(
+                "Commit message is marked 'Unreviewed' or 'Versioning' but contains a 'Reviewed by' line. Remove it?",
+                options=('Yes', 'No'),
+                default='Yes',
+            )
+            if response == 'Yes':
+                cleaned = re.sub(r'Reviewed by .+\n?', '', bad_commits[0].message)
+                if run([repository.executable(), 'commit', '--amend', '-m', cleaned], cwd=repository.root_path).returncode:
+                    sys.stderr.write("Failed to amend commit message\n")
+                    return 1
+                commits = list(repository.commits(begin={'hash': branch_point.hash}, end={'branch': repository.branch}))
+
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
         radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'

@@ -552,6 +552,7 @@ void JIT::emitSlow_op_get_by_id_direct(const JSInstruction*, Vector<SlowCaseEntr
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+    gen.generateDataICSlowPath(*this);
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
@@ -634,6 +635,7 @@ void JIT::emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+    gen.generateDataICSlowPath(*this);
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
@@ -643,6 +645,7 @@ void JIT::emitSlow_op_get_length(const JSInstruction*, Vector<SlowCaseEntry>::it
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+    gen.generateDataICSlowPath(*this);
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
@@ -688,6 +691,7 @@ void JIT::emitSlow_op_get_by_id_with_this(const JSInstruction*, Vector<SlowCaseE
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdWithThisGenerator& gen = m_getByIdsWithThis[m_getByIdWithThisIndex++];
+    gen.generateDataICSlowPath(*this);
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
@@ -739,6 +743,7 @@ void JIT::emitSlow_op_put_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITPutByIdGenerator& gen = m_putByIds[m_putByIdIndex++];
+    gen.generateDataICSlowPath(*this);
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
@@ -779,6 +784,7 @@ void JIT::emitSlow_op_in_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iter
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITInByIdGenerator& gen = m_inByIds[m_inByIdIndex++];
+    gen.generateDataICSlowPath(*this);
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });

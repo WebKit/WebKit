@@ -2476,6 +2476,27 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#BaselineShiftProperty"
             }
         },
+        "baseline-source": {
+            "animation-type": "discrete",
+            "initial": "auto",
+            "values": [
+                "auto",
+                "first",
+                "last"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssBaselineSourceEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "BaselineSource",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://drafts.csswg.org/css-inline-3/#baseline-source"
+            },
+            "status": "experimental"
+        },
         "block-ellipsis": {
             "animation-type": "discrete",
             "inherited": true,

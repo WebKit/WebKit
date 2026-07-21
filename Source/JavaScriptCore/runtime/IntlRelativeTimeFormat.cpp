@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -365,7 +366,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     if (numberStart >= 0) {
         if (numberStart > 0) {
             JSObject* part = createIntlPartObject(globalObject, literalString, jsSubstring(vm, formattedRelativeTime, 0, numberStart));
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
 
@@ -382,13 +383,13 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
         auto stringLength = formattedRelativeTime.length();
         if (static_cast<unsigned>(numberEnd) < stringLength) {
             JSObject* part = createIntlPartObject(globalObject, literalString, jsSubstring(vm, formattedRelativeTime, numberEnd, stringLength - numberEnd));
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
     } else {
         // No numeric field (e.g., numeric: "auto" producing "today", "yesterday").
         JSObject* part = createIntlPartObject(globalObject, literalString, jsString(vm, formattedRelativeTime));
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

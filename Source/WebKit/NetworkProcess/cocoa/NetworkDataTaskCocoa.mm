@@ -195,6 +195,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_pageID(parameters.webPageID)
     , m_webPageProxyID(parameters.webPageProxyID)
     , m_isForMainResourceNavigationForAnyFrame(!!parameters.mainResourceNavigationDataForAnyFrame)
+    , m_navigationLosesFrameSpecificStorageAccess(parameters.navigationLosesFrameSpecificStorageAccess)
     , m_sourceOrigin(parameters.sourceOrigin)
     , m_requiredCookiesVersion(parameters.requiredCookiesVersion)
 {

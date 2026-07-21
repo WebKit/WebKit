@@ -16,6 +16,21 @@ function shouldThrow(func, errorType, label) {
     throw new Error(`${label}: expected ${errorType.name}, but no exception was thrown`);
 }
 
+function shouldBeDate(actual, year, month, day, label) {
+    shouldBe(actual.year, year, `${label} year`);
+    shouldBe(actual.month, month, `${label} month`);
+    shouldBe(actual.day, day, `${label} day`);
+}
+
+function shouldRoundTripDuration(start, end, largestUnit, expected, label) {
+    const forward = start.until(end, {largestUnit});
+    shouldBe(forward.toString(), expected, `${label} forward difference`);
+    shouldBe(start.add(forward).equals(end), true, `${label} forward inverse`);
+    const reverse = end.until(start, {largestUnit});
+    shouldBe(reverse.toString(), `-${expected}`, `${label} reverse difference`);
+    shouldBe(end.add(reverse).equals(start), true, `${label} reverse inverse`);
+}
+
 // Buddhist: `year` is BE (Gregorian + 543). BE 2567 = Gregorian 2024.
 {
     const pd = Temporal.PlainDate.from({year:2567, month:1, day:1, calendar:"buddhist"});
@@ -107,4 +122,109 @@ shouldThrow(() => Temporal.PlainMonthDay.from({year:-1, era:"aa", eraYear:0, mon
     const pd = Temporal.PlainDate.from({era:"ce", eraYear:1600, month:2, day:29, calendar:"japanese"});
     shouldBe(pd.inLeapYear, true, "japanese ce 1600 inLeapYear");
     shouldBe(pd.daysInYear, 366, "japanese ce 1600 daysInYear");
+}
+
+// Month arithmetic uses calendar-native months, not ISO months.
+const indianMonthDate = Temporal.PlainDate.from({year:1945, month:12, day:29, calendar:"indian"});
+const indianAddedMonth = indianMonthDate.add({months:1});
+shouldBeDate(indianAddedMonth, 1946, 1, 29, "indian add month");
+shouldBeDate(indianAddedMonth.subtract({months:1}), 1945, 12, 29, "indian subtract month");
+
+// Calendar-native add/until balances years and months, including month correction and day remainders.
+for (const [calendar, label, startFields, endFields, largestUnit, expected] of [
+    ["persian", "add/until", {year:1402, month:10, day:15}, {year:1404, month:1, day:15}, "years", "P1Y3M"],
+    ["coptic", "add/until", {year:1739, month:11, day:15}, {year:1741, month:1, day:15}, "years", "P1Y3M"],
+    ["persian", "end-of-month surpass", {year:1402, month:6, day:31}, {year:1402, month:7, day:30}, "months", "P30D"],
+    ["persian", "month/day remainder", {year:1402, month:1, day:15}, {year:1402, month:3, day:20}, "months", "P2M5D"],
+]) {
+    const start = Temporal.PlainDate.from({...startFields, calendar});
+    const end = Temporal.PlainDate.from({...endFields, calendar});
+    shouldRoundTripDuration(start, end, largestUnit, expected, `${calendar} ${label}`);
+}
+
+// Constrain and reject apply after calendar-native month and leap-day year arithmetic.
+for (const [label, unit, fields, expected] of [
+    ["persian", "month", {year:1402, month:11, day:30, calendar:"persian"}, [1402, 12, 29]],
+    ["coptic", "month", {year:1740, month:12, day:30, calendar:"coptic"}, [1740, 13, 5]],
+    ["indian", "month", {year:1945, month:6, day:31, calendar:"indian"}, [1945, 7, 30]],
+    ["persian", "year", {year:1399, month:12, day:30, calendar:"persian"}, [1400, 12, 29]],
+    ["coptic", "year", {year:1739, month:13, day:6, calendar:"coptic"}, [1740, 13, 5]],
+    ["indian", "year", {year:1946, month:1, day:31, calendar:"indian"}, [1947, 1, 30]],
+]) {
+    const pd = Temporal.PlainDate.from(fields);
+    const duration = unit === "month" ? {months:1} : {years:1};
+    shouldBeDate(pd.add(duration), ...expected, `${label} constrained ${unit}`);
+    shouldThrow(() => pd.add(duration, {overflow:"reject"}), RangeError, `${label} rejected ${unit}`);
+}
+
+// Weeks and days are applied after calendar-native years and months for both signs.
+const positiveMixedDate = Temporal.PlainDate.from({year:1402, month:12, day:29, calendar:"persian"});
+shouldBeDate(positiveMixedDate.add({months:1, weeks:1, days:1}), 1403, 2, 6, "persian positive mixed duration");
+const negativeMixedDate = Temporal.PlainDate.from({year:1403, month:1, day:29, calendar:"persian"});
+shouldBeDate(negativeMixedDate.subtract({months:1, weeks:1, days:1}), 1402, 12, 21, "persian negative mixed duration");
+
+// Ethiopic calendars use the same 13-month solar arithmetic as Coptic.
+for (const calendar of ["ethiopic", "ethioaa"]) {
+    const pd = Temporal.PlainDate.from({year:2015, month:13, day:5, calendar});
+    shouldBeDate(pd.add({months:1}), 2016, 1, 5, `${calendar} add month`);
+}
+
+// A Gregorian-derived calendar keeps exact ISO proleptic-Gregorian arithmetic.
+const gregorianMonthDate = Temporal.PlainDate.from("2024-01-31").withCalendar("gregory");
+shouldBe(gregorianMonthDate.add({months:1}).withCalendar("iso8601").toString(), "2024-02-29", "gregory add month");
+
+// Representative existing lunisolar arithmetic still enters intercalary months.
+for (const [date, expectedMonthCode, expectedDay, calendar] of [
+    [Temporal.PlainDate.from("2023-02-20").withCalendar("chinese"), "M02L", 1, "chinese"],
+    [Temporal.PlainDate.from({year:5784, monthCode:"M05", day:15, calendar:"hebrew"}), "M05L", 15, "hebrew"],
+]) {
+    const added = date.add({months:1});
+    shouldBe(added.monthCode, expectedMonthCode, `${calendar} add into leap month monthCode`);
+    shouldBe(added.day, expectedDay, `${calendar} add into leap month day`);
+}
+
+// ICU must not silently clamp native month arithmetic at Temporal's representable limits.
+shouldBe(Temporal.PlainDate.from("-271821-05-19").withCalendar("indian").add({months:-1}).withCalendar("iso8601").toString(), "-271821-04-19", "indian exact minimum boundary");
+shouldBe(Temporal.PlainDate.from("-271821-04-19").withCalendar("indian").add({months:1}).withCalendar("iso8601").toString(), "-271821-05-19", "indian add from exact minimum boundary");
+shouldThrow(() => Temporal.PlainDate.from("-271821-04-20").withCalendar("indian").add({months:-1}), RangeError, "indian minimum boundary");
+shouldThrow(() => Temporal.PlainDate.from("-271821-05-20").withCalendar("indian").add({months:-2}), RangeError, "indian multi-month partial minimum clamp");
+shouldThrow(() => Temporal.PlainDate.from("-271821-06-20").withCalendar("indian").add({months:-3}), RangeError, "indian longer partial minimum clamp");
+shouldBe(Temporal.PlainDate.from("-271821-06-19").withCalendar("indian").add({months:-2}).withCalendar("iso8601").toString(), "-271821-04-19", "indian exact multi-month minimum boundary");
+const indianMinimum = Temporal.PlainDate.from("-271821-04-19").withCalendar("indian");
+const indianMinimumNextMonth = indianMinimum.add({months:1});
+shouldBe(indianMinimum.until(indianMinimumNextMonth, {largestUnit:"months"}).toString(), "P1M", "indian minimum until progress");
+shouldBe(indianMinimumNextMonth.until(indianMinimum, {largestUnit:"months"}).toString(), "-P1M", "indian minimum reverse until progress");
+
+// Calendar-native arithmetic must enforce the exact partial-year ISO limits.
+shouldBe(Temporal.PlainDate.from("+275760-08-13").withCalendar("indian").add({months:1}).withCalendar("iso8601").toString(), "+275760-09-13", "indian exact maximum boundary");
+shouldThrow(() => Temporal.PlainDate.from("+275760-08-14").withCalendar("indian").add({months:1}), RangeError, "indian maximum boundary");
+shouldThrow(() => Temporal.PlainDate.from("+275760-07-14").withCalendar("indian").add({months:2}), RangeError, "indian multi-month partial maximum clamp");
+const copticMaximum = Temporal.PlainDate.from("+275760-09-13").withCalendar("coptic");
+const copticPriorYear = copticMaximum.subtract({months:13});
+shouldBe(copticPriorYear.add({months:13}).equals(copticMaximum), true, "coptic exact 13-month maximum boundary");
+shouldBe(copticPriorYear.until(copticMaximum, {largestUnit:"months"}).toString(), "P13M", "coptic extreme 13-month difference");
+
+// Final ISO day/week movement is checked after the native year/month baseline.
+shouldThrow(() => Temporal.PlainDate.from("+275760-08-13").withCalendar("indian").add({months:1, days:1}), RangeError, "indian final day beyond maximum");
+shouldThrow(() => Temporal.PlainDate.from("+275760-09-07").withCalendar("indian").add({weeks:1}), RangeError, "indian final week beyond maximum");
+
+// Partial Temporal types use their own limits and may canonicalize an out-of-PlainDate-range reference date.
+shouldBe(Temporal.PlainYearMonth.from({year:275682, monthCode:"M07", calendar:"indian"}).toString(), "+275760-09-23[u-ca=indian]", "indian maximum PlainYearMonth");
+shouldBe(Temporal.PlainYearMonth.from({year:-272442, monthCode:"M01", calendar:"persian"}).toString(), "-271821-04-11[u-ca=persian]", "persian boundary PlainYearMonth");
+shouldBe(Temporal.PlainMonthDay.from({year:-272442, monthCode:"M01", day:1, calendar:"persian"}).toString(), "1972-03-21[u-ca=persian]", "persian boundary PlainMonthDay");
+shouldThrow(() => Temporal.PlainYearMonth.from("+275760-09-01[u-ca=indian]").add({months:1}), RangeError, "indian PlainYearMonth maximum boundary");
+
+// Fixed-solar month differences must not walk millions of native months one at a time.
+for (const [calendar, startFields, endFields, expectedMonths] of [
+    ["indian", "-250000-01-01", "+250000-01-01", 6000000],
+    ["persian", {year:-250000, month:1, day:15}, {year:250000, month:1, day:15}, 6000000],
+    ["coptic", {year:-250000, month:1, day:15}, {year:250000, month:1, day:15}, 6500000],
+]) {
+    const start = typeof startFields === "string" ? Temporal.PlainDate.from(startFields).withCalendar(calendar) : Temporal.PlainDate.from({...startFields, calendar});
+    const end = typeof endFields === "string" ? Temporal.PlainDate.from(endFields).withCalendar(calendar) : Temporal.PlainDate.from({...endFields, calendar});
+    const forward = start.until(end, {largestUnit:"months"});
+    const reverse = end.until(start, {largestUnit:"months"});
+    shouldBe(forward.toString(), `P${expectedMonths}M`, `${calendar} wide forward month difference`);
+    shouldBe(reverse.toString(), `-P${expectedMonths}M`, `${calendar} wide reverse month difference`);
+    shouldBe(start.until(end, {largestUnit:"years"}).toString(), "P500000Y", `${calendar} wide year difference`);
 }

@@ -39,9 +39,11 @@
 			{"value": "unreviewed test gardening"}
 		],
 		"paths": [
-			"LayoutTests/",
-			"Tools/TestWebKitAPI",
-			"TestExpectations/apitests"
+			"LayoutTests/TestExpectations",
+			"LayoutTests/platform/.+/TestExpectations",
+			"LayoutTests/.+-expected(-mismatch)?\\.",
+			"TestExpectations/apitests",
+			"Tools/TestWebKitAPI/.+/TestExpectations"
 		]
 	},
 	{

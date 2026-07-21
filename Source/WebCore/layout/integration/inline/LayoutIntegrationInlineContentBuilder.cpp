@@ -374,12 +374,15 @@ FloatRect InlineContentBuilder::handlePartialDisplayContentUpdate(Layout::Inline
             if (numberOfNewBoxes == *numberOfDamagedBoxes)
                 return;
             auto firstCleanLineIndex = *firstDamagedLineIndex + *numberOfDamagedLines;
-            auto offset = numberOfNewBoxes - *numberOfDamagedBoxes;
             auto& lines = displayContent.lines;
             for (size_t cleanLineIndex = firstCleanLineIndex; cleanLineIndex < lines.size(); ++cleanLineIndex) {
-                ASSERT(lines[cleanLineIndex].firstBoxIndex() + offset > 0);
-                auto adjustedFirstBoxIndex = std::max<size_t>(0, lines[cleanLineIndex].firstBoxIndex() + offset);
-                lines[cleanLineIndex].setFirstBoxIndex(adjustedFirstBoxIndex);
+                auto firstBoxIndex = lines[cleanLineIndex].firstBoxIndex();
+                if (numberOfNewBoxes >= *numberOfDamagedBoxes) {
+                    lines[cleanLineIndex].setFirstBoxIndex(firstBoxIndex + (numberOfNewBoxes - *numberOfDamagedBoxes));
+                    continue;
+                }
+                auto decrease = *numberOfDamagedBoxes - numberOfNewBoxes;
+                lines[cleanLineIndex].setFirstBoxIndex(decrease > firstBoxIndex ? 0uz : firstBoxIndex - decrease);
             }
         };
         adjustCachedBoxIndexesIfNeeded();

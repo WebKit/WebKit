@@ -13,7 +13,7 @@
             testFrame.remove();
 
             const result = (new FrameURLPattern()).exec();
-            assert_equals(result, null);
+            assert_not_equals(result, null);
         }, "URLPattern with stopped document");
     </script>
     <p>This test passes if WebKit does not crash.</p>

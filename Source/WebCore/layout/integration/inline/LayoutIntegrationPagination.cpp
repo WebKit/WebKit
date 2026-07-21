@@ -65,11 +65,11 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
             continue;
 
         CheckedRef renderer = downcast<RenderBox>(*floatBox.layoutBox()->rendererForIntegration());
-        bool isUsplittable = renderer->isUnsplittableForPagination() || renderer->style().breakInside() == BreakInside::Avoid;
+        bool isUnsplittable = renderer->isUnsplittableForPagination() || renderer->style().breakInside() == BreakInside::Avoid;
 
         auto placedByLine = floatBox.placedByLine();
         if (!placedByLine) {
-            if (isUsplittable) {
+            if (isUnsplittable) {
                 auto rect = floatBox.absoluteRectWithMargin();
                 flow.updateMinimumPageHeight(rect.top(), rect.height());
             }
@@ -77,7 +77,7 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
         }
 
         auto floatMinimumBottom = [&] {
-            if (isUsplittable)
+            if (isUnsplittable)
                 return floatBox.absoluteRectWithMargin().bottom();
 
             if (CheckedPtr block = dynamicDowncast<RenderBlockFlow>(renderer)) {

@@ -56,6 +56,7 @@ enum OffscreenRenderingContextType {
     Conditional=OFFSCREEN_CANVAS,
     ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKERS,
     EnabledForContext,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker)
 ] interface OffscreenCanvas : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height);

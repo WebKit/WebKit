@@ -149,12 +149,14 @@ public:
 #endif
 
     // ActiveDOMObject
+    void suspend(ReasonForSuspension) final;
     void stop() final;
 
     bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
     void viewportIntersectionChanged(bool isIntersecting);
 
 private:
+    friend class HTMLVideoElementPictureInPicture;
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
     void scheduleResizeEvent(const FloatSize&) final;

@@ -529,7 +529,6 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         throwException(globalObject, scope, error);
     };
 
-    // FIXME(wasm-multimemory): will need to change this to make BBQ/OMG work with multiple memories
     // FIXME(wasm-multimemory): should we get rid of hasMemoryImport()?
     if (moduleInformation.hasMemoryImport()) {
         // Usually at this point the module's code block in any memory mode should be
@@ -873,16 +872,23 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
             uint8_t* memory = static_cast<uint8_t*>(wasmMemory.basePointer());
             uint64_t sizeInBytes = wasmMemory.size();
 
+            const bool isMemory64 = moduleInformation.memory(segment->memoryIndex()).isMemory64();
             uint64_t offset = 0;
-            if (segment->offsetIfActive()->isGlobalImport())
-                offset = static_cast<uint64_t>(m_instance->loadI32Global(segment->offsetIfActive()->globalImportIndex()));
-            else if (segment->offsetIfActive()->isConst())
-                offset = segment->offsetIfActive()->constValue();
-            else {
+            if (segment->offsetIfActive()->isGlobalImport()) {
+                if (isMemory64)
+                    offset = static_cast<uint64_t>(m_instance->loadI64Global(segment->offsetIfActive()->globalImportIndex()));
+                else
+                    offset = static_cast<uint32_t>(m_instance->loadI32Global(segment->offsetIfActive()->globalImportIndex()));
+            } else if (segment->offsetIfActive()->isConst()) {
+                if (isMemory64)
+                    offset = segment->offsetIfActive()->constValue();
+                else
+                    offset = static_cast<uint32_t>(segment->offsetIfActive()->constValue());
+            } else {
                 uint64_t result;
-                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[segment->offsetIfActive()->constantExpressionIndex()], moduleInformation, Wasm::Types::I32, result);
+                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[segment->offsetIfActive()->constantExpressionIndex()], moduleInformation, isMemory64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
                 RETURN_IF_EXCEPTION(scope, void());
-                offset = result;
+                offset = isMemory64 ? result : static_cast<uint32_t>(result);
             }
 
             if (fn(memory, sizeInBytes, segment, offset) == IterationStatus::Done)

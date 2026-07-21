@@ -341,9 +341,9 @@ IDBError MemoryIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     return IDBError { };
 }
 
-IDBError MemoryIDBBackingStore::addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const IndexIDToIndexKeyMap& indexKeys, const IDBValue& value)
+IDBError MemoryIDBBackingStore::overwriteRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const IndexIDToIndexKeyMap& indexKeys, const IDBValue& value)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::addRecord");
+    LOG(IndexedDB, "MemoryIDBBackingStore::overwriteRecord");
 
     RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction)
@@ -353,7 +353,7 @@ IDBError MemoryIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     if (!objectStore)
         return IDBError { ExceptionCode::UnknownError, "No backing store object store found to put record"_s };
 
-    return objectStore->addRecord(*transaction, keyData, indexKeys, value);
+    return objectStore->overwriteRecord(*transaction, keyData, indexKeys, value);
 }
 
 IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, const IDBKeyRangeData& range, IDBGetRecordDataType type, IDBGetResult& outValue)

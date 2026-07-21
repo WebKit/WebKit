@@ -1801,8 +1801,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverse()
 {
-    for (size_t i = 0; i < m_size / 2; ++i)
-        std::swap(at(i), at(m_size - 1 - i));
+    std::ranges::reverse(*this);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>

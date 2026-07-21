@@ -57,6 +57,8 @@ public:
 
     virtual bool isInitiatedByDedicatedWorker() const { return false; }
 
+    virtual bool navigationLosesFrameSpecificStorageAccess() const { return false; }
+
 protected:
     NetworkTaskCocoa(NetworkSession&);
 

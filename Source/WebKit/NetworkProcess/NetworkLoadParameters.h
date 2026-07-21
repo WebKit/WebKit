@@ -67,6 +67,11 @@ struct NetworkLoadParameters {
     bool isInitiatedByDedicatedWorker { false };
 
     uint64_t requiredCookiesVersion { 0 };
+
+    // The navigation initiator lost the navigated frame's Storage Access API grant (computed in
+    // the WebProcess). We should block storage access cookies on this load's network requests without
+    // revoking the frame's storage from JS until the navigation load commits.
+    bool navigationLosesFrameSpecificStorageAccess { false };
 };
 
 } // namespace WebKit

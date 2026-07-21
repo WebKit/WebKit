@@ -345,6 +345,8 @@ imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html?r
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?interop-2026 [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?rest [ Pass Failure ]
 
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-video-element-loadedmetadata-event.html [ Pass Failure ]
+
 # The addstream event is not supported anymore.
 imported/w3c/web-platform-tests/webrtc/legacy/onaddstream.https.html [ Skip ]
 
@@ -425,7 +427,9 @@ compositing/geometry/frame-clipping-layer-with-top-left-inset.html [ Skip ]
 # A rounding error may cause 90deg 3d-rotated elements to count as painted
 imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant.html
 
-webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
+webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture-disable-attribute.optional.html [ Skip ]
+webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/mediastream.html [ Skip ]
+webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/permissions-policy.https.sub.html [ Skip ]
 
 # PiP API tests are only relevant on mac and iPad
 media/picture-in-picture [ Skip ]
@@ -2342,6 +2346,12 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/broadcastchanne
 # This webmessaging WPT test is flaky.
 webkit.org/b/289126 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ Skip ]
 
+# Timeout because we don't have MessagePort.onclose (see https://github.com/whatwg/html/issues/10201)
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/document-destroyed.tentative.window.html [ Skip ]
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/explicitly-closed.tentative.window.html [ Skip ]
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/garbage-collected.tentative.any.html [ Skip ]
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/garbage-collected.tentative.any.worker.html [ Skip ]
+
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/percentage-height-quirk-excludes-flex-grid-001.html [ ImageOnlyFailure ]
@@ -2531,7 +2541,6 @@ imported/w3c/web-platform-tests/svg/animations/cyclic-syncbase-events.html [ Ski
 imported/w3c/web-platform-tests/svg/painting/marker-orient-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/marker-external-reference.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-004.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-006.svg [ ImageOnlyFailure ]

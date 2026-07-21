@@ -164,7 +164,14 @@ public:
     bool isBuffered(const PlatformTimeRanges&) const;
     PlatformTimeRanges seekable() const;
 
+    // Returns the time at which playback starting from currentTime would first
+    // stall: walk forward from the range containing currentTime, bridging gaps
+    // within the gap policy, stopping at the first larger gap (or media end).
+    // The overload taking ranges lets callers (e.g. per-SourceBuffer coded frame
+    // eviction) evaluate the stall against their own buffered ranges rather than
+    // the cross-SourceBuffer intersection.
     MediaTime nextStallTime(const MediaTime& currentTime) const;
+    MediaTime nextStallTime(const MediaTime& currentTime, const PlatformTimeRanges&) const;
     bool hasBufferedData() const;
     bool hasCurrentTime() const;
     bool hasFutureTime() const;

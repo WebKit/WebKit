@@ -148,7 +148,7 @@ static inline void NODELETE updateRenderTreeLegacyLineClamp(auto& inlineLayoutSt
     renderTreeLayoutState.setLegacyLineClamp(legacyLineClamp);
 }
 
-static inline void NODELETE udpdateIFCLineClamp(auto& inlineLayoutState, auto& renderTreeLayoutState)
+static inline void NODELETE updateIFCLineClamp(auto& inlineLayoutState, auto& renderTreeLayoutState)
 {
     auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
 
@@ -208,7 +208,7 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         }
         blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), borderBoxTop });
 
-        udpdateIFCLineClamp(inlineLayoutState, renderTreeLayoutState);
+        updateIFCLineClamp(inlineLayoutState, renderTreeLayoutState);
         populateIFCWithNewlyPlacedFloats(blockRenderer.get(), placedFloats, blockLineLogicalTopLeft);
         parentBlockLayoutState.marginState() = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);
     };

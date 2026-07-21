@@ -190,6 +190,9 @@ void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin codeOrigin, JSValueReg
 
     addGetById(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
+    addSlowPathGeneratorLambda([=, this]() mutable {
+        gen.generateDataICSlowPath(*this);
+    });
 }
 
 void SpeculativeJIT::cachedGetByIdWithThis(Node* node, CodeOrigin codeOrigin, JSValueRegs baseRegs, JSValueRegs thisRegs, JSValueRegs resultRegs, CacheableIdentifier identifier, bool needsBaseAndThisCellCheck)
@@ -226,6 +229,9 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node, CodeOrigin codeOrigin, JS
 
     addGetByIdWithThis(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
+    addSlowPathGeneratorLambda([=, this]() mutable {
+        gen.generateDataICSlowPath(*this);
+    });
 }
 
 void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand)
@@ -7561,6 +7567,9 @@ void SpeculativeJIT::compileInById(Node* node)
 
     addInById(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
+    addSlowPathGeneratorLambda([=, this]() mutable {
+        gen.generateDataICSlowPath(*this);
+    });
 
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
@@ -8294,6 +8303,9 @@ void SpeculativeJIT::cachedPutById(Node*, CodeOrigin codeOrigin, GPRReg baseGPR,
 
     addPutById(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
+    addSlowPathGeneratorLambda([=, this]() mutable {
+        gen.generateDataICSlowPath(*this);
+    });
 }
 
 void SpeculativeJIT::compilePutPrivateNameById(Node* node)

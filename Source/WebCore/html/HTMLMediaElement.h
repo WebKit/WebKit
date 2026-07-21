@@ -823,6 +823,7 @@ protected:
 protected:
     // ActiveDOMObject
     void stop() override;
+    void suspend(ReasonForSuspension) override;
 
 private:
     friend class Internals;
@@ -842,7 +843,6 @@ private:
     void willStopBeingFullscreenElement() override;
 
     // ActiveDOMObject.
-    void suspend(ReasonForSuspension) override;
     void resume() override;
     bool virtualHasPendingActivity() const override;
 

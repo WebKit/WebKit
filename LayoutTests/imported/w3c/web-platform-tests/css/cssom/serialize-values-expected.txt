@@ -207,10 +207,10 @@ PASS baseline-shift: 0px
 PASS baseline-shift: 1px
 PASS baseline-shift: .1em
 PASS baseline-shift: inherit
-FAIL baseline-source: auto assert_equals: baseline-source raw inline style declaration expected (string) "auto" but got (undefined) undefined
-FAIL baseline-source: first assert_equals: baseline-source raw inline style declaration expected (string) "first" but got (undefined) undefined
-FAIL baseline-source: last assert_equals: baseline-source raw inline style declaration expected (string) "last" but got (undefined) undefined
-FAIL baseline-source: inherit assert_equals: baseline-source raw inline style declaration expected (string) "inherit" but got (undefined) undefined
+PASS baseline-source: auto
+PASS baseline-source: first
+PASS baseline-source: last
+PASS baseline-source: inherit
 PASS border-collapse: collapse
 PASS border-collapse: separate
 PASS border-collapse: inherit

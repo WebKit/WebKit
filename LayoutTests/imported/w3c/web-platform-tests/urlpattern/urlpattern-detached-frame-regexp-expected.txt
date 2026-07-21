@@ -1,6 +1,6 @@
 
-FAIL Named regexp group matches after the owning frame is detached assert_not_equals: regexp pattern should match got disallowed value null
+PASS Named regexp group matches after the owning frame is detached
 PASS Non-matching regexp input returns null after the owning frame is detached
-FAIL Anonymous regexp group via test() after the owning frame is detached assert_true: anonymous regexp alternation should match after detach expected true got false
-FAIL Regexp groups across multiple components after the owning frame is detached assert_not_equals: multi-component regexp pattern should match after detach got disallowed value null
+PASS Anonymous regexp group via test() after the owning frame is detached
+PASS Regexp groups across multiple components after the owning frame is detached
 

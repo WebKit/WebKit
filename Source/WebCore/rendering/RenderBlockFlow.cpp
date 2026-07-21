@@ -4409,7 +4409,7 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     auto& inlineLayout = *this->inlineLayout();
 
     ASSERT(containingBlock() || is<RenderView>(*this));
-    inlineLayout.updateFormattingContexGeometries(containingBlock() ? containingBlockLogicalWidthForContent() : LayoutUnit());
+    inlineLayout.updateFormattingContextGeometries(containingBlock() ? containingBlockLogicalWidthForContent() : LayoutUnit());
 
     auto marginInfo = MarginInfo { *this, MarginInfo::IgnoreScrollbarForAfterMargin::No };
     auto shouldForceFullLayout = relayoutChildren == RelayoutChildren::Yes || inlineContentStatus.hasDirtyInFlowBlockLevelElement ? LayoutIntegration::LineLayout::ForceFullLayout::Yes : LayoutIntegration::LineLayout::ForceFullLayout::No;

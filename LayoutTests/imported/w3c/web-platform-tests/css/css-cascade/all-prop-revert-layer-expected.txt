@@ -31,6 +31,7 @@ PASS background-position-y
 PASS background-repeat
 PASS background-size
 PASS baseline-shift
+PASS baseline-source
 PASS block-size
 PASS border-block-end-color
 PASS border-block-end-style

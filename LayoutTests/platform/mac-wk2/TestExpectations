@@ -2259,7 +2259,7 @@ webkit.org/b/311677 [ Tahoe+ Release ] imported/w3c/web-platform-tests/svg/anima
 
 webkit.org/b/313278 [ Tahoe+ ] imported/w3c/web-platform-tests/css/css-images/gradient/gradient-analogous-missing-components-003.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/313346 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Pass Failure ]
+webkit.org/b/313346 [ Sequoia+ ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Pass Failure ]
 
 webkit.org/b/313554 [ Debug ] http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url.html [ Skip ]
 
@@ -2439,3 +2439,5 @@ media/media-source/media-managedmse-webvtt-track.html [ Pass Timeout ]
 webkit.org/b/319121 [ Release ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-corner-shape-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ]
+
+webkit.org/b/319798 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Pass Failure ]

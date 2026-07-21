@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -840,7 +841,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
                 case ElementType::Literal: {
                     JSString* value = jsString(vm, element.m_string);
                     JSObject* part = createPart(literalString, value);
-                    parts->push(globalObject, part);
+                    parts->putDirectIndex(globalObject, parts->length(), part);
                     RETURN_IF_EXCEPTION(scope, void());
                     break;
                 }
@@ -868,7 +869,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
         if (previousEndIndex < beginIndex) {
             auto value = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = createPart(literalString, value);
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
         previousEndIndex = endIndex;
@@ -876,10 +877,11 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    ASSERT(previousEndIndex == resultLength);
     if (previousEndIndex < resultLength) {
         auto value = jsString(vm, resultStringView.substring(previousEndIndex, resultLength - previousEndIndex));
         JSObject* part = createPart(literalString, value);
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

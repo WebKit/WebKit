@@ -107,7 +107,7 @@ struct Layer {
         BindingList* end;
 
         if constexpr (kForwards) {
-            list = startList ? startList : fBindings.head();
+            list = startList ? startList->fNext : fBindings.head();
             end = nullptr;
         } else {
             list = fBindings.tail();
@@ -132,8 +132,9 @@ struct Layer {
     //
     // This was implemented in https://review.skia.org/1171836 and slightly regresses performance
     // due to the overhead it introduces.
-    template <bool kIsStencil, bool kIsDepthOnly = false, bool kForwards>
-    SK_ALWAYS_INLINE std::pair<BoundsTest, BindingList*> test(const Rect& drawBounds,
+    template <bool kIsStencil, bool kForwards>
+    SK_ALWAYS_INLINE std::pair<BoundsTest, BindingList*> test(bool isDepthOnly,
+                                                              const Rect& drawBounds,
                                                               const LayerKey& key,
                                                               bool requiresBarrier,
                                                               BindingList* startList,
@@ -142,7 +143,7 @@ struct Layer {
         BindingList* list;
         BindingList* end;
         if constexpr (kForwards) {
-            list = startList ? startList : fBindings.head();
+            list = startList ? startList->fNext : fBindings.head();
             end = nullptr;
         } else {
             list = fBindings.tail();
@@ -151,40 +152,26 @@ struct Layer {
         // Advancement is also constexpr
         for (; list != end; list = kForwards ? list->fNext : list->fPrev) {
             if (list->fKey.isEqual(key, matchUniform)) {
-                // Depth-only and stencil draws check for intersection under the rules listed below.
-                if constexpr (!kIsDepthOnly && !kIsStencil) {
-                    foundMatch = list;
+                // A side effect of the layer key system is that a non-shading stencil step and a
+                // depth-only draw can generate a valid match. While this allows the two render
+                // steps to share the same binding list, it technically still produces a visually
+                // correct image due to the multi-step nature of stencil renderers:
+                //
+                // 1. Depth-Only matching a Stencil List: While depth-only draws allow self-
+                //    intersection (see below), they cannot bypass shading draws. During a backwards
+                //    traversal, a depth draw might match the stencil's non-shading step, but it
+                //    will always be blocked by the stencil's subsequent shading step (which shares
+                //    identical bounds and is encountered first in reverse).
+                //
+                // 2. Stencil Step matching a Depth-Only List: A spatially disjoint non-shading
+                //    stencil step can match an existing depth-only list. This is a theoretical
+                //    hazard because shading draws are permitted to bypass depth-only lists.
+                //    However, the stencil's corresponding shading step acts as a shield; any
+                //    succeeding draw that would have incorrectly bypassed the stencil step will
+                //    collide with the shading step earlier in its traversal and halt.
+                foundMatch = list;
+                if (!isDepthOnly && !kIsStencil) {
                     if (!requiresBarrier) continue;
-                } else {
-                    // A side effect of the layer key system is that a non-shading stencil step and
-                    // a depth-only draw can generate a valid match. While this allows the two
-                    // render steps to share the same binding list, it technically still produces a
-                    // visually correct image due to the multi-step nature of stencil renderers:
-                    //
-                    // 1. Depth-Only matching a Stencil List: While depth-only draws allow self-
-                    //    intersection (see below), they cannot bypass shading draws. During a
-                    //    backwards traversal, a depth draw might match the stencil's non-shading
-                    //    step, but it will always be blocked by the stencil's subsequent shading
-                    //    step (which shares identical bounds and is encountered first in reverse).
-                    //
-                    // 2. Stencil Step matching a Depth-Only List: A spatially disjoint non-shading
-                    //    stencil step can match an existing depth-only list. This is a theoretical
-                    //    hazard because shading draws are permitted to bypass depth-only lists.
-                    //    However, the stencil's corresponding shading step acts as a shield; any
-                    //    succeeding draw that would have incorrectly bypassed the stencil step will
-                    //    collide with the shading step earlier in its traversal and halt.
-                    //
-                    // However, we must strictly prevent these disjoint draws from merging because
-                    // mixing them corrupts the list's fIsDepthOnly state, breaking batching:
-                    //
-                    // Poisoned Depth Batches: If a Depth draw merges into a Stencil list
-                    // (fIsDepthOnly == false), subsequent depth draws evaluating this list will
-                    // process !list->fIsDepthOnly as true. Even though the overlapping geometry
-                    // is purely depth, the traversal sees a shading intersection and prematurely
-                    // halts, and potentially breaking batching with earlier extant depth draws.
-                    if (list->fIsDepthOnly == kIsDepthOnly) {
-                        foundMatch = list;
-                    }
                 }
             }
 
@@ -220,9 +207,11 @@ struct Layer {
         return {foundMatch ? BoundsTest::kCompatibleOverlap : BoundsTest::kDisjoint, foundMatch};
     }
 
-    template <bool kIsDepthOnly>
-    SK_ALWAYS_INLINE BindingList* add(SkArenaAllocWithReset* alloc,
+    SK_ALWAYS_INLINE BindingList* add(bool isChild,
+                                      bool isDepthOnly,
+                                      SkArenaAllocWithReset* alloc,
                                       BindingList* list,
+                                      BindingList* parentList,
                                       const LayerKey& key,
                                       Draw* draw,
                                       const RenderStep* step,
@@ -231,17 +220,21 @@ struct Layer {
             list->fBounds.join(draw->fDrawParams->drawBounds());
         } else {
             fListOrder = fListOrder.next();
-            list = alloc->make<BindingList>(fListOrder, kIsDepthOnly);
+            list = alloc->make<BindingList>(fListOrder, isDepthOnly);
             list->fKey = key;
             list->fStep = const_cast<RenderStep*>(step);
             list->fBounds = draw->fDrawParams->drawBounds();
-            if constexpr (kIsDepthOnly) {
-                fBindings.addToHead(list);
+            if (isDepthOnly) {
+                if (isChild) {
+                    SkASSERT(parentList);
+                    fBindings.addAfter(list, parentList);
+                } else {
+                    fBindings.addToHead(list);
+                }
             } else {
                 fBindings.addToTail(list);
             }
         }
-        SkASSERT(kIsDepthOnly == list->fIsDepthOnly);
 
         if (insertBefore) {
             list->fDraws.addToHead(draw);

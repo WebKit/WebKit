@@ -43,6 +43,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool needsCertificateInfo;
     bool isMainFrameNavigation;
+    bool navigationLosesFrameSpecificStorageAccess;
     std::optional<WebKit::NavigationActionData> mainResourceNavigationDataForAnyFrame;
     WebKit::PreconnectOnly shouldPreconnectOnly;
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;

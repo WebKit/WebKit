@@ -40,11 +40,13 @@
 #include "SVGElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleClipPath.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
 #include "StyleFilter.h"
 #include "StyleFilterReference.h"
 #include "StyleImage.h"
+#include "StyleSVGMarkerResource.h"
 
 namespace WebCore {
 namespace Style {
@@ -113,6 +115,18 @@ static void loadPendingExternalSVGPaint(Document& document, const Style::SVGPain
         loadExternalSVGResource(document, url->resolved);
 }
 
+static void loadPendingExternalSVGMarker(Document& document, const Style::SVGMarkerResource& marker)
+{
+    if (auto url = marker.tryURL())
+        loadExternalSVGResource(document, url->resolved);
+}
+
+static void loadPendingExternalSVGClipPath(Document& document, const Style::ClipPath& clipPath)
+{
+    if (auto referencePath = clipPath.tryReference())
+        loadExternalSVGResource(document, referencePath->url().resolved);
+}
+
 void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
 {
     for (auto& backgroundLayer : style.backgroundLayers().usedValues())
@@ -156,6 +170,12 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
     if (document.settings().svgExternalResourcesEnabled() && element && is<SVGElement>(*element)) {
         loadPendingExternalSVGPaint(document, style.fill());
         loadPendingExternalSVGPaint(document, style.stroke());
+
+        loadPendingExternalSVGMarker(document, style.markerStart());
+        loadPendingExternalSVGMarker(document, style.markerMid());
+        loadPendingExternalSVGMarker(document, style.markerEnd());
+
+        loadPendingExternalSVGClipPath(document, style.clipPath());
 
         if (style.filter().size() == 1) {
             WTF::switchOn(style.filter().first(),

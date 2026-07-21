@@ -27,6 +27,24 @@ from webkitcorepy import OutputCapture, Terminal, testing
 from webkitscmpy import program, mocks, Commit, CommitClassifier, Contributor
 
 
+def repository_commit_classes():
+    path = os.path.dirname(os.path.abspath(__file__))
+    while path != os.path.dirname(path):
+        candidate = os.path.join(path, 'metadata', 'commit_classes.json')
+        if os.path.isfile(candidate):
+            return candidate
+        path = os.path.dirname(path)
+    return None
+
+
+class MockClassifyRepository(object):
+    def __init__(self, files_changed):
+        self._files_changed = files_changed
+
+    def files_changed(self, argument=None):
+        return self._files_changed
+
+
 class TestClassify(testing.PathTestCase):
     basepath = 'mock/repository'
 
@@ -173,3 +191,45 @@ class TestClassify(testing.PathTestCase):
                     'Reviewed by NOBODY (OOPS!)\n\n'
                     'cherry-pick: 2.3@branch-b (790725a6d79e)\n',
         )))
+
+    def classify_against_repository_classes(self, message, files_changed):
+        path = repository_commit_classes()
+        if not path:
+            self.skipTest('Cannot find metadata/commit_classes.json to classify against')
+        with open(path) as file:
+            classifier = CommitClassifier.load(file)
+        commit = Commit(
+            revision=10,
+            hash='898d20c0b1efc7b717173804676349f079df3b7e',
+            identifier='6@main',
+            timestamp=int(time.time()),
+            author=Contributor.Encoder().default(Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')),
+            message=message,
+        )
+        klass = classifier.classify(commit, repository=MockClassifyRepository(files_changed))
+        return klass.name if klass else None
+
+    def test_gardening_excludes_test_source(self):
+        self.assertEqual('Tools', self.classify_against_repository_classes(
+            'NEW TEST(316388@main): [macOS iOS debug]: http/tests/ipc/foo.html is constant failure\n\nUnreviewed.\n',
+            [
+                'LayoutTests/http/tests/ipc/foo.html',
+                'LayoutTests/platform/ios/TestExpectations',
+                'LayoutTests/platform/mac-wk2/TestExpectations',
+            ],
+        ))
+
+    def test_gardening_expectations_only(self):
+        self.assertEqual('Gardening', self.classify_against_repository_classes(
+            'foo.html is a constant failure\n\nUnreviewed.\n',
+            ['LayoutTests/platform/ios/TestExpectations'],
+        ))
+
+    def test_gardening_rebaseline_only(self):
+        self.assertEqual('Gardening', self.classify_against_repository_classes(
+            'REBASELINE foo after 316378@main\n\nUnreviewed.\n',
+            [
+                'LayoutTests/fast/foo-expected.txt',
+                'LayoutTests/platform/mac/fast/foo-expected.png',
+            ],
+        ))

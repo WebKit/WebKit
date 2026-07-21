@@ -611,7 +611,12 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
         return;
     }
 
-    if (!protect(mediaSession())->fullscreenPermitted() || !supportsFullscreen(videoFullscreenMode))
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    bool requiresUserGesture = mode != VideoPresentationMode::PictureInPicture || !protect(document())->pictureInPictureElement();
+#else
+    bool requiresUserGesture = true;
+#endif
+    if ((requiresUserGesture && !protect(mediaSession())->fullscreenPermitted()) || !supportsFullscreen(videoFullscreenMode))
         return;
 
     if (videoFullscreenMode == VideoFullscreenModePictureInPicture)
@@ -773,6 +778,16 @@ void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
         if (RefPtr player = this->player())
             player->stopVideoFrameMetadataGathering();
     }
+}
+
+void HTMLVideoElement::suspend(ReasonForSuspension reason)
+{
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (reason == ReasonForSuspension::BackForwardCache)
+        protect(HTMLVideoElementPictureInPicture::from(*this))->didExitPictureInPicture();
+#endif
+
+    HTMLMediaElement::suspend(reason);
 }
 
 void HTMLVideoElement::stop()

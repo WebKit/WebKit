@@ -434,6 +434,7 @@ void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
     ALWAYS_LOG(LOGIDENTIFIER, newReadyState);
     updateCachedVideoMetrics();
     updateCachedState(true);
+    updateCachedMediaCharacteristics();
     m_cachedState.networkState = player->networkState();
     m_cachedState.duration = player->duration();
 
@@ -610,14 +611,18 @@ void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
 {
     updateCachedVideoMetrics();
     updateCachedState();
+    updateCachedMediaCharacteristics();
 
+    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::CharacteristicChanged(m_cachedState), m_id);
+}
+
+void RemoteMediaPlayerProxy::updateCachedMediaCharacteristics()
+{
     RefPtr player = m_player;
     m_cachedState.hasAudio = player->hasAudio();
     m_cachedState.hasVideo = player->hasVideo();
     m_cachedState.hasClosedCaptions = player->hasClosedCaptions();
     m_cachedState.languageOfPrimaryAudioTrack = player->languageOfPrimaryAudioTrack();
-
-    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::CharacteristicChanged(m_cachedState), m_id);
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()

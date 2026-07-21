@@ -32,6 +32,7 @@
 #include "AssemblyComments.h"
 #include "AssertInvariants.h"
 #include "ExecutableAllocator.h"
+#include "IntlCache.h"
 #include "JITOperationList.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
@@ -123,6 +124,8 @@ void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCusto
         AssemblyCommentRegistry::initialize();
         LLInt::initialize();
         AssertNoGC::initialize();
+
+        IntlCache::ensureLanguageChangeObserver();
 
         initializeSuperSampler();
         auto& thread = Thread::currentSingleton();

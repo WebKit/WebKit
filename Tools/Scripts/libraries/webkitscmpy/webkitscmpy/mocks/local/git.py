@@ -611,6 +611,10 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
             ), mocks.Subprocess.Route(
+                self.executable, 'commit', '--amend', '-m', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(amend=True, message=args[4]),
+            ), mocks.Subprocess.Route(
                 self.executable, 'commit', '-a', '-m', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(message=args[4], env=kwargs.get('env', dict())),
@@ -1194,9 +1198,12 @@ nothing to commit, working tree clean
         if message:
             self.head.message = message
         else:
-            self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n{}'.format(
-                env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
+            title = env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating')
+            reviewed_by = '' if re.match(r'(Unreviewed|Versioning.)', title, re.IGNORECASE) else '\nReviewed by Jonathan Bedard'
+            self.head.message = '{}{}{}\n\n * {}\n{}'.format(
+                title,
                 ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
+                reviewed_by,
                 '\n * '.join(self.staged.keys()),
                 env.get('COMMIT_MESSAGE_CONTENT', '')
             )

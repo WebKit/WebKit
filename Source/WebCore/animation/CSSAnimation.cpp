@@ -40,13 +40,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSAnimation);
 
-Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, Style::Animation&& backingStyleAnimation, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext& resolutionContext)
+Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, Style::Animation&& backingStyleAnimation, Style::ZoomFactor backingStyleZoomForLength, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     // CSSAnimation should only ever be created with non-"none" animation names.
     auto name = backingStyleAnimation.name().tryKeyframesName();
     RELEASE_ASSERT(name);
 
-    auto result = adoptRef(*new CSSAnimation(owningElement, WTF::move(*name), WTF::move(backingStyleAnimation)));
+    auto result = adoptRef(*new CSSAnimation(owningElement, WTF::move(*name), WTF::move(backingStyleAnimation), backingStyleZoomForLength));
     result->initialize(oldStyle, newStyle, resolutionContext);
 
     InspectorInstrumentation::didCreateWebAnimation(result.get());
@@ -54,16 +54,18 @@ Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, Style::An
     return result;
 }
 
-CSSAnimation::CSSAnimation(const Styleable& element, Style::ScopedName&& animationName, Style::Animation&& backingStyleAnimation)
+CSSAnimation::CSSAnimation(const Styleable& element, Style::ScopedName&& animationName, Style::Animation&& backingStyleAnimation, Style::ZoomFactor backingStyleZoomForLength)
     : StyleOriginatedAnimation(element)
     , m_animationName(WTF::move(animationName))
     , m_backingStyleAnimation(WTF::move(backingStyleAnimation))
+    , m_backingStyleZoomForLength(backingStyleZoomForLength)
 {
 }
 
-void CSSAnimation::setBackingStyleAnimation(const Style::Animation& backingStyleAnimation)
+void CSSAnimation::setBackingStyleAnimation(const Style::Animation& backingStyleAnimation, Style::ZoomFactor backingStyleZoomForLength)
 {
     m_backingStyleAnimation = backingStyleAnimation;
+    m_backingStyleZoomForLength = backingStyleZoomForLength;
     syncPropertiesWithBackingAnimation();
 }
 
@@ -155,9 +157,9 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     }
 
     if (!m_overriddenProperties.contains(Property::RangeStart))
-        setRangeStart(Style::SingleAnimationRangeStart { animation.range().start });
+        setRangeStart(Style::SingleAnimationRangeStart { animation.range().start }, m_backingStyleZoomForLength);
     if (!m_overriddenProperties.contains(Property::RangeEnd))
-        setRangeEnd(Style::SingleAnimationRangeEnd { animation.range().end });
+        setRangeEnd(Style::SingleAnimationRangeEnd { animation.range().end }, m_backingStyleZoomForLength);
 
     effectTimingDidChange();
 

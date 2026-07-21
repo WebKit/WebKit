@@ -31,8 +31,6 @@ namespace skgpu::graphite {
 namespace {
 
 constexpr uint32_t kBufferBindingSizeAlignment = 16;
-constexpr int kMaxNumberOfCachedBufferBindGroups = 1024;
-constexpr int kMaxNumberOfCachedTextureBindGroups = 4096;
 
 wgpu::ShaderModule create_shader_module(const wgpu::Device& device, const char* source) {
 #if defined(__EMSCRIPTEN__)
@@ -108,57 +106,7 @@ wgpu::RenderPipeline create_blit_render_pipeline(const DawnSharedContext* shared
 
     return pipeline;
 }
-
-template <size_t NumEntries>
-using BindGroupKey = typename DawnResourceProvider::BindGroupKey<NumEntries>;
-using UniformBindGroupKey = BindGroupKey<DawnResourceProvider::kNumUniformEntries>;
-
-UniformBindGroupKey make_ubo_bind_group_key(
-        const std::array<std::pair<const DawnBuffer*, uint32_t>,
-                         DawnResourceProvider::kNumUniformEntries>& boundBuffersAndSizes) {
-    UniformBindGroupKey uniqueKey;
-    {
-        // Each entry in the bind group needs 2 uint32_t in the key:
-        //  - buffer's unique ID: 32 bits.
-        //  - buffer's binding size: 32 bits.
-        // We need total of 4 entries in the uniform buffer bind group.
-        // Unused entries will be assigned zero values.
-        UniformBindGroupKey::Builder builder(&uniqueKey);
-
-        for (uint32_t i = 0; i < boundBuffersAndSizes.size(); ++i) {
-            const DawnBuffer* boundBuffer = boundBuffersAndSizes[i].first;
-            const uint32_t bindingSize = boundBuffersAndSizes[i].second;
-            if (boundBuffer) {
-                builder[2 * i] = boundBuffer->uniqueID().asUInt();
-                builder[2 * i + 1] = bindingSize;
-            } else {
-                builder[2 * i] = 0;
-                builder[2 * i + 1] = 0;
-            }
-        }
-
-        builder.finish();
-    }
-
-    return uniqueKey;
-}
-
-BindGroupKey<1> make_texture_bind_group_key(const DawnSampler* sampler,
-                                            const DawnTexture* texture) {
-    BindGroupKey<1> uniqueKey;
-    {
-        BindGroupKey<1>::Builder builder(&uniqueKey);
-
-        builder[0] = sampler->uniqueID().asUInt();
-        builder[1] = texture->uniqueID().asUInt();
-
-        builder.finish();
-    }
-
-    return uniqueKey;
-}
-}  // namespace
-
+} // namespace
 
 // Wraps a Dawn buffer, and tracks the intrinsic blocks residing in this buffer.
 class DawnResourceProvider::IntrinsicBuffer final {
@@ -443,8 +391,6 @@ DawnResourceProvider::DawnResourceProvider(SharedContext* sharedContext,
                                            uint32_t recorderID,
                                            size_t resourceBudget)
         : ResourceProvider(sharedContext, singleOwner, recorderID, resourceBudget)
-        , fUniformBufferBindGroupCache(kMaxNumberOfCachedBufferBindGroups)
-        , fSingleTextureSamplerBindGroups(kMaxNumberOfCachedTextureBindGroups)
         , fSingleOwner(singleOwner) {
     fIntrinsicConstantsManager = std::make_unique<IntrinsicConstantsManager>(this);
 
@@ -676,91 +622,92 @@ const wgpu::Buffer& DawnResourceProvider::getOrCreateNullBuffer() {
     return fNullBuffer;
 }
 
-const wgpu::BindGroup& DawnResourceProvider::findOrCreateUniformBuffersBindGroup(
-        const std::array<std::pair<const DawnBuffer*, uint32_t>, kNumUniformEntries>&
-                boundBuffersAndSizes) {
-    SKGPU_ASSERT_SINGLE_OWNER(fSingleOwner)
-
-    auto key = make_ubo_bind_group_key(boundBuffersAndSizes);
-    auto* existingBindGroup = fUniformBufferBindGroupCache.find(key);
-    if (existingBindGroup) {
-        // cache hit.
-        return *existingBindGroup;
-    }
-
-    // Translate to wgpu::BindGroupDescriptor
-    std::array<wgpu::BindGroupEntry, kNumUniformEntries> entries;
-
-    constexpr uint32_t kBindingIndices[] = {
-        DawnGraphicsPipeline::kIntrinsicUniformBufferIndex,
-        DawnGraphicsPipeline::kCombinedUniformIndex,
-        DawnGraphicsPipeline::kGradientBufferIndex,
-    };
-
-    for (uint32_t i = 0; i < boundBuffersAndSizes.size(); ++i) {
-        const DawnBuffer* boundBuffer = boundBuffersAndSizes[i].first;
-        const uint32_t bindingSize = boundBuffersAndSizes[i].second;
-
-        entries[i].binding = kBindingIndices[i];
-        entries[i].offset = 0;
-        if (boundBuffer) {
-            entries[i].buffer = boundBuffer->dawnBuffer();
-            entries[i].size = SkAlignTo(bindingSize, kBufferBindingSizeAlignment);
-        } else {
-            entries[i].buffer = this->getOrCreateNullBuffer();
-            entries[i].size = wgpu::kWholeSize;
-        }
-    }
+wgpu::BindGroup DawnResourceProvider::createBindGroup(SkSpan<wgpu::BindGroupEntry> entries,
+                                                      const wgpu::BindGroupLayout layout) {
+    const auto& device = this->dawnSharedContext()->device();
 
     wgpu::BindGroupDescriptor desc;
-    desc.layout = this->dawnSharedContext()->getUniformBuffersBindGroupLayout();
+    desc.layout = layout;
     desc.entryCount = entries.size();
     desc.entries = entries.data();
 
-    const auto& device = this->dawnSharedContext()->device();
-    auto bindGroup = device.CreateBindGroup(&desc);
-
-    return *fUniformBufferBindGroupCache.insert(key, bindGroup);
+    return device.CreateBindGroup(&desc);
 }
 
-const wgpu::BindGroup& DawnResourceProvider::findOrCreateSingleTextureSamplerBindGroup(
+wgpu::BindGroup DawnResourceProvider::findOrCreateSingleUniformBindGroup(
+        const BindBufferInfo& bufferInfo) {
+    SKGPU_ASSERT_SINGLE_OWNER(fSingleOwner)
+    // We should only hit the single-uniform case if push constant usage is supported for intrinsic
+    // constants.
+    SkASSERT(this->dawnSharedContext()->dawnCaps()->
+            resourceBindingRequirements().fUsePushConstantsForIntrinsicConstants);
+
+    auto buffer = static_cast<const DawnBuffer*>(bufferInfo.fBuffer);
+
+    if (auto cachedBindGroup = buffer->getCachedSingleBufferBindGroup(bufferInfo.fSize)) {
+        return *cachedBindGroup;
+    }
+
+    // We should be able to assume that if we only have one uniform that it is the combined uniform
+    // buffer. Construct a list of bind group entries to represent the single combined uniform
+    // buffer case.
+    wgpu::BindGroupEntry intrinsicConstantNullEntry;
+    intrinsicConstantNullEntry.binding = DawnGraphicsPipeline::kIntrinsicUniformBufferIndex;
+    intrinsicConstantNullEntry.buffer  = this->getOrCreateNullBuffer();
+
+    wgpu::BindGroupEntry combinedUniformEntry;
+    combinedUniformEntry.binding = DawnGraphicsPipeline::kCombinedUniformIndex;
+    combinedUniformEntry.offset  = 0; // Use dynamic offsets; ignore bufferInfo.fOffset
+    combinedUniformEntry.buffer  = buffer->dawnBuffer();
+    combinedUniformEntry.size    = SkAlignTo(bufferInfo.fSize, kBufferBindingSizeAlignment);
+
+    wgpu::BindGroupEntry gradientBufferNullEntry;
+    gradientBufferNullEntry.binding = DawnGraphicsPipeline::kGradientBufferIndex;
+    gradientBufferNullEntry.buffer  = this->getOrCreateNullBuffer();
+
+    std::array<wgpu::BindGroupEntry, kNumUniformEntries> entries = {
+        intrinsicConstantNullEntry,
+        combinedUniformEntry,
+        gradientBufferNullEntry
+    };
+
+    wgpu::BindGroup bindGroup = this->createBindGroup(
+            entries, this->dawnSharedContext()->getUniformBuffersBindGroupLayout());
+
+    buffer->addCachedSingleBufferBindGroup(bindGroup, bufferInfo.fSize);
+
+    return bindGroup;
+}
+
+
+wgpu::BindGroup DawnResourceProvider::findOrCreateSingleTextureSamplerBindGroup(
         const DawnSampler* sampler, const DawnTexture* texture) {
     SKGPU_ASSERT_SINGLE_OWNER(fSingleOwner)
 
-    auto key = make_texture_bind_group_key(sampler, texture);
-    auto* existingBindGroup = fSingleTextureSamplerBindGroups.find(key);
-    if (existingBindGroup) {
-        // cache hit.
-        return *existingBindGroup;
+    // First check if we already have a cached bind group we can use.
+    auto cachedBindGroup = texture->getCachedSingleTextureBindGroup(sampler);
+    if (cachedBindGroup) {
+        return *cachedBindGroup;
     }
 
+    // Otherwise, create one and store it on the Texture for potential future reuse.
     std::array<wgpu::BindGroupEntry, 2> entries;
-
     entries[0].binding = 0;
     entries[0].sampler = sampler->dawnSampler();
     entries[1].binding = 1;
     entries[1].textureView = texture->sampleTextureView();
 
-    wgpu::BindGroupDescriptor desc;
-    desc.layout = this->dawnSharedContext()->getSingleTextureSamplerBindGroupLayout();
-    desc.entryCount = entries.size();
-    desc.entries = entries.data();
+    wgpu::BindGroup bindGroup = this->createBindGroup(
+            entries, this->dawnSharedContext()->getSingleTextureSamplerBindGroupLayout());
+    texture->addCachedSingleTextureBindGroup(bindGroup, sampler);
 
-    const auto& device = this->dawnSharedContext()->device();
-    auto bindGroup = device.CreateBindGroup(&desc);
-
-    return *fSingleTextureSamplerBindGroups.insert(key, bindGroup);
+    return bindGroup;
 }
 
 void DawnResourceProvider::onFreeGpuResources() {
     SKGPU_ASSERT_SINGLE_OWNER(fSingleOwner)
 
     fIntrinsicConstantsManager->freeGpuResources();
-    // The wgpu::Textures and wgpu::Buffers held by the BindGroups should be explicitly destroyed
-    // when the DawnTexture and DawnBuffer is destroyed, but removing the bind groups themselves
-    // helps reduce CPU memory periodically.
-    fSingleTextureSamplerBindGroups.reset();
-    fUniformBufferBindGroupCache.reset();
 }
 
 void DawnResourceProvider::onPurgeResourcesNotUsedSince(

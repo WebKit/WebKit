@@ -47,6 +47,8 @@ class Tracker(GenericTracker):
         r'\A<?api.github.{}/repos/{}/{}/issues/(?P<id>\d+)>?\Z',
     ]
     REFRESH_TOKEN_PROMPT = "Is your API token out of date? Run 'git-webkit setup' to refresh credentials\n"
+    SERVER_ERROR_PROMPT = 'This is likely a transient server-side error, trying again later may succeed\n'
+    RATE_LIMIT_PROMPT = 'The API rate limit has been exceeded, waiting before retrying may succeed\n'
     DEFAULT_COMPONENT_COLOR = 'FFFFFF'
     DEFAULT_VERSION_COLOR = 'EEEEEE'
     ACCEPT_HEADER = 'application/vnd.github.v3+json'
@@ -158,6 +160,20 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             save_in_keyring=save_in_keyring,
         )
 
+    @classmethod
+    def api_error_hint(cls, response) -> str:
+        status_code = response.status_code
+        if status_code in (403, 429) and (
+            response.headers.get('x-ratelimit-remaining') == '0'
+            or response.headers.get('retry-after')
+        ):
+            return cls.RATE_LIMIT_PROMPT
+        if status_code in (401, 403):
+            return cls.REFRESH_TOKEN_PROMPT
+        if status_code // 100 == 5:
+            return cls.SERVER_ERROR_PROMPT
+        return ''
+
     def request(self, path=None, params=None, method='GET', headers=None, authenticated=None, paginate=True, json=None, error_message=None):
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
@@ -190,7 +206,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             if auth:
-                sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
+                sys.stderr.write(self.api_error_hint(response))
             return None
         result = response.json()
 
@@ -219,7 +235,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             message = response.json().get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
-            sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
+            sys.stderr.write(self.api_error_hint(response))
             return None
 
         data = response.json()

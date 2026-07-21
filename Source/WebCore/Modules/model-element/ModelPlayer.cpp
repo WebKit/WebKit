@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ModelPlayer.h"
 
-#include "Color.h"
 #include "FloatPoint3D.h"
 #include "ImageBuffer.h"
 #include "ModelPlayerAnimationState.h"

@@ -22,6 +22,8 @@
 
 import io
 import os
+import shutil
+import tempfile
 import unittest
 from unittest.mock import patch
 from urllib.error import URLError
@@ -70,3 +72,54 @@ class ArchiveTest(unittest.TestCase):
             with self.assertRaises(URLError):
                 archive.download()
             self.assertEqual(mock_urlopen.call_count, 4)
+
+
+class MergeMoveTest(unittest.TestCase):
+    # Package._merge_move is what lets multiple distributions contribute to a
+    # shared namespace package (e.g. 'backports') without clobbering each other.
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        self.destination = os.path.join(self.root, 'site')
+        os.makedirs(self.destination)
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def _unpack(self, name, files):
+        # Emulate one wheel install: build an unpacked wheel and merge each of
+        # its top-level entries into the destination, as Package.install does.
+        source = os.path.join(self.root, 'unpack-{}'.format(name))
+        for relative in files:
+            path = os.path.join(source, relative)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w') as handle:
+                handle.write(relative)
+        for top in os.listdir(source):
+            Package._merge_move(os.path.join(source, top), os.path.join(self.destination, top))
+
+    def _contents(self):
+        return sorted(
+            os.path.relpath(os.path.join(dirpath, name), self.destination).replace(os.sep, '/')
+            for dirpath, _, filenames in os.walk(self.destination)
+            for name in filenames
+        )
+
+    def test_install_order_does_not_matter(self):
+        expected = ['sample/a.py', 'sample/b/__init__.py']
+
+        self._unpack('sample-a', ['sample/a.py'])
+        self._unpack('sample-b', ['sample/b/__init__.py'])
+        self.assertEqual(self._contents(), expected)
+
+        shutil.rmtree(self.destination)
+        os.makedirs(self.destination)
+
+        self._unpack('sample-b', ['sample/b/__init__.py'])
+        self._unpack('sample-a', ['sample/a.py'])
+        self.assertEqual(self._contents(), expected)
+
+    def test_file_is_replaced_by_directory(self):
+        # A leaf that changes kind between distributions is replaced, not merged.
+        self._unpack('provides-file', ['sample/thing'])
+        self._unpack('provides-package', ['sample/thing/__init__.py'])
+        self.assertEqual(self._contents(), ['sample/thing/__init__.py'])

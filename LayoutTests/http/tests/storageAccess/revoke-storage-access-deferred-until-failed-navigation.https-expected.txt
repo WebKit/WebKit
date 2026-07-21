@@ -1,0 +1,12 @@
+Tests that a cross-site-initiated navigation of an iframe does not revoke the iframe's storage access when the navigation never commits (a 204 No Content response). Storage access should only be revoked when a navigation commits.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Storage access was granted. document.cookie == firstPartyCookie=value
+Initiated a cross-site navigation of the iframe that does not commit. The original document should retain storage access.
+PASS The iframe retained storage access. document.cookie == firstPartyCookie=value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

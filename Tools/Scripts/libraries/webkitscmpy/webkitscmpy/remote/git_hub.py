@@ -170,7 +170,7 @@ class GitHub(Scm):
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
                 sys.stderr.write(self.repository.tracker.parse_error(response.json()))
-                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                sys.stderr.write(Tracker.api_error_hint(response))
                 return None
             result = self.PullRequest(response.json())
 
@@ -216,7 +216,7 @@ class GitHub(Scm):
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
                 sys.stderr.write(self.repository.tracker.parse_error(response.json()))
-                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                sys.stderr.write(Tracker.api_error_hint(response))
                 return None
             data = response.json()
 
@@ -403,8 +403,7 @@ class GitHub(Scm):
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
                 sys.stderr.write(self.repository.tracker.parse_error(response.json()))
-                if response.status_code != 422:
-                    sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                sys.stderr.write(Tracker.api_error_hint(response))
                 return False
             return True
 
@@ -472,8 +471,7 @@ class GitHub(Scm):
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
                 sys.stderr.write(self.repository.tracker.parse_error(response.json()))
-                if response.status_code != 422:
-                    sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                sys.stderr.write(Tracker.api_error_hint(response))
                 return None
 
             me = self._contributor(self.repository.credentials(required=True)[0])
@@ -619,7 +617,7 @@ class GitHub(Scm):
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             if auth:
-                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                sys.stderr.write(Tracker.api_error_hint(response))
             return None
 
         if not is_json_response:
@@ -646,7 +644,7 @@ class GitHub(Scm):
             message = response.json().get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
-            sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+            sys.stderr.write(Tracker.api_error_hint(response))
             return None
         return response.json()
 

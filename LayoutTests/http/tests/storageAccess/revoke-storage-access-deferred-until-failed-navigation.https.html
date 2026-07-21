@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body>
+    <script>
+        description("Tests that a cross-site-initiated navigation of an iframe does not revoke the iframe's storage access when the navigation never commits (a 204 No Content response). Storage access should only be revoked when a navigation commits.");
+        const navigationTarget = "/navigation/resources/response204.pl";
+        const navigationDescription = "Initiated a cross-site navigation of the iframe that does not commit. The original document should retain storage access.";
+    </script>
+    <script src="resources/deferred-storage-access-revocation-test.js"></script>
+</body>
+</html>

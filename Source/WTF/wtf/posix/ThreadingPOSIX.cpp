@@ -454,6 +454,8 @@ Thread& Thread::initializeCurrentTLS()
     WTF::initialize();
 #if PLATFORM(COCOA)
     Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other, pthread_main_np() ? IsMain::Yes : IsMain::No));
+#elif OS(LINUX)
+    Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other, getpid() == static_cast<pid_t>(syscall(SYS_gettid)) ? IsMain::Yes : IsMain::No));
 #else
     Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other));
 #endif

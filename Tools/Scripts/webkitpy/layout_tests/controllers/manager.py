@@ -50,6 +50,7 @@ from collections import OrderedDict, defaultdict
 
 from webkitcorepy.string_utils import pluralize
 
+from webkitpy.common.net import results_database
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
@@ -697,6 +698,15 @@ class Manager(object):
                 flat_expectations[device_type] = exp
         summarized_results = test_run_results.summarize_results(self._port, flat_expectations, initial_results, retry_results, enabled_pixel_tests_in_retry)
         self._printer.print_results(end_time - start_time, initial_results, summarized_results)
+
+        if self._options.check_pre_existing_failures:
+            results = retry_results if retry_results else initial_results
+            results_database.check_pre_existing_failures(
+                results.unexpected_results_by_name.keys(),
+                self._options.suite or 'layout-tests',
+                self._options.max_pre_existing_checks,
+                _log.info,
+            )
 
         exit_code = -1
         if not self._options.dry_run:

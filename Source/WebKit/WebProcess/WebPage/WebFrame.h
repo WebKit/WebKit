@@ -62,9 +62,13 @@ class Frame;
 class FrameTreeSyncData;
 class HTMLFrameOwnerElement;
 class HandleUserInputEventResult;
+class ImageData;
 class IntPoint;
 class IntRect;
 class LocalFrame;
+#if ENABLE(OFFSCREEN_CANVAS)
+class OffscreenCanvas;
+#endif
 class PlatformMouseEvent;
 class RemoteFrame;
 class TextIndicator;
@@ -345,6 +349,11 @@ private:
 
     std::unique_ptr<FrameInspectorTarget> m_inspectorTarget;
 };
+
+RefPtr<WebCore::ShareableBitmap> shareableBitmapFromImageData(WebCore::ImageData&);
+#if ENABLE(OFFSCREEN_CANVAS)
+RefPtr<WebCore::ShareableBitmap> shareableBitmapFromOffscreenCanvas(WebCore::OffscreenCanvas&);
+#endif
 
 } // namespace WebKit
 

@@ -30,6 +30,7 @@
 
 #include "PictureInPictureObserver.h"
 #include "Supplementable.h"
+#include <wtf/CancellableTask.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -88,6 +89,8 @@ private:
     const Ref<PictureInPictureWindow> m_pictureInPictureWindow;
     RefPtr<DeferredPromise> m_enterPictureInPicturePromise;
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;
+
+    TaskCancellationGroup m_eventTaskGroup;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

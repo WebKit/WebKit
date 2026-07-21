@@ -308,9 +308,9 @@ WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_I
 // Some WebKit clients (cf. rdar://182539064) are not configured to look in the
 // correct StagedFrameworks/Safari path to load dylibs. Put this path on the
 // rpath stack to support them.
-RPATH_LDFLAGS = $(LD_RPATH_$(USE_STAGING_INSTALL_PATH));
+RPATH_LDFLAGS = $(RPATH_LDFLAGS_$(USE_STAGING_INSTALL_PATH));
 // StagedFrameworks/WebKit.framework/Versions/A/ => StagedFrameworks/
-RPATH_LDFLAGS = -rpath @loader_path/../../..;
+RPATH_LDFLAGS_YES = -rpath @loader_path/../../..;
 
 OTHER_LDFLAGS = $(inherited) -lsqlite3 -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_SHARED_CACHE) $(SOURCE_VERSION_LDFLAGS) $(WK_PGO_USE_LDFLAGS) $(WK_PGO_GEN_FLAGS) $(WK_NO_STATIC_INITIALIZERS) $(RPATH_LDFLAGS);
 

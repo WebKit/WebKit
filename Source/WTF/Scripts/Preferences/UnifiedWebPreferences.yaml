@@ -1099,6 +1099,20 @@ CSSAxisRelativePositionKeywordsEnabled:
     WebCore:
       default: true
 
+CSSBaselineSourceEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS baseline-source"
+  humanReadableDescription: "Enable CSS baseline-source"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCalcMixEnabled:
   type: bool
   category: css
@@ -9735,7 +9749,7 @@ WasmMemoryToBufferAPIsEnabled:
 
 WasmMultiMemoryEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "WebAssembly Multi-Memory"
   humanReadableDescription: "Allow wasm code to access multiple linear memories"
@@ -9744,7 +9758,7 @@ WasmMultiMemoryEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 WasmRelaxedSIMDEnabled:
   type: bool

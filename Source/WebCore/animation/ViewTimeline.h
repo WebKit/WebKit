@@ -95,8 +95,8 @@ public:
     RefPtr<Element> source() const override;
     Style::SingleAnimationRange defaultRange() const final;
 
-    std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const final;
-    std::pair<double, double> offsetIntervalForAttachmentRange(const Style::SingleAnimationRange&) const;
+    std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const ResolvableTimelineRange&) const final;
+    std::pair<double, double> offsetIntervalForAttachmentRange(const ResolvableTimelineRange&) const;
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
     bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;

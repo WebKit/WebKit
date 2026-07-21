@@ -10,12 +10,12 @@
 #include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/graphite/TextureInfo.h"
 #include "include/gpu/graphite/mtl/MtlGraphiteTypes.h"
+#include "include/private/base/SkLog.h"
 #include "src/gpu/SwizzlePriv.h"
 #include "src/gpu/graphite/CommandBuffer.h"
 #include "src/gpu/graphite/ComputePipelineDesc.h"
 #include "src/gpu/graphite/GraphicsPipelineDesc.h"
 #include "src/gpu/graphite/GraphiteResourceKey.h"
-#include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/RendererProvider.h"
 #include "src/gpu/graphite/TextureInfoPriv.h"
@@ -64,7 +64,7 @@ void MtlCaps::initGPUFamily(id<MTLDevice> device) {
     }
 
     // If we've reached here, we didn't find a supported family and nothing can be trusted.
-    SKGPU_LOG_F("Unable to detect supported MTLGPUFamily");
+    SK_ABORT("Unable to detect supported MTLGPUFamily");
 }
 
 void MtlCaps::initCaps(const id<MTLDevice> device) {

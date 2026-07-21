@@ -2,6 +2,7 @@
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
  * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -933,7 +934,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
         auto fieldType = field.m_field;
         auto partType = fieldType == literalField ? literalString : jsNontrivialString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
         JSObject* part = createPart(partType, field.m_range.begin(), field.m_range.distance());
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }
@@ -1318,7 +1319,7 @@ void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style
             part = createIntlPartObjectWithSource(globalObject, partType, partValue, sourceType);
         else
             part = createIntlPartObject(globalObject, partType, partValue);
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }

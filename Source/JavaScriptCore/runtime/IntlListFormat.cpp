@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -248,21 +249,21 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
         if (previousEndIndex < beginIndex) {
             auto value = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = createPart(literalString, value);
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
         previousEndIndex = endIndex;
 
         auto value = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
         JSObject* part = createPart(elementString, value);
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
     if (previousEndIndex < resultLength) {
         auto value = jsString(vm, resultStringView.substring(previousEndIndex, resultLength - previousEndIndex));
         JSObject* part = createPart(literalString, value);
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

@@ -67,18 +67,8 @@ static bool containsxy_proc(SkRegion& a, SkRegion& b) {
 }
 
 class RegionBench : public Benchmark {
+    using Proc = bool (*)(SkRegion& a, SkRegion& b);
 public:
-    typedef bool (*Proc)(SkRegion& a, SkRegion& b);
-
-    SkRegion fA, fB;
-    Proc     fProc;
-    SkString fName;
-
-    enum {
-        W = 1024,
-        H = 768,
-    };
-
     SkIRect randrect(SkRandom& rand) {
         int x = rand.nextU() % W;
         int y = rand.nextU() % H;
@@ -113,7 +103,59 @@ protected:
     }
 
 private:
-    using INHERITED = Benchmark;
+
+    SkRegion fA, fB;
+    Proc     fProc;
+    SkString fName;
+
+    static constexpr int W = 1024;
+    static constexpr int H = 768;
+};
+
+class RegionSetRectsBench : public Benchmark {
+public:
+    RegionSetRectsBench(int count, bool sorted) {
+        fName.printf("region_setRects_%d%s", count, sorted ? "_sorted" : "");
+
+        if (sorted) {
+            // A grid of non-overlapping rectangles, naturally ordered by Y then X.
+            int side = 1;
+            while (side * side < count) side++;
+            for (int i = 0; i < count; i++) {
+                int x = i % side;
+                int y = i / side;
+                fRects.push_back(SkIRect::MakeXYWH(x * 20, y * 20, 10, 10));
+            }
+        } else {
+            // Random rectangles, likely overlapping and in arbitrary order.
+            SkRandom rand;
+            for (int i = 0; i < count; i++) {
+                int x = rand.nextU() % 1024;
+                int y = rand.nextU() % 768;
+                int w = rand.nextU() % 1024;
+                int h = rand.nextU() % 768;
+                fRects.push_back(SkIRect::MakeXYWH(x, y, w >> 1, h >> 1));
+            }
+        }
+    }
+
+    bool isSuitableFor(Backend backend) override {
+        return backend == Backend::kNonRendering;
+    }
+
+protected:
+    const char* onGetName() override { return fName.c_str(); }
+
+    void onDraw(int loops, SkCanvas* canvas) override {
+        for (int i = 0; i < loops; ++i) {
+            SkRegion rgn;
+            rgn.setRects(fRects);
+        }
+    }
+
+private:
+    SkString fName;
+    std::vector<SkIRect> fRects;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,3 +171,42 @@ DEF_BENCH(return new RegionBench(SMALL, containsrect_proc, "containsrect");)
 DEF_BENCH(return new RegionBench(SMALL, sectsrgn_proc, "intersectsrgn");)
 DEF_BENCH(return new RegionBench(SMALL, sectsrect_proc, "intersectsrect");)
 DEF_BENCH(return new RegionBench(SMALL, containsxy_proc, "containsxy");)
+
+DEF_BENCH(return new RegionSetRectsBench(50, false);)
+DEF_BENCH(return new RegionSetRectsBench(500, false);)
+DEF_BENCH(return new RegionSetRectsBench(2500, false);)
+DEF_BENCH(return new RegionSetRectsBench(10000, false);)
+DEF_BENCH(return new RegionSetRectsBench(50, true);)
+DEF_BENCH(return new RegionSetRectsBench(500, true);)
+DEF_BENCH(return new RegionSetRectsBench(2500, true);)
+DEF_BENCH(return new RegionSetRectsBench(10000, true);)
+
+class RegionCheckerboardBench : public Benchmark {
+public:
+    RegionCheckerboardBench() {}
+
+protected:
+    const char* onGetName() override { return "region_checkerboard"; }
+
+    bool isSuitableFor(Backend backend) override {
+        return backend == Backend::kNonRendering;
+    }
+
+    void onDraw(int loops, SkCanvas* canvas) override {
+        for (int i = 0; i < loops; ++i) {
+            SkRegion rgn;
+            // Simulate a 300x200 grid of tiles where every other tile is missing.
+            // This creates 30,000 non-merging rectangles with high coordinate values
+            // similar to b/511952524.
+            for (int y = 0; y < 300; ++y) {
+                for (int x = 0; x < 200; ++x) {
+                    if ((x + y) % 2 == 0) {
+                        rgn.op(SkIRect::MakeXYWH(x * 256, y * 256, 256, 256), SkRegion::kUnion_Op);
+                    }
+                }
+            }
+        }
+    }
+};
+
+DEF_BENCH(return new RegionCheckerboardBench();)

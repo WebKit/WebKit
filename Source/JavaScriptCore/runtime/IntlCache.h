@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +26,16 @@
 
 #pragma once
 
+#include "IntlDateTimeFormat.h"
+#include <atomic>
+#include <optional>
 #include <unicode/udatpg.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TinyLRUCache.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -36,18 +43,55 @@
 
 namespace JSC {
 
+struct IntlDateTimeFormatImplKey {
+    std::optional<String> locales;
+    IntlDateTimeFormat::RequiredComponent required { IntlDateTimeFormat::RequiredComponent::Any };
+    IntlDateTimeFormat::Defaults defaults { IntlDateTimeFormat::Defaults::All };
+
+    friend bool operator==(const IntlDateTimeFormatImplKey&, const IntlDateTimeFormatImplKey&) = default;
+};
+
 class IntlCache {
     WTF_MAKE_NONCOPYABLE(IntlCache);
     WTF_MAKE_TZONE_ALLOCATED(IntlCache);
 public:
-    IntlCache() = default;
+    IntlCache();
+    ~IntlCache();
+
+    static void ensureLanguageChangeObserver();
 
     Vector<char16_t, 32> getBestDateTimePattern(const CString& locale, std::span<const char16_t> skeleton, UErrorCode&);
     Vector<char16_t, 32> getFieldDisplayName(const CString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
 
     String canonicalizeUnicodeLocaleID(const String& languageTag);
 
+    // The cache is reset only at the VM entry service scope; get and insert never check.
+    RefPtr<const IntlDateTimeFormatImpl> findCachedDateTimeFormatImpl(const IntlDateTimeFormatImplKey& key)
+    {
+        if (auto cached = m_cachedDateTimeFormatImpls.findIfCached(key))
+            return *cached;
+        return nullptr;
+    }
+
+    void cacheDateTimeFormatImpl(const IntlDateTimeFormatImplKey& key, Ref<const IntlDateTimeFormatImpl>&& impl)
+    {
+        m_cachedDateTimeFormatImpls.insert(key, RefPtr<const IntlDateTimeFormatImpl>(WTF::move(impl)));
+    }
+
+    void clearForTimeZoneChange() { clearDateTimeFormatImplCache(); }
+    bool hasLanguageChange() const { return m_lastSeenLanguagesEpoch != s_languagesEpoch.load(std::memory_order_acquire); }
+    void clearForLanguageChange()
+    {
+        m_lastSeenLanguagesEpoch = s_languagesEpoch.load(std::memory_order_acquire);
+        clearDateTimeFormatImplCache();
+    }
+
 private:
+    void clearDateTimeFormatImplCache() { m_cachedDateTimeFormatImpls.clear(); }
+
+    static constexpr size_t dateTimeFormatImplCacheCapacity = 4;
+    using DateTimeFormatImplCache = WTF::TinyLRUCache<IntlDateTimeFormatImplKey, RefPtr<const IntlDateTimeFormatImpl>, dateTimeFormatImplCacheCapacity>;
+
     UDateTimePatternGenerator* getSharedPatternGenerator(const CString& locale, UErrorCode& status)
     {
         if (m_cachedDateTimePatternGenerator) {
@@ -62,6 +106,11 @@ private:
     std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>> m_cachedDateTimePatternGenerator;
     CString m_cachedDateTimePatternGeneratorLocale;
     UncheckedKeyHashMap<String, String> m_cachedCanonicalizedLocaleIDs;
+
+    static std::atomic<uint64_t> s_languagesEpoch;
+
+    DateTimeFormatImplCache m_cachedDateTimeFormatImpls;
+    uint64_t m_lastSeenLanguagesEpoch { 0 };
 };
 
 } // namespace JSC

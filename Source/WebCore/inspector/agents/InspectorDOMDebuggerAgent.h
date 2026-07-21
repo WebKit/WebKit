@@ -40,8 +40,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -132,8 +132,22 @@ private:
     RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllAnimationFramesBreakpoint;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
-    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;
+    struct URLBreakpoint {
+        String url;
+        bool isRegex { false };
+
+        // This is only used for the breakpoint configuration (i.e. it's irrelevant when comparing).
+        Ref<JSC::Breakpoint> specialBreakpoint;
+
+        // Cached so the searcher isn't recompiled for every request while the breakpoint exists.
+        Inspector::ContentSearchUtilities::Searcher searcher;
+
+        inline bool operator==(const URLBreakpoint& other) const
+        {
+            return url == other.url && isRegex == other.isRegex;
+        }
+    };
+    Vector<URLBreakpoint> m_urlBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllURLsBreakpoint;
 };
 

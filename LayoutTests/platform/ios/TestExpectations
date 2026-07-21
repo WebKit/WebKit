@@ -1296,6 +1296,12 @@ media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-volume.html [ Skip ]
 
 media/picture-in-picture/picture-in-picture-interruption.html [ Skip ]
+imported/w3c/web-platform-tests/picture-in-picture/disable-picture-in-picture.html [ Skip ]
+imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-window.html [ Skip ]
+imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-exits-existing.html [ Skip ]
+imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html [ Skip ]
+imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture.html [ Skip ]
+
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Skip ]
@@ -8602,6 +8608,7 @@ http/wpt/identity/formats/ISO18013/mixed-requests.https.html [ Failure ] # webki
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-constraint-validation.html [ Pass Failure ] # webkit.org/b/318257
 
 webkit.org/b/317884 imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html [ Skip ]
+webkit.org/b/256299 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
 
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Failure ]
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.worker.html [ Failure ]

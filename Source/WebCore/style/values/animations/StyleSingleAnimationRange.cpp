@@ -35,33 +35,33 @@
 namespace WebCore {
 namespace Style {
 
-static RefPtr<CSSNumericValue> toCSSNumericValue(const LengthPercentage<>& offset)
+static RefPtr<CSSNumericValue> toCSSNumericValue(const SingleAnimationRangeEdgeOffset& offset, ZoomFactor zoom)
 {
     // FIXME: This will fail for calc().
     return offset.isPercentOrCalculated()
         ? CSSNumericFactory::percent(offset.tryPercentage()->value)
-        : CSSNumericFactory::px(offset.tryFixed()->resolveZoom(Style::ZoomNeeded { }));
+        : CSSNumericFactory::px(offset.tryFixed()->resolveZoom(zoom));
 }
 
-TimelineRangeValue SingleAnimationRangeStart::toTimelineRangeValue() const
+TimelineRangeValue SingleAnimationRangeStart::toTimelineRangeValue(ZoomFactor zoom) const
 {
     if (m_name == SingleAnimationRangeName::Normal)
         return convertSingleAnimationRangeNameToRangeString(m_name);
 
     return TimelineRangeOffset {
         convertSingleAnimationRangeNameToRangeString(m_name),
-        toCSSNumericValue(m_offset),
+        toCSSNumericValue(m_offset, zoom),
     };
 }
 
-TimelineRangeValue SingleAnimationRangeEnd::toTimelineRangeValue() const
+TimelineRangeValue SingleAnimationRangeEnd::toTimelineRangeValue(ZoomFactor zoom) const
 {
     if (m_name == SingleAnimationRangeName::Normal)
         return convertSingleAnimationRangeNameToRangeString(m_name);
 
     return TimelineRangeOffset {
         convertSingleAnimationRangeNameToRangeString(m_name),
-        toCSSNumericValue(m_offset),
+        toCSSNumericValue(m_offset, zoom),
     };
 }
 

@@ -4951,19 +4951,13 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
 
         RefPtr<RegisterID> iterator = newTemporary();
         RefPtr<RegisterID> nextMethod = newTemporary();
-        RefPtr<RegisterID> symbolAsyncIterator;
 
-        if (isAsyncFunctionParseMode(parseMode())) {
+        {
             emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
-            symbolAsyncIterator = emitGetById(newTemporary(), subject.get(), propertyNames().asyncIteratorSymbol);
+            RefPtr<RegisterID> symbolAsyncIterator = emitGetById(newTemporary(), subject.get(), propertyNames().asyncIteratorSymbol);
             CallArguments args(*this, nullptr, 0);
             move(args.thisRegister(), subject.get());
             emitAsyncIteratorOpen(iterator.get(), nextMethod.get(), symbolAsyncIterator.get(), args, node);
-        } else {
-            // Module top-level await. `driver` is an AbstractModuleRecord, which AsyncGeneratorDriverResume
-            // cannot drive, so acquire generically -- op_async_iterator_next then always takes its real-call branch.
-            move(iterator.get(), emitGetAsyncIterator(subject.get(), node));
-            emitGetById(nextMethod.get(), iterator.get(), propertyNames().next);
         }
 
         Ref<Label> loopDone = newLabel();

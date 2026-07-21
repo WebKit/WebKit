@@ -600,10 +600,6 @@ webkit.org/b/168164 fast/picture/viewport-resize.html [ Timeout ]
 
 webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 
-# webkit.org/b/188506 fast/dom/timer-throttling-hidden-page.html [ Failure ]
-webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
-webkit.org/b/212350 fast/dom/timer-throttling-hidden-page-2.html [ Timeout ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////

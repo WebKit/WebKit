@@ -625,8 +625,12 @@ void MediaSourcePrivate::shutdown()
 
 MediaTime MediaSourcePrivate::nextStallTime(const MediaTime& currentTime) const
 {
+    return nextStallTime(currentTime, buffered());
+}
+
+MediaTime MediaSourcePrivate::nextStallTime(const MediaTime& currentTime, const PlatformTimeRanges& ranges) const
+{
     auto stallAtTime = duration();
-    auto ranges = buffered();
     size_t index = ranges.find(currentTime);
     if (index == notFound)
         return stallAtTime;

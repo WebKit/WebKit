@@ -252,6 +252,14 @@ def parse_args(args):
                              help='Reorganize and reformat API test expectations files (sections, alphabetical order). Does not run any tests.'),
         optparse.make_option('--print-expectations', action='store_true', default=False,
                              help='Print expected outcomes for given tests. Does not run any tests.'),
+        optparse.make_option('--check-pre-existing-failures', action='store_true',
+                             default=False, dest='check_pre_existing_failures',
+                             help='After the run, consult results.webkit.org to annotate each unexpected '
+                                  'failure as pre-existing (historically failing on CI) or possibly new.'),
+        optparse.make_option('--max-pre-existing-checks', type='int', default=0,
+                             dest='max_pre_existing_checks',
+                             help='Maximum number of failing tests to look up in results.webkit.org when '
+                                  '--check-pre-existing-failures is set. Use 0 for no limit. (default: 0)'),
     ]))
     option_group_definitions.append(('Upload Options', upload_options()))
 

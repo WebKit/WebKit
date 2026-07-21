@@ -90,8 +90,7 @@ void InspectorDOMDebuggerAgent::disable()
     m_pauseOnAllTimeoutsBreakpoint = nullptr;
     m_pauseOnAllAnimationFramesBreakpoint = nullptr;
 
-    m_urlTextBreakpoints.clear();
-    m_urlRegexBreakpoints.clear();
+    m_urlBreakpoints.clear();
     m_pauseOnAllURLsBreakpoint = nullptr;
 }
 
@@ -438,13 +437,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakp
         return { };
     }
 
-    if (isRegex && *isRegex) {
-        if (!m_urlRegexBreakpoints.add(url, breakpoint.releaseNonNull()))
-            return makeUnexpected("Breakpoint for given regex already exists"_s);
-    } else {
-        if (!m_urlTextBreakpoints.add(url, breakpoint.releaseNonNull()))
-            return makeUnexpected("Breakpoint for given URL already exists"_s);
-    }
+    bool isRegexBreakpoint = isRegex && *isRegex;
+    auto searchType = isRegexBreakpoint ? ContentSearchUtilities::SearchType::Regex : ContentSearchUtilities::SearchType::ContainsString;
+    auto searcher = ContentSearchUtilities::createSearcherForString(url, searchType, ContentSearchUtilities::SearchCaseSensitive::No);
+    if (!m_urlBreakpoints.appendIfNotContains(URLBreakpoint { url, isRegexBreakpoint, breakpoint.releaseNonNull(), WTF::move(searcher) }))
+        return makeUnexpected("Breakpoint for given url and given isRegex already exists"_s);
 
     return { };
 }
@@ -458,13 +455,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeURLBre
         return { };
     }
 
-    if (isRegex && *isRegex) {
-        if (!m_urlRegexBreakpoints.remove(url))
-            return makeUnexpected("Missing breakpoint for given regex"_s);
-    } else {
-        if (!m_urlTextBreakpoints.remove(url))
-            return makeUnexpected("Missing breakpoint for given URL"_s);
-    }
+    bool isRegexBreakpoint = isRegex && *isRegex;
+    if (!m_urlBreakpoints.removeFirstMatching([&](auto& existing) { return existing.isRegex == isRegexBreakpoint && existing.url == url; }))
+        return makeUnexpected("Missing breakpoint for given url and isRegex"_s);
 
     return { };
 }
@@ -478,26 +471,13 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
     if (!ScriptDisallowedScope::isScriptAllowedInMainThread())
         return;
 
-    constexpr auto searchCaseSensitive = ContentSearchUtilities::SearchCaseSensitive::No;
-
     auto breakpointURL = emptyString();
     auto breakpoint = m_pauseOnAllURLsBreakpoint.copyRef();
     if (!breakpoint) {
-        for (auto& [query, textBreakpoint] : m_urlTextBreakpoints) {
-            auto searcher = ContentSearchUtilities::createSearcherForString(query, ContentSearchUtilities::SearchType::ContainsString, searchCaseSensitive);
-            if (ContentSearchUtilities::searcherMatchesText(searcher, url)) {
-                breakpoint = textBreakpoint.copyRef();
-                breakpointURL = query;
-                break;
-            }
-        }
-    }
-    if (!breakpoint) {
-        for (auto& [query, regexBreakpoint] : m_urlRegexBreakpoints) {
-            auto searcher = ContentSearchUtilities::createSearcherForString(query, ContentSearchUtilities::SearchType::Regex, searchCaseSensitive);
-            if (ContentSearchUtilities::searcherMatchesText(searcher, url)) {
-                breakpoint = regexBreakpoint.copyRef();
-                breakpointURL = query;
+        for (auto& urlBreakpoint : m_urlBreakpoints) {
+            if (ContentSearchUtilities::searcherMatchesText(urlBreakpoint.searcher, url)) {
+                breakpoint = urlBreakpoint.specialBreakpoint.copyRef();
+                breakpointURL = urlBreakpoint.url;
                 break;
             }
         }

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_Blob.any.js
@@ -35,12 +33,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/README.md
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/Transferred_objects_unusable.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.data.sub.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.origin.sub.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.ports.sub.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.source.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.source.xorigin.sub.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/messageerror.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage-to-target-not-fully-active-on-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_ArrayBuffer.sub.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_CryptoKey_insecure.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_Date.sub.htm

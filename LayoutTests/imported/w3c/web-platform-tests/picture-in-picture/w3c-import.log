@@ -10,20 +10,24 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/css-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/disable-picture-in-picture.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/enter-picture-in-picture.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/exit-picture-in-picture.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture-disable-attribute.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/mediastream.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-element.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-window.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/removed-from-document.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-exits-existing.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/unload-document-exits-picture-in-picture.html

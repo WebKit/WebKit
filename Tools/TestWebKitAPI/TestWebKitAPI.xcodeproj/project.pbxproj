@@ -180,6 +180,7 @@
 			);
 			script = (
 				"\"${SCRIPT_INPUT_FILE_0}\"",
+				"",
 			);
 		};
 /* End PBXBuildRule section */
@@ -550,6 +551,7 @@
 			membershipExceptions = (
 				"WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift",
 				"WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift",
+				"WebKit/WebPage/AppKit Gesture Tests/DoubleClickGesturesTests.swift",
 				"WebKit/WebPage/AppKit Gesture Tests/EmbeddedAppKitGesturesTests.swift",
 				WebKit/WebPage/EditingFontSizeTests.swift,
 				WebKit/WebPage/JavaScriptExpressionTests.swift,
@@ -1331,6 +1333,7 @@
 			membershipExceptions = (
 				"WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift",
 				"WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift",
+				"WebKit/WebPage/AppKit Gesture Tests/DoubleClickGesturesTests.swift",
 				"WebKit/WebPage/AppKit Gesture Tests/EmbeddedAppKitGesturesTests.swift",
 				WebKit/WebPage/EditingFontSizeTests.swift,
 				WebKit/WebPage/JavaScriptExpressionTests.swift,

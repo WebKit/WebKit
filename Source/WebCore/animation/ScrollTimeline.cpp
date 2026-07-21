@@ -360,23 +360,29 @@ ScrollTimeline::Data ScrollTimeline::computeTimelineData(UseCachedCurrentTime us
     };
 }
 
-std::pair<WebAnimationTime, WebAnimationTime> ScrollTimeline::intervalForAttachmentRange(const Style::SingleAnimationRange& attachmentRange) const
+std::pair<WebAnimationTime, WebAnimationTime> ScrollTimeline::intervalForAttachmentRange(const ResolvableTimelineRange& resolvableTimelineRange) const
 {
     auto maxScrollOffset = m_cachedCurrentTimeData.maxScrollOffset;
     if (!maxScrollOffset)
         return { WebAnimationTime::fromPercentage(0), WebAnimationTime::fromPercentage(100) };
 
-    auto attachmentRangeOrDefault = attachmentRange.isDefault() ? defaultRange() : attachmentRange;
-
-    auto computedPercentageIfNecessary = [&](const auto& rangeOffset) {
-        if (auto percentage = rangeOffset.tryPercentage())
-            return percentage->value;
-        return Style::evaluate<float>(rangeOffset, maxScrollOffset, Style::ZoomNeeded { }) / maxScrollOffset * 100;
+    auto computedTime = [&](const auto& edge, auto zoom) {
+        if (auto percentage = edge.offset().tryPercentage())
+            return WebAnimationTime::fromPercentage(percentage->value);
+        return WebAnimationTime::fromPercentage(Style::evaluate<float>(edge.offset(), maxScrollOffset, zoom) / maxScrollOffset * 100);
     };
 
+    if (resolvableTimelineRange.isDefault()) {
+        auto range = defaultRange();
+        return {
+            computedTime(range.start, Style::ZoomFactor::none()),
+            computedTime(range.end, Style::ZoomFactor::none()),
+        };
+    }
+
     return {
-        WebAnimationTime::fromPercentage(computedPercentageIfNecessary(attachmentRangeOrDefault.start.offset())),
-        WebAnimationTime::fromPercentage(computedPercentageIfNecessary(attachmentRangeOrDefault.end.offset()))
+        computedTime(resolvableTimelineRange.start, resolvableTimelineRange.startZoom),
+        computedTime(resolvableTimelineRange.end, resolvableTimelineRange.endZoom),
     };
 }
 

@@ -1088,12 +1088,6 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     endif ()
 endforeach ()
 
-# Symlink WebKit/ -> WebKitLegacy/ for <WebKit/...> imports.
-if (NOT EXISTS "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKit")
-    file(CREATE_LINK "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy"
-                     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKit" SYMBOLIC)
-endif ()
-
 set(_wkl_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework")
 make_directory("${_wkl_fw}")
 make_directory("${_wkl_fw}/Modules")

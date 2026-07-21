@@ -47,7 +47,6 @@
 #include "MediationRequirement.h"
 #include "PermissionsPolicy.h"
 #include "Settings.h"
-#include "VisibilityState.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSONObject.h>
 #include <Logging.h>
@@ -177,14 +176,8 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
         return;
     }
 
-    CheckedRef focusController = page->focusController();
-    if (!focusController->isActive() || !focusController->isFocused()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The top-level browsing context does not have user attention."_s });
-        return;
-    }
-
-    if (document.visibilityState() != VisibilityState::Visible) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not visible."_s });
+    if (!document.isFullyActiveAndHasUserAttention()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document must be focused and visible."_s });
         return;
     }
 

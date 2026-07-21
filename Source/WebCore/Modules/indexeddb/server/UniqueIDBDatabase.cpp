@@ -1007,13 +1007,8 @@ void UniqueIDBDatabase::putOrAddAfterSpaceCheck(const IDBRequestData& requestDat
 
     if (spaceCheckResult != SpaceCheckResult::Pass)
         return callback(IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("PutOrAdd"_s) }, keyData);
-    // If a record already exists in store, then remove the record from store using the steps for deleting records from an object store.
-    // This is important because formally deleting it from the object store also removes it from the appropriate indexes.
-    IDBError error = protect(m_backingStore)->deleteRange(transactionIdentifier, objectStoreIdentifier, keyData);
-    if (!error.isNull())
-        return callback(error, keyData);
 
-    error = protect(m_backingStore)->addRecord(transactionIdentifier, objectStoreInfo, keyData, indexKeys, value);
+    IDBError error = protect(m_backingStore)->overwriteRecord(transactionIdentifier, objectStoreInfo, keyData, indexKeys, value);
     if (!error.isNull())
         return callback(error, keyData);
 

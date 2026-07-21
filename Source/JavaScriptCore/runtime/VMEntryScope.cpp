@@ -51,7 +51,7 @@ void VMEntryScope::setUpSlow()
 #endif
     }
 
-    if (m_vm.hasAnyEntryScopeServiceRequest() || m_vm.hasTimeZoneChange()) [[unlikely]]
+    if (m_vm.hasAnyEntryScopeServiceRequest()) [[unlikely]]
         m_vm.executeEntryScopeServicesOnEntry();
 }
 

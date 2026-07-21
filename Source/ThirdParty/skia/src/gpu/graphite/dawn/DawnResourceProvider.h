@@ -8,6 +8,7 @@
 #ifndef skgpu_graphite_DawnResourceProvider_DEFINED
 #define skgpu_graphite_DawnResourceProvider_DEFINED
 
+#include "include/core/SkSpan.h"
 #include "include/gpu/graphite/dawn/DawnGraphiteTypes.h"
 #include "src/core/SkLRUCache.h"
 #include "src/core/SkTHash.h"
@@ -65,24 +66,24 @@ public:
                                              AccessPattern,
                                              std::string_view label);
 
-    // Find the cached bind group or create a new one based on the bound buffers and their
-    // binding sizes (boundBuffersAndSizes) for these uniforms (in order):
-    // - Intrinsic constants.
-    // - Render step uniforms.
-    // - Paint uniforms.
-    const wgpu::BindGroup& findOrCreateUniformBuffersBindGroup(
-            const std::array<std::pair<const DawnBuffer*, uint32_t>, kNumUniformEntries>&
-                    boundBuffersAndSizes);
+    wgpu::BindGroup createBindGroup(SkSpan<wgpu::BindGroupEntry>, const wgpu::BindGroupLayout);
+
+    // Find or create a bind group containing the given buffer.
+    wgpu::BindGroup findOrCreateSingleUniformBindGroup(const BindBufferInfo&);
 
     // Find or create a bind group containing the given sampler & texture.
-    const wgpu::BindGroup& findOrCreateSingleTextureSamplerBindGroup(const DawnSampler* sampler,
-                                                                     const DawnTexture* texture);
+    wgpu::BindGroup findOrCreateSingleTextureSamplerBindGroup(const DawnSampler*,
+                                                              const DawnTexture*);
 
     // Find the cached bind buffer info, or create a new one for the given intrinsic values.
     BindBufferInfo findOrCreateIntrinsicBindBufferInfo(DawnCommandBuffer* cb,
                                                        UniformDataBlock intrinsicValues);
 
     void releasePendingIntrinsicBuffers();
+
+    // For BindGroupEntries, using this method to get a null buffer pointer rather than simply using
+    // nullptr allows for assigning a label (when enabled in Caps) for more clear debugging.
+    const wgpu::Buffer& getOrCreateNullBuffer();
 
 private:
     sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) override;
@@ -97,8 +98,6 @@ private:
     BackendTexture onCreateBackendTexture(SkISize dimensions, const TextureInfo&) override;
     void onDeleteBackendTexture(const BackendTexture&) override;
 
-    const wgpu::Buffer& getOrCreateNullBuffer();
-
     DawnSharedContext* dawnSharedContext() const;
 
     void onFreeGpuResources() override;
@@ -109,14 +108,6 @@ private:
     skia_private::THashMap<uint32_t, wgpu::RenderPipeline> fBlitWithDrawPipelines;
 
     wgpu::Buffer fNullBuffer;
-
-    template <size_t NumEntries>
-    using BindGroupCache = SkLRUCache<BindGroupKey<NumEntries>,
-                                      wgpu::BindGroup,
-                                      typename BindGroupKey<NumEntries>::Hash>;
-
-    BindGroupCache<kNumUniformEntries> fUniformBufferBindGroupCache;
-    BindGroupCache<1> fSingleTextureSamplerBindGroups;
 
     class IntrinsicBuffer;
     class IntrinsicConstantsManager;

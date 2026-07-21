@@ -996,3 +996,12 @@
 349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.switch.default_label_static_* = SKIP
 349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.switch.default_not_last_static_* = SKIP
 349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.switch.if_in_switch_static_* = SKIP
+
+// webkit.org/b/319849
+0 METAL : dEQP-GLES3.functional.shaders.builtin_functions.common.isinf.* = SKIP
+0 METAL : dEQP-GLES3.functional.shaders.builtin_functions.common.isnan.* = SKIP
+0 METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.* = SKIP
+0 METAL : dEQP-GLES3.functional.shaders.linkage.varying.rules.* = SKIP
+0 METAL : dEQP-GLES3.functional.shaders.metamorphic.bubblesort_flag.variant_* = SKIP
+0 METAL : dEQP-GLES3.functional.shaders.metamorphic.synthetic.variant_* = SKIP
+0 METAL : dEQP-GLES3.functional.shaders.operator.geometric.faceforward.mediump_vec2_vertex = SKIP

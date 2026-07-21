@@ -68,6 +68,7 @@ enum class ApplePayButtonStyle : uint8_t;
 enum class ApplePayButtonType : uint8_t;
 enum class AppleVisualEffect : uint8_t;
 enum class BackfaceVisibility : uint8_t;
+enum class BaselineSource : uint8_t;
 enum class BlendMode : uint8_t;
 enum class FlowDirection : uint8_t;
 enum class BlockStepAlign : uint8_t;

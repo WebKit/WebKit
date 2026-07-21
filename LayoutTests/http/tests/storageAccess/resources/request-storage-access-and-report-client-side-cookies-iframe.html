@@ -1,0 +1,64 @@
+<html>
+<head>
+    <script>
+        // Grants storage access on user activation like request-storage-access-iframe.html, but reports
+        // whether cookies are accessible by reading document.cookie client-side (which doesn't require a 
+        // fetch over the network).
+        // This lets the parent check the iframe's storage-access state even while the frame has an in-flight or
+        // non-committing navigation, without a fetch that would be cancelled or fail access-control checks.
+        const topOrigin = "https://127.0.0.1:8443";
+
+        var requestStorageAccessResolved;
+
+        function messageToTop(message) {
+            top.postMessage(message, topOrigin);
+        }
+
+        function receiveMessage(event) {
+            if (event.origin !== topOrigin) {
+                messageToTop("FAIL Received a message from an unexpected origin: " + event.origin);
+                return;
+            }
+            if (event.data.indexOf("reportBackCookies") !== -1) {
+                if (document.cookie.indexOf("firstPartyCookie=value") !== -1)
+                    messageToTop("PASS The iframe retained storage access. document.cookie == " + document.cookie);
+                else
+                    messageToTop("FAIL The iframe lost storage access. document.cookie == " + document.cookie);
+            } else {
+                messageToTop("FAIL Unknown request.");
+            }
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function makeRequestWithUserGesture() {
+            document.requestStorageAccess().then(
+                function () {
+                    requestStorageAccessResolved = true;
+                    continueAfterRequestWithUserGesture();
+                },
+                function () {
+                    requestStorageAccessResolved = false;
+                    continueAfterRequestWithUserGesture();
+                }
+            );
+        }
+
+        function continueAfterRequestWithUserGesture() {
+            document.hasStorageAccess().then(
+                function (hasAccess) {
+                    if (requestStorageAccessResolved && hasAccess)
+                        messageToTop("PASS Storage access was granted. document.cookie == " + document.cookie);
+                    else
+                        messageToTop("FAIL Storage access was not granted. document.cookie == " + document.cookie);
+                },
+                function (reason) {
+                    messageToTop("FAIL document.hasStorageAccess() was rejected. Reason: " + reason);
+                }
+            );
+        }
+    </script>
+</head>
+<body onclick="makeRequestWithUserGesture()">
+</body>
+</html>

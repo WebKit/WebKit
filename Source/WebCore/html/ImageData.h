@@ -67,7 +67,7 @@ public:
     PredefinedColorSpace colorSpace() const { return m_colorSpace; }
     ImageDataPixelFormat pixelFormat() const { return m_data.pixelFormat(); }
 
-    Ref<ByteArrayPixelBuffer> byteArrayPixelBuffer() const;
+    WEBCORE_EXPORT Ref<ByteArrayPixelBuffer> byteArrayPixelBuffer() const;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     Ref<Float16ArrayPixelBuffer> float16ArrayPixelBuffer() const;
 #endif

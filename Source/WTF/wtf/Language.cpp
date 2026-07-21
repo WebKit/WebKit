@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2013, 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,8 +57,9 @@ static Vector<String>& NODELETE preferredLanguagesOverride() WTF_REQUIRES_LOCK(l
 }
 static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOCK(languagesLock);
 
+static Lock observerMapLock;
 using ObserverMap = HashMap<void*, LanguageChangeObserverFunction>;
-static ObserverMap& NODELETE observerMap()
+static ObserverMap& NODELETE observerMap() WTF_REQUIRES_LOCK(observerMapLock)
 {
     static NeverDestroyed<ObserverMap> map;
     return map.get();
@@ -65,11 +67,13 @@ static ObserverMap& NODELETE observerMap()
 
 void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction customObserver)
 {
+    Locker locker { observerMapLock };
     observerMap().set(context, customObserver);
 }
 
 void removeLanguageChangeObserver(void* context)
 {
+    Locker locker { observerMapLock };
     ASSERT(observerMap().contains(context));
     observerMap().remove(context);
 }
@@ -83,10 +87,9 @@ void languageDidChange()
         cachedUserPrefersSimplifiedChinese = std::nullopt;
     }
 
-    for (auto& observer : copyToVector(observerMap())) {
-        if (observerMap().contains(observer.key))
-            observer.value(observer.key);
-    }
+    Locker locker { observerMapLock };
+    for (auto& observer : copyToVector(observerMap()))
+        observer.value(observer.key);
 }
 
 String defaultLanguage(ShouldMinimizeLanguages shouldMinimizeLanguages)

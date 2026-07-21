@@ -533,6 +533,16 @@ TextStream& operator<<(TextStream& ts, FieldSizing sizing)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, BaselineSource source)
+{
+    switch (source) {
+    case BaselineSource::Auto: ts << "auto"_s; break;
+    case BaselineSource::First: ts << "first"_s; break;
+    case BaselineSource::Last: ts << "last"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, FillAttachment attachment)
 {
     switch (attachment) {

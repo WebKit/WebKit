@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -738,6 +739,22 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    std::optional<IntlDateTimeFormatImplKey> cacheKey;
+    const bool canCache = originalOptions.isUndefined() && (locales.isUndefined() || locales.isString()) && toLocaleStringTimeZone.isNull();
+    if (canCache) {
+        IntlDateTimeFormatImplKey key { .locales = std::nullopt, .required = required, .defaults = defaults };
+        if (locales.isString()) {
+            key.locales = asString(locales)->value(globalObject);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+        if (auto cachedImpl = vm.intlCache().findCachedDateTimeFormatImpl(key)) {
+            setImpl(cachedImpl.releaseNonNull());
+            vm.heap.reportExtraMemoryAllocated(this, estimatedUDateFormatSize);
+            return;
+        }
+        cacheKey = WTF::move(key);
+    }
+
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -1076,6 +1093,9 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     }
 
     vm.heap.reportExtraMemoryAllocated(this, estimatedUDateFormatSize);
+
+    if (cacheKey)
+        vm.intlCache().cacheDateTimeFormatImpl(*cacheKey, impl.copyRef());
     m_impl = WTF::move(impl);
 }
 
@@ -1495,7 +1515,7 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
             JSObject* part = sourceType
                 ? createIntlPartObjectWithSource(globalObject, literalString, value, sourceType)
                 : createIntlPartObject(globalObject, literalString, value);
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
         previousEndIndex = endIndex;
@@ -1506,7 +1526,7 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
             JSObject* part = sourceType
                 ? createIntlPartObjectWithSource(globalObject, type, value, sourceType)
                 : createIntlPartObject(globalObject, type, value);
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
     }
@@ -1927,7 +1947,7 @@ static JSValue buildFormattedDateIntervalParts(JSGlobalObject* globalObject, con
 
         if (previousEndIndex < beginIndex) {
             JSObject* part = createPart(literalString, previousEndIndex, beginIndex - previousEndIndex);
-            parts->push(globalObject, part);
+            parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
             previousEndIndex = beginIndex;
         }
@@ -1950,14 +1970,14 @@ static JSValue buildFormattedDateIntervalParts(JSGlobalObject* globalObject, con
 
         auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
         JSObject* part = createPart(type, beginIndex, endIndex - beginIndex);
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, { });
         previousEndIndex = endIndex;
     }
 
     if (previousEndIndex < resultLength) {
         JSObject* part = createPart(literalString, previousEndIndex, resultLength - previousEndIndex);
-        parts->push(globalObject, part);
+        parts->putDirectIndex(globalObject, parts->length(), part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

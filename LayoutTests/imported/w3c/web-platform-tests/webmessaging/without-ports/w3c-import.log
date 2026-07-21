@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/001.html
@@ -44,3 +42,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/027.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/028.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/029.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/WEB_FEATURES.yml

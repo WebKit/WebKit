@@ -56,4 +56,6 @@ struct NavigationRequester {
     std::optional<ProcessIdentifier> processIdentifier;
 };
 
+WEBCORE_EXPORT bool shouldNavigationLoseFrameSpecificStorageAccess(const NavigationRequester&, FrameIdentifier navigatedFrame, const URL& fromURL, const URL& toURL);
+
 } // namespace WebCore

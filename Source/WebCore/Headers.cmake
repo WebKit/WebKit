@@ -706,6 +706,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/url-pattern/URLPattern.h
     Modules/url-pattern/URLPatternComponent.h
     Modules/url-pattern/URLPatternInit.h
+    Modules/url-pattern/URLPatternOptions.h
+    Modules/url-pattern/URLPatternResult.h
 
     Modules/web-locks/WebLock.h
     Modules/web-locks/WebLockIdentifier.h
@@ -891,6 +893,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/KeyframeInterpolation.h
     animation/OptionalEffectTiming.h
     animation/PlaybackDirection.h
+    animation/ResolvableTimelineRange.h
     animation/ScrollAxis.h
     animation/ScrollTimeline.h
     animation/ScrollTimelineOptions.h
@@ -1614,6 +1617,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLOptionsCollectionInlines.h
     html/HTMLParagraphElement.h
     html/HTMLParamElement.h
+    html/HTMLPictureElement.h
     html/HTMLPlugInElement.h
     html/HTMLPreElement.h
     html/HTMLQuoteElement.h
@@ -3717,12 +3721,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/JSFile.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLCollection.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLOptionsCollection.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSImageData.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSMediaList.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNamedNodeMap.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNode.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNodeIterator.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNodeList.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSNotification.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSOffscreenCanvas.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSRange.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSReadableStreamDefaultController.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSStyleSheet.h

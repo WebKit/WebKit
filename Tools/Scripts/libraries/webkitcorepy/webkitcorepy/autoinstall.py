@@ -293,6 +293,23 @@ class Package(object):
             return False
         return True
 
+    @staticmethod
+    def _merge_move(source, target):
+        # Recursively move source into target. Unlike shutil.move, existing
+        # directories at the destination are merged rather than replaced. This
+        # preserves shared namespace packages (e.g. 'backports') when multiple
+        # wheels contribute sub-packages to the same top-level directory.
+        if os.path.isdir(source) and os.path.isdir(target):
+            for entry in os.listdir(source):
+                Package._merge_move(os.path.join(source, entry), os.path.join(target, entry))
+            os.rmdir(source)
+            return
+        if os.path.isdir(target):
+            shutil.rmtree(target, ignore_errors=True)
+        elif os.path.exists(target):
+            os.remove(target)
+        shutil.move(source, target)
+
     def install(self):
         AutoInstall.register(self)
         if self.is_cached():
@@ -414,12 +431,7 @@ class Package(object):
                     ):
                         raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
                     for file in to_be_moved:
-                        target = os.path.join(AutoInstall.directory, file)
-                        if os.path.isdir(target):
-                            shutil.rmtree(target, ignore_errors=True)
-                        elif os.path.exists(target):
-                            os.remove(target)
-                        shutil.move(os.path.join(temp_location, file), AutoInstall.directory)
+                        self._merge_move(os.path.join(temp_location, file), os.path.join(AutoInstall.directory, file))
 
                 self.do_post_install(temp_location)
 

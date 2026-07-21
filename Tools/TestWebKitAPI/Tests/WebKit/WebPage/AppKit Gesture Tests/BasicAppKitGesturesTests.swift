@@ -76,17 +76,9 @@ extension AppKitGesturesTests.Basic {
     func singleClickFiresPointerMouseAndClickEvents(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
-        let expectedEvents = ["pointerdown", "mousedown", "pointerup", "mouseup", "click"]
+        let expectedEvents: [DOMEventType] = [.pointerdown, .mousedown, .pointerup, .mouseup, .click]
 
-        try await page.callJavaScript(arguments: ["events": expectedEvents]) {
-            """
-            window.eventLog = [];
-            const target = document.getElementById("div");
-            for (const eventType of events) {
-                target.addEventListener(eventType, e => window.eventLog.push(e.type));
-            }
-            """
-        }
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: expectedEvents))
 
         if contentEditable {
             // FIXME: <rdar://177201499> This workaround establishes a selection first so that the synthetic click does not change insertion point.
@@ -103,14 +95,10 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let eventLog = try await page.callJavaScript(returning: [String].self) {
-            """
-            return window.eventLog;
-            """
-        }
+        let eventLog = try await page.callJavaScript(JavaScriptMessages.EventLog())
 
         for eventType in expectedEvents {
-            #expect(eventLog.contains(eventType))
+            #expect(eventLog.contains { $0.type == eventType })
         }
     }
 
@@ -756,6 +744,52 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func clickAfterScrollStillProducesClick() async throws {
+        let html = """
+            <body style="margin: 0;">
+                <div id="content"
+                     onclick="window.clicks = (window.clicks || 0) + 1;"
+                     style="height: 4000px; font-size: 30px;
+                            background: repeating-linear-gradient(to bottom, #eee 0 40px, #fff 40px 80px);">
+                    scroll, then click
+                </div>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: center,
+                end: CGPoint(x: center.x, y: center.y - 200),
+                duration: .seconds(0.5),
+                release: false
+            )
+            composer.advanceTime(0.5)
+            composer._wk_mouseUp()
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let scrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+        #expect(scrollPosition.y > 0)
+
+        try await Task.sleep(for: .seconds(1.5))
+
+        await recap.play { composer in
+            composer._wk_click(at: center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let clicks = try await page.callJavaScript(returning: Int.self) {
+            "return window.clicks || 0;"
+        }
+        #expect(clicks >= 1)
+    }
+
+    @Test
     func clickingOnSelectControlsKeepsMenuOpen() async throws {
         let html = """
             <select name="pets" id="select">
@@ -808,6 +842,63 @@ extension AppKitGesturesTests.Basic {
         #expect(clickCount == 1)
     }
 
+    @Test
+    func clickingOtherContentDismissesDataListDropdown() async throws {
+        let html = """
+            <div id="other" style="height: 200px; font-size: 30px;">other content</div>
+            <input id="input" list="pets" style="font-size: 30px;">
+            <datalist id="pets">
+                <option value="Dog">
+                <option value="Cat">
+                <option value="Goose">
+            </datalist>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript {
+            """
+            window.blurCount = 0;
+            document.getElementById("input").addEventListener("blur", () => window.blurCount++);
+            """
+        }
+
+        let inputBounds = try await screenBounds(ofElementWithID: "input")
+        let otherBounds = try await screenBounds(ofElementWithID: "other")
+
+        await recap.play { composer in
+            composer._wk_click(at: inputBounds.center, for: .seconds(0.1))
+        }
+
+        func isDataListDropdownShowing() -> Bool {
+            guard let childWindows = window.childWindows else {
+                return false
+            }
+
+            return childWindows.contains { NSStringFromClass(type(of: $0)) == "WKDataListSuggestionWindow" }
+        }
+
+        await page.waitForNextPresentationUpdate()
+        #expect(isDataListDropdownShowing())
+
+        await recap.play { composer in
+            composer._wk_click(at: otherBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+        #expect(!isDataListDropdownShowing())
+
+        let (activeElementID, blurCount) = try await page.callJavaScript(returning: (String, Int).self) {
+            """
+            return [document.activeElement?.id ?? "", window.blurCount];
+            """
+        }
+
+        #expect(activeElementID != "input")
+        #expect(blurCount == 1)
+    }
+
     // MARK: - Drag Press Disambiguation Tests
 
     @Test(arguments: [true, false])
@@ -822,7 +913,10 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        try await page.callJavaScript(arguments: ["elementID": "custom-slider"], script: styleAdjustmentForCustomWidgetScript)
+        try await page.callJavaScript(
+            arguments: ["elementID": "custom-slider", "interactive": false],
+            script: styleAdjustmentForCustomWidgetScript
+        )
         await page.waitForNextPresentationUpdate()
 
         let sliderBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: elementID))
@@ -1210,17 +1304,6 @@ extension CGPoint {
 }
 
 extension AppKitGesturesTests.Basic {
-    private func loadHTML(contentEditable: Bool = false, clickHandler: Bool = false) async throws {
-        let contentEditableMarkup = contentEditable ? "contenteditable" : ""
-        let clickHandlerMarkup = clickHandler ? "onclick='void(0)'" : ""
-
-        let html = """
-            <div \(contentEditableMarkup) \(clickHandlerMarkup) id="div" style="font-size: 30px;">\(Self.text)</div>
-            """
-
-        try await page.load(html: html).wait()
-    }
-
     private func loadScrollableText() async throws {
         let lines = (0..<100)
             .reversed()

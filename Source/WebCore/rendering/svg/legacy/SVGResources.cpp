@@ -272,8 +272,14 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     if (clipperFilterMaskerTags().contains(tagName)) {
         WTF::switchOn(style.clipPath(),
             [&](const Style::ReferencePath& clipPath) {
-                // FIXME: -webkit-clip-path should support external resources
-                // https://bugs.webkit.org/show_bug.cgi?id=127032
+                if (auto externalDocument = externalSVGResourceDocument(document, clipPath.url().resolved)) {
+                    if (RefPtr resolvedDocument = *externalDocument) {
+                        auto id = clipPath.url().resolved.fragmentIdentifier().toAtomString();
+                        if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(*resolvedDocument, id))
+                            ensureResources(foundResources).setClipper(clipper);
+                    }
+                    return;
+                }
                 if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, clipPath.fragment()))
                     ensureResources(foundResources).setClipper(clipper);
                 else
@@ -316,6 +322,16 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
     if (markerTags().contains(tagName) && style.hasMarkers()) {
         auto buildCachedMarkerResource = [&](const Style::SVGMarkerResource& markerResource, bool (SVGResources::*setMarker)(LegacyRenderSVGResourceMarker*)) {
+            if (auto markerURL = markerResource.tryURL()) {
+                if (auto externalDocument = externalSVGResourceDocument(document, markerURL->resolved)) {
+                    if (RefPtr resolvedDocument = *externalDocument) {
+                        auto markerId = markerURL->resolved.fragmentIdentifier().toAtomString();
+                        if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(*resolvedDocument, markerId))
+                            (ensureResources(foundResources).*setMarker)(marker);
+                    }
+                    return;
+                }
+            }
             auto markerId = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, document);
             if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(treeScope, markerId))
                 (ensureResources(foundResources).*setMarker)(marker);

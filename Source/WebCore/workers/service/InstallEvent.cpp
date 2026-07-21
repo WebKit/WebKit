@@ -122,7 +122,7 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
 {
     bool hasCondition = false;
     if (condition.urlPattern) {
-        auto urlPatternOrException = URLPattern::create(scope, std::exchange(*condition.urlPattern, { }), scope.contextData().scriptURL.string());
+        auto urlPatternOrException = URLPattern::create(std::exchange(*condition.urlPattern, { }), scope.contextData().scriptURL.string());
         if (urlPatternOrException.hasException())
             return urlPatternOrException.releaseException();
         condition.urlPattern = urlPatternOrException.releaseReturnValue();

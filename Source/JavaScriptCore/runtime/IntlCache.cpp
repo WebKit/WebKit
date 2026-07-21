@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +26,37 @@
 
 #include "config.h"
 #include "IntlCache.h"
-#include "IntlObject.h"
 
+#include "IntlDateTimeFormat.h"
+#include "IntlObject.h"
+#include <atomic>
+#include <mutex>
+#include <wtf/Language.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IntlCache);
+
+std::atomic<uint64_t> IntlCache::s_languagesEpoch { 1 };
+
+void IntlCache::ensureLanguageChangeObserver()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        WTF::addLanguageChangeObserver(&s_languagesEpoch, [](void*) {
+            s_languagesEpoch.fetch_add(1, std::memory_order_release);
+        });
+    });
+}
+
+IntlCache::IntlCache()
+    : m_lastSeenLanguagesEpoch(s_languagesEpoch.load(std::memory_order_acquire))
+{
+}
+
+IntlCache::~IntlCache() = default;
 
 UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString& locale, UErrorCode& status)
 {

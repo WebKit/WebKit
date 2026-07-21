@@ -10,11 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/ChildWindowPostMessage.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/MessageEvent-trusted-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/compare.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/cross-domain-image-receive.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/postMessage-reload-child.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/postMessage-reload-parent.html

@@ -1,0 +1,7 @@
+
+PASS Picture-in-Picture window dimensions are set after entering Picture-in-Picture
+PASS Picture-in-Picture window dimensions are set to 0 after entering Picture-in-Picture for another video
+PASS Picture-in-Picture window is unchanged after entering Picture-in-Picture for video already in Picture-in-Picture
+PASS Picture-in-Picture window dimensions are set to 0 after exiting Picture-in-Picture
+PASS Picture-in-Picture window dimensions are set to 0 if disablePictureInPicture becomes true
+

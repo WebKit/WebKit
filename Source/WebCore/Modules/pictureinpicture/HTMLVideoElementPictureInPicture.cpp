@@ -104,13 +104,19 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         return;
     }
 
-    if (!videoElement.videoTracks() || !videoElement.videoTracks()->length()) {
+    if (!videoElement.hasVideo()) {
         promise->reject(ExceptionCode::InvalidStateError, "The video element does not have a video track or it has not detected a video track yet."_s);
         return;
     }
 
+    RefPtr window = videoElement.document().window();
+    if (!window) {
+        promise->reject(ExceptionCode::InvalidStateError, "The video element does not have a window object."_s);
+        return;
+    }
+
     bool userActivationRequired = !protect(videoElement)->document().pictureInPictureElement();
-    if (userActivationRequired && !UserGestureIndicator::processingUserGesture()) {
+    if (userActivationRequired && !window->hasTransientActivation()) {
         promise->reject(ExceptionCode::NotAllowedError, "The request is not triggered by a user activation."_s);
         return;
     }
@@ -173,19 +179,37 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
         return;
 
     INFO_LOG(LOGIDENTIFIER);
-    protect(videoElement)->document().setPictureInPictureElement(videoElement.get());
+
     m_pictureInPictureWindow->setSize(windowSize);
 
-    auto initializer = PictureInPictureEvent::Init {
-        { true, false, false },
-        m_pictureInPictureWindow
-    };
-    videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTF::move(initializer)));
+    // https://w3c.github.io/picture-in-picture/#dom-htmlvideoelement-requestpictureinpicture
+    // 5. Queue a global task on the media element event task source given global, to perform the following steps:
+    // 5.1. If pictureInPictureElement is not null, run the exit Picture-in-Picture algorithm.
+    //      NOTE: This step is explicitly outside the EventQueue below so that the exit steps
+    //      happen both within their own event queue task and before the steps below.
+    if (RefPtr existing = videoElement->document().pictureInPictureElement())
+        HTMLVideoElementPictureInPicture::from(*existing).didExitPictureInPicture();
 
-    if (m_enterPictureInPicturePromise) {
-        protect(m_enterPictureInPicturePromise)->resolve<IDLInterface<PictureInPictureWindow>>(m_pictureInPictureWindow);
-        m_enterPictureInPicturePromise = nullptr;
-    }
+    ActiveDOMObject::queueTaskKeepingObjectAlive(*videoElement, TaskSource::MediaElement, [enterPictureInPicturePromise = std::exchange(m_enterPictureInPicturePromise, nullptr), pictureInPictureWindow = m_pictureInPictureWindow](auto& videoElement) mutable {
+
+        // 5.2. Set doc’s Picture-in-Picture element to this.
+        videoElement.document().setPictureInPictureElement(&videoElement);
+
+        // 5.3. Append relevant settings object’s origin to initiators of active Picture-in-Picture sessions.
+        // 5.4. If this is fullscreenElement, exit fullscreen.
+        // 5.5. Fire an event named enterpictureinpicture using PictureInPictureEvent at this with its bubbles
+        //      attribute initialized to true and its pictureInPictureWindow attribute initialized to
+        //      Picture-in-Picture window.
+        auto initializer = PictureInPictureEvent::Init {
+            { true, false, false },
+            pictureInPictureWindow
+        };
+        videoElement.dispatchEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTF::move(initializer)));
+
+        // 6. Resolve p with pipWindow.
+        if (enterPictureInPicturePromise)
+            enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(pictureInPictureWindow);
+    });
 }
 
 void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
@@ -196,18 +220,19 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 
     INFO_LOG(LOGIDENTIFIER);
     m_pictureInPictureWindow->close();
-    protect(videoElement)->document().setPictureInPictureElement(nullptr);
+    videoElement->document().setPictureInPictureElement(nullptr);
 
-    auto initializer = PictureInPictureEvent::Init {
-        { true, false, false },
-        m_pictureInPictureWindow
-    };
-    videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTF::move(initializer)));
+    ActiveDOMObject::queueTaskKeepingObjectAlive(*videoElement, TaskSource::MediaElement, [exitPictureInPicturePromise = std::exchange(m_exitPictureInPicturePromise, nullptr), pictureInPictureWindow = m_pictureInPictureWindow](auto& videoElement) mutable {
 
-    if (m_exitPictureInPicturePromise) {
-        protect(m_exitPictureInPicturePromise)->resolve();
-        m_exitPictureInPicturePromise = nullptr;
-    }
+        auto initializer = PictureInPictureEvent::Init {
+            { true, false, false },
+            pictureInPictureWindow
+        };
+        videoElement.dispatchEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTF::move(initializer)));
+
+        if (exitPictureInPicturePromise)
+            exitPictureInPicturePromise->resolve();
+    });
 }
 
 void HTMLVideoElementPictureInPicture::pictureInPictureWindowResized(const IntSize& windowSize)

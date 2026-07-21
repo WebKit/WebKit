@@ -1743,6 +1743,11 @@ NativeExecutable* VM::promiseAnySlowRejectFunctionExecutableSlow()
     return executable;
 }
 
+bool VM::hasLanguageChange()
+{
+    return m_intlCache->hasLanguageChange();
+}
+
 void VM::executeEntryScopeServicesOnEntry()
 {
     if (hasEntryScopeServiceRequest(EntryScopeService::FirePrimitiveGigacageEnabled)) [[unlikely]] {
@@ -1750,8 +1755,13 @@ void VM::executeEntryScopeServicesOnEntry()
         clearEntryScopeService(EntryScopeService::FirePrimitiveGigacageEnabled);
     }
 
-    if (dateCache.hasTimeZoneChange()) [[unlikely]]
+    if (dateCache.hasTimeZoneChange()) [[unlikely]] {
+        intlCache().clearForTimeZoneChange();
         dateCache.clearForTimeZoneChange();
+    }
+
+    if (intlCache().hasLanguageChange()) [[unlikely]]
+        intlCache().clearForLanguageChange();
 
     RefPtr watchdog = this->watchdog();
     if (watchdog) [[unlikely]]

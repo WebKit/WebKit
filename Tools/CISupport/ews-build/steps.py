@@ -6007,7 +6007,8 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
         if self.failedTestCount:
             rc = FAILURE
 
-        yield self.analyze_failures_using_results_db()
+        failures = yield self.parse_and_set_failures()
+        yield self.analyze_failures_using_results_db(failures)
 
         if SHOULD_FILTER_LOGS is True:
             self.steps_to_add += [
@@ -6087,12 +6088,14 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
         return {'step': status}
 
     @defer.inlineCallbacks
-    def analyze_failures_using_results_db(self):
+    def parse_and_set_failures(self):
         yield self._addToLog('json', '\n')
-        logTextJson = self.log_observer_json.getStdout().rstrip()
-
-        failures = self.parse_api_failures_from_string(logTextJson)
+        failures = self.parse_api_failures_from_string(self.log_observer_json.getStdout().rstrip())
         self.setProperty(f'{self.suffix}_failures', sorted(failures))
+        defer.returnValue(failures)
+
+    @defer.inlineCallbacks
+    def analyze_failures_using_results_db(self, failures):
         if failures:
             yield self._addToLog(self.test_failures_log_name, '\n'.join(failures))
             yield self.filter_api_test_failures_using_results_db(failures)
@@ -6192,11 +6195,12 @@ class ReRunAPITests(RunAPITests):
 
 class RunAPITestsWithoutChange(RunAPITests):
     name = 'run-api-tests-without-change'
+    suffix = 'clean_tree_run'
 
     def doOnFailure(self):
         pass
 
-    def analyze_failures_using_results_db(self):
+    def analyze_failures_using_results_db(self, failures):
         pass
 
 
@@ -6208,42 +6212,18 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
 
     @defer.inlineCallbacks
     def run(self):
-        self.results = {}
-        yield self.getTestsResults(RunAPITests.name)
-        yield self.getTestsResults(ReRunAPITests.name)
-        yield self.getTestsResults(RunAPITestsWithoutChange.name)
-        result = yield self.analyzeResults()
+        first_run_failures = set(self.getProperty('first_run_failures', []))
+        second_run_failures = set(self.getProperty('second_run_failures', []))
 
-        defer.returnValue(result)
-
-    @defer.inlineCallbacks
-    def analyzeResults(self):
-        if not self.results or len(self.results) == 0:
-            yield self._addToLog('stderr', 'Unable to parse API test results: {}'.format(self.results))
+        # This step runs only after both runs failed, so a missing or empty failure list means a run
+        # failed without producing parseable results: an infrastructure issue that should retry.
+        if not first_run_failures or not second_run_failures:
+            yield self._addToLog('stderr', 'Unable to parse API test results')
             self.build.buildFinished(['Unable to parse API test results'], RETRY)
             defer.returnValue(RETRY)
             return
 
-        first_run_results = self.results.get(RunAPITests.name)
-        second_run_results = self.results.get(ReRunAPITests.name)
-        clean_tree_results = self.results.get(RunAPITestsWithoutChange.name)
-
-        if not (first_run_results and second_run_results):
-            self.build.buildFinished(['Unable to parse API test results'], RETRY)
-            defer.returnValue(RETRY)
-            return
-
-        def getAPITestFailures(result):
-            if not result:
-                return set([])
-            # TODO: Analyze Time-out, Crash and Failure independently
-            return set([failure.get('name') for failure in result.get('Timedout', [])] +
-                       [failure.get('name') for failure in result.get('Crashed', [])] +
-                       [failure.get('name') for failure in result.get('Failed', [])])
-
-        first_run_failures = getAPITestFailures(first_run_results)
-        second_run_failures = getAPITestFailures(second_run_results)
-        clean_tree_failures = getAPITestFailures(clean_tree_results)
+        clean_tree_failures = set(self.getProperty('clean_tree_run_failures', []))
         clean_tree_failures_to_display = list(clean_tree_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         clean_tree_failures_string = ', '.join(clean_tree_failures_to_display)
 
@@ -6288,38 +6268,6 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
                     self.send_email_for_flaky_failure(flaky_failure)
             self.build.buildFinished([message], SUCCESS)
             defer.returnValue(SUCCESS)
-
-    def getBuildStepByName(self, name):
-        for step in self.build.executedSteps:
-            if step.name == name:
-                return step
-        return None
-
-    @defer.inlineCallbacks
-    def getTestsResults(self, name):
-        step = self.getBuildStepByName(name)
-        if not step:
-            yield self._addToLog('stderr', 'ERROR: step not found: {}'.format(step))
-            defer.returnValue(None)
-            return
-
-        logs = yield self.master.db.logs.getLogs(step.stepid)
-        log = next((log for log in logs if log['name'] == 'json'), None)
-        if not log:
-            yield self._addToLog('stderr', 'ERROR: log for step not found: {}'.format(step))
-            defer.returnValue(None)
-            return
-
-        lastline = int(max(0, log['num_lines'] - 1))
-        logLines = yield self.master.db.logs.getLogLines(log['id'], 0, lastline)
-        if log['type'] == 's':
-            logLines = ''.join([line[1:] for line in logLines.splitlines()])
-
-        try:
-            self.results[name] = json.loads(logLines)
-            defer.returnValue(self.results[name])
-        except Exception as ex:
-            yield self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
 
     def send_email_for_flaky_failure(self, test_name):
         try:
@@ -6696,7 +6644,7 @@ class RunAPITestsParallelSafety(RunAPITests):
         # No retry needed for parallel safety tests - failures are legitimate
         pass
 
-    def analyze_failures_using_results_db(self):
+    def analyze_failures_using_results_db(self, failures):
         # Skip results DB checking for parallel safety tests
         pass
 

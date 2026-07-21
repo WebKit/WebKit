@@ -15,7 +15,8 @@ assert.eq(WebAssembly.validate.length, 1);
         .Code()
         .End();
 
-    assert.truthy(!WebAssembly.validate(builder.WebAssembly().get()));
+    // wasm multimemory ok now
+    assert.truthy(WebAssembly.validate(builder.WebAssembly().get()));
 }
 
 {

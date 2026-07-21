@@ -33,8 +33,10 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/JSStringInlines.h>
 #include <JavaScriptCore/Lookup.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 
 #include <pal/SessionID.h>

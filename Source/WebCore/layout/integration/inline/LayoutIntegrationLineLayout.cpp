@@ -344,7 +344,7 @@ bool LineLayout::shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFl
     return shouldInvalidateLineLayoutAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
-void LineLayout::updateFormattingContexGeometries(LayoutUnit availableLogicalWidth)
+void LineLayout::updateFormattingContextGeometries(LayoutUnit availableLogicalWidth)
 {
     m_boxGeometryUpdater.setFormattingContextRootGeometry(availableLogicalWidth);
     m_inlineContentConstraints = m_boxGeometryUpdater.formattingContextConstraints(availableLogicalWidth);

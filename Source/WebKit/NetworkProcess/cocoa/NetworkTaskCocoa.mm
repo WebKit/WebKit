@@ -315,7 +315,7 @@ WebCore::ThirdPartyCookieBlockingDecision NetworkTaskCocoa::requestThirdPartyCoo
     auto thirdPartyCookieBlockingDecision = storedCredentialsPolicy() == WebCore::StoredCredentialsPolicy::EphemeralStateless ? WebCore::ThirdPartyCookieBlockingDecision::All : WebCore::ThirdPartyCookieBlockingDecision::None;
     if (CheckedPtr networkStorageSession = protect(m_networkSession)->networkStorageSession()) {
         if (!NetworkStorageSession::shouldBlockCookies(thirdPartyCookieBlockingDecision))
-            thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), pageID(), shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request), isInitiatedByDedicatedWorker());
+            thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), pageID(), shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request), isInitiatedByDedicatedWorker(), navigationLosesFrameSpecificStorageAccess());
     }
 
     return thirdPartyCookieBlockingDecision;
