@@ -1409,17 +1409,17 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
     return IDBError { };
 }
 
-IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info, const IDBKeyData& indexKey, bool& hasRecord)
+IDBError SQLiteIDBBackingStore::uncheckedGetExistingPrimaryKeyForIndexKey(const IDBIndexInfo& info, const IDBKeyData& indexKey, std::optional<IDBKeyData>& existingPrimaryKey)
 {
-    hasRecord = false;
+    existingPrimaryKey = std::nullopt;
 
     auto indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
-        LOG_ERROR("Unable to serialize index key to be stored in the database");
+        LOG_ERROR("Unable to serialize index key to be checked in the database");
         return IDBError { ExceptionCode::UnknownError, "Unable to serialize IDBKey to check for index record in database"_s };
     }
 
-    auto sql = cachedStatement(SQL::HasIndexRecord, "SELECT rowid FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT);"_s);
+    auto sql = cachedStatement(SQL::GetExistingPrimaryKeyForIndexKey, "SELECT value FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT);"_s);
     CheckedPtr statement = sql.get();
     if (!statement
         || statement->bindInt64(1, info.identifier().toRawValue()) != SQLITE_OK
@@ -1439,7 +1439,80 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info
         return IDBError { ExceptionCode::UnknownError, "Error checking for existence of IDBKey in index"_s };
     }
 
-    hasRecord = true;
+    IDBKeyData primaryKey;
+    if (!deserializeIDBKeyData(statement->columnBlobAsSpan(0), primaryKey)) {
+        LOG_ERROR("Unable to deserialize primary key referenced by index record");
+        return IDBError { ExceptionCode::UnknownError, "Unable to deserialize primary key referenced by index record"_s };
+    }
+
+    existingPrimaryKey = primaryKey;
+    return IDBError { };
+}
+
+// https://w3c.github.io/IndexedDB/#object-store-storage-operation
+IDBError SQLiteIDBBackingStore::overwriteRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const IndexIDToIndexKeyMap& indexKeys, const IDBValue& value)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::overwriteRecord - key %s, object store %" PRIu64, keyData.loggingString().utf8().data(), objectStoreInfo.identifier().toRawValue());
+
+    // Before mutating anything, verify the record does not violate a unique index constraint. Otherwise deleting
+    // the record being overwritten below would leave the store with neither the old nor the new record if adding
+    // the new record then failed. A failed put() must leave the store unchanged.
+    auto error = checkIndexConstraintsForPut(transactionIdentifier, objectStoreInfo, keyData, indexKeys);
+    if (!error.isNull())
+        return error;
+
+    // If a record already exists in store, then remove the record from store using the steps for deleting records
+    // from an object store. This is important because formally deleting it from the object store also removes it
+    // from the appropriate indexes.
+    error = deleteRange(transactionIdentifier, objectStoreInfo.identifier(), keyData);
+    if (!error.isNull())
+        return error;
+
+    return addRecord(transactionIdentifier, objectStoreInfo, keyData, indexKeys, value);
+}
+
+IDBError SQLiteIDBBackingStore::checkIndexConstraintsForPut(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const IndexIDToIndexKeyMap& indexKeys)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::checkIndexConstraintsForPut - object store %" PRIu64, objectStoreInfo.identifier().toRawValue());
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    CheckedPtr transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress())
+        return IDBError { ExceptionCode::UnknownError, "Attempt to check index constraints without an in-progress transaction"_s };
+
+    const auto& indexMap = objectStoreInfo.indexMap();
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto indexIterator = indexMap.find(indexID);
+        ASSERT(indexIterator != indexMap.end());
+        if (indexIterator == indexMap.end())
+            return IDBError { ExceptionCode::InvalidStateError, "Missing index metadata"_s };
+
+        const auto& indexInfo = indexIterator->value;
+        if (!indexInfo.unique())
+            continue;
+
+        Vector<IDBKeyData> keys;
+        if (indexInfo.multiEntry())
+            keys = indexKey.multiEntry();
+        else
+            keys.append(indexKey.asOneKey());
+
+        for (auto& key : keys) {
+            if (!key.isValid())
+                continue;
+
+            std::optional<IDBKeyData> existingPrimaryKey;
+            auto error = uncheckedGetExistingPrimaryKeyForIndexKey(indexInfo, key, existingPrimaryKey);
+            if (!error.isNull())
+                return error;
+
+            if (existingPrimaryKey && *existingPrimaryKey != keyData)
+                return IDBError { ExceptionCode::ConstraintError, "Unable to store record in object store because it does not satisfy the uniqueness requirements of an index"_s };
+        }
+    }
+
     return IDBError { };
 }
 
@@ -1454,15 +1527,15 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
         indexKeys.append(indexKey.asOneKey());
 
     if (info.unique()) {
-        bool hasRecord;
+        std::optional<IDBKeyData> existingPrimaryKey;
         IDBError error;
         for (auto& indexKey : indexKeys) {
             if (!indexKey.isValid())
                 continue;
-            error = uncheckedHasIndexRecord(info, indexKey, hasRecord);
+            error = uncheckedGetExistingPrimaryKeyForIndexKey(info, indexKey, existingPrimaryKey);
             if (!error.isNull())
                 return error;
-            if (hasRecord)
+            if (existingPrimaryKey)
                 return IDBError { ExceptionCode::ConstraintError, "Index key is not unique"_s };
         }
     }

@@ -75,6 +75,8 @@ public:
 
     IDBError putIndexKey(const IDBKeyData&, const IndexKey&);
 
+    bool hasRecordForOtherPrimaryKey(const IDBKeyData& indexKey, const IDBKeyData& primaryKey);
+
     void removeEntriesWithValueKey(const IDBKeyData&);
     void removeRecord(const IDBKeyData&, const IndexKey&);
 

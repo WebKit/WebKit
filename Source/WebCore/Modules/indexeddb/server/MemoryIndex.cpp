@@ -235,6 +235,26 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
     return IDBError { };
 }
 
+bool MemoryIndex::hasRecordForOtherPrimaryKey(const IDBKeyData& indexKey, const IDBKeyData& primaryKey)
+{
+    ASSERT(m_info.unique());
+
+    CheckedPtr records = m_records.get();
+    if (!records)
+        return false;
+
+    auto valueKeys = records->valueKeys(indexKey);
+    if (!valueKeys)
+        return false;
+
+    for (auto& valueKey : *valueKeys) {
+        if (valueKey != primaryKey)
+            return true;
+    }
+
+    return false;
+}
+
 void MemoryIndex::removeRecord(const IDBKeyData& valueKey, const IndexKey& indexKey)
 {
     LOG(IndexedDB, "MemoryIndex::removeRecord");
