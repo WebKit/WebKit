@@ -451,10 +451,15 @@ public:
 
     [[nodiscard]] PartialResult addSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
+    static ExpressionType NODELETE wrapI32(ExpressionType value)
+    {
+        return ConstExprValue(static_cast<uint64_t>(static_cast<int32_t>(value.getValue())));
+    }
+
     [[nodiscard]] PartialResult NODELETE addI32Add(ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate)
-            result = lhs + rhs;
+            result = wrapI32(lhs + rhs);
         return { };
     }
     [[nodiscard]] PartialResult NODELETE addI64Add(ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
@@ -470,7 +475,7 @@ public:
     [[nodiscard]] PartialResult NODELETE addI32Sub(ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate)
-            result = lhs - rhs;
+            result = wrapI32(lhs - rhs);
         return { };
     }
 
@@ -487,7 +492,7 @@ public:
     [[nodiscard]] PartialResult NODELETE addI32Mul(ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate)
-            result = lhs * rhs;
+            result = wrapI32(lhs * rhs);
         return { };
     }
 
