@@ -5112,6 +5112,24 @@ void SpeculativeJIT::compileInstanceOfCustom(Node* node)
 
 void SpeculativeJIT::compileIsCellWithType(Node* node)
 {
+    JSTypeRange range = node->queriedType();
+    auto compareType = [&](GPRReg cellGPR, GPRReg resultGPR) {
+        if (range.first == range.last) {
+            compare8(Equal,
+                Address(cellGPR, JSCell::typeInfoTypeOffset()),
+                TrustedImm32(range.first),
+                resultGPR);
+            return;
+        }
+
+        load8(Address(cellGPR, JSCell::typeInfoTypeOffset()), resultGPR);
+        sub32(TrustedImm32(range.first), resultGPR);
+        compare32(BelowOrEqual,
+            resultGPR,
+            TrustedImm32(range.last - range.first),
+            resultGPR);
+    };
+
     switch (node->child1().useKind()) {
     case UntypedUse: {
         JSValueOperand value(this, node->child1());
@@ -5122,10 +5140,7 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
 
         Jump isNotCell = branchIfNotCell(valueRegs);
 
-        compare8(Equal,
-            Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
-            TrustedImm32(node->queriedType()),
-            resultGPR);
+        compareType(valueRegs.payloadGPR(), resultGPR);
         blessBoolean(resultGPR);
         Jump done = jump();
 
@@ -5144,10 +5159,7 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
         GPRReg cellGPR = cell.gpr();
         GPRReg resultGPR = result.gpr();
 
-        compare8(Equal,
-            Address(cellGPR, JSCell::typeInfoTypeOffset()),
-            TrustedImm32(node->queriedType()),
-            resultGPR);
+        compareType(cellGPR, resultGPR);
         blessBoolean(resultGPR);
         blessedBooleanResult(resultGPR, node);
         return;
@@ -5157,32 +5169,6 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
-}
-
-void SpeculativeJIT::compileIsTypedArrayView(Node* node)
-{
-    JSValueOperand value(this, node->child1());
-    GPRTemporary result(this, Reuse, value, PayloadWord);
-
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
-
-    Jump isNotCell = branchIfNotCell(valueRegs);
-
-    load8(Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()), resultGPR);
-    sub32(TrustedImm32(FirstTypedArrayType), resultGPR);
-    compare32(Below,
-        resultGPR,
-        TrustedImm32(NumberOfTypedArrayTypesExcludingDataView),
-        resultGPR);
-    blessBoolean(resultGPR);
-    Jump done = jump();
-
-    isNotCell.link(this);
-    moveFalseTo(resultGPR);
-
-    done.link(this);
-    blessedBooleanResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileArrayIsArray(Node* node)

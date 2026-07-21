@@ -1768,14 +1768,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsObject:
     case IsCallable:
     case IsConstructor:
-    case IsCellWithType:
-    case IsTypedArrayView: {
+    case IsCellWithType: {
         AbstractValue& child = forNode(node->child1());
         if (child.value()) {
             bool constantWasSet = true;
             switch (node->op()) {
             case IsCellWithType:
-                setConstant(node, jsBoolean(child.value().isCell() && child.value().asCell()->type() == node->queriedType()));
+                setConstant(node, jsBoolean(child.value().isCell() && node->queriedType().contains(child.value().asCell()->type())));
                 break;
             case TypeOfIsUndefined:
                 setConstant(node, jsBoolean(
@@ -1836,9 +1835,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case IsEmpty:
                 setConstant(node, jsBoolean(child.value().isEmpty()));
                 break;
-            case IsTypedArrayView:
-                setConstant(node, jsBoolean(child.value().isObject() && isTypedView(child.value().getObject()->type())));
-                break;
             default:
                 constantWasSet = false;
                 break;
@@ -1856,7 +1852,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     std::optional<bool> result;
                     child.m_structure.forEach(
                         [&] (RegisteredStructure structure) {
-                            bool matched = structure->typeInfo().type() == node->queriedType();
+                            bool matched = node->queriedType().contains(structure->typeInfo().type());
                             if (!result)
                                 result = matched;
                             else {
@@ -2069,19 +2065,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             break;
         }
-
-        case IsTypedArrayView:
-            if (!(child.m_type & ~SpecTypedArrayView)) {
-                setConstant(node, jsBoolean(true));
-                constantWasSet = true;
-                break;
-            }
-            if (!(child.m_type & SpecTypedArrayView)) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-            break;
 
         default:
             break;

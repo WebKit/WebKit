@@ -168,6 +168,7 @@ namespace JSC {
     macro(TypedArrayKeysIntrinsic) \
     macro(TypedArrayEntriesIntrinsic) \
     macro(IsTypedArrayViewIntrinsic) \
+    macro(ArrayBufferIsViewIntrinsic) \
     macro(BoundFunctionCallIntrinsic) \
     macro(RemoteFunctionCallIntrinsic) \
     macro(IteratorIntrinsic) \

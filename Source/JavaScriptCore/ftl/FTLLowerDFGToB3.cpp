@@ -1744,9 +1744,6 @@ private:
         case IsConstructor:
             compileIsConstructor();
             break;
-        case IsTypedArrayView:
-            compileIsTypedArrayView();
-            break;
         case ParseInt:
             compileParseInt();
             break;
@@ -17162,24 +17159,6 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue value = lowJSValue(m_node->child1());
         setBoolean(vmCall(Int32, operationIsConstructor, weakPointer(globalObject), value));
-    }
-
-    void compileIsTypedArrayView()
-    {
-        LValue value = lowJSValue(m_node->child1());
-
-        LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
-
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isTypedArrayView(value, provenType(m_node->child1())));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, notCellResult, cellResult));
     }
 
     void compileTypeOf()

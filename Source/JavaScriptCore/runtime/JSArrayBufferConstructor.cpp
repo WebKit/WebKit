@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSArrayBufferConstructor.h"
 
-#include "BuiltinNames.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSArrayBufferView.h"
@@ -66,10 +65,8 @@ void JSGenericArrayBufferConstructor<sharingMode>::finishCreation(VM& vm, JSArra
     JSGlobalObject* globalObject = this->globalObject();
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, globalObject->arrayBufferSpeciesGetterSetter(sharingMode), PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
-    if (sharingMode == ArrayBufferSharingMode::Default) {
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isView, arrayBufferFuncIsView, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().isViewPrivateName(), arrayBufferFuncIsView, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
-    }
+    if (sharingMode == ArrayBufferSharingMode::Default)
+        JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isView, arrayBufferFuncIsView, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayBufferIsViewIntrinsic);
 }
 
 template<ArrayBufferSharingMode sharingMode>

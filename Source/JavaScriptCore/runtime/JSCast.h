@@ -30,14 +30,6 @@
 
 namespace JSC {
 
-// The first and last JSType are inclusive
-struct JSTypeRange {
-    bool contains(JSType type) const { return first <= type && type <= last; }
-
-    JSType first;
-    JSType last;
-};
-
 // Specific type overloads.
 
 template<typename>

@@ -1324,7 +1324,6 @@ private:
         case IsCallable:
         case IsConstructor:
         case IsCellWithType:
-        case IsTypedArrayView:
         case ArrayIsArray:
         case HasStructureWithFlags:
         case MatchStructure: {

@@ -170,6 +170,17 @@ enum JSType : uint8_t {
     MaxJSType = 0b11111111,
 };
 
+// The first and last JSType are inclusive
+struct JSTypeRange {
+    static constexpr JSTypeRange fromRawValue(uint16_t value) { return JSTypeRange { static_cast<JSType>(value & 0xff), static_cast<JSType>(value >> 8) }; }
+
+    bool contains(JSType type) const { return first <= type && type <= last; }
+    constexpr uint16_t rawValue() const { return static_cast<uint16_t>(first) | (static_cast<uint16_t>(last) << 8); }
+
+    JSType first;
+    JSType last;
+};
+
 static constexpr uint8_t EmbedderArrayLikeType = 0b11101101;
 
 static constexpr uint32_t LastValueCompareCellType = HeapBigIntType;

@@ -255,7 +255,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IsBigInt:
     case NumberIsInteger:
     case IsObject:
-    case IsTypedArrayView:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case DoubleRep:
@@ -362,7 +361,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case IsCellWithType:
-        def(PureValue(node, node->queriedType()));
+        def(PureValue(node, node->queriedType().rawValue()));
         return;
 
     case ValueBitNot:

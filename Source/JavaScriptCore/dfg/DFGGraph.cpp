@@ -309,8 +309,13 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
             }
         }
     }
-    if (node->hasQueriedType())
-        out.print(comma, node->queriedType());
+    if (node->hasQueriedType()) {
+        JSTypeRange range = node->queriedType();
+        if (range.first == range.last)
+            out.print(comma, range.first);
+        else
+            out.print(comma, range.first, "..."_s, range.last);
+    }
     if (node->hasStructureFlags())
         out.print(comma, node->structureFlags());
     if (node->hasStorageAccessData()) {

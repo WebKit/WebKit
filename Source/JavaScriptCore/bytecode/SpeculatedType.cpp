@@ -734,9 +734,26 @@ std::optional<SpeculatedType> speculationFromJSType(JSType type)
         return SpecMapIteratorObject;
     case JSSetIteratorType:
         return SpecSetIteratorObject;
+#define JSC_DEFINE_TYPED_ARRAY_SPECULATION(type) \
+    case type##ArrayType: \
+        return Spec##type##Array;
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_DEFINE_TYPED_ARRAY_SPECULATION)
+#undef JSC_DEFINE_TYPED_ARRAY_SPECULATION
     default:
         return std::nullopt;
     }
+}
+
+std::optional<SpeculatedType> speculationFromJSTypeRange(JSTypeRange range)
+{
+    SpeculatedType result = SpecNone;
+    for (unsigned type = range.first; type <= range.last; ++type) {
+        std::optional<SpeculatedType> speculatedType = speculationFromJSType(static_cast<JSType>(type));
+        if (!speculatedType)
+            return std::nullopt;
+        result |= speculatedType.value();
+    }
+    return result;
 }
 
 SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType type)

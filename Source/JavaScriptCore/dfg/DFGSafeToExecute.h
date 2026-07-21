@@ -280,7 +280,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case IsCallable:
     case IsConstructor:
     case IsCellWithType:
-    case IsTypedArrayView:
     case ArrayIsArray:
     case HasStructureWithFlags:
     case TypeOf:

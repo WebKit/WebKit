@@ -29,6 +29,7 @@
 #pragma once
 
 #include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/JSType.h>
 #include <wtf/Forward.h>
 
 namespace JSC {
@@ -40,7 +41,6 @@ class Structure;
 struct ClassInfo;
 
 using IndexingType = uint8_t;
-enum JSType : uint8_t;
 enum TypedArrayType : uint8_t;
 
 typedef uint64_t SpeculatedType;
@@ -568,6 +568,7 @@ SpeculatedType NODELETE speculationFromValue(JSValue);
 // Otherwise, it'll return types from the JSValue lattice.
 JS_EXPORT_PRIVATE SpeculatedType NODELETE int52AwareSpeculationFromValue(JSValue);
 std::optional<SpeculatedType> NODELETE speculationFromJSType(JSType);
+std::optional<SpeculatedType> NODELETE speculationFromJSTypeRange(JSTypeRange);
 
 SpeculatedType NODELETE speculationFromTypedArrayType(TypedArrayType); // only valid for typed views.
 TypedArrayType NODELETE typedArrayTypeFromSpeculation(SpeculatedType);

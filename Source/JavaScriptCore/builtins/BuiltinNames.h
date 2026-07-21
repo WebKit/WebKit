@@ -53,7 +53,6 @@ namespace JSC {
     macro(callFunction) \
     macro(charCodeAt) \
     macro(executor) \
-    macro(isView) \
     macro(iteratedObject) \
     macro(iteratedString) \
     macro(promise) \

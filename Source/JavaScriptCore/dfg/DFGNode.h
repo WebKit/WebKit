@@ -1718,10 +1718,11 @@ public:
         return op() == IsCellWithType;
     }
 
-    JSType queriedType()
+    JSTypeRange queriedType()
     {
+        ASSERT(hasQueriedType());
         static_assert(std::same_as<uint8_t, std::underlying_type_t<JSType>>);
-        return static_cast<JSType>(m_opInfo.as<uint32_t>());
+        return JSTypeRange::fromRawValue(m_opInfo.as<uint32_t>());
     }
 
     bool hasSpeculatedTypeForQuery()
@@ -1731,7 +1732,7 @@ public:
 
     std::optional<SpeculatedType> speculatedTypeForQuery()
     {
-        return speculationFromJSType(queriedType());
+        return speculationFromJSTypeRange(queriedType());
     }
 
     bool hasStructureFlags()

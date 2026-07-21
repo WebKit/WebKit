@@ -3812,7 +3812,6 @@ private:
         case NewSet:
         case NewWeakMap:
         case NewWeakSet:
-        case IsTypedArrayView:
         case IsEmpty:
         case TypeOfIsUndefined:
         case TypeOfIsObject:

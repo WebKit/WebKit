@@ -756,7 +756,6 @@ public:
     void compileOverridesHasInstance(Node*);
 
     void compileIsCellWithType(Node*);
-    void compileIsTypedArrayView(Node*);
     void compileArrayIsArray(Node*);
 
     void emitCall(Node*);

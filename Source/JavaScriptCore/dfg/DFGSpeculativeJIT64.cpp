@@ -5897,11 +5897,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsTypedArrayView: {
-        compileIsTypedArrayView(node);
-        break;
-    }
-
     case ArrayIsArray: {
         compileArrayIsArray(node);
         break;
