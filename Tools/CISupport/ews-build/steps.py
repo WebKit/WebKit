@@ -5958,6 +5958,7 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
     test_failures_log_name = 'test-failures'
     results_db_log_name = 'results-db'
     suffix = 'first_run'
+    MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
     command = ['python3', 'Tools/Scripts/run-api-tests', '--timestamps', '--no-build',
                WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
     failedTestsFormatString = '%d api test%s failed or timed out'
@@ -6154,7 +6155,7 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
             if not has_commit:
                 yield self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
 
-        for test in failing_tests:
+        for test in failing_tests[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]:
             data = yield ResultsDatabase.is_test_pre_existing_failure(
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
@@ -6164,10 +6165,6 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
                 self.failing_tests_filtered.remove(test)
-            else:
-                # Optimization to skip consulting results-db for every failure if we encounter any new failure,
-                # since until there is atleast one failure which is not pre-existing, we will anayways have to continue with retry logic.
-                break
 
 
 class ReRunAPITests(RunAPITests):
@@ -6222,6 +6219,15 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
             self.build.buildFinished(['Unable to parse API test results'], RETRY)
             defer.returnValue(RETRY)
             return
+
+        # Prefer the results-db-filtered lists (pre-existing failures already removed) so a known
+        # pre-existing flaky failure is not reported as new even if it passed on the clean tree.
+        first_run_failures_filtered = self.getProperty('first_run_failures_filtered', None)
+        if first_run_failures_filtered is not None:
+            first_run_failures = set(first_run_failures_filtered)
+        second_run_failures_filtered = self.getProperty('second_run_failures_filtered', None)
+        if second_run_failures_filtered is not None:
+            second_run_failures = set(second_run_failures_filtered)
 
         clean_tree_failures = set(self.getProperty('clean_tree_run_failures', []))
         clean_tree_failures_to_display = list(clean_tree_failures)[:self.NUM_FAILURES_TO_DISPLAY]

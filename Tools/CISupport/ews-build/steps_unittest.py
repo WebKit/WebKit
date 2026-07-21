@@ -6097,6 +6097,125 @@ class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=RETRY, state_string='analyze-api-tests-results (retry)')
         return self.run_step()
 
+    def test_pre_existing_flaky_failure_not_blamed_on_author(self):
+        # A pre-existing flaky failure fails in both runs but passes on the clean tree. It is stripped
+        # from the *_filtered lists by results-db, so it must not be reported as a new failure.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('second_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('first_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('second_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('clean_tree_run_failures', ['suite.real_failure'])
+        self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
+        return self.run_step()
+
+    def test_new_failure_still_reported_with_filtered_lists(self):
+        # A genuinely new failure remains in the *_filtered lists, so it must still be reported.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('second_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('first_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('second_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('clean_tree_run_failures', [])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: suite.real_failure (failure)')
+        return self.run_step()
+
+    def test_all_failures_pre_existing_filtered_lists_empty(self):
+        # If every failure was pre-existing, both *_filtered lists are empty and the build passes.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.MultipleAccounts'])
+        self.setProperty('second_run_failures', ['suite.MultipleAccounts'])
+        self.setProperty('first_run_failures_filtered', [])
+        self.setProperty('second_run_failures_filtered', [])
+        self.setProperty('clean_tree_run_failures', [])
+        self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
+        return self.run_step()
+
+    def test_falls_back_to_unfiltered_when_filtered_absent(self):
+        # When the *_filtered properties are absent, behavior degrades to the unfiltered lists.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.test1'])
+        self.setProperty('second_run_failures', ['suite.test1'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: suite.test1 (failure)')
+        return self.run_step()
+
+
+class TestFilterAPITestFailuresUsingResultsDB(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def _configure(self, pre_existing):
+        # pre_existing: set of test names results-db considers pre-existing failures.
+        self.setup_step(RunAPITests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+
+        def fake_is_pre_existing(cls, test, **kwargs):
+            return defer.succeed({
+                'is_existing_failure': test in pre_existing,
+                'pass_rate': 0 if test in pre_existing else 100,
+                'raw_data': {},
+                'logs': '',
+                'request_failed': False,
+            })
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        return step
+
+    @defer.inlineCallbacks
+    def _check_order(self, failing_tests, pre_existing):
+        step = self._configure(pre_existing)
+        yield step.filter_api_test_failures_using_results_db(failing_tests)
+        self.assertEqual(step.failing_tests_filtered, ['suite.real_failure'])
+        self.assertEqual(sorted(step.preexisting_failures_in_results_db), ['suite.AlsoFlaky', 'suite.MultipleAccounts'])
+
+    def test_pre_existing_after_real_failure_still_stripped(self):
+        # Regression guard: a pre-existing failure listed after a non-pre-existing one must still be
+        # filtered out (previously an early-break would stop at the first non-pre-existing test).
+        return self._check_order(
+            ['suite.real_failure', 'suite.MultipleAccounts', 'suite.AlsoFlaky'],
+            {'suite.MultipleAccounts', 'suite.AlsoFlaky'},
+        )
+
+    def test_pre_existing_before_real_failure_stripped(self):
+        return self._check_order(
+            ['suite.MultipleAccounts', 'suite.real_failure', 'suite.AlsoFlaky'],
+            {'suite.MultipleAccounts', 'suite.AlsoFlaky'},
+        )
+
+    def test_pre_existing_interleaved_with_real_failure_stripped(self):
+        return self._check_order(
+            ['suite.AlsoFlaky', 'suite.MultipleAccounts', 'suite.real_failure'],
+            {'suite.MultipleAccounts', 'suite.AlsoFlaky'},
+        )
+
+    @defer.inlineCallbacks
+    def test_caps_number_of_results_db_queries(self):
+        # Only the first MAX_FAILURES_TO_CHECK_RESULTS_DB failures are checked against results-db.
+        queried = []
+
+        def fake_is_pre_existing(cls, test, **kwargs):
+            queried.append(test)
+            return defer.succeed({
+                'is_existing_failure': True, 'pass_rate': 0, 'raw_data': {}, 'logs': '', 'request_failed': False,
+            })
+
+        self.setup_step(RunAPITests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+
+        cap = RunAPITests.MAX_FAILURES_TO_CHECK_RESULTS_DB
+        failing_tests = [f'suite.test{i}' for i in range(cap + 10)]
+        yield step.filter_api_test_failures_using_results_db(failing_tests)
+        self.assertEqual(len(queried), cap)
+
 
 class TestRunAPITestsParallelSafety(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
