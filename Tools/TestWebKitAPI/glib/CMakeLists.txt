@@ -10,6 +10,7 @@ set(WebKitGLibAPITests_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
     ${TOOLS_DIR}/TestWebKitAPI
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib
     # FIXME Should we add a _PRIVATE_INCLUDE_DIRECTORIES for this?
     ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
@@ -130,41 +131,44 @@ add_custom_target(test-gresource-bundle
     DEPENDS ${TEST_RESOURCES_DIR}/webkitglib-tests-resources.gresource
 )
 
+# Web process tests
 ADD_WK2_TEST_WEB_PROCESS_EXTENSION(WebProcessExtensionTest ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/WebProcessExtensionTest.cpp)
 ADD_WK2_TEST_WEB_PROCESS_EXTENSION(WebProcessTest ${WebKitGLibAPIWebProcessTests})
 
-ADD_WK2_TEST(TestAuthentication ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestAuthentication.cpp)
-ADD_WK2_TEST(TestAutomationSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestAutomationSession.cpp)
-ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestBackForwardList.cpp)
-ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestConsoleMessage.cpp)
-ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestCookieManager.cpp)
-ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestDownloads.cpp)
-ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitFindController.cpp)
+ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestDOMElement.cpp)
 ADD_WK2_TEST(TestEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestEditor.cpp)
 ADD_WK2_TEST(TestFrame ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestFrame.cpp)
-ADD_WK2_TEST(TestLoaderClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestLoaderClient.cpp)
-ADD_WK2_TEST(TestMultiprocess ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestMultiprocess.cpp)
-ADD_WK2_TEST(TestNetworkProcessMemoryPressure ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestNetworkProcessMemoryPressure.cpp)
-ADD_WK2_TEST(TestOptionMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestOptionMenu.cpp)
-ADD_WK2_TEST(TestResources ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestResources.cpp)
-ADD_WK2_TEST(TestSSL ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestSSL.cpp)
-ADD_WK2_TEST(TestUIClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestUIClient.cpp)
 ADD_WK2_TEST(TestWebProcessExtensions ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebProcessExtensions.cpp)
-ADD_WK2_TEST(TestWebKitPolicyClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitPolicyClient.cpp)
-ADD_WK2_TEST(TestWebKitSecurityOrigin ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitSecurityOrigin.cpp)
-ADD_WK2_TEST(TestWebKitSettings ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitSettings.cpp)
-ADD_WK2_TEST(TestWebKitURIUtilities ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitURIUtilities.cpp)
-ADD_WK2_TEST(TestWebKitWebContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitWebContext.cpp)
-ADD_WK2_TEST(TestWebKitWebView ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitWebView.cpp)
-ADD_WK2_TEST(TestWebKitUserContentFilterStore ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitUserContentFilterStore.cpp)
-ADD_WK2_TEST(TestWebKitUserContentManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitUserContentManager.cpp)
-ADD_WK2_TEST(TestWebsiteData ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebsiteData.cpp)
-ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestDOMElement.cpp)
-ADD_WK2_TEST(TestGeolocationManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestGeolocationManager.cpp)
-ADD_WK2_TEST(TestInputMethodContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestInputMethodContext.cpp)
+
+# UI process tests
+ADD_WK2_TEST(TestAuthentication ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestAuthentication.cpp)
+ADD_WK2_TEST(TestAutomationSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestAutomationSession.cpp)
+ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestBackForwardList.cpp)
+ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestConsoleMessage.cpp)
+ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestCookieManager.cpp)
+ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestDownloads.cpp)
+ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitFindController.cpp)
+ADD_WK2_TEST(TestLoaderClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestLoaderClient.cpp)
+ADD_WK2_TEST(TestMultiprocess ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestMultiprocess.cpp)
+ADD_WK2_TEST(TestNetworkProcessMemoryPressure ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestNetworkProcessMemoryPressure.cpp)
+ADD_WK2_TEST(TestOptionMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestOptionMenu.cpp)
+ADD_WK2_TEST(TestResources ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestResources.cpp)
+ADD_WK2_TEST(TestSSL ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestSSL.cpp)
+ADD_WK2_TEST(TestUIClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestUIClient.cpp)
+ADD_WK2_TEST(TestWebKitPolicyClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitPolicyClient.cpp)
+ADD_WK2_TEST(TestWebKitSecurityOrigin ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitSecurityOrigin.cpp)
+ADD_WK2_TEST(TestWebKitSettings ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitSettings.cpp)
+ADD_WK2_TEST(TestWebKitURIUtilities ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitURIUtilities.cpp)
+ADD_WK2_TEST(TestWebKitWebContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebContext.cpp)
+ADD_WK2_TEST(TestWebKitWebView ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebView.cpp)
+ADD_WK2_TEST(TestWebKitUserContentFilterStore ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitUserContentFilterStore.cpp)
+ADD_WK2_TEST(TestWebKitUserContentManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitUserContentManager.cpp)
+ADD_WK2_TEST(TestWebsiteData ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebsiteData.cpp)
+ADD_WK2_TEST(TestGeolocationManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestGeolocationManager.cpp)
+ADD_WK2_TEST(TestInputMethodContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestInputMethodContext.cpp)
 
 if (ENABLE_WEBXR AND USE_OPENXR)
-    ADD_WK2_TEST(TestWebKitWebXR ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitWebXR.cpp)
+    ADD_WK2_TEST(TestWebKitWebXR ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebXR.cpp)
 
     # The mock runtime uses the loader-negotiation structs, which older SDKs only
     # expose via a loader-internal header that is not installed. openxr_loader_negotiation.h
@@ -183,7 +187,7 @@ if (ENABLE_WEBXR AND USE_OPENXR)
             CONTENT "{ \"file_format_version\": \"1.0.0\", \"runtime\": { \"library_path\": \"./libMockOpenXRRuntime.so\" } }\n"
         )
 
-        ADD_WK2_TEST(TestOpenXRInstanceLifecycle ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestOpenXRInstanceLifecycle.cpp)
+        ADD_WK2_TEST(TestOpenXRInstanceLifecycle ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestOpenXRInstanceLifecycle.cpp)
         add_dependencies(TestOpenXRInstanceLifecycle MockOpenXRRuntime)
         target_link_libraries(TestOpenXRInstanceLifecycle ${CMAKE_DL_LIBS})
         target_compile_definitions(TestOpenXRInstanceLifecycle PRIVATE
@@ -193,20 +197,20 @@ if (ENABLE_WEBXR AND USE_OPENXR)
 endif ()
 
 if (ENABLE_2022_GLIB_API)
-    ADD_WK2_TEST(TestWebKitImage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitImage.cpp)
-    ADD_WK2_TEST(TestWebKitNetworkSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitNetworkSession.cpp)
+    ADD_WK2_TEST(TestWebKitImage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitImage.cpp)
+    ADD_WK2_TEST(TestWebKitNetworkSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitNetworkSession.cpp)
 
 if (ENABLE_WK_WEB_EXTENSIONS)
 if (ENABLE_2022_GLIB_API)
-    ADD_WK2_TEST(TestWebKitWebExtension ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitWebExtension.cpp)
+    ADD_WK2_TEST(TestWebKitWebExtension ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebExtension.cpp)
 endif ()
-    ADD_WK2_TEST(TestWebKitWebExtensionMatchPattern ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebKitWebExtensionMatchPattern.cpp)
+    ADD_WK2_TEST(TestWebKitWebExtensionMatchPattern ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebExtensionMatchPattern.cpp)
 endif ()
 
 endif ()
 
 macro(ADD_WPE_QT_TEST test_name)
-    add_executable(${test_name} ${ARGN} ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/qt/WPEQtTest.cpp)
+    add_executable(${test_name} ${ARGN} ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/qt/WPEQtTest.cpp)
     set_target_properties(${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEQt
         AUTOMOC ON
@@ -243,8 +247,8 @@ if (PORT STREQUAL "WPE" AND ENABLE_WPE_QT_API)
          ${WebKitAPITest_LIBRARIES}
          Qt6::Test qtwpe
     )
-    ADD_WPE_QT_TEST(TestLoad ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/qt/TestLoad.cpp)
-    ADD_WPE_QT_TEST(TestLoadHtml ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/qt/TestLoadHtml.cpp)
-    ADD_WPE_QT_TEST(TestLoadRequest ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/qt/TestLoadRequest.cpp)
-    ADD_WPE_QT_TEST(TestRunJavaScript ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/qt/TestRunJavaScript.cpp)
+    ADD_WPE_QT_TEST(TestLoad ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/qt/TestLoad.cpp)
+    ADD_WPE_QT_TEST(TestLoadHtml ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/qt/TestLoadHtml.cpp)
+    ADD_WPE_QT_TEST(TestLoadRequest ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/qt/TestLoadRequest.cpp)
+    ADD_WPE_QT_TEST(TestRunJavaScript ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/qt/TestRunJavaScript.cpp)
 endif ()
