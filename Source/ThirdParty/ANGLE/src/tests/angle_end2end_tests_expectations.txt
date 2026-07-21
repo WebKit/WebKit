@@ -2896,6 +2896,53 @@
 // webkit.org/b/317381
 0 METAL : HardenedContextTest.RenderingFeedbackLoopWithStencilOnlyANGLE/* = SKIP
 
+// webkit.org/b/319849
+0 METAL : ClipDistanceAPPLETest.OneClipDistance/* = SKIP
+0 METAL : ClipDistanceAPPLETest.ToggleOneClipDistance/* = SKIP
+0 METAL : ClipDistanceAPPLETest.EachClipDistance/* = SKIP
+0 METAL : ClipDistanceAPPLETest.ThreeClipDistancesRedeclared/* = SKIP
+0 METAL : ClipCullDistanceTest.SizedArrayLength/* = SKIP
+0 METAL : ClipCullDistanceTest.OneClipDistance/* = SKIP
+0 METAL : ClipCullDistanceTest.EachClipDistance/* = SKIP
+0 METAL : ClipCullDistanceTest.ThreeClipDistancesRedeclared/* = SKIP
+0 METAL : GLSLConstantFoldingTest.RadiansInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.DegreesInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.SinhInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.SinhNegativeInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.CoshInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.CoshNegativeInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.AsinhInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.AsinhNegativeInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.AcoshInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.ExpInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.LogInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.Exp2Infinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.Log2Infinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.SqrtInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.LengthInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.DotInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.DotInfinity2/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityMinusFinite/* = SKIP
+0 METAL : GLSLConstantFoldingTest.MinusInfinityPlusFinite/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityMultipliedByFinite/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityMultipliedByInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityMultipliedByNegativeInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.DivideByNegativeZero/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityDividedByZero/* = SKIP
+0 METAL : GLSLConstantFoldingTest.MinusInfinityDividedByZero/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityMinusInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityPlusNegativeInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityMultipliedByZero/* = SKIP
+0 METAL : GLSLConstantFoldingTest.InfinityDividedByInfinity/* = SKIP
+0 METAL : GLSLConstantFoldingTest.ZeroDividedByZero/* = SKIP
+0 METAL : GLSLConstantFoldingTest.FloatOverflowAdd/* = SKIP
+0 METAL : GLSLConstantFoldingTest.FloatOverflowSubtract/* = SKIP
+0 METAL : GLSLConstantFoldingTest.FloatOverflowMultiply/* = SKIP
+0 METAL : GLSLConstantFoldingTest.FloatOverflowDivide/* = SKIP
+0 METAL : GLSLTest.InactiveVaryingInVertexActiveInFragment/* = SKIP
+0 METAL : PixelLocalStorageTest.DrawCommandValidation/* = SKIP
+0 METAL : TransformFeedbackTest.InactiveStructureVarying/* = SKIP
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
