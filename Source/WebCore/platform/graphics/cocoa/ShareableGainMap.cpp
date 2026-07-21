@@ -153,7 +153,8 @@ PlatformImagePtr ShareableGainMap::applyGainMapToBaseImage(PlatformImagePtr base
 
     RetainPtr applyGainMapOptions = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFDictionarySetValue(applyGainMapOptions, kCGImageAuxiliaryDataInfoMetadata, metadata);
-    CFDictionarySetValue(applyGainMapOptions, kCGImageAuxiliaryDataInfoColorSpace, m_colorSpace ? m_colorSpace->platformColorSpace() : nullptr);
+    if (m_colorSpace)
+        CFDictionarySetValue(applyGainMapOptions, kCGImageAuxiliaryDataInfoColorSpace, m_colorSpace->platformColorSpace());
 
     auto status = CGImageApplyHDRGainMap(baseImagePixelBuffer, gainMapPixelBuffer, targetImagePixelBuffer, applyGainMapOptions);
     if (status != kCVReturnSuccess) {
