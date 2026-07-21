@@ -50,24 +50,8 @@ ExceptionOr<Ref<DOMAsyncIterator>> DOMAsyncIterator::create(JSDOMGlobalObject& g
     return adoptRef(*new DOMAsyncIterator(globalObject, *iteratorObject, *iteratorRecord.nextMethod.asCell()));
 }
 
-void DOMAsyncIterator::handleCallbackWithPromise(JSDOMGlobalObject& globalObject, Callback&& callback, JSC::JSPromise& promise)
-{
-    bool shouldStoreCallback = DOMPromise::whenPromiseIsSettled(&globalObject, &promise, [weakThis = WeakPtr { *this }](auto* globalObject, bool isOK, auto value) {
-        if (RefPtr protectedThis = weakThis.get())
-            std::exchange(protectedThis->m_callback, { })(globalObject, isOK, value);
-    }) == DOMPromise::IsCallbackRegistered::Yes;
-
-    if (!shouldStoreCallback) {
-        callback(&globalObject, false, { });
-        return;
-    }
-
-    m_callback = WTF::move(callback);
-}
-
 void DOMAsyncIterator::callNext(Callback&& callback)
 {
-    ASSERT(!m_callback);
     auto* globalObject = this->globalObject();
     if (!globalObject) {
         callback(nullptr, false, { });
@@ -97,12 +81,11 @@ void DOMAsyncIterator::callNext(Callback&& callback)
         return;
     }
 
-    handleCallbackWithPromise(*globalObject, WTF::move(callback), *promise);
+    DOMPromise::whenPromiseIsSettled(globalObject, promise, WTF::move(callback), nullptr, DOMPromise::ShouldCallCallbackOnRegistrationFailure::Yes);
 }
 
 void DOMAsyncIterator::callReturn(JSC::JSValue reason, Callback&& callback)
 {
-    ASSERT(!m_callback);
     auto* globalObject = this->globalObject();
     if (!globalObject) {
         callback(nullptr, false, { });
@@ -150,7 +133,7 @@ void DOMAsyncIterator::callReturn(JSC::JSValue reason, Callback&& callback)
         return;
     }
 
-    handleCallbackWithPromise(*globalObject, WTF::move(callback), *promise);
+    DOMPromise::whenPromiseIsSettled(globalObject, promise, WTF::move(callback), nullptr, DOMPromise::ShouldCallCallbackOnRegistrationFailure::Yes);
 }
 
 }

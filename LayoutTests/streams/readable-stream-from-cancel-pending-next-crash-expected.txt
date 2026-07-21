@@ -1,0 +1,3 @@
+
+PASS Cancelling a pipe with a pending next call on the source DOM async iterator should not crash
+
