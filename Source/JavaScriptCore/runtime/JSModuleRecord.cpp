@@ -32,6 +32,7 @@
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
+#include "JSMicrotask.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
@@ -85,6 +86,12 @@ void JSModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSModuleRecord);
 
+bool JSModuleRecord::isTopLevelExecutionFinished() const
+{
+    JSValue state = internalField(Field::State).get();
+    return !state.isNumber() || state.asInt32AsAnyInt() == std::to_underlying(State::Executing);
+}
+
 JSValue JSModuleRecord::evaluate(JSGlobalObject* globalObject, JSValue sentValue, JSValue resumeMode)
 {
     if (!m_moduleProgramExecutable) {
@@ -104,7 +111,7 @@ JSValue JSModuleRecord::evaluate(JSGlobalObject* globalObject, JSValue sentValue
     JSValue resultOrAwaitedValue = vm.interpreter.executeModuleProgram(this, executable, globalObject, moduleEnvironment(), sentValue, resumeMode);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (JSValue state = internalField(Field::State).get(); !state.isNumber() || state.asInt32AsAnyInt() == std::to_underlying(State::Executing))
+    if (isTopLevelExecutionFinished())
         m_moduleProgramExecutable.clear();
 
     RELEASE_AND_RETURN(scope, resultOrAwaitedValue);
@@ -146,12 +153,7 @@ void JSModuleRecord::execute(JSGlobalObject* globalObject, JSPromise* capability
         // 10.b. Perform AsyncBlockStart(capability, module.[[ECMAScriptCode]], moduleContext).
         asyncCapability(vm, capability);
         JSValue result = globalObject->moduleLoader()->evaluate(globalObject, identifierToJSValue(vm, moduleKey()), this, nullptr, jsUndefined(), jsNumber(static_cast<int32_t>(ResumeMode::NormalMode)));
-        if (scope.exception())
-            capability->rejectWithCaughtException(vm, scope);
-        else if (JSValue state = internalField(Field::State).get(); !state.isNumber() || state.asInt32AsAnyInt() == std::to_underlying(State::Executing))
-            capability->resolve(globalObject, vm, result);
-        else
-            JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, vm, result, InternalMicrotask::AsyncModuleExecutionResume, this);
+        asyncModuleResolveEvaluation(globalObject, vm, scope, this, result);
     }
     // 11. Return unused.
 }
