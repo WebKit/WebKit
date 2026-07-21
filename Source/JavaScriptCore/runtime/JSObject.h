@@ -940,6 +940,7 @@ public:
 
     static JSFinalObject* create(VM&, Structure*);
     static JSFinalObject* createWithButterfly(VM&, Structure*, Butterfly*);
+    static JSFinalObject* createWithButterflyCopyingInlineStorage(VM&, Structure*, Butterfly*, const WriteBarrierBase<Unknown>* inlineStorageSource);
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, unsigned);
 
     static JSFinalObject* createDefaultEmptyObject(JSGlobalObject*);
@@ -956,6 +957,16 @@ private:
     {
         // We do not need to use gcSafeMemcpy since this object is not exposed yet.
         memset(inlineStorageUnsafe(), 0, inlineCapacity * sizeof(EncodedJSValue));
+    }
+
+    // Initializes the inline storage by copying from |inlineStorageSource| instead of zero-filling.
+    explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly, size_t inlineCapacity, const WriteBarrierBase<Unknown>* inlineStorageSource)
+        : JSObjectWithButterfly(vm, structure, butterfly)
+    {
+        auto* destination = reinterpret_cast<EncodedJSValue*>(inlineStorageUnsafe());
+        auto* source = reinterpret_cast<const EncodedJSValue*>(inlineStorageSource);
+        for (size_t i = 0; i < inlineCapacity; ++i)
+            destination[i] = source[i];
     }
 
     explicit JSFinalObject(CreatingWellDefinedBuiltinCellTag, StructureID structureID)
@@ -984,6 +995,14 @@ inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* stru
         NotNull,
         allocateCell<JSFinalObject>(vm, allocationSize(inlineCapacity))
     ) JSFinalObject(vm, structure, butterfly, inlineCapacity);
+    finalObject->finishCreation(vm);
+    return finalObject;
+}
+
+inline JSFinalObject* JSFinalObject::createWithButterflyCopyingInlineStorage(VM& vm, Structure* structure, Butterfly* butterfly, const WriteBarrierBase<Unknown>* inlineStorageSource)
+{
+    size_t inlineCapacity = structure->inlineCapacity();
+    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(vm, allocationSize(inlineCapacity))) JSFinalObject(vm, structure, butterfly, inlineCapacity, inlineStorageSource);
     finalObject->finishCreation(vm);
     return finalObject;
 }
