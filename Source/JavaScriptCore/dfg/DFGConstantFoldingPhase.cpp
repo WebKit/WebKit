@@ -1353,6 +1353,8 @@ private:
                 Edge keyEdge = node->child2();
                 Edge descriptorEdge = node->child3();
 
+                m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+
                 std::array<Edge, Node::numberOfDescriptorSlots> slotEdges;
                 Node* butterfly = nullptr;
                 Node* emptyConstant = nullptr;
