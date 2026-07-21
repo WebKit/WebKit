@@ -65,6 +65,7 @@ public:
     PREFERRED_TYPE(bool) uint8_t hasAutoUsedZIndex : 1;
     PREFERRED_TYPE(BoxSizing) uint8_t boxSizing : 1;
     PREFERRED_TYPE(BoxDecorationBreak) uint8_t boxDecorationBreak : 1;
+    PREFERRED_TYPE(BaselineSource) uint8_t baselineSource : 2;
 
     ZIndex::Value specifiedZIndexValue;
     ZIndex::Value usedZIndexValue;

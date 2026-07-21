@@ -1099,6 +1099,20 @@ CSSAxisRelativePositionKeywordsEnabled:
     WebCore:
       default: true
 
+CSSBaselineSourceEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS baseline-source"
+  humanReadableDescription: "Enable CSS baseline-source"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCalcMixEnabled:
   type: bool
   category: css

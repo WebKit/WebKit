@@ -1034,6 +1034,12 @@ enum class FieldSizing : bool {
     Content
 };
 
+enum class BaselineSource : uint8_t {
+    Auto,
+    First,
+    Last
+};
+
 enum class NinePieceImageRule : uint8_t {
     Stretch,
     Round,
@@ -1252,6 +1258,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, MathShift);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
+WTF::TextStream& operator<<(WTF::TextStream&, BaselineSource);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowContinue);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AlignmentBaseline);

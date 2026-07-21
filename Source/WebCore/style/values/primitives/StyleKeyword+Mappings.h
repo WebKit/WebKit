@@ -412,6 +412,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE BaselineSource
+#define FOR_EACH(CASE) CASE(Auto) CASE(First) CASE(Last)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 constexpr CSSValueID toCSSValueID(FillAttachment e)
 {
     switch (e) {
