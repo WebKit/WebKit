@@ -1,0 +1,36 @@
+<script>
+globalThis.testRunner?.waitUntilDone();
+globalThis.testRunner?.dumpAsText();
+const log = console.debug;
+
+onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    // A render pipeline with no fragment stage (depth-only) should be compatible with a render
+    // bundle encoder that declares no color formats and a matching depthStencilFormat.
+    let module = device.createShaderModule({
+        code: '@vertex fn v() -> @builtin(position) vec4f { return vec4f(); }',
+    });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: { module },
+        depthStencil: { format: 'depth24plus', depthWriteEnabled: true, depthCompare: 'less' },
+    });
+    let encoder = device.createRenderBundleEncoder({
+        colorFormats: [],
+        depthStencilFormat: 'depth24plus',
+    });
+    encoder.setPipeline(pipeline);
+    encoder.draw(3);
+    encoder.finish();
+
+    let error = await device.popErrorScope();
+    if (error)
+        log(error.message);
+    else
+        log('no validation error');
+    globalThis.testRunner?.notifyDone();
+};
+</script>

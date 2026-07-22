@@ -1946,15 +1946,8 @@ bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescripto
     if (descriptor.sampleCount != m_descriptor.multisample.count)
         return false;
 
-    if (!m_descriptor.fragment) {
-        if (descriptor.colorFormatCount || descriptor.depthStencilFormat != WGPUTextureFormat_Undefined)
-            return false;
-
-        return true;
-    }
-
-    auto& fragment = *m_descriptor.fragment;
-    for (size_t i = 0, maxTargetCount = std::max<size_t>(fragment.targetCount, descriptor.colorFormatCount); i < maxTargetCount; ++i) {
+    size_t fragmentTargetCount = m_descriptor.fragment ? m_descriptor.fragment->targetCount : 0;
+    for (size_t i = 0, maxTargetCount = std::max<size_t>(fragmentTargetCount, descriptor.colorFormatCount); i < maxTargetCount; ++i) {
         auto colorFormat = i < descriptor.colorFormatCount ? descriptor.colorFormatsSpan()[i] : WGPUTextureFormat_Undefined;
         auto descriptorFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
         if (descriptorFormat != colorFormat)
