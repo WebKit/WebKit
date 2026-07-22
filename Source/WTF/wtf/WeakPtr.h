@@ -384,7 +384,7 @@ inline bool isAnyOf(WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
 }
 
 template<typename... ExpectedTypes, typename ArgType, typename WeakPtrImpl, typename PtrTraits>
-inline bool is(const WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
+inline bool isAnyOf(const WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
 {
     return isAnyOf<ExpectedTypes...>(source.get());
 }

@@ -138,7 +138,7 @@ inline bool isAnyOf(UniqueRef<ArgType>& source)
 }
 
 template<typename... ExpectedTypes, typename ArgType>
-inline bool is(const UniqueRef<ArgType>& source)
+inline bool isAnyOf(const UniqueRef<ArgType>& source)
 {
     return isAnyOf<ExpectedTypes...>(source.get());
 }
