@@ -126,15 +126,19 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
 
     shadowRootPushed(hostId, root)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetShadowRootPushed(this._target, hostId, root);
+            return;
+        }
         WI.domManager._childNodeInserted(hostId, 0, root);
     }
 
     shadowRootPopped(hostId, rootId)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetShadowRootPopped(this._target, hostId, rootId);
+            return;
+        }
         WI.domManager._childNodeRemoved(hostId, rootId);
     }
 

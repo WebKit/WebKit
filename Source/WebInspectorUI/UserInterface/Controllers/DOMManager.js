@@ -440,6 +440,37 @@ WI.DOMManager = class DOMManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
     }
 
+    _frameTargetShadowRootPushed(target, hostId, payload)
+    {
+        let scopedHostId = target.identifier + ":" + hostId;
+        let host = this._idToDOMNode[scopedHostId];
+        if (!host)
+            return;
+
+        // Insert as a child with no previous sibling, mirroring the page path's
+        // `_childNodeInserted(hostId, 0, root)`; `_insertChild` scopes the node to this target.
+        let node = host._insertChild(null, payload);
+        this._idToDOMNode[node.id] = node;
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent: host});
+
+        // A shadow subtree may contain an iframe element.
+        this._trySpliceUnsplicedFrameDocuments();
+    }
+
+    _frameTargetShadowRootPopped(target, hostId, rootId)
+    {
+        let scopedHostId = target.identifier + ":" + hostId;
+        let scopedRootId = target.identifier + ":" + rootId;
+        let host = this._idToDOMNode[scopedHostId];
+        let root = this._idToDOMNode[scopedRootId];
+        if (!host || !root)
+            return;
+
+        host._removeChild(root);
+        this._frameTargetUnbind(root);
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: root, parent: host});
+    }
+
     _frameTargetWillDestroyDOMNode(target, nodeId)
     {
         let scopedId = target.identifier + ":" + nodeId;

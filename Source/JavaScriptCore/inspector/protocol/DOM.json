@@ -916,7 +916,7 @@
         {
             "name": "shadowRootPushed",
             "description": "Called when shadow root is pushed into the element.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                 { "name": "root", "$ref": "Node", "description": "Shadow root." }
@@ -925,7 +925,7 @@
         {
             "name": "shadowRootPopped",
             "description": "Called when shadow root is popped from the element.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                 { "name": "rootId", "$ref": "NodeId", "description": "Shadow root id." }

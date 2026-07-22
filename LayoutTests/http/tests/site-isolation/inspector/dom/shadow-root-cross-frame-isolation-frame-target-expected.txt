@@ -1,0 +1,21 @@
+Test that shadow roots pushed from two distinct cross-origin frame targets stay isolated under site isolation, even with colliding raw node ids.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.ShadowRootCrossFrameIsolation
+-- Running test case: Setup
+PASS: Should find the child frame target (host B).
+PASS: Should find the grandchild frame target (host A).
+PASS: Child and grandchild should be distinct targets.
+
+-- Running test case: SiteIsolation.DOM.ShadowRootCrossFrameIsolation.DistinctScopedNodes
+PASS: Should find #child-host in the child frame.
+PASS: Should find #grandchild-host in the grandchild frame.
+PASS: Child shadow root should be owned by the child target.
+PASS: Grandchild shadow root should be owned by the grandchild target.
+PASS: The two shadow roots must be distinct WI.DOMNode instances.
+PASS: The two shadow roots must have distinct scoped ids.
+PASS: Child shadow root should resolve on the child target by its raw id.
+PASS: Grandchild shadow root should resolve on the grandchild target by its raw id.
+PASS: Child's raw id must not resolve to the child's node on the grandchild target.
+
