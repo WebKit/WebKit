@@ -30,7 +30,7 @@
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-/*! @abstract An object representing a website-provided immersive environment that is ready for presentation.
+/*! @abstract An object that represents a website-provided immersive environment ready for presentation.
  */
 NS_SWIFT_UI_ACTOR
 NS_SWIFT_SENDABLE
@@ -41,7 +41,7 @@ WK_API_UNAVAILABLE(macos, ios)
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-/*! @abstract The frame information of the website that provided this immersive environment.
+/*! @abstract The frame information of the website that provides this immersive environment.
  */
 @property (nonatomic, readonly) WKFrameInfo *sourceFrame WK_API_AVAILABLE(visionos(27.0));
 

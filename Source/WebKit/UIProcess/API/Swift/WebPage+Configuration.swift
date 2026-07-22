@@ -100,7 +100,7 @@ extension WebPage {
 
         private var backingAllowsImmersiveEnvironments = false
 
-        /// Indicates whether website immersive environments are allowed.
+        /// A Boolean value that indicates whether website immersive environments are allowed.
         ///
         /// Set this property to `true` to enable support for website immersive environments.
         /// If `false`, requests to present immersive environments are ignored.

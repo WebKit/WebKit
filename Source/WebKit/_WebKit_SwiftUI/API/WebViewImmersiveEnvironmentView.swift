@@ -30,7 +30,7 @@ import WebKit_Private
 /// A SwiftUI view that renders a specific website-provided immersive environment.
 ///
 /// Place this view in your app's Immersive Space hierarchy. Initialize it with the
-/// `WebPage.ImmersiveEnvironment` received from the presentation callback to render
+/// ``WebPage/ImmersiveEnvironment`` that the presentation callback provides to render
 /// that specific environment.
 @MainActor
 @available(anyAppleOSAndDownlevels 27.0, *)
@@ -46,7 +46,7 @@ public struct WebViewImmersiveEnvironmentView: View {
         self.init(environment.wrapped)
     }
 
-    /// Creates an immersive environment view from a `WKImmersiveEnvironment`.
+    /// Creates an immersive environment view from a ``WKImmersiveEnvironment``.
     public init(_ environment: WKImmersiveEnvironment) {
         self.environment = environment
     }

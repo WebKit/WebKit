@@ -179,19 +179,22 @@ extension View {
     /// Use this modifier to control authorization, presentation, and dismissal of
     /// immersive environments from websites.
     ///
+    /// - Important: Set ``WebPage/Configuration/allowsImmersiveEnvironments`` to `true` before
+    ///   loading a page, or none of the callbacks will fire.
+    ///
     /// - Parameters:
     ///   - shouldAllow: An async closure called when a website requests an immersive environment.
-    ///     This can be used to request user consent or apply custom authorization logic.
-    ///     It receives the source `WebPage.FrameInfo` and should return `true` to allow
+    ///     Use this closure to request user consent or apply custom authorization logic.
+    ///     It receives the source ``WebPage/FrameInfo``. Return `true` to allow
     ///     the environment presentation, or `false` to deny it.
     ///   - present: An async throwing closure called after the environment has loaded and is ready
-    ///     for presentation. It receives the `WebPage.ImmersiveEnvironment`. Use this to
-    ///     open an Immersive Space containing a `WebViewImmersiveEnvironmentView` initialized
+    ///     for presentation. It receives the ``WebPage/ImmersiveEnvironment``. Use this to
+    ///     open an Immersive Space containing a ``WebViewImmersiveEnvironmentView`` initialized
     ///     with this environment. If another immersive space is already being presented,
-    ///     dismiss it first. This closure should return after the presentation transition completes.
-    ///   - dismiss: An async closure called when the website or the application asks to dismiss
-    ///     the immersive environment. It receives the `WebPage.ImmersiveEnvironment` to dismiss.
-    ///     This closure should return after the dismissal transition completes.
+    ///     dismiss it first. Return after the presentation transition completes.
+    ///   - dismiss: An async closure called when the website or the app asks to dismiss
+    ///     the immersive environment. It receives the ``WebPage/ImmersiveEnvironment`` to dismiss.
+    ///     Return after the dismissal transition completes.
     /// - Returns: A modified view that manages immersive environment lifecycle.
     @available(anyAppleOSAndDownlevels 27.0, *)
     @available(iOS, unavailable)
