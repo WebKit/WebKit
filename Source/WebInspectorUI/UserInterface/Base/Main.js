@@ -2687,6 +2687,7 @@ WI._resourceCachingDisabledSettingChanged = function(event)
 WI._clearResourceDataOnNavigateSettingChanged = function(event)
 {
     for (let target of WI.targets) {
+        // COMPATIBILITY (macOS 26.4, iOS 26.4): Network.setClearResourceDataOnNavigate did not exist yet.
         if (target.hasCommand("Network.setClearResourceDataOnNavigate"))
             target.NetworkAgent.setClearResourceDataOnNavigate(WI.settings.clearNetworkOnNavigate.value);
     }
