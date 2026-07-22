@@ -85,7 +85,7 @@ public:
     CommandResult<void> setCookie(Ref<JSON::Object>&&, std::optional<bool>&& shouldPartition) final;
     CommandResult<void> deleteCookie(const String& cookieName, const String& url) final;
     void getResourceTree(Ref<GetResourceTreeCallback>&&) final;
-    CommandResultOf<String, bool /* base64Encoded */> getResourceContent(const Protocol::Network::FrameId&, const String& url) final;
+    void getResourceContent(const Protocol::Network::FrameId&, const String& url, Ref<GetResourceContentCallback>&&) final;
     CommandResult<void> setBootstrapScript(const String& source) final;
     void searchInResource(const Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&) final;
     void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&) final;

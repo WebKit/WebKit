@@ -436,9 +436,49 @@ CommandResult<void> ProxyingPageAgent::deleteCookie(const String&, const String&
     return { };
 }
 
-CommandResultOf<String, bool> ProxyingPageAgent::getResourceContent(const Protocol::Network::FrameId&, const String&)
+void ProxyingPageAgent::getResourceContent(const Protocol::Network::FrameId& frameId, const String& url, Ref<GetResourceContentCallback>&& callback)
 {
-    return makeUnexpected("Not yet implemented under Site Isolation"_s);
+    if (!m_enabled) {
+        callback->sendFailure("Not supported without Site Isolation"_s);
+        return;
+    }
+
+    // The frameId is hosting-process-qualified by IdentifierRegistry::protocolFrameId(frameID,
+    // processID), so parseProtocolFrameId yields the hosting process directly -- same routing as
+    // searchInResource()'s frame branch. The parser validates the raw value before constructing
+    // FrameIdentifier, so a malformed/hostile id is a clean failure rather than a UIProcess crash.
+    auto parsed = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsed) {
+        callback->sendFailure("Invalid frameId format"_s);
+        return;
+    }
+    auto [frameProcessIdentifier, frameID] = *parsed;
+
+    Ref inspectedPage = m_inspectedPage.get();
+
+    RefPtr<WebKit::WebProcessProxy> targetProcess;
+    std::optional<PageIdentifier> targetPageID;
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess.coreProcessIdentifier() == frameProcessIdentifier) {
+            targetProcess = &webProcess;
+            targetPageID = pageID;
+        }
+    });
+
+    if (!targetProcess || !targetPageID) {
+        callback->sendFailure("WebProcess not found for frameId"_s);
+        return;
+    }
+
+    targetProcess->sendWithAsyncReply(
+        Messages::WebInspectorBackend::GetFrameResourceContent { frameID, url },
+        [callback = WTF::move(callback)](String content, bool base64Encoded, String errorString) mutable {
+            if (!errorString.isEmpty())
+                callback->sendFailure(errorString);
+            else
+                callback->sendSuccess(content, base64Encoded);
+        },
+        *targetPageID);
 }
 
 // FIXME: <https://webkit.org/b/308897> Cross-process bootstrap script injection.

@@ -1,0 +1,27 @@
+Test that Page.getResourceContent returns resource bytes cross-process under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.GetResourceContent
+-- Running test case: SiteIsolation.Page.GetResourceContent.CrossOriginChildDocument
+PASS: Should have found the cross-origin child frame.
+PASS: Child document content should not be base64 encoded.
+PASS: Child document content should contain the document's marker text.
+
+-- Running test case: SiteIsolation.Page.GetResourceContent.CrossOriginChildSubresource
+PASS: Should have found the cross-origin child frame.
+PASS: Child frame's cached stylesheet subresource should be reported.
+PASS: Stylesheet subresource content should not be base64 encoded.
+PASS: Stylesheet subresource content should contain the stylesheet's marker text.
+PASS: Stylesheet subresource content should contain the stylesheet's rule.
+
+-- Running test case: SiteIsolation.Page.GetResourceContent.MainFrameDocument
+PASS: Main frame document content should contain the inline test script.
+
+-- Running test case: SiteIsolation.Page.GetResourceContent.InvalidFrameId
+PASS: A malformed frameId should be rejected with an error, not crash the UIProcess.
+
+-- Running test case: SiteIsolation.Page.GetResourceContent.MissingResource
+FAIL: A url with no matching resource should be rejected with an error.
+    Expected: truthy
+    Actual: false
+

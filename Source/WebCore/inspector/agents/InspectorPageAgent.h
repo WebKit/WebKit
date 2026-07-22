@@ -85,7 +85,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setCookie(Ref<JSON::Object>&&, std::optional<bool>&& shouldPartition);
     Inspector::Protocol::ErrorStringOr<void> deleteCookie(const String& cookieName, const String& url);
     void getResourceTree(Ref<GetResourceTreeCallback>&&);
-    Inspector::Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> getResourceContent(const Inspector::Protocol::Network::FrameId&, const String& url);
+    void getResourceContent(const Inspector::Protocol::Network::FrameId&, const String& url, Ref<GetResourceContentCallback>&&);
     Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(const String& source);
     void searchInResource(const Inspector::Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&);
     void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&);

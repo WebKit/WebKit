@@ -137,8 +137,12 @@ public:
     }
 
     // Reverse-parse a protocol frameId string back into its components (hosting process, frame).
-    // Returns nullopt if the string doesn't match the expected "frame-processID.frameID" format.
-    // The 2-arg protocolFrameId(frameID, processID) is the inverse.
+    // Returns nullopt if the string doesn't match the expected "frame-processID.frameID" format,
+    // if either segment isn't a valid uint64, or -- crucially -- if the frame segment isn't a
+    // valid FrameIdentifier raw value. The FrameIdentifier(uint64_t) constructor RELEASE_ASSERTs
+    // on an invalid raw value (see ObjectIdentifier.h), so a malformed or hostile id arriving from
+    // the frontend would crash the UIProcess; validating with isValidIdentifier() first keeps this
+    // a clean parse failure. The 2-arg protocolFrameId(frameID, processID) is the inverse.
     static inline std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> parseProtocolFrameId(const String& frameId)
     {
         // Format: "frame-processID.frameID"
@@ -154,11 +158,11 @@ public:
         auto framePart = rest.substring(dotIndex + 1);
 
         auto pidValue = parseInteger<uint64_t>(pidPart);
-        if (!pidValue)
+        if (!pidValue || !WebCore::ProcessIdentifier::isValidIdentifier(*pidValue))
             return std::nullopt;
 
         auto frameValue = parseInteger<uint64_t>(framePart);
-        if (!frameValue)
+        if (!frameValue || !WebCore::FrameIdentifier::isValidIdentifier(*frameValue))
             return std::nullopt;
 
         return std::pair {

@@ -609,20 +609,27 @@ void InspectorPageAgent::getResourceTree(Ref<GetResourceTreeCallback>&& callback
     callback->sendSuccess(buildObjectForFrameTree(localMainFrame.get()));
 }
 
-Inspector::Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorPageAgent::getResourceContent(const Inspector::Protocol::Network::FrameId& frameId, const String& url)
+void InspectorPageAgent::getResourceContent(const Inspector::Protocol::Network::FrameId& frameId, const String& url, Ref<GetResourceContentCallback>&& callback)
 {
     Inspector::Protocol::ErrorString errorString;
 
     RefPtr frame = assertFrame(errorString, frameId);
-    if (!frame)
-        return makeUnexpected(errorString);
+    if (!frame) {
+        callback->sendFailure(errorString);
+        return;
+    }
 
     String content;
-    bool base64Encoded;
+    bool base64Encoded = false;
 
-    ResourceUtilities::resourceContent(errorString, frame, URL({ }, url), &content, &base64Encoded);
+    // Behavior is identical to the previous synchronous implementation: on a resource-lookup
+    // miss resourceContent() sets errorString but leaves content empty, and we still report
+    // success with that empty content (the frontend tolerates empty content on this path).
+    // Only the return mechanism changed (sync tuple -> async callback) for the Page.json
+    // "async" flip required by ProxyingPageAgent's cross-process implementation.
+    ResourceUtilities::resourceContent(errorString, frame.get(), URL({ }, url), &content, &base64Encoded);
 
-    return { { content, base64Encoded } };
+    callback->sendSuccess(content, base64Encoded);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setBootstrapScript(const String& source)

@@ -107,6 +107,7 @@ public:
     void enablePageInstrumentation();
     void disablePageInstrumentation();
     void getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&&);
+    void getFrameResourceContent(WebCore::FrameIdentifier, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&&);
 
     void searchInRequest(WebCore::ResourceLoaderIdentifier, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
     void searchInFrameResource(WebCore::FrameIdentifier, const String& url, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);

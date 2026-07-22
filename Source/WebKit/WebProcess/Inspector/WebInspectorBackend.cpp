@@ -706,4 +706,60 @@ void WebInspectorBackend::getFrameResourceData(Vector<WebCore::FrameIdentifier>&
     completionHandler(WTF::move(resourcesByFrame));
 }
 
+void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frameID, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&& completionHandler)
+{
+    // Return the content of a resource hosted by this WebContent process, for the UIProcess
+    // ProxyingPageAgent to serve Page.getResourceContent cross-process under Site Isolation.
+    // The UIProcess routes this message to the frame's hosting process (parsed from the
+    // process-qualified protocol frameId), so the frame is expected to be local here; a null
+    // WebFrame / LocalFrame / DocumentLoader means the frame swapped or detached between the
+    // request and this reply, which we surface as an errorString (unlike a lookup miss below,
+    // this case has no InspectorPageAgent precedent to mimic).
+    // Frame resolution mirrors searchInFrameResource() / getFrameResourceData().
+    // See webkit.org/b/171780776.
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        completionHandler(String(), false, "Frame not found in this process"_s);
+        return;
+    }
+    RefPtr localFrame = webFrame->coreLocalFrame();
+    if (!localFrame) {
+        completionHandler(String(), false, "Frame is not local to this process"_s);
+        return;
+    }
+    RefPtr loader = localFrame->loader().documentLoader();
+    if (!loader) {
+        completionHandler(String(), false, "No document loader for frame"_s);
+        return;
+    }
+
+    // Serve the frame's committed main document, else a cached subresource matched by url --
+    // the same two-step lookup as WebCore's ResourceUtilities::resourceContent (which is not
+    // WEBCORE_EXPORT and so can't be linked from WebKit), composed here from the exported
+    // primitives, the same way searchInFrameResource() does above. Runs on the main thread (same
+    // dispatch as getFrameResourceData) because it touches Document / CachedResourceLoader /
+    // DocumentLoader.
+    URL parsedURL({ }, url);
+    URL loaderURL = loader->url();
+
+    String content;
+    // Initialize before use: the cached-subresource branch (cachedResourceContent) has a
+    // return-false path that leaves base64Encoded untouched, and this reply serializes it across
+    // IPC unconditionally, so an uninitialized bool would be undefined behavior.
+    bool base64Encoded = false;
+    bool success = false;
+
+    if (equalIgnoringFragmentIdentifier(parsedURL, loaderURL))
+        success = Inspector::ResourceUtilities::mainResourceContent(localFrame.get(), false, &content);
+
+    if (!success) {
+        if (RefPtr resource = Inspector::ResourceUtilities::cachedResource(localFrame.get(), parsedURL))
+            Inspector::ResourceUtilities::cachedResourceContent(*resource, &content, &base64Encoded);
+    }
+
+    // Matches InspectorPageAgent::getResourceContent: on a lookup miss, report success with
+    // empty content rather than an error -- the frontend already tolerates empty content here.
+    completionHandler(content, base64Encoded, String());
+}
+
 } // namespace WebKit

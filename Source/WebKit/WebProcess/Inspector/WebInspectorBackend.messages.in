@@ -59,6 +59,13 @@ messages -> WebInspectorBackend {
     # asks each process only for the frames it hosts. See webkit.org/b/308896.
     GetFrameResourceData(Vector<WebCore::FrameIdentifier> frameIDs) -> (Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>> resourcesByFrame) Async
 
+    # Returns the content of a resource (the frame's committed main document, or a cached
+    # subresource identified by url) for a frame local to this WebContent process, for the
+    # UIProcess ProxyingPageAgent to serve Page.getResourceContent cross-process under Site
+    # Isolation. errorString is non-empty when the frame isn't local here or the resource
+    # isn't found. See webkit.org/b/171780776.
+    GetFrameResourceContent(WebCore::FrameIdentifier frameID, String url) -> (String content, bool base64Encoded, String errorString) Async
+
     GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (String content, bool base64Encoded, String errorString) Async
 
     # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
