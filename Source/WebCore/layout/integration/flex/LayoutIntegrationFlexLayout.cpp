@@ -69,8 +69,8 @@ void FlexLayout::prepareFlexItemForPositionedLayout(RenderBox& flexItem)
 FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren)
 {
     // Out-of-flow children are not flex items, but the container still establishes their static position.
-    for (auto& child : childrenOfType<RenderBox>(flexBox())) {
-        if (child.isOutOfFlowPositioned())
+    for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
+        if (child->isOutOfFlowPositioned())
             prepareFlexItemForPositionedLayout(child);
     }
 
@@ -173,7 +173,7 @@ std::optional<LayoutUnit> FlexLayout::lastLineBaseline() const
     return result;
 }
 
-const RenderBox* FlexLayout::flexItemForFirstBaseline() const
+CheckedPtr<const RenderBox> FlexLayout::flexItemForFirstBaseline() const
 {
     // The first baseline comes from the visually-first flex line, and within it the item nearest that line's visual
     // start. flex-wrap: wrap-reverse makes the visually-first line the logically-last line; a reversed main axis
@@ -185,7 +185,7 @@ const RenderBox* FlexLayout::flexItemForFirstBaseline() const
     return baselineFlexItemInLine(0, flexBox().m_numberOfFlexItemsOnFirstLine, reverse);
 }
 
-const RenderBox* FlexLayout::flexItemForLastBaseline() const
+CheckedPtr<const RenderBox> FlexLayout::flexItemForLastBaseline() const
 {
     // The last baseline comes from the visually-last flex line, and within it the item nearest that line's visual
     // end (the opposite end to flexItemForFirstBaseline, hence the negated reverse). wrap-reverse makes the
@@ -197,16 +197,16 @@ const RenderBox* FlexLayout::flexItemForLastBaseline() const
     return baselineFlexItemInLine(flexItems.size() - flexBox().m_numberOfFlexItemsOnLastLine, flexBox().m_numberOfFlexItemsOnLastLine, reverse);
 }
 
-const RenderBox* FlexLayout::baselineFlexItemInLine(size_t lineStart, size_t itemCount, bool reverse) const
+CheckedPtr<const RenderBox> FlexLayout::baselineFlexItemInLine(size_t lineStart, size_t itemCount, bool reverse) const
 {
     // A flex line is the slice [lineStart, lineStart + itemCount) of the flex items (items are collected into lines
     // in order). Scanning it in the given direction, return the first item that participates in baseline alignment
     // (baseline self-alignment, the main axis is the item's inline axis, and no auto margins in the cross axis), or
     // the first item scanned when none participate.
     auto& flexItems = flexBox().flexItems();
-    const RenderBox* fallback = nullptr;
+    CheckedPtr<const RenderBox> fallback = nullptr;
     for (size_t i = 0; i < itemCount; ++i) {
-        auto* flexItem = flexItems[lineStart + (reverse ? itemCount - 1 - i : i)].get();
+        CheckedPtr flexItem = flexItems[lineStart + (reverse ? itemCount - 1 - i : i)].get();
         if (!flexItem)
             continue;
         if (!fallback)
