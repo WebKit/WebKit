@@ -235,12 +235,7 @@ Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRe
         return { };
 
     FloatPoint center = rect.center();
-    RectEdges<std::pair<FloatPoint, FloatPoint>> edges {
-        { rect.minXMinYCorner(), rect.maxXMinYCorner() }, // top
-        { rect.maxXMinYCorner(), rect.maxXMaxYCorner() }, // right
-        { rect.maxXMaxYCorner(), rect.minXMaxYCorner() }, // bottom
-        { rect.minXMaxYCorner(), rect.minXMinYCorner() }, // left
-    };
+    auto edges = rect.edges();
 
     Vector<BezierSegment> curves;
     curves.append(curve);

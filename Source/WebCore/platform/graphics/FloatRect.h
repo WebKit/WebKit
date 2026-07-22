@@ -28,6 +28,7 @@
 
 #include <WebCore/BoxExtents.h>
 #include <WebCore/FloatPoint.h>
+#include <utility>
 #include <wtf/Platform.h>
 
 #if USE(CG)
@@ -181,6 +182,16 @@ public:
     constexpr FloatPoint maxXMinYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y()); } // typically topRight
     constexpr FloatPoint minXMaxYCorner() const { return FloatPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
     constexpr FloatPoint maxXMaxYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
+
+    RectEdges<std::pair<FloatPoint, FloatPoint>> edges() const
+    {
+        return {
+            { minXMinYCorner(), maxXMinYCorner() }, // top
+            { maxXMinYCorner(), maxXMaxYCorner() }, // right
+            { maxXMaxYCorner(), minXMaxYCorner() }, // bottom
+            { minXMaxYCorner(), minXMinYCorner() }, // left
+        };
+    }
 
     WEBCORE_EXPORT bool NODELETE intersects(const FloatRect&) const;
     WEBCORE_EXPORT bool NODELETE inclusivelyIntersects(const FloatRect&) const;
