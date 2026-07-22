@@ -29,7 +29,7 @@ messages -> NetworkTransportSession {
     SendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier> identifier, std::span<const uint8_t> datagram) -> (std::optional<WebCore::Exception> exception)
     CreateOutgoingUnidirectionalStream() -> (std::optional<WebCore::WebTransportStreamIdentifier> identifier)
     CreateBidirectionalStream() -> (std::optional<WebCore::WebTransportStreamIdentifier> identifier)
-    GetStats() -> (struct WebCore::WebTransportConnectionStats stats)
+    GetStats() -> (struct std::optional<WebCore::WebTransportConnectionStats> stats)
     GetSendStreamStats(WebCore::WebTransportStreamIdentifier identifier) -> (struct std::optional<WebCore::WebTransportSendStreamStats> stats)
     GetReceiveStreamStats(WebCore::WebTransportStreamIdentifier identifier) -> (struct std::optional<WebCore::WebTransportReceiveStreamStats> stats)
     GetSendGroupStats(WebCore::WebTransportSendGroupIdentifier identifier) -> (struct std::optional<WebCore::WebTransportSendStreamStats> stats)

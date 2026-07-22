@@ -35,13 +35,18 @@
 #include <WebCore/WebTransportConnectionStats.h>
 #include <WebCore/WebTransportReceiveStreamStats.h>
 #include <WebCore/WebTransportSendStreamStats.h>
+#include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportSession);
 
-NetworkTransportSession::~NetworkTransportSession() = default;
+NetworkTransportSession::~NetworkTransportSession()
+{
+    for (auto&& statsRequest : std::exchange(m_statsRequestsBeforeInitialization, { }))
+        statsRequest(std::nullopt);
+}
 
 IPC::Connection* NetworkTransportSession::messageSenderConnection() const
 {
@@ -63,6 +68,7 @@ void NetworkTransportSession::streamSendBytes(WebCore::WebTransportStreamIdentif
 
 void NetworkTransportSession::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<WebCore::Exception>&& exception)
 {
+    m_datagramBytesReceived += datagram.size();
     send(Messages::WebTransportSession::ReceiveDatagram(datagram, withFin, WTF::move(exception)));
 }
 
@@ -105,8 +111,11 @@ void NetworkTransportSession::cancelSendStream(WebCore::WebTransportStreamIdenti
 
 void NetworkTransportSession::destroyStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<WebCore::WebTransportStreamErrorCode> errorCode)
 {
-    if (RefPtr stream = m_streams.take(identifier))
+    if (RefPtr stream = m_streams.take(identifier)) {
         stream->cancel(errorCode);
+        m_bytesSentOnClosedStreams += stream->bytesSent();
+        m_bytesReceivedOnClosedStreams += stream->bytesReceived();
+    }
 }
 
 std::optional<SharedPreferencesForWebProcess> NetworkTransportSession::sharedPreferencesForWebProcess() const
@@ -136,7 +145,7 @@ void NetworkTransportSession::getReceiveStreamStats(WebCore::WebTransportStreamI
 void NetworkTransportSession::getSendGroupStats(WebCore::WebTransportSendGroupIdentifier identifier, CompletionHandler<void(std::optional<WebCore::WebTransportSendStreamStats>&&)>&& completionHandler)
 {
     // FIXME: Get better data from the stream.
-    uint64_t bytesSent = m_datagramStats.get(identifier);
+    uint64_t bytesSent = m_datagramBytesSent.get(identifier);
     completionHandler(WebCore::WebTransportSendStreamStats {
         bytesSent,
         bytesSent,
@@ -162,6 +171,66 @@ void NetworkTransportSession::incomingMaxBufferedDatagramsUpdated(uint32_t)
 void NetworkTransportSession::outgoingMaxBufferedDatagramsUpdated(uint32_t)
 {
     // FIXME: Use this value.
+}
+
+void NetworkTransportSession::getStats(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionStats>&&)>&& completionHandler)
+{
+    switch (m_initializationState) {
+    case InitializationState::Waiting:
+        m_statsRequestsBeforeInitialization.append(WTF::move(completionHandler));
+        return;
+    case InitializationState::Failed:
+        return completionHandler(std::nullopt);
+    case InitializationState::Succeeded:
+        break;
+    }
+
+    // FIXME: Get better stats from the network implementation.
+    uint64_t bytesSent = m_bytesSentOnClosedStreams;
+    uint64_t bytesReceived = m_bytesReceivedOnClosedStreams;
+    for (Ref stream : m_streams.values()) {
+        bytesSent += stream->bytesSent();
+        bytesReceived += stream->bytesReceived();
+    }
+    for (uint64_t datagramBytesSent : m_datagramBytesSent.values())
+        bytesSent += datagramBytesSent;
+    bytesReceived += m_datagramBytesReceived;
+
+    // https://www.w3.org/TR/hr-time-3/#dfn-coarsen-time
+    auto roundTo100Microseconds = [] (Seconds time) {
+        return ReducedResolutionSeconds::reduce(time, 100_us).milliseconds();
+    };
+
+    completionHandler(WebCore::WebTransportConnectionStats {
+        bytesSent,
+        0, /* packetsSent */
+        0, /* bytesLost */
+        0, /* packetsLost */
+        bytesReceived,
+        0, /* packetsReceived */
+        roundTo100Microseconds(m_initializationTime), /* smoothedRtt */
+        0, /* rttVariation */
+        roundTo100Microseconds(m_initializationTime), /* minRtt */
+        WebCore::WebTransportDatagramStats { },
+        std::nullopt, /* estimatedSendRate */
+        false /* atSendCapacity */
+    });
+}
+
+void NetworkTransportSession::completeStatsRequestsAfterInitialization(std::optional<Seconds> initializationTime)
+{
+    ASSERT(!m_initializationTime);
+    ASSERT(m_initializationState == InitializationState::Waiting);
+    if (!initializationTime) {
+        m_initializationState = InitializationState::Failed;
+        for (auto&& statsRequest : std::exchange(m_statsRequestsBeforeInitialization, { }))
+            statsRequest(std::nullopt);
+        return;
+    }
+    m_initializationState = InitializationState::Succeeded;
+    m_initializationTime = *initializationTime;
+    for (auto&& statsRequest : std::exchange(m_statsRequestsBeforeInitialization, { }))
+        getStats(WTF::move(statsRequest));
 }
 
 #if !PLATFORM(COCOA)
@@ -193,11 +262,6 @@ void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandl
 void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
 {
     completionHandler(std::nullopt);
-}
-
-void NetworkTransportSession::getStats(CompletionHandler<void(WebCore::WebTransportConnectionStats&&)>&& completionHandler)
-{
-    completionHandler({ });
 }
 
 void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode, CString&&)

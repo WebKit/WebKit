@@ -166,6 +166,7 @@ void WebTransport::initializeOverHTTP(SocketProvider& provider, ScriptExecutionC
 
     // FIXME: Rename SocketProvider to NetworkProvider or something to reflect that it provides a little more than just simple sockets. SocketAndTransportProvider?
     auto [session, promise] = provider.initializeWebTransportSession(context, *this, url, options);
+    ASSERT(!m_session);
     m_session = WTF::move(session);
     m_datagrams->attachTo(*this);
 
@@ -196,6 +197,8 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
     , m_receiveStreamSource(WTF::move(receiveStreamSource))
     , m_bidirectionalStreamSource(WTF::move(bidirectionalStreamSource))
 {
+    // FIXME: Change initializeWebTransportSession to being called in the constructor,
+    // and change m_session to being a const Ref.
 }
 
 WebTransport::~WebTransport() = default;
@@ -250,7 +253,7 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
         ASSERT(!m_readStreamSources.contains(identifier));
         m_readStreamSources.add(identifier, WTF::move(incomingStream));
     } else
-        protect(m_session)->destroyStream(identifier, std::nullopt);
+        session->destroyStream(identifier, std::nullopt);
 }
 
 static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStream(WebTransport& transport, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<WebTransportSendStreamSink>&& sink, Ref<WebTransportReceiveStreamByteSource>&& source, const WebTransportSendStreamOptions& options)
@@ -301,7 +304,7 @@ void WebTransport::receiveBidirectionalStream(WebTransportStreamIdentifier ident
         ASSERT(!m_sendStreamSinks.contains(identifier));
         m_sendStreamSinks.add(identifier, WTF::move(sink));
     } else
-        protect(m_session)->destroyStream(identifier, std::nullopt);
+        session->destroyStream(identifier, std::nullopt);
 }
 
 void WebTransport::streamReceiveBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> span, bool withFin, std::optional<Exception>&& exception)
@@ -365,6 +368,9 @@ void WebTransport::getStats(ScriptExecutionContext& context, Ref<DeferredPromise
 {
     RefPtr session = m_session;
     if (!session)
+        return promise->reject(ExceptionCode::InvalidStateError);
+
+    if (m_state == State::Failed)
         return promise->reject(ExceptionCode::InvalidStateError);
 
     context.enqueueTaskWhenSettled(session->getStats(), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& stats) mutable {
@@ -462,7 +468,7 @@ void WebTransport::cleanupContext()
     // (frame detached, null global object) and drop the rejection; this instead runs on resume.
     if (m_state == State::Connected) {
         m_state = State::Failed;
-        if (auto session = std::exchange(m_session, nullptr))
+        if (RefPtr session = m_session)
             session->terminate(0, { });
         queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& transport) {
             transport.cleanupWithSessionError();
@@ -479,7 +485,7 @@ void WebTransport::close(WebTransportCloseInfo&& closeInfo)
         return;
     if (m_state == State::Connecting)
         return cleanupWithSessionError();
-    if (auto session = std::exchange(m_session, nullptr))
+    if (RefPtr session = m_session)
         session->terminate(closeInfo.closeCode, trimToValidUTF8Length1024(closeInfo.reason.utf8()));
     cleanup(DOMException::create(ExceptionCode::AbortError), WTF::move(closeInfo));
 }
@@ -535,8 +541,6 @@ void WebTransport::cleanup(Ref<DOMException>&& exception, std::optional<WebTrans
         for (Ref datagramsWritable : std::exchange(m_datagramsWritables, { }))
             datagramsWritable->errorIfPossible(jsDOMGlobalObject, jsException);
     }
-
-    m_session = nullptr;
 }
 
 void WebTransport::datagramsWritableCreated(WebTransportDatagramsWritable& writable)

@@ -170,9 +170,9 @@ Ref<WebCore::WebTransportConnectionStatsPromise> WebTransportSession::getStats()
 {
     return sendWithPromisedReply(Messages::NetworkTransportSession::GetStats())->whenSettled(RunLoop::mainSingleton(), [] (auto&& stats) mutable {
         ASSERT(RunLoop::isMain());
-        if (!stats)
+        if (!stats || !*stats)
             return WebCore::WebTransportConnectionStatsPromise::createAndReject();
-        return WebCore::WebTransportConnectionStatsPromise::createAndResolve(WTF::move(*stats));
+        return WebCore::WebTransportConnectionStatsPromise::createAndResolve(WTF::move(**stats));
     });
 }
 

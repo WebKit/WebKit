@@ -296,9 +296,15 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
         return;
     }
 
-    auto creationCompletionHandler = [completionHandler = WTF::move(completionHandler)] (std::optional<WebCore::WebTransportConnectionInfo>&& connectionInfo) mutable {
+    auto creationCompletionHandler = [
+        completionHandler = WTF::move(completionHandler),
+        initializationStartTime = MonotonicTime::now(),
+        weakThis = WeakPtr { *this }
+    ] (std::optional<WebCore::WebTransportConnectionInfo>&& connectionInfo) mutable {
         if (!completionHandler)
             return;
+        if (RefPtr strongThis = weakThis.get())
+            strongThis->completeStatsRequestsAfterInitialization(connectionInfo ? std::optional(MonotonicTime::now() - initializationStartTime) : std::nullopt);
         return completionHandler(WTF::move(connectionInfo));
     };
 
@@ -378,12 +384,6 @@ void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(s
     createStream(NetworkTransportStreamType::Bidirectional, WTF::move(completionHandler));
 }
 
-void NetworkTransportSession::getStats(CompletionHandler<void(WebCore::WebTransportConnectionStats&&)>&& completionHandler)
-{
-    // FIXME: Implement.
-    completionHandler({ });
-}
-
 void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
 {
     createStream(NetworkTransportStreamType::OutgoingUnidirectional, WTF::move(completionHandler));
@@ -448,7 +448,7 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
 void NetworkTransportSession::sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier> identifier, std::span<const uint8_t> data, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
     if (identifier) {
-        m_datagramStats.ensure(*identifier, [] {
+        m_datagramBytesSent.ensure(*identifier, [] {
             return uint64_t { };
         }).iterator->value += data.size();
     }
