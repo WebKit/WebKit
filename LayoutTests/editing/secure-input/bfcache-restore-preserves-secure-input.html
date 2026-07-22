@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="input" type=password>
+<script>
+jsTestIsAsync = true;
+
+description("Verify that restoring a page from the back/forward cache re-enables secure input state when the cached focused element is a password input.");
+
+window.addEventListener("pageshow", function(event) {
+    if (!event.persisted)
+        return;
+    debug("\nPage was restored from the back/forward cache:");
+    UIHelper.ensurePresentationUpdate().then(() => {
+        shouldBe("document.activeElement", "input");
+        shouldBe("testRunner.secureEventInputIsEnabled", "true");
+        finishJSTest();
+    });
+});
+
+window.addEventListener("load", function() {
+    debug("A password input is focused on the initial page:");
+    input.focus();
+    UIHelper.ensurePresentationUpdate().then(() => {
+        shouldBe("testRunner.secureEventInputIsEnabled", "true");
+        debug("\nNavigating to a helper page that will navigate back:");
+        window.location.href = "../../fast/history/resources/page-cache-helper.html";
+    });
+});
+</script>
+</body>
+</html>

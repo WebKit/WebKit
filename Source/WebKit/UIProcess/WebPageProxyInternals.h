@@ -411,6 +411,8 @@ public:
 
     explicit Internals(WebPageProxy&, bool processInheritedFromOpener);
 
+    bool forceNeedsSecureInputReevaluation { false };
+
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisData& speechSynthesisData() LIFETIME_BOUND;
 #endif
