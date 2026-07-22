@@ -1,0 +1,85 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true RemoteMediaSessionManagerEnabled=true ] -->
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+let finished = false;
+function finish() {
+    if (finished)
+        return;
+    finished = true;
+    window.testRunner?.notifyDone();
+}
+
+function makeState(pageID) {
+    return {
+        pageIdentifier: pageID, sessionIdentifier: 1234, logIdentifier: 0,
+        mediaType: 0, presentationType: 0, displayType: 0, state: 0, stateToRestore: 0,
+        interruptionType: 0, duration: { timeValue: 0, timeScale: 1, timeFlags: 0 },
+        groupIdentifier: { }, nowPlayingInfo: { },
+        shouldOverrideBackgroundLoadingRestriction: false, isPlayingToWirelessPlaybackTarget: false,
+        isPlayingOnSecondScreen: false, hasMediaStreamSource: false,
+        shouldOverridePauseDuringRouteChange: false, isNowPlayingEligible: false,
+        canProduceAudio: false, isSuspended: false, isPlaying: false, isAudible: false,
+        isEnded: false, canReceiveRemoteControlCommands: false, supportsSeeking: false,
+        hasPlayedAudiblySinceLastInterruption: false, isLongEnoughForMainContent: false,
+        blockedBySystemInterruption: false, activeAudioSessionRequired: false,
+        preparingToPlay: false, isActiveNowPlayingSession: false,
+    };
+}
+
+async function run() {
+    const { CoreIPC } = await import('./coreipc.js');
+
+    // With RemoteMediaSessionManagerEnabled=true each WebPageProxy creates its
+    // RemoteMediaSessionManagerProxy eagerly, so the last-opened page (B) owns
+    // the process-global AudioHardwareListener factory.
+    const winA = window.open("about:blank", "A");
+    const winB = window.open("about:blank", "B");
+    await wait(0);
+
+    if (!winA?.IPC || !winB?.IPC) {
+        finish();
+        return;
+    }
+    const pageA = winA.IPC.pageID;
+    const pageB = winB.IPC.pageID;
+
+    // A.AddMediaSession -> AudioHardwareListener::create(*A) -> B's factory ->
+    // B caches a listener whose raw Client& was A.
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.AddMediaSession(pageA, { session: makeState(pageA) });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoveMediaSession(pageA, { session: makeState(pageA) });
+
+    // Destroy A's WebPageProxy; B's listener used to keep a dangling Client& to A.
+    winA.close();
+    for (let i = 0; i < 8; ++i)
+        await wait(50);
+    if (window.GCController)
+        GCController.collect();
+    await wait(100);
+
+    // RemoteAudioOutputDeviceChanged on B used to dispatch on freed A.
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoteAudioOutputDeviceChanged(pageB, { bufferSizeMinimum: 128, bufferSizeMaximum: 4096 });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoteAudioHardwareDidBecomeActive(pageB, { });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoteAudioHardwareDidBecomeInactive(pageB, { });
+
+    await wait(100);
+    finish();
+}
+
+// The IPC testing API (window.IPC) is only present on debug/ASAN builds; on other
+// configurations this test must still finish, so guarantee notifyDone() on every path
+// and only import coreipc.js (which dereferences IPC at module scope) when IPC exists.
+// The watchdog also finishes the test if an opened window never populates window.IPC.
+if (!window.IPC || !IPC.messages.RemoteMediaSessionManagerProxy_AddMediaSession)
+    finish();
+else {
+    setTimeout(finish, 8000);
+    run().catch(finish);
+}
+</script>

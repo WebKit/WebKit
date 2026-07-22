@@ -1,0 +1,72 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true RemoteMediaSessionManagerEnabled=true ] -->
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() { window.testRunner?.notifyDone(); }
+
+async function run() {
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const pageID = IPC.pageID;
+
+    const state = {
+        pageIdentifier: pageID,
+        sessionIdentifier: 1234,
+        logIdentifier: 0,
+        mediaType: 0,
+        presentationType: 0,
+        displayType: 0,
+        state: 0,
+        stateToRestore: 0,
+        interruptionType: 0,
+        duration: { timeValue: 0, timeScale: 1, timeFlags: 0 },
+        groupIdentifier: { },
+        nowPlayingInfo: { },
+        shouldOverrideBackgroundLoadingRestriction: false,
+        isPlayingToWirelessPlaybackTarget: false,
+        isPlayingOnSecondScreen: false,
+        hasMediaStreamSource: false,
+        shouldOverridePauseDuringRouteChange: false,
+        isNowPlayingEligible: false,
+        canProduceAudio: false,
+        isSuspended: false,
+        isPlaying: false,
+        isAudible: false,
+        isEnded: false,
+        canReceiveRemoteControlCommands: false,
+        supportsSeeking: false,
+        hasPlayedAudiblySinceLastInterruption: false,
+        isLongEnoughForMainContent: false,
+        blockedBySystemInterruption: false,
+        activeAudioSessionRequired: false,
+        preparingToPlay: false,
+        isActiveNowPlayingSession: false,
+    };
+
+    // AddMediaSession creates the AudioHardwareListener; RemoveMediaSession (last
+    // session) clears MediaSessionManagerCocoa::m_audioHardwareListener while
+    // RemoteMediaSessionManagerProxy used to retain a stale listener proxy whose
+    // raw Client& dispatched into a manager with a null m_audioHardwareListener.
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.AddMediaSession(pageID, { session: state });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoveMediaSession(pageID, { session: state });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoteAudioOutputDeviceChanged(pageID, { bufferSizeMinimum: 128, bufferSizeMaximum: 4096 });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoteAudioHardwareDidBecomeActive(pageID, { });
+    CoreIPC.UI.RemoteMediaSessionManagerProxy.RemoteAudioHardwareDidBecomeInactive(pageID, { });
+
+    // Let the async IPC drain before finishing.
+    await new Promise(resolve => setTimeout(resolve, 100));
+    done();
+}
+
+// The IPC testing API (window.IPC) is only present on debug/ASAN builds; on other
+// configurations this test must still finish, so guarantee notifyDone() on every path
+// and only import coreipc.js (which dereferences IPC at module scope) when IPC exists.
+if (!window.IPC || !IPC.messages.RemoteMediaSessionManagerProxy_AddMediaSession)
+    done();
+else
+    run().catch(done);
+</script>

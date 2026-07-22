@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include <wtf/AbstractRefCounted.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
-    
+
 enum class AudioHardwareActivityType {
     Unknown,
     IsActive,
@@ -38,7 +39,7 @@ enum class AudioHardwareActivityType {
 
 class AudioHardwareListener : public AbstractRefCounted {
 public:
-    class Client {
+    class Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
     public:
         virtual ~Client() = default;
         virtual void audioHardwareDidBecomeActive() = 0;
@@ -66,10 +67,12 @@ public:
 protected:
     WEBCORE_EXPORT AudioHardwareListener(Client&);
 
+    Client* client() const { return m_client.get(); }
     void setHardwareActivity(AudioHardwareActivityType activity) { m_activity = activity; }
     void setSupportedBufferSizes(BufferSizeRange sizes) { m_supportedBufferSizes = sizes; }
 
-    Client& m_client;
+private:
+    WeakPtr<Client> m_client;
     AudioHardwareActivityType m_activity { AudioHardwareActivityType::Unknown };
     BufferSizeRange m_supportedBufferSizes;
 };
