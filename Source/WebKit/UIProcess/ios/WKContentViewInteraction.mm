@@ -1569,7 +1569,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _didAccessoryTabInitiateFocus = NO;
     _isChangingFocusUsingAccessoryTab = NO;
     _isExpectingFastSingleTapCommit = NO;
-    _blurringFocusedElementForLoupeSelection = NO;
     _needsDeferredEndScrollingSelectionUpdate = NO;
     [_formInputSession invalidate];
     _formInputSession = nil;
@@ -3810,9 +3809,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return YES;
 #endif
 
-    // If we're currently focusing an editable element, only allow the selection to move within that focused
-    // element. The loupe is exempt: it may begin a new selection on non-editable content outside the field.
-    if (self.isFocusingElement && gesture != WKBEGestureTypeLoupe)
+    // If we're currently focusing an editable element, only allow the selection to move within that focused element.
+    if (self.isFocusingElement)
         return _positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext);
 
     if (_positionInformation.prefersDraggingOverTextSelection)
@@ -5886,8 +5884,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
     _autocorrectionContextNeedsUpdate = YES;
-    BOOL stayingWithinFocusedElement = self._hasFocusedElement && _focusedElementInformation.interactionRect.contains(WebCore::roundedIntPoint(point));
-    [self _selectPositionAtPoint:point stayingWithinFocusedElement:stayingWithinFocusedElement completionHandler:completionHandler];
+    [self _selectPositionAtPoint:point stayingWithinFocusedElement:self._hasFocusedElement completionHandler:completionHandler];
 }
 
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
@@ -5896,20 +5893,6 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
-
-    if (!stayingWithinFocusedElement && self._hasFocusedElement) {
-        _blurringFocusedElementForLoupeSelection = YES;
-        cancelPotentialTapIfNecessary(self);
-        protect(_page)->blurFocusedElement(_focusedElementInformation.frameID());
-        BOOL isInteractingWithFocusedElement = false;
-        [self.textInteractionLoupeGestureRecognizer _wk_cancel];
-        protect(_page)->selectWithGesture(WebCore::IntPoint(point), WebKit::GestureType::Loupe, WebKit::GestureRecognizerState::Began, isInteractingWithFocusedElement,
-        [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)](const WebCore::IntPoint&, WebKit::GestureType, WebKit::GestureRecognizerState, OptionSet<WebKit::SelectionFlags>) {
-            completionHandler();
-            view->_usingGestureForSelection = NO;
-        });
-        return;
-    }
 
     protect(_page)->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
@@ -8349,8 +8332,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     self.inputDelegate = nil;
     [self setUpTextSelectionAssistant];
 
-    if (!_blurringFocusedElementForLoupeSelection)
-        [_textInteractionWrapper deactivateSelection];
+    [_textInteractionWrapper deactivateSelection];
     [protect(_formAccessoryView) hideAutoFillButton];
 
     // FIXME: Does it make sense to call -reloadInputViews on watchOS?
@@ -8857,8 +8839,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         _didAccessoryTabInitiateFocus = NO;
 
     _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
-
-    _blurringFocusedElementForLoupeSelection = NO;
 }
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
@@ -9481,7 +9461,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (postLayoutData.selectionIsTransparentOrFullyClipped)
             selectionIsTransparentOrFullyClipped = YES;
 
-        if (self._hasFocusedElement && editorState.isContentEditable) {
+        if (self._hasFocusedElement) {
             auto elementArea = visualData.editableRootBounds.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;

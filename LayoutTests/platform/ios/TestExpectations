@@ -8518,14 +8518,11 @@ editing/input/cocoa/autocorrect-on.html [ Pass Timeout ]
 editing/input/cocoa/extended-proofreading.html [ Pass Timeout ] # rdar://177981315
 editing/input/ios/compose-accent-with-hardware-keyboard-when-preventing-keydown.html [ Pass Failure Timeout ] # rdar://176615540
 editing/selection/ios/caret-rect-after-inserting-newlines-in-textarea.html [ Pass Timeout Crash ] # rdar://177980999
-editing/selection/ios/select-text-by-long-press-with-focused-element.html [ Pass Timeout ] # rdar://180007873
-editing/selection/ios/select-text-by-long-press-with-hardware-keyboard.html [ Pass Timeout ] # rdar://180007873
 editing/selection/ios/select-word-for-replacement-extends-grammar-marker.html [ Pass Timeout ] # rdar://180007873
 editing/selection/ios/selection-clip-in-position-relative-text-field.html [ Pass Timeout ] # rdar://177980999
 editing/selection/ios/selection-moves-between-composited-layers.html [ Pass Timeout Crash ] # rdar://177980999, rdar://179387140
 editing/selection/ios/show-edit-menu-with-transparent-caret.html [ Pass Timeout ] # rdar://177980999
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Pass Timeout ] # rdar://177980999
-editing/selection/ios/tap-focused-input-clears-outside-selection.html [ Timeout ] # rdar://180007798
 editing/text-placeholder/caret-before-zero-width-placeholder-in-content-editable-start-of-word.html [ Pass Timeout ] # rdar://178158441
 fast/dynamic/anchor-lock.html [ Pass Failure ] # rdar://178675751
 fast/events/autoscroll-when-input-is-offscreen.html [ Pass Failure ]
