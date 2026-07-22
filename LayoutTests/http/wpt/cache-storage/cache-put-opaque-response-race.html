@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+<script>
+const NUM_WORKERS = 4;
+const PUTS_PER_THREAD = 30;
+const REMOTE = get_host_info().HTTP_REMOTE_ORIGIN + "/";
+
+const workerSrc = `
+const REMOTE = ${JSON.stringify(REMOTE)};
+const PUTS = ${PUTS_PER_THREAD};
+self.onmessage = async (e) => {
+    if (e.data !== "go")
+        return;
+    try {
+        const cache = await caches.open("opaque-response-race");
+        const responses = await Promise.all(
+            Array.from({length: PUTS}, (_, i) =>
+                fetch(REMOTE + "?w=" + i + "-" + Math.random(), { mode: "no-cors", cache: "no-store" })));
+        await Promise.all(responses.map((r, i) =>
+            cache.put("https://example.com/w-" + i + "-" + Math.random(), r).catch(() => {})));
+        postMessage("done");
+    } catch (err) {
+        postMessage("error:" + err);
+    }
+};
+`;
+
+promise_test(async t => {
+    await caches.delete("opaque-response-race");
+    const cache = await caches.open("opaque-response-race");
+
+    const url = URL.createObjectURL(new Blob([workerSrc], { type: "application/javascript" }));
+    t.add_cleanup(() => URL.revokeObjectURL(url));
+    const workers = [];
+    const workerDone = [];
+    for (let i = 0; i < NUM_WORKERS; i++) {
+        const w = new Worker(url);
+        workers.push(w);
+        workerDone.push(new Promise((resolve, reject) => {
+            w.onmessage = (e) => e.data === "done" ? resolve() : reject(new Error(e.data));
+            w.onerror = (e) => reject(new Error(e.message));
+        }));
+    }
+
+    for (const worker of workers)
+        worker.postMessage("go");
+
+    const mainResponses = await Promise.all(
+        Array.from({length: PUTS_PER_THREAD}, (_, i) =>
+            fetch(REMOTE + "?m=" + i + "-" + Math.random(), { mode: "no-cors", cache: "no-store" })));
+    const mainPuts = mainResponses.map((r, i) =>
+        cache.put("https://example.com/m-" + i + "-" + Math.random(), r).catch(() => {}));
+
+    await Promise.all([...mainPuts, ...workerDone]);
+
+    for (const worker of workers)
+        worker.terminate();
+    await caches.delete("opaque-response-race");
+}, "Concurrent cache.put of opaque responses from main thread and Workers must not crash WebContent");
+</script>
+</body>
+</html>
