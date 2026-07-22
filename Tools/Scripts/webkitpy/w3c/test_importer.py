@@ -555,10 +555,12 @@ class TestImporter(object):
 
     def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
         if (orig_filepath.endswith('.window.js')):
-            self._write_html_template(new_filepath.replace('.window.js', '.window.html'))
+            _, variants = self._read_environments_and_variants_for_template_test(orig_filepath)
+            self._write_html_template(new_filepath.replace('.window.js', '.window.html'), variants)
             return
         if (orig_filepath.endswith('.worker.js')):
-            self._write_html_template(new_filepath.replace('.worker.js', '.worker.html'))
+            _, variants = self._read_environments_and_variants_for_template_test(orig_filepath)
+            self._write_html_template(new_filepath.replace('.worker.js', '.worker.html'), variants)
             return
         if (orig_filepath.endswith('.any.js')):
             environments, variants = self._read_environments_and_variants_for_template_test(orig_filepath)

@@ -714,6 +714,30 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue('<!-- META: variant=?1-10 -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any.html'))
         self.assertTrue('<!-- META: variant=?11-20 -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any.html'))
 
+    def test_template_test_variant_window(self):
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/t/variant.window.js': '// META: variant=?urlType=origin\n// META: variant=?urlType=blob',
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.window.html'))
+        self.assertTrue('<!-- META: variant=?urlType=origin -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.window.html'))
+        self.assertTrue('<!-- META: variant=?urlType=blob -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.window.html'))
+
+    def test_template_test_variant_worker(self):
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/t/variant.worker.js': '// META: variant=?1-10\n// META: variant=?11-20',
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.worker.html'))
+        self.assertTrue('<!-- META: variant=?1-10 -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.worker.html'))
+        self.assertTrue('<!-- META: variant=?11-20 -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.worker.html'))
+
     def test_template_test_variant_dangling(self):
         FAKE_FILES = {
             f'{FAKE_WPT_DIR}/t/variant.any.js': '// META: variant=?1-10\n// META: variant=?11-20',
