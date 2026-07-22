@@ -217,29 +217,13 @@ TemporalResult<ISO8601::PlainDateTime> getISODateTimeFor(const TimeZone& timeZon
     return exactTimeToLocalDateAndTime(epochNs, *offsetResult);
 }
 
-// tryPreLMTFallback — workaround for ICU4C snapping pre-first-transition dates to the wrong year.
-// icu4x: transition_offset_at (utils/zoneinfo64/src/lib.rs) correctly uses type_offsets[0] for pre-transition dates.
-// NOTE: ICU4C ucal_setDateTime snaps to the first recorded year (e.g. 1884 for America/Vancouver); this detects that gap and queries the correct LMT offset.
-static std::optional<double> tryPreLMTFallback(UCalendar* calendar, double localMs, double icuEpochMs)
-{
-    const double oneDayMs = 86'400'000.0; // nsPerDay / nsPerMillisecond
-    if (std::abs(icuEpochMs - localMs) <= oneDayMs)
-        return std::nullopt;
-
-    auto lmtOffsetMs = getOffsetMsAtEpoch(calendar, localMs);
-    if (!lmtOffsetMs)
-        return std::nullopt;
-
-    double fallbackEpochMs = localMs - static_cast<double>(*lmtOffsetMs);
-    auto fallbackOffset = getOffsetMsAtEpoch(calendar, fallbackEpochMs);
-    if (!fallbackOffset || (fallbackEpochMs + static_cast<double>(*fallbackOffset) != localMs))
-        return std::nullopt;
-
-    return fallbackEpochMs;
-}
-
 // getNamedTimeZoneEpochNanoseconds — ICU4C implementation of the implementation-defined AO
 // https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
+// NOTE: Uses ucal_getTimeZoneOffsetFromLocal (ICU 69+), which resolves a local wall-clock time
+// to its UTC offset(s) directly, with explicit control over the gap (nonExistingTimeOpt) and
+// fold (duplicatedTimeOpt) cases. Querying the FORMER (pre-transition) and LATTER (post-transition)
+// interpretations yields the two bracket offsets, from which normal/gap/fold follow arithmetically.
+// This replaces the previous ucal_setDateTime + transition-probing + pre-LMT-fallback approach.
 static TemporalResult<PossibleEpochNanoseconds> getNamedTimeZoneEpochNanoseconds(const TimeZone& timeZone, const ISO8601::PlainDate& date, const ISO8601::PlainTime& time)
 {
     // NOTE: Sub-ms fields are added back after ms-level computation; offset changes occur at ≥second granularity.
@@ -257,143 +241,49 @@ static TemporalResult<PossibleEpochNanoseconds> getNamedTimeZoneEpochNanoseconds
             return ISO8601::ExactTime(base.epochNanoseconds() + subMs);
         };
 
-        // Set ICU calendar to local date+time. ICU months are 0-indexed.
-        // Explicitly set UCAL_MILLISECOND to avoid retaining a stale field (ucal_setDateTime does not set ms).
+        // Store the naive local epoch as the calendar's time value. ucal_getTimeZoneOffsetFromLocal
+        // reinterprets that stored value as wall-clock (local) time. IMPORTANT: do NOT use
+        // ucal_setDateTime here — it would apply ICU's own disambiguation and store a resolved UTC
+        // instant, which is not what getTimeZoneOffsetFromLocal expects to read.
         UErrorCode status = U_ZERO_ERROR;
-        ucal_setDateTime(cal,
-            date.year(), static_cast<int32_t>(date.month()) - 1, date.day(),
-            time.hour(), time.minute(), time.second(),
-            &status);
+        ucal_setMillis(cal, localMs, &status);
         if (U_FAILURE(status)) [[unlikely]]
             return makeUnexpected(rangeError(icuSetCalendarFailed));
-        ucal_set(cal, UCAL_MILLISECOND, time.millisecond());
 
-        // ICU resolves the local time to one epoch (its "default" interpretation).
-        double icuEpochMs = ucal_getMillis(cal, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
+        // Query both interpretations of the local time. Away from any transition they are equal.
+        //   FORMER = offset in effect before a nearby transition, LATTER = offset after it.
+        auto offsetMsFor = [&](UTimeZoneLocalOption opt) -> std::optional<int64_t> {
+            UErrorCode s = U_ZERO_ERROR;
+            int32_t rawOffset = 0;
+            int32_t dstOffset = 0;
+            ucal_getTimeZoneOffsetFromLocal(cal, opt, opt, &rawOffset, &dstOffset, &s);
+            if (U_FAILURE(s)) [[unlikely]]
+                return std::nullopt;
+            return static_cast<int64_t>(rawOffset) + static_cast<int64_t>(dstOffset);
+        };
 
-        auto icuOffsetMs = getOffsetMsAtEpoch(cal, icuEpochMs);
-        if (!icuOffsetMs)
+        auto before = offsetMsFor(UCAL_TZ_LOCAL_FORMER);
+        auto after = offsetMsFor(UCAL_TZ_LOCAL_LATTER);
+        if (!before || !after) [[unlikely]]
             return makeUnexpected(rangeError(icuTimeZoneOffsetFailed));
 
-        // If icuEpoch + offset ≠ localMs the local time is in a DST gap (spring-forward).
-        bool icuValid = (icuEpochMs + static_cast<double>(*icuOffsetMs) == localMs);
-        if (!icuValid) {
-            if (auto fallbackMs = tryPreLMTFallback(cal, localMs, icuEpochMs))
-                return PossibleEpochNanoseconds { makeExactTime(*fallbackMs) };
+        constexpr int64_t nsPerMs = static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
 
-            // Gap: store bracket offsets in GapOffsets so disambiguate needs no extra ICU calls.
-            // afterNs = post-transition offset (= the ICU-resolved offset at the gap).
-            int64_t afterNs = static_cast<int64_t>(*icuOffsetMs) * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
-            // beforeNs = pre-transition offset (find via previous transition or 1-day probe fallback).
-            int64_t beforeNs = afterNs;
-            {
-                ucal_setMillis(cal, icuEpochMs, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuTimeZoneOffsetFailed));
+        // Normal: a single offset is in force → exactly one instant.
+        if (*before == *after)
+            return PossibleEpochNanoseconds { makeExactTime(localMs - static_cast<double>(*before)) };
 
-                UDate transitionMs = 0;
-                // icuEpochMs can be the exact transition instant. UCAL_TZ_TRANSITION_PREVIOUS_INCLUSIVE is including icuEpochMs's instant itself.
-                // We use it instead of UCAL_TZ_TRANSITION_PREVIOUS as it is not including icuEpochMs itself.
-                auto result = ucal_getTimeZoneTransitionDate(cal, UCAL_TZ_TRANSITION_PREVIOUS_INCLUSIVE, &transitionMs, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuTimeZoneOffsetFailed));
+        // Offset jumped up (spring-forward) → the local time is skipped (gap): no instant maps here.
+        // Hand the bracket offsets to the disambiguator, preserving the prior GapOffsets contract
+        // (disambiguate: earlier = naiveNs − afterNs; later/compatible = naiveNs − beforeNs).
+        if (*after > *before)
+            return PossibleEpochNanoseconds { GapOffsets { *before * nsPerMs, *after * nsPerMs } };
 
-                if (result) {
-                    auto preOffset = getOffsetMsAtEpoch(cal, transitionMs - 1.0);
-                    if (preOffset)
-                        beforeNs = static_cast<int64_t>(*preOffset) * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
-                }
-                if (beforeNs == afterNs) {
-                    constexpr int64_t nsPerDay = 86'400'000'000'000LL;
-                    Int128 naiveNs = static_cast<Int128>(localMs) * ISO8601::ExactTime::nsPerMillisecond + subMs;
-                    // Inline getOffsetNanosecondsFor — avoids recursive withTimeZone call which would deadlock.
-                    double probeEpochMs = static_cast<double>(static_cast<int64_t>((naiveNs - Int128(nsPerDay)) / static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond)));
-                    auto probeOffset = getOffsetMsAtEpoch(cal, probeEpochMs);
-                    if (probeOffset)
-                        beforeNs = static_cast<int64_t>(*probeOffset) * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
-                }
-            }
-            return PossibleEpochNanoseconds { GapOffsets { beforeNs, afterNs } };
-        }
-
-        auto primaryCandidate = makeExactTime(icuEpochMs);
-
-        // Check for a second candidate (DST fold) via nearest transition boundary.
-        // 25 hours covers all known IANA single-step transitions including 24-hour date-line crossings.
-        const double maxFoldWindowMs = 90'000'000.0; // 25 hours in ms
-        std::optional<ISO8601::ExactTime> secondCandidate;
-
-        auto tryFoldFromTransition = [&](UTimeZoneTransitionType transType) -> bool {
-            UErrorCode status = U_ZERO_ERROR;
-            ucal_setMillis(cal, icuEpochMs, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return false;
-            UDate transitionMs = 0;
-            auto result = ucal_getTimeZoneTransitionDate(cal, transType, &transitionMs, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return false;
-            if (!result)
-                return false;
-            if (std::abs(transitionMs - icuEpochMs) > maxFoldWindowMs)
-                return false;
-            double otherSideMs = (transType == UCAL_TZ_TRANSITION_PREVIOUS)
-                ? transitionMs - 1.0
-                : transitionMs + 1.0;
-            auto otherOffset = getOffsetMsAtEpoch(cal, otherSideMs);
-            if (!otherOffset || *otherOffset == *icuOffsetMs)
-                return false;
-            double probe = localMs - static_cast<double>(*otherOffset);
-            if (probe == icuEpochMs)
-                return false;
-            auto verifyOffset = getOffsetMsAtEpoch(cal, probe);
-            if (!verifyOffset || *verifyOffset != *otherOffset)
-                return false;
-            secondCandidate = makeExactTime(probe);
-            return true;
-        };
-
-        if (!tryFoldFromTransition(UCAL_TZ_TRANSITION_PREVIOUS))
-            tryFoldFromTransition(UCAL_TZ_TRANSITION_NEXT);
-
-        // ICU quirk: retry from 1ms later to catch transition-boundary fold case.
-        if (!secondCandidate) {
-            auto tryFoldFromOffset = [&](double probeEpochMs) -> bool {
-                UErrorCode status = U_ZERO_ERROR;
-                ucal_setMillis(cal, probeEpochMs, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return false;
-                UDate transitionMs = 0;
-                auto result = ucal_getTimeZoneTransitionDate(cal, UCAL_TZ_TRANSITION_PREVIOUS, &transitionMs, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return false;
-                if (!result)
-                    return false;
-                if (std::abs(transitionMs - icuEpochMs) > maxFoldWindowMs)
-                    return false;
-            auto otherOffset = getOffsetMsAtEpoch(cal, transitionMs - 1.0);
-            if (!otherOffset || *otherOffset == *icuOffsetMs)
-                return false;
-            double probe = localMs - static_cast<double>(*otherOffset);
-            if (probe == icuEpochMs)
-                return false;
-            auto verifyOffset = getOffsetMsAtEpoch(cal, probe);
-            if (!verifyOffset || *verifyOffset != *otherOffset)
-                return false;
-            secondCandidate = makeExactTime(probe);
-            return true;
-        };
-        tryFoldFromOffset(icuEpochMs + 1.0);
-    }
-
-        if (!secondCandidate)
-            return PossibleEpochNanoseconds { primaryCandidate };
-
-        ISO8601::ExactTime earlier = primaryCandidate;
-        ISO8601::ExactTime later = *secondCandidate;
-        if (earlier.epochNanoseconds() > later.epochNanoseconds())
-            std::swap(earlier, later);
+        // Offset jumped down (fall-back) → the local time occurs twice (fold).
+        // earlier uses the larger (pre-transition) offset; later uses the smaller (post-transition).
+        ISO8601::ExactTime earlier = makeExactTime(localMs - static_cast<double>(*before));
+        ISO8601::ExactTime later = makeExactTime(localMs - static_cast<double>(*after));
+        ASSERT(earlier.epochNanoseconds() <= later.epochNanoseconds());
         return PossibleEpochNanoseconds { std::array<ISO8601::ExactTime, 2> { earlier, later } };
     }); // withTimeZone
 }
