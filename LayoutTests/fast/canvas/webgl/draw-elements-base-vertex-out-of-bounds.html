@@ -1,0 +1,74 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebGLDraftExtensionsEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="c" width="4" height="4"></canvas>
+<script>
+description("drawElementsInstancedBaseVertexBaseInstanceWEBGL must reject out-of-range baseVertex");
+
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var gl = document.getElementById('c').getContext('webgl2');
+var ext = gl.getExtension('WEBGL_draw_instanced_base_vertex_base_instance');
+var multiExt = gl.getExtension('WEBGL_multi_draw_instanced_base_vertex_base_instance');
+if (!ext) {
+    testPassed("WEBGL_draw_instanced_base_vertex_base_instance unavailable; skipping");
+} else {
+    var vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, "#version 300 es\nin vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }");
+    gl.compileShader(vs);
+    var fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, "#version 300 es\nprecision highp float; out vec4 c; void main(){ c = vec4(1.); }");
+    gl.compileShader(fs);
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.bindAttribLocation(prog, 0, "p");
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    // 3-vertex VBO (24 bytes), index buffer [0,1,2].
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, 0,1]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2]), gl.STATIC_DRAW);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    // In-range baseVertex=0 must succeed.
+    ext.drawElementsInstancedBaseVertexBaseInstanceWEBGL(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0, 1, 0, 0);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    // baseVertex=9999 makes the GPU fetch vertex 10001 from a 3-vertex buffer.
+    // ANGLE robust-buffer-access validation must reject this with INVALID_OPERATION
+    // rather than letting the backend read out-of-bounds GPU memory.
+    ext.drawElementsInstancedBaseVertexBaseInstanceWEBGL(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0, 1, 9999, 0);
+    shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+
+    // Off-by-one boundary: baseVertex=1 puts max effective index at 3 (== vertex count) -> reject.
+    ext.drawElementsInstancedBaseVertexBaseInstanceWEBGL(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0, 1, 1, 0);
+    shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+
+    // Negative baseVertex producing a negative effective index is undefined per spec -> reject.
+    ext.drawElementsInstancedBaseVertexBaseInstanceWEBGL(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0, 1, -1, 0);
+    shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+
+    if (multiExt) {
+        multiExt.multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(
+            gl.TRIANGLES, new Int32Array([3]), 0, gl.UNSIGNED_SHORT, new Int32Array([0]), 0,
+            new Int32Array([1]), 0, new Int32Array([9999]), 0, new Uint32Array([0]), 0, 1);
+        shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+    } else {
+        testPassed("WEBGL_multi_draw_instanced_base_vertex_base_instance unavailable; skipping multiDraw case");
+    }
+
+    gl.finish();
+    testPassed("no GPU process crash");
+}
+</script>
+</body>
+</html>

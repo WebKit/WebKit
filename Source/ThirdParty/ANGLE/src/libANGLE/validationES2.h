@@ -565,7 +565,7 @@ ANGLE_INLINE bool ValidateDrawElements(const Context *context,
                                        DrawElementsType type,
                                        const void *indices)
 {
-    return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1);
+    return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1, 0);
 }
 
 ANGLE_INLINE bool ValidateVertexAttribPointer(const Context *context,
