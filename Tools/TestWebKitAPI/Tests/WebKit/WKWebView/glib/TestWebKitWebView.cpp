@@ -202,13 +202,24 @@ static void testWebViewDisplay(WebViewTest* test, gconstpointer)
     auto* display = webkit_web_view_get_display(test->webView());
     g_assert_true(WPE_IS_DISPLAY_HEADLESS(display));
 
-    // A web view created without a display uses the default one (mock display for the tests).
+    // A web view created without a display uses the primary display (the one created by the
+    // application, in this case the test headless display), falling back to the default display
+    // only when the application didn't create any.
     GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr)));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     display = webkit_web_view_get_display(webView.get());
     g_assert_true(WPE_IS_DISPLAY(display));
+    g_assert_true(display == wpe_display_get_primary());
+    g_assert_true(display == test->m_display.get());
+
+    // A web view created with the default display still uses it instead of the primary display.
+    auto* defaultDisplay = wpe_display_get_default();
+    GRefPtr<WebKitWebView> defaultWebView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, "display", defaultDisplay, nullptr)));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultWebView.get()));
+    display = webkit_web_view_get_display(defaultWebView.get());
+    g_assert_true(WPE_IS_DISPLAY(display));
     g_assert_cmpstr(G_OBJECT_TYPE_NAME(display), ==, "WPEDisplayMock");
-    g_assert_true(display == wpe_display_get_default());
+    g_assert_true(display == defaultDisplay);
 }
 
 static void testWebViewWPEView(WebViewTest* test, gconstpointer)
@@ -223,10 +234,19 @@ static void testWebViewWPEView(WebViewTest* test, gconstpointer)
     g_assert_true(WPE_IS_VIEW_HEADLESS(view));
     g_assert_true(wpe_view_get_display(view) == test->m_display.get());
 
-    // A web view created without a display uses the default one (mock display for the tests).
+    // A web view created without a display uses the primary one (headless display for the tests).
     GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr)));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     view = webkit_web_view_get_wpe_view(webView.get());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(view));
+    g_assert_true(WPE_IS_VIEW_HEADLESS(view));
+    g_assert_true(wpe_view_get_display(view) == wpe_display_get_primary());
+    g_assert_true(wpe_view_get_display(view) == test->m_display.get());
+
+    // A web view created with the default display still creates a mock WPE view.
+    GRefPtr<WebKitWebView> defaultWebView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, "display", wpe_display_get_default(), nullptr)));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultWebView.get()));
+    view = webkit_web_view_get_wpe_view(defaultWebView.get());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(view));
     g_assert_true(WPE_IS_VIEW(view));
     g_assert_cmpstr(G_OBJECT_TYPE_NAME(view), ==, "WPEViewMock");

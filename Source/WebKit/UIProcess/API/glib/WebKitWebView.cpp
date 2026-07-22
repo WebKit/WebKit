@@ -927,6 +927,17 @@ static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfigu
 #endif
 }
 
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+static WPEDisplay* webkitWebViewDefaultDisplay()
+{
+    // If the application has already created a display it is the primary display, and web views
+    // should be created there rather than implicitly connecting to the platform default display.
+    if (auto* primaryDisplay = wpe_display_get_primary())
+        return primaryDisplay;
+    return wpe_display_get_default();
+}
+#endif
+
 static void webkitWebViewConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
@@ -964,7 +975,7 @@ static void webkitWebViewConstructed(GObject* object)
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 #if USE(LIBWPE)
     if (!priv->display && !priv->backend)
-        priv->display = wpe_display_get_default();
+        priv->display = webkitWebViewDefaultDisplay();
     else if (priv->backend) {
         if (priv->display) {
             g_critical("WebKitWebView backend can't be set when display is set too, passed backend is ignored.");
@@ -972,12 +983,12 @@ static void webkitWebViewConstructed(GObject* object)
         } else if (WKWPE::isUsingWPEPlatformAPI()) {
             g_critical("WebKitWebView backend can't be set when WPE platform API is already in use, passed backend is ignored.");
             priv->backend = nullptr;
-            priv->display = wpe_display_get_default();
+            priv->display = webkitWebViewDefaultDisplay();
         }
     }
 #else
     if (!priv->display)
-        priv->display = wpe_display_get_default();
+        priv->display = webkitWebViewDefaultDisplay();
 #endif
 
     if (priv->display)
