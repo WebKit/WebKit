@@ -397,7 +397,14 @@ void TextBoxPainter::paintForegroundAndDecorations()
         return false;
     };
 
-    auto hasDecoration = hasTextDecoration || hasHighlightDecoration || hasSpellingOrGrammarDecoration();
+    auto hasSelectionDecoration = [&] {
+        if (!shouldPaintSelectionForeground)
+            return false;
+        auto selectionStyle = m_renderer->selectionPseudoStyle();
+        return selectionStyle && !selectionStyle->textDecorationLineInEffect().isNone();
+    };
+
+    auto hasDecoration = hasTextDecoration || hasHighlightDecoration || hasSpellingOrGrammarDecoration() || hasSelectionDecoration();
 
     auto contentMayNeedStyledMarkedText = [&] {
         if (hasDecoration)
