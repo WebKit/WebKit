@@ -1426,7 +1426,7 @@ enum class WebCore::VideoCodecType : uint8_t {
 
 header: <WebCore/FormData.h>
 [CustomHeader] struct WebCore::FormDataElement {
-    Variant<Vector<uint8_t>, WebCore::FormDataElement::EncodedFileData, WebCore::FormDataElement::EncodedBlobData> data
+    Variant<Vector<uint8_t>, WebCore::FormDataElement::EncodedFileData, WebCore::FormDataElement::EncodedBlobData, WebCore::FormDataElement::PendingStreamData> data
 }
 
 [Nested] struct WebCore::FormDataElement::EncodedFileData {
@@ -1438,6 +1438,10 @@ header: <WebCore/FormData.h>
 
 [Nested] struct WebCore::FormDataElement::EncodedBlobData {
     URL url;
+}
+
+[Nested] struct WebCore::FormDataElement::PendingStreamData {
+    WebCore::PendingStreamIdentifier identifier;
 }
 
 header: <WebCore/NetworkLoadInformation.h>

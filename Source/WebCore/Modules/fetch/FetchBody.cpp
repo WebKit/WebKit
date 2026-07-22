@@ -281,6 +281,8 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
         return &const_cast<FormData&>(formDataBody());
     if (RefPtr data = protect(const_cast<FetchBody*>(this)->consumer())->data())
         return FormData::create(data->makeContiguous()->span());
+    if (isReadableStream())
+        return FormData::create(PendingStreamIdentifier::generate());
 
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -43,9 +43,10 @@ static HTTPBody toHTTPBody(const FormData& formData)
     for (const auto& formDataElement : formData.elements()) {
         HTTPBody::Element element;
 
-        switchOn(formDataElement.data,
+        bool skipElement = switchOn(formDataElement.data,
             [&] (const Vector<uint8_t>& bytes) {
                 element.data = bytes;
+                return false;
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 HTTPBody::Element::FileData data;
                 data.filePath = fileData.filename;
@@ -54,11 +55,18 @@ static HTTPBody toHTTPBody(const FormData& formData)
                     data.fileLength = fileData.fileLength;
                 data.expectedFileModificationTime = fileData.expectedFileModificationTime;
                 element.data = WTF::move(data);
+                return false;
             }, [&] (const FormDataElement::EncodedBlobData& blobData) {
                 element.data = blobData.url.string();
+                return false;
+            }, [&] (const FormDataElement::PendingStreamData&) {
+                // Streaming bodies cannot be preserved in session state.
+                return true;
             }
         );
 
+        if (skipElement)
+            continue;
         httpBody.elements.append(WTF::move(element));
     }
 

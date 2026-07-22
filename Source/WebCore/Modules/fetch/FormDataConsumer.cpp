@@ -66,6 +66,9 @@ void FormDataConsumer::read()
         consumeFile(fileData.filename);
     }, [this](const FormDataElement::EncodedBlobData& blobData) {
         consumeBlob(blobData.url);
+    }, [this](const FormDataElement::PendingStreamData&) {
+        // FIXME: Allow reading from PendingStreamData.
+        didFail(Exception { ExceptionCode::NotSupportedError, "Stream upload reading is not yet supported"_s });
     });
 }
 

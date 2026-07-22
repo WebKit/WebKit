@@ -32,6 +32,7 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include <WebCore/FormData.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -89,6 +90,9 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     , m_isInitiatedByDedicatedWorker(isInitiatedByDedicatedWorker)
 {
     ASSERT(RunLoop::isMain());
+
+    if (RefPtr body = requestWithCredentials.httpBody())
+        m_hasPendingStreamBody = body->isPendingStream();
 
     if (!requestWithCredentials.url().isValid()) {
         scheduleFailure(FailureType::InvalidURL);

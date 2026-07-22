@@ -74,6 +74,8 @@ static bool webkitFormDataInputStreamCreateNextStream(WebKitFormDataInputStream*
             }
         }, [] (const FormDataElement::EncodedBlobData&) {
             ASSERT_NOT_REACHED();
+        }, [] (const FormDataElement::PendingStreamData&) {
+            ASSERT_NOT_REACHED();
         }
     );
 

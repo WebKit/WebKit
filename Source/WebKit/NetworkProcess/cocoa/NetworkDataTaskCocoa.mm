@@ -43,6 +43,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/OriginAccessPatterns.h>
 #import <WebCore/RegistrableDomain.h>
+#import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -231,6 +232,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     ASSERT(nsRequest);
     RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+
+    ASSERT(!hasPendingStreamBody() || ![mutableRequest valueForHTTPHeaderField:@"Content-Length"]);
 
     if (parameters.isMainFrameNavigation
         || parameters.hadMainFrameMainResourcePrivateRelayed

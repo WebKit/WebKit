@@ -509,6 +509,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::PlatformLayerIdentifierID"_s,
         "WebCore::PlaybackTargetClientContextID"_s,
         "WebCore::NonSerializedDataIdentifier"_s,
+        "WebCore::PendingStreamIdentifier"_s,
         "WebCore::PortIdentifier"_s,
         "WebCore::ProcessIdentifier"_s,
         "WebCore::PushSubscriptionIdentifier"_s,

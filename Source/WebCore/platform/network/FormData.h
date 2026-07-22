@@ -20,6 +20,7 @@
 #pragma once
 
 #include <WebCore/BlobData.h>
+#include <WebCore/PendingStreamIdentifier.h>
 #include <optional>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
@@ -44,7 +45,8 @@ class SharedBuffer;
 struct FormDataElement {
     struct EncodedFileData;
     struct EncodedBlobData;
-    using Data = Variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
+    struct PendingStreamData;
+    using Data = Variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData, PendingStreamData>;
 
     FormDataElement() = default;
     explicit FormDataElement(Data&& data)
@@ -55,6 +57,8 @@ struct FormDataElement {
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
     explicit FormDataElement(const URL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
+    explicit FormDataElement(PendingStreamData&& stream)
+        : data(WTF::move(stream)) { }
 
     uint64_t lengthInBytes(NOESCAPE const Function<uint64_t(const URL&)>&) const;
     uint64_t lengthInBytes() const;
@@ -82,18 +86,16 @@ struct FormDataElement {
 
         friend bool operator==(const EncodedBlobData&, const EncodedBlobData&) = default;
     };
-    
+
+    struct PendingStreamData {
+        PendingStreamIdentifier identifier;
+
+        friend bool operator==(const PendingStreamData&, const PendingStreamData&) = default;
+    };
+
     bool operator==(const FormDataElement& other) const
     {
-        if (&other == this)
-            return true;
-        if (data.index() != other.data.index())
-            return false;
-        if (!data.index())
-            return std::get<0>(data) == std::get<0>(other.data);
-        if (data.index() == 1)
-            return std::get<1>(data) == std::get<1>(other.data);
-        return std::get<2>(data) == std::get<2>(other.data);
+        return data == other.data;
     }
 
     Data data;
@@ -132,6 +134,7 @@ public:
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = EncodingType::FormURLEncoded);
     static Ref<FormData> createMultiPart(const DOMFormData&);
+    WEBCORE_EXPORT static Ref<FormData> create(PendingStreamIdentifier);
     WEBCORE_EXPORT ~FormData();
 
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
@@ -151,6 +154,7 @@ public:
     // If the FormData has no blob references to resolve, this is returned.
     WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistryImpl* = nullptr);
     bool NODELETE containsBlobElement() const;
+    WEBCORE_EXPORT bool isPendingStream() const;
 
     WEBCORE_EXPORT FormDataForUpload prepareForUpload();
 

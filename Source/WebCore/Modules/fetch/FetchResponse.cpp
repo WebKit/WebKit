@@ -42,6 +42,7 @@
 #include "ReadableStreamToSharedBufferSink.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSONObject.h>
 #include <WebCore/HTTPStatusCodes.h>
@@ -274,11 +275,11 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback, const String& initiator)
 {
     if (request.isReadableStreamBody()) {
-        responseCallback(Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s });
-        return;
-    }
-
-    if (request.hasReadableStreamBody()) {
+        if (!context.settingsValues().fetchUploadStreamsEnabled) {
+            responseCallback(Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s });
+            return;
+        }
+    } else if (request.hasReadableStreamBody()) {
         request.body().convertReadableStreamToArrayBuffer(request, [context = Ref { context }, weakRequest = WeakPtr { request }, responseCallback = WTF::move(responseCallback), initiator](auto&& exception) mutable {
             if (!!exception) {
                 responseCallback(WTF::move(*exception));

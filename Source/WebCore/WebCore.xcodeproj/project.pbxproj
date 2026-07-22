@@ -1616,6 +1616,7 @@
 		41E0311B28AE1B4C00DA9D63 /* RTCIceCandidateFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E0311A28AE1B4900DA9D63 /* RTCIceCandidateFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E12E9F24FE74E20093FFB4 /* WebSocketIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
+		41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E2F199274FAECF00A089EE /* NavigationPreloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */; };
 		41E4C3E729A3D03300EA6B3A /* BackgroundFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 418B491D29A3CF80007B3135 /* BackgroundFetch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E4C3E829A3D03900EA6B3A /* BackgroundFetchEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 418B491E29A3CF81007B3135 /* BackgroundFetchEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11534,6 +11535,7 @@
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
 		41E1F33D248A62B60022D5DE /* AudioSampleBufferConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferConverter.mm; sourceTree = "<group>"; };
 		41E1F33F248A62B60022D5DE /* AudioSampleBufferConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferConverter.h; sourceTree = "<group>"; };
+		41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingStreamIdentifier.h; sourceTree = "<group>"; };
 		41E2F195274FAECA00A089EE /* NavigationPreloadManager.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationPreloadManager.idl; sourceTree = "<group>"; };
 		41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationPreloadManager.h; sourceTree = "<group>"; };
 		41E2F198274FAECB00A089EE /* NavigationPreloadManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationPreloadManager.cpp; sourceTree = "<group>"; };
@@ -30837,6 +30839,7 @@
 				CDCD41E61C3DDB0900965D99 /* ParsedContentRange.h */,
 				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
 				447958031643B47B001E0A7F /* ParsedContentType.h */,
+				41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */,
 				37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */,
@@ -47778,6 +47781,7 @@
 				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */,
+				41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */,
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
 				86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */,
 				4822FD232E2A8058004CAFF9 /* PerformanceEventTiming.h in Headers */,

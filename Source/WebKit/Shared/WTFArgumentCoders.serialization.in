@@ -204,6 +204,7 @@ template: struct WebCore::LibWebRTCSocketIdentifierType
 template: enum class WebCore::MainThreadPermissionObserverIdentifierType
 template: enum class WebCore::OpaqueOriginIdentifierType
 template: enum class WebCore::PortIdentifierType
+template: struct WebCore::PendingStreamIdentifierType
 template: enum class WebCore::RTCDataChannelLocalIdentifierType
 template: enum class WebCore::RTCEncodedStreamProducerIdentifierType
 template: struct WebCore::RenderingResourceIdentifierType

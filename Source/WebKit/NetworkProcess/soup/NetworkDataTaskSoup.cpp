@@ -148,6 +148,12 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
         return;
     }
 
+    if (hasPendingStreamBody()) {
+        // Fetch upload streams are not yet supported by the Soup backend.
+        scheduleFailure(FailureType::InvalidURL);
+        return;
+    }
+
     restrictRequestReferrerToOriginIfNeeded(m_currentRequest);
 
     m_soupMessage = m_currentRequest.createSoupMessage(m_session->blobRegistry());

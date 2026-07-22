@@ -170,6 +170,7 @@ protected:
 
     void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
     void setBytesTransferredOverNetwork(size_t bytes) { m_bytesTransferredOverNetwork = bytes; }
+    bool hasPendingStreamBody() const { return m_hasPendingStreamBody; }
 
     const WeakPtr<NetworkSession> m_session;
     WeakPtr<NetworkDataTaskClient> m_client;
@@ -185,6 +186,7 @@ protected:
     WebCore::ResourceRequest m_firstRequest;
     WebCore::ResourceRequest m_previousRequest;
     String m_suggestedFilename;
+    bool m_hasPendingStreamBody { false };
     size_t m_bytesTransferredOverNetwork { 0 };
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool m_dataTaskIsForMainFrameNavigation { false };

@@ -115,6 +115,9 @@ std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
             }, [] (const FormDataElement::EncodedBlobData&) -> std::optional<size_t> {
                 ASSERT_NOT_REACHED();
                 return std::nullopt;
+            }, [] (const FormDataElement::PendingStreamData&) -> std::optional<size_t> {
+                ASSERT_NOT_REACHED();
+                return std::nullopt;
             }
         );
 
