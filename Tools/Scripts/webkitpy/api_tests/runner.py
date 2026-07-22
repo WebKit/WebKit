@@ -163,6 +163,29 @@ class Runner(object):
                 shards[f"{test}.{i}"] = [test]
         return shards
 
+    @staticmethod
+    def _is_disabled_test(test_name):
+        # gtest never runs a test whose method component is prefixed with
+        # DISABLED_.  test_name is the full binary.suite.method form; strip the
+        # binary name, then check the method component.
+        components = test_name.split('.')[1:]
+        return len(components) > 1 and components[1].startswith('DISABLED_')
+
+    @staticmethod
+    def _partition_parallel_safety_tests(tests):
+        # In test-parallel-safety mode each supplied test is dispatched as a
+        # repeat=True task, so a disabled test loops as an instant no-op and
+        # emits "Disabled" without bound until the log limit is hit.  Partition
+        # disabled tests out of the repeat set.
+        runnable = []
+        disabled = []
+        for test in tests:
+            if Runner._is_disabled_test(test):
+                disabled.append(test)
+            else:
+                runnable.append(test)
+        return runnable, disabled
+
     def run(self, tests, num_workers):
         if not tests:
             return
@@ -207,6 +230,9 @@ class Runner(object):
             if supplied_tests_raw:
                 for test_arg in supplied_tests_raw:
                     supplied_tests.extend(test_arg.split())
+                supplied_tests, disabled_tests = Runner._partition_parallel_safety_tests(supplied_tests)
+                if disabled_tests:
+                    _log.warning(f'Test-parallel-safety mode: skipping {len(disabled_tests)} disabled test(s) that cannot be repeat-run: {disabled_tests}')
                 _log.info(f'Test-parallel-safety mode: creating repeat loop tasks for tests: {supplied_tests}')
 
                 if len(supplied_tests) <= max_repeat_workers:
@@ -341,8 +367,7 @@ class _Worker(object):
             env=self._port.environment_for_api_tests())
 
         status = Runner.STATUS_RUNNING
-        split_test = test.split('.')
-        if len(split_test) > 1 and split_test[1].startswith('DISABLED_') and not self._port.get_option('force'):
+        if Runner._is_disabled_test(f'{binary_name}.{test}') and not self._port.get_option('force'):
             status = Runner.STATUS_DISABLED
 
         stdout_buffer = ''
