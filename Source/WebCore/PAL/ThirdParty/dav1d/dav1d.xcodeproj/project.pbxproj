@@ -83,6 +83,26 @@
 		444A6F1B2AEB1D4E005FE121 /* alloc_fail.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADE628FC721A00FFE212 /* alloc_fail.c */; };
 		444A6F1C2AEB1D50005FE121 /* dav1d_fuzzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADE528FC721A00FFE212 /* dav1d_fuzzer.c */; };
 		444A6F1D2AEB1D6B005FE121 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C4FACD528FC70C000FFE212 /* libdav1d.a */; };
+		DA71D0000000000000000001 /* itx.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADAC28FC71B900FFE212 /* itx.S */; };
+		DA71D0000000000000000002 /* looprestoration_common.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADAA28FC71B900FFE212 /* looprestoration_common.S */; };
+		DA71D0000000000000000003 /* msac.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADBC28FC71B900FFE212 /* msac.S */; };
+		DA71D0000000000000000004 /* refmvs.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADA928FC71B900FFE212 /* refmvs.S */; };
+		DA71D0000000000000000005 /* cdef.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADBB28FC71B900FFE212 /* cdef.S */; };
+		DA71D0000000000000000006 /* filmgrain.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB328FC71B900FFE212 /* filmgrain.S */; };
+		DA71D0000000000000000007 /* ipred.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADAE28FC71B900FFE212 /* ipred.S */; };
+		DA71D0000000000000000008 /* loopfilter.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB928FC71B900FFE212 /* loopfilter.S */; };
+		DA71D0000000000000000009 /* looprestoration.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB628FC71B900FFE212 /* looprestoration.S */; };
+		DA71D0000000000000000010 /* mc.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADAB28FC71B900FFE212 /* mc.S */; };
+		DA71D0000000000000000011 /* mc_dotprod.S in Sources */ = {isa = PBXBuildFile; fileRef = DA71D0000000000000000101 /* mc_dotprod.S */; };
+		DA71D0000000000000000012 /* cdef16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB028FC71B900FFE212 /* cdef16.S */; };
+		DA71D0000000000000000013 /* filmgrain16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB528FC71B900FFE212 /* filmgrain16.S */; };
+		DA71D0000000000000000014 /* ipred16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADBA28FC71B900FFE212 /* ipred16.S */; };
+		DA71D0000000000000000015 /* itx16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB128FC71B900FFE212 /* itx16.S */; };
+		DA71D0000000000000000016 /* loopfilter16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB428FC71B900FFE212 /* loopfilter16.S */; };
+		DA71D0000000000000000017 /* looprestoration16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADAF28FC71B900FFE212 /* looprestoration16.S */; };
+		DA71D0000000000000000018 /* mc16.S in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADB828FC71B900FFE212 /* mc16.S */; };
+		DA71D0000000000000000019 /* mc16_sve.S in Sources */ = {isa = PBXBuildFile; fileRef = DA71D0000000000000000102 /* mc16_sve.S */; };
+		DA71D0000000000000000020 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADA428FC71B900FFE212 /* cpu.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -315,6 +335,8 @@
 		1C4FADB628FC71B900FFE212 /* looprestoration.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = looprestoration.S; sourceTree = "<group>"; };
 		1C4FADB728FC71B900FFE212 /* util.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = util.S; sourceTree = "<group>"; };
 		1C4FADB828FC71B900FFE212 /* mc16.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc16.S; sourceTree = "<group>"; };
+		DA71D0000000000000000101 /* mc_dotprod.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc_dotprod.S; sourceTree = "<group>"; };
+		DA71D0000000000000000102 /* mc16_sve.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc16_sve.S; sourceTree = "<group>"; };
 		1C4FADB928FC71B900FFE212 /* loopfilter.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = loopfilter.S; sourceTree = "<group>"; };
 		1C4FADBA28FC71B900FFE212 /* ipred16.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = ipred16.S; sourceTree = "<group>"; };
 		1C4FADBB28FC71B900FFE212 /* cdef.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = cdef.S; sourceTree = "<group>"; };
@@ -851,6 +873,8 @@
 				1C4FADAD28FC71B900FFE212 /* looprestoration_tmpl.S */,
 				1C4FADAB28FC71B900FFE212 /* mc.S */,
 				1C4FADB828FC71B900FFE212 /* mc16.S */,
+				DA71D0000000000000000102 /* mc16_sve.S */,
+				DA71D0000000000000000101 /* mc_dotprod.S */,
 				1C4FADBC28FC71B900FFE212 /* msac.S */,
 				1C4FADA928FC71B900FFE212 /* refmvs.S */,
 				1C4FADB728FC71B900FFE212 /* util.S */,
@@ -1170,26 +1194,46 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA71D0000000000000000005 /* cdef.S in Sources */,
+				DA71D0000000000000000012 /* cdef16.S in Sources */,
 				1C4FAE3028FC751500FFE212 /* cdf.c in Sources */,
 				1C4FAE3A28FC751500FFE212 /* cpu.c in Sources */,
+				DA71D0000000000000000020 /* cpu.c in Sources */,
 				41679AA42FFE7F53001D4EA4 /* ctx.c in Sources */,
 				1C4FAE2228FC751500FFE212 /* data.c in Sources */,
 				1C4FAE2F28FC751500FFE212 /* decode.c in Sources */,
 				1C4FAE2328FC751500FFE212 /* dequant_tables.c in Sources */,
+				DA71D0000000000000000006 /* filmgrain.S in Sources */,
+				DA71D0000000000000000013 /* filmgrain16.S in Sources */,
 				1C4FAE3928FC751500FFE212 /* getbits.c in Sources */,
 				1C4FAE3C28FC751500FFE212 /* intra_edge.c in Sources */,
+				DA71D0000000000000000007 /* ipred.S in Sources */,
+				DA71D0000000000000000014 /* ipred16.S in Sources */,
+				DA71D0000000000000000001 /* itx.S in Sources */,
+				DA71D0000000000000000015 /* itx16.S in Sources */,
 				1C4FAE2C28FC751500FFE212 /* itx_1d.c in Sources */,
 				1C4FAE3528FC751500FFE212 /* lf_mask.c in Sources */,
 				1C4FAE3328FC751500FFE212 /* lib.c in Sources */,
 				1C4FAE2628FC751500FFE212 /* log.c in Sources */,
+				DA71D0000000000000000008 /* loopfilter.S in Sources */,
+				DA71D0000000000000000016 /* loopfilter16.S in Sources */,
+				DA71D0000000000000000009 /* looprestoration.S in Sources */,
+				DA71D0000000000000000017 /* looprestoration16.S in Sources */,
+				DA71D0000000000000000002 /* looprestoration_common.S in Sources */,
+				DA71D0000000000000000010 /* mc.S in Sources */,
+				DA71D0000000000000000018 /* mc16.S in Sources */,
+				DA71D0000000000000000019 /* mc16_sve.S in Sources */,
+				DA71D0000000000000000011 /* mc_dotprod.S in Sources */,
 				1C4FAE4428FC751500FFE212 /* mem.c in Sources */,
 				1C4FAE2A28FC751500FFE212 /* msac.c in Sources */,
+				DA71D0000000000000000003 /* msac.S in Sources */,
 				1C4FAE2B28FC751500FFE212 /* obu.c in Sources */,
 				41679AA32FFE7F53001D4EA4 /* pal.c in Sources */,
 				1C4FAE2528FC751500FFE212 /* picture.c in Sources */,
 				1C4FAE4228FC751500FFE212 /* qm.c in Sources */,
 				1C4FAE2128FC751500FFE212 /* ref.c in Sources */,
 				1C4FAE3828FC751500FFE212 /* refmvs.c in Sources */,
+				DA71D0000000000000000004 /* refmvs.S in Sources */,
 				1C4FAE4328FC751500FFE212 /* scan.c in Sources */,
 				1C4FAE4028FC751500FFE212 /* tables.c in Sources */,
 				1C4FAE2828FC751500FFE212 /* thread_task.c in Sources */,
