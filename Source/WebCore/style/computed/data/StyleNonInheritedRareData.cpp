@@ -41,7 +41,7 @@ NonInheritedRareData::NonInheritedRareData()
     , zoom(ComputedStyle::initialZoom())
     , maxLines(ComputedStyle::initialMaxLines())
     , touchAction(ComputedStyle::initialTouchAction())
-    , initialLetter(ComputedStyle::initialInitialLetter())
+    , webkitInitialLetter(ComputedStyle::initialWebkitInitialLetter())
     , marquee(MarqueeData::create())
     , backdropFilter(BackdropFilterData::create())
     , grid(GridData::create())
@@ -153,7 +153,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , zoom(o.zoom)
     , maxLines(o.maxLines)
     , touchAction(o.touchAction)
-    , initialLetter(o.initialLetter)
+    , webkitInitialLetter(o.webkitInitialLetter)
     , marquee(o.marquee)
     , backdropFilter(o.backdropFilter)
     , grid(o.grid)
@@ -272,7 +272,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && zoom == o.zoom
         && maxLines == o.maxLines
         && touchAction == o.touchAction
-        && initialLetter == o.initialLetter
+        && webkitInitialLetter == o.webkitInitialLetter
         && marquee == o.marquee
         && backdropFilter == o.backdropFilter
         && grid == o.grid
@@ -407,7 +407,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT(touchAction);
 
-    LOG_IF_DIFFERENT(initialLetter);
+    LOG_IF_DIFFERENT(webkitInitialLetter);
 
     LOG_IF_DIFFERENT(clip);
     LOG_IF_DIFFERENT(scrollMargin);
