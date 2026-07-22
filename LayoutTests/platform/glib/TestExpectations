@@ -3436,6 +3436,11 @@ webkit.org/b/232346 media/video-canvas-createPattern.html [ Failure Timeout ]
 webkit.org/b/232346 media/video-canvas-drawing-output.html [ Failure ]
 webkit.org/b/232346 media/video-orientation-canvas.html [ Failure ]
 
+webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-colorSpaceConversion.html [ Failure ]
+webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-invalid-args.html [ Failure ]
+webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-serializable.html [ Failure ]
+webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-transfer.html [ Failure ]
+
 # These are skipped globally as they only work with the web-platform.test domain.
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Pass ]
 
