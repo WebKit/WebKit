@@ -48,7 +48,6 @@ set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa")
 
 set(EXECUTABLE_NAME MiniBrowser)
 set(PRODUCT_NAME MiniBrowser)
-set(MiniBrowser_CODE_SIGN_ENTITLEMENTS ${MINIBROWSER_DIR}/MiniBrowser.entitlements)
 
 set(MiniBrowser_Contents_Directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MiniBrowser.app/Contents)
 make_directory(${MiniBrowser_Contents_Directory}/Resources)
