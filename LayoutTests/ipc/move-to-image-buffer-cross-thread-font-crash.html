@@ -1,0 +1,136 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true RemoteSnapshottingEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    function createRenderingBackend() {
+        const id = randomIPCID();
+        const streamConnection = CoreIPC.newStreamConnection();
+        CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: id, connectionHandle: streamConnection });
+        const backend = streamConnection.newInterface("RemoteRenderingBackend", id);
+        const didInitialize = streamConnection.connection.waitForMessage(id, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+        streamConnection.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+        return { id, streamConnection, backend };
+    }
+
+    function createDisplayListImageBuffer(renderingBackend) {
+        const imageBufferIdentifier = randomIPCID();
+        const contextIdentifier = randomIPCID();
+        renderingBackend.backend.CreateImageBuffer({
+            logicalSize: { width: 128, height: 128 },
+            renderingMode: 3,
+            renderingPurpose: 0,
+            resolutionScale: 1,
+            colorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 17 } } } } } },
+            bufferFormat: { pixelFormat: 2, useLosslessCompression: 1 },
+            identifier: imageBufferIdentifier,
+            contextIdentifier
+        });
+        return {
+            imageBuffer: renderingBackend.streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier),
+            graphicsContext: renderingBackend.streamConnection.newInterface("RemoteGraphicsContext", contextIdentifier),
+            imageBufferIdentifier,
+            contextIdentifier
+        };
+    }
+
+    function isAlive(renderingBackend) {
+        try {
+            renderingBackend.streamConnection.connection.sendMessage(renderingBackend.id, IPC.messages.RemoteRenderingBackend_FinalizeRenderingUpdate.name, [{ type: 'uint64_t', value: 1 }]);
+            return !!renderingBackend.streamConnection.connection.waitForMessage(renderingBackend.id, IPC.messages.RemoteRenderingBackendProxy_DidFinalizeRenderingUpdate.name, 2);
+        } catch {
+            return false;
+        }
+    }
+
+    const backendA = createRenderingBackend();
+    const backendB = createRenderingBackend();
+
+    const fontResponse = await fetch("../resources/Ahem.otf");
+    const fontBytes = new Uint8Array(await fontResponse.arrayBuffer());
+    const fontShared = IPC.createSharedMemory(fontBytes.length);
+    fontShared.writeBytes(fontBytes);
+
+    const fontCustomPlatformDataIdentifier = randomIPCID();
+    backendA.backend.CacheFontCustomPlatformData({
+        fontCustomPlatformData: {
+            fontFaceData: { asFragmentedSharedBuffer: { toIPCData: {
+                variantType: 'std::optional<WebCore::SharedMemoryHandle>',
+                variant: { optionalValue: { protection: 'ReadWrite', handle: fontShared } }
+            } } },
+            itemInCollection: "",
+            renderingResourceIdentifier: fontCustomPlatformDataIdentifier
+        }
+    });
+
+    const fontIdentifier = randomIPCID();
+    backendA.backend.CacheFont({
+        data: {
+            renderingResourceIdentifier: { optionalValue: fontIdentifier },
+            origin: 1, isInterstitial: 0, visibility: 0, isTextOrientationFallback: 0
+        },
+        platformData: {
+            m_metadata: {
+                pointSize: 10, orientation: 0, widthVariant: 0, textRenderingMode: 0,
+                isSyntheticBold: false, isSyntheticOblique: false
+            },
+            serializableAttributes: {},
+            m_options: 0,
+            m_url: {},
+            m_psName: {}
+        },
+        renderingResourceIdentifier: { optionalValue: fontCustomPlatformDataIdentifier }
+    });
+
+    const bufferToTransfer = createDisplayListImageBuffer(backendA);
+    const racingBuffer = createDisplayListImageBuffer(backendA);
+
+    const drawGlyphs = {
+        fontIdentifier,
+        glyphsAdvances: [[{ alias: { alias: 0 } }], [{ width: 1, height: 1 }]],
+        localAnchor: { x: 0, y: 0 },
+        smoothingMode: 1
+    };
+    bufferToTransfer.graphicsContext.DrawGlyphs(drawGlyphs);
+    racingBuffer.graphicsContext.DrawGlyphs(drawGlyphs);
+
+    const nestedRecorderIdentifier = randomIPCID();
+    backendA.backend.CreateDisplayListRecorder({ identifier: nestedRecorderIdentifier });
+    backendA.streamConnection.newInterface("RemoteGraphicsContext", nestedRecorderIdentifier).DrawGlyphs(drawGlyphs);
+    const nestedDisplayListIdentifier = randomIPCID();
+    backendA.backend.SinkDisplayListRecorderIntoDisplayList({ identifier: nestedRecorderIdentifier, displayListIdentifier: nestedDisplayListIdentifier });
+    bufferToTransfer.graphicsContext.DrawDisplayList({ identifier: nestedDisplayListIdentifier });
+
+    const serializedIdentifier = randomIPCID();
+    backendA.backend.MoveToSerializedBuffer({ identifier: bufferToTransfer.imageBufferIdentifier, serializedIdentifier });
+
+    const transferredImageBufferIdentifier = randomIPCID();
+    const transferredContextIdentifier = randomIPCID();
+    backendB.backend.MoveToImageBuffer({ identifier: serializedIdentifier, imageBufferIdentifier: transferredImageBufferIdentifier, contextIdentifier: transferredContextIdentifier });
+    const transferredBuffer = backendB.streamConnection.newInterface("RemoteImageBuffer", transferredImageBufferIdentifier);
+
+    for (let iteration = 0; iteration < 0x1000; ++iteration) {
+        transferredBuffer.CopyNativeImage({ image: randomIPCID() });
+        racingBuffer.graphicsContext.DrawGlyphs(drawGlyphs);
+    }
+
+    backendA.backend.ReleaseImageBuffer({ identifier: racingBuffer.imageBufferIdentifier });
+
+    if (!isAlive(backendA) || !isAlive(backendB))
+        document.querySelector('p').textContent = 'FAIL: GPU process crashed.';
+
+    backendA.streamConnection.connection.invalidate();
+    backendB.streamConnection.connection.invalidate();
+    window.testRunner?.notifyDone();
+})();
+</script>

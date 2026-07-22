@@ -48,6 +48,9 @@ public:
     // removed once all clients are fixed.
     WEBCORE_EXPORT Ref<const DisplayList> copyDisplayList();
 
+    WEBCORE_EXPORT void replaceFontsWithRebuildData();
+    WEBCORE_EXPORT void rebuildFonts();
+
     void save(GraphicsContextState::Purpose) final;
     void restore(GraphicsContextState::Purpose) final;
     void translate(float x, float y) final;

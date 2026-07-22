@@ -29,6 +29,7 @@
 #include "DisplayList.h"
 #include "DisplayListItems.h"
 #include "Filter.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
@@ -66,6 +67,53 @@ Ref<const DisplayList> RecorderImpl::copyDisplayList()
 {
     appendStateChangeItemIfNecessary();
     return DisplayList::create(Vector(m_items));
+}
+
+static void replaceFontsWithRebuildDataInItems(std::span<Item>);
+static void rebuildFontsInItems(std::span<Item>);
+
+static Ref<const DisplayList> displayListWithFontsReplacedByRebuildData(const DisplayList& displayList)
+{
+    Vector<Item> items(displayList.items());
+    replaceFontsWithRebuildDataInItems(items.mutableSpan());
+    return DisplayList::create(WTF::move(items));
+}
+
+static Ref<const DisplayList> displayListWithFontsRebuilt(const DisplayList& displayList)
+{
+    Vector<Item> items(displayList.items());
+    rebuildFontsInItems(items.mutableSpan());
+    return DisplayList::create(WTF::move(items));
+}
+
+static void replaceFontsWithRebuildDataInItems(std::span<Item> items)
+{
+    for (auto& item : items) {
+        if (auto* drawGlyphs = std::get_if<DrawGlyphs>(&item))
+            drawGlyphs->replaceFontWithRebuildData();
+        else if (auto* drawDisplayList = std::get_if<DrawDisplayList>(&item))
+            drawDisplayList->setDisplayList(displayListWithFontsReplacedByRebuildData(drawDisplayList->displayList()));
+    }
+}
+
+static void rebuildFontsInItems(std::span<Item> items)
+{
+    for (auto& item : items) {
+        if (auto* drawGlyphs = std::get_if<DrawGlyphs>(&item))
+            drawGlyphs->rebuildFont();
+        else if (auto* drawDisplayList = std::get_if<DrawDisplayList>(&item))
+            drawDisplayList->setDisplayList(displayListWithFontsRebuilt(drawDisplayList->displayList()));
+    }
+}
+
+void RecorderImpl::replaceFontsWithRebuildData()
+{
+    replaceFontsWithRebuildDataInItems(m_items.mutableSpan());
+}
+
+void RecorderImpl::rebuildFonts()
+{
+    rebuildFontsInItems(m_items.mutableSpan());
 }
 
 void RecorderImpl::save(GraphicsContextState::Purpose purpose)

@@ -33,6 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Platform.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WIN)
@@ -67,7 +68,7 @@ struct FontCustomPlatformSerializedData {
     RenderingResourceIdentifier renderingResourceIdentifier;
 };
 
-struct FontCustomPlatformData : public RefCounted<FontCustomPlatformData> {
+struct FontCustomPlatformData : public ThreadSafeRefCounted<FontCustomPlatformData> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FontCustomPlatformData);
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:

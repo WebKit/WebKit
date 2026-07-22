@@ -280,7 +280,7 @@ void DrawFilteredImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) 
 
 void DrawGlyphs::apply(GraphicsContext& context) const
 {
-    context.drawGlyphs(m_font, m_glyphs.span(), m_advances.span(), m_localAnchor, m_fontSmoothingMode);
+    context.drawGlyphs(std::get<Ref<const Font>>(m_font).get(), m_glyphs.span(), m_advances.span(), m_localAnchor, m_fontSmoothingMode);
 }
 
 void DrawGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag>) const
@@ -316,6 +316,11 @@ DrawDisplayList::~DrawDisplayList() = default;
 Ref<const DisplayList> DrawDisplayList::displayList() const
 {
     return m_displayList;
+}
+
+void DrawDisplayList::setDisplayList(Ref<const DisplayList>&& displayList)
+{
+    m_displayList = WTF::move(displayList);
 }
 
 void DrawDisplayList::apply(GraphicsContext& context, ControlFactory& controlFactory) const

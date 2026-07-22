@@ -123,6 +123,9 @@ public:
     virtual void flushContext() { }
     virtual void submitDrawingCommands() { }
 
+    virtual void replaceFontsWithRebuildData() { }
+    virtual void rebuildFonts() { }
+
     virtual RefPtr<NativeImage> copyNativeImage() = 0;
     virtual RefPtr<NativeImage> createNativeImageReference() = 0;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();

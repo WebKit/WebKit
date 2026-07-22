@@ -62,7 +62,7 @@ RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
         return nullptr;
 
     auto& context = buffer->context();
-    context.drawDisplayList(m_drawingContext.copyDisplayList());
+    context.drawDisplayList(m_drawingContext.copyDisplayList(), m_controlFactory);
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
@@ -84,6 +84,16 @@ String ImageBufferDisplayListBackend::debugDescription() const
     TextStream stream;
     stream << "ImageBufferDisplayListBackend " << this;
     return stream.release();
+}
+
+void ImageBufferDisplayListBackend::replaceFontsWithRebuildData()
+{
+    m_drawingContext.replaceFontsWithRebuildData();
+}
+
+void ImageBufferDisplayListBackend::rebuildFonts()
+{
+    m_drawingContext.rebuildFonts();
 }
 
 } // namespace WebCore

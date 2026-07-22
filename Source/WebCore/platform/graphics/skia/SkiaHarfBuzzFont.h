@@ -33,12 +33,13 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkTypeface.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class FontPlatformData;
 
-class SkiaHarfBuzzFont final : public RefCounted<SkiaHarfBuzzFont> {
+class SkiaHarfBuzzFont final : public ThreadSafeRefCounted<SkiaHarfBuzzFont> {
 public:
     static Ref<SkiaHarfBuzzFont> getOrCreate(SkTypeface&);
 

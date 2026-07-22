@@ -191,6 +191,7 @@ void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier 
     MESSAGE_CHECK(remoteImageBuffer, "Missing ImageBuffer");
     Ref imageBuffer = RemoteImageBuffer::sinkIntoImageBuffer(remoteImageBuffer.releaseNonNull());
     MESSAGE_CHECK(imageBuffer->hasOneRef(), "ImageBuffer in use");
+    imageBuffer->replaceFontsWithRebuildData();
     bool success = m_sharedResourceCache->addSerializedImageBuffer(serializedIdentifier, WTF::move(imageBuffer));
     MESSAGE_CHECK(success, "Duplicate SerializedImageBuffer");
 }
@@ -212,6 +213,7 @@ void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferIdenti
     ImageBufferCreationContext creationContext;
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
     imageBuffer->transferToNewContext(creationContext);
+    imageBuffer->rebuildFonts();
     auto result = m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(imageBuffer.releaseNonNull(), imageBufferIdentifier, contextIdentifier, *this));
     MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffer");
 }
