@@ -1705,7 +1705,7 @@ void RenderLayer::dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants()
 
 FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds) const
 {
-    bool isReferenceBox = m_svgData ? true : renderer().isRenderBox();
+    bool isReferenceBox = m_svgData || renderer().isRenderBox();
 
     // FIXME: Support different reference boxes for inline content.
     // https://bugs.webkit.org/show_bug.cgi?id=129047
@@ -6304,7 +6304,7 @@ RenderLayer* RenderLayer::reflectionLayer() const
 
 bool RenderLayer::isReflectionLayer(const RenderLayer& layer) const
 {
-    return m_reflection ? &layer == m_reflection->layer() : false;
+    return m_reflection && &layer == m_reflection->layer();
 }
 
 void RenderLayer::createReflection()

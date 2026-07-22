@@ -2035,7 +2035,7 @@ bool RenderObject::canUpdateSelectionOnRootLineBoxes()
         return false;
 
     CheckedPtr containingBlock = this->containingBlock();
-    return containingBlock ? !containingBlock->needsLayout() : true;
+    return !containingBlock || !containingBlock->needsLayout();
 }
 
 // We only create "generated" child renderers like one for first-letter if:

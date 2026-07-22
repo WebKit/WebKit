@@ -683,8 +683,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     // chain, so it sits in a different space than the damage rect and on-screen layers get wrongly
     // culled. Empty SVG layers keep the normal cull so they stay out of the dump.
     bool isNonEmptySVGLayer = layer.renderer().isSVGLayerAwareRenderer() && !rects.layerBounds().isEmpty();
-    bool shouldPaint = (behavior.contains(RenderAsTextFlag::ShowAllLayers) || isNonEmptySVGLayer)
-        ? true : layer.intersectsDamageRect(rects.layerBounds(), rects.dirtyBackgroundRect().rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
+    bool shouldPaint = behavior.contains(RenderAsTextFlag::ShowAllLayers) || isNonEmptySVGLayer || layer.intersectsDamageRect(rects.layerBounds(), rects.dirtyBackgroundRect().rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
     auto negativeZOrderLayers = layer.negativeZOrderLayers();
     bool paintsBackgroundSeparately = negativeZOrderLayers.size() > 0;
     if (shouldPaint && paintsBackgroundSeparately) {

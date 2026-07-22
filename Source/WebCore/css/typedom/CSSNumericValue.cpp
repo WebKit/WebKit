@@ -220,7 +220,7 @@ static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const 
 {
     bool allValuesHaveSameUnit = values.size() && std::ranges::all_of(values, [&](auto& value) {
         auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get());
-        return unitValue ? unitValue->unitEnum() == downcast<CSSUnitValue>(values[0].get()).unitEnum() : false;
+        return unitValue && unitValue->unitEnum() == downcast<CSSUnitValue>(values[0].get()).unitEnum();
     });
     if (allValuesHaveSameUnit) {
         Ref firstUnitValue = downcast<CSSUnitValue>(values[0]);

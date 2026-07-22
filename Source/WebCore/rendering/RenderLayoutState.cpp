@@ -113,8 +113,8 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
     }();
     m_layoutDeltaForRepaint = isRepaintContainer ? LayoutSize() : ancestor.layoutDelta();
 #if ASSERT_ENABLED
-    m_layoutDeltaForRepaintXSaturated = isRepaintContainer ? false : ancestor.m_layoutDeltaForRepaintXSaturated;
-    m_layoutDeltaForRepaintYSaturated = isRepaintContainer ? false : ancestor.m_layoutDeltaForRepaintYSaturated;
+    m_layoutDeltaForRepaintXSaturated = !isRepaintContainer && ancestor.m_layoutDeltaForRepaintXSaturated;
+    m_layoutDeltaForRepaintYSaturated = !isRepaintContainer && ancestor.m_layoutDeltaForRepaintYSaturated;
 #endif
 }
 

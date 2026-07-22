@@ -114,7 +114,7 @@ void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::Co
     updateScaledFont();
 
     bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
-    bool oldPreserves = oldStyle ? oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve : false;
+    bool oldPreserves = oldStyle && oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     if (oldPreserves && !newPreserves) {
         setText(applySVGWhitespaceRules(originalText(), false), true);
         return;

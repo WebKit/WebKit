@@ -770,7 +770,7 @@ bool ScriptExecutionContext::allowsMediaDevices() const
     if (!document)
         return false;
     RefPtr page = document->page();
-    return page ? !page->settings().mediaCaptureRequiresSecureConnection() : false;
+    return page && !page->settings().mediaCaptureRequiresSecureConnection();
 #else
     return false;
 #endif

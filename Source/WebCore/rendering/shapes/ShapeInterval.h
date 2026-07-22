@@ -58,7 +58,7 @@ public:
     T x1() const { return isUndefined() ? 0 : m_x1; }
     T x2() const { return isUndefined() ? 0 : m_x2; }
     T width() const { return isUndefined() ? 0 : m_x2 - m_x1; }
-    bool isEmpty() const { return isUndefined() ? true : m_x1 == m_x2; }
+    bool isEmpty() const { return isUndefined() || m_x1 == m_x2; }
 
     void set(T x1, T x2)
     {

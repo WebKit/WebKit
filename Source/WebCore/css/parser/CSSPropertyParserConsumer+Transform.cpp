@@ -313,11 +313,11 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
         return nullptr;
 
     auto knownToBeZero = [](std::optional<bool> value) -> bool {
-        return !value ? false : *value == true;
+        return value && *value;
     };
 
     auto knownToBeNotZero = [](std::optional<bool> value) -> bool {
-        return !value ? false : *value == false;
+        return value && !*value;
     };
 
     if (list.size() == 3) {

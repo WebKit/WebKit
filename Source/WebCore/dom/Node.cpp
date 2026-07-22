@@ -1272,7 +1272,7 @@ bool Node::canStartSelection() const
         if (style.userDrag() == UserDrag::Element && style.usedUserSelect() == UserSelect::None)
             return false;
     }
-    return parentOrShadowHostNode() ? protect(parentOrShadowHostNode())->canStartSelection() : true;
+    return !parentOrShadowHostNode() || protect(parentOrShadowHostNode())->canStartSelection();
 }
 
 Element* Node::shadowHost() const

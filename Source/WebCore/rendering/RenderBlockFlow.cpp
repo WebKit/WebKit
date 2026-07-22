@@ -148,7 +148,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, IgnoreScro
         if (block.borderAndPaddingAfter())
             return false;
         // FIXME: Check if all callsites are supposed to take scrollbar into account here.
-        return ignoreScrollbarForAfterMargin == IgnoreScrollbarForAfterMargin::Yes ? true : !block.scrollbarLogicalHeight();
+        return ignoreScrollbarForAfterMargin == IgnoreScrollbarForAfterMargin::Yes || !block.scrollbarLogicalHeight();
     };
     m_canCollapseMarginAfterWithChildren = canCollapseMarginAfterWithChildren();
 
@@ -2590,7 +2590,7 @@ void RenderBlockFlow::updateStylesForColumnChildren(const Style::ComputedStyle* 
 void RenderBlockFlow::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
     const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrOutOfFlowPositioned() && !avoidsFloats() : false;
+    s_canPropagateFloatIntoSibling = oldStyle && !isFloatingOrOutOfFlowPositioned() && !avoidsFloats();
 
     if (oldStyle) {
         auto oldPosition = oldStyle->position();
@@ -4048,12 +4048,12 @@ bool RenderBlockFlow::relayoutForPagination()
 
 bool RenderBlockFlow::hasContentfulInlineOrBlockLine() const
 {
-    return inlineLayout() ? inlineLayout()->hasContentfulInlineOrBlockLine() : false;
+    return inlineLayout() && inlineLayout()->hasContentfulInlineOrBlockLine();
 }
 
 bool RenderBlockFlow::hasContentfulInlineLine() const
 {
-    return inlineLayout() ? inlineLayout()->hasContentfulInlineLine() : false;
+    return inlineLayout() && inlineLayout()->hasContentfulInlineLine();
 }
 
 bool RenderBlockFlow::hasBlocksInInlineLayout() const

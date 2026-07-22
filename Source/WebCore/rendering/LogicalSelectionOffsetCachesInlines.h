@@ -29,7 +29,7 @@ namespace WebCore {
 void LogicalSelectionOffsetCaches::ContainingBlockInfo::setBlock(RenderBlock* block, const LogicalSelectionOffsetCaches* cache, bool parentCacheHasFloatsOrFragmentedFlows)
 {
     m_block = block;
-    bool blockHasFloatsOrFragmentedFlows = m_block ? (m_block->containsFloats() || m_block->enclosingFragmentedFlow()) : false;
+    bool blockHasFloatsOrFragmentedFlows = m_block && (m_block->containsFloats() || m_block->enclosingFragmentedFlow());
     m_hasFloatsOrFragmentedFlows = parentCacheHasFloatsOrFragmentedFlows || m_hasFloatsOrFragmentedFlows || blockHasFloatsOrFragmentedFlows;
     m_cache = cache;
     m_cachedLogicalLeftSelectionOffset = false;

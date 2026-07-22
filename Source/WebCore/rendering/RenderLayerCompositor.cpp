@@ -1152,7 +1152,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         }
 
         RefPtr scrollingCoordinator = this->scrollingCoordinator();
-        bool hadSubscrollers = scrollingCoordinator ? scrollingCoordinator->hasSubscrollers(m_renderView.frame().rootFrame().frameID()) : false;
+        bool hadSubscrollers = scrollingCoordinator && scrollingCoordinator->hasSubscrollers(m_renderView.frame().rootFrame().frameID());
 
         UpdateBackingTraversalState traversalState;
         Vector<Ref<GraphicsLayer>> childList;

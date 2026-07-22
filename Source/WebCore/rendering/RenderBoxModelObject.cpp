@@ -451,7 +451,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             if (isOutOfFlowPositioned()) {
                 auto& outOfFlowStyle = style();
                 ASSERT(containingBlock());
-                auto isHorizontalWritingMode = containingBlock() ? containingBlock()->writingMode().isHorizontal() : true;
+                auto isHorizontalWritingMode = !containingBlock() || containingBlock()->writingMode().isHorizontal();
                 if (!outOfFlowStyle.hasStaticInlinePosition(isHorizontalWritingMode))
                     topLeft.setX(LayoutUnit { });
                 if (!outOfFlowStyle.hasStaticBlockPosition(isHorizontalWritingMode))
