@@ -1492,17 +1492,18 @@ String ShorthandSerializer::serializePositionTry() const
 
 String ShorthandSerializer::serializeLineClamp() const
 {
-    auto isMaxLinesInitial = isLonghandInitialValue(0);
-    auto isBlockEllipsisInitial = isLonghandInitialValue(1);
-    if (isMaxLinesInitial && isBlockEllipsisInitial)
-        return nameString(CSSValueNone);
-
-    if (isMaxLinesInitial != isBlockEllipsisInitial)
-        return { };
-
     auto blockEllipsis = longhandValueID(1);
-    if (isBlockEllipsisInitial || (!isMaxLinesInitial && blockEllipsis == CSSValueAuto))
-        return serializeLonghands(1);
+    auto maxLines = longhandValueID(0);
+    if (blockEllipsis == CSSValueAuto) {
+        if (maxLines == CSSValueNone)
+            return nameString(CSSValueAuto);
+        return serializeLonghandValue(0);
+    }
+    if (maxLines == CSSValueNone) {
+        if (blockEllipsis == CSSValueNoEllipsis)
+            return nameString(CSSValueNone);
+        return serializeLonghandValue(1);
+    }
 
     // FIXME: Add check for correct order.
     return serializeLonghands(2);
