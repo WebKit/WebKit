@@ -77,7 +77,7 @@ public:
     bool useContentBasedMinimumBlockSize(const RenderBox& flexItem) const;
     bool hasStretchedFlexItemWithAspectRatio() const;
     LayoutUnit computeGap(GapType) const;
-    bool isHorizontalFlow() const;
+    bool NODELETE isHorizontalFlow() const;
     bool isMultiline() const;
     bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const;
     Style::FlexBasis flexBasisForFlexItem(const RenderBox& flexItem) const;
@@ -109,7 +109,7 @@ public:
         ~OverridingSizesScope();
 
     private:
-        RenderBox& m_box;
+        const CheckedRef<RenderBox> m_box;
         Axis m_axis;
         std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalWidth;
         std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalHeight;

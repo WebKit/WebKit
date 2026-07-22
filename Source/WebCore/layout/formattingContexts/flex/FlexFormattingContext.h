@@ -63,7 +63,7 @@ using FlexLayoutItems = Vector<FlexLayoutItem, 4>;
 
 struct FlexLayoutConstraints {
     // The formatting-context root's computed style (the flex container's own style).
-    const Style::ComputedStyle& style;
+    CheckedRef<const Style::ComputedStyle> style;
     bool isHorizontalFlow { false };
     bool isColumnFlow { false };
     bool isMultiline { false };
@@ -206,7 +206,7 @@ private:
 
     const FlexFormattingUtils& flexFormattingUtils() const;
 
-    RenderFlexibleBox& m_flexBox;
+    const CheckedRef<RenderFlexibleBox> m_flexBox;
     FlexFormattingUtils m_flexFormattingUtils;
     const FlexLayoutConstraints m_constraints;
     Result m_result;

@@ -107,9 +107,9 @@ static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox
 #define SET_OR_CLEAR_OVERRIDING_SIZE(box, SizeType, size)       \
     {                                                           \
         if (size)                                               \
-            box.setOverridingBorderBoxLogical##SizeType(*size); \
+            box->setOverridingBorderBoxLogical##SizeType(*size); \
         else                                                    \
-            box.clearOverridingBorderBoxLogical##SizeType();    \
+            box->clearOverridingBorderBoxLogical##SizeType();    \
     }
 
 // RAII class which defines a scope in which overriding sizes of a box are either:
