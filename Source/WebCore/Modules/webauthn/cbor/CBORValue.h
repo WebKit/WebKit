@@ -197,7 +197,7 @@ private:
     };
 
     void internalMoveConstructFrom(CBORValue&&);
-    void NODELETE internalCleanup();
+    void internalCleanup();
 };
 
 } // namespace cbor
