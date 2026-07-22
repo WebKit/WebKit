@@ -64,12 +64,12 @@ static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, c
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
         return std::nullopt;
 
-    // Disable padding
-    if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-        return std::nullopt;
-
     // Initialize the encryption operation
     if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, nullptr, nullptr))
+        return std::nullopt;
+
+    // Disable padding
+    if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
         return std::nullopt;
 
     // Set IV length
@@ -120,12 +120,12 @@ static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, c
     if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
         return std::nullopt;
 
-    // Disable padding
-    if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
-        return std::nullopt;
-
     // Initialize the encryption operation
     if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, nullptr, nullptr))
+        return std::nullopt;
+
+    // Disable padding
+    if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
         return std::nullopt;
 
     // Set IV length
