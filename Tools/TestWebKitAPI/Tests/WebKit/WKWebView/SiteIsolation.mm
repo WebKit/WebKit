@@ -6715,9 +6715,7 @@ TEST(SiteIsolation, LoadWebArchiveNestedFrame)
     });
 }
 
-// FIXME: Re-enable this once the extra resize events are gone.
-// https://bugs.webkit.org/show_bug.cgi?id=292311 might do it.
-TEST(SiteIsolation, DISABLED_Events)
+TEST(SiteIsolation, Events)
 {
     auto eventListeners = "<script>"
     "addEventListener('resize', ()=>{ alert('resize') });"

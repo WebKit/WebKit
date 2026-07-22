@@ -4976,6 +4976,13 @@ IntSize LocalFrameView::sizeForResizeEvent() const
     return visibleContentRectIncludingScrollbars().size();
 }
 
+void LocalFrameView::primeResizeEventBaseline(IntSize size)
+{
+    m_lastViewportSize = size;
+    if (CheckedPtr renderView = this->renderView())
+        m_lastUsedZoomFactor = renderView->style().usedZoom();
+}
+
 void LocalFrameView::scheduleResizeEventIfNeeded()
 {
     if (layoutContext().isInRenderTreeLayout() || needsLayout())

@@ -1,0 +1,25 @@
+<script>
+    let count = 0;
+    window.addEventListener("resize", () => { count++; });
+
+    async function enterFullScreen() {
+        await document.documentElement.requestFullscreen();
+        if (window.testRunner) { await testRunner.updatePresentation() }
+        window.parent.postMessage("Resize count after entering fullscreen: " + count, "*");
+    }
+    async function exitFullScreen() {
+        count = 0;
+        await document.exitFullscreen();
+        if (window.testRunner) { await testRunner.updatePresentation() }
+        window.parent.postMessage("Resize count after exiting fullscreen: " + count, "*");
+    }
+
+    if (window.internals) {
+        internals.withUserGesture(async () => {
+            await enterFullScreen();
+            await exitFullScreen();
+        });
+    }
+</script>
+<button onclick="enterFullScreen()">Enter</button>
+<button onclick="exitFullScreen()">Exit</button>

@@ -503,8 +503,9 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
 
     if (parameters.layerHostingContextIdentifier)
         setLayerHostingContextIdentifier(*parameters.layerHostingContextIdentifier);
+    m_hasAppliedInitialRemoteFrameRect = false;
     if (parameters.initialRect)
-        updateLocalFrameRect(localFrame, *parameters.initialRect);
+        updateLocalFrameRect(localFrame, *parameters.initialRect, consumeIsInitialFrameRect());
 
     if (parameters.commitTiming == CommitTiming::Immediately)
         commitProvisionalFrame();
@@ -1278,7 +1279,7 @@ void WebFrame::updateFrameRectFromRemote(WebCore::IntRect newRect)
 {
     ASSERT(m_page->corePage()->settings().siteIsolationEnabled());
     if (RefPtr localFrame = coreLocalFrame())
-        updateLocalFrameRect(*localFrame, newRect);
+        updateLocalFrameRect(*localFrame, newRect, consumeIsInitialFrameRect());
     else {
         RefPtr remoteFrame = coreRemoteFrame();
         RefPtr remoteFrameView = remoteFrame->view();
@@ -1288,7 +1289,7 @@ void WebFrame::updateFrameRectFromRemote(WebCore::IntRect newRect)
     }
 }
 
-void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::IntRect newRect)
+void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::IntRect newRect, IsInitialFrameRect isInitialFrameRect)
 {
     RefPtr frameView = localFrame.view();
     if (!frameView)
@@ -1298,6 +1299,10 @@ void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::In
 
     if (oldRect == newRect)
         return;
+
+    if (isInitialFrameRect == IsInitialFrameRect::Yes)
+        frameView->primeResizeEventBaseline(newRect.size());
+
     frameView->setFrameRect(newRect);
 
 #if PLATFORM(IOS_FAMILY)

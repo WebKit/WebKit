@@ -311,7 +311,9 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
-    void updateLocalFrameRect(WebCore::LocalFrame&, WebCore::IntRect);
+    enum class IsInitialFrameRect : bool { No, Yes };
+    void updateLocalFrameRect(WebCore::LocalFrame&, WebCore::IntRect, IsInitialFrameRect);
+    IsInitialFrameRect consumeIsInitialFrameRect() { return std::exchange(m_hasAppliedInitialRemoteFrameRect, true) ? IsInitialFrameRect::No : IsInitialFrameRect::Yes; }
 
     inline WebCore::DocumentLoader* policySourceDocumentLoader() const;
 
@@ -338,6 +340,7 @@ private:
 
     const WebCore::FrameIdentifier m_frameID;
     bool m_wasRemovedInAnotherProcess { false };
+    bool m_hasAppliedInitialRemoteFrameRect { false };
 
 #if ENABLE(TWO_PHASE_CLICKS)
     std::optional<TransactionID> m_firstLayerTreeTransactionIDAfterDidCommitLoad;

@@ -218,7 +218,6 @@ webkit.org/b/305954 TestWebKitAPI.ShareableBitmap.ensureCOWBothMapsROSenderWrite
 webkit.org/b/305954 TestWebKitAPI.ShareableBitmap.ensureCOWBothMapsRWSenderWrite [ Skip ]
 webkit.org/b/305954 TestWebKitAPI.ShareableBitmap.ensureCOWBothMapsRWSenderWriteReceiverWrite [ Skip ]
 rdar://142903525 [ ios ] TestWebKitAPI.ShareSheetTests.ShareImgElementWithBase64URL [ Skip ]
-webkit.org/b/292331 TestWebKitAPI.SiteIsolation.Events [ Skip ]
 webkit.org/b/317783 [ ios ] TestWebKitAPI.SiteIsolation.FindStringSelectionSameOriginFrameBeforeWrap [ Skip ]
 webkit.org/b/316819 [ mac debug ] TestWebKitAPI.SiteIsolation.MultiProcessBFCacheSameSiteWithCrossSiteIframe [ Pass Crash ]
 webkit.org/b/310149 [ mac release ] TestWebKitAPI.SiteIsolation.PostMessageWithMessagePorts [ Skip ]
