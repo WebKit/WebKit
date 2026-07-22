@@ -1,0 +1,88 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+(async () => {
+    if (!window.IPC) {
+        window.testRunner?.notifyDone();
+        return;
+    }
+
+    const TIMEOUT = 1000;
+    let nextId = (Math.floor(Math.random() * 100000) + 1) * 100000;
+    const freshId = () => ++nextId;
+
+    const M = IPC.messages;
+    const MSG_CreateRenderingBackend = M.GPUConnectionToWebProcess_CreateRenderingBackend.name;
+    const MSG_RB_DidInitialize = M.RemoteRenderingBackendProxy_DidInitialize.name;
+    const MSG_CreateGPU = M.GPUConnectionToWebProcess_CreateGPU.name;
+    const MSG_WasCreated = M.RemoteGPUProxy_WasCreated.name;
+    const MSG_RequestAdapter = M.RemoteGPU_RequestAdapter.name;
+    const MSG_RequestDevice = M.RemoteAdapter_RequestDevice.name;
+    const MSG_CreateCommandEncoder = M.RemoteDevice_CreateCommandEncoder.name;
+    const MSG_Finish = M.RemoteCommandEncoder_Finish.name;
+    const MSG_Submit = M.RemoteQueue_Submit.name;
+    const MSG_ReleaseGPU = M.GPUConnectionToWebProcess_ReleaseGPU.name;
+
+    const [rbSC, rbHandle] = IPC.createStreamClientConnection(14, TIMEOUT);
+    rbSC.open();
+    const backendID = freshId();
+    IPC.sendMessage("GPU", 0, MSG_CreateRenderingBackend,
+        [{ type: "uint64_t", value: backendID }, { type: "StreamServerConnectionHandle", value: rbHandle }]);
+    const rbInit = rbSC.waitForMessage(backendID, MSG_RB_DidInitialize);
+    rbSC.setSemaphores(rbInit[0].value, rbInit[1].value);
+
+    async function iteration(NA) {
+        const [gpuSC, gpuHandle] = IPC.createStreamClientConnection(18, TIMEOUT);
+        gpuSC.open();
+        const gpuID = freshId();
+        IPC.sendMessage("GPU", 0, MSG_CreateGPU,
+            [{ type: "uint64_t", value: gpuID }, { type: "uint64_t", value: backendID }, { type: "StreamServerConnectionHandle", value: gpuHandle }]);
+        const wasCreated = gpuSC.waitForMessage(gpuID, MSG_WasCreated);
+        if (!wasCreated || !wasCreated[0].value)
+            return false;
+        gpuSC.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+
+        const adapterID = freshId();
+        gpuSC.sendSyncMessage(gpuID, MSG_RequestAdapter,
+            [{ type: "bool", value: 0 }, { type: "bool", value: 0 }, { type: "bool", value: 0 }, { type: "uint64_t", value: adapterID }]);
+        const deviceID = freshId(), queueID = freshId();
+        gpuSC.sendSyncMessage(adapterID, MSG_RequestDevice,
+            [{ type: "String", value: "" }, { type: "Vector", value: [] }, { type: "Vector", value: [] },
+             { type: "uint64_t", value: deviceID }, { type: "uint64_t", value: queueID }]);
+
+        const cbIds = [];
+        for (let i = 0; i < NA; i++) {
+            const eId = freshId(), cbId = freshId();
+            cbIds.push(cbId);
+            gpuSC.sendMessage(deviceID, MSG_CreateCommandEncoder,
+                [{ type: "bool", value: 1 }, { type: "String", value: "" }, { type: "uint64_t", value: eId }]);
+            gpuSC.sendMessage(eId, MSG_Finish,
+                [{ type: "String", value: "" }, { type: "uint64_t", value: cbId }]);
+        }
+
+        const cbVec = cbIds.map(id => ({ type: "uint64_t", value: id }));
+        gpuSC.sendMessage(queueID, MSG_Submit, [{ type: "Vector", value: cbVec }]);
+
+        IPC.sendMessage("GPU", 0, MSG_ReleaseGPU,
+            [{ type: "uint64_t", value: gpuID }]);
+        gpuSC.invalidate();
+        return true;
+    }
+
+    const ITERS = 300, NA = 200;
+    for (let it = 0; it < ITERS; it++) {
+        try {
+            if (!await iteration(NA))
+                break;
+        } catch (e) { }
+        if (!(it % 10))
+            await new Promise(r => setTimeout(r, 0));
+    }
+    window.testRunner?.notifyDone();
+})();
+</script>
+</body>
