@@ -27,14 +27,28 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
 {
     constructor()
     {
-        // Most recently edited target. Cmd+Z dispatches here. Stays valid until that target is removed.
-        this._lastEditTarget = null;
+        // Per-edit LIFOs of targets. Each successful didEdit pushes one entry; undo/redo
+        // move entries between the two stacks. No deduplication: the stacks mirror each
+        // backend agent's per-process InspectorHistory so that Cmd+Z reverses edits in
+        // the order they were made across frames.
+        this._undoTargetStack = [];
+        this._redoTargetStack = [];
+
+        // Chained promise that serializes undo/redo dispatch. Without this, back-to-back
+        // Cmd+Z presses could send overlapping DOM.undo/DOM.redo commands whose responses
+        // resolve out of order (especially across frame targets in different processes),
+        // corrupting the order entries land back on the opposite stack.
+        this._chainedOperationsPromise = Promise.resolve();
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
     }
 
     // Public
 
+    // didEdit()/markUndoableState() only push a target and fire a command; they don't need to
+    // wait on anything, so they stay synchronous. undo()/redo() are async because they must wait
+    // for their turn in _chainedOperationsPromise and then for the backend response before it's
+    // safe to move the target to the opposite stack — see _performOperationSoon() below.
     didEdit(target)
     {
         // A null target means "the edit's target is unknown," not "the edit belongs to main." Defaulting to
@@ -42,7 +56,8 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
         // and keep the existing routing. markUndoableState() is what supplies the concrete target.
         if (!target)
             return;
-        this._lastEditTarget = target;
+        this._undoTargetStack.push(target);
+        this._redoTargetStack = [];
     }
 
     markUndoableState(target)
@@ -50,6 +65,11 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
         // Unlike didEdit(), a missing target here is a real page-level edit (e.g. a DOMNode with no owning
         // frame target, or a CSS edit while FrameCSSAgent does not yet exist), which genuinely belongs to
         // main. Resolve it so the edit is both recorded and dispatched against a concrete target.
+        //
+        // Assumes each call here corresponds to a nonempty backend undo group: InspectorHistory::undo()/redo()
+        // collapse over consecutive UndoableStateMark entries, so calling this without a preceding real edit
+        // action produces an empty backend group while still pushing a stack entry here, breaking the 1:1
+        // correspondence the multi-target undo/redo stacks rely on.
         target ||= WI.assumingMainTarget();
         this.didEdit(target);
         if (target.hasCommand("DOM.markUndoableState"))
@@ -58,23 +78,70 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
 
     undo()
     {
-        let target = this._lastEditTarget || WI.assumingMainTarget();
-        if (target.hasCommand("DOM.undo"))
-            target.DOMAgent.undo();
+        return this._performOperationSoon(() => this._undo());
     }
 
     redo()
     {
-        let target = this._lastEditTarget || WI.assumingMainTarget();
-        if (target.hasCommand("DOM.redo"))
-            target.DOMAgent.redo();
+        return this._performOperationSoon(() => this._redo());
     }
 
     // Private
 
+    // undo()/redo() are invoked as fire-and-forget from keyboard shortcut handlers, so
+    // no caller is positioned to catch a rejection. Log and swallow failures here instead
+    // of leaving an unhandled rejection for something downstream to trip over; the chain
+    // itself is kept alive by catching separately so one failed operation can't wedge
+    // every operation queued after it.
+    _performOperationSoon(operation)
+    {
+        let result = this._chainedOperationsPromise.then(operation);
+        this._chainedOperationsPromise = result.catch(() => {});
+        return result.catch((error) => { console.error(error); });
+    }
+
+    async _undo()
+    {
+        let target = this._undoTargetStack.lastValue;
+        if (!target) {
+            // Older Page-only backend without the per-frame DOM.undo introduced for Site Isolation:
+            // nothing was ever pushed, so dispatch against main. The main target definitely supports
+            // DOM.undo (assuming ITML has been deprecated), so no hasCommand() guard is needed.
+            await WI.assumingMainTarget().DOMAgent.undo();
+            return;
+        }
+
+        if (!target.hasCommand("DOM.undo")) {
+            console.assert(false, "Edited target should support DOM.undo", target);
+            return;
+        }
+        this._undoTargetStack.pop();
+        await target.DOMAgent.undo();
+        this._redoTargetStack.push(target);
+    }
+
+    async _redo()
+    {
+        let target = this._redoTargetStack.lastValue;
+        if (!target) {
+            // Same older-backend fallback as _undo() above.
+            await WI.assumingMainTarget().DOMAgent.redo();
+            return;
+        }
+
+        if (!target.hasCommand("DOM.redo")) {
+            console.assert(false, "Edited target should support DOM.redo", target);
+            return;
+        }
+        this._redoTargetStack.pop();
+        await target.DOMAgent.redo();
+        this._undoTargetStack.push(target);
+    }
+
     _handleTargetRemoved(event)
     {
-        if (this._lastEditTarget === event.data.target)
-            this._lastEditTarget = null;
+        let removed = event.data.target;
+        this._undoTargetStack = this._undoTargetStack.filter((t) => t !== removed);
+        this._redoTargetStack = this._redoTargetStack.filter((t) => t !== removed);
     }
 };

@@ -21,12 +21,24 @@ PASS: main frame markUndoableState NOT called.
 PASS: Subsequent undo routes to child frame.
 PASS: Subsequent undo did NOT hit main frame.
 
--- Running test case: DidEditSwitchesRouting
-PASS: undo routes to child frame after didEdit(childFrameTarget).
-PASS: redo routes to main frame after didEdit(mainFrameTarget).
-PASS: redo did NOT hit child frame after switching to main frame.
+-- Running test case: DidEditOrdersStackAcrossFrames
+PASS: First undo routes to main frame (most recent edit).
+PASS: First undo did NOT hit child frame yet.
+PASS: Second undo routes to child frame (earlier edit).
+PASS: First redo routes back to child frame.
+PASS: Second redo routes back to main frame.
+
+-- Running test case: DidEditAfterUndoClearsRedoStack
+PASS: Undo reverses the child frame edit.
+PASS: Redo is a no-op: new edit cleared the redo stack.
+PASS: Redo did NOT reach back to the child frame either.
 
 -- Running test case: NullTargetIsNoop
 PASS: undo still routes to child frame after didEdit(null).
-PASS: didEdit(null) did NOT reset routing to main frame.
+PASS: didEdit(null) did NOT push a main frame entry.
+PASS: Stack now empty: subsequent undo falls back to main as a no-op dispatch.
+
+-- Running test case: TargetRemovedFiltersBothStacks
+PASS: Removed main frame target is skipped, not dispatched to.
+PASS: undo falls through to the next entry, the child frame.
 

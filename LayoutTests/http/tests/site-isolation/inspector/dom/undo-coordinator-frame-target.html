@@ -58,8 +58,8 @@ function test() {
             let mainFrameCalls = spyAgent(mainFrameTarget);
             let childCalls = spyAgent(childFrameTarget);
 
-            WI.domUndoCoordinator.undo();
-            WI.domUndoCoordinator.redo();
+            await WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.redo();
 
             InspectorTest.expectEqual(pageCalls.undo, 1, "page target undo called once.");
             InspectorTest.expectEqual(pageCalls.redo, 1, "page target redo called once.");
@@ -75,7 +75,7 @@ function test() {
 
     suite.addTestCase({
         name: "MarkUndoableStateRoutesToFrameTarget",
-        description: "markUndoableState(childFrameTarget) dispatches to the child frame agent and sets it as last-edit target.",
+        description: "markUndoableState(childFrameTarget) dispatches to the child frame agent and pushes it onto the undo stack.",
         async test() {
             let mainCalls = spyAgent(mainFrameTarget);
             let childCalls = spyAgent(childFrameTarget);
@@ -84,7 +84,7 @@ function test() {
             InspectorTest.expectEqual(childCalls.markUndoableState, 1, "child frame markUndoableState called.");
             InspectorTest.expectEqual(mainCalls.markUndoableState, 0, "main frame markUndoableState NOT called.");
 
-            WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
             InspectorTest.expectEqual(childCalls.undo, 1, "Subsequent undo routes to child frame.");
             InspectorTest.expectEqual(mainCalls.undo, 0, "Subsequent undo did NOT hit main frame.");
 
@@ -94,20 +94,48 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "DidEditSwitchesRouting",
-        description: "didEdit(childFrameTarget) then didEdit(mainFrameTarget) — undo follows the latest target.",
+        name: "DidEditOrdersStackAcrossFrames",
+        description: "didEdit(childFrameTarget) then didEdit(mainFrameTarget) — undo reverses in LIFO order: main first, then child.",
         async test() {
             let mainCalls = spyAgent(mainFrameTarget);
             let childCalls = spyAgent(childFrameTarget);
 
             WI.domUndoCoordinator.didEdit(childFrameTarget);
-            WI.domUndoCoordinator.undo();
-            InspectorTest.expectEqual(childCalls.undo, 1, "undo routes to child frame after didEdit(childFrameTarget).");
+            WI.domUndoCoordinator.didEdit(mainFrameTarget);
+
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(mainCalls.undo, 1, "First undo routes to main frame (most recent edit).");
+            InspectorTest.expectEqual(childCalls.undo, 0, "First undo did NOT hit child frame yet.");
+
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(childCalls.undo, 1, "Second undo routes to child frame (earlier edit).");
+
+            await WI.domUndoCoordinator.redo();
+            InspectorTest.expectEqual(childCalls.redo, 1, "First redo routes back to child frame.");
+
+            await WI.domUndoCoordinator.redo();
+            InspectorTest.expectEqual(mainCalls.redo, 1, "Second redo routes back to main frame.");
+
+            mainCalls.restore();
+            childCalls.restore();
+        }
+    });
+
+    suite.addTestCase({
+        name: "DidEditAfterUndoClearsRedoStack",
+        description: "A new edit after undo() invalidates the redo stack, standard undo/redo semantics.",
+        async test() {
+            let mainCalls = spyAgent(mainFrameTarget);
+            let childCalls = spyAgent(childFrameTarget);
+
+            WI.domUndoCoordinator.didEdit(childFrameTarget);
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(childCalls.undo, 1, "Undo reverses the child frame edit.");
 
             WI.domUndoCoordinator.didEdit(mainFrameTarget);
-            WI.domUndoCoordinator.redo();
-            InspectorTest.expectEqual(mainCalls.redo, 1, "redo routes to main frame after didEdit(mainFrameTarget).");
-            InspectorTest.expectEqual(childCalls.redo, 0, "redo did NOT hit child frame after switching to main frame.");
+            await WI.domUndoCoordinator.redo();
+            InspectorTest.expectEqual(mainCalls.redo, 0, "Redo is a no-op: new edit cleared the redo stack.");
+            InspectorTest.expectEqual(childCalls.redo, 0, "Redo did NOT reach back to the child frame either.");
 
             mainCalls.restore();
             childCalls.restore();
@@ -116,7 +144,7 @@ function test() {
 
     suite.addTestCase({
         name: "NullTargetIsNoop",
-        description: "didEdit(null) preserves the prior last-edit target.",
+        description: "didEdit(null) does not push onto the undo stack.",
         async test() {
             WI.domUndoCoordinator.didEdit(childFrameTarget);
             WI.domUndoCoordinator.didEdit(null);
@@ -124,9 +152,36 @@ function test() {
             let mainCalls = spyAgent(mainFrameTarget);
             let childCalls = spyAgent(childFrameTarget);
 
-            WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
             InspectorTest.expectEqual(childCalls.undo, 1, "undo still routes to child frame after didEdit(null).");
-            InspectorTest.expectEqual(mainCalls.undo, 0, "didEdit(null) did NOT reset routing to main frame.");
+            InspectorTest.expectEqual(mainCalls.undo, 0, "didEdit(null) did NOT push a main frame entry.");
+
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(mainCalls.undo, 1, "Stack now empty: subsequent undo falls back to main as a no-op dispatch.");
+
+            mainCalls.restore();
+            childCalls.restore();
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetRemovedFiltersBothStacks",
+        description: "A torn-down frame's target is filtered out of the undo/redo stacks and cannot be popped later.",
+        async test() {
+            WI.domUndoCoordinator.didEdit(childFrameTarget);
+            WI.domUndoCoordinator.didEdit(mainFrameTarget);
+
+            // Simulate main frame target teardown via the same public event the coordinator listens
+            // on, without actually calling TargetManager.removeTarget() (which would destroy the
+            // target and break later test cases that still need it).
+            WI.targetManager.dispatchEventToListeners(WI.TargetManager.Event.TargetRemoved, {target: mainFrameTarget});
+
+            let mainCalls = spyAgent(mainFrameTarget);
+            let childCalls = spyAgent(childFrameTarget);
+
+            await WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(mainCalls.undo, 0, "Removed main frame target is skipped, not dispatched to.");
+            InspectorTest.expectEqual(childCalls.undo, 1, "undo falls through to the next entry, the child frame.");
 
             mainCalls.restore();
             childCalls.restore();
