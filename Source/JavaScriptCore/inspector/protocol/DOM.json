@@ -934,7 +934,7 @@
         {
             "name": "customElementStateChanged",
             "description": "Called when the custom element state is changed.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Element id." },
                 { "name": "customElementState", "$ref": "CustomElementState", "description": "Custom element state." }
@@ -943,7 +943,7 @@
         {
             "name": "pseudoElementAdded",
             "description": "Called when a pseudo element is added to an element.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElement", "$ref": "Node", "description": "The added pseudo element." }
@@ -952,7 +952,7 @@
         {
             "name": "pseudoElementRemoved",
             "description": "Called when a pseudo element is removed from an element.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElementId", "$ref": "NodeId", "description": "The removed pseudo element id." }

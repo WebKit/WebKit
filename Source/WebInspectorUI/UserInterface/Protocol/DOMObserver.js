@@ -144,22 +144,28 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
 
     customElementStateChanged(nodeId, customElementState)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetCustomElementStateChanged(this._target, nodeId, customElementState);
+            return;
+        }
         WI.domManager._customElementStateChanged(nodeId, customElementState);
     }
 
     pseudoElementAdded(parentNodeId, pseudoElement)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetPseudoElementAdded(this._target, parentNodeId, pseudoElement);
+            return;
+        }
         WI.domManager._pseudoElementAdded(parentNodeId, pseudoElement);
     }
 
     pseudoElementRemoved(parentNodeId, pseudoElementId)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetPseudoElementRemoved(this._target, parentNodeId, pseudoElementId);
+            return;
+        }
         WI.domManager._pseudoElementRemoved(parentNodeId, pseudoElementId);
     }
 

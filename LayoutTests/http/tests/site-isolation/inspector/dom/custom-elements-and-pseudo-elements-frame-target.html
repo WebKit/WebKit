@@ -1,0 +1,238 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.CustomAndPseudoElements");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let hostNode = null;
+
+    const Before = WI.DOMNode.PseudoElementType.Before;
+    const After = WI.DOMNode.PseudoElementType.After;
+
+    // Evaluate an expression inside the cross-origin frame's own process/execution context.
+    async function evaluateInFrame(expression) {
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+    }
+
+    // Resolve an element in the frame document via a live backend querySelector. The frame target
+    // returns a frame-local nodeId; nodeForIdInFrameTarget scopes it and hands back the cached
+    // DOMNode instance (the same one the DOMManager event handlers mutate).
+    async function querySelectorInFrame(selector) {
+        let rawId = await frameDoc.querySelector(selector);
+        if (!rawId)
+            return null;
+        return WI.domManager.nodeForIdInFrameTarget(rawId, frameTarget);
+    }
+
+    // Only consider events whose node belongs to our frame target (ignore any page-target churn).
+    function belongsToFrame(data) {
+        return !data.node || data.node.owningTarget === frameTarget;
+    }
+
+    // Collect every matching DOMManager event into a growing array until stop() is called.
+    // Returned so a single mutation that fires multiple events can be asserted on as a set,
+    // which is exactly what surfaces back-to-back / duplicate / wrong-node bugs.
+    function collectDOMManagerEvents(eventType, filter) {
+        let collected = [];
+        let listener = (event) => {
+            if (!belongsToFrame(event.data))
+                return;
+            if (filter && !filter(event.data))
+                return;
+            collected.push(event.data);
+        };
+        WI.domManager.addEventListener(eventType, listener);
+        return {
+            events: collected,
+            stop() { WI.domManager.removeEventListener(eventType, listener); },
+        };
+    }
+
+    // Poll until predicate() is true or we give up (keeps the test from hanging forever if an
+    // expected event never arrives — it fails an assertion instead of timing out at 10s).
+    async function waitUntil(predicate, description, maxAttempts = 50) {
+        for (let i = 0; i < maxAttempts; ++i) {
+            if (predicate())
+                return true;
+            await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+        InspectorTest.expectThat(predicate(), "TIMED OUT waiting for: " + description);
+        return predicate();
+    }
+
+    function pseudoNames(node) {
+        return Array.from(node.pseudoElements().keys()).sort().join(",");
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and obtain its FrameDOMAgent document + #host.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining("custom-elements-and-pseudo-elements-frame.html");
+            InspectorTest.expectThat(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe should be its own Frame Target.");
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            hostNode = await querySelectorInFrame("#host");
+            InspectorTest.expectNotNull(hostNode, "Should find #host in the frame document.");
+            InspectorTest.expectThat(!hostNode.hasPseudoElements(), "#host should start with no pseudo elements.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CustomElementStateChanged.TwoInSequence",
+        description: "Two separate custom elements upgraded back-to-back should each fire customElementStateChanged. WebKit's upgrade path transitions each element FailedOrPrecustomized -> Custom (JSCustomElementInterface::upgradeElement), so each element emits two state-change events; this verifies both elements' events arrive, target the correct node, and end in Custom without cross-contamination.",
+        async test() {
+            let widget = await querySelectorInFrame("#widget");
+            let gadget = await querySelectorInFrame("#gadget");
+            InspectorTest.expectNotNull(widget, "Should find <my-widget>.");
+            InspectorTest.expectNotNull(gadget, "Should find <my-gadget>.");
+            InspectorTest.expectEqual(widget.customElementState(), WI.DOMNode.CustomElementState.Waiting, "<my-widget> should start 'waiting'.");
+            InspectorTest.expectEqual(gadget.customElementState(), WI.DOMNode.CustomElementState.Waiting, "<my-gadget> should start 'waiting'.");
+
+            let collector = collectDOMManagerEvents(WI.DOMManager.Event.CustomElementStateChanged);
+
+            // Fire both upgrades back-to-back in a single frame turn (no await between them).
+            // Each element transitions through a transient failed/precustomized state before
+            // becoming Custom, so wait for both elements to reach their terminal Custom state
+            // rather than a fixed event count.
+            await evaluateInFrame("defineWidget(); defineGadget();");
+            await waitUntil(() => widget.customElementState() === WI.DOMNode.CustomElementState.Custom && gadget.customElementState() === WI.DOMNode.CustomElementState.Custom, "both custom elements to reach 'custom'");
+            collector.stop();
+
+            let widgetEvents = collector.events.filter((d) => d.node === widget);
+            let gadgetEvents = collector.events.filter((d) => d.node === gadget);
+            let strayEvents = collector.events.filter((d) => d.node !== widget && d.node !== gadget);
+
+            InspectorTest.expectThat(widgetEvents.length >= 1, "<my-widget> should receive at least one customElementStateChanged event.");
+            InspectorTest.expectThat(gadgetEvents.length >= 1, "<my-gadget> should receive at least one customElementStateChanged event.");
+            InspectorTest.expectEqual(strayEvents.length, 0, "No customElementStateChanged event should target an unrelated node.");
+            InspectorTest.expectEqual(widget.customElementState(), WI.DOMNode.CustomElementState.Custom, "<my-widget> should become 'custom'.");
+            InspectorTest.expectEqual(gadget.customElementState(), WI.DOMNode.CustomElementState.Custom, "<my-gadget> should become 'custom'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "PseudoElements.BothCoexist",
+        description: "Adding ::before then ::after should fire two pseudoElementAdded events and track both types simultaneously without clobbering.",
+        async test() {
+            let collector = collectDOMManagerEvents(WI.DOMManager.Event.NodeInserted, (data) => data.parent === hostNode);
+
+            // Two separate mutations, each creating exactly one pseudo element; collect both.
+            await evaluateInFrame("addHostClass('b')");
+            await evaluateInFrame("addHostClass('a')");
+            await waitUntil(() => collector.events.length >= 2, "two pseudoElementAdded events");
+            collector.stop();
+
+            InspectorTest.expectEqual(collector.events.length, 2, "Exactly two pseudoElementAdded events should arrive for #host.");
+            for (let {node} of collector.events)
+                InspectorTest.expectThat(node.isPseudoElement(), "Each inserted node should be a pseudo element.");
+
+            InspectorTest.expectEqual(hostNode.pseudoElements().size, 2, "#host should track two pseudo elements.");
+            InspectorTest.expectEqual(pseudoNames(hostNode), "after,before", "#host should track exactly ::before and ::after.");
+            InspectorTest.expectNotNull(hostNode.beforePseudoElement(), "#host should have a ::before node.");
+            InspectorTest.expectNotNull(hostNode.afterPseudoElement(), "#host should have an ::after node.");
+            InspectorTest.expectEqual(hostNode.beforePseudoElement().pseudoType(), Before, "::before node should be typed Before.");
+            InspectorTest.expectEqual(hostNode.afterPseudoElement().pseudoType(), After, "::after node should be typed After.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "PseudoElements.RemoveOneLeavesOther",
+        description: "Removing only ::before should remove exactly that node and leave the ::after node intact (same instance).",
+        async test() {
+            let beforeNode = hostNode.beforePseudoElement();
+            let afterNode = hostNode.afterPseudoElement();
+            InspectorTest.expectNotNull(beforeNode, "Precondition: ::before present.");
+            InspectorTest.expectNotNull(afterNode, "Precondition: ::after present.");
+
+            let removed = null;
+            let collector = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node.isPseudoElement());
+
+            await evaluateInFrame("removeHostClass('b')"); // removes ::before, keeps ::after
+            await waitUntil(() => collector.events.length >= 1, "one pseudoElementRemoved event");
+            collector.stop();
+            removed = collector.events.length ? collector.events[0].node : null;
+
+            InspectorTest.expectEqual(collector.events.length, 1, "Exactly one pseudoElementRemoved event should fire.");
+            InspectorTest.expectThat(removed === beforeNode, "The removed node should be the ::before node, not ::after.");
+            InspectorTest.expectEqual(hostNode.pseudoElements().size, 1, "#host should now track one pseudo element.");
+            InspectorTest.expectEqual(pseudoNames(hostNode), "after", "Only ::after should remain.");
+            InspectorTest.expectThat(hostNode.afterPseudoElement() === afterNode, "The surviving ::after should be the same node instance.");
+            InspectorTest.expectThat(!hostNode.beforePseudoElement(), "::before should be gone.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "PseudoElements.RemoveRemaining",
+        description: "Removing ::after should leave #host with no pseudo elements.",
+        async test() {
+            let collector = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node.isPseudoElement());
+
+            await evaluateInFrame("removeHostClass('a')");
+            await waitUntil(() => collector.events.length >= 1, "one pseudoElementRemoved event");
+            collector.stop();
+
+            InspectorTest.expectEqual(collector.events.length, 1, "Exactly one pseudoElementRemoved event should fire.");
+            InspectorTest.expectThat(!hostNode.hasPseudoElements(), "#host should have no pseudo elements.");
+            InspectorTest.expectEqual(hostNode.pseudoElements().size, 0, "pseudoElements map should be empty.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "PseudoElements.AddRemoveReAddNoStaleNode",
+        description: "Add ::before, remove it, then add ::before again. The re-added node must be a fresh instance and the old node must be destroyed (no stale-node leak / duplicate-key overwrite).",
+        async test() {
+            // Add ::before (first instance).
+            let add1 = collectDOMManagerEvents(WI.DOMManager.Event.NodeInserted, (data) => data.parent === hostNode);
+            await evaluateInFrame("addHostClass('b')");
+            await waitUntil(() => add1.events.length >= 1, "first ::before add");
+            add1.stop();
+            let firstBefore = hostNode.beforePseudoElement();
+            InspectorTest.expectNotNull(firstBefore, "First ::before should be present.");
+
+            // Remove it.
+            let rem = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node === firstBefore);
+            await evaluateInFrame("removeHostClass('b')");
+            await waitUntil(() => rem.events.length >= 1, "::before removal");
+            rem.stop();
+            InspectorTest.expectThat(!hostNode.beforePseudoElement(), "::before should be cleared after removal.");
+            InspectorTest.expectThat(firstBefore.destroyed, "The first ::before node should be marked destroyed.");
+
+            // Add ::before again (second instance).
+            let add2 = collectDOMManagerEvents(WI.DOMManager.Event.NodeInserted, (data) => data.parent === hostNode);
+            await evaluateInFrame("addHostClass('b')");
+            await waitUntil(() => add2.events.length >= 1, "second ::before add");
+            add2.stop();
+            let secondBefore = hostNode.beforePseudoElement();
+
+            InspectorTest.expectNotNull(secondBefore, "Second ::before should be present.");
+            InspectorTest.expectThat(secondBefore !== firstBefore, "Re-added ::before must be a fresh node, not the destroyed one.");
+            InspectorTest.expectThat(!secondBefore.destroyed, "Re-added ::before should not be destroyed.");
+            InspectorTest.expectEqual(hostNode.pseudoElements().size, 1, "#host should track exactly one pseudo element after re-add.");
+            InspectorTest.expectThat(hostNode.pseudoElements().get(Before) === secondBefore, "The Before map entry should point at the fresh node.");
+
+            // Cleanup so the suite ends in a known state.
+            let cleanup = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node === secondBefore);
+            await evaluateInFrame("removeHostClass('b')");
+            await waitUntil(() => cleanup.events.length >= 1, "cleanup removal");
+            cleanup.stop();
+            InspectorTest.expectThat(!hostNode.hasPseudoElements(), "#host should end with no pseudo elements.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a cross-origin iframe's FrameDOMAgent dispatches DOM.customElementStateChanged, DOM.pseudoElementAdded, and DOM.pseudoElementRemoved to its Frame Target under Site Isolation, including multiple, repeated, and interleaved events.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/custom-elements-and-pseudo-elements-frame.html"></iframe>
+</body>

@@ -483,6 +483,51 @@ WI.DOMManager = class DOMManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node});
     }
 
+    _frameTargetCustomElementStateChanged(target, nodeId, newState)
+    {
+        let scopedId = target.identifier + ":" + nodeId;
+        let node = this._idToDOMNode[scopedId];
+        if (!node)
+            return;
+
+        node._customElementState = newState;
+        this.dispatchEventToListeners(WI.DOMManager.Event.CustomElementStateChanged, {node});
+    }
+
+    _frameTargetPseudoElementAdded(target, parentId, pseudoElement)
+    {
+        let scopedParentId = target.identifier + ":" + parentId;
+        let parent = this._idToDOMNode[scopedParentId];
+        if (!parent)
+            return;
+
+        let node = new WI.DOMNode(this, parent.ownerDocument, false, pseudoElement, {frameTarget: target});
+        node.parentNode = parent;
+        this._idToDOMNode[node.id] = node;
+        console.assert(!parent.pseudoElements().get(node.pseudoType()));
+        parent.pseudoElements().set(node.pseudoType(), node);
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+    }
+
+    _frameTargetPseudoElementRemoved(target, parentId, pseudoElementId)
+    {
+        let scopedParentId = target.identifier + ":" + parentId;
+        let scopedPseudoElementId = target.identifier + ":" + pseudoElementId;
+        let pseudoElement = this._idToDOMNode[scopedPseudoElementId];
+        if (!pseudoElement)
+            return;
+
+        let parent = pseudoElement.parentNode;
+        console.assert(parent);
+        console.assert(parent.id === scopedParentId);
+        if (!parent)
+            return;
+
+        parent._removeChild(pseudoElement);
+        this._frameTargetUnbind(pseudoElement);
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: pseudoElement, parent});
+    }
+
     transitionPageTarget()
     {
         this._documentUpdated();

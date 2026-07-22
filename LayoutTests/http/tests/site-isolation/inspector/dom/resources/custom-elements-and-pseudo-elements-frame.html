@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Custom &amp; Pseudo Element Frame</title>
+    <style>
+    /* Independent toggles: class "b" -> ::before, class "a" -> ::after. Combining them
+       ("b a") yields both pseudo elements at once, so the inspector test can drive one,
+       the other, or both, and exercise targeted removal. */
+    .b::before { content: "before"; }
+    .a::after { content: "after"; }
+    </style>
+</head>
+<body>
+    <!-- Two independent undefined custom elements. Each starts as an upgrade candidate
+         ("waiting") and is upgraded to "custom" when its define function runs. Having two
+         lets the test upgrade them back-to-back and confirm two customElementStateChanged
+         events don't cross-contaminate. -->
+    <my-widget id="widget">upgrade me</my-widget>
+    <my-gadget id="gadget">upgrade me too</my-gadget>
+
+    <!-- A plain element whose ::before / ::after pseudo elements are toggled by
+         adding/removing classes, driving pseudoElementAdded / pseudoElementRemoved. -->
+    <div id="host">host element</div>
+
+    <script>
+    // Exposed so the inspector test can trigger custom element upgrades at controlled times
+    // (after it has begun observing DOM.customElementStateChanged).
+    function defineWidget() {
+        customElements.define("my-widget", class extends HTMLElement { });
+    }
+    function defineGadget() {
+        customElements.define("my-gadget", class extends HTMLElement { });
+    }
+
+    // Independent pseudo-element control on #host via incremental class add/remove, so each
+    // call creates/destroys exactly one pseudo element (matching how WebKit's style recalc
+    // preserves an unchanged pseudo element across an unrelated class change).
+    function addHostClass(name) {
+        document.getElementById("host").classList.add(name);
+    }
+    function removeHostClass(name) {
+        document.getElementById("host").classList.remove(name);
+    }
+    </script>
+</body>
+</html>
