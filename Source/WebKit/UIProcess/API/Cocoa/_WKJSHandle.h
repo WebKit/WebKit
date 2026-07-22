@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
 @interface _WKJSHandle : WKJSHandle
 @property (nonatomic, readonly, weak) WKContentWorld *world;
+@property (nonatomic, readonly, copy) WKFrameInfo *frame;
 - (void)windowFrameInfo:(void (^)(WKFrameInfo * _Nullable))completionHandler;
 @end
 
