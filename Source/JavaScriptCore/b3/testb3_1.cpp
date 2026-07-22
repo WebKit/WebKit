@@ -1198,6 +1198,7 @@ void run(const TestConfig* config)
     RUN(testLoopWithMultipleHeaderEdges());
 
     RUN(testInfiniteLoopDoesntCauseBadHoisting());
+    RUN(testBackwardsDominatorsWithMultipleBackEdges());
 
     RUN(testFloatMaxMin());
     RUN(testDoubleMaxMin());
