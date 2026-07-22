@@ -31,6 +31,109 @@ function shouldRoundTripDuration(start, end, largestUnit, expected, label) {
     shouldBe(end.add(reverse).equals(start), true, `${label} reverse inverse`);
 }
 
+function shouldHaveCalendarDateFields(date, year, era, eraYear, month, day, label) {
+    shouldBe(date.year, year, `${label} year`);
+    shouldBe(date.era, era, `${label} era`);
+    shouldBe(date.eraYear, eraYear, `${label} eraYear`);
+    shouldBe(date.month, month, `${label} month`);
+    shouldBe(date.monthCode, `M${String(month).padStart(2, "0")}`, `${label} monthCode`);
+    shouldBe(date.day, day, `${label} day`);
+}
+
+// Japanese `year` is always the proleptic-Gregorian ISO year. Era fields remain calendar-native.
+for (const [isoDate, era, eraYear] of [
+    ["-271821-04-19", "bce", 271822],
+    ["-000001-01-01", "bce", 2],
+    ["0000-01-01", "bce", 1],
+    ["0001-01-01", "ce", 1],
+    ["1000-01-01", "ce", 1000],
+    ["1500-02-28", "ce", 1500],
+    ["1868-10-22", "ce", 1868],
+    ["1872-12-31", "ce", 1872],
+    ["1873-01-01", "meiji", 6],
+    ["1912-07-29", "meiji", 45],
+    ["1912-07-30", "taisho", 1],
+    ["1926-12-24", "taisho", 15],
+    ["1926-12-25", "showa", 1],
+    ["1989-01-07", "showa", 64],
+    ["1989-01-08", "heisei", 1],
+    ["2019-04-30", "heisei", 31],
+    ["2019-05-01", "reiwa", 1],
+    ["+275760-09-13", "reiwa", 273742],
+]) {
+    const iso = Temporal.PlainDate.from(isoDate);
+    const date = iso.withCalendar("japanese");
+    shouldHaveCalendarDateFields(date, iso.year, era, eraYear, iso.month, iso.day, `japanese ${isoDate}`);
+
+    const roundTrip = Temporal.PlainDate.from({
+        calendar: "japanese",
+        year: date.year,
+        era: date.era,
+        eraYear: date.eraYear,
+        monthCode: date.monthCode,
+        day: date.day,
+    });
+    shouldBe(roundTrip.withCalendar("iso8601").toString(), isoDate, `japanese ${isoDate} field round-trip`);
+}
+
+for (const [fields, isoDate, era, eraYear] of [
+    [{ year: -1, era: "bce", eraYear: 2, month: 1, day: 1 }, "-000001-01-01", "bce", 2],
+    [{ year: 1000, era: "ce", eraYear: 1000, month: 1, day: 1 }, "1000-01-01", "ce", 1000],
+    [{ year: 1873, era: "meiji", eraYear: 6, month: 1, day: 1 }, "1873-01-01", "meiji", 6],
+    [{ year: 2019, era: "reiwa", eraYear: 1, month: 5, day: 1 }, "2019-05-01", "reiwa", 1],
+]) {
+    const date = Temporal.PlainDate.from({ calendar: "japanese", ...fields }, { overflow: "reject" });
+    shouldBe(date.withCalendar("iso8601").toString(), isoDate, `japanese ${isoDate} from fields`);
+    shouldHaveCalendarDateFields(date, fields.year, era, eraYear, fields.month, fields.day, `japanese ${isoDate} from fields`);
+
+    const updated = date.with({ day: 2 }, { overflow: "reject" });
+    shouldHaveCalendarDateFields(updated, fields.year, era, eraYear, fields.month, 2, `japanese ${isoDate} with`);
+}
+
+// A Japanese year-only property bag uses the same ISO year exposed by the getter.
+for (const [year, month, day, era, eraYear] of [
+    [1000, 2, 28, "ce", 1000],
+    [1872, 12, 31, "ce", 1872],
+    [1873, 1, 1, "meiji", 6],
+]) {
+    const date = Temporal.PlainDate.from({ calendar: "japanese", year, month, day }, { overflow: "reject" });
+    shouldBe(date.withCalendar("iso8601").toString(), `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`, `japanese year-only ${year} ISO date`);
+    shouldHaveCalendarDateFields(date, year, era, eraYear, month, day, `japanese year-only ${year}`);
+}
+
+const japaneseYearMonth = Temporal.PlainYearMonth.from({ calendar: "japanese", year: 1000, month: 2 }, { overflow: "reject" });
+shouldBe(japaneseYearMonth.toString({ calendarName: "never" }), "1000-02-01", "japanese year-only PlainYearMonth ISO date");
+shouldBe(japaneseYearMonth.year, 1000, "japanese year-only PlainYearMonth year");
+shouldBe(japaneseYearMonth.month, 2, "japanese year-only PlainYearMonth month");
+shouldBe(japaneseYearMonth.monthCode, "M02", "japanese year-only PlainYearMonth monthCode");
+
+// Named Meiji era input uses proleptic Gregorian arithmetic before the 1873 cutover.
+const negativeMeiji = Temporal.PlainDate.from({ calendar: "japanese", year: 1500, era: "meiji", eraYear: -367, month: 12, day: 31 }, { overflow: "reject" });
+shouldBe(negativeMeiji.withCalendar("iso8601").toString(), "1500-12-31", "negative Meiji eraYear ISO date");
+shouldBe(negativeMeiji.with({ era: "meiji", eraYear: -367, day: 30 }, { overflow: "reject" }).withCalendar("iso8601").toString(), "1500-12-30", "negative Meiji eraYear with");
+shouldBe(Temporal.PlainDate.from({ calendar: "japanese", year: negativeMeiji.year, era: negativeMeiji.era, eraYear: negativeMeiji.eraYear, monthCode: negativeMeiji.monthCode, day: negativeMeiji.day }).withCalendar("iso8601").toString(), "1500-12-31", "negative Meiji eraYear round-trip");
+shouldThrow(() => Temporal.PlainDate.from({ calendar: "japanese", year: 1501, era: "meiji", eraYear: -367, month: 12, day: 31 }), RangeError, "inconsistent negative Meiji year");
+shouldBe(Temporal.PlainDate.from({ calendar: "japanese", era: "meiji", eraYear: -367, month: 2, day: 29 }).withCalendar("iso8601").toString(), "1500-02-28", "negative Meiji Gregorian February constrain");
+shouldThrow(() => Temporal.PlainDate.from({ calendar: "japanese", era: "meiji", eraYear: -367, month: 2, day: 29 }, { overflow: "reject" }), RangeError, "negative Meiji Gregorian February reject");
+shouldBe(Temporal.PlainDate.from({ calendar: "japanese", era: "meiji", eraYear: 0, month: 1, day: 1 }).withCalendar("iso8601").toString(), "1867-01-01", "Meiji eraYear zero");
+
+for (const [era, month, day, isoDate, outputEra, outputEraYear] of [["meiji", 9, 8, "1868-09-08", "ce", 1868], ["taisho", 7, 30, "1912-07-30", "taisho", 1], ["showa", 12, 25, "1926-12-25", "showa", 1], ["heisei", 1, 8, "1989-01-08", "heisei", 1], ["reiwa", 5, 1, "2019-05-01", "reiwa", 1]]) {
+    const date = Temporal.PlainDate.from({ calendar: "japanese", era, eraYear: 1, month, day }, { overflow: "reject" });
+    shouldBe(date.withCalendar("iso8601").toString(), isoDate, `${era} transition ISO date`);
+    shouldHaveCalendarDateFields(date, Number(isoDate.slice(0, 4)), outputEra, outputEraYear, month, day, `${era} transition`);
+}
+
+shouldThrow(() => Temporal.PlainDate.from({ calendar: "japanese", year: 999, era: "ce", eraYear: 1000, month: 1, day: 1 }), RangeError, "inconsistent Japanese CE year");
+shouldThrow(() => Temporal.PlainDate.from({ calendar: "japanese", year: 2018, era: "reiwa", eraYear: 1, month: 5, day: 1 }), RangeError, "inconsistent Japanese Reiwa year");
+
+for (const [type, date] of [
+    ["PlainDateTime", Temporal.PlainDateTime.from("1000-01-01T12:00").withCalendar("japanese")],
+    ["ZonedDateTime", Temporal.ZonedDateTime.from("1000-01-01T12:00Z[UTC]").withCalendar("japanese")],
+]) {
+    shouldHaveCalendarDateFields(date, 1000, "ce", 1000, 1, 1, `japanese ${type}`);
+    shouldHaveCalendarDateFields(date.with({ day: 2 }), 1000, "ce", 1000, 1, 2, `japanese ${type} with`);
+}
+
 // Buddhist: `year` is BE (Gregorian + 543). BE 2567 = Gregorian 2024.
 {
     const pd = Temporal.PlainDate.from({year:2567, month:1, day:1, calendar:"buddhist"});
@@ -48,6 +151,115 @@ function shouldRoundTripDuration(start, end, largestUnit, expected, label) {
     const pd = Temporal.PlainDate.from({era:"be", eraYear:2567, month:1, day:1, calendar:"buddhist"});
     shouldBe(pd.year, 2567, "buddhist era:be eraYear:2567 -> year");
     shouldBe(pd.toString(), "2024-01-01[u-ca=buddhist]", "buddhist era -> ISO");
+}
+
+function shouldHaveISODate(date, expectedYear, expectedMonth, expectedDay, label) {
+    const isoDate = date.withCalendar("iso8601");
+    shouldBe(isoDate.year, expectedYear, `${label} ISO year`);
+    shouldBe(isoDate.month, expectedMonth, `${label} ISO month`);
+    shouldBe(isoDate.day, expectedDay, `${label} ISO day`);
+}
+
+function shouldRoundTripGregorianDate(date, createFromFields, expectedYear, expectedEra, expectedEraYear, expectedMonth, label) {
+    shouldHaveCalendarDateFields(date, expectedYear, expectedEra, expectedEraYear, expectedMonth, 1, label);
+
+    const result = date.with({ day: 2 });
+    shouldHaveISODate(result, 1500, expectedMonth, 2, `${label} after with`);
+    shouldHaveCalendarDateFields(result, expectedYear, expectedEra, expectedEraYear, expectedMonth, 2, `${label} after with`);
+
+    const roundTrip = createFromFields({
+        year: date.year,
+        era: date.era,
+        eraYear: date.eraYear,
+        monthCode: date.monthCode,
+        day: date.day,
+        calendar: date.calendarId,
+    });
+    shouldHaveISODate(roundTrip, 1500, expectedMonth, 1, `${label} field round-trip`);
+    shouldHaveCalendarDateFields(roundTrip, expectedYear, expectedEra, expectedEraYear, expectedMonth, 1, `${label} field round-trip`);
+}
+
+// ROC and Buddhist use proleptic Gregorian date fields before 1582.
+for (const calendar of ["roc", "buddhist"]) {
+    const expectedYear = calendar === "roc" ? -411 : 2043;
+    const expectedEra = calendar === "roc" ? "broc" : "be";
+    const expectedEraYear = calendar === "roc" ? 412 : 2043;
+    for (const month of [1, 2]) {
+        const isoMonth = `0${month}`;
+        const dates = [
+            ["PlainDate", Temporal.PlainDate.from(`1500-${isoMonth}-01`).withCalendar(calendar), fields => Temporal.PlainDate.from(fields)],
+            ["PlainDateTime", Temporal.PlainDateTime.from(`1500-${isoMonth}-01T12:00`).withCalendar(calendar), fields => Temporal.PlainDateTime.from({ ...fields, hour: 12 })],
+            ["ZonedDateTime", Temporal.ZonedDateTime.from(`1500-${isoMonth}-01T12:00Z[UTC]`).withCalendar(calendar), fields => Temporal.ZonedDateTime.from({ ...fields, hour: 12, timeZone: "UTC" })],
+        ];
+        for (const [type, date, createFromFields] of dates) {
+            const label = `${calendar} ${type} 1500-${isoMonth}`;
+            shouldRoundTripGregorianDate(date, createFromFields, expectedYear, expectedEra, expectedEraYear, month, label);
+        }
+    }
+}
+
+// ROC year 0 is the year before ROC year 1.
+for (const [isoDate, year, era, eraYear] of [
+    ["1911-12-31", 0, "broc", 1],
+    ["1912-01-01", 1, "roc", 1],
+]) {
+    const date = Temporal.PlainDate.from(isoDate).withCalendar("roc");
+    shouldBe(date.year, year, `${isoDate} ROC year`);
+    shouldBe(date.era, era, `${isoDate} ROC era`);
+    shouldBe(date.eraYear, eraYear, `${isoDate} ROC eraYear`);
+    const roundTrip = Temporal.PlainDate.from({ year, era, eraYear, monthCode: date.monthCode, day: date.day, calendar: "roc" });
+    shouldBe(roundTrip.withCalendar("iso8601").toString(), isoDate, `${isoDate} ROC round-trip`);
+}
+
+// Buddhist has one era and its arithmetic year may be non-positive.
+for (const [year, isoDate] of [
+    [-1, "-000544-01-01"],
+    [0, "-000543-01-01"],
+    [1, "-000542-01-01"],
+]) {
+    const date = Temporal.PlainDate.from({ year, era: "be", eraYear: year, monthCode: "M01", day: 1, calendar: "buddhist" });
+    shouldBe(date.withCalendar("iso8601").toString(), isoDate, `Buddhist year ${year} ISO date`);
+    shouldBe(date.year, year, `Buddhist year ${year}`);
+    shouldBe(date.era, "be", `Buddhist year ${year} era`);
+    shouldBe(date.eraYear, year, `Buddhist year ${year} eraYear`);
+}
+
+shouldThrow(() => Temporal.PlainDate.from({ year: 0, era: "roc", eraYear: 1, monthCode: "M01", day: 1, calendar: "roc" }), RangeError, "inconsistent ROC year and eraYear");
+shouldThrow(() => Temporal.PlainDate.from({ year: 0, era: "be", eraYear: 1, monthCode: "M01", day: 1, calendar: "buddhist" }), RangeError, "inconsistent Buddhist year and eraYear");
+
+for (const [calendar, fields] of [["japanese", { era: "meiji", eraYear: -367 }], ["roc", { year: -411 }], ["buddhist", { year: 2043 }]]) {
+    const constrained = Temporal.PlainMonthDay.from({ calendar, ...fields, month: 2, day: 29 });
+    shouldBe(constrained.toString(), `1972-02-28[u-ca=${calendar}]`, `${calendar} historical PlainMonthDay constrain and reference year`);
+    shouldThrow(() => Temporal.PlainMonthDay.from({ calendar, ...fields, month: 2, day: 29 }, { overflow: "reject" }), RangeError, `${calendar} historical PlainMonthDay reject`);
+    shouldBe(Temporal.PlainMonthDay.from({ calendar, monthCode: "M02", day: 29 }).toString(), `1972-02-29[u-ca=${calendar}]`, `${calendar} PlainMonthDay leap reference year`);
+}
+for (const [calendar, fields] of [["roc", { era: "roc", eraYear: 2147483647 }], ["roc", { era: "broc", eraYear: -2147483648 }], ["buddhist", { era: "be", eraYear: 2147483647 }], ["buddhist", { era: "be", eraYear: -2147483648 }]]) {
+    shouldThrow(() => Temporal.ZonedDateTime.from(`2000-01-01T00:00[UTC][u-ca=${calendar}]`).with(fields), RangeError, `${calendar} ZonedDateTime.with checked year offset`);
+}
+
+for (const [calendar, year] of [["roc", -411], ["buddhist", 2043]]) {
+    const constrainedDay = Temporal.PlainDate.from({ year, month: 2, day: 29, calendar }, { overflow: "constrain" });
+    shouldBe(constrainedDay.withCalendar("iso8601").toString(), "1500-02-28", `${calendar} day constrain`);
+    shouldThrow(() => Temporal.PlainDate.from({ year, month: 2, day: 29, calendar }, { overflow: "reject" }), RangeError, `${calendar} day reject`);
+
+    const constrainedMonth = Temporal.PlainDate.from({ year, month: 13, day: 1, calendar }, { overflow: "constrain" });
+    shouldBe(constrainedMonth.withCalendar("iso8601").toString(), "1500-12-01", `${calendar} month constrain`);
+    shouldThrow(() => Temporal.PlainDate.from({ year, month: 13, day: 1, calendar }, { overflow: "reject" }), RangeError, `${calendar} month reject`);
+}
+
+// The exact Temporal PlainDate limits support stable calendar-field round-trips.
+for (const [isoDate, calendar, year, era, eraYear] of [
+    ["-271821-04-19", "roc", -273732, "broc", 273733],
+    ["-271821-04-19", "buddhist", -271278, "be", -271278],
+    ["+275760-09-13", "roc", 273849, "roc", 273849],
+    ["+275760-09-13", "buddhist", 276303, "be", 276303],
+]) {
+    const date = Temporal.PlainDate.from(isoDate).withCalendar(calendar);
+    shouldBe(date.year, year, `${calendar} ${isoDate} year`);
+    shouldBe(date.era, era, `${calendar} ${isoDate} era`);
+    shouldBe(date.eraYear, eraYear, `${calendar} ${isoDate} eraYear`);
+    const roundTrip = Temporal.PlainDate.from({ year, era, eraYear, monthCode: date.monthCode, day: date.day, calendar });
+    shouldBe(roundTrip.withCalendar("iso8601").toString(), isoDate, `${calendar} ${isoDate} round-trip`);
 }
 
 // Coptic `am` era: AM 1740 M01 D01 = ISO 2023-09-12.

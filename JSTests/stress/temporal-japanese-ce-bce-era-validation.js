@@ -29,10 +29,10 @@ function shouldThrow(func, errorType) {
     shouldBe(r.toString(), "2000-12-01[u-ca=japanese]");
 }
 {
-    // ISO year 0 (bce 1); assert via toString since the year getter goes
-    // through ICU and is subject to Julian/Gregorian switch quirks near year 0.
+    // ISO year 0 (bce 1); the Japanese year getter is always the ISO year.
     const r = Temporal.PlainDate.from({ calendar: "japanese", era: "bce", eraYear: 1, month: 255, day: 40 });
     shouldBe(r.toString(), "0000-12-31[u-ca=japanese]");
+    shouldBe(r.year, 0);
     shouldBe(r.month, 12);
     shouldBe(r.day, 31);
 }
