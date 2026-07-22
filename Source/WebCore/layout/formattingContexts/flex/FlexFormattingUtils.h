@@ -79,24 +79,31 @@ public:
 
     enum class GapType : uint8_t { BetweenLines, BetweenItems };
     static LayoutUnit computeGap(const RenderFlexibleBox&, GapType);
+    LayoutUnit computeGap(GapType) const;
 
     LayoutUnit mainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
     static LayoutUnit crossAxisMarginExtentForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    LayoutUnit crossAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
 
     LayoutUnit crossAxisScrollbarExtent() const;
     LayoutUnit mainAxisScrollbarExtent() const;
 
     static const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem LIFETIME_BOUND);
+    const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
     static const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem LIFETIME_BOUND);
+    const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
     const Style::MaximumSize& maxMainSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
     static const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem LIFETIME_BOUND);
+    const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
     const Style::MinimumSize& minCrossSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
     const Style::MaximumSize& maxCrossSizeLengthForFlexItem(const RenderBox& flexItem) const LIFETIME_BOUND;
 
     static Overflow mainAxisOverflowForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
     OverflowAlignment overflowAlignmentForFlexItem(const RenderBox& flexItem) const;
     static bool hasAutoMarginsInCrossAxis(const RenderFlexibleBox&, const RenderBox& flexItem);
+    bool hasAutoMarginsInCrossAxis(const RenderBox& flexItem) const;
     static bool useContentBasedMinimumSize(const RenderFlexibleBox&, const RenderBox& flexItem);
+    bool useContentBasedMinimumSize(const RenderBox& flexItem) const;
     double preferredAspectRatioForFlexItem(const RenderBox& flexItem) const;
 
     static bool flexItemHasAspectRatio(const RenderBox& flexItem);
@@ -104,6 +111,7 @@ public:
     bool flexItemHasComputableAspectRatio(const RenderBox& flexItem) const;
     bool needToStretchFlexItemLogicalHeight(const RenderBox& flexItem) const;
     static LayoutUnit innerCrossSizeForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    LayoutUnit innerCrossSizeForFlexItem(const RenderBox& flexItem) const;
     LayoutUnit columnInnerMainSize(LayoutUnit hypotheticalMainSize) const;
     LayoutUnit availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem, LayoutUnit crossSize) const;
     LayoutUnit marginBoxAscentForFlexItem(const RenderBox& flexItem, LayoutUnit crossSize) const;
@@ -117,9 +125,13 @@ public:
     static bool isMultiline(const RenderFlexibleBox&);
     bool isLeftToRightFlow() const;
     static bool mainAxisIsFlexItemInlineAxis(const RenderFlexibleBox&, const RenderBox& flexItem);
+    bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const;
     static Style::FlexBasis flexBasisForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    Style::FlexBasis flexBasisForFlexItem(const RenderBox& flexItem) const;
     static ItemPosition alignmentForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    ItemPosition alignmentForFlexItem(const RenderBox& flexItem) const;
     static bool hasDefiniteCrossSizeForFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem);
+    bool hasDefiniteCrossSizeForFlexItem(const RenderBox& flexItem) const;
     static bool hasDefiniteLogicalWidthForAspectRatioCrossSize(const RenderFlexibleBox&);
     static std::optional<TextDirection> leftRightAxisDirectionFromStyle(const Style::ComputedStyle&);
 

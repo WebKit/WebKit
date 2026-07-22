@@ -66,7 +66,54 @@ void FlexLayout::prepareFlexItemForPositionedLayout(RenderBox& flexItem)
     }
 }
 
-FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren)
+FlexLayoutConstraints FlexLayout::flexLayoutConstraints() const
+{
+    FlexFormattingUtils utils { flexBox() };
+    return {
+        .style = flexBox().style(),
+        .isHorizontalFlow = FlexFormattingUtils::isHorizontalFlow(flexBox()),
+        .isColumnFlow = FlexFormattingUtils::isColumnFlow(flexBox()),
+        .isMultiline = FlexFormattingUtils::isMultiline(flexBox()),
+        .isWrapReverse = FlexFormattingUtils::isWrapReverse(flexBox()),
+        .isColumnOrRowReverse = utils.isColumnOrRowReverse(),
+        .isLeftToRightFlow = utils.isLeftToRightFlow(),
+        .crossAxisDirection = utils.crossAxisDirection(),
+        .flowAwareBorderInline = { utils.flowAwareBorderStart(), utils.flowAwareBorderEnd() },
+        .flowAwareBorderBlock = { utils.flowAwareBorderBefore(), utils.flowAwareBorderAfter() },
+        .flowAwarePaddingInline = { utils.flowAwarePaddingStart(), utils.flowAwarePaddingEnd() },
+        .flowAwarePaddingBlock = { utils.flowAwarePaddingBefore(), utils.flowAwarePaddingAfter() },
+        .mainAxisAvailableSpace = mainAxisAvailableSpace(),
+        .mainAxisSizeForLengthResolution = FlexFormattingUtils::isColumnFlow(flexBox()) ? flexBox().availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : flexBox().contentBoxLogicalWidth(),
+        .mainAxisBorderBoxExtent = utils.mainAxisExtent(),
+        .crossAxisSizeForLengthResolution = flexBox().contentBoxLogicalWidth(),
+        .mainAxisScrollbarExtent = utils.mainAxisScrollbarExtent(),
+        .crossAxisScrollbarExtent = utils.crossAxisScrollbarExtent(),
+    };
+}
+
+LayoutUnit FlexLayout::mainAxisAvailableSpace() const
+{
+    if (!FlexFormattingUtils::isColumnFlow(flexBox()))
+        return flexBox().contentBoxLogicalWidth();
+
+    auto logicalHeightIgnoringFlexBasisOverride = [&] {
+        // The flex-basis override is for the parent flex's sizing of this item,
+        // not for this container's own wrapping decisions. Temporarily clear it
+        // so computeLogicalHeight sees the specified height.
+        auto override = flexBox().overridingLogicalHeightForFlexBasisComputation();
+        if (!override)
+            return flexBox().computeLogicalHeight(LayoutUnit::max(), flexBox().logicalTop()).extent;
+
+        flexBox().clearOverridingLogicalHeightForFlexBasisComputation();
+        auto computedValues = flexBox().computeLogicalHeight(LayoutUnit::max(), flexBox().logicalTop());
+        flexBox().setOverridingBorderBoxLogicalHeightForFlexBasisComputation(*override);
+        return computedValues.extent;
+    };
+    auto logicalHeight = logicalHeightIgnoringFlexBasisOverride();
+    return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (flexBox().borderAndPaddingLogicalHeight() + flexBox().scrollbarLogicalHeight()));
+}
+
+FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, const FlexLayoutConstraints& constraints)
 {
     // Out-of-flow children are not flex items, but the container still establishes their static position.
     for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
@@ -88,20 +135,21 @@ FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren)
         if (flexItem->shouldInvalidateContentWidths())
             flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
         flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *flexItem);
-        flexItems.append({ *flexItem, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
+        flexItems.append({ *flexItem, constraints.isHorizontalFlow, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
     return flexItems;
 }
 
 void FlexLayout::layout(RelayoutChildren relayoutChildren)
 {
-    auto flexItems = collectFlexItems(relayoutChildren);
+    auto constraints = flexLayoutConstraints();
+    auto flexItems = collectFlexItems(relayoutChildren, constraints);
     if (flexItems.isEmpty()) {
         flexBox().updateFlexContainerLogicalHeight(0_lu);
         return;
     }
 
-    auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox()).layout(flexItems);
+    auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints).layout(flexItems);
     if (flexLayoutResult.alignContentStartOverflow)
         flexBox().m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
     flexBox().m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;

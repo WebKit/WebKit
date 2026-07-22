@@ -47,7 +47,9 @@ public:
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
 private:
-    FlexLayoutItems collectFlexItems(RelayoutChildren);
+    FlexLayoutItems collectFlexItems(RelayoutChildren, const FlexLayoutConstraints&);
+    FlexLayoutConstraints flexLayoutConstraints() const;
+    LayoutUnit mainAxisAvailableSpace() const;
     void prepareFlexItemForPositionedLayout(RenderBox&);
     CheckedPtr<const RenderBox> flexItemForFirstBaseline() const;
     CheckedPtr<const RenderBox> flexItemForLastBaseline() const;

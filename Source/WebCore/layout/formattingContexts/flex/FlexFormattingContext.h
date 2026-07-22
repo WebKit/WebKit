@@ -40,7 +40,7 @@ class RenderFlexibleBox;
 
 class FlexLayoutItem {
 public:
-    FlexLayoutItem(RenderBox&, bool everHadLayout, bool shouldInvalidateChildContent);
+    FlexLayoutItem(RenderBox&, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent);
 
     LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize(LayoutUnit hypotheticalMainContentSize) const;
     LayoutUnit NODELETE flexBaseMarginBoxSize(LayoutUnit flexBaseContentSize) const;
@@ -93,7 +93,7 @@ struct FlexContainerUsedExtents {
 
 class FlexFormattingContext {
 public:
-    FlexFormattingContext(RenderFlexibleBox&);
+    FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&);
 
     struct Result {
         std::optional<LayoutUnit> alignContentStartOverflow;
@@ -104,9 +104,6 @@ public:
     Result layout(FlexLayoutItems&);
 
 private:
-    static FlexLayoutConstraints flexLayoutConstraints(RenderFlexibleBox&);
-    static LayoutUnit mainAxisAvailableSpace(RenderFlexibleBox&);
-
     struct FlexBaseAndHypotheticalMainSize {
         LayoutUnit flexBase;
         LayoutUnit hypotheticalMainSize;

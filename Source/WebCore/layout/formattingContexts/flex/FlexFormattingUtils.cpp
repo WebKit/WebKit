@@ -838,4 +838,65 @@ LayoutUnit FlexFormattingUtils::alignContentSpaceBetweenFlexItems(LayoutUnit ava
     return 0_lu;
 }
 
+// Instance forwarders for the formatting context, which holds a FlexFormattingUtils and so need not re-pass the container.
+LayoutUnit FlexFormattingUtils::computeGap(GapType gapType) const
+{
+    return computeGap(flexBox(), gapType);
+}
+
+LayoutUnit FlexFormattingUtils::crossAxisMarginExtentForFlexItem(const RenderBox& flexItem) const
+{
+    return crossAxisMarginExtentForFlexItem(flexBox(), flexItem);
+}
+
+const Style::PreferredSize& FlexFormattingUtils::preferredMainSizeLengthForFlexItem(const RenderBox& flexItem) const
+{
+    return preferredMainSizeLengthForFlexItem(flexBox(), flexItem);
+}
+
+const Style::MinimumSize& FlexFormattingUtils::minMainSizeLengthForFlexItem(const RenderBox& flexItem) const
+{
+    return minMainSizeLengthForFlexItem(flexBox(), flexItem);
+}
+
+const Style::PreferredSize& FlexFormattingUtils::preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem) const
+{
+    return preferredCrossSizeLengthForFlexItem(flexBox(), flexItem);
+}
+
+bool FlexFormattingUtils::hasAutoMarginsInCrossAxis(const RenderBox& flexItem) const
+{
+    return hasAutoMarginsInCrossAxis(flexBox(), flexItem);
+}
+
+bool FlexFormattingUtils::useContentBasedMinimumSize(const RenderBox& flexItem) const
+{
+    return useContentBasedMinimumSize(flexBox(), flexItem);
+}
+
+LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexItem) const
+{
+    return innerCrossSizeForFlexItem(flexBox(), flexItem);
+}
+
+bool FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const
+{
+    return mainAxisIsFlexItemInlineAxis(flexBox(), flexItem);
+}
+
+Style::FlexBasis FlexFormattingUtils::flexBasisForFlexItem(const RenderBox& flexItem) const
+{
+    return flexBasisForFlexItem(flexBox(), flexItem);
+}
+
+ItemPosition FlexFormattingUtils::alignmentForFlexItem(const RenderBox& flexItem) const
+{
+    return alignmentForFlexItem(flexBox(), flexItem);
+}
+
+bool FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(const RenderBox& flexItem) const
+{
+    return hasDefiniteCrossSizeForFlexItem(flexBox(), flexItem);
+}
+
 } // namespace WebCore

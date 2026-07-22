@@ -118,7 +118,7 @@ public:
     class ScopedCrossAxisOverrideForFlexItem {
     public:
         enum class InvalidateContentWidths : bool { No, Yes };
-        ScopedCrossAxisOverrideForFlexItem(const RenderFlexibleBox&, RenderBox& flexItem, InvalidateContentWidths);
+        ScopedCrossAxisOverrideForFlexItem(RenderBox& flexItem, InvalidateContentWidths);
         ~ScopedCrossAxisOverrideForFlexItem();
 
     private:

@@ -43,7 +43,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
-#include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "FlexFormattingContext.h"
@@ -53,13 +52,10 @@
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderSVGRoot.h"
-#include "RenderTable.h"
-#include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
-#include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -149,12 +145,13 @@ RenderFlexibleBox::OverridingSizesScope::~OverridingSizesScope()
 // When invalidateContentLogicalWidths is true, the flex item's preferred widths are
 // invalidated so that min/maxContentLogicalWidthContribution() will recompute them with the
 // cross-axis override in place. The destructor ASSERTs the dirty flag was consumed.
-RenderFlexibleBox::ScopedCrossAxisOverrideForFlexItem::ScopedCrossAxisOverrideForFlexItem(const RenderFlexibleBox& flexBox, RenderBox& flexItem, InvalidateContentWidths invalidateContentWidths)
-    : m_intrinsicWidthComputation(flexBox.m_inFlexItemIntrinsicWidthComputation, true)
+RenderFlexibleBox::ScopedCrossAxisOverrideForFlexItem::ScopedCrossAxisOverrideForFlexItem(RenderBox& flexItem, InvalidateContentWidths invalidateContentWidths)
+    : m_intrinsicWidthComputation(downcast<RenderFlexibleBox>(*flexItem.parent()).m_inFlexItemIntrinsicWidthComputation, true)
 #if ASSERT_ENABLED
     , m_flexItem(flexItem)
 #endif
 {
+    auto& flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
     if (FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexBox, flexItem)) {
         auto axis = FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexBox, flexItem) ? OverridingSizesScope::Axis::Block : OverridingSizesScope::Axis::Inline;
         m_overridingScope.emplace(flexItem, axis, FlexFormattingUtils::innerCrossSizeForFlexItem(flexBox, flexItem));
