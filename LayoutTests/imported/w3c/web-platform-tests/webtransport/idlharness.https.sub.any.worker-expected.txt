@@ -29,7 +29,7 @@ PASS WebTransport interface: existence and properties of interface prototype obj
 PASS WebTransport interface: existence and properties of interface prototype object's "constructor" property
 PASS WebTransport interface: existence and properties of interface prototype object's @@unscopables property
 PASS WebTransport interface: operation getStats()
-FAIL WebTransport interface: operation exportKeyingMaterial(BufferSource, optional BufferSource) assert_own_property: interface prototype object missing non-static operation expected property "exportKeyingMaterial" missing
+PASS WebTransport interface: operation exportKeyingMaterial(BufferSource, optional BufferSource)
 PASS WebTransport interface: attribute ready
 PASS WebTransport interface: attribute reliability
 PASS WebTransport interface: attribute congestionControl
@@ -49,8 +49,8 @@ PASS WebTransport interface: attribute supportsReliableOnly
 PASS WebTransport must be primary interface of webTransport
 PASS Stringification of webTransport
 PASS WebTransport interface: webTransport must inherit property "getStats()" with the proper type
-FAIL WebTransport interface: webTransport must inherit property "exportKeyingMaterial(BufferSource, optional BufferSource)" with the proper type assert_inherits: property "exportKeyingMaterial" not found in prototype chain
-FAIL WebTransport interface: calling exportKeyingMaterial(BufferSource, optional BufferSource) on webTransport with too few arguments must throw TypeError assert_inherits: property "exportKeyingMaterial" not found in prototype chain
+PASS WebTransport interface: webTransport must inherit property "exportKeyingMaterial(BufferSource, optional BufferSource)" with the proper type
+PASS WebTransport interface: calling exportKeyingMaterial(BufferSource, optional BufferSource) on webTransport with too few arguments must throw TypeError
 PASS WebTransport interface: webTransport must inherit property "ready" with the proper type
 PASS WebTransport interface: webTransport must inherit property "reliability" with the proper type
 PASS WebTransport interface: webTransport must inherit property "congestionControl" with the proper type

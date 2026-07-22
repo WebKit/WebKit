@@ -41,6 +41,7 @@ namespace WebCore {
 
 enum class WebTransportCongestionControl : uint8_t;
 
+class BufferSource;
 class DOMException;
 class DOMPromise;
 class DatagramSource;
@@ -81,6 +82,7 @@ public:
     void deref() const final { WebTransportSessionClient::deref(); }
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+    void exportKeyingMaterial(BufferSource&& label, std::optional<BufferSource>&& context, Ref<DeferredPromise>&&);
     DOMPromise& NODELETE ready();
     WebTransportReliabilityMode NODELETE reliability();
     WebTransportCongestionControl NODELETE congestionControl();

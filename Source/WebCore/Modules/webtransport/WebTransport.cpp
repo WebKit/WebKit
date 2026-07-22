@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebTransport.h"
 
+#include "BufferSource.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ContentSecurityPolicy.h"
 #include "DatagramByteSource.h"
@@ -378,6 +379,12 @@ void WebTransport::getStats(ScriptExecutionContext& context, Ref<DeferredPromise
             return promise->reject(ExceptionCode::InvalidStateError);
         promise->resolve<IDLDictionary<WebTransportConnectionStats>>(*stats);
     });
+}
+
+void WebTransport::exportKeyingMaterial(BufferSource&&, std::optional<BufferSource>&&, Ref<DeferredPromise>&& promise)
+{
+    // FIXME: Implement once libnetcore exposes a keying-material export SPI (rdar://167646346).
+    promise->reject(ExceptionCode::NotSupportedError);
 }
 
 DOMPromise& WebTransport::ready()
