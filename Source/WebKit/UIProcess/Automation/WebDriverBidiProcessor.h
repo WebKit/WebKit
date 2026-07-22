@@ -82,7 +82,7 @@ private:
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
 
     const UniqueRef<BidiBrowserAgent> m_browserAgent;
-    const UniqueRef<BidiBrowsingContextAgent> m_browsingContextAgent;
+    const Ref<BidiBrowsingContextAgent> m_browsingContextAgent;
     const UniqueRef<BidiDigitalCredentialsAgent> m_digitalCredentialsAgent;
     const UniqueRef<BidiPermissionsAgent> m_permissionsAgent;
     const UniqueRef<BidiScriptAgent> m_scriptAgent;

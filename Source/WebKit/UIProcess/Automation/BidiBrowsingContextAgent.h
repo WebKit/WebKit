@@ -35,6 +35,7 @@
 #include <cstdint>
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,10 +45,10 @@ struct FrameTreeNodeData;
 class WebAutomationSession;
 class WebPageProxy;
 
-class BidiBrowsingContextAgent final : public Inspector::BidiBrowsingContextBackendDispatcherHandler {
+class BidiBrowsingContextAgent final : public Inspector::BidiBrowsingContextBackendDispatcherHandler, public RefCountedAndCanMakeWeakPtr<BidiBrowsingContextAgent> {
     WTF_MAKE_TZONE_ALLOCATED(BidiBrowsingContextAgent);
 public:
-    BidiBrowsingContextAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
+    static Ref<BidiBrowsingContextAgent> create(WebAutomationSession&, Inspector::BackendDispatcher&);
     ~BidiBrowsingContextAgent() override;
 
     // Inspector::BidiBrowsingContextDispatcherHandler methods.
@@ -63,6 +64,8 @@ public:
     void setViewport(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, RefPtr<JSON::Object>&&, std::optional<double>&&, RefPtr<JSON::Array>&&, Inspector::CommandCallback<void>&&) override;
 
 private:
+    BidiBrowsingContextAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
+
     enum class IncludeParentID: bool { No, Yes };
 
     void getNextTree(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>, std::optional<uint64_t> maxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&);
