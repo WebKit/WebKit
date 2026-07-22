@@ -3793,23 +3793,12 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         if (m_node->child1().useKind() == DoubleRepUse) {
-            LBasicBlock shouldRoundDown = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-
             LValue value = lowDouble(m_node->child1());
             LValue integerValue = m_out.doubleCeil(value);
-            ValueFromBlock integerValueResult = m_out.anchor(integerValue);
 
             LValue ceilMinusHalf = m_out.doubleSub(integerValue, m_out.constDouble(0.5));
-            m_out.branch(m_out.doubleGreaterThanOrUnordered(ceilMinusHalf, value), unsure(shouldRoundDown), unsure(continuation));
-
-            LBasicBlock lastNext = m_out.appendTo(shouldRoundDown, continuation);
             LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
-            ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
-            m_out.jump(continuation);
-            m_out.appendTo(continuation, lastNext);
-
-            LValue result = m_out.phi(Double, integerValueResult, integerValueRoundedDownResult);
+            LValue result = m_out.select(m_out.doubleGreaterThanOrUnordered(ceilMinusHalf, value), integerValueRoundedDown, integerValue);
 
             if (producesInteger(m_node->arithRoundingMode())) {
                 LValue integerValue = convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode()));
@@ -13807,33 +13796,12 @@ IGNORE_CLANG_WARNINGS_END
         if (m_node->isBinaryUseKind(DoubleRepUse)) {
             LValue arg1 = lowDouble(m_node->child1());
             LValue arg2 = lowDouble(m_node->child2());
+            LValue arg1Int = m_out.bitCast(arg1, Int64);
+            LValue arg2Int = m_out.bitCast(arg2, Int64);
 
-            LBasicBlock numberCase = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-
-            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
-            patchpoint->append(arg1, ValueRep::SomeRegister);
-            patchpoint->append(arg2, ValueRep::SomeRegister);
-            patchpoint->numGPScratchRegisters = 1;
-            patchpoint->setGenerator(
-                [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                    GPRReg scratchGPR = params.gpScratch(0);
-                    jit.moveDoubleTo64(params[1].fpr(), scratchGPR);
-                    jit.moveDoubleTo64(params[2].fpr(), params[0].gpr());
-                    jit.compare64(CCallHelpers::Equal, scratchGPR, params[0].gpr(), params[0].gpr());
-                });
-            patchpoint->effects = Effects::none();
-            ValueFromBlock compareResult = m_out.anchor(patchpoint);
-            m_out.branch(patchpoint, unsure(continuation), unsure(numberCase));
-
-            LBasicBlock lastNext = m_out.appendTo(numberCase, continuation);
             LValue isArg1NaN = m_out.doubleNotEqualOrUnordered(arg1, arg1);
             LValue isArg2NaN = m_out.doubleNotEqualOrUnordered(arg2, arg2);
-            ValueFromBlock nanResult = m_out.anchor(m_out.bitAnd(isArg1NaN, isArg2NaN));
-            m_out.jump(continuation);
-
-            m_out.appendTo(continuation, lastNext);
-            setBoolean(m_out.phi(Int32, compareResult, nanResult));
+            setBoolean(m_out.bitOr(m_out.equal(arg1Int, arg2Int), m_out.bitAnd(isArg1NaN, isArg2NaN)));
             return;
         }
 
@@ -18344,18 +18312,7 @@ IGNORE_CLANG_WARNINGS_END
 
             speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.bitAnd(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_flags), m_out.constInt32(JSPropertyNameEnumerator::enumerationModeMask)), m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)));
 
-            LBasicBlock increment = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-
-            ValueFromBlock initialIndex = m_out.anchor(index);
-            m_out.branch(m_out.isZero32(mode), unsure(continuation), unsure(increment));
-
-            m_out.appendTo(increment);
-            ValueFromBlock incrementedIndex = m_out.anchor(m_out.add(index, m_out.int32One));
-            m_out.jump(continuation);
-
-            m_out.appendTo(continuation);
-            index = m_out.phi(Int32, initialIndex, incrementedIndex);
+            index = m_out.select(m_out.isZero32(mode), index, m_out.add(index, m_out.int32One));
             setTuple(0, index);
             setTuple(1, m_out.constInt32(static_cast<uint32_t>(JSPropertyNameEnumerator::OwnStructureMode)));
             return;
