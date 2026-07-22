@@ -307,6 +307,9 @@ void DtlsTransportInternalImpl::CompleteDtlsInStun(bool success) {
 #if WEBRTC_WEBKIT_BUILD
   ice_transport()->UnsubscribeReceivingState(this);
   ice_transport()->UnsubscribeWritableState(this);
+  ice_transport()->UnsubscribeReadyToSend(this);
+  ice_transport()->UnsubscribeNetworkRouteChanged(this);
+  ice_transport()->UnsubscribeSentPacket(this);
 #endif
 }
 
