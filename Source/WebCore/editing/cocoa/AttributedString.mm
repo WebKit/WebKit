@@ -32,8 +32,10 @@
 #import "LoaderNSURLExtras.h"
 #import "Logging.h"
 #import "PlatformNSAdaptiveImageGlyph.h"
+#import "UTIRegistry.h"
 #import "WebCoreTextAttachment.h"
 #import <Foundation/Foundation.h>
+#import <ImageIO/ImageIO.h>
 #import <pal/spi/cocoa/UIFoundationSPI.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -432,6 +434,15 @@ static String cacheKeyForInstalledFont(const InstalledFont& font)
         });
 }
 
+// Returns the image UTI of `data`, or nullptr if `data` is not image data.
+static RetainPtr<CFStringRef> imageTypeForAttachmentData(NSData *data)
+{
+    RetainPtr source = adoptCF(CGImageSourceCreateWithData(bridge_cast(data), nullptr));
+    if (!source)
+        return nullptr;
+    return CGImageSourceGetType(source.get());
+}
+
 static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists, InstalledFontToCTFontCache& fontCache)
 {
     return WTF::switchOn(value.value, [] (double value) -> RetainPtr<id> {
@@ -460,11 +471,21 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
     }, [] (const TextAttachmentFileWrapper& value) -> RetainPtr<id> {
         RetainPtr<NSData> data = value.data ? bridge_cast((value.data).get()) : nil;
 
+        // Drop image bytes whose type is not supported for web content so the UIProcess
+        // never decodes them, and show the missing-image placeholder instead. Non-image
+        // file wrappers and web-safe images are left untouched.
+        RetainPtr imageType = data ? imageTypeForAttachmentData(data.get()) : nullptr;
+        bool isUnsupportedImage = imageType && !isSupportedImageType(imageType.get());
+        if (isUnsupportedImage)
+            data = nil;
+
         RetainPtr fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
         if (!value.preferredFilename.isNull())
             [fileWrapper setPreferredFilename:protect(filenameByFixingIllegalCharacters(value.preferredFilename.createNSString().get())).get()];
 
         auto textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
+        if (isUnsupportedImage)
+            ((NSTextAttachment *)textAttachment.get()).image = protect(webCoreTextAttachmentMissingPlatformImage()).get();
         if (!value.accessibilityLabel.isNull())
             ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = value.accessibilityLabel.createNSString().get();
 

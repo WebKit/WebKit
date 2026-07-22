@@ -579,7 +579,7 @@ void WebPageProxy::saveImageToLibrary(IPC::Connection& connection, SharedMemory:
         return;
 
     auto buffer = sharedMemoryBuffer->createSharedBuffer(sharedMemoryBuffer->size());
-    pageClient->saveImageToLibrary(WTF::move(buffer));
+    pageClient->saveImageToLibrary(buffer);
 }
 
 void WebPageProxy::applicationDidEnterBackground()
