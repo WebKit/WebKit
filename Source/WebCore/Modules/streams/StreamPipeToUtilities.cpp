@@ -315,7 +315,7 @@ void StreamPipeToState::handleSignal()
                     deferred->reject(valueOrException.releaseException());
                     return WTF::move(rejectedPromise);
                 }
-                auto* promise = downcast<JSC::JSPromise>(valueOrException.releaseReturnValue());
+                auto* promise = dynamicDowncast<JSC::JSPromise>(valueOrException.releaseReturnValue());
                 if (!promise)
                     return nullptr;
 
