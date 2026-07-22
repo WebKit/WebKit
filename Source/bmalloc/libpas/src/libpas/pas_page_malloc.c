@@ -287,6 +287,11 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
 #if PAS_USE_MADV_ZERO
 static void pas_page_malloc_zero_fill_latch_if_madv_zero_is_supported(void)
 {
+    if (!pas_mte_is_mte_enabled()) {
+        madv_zero_supported = false;
+        return;
+    }
+
     /* It is possible that the MADV_ZERO macro is defined but that the kernel
      * does not actually support it. In this case we want to avoid calling madvise
      * since it will just return -1 every time, and so just short-circuit
@@ -338,6 +343,7 @@ void pas_page_malloc_zero_fill(void* base, size_t size)
     pthread_once(&madv_zero_once_control, pas_page_malloc_zero_fill_latch_if_madv_zero_is_supported);
     if (madv_zero_supported) {
         int rc = madvise(base, size, MADV_ZERO);
+        PAS_ASSERT(false);
         if (rc != -1)
             return;
     }
