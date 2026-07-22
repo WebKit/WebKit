@@ -10818,4 +10818,40 @@ TEST(SiteIsolation, CrossSiteTargetBlankDownloadDoesNotCrashNetworkProcess)
     EXPECT_FALSE(processCrashed);
 }
 
+// Per-navigation website policies must be applied to a cross-origin subframe's document loader under
+// site isolation, matching non-site-isolation (where the subframe's own DocumentLoader receives them
+// via the navigation policy decision). Here we use allowsJSHandleCreationInPageWorld: without applying
+// it in the subframe's process, window.webkit.createJSHandle (and therefore testRunner.runUIScript from
+// a subframe) is unavailable.
+TEST(SiteIsolation, WebsitePoliciesAppliedToCrossOriginSubframeDocumentLoader)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html>subframe"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    // Enable JSHandle creation in the page world for every navigation, main frame and subframe alike,
+    // as WebKitTestRunner does for all navigations.
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._allowsJSHandleCreationInPageWorld = YES;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    NSString *check = @"window.webkit && typeof window.webkit.createJSHandle === 'function' ? 'available' : 'unavailable'";
+
+    // The main frame's process receives the policy via ProvisionalPageProxy.
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check], "available");
+
+    // Wait for the cross-origin subframe (a separate process under site isolation) to commit.
+    while (![[webView firstChildFrame].securityOrigin.host isEqualToString:@"b.com"])
+        Util::spinRunLoop();
+
+    // The subframe's process must also have the policy applied to its document loader.
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check inFrame:[webView firstChildFrame]], "available");
+}
+
 }

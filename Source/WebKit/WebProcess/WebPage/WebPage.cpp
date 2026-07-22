@@ -8619,7 +8619,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceReq
             m_pendingNavigationID = std::nullopt;
         }
 
-        if (m_internals->pendingWebsitePolicies && frame.isMainFrame()) {
+        if (m_internals->pendingWebsitePolicies) {
             m_allowsContentJavaScriptFromMostRecentNavigation = m_internals->pendingWebsitePolicies->allowsContentJavaScript;
             WebsitePoliciesData::applyToDocumentLoader(*std::exchange(m_internals->pendingWebsitePolicies, std::nullopt), documentLoader);
         }
