@@ -469,5 +469,12 @@
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/318892"}}
             }
         }
+    },
+    "TestMultiprocess": {
+        "subtests": {
+            "/webkit/WebKitWebContext/process-per-web-view": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": "webkit.org/b/319955"}}
+            }
+        }
     }
 }
