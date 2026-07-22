@@ -771,6 +771,14 @@ void WebProcessProxy::shutDown()
 
     shutDownProcess();
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    // Tear down the log stream as soon as the process shuts down, rather than waiting for this
+    // proxy to be destroyed (which may be delayed, or leak). Otherwise its underlying default-QOS
+    // IPC connection — and the Mach port / kqueue workloop it holds — lingers with a dead peer and
+    // accumulates until the UI process is killed for resource exhaustion. See rdar://182244946.
+    stopLogStream();
+#endif
+
     m_backgroundResponsivenessTimer->invalidate();
     m_audibleMediaActivity = std::nullopt;
     m_mediaStreamingActivity = std::nullopt;

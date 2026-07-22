@@ -783,6 +783,7 @@ private:
 #else
     void createLogStream(LogStreamIdentifier, CompletionHandler<void()>&&);
 #endif
+    void stopLogStream();
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
