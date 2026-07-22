@@ -42,7 +42,11 @@ function isWritableStreamDefaultWriter(writer)
 
 function acquireWritableStreamDefaultWriter(stream)
 {
-    return new @WritableStreamDefaultWriter(stream);
+    "use strict";
+
+    const writer = { };
+    @setUpWritableStreamDefaultWriter(writer, stream);
+    return writer;
 }
 
 // https://streams.spec.whatwg.org/#create-writable-stream
@@ -140,6 +144,97 @@ function writableStreamAbortForBindings(stream, reason)
         return @promiseReject(@Promise, @makeTypeError("WritableStream.abort method can only be used on non locked WritableStream"));
 
     return @writableStreamAbort(stream, reason);
+}
+
+function writableStreamDefaultWriterClosedForBindings(writer)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        return @promiseReject(@Promise, @makeGetterTypeError("WritableStreamDefaultWriter", "closed"));
+
+    return @getByIdDirectPrivate(writer, "closedPromise").promise;
+}
+
+function writableStreamDefaultWriterReadyForBindings(writer)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        return @promiseReject(@Promise, @makeThisTypeError("WritableStreamDefaultWriter", "ready"));
+
+    return @getByIdDirectPrivate(writer, "readyPromise").promise;
+}
+
+function writableStreamDefaultWriterDesiredSizeForBindings(writer)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        @throwTypeError("The WritableStreamDefaultWriter.desiredSize getter can only be used on instances of WritableStreamDefaultWriter");
+
+    if (@getByIdDirectPrivate(writer, "stream") === @undefined)
+        @throwTypeError("WritableStreamDefaultWriter has no stream");
+
+    return @writableStreamDefaultWriterGetDesiredSize(writer);
+}
+
+function writableStreamDefaultWriterAbortForBindings(writer, reason)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        return @promiseReject(@Promise, @makeThisTypeError("WritableStreamDefaultWriter", "abort"));
+
+    if (@getByIdDirectPrivate(writer, "stream") === @undefined)
+        return @promiseReject(@Promise, @makeTypeError("WritableStreamDefaultWriter has no stream"));
+
+    return @writableStreamDefaultWriterAbort(writer, reason);
+}
+
+function writableStreamDefaultWriterCloseForBindings(writer)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        return @promiseReject(@Promise, @makeThisTypeError("WritableStreamDefaultWriter", "close"));
+
+    const stream = @getByIdDirectPrivate(writer, "stream");
+    if (stream === @undefined)
+        return @promiseReject(@Promise, @makeTypeError("WritableStreamDefaultWriter has no stream"));
+
+    if (@writableStreamCloseQueuedOrInFlight(stream))
+        return @promiseReject(@Promise, @makeTypeError("WritableStreamDefaultWriter is being closed"));
+
+    return @writableStreamDefaultWriterClose(writer);
+}
+
+function writableStreamDefaultWriterReleaseLockForBindings(writer)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        @throwTypeError("The WritableStreamDefaultWriter.releaseLock method can only be used on instances of WritableStreamDefaultWriter");
+
+    const stream = @getByIdDirectPrivate(writer, "stream");
+    if (stream === @undefined)
+        return;
+
+    @assert(@getByIdDirectPrivate(stream, "writer") !== @undefined);
+    @writableStreamDefaultWriterRelease(writer);
+}
+
+function writableStreamDefaultWriterWriteForBindings(writer, chunk)
+{
+    "use strict";
+
+    if (!@isWritableStreamDefaultWriter(writer))
+        return @promiseReject(@Promise, @makeThisTypeError("WritableStreamDefaultWriter", "write"));
+
+    if (@getByIdDirectPrivate(writer, "stream") === @undefined)
+        return @promiseReject(@Promise, @makeTypeError("WritableStreamDefaultWriter has no stream"));
+
+    return @writableStreamDefaultWriterWrite(writer, chunk);
 }
 
 function isWritableStreamLocked(stream)

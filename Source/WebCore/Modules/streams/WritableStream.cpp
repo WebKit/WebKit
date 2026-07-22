@@ -38,6 +38,7 @@
 #include "StreamPipeOptions.h"
 #include "StreamPipeToUtilities.h"
 #include "StreamTransferUtilities.h"
+#include "WritableStreamDefaultWriter.h"
 #include <JavaScriptCore/CallFrameInlines.h>
 
 namespace WebCore {
@@ -177,9 +178,9 @@ JSC::JSValue JSWritableStream::close(JSC::JSGlobalObject& globalObject, JSC::Cal
     return wrapped().internalWritableStream().closeForBindings(globalObject);
 }
 
-JSC::JSValue JSWritableStream::getWriter(JSC::JSGlobalObject& globalObject, JSC::CallFrame&)
+ExceptionOr<Ref<WritableStreamDefaultWriter>> WritableStream::getWriter(JSDOMGlobalObject& globalObject)
 {
-    return wrapped().internalWritableStream().getWriter(globalObject);
+    return WritableStreamDefaultWriter::create(globalObject, *this);
 }
 
 } // namespace WebCore

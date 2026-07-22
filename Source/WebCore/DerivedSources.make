@@ -2727,7 +2727,6 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/TransformStreamDefaultController.js \
     $(WebCore)/Modules/streams/TransformStreamInternals.js \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.js \
-    $(WebCore)/Modules/streams/WritableStreamDefaultWriter.js \
     $(WebCore)/Modules/streams/WritableStreamInternals.js \
     $(WebCore)/dom/TextDecoderStream.js \
     $(WebCore)/dom/TextEncoderStream.js \

@@ -37,6 +37,7 @@ class Exception;
 class InternalWritableStream;
 class JSDOMGlobalObject;
 class MessagePort;
+class WritableStreamDefaultWriter;
 class WritableStreamSink;
 template<typename> class ExceptionOr;
 
@@ -54,6 +55,8 @@ public:
 
     void lock();
     bool locked() const;
+
+    ExceptionOr<Ref<WritableStreamDefaultWriter>> getWriter(JSDOMGlobalObject&);
 
     void closeIfPossible();
     void errorIfPossible(Exception&&);

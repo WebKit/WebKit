@@ -45,6 +45,16 @@ public:
     void onClosedPromiseRejection(Function<void(JSDOMGlobalObject&, JSC::JSValue)>&&);
     void onClosedPromiseResolution(Function<void()>&&);
 
+    // Bindings for the exposed WritableStreamDefaultWriter interface.
+    JSC::JSValue closedForBindings(JSC::JSGlobalObject&);
+    ExceptionOr<std::optional<double>> desiredSizeForBindings(JSC::JSGlobalObject&);
+    JSC::JSValue readyForBindings(JSC::JSGlobalObject&);
+    JSC::JSValue abortForBindings(JSC::JSGlobalObject&, JSC::JSValue reason);
+    JSC::JSValue closeForBindings(JSC::JSGlobalObject&);
+    ExceptionOr<void> releaseLockForBindings(JSC::JSGlobalObject&);
+    JSC::JSValue writeForBindings(JSC::JSGlobalObject&, JSC::JSValue chunk);
+
+
 private:
     InternalWritableStreamWriter(JSDOMGlobalObject& globalObject, JSC::JSObject& writer)
         : DOMGuarded<JSC::JSObject>(globalObject, writer)

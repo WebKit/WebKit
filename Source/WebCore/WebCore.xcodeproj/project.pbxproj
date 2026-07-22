@@ -11209,7 +11209,6 @@
 		417612AE1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCPeerConnectionBackend.h; path = libwebrtc/LibWebRTCPeerConnectionBackend.h; sourceTree = "<group>"; };
 		41763D182ACB0AAA00283035 /* WebCodecsAudioDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsAudioDecoder.cpp; sourceTree = "<group>"; };
 		4176673024DC08EA008BFE28 /* WritableStreamDefaultWriter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStreamDefaultWriter.idl; sourceTree = "<group>"; };
-		4176673224DC08EB008BFE28 /* WritableStreamDefaultWriter.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WritableStreamDefaultWriter.js; sourceTree = "<group>"; };
 		4176673324DC08EB008BFE28 /* WritableStreamDefaultController.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WritableStreamDefaultController.js; sourceTree = "<group>"; };
 		4176673424DC08EB008BFE28 /* WritableStreamDefaultController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStreamDefaultController.idl; sourceTree = "<group>"; };
 		4176900322FCD8F200B1576D /* MediaSourceRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourceRegistry.h; sourceTree = "<group>"; };
@@ -11421,6 +11420,8 @@
 		41A0829B22932EF4008426E0 /* PermissionsPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PermissionsPolicy.cpp; sourceTree = "<group>"; };
 		41A098BC231E91D100F4FFF0 /* WorkerSWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerSWClientConnection.cpp; sourceTree = "<group>"; };
 		41A098BE231E91D100F4FFF0 /* WorkerSWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerSWClientConnection.h; sourceTree = "<group>"; };
+		41A0B1C22E0000010000000A /* WritableStreamDefaultWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritableStreamDefaultWriter.h; sourceTree = "<group>"; };
+		41A0B1C22E0000010000000B /* WritableStreamDefaultWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WritableStreamDefaultWriter.cpp; sourceTree = "<group>"; };
 		41A1AE382B30560C009F338A /* VideoTrackGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoTrackGenerator.h; sourceTree = "<group>"; };
 		41A1AE392B30560C009F338A /* VideoTrackGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VideoTrackGenerator.cpp; sourceTree = "<group>"; };
 		41A1AE3A2B30560D009F338A /* VideoTrackGenerator.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoTrackGenerator.idl; sourceTree = "<group>"; };
@@ -27729,8 +27730,9 @@
 				41A023ED1A39DB7900F722DF /* WritableStream.idl */,
 				4176673424DC08EB008BFE28 /* WritableStreamDefaultController.idl */,
 				4176673324DC08EB008BFE28 /* WritableStreamDefaultController.js */,
+				41A0B1C22E0000010000000B /* WritableStreamDefaultWriter.cpp */,
+				41A0B1C22E0000010000000A /* WritableStreamDefaultWriter.h */,
 				4176673024DC08EA008BFE28 /* WritableStreamDefaultWriter.idl */,
-				4176673224DC08EB008BFE28 /* WritableStreamDefaultWriter.js */,
 				9908B0F11BCACF9100ED0F75 /* WritableStreamInternals.js */,
 				413FA8112F2B57F800631736 /* WritableStreamSink.cpp */,
 				41418A022564359800363417 /* WritableStreamSink.h */,

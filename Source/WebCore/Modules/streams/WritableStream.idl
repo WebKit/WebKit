@@ -41,5 +41,5 @@
 
     [Custom, ReturnsOwnPromise] Promise<any> abort(optional any reason);
     [Custom, ReturnsOwnPromise] Promise<any> close();
-    [Custom] WritableStreamDefaultWriter getWriter();
+    [CallWith=CurrentGlobalObject] WritableStreamDefaultWriter getWriter();
 };
