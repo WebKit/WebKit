@@ -620,6 +620,18 @@ static void overrideDefaults()
     Options::worklistFTLLoadWeight() = 20;
 #endif
 
+#if PLATFORM(MAC) && CPU(ARM64)
+    // JIT compilation can contribute to thermal load on low P-core count Apple silicon Macs.
+    constexpr int32_t maxP0CoresForThresholdScaling = 2;
+    if (hwNumberOfP0Cores() <= maxP0CoresForThresholdScaling) {
+        Options::thresholdForOptimizeAfterWarmUp() *= Options::dfgThresholdScaleForLowP0Cores();
+        Options::thresholdForOptimizeAfterLongWarmUp() *= Options::dfgThresholdScaleForLowP0Cores();
+        Options::thresholdForOptimizeSoon() *= Options::dfgThresholdScaleForLowP0Cores();
+        Options::thresholdForFTLOptimizeAfterWarmUp() *= Options::ftlThresholdScaleForLowP0Cores();
+        Options::thresholdForFTLOptimizeSoon() *= Options::ftlThresholdScaleForLowP0Cores();
+    }
+#endif
+
 #if OS(LINUX) && CPU(ARM)
     Options::maximumFunctionForCallInlineCandidateBytecodeCostForDFG() = 77;
     Options::maximumOptimizationCandidateBytecodeCost() = 42403;
