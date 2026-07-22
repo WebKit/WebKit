@@ -367,14 +367,27 @@ void SpeechSynthesis::simulateVoicesListChange()
 
 void SpeechSynthesis::suspend(ReasonForSuspension)
 {
-    if (speaking())
-        cancel();
+    stopPlatformSpeech();
 }
 
 void SpeechSynthesis::stop()
 {
-    if (speaking())
-        cancel();
+    stopPlatformSpeech();
+}
+
+void SpeechSynthesis::stopPlatformSpeech()
+{
+    // Called from inside ScriptExecutionContext::forEachActiveDOMObject, which holds a
+    // ScriptDisallowedScope, so we cannot fire error events here as cancel() would. Any
+    // late completion callback from the platform will see m_currentSpeechUtterance == nullptr
+    // and be ignored by handleSpeakingCompleted().
+    m_utteranceQueue.clear();
+    m_currentSpeechUtterance = nullptr;
+    m_isPaused = false;
+    if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get())
+        speechSynthesisClient->cancel();
+    else if (RefPtr platformSpeechSynthesizer = m_platformSpeechSynthesizer)
+        platformSpeechSynthesizer->cancel();
 }
 
 bool SpeechSynthesis::virtualHasPendingActivity() const
