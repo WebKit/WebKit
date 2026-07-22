@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
 class CSSValuePair;
 
 namespace Style {
@@ -37,7 +36,7 @@ namespace Style {
 // <single-view-timeline-inset-item> = [ [ auto | <length-percentage> ]{1,2} ]
 // https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
 struct ViewTimelineInsetItem {
-    struct Offset : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::Keyword::Auto> {
+    struct Offset : PrimitiveNumericOrKeyword<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
         using Base::Base;
 
         bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }

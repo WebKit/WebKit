@@ -27,9 +27,9 @@
 
 #include <WebCore/CSSNumericValue.h>
 #include <WebCore/CSSPrimitiveValue.h>
+#include <WebCore/ResolvableViewTimelineInsets.h>
 #include <WebCore/ScrollTimeline.h>
 #include <WebCore/StyleViewFunction.h>
-#include <WebCore/StyleViewTimelineInsetItem.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/ViewTimelineOptions.h>
 #include <wtf/Ref.h>
@@ -38,7 +38,6 @@
 namespace WebCore {
 
 namespace Style {
-class BuilderState;
 enum class SingleAnimationRangeName : uint8_t;
 }
 
@@ -73,15 +72,15 @@ struct StickinessAdjustmentData {
 class ViewTimeline final : public ScrollTimeline {
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&& = { });
-    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&);
+    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     const Element* NODELETE subject() const;
     const WeakStyleable subjectStyleable() const { return m_subject; }
     void setSubject(Element*);
     void setSubject(const Styleable&);
 
-    const Style::ViewTimelineInsetItem& insets() const LIFETIME_BOUND { return m_insets; }
-    void setInsets(const Style::ViewTimelineInsetItem& insets) { m_insets = insets; }
+    const ResolvableViewTimelineInsets& insets() const LIFETIME_BOUND { return m_insets; }
+    void setInsets(ResolvableViewTimelineInsets&& insets) { m_insets = WTF::move(insets); }
 
     Ref<CSSNumericValue> startOffset() const;
     Ref<CSSNumericValue> endOffset() const;
@@ -99,7 +98,7 @@ public:
     std::pair<double, double> offsetIntervalForAttachmentRange(const ResolvableTimelineRange&) const;
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
-    bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;
+    bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Style::ZoomFactor&, const Styleable&) const;
     WebAnimationTime NODELETE epsilon() const;
 
 private:
@@ -108,7 +107,7 @@ private:
     template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, Style::SingleAnimationRangeName, F&&) const;
 
     explicit ViewTimeline(ScrollAxis);
-    explicit ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&);
+    explicit ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     bool isViewTimeline() const final { return true; }
 
@@ -134,7 +133,8 @@ private:
 
     WeakStyleable m_subject;
     std::optional<SpecifiedViewTimelineInsets> m_specifiedInsets;
-    Style::ViewTimelineInsetItem m_insets;
+    ResolvableViewTimelineInsets m_insets;
+
     CurrentTimeData m_cachedCurrentTimeData { };
 };
 

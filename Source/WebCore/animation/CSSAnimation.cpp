@@ -232,10 +232,10 @@ void CSSAnimation::syncStyleOriginatedTimeline()
         },
         [&](const Style::ViewFunction& viewFunction) {
             if (RefPtr existingViewTimeline = dynamicDowncast<ViewTimeline>(timeline())) {
-                if (existingViewTimeline->matchesAnonymousViewFunctionForSubject(viewFunction, *owningElement()))
+                if (existingViewTimeline->matchesAnonymousViewFunctionForSubject(viewFunction, m_backingStyleZoomForLength, *owningElement()))
                     return;
             }
-            auto viewTimeline = ViewTimeline::create(nullAtom(), viewFunction->axis, viewFunction->insets);
+            auto viewTimeline = ViewTimeline::create(nullAtom(), viewFunction->axis, viewFunction->insets, m_backingStyleZoomForLength);
             viewTimeline->setSubject(*owningElement());
             setTimeline(WTF::move(viewTimeline));
         }

@@ -89,20 +89,20 @@ ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTime
     return viewTimeline;
 }
 
-Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, const Style::ViewTimelineInsetItem& insetItem)
+Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
 {
-    return adoptRef(*new ViewTimeline(name, axis, insetItem));
+    return adoptRef(*new ViewTimeline(name, axis, insets, usedZoomForLength));
 }
 
 ViewTimeline::ViewTimeline(ScrollAxis axis)
     : ScrollTimeline(nullAtom(), axis)
-    , m_insets(CSS::Keyword::Auto { })
+    , m_insets({ .insets = CSS::Keyword::Auto { }, .zoom = Style::ZoomFactor::none() })
 {
 }
 
-ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, const Style::ViewTimelineInsetItem& insetItem)
+ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
     : ScrollTimeline(name, axis)
-    , m_insets(insetItem)
+    , m_insets({ .insets = insets, .zoom = usedZoomForLength })
 {
 }
 
@@ -367,47 +367,59 @@ void ViewTimeline::cacheCurrentTime()
 
             if (m_specifiedInsets->start && m_specifiedInsets->end) {
                 m_insets = {
-                    computedInset(protect(*m_specifiedInsets->start)),
-                    computedInset(protect(*m_specifiedInsets->end)),
+                    .insets = {
+                        computedInset(protect(*m_specifiedInsets->start)),
+                        computedInset(protect(*m_specifiedInsets->end)),
+                    },
+                    .zoom = Style::ZoomFactor::none(),
                 };
             } else if (m_specifiedInsets->start) {
                 m_insets = {
-                    computedInset(protect(*m_specifiedInsets->start)),
+                    .insets {
+                        computedInset(protect(*m_specifiedInsets->start)),
+                    },
+                    .zoom = Style::ZoomFactor::none(),
                 };
             } else if (m_specifiedInsets->end) {
                 m_insets = {
-                    Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
-                    computedInset(protect(*m_specifiedInsets->end)),
+                    .insets {
+                        Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
+                        computedInset(protect(*m_specifiedInsets->end)),
+                    },
+                    .zoom = Style::ZoomFactor::none(),
                 };
             } else {
                 m_insets = {
-                    Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
-                    Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
+                    .insets {
+                        Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
+                        Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
+                    },
+                    .zoom = Style::ZoomFactor::none(),
                 };
             }
         }
 
-        enum class PaddingEdge : bool { Start, End };
-        auto scrollPadding = [&](PaddingEdge edge) {
-            auto& style = sourceRenderer->style();
-            if (edge == PaddingEdge::Start)
-                return scrollDirection.isVertical ? style.scrollPaddingTop() : style.scrollPaddingLeft();
-            return scrollDirection.isVertical ? style.scrollPaddingBottom() : style.scrollPaddingRight();
+        auto scrollPaddingStart = [&] {
+            CheckedRef style = sourceRenderer->style();
+            return Style::evaluate<float>(scrollDirection.isVertical ? style->scrollPaddingTop() : style->scrollPaddingLeft(), scrollContainerSize, style->usedZoomForLength());
         };
-        auto zoom = sourceRenderer->style().usedZoomForLength();
+        auto scrollPaddingEnd = [&] {
+            CheckedRef style = sourceRenderer->style();
+            return Style::evaluate<float>(scrollDirection.isVertical ? style->scrollPaddingBottom() : style->scrollPaddingRight(), scrollContainerSize, style->usedZoomForLength());
+        };
 
         float insetStart = 0;
         float insetEnd = 0;
 
-        if (m_insets.start().isAuto())
-            insetStart = Style::evaluate<float>(scrollPadding(PaddingEdge::Start), scrollContainerSize, zoom);
+        if (m_insets.insets.start().isAuto())
+            insetStart = scrollPaddingStart();
         else
-            insetStart = Style::evaluate<float>(m_insets.start(), scrollContainerSize, Style::ZoomNeeded { });
+            insetStart = Style::evaluate<float>(m_insets.insets.start(), scrollContainerSize, m_insets.zoom);
 
-        if (m_insets.end().isAuto())
-            insetEnd = Style::evaluate<float>(scrollPadding(PaddingEdge::End), scrollContainerSize, zoom);
+        if (m_insets.insets.end().isAuto())
+            insetEnd = scrollPaddingEnd();
         else
-            insetEnd = Style::evaluate<float>(m_insets.end(), scrollContainerSize, Style::ZoomNeeded { });
+            insetEnd = Style::evaluate<float>(m_insets.insets.end(), scrollContainerSize, m_insets.zoom);
 
         StickinessAdjustmentData stickyData;
         if (CheckedPtr stickyContainer = dynamicDowncast<RenderBoxModelObject>(this->stickyContainer().get())) {
@@ -672,9 +684,14 @@ Ref<CSSNumericValue> ViewTimeline::endOffset() const
     return CSSNumericFactory::px(computeTimelineData().rangeEnd);
 }
 
-bool ViewTimeline::matchesAnonymousViewFunctionForSubject(const Style::ViewFunction& viewFunction, const Styleable& subject) const
+bool ViewTimeline::matchesAnonymousViewFunctionForSubject(const Style::ViewFunction& viewFunction, const Style::ZoomFactor& usedZoomForLength, const Styleable& subject) const
 {
-    return isStyleOriginated() && name().isEmpty() && m_insets == viewFunction->insets && axis() == viewFunction->axis && m_subject.styleable() == subject;
+    return isStyleOriginated()
+        && name().isEmpty()
+        && m_insets.insets == viewFunction->insets
+        && m_insets.zoom == usedZoomForLength
+        && axis() == viewFunction->axis
+        && m_subject.styleable() == subject;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData& stickiness)
@@ -698,7 +715,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData:
 
 TextStream& operator<<(TextStream& ts, const ViewTimeline& timeline)
 {
-    return ts << timeline.name() << ' ' << timeline.axis() << ' ' << timeline.insets();
+    return ts << timeline.name() << ' ' << timeline.axis() << ' ' << timeline.insets().insets;
 }
 
 } // namespace WebCore

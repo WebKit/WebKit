@@ -912,7 +912,7 @@ void Styleable::updateCSSViewTimelines(const Style::ComputedStyle* currentStyle,
                 // Nothing to register.
             },
             [&](const Style::CustomIdent& identifier) {
-                styleOriginatedTimelinesController->registerNamedViewTimeline(identifier.value, *this, viewTimeline.axis(), viewTimeline.inset());
+                styleOriginatedTimelinesController->registerNamedViewTimeline(identifier.value, *this, viewTimeline.axis(), viewTimeline.inset(), afterChangeStyle.usedZoomForLength());
                 registeredViewTimelineNames.add(identifier.value);
             }
         );
