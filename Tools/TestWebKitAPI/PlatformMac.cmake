@@ -283,6 +283,7 @@ list(APPEND TestIPC_SOURCES
     ${WEBKIT_DIR}/Platform/EditingRangeClamping.cpp
     ${WEBKIT_DIR}/Platform/Logging.cpp
     ${WEBKIT_DIR}/Platform/mac/MachUtilities.cpp
+    ${WEBKIT_DIR}/Shared/WebFoundTextRange.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
 )
 unset(_ipc_core_sources)

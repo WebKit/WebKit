@@ -512,6 +512,7 @@ if (ENABLE_WEBKIT)
             Tests/IPC/StreamConnectionWorkQueueTests.cpp
             Tests/IPC/ThreadSafeObjectHeapTests.cpp
             Tests/IPC/TransferStringTests.cpp
+            Tests/IPC/WebFoundTextRangeTests.cpp
         )
 
         set(TestIPC_PRIVATE_INCLUDE_DIRECTORIES

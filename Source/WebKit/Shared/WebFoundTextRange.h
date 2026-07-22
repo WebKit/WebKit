@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/MediaPlayerClientIdentifier.h>
+#include <limits>
 #include <wtf/HashTraits.h>
 #include <wtf/text/WTFString.h>
 
@@ -114,10 +115,16 @@ public:
 };
 
 template<> struct HashTraits<WebKit::WebFoundTextRange> : GenericHashTraits<WebKit::WebFoundTextRange> {
-    static WebKit::WebFoundTextRange emptyValue() { return { }; }
+    static WebKit::WebFoundTextRange emptyValue()
+    {
+        return {
+            WebKit::WebFoundTextRange::DOMData { std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max() },
+            Vector<uint64_t> { },
+            0
+        };
+    }
 
     static void constructDeletedValue(WebKit::WebFoundTextRange& slot) { slot.pathToFrame = Vector<uint64_t> { HashTableDeletedValue }; }
     static bool isDeletedValue(const WebKit::WebFoundTextRange& range) { return range.pathToFrame.isHashTableDeletedValue(); }
 };
-
 }

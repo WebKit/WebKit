@@ -62,6 +62,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		CC1FEED000000000000FF002 /* WebFoundTextRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC1FEED000000000000FF001 /* WebFoundTextRange.cpp */; };
 		07275CBC2D01398C002315A5 /* _WebKit_SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */; };
 		07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
@@ -413,6 +414,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CC1FEED000000000000FF001 /* WebFoundTextRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebFoundTextRange.cpp; path = ../../Source/WebKit/Shared/WebFoundTextRange.cpp; sourceTree = SOURCE_ROOT; };
 		07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = _WebKit_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07597D7E2F81DD59000C96D0 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -1318,6 +1320,7 @@
 				IPC/ThreadSafeObjectHeapTests.cpp,
 				IPC/TransferStringObjCTests.mm,
 				IPC/TransferStringTests.cpp,
+				IPC/WebFoundTextRangeTests.cpp,
 			);
 			target = 7B9FC39428A26137007570E7 /* TestIPC */;
 		};
@@ -2402,6 +2405,7 @@
 		7B9FC39B28A26137007570E7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				CC1FEED000000000000FF002 /* WebFoundTextRange.cpp in Sources */,
 			);
 		};
 		7C83DE961D0A590C00FEBCF3 /* Sources */ = {
