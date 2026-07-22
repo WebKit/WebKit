@@ -1223,6 +1223,8 @@ webkit.org/b/310413 [ arm64 ] compositing/backing/animate-into-view.html [ Failu
 
 webkit.org/b/309382 [ arm64 ] fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
 
+webkit.org/b/319953 [ arm64 ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
+
 webkit.org/b/310415 fast/canvas/canvas-createPattern-fillRect-shadow.html [ Failure Pass ]
 
 webkit.org/b/309633 [ arm64 ] fast/text/hyphenate-locale.html [ Failure ]
