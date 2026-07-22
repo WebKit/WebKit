@@ -4571,6 +4571,57 @@ void testVectorShrImmediate()
     testVectorShrImmediateForLane<uint64_t, int64_t>(SIMDLane::i64x2, SIMDSignMode::Signed, 32, 0xFFFFFFFF00000000ull);
     testVectorShrImmediateForLane<uint64_t, int64_t>(SIMDLane::i64x2, SIMDSignMode::Signed, 63, 0x8000000000000000ull);
 }
+
+// Verifies the B3ReduceStrength peephole that rewrites VectorZip{Lower,Higher}(x, zeroConstant)
+// into an unsigned VectorExtend{Low,High}(x): zip-with-zero interleaves each narrow lane with a
+// zero lane, which is exactly a zero-extension (uxtl / uxtl2). NarrowT/WideT are the source and
+// destination lane element types.
+template<typename NarrowT, typename WideT>
+static void testVectorZipZeroExtendForLane(SIMDLane narrowLane, bool high)
+{
+    if constexpr (!isARM64())
+        return;
+
+    alignas(16) v128_t vectors[2];
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<void*>(proc, root);
+    Value* address = arguments[0];
+    Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* zero = root->appendNew<Const128Value>(proc, Origin(), vectorAllZeros());
+    B3::Opcode zipOp = high ? VectorZipHigher : VectorZipLower;
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), zipOp, B3::V128, narrowLane, SIMDSignMode::None, input, zero);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address, static_cast<int32_t>(sizeof(v128_t)));
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    constexpr unsigned narrowLanes = sizeof(v128_t) / sizeof(NarrowT);
+    constexpr unsigned wideLanes = sizeof(v128_t) / sizeof(WideT);
+    for (unsigned i = 0; i < narrowLanes; ++i)
+        reinterpret_cast<NarrowT*>(&vectors[0])[i] = static_cast<NarrowT>(0x80 + i * 0x11);
+    invoke<void>(*code, vectors);
+
+    // Lower zips the low half of the input; higher zips the high half.
+    unsigned base = high ? wideLanes : 0;
+    for (unsigned i = 0; i < wideLanes; ++i) {
+        WideT expected = static_cast<WideT>(reinterpret_cast<NarrowT*>(&vectors[0])[base + i]);
+        CHECK(reinterpret_cast<WideT*>(&vectors[1])[i] == expected);
+    }
+}
+
+void testVectorZipWithZeroIsZeroExtend()
+{
+    if constexpr (!isARM64())
+        return;
+
+    for (bool high : { false, true }) {
+        testVectorZipZeroExtendForLane<uint8_t, uint16_t>(SIMDLane::i8x16, high);
+        testVectorZipZeroExtendForLane<uint16_t, uint32_t>(SIMDLane::i16x8, high);
+        testVectorZipZeroExtendForLane<uint32_t, uint64_t>(SIMDLane::i32x4, high);
+    }
+}
+
 // Helper: build a 3-child (binary) VectorSwizzle with the given byte pattern, verify result.
 static void testBinarySwizzlePattern(const char*, const uint8_t pattern[16], v128_t inputA, v128_t inputB, v128_t expected)
 {

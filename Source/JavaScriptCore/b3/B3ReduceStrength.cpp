@@ -119,6 +119,16 @@ namespace B3ReduceStrengthInternal {
 static constexpr bool verbose = false;
 }
 
+static inline std::optional<SIMDLane> wideningLaneFor(SIMDLane lane)
+{
+    switch (lane) {
+    case SIMDLane::i8x16: return SIMDLane::i16x8;
+    case SIMDLane::i16x8: return SIMDLane::i32x4;
+    case SIMDLane::i32x4: return SIMDLane::i64x2;
+    default: return std::nullopt;
+    }
+}
+
 struct CanonicalShuffleInfo {
     B3::Opcode opcode;
     SIMDLane lane;
@@ -3923,6 +3933,20 @@ private:
         }
 
         case VectorZipLower: {
+            // Turn this: VectorZipLower(x, zeroConstant) with a widenable integer lane
+            // Into this: VectorExtendLow(x, widerLane, Unsigned)
+            //
+            // zip1(x, 0) interleaves each narrow element of x's low half with a zero
+            // element, which is exactly an unsigned widening of the low half (uxtl / pmovzx).
+            //   zip i8x16  -> i8 ->i16 zero extension
+            //   zip i16x8  -> i16->i32 zero extension
+            //   zip i32x4  -> i32->i64 zero extension
+            if (SIMDValue* zip = m_value->as<SIMDValue>(); zip->child(1)->isV128(vectorAllZeros())) {
+                if (auto widerLane = wideningLaneFor(zip->simdLane())) {
+                    replaceWithNew<SIMDValue>(m_value->origin(), VectorExtendLow, B3::V128, *widerLane, SIMDSignMode::Unsigned, zip->child(0));
+                    break;
+                }
+            }
             // Turn this: VectorZipLower(i64x2, i64x2)
             // Into this: VectorDupElement(i64x2, 0)
             if (tryReduceSameInputShuffleToDup(0))
@@ -3931,6 +3955,14 @@ private:
         }
 
         case VectorZipHigher: {
+            // Turn this: VectorZipHigher(x, zeroConstant) with a widenable integer lane
+            // Into this: VectorExtendHigh(x, widerLane, Unsigned)
+            if (SIMDValue* zip = m_value->as<SIMDValue>(); zip->child(1)->isV128(vectorAllZeros())) {
+                if (auto widerLane = wideningLaneFor(zip->simdLane())) {
+                    replaceWithNew<SIMDValue>(m_value->origin(), VectorExtendHigh, B3::V128, *widerLane, SIMDSignMode::Unsigned, zip->child(0));
+                    break;
+                }
+            }
             // Turn this: VectorZipHigher(i64x2, i64x2)
             // Into this: VectorDupElement(i64x2, 1)
             if (tryReduceSameInputShuffleToDup(1))
