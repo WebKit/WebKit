@@ -35,6 +35,10 @@
 #include "StyleColorOptions.h"
 #include <wtf/OptionSet.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 namespace CSS {
 
@@ -65,11 +69,18 @@ bool isCurrentColorKeyword(CSSValueID id)
 bool isSystemColorKeyword(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#css-system-colors
-    return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || id == CSSValueText || isDeprecatedSystemColorKeyword(id);
+    return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || isDeprecatedSystemColorKeyword(id);
 }
 
 bool isDeprecatedSystemColorKeyword(CSSValueID id)
 {
+    if (id == CSSValueText)
+#if PLATFORM(COCOA)
+        return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTextValueForCSSColor);
+#else
+        return false;
+#endif
+
     // https://drafts.csswg.org/css-color-4/#deprecated-system-colors
     return (id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu;
 }

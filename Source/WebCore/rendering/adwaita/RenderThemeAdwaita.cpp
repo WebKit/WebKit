@@ -299,7 +299,6 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
 
     case CSSValueCanvastext:
     case CSSValueFieldtext:
-    case CSSValueText:
         if (useDarkAppearance)
             return { Color::white, Color::Flags::Semantic };
         return { Color::black, Color::Flags::Semantic };

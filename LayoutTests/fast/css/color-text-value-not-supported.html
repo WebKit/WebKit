@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>color: text should not parse</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+
+// `text` was a non-standard, WebKit-only alias for `CanvasText`. It has been
+// removed (https://bugs.webkit.org/show_bug.cgi?id=245626) and should no
+// longer be accepted as a color keyword.
+test_invalid_value("color", "text");
+test_invalid_value("background-color", "text");
+test_invalid_value("border-color", "text");
+</script>
+</body>
+</html>

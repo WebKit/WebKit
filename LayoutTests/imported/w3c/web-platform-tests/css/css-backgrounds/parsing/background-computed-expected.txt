@@ -36,6 +36,6 @@ PASS Property background-size value 'contain'
 PASS Property background-size value 'auto 1px, 2% 3%'
 PASS Property background-size value 'auto 1px, 2% 3%, contain'
 PASS Property background-size value 'auto 1px, 2% 3%, contain, 7px 8px'
-FAIL background shorthand with 'border-area text' computes background-clip correctly assert_equals: expected "border-area text" but got "border-area"
+FAIL background shorthand with 'border-area text' computes background-clip correctly assert_equals: expected "border-area text" but got "border-box"
 FAIL background shorthand with 'text border-area' computes background-clip correctly assert_equals: expected "border-area text" but got "border-box"
 

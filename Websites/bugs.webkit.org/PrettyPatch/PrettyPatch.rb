@@ -527,7 +527,7 @@ pre, .text {
 .LinkContainer label:after,
 .LinkContainer a:after {
   content: " | ";
-  color: text;
+  color: CanvasText;
 }
 
 .LinkContainer a:last-of-type:after {
