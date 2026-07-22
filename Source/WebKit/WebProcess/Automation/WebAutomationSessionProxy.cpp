@@ -927,6 +927,21 @@ void WebAutomationSessionProxy::getComputedLabel(WebCore::PageIdentifier pageID,
     completionHandler(std::nullopt, axObject->computedLabel());
 }
 
+void WebAutomationSessionProxy::consumeUserActivation(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, CompletionHandler<void(std::optional<String>, bool)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : (page ? &page->mainWebFrame() : nullptr);
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
+    if (!window) {
+        String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        completionHandler(windowNotFoundErrorType, false);
+        return;
+    }
+
+    completionHandler(std::nullopt, window->consumeTransientActivation());
+}
+
 void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

@@ -1636,6 +1636,39 @@ void Session::getComputedRole(const String& elementID, Function<void(CommandResu
     });
 }
 
+void Session::consumeUserActivation(Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!m_currentBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTF::move(result));
+            return;
+        }
+        auto parameters = JSON::Object::create();
+        parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
+        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
+        m_host->sendCommandToBackend("consumeUserActivation"_s, WTF::move(parameters), [protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTF::move(response.responseObject)));
+                return;
+            }
+
+            auto consume = response.responseObject->getBoolean("consume"_s);
+            if (!consume) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not retrieve user activation consumption result from browsing context"_s));
+                return;
+            }
+
+            auto resultValue = JSON::Value::create(consume.value());
+            completionHandler(CommandResult::success(WTF::move(resultValue)));
+        });
+    });
+}
+
 void Session::getComputedLabel(const String& elementID, Function<void(CommandResult&&)>&& completionHandler)
 {
     if (!m_currentBrowsingContext) {

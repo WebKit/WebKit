@@ -116,6 +116,7 @@ private:
     void isElementEnabled(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getComputedRole(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getComputedLabel(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void consumeUserActivation(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void isElementDisplayed(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClick(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClear(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

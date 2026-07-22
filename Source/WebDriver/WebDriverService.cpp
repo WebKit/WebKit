@@ -270,6 +270,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/window/maximize", &WebDriverService::maximizeWindow },
     { HTTPMethod::Post, "/session/$sessionId/window/minimize", &WebDriverService::minimizeWindow },
     { HTTPMethod::Post, "/session/$sessionId/window/fullscreen", &WebDriverService::fullscreenWindow },
+    { HTTPMethod::Post, "/session/$sessionId/window/consume-user-activation", &WebDriverService::consumeUserActivation },
 
     { HTTPMethod::Post, "/session/$sessionId/element", &WebDriverService::findElement },
     { HTTPMethod::Post, "/session/$sessionId/elements", &WebDriverService::findElements },
@@ -1931,6 +1932,16 @@ void WebDriverService::getComputedRole(RefPtr<JSON::Object>&& parameters, Functi
         return;
 
     m_session->getComputedRole(elementID.value(), WTF::move(completionHandler));
+}
+
+void WebDriverService::consumeUserActivation(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // consume-user-activation extension command.
+    // https://html.spec.whatwg.org/#user-activation-user-agent-automation
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    m_session->consumeUserActivation(WTF::move(completionHandler));
 }
 
 void WebDriverService::getComputedLabel(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

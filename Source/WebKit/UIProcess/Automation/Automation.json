@@ -714,6 +714,18 @@
             "async": true
         },
         {
+            "name": "consumeUserActivation",
+            "description": "Consume the transient user activation of the browsing context's active window.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame whose active window is targeted. The main frame is used if this parameter is empty string." }
+            ],
+            "returns": [
+                { "name": "consume", "type": "boolean", "description": "True if transient activation was present and was consumed; otherwise false." }
+            ],
+            "async": true
+        },
+        {
             "name": "selectOptionElement",
             "description": "Selects the given option element. In case of container with multiple options enabled, the element selectedness is toggled.",
             "parameters": [
