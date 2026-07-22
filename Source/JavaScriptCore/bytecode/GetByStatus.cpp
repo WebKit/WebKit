@@ -658,6 +658,8 @@ bool GetByStatus::makesCalls() const
 
 GetByStatus GetByStatus::slowVersion() const
 {
+    // FIXME: This discards the Megamorphic state, so a recompile after exits loses the chance
+    // to emit megamorphic load nodes even though the IC already went megamorphic.
     if (observedPropertyInlineCacheSlowPath())
         return GetByStatus(makesCalls() ? ObservedSlowPathAndMakesCalls : ObservedTakesSlowPath, wasSeenInJIT());
     return GetByStatus(makesCalls() ? MakesCalls : LikelyTakesSlowPath, wasSeenInJIT());

@@ -7274,6 +7274,8 @@ void ByteCodeParser::handleGetPrivateNameById(
 
     ASSERT(!getByStatus.isCustomAccessor());
     ASSERT(!getByStatus.makesCalls());
+    // FIXME: When getByStatus.isMegamorphic(), we should emit a megamorphic load node directly
+    // instead of a generic IC node, like handleGetById does with GetByIdMegamorphic.
     if (!getByStatus.isSimple() || !getByStatus.numVariants() || !Options::useAccessInlining()) {
         auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf });
         set(destination, addToGraph(GetPrivateNameById, OpInfo(data), OpInfo(prediction), base, nullptr));
@@ -9404,6 +9406,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (compileSingleIdentifier)
                 handleGetPrivateNameById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus);
             else {
+                // FIXME: When getByStatus.isMegamorphic(), we should emit a megamorphic load node
+                // directly, like get_by_val does with GetByValMegamorphic.
                 Node* node = addToGraph(GetPrivateName, OpInfo(), OpInfo(prediction), base, property);
                 m_exitOK = false;
                 set(bytecode.m_dst, node);

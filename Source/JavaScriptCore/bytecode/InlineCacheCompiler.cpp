@@ -2999,7 +2999,10 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         slowCases.append(jit.loadCacheableIdentifierImpl(propertyGPR, scratch4GPR, m_propertyCache.propertyIsString, m_propertyCache.propertyIsSymbol));
 
-        slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+        if (m_propertyCache.accessType == AccessType::GetPrivateName)
+            slowCases.append(jit.loadMegamorphicPrivateProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+        else
+            slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
@@ -3030,25 +3033,36 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         CCallHelpers::JumpList slowCases;
 
-        jit.move(baseGPR, scratch5GPR);
-        auto isString = jit.branchIfString(scratch5GPR);
-        auto label = jit.label();
-        if (useHandlerIC()) {
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch4GPR);
-            slowCases.append(jit.loadMegamorphicProperty(vm, scratch5GPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
-        } else
-            slowCases.append(jit.loadMegamorphicProperty(vm, scratch5GPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+        if (m_propertyCache.accessType == AccessType::GetPrivateNameById) {
+            if (useHandlerIC()) {
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch4GPR);
+                slowCases.append(jit.loadMegamorphicPrivateProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+            } else
+                slowCases.append(jit.loadMegamorphicPrivateProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
-        allocator.restoreReusedRegistersByPopping(jit, preservedState);
-        succeed();
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            succeed();
+        } else {
+            jit.move(baseGPR, scratch5GPR);
+            auto isString = jit.branchIfString(scratch5GPR);
+            auto label = jit.label();
+            if (useHandlerIC()) {
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch4GPR);
+                slowCases.append(jit.loadMegamorphicProperty(vm, scratch5GPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+            } else
+                slowCases.append(jit.loadMegamorphicProperty(vm, scratch5GPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
-        isString.link(jit);
-        if (useHandlerIC()) {
-            jit.loadPtr(CCallHelpers::Address(m_propertyCache.m_propertyCacheGPR, PropertyInlineCache::offsetOfGlobalObject()), scratch5GPR);
-            jit.loadPtr(CCallHelpers::Address(scratch5GPR, JSGlobalObject::offsetOfStringPrototype()), scratch5GPR);
-        } else
-            jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->stringPrototype()), scratch5GPR);
-        jit.jump().linkTo(label, jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            succeed();
+
+            isString.link(jit);
+            if (useHandlerIC()) {
+                jit.loadPtr(CCallHelpers::Address(m_propertyCache.m_propertyCacheGPR, PropertyInlineCache::offsetOfGlobalObject()), scratch5GPR);
+                jit.loadPtr(CCallHelpers::Address(scratch5GPR, JSGlobalObject::offsetOfStringPrototype()), scratch5GPR);
+            } else
+                jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->stringPrototype()), scratch5GPR);
+            jit.jump().linkTo(label, jit);
+        }
 
         if (allocator.didReuseRegisters()) {
             slowCases.link(&jit);
@@ -4920,6 +4934,25 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
                     return nullptr;
             }
 
+            return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicLoad, nullptr);
+        }
+        // FIXME: Private puts (DefinePrivateNameById / SetPrivateNameById), brand checks
+        // (Has/Check/SetPrivateBrand), and HasPrivateName could fold to megamorphic cases similarly.
+        case AccessType::GetPrivateNameById:
+        case AccessType::GetPrivateName: {
+            for (auto& accessCase : cases) {
+                if (accessCase->type() != AccessCase::Load)
+                    return nullptr;
+
+                if (accessCase->viaGlobalProxy())
+                    return nullptr;
+
+                if (accessCase->usesPolyProto())
+                    return nullptr;
+            }
+
+            if (m_propertyCache.accessType == AccessType::GetPrivateNameById)
+                return AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, useHandlerIC() ? nullptr : m_propertyCache.m_identifier);
             return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicLoad, nullptr);
         }
 #endif
