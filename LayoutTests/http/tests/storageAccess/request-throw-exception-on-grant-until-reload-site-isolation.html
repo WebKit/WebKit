@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +10,9 @@
         jsTestIsAsync = true;
         testEnded = false;
         testStarted = false;
+        var mainFramePid = window.internals ? String(window.internals.processIdentifier) : null;
+        var iframe2Pid = null;
+        var iframe1PidBefore = null;
 
         function endTest() {
             if (testEnded)
@@ -25,12 +29,46 @@
                 endTest();
                 return;
             }
-            
-            if (event.data.startsWith("iframe 1 pid: "))
+
+            if (event.data.startsWith("iframe 2 pid: ")) {
+                iframe2Pid = event.data.substring("iframe 2 pid: ".length);
                 return;
+            }
+            
+            if (event.data.startsWith("iframe 1 pid: ")) {
+                var pid = event.data.substring("iframe 1 pid: ".length);
+                if (iframe1PidBefore === null) {
+                    iframe1PidBefore = pid;
+                    if (iframe2Pid !== null) {
+                        if (iframe1PidBefore === iframe2Pid)
+                            testPassed("iframe 1 and iframe 2 are in the same process");
+                        else
+                            testFailed("iframe 1 and iframe 2 are not in the same process");
+                    }
+                    if (mainFramePid !== null) {
+                        if (iframe1PidBefore !== mainFramePid)
+                            testPassed("iframe 1 is in a different process from the main frame");
+                        else
+                            testFailed("iframe 1 is in the same process as the main frame");
+                    }
+                } else {
+                    if (pid !== iframe1PidBefore)
+                        testPassed("iframe 1 was reloaded into a different process");
+                    else
+                        testFailed("iframe 1 was not reloaded into a different process");
+                    if (mainFramePid !== null) {
+                        if (pid !== mainFramePid)
+                            testPassed("iframe 1 is still in a different process from the main frame after reload");
+                        else
+                            testFailed("iframe 1 is in the same process as the main frame after reload");
+                    }
+                }
+                return;
+            }
 
             if (event.data == "NoModificationAllowedError") {
                 testPassed("requestStorageAccess result: " + event.data);
+                pidMessage = true;
                 return;
             }
 
@@ -83,6 +121,7 @@
     </script>
 </head>
 <body>
+    <iframe src="http://localhost:8000/storageAccess/resources/pid-iframe.html"></iframe>
     <iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="frameLoaded()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-throw-exception-on-grant-until-reload-iframe.html"></iframe>
 </body>
 </html>

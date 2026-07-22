@@ -3592,4 +3592,16 @@ void NetworkProcess::isEnhancedSecurityLink(const URL& url, CompletionHandler<vo
 }
 #endif
 
+void NetworkProcess::needsProcessSwapForStorageAccessReload(PAL::SessionID sessionID, WebCore::FrameIdentifier frameID, const WebCore::RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    CheckedPtr session = networkSession(sessionID);
+    if (!session)
+        return completionHandler(false);
+
+    if (RefPtr resourceLoadStatistics = session->resourceLoadStatistics())
+        return completionHandler(resourceLoadStatistics->needsProcessSwapForStorageAccessReload(frameID, domain));
+
+    completionHandler(false);
+}
+
 } // namespace WebKit

@@ -1,0 +1,10 @@
+<html>
+<head>
+    <script>
+        function messageToTop(message) {
+            top.postMessage("iframe 2 pid: " + window.internals.processIdentifier, "http://127.0.0.1:8000");
+        }
+    </script>
+</head>
+<body onload="messageToTop()"></body>
+</html>

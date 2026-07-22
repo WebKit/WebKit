@@ -5977,6 +5977,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         websiteDataStore = websiteDataStore.copyRef(),
         continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
     ](FrameProcess* sharedProcess) mutable {
+        if (sharedProcess && navigation->needsProcessSwapForStorageAccessReload())
+            sharedProcess = nullptr;
         if (sharedProcess) {
             navigation->setPendingSharedProcess(*sharedProcess);
             ASSERT(!sharedProcess->process().isInProcessCache());
@@ -8421,6 +8423,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         if (navigation)
             navigation->setClientNavigationActivity({ });
 
+        m_pendingStorageAccessReloadFrameCount = 0;
         callLoadCompletionHandlersIfNecessary(false);
 
         // Update current main frame when provisional main frame load fails, because it
@@ -8583,6 +8586,9 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     }
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didCommitLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
+
+    if (frame->isMainFrame())
+        m_pendingStorageAccessReloadFrameCount = 0;
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
@@ -9721,6 +9727,9 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     else if (m_needsInitialLinkDecorationFilteringData)
         sendCachedLinkDecorationFilteringData();
 #endif
+    ShouldWaitForStorageAccessReloadCheck shouldWaitForStorageAccessReloadCheck = ShouldWaitForStorageAccessReloadCheck::No;
+    if (!frame.isMainFrame() && protect(preferences())->siteIsolationEnabled() && m_pendingStorageAccessReloadFrameCount)
+        shouldWaitForStorageAccessReloadCheck = ShouldWaitForStorageAccessReloadCheck::Yes;
 
     transaction = std::nullopt;
 
@@ -9910,7 +9919,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         }
         completionHandlerWrapper(policyAction);
 
-    }, ShouldExpectSafeBrowsingResult::No, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLink);
+    }, ShouldExpectSafeBrowsingResult::No, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLink, shouldWaitForStorageAccessReloadCheck);
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), *navigation, frame.isMainFrame());
     if (shouldWaitForInitialLinkDecorationFilteringData == ShouldWaitForInitialLinkDecorationFilteringData::Yes)
@@ -9921,6 +9930,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (shouldWaitForEnhancedSecurityLink == ShouldWaitForEnhancedSecurityLinkCheck::Yes)
         beginEnhancedSecurityLinkCheck(request.url(), *navigation, listener);
 #endif
+    if (shouldWaitForStorageAccessReloadCheck == ShouldWaitForStorageAccessReloadCheck::Yes)
+        beginStorageAccessReloadCheck(frame.frameID(), RegistrableDomain { request.url() }, *navigation, listener);
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url(), websiteDataStore().configuration().enableInAppBrowserPrivacyForTesting());
     auto host = shouldSendSecurityOriginData ? frameInfo.securityOrigin.host() : request.url().host();
@@ -10089,7 +10100,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, N
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
 
         receivedPolicyDecision(policyAction, nullptr, std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, std::nullopt, WTF::move(completionHandler));
-    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No);
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No, ShouldWaitForStorageAccessReloadCheck::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationAction.get(), request, frameName, WTF::move(listener));
@@ -10270,7 +10281,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         }
 #endif
         completionHandlerWrapper(policyAction);
-    }, expectSafeBrowsing , ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No);
+    }, expectSafeBrowsing , ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No, ShouldWaitForStorageAccessReloadCheck::No);
     if (expectSafeBrowsing == ShouldExpectSafeBrowsingResult::Yes && navigation) {
         navigation->whenSafeBrowsingCheckCompletes([listener] mutable {
             listener->didReceiveSafeBrowsingResults();
@@ -13873,6 +13884,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_nowPlayingMetadataObservers.clear();
     m_nowPlayingMetadataObserverForTesting = nullptr;
+
+    m_pendingStorageAccessReloadFrameCount = 0;
 
     if (RefPtr pageClient = this->pageClient())
         pageClient->hasActiveNowPlayingSessionChanged(false);
@@ -18617,6 +18630,30 @@ void WebPageProxy::beginEnhancedSecurityLinkCheck(const URL& url, API::Navigatio
         networkProcess->sendWithAsyncReply(Messages::NetworkProcess::IsEnhancedSecurityLink(url), WTF::move(completionHandler));
 }
 #endif
+
+void WebPageProxy::beginStorageAccessReloadCheck(WebCore::FrameIdentifier frameID, const WebCore::RegistrableDomain& domain, API::Navigation& navigation, WebFramePolicyListenerProxy& listener)
+{
+    ASSERT(m_pendingStorageAccessReloadFrameCount);
+    m_pendingStorageAccessReloadFrameCount--;
+
+    auto url = navigation.currentRequest().url();
+    auto completionHandler = [navigation = protect(navigation), url, listener = protect(listener)] (bool needsSwap) {
+        if (url == navigation->currentRequest().url()) {
+            navigation->setNeedsProcessSwapForStorageAccessReload(needsSwap);
+            listener->didReceiveStorageAccessReloadCheckResults();
+        }
+    };
+
+    if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::NeedsProcessSwapForStorageAccessReload(websiteDataStore().sessionID(), frameID, domain), WTF::move(completionHandler));
+    else
+        completionHandler(false);
+}
+
+void WebPageProxy::storageAccessReloadableFrameRecorded()
+{
+    m_pendingStorageAccessReloadFrameCount++;
+}
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)

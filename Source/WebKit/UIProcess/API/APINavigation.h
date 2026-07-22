@@ -209,6 +209,9 @@ public:
     void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }
     bool isEnhancedSecurityLinkForCurrentSite() const { return m_isEnhancedSecurityLinkForCurrentSite; }
 
+    void setNeedsProcessSwapForStorageAccessReload(bool value) { m_needsProcessSwapForStorageAccessReload = value; }
+    bool needsProcessSwapForStorageAccessReload() const { return m_needsProcessSwapForStorageAccessReload; }
+
     WebKit::FrameState* backForwardFrameState() const { return m_backForwardFrameState.get(); }
     void setBackForwardFrameState(RefPtr<WebKit::FrameState>&& frameState) { m_backForwardFrameState = WTF::move(frameState); }
 
@@ -248,6 +251,7 @@ private:
     bool m_hadSafeBrowsingWarning : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
     bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
+    bool m_needsProcessSwapForStorageAccessReload : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };

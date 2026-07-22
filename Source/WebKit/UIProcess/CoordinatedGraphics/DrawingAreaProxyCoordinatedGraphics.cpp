@@ -243,7 +243,12 @@ bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
 
 void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    ASSERT(!isInAcceleratedCompositingMode());
+    // Under Site Isolation, a process swap within an iframe may send EnterAcceleratedCompositingMode
+    // while the drawing area is already compositing (from the previous process). Treat it as an update.
+    if (isInAcceleratedCompositingMode()) {
+        updateAcceleratedCompositingMode(layerTreeContext);
+        return;
+    }
 #if !PLATFORM(WPE) && !PLATFORM(GTK)
     m_backingStore = nullptr;
 #endif

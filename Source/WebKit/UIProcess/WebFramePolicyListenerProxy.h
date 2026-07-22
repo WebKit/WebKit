@@ -45,15 +45,16 @@ enum class ShouldExpectAppBoundDomainResult : bool { No, Yes };
 enum class ShouldWaitForInitialLinkDecorationFilteringData : bool { No, Yes };
 enum class ShouldWaitForSiteHasStorageCheck : bool { No, Yes };
 enum class ShouldWaitForEnhancedSecurityLinkCheck : bool { No, Yes };
+enum class ShouldWaitForStorageAccessReloadCheck : bool { No, Yes };
 enum class WasNavigationIntercepted : bool { No, Yes };
 
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener>, public CanMakeWeakPtr<WebFramePolicyListenerProxy> {
 public:
 
     using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>;
-    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLinkCheck)
+    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLinkCheck, ShouldWaitForStorageAccessReloadCheck shouldWaitForStorageAccessReloadCheck)
     {
-        return adoptRef(*new WebFramePolicyListenerProxy(WTF::move(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLinkCheck));
+        return adoptRef(*new WebFramePolicyListenerProxy(WTF::move(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLinkCheck, shouldWaitForStorageAccessReloadCheck));
     }
     ~WebFramePolicyListenerProxy();
 
@@ -67,9 +68,10 @@ public:
     void didReceiveInitialLinkDecorationFilteringData();
     void didReceiveSiteHasStorageResults();
     void didReceiveEnhancedSecurityLinkResults();
+    void didReceiveStorageAccessReloadCheckResults();
 
 private:
-    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck);
+    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck, ShouldWaitForStorageAccessReloadCheck);
 
     std::optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
     std::optional<std::optional<NavigatingToAppBoundDomain>> m_isNavigatingToAppBoundDomain;
@@ -77,6 +79,7 @@ private:
     bool m_doneWaitingForSiteHasStorage { false };
     bool m_doneWaitingForEnhancedSecurityLink { false };
     bool m_doneWaitingForLinkDecorationFilteringData { false };
+    bool m_doneWaitingForStorageAccessReloadCheck { false };
     Reply m_reply;
 };
 

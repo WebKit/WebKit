@@ -231,6 +231,7 @@ public:
     void recordFrameLoadForStorageAccess(WebPageProxyIdentifier, WebCore::FrameIdentifier, const WebCore::RegistrableDomain&);
     void clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier);
     void clearFrameLoadRecordsForStorageAccess(WebPageProxyIdentifier);
+    bool needsProcessSwapForStorageAccessReload(WebCore::FrameIdentifier, const WebCore::RegistrableDomain&);
 
     void setStorageAccessPermissionForTesting(bool, WebPageProxyIdentifier, RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain, CompletionHandler<void()>&&);
     void wasRevokedStorageAccessPermissionInPage(WebPageProxyIdentifier);
@@ -284,6 +285,7 @@ private:
     };
     using StorageAccessRequestRecordKey = std::pair<WebCore::FrameIdentifier, RegistrableDomain>;
     HashMap<StorageAccessRequestRecordKey, StorageAccessRequestRecordValue> m_storageAccessRequestRecords;
+    HashSet<StorageAccessRequestRecordKey> m_framesAwaitingStorageAccessReload;
     HashMap<std::pair<RegistrableDomain, RegistrableDomain>, WeakHashSet<StorageAccessPermissionChangeObserver>> m_storageAccessPermissionChangeObservers;
 };
 
