@@ -1253,11 +1253,6 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
         tree = nullptr;
     }
 
-    // A new isolated tree needs to be created. Initialize the GeometryManager primary screen rect to be ready when needed.
-    m_geometryManager->initializePrimaryScreenRect();
-    // Schedule a paint to cache the rects for the objects in this new isolated tree.
-    scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
-
     if (clientIsInTestMode()) [[unlikely]] {
         // For test clients (LayoutTests / XCTests) build the whole isolated tree synchronously.
         // This is necessary because tests assume that APIs like accessibleElementById can
@@ -1276,6 +1271,14 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     }
 
     return tree;
+}
+
+void AXObjectCache::initializeIsolatedTreeGeometry()
+{
+    // Cache the primary display's rect on the geometry manager (its height is exposed to AX clients as
+    // AXPrimaryScreenHeight) and schedule an immediate object-region paint to cache per-object rects.
+    m_geometryManager->initializePrimaryScreenRect();
+    scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
 }
 
 void AXObjectCache::buildIsolatedTree()
