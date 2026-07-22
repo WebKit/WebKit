@@ -114,6 +114,10 @@ public:
     WEBCORE_EXPORT String urlStringSuitableForLoading(String& title);
 #endif
 
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT static bool isFilePasteboardType(const String&);
+#endif
+
 private:
 #if PLATFORM(IOS_FAMILY)
     bool allowReadingURLAtIndex(const URL&, int index) const;
