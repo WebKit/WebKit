@@ -64,7 +64,7 @@ class VideoMediaSampleRenderer;
 class AudioVideoRendererAVFObjC
     : public AudioVideoRenderer
     , public WebAVSampleBufferListenerClient
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererAVFObjC>
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererAVFObjC, WTF::DestructionThread::Main>
     , private PeriodicSharedTimer::Client
     , private LoggerHelper {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioVideoRendererAVFObjC, WEBCORE_EXPORT);
