@@ -376,10 +376,10 @@ public:
         {
             ASSERT(from < length);
             auto result = input[from];
-            if (decodeSurrogatePairs && from + 1 < length) {
-                if (U16_IS_LEAD(result) && U16_IS_TRAIL(input[from + 1]))
+            if (decodeSurrogatePairs) {
+                if (U16_IS_LEAD(result) && from + 1 < length && U16_IS_TRAIL(input[from + 1]))
                     return U16_GET_SUPPLEMENTARY(result, input[from + 1]);
-                if (U16_IS_TRAIL(result) && U16_IS_LEAD(input[from + 1]))
+                if (U16_IS_TRAIL(result) && from > 0 && U16_IS_LEAD(input[from - 1]))
                     return errorCodePoint;
             }
             return result;
