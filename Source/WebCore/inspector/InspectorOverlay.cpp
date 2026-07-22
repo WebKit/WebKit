@@ -1140,10 +1140,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
 static bool NODELETE rendererIsFlexboxItem(RenderObject& renderer)
 {
-    if (auto* parentFlexRenderer = dynamicDowncast<RenderFlexibleBox>(renderer.parent()))
-        return !parentFlexRenderer->orderIterator().shouldSkipChild(renderer);
-
-    return false;
+    return is<RenderFlexibleBox>(renderer.parent()) && !renderer.isOutOfFlowPositioned() && !renderer.isExcludedFromNormalLayout();
 }
 
 static bool NODELETE rendererIsGridItem(RenderObject& renderer)
@@ -2246,11 +2243,9 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
     Vector<RenderBox*> renderChildrenInDOMOrder;
     bool hasCustomOrder = false;
 
-    auto childOrderIterator = renderFlex->orderIterator();
-    for (CheckedPtr<RenderBox> renderChild = childOrderIterator.first(); renderChild; renderChild = childOrderIterator.next()) {
-        if (childOrderIterator.shouldSkipChild(*renderChild))
-            continue;
-        renderChildrenInFlexOrder.append(renderChild);
+    for (auto& flexItem : renderFlex->flexItems()) {
+        if (flexItem)
+            renderChildrenInFlexOrder.append(flexItem.get());
     }
 
     if (flexOverlay.config.showOrderNumbers) {

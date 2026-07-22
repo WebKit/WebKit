@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/FlexFormattingContext.h>
-#include <WebCore/OrderIterator.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -52,8 +51,8 @@ private:
     void prepareFlexItemForPositionedLayout(RenderBox&);
     const RenderBox* flexItemForFirstBaseline() const;
     const RenderBox* flexItemForLastBaseline() const;
-    const RenderBox* firstBaselineCandidateOnLine(OrderIterator, size_t numberOfItemsOnLine) const;
-    const RenderBox* lastBaselineCandidateOnLine(OrderIterator, size_t numberOfItemsOnLine) const;
+    const RenderBox* firstBaselineCandidateOnLine(bool reversed, size_t numberOfItemsOnLine) const;
+    const RenderBox* lastBaselineCandidateOnLine(bool reversed, size_t numberOfItemsOnLine) const;
     LayoutUnit staticMainAxisPositionForPositionedFlexItem(const RenderBox&);
     LayoutUnit staticCrossAxisPositionForPositionedFlexItem(const RenderBox&);
     LayoutUnit staticInlinePositionForPositionedFlexItem(const RenderBox&);

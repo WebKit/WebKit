@@ -30,6 +30,7 @@
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderLayer.h"
@@ -67,15 +68,18 @@ void FlexLayout::prepareFlexItemForPositionedLayout(RenderBox& flexItem)
 
 FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren)
 {
-    // Build the flex container's flex items in order-modified document order, skipping out-of-flow children (which are not flex items).
+    // Out-of-flow children are not flex items, but the container still establishes their static position.
+    for (auto& child : childrenOfType<RenderBox>(flexBox())) {
+        if (child.isOutOfFlowPositioned())
+            prepareFlexItemForPositionedLayout(child);
+    }
+
+    // Build the flex items from the container's in-flow children in order-modified document order.
     FlexLayoutItems flexItems;
-    auto& orderIterator = flexBox().m_orderIterator;
-    for (CheckedPtr flexItem = orderIterator.first(); flexItem; flexItem = orderIterator.next()) {
-        if (orderIterator.shouldSkipChild(*flexItem)) {
-            if (flexItem->isOutOfFlowPositioned())
-                prepareFlexItemForPositionedLayout(*flexItem);
+    for (auto& renderer : flexBox().flexItems()) {
+        CheckedPtr flexItem = renderer.get();
+        if (!flexItem)
             continue;
-        }
         auto everHadLayout = flexItem->everHadLayout();
         if (CheckedPtr flexibleBox = dynamicDowncast<RenderFlexibleBox>(flexItem.get()))
             flexibleBox->resetHasDefiniteHeight();
@@ -178,18 +182,18 @@ const RenderBox* FlexLayout::flexItemForFirstBaseline() const
     if (!useLastLine) {
         if (!useLastItem) {
             // Logically (and visually) first item on logically (and visually) first line.
-            return firstBaselineCandidateOnLine(flexBox().m_orderIterator, flexBox().m_numberOfFlexItemsOnFirstLine);
+            return firstBaselineCandidateOnLine(false, flexBox().m_numberOfFlexItemsOnFirstLine);
         }
         // Logically last (but visually first) item on logically (and visually) first line.
-        return lastBaselineCandidateOnLine(flexBox().m_orderIterator, flexBox().m_numberOfFlexItemsOnFirstLine);
+        return lastBaselineCandidateOnLine(false, flexBox().m_numberOfFlexItemsOnFirstLine);
     }
 
     if (!useLastItem) {
         // Logically (and visually) first item on logically last (but visually first) line.
-        return lastBaselineCandidateOnLine(flexBox().m_orderIterator.reverse(), flexBox().m_numberOfFlexItemsOnLastLine);
+        return lastBaselineCandidateOnLine(true, flexBox().m_numberOfFlexItemsOnLastLine);
     }
     // Logically last (but visually first) item on logically last (but visually first) line.
-    return firstBaselineCandidateOnLine(flexBox().m_orderIterator.reverse(), flexBox().m_numberOfFlexItemsOnLastLine);
+    return firstBaselineCandidateOnLine(true, flexBox().m_numberOfFlexItemsOnLastLine);
 }
 
 const RenderBox* FlexLayout::flexItemForLastBaseline() const
@@ -201,27 +205,29 @@ const RenderBox* FlexLayout::flexItemForLastBaseline() const
     if (!useLastLine) {
         if (!useLastItem) {
             // Logically (and visually) last item on logically (and visually) last line.
-            return firstBaselineCandidateOnLine(flexBox().m_orderIterator.reverse(), flexBox().m_numberOfFlexItemsOnLastLine);
+            return firstBaselineCandidateOnLine(true, flexBox().m_numberOfFlexItemsOnLastLine);
         }
         // Logically first (but visually last) item  on logically (and visually) last line.
-        return lastBaselineCandidateOnLine(flexBox().m_orderIterator.reverse(), flexBox().m_numberOfFlexItemsOnLastLine);
+        return lastBaselineCandidateOnLine(true, flexBox().m_numberOfFlexItemsOnLastLine);
     }
 
     if (!useLastItem) {
         // Logically (and visually) last item on logically first (but visually last) line.
-        return lastBaselineCandidateOnLine(flexBox().m_orderIterator, flexBox().m_numberOfFlexItemsOnFirstLine);
+        return lastBaselineCandidateOnLine(false, flexBox().m_numberOfFlexItemsOnFirstLine);
     }
     // Logically first (but visually last) item on logically last (but visually first) line.
-    return firstBaselineCandidateOnLine(flexBox().m_orderIterator, flexBox().m_numberOfFlexItemsOnFirstLine);
+    return firstBaselineCandidateOnLine(false, flexBox().m_numberOfFlexItemsOnFirstLine);
 }
 
-const RenderBox* FlexLayout::firstBaselineCandidateOnLine(OrderIterator flexItemIterator, size_t numberOfItemsOnLine) const
+const RenderBox* FlexLayout::firstBaselineCandidateOnLine(bool reversed, size_t numberOfItemsOnLine) const
 {
-    // Note that "first" here means in iterator order and not logical flex order (caller can pass in reversed order).
+    // Note that "first" here means in iteration order and not logical flex order (the caller can iterate reversed).
+    auto& flexItems = flexBox().flexItems();
     size_t index = 0;
     const RenderBox* baselineFlexItem = nullptr;
-    for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
-        if (flexItemIterator.shouldSkipChild(*flexItem))
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        auto* flexItem = flexItems[reversed ? flexItems.size() - 1 - i : i].get();
+        if (!flexItem)
             continue;
         auto flexItemPosition = FlexFormattingUtils::alignmentForFlexItem(flexBox(), *flexItem);
         if ((flexItemPosition == ItemPosition::Baseline || flexItemPosition == ItemPosition::LastBaseline)
@@ -235,13 +241,15 @@ const RenderBox* FlexLayout::firstBaselineCandidateOnLine(OrderIterator flexItem
     return nullptr;
 }
 
-const RenderBox* FlexLayout::lastBaselineCandidateOnLine(OrderIterator flexItemIterator, size_t numberOfItemsOnLine) const
+const RenderBox* FlexLayout::lastBaselineCandidateOnLine(bool reversed, size_t numberOfItemsOnLine) const
 {
-    // Note that "last" here means in iterator order and not logical flex order (caller can pass in reversed order).
+    // Note that "last" here means in iteration order and not logical flex order (the caller can iterate reversed).
+    auto& flexItems = flexBox().flexItems();
     size_t index = 0;
-    RenderBox* baselineFlexItem = nullptr;
-    for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
-        if (flexItemIterator.shouldSkipChild(*flexItem))
+    const RenderBox* baselineFlexItem = nullptr;
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        auto* flexItem = flexItems[reversed ? flexItems.size() - 1 - i : i].get();
+        if (!flexItem)
             continue;
         auto flexItemPosition = FlexFormattingUtils::alignmentForFlexItem(flexBox(), *flexItem);
         if ((flexItemPosition == ItemPosition::Baseline || flexItemPosition == ItemPosition::LastBaseline)

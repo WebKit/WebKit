@@ -237,12 +237,14 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
         beginUpdateScrollInfoAfterLayoutTransaction();
 
-        prepareOrderIteratorAndMargins();
-
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
         // It doesn't get included in the normal layout process but is instead skipped.
+        // This must run before prepareFlexItemsAndMargins so the legend's isExcludedFromNormalLayout
+        // bit is set before we collect the flex items (the excluded legend is not a flex item).
         layoutExcludedChildren(relayoutChildren);
+
+        prepareFlexItemsAndMargins();
 
         FlexItemBorderBoxRects oldFlexItemRects;
         appendFlexItemBorderBoxRects(oldFlexItemRects);
@@ -316,32 +318,35 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
 
     LayoutPoint scrolledOffset = hasNonVisibleOverflow() ? adjustedLocation - toLayoutSize(scrollPosition()) : adjustedLocation;
 
-    // If collecting the children in reverse order is bad for performance, this Vector could be determined at layout time.
-    Vector<RenderBox*> reversedOrderIteratorForHitTesting;
-    for (auto* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
-        if (flexItem->isOutOfFlowPositioned())
-            continue;
-        reversedOrderIteratorForHitTesting.append(flexItem);
-    }
-    reversedOrderIteratorForHitTesting.reverse();
+    auto hitTestChild = [&](RenderBox& child) {
+        if (child.hasSelfPaintingLayer())
+            return false;
+        auto location = flipForWritingModeForChild(child, scrolledOffset);
+        if (!child.hitTest(request, result, locationInContainer, location))
+            return false;
+        updateHitTestResult(result, flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
+        return true;
+    };
 
-    for (auto* flexItem : reversedOrderIteratorForHitTesting) {
-        if (flexItem->hasSelfPaintingLayer())
-            continue;
-        auto location = flipForWritingModeForChild(*flexItem, scrolledOffset);
-        if (flexItem->hitTest(request, result, locationInContainer, location)) {
-            updateHitTestResult(result, flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
+    // Hit-testing visits children front-to-back, i.e. the reverse of paint order.
+    for (size_t i = m_flexItems.size(); i--;) {
+        if (CheckedPtr flexItem = m_flexItems[i].get(); flexItem && hitTestChild(*flexItem))
             return true;
-        }
     }
+
+    // A fieldset's legend is excluded from normal layout (placed in the border), so it is not a flex item and is
+    // not in m_flexItems; hit-test it separately.
+    if (CheckedPtr legend = isFieldset() ? findFieldsetLegend() : nullptr; legend && legend->isExcludedFromNormalLayout())
+        return hitTestChild(*legend);
 
     return false;
 }
 
 void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForFlexItem, bool usePrintRect)
 {
-    for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
-        if (!paintChild(*flexItem, paintInfo, paintOffset, paintInfoForFlexItem, usePrintRect, PaintAsInlineBlock))
+    for (auto& renderer : m_flexItems) {
+        CheckedPtr flexItem = renderer.get();
+        if (flexItem && !paintChild(*flexItem, paintInfo, paintOffset, paintInfoForFlexItem, usePrintRect, PaintAsInlineBlock))
             return;
     }
 }
@@ -818,8 +823,8 @@ bool RenderFlexibleBox::hasDefiniteCrossSizeForFlexItem(const RenderBox& flexIte
 
 void RenderFlexibleBox::appendFlexItemBorderBoxRects(FlexItemBorderBoxRects& flexItemBorderBoxRects)
 {
-    for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
-        if (!flexItem->isOutOfFlowPositioned())
+    for (auto& renderer : m_flexItems) {
+        if (CheckedPtr flexItem = renderer.get())
             flexItemBorderBoxRects.append(flexItem->borderBoxRectInContainer());
     }
 }
@@ -827,8 +832,9 @@ void RenderFlexibleBox::appendFlexItemBorderBoxRects(FlexItemBorderBoxRects& fle
 void RenderFlexibleBox::repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorderBoxRects& oldFlexItemRects)
 {
     size_t index = 0;
-    for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
-        if (flexItem->isOutOfFlowPositioned())
+    for (auto& renderer : m_flexItems) {
+        CheckedPtr flexItem = renderer.get();
+        if (!flexItem)
             continue;
 
         // If the child moved, we have to repaint it as well as any floating/positioned
@@ -927,22 +933,30 @@ void RenderFlexibleBox::clearFlexItemOverridingSizes()
     }
 }
 
-void RenderFlexibleBox::prepareOrderIteratorAndMargins()
+void RenderFlexibleBox::prepareFlexItemsAndMargins()
 {
-    OrderIteratorPopulator populator(m_orderIterator);
+    // Collect the in-flow flex items in order-modified document order (a stable sort by the used 'order' value
+    // keeps document order among equal values). This is rebuilt every layout and replaces the order iterator.
+    // Out-of-flow and excluded children are not flex items, so they are left out; the list holds weak pointers
+    // because painting/hit-testing/baseline queries read it after layout, when a child may have been removed.
+    m_flexItems.clear();
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        if (!child.isOutOfFlowPositioned() && !child.isExcludedFromNormalLayout())
+            m_flexItems.append(child);
+    }
+    std::stable_sort(m_flexItems.begin(), m_flexItems.end(), [](auto& a, auto& b) {
+        return a->style().order().value < b->style().order().value;
+    });
 
-    for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
-        if (!populator.collectChild(flexItem))
-            continue;
-
+    for (auto& flexItem : m_flexItems) {
         // Before running the flex algorithm, 'auto' has a margin of 0.
         // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
         if (FlexFormattingUtils::isHorizontalFlow(*this)) {
-            flexItem.setMarginLeft(computeFlexItemMarginValue(*this, flexItem.style().marginLeft()));
-            flexItem.setMarginRight(computeFlexItemMarginValue(*this, flexItem.style().marginRight()));
+            flexItem->setMarginLeft(computeFlexItemMarginValue(*this, flexItem->style().marginLeft()));
+            flexItem->setMarginRight(computeFlexItemMarginValue(*this, flexItem->style().marginRight()));
         } else {
-            flexItem.setMarginTop(computeFlexItemMarginValue(*this, flexItem.style().marginTop()));
-            flexItem.setMarginBottom(computeFlexItemMarginValue(*this, flexItem.style().marginBottom()));
+            flexItem->setMarginTop(computeFlexItemMarginValue(*this, flexItem->style().marginTop()));
+            flexItem->setMarginBottom(computeFlexItemMarginValue(*this, flexItem->style().marginBottom()));
         }
     }
 }

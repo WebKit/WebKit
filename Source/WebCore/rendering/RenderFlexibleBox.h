@@ -34,7 +34,6 @@
 #include <WebCore/FlexFormattingContext.h>
 #include <WebCore/FlexFormattingUtils.h>
 #include <WebCore/LayoutIntegrationFlexLayout.h>
-#include <WebCore/OrderIterator.h>
 #include <WebCore/RenderBlock.h>
 #include <wtf/Range.h>
 #include <wtf/SetForScope.h>
@@ -66,7 +65,7 @@ public:
 
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
-    const OrderIterator& orderIterator() const LIFETIME_BOUND { return m_orderIterator; }
+    const Vector<SingleThreadWeakPtr<RenderBox>>& flexItems() const LIFETIME_BOUND { return m_flexItems; }
 
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
@@ -154,7 +153,7 @@ private:
 
     void clearFlexItemOverridingSizes();
 
-    void prepareOrderIteratorAndMargins();
+    void prepareFlexItemsAndMargins();
 
     FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
 
@@ -200,7 +199,7 @@ private:
     // sizing of children.
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 
-    mutable OrderIterator m_orderIterator { *this };
+    Vector<SingleThreadWeakPtr<RenderBox>> m_flexItems;
     // The flex formatting context integration: RenderFlexibleBox owns it and befriends it so it can reach the
     // container's layout-phase state.
     LayoutIntegration::FlexLayout m_flexLayout { *this };
