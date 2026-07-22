@@ -230,6 +230,7 @@ static std::optional<ISO8601::PlainDate> isoDateFromCalendarChecked(UCalendar* c
 
 // Japanese era table — start years are historically fixed calendar facts.
 // icu4x: components/calendar/src/cal/japanese.rs Japanese::eras()
+// https://github.com/tc39/proposal-intl-era-monthcode/issues/86
 static constexpr int32_t japaneseCalendarGregorianTransitionYear = 1873;
 
 struct JapaneseEra {
@@ -526,12 +527,12 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
     fields.monthCode = WTF::move(*raw.monthCode);
 
     if (calendarId == japaneseCalendarID()) {
+        // Japanese uses proleptic Gregorian for its date fields, so year/month/day/monthCode are
+        // always the ISO values regardless of era. Only era/eraYear differ.
         fields.year = isoDate.year();
-        if (isoDate.year() < japaneseCalendarGregorianTransitionYear) {
-            fields.month = isoDate.month();
-            fields.day = isoDate.day();
-            fields.monthCode = ISO8601::monthCode(isoDate.month());
-        }
+        fields.month = isoDate.month();
+        fields.day = isoDate.day();
+        fields.monthCode = ISO8601::monthCode(isoDate.month());
     }
 
     // isLeapMonth is re-derived from the month code (avoids needing UCAL_IS_LEAP_MONTH in raw)
@@ -598,9 +599,11 @@ TemporalResult<int32_t> calendarYear(CalendarID calendarId, const ISO8601::Plain
 TemporalResult<uint8_t> calendarMonth(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     // 1. Return the ordinal month (1-based position in year, counting leap months) of isoDate in calendarId.
-    // NOTE: Japanese pre-1873 "ce"/"bce" eras use ISO month directly to bypass ICU Julian conversion.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
+
+    // Japanese uses proleptic Gregorian for its date fields, so the month is always the ISO month.
+    if (calendarId == japaneseCalendarID())
         return isoDate.month();
+
     return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<uint8_t> {
         if (!cal) [[unlikely]]
             return makeUnexpected(rangeError(icuOpenCalendarFailed));
@@ -622,9 +625,11 @@ TemporalResult<uint8_t> calendarMonth(CalendarID calendarId, const ISO8601::Plai
 TemporalResult<String> calendarMonthCode(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     // 1. Return the month code string (e.g. "M01", "M05L") of isoDate in calendarId.
-    // NOTE: Japanese pre-1873 "ce"/"bce" eras use ISO month code directly to bypass ICU Julian conversion.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
+
+    // Japanese uses proleptic Gregorian for its date fields, so the month code is always the ISO month code.
+    if (calendarId == japaneseCalendarID())
         return ISO8601::monthCode(isoDate.month());
+
     return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<String> {
         if (!cal) [[unlikely]]
             return makeUnexpected(rangeError(icuOpenCalendarFailed));
@@ -646,9 +651,11 @@ TemporalResult<String> calendarMonthCode(CalendarID calendarId, const ISO8601::P
 TemporalResult<uint8_t> calendarDay(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     // 1. Return the day-of-month of isoDate in calendarId.
-    // NOTE: Japanese pre-1873 "ce"/"bce" eras return ISO day directly to bypass ICU Julian conversion.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
+
+    // Japanese uses proleptic Gregorian for its date fields, so the day is always the ISO day.
+    if (calendarId == japaneseCalendarID())
         return isoDate.day();
+
     return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<uint8_t> {
         if (!cal) [[unlikely]]
             return makeUnexpected(rangeError(icuOpenCalendarFailed));
