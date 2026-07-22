@@ -796,6 +796,7 @@ public:
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
     WEBCORE_EXPORT static bool NODELETE isAXThreadInitialized();
     WEBCORE_EXPORT RefPtr<AXIsolatedTree> getOrCreateIsolatedTree();
+    void initializeIsolatedTreeGeometry();
 
     static bool isAccessibilityList(Element&);
 private:
