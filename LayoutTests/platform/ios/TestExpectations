@@ -6588,6 +6588,7 @@ fast/media/mq-color-gamut.html [ ImageOnlyFailure ]
 
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]
+webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-font-metrics-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-003.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ Pass ImageOnlyFailure ]
