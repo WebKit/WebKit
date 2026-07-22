@@ -137,6 +137,11 @@ static CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteVa
     return nodesArray;
 }
 
+Ref<BidiBrowsingContextAgent> BidiBrowsingContextAgent::create(WebAutomationSession& session, BackendDispatcher& backendDispatcher)
+{
+    return adoptRef(*new BidiBrowsingContextAgent(session, backendDispatcher));
+}
+
 BidiBrowsingContextAgent::BidiBrowsingContextAgent(WebAutomationSession& session, BackendDispatcher& backendDispatcher)
     : m_session(session)
     , m_browsingContextDomainDispatcher(BidiBrowsingContextBackendDispatcher::create(backendDispatcher, this))
@@ -287,12 +292,15 @@ void BidiBrowsingContextAgent::getNextTree(Vector<Ref<WebPageProxy>>&& pagesToPr
     }
 
     Ref webPageProxy = pagesToProcess.takeLast();
-    webPageProxy->getAllFrameTrees([this, pagesToProcess = WTF::move(pagesToProcess), resultsObject = WTF::move(resultsObject), callback = WTF::move(callback), maxDepth, protectedPage = Ref { webPageProxy }](Vector<WebKit::FrameTreeNodeData>&& trees) mutable {
+    webPageProxy->getAllFrameTrees([weakThis = WeakPtr { *this }, pagesToProcess = WTF::move(pagesToProcess), resultsObject = WTF::move(resultsObject), callback = WTF::move(callback), maxDepth, protectedPage = Ref { webPageProxy }](Vector<WebKit::FrameTreeNodeData>&& trees) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
         for (auto& tree : trees) {
-            auto infoTree = getNavigableInfo(tree, maxDepth, IncludeParentID::Yes);
+            auto infoTree = protectedThis->getNavigableInfo(tree, maxDepth, IncludeParentID::Yes);
             resultsObject->addItem(WTF::move(infoTree));
         }
-        getNextTree(WTF::move(pagesToProcess), WTF::move(resultsObject), maxDepth, WTF::move(callback));
+        protectedThis->getNextTree(WTF::move(pagesToProcess), WTF::move(resultsObject), maxDepth, WTF::move(callback));
     });
 }
 
