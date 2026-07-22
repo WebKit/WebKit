@@ -662,6 +662,12 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
         internalformat = adjustWebGL1TextureInternalFormat(internalformat, format, type);
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, 0, reinterpret_cast<GLvoid*>(offset));
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
@@ -679,6 +685,12 @@ void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     GL_TexSubImage2DRobustANGLE(target, level, xoff, yoff, width, height, format, type, 0, reinterpret_cast<GLvoid*>(offset));
     invalidateKnownTextureContent(m_state.currentBoundTexture());
@@ -696,6 +708,12 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_CompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, reinterpret_cast<GLvoid*>(offset));
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
@@ -712,6 +730,12 @@ void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level,
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, reinterpret_cast<GLvoid*>(offset));
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
@@ -1161,6 +1185,12 @@ void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internal
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_TexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, format, type, 0, reinterpret_cast<GLvoid*>(offset));
 }
 
@@ -1175,6 +1205,12 @@ void GraphicsContextGLANGLE::texSubImage3D(GCGLenum target, int level, int xoffs
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_TexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, 0, reinterpret_cast<GLvoid*>(offset));
 }
 
@@ -1189,6 +1225,12 @@ void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GC
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_CompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, reinterpret_cast<GLvoid*>(offset));
 }
 
@@ -1203,6 +1245,12 @@ void GraphicsContextGLANGLE::compressedTexSubImage3D(GCGLenum target, int level,
 {
     if (!makeContextCurrent())
         return;
+    GCGLuint pixelUnpackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelUnpackBuffer));
+    if (!pixelUnpackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_CompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, reinterpret_cast<GLvoid*>(offset));
 }
 
