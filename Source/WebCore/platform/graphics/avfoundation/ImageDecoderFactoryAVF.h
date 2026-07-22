@@ -27,7 +27,7 @@
 
 #if HAVE(AVASSETREADER)
 
-#include "ImageDecoder.h"
+#include <WebCore/ImageDecoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 
