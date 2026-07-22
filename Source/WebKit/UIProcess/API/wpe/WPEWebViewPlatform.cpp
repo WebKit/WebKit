@@ -324,6 +324,35 @@ void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPETople
 }
 
 #if ENABLE(TOUCH_EVENTS)
+static Vector<WebKit::WebPlatformTouchPoint> platformTouchPoints(std::span<const WPETouchPoint> touchPoints)
+{
+    Vector<WebPlatformTouchPoint> points;
+    points.reserveInitialCapacity(touchPoints.size());
+    for (const auto& touchPoint : touchPoints) {
+        WebCore::IntPoint position(touchPoint.x, touchPoint.y);
+        WebPlatformTouchPoint::State state = WebPlatformTouchPoint::State::Stationary;
+        switch (touchPoint.state) {
+        case WPE_TOUCH_POINT_STATE_STATIONARY:
+            state = WebPlatformTouchPoint::State::Stationary;
+            break;
+        case WPE_TOUCH_POINT_STATE_PRESSED:
+            state = WebPlatformTouchPoint::State::Pressed;
+            break;
+        case WPE_TOUCH_POINT_STATE_MOVED:
+            state = WebPlatformTouchPoint::State::Moved;
+            break;
+        case WPE_TOUCH_POINT_STATE_RELEASED:
+            state = WebPlatformTouchPoint::State::Released;
+            break;
+        case WPE_TOUCH_POINT_STATE_CANCELLED:
+            state = WebPlatformTouchPoint::State::Cancelled;
+            break;
+        }
+        points.append(WebPlatformTouchPoint(touchPoint.sequence_id, state, position, position));
+    }
+    return points;
+}
+
 Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent* event)
 {
     auto stateForEvent = [](uint32_t id, WPEEvent* event) -> WebPlatformTouchPoint::State {
@@ -361,6 +390,24 @@ Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent
 
 gboolean ViewPlatform::handleEvent(WPEEvent* event)
 {
+#if ENABLE(TOUCH_EVENTS)
+    switch (wpe_event_get_event_type(event)) {
+    case WPE_EVENT_TOUCH_CANCEL:
+    case WPE_EVENT_TOUCH_DOWN:
+    case WPE_EVENT_TOUCH_MOVE:
+    case WPE_EVENT_TOUCH_UP: {
+        const WPETouchPoint* touchPoints = nullptr;
+        guint32 nTouchPoints = 0;
+        if (wpe_event_touch_get_touch_points(event, &touchPoints, &nTouchPoints)) {
+            page().handleTouchEvent(nullptr, NativeWebTouchEvent(event, platformTouchPoints(unsafeMakeSpan(touchPoints, nTouchPoints))));
+            return TRUE;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+#endif
     switch (wpe_event_get_event_type(event)) {
     case WPE_EVENT_NONE:
         RELEASE_ASSERT_NOT_REACHED();

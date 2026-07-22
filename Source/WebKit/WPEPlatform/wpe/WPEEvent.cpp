@@ -28,6 +28,7 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
 struct WPEEventPointerButton {
@@ -69,6 +70,11 @@ struct WPEEventTouch {
     double y { 0 };
 };
 
+struct WPEEventTouch2 {
+    WPEModifiers modifiers { static_cast<WPEModifiers>(0) };
+    Vector<WPETouchPoint> touchPoints;
+};
+
 /**
  * WPEEvent: (ref-func wpe_event_ref) (unref-func wpe_event_unref)
  *
@@ -92,7 +98,7 @@ struct _WPEEvent {
         GDestroyNotify destroyFunction { nullptr };
     } userData;
 
-    Variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch> variant;
+    Variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch, WPEEventTouch2> variant;
 
     int referenceCount { 1 };
 };
@@ -247,6 +253,7 @@ WPEModifiers wpe_event_get_modifiers(WPEEvent* event)
         [](const WPEEventScroll& scroll) { return scroll.modifiers; },
         [](const WPEEventKeyboard& keyboard) { return keyboard.modifiers; },
         [](const WPEEventTouch& touch) { return touch.modifiers; },
+        [](const WPEEventTouch2& touch) { return touch.modifiers; },
         [](const auto&) { return static_cast<WPEModifiers>(0); }
     );
 }
@@ -574,6 +581,57 @@ guint32 wpe_event_touch_get_sequence_id(WPEEvent* event)
 {
     g_return_val_if_fail(event, 0);
     g_return_val_if_fail(event->type == WPE_EVENT_TOUCH_DOWN || event->type == WPE_EVENT_TOUCH_UP || event->type == WPE_EVENT_TOUCH_MOVE || event->type == WPE_EVENT_TOUCH_CANCEL, 0);
+    g_return_val_if_fail(std::holds_alternative<WPEEventTouch>(event->variant), 0);
 
     return std::get<WPEEventTouch>(event->variant).sequenceID;
+}
+
+/**
+ * wpe_event_touch_new_with_touch_points:
+ * @type: a #WPEEventType (%WPE_EVENT_TOUCH_DOWN, %WPE_EVENT_TOUCH_UP, %WPE_EVENT_TOUCH_MOVE or %WPE_EVENT_TOUCH_CANCEL)
+ * @view: a #WPEView
+ * @source: a #WPEInputSource
+ * @time: the event timestamp
+ * @modifiers: a #WPEModifiers
+ * @touch_points: (array length=n_touch_points) (element-type WPETouchPoint): an array of #WPETouchPoint
+ * @n_touch_points: the number of elements in @touch_points
+ *
+ * Create a #WPEEvent for a touch with multiple touch points
+ *
+ * Returns: (transfer full): a new allocated #WPEEvent.
+ */
+WPEEvent* wpe_event_touch_new_with_touch_points(WPEEventType type, WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, const WPETouchPoint* touchPoints, guint32 numTouchPoints)
+{
+    g_return_val_if_fail(type == WPE_EVENT_TOUCH_DOWN || type == WPE_EVENT_TOUCH_UP || type == WPE_EVENT_TOUCH_MOVE || type == WPE_EVENT_TOUCH_CANCEL, nullptr);
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
+
+    Vector<WPETouchPoint> vector(unsafeMakeSpan(touchPoints, numTouchPoints));
+    return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventTouch2 { modifiers,  WTF::move(vector) }, 1 };
+}
+
+/**
+ * wpe_event_touch_get_touch_points:
+ * @event: a #WPEEvent
+ * @touch_points: (out) (array length=n_touch_points) (element-type WPETouchPoint) (transfer none): return location for touch points
+ * @n_touch_points: (out): return location for the number of touch points
+ *
+ * Get the touch points of @event.
+ * Note that @event must be a touch event (%WPE_EVENT_TOUCH_DOWN, %WPE_EVENT_TOUCH_UP, %WPE_EVENT_TOUCH_MOVE or %WPE_EVENT_TOUCH_CANCEL)
+ * created with wpe_event_touch_new_with_touch_points()
+ *
+ * Returns: %TRUE if touch points were retrieved, or %FALSE otherwise
+ */
+gboolean wpe_event_touch_get_touch_points(WPEEvent *event, const WPETouchPoint **touchPoints, guint32 *numTouchPoints)
+{
+    *touchPoints = nullptr;
+    *numTouchPoints = 0;
+
+    g_return_val_if_fail(event, FALSE);
+    g_return_val_if_fail(event->type == WPE_EVENT_TOUCH_DOWN || event->type == WPE_EVENT_TOUCH_UP || event->type == WPE_EVENT_TOUCH_MOVE || event->type == WPE_EVENT_TOUCH_CANCEL, FALSE);
+    g_return_val_if_fail(std::holds_alternative<WPEEventTouch2>(event->variant), FALSE);
+
+    auto touchPointsSpan = std::get<WPEEventTouch2>(event->variant).touchPoints.span();
+    *touchPoints = touchPointsSpan.data();
+    *numTouchPoints = touchPointsSpan.size();
+    return TRUE;
 }

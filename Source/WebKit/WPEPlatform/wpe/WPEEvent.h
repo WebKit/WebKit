@@ -130,6 +130,24 @@ typedef enum {
 } WPEModifiers;
 
 /**
+ * WPETouchPointState:
+ * @WPE_TOUCH_POINT_STATE_STATIONARY: The touch point has no change.
+ * @WPE_TOUCH_POINT_STATE_PRESSED: The touch point is newly added.
+ * @WPE_TOUCH_POINT_STATE_MOVED: The touch point is moved.
+ * @WPE_TOUCH_POINT_STATE_RELEASED: The touch point is released.
+ * @WPE_TOUCH_POINT_STATE_CANCELLED: The touch point is canceled.
+ *
+ * State of a #WPETouchPoint.
+ */
+typedef enum {
+    WPE_TOUCH_POINT_STATE_STATIONARY,
+    WPE_TOUCH_POINT_STATE_PRESSED,
+    WPE_TOUCH_POINT_STATE_MOVED,
+    WPE_TOUCH_POINT_STATE_RELEASED,
+    WPE_TOUCH_POINT_STATE_CANCELLED,
+} WPETouchPointState;
+
+/**
  * WPE_BUTTON_PRIMARY:
  *
  * The primary button. This is typically the left mouse button, or the
@@ -152,6 +170,22 @@ typedef enum {
  */
 #define WPE_BUTTON_SECONDARY (3)
 
+/**
+ * WPETouchPoint:
+ * @sequence_id: the touch point sequence identifier
+ * @state: a #WPETouchPointState
+ * @x: the x coordinate of the touch point
+ * @y: the y coordinate of the touch point
+ *
+ * Structure representing a touch point.
+ */
+struct _WPETouchPoint {
+    guint32             sequence_id;
+    WPETouchPointState  state;
+    double              x;
+    double              y;
+};
+typedef struct _WPETouchPoint WPETouchPoint;
 
 WPE_API GType          wpe_event_get_type                       (void);
 WPE_API WPEEvent      *wpe_event_ref                            (WPEEvent      *event);
@@ -229,6 +263,19 @@ WPE_API WPEEvent      *wpe_event_touch_new                      (WPEEventType   
                                                                  double         x,
                                                                  double         y);
 WPE_API guint32        wpe_event_touch_get_sequence_id          (WPEEvent      *event);
+
+WPE_API WPEEvent      *wpe_event_touch_new_with_touch_points    (WPEEventType          type,
+                                                                 WPEView              *view,
+                                                                 WPEInputSource        source,
+                                                                 guint32               time,
+                                                                 WPEModifiers          modifiers,
+                                                                 const WPETouchPoint  *touch_points,
+                                                                 guint32               n_touch_points);
+
+WPE_API gboolean       wpe_event_touch_get_touch_points         (WPEEvent             *event,
+                                                                 const WPETouchPoint **touch_points,
+                                                                 guint32              *n_touch_points);
+
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(WPEEvent, wpe_event_unref)
 
