@@ -30,6 +30,7 @@
 
 #include "AcceleratedEffectAnimationUtilities.h"
 #include "Path.h"
+#include <wtf/Lock.h>
 #include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
@@ -51,8 +52,13 @@ public:
     }
 };
 
-static const WebCore::Path& cachedRoundedInsetPath(const FloatRoundedRect& rect)
+static WebCore::Path cachedRoundedInsetPath(const FloatRoundedRect& rect)
 {
+    // This may be reached on the main run loop and the ScrollingThread concurrently
+    // (via RemoteLayerTreeEventDispatcher::updateAnimations), so the global cache
+    // must be guarded and the result copied out under the lock.
+    static Lock cacheLock;
+    Locker locker { cacheLock };
     static NeverDestroyed<TinyLRUCache<FloatRoundedRect, WebCore::Path, 4, AcceleratedEffectInsetPathPolicy>> cache;
     return cache.get().get(rect);
 }

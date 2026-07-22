@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { height: 5000px; }
+.mover {
+    position: absolute;
+    top: 50px; left: 50px;
+    width: 40px; height: 40px;
+    will-change: transform;
+    animation: move auto linear;
+    animation-timeline: scroll(root);
+}
+@keyframes move {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+}
+/* Distinct polygon() values to churn the 4-slot cachedAcceleratedEffectPolygonPath() LRU. */
+#m0 { offset-path: polygon(0% 0%, 28% 12%, 53% 97%, 100% 5%, 19% 100%); }
+#m1 { offset-path: polygon(0% 0%, 53% 37%, 3% 72%, 75% 30%, 44% 100%); }
+#m2 { offset-path: polygon(0% 0%, 78% 62%, 28% 47%, 50% 55%, 69% 76%); }
+#m3 { offset-path: polygon(0% 0%, 100% 87%, 78% 22%, 25% 80%, 94% 51%); }
+#m4 { offset-path: polygon(0% 0%, 100% 100%, 100% 100%, 100% 100%, 100% 26%); }
+#m5 { offset-path: polygon(0% 0%, 100% 100%, 100% 100%, 100% 100%, 69% 1%); }
+</style>
+</head>
+<body>
+<div class="mover" id="m0"></div>
+<div class="mover" id="m1"></div>
+<div class="mover" id="m2"></div>
+<div class="mover" id="m3"></div>
+<div class="mover" id="m4"></div>
+<div class="mover" id="m5"></div>
+<script>
+// Two pages each have their own RemoteLayerTreeEventDispatcher (and so their
+// own m_animationLock); both can call updateAnimations() concurrently — one
+// from the main run loop (renderingUpdateComplete), one from the
+// ScrollingThread (didRefreshDisplay). Prior to the fix this raced on the
+// process-global TinyLRUCache in cachedAcceleratedEffectPolygonPath() and
+// crashed in the UIProcess.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let dir = 1;
+function pump()
+{
+    let y = scrollY + dir * 600;
+    if (y > 3800) { dir = -1; y = 3800; }
+    if (y < 10)   { dir =  1; y = 10; }
+    scrollTo({ top: y, behavior: "smooth" });
+}
+let scrollTimer = setInterval(pump, 60);
+pump();
+
+// Force periodic commits so renderingUpdateComplete() runs frequently on the
+// main run loop while didRefreshDisplay() runs on the ScrollingThread.
+let n = 0;
+let commitTimer = setInterval(() => { document.title = ++n; }, 33);
+
+let popup;
+addEventListener("load", () => {
+    setTimeout(() => {
+        popup = window.open("resources/offset-path-shape-cache-thread-safety-popup.html", "_blank", "width=900,height=700");
+    }, 200);
+    setTimeout(finish, 4000);
+});
+
+function finish()
+{
+    clearInterval(scrollTimer);
+    clearInterval(commitTimer);
+    if (popup)
+        popup.close();
+    document.body.innerText = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

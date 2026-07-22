@@ -33,6 +33,7 @@
 #include "GeometryUtilities.h"
 #include "Path.h"
 #include "SVGPathUtilities.h"
+#include <wtf/Lock.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/ZippedRange.h>
 
@@ -79,8 +80,13 @@ struct AcceleratedEffectTransformedByteStreamPathPolicy : TinyLRUCachePolicy<Acc
     }
 };
 
-static const WebCore::Path& cachedAcceleratedEffectTransformedByteStreamPath(const SVGPathByteStream& stream, float zoom, const FloatPoint& offset)
+static WebCore::Path cachedAcceleratedEffectTransformedByteStreamPath(const SVGPathByteStream& stream, float zoom, const FloatPoint& offset)
 {
+    // This may be reached on the main run loop and the ScrollingThread concurrently
+    // (via RemoteLayerTreeEventDispatcher::updateAnimations), so the global cache
+    // must be guarded and the result copied out under the lock.
+    static Lock cacheLock;
+    Locker locker { cacheLock };
     static NeverDestroyed<TinyLRUCache<AcceleratedEffectSVGPathTransformedByteStream, WebCore::Path, 4, AcceleratedEffectTransformedByteStreamPathPolicy>> cache;
     return cache.get().get(AcceleratedEffectSVGPathTransformedByteStream { stream, zoom, offset });
 }
