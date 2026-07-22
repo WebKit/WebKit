@@ -184,7 +184,7 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
-    NetworkProcess& NODELETE networkProcess();
+    NetworkProcess* NODELETE networkProcess();
 
     bool isWebSWServerConnection() const final { return true; }
 
