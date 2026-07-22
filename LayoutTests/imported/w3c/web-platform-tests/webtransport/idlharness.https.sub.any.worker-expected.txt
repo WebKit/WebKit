@@ -1,8 +1,6 @@
 
 PASS idl_test setup
-FAIL idl_test validation Validation error at line 20 in streams:
-  async iterable<any>
-  ^ `async iterable` is now changed to `async_iterable`.
+PASS idl_test validation
 PASS WebTransportDatagramsWritable interface: existence and properties of interface object
 PASS WebTransportDatagramsWritable interface object length
 PASS WebTransportDatagramsWritable interface object name

@@ -1,8 +1,6 @@
 
 PASS idl_test setup
-FAIL idl_test validation Validation error at line 20 in streams:
-  async iterable<any>
-  ^ `async iterable` is now changed to `async_iterable`.
+PASS idl_test validation
 PASS Partial interface RTCRtpSender: original interface defined
 PASS Partial interface RTCRtpSender: member names are unique
 PASS Partial interface RTCRtpReceiver: original interface defined
