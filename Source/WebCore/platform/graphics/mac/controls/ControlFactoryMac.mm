@@ -64,6 +64,8 @@ Ref<ControlFactory> ControlFactory::create()
     return adoptRef(*new ControlFactoryMac());
 }
 
+ControlFactoryMac::~ControlFactoryMac() = default;
+
 ControlFactoryMac& ControlFactoryMac::singleton()
 {
     return downcast<ControlFactoryMac>(ControlFactory::singleton());

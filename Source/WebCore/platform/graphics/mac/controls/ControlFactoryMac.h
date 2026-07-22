@@ -44,6 +44,7 @@ class ControlFactoryMac final : public ControlFactoryCocoa, public CanMakeChecke
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ControlFactoryMac);
 public:
     using ControlFactoryCocoa::ControlFactoryCocoa;
+    ~ControlFactoryMac();
 
     static ControlFactoryMac& singleton();
 
