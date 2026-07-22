@@ -1011,8 +1011,8 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
         RTC_LOG(LS_ERROR) << "H264 decoder: CMBlockBufferGetDataPointer failed with error " << error;
         return;
       }
-      buffer->AppendData(data, size);
-      currentStart += size;
+      buffer->AppendData(data, length);
+      currentStart += length;
     }
     if (_descriptionCallback && _needsToSendDescription) {
       auto formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);

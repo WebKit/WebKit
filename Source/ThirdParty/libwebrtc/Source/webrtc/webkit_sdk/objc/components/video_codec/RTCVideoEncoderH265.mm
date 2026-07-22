@@ -591,8 +591,8 @@ void compressionOutputCallback(void* encoder,
         }
         return;
       }
-      buffer->AppendData(data, size);
-      currentStart += size;
+      buffer->AppendData(data, length);
+      currentStart += length;
     }
     if (_descriptionCallback && _needsToSendDescription) {
       auto formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
