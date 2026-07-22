@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<p>Tests that an iframe's "load" event cannot be made to refire by document.write().</p>
+<script>
+let loadCount = 0;
+let generation = 0;
+const MAX_GENERATIONS = 10;
+
+function innerHTML() {
+    return "<!DOCTYPE html><html><body><audio src='../../media/content/silence.mp3'></audio></body></html>";
+}
+
+const iframe = document.createElement("iframe");
+iframe.addEventListener("load", () => {
+    loadCount++;
+    if (generation < MAX_GENERATIONS) {
+        generation++;
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(innerHTML());
+        iframe.contentDocument.close();
+    }
+});
+document.body.appendChild(iframe);
+
+async_test(t => {
+    const STABLE_FRAMES_NEEDED = 60;
+    let lastLoadCount = -1;
+    let stableFrames = 0;
+
+    function checkStable() {
+        if (loadCount === lastLoadCount) {
+            stableFrames++;
+        } else {
+            lastLoadCount = loadCount;
+            stableFrames = 0;
+        }
+
+        if (stableFrames < STABLE_FRAMES_NEEDED) {
+            requestAnimationFrame(checkStable);
+            return;
+        }
+
+        assert_equals(loadCount, 1, "the iframe owner element's \"load\" event should fire exactly once");
+        t.done();
+    }
+
+    requestAnimationFrame(checkStable);
+}, "document.write()-ing an <audio> element from an iframe's onload handler must not cause the owner element's load event to refire on its own");
+</script>
+</body>
+</html>

@@ -2456,9 +2456,14 @@ void LocalDOMWindow::dispatchLoadEvent()
         WTFEndSignpost(document.get(), NavigationAndPaintTiming);
     }
 
-    // Send a separate load event to the element that owns this frame.
-    if (RefPtr frame = this->frame())
-        frame->dispatchLoadEventToParent();
+    // Send a separate load event to the element that owns this frame. This must only happen once
+    // per navigation: a script can make this window's own load event fire again (e.g. by calling
+    // document.open()/write()/close() from within this very handler), but that must not be able to
+    // make the owner element's load event fire again and again.
+    if (RefPtr frame = this->frame()) {
+        if (frame->loader().shouldDispatchLoadEventToOwnerElement())
+            frame->dispatchLoadEventToParent();
+    }
 
     InspectorInstrumentation::loadEventFired(protect(this->frame()).get());
 }

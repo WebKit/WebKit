@@ -245,6 +245,12 @@ public:
 
     void didExplicitOpen();
 
+    // Returns true the first time it's called since the last real navigation (see didOpenURL()),
+    // and false on every subsequent call. A script calling document.open()/write()/close() from
+    // within the very load handler that's currently firing must not be able to make the owner
+    // element's load event fire again until an actual new navigation happens.
+    bool shouldDispatchLoadEventToOwnerElement();
+
     // Callbacks from DocumentWriter
     void didBeginDocument(bool dispatchWindowObjectAvailable, LocalDOMWindow* previousWindow);
 
@@ -533,6 +539,7 @@ private:
     bool m_isExecutingJavaScriptFormAction { false };
 
     bool m_didCallImplicitClose { true };
+    bool m_didDispatchLoadEventToOwnerElement { false };
     bool m_wasUnloadEventEmitted { false };
 
     PageDismissalType m_pageDismissalEventBeingDispatched { PageDismissalType::None };

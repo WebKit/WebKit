@@ -684,9 +684,18 @@ bool FrameLoader::didOpenURL()
 
     m_isComplete = false;
     m_didCallImplicitClose = false;
+    m_didDispatchLoadEventToOwnerElement = false;
 
     started();
 
+    return true;
+}
+
+bool FrameLoader::shouldDispatchLoadEventToOwnerElement()
+{
+    if (m_didDispatchLoadEventToOwnerElement)
+        return false;
+    m_didDispatchLoadEventToOwnerElement = true;
     return true;
 }
 
