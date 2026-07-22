@@ -45,19 +45,24 @@ class IntegrationUtils;
 class PlacedGridItem;
 struct GridItemSizingFunctions;
 
+struct UsedMargins {
+    LayoutUnit marginStart;
+    LayoutUnit marginEnd;
+};
+
 namespace GridLayoutUtils {
 
 LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
 
-LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
-LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
+LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&, const UsedMargins&);
+LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint, const UsedMargins&);
 
 LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
 LayoutUnit blockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
 LayoutUnit inlineMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit blockMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
-LayoutUnit inlineUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
-LayoutUnit blockUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
+LayoutUnit inlineUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&, const UsedMargins&);
+LayoutUnit blockUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint, const UsedMargins&);
 
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
 LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);

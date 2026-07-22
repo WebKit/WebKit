@@ -46,11 +46,6 @@
 namespace WebCore {
 namespace Layout {
 
-struct UsedMargins {
-    LayoutUnit marginStart;
-    LayoutUnit marginEnd;
-};
-
 struct UsedGridItemSizes {
     LayoutUnit inlineAxisSize;
     LayoutUnit blockAxisSize;
@@ -526,7 +521,9 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& lay
     return { columnSizes, rowSizes };
 }
 
-// Helper to compute margins from axis sizes
+// Resolves a grid item's used margins in one axis. This is intended to be used only after track
+// sizing is complete — i.e. for grid item sizing and alignment — since the grid area sizes it
+// relies on are not known until then.
 static UsedMargins computeMarginsForAxis(const ComputedSizes& axisSizes, const Style::ZoomFactor& zoomFactor)
 {
     auto marginStart = [&] -> LayoutUnit {
@@ -580,11 +577,14 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         auto& gridAreaInlineSize = gridAreaSizes.inlineSizes[gridItemIndex];
         auto& gridAreaBlockSize = gridAreaSizes.blockSizes[gridItemIndex];
 
-        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, gridItem.usedInlineBorderAndPadding(), gridAreaInlineSize, integrationUtils);
+        auto inlineMargins = computeMarginsForAxis(gridItem.inlineAxisSizes(), gridItem.usedZoom());
+        auto blockMargins = computeMarginsForAxis(gridItem.blockAxisSizes(), gridItem.usedZoom());
+
+        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, gridItem.usedInlineBorderAndPadding(), gridAreaInlineSize, integrationUtils, inlineMargins);
         usedInlineSizes.append(inlineUsedSize);
 
         // FIXME: investigate to check if we should use the inlineUsedSize or the size of the grid area in the inline direction.
-        auto blockUsedSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, gridItem.usedBlockBorderAndPadding(), gridAreaBlockSize, formattingContext, inlineUsedSize);
+        auto blockUsedSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, gridItem.usedBlockBorderAndPadding(), gridAreaBlockSize, formattingContext, inlineUsedSize, blockMargins);
         usedBlockSizes.append(blockUsedSize);
 
         auto& layoutBox = gridItem.layoutBox();
