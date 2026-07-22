@@ -13262,9 +13262,22 @@ void WebPageProxy::editorStateChanged(IPC::Connection& connection, EditorState&&
 {
     // FIXME: This should not merge VisualData; they should only be merged
     // if the drawing area says to.
-    if (updateEditorState(connection, WTF::move(editorState), ShouldMergeVisualEditorState::Yes))
+    if (updateEditorState(connection, WTF::move(editorState), ShouldMergeVisualEditorState::Yes)) {
         dispatchDidUpdateEditorState();
+#if ENABLE(WRITING_TOOLS)
+        updateWritingToolsAvailability();
+#endif // ENABLE(WRITING_TOOLS)
+    }
 }
+
+#if ENABLE(WRITING_TOOLS)
+
+void WebPageProxy::updateWritingToolsAvailability()
+{
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetWritingToolsAvailable(writingToolsBehavior() != WritingTools::Behavior::None), webPageIDInMainFrameProcess());
+}
+
+#endif // ENABLE(WRITING_TOOLS)
 
 bool WebPageProxy::updateEditorState(IPC::Connection& connection, EditorState&& newEditorState, ShouldMergeVisualEditorState shouldMergeVisualEditorState)
 {

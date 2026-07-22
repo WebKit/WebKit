@@ -446,6 +446,13 @@ static NSAttributedString *attributedStringForTextMarkerRange(const AXCoreObject
     return object.attributedStringForTextMarkerRange({ textMarkerRangeRef }, spellCheck).autorelease();
 }
 
+#if ENABLE(WRITING_TOOLS)
+static bool isTextAreaOrEditableWebArea(AXCoreObject& backingObject)
+{
+    return backingObject.role() == AccessibilityRole::TextArea || backingObject.isEditableWebArea();
+}
+#endif // ENABLE(WRITING_TOOLS)
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray*)accessibilityActionNames
 {
@@ -466,6 +473,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
     static NeverDestroyed<RetainPtr<NSArray>> incrementorActions = [defaultElementActions.get() arrayByAddingObjectsFromArray:@[NSAccessibilityIncrementAction, NSAccessibilityDecrementAction]];
 
+#if ENABLE(WRITING_TOOLS)
+    static NeverDestroyed<RetainPtr<NSArray>> actionElementActionsWithShowWritingTools = [actionElementActions.get() arrayByAddingObject:NSAccessibilityShowWritingToolsAction];
+    static NeverDestroyed<RetainPtr<NSArray>> defaultElementActionsWithShowWritingTools = [defaultElementActions.get() arrayByAddingObject:NSAccessibilityShowWritingToolsAction];
+#endif // ENABLE(WRITING_TOOLS)
+
     if (backingObject->isSlider() || (backingObject->isSpinButton() && backingObject->spinButtonType() == SpinButtonType::Standalone)) {
         // Non-standalone spinbuttons should not advertise the increment and decrement actions because they have separate increment and decrement controls.
         return incrementorActions.get().get();
@@ -475,8 +487,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         return menuElementActions.get().get();
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityActionNames];
-    if (backingObject->supportsPressAction())
+
+#if ENABLE(WRITING_TOOLS)
+    auto shouldExposeShowWritingTools = [&] {
+        return backingObject->writingToolsAvailable() && isTextAreaOrEditableWebArea(*backingObject);
+    };
+#endif // ENABLE(WRITING_TOOLS)
+
+    if (backingObject->supportsPressAction()) {
+#if ENABLE(WRITING_TOOLS)
+        if (shouldExposeShowWritingTools())
+            return actionElementActionsWithShowWritingTools.get().get();
+#endif // ENABLE(WRITING_TOOLS)
         return actionElementActions.get().get();
+    }
+
+#if ENABLE(WRITING_TOOLS)
+    if (shouldExposeShowWritingTools())
+        return defaultElementActionsWithShowWritingTools.get().get();
+#endif // ENABLE(WRITING_TOOLS)
 
     return defaultElementActions.get().get();
 }
@@ -3137,6 +3166,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         backingObject->performDismissActionIgnoringResult();
     else if (AXObjectCache::clientIsInTestMode() && [action isEqualToString:@"AXLogTrees"])
         [self _accessibilityPrintTrees];
+    else if ([action isEqualToString:NSAccessibilityShowWritingToolsAction]) {
+        Accessibility::performFunctionOnMainThread([protectedSelf = retainPtr(self)] {
+            RefPtr<AXCoreObject> backingObject = protectedSelf.get().updateObjectBackingStore;
+            if (RefPtr page = backingObject ? backingObject->page() : nullptr)
+                page->chrome().client().showWritingToolsAffordance();
+        });
+    }
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
@@ -3298,7 +3334,10 @@ static RenderObject* rendererForView(NSView* view)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSString*)accessibilityActionDescription:(NSString*)action
 {
-    // we have no custom actions
+#if ENABLE(WRITING_TOOLS)
+    if ([action isEqualToString:NSAccessibilityShowWritingToolsAction])
+        return AXShowWritingToolsLabel().createNSString().autorelease();
+#endif // ENABLE(WRITING_TOOLS)
     return NSAccessibilityActionDescription(action);
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END

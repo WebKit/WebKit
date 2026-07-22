@@ -560,6 +560,10 @@ private:
 
     void clearAnimationsForActiveWritingToolsSession() final;
 
+    void showWritingToolsAffordance() final;
+
+    bool writingToolsAvailable() const final;
+
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
     void addTextEffectForID(const WTF::UUID&, WebCore::TextEffectData&&, RefPtr<WebCore::TextIndicator>&&, RefPtr<WebCore::TextIndicator>&&) final;
     void removeTextEffectForID(const WTF::UUID&) final;

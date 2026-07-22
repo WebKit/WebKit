@@ -1298,6 +1298,16 @@ void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
     m_loadingProgress = newProgressValue;
 }
 
+#if ENABLE(WRITING_TOOLS)
+void AXIsolatedTree::setWritingToolsAvailable(bool isAvailable)
+{
+    AXTRACE("AXIsolatedTree::setWritingToolsAvailable"_s);
+    AX_ASSERT(isMainThread());
+
+    m_writingToolsAvailable = isAvailable;
+}
+#endif // ENABLE(WRITING_TOOLS)
+
 void AXIsolatedTree::updateFrame(AXID axID, IntRect&& newFrame)
 {
     AXTRACE("AXIsolatedTree::updateFrame"_s);

@@ -445,6 +445,9 @@ private:
     // CharacterRange support.
     CharacterRange selectedTextRange() const final { return propertyValue<CharacterRange>(AXProperty::SelectedTextRange); }
     int insertionPointLineNumber() const final;
+#if ENABLE(WRITING_TOOLS)
+    bool writingToolsAvailable() const final { return tree().writingToolsAvailable(); }
+#endif // ENABLE(WRITING_TOOLS)
     CharacterRange doAXRangeForLine(unsigned) const final;
     String doAXStringForRange(const CharacterRange&) const final;
     CharacterRange characterRangeForPoint(const IntPoint&) const final;

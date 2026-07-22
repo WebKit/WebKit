@@ -274,6 +274,7 @@ namespace WebCore {
     String AXMenuListPopupActionVerb();
     String AXLinkActionVerb();
     String AXListItemActionVerb();
+    String AXShowWritingToolsLabel();
 
 #if PLATFORM(COCOA)
     String AXMeterGaugeRegionOptimumText();

@@ -324,6 +324,10 @@ private:
     void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool, WebCore::IntRect) override;
 #endif
 
+#if ENABLE(WRITING_TOOLS)
+    void showWritingToolsAffordance() override;
+#endif // ENABLE(WRITING_TOOLS)
+
 #if ENABLE(DATA_DETECTION)
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) final;
 #endif

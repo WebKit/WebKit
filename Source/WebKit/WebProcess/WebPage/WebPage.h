@@ -2133,6 +2133,10 @@ public:
     void addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, const String&);
     void saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
     void clearAnimationsForActiveWritingToolsSession();
+    void showWritingToolsAffordance();
+
+    bool writingToolsAvailable() const { return m_writingToolsAvailable; }
+    void setWritingToolsAvailable(bool);
 
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
 
@@ -3384,6 +3388,7 @@ private:
 
 #if ENABLE(WRITING_TOOLS)
     const UniqueRef<TextAnimationController> m_textAnimationController;
+    bool m_writingToolsAvailable { false };
 #endif
 
     Vector<WebCore::TextExtraction::FilterRule> m_textExtractionFilterRules;

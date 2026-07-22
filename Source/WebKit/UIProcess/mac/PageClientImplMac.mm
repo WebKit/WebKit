@@ -1224,6 +1224,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
 
+#if ENABLE(WRITING_TOOLS)
+
+void PageClientImpl::showWritingToolsAffordance()
+{
+    protect(m_impl)->showWritingTools(WTRequestedToolIndex);
+}
+
+#endif // ENABLE(WRITING_TOOLS)
+
 #if ENABLE(DATA_DETECTION)
 
 void PageClientImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)

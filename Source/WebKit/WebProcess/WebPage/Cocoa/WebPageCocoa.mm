@@ -1409,6 +1409,21 @@ void WebPage::clearAnimationsForActiveWritingToolsSession()
     m_textAnimationController->clearAnimationsForActiveWritingToolsSession();
 }
 
+void WebPage::showWritingToolsAffordance()
+{
+    send(Messages::WebPageProxy::ShowWritingToolsAffordance());
+}
+
+void WebPage::setWritingToolsAvailable(bool isAvailable)
+{
+    m_writingToolsAvailable = isAvailable;
+
+    RefPtr frame = corePage()->focusController().focusedOrMainFrame();
+    RefPtr document = frame ? frame->document() : nullptr;
+    if (CheckedPtr cache = document ? document->axObjectCache() : nullptr)
+        cache->setWritingToolsAvailable(isAvailable);
+}
+
 void WebPage::createTextIndicatorForTextAnimationID(const WTF::UUID& uuid, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
 {
     m_textAnimationController->createTextIndicatorForTextAnimationID(uuid, WTF::move(completionHandler));

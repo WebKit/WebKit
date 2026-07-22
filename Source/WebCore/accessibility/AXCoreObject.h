@@ -1058,6 +1058,10 @@ public:
     virtual CharacterRange selectedTextRange() const = 0;
     virtual int insertionPointLineNumber() const = 0;
 
+#if ENABLE(WRITING_TOOLS)
+    virtual bool writingToolsAvailable() const = 0;
+#endif // ENABLE(WRITING_TOOLS)
+
     virtual URL url() const = 0;
     virtual VisibleSelection selection() const = 0;
     virtual String selectedText() const = 0;

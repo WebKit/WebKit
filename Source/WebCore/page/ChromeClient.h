@@ -778,6 +778,10 @@ public:
 
     virtual void clearAnimationsForActiveWritingToolsSession() { };
 
+    virtual void showWritingToolsAffordance() { }
+
+    virtual bool writingToolsAvailable() const { return false; }
+
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
     virtual void addTextEffectForID(const WTF::UUID&, TextEffectData&&, RefPtr<TextIndicator>&&, RefPtr<TextIndicator>&&) { }
     virtual void removeTextEffectForID(const WTF::UUID&) { }

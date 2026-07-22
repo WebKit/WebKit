@@ -917,6 +917,14 @@ std::optional<SimpleRange> AccessibilityObject::selectionRange() const
     return { { { document.get(), 0 }, { document.get(), 0 } } };
 }
 
+#if ENABLE(WRITING_TOOLS)
+bool AccessibilityObject::writingToolsAvailable() const
+{
+    RefPtr page = this->page();
+    return page && page->chrome().client().writingToolsAvailable();
+}
+#endif // ENABLE(WRITING_TOOLS)
+
 std::optional<SimpleRange> AccessibilityObject::simpleRange() const
 {
     RefPtr node = this->node();

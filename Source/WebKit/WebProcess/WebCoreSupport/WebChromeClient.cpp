@@ -2400,6 +2400,18 @@ void WebChromeClient::clearAnimationsForActiveWritingToolsSession()
         page->clearAnimationsForActiveWritingToolsSession();
 }
 
+void WebChromeClient::showWritingToolsAffordance()
+{
+    if (RefPtr page = m_page.get())
+        page->showWritingToolsAffordance();
+}
+
+bool WebChromeClient::writingToolsAvailable() const
+{
+    RefPtr page = m_page.get();
+    return page && page->writingToolsAvailable();
+}
+
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
 void WebChromeClient::addTextEffectForID(const WTF::UUID& uuid, WebCore::TextEffectData&& data, RefPtr<WebCore::TextIndicator>&& textIndicator, RefPtr<WebCore::TextIndicator>&& decorationIndicator)
 {

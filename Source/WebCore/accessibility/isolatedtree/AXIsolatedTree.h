@@ -502,6 +502,11 @@ public:
     double NODELETE loadingProgress();
     void NODELETE updateLoadingProgress(double);
 
+#if ENABLE(WRITING_TOOLS)
+    bool writingToolsAvailable() const { return m_writingToolsAvailable; }
+    void setWritingToolsAvailable(bool);
+#endif // ENABLE(WRITING_TOOLS)
+
     void addUnconnectedNode(Ref<AccessibilityObject>);
     bool isUnconnectedNode(std::optional<AXID> axID) const { return axID && m_unconnectedNodes.contains(*axID); }
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
@@ -771,6 +776,9 @@ private:
     std::atomic<double> m_loadingProgress { 0 };
     std::atomic<double> m_processingProgress { 1 };
     std::atomic<bool> m_hasPendingChanges { false };
+#if ENABLE(WRITING_TOOLS)
+    std::atomic<bool> m_writingToolsAvailable { false };
+#endif // ENABLE(WRITING_TOOLS)
 #if ENABLE(ACCESSIBILITY_THREAD_DISPATCHING)
     std::atomic<bool> m_appliedOrApplyingMainThreadSnapshot { true };
 #endif

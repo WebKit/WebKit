@@ -2368,6 +2368,18 @@ void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState> newState)
 #endif
 }
 
+#if ENABLE(WRITING_TOOLS)
+void AXObjectCache::setWritingToolsAvailable(bool isAvailable)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForFrameID(m_frameID))
+        tree->setWritingToolsAvailable(isAvailable);
+#else
+    UNUSED_PARAM(isAvailable);
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+}
+#endif // ENABLE(WRITING_TOOLS)
+
 static bool shouldDeferFocusChange(Element* element)
 {
     if (!element)
