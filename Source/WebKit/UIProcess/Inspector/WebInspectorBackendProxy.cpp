@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WebInspectorBackendProxy.h"
 
+#include <wtf/StdLibExtras.h>
+
 namespace WebKit {
 
 WebInspectorBackendProxy::~WebInspectorBackendProxy() = default;
@@ -64,7 +66,7 @@ void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::Inspector
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 void WebInspectorBackendProxy::setEmulatedConditions(std::optional<int64_t> bytesPerSecondLimit)
 {
-    protect(m_proxy)->setEmulatedConditions(bytesPerSecondLimit);
+    protect(m_proxy)->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
 }
 #endif
 
