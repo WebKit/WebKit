@@ -47,7 +47,7 @@ void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, 
 
 LayoutUnit IntegrationUtils::maxContentWidth(const ElementBox& box) const
 {
-    ASSERT(box.isFlexItem());
+    ASSERT(box.isFlexItem() || box.isGridItem());
     return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContent);
 }
 
@@ -69,10 +69,8 @@ static LayoutUnit blockSizeForGridItem(const LayoutState& layoutState, const Ele
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
     switch (logicalHeightType) {
-    // A grid item's block-axis min-content size, min-content contribution and max-content
-    // contribution all resolve to its post-layout border-box block size at the given inline
-    // size, so these currently coincide.
     case LayoutIntegration::LogicalHeightType::MinContent:
+    case LayoutIntegration::LogicalHeightType::MaxContent:
     case LayoutIntegration::LogicalHeightType::MinContentContribution:
     case LayoutIntegration::LogicalHeightType::MaxContentContribution: {
         renderer->setGridAreaContentLogicalWidth(inlineAxisConstraint);
@@ -92,16 +90,25 @@ static LayoutUnit blockSizeForGridItem(const LayoutState& layoutState, const Ele
 
 LayoutUnit IntegrationUtils::minContentHeightForGridItem(const ElementBox& box, LayoutUnit inlineAxisConstraint) const
 {
+    ASSERT(box.isGridItem());
     return blockSizeForGridItem(m_globalLayoutState, box, inlineAxisConstraint, LayoutIntegration::LogicalHeightType::MinContent);
+}
+
+LayoutUnit IntegrationUtils::maxContentHeightForGridItem(const ElementBox& box, LayoutUnit inlineAxisConstraint) const
+{
+    ASSERT(box.isGridItem());
+    return blockSizeForGridItem(m_globalLayoutState, box, inlineAxisConstraint, LayoutIntegration::LogicalHeightType::MaxContent);
 }
 
 LayoutUnit IntegrationUtils::minContentContributionHeightForGridItem(const ElementBox& box, LayoutUnit inlineAxisConstraint) const
 {
+    ASSERT(box.isGridItem());
     return blockSizeForGridItem(m_globalLayoutState, box, inlineAxisConstraint, LayoutIntegration::LogicalHeightType::MinContentContribution);
 }
 
 LayoutUnit IntegrationUtils::maxContentContributionHeightForGridItem(const ElementBox& box, LayoutUnit inlineAxisConstraint) const
 {
+    ASSERT(box.isGridItem());
     return blockSizeForGridItem(m_globalLayoutState, box, inlineAxisConstraint, LayoutIntegration::LogicalHeightType::MaxContentContribution);
 }
 

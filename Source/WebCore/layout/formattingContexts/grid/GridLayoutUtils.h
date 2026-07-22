@@ -49,9 +49,8 @@ namespace GridLayoutUtils {
 
 LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
 
-LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize);
-LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
-LayoutUnit stretchedBlockSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
+LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
+LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
 
 LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
 LayoutUnit blockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
