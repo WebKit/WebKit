@@ -134,10 +134,15 @@ typedef NS_OPTIONS(NSUInteger, AVOutputDeviceFeatures) {
     AVOutputDeviceFeatureVideo = (1UL << 2),
 };
 
+typedef NS_ENUM(NSInteger, AVOutputDeviceType) {
+    AVOutputDeviceTypeCustomProtocol = 5,
+};
+
 @interface AVOutputDevice : NSObject
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSString *deviceName;
 @property (nonatomic, readonly) AVOutputDeviceFeatures deviceFeatures;
+@property (nonatomic, readonly) AVOutputDeviceType deviceType;
 @end
 
 #if !PLATFORM(IOS_FAMILY)

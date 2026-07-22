@@ -1,0 +1,17 @@
+
+Test that deactivating the active MediaDeviceRoute pauses the video element.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 60 })
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(playing)
+RUN(route.currentPlaybackPosition = 10)
+RUN(internals.mockMediaDeviceRouteController.deactivateRoute(route))
+EVENT(pause)
+EXPECTED (video.paused == 'true') OK
+EXPECTED (internals.elementEffectivePlaybackRate(video) == '0') OK
+END OF TEST
+
