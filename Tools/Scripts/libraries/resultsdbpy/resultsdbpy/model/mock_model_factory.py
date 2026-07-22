@@ -26,9 +26,9 @@ import io
 import time
 
 from resultsdbpy.controller.configuration import Configuration
-from resultsdbpy.model.configuration_context_unittest import ConfigurationContextTest
 from resultsdbpy.model.model import Model
 from resultsdbpy.model.repository import StashRepository, WebKitRepository
+from resultsdbpy.model.configuration_context_unittest import ConfigurationContextTest
 
 from webkitscmpy import mocks, Commit
 
@@ -217,6 +217,20 @@ class MockModelFactory(object):
                                 configuration=config, commits=result['commits'], suite=suite,
                                 test_results=result['test_results'], timestamp=result['timestamp'],
                             )
+
+    @classmethod
+    def add_mock_ews_results(cls, test_results, model, configuration=Configuration(), timestamp=None, flaky_type=None, details=None):
+        configurations = [configuration] if configuration.is_complete() else ConfigurationContextTest.CONFIGURATIONS
+
+        for complete_configuration in configurations:
+            if complete_configuration != configuration:
+                continue
+
+            cls.iterate_all_commits(model, lambda commits: model.ews_context.register(
+                complete_configuration, commits, suite='layout-tests',
+                test_results=test_results, flaky_type=flaky_type,
+                timestamp=timestamp, details=details,
+            ))
 
     @classmethod
     def add_mock_archives(cls, model, configuration=Configuration(), suite='layout-tests', archive=None):

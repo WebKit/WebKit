@@ -33,6 +33,7 @@ from resultsdbpy.model.upload_context import UploadContext
 from resultsdbpy.model.suite_context import SuiteContext
 from resultsdbpy.model.test_context import TestContext
 from resultsdbpy.model.failure_context import FailureContext
+from resultsdbpy.model.ews_context import EWSContext
 
 
 class Model(object):
@@ -100,6 +101,11 @@ class Model(object):
             commit_context=self.commit_context,
             ttl_seconds=self.archive_ttl_seconds,
             s3_credentials=s3_credentials,
+        )
+
+        self.ews_context = EWSContext(
+            configuration_context=self.configuration_context,
+            commit_context=self.commit_context,
         )
 
     def healthy(self, writable=True):
