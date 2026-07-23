@@ -272,6 +272,7 @@ platform/graphics/DisplayRefreshMonitorManager.h
 platform/graphics/ImageBackingStore.h
 [ iOS ] platform/graphics/avfoundation/SampleBufferDisplayLayer.h
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
+platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp
 [ Mac ] platform/graphics/cocoa/ImageAdapterCocoa.mm
@@ -302,6 +303,7 @@ platform/mediastream/RealtimeOutgoingAudioSource.h
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mock/MockRealtimeVideoSource.cpp
+platform/network/cf/FormDataStreamCFNet.mm
 platform/network/cocoa/ResourceHandleCocoa.mm
 platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
 [ macOS ] rendering/AttachmentLayout.mm

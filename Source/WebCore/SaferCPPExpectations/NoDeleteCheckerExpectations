@@ -2,7 +2,6 @@ Modules/indexeddb/server/IndexValueStore.cpp
 Modules/notifications/NotificationPayload.cpp
 Modules/streams/ReadableByteStreamController.cpp
 Modules/streams/ReadableStreamBYOBReader.cpp
-Modules/websockets/WebSocketChannelInspector.cpp
 Modules/webtransport/WebTransportDatagramsWritable.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSPropertyInitialValues.cpp
@@ -11,6 +10,7 @@ css/PropertySetCSSDescriptors.cpp
 css/SelectorChecker.cpp
 css/StyleSheetList.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
+css/values/color/CSSKeywordColor.cpp
 dom/ContainerNode.cpp
 dom/Document.cpp
 dom/Element.cpp
