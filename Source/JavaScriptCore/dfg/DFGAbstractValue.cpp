@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "JSCJSValueInlines.h"
+#include "Options.h"
 #include "TrackedReferences.h"
 #include <wtf/AlignedStorage.h>
 #include <wtf/StdLibExtras.h>
@@ -54,8 +55,16 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
 {
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
-        if (graph.tryWatch(structure)) {
+        // The finite-vs-TOP decision is identical either way (it is dfgMayWatch()); only the
+        // timing of the watchpoint install differs. With useDFGLazyStructureWatchpoints we keep
+        // the constant's structure finite without watching it now and mark needsWatch, so the
+        // watchpoint is installed only if a consumer relies on the structure being stable.
+        // Otherwise we install eagerly here via tryWatch.
+        bool keepFinite = Options::useDFGLazyStructureWatchpoints() ? structure->dfgMayWatch() : graph.tryWatch(structure);
+        if (keepFinite) {
             m_structure = graph.registerStructure(structure);
+            if (Options::useDFGLazyStructureWatchpoints())
+                m_structure.setNeedsWatch(true);
             if (clobberState == StructuresAreClobbered) {
                 m_arrayModes = ALL_ARRAY_MODES;
                 m_structure.clobber(graph);

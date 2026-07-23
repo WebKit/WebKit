@@ -57,24 +57,31 @@ public:
         : m_set(other.m_set)
     {
         setClobbered(other.isClobbered());
+        m_needsWatch = other.m_needsWatch;
     }
     
+    // Assigning a known/checked structure set (a CheckStructure's set, a freshly allocated
+    // object's structure, a transition target, ...) (re)establishes it fresh: its stability is
+    // guaranteed here without a watchpoint, so needsWatch resets to false. See needsWatch().
     ALWAYS_INLINE StructureAbstractValue& operator=(RegisteredStructure structure)
     {
         m_set = RegisteredStructureSet(structure);
         setClobbered(false);
+        m_needsWatch = false;
         return *this;
     }
     ALWAYS_INLINE StructureAbstractValue& operator=(const RegisteredStructureSet& other)
     {
         m_set = other;
         setClobbered(false);
+        m_needsWatch = false;
         return *this;
     }
     ALWAYS_INLINE StructureAbstractValue& operator=(const StructureAbstractValue& other)
     {
         m_set = other.m_set;
         setClobbered(other.isClobbered());
+        m_needsWatch = other.m_needsWatch;
         return *this;
     }
     
@@ -82,12 +89,14 @@ public:
     {
         m_set.clear();
         setClobbered(false);
+        m_needsWatch = false;
     }
     
     void makeTop()
     {
         m_set.deleteListIfNecessary();
         m_set.m_pointer = topValue;
+        m_needsWatch = false;
     }
     
 #if ASSERT_ENABLED
@@ -131,6 +140,18 @@ public:
 
     // An infinite structure abstract value may currently have any structure.
     bool isInfinite() const { return !isFinite(); }
+
+    // When useDFGLazyStructureWatchpoints is enabled, we keep watchable structures finite in
+    // the abstract value without eagerly installing their transition watchpoints. This flag
+    // records that the current (finite) set's stability is NOT already guaranteed by a runtime
+    // structure check on this path - i.e. trusting it to elide a check requires watching the
+    // structures first. It is set exactly where the pre-existing code would have watched to
+    // keep a value finite (a watchable constant in AbstractValue::set, or surviving a clobber),
+    // OR'd on merge, and preserved across invalidation points. It is cleared (false) whenever
+    // the value is freshly (re)established from a known/checked structure set. See
+    // Graph::trustStructures.
+    bool needsWatch() const { return m_needsWatch; }
+    void setNeedsWatch(bool needsWatch) { m_needsWatch = needsWatch; }
     
     bool add(RegisteredStructure);
     
@@ -174,7 +195,7 @@ public:
     ALWAYS_INLINE bool operator==(const StructureAbstractValue& other) const
     {
         if ((m_set.isThin() && other.m_set.isThin()) || isTop() || other.isTop())
-            return m_set.m_pointer == other.m_set.m_pointer;
+            return m_set.m_pointer == other.m_set.m_pointer && m_needsWatch == other.m_needsWatch;
         
         return equalsSlow(other);
     }
@@ -267,6 +288,7 @@ private:
     {
         ASSERT(m_set.isThin());
         m_set.m_pointer = topValue;
+        m_needsWatch = false;
     }
     
     bool mergeNotTop(const RegisteredStructureSet& other);
@@ -278,6 +300,10 @@ private:
     }
     
     RegisteredStructureSet m_set;
+
+    // See needsWatch(). Only meaningful when useDFGLazyStructureWatchpoints is enabled;
+    // otherwise it stays false and is ignored (watchpoints are installed eagerly).
+    bool m_needsWatch { false };
 };
 
 } } // namespace JSC::DFG

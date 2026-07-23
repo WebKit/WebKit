@@ -3831,8 +3831,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     bool canFold = false;
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     if (Structure* originalSetStructure = globalObject->setStructureConcurrently()) {
-                        if (forNode(node->child1()).m_structure.isSubsetOf(RegisteredStructureSet(m_graph.registerStructure(originalSetStructure))))
+                        if (forNode(node->child1()).m_structure.isSubsetOf(RegisteredStructureSet(m_graph.registerStructure(originalSetStructure)))) {
+                            m_graph.trustStructures(forNode(node->child1()).m_structure);
                             canFold = true;
+                        }
                     }
                     if (canFold)
                         didFoldClobberWorld();
@@ -5938,6 +5940,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (m_graph.isWatchingPromiseSpeciesWatchpoint(node)) {
                         if (auto structure = argument.m_structure.onlyStructure()) {
                             if (structure.get() == globalObject->promiseStructure()) {
+                                m_graph.trustStructures(argument.m_structure);
                                 didFoldClobberWorld();
                                 forNode(node) = argument;
                                 break;
