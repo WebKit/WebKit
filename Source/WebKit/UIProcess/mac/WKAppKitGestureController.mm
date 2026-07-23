@@ -44,6 +44,7 @@
 #import "WebEventFactory.h"
 #import "WebEventModifier.h"
 #import "WebEventType.h"
+#import "WebKit-Swift.h"
 #import "WebMouseEvent.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -239,6 +240,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisDragAndContextMenuDeferringGestureRecognizer;
 
     std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
+    std::unique_ptr<WebKit::WKFastScrollTracker> _fastScrollTracker;
 }
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
@@ -255,6 +257,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     _page = page.get();
     _viewImpl = viewImpl.get();
     _positionInformationManager = makeUnique<WebKit::PositionInformationManager>(page.get());
+    _fastScrollTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKFastScrollTracker>(WebKit::WKFastScrollTracker::init());
 
     [self setUpGestureRecognizers];
     [self addGesturesToWebView];
@@ -536,6 +539,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
         // A scroll preempts any pending potential click begun at press-down; cancel it so the stale
         // click can't block or mis-commit the next click.
         [self _handleClickCancelled];
+        _fastScrollTracker->didStartGesture([gesture locationInView:nil]);
     }
 
 #if HAVE(NSREFRESHCONTROLLER)
@@ -1686,6 +1690,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     WebCore::IntPoint position { [gesture locationInView:webView.get()] };
     auto globalPosition = WebCore::globalPoint([gesture locationInView:nil], [webView window]);
 
+    auto fastScrollMultiplier = _fastScrollTracker->update([gesture locationInView:nil], velocity, [gesture timestamp]);
+
     WebKit::WebWheelEvent momentumEvent {
         { WebKit::WebEventType::Wheel, { }, timestamp, WTF::UUID::createVersion4() },
         position,
@@ -1702,7 +1708,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         timestamp,
         std::nullopt,
         WebKit::WebWheelEvent::MomentumEndType::Unknown,
-        WebKit::WebEventInputSource::Automation
+        WebKit::WebEventInputSource::Automation,
+        static_cast<float>(fastScrollMultiplier),
     };
     WebKit::NativeWebWheelEvent nativeMomentumEvent { momentumEvent };
 
@@ -1733,6 +1740,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!page)
         return;
 
+    _fastScrollTracker->didCatchMomentum();
     _caughtDeceleratingScroll = true;
     _suppressNextPanScrollDelta = true;
 
@@ -1802,6 +1810,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _mouseTrackingHasSentMouseDown = false;
     _isMomentumActive = false;
     [self _resetCaughtDeceleratingScroll];
+    _fastScrollTracker->reset();
     _isSuppressingSingleClickGestureForTextSelection = false;
     _latestClickID.reset();
     _layerTreeTransactionIdAtLastInteractionStart.reset();

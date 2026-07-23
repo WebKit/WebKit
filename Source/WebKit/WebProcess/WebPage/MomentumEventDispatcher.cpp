@@ -226,7 +226,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     // directly when the frame interval is within 20fps of idealCurveFrameRate;
     // we should perhaps do the same.
     float idealCurveMultiplier = m_currentGesture.accelerationCurve->frameRate() / idealCurveFrameRate;
-    buildOffsetTableWithInitialDelta(*event.rawPlatformDelta() * idealCurveMultiplier);
+    buildOffsetTableWithInitialDelta(*event.rawPlatformDelta() * idealCurveMultiplier * event.momentumFastScrollMultiplier());
 
     WebCore::FloatSize consumedDelta = event.delta();
     if (m_currentGesture.initiatingEvent->directionInvertedFromDevice())

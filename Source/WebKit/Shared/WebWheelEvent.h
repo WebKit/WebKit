@@ -62,7 +62,7 @@ public:
 
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity);
 #if PLATFORM(COCOA)
-    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType, WebEventInputSource = WebEventInputSource::UserDriven);
+    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType, WebEventInputSource = WebEventInputSource::UserDriven, float momentumFastScrollMultiplier = 1);
 #elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas);
 #endif
@@ -87,7 +87,9 @@ public:
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const LIFETIME_BOUND { return m_unacceleratedScrollingDelta; }
     WebEventInputSource inputSource() const { return m_inputSource; }
-#endif
+    float momentumFastScrollMultiplier() const { return m_momentumFastScrollMultiplier; }
+    void setMomentumFastScrollMultiplier(float multiplier) { m_momentumFastScrollMultiplier = multiplier; }
+#endif // PLATFORM(COCOA)
 
     bool isMomentumEvent() const { return momentumPhase() != Phase::None && momentumPhase() != Phase::WillBegin; }
 
@@ -113,7 +115,8 @@ private:
     uint32_t m_scrollCount { 0 };
     WebCore::FloatSize m_unacceleratedScrollingDelta;
     WebEventInputSource m_inputSource { WebEventInputSource::UserDriven };
-#endif
+    float m_momentumFastScrollMultiplier { 1 };
+#endif // PLATFORM(COCOA)
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, WebWheelEvent::Granularity);
