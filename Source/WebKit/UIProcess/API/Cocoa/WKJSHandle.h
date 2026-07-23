@@ -57,11 +57,11 @@ WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-/*! @abstract The frame in which the `WKJSHandle` can be used.
+/*! @abstract The frame from which the `WKJSHandle` originates and where it can be used.
  @discussion If the `WKJSHandle` is used as an argument to JavaScript in another frame or after the indicated frame has navigated,
  it will be interpreted as the JavaScript value `undefined`.
  */
-@property (nonatomic, readonly, copy) WKFrameInfo *frame;
+@property (nonatomic, readonly, copy) WKFrameInfo *sourceFrame;
 
 /*! @abstract The world in which the `WKJSHandle` can be used.
  @discussion If the `WKJSHandle` is used in another world it will be interpreted as the JavaScript value `undefined`.

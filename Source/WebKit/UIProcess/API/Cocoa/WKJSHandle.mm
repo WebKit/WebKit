@@ -47,7 +47,7 @@
     [super dealloc];
 }
 
-- (WKFrameInfo *)frame
+- (WKFrameInfo *)sourceFrame
 {
     return wrapper(API::FrameInfo::create(WebKit::FrameInfoData { _ref->info().frameInfo })).autorelease();
 }
@@ -103,6 +103,11 @@
 - (WKContentWorld *)world
 {
     return [self contentWorld];
+}
+
+- (WKFrameInfo *)frame
+{
+    return [self sourceFrame];
 }
 
 - (void)windowFrameInfo:(void (^)(WKFrameInfo * _Nullable))completionHandler
