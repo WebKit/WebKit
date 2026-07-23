@@ -1403,12 +1403,40 @@ TEST(SiteIsolation, QueryFramesStateAfterNavigating)
         { "/subframe3.html"_s, { "SubFrame3"_s } },
         { "/subframe4.html"_s, { "SubFrame4"_s } }
     }, HTTPServer::Protocol::Http);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableSiteIsolation(configuration.get());
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
     EXPECT_EQ(3u, [webView mainFrame].childFrames.count);
 
     [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
     EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+}
+
+TEST(SiteIsolation, QueryFramesStateAfterGoingBackToCachedPageWithIframe)
+{
+    HTTPServer server({
+        { "/page1.html"_s, { "<iframe src='subframe.html'></iframe>"_s } },
+        { "/page2.html"_s, { ""_s } },
+        { "/subframe.html"_s, { "SubFrame"_s } }
+    }, HTTPServer::Protocol::Http);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableSiteIsolation(configuration.get());
+    enableFeature(configuration.get(), @"MultiProcessBackForwardCacheEnabled");
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
+    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+    RetainPtr<WKFrameInfo> childFrame = [webView mainFrame].childFrames.firstObject.info;
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker = true"];
+    [webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker = true" inFrame:childFrame.get()];
+
+    [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
+    EXPECT_EQ(0u, [webView mainFrame].childFrames.count);
+
+    [webView synchronouslyGoBack];
+    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false"] boolValue]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker ? true : false" inFrame:[webView mainFrame].childFrames.firstObject.info] boolValue]);
 }
 
 TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)

@@ -2846,6 +2846,12 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
                     });
 
                 for (Ref iframeProcess : iframeProcesses) {
+                    // Children cached in the same process as the restored main frame are local
+                    // WebFrameProxys and they're reattached directly via
+                    // pendingBackForwardCachedChildren/adoptChildFrames once the main frame commits.
+                    if (iframeProcess.ptr() == process.ptr())
+                        continue;
+
                     if (!protect(browsingContextGroup())->remotePageInProcess(*this, iframeProcess)) {
                         RELEASE_LOG_ERROR(ProcessSwapping, "WebPageProxy::goToBackForwardItem: no RemotePageProxy for pid %i, signaling failure", iframeProcess->processID());
                         aggregator->failed();
@@ -19230,17 +19236,19 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
         return completionHandler(false);
     }
 
+    // Frame processes need to be fetched before child frames are removed.
     auto iframeProcesses = activeRemoteFrameProcesses();
+
+    // Children are stored in the cache entry; if restore is implemented they
+    // would be reattached at restore time. Until then they are released when
+    // the entry is discarded.
+    if (protect(preferences())->siteIsolationEnabled() && protect(preferences())->multiProcessBackForwardCacheEnabled())
+        entry->setCachedChildren(mainFrame->takeChildFrames());
 
     if (iframeProcesses.isEmpty())
         return completionHandler(true);
 
     auto mainFrameItemID = item->mainFrameItem().identifier();
-
-    // Children are stored in the cache entry; if restore is implemented they
-    // would be reattached at restore time. Until then they are released when
-    // the entry is discarded.
-    entry->setCachedChildren(mainFrame->takeChildFrames());
 
     auto aggregator = MainRunLoopSuccessCallbackAggregator::create(
         [weakThis = WeakPtr { *this }, itemID, completionHandler = WTF::move(completionHandler)](bool success) mutable {
