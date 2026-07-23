@@ -6462,7 +6462,7 @@ class FilterAPITestsForPlatform(shell.ShellCommand, AddToLogMixin):
         configuration = self.getProperty('configuration', 'debug')
 
         # iOS simulators have significant boot overhead, so use a lower cap
-        MAX_TESTS = 5 if platform == 'ios' else 30
+        MAX_TESTS = 2 if platform == 'ios' else 30
 
         self.log_observer = logobserver.BufferLogObserver(wantStdout=True, wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
