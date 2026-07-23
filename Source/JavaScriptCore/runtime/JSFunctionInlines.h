@@ -230,6 +230,8 @@ inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
     // FunctionExecutable for JS), so the only thing we have to refuse is bound functions
     // (which set their length/name at bind time, not via FunctionRareData tracking) and any
     // function whose length or name has since been user-mutated.
+    //
+    // This must be synced with JSBoundFunction::canSkipNameAndLengthMaterialization().
     if (this->inherits<JSBoundFunction>())
         return false;
     FunctionRareData* rareData = this->rareData();
