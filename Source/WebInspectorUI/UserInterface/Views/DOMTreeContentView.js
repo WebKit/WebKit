@@ -518,7 +518,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             }, WI.settings.enabledDOMTreeBadgeTypes.value.includes(WI.DOMTreeElement.BadgeType.Grid));
         }
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): `Subgrid` value for `CSS.LayoutFlag` did not exist yet.
+        // COMPATIBILITY (macOS 26.4, iOS 26.4): `Subgrid` value for `CSS.LayoutFlag` did not exist yet.
         if (InspectorBackend.Enum.CSS?.LayoutFlag?.Subgrid) {
             contextMenu.appendCheckboxItem(WI.unlocalizedString("subgrid"), () => {
                 WI.settings.enabledDOMTreeBadgeTypes.value.toggleIncludes(WI.DOMTreeElement.BadgeType.Subgrid);
@@ -526,7 +526,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             }, WI.settings.enabledDOMTreeBadgeTypes.value.includes(WI.DOMTreeElement.BadgeType.Subgrid));
         }
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): `GridLanes` value for `CSS.LayoutFlag` did not exist yet.
+        // COMPATIBILITY (macOS 26.4, iOS 26.4): `GridLanes` value for `CSS.LayoutFlag` did not exist yet.
         if (InspectorBackend.Enum.CSS?.LayoutFlag?.GridLanes) {
             contextMenu.appendCheckboxItem(WI.unlocalizedString("grid-lanes"), () => {
                 WI.settings.enabledDOMTreeBadgeTypes.value.toggleIncludes(WI.DOMTreeElement.BadgeType.GridLanes);

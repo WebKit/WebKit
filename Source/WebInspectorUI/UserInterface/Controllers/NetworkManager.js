@@ -223,6 +223,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             target.NetworkAgent.enable();
             target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 
+            // COMPATIBILITY (macOS 26.4, iOS 26.4): Network.setClearResourceDataOnNavigate did not exist yet.
             if (target.hasCommand("Network.setClearResourceDataOnNavigate"))
                 target.NetworkAgent.setClearResourceDataOnNavigate(WI.settings.clearNetworkOnNavigate.value);
 
