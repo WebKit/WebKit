@@ -33,6 +33,7 @@
 #include "PlatformMediaSession.h"
 #include <algorithm>
 #include <ranges>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(formatString, ...) \
@@ -345,8 +346,12 @@ void MediaSessionManagerInterface::processWillSuspend()
     });
 #endif
 
+    if (std::ranges::any_of(m_audioCaptureSources, [](auto& source) { return Ref { source }->isCapturingAudio(); }))
+        MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(ProcessWillSuspendWhileCapturing);
+
+
 #if USE(AUDIO_SESSION)
-    maybeDeactivateAudioSession();
+    maybeDeactivateAudioSession(ShouldCheckRequiredSession::No);
 #endif
 }
 
@@ -460,32 +465,96 @@ void MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
         return;
     }
 
-    if (!maybeActivateAudioSession()) {
-        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false, failed to activate AudioSession");
-        completionHandler(false);
+    // Capture whether the session is already interrupted now. If activation is async and an
+    // interruption begins while activation is in flight, we must not consume that interruption
+    // when the callback fires.
+    bool sessionWasAlreadyInterrupted = session.state() == PlatformMediaSession::State::Interrupted;
+
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    auto completeWillBeginPlayback = [this, protectedThis = Ref { *this }, weakSession = WeakPtr { session },
+#if !RELEASE_LOG_DISABLED
+        sessionLogId = session.logIdentifier(),
+#endif
+        sessionWasAlreadyInterrupted, logSiteIdentifier, completionHandler = WTF::move(completionHandler)](bool activated) mutable {
+        if (!activated) {
+            ALWAYS_LOG(logSiteIdentifier, " returning false, failed to activate AudioSession");
+            completionHandler(false);
+            return;
+        }
+        if (m_currentInterruption && sessionWasAlreadyInterrupted)
+            endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
+
+        if (RefPtr session = weakSession.get())
+            enforceConcurrentPlaybackRestriction(*session);
+        ALWAYS_LOG(logSiteIdentifier, sessionLogId, " returning true");
+        completionHandler(true);
+    };
+
+#if USE(AUDIO_SESSION)
+    if (!AudioSession::singleton().isActive() && session.canProduceAudio()) {
+        // This session is about to produce audio and the audio session is not
+        // currently active. Activate before completing so that the active state
+        // is visible to JS observers (e.g., the 'playing' event handler reading
+        // internals.audioSessionActive()) by the time play() resolves.
+        //
+        // Complete the playback admission FIRST — completeWillBeginPlayback()
+        // drives the session to State::Playing (via clientWillBeginPlayback's
+        // completion) and fires the 'playing' event. Then deactivate only if the
+        // session was actually REMOVED while activation was in flight (hasNoSession),
+        // e.g. an iframe GC'd before the reply — mirroring removeSession()'s own
+        // check. Do NOT key this on !activeAudioSessionRequired(): the callback runs
+        // a runloop turn later, and a still-alive session can be transiently
+        // "not required" (Autoplaying, or canProduceAudio flipping during a
+        // Video->VideoAudio transition), which would spuriously tear down an active
+        // session and make internals.audioSessionActive() observably false at the
+        // 'playing' event (Release-timing race). Consistent with B1.
+        AudioSession::singleton().tryToSetActive(true)->whenSettled(RunLoop::mainSingleton(),
+            [this, protectedThis = Ref { *this }, completeWillBeginPlayback = WTF::move(completeWillBeginPlayback)](auto&& result) mutable {
+                if (result)
+                    m_becameActive = true;
+                completeWillBeginPlayback(result.has_value());
+                if (result && hasNoSession())
+                    maybeDeactivateAudioSession();
+            });
+        return;
+    }
+#endif
+
+    if (!activeAudioSessionRequired() || m_becameActive) {
+        completeWillBeginPlayback(true);
         return;
     }
 
-    if (m_currentInterruption)
-        endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
-
-    if (restrictions.contains(MediaSessionRestriction::ConcurrentPlaybackNotPermitted)) {
-        forEachMatchingSession([&session](auto& otherSession) {
-            if (&otherSession == &session)
-                return false;
-
-            if (otherSession.state() != PlatformMediaSession::State::Playing)
-                return false;
-
-            return !otherSession.canPlayConcurrently(session);
-        }, [](auto& oneSession) {
-            oneSession.pauseSession();
+    maybeActivateAudioSession()->whenSettled(RunLoop::mainSingleton(),
+        [completeWillBeginPlayback = WTF::move(completeWillBeginPlayback)](auto&& result) mutable {
+            completeWillBeginPlayback(result.has_value());
         });
-    }
-    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning true");
-    completionHandler(true);
 #else
     completionHandler(false);
+#endif
+}
+
+void MediaSessionManagerInterface::enforceConcurrentPlaybackRestriction(PlatformMediaSessionInterface& newSession)
+{
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    auto restrictions = this->restrictions(newSession.mediaType());
+    if (!restrictions.contains(MediaSessionRestriction::ConcurrentPlaybackNotPermitted))
+        return;
+
+    forEachMatchingSession([&newSession](auto& otherSession) {
+        bool isOther = &otherSession == &newSession;
+        bool isPlaying = otherSession.state() == PlatformMediaSession::State::Playing;
+        bool canConcurrent = otherSession.canPlayConcurrently(newSession);
+        if (isOther)
+            return false;
+        if (!isPlaying)
+            return false;
+        return !canConcurrent;
+    }, [](auto& oneSession) {
+        oneSession.pauseSession();
+    });
+#else
+    UNUSED_PARAM(newSession);
 #endif
 }
 
@@ -534,6 +603,16 @@ void MediaSessionManagerInterface::sessionStateChanged(PlatformMediaSessionInter
 void MediaSessionManagerInterface::sessionCanProduceAudioChanged()
 {
     MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(SessionCanProduceAudioChanged);
+
+    // Activate synchronously so isActive() reflects the newly-audible
+    // state immediately. The WebContent process always holds a RemoteAudioSession
+    // (GPU process is always enabled), whose tryToSetActive sets m_active
+    // optimistically+synchronously — so internals.audioSessionActive() (and any
+    // 'playing'-handler read) sees the correct state without waiting for the
+    // debounced task below, which can otherwise land after the 'playing' event.
+    // No-op unless activeAudioSessionRequired(); redundant with the deferred call,
+    // which coalesces at RemoteAudioSession's IPC FIFO.
+    maybeActivateAudioSession();
 
     if (m_alreadyScheduledSessionStatedUpdate)
         return;
@@ -584,7 +663,7 @@ void MediaSessionManagerInterface::audioCaptureSourceStateChanged(IsCaptureStart
 #if USE(AUDIO_SESSION)
     if (isCaptureStarting == IsCaptureStarting::Yes)
         maybeActivateAudioSession();
-    else if (!activeAudioSessionRequired())
+    else
         maybeDeactivateAudioSession();
 #else
     UNUSED_PARAM(isCaptureStarting);
@@ -675,7 +754,7 @@ void MediaSessionManagerInterface::removeSession(PlatformMediaSessionInterface& 
     MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(RemoveSession, session.logIdentifier());
 #endif
 
-    if (hasNoSession() && !activeAudioSessionRequired())
+    if (hasNoSession())
         maybeDeactivateAudioSession();
 
 #if !RELEASE_LOG_DISABLED && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
@@ -698,31 +777,95 @@ bool MediaSessionManagerInterface::computeSupportsSeeking() const
     return false;
 }
 
-void MediaSessionManagerInterface::maybeDeactivateAudioSession()
+void MediaSessionManagerInterface::maybeDeactivateAudioSession(ShouldCheckRequiredSession shouldCheckRequiredSession)
 {
 #if USE(AUDIO_SESSION)
     if (!m_becameActive || !shouldDeactivateAudioSession())
         return;
 
+    if (shouldCheckRequiredSession == ShouldCheckRequiredSession::Yes && activeAudioSessionRequired()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "skipping AudioSession deactivation, capture or media session still requires it");
+        return;
+    }
+
+    // Honor an explicit category override (e.g., navigator.audioSession.type =
+    // "play-and-record"): the page has expressed intent that the session remain
+    // in that category, which implies keeping it active.
+    if (AudioSession::singleton().categoryOverride() != AudioSession::CategoryType::None)
+        return;
+
+    // Don't tear down activation while an interruption is in progress —
+    // the system audio session is in an unstable state and a follow-up
+    // tryToSetActive(true) (e.g. from getUserMedia recall after the
+    // interruption ends) may fail with the session in a corrupt state.
+    if (AudioSession::singleton().isInterrupted())
+        return;
+
     ALWAYS_LOG(LOGIDENTIFIER, "tried to set inactive AudioSession");
-    AudioSession::singleton().tryToSetActive(false);
+    AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
     m_becameActive = false;
+#else
+    UNUSED_PARAM(shouldCheckRequiredSession);
 #endif
 }
 
-bool MediaSessionManagerInterface::maybeActivateAudioSession()
+Ref<GenericPromise> MediaSessionManagerInterface::maybeActivateAudioSession()
 {
 #if USE(AUDIO_SESSION)
     if (!activeAudioSessionRequired()) {
         MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(MaybeActivateAudioSessionActiveSessionNotRequired);
-        return true;
+        // Do NOT deactivate here. This is an "activate or no-op" function, matching
+        // the pre-async contract (7136b90d351d). Tearing the session down on any
+        // re-evaluation where nothing currently "requires" it caused permanent audio
+        // loss on pages whose audible content sits in Autoplaying rather than Playing
+        // (e.g. YouTube DASH audio elements), because activeAudioSessionRequired()
+        // excludes Autoplaying (PlatformMediaSession::activeAudioSessionRequired).
+        // rdar://181517699 (REGRESSION 316303@main). Deactivation stays conservative,
+        // driven only by the lifecycle callers (processWillSuspend / removeSession /
+        // audioCaptureSourceStateChanged) via maybeDeactivateAudioSession().
+        return GenericPromise::createAndResolve();
     }
 
-    m_becameActive = AudioSession::singleton().tryToSetActive(true);
-    ALWAYS_LOG(LOGIDENTIFIER, m_becameActive ? "successfully activated" : "failed to activate", " AudioSession");
-    return m_becameActive;
+    // Set m_becameActive optimistically so that an interleaved
+    // maybeDeactivateAudioSession (e.g. from processWillSuspend) doesn't bail
+    // out before the activation IPC's reply arrives. Revert on failure.
+    // Mirrors the optimistic configuration().isActive update in
+    // RemoteAudioSession::tryToSetActiveInternal.
+    bool previousBecameActive = m_becameActive;
+    m_becameActive = true;
+    auto logSiteIdentifier = LOGIDENTIFIER;
+
+    // Each call gets its own promise. RemoteAudioSession's FIFO chain
+    // coalesces same-state IPCs at the IPC layer, so issuing tryToSetActive(true)
+    // per call is harmless. The MSMI-level dedup via m_activationWaiters was
+    // removed because it could stall a fresh activation request when a previous
+    // activation's callback hadn't yet fired (e.g. processDidResume right after
+    // processWillSuspend's deactivate — the still-pending earlier waiter would
+    // block the resume's tryToSetActive(true) optimistic update from running).
+    return AudioSession::singleton().tryToSetActive(true)->whenSettled(RunLoop::mainSingleton(),
+        [this, protectedThis = Ref { *this }, previousBecameActive, logSiteIdentifier](auto&& result) mutable -> Ref<GenericPromise> {
+            if (!result) {
+                m_becameActive = previousBecameActive;
+                ALWAYS_LOG(logSiteIdentifier, "failed to activate AudioSession");
+                return GenericPromise::createAndReject();
+            }
+
+            ALWAYS_LOG(logSiteIdentifier, "successfully activated AudioSession");
+
+            // Handle the race: session may have been removed while activation was in
+            // flight. Key on hasNoSession() (genuine removal, as removeSession() does),
+            // NOT !activeAudioSessionRequired(): this callback runs a runloop turn later,
+            // and a still-alive session can be transiently not-required (Autoplaying, or
+            // canProduceAudio flipping during a Video->VideoAudio transition). Keying on
+            // "not required" would spuriously deactivate an active session mid-playback
+            // (Release-timing race → internals.audioSessionActive() false at 'playing').
+            if (hasNoSession())
+                maybeDeactivateAudioSession();
+
+            return GenericPromise::createAndResolve();
+        });
 #else
-    return true;
+    return GenericPromise::createAndResolve();
 #endif
 }
 

@@ -44,6 +44,28 @@ static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* ex
         TestWebKitAPI::Util::runFor(0.1_s);
     } while (++tries <= 100);
 
+    if (![observed isEqualToString:@(expected)]) {
+        // On a mismatch, log why the preferred buffering policy diverged so a future failure is
+        // diagnosable from the log alone:
+        //   sessionState "Playing" + preferred "Default"  => session state stuck at Playing
+        //   sessionState "Paused"  + preferred "MakeResourcesPurgeable" but cached "Default"
+        //     => applied policy is stale (buffering update never re-triggered after state settled)
+        NSString *snapshot = [webView stringByEvaluatingJavaScript:
+            @"(() => {"
+            @"  const v = document.querySelector('video');"
+            @"  const i = window.internals;"
+            @"  return JSON.stringify({"
+            @"    cached: i.elementBufferingPolicy(v),"
+            @"    preferred: i.elementPreferredBufferingPolicy(v),"
+            @"    sessionState: i.mediaSessionState(v),"
+            @"    paused: v.paused,"
+            @"    hidden: document.hidden,"
+            @"    readyState: v.readyState"
+            @"  });"
+            @"})()"];
+        NSLog(@"MediaBufferingPolicy mismatch: expected='%s' observed='%@' snapshot=%@", expected, observed, snapshot);
+    }
+
     EXPECT_WK_STREQ(expected, observed);
 }
 

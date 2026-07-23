@@ -33,7 +33,8 @@
 messages -> RemoteAudioSessionProxy {
     SetCategory(enum:uint8_t WebCore::AudioSessionCategory type, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
     SetPreferredBufferSize(uint64_t preferredBufferSize)
-    TryToSetActive(bool active) -> (bool suceeded) Synchronous
+    TryToSetActive(bool active) -> (bool suceeded)
+    TryToSetActiveSync(bool active) -> (bool suceeded) Synchronous
     SetIsPlayingToBluetoothOverride(std::optional<bool> value)
 
     [EnabledBy=AllowTestOnlyIPC] TriggerBeginInterruptionForTesting()

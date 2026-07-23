@@ -775,7 +775,7 @@ void Internals::resetToConsistentState(Page& page)
 
 #if USE(AUDIO_SESSION)
     AudioSession::singleton().setCategoryOverride(AudioSessionCategory::None);
-    AudioSession::singleton().tryToSetActive(false);
+    AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
     AudioSession::singleton().endInterruptionForTesting();
 #endif
 
@@ -4944,9 +4944,9 @@ bool Internals::elementShouldBufferData(HTMLMediaElement& element)
     return element.bufferingPolicy() < MediaPlayer::BufferingPolicy::LimitReadAhead;
 }
 
-String Internals::elementBufferingPolicy(HTMLMediaElement& element)
+static String bufferingPolicyToString(MediaPlayer::BufferingPolicy policy)
 {
-    switch (element.bufferingPolicy()) {
+    switch (policy) {
     case MediaPlayer::BufferingPolicy::Default:
         return "Default"_s;
     case MediaPlayer::BufferingPolicy::LimitReadAhead:
@@ -4959,6 +4959,20 @@ String Internals::elementBufferingPolicy(HTMLMediaElement& element)
 
     ASSERT_NOT_REACHED();
     return "UNKNOWN"_s;
+}
+
+String Internals::elementBufferingPolicy(HTMLMediaElement& element)
+{
+    return bufferingPolicyToString(element.bufferingPolicy());
+}
+
+// The live-computed preferred policy, in contrast to the cached applied policy
+// returned by elementBufferingPolicy(). Comparing the two, together with
+// mediaSessionState(), disambiguates "session state stuck at Playing" from
+// "applied policy stale (update never re-triggered)". rdar://181274857.
+String Internals::elementPreferredBufferingPolicy(HTMLMediaElement& element)
+{
+    return bufferingPolicyToString(element.mediaSession().preferredBufferingPolicy());
 }
 
 void Internals::setMediaElementBufferingPolicy(HTMLMediaElement& element, const String& policy)

@@ -190,19 +190,30 @@ void DOMAudioSession::scheduleStateChangeEvent()
     if (m_hasScheduleStateChangeEvent)
         return;
 
+    // Capture the state at queue time, not at task-run time. With async session
+    // activation, the audio session can transition multiple times within the
+    // task-queue debounce window (e.g., activate-then-deactivate when
+    // getUserMedia + stop() interleave). Recomputing at run time would miss
+    // the intermediate transition. If the state has changed again by task-run
+    // time, the task re-queues itself to dispatch the now-current state.
+    auto queuedState = computeAudioSessionState();
     m_hasScheduleStateChangeEvent = true;
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& session) {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [queuedState](auto& session) {
         if (session.isContextStopped())
             return;
 
         session.m_hasScheduleStateChangeEvent = false;
-        auto newState = computeAudioSessionState();
 
-        if (session.m_state && *session.m_state == newState)
-            return;
+        if (!session.m_state || *session.m_state != queuedState) {
+            session.m_state = queuedState;
+            session.dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        }
 
-        session.m_state = newState;
-        session.dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        // If the audio session state has changed again since we queued this task
+        // (e.g., a deactivation came in during the debounce window after we
+        // captured "active"), queue another task for the current state.
+        if (computeAudioSessionState() != queuedState)
+            session.scheduleStateChangeEvent();
     });
 }
 

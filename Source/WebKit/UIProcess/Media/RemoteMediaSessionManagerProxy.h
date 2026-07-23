@@ -130,7 +130,7 @@ private:
     size_t maximumNumberOfOutputChannels() const final { return m_audioConfiguration.maximumNumberOfOutputChannels; }
     size_t outputLatency() const final { return m_audioConfiguration.outputLatency; }
 
-    bool tryToSetActiveInternal(bool) final;
+    Ref<SetActivePromise> tryToSetActiveInternal(bool) final;
 
     size_t preferredBufferSize() const final { return m_audioConfiguration.preferredBufferSize; }
     void setPreferredBufferSize(size_t) final;

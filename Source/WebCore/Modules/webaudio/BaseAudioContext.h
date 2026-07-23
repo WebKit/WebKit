@@ -128,6 +128,7 @@ public:
     using State = AudioContextState;
     State state() const { return m_state; }
     bool isClosed() const { return m_state == State::Closed; }
+    bool isRunning() const { return m_state == State::Running; }
 
     AudioWorklet& audioWorklet() { return m_worklet.get(); }
 

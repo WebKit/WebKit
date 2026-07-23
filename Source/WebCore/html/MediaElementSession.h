@@ -95,7 +95,7 @@ public:
     Expected<void, MediaPlaybackDenialExplanation> playbackStateChangePermitted(MediaPlaybackState) const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted() const;
-    MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;
+    WEBCORE_EXPORT MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;
     bool fullscreenPermitted() const;
     bool pageAllowsDataLoading() const;
     bool pageAllowsPlaybackAfterResuming() const;

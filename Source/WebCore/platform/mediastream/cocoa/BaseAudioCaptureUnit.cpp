@@ -139,6 +139,15 @@ void BaseAudioCaptureUnit::continueStartProducingData()
     if (isProducingData())
         return;
 
+    // The IO unit start is deferred (prewarmAudioUnitCreation on macOS), so the unit
+    // may have been suspended (e.g. an audio session interruption arrived) after
+    // startProducingData() checked m_suspended up front. Do not start the IO unit while
+    // suspended: it would leave the unit suspended-but-producing and trip resume()'s
+    // ASSERT(!isProducingData()) when the interruption ends. resume() drives the restart
+    // of capture that should resume after the interruption. rdar://97612254.
+    if (m_suspended)
+        return;
+
     if (hasAudioUnit()) {
         cleanupAudioUnit();
         ASSERT(!hasAudioUnit());

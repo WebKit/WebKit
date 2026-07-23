@@ -2420,8 +2420,6 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 
 webkit.org/b/318450 [ Debug ] accessibility/mac/input-replacevalue-userinfo.html [ Timeout ]
 
-webkit.org/b/318452 [ Release ] platform/mac/media/audio-session-deactivated-when-suspended.html [ Pass Failure ]
-
 # webkit.org/b/305671 3x fast/animation/* (layout-tests) are flaky failures.
 fast/animation/css-animation-throttling.html [ Pass Failure ]
 fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Pass Failure ]

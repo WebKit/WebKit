@@ -135,7 +135,7 @@ public:
         RELEASE_LOG_ERROR_IF(!session->isActive() || session->category() != AudioSession::CategoryType::PlayAndRecord, WebRTC, "Audio session should be active (%d) and category should be play and record (%d)", session->isActive(), session->category() != AudioSession::CategoryType::PlayAndRecord);
 
         session->setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::VideoChat, RouteSharingPolicy::Default);
-        session->tryToSetActive(true);
+        session->tryToSetActive(true)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
     }
 
     void start()
