@@ -155,8 +155,17 @@ svg/zoom/page/non-scaling-stroke-textRendering-geometricPrecision.svg [ ImageOnl
 # SMIL animation issues
 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
 
-# Empty viewBox doesn't disable rendering for inline SVG documents
-svg/custom/viewBox-empty.html [ ImageOnlyFailure ]
+# Empty/zero viewBox doesn't disable rendering under LBSE (see bug 320095).
+# DRAFT: these WPT tests replace svg/custom/viewBox-empty.html (removed). Confirm
+# against an LBSE-text run and delete any line that actually PASSES before landing
+# (a passing test marked ImageOnlyFailure reports as an unexpected pass).
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-contexts.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-symbol.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-pattern.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-marker.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-002.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-003.svg [ ImageOnlyFailure ]
 
 # SVG <image> (buffered-rendering) issues
 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
