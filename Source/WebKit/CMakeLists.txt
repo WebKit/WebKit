@@ -977,6 +977,7 @@ if (SWIFT_REQUIRED)
             UIProcess/API/mac/WKWebViewMac.mm
             UIProcess/ios/ViewGestureControllerIOS.mm
             UIProcess/mac/ViewGestureControllerMac.mm
+            UIProcess/mac/WKAppKitGestureController.mm
             UIProcess/mac/WebViewImpl.mm
         )
     endif ()
