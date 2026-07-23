@@ -118,7 +118,11 @@ PlatformSample MediaSampleAVFObjC::platformSample() const
 
 static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDict)
 {
-    return !CFDictionaryContainsKey(attachmentDict, PAL::kCMSampleAttachmentKey_NotSync);
+    const void* notSync = nullptr;
+    if (!CFDictionaryGetValueIfPresent(attachmentDict, PAL::kCMSampleAttachmentKey_NotSync, &notSync))
+        return true;
+
+    return !notSync || !CFBooleanGetValue(static_cast<CFBooleanRef>(notSync));
 }
 
 static bool doesCMSampleBufferHaveSyncInfo(CMSampleBufferRef sample)

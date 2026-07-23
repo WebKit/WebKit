@@ -976,7 +976,11 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
   if (attachments != nullptr && CFArrayGetCount(attachments)) {
     CFDictionaryRef attachment =
         static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, 0));
-    isKeyframe = !CFDictionaryContainsKey(attachment, kCMSampleAttachmentKey_NotSync);
+    const void* notSync = nullptr;
+    if (CFDictionaryGetValueIfPresent(attachment, kCMSampleAttachmentKey_NotSync, &notSync))
+      isKeyframe = !notSync || !CFBooleanGetValue(static_cast<CFBooleanRef>(notSync));
+    else
+      isKeyframe = YES;
     if (_enableL1T2ScalabilityMode) {
       auto isDependedOnByOthers = CFDictionaryGetValue(attachment, kCMSampleAttachmentKey_IsDependedOnByOthers);
       isBaseLayer = !isDependedOnByOthers || CFBooleanGetValue(static_cast<CFBooleanRef>(isDependedOnByOthers));
