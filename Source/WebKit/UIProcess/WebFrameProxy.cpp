@@ -69,9 +69,11 @@
 #include <WebCore/FrameTreeSyncData.h>
 #include <WebCore/Image.h>
 #include <WebCore/LayoutRect.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/RemoteFrameLayoutInfo.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/ShareableBitmapHandle.h>
@@ -353,6 +355,7 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_title = String();
     m_MIMEType = contentType;
     m_containsPluginDocument = containsPluginDocument;
+    m_lastActivationTimestamp = -MonotonicTime::infinity();
     m_documentSecurityPolicy = WTF::move(documentSecurityPolicy);
     m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(cspOriginsThatUpgradeInsecureNavigations);
 
@@ -1055,6 +1058,35 @@ Ref<WebFrameProxy> WebFrameProxy::rootFrame()
     while (rootFrame->m_parentFrame && rootFrame->m_parentFrame->process().coreProcessIdentifier() == process().coreProcessIdentifier())
         rootFrame = *rootFrame->m_parentFrame;
     return rootFrame;
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
+// Mirrors LocalDOMWindow::notifyActivated. We track activation in the UIProcess so that a
+// compromised WebContent process cannot fabricate transient activation when calling APIs
+// such as RequestDOMPasteAccess.
+void WebFrameProxy::notifyActivated(MonotonicTime activationTime)
+{
+    m_lastActivationTimestamp = activationTime;
+
+    for (RefPtr ancestor = m_parentFrame.get(); ancestor; ancestor = ancestor->m_parentFrame.get())
+        ancestor->m_lastActivationTimestamp = activationTime;
+
+    propagateActivationToSameOriginDescendants(documentSecurityOriginData(), activationTime);
+}
+
+void WebFrameProxy::propagateActivationToSameOriginDescendants(const WebCore::SecurityOriginData& rootOrigin, MonotonicTime activationTime)
+{
+    for (Ref child : m_childFrames) {
+        if (child->documentSecurityOriginData() == rootOrigin)
+            child->m_lastActivationTimestamp = activationTime;
+        child->propagateActivationToSameOriginDescendants(rootOrigin, activationTime);
+    }
+}
+
+bool WebFrameProxy::hasTransientActivation() const
+{
+    auto now = MonotonicTime::now();
+    return now >= m_lastActivationTimestamp && now < (m_lastActivationTimestamp + WebCore::LocalDOMWindow::transientActivationDuration());
 }
 
 bool WebFrameProxy::isMainFrame() const
