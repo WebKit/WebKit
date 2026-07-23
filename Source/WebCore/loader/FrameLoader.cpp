@@ -3558,7 +3558,8 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         request.setIsTopSite(isMainFrameMainResource);
 
     bool hasSpecificCachePolicy = request.cachePolicy() != ResourceRequestCachePolicy::UseProtocolCachePolicy;
-    if (page && page->isResourceCachingDisabledByWebInspector()) {
+    bool cachingDisabledByWebInspector = page && page->isResourceCachingDisabledByWebInspector();
+    if (cachingDisabledByWebInspector) {
         request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
         loadType = FrameLoadType::ReloadFromOrigin;
     } else if (!hasSpecificCachePolicy)
@@ -3569,11 +3570,18 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         return;
 
     if (!hasSpecificCachePolicy && request.cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData) {
+        auto overrideHeaderIfNeeded = [&] (HTTPHeaderName name, const String& value) {
+            if (cachingDisabledByWebInspector)
+                request.addHTTPHeaderFieldIfNotPresent(name, value);
+            else
+                request.setHTTPHeaderField(name, value);
+        };
+
         if (loadType == FrameLoadType::Reload)
-            request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
+            overrideHeaderIfNeeded(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
         else if (loadType == FrameLoadType::ReloadFromOrigin) {
-            request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
-            request.setHTTPHeaderField(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+            overrideHeaderIfNeeded(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+            overrideHeaderIfNeeded(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
         }
     }
 
