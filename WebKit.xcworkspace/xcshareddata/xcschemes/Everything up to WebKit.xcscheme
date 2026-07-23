@@ -39,12 +39,26 @@
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "932F5BE30822A1C700736975"
                BuildableName = "All"
                BlueprintName = "All"
+               ReferencedContainer = "container:Source/JavaScriptCore/JavaScriptCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "932F5B3E0822A1C700736975"
+               BuildableName = "JavaScriptCore.framework"
+               BlueprintName = "JavaScriptCore"
                ReferencedContainer = "container:Source/JavaScriptCore/JavaScriptCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
