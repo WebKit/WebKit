@@ -882,7 +882,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                 uint64_t result;
                 evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[segment->offsetIfActive()->constantExpressionIndex()], moduleInformation, Wasm::Types::I32, result);
                 RETURN_IF_EXCEPTION(scope, void());
-                offset = result;
+                offset = static_cast<uint32_t>(result);
             }
 
             if (fn(memory, sizeInBytes, segment, offset) == IterationStatus::Done)
