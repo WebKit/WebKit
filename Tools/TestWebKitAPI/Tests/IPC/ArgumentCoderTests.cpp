@@ -32,6 +32,7 @@
 #include "Encoder.h"
 #include "GeneratedSerializers.h"
 #include "StreamConnectionEncoder.h"
+#include "UnsafeSpan.h"
 #include "Helpers/Test.h"
 #include <WebCore/ShareableResource.h>
 #include <limits>
@@ -776,5 +777,83 @@ TEST(ArgumentCoderShareableResourceHandle, OverflowingOffsetAndSizeIsRejectedNot
     EXPECT_FALSE(result.has_value());
 }
 #endif // ENABLE(SHAREABLE_RESOURCE)
+
+// On a stream connection the decoded message buffer stays writable by the sender, so
+// ArgumentCoder<std::span> copies the bytes into Decoder-owned storage on decode. UnsafeSpan is
+// the audited opt-out that keeps a live view into the buffer. These tests exercise both by
+// mutating the shared buffer after decode and observing whether the decoded data follows.
+
+static bool spanAliasesBuffer(std::span<const uint8_t> buffer, const void* data)
+{
+    auto* bytes = static_cast<const uint8_t*>(data);
+    return bytes >= buffer.data() && bytes < std::to_address(buffer.end());
+}
+
+TEST(ArgumentCoderStreamSpanCopy, PlainSpanIsCopiedOffStreamBuffer)
+{
+    Vector<uint8_t> buffer(FillWith { }, 1024, static_cast<uint8_t>(0));
+    IPC::StreamConnectionEncoder encoder(EncoderDecoderTest::name(), buffer.mutableSpan());
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    encoder << std::span<const uint32_t> { data };
+
+    auto decoder = makeUnique<IPC::Decoder>(buffer.span(), 0);
+    ASSERT_TRUE(decoder->isStream());
+    auto span = decoder->decode<std::span<const uint32_t>>();
+    ASSERT_TRUE(!!span);
+    ASSERT_EQ(span->size(), 4u);
+
+    // The decoded span must not alias the sender-writable stream buffer.
+    EXPECT_FALSE(spanAliasesBuffer(decoder->span(), span->data()));
+
+    // Mutating the shared buffer must not disturb the decoded copy.
+    for (auto& byte : buffer.mutableSpan())
+        byte = 0xff;
+    EXPECT_EQ((*span)[0], 1u);
+    EXPECT_EQ((*span)[1], 2u);
+    EXPECT_EQ((*span)[2], 3u);
+    EXPECT_EQ((*span)[3], 4u);
+}
+
+TEST(ArgumentCoderStreamSpanCopy, UnsafeSpanViewsStreamBuffer)
+{
+    Vector<uint8_t> buffer(FillWith { }, 1024, static_cast<uint8_t>(0));
+    IPC::StreamConnectionEncoder encoder(EncoderDecoderTest::name(), buffer.mutableSpan());
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    encoder << IPC::UnsafeSpan<uint32_t> { std::span<const uint32_t> { data } };
+
+    auto decoder = makeUnique<IPC::Decoder>(buffer.span(), 0);
+    ASSERT_TRUE(decoder->isStream());
+    auto span = decoder->decode<IPC::UnsafeSpan<uint32_t>>();
+    ASSERT_TRUE(!!span);
+    ASSERT_EQ(span->size(), 4u);
+
+    // The decoded view aliases the stream buffer: this is the audited opt-out.
+    EXPECT_TRUE(spanAliasesBuffer(decoder->span(), span->data()));
+
+    // Mutating the shared buffer is visible through the view.
+    for (auto& byte : buffer.mutableSpan())
+        byte = 0xff;
+    EXPECT_EQ((*span)[0], 0xffffffffu);
+    EXPECT_EQ((*span)[3], 0xffffffffu);
+}
+
+TEST(ArgumentCoderStreamSpanCopy, NonStreamPlainSpanIsNotCopied)
+{
+    IPC::Encoder encoder(EncoderDecoderTest::name(), 0);
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    encoder << std::span<const uint32_t> { data };
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+    ASSERT_FALSE(decoder->isStream());
+    auto span = decoder->decode<std::span<const uint32_t>>();
+    ASSERT_TRUE(!!span);
+    ASSERT_EQ(span->size(), 4u);
+
+    // Off a stream connection there is no defensive copy: the span views the decoder buffer.
+    EXPECT_TRUE(spanAliasesBuffer(decoder->span(), span->data()));
+    EXPECT_EQ((*span)[0], 1u);
+    EXPECT_EQ((*span)[3], 4u);
+}
 
 } // namespace TestWebKitAPI

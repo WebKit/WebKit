@@ -407,7 +407,7 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
     drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
 }
 
-void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)
+void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::UnsafeArrayReferenceTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)
 {
     RefPtr font = resourceCache().cachedFont(fontIdentifier);
     MESSAGE_CHECK(font);
@@ -491,9 +491,9 @@ void RemoteGraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint&
     context().drawLine(point1, point2);
 }
 
-void RemoteGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void RemoteGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, IPC::UnsafeSpan<FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
-    context().drawLinesForText(point, thickness, Vector(lineSegments), printing, doubleLines, strokeStyle);
+    context().drawLinesForText(point, thickness, Vector(lineSegments.span()), printing, doubleLines, strokeStyle);
 }
 
 void RemoteGraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
@@ -642,7 +642,7 @@ void RemoteGraphicsContext::strokeLine(const PathDataLine& line)
     context().strokeLine(line);
 }
 
-void RemoteGraphicsContext::strokeLinesWithColorAndThickness(std::span<const PathDataLineColorThickness> lines)
+void RemoteGraphicsContext::strokeLinesWithColorAndThickness(IPC::UnsafeSpan<PathDataLineColorThickness> lines)
 {
     // Each line carries its stroke color and thickness so the batch is self
     // describing; only push a state change to the context when it differs from

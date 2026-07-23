@@ -98,7 +98,7 @@ public:
     void clipPath(const WebCore::Path&, WebCore::WindRule);
     void clipCachedPath(RemotePathImplIdentifier, WebCore::WindRule);
     void resetClip();
-    void drawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize>, WebCore::FloatPoint localAnchor, WebCore::FontSmoothingMode);
+    void drawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::UnsafeArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize>, WebCore::FloatPoint localAnchor, WebCore::FontSmoothingMode);
     void drawDisplayList(RemoteDisplayListIdentifier);
     void drawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, Ref<WebCore::Filter>&&);
     virtual void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);
@@ -114,7 +114,7 @@ public:
     void endTransparencyLayer();
     void drawRect(const WebCore::FloatRect&, float borderThickness);
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2);
-    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, WebCore::StrokeStyle);
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, IPC::UnsafeSpan<WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, WebCore::StrokeStyle);
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&);
     void drawEllipse(const WebCore::FloatRect&);
     void drawPath(const WebCore::Path&);
@@ -138,7 +138,7 @@ public:
     void fillEllipse(const WebCore::FloatRect&);
     void strokeRect(const WebCore::FloatRect&, float lineWidth);
     void strokeLine(const WebCore::PathDataLine&);
-    void strokeLinesWithColorAndThickness(std::span<const WebCore::PathDataLineColorThickness>);
+    void strokeLinesWithColorAndThickness(IPC::UnsafeSpan<WebCore::PathDataLineColorThickness>);
     void strokeArc(const WebCore::PathArc&);
     void strokeClosedArc(const WebCore::PathClosedArc&);
     void strokeQuadCurve(const WebCore::PathDataQuadCurve&);
