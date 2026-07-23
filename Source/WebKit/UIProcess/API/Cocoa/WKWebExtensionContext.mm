@@ -557,8 +557,8 @@ static inline WebKit::WebExtensionContext::PermissionState NODELETE toImpl(WKWeb
     Ref { *_webExtensionContext }->loadBackgroundContent([capturedBlock = makeBlockPtr(completionHandler)](RefPtr<API::Error> error) {
         if (error)
             capturedBlock(wrapper(error));
-
-        capturedBlock(nil);
+        else
+            capturedBlock(nil);
     });
 }
 
