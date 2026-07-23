@@ -364,6 +364,7 @@ public:
 
     bool shouldLimitHLSPlaybackRate() const;
     bool shouldSuppressHLSSubtitles() const;
+    bool shouldBlockAudiblePlaybackWhileAudioIsPlaying() const;
 
     bool shouldSuppressMediaSessionPauseActionOnInterruption() const;
 

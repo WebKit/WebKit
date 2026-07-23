@@ -288,6 +288,7 @@ struct QuirksData {
         ShouldDeferIntersectionObserversDuringResize,
         ShouldSuppressHLSSubtitles,
         ShouldSuppressMediaSessionPauseActionOnInterruption,
+        ShouldBlockAudiblePlaybackWhileAudioIsPlaying,
 
         NumberOfQuirks
     };
