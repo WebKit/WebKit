@@ -510,7 +510,14 @@ private:
 
     static constexpr unsigned MaxSaveCount = 1024 * 16;
     mutable RefPtr<ImageBuffer> m_buffer;
-    Vector<State, 1> m_stateStack; // References go m_stateStack -> targetSwitcher -> m_buffer, so destroy state stack first.
+
+    // When layers are opened, m_stateStack contains target switchers where the top
+    // targetSwitcher on the stack draws to the targetSwitcher under it, ... until
+    // it eventually draws to m_buffer. So m_stateStack has to be freed in the stack
+    // order (top in stack/last in vector first, bottom in stack/first in vector last),
+    // then m_buffer can be freed after.
+    Vector<State, 1> m_stateStack;
+
     FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
