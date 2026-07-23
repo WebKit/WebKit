@@ -75,6 +75,10 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
     }
 
     if (err || !localizedName || !CFStringGetLength(localizedName)) {
+        if (localizedName) {
+            CFRelease(localizedName);
+            localizedName = nullptr;
+        }
         address = {
             kAudioObjectPropertyName,
             kAudioObjectPropertyScopeGlobal,
