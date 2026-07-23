@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea id="trailing-newline">abc
+def
+</textarea>
+
+<textarea id="three-line">abc
+def
+ghi
+</textarea>
+
+<textarea id="no-trailing-newline">abc
+def</textarea>
+
+<textarea id="three-line-no-newline">abc
+def
+ghi</textarea>
+
+<script>
+var output = "This tests the line APIs for the trailing blank line of a textarea whose value ends in a newline: rangeForLine reports it as an empty range at the document end, and lineForIndex reports indices there as out of range (matching a value without a trailing newline having no phantom line).\n\n";
+
+if (window.accessibilityController) {
+    // Value "abc\ndef\n": line 0 is "abc\n", line 1 is "def\n", and line 2 is the trailing
+    // blank line rendered by the placeholder <br>, an empty range at the document end (8). An
+    // index at a line start resolves to that line, not the previous one; the trailing blank
+    // line at the document end (index 8) is out of range.
+    var axTrailingNewline = accessibilityController.accessibleElementById("trailing-newline");
+    output += expect("axTrailingNewline.rangeForLine(0)", "'{0, 4}'");
+    output += expect("axTrailingNewline.rangeForLine(1)", "'{4, 4}'");
+    output += expect("axTrailingNewline.rangeForLine(2)", "'{8, 0}'");
+    output += expect("axTrailingNewline.lineForIndex(0)", "0");
+    output += expect("axTrailingNewline.lineForIndex(4)", "1");
+    output += expect("axTrailingNewline.lineForIndex(7)", "1");
+    output += expect("axTrailingNewline.lineForIndex(8)", "-1");
+
+    // Value "abc\ndef\nghi\n": the trailing blank line (line 3) is also an empty range at the
+    // document end, regardless of how many content lines precede it.
+    var axThreeLine = accessibilityController.accessibleElementById("three-line");
+    output += expect("axThreeLine.rangeForLine(0)", "'{0, 4}'");
+    output += expect("axThreeLine.rangeForLine(1)", "'{4, 4}'");
+    output += expect("axThreeLine.rangeForLine(2)", "'{8, 4}'");
+    output += expect("axThreeLine.rangeForLine(3)", "'{12, 0}'");
+    output += expect("axThreeLine.lineForIndex(0)", "0");
+    output += expect("axThreeLine.lineForIndex(4)", "1");
+    output += expect("axThreeLine.lineForIndex(8)", "2");
+    output += expect("axThreeLine.lineForIndex(11)", "2");
+    output += expect("axThreeLine.lineForIndex(12)", "-1");
+
+    // Value "abc\ndef" has no trailing newline, so line 1 is the last line ("def") and there is
+    // no trailing blank line to report. lineForIndex of the last content character (6, the "f")
+    // resolves to its line, not out of range.
+    var axNoTrailingNewline = accessibilityController.accessibleElementById("no-trailing-newline");
+    output += expect("axNoTrailingNewline.rangeForLine(0)", "'{0, 4}'");
+    output += expect("axNoTrailingNewline.rangeForLine(1)", "'{4, 3}'");
+    output += expect("axNoTrailingNewline.rangeForLine(2)", "'{0, 0}'");
+    output += expect("axNoTrailingNewline.lineForIndex(0)", "0");
+    output += expect("axNoTrailingNewline.lineForIndex(4)", "1");
+    output += expect("axNoTrailingNewline.lineForIndex(6)", "1");
+
+    // Value "abc\ndef\nghi" (no trailing newline, three content lines): lineForIndex at a later
+    // line's start (8, the "g") resolves to that line, not the previous one. This is the "type a
+    // character on the last line then pan" case; there is no trailing blank line.
+    var axThreeLineNoNewline = accessibilityController.accessibleElementById("three-line-no-newline");
+    output += expect("axThreeLineNoNewline.rangeForLine(2)", "'{8, 3}'");
+    output += expect("axThreeLineNoNewline.lineForIndex(8)", "2");
+    output += expect("axThreeLineNoNewline.lineForIndex(10)", "2");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

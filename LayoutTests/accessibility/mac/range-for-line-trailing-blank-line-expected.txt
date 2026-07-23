@@ -1,0 +1,32 @@
+This tests the line APIs for the trailing blank line of a textarea whose value ends in a newline: rangeForLine reports it as an empty range at the document end, and lineForIndex reports indices there as out of range (matching a value without a trailing newline having no phantom line).
+
+PASS: axTrailingNewline.rangeForLine(0) === '{0, 4}'
+PASS: axTrailingNewline.rangeForLine(1) === '{4, 4}'
+PASS: axTrailingNewline.rangeForLine(2) === '{8, 0}'
+PASS: axTrailingNewline.lineForIndex(0) === 0
+PASS: axTrailingNewline.lineForIndex(4) === 1
+PASS: axTrailingNewline.lineForIndex(7) === 1
+PASS: axTrailingNewline.lineForIndex(8) === -1
+PASS: axThreeLine.rangeForLine(0) === '{0, 4}'
+PASS: axThreeLine.rangeForLine(1) === '{4, 4}'
+PASS: axThreeLine.rangeForLine(2) === '{8, 4}'
+PASS: axThreeLine.rangeForLine(3) === '{12, 0}'
+PASS: axThreeLine.lineForIndex(0) === 0
+PASS: axThreeLine.lineForIndex(4) === 1
+PASS: axThreeLine.lineForIndex(8) === 2
+PASS: axThreeLine.lineForIndex(11) === 2
+PASS: axThreeLine.lineForIndex(12) === -1
+PASS: axNoTrailingNewline.rangeForLine(0) === '{0, 4}'
+PASS: axNoTrailingNewline.rangeForLine(1) === '{4, 3}'
+PASS: axNoTrailingNewline.rangeForLine(2) === '{0, 0}'
+PASS: axNoTrailingNewline.lineForIndex(0) === 0
+PASS: axNoTrailingNewline.lineForIndex(4) === 1
+PASS: axNoTrailingNewline.lineForIndex(6) === 1
+PASS: axThreeLineNoNewline.rangeForLine(2) === '{8, 3}'
+PASS: axThreeLineNoNewline.lineForIndex(8) === 2
+PASS: axThreeLineNoNewline.lineForIndex(10) === 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
