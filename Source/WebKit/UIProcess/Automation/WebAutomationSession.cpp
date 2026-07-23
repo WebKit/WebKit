@@ -925,7 +925,6 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page, const St
             }
         }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-    });
 
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         if (!m_pendingWheelEventsFlushedCallbacksPerPage.isEmpty()) {
@@ -935,6 +934,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page, const St
             }
         }
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    });
 }
     
 void WebAutomationSession::didEnterFullScreenForPage(const WebPageProxy&)
