@@ -1570,6 +1570,63 @@ TEST(TextManipulation, CompleteTextManipulationReplaceSimpleSingleParagraph)
     EXPECT_WK_STREQ("<p>hello, world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+static NSString *selectionDirectionProbe(TestWKWebView *webView, NSString *elementID)
+{
+    return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@""
+        "(function() {"
+        "    var p = document.getElementById('%@');"
+        "    var t = p.firstChild;"
+        "    var sel = getSelection();"
+        "    var r = document.createRange();"
+        "    r.setStart(t, 10);"
+        "    r.collapse(true);"
+        "    sel.removeAllRanges();"
+        "    sel.addRange(r);"
+        "    sel.modify('extend', 'right', 'character');"
+        "    if (sel.focusNode !== t) return 'other';"
+        "    if (sel.focusOffset > 10) return 'forward';"
+        "    if (sel.focusOffset < 10) return 'backward';"
+        "    return 'none';"
+        "})()", elementID]];
+}
+
+TEST(TextManipulation, CompleteTextManipulationTranslatedRTLParagraphUsesStaleSelectionDirection)
+{
+    RetainPtr delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html><body>"
+        "<p id='translated' dir='rtl'>الثعلب البني السريع يقفز فوق الكلب الكسول</p>"
+        "<p id='control' dir='ltr'>The quick brown fox jumps over the lazy dog</p>"
+        "</body></html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+
+    EXPECT_WK_STREQ("backward", selectionDirectionProbe(webView.get(), @"translated"));
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[0].identifier, {
+        { items[0].tokens[0].identifier, @"The quick brown fox jumps over the lazy dog" },
+    })] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("The quick brown fox jumps over the lazy dog", [webView stringByEvaluatingJavaScript:@"document.getElementById('translated').textContent"]);
+    EXPECT_WK_STREQ("forward", selectionDirectionProbe(webView.get(), @"control"));
+    EXPECT_WK_STREQ("forward", selectionDirectionProbe(webView.get(), @"translated"));
+}
+
 TEST(TextManipulation, LegacyCompleteTextManipulationReplaceSimpleSingleParagraph)
 {
     RetainPtr delegate = adoptNS([[TextManipulationDelegate alloc] init]);
