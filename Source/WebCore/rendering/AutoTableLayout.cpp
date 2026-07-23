@@ -180,6 +180,7 @@ void AutoTableLayout::fullRecalc()
 
     Style::PreferredSize groupLogicalWidth = CSS::Keyword::Auto { };
     unsigned currentColumn = 0;
+    bool tableHasCells = m_table->topNonEmptySection() != nullptr;
     for (RenderTableCol* column = m_table->firstColumn(); column; column = column->nextColumn()) {
         if (column->isTableColumnGroupWithColumnChildren())
             groupLogicalWidth = column->style().logicalWidth();
@@ -193,9 +194,20 @@ void AutoTableLayout::fullRecalc()
             unsigned span = column->span();
 
             // Apply width to all columns covered by this col element.
+            // When a COL element with specified width has a span that exceeds
+            // existing effective columns, create individual columns for the extras.
+            // Only do this when the table has cells; empty tables should not
+            // take COL-defined columns into account per the spec.
             if (!colLogicalWidth.isAuto()) {
                 for (unsigned spanOffset = 0; spanOffset < span; ++spanOffset) {
                     unsigned effCol = m_table->colToEffCol(currentColumn + spanOffset);
+                    if (effCol >= nEffCols && tableHasCells) {
+                        m_table->appendColumn(1);
+                        nEffCols = m_table->numEffCols();
+                        m_layoutStruct.resizeToFit(nEffCols);
+                        m_layoutStruct[nEffCols - 1] = Layout();
+                        effCol = nEffCols - 1;
+                    }
                     if (effCol < nEffCols && m_table->spanOfEffCol(effCol) == 1) {
                         m_layoutStruct[effCol].usedZoom = column->style().usedZoom();
                         m_layoutStruct[effCol].logicalWidth = colLogicalWidth;
@@ -211,6 +223,9 @@ void AutoTableLayout::fullRecalc()
         if (column->isTableColumn() && !column->nextSibling())
             groupLogicalWidth = CSS::Keyword::Auto { };
     }
+
+    nEffCols = m_table->numEffCols();
+    m_layoutStruct.resizeToFit(nEffCols);
 
     for (unsigned i = 0; i < nEffCols; i++)
         recalcColumn(i);

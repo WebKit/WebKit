@@ -104,47 +104,8 @@ PASS main table 6
 PASS main table 7
 PASS main table 8
 PASS main table 9
-FAIL main table 10 assert_equals:
-<table id="col_fixed_130" style="table-layout:fixed; width: 130px" data-expected-width="340">
-<colgroup><col span="10">
-</colgroup><caption>fixed 130px</caption>
-<tbody><tr>
-  <td data-expected-width="50"></td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td></td>
-</tr>
-</tbody></table>
-width expected 340 but got 200
-FAIL main table 11 assert_equals:
-<table id="col_auto" data-expected-width="580">
-<caption>auto col 30px</caption>
-<colgroup><col span="10" style="width:30px">
-</colgroup><tbody><tr>
-  <td data-expected-width="50"></td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td></td>
-</tr>
-</tbody></table>
-width expected 580 but got 180
-FAIL main table 12 assert_equals:
-<table id="col_auto" data-expected-width="640">
-<caption>auto col 10%</caption>
-<colgroup><col span="5" style="width:10%">
-</colgroup><tbody><tr>
-  <td data-expected-width="100"></td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td></td>
-</tr>
-</tbody></table>
-width expected 640 but got 580
+PASS main table 10
+PASS main table 11
+PASS main table 12
 PASS main table 13
 

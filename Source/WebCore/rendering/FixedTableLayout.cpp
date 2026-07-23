@@ -110,10 +110,11 @@ float FixedTableLayout::calcWidthArray()
         while (span) {
             unsigned spanInCurrentEffectiveColumn;
             if (currentEffectiveColumn >= nEffCols) {
-                m_table->appendColumn(span);
+                // Create individual columns for proper border spacing.
+                m_table->appendColumn(1);
                 nEffCols++;
                 m_width.append(CSS::Keyword::Auto { });
-                spanInCurrentEffectiveColumn = span;
+                spanInCurrentEffectiveColumn = 1;
             } else {
                 if (span < m_table->spanOfEffCol(currentEffectiveColumn)) {
                     m_table->splitColumn(currentEffectiveColumn, span);
