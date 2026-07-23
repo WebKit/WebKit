@@ -3219,8 +3219,38 @@ void BBQJIT::emitEntryTierUpCheck()
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     static_assert(GPRInfo::nonPreservedNonArgumentGPR0 == wasmScratchGPR);
+
+    // By default every function entry bumps the BBQ->OMG tier-up counter by a flat amount, so tier-up
+    // is driven purely by call count. That over-optimizes tiny straight-line functions that are called
+    // often but do little work per call: they are cheap in BBQ yet still pay a full OMG compile,
+    // flooding the compiler threads during warm-up. Furthermore, they do not get significant benefit
+    // typically because (1) BBQ and OMG both needs to pay the same function prologue / epilogue cost
+    // so if the body is tiny, progression is small, and (2) tiny functions will be inlined from the
+    // hot callers and they will fully inline them. After that, compiled tiny functions will not be called.
+    //
+    // When wasmOMGEntryIncrementSizeReference is set we make the entry increment work-proportional by
+    // scaling it down for functions smaller than the reference size (never above the flat increment,
+    // so medium/large functions tier up exactly as before). Loop back-edges already increment per
+    // iteration, so genuinely hot small functions still reach OMG.
+    //
+    // Per-entry increment vs the default flat +15 (defaults: functionEntryIncrement 15, reference 128):
+    //
+    //   function size |  count
+    //   --------------+-------
+    //        8 B      |   +1
+    //       32 B      |   +3
+    //       64 B      |   +7
+    //      100 B      |  +11
+    //      128 B      |  +15   (cutover)
+    //      256 B      |  +15
+    //
+    int32_t entryIncrement = TierUpCount::functionEntryIncrement();
+    if (int32_t reference = Options::wasmOMGEntryIncrementSizeReference()) {
+        int32_t size = static_cast<int32_t>(std::min<size_t>(m_function.data.size(), std::numeric_limits<int32_t>::max()));
+        entryIncrement = std::clamp<int32_t>((static_cast<int64_t>(size) * TierUpCount::functionEntryIncrement()) / reference, 1, TierUpCount::functionEntryIncrement());
+    }
     m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(&m_callee.tierUpCounter().m_counter)), wasmScratchGPR);
-    Jump tierUp = m_jit.branchAdd32(CCallHelpers::PositiveOrZero, TrustedImm32(TierUpCount::functionEntryIncrement()), Address(wasmScratchGPR));
+    Jump tierUp = m_jit.branchAdd32(CCallHelpers::PositiveOrZero, TrustedImm32(entryIncrement), Address(wasmScratchGPR));
     MacroAssembler::Label tierUpResume = m_jit.label();
     addLatePath(origin(), [tierUp, tierUpResume](BBQJIT& generator, CCallHelpers& jit) {
         tierUp.link(&jit);
