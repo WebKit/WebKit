@@ -2659,6 +2659,29 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.run_step()
 
+    def test_run_subtest_skips_results_db_pre_existing(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['test1.html', 'test2.html', 'test3.html'])
+        self.setProperty('second_run_failures', ['test3.html', 'test4.html', 'test5.html'])
+        # results-db flagged test1/test5 as pre-existing; the clean tree should only run the filtered union.
+        self.setProperty('first_run_failures_filtered', ['test2.html', 'test3.html'])
+        self.setProperty('second_run_failures_filtered', ['test3.html', 'test4.html'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests --builder-name iOS-13-Simulator-WK2-Tests-EWS --build-number 123 --buildbot-worker ews126 --buildbot-master {EWS_BUILD_HOSTNAMES[0]} --report https://results.webkit.org/ --skipped=always test2.html test3.html test4.html 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='layout-tests')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
+
     def test_run_subtest_tests_strips_wpt_directory_from_additional_arguments(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
@@ -3060,6 +3083,112 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('clean_tree_run_status', SUCCESS)
         self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: test-was-skipped-change-removed-expectation-but-still-fails.html (failure)')
         return self.run_step()
+
+    def test_pre_existing_flaky_failure_not_blamed(self):
+        # A pre-existing flaky test fails with the change (both runs) but passes on the clean tree.
+        # results-db flagged it, so it is stripped from the *_filtered lists and must not be blamed.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['pre-existing-flaky.html'])
+        self.setProperty('second_run_failures', ['pre-existing-flaky.html'])
+        self.setProperty('first_run_failures_filtered', [])
+        self.setProperty('second_run_failures_filtered', [])
+        self.setProperty('clean_tree_run_failures', [])
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.run_step()
+
+    def test_new_failure_still_reported_with_filtered_lists(self):
+        # A genuinely new failure stays in the *_filtered lists and must still be reported, while the
+        # pre-existing flaky one (stripped by results-db) is not blamed.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['pre-existing-flaky.html', 'real-regression.html'])
+        self.setProperty('second_run_failures', ['pre-existing-flaky.html', 'real-regression.html'])
+        self.setProperty('first_run_failures_filtered', ['real-regression.html'])
+        self.setProperty('second_run_failures_filtered', ['real-regression.html'])
+        self.setProperty('clean_tree_run_failures', [])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: real-regression.html (failure)')
+        return self.run_step()
+
+    def test_flaky_limit_ignores_pre_existing(self):
+        # >10 tests flake between the two runs, but all are pre-existing (excluded by the filtered
+        # lists), so we must not report 'Too many flaky failures' and block the PR.
+        self.configureStep()
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 5)])
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(5, 12)])
+        self.setProperty('first_run_failures_filtered', [])
+        self.setProperty('second_run_failures_filtered', [])
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.run_step()
+
+
+class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def _configure(self, pre_existing):
+        # pre_existing: set of test names results-db considers pre-existing failures.
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+
+        def fake_is_pre_existing(cls, test, **kwargs):
+            return defer.succeed({
+                'is_existing_failure': test in pre_existing,
+                'pass_rate': 0 if test in pre_existing else 100,
+                'raw_data': {},
+                'logs': '',
+                'request_failed': False,
+            })
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        return step
+
+    @defer.inlineCallbacks
+    def _check_order(self, failing_tests, pre_existing):
+        step = self._configure(pre_existing)
+        yield step.filter_failures_using_results_db(failing_tests)
+        self.assertEqual(step.failing_tests_filtered, ['real.html'])
+        self.assertEqual(sorted(step.preexisting_failures_in_results_db), ['flaky1.html', 'flaky2.html'])
+
+    def test_pre_existing_after_real_failure_still_stripped(self):
+        # Regression guard: a pre-existing failure listed after a non-pre-existing one must still be
+        # filtered out (previously an early-break stopped at the first non-pre-existing test).
+        return self._check_order(
+            ['real.html', 'flaky1.html', 'flaky2.html'],
+            {'flaky1.html', 'flaky2.html'},
+        )
+
+    def test_pre_existing_interleaved_with_real_failure_stripped(self):
+        return self._check_order(
+            ['flaky1.html', 'real.html', 'flaky2.html'],
+            {'flaky1.html', 'flaky2.html'},
+        )
+
+    @defer.inlineCallbacks
+    def test_caps_number_of_results_db_queries(self):
+        # Only the first MAX_FAILURES_TO_CHECK_RESULTS_DB failures are checked against results-db.
+        queried = []
+
+        def fake_is_pre_existing(cls, test, **kwargs):
+            queried.append(test)
+            return defer.succeed({
+                'is_existing_failure': True, 'pass_rate': 0, 'raw_data': {}, 'logs': '', 'request_failed': False,
+            })
+
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+
+        cap = RunWebKitTests.MAX_FAILURES_TO_CHECK_RESULTS_DB
+        failing_tests = [f'test{i}.html' for i in range(cap + 10)]
+        yield step.filter_failures_using_results_db(failing_tests)
+        self.assertEqual(len(queried), cap)
 
 
 class MockLayoutTestFailures(object):
