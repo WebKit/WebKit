@@ -872,7 +872,7 @@ class Port(object):
             ports.extend(self._http_server.ports_to_forward())
         if Port._websocket_server:
             ports.extend(Port._websocket_server.ports_to_forward())
-        if Port._websocket_server:
+        if Port._websocket_secure_server:
             ports.extend(Port._websocket_secure_server.ports_to_forward())
         if Port._web_platform_test_server:
             ports.extend(Port._web_platform_test_server.ports_to_forward())
