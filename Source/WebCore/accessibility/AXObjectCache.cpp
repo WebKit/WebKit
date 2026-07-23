@@ -6896,6 +6896,13 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
 
 void AXObjectCache::addLabelForRelation(Element& origin)
 {
+    RefPtr label = dynamicDowncast<HTMLLabelElement>(origin);
+
+    if (label) {
+        if (const auto& controlID = label->attributeWithoutSynchronization(forAttr); !controlID.isEmpty())
+            m_referencedRelationTargetIds.add(controlID);
+    }
+
     // A detached label has no accessibility object, so its label relations have no consumer. Skipping
     // it here also avoids HTMLLabelElement::control()'s scan of the label's descendants.
     if (!origin.isInTreeScope())
@@ -6904,7 +6911,7 @@ void AXObjectCache::addLabelForRelation(Element& origin)
     bool addedRelation = false;
 
     // LabelFor relations are established for <label for=...>.
-    if (RefPtr label = dynamicDowncast<HTMLLabelElement>(origin)) {
+    if (label) {
         if (RefPtr control = Accessibility::controlForLabelElement(*label)) {
             // Always add NativeLabelFor for geometry purposes.
             addedRelation = addRelation(origin, *control, AXRelation::NativeLabelFor);
