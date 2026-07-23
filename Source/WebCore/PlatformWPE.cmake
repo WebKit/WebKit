@@ -149,6 +149,10 @@ if (USE_LIBHYPHEN)
     list(APPEND WebCore_PRIVATE_LIBRARIES Hyphen::Hyphen)
 endif ()
 
+if (USE_LIBSECRET)
+    list(APPEND WebCore_PRIVATE_LIBRARIES Secret::Secret)
+endif ()
+
 if (ENABLE_GAMEPAD)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/gamepad/libwpe"
