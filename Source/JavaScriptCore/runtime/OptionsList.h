@@ -279,6 +279,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, usePutStackSinking, true, Normal, nullptr) \
     v(Bool, useObjectAllocationSinking, true, Normal, nullptr) \
     v(Bool, verboseObjectAllocationSinking, false, Normal, nullptr) \
+    v(Bool, useDFGLazyStructureWatchpoints, true, Normal, "if true, the DFG defers installing structure transition watchpoints until code that relies on structure stability is actually emitted, rather than eagerly watching in AbstractValue::set/StructureAbstractValue::clobber"_s) \
     v(Bool, useValueRepElimination, true, Normal, nullptr) \
     v(Bool, useArityFixupInlining, true, Normal, nullptr) \
     v(Bool, logExecutableAllocation, false, Normal, nullptr) \

@@ -295,6 +295,15 @@ public:
     void watch(Structure*);
     bool isWatched(Structure*);
 
+    // Commit to relying on the given (finite) structure abstract value being stable, installing
+    // its transition watchpoints unless that stability is already guaranteed by a dominating
+    // runtime check or fresh allocation (see StructureAbstractValue::needsWatch()). The value
+    // must be finite (asserted). If a structure was invalidated by the mutator mid-compilation we
+    // still watch it; installing an already-fired watchpoint at finalization invalidates this
+    // compilation, which is the correct (and rare) outcome. With useDFGLazyStructureWatchpoints
+    // disabled this is a no-op, since the watchpoints were already installed eagerly.
+    void trustStructures(const StructureAbstractValue&);
+
     void assertIsRegistered(Structure* structure);
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).

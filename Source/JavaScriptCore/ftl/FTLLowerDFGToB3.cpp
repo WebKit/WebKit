@@ -6041,12 +6041,16 @@ IGNORE_CLANG_WARNINGS_END
                         hasMonoProto = true;
                 });
 
+                // Only rely on (and watch) the structures when they agree on proto layout, i.e.
+                // when we take a fast path. A mixed set falls through to the general path.
                 if (hasMonoProto && !hasPolyProto) {
+                    m_graph.trustStructures(value.m_structure);
                     setJSValue(m_out.load64(structure, m_heaps.Structure_prototype));
                     return;
                 }
 
                 if (hasPolyProto && !hasMonoProto) {
+                    m_graph.trustStructures(value.m_structure);
                     setJSValue(m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, m_out.constInt64(knownPolyProtoOffset), ScaleEight, JSObject::offsetOfInlineStorage())));
                     return;
                 }
@@ -8741,8 +8745,10 @@ IGNORE_CLANG_WARNINGS_END
                     return false;
                 if (auto structure = base.m_structure.onlyStructure()) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-                    if (structure.get() == globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous))
+                    if (structure.get() == globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous)) {
+                        m_graph.trustStructures(base.m_structure);
                         return true;
+                    }
                 }
                 return false;
             };
@@ -10848,9 +10854,10 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.jump(slowPath);
             else {
                 RegisteredStructure registeredSetStructure = m_graph.registerStructure(originalSetStructure);
-                if (m_state.forNode(m_node->child1()).m_structure.isSubsetOf(RegisteredStructureSet { registeredSetStructure }))
+                if (m_state.forNode(m_node->child1()).m_structure.isSubsetOf(RegisteredStructureSet { registeredSetStructure })) {
+                    m_graph.trustStructures(m_state.forNode(m_node->child1()).m_structure);
                     m_out.jump(storageCheck);
-                else {
+                } else {
                     LValue structureID = m_out.load32(argument, m_heaps.JSCell_structureID);
                     m_out.branch(m_out.notEqual(structureID,
                         weakStructureID(registeredSetStructure)),
@@ -12715,6 +12722,8 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
         bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        if (structuresChecked)
+            m_graph.trustStructures(m_interpreter.forNode(m_node->child1()).m_structure);
         emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
 
         LBasicBlock lastNext = m_out.m_nextBlock;
@@ -12823,6 +12832,8 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
         bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        if (structuresChecked)
+            m_graph.trustStructures(m_interpreter.forNode(m_node->child1()).m_structure);
         emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
 
         LBasicBlock lastNext = m_out.m_nextBlock;
@@ -12917,6 +12928,8 @@ IGNORE_CLANG_WARNINGS_END
                 cases.append(SwitchCase(weakStructureID(structure), blocks[variant.result() ? trueBlock : falseBlock], Weight(1)));
         }
         bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        if (structuresChecked)
+            m_graph.trustStructures(m_interpreter.forNode(m_node->child1()).m_structure);
         emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
 
         LBasicBlock lastNext = m_out.m_nextBlock;
@@ -12999,6 +13012,8 @@ IGNORE_CLANG_WARNINGS_END
                 variant.result ? trueBlock : falseBlock, Weight(1)));
         }
         bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        if (structuresChecked)
+            m_graph.trustStructures(m_interpreter.forNode(m_node->child1()).m_structure);
         emitSwitchForMultiByOffset(base, structuresChecked, cases, exitBlock);
 
         m_out.appendTo(trueBlock, falseBlock);
@@ -18129,11 +18144,17 @@ IGNORE_CLANG_WARNINGS_END
                     if (structure->indexingType() > ArrayWithUndecided)
                         hasIndexing = true;
                 });
-                if (!hasIndexing)
-                    skipIndexingMaskCheck = true;
-                onlyStructure = baseValue.m_structure.onlyStructure();
-                if (onlyStructure)
-                    rareData = onlyStructure->tryRareData();
+                RegisteredStructure only = baseValue.m_structure.onlyStructure();
+                // Only rely on (and watch) the proven structures if we'd skip the indexing-mask
+                // check or embed the structure / read its rareData directly. rareData derives
+                // from onlyStructure, so gating on `only` covers it. Otherwise we rely on nothing.
+                if (!hasIndexing || only) {
+                    m_graph.trustStructures(baseValue.m_structure);
+                    skipIndexingMaskCheck = !hasIndexing;
+                    onlyStructure = only;
+                    if (onlyStructure)
+                        rareData = onlyStructure->tryRareData();
+                }
             }
 
             LValue notHavingIndexing = nullptr;
@@ -18457,10 +18478,12 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(checkStructureBlock);
         LValue structureID;
-        auto structure = m_state.forNode(baseEdge.node()).m_structure.onlyStructure();
-        if (structure)
+        auto& baseAbstractValue = m_state.forNode(baseEdge.node());
+        auto structure = baseAbstractValue.m_structure.onlyStructure();
+        if (structure) {
+            m_graph.trustStructures(baseAbstractValue.m_structure);
             structureID = m_out.constInt32(structure->id().bits());
-        else
+        } else
             structureID = m_out.load32(base, m_heaps.JSCell_structureID);
 
         LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));
@@ -18617,10 +18640,12 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(checkStructureBlock);
         LValue structureID;
-        auto structure = m_state.forNode(baseEdge.node()).m_structure.onlyStructure();
-        if (structure)
+        auto& baseAbstractValue = m_state.forNode(baseEdge.node());
+        auto structure = baseAbstractValue.m_structure.onlyStructure();
+        if (structure) {
+            m_graph.trustStructures(baseAbstractValue.m_structure);
             structureID = m_out.constInt32(structure->id().bits());
-        else
+        } else
             structureID = m_out.load32(base, m_heaps.JSCell_structureID);
 
         LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));

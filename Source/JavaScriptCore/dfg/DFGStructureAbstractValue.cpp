@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "JSCJSValueInlines.h"
+#include "Options.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -48,18 +49,30 @@ void StructureAbstractValue::assertIsRegistered(Graph& graph) const
 
 void StructureAbstractValue::clobber(Graph& graph)
 {
-    // The premise of this approach to clobbering is that anytime we introduce
-    // a watchable structure into an abstract value, we watchpoint it.
+    // Clobbering keeps only watchable structures finite across the side-effect. With
+    // useDFGLazyStructureWatchpoints, instead of eagerly installing their transition
+    // watchpoints here, we record that the surviving finite set needs watching if some
+    // consumer later decides to rely on it (see needsWatch() / Graph::trustStructures).
+    // With the feature off, we install the watchpoints eagerly, matching prior behavior:
+    // the premise being that anytime we introduce a watchable structure into an abstract
+    // value, we watchpoint it.
 
     if (isTop())
         return;
 
+    bool lazy = Options::useDFGLazyStructureWatchpoints();
+
     setClobbered(true);
-        
+    
     if (m_set.isThin()) {
         if (!m_set.singleEntry())
             return;
-        if (!graph.tryWatch(m_set.singleEntry().get()))
+        if (lazy) {
+            if (!m_set.singleEntry()->dfgMayWatch())
+                makeTopWhenThin();
+            else
+                m_needsWatch = true;
+        } else if (!graph.tryWatch(m_set.singleEntry().get()))
             makeTopWhenThin();
         return;
     }
@@ -71,8 +84,12 @@ void StructureAbstractValue::clobber(Graph& graph)
         }
     }
 
-    for (auto& item : m_set.list()->lengthSpan())
-        graph.watch(item.get());
+    if (lazy)
+        m_needsWatch = true;
+    else {
+        for (auto& item : m_set.list()->lengthSpan())
+            graph.watch(item.get());
+    }
 }
 
 void StructureAbstractValue::observeTransition(RegisteredStructure from, RegisteredStructure to)
@@ -171,6 +188,13 @@ bool StructureAbstractValue::mergeSlow(const StructureAbstractValue& other)
     
     if (!isClobbered() && other.isClobbered()) {
         setClobbered(true);
+        changed = true;
+    }
+    
+    // A merged value's finiteness needs watching if either input did. This is monotonic
+    // (false -> true only), so it does not impede abstract-interpreter convergence.
+    if (!m_needsWatch && other.m_needsWatch) {
+        m_needsWatch = true;
         changed = true;
     }
     
@@ -373,7 +397,8 @@ bool StructureAbstractValue::equalsSlow(const StructureAbstractValue& other) con
     ASSERT(!other.isTop());
     
     return m_set == other.m_set
-        && isClobbered() == other.isClobbered();
+        && isClobbered() == other.isClobbered()
+        && m_needsWatch == other.m_needsWatch;
 }
 
 void StructureAbstractValue::dumpInContext(PrintStream& out, DumpContext* context) const
@@ -381,6 +406,9 @@ void StructureAbstractValue::dumpInContext(PrintStream& out, DumpContext* contex
     if (isClobbered())
         out.print("Clobbered:");
     
+    if (needsWatch())
+        out.print("NeedsWatch:");
+
     if (isTop())
         out.print("TOP");
     else
