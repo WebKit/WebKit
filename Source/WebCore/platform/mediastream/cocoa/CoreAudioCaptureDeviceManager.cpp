@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -335,7 +335,7 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
         for (size_t cptr = 0; cptr < audioDevices.size(); ++cptr) {
             auto& oldDevice = m_coreAudioCaptureDevices[cptr];
             auto& newDevice = audioDevices[cptr];
-            if (newDevice.type() != oldDevice.type() || newDevice.deviceID() != oldDevice.deviceID() || newDevice.isDefault() != oldDevice.isDefault() || newDevice.enabled() != oldDevice.enabled() || newDevice.isDefault() != oldDevice.isDefault())
+            if (newDevice.type() != oldDevice.type() || newDevice.deviceID() != oldDevice.deviceID() || newDevice.isDefault() != oldDevice.isDefault() || newDevice.enabled() != oldDevice.enabled() || newDevice.label() != oldDevice.label() || newDevice.groupId() != oldDevice.groupId())
                 haveDeviceChanges = true;
         }
     }
