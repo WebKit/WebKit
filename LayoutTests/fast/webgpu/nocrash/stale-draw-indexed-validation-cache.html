@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() {
+    document.body.textContent = "PASS. Test did not crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter)
+        return;
+    const device = await adapter.requestDevice();
+
+    const vertexBuffer = device.createBuffer({
+        size: 4 * 16,
+        usage: GPUBufferUsage.VERTEX,
+        mappedAtCreation: true,
+    });
+    new Float32Array(vertexBuffer.getMappedRange()).set([
+        0, 0, 0, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        1, 1, 0, 1,
+    ]);
+    vertexBuffer.unmap();
+
+    // Index buffer is also bound as STORAGE so a later compute pass can overwrite it
+    // with out-of-bounds indices after the validation kernel has been dispatched.
+    const indexBuffer = device.createBuffer({
+        size: 4 * 4,
+        usage: GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE,
+        mappedAtCreation: true,
+    });
+    new Uint32Array(indexBuffer.getMappedRange()).set([0, 1, 2, 3]);
+    indexBuffer.unmap();
+
+    const renderShader = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) p: vec4f) -> @builtin(position) vec4f { return p; }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(1); }
+    `});
+    const renderPipeline = device.createRenderPipeline({
+        layout: "auto",
+        vertex: {
+            module: renderShader, entryPoint: "vs",
+            buffers: [{ arrayStride: 16, attributes: [{ shaderLocation: 0, offset: 0, format: "float32x4" }] }],
+        },
+        fragment: { module: renderShader, entryPoint: "fs", targets: [{ format: "rgba8unorm" }] },
+        primitive: { topology: "triangle-list" },
+    });
+
+    const computePipeline = device.createComputePipeline({
+        layout: "auto",
+        compute: {
+            module: device.createShaderModule({ code: `
+                @group(0) @binding(0) var<storage, read_write> indices: array<u32>;
+                @compute @workgroup_size(1) fn main() {
+                    indices[0] = 100000u; indices[1] = 100001u;
+                    indices[2] = 100002u; indices[3] = 100003u;
+                }
+            `}),
+            entryPoint: "main",
+        },
+    });
+    const computeBindGroup = device.createBindGroup({
+        layout: computePipeline.getBindGroupLayout(0),
+        entries: [{ binding: 0, resource: { buffer: indexBuffer } }],
+    });
+
+    const target = device.createTexture({ size: [4, 4], format: "rgba8unorm", usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    const colorAttachment = () => ({ view: target.createView(), loadOp: "clear", storeOp: "store", clearValue: [0, 0, 0, 1] });
+
+    // CB1: validate indices via drawIndexed (registers a completion handler that will
+    // populate m_drawIndexedCache), then overwrite the buffer with out-of-bounds indices
+    // in the same command buffer (clears m_drawIndexedCache at encode and commit time).
+    const enc1 = device.createCommandEncoder();
+    const rp1 = enc1.beginRenderPass({ colorAttachments: [colorAttachment()] });
+    rp1.setPipeline(renderPipeline);
+    rp1.setVertexBuffer(0, vertexBuffer);
+    rp1.setIndexBuffer(indexBuffer, "uint32");
+    rp1.drawIndexed(4, 1, 0, 0, 0);
+    rp1.end();
+    const cp = enc1.beginComputePass();
+    cp.setPipeline(computePipeline);
+    cp.setBindGroup(0, computeBindGroup);
+    cp.dispatchWorkgroups(1);
+    cp.end();
+    device.queue.submit([enc1.finish()]);
+
+    // Wait for the GPU to finish so the (now stale) completion handler has fired.
+    await device.queue.onSubmittedWorkDone();
+    await new Promise(r => setTimeout(r, 200));
+
+    // CB2: identical drawIndexed parameters. Before the fix this hit the stale
+    // m_drawIndexedCache entry and skipped the index-clamp shader, passing the
+    // attacker-controlled out-of-bounds indices straight to Metal.
+    const enc2 = device.createCommandEncoder();
+    const rp2 = enc2.beginRenderPass({ colorAttachments: [colorAttachment()] });
+    rp2.setPipeline(renderPipeline);
+    rp2.setVertexBuffer(0, vertexBuffer);
+    rp2.setIndexBuffer(indexBuffer, "uint32");
+    rp2.drawIndexed(4, 1, 0, 0, 0);
+    rp2.end();
+    device.queue.submit([enc2.finish()]);
+    await device.queue.onSubmittedWorkDone();
+}
+
+onload = () => main().catch(() => { }).finally(done);
+</script>
+<body></body>
