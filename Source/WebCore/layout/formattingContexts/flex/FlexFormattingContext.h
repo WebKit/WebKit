@@ -49,10 +49,10 @@ public:
 
     CheckedRef<RenderBox> renderer;
     const LayoutUnit mainAxisBorderAndPadding;
+    LayoutUnit mainAxisMargin;
     const LayoutUnit crossAxisBorderAndPadding;
     // True when the flex container's main axis is this item's inline axis (i.e. the item is not orthogonal to the container).
     const bool mainAxisIsInlineAxis;
-    LayoutUnit mainAxisMargin;
     bool everHadLayout { false };
     // Whether the container is relaying out all its items this pass (RelayoutChildren::Yes); layoutFlexItemWithMainSize
     // combines it with !hasFlexItemCompletedLayout to decide whether to invalidate this child's content.
@@ -145,13 +145,8 @@ private:
     void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> flexItemsMainSizeList);
     SizeList hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     LinesCrossSizeList crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const SizeList& flexItemsHypotheticalCrossSizeList);
-    // What 9.5 (#12) main-axis alignment produces: each item's in-container position, and (column flow only) the
-    // largest line's main-axis content extent, which the 9.6 finalize turns into the container's logical height.
-    struct MainAxisAlignment {
-        PositionList positions;
-        LayoutUnit columnMainContentExtent;
-    };
-    MainAxisAlignment handleMainAxisAlignment(const FlexLines&, FlexLayoutItems&, const SizeList& flexItemsMainSizeList, const LinesCrossPositionList& flexLinesCrossPositionList);
+    LinesCrossPositionList computeFlexLineCrossPositions(const FlexLines&, const LinesCrossSizeList&, LayoutUnit& flexContentBlockExtent);
+    PositionList handleMainAxisAlignment(const FlexLines&, FlexLayoutItems&, const SizeList& flexItemsMainSizeList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit& columnMainContentExtent);
     SizeList computeCrossSizeForFlexItems(const FlexLines&, FlexLayoutItems&, const LinesCrossSizeList& flexLinesCrossSizeList, LayoutUnit crossContentExtent);
     void handleCrossAxisAlignmentForFlexLines(const FlexLines&, PositionList& flexItemsPositionList, LinesCrossPositionList& flexLinesCrossPositionList, LinesCrossSizeList& flexLinesCrossSizeList, LayoutUnit crossContentExtent);
     void handleCrossAxisAlignmentForFlexItems(const FlexLines&, FlexLayoutItems&, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList, PositionList& flexItemsPositionList);
@@ -165,11 +160,10 @@ private:
     void layoutColumnReverse(std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit columnMainBorderBoxExtent);
     void setFlexItemCountsForFirstAndLastLine(const FlexLines&);
 
-    FlexBaseAndHypotheticalMainSize flexBaseAndHypotheticalMainSize(const FlexLayoutItem&);
+    FlexBaseAndHypotheticalMainSizeList computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems&);
     LayoutUnit flexBaseSizeForFlexItem(const FlexLayoutItem&);
-    bool flexBaseSizeNeedsBlockAxisContentSize(const FlexLayoutItem&);
     std::optional<LayoutUnit> ensureBlockAxisContentSizeForFlexItemIfNeeded(const FlexLayoutItem&);
-    std::pair<LayoutUnit, LayoutUnit> computeFlexItemMinMaxMainSizes(const FlexLayoutItem&);
+    std::pair<LayoutUnit, LayoutUnit> minMaxMainSizesForFlexItem(const FlexLayoutItem&);
     std::optional<LayoutUnit> computeUsedMaxMainSize(const FlexLayoutItem&);
     LayoutUnit computeUsedNonAutoMinMainSize(const FlexLayoutItem&, const Style::MinimumSize&);
     LayoutUnit computeContentBasedMinMainSize(const FlexLayoutItem&, std::optional<LayoutUnit> maxExtent);
@@ -177,7 +171,6 @@ private:
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const FlexLayoutItem&, const SizeType& crossSizeLength) const;
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem&, LayoutUnit flexItemSize);
 
-    LayoutUnit crossAxisIntrinsicExtentForFlexItem(const FlexLayoutItem&);
     LayoutUnit flexItemIntrinsicLogicalHeight(const FlexLayoutItem&) const;
     LayoutUnit flexItemIntrinsicLogicalWidth(const FlexLayoutItem&);
     template<typename SizeType> bool flexItemCrossSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
