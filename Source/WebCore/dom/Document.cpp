@@ -11185,8 +11185,8 @@ HTMLElement* Document::nearestOpenHintAncestor(Element& element) const
 {
     for (Ref ancestor : composedTreeLineage(element)) {
         auto* htmlElement = dynamicDowncast<HTMLElement>(ancestor.ptr());
-        if (htmlElement && htmlElement->popoverState() == PopoverState::Hint
-            && htmlElement->popoverData()
+        if (htmlElement && htmlElement->popoverData()
+            && htmlElement->popoverData()->showingAsHint()
             && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
             return htmlElement;
     }
@@ -11309,7 +11309,11 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
             RefPtr<HTMLElement> clickedPopover;
             RefPtr<HTMLElement> invokerPopover;
             auto isShowingAutoPopover = [](HTMLElement& element) -> bool {
-                return element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+                // A popover=auto demoted into the hint stack (showingAsHint()) lives in
+                // m_hintPopoverList, not m_autoPopoverList, so it must not be treated as an
+                // "effective auto" here -- hideAutoPopoversUntil() would never find it as an
+                // endpoint and would fall back to closing every unrelated auto popover.
+                return element.popoverState() == PopoverState::Auto && !element.popoverData()->showingAsHint() && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
             };
             auto checkElement = [&](Element& element) {
                 if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element)) {
