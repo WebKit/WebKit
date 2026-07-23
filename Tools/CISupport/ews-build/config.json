@@ -1,9 +1,6 @@
 {
   "workers": [
     { "name": "webkit-misc", "platform": "*", "max_builds": 3 },
-    { "name": "igalia-jsc32-armv7-ews", "platform": "jsc-only" },
-    { "name": "igalia-jsc32-armv7-ews-02", "platform": "jsc-only" },
-    { "name": "igalia-jsc32-i386-ews", "platform": "jsc-only" },
     { "name": "igalia1-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia2-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia3-gtk-wk2-ews", "platform": "gtk" },
@@ -43,6 +40,10 @@
     { "name": "igalia20-wpe-ews", "platform": "wpe" },
     { "name": "igalia21-wpe-ews", "platform": "wpe" },
     { "name": "igalia22-wpe-ews", "platform": "wpe" },
+    { "name": "igalia23-wpe-ews", "platform": "wpe" },
+    { "name": "igalia24-wpe-ews", "platform": "wpe" },
+    { "name": "igalia25-wpe-ews", "platform": "wpe" },
+    { "name": "igalia26-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "playstation-ews-001", "platform": "playstation" },
     { "name": "playstation-ews-002", "platform": "playstation" },
@@ -465,7 +466,7 @@
       "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly",
       "factory": "WPEBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["wpe-wk2-tests-ews", "api-tests-wpe-ews"],
+      "triggers": ["wpe-wk2-tests-ews", "api-tests-wpe-ews", "jsc-tests-wpe-ews"],
       "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews", "igalia3-wpe-ews", "igalia20-wpe-ews", "igalia21-wpe-ews", "igalia22-wpe-ews"]
     },
     {
@@ -474,6 +475,13 @@
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["wpe-build-ews"],
       "workernames": ["igalia4-wpe-ews", "igalia5-wpe-ews", "igalia6-wpe-ews", "igalia7-wpe-ews", "igalia8-wpe-ews", "igalia9-wpe-ews", "igalia10-wpe-ews", "igalia11-wpe-ews"]
+    },
+    {
+      "name": "JSC-Tests-WPE-EWS", "shortname": "jsc-wpe", "icon": "testOnly",
+      "factory": "JSCTestsFactory", "platform": "wpe",
+      "configuration": "release", "architectures": ["x86_64"],
+      "triggered_by": ["wpe-build-ews"],
+      "workernames": ["igalia23-wpe-ews", "igalia24-wpe-ews", "igalia25-wpe-ews", "igalia26-wpe-ews"]
     },
     {
       "name": "GTK-GTK3-LibWebRTC-Build-EWS", "shortname": "gtk3-libwebrtc", "icon": "buildOnly",
@@ -493,19 +501,6 @@
       "factory": "JSCBuildO3AndTestsFactory", "platform": "mac-sequoia",
       "configuration": "debug", "runTests": "true",
       "workernames": ["ews136", "ews137", "ews265", "ews266"]
-    },
-    {
-      "name": "JSC-ARMv7-32bits-Build-EWS", "shortname": "jsc-armv7", "icon": "buildOnly",
-      "factory": "JSCBuildFactory", "platform": "jsc-only",
-      "configuration": "release", "architectures": ["armv7"],
-      "triggers": ["jsc-tests-armv7-tests-ews"],
-      "workernames": ["igalia-jsc32-armv7-ews"]
-    },
-    {
-      "name": "JSC-ARMv7-32bits-Tests-EWS", "shortname": "jsc-armv7-tests", "icon": "testOnly",
-      "factory": "JSCTestsFactory", "platform": "jsc-only",
-      "configuration": "release", "architectures": ["armv7"],
-      "workernames": ["igalia-jsc32-armv7-ews-02"]
     },
     {
       "name": "Bindings-Tests-EWS", "shortname": "bindings", "icon": "testOnly",
@@ -582,8 +577,7 @@
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
-            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-26-Build-EWS", "iOS-26-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-O3-Debug-arm64-EWS",
+            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-26-Build-EWS", "iOS-26-Simulator-Build-EWS", "JSC-Tests-O3-Debug-arm64-EWS",
             "macOS-Tahoe-Debug-Build-EWS", "macOS-Sequoia-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS", "Apple-iOS-26-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
             "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
@@ -597,8 +591,7 @@
     {
       "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [
-            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-26-Build-EWS", "iOS-26-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-O3-Debug-arm64-EWS",
+            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-26-Build-EWS", "iOS-26-Simulator-Build-EWS", "JSC-Tests-O3-Debug-arm64-EWS",
             "macOS-Tahoe-Debug-Build-EWS", "macOS-Sequoia-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS", "Apple-iOS-26-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
             "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
@@ -714,8 +707,8 @@
       "builderNames": ["API-Tests-WPE-EWS"]
     },
     {
-      "type": "Triggerable", "name": "jsc-tests-armv7-tests-ews",
-      "builderNames": ["JSC-ARMv7-32bits-Tests-EWS"]
+      "type": "Triggerable", "name": "jsc-tests-wpe-ews",
+      "builderNames": ["JSC-Tests-WPE-EWS"]
     }
   ]
 }

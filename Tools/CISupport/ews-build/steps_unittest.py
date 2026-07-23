@@ -7400,7 +7400,7 @@ class TestCheckStatusOfPR(BuildStepMixinAdditions, unittest.TestCase):
         }
 
         # All Linux checks pass; Apple and Windows checks fail to prove they are not required for glib branches
-        queue_statuses = {queue: {'state': 0} for queue in CheckStatusOfPR.LINUX_CHECKS + CheckStatusOfPR.EXTRA_LINUX_CHECKS}
+        queue_statuses = {queue: {'state': 0} for queue in CheckStatusOfPR.LINUX_CHECKS}
         for queue in CheckStatusOfPR.MACOS_CHECKS + CheckStatusOfPR.EMBEDDED_CHECKS + CheckStatusOfPR.WINDOWS_CHECKS:
             queue_statuses[queue] = {'state': 2}
 

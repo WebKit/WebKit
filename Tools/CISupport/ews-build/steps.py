@@ -2674,8 +2674,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-safer-cpp', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc-x86-64', 'jsc-debug-arm64']
-    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'gtk3-libwebrtc', 'wpe-wk2', 'api-wpe']
-    EXTRA_LINUX_CHECKS = ['jsc-armv7', 'jsc-armv7-tests']
+    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'gtk3-libwebrtc', 'wpe-wk2', 'api-wpe', 'jsc-wpe']
     WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
@@ -2766,7 +2765,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         is_glib_stable_branch = bool(re.match(r'webkitglib/\d+\.\d+', branch))
         if is_glib_stable_branch:
-            queues_for_safe_merge = self.LINUX_CHECKS + self.EXTRA_LINUX_CHECKS
+            queues_for_safe_merge = self.LINUX_CHECKS
         else:
             queues_for_safe_merge = self.EMBEDDED_CHECKS + self.MACOS_CHECKS
             if self.getProperty('project') == CANONICAL_GITHUB_PROJECT:
@@ -2775,10 +2774,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)
-            # jsc-arm7-tests will not set its status if skipped, so we condition on jsc-armv7
-            if queue == 'jsc-armv7-tests' and response.json().get('jsc-armv7', {}).get('state', None) == 3:
-                yield self._addToLog('stdio', f'{queue}: Skipped\n')
-            elif queue_data:
+            if queue_data:
                 status = queue_data.get('state', None)
                 if status == 0:  # success
                     yield self._addToLog('stdio', f'{queue}: Success\n')
@@ -3821,9 +3817,6 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
         if platform in ('gtk', 'wpe', 'jsc-only'):
             self.command.extend(['--memory-limited', '--verbose'])
-
-        if self.getProperty('architecture') in ["armv7"]:
-            self.command = ["linux32"] + self.command
 
         self.command += customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform'))
         self.command.extend(self.command_extra)

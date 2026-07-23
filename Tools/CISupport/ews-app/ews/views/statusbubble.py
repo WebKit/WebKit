@@ -45,7 +45,7 @@ class StatusBubble(View):
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
     ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'gtk3-libwebrtc', 'playstation', 'win', 'win-tests',
                   'ios-wk2', 'ios-wk2-wpt', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-AS-debug-wk2', 'mac-safer-cpp', 'mac-site-isolation', 'ios-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac',
-                  'api-mac-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc-x86-64', 'jsc-debug-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'webkitperl', 'webkitpy', 'services']
+                  'api-mac-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc-x86-64', 'jsc-debug-arm64', 'jsc-wpe', 'webkitperl', 'webkitpy', 'services']
 
     DAYS_TO_CHECK_QUEUE_POSITION = 0.5
     DAYS_TO_HIDE_BUBBLE = 7

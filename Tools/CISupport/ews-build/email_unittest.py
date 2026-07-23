@@ -38,7 +38,7 @@ class EmailsDotJSONTest(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(cwd, 'emails.json')) as emails_json:
             emails = json.load(emails_json)
-            valid_email_categories = ['ADMIN_EMAILS', 'APPLE_BOT_WATCHERS_EMAILS', 'EMAIL_IDS_TO_UNSUBSCRIBE', 'IGALIA_JSC_TEAM_EMAILS', 'IGALIA_GTK_WPE_EMAILS']
+            valid_email_categories = ['ADMIN_EMAILS', 'APPLE_BOT_WATCHERS_EMAILS', 'EMAIL_IDS_TO_UNSUBSCRIBE', 'IGALIA_GTK_WPE_EMAILS']
             for category in valid_email_categories:
                 self.assertTrue(category in list(emails.keys()))
 

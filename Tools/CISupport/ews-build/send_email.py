@@ -34,7 +34,6 @@ custom_suffix = get_custom_suffix()
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAMES = ['ews-build.webkit.org', 'ews-build']
 FROM_EMAIL = f'ews@webkit{custom_suffix}.org'
-IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
 SERVER = 'localhost'
 
@@ -85,9 +84,7 @@ def send_email_to_patch_author(author_email, subject, text, reference=''):
 
 
 def send_email_to_bot_watchers(subject, text, builder_name, reference=''):
-    if any(pattern in builder_name.lower() for pattern in IGALIA_JSC_QUEUES_PATTERNS):
-        send_email(get_email_ids('IGALIA_JSC_TEAM_EMAILS'), subject, text, reference)
-    elif any(pattern in builder_name.lower() for pattern in IGALIA_GTK_WPE_QUEUES_PATTERNS):
+    if any(pattern in builder_name.lower() for pattern in IGALIA_GTK_WPE_QUEUES_PATTERNS):
         send_email(get_email_ids('IGALIA_GTK_WPE_EMAILS'), subject, text, reference)
     else:
         send_email(get_email_ids('APPLE_BOT_WATCHERS_EMAILS'), subject, text, reference)

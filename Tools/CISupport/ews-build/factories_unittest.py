@@ -727,26 +727,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'jscore-test'
         ],
-        'JSC-ARMv7-32bits-Build-EWS': [
-            'configure-build',
-            'check-change-relevance',
-            'validate-change',
-            'configuration',
-            'clean-up-git-repo',
-            'clean-webkitbuild-if-base-changed',
-            'set-credential-helper',
-            'checkout-source',
-            'fetch-branch-references',
-            'checkout-specific-revision',
-            'show-identifier',
-            'apply-patch',
-            'checkout-pull-request',
-            'validate-change-content',
-            'kill-old-processes',
-            'validate-change',
-            'compile-jsc'
-        ],
-        'JSC-ARMv7-32bits-Tests-EWS': [
+        'JSC-Tests-WPE-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
