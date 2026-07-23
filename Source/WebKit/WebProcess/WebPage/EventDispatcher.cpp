@@ -183,7 +183,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
                     dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps, WTF::move(completionHandler));
                     return;
                 }
-                dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps, [](bool) { });
+                dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps, CompletionHandler<void(bool)>([](bool) { }, CompletionHandlerCallThread::AnyThread));
             }
 
             // If we scrolled on the scrolling thread (even if we send the event to the main thread for passive event handlers)
