@@ -34,6 +34,7 @@
 #include "FontCascadeInlines.h"
 #include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
+#include "InlineIteratorBoxInlines.h"
 #include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
@@ -294,6 +295,15 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (isDisclosureMarker()) {
         paintDisclosureMarker(context, markerRect);
         return;
+    }
+
+    if (writingMode().isHorizontal()) {
+        // This is required because RenderListMarker hand-draws the text, instead of running inline
+        // layout and paint on its (RenderText) subtree (LayoutUnit vs. float precision)
+        // FIXME: The vertical path mispositions the marker line box separately (it ignores fallback-font
+        // metrics), so this is limited to horizontal writing modes for now. See webkit.org/b/319618.
+        if (auto markerInlineBox = InlineIterator::boxFor(*this))
+            markerRect.setY(paintOffset.y() + markerInlineBox->visualRectIgnoringBlockDirection().y());
     }
 
     auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + style().fontCascade().metricsOfPrimaryFont().ascent() };
