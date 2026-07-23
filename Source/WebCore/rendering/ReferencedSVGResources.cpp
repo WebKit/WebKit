@@ -28,6 +28,7 @@
 #include "ReferencedSVGResources.h"
 
 #include "ContainerNodeInlines.h"
+#include "Document.h"
 #include "DocumentView.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGResourceContainerInlines.h"
@@ -40,6 +41,8 @@
 #include "RenderSVGResourcePaintServer.h"
 #include "RenderSVGResourcePattern.h"
 #include "SVGClipPathElement.h"
+#include "SVGDocument.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 #include "SVGMarkerElement.h"
@@ -359,6 +362,16 @@ LegacyRenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRendere
 {
     if (clipPath.fragment().isEmpty())
         return nullptr;
+
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url().resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        if (!resolvedDocument)
+            return nullptr;
+        return getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(*resolvedDocument, clipPath.fragment());
+    }
+
     // For some reason, SVG stores a cache of id -> renderer, rather than just using getElementById() and renderer().
     return getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, clipPath.fragment());
 }

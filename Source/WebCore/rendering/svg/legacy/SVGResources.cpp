@@ -204,26 +204,6 @@ static CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromTreeScop
     return container;
 }
 
-// The return value is tri-state because callers need to distinguish whether the reference is external at
-// all, and if so whether it's loaded yet: nullopt = not an external/data reference (resolve locally);
-// null RefPtr = external but not loaded yet (resolve to nothing); non-null = the isolated document to
-// resolve in.
-// FIXME: The external-or-not classification could be computed once at style-build time on Style::URL.
-static std::optional<RefPtr<SVGDocument>> externalSVGResourceDocument(Document& document, const WTF::URL& url)
-{
-    if (!document.settings().svgExternalResourcesEnabled())
-        return std::nullopt;
-
-    if (!url.protocolIsData() && !SVGURIReference::isExternalURIReference(url.string(), document))
-        return std::nullopt;
-
-    auto documentURL = url;
-    documentURL.removeFragmentIdentifier();
-
-    RefPtr isolatedContext = document.svgExtensions().isolatedSVGDocumentContext(documentURL);
-    return RefPtr { isolatedContext ? isolatedContext->document() : nullptr };
-}
-
 static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromSVGPaint(TreeScope& treeScope, const Style::SVGPaint& paint, AtomString& id, bool& hasPendingResource)
 {
     auto paintURL = paint.tryAnyURL();
@@ -232,7 +212,7 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
 
     Ref document = treeScope.documentScope();
 
-    if (auto externalDocument = externalSVGResourceDocument(document, paintURL->resolved)) {
+    if (auto externalDocument = document->svgExtensions().externalResourceDocument(paintURL->resolved)) {
         id = paintURL->resolved.fragmentIdentifier().toAtomString();
         RefPtr resolvedDocument = *externalDocument;
         if (id.isEmpty() || !resolvedDocument)
@@ -272,10 +252,9 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     if (clipperFilterMaskerTags().contains(tagName)) {
         WTF::switchOn(style.clipPath(),
             [&](const Style::ReferencePath& clipPath) {
-                if (auto externalDocument = externalSVGResourceDocument(document, clipPath.url().resolved)) {
+                if (auto externalDocument = document->svgExtensions().externalResourceDocument(clipPath.url().resolved)) {
                     if (RefPtr resolvedDocument = *externalDocument) {
-                        auto id = clipPath.url().resolved.fragmentIdentifier().toAtomString();
-                        if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(*resolvedDocument, id))
+                        if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(*resolvedDocument, clipPath.fragment()))
                             ensureResources(foundResources).setClipper(clipper);
                     }
                     return;
@@ -292,7 +271,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             WTF::switchOn(style.filter().first(),
                 [&](const Style::FilterReference& filterReference) {
                     auto& id = filterReference.cachedFragment;
-                    if (auto externalDocument = externalSVGResourceDocument(document, filterReference.url.resolved)) {
+                    if (auto externalDocument = document->svgExtensions().externalResourceDocument(filterReference.url.resolved)) {
                         if (RefPtr resolvedDocument = *externalDocument) {
                             if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(*resolvedDocument, id))
                                 ensureResources(foundResources).setFilter(filter);
@@ -323,7 +302,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     if (markerTags().contains(tagName) && style.hasMarkers()) {
         auto buildCachedMarkerResource = [&](const Style::SVGMarkerResource& markerResource, bool (SVGResources::*setMarker)(LegacyRenderSVGResourceMarker*)) {
             if (auto markerURL = markerResource.tryURL()) {
-                if (auto externalDocument = externalSVGResourceDocument(document, markerURL->resolved)) {
+                if (auto externalDocument = document->svgExtensions().externalResourceDocument(markerURL->resolved)) {
                     if (RefPtr resolvedDocument = *externalDocument) {
                         auto markerId = markerURL->resolved.fragmentIdentifier().toAtomString();
                         if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(*resolvedDocument, markerId))

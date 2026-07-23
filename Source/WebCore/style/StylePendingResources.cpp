@@ -164,27 +164,28 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
     if (RefPtr shapeValueImage = style.shapeOutside().image())
         loadPendingImage(document, shapeValueImage.get(), element, LoadPolicy::Anonymous);
 
-    // External/data: SVG paint servers and filters resolve through SVGResources, which only applies
-    // to SVG elements. Restrict loading to them so CSS filter on non-SVG elements (a separate path)
-    // isn't pulled through here.
-    if (document.settings().svgExternalResourcesEnabled() && element && is<SVGElement>(*element)) {
-        loadPendingExternalSVGPaint(document, style.fill());
-        loadPendingExternalSVGPaint(document, style.stroke());
+    if (document.settings().svgExternalResourcesEnabled()) {
+        // Paint servers, markers, and filter= resolve through SVGResources, which only applies to SVG
+        // elements.
+        if (element && is<SVGElement>(*element)) {
+            loadPendingExternalSVGPaint(document, style.fill());
+            loadPendingExternalSVGPaint(document, style.stroke());
 
-        loadPendingExternalSVGMarker(document, style.markerStart());
-        loadPendingExternalSVGMarker(document, style.markerMid());
-        loadPendingExternalSVGMarker(document, style.markerEnd());
+            loadPendingExternalSVGMarker(document, style.markerStart());
+            loadPendingExternalSVGMarker(document, style.markerMid());
+            loadPendingExternalSVGMarker(document, style.markerEnd());
+
+            if (style.filter().size() == 1) {
+                WTF::switchOn(style.filter().first(),
+                    [&](const Style::FilterReference& filterReference) {
+                        loadExternalSVGResource(document, filterReference.url.resolved);
+                    },
+                    [](const auto&) { }
+                );
+            }
+        }
 
         loadPendingExternalSVGClipPath(document, style.clipPath());
-
-        if (style.filter().size() == 1) {
-            WTF::switchOn(style.filter().first(),
-                [&](const Style::FilterReference& filterReference) {
-                    loadExternalSVGResource(document, filterReference.url.resolved);
-                },
-                [](const auto&) { }
-            );
-        }
     }
 
     // Are there other pseudo-elements that need resource loading?
