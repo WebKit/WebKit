@@ -529,6 +529,7 @@ private:
     virtual void didPreroll();
 
     void managePlayerSuspend();
+    virtual GstState suspendTargetState() const { return GST_STATE_NULL; }
 
     void createGSTPlayBin(const URL&);
 
@@ -697,6 +698,9 @@ private:
     bool m_isSuspended { false };
     // The state the pipeline should be set back to after the player is resumed.
     GstState m_stateToResume { GST_STATE_VOID_PENDING };
+    MediaTime m_positionToResume { MediaTime::invalidTime() };
+    // If set, contains the target state of the on-going transition from suspended state.
+    GstState m_ongoingReturnFromSuspendedState { GST_STATE_VOID_PENDING };
 
     // Specific to MediaStream playback.
     MediaTime m_startTime;

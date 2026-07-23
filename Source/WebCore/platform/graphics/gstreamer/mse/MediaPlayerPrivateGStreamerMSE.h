@@ -106,6 +106,8 @@ public:
     // mirror when the element one changed. Fortunately, both share the same trackId.
     void mirrorEnabledVideoTrackIfNeeded(const VideoTrackPrivateGStreamer& originalVideoTrackPrivate) final;
 
+    GstState suspendTargetState() const final { return GST_STATE_PAUSED; }
+
 private:
     explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer&);
 

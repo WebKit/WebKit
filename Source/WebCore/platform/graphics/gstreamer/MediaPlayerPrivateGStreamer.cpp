@@ -3185,6 +3185,15 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (m_isSeeking && !(state == GST_STATE_PLAYING && pending == GST_STATE_PAUSED))
             finishSeek();
     }
+
+    if (m_ongoingReturnFromSuspendedState != GST_STATE_VOID_PENDING && getStateResult == GST_STATE_CHANGE_SUCCESS && m_currentState == m_ongoingReturnFromSuspendedState) {
+        m_ongoingReturnFromSuspendedState = GST_STATE_VOID_PENDING;
+        if (m_positionToResume.isValid()) {
+            auto resumedPosition = std::exchange(m_positionToResume, MediaTime::invalidTime());
+            GST_DEBUG_OBJECT(pipeline(), "State successfully resumed to %s, now seeking back to position %f", gst_state_get_name(m_currentState), resumedPosition.toDouble());
+            doSeek(SeekTarget { resumedPosition }, m_playbackRate);
+        }
+    }
 }
 
 void MediaPlayerPrivateGStreamer::mediaLocationChanged(GstMessage* message)
@@ -4221,33 +4230,41 @@ void MediaPlayerPrivateGStreamer::setViewportVisibility(ViewportVisibility visib
 
 void MediaPlayerPrivateGStreamer::managePlayerSuspend()
 {
-    if (!m_pipeline)
+    if (!m_pipeline || isMediaStreamPlayer())
         return;
 
     RefPtr player = m_player.get();
 
     // Some layout tests (webgl) expect playback of invisible videos to not be suspended, so allow
     // this using an environment variable, set from the webkitpy glib port sub-classes.
-    auto allowPlaybackOfInvisibleVideos = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS"));
+    static bool allowPlaybackOfInvisibleVideos = false;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        allowPlaybackOfInvisibleVideos = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS")) == "1"_s;
+    });
+
     bool muted = isMuted();
-    bool shouldBeSuspended = (player && player->isVideoPlayer()) && muted && !m_isVisibleInViewport && allowPlaybackOfInvisibleVideos != "1"_s;
+    bool shouldBeSuspended = (player && player->isVideoPlayer()) && muted && !m_isVisibleInViewport && !allowPlaybackOfInvisibleVideos;
     GST_INFO_OBJECT(m_pipeline.get(), "%s %s player %svisible in viewport", muted ? "Muted" : "Un-muted", (player && player->isVideoPlayer()) ? "video" : "audio", m_isVisibleInViewport ? "" : "not ");
 
     if (shouldBeSuspended && !isSuspended()) {
         GstState currentState, pendingState;
         gst_element_get_state(m_pipeline.get(), &currentState, &pendingState, 0);
-        GstState targetState = (pendingState != GST_STATE_VOID_PENDING ? pendingState : currentState);
+        GstState actualState = pendingState != GST_STATE_VOID_PENDING ? pendingState : currentState;
         m_isSuspended = true;
-        if (targetState == GST_STATE_NULL) {
-            GST_DEBUG_OBJECT(pipeline(), "Pipeline is already in NULL state, no point in pausing the player.");
+        auto targetState = suspendTargetState();
+        if (actualState == targetState) {
+            GST_DEBUG_OBJECT(pipeline(), "Pipeline is already in %s state, no need to suspend playback.", gst_state_get_name(actualState));
             return;
         }
-        m_stateToResume = targetState;
-        GST_DEBUG_OBJECT(pipeline(), "Media element is muted and not visible in viewport, pausing it to save resources. Will resume afterwards to %s state.",
+        m_stateToResume = actualState;
+        if (targetState < GST_STATE_PAUSED)
+            m_positionToResume = playbackPosition();
+        GST_DEBUG_OBJECT(pipeline(), "Media element is muted and not visible in viewport, setting pipeline state to %s. Will resume afterwards to %s state.", gst_state_get_name(targetState),
             gst_state_get_name(m_stateToResume));
-        gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
+        gst_element_set_state(m_pipeline.get(), targetState);
         gst_element_get_state(m_pipeline.get(), &currentState, &pendingState, 0);
-        GST_DEBUG_OBJECT(pipeline(), "Now pipeline is in %s state with %s pending", gst_state_get_name(currentState), gst_state_get_name(pendingState));
+        GST_DEBUG_OBJECT(pipeline(), "Pipeline is now in %s state with %s pending", gst_state_get_name(currentState), gst_state_get_name(pendingState));
         m_isPipelinePlaying = false;
     } else if (!shouldBeSuspended && isSuspended()) {
         m_isSuspended = false;
@@ -4255,10 +4272,11 @@ void MediaPlayerPrivateGStreamer::managePlayerSuspend()
         if (m_stateToResume == GST_STATE_VOID_PENDING)
             return;
 
-        GstState resumeState = m_stateToResume;
-        m_stateToResume = GST_STATE_VOID_PENDING;
+        GstState resumeState = GST_STATE_VOID_PENDING;
+        std::swap(m_stateToResume, resumeState);
         GST_DEBUG_OBJECT(pipeline(), "Element is either unmuted or in viewport again, resuming playback via state change to %s.",
             gst_state_get_name(resumeState));
+        m_ongoingReturnFromSuspendedState = resumeState;
         changePipelineState(resumeState);
     }
 }
