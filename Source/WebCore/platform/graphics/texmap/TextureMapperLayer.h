@@ -95,12 +95,12 @@ public:
         return !m_currentFilters.isEmpty();
     }
 
-    void setShowDebugBorder(bool);
-    void setDebugBorderColor(Color);
-    void setDebugBorderWidth(float);
+    WEBCORE_EXPORT void setShowDebugBorder(bool);
+    WEBCORE_EXPORT void setDebugBorderColor(Color);
+    WEBCORE_EXPORT void setDebugBorderWidth(float);
 
-    void setShowRepaintCounter(bool);
-    void setRepaintCount(int);
+    WEBCORE_EXPORT void setShowRepaintCounter(bool);
+    WEBCORE_EXPORT void setRepaintCount(int);
 
     WEBCORE_EXPORT void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const TextureMapperAnimations&);
