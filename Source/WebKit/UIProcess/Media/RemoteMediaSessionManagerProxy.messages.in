@@ -29,7 +29,7 @@
     EnabledBy=RemoteMediaSessionManagerEnabled || SiteIsolationEnabled
 ]
 messages -> RemoteMediaSessionManagerProxy {
-    void UpdateMediaSessionState()
+    void UpdateMediaSessionStates(Vector<WebKit::RemoteMediaSessionState> sessions)
     void AddMediaSession(struct WebKit::RemoteMediaSessionState session);
     void RemoveMediaSession(struct WebKit::RemoteMediaSessionState session);
     void SetCurrentMediaSession(struct WebKit::RemoteMediaSessionState session);

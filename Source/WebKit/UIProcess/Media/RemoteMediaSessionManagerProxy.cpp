@@ -36,6 +36,7 @@
 #include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/PlatformMediaSessionInterface.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -99,6 +100,10 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy()
     AudioSession::setSharedSession(*this);
 #endif
 
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
+    WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
+#endif
+
 #if PLATFORM(COCOA)
     WebCore::AudioHardwareListener::setCreationFunction([protectedThis = Ref { *this }] (WebCore::AudioHardwareListener::Client& client) {
         return protectedThis->ensureAudioHardwareListenerProxy(client);
@@ -140,8 +145,18 @@ void RemoteMediaSessionManagerProxy::setCurrentMediaSession(IPC::Connection& con
         setCurrentSession(*session);
 }
 
-void RemoteMediaSessionManagerProxy::updateMediaSessionState()
+void RemoteMediaSessionManagerProxy::refreshSessionStates(IPC::Connection& connection, const Vector<RemoteMediaSessionState>& sessions)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    for (auto& state : sessions) {
+        if (RefPtr session = m_sessionProxies.get({ state.sessionIdentifier, process->coreProcessIdentifier() }))
+            session->updateState(state);
+    }
+}
+
+void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, Vector<RemoteMediaSessionState>&& sessions)
+{
+    refreshSessionStates(connection, sessions);
     updateSessionState();
 }
 

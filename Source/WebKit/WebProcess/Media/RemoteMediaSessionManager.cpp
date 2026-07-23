@@ -134,7 +134,15 @@ void RemoteMediaSessionManager::resetRestrictions()
 
 void RemoteMediaSessionManager::updateSessionState()
 {
-    send(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionState());
+    auto liveSessions = copySessionsToVector();
+    Vector<RemoteMediaSessionState> sessions(liveSessions.size(), [&](size_t i) -> std::optional<RemoteMediaSessionState> {
+        RefPtr session = liveSessions[i].get();
+        if (!session)
+            return std::nullopt;
+        return currentSessionState(*session);
+    });
+
+    send(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(WTF::move(sessions)));
 }
 
 void RemoteMediaSessionManager::sessionStateChanged(WebCore::PlatformMediaSessionInterface& session)
