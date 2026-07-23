@@ -19117,7 +19117,11 @@ void WebPageProxy::addConsoleMessage(FrameIdentifier frameID, MessageSource mess
 #if PLATFORM(COCOA)
 void WebPageProxy::sendScrollUpdateForNode(std::optional<WebCore::FrameIdentifier> frameID, WebCore::ScrollUpdate update, bool isLastUpdate)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollUpdateForNode(update), [weakThis = WeakPtr { *m_scrollingCoordinatorProxy }, isLastUpdate] {
+    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    if (!scrollingCoordinatorProxy)
+        return;
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollUpdateForNode(update), [weakThis = WeakPtr { *scrollingCoordinatorProxy }, isLastUpdate] {
         if (!weakThis)
             return;
 
