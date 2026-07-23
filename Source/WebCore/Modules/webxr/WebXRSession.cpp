@@ -46,7 +46,6 @@
 #include "WebXRFrame.h"
 #include "WebXRHitTestSource.h"
 #include "WebXRTransientInputHitTestSource.h"
-#include "WebXRView.h"
 #include "XRFrameRequestCallback.h"
 #include "XRGPUProjectionLayerInit.h"
 #include "XRHitTestOptionsInit.h"
