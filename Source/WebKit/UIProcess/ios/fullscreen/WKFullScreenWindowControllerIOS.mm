@@ -97,6 +97,14 @@ static constexpr float ZoomForFullscreenWindow = 1.0;
 static constexpr float ZoomForVisionFullscreenVideoWindow = 1.36;
 #endif
 
+#if PLATFORM(VISION)
+#if HAVE(FULLSCREEN_LIGHTSPILL)
+static constexpr WKSurroundingsEffectType DefaultFullscreenSurroundingsEffect = WKSurroundingsEffectTypeNone;
+#else
+static constexpr WKSurroundingsEffectType DefaultFullscreenSurroundingsEffect = WKSurroundingsEffectTypeDark;
+#endif
+#endif
+
 static CGSize sizeExpandedToSize(CGSize initial, CGSize other)
 {
     return CGSizeMake(std::max(initial.width, other.width),  std::max(initial.height, other.height));
@@ -1033,7 +1041,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             prefersAutoDimming = bestVideo->playbackSessionModel()->prefersAutoDimming();
     }
 
-    WKSurroundingsEffectType targetEffect = prefersAutoDimming ? WKSurroundingsEffectTypeDark : WKSurroundingsEffectTypeNone;
+    WKSurroundingsEffectType targetEffect = prefersAutoDimming ? WebKit::DefaultFullscreenSurroundingsEffect : WKSurroundingsEffectTypeNone;
     if ([WKSurroundingsEffectManager shared].currentEffect != targetEffect)
         [WKSurroundingsEffectManager shared].currentEffect = targetEffect;
 #endif
@@ -2197,7 +2205,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     inWindow.transform3D = CATransform3DTranslate(originalState.transform3D, 0, 0, kIncomingWindowZOffset);
 
-    WKSurroundingsEffectType targetDarkness = enter ? (self.prefersSceneDimming ? WKSurroundingsEffectTypeDark : originalState.preferredSurroundingsEffect) : originalState.preferredSurroundingsEffect;
+    WKSurroundingsEffectType targetDarkness = enter ? (self.prefersSceneDimming ? WebKit::DefaultFullscreenSurroundingsEffect : originalState.preferredSurroundingsEffect) : originalState.preferredSurroundingsEffect;
 
     WKSurroundingsEffectType currentEffect = [WKSurroundingsEffectManager shared].currentEffect;
     if (currentEffect != targetDarkness) {
@@ -2321,7 +2329,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (self.isFullScreen) {
-        WKSurroundingsEffectType target = updatedPrefersSceneDimming ? WKSurroundingsEffectTypeDark : (_parentWindowState ? [_parentWindowState preferredSurroundingsEffect] : WKSurroundingsEffectTypeNone);
+        WKSurroundingsEffectType target = updatedPrefersSceneDimming ? WebKit::DefaultFullscreenSurroundingsEffect : (_parentWindowState ? [_parentWindowState preferredSurroundingsEffect] : WKSurroundingsEffectTypeNone);
         if ([WKSurroundingsEffectManager shared].currentEffect != target)
             [WKSurroundingsEffectManager shared].currentEffect = target;
         WebKit::setLightspillEnabledForElementFullscreenLayer([_window layer], updatedPrefersSceneDimming);
