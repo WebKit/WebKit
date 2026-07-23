@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
+CONSOLE MESSAGE: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
+CONSOLE MESSAGE: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
+This test passes if it does not crash.
+
+
