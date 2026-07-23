@@ -60,6 +60,9 @@ WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();
 WK_EXPORT bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef, bool);
 
+WK_EXPORT bool WKWebsitePoliciesGetGlobalPrivacyControlEnabled(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetGlobalPrivacyControlEnabled(WKWebsitePoliciesRef, bool);
+
 WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef, WKDictionaryRef) WK_C_API_DEPRECATED;
 

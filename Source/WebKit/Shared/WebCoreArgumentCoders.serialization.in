@@ -3634,6 +3634,7 @@ struct WebCore::ServiceWorkerClientData {
     bool isFocused;
     uint64_t focusOrder;
     Vector<String> ancestorOrigins;
+    std::optional<bool> globalPrivacyControlEnabled;
 };
 
 struct WebCore::ServiceWorkerClientQueryOptions {
@@ -4139,6 +4140,7 @@ struct WebCore::WorkerInitializationData {
     std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     String userAgent;
+    std::optional<bool> globalPrivacyControlEnabled;
 };
 
 struct WebCore::WorkerFetchResult {
@@ -4212,6 +4214,7 @@ struct WebCore::ServiceWorkerContextData {
     std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     WebCore::NavigationPreloadState navigationPreloadState;
     Vector<WebCore::ServiceWorkerRoute> routes;
+    std::optional<bool> globalPrivacyControlEnabled;
 };
 
 #if HAVE(SCREEN_CAPTURE_KIT)

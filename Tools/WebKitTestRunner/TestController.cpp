@@ -1461,7 +1461,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         WKPreferencesSetAllowsPictureInPictureMediaPlayback(preferences, true);
 
         WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyIPC(), toWK("AllowTestOnlyIPC").get());
-        WKPreferencesSetBoolValueForKeyForTesting(preferences, false, toWK("GlobalPrivacyControlEnabled").get());
         WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyMockContentFilterIPC(), toWK("AllowTestOnlyMockContentFilterIPC").get());
         WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyOriginAccessAllowListIPC(), toWK("AllowTestOnlyOriginAccessAllowListIPC").get());
 
@@ -1483,6 +1482,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 {
     SetForScope changeState(m_state, Resetting);
     m_beforeUnloadReturnValue = true;
+
+    m_globalPrivacyControlEnabled = std::nullopt;
 
     for (auto& auxiliaryWebView : std::exchange(m_auxiliaryWebViews, { }))
         WKPageClose(auxiliaryWebView->page());
@@ -4556,12 +4557,18 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
     WKRetainPtr<WKNavigationActionRef> retainedNavigationAction { navigationAction };
     const bool shouldIgnore { m_policyDelegateEnabled && !m_policyDelegatePermissive };
+
+    auto globalPrivacyControlEnabled = m_globalPrivacyControlEnabled;
+    if (!globalPrivacyControlEnabled && m_currentInvocation && protectedCurrentInvocation()->options().globalPrivacyControl())
+        globalPrivacyControlEnabled = false;
+
     auto decisionFunction = [
         shouldIgnore,
         retainedListener,
         retainedNavigationAction,
         shouldSwapToEphemeralSessionOnNextNavigation = m_shouldSwapToEphemeralSessionOnNextNavigation,
         shouldSwapToDefaultSessionOnNextNavigation = m_shouldSwapToDefaultSessionOnNextNavigation,
+        globalPrivacyControlEnabled,
         page = WKRetainPtr { page }
     ] {
         if (shouldIgnore)
@@ -4573,6 +4580,8 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
                 ASSERT(shouldSwapToEphemeralSessionOnNextNavigation != shouldSwapToDefaultSessionOnNextNavigation);
                 WKRetainPtr policies = adoptWK(WKWebsitePoliciesCreate());
                 WKWebsitePoliciesSetAllowsJSHandleCreationInPageWorld(policies.get(), true);
+                if (globalPrivacyControlEnabled)
+                    WKWebsitePoliciesSetGlobalPrivacyControlEnabled(policies.get(), *globalPrivacyControlEnabled);
                 WKRetainPtr<WKWebsiteDataStoreRef> newSession = TestController::defaultWebsiteDataStore();
                 if (shouldSwapToEphemeralSessionOnNextNavigation)
                     newSession = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
@@ -4581,6 +4590,8 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
             } else {
                 WKRetainPtr policies = WKPageConfigurationGetDefaultWebsitePolicies(adoptWK(WKPageCopyPageConfiguration(page.get())).get());
                 WKWebsitePoliciesSetAllowsJSHandleCreationInPageWorld(policies.get(), true);
+                if (globalPrivacyControlEnabled)
+                    WKWebsitePoliciesSetGlobalPrivacyControlEnabled(policies.get(), *globalPrivacyControlEnabled);
                 WKFramePolicyListenerUseWithPolicies(retainedListener.get(), policies.get());
             }
         }

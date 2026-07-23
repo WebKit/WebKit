@@ -163,6 +163,11 @@ static bool shouldEnableTouchEventRegions(const std::string& pathOrURL)
     return pathContains(pathOrURL, "touch-event-regions-layer-tree/");
 }
 
+static bool shouldEnableGlobalPrivacyControl(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "/gpc/");
+}
+
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
 {
     TestFeatures features;
@@ -198,6 +203,8 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolWebPreferenceFeatures.insert({ "MutationEventsEnabled", false });
     if (shouldEnableTouchEventRegions(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "AlwaysUseTouchEventRegions", true });
+    if (shouldEnableGlobalPrivacyControl(command.pathOrURL))
+        features.boolTestRunnerFeatures.insert({ "globalPrivacyControl", true });
 
     return features;
 }

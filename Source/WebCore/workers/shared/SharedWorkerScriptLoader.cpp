@@ -103,7 +103,8 @@ void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionConte
         m_loader->takeServiceWorkerData(),
         m_loader->clientIdentifier(),
         m_loader->advancedPrivacyProtections(),
-        m_loader->userAgentForSharedWorker()
+        m_loader->userAgentForSharedWorker(),
+        m_loader->globalPrivacyControlEnabled()
     }); // deletes this.
 }
 

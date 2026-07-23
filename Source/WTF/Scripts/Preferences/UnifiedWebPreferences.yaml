@@ -3674,18 +3674,13 @@ GetUserMediaRequiresFocus:
       default: true
 
 GlobalPrivacyControlEnabled:
-  type: bool
-  status: testable
-  category: privacy
+  type: "std::optional<bool>"
+  status: embedder
   humanReadableName: "Global Privacy Control"
   humanReadableDescription: "Enable Global Privacy Control (GPC) signal"
   defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
     WebCore:
-      default: false
+      default: std::nullopt
 
 GoogleAntiFlickerOptimizationQuirkEnabled:
   type: bool

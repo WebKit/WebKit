@@ -2304,6 +2304,13 @@ TEST(WebpagePreferences, GlobalPrivacyControlNavigatorAPI)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "false");
 }
 
+TEST(WebpagePreferences, GlobalPrivacyControlNavigatorAPINotSet)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView loadHTMLString:@"<script>alert(String(navigator.globalPrivacyControl))</script>" baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "undefined");
+}
+
 TEST(WebpagePreferences, GlobalPrivacyControlRequestHeader)
 {
     using namespace TestWebKitAPI;

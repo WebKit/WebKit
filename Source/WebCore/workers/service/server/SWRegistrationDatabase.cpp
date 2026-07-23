@@ -514,7 +514,7 @@ Vector<ServiceWorkerContextData> SWRegistrationDatabase::collectRegistrationsFro
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, registrationIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType };
         auto registration = ServiceWorkerRegistrationData { WTF::move(*key), registrationIdentifier, WTF::move(scopeURL), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTF::move(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { std::nullopt, WTF::move(registration), workerIdentifier, ScriptBuffer(), WTF::move(*certificateInfo), WTF::move(*contentSecurityPolicy), WTF::move(*coep), WTF::move(referrerPolicy), WTF::move(scriptURL), *workerType, true, LastNavigationWasAppInitiated::Yes, WTF::move(scriptResourceMap), std::nullopt, WTF::move(*navigationPreloadState), WTF::move(*routes) };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTF::move(registration), workerIdentifier, ScriptBuffer(), WTF::move(*certificateInfo), WTF::move(*contentSecurityPolicy), WTF::move(*coep), WTF::move(referrerPolicy), WTF::move(scriptURL), *workerType, true, LastNavigationWasAppInitiated::Yes, WTF::move(scriptResourceMap), std::nullopt, WTF::move(*navigationPreloadState), WTF::move(*routes), std::nullopt };
 
         registrations.append(WTF::move(contextData));
     }

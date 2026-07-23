@@ -217,6 +217,9 @@ public:
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool value) { m_shouldSwapToEphemeralSessionOnNextNavigation = value; }
     void setShouldSwapToDefaultSessionOnNextNavigation(bool value) { m_shouldSwapToDefaultSessionOnNextNavigation = value; }
 
+    void setGlobalPrivacyControl(bool value) { m_globalPrivacyControlEnabled = value; }
+    bool globalPrivacyControl() const { return m_globalPrivacyControlEnabled.value_or(false); }
+
     void setBlockAllPlugins(bool shouldBlock);
     void setPluginSupportedMode(const String&);
 
@@ -905,6 +908,7 @@ private:
     bool m_allowsAnySSLCertificate { true };
     bool m_shouldSwapToEphemeralSessionOnNextNavigation { false };
     bool m_shouldSwapToDefaultSessionOnNextNavigation { false };
+    std::optional<bool> m_globalPrivacyControlEnabled;
     
 #if PLATFORM(COCOA)
     bool m_hasSetApplicationBundleIdentifier { false };

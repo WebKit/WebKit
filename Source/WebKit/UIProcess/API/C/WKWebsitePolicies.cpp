@@ -58,6 +58,16 @@ bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
     return toImpl(websitePolicies)->contentExtensionEnablement().first == WebCore::ContentExtensionDefaultEnablement::Enabled;
 }
 
+void WKWebsitePoliciesSetGlobalPrivacyControlEnabled(WKWebsitePoliciesRef websitePolicies, bool enabled)
+{
+    toImpl(websitePolicies)->setGlobalPrivacyControlEnabled(enabled);
+}
+
+bool WKWebsitePoliciesGetGlobalPrivacyControlEnabled(WKWebsitePoliciesRef websitePolicies)
+{
+    return toImpl(websitePolicies)->globalPrivacyControlEnabled().value_or(false);
+}
+
 WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef)
 {
     return nullptr;

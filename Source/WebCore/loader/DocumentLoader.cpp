@@ -1533,6 +1533,8 @@ void DocumentLoader::applyPoliciesToSettings()
 
     if (m_inlineMediaPlaybackPolicy != InlineMediaPlaybackPolicy::Default)
         m_frame->settings().setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackPolicy == InlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute);
+
+    m_frame->settings().setGlobalPrivacyControlEnabled(m_globalPrivacyControlEnabled);
 }
 
 ColorSchemePreference NODELETE DocumentLoader::colorSchemePreference() const

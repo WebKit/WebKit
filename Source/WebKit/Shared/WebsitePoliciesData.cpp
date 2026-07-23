@@ -155,6 +155,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
     if (!documentLoader.originatorAdvancedPrivacyProtections())
         documentLoader.setOriginatorAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
+    documentLoader.setGlobalPrivacyControlEnabled(websitePolicies.globalPrivacyControlEnabled);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
     documentLoader.setHTTPSByDefaultMode(websitePolicies.httpsByDefaultMode);
 
@@ -201,9 +202,6 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     if (auto overrideValue = websitePolicies.overrideTouchEventDOMAttributesEnabled)
         frame->settings().setTouchEventDOMAttributesEnabled(*overrideValue);
 #endif
-
-    if (auto overrideValue = websitePolicies.globalPrivacyControlEnabled)
-        frame->settings().setGlobalPrivacyControlEnabled(*overrideValue);
 
     documentLoader.applyPoliciesToSettings();
 }

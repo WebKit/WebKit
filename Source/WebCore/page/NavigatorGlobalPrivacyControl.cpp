@@ -38,7 +38,7 @@ bool NavigatorGlobalPrivacyControl::globalPrivacyControlEnabled(Navigator& navig
     auto* frame = navigator.frame();
     if (!frame)
         return false;
-    return frame->settings().globalPrivacyControlEnabled();
+    return frame->settings().globalPrivacyControlEnabled().value_or(false);
 }
 
 bool NavigatorGlobalPrivacyControl::globalPrivacyControlEnabled(WorkerNavigator& navigator)
@@ -46,7 +46,7 @@ bool NavigatorGlobalPrivacyControl::globalPrivacyControlEnabled(WorkerNavigator&
     RefPtr scope = navigator.scriptExecutionContext();
     if (!scope)
         return false;
-    return scope->settingsValues().globalPrivacyControlEnabled;
+    return scope->settingsValues().globalPrivacyControlEnabled.value_or(false);
 }
 
 } // namespace WebCore
