@@ -39,6 +39,8 @@ struct WebTransportSendStreamOptions;
 struct WebTransportSendStreamStats;
 struct WebTransportStreamIdentifierType;
 
+class WebTransportWriter;
+
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportSendStream : public WritableStream {
@@ -47,6 +49,7 @@ public:
     ~WebTransportSendStream();
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+    ExceptionOr<Ref<WebTransportWriter>> getWriter(JSDOMGlobalObject&);
     WebTransportSendGroup* NODELETE sendGroup();
     ExceptionOr<void> setSendGroup(WebTransportSendGroup*);
     int64_t sendOrder() { return m_sendOrder; }

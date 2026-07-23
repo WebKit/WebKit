@@ -6778,7 +6778,7 @@ imported/w3c/web-platform-tests/webtransport/streams-close.https.any.servicework
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Skip ]
 
-# Backend gaps (datagram flow-control, getStats, close, historical, idlharness exportKeyingMaterial).
+# Backend gaps (datagram flow-control, getStats, close, historical).
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
@@ -6795,10 +6795,6 @@ imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.html [ Ski
 imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Skip ]
 
 # Some of Canvas Layer API features are not supported yet.
 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.anisotropic-blur.isotropic.html [ ImageOnlyFailure ]

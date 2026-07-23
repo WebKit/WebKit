@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,8 @@
 [
     EnabledBySetting=WebTransportEnabled,
     Exposed=(Window,Worker),
-    SecureContext,
-    Transferable
-] interface WebTransportSendStream : WritableStream {
-    attribute WebTransportSendGroup? sendGroup;
-    attribute long long sendOrder;
-    [CallWith=CurrentScriptExecutionContext] Promise<WebTransportSendStreamStats> getStats();
-    [CallWith=CurrentGlobalObject] WebTransportWriter getWriter();
+    SecureContext
+] interface WebTransportWriter : WritableStreamDefaultWriter {
+    Promise<undefined> atomicWrite(optional any chunk);
+    undefined commit();
 };

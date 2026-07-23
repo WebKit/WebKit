@@ -79,7 +79,7 @@ PASS WebTransportSendStream interface: existence and properties of interface pro
 PASS WebTransportSendStream interface: attribute sendGroup
 PASS WebTransportSendStream interface: attribute sendOrder
 PASS WebTransportSendStream interface: operation getStats()
-FAIL WebTransportSendStream interface: operation getWriter() assert_own_property: interface prototype object missing non-static operation expected property "getWriter" missing
+PASS WebTransportSendStream interface: operation getWriter()
 PASS WebTransportSendGroup interface: existence and properties of interface object
 PASS WebTransportSendGroup interface object length
 PASS WebTransportSendGroup interface object name
@@ -102,14 +102,14 @@ PASS WebTransportBidirectionalStream interface: existence and properties of inte
 PASS WebTransportBidirectionalStream interface: existence and properties of interface prototype object's @@unscopables property
 PASS WebTransportBidirectionalStream interface: attribute readable
 PASS WebTransportBidirectionalStream interface: attribute writable
-FAIL WebTransportWriter interface: existence and properties of interface object assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface object length assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface object name assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface: operation atomicWrite(optional any) assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
-FAIL WebTransportWriter interface: operation commit() assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+PASS WebTransportWriter interface: existence and properties of interface object
+PASS WebTransportWriter interface object length
+PASS WebTransportWriter interface object name
+PASS WebTransportWriter interface: existence and properties of interface prototype object
+PASS WebTransportWriter interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportWriter interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebTransportWriter interface: operation atomicWrite(optional any)
+PASS WebTransportWriter interface: operation commit()
 PASS WebTransportError interface: existence and properties of interface object
 PASS WebTransportError interface object length
 PASS WebTransportError interface object name

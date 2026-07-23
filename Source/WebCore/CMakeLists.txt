@@ -925,6 +925,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webtransport/WebTransportSendStream.idl
     Modules/webtransport/WebTransportSendStreamOptions.idl
     Modules/webtransport/WebTransportSendStreamStats.idl
+    Modules/webtransport/WebTransportWriter.idl
 
 
     animation/AnimationEffect.idl

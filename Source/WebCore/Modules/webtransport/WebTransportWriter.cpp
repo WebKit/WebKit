@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledBySetting=WebTransportEnabled,
-    Exposed=(Window,Worker),
-    SecureContext,
-    Transferable
-] interface WebTransportSendStream : WritableStream {
-    attribute WebTransportSendGroup? sendGroup;
-    attribute long long sendOrder;
-    [CallWith=CurrentScriptExecutionContext] Promise<WebTransportSendStreamStats> getStats();
-    [CallWith=CurrentGlobalObject] WebTransportWriter getWriter();
-};
+#include "config.h"
+#include "WebTransportWriter.h"
+
+#include "InternalWritableStreamWriter.h"
+#include "JSDOMGlobalObject.h"
+#include "JSDOMPromiseDeferred.h"
+#include "WritableStream.h"
+
+namespace WebCore {
+
+ExceptionOr<Ref<WebTransportWriter>> WebTransportWriter::create(JSDOMGlobalObject& globalObject, WritableStream& stream)
+{
+    auto result = acquireWritableStreamDefaultWriter(globalObject, stream);
+    if (result.hasException())
+        return result.releaseException();
+
+    return adoptRef(*new WebTransportWriter(result.releaseReturnValue()));
+}
+
+WebTransportWriter::WebTransportWriter(Ref<InternalWritableStreamWriter>&& internalWriter)
+    : WritableStreamDefaultWriter(WTF::move(internalWriter))
+{
+}
+
+void WebTransportWriter::atomicWrite(JSC::JSValue, Ref<DeferredPromise>&& promise)
+{
+    // FIXME: Implement WebTransport atomic writes once the send-stream commit API exists (rdar://164169921).
+    promise->reject(ExceptionCode::NotSupportedError);
+}
+
+void WebTransportWriter::commit()
+{
+    // FIXME: Implement WebTransport commit once the send-stream commit API exists (rdar://164169921).
+}
+
+} // namespace WebCore

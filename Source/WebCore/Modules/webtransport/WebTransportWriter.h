@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledBySetting=WebTransportEnabled,
-    Exposed=(Window,Worker),
-    SecureContext,
-    Transferable
-] interface WebTransportSendStream : WritableStream {
-    attribute WebTransportSendGroup? sendGroup;
-    attribute long long sendOrder;
-    [CallWith=CurrentScriptExecutionContext] Promise<WebTransportSendStreamStats> getStats();
-    [CallWith=CurrentGlobalObject] WebTransportWriter getWriter();
+#pragma once
+
+#include "WritableStreamDefaultWriter.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/TypeCasts.h>
+
+namespace WebCore {
+
+class DeferredPromise;
+class JSDOMGlobalObject;
+class WritableStream;
+
+template<typename> class ExceptionOr;
+
+class WebTransportWriter final : public WritableStreamDefaultWriter {
+public:
+    static ExceptionOr<Ref<WebTransportWriter>> create(JSDOMGlobalObject&, WritableStream&);
+
+    void atomicWrite(JSC::JSValue chunk, Ref<DeferredPromise>&&);
+    void commit();
+
+private:
+    explicit WebTransportWriter(Ref<InternalWritableStreamWriter>&&);
+
+    Type type() const final { return Type::WebTransport; }
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebTransportWriter)
+static bool isType(const WebCore::WritableStreamDefaultWriter& writer) { return writer.type() == WebCore::WritableStreamDefaultWriter::Type::WebTransport; }
+SPECIALIZE_TYPE_TRAITS_END()
+

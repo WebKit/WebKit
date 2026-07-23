@@ -38,6 +38,7 @@
 #include "WebTransportSendStreamSink.h"
 #include "WebTransportSendStreamStats.h"
 #include "WebTransportSession.h"
+#include "WebTransportWriter.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -64,6 +65,11 @@ WebTransportSendStream::WebTransportSendStream(WebTransportStreamIdentifier iden
     , m_transport(transport) { }
 
 WebTransportSendStream::~WebTransportSendStream() = default;
+
+ExceptionOr<Ref<WebTransportWriter>> WebTransportSendStream::getWriter(JSDOMGlobalObject& globalObject)
+{
+    return WebTransportWriter::create(globalObject, *this);
+}
 
 void WebTransportSendStream::getStats(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {

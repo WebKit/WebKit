@@ -41,6 +41,9 @@ public:
 
     virtual ~WritableStreamDefaultWriter();
 
+    enum class Type : bool { Default, WebTransport };
+    virtual Type type() const { return Type::Default; }
+
     ExceptionOr<std::optional<double>> desiredSize(JSDOMGlobalObject&);
     ExceptionOr<void> releaseLock(JSDOMGlobalObject&);
 
