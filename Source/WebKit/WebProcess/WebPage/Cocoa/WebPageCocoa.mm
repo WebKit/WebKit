@@ -3152,35 +3152,28 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
 
     m_wasShowingInputViewForFocusedElementDuringLastPotentialTap = m_isShowingInputViewForFocusedElement;
 
-    sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get(), position);
-#endif // PLATFORM(IOS_FAMILY)
+    RefPtr viewGestureGeometryCollector = m_viewGestureGeometryCollector;
 
-#if ENABLE(TWO_PHASE_CLICKS)
-    RefPtr<WebCore::Node> magnificationNode = m_potentialTapNode;
-    if (!magnificationNode && localMainFrame) {
-        if (RefPtr frameView = localMainFrame->view()) {
-            constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-            auto result = localMainFrame->eventHandler().hitTestResultAtPoint(frameView->windowToContents(roundedIntPoint(position)), hitType);
-            magnificationNode = result.innerNode();
-        }
-    }
-    if (RefPtr viewGestureGeometryCollector = m_viewGestureGeometryCollector; shouldRequestMagnificationInformation && magnificationNode && viewGestureGeometryCollector) {
+    if (shouldRequestMagnificationInformation && m_potentialTapNode && viewGestureGeometryCollector) {
         FloatPoint origin = position;
         FloatRect absoluteBoundingRect;
         bool fitEntireRect;
         double viewportMinimumScale;
         double viewportMaximumScale;
 
-        viewGestureGeometryCollector->computeZoomInformationForNode(*magnificationNode, origin, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
+        viewGestureGeometryCollector->computeZoomInformationForNode(*protect(m_potentialTapNode), origin, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
 
-        bool nodeIsRootLevel = is<WebCore::Document>(*magnificationNode) || is<WebCore::HTMLBodyElement>(*magnificationNode);
-        bool nodeIsPluginElement = is<WebCore::HTMLPlugInElement>(*magnificationNode);
+        bool nodeIsRootLevel = is<WebCore::Document>(*m_potentialTapNode) || is<WebCore::HTMLBodyElement>(*m_potentialTapNode);
+        bool nodeIsPluginElement = is<WebCore::HTMLPlugInElement>(*m_potentialTapNode);
         send(Messages::WebPageProxy::HandleSmartMagnificationInformationForPotentialTap(requestID, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel, nodeIsPluginElement));
     }
 
+    sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get(), position);
+#if ENABLE(TWO_PHASE_CLICKS)
     if (RefPtr potentialTapNode = m_potentialTapNode; potentialTapNode && !potentialTapNode->allowsDoubleTapGesture())
         send(Messages::WebPageProxy::DisableDoubleTapGesturesDuringTapIfNecessary(requestID));
-#endif // ENABLE(TWO_PHASE_CLICKS)
+#endif
+#endif // PLATFORM(IOS_FAMILY)
 
     co_return std::nullopt;
 }
@@ -3219,19 +3212,23 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
     };
 
     if (invalidTargetForSingleClick) {
+#if PLATFORM(IOS_FAMILY)
         if (localRootFrame) {
             constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
             auto roundedPoint = IntPoint { m_potentialTapLocation };
             auto result = localRootFrame->eventHandler().hitTestResultAtPoint(roundedPoint, hitType);
             localRootFrame->eventHandler().setLastTouchedNode(protect(result.innerNode()));
         }
+#endif
 
         reportFailedTap();
         co_return std::nullopt;
     }
 
+#if PLATFORM(IOS_FAMILY)
     if (localRootFrame)
         localRootFrame->eventHandler().setLastTouchedNode(nullptr);
+#endif
 
     FloatPoint adjustedPoint;
     RefPtr nodeRespondingToClick = localRootFrame ? localRootFrame->nodeRespondingToClickEvents(m_potentialTapLocation, adjustedPoint, m_potentialTapSecurityOrigin.get()) : nullptr;
