@@ -70,6 +70,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FindController);
 
+static constexpr Seconds findDebounceInterval = 200_ms;
+
 #if ENABLE(VIDEO)
 static Vector<FindMatch> mergeByDocumentOrder(Page& page, Vector<SimpleRange>&& domRanges, Vector<CueMatch>&& cueMatches)
 {
@@ -191,10 +193,14 @@ FindController::FindController(WebPage* webPage)
 #else
     , m_findIndicator(WTF::makeUnique<FindIndicator>(webPage))
 #endif
+    , m_findDebounceTimer(*this, &FindController::findDebounceTimerFired, findDebounceInterval)
 {
 }
 
-FindController::~FindController() = default;
+FindController::~FindController()
+{
+    cancelPendingFindRequests();
+}
 
 #if ENABLE(PDF_PLUGIN)
 
@@ -495,7 +501,47 @@ void FindController::findStringIncludingImages(const String& string, OptionSet<F
 
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
-    findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::No, WTF::move(completionHandler));
+    if (string.isEmpty()) {
+        cancelPendingFindRequests();
+        findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::No, WTF::move(completionHandler));
+        return;
+    }
+
+    bool termChanged = string != m_lastSearchedString || options != m_lastSearchedOptions;
+    if (!termChanged && !m_findDebounceTimer.isActive()) {
+        findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::No, WTF::move(completionHandler));
+        return;
+    }
+
+    m_pendingFindRequest.string = string;
+    m_pendingFindRequest.options = options;
+    m_pendingFindRequest.maxMatchCount = maxMatchCount;
+    m_pendingFindRequest.completionHandlers.append(WTF::move(completionHandler));
+    m_findDebounceTimer.restart();
+}
+
+void FindController::findDebounceTimerFired()
+{
+    auto completionHandlers = std::exchange(m_pendingFindRequest.completionHandlers, { });
+    m_lastSearchedString = m_pendingFindRequest.string;
+    m_lastSearchedOptions = m_pendingFindRequest.options;
+
+    findString(m_pendingFindRequest.string, m_pendingFindRequest.options, m_pendingFindRequest.maxMatchCount, ShouldReuseLastFoundRange::No, [completionHandlers = WTF::move(completionHandlers)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+        for (auto& completionHandler : completionHandlers)
+            completionHandler(frameID, Vector<IntRect> { matchRects }, matchCount, matchIndex, didWrap);
+    });
+
+    m_pendingFindRequest.string = { };
+}
+
+void FindController::cancelPendingFindRequests()
+{
+    m_findDebounceTimer.stop();
+    m_lastSearchedString = { };
+    m_pendingFindRequest.string = { };
+    auto completionHandlers = std::exchange(m_pendingFindRequest.completionHandlers, { });
+    for (auto& completionHandler : completionHandlers)
+        completionHandler(std::nullopt, { }, 0, 0, false);
 }
 
 void FindController::selectLastFoundRange(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, int32_t, bool)>&& completionHandler)
@@ -727,6 +773,7 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 
 void FindController::hideFindUI()
 {
+    cancelPendingFindRequests();
     m_findMatches.clear();
     m_lastFoundRange = std::nullopt;
     if (RefPtr findPageOverlay = m_findPageOverlay.get())

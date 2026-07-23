@@ -34,6 +34,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/Timer.h>
 #include <WebCore/VisibleSelection.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -109,6 +110,10 @@ private:
     enum class ShouldReuseLastFoundRange : bool { No, Yes };
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, ShouldReuseLastFoundRange, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 
+    using FindStringCompletionHandler = CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>;
+    void findDebounceTimerFired();
+    void cancelPendingFindRequests();
+
     void updateFindPageOverlay(bool shouldShowOverlay);
     void updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptions>, bool shouldShowOverlay);
     unsigned markMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
@@ -131,6 +136,18 @@ private:
     std::optional<FindMatch> m_lastFoundRange;
     bool m_lastFoundRangeDidWrap { false };
     std::unique_ptr<FindIndicator> m_findIndicator;
+
+    struct PendingFindRequest {
+        String string;
+        OptionSet<FindOptions> options;
+        unsigned maxMatchCount { 0 };
+        Vector<FindStringCompletionHandler> completionHandlers;
+    };
+
+    WebCore::DeferrableOneShotTimer m_findDebounceTimer;
+    String m_lastSearchedString;
+    OptionSet<FindOptions> m_lastSearchedOptions;
+    PendingFindRequest m_pendingFindRequest;
 };
 
 } // namespace WebKit
