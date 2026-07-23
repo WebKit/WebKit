@@ -112,13 +112,27 @@ class ErrorCollector:
 
 # This class is a lame mock of codecs. We do not verify filename, mode, or
 # encoding, but for the current use case it is not needed.
+class MockFile:
+    def __init__(self, lines):
+        self.lines = lines
+
+    def __iter__(self):
+        return iter(self.lines)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+
 class MockIo:
     def __init__(self, mock_file):
         self.mock_file = mock_file
 
     def open(self, unused_filename, unused_mode, unused_encoding, _):  # NOLINT
         # (lint doesn't like open as a method name)
-        return self.mock_file
+        return MockFile(self.mock_file)
 
 
 class CppFunctionsTest(unittest.TestCase):
