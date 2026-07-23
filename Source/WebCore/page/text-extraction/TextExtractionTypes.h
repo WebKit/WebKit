@@ -101,6 +101,7 @@ struct Request {
     std::optional<FloatRect> collectionRectInRootView;
     std::optional<JSHandleIdentifier> targetNodeHandleIdentifier;
     Vector<JSHandleIdentifier> handleIdentifiersOfNodesToSkip;
+    std::optional<NodeIdentifier> contextMenuTargetNodeIdentifier;
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
     NodeIdentifierInclusion nodeIdentifierInclusion { NodeIdentifierInclusion::None };

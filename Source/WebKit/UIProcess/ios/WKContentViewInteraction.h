@@ -748,6 +748,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) BOOL shouldHideSelectionInFixedPositionWhenScrolling;
 @property (nonatomic, readonly) BOOL shouldIgnoreKeyboardWillHideNotification;
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
+@property (nonatomic, readonly) std::optional<WebCore::ElementContext> activeContextMenuElementContext;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
 @property (nonatomic, readonly) const WebKit::FocusedElementInformation& focusedElementInformation;
 @property (nonatomic, readonly) WKFormAccessoryView *formAccessoryView;

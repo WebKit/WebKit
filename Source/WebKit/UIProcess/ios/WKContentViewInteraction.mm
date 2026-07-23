@@ -1945,6 +1945,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _positionInformation;
 }
 
+- (std::optional<WebCore::ElementContext>)activeContextMenuElementContext
+{
+#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+    if (!_contextMenuElementInfo)
+        return std::nullopt;
+
+    return downcast<API::ContextMenuElementInfo>([_contextMenuElementInfo _apiObject]).interactionInformation().elementContext;
+#else
+    return std::nullopt;
+#endif
+}
+
 - (void)setInputDelegate:(id <UITextInputDelegate>)inputDelegate
 {
     _inputDelegate = inputDelegate;

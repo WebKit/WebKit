@@ -804,6 +804,7 @@ struct LiveResizeSnapshotState {
 
 - (void)_requestTextExtraction:(nullable _WKTextExtractionConfiguration *)configuration completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKTextExtractionItem * _Nullable))completionHandler;
 - (void)_describeInteraction:(nullable _WKTextExtractionInteraction *)interaction completionHandler:(NS_SWIFT_UI_ACTOR void (^)(NSString * _Nullable_result, NSError * _Nullable))completionHandler;
+@property (nonatomic, readonly, nullable) NSString *_activeContextMenuTargetNodeIdentifier;
 
 @end
 

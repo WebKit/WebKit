@@ -292,6 +292,7 @@ struct TraversalContext {
     const ClientNodeAttributesMap clientNodeAttributes;
     const TextAndSelectedRangeMap visibleText;
     const HashSet<Ref<Node>> nodesToSkip;
+    const RefPtr<Node> contextMenuTargetNode;
     const std::optional<FloatRect> rectInRootView;
     const FrameIdentifier frameIdentifier;
     Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> enclosingBlocks;
@@ -1205,7 +1206,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             isScrollable = std::holds_alternative<ScrollableItemData>(result);
 
             std::optional<NodeIdentifier> nodeIdentifier;
-            if (shouldIdentifyClickableElement || shouldIncludeNodeIdentifier(context.nodeIdentifierInclusion, eventListeners, AccessibilityObject::ariaRoleToWebCoreRole(role), result))
+            if (shouldIdentifyClickableElement || context.contextMenuTargetNode == &node || shouldIncludeNodeIdentifier(context.nodeIdentifierInclusion, eventListeners, AccessibilityObject::ariaRoleToWebCoreRole(role), result))
                 nodeIdentifier = node.nodeIdentifier();
 
             item = { {
@@ -1533,6 +1534,10 @@ Result extractItem(Request&& request, LocalFrame& frame)
                 nodesToSkip.add(node.releaseNonNull());
         }
 
+        RefPtr<Node> contextMenuTargetNode;
+        if (request.contextMenuTargetNodeIdentifier)
+            contextMenuTargetNode = Node::fromIdentifier(*request.contextMenuTargetNodeIdentifier);
+
         HashSet<Ref<Node>> additionalContainersToCollect;
         RefPtr extractionRoot = dynamicDowncast<ContainerNode>(*extractionRootNode);
         if (extractionRoot && request.includeOffscreenPasswordFields && request.collectionRectInRootView) {
@@ -1563,6 +1568,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
             .clientNodeAttributes = WTF::move(clientNodeAttributes),
             .visibleText = collectText(*extractionRootNode, includeTextInAutoFilledControls),
             .nodesToSkip = WTF::move(nodesToSkip),
+            .contextMenuTargetNode = WTF::move(contextMenuTargetNode),
             .rectInRootView = request.collectionRectInRootView,
             .frameIdentifier = WTF::move(frameID),
             .enclosingBlocks = { },

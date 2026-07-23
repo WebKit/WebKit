@@ -4896,6 +4896,7 @@ header: <WebCore/TextExtractionTypes.h>
     std::optional<WebCore::FloatRect> collectionRectInRootView;
     std::optional<WebCore::JSHandleIdentifier> targetNodeHandleIdentifier;
     Vector<WebCore::JSHandleIdentifier> handleIdentifiersOfNodesToSkip;
+    std::optional<WebCore::NodeIdentifier> contextMenuTargetNodeIdentifier;
     bool mergeParagraphs;
     bool skipNearlyTransparentContent;
     WebCore::TextExtraction::NodeIdentifierInclusion nodeIdentifierInclusion;
