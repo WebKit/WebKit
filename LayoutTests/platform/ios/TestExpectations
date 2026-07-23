@@ -10264,3 +10264,5 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/322305 fast/visual-viewport/ios/interactive-widget/resizes-content-orientation-rotations.html [ Failure ]
+
+webkit.org/b/323793 fast/text/otsvg-currentcolor-gradient-stops.html [ ImageOnlyFailure ]
