@@ -9926,6 +9926,9 @@ void HTMLMediaElement::setFullscreenMode(VideoFullscreenMode mode)
     schedulePlaybackControlsManagerUpdate();
     scheduleUpdateAcceleratedRenderingState();
 
+    if (RefPtr player = this->player())
+        player->setViewportVisibility(viewportVisibility());
+
     updatePlayerDynamicRangeLimit();
 }
 
