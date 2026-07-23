@@ -1212,7 +1212,7 @@ webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio
 webkit.org/b/309372 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
 
-webkit.org/b/309376 [ arm64 ] compositing/animation/animation-backing.html [ Failure Pass ]
+webkit.org/b/309376 compositing/animation/animation-backing.html [ Failure Pass ]
 
 webkit.org/b/310413 [ arm64 ] compositing/backing/animate-into-view.html [ Failure Pass ]
 
@@ -1371,3 +1371,10 @@ webkit.org/b/319317 [ Debug ] imported/w3c/web-platform-tests/html/canvas/elemen
 webkit.org/b/319320 [ arm64 ] compositing/reflections/animation-inside-reflection.html [ Failure Pass ]
 webkit.org/b/319325 [ arm64 ] fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
 webkit.org/b/319326 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Failure Pass ]
+
+webkit.org/b/320053 [ Debug ] fast/dom/move-embedded-during-update.html [ Failure Pass ]
+webkit.org/b/320054 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-add-new-track.html [ Failure Pass ]
+webkit.org/b/320056 [ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure Pass ]
+webkit.org/b/320063 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Crash Failure Pass ]
+webkit.org/b/320064 [ x86_64 ] fast/history/site-isolation/history-back-initial-vs-final-url.html [ Failure Pass ]
+webkit.org/b/320065 [ x86_64 ] fast/dom/gc-dom-tree-lifetime-shadow-tree.html [ Failure Pass ]

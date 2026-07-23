@@ -5276,7 +5276,7 @@ webkit.org/b/317607 http/tests/media/track/track-removal-clears-pending-list.htm
 webkit.org/b/319954 [ x86_64 ] imported/w3c/web-platform-tests/css/css-text/white-space/white-space-trim-inline-block.html [ ImageOnlyFailure ]
 webkit.org/b/319954 [ arm64 ] imported/w3c/web-platform-tests/css/css-text/white-space/white-space-trim-inline-block.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/317966 [ x86_64 ] http/tests/web-locks/web-lock-in-serviceworker.html [ Crash Failure Pass ]
+webkit.org/b/317966 http/tests/web-locks/web-lock-in-serviceworker.html [ Crash Failure Pass ]
 webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html [ Pass Failure ]
 
 webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Pass ]
@@ -5302,6 +5302,19 @@ webkit.org/b/319950 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-te
 
 # WebTransport is Cocoa-only (non-Cocoa ports are a stub). https://bugs.webkit.org/show_bug.cgi?id=319008
 imported/w3c/web-platform-tests/webtransport/ [ Skip ]
+
+webkit.org/b/320057 imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-old-image.html [ ImageOnlyFailure Pass ]
+
+# These tests are expected to fail cross-port in LayoutTests/TestExpectations, but have
+# passed 100% of runs on all three GLib Release bots at wktesthunter depth 500 and 250.
+# Overridden here rather than removed upstream, since the Apple/Win ports were not checked.
+imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-shape-arc-direction-agnostic-radius.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/marker-content-024.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-009.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-014.html [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference.svg [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/reftests/pattern-external-reference.svg [ Pass ]
 
 # End: Common failures between GTK and WPE.
 
