@@ -443,19 +443,18 @@ void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastIn
 const WasmCodeOrigin* OptimizingJITCallee::getCodeOrigin(unsigned csi, unsigned depth, bool& isInlined) const
 {
     isInlined = false;
-    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), WasmCodeOrigin { 0, csi, 0, 0 }, [&](const auto& a, const auto& b) {
-        return b.lastInlineCSI - a.lastInlineCSI;
+    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), csi, [](const WasmCodeOrigin& origin, unsigned value) {
+        return origin.lastInlineCSI < value;
     });
-    if (!iter || iter == codeOrigins.end())
-        iter = codeOrigins.begin();
-    while (iter != codeOrigins.end()) {
-        if (iter->firstInlineCSI <= csi && iter->lastInlineCSI >= csi && !(depth--)) {
+    for (; iter != codeOrigins.end(); ++iter) {
+        if (iter->firstInlineCSI > csi)
+            continue;
+        if (!depth) {
             isInlined = true;
             return iter;
         }
-        ++iter;
+        --depth;
     }
-
     return nullptr;
 }
 
