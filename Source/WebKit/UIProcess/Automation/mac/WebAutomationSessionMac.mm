@@ -285,7 +285,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         ASSERT(downEventType);
 
         RetainPtr downEvent = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, WebCore::ForceAtClick, button);
-        RetainPtr upEvent = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, 0.f, button);
+        RetainPtr upEvent = simulatedMouseEvent(upEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, 0.f, button);
 
         // Send separate down and up events. WebCore will see this as a single-click event.
         [eventsToBeSent addObject:downEvent.get()];
