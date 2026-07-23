@@ -105,6 +105,11 @@ list(APPEND WebKit_COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-no-warnin
 # the C++ target's include directories to swiftc's Clang importer so those
 # resolve. cmakeconfig.h is force-included because the headers assume the
 # project's prefix header has already defined ENABLE()/HAVE() values.
+#
+# The last two entries complete the search path for the WebCore_Private umbrella:
+# its PrivateHeaders/ quote-include generated WebCore headers
+# (WebCore_DERIVED_SOURCES_DIR) and style/computed source inlines. This is the
+# live Mac importer list; the CMakeLists.txt copy is inert on Apple.
 set(WebKit_SWIFT_CLANG_INCLUDE_DIRS
     ${CMAKE_BINARY_DIR}
     ${WebKit_FRAMEWORK_HEADERS_DIR}
@@ -116,8 +121,9 @@ set(WebKit_SWIFT_CLANG_INCLUDE_DIRS
     ${bmalloc_FRAMEWORK_HEADERS_DIR}
     ${PAL_FRAMEWORK_HEADERS_DIR}
     ${ICU_INCLUDE_DIRS}
-    ${WebCore_Private_SWIFT_MODULEMAP_DIR}
     ${WebKit_PRIVATE_INCLUDE_DIRECTORIES}
+    ${WebCore_DERIVED_SOURCES_DIR}
+    ${WEBCORE_DIR}/style/computed
 )
 
 # -Xcc -D/-f flags shared with PAL/WebGPU come from
