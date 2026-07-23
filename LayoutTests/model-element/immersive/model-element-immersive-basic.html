@@ -41,6 +41,8 @@ promise_test(async t => {
     await model.requestImmersive();
     
     assert_equals(document.immersiveElement, model, 'Document should reference immersive model');
+
+    await document.exitImmersive();
 }, 'Model enters immersive mode with user activation');
 
 promise_test(async t => {
@@ -94,6 +96,8 @@ promise_test(async t => {
 
     assert_equals(documentChangeEvents.length, 1, 'Document should fire one immersivechange event');
     assert_equals(documentChangeEvents[0], model, 'Document event should reference model');
+
+    await document.exitImmersive();
 }, 'Immersivechange events fire when entering immersive');
 
 promise_test(async t => {
@@ -109,6 +113,8 @@ promise_test(async t => {
     await model2.requestImmersive();
     
     assert_equals(document.immersiveElement, model2, 'Document should reference second model');
+
+    await document.exitImmersive();
 }, 'Only one model can be immersive at a time');
 
 
@@ -184,6 +190,8 @@ promise_test(async t => {
     await model.requestImmersive();
     
     assert_equals(model.complete, true, 'Model should be complete when immersive');
+
+    await document.exitImmersive();
 }, 'Model is complete once presented as immersive');
 
 promise_test(async t => {
@@ -200,6 +208,8 @@ promise_test(async t => {
     await Promise.all([promise1, promise2]);
     
     assert_equals(document.immersiveElement, model1, 'Model should be immersive after multiple requests');
+
+    await document.exitImmersive();
 }, 'Multiple concurrent requestImmersive calls are handled correctly');
 
 </script>

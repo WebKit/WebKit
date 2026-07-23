@@ -33,6 +33,8 @@ window.addEventListener("pageshow", async (event) => {
         testFailed("Could not re-enter the immersive environment after restore: " + error);
     }
 
+    await document.exitImmersive();
+
     finishJSTest();
 });
 
