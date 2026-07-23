@@ -1,3 +1,4 @@
+//@ memoryHog!
 function shouldBe(actual, expected, message) {
     if (actual !== expected)
         throw new Error(`FAIL ${message}: expected ${expected}, got ${actual}`);
