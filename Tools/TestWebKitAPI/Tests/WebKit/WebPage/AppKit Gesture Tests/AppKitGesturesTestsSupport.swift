@@ -154,4 +154,19 @@ extension AppKitGestureTestSuite {
     }
 }
 
+extension AppKitGestureTestSuite {
+    // Loads a single `#div` containing `Self.text`, optionally editable or with click/dblclick listeners attached.
+    func loadHTML(contentEditable: Bool = false, clickHandler: Bool = false, dblclickHandler: Bool = false) async throws {
+        let contentEditableMarkup = contentEditable ? "contenteditable" : ""
+        let clickHandlerMarkup = clickHandler ? "onclick='void(0)'" : ""
+        let dblclickHandlerMarkup = dblclickHandler ? "ondblclick='void(0)'" : ""
+
+        let html = """
+            <div \(contentEditableMarkup) \(clickHandlerMarkup) \(dblclickHandlerMarkup) id="div" style="font-size: 30px;">\(Self.text)</div>
+            """
+
+        try await page.load(html: html).wait()
+    }
+}
+
 #endif // HAVE_APPKIT_GESTURES_SUPPORT

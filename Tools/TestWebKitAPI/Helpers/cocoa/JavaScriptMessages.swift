@@ -256,4 +256,75 @@ extension JavaScriptMessages {
     }
 }
 
+extension JavaScriptMessages {
+    /// Installs listeners on an element that record every received event into a log.
+    ///
+    /// Use `EventLog` to read the recorded events back.
+    public struct InstallEventLog: WebPage.JavaScriptExpression {
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public typealias Output = Void
+
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public static var expression: String {
+            """
+            window.eventLog = [];
+            const target = document.getElementById(elementID);
+            for (const type of eventTypes)
+                target.addEventListener(type, event => window.eventLog.push({ "type": event.type, "detail": event.detail }));
+            """
+        }
+
+        private let elementID: String
+        private let eventTypes: [String]
+
+        /// Creates an expression that records the given event types fired on an element.
+        ///
+        /// - Parameters:
+        ///   - elementID: The `id` attribute of the element to observe.
+        ///   - eventTypes: The event types to record.
+        public init(in elementID: String, for eventTypes: [DOMEventType]) {
+            self.elementID = elementID
+            self.eventTypes = eventTypes.map(\.rawValue)
+        }
+
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public func encoded() -> [String: Any?] {
+            [
+                "elementID": elementID,
+                "eventTypes": eventTypes,
+            ]
+        }
+    }
+}
+
+extension JavaScriptMessages {
+    /// Reads the events recorded by `InstallEventLog`.
+    public struct EventLog: WebPage.JavaScriptExpression {
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public typealias Output = [DOMEvent]
+
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public static var expression: String {
+            """
+            return window.eventLog ?? [];
+            """
+        }
+
+        /// Creates a new `EventLog`.
+        public init() {
+        }
+
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public func encoded() -> [String: Any?] {
+            [:]
+        }
+    }
+}
+
 #endif // ENABLE_SWIFTUI
