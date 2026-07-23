@@ -808,6 +808,15 @@ GstClockTime toGstClockTime(const Seconds& seconds)
     return toGstClockTime(MediaTime::createWithDouble(seconds.seconds()));
 }
 
+GstClockTime toGstClockTime(const WTF::MediaTime& mediaTime)
+{
+    if (mediaTime.isInvalid())
+        return GST_CLOCK_TIME_NONE;
+    if (mediaTime < MediaTime::zeroTime())
+        return 0;
+    return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
+}
+
 MediaTime fromGstClockTime(GstClockTime time)
 {
     if (!GST_CLOCK_TIME_IS_VALID(time))
