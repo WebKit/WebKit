@@ -62,7 +62,13 @@ void LogStream::stopListeningForIPC()
 {
     assertIsMainRunLoop();
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    // Fully tear down the stream connection. stopReceivingMessages() clears the StreamServerConnection's
+    // receiver map (breaking the m_receivers <-> m_connection retain cycle so the objects can be freed),
+    // and invalidate() invalidates the underlying IPC::Connection so its Mach port / kqueue workloop is
+    // released. Neither alone is sufficient; without this the connection leaked after the WebContent
+    // process was gone, until the UI process was killed for resource exhaustion. See rdar://182244946.
     m_connection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), m_identifier.toUInt64());
+    m_connection->invalidate();
 #endif
 }
 
