@@ -4121,7 +4121,7 @@
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command-edge-cases.tentative.html": [
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command-edge-cases.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command.html": [
