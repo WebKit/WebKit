@@ -1954,8 +1954,12 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     RefPtr<AccessibilityObject> object = self.axBackingObject;
     AXAttributeCacheScope enableCache(object->axObjectCache());
 
-    // As long as there's a parent wrapper, that's the correct chain to climb.
-    RefPtr parent = object->parentObjectUnignored();
+    // As long as there's a parent wrapper, that's the correct chain to climb. Use the cross-frame variant
+    // so that ascending out of a local iframe reaches the hosting frame in the parent document. Without this,
+    // parentObjectUnignored() returns null at the iframe's root scroll view, the container chain dead-ends, and
+    // VoiceOver can neither advance past the last iframe element nor resolve the view/window needed to draw its cursor.
+    // This mirrors the macOS wrapper (handleParentAttribute / scrollViewParent).
+    RefPtr parent = object->crossFrameParentObjectUnignored();
     if (parent)
         return parent->wrapper();
 
