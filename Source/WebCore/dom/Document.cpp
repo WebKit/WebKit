@@ -7681,6 +7681,15 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), false);
         break;
     case AboutToEnterBackForwardCache:
+        // Render tree teardown (Page::willEnterBackForwardCache() -> destroyRenderTrees()) clears hover
+        // state as a side effect, but never dispatches mouseout/mouseleave, so a JS onmouseout handler
+        // (e.g. one that hides a hover-triggered popover) would otherwise never run for whatever was
+        // hovered at freeze time. Fire it now, synchronously, while script is still allowed to run and the
+        // DOM is fully live, so any resulting change (like hiding the popover) is baked into the state that
+        // gets cached and later restored, even if the mouse never moves again after a restore
+        // (rdar://161198753).
+        if (RefPtr frame = this->frame())
+            frame->eventHandler().clearHoveredElementAndDispatchMouseOutIfNeeded();
         break;
     }
 }

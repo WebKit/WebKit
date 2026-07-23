@@ -185,6 +185,13 @@ public:
     WEBCORE_EXPORT void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
+    // Synchronously dispatches mouseout/mouseleave for the currently hovered element chain, as if the
+    // mouse left the page. Used when a page is about to enter the back/forward cache: render tree teardown
+    // will otherwise silently clear hover state with no event dispatch, leaving hover-driven UI (e.g. a
+    // popover shown by a mouseover handler) stuck visible even if the mouse never moves again after a
+    // later restore (rdar://161198753).
+    void clearHoveredElementAndDispatchMouseOutIfNeeded();
+
     WEBCORE_EXPORT HitTestResult hitTestResultAtPoint(const LayoutPoint& pointInContentsCoordinateSpace, OptionSet<HitTestRequest::Type>) const;
 
     bool mousePressed() const { return m_mousePressed; }

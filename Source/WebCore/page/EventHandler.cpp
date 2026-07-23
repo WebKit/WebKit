@@ -3262,6 +3262,24 @@ void EventHandler::updateMouseEventTargetAfterLayoutIfNeeded()
     }
 }
 
+void EventHandler::clearHoveredElementAndDispatchMouseOutIfNeeded()
+{
+    if (!m_elementUnderMouse)
+        return;
+
+    RefPtr document = m_frame->document();
+
+    auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
+    PlatformMouseEvent syntheticEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition,
+        MouseButton::None, PlatformEvent::Type::NoType, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+
+    // A null target makes updateMouseEventTargetNode() diff the current hover chain against nothing,
+    // i.e. fire mouseout/mouseleave for everything currently hovered, as if the mouse left the page.
+    updateMouseEventTargetNode(eventNames().mousemoveEvent, nullptr, syntheticEvent, FireMouseOverOut::Yes);
+    if (document)
+        document->updateHoverActiveState(hoverTimerHitType, nullptr);
+}
+
 void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse)
 {
     Ref frame = m_frame.get();
