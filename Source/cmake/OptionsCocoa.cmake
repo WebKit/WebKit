@@ -1,5 +1,19 @@
 set(SWIFT_REQUIRED ON)
 
+if (PORT STREQUAL "Mac" AND USE_APPLE_INTERNAL_SDK)
+    set(WEBKIT_CODE_SIGN_IDENTITY "Safari Engineering")
+    WEBKITADDITIONS_FIND_KEYCHAIN()
+else ()
+    set(WEBKIT_CODE_SIGN_IDENTITY "-")
+endif ()
+
+# Options controlling auxiliary-process entitlement generation. These are read
+# by WEBKIT_GENERATE_ENTITLEMENTS (see WebKitEntitlements).
+option(USE_RESTRICTED_ENTITLEMENTS "Emit private/restricted entitlements (requires the internal SDK)" ${USE_APPLE_INTERNAL_SDK})
+option(USE_FATAL_EXCEPTIONS "Emit the fatal-exceptions entitlements" ON)
+option(WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT "Emit the WebContent XPC domain-extension entitlement" OFF)
+option(USE_RELOCATABLE_WEBPUSHD "Build a relocatable webpushd (omits the fixed application-groups entitlements)" OFF)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

@@ -3,7 +3,7 @@
 # Always pass --sdk to xcrun explicitly -- otherwise, toolchain and SDK
 # are not guaranteed to match.
 
-# Sets CMAKE_OSX_SYSROOT and _sdk_version in the caller's scope.
+# Sets CMAKE_OSX_SYSROOT and WEBKIT_SDK_VERSION in the caller's scope.
 function(WEBKIT_RESOLVE_SDK)
     foreach (_sdk IN LISTS ARGN)
         execute_process(COMMAND xcrun --sdk ${_sdk} --show-sdk-path
@@ -14,7 +14,7 @@ function(WEBKIT_RESOLVE_SDK)
         if (_sdk_result EQUAL 0 AND _sdk_path)
             file(READ "${_sdk_path}/SDKSettings.json" _sdk_settings)
             string(JSON _sdk_version GET ${_sdk_settings} Version)
-            set(_sdk_version "${_sdk_version}" PARENT_SCOPE)
+            set(WEBKIT_SDK_VERSION "${_sdk_version}" PARENT_SCOPE)
             string(JSON _sdk_canonical_name GET ${_sdk_settings} CanonicalName)
             string(JSON _platform_name GET ${_sdk_settings} DefaultProperties PLATFORM_NAME)
 
@@ -102,37 +102,6 @@ function(WEBKIT_RESOLVE_TOOL OUTPUT_VAR _tool)
     endif ()
 endfunction()
 
-# Run Source/${PROJECT}/Scripts/process-entitlements.sh against an executable
-# target and ad-hoc codesign it with the resulting entitlements. Mirrors the
-# Xcode build's "Process Entitlements" build phase plus the signing step.
-#
-# Usage:
-#   WEBKIT_PROCESS_ENTITLEMENTS(target PROJECT name [PRODUCT_NAME name])
-#
-# PROJECT names the directory under Source/ containing Scripts/process-entitlements.sh
-# (e.g. JavaScriptCore, WebKit). PRODUCT_NAME defaults to the CMake target name;
-# set it explicitly when the script's dispatcher keys off a different name.
-function(WEBKIT_PROCESS_ENTITLEMENTS _target)
-    cmake_parse_arguments(_arg "" "PROJECT;PRODUCT_NAME" "" ${ARGN})
-    if (NOT _arg_PROJECT)
-        message(FATAL_ERROR "WEBKIT_PROCESS_ENTITLEMENTS(${_target}): PROJECT is required")
-    endif ()
-    if (NOT _arg_PRODUCT_NAME)
-        set(_arg_PRODUCT_NAME ${_target})
-    endif ()
-    set(_xcent ${CMAKE_CURRENT_BINARY_DIR}/${_target}.xcent)
-    add_custom_command(TARGET ${_target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E env
-            WK_PROCESSED_XCENT_FILE=${_xcent}
-            WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
-            PRODUCT_NAME=${_arg_PRODUCT_NAME}
-            ${CMAKE_SOURCE_DIR}/Source/${_arg_PROJECT}/Scripts/process-entitlements.sh
-        COMMAND codesign --force --sign - --entitlements ${_xcent} $<TARGET_FILE:${_target}>
-        VERBATIM
-    )
-endfunction()
-
-
 # ----------------------------------------------------------------------------
 # Initialization logic. Sets CMAKE_OSX_SYSROOT if needed, and pins compiler
 # tools from the SDK.
@@ -157,7 +126,7 @@ endif ()
 if (PORT STREQUAL "IOS")
     set(CMAKE_SYSTEM_NAME iOS)
     if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        string(REGEX MATCH "^[0-9]+\\.[0-9]+" _ios_deployment_target "${_sdk_version}")
+        string(REGEX MATCH "^[0-9]+\\.[0-9]+" _ios_deployment_target "${WEBKIT_SDK_VERSION}")
         set(CMAKE_OSX_DEPLOYMENT_TARGET "${_ios_deployment_target}" CACHE STRING "Minimum iOS version" FORCE)
     endif ()
     if (NOT CMAKE_SYSTEM_PROCESSOR)

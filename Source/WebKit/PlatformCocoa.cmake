@@ -26,6 +26,16 @@ set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
 include(Headers.cmake)
 
+webkit_generate_entitlements(WebProcess
+    USING Scripts/process-entitlements.sh
+    BUNDLE_IDENTIFIER com.apple.WebKit.WebContent)
+webkit_generate_entitlements(NetworkProcess
+    USING Scripts/process-entitlements.sh
+    BUNDLE_IDENTIFIER com.apple.WebKit.Networking)
+webkit_generate_entitlements(GPUProcess
+    USING Scripts/process-entitlements.sh
+    BUNDLE_IDENTIFIER com.apple.WebKit.GPU)
+
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
 

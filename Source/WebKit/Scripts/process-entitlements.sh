@@ -3,7 +3,8 @@ set -e
 
 function plistbuddy()
 {
-    /usr/libexec/PlistBuddy -c "$*" "${WK_PROCESSED_XCENT_FILE}"
+    /usr/libexec/PlistBuddy -c "$*" "${WK_PROCESSED_XCENT_FILE}" | fgrep -vE "(File Doesn't Exist|Initializing Plist)" || true
+    return ${PIPESTATUS[0]}
 }
 
 # ========================================
@@ -733,7 +734,7 @@ function process_additional_entitlements()
     done
 }
 
-ADDITIONAL_ENTITLEMENTS_SCRIPT=usr/local/include/WebKitAdditions/Scripts/process-additional-entitlements.sh
-process_additional_entitlements "${ADDITIONAL_ENTITLEMENTS_SCRIPT}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"
+process_additional_entitlements "usr/local/include/WebKitAdditions/Scripts/process-additional-entitlements.sh" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"
+process_additional_entitlements "WebKitAdditons/Headers/WebKitAdditions/Scripts/process-additional-entitlements.sh" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"
 
 exit 0

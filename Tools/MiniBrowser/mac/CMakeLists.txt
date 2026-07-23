@@ -79,6 +79,9 @@ foreach (_service IN LISTS MiniBrowser_XPC_SERVICES)
     set_property(TARGET MiniBrowser APPEND PROPERTY LINK_DEPENDS $<TARGET_FILE:${_service}>)
 endforeach ()
 
+set(MiniBrowser_CODE_SIGN_ENTITLEMENTS ${MINIBROWSER_DIR}/../MiniBrowser.entitlements)
+_WEBKIT_ADD_CODE_SIGN(MiniBrowser)
+
 # SIP strips DYLD_* for XPC children, so they load system WebKit -> version mismatch crash.
 # Set __XPC_DYLD_FRAMEWORK_PATH so XPC services find this build's frameworks.
 # Mirrors Tools/Scripts/webkitdirs.pm:setupMacWebKitEnvironment().

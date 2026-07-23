@@ -2,7 +2,8 @@
 
 function plistbuddy()
 {
-    /usr/libexec/PlistBuddy -c "$*" "${WK_PROCESSED_XCENT_FILE}"
+    /usr/libexec/PlistBuddy -c "$*" "${WK_PROCESSED_XCENT_FILE}" | fgrep -vE "(File Doesn't Exist|Initializing Plist)" || true
+    return ${PIPESTATUS[0]}
 }
 
 # ========================================

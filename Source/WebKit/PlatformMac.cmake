@@ -338,17 +338,21 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     function(WEBKIT_WEBCONTENT_VARIANT _variant)
         set(_target WebProcess${_variant})
         set(_exec_name com.apple.WebKit.WebContent.${_variant}.Development)
-        add_executable(${_target} ${WebProcess_SOURCES})
-        target_link_libraries(${_target} PRIVATE WebKit)
-        target_include_directories(${_target} PRIVATE
-            ${CMAKE_BINARY_DIR}
+        WEBKIT_EXECUTABLE_DECLARE(${_target})
+        set(${_target}_SOURCES ${WebProcess_SOURCES})
+        set(${_target}_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
-        target_compile_options(${_target} PRIVATE -Wno-unused-parameter)
+        set(${_target}_LIBRARIES WebKit)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_exec_name})
         WEBKIT_XPC_SERVICE(${_target}
             "com.apple.WebKit.WebContent.${_variant}"
             ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist
             ${_exec_name})
+        WEBKIT_GENERATE_ENTITLEMENTS(${_target}
+            USING Scripts/process-entitlements.sh
+            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant})
+        WEBKIT_EXECUTABLE(${_target})
+        WEBKIT_REUSE_PREFIX_HEADER(${_target} WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
     endfunction()
     WEBKIT_WEBCONTENT_VARIANT(EnhancedSecurity)
     WEBKIT_WEBCONTENT_VARIANT(CaptivePortal)

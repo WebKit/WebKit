@@ -1511,6 +1511,20 @@ endif ()
 
 if ("${PORT}" STREQUAL "Mac" OR "${PORT}" STREQUAL "IOS")
     WEBKIT_DEFINE_XPC_SERVICES()
+    # XPC services have a link dependency on WebKit, but for codesigning we
+    # need the reverse. The service bundles all sign, and then WebKit.framework
+    # can sign.
+    if (NOT "${PORT}" STREQUAL "IOS")
+        # FIXME: iOS port does not use the shared codesigning macros for
+        # extension processes.
+        add_dependencies(WebKit_CodeSign
+            WebProcess_CodeSign
+            WebProcessEnhancedSecurity_CodeSign
+            WebProcessCaptivePortal_CodeSign
+            NetworkProcess_CodeSign
+            GPUProcess_CodeSign
+        )
+    endif ()
 else ()
     if (NOT ANDROID)
         WEBKIT_POPULATE_LIBRARY_VERSION(WEBKIT)

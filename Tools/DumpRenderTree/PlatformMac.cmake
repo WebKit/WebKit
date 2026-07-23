@@ -14,6 +14,9 @@ add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks -iframework ${CORESERVI
 link_directories(../../WebKitLibraries)
 include_directories(../../WebKitLibraries)
 
+set(DumpRenderTree_CODE_SIGN_ENTITLEMENTS
+    ${DumpRenderTree_DIR}/mac/Configurations/DumpRenderTree.entitlements)
+
 list(APPEND DumpRenderTree_LIBRARIES
     ${CARBON_LIBRARY}
     ${QUARTZ_LIBRARY}

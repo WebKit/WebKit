@@ -18,7 +18,6 @@ endif ()
 set(JavaScriptCore_POST_BUILD_COMMAND
     ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/Info.plist
-    COMMAND codesign --force --sign - ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework
 )
 set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
 set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
