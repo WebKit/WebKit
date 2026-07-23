@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,12 +125,16 @@ void ImageFrameWorkQueue::dispatch(const Request& request)
     decodeQueue().append(request);
 
     start();
+    ++s_instanceCount;
 }
 
 void ImageFrameWorkQueue::stop()
 {
     ASSERT(isMainThread());
+    if (!m_workQueue)
+        return;
 
+    ASSERT(s_instanceCount);
     Ref source = m_source.get();
 
     for (auto& request : m_decodeQueue) {
@@ -145,6 +149,7 @@ void ImageFrameWorkQueue::stop()
 
     m_decodeQueue.clear();
     m_workQueue = nullptr;
+    --s_instanceCount;
 }
 
 bool ImageFrameWorkQueue::isPendingDecodingAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const

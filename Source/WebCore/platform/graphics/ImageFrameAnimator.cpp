@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,7 +136,8 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
 
     LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation at index = %d will be started.", __FUNCTION__, this, sourceUTF8().data(), m_currentFrameIndex);
 
-    if (options.decodingMode() == DecodingMode::Asynchronous) {
+    static constexpr unsigned maxAnimatedWorkQueues = 50;
+    if (options.decodingMode() == DecodingMode::Asynchronous && ImageFrameWorkQueue::instanceCount() <= maxAnimatedWorkQueues) {
         LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8().data(), nextFrameIndex());
         source->requestNativeImageAtIndexIfNeeded(nextFrameIndex(), subsamplingLevel, ImageAnimatingState::Yes, options);
     }
