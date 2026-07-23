@@ -11,6 +11,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColor.h"
 #include "include/core/SkMatrix.h"
+#include "include/core/SkPoint.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkScalar.h"
@@ -20,17 +21,16 @@
 #include "include/gpu/ganesh/GrBackendSurface.h"
 #include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/gpu/ganesh/GrTypes.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkPoint_impl.h"
-#include "include/private/base/SkTArray.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
-#include "src/base/SkArenaAlloc.h"
-#include "src/base/SkSafeMath.h"
-#include "src/base/SkVx.h"
+#include "src/core/SkArenaAlloc.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkLatticeIter.h"
 #include "src/core/SkSLTypeShared.h"
+#include "src/core/SkSafeMath.h"
+#include "src/core/SkVx.h"
 #include "src/gpu/BufferWriter.h"
 #include "src/gpu/KeyBuilder.h"
 #include "src/gpu/SkBackingFit.h"
@@ -54,7 +54,7 @@
 #include "src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelper.h"
 
 #if defined(GPU_TEST_UTILS)
-#include "src/base/SkRandom.h"
+#include "src/core/SkRandom.h"
 #include "src/gpu/ganesh/GrDrawOpTest.h"
 #include "src/gpu/ganesh/GrProxyProvider.h"
 #include "src/gpu/ganesh/GrRecordingContextPriv.h"
@@ -571,7 +571,7 @@ GR_DRAW_OP_TEST_DEFINE(NonAALatticeOp) {
     dst.fTop = random->nextRangeScalar(-2000.5f, 1000.f);
     dst.fRight = dst.fLeft + random->nextRangeScalar(0.5f, 1000.f);
     dst.fBottom = dst.fTop + random->nextRangeScalar(0.5f, 1000.f);
-    std::unique_ptr<SkLatticeIter> iter(new SkLatticeIter(lattice, dst));
+    auto iter = std::make_unique<SkLatticeIter>(lattice, dst);
     SkMatrix viewMatrix = GrTest::TestMatrixPreservesRightAngles(random);
     auto csxf = GrTest::TestColorXform(random);
     GrSamplerState::Filter filter =

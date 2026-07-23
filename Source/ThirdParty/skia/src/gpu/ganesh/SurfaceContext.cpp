@@ -12,6 +12,7 @@
 #include "include/core/SkData.h"
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkMatrix.h"
+#include "include/core/SkPoint.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkSurface.h"
 #include "include/gpu/GpuTypes.h"
@@ -19,16 +20,15 @@
 #include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/gpu/ganesh/GrTypes.h"
-#include "include/private/base/SingleOwner.h"
-#include "include/private/base/SkAlign.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkPoint_impl.h"
-#include "include/private/base/SkTemplates.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SingleOwner.h"
+#include "include/private/SkAlign.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkTemplates.h"
+#include "include/private/SkTo.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
-#include "src/base/SkSafeMath.h"
 #include "src/core/SkColorSpaceXformSteps.h"
 #include "src/core/SkMipmap.h"
+#include "src/core/SkSafeMath.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/core/SkYUVMath.h"
 #include "src/gpu/AsyncReadTypes.h"
@@ -51,6 +51,7 @@
 #include "src/gpu/ganesh/GrSurface.h"
 #include "src/gpu/ganesh/GrTextureProxy.h"
 #include "src/gpu/ganesh/GrTracing.h"
+#include "src/gpu/ganesh/GrTransferFromRenderTask.h"
 #include "src/gpu/ganesh/SurfaceFillContext.h"
 #include "src/gpu/ganesh/effects/GrBicubicEffect.h"
 #include "src/gpu/ganesh/effects/GrTextureEffect.h"
@@ -720,6 +721,20 @@ struct SurfaceContext::AsyncReadPixelContext {
 
     void setSubmitted(bool success) {
         SkASSERT(fSubmitted == kUnsubmitted);
+        // `success` initially represents whether or not the command buffer was submitted, but the
+        // actual transfer tasks need to have been executed in order for that submission to
+        // have valid results for the async read. Ganesh will submit if any task is executed.
+        if (success) {
+            for (auto transfer : {&fPrimaryTransfer, &fUTransfer, &fVTransfer, &fATransfer}) {
+                if (!transfer->fTransferBuffer) {
+                    break; // Reached end of the planes being copied
+                }
+                if (!transfer->fTransferTask || !transfer->fTransferTask->wasExecuted()) {
+                    success = false;
+                    break;
+                }
+            }
+        }
         fSubmitted = success ? kSuccess : kFailure;
         this->runClientCallbackMaybe();
     }
@@ -1442,10 +1457,15 @@ SurfaceContext::PixelTransferResult SurfaceContext::transferPixels(GrColorType d
         srcRect = SkIRect::MakeLTRB(rect.fLeft, this->height() - rect.fBottom, rect.fRight,
                                     this->height() - rect.fTop);
     }
-    this->drawingManager()->newTransferFromRenderTask(this->asSurfaceProxyRef(), srcRect,
-                                                      this->colorInfo().colorType(),
-                                                      supportedRead.fColorType, buffer, 0);
+
     PixelTransferResult result;
+    result.fTransferTask = this->drawingManager()->newTransferFromRenderTask(
+            this->asSurfaceProxyRef(),
+            srcRect,
+            this->colorInfo().colorType(),
+            supportedRead.fColorType,
+            buffer,
+            0);
     result.fTransferBuffer = std::move(buffer);
     auto at = this->colorInfo().alphaType();
     if (supportedRead.fColorType != dstCT || flip) {

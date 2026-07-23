@@ -9,8 +9,8 @@
 #define GrCpuBuffer_DEFINED
 
 #include "include/core/SkRefCnt.h"
-#include "include/private/base/SkAssert.h"
-#include "src/base/SkSafeMath.h"
+#include "include/private/SkAssert.h"
+#include "src/core/SkSafeMath.h"
 #include "src/gpu/ganesh/GrBuffer.h"
 #include "src/gpu/ganesh/GrNonAtomicRef.h"
 

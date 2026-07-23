@@ -7,10 +7,10 @@
 
 #include "src/pathops/SkPathOpsTSect.h"
 
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkMacros.h"
-#include "include/private/base/SkTArray.h"
-#include "src/base/SkTSort.h"
+#include "include/private/SkFloatingPoint.h"
+#include "include/private/SkMacros.h"
+#include "include/private/SkTArray.h"
+#include "src/core/SkTSort.h"
 #include "src/pathops/SkIntersections.h"
 #include "src/pathops/SkPathOpsConic.h"
 #include "src/pathops/SkPathOpsCubic.h"

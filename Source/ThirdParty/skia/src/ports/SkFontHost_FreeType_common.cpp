@@ -18,8 +18,8 @@
 #include "include/core/SkPath.h"
 #include "include/core/SkPathBuilder.h"
 #include "include/effects/SkGradient.h"
-#include "include/private/base/SkTFitsIn.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTFitsIn.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkFDot6.h"
 #include "src/core/SkSwizzlePriv.h"
@@ -65,7 +65,7 @@ namespace {
     !defined(FT_STATIC_CAST)
 #    undef TT_SUPPORT_COLRV1
 #else
-#    include "src/base/SkScopeExit.h"
+#    include "src/core/SkScopeExit.h"
 #endif
 #endif
 

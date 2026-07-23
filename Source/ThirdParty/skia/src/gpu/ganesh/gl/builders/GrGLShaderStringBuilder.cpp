@@ -8,8 +8,8 @@
 
 #include "include/gpu/ganesh/gl/GrGLFunctions.h"
 #include "include/gpu/ganesh/gl/GrGLInterface.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkAutoMalloc.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkAutoMalloc.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLGpu.h"

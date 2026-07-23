@@ -8,11 +8,11 @@
 #include "src/core/SkEdge.h"
 
 #include "include/core/SkRect.h"
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkSafe32.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkMathPriv.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkSafe32.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkFDot6.h"
+#include "src/core/SkMathPriv.h"
 
 #include <algorithm>
 #include <utility>

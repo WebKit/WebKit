@@ -10,8 +10,8 @@
 
 #include "include/core/SkM44.h"
 #include "include/core/SkRefCnt.h"
-#include "include/private/base/SkAssert.h"
-#include "src/base/SkVx.h"
+#include "include/private/SkAssert.h"
+#include "src/core/SkVx.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/geom/Rect.h"
 #include "src/gpu/graphite/geom/Shape.h"

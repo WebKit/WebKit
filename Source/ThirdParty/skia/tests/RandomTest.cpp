@@ -6,9 +6,9 @@
  */
 
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkMath.h"
-#include "src/base/SkRandom.h"
-#include "src/base/SkTSort.h"
+#include "include/private/SkMath.h"
+#include "src/core/SkRandom.h"
+#include "src/core/SkTSort.h"
 #include "tests/Test.h"
 
 #include <cmath>

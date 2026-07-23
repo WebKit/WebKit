@@ -14,21 +14,21 @@
 #include "include/core/SkData.h"
 #include "include/core/SkDocument.h"
 #include "include/core/SkGraphics.h"
-#include "include/private/base/SkLog.h"
-#include "src/base/SkHalf.h"
-#include "src/base/SkLeanWindows.h"
-#include "src/base/SkNoDestructor.h"
-#include "src/base/SkSpinlock.h"
-#include "src/base/SkTime.h"
-#include "src/base/SkVx.h"
+#include "include/private/SkLog.h"
 #include "src/core/SkChecksum.h"
 #include "src/core/SkColorPriv.h"
 #include "src/core/SkColorSpacePriv.h"
+#include "src/core/SkHalf.h"
+#include "src/core/SkLeanWindows.h"
 #include "src/core/SkMD5.h"
+#include "src/core/SkNoDestructor.h"
 #include "src/core/SkOSFile.h"
+#include "src/core/SkSpinlock.h"
 #include "src/core/SkStringUtils.h"
 #include "src/core/SkTHash.h"
 #include "src/core/SkTaskGroup.h"
+#include "src/core/SkTime.h"
+#include "src/core/SkVx.h"
 #include "src/utils/SkOSPath.h"
 #include "tests/Test.h"
 #include "tests/TestHarness.h"
@@ -1635,6 +1635,7 @@ int main(int argc, char** argv) {
     // If available, use PartitionAlloc as the memory allocator for DM. This allows catching
     // additional memory errors in tests that would otherwise go unnoticed.
     skiatest::InitializePartitionAllocForTesting();
+    skiatest::InitializeDanglingPointerChecksForTesting();
 #endif
 
     CommandLineFlags::Parse(argc, argv);

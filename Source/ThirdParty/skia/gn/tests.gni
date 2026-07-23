@@ -182,6 +182,7 @@ tests_sources = [
   "$_tests/RandomTest.cpp",
   "$_tests/RasterPipelineBuilderTest.cpp",
   "$_tests/RasterPipelineCodeGeneratorTest.cpp",
+  "$_tests/RawPtrTest.cpp",
   "$_tests/ReadPixelsTest.cpp",
   "$_tests/RecordDrawTest.cpp",
   "$_tests/RecordOptsTest.cpp",
@@ -509,6 +510,7 @@ ganesh_tests_sources = [
   "$_tests/Skbug12214.cpp",
   "$_tests/Skbug6653.cpp",
   "$_tests/SlugTest.cpp",
+  "$_tests/SmallPathRendererTest.cpp",
   "$_tests/SrcSrcOverBatchTest.cpp",
   "$_tests/SurfaceDrawContextTest.cpp",
   "$_tests/SurfaceSemaphoreTest.cpp",
@@ -521,6 +523,7 @@ ganesh_tests_sources = [
   "$_tests/VkBackendSurfaceTest.cpp",
   "$_tests/VkWrapTests.cpp",
   "$_tests/WrappedSurfaceCopyOnWriteTest.cpp",
+  "$_tests/crbug_500172224.cpp",
 ]
 
 ganesh_gl_tests_sources = [

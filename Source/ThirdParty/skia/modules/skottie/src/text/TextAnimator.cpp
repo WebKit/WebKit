@@ -8,13 +8,13 @@
 #include "modules/skottie/src/text/TextAnimator.h"
 
 #include "include/core/SkColor.h"
-#include "include/private/base/SkCPUTypes.h"
+#include "include/private/SkCPUTypes.h"
 #include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/src/SkottieValue.h"
 #include "modules/skottie/src/animator/Animator.h"
 #include "modules/skottie/src/text/RangeSelector.h"
-#include "src/base/SkVx.h"
 #include "src/core/SkSwizzlePriv.h"
+#include "src/core/SkVx.h"
 
 #include <algorithm>
 #include <cmath>

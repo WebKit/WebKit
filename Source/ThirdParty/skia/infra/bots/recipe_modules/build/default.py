@@ -142,7 +142,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
 
   if 'Tidy' in extra_tokens:
     # Swap in clang-tidy.sh for clang++, but update PATH so it can find clang++.
-    cxx = skia_dir.joinpath("tools/clang-tidy.sh")
+    args['cc_wrapper'] = '"%s"' % skia_dir.joinpath("tools/clang-tidy.sh")
     env['PATH'] = '%s:%%(PATH)s' % (clang_linux + '/bin')
     # Increase ClangTidy code coverage by enabling features.
     args.update({
@@ -316,10 +316,6 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
       if api.vars.is_linux and t == 'ASAN':
         # skbug.com/40040003 and skbug.com/40040004
         extra_cflags.append('-DSK_ENABLE_SCOPED_LSAN_SUPPRESSIONS')
-  if 'SafeStack' in extra_tokens:
-    assert sanitize == ''
-    sanitize = 'safe-stack'
-
   if 'Wuffs' in extra_tokens:
     args['skia_use_wuffs'] = 'true'
 

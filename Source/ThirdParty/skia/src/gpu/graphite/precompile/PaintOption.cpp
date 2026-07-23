@@ -109,6 +109,15 @@ void PaintOption::toKey(const KeyContext& keyContext) const {
                                                         fTargetFormat,
                                                         *finalBlendMode,
                                                         effectiveCoverage);
+        // Match PaintParams::toKey's logic to convert kSrcOver to kSrc
+        if (finalBlendMode == SkBlendMode::kSrcOver && isOpaque) {
+            const bool dstUsageNone = !hasAnalyticClip && fRendererCoverage == Coverage::kNone;
+            if (dstUsageNone && optimizeSrcBlend) {
+                SkASSERT(CanUseHardwareBlending(keyContext.caps(), fTargetFormat,
+                                                SkBlendMode::kSrc, fRendererCoverage));
+                finalBlendMode = SkBlendMode::kSrc;
+            }
+        }
         if (!dstReadReq || (finalBlendMode == SkBlendMode::kSrc && optimizeSrcBlend)) {
             AddFixedBlendMode(keyContext, *finalBlendMode);
         } else {
@@ -250,6 +259,7 @@ bool PaintOption::handleDithering(const KeyContext& keyContext) const {
 
 void PaintOption::handleClipping(const KeyContext& keyContext) const {
     if (fAnalyticClip) {
+#if defined(SK_GRAPHITE_USE_LEGACY_RRECT_CLIP_SHADER)
         NonMSAAClipBlock::NonMSAAClipData data(
                 /* rect= */ {},
                 /* radiusPlusHalf= */ {},
@@ -276,6 +286,37 @@ void PaintOption::handleClipping(const KeyContext& keyContext) const {
             // Without a clip shader, the analytic clip can be the clipping root node.
             NonMSAAClipBlock::AddBlock(keyContext, data);
         }
+#else
+        NonMSAAClip clip{
+            .fAnalyticClip = {
+                .fBounds = {0, 0, 1, 1}, // just needs to be non-empty
+            },
+            // TODO: kAnalyticAndAtlasClip vs. kAnalyticClip decision is based on this being
+            // a valid TextureProxy
+            .fAtlasClip = {
+                .fMaskBounds = {},
+                .fOutPos = {},
+                .fAtlasTexture = nullptr,
+            },
+        };
+        if (fClipShader.first) {
+            // For both an analytic clip and clip shader, we need to compose them together into
+            // a single clipping root node.
+            Blend(keyContext,
+                    /* addBlendToKey= */ [&]() -> void {
+                        AddFixedBlendMode(keyContext, SkBlendMode::kModulate);
+                    },
+                    /* addSrcToKey= */ [&]() -> void {
+                        AddAnalyticClip(keyContext, clip);
+                    },
+                    /* addDstToKey= */ [&]() -> void {
+                        fClipShader.first->priv().addToKey(keyContext, fClipShader.second);
+                    });
+        } else {
+            // Without a clip shader, the analytic clip can be the clipping root node.
+            AddAnalyticClip(keyContext, clip);
+        }
+#endif // SK_GRAPHITE_USE_LEGACY_RRECT_CLIP_SHADER
     } else if (fClipShader.first) {
         // Since there's no analytic clip, the clipping root node can be fClipShader directly.
         fClipShader.first->priv().addToKey(keyContext, fClipShader.second);

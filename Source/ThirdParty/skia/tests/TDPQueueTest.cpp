@@ -5,9 +5,9 @@
  * found in the LICENSE file.
  */
 
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkRandom.h"
-#include "src/base/SkTDPQueue.h"
+#include "include/private/SkTDArray.h"
+#include "src/core/SkRandom.h"
+#include "src/core/SkTDPQueue.h"
 #include "tests/Test.h"
 
 namespace { bool intless(const int& a, const int& b) { return a < b; } }

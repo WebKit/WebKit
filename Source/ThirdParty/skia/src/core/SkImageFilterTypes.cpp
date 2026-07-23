@@ -20,10 +20,8 @@
 #include "include/core/SkPicture.h"  // IWYU pragma: keep
 #include "include/core/SkShader.h"
 #include "include/effects/SkRuntimeEffect.h"
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "src/base/SkMathPriv.h"
-#include "src/base/SkVx.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkFloatingPoint.h"
 #include "src/core/SkBitmapDevice.h"
 #include "src/core/SkBlenderBase.h"
 #include "src/core/SkBlurEngine.h"
@@ -33,9 +31,11 @@
 #include "src/core/SkImageFilterCache.h"
 #include "src/core/SkImageFilter_Base.h"
 #include "src/core/SkKnownRuntimeEffects.h"
+#include "src/core/SkMathPriv.h"
 #include "src/core/SkMatrixPriv.h"
 #include "src/core/SkRectPriv.h"
 #include "src/core/SkTraceEvent.h"
+#include "src/core/SkVx.h"
 #include "src/effects/colorfilters/SkColorFilterBase.h"
 
 #include <algorithm>

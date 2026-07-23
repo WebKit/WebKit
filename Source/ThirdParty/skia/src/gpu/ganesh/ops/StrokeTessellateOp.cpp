@@ -11,7 +11,8 @@
 #include "include/core/SkPath.h"
 #include "include/core/SkRect.h"
 #include "include/gpu/ganesh/GrRecordingContext.h"
-#include "src/base/SkArenaAlloc.h"
+#include "src/core/SkArenaAlloc.h"
+#include "src/core/SkSafeMath.h"
 #include "src/gpu/ganesh/GrAppliedClip.h"
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrOpFlushState.h"
@@ -93,7 +94,10 @@ GrOp::CombineResult StrokeTessellateOp::onCombineIfPossible(GrOp* grOp, SkArenaA
     SkASSERT(fProcessors.isFinalized());
     SkASSERT(op->fProcessors.isFinalized());
 
-    if (fNeedsStencil ||
+    SkSafeMath safe;
+    int combinedVerbCnt = safe.addInt(fTotalCombinedVerbCnt, op->fTotalCombinedVerbCnt);
+    if (!safe.ok() ||
+        fNeedsStencil ||
         op->fNeedsStencil ||
         fViewMatrix != op->fViewMatrix ||
         fAAType != op->fAAType ||
@@ -138,7 +142,7 @@ GrOp::CombineResult StrokeTessellateOp::onCombineIfPossible(GrOp* grOp, SkArenaA
     fPathStrokeTail = (op->fPathStrokeTail == &op->fPathStrokeList.fNext) ? &headCopy->fNext
                                                                           : op->fPathStrokeTail;
 
-    fTotalCombinedVerbCnt += op->fTotalCombinedVerbCnt;
+    fTotalCombinedVerbCnt = combinedVerbCnt;
     return CombineResult::kMerged;
 }
 

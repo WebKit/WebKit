@@ -29,21 +29,20 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
 #include "include/core/SkVertices.h"
+#include "include/private/SkFloatingPoint.h"
 #include "include/private/SkIDChangeListener.h"
+#include "include/private/SkMalloc.h"
 #include "include/private/SkPathRef.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkMalloc.h"
-#include "include/private/base/SkPoint_impl.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTo.h"
 #include "include/utils/SkNullCanvas.h"
 #include "include/utils/SkParse.h"
 #include "include/utils/SkParsePath.h"
-#include "src/base/SkAutoMalloc.h"
-#include "src/base/SkFloatBits.h"
-#include "src/base/SkRandom.h"
+#include "src/core/SkAutoMalloc.h"
+#include "src/core/SkFloatBits.h"
 #include "src/core/SkGeometry.h"
 #include "src/core/SkPathEnums.h"
 #include "src/core/SkPathPriv.h"
+#include "src/core/SkRandom.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkWriteBuffer.h"
 #include "tests/Test.h"
@@ -5650,4 +5649,21 @@ DEF_TEST(path_empty_iter, reporter) {
 
     SkPath::Iter iter(p, false);
     REPORTER_ASSERT(reporter, !iter.next());
+}
+
+DEF_TEST(path_b511244869, reporter) {
+    SkPath path =
+            SkPathBuilder()
+                    .moveTo(2.11521295e+37f, 15.9130936f)
+                    .conicTo(2.11521295e+37f, 15.9130936f, -1.90539568e+38f, 15.9130936f, 0.0f)
+                    .detach();
+
+    SkMatrix m;
+    m.setAll(1.356316e-19f, 1.356316e-19f, 1.356316e-19f,
+             1.356316e-19f, -2.128433e+38f, 1.356316e-19f,
+             1.152428e-41f, 0.000000e+00f, 0.000000e+00f);
+
+    // This should not crash or trigger an assertion in debug builds.
+    SkPath transformed = path.makeTransform(m);
+    REPORTER_ASSERT(reporter, transformed.isEmpty());
 }

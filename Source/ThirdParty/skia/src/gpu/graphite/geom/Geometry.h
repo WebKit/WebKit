@@ -10,7 +10,7 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkVertices.h"
-#include "include/private/base/SkAssert.h"
+#include "include/private/SkAssert.h"
 #include "src/gpu/graphite/geom/AnalyticBlurMask.h"
 #include "src/gpu/graphite/geom/CoverageMaskShape.h"
 #include "src/gpu/graphite/geom/EdgeAAQuad.h"
@@ -112,6 +112,8 @@ public:
     }
 
     const Shape& shape() const { SkASSERT(this->isShape()); return fShape; }
+    Shape& shape() { SkASSERT(this->isShape()); return fShape; }
+
     const SubRunData& subRunData() const { SkASSERT(this->isSubRun()); return fSubRunData; }
     const EdgeAAQuad& edgeAAQuad() const { SkASSERT(this->isEdgeAAQuad()); return fEdgeAAQuad; }
     const CoverageMaskShape& coverageMaskShape() const {

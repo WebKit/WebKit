@@ -14,9 +14,9 @@
 #include "include/core/SkSurface.h"
 #include "include/gpu/graphite/GraphiteTypes.h"
 #include "include/gpu/graphite/Recording.h"
-#include "include/private/base/SingleOwner.h"
-#include "include/private/base/SkAPI.h"
-#include "include/private/base/SkTArray.h"
+#include "include/private/SingleOwner.h"
+#include "include/private/SkAPI.h"
+#include "include/private/SkTArray.h"
 
 #include <chrono>
 #include <cstddef>
@@ -283,7 +283,7 @@ private:
     void deregisterDevice(const Device*);
 
     SkCanvas* makeCaptureCanvas(SkCanvas*) override;
-    SkContentID createCaptureBreakpoint(SkSurface*) override;
+    void createCaptureBreakpoint(SkSurface*) override;
 
     sk_sp<SharedContext> fSharedContext;
     ResourceProvider* fResourceProvider; // May point to the Context's resource provider

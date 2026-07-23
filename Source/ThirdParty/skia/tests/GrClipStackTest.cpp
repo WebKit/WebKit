@@ -25,7 +25,7 @@
 #include "include/gpu/ganesh/GrContextOptions.h"
 #include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/mock/GrMockTypes.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTo.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkRRectPriv.h"
 #include "src/gpu/ResourceKey.h"
@@ -2099,7 +2099,7 @@ DEF_GANESH_TEST_FOR_CONTEXTS(ClipStack_SWMask,
             context, GrColorType::kRGBA_8888, nullptr, SkBackingFit::kExact, kDeviceBounds.size(),
             SkSurfaceProps(), /*label=*/{});
 
-    std::unique_ptr<ClipStack> cs(new ClipStack(kDeviceBounds, &SkMatrix::I(), false));
+    auto cs = std::make_unique<ClipStack>(kDeviceBounds, &SkMatrix::I(), false);
 
     auto addMaskRequiringClip = [&](SkScalar x, SkScalar y, SkScalar radius) {
         SkPath path = SkPathBuilder(SkPathFillType::kEvenOdd)

@@ -6,10 +6,10 @@
  */
 #include "src/pathops/SkPathOpsTypes.h"
 
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkMath.h"
-#include "include/private/base/SkTemplates.h"
-#include "src/base/SkFloatBits.h"
+#include "include/private/SkFloatingPoint.h"
+#include "include/private/SkMath.h"
+#include "include/private/SkTemplates.h"
+#include "src/core/SkFloatBits.h"
 
 #include <algorithm>
 #include <cstdint>

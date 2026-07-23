@@ -23,17 +23,17 @@
 #include "include/core/SkPictureRecorder.h"
 #include "include/core/SkSpan.h"
 #include "include/effects/SkGradient.h"
-#include "include/private/base/SkMutex.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkEndian.h"
-#include "src/base/SkScopeExit.h"
-#include "src/base/SkSharedMutex.h"
+#include "include/private/SkMutex.h"
+#include "include/private/SkTo.h"
 #include "src/codec/SkCodecPriv.h"
 #include "src/core/SkDraw.h"
+#include "src/core/SkEndian.h"
 #include "src/core/SkGlyph.h"
 #include "src/core/SkMaskGamma.h"
 #include "src/core/SkRasterClip.h"
 #include "src/core/SkScalerContext.h"
+#include "src/core/SkScopeExit.h"
+#include "src/core/SkSharedMutex.h"
 #include "src/ports/SkScalerContext_win_dw.h"
 #include "src/ports/SkTypeface_win_dw.h"
 #include "src/sfnt/SkOTTable_EBLC.h"
@@ -1853,15 +1853,14 @@ void SkScalerContext_DW::generateFontMetrics(SkFontMetrics* metrics) {
     sk_bzero(metrics, sizeof(*metrics));
 
     IDWriteFontFace* fontFace = this->getDWriteTypeface()->fDWriteFontFace.get();
-    DWRITE_FONT_METRICS dwfm;
+    DWRITE_FONT_METRICS dwfm = {};
     if (DWRITE_MEASURING_MODE_GDI_CLASSIC == fMeasuringMode ||
-        DWRITE_MEASURING_MODE_GDI_NATURAL == fMeasuringMode)
-    {
-        fontFace->GetGdiCompatibleMetrics(
-             fTextSizeRender,
-             1.0f, // pixelsPerDip
-             &fXform,
-             &dwfm);
+        DWRITE_MEASURING_MODE_GDI_NATURAL == fMeasuringMode) {
+        HRVM(fontFace->GetGdiCompatibleMetrics(fTextSizeRender,
+                                               1.0f,  // pixelsPerDip
+                                               &fXform,
+                                               &dwfm),
+             "Could not initialize DWFM with GDI Compatible Metrics.");
     } else {
         fontFace->GetMetrics(&dwfm);
     }

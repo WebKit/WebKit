@@ -9,9 +9,9 @@
 #define skgpu_graphite_ResourceCache_DEFINED
 
 #include "include/core/SkRefCnt.h"
-#include "include/private/base/SkMutex.h"
-#include "include/private/base/SkTArray.h"
-#include "src/base/SkTDPQueue.h"
+#include "include/private/SkMutex.h"
+#include "include/private/SkTArray.h"
+#include "src/core/SkTDPQueue.h"
 #include "src/core/SkTHash.h"
 #include "src/core/SkTMultiMap.h"
 #include "src/gpu/GpuTypesPriv.h"

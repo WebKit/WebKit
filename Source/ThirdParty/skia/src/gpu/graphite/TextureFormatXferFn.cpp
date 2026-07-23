@@ -8,16 +8,16 @@
 #include "src/gpu/graphite/TextureFormatXferFn.h"
 
 #include "include/core/SkColorType.h"
-#include "include/private/base/SkLog.h"
-#include "src/base/SkAutoMalloc.h"
-#include "src/base/SkFloatBits.h"
-#include "src/base/SkHalf.h"
-#include "src/base/SkMathPriv.h"
-#include "src/base/SkVx.h"
+#include "include/private/SkLog.h"
+#include "src/core/SkAutoMalloc.h"
 #include "src/core/SkColorSpaceXformSteps.h"
+#include "src/core/SkFloatBits.h"
+#include "src/core/SkHalf.h"
 #include "src/core/SkImageInfoPriv.h"
+#include "src/core/SkMathPriv.h"
 #include "src/core/SkRasterPipeline.h"
 #include "src/core/SkRasterPipelineOpContexts.h"
+#include "src/core/SkVx.h"
 
 #include <functional>
 

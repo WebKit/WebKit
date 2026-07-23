@@ -13,9 +13,9 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkTileMode.h"
 #include "include/gpu/graphite/Recorder.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkDebug.h"
-#include "src/base/SkEnumBitMask.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkEnumBitMask.h"
 #include "src/core/SkSLTypeShared.h"
 #include "src/gpu/graphite/AtlasProvider.h"
 #include "src/gpu/graphite/Attribute.h"
@@ -37,7 +37,7 @@
 #include "src/text/gpu/VertexFiller.h"
 
 #if defined(SK_GAMMA_APPLY_TO_A8)
-#include "include/private/base/SkCPUTypes.h"
+#include "include/private/SkCPUTypes.h"
 #include "src/core/SkMaskGamma.h"
 #include "src/text/gpu/DistanceFieldAdjustTable.h"
 #endif
@@ -58,6 +58,7 @@ SDFTextRenderStep::SDFTextRenderStep(Layout layout)
                      Flags::kAppendInstances,
                      /*uniforms=*/{{"maskToDevice", SkSLType::kFloat4x4},
                                    {"localToDevice", SkSLType::kFloat4x4},
+                                   {"atlasSizeInv", SkSLType::kFloat2},
                                    {"gammaParams", SkSLType::kHalf2}},
                      PrimitiveType::kTriangleStrip,
                      kDirectDepthLEqualPass,
@@ -72,6 +73,7 @@ SDFTextRenderStep::SDFTextRenderStep(Layout layout)
                       {"ssboIndex", VertexAttribType::kUInt, SkSLType::kUInt}}},
                      /*varyings=*/
                      {{{"unormTexCoords", SkSLType::kFloat2},
+                      {"textureCoords", SkSLType::kFloat2},
                       {"texIndex", SkSLType::kFloat}}}) {}
 
 SDFTextRenderStep::~SDFTextRenderStep() {}
@@ -83,11 +85,13 @@ std::string SDFTextRenderStep::vertexSkSL() const {
            "float4 devPosition = text_vertex_fn(float2(sk_VertexID >> 1, sk_VertexID & 1), "
                                                "maskToDevice, "
                                                "localToDevice, "
+                                               "atlasSizeInv, "
                                                "float2(size), "
                                                "float2(uvPos), "
                                                "xyPos, "
                                                "strikeToSourceScale, "
                                                "depth, "
+                                               "textureCoords, "
                                                "unormTexCoords, "
                                                "stepLocalCoords);";
 }
@@ -114,14 +118,14 @@ const char* SDFTextRenderStep::fragmentCoverageSkSL() const {
     // TODO: Need to add 565 support.
     // TODO: Need aliased and possibly sRGB support.
     static_assert(kNumSDFAtlasTextures == 4);
-    return "outputCoverage = sdf_text_coverage_fn(sample_indexed_atlas(unormTexCoords, "
+    return "outputCoverage = sdf_text_coverage_fn(sample_indexed_atlas(textureCoords, "
                                                                       "int(texIndex), "
                                                                       "sdf_atlas_0, "
                                                                       "sdf_atlas_1, "
                                                                       "sdf_atlas_2, "
                                                                       "sdf_atlas_3).r, "
-                                                 "unormTexCoords, "
-                                                 "gammaParams);";
+                                                 "gammaParams, "
+                                                 "unormTexCoords);";
 }
 
 void SDFTextRenderStep::writeVertices(DrawWriter* dw,
@@ -163,6 +167,9 @@ void SDFTextRenderStep::writeUniformsAndTextures(const DrawParams& params,
     // instances? We can derive it from the Transform's existing 4x4 inverse.
     gatherer->write(subRunData.maskToDevice());
     gatherer->write(params.transform().matrix()); // local-to-device
+    SkV2 atlasDimensionsInverse = {1.f/proxies[0]->dimensions().width(),
+                                   1.f/proxies[0]->dimensions().height()};
+    gatherer->write(atlasDimensionsInverse);
 
     float gammaAdjustment = 0;
     // TODO: generate LCD adjustment

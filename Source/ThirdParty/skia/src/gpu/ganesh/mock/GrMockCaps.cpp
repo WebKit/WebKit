@@ -8,8 +8,8 @@
 #include "src/gpu/ganesh/mock/GrMockCaps.h"
 
 #include "include/gpu/ganesh/mock/GrMockBackendSurface.h"
-#include "include/private/base/SkDebug.h"
-#include "src/base/SkMathPriv.h"
+#include "include/private/SkDebug.h"
+#include "src/core/SkMathPriv.h"
 #include "src/gpu/ganesh/GrProgramDesc.h"
 #include "src/gpu/ganesh/TestFormatColorTypeCombination.h"
 

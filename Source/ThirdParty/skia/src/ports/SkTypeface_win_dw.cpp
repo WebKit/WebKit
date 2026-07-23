@@ -9,7 +9,7 @@
 #include "include/core/SkTypes.h"
 #if defined(SK_BUILD_FOR_WIN)
 
-#include "src/base/SkLeanWindows.h"
+#include "src/core/SkLeanWindows.h"
 
 // SkLeanWindows will include Windows.h, which will pull in all of the GDI defines.
 // GDI #defines GetGlyphIndices to GetGlyphIndicesA or GetGlyphIndicesW, but
@@ -19,7 +19,7 @@
 
 #include "include/core/SkData.h"
 #include "include/core/SkFontTypes.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkFontDescriptor.h"
 #include "src/core/SkFontStream.h"
 #include "src/core/SkScalerContext.h"

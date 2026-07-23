@@ -11,9 +11,9 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSize.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/private/base/SkAlign.h"
-#include "include/private/base/SkAssert.h"
-#include "src/base/SkEnumBitMask.h"
+#include "include/private/SkAlign.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkEnumBitMask.h"
 #include "src/gpu/ResourceKey.h"
 #include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/ResourceTypes.h"
@@ -405,6 +405,10 @@ public:
 
 protected:
     Caps();
+
+    // Initializes ShaderCaps to the baseline feature levels that Graphite assumes to be true.
+    // Called in Caps' constructor so subclasses can override or set additional flags afterwards.
+    void setDefaultShaderCaps();
 
     /**
      * Subclasses must call this at the end of their init method in order to do final processing on

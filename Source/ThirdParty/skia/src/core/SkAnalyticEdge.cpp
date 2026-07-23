@@ -8,10 +8,10 @@
 #include "src/core/SkAnalyticEdge.h"
 
 #include "include/core/SkPoint.h"
-#include "include/private/base/SkMath.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkMathPriv.h"
+#include "include/private/SkMath.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkFDot6.h"
+#include "src/core/SkMathPriv.h"
 
 #include <algorithm>
 #include <cstddef>

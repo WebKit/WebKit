@@ -17,7 +17,7 @@
 #include "include/core/SkRRect.h"
 #include "include/core/SkShader.h"
 #include "include/core/SkSurface.h"
-#include "include/private/base/SkTemplates.h"
+#include "include/private/SkTemplates.h"
 
 #if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrDirectContext.h"
@@ -202,7 +202,7 @@ void run_test(SkSurface* surface, skiatest::Reporter* reporter) {
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(SimplifyPaintTest_Graphite,
                                          reporter,
                                          context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_202604) {
     using namespace skgpu::graphite;
 
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
@@ -217,7 +217,7 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(SimplifyPaintTest_Graphite,
 DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(SimplifyPaintTest_Ganesh,
                                        reporter,
                                        contextInfo,
-                                       CtsEnforcement::kNextRelease) {
+                                       CtsEnforcement::kApiLevel_202604) {
     GrDirectContext* context = contextInfo.directContext();
     sk_sp<SkSurface> surface = SkSurfaces::RenderTarget(context,
                                                         skgpu::Budgeted::kYes,

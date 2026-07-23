@@ -28,9 +28,9 @@
 #include "include/core/SkString.h"
 #include "include/core/SkTypeface.h"
 #include "include/ports/SkFontMgr_mac_ct.h"
-#include "include/private/base/SkOnce.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkUTF.h"
+#include "include/private/SkOnce.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkUTF.h"
 #include "src/ports/SkTypeface_mac_ct.h"
 #include "src/utils/mac/SkUniqueCFRef.h"
 

@@ -27,11 +27,11 @@
 #include "include/core/SkTypes.h"
 #include "include/effects/SkGradient.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/private/base/SkTemplates.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTemplates.h"
+#include "include/private/SkTo.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
-#include "src/base/SkTLazy.h"
 #include "src/core/SkColorPriv.h"
+#include "src/core/SkTLazy.h"
 #include "src/shaders/SkShaderBase.h"
 #include "tests/CtsEnforcement.h"
 #include "tests/Test.h"
@@ -620,7 +620,7 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(TestSweepGradientZeroXGanesh,
 // TODO: Fix this bug in Graphite as well.
 // #if defined(SK_GRAPHITE)
 // DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(TestSweepGradientZeroXGraphite, reporter, context,
-//                                          CtsEnforcement::kNextRelease) {
+//                                          CtsEnforcement::kApiLevel_202604) {
 //     using namespace skgpu::graphite;
 //     SkImageInfo ii = SkImageInfo::Make(SkISize::Make(5, 5),
 //                                        SkColorType::kRGBA_8888_SkColorType,

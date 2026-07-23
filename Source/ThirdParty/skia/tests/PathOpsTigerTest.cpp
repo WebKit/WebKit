@@ -6,9 +6,9 @@
  */
 #include "include/core/SkPathBuilder.h"
 #include "include/core/SkString.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkFloatBits.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkTDArray.h"
+#include "src/core/SkFloatBits.h"
+#include "src/core/SkRandom.h"
 #include "tests/PathOpsExtendedTest.h"
 #include "tests/PathOpsThreadedCommon.h"
 #include "tests/Test.h"

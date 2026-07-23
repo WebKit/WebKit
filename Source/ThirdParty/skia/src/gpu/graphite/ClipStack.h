@@ -10,9 +10,9 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkShader.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkTArray.h"
-#include "src/base/SkTBlockList.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkTArray.h"
+#include "src/core/SkTBlockList.h"
 #include "src/gpu/graphite/DrawListTypes.h"
 #include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawParams.h"

@@ -19,31 +19,6 @@ endif ()
 # The rest may be added later as-needed with target_sources().
 #
 add_library(Skia STATIC
-    src/base/SkArenaAlloc.cpp
-    src/base/SkBezierCurves.cpp
-    src/base/SkBlockAllocator.cpp
-    src/base/SkBuffer.cpp
-    src/base/SkContainers.cpp
-    src/base/SkCubics.cpp
-    src/base/SkDebug.cpp
-    src/base/SkDeque.cpp
-    src/base/SkFloatingPoint.cpp
-    src/base/SkHalf.cpp
-    src/base/SkLog.cpp
-    src/base/SkMalloc.cpp
-    src/base/SkMathPriv.cpp
-    src/base/SkQuads.cpp
-    src/base/SkSafeMath.cpp
-    src/base/SkSemaphore.cpp
-    src/base/SkSharedMutex.cpp
-    src/base/SkSpinlock.cpp
-    src/base/SkTDArray.cpp
-    src/base/SkTSearch.cpp
-    src/base/SkThreadID.cpp
-    src/base/SkTime.cpp
-    src/base/SkUTF.cpp
-    src/base/SkUtils.cpp
-
     src/codec/SkCodec.cpp
     src/codec/SkCodecColorProfile.cpp
     src/codec/SkCodecImageGenerator.cpp
@@ -75,8 +50,10 @@ add_library(Skia STATIC
     src/core/SkAlphaRuns.cpp
     src/core/SkAnalyticEdge.cpp
     src/core/SkAnnotation.cpp
+    src/core/SkArenaAlloc.cpp
     src/core/SkAutoPixmapStorage.cpp
     src/core/SkBBHFactory.cpp
+    src/core/SkBezierCurves.cpp
     src/core/SkBigPicture.cpp
     src/core/SkBitmap.cpp
     src/core/SkBitmapCache.cpp
@@ -84,8 +61,8 @@ add_library(Skia STATIC
     src/core/SkBitmapProcState.cpp
     src/core/SkBitmapProcState_matrixProcs.cpp
     src/core/SkBitmapProcState_opts.cpp
-    src/core/SkBitmapProcState_opts_ssse3.cpp
     src/core/SkBitmapProcState_opts_lasx.cpp
+    src/core/SkBitmapProcState_opts_ssse3.cpp
     src/core/SkBlendMode.cpp
     src/core/SkBlendModeBlender.cpp
     src/core/SkBlitMask_opts.cpp
@@ -98,9 +75,11 @@ add_library(Skia STATIC
     src/core/SkBlitter_A8.cpp
     src/core/SkBlitter_ARGB32.cpp
     src/core/SkBlitter_Sprite.cpp
+    src/core/SkBlockAllocator.cpp
     src/core/SkBlurEngine.cpp
     src/core/SkBlurMask.cpp
     src/core/SkBlurMaskFilterImpl.cpp
+    src/core/SkBuffer.cpp
     src/core/SkCPUContext.cpp
     src/core/SkCPURecorder.cpp
     src/core/SkCachedData.cpp
@@ -117,13 +96,17 @@ add_library(Skia STATIC
     src/core/SkColorSpaceXformSteps.cpp
     src/core/SkColorTable.cpp
     src/core/SkCompressedDataUtils.cpp
+    src/core/SkContainers.cpp
     src/core/SkContourMeasure.cpp
     src/core/SkConvertPixels.cpp
     src/core/SkCpu.cpp
     src/core/SkCubicClipper.cpp
     src/core/SkCubicMap.cpp
+    src/core/SkCubics.cpp
     src/core/SkData.cpp
     src/core/SkDataTable.cpp
+    src/core/SkDebug.cpp
+    src/core/SkDeque.cpp
     src/core/SkDescriptor.cpp
     src/core/SkDevice.cpp
     src/core/SkDistanceFieldGen.cpp
@@ -139,6 +122,7 @@ add_library(Skia STATIC
     src/core/SkEdgeClipper.cpp
     src/core/SkExecutor.cpp
     src/core/SkFlattenable.cpp
+    src/core/SkFloatingPoint.cpp
     src/core/SkFont.cpp
     src/core/SkFontDescriptor.cpp
     src/core/SkFontMetricsPriv.cpp
@@ -152,6 +136,7 @@ add_library(Skia STATIC
     src/core/SkGlyph.cpp
     src/core/SkGlyphRunPainter.cpp
     src/core/SkGraphics.cpp
+    src/core/SkHalf.cpp
     src/core/SkIDChangeListener.cpp
     src/core/SkImageFilter.cpp
     src/core/SkImageFilterCache.cpp
@@ -162,8 +147,10 @@ add_library(Skia STATIC
     src/core/SkLatticeIter.cpp
     src/core/SkLineClipper.cpp
     src/core/SkLocalMatrixImageFilter.cpp
+    src/core/SkLog.cpp
     src/core/SkM44.cpp
     src/core/SkMD5.cpp
+    src/core/SkMalloc.cpp
     src/core/SkMallocPixelRef.cpp
     src/core/SkMask.cpp
     src/core/SkMaskBlurFilter.cpp
@@ -172,6 +159,7 @@ add_library(Skia STATIC
     src/core/SkMaskFilterBase.cpp
     src/core/SkMaskGamma.cpp
     src/core/SkMasks.cpp
+    src/core/SkMathPriv.cpp
     src/core/SkMatrix.cpp
     src/core/SkMatrixInvert.cpp
     src/core/SkMemset_opts.cpp
@@ -212,6 +200,7 @@ add_library(Skia STATIC
     src/core/SkPoint3.cpp
     src/core/SkPtrRecorder.cpp
     src/core/SkQuadClipper.cpp
+    src/core/SkQuads.cpp
     src/core/SkRRect.cpp
     src/core/SkRSXform.cpp
     src/core/SkRTree.cpp
@@ -233,6 +222,7 @@ add_library(Skia STATIC
     src/core/SkRuntimeBlender.cpp
     src/core/SkRuntimeEffect.cpp
     src/core/SkSLTypeShared.cpp
+    src/core/SkSafeMath.cpp
     src/core/SkScalar.cpp
     src/core/SkScalerContext.cpp
     src/core/SkScan.cpp
@@ -241,7 +231,10 @@ add_library(Skia STATIC
     src/core/SkScan_Antihair.cpp
     src/core/SkScan_Hairline.cpp
     src/core/SkScan_Path.cpp
+    src/core/SkSemaphore.cpp
+    src/core/SkSharedMutex.cpp
     src/core/SkSpecialImage.cpp
+    src/core/SkSpinlock.cpp
     src/core/SkSpriteBlitter_ARGB32.cpp
     src/core/SkStream.cpp
     src/core/SkStrike.cpp
@@ -254,16 +247,22 @@ add_library(Skia STATIC
     src/core/SkStrokerPriv.cpp
     src/core/SkSwizzle.cpp
     src/core/SkSwizzler_opts.cpp
-    src/core/SkSwizzler_opts_ml3.cpp
-    src/core/SkSynchronizedResourceCache.cpp
-    src/core/SkSwizzler_opts_ssse3.cpp
     src/core/SkSwizzler_opts_lasx.cpp
+    src/core/SkSwizzler_opts_ml3.cpp
+    src/core/SkSwizzler_opts_ssse3.cpp
+    src/core/SkSynchronizedResourceCache.cpp
+    src/core/SkTDArray.cpp
+    src/core/SkTSearch.cpp
     src/core/SkTaskGroup.cpp
     src/core/SkTextBlob.cpp
+    src/core/SkThreadID.cpp
+    src/core/SkTime.cpp
     src/core/SkTypeface.cpp
     src/core/SkTypefaceCache.cpp
     src/core/SkTypeface_remote.cpp
+    src/core/SkUTF.cpp
     src/core/SkUnPreMultiply.cpp
+    src/core/SkUtils.cpp
     src/core/SkVertState.cpp
     src/core/SkVertices.cpp
     src/core/SkWriteBuffer.cpp
@@ -903,7 +902,7 @@ if (USE_SKIA_OPENTYPE_SVG)
         SK_SHAPER_PRIMITIVE_AVAILABLE
     )
     target_sources(Skia PRIVATE
-        src/base/SkBase64.cpp
+        src/core/SkBase64.cpp
 
         src/effects/SkColorMatrix.cpp
 

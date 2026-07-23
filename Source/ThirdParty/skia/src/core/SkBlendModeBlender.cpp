@@ -10,10 +10,10 @@
 #include "include/core/SkBlendMode.h"
 #include "include/core/SkBlender.h"
 #include "include/core/SkRefCnt.h"
-#include "include/private/base/SkAssert.h"
-#include "src/base/SkNoDestructor.h"
+#include "include/private/SkAssert.h"
 #include "src/core/SkBlendModePriv.h"
 #include "src/core/SkEffectPriv.h"
+#include "src/core/SkNoDestructor.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkWriteBuffer.h"
 

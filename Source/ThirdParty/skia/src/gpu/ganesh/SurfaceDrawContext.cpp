@@ -25,11 +25,11 @@
 #include "include/gpu/ganesh/GrBackendSurface.h"
 #include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/GrRecordingContext.h"
-#include "include/private/base/SingleOwner.h"
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkTemplates.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SingleOwner.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkFloatingPoint.h"
+#include "include/private/SkTemplates.h"
+#include "include/private/SkTo.h"
 #include "include/utils/SkShadowUtils.h"
 #include "src/core/SkDevice.h"
 #include "src/core/SkDrawProcs.h"
@@ -910,7 +910,8 @@ void SurfaceDrawContext::drawTextureSet(const GrClip* clip,
                                         SkBlendMode mode,
                                         SkCanvas::SrcRectConstraint constraint,
                                         const SkMatrix& viewMatrix,
-                                        sk_sp<GrColorSpaceXform> texXform) {
+                                        sk_sp<GrColorSpaceXform> texXform,
+                                        bool setMayHavePersp) {
     ASSERT_SINGLE_OWNER
     RETURN_IF_ABANDONED
     SkDEBUGCODE(this->validate();)
@@ -924,7 +925,7 @@ void SurfaceDrawContext::drawTextureSet(const GrClip* clip,
                                                       : ganesh::TextureOp::Saturate::kNo;
     ganesh::TextureOp::AddTextureSetOps(this, clip, fContext, set, cnt, proxyRunCnt, filter, mm,
                                         saturate, mode, aaType, constraint, viewMatrix,
-                                        std::move(texXform));
+                                        std::move(texXform), setMayHavePersp);
 }
 
 void SurfaceDrawContext::drawVertices(const GrClip* clip,

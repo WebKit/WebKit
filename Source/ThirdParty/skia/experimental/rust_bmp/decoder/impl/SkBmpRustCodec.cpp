@@ -12,13 +12,13 @@
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkSpan.h"
 #include "include/core/SkStream.h"
+#include "include/private/SkAssert.h"
 #include "include/private/SkEncodedInfo.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkTemplates.h"
+#include "include/private/SkTemplates.h"
 #include "rust/common/SkStreamAdapter.h"
 #include "rust/common/SpanUtils.h"
-#include "src/base/SkSafeMath.h"
 #include "src/codec/SkSwizzler.h"
+#include "src/core/SkSafeMath.h"
 #include "src/core/SkStreamPriv.h"
 
 // Color type to use when creating the swizzler for xform

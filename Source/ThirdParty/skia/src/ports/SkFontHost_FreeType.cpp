@@ -19,13 +19,12 @@
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
 #include "include/ports/SkFontScanner_FreeType.h"
-#include "include/private/base/SkMalloc.h"
-#include "include/private/base/SkMutex.h"
-#include "include/private/base/SkTFitsIn.h"
-#include "include/private/base/SkTPin.h"
-#include "include/private/base/SkTemplates.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkTSearch.h"
+#include "include/private/SkMalloc.h"
+#include "include/private/SkMutex.h"
+#include "include/private/SkTFitsIn.h"
+#include "include/private/SkTPin.h"
+#include "include/private/SkTemplates.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkAdvancedTypefaceMetrics.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkDescriptor.h"
@@ -35,6 +34,7 @@
 #include "src/core/SkMask.h"
 #include "src/core/SkMaskGamma.h"
 #include "src/core/SkScalerContext.h"
+#include "src/core/SkTSearch.h"
 #include "src/ports/SkFontHost_FreeType_common.h"
 #include "src/ports/SkFontScanner_FreeType_priv.h"
 #include "src/ports/SkTypeface_FreeType.h"
@@ -579,7 +579,7 @@ std::unique_ptr<SkAdvancedTypefaceMetrics> SkTypeface_FreeType::onGetAdvancedMet
         return nullptr;
     }
 
-    std::unique_ptr<SkAdvancedTypefaceMetrics> info(new SkAdvancedTypefaceMetrics);
+    auto info = std::make_unique<SkAdvancedTypefaceMetrics>();
     info->fPostScriptName.set(FT_Get_Postscript_Name(face));
 
     if (FT_HAS_MULTIPLE_MASTERS(face)) {
@@ -727,11 +727,11 @@ std::unique_ptr<SkScalerContext> SkTypeface_FreeType::onCreateScalerContextAsPro
         const SkScalerContextEffects& effects,
         const SkDescriptor* desc,
         SkTypeface* proxyTypeface) const {
-    std::unique_ptr<SkScalerContext_FreeType> scalerContext(new SkScalerContext_FreeType(
+    auto scalerContext = std::make_unique<SkScalerContext_FreeType>(
             *this,
             effects,
             desc,
-            proxyTypeface ? *proxyTypeface : *const_cast<SkTypeface_FreeType*>(this)));
+            proxyTypeface ? *proxyTypeface : *const_cast<SkTypeface_FreeType*>(this));
     if (scalerContext->success()) {
         return scalerContext;
     }

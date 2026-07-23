@@ -23,14 +23,14 @@
 #include <utility>
 
 #if defined(GPU_TEST_UTILS)
-#   include "src/base/SkRandom.h"
+#   include "src/core/SkRandom.h"
 #   if defined(SK_ENABLE_SCOPED_LSAN_SUPPRESSIONS)
 #       include <sanitizer/lsan_interface.h>
 #   endif
 #endif
 
 #if defined(SK_DISABLE_LEGACY_GL_MAKE_NATIVE_INTERFACE)
-#include "include/private/base/SkAssert.h"
+#include "include/private/SkAssert.h"
 #endif
 
 namespace GrDirectContexts {

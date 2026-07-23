@@ -10,9 +10,9 @@
 
 #include "include/core/SkFontArguments.h"
 #include "include/core/SkTypeface.h"
-#include "include/private/base/SkAPI.h"
-#include "src/base/SkLeanWindows.h"
+#include "include/private/SkAPI.h"
 #include "src/core/SkAdvancedTypefaceMetrics.h"
+#include "src/core/SkLeanWindows.h"
 #include "src/core/SkTypefaceCache.h"
 #include "src/utils/win/SkDWrite.h"
 #include "src/utils/win/SkHRESULT.h"

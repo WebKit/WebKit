@@ -611,7 +611,10 @@ if (skia_compile_modules) {
     sources += skia_sksl_core_sources
     sources += skia_sksl_codegen_sources
     include_dirs = [ "." ]
-    deps = [ ":run_sksllex" ]
+    deps = [
+      ":run_sksllex",
+      "//src/partition_alloc:raw_ptr",
+    ]
   }
 
   sksl_minify_path = "$root_out_dir/"
@@ -745,6 +748,7 @@ if (skia_compile_sksl_tests) {
     include_dirs = [ "." ]
     deps = [
       ":run_sksllex",
+      "//src/partition_alloc:raw_ptr",
       "//third_party/dawn:tint",
       "//third_party/externals/spirv-tools:spvtools",
       "//third_party/externals/spirv-tools:spvtools_val",
@@ -1287,6 +1291,7 @@ optional("xps") {
 
 optional("png_decode_common") {
   enabled = skia_use_libpng_decode || skia_use_rust_png_decode
+  public = skia_codec_png_public
   sources = skia_codec_png_base
 }
 
@@ -1450,6 +1455,11 @@ if (skia_use_fontations || skia_use_rust_png_decode ||
       rebase_path("//bazel-bin/rust/png/FFI.rs.cc", root_build_dir) +
           "=rust/png/FFI.rs.cc",
     ]
+    if (skia_use_rust_png_decode_unknown_chunks) {
+      bazel_args += [ "--//rust/png:use_unknown_chunks=true" ]
+    } else {
+      bazel_args += [ "--//rust/png:use_unknown_chunks=false" ]
+    }
   }
 
   if (skia_use_rust_bmp_decode) {
@@ -1729,6 +1739,9 @@ optional("rust_exif") {
 
 optional("png_decode_rust") {
   public_defines = [ "SK_CODEC_DECODES_PNG_WITH_RUST" ]
+  if (skia_use_rust_png_decode_unknown_chunks) {
+    public_defines += [ "SK_CODEC_DECODES_PNG_WITH_RUST_UNKNOWN_CHUNKS" ]
+  }
   enabled = skia_use_rust_png_decode
   public = skia_codec_rust_png_public
   sources = skia_codec_rust_png
@@ -1907,6 +1920,7 @@ skia_component("skia") {
     ":jpeg_encode",
     ":pdf",
     ":pdf_jpeg_helpers",
+    ":png_decode_common",
     ":png_decode_libpng",
     ":png_encode_libpng",
     ":webp_encode",
@@ -1934,6 +1948,7 @@ skia_component("skia") {
     ":wuffs",
     ":xml",
     "modules/skcms",
+    "//src/partition_alloc:raw_ptr",
   ]
 
   public = []
@@ -1974,6 +1989,10 @@ skia_component("skia") {
 
   defines = []
   libs = []
+
+  if (is_win && sanitize == "ASAN") {
+    deps += [ "gn/skia:copy_asan_runtime" ]
+  }
 
   if (skia_build_for_debugger) {
     defines += [ "SK_BUILD_FOR_DEBUGGER" ]
@@ -2820,6 +2839,7 @@ if (skia_enable_tools) {
         "modules/skshaper:tests",
         "modules/skunicode:tests",
         "modules/svg:tests",
+        "//src/partition_alloc:raw_ptr",
         "//third_party/libpng",
         "//third_party/libwebp",
         "//third_party/zlib",

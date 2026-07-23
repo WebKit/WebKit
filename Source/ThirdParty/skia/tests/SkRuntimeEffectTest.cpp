@@ -32,13 +32,13 @@
 #include "include/effects/SkRuntimeEffect.h"
 #include "include/gpu/GpuTypes.h"
 #include "include/private/SkSLSampleUsage.h"
-#include "include/private/base/SkTArray.h"
+#include "include/private/SkTArray.h"
 #include "include/sksl/SkSLDebugTrace.h"
 #include "include/sksl/SkSLVersion.h"
-#include "src/base/SkStringView.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkColorSpacePriv.h"
 #include "src/core/SkRuntimeEffectPriv.h"
+#include "src/core/SkStringView.h"
 #include "src/gpu/KeyBuilder.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/sksl/SkSLString.h"
@@ -1697,7 +1697,7 @@ void test_using_transformed_coords(skiatest::Reporter* reporter,
 DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(SkRuntimeShader_TransformedCoords_Graphite,
                                          reporter,
                                          context,
-                                         CtsEnforcement::kNextRelease) {
+                                         CtsEnforcement::kApiLevel_202604) {
     std::unique_ptr<skgpu::graphite::Recorder> recorder = context->makeRecorder();
     GraphiteInfo graphiteInfo = {context, recorder.get()};
     test_using_transformed_coords(reporter, /*ganeshContext=*/nullptr, &graphiteInfo);
@@ -1708,7 +1708,7 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(SkRuntimeShader_TransformedCoords_Graph
 DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(SkRuntimeShader_TransformedCoords_Ganesh,
                                        reporter,
                                        contextInfo,
-                                       CtsEnforcement::kNextRelease) {
+                                       CtsEnforcement::kApiLevel_202604) {
     test_using_transformed_coords(reporter, contextInfo.directContext(), /*graphiteInfo=*/nullptr);
 }
 

@@ -9,11 +9,11 @@
 #define sktext_gpu_SubRunContainer_DEFINED
 
 #include "include/core/SkMatrix.h"
+#include "include/core/SkPoint.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSpan.h"
-#include "include/private/base/SkPoint_impl.h"
-#include "include/private/base/SkTLogic.h"
+#include "include/private/SkTLogic.h"
 #include "src/core/SkColorData.h"  // IWYU pragma: keep
 #include "src/text/gpu/GlyphVector.h"
 #include "src/text/gpu/SubRunAllocator.h"
@@ -95,6 +95,7 @@ protected:
 
 private:
     friend class SubRunList;
+    friend class TextBlobTools;
     SubRunOwner fNext;
 };
 
@@ -118,6 +119,10 @@ public:
             : fVertexFiller{std::move(vertexFiller)}, fGlyphVector{std::move(glyphVector)} {}
 
     ~AtlasSubRun() override = default;
+
+    static bool IsBigEnough(const SkMatrix& matrix) {
+        return matrix.getMaxScale() >= 1.f;
+    }
 
     int glyphCount() const { return fGlyphVector.glyphCount(); }
     skgpu::MaskFormat maskFormat() const { return fVertexFiller.maskFormat(); }
@@ -232,9 +237,6 @@ private:
     const SkMatrix fInitialPositionMatrix;
     SubRunList fSubRuns;
 };
-
-// Returns the empty span if there is a problem reading the positions.
-SkSpan<SkPoint> MakePointsFromBuffer(SkReadBuffer&, SubRunAllocator*);
 
 }  // namespace sktext::gpu
 

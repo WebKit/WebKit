@@ -9,9 +9,9 @@
 
 #include "include/core/SkSpan.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkEnumBitMask.h"
-#include "src/base/SkStringView.h"
+#include "include/private/SkEnumBitMask.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkStringView.h"
 #include "src/sksl/SkSLBuiltinTypes.h"
 #include "src/sksl/SkSLContext.h"
 #include "src/sksl/SkSLDefines.h"

@@ -38,13 +38,11 @@
 #include "include/gpu/graphite/Recorder.h"
 #include "include/gpu/graphite/Surface.h"
 #include "include/gpu/graphite/TextureInfo.h"
-#include "include/private/base/SingleOwner.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkLog.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkArenaAlloc.h"
-#include "src/base/SkVx.h"
+#include "include/private/SingleOwner.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkFloatingPoint.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkArenaAlloc.h"
 #include "src/core/SkBlendModePriv.h"
 #include "src/core/SkBlenderBase.h"
 #include "src/core/SkImageFilterTypes.h"  // IWYU pragma: keep
@@ -56,6 +54,7 @@
 #include "src/core/SkStrikeCache.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/core/SkVerticesPriv.h"
+#include "src/core/SkVx.h"
 #include "src/gpu/BlurUtils.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/gpu/Swizzle.h"
@@ -1522,6 +1521,15 @@ void Device::drawGeometry(const Transform& localToDevice,
         return;
     }
 
+    // Currently Graphite ignores the inverted-ness of a shape when it's stroked (since inversion
+    // is part of the "fill" style). This differs from Ganesh and CPU rasterization, which only
+    // ignore inverted-ness for hairlines. Setting the inverted bit here enforces consistent
+    // behavior between Graphite's different path rendering strategies.
+    if (geometry.isShape() && geometry.shape().inverted() &&
+        (style.isHairlineStyle() || style.getStyle() == SkStrokeRec::kStroke_Style)) {
+        geometry.shape().setInverted(false);
+    }
+
     ScopedDrawBuilder scopedDrawBuilder(fRecorder);
 
     // Calculate the clipped bounds of the draw and determine the clip elements that affect the
@@ -1647,17 +1655,10 @@ void Device::drawGeometry(const Transform& localToDevice,
             return;
         } else {
             // This paint does not depend on the destination and covers the entire surface, so
-            // discard everything previously recorded and proceed with the draw. However, if we are
-            // here because of a paint with src-over blending that just happens to be opaque, the
-            // discarded dst can still be accessed. For non-floating point formats, that is fine,
-            // but float formats can have NaNs after a discard that cause blending to fail. To
-            // avoid that scenario, we clear to a known value instead.
-            if (paint.finalBlendMode() == SkBlendMode::kSrcOver &&
-                TextureFormatIsFloatingPoint(format)) {
-                fDC->clear(SkColors::kMagenta); // This color doesn't matter
-            } else {
-                fDC->discard();
-            }
+            // discard everything previously recorded and proceed with the draw. DstUsage::kNone
+            // implies no blending will be enabled for the draw, so discards on floating-point
+            // formats (that could inject NaNs into the dst) will be overwritten correctly.
+            fDC->discard();
             // But then continue to render the flood fill with shading
         }
     }
@@ -1783,9 +1784,11 @@ void Device::drawGeometry(const Transform& localToDevice,
             // The regular draw has analytic coverage, so isn't being sorted front to back, but
             // we do want to sort the inner fill to maximize overdraw reduction
             orderWithoutCoverage.reverseDepthAsStencil();
+
+            UniquePaintParamsID opaqueID = shading.optimizeForOpacity(keyContext, paintID);
             fDC->recordDraw(fRecorder->priv().rendererProvider()->nonAABounds(), localToDevice,
                             Geometry(Shape(innerFillBounds)), clip, orderWithoutCoverage,
-                            paintID, dstUsage, scopedDrawBuilder.gatherer(),
+                            opaqueID, DstUsage::kNone, scopedDrawBuilder.gatherer(),
                             /*stroke=*/nullptr, latestInsertion);
             // Force the coverage draw to come after the non-AA draw in order to benefit from
             // early depth testing.

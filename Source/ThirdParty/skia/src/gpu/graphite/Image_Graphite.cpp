@@ -14,7 +14,7 @@
 #include "include/gpu/graphite/Image.h"
 #include "include/gpu/graphite/Recorder.h"
 #include "include/gpu/graphite/Surface.h"
-#include "include/private/base/SkLog.h"
+#include "include/private/SkLog.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/Device.h"
@@ -37,7 +37,9 @@ namespace skgpu::graphite {
 // Graphite does not cache based on the image's unique ID so always request a new one.
 Image::Image(TextureProxyView view,
              const SkColorInfo& info)
-    : Image_Base(SkImageInfo::Make(view.proxy()->dimensions(), info), kNeedNewImageUniqueID)
+    : Image_Base(SkImageInfo::Make(view.proxy()->dimensions(), info),
+                                   kNeedNewImageUniqueID,
+                                   view.refProxy())
     , fTextureProxyView(std::move(view)) {}
 
 Image::~Image() = default;

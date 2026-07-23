@@ -17,11 +17,11 @@
 #include "include/core/SkSpan.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkTypeface.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkUTF.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkTDArray.h"
 #include "src/core/SkOSFile.h"
 #include "src/core/SkPathPriv.h"
+#include "src/core/SkUTF.h"
 #include "src/utils/SkOSPath.h"
 
 #include <stdio.h>

@@ -10,7 +10,7 @@
 #include "include/core/SkPathBuilder.h"
 #include "include/core/SkVertices.h"
 #include "include/effects/SkGradient.h"
-#include "include/private/base/SkFloatingPoint.h"
+#include "include/private/SkFloatingPoint.h"
 #include "src/core/SkBlurMask.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkWriteBuffer.h"
@@ -240,8 +240,8 @@ static void gradient_slide(SkCanvas* canvas) {
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "include/core/SkStream.h"
-#include "src/base/SkRandom.h"
 #include "src/core/SkOSFile.h"
+#include "src/core/SkRandom.h"
 #include "tools/DecodeUtils.h"
 
 static sk_sp<SkShader> make_shader0(SkIPoint* size) {

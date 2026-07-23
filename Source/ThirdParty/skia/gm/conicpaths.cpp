@@ -16,8 +16,8 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkString.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkTArray.h"
-#include "src/base/SkFloatBits.h"
+#include "include/private/SkTArray.h"
+#include "src/core/SkFloatBits.h"
 
 using namespace skia_private;
 

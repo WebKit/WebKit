@@ -14,7 +14,7 @@
 #include "include/core/SkString.h"
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTo.h"
 #include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/include/Skottie.h"
 #include "modules/skottie/src/SkottieJson.h"
@@ -24,8 +24,8 @@
 #include "modules/skresources/include/SkResources.h"
 #include "modules/sksg/include/SkSGGroup.h"  // IWYU pragma: keep
 #include "modules/sksg/include/SkSGRenderNode.h"
-#include "src/base/SkTSearch.h"
 #include "src/core/SkTHash.h"
+#include "src/core/SkTSearch.h"
 
 #include <string.h>
 #include <algorithm>

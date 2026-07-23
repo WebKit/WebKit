@@ -12,9 +12,10 @@
 #include "include/core/SkM44.h"
 #include "include/core/SkMatrix.h"
 #include "include/core/SkRect.h"
-#include "src/base/SkEnumBitMask.h"
+#include "include/private/SkEnumBitMask.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkColorSpaceXformSteps.h"
+#include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/TextureProxy.h"
 
 class SkRuntimeEffect;
@@ -22,7 +23,6 @@ class SkRuntimeEffect;
 namespace skgpu::graphite {
 
 class Caps;
-class DrawContext;
 enum class DstReadStrategy : uint8_t;
 class FloatStorageManager;
 class PaintParamsKeyBuilder;
@@ -36,12 +36,13 @@ enum class KeyGenFlags : uint8_t {
     // By default, linear sampling can be optimized to nearest when it's visually equivalent.
     // This flag disables this behavior.
     kDisableSamplingOptimization       = 0x1,
-    // By default, identity color conversions map to ColorSpaceTransformPremul as a reasonably
-    // performant baseline that avoids shader combinatorics. However, in certain contexts (such as
-    // image filters or runtime effects) that sample an image many times *and* perform up front
-    // work to ensure there doesn't need to be any color conversion, skipping color space conversion
-    // in the shader produces meaningful performance improvements.
-    kEnableIdentityColorSpaceXform     = 0x2,
+    // By default, stages of color space transforms are generalized to minimize pipeline variations.
+    // However, in certain contexts (such as image filters, runtime effects) that sample an image
+    // many times *and* perform up front work to ensure there doesn't need to be any color
+    // conversion, or the working color space/format effects that spread out the stages around other
+    // effects, then skipping color space conversion in the shader produces meaningful performance
+    // improvements.
+    kSpecializeColorSpaceXform         = 0x2,
     // By default, alpha-only image shaders are colorized by the paint's color. In the context of
     // a runtime effect this is disabled.
     kDisableAlphaOnlyImageColorization = 0x4,
@@ -118,6 +119,7 @@ public:
     PaintParamsKeyBuilder* paintParamsKeyBuilder() const { return fPaintParamsKeyBuilder; }
     PipelineDataGatherer* pipelineDataGatherer() const { return fPipelineDataGatherer; }
     ShaderCodeDictionary* dict() const { return fDictionary; }
+    TextureFormat targetFormat() const { return fDC->target().proxy()->format(); }
 
     sk_sp<RuntimeEffectDictionary> rtEffectDict() const;
 

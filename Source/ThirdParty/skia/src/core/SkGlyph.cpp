@@ -14,11 +14,11 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkSerialProcs.h"
 #include "include/core/SkSpan.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkTFitsIn.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkArenaAlloc.h"
-#include "src/base/SkBezierCurves.h"
+#include "include/private/SkFloatingPoint.h"
+#include "include/private/SkTFitsIn.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkArenaAlloc.h"
+#include "src/core/SkBezierCurves.h"
 #include "src/core/SkPictureData.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkScalerContext.h"
@@ -406,6 +406,12 @@ size_t SkGlyph::addPathFromBuffer(SkReadBuffer& buffer, SkArenaAlloc* alloc) {
         const bool pathIsHairline = buffer.readBool();
         const bool pathIsModified = buffer.readBool();
         if (auto path = buffer.readPath()) {
+            if (fMaskFormat != SkMask::kBW_Format &&
+                fMaskFormat != SkMask::kA8_Format &&
+                fMaskFormat != SkMask::kLCD16_Format) {
+                buffer.validate(false);
+                return 0;
+            }
             if (this->setPath(alloc, &path.value(), pathIsHairline, pathIsModified)) {
                 memoryIncrease += path->approximateBytesUsed();
             }

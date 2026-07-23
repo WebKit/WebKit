@@ -14,15 +14,15 @@
 #include "include/core/SkPoint.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkString.h"
-#include "include/private/base/SkTDArray.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkUtils.h"
+#include "include/private/SkTDArray.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkAdvancedTypefaceMetrics.h"
 #include "src/core/SkFontDescriptor.h"
 #include "src/core/SkFontPriv.h"
 #include "src/core/SkGlyph.h"
 #include "src/core/SkPaintPriv.h"
 #include "src/core/SkScalerContext.h"
+#include "src/core/SkUtils.h"
 #include "src/sfnt/SkOTUtils.h"
 #include "tools/fonts/TestTypeface.h"
 
@@ -155,7 +155,7 @@ void TestTypeface::getGlyphToUnicodeMap(SkSpan<SkUnichar> glyphToUnicode) const 
 }
 
 std::unique_ptr<SkAdvancedTypefaceMetrics> TestTypeface::onGetAdvancedMetrics() const {  // pdf only
-    std::unique_ptr<SkAdvancedTypefaceMetrics>info(new SkAdvancedTypefaceMetrics);
+    auto info = std::make_unique<SkAdvancedTypefaceMetrics>();
     info->fPostScriptName.set(fTestFont->fName);
     return info;
 }

@@ -12,8 +12,8 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkCPUTypes.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkCPUTypes.h"
+#include "include/private/SkTo.h"
 
 #include <cstdint>
 #include <cstdio>
@@ -319,7 +319,7 @@ public:
     ~SkFILEStream() override;
 
     static std::unique_ptr<SkFILEStream> Make(const char path[]) {
-        std::unique_ptr<SkFILEStream> stream(new SkFILEStream(path));
+        auto stream = std::make_unique<SkFILEStream>(path);
         return stream->isValid() ? std::move(stream) : nullptr;
     }
 

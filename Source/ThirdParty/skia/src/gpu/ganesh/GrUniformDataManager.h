@@ -8,9 +8,9 @@
 #ifndef GrUniformDataManager_DEFINED
 #define GrUniformDataManager_DEFINED
 
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkTArray.h"
-#include "src/base/SkAutoMalloc.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkTArray.h"
+#include "src/core/SkAutoMalloc.h"
 #include "src/gpu/ganesh/glsl/GrGLSLProgramDataManager.h"
 
 #include <cstdint>

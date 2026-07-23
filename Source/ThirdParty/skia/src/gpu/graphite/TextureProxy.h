@@ -12,7 +12,7 @@
 #include "include/core/SkSize.h"
 #include "include/gpu/graphite/TextureInfo.h"
 #include "include/private/SkPixelStorage.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkTo.h"
 #include "src/gpu/graphite/TextureInfoPriv.h"
 
 #include <functional>
@@ -28,13 +28,11 @@ class ScratchResourceManager;
 class Texture;
 enum class TextureFormat : uint8_t;
 
-class TextureProxy : public SkPixelStorage, public SkRefCnt {
+class TextureProxy : public SkPixelStorage {
 public:
     TextureProxy() = delete;
 
     ~TextureProxy() override;
-
-    Type type() const override;
 
     SampleCount sampleCount() const { return fInfo.sampleCount(); }
     Mipmapped mipmapped() const { return fInfo.mipmapped(); }

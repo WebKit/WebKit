@@ -9,8 +9,8 @@
 
 #include "include/core/SkMatrix.h"
 #include "include/core/SkScalar.h"
-#include "include/private/base/SkFixed.h"
-#include "src/base/SkFloatBits.h"
+#include "include/private/SkFixed.h"
+#include "src/core/SkFloatBits.h"
 #include "src/gpu/ganesh/GrStyle.h"
 #include "src/gpu/ganesh/geometry/GrStyledShape.h"
 
