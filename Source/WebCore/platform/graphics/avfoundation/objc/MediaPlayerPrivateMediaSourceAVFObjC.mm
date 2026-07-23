@@ -1556,6 +1556,15 @@ WebCore::HostingContext MediaPlayerPrivateMediaSourceAVFObjC::hostingContext() c
     return m_renderer->hostingContext();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+{
+    m_renderer->requestHostingContext([completionHandler = WTF::move(completionHandler)](WebCore::HostingContext hostingContext) mutable {
+        ensureOnMainThread([completionHandler = WTF::move(completionHandler), hostingContext = WTF::move(hostingContext)]() mutable {
+            completionHandler(WTF::move(hostingContext));
+        });
+    });
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
 {
     m_renderer->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
