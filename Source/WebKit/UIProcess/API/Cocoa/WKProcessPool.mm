@@ -437,9 +437,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (BOOL)_requestWebProcessTermination:(pid_t)pid
 {
     for (Ref process : borrow(_processPool->processes()).get()) {
-        if (process->processID() == pid)
+        if (process->processID() == pid) {
             process->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
-        return YES;
+            return YES;
+        }
     }
     return NO;
 }
