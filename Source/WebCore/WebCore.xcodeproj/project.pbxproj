@@ -3127,6 +3127,7 @@
 		7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A696194A64E7001CBD24 /* TileController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A698194A64E7001CBD24 /* TileGrid.h */; };
 		7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A69E194B59B6001CBD24 /* LayerPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F1A2B3C4D5E6F7080910A01 /* FrameProcessIndicators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1A2B3C4D5E6F7080910A02 /* FrameProcessIndicators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA3A6A4194B5C22001CBD24 /* TileCoverageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */; };
 		7AAA32B6C6C7C1328978606C /* Ellipsis.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = F3FB34D3C8B0041EA738900D /* Ellipsis.svg */; platformFilters = (macos, ); };
 		7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AABA25814BC613300AA9A11 /* DOMEditor.h */; };
@@ -12266,6 +12267,8 @@
 		4998AED013FB224D0090B1AA /* ScriptedAnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptedAnimationController.h; sourceTree = "<group>"; };
 		499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayer.h; sourceTree = "<group>"; };
 		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerCA.cpp; sourceTree = "<group>"; };
+		0F1A2B3C4D5E6F7080910A03 /* FrameProcessIndicators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameProcessIndicators.cpp; sourceTree = "<group>"; };
+		0F1A2B3C4D5E6F7080910A02 /* FrameProcessIndicators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameProcessIndicators.h; sourceTree = "<group>"; };
 		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCA.h; sourceTree = "<group>"; };
 		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimation.h; sourceTree = "<group>"; };
 		49AE2D8C134EE50C0072920A /* CSSCalcValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalcValue.cpp; sourceTree = "<group>"; };
@@ -28579,6 +28582,8 @@
 			isa = PBXGroup;
 			children = (
 				4958781E12A57DBC007238AC /* cocoa */,
+				0F1A2B3C4D5E6F7080910A03 /* FrameProcessIndicators.cpp */,
+				0F1A2B3C4D5E6F7080910A02 /* FrameProcessIndicators.h */,
 				499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */,
 				499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */,
 				7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */,
@@ -45593,6 +45598,7 @@
 				93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */,
 				658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */,
 				628D214E12131EF40055DCFC /* FrameNetworkingContext.h in Headers */,
+				0F1A2B3C4D5E6F7080910A01 /* FrameProcessIndicators.h in Headers */,
 				71FCB17027BAB3FE00E0631C /* FrameRateAligner.h in Headers */,
 				4190F3A524A0B4EE00531C57 /* FrameRateMonitor.h in Headers */,
 				5EAA0A2D2F47C803009CAB0D /* FrameRuntimeAgent.h in Headers */,

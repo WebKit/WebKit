@@ -32,6 +32,7 @@
 #include "DisplayListRecorderImpl.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "FrameProcessIndicators.h"
 #include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerAnimationValue.h"
 #include "GraphicsLayerAsyncContentsDisplayDelegateCocoa.h"
@@ -475,6 +476,8 @@ GraphicsLayerCA::~GraphicsLayerCA()
 
     if (m_backdropClippingLayer)
         protect(m_backdropClippingLayer)->setOwner(nullptr);
+
+    m_frameProcessIndicators = nullptr;
 
     removeCloneLayers();
 
@@ -2449,9 +2452,9 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 #ifdef VISIBLE_TILE_WASH
         if (m_visibleTileWashLayer)
             list.append(m_visibleTileWashLayer);
-#else
-        UNUSED_PARAM(list);
 #endif
+        if (m_frameProcessIndicators)
+            m_frameProcessIndicators->appendLayers(list);
     };
 
     auto buildChildLayerList = [&](PlatformCALayerList& list) {
@@ -2541,6 +2544,9 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     FloatRect adjustedBounds = FloatRect(FloatPoint(m_boundsOrigin - pixelAlignmentOffset), m_size);
     layer->setBounds(adjustedBounds);
     layer->setAnchorPoint(scaledAnchorPoint);
+
+    if (m_frameProcessIndicators)
+        m_frameProcessIndicators->updateGeometry(adjustedBounds);
 
     if (m_layerClones) {
         for (auto& clone : m_layerClones->primaryLayerClones) {
@@ -3089,12 +3095,23 @@ static Color cloneLayerDebugBorderColor(bool showingBorders)
     return showingBorders ? SRGBA<uint8_t> { 255, 122, 251 } : Color { };
 }
 
+void GraphicsLayerCA::updateFrameProcessIndicators()
+{
+    if (isShowingFrameProcessBorders() && !m_frameProcessIndicators)
+        m_frameProcessIndicators = makeUnique<FrameProcessIndicators>(*this);
+    else if (!isShowingFrameProcessBorders() && m_frameProcessIndicators)
+        m_frameProcessIndicators = nullptr;
+    noteSublayersChanged(DontScheduleFlush);
+}
+
 void GraphicsLayerCA::updateDebugIndicators()
 {
+    updateFrameProcessIndicators();
+
     Color borderColor;
     float width = 0;
 
-    bool showDebugBorders = isShowingDebugBorder() || isShowingFrameProcessBorders();
+    bool showDebugBorders = isShowingDebugBorder();
     if (showDebugBorders)
         getDebugBorderInfo(borderColor, width);
 
@@ -4419,6 +4436,9 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 
     if (auto customScale = client().customContentsScale(*this))
         contentsScale = *customScale;
+
+    if (m_frameProcessIndicators)
+        m_frameProcessIndicators->updateContentsScale(contentsScale);
 
     RefPtr layer = m_layer;
     if (contentsScale == layer->contentsScale())

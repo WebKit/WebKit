@@ -357,6 +357,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 
+    platform/graphics/ca/FrameProcessIndicators.cpp
     platform/graphics/ca/GraphicsLayerCA.cpp
     platform/graphics/ca/LayerPool.cpp
     platform/graphics/ca/PlatformCAAnimation.cpp
@@ -1142,6 +1143,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h
     platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h
 
+    platform/graphics/ca/FrameProcessIndicators.h
     platform/graphics/ca/GraphicsLayerCA.h
     platform/graphics/ca/LayerPool.h
     platform/graphics/ca/PlatformCAAnimation.h

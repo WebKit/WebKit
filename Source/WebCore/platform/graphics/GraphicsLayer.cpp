@@ -40,7 +40,6 @@
 #include <wtf/FileHandle.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -781,20 +780,12 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
         return;
     }
 
-    if (isShowingFrameProcessBorders()) {
-        auto hash = intHash(static_cast<uint32_t>(getCurrentProcessID()));
-        uint8_t r = (hash >>  0) & 0xFF, g = (hash >>  8) & 0xFF, b = (hash >> 16) & 0xFF;
-        color = SRGBA<uint8_t> { r, g, b }.colorWithAlphaByte(192);
-        width = 4;
-        return;
-    }
-
     color = Color::yellow.colorWithAlphaByte(192); // container: yellow
 }
 
 void GraphicsLayer::updateDebugIndicators()
 {
-    if (!isShowingDebugBorder() && !isShowingFrameProcessBorders())
+    if (!isShowingDebugBorder())
         return;
 
     Color borderColor;

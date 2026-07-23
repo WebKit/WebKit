@@ -400,6 +400,7 @@ platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @nonARC
 platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm @nonARC @no-unify-when(bundle<=8)
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @nonARC
+platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp
 platform/graphics/ca/PlatformCAAnimation.cpp
