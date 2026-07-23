@@ -48,7 +48,7 @@ inline TypeInformation& TypeInformation::singleton()
 
 inline RefPtr<const RTT> TypeInformation::tryGetRTT(TypeIndex typeIndex)
 {
-    if (typeIndexIsType(typeIndex) || typeIndex == invalidTypeIndex)
+    if (isAbstractTypeIndex(typeIndex) || typeIndex == invalidTypeIndex)
         return nullptr;
     return std::bit_cast<const RTT*>(typeIndex);
 }

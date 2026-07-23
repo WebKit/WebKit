@@ -1081,8 +1081,8 @@ WASM_IPINT_EXTERN_CPP_DECL(any_convert_extern, EncodedJSValue value)
 
 WASM_IPINT_EXTERN_CPP_DECL(ref_test, int32_t heapType, bool allowNull, EncodedJSValue value)
 {
-    if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType))) {
-        bool result = Wasm::refCast(value, allowNull, static_cast<Wasm::TypeIndex>(heapType));
+    if (!Wasm::isTypeIndexHeapType(heapType)) {
+        bool result = Wasm::refCast(value, allowNull, Wasm::typeIndexFromTypeKind(static_cast<Wasm::TypeKind>(heapType)));
         IPINT_RETURN(static_cast<uint64_t>(result));
     }
 
@@ -1093,8 +1093,8 @@ WASM_IPINT_EXTERN_CPP_DECL(ref_test, int32_t heapType, bool allowNull, EncodedJS
 
 WASM_IPINT_EXTERN_CPP_DECL(ref_cast, int32_t heapType, bool allowNull, EncodedJSValue value)
 {
-    if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType))) {
-        if (!Wasm::refCast(value, allowNull, static_cast<Wasm::TypeIndex>(heapType))) [[unlikely]]
+    if (!Wasm::isTypeIndexHeapType(heapType)) {
+        if (!Wasm::refCast(value, allowNull, Wasm::typeIndexFromTypeKind(static_cast<Wasm::TypeKind>(heapType)))) [[unlikely]]
             IPINT_THROW(Wasm::ExceptionType::CastFailure);
         IPINT_RETURN(value);
     }

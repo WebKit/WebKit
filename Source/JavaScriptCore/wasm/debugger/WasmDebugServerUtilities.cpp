@@ -67,7 +67,7 @@ void logWasmLocalValue(size_t index, const JSC::IPInt::IPIntLocal& local, const 
 {
     dataLog("  Local[", index, "] (", localType, "): ");
 
-    switch (localType.kind) {
+    switch (localType.kind()) {
     case TypeKind::I32:
         dataLogLn("i32=", local.i32, " [index ", index, "]");
         break;

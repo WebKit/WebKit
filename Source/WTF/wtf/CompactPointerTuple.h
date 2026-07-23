@@ -70,7 +70,7 @@ public:
 
     static constexpr uint64_t pointerMask = (1ULL << maxNumberOfBitsInPointer) - 1;
 
-    CompactPointerTuple(PointerType pointer, Type type)
+    constexpr CompactPointerTuple(PointerType pointer, Type type)
         : m_data(encode(pointer, type))
     {
         ASSERT(this->type() == type);
@@ -84,21 +84,29 @@ public:
     {
     }
 
-    PointerType pointer() const { return std::bit_cast<PointerType>(m_data & pointerMask); }
+    constexpr PointerType pointer() const
+    {
+        // bit_cast to a pointer type is not allowed in constant expressions.
+        if (std::is_constant_evaluated()) {
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(!(m_data & pointerMask));
+            return nullptr;
+        }
+        return std::bit_cast<PointerType>(m_data & pointerMask);
+    }
     void setPointer(PointerType pointer)
     {
         m_data = encode(pointer, type());
         ASSERT(this->pointer() == pointer);
     }
 
-    Type type() const { return decodeType(m_data); }
+    constexpr Type type() const { return decodeType(m_data); }
     void setType(Type type)
     {
         m_data = encode(pointer(), type);
         ASSERT(this->type() == type);
     }
 
-    uint64_t data() const { return m_data; }
+    constexpr uint64_t data() const { return m_data; }
 
     void swap(CompactPointerTuple& other)
     {
@@ -115,15 +123,21 @@ private:
         return static_cast<Type>(static_cast<UnsignedType>(value >> maxNumberOfBitsInPointer));
     }
 
-    static uint64_t encode(PointerType pointer, Type type)
+    static constexpr uint64_t encode(PointerType pointer, Type type)
     {
+        // bit_cast from a pointer type is not allowed in constant expressions.
+        // Constexpr construction is limited to a null pointer (pointer bits 0).
+        if (std::is_constant_evaluated()) {
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(!pointer);
+            return encodeType(type);
+        }
         return std::bit_cast<uint64_t>(pointer) | encodeType(type);
     }
 
     uint64_t m_data { 0 };
 #else
 public:
-    CompactPointerTuple(PointerType pointer, Type type)
+    constexpr CompactPointerTuple(PointerType pointer, Type type)
         : m_pointer(pointer)
         , m_type(type)
     {
@@ -137,9 +151,9 @@ public:
     {
     }
 
-    PointerType pointer() const { return m_pointer; }
+    constexpr PointerType pointer() const { return m_pointer; }
     void setPointer(PointerType pointer) { m_pointer = pointer; }
-    Type type() const { return m_type; }
+    constexpr Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
 
     void swap(CompactPointerTuple& other)

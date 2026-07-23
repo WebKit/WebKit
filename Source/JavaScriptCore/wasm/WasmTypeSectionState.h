@@ -39,19 +39,13 @@ namespace JSC { namespace Wasm {
 // Subtype/RecursionGroup/Projection are parser-internal classes.
 //
 // TypeIndex (uintptr_t) is overloaded to carry one of:
-//   - Abstract heap type (small negative number representing a TypeKind).
-//   - Bare RTT pointer (untagged, low bits all zero).
-//   - Bare Subtype pointer (tag bit subtypeTagBit set, used in
-//     RecursionGroup::types() to discriminate Subtype members from concrete
-//     RTT members).
-//   - Bare Projection pointer (tag bit projectionTagBit set). Two contexts
-//     use this tag with the same bit: (a) Subtype::superTypes() entries for
-//     intra-rec-group supertype refs, and (b) Type::index values carrying a
-//     placeholder ref during parsing, before rewriteInternalRefs replaces
-//     them with bare canonical RTT*.
+//   - Abstract heap type (64-bit: EnumTaggingTraits on null; 32-bit: negative TypeKind)
+//   - Bare RTT pointer (untagged)
+//   - Bare Subtype pointer (subtypeTagBit), for RecursionGroup::types()
+//   - Bare Projection pointer (projectionTagBit): Subtype::superTypes() intra-group
+//     refs, or Type::index placeholders until rewriteInternalRefs
 //
-// projectionTagBit and subtypeTagBit are independent (different positions);
-// each context knows which (if any) tag may be set on the indices it sees.
+// projectionTagBit / subtypeTagBit are low bits; 64-bit abstract tags use high bits.
 class Subtype;
 class Projection;
 

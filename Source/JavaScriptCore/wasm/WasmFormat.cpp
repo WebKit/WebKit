@@ -87,7 +87,7 @@ void validateWasmValue(uint64_t wasmValue, Type expectedType)
             ASSERT(is<JSWebAssemblyArray>(value));
 
         if (isRefWithTypeIndex(expectedType)) {
-            auto expectedRTT = Wasm::TypeInformation::getCanonicalRTT(expectedType.index);
+            auto expectedRTT = Wasm::TypeInformation::getCanonicalRTT(expectedType.index());
             if (expectedRTT->kind() == RTTKind::Function) {
                 ASSERT(is<JSFunction>(value));
                 return;
@@ -106,7 +106,7 @@ void BlockSignature::dump(PrintStream& out) const
         out.print("("_s);
         CommaPrinter comma;
         for (FunctionArgCount arg = 0; arg < argumentCount(); ++arg)
-            out.print(comma, makeString(argumentType(arg).kind));
+            out.print(comma, makeString(argumentType(arg).kind()));
         out.print(")"_s);
     }
 
@@ -114,7 +114,7 @@ void BlockSignature::dump(PrintStream& out) const
         CommaPrinter comma;
         out.print(" -> ["_s);
         for (FunctionArgCount ret = 0; ret < returnCount(); ++ret)
-            out.print(comma, makeString(returnType(ret).kind));
+            out.print(comma, makeString(returnType(ret).kind()));
         out.print("]"_s);
     }
 }

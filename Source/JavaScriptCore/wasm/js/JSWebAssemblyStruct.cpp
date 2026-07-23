@@ -83,7 +83,7 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     }
     ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
 
-    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {
+    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind()) {
     case TypeKind::I32:
     case TypeKind::F32:
         return *std::bit_cast<uint32_t*>(targetPointer);
@@ -130,7 +130,7 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
     }
     ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
 
-    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {
+    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind()) {
     case TypeKind::I32:
     case TypeKind::F32: {
         *std::bit_cast<uint32_t*>(targetPointer) = static_cast<uint32_t>(argument);
@@ -177,7 +177,7 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, v128_t argument)
 {
     uint8_t* targetPointer = fieldPointer(fieldIndex);
     ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
-    ASSERT(fieldType(fieldIndex).type.as<Wasm::Type>().kind == Wasm::TypeKind::V128);
+    ASSERT(fieldType(fieldIndex).type.as<Wasm::Type>().kind() == Wasm::TypeKind::V128);
     *std::bit_cast<v128_t*>(targetPointer) = argument;
 }
 

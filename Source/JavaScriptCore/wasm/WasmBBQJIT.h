@@ -834,7 +834,7 @@ public:
             for (unsigned i = 0; i < predecessor.resultLocations().size(); ++i) {
                 unsigned offset = expressionStack.size() - predecessor.resultLocations().size();
                 // Intentionally not using implicitSlots since results should not include implicit slot.
-                expressionStack[i + offset].value() = Value::fromTemp(expressionStack[i + offset].type().kind, predecessor.enclosedHeight() + i);
+                expressionStack[i + offset].value() = Value::fromTemp(expressionStack[i + offset].type().kind(), predecessor.enclosedHeight() + i);
                 generator.bind(expressionStack[i + offset].value(), predecessor.resultLocations()[i]);
             }
         }

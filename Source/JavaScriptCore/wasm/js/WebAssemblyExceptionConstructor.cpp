@@ -74,7 +74,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     FixedVector<uint64_t> payload(values.size());
     for (unsigned i = 0; i < values.size(); ++i) {
         auto type = tagFunctionType.argumentType(i);
-        if (type.kind == Wasm::TypeKind::V128 || isExnref(type)) [[unlikely]]
+        if (type.kind() == Wasm::TypeKind::V128 || isExnref(type)) [[unlikely]]
             return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects payload includes neither v128 nor exnref."_s);
         payload[i] = toWebAssemblyValue(globalObject, type, values.at(i));
         RETURN_IF_EXCEPTION(scope, { });

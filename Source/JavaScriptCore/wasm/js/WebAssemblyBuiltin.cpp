@@ -159,7 +159,7 @@ bool WebAssemblyArrayMutI16TypeExpectation::isValid(const Wasm::Type& type) cons
 {
     if (!type.isRefNull())
         return false;
-    RefPtr referentRTT = Wasm::TypeInformation::tryGetRTT(type.index);
+    RefPtr referentRTT = Wasm::TypeInformation::tryGetRTT(type.index());
     if (!referentRTT || referentRTT->kind() != Wasm::RTTKind::Array)
         return false;
     Wasm::FieldType elementType = referentRTT->elementType();

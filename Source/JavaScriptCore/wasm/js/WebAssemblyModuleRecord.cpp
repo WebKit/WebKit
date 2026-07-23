@@ -308,7 +308,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     if (globalValue->global()->mutability() != Wasm::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same mutability"_s)));
                     const auto& declaredGlobalType = moduleInformation.globals[import.kindIndex].type;
-                    switch (declaredGlobalType.kind) {
+                    switch (declaredGlobalType.kind()) {
                     case Wasm::TypeKind::I32:
                     case Wasm::TypeKind::I64:
                     case Wasm::TypeKind::F32:
@@ -336,7 +336,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             if (Wasm::isRefWithTypeIndex(declaredGlobalType) && !value.isNull()) {
-                                Wasm::TypeIndex paramIndex = global.type.index;
+                                Wasm::TypeIndex paramIndex = global.type.index();
                                 Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                                 if (paramIndex != argIndex)
                                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
@@ -349,7 +349,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             auto global = globalValue->global()->get(globalObject);
                             RETURN_IF_EXCEPTION(scope, void());
                             value = Wasm::internalizeExternref(global);
-                            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, declaredGlobalType.isNullable(), declaredGlobalType.index))
+                            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, declaredGlobalType.isNullable(), declaredGlobalType.index()))
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
                             m_instance->setGlobal(import.kindIndex, value);
                         }
@@ -368,7 +368,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     }
 
                     // iii. Append ToWebAssemblyValue(v) to imports.
-                    switch (globalType.kind) {
+                    switch (globalType.kind()) {
                     case Wasm::TypeKind::I32:
                         m_instance->setGlobal(import.kindIndex, value.toInt32(globalObject));
                         break;
@@ -401,7 +401,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             if (Wasm::isRefWithTypeIndex(globalType) && !value.isNull()) {
-                                Wasm::TypeIndex paramIndex = global.type.index;
+                                Wasm::TypeIndex paramIndex = global.type.index();
                                 Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                                 if (paramIndex != argIndex)
                                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
@@ -412,7 +412,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "cannot be exnref"_s)));
                         else {
                             value = Wasm::internalizeExternref(value);
-                            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, global.type.isNullable(), global.type.index))
+                            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, global.type.isNullable(), global.type.index()))
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
                             m_instance->setGlobal(import.kindIndex, value);
                         }
@@ -710,7 +710,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         }
         case Wasm::ExternalKind::Global: {
             const Wasm::GlobalInformation& global = moduleInformation.globals[exp.kindIndex];
-            switch (global.type.kind) {
+            switch (global.type.kind()) {
             case Wasm::TypeKind::Externref:
             case Wasm::TypeKind::Funcref:
             case Wasm::TypeKind::Ref:
@@ -724,7 +724,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 // But we need to create a binding just to export it. This binding is not actually connected. But this is OK since it is immutable.
                 if (global.bindingMode == Wasm::GlobalInformation::BindingMode::EmbeddedInInstance) {
                     RefPtr<Wasm::Global> globalRef;
-                    if (global.type.kind == Wasm::TypeKind::V128) {
+                    if (global.type.kind() == Wasm::TypeKind::V128) {
                         v128_t initialValue = m_instance->loadV128Global(exp.kindIndex);
                         globalRef = Wasm::Global::create(global.type, global.mutability, initialValue);
                     } else {

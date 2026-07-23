@@ -14949,7 +14949,7 @@ IGNORE_CLANG_WARNINGS_END
         for (unsigned i = signature->argumentCount(); i--;) {
             bool isStack = wasmCallInfo.params[i].location.isStackArgument();
             auto type = signature->argumentType(i);
-            switch (type.kind) {
+            switch (type.kind()) {
             case Wasm::TypeKind::I32:
                 if (isStack)
                     arguments.append(ConstrainedValue(lowInt32(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(safeCast<int32_t>(wasmCallInfo.params[i].location.offsetFromSP()))));
@@ -15024,7 +15024,7 @@ IGNORE_CLANG_WARNINGS_END
         if (signature->returnsVoid())
             patchpoint = m_out.patchpoint(Void);
         else {
-            switch (signature->returnType(0).kind) {
+            switch (signature->returnType(0).kind()) {
             case Wasm::TypeKind::I32: {
                 patchpoint = m_out.patchpoint(Int32);
                 patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
@@ -15123,7 +15123,7 @@ IGNORE_CLANG_WARNINGS_END
         if (signature->returnsVoid())
             setJSValue(m_out.constInt64(JSValue::encode(jsUndefined())));
         else {
-            switch (signature->returnType(0).kind) {
+            switch (signature->returnType(0).kind()) {
             case Wasm::TypeKind::I32: {
                 setInt32(patchpoint);
                 break;

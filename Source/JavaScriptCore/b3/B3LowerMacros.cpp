@@ -689,7 +689,7 @@ private:
                     ASSERT(fieldType.is<Wasm::Type>());
                     auto unpacked = fieldType.unpacked();
                     Type b3Type;
-                    switch (unpacked.kind) {
+                    switch (unpacked.kind()) {
                     case Wasm::TypeKind::I32:
                         b3Type = Int32;
                         break;
@@ -848,7 +848,7 @@ private:
                     ASSERT(elementType.is<Wasm::Type>());
                     auto unpacked = elementType.unpacked();
                     Type b3Type;
-                    switch (unpacked.kind) {
+                    switch (unpacked.kind()) {
                     case Wasm::TypeKind::I32:
                         b3Type = Int32;
                         break;
@@ -1373,7 +1373,7 @@ private:
             if (allowNull)
                 return std::nullopt;
 
-            if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType)))
+            if (!Wasm::isTypeIndexHeapType(toHeapType))
                 return std::nullopt;
 
             if (targetRTT->kind() == Wasm::RTTKind::Function)
@@ -1465,7 +1465,7 @@ private:
             currentBlock = nonNullCase;
         }
 
-        if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
+        if (!Wasm::isTypeIndexHeapType(toHeapType)) {
             switch (static_cast<Wasm::TypeKind>(toHeapType)) {
             case Wasm::TypeKind::Funcref:
             case Wasm::TypeKind::Externref:

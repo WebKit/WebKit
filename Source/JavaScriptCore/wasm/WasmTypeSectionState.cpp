@@ -201,8 +201,8 @@ const Projection* TypeSectionState::createPlaceholderProjection(ProjectionIndex 
 
 Type TypeSectionState::substitute(Type type, const RecursionGroup* projectee)
 {
-    if (isRefWithTypeIndex(type) && isPlaceholderRef(type.index)) {
-        const Projection* projection = untagProjection(type.index);
+    if (isRefWithTypeIndex(type) && isPlaceholderRef(type.index())) {
+        const Projection* projection = untagProjection(type.index());
         if (projection->isPlaceholder()) {
             auto* newProjection = createProjection(projectee, projection->projectionIndex());
             TypeKind kind = type.isNullable() ? TypeKind::RefNull : TypeKind::Ref;

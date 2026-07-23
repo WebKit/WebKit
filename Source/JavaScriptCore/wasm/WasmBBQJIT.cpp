@@ -465,9 +465,9 @@ ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature&
         // For TopLevel, use the function's calling convention
         CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(generator.m_functionSignature.get(), CallRole::Callee);
         for (unsigned i = 0; i < m_signature.argumentCount(); ++i)
-            m_argumentLocations.append(Location::fromArgumentLocation(wasmCallInfo.params[i], m_signature.argumentType(i).kind));
+            m_argumentLocations.append(Location::fromArgumentLocation(wasmCallInfo.params[i], m_signature.argumentType(i).kind()));
         for (unsigned i = 0; i < m_signature.returnCount(); ++i)
-            m_resultLocations.append(Location::fromArgumentLocation(wasmCallInfo.results[i], m_signature.returnType(i).kind));
+            m_resultLocations.append(Location::fromArgumentLocation(wasmCallInfo.results[i], m_signature.returnType(i).kind()));
         return;
     }
 
@@ -478,13 +478,13 @@ ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature&
         liveScratchFPRs.forEach([&] (auto r) { fprSetCopy.remove(r); });
 
         for (unsigned i = 0; i < m_signature.argumentCount(); ++i)
-            m_argumentLocations.append(allocateArgumentOrResult(generator, m_signature.argumentType(i).kind, i, gprSetCopy, fprSetCopy));
+            m_argumentLocations.append(allocateArgumentOrResult(generator, m_signature.argumentType(i).kind(), i, gprSetCopy, fprSetCopy));
     }
 
     auto gprSetCopy = generator.validGPRs();
     auto fprSetCopy = generator.validFPRs();
     for (unsigned i = 0; i < m_signature.returnCount(); ++i)
-        m_resultLocations.append(allocateArgumentOrResult(generator, m_signature.returnType(i).kind, i, gprSetCopy, fprSetCopy));
+        m_resultLocations.append(allocateArgumentOrResult(generator, m_signature.returnType(i).kind(), i, gprSetCopy, fprSetCopy));
 }
 
 // This function is intentionally not using implicitSlots since arguments and results should not include implicit slot.
@@ -730,12 +730,12 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     ASSERT(callInfo.params.size() == m_functionSignature->argumentCount());
     for (unsigned i = 0; i < m_functionSignature->argumentCount(); i ++) {
         const Type& type = m_functionSignature->argumentType(i);
-        m_localSlots.append(allocateStack(Value::fromLocal(type.kind, i)));
+        m_localSlots.append(allocateStack(Value::fromLocal(type.kind(), i)));
         m_locals.append(Location::none());
-        m_localTypes.append(type.kind);
+        m_localTypes.append(type.kind());
 
-        Value parameter = Value::fromLocal(type.kind, i);
-        bind(parameter, Location::fromArgumentLocation(callInfo.params[i], type.kind));
+        Value parameter = Value::fromLocal(type.kind(), i);
+        bind(parameter, Location::fromArgumentLocation(callInfo.params[i], type.kind()));
         m_arguments.append(i);
     }
     m_localAndCalleeSaveStorage = m_frameSizeForValidation; // All stack slots allocated so far are locals.
@@ -781,7 +781,7 @@ bool BBQJIT::addArguments(const RTT& signature)
 Value BBQJIT::addConstant(Type type, uint64_t value)
 {
     Value result;
-    switch (type.kind) {
+    switch (type.kind()) {
     case TypeKind::I32:
         result = Value::fromI32(value);
         LOG_INSTRUCTION("I32Const", RESULT(result));
@@ -813,8 +813,8 @@ Value BBQJIT::addConstant(Type type, uint64_t value)
     case TypeKind::Noneref:
     case TypeKind::Nofuncref:
     case TypeKind::Noexternref:
-        result = Value::fromRef(type.kind, static_cast<EncodedJSValue>(value));
-        LOG_INSTRUCTION("RefConst", makeString(type.kind), RESULT(result));
+        result = Value::fromRef(type.kind(), static_cast<EncodedJSValue>(value));
+        LOG_INSTRUCTION("RefConst", makeString(type.kind()), RESULT(result));
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented constant type.\n");
@@ -822,7 +822,7 @@ Value BBQJIT::addConstant(Type type, uint64_t value)
     }
 
     if (Options::disableBBQConsts()) [[unlikely]] {
-        Value stackResult = topValue(type.kind);
+        Value stackResult = topValue(type.kind());
         emitStoreConst(result, canonicalSlot(stackResult));
         result = stackResult;
     }
@@ -841,10 +841,10 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 {
     for (uint32_t i = 0; i < numberOfLocals; i ++) {
         uint32_t localIndex = m_locals.size();
-        m_localSlots.append(allocateStack(Value::fromLocal(type.kind, localIndex)));
+        m_localSlots.append(allocateStack(Value::fromLocal(type.kind(), localIndex)));
         m_localAndCalleeSaveStorage = m_frameSizeForValidation;
         m_locals.append(m_localSlots.last());
-        m_localTypes.append(type.kind);
+        m_localTypes.append(type.kind());
     }
     return { };
 }
@@ -1000,9 +1000,9 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
     // This is probably not ideal, we have infrastructure to support binding locals to registers, but
     // we currently can't track local versioning (meaning we can get SSA-style issues where assigning
     // to a local also updates all previous uses).
-    result = topValue(m_parser->typeOfLocal(localIndex).kind);
+    result = topValue(m_parser->typeOfLocal(localIndex).kind());
     Location resultLocation = allocate(result);
-    emitLoad(Value::fromLocal(m_parser->typeOfLocal(localIndex).kind, localIndex), resultLocation);
+    emitLoad(Value::fromLocal(m_parser->typeOfLocal(localIndex).kind(), localIndex), resultLocation);
     LOG_INSTRUCTION("GetLocal", localIndex, RESULT(result));
     return { };
 }
@@ -1011,7 +1011,7 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 {
     if (!value.isConst())
         loadIfNecessary(value);
-    Value local = Value::fromLocal(m_parser->typeOfLocal(localIndex).kind, localIndex);
+    Value local = Value::fromLocal(m_parser->typeOfLocal(localIndex).kind(), localIndex);
     Location localLocation = locationOf(local);
     emitStore(value, localLocation);
     consume(value);
@@ -1022,12 +1022,12 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 [[nodiscard]] PartialResult BBQJIT::teeLocal(uint32_t localIndex, Value value, Value& result)
 {
     auto type = m_parser->typeOfLocal(localIndex);
-    Value local = Value::fromLocal(type.kind, localIndex);
+    Value local = Value::fromLocal(type.kind(), localIndex);
     if (value.isConst()) {
         Location localLocation = locationOf(local);
         emitStore(value, localLocation);
         consume(value);
-        result = topValue(type.kind);
+        result = topValue(type.kind());
         Location resultLocation = allocate(result);
         emitMoveConst(value, resultLocation);
     } else {
@@ -1035,9 +1035,9 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
         Location localLocation = locationOf(local);
         emitStore(value, localLocation);
         consume(value);
-        result = topValue(type.kind);
+        result = topValue(type.kind());
         Location resultLocation = allocate(result);
-        emitMove(type.kind, srcLocation, resultLocation);
+        emitMove(type.kind(), srcLocation, resultLocation);
     }
     LOG_INSTRUCTION("TeeLocal", localIndex, value, RESULT(result));
     return { };
@@ -1509,7 +1509,7 @@ FloatingPointRange BBQJIT::lookupTruncationRange(TruncationKind truncationKind)
 
     consume(operand); // Allow temp operand location to be reused
 
-    result = topValue(returnType.kind);
+    result = topValue(returnType.kind());
     Location resultLocation = allocate(result);
     TruncationKind kind = truncationKind(truncationOp);
     auto range = lookupTruncationRange(kind);
@@ -1558,7 +1558,7 @@ FloatingPointRange BBQJIT::lookupTruncationRange(TruncationKind truncationKind)
 
         consume(operand);
 
-        result = topValue(returnType.kind);
+        result = topValue(returnType.kind());
         Location resultLocation = allocate(result);
 
         LOG_INSTRUCTION("TruncSaturated", operand, operandLocation, RESULT(result));
@@ -1616,7 +1616,7 @@ FloatingPointRange BBQJIT::lookupTruncationRange(TruncationKind truncationKind)
 
     consume(operand); // Allow temp operand location to be reused
 
-    result = topValue(returnType.kind);
+    result = topValue(returnType.kind());
     Location resultLocation = allocate(result);
 
     LOG_INSTRUCTION("TruncSaturated", operand, operandLocation, RESULT(result));
@@ -3296,7 +3296,7 @@ void BBQJIT::emitEntryTierUpCheck()
 
     LocalOrTempIndex i = 0;
     for (; i < m_arguments.size(); ++i)
-        flushValue(Value::fromLocal(m_parser->typeOfLocal(i).kind, i));
+        flushValue(Value::fromLocal(m_parser->typeOfLocal(i).kind(), i));
 
     // Zero all locals that aren't initialized by arguments.
     enum class ClearMode { Zero, JSNull };
@@ -3367,7 +3367,7 @@ void BBQJIT::emitEntryTierUpCheck()
 
     JIT_COMMENT(m_jit, "initialize locals");
     for (; i < m_locals.size(); ++i) {
-        TypeKind type = m_parser->typeOfLocal(i).kind;
+        TypeKind type = m_parser->typeOfLocal(i).kind();
         switch (type) {
         case TypeKind::I32:
         case TypeKind::I31ref:
@@ -3572,13 +3572,13 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, std::span<const TypedExpr
 
     for (size_t i = 0; i < m_parser->controlStack().size(); ++i) {
         for (const TypedExpression& expr : m_parser->enclosedSliceOf(i))
-            stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
+            stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind()));
     }
 
     for (const TypedExpression& expr : enclosingStack)
-        stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
+        stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind()));
     for (unsigned i = 0; i < data.argumentLocations().size(); i++)
-        stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind));
+        stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind()));
 
     RELEASE_ASSERT(stackMapIndex == numElements);
     m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, BBQCallee::extraOSRValuesForLoopIndex + numElements);
@@ -3697,7 +3697,7 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, std::sp
     const auto& blockSignature = data.signature();
     while (expressionStack.size() < blockSignature.argumentCount()) {
         Type type = blockSignature.argumentType(expressionStack.size());
-        expressionStack.constructAndAppend(type, Value::fromTemp(type.kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + expressionStack.size()));
+        expressionStack.constructAndAppend(type, Value::fromTemp(type.kind(), dataElse.enclosedHeight() + dataElse.implicitSlots() + expressionStack.size()));
     }
 
     dataElse.startBlock(*this, expressionStack);
@@ -3725,7 +3725,7 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, std::sp
     Stack expressionStack;
     const auto& functionSignature = dataElse.signature();
     for (unsigned i = 0; i < functionSignature.argumentCount(); i ++)
-        expressionStack.constructAndAppend(functionSignature.argumentType(i), Value::fromTemp(functionSignature.argumentType(i).kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + i));
+        expressionStack.constructAndAppend(functionSignature.argumentType(i), Value::fromTemp(functionSignature.argumentType(i).kind(), dataElse.enclosedHeight() + dataElse.implicitSlots() + i));
     dataElse.startBlock(*this, expressionStack);
     data = dataElse;
     return { };
@@ -3940,7 +3940,7 @@ void BBQJIT::prepareForExceptions()
         Vector<Location, 8> returnLocationsForShuffle;
         for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i) {
             returnValuesForShuffle.append(returnValues[offset + i]);
-            returnLocationsForShuffle.append(Location::fromArgumentLocation(wasmCallInfo.results[i], returnValues[offset + i].type().kind));
+            returnLocationsForShuffle.append(Location::fromArgumentLocation(wasmCallInfo.results[i], returnValues[offset + i].type().kind()));
         }
         emitShuffle(returnValuesForShuffle, returnLocationsForShuffle);
         LOG_INSTRUCTION("Return", returnLocationsForShuffle);
@@ -4112,7 +4112,7 @@ void BBQJIT::prepareForExceptions()
         unsigned offset = enclosedStack.size() - returnCount;
         for (unsigned i = 0; i < returnCount; ++i) {
             Type type = blockSignature.returnType(i);
-            enclosedStack[offset + i] = TypedExpression(type, Value::fromTemp(type.kind, entryData.enclosedHeight() + entryData.implicitSlots() + i));
+            enclosedStack[offset + i] = TypedExpression(type, Value::fromTemp(type.kind(), entryData.enclosedHeight() + entryData.implicitSlots() + i));
         }
         unbindAllRegisters();
     }
@@ -4356,7 +4356,7 @@ void BBQJIT::saveValuesAcrossCallAndPassArguments(const Args& arguments, const C
     // careful.
     for (size_t i = 0; i < callInfo.params.size(); ++i) {
         auto type = signature.argumentType(i);
-        Location paramLocation = Location::fromArgumentLocation(callInfo.params[i], type.kind);
+        Location paramLocation = Location::fromArgumentLocation(callInfo.params[i], type.kind());
         if (paramLocation.isRegister()) {
             RegisterBinding binding;
             if (paramLocation.isGPR())
@@ -4375,7 +4375,7 @@ void BBQJIT::saveValuesAcrossCallAndPassArguments(const Args& arguments, const C
     parameterLocations.reserveInitialCapacity(callInfo.params.size());
     for (unsigned i = 0; i < callInfo.params.size(); i++) {
         auto type = signature.argumentType(i);
-        auto parameterLocation = Location::fromArgumentLocation(callInfo.params[i], type.kind);
+        auto parameterLocation = Location::fromArgumentLocation(callInfo.params[i], type.kind());
         parameterLocations.append(parameterLocation);
     }
 
@@ -4393,7 +4393,7 @@ template<size_t N>
 void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const RTT& functionType, const CallInformation& callInfo)
 {
     for (size_t i = 0; i < callInfo.results.size(); i ++) {
-        Value result = topValue(functionType.returnType(i).kind, i);
+        Value result = topValue(functionType.returnType(i).kind(), i);
         Location returnLocation = Location::fromArgumentLocation(callInfo.results[i], result.type());
         if (returnLocation.isRegister()) {
             RegisterBinding currentBinding;
@@ -4496,7 +4496,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
         case ValueLocation::Kind::GPRRegister:
         case ValueLocation::Kind::FPRRegister: {
             auto type = signature.argumentType(i);
-            parameterLocations.append(Location::fromArgumentLocation(param, type.kind));
+            parameterLocations.append(Location::fromArgumentLocation(param, type.kind()));
             break;
         }
         case ValueLocation::Kind::StackArgument:
@@ -4777,7 +4777,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         case ValueLocation::Kind::GPRRegister:
         case ValueLocation::Kind::FPRRegister: {
             auto type = signature.argumentType(i);
-            parameterLocations.append(Location::fromArgumentLocation(param, type.kind));
+            parameterLocations.append(Location::fromArgumentLocation(param, type.kind()));
             break;
         }
         case ValueLocation::Kind::StackArgument:

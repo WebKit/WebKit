@@ -86,7 +86,7 @@ Table::Table(uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, W
     : m_maximum(maximum)
     , m_type(type)
     , m_wasmType(wasmType)
-    , m_wasmTypeRTT(TypeInformation::tryGetRTT(wasmType.index))
+    , m_wasmTypeRTT(TypeInformation::tryGetRTT(wasmType.index()))
     , m_isFixedSized(maximum && maximum.value() == initial)
     , m_addressType(addressType)
     , m_owner(nullptr)

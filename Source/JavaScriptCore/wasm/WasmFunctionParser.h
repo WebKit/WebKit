@@ -381,11 +381,11 @@ private:
             out.print("(ref "_s);
             if (type.isNullable())
                 out.print("null "_s);
-            if (typeIndexIsType(type.index))
-                out.print(heapTypeKindAsString(static_cast<TypeKind>(type.index)));
+            if (isAbstractTypeIndex(type.index()))
+                out.print(heapTypeKindAsString(typeIndexAsTypeKind(type.index())));
             // FIXME: use name section if it exists to provide a nicer name.
             else {
-                RefPtr rtt = TypeInformation::tryGetRTT(type.index);
+                RefPtr rtt = TypeInformation::tryGetRTT(type.index());
                 if (rtt && rtt->kind() == RTTKind::Function)
                     out.print("<func:"_s);
                 else if (rtt && rtt->kind() == RTTKind::Array)
@@ -396,7 +396,7 @@ private:
                 }
                 // Print the type section index by searching for the matching type definition.
                 for (uint32_t i = 0; i < m_info.typeCount(); ++i) {
-                    if (m_info.rtt(TypeSignatureIndex(i)).asTypeIndex() == type.index) {
+                    if (m_info.rtt(TypeSignatureIndex(i)).asTypeIndex() == type.index()) {
                         out.print(i);
                         break;
                     }
@@ -771,7 +771,7 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
 
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
     ExpressionType result;
     WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(memoryType, result);
@@ -804,7 +804,7 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
 
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
@@ -848,7 +848,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     }
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
 
     ExpressionType result;
     WASM_TRY_ADD_TO_CONTEXT(atomicLoad(op, memoryType, pointer, result, offset, memoryIndex));
@@ -880,7 +880,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
     WASM_TRY_ADD_TO_CONTEXT(atomicStore(op, memoryType, pointer, value, offset, memoryIndex));
@@ -910,7 +910,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
 
     ExpressionType result;
@@ -944,7 +944,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     WASM_TRY_POP_EXPRESSION_STACK_INTO(expected, "expected"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(expected.type() != memoryType, static_cast<unsigned>(op), " expected type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
 
@@ -979,7 +979,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(!timeout.type().isI64(), static_cast<unsigned>(op), " timeout type mismatch"_s);
 
@@ -1012,7 +1012,7 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(!count.type().isI32(), static_cast<unsigned>(op), " count type mismatch"_s); // The spec's definition is saying i64, but all implementations (including tests) are using i32. So looks like the spec is wrong.
 
     ExpressionType result;
@@ -2038,7 +2038,7 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseBlockSignature(const ModuleInfo
             return parseReftypeSignature(info, result);
 
         Type type = { typeKind, invalidTypeIndex };
-        WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind), " is not a value type or Void"_s);
+        WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind()), " is not a value type or Void"_s);
 
         result = BlockSignature { type };
         m_offset++;
@@ -2185,7 +2185,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         TypedExpression index;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.get"_s);
         Wasm::TypeKind tableAddressType = m_info.tables[tableIndex].addressType().asWasmTypeKind();
-        WASM_VALIDATOR_FAIL_IF(tableAddressType != index.type().kind, "table.get index to type "_s, index.type(), " expected "_s, tableAddressType);
+        WASM_VALIDATOR_FAIL_IF(tableAddressType != index.type().kind(), "table.get index to type "_s, index.type(), " expected "_s, tableAddressType);
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addTableGet(tableIndex, index, result));
@@ -2202,7 +2202,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "table.set"_s);
         WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.set"_s);
         Wasm::TypeKind tableAddressType = m_info.tables[tableIndex].addressType().asWasmTypeKind();
-        WASM_VALIDATOR_FAIL_IF(tableAddressType != index.type().kind, "table.set index to type "_s, index.type(), " expected "_s, tableAddressType);
+        WASM_VALIDATOR_FAIL_IF(tableAddressType != index.type().kind(), "table.set index to type "_s, index.type(), " expected "_s, tableAddressType);
         Type type = m_info.tables[tableIndex].wasmType();
         WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), type), "table.set value to type "_s, value.type(), " expected "_s, type);
         RELEASE_ASSERT(m_info.tables[tableIndex].type() == TableElementType::Externref || m_info.tables[tableIndex].type() == TableElementType::Funcref);
@@ -2230,9 +2230,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "table.init"_s);
 
             Wasm::TypeKind tableAddressType = m_info.tables[immediates.tableIndex].addressType().asWasmTypeKind();
-            WASM_VALIDATOR_FAIL_IF(dstOffset.type().kind != tableAddressType, "table.init dst_offset to type "_s, dstOffset.type(), " expected "_s, tableAddressType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind, "table.init src_offset to type "_s, srcOffset.type(), " expected "_s, TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind, "table.init length to type "_s, length.type(), " expected "_s, TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(dstOffset.type().kind() != tableAddressType, "table.init dst_offset to type "_s, dstOffset.type(), " expected "_s, tableAddressType);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind(), "table.init src_offset to type "_s, srcOffset.type(), " expected "_s, TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind(), "table.init length to type "_s, length.type(), " expected "_s, TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addTableInit(immediates.elementIndex, immediates.tableIndex, dstOffset, srcOffset, length));
             break;
@@ -2267,7 +2267,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             Type tableType = m_info.tables[tableIndex].wasmType();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(fill.type(), tableType), "table.grow expects fill value of type "_s, tableType, " got "_s, fill.type());
             AddressType addressType = m_info.table(tableIndex).addressType();
-            WASM_VALIDATOR_FAIL_IF(delta.type().kind != addressType.asWasmTypeKind(), "table.grow expects an "_s, addressType.is64Bit() ? "i64"_s : "i32"_s, " delta value, got "_s, delta.type());
+            WASM_VALIDATOR_FAIL_IF(delta.type().kind() != addressType.asWasmTypeKind(), "table.grow expects an "_s, addressType.is64Bit() ? "i64"_s : "i32"_s, " delta value, got "_s, delta.type());
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addTableGrow(tableIndex, fill, delta, result));
@@ -2289,8 +2289,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             auto tableType = table.wasmType();
             auto addressTypeKind = table.addressType().asWasmTypeKind();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(fill.type(), tableType), "table.fill expects fill value of type "_s, tableType, " got "_s, fill.type());
-            WASM_VALIDATOR_FAIL_IF(offset.type().kind != addressTypeKind, "table.fill expects an "_s, addressTypeKind, " offset value, got "_s, offset.type());
-            WASM_VALIDATOR_FAIL_IF(count.type().kind != addressTypeKind, "table.fill expects an "_s, addressTypeKind, " count value, got "_s, count.type());
+            WASM_VALIDATOR_FAIL_IF(offset.type().kind() != addressTypeKind, "table.fill expects an "_s, addressTypeKind, " offset value, got "_s, offset.type());
+            WASM_VALIDATOR_FAIL_IF(count.type().kind() != addressTypeKind, "table.fill expects an "_s, addressTypeKind, " count value, got "_s, count.type());
 
             WASM_TRY_ADD_TO_CONTEXT(addTableFill(tableIndex, offset, fill, count));
             break;
@@ -2312,13 +2312,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             auto dstTableAddressType = m_info.tables[immediates.dstTableIndex].addressType();
             auto srcTableAddressType = m_info.tables[immediates.srcTableIndex].addressType();
-            WASM_VALIDATOR_FAIL_IF(dstOffset.type().kind != dstTableAddressType.asWasmTypeKind(), "table.copy dst_offset to type "_s, dstOffset.type(), " expected "_s, dstTableAddressType.asWasmTypeKind());
-            WASM_VALIDATOR_FAIL_IF(srcOffset.type().kind != srcTableAddressType.asWasmTypeKind(), "table.copy src_offset to type "_s, srcOffset.type(), " expected "_s, srcTableAddressType.asWasmTypeKind());
+            WASM_VALIDATOR_FAIL_IF(dstOffset.type().kind() != dstTableAddressType.asWasmTypeKind(), "table.copy dst_offset to type "_s, dstOffset.type(), " expected "_s, dstTableAddressType.asWasmTypeKind());
+            WASM_VALIDATOR_FAIL_IF(srcOffset.type().kind() != srcTableAddressType.asWasmTypeKind(), "table.copy src_offset to type "_s, srcOffset.type(), " expected "_s, srcTableAddressType.asWasmTypeKind());
 
             if (dstTableAddressType.is64Bit() && srcTableAddressType.is64Bit())
-                WASM_VALIDATOR_FAIL_IF(length.type().kind != TypeKind::I64, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(length.type().kind() != TypeKind::I64, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I64);
             else
-                WASM_VALIDATOR_FAIL_IF(length.type().kind != TypeKind::I32, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(length.type().kind() != TypeKind::I32, "table.copy length to type "_s, length.type(), " expected "_s, TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addTableCopy(immediates.dstTableIndex, immediates.srcTableIndex, dstOffset, srcOffset, length));
             break;
@@ -2338,13 +2338,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.fill");
 
             if (m_info.memory(memoryIndex).isMemory64()) {
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind, "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind(), "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind(), "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind(), "memory.fill size to type ", count.type(), " expected ", TypeKind::I64);
             } else {
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind, "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind(), "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind(), "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind(), "memory.fill size to type ", count.type(), " expected ", TypeKind::I32);
             }
 
             WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count, memoryIndex));
@@ -2365,19 +2365,19 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.copy");
 
             if (m_info.memory(dstMemoryIndex).isMemory64())
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind(), "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
             else
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind(), "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
 
             if (m_info.memory(srcMemoryIndex).isMemory64())
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != srcAddress.type().kind(), "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I64);
             else
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind(), "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I32);
 
             if (m_info.memory(dstMemoryIndex).isMemory64() && m_info.memory(srcMemoryIndex).isMemory64())
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind(), "memory.copy size to type ", count.type(), " expected ", TypeKind::I64);
             else
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind(), "memory.copy size to type ", count.type(), " expected ", TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addMemoryCopy(dstAddress, srcAddress, count, dstMemoryIndex, srcMemoryIndex));
             break;
@@ -2396,12 +2396,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.init");
 
             if (m_info.memory(immediates.memoryIndex).isMemory64())
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind(), "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I64);
             else
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind(), "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I32);
 
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.init src address to type ", srcAddress.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind, "memory.init length to type ", length.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind(), "memory.init src address to type ", srcAddress.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind(), "memory.init length to type ", length.type(), " expected ", TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addMemoryInit(immediates.dataSegmentIndex, dstAddress, srcAddress, length, immediates.memoryIndex));
             break;
@@ -2430,10 +2430,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(rhsLo, "i64.add128/sub128"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(lhsHi, "i64.add128/sub128"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(lhsLo, "i64.add128/sub128"_s);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhsLo.type().kind, "i64.add128/sub128 lhs_lo to type "_s, lhsLo.type(), " expected "_s, TypeKind::I64);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhsHi.type().kind, "i64.add128/sub128 lhs_hi to type "_s, lhsHi.type(), " expected "_s, TypeKind::I64);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhsLo.type().kind, "i64.add128/sub128 rhs_lo to type "_s, rhsLo.type(), " expected "_s, TypeKind::I64);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhsHi.type().kind, "i64.add128/sub128 rhs_hi to type "_s, rhsHi.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhsLo.type().kind(), "i64.add128/sub128 lhs_lo to type "_s, lhsLo.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhsHi.type().kind(), "i64.add128/sub128 lhs_hi to type "_s, lhsHi.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhsLo.type().kind(), "i64.add128/sub128 rhs_lo to type "_s, rhsLo.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhsHi.type().kind(), "i64.add128/sub128 rhs_hi to type "_s, rhsHi.type(), " expected "_s, TypeKind::I64);
 
             ExpressionType resultLo;
             ExpressionType resultHi;
@@ -2454,8 +2454,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             TypedExpression lhs;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(rhs, "i64.mul_wide"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(lhs, "i64.mul_wide"_s);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhs.type().kind, "i64.mul_wide lhs to type "_s, lhs.type(), " expected "_s, TypeKind::I64);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhs.type().kind, "i64.mul_wide rhs to type "_s, rhs.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhs.type().kind(), "i64.mul_wide lhs to type "_s, lhs.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhs.type().kind(), "i64.mul_wide rhs to type "_s, rhs.type(), " expected "_s, TypeKind::I64);
 
             ExpressionType resultLo;
             ExpressionType resultHi;
@@ -2489,7 +2489,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addRefI31(value, result));
 
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeIndexFromTypeKind(TypeKind::I31ref) }, result);
             break;
         }
         case ExtGCOpType::I31GetS: {
@@ -2525,7 +2525,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "array.new");
             WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), unpackedElementType), "array.new value to type ", value.type(), " expected ", unpackedElementType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new index to type ", size.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.new index to type ", size.type(), " expected ", TypeKind::I32);
 
             if (unpackedElementType.isV128())
                 m_context.notifyFunctionUsesSIMD();
@@ -2546,7 +2546,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             TypedExpression size;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new_default");
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new_default index to type ", size.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.new_default index to type ", size.type(), " expected ", TypeKind::I32);
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewDefault(typeIndex, size, result));
@@ -2614,12 +2614,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             // Get the array size
             TypedExpression size;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new_data");
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new_data: size has type ", size.type().kind, " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.new_data: size has type ", size.type().kind(), " expected ", TypeKind::I32);
 
             // Get the offset into the data segment
             TypedExpression offset;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "array.new_data");
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "array.new_data: offset has type ", offset.type().kind, " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind(), "array.new_data: offset has type ", offset.type().kind(), " expected ", TypeKind::I32);
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewData(typeIndex, dataIndex, size, offset, result));
@@ -2652,12 +2652,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             // Get the array size
             TypedExpression size;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new_elem");
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new_elem: size has type ", size.type().kind, " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.new_elem: size has type ", size.type().kind(), " expected ", TypeKind::I32);
 
             // Get the offset into the data segment
             TypedExpression offset;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "array.new_elem");
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "array.new_elem: offset has type ", offset.type().kind, " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind(), "array.new_elem: offset has type ", offset.type().kind(), " expected ", TypeKind::I32);
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewElem(typeIndex, elemSegmentIndex, size, offset, result));
@@ -2677,7 +2677,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             // array.get_s and array.get_u are only valid for packed arrays
             if (op == ExtGCOpType::ArrayGetS || op == ExtGCOpType::ArrayGetU)
-                WASM_PARSER_FAIL_IF(!elementType.is<PackedType>(), opName, " applied to wrong type of array -- expected: i8 or i16, found "_s, elementType.as<Type>().kind);
+                WASM_PARSER_FAIL_IF(!elementType.is<PackedType>(), opName, " applied to wrong type of array -- expected: i8 or i16, found "_s, elementType.as<Type>().kind());
 
             // array.get is not valid for packed arrays
             if (op == ExtGCOpType::ArrayGet)
@@ -2689,7 +2689,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "array.get"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.get"_s);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), arrayRefType), opName, " arrayref to type ", arrayref.type(), " expected ", arrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "array.get index to type ", index.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind(), "array.get index to type ", index.type(), " expected ", TypeKind::I32);
 
             if (resultType.isV128())
                 m_context.notifyFunctionUsesSIMD();
@@ -2716,7 +2716,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "array.set"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.set"_s);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), arrayRefType), "array.set arrayref to type ", arrayref.type(), " expected ", arrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "array.set index to type ", index.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind(), "array.set index to type ", index.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), unpackedElementType), "array.set value to type ", value.type(), " expected ", unpackedElementType);
 
             if (unpackedElementType.isV128())
@@ -2729,7 +2729,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         case ExtGCOpType::ArrayLen: {
             TypedExpression arrayref;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.len"_s);
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Arrayref) }), "array.len value to type ", arrayref.type(), " expected arrayref");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), Type { TypeKind::RefNull, typeIndexFromTypeKind(TypeKind::Arrayref) }), "array.len value to type ", arrayref.type(), " expected arrayref");
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayLen(arrayref, result));
@@ -2752,9 +2752,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "array.fill"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.fill"_s);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), arrayRefType), "array.fill arrayref to type ", arrayref.type(), " expected ", arrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "array.fill offset to type ", offset.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind(), "array.fill offset to type ", offset.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), unpackedElementType), "array.fill value to type ", value.type(), " expected ", unpackedElementType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.fill size to type ", size.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.fill size to type ", size.type(), " expected ", TypeKind::I32);
 
             if (unpackedElementType.isV128())
                 m_context.notifyFunctionUsesSIMD();
@@ -2782,10 +2782,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "array.copy"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dst, "array.copy"_s);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(dst.type(), dstArrayRefType), "array.copy dst to type ", dst.type(), " expected ", dstArrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind, "array.copy dstOffset to type ", dstOffset.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind(), "array.copy dstOffset to type ", dstOffset.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(src.type(), srcArrayRefType), "array.copy src to type ", src.type(), " expected ", srcArrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind, "array.copy srcOffset to type ", srcOffset.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.copy size to type ", size.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind(), "array.copy srcOffset to type ", srcOffset.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.copy size to type ", size.type(), " expected ", TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayCopy(dstTypeIndex, dst, dstOffset, srcTypeIndex, src, srcOffset, size));
             break;
@@ -2813,9 +2813,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "array.init_elem"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dst, "array.init_elem"_s);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(dst.type(), dstArrayRefType), "array.init_elem dst to type ", dst.type(), " expected ", dstArrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind, "array.init_elem dstOffset to type ", dstOffset.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind, "array.init_elem srcOffset to type ", srcOffset.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.init_elem size to type ", size.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind(), "array.init_elem dstOffset to type ", dstOffset.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind(), "array.init_elem srcOffset to type ", srcOffset.type(), " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.init_elem size to type ", size.type(), " expected ", TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayInitElem(dstTypeIndex, dst, dstOffset, elemSegmentIndex, srcOffset, size));
             break;
@@ -2838,9 +2838,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "array.init_data"_s);
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dst, "array.init_data"_s);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(dst.type(), dstArrayRefType), "array.init_data dst to type "_s, dst.type(), " expected "_s, dstArrayRefType);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind, "array.init_data dstOffset to type "_s, dstOffset.type(), " expected "_s, TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind, "array.init_data srcOffset to type "_s, srcOffset.type(), " expected "_s, TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.init_data size to type "_s, size.type(), " expected "_s, TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstOffset.type().kind(), "array.init_data dstOffset to type "_s, dstOffset.type(), " expected "_s, TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcOffset.type().kind(), "array.init_data srcOffset to type "_s, srcOffset.type(), " expected "_s, TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind(), "array.init_data size to type "_s, size.type(), " expected "_s, TypeKind::I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayInitData(dstTypeIndex, dst, dstOffset, dataSegmentIndex, srcOffset, size));
             break;
@@ -2901,7 +2901,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, opName));
 
             if (op == ExtGCOpType::StructGetS || op == ExtGCOpType::StructGetU)
-                WASM_PARSER_FAIL_IF(!structGetInput.field.type.template is<PackedType>(), opName, " applied to wrong type of struct -- expected: i8 or i16, found "_s, structGetInput.field.type.template as<Type>().kind);
+                WASM_PARSER_FAIL_IF(!structGetInput.field.type.template is<PackedType>(), opName, " applied to wrong type of struct -- expected: i8 or i16, found "_s, structGetInput.field.type.template as<Type>().kind());
 
             if (op == ExtGCOpType::StructGet)
                 WASM_PARSER_FAIL_IF(structGetInput.field.type.template is<PackedType>(), opName, " applied to packed array of "_s, structGetInput.field.type.template as<PackedType>(), " -- use struct.get_s or struct.get_u"_s);
@@ -2946,8 +2946,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, opName);
             WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), opName, " to type "_s, ref.type(), " expected a reference type"_s);
 
-            TypeIndex resultTypeIndex = static_cast<TypeIndex>(heapType);
-            if (typeIndexIsType(resultTypeIndex)) {
+            TypeIndex resultTypeIndex;
+            if (!isTypeIndexHeapType(heapType)) {
+                resultTypeIndex = typeIndexFromTypeKind(static_cast<TypeKind>(heapType));
                 switch (static_cast<TypeKind>(heapType)) {
                 case TypeKind::Funcref:
                 case TypeKind::Nofuncref:
@@ -3014,12 +3015,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             if (isTypeIndexHeapType(heapType1))
                 typeIndex1 = m_info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType1)).asTypeIndex();
             else
-                typeIndex1 = static_cast<TypeIndex>(heapType1);
+                typeIndex1 = typeIndexFromTypeKind(static_cast<TypeKind>(heapType1));
 
             if (isTypeIndexHeapType(heapType2))
                 typeIndex2 = m_info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType2)).asTypeIndex();
             else
-                typeIndex2 = static_cast<TypeIndex>(heapType2);
+                typeIndex2 = typeIndexFromTypeKind(static_cast<TypeKind>(heapType2));
 
             // Manually pop the stack in order to avoid decreasing the stack size, as we will immediately put it back.
             TypedExpression ref;
@@ -3132,7 +3133,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             TypeIndex typeIndex = m_info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType)).asTypeIndex();
             typeOfNull = Type { TypeKind::RefNull, typeIndex };
         } else
-            typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
+            typeOfNull = Type { TypeKind::RefNull, typeIndexFromTypeKind(static_cast<TypeKind>(heapType)) };
         m_expressionStack.constructAndAppend(typeOfNull, m_context.addConstant(typeOfNull, JSValue::encode(jsNull())));
         return { };
     }
@@ -3170,7 +3171,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
 
-        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index() }, result);
         return { };
     }
 
@@ -3188,7 +3189,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, expressionStack(), false, result));
-        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index() }, result);
 
         return { };
     }
@@ -3201,7 +3202,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         // Pop the stack manually to avoid changing the stack size, because the branch needs the value with a different type.
         WASM_PARSER_FAIL_IF(m_expressionStack.size() == m_currentStackBegin, "can't pop empty stack in br_on_non_null"_s);
         ref = m_expressionStack.takeLast();
-        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, ref.value());
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index() }, ref.value());
         WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type "_s, ref.type(), " expected a reference type"_s);
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
@@ -3224,8 +3225,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         TypedExpression ref1;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(ref0, "ref.eq"_s);
         WASM_TRY_POP_EXPRESSION_STACK_INTO(ref1, "ref.eq"_s);
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(ref0.type(), eqrefType()), "ref.eq ref0 to type "_s, ref0.type().kind, " expected "_s, TypeKind::Eqref);
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(ref1.type(), eqrefType()), "ref.eq ref1 to type "_s, ref1.type().kind, " expected "_s, TypeKind::Eqref);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(ref0.type(), eqrefType()), "ref.eq ref0 to type "_s, ref0.type().kind(), " expected "_s, TypeKind::Eqref);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(ref1.type(), eqrefType()), "ref.eq ref1 to type "_s, ref1.type().kind(), " expected "_s, TypeKind::Eqref);
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefEq(ref0, ref1, result));
@@ -3301,7 +3302,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         Type globalType = m_info.globals[index].type;
         ASSERT(isValueType(globalType));
 
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), globalType), "set_global "_s, index, " with type "_s, globalType.kind, " with a variable of type "_s, value.type().kind);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), globalType), "set_global "_s, index, " with type "_s, globalType.kind(), " with a variable of type "_s, value.type().kind());
 
         if (globalType.isV128())
             m_context.notifyFunctionUsesSIMD();
@@ -3385,7 +3386,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size() - m_currentStackBegin, "call_indirect expects "_s, argumentCount, " arguments, but the expression stack currently holds "_s, m_expressionStack.size() - m_currentStackBegin, " values"_s);
 
         Wasm::Type tableAddressType = m_info.table(tableIndex).addressType().asWasmType();
-        WASM_VALIDATOR_FAIL_IF(tableAddressType!= m_expressionStack.last().type(), "call_indirect index to type "_s, m_expressionStack.last().type().kind, " expected "_s, tableAddressType.kind);
+        WASM_VALIDATOR_FAIL_IF(tableAddressType!= m_expressionStack.last().type(), "call_indirect index to type "_s, m_expressionStack.last().type().kind(), " expected "_s, tableAddressType.kind());
 
         ArgumentList args;
         WASM_ALLOCATOR_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for "_s, argumentCount, " call_indirect arguments"_s);
@@ -3723,7 +3724,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             }
             if (catchTarget.type == CatchKind::CatchRef || catchTarget.type == CatchKind::CatchAllRef) {
                 ExpressionType exp;
-                results.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::Exnref) }, exp);
+                results.constructAndAppend(Type { TypeKind::Ref, typeIndexFromTypeKind(TypeKind::Exnref) }, exp);
             }
 
             WASM_VALIDATOR_FAIL_IF(results.size() != target.branchTargetArity());
@@ -4536,12 +4537,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             if (isTypeIndexHeapType(heapType1))
                 typeIndex1 = m_info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType1)).asTypeIndex();
             else
-                typeIndex1 = static_cast<TypeIndex>(heapType1);
+                typeIndex1 = typeIndexFromTypeKind(static_cast<TypeKind>(heapType1));
 
             if (isTypeIndexHeapType(heapType2))
                 typeIndex2 = m_info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType2)).asTypeIndex();
             else
-                typeIndex2 = static_cast<TypeIndex>(heapType2);
+                typeIndex2 = typeIndexFromTypeKind(static_cast<TypeKind>(heapType2));
 
             WASM_VALIDATOR_FAIL_IF(!isSubtype(Type { hasNull2 ? TypeKind::RefNull : TypeKind::Ref, typeIndex2 }, Type { hasNull1 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 }), "target heaptype was not a subtype of source heaptype for "_s, opName);
             return { };

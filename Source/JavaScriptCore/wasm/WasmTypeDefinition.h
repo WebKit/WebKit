@@ -288,7 +288,7 @@ using SupertypeCount = uint32_t;
 
 ALWAYS_INLINE Width Type::width() const
 {
-    switch (kind) {
+    switch (kind()) {
 #define CREATE_CASE(name, id, b3type, inc, wasmName, width, ...) case TypeKind::name: return widthForBytes(width / 8);
     FOR_EACH_WASM_TYPE(CREATE_CASE)
 #undef CREATE_CASE
@@ -300,7 +300,7 @@ ALWAYS_INLINE Width Type::width() const
 #define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
 inline B3::Type toB3Type(Type type)
 {
-    switch (type.kind) {
+    switch (type.kind()) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -396,7 +396,7 @@ public:
     size_t elementSize() const
     {
         if (is<Type>()) {
-            switch (as<Type>().kind) {
+            switch (as<Type>().kind()) {
             case Wasm::TypeKind::I32:
             case Wasm::TypeKind::F32:
                 return sizeof(uint32_t);
@@ -432,14 +432,14 @@ public:
     int8_t typeCode() const
     {
         if (is<Type>())
-            return static_cast<int8_t>(as<Type>().kind);
+            return static_cast<int8_t>(as<Type>().kind());
         return static_cast<int8_t>(as<PackedType>());
     }
 
     TypeIndex index() const
     {
         if (is<Type>())
-            return as<Type>().index;
+            return as<Type>().index();
         return 0;
     }
     void dump(WTF::PrintStream& out) const;
@@ -450,7 +450,7 @@ private:
 
 inline ASCIILiteral makeString(const StorageType& storageType)
 {
-    return(storageType.is<Type>() ? makeString(storageType.as<Type>().kind) :
+    return(storageType.is<Type>() ? makeString(storageType.as<Type>().kind()) :
         makeString(storageType.as<PackedType>()));
 }
 
@@ -466,7 +466,7 @@ inline size_t typeSizeInBytes(const StorageType& storageType)
         }
         }
     }
-    return typeKindSizeInBytes(storageType.as<Type>().kind);
+    return typeKindSizeInBytes(storageType.as<Type>().kind());
 }
 
 inline size_t typeAlignmentInBytes(const StorageType& storageType)

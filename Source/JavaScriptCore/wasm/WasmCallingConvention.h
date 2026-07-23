@@ -168,7 +168,7 @@ private:
     {
         ASSERT(isValueType(valueType));
         unsigned valueSize = bytesForWidth(valueType.width());
-        switch (valueType.kind) {
+        switch (valueType.kind()) {
         case TypeKind::I32:
         case TypeKind::I64:
         case TypeKind::Funcref:
@@ -254,7 +254,7 @@ private:
     ArgumentLocation marshallLocation(CallRole role, Type valueType, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
     {
         ASSERT(isValueType(valueType));
-        switch (valueType.kind) {
+        switch (valueType.kind()) {
         case TypeKind::I32:
         case TypeKind::I64:
         case TypeKind::Funcref:
@@ -359,7 +359,7 @@ private:
     {
         ASSERT(isValueType(valueType));
         unsigned alignedWidth = bytesForWidth(valueType.width());
-        switch (valueType.kind) {
+        switch (valueType.kind()) {
         case TypeKind::I64:
         case TypeKind::Funcref:
         case TypeKind::Exnref:
@@ -387,7 +387,7 @@ public:
         uint32_t fprIndex = 0;
         uint32_t stackCount = 0;
         for (uint32_t i = 0; i < signature.returnCount(); i++) {
-            switch (signature.returnType(i).kind) {
+            switch (signature.returnType(i).kind()) {
             case TypeKind::I64:
             case TypeKind::Funcref:
             case TypeKind::Exnref:
@@ -428,7 +428,7 @@ public:
         uint32_t fprIndex = 0;
         uint32_t stackCount = 0;
         for (uint32_t i = 0; i < signature.argumentCount(); i++) {
-            switch (signature.argumentType(i).kind) {
+            switch (signature.argumentType(i).kind()) {
             case TypeKind::I64:
             case TypeKind::Funcref:
             case TypeKind::Exnref:

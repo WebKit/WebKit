@@ -73,7 +73,7 @@ void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     for (unsigned i = 0; i < tagType.argumentCount(); ++i) {
         if (isRefType(tagType.argumentType(i)))
             visitor.append(std::bit_cast<WriteBarrier<Unknown>>(exception->payload()[offset]));
-        offset += tagType.argumentType(i).kind == Wasm::TypeKind::V128 ? 2 : 1;
+        offset += tagType.argumentType(i).kind() == Wasm::TypeKind::V128 ? 2 : 1;
     }
     visitor.reportExtraMemoryVisited(exception->payload().size());
 }
@@ -93,7 +93,7 @@ JSValue JSWebAssemblyException::getArg(JSGlobalObject* globalObject, unsigned i)
     SUPPRESS_UNCOUNTED_LOCAL const auto& tagType = tag().type();
     ASSERT(i < tagType.argumentCount());
 
-    auto argTypeKind = tagType.argumentType(i).kind;
+    auto argTypeKind = tagType.argumentType(i).kind();
     if (argTypeKind == Wasm::TypeKind::V128 || argTypeKind == Wasm::TypeKind::Exnref) {
         throwTypeError(globalObject, scope, "argument type cannot be a V128 or exnref");
         return { };
@@ -101,7 +101,7 @@ JSValue JSWebAssemblyException::getArg(JSGlobalObject* globalObject, unsigned i)
 
     unsigned offset = 0;
     for (unsigned j = 0; j < i; ++j)
-        offset += tagType.argumentType(j).kind == Wasm::TypeKind::V128 ? 2 : 1;
+        offset += tagType.argumentType(j).kind() == Wasm::TypeKind::V128 ? 2 : 1;
     RELEASE_AND_RETURN(scope, toJSValue(globalObject, tagType.argumentType(i), payload()[offset]));
 }
 

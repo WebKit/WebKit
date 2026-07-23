@@ -174,7 +174,7 @@ constexpr int32_t minI31ref = -1073741824;
 
 inline bool isValueType(Type type)
 {
-    switch (type.kind) {
+    switch (type.kind()) {
     case TypeKind::I32:
     case TypeKind::I64:
     case TypeKind::F32:
@@ -186,7 +186,7 @@ inline bool isValueType(Type type)
         return false;
     case TypeKind::Ref:
     case TypeKind::RefNull:
-        return type.index != invalidTypeIndex;
+        return type.index() != invalidTypeIndex;
     case TypeKind::V128:
         return Options::useWasmSIMD();
     default:
@@ -226,50 +226,50 @@ inline bool isRefType(StorageType type)
 
 inline bool isExternref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Externref);
 }
 
 inline bool isFuncref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Funcref);
 }
 
 inline bool isEqref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Eqref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Eqref);
 }
 
 inline bool isAnyref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Anyref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Anyref);
 }
 
 inline bool isNoexnref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noexnref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Noexnref);
 }
 
 inline bool isNoneref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noneref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Noneref);
 }
 
 inline bool isNofuncref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nofuncref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Nofuncref);
 }
 
 inline bool isNoexternref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noexternref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Noexternref);
 }
 
 inline bool isInternalref(Type type)
 {
     if (!isRefType(type))
         return false;
-    if (typeIndexIsType(type.index)) {
-        switch (static_cast<TypeKind>(type.index)) {
+    if (isAbstractTypeIndex(type.index())) {
+        switch (typeIndexAsTypeKind(type.index())) {
         case TypeKind::I31ref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
@@ -281,32 +281,32 @@ inline bool isInternalref(Type type)
             return false;
         }
     }
-    return TypeInformation::getCanonicalRTT(type.index)->kind() != RTTKind::Function;
+    return TypeInformation::getCanonicalRTT(type.index())->kind() != RTTKind::Function;
 }
 
 inline bool isI31ref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::I31ref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::I31ref);
 }
 
 inline bool isArrayref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Arrayref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Arrayref);
 }
 
 inline bool isStructref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Structref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Structref);
 }
 
 inline bool isExnref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Exnref);
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Exnref);
 }
 
 inline JSString* typeToJSAPIString(VM& vm, Type type)
 {
-    switch (type.kind) {
+    switch (type.kind()) {
     case TypeKind::I32:
         return jsNontrivialString(vm, "i32"_s);
     case TypeKind::I64:
@@ -331,44 +331,44 @@ inline JSString* typeToJSAPIString(VM& vm, Type type)
 
 inline Type nonNullFuncrefType()
 {
-    return Wasm::Type { Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
+    return Wasm::Type { Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Funcref) };
 }
 
 inline Type funcrefType()
 {
-    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
+    return Wasm::Type { Wasm::TypeKind::RefNull, typeIndexFromTypeKind(Wasm::TypeKind::Funcref) };
 }
 
 inline Type externrefType(bool isNullable = true)
 {
-    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Externref) };
 }
 
 inline Type eqrefType()
 {
-    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Eqref) };
+    return Wasm::Type { Wasm::TypeKind::RefNull, typeIndexFromTypeKind(Wasm::TypeKind::Eqref) };
 }
 
 inline Type anyrefType(bool isNullable = true)
 {
-    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Anyref) };
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Anyref) };
 }
 
 inline Type arrayrefType(bool isNullable = true)
 {
     // Returns a non-null ref type, since this is used for the return types of array operations
     // that are guaranteed to return a non-null array reference
-    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Arrayref) };
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Arrayref) };
 }
 
 inline Type exnrefType()
 {
-    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exnref) };
+    return Wasm::Type { Wasm::TypeKind::RefNull, typeIndexFromTypeKind(Wasm::TypeKind::Exnref) };
 }
 
 inline bool isRefWithTypeIndex(Type type)
 {
-    return isRefType(type) && !typeIndexIsType(type.index);
+    return isRefType(type) && !isAbstractTypeIndex(type.index());
 }
 
 inline bool isTypeIndexHeapType(int32_t heapType)
@@ -396,9 +396,9 @@ inline bool isSubtypeSlow(Type sub, Type parent)
 
     if (isRefWithTypeIndex(sub)) {
         if (isRefWithTypeIndex(parent))
-            return isSubtypeIndex(sub.index, parent.index);
+            return isSubtypeIndex(sub.index(), parent.index());
 
-        Ref<const RTT> subRTT = TypeInformation::getCanonicalRTT(sub.index);
+        Ref<const RTT> subRTT = TypeInformation::getCanonicalRTT(sub.index());
 
         if ((isAnyref(parent) || isEqref(parent)))
             return subRTT->kind() != RTTKind::Function;
@@ -432,7 +432,7 @@ inline bool isSubtypeSlow(Type sub, Type parent)
         return true;
 
     if (sub.isRef() && parent.isRefNull())
-        return sub.index == parent.index;
+        return sub.index() == parent.index();
 
     return false;
 }

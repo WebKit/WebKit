@@ -198,7 +198,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
     IndexingType indexingType = ArrayWithUndecided;
     for (unsigned i = 0; i < signature.returnCount(); ++i) {
         Type type = signature.returnType(i);
-        switch (type.kind) {
+        switch (type.kind()) {
         case TypeKind::I32:
             indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithInt32);
             break;
@@ -230,7 +230,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
         Type type = signature.returnType(i);
         JSValue result;
         if (loc.isGPR() || loc.isFPR()) {
-            switch (type.kind) {
+            switch (type.kind()) {
             case TypeKind::I32:
                 result = jsNumber(*access.operator()<int32_t>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
                 break;
@@ -249,7 +249,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
                 break;
             }
         } else {
-            switch (type.kind) {
+            switch (type.kind()) {
             case TypeKind::I32:
                 result = jsNumber(*access.operator()<int32_t>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP()));
                 break;
@@ -333,7 +333,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
         auto wasmParam = wasmCC.params[argNum].location;
         auto dst = jsCC.params[argNum].location.offsetFromFP();
 
-        switch (argType.kind) {
+        switch (argType.kind()) {
         case TypeKind::Void:
         case TypeKind::Func:
         case TypeKind::Struct:
@@ -488,7 +488,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 
     if (signature.returnCount() == 1) {
         const auto& returnType = signature.returnType(0);
-        switch (returnType.kind) {
+        switch (returnType.kind()) {
         case TypeKind::I32: {
             if (!returned.isNumber() || !returned.isInt32()) {
                 // slow path
@@ -573,7 +573,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     }
 
                     if (isRefWithTypeIndex(returnType) && !value.isNull()) {
-                        Wasm::TypeIndex paramIndex = returnType.index;
+                        Wasm::TypeIndex paramIndex = returnType.index();
                         Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                         if (paramIndex != argIndex) {
                             throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
@@ -584,7 +584,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                 } else {
                     // operationConvertToAnyref
                     value = Wasm::internalizeExternref(value);
-                    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index)) [[unlikely]] {
+                    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index())) [[unlikely]] {
                         throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         OPERATION_RETURN(scope);
                     }
@@ -626,7 +626,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 
         uint64_t unboxedValue = 0;
         const auto& returnType = signature.returnType(index);
-        switch (returnType.kind) {
+        switch (returnType.kind()) {
         case TypeKind::I32:
             unboxedValue = static_cast<uint32_t>(value.toInt32(globalObject));
             OPERATION_RETURN_IF_EXCEPTION(scope);
@@ -660,7 +660,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                         OPERATION_RETURN(scope);
                     }
                     if (Wasm::isRefWithTypeIndex(returnType) && !value.isNull()) {
-                        Wasm::TypeIndex paramIndex = returnType.index;
+                        Wasm::TypeIndex paramIndex = returnType.index();
                         Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                         if (paramIndex != argIndex) {
                             throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
@@ -669,7 +669,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     }
                 } else {
                     value = Wasm::internalizeExternref(value);
-                    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index)) [[unlikely]] {
+                    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index())) [[unlikely]] {
                         throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         OPERATION_RETURN(scope);
                     }
@@ -1324,7 +1324,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JSWebAssemb
     Type resultType = signature->returnType(0);
 
     if (isRefWithTypeIndex(resultType) && !value.isNull()) {
-        Wasm::TypeIndex paramIndex = resultType.index;
+        Wasm::TypeIndex paramIndex = resultType.index();
         Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
         if (paramIndex != argIndex)
             OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s));
@@ -1347,7 +1347,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JSWebAssembl
 
     JSValue value = JSValue::decode(v);
     value = Wasm::internalizeExternref(value);
-    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, resultType.isNullable(), resultType.index)) [[unlikely]]
+    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, resultType.isNullable(), resultType.index())) [[unlikely]]
         OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s));
 
     OPERATION_RETURN(scope, JSValue::encode(value));
@@ -1406,7 +1406,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
 
         uint64_t unboxedValue = 0;
         const auto& returnType = signature->returnType(index);
-        switch (returnType.kind) {
+        switch (returnType.kind()) {
         case TypeKind::I32:
             unboxedValue = static_cast<uint32_t>(value.toInt32(globalObject));
             break;
@@ -1436,7 +1436,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
                         OPERATION_RETURN(scope);
                     }
                     if (Wasm::isRefWithTypeIndex(returnType) && !value.isNull()) {
-                        Wasm::TypeIndex paramIndex = returnType.index;
+                        Wasm::TypeIndex paramIndex = returnType.index();
                         Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                         if (paramIndex != argIndex) {
                             throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
@@ -1445,7 +1445,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
                     }
                 } else {
                     value = Wasm::internalizeExternref(value);
-                    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index)) [[unlikely]] {
+                    if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index())) [[unlikely]] {
                         throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         OPERATION_RETURN(scope);
                     }
@@ -1865,8 +1865,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRefTest, UCPUStrictInt32, (JSWebA
     int32_t truth = shouldNegate ? 0 : 1;
     int32_t falsity = shouldNegate ? 1 : 0;
 
-    if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType))) {
-        bool result = Wasm::refCast(reference, static_cast<bool>(allowNull), static_cast<Wasm::TypeIndex>(heapType));
+    if (!Wasm::isTypeIndexHeapType(heapType)) {
+        bool result = Wasm::refCast(reference, static_cast<bool>(allowNull), Wasm::typeIndexFromTypeKind(static_cast<Wasm::TypeKind>(heapType)));
         return toUCPUStrictInt32(result ? truth : falsity);
     }
 
@@ -1877,8 +1877,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRefTest, UCPUStrictInt32, (JSWebA
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRefCast, EncodedJSValue, (JSWebAssemblyInstance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))
 {
-    if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType))) {
-        if (!Wasm::refCast(reference, static_cast<bool>(allowNull), static_cast<Wasm::TypeIndex>(heapType))) [[unlikely]]
+    if (!Wasm::isTypeIndexHeapType(heapType)) {
+        if (!Wasm::refCast(reference, static_cast<bool>(allowNull), Wasm::typeIndexFromTypeKind(static_cast<Wasm::TypeKind>(heapType)))) [[unlikely]]
             return encodedJSValue();
         return reference;
     }

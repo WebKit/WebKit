@@ -2535,7 +2535,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     const auto& signature = m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
     unsigned offset = 0;
     for (unsigned i = 0; i < signature.argumentCount(); ++i)
-        offset += signature.argumentType(i).kind == TypeKind::V128 ? 2 : 1;
+        offset += signature.argumentType(i).kind() == TypeKind::V128 ? 2 : 1;
     unsigned throwCalleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(offset * sizeof(uint64_t));
     m_metadata->m_maxCalleeStackSize = std::max(throwCalleeStackSize, m_metadata->m_maxCalleeStackSize);
 

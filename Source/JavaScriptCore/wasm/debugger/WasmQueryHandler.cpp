@@ -399,7 +399,7 @@ void QueryHandler::handleWasmLocal(StringView packet)
     logWasmLocalValue(localIndex, local, localType);
 
     String response;
-    uint32_t width = typeKindToWidth(localType.kind);
+    uint32_t width = typeKindToWidth(localType.kind());
     switch (width) {
     case 32: {
         response = toNativeEndianHex(local.i32);
@@ -410,12 +410,12 @@ void QueryHandler::handleWasmLocal(StringView packet)
         break;
     }
     case 128: {
-        RELEASE_ASSERT(localType.kind == TypeKind::V128, "Expected V128 for 128-bit type");
+        RELEASE_ASSERT(localType.kind() == TypeKind::V128, "Expected V128 for 128-bit type");
         response = toNativeEndianHex(local.v128);
         break;
     }
     default:
-        RELEASE_ASSERT(false, "Unsupported TypeKind bit size: ", width, " for TypeKind: ", localType.kind);
+        RELEASE_ASSERT(false, "Unsupported TypeKind bit size: ", width, " for TypeKind: ", localType.kind());
         break;
     }
     m_debugServer.sendReply(response);
@@ -467,7 +467,7 @@ void QueryHandler::handleWasmGlobal(StringView packet)
     }
 
     Type globalType = moduleInfo.global(globalIndex).type;
-    uint32_t width = typeKindToWidth(globalType.kind);
+    uint32_t width = typeKindToWidth(globalType.kind());
 
     String response;
     switch (width) {

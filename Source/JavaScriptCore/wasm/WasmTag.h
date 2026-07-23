@@ -44,7 +44,7 @@ public:
     {
         size_t result = 0;
         for (size_t i = 0; i < parameterCount(); i ++)
-            result += m_rtt->argumentType(i).kind == TypeKind::V128 ? 2 : 1;
+            result += m_rtt->argumentType(i).kind() == TypeKind::V128 ? 2 : 1;
         return result;
     }
 

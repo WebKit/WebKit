@@ -200,7 +200,7 @@ ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
 
 ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type type, uint64_t bits)
 {
-    switch (type.kind) {
+    switch (type.kind()) {
     case Wasm::TypeKind::Void:
         return jsUndefined();
     case Wasm::TypeKind::I32:
@@ -228,7 +228,7 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    switch (type.kind) {
+    switch (type.kind()) {
     case Wasm::TypeKind::I32:
         RELEASE_AND_RETURN(scope, value.toInt32(globalObject));
     case Wasm::TypeKind::I64:
@@ -260,7 +260,7 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
             RELEASE_ASSERT_NOT_REACHED();
         else {
             value = Wasm::internalizeExternref(value);
-            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, type.isNullable(), type.index)) {
+            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, type.isNullable(), type.index())) {
                 // FIXME: provide a better error message here
                 // https://bugs.webkit.org/show_bug.cgi?id=247746
                 return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);

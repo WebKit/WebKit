@@ -97,7 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
 
     uint64_t initialValue = 0;
     JSValue argument = callFrame->argument(1);
-    switch (type.kind) {
+    switch (type.kind()) {
     case Wasm::TypeKind::I32: {
         if (!argument.isUndefined()) {
             int32_t value = argument.toInt32(globalObject);

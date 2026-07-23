@@ -47,7 +47,7 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
 {
     auto boxNativeCalleeResult = [](CCallHelpers& jit, Type type, ValueLocation src, JSValueRegs dst) {
         JIT_COMMENT(jit, "boxNativeCalleeResult ", type);
-        switch (type.kind) {
+        switch (type.kind()) {
         case TypeKind::Void:
             jit.moveTrustedValue(jsUndefined(), dst);
             break;
@@ -125,7 +125,7 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
                 ASSERT(!loc.isGPR() || savedResultRegisters.find(loc.jsr().payloadGPR())->offset() + 4 == savedResultRegisters.find(loc.jsr().tagGPR())->offset());
 #endif
                 auto address = CCallHelpers::Address(CCallHelpers::stackPointerRegister, wasmFrameConvention.headerAndArgumentStackSizeInBytes);
-                switch (type.kind) {
+                switch (type.kind()) {
                 case TypeKind::F32:
                 case TypeKind::F64:
                     boxNativeCalleeResult(jit, type, loc, scratchJSR);
@@ -144,7 +144,7 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
                     auto readLocation = CCallHelpers::Address(CCallHelpers::stackPointerRegister, loc.offsetFromSP() + stackResultReadOffset);
                     auto writeLocation = CCallHelpers::Address(CCallHelpers::stackPointerRegister, loc.offsetFromSP());
                     ValueLocation tmp;
-                    switch (type.kind) {
+                    switch (type.kind()) {
                     case TypeKind::F32:
                         tmp = ValueLocation { fprScratch };
                         jit.loadFloat(readLocation, fprScratch);
@@ -167,7 +167,7 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
                 }
             }
 
-            switch (type.kind) {
+            switch (type.kind()) {
             case TypeKind::I32:
                 indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithInt32);
                 break;
@@ -637,7 +637,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
         auto type = argumentType(i);
         JIT_COMMENT(jit, "Arg ", i, " : ", type);
-        switch (type.kind) {
+        switch (type.kind()) {
         case Wasm::TypeKind::I32: {
             materializeTagRegistersIfNeeded();
             jit.loadValue(jsParam, scratchJSR);
@@ -684,7 +684,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         case Wasm::TypeKind::RefNull:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Externref: {
-            if (Wasm::isFuncref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::TypeInformation::tryGetRTT(type.index) && Wasm::TypeInformation::tryGetRTT(type.index)->kind() == Wasm::RTTKind::Function)) {
+            if (Wasm::isFuncref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::TypeInformation::tryGetRTT(type.index()) && Wasm::TypeInformation::tryGetRTT(type.index())->kind() == Wasm::RTTKind::Function)) {
                 // Ensure we have a WASM exported function.
                 jit.loadValue(jsParam, scratchJSR);
                 auto isNull = jit.branchIfNull(scratchJSR);
@@ -703,7 +703,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
                 isWasmFunction.link(&jit);
                 if (Wasm::isRefWithTypeIndex(type)) {
-                    auto targetRTT = TypeInformation::getCanonicalRTT(type.index);
+                    auto targetRTT = TypeInformation::getCanonicalRTT(type.index());
                     jit.loadPtr(jsParam, scratchJSR.payloadGPR());
                     jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), WebAssemblyFunctionBase::offsetOfRTT()), scratchJSR.payloadGPR());
                     slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchJSR.payloadGPR(), CCallHelpers::TrustedImmPtr(targetRTT.ptr())));

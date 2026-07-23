@@ -325,14 +325,14 @@ ALWAYS_INLINE bool ParserBase::parseValueType(const ModuleInformation& info, Typ
     TypeKind typeKind = static_cast<TypeKind>(kind);
     TypeIndex typeIndex = 0;
     if (isValidHeapTypeKind(kind)) {
-        typeIndex = static_cast<TypeIndex>(typeKind);
+        typeIndex = typeIndexFromTypeKind(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
         int32_t heapType;
         if (!parseHeapType(info, heapType))
             return false;
         if (heapType < 0)
-            typeIndex = static_cast<TypeIndex>(heapType);
+            typeIndex = typeIndexFromTypeKind(static_cast<TypeKind>(heapType));
         else {
             // For recursive references inside recursion groups, we construct a
             // placeholder projection with an invalid group index. These should

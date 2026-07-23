@@ -45,7 +45,7 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    switch (m_type.kind) {
+    switch (m_type.kind()) {
     case TypeKind::I32:
         return jsNumber(std::bit_cast<int32_t>(static_cast<uint32_t>(m_value.m_primitive)));
     case TypeKind::I64:
@@ -78,7 +78,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     ASSERT(m_mutability != Wasm::Immutable);
-    switch (m_type.kind) {
+    switch (m_type.kind()) {
     case TypeKind::I32: {
         int32_t value = argument.toInt32(globalObject);
         RETURN_IF_EXCEPTION(throwScope, void());
@@ -118,7 +118,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
-        } else if (isFuncref(m_type) || (isRefWithTypeIndex(m_type) && TypeInformation::tryGetRTT(m_type.index) && TypeInformation::tryGetRTT(m_type.index)->kind() == RTTKind::Function)) {
+        } else if (isFuncref(m_type) || (isRefWithTypeIndex(m_type) && TypeInformation::tryGetRTT(m_type.index()) && TypeInformation::tryGetRTT(m_type.index())->kind() == RTTKind::Function)) {
             RELEASE_ASSERT(m_owner);
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
@@ -128,7 +128,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             }
 
             if (isRefWithTypeIndex(m_type) && !argument.isNull()) {
-                Wasm::TypeIndex paramIndex = m_type.index;
+                Wasm::TypeIndex paramIndex = m_type.index();
                 Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                 if (paramIndex != argIndex) {
                     throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);
@@ -141,7 +141,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             return;
         } else {
             JSValue internref = Wasm::internalizeExternref(argument);
-            if (!Wasm::TypeInformation::isReferenceValueAssignable(internref, m_type.isNullable(), m_type.index)) {
+            if (!Wasm::TypeInformation::isReferenceValueAssignable(internref, m_type.isNullable(), m_type.index())) {
                 // FIXME: provide a better error message here
                 // https://bugs.webkit.org/show_bug.cgi?id=247746
                 throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);

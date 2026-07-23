@@ -1854,7 +1854,7 @@ private:
                 for (unsigned index = 0; index < signature->argumentCount(); ++index) {
                     auto type = signature->argumentType(index);
                     Edge argument = m_graph.varArgChild(m_node, 2 + index);
-                    switch (type.kind) {
+                    switch (type.kind()) {
                     case Wasm::TypeKind::I32: {
                         if (!argument->shouldSpeculateInt32())
                             success = false;
@@ -1890,7 +1890,7 @@ private:
                 if (!signature->returnsVoid()) {
                     ASSERT(signature->returnCount() == 1);
                     auto type = signature->returnType(0);
-                    switch (type.kind) {
+                    switch (type.kind()) {
                     case Wasm::TypeKind::I32:
                     case Wasm::TypeKind::I64:
                     case Wasm::TypeKind::Ref:
@@ -1934,7 +1934,7 @@ private:
                     auto type = signature->argumentType(index);
                     Edge argument = m_graph.varArgChild(m_node, 2 + index);
                     Node* argumentNode = argument.node();
-                    switch (type.kind) {
+                    switch (type.kind()) {
                     case Wasm::TypeKind::I32: {
                         m_insertionSet.insertCheck(checkIndex, m_node->origin, Edge(argumentNode, Int32Use));
                         m_graph.varArgChild(m_node, 2 + index) = Edge(argumentNode, KnownInt32Use);
@@ -1972,7 +1972,7 @@ private:
 
                 if (!signature->returnsVoid()) {
                     auto type = signature->returnType(0);
-                    switch (type.kind) {
+                    switch (type.kind()) {
                     case Wasm::TypeKind::I32: {
                         m_node->setResult(NodeResultInt32);
                         break;

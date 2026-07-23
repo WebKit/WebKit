@@ -237,7 +237,7 @@ inline EncodedJSValue arrayNewData(JSWebAssemblyInstance* instance, uint32_t typ
             break;
         }
     } else {
-        switch (fieldType.type.as<Type>().kind) {
+        switch (fieldType.type.as<Type>().kind()) {
         case Wasm::TypeKind::I32:
         case Wasm::TypeKind::F32: {
             return createArrayFromDataSegment<uint32_t>(instance, structure, arraySize, dataSegmentIndex, offset);

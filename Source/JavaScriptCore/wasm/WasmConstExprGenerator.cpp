@@ -220,7 +220,7 @@ public:
 
     ExpressionType NODELETE addConstant(Type type, uint64_t value)
     {
-        switch (type.kind) {
+        switch (type.kind()) {
         case TypeKind::I32:
         case TypeKind::I64:
         case TypeKind::F32:
@@ -268,7 +268,7 @@ public:
         WASM_COMPILE_FAIL_IF(m_info.globals[index].mutability != Mutability::Immutable, "get_global import kind index ", index, " is mutable ");
 
         if (m_mode == Mode::Evaluate) {
-            if (m_info.globals[index].type.kind == TypeKind::V128)
+            if (m_info.globals[index].type.kind() == TypeKind::V128)
                 result = ConstExprValue(m_instance->loadV128Global(index));
             else
                 result = ConstExprValue(m_instance->loadI64Global(index));

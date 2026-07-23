@@ -55,7 +55,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeInformation);
 void StorageType::dump(PrintStream& out) const
 {
     if (is<Type>())
-        out.print(makeString(as<Type>().kind));
+        out.print(makeString(as<Type>().kind()));
     else {
         ASSERT(is<PackedType>());
         out.print(makeString(as<PackedType>()));
@@ -173,16 +173,16 @@ void RTT::rewriteInternalRefs(TypeSectionState* state, std::span<const Ref<const
         Type t = slot.type;
         if (!isRefWithTypeIndex(t))
             return;
-        if (t.index == invalidTypeIndex)
+        if (t.index() == invalidTypeIndex)
             return;
         // Placeholder-tagged Projection pointers are emitted by the parser
         // (createPlaceholderProjection in WasmParser.h / WasmSectionParser.cpp)
         // for intra-rec-group refs. Untagged indices are bare RTT* (already
         // canonical) and don't need rewriting.
-        if (!isPlaceholderRef(t.index))
+        if (!isPlaceholderRef(t.index()))
             return;
         ASSERT(!slot.rttAnchor);
-        const Projection* projection = untagProjection(t.index);
+        const Projection* projection = untagProjection(t.index());
         RefPtr<const RTT> canonical = nullptr;
         if (projection->recursionGroup() == recursionGroup) {
             ProjectionIndex pi = projection->projectionIndex();
@@ -199,7 +199,7 @@ void RTT::rewriteInternalRefs(TypeSectionState* state, std::span<const Ref<const
             canonical = projection->rtt();
             RELEASE_ASSERT(canonical);
         }
-        slot.type = Type { t.kind, canonical->asTypeIndex() };
+        slot.type = Type { t.kind(), canonical->asTypeIndex() };
         slot.rttAnchor = WTF::move(canonical);
     });
 }
@@ -239,14 +239,14 @@ void RTT::dump(PrintStream& out) const
         {
             CommaPrinter comma;
             for (FunctionArgCount arg = 0; arg < argumentCount(); ++arg)
-                out.print(comma, makeString(argumentType(arg).kind));
+                out.print(comma, makeString(argumentType(arg).kind()));
         }
         out.print(")"_s);
         out.print(" -> ["_s);
         {
             CommaPrinter comma;
             for (FunctionArgCount ret = 0; ret < returnCount(); ++ret)
-                out.print(comma, makeString(returnType(ret).kind));
+                out.print(comma, makeString(returnType(ret).kind()));
         }
         out.print("]"_s);
         return;
@@ -290,14 +290,14 @@ RefPtr<const RTT> TypeInformation::extractExternalRTT(Type type)
 {
     if (!isRefWithTypeIndex(type))
         return nullptr;
-    if (type.index == invalidTypeIndex)
+    if (type.index() == invalidTypeIndex)
         return nullptr;
     // Placeholder Projection refs are intra-recgroup; they get rewritten to
     // canonical RTT pointers later (rewriteInternalRefs), at which point we
     // anchor them. Skip here.
-    if (isPlaceholderRef(type.index))
+    if (isPlaceholderRef(type.index()))
         return nullptr;
-    return std::bit_cast<const RTT*>(type.index);
+    return std::bit_cast<const RTT*>(type.index());
 }
 
 // Returns a Variant<ProjectionIndex, const RTT*>: the first alternative for
@@ -323,7 +323,7 @@ template<typename IntraLookup>
 inline EncodedRef encodeRef(Type type, IntraLookup&& intra)
 {
     ASSERT(isRefWithTypeIndex(type));
-    return encodeRef(std::bit_cast<const RTT*>(type.index), intra);
+    return encodeRef(std::bit_cast<const RTT*>(type.index()), intra);
 }
 
 // High bit on the ProjectionIndex hash keeps the internal and external hash
@@ -339,25 +339,30 @@ inline unsigned hashEncodedRef(EncodedRef r)
 template<typename IntraLookup>
 inline unsigned hashType(Type type, IntraLookup&& intra)
 {
-    unsigned h = WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(type.kind));
+    unsigned h = WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(type.kind()));
     if (isRefWithTypeIndex(type))
         h = WTF::pairIntHash(h, hashEncodedRef(encodeRef(type, intra)));
-    else if (type.index)
-        h = WTF::pairIntHash(h, static_cast<unsigned>(type.index));
+    else if (TypeIndex typeIndex = type.index()) {
+        // Abstract indices put the tag only in high bits; low 32 bits are 0.
+        if (isAbstractTypeIndex(typeIndex))
+            h = WTF::pairIntHash(h, static_cast<unsigned>(static_cast<uint8_t>(static_cast<int8_t>(typeIndexAsTypeKind(typeIndex)))));
+        else
+            h = WTF::pairIntHash(h, static_cast<unsigned>(typeIndex));
+    }
     return h;
 }
 
 template<typename IntraLookupA, typename IntraLookupB>
 inline bool equalTypes(Type a, IntraLookupA&& aIntra, Type b, IntraLookupB&& bIntra)
 {
-    if (a.kind != b.kind)
+    if (a.kind() != b.kind())
         return false;
     if (isRefWithTypeIndex(a)) {
         if (!isRefWithTypeIndex(b))
             return false;
         return encodeRef(a, aIntra) == encodeRef(b, bIntra);
     }
-    return a.index == b.index;
+    return a.index() == b.index();
 }
 
 template<typename IntraLookup>
@@ -622,7 +627,7 @@ bool TypeInformation::isRefWithRecursiveReference(Type type)
     // External (canonical) Type::index values are RTT pointers; they never
     // name a placeholder. Parser-internal placeholder Projections are wrapped
     // in TypeIndex via placeholderRefIndex().
-    return isRefWithTypeIndex(type) && isPlaceholderRef(type.index);
+    return isRefWithTypeIndex(type) && isPlaceholderRef(type.index());
 }
 
 bool TypeInformation::isRefWithRecursiveReference(StorageType storageType)
@@ -654,11 +659,11 @@ Ref<const RTT> TypeInformation::getCanonicalRTT(TypeIndex type)
 // CanonicalHashing/CanonicalEquality).
 //
 // A Type ref inside a member's payload is "internal" iff
-// TypeInformation::get(type.index) is a Projection whose recursionGroup ==
+// TypeInformation::get(type.index()) is a Projection whose recursionGroup ==
 // the candidate's recursionGroup. In that case the ref is hashed/
 // compared by the relative projection index. Otherwise the ref is "external"
 // and is hashed/compared by the canonical RTT pointer obtained from
-// TypeInformation::get(type.index).rtt(). This way, modules that have
+// TypeInformation::get(type.index()).rtt(). This way, modules that have
 // already canonicalized their external dependencies (true once we walk
 // recgroups in their declared order) produce the same key.
 // =====================================================================
@@ -806,8 +811,8 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
     if (refValue.isNull())
         return allowNull;
 
-    if (typeIndexIsType(typeIndex)) {
-        switch (static_cast<TypeKind>(typeIndex)) {
+    if (isAbstractTypeIndex(typeIndex)) {
+        switch (typeIndexAsTypeKind(typeIndex)) {
         case TypeKind::Externref:
         case TypeKind::Anyref:
             // Casts to these types cannot fail as any value can be an externref/hostref.
@@ -1019,8 +1024,9 @@ bool NODELETE Type::definitelyIsCellOrNull() const
     if (!isRefType(*this))
         return false;
 
-    if (typeIndexIsType(index)) {
-        switch (static_cast<TypeKind>(index)) {
+    TypeIndex typeIndex = index();
+    if (isAbstractTypeIndex(typeIndex)) {
+        switch (typeIndexAsTypeKind(typeIndex)) {
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
@@ -1038,8 +1044,9 @@ bool Type::definitelyIsWasmGCObjectOrNull() const
     if (!isRefType(*this))
         return false;
 
-    if (typeIndexIsType(index)) {
-        switch (static_cast<TypeKind>(index)) {
+    TypeIndex typeIndex = index();
+    if (isAbstractTypeIndex(typeIndex)) {
+        switch (typeIndexAsTypeKind(typeIndex)) {
         case TypeKind::Arrayref:
         case TypeKind::Structref:
             return true;
@@ -1048,7 +1055,7 @@ bool Type::definitelyIsWasmGCObjectOrNull() const
         }
     }
 
-    if (RefPtr rtt = TypeInformation::tryGetRTT(index))
+    if (RefPtr rtt = TypeInformation::tryGetRTT(typeIndex))
         return rtt->kind() == RTTKind::Struct || rtt->kind() == RTTKind::Array;
 
     return false;
@@ -1056,16 +1063,16 @@ bool Type::definitelyIsWasmGCObjectOrNull() const
 
 void Type::dump(PrintStream& out) const
 {
-    TypeKind kindToPrint = kind;
-    if (index != invalidTypeIndex) {
-        if (typeIndexIsType(index)) {
-            // If the index is negative, it represents a TypeKind.
-            kindToPrint = static_cast<TypeKind>(index);
-        } else if (index & projectionTagBit) {
-            out.print(*untagProjection(index));
+    TypeKind kindToPrint = kind();
+    TypeIndex typeIndex = index();
+    if (typeIndex != invalidTypeIndex) {
+        if (isAbstractTypeIndex(typeIndex)) {
+            kindToPrint = typeIndexAsTypeKind(typeIndex);
+        } else if (typeIndex & projectionTagBit) {
+            out.print(*untagProjection(typeIndex));
             return;
         } else {
-            out.print(*reinterpret_cast<const RTT*>(index));
+            out.print(*reinterpret_cast<const RTT*>(typeIndex));
             return;
         }
     }

@@ -144,7 +144,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
         unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature.argumentType(argNum);
-            switch (argType.kind) {
+            switch (argType.kind()) {
             case TypeKind::Void:
             case TypeKind::Func:
             case TypeKind::Struct:
@@ -240,7 +240,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
 
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature.argumentType(argNum);
-            switch (argType.kind) {
+            switch (argType.kind()) {
             case TypeKind::Void:
             case TypeKind::Func:
             case TypeKind::Struct:
@@ -350,7 +350,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
 
     if (signature.returnCount() == 1) {
         const auto& returnType = signature.returnType(0);
-        switch (returnType.kind) {
+        switch (returnType.kind()) {
         case TypeKind::I64: {
             // FIXME: Optimize I64 extraction from BigInt.
             // https://bugs.webkit.org/show_bug.cgi?id=220053
