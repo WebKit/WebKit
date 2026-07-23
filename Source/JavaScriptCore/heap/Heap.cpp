@@ -23,6 +23,7 @@
 
 #include "JSCJSValueInlines.h"
 
+#include "BaselineJITCode.h"
 #include "BuiltinExecutables.h"
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
@@ -1178,6 +1179,25 @@ void Heap::deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort effort)
             UnlinkedFunctionExecutable* executable = static_cast<UnlinkedFunctionExecutable*>(cell);
             executable->clearCode(vm);
         });
+
+#if ENABLE(JIT)
+    // Shareable Baseline JIT code is cached on UnlinkedCodeBlock::m_unlinkedBaselineCode (populated by
+    // CodeBlock::setupWithUnlinkedBaselineCode). That cache is not owned by any linked CodeBlock or
+    // executable, so it survives deleteAllCodeBlocks and is otherwise only released when the
+    // UnlinkedCodeBlock itself is collected. A "warm" UnlinkedCodeBlock can therefore pin Baseline JIT
+    // executable memory across memory warnings indefinitely. Drop the cache eagerly here: any still-linked
+    // CodeBlock holds its own ref to the BaselineJITCode (so we never free code that is still in use),
+    // while a cache-only entry is freed as soon as its last ref goes away, synchronously here.
+    if (Options::useBaselineJITCodeSharing()) {
+        auto clearUnlinkedBaselineCode = [] (HeapCell* cell, HeapCell::Kind) {
+            static_cast<UnlinkedCodeBlock*>(cell)->m_unlinkedBaselineCode = nullptr;
+        };
+        for (auto* space : { m_unlinkedFunctionCodeBlockSpace.get(), m_unlinkedProgramCodeBlockSpace.get(), m_unlinkedEvalCodeBlockSpace.get(), m_unlinkedModuleProgramCodeBlockSpace.get() }) {
+            if (space)
+                space->forEachLiveCell(clearUnlinkedBaselineCode);
+        }
+    }
+#endif
 }
 
 void Heap::deleteUnmarkedCompiledCode()
