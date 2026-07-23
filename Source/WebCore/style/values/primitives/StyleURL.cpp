@@ -53,6 +53,17 @@ namespace Style {
 //      CSS:    [.specified = "foo/bar.png", .resolved = null-url]
 //      Style:  [.resolved = "foo/bar.png"]
 
+AtomString URL::fragment() const
+{
+    if (resolved.hasFragmentIdentifier())
+        return resolved.fragmentIdentifier().toAtomString();
+
+    // A bare "#id" same-document reference is stored unresolved (an invalid URL), so WTF::URL can't
+    // report its fragment; read it directly from the string.
+    auto string = resolved.string();
+    return string.startsWith('#') ? StringView(string).substring(1).toAtomString() : nullAtom();
+}
+
 auto toStyleWithScriptExecutionContext(const CSS::URL& url, const ScriptExecutionContext& context) -> URL
 {
     if (url.resolved.isNull()) {

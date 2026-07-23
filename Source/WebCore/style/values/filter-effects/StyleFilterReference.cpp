@@ -54,11 +54,7 @@ auto ToCSS<FilterReference>::operator()(const FilterReference& value, const Styl
 auto ToStyle<CSS::FilterReference>::operator()(const CSS::FilterReference& value, const BuilderState& state) -> FilterReference
 {
     auto url = toStyle(value.url, state);
-
-    // FIXME: Unify all the fragment accessing/construction.
-    auto fragment = url.resolved.string().startsWith('#')
-        ? StringView(url.resolved.string()).substring(1).toAtomString()
-        : url.resolved.fragmentIdentifier().toAtomString();
+    auto fragment = url.fragment();
 
     return {
         .url = WTF::move(url),

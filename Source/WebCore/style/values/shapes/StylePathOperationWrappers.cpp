@@ -61,10 +61,7 @@ RefPtr<PathOperation> CSSValueConversion<RefPtr<PathOperation>>::operator()(Buil
     if (RefPtr url = dynamicDowncast<CSSURLValue>(value)) {
         auto styleURL = toStyle(url->url(), state);
 
-        // FIXME: Unify all the fragment accessing/construction.
-        auto fragment = styleURL.resolved.string().startsWith('#')
-            ? StringView(styleURL.resolved.string()).substring(1).toAtomString()
-            : styleURL.resolved.fragmentIdentifier().toAtomString();
+        auto fragment = styleURL.fragment();
 
         Ref treeScope = [&] -> Ref<const TreeScope> {
             if (auto* element = state.element())

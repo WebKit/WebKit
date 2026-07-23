@@ -26,6 +26,7 @@
 
 #include <WebCore/CSSURL.h>
 #include <WebCore/StyleValueTypes.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -37,6 +38,10 @@ namespace Style {
 struct URL {
     WTF::URL resolved;
     CSS::URLModifiers modifiers;
+
+    // The fragment identifier of `resolved`. `resolved` may be a bare "#id" same-document reference,
+    // which is not a valid standalone URL, so this handles that case as well as absolute URLs.
+    AtomString fragment() const;
 
     bool operator==(const URL&) const = default;
 };
