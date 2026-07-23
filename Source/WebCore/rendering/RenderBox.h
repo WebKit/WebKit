@@ -338,6 +338,15 @@ public:
     // zero (and returns just border + padding).
     LayoutUnit computeLogicalHeightForIntrinsicWidthContribution() const;
 
+    // Computes this box's intrinsic block-axis size (its logical height). A container
+    // gathering the inline-axis intrinsic contribution of an orthogonal child calls
+    // this because, for an orthogonal box, the block-axis size is what maps to the
+    // container's inline axis (CSS Writing Modes 3, orthogonal shrink-to-fit). Unlike
+    // computeLogicalHeightForIntrinsicWidthContribution() this lays the box out when a
+    // content-based height is needed, re-arming its dirty bit so the regular layout
+    // pass runs again afterwards. May lay out the box, hence non-const.
+    LayoutUnit computeIntrinsicLogicalHeight();
+
     LayoutUnit constrainLogicalWidthByMinMax(LayoutUnit, LayoutUnit, const RenderBlock&, AllowIntrinsic = AllowIntrinsic::Yes) const;
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, IsComputingIntrinsicSize = IsComputingIntrinsicSize::No) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;

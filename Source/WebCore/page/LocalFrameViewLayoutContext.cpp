@@ -1079,6 +1079,21 @@ bool LocalFrameViewLayoutContext::isPercentHeightResolveDisabledFor(const Render
     return m_percentHeightIgnoreList.contains(flexItem);
 }
 
+void LocalFrameViewLayoutContext::addIntrinsicLogicalHeightComputationFor(const RenderBox& box)
+{
+    m_intrinsicLogicalHeightComputationList.add(box);
+}
+
+void LocalFrameViewLayoutContext::removeIntrinsicLogicalHeightComputationFor(const RenderBox& box)
+{
+    m_intrinsicLogicalHeightComputationList.remove(box);
+}
+
+bool LocalFrameViewLayoutContext::isComputingIntrinsicLogicalHeightFor(const RenderBox& box) const
+{
+    return m_intrinsicLogicalHeightComputationList.contains(box);
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {

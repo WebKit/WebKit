@@ -422,22 +422,28 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeIntrinsicLogicalWidt
 
         LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*flexItem);
 
-        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeChildIntrinsicLogicalWidths(*flexItem);
+        auto [minContentInParentInlineAxis, maxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+            if (writingMode().isOrthogonal(flexItem->writingMode())) {
+                auto intrinsicBlockSize = flexItem->computeIntrinsicLogicalHeight();
+                return { intrinsicBlockSize, intrinsicBlockSize };
+            }
+            return computeChildIntrinsicLogicalWidths(*flexItem);
+        }();
 
-        minContentLogicalWidth += margin;
-        maxContentLogicalWidth += margin;
+        minContentInParentInlineAxis += margin;
+        maxContentInParentInlineAxis += margin;
 
         if (!FlexFormattingUtils::isColumnFlow(*this)) {
-            maxLogicalWidth += maxContentLogicalWidth;
+            maxLogicalWidth += maxContentInParentInlineAxis;
             if (FlexFormattingUtils::isMultiline(*this)) {
                 // For multiline, the min preferred width is if you put a break between
                 // each item.
-                minLogicalWidth = std::max(minLogicalWidth, minContentLogicalWidth);
+                minLogicalWidth = std::max(minLogicalWidth, minContentInParentInlineAxis);
             } else
-                minLogicalWidth += minContentLogicalWidth;
+                minLogicalWidth += minContentInParentInlineAxis;
         } else {
-            minLogicalWidth = std::max(minContentLogicalWidth, minLogicalWidth);
-            maxLogicalWidth = std::max(maxContentLogicalWidth, maxLogicalWidth);
+            minLogicalWidth = std::max(minContentInParentInlineAxis, minLogicalWidth);
+            maxLogicalWidth = std::max(maxContentInParentInlineAxis, maxLogicalWidth);
         }
     }
 

@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             text run at (409,0) width 331: "TFOOT borders are copied to THEAD and TBODY"
         RenderText {#text} at (739,0) size 5x18
           text run at (739,0) width 5: "."
-      RenderTable {TABLE} at (0,44) size 418x210
-        RenderTableSection {TBODY} at (0,0) size 418x210
-          RenderTableRow {TR} at (0,2) size 418x206
-            RenderTableCell {TD} at (2,2) size 102x206 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,44) size 446x210
+        RenderTableSection {TBODY} at (0,0) size 446x210
+          RenderTableRow {TR} at (0,2) size 446x206
+            RenderTableCell {TD} at (2,2) size 108x206 [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (11,11) size 86x55 [border: none]
                 RenderTableSection {THEAD} at (0,0) size 21x54
                   RenderTableRow {TR} at (0,0) size 21x54
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 21x54 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,2) size 18x47
                         text run at (1,2) width 47: "Body 2"
-            RenderTableCell {TD} at (106,2) size 102x206 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (112,2) size 108x206 [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (11,11) size 86x55 [border: none]
                 RenderTableSection {TBODY} at (21,0) size 21x54
                   RenderTableRow {TR} at (0,0) size 21x54
@@ -146,7 +146,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TH} at (0,0) size 21x54 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,2) size 18x51
                         text run at (1,2) width 51: "Header"
-            RenderTableCell {TD} at (210,2) size 102x206 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (222,2) size 110x206 [r=0 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (11,11) size 88x55 [border: none]
                 RenderTableSection {THEAD} at (1,0) size 22x54 [border: none (2px solid #0000FF) none (2px solid #008000)]
                   RenderTableRow {TR} at (0,0) size 22x54
@@ -210,7 +210,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 21x54 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,2) size 18x47
                         text run at (1,2) width 47: "Body 2"
-            RenderTableCell {TD} at (314,2) size 102x206 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (334,2) size 110x206 [r=0 c=3 rs=1 cs=1]
               RenderTable {TABLE} at (11,11) size 88x55 [border: none]
                 RenderTableSection {TBODY} at (23,0) size 22x54
                   RenderTableRow {TR} at (0,0) size 22x54

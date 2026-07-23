@@ -198,6 +198,19 @@ private:
     const CheckedRef<const RenderBox> m_flexItem;
 };
 
+// Marks a box as being laid out solely to measure its intrinsic block-axis size, so its
+// own cyclic-percentage min/max block-size resolves per CSS Sizing 3 section 5.1.
+// See RenderBox::computeIntrinsicLogicalHeight and RenderBox::computeLogicalHeight.
+class IntrinsicLogicalHeightComputationScope {
+public:
+    IntrinsicLogicalHeightComputationScope(LocalFrameViewLayoutContext&, const RenderBox&);
+    ~IntrinsicLogicalHeightComputationScope();
+
+private:
+    const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
+    const CheckedRef<const RenderBox> m_box;
+};
+
 class ContentVisibilityOverrideScope {
 public:
     enum class OverrideType {

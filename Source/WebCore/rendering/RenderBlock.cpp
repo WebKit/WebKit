@@ -2351,16 +2351,24 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         auto [marginStart, marginEnd] = intrinsicLogicalMarginStartAndEnd(childBox);
         auto margin = marginStart + marginEnd;
 
-        auto [childMinContentLogicalWidth, childMaxContentLogicalWidth] = computeChildIntrinsicLogicalWidths(const_cast<RenderBox&>(childBox));
+        // An orthogonal child contributes its block-axis size (its logical height) to our inline axis
+        auto [childMinContentInParentInlineAxis, childMaxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+            auto& box = const_cast<RenderBox&>(childBox);
+            if (writingMode().isOrthogonal(box.writingMode())) {
+                auto intrinsicBlockSize = box.computeIntrinsicLogicalHeight();
+                return { intrinsicBlockSize, intrinsicBlockSize };
+            }
+            return computeChildIntrinsicLogicalWidths(box);
+        }();
 
-        auto logicalWidth = childMinContentLogicalWidth + margin;
+        auto logicalWidth = childMinContentInParentInlineAxis + margin;
         minLogicalWidth = std::max(logicalWidth, minLogicalWidth);
 
         // IE ignores tables for calculation of nowrap. Makes some sense.
         if (nowrap && !childBox.isRenderTable())
             maxLogicalWidth = std::max(logicalWidth, maxLogicalWidth);
 
-        logicalWidth = childMaxContentLogicalWidth + margin;
+        logicalWidth = childMaxContentInParentInlineAxis + margin;
 
         if (!childBox.isFloating()) {
             if (childAvoidsFloats) {
@@ -2372,7 +2380,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
                 LayoutUnit marginLogicalRight = ltr ? marginEnd : marginStart;
                 LayoutUnit maxLeft = marginLogicalLeft > 0 ? std::max(floatLeftWidth, marginLogicalLeft) : floatLeftWidth + marginLogicalLeft;
                 LayoutUnit maxRight = marginLogicalRight > 0 ? std::max(floatRightWidth, marginLogicalRight) : floatRightWidth + marginLogicalRight;
-                logicalWidth = childMaxContentLogicalWidth + maxLeft + maxRight;
+                logicalWidth = childMaxContentInParentInlineAxis + maxLeft + maxRight;
                 logicalWidth = std::max(logicalWidth, floatLeftWidth + floatRightWidth);
             } else
                 maxLogicalWidth = std::max(floatLeftWidth + floatRightWidth, maxLogicalWidth);
@@ -2400,28 +2408,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeChildIntrinsicLogicalWidths(RenderBox& childBox) const
 {
-    if (childBox.isHorizontalWritingMode() != isHorizontalWritingMode()) {
-        // If the child is an orthogonal flow, child's height determines the width,
-        // but the height is not available until layout.
-        // http://dev.w3.org/csswg/css-writing-modes-3/#orthogonal-shrink-to-fit
-        if (!childBox.needsLayout())
-            return { childBox.logicalHeight(), childBox.logicalHeight() };
-        auto& childBoxStyle = childBox.style();
-        if (auto fixedChildBoxStyleLogicalWidth = childBoxStyle.logicalWidth().tryFixed(); childBox.shouldComputeLogicalHeightFromAspectRatio() && fixedChildBoxStyleLogicalWidth) {
-            auto aspectRatioSize = blockSizeFromAspectRatio(
-                childBox.horizontalBorderAndPaddingExtent(),
-                childBox.verticalBorderAndPaddingExtent(),
-                childBoxStyle.logicalAspectRatio(),
-                childBoxStyle.boxSizingForAspectRatio(),
-                LayoutUnit { fixedChildBoxStyleLogicalWidth->resolveZoom(childBoxStyle.usedZoomForLength()) },
-                style().aspectRatio(),
-                isRenderReplaced()
-            );
-            return { aspectRatioSize, aspectRatioSize };
-        }
-        auto logicalHeightWithoutLayout = childBox.computeLogicalHeightForIntrinsicWidthContribution();
-        return { logicalHeightWithoutLayout, logicalHeightWithoutLayout };
-    }
+    ASSERT(childBox.isHorizontalWritingMode() == isHorizontalWritingMode());
 
     auto minLogicalWidth = LayoutUnit { };
     auto maxLogicalWidth = LayoutUnit { };
@@ -3418,12 +3405,18 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidthsForF
 
     legend->setIsExcludedFromNormalLayout(true);
 
-    auto [minLogicalWidth, maxLogicalWidth] = computeChildIntrinsicLogicalWidths(*legend);
+    auto [legendMinContentInParentInlineAxis, legendMaxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+        if (writingMode().isOrthogonal(legend->writingMode())) {
+            auto intrinsicBlockSize = legend->computeIntrinsicLogicalHeight();
+            return { intrinsicBlockSize, intrinsicBlockSize };
+        }
+        return computeChildIntrinsicLogicalWidths(*legend);
+    }();
     // These are going to be added in later, so we subtract them out to reflect the
     // fact that the legend is outside the scrollable area.
     auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
     auto margin = marginIntrinsicLogicalWidthForChild(*legend);
-    return { minLogicalWidth - scrollbarWidth + margin, maxLogicalWidth - scrollbarWidth + margin };
+    return { legendMinContentInParentInlineAxis - scrollbarWidth + margin, legendMaxContentInParentInlineAxis - scrollbarWidth + margin };
 }
 
 LayoutUnit RenderBlock::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const
