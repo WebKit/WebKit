@@ -86,6 +86,8 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     SizeList flexItemsCrossSizeList;
 
     auto performContentAlignment = [&] {
+        // Stack the flex lines along the cross axis (their cross sizes are known); the block extent this returns is
+        // what finalizes the container's logical height for row flow below.
         auto flexContentBlockExtent = LayoutUnit { };
         flexLinesCrossPositionList = computeFlexLineCrossPositions(flexLines, flexLinesCrossSizeList, flexContentBlockExtent);
         // 9.5. (#12) Main-Axis Alignment.
@@ -100,7 +102,9 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList, flexContainerUsedExtents.blockContentBox);
         // 9.5. (#12) For column-reverse, reposition each line's items from the finalized container main-axis end.
         reverseColumnLinesFromContainerMainEndIfNeeded(flexLines, flexItems, flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList, flexContainerUsedExtents.blockContentBox, flexContainerUsedExtents.blockBorderBox);
-        // 9.6. (#13 - #16) Cross-Axis Alignment.
+        // Cross-Axis Alignment: with the container's cross size now final, run the remaining cross-axis steps
+        // (§9.4 #9 and #11, §9.6 #13, #14 and #16) here rather than in spec-number order. First record where the
+        // lines start on the cross axis, for the wrap-reverse flip in computeFlexItemRects.
         crossAxisStartEdge = flexLinesCrossPositionList.isEmpty() ? 0_lu : flexLinesCrossPositionList[0];
         // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
         // this means we need to use the height, so we do this after calling updateLogicalHeight.
