@@ -74,6 +74,9 @@ protected:
 
 private:
     void configureWirelessTargetMonitoring() final;
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    void ensureMediaDeviceRouteControllerMonitoring() final;
+#endif
     void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying) final;
 
     // AudioSessionInterruptionObserver

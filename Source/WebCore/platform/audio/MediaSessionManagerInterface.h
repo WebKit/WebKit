@@ -129,6 +129,9 @@ public:
     virtual void clientCharacteristicsChanged(PlatformMediaSessionInterface&, bool) { }
 
     virtual void configureWirelessTargetMonitoring() { }
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    virtual void ensureMediaDeviceRouteControllerMonitoring() { }
+#endif
     virtual bool hasWirelessTargetsAvailable() { return false; }
     virtual bool isMonitoringWirelessTargets() const { return false; }
     virtual void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSessionInterface&);

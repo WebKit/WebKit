@@ -46,8 +46,6 @@ public:
 
     RetainPtr<AVOutputContext> outputContext() const { return m_outputContext.get(); }
 
-    bool supportsCustomProtocolVideoPlayback() const;
-
     // MediaPlaybackTarget
     bool supportsRemoteVideoPlayback() const final;
 
