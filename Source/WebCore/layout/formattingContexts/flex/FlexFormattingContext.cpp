@@ -27,6 +27,7 @@
 #include "FlexFormattingContext.h"
 
 #include "FlexFormattingUtils.h"
+#include "FlexLayoutState.h"
 #include "InspectorInstrumentation.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
@@ -71,7 +72,7 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
         flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span());
         trimCrossAxisMarginsForFlexItems(flexItems, flexLines);
-        layoutFlexItems(flexItems.mutableSpan(), flexItemsMainSizeList.span());
+        layoutFlexItems(flexItems, flexItemsMainSizeList.span());
         // 9.4. (#7) Determine the hypothetical cross size of each item.
         auto flexItemsHypotheticalCrossSizeList = hypotheticalCrossSizeForFlexItems(flexItems);
         // 9.4. (#8) Calculate the cross size of each flex line.
@@ -125,8 +126,9 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
 
 FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext::computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems& flexItems)
 {
-    FlexBaseAndHypotheticalMainSizeList flexBaseAndHypotheticalMainSizeList(flexItems.size());
+    flexLayoutState().setPhase(FlexLayoutState::Phase::ComputingFlexBaseSizes);
 
+    FlexBaseAndHypotheticalMainSizeList flexBaseAndHypotheticalMainSizeList(flexItems.size());
     for (size_t index = 0; index < flexItems.size(); ++index) {
         auto& flexItem = flexItems[index];
         auto flexBase = flexBaseSizeForFlexItem(flexItem);
@@ -146,6 +148,7 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
 
 FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
 {
+    flexLayoutState().setPhase(FlexLayoutState::Phase::CollectingLines);
     // 9.3. (#5) Collect flex items into flex lines: a single-line container collects all items into one line; a
     // multi-line container collects consecutive items until the next item's outer hypothetical main size would not
     // fit in the inner main size. The first uncollected item is always collected, even if it does not fit.
@@ -193,6 +196,8 @@ FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(FlexLay
 
 FlexFormattingContext::SizeList FlexFormattingContext::computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines& flexLines, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
 {
+    flexLayoutState().setPhase(FlexLayoutState::Phase::ResolvingFlexibleLengths);
+
     SizeList flexItemsMainSizeList(flexItems.size());
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
@@ -370,7 +375,7 @@ void FlexFormattingContext::distributeMainAxisFreeSpaceForMultilineColumnIfNeede
         for (size_t index = 0; index < lineItems.size(); ++index)
             remainingFreeSpace -= lineItems[index].flexedMarginBoxSize(lineFlexItemsMainSizeList[index]);
 
-        layoutFlexItems(lineItems, lineFlexItemsMainSizeList);
+        layoutFlexItemsWithMainSizes(lineItems, lineFlexItemsMainSizeList);
         placeFlexItems(flexLinesCrossPositionList[lineIndex], lineItems, linePositions, remainingFreeSpace);
     }
 }
@@ -399,7 +404,14 @@ void FlexFormattingContext::trimCrossAxisMarginsForFlexItems(FlexLayoutItems& fl
     }
 }
 
-void FlexFormattingContext::layoutFlexItems(std::span<FlexLayoutItem> flexLayoutItems, std::span<const LayoutUnit> flexItemsMainSizeList)
+void FlexFormattingContext::layoutFlexItems(FlexLayoutItems& flexItems, std::span<const LayoutUnit> flexItemsMainSizeList)
+{
+    // The MainAxisItemSizing phase begins and ends here: every item is laid out at its resolved main size, so only the items' main-axis sizes are final at this point.
+    flexLayoutState().setPhase(FlexLayoutState::Phase::MainAxisItemSizing);
+    layoutFlexItemsWithMainSizes(flexItems.mutableSpan(), flexItemsMainSizeList);
+}
+
+void FlexFormattingContext::layoutFlexItemsWithMainSizes(std::span<FlexLayoutItem> flexLayoutItems, std::span<const LayoutUnit> flexItemsMainSizeList)
 {
     for (size_t index = 0; index < flexLayoutItems.size(); ++index)
         m_flexBox->layoutFlexItemWithMainSize(flexLayoutItems[index], flexItemsMainSizeList[index]);
@@ -407,6 +419,8 @@ void FlexFormattingContext::layoutFlexItems(std::span<FlexLayoutItem> flexLayout
 
 FlexFormattingContext::SizeList FlexFormattingContext::hypotheticalCrossSizeForFlexItems(const FlexLayoutItems& flexItems)
 {
+    flexLayoutState().setPhase(FlexLayoutState::Phase::CrossSizing);
+
     // 9.4. (#7) The hypothetical cross size of each item is the cross size it would have at its used main size.
     SizeList flexItemsHypotheticalCrossSizeList(flexItems.size());
     for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex) {
@@ -481,6 +495,8 @@ FlexFormattingContext::LinesCrossPositionList FlexFormattingContext::computeFlex
 
 FlexFormattingContext::PositionList FlexFormattingContext::handleMainAxisAlignment(const FlexLines& flexLines, FlexLayoutItems& flexItems, const SizeList& flexItemsMainSizeList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit& columnMainContentExtent)
 {
+    flexLayoutState().setPhase(FlexLayoutState::Phase::MainAxisAlignment);
+
     PositionList flexItemsPositionList(flexItems.size());
     columnMainContentExtent = 0_lu;
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
@@ -506,6 +522,8 @@ FlexFormattingContext::PositionList FlexFormattingContext::handleMainAxisAlignme
 
 FlexFormattingContext::SizeList FlexFormattingContext::computeCrossSizeForFlexItems(const FlexLines& flexLines, FlexLayoutItems& flexItems, const LinesCrossSizeList& flexLinesCrossSizeList, LayoutUnit crossContentExtent)
 {
+    flexLayoutState().setPhase(FlexLayoutState::Phase::CrossAxisItemSizing);
+    // Stretching items to their line's cross size relays them out, so both their main and cross sizes become final.
     SizeList flexItemsCrossSizeList(flexItems.size());
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
@@ -565,6 +583,7 @@ void FlexFormattingContext::handleCrossAxisAlignmentForFlexLines(const FlexLines
 
 void FlexFormattingContext::handleCrossAxisAlignmentForFlexItems(const FlexLines& flexLines, FlexLayoutItems& flexItems, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList, PositionList& flexItemsPositionList)
 {
+    flexLayoutState().setPhase(FlexLayoutState::Phase::CrossAxisAlignment);
     // 9.6. (#13, #14) For each item resolve its cross-axis auto margins, then -- when neither cross-axis margin is
     // auto -- align it within its line per align-self (baseline-aligned items go through performBaselineAlignment).
     Vector<LayoutUnit> flexItemsCrossOffsetList(flexItems.size());
@@ -866,7 +885,6 @@ LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& 
     auto scoped = ScopedFlexBasisAsFlexItemMainSize { flexItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }), flexLayoutItem.mainAxisIsInlineAxis };
     // FIXME: While we are supposed to ignore min/max here, the cached
     // The cached block-axis size entry may hold a min/max-constrained size.
-    auto computingBaseSizesScope = m_flexBox->scopedComputingFlexBaseSizes();
     auto blockAxisContentSize = ensureBlockAxisContentSizeForFlexItemIfNeeded(flexLayoutItem);
 
     // A. If the item has a definite used flex basis, that's the flex base size.
@@ -1427,7 +1445,6 @@ LayoutUnit FlexFormattingContext::applyStretchAlignmentToFlexItem(const FlexLayo
     // 9.4. (#11) A stretched item's used cross size is its flex line's cross size minus the item's cross-axis
     // margins, clamped by the item's used min and max cross sizes. (An item with a definite cross size is not
     // stretched, but still gets the stretch min/max clamp via applyStretchMinMaxCrossSize.)
-    auto flexLayoutScope = m_flexBox->scopedAfterCrossAxisItemSizing();
     if (flexLayoutItem.mainAxisIsInlineAxis) {
         // Cross axis is block axis (height).
         if (!style->logicalHeight().isAuto() && !style->logicalHeight().isStretch())
@@ -1536,6 +1553,11 @@ void FlexFormattingContext::setFlexItemGeometry(FlexLayoutItem& flexLayoutItem, 
 const FlexFormattingUtils& FlexFormattingContext::flexFormattingUtils() const
 {
     return m_flexFormattingUtils;
+}
+
+FlexLayoutState& FlexFormattingContext::flexLayoutState() const
+{
+    return m_flexBox->flexLayoutState();
 }
 
 FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent)

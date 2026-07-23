@@ -36,6 +36,7 @@ class ComputedStyle;
 struct MinimumSize;
 }
 
+class FlexLayoutState;
 class RenderFlexibleBox;
 
 class FlexLayoutItem {
@@ -131,18 +132,14 @@ private:
     using BaselineSharingGroups = Vector<BaselineSharingGroup, 1>;
 
     FlexLines computeFlexLines(FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList);
-    // Resolves each flex item's flexed main size (spec 9.7) for every line, and returns the used main size of each item.
     SizeList computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList);
     void resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize);
     void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines&, FlexLayoutItems&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent);
-    // CSS Flexbox 9.7/9.6: the space available to distribute among a line's items (respectively among the lines
-    // within the container) is the container's inner main (cross) size minus the gaps between them.
     LayoutUnit mainAxisAvailableSpaceForItemAlignment(LayoutUnit mainAxisAvailableSpace, size_t numberOfFlexItems) const;
     LayoutUnit crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const;
-    // Trims the cross-axis margins of the items on the first and last flex line (must run before laying the items out).
     void trimCrossAxisMarginsForFlexItems(FlexLayoutItems& flexItems, const FlexLines&);
-    // Lays out each flex item at its resolved main size.
-    void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> flexItemsMainSizeList);
+    void layoutFlexItems(FlexLayoutItems&, std::span<const LayoutUnit> flexItemsMainSizeList);
+    void layoutFlexItemsWithMainSizes(std::span<FlexLayoutItem>, std::span<const LayoutUnit> flexItemsMainSizeList);
     SizeList hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     LinesCrossSizeList crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const SizeList& flexItemsHypotheticalCrossSizeList);
     LinesCrossPositionList computeFlexLineCrossPositions(const FlexLines&, const LinesCrossSizeList&, LayoutUnit& flexContentBlockExtent);
@@ -153,8 +150,6 @@ private:
     void performBaselineAlignment(WTF::Range<size_t> lineRange, FlexLayoutItems&, Vector<LayoutUnit>& flexItemsCrossOffsetList, const SizeList& flexItemsCrossSizeList, LayoutUnit lineCrossAxisExtent);
     void computeFlexItemRects(const FlexLines&, FlexLayoutItems&, const PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsCrossSizeList, LayoutUnit crossAxisStartEdge, LayoutUnit crossContentExtent, LayoutUnit crossExtent);
 
-    // Places a flex line's items along the main axis and writes their positions; returns the line's main-axis content
-    // extent for column flow (0 for row flow, which builds its block extent elsewhere).
     LayoutUnit placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
     void reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines&, FlexLayoutItems&, const SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent, LayoutUnit containerMainBorderBoxExtent);
     void layoutColumnReverse(std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit columnMainBorderBoxExtent);
@@ -195,6 +190,7 @@ private:
     void setFlexItemGeometry(FlexLayoutItem&, const LayoutPoint& location);
 
     const FlexFormattingUtils& flexFormattingUtils() const;
+    FlexLayoutState& flexLayoutState() const;
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
     FlexFormattingUtils m_flexFormattingUtils;

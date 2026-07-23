@@ -208,8 +208,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     resetLogicalHeightBeforeLayoutIfNeeded();
     m_flexItemsWithCompletedLayout.clear();
 
-    bool oldInLayout = m_inLayout;
-    m_inLayout = true;
+    SetForScope flexLayoutStateScope(m_flexLayoutState, FlexLayoutState { });
 
     if (!style().marginTrim().isNone())
         initializeMarginTrimState();
@@ -247,10 +246,8 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
         m_flexLayout.layout(relayoutChildren);
 
-        {
-            auto scrollbarLayout = SetForScope(m_inPostFlexUpdateScrollbarLayout, true);
-            endAndCommitUpdateScrollInfoAfterLayoutTransaction();
-        }
+        m_flexLayoutState->setPhase(FlexLayoutState::Phase::PostFlexScrollbarLayout);
+        endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
         repaintFlexItemsDuringLayoutIfMoved(oldFlexItemRects);
         // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
@@ -274,8 +271,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     resetHasDefiniteHeight();
 
     repainter.repaintAfterLayout();
-
-    m_inLayout = oldInLayout;
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
@@ -486,21 +481,18 @@ bool RenderFlexibleBox::canUseFlexItemForPercentageResolution(const RenderBox& f
         if (m_inFlexItemIntrinsicWidthComputation)
             return FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem);
 
-        if (m_afterMainAxisItemSizing) {
-            // Final sizes for flex items are available only along the main axis.
-            // Percentages can be resolved only against those items when they are orthogonal to the flex container (i.e., their logical height is computed and final)
-            return !FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem);
-        }
-
-        if (m_afterCrossAxisItemSizing) {
-            // Final sizes for flex items are known in both the main and cross directions, so it's fine to resolve percentage heights using those final values.
-            return true;
-        }
-
-        if (m_inPostFlexUpdateScrollbarLayout) {
-            // We run layout on flex content _after_ performing flex layout (see endAndCommitUpdateScrollInfoAfterLayoutTransaction/updateScrollInfoAfterLayout).
-            // Final sizes for flex items are known in both the main and cross directions.
-            return true;
+        if (m_flexLayoutState) {
+            auto phase = m_flexLayoutState->phase();
+            if (phase >= FlexLayoutState::Phase::CrossAxisItemSizing) {
+                // Final sizes for flex items are known in both the main and cross directions, so it's fine to resolve percentage heights using those final values.
+                // Note that we run layout on flex content _after_ performing flex layout (see endAndCommitUpdateScrollInfoAfterLayoutTransaction/updateScrollInfoAfterLayout).
+                return true;
+            }
+            if (phase >= FlexLayoutState::Phase::MainAxisItemSizing) {
+                // Final sizes for flex items are available only along the main axis.
+                // Percentages can be resolved only against those items when they are orthogonal to the flex container (i.e., their logical height is computed and final)
+                return !FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem);
+            }
         }
 
         if (m_inSimplifiedLayout) {
@@ -514,7 +506,7 @@ bool RenderFlexibleBox::canUseFlexItemForPercentageResolution(const RenderBox& f
             return !FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem);
 
         // Outside of layout (i.e. when using relative percentage positioning), base the decision on style.
-        return !m_inLayout;
+        return !m_flexLayoutState;
     };
     if (!canUseByLayoutPhase())
         return false;
@@ -686,10 +678,7 @@ void RenderFlexibleBox::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayoutIte
     if (flexItem.needsLayout())
         markFlexItemLayoutComplete(flexItem);
 
-    {
-        auto flexLayoutScope = scopedAfterMainAxisItemSizing();
-        flexItem.layoutIfNeeded();
-    }
+    flexItem.layoutIfNeeded();
 
     if (!flexLayoutItem.everHadLayout && flexItem.checkForRepaintDuringLayout()) {
         flexItem.repaint();
@@ -864,7 +853,7 @@ template<typename SizeType> bool RenderFlexibleBox::canComputePercentageFlexBasi
     ASSERT(!isPercentResolveSuspended || is<RenderBlock>(flexItem));
 
     bool definite = !isPercentResolveSuspended && flexItem.computePercentageLogicalHeight(flexBasis, updateDescendants).has_value();
-    if (m_inLayout && (isHorizontalWritingMode() == flexItem.isHorizontalWritingMode())) {
+    if (m_flexLayoutState && (isHorizontalWritingMode() == flexItem.isHorizontalWritingMode())) {
         // We can reach this code even while we're not laying ourselves out, such
         // as from mainSizeForPercentageResolution.
         m_hasDefiniteHeight = definite ? SizeDefiniteness::Definite : SizeDefiniteness::Indefinite;
