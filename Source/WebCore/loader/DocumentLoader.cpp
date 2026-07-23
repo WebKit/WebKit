@@ -193,7 +193,7 @@ DocumentLoader::DocumentLoader(ResourceRequest&& request, SubstituteData&& subst
     , m_originalRequestCopy(originalRequest.isNull() ? request : WTF::move(originalRequest))
     , m_request(WTF::move(request))
     , m_substituteResourceDeliveryTimer(*this, &DocumentLoader::substituteResourceDeliveryTimerFired)
-    , m_originalSubstituteDataWasValid(substituteData.isValid())
+    , m_originalSubstituteDataWasValid(m_substituteData.isValid())
 {
 }
 

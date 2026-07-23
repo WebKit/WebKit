@@ -1097,6 +1097,7 @@
 				WebKit/WKWebView/WKWebExtensionAPILocalization.mm,
 				WebKit/WKWebView/WKWebViewLogging.mm,
 				WebKit/WKWebView/WKWebViewSpatialTrackingLabels.mm,
+				WebKitLegacy/cocoa/SubstituteDataLocalResourceAccess.mm,
 				WebKitLegacy/cocoa/WebPreferencesTest.mm,
 				WebKitLegacy/ios/AudioSessionCategoryIOS.mm,
 				WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm,
