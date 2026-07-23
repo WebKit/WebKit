@@ -1463,6 +1463,7 @@ public:
         ASSERT(!BadReg(rt));
         ASSERT(!BadReg(rt2));
         ASSERT(rn != ARMRegisters::pc);
+        ASSERT(rt != rt2); // Rt and Rt2 must not be the same register
         m_formatter.twoWordOp12Reg4FourFours(OP_LDREXD_T1, rn, FourFours(rt, rt2, 0x7, 0xf));
     }
 

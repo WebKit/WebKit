@@ -514,36 +514,22 @@ public:
     void compare64(RelationalCondition cond, RegisterID lhsHi, RegisterID lhsLo, RegisterID rhsHi, RegisterID rhsLo, RegisterID dest)
     {
         if (cond == RelationalCondition::Equal || cond == RelationalCondition::NotEqual) {
-            // For Equal/NotEqual, we can optimize to only set one value conditionally
-            // NotEqual: default to 1, change to 0 only if both parts equal
-            // Equal: default to 0, change to 1 only if both parts equal
-            if (dest != lhsHi && dest != rhsHi && dest != lhsLo && dest != rhsLo) {
-                m_assembler.mov(dest, ARMThumbImmediate::makeEncodedImm(cond == RelationalCondition::NotEqual ? 1 : 0));
-                m_assembler.cmp(lhsHi, rhsHi);
-                Jump done = makeBranch(ARMv7Assembler::ConditionNE);
-                m_assembler.cmp(lhsLo, rhsLo);
-                // Only need to set the "opposite" value when both parts match
-                m_assembler.it(ARMv7Assembler::ConditionEQ);
-                m_assembler.mov(dest, ARMThumbImmediate::makeEncodedImm(cond == RelationalCondition::NotEqual ? 0 : 1));
-                done.link(this);
-            } else {
-                RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
-                m_assembler.mov(scratch, ARMThumbImmediate::makeEncodedImm(cond == RelationalCondition::NotEqual ? 1 : 0));
-                m_assembler.cmp(lhsHi, rhsHi);
-                Jump done = makeBranch(ARMv7Assembler::ConditionNE);
-                m_assembler.cmp(lhsLo, rhsLo);
-                m_assembler.it(ARMv7Assembler::ConditionEQ);
-                m_assembler.mov(scratch, ARMThumbImmediate::makeEncodedImm(cond == RelationalCondition::NotEqual ? 0 : 1));
-                done.link(this);
-                move(scratch, dest);
-            }
+            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+            m_assembler.eor(scratch, lhsHi, rhsHi);
+            m_assembler.eor(dest, lhsLo, rhsLo);
+            m_assembler.orr(dest, dest, scratch);
+            m_assembler.clz(dest, dest);
+            m_assembler.lsr(dest, dest, 5);
+
+            if (cond == RelationalCondition::NotEqual)
+                m_assembler.eor(dest, dest, ARMThumbImmediate::makeEncodedImm(1));
             return;
         }
 
         ARMv7Assembler::Condition hiCondition = armV7ConditionForHigh32(cond);
         ARMv7Assembler::Condition loCondition = armV7ConditionForLow32(cond);
 
-        if (dest != lhsLo && dest != rhsLo && dest != lhsHi && dest != rhsHi) {
+        if (dest != lhsLo && dest != rhsLo) {
             // No aliasing - use ITE blocks with 1 branch
             m_assembler.cmp(lhsHi, rhsHi);
             m_assembler.it(hiCondition, false);
@@ -2758,6 +2744,21 @@ public:
         return static_cast<ResultCondition>(cond ^ 1);
     }
 
+    static RelationalCondition commute(RelationalCondition cond)
+    {
+        switch (cond) {
+        case Above: return Below;
+        case AboveOrEqual: return BelowOrEqual;
+        case Below: return Above;
+        case BelowOrEqual: return AboveOrEqual;
+        case GreaterThan: return LessThan;
+        case GreaterThanOrEqual: return LessThanOrEqual;
+        case LessThan: return GreaterThan;
+        case LessThanOrEqual: return GreaterThanOrEqual;
+        default: return cond; // Equal and NotEqual are symmetric
+        }
+    }
+
     static std::optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
     {
         switch (cond) {
@@ -2947,28 +2948,13 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
-        if (left == ARMRegisters::sp && right == addressTempRegister && cond == Equal) {
-            m_assembler.sub_S(addressTempRegister, left, addressTempRegister);
-            return Jump(makeBranch(Zero));
-        } else if (left == ARMRegisters::sp && right == addressTempRegister && cond == NotEqual) {
-            m_assembler.sub_S(addressTempRegister, left, addressTempRegister);
-            return Jump(makeBranch(NonZero));
-        } else if (right == ARMRegisters::sp && left == addressTempRegister && cond == Equal) {
-            m_assembler.sub_S(addressTempRegister, right, addressTempRegister);
-            return Jump(makeBranch(Zero));
-        } else if (right == ARMRegisters::sp && left == addressTempRegister && cond == NotEqual) {
-            m_assembler.sub_S(addressTempRegister, right, addressTempRegister);
-            return Jump(makeBranch(NonZero));
-        } else if (left == ARMRegisters::sp) {
-            ASSERT(right != addressTempRegister);
-            move(left, addressTempRegister);
-            m_assembler.cmp(addressTempRegister, right);
-        } else if (right == ARMRegisters::sp) {
-            ASSERT(left != addressTempRegister);
-            move(right, addressTempRegister);
-            m_assembler.cmp(left, addressTempRegister);
+        // ARM CMP T3 encoding: allows SP as first operand but not second
+        if (right == ARMRegisters::sp) {
+            m_assembler.cmp(right, left);
+            cond = commute(cond);
         } else
             m_assembler.cmp(left, right);
+
         return Jump(makeBranch(cond));
     }
 
@@ -2997,23 +2983,20 @@ public:
 
     Jump branch32(RelationalCondition cond, Address left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
-        load32(left, addressTempRegister);
-        return branch32(cond, addressTempRegister, right);
+        load32(left, dataTempRegister);
+        return branch32(cond, dataTempRegister, right);
     }
 
     Jump branch32(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
-        load32(left, addressTempRegister);
-        return branch32(cond, addressTempRegister, right);
+        load32(left, dataTempRegister);
+        return branch32(cond, dataTempRegister, right);
     }
 
     Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
-        load32WithUnalignedHalfWords(left, addressTempRegister);
-        return branch32(cond, addressTempRegister, right);
+        load32WithUnalignedHalfWords(left, dataTempRegister);
+        return branch32(cond, dataTempRegister, right);
     }
 
     Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
@@ -3049,8 +3032,7 @@ public:
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch8 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, left, scratch);
         return branch8(cond, scratch, right8);
@@ -3058,8 +3040,7 @@ public:
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, left, scratch);
         return branch32(cond, scratch, right8);
@@ -3067,11 +3048,10 @@ public:
 
     Jump branch8(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 right)
     {
-        // Use addressTempRegister instead of dataTempRegister, since branch32 uses dataTempRegister.
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         ArmAddress armAddress = setupArmAddress(address);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, addressTempRegister);
-        return branch32(cond, addressTempRegister, right8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, dataTempRegister);
+        return branch32(cond, dataTempRegister, right8);
     }
 
     Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
@@ -3083,8 +3063,7 @@ public:
 
     Jump branch16(RelationalCondition cond, Address left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch16 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
         MacroAssemblerHelpers::load16OnCondition(*this, cond, left, scratch);
         return branch16(cond, scratch, right16);
@@ -3092,8 +3071,7 @@ public:
 
     Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
         MacroAssemblerHelpers::load16OnCondition(*this, cond, left, scratch);
         return branch32(cond, scratch, right16);
@@ -3101,11 +3079,10 @@ public:
 
     Jump branch16(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 right)
     {
-        // Use addressTempRegister instead of dataTempRegister, since branch32 uses dataTempRegister.
         TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
         ArmAddress armAddress = setupArmAddress(address);
-        MacroAssemblerHelpers::load16OnCondition(*this, cond, armAddress, addressTempRegister);
-        return branch32(cond, addressTempRegister, right16);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, armAddress, dataTempRegister);
+        return branch32(cond, dataTempRegister, right16);
     }
 
 private:
@@ -3209,29 +3186,25 @@ public:
 
     Jump branchTest32(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        load32(address, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask);
+        load32(address, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask);
     }
 
     Jump branchTest32(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        load32(address, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask);
+        load32(address, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask);
     }
 
     Jump branchTest32(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        load32(setupArmAddress(address), addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask);
+        load32(setupArmAddress(address), dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask);
     }
 
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, address, scratch);
         return branchTest32(cond, scratch, mask8);
@@ -3239,8 +3212,7 @@ public:
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, address, scratch);
         return branchTest32(cond, scratch, mask8);
@@ -3248,17 +3220,15 @@ public:
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         ArmAddress armAddress = setupArmAddress(address);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask8);
     }
 
     Jump branchTest16(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
         MacroAssemblerHelpers::load16OnCondition(*this, cond, address, scratch);
         return branchTest32(cond, scratch, mask16);
@@ -3266,8 +3236,7 @@ public:
 
     Jump branchTest16(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
         MacroAssemblerHelpers::load16OnCondition(*this, cond, address, scratch);
         return branchTest32(cond, scratch, mask16);
@@ -3275,11 +3244,10 @@ public:
 
     Jump branchTest16(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
         ArmAddress armAddress = setupArmAddress(address);
-        MacroAssemblerHelpers::load16OnCondition(*this, cond, armAddress, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask16);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, armAddress, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask16);
     }
 
     void farJump(RegisterID target, PtrTag)
