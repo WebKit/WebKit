@@ -1763,7 +1763,6 @@ webkit.org/b/308037 imported/w3c/web-platform-tests/webrtc/simulcast/vp8.https.h
 webkit.org/b/308037 imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html [ Crash Failure Pass ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-video-jitterBufferTarget-stats.html [ Failure ]
 
 webkit.org/b/311462 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure Timeout Crash ]
 webkit.org/b/308601 [ Release ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Failure Pass ]
@@ -2795,8 +2794,41 @@ webkit.org/b/251107 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure
 # WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Failing since migration to libwebrtc: issue with constraints passed to getUserMedia lead to lack of track event, and timeout
+webrtc/video-interruption.html [ Skip ]
+
+# Failing since migration to libwebrtc: 
+imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-maxFramerate.https.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html [ Skip ] # Timeout
+webrtc/getDisplayMedia-odd-size.html [ Skip ] # Timeout
+webrtc/video-rotation.html [ Failure ]
+
+# Flakies since migration to libwebrtc:
+fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Timeout Pass ]
+imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Timeout Pass ]
+imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Pass Crash ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html [ Pass Crash ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html?rest [ Pass Crash ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html?rest [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html?rest [ Pass Crash ]
+imported/w3c/web-platform-tests/webrtc/legacy/RTCRtpTransceiver-with-OfferToReceive-options.optional.https.html [ Timeout Pass ]
+imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?interop-2026 [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/transfer-datachannel.html [ Pass Failure ]
+webrtc/encrypted-rtp-header-extensions.html [ Pass Crash ]
+webrtc/h264-baseline.html [ Pass Crash ]
+webrtc/h264-high.html [ Pass Crash ]
+webrtc/vp8-then-h264.html [ Pass Crash ]
+
+imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?rest [ Failure Slow ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer.html?rest [ Slow ]
+
 # Specific to apple ports.
 webkit.org/b/318758 fast/mediastream/delete-audio-unit.html [ Skip ]
+fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
+http/wpt/webrtc/rtcNetworkInterface.html [ Skip ]
 
 # Fails when using two textures.
 webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
@@ -2811,18 +2843,12 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 
 http/tests/media/video-play-stall-seek.html [ Skip ] # Timeout
 
-# Missing support for RTP header encryption support:
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4625
-webrtc/encrypted-rtp-header-extensions.html [ Failure ]
-
 # Requires video scaling adaptation.
 webrtc/video-maxBitrate.html [ Failure ]
 webrtc/video-maxBitrate-vp8.html [ Failure ]
 
 # Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
-
-webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ] # Timeout
 
 fast/mediastream/video-rotation2.html [ Failure ]
 
@@ -2856,23 +2882,27 @@ webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure 
 fast/mediastream/getDisplayMedia-max-constraints4.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints5.html [ Skip ]
 
-# DataChannel GstWebRTC implementation incomplete, missing stats support.
-webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
-# Crash due to webkit.org/b/286859
-webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Crash ]
-
 # This test has an expectation that one subtest should fail, but in glib it passes rarely. If it starts passing
 # more consistently in glib we probably should have a baseline for glib ports.
 webkit.org/b/309440 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html [ Pass Failure ]
 
-# Missing support for qpSum WebRTC stats.
-webkit.org/b/269285 webrtc/h265.html [ Failure Timeout ]
+# Missing support for H.265 in current libwebrtc backend.
+webkit.org/b/269285 webrtc/h265.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/protocol/h265-loopback.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/protocol/h265-level-id.https.html [ Skip ]
 
-# Too slow with filtering implemented in WebKit. Should be done directly by GstWebRTC.
+# Missing support for AV1 in current libwebrtc backend.
+webkit.org/b/302254 webrtc/video-av1.html [ Skip ]
+webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/protocol/av1-profile-asymmetry.https.html [ Skip ]
+webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.html [ Skip ]
+
+# Lack of mDNS support. Currently we expect to communicate with Avahi on host (not guest) but
+# apparently it is not running on current infra.
 webrtc/datachannel/filter-ice-candidate.html [ Skip ]
 webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
 http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Skip ]
+webrtc/processIceTransportStateChange-gc.html [ Skip ]
 
 # The GstWebRTC backend doesn't support transforms yet.
 webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Pass ]
@@ -2893,25 +2923,7 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFra
 http/wpt/webrtc/video-script-transform-simulcast.html [ Skip ]
 http/wpt/webrtc/unset-transform.html [ Failure ]
 
-# GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
-webkit.org/b/235885 webrtc/video-addTransceiver.html [ Timeout Failure ]
-
-# Transceiver direction change support is incomplete.
-webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Skip ]
-webkit.org/b/235885 webkit.org/b/314219 webrtc/direction-change.html [ Crash Failure Timeout ]
-webkit.org/b/235885 webrtc/remove-track.html [ Crash Failure ]
-
-# Stopping a transceiver is unsupported in GstWebRTC.
-imported/w3c/web-platform-tests/webrtc/protocol/transceiver-mline-recycling.html [ Failure ]
-
 webrtc/RTCConfiguration-targetLatency.html [ Failure ]
-
-# Specific to LibWebRTC:
-webkit.org/b/235885 webrtc/disable-encryption.html [ Skip ]
-webkit.org/b/235885 webrtc/libwebrtc/ [ Skip ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Skip ]
-fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
-http/wpt/webrtc/rtcNetworkInterface.html [ Skip ]
 
 # This test is a constant failure (assert_true: front stream should be small expected true got false).
 webkit.org/b/313153 webrtc/video-replace-track.html [ Failure ]
@@ -2942,8 +2954,6 @@ webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Skip ]
 webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Skip ]
 webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Crash Failure Timeout ]
 webkit.org/b/235885 webrtc/video-maxFramerate.html [ Failure ]
-# webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
-webkit.org/b/303673 webrtc/video-stats.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-unmute.html [ Pass Failure Timeout ]
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
 
@@ -2965,117 +2975,10 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 # out, awaiting forever a remote mediastream.
 webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
 
-# Skip WebRTC WPT tests and allow-list the ones passing or failing. The Skip (Timeout) expectations
-# hang the test runner forever, likely due to promises not properly configured to time out.
-imported/w3c/web-platform-tests/webrtc/ [ Skip ]
-imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceCandidatePoolSize.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceServers.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCConfiguration-rtcpMuxPolicy.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCConfiguration-validation.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-GC.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-binaryType.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-iceRestart.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-id.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-blob-order.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-array-buffer-negotiated.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-array-buffer.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob-negotiated.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-string-negotiated.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-string.window.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-add-track-no-deadlock.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-timing.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTcpIceCandidate.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTrack.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTransceiver-renegotiation.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-constructor.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createAnswer.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-description-attributes-timing.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html?rest [ Failure Pass Timeout ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getTransceivers.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-helper-test.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState-disconnected.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ondatachannel.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onicecandidateerror.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onsignalingstatechanged.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-plan-b-is-not-supported.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html [ Pass Failure Crash Timeout ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-currentTime.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-properties.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-removeTrack.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce-onnegotiationneeded.https.html [ Pass Failure ]
-webkit.org/b/306632 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver.html [ Failure Crash ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-pranswer.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-rollback.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-answer.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-nomsid.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-pranswer.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-replaceTrack.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-rollback.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-simulcast.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transceivers.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transport-stats.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-encodings.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-headerExtensions.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-rtcp.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getCapabilities.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getParameters.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html?rest [ Failure Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-jitterBufferTarget.html [ Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-video-anyCodec.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-encode-same-track-twice.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getCapabilities.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getParameters.html [ Failure ]
-webkit.org/b/315948 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-setStreams.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-transport.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-direction.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-stop.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-stopping.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxChannels.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxMessageSize.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-constructor.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-fire.html  [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/toJSON.html [ Pass ]
-imported/w3c/web-platform-tests/webrtc/transfer-datachannel.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html [ Skip ] # Timeout
-
-# Triggers an assert in webrtcbin.
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/webrtc/rtp-stats-lifetime.https.html?interop-2026 [ Failure ]
 
 # The last promise test here fails because webrtcbin doesn't rely on a singleton signaling thread.
 # See also comments in:
@@ -3087,45 +2990,13 @@ imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-transactionId.html [ Fai
 
 imported/w3c/web-platform-tests/webrtc/protocol/ [ Pass ]
 imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html?interop-2026 [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html?rest [ Failure ]
-webkit.org/b/308364 imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html [ Failure Crash ]
-webkit.org/b/312269 imported/w3c/web-platform-tests/webrtc/protocol/dtls-setup.https.html [ Failure Crash ]
 imported/w3c/web-platform-tests/webrtc/protocol/rtp-payloadtypes.html [ Failure ]
-
-# Expected to pass when updating to GStreamer 1.30
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/10472
-imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html [ Failure ]
 
 # Our video encoder is not enforcing video resolution capping based on the configured H.264 level.
 # See also: https://en.wikipedia.org/wiki/Advanced_Video_Coding#Levels
 webkit.org/b/301687 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html [ Failure ]
-webkit.org/b/301687 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html?rest [ Failure ]
 
-# offerPc doesn't receive a datachannel event for the "second back" channel created by
-# answerPcSecond, leading to the test timing out.
-imported/w3c/web-platform-tests/webrtc/protocol/handover-datachannel.html [ Failure ]
-
-# The first test here times out, we don't fire track events because there's no actual p2p streaming
-# set-up, so rtpbin doesn't create src pads and thus neither is webrtcbin.
-imported/w3c/web-platform-tests/webrtc/protocol/msid-parse.html [ Failure Timeout ]
-
-# Still failing after update to GStreamer 1.28, to be investigated.
-imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Skip ] # Timeout
-
-# Missing support for multiple MediaStreams per track/transceiver.
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3954
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/webrtc/protocol/msid-generate.html [ Failure ]
-
-imported/w3c/web-platform-tests/webrtc/protocol/additional-codecs.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/codecs-subsequent-offer.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/pt-no-bundle.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-codecs.html [ Failure ]
-
-# The 'Can demux two video tracks with the same payload type on an unbundled connection' test times
-# out, the metadataToBeLoaded promise never resolves.
-webkit.org/b/286481 imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html [ Failure ]
 
 # Simulcast support is not complete yet.
 imported/w3c/web-platform-tests/webrtc/simulcast [ Pass ]
@@ -3133,16 +3004,9 @@ imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Crash Fa
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-encodings.https.html [ Failure ]
 
-webkit.org/b/315758 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-maxFramerate.https.html [ Crash Pass Failure ]
-webkit.org/b/315758 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-setParameters-keyFrame.html [ Crash Pass ]
-webkit.org/b/315758 imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html [ Crash Pass ]
-
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-answer.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-offer.html [ Skip ]
-webkit.org/b/306018 imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.html [ Pass Failure ]
 webkit.org/b/308371 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?interop-2026 [ Failure ]
-imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?rest [ Failure ]
 
 # RTP sender de-activation is not working as expected due to internal queues in rtpbin. The valve we
 # use in our RTPPacketizer is not sufficient, we would need it to be further downstream.
@@ -3154,54 +3018,16 @@ imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
 
 webkit.org/b/310095 imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Pass Failure ]
 
-# This test expects the backend to not fill codecs encoding parameters, which we do, at least in the
-# GstWebRTC backend case.
-webrtc/video-getParameters.html [ Failure ]
-
 # Legacy Offer options are enabled by default in WPE and GTK ports.
 imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-createOffer-offerToReceive.optional.html [ Pass ]
 
-# Fails because the transceiver state.currentDirection is expected to be null but isn't.
-imported/w3c/web-platform-tests/webrtc/legacy/RTCRtpTransceiver-with-OfferToReceive-options.optional.https.html [ Failure ]
-
-# Missing support for ICE restarts
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-explicit-rollback-iceGatheringState.html [ Skip ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Skip ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html [ Skip ]
-
-# GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented.
-webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Skip ]
-webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Skip ]
-webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Skip ]
-
-# "insertDTMF() should throw InvalidStateError if transceiver.currentDirection is inactive" test failing.
-imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-insertDTMF.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/legacy/munge-dont.html [ Pass ]
 
 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange.https.html [ Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.https.html [ Pass ]
 
 # Also skipped on mac, timing out because relying on MediaStream::onactive event which is not exposed.
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
-
-# webrtcbin sets the transceiver name as track id on SSRC lines.
-fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
-
-# webrtcbin blocks outgoing data flow until the signaling state has switched to stable. The
-# "Parameterless SLD() in 'have-remote-offer' sets transceiver.currentDirection" test times out
-# because the answerer is blocked waiting on the track event before the offerer has completed its
-# setup and unblocked data flow.
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-parameterless.https.html [ Failure Timeout ]
-
-# Creates 256 PeerConnections. The test takes around 30 seconds to complete.
-webrtc/datachannel/multiple-connections.html [ Slow ]
-
-webkit.org/b/306207 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Crash Pass Failure ]
-
-# This test is almost the same as http/wpt/webrtc/transfer-datachannel-service-worker.https.html.
-# The main difference is that in this test an additional message is sent on the data-channel.
-webkit.org/b/264936 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Failure ]
-
-webkit.org/b/276587 webrtc/video-av1.html [ Pass Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

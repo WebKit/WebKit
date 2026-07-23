@@ -1,4 +1,0 @@
-
-PASS Rejects invalid modification of send direction
-FAIL Rejects invalid modification of receive direction assert_unreached: Should have rejected: undefined Reached unreachable code
-

@@ -559,8 +559,6 @@ webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-pseudo/backdrop-animate-002.html [ ImageOnlyFailure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Pass ]
 
-# Constant timeout.
-webkit.org/b/265290 webrtc/datachannel/multiple-connections.html [ Skip ]
 webkit.org/b/235885 [ Debug ] webrtc/multi-video.html [ Failure Pass ]
 webkit.org/b/312138 [ Debug ] webrtc/video-rotation-black.html [ Failure Pass ]
 
@@ -878,9 +876,6 @@ css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
 webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 
 webrtc/vp8-then-h264.html [ Pass ]
-
-# See https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/11758
-[ Release ] webrtc/remote-track-label-quirks.html [ Pass Crash ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
 
@@ -1377,5 +1372,3 @@ webkit.org/b/319317 [ Debug ] imported/w3c/web-platform-tests/html/canvas/elemen
 webkit.org/b/319320 [ arm64 ] compositing/reflections/animation-inside-reflection.html [ Failure Pass ]
 webkit.org/b/319325 [ arm64 ] fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
 webkit.org/b/319326 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Failure Pass ]
-
-webkit.org/b/319974 webrtc/remoteAudio-never-played.html [ Pass Crash ]

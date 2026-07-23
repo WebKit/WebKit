@@ -1223,7 +1223,6 @@ webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debu
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2029_u05D0.html [ Pass ]
 
 webkit.org/b/310748 [ Release ] editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html [ Pass ImageOnlyFailure ]
-webkit.org/b/310751 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html?interop-2026 [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats-timestamp.https.html [ Pass Failure ]
 webkit.org/b/313631 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Pass Failure ]
 webkit.org/b/307440 [ Release ] imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Pass Failure ]
