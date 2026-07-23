@@ -38,7 +38,6 @@ Dashboard = {
         Windows: { name: "windows", readableName: "Windows", order: 43 },
         LinuxWPE: { name : "linux-wpe", readableName: "Linux WPE", order: 78 },
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 79 },
-        LinuxJSCOnly: { name : "linux-jsconly", readableName: "Linux JSCOnly", order: 80 },
         PlayStation: { name : "playstation", readableName: "PlayStation", order: 88 },
     },
     Branch: {},

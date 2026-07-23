@@ -247,10 +247,6 @@ table.queue-grid tr.platform.linux-wpe img.logo {
     content: url(../Images/WPE.png);
 }
 
-table.queue-grid tr.platform.linux-jsconly img.logo {
-    content: url(../Images/SquirrelFish.png);
-}
-
 table.queue-grid tr.platform.playstation img.logo {
     content: url(../Images/PlayStation.png);
 }

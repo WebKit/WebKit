@@ -1118,28 +1118,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'JSCOnly-Linux-AArch64-Release': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'compile-jsc',
-            'jscore-test'
-        ],
-        'JSCOnly-Linux-ARMv7-Thumb2-Release': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'compile-jsc',
-            'jscore-test'
-        ],
         'WPE-Linux-64-bit-Release-Build': [
             'configure-build',
             'configuration',
@@ -1288,7 +1266,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'compile-webkit'
         ],
-        'WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build': [
+        'WPE-Linux-RPi4-64bits-Mesa-Release-v252-Perf-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit',
+            'check-if-deployed-cross-target-image-is-updated',
+            'trigger'
+        ],
+        'WPE-Linux-RPi4-64bits-Mesa-Release-v254-Perf-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1314,7 +1305,21 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'check-if-deployed-cross-target-image-is-updated',
             'trigger'
         ],
-        'WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Tests': [
+        'WPE-Linux-RPi4-64bits-Mesa-Release-v252-Perf-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'check-if-running-cross-target-image-is-updated',
+            'download-built-product',
+            'extract-built-product',
+            'benchmark-test'
+        ],
+        'WPE-Linux-RPi4-64bits-Mesa-Release-v254-Perf-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1441,6 +1446,33 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'test262-test'
         ],
         'WPE-Linux-ARM64-bit-Release-v252-BuildAndTest': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit',
+            'jscore-test',
+            'layout-test',
+            'dashboard-tests',
+            'archive-test-results',
+            'upload',
+            'extract-test-results',
+            'set-permissions',
+            'run-api-tests',
+            'webkitpy-test',
+            'webkitperl-test',
+            'bindings-generation-tests',
+            'builtins-generator-tests',
+            'test262-test',
+            'webdriver-test',
+            'MVT-tests'
+        ],
+        'WPE-Linux-ARM64-bit-Release-v254-BuildAndTest': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
