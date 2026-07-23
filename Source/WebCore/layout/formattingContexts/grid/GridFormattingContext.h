@@ -32,6 +32,7 @@
 #include <WebCore/StyleGridTemplateList.h>
 #include <WebCore/StyleGridTrackSizes.h>
 #include <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
+#include <WebCore/StyleZoomPrimitives.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -68,6 +69,7 @@ struct GridDefinition {
     Style::GridTrackSizes gridAutoColumns;
     Style::GridTrackSizes gridAutoRows;
     GridAutoFlowOptions autoFlowOptions;
+    Style::ZoomFactor zoom;
 };
 
 // Static classification of how much grid-sizing work is required to compute

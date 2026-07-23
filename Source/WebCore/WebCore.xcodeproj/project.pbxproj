@@ -19666,6 +19666,8 @@
 		BC4F32CA2E8C518300F6AEC1 /* StyleAccentColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleAccentColor.h; sourceTree = "<group>"; };
 		BC4F32CB2E8C518300F6AEC1 /* StyleAccentColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleAccentColor.cpp; sourceTree = "<group>"; };
 		BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollAnimatorMac.mm; sourceTree = "<group>"; };
+		BC51496330111DE2003E6266 /* StyleZoomResolvable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleZoomResolvable.h; sourceTree = "<group>"; };
+		BC514965301120A9003E6266 /* StyleZoomResolved.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleZoomResolved.h; sourceTree = "<group>"; };
 		BC5238112F82BE2000316BBC /* StyleCounterStyle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCounterStyle.cpp; sourceTree = "<group>"; };
 		BC53C5F40DA56B920021EB5D /* Gradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gradient.h; sourceTree = "<group>"; };
 		BC53C6070DA56C570021EB5D /* Gradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gradient.cpp; sourceTree = "<group>"; };
@@ -38392,6 +38394,8 @@
 				BC913AE02EE1FA36009E3349 /* StyleZoom.h */,
 				BC913AE12EE1FA36009E3349 /* StyleZoomPrimitives.h */,
 				BC1778102F4908C500E318C5 /* StyleZoomPrimitivesInlines.h */,
+				BC51496330111DE2003E6266 /* StyleZoomResolvable.h */,
+				BC514965301120A9003E6266 /* StyleZoomResolved.h */,
 			);
 			path = viewport;
 			sourceTree = "<group>";

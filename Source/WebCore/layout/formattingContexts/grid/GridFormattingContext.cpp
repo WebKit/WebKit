@@ -190,7 +190,7 @@ UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstra
     auto gridTemplateColumns = inlineAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()) : gridStyle->gridTemplateColumns();
     auto gridTemplateRows = blockAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()) : gridStyle->gridTemplateRows();
 
-    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, gridStyle->gridAutoColumns(), gridStyle->gridAutoRows(), autoFlowOptions };
+    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, gridStyle->gridAutoColumns(), gridStyle->gridAutoRows(), autoFlowOptions, gridStyle->usedZoomForLength() };
 
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
@@ -298,7 +298,8 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()),
         gridStyle->gridAutoColumns(),
         gridStyle->gridAutoRows(),
-        autoFlowOptions
+        autoFlowOptions,
+        gridStyle->usedZoomForLength(),
     };
 
     auto usedJustifyContent = gridStyle->justifyContent().resolve();

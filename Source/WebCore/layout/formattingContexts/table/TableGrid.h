@@ -30,6 +30,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutUnits.h"
 #include "StylePrimitiveNumericTypes.h"
+#include "StyleZoomResolved.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Variant.h>
@@ -93,10 +94,17 @@ public:
     std::optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isEmpty() const { return m_slotMap.isEmpty(); }
+
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:
-        using ComputedLogicalWidth = Variant<CSS::Keyword::Auto, Style::Length<CSS::Nonnegative, float>, Style::Percentage<CSS::Nonnegative, float>>;
+        using ComputedLogicalWidthFixed = Style::ZoomResolved<Style::Length<CSS::NonnegativeUnzoomed, float>>;
+        using ComputedLogicalWidthPercentage = Style::Percentage<CSS::Nonnegative, float>;
+        using ComputedLogicalWidth = Variant<
+            CSS::Keyword::Auto,
+            ComputedLogicalWidthFixed,
+            ComputedLogicalWidthPercentage
+        >;
 
         Column(const ElementBox*);
 

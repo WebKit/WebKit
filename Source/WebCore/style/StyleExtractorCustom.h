@@ -284,9 +284,9 @@ public:
     static void extractMarkerShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
 };
 
-template<typename T> Length<CSS::AllUnzoomed> unzoomedLengthIfEvaluationTimeZoomEnabled(ExtractorState& state, T value)
+template<typename T, typename U> auto unzoomedIfEvaluationTimeZoomEnabled(ExtractorState& state, U value) -> T
 {
-    return Length<CSS::AllUnzoomed> { value / state.style.usedZoomForLength().value };
+    return T { value / state.style.usedZoomForLength().value };
 }
 
 // MARK: - Shared Adaptor
@@ -327,7 +327,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
                         containingBlockSize = box->containingBlockLogicalWidthForContent();
                 }
             }
-            return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<LayoutUnit>(value, containingBlockSize, state.style.usedZoomForLength())));
+            return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, evaluate<LayoutUnit>(value, containingBlockSize, state.style.usedZoomForLength())));
         }
 
         // Return a "computed value" length.
@@ -360,7 +360,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
 
         // The property won't be over-constrained if its computed value is "auto", so the "used value" can be returned.
         if (box->isRelativelyPositioned())
-            return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, insetUsedStyleRelative(*box)));
+            return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, insetUsedStyleRelative(*box)));
 
         auto insetUsedStyleOutOfFlowPositioned = [&](auto& container, auto& box) {
             // For out-of-flow positioned boxes, the inset is how far an box's margin
@@ -402,7 +402,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
         };
 
         if (containingBlock && box->isOutOfFlowPositioned())
-            return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, insetUsedStyleOutOfFlowPositioned(*containingBlock, *box)));
+            return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, insetUsedStyleOutOfFlowPositioned(*containingBlock, *box)));
 
         return functor(CSS::Keyword::Auto { });
     }
@@ -496,7 +496,7 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
 
         if constexpr (propertyID == CSSPropertyMarginRight) {
             if (rendererCanHaveTrimmedMargin(*box) && box->hasTrimmedMargin(toMarginTrimSide(*box)))
-                return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, usedValue(*box)));
+                return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, usedValue(*box)));
 
             if (value.isFixed())
                 return functor(value);
@@ -505,11 +505,11 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == DisplayType::BlockFlow. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
-                return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluateMinimum<float>(value, box->containingBlockLogicalWidthForContent(), state.style.usedZoomForLength())));
+                return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, evaluateMinimum<float>(value, box->containingBlockLogicalWidthForContent(), state.style.usedZoomForLength())));
             }
         }
 
-        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, usedValue(*box)));
+        return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, usedValue(*box)));
     }
 };
 
@@ -531,7 +531,7 @@ template<CSSPropertyID propertyID> struct PaddingEdgeSharedAdaptor {
                 return box.computedCSSPaddingLeft();
         };
 
-        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, usedValue(*box)));
+        return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, usedValue(*box)));
     }
 };
 
@@ -590,9 +590,9 @@ template<CSSPropertyID propertyID> struct PreferredSizeSharedAdaptor {
                 // not apply for non-replaced inline elements.
                 if (!isNonReplacedInline(*state.renderer)) {
                     if constexpr (propertyID == CSSPropertyHeight)
-                        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, sizingBox(*state.renderer).height()));
+                        return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, sizingBox(*state.renderer).height()));
                     else if constexpr (propertyID == CSSPropertyWidth)
-                        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, sizingBox(*state.renderer).width()));
+                        return functor(unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, sizingBox(*state.renderer).width()));
                 }
             }
         }
@@ -1201,8 +1201,8 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyPerspectiveOrigin> {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
             auto zoom = state.style.usedZoomForLength();
 
-            auto perspectiveOriginX = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.perspectiveOriginX(), box.width(), zoom));
-            auto perspectiveOriginY = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.perspectiveOriginY(), box.height(), zoom));
+            auto perspectiveOriginX = unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, evaluate<float>(state.style.perspectiveOriginX(), box.width(), zoom));
+            auto perspectiveOriginY = unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, evaluate<float>(state.style.perspectiveOriginY(), box.height(), zoom));
 
             return functor(SpaceSeparatedTuple { perspectiveOriginX, perspectiveOriginY });
         }
@@ -1288,8 +1288,8 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTransformOrigin> {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
             auto zoom = state.style.usedZoomForLength();
 
-            auto transformOriginX = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.transformOriginX(), box.width(), zoom));
-            auto transformOriginY = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.transformOriginY(), box.height(), zoom));
+            auto transformOriginX = unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, evaluate<float>(state.style.transformOriginX(), box.width(), zoom));
+            auto transformOriginY = unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::AllUnzoomed>>(state, evaluate<float>(state.style.transformOriginY(), box.height(), zoom));
 
             if (auto transformOriginZ = state.style.transformOriginZ(); !transformOriginZ.isZero())
                 return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY, transformOriginZ });
@@ -1456,7 +1456,9 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
                 addValuesForNamedGridLinesAtIndex(trackList.value.value, collector, i + offset, false);
 
             trackList.value.value.append(CSS::GridTrackSize { CSS::GridTrackBreadth {
-                toCSS(LengthPercentage<CSS::Nonnegative> { Length<CSS::Nonnegative> { computedTrackSizes[i] } }, state.style)
+                toCSS(LengthPercentage<CSS::NonnegativeUnzoomed> {
+                    unzoomedIfEvaluationTimeZoomEnabled<Length<CSS::NonnegativeUnzoomed>>(state, computedTrackSizes[i])
+                }, state.style)
             } });
         }
         if (end + offset >= 0)

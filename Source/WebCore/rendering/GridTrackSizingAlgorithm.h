@@ -33,6 +33,7 @@
 #include "RenderGridLayoutState.h"
 #include "StyleGridTrackSize.h"
 #include "StyleGridTrackSizingDirection.h"
+#include "StyleZoomResolvable.h"
 #include <wtf/StdMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -94,8 +95,8 @@ public:
     void NODELETE setGrowthLimitCap(std::optional<LayoutUnit>);
     std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
-    const Style::GridTrackSize& NODELETE cachedTrackSize() const LIFETIME_BOUND;
-    void setCachedTrackSize(const Style::GridTrackSize&);
+    const Style::ZoomResolvable<Style::GridTrackSize>& NODELETE cachedTrackSize() const LIFETIME_BOUND;
+    void setCachedTrackSize(const Style::ZoomResolvable<Style::GridTrackSize>&);
 
 private:
     bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= std::max(m_baseSize, 0_lu); }
@@ -108,7 +109,7 @@ private:
     LayoutUnit m_tempSize { 0 };
     std::optional<LayoutUnit> m_growthLimitCap;
     bool m_infinitelyGrowable { false };
-    std::optional<Style::GridTrackSize> m_cachedTrackSize;
+    std::optional<Style::ZoomResolvable<Style::GridTrackSize>> m_cachedTrackSize;
 };
 
 class GridTrackSizingAlgorithm final {
@@ -177,11 +178,11 @@ private:
     };
 
     std::optional<LayoutUnit> NODELETE availableSpace() const;
-    Style::GridTrackSize calculateGridTrackSize(Style::GridTrackSizingDirection, unsigned translatedIndex) const;
+    Style::ZoomResolvable<Style::GridTrackSize> calculateGridTrackSize(Style::GridTrackSizingDirection, unsigned translatedIndex) const;
 
     // Helper methods for step 1. initializeTrackSizes().
-    LayoutUnit initialBaseSize(const Style::GridTrackSize&) const;
-    LayoutUnit initialGrowthLimit(const Style::GridTrackSize&, LayoutUnit baseSize) const;
+    LayoutUnit initialBaseSize(const Style::ZoomResolvable<Style::GridTrackSize>&) const;
+    LayoutUnit initialGrowthLimit(const Style::ZoomResolvable<Style::GridTrackSize>&, LayoutUnit baseSize) const;
 
     // Helper methods for step 2. resolveIntrinsicTrackSizes().
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, RenderGridLayoutState&);

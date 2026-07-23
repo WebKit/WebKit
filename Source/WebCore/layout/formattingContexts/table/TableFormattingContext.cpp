@@ -329,8 +329,11 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
                     return width;
                 return formattingGeometry.computedColumnWidth(*columnBox);
             }();
-        if (fixedWidth)
-            column.setComputedLogicalWidth(Style::Length<CSS::Nonnegative, float> { *fixedWidth });
+            if (fixedWidth) {
+                column.setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthFixed {
+                    Style::Length<CSS::NonnegativeUnzoomed, float> { *fixedWidth }
+                });
+            }
         }
     };
     collectColsFixedWidth();
@@ -445,8 +448,11 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
 
         if (hasColumnWithFixedWidth && !hasColumnWithPercentWidth) {
             for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
-                if (auto fixedWidth = maximumFixedColumnWidths[columnIndex])
-                    columnList[columnIndex].setComputedLogicalWidth(Style::Length<CSS::Nonnegative, float> { *fixedWidth });
+                if (auto fixedWidth = maximumFixedColumnWidths[columnIndex]) {
+                    columnList[columnIndex].setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthFixed {
+                        Style::Length<CSS::NonnegativeUnzoomed, float> { *fixedWidth }
+                    });
+                }
             }
             return;
         } 
@@ -462,7 +468,9 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
         for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
             auto nonPercentColumnWidth = columnIntrinsicWidths[columnIndex].maximum;
             if (auto fixedWidth = maximumFixedColumnWidths[columnIndex]) {
-                columnList[columnIndex].setComputedLogicalWidth(Style::Length<CSS::Nonnegative, float> { *fixedWidth });
+                columnList[columnIndex].setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthFixed {
+                    Style::Length<CSS::NonnegativeUnzoomed, float> { *fixedWidth }
+                });
                 nonPercentColumnWidth = std::max(nonPercentColumnWidth, *fixedWidth);
             }
             if (!maximumPercentColumnWidths[columnIndex]) {
@@ -470,7 +478,9 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
                 continue;
             }
             auto percent = std::min(*maximumPercentColumnWidths[columnIndex], remainingPercent);
-            columnList[columnIndex].setComputedLogicalWidth(Style::Percentage<CSS::Nonnegative, float> { percent });
+            columnList[columnIndex].setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthPercentage {
+                percent
+            });
             percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { nonPercentColumnWidth * 100.0f / percent });
             remainingPercent -= percent;
         }

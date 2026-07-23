@@ -249,13 +249,14 @@ static std::optional<LayoutUnit> fixedMaxTrackSizingFunctionSum(const WTF::Range
 {
     LayoutUnit sum;
     for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex) {
-        auto& maxTrackSizingFunction = unsizedTracks[trackIndex].trackSizingFunction.max;
+        auto& trackSizingFunction = unsizedTracks[trackIndex].trackSizingFunction;
+        auto& maxTrackSizingFunction = trackSizingFunction.max;
         if (!maxTrackSizingFunction.isLength())
             return { };
         auto fixedValue = maxTrackSizingFunction.length().tryFixed();
         if (!fixedValue)
             return { };
-        sum += LayoutUnit { fixedValue->resolveZoom(Style::ZoomNeeded { }) };
+        sum += Style::evaluate<LayoutUnit>(*fixedValue, trackSizingFunction.zoom);
     }
     return sum;
 }
@@ -689,10 +690,9 @@ static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList& trackS
             if (minTrackSizingFunction.isLength()) {
                 auto& trackBreadthLength = minTrackSizingFunction.length();
                 if (auto fixedValue = trackBreadthLength.tryFixed())
-                    return LayoutUnit { fixedValue->resolveZoom(Style::ZoomNeeded { }) };
+                    return Style::evaluate<LayoutUnit>(*fixedValue, trackSizingFunctions.zoom);
                 if (trackBreadthLength.isPercentOrCalculated())
-                    return Style::evaluate<LayoutUnit>(trackBreadthLength, availableGridSpace, Style::ZoomNeeded { });
-
+                    return Style::evaluate<LayoutUnit>(trackBreadthLength, availableGridSpace, trackSizingFunctions.zoom);
             }
 
             // An intrinsic sizing function
@@ -713,9 +713,9 @@ static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList& trackS
             if (maxTrackSizingFunction.isLength()) {
                 auto trackBreadthLength = maxTrackSizingFunction.length();
                 if (auto fixedValue = trackBreadthLength.tryFixed())
-                    return LayoutUnit { fixedValue->resolveZoom(Style::ZoomNeeded { }) };
+                    return Style::evaluate<LayoutUnit>(*fixedValue, trackSizingFunctions.zoom);
                 if (trackBreadthLength.isPercentOrCalculated())
-                    return Style::evaluate<LayoutUnit>(trackBreadthLength, availableGridSpace, Style::ZoomNeeded { });
+                    return Style::evaluate<LayoutUnit>(trackBreadthLength, availableGridSpace, trackSizingFunctions.zoom);
             }
 
             // An intrinsic sizing function

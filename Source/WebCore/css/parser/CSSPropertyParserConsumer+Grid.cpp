@@ -420,7 +420,7 @@ static std::optional<CSS::GridTrackBreadth> consumeUnresolvedGridInflexibleBread
         break;
     }
 
-    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state)) {
+    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state)) {
         guard.commit();
         return CSS::GridTrackBreadth { WTF::move(*lengthPercentage) };
     }
@@ -461,7 +461,7 @@ static std::optional<CSS::GridTrackBreadth> consumeUnresolvedGridTrackBreadth(CS
         guard.commit();
         return CSS::GridTrackBreadth { WTF::move(*flex) };
     }
-    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state)) {
+    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state)) {
         guard.commit();
         return CSS::GridTrackBreadth { WTF::move(*lengthPercentage) };
     }
@@ -511,7 +511,7 @@ static std::optional<GridInflexibleOrFixedBreadth> consumeUnresolvedGridInflexib
         break;
     }
 
-    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state)) {
+    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state)) {
         guard.commit();
         return GridInflexibleOrFixedBreadth {
             .value = CSS::GridTrackBreadth { WTF::move(*lengthPercentage) },
@@ -571,7 +571,7 @@ static std::optional<GridTrackOrFixedBreadth> consumeUnresolvedGridTrackOrFixedB
             .hasConsumedNonFixed = true,
         };
     }
-    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state)) {
+    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state)) {
         guard.commit();
         return GridTrackOrFixedBreadth {
             .value = CSS::GridTrackBreadth { WTF::move(*lengthPercentage) },
@@ -591,7 +591,7 @@ static std::optional<CSS::GridFitContentFunction> consumeUnresolvedGridFitConten
     CSSParserTokenRangeGuard guard { range };
     auto args = consumeFunction(range);
 
-    auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(args, state);
+    auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(args, state);
     if (!lengthPercentage || !args.atEnd())
         return std::nullopt;
 

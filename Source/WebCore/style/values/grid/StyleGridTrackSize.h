@@ -59,7 +59,7 @@ template<size_t I> const auto& get(const GridMinMaxFunctionParameters& value)
         return value.max;
 }
 
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(GridTrackFitContentLength, LengthPercentage<CSS::Nonnegative>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(GridTrackFitContentLength, LengthPercentage<CSS::NonnegativeUnzoomed>);
 
 struct GridFitContentFunctionParameters {
     GridTrackFitContentLength value;

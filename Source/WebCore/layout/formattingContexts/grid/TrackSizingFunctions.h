@@ -26,12 +26,16 @@
 #pragma once
 
 #include "StyleGridTrackBreadth.h"
+#include "StyleZoomPrimitives.h"
 
 namespace WebCore {
 namespace Layout {
+
 struct TrackSizingFunctions {
     Style::GridTrackBreadth min { CSS::Keyword::Auto { } };
     Style::GridTrackBreadth max { CSS::Keyword::Auto { } };
+    Style::ZoomFactor zoom;
 };
-}
-}
+
+} // namespace Layout
+} // namespace WebCore
