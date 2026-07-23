@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Tests that "currentColor" inside an OpenType-SVG glyph resolves to the CSS
+     text color. The "A" glyph of Ahem-CurrentColor-SVG.ttf is a full square
+     painted fill="currentColor"; with color:green it must render green, matching
+     the reference which uses the same glyph baked to fill="green".
+     Before https://bugs.webkit.org/show_bug.cgi?id=320029 the glyph rendered
+     black on the CoreText port because the OT-SVG run's isolated ImageBuffer was
+     never seeded with the owner context's fill color. -->
+<meta name="fuzzy" content="maxDifference=0-64; totalPixels=0-16682" />
+<style>
+    @font-face {
+        font-family: "WebFont";
+        src: url("resources/Ahem-CurrentColor-SVG.ttf") format("truetype");
+    }
+    .WebFont {
+        font-family: "WebFont" !important;
+        font-size: 100px;
+        color: green;
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+    }
+</style>
+</head>
+<body>
+    <h2>This tests that currentColor propagates into OpenType-SVG glyphs.</h2>
+    <p class="WebFont">A</p>
+</body>
+</html>
