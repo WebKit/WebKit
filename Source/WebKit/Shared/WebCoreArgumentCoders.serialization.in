@@ -2782,6 +2782,7 @@ enum class WebCore::IncludeSecureCookies : bool;
     bool m_alwaysStream;
     Vector<uint8_t> m_boundary;
     [NotSerialized] std::optional<uint64_t> m_lengthInBytes;
+    [NotSerialized] RefPtr<WebCore::PendingStreamState> m_pendingStreamState;
 };
 
 #if ENABLE(ASYNC_SCROLLING)

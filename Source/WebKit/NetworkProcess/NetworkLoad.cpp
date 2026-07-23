@@ -37,6 +37,7 @@
 #include "NetworkSession.h"
 #include "WebErrors.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/NeverDestroyed.h>
@@ -185,14 +186,23 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
 
-    if (!m_networkProcess->ftpEnabled() && request.url().protocolIsInFTPFamily()) {
+    auto errorCallback = [&](ResourceError&& error) {
         m_task->clearClient();
         m_task = nullptr;
         WebCore::NetworkLoadMetrics emptyMetrics;
-        didCompleteWithError(ResourceError { errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl }, emptyMetrics);
+        didCompleteWithError(WTF::move(error), emptyMetrics);
 
         if (completionHandler)
             completionHandler({ });
+    };
+
+    if (!m_networkProcess->ftpEnabled() && request.url().protocolIsInFTPFamily()) {
+        errorCallback({ errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl });
+        return;
+    }
+
+    if (redirectResponse.httpStatusCode() != httpStatus303SeeOther && protect(m_task)->hasPendingStreamBody()) {
+        errorCallback({ errorDomainWebKitInternal, 0, url(), "Fetch upload streams cannot handle redirections other than 303"_s, ResourceError::Type::Cancellation });
         return;
     }
 

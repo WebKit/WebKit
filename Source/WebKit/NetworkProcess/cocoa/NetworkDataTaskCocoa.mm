@@ -42,6 +42,7 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/OriginAccessPatterns.h>
+#import <WebCore/PendingStreamState.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
@@ -188,6 +189,21 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
         session->setFirstPartyHostIPAddress(requestURL.host().toString(), ipAddress.get());
 }
 
+void NetworkDataTaskCocoa::installPendingStreamProbe(WebCore::PendingStreamState& state)
+{
+    state.setHTTPVersionProbe([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr task = weakThis.get();
+        if (!task || !task->m_task)
+            return WebCore::PendingStreamState::HTTPVersion::Unknown;
+        auto protocolName = retainPtr([task->m_task _incompleteTaskMetrics].transactionMetrics.lastObject.networkProtocolName);
+        if (!protocolName)
+            return WebCore::PendingStreamState::HTTPVersion::Unknown;
+        if ([protocolName isEqualToString:@"h2"] || [protocolName isEqualToString:@"h2c"] || [protocolName isEqualToString:@"h3"])
+            return WebCore::PendingStreamState::HTTPVersion::HTTP2OrLater;
+        return WebCore::PendingStreamState::HTTPVersion::HTTP1;
+    });
+}
+
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation, parameters.isInitiatedByDedicatedWorker)
     , NetworkTaskCocoa(session)
@@ -228,6 +244,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     auto thirdPartyCookieBlockingDecision = requestThirdPartyCookieBlockingDecision(request);
     restrictRequestReferrerToOriginIfNeeded(request);
+
+    if (RefPtr body = request.httpBody()) {
+        if (RefPtr state = body->pendingStreamState())
+            installPendingStreamProbe(*state);
+    }
 
     RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     ASSERT(nsRequest);

@@ -1,5 +1,5 @@
 
-FAIL Fetch upload streaming should be accepted on 303 promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Fetch upload streaming should be accepted on 303
 PASS Fetch upload streaming should fail on 301
 PASS Fetch upload streaming should fail on 302
 PASS Fetch upload streaming should fail on 307

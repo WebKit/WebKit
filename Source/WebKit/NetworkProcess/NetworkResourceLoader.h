@@ -55,6 +55,7 @@ class ContentFilter;
 class FormData;
 class LinkHeader;
 class NetworkStorageSession;
+class PendingStreamState;
 class Report;
 class ResourceRequest;
 }
@@ -319,6 +320,8 @@ private:
 
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<Ref<WebCore::BlobDataFileReference>> m_fileReferences;
+
+    RefPtr<WebCore::PendingStreamState> m_pendingStreamState;
 
     bool m_wasStarted { false };
     bool m_didConsumeSandboxExtensions { false };

@@ -32,6 +32,7 @@
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/PendingStreamIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/StoredCredentialsPolicy.h>
@@ -157,6 +158,8 @@ public:
 
     size_t bytesTransferredOverNetwork() const { return m_bytesTransferredOverNetwork; }
 
+    bool hasPendingStreamBody() const;
+
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation, bool isInitiatedByDedicatedWorker);
 
@@ -170,7 +173,6 @@ protected:
 
     void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
     void setBytesTransferredOverNetwork(size_t bytes) { m_bytesTransferredOverNetwork = bytes; }
-    bool hasPendingStreamBody() const { return m_hasPendingStreamBody; }
 
     const WeakPtr<NetworkSession> m_session;
     WeakPtr<NetworkDataTaskClient> m_client;
@@ -186,7 +188,6 @@ protected:
     WebCore::ResourceRequest m_firstRequest;
     WebCore::ResourceRequest m_previousRequest;
     String m_suggestedFilename;
-    bool m_hasPendingStreamBody { false };
     size_t m_bytesTransferredOverNetwork { 0 };
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool m_dataTaskIsForMainFrameNavigation { false };

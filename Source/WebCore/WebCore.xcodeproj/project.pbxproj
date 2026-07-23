@@ -1618,6 +1618,7 @@
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E2806F300A38020015A3AF /* FetchRequestDuplex.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2806D300A37F90015A3AF /* FetchRequestDuplex.h */; };
+		41E271713009351A0015A3AF /* PendingStreamState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E271723009352A0015A3AF /* PendingStreamState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E2F199274FAECF00A089EE /* NavigationPreloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */; };
 		41E4C3E729A3D03300EA6B3A /* BackgroundFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 418B491D29A3CF80007B3135 /* BackgroundFetch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E4C3E829A3D03900EA6B3A /* BackgroundFetchEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 418B491E29A3CF81007B3135 /* BackgroundFetchEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11541,6 +11542,8 @@
 		41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingStreamIdentifier.h; sourceTree = "<group>"; };
 		41E2806D300A37F90015A3AF /* FetchRequestDuplex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestDuplex.h; sourceTree = "<group>"; };
 		41E2806E300A37F90015A3AF /* FetchRequestDuplex.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestDuplex.idl; sourceTree = "<group>"; };
+		41E271723009352A0015A3AF /* PendingStreamState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingStreamState.h; sourceTree = "<group>"; };
+		41E271733009353A0015A3AF /* PendingStreamState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PendingStreamState.cpp; sourceTree = "<group>"; };
 		41E2F195274FAECA00A089EE /* NavigationPreloadManager.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationPreloadManager.idl; sourceTree = "<group>"; };
 		41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationPreloadManager.h; sourceTree = "<group>"; };
 		41E2F198274FAECB00A089EE /* NavigationPreloadManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationPreloadManager.cpp; sourceTree = "<group>"; };
@@ -30852,6 +30855,8 @@
 				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
 				447958031643B47B001E0A7F /* ParsedContentType.h */,
 				41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */,
+				41E271733009353A0015A3AF /* PendingStreamState.cpp */,
+				41E271723009352A0015A3AF /* PendingStreamState.h */,
 				37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */,
@@ -47798,6 +47803,7 @@
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */,
 				41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */,
+				41E271713009351A0015A3AF /* PendingStreamState.h in Headers */,
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
 				86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */,
 				4822FD232E2A8058004CAFF9 /* PerformanceEventTiming.h in Headers */,

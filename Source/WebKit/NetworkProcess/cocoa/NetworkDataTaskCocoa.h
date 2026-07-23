@@ -38,6 +38,7 @@ OBJC_CLASS NSURLSessionDataTask;
 OBJC_CLASS NSMutableURLRequest;
 
 namespace WebCore {
+class PendingStreamState;
 class RegistrableDomain;
 class SharedBuffer;
 enum class AdvancedPrivacyProtections : uint16_t;
@@ -110,6 +111,8 @@ private:
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
     void setTimingAllowFailedFlag() final;
+
+    void installPendingStreamProbe(WebCore::PendingStreamState&);
 
     WeakPtr<SessionWrapper> m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;

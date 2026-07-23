@@ -30,6 +30,7 @@
 #include "FormDataBuilder.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "PendingStreamState.h"
 #include "SharedBuffer.h"
 #include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
@@ -101,6 +102,13 @@ Ref<FormData> FormData::create(PendingStreamIdentifier identifier)
     auto result = create();
     result->m_elements.append(FormDataElement { FormDataElement::PendingStreamData { identifier } });
     return result;
+}
+
+void FormData::setPendingStreamState(Ref<PendingStreamState>&& state)
+{
+    ASSERT(isPendingStream());
+    ASSERT(!m_pendingStreamState);
+    m_pendingStreamState = WTF::move(state);
 }
 
 Ref<FormData> FormData::createMultiPart(const DOMFormData& formData)

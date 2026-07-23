@@ -2941,6 +2941,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/ParsedContentRange.h
     platform/network/ParsedContentType.h
     platform/network/PendingStreamIdentifier.h
+    platform/network/PendingStreamState.h
     platform/network/ProtectionSpace.h
     platform/network/ProtectionSpaceBase.h
     platform/network/ProtectionSpaceHash.h

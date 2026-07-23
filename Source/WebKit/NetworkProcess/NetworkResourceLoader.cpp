@@ -74,6 +74,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
+#include <WebCore/PendingStreamState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ReportingScope.h>
 #include <WebCore/SWServer.h>
@@ -180,6 +181,15 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 #endif
     if (synchronousReply)
         m_synchronousLoadData = makeUnique<SynchronousLoadData>(WTF::move(synchronousReply));
+
+    if (RefPtr body = m_parameters.request.httpBody()) {
+        if (body->isPendingStream()) {
+            m_pendingStreamState = PendingStreamState::create();
+            // FIXME: Until we add support for getting data from web process, we pretend the body is empty.
+            protect(m_pendingStreamState)->endStream();
+            body->setPendingStreamState(*m_pendingStreamState);
+        }
+    }
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
