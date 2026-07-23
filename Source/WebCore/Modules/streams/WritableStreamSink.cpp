@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WritableStreamSink.h"
 
+#include "AbortSignal.h"
+#include "JSAbortSignal.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWritableStreamDefaultController.h"
 #include "JSWritableStreamSink.h"
@@ -52,11 +54,24 @@ public:
 
     void errorIfNeeded(JSC::JSGlobalObject&, JSC::JSValue);
     JSWritableStreamDefaultController* NODELETE jsController() { return m_jsController; }
+    RefPtr<AbortSignal> signal() const;
 
 private:
     // The owner of WritableStreamDefaultController is responsible to keep uncollected the JSWritableStreamDefaultController.
     JSWritableStreamDefaultController* m_jsController { nullptr };
 };
+
+RefPtr<AbortSignal> WritableStreamDefaultController::signal() const
+{
+    if (!m_jsController)
+        return nullptr;
+
+    Ref vm = m_jsController->vm();
+    JSC::JSLockHolder lock(vm.get());
+    auto signalValue = m_jsController->getDirect(vm, builtinNames(vm.get()).signalPrivateName());
+    auto* jsSignal = dynamicDowncast<JSAbortSignal>(signalValue);
+    return jsSignal ? RefPtr { &jsSignal->wrapped() } : nullptr;
+}
 
 static bool invokeWritableStreamDefaultControllerFunction(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {
@@ -87,6 +102,11 @@ void WritableStreamSink::start(std::unique_ptr<WritableStreamDefaultController>&
     m_controller = WTF::move(controller);
 }
 
+RefPtr<AbortSignal> WritableStreamSink::abortSignal() const
+{
+    return m_controller ? m_controller->signal() : nullptr;
+}
+
 void WritableStreamSink::errorIfNeeded(JSC::JSGlobalObject& globalObject, JSC::JSValue error)
 {
     Ref vm = globalObject.vm();
@@ -111,6 +131,11 @@ SimpleWritableStreamSink::SimpleWritableStreamSink(WriteCallback&& writeCallback
 void SimpleWritableStreamSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
 {
     promise.settle(m_writeCallback(context, value));
+}
+
+void SimpleWritableStreamSink::close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&& promise)
+{
+    promise.resolve();
 }
 
 JSC::JSValue JSWritableStreamSink::start(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)

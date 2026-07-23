@@ -6785,10 +6785,6 @@ imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.html [ Skip 
 imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Skip ]
 
 # Backend gaps (datagram flow-control, getStats, close, historical, idlharness exportKeyingMaterial).
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.html [ Skip ]

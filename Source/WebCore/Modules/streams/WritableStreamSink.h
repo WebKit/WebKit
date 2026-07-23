@@ -39,6 +39,7 @@ class JSGlobalObject;
 
 namespace WebCore {
 
+class AbortSignal;
 class JSDOMGlobalObject;
 class ScriptExecutionContext;
 template<typename> class ExceptionOr;
@@ -49,15 +50,19 @@ class WritableStreamSink : public RefCounted<WritableStreamSink> {
 public:
     virtual ~WritableStreamSink();
 
-    void start(std::unique_ptr<WritableStreamDefaultController>&&);
+    virtual void start(std::unique_ptr<WritableStreamDefaultController>&&);
     virtual void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) = 0;
-    virtual void close(JSDOMGlobalObject&) = 0;
+    virtual void close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&&) = 0;
     virtual void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&);
 
     void errorIfNeeded(JSC::JSGlobalObject&, JSC::JSValue);
 
 protected:
     WritableStreamSink();
+
+    // The AbortSignal owned by the associated WritableStreamDefaultController, if any.
+    // Fired synchronously when the stream is aborted, before the abort algorithm runs.
+    RefPtr<AbortSignal> abortSignal() const;
 
 private:
     std::unique_ptr<WritableStreamDefaultController> m_controller;
@@ -72,7 +77,7 @@ private:
     explicit SimpleWritableStreamSink(WriteCallback&&);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close(JSDOMGlobalObject&) final { }
+    void close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&&) final;
 
     WriteCallback m_writeCallback;
 };

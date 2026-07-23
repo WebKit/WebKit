@@ -183,12 +183,13 @@ void FileSystemWritableFileStreamSink::write(ScriptExecutionContext& context, JS
     }
 }
 
-void FileSystemWritableFileStreamSink::close(JSDOMGlobalObject&)
+void FileSystemWritableFileStreamSink::close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_isClosed);
 
     m_isClosed = true;
     protect(m_source)->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed);
+    promise.resolve();
 }
 
 void FileSystemWritableFileStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&& promise)
