@@ -53,30 +53,33 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const NativeImage& im
 {
 }
 
-std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
+DestinationColorSpace ShareableBitmapConfiguration::validateColorSpace(const DestinationColorSpace& colorSpace)
 {
-    if (!colorSpace)
-        return std::nullopt;
-
-    if (auto colorSpaceAsRGB = colorSpace->asRGB())
-        return colorSpaceAsRGB;
+    if (auto colorSpaceAsRGB = colorSpace.asRGB())
+        return *colorSpaceAsRGB;
 
     return DestinationColorSpace::ExtendedSRGB();
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
 {
-    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
+    return (calculateBytesPerPixel(pixelFormat, colorSpace) / 4) * 8;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(PixelFormat pixelFormat, const DestinationColorSpace&)
 {
-    return colorSpace.usesExtendedRange() ? 8 : 4;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (pixelFormat == PixelFormat::RGBA16F)
+        return sizeof(Float16) * 4;
+#else
+    UNUSED_PARAM(pixelFormat);
+#endif
+    return 4;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
 {
-    CheckedUint32 bytesPerRow = calculateBytesPerPixel(colorSpace) * size.width();
+    CheckedUint32 bytesPerRow = calculateBytesPerPixel(pixelFormat, colorSpace) * size.width();
 #if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
@@ -87,24 +90,29 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
 #endif
 }
 
-CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const DestinationColorSpace& colorSpace, bool isOpaque)
+CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(PixelFormat pixelFormat, bool isOpaque)
 {
     CGBitmapInfo info = 0;
-    if (colorSpace.usesExtendedRange()) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (pixelFormat == PixelFormat::RGBA16F) {
         info |= kCGBitmapFloatComponents | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host);
 
         if (isOpaque)
             info |= kCGImageAlphaNoneSkipLast;
         else
             info |= kCGImageAlphaPremultipliedLast;
-    } else {
-        info |= static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
-
-        if (isOpaque)
-            info |= kCGImageAlphaNoneSkipFirst;
-        else
-            info |= kCGImageAlphaPremultipliedFirst;
+        return info;
     }
+#else
+    UNUSED_PARAM(pixelFormat);
+#endif
+
+    info |= static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
+
+    if (isOpaque)
+        info |= kCGImageAlphaNoneSkipFirst;
+    else
+        info |= kCGImageAlphaPremultipliedFirst;
 
     return info;
 }

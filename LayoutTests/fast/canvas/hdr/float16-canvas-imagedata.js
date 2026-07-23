@@ -1,24 +1,22 @@
-<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
-<!DOCTYPE html>
-<html>
-<head>
-<script src="../../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<script>
 description("Tests that put/getImageData work with float16 canvas.");
 
-var canvas = document.createElement("canvas");
-canvas.width = 10;
-canvas.height = 10;
+debug(`canvas.width: ${canvas.width}`)
+debug(`canvas.height: ${canvas.height}`)
+
 var context = canvas.getContext("2d", { colorType: "float16" });
+shouldBe('context.getContextAttributes().colorType', '"float16"');
+
+if (typeof context.getEffectiveRenderingModeForTesting !== "undefined") {
+    debug(`Effective renderingMode: ${context.getEffectiveRenderingModeForTesting()}`);
+}
+
 var r = 0;
 var g = 128;
 var b = 255;
 var a = 255;
 // FIXME: Fill still only works in SRGB/uint8, adapt when extended/float16 support is available.
 context.fillStyle = `rgb(${r} ${g} ${b})`;
-context.fillRect(0, 0, 1, 1);
+context.fillRect(0, 0, canvas.width, canvas.height);
 
 const componentsPerPixel = 4;
 
@@ -71,12 +69,18 @@ verifyImageData('created_imageData_float16', 'Float16Array', float16_bytes_per_e
 var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-float16" });
 verifyImageData('gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
 
+var gotten_imageData_float16_last = context.getImageData(canvas.width - 1, canvas.height - 2, 1, 1, { pixelFormat: "rgba-float16" });
+verifyImageData('gotten_imageData_float16_last', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
+
 var created_imageData_uint8 = context.createImageData(1, 1, { pixelFormat: "rgba-unorm8" });
 verifyImageData('created_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, 0, 0, 0, 0);
 
 // This verifies the basic float16->uint8 conversion:
 var gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-unorm8" });
 verifyImageData('gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
+
+var gotten_imageData_uint8_last = context.getImageData(canvas.width - 1, canvas.height - 2, 1, 1, { pixelFormat: "rgba-unorm8" });
+verifyImageData('gotten_imageData_uint8_last', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
 
 // Put the float16 ImageData back into the (uint8-backed) canvas, and get a default (uint8) ImageData.
 // This verifies the basic uint8->float16 conversion.
@@ -86,8 +90,6 @@ var gotten_imageData_uint8_from_float16 = context.getImageData(0, 0, 1, 1);
 verifyImageData('gotten_imageData_uint8_from_float16', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
 
 // Exhaustive uint8->float16->uint8 round-trip test for all possible individual SRGB/uint8 component values. Only log errors.
-canvas.width = 64;
-canvas.height = 16;
 var componentsToTest = componentsPerPixel;
 shouldBeTrue('canvas.width * canvas.height >= 256 * componentsToTest');
 
@@ -140,8 +142,6 @@ gotten_imageData_uint8 = context.getImageData(0, 0, canvas.width, canvas.height,
 areEqualImageData('gotten_imageData_uint8', 'expected_imageData_uint8', 0);
 
 // Deeper float16->(same)float16->uint8->(nearby)float16 round-trip test for many possible individual component values. Only log errors.
-canvas.width = 100;
-canvas.height = 32;
 const divisions = 1024;
 componentsToTest = 3;
 const maxValue = 2;
@@ -208,7 +208,3 @@ areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', floa
 
 shouldThrowErrorName(`context.createImageData(1, 1, { pixelFormat: "foo" })`, "TypeError")
 shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { pixelFormat: "foo" })`, "TypeError")
-</script>
-<script src="../../../resources/js-test-post.js"></script>
-</body>
-</html>

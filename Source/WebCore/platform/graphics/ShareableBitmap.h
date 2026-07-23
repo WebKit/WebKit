@@ -29,6 +29,7 @@
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/PixelFormat.h>
 #include <WebCore/PlatformImage.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/ArgumentCoder.h>
@@ -54,6 +55,7 @@ class GraphicsContext;
 class Image;
 class NativeImage;
 
+inline constexpr auto unspecifiedPixelFormat = std::optional<PixelFormat> { };
 inline constexpr auto defaultCopyOnWrite = SharedMemory::CopyOnWrite::No;
 
 class ShareableBitmapConfiguration {
@@ -62,13 +64,7 @@ public:
     explicit ShareableBitmapConfiguration(const ShareableBitmapConfiguration&) = default;
     ShareableBitmapConfiguration(ShareableBitmapConfiguration&&) = default;
 
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace> = std::nullopt, Headroom = Headroom::None, bool isOpaque = false);
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace>, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
-#if USE(CG)
-        , CGBitmapInfo
-        , std::optional<ShareableGainMap>&&
-#endif
-    );
+    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<PixelFormat> = unspecifiedPixelFormat, Headroom = Headroom::None, bool isOpaque = false);
 #if USE(CG)
     ShareableBitmapConfiguration(const NativeImage&);
 #endif
@@ -76,8 +72,9 @@ public:
     ShareableBitmapConfiguration& operator=(ShareableBitmapConfiguration&&) = default;
 
     IntSize size() const { return m_size; }
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace ? *m_colorSpace : DestinationColorSpace::SRGB(); }
+    const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
     PlatformColorSpaceValue platformColorSpace() const { return colorSpace().platformColorSpace(); }
+    PixelFormat pixelFormat() const { return m_pixelFormat; }
     Headroom baseImageHeadroom() const { return m_baseImageHeadroom; }
     bool isOpaque() const { return m_isOpaque; }
 
@@ -94,21 +91,28 @@ public:
 
     CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
 
-    WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, const DestinationColorSpace&);
-    WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, const DestinationColorSpace&);
+    WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, PixelFormat, const DestinationColorSpace&);
+    WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, PixelFormat, const DestinationColorSpace&);
 
 private:
     friend struct IPC::ArgumentCoder<ShareableBitmapConfiguration>;
-
-    static std::optional<DestinationColorSpace> validateColorSpace(std::optional<DestinationColorSpace>);
-    static CheckedUint32 calculateBitsPerComponent(const DestinationColorSpace&);
-    static CheckedUint32 calculateBytesPerPixel(const DestinationColorSpace&);
+    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, const DestinationColorSpace&, PixelFormat, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
-    static CGBitmapInfo calculateBitmapInfo(const DestinationColorSpace&, bool isOpaque);
+        , CGBitmapInfo
+        , std::optional<ShareableGainMap>&&
+#endif
+    );
+
+    static DestinationColorSpace validateColorSpace(const DestinationColorSpace&);
+    static CheckedUint32 calculateBitsPerComponent(PixelFormat, const DestinationColorSpace&);
+    static CheckedUint32 calculateBytesPerPixel(PixelFormat, const DestinationColorSpace&);
+#if USE(CG)
+    static CGBitmapInfo calculateBitmapInfo(PixelFormat, bool isOpaque);
 #endif
 
     IntSize m_size;
-    std::optional<DestinationColorSpace> m_colorSpace;
+    DestinationColorSpace m_colorSpace { DestinationColorSpace::SRGB() };
+    PixelFormat m_pixelFormat { PixelFormat::RGBA8 };
     Headroom m_baseImageHeadroom { Headroom::None };
     bool m_isOpaque { false };
 
@@ -185,7 +189,8 @@ public:
     WEBCORE_EXPORT std::span<uint8_t> NODELETE mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
-    const DestinationColorSpace& colorSpace() const { return  m_configuration.colorSpace(); }
+    const DestinationColorSpace& colorSpace() const { return m_configuration.colorSpace(); }
+    PixelFormat pixelFormat() const { return m_configuration.pixelFormat(); }
 
     // Create a graphics context that can be used to paint into the backing store.
     WEBCORE_EXPORT std::unique_ptr<GraphicsContext> createGraphicsContext();

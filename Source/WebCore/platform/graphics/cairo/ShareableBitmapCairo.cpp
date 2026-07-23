@@ -38,23 +38,33 @@ namespace WebCore {
 
 static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
 
-std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
+DestinationColorSpace ShareableBitmapConfiguration::validateColorSpace(const DestinationColorSpace& colorSpace)
 {
     return colorSpace;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
 {
-    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
+    return (calculateBytesPerPixel(pixelFormat, colorSpace) / 4) * 8;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace&)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(PixelFormat pixelFormat, const DestinationColorSpace&)
 {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    RELEASE_ASSERT(pixelFormat != PixelFormat::RGBA16F);
+#else
+    UNUSED_PARAM(pixelFormat);
+#endif
     return 4;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace&)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, PixelFormat pixelFormat, const DestinationColorSpace&)
 {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    RELEASE_ASSERT(pixelFormat != PixelFormat::RGBA16F);
+#else
+    UNUSED_PARAM(pixelFormat);
+#endif
     return cairo_format_stride_for_width(cairoFormat, size.width());
 }
 

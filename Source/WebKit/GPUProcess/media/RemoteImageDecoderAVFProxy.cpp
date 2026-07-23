@@ -159,7 +159,7 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
         return;
     bool isOpaque = false;
     auto imageSize = nativeImage->size();
-    auto bitmap = ShareableBitmap::create({ imageSize, nativeImage->colorSpace(), nativeImage->headroom(), isOpaque });
+    auto bitmap = ShareableBitmap::create({ imageSize, nativeImage->colorSpace(), unspecifiedPixelFormat, nativeImage->headroom(), isOpaque });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();

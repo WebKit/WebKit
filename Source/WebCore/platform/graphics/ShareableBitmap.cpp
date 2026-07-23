@@ -36,26 +36,31 @@ namespace WebCore {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmap, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, Headroom baseImageHeadroom, bool isOpaque)
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, const DestinationColorSpace& colorSpace, std::optional<PixelFormat> pixelFormat, Headroom baseImageHeadroom, bool isOpaque)
     : m_size(size)
     , m_colorSpace(validateColorSpace(colorSpace))
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    , m_pixelFormat(pixelFormat ? *pixelFormat : (m_colorSpace.usesExtendedRange() ? PixelFormat::RGBA16F : PixelFormat::RGBA8))
+#else
+    , m_pixelFormat(pixelFormat ? *pixelFormat : PixelFormat::RGBA8)
+#endif
     , m_baseImageHeadroom(baseImageHeadroom)
     , m_isOpaque(isOpaque)
-    , m_bitsPerComponent(calculateBitsPerComponent(this->colorSpace()))
-    , m_bytesPerPixel(calculateBytesPerPixel(this->colorSpace()))
-    , m_bytesPerRow(calculateBytesPerRow(size, this->colorSpace()))
+    , m_bitsPerComponent(calculateBitsPerComponent(m_pixelFormat, m_colorSpace))
+    , m_bytesPerPixel(calculateBytesPerPixel(m_pixelFormat, m_colorSpace))
+    , m_bytesPerRow(calculateBytesPerRow(size, m_pixelFormat, m_colorSpace))
 #if USE(CG)
-    , m_bitmapInfo(calculateBitmapInfo(this->colorSpace(), isOpaque))
+    , m_bitmapInfo(calculateBitmapInfo(m_pixelFormat, isOpaque))
 #endif
 #if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
+    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), m_colorSpace.platformColorSpace()))
 #endif
 {
     ASSERT(!m_size.isEmpty());
     ASSERT(m_baseImageHeadroom >= Headroom::None);
 }
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, Headroom baseImageHeadroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, Headroom baseImageHeadroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
     , CGBitmapInfo bitmapInfo
     , std::optional<ShareableGainMap>&& shareableGainMap
@@ -63,6 +68,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
 )
     : m_size(size)
     , m_colorSpace(colorSpace)
+    , m_pixelFormat(pixelFormat)
     , m_baseImageHeadroom(baseImageHeadroom)
     , m_isOpaque(isOpaque)
     , m_bitsPerComponent(bitsPerComponent)
@@ -73,7 +79,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_shareableGainMap(WTF::move(shareableGainMap))
 #endif
 #if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
+    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), m_colorSpace.platformColorSpace()))
 #endif
 {
     // This constructor is called when decoding ShareableBitmapConfiguration. So this constructor
@@ -81,9 +87,9 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     ASSERT(m_baseImageHeadroom >= Headroom::None);
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
 {
-    return calculateBytesPerRow(size, colorSpace) * size.height();
+    return calculateBytesPerRow(size, pixelFormat, colorSpace) * size.height();
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfiguration& configuration)

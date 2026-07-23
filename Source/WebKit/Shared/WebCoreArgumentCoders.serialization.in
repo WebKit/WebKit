@@ -6436,7 +6436,7 @@ header: <WebCore/ShareableCVPixelBuffer.h>
     WebCore::ShareableCVPixelBufferConfiguration m_configuration;
     Ref<WebCore::ShareableCVPixelBufferBytes> m_bytes;
 }
-    
+
 [CustomHeader, RefCounted] class WebCore::ShareableCVPixelBufferWithPlanarBytes {
     WebCore::ShareableCVPixelBufferConfiguration m_configuration;
     Vector<Ref<WebCore::ShareableCVPixelBufferBytes>> m_planes;
@@ -6459,7 +6459,8 @@ header: <WebCore/ShareableGainMap.h>
 header: <WebCore/ShareableBitmap.h>
 [CustomHeader] class WebCore::ShareableBitmapConfiguration {
     [Validator='m_size->width() > 0 && m_size->height() > 0'] WebCore::IntSize m_size;
-    std::optional<WebCore::DestinationColorSpace> m_colorSpace;
+    WebCore::DestinationColorSpace m_colorSpace;
+    WebCore::PixelFormat m_pixelFormat;
     WebCore::Headroom m_baseImageHeadroom;
     bool m_isOpaque;
     [Validator='*bitsPerComponent >= 1 && *bitsPerComponent <= 16'] unsigned bitsPerComponent();

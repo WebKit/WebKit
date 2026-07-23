@@ -44,7 +44,7 @@ IntSize ImageBufferBackend::calculateSafeBackendSize(const Parameters& parameter
     if (backendSize.isEmpty())
         return backendSize;
 
-    auto bytesPerRow = 4 * CheckedUint32(backendSize.width());
+    auto bytesPerRow = PixelBuffer::bytesPerPixel(parameters.bufferFormat.pixelFormat) * CheckedUint32(backendSize.width());
     if (bytesPerRow.hasOverflowed())
         return { };
 
