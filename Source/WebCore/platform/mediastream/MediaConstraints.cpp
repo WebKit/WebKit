@@ -737,7 +737,7 @@ static bool NODELETE isAllowedRequiredConstraintForDeviceSelection(MediaConstrai
     if (deviceType == MediaConstraints::DeviceType::Microphone)
         return true;
 
-    return deviceType == MediaConstraints::DeviceType::Microphone || type == MediaConstraintType::DisplaySurface || type == MediaConstraintType::LogicalSurface;
+    return type == MediaConstraintType::DisplaySurface || type == MediaConstraintType::LogicalSurface;
 }
 
 bool MediaConstraints::hasDisallowedRequiredConstraintForDeviceSelection(DeviceType deviceType) const
