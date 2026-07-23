@@ -274,11 +274,17 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
 {
     // collect a WebVTT block parsing. (WebVTT parser algorithm step 14)
     
-    if (checkAndCreateRegion(line))
+    if (checkAndCreateRegion(line)) {
+        // Starting a region block supersedes any buffered line, so it must not
+        // linger and get applied as the id of a later cue that has no id line.
+        m_previousLine = emptyString();
         return Region;
-    
-    if (checkStyleSheet(line))
+    }
+
+    if (checkStyleSheet(line)) {
+        m_previousLine = emptyString();
         return Style;
+    }
 
     // Handle cue block.
     ParseState state = checkAndRecoverCue(line);
