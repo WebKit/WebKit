@@ -73,7 +73,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     return String { referrerURL.string() };
 }
 
-static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, String& referrer, RequestPriority& priority, ScriptExecutionContext& context, const FetchRequest::Init& init)
+static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, String& referrer, RequestPriority& priority, std::optional<FetchRequestDuplex>& duplex, ScriptExecutionContext& context, const FetchRequest::Init& init)
 {
     if (!init.window.isUndefinedOrNull() && !init.window.isEmpty())
         return Exception { ExceptionCode::TypeError, "Window can only be null."_s };
@@ -97,6 +97,9 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
 
     if (init.priority)
         priority = *init.priority;
+
+    if (init.duplex)
+        duplex = init.duplex;
 
     if (init.mode) {
         options.mode = init.mode.value();
@@ -165,7 +168,7 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
 
-    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *protect(scriptExecutionContext()), init);
+    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, m_duplex, *protect(scriptExecutionContext()), init);
     if (exception)
         return WTF::move(exception.value());
 
@@ -247,6 +250,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     m_options = input.m_options;
     m_referrer = input.m_referrer;
     m_priority = input.m_priority;
+    m_duplex = input.m_duplex;
     m_enableContentExtensionsCheck = input.m_enableContentExtensionsCheck;
 
     auto optionsResult = initializeOptions(init);
@@ -284,6 +288,11 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     return { };
 }
 
+static bool shouldCheckDuplex(ScriptExecutionContext* context)
+{
+    return context && context->settingsValues().fetchUploadStreamsEnabled;
+}
+
 ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
 {
     if (!methodCanHaveBody(m_request))
@@ -293,6 +302,9 @@ ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
     auto result = extractBody(WTF::move(body));
     if (result.hasException())
         return result;
+
+    if (isReadableStreamBody() && !m_duplex && shouldCheckDuplex(protect(scriptExecutionContext())))
+        return Exception { ExceptionCode::TypeError, "Request with a ReadableStream body requires the 'duplex' option to be set"_s };
 
     if (m_options.keepAlive && hasReadableStreamBody())
         return Exception { ExceptionCode::TypeError, "Request cannot have a ReadableStream body and keepalive set to true"_s };
@@ -304,15 +316,18 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
     if (request.isDisturbedOrLocked())
         return Exception { ExceptionCode::TypeError, "Request input is disturbed or locked."_s };
 
+    RefPtr context = scriptExecutionContext();
     if (!request.isBodyNull()) {
         if (!methodCanHaveBody(m_request))
             return Exception { ExceptionCode::TypeError, makeString("Request has method '"_s, m_request.httpMethod(), "' and cannot have a body"_s) };
 
-        RefPtr context = scriptExecutionContext();
         auto* globalObject = context ? downcast<JSDOMGlobalObject>(context->globalObject()) : nullptr;
         m_body = request.m_body->createProxy(*globalObject);
         request.setDisturbed();
     }
+
+    if (isReadableStreamBody() && !m_duplex && shouldCheckDuplex(context))
+        return Exception { ExceptionCode::TypeError, "Request with a ReadableStream body requires the 'duplex' option to be set"_s };
 
     if (m_options.keepAlive && hasReadableStreamBody())
         return Exception { ExceptionCode::TypeError, "Request cannot have a ReadableStream body and keepalive set to true"_s };
@@ -385,6 +400,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(JSDOMGlobalObject& globalObje
         return Exception { ExceptionCode::InvalidStateError, "Cannot clone FetchRequest without a valid script execution context"_s };
     auto clone = adoptRef(*new FetchRequest(*context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
     clone->suspendIfNeeded();
+    clone->m_duplex = m_duplex;
     clone->cloneBody(globalObject, *this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;

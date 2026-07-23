@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,10 @@
 
 #pragma once
 
-#include "AbortSignal.h"
-#include "FetchBody.h"
-#include "FetchHeaders.h"
-#include "FetchOptions.h"
-#include "FetchRequestDuplex.h"
-#include "IPAddressSpace.h"
-#include "RequestPriority.h"
-#include <JavaScriptCore/JSCJSValue.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-struct FetchRequestInit {
-    String method;
-    std::optional<FetchHeaders::Init> headers;
-    std::optional<std::optional<FetchBody::Init>> body;
-    String referrer;
-    std::optional<ReferrerPolicy> referrerPolicy;
-    std::optional<FetchOptions::Mode> mode;
-    std::optional<FetchOptions::Credentials> credentials;
-    std::optional<FetchOptions::Cache> cache;
-    std::optional<FetchOptions::Redirect> redirect;
-    String integrity;
-    std::optional<bool> keepalive;
-    JSC::JSValue signal;
-    std::optional<RequestPriority> priority;
-    std::optional<FetchRequestDuplex> duplex;
-    JSC::JSValue window;
-    std::optional<IPAddressSpace> targetAddressSpace;
-
-    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || duplex || !window.isUndefined() || !signal.isUndefined() || (targetAddressSpace && *targetAddressSpace != IPAddressSpace::Public); }
+enum class FetchRequestDuplex : bool {
+    Half
 };
 
 }

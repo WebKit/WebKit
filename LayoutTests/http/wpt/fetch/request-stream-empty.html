@@ -13,7 +13,7 @@ function createRequestWithEmptyReadableStream()
     var stream = new ReadableStream({start: controller => {
         controller.close();
     }});
-    return new Request("", {body: stream, method: "POST"});
+    return new Request("", {body: stream, duplex : "half", method: "POST"});
 }
 
 function createRequestWithEmptyChunkReadableStream()
@@ -22,7 +22,7 @@ function createRequestWithEmptyChunkReadableStream()
         controller.enqueue(new Uint8Array(0));
         controller.close();
     }});
-    return new Request("", {body: stream, method: "POST"});
+    return new Request("", {body: stream, duplex : "half", method: "POST"});
 }
 
 promise_test(test => {

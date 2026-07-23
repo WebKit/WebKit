@@ -24,7 +24,7 @@ promise_test(test => {
         controller.enqueue(new ArrayBuffer(10));
         controller.close();
     }});
-    var request = new Request("", {body: stream, mode:"cors", method: "POST"});
+    var request = new Request("", {body: stream, mode:"cors", method: "POST", duplex : "half"});
     return promise_rejects_dom(test, "NotSupportedError", fetch(request));
 }, "Uploading a readable stream body request is not supported");
     </script>

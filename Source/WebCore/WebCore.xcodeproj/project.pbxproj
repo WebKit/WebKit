@@ -1617,6 +1617,7 @@
 		41E12E9F24FE74E20093FFB4 /* WebSocketIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41E2806F300A38020015A3AF /* FetchRequestDuplex.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2806D300A37F90015A3AF /* FetchRequestDuplex.h */; };
 		41E2F199274FAECF00A089EE /* NavigationPreloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */; };
 		41E4C3E729A3D03300EA6B3A /* BackgroundFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 418B491D29A3CF80007B3135 /* BackgroundFetch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E4C3E829A3D03900EA6B3A /* BackgroundFetchEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 418B491E29A3CF81007B3135 /* BackgroundFetchEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11537,6 +11538,8 @@
 		41E1F33D248A62B60022D5DE /* AudioSampleBufferConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferConverter.mm; sourceTree = "<group>"; };
 		41E1F33F248A62B60022D5DE /* AudioSampleBufferConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferConverter.h; sourceTree = "<group>"; };
 		41E2716F300934A20015A3AF /* PendingStreamIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingStreamIdentifier.h; sourceTree = "<group>"; };
+		41E2806D300A37F90015A3AF /* FetchRequestDuplex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestDuplex.h; sourceTree = "<group>"; };
+		41E2806E300A37F90015A3AF /* FetchRequestDuplex.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestDuplex.idl; sourceTree = "<group>"; };
 		41E2F195274FAECA00A089EE /* NavigationPreloadManager.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationPreloadManager.idl; sourceTree = "<group>"; };
 		41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationPreloadManager.h; sourceTree = "<group>"; };
 		41E2F198274FAECB00A089EE /* NavigationPreloadManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationPreloadManager.cpp; sourceTree = "<group>"; };
@@ -27893,6 +27896,8 @@
 				7CE191541F2A9B1D00272F78 /* FetchRequestCredentials.idl */,
 				464D4C7D28D2407B001C47C7 /* FetchRequestDestination.h */,
 				464D4C7C28D2407A001C47C7 /* FetchRequestDestination.idl */,
+				41E2806D300A37F90015A3AF /* FetchRequestDuplex.h */,
+				41E2806E300A37F90015A3AF /* FetchRequestDuplex.idl */,
 				7CE191471F2A98AF00272F78 /* FetchRequestInit.h */,
 				7CE191491F2A98B000272F78 /* FetchRequestInit.idl */,
 				7CE1914F1F2A9B0A00272F78 /* FetchRequestMode.h */,
@@ -45421,6 +45426,7 @@
 				7CE1915A1F2A9B3400272F78 /* FetchRequestCache.h in Headers */,
 				7CE191551F2A9B1D00272F78 /* FetchRequestCredentials.h in Headers */,
 				464D4C7E28D24080001C47C7 /* FetchRequestDestination.h in Headers */,
+				41E2806F300A38020015A3AF /* FetchRequestDuplex.h in Headers */,
 				7CE1914A1F2A98B900272F78 /* FetchRequestInit.h in Headers */,
 				7CE191511F2A9B0A00272F78 /* FetchRequestMode.h in Headers */,
 				7CE191601F2A9B4F00272F78 /* FetchRequestRedirect.h in Headers */,

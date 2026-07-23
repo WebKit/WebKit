@@ -62,7 +62,7 @@ PASS Request interface: attribute keepalive
 FAIL Request interface: attribute isReloadNavigation assert_true: The prototype object must have a property "isReloadNavigation" expected true got false
 FAIL Request interface: attribute isHistoryNavigation assert_true: The prototype object must have a property "isHistoryNavigation" expected true got false
 PASS Request interface: attribute signal
-FAIL Request interface: attribute duplex assert_true: The prototype object must have a property "duplex" expected true got false
+PASS Request interface: attribute duplex
 PASS Request interface: operation clone()
 PASS Request interface: attribute body
 PASS Request interface: attribute bodyUsed
@@ -89,7 +89,7 @@ PASS Request interface: new Request('about:blank') must inherit property "keepal
 FAIL Request interface: new Request('about:blank') must inherit property "isReloadNavigation" with the proper type assert_inherits: property "isReloadNavigation" not found in prototype chain
 FAIL Request interface: new Request('about:blank') must inherit property "isHistoryNavigation" with the proper type assert_inherits: property "isHistoryNavigation" not found in prototype chain
 PASS Request interface: new Request('about:blank') must inherit property "signal" with the proper type
-FAIL Request interface: new Request('about:blank') must inherit property "duplex" with the proper type assert_inherits: property "duplex" not found in prototype chain
+PASS Request interface: new Request('about:blank') must inherit property "duplex" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "clone()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "body" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "bodyUsed" with the proper type

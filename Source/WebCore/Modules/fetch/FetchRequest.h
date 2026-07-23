@@ -73,6 +73,7 @@ public:
     Cache cache() const { return m_options.cache; }
     Redirect redirect() const { return m_options.redirect; }
     bool keepalive() const { return m_options.keepAlive; };
+    FetchRequestDuplex duplex() const { return m_duplex.value_or(FetchRequestDuplex::Half); }
     AbortSignal& signal() { return m_signal.get(); }
 
     const String& integrity() const LIFETIME_BOUND { return m_options.integrity; }
@@ -110,6 +111,7 @@ private:
     URLKeepingBlobAlive m_requestURL;
     FetchOptions m_options;
     RequestPriority m_priority { RequestPriority::Auto };
+    std::optional<FetchRequestDuplex> m_duplex;
     String m_referrer;
     const Ref<AbortSignal> m_signal;
     Markable<FetchIdentifier> m_navigationPreloadIdentifier;

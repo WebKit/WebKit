@@ -50,6 +50,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
     readonly attribute boolean keepalive;
+    [EnabledBySetting=FetchUploadStreamsEnabled] readonly attribute FetchRequestDuplex duplex;
     // FIXME: Implement 'isReloadNavigation'.
     // readonly attribute boolean isReloadNavigation;
     // FIXME: Implement 'isHistoryNavigation'.

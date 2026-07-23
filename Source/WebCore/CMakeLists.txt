@@ -424,6 +424,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchRequestCache.idl
     Modules/fetch/FetchRequestCredentials.idl
     Modules/fetch/FetchRequestDestination.idl
+    Modules/fetch/FetchRequestDuplex.idl
     Modules/fetch/FetchRequestInit.idl
     Modules/fetch/FetchRequestMode.idl
     Modules/fetch/FetchRequestRedirect.idl

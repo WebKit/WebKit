@@ -4230,6 +4230,7 @@ JSFetchRequest.cpp
 JSFetchRequestCache.cpp
 JSFetchRequestCredentials.cpp
 JSFetchRequestDestination.cpp
+JSFetchRequestDuplex.cpp
 JSFetchRequestInit.cpp
 JSFetchRequestMode.cpp
 JSFetchRequestRedirect.cpp

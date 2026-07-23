@@ -22,7 +22,7 @@ var clonedRequest = request.clone();
 function testReadableStreamClone(initialBuffer, bufferType)
 {
     promise_test(function(test) {
-        var request = new Request("", {"method" : "POST", "body" : new ReadableStream({start : function(controller) {
+        var request = new Request("", {"method" : "POST", duplex : "half", "body" : new ReadableStream({start : function(controller) {
             controller.enqueue(initialBuffer);
             controller.close();
         }})});
