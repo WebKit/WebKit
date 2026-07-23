@@ -3303,8 +3303,17 @@ void WebRtcVideoReceiveChannel::OnPacketReceived(RtpPacketReceived packet) {
 
   call_->Receiver()->DeliverRtpPacket(
       MediaType::VIDEO, std::move(packet),
+#if defined(WEBRTC_WEBKIT_BUILD)
+      [this, safety = task_safety_.flag()](const RtpPacketReceived& packet) {
+        if (!safety->alive())
+          return false;
+        RTC_DCHECK_RUN_ON(&thread_checker_);
+        return MaybeCreateDefaultReceiveStream(packet);
+      });
+#else
       absl::bind_front(
           &WebRtcVideoReceiveChannel::MaybeCreateDefaultReceiveStream, this));
+#endif
 }
 
 bool WebRtcVideoReceiveChannel::MaybeCreateDefaultReceiveStream(
