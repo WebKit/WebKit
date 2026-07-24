@@ -1158,7 +1158,12 @@ void SpeculativeJIT::checkArray(Node* node)
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
     
-    if (arrayMode.alreadyChecked(m_graph, node, m_state.forNode(node->child1()))) {
+    AbstractValue& child1Value = m_state.forNode(node->child1());
+    if (arrayMode.alreadyChecked(m_graph, node, child1Value)) {
+        // We're eliding the array/structure check. If alreadyChecked relied on a finite
+        // structure set (rather than arrayModes/type), watch those structures.
+        if (child1Value.m_structure.isFinite())
+            m_graph.trustStructures(child1Value.m_structure);
         // We can purge Empty check completely in this case of CheckArrayOrEmpty since CellUse only accepts SpecCell | SpecEmpty.
 #if USE(JSVALUE64)
         ASSERT(typeFilterFor(node->child1().useKind()) & SpecEmpty);

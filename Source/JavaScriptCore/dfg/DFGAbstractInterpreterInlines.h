@@ -4878,7 +4878,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case Arrayify: {
-        if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
+        AbstractValue& arrayifyValue = forNode(node->child1());
+        if (node->arrayMode().alreadyChecked(m_graph, node, arrayifyValue)) {
+            // We model Arrayify as a no-op (no structure clobber) because the array is already
+            // in the required mode. If that proof relies on a finite structure set, watch it so
+            // the mode can't change under us (else the runtime Arrayify would convert & clobber).
+            if (arrayifyValue.m_structure.isFinite())
+                m_graph.trustStructures(arrayifyValue.m_structure);
             didFoldClobberStructures();
             break;
         }

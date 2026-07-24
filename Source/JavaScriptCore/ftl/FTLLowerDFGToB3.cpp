@@ -5879,8 +5879,13 @@ private:
         Edge edge = m_node->child1();
         LValue cell = lowCell(edge);
 
-        if (m_node->arrayMode().alreadyChecked(m_graph, m_node, abstractValue(edge)))
+        if (m_node->arrayMode().alreadyChecked(m_graph, m_node, abstractValue(edge))) {
+            // Eliding the array/structure check: watch the proven structures if the proof
+            // relied on a finite structure set (arrayModes/type proofs need no watchpoint).
+            if (abstractValue(edge).m_structure.isFinite())
+                m_graph.trustStructures(abstractValue(edge).m_structure);
             return;
+        }
 
         speculate(
             BadIndexingType, jsValueValue(cell), nullptr,
@@ -5895,6 +5900,8 @@ private:
         if (m_node->arrayMode().alreadyChecked(m_graph, m_node, abstractValue(edge))) {
             // We can purge Empty check of CheckArrayOrEmpty completely in this case since CellUse only accepts SpecCell | SpecEmpty.
             ASSERT(typeFilterFor(m_node->child1().useKind()) & SpecEmpty);
+            if (abstractValue(edge).m_structure.isFinite())
+                m_graph.trustStructures(abstractValue(edge).m_structure);
             return;
         }
 

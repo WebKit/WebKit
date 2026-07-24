@@ -446,6 +446,24 @@ private:
         
         dataLogLnIf(verbose, "    Hoisting ", node, " from ", *fromBlock, " to ", *data.preHeader);
 
+        // We're committing to move this node to the pre-header. safeToExecute() above may have
+        // proven the move safe by relying on a child's finite structure set (its structure cases
+        // read m_structure); since the hoisted node runs without re-checking, those structures must
+        // be backed by a transition watchpoint. With lazy structure watchpoints, trust the finite
+        // structures of the node's children now, at the point of the hoist. This over-approximates
+        // which child safeToExecute actually relied on, but it is deliberately robust: it can't miss
+        // a structure-reliant case, and it stays within the eager baseline's watched set (a hoisted
+        // node's finite children are a subset of the clobber-survived structures the eager path
+        // watched unconditionally). trustStructures() no-ops on !needsWatch sets, so it only installs
+        // for finiteness that actually needs watching.
+        if (Options::useDFGLazyStructureWatchpoints()) {
+            m_graph.doToChildren(node, [&] (Edge& edge) {
+                auto& structures = m_state.forNode(edge).m_structure;
+                if (structures.isFinite())
+                    m_graph.trustStructures(structures);
+            });
+        }
+
         insertHoistedNode(node);
         updateAbstractState();
 
