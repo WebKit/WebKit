@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {stat} from "fs";
+import {stat, unlink} from "fs";
 import path from "path";
 import util from "util";
 import which from "which";
@@ -40,6 +40,7 @@ const defaultTimeoutForRevert = 60 * 1000 * 10;
 
 const execFileAsync = util.promisify(execFile);
 const statAsync = util.promisify(stat);
+const unlinkAsync = util.promisify(unlink);
 
 function parseBugId(string)
 {
@@ -567,8 +568,32 @@ Type \`help COMMAND\` for help on my individual commands.`,
         });
     }
 
+    // Remove orphaned *.lock files from a crashed git process; safe because the AsyncTaskQueue guarantees no git process is running here.
+    async clearStaleGitLocks()
+    {
+        const gitDir = path.join(process.env.webkitWorkingDirectory, ".git");
+        const lockPaths = [
+            path.join(gitDir, "index.lock"),
+            path.join(gitDir, "HEAD.lock"),
+            path.join(gitDir, "config.lock"),
+            path.join(gitDir, "packed-refs.lock"),
+            path.join(gitDir, "refs", "heads", "main.lock"),
+        ];
+        for (let lockPath of lockPaths) {
+            try {
+                await unlinkAsync(lockPath);
+                dataLogLn("Removed stale git lock: " + lockPath);
+            } catch (error) {
+                if (error.code !== "ENOENT")
+                    dataLogLn("Warning: could not remove git lock " + lockPath + ": " + error.message);
+            }
+        }
+    }
+
     async cleanUpWorkingCopy()
     {
+        await this.clearStaleGitLocks();
+
         dataLogLn("1. Resetting");
         await this.execInWebKitDirectorySimple("git", ["reset", "--hard"]);
 
