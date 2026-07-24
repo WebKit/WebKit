@@ -288,6 +288,14 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
             return fitContentSize(minContentBorderBoxWidth, maxContentBorderBoxWidth, stretchFitBorderBoxWidth);
         }
 
+        // Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
+        // (i.e. it is sized consistent with the block-level replaced element sizing rules).
+        auto& layoutBox = placedGridItem.layoutBox();
+        if (placedGridItem.isReplacedElement() && layoutBox.hasNaturalWidth())
+            return BorderBoxSize { ContentBoxSize { layoutBox.naturalWidth() }, borderAndPadding }.value;
+
+        // FIXME: Handle replaced elements with no natural size in the axis and non-replaced items
+        // with a preferred aspect ratio.
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
@@ -437,6 +445,14 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
             return fitContentSize(minContentBorderBoxHeight, maxContentBorderBoxHeight, stretchFitBorderBoxHeight);
         }
 
+        // Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
+        // (i.e. it is sized consistent with the block-level replaced element sizing rules).
+        auto& layoutBox = placedGridItem.layoutBox();
+        if (placedGridItem.isReplacedElement() && layoutBox.hasNaturalHeight())
+            return BorderBoxSize { ContentBoxSize { layoutBox.naturalHeight() }, borderAndPadding }.value;
+
+        // FIXME: Handle replaced elements with no natural size in the axis and non-replaced items
+        // with a preferred aspect ratio.
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
