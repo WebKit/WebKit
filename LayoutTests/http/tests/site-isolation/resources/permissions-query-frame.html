@@ -1,0 +1,9 @@
+<script>
+const name = new URLSearchParams(location.search).get("name");
+navigator.permissions.query({ name })
+    .then(status => {
+        window.parent.postMessage(status.state, "*");
+    }).catch(error => {
+        window.parent.postMessage(`fail (${error.name})`, "*");
+    });
+</script>

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Permission policy 'SyncXHR' check failed for document with origin 'http://localhost:8000'.
-Verifies permissions policy is set correctly on cross-site frames
+Verifies sync-xhr permissions policy is set correctly on cross-site frames
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
