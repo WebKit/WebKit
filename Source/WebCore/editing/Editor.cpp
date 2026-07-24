@@ -4170,9 +4170,23 @@ static bool isFrameInRange(LocalFrame& frame, const SimpleRange& range)
     return false;
 }
 
-unsigned Editor::countMatchesForText(const String& target, const std::optional<SimpleRange>& range, FindOptions options, unsigned limit, bool markMatches, Vector<SimpleRange>* matches)
+Vector<SimpleRange> Editor::findAllMatches(const String& searchText, const std::optional<SimpleRange>& searchRange, FindOptions searchOptions, std::optional<unsigned> optionalLimit)
 {
-    if (target.isEmpty())
+    if (!m_matchFinder)
+        m_matchFinder = WTF::makeUnique<CachedMatchFinder>(this->document());
+
+    auto cachedMatches = m_matchFinder->findMatches(searchRange, searchText, searchOptions, optionalLimit);
+    if (cachedMatches.has_value())
+        return *cachedMatches;
+
+    ASSERT(cachedMatches.error() == CachedMatchFinder::CacheUnusable::Oversized);
+    auto fallbackRange = searchRange.has_value() ? *searchRange : makeRangeSelectingNodeContents(this->document());
+    return findAllPlainText(fallbackRange, searchText, searchOptions, optionalLimit.has_value() ? *optionalLimit : 0);
+}
+
+unsigned Editor::countMatchesForText(const String& searchText, const std::optional<SimpleRange>& range, FindOptions options, unsigned limit, bool markMatches, Vector<SimpleRange>* matches)
+{
+    if (searchText.isEmpty())
         return 0;
 
     Ref document = this->document();
@@ -4187,40 +4201,52 @@ unsigned Editor::countMatchesForText(const String& target, const std::optional<S
     if (!searchRange)
         searchRange = makeRangeSelectingNodeContents(document);
 
+    auto searchOptions = options - FindOption::Backwards;
+    std::optional<unsigned> optionalLimit = limit ? std::make_optional(limit) : std::nullopt;
+
+    auto allMatches = findAllMatches(searchText, searchRange, searchOptions, optionalLimit);
+
+    if (matches)
+        matches->appendVector(allMatches);
+
+    if (markMatches) {
+        for (const auto& match : allMatches)
+            addMarker(match, DocumentMarkerType::TextMatch);
+    }
+
+    return allMatches.size();
+}
+
+unsigned Editor::markAllMatchesForText(const String& searchText, FindOptions options, unsigned limit)
+{
+    if (searchText.isEmpty())
+        return 0;
+
+    Ref document = this->document();
+
     if (!m_matchFinder)
         m_matchFinder = WTF::makeUnique<CachedMatchFinder>(document);
 
     auto searchOptions = options - FindOption::Backwards;
     std::optional<unsigned> optionalLimit = limit ? std::make_optional(limit) : std::nullopt;
 
-    auto collectAndMark = [&](const Vector<SimpleRange>& allMatches) {
-        if (matches)
-            matches->appendVector(allMatches);
+    auto allMatches = findAllMatches(searchText, std::nullopt, searchOptions, optionalLimit);
 
-        if (markMatches) {
-            for (const auto& match : allMatches)
-                addMarker(match, DocumentMarkerType::TextMatch);
-        }
-    };
+    if (CheckedPtr markers = document->markersIfExists())
+        markers->removeMarkers(DocumentMarkerType::TextMatch);
+    for (const auto& match : allMatches)
+        addMarker(match, DocumentMarkerType::TextMatch);
 
-    if (matches || markMatches) {
-        auto cachedMatches = m_matchFinder->findMatches(searchRange, target, searchOptions, optionalLimit);
-        if (cachedMatches.has_value()) {
-            collectAndMark(*cachedMatches);
-            return cachedMatches->size();
-        }
-        ASSERT(cachedMatches.error() == CachedMatchFinder::CacheUnusable::Oversized);
-    } else {
-        auto cachedCount = m_matchFinder->countMatches(searchRange, target, searchOptions, optionalLimit);
-        if (cachedCount.has_value())
-            return *cachedCount;
-        ASSERT(cachedCount.error() == CachedMatchFinder::CacheUnusable::Oversized);
-    }
+    if (!m_matchFinder->matchesAreMarked(searchText, searchOptions, optionalLimit))
+        m_matchFinder->setMatchesMarked();
 
-    // The cached buffer was oversized; fall back to an uncached search.
-    auto allMatches = findAllPlainText(*searchRange, target, searchOptions, limit);
-    collectAndMark(allMatches);
     return allMatches.size();
+}
+
+void Editor::textMatchMarkersWereCleared()
+{
+    if (m_matchFinder)
+        m_matchFinder->clearMatchesMarked();
 }
 
 void Editor::setMarkedTextMatchesAreHighlighted(bool flag)

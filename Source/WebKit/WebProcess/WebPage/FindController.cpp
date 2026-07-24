@@ -223,7 +223,6 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
         if (shouldShowOverlay || shouldShowHighlight) {
             auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount);
             matchCount = result.ranges.size();
-            protect(webPage->corePage())->unmarkAllTextMatches();
             protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
         } else {
             matchCount = protect(webPage->corePage())->countFindMatches(string, core(options), maxMatchCount + 1);
@@ -374,7 +373,6 @@ unsigned FindController::markMatches(const String& string, OptionSet<FindOptions
     RefPtr webPage { m_webPage.get() };
     bool shouldShowHighlight = options.contains(FindOptions::ShowHighlight);
 
-    protect(webPage->corePage())->unmarkAllTextMatches();
     unsigned matchCount = protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
     return matchCount + cueMatchCount;
 }
@@ -438,10 +436,8 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
 
     bool shouldShowOverlay = found && options.contains(FindOptions::ShowOverlay);
     bool shouldShowHighlight = options.contains(FindOptions::ShowHighlight);
-    if (shouldShowOverlay || shouldShowHighlight) {
-        protect(webPage->corePage())->unmarkAllTextMatches();
+    if (shouldShowOverlay || shouldShowHighlight)
         protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
-    }
 
     updateFindPageOverlay(shouldShowOverlay);
     updateFindIndicatorIfNeeded(found, options, shouldShowOverlay);

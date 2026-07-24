@@ -526,6 +526,8 @@ public:
     WEBCORE_EXPORT void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, Affinity, bool stillSelecting) const;
     WEBCORE_EXPORT unsigned countMatchesForText(const String&, const std::optional<SimpleRange>&, FindOptions, unsigned limit, bool markMatches, Vector<SimpleRange>*);
+    WEBCORE_EXPORT unsigned markAllMatchesForText(const String&, FindOptions, unsigned limit);
+    WEBCORE_EXPORT void textMatchMarkersWereCleared();
     bool markedTextMatchesAreHighlighted() const;
     WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
 
@@ -734,6 +736,8 @@ private:
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
     void removeWritingSuggestionIfNeeded();
+
+    Vector<SimpleRange> findAllMatches(const String& searchText, const std::optional<SimpleRange>&, FindOptions searchOptions, std::optional<unsigned> limit);
 
     WeakPtr<EditorClient> m_client;
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;

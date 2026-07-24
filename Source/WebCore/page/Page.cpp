@@ -1360,9 +1360,11 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
             frame = incrementFrame(frame.get(), true, CanWrap::No);
             continue;
         }
-        if (shouldMarkMatches == MarkMatches)
+        if (shouldMarkMatches == MarkMatches) {
             protect(localFrame->editor())->setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
-        matchCount += protect(localFrame->editor())->countMatchesForText(target, std::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, nullptr);
+            matchCount += protect(localFrame->editor())->markAllMatchesForText(target, options, maxMatchCount ? (maxMatchCount - matchCount) : 0);
+        } else
+            matchCount += protect(localFrame->editor())->countMatchesForText(target, std::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, false, nullptr);
         frame = incrementFrame(frame.get(), true, CanWrap::No);
     } while (frame);
 
@@ -1488,6 +1490,8 @@ void Page::unmarkAllTextMatches()
     forEachDocument([] (Document& document) {
         if (CheckedPtr markers = document.markersIfExists())
             markers->removeMarkers(DocumentMarkerType::TextMatch);
+        if (RefPtr frame = document.frame())
+            protect(frame->editor())->textMatchMarkersWereCleared();
     });
 }
 

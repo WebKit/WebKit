@@ -272,6 +272,7 @@ Expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinde
 
     m_matchCache = results;
     m_countCache = results.size();
+    m_matchesMarked = false;
     m_searchResultCacheKeys.targetString = target;
     m_searchResultCacheKeys.limit = limit;
     m_searchResultCacheKeys.options = matchAffectingOptions(options);
@@ -364,6 +365,7 @@ bool CachedMatchFinder::clearTextBufferCache()
         m_searchResultCacheKeys.options = std::nullopt;
         m_matchCache = std::nullopt;
         m_countCache = std::nullopt;
+        m_matchesMarked = false;
         return false;
     }
 
@@ -376,6 +378,7 @@ bool CachedMatchFinder::clearTextBufferCache()
     m_docBuffer.dirty = true;
     m_matchCache = std::nullopt;
     m_countCache = std::nullopt;
+    m_matchesMarked = false;
     return true;
 }
 
@@ -460,6 +463,21 @@ bool CachedMatchFinder::isSearchResultCacheValid(const String& target, FindOptio
         && target == *m_searchResultCacheKeys.targetString
         && m_searchResultCacheKeys.limit == limit
         && m_searchResultCacheKeys.options == matchAffectingOptions(options);
+}
+
+void CachedMatchFinder::setMatchesMarked()
+{
+    m_matchesMarked = true;
+}
+
+void CachedMatchFinder::clearMatchesMarked()
+{
+    m_matchesMarked = false;
+}
+
+bool CachedMatchFinder::matchesAreMarked(const String& target, FindOptions options, std::optional<unsigned> limit) const
+{
+    return m_matchesMarked && isSearchResultCacheValid(target, options, limit);
 }
 
 } // namespace WebCore
