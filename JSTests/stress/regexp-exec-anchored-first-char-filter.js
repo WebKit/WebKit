@@ -1,5 +1,3 @@
-//@ skip if not $jitTests
-//@ $skipModes << :lockdown
 // Verify the anchored (^, non-multiline) non-sticky RegExp.exec first-character fast-fail filter:
 // a filtered no-match must equal the operation's result, and NON-anchored patterns must never be
 // filtered (a match can appear anywhere).
