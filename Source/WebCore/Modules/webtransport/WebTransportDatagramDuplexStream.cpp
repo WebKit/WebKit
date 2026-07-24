@@ -64,7 +64,7 @@ RefPtr<WebTransportSession> WebTransportDatagramDuplexStream::session()
     RefPtr transport = m_transport.get();
     if (!transport)
         return nullptr;
-    return transport->session();
+    return transport->session().ptr();
 }
 
 ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingMaxAge(std::optional<double> maxAge)

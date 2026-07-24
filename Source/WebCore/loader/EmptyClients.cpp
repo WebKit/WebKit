@@ -87,6 +87,10 @@
 #include "UserContentProvider.h"
 #include "VisitedLinkStore.h"
 #include "WebRTCProvider.h"
+#include "WebTransportConnectionInfo.h"
+#include "WebTransportConnectionStats.h"
+#include "WebTransportReceiveStreamStats.h"
+#include "WebTransportSendStreamStats.h"
 #include "WebTransportSession.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <pal/SessionID.h>
@@ -1234,12 +1238,43 @@ private:
     void NODELETE postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
+class EmptyWebTransportSession final : public WebTransportSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EmptyWebTransportSession> {
+public:
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+
+    Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const ClientOrigin&) final { return WebTransportSessionInitializationPromise::createAndReject(); }
+    Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final { return WebTransportSendPromise::createAndReject(); }
+    Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() final { return WebTransportStreamPromise::createAndReject(); }
+    Ref<WebTransportStreamPromise> createBidirectionalStream() final { return WebTransportStreamPromise::createAndReject(); }
+    Ref<WebTransportSendPromise> streamSendBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool) final { return WebTransportSendPromise::createAndReject(); }
+    Ref<WebTransportConnectionStatsPromise> getStats() final { return WebTransportConnectionStatsPromise::createAndReject(); }
+    Ref<WebTransportSendStreamStatsPromise> getSendStreamStats(WebTransportStreamIdentifier) final { return WebTransportSendStreamStatsPromise::createAndReject(); }
+    Ref<WebTransportReceiveStreamStatsPromise> getReceiveStreamStats(WebTransportStreamIdentifier) final { return WebTransportReceiveStreamStatsPromise::createAndReject(); }
+    Ref<WebTransportSendStreamStatsPromise> getSendGroupStats(WebTransportSendGroupIdentifier) final { return WebTransportSendStreamStatsPromise::createAndReject(); }
+    Ref<WebTransportExportKeyingMaterialPromise> exportKeyingMaterial(std::span<const uint8_t>, std::span<const uint8_t>, uint32_t) final { return WebTransportExportKeyingMaterialPromise::createAndReject(); }
+
+    void cancelReceiveStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) final { }
+    void cancelSendStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) final { }
+    void destroyStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) final { }
+    void terminate(WebTransportSessionErrorCode, CString&&) final { }
+    void datagramIncomingMaxAgeUpdated(std::optional<double>) final { }
+    void datagramOutgoingMaxAgeUpdated(std::optional<double>) final { }
+    void incomingMaxBufferedDatagramsUpdated(uint32_t) final { }
+    void outgoingMaxBufferedDatagramsUpdated(uint32_t) final { }
+};
+
 class EmptySocketProvider final : public SocketProvider {
 public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) final { return nullptr; }
 
-    std::pair<RefPtr<WebTransportSession>, Ref<WebTransportSessionPromise>> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&, const WebTransportOptions&) { return { nullptr, WebTransportSessionPromise::createAndReject() }; }
+    Ref<WebTransportSession> createWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&) { return adoptRef(*new EmptyWebTransportSession()); }
 };
+
+Ref<SocketProvider> emptySocketProvider()
+{
+    static NeverDestroyed<Ref<SocketProvider>> provider { adoptRef(*new EmptySocketProvider()) };
+    return provider.get();
+}
 
 class EmptyHistoryItemClient final : public HistoryItemClient {
 public:
@@ -1256,7 +1291,7 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         std::nullopt,
         sessionID,
         makeUniqueRef<EmptyEditorClient>(),
-        adoptRef(*new EmptySocketProvider),
+        emptySocketProvider(),
         WebRTCProvider::create(),
         CacheStorageProvider::create(),
         adoptRef(*new EmptyUserContentProvider),

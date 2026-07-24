@@ -78,10 +78,6 @@ void WebTransportSendStreamSink::write(ScriptExecutionContext& context, JSC::JSV
     if (!transport)
         return promise.reject(Exception { ExceptionCode::InvalidStateError });
 
-    RefPtr session = transport->session();
-    if (!session)
-        return promise.reject(Exception { ExceptionCode::InvalidStateError });
-
     if (!context.globalObject())
         return promise.reject(Exception { ExceptionCode::InvalidStateError });
 
@@ -97,7 +93,7 @@ void WebTransportSendStreamSink::write(ScriptExecutionContext& context, JSC::JSV
 
     WTF::switchOn(bufferSource.releaseReturnValue(), [&] (auto&& arrayBufferOrView) {
         constexpr bool withFin { false };
-        context.enqueueTaskWhenSettled(session->streamSendBytes(m_identifier, arrayBufferOrView->span(), withFin), TaskSource::Networking, [promise = WTF::move(promise)] (auto&& exception) mutable {
+        context.enqueueTaskWhenSettled(transport->session()->streamSendBytes(m_identifier, arrayBufferOrView->span(), withFin), TaskSource::Networking, [promise = WTF::move(promise)] (auto&& exception) mutable {
             if (!exception)
                 promise.settle(Exception { ExceptionCode::NetworkError });
             else if (*exception)
@@ -115,8 +111,7 @@ void WebTransportSendStreamSink::close(JSDOMGlobalObject&)
     m_isClosed = true;
 
     if (RefPtr transport = m_transport.get()) {
-        if (RefPtr session = transport->session())
-            session->streamSendBytes(m_identifier, { }, true);
+        transport->session()->streamSendBytes(m_identifier, { }, true);
         transport->sendStreamClosed(m_identifier);
     }
 }
@@ -136,17 +131,13 @@ void WebTransportSendStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue value, D
         return;
     transport->sendStreamClosed(m_identifier);
 
-    RefPtr session = transport->session();
-    if (!session)
-        return;
-
     std::optional<uint64_t> errorCode;
     if (auto* jsWebTransportError = dynamicDowncast<JSWebTransportError>(value)) {
         auto& webTransportError = jsWebTransportError->wrapped();
         if (auto webTransportErrorCode = webTransportError.streamErrorCode())
             errorCode = static_cast<uint64_t>(*webTransportErrorCode);
     }
-    session->cancelSendStream(m_identifier, errorCode);
+    transport->session()->cancelSendStream(m_identifier, errorCode);
 }
 
 }

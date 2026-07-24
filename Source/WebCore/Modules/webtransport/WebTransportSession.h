@@ -39,7 +39,10 @@ class WebTransportBidirectionalStream;
 class WebTransportSendStream;
 class WebTransportSessionClient;
 
+struct ClientOrigin;
+struct WebTransportConnectionInfo;
 struct WebTransportConnectionStats;
+struct WebTransportOptions;
 struct WebTransportReceiveStreamStats;
 struct WebTransportSendGroupIdentifierType;
 struct WebTransportSendStreamStats;
@@ -47,6 +50,7 @@ struct WebTransportStreamIdentifierType;
 
 using WebTransportSendGroupIdentifier = ObjectIdentifier<WebTransportSendGroupIdentifierType>;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportSessionInitializationPromise = NativePromise<WebTransportConnectionInfo, void>;
 using WebTransportStreamPromise = NativePromise<WebTransportStreamIdentifier, void>;
 using WebTransportSendPromise = NativePromise<std::optional<Exception>, void>;
 using WebTransportConnectionStatsPromise = NativePromise<WebTransportConnectionStats, void>;
@@ -61,6 +65,7 @@ class WEBCORE_EXPORT WebTransportSession : public AbstractThreadSafeRefCountedAn
 public:
     virtual ~WebTransportSession();
 
+    virtual Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const ClientOrigin&) = 0;
     virtual Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) = 0;
     virtual Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() = 0;
     virtual Ref<WebTransportStreamPromise> createBidirectionalStream() = 0;

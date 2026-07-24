@@ -53,6 +53,7 @@ class DiagnosticLoggingClient;
 class EditorClient;
 class HTMLImageElement;
 class PageConfiguration;
+class SocketProvider;
 enum class BroadcastFocusedElement : bool;
 enum class ContentChange : uint8_t;
 struct FocusOptions;
@@ -226,6 +227,7 @@ class EmptyChromeClient : public ChromeClient {
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;
 };
 
+WEBCORE_EXPORT Ref<SocketProvider> emptySocketProvider();
 DiagnosticLoggingClient& NODELETE emptyDiagnosticLoggingClient();
 WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier>, PAL::SessionID);
 

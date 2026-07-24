@@ -29,6 +29,7 @@
 #include "Exception.h"
 #include "ScriptExecutionContext.h"
 #include "WebTransport.h"
+#include "WebTransportConnectionInfo.h"
 #include "WebTransportConnectionStats.h"
 #include "WebTransportReceiveStreamStats.h"
 #include "WebTransportSendStreamStats.h"
@@ -143,6 +144,14 @@ void WorkerWebTransportSession::streamSendError(WebTransportStreamIdentifier ide
             return;
         client->streamSendError(identifier, errorCode);
     });
+}
+
+Ref<WebTransportSessionInitializationPromise> WorkerWebTransportSession::initialize(ScriptExecutionContext& context, const URL& url, const WebTransportOptions& options, const ClientOrigin& origin)
+{
+    ASSERT(!RunLoop::isMain());
+    if (RefPtr session = m_session)
+        return session->initialize(context, url, options, origin);
+    return WebTransportSessionInitializationPromise::createAndReject();
 }
 
 Ref<WebTransportSendPromise> WorkerWebTransportSession::sendDatagram(std::optional<WebTransportSendGroupIdentifier> identifier, std::span<const uint8_t> datagram)

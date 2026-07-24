@@ -60,7 +60,7 @@ WebSocketProvider::WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
     : m_webPageProxyID(webPageProxyID)
     , m_networkProcessConnection(WebProcess::singleton().ensureNetworkProcessConnection().connection()) { }
 
-std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>> WebSocketProvider::initializeWebTransportSession(ScriptExecutionContext& context, WebTransportSessionClient& client, const URL& url, const WebCore::WebTransportOptions& options)
+Ref<WebCore::WebTransportSession> WebSocketProvider::createWebTransportSession(ScriptExecutionContext& context, WebTransportSessionClient& client)
 {
     if (RefPtr scope = dynamicDowncast<WorkerGlobalScope>(context)) {
         ASSERT(!RunLoop::isMain());
@@ -80,15 +80,14 @@ std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>>
             connection = getConnection();
         }
 
-        auto [session, promise] = WebKit::WebTransportSession::initialize(WTF::move(connection), workerSession, url, options, m_webPageProxyID, scope->clientOrigin());
+        Ref session = WebKit::WebTransportSession::create(WTF::move(connection), workerSession, m_webPageProxyID);
         workerSession->attachSession(session);
-        return { WTF::move(workerSession), WTF::move(promise) };
+        return workerSession;
     }
 
     Ref document = downcast<Document>(context);
     ASSERT(RunLoop::isMain());
-    auto [session, promise] = WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, options, m_webPageProxyID, document->clientOrigin());
-    return { WTF::move(session), WTF::move(promise) };
+    return WebKit::WebTransportSession::create(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, m_webPageProxyID);
 }
 
 } // namespace WebKit

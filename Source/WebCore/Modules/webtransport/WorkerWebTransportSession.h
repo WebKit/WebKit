@@ -54,6 +54,7 @@ private:
     void didFail(std::optional<uint32_t>&&, String&&) final;
     void didDrain() final;
 
+    Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const ClientOrigin&) final;
     Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final;
     Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() final;
     Ref<WebTransportStreamPromise> createBidirectionalStream() final;

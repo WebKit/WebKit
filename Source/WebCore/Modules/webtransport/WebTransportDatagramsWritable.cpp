@@ -49,7 +49,7 @@ ExceptionOr<Ref<WebTransportDatagramsWritable>> WebTransportDatagramsWritable::c
     }
     auto& domGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
 
-    Ref datagramSink = DatagramSink::create(transport ? transport->session().get() : nullptr);
+    Ref datagramSink = DatagramSink::create(transport ? transport->session().ptr() : nullptr);
     auto internal = createInternalWritableStream(domGlobalObject, datagramSink.copyRef());
     if (internal.hasException())
         return internal.releaseException();

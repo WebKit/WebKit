@@ -2117,7 +2117,7 @@ public:
     WEBCORE_EXPORT void ariaNotify(const String&);
     WEBCORE_EXPORT void ariaNotify(const String&, const AriaNotifyOptions&);
 
-    std::optional<TextPosition> currentParserSourcePosition() const;
+    WEBCORE_EXPORT std::optional<TextPosition> currentParserSourcePosition() const;
 
     bool shouldUseTouchEventRegions() const;
 

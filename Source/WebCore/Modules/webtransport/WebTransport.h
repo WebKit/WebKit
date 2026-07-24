@@ -66,6 +66,7 @@ class WorkerWebTransportSession;
 class WritableStream;
 
 struct WebTransportCloseInfo;
+struct WebTransportConnectionInfo;
 struct WebTransportOptions;
 struct WebTransportSendStreamOptions;
 struct WebTransportHash;
@@ -102,7 +103,7 @@ public:
     Ref<WebTransportSendGroup> createSendGroup();
     static bool NODELETE supportsReliableOnly();
 
-    RefPtr<WebTransportSession> NODELETE session();
+    const Ref<WebTransportSession>& session() const { return m_session; };
     void datagramsWritableCreated(WebTransportDatagramsWritable&);
     void cleanupContext();
 
@@ -110,9 +111,8 @@ public:
     void receiveStreamClosed(WebTransportStreamIdentifier);
 
 private:
-    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&);
+    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&, URL&&);
 
-    void initializeOverHTTP(SocketProvider&, ScriptExecutionContext&, URL&&, WebTransportOptions&&);
     void cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseInfo>&&);
     void cleanupWithSessionError();
 
@@ -154,7 +154,7 @@ private:
     const PromiseAndWrapper m_closed;
     const PromiseAndWrapper m_draining;
     const Ref<WebTransportDatagramDuplexStream> m_datagrams;
-    RefPtr<WebTransportSession> m_session;
+    const Ref<WebTransportSession> m_session;
     const Ref<DatagramSource> m_datagramSource;
     const Ref<WebTransportReceiveStreamSource> m_receiveStreamSource;
     const Ref<WebTransportBidirectionalStreamSource> m_bidirectionalStreamSource;

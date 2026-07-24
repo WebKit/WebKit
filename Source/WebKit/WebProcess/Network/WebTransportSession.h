@@ -47,7 +47,6 @@ struct WebTransportConnectionInfo;
 struct WebTransportOptions;
 struct WebTransportStreamIdentifierType;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
-using WebTransportSessionPromise = NativePromise<WebTransportConnectionInfo, void>;
 using WebTransportSendPromise = NativePromise<std::optional<Exception>, void>;
 using WebTransportSessionErrorCode = uint32_t;
 using WebTransportStreamErrorCode = uint64_t;
@@ -65,7 +64,7 @@ using WebTransportSessionIdentifier = AtomicObjectIdentifier<WebTransportSession
 
 class WebTransportSession : public WebCore::WebTransportSession, public IPC::MessageReceiver, public IPC::MessageSender, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebTransportSession> {
 public:
-    static std::pair<Ref<WebTransportSession>, Ref<WebCore::WebTransportSessionPromise>> initialize(Ref<IPC::Connection>&&, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&&, const URL&, const WebCore::WebTransportOptions&, const WebPageProxyIdentifier&, const WebCore::ClientOrigin&);
+    static Ref<WebTransportSession> create(Ref<IPC::Connection>&&, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&&, const WebPageProxyIdentifier&);
     ~WebTransportSession();
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
@@ -83,9 +82,10 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    WebTransportSession(Ref<IPC::Connection>&&, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&&, WebTransportSessionIdentifier);
+    WebTransportSession(Ref<IPC::Connection>&&, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&&, WebTransportSessionIdentifier, WebPageProxyIdentifier);
 
     // WebTransportSession
+    Ref<WebCore::WebTransportSessionInitializationPromise> initialize(WebCore::ScriptExecutionContext&, const URL&, const WebCore::WebTransportOptions&, const WebCore::ClientOrigin&) final;
     Ref<WebCore::WebTransportSendPromise> sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final;
     Ref<WebCore::WebTransportStreamPromise> createOutgoingUnidirectionalStream() final;
     Ref<WebCore::WebTransportStreamPromise> createBidirectionalStream() final;
@@ -112,6 +112,7 @@ private:
     const Ref<IPC::Connection> m_connection;
     const ThreadSafeWeakPtr<WebCore::WebTransportSessionClient> m_client;
     const WebTransportSessionIdentifier m_identifier;
+    const WebPageProxyIdentifier m_pageID;
 };
 
 }

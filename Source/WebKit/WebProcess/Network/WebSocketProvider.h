@@ -41,7 +41,7 @@ public:
     ~WebSocketProvider();
 private:
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker) final;
-    std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebCore::WebTransportSessionPromise>> initializeWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&, const URL&, const WebCore::WebTransportOptions&) final;
+    Ref<WebCore::WebTransportSession> createWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&) final;
     void countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&&) final;
 
     explicit WebSocketProvider(WebPageProxyIdentifier);

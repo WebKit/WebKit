@@ -127,17 +127,13 @@ void WebTransportReceiveStreamByteSource::cancel(JSC::JSValue reason, Ref<Deferr
         return;
     transport->receiveStreamClosed(m_identifier);
 
-    RefPtr session = transport->session();
-    if (!session)
-        return;
-
     std::optional<uint64_t> errorCode;
     if (auto* jsWebTransportError = dynamicDowncast<JSWebTransportError>(reason)) {
         auto& webTransportError = jsWebTransportError->wrapped();
         if (auto webTransportErrorCode = webTransportError.streamErrorCode())
             errorCode = static_cast<uint64_t>(*webTransportErrorCode);
     }
-    session->cancelReceiveStream(m_identifier, errorCode);
+    transport->session()->cancelReceiveStream(m_identifier, errorCode);
 }
 
 }

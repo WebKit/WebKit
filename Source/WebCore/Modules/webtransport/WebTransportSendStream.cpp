@@ -76,10 +76,7 @@ void WebTransportSendStream::getStats(ScriptExecutionContext& context, Ref<Defer
     RefPtr transport = m_transport.get();
     if (!transport)
         return promise->reject(ExceptionCode::InvalidStateError);
-    RefPtr session = transport->session();
-    if (!session)
-        return promise->reject(ExceptionCode::InvalidStateError);
-    context.enqueueTaskWhenSettled(session->getSendStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& stats) mutable {
+    context.enqueueTaskWhenSettled(transport->session()->getSendStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& stats) mutable {
         if (!stats)
             return promise->reject(ExceptionCode::InvalidStateError);
         promise->resolve<IDLDictionary<WebTransportSendStreamStats>>(*stats);
