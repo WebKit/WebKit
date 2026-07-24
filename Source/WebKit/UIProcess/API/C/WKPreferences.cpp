@@ -104,7 +104,7 @@ void WKPreferencesSetBoolValueForKeyForTesting(WKPreferencesRef preferencesRef, 
 
 void WKPreferencesSetDoubleValueForKeyForTesting(WKPreferencesRef preferencesRef, double value, WKStringRef key)
 {
-    protect(toImpl(preferencesRef))->setBoolValueForKey(toWTFString(key), value, true);
+    protect(toImpl(preferencesRef))->setDoubleValueForKey(toWTFString(key), value, true);
 }
 
 void WKPreferencesSetUInt32ValueForKeyForTesting(WKPreferencesRef preferencesRef, uint32_t value, WKStringRef key)
