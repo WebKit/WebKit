@@ -6,6 +6,7 @@ load("wasm-module-builder.js");
 
 const builder = new WasmModuleBuilder();
 let table = new WebAssembly.Table({element: 'anyfunc', initial: 2});
-// Big size that causes an int32 overflow.
+// Big size that causes an int32 overflow. The oversized initial is clamped at
+// compile time and rejected at instantiation instead of overflowing.
 builder.addImportedTable('m', 'table', 4000000000);
-assertThrows(() => builder.instantiate({m: {table: table}}), WebAssembly.CompileError);
+assertThrows(() => builder.instantiate({m: {table: table}}), WebAssembly.LinkError);

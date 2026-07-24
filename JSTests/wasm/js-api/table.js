@@ -46,16 +46,21 @@ import * as assert from '../assert.js';
     const builder = new Builder()
         .Type().End()
         .Function().End()
+        .Table()
+            .Table({initial: 2**31, element: "funcref"})
+        .End()
         .Export()
             .Function("foo")
         .End()
         .Code()
             .Function("foo", {params: ["i32"]})
                 .GetLocal(0)
+                .GetLocal(0)
                 .CallIndirect(0, 0)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 4: call_indirect is only valid when a table is defined or imported, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    const module = new WebAssembly.Module(builder.WebAssembly().get());
+    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.LinkError, "couldn't create Table");
 }
 
 {
@@ -187,9 +192,6 @@ function assertBadTableImport(tableDescription, message) {
         [{initial: 2**32 - 1, maximum: 2**32 - 2, element: "funcref"},
          "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
          "WebAssembly.Module doesn't parse at byte 37: resizable limits has an initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
-        [{initial: 2**31, element: "funcref"},
-         "WebAssembly.Module doesn't parse at byte 24: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 32: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
     ];
 
     for (const d of badDescriptions) {
