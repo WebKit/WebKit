@@ -46,6 +46,14 @@ static std::atomic<unsigned> globalLogCountForTesting { 0 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LogStream);
 
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+static IPC::StreamConnectionWorkQueue& logWorkQueueSingleton()
+{
+    static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> queue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
+    return queue.get().get();
+}
+#endif
+
 LogStream::LogStream(WebProcessProxy& process, Ref<ConnectionType>&& connection, LogStreamIdentifier identifier)
     : m_connection(WTF::move(connection))
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
@@ -68,7 +76,10 @@ void LogStream::stopListeningForIPC()
     // released. Neither alone is sufficient; without this the connection leaked after the WebContent
     // process was gone, until the UI process was killed for resource exhaustion. See rdar://182244946.
     m_connection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), m_identifier.toUInt64());
-    m_connection->invalidate();
+    // invalidate() asserts it is called on the connection's own dispatcher.
+    logWorkQueueSingleton().dispatch([connection = m_connection] {
+        connection->invalidate();
+    });
 #endif
 }
 
@@ -123,12 +134,10 @@ RefPtr<LogStream> LogStream::create(WebProcessProxy& process, IPC::StreamServerC
         completionHandler(invalidWakeUpSemaphore, invalidClientWaitSemaphore);
         return nullptr;
     }
-    static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> logQueue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
-
     Ref instance = adoptRef(*new LogStream(process, connection.releaseNonNull(), identifier));
-    instance->m_connection->open(instance.get(), logQueue.get());
+    instance->m_connection->open(instance.get(), logWorkQueueSingleton());
     instance->m_connection->startReceivingMessages(instance, Messages::LogStream::messageReceiverName(), identifier.toUInt64());
-    completionHandler(logQueue.get()->wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
+    completionHandler(logWorkQueueSingleton().wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
     return instance;
 }
 
