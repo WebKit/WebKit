@@ -154,12 +154,13 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
-// GFC can place grid items into trailing (positive-side) implicit columns. The implicit grid is
-// backed by a dense matrix, so cap how far outside the explicit grid an item may be placed to
-// avoid large allocations for pathological values (e.g. grid-column: 100000); items beyond this
-// fall back to the legacy grid path.
-// FIXME: Extend implicit-track support to rows and to leading (negative-line) implicit tracks.
+// GFC can place grid items into leading (negative-side) and trailing (positive-side) implicit
+// columns. The implicit grid is backed by a dense matrix, so cap how far outside the explicit grid
+// an item may be placed to avoid large allocations for pathological values (e.g. grid-column: 100000
+// or grid-column: -100000); items beyond these caps fall back to the legacy grid path.
+// FIXME: Extend implicit-track support to rows.
 static constexpr size_t maxTrailingImplicitColumns = 10;
+static constexpr size_t maxLeadingImplicitColumns = 10;
 
 // Resolve a 1-indexed CSS grid column line to a 0-based index, matching
 // UnplacedGridItem::explicitLineToIndex. Positive lines count forward from the start of the
@@ -188,10 +189,11 @@ static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnS
             auto resolvedStart = resolveColumnLineToIndex(explicitColumnStart.position.value, linesFromGridTemplateColumnsCount);
             auto resolvedEnd = resolveColumnLineToIndex(columnEnd.explicitPosition(), linesFromGridTemplateColumnsCount);
 
-            // A line that resolves before the explicit grid start is a leading implicit column,
-            // which is not yet supported.
-            // FIXME: Support leading (negative-line) implicit columns.
-            if (resolvedStart < 0 || resolvedEnd < 0)
+            // A line that resolves before the explicit grid start places the item into a leading
+            // implicit column. Allow this up to the cap; farther-out placements stay on the legacy
+            // path. (The column-start check keeps a leading item on the legacy path when
+            // grid-auto-columns lists multiple sizes, so no such item reaches here.)
+            if (resolvedStart < -static_cast<int>(maxLeadingImplicitColumns) || resolvedEnd < -static_cast<int>(maxLeadingImplicitColumns))
                 return false;
 
             // Allow the end line to fall into a trailing implicit column, bounded by the cap above.
@@ -603,12 +605,17 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 auto columnStartLineNumber = explicitPosition.position.value;
                 if (!columnStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
-                // Resolve a negative start line against the end of the explicit grid. A line that
-                // resolves before the explicit grid start is a leading implicit column, which is
-                // not yet supported.
-                // FIXME: Support leading (negative-line) implicit columns.
+                // Resolve a negative start line against the end of the explicit grid.
                 auto resolvedColumnStart = resolveColumnLineToIndex(columnStartLineNumber, linesFromGridTemplateColumnsCount);
-                if (resolvedColumnStart < 0)
+                // A start line that resolves before the explicit grid start places the item into a
+                // leading implicit column. Allow this up to the cap; farther-out placements stay on
+                // the legacy path.
+                if (resolvedColumnStart < -static_cast<int>(maxLeadingImplicitColumns))
+                    return GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid;
+                // Leading implicit columns are sized by grid-auto-columns cycling backwards from the
+                // explicit grid, which GFC only implements for a single grid-auto-columns value.
+                // FIXME: Support multiple grid-auto-columns values for leading implicit columns.
+                if (resolvedColumnStart < 0 && renderGridStyle->gridAutoColumns().size() > 1)
                     return GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber;
                 // A start line beyond the explicit grid places the item into a trailing implicit
                 // column. Allow this up to the cap; farther-out placements stay on the legacy path.
