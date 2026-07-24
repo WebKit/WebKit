@@ -64,17 +64,17 @@ struct UnsizedTrack {
 using GridItemIndexes = Vector<size_t>;
 
 struct InflexibleTrackState {
-    HashSet<size_t> inflexibleTracks;
+    BitVector inflexibleTracks;
 
     bool isFlexible(size_t trackIndex, const UnsizedTrack& track) const
     {
         return track.trackSizingFunction.max.isFlex()
-            && !inflexibleTracks.contains(trackIndex);
+            && !inflexibleTracks.get(trackIndex);
     }
 
     void markAsInflexible(size_t trackIndex)
     {
-        inflexibleTracks.add(trackIndex);
+        inflexibleTracks.set(trackIndex);
     }
 };
 
