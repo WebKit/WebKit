@@ -125,17 +125,8 @@ void WebProcessProxy::cacheMediaMIMETypes(const Vector<String>& types)
     mediaTypeCache() = types;
     for (Ref process : processPool().processes()) {
         if (process.ptr() != this)
-            cacheMediaMIMETypesInternal(types);
+            process->send(Messages::WebProcess::SetMediaMIMETypes(types), 0);
     }
-}
-
-void WebProcessProxy::cacheMediaMIMETypesInternal(const Vector<String>& types)
-{
-    if (!mediaTypeCache().isEmpty())
-        return;
-
-    mediaTypeCache() = types;
-    send(Messages::WebProcess::SetMediaMIMETypes(types), 0);
 }
 
 const Vector<String>& WebProcessProxy::mediaMIMETypes()

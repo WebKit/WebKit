@@ -664,8 +664,6 @@ private:
 
 #if PLATFORM(COCOA)
     bool handleRemoteObjectRegistryMessage(IPC::Connection&, IPC::Decoder&);
-
-    void cacheMediaMIMETypesInternal(const Vector<String>&);
 #endif
 
     // ProcessLauncher::Client
