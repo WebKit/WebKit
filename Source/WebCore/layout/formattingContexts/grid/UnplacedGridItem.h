@@ -34,48 +34,84 @@ class ElementBox;
 class GridLayout;
 
 class UnplacedGridItem {
+private:
+    // https://drafts.csswg.org/css-grid-1/#placement
+    // A definite value for any two of Start, End, and Span in a given dimension implies
+    // a definite value for the third.
+    //
+    // A "definite" axis (at least one edge references an explicit line) resolves to a concrete
+    // 0-based line range. Everything else (auto/auto, span/auto, auto/span) is auto-positioned
+    // and only carries the span size that the placement algorithm resolves into a position later.
+    struct DefinitePosition {
+        // 0-based grid line indices; endLine is exclusive.
+        size_t startLine { 0 };
+        size_t endLine { 0 };
+
+        bool operator==(const DefinitePosition&) const = default;
+    };
+
+    struct AutoPosition {
+        // Number of tracks the item spans; resolved to a position during auto-placement.
+        size_t span { 1 };
+
+        bool operator==(const AutoPosition&) const = default;
+    };
+
+    class GridPosition {
+    public:
+        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end);
+
+        bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
+        bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
+
+        const DefinitePosition& definitePosition() const { return std::get<DefinitePosition>(m_position); }
+
+        size_t span() const;
+
+        bool operator==(const GridPosition&) const = default;
+
+    private:
+        using Value = Variant<DefinitePosition, AutoPosition>;
+
+        GridPosition(DefinitePosition position)
+            : m_position(position) { }
+        GridPosition(AutoPosition position)
+            : m_position(position) { }
+
+        Value m_position;
+    };
+
 public:
     UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd);
     UnplacedGridItem(WTF::HashTableEmptyValueType);
 
-    bool NODELETE operator==(const UnplacedGridItem& other) const;
+    bool operator==(const UnplacedGridItem& other) const;
 
     bool isHashTableDeletedValue() const { return m_layoutBox.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_layoutBox.isHashTableEmptyValue(); }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
-    size_t NODELETE normalizedColumnStart() const;
-    size_t NODELETE normalizedColumnEnd() const;
-    size_t NODELETE normalizedRowStart() const;
-    size_t NODELETE normalizedRowEnd() const;
+    size_t normalizedColumnStart() const;
+    size_t normalizedColumnEnd() const;
+    size_t normalizedRowStart() const;
+    size_t normalizedRowEnd() const;
 
     bool NODELETE hasDefiniteRowPosition() const;
     bool NODELETE hasDefiniteColumnPosition() const;
     bool NODELETE hasAutoColumnPosition() const;
     bool NODELETE hasAutoRowPosition() const;
     size_t columnSpanSize() const;
-    size_t NODELETE rowSpanSize() const;
+    size_t rowSpanSize() const;
 
-    std::pair<size_t, size_t> NODELETE normalizedRowStartEnd() const;
-    std::pair<size_t, size_t> NODELETE normalizedColumnStartEnd() const;
+    std::pair<size_t, size_t> normalizedRowStartEnd() const;
+    std::pair<size_t, size_t> normalizedColumnStartEnd() const;
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;
 
     // https://drafts.csswg.org/css-grid-1/#typedef-grid-row-start-grid-line
-    std::pair<Style::GridPosition, Style::GridPosition> m_columnPosition;
-    std::pair<Style::GridPosition, Style::GridPosition> m_rowPosition;
-
-    // The grammar for <grid-line>, which is used by the grid-{column, row}-{start-end}
-    // placement properties is 1-index in regards to line numbers. To allow for easy
-    // indexing from these line numbers into our structures we subtract 1 from them
-    // into these helper functions to make them 0-index. For example, grid-column-start: 1
-    // and grid-column-end: 2 would make to [0, 1] and place the grid item into
-    // Grid[rowIndex][0].
-    int NODELETE explicitColumnStart() const;
-    int NODELETE explicitColumnEnd() const;
-    int NODELETE explicitRowStart() const;
-    int NODELETE explicitRowEnd() const;
+    GridPosition m_columnPosition;
+    GridPosition m_rowPosition;
 
     std::pair<int, int> definiteRowStartEnd() const;
     std::pair<int, int> definiteColumnStartEnd() const;
@@ -94,7 +130,7 @@ private:
     friend class GridFormattingContext;
     friend class GridLayout;
     friend class PlacedGridItem;
-    friend void NODELETE add(Hasher&, const WebCore::Layout::UnplacedGridItem&);
+    friend void add(Hasher&, const WebCore::Layout::UnplacedGridItem&);
 };
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo

@@ -32,202 +32,148 @@
 namespace WebCore {
 namespace Layout {
 
+// Convert a 1-indexed explicit CSS grid line into a 0-indexed grid line. For example
+// grid-column-start: 1 maps to 0. https://www.w3.org/TR/css-grid-1/#line-placement
+static int explicitLineToIndex(const Style::GridPosition& position)
+{
+    ASSERT(position.isExplicit());
+    auto line = position.explicitPosition();
+    // A value of zero makes the declaration invalid.
+    ASSERT(line);
+    return line > 0 ? line - 1 : line;
+}
+
+UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end)
+{
+    // An axis is only definite when one of its edges references an explicit line. Anything
+    // else (auto/auto, span/auto, auto/span) is auto-positioned; carry the span forward for
+    // the placement algorithm to resolve.
+    if (!start.isExplicit() && !end.isExplicit()) {
+        size_t span = 1;
+        if (start.isSpan())
+            span = start.spanPosition();
+        else if (end.isSpan())
+            span = end.spanPosition();
+        return AutoPosition { span };
+    }
+
+    int startLine = 0;
+    int endLine = 0;
+    if (start.isExplicit() && end.isExplicit()) {
+        startLine = explicitLineToIndex(start);
+        endLine = explicitLineToIndex(end);
+    } else if (start.isExplicit() && end.isSpan()) {
+        startLine = explicitLineToIndex(start);
+        endLine = startLine + end.spanPosition();
+    } else if (start.isSpan() && end.isExplicit()) {
+        endLine = explicitLineToIndex(end);
+        startLine = endLine - static_cast<int>(start.spanPosition());
+    } else if (start.isExplicit() && end.isAuto()) {
+        startLine = explicitLineToIndex(start);
+        endLine = startLine + 1;
+    } else {
+        ASSERT(start.isAuto() && end.isExplicit());
+        endLine = explicitLineToIndex(end);
+        startLine = endLine - 1;
+    }
+
+    // Negative line placement is not yet supported (grid coverage keeps such items on the
+    // legacy path), so the resolved lines are non-negative and safe to store as unsigned.
+    ASSERT(startLine >= 0 && endLine >= 0);
+    // The range is always forward. The span/auto branches derive endLine from startLine, and the
+    // explicit/explicit branch only reaches GFC for single-track placements: grid coverage requires
+    // the end line to be exactly one past the start (a distance of 1), so an inverted placement like
+    // grid-column: 3 / 1 stays on the legacy path and can never underflow span() here.
+    ASSERT(startLine <= endLine);
+    return DefinitePosition { static_cast<size_t>(startLine), static_cast<size_t>(endLine) };
+}
+
+size_t UnplacedGridItem::GridPosition::span() const
+{
+    if (auto* definitePosition = std::get_if<DefinitePosition>(&m_position))
+        return definitePosition->endLine - definitePosition->startLine;
+    return std::get<AutoPosition>(m_position).span;
+}
+
 UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition columnStart, Style::GridPosition columnEnd,
     Style::GridPosition rowStart, Style::GridPosition rowEnd)
     : m_layoutBox(layoutBox)
-    , m_columnPosition({ columnStart, columnEnd })
-    , m_rowPosition({ rowStart, rowEnd })
+    , m_columnPosition(GridPosition::create(columnStart, columnEnd))
+    , m_rowPosition(GridPosition::create(rowStart, rowEnd))
 {
 }
 
 UnplacedGridItem::UnplacedGridItem(WTF::HashTableEmptyValueType)
     : m_layoutBox(WTF::HashTableEmptyValue)
-    , m_columnPosition({ Style::ComputedStyle::initialGridItemColumnStart(), Style::ComputedStyle::initialGridItemColumnEnd() })
-    , m_rowPosition({ Style::ComputedStyle::initialGridItemRowStart(), Style::ComputedStyle::initialGridItemRowEnd() })
+    , m_columnPosition(GridPosition::create(Style::ComputedStyle::initialGridItemColumnStart(), Style::ComputedStyle::initialGridItemColumnEnd()))
+    , m_rowPosition(GridPosition::create(Style::ComputedStyle::initialGridItemRowStart(), Style::ComputedStyle::initialGridItemRowEnd()))
 {
-}
-
-int UnplacedGridItem::explicitColumnStart() const
-{
-    ASSERT(m_columnPosition.first.isExplicit());
-    auto explicitColumnStart = m_columnPosition.first.explicitPosition();
-    // https://www.w3.org/TR/css-grid-1/#line-placement
-    // An <integer> value of zero makes the declaration invalid.
-    ASSERT(explicitColumnStart);
-
-    // Convert from 1-indexed CSS grid lines to 0-indexed matrix positions.
-    return explicitColumnStart > 0 ? explicitColumnStart - 1 : explicitColumnStart;
 }
 
 size_t UnplacedGridItem::normalizedColumnStart() const
 {
-    return explicitColumnStart() + m_columnNormalizationOffset;
-}
-
-int UnplacedGridItem::explicitColumnEnd() const
-{
-    ASSERT(m_columnPosition.second.isExplicit());
-    auto explicitColumnEnd = m_columnPosition.second.explicitPosition();
-    // https://www.w3.org/TR/css-grid-1/#line-placement
-    // An <integer> value of zero makes the declaration invalid.
-    ASSERT(explicitColumnEnd);
-
-    // Convert from 1-indexed CSS grid lines to 0-indexed matrix positions.
-    return explicitColumnEnd > 0 ? explicitColumnEnd - 1 : explicitColumnEnd;
+    ASSERT(m_hasAppliedGridOffsets);
+    return m_columnPosition.definitePosition().startLine + m_columnNormalizationOffset;
 }
 
 size_t UnplacedGridItem::normalizedColumnEnd() const
 {
-    return explicitColumnEnd() + m_columnNormalizationOffset;
-}
-
-int UnplacedGridItem::explicitRowStart() const
-{
-    ASSERT(m_rowPosition.first.isExplicit());
-    auto explicitRowStart = m_rowPosition.first.explicitPosition();
-    // https://www.w3.org/TR/css-grid-1/#line-placement
-    // An <integer> value of zero makes the declaration invalid.
-    ASSERT(explicitRowStart);
-
-    // Convert from 1-indexed CSS grid lines to 0-indexed matrix positions.
-    return explicitRowStart > 0 ? explicitRowStart - 1 : explicitRowStart;
+    ASSERT(m_hasAppliedGridOffsets);
+    return m_columnPosition.definitePosition().endLine + m_columnNormalizationOffset;
 }
 
 size_t UnplacedGridItem::normalizedRowStart() const
 {
-    return explicitRowStart() + m_rowNormalizationOffset;
-}
-
-int UnplacedGridItem::explicitRowEnd() const
-{
-    ASSERT(m_rowPosition.second.isExplicit());
-    auto explicitRowEnd = m_rowPosition.second.explicitPosition();
-    // https://www.w3.org/TR/css-grid-1/#line-placement
-    // An <integer> value of zero makes the declaration invalid.
-    ASSERT(explicitRowEnd);
-
-    // Convert from 1-indexed CSS grid lines to 0-indexed matrix positions.
-    return explicitRowEnd > 0 ? explicitRowEnd - 1 : explicitRowEnd;
+    ASSERT(m_hasAppliedGridOffsets);
+    return m_rowPosition.definitePosition().startLine + m_rowNormalizationOffset;
 }
 
 size_t UnplacedGridItem::normalizedRowEnd() const
 {
-    return explicitRowEnd() + m_rowNormalizationOffset;
+    ASSERT(m_hasAppliedGridOffsets);
+    return m_rowPosition.definitePosition().endLine + m_rowNormalizationOffset;
 }
 
 bool UnplacedGridItem::hasDefiniteRowPosition() const
 {
-    return m_rowPosition.first.isExplicit() || m_rowPosition.second.isExplicit();
+    return m_rowPosition.isDefinite();
 }
 
 bool UnplacedGridItem::hasDefiniteColumnPosition() const
 {
-    return m_columnPosition.first.isExplicit() || m_columnPosition.second.isExplicit();
+    return m_columnPosition.isDefinite();
 }
 
 bool UnplacedGridItem::hasAutoColumnPosition() const
 {
-    return m_columnPosition.first.isAuto() && m_columnPosition.second.isAuto();
+    return m_columnPosition.isAuto();
 }
 
 bool UnplacedGridItem::hasAutoRowPosition() const
 {
-    return m_rowPosition.first.isAuto() && m_rowPosition.second.isAuto();
+    return m_rowPosition.isAuto();
 }
 
 size_t UnplacedGridItem::columnSpanSize() const
 {
-    auto firstPosition = m_columnPosition.first;
-    auto secondPosition = m_columnPosition.second;
-
-    // Case 1: Both positions are explicit - calculate span size
-    if (firstPosition.isExplicit() && secondPosition.isExplicit())
-        return explicitColumnEnd() - explicitColumnStart();
-
-    // Case 2: One position is a span - extract its span size.
-    ASSERT(!(firstPosition.isSpan() && secondPosition.isSpan()));
-    if (firstPosition.isSpan())
-        return firstPosition.spanPosition();
-    if (secondPosition.isSpan())
-        return secondPosition.spanPosition();
-
-    // Default to span 1
-    ASSERT(hasAutoColumnPosition());
-    return 1;
+    return m_columnPosition.span();
 }
 
 size_t UnplacedGridItem::rowSpanSize() const
 {
-    auto& firstPosition = m_rowPosition.first;
-    auto& secondPosition = m_rowPosition.second;
-
-    // Case 1: Both positions are explicit - calculate span size
-    if (firstPosition.isExplicit() && secondPosition.isExplicit())
-        return explicitRowEnd() - explicitRowStart();
-
-    // Case 2: One position is a span - extract its span size.
-    ASSERT(!(firstPosition.isSpan() && secondPosition.isSpan()));
-    if (firstPosition.isSpan())
-        return firstPosition.spanPosition();
-    if (secondPosition.isSpan())
-        return secondPosition.spanPosition();
-
-    // Default to span 1
-    ASSERT(hasAutoRowPosition());
-    return 1;
+    return m_rowPosition.span();
 }
 
 std::pair<int, int> UnplacedGridItem::definiteRowStartEnd() const
 {
-    auto startPosition = m_rowPosition.first;
-    auto endPosition = m_rowPosition.second;
-
-    if (startPosition.isExplicit() && endPosition.isExplicit())
-        return { explicitRowStart(), explicitRowEnd() };
-
-    if (startPosition.isExplicit() && endPosition.isSpan())
-        return { explicitRowStart(), explicitRowStart() + endPosition.spanPosition() };
-
-    if (startPosition.isSpan() && endPosition.isExplicit())
-        return { explicitRowEnd() - startPosition.spanPosition(), explicitRowEnd() };
-
-    if (startPosition.isExplicit() && endPosition.isAuto())
-        return { explicitRowStart(), explicitRowStart() + 1 };
-
-    if (startPosition.isAuto() && endPosition.isExplicit()) {
-        auto explicitEnd = explicitRowEnd();
-        ASSERT(explicitEnd >= 1);
-        return { explicitEnd - 1, explicitEnd };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { 0, 0 };
+    auto& definitePosition = m_rowPosition.definitePosition();
+    return { static_cast<int>(definitePosition.startLine), static_cast<int>(definitePosition.endLine) };
 }
 
 std::pair<int, int> UnplacedGridItem::definiteColumnStartEnd() const
 {
-    auto startPosition = m_columnPosition.first;
-    auto endPosition = m_columnPosition.second;
-
-    if (startPosition.isExplicit() && endPosition.isExplicit())
-        return { explicitColumnStart(), explicitColumnEnd() };
-
-    if (startPosition.isExplicit() && endPosition.isSpan())
-        return { explicitColumnStart(), explicitColumnStart() + endPosition.spanPosition() };
-
-    if (startPosition.isSpan() && endPosition.isExplicit())
-        return { explicitColumnEnd() - startPosition.spanPosition(), explicitColumnEnd() };
-
-    if (startPosition.isExplicit() && endPosition.isAuto())
-        return { explicitColumnStart(), explicitColumnStart() + 1 };
-
-    if (startPosition.isAuto() && endPosition.isExplicit()) {
-        auto explicitEnd = explicitColumnEnd();
-        return { explicitEnd - 1, explicitEnd };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { 0, 0 };
+    auto& definitePosition = m_columnPosition.definitePosition();
+    return { static_cast<int>(definitePosition.startLine), static_cast<int>(definitePosition.endLine) };
 }
 
 std::pair<size_t, size_t> UnplacedGridItem::normalizedRowStartEnd() const
@@ -280,7 +226,17 @@ void UnplacedGridItem::applyGridOffsets(size_t rowOffset, size_t columnOffset)
 
 void add(Hasher& hasher, const WebCore::Layout::UnplacedGridItem& unplacedGridItem)
 {
-    addArgs(hasher, unplacedGridItem.m_layoutBox.ptr(), unplacedGridItem.m_columnPosition, unplacedGridItem.m_rowPosition);
+    addArgs(hasher, unplacedGridItem.m_layoutBox.ptr());
+
+    auto addPosition = [&](const auto& position) {
+        if (position.isDefinite()) {
+            auto& definitePosition = position.definitePosition();
+            addArgs(hasher, static_cast<size_t>(0), definitePosition.startLine, definitePosition.endLine);
+        } else
+            addArgs(hasher, static_cast<size_t>(1), position.span());
+    };
+    addPosition(unplacedGridItem.m_columnPosition);
+    addPosition(unplacedGridItem.m_rowPosition);
 }
 
 } // namespace Layout
