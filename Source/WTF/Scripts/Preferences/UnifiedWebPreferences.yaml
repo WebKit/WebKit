@@ -3488,6 +3488,7 @@ FullScreenEnabled:
   humanReadableDescription: "Fullscreen API"
   condition: ENABLE(FULLSCREEN_API)
   hidden: EXPERIMENTAL_FULLSCREEN_API_HIDDEN
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       default: false
@@ -6335,6 +6336,7 @@ NotificationsEnabled:
   humanReadableName: "Notifications"
   humanReadableDescription: "Enable the Notifications API"
   condition: ENABLE(NOTIFICATIONS)
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": false
@@ -6786,6 +6788,7 @@ PointerLockEnabled:
   condition: ENABLE(POINTER_LOCK)
   humanReadableName: "Pointer Lock API"
   humanReadableDescription: "Enable the Pointer Lock API"
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": false
@@ -6987,6 +6990,7 @@ PushAPIEnabled:
   category: dom
   humanReadableName: "Push API"
   humanReadableDescription: "Enable Push API"
+  inspectorOverride: true
   defaultValue:
     WebCore:
       default: false

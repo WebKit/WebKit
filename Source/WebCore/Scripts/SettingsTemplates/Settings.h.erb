@@ -39,7 +39,7 @@ struct SettingsValues {
     SettingsValues isolatedCopy() const;
 
 <%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
-    std::optional<<%= @setting.type %>> <%= @setting.name %>InspectorOverride;
+    std::optional<<%= @setting.type %>> <%= @setting.name %>BeforeInspectorOverride;
 <%- end -%>
 
     FontGenericFamilies fontGenericFamilies;
@@ -90,11 +90,7 @@ public:
 #if <%= @condition.condition %>
 <%- end -%>
 <%- for @setting in @condition.settingsNeedingImplementation do -%>
-    <%- if @setting.hasComplexGetter? -%>
-    WEBCORE_EXPORT <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const;
-    <%- else -%>
     <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const { return m_values.<%= @setting.name %>; }
-    <%- end -%>
     <%- if @setting.hasComplexSetter? -%>
     WEBCORE_EXPORT void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %>);
     <%- else -%>
@@ -107,11 +103,7 @@ public:
 <%- end -%>
 
 <%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
-    <%- if @setting.hasComplexSetter? -%>
     WEBCORE_EXPORT void <%= @setting.setterFunctionName %>InspectorOverride(std::optional<<%= @setting.parameterType %>>);
-    <%- else -%>
-    void <%= @setting.setterFunctionName %>InspectorOverride(std::optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride) { m_values.<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride; }
-    <%- end -%>
 <%- end -%>
     FontGenericFamilies& fontGenericFamilies() final { return m_values.fontGenericFamilies; }
     const FontGenericFamilies& fontGenericFamilies() const final { return m_values.fontGenericFamilies; }

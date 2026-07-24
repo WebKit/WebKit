@@ -59,7 +59,6 @@ class LocalFrame;
 class Page;
 class RemoteFrame;
 class RenderObject;
-class Settings;
 class FragmentedSharedBuffer;
 
 class InspectorPageAgent final : public InspectorAgentBase, public Inspector::PageBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorPageAgent> {
@@ -136,8 +135,6 @@ private:
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
 
-    void overrideSettingByModifyingValue(std::optional<bool>& savedValue, std::optional<bool> value, bool (Settings::*getter)() const, void (Settings::*setter)(bool));
-
     Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(LocalFrame*);
     Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
 
@@ -153,11 +150,6 @@ private:
     String m_bootstrapScript;
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };
-
-    std::optional<bool> m_fullScreenEnabledBeforeOverride;
-    std::optional<bool> m_notificationsEnabledBeforeOverride;
-    std::optional<bool> m_pointerLockEnabledBeforeOverride;
-    std::optional<bool> m_pushAPIEnabledBeforeOverride;
 };
 
 } // namespace WebCore

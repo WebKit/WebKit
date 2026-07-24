@@ -150,11 +150,7 @@ class Setting
   end
 
   def hasComplexSetter?
-    @onChange != nil
-  end
-
-  def hasComplexGetter?
-    hasInspectorOverride?
+    @onChange != nil || hasInspectorOverride?
   end
 
   def setterFunctionName
@@ -194,8 +190,6 @@ class Conditional
   attr_accessor :boolSettingsNeedingImplementation
   attr_accessor :nonBoolSettings
   attr_accessor :nonBoolSettingsNeedingImplementation
-  attr_accessor :settingsWithComplexGetters
-  attr_accessor :settingsWithComplexGettersNeedingImplementation
   attr_accessor :settingsWithComplexSetters
   attr_accessor :settingsWithComplexSettersNeedingImplementation
 
@@ -210,9 +204,6 @@ class Conditional
   
     @nonBoolSettings = @settings.reject { |setting| setting.type == "bool" }
     @nonBoolSettingsNeedingImplementation = @nonBoolSettings.reject { |setting| setting.customImplementation }
-
-    @settingsWithComplexGetters = @settings.select { |setting| setting.hasComplexGetter? }
-    @settingsWithComplexGettersNeedingImplementation = @settingsWithComplexGetters.reject { |setting| setting.customImplementation }
 
     @settingsWithComplexSetters = @settings.select { |setting| setting.hasComplexSetter? }
     @settingsWithComplexSettersNeedingImplementation = @settingsWithComplexSetters.reject { |setting| setting.customImplementation }
