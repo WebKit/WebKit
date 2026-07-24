@@ -73,15 +73,17 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
     // First pass: find the smallest (most-negative) explicit line in each axis. Negative line
     // placements are normalized by shifting every line forward by the magnitude of that line, so
     // e.g. a column-start of -5 shifts all column lines forward by 5 and maps to matrix column 0.
+    auto explicitColumnCount = m_gridBox->style().gridTemplateColumns().sizes.size();
+    auto explicitRowCount = m_gridBox->style().gridTemplateRows().sizes.size();
     int minimumColumnLine = 0;
     int minimumRowLine = 0;
     for (auto& gridItem : gridItems) {
         CheckedRef gridItemStyle = gridItem.layoutBox->style();
-        if (auto columnRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd())) {
+        if (auto columnRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), explicitColumnCount)) {
             auto [startLine, endLine] = *columnRange;
             minimumColumnLine = std::min({ minimumColumnLine, startLine, endLine });
         }
-        if (auto rowRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd())) {
+        if (auto rowRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), explicitRowCount)) {
             auto [startLine, endLine] = *rowRange;
             minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
         }
@@ -106,6 +108,8 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
             gridItemColumnEnd,
             gridItemRowStart,
             gridItemRowEnd,
+            explicitColumnCount,
+            explicitRowCount,
             columnNegativeLineOffset,
             rowNegativeLineOffset
         };
