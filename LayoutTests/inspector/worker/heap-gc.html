@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("resources/worker-1.js");
+
+function terminateWorker()
+{
+    worker.terminate();
+}
+
+function test()
+{
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker Target");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Heap");
+
+    suite.addTestCase({
+        name: "Worker.Heap.GarbageCollected",
+        description: "Calling Heap.gc on a Worker should trigger a Heap.garbageCollected event.",
+        async test() {
+            let garbageCollectedPromise = new Promise((resolve) => {
+                let listener = WI.heapManager.addEventListener(WI.HeapManager.Event.GarbageCollected, (event) => {
+                    if (event.data.target !== workerTarget || event.data.collection.type !== WI.GarbageCollection.Type.Full)
+                        return;
+
+                    WI.heapManager.removeEventListener(WI.HeapManager.Event.GarbageCollected, listener);
+                    resolve(event);
+                });
+            });
+
+            await workerTarget.HeapAgent.gc();
+            let event = await garbageCollectedPromise;
+
+            InspectorTest.expectEqual(event.data.target, workerTarget, "Event should come from the Worker target.");
+            InspectorTest.expectThat(event.data.collection instanceof WI.GarbageCollection, "Event should have GarbageCollection data.");
+            InspectorTest.expectEqual(event.data.collection.type, WI.GarbageCollection.Type.Full, "GarbageCollection type should be Full.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Heap.Terminate",
+        description: "Terminating a Worker after Heap.gc should stop its delayed event timer on the Worker thread.",
+        async test() {
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            await InspectorTest.evaluateInPage("terminateWorker()");
+            let event = await targetRemovedPromise;
+
+            InspectorTest.expectEqual(event.data.target, workerTarget, "Terminating the Worker should remove its target.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for HeapAgent in a Worker.</p>
+</body>
+</html>

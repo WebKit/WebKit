@@ -65,7 +65,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SendGarbageCollectionEventsTask);
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(WebHeapAgent& agent)
     : m_agent(agent)
-    , m_timer(RunLoop::mainSingleton(), "SendGarbageCollectionEventsTask::Timer"_s, this, &SendGarbageCollectionEventsTask::timerFired)
+    , m_timer(RunLoop::currentSingleton(), "SendGarbageCollectionEventsTask::Timer"_s, this, &SendGarbageCollectionEventsTask::timerFired)
 {
 }
 
