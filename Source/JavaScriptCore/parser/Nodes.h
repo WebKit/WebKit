@@ -2275,6 +2275,8 @@ namespace JSC {
         const Identifier& ident() { return m_ident; }
         void setEcmaName(const Identifier& ecmaName) { m_ecmaName = ecmaName; }
         const Identifier& ecmaName() { return m_ident.isEmpty() ? m_ecmaName : m_ident; }
+        void setInferredName(const Identifier& inferredName) { m_inferredName = inferredName; }
+        const Identifier& inferredName() { return m_inferredName; }
 
         void setPrivateBrandRequirement(PrivateBrandRequirement privateBrandRequirement) { m_privateBrandRequirement = static_cast<unsigned>(privateBrandRequirement); }
         PrivateBrandRequirement privateBrandRequirement() { return static_cast<PrivateBrandRequirement>(m_privateBrandRequirement); }
@@ -2335,6 +2337,7 @@ namespace JSC {
         FunctionMode m_functionMode;
         Identifier m_ident;
         Identifier m_ecmaName;
+        Identifier m_inferredName;
         unsigned m_startColumn;
         unsigned m_endColumn;
         unsigned m_functionStart;

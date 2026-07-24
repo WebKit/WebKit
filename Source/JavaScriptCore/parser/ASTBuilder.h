@@ -1677,8 +1677,11 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
 
-    if (op == Operator::Equal)
+    if (op == Operator::Equal) {
+        if (expr->isBaseFuncExprNode())
+            static_cast<BaseFuncExprNode*>(expr)->metadata()->setInferredName(dot->identifier());
         return new (m_parserArena) AssignDotNode(location, dot->base(), dot->identifier(), dot->type(), expr, exprHasAssignments, dot->divot(), start, end);
+    }
 
     if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq) {
         auto* node = new (m_parserArena) ShortCircuitReadModifyDotNode(location, dot->base(), dot->identifier(), dot->type(), op, expr, exprHasAssignments, divot, start, end);

@@ -90,6 +90,13 @@ public:
         ASSERT(!m_hasName || name == m_ecmaName);
         m_ecmaName = name;
     }
+    Identifier inferredName() const
+    {
+        if (m_rareData)
+            return m_rareData->m_inferredName;
+        return Identifier();
+    }
+    void setInferredName(const Identifier& name) { ensureRareData().m_inferredName = name; }
     unsigned parameterCount() const { return m_parameterCount; }; // Excluding 'this'!
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
 
@@ -254,6 +261,7 @@ public:
         FixedVector<Identifier> m_generatorOrAsyncWrapperFunctionParameterNames;
         FixedVector<ClassElementDefinition> m_classElementDefinitions;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;
+        Identifier m_inferredName;
     };
 
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return static_cast<NeedsClassFieldInitializer>(m_needsClassFieldInitializer); }
