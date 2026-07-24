@@ -199,8 +199,6 @@ private:
     // The flex formatting context integration: RenderFlexibleBox owns it and befriends it so it can reach the
     // container's layout-phase state.
     LayoutIntegration::FlexLayout m_flexLayout { *this };
-    size_t m_numberOfFlexItemsOnFirstLine { 0 };
-    size_t m_numberOfFlexItemsOnLastLine { 0 };
 
     struct MarginTrimItems {
         SingleThreadWeakHashSet<const RenderBox> m_itemsAtFlexLineStart;

@@ -226,8 +226,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
         preparePaginationBeforeBlockLayout(relayoutChildren);
 
-        m_numberOfFlexItemsOnFirstLine = { };
-        m_numberOfFlexItemsOnLastLine = { };
         m_justifyContentStartOverflow = 0;
 
         beginUpdateScrollInfoAfterLayoutTransaction();
