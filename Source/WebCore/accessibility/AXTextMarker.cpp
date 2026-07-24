@@ -663,8 +663,25 @@ AXTextMarker AXTextMarker::convertToDomOffset() const
 
     if (!isValid())
         return { };
-    if (!isInTextRun())
-        return toTextRunMarker().convertToDomOffset();
+    if (!isInTextRun()) {
+        // This marker is anchored to a non-text object, so to compute a DOM offset we normalize it to
+        // the text run its offset points into. A non-text *container* (e.g. a group) legitimately
+        // resolves to a descendant text run, but an empty non-text *leaf* (e.g. a button with no text
+        // of its own) has none, and the forward walk can then escape into unrelated downstream text. If
+        // that text is inside an editable, applying the result as the selection steals DOM focus into
+        // the editable, which can cause adverse side effects like navigation loops.
+        //
+        // So, when the resolved text run lies outside this object's own subtree, anchor at the object
+        // itself. Return a normalized element-anchored offset (0) so we maintain the invariant of this
+        // function always returning a DOM-offset marker.
+        auto textRunMarker = toTextRunMarker();
+        RefPtr object = isolatedObject();
+        RefPtr textRunObject = textRunMarker.isolatedObject();
+        if (!textRunMarker.isValid() || !object || !textRunObject || !object->isAncestorOfObject(*textRunObject))
+            return { treeID(), objectID(), 0 };
+
+        return textRunMarker.convertToDomOffset();
+    }
 
     auto newData = m_data;
     newData.offset = runs()->domOffset(offset());
