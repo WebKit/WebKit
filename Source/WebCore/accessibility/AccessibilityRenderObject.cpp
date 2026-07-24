@@ -2192,8 +2192,16 @@ CharacterRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) 
     if (isHardLineBreak(lineEnd))
         ++lineEndIndex;
 
-    if (lineStartIndex < 0 || lineEndIndex < 0 || lineEndIndex <= lineStartIndex)
+    if (lineStartIndex < 0 || lineEndIndex < 0 || lineEndIndex <= lineStartIndex) {
+        // A text control whose value ends in a line break has an empty final line at the document
+        // end, rendered by a placeholder <br>. Report it as an empty range there so it reads as an
+        // empty line, matching the isolated-tree path (AXTextMarker::characterRangeForLine).
+        auto value = text();
+        bool endsWithLineBreak = value.length() && value[value.length() - 1] == '\n';
+        if (lineStartIndex >= 0 && lineStartIndex == lineEndIndex && static_cast<unsigned>(lineStartIndex) == value.length() && endsWithLineBreak)
+            return { static_cast<unsigned>(lineStartIndex), 0 };
         return { };
+    }
 
     return { static_cast<unsigned>(lineStartIndex), static_cast<unsigned>(lineEndIndex - lineStartIndex) };
 }

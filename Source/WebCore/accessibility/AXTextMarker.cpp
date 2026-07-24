@@ -770,6 +770,35 @@ int AXTextMarker::lineIndex() const
     return index;
 }
 
+// A text control whose value ends in a line break renders an empty final line. Depending on
+// whether the control is being edited, that line's sole content, a single newline, is exposed
+// either as a placeholder <br> (role LineBreak, appended by HTMLTextFormControlElement::
+// setInnerTextValue) or as a text node (role StaticText). Detect it by content and position, a
+// lone newline with no following text runs within the text control (bounded by |stopAtID|),
+// rather than by object role, which differs between those two representations. |lineLength| is
+// the caller's already-computed length of |lineRange|; a lone newline is length 1, so checking it
+// first avoids building the range's string (and walking for following runs) on every other line.
+static bool isOnTrailingPlaceholderBlankLine(const AXTextMarkerRange& lineRange, unsigned lineLength, std::optional<AXID> stopAtID)
+{
+    if (lineLength != 1 || lineRange.toString() != "\n"_s)
+        return false;
+    RefPtr object = lineRange.start().isolatedObject();
+    return object && !findObjectWithRuns(*object, AXDirection::Next, stopAtID);
+}
+
+// Advances |lineRange| to the following line: the range from the start of the next line through
+// its end. Returns an invalid range when there is no next line (nextLineEnd does not advance),
+// which ends the line walks in characterRangeForLine, markerRangeForLineIndex, and
+// lineNumberForIndex. |includeTrailingLineBreak| and |stopAtID| select the caller's line semantics.
+static AXTextMarkerRange nextLineRange(const AXTextMarkerRange& lineRange, IncludeTrailingLineBreak includeTrailingLineBreak, std::optional<AXID> stopAtID)
+{
+    auto lineEnd = lineRange.end();
+    auto nextLineEndMarker = lineEnd.nextLineEnd(includeTrailingLineBreak, stopAtID);
+    if (nextLineEndMarker == lineEnd)
+        return { };
+    return { nextLineEndMarker.previousLineStart(stopAtID), WTF::move(nextLineEndMarker) };
+}
+
 CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
 {
     if (!isValid())
@@ -796,11 +825,17 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     auto currentLineRange = textRunMarker.lineRange(LineRangeType::Current, IncludeTrailingLineBreak::Yes);
     while (lineIndex && currentLineRange) {
         precedingLength += currentLineRange.toString().length();
-        auto lineEndMarker = currentLineRange.end().nextLineEnd(IncludeTrailingLineBreak::Yes, stopAtID);
-        currentLineRange = { lineEndMarker.previousLineStart(stopAtID), WTF::move(lineEndMarker) };
+        currentLineRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::Yes, stopAtID);
         --lineIndex;
     }
-    return currentLineRange ? CharacterRange(precedingLength, currentLineRange.toString().length()) : CharacterRange();
+    if (!currentLineRange)
+        return { };
+    // Report the trailing blank line of a value ending in a line break as an empty range at the
+    // document end, so it reads as an empty line rather than a line whose content is a newline.
+    unsigned lineLength = currentLineRange.toString().length();
+    if (isOnTrailingPlaceholderBlankLine(currentLineRange, lineLength, stopAtID))
+        return CharacterRange(precedingLength, 0);
+    return CharacterRange(precedingLength, lineLength);
 }
 
 AXTextMarkerRange AXTextMarker::markerRangeForLineIndex(unsigned lineIndex) const
@@ -815,8 +850,7 @@ AXTextMarkerRange AXTextMarker::markerRangeForLineIndex(unsigned lineIndex) cons
 
     auto currentLineRange = lineRange(LineRangeType::Current);
     while (lineIndex && currentLineRange) {
-        auto lineEndMarker = currentLineRange.end().nextLineEnd();
-        currentLineRange = { lineEndMarker.previousLineStart(), WTF::move(lineEndMarker) };
+        currentLineRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::No, std::nullopt);
         --lineIndex;
     }
     return currentLineRange;
@@ -828,27 +862,33 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     if (!object)
         return -1;
 
-    if (object->isTextControl() && index >= object->textMarkerRange().toString().length() - 1) {
-        // Mimic behavior of AccessibilityRenderObject::visiblePositionForIndex.
-        return -1;
-    }
-
     std::optional stopAtID = object->idOfNextSiblingIncludingIgnoredOrParent();
-    unsigned lineIndex = 0;
-    auto currentMarker = *this;
-    while (index) {
-        auto oldMarker = WTF::move(currentMarker);
-        currentMarker = oldMarker.findMarker(AXDirection::Next, CoalesceObjectBreaks::Yes, IgnoreBRs::Yes, stopAtID);
-        if (!currentMarker.isValid())
-            break;
+    auto textRunMarker = toTextRunMarker(stopAtID);
+    if (!textRunMarker.isValid())
+        return !index ? 0 : -1;
 
-        if (oldMarker.lineID() != currentMarker.lineID())
-            ++lineIndex;
-
-        --index;
+    // Walk lines with nextLineRange, the same helper characterRangeForLine uses, so the two APIs
+    // stay consistent: return the line whose [start, end) character range contains |index|, or -1
+    // if |index| is past the end.
+    unsigned lineStart = 0;
+    unsigned lineNumber = 0;
+    auto currentLineRange = textRunMarker.lineRange(LineRangeType::Current, IncludeTrailingLineBreak::Yes);
+    while (currentLineRange) {
+        unsigned lineLength = currentLineRange.toString().length();
+        if (index < lineStart + lineLength) {
+            // Report an index on the trailing blank line of a value ending in a line break as
+            // out of range, matching the non-isolated AccessibilityRenderObject path: that line
+            // sits at the document end and is surfaced by characterRangeForLine (an empty range)
+            // instead. A value with no trailing line break has no such line and is unaffected.
+            if (isOnTrailingPlaceholderBlankLine(currentLineRange, lineLength, stopAtID))
+                return -1;
+            return static_cast<int>(lineNumber);
+        }
+        lineStart += lineLength;
+        currentLineRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::Yes, stopAtID);
+        ++lineNumber;
     }
-    // Only return the line number if the index was a valid offset into our descendants.
-    return !index ? lineIndex : -1;
+    return -1;
 }
 
 bool AXTextMarker::atLineBoundaryForDirection(AXDirection direction) const
