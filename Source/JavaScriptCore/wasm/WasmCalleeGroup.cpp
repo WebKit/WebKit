@@ -218,20 +218,20 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker& locker, FunctionCodeInd
     // tier it up soon.
     m_ipintCallees->at(functionIndex)->tierUpCounter().resetAndOptimizeSoon(m_mode);
 
-    // We could have triggered a tier up from a BBQCallee has MemoryMode::BoundsChecking
-    // but is currently running a MemoryMode::Signaling memory. In that case there may
-    // be nothing to release.
-    if (auto* tuple = optimizedCalleesTuple(locker, functionIndex)) [[likely]] {
-        RefPtr<BBQCallee> bbqCallee;
-        {
-            Locker bbqLocker { tuple->m_bbqCalleeLock };
-            bbqCallee = tuple->m_bbqCallee.convertToWeak();
-        }
-        bbqCallee->reportToVMsForDestruction();
+    // OMG may install without a same-mode BBQCallee (e.g. BoundsChecking BBQ while
+    // running Signaling memory). In that case there may be nothing to release.
+    auto* tuple = optimizedCalleesTuple(locker, functionIndex);
+    if (!tuple) [[unlikely]]
         return;
-    }
 
-    ASSERT(mode() == MemoryMode::Signaling);
+    RefPtr<BBQCallee> bbqCallee;
+    {
+        Locker bbqLocker { tuple->m_bbqCalleeLock };
+        if (!tuple->m_bbqCallee.isStrong() || !tuple->m_bbqCallee.get())
+            return;
+        bbqCallee = tuple->m_bbqCallee.convertToWeak();
+    }
+    bbqCallee->reportToVMsForDestruction();
 }
 #endif
 
