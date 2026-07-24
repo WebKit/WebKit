@@ -41,6 +41,7 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         frame.addEventListener(WI.Frame.Event.ExtraScriptAdded, this._extraScriptAdded, this);
         frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
         frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
+        frame.extraScriptCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._collectionItemWasRemoved, this);
 
         this.shouldRefreshChildren = true;
         this.folderSettingsKey = this._frame.url.hash;
@@ -174,7 +175,7 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         }
 
         for (let extraScript of this._frame.extraScriptCollection) {
-            if (extraScript.sourceURL || extraScript.sourceMappingURL)
+            if (extraScript.sourceURL || extraScript.sourceMappingURL || extraScript.sourceType === WI.Script.SourceType.WebAssembly)
                 this.addChildForRepresentedObject(extraScript);
         }
 
@@ -240,10 +241,15 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         this.removeChildForRepresentedObject(event.data.resource);
     }
 
+    _collectionItemWasRemoved(event)
+    {
+        this.removeChildForRepresentedObject(event.data.item);
+    }
+
     _extraScriptAdded(event)
     {
         let extraScript = event.data.script;
-        if (extraScript.sourceURL || extraScript.sourceMappingURL)
+        if (extraScript.sourceURL || extraScript.sourceMappingURL || extraScript.sourceType === WI.Script.SourceType.WebAssembly)
             this.addRepresentedObjectToNewChildQueue(extraScript);
     }
 

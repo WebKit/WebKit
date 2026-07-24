@@ -558,10 +558,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this._contentPopulated)
             return;
 
-        if (this._sourceCode instanceof WI.Resource)
+        if (this._sourceCode instanceof WI.Resource || this._sourceCode instanceof WI.Script)
             this.mimeType = this._sourceCode.syntheticMIMEType;
-        else if (this._sourceCode instanceof WI.Script)
-            this.mimeType = "text/javascript";
         else if (this._sourceCode instanceof WI.CSSStyleSheet)
             this.mimeType = "text/css";
 
@@ -1295,10 +1293,15 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this._sourceCode instanceof WI.Resource) {
             if (this._sourceCode.localResourceOverride)
                 return false;
+            // FIXME: Support breakpoints and stepping in WebAssembly.
+            if (this._sourceCode.mimeTypeComponents.type === "application/wasm")
+                return false;
             return this._sourceCode.type === WI.Resource.Type.Document || this._sourceCode.type === WI.Resource.Type.Script;
         }
-        if (this._sourceCode instanceof WI.Script)
-            return !(this._sourceCode instanceof WI.LocalScript);
+        if (this._sourceCode instanceof WI.Script) {
+            // FIXME: Support breakpoints and stepping in WebAssembly.
+            return !(this._sourceCode instanceof WI.LocalScript) && this._sourceCode.sourceType !== WI.Script.SourceType.WebAssembly;
+        }
         return false;
     }
 

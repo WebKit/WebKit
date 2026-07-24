@@ -2,6 +2,7 @@ CONSOLE MESSAGE: dynamically added script element
 WI.Frame.extraScriptCollection.
 
 
+
 == Running test suite: WI.Frame.extraScriptCollection
 -- Running test case: FrameHasNoExtraScriptsYet
 PASS: Main frame should have no dynamic scripts.
@@ -10,4 +11,35 @@ PASS: Main frame should have no dynamic scripts.
 PASS: ExtraScriptAdded event fired.
 PASS: Script should identify as dynamic.
 PASS: Main frame should have 1 dynamic script.
+
+-- Running test case: AssociateDynamicJavaScriptWithChildFrame
+PASS: The child frames should have the same URL.
+PASS: The dynamic JavaScript script should belong to the second child frame.
+PASS: The first child frame should not contain the second child frame's dynamic JavaScript script.
+PASS: The second child frame should contain its dynamic JavaScript script.
+
+-- Running test case: AssociateJavaScriptWithChildFrame
+PASS: The JavaScript script should be associated with a Resource.
+PASS: The JavaScript script should belong to the first child frame.
+PASS: The resource-backed JavaScript script should not be an extra script.
+
+-- Running test case: AddWebAssemblyScriptToMainFrame
+PASS: The WebAssembly script should not be associated with a Resource.
+PASS: The WebAssembly script should belong to the main frame.
+PASS: The main frame should contain the WebAssembly script.
+PASS: The WebAssembly script should use its module name for display.
+
+-- Running test case: AddWebAssemblyScriptToChildFrame
+PASS: The child frames should have the same URL.
+PASS: The first WebAssembly script should belong to the first child frame.
+PASS: The main frame should not contain the first child frame's WebAssembly script.
+PASS: The first child frame should contain its WebAssembly script.
+PASS: The second child frame should not contain the first child frame's WebAssembly script.
+PASS: The first WebAssembly script should use its module name for display.
+PASS: The second WebAssembly script should belong to the second child frame.
+PASS: The main frame should not contain the second child frame's WebAssembly script.
+PASS: The first child frame should not contain the second child frame's WebAssembly script.
+PASS: The second child frame should contain its WebAssembly script.
+PASS: The second WebAssembly script should use its module name for display.
+PASS: Equal module names should not replace the scripts' unique URLs.
 

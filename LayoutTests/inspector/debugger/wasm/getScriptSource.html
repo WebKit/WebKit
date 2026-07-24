@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../../resources/wasm-builder.js"></script>
+<script src="resources/test-modules.js"></script>
+<script>
+function wasmDataURL(bytes)
+{
+    return "data:application/wasm;base64," + btoa(String.fromCharCode(...bytes));
+}
+
+let wasmInstances = new Set;
+let wasmModules = new Set;
+let wasmModuleNamespaces = new Set;
+function compileWasmBytes(bytes)
+{
+    let module = new WebAssembly.Module(bytes);
+    wasmModules.add(module);
+    return module;
+}
+
+function instantiateWasmModule(wasmModule, imports)
+{
+    let instance = new WebAssembly.Instance(wasmModule, imports);
+    wasmInstances.add(instance);
+    return instance;
+}
+
+function instantiateWasmBytes(bytes, imports)
+{
+    return instantiateWasmModule(compileWasmBytes(bytes), imports);
+}
+
+function instantiateWasm(bytes, {imports, streaming} = {})
+{
+    if (streaming) {
+        return WebAssembly.instantiateStreaming(fetch(wasmDataURL(bytes)), imports).then((result) => {
+            wasmInstances.add(result.instance);
+            return result;
+        });
+    }
+
+    return instantiateWasmBytes(bytes, imports);
+}
+
+function importWasmURL(url)
+{
+    return import(url).then((namespace) => {
+        wasmModuleNamespaces.add(namespace);
+        return namespace;
+    });
+}
+
+function importWasm(bytes)
+{
+    return importWasmURL(wasmDataURL(bytes));
+}
+
+let wasmModuleCreatedBeforeInspector = compileWasmBytes(createAddWasmBytes());
+
+function test()
+{
+    let webAssemblyScriptType = "webassembly";
+    let mainExecutionContextId = null;
+    let pendingDumpPromise = null;
+    let wasmScripts = [];
+    let debuggerEnabled;
+
+    function sanitizeWasmURL(url)
+    {
+        return sanitizeURL(url).replace(/\d+\.wasm$/, "<identifier>.wasm");
+    }
+
+    async function dump(script)
+    {
+        let {scriptSource} = await InspectorProtocol.awaitCommand({
+            method: "Debugger.getScriptSource",
+            params: {scriptId: script.scriptId},
+        });
+        ProtocolTest.assert(script.scriptType === webAssemblyScriptType, "Should be WebAssembly.");
+        ProtocolTest.assert(Number.isInteger(script.executionContextId), "Should identify the creating execution context.");
+        ProtocolTest.assert(script.executionContextId === mainExecutionContextId, "Should identify the execution context that created the WebAssembly module.");
+        ProtocolTest.assert(!script.endLine, "WebAssembly scripts should use a single logical line.");
+        ProtocolTest.assert(script.endColumn > script.startColumn, "WebAssembly scripts should report their bytecode range.");
+        ProtocolTest.log(JSON.stringify(sanitizeWasmURL(script.url)));
+        ProtocolTest.expectEqual(scriptSource, "", "WebAssembly scripts should not expose source content.");
+    }
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = async function({params: script}) {
+        if (script.scriptType !== webAssemblyScriptType)
+            return;
+
+        wasmScripts.push(script);
+
+        if (!pendingDumpPromise)
+            return;
+
+        let dumpPromise = pendingDumpPromise;
+        pendingDumpPromise = null;
+
+        try {
+            await dump(script);
+            dumpPromise.resolve(script);
+        } catch (error) {
+            dumpPromise.reject(error);
+        }
+    };
+
+    async function evaluateAndDump(expression)
+    {
+        console.assert(!pendingDumpPromise);
+        let dumpPromise = Promise.withResolvers();
+        pendingDumpPromise = dumpPromise;
+
+        try {
+            let evaluationPromise = InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression}}).then(async (response) => {
+                if (response.wasThrown)
+                    throw JSON.stringify(response);
+                if (response.result.className !== "Promise")
+                    return;
+
+                response = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.awaitPromise",
+                    params: {promiseObjectId: response.result.objectId},
+                });
+                if (response.wasThrown)
+                    throw JSON.stringify(response);
+            });
+
+            let [script] = await Promise.all([dumpPromise.promise, evaluationPromise]);
+            return script;
+        } finally {
+            if (pendingDumpPromise === dumpPromise)
+                pendingDumpPromise = null;
+        }
+    }
+
+    InspectorProtocol.eventHandler["Runtime.executionContextCreated"] = function({params: {context}}) {
+        mainExecutionContextId ??= context.id;
+    };
+
+    debuggerEnabled = (async function() {
+        await InspectorProtocol.awaitCommand({method: "Runtime.enable", params: {}});
+        ProtocolTest.assert(Number.isInteger(mainExecutionContextId), "Should report the main execution context.");
+        await InspectorProtocol.awaitCommand({method: "Debugger.enable", params: {}});
+    })();
+
+    let suite = ProtocolTest.createAsyncSuite("Debugger.getScriptSource.WebAssembly");
+
+    suite.addTestCase({
+        name: "Debugger.getScriptSource.WebAssembly.ModuleCreatedBeforeInspector",
+        description: "A live WebAssembly module created but never instantiated before Web Inspector opens should be discovered when the Debugger is enabled.",
+        async test() {
+            await debuggerEnabled;
+
+            ProtocolTest.expectTrue(wasmScripts.length, "Should discover a WebAssembly module that has not been instantiated.");
+
+            for (let script of wasmScripts)
+                await dump(script);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debugger.getScriptSource.WebAssembly.SharedModule",
+        description: "Multiple instances of the same WebAssembly.Module should share one script.",
+        async test() {
+            await debuggerEnabled;
+
+            let previousScriptCount = wasmScripts.length;
+            await evaluateAndDump(`(() => {
+                let module = new WebAssembly.Module(createAddWasmBytes());
+                instantiateWasmModule(module);
+                instantiateWasmModule(module);
+            })()`);
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            ProtocolTest.expectEqual(wasmScripts.length, previousScriptCount + 1, "Should report one script for multiple instances of the same module.");
+        }
+    });
+
+    [
+        {
+            name: "DefaultURL",
+            description: "A WebAssembly module should use a URL derived from its frame when no response URL is available.",
+            expression: `instantiateWasm(createAddWasmBytes())`,
+        },
+        {
+            name: "ModuleName",
+            description: "A byte-created WebAssembly module should use its name section as a display name without replacing its unique URL.",
+            expression: `instantiateWasm(createNamedAddWasmBytes("named-math.wasm"))`,
+            expectedDisplayName: "named-math.wasm",
+        },
+        {
+            name: "StreamingURL",
+            description: "A streaming WebAssembly module should preserve its response URL while using its name section to label an opaque data URL.",
+            expression: `instantiateWasm(createNamedAddWasmBytes("streamed-name.wasm"), {streaming: true})`,
+            expectedURLPrefix: "data:application/wasm;base64,",
+            expectedDisplayName: "streamed-name.wasm",
+        },
+        {
+            name: "ModuleLoaderOpaqueURL",
+            description: "A WebAssembly module imported by the module loader should preserve its module URL while using its name section to label an opaque data URL.",
+            expression: `importWasm(createNamedAddWasmBytes("module-loader-name.wasm"))`,
+            expectedURLPrefix: "data:application/wasm;base64,",
+            expectedDisplayName: "module-loader-name.wasm",
+        },
+    ].forEach(function({name, description, expression, expectedURLPrefix, expectedURLSuffix, expectedDisplayName}) {
+        suite.addTestCase({
+            name: "Debugger.getScriptSource.WebAssembly." + name,
+            description,
+            async test() {
+                await debuggerEnabled;
+                let script = await evaluateAndDump(expression);
+                if (expectedURLPrefix)
+                    ProtocolTest.expectTrue(script.url.startsWith(expectedURLPrefix), "Should report the WebAssembly module's real URL.");
+                if (expectedURLSuffix)
+                    ProtocolTest.expectTrue(script.url.endsWith(expectedURLSuffix), "Should report the WebAssembly module's real URL.");
+                if (expectedDisplayName)
+                    ProtocolTest.expectEqual(script.displayName, expectedDisplayName, "Should report the module name separately from its URL.");
+                else if (expectedDisplayName === null)
+                    ProtocolTest.expectFalse("displayName" in script, "Should derive the display name from the real URL.");
+            },
+        });
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests the script metadata and source reported for WebAssembly modules.</p>
+</body>
+</html>

@@ -89,6 +89,26 @@ static JSC::Debugger::BlackboxRange NODELETE blackboxRange(const JSC::Debugger::
     };
 }
 
+static Protocol::Debugger::ScriptType scriptTypeForScript(const JSC::Debugger::Script& script)
+{
+    if (!script.sourceProvider)
+        return Protocol::Debugger::ScriptType::Program;
+
+    switch (script.sourceProvider->sourceType()) {
+    case JSC::SourceProviderSourceType::Module:
+        return Protocol::Debugger::ScriptType::Module;
+    case JSC::SourceProviderSourceType::WebAssembly:
+        return Protocol::Debugger::ScriptType::WebAssembly;
+    case JSC::SourceProviderSourceType::Program:
+    case JSC::SourceProviderSourceType::JSON:
+    case JSC::SourceProviderSourceType::ImportMap:
+        return Protocol::Debugger::ScriptType::Program;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Protocol::Debugger::ScriptType::Program;
+}
+
 static std::optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(Protocol::ErrorString& errorString, const String& typeString)
 {
     auto type = Protocol::Helpers::parseEnumValueFromString<Protocol::Debugger::BreakpointAction::Type>(typeString);
@@ -633,6 +653,10 @@ void InspectorDebuggerAgent::didSetBreakpoint(ProtocolBreakpoint& protocolBreakp
 
 bool InspectorDebuggerAgent::resolveBreakpoint(const JSC::Debugger::Script& script, JSC::Breakpoint& debuggerBreakpoint)
 {
+    // FIXME: Support breakpoints in WebAssembly.
+    if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly)
+        return false;
+
     if (debuggerBreakpoint.lineNumber() < static_cast<unsigned>(script.startLine) || static_cast<unsigned>(script.endLine) < debuggerBreakpoint.lineNumber())
         return false;
 
@@ -1147,6 +1171,10 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> Inspec
     if (scriptIterator == m_scripts.end())
         return makeUnexpected("Missing script for scriptId in given start"_s);
 
+    // FIXME: Support breakpoints in WebAssembly.
+    if (scriptTypeForScript(scriptIterator->value) == Protocol::Debugger::ScriptType::WebAssembly)
+        return makeUnexpected("WebAssembly breakpoints are not supported"_s);
+
     auto protocolLocations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
     m_debugger.forEachBreakpointLocation(startSourceID, scriptIterator->value.sourceProvider.get(), startLineNumber, startColumnNumber, endLineNumber, endColumnNumber, [&] (int lineNumber, int columnNumber) {
         auto protocolLocation = Protocol::Debugger::Location::create()
@@ -1511,6 +1539,10 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
 
 void InspectorDebuggerAgent::setBlackboxConfiguration(JSC::SourceID sourceID, const JSC::Debugger::Script& script)
 {
+    // FIXME: Support blackboxing in WebAssembly.
+    if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly)
+        return;
+
     JSC::Debugger::BlackboxConfiguration blackboxConfiguration;
 
     if (!m_pauseForInternalScripts && isWebKitInjectedScript(script.sourceURL)) {
@@ -1815,16 +1847,20 @@ JSC::JSObject* InspectorDebuggerAgent::debuggerScopeExtensionObject(JSC::Debugge
     return injectedScript.createCommandLineAPIObject(callFrame);
 }
 
-void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const JSC::Debugger::Script& script)
+void InspectorDebuggerAgent::didParseSource(JSC::JSGlobalObject* globalObject, JSC::SourceID sourceID, const JSC::Debugger::Script& script)
 {
     String scriptIDStr = String::number(sourceID);
     bool hasSourceURL = !script.sourceURL.isEmpty();
     String sourceURL = script.sourceURL;
     String sourceMappingURL = sourceMapURLForScript(script);
 
-    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, script.isContentScript, sourceURL, sourceMappingURL, script.sourceProvider->sourceType() == JSC::SourceProviderSourceType::Module);
+    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, injectedScriptManager().injectedScriptIdFor(globalObject), scriptTypeForScript(script), script.isContentScript, sourceURL, sourceMappingURL, script.displayName);
 
     m_scripts.set(sourceID, script);
+
+    // FIXME: Support breakpoints and blackboxing in WebAssembly.
+    if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly)
+        return;
 
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
     if (scriptURLForBreakpoints.isEmpty())

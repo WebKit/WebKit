@@ -49,6 +49,7 @@ private:
     void didContinue(JSC::JSGlobalObject*) final;
     void runEventLoopWhilePaused() final;
     bool isContentScript(JSC::JSGlobalObject*) const final;
+    URL sourceURLBase(JSC::JSGlobalObject*) const final;
     void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 
     void runEventLoopWhilePausedInternal();

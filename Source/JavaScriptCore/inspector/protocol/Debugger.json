@@ -20,6 +20,11 @@
             "description": "Unique script identifier."
         },
         {
+            "id": "ScriptType",
+            "type": "string",
+            "enum": ["program", "module", "webassembly"]
+        },
+        {
             "id": "CallFrameId",
             "type": "string",
             "description": "Call frame identifier."
@@ -31,7 +36,7 @@
             "properties": [
                 { "name": "scriptId", "$ref": "ScriptId", "description": "Script identifier as reported in the <code>Debugger.scriptParsed</code>." },
                 { "name": "lineNumber", "type": "integer", "description": "Line number in the script (0-based)." },
-                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script (0-based)." }
+                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script (0-based) or bytecode offset for WebAssembly modules (0-based)." }
             ]
         },
         {
@@ -376,11 +381,13 @@
                 { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
                 { "name": "startColumn", "type": "integer", "description": "Column offset of the script within the resource with given URL." },
                 { "name": "endLine", "type": "integer", "description": "Last line of the script." },
-                { "name": "endColumn", "type": "integer", "description": "Length of the last line of the script." },
+                { "name": "endColumn", "type": "integer", "description": "Length of the last line of the script or the end bytecode offset for WebAssembly modules." },
+                { "name": "executionContextId", "$ref": "Runtime.ExecutionContextId", "description": "Identifier of the execution context in which this script was parsed." },
+                { "name": "scriptType", "$ref": "ScriptType", "description": "Type of script." },
                 { "name": "isContentScript", "type": "boolean", "optional": true, "description": "Determines whether this script is a user extension script." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "sourceURL name of the script (if any)." },
                 { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with script (if any)." },
-                { "name": "module", "type": "boolean", "optional": true, "description": "True if this script was parsed as a module." }
+                { "name": "displayName", "type": "string", "optional": true, "description": "Human-readable name of the script." }
             ]
         },
         {

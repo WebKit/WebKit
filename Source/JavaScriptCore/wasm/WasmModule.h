@@ -65,10 +65,11 @@ public:
 
     static ValidationResult validateSync(VM&, Vector<uint8_t>&& source);
     static void validateAsync(VM&, Vector<uint8_t>&& source, Module::AsyncValidationCallback&&);
+    static void validateAsync(VM&, Vector<uint8_t>&& source, Name&& sourceURL, Module::AsyncValidationCallback&&);
 
-    static Ref<Module> create(IPIntPlan& plan)
+    static Ref<Module> create(IPIntPlan& plan, Name&& sourceURL = { })
     {
-        return adoptRef(*new Module(plan));
+        return adoptRef(*new Module(plan, WTF::move(sourceURL)));
     }
 
     const Wasm::RTT& rttFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const;
@@ -101,7 +102,7 @@ public:
 private:
     Ref<CalleeGroup> getOrCreateCalleeGroup(VM&, MemoryMode);
 
-    Module(IPIntPlan&);
+    Module(IPIntPlan&, Name&& sourceURL);
     const Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CalleeGroup> m_calleeGroups[numberOfMemoryModes];
     const Ref<IPIntCallees> m_ipintCallees;

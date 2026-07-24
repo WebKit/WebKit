@@ -2,6 +2,8 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../resources/wasm-builder.js"></script>
+<script src="../debugger/wasm/resources/test-modules.js"></script>
 <script>
 function triggerAddScriptElement() {
     let script = document.createElement("script");
@@ -9,11 +11,79 @@ function triggerAddScriptElement() {
     document.body.appendChild(script);
 }
 
+function loadScriptInFrame(frameName)
+{
+    let script = frames[frameName].document.createElement("script");
+    script.src = new URL("../../resources/wasm-builder.js?frame=" + frameName, location.href).href;
+    frames[frameName].document.head.appendChild(script);
+}
+
+function triggerAddScriptElementInFrame(frameName)
+{
+    let script = frames[frameName].document.createElement("script");
+    script.text = "window.dynamicScriptWasAdded = Boolean(true);";
+    frames[frameName].document.body.appendChild(script);
+}
+
+let wasmInstances = [];
+function instantiateWasmInFrame(frameName, moduleName)
+{
+    let targetWindow = frameName === undefined ? window : frames[frameName];
+    let module = new targetWindow.WebAssembly.Module(createNamedAddWasmBytes(moduleName));
+    wasmInstances.push(new targetWindow.WebAssembly.Instance(module));
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("WI.Frame.extraScriptCollection");
 
     let mainFrame = WI.networkManager.mainFrame;
+
+    async function targetForFrame(frame)
+    {
+        if (!WI.isSiteIsolationEnabled())
+            return WI.mainTarget;
+
+        let match = frame.id.match(/^frame-(\d+)\.(\d+)$/);
+        console.assert(match);
+        let targetIdentifier = `frame-${match[2]}-${match[1]}`;
+
+        while (true) {
+            let target = WI.targetManager.targetForIdentifier(targetIdentifier);
+            if (target)
+                return target;
+            await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        }
+    }
+
+    function scriptsForAllTargets()
+    {
+        let scripts = [];
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                scripts.pushAll(WI.debuggerManager.dataForTarget(target).scripts);
+        }
+        return scripts;
+    }
+
+    async function evaluateAndAwaitScript(frame, expression, predicate)
+    {
+        let knownScripts = new Set(scriptsForAllTargets());
+        await InspectorTest.evaluateInPage(expression);
+
+        let targetData = WI.debuggerManager.dataForTarget(await targetForFrame(frame));
+        while (true) {
+            let script = targetData.scripts.find((script) => predicate(script) && !knownScripts.has(script));
+            if (script)
+                return script;
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.ScriptAdded);
+        }
+    }
+
+    function evaluateAndAwaitWebAssemblyScript(frame, expression)
+    {
+        return evaluateAndAwaitScript(frame, expression, (script) => script.sourceType === WI.Script.SourceType.WebAssembly);
+    }
 
     suite.addTestCase({
         name: "FrameHasNoExtraScriptsYet",
@@ -40,11 +110,85 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "AssociateDynamicJavaScriptWithChildFrame",
+        description: "A dynamic JavaScript script should belong to the exact child frame for its execution context.",
+        async test() {
+            let childFrames = Array.from(mainFrame.childFrameCollection);
+            let firstChildFrame = childFrames.find((frame) => frame.name === "first");
+            let secondChildFrame = childFrames.find((frame) => frame.name === "second");
+            InspectorTest.assert(firstChildFrame, "Should find the first child frame.");
+            InspectorTest.assert(secondChildFrame, "Should find the second child frame.");
+            InspectorTest.expectEqual(firstChildFrame.url, secondChildFrame.url, "The child frames should have the same URL.");
+
+            let script = await evaluateAndAwaitScript(secondChildFrame, "triggerAddScriptElementInFrame('second')", (script) => script.dynamicallyAddedScriptElement);
+            InspectorTest.expectEqual(script.parentFrame, secondChildFrame, "The dynamic JavaScript script should belong to the second child frame.");
+            InspectorTest.expectFalse(firstChildFrame.extraScriptCollection.has(script), "The first child frame should not contain the second child frame's dynamic JavaScript script.");
+            InspectorTest.expectTrue(secondChildFrame.extraScriptCollection.has(script), "The second child frame should contain its dynamic JavaScript script.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "AssociateJavaScriptWithChildFrame",
+        description: "A JavaScript script should belong to the child frame for its execution context.",
+        async test() {
+            let firstChildFrame = Array.from(mainFrame.childFrameCollection).find((frame) => frame.name === "first");
+            InspectorTest.assert(firstChildFrame, "Should find the first child frame.");
+
+            let script = await evaluateAndAwaitScript(firstChildFrame, "loadScriptInFrame('first')", (script) => script.url.includes("wasm-builder.js?frame=first"));
+            InspectorTest.expectNotNull(script.resource, "The JavaScript script should be associated with a Resource.");
+            InspectorTest.expectEqual(script.parentFrame, firstChildFrame, "The JavaScript script should belong to the first child frame.");
+            InspectorTest.expectFalse(firstChildFrame.extraScriptCollection.has(script), "The resource-backed JavaScript script should not be an extra script.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddWebAssemblyScriptToMainFrame",
+        description: "A WebAssembly script should belong to the main frame that created it.",
+        async test() {
+            let script = await evaluateAndAwaitWebAssemblyScript(mainFrame, "instantiateWasmInFrame(undefined, 'main-frame-math.wasm')");
+            InspectorTest.expectNull(script.resource, "The WebAssembly script should not be associated with a Resource.");
+            InspectorTest.expectEqual(script.parentFrame, mainFrame, "The WebAssembly script should belong to the main frame.");
+            InspectorTest.expectTrue(mainFrame.extraScriptCollection.has(script), "The main frame should contain the WebAssembly script.");
+            InspectorTest.expectEqual(script.displayName, "main-frame-math.wasm", "The WebAssembly script should use its module name for display.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddWebAssemblyScriptToChildFrame",
+        description: "A WebAssembly script should belong to the exact child frame that created it.",
+        async test() {
+            let childFrames = Array.from(mainFrame.childFrameCollection);
+            let firstChildFrame = childFrames.find((frame) => frame.name === "first");
+            let secondChildFrame = childFrames.find((frame) => frame.name === "second");
+            InspectorTest.assert(firstChildFrame, "Should find the first child frame.");
+            InspectorTest.assert(secondChildFrame, "Should find the second child frame.");
+            InspectorTest.expectEqual(firstChildFrame.url, secondChildFrame.url, "The child frames should have the same URL.");
+
+            let firstScript = await evaluateAndAwaitWebAssemblyScript(firstChildFrame, "instantiateWasmInFrame('first', 'shared-frame-math.wasm')");
+            InspectorTest.expectEqual(firstScript.parentFrame, firstChildFrame, "The first WebAssembly script should belong to the first child frame.");
+            InspectorTest.expectFalse(mainFrame.extraScriptCollection.has(firstScript), "The main frame should not contain the first child frame's WebAssembly script.");
+            InspectorTest.expectTrue(firstChildFrame.extraScriptCollection.has(firstScript), "The first child frame should contain its WebAssembly script.");
+            InspectorTest.expectFalse(secondChildFrame.extraScriptCollection.has(firstScript), "The second child frame should not contain the first child frame's WebAssembly script.");
+            InspectorTest.expectEqual(firstScript.displayName, "shared-frame-math.wasm", "The first WebAssembly script should use its module name for display.");
+
+            let secondScript = await evaluateAndAwaitWebAssemblyScript(secondChildFrame, "instantiateWasmInFrame('second', 'shared-frame-math.wasm')");
+            InspectorTest.expectEqual(secondScript.parentFrame, secondChildFrame, "The second WebAssembly script should belong to the second child frame.");
+            InspectorTest.expectFalse(mainFrame.extraScriptCollection.has(secondScript), "The main frame should not contain the second child frame's WebAssembly script.");
+            InspectorTest.expectFalse(firstChildFrame.extraScriptCollection.has(secondScript), "The first child frame should not contain the second child frame's WebAssembly script.");
+            InspectorTest.expectTrue(secondChildFrame.extraScriptCollection.has(secondScript), "The second child frame should contain its WebAssembly script.");
+            InspectorTest.expectEqual(secondScript.displayName, "shared-frame-math.wasm", "The second WebAssembly script should use its module name for display.");
+            InspectorTest.expectNotEqual(firstScript.url, secondScript.url, "Equal module names should not replace the scripts' unique URLs.");
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
 <p>WI.Frame.extraScriptCollection.</p>
+<iframe name="first" src="../page/resources/blank.html"></iframe>
+<iframe name="second" src="../page/resources/blank.html"></iframe>
 </body>
 </html>

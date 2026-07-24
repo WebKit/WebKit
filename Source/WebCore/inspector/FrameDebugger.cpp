@@ -150,6 +150,13 @@ bool FrameDebugger::isContentScript(JSGlobalObject* state) const
     return &currentWorld(*state) != &mainThreadNormalWorldSingleton() || JSC::Debugger::isContentScript(state);
 }
 
+URL FrameDebugger::sourceURLBase(JSGlobalObject* state) const
+{
+    if (RefPtr context = uncheckedDowncast<JSDOMGlobalObject>(state)->scriptExecutionContext())
+        return context->url();
+    return { };
+}
+
 void FrameDebugger::reportException(JSGlobalObject* state, JSC::Exception* exception) const
 {
     JSC::Debugger::reportException(state, exception);

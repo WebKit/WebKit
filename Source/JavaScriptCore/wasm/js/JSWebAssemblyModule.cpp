@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "Debugger.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyLinkError.h"
@@ -47,6 +48,8 @@ JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, R
 {
     auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm)) JSWebAssemblyModule(vm, structure, WTF::move(result));
     module->finishCreation(vm);
+    if (auto* debugger = module->realm()->debugger()) [[unlikely]]
+        debugger->sourceParsed(module->realm(), module);
     return module;
 }
 

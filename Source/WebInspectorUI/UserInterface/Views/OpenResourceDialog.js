@@ -452,7 +452,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
     _scriptAdded(event)
     {
         let {script} = event.data;
-        if (script.resource || script.target === WI.mainTarget)
+        if (script.resource || script.dynamicallyAddedScriptElement)
             return;
 
         this._addResource(script);
@@ -461,7 +461,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
     _scriptRemoved(event)
     {
         let {script} = event.data;
-        if (script.resource || script.target === WI.mainTarget)
+        if (script.resource || script.dynamicallyAddedScriptElement)
             return;
 
         this._removeResource(script);

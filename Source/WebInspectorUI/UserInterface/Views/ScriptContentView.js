@@ -39,9 +39,9 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
         this._script = script;
 
-        // This view is only for standalone Scripts with no corresponding Resource. All other Scripts
-        // should be handled by TextResourceContentView via the Resource.
-        console.assert(!script.resource);
+        // WebAssembly Resources use ScriptContentView so the debugger's source content is shown instead
+        // of the Resource's raw binary response.
+        console.assert(!script.resource || script.sourceType === WI.Script.SourceType.WebAssembly);
         // FIXME: <https://webkit.org/b/298909> Frame target inline scripts have non-zero start positions
         // because they are <script> blocks inside HTML, but frame targets lack a Network agent so there
         // is no Document resource to display through TextResourceContentView. This is blocked on the
@@ -240,6 +240,12 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     _contentDidPopulate(event)
     {
+        if (this._script.sourceType === WI.Script.SourceType.WebAssembly && !this._textEditor.string) {
+            this.removeAllSubviews();
+            this.element.appendChild(WI.createMessageTextView(WI.UIString("Resource has binary content.")));
+            return;
+        }
+
         let isLocalScript = this._script instanceof WI.LocalScript;
 
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();

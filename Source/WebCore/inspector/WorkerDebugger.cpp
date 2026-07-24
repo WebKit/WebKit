@@ -53,6 +53,11 @@ WorkerDebugger::WorkerDebugger(WorkerOrWorkletGlobalScope& context)
 {
 }
 
+URL WorkerDebugger::sourceURLBase(JSC::JSGlobalObject*) const
+{
+    return protect(m_globalScope)->url();
+}
+
 void WorkerDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();

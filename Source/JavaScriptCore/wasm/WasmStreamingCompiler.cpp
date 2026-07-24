@@ -50,14 +50,7 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     , m_parser(m_info.get(), *this)
     , m_source(source)
 {
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-    if (Options::enableWasmDebugger()) [[unlikely]] {
-        if (!wasmSourceURL.isEmpty())
-            m_info->debugInfo->sourceURL = WTF::move(wasmSourceURL);
-    }
-#else
-    UNUSED_PARAM(wasmSourceURL);
-#endif
+    m_info->sourceURL = Name(byteCast<char8_t>(wasmSourceURL.utf8().span()));
     Vector<JSCell*> dependencies;
     dependencies.append(globalObject);
     if (importObject)

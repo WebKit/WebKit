@@ -25,20 +25,19 @@
 
 WI.ExecutionContext = class ExecutionContext
 {
-    constructor(target, id, type, name, frame)
+    constructor(target, id, type, name, frameId)
     {
         console.assert(target instanceof WI.Target);
         console.assert(typeof id === "number" || id === WI.RuntimeManager.TopLevelExecutionContextIdentifier);
         console.assert(Object.values(WI.ExecutionContext.Type).includes(type));
         console.assert(!name || typeof name === "string");
-        // Frame is required unless: (1) it's a top-level context, or (2) target is a FrameTarget (site isolation).
-        console.assert(frame instanceof WI.Frame || id === WI.RuntimeManager.TopLevelExecutionContextIdentifier || target instanceof WI.FrameTarget);
+        console.assert(typeof frameId === "string" || id === WI.RuntimeManager.TopLevelExecutionContextIdentifier || target instanceof WI.FrameTarget);
 
         this._target = target;
         this._id = id;
         this._type = type || WI.ExecutionContext.Type.Internal;
         this._name = name || "";
-        this._frame = frame || null;
+        this._frameId = frameId || null;
     }
 
     // Static
@@ -68,7 +67,11 @@ WI.ExecutionContext = class ExecutionContext
     get id() { return this._id; }
     get type() { return this._type; }
     get name() { return this._name; }
-    get frame() { return this._frame; }
+
+    get frame()
+    {
+        return this._frameId ? WI.networkManager.frameForIdentifier(this._frameId) : null;
+    }
 };
 
 WI.ExecutionContext.Type = {

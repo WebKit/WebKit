@@ -28,16 +28,25 @@
 #include "HeapIterationScope.h"
 #include "JSAsyncFunctionGenerator.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyModule.h"
 #include "MarkedSpaceInlines.h"
+#include "MarkedVector.h"
 #include "Microtask.h"
+#include "SourceOrigin.h"
+#include "SourceProvider.h"
 #include "VMEntryScopeInlines.h"
 #include "VMTrapsInlines.h"
+#include "WasmModuleInformation.h"
+#include <atomic>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
@@ -173,6 +182,9 @@ void Debugger::attach(JSGlobalObject* globalObject)
 
     // Call `sourceParsed` after iterating because it will execute JavaScript in Web Inspector.
     UncheckedKeyHashSet<RefPtr<SourceProvider>> sourceProviders;
+#if ENABLE(WEBASSEMBLY)
+    MarkedVector<JSWebAssemblyModule*> wasmModules;
+#endif
     {
         JSLockHolder locker(m_vm);
         HeapIterationScope iterationScope(m_vm.heap);
@@ -183,12 +195,22 @@ void Debugger::attach(JSGlobalObject* globalObject)
                     if (function->scope()->realm() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
                         sourceProviders.add(uncheckedDowncast<FunctionExecutable>(function->executable())->source().provider());
                 }
+#if ENABLE(WEBASSEMBLY)
+                else if (auto* module = dynamicDowncast<JSWebAssemblyModule>(cell)) {
+                    if (module->realm() == globalObject)
+                        wasmModules.append(module);
+                }
+#endif
             }
             return IterationStatus::Continue;
         });
     }
     for (auto& sourceProvider : sourceProviders)
         sourceParsed(globalObject, sourceProvider.get(), -1, nullString());
+#if ENABLE(WEBASSEMBLY)
+    for (auto* module : wasmModules)
+        sourceParsed(globalObject, module);
+#endif
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
@@ -324,8 +346,12 @@ void Debugger::removeObserver(Observer& observer, bool isBeingDestroyed)
 {
     m_observers.remove(&observer);
 
-    if (m_observers.isEmpty())
-        detachDebugger(isBeingDestroyed);
+    if (!m_observers.isEmpty())
+        return;
+
+    m_reportedSourceIDs.clear();
+
+    detachDebugger(isBeingDestroyed);
 }
 
 bool Debugger::canDispatchFunctionToObservers() const
@@ -354,6 +380,10 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* source
     if (!canDispatchFunctionToObservers())
         return;
 
+    JSC::SourceID sourceID = sourceProvider->asID();
+    if (!m_reportedSourceIDs.add(sourceID).isNewEntry)
+        return;
+
     if (errorLine != -1) {
         auto sourceURL = sourceProvider->sourceURL();
         auto data = sourceProvider->source().toString();
@@ -363,8 +393,6 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* source
         });
         return;
     }
-
-    JSC::SourceID sourceID = sourceProvider->asID();
 
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify Debugger::Script to use SourceProvider
     Debugger::Script script;
@@ -394,9 +422,54 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* source
         script.endColumn = sourceLength - lastLineStart;
 
     dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.didParseSource(sourceID, script);
+        observer.didParseSource(globalObject, sourceID, script);
     });
 }
+
+#if ENABLE(WEBASSEMBLY)
+
+void Debugger::sourceParsed(JSGlobalObject* globalObject, JSWebAssemblyModule* module)
+{
+    if (!canDispatchFunctionToObservers())
+        return;
+
+    Ref info = module->moduleInformation();
+
+    auto baseURL = sourceURLBase(globalObject);
+    auto url = Wasm::makeString(info->sourceURL);
+    if (url.isEmpty()) {
+        static std::atomic<uint64_t> nextWasmURLIdentifier { 0 };
+        auto identifier = ++nextWasmURLIdentifier;
+        URL resolvedURL(baseURL, makeString(identifier, ".wasm"_s));
+        if (resolvedURL.isValid())
+            url = resolvedURL.string();
+        else
+            url = makeString("webassembly:///"_s, identifier, ".wasm"_s);
+    }
+
+    Ref sourceProvider = StringSourceProvider::create(emptyString(), SourceOrigin { baseURL }, WTF::move(url), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::WebAssembly);
+    SourceID sourceID = sourceProvider->asID();
+    if (!m_reportedSourceIDs.add(sourceID).isNewEntry)
+        return;
+
+    Debugger::Script script;
+    script.url = sourceProvider->sourceURL();
+    URL sourceURL { Wasm::makeString(info->sourceURL) };
+    if (info->sourceURL.isEmpty() || sourceURL.protocolIsBlob() || sourceURL.protocolIsData())
+        script.displayName = Wasm::makeString(info->nameSection().moduleName);
+    script.sourceProvider = WTF::move(sourceProvider);
+    script.isContentScript = isContentScript(globalObject);
+
+    const auto& functions = info->functions;
+    if (!functions.isEmpty())
+        script.endColumn = safeCast<int>(functions.last().end);
+
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.didParseSource(globalObject, sourceID, script);
+    });
+}
+
+#endif // ENABLE(WEBASSEMBLY)
 
 Seconds Debugger::willEvaluateScript()
 {

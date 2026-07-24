@@ -33,6 +33,7 @@
 #include "FrameConsoleClient.h"
 #include "FrameLoader.h"
 #include "FrameLoaderStateMachine.h"
+#include "InspectorIdentifierRegistry.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
@@ -40,6 +41,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "Page.h"
+#include "ProcessIdentifier.h"
 #include "RuntimeAgentUtilities.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -166,7 +168,7 @@ void FrameRuntimeAgent::unmuteConsole()
 
 String FrameRuntimeAgent::frameIdForProtocol() const
 {
-    return makeString("frame-"_s, m_frameIdentifier.toUInt64());
+    return IdentifierRegistry::protocolFrameId(m_frameIdentifier, Process::identifier());
 }
 
 void FrameRuntimeAgent::reportExecutionContextCreation()

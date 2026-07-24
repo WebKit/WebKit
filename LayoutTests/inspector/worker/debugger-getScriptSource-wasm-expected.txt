@@ -1,0 +1,15 @@
+Tests WebAssembly script discovery for instances created in a Worker before and after Web Inspector opens.
+
+
+== Running test suite: Worker.Debugger.WebAssembly
+-- Running test case: Worker.Debugger.WebAssembly.InstanceCreatedBeforeInspector
+PASS: The WebAssembly script should not replace the Worker's main script.
+PASS: The WebAssembly script should not be associated with the Worker script's Resource.
+PASS: The WebAssembly script should be listed separately under the Worker.
+"inspector/worker/resources/<identifier>.wasm"
+PASS: WebAssembly scripts should not expose source content.
+
+-- Running test case: Worker.Debugger.WebAssembly.InstanceCreatedAfterInspector
+"inspector/worker/resources/<identifier>.wasm"
+PASS: WebAssembly scripts should not expose source content.
+

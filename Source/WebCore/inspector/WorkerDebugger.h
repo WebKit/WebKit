@@ -51,6 +51,7 @@ private:
     void detachDebugger(bool isBeingDestroyed) final;
     void recompileAllJSFunctions() final;
     void runEventLoopWhilePaused() final;
+    URL sourceURLBase(JSC::JSGlobalObject*) const final;
     void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 
     WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;

@@ -1202,7 +1202,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let type = WI.ExecutionContext.typeFromPayload(payload);
         let target = frame.mainResource.target;
-        let executionContext = new WI.ExecutionContext(target, payload.id, type, payload.name, frame);
+        let executionContext = new WI.ExecutionContext(target, payload.id, type, payload.name, payload.frameId);
         frame.addExecutionContext(executionContext);
     }
 

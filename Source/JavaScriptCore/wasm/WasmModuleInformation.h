@@ -220,6 +220,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     std::optional<uint32_t> numberOfDataSegments;
     using ConstantExpressionAndSourceOffset = std::pair<Vector<uint8_t>, size_t>;
     Vector<ConstantExpressionAndSourceOffset> constantExpressions;
+    Name sourceURL;
     Name sourceMappingURL;
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;

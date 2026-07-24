@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+let workerPromise = Promise.withResolvers();
+let worker = new Worker("resources/worker-debugger-wasm.js");
+worker.addEventListener("message", ({data}) => {
+    if (data === "ready")
+        workerPromise.resolve();
+});
+worker.addEventListener("error", workerPromise.reject);
+
+async function test()
+{
+    function sanitizeWasmURL(url)
+    {
+        return sanitizeURL(url).replace(/\d+\.wasm$/, "<identifier>.wasm");
+    }
+
+    function findWasmScript(workerTarget, ignoredScripts)
+    {
+        return WI.debuggerManager.dataForTarget(workerTarget).scripts.find((script) => script.sourceType === WI.Script.SourceType.WebAssembly && !ignoredScripts.has(script));
+    }
+
+    async function awaitWasmScript(workerTarget, ignoredScripts = new Set)
+    {
+        while (true) {
+            let script = findWasmScript(workerTarget, ignoredScripts);
+            if (script)
+                return script;
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.ScriptAdded);
+        }
+    }
+
+    let workerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName.endsWith("worker-debugger-wasm.js"));
+
+    async function dump(script)
+    {
+        let {content} = await script.requestContent();
+        InspectorTest.assert(script.target === workerTarget, "Should belong to the Worker target.");
+        InspectorTest.assert(script.sourceType === WI.Script.SourceType.WebAssembly, "Should be WebAssembly.");
+        InspectorTest.log(JSON.stringify(sanitizeWasmURL(script.url)));
+        InspectorTest.expectEqual(content, "", "WebAssembly scripts should not expose source content.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Debugger.WebAssembly");
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssembly.InstanceCreatedBeforeInspector",
+        description: "A live WebAssembly instance created in a Worker before Web Inspector opens should be discovered when the Worker debugger is enabled.",
+        async test() {
+            let script = await awaitWasmScript(workerTarget);
+            InspectorTest.expectFalse(script.isMainResource(), "The WebAssembly script should not replace the Worker's main script.");
+            InspectorTest.expectNull(script.resource, "The WebAssembly script should not be associated with the Worker script's Resource.");
+            InspectorTest.expectTrue(workerTarget.extraScriptCollection.has(script), "The WebAssembly script should be listed separately under the Worker.");
+            await dump(script);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssembly.InstanceCreatedAfterInspector",
+        description: "A WebAssembly instance created in a Worker after Web Inspector opens should be reported to the Worker debugger.",
+        async test() {
+            let ignoredScripts = new Set(WI.debuggerManager.dataForTarget(workerTarget).scripts);
+            let [script] = await Promise.all([
+                awaitWasmScript(workerTarget, ignoredScripts),
+                InspectorTest.evaluateInPage("worker.postMessage('instantiate')"),
+            ]);
+            await dump(script);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="testRunner.waitUntilDone(); workerPromise.promise.then(runTest)">
+<p>Tests WebAssembly script discovery for instances created in a Worker before and after Web Inspector opens.</p>
+</body>
+</html>
