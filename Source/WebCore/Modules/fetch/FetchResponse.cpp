@@ -227,7 +227,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(JSDOMGlobalObject& globalOb
 void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
 {
     m_abortSignal = signal.copyRef();
-    signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) {
+    signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue value) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -252,14 +252,19 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
         if (protectedThis->m_body)
             protectedThis->m_body->loadingFailed(*protectedThis->loadingException());
 
-        if (RefPtr loader = std::exchange(protectedThis->m_loader, nullptr))
+        if (RefPtr loader = std::exchange(protectedThis->m_loader, nullptr)) {
+            RefPtr context = protectedThis->scriptExecutionContext();
+            auto* globalObject = context ? context->globalObject() : nullptr;
+            if (globalObject)
+                loader->abortUpload(*downcast<JSDOMGlobalObject>(globalObject), value);
             loader->stop();
+        }
         if (auto bodyLoader = std::exchange(protectedThis->m_bodyLoader, nullptr))
             bodyLoader->stop();
     });
 }
 
-Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback)
+Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback, RefPtr<ReadableStreamToSharedBufferSink>&& pendingUpload)
 {
     auto response = adoptRef(*new FetchResponse(&context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     response->suspendIfNeeded();
@@ -268,7 +273,7 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
 
     response->addAbortSteps(request.signal());
 
-    response->m_loader = Loader::create(response.get(), WTF::move(responseCallback));
+    response->m_loader = Loader::create(response.get(), WTF::move(responseCallback), WTF::move(pendingUpload));
     return response;
 }
 
@@ -295,9 +300,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
         return;
     }
 
-    Ref response = createFetchResponse(context, request, WTF::move(responseCallback));
-    if (uploadSink)
-        protect(response->m_loader)->setUploadSink(uploadSink.releaseNonNull());
+    Ref response = createFetchResponse(context, request, WTF::move(responseCallback), WTF::move(uploadSink));
     response->startLoader(context, request, initiator);
 }
 
@@ -378,15 +381,16 @@ void FetchResponse::setReceivedInternalResponse(const ResourceResponse& resource
     m_headers->filterAndFill(m_filteredResponse->httpHeaderFields(), FetchHeaders::Guard::Response);
 }
 
-Ref<FetchResponse::Loader> FetchResponse::Loader::create(FetchResponse& response, NotificationCallback&& responseCallback)
+Ref<FetchResponse::Loader> FetchResponse::Loader::create(FetchResponse& response, NotificationCallback&& responseCallback, RefPtr<ReadableStreamToSharedBufferSink>&& pendingUpload)
 {
-    return adoptRef(*new Loader(response, WTF::move(responseCallback)));
+    return adoptRef(*new Loader(response, WTF::move(responseCallback), WTF::move(pendingUpload)));
 }
 
-FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& responseCallback)
+FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& responseCallback, RefPtr<ReadableStreamToSharedBufferSink>&& pendingUpload)
     : m_response(response)
     , m_responseCallback(WTF::move(responseCallback))
     , m_pendingActivity(response.makePendingActivity(response))
+    , m_pendingUpload(WTF::move(pendingUpload))
 {
 }
 
@@ -456,6 +460,12 @@ bool FetchResponse::Loader::start(ScriptExecutionContext& context, const FetchRe
     }
 
     return true;
+}
+
+void FetchResponse::Loader::abortUpload(JSDOMGlobalObject& globalObject, JSC::JSValue value)
+{
+    if (m_pendingUpload)
+        m_pendingUpload->cancel(globalObject, value);
 }
 
 void FetchResponse::Loader::stop()

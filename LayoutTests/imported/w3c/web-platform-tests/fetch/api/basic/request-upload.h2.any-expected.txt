@@ -1,7 +1,5 @@
 web-platform.test:9000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Simulating cancelled authentication sheet
 
-Harness Error (FAIL), message = Unhandled rejection: promise_rejects_exactly: function "function() { throw e; }" threw object "AbortError: Fetch is aborted" but we expected it to throw "foo abort"
-
 PASS Fetch with POST with empty ReadableStream
 PASS Fetch with POST with ReadableStream
 PASS Fetch with POST with ReadableStream on 421 response should return the response and not retry.
@@ -13,5 +11,5 @@ PASS Streaming upload with body containing a String
 PASS Streaming upload with body containing null
 PASS Streaming upload with body containing a number
 FAIL Streaming upload should fail on a 401 response assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL ReadbleStream should be closed on signal.abort promise_test: Unhandled rejection with value: "streamCancelPromise timed out"
+PASS ReadbleStream should be closed on signal.abort
 

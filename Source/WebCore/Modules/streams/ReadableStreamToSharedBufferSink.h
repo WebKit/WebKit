@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class JSDOMGlobalObject;
 class ReadableStream;
 class ReadableStreamDefaultReader;
 class SinkReadRequest;
@@ -51,6 +52,7 @@ public:
     void pipeFrom(ReadableStream&);
     void clearCallback();
     bool hasCallback() const { return !!m_callback; }
+    void cancel(JSDOMGlobalObject&, JSC::JSValue);
 
 private:
     explicit ReadableStreamToSharedBufferSink(Callback&&);

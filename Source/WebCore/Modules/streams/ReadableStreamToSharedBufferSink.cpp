@@ -33,6 +33,7 @@
 #include "ExceptionOr.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMPromise.h"
 #include "ReadableStream.h"
 #include "ReadableStreamDefaultReader.h"
 #include "ScriptExecutionContext.h"
@@ -201,6 +202,13 @@ void ReadableStreamToSharedBufferSink::clearCallback()
     m_reader = nullptr;
     m_readRequest = nullptr;
     m_callback = { };
+}
+
+void ReadableStreamToSharedBufferSink::cancel(JSDOMGlobalObject& globalObject, JSC::JSValue value)
+{
+    if (RefPtr reader = m_reader)
+        reader->cancel(globalObject, value);
+    clearCallback();
 }
 
 } // namespace WebCore
