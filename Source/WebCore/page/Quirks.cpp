@@ -2987,6 +2987,10 @@ static void handleCNNQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 #if PLATFORM(COCOA)
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsCNNCaptionQuirk);
 #endif
+    // cnn.com rdar://176539646
+#if ENABLE(THREADED_ANIMATIONS)
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDisableThreadedAnimationsQuirk);
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
