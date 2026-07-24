@@ -1316,3 +1316,8 @@ webkit.org/b/320058 [ Debug ] ipc/send-filter.html [ Crash Pass ]
 webkit.org/b/320059 [ Debug ] media/media-source/media-source-resize.html [ Timeout Pass ]
 webkit.org/b/320061 inspector/dom-debugger/dom-breakpoint-node-removed-ancestor.html [ Crash Pass ]
 webkit.org/b/320061 inspector/dom-debugger/dom-breakpoint-node-removed-direct.html [ Crash Pass ]
+
+webkit.org/b/320214 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Failure Timeout ]
+webkit.org/b/320215 compositing/absolute-inside-out-of-view-fixed.html [ Pass Timeout ]
+webkit.org/b/319067 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure Pass ]
+webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure Pass ]
