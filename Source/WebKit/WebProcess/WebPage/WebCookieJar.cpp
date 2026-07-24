@@ -142,10 +142,10 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
     if (!page)
         return { };
 
-    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url) == BlockCookies::Yes)
-        return cookiesInPartitionedCookieStorage(document, url, sameSiteInfo);
+        return { };
 
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(url);
     auto frameID = webFrame->frameID();
     auto pageID = page->identifier();
@@ -170,12 +170,10 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     if (!page)
         return;
 
-    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url) == BlockCookies::Yes) {
-        setCookiesInPartitionedCookieStorage(document, url, sameSiteInfo, cookieString);
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url) == BlockCookies::Yes)
         return;
-    }
 
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     auto frameID = webFrame->frameID();
     auto pageID = page->identifier();
     auto requiresPrivacyProtections = document.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Cookies) ? RequiresScriptTrackingPrivacy::Yes : RequiresScriptTrackingPrivacy::No;
@@ -445,18 +443,5 @@ void WebCookieJar::setOptInCookiePartitioningEnabled(bool enabled)
     m_cache->setOptInCookiePartitioningEnabled(enabled);
 }
 #endif
-
-#if !PLATFORM(COCOA)
-
-String WebCookieJar::cookiesInPartitionedCookieStorage(const WebCore::Document&, const URL&, const WebCore::SameSiteInfo&) const
-{
-    return { };
-}
-
-void WebCookieJar::setCookiesInPartitionedCookieStorage(const WebCore::Document&, const URL&, const WebCore::SameSiteInfo&, const String&)
-{
-}
-
-#endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

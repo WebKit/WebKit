@@ -2105,20 +2105,6 @@ bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
 #endif
 }
 
-bool Quirks::shouldUseEphemeralPartitionedStorageForDOMCookies(const URL& url) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    auto firstPartyDomain = RegistrableDomain(m_document->firstPartyForCookies()).string();
-    auto domain = RegistrableDomain(url).string();
-
-    // rdar://113830141
-    if (firstPartyDomain == "cagreatamerica.com"_s && domain == "queue-it.net"_s)
-        return true;
-
-    return false;
-}
-
 #if PLATFORM(IOS_FAMILY)
 // m365.cloud.microsoft rdar://157794706
 // Allow popups from m365.cloud.microsoft to onedrive.live.com

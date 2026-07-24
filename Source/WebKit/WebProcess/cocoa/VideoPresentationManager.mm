@@ -48,6 +48,7 @@
 #import <WebCore/DocumentView.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
+#import <WebCore/FloatQuad.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HostingContext.h>
 #import <WebCore/LocalFrameView.h>

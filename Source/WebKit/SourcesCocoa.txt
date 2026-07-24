@@ -894,7 +894,6 @@ WebProcess/WebPage/Cocoa/DrawingAreaCocoa.mm @nonARC
 WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm @nonARC
 WebProcess/WebPage/Cocoa/TextAnimationController.mm @nonARC
 WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm @nonARC
-WebProcess/WebPage/Cocoa/WebCookieJarCocoa.mm @nonARC
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm @nonARC @cost:10
 WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
 
