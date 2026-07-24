@@ -3090,7 +3090,7 @@ ExperimentalSandboxEnabled:
 
 ExplicitResourceManagementEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "Explicit Resource Management"
   humanReadableDescription: "Enable explicit resource management builtins and syntax."
@@ -3099,7 +3099,7 @@ ExplicitResourceManagementEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 ExposeCaptureDevicesAfterCaptureEnabled:
   type: bool
