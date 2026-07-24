@@ -84,7 +84,7 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const Style::
     if (style.writingMode().computedWritingMode() != Style::ComputedStyle::initialWritingMode()
         || style.writingMode().computedTextDirection() != Style::ComputedStyle::initialDirection())
         return false;
-    if (style.usesContainerUnits())
+    if (style.isContainerDependent())
         return false;
     if (style.useTreeCountingFunctions())
         return false;

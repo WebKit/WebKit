@@ -104,9 +104,9 @@ inline bool ComputedStyleBase::usesViewportUnits() const
     return m_nonInheritedFlags.usesViewportUnits;
 }
 
-inline bool ComputedStyleBase::usesContainerUnits() const
+inline bool ComputedStyleBase::isContainerDependent() const
 {
-    return m_nonInheritedFlags.usesContainerUnits;
+    return m_nonInheritedFlags.isContainerDependent;
 }
 
 inline bool ComputedStyleBase::useTreeCountingFunctions() const

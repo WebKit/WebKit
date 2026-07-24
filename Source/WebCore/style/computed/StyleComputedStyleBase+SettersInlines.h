@@ -63,9 +63,9 @@ inline void ComputedStyleBase::setUsesViewportUnits()
     m_nonInheritedFlags.usesViewportUnits = true;
 }
 
-inline void ComputedStyleBase::setUsesContainerUnits()
+inline void ComputedStyleBase::setIsContainerDependent()
 {
-    m_nonInheritedFlags.usesContainerUnits = true;
+    m_nonInheritedFlags.isContainerDependent = true;
 }
 
 inline void ComputedStyleBase::setUsesTreeCountingFunctions()

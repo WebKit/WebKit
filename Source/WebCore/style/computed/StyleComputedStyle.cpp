@@ -68,7 +68,7 @@ struct SameSizeAsComputedStyle : CanMakeCheckedPtr<SameSizeAsComputedStyle> {
         unsigned unicodeBidi : 3;
         unsigned floating : 3;
         bool usesViewportUnits : 1;
-        bool usesContainerUnits : 1;
+        bool isContainerDependent : 1;
         bool useTreeCountingFunctions : 1;
         bool hasExplicitlyInheritedProperties : 1;
         bool disallowsFastPathInheritance : 1;

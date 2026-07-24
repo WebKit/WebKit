@@ -420,6 +420,10 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
 
         auto mutableProperties = MutableStyleProperties::create();
         for (auto& block : blocks) {
+            // A container query in the body makes the result depend on the calling element's
+            // container, not just the matched declarations, so it must not be cached.
+            if (!block.containerQueries.isEmpty())
+                m_styleBuilder.state().setIsContainerDependent();
             if (containerQueriesMatch(block.containerQueries))
                 mutableProperties->mergeAndOverrideOnConflict(block.properties.get());
         }

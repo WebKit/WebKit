@@ -166,7 +166,7 @@ FloatSize CSSToLengthConversionData::dynamicViewportFactor() const
 void CSSToLengthConversionData::setUsesContainerUnits() const
 {
     if (m_styleBuilderState)
-        m_styleBuilderState->setUsesContainerUnits();
+        m_styleBuilderState->setIsContainerDependent();
 }
 
 bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
