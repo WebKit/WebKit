@@ -137,6 +137,7 @@ private:
     friend class FlexFormattingContext;
     friend class FlexFormattingUtils;
     friend class LayoutIntegration::FlexLayout;
+    friend class LayoutIntegration::FlexIntegrationUtils;
 
     using FlexItemBorderBoxRects = Vector<LayoutRect, 4>;
 
@@ -161,10 +162,7 @@ private:
     std::optional<LayoutUnit> blockAxisSizeForFlexItem(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
     void cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height);
     LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
-    void applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit blockSize);
-    void layoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
-    void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
     void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineStart.add(flexItem); }

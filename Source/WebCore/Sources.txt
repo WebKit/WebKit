@@ -2054,6 +2054,7 @@ layout/integration/LayoutIntegrationCoverage.cpp @header:RenderStyleGetters
 layout/integration/grid/LayoutIntegrationGridCoverage.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationUtils.cpp
+layout/integration/flex/FlexIntegrationUtils.cpp @header:RenderStyleGetters
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp @header:RenderStyleGetters
 layout/integration/grid/LayoutIntegrationGridLayout.cpp @header:RenderStyleGetters
 layout/integration/inline/InlineIteratorBox.cpp

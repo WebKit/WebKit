@@ -1817,6 +1817,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/integration/LayoutIntegrationBoxGeometryUpdater.h
     layout/integration/LayoutIntegrationBoxTreeUpdater.h
     layout/integration/LayoutIntegrationUtils.h
+
+    layout/integration/flex/FlexIntegrationUtils.h
     layout/integration/flex/LayoutIntegrationFlexLayout.h
 
     layout/integration/grid/LayoutIntegrationGridLayout.h

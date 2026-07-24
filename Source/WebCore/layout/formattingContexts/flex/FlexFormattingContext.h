@@ -39,6 +39,8 @@ struct MinimumSize;
 class FlexLayoutState;
 class RenderFlexibleBox;
 
+namespace LayoutIntegration { class FlexIntegrationUtils; }
+
 class FlexLayoutItem {
 public:
     FlexLayoutItem(RenderBox&, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent);
@@ -94,7 +96,7 @@ struct FlexContainerUsedExtents {
 
 class FlexFormattingContext {
 public:
-    FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&);
+    FlexFormattingContext(LayoutIntegration::FlexIntegrationUtils&, const FlexLayoutConstraints&);
 
     struct Result {
         std::optional<LayoutUnit> alignContentStartOverflow;
@@ -191,8 +193,10 @@ private:
 
     const FlexFormattingUtils& flexFormattingUtils() const;
     FlexLayoutState& layoutState() const;
+    LayoutIntegration::FlexIntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
+    LayoutIntegration::FlexIntegrationUtils& m_integrationUtils;
     FlexFormattingUtils m_flexFormattingUtils;
     const FlexLayoutConstraints m_constraints;
     Result m_result;

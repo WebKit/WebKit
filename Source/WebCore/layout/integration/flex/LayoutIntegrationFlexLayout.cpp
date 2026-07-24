@@ -42,6 +42,7 @@ namespace LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBox)
     : m_flexBox(flexBox)
+    , m_integrationUtils(flexBox)
 {
 }
 
@@ -151,7 +152,7 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
         return;
     }
 
-    auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints).layout(flexItems);
+    auto flexLayoutResult = WebCore::FlexFormattingContext(m_integrationUtils, constraints).layout(flexItems);
     if (flexLayoutResult.alignContentStartOverflow)
         flexBox().m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
     flexBox().m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;

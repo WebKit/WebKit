@@ -573,28 +573,6 @@ LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& 
     return blockAxisContentSize;
 }
 
-void RenderFlexibleBox::applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit blockSize)
-{
-    // We cache the child's content logical height to avoid it being reset to the stretched height.
-    // FIXME: This is fragile. RenderBoxes should be smart enough to determine their content logical height
-    // correctly even when there's an overrideHeight.
-    auto contentLogicalHeight = flexItemContentLogicalHeight(flexItem);
-    dirtyPercentHeightDescendantsWithinFlexItem(flexItem);
-    // Don't use layoutChildIfNeeded to avoid setting cross axis cached size twice.
-    layoutFlexItemForStretchedCrossSize(flexItem, blockSize, LogicalBoxAxis::Block);
-    cacheFlexItemContentLogicalHeightIfAllowed(flexItem, contentLogicalHeight);
-}
-
-void RenderFlexibleBox::layoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis)
-{
-    if (crossAxis == LogicalBoxAxis::Block)
-        flexItem.setOverridingBorderBoxLogicalHeight(crossSize);
-    else
-        flexItem.setOverridingBorderBoxLogicalWidth(crossSize);
-    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    flexItem.layoutIfNeeded();
-}
-
 void RenderFlexibleBox::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)
 {
     // In quirks mode, the percentage height walk may register descendants on the
@@ -611,56 +589,6 @@ void RenderFlexibleBox::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& f
             continue;
         if (flexItemBlockFlow->isContainingBlockAncestorFor(descendant))
             flexItemBlockFlow->dirtyForLayoutFromPercentageHeightDescendant(descendant);
-    }
-}
-
-void RenderFlexibleBox::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayoutItem, LayoutUnit mainSize)
-{
-    auto& flexItem = flexLayoutItem.renderer.get();
-
-    FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem) ? flexItem.setOverridingBorderBoxLogicalWidth(mainSize + flexItem.borderAndPaddingLogicalWidth())
-        : flexItem.setOverridingBorderBoxLogicalHeight(mainSize + flexItem.borderAndPaddingLogicalHeight());
-    auto mainAxisContentExtentIncludingScrollbar = FlexFormattingUtils::isHorizontalFlow(*this) ? flexItem.contentBoxWidth() + flexItem.verticalScrollbarWidth() : flexItem.contentBoxHeight() + flexItem.horizontalScrollbarHeight();
-    auto mainSizeIsUnchanged = mainSize == mainAxisContentExtentIncludingScrollbar;
-
-    if (mainSizeIsUnchanged) {
-        // To avoid double applying margin changes in updateAutoMarginsInCrossAxis, we reset the margins here.
-        resetAutoMarginsAndLogicalTopInCrossAxis(flexItem);
-    }
-
-    // We may have already forced relayout for orthogonal flowing children in computeInnerFlexBaseSizeForFlexItem.
-    auto shouldMarkFlexItemForLayout = [&] {
-        // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
-        // an auto value. Add a method to determine this, so that we can avoid the relayout.
-        if (flexItem.hasRelativeLogicalHeight())
-            return true;
-        if (flexLayoutItem.shouldInvalidateChildContent && !m_flexLayoutState->hasFlexItemCompletedLayout(flexItem))
-            return true;
-        // The flexed content size and the override size include the scrollbar
-        // width, so we need to compare to the size including the scrollbar.
-        // FIXME: Should it include the scrollbar?
-        if (!mainSizeIsUnchanged)
-            return true;
-        // Have to force another relayout even though the child is sized
-        // correctly, because its descendants are not sized correctly yet. Our
-        // previous layout of the child was done without an override height set.
-        // So, redo it here.
-        return flexItemHasPercentHeightDescendants(flexItem);
-    };
-
-    if (shouldMarkFlexItemForLayout())
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    else
-        flexItem.markForPaginationRelayoutIfNeeded();
-
-    if (flexItem.needsLayout()) {
-        flexItem.layoutIfNeeded();
-        m_flexLayoutState->setFlexItemHasCompletedLayout(flexItem);
-    }
-
-    if (!flexLayoutItem.everHadLayout && flexItem.checkForRepaintDuringLayout()) {
-        flexItem.repaint();
-        flexItem.repaintOverhangingFloats(true);
     }
 }
 

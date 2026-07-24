@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FlexFormattingContext.h>
+#include <WebCore/FlexIntegrationUtils.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -62,8 +63,8 @@ private:
     RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
-    // First/last flex-line item counts from the last layout. They live here rather than on RenderFlexibleBox because
-    // the baseline queries that read them are on this integration layer, which outlives the FlexFormattingContext.
+    FlexIntegrationUtils m_integrationUtils;
+
     size_t m_numberOfFlexItemsOnFirstLine { 0 };
     size_t m_numberOfFlexItemsOnLastLine { 0 };
 };
