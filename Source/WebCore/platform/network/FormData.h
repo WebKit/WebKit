@@ -135,7 +135,7 @@ public:
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = EncodingType::FormURLEncoded);
     static Ref<FormData> createMultiPart(const DOMFormData&);
-    WEBCORE_EXPORT static Ref<FormData> create(PendingStreamIdentifier);
+    WEBCORE_EXPORT static Ref<FormData> create(PendingStreamIdentifier, RefPtr<WebCore::PendingStreamState>&&);
     WEBCORE_EXPORT ~FormData();
 
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.

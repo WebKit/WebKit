@@ -48,6 +48,7 @@ class AbortSignal;
 class FetchRequest;
 class FetchResponseBodyLoader;
 class ReadableStreamSource;
+class ReadableStreamToSharedBufferSink;
 
 class FetchResponse final : public FetchBodyOwner {
 public:
@@ -170,6 +171,8 @@ private:
         NotificationCallback takeNotificationCallback() { return WTF::move(m_responseCallback); }
         ConsumeDataByChunkCallback takeConsumeDataCallback() { return WTF::move(m_consumeDataCallback); }
 
+        void setUploadSink(Ref<ReadableStreamToSharedBufferSink>&& sink) { m_uploadSink = WTF::move(sink); }
+
     private:
         Loader(FetchResponse&, NotificationCallback&&);
 
@@ -183,6 +186,7 @@ private:
         NotificationCallback m_responseCallback;
         ConsumeDataByChunkCallback m_consumeDataCallback;
         RefPtr<FetchLoader> m_loader;
+        RefPtr<ReadableStreamToSharedBufferSink> m_uploadSink;
         const Ref<PendingActivity<FetchResponse>> m_pendingActivity;
         FetchOptions::Credentials m_credentials;
         bool m_shouldStartStreaming { false };

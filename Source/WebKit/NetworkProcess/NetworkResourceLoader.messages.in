@@ -27,4 +27,8 @@
 ]
 messages -> NetworkResourceLoader {
     ContinueDidReceiveResponse()
+
+    PendingStreamAppendData(IPC::SharedBufferReference chunk)
+    PendingStreamEnd()
+    PendingStreamError()
 }

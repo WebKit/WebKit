@@ -274,11 +274,13 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback, const String& initiator)
 {
+    RefPtr<ReadableStreamToSharedBufferSink> uploadSink;
     if (request.isReadableStreamBody()) {
         if (!context.settingsValues().fetchUploadStreamsEnabled) {
             responseCallback(Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s });
             return;
         }
+        uploadSink = request.body().startPendingStreamUpload();
     } else if (request.hasReadableStreamBody()) {
         request.body().convertReadableStreamToArrayBuffer(request, [context = Ref { context }, weakRequest = WeakPtr { request }, responseCallback = WTF::move(responseCallback), initiator](auto&& exception) mutable {
             if (!!exception) {
@@ -294,6 +296,8 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
     }
 
     Ref response = createFetchResponse(context, request, WTF::move(responseCallback));
+    if (uploadSink)
+        protect(response->m_loader)->setUploadSink(uploadSink.releaseNonNull());
     response->startLoader(context, request, initiator);
 }
 

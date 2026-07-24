@@ -66,6 +66,7 @@
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/NodeDocument.h>
+#include <WebCore/PendingStreamState.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
@@ -663,7 +664,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         return;
     }
 
-    auto loader = WebResourceLoader::create(resourceLoader, trackingParameters);
+    RefPtr<PendingStreamState> state;
+    if (RefPtr body = resourceLoader.request().httpBody())
+        state = body->pendingStreamState();
+    auto loader = WebResourceLoader::create(resourceLoader, trackingParameters, WTF::move(state));
     m_webResourceLoaders.set(identifier, WTF::move(loader));
 }
 

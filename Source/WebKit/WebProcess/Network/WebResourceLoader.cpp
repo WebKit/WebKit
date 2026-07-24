@@ -53,6 +53,7 @@
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
+#include <WebCore/PendingStreamState.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SubresourceLoader.h>
@@ -72,17 +73,47 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader, const std::optional<TrackingParameters>& trackingParameters)
+Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader, const std::optional<TrackingParameters>& trackingParameters, RefPtr<PendingStreamState>&& state)
 {
-    return adoptRef(*new WebResourceLoader(WTF::move(coreLoader), trackingParameters));
+    return adoptRef(*new WebResourceLoader(WTF::move(coreLoader), trackingParameters, WTF::move(state)));
 }
 
-WebResourceLoader::WebResourceLoader(Ref<WebCore::ResourceLoader>&& coreLoader, const std::optional<TrackingParameters>& trackingParameters)
+WebResourceLoader::WebResourceLoader(Ref<WebCore::ResourceLoader>&& coreLoader, const std::optional<TrackingParameters>& trackingParameters, RefPtr<PendingStreamState>&& state)
     : m_coreLoader(WTF::move(coreLoader))
     , m_trackingParameters(trackingParameters)
+    , m_pendingStreamState(state.get())
     , m_loadStart(MonotonicTime::now())
 {
     WEBRESOURCELOADER_RELEASE_LOG(WebResourceLoaderConstructor);
+    if (state) {
+        state->setDataAvailableHandler([weakThis = WeakPtr { *this }] {
+            ensureOnMainThread([weakThis] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis || !protectedThis->m_pendingStreamState)
+                    return;
+                Ref state = *protectedThis->m_pendingStreamState;
+                while (true) {
+                    bool atEOF = false;
+                    int errorCode = 0;
+                    RefPtr chunk = state->takeNextChunk(atEOF, errorCode);
+                    if (errorCode) {
+                        protectedThis->send(Messages::NetworkResourceLoader::PendingStreamError { });
+                        protectedThis->m_pendingStreamState = nullptr;
+                        return;
+                    }
+                    if (chunk)
+                        protectedThis->send(Messages::NetworkResourceLoader::PendingStreamAppendData { IPC::SharedBufferReference(*chunk) });
+                    if (atEOF) {
+                        protectedThis->send(Messages::NetworkResourceLoader::PendingStreamEnd { });
+                        protectedThis->m_pendingStreamState = nullptr;
+                        return;
+                    }
+                    if (!chunk)
+                        return;
+                }
+            });
+        });
+    }
 }
 
 WebResourceLoader::~WebResourceLoader() = default;

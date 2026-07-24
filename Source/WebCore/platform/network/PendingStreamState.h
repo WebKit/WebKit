@@ -56,12 +56,13 @@ public:
 
     WEBCORE_EXPORT void setHTTPVersionProbe(HTTPVersionProbe&&);
 
-    void setDataAvailableHandler(Function<void()>&&);
-    void clearDataAvailableHandler();
+    WEBCORE_EXPORT void setDataAvailableHandler(Function<void()>&&);
+    WEBCORE_EXPORT void clearDataAvailableHandler();
 
     HTTPVersion currentHTTPVersion();
 
     size_t read(std::span<uint8_t> outBuffer, bool& atEOF, int& errorCode);
+    WEBCORE_EXPORT RefPtr<SharedBuffer> takeNextChunk(bool& atEOF, int& errorCode);
     bool hasReadyData();
 
 private:

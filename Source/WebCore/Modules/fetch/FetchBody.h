@@ -32,6 +32,7 @@
 #include "DOMFormData.h"
 #include "FetchBodyConsumer.h"
 #include "FormData.h"
+#include "PendingStreamState.h"
 #include "ReadableStream.h"
 #include "URLSearchParams.h"
 
@@ -40,6 +41,7 @@ namespace WebCore {
 class DeferredPromise;
 class FetchBodyOwner;
 class FetchBodySource;
+class ReadableStreamToSharedBufferSink;
 class ScriptExecutionContext;
 
 template<typename> class ExceptionOr;
@@ -105,6 +107,9 @@ public:
 
     void convertReadableStreamToArrayBuffer(FetchBodyOwner&, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
+    Ref<ReadableStreamToSharedBufferSink> startPendingStreamUpload();
+    PendingStreamState* pendingStreamState() const { return m_pendingStreamState.get(); }
+
     bool isBlob() const { return std::holds_alternative<Ref<Blob>>(m_data); }
     bool isFormData() const { return std::holds_alternative<Ref<FormData>>(m_data); }
     bool isReadableStream() const { return std::holds_alternative<Ref<ReadableStream>>(m_data); }
@@ -138,12 +143,14 @@ private:
     String& textBody() LIFETIME_BOUND { return std::get<String>(m_data); }
     const String& textBody() const LIFETIME_BOUND { return std::get<String>(m_data); }
     URLSearchParams& urlSearchParamsBody() const { return std::get<Ref<URLSearchParams>>(m_data).get(); }
+    ReadableStream& readableStreamBody() LIFETIME_BOUND { return std::get<Ref<ReadableStream>>(m_data); }
 
     using Data = Variant<std::nullptr_t, Ref<Blob>, Ref<FormData>, Ref<ArrayBuffer>, Ref<ArrayBufferView>, Ref<URLSearchParams>, String, Ref<ReadableStream>>;
     Data m_data { nullptr };
 
     std::unique_ptr<FetchBodyConsumer> m_consumer;
     RefPtr<ReadableStream> m_readableStream;
+    RefPtr<PendingStreamState> m_pendingStreamState;
 };
 
 struct FetchBodyWithType {

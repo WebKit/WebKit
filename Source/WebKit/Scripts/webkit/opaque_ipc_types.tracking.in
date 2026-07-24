@@ -416,6 +416,7 @@
     [Legacy] MessageParam WebPageProxy.RegisterAttachmentIdentifierFromData data
     [Legacy] MessageParam ServiceWorkerDownloadTask.DidReceiveData data
     [Legacy] MessageParam ServiceWorkerFetchTask.DidReceiveData data
+    [Legacy] MessageParam NetworkResourceLoader.PendingStreamAppendData chunk
 
     [NotSentFromWebContent] MessageParam WebResourceLoader.DidReceiveData data
     [NotSentFromWebContent] MessageParam WebSWClientConnection.NotifyRecordResponseBodyChunk data

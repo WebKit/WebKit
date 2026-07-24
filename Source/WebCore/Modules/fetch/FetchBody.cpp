@@ -41,7 +41,10 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PendingStreamState.h"
 #include "ReadableStreamSource.h"
+#include "ReadableStreamToSharedBufferSink.h"
+#include "SharedBuffer.h"
 #include "StreamPipeOptions.h"
 #include "TransformStream.h"
 #include "WritableStream.h"
@@ -281,11 +284,35 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
         return &const_cast<FormData&>(formDataBody());
     if (RefPtr data = protect(const_cast<FetchBody*>(this)->consumer())->data())
         return FormData::create(data->makeContiguous()->span());
-    if (isReadableStream())
-        return FormData::create(PendingStreamIdentifier::generate());
+    if (isReadableStream()) {
+        ASSERT(m_pendingStreamState);
+        Ref formData = FormData::create(PendingStreamIdentifier::generate(), protect(m_pendingStreamState));
+        return formData;
+    }
 
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+Ref<ReadableStreamToSharedBufferSink> FetchBody::startPendingStreamUpload()
+{
+    ASSERT(isReadableStream());
+    ASSERT(!m_pendingStreamState);
+
+    Ref state = PendingStreamState::create();
+    m_pendingStreamState = state.copyRef();
+
+    Ref sink = ReadableStreamToSharedBufferSink::create([state = WTF::move(state)](auto&& result) mutable {
+        WTF::switchOn(result,
+            [&](std::nullptr_t) { state->endStream(); },
+            [&](std::span<const uint8_t> chunk) { state->appendData(SharedBuffer::create(chunk)); },
+            [&](JSC::JSValue) { state->errorStream(-1); },
+            [&](Exception&) { state->errorStream(-1); }
+        );
+    });
+
+    sink->pipeFrom(protect(readableStreamBody()));
+    return sink;
 }
 
 void FetchBody::convertReadableStreamToArrayBuffer(FetchBodyOwner& owner, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)

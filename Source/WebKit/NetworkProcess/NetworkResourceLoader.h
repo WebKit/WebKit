@@ -49,6 +49,10 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
+namespace IPC {
+class SharedBufferReference;
+}
+
 namespace WebCore {
 class BlobDataFileReference;
 class ContentFilter;
@@ -115,6 +119,10 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
+
+    void pendingStreamAppendData(IPC::SharedBufferReference&&);
+    void pendingStreamEnd();
+    void pendingStreamError();
 
     void setResponse(WebCore::ResourceResponse&& response) { m_response = WTF::move(response); }
     const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_response; }

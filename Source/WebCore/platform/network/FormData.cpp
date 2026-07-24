@@ -97,10 +97,11 @@ Ref<FormData> FormData::create(Vector<WebCore::FormDataElement>&& elements, uint
     return result;
 }
 
-Ref<FormData> FormData::create(PendingStreamIdentifier identifier)
+Ref<FormData> FormData::create(PendingStreamIdentifier identifier, RefPtr<WebCore::PendingStreamState>&& state)
 {
     auto result = create();
     result->m_elements.append(FormDataElement { FormDataElement::PendingStreamData { identifier } });
+    result->m_pendingStreamState = WTF::move(state);
     return result;
 }
 
@@ -130,6 +131,8 @@ Ref<FormData> FormData::isolatedCopy() const
     auto formData = create();
     formData->m_alwaysStream = m_alwaysStream;
     formData->m_elements = crossThreadCopy(m_elements);
+    // We copy m_pendingStreamState as it is thread-safe, but only one consumer of data per PendingStreamState is possible.
+    formData->m_pendingStreamState = m_pendingStreamState;
     return formData;
 }
 

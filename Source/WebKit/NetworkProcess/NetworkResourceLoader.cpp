@@ -185,8 +185,6 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     if (RefPtr body = m_parameters.request.httpBody()) {
         if (body->isPendingStream()) {
             m_pendingStreamState = PendingStreamState::create();
-            // FIXME: Until we add support for getting data from web process, we pretend the body is empty.
-            protect(m_pendingStreamState)->endStream();
             body->setPendingStreamState(*m_pendingStreamState);
         }
     }
@@ -1674,6 +1672,31 @@ void NetworkResourceLoader::continueDidReceiveResponse()
 
     if (!m_responseCompletionHandlers.isEmpty())
         m_responseCompletionHandlers.takeFirst()(PolicyAction::Use);
+}
+
+void NetworkResourceLoader::pendingStreamAppendData(IPC::SharedBufferReference&& chunk)
+{
+    ASSERT(m_pendingStreamState);
+    if (!m_pendingStreamState)
+        return;
+    RefPtr buffer = chunk.unsafeBuffer();
+    if (!buffer)
+        return;
+    protect(m_pendingStreamState)->appendData(buffer.releaseNonNull());
+}
+
+void NetworkResourceLoader::pendingStreamEnd()
+{
+    ASSERT(m_pendingStreamState);
+    if (RefPtr state = m_pendingStreamState)
+        state->endStream();
+}
+
+void NetworkResourceLoader::pendingStreamError()
+{
+    ASSERT(m_pendingStreamState);
+    if (RefPtr state = m_pendingStreamState)
+        state->errorStream(-1);
 }
 
 void NetworkResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)

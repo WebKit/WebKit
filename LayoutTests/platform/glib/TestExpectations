@@ -277,6 +277,12 @@ imported/w3c/web-platform-tests/css/css-break/change-inline-color.html [ Pass ]
 http/wpt/background-fetch [ Skip ]
 imported/w3c/web-platform-tests/background-fetch [ Pass Failure ]
 
+# ReadableStream upload is not supported.
+imported/w3c/web-platform-tests/fetch/api/basic/request-upload.h2.any.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-upload.h2.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-upload.h2.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-upload.h2.any.sharedworker.html [ Skip ]
+
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-01.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]

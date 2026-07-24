@@ -168,6 +168,33 @@ size_t PendingStreamState::read(std::span<uint8_t> outBuffer, bool& atEOF, int& 
     return written;
 }
 
+RefPtr<SharedBuffer> PendingStreamState::takeNextChunk(bool& atEOF, int& errorCode)
+{
+    Locker locker { m_lock };
+    errorCode = m_errorCode;
+    atEOF = false;
+
+    if (errorCode)
+        return nullptr;
+
+    if (m_chunks.isEmpty()) {
+        if (m_ended)
+            atEOF = true;
+        return nullptr;
+    }
+
+    RefPtr<SharedBuffer> chunk = m_chunks.takeFirst();
+    if (m_frontChunkOffset) {
+        chunk = SharedBuffer::create(chunk->span().subspan(m_frontChunkOffset));
+        m_frontChunkOffset = 0;
+    }
+
+    if (m_chunks.isEmpty() && m_ended)
+        atEOF = true;
+
+    return chunk;
+}
+
 bool PendingStreamState::hasReadyData()
 {
     Locker locker { m_lock };
