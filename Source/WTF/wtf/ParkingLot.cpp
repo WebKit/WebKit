@@ -266,13 +266,11 @@ Hashtable* ensureHashtable()
         if (currentHashtable)
             return currentHashtable;
 
-        if (!currentHashtable) {
-            auto currentHashtable = makeUnique<Hashtable>(maxLoadFactor);
-            if (hashtable.compareExchangeWeak(nullptr, currentHashtable.get())) {
-                if (verbose)
-                    dataLogForCurrentThread(": created initial hashtable ", RawPointer(currentHashtable.get()), "\n");
-                return currentHashtable.release(); // Leak the hash table.
-            }
+        auto newHashtable = makeUnique<Hashtable>(maxLoadFactor);
+        if (hashtable.compareExchangeWeak(nullptr, newHashtable.get())) {
+            if (verbose)
+                dataLogForCurrentThread(": created initial hashtable ", RawPointer(newHashtable.get()), "\n");
+            return newHashtable.release(); // Leak the hash table.
         }
     }
 }
