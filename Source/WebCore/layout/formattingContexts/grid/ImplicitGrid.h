@@ -55,8 +55,8 @@ public:
 private:
     using RowCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
     std::optional<size_t> NODELETE findFirstAvailableColumnPosition(size_t rowStart, size_t rowEnd, size_t columnSpan, size_t startSearchColumn) const;
-    std::optional<size_t> findColumnPositionForDefiniteRowItem(size_t normalizedRowStart, size_t normalizedRowEnd, size_t columnSpan, GridAutoFlowOptions) const;
-    void growGridColumnsToFit(size_t columnSpan, size_t normalizedRowStart, size_t normalizedRowEnd);
+    std::optional<size_t> findColumnPositionForDefiniteRowItem(size_t rowStart, size_t rowEnd, size_t columnSpan, GridAutoFlowOptions) const;
+    void growGridColumnsToFit(size_t columnSpan, size_t rowStart, size_t rowEnd);
     bool NODELETE isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd) const;
     void insertItemInArea(const UnplacedGridItem&, size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd);
 
