@@ -2186,6 +2186,21 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
         if (!didFullRepaint)
             didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), style.usedZoomForLength(), true);
+
+        // Mask layers paint as a single all-or-nothing group (RenderBox::paintMaskImages), so when
+        // more than one image contributes to the mask we must repaint the whole masked area rather
+        // than just the destination rect of the image that loaded.
+        if (!didFullRepaint) {
+            unsigned maskImageContributors = style.maskBorderSource().tryStyleImage() ? 1 : 0;
+            for (auto& layer : style.maskLayers().usedValues())
+                maskImageContributors += layer.hasImage();
+
+            bool isNonEmpty;
+            if (maskImageContributors > 1 && Style::findLayerUsedImage(style.maskLayers(), image, isNonEmpty)) {
+                repaint();
+                didFullRepaint = true;
+            }
+        }
         if (!didFullRepaint)
             didFullRepaint = repaintLayerRectsForImage(image, style.maskLayers(), style.usedZoomForLength(), false);
     };
