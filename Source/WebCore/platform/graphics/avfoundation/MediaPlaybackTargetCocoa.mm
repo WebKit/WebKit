@@ -76,20 +76,6 @@ bool MediaPlaybackTargetCocoa::hasActiveRoute() const
     return m_outputContext.get().deviceName;
 }
 
-// FIXME: This check is only needed temporarily. Once rdar://181927768 is resolved,
-// AVSystemRouting will not even notify us of routes that do no support the video feature.
-bool MediaPlaybackTargetCocoa::supportsCustomProtocolVideoPlayback() const
-{
-#if HAVE(AVOUTPUTDEVICE_CUSTOM_PROTOCOL)
-    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
-        if (outputDevice.deviceType == AVOutputDeviceTypeCustomProtocol && outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
-            return true;
-    }
-#endif
-
-    return false;
-}
-
 bool MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback() const
 {
     for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {

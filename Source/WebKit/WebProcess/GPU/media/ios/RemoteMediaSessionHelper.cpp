@@ -72,6 +72,16 @@ void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
     protect(ensureConnection())->send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+void RemoteMediaSessionHelper::ensureMediaDeviceRouteControllerMonitoring()
+{
+    // Connecting causes the GPU process to create a RemoteMediaSessionHelperProxy, which registers
+    // as a client of MediaSessionHelper to ensure that changes in MediaDeviceRouteController's
+    // active route are sent to the WebContent process.
+    ensureConnection();
+}
+#endif
+
 void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContextSerialized&& targetContext)
 {
     switch (targetContext.targetType()) {

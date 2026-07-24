@@ -154,6 +154,9 @@ void MediaSessionHelper::addClient(MediaSessionHelperClient& client)
 {
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
+
+    if (RefPtr playbackTarget = m_playbackTarget)
+        client.activeVideoRouteDidChange(m_activeVideoRouteSupportsAirPlayVideo ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No, playbackTarget.releaseNonNull());
 }
 
 void MediaSessionHelper::removeClient(MediaSessionHelperClient& client)
@@ -262,17 +265,9 @@ void MediaSessionHelper::activeRoutesDidChange(MediaDeviceRouteController& route
     Ref target = MediaPlaybackTargetCocoa::create();
     RefPtr mostRecentActiveRoute = routeController.mostRecentActiveRoute();
 
-    bool supportsVideo = [&] {
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-        return true;
-#else
-        return target->supportsCustomProtocolVideoPlayback();
-#endif
-    }();
+    RELEASE_LOG(Media, "MediaSessionHelper::activeRoutesDidChange: mostRecentActiveRoute=%d", !!mostRecentActiveRoute);
 
-    RELEASE_LOG(Media, "MediaSessionHelper::activeRoutesDidChange: mostRecentActiveRoute=%d, supportsVideo=%d", !!mostRecentActiveRoute, supportsVideo);
-
-    if (!mostRecentActiveRoute || !supportsVideo) {
+    if (!mostRecentActiveRoute) {
         activeAudioRouteDidChange(ShouldPause::Yes);
         activeVideoRouteDidChange(SupportsAirPlayVideo::No, WTF::move(target));
         return;

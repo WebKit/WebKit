@@ -67,6 +67,9 @@ private:
     // MediaSessionHelper
     void startMonitoringWirelessRoutesInternal() final;
     void stopMonitoringWirelessRoutesInternal() final;
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    void ensureMediaDeviceRouteControllerMonitoring() final;
+#endif
 
     // Messages
     void activeVideoRouteDidChange(SupportsAirPlayVideo, MediaPlaybackTargetContextSerialized&&);

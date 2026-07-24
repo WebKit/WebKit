@@ -86,6 +86,10 @@ public:
     void startMonitoringWirelessRoutes();
     void stopMonitoringWirelessRoutes();
 
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    virtual void ensureMediaDeviceRouteControllerMonitoring() { }
+#endif
+
     virtual std::optional<ProcessID> presentedApplicationPID() const;
     virtual void providePresentingApplicationPID(ProcessID);
 
