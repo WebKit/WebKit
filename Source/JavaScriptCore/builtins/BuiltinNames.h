@@ -217,6 +217,7 @@ namespace JSC {
     macro(asyncFromSyncIteratorCreate) \
     macro(regExpStringIteratorCreate) \
     macro(iteratorHelperCreate) \
+    macro(ownKeys) \
     macro(includes) \
     macro(ReferenceError) \
     macro(SuppressedError) \

@@ -31,6 +31,8 @@ namespace JSC {
 
 inline constexpr ASCIILiteral ReflectOwnKeysNonObjectArgumentError { "Reflect.ownKeys requires the first argument be an object"_s };
 
+JSC_DECLARE_HOST_FUNCTION(reflectObjectOwnKeys);
+
 class ReflectObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;

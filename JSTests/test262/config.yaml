@@ -10,13 +10,13 @@ flags:
   iterator-sequencing: useIteratorSequencing
   explicit-resource-management: useExplicitResourceManagement
   import-defer: useImportDefer
+  joint-iteration: useJointIteration
 skip:
   features:
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - source-phase-imports
-    - joint-iteration
     - Intl.Era-monthcode
     - await-dictionary
     - import-bytes

@@ -152,6 +152,7 @@ class JSGlobalObject;
     v(asyncFromSyncIteratorCreate, nullptr) \
     v(regExpStringIteratorCreate, nullptr) \
     v(iteratorHelperCreate, nullptr) \
+    v(ownKeys, nullptr) \
     v(ReferenceError, nullptr) \
     v(SuppressedError, nullptr) \
     v(DisposableStack, nullptr) \

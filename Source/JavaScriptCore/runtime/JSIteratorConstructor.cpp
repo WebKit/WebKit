@@ -59,6 +59,11 @@ void JSIteratorConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject,
 
     if (Options::useIteratorSequencing())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().concatPublicName(), jsIteratorConstructorConcatCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (Options::useJointIteration()) {
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().zipPublicName(), jsIteratorConstructorZipCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().zipKeyedPublicName(), jsIteratorConstructorZipKeyedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
 }
 
 template<typename Visitor>

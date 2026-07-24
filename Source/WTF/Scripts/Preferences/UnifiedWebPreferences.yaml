@@ -379,7 +379,7 @@ AllowUniversalAccessFromFileURLs:
     WebCore:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely.
 AllowViewportShrinkToFitContent:
   type: bool
   status: internal
@@ -1842,7 +1842,7 @@ CSSWrapInsideEnabled:
     WebCore:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 CacheAPIEnabled:
   type: bool
   status: embedder
@@ -4641,7 +4641,7 @@ IsFirstPartyWebsiteDataRemovalDisabled:
     WebCore:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely.
 IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
   type: bool
   status: developer
@@ -4656,7 +4656,7 @@ IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
     WebCore:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely.
 IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
   type: bool
   status: developer
@@ -4753,7 +4753,7 @@ IteratorSequencingEnabled:
     WebKit:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ItpDebugModeEnabled:
   type: bool
   status: developer
@@ -4859,6 +4859,23 @@ JavaScriptRuntimeFlags:
       default: 0
     WebCore:
       default: '{ }'
+
+JointIterationEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Joint Iteration"
+  humanReadableDescription: "Expose the Iterator.zip and Iterator.zipKeyed methods"
+  webcoreBinding: none
+  jscOptionName: useJointIteration
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 KeyboardDismissalGestureEnabled:
   type: bool
@@ -8146,7 +8163,7 @@ ShouldTakeNearSuspendedAssertions:
     WebCore:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 # FIXME: This is not used in WebCore, so should not have a binding to WebCore::Settings.
 ShouldUseServiceWorkerShortTimeout:
   type: bool
@@ -8963,7 +8980,7 @@ ThreadedTimeBasedAnimationsEnabled:
     WebCore:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely.
 TiledScrollingIndicatorVisible:
   type: bool
   status: internal
@@ -10399,7 +10416,7 @@ WebRTCMediaPipelineAdditionalLoggingEnabled:
     WebCore:
       default: false
 
-# FIXME: This is not relevant for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely.
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool
   status: embedder
