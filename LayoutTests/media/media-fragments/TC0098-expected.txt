@@ -1,0 +1,9 @@
+
+
+Title: TC0098
+Fragment: 't=1000000:00:00'
+Comment: The npt-hh value, when multiplied by the number of seconds per hour, would overflow a 32-bit int. UA computes the seek time using floating point instead. The request lies beyond the end of the resource, so the UA seeks to the end of the media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == 'duration') OK
+END OF TEST
+

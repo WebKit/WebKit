@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-constexpr int secondsPerHour = 3600;
-constexpr int secondsPerMinute = 60;
 constexpr unsigned nptIdentifierLength = 4; // "npt:"
 
 static String collectDigits(std::span<const Latin1Character> input, unsigned& position)
@@ -259,7 +257,10 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
     // npt-ss        =   2DIGIT      ; 0-59
 
     String digits1 = collectDigits(timeString, offset);
-    int value1 = parseInteger<int>(digits1).value_or(0);
+    auto parsedValue1 = parseInteger<int>(digits1);
+    if (!parsedValue1)
+        return false;
+    int value1 = *parsedValue1;
     if (offset >= timeString.size() || timeString[offset] == ',') {
         time = MediaTime::createWithDouble(value1);
         return true;
@@ -317,7 +318,7 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
         fraction = MediaTime::createWithDouble(collectFraction(timeString, offset).toDouble(isValid));
     }
     
-    time = MediaTime::createWithDouble((value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3) + fraction;
+    time = MediaTime::createWithDouble(value1 * 3600.0 + value2 * 60.0 + value3) + fraction;
     return true;
 }
 

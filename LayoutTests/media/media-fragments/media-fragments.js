@@ -73,7 +73,10 @@
         TC0092 : { start: null, end: null, valid: false, description: "Incorrect percent encoding", fragment: "t%3d10", comment: "UA knows that this is an invalid media fragment, so it will play the entire media resource."},
         TC0093 : { start: null, end: null, valid: false, description: "Incorrect percent encoding", fragment: "t=10%26", comment: "UA knows that this is an invalid media fragment, so it will play the entire media resource."},
         TC0094 : { start: null, end: null, valid: false, description: "Trailing comma", fragment: "t=3,7,", comment: "UA knows that this is an invalid media fragment, so it will play the entire media resource."},
-        TC0095 : { start: 3, end: 7, valid: true, description: "NPT HH:MM:SS format. Single digit npt-hh.", fragment: "t=0:00:03,0:00:07", comment: "The media is requested from a to b."}
+        TC0095 : { start: 3, end: 7, valid: true, description: "NPT HH:MM:SS format. Single digit npt-hh.", fragment: "t=0:00:03,0:00:07", comment: "The media is requested from a to b."},
+        TC0096 : { start: null, end: null, valid: false, description: "NPT hours overflow", fragment: "t=99999999999:00:05", comment: "The npt-hh value overflows the integer range. UA knows that this is an invalid media fragment, so it will play the entire media resource."},
+        TC0097 : { start: null, end: null, valid: false, description: "NPT seconds-only overflow", fragment: "t=99999999999", comment: "The npt-sec value overflows the integer range. UA knows that this is an invalid media fragment, so it will play the entire media resource."},
+        TC0098 : { start: "duration", end: null, valid: false, description: "NPT hours multiplication overflow", fragment: "t=1000000:00:00", comment: "The npt-hh value, when multiplied by the number of seconds per hour, would overflow a 32-bit int. UA computes the seek time using floating point instead. The request lies beyond the end of the resource, so the UA seeks to the end of the media resource."}
     };
 
     function pause()
