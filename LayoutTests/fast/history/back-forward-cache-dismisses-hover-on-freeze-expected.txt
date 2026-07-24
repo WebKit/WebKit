@@ -1,0 +1,11 @@
+A hover-triggered popover (shown via onmouseover, hidden via onmouseout) must be dismissed after navigating away while hovering it and coming back via the back/forward cache, even if the mouse never moves again after the restore. Entering the back/forward cache tears down hover state internally but must also dispatch a real mouseout/mouseleave so page script can react, matching mouse-left-the-page behavior.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('popover').style.display is "block"
+PASS document.getElementById('popover').style.display is "none"
+PASS document.getElementById('cluster').matches(':hover') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE

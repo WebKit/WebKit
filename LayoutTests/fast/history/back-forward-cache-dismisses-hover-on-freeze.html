@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<div id="cluster" style="position:absolute; top:20px; left:20px; width:200px; height:100px; background:#ddd;"
+     onmouseover="document.getElementById('popover').style.display = 'block'"
+     onmouseout="document.getElementById('popover').style.display = 'none'">
+  Hover me
+  <a id="link" href="resources/page-cache-helper.html">go to page B</a>
+  <div id="popover" style="display:none; background:red; width:100px; height:40px;">POPOVER</div>
+</div>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("A hover-triggered popover (shown via onmouseover, hidden via onmouseout) must be " +
+    "dismissed after navigating away while hovering it and coming back via the back/forward " +
+    "cache, even if the mouse never moves again after the restore. Entering the back/forward " +
+    "cache tears down hover state internally but must also dispatch a real mouseout/mouseleave " +
+    "so page script can react, matching mouse-left-the-page behavior.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.clearAllDatabases();
+
+window.addEventListener("pageshow", function(event) {
+    if (!event.persisted)
+        return;
+
+    // Deliberately do NOT move the mouse here -- the fix must dismiss the popover as a result of
+    // freeze-time mouseout/mouseleave dispatch alone, without relying on any further mouse
+    // movement after the page is restored.
+    shouldBeEqualToString("document.getElementById('popover').style.display", "none");
+    shouldBeFalse("document.getElementById('cluster').matches(':hover')");
+    finishJSTest();
+});
+
+function runTest()
+{
+    if (!window.eventSender) {
+        testFailed("This test requires eventSender.");
+        finishJSTest();
+        return;
+    }
+
+    var clusterRect = document.getElementById("cluster").getBoundingClientRect();
+    eventSender.mouseMoveTo(clusterRect.left + 10, clusterRect.top + 10);
+    shouldBeEqualToString("document.getElementById('popover').style.display", "block");
+
+    // Click the link inside the still-hovered cluster to navigate away, mirroring the reported
+    // steps to reproduce (hover a cluster, then click a link inside it).
+    var linkRect = document.getElementById("link").getBoundingClientRect();
+    eventSender.mouseMoveTo(linkRect.left + linkRect.width / 2, linkRect.top + linkRect.height / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>
