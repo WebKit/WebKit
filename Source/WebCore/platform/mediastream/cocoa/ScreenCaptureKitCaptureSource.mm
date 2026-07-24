@@ -493,7 +493,7 @@ void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
 
         callOnMainRunLoop([weakThis = WTF::move(weakThis), error = RetainPtr { error }]() mutable {
             if (RefPtr protectedThis = weakThis.get())
-                weakThis->sessionFailedWithError(WTF::move(error), "-[SCStream updateConfiguration:completionHandler:] failed"_s);
+                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream updateConfiguration:completionHandler:] failed"_s);
         });
     });
 
