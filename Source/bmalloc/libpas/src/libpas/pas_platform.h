@@ -65,6 +65,7 @@
 #endif
 
 #define PAS_ASAN_ENABLED PAS_COMPILER_HAS_CLANG_FEATURE(address_sanitizer)
+#define PAS_TSAN_ENABLED PAS_COMPILER_HAS_CLANG_FEATURE(thread_sanitizer)
 
 /* PAS_IGNORE_WARNINGS */
 

@@ -172,7 +172,9 @@ void ConcurrentDecommitQueue::decommit()
 
 void SequesteredImmortalHeap::installScavenger()
 {
+#if USE(LIBPAS)
     RELEASE_ASSERT(pas_scavenger_try_install_foreign_work_callback(scavenge, 11, nullptr));
+#endif
 }
 
 bool SequesteredImmortalHeap::scavengeImpl(void* /*userdata*/)

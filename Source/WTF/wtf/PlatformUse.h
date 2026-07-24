@@ -248,7 +248,10 @@
 #endif
 
 #if !defined(USE_SYSTEM_MALLOC)
-#if OS(DARWIN) && !CPU(ADDRESS64)
+#if TSAN_ENABLED
+// bmalloc falls back to the system allocator under ThreadSanitizer.
+#define USE_SYSTEM_MALLOC 1
+#elif OS(DARWIN) && !CPU(ADDRESS64)
 #define USE_SYSTEM_MALLOC 1
 #else
 #define USE_SYSTEM_MALLOC 0

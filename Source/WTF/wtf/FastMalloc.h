@@ -30,7 +30,7 @@
 
 // Enable USE(LIBPAS)
 // FIXME: Replaces uses of `#if !USE(SYSTEM_MALLOC) \n #if BUSE(LIBPAS)` with `#if USE(LIBPAS)`
-#if BUSE(LIBPAS)
+#if !USE(SYSTEM_MALLOC) && BUSE(LIBPAS)
 #define USE_LIBPAS 1
 #endif
 
