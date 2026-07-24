@@ -597,14 +597,14 @@ LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& 
     return blockAxisContentSize;
 }
 
-void RenderFlexibleBox::stretchFlexItemLogicalHeight(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout)
+void RenderFlexibleBox::applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout)
 {
     if (needsRelayout || !flexItem.overridingBorderBoxLogicalHeight())
         flexItem.setOverridingBorderBoxLogicalHeight(desiredLogicalHeight);
+
     if (!needsRelayout)
         return;
 
-    auto resetFlexItemLogicalHeight = scopedResetFlexItemLogicalHeightBeforeLayout();
     // We cache the child's content logical height to avoid it being reset to the stretched height.
     // FIXME: This is fragile. RenderBoxes should be smart enough to determine their content logical height
     // correctly even when there's an overrideHeight.

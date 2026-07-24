@@ -99,7 +99,6 @@ public:
 
     bool isComputingFlexBaseSizes() const { return m_flexLayoutState && m_flexLayoutState->phase() == FlexLayoutState::Phase::ComputingFlexBaseSizes; }
 
-    bool shouldResetFlexItemLogicalHeightBeforeLayout() const { return m_shouldResetFlexItemLogicalHeightBeforeLayout; }
     bool isInCrossAxisStretchLayout() const { return m_flexLayoutState && m_flexLayoutState->phase() == FlexLayoutState::Phase::CrossAxisItemSizing; }
 
     class OverridingSizesScope {
@@ -162,14 +161,13 @@ private:
 
     FlexLayoutState& flexLayoutState() LIFETIME_BOUND { ASSERT(m_flexLayoutState); return *m_flexLayoutState; }
 
-    SetForScope<bool> scopedResetFlexItemLogicalHeightBeforeLayout() { return SetForScope(m_shouldResetFlexItemLogicalHeightBeforeLayout, true); }
     SizeDefiniteness hasDefiniteHeight() const { return m_hasDefiniteHeight; }
     void setHasDefiniteHeight(SizeDefiniteness definiteness) { m_hasDefiniteHeight = definiteness; }
     void setBlockAxisSizeForFlexItem(const RenderBox& flexItem, LayoutUnit size) { m_blockAxisSize.set(flexItem, size); }
     std::optional<LayoutUnit> blockAxisSizeForFlexItem(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
     void cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height);
     LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
-    void stretchFlexItemLogicalHeight(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout);
+    void applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout);
     void relayoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
     void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
@@ -219,7 +217,6 @@ private:
     std::optional<FlexLayoutState> m_flexLayoutState;
     bool m_inSimplifiedLayout { false };
     mutable bool m_inFlexItemIntrinsicWidthComputation { false };
-    bool m_shouldResetFlexItemLogicalHeightBeforeLayout { false };
 };
 
 } // namespace WebCore

@@ -1464,7 +1464,7 @@ LayoutUnit FlexFormattingContext::applyStretchAlignmentToFlexItem(const FlexLayo
             // So, redo it here.
             flexItemNeedsRelayout = true;
         }
-        m_flexBox->stretchFlexItemLogicalHeight(flexItem, desiredLogicalHeight, flexItemNeedsRelayout);
+        m_flexBox->applyStretchedLogicalHeightToFlexItem(flexItem, desiredLogicalHeight, flexItemNeedsRelayout);
         return desiredLogicalHeight;
     }
 
