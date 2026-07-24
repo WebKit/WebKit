@@ -5204,7 +5204,6 @@ webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-coll
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-collapsed-item-horiz-003.html [ ImageOnlyFailure ]
 
 # Painting order in flexbox
-webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order.html [ ImageOnlyFailure ]
 
 # Newly imported Canvas WPT tests that are failing.
