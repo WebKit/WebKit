@@ -152,14 +152,26 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
+// GFC can place grid items into trailing (positive-side) implicit columns. The implicit grid is
+// backed by a dense matrix, so cap how far outside the explicit grid an item may be placed to
+// avoid large allocations for pathological values (e.g. grid-column: 100000); items beyond this
+// fall back to the legacy grid path.
+// FIXME: Extend implicit-track support to rows and to leading (negative-line) implicit tracks.
+static constexpr size_t maxTrailingImplicitColumns = 10;
+
 static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnStart, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
 {
     return WTF::switchOn(columnEnd,
         [](const CSS::Keyword::Auto&) {
-            return false;
+            // An auto end with an explicit start resolves to a single-column span at the start line
+            // (grid shorthand behavior). The start-line cap already bounds how far outside the
+            // explicit grid the item can be, so no additional bound is needed here.
+            return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!columnEnd.namedGridLine().value.isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
+            // Allow the end line to fall into a trailing implicit column, bounded by the cap above.
+            auto maxColumnEndLine = static_cast<int>(linesFromGridTemplateColumnsCount + maxTrailingImplicitColumns);
+            if (!columnEnd.namedGridLine().value.isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > maxColumnEndLine)
                 return false;
 
             // FIXME: Multi-span items are not yet supported in intrinsic sizing
@@ -546,7 +558,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
                 if (columnStartLineNumber < 0)
                     return GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber;
-                if (columnStartLineNumber > static_cast<int>(linesFromGridTemplateColumnsCount))
+                // A start line beyond the explicit grid places the item into a trailing implicit
+                // column. Allow this up to the cap; farther-out placements stay on the legacy path.
+                if (columnStartLineNumber > static_cast<int>(linesFromGridTemplateColumnsCount + maxTrailingImplicitColumns))
                     return GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid;
                 if (!hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
