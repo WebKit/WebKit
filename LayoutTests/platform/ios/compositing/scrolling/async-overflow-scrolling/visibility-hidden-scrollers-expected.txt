@@ -1,14 +1,14 @@
 s
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 744.00)
+  (bounds 800.00 742.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 744.00)
+      (bounds 800.00 742.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 28.00 48.00)
+          (position 28.00 46.00)
           (bounds 304.00 154.00)
           (drawsContent 1)
           (children 1

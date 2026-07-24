@@ -39,13 +39,13 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 290x32
         chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 289.23: "Test of Eventbase targets."
     RenderSVGText {text} at (15,228) size 338x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 338x21
+      RenderSVGInlineText {#text} at (0,0) size 338x20
         chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 337.42: "Note that clicking rect D should give no result."
     RenderSVGText {text} at (15,188) size 360x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 360x21
+      RenderSVGInlineText {#text} at (0,0) size 360x20
         chunk 1 text run 1 at (15.00,205.00) startOffset 0 endOffset 51 width 359.89: "Clicking a rectangle should change its color at the"
     RenderSVGText {text} at (15,208) size 364x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 364x21
+      RenderSVGInlineText {#text} at (0,0) size 364x20
         chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 53 width 363.49: "time for the click + delay as indicated in each rect."
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

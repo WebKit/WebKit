@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DETAILS} at (0,0) size 800x20
-        RenderListItem {SUMMARY} at (0,0) size 800x20
-          RenderListMarker at (0,0) size 17x20: "\x{25BC}"
-          RenderText {#text} at (16,0) size 46x20
+      RenderBlock {DETAILS} at (0,0) size 800x18
+        RenderListItem {SUMMARY} at (0,0) size 800x18
+          RenderListMarker at (0,0) size 17x18: "\x{25BC}"
+          RenderText {#text} at (16,0) size 46x18
             text run at (16,0) width 46: "Details"
-        RenderBlock {SLOT} at (0,20) size 800x0
+        RenderBlock {SLOT} at (0,18) size 800x0

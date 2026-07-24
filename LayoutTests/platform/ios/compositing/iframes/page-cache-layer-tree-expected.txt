@@ -15,7 +15,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
       (children 4
         (GraphicsLayer
           (offsetFromRenderer width=-28 height=-28)
-          (position 0.00 44.00)
+          (position 0.00 42.00)
           (bounds 386.00 236.00)
           (drawsContent 1)
           (children 1
@@ -57,17 +57,17 @@ This tests that layers are rebuilt properly after the page is restored from the 
           )
         )
         (GraphicsLayer
-          (position 13.00 57.00)
+          (position 13.00 55.00)
           (bounds 50.00 50.00)
         )
         (GraphicsLayer
-          (position 8.00 276.50)
-          (bounds 784.00 224.50)
+          (position 8.00 273.50)
+          (bounds 784.00 224.00)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=-28 height=-28)
               (position -8.00 -8.00)
-              (bounds 386.00 236.00)
+              (bounds 386.00 236.50)
               (drawsContent 1)
               (children 1
                 (GraphicsLayer
@@ -108,8 +108,8 @@ This tests that layers are rebuilt properly after the page is restored from the 
           )
         )
         (GraphicsLayer
-          (position 13.00 281.50)
-          (bounds 50.00 50.00)
+          (position 13.00 278.50)
+          (bounds 50.00 50.50)
         )
       )
     )

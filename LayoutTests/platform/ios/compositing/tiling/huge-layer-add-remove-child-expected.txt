@@ -3,14 +3,14 @@ The yellow box should be large enough to scroll off the bottom. At the start the
 First (no children):
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 5134.00)
+  (bounds 800.00 5129.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 5134.00)
+      (bounds 800.00 5129.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 92.00)
+          (position 8.00 86.00)
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (contentsOpaque 1)
@@ -25,14 +25,14 @@ First (no children):
 Second (child added):
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 5134.00)
+  (bounds 800.00 5129.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 5134.00)
+      (bounds 800.00 5129.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 92.00)
+          (position 8.00 86.00)
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (contentsOpaque 1)
@@ -54,14 +54,14 @@ Second (child added):
 Third (child removed):
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 5134.00)
+  (bounds 800.00 5129.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 5134.00)
+      (bounds 800.00 5129.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 92.00)
+          (position 8.00 86.00)
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (contentsOpaque 1)

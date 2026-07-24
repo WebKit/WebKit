@@ -13,18 +13,18 @@ compositing
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (107.98,76.50) width=81.77 height=27)
+        (interaction (107.98,77.14) width=81.77 height=25.72)
         (cornerRadius 8.00)])
       )
       (children 2
         (GraphicsLayer
           (position 0.00 200.00)
           (anchor 0.50 0.50)
-          (bounds 79.50 20.00)
+          (bounds 79.50 18.00)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [500.00 50.00 0.00 1.00])
           (event region
-            (rect (0,0) width=80 height=20)
+            (rect (0,0) width=80 height=18)
           )
         )
         (GraphicsLayer
@@ -43,9 +43,9 @@ compositing
                   (drawsContent 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [500.00 50.00 0.00 1.00])
                   (event region
-                    (rect (0,0) width=79 height=40)
-                    (rect (0,40) width=80 height=20)
-                    (rect (0,60) width=79 height=40)
+                    (rect (0,0) width=79 height=41)
+                    (rect (0,41) width=80 height=18)
+                    (rect (0,59) width=79 height=41)
                   )
                 )
               )

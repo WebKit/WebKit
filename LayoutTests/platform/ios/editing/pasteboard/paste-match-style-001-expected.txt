@@ -19,30 +19,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x60
-          RenderText {#text} at (0,1) size 60x28
-            text run at (0,1) width 60: "Tests:"
-          RenderBR {BR} at (59,1) size 1x28
-          RenderText {#text} at (0,31) size 264x28
-            text run at (0,31) width 264: "Pasting and matching style."
-        RenderBlock {DIV} at (14,90) size 756x120
-          RenderText {#text} at (0,1) size 184x28
-            text run at (0,1) width 184: "Expected Results:"
-          RenderBR {BR} at (183,1) size 1x28
-          RenderText {#text} at (0,31) size 738x58
-            text run at (0,31) width 738: "The pasted letter should match the style of the preexisting bold letter. Should"
-            text run at (0,61) width 358: "see this content in the red box below:"
-          RenderBR {BR} at (357,61) size 1x28
-          RenderInline {B} at (0,91) size 26x28
-            RenderText {#text} at (0,91) size 26x28
-              text run at (0,91) width 26: "ab"
+      RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x54
+          RenderText {#text} at (0,0) size 60x27
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x27
+          RenderText {#text} at (0,27) size 264x27
+            text run at (0,27) width 264: "Pasting and matching style."
+        RenderBlock {DIV} at (14,84) size 756x108
+          RenderText {#text} at (0,0) size 184x27
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x27
+          RenderText {#text} at (0,27) size 738x54
+            text run at (0,27) width 738: "The pasted letter should match the style of the preexisting bold letter. Should"
+            text run at (0,54) width 358: "see this content in the red box below:"
+          RenderBR {BR} at (357,54) size 1x27
+          RenderInline {B} at (0,81) size 26x27
+            RenderText {#text} at (0,81) size 26x27
+              text run at (0,81) width 26: "ab"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,248) size 784x34
-        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderInline {B} at (2,3) size 32x28
-            RenderText {#text} at (2,3) size 32x28
-              text run at (2,3) width 12: "a"
-              text run at (14,3) width 6: " "
-              text run at (20,3) width 14: "b"
+      RenderBlock {DIV} at (0,230) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderInline {B} at (2,2) size 32x27
+            RenderText {#text} at (2,2) size 32x27
+              text run at (2,2) width 12: "a"
+              text run at (14,2) width 6: " "
+              text run at (20,2) width 14: "b"
 caret: position 3 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

@@ -20,7 +20,7 @@ relative absolute
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
                   (anchor 0.00 0.00)
-                  (bounds 300.00 684.00)
+                  (bounds 300.00 682.00)
                   (drawsContent 1)
                 )
               )

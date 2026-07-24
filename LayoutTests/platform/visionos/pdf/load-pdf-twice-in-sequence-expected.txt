@@ -71,10 +71,10 @@
 )
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 1046.00 1319.00)
+  (bounds 1046.00 1388.00)
   (children 1
     (GraphicsLayer
-      (bounds 1046.00 1319.00)
+      (bounds 1046.00 1388.00)
       (contentsOpaque 1)
       (children 4
         (GraphicsLayer

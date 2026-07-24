@@ -4,7 +4,7 @@ Scrolling tree on non-scrollable
 
 (Frame scrolling node
   (scrollable area size 800 600)
-  (contents size 800 645)
+  (contents size 800 640)
   (scrollable area parameters
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -12,7 +12,7 @@ Scrolling tree on non-scrollable
     (vertical scrollbar mode 0))
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
-  (max layout viewport origin (0,45))
+  (max layout viewport origin (0,40))
   (behavior for fixed 1)
   (children 1
     (Frame hosting node
@@ -59,7 +59,7 @@ Scrolling tree on scrollable
 
 (Frame scrolling node
   (scrollable area size 800 600)
-  (contents size 800 645)
+  (contents size 800 640)
   (scrollable area parameters
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -67,7 +67,7 @@ Scrolling tree on scrollable
     (vertical scrollbar mode 0))
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
-  (max layout viewport origin (0,45))
+  (max layout viewport origin (0,40))
   (behavior for fixed 1)
   (children 1
     (Frame hosting node

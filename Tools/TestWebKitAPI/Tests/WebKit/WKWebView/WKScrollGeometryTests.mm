@@ -148,11 +148,7 @@ TEST(WKScrollGeometry, FixedSizeDiv)
 
 TEST(WKScrollGeometry, AbsolutePositionedRootElement)
 {
-#if PLATFORM(IOS_FAMILY)
-    CGFloat expectedHeight = 136;
-#else
     CGFloat expectedHeight = 134;
-#endif
 
     runContentSizeTest(@""
         "<html>"
@@ -170,11 +166,7 @@ TEST(WKScrollGeometry, AbsolutePositionedRootElement)
 
 TEST(WKScrollGeometry, SimpleText)
 {
-#if PLATFORM(IOS_FAMILY)
-    CGFloat expectedHeight = 36;
-#else
     CGFloat expectedHeight = 34;
-#endif
 
     runContentSizeTest(@""
         "<html>"

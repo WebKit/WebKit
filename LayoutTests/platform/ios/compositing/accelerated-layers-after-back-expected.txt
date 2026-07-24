@@ -25,10 +25,10 @@ After:
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 638.00)
+  (bounds 800.00 651.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 638.00)
+      (bounds 800.00 651.00)
       (contentsOpaque 1)
       (acceleratesDrawing 1)
       (children 1

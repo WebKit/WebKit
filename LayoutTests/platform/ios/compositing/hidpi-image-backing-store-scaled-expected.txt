@@ -12,7 +12,7 @@ Tests whether a compositing layer containing only an image uses a standard DPI b
       (device scale 2.00)
       (children 1
         (GraphicsLayer
-          (position 8.00 52.00)
+          (position 8.00 50.00)
           (bounds 200.00 150.00)
           (drawsContent 1)
           (device scale 2.00)

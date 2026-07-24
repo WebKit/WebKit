@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x248 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (14,95) size 202x138
+      RenderBlock {DIV} at (0,0) size 784x245 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (14,95) size 202x136
           RenderText {#text} at (14,95) size 11x28
             text run at (14,95) width 11: "a"
           RenderImage {IMG} at (24,14) size 77x103
@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
             text run at (106,95) width 7: " "
             text run at (112,95) width 104: "conceived "
           RenderBR {BR} at (215,95) size 1x28
-          RenderText {#text} at (14,205) size 60x28
-            text run at (14,205) width 60: "nation"
-          RenderImage {IMG} at (73,124) size 77x103
+          RenderText {#text} at (14,204) size 60x27
+            text run at (14,204) width 60: "nation"
+          RenderImage {IMG} at (73,122) size 77x104
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of body

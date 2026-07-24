@@ -79,22 +79,7 @@ bool fontFamilyShouldNotBeUsedForArabic(CFStringRef fontFamilyName)
     return (CFStringCompare(CFSTR("Times New Roman"), fontFamilyName, 0) == kCFCompareEqualTo)
         || (CFStringCompare(CFSTR("Arial"), fontFamilyName, 0) == kCFCompareEqualTo);
 }
-
-static const float kLineHeightAdjustment = 0.15f;
-
-static bool shouldUseAdjustment(CTFontRef font)
-{
-    RetainPtr<CFStringRef> familyName = adoptCF(CTFontCopyFamilyName(font));
-
-    if (!familyName || !CFStringGetLength(familyName.get()))
-        return false;
-
-    return caseInsensitiveCompare(familyName.get(), CFSTR("Times"))
-        || caseInsensitiveCompare(familyName.get(), CFSTR("Helvetica"))
-        || caseInsensitiveCompare(familyName.get(), CFSTR(".Helvetica NeueUI"));
-}
-
-#else
+#endif
 
 static bool needsAscentAdjustment(CFStringRef familyName)
 {
@@ -102,8 +87,6 @@ static bool needsAscentAdjustment(CFStringRef familyName)
         || caseInsensitiveCompare(familyName, CFSTR("Helvetica"))
         || caseInsensitiveCompare(familyName, CFSTR("Courier")));
 }
-
-#endif
 
 static bool isAhemFont(CFStringRef familyName)
 {
@@ -146,7 +129,6 @@ void Font::platformInit()
     if (isAhemFont(familyName.get()))
         m_allowsAntialiasing = false;
 
-#if PLATFORM(MAC)
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto
     // web standard. The AppKit adjustment of 20% is too big and is
@@ -154,7 +136,6 @@ void Font::platformInit()
     // and add it to the ascent.
     if (origin() == Origin::Local && needsAscentAdjustment(familyName.get()))
         ascent += std::round((ascent + descent) * 0.15f);
-#endif
 
     if (isAhemFont(familyName.get())) {
         auto tolerance = [&] (auto a, auto b) {
@@ -169,30 +150,19 @@ void Font::platformInit()
     }
 
     // Compute line spacing before the line metrics hacks are applied.
-#if !PLATFORM(IOS_FAMILY)
     float lineSpacing = std::lround(ascent) + std::lround(descent) + std::lround(lineGap);
-#endif
 
-#if PLATFORM(MAC)
     // Hack Hiragino line metrics to allow room for marked text underlines.
     // <rdar://problem/5386183>
     if (descent < 3 && lineGap >= 3 && familyName && CFStringHasPrefix(familyName.get(), CFSTR("Hiragino"))) {
         lineGap -= 3 - descent;
         descent = 3;
     }
-#endif
-    
+
     if (platformData().orientation() == FontOrientation::Vertical && !isTextOrientationFallback())
         m_hasVerticalGlyphs = fontHasVerticalGlyphs(ctFont.get());
 
 #if PLATFORM(IOS_FAMILY)
-    CGFloat adjustment = shouldUseAdjustment(ctFont.get()) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;
-
-    lineGap = ceilf(lineGap);
-    float lineSpacing = std::ceil(ascent) + adjustment + std::ceil(descent) + lineGap;
-    ascent = ceilf(ascent + adjustment);
-    descent = ceilf(descent);
-
     m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 #endif
 

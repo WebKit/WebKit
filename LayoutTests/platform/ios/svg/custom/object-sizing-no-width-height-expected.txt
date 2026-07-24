@@ -1,8 +1,8 @@
-layer at (0,0) size 800x805
+layer at (0,0) size 800x804
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x805
-  RenderBlock {html} at (0,0) size 800x805
-    RenderBody {body} at (8,8) size 784x789
+layer at (0,0) size 800x804
+  RenderBlock {html} at (0,0) size 800x804
+    RenderBody {body} at (8,8) size 784x788
       RenderEmbeddedObject {object} at (0,0) size 784x784 [bgcolor=#FF0000]
         layer at (0,0) size 784x784
           RenderView at (0,0) size 784x784

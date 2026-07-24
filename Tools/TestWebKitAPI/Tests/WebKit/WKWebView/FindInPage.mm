@@ -993,14 +993,14 @@ TEST(WebKit, FindAndHighlightDifferentWebViews)
 
     __block bool retrievedRect = false;
     [webViewForHighlight _requestRectForFoundTextRange:[ranges objectAtIndex:0] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(8, 8, 27, 20)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(8, 8, 27, 18)));
         retrievedRect = true;
     }];
     TestWebKitAPI::Util::run(&retrievedRect);
 
     retrievedRect = false;
     [webViewForHighlight _requestRectForFoundTextRange:[ranges objectAtIndex:1] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(18, 54, 27, 20)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(18, 52, 27, 18)));
         retrievedRect = true;
     }];
     TestWebKitAPI::Util::run(&retrievedRect);
@@ -1015,7 +1015,7 @@ TEST(WebKit, RequestRectForFoundTextRange)
 
     __block bool done = false;
     [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(252, 146, 44, 20)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(252, 134, 44, 18)));
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1024,7 +1024,7 @@ TEST(WebKit, RequestRectForFoundTextRange)
 
     done = false;
     [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 646, 72, 20)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 584, 72, 18)));
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1032,7 +1032,7 @@ TEST(WebKit, RequestRectForFoundTextRange)
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
     done = false;
     [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 104, 72, 20)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 108, 72, 18)));
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1051,7 +1051,7 @@ TEST(WebKit, ScrollToFoundRangeWithExistingSelection)
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
 
     TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
-    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 660)));
 }
 
 TEST(WebKit, ScrollToFoundRangeDoesNotFocusElement)
@@ -1106,13 +1106,13 @@ TEST(WebKit, ScrollToFoundRangeRepeated)
 
     TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
 
-    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 660)));
 
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
 
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 660)));
 }
 
 TEST(WebKit, ScrollToFoundRangeAtTopWithContentInsets)
@@ -1160,7 +1160,7 @@ TEST(WebKit, ScrollToFoundRangeInNonScrollableIframe)
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
 
     TestWebKitAPI::Util::runFor(500_ms);
-    EXPECT_WK_STREQ("771", [webView stringByEvaluatingJavaScript:@"document.getElementById('frame').contentWindow.scrollY"]);
+    EXPECT_WK_STREQ("768", [webView stringByEvaluatingJavaScript:@"document.getElementById('frame').contentWindow.scrollY"]);
 }
 
 TEST(WebKit, ScrollToUserSelectNoneFoundRange)
@@ -1186,7 +1186,7 @@ TEST(WebKit, ScrollToUserSelectNoneFoundRange)
 
     TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
 
-    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 2398)));
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 2397)));
 }
 
 TEST(WebKit, CannotHaveMultipleFindOverlays)

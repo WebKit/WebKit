@@ -2,17 +2,17 @@ Tests whether we switch back to a hidpi backing store when we zoom out (and woul
 
  (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 2008.00 1144.00)
+  (bounds 2008.00 1141.00)
   (device scale 2.00)
   (children 1
     (GraphicsLayer
-      (bounds 2008.00 1144.00)
+      (bounds 2008.00 1141.00)
       (contentsOpaque 1)
       (device scale 2.00)
       (children 1
         (GraphicsLayer
-          (position 8.00 72.00)
-          (bounds 2000.00 1004.50)
+          (position 8.00 68.00)
+          (bounds 2000.00 1004.00)
           (opacity 0.50)
           (device scale 2.00)
           (children 1
@@ -32,17 +32,17 @@ Tests whether we switch back to a hidpi backing store when we zoom out (and woul
 )
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 2008.00 1550.00)
+  (bounds 2008.00 1576.00)
   (device scale 2.00)
   (children 1
     (GraphicsLayer
-      (bounds 2008.00 1550.00)
+      (bounds 2008.00 1576.00)
       (contentsOpaque 1)
       (device scale 2.00)
       (children 1
         (GraphicsLayer
-          (position 8.00 72.00)
-          (bounds 2000.00 1004.50)
+          (position 8.00 68.00)
+          (bounds 2000.00 1004.00)
           (opacity 0.50)
           (device scale 2.00)
           (children 1

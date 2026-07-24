@@ -36,7 +36,7 @@ Relative
                             (GraphicsLayer
                               (offsetFromRenderer width=2 height=2)
                               (anchor 0.00 0.00)
-                              (bounds 300.00 428.00)
+                              (bounds 300.00 426.00)
                               (drawsContent 1)
                             )
                           )

@@ -1,14 +1,14 @@
 layer at (0,0) size 844x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x500
-  RenderBlock {HTML} at (0,0) size 800x500
-    RenderBody {BODY} at (8,17) size 784x466
-layer at (8,18) size 836x465
-  RenderBlock {DIV} at (0,0) size 836x465 [border: (5.50px solid #800000)]
-    RenderBlock {H2} at (5,27) size 826x33 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 732x30
-        text run at (0,1) width 732: "This is a spanning element at the beginning of the columns block."
-    RenderMultiColumnSet at (5,81) size 826x379
+layer at (0,0) size 800x499
+  RenderBlock {HTML} at (0,0) size 800x499
+    RenderBody {BODY} at (8,17) size 784x465
+layer at (8,18) size 836x464
+  RenderBlock {DIV} at (0,0) size 836x464 [border: (5.50px solid #800000)]
+    RenderBlock {H2} at (5,27) size 826x32 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 732x31
+        text run at (0,0) width 732: "This is a spanning element at the beginning of the columns block."
+    RenderMultiColumnSet at (5,80) size 826x379
 layer at (14,23) size 403x735 backgroundClip at (0,0) size 844x600 clip at (0,0) size 844x600
   RenderMultiColumnFlowThread at (5,5) size 405x736
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0

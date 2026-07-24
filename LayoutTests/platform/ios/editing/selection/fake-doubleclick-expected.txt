@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DIV} at (0,0) size 800x20
-        RenderText {#text} at (0,0) size 199x20
+      RenderBlock {DIV} at (0,0) size 800x18
+        RenderText {#text} at (0,0) size 199x18
           text run at (0,0) width 199: "Select me, select me, select me"

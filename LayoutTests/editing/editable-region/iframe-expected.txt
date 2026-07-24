@@ -30,22 +30,22 @@
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)
-                          (bounds 310.00 670.00)
+                          (bounds 310.00 666.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 310.00 670.00)
+                              (bounds 310.00 666.00)
                               (drawsContent 1)
                               (event region
-                                (rect (0,0) width=310 height=670)
+                                (rect (0,0) width=310 height=666)
                               (editable region
-                                (rect (8,286) width=284 height=24)
-                                (rect (9,431) width=285 height=24)
+                                (rect (8,284) width=284 height=22)
+                                (rect (9,425) width=285 height=22)
                               )
                               )
                               (children 1
                                 (GraphicsLayer
                                   (anchor 0.00 0.00)
-                                  (bounds 310.00 670.00)
+                                  (bounds 310.00 666.00)
                                 )
                               )
                             )

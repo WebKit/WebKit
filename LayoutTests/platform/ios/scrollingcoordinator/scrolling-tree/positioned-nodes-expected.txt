@@ -75,7 +75,7 @@ Scrolling content
       (children 1
         (Positioned node
           (layout constraints
-            (layer-position-at-last-layout (81,30)))
+            (layer-position-at-last-layout (81,28)))
           (related overflow nodes 1)
         )
       )

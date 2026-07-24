@@ -8,7 +8,7 @@ layer at (0,0) size 450x500
           chunk 1 (middle anchor) text run 1 at (-22.66,0.00) startOffset 0 endOffset 6 width 45.32: "sample"
     RenderSVGContainer {g} at (31,36) size 384x392
       RenderSVGText {text} at (133,36) size 184x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x18
+        RenderSVGInlineText {#text} at (0,0) size 183x17
           chunk 1 (middle anchor) text run 1 at (133.71,50.00) startOffset 0 endOffset 26 width 182.58: "Text Font Faces and Styles"
       RenderSVGText {text} at (184,66) size 82x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 82x12
@@ -131,10 +131,10 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-21,4) size 42x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x14
             chunk 1 (middle anchor) text run 1 at (-20.32,15.00) startOffset 0 endOffset 7 width 40.64: "Verdana"
-      RenderSVGContainer {g} at (301,331) size 98x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,360.00)}]
-        RenderSVGContainer {use} at (301,331) size 98x36
-          RenderSVGText {text} at (-49,-29) size 98x36 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 97x36
+      RenderSVGContainer {g} at (301,332) size 98x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,360.00)}]
+        RenderSVGContainer {use} at (301,332) size 98x35
+          RenderSVGText {text} at (-49,-28) size 98x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 97x35
               chunk 1 (middle anchor) text run 1 at (-48.35,0.00) startOffset 0 endOffset 6 width 96.71: "sample"
         RenderSVGText {text} at (-23,4) size 46x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 46x14

@@ -1,14 +1,14 @@
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 628.00)
+  (bounds 800.00 627.00)
   (visible rect 92.31, 69.23 615.38 x 461.54)
   (coverage rect 92.31, 69.23 615.38 x 461.54)
   (intersects coverage rect 1)
   (contentsScale 2.60)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 628.00)
+      (bounds 800.00 627.00)
       (contentsOpaque 1)
       (visible rect 92.31, 69.23 615.38 x 461.54)
       (coverage rect 0.00, 0.00 812.31 x 658.46)

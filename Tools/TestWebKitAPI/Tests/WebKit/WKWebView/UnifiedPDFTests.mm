@@ -1117,7 +1117,13 @@ UNIFIED_PDF_TEST(KeepRelativeScrollPositionAfterZoomingAndViewportUpdate)
     [webView waitForNextVisibleContentRectUpdate];
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_EQ([webView scrollView].contentOffset, CGPointMake(600, 8002));
+    // The PDF is hosted in a PluginDocument whose <embed> is an inline replaced
+    // element, so the document's scrollable height carries a sub-pixel dependency
+    // on the surrounding line box's font-metric descent. Round away that fraction
+    // (magnified here by the 3x zoom) so the check stays metric-independent.
+    CGPoint contentOffset = [webView scrollView].contentOffset;
+    EXPECT_EQ(contentOffset.x, 600);
+    EXPECT_EQ(std::lround(contentOffset.y), 8002);
 }
 
 UNIFIED_PDF_TEST(ScrollOffsetResetWhenChangingPDF)

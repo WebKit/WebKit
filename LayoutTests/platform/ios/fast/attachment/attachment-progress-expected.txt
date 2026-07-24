@@ -1,28 +1,28 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x285
-  RenderBlock {HTML} at (0,0) size 800x285
-    RenderBody {BODY} at (8,8) size 784x269
-      RenderAttachment {ATTACHMENT} at (0,15) size 160x120 [color=#0088FF]
-      RenderText {#text} at (160,0) size 4x20
+layer at (0,0) size 800x283
+  RenderBlock {HTML} at (0,0) size 800x283
+    RenderBody {BODY} at (8,8) size 784x267
+      RenderAttachment {ATTACHMENT} at (0,14) size 160x120 [color=#0088FF]
+      RenderText {#text} at (160,0) size 4x18
         text run at (160,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (164,15) size 160x120 [color=#0088FF]
-      RenderText {#text} at (324,0) size 4x20
+      RenderAttachment {ATTACHMENT} at (164,14) size 160x120 [color=#0088FF]
+      RenderText {#text} at (324,0) size 4x18
         text run at (324,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (328,15) size 160x120 [color=#0088FF]
-      RenderText {#text} at (488,0) size 4x20
+      RenderAttachment {ATTACHMENT} at (328,14) size 160x120 [color=#0088FF]
+      RenderText {#text} at (488,0) size 4x18
         text run at (488,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (492,15) size 160x120 [color=#0088FF]
+      RenderAttachment {ATTACHMENT} at (492,14) size 160x120 [color=#0088FF]
       RenderText {#text} at (0,0) size 0x0
-      RenderAttachment {ATTACHMENT} at (0,150) size 160x119 [color=#0088FF]
-      RenderText {#text} at (160,135) size 4x19
-        text run at (160,135) width 4: " "
-      RenderAttachment {ATTACHMENT} at (164,150) size 160x119 [color=#0088FF]
-      RenderText {#text} at (324,135) size 4x19
-        text run at (324,135) width 4: " "
-      RenderAttachment {ATTACHMENT} at (328,150) size 160x119 [color=#0088FF]
-      RenderText {#text} at (488,135) size 4x19
-        text run at (488,135) width 4: " "
-      RenderAttachment {ATTACHMENT} at (492,150) size 160x119 [color=#0088FF]
+      RenderAttachment {ATTACHMENT} at (0,147) size 160x120 [color=#0088FF]
+      RenderText {#text} at (160,133) size 4x19
+        text run at (160,133) width 4: " "
+      RenderAttachment {ATTACHMENT} at (164,147) size 160x120 [color=#0088FF]
+      RenderText {#text} at (324,133) size 4x19
+        text run at (324,133) width 4: " "
+      RenderAttachment {ATTACHMENT} at (328,147) size 160x120 [color=#0088FF]
+      RenderText {#text} at (488,133) size 4x19
+        text run at (488,133) width 4: " "
+      RenderAttachment {ATTACHMENT} at (492,147) size 160x120 [color=#0088FF]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

@@ -5,16 +5,15 @@ Initial
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 633.00)
+  (bounds 800.00 621.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 633.00)
+      (bounds 800.00 621.00)
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
           (position 18.00 10.00)
-          (anchor 0.50 0.50)
-          (bounds 764.00 144.50)
+          (bounds 764.00 144.00)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
@@ -26,14 +25,14 @@ Initial
         )
         (GraphicsLayer
           (offsetFromRenderer width=-4 height=-4)
-          (position 14.00 160.50)
-          (anchor 0.50 0.50)
-          (bounds 772.00 152.50)
+          (position 14.00 159.50)
+          (bounds 772.00 152.00)
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 24.00 24.00)
-              (bounds 100.00 100.00)
+              (anchor 0.50 0.50)
+              (bounds 100.00 100.50)
               (drawsContent 1)
               (contentsVisible 0)
             )
@@ -41,14 +40,14 @@ Initial
         )
         (GraphicsLayer
           (offsetFromRenderer width=-4 height=-4)
-          (position 14.00 315.00)
-          (anchor 0.50 0.50)
-          (bounds 772.00 152.50)
+          (position 14.00 313.00)
+          (bounds 772.00 152.00)
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 24.00 24.00)
-              (bounds 100.00 100.00)
+              (anchor 0.50 0.50)
+              (bounds 100.00 100.50)
               (drawsContent 1)
             )
           )
@@ -61,16 +60,15 @@ After step 1
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 1409.00)
+  (bounds 800.00 1436.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 1409.00)
+      (bounds 800.00 1436.00)
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
           (position 18.00 10.00)
-          (anchor 0.50 0.50)
-          (bounds 764.00 144.50)
+          (bounds 764.00 144.00)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
@@ -81,14 +79,14 @@ After step 1
         )
         (GraphicsLayer
           (offsetFromRenderer width=-4 height=-4)
-          (position 14.00 160.50)
-          (anchor 0.50 0.50)
-          (bounds 772.00 152.50)
+          (position 14.00 159.50)
+          (bounds 772.00 152.00)
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 24.00 24.00)
-              (bounds 100.00 100.00)
+              (anchor 0.50 0.50)
+              (bounds 100.00 100.50)
               (drawsContent 1)
               (contentsVisible 0)
             )
@@ -96,14 +94,14 @@ After step 1
         )
         (GraphicsLayer
           (offsetFromRenderer width=-4 height=-4)
-          (position 14.00 315.00)
-          (anchor 0.50 0.50)
-          (bounds 772.00 152.50)
+          (position 14.00 313.00)
+          (bounds 772.00 152.00)
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 24.00 24.00)
-              (bounds 100.00 100.00)
+              (anchor 0.50 0.50)
+              (bounds 100.00 100.50)
               (drawsContent 1)
             )
           )
@@ -116,16 +114,15 @@ After step 2
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 2171.00)
+  (bounds 800.00 2236.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 2171.00)
+      (bounds 800.00 2236.00)
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
           (position 18.00 10.00)
-          (anchor 0.50 0.50)
-          (bounds 764.00 144.50)
+          (bounds 764.00 144.00)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
@@ -136,28 +133,28 @@ After step 2
         )
         (GraphicsLayer
           (offsetFromRenderer width=-4 height=-4)
-          (position 14.00 160.50)
-          (anchor 0.50 0.50)
-          (bounds 772.00 152.50)
+          (position 14.00 159.50)
+          (bounds 772.00 152.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
               (position 24.00 24.00)
-              (bounds 100.00 100.00)
+              (anchor 0.50 0.50)
+              (bounds 100.00 100.50)
               (drawsContent 1)
             )
           )
         )
         (GraphicsLayer
           (offsetFromRenderer width=-4 height=-4)
-          (position 14.00 315.00)
-          (anchor 0.50 0.50)
-          (bounds 772.00 152.50)
+          (position 14.00 313.00)
+          (bounds 772.00 152.00)
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 24.00 24.00)
-              (bounds 100.00 100.00)
+              (anchor 0.50 0.50)
+              (bounds 100.00 100.50)
               (drawsContent 1)
             )
           )

@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 420x584 [border: (5px outset #000000)]
         RenderTableSection {TBODY} at (5,5) size 410x574
           RenderTableRow {TR} at (0,2) size 410x570
-            RenderTableCell {TD} at (2,275) size 406x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,275) size 402x20
+            RenderTableCell {TD} at (2,276) size 406x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,276) size 402x18
                 text run at (2,2) width 402: "This table is set to a height of 100%. It should just fit the page."

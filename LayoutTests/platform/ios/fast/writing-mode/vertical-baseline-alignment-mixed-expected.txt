@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (544,0) size 256x600
-  RenderBlock {HTML} at (0,0) size 256x600
-    RenderBody {BODY} at (24,8) size 208x584
-      RenderBlock {P} at (0,0) size 114x584
-        RenderInline {SPAN} at (16,0) size 25x104
-          RenderText {#text} at (16,0) size 25x104
-            text run at (16,0) width 104: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
-        RenderInline {SPAN} at (1,0) size 112x457
-          RenderText {#text} at (1,103) size 55x324
-            text run at (1,103) width 323: "PARAGRAPH 1"
-          RenderBR {BR} at (1,426) size 55x1
-          RenderText {#text} at (58,0) size 55x294
-            text run at (58,0) width 295: "MORE TEXT. "
-          RenderInline {SPAN} at (78,293) size 15x164
-            RenderText {#text} at (78,293) size 15x164
-              text run at (78,293) width 164: "SHOULD NOT BE CENTERED."
+layer at (548,0) size 252x600
+  RenderBlock {HTML} at (0,0) size 252x600
+    RenderBody {BODY} at (24,8) size 204x584
+      RenderBlock {P} at (0,0) size 110x584
+        RenderInline {SPAN} at (15,0) size 25x104
+          RenderText {#text} at (15,0) size 25x104
+            text run at (15,0) width 105: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
+        RenderInline {SPAN} at (0,0) size 110x457
+          RenderText {#text} at (0,103) size 55x324
+            text run at (0,103) width 324: "PARAGRAPH 1"
+          RenderBR {BR} at (0,426) size 55x1
+          RenderText {#text} at (55,0) size 55x294
+            text run at (55,0) width 295: "MORE TEXT. "
+          RenderInline {SPAN} at (75,293) size 15x164
+            RenderText {#text} at (75,293) size 15x164
+              text run at (75,293) width 164: "SHOULD NOT BE CENTERED."
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (138,0) size 70x584
+      RenderBlock {P} at (134,0) size 70x584
         RenderInline {SPAN} at (21,0) size 28x467
           RenderText {#text} at (21,0) size 28x102
-            text run at (21,0) width 102: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "
+            text run at (21,0) width 103: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "
           RenderInline {SPAN} at (8,102) size 54x365
             RenderText {#text} at (8,102) size 54x335
               text run at (8,102) width 335: "PARAGRAPH 2 "

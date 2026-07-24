@@ -3,68 +3,68 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 54x20
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (53,0) size 661x20
-          RenderInline {A} at (53,0) size 353x20 [color=#0000EE]
-            RenderText {#text} at (53,0) size 353x20
+        RenderInline {I} at (53,0) size 661x18
+          RenderInline {A} at (53,0) size 353x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 353x18
               text run at (53,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8408"
-          RenderText {#text} at (405,0) size 309x20
+          RenderText {#text} at (405,0) size 309x18
             text run at (405,0) width 5: " "
             text run at (409,0) width 305: "Paint the highlight behind selected list markers"
-        RenderText {#text} at (713,0) size 5x20
+        RenderText {#text} at (713,0) size 5x18
           text run at (713,0) width 5: "."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 377x20
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 377x18
           text run at (0,0) width 377: "This tests the rendering of list markers inside the selection."
-      RenderBlock (anonymous) at (0,72) size 784x0
+      RenderBlock (anonymous) at (0,68) size 784x0
         RenderInline {A} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {UL} at (0,90) size 784x20
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-18,0) size 7x20: bullet
-          RenderText {#text} at (0,0) size 162x20
+      RenderBlock {UL} at (0,86) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 162x18
             text run at (0,0) width 162: "Item with outside marker"
-      RenderBlock {UL} at (0,126) size 784x20
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-1,0) size 7x20: bullet
-          RenderText {#text} at (15,0) size 154x20
-            text run at (15,0) width 154: "Item with inside marker"
-      RenderBlock {UL} at (0,162) size 784x20
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-17,5) size 10x11
-          RenderText {#text} at (0,0) size 205x20
+      RenderBlock {UL} at (0,120) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-1,0) size 7x18: bullet
+          RenderText {#text} at (14,0) size 154x18
+            text run at (14,0) width 154: "Item with inside marker"
+      RenderBlock {UL} at (0,154) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-17,4) size 10x11
+          RenderText {#text} at (0,0) size 205x18
             text run at (0,0) width 205: "Item with outside image marker"
-      RenderBlock {UL} at (0,198) size 784x20
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (0,5) size 10x11
-          RenderText {#text} at (17,0) size 197x20
+      RenderBlock {UL} at (0,188) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (0,4) size 10x11
+          RenderText {#text} at (17,0) size 197x18
             text run at (17,0) width 197: "Item with inside image marker"
-      RenderBlock {OL} at (0,234) size 784x40
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-16,0) size 16x20: "1"
-          RenderText {#text} at (0,0) size 162x20
+      RenderBlock {OL} at (0,222) size 784x36
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-16,0) size 16x18: "1"
+          RenderText {#text} at (0,0) size 162x18
             text run at (0,0) width 162: "Item with outside ordinal"
-        RenderListItem {LI} at (40,20) size 744x20
-          RenderListMarker at (-16,0) size 16x20: "2"
-          RenderText {#text} at (0,0) size 103x20
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (-16,0) size 16x18: "2"
+          RenderText {#text} at (0,0) size 103x18
             text run at (0,0) width 103: "and another one"
-      RenderBlock {OL} at (0,290) size 784x40
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (0,0) size 16x20: "1"
-          RenderText {#text} at (16,0) size 154x20
+      RenderBlock {OL} at (0,274) size 784x36
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (0,0) size 16x18: "1"
+          RenderText {#text} at (16,0) size 154x18
             text run at (16,0) width 154: "Item with inside ordinal"
-        RenderListItem {LI} at (40,20) size 744x20
-          RenderListMarker at (0,0) size 16x20: "2"
-          RenderText {#text} at (16,0) size 103x20
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (0,0) size 16x18: "2"
+          RenderText {#text} at (16,0) size 103x18
             text run at (16,0) width 103: "and another one"
-      RenderBlock (anonymous) at (0,356) size 784x0
+      RenderBlock (anonymous) at (0,336) size 784x0
         RenderInline {A} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,80) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,72) size 784x2 [color=#808080] [border: (1px inset #808080)]
-layer at (8,354) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,346) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,76) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,68) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,334) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,326) size 784x2 [color=#808080] [border: (1px inset #808080)]
 selection start: position 0 of child 7 {HR} of body
 selection end:   position 1 of child 21 {HR} of body

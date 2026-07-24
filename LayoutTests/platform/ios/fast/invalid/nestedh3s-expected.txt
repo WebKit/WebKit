@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x574
-      RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 574x20
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 574x18
           text run at (0,0) width 574: "In this sample, the H3s should be nested. This matches Firefox, IE, and the HTML5 spec."
-      RenderBlock {H3} at (0,38) size 784x304 [border: (2px solid #FF0000)]
-        RenderInline {I} at (4,4) size 776x274
-          RenderText {#text} at (4,4) size 33x23
+      RenderBlock {H3} at (0,36) size 784x300 [border: (2px solid #FF0000)]
+        RenderInline {I} at (4,4) size 776x270
+          RenderText {#text} at (4,4) size 33x22
             text run at (4,4) width 33: "One"
-          RenderBlock {H3} at (4,48) size 776x230 [border: (2px solid #FF0000)]
-            RenderInline {I} at (4,4) size 768x195
+          RenderBlock {H3} at (4,47) size 776x227 [border: (2px solid #FF0000)]
+            RenderInline {I} at (4,4) size 768x192
               RenderText {#text} at (4,4) size 39x26
                 text run at (4,4) width 39: "Two"
-              RenderBlock {H3} at (4,55) size 768x144 [border: (2px solid #FF0000)]
-                RenderInline {I} at (4,5) size 760x104
-                  RenderText {#text} at (4,5) size 63x29
-                    text run at (4,5) width 63: "Three"
-                  RenderBlock {H3} at (4,64) size 760x45 [border: (2px solid #FF0000)]
-                    RenderInline {I} at (4,5) size 64x34
-                      RenderText {#text} at (4,5) size 64x34
-                        text run at (4,5) width 64: "Four"
+              RenderBlock {H3} at (4,55) size 768x141 [border: (2px solid #FF0000)]
+                RenderInline {I} at (4,4) size 760x102
+                  RenderText {#text} at (4,4) size 63x30
+                    text run at (4,4) width 63: "Three"
+                  RenderBlock {H3} at (4,63) size 760x43 [border: (2px solid #FF0000)]
+                    RenderInline {I} at (4,4) size 64x34
+                      RenderText {#text} at (4,4) size 64x34
+                        text run at (4,4) width 64: "Four"

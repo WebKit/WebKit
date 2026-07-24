@@ -711,7 +711,7 @@ TEST(WKWebView, RequestAllTextRunsWithSubframes)
         { "things", CGRectMake(18, 221, 96, 16) },
         { "differently.", CGRectMake(18, 237, 192, 16) },
 #else
-        { "Here's to the crazy ones.", CGRectMake(0, 18, 394, 16) },
+        { "Here's to the crazy ones.", CGRectMake(0, 18, 394, 17) },
         { "The round", CGRectMake(9, 68, 144, 16) },
         { "pegs in the", CGRectMake(9, 84, 176, 16) },
         { "square", CGRectMake(9, 100, 96, 16) },

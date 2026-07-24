@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS caretRect.left is 9
 PASS caretRect.top is 21
 PASS caretRect.width is 2
-PASS caretRect.height is 24
+PASS caretRect.height is 23
 PASS successfullyParsed is true
 
 TEST COMPLETE

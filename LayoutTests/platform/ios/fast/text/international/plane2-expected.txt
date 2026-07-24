@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 54x20
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
-        RenderInline {A} at (53,0) size 69x20 [color=#0000EE]
-          RenderText {#text} at (53,0) size 69x20
+        RenderInline {A} at (53,0) size 69x18 [color=#0000EE]
+          RenderText {#text} at (53,0) size 69x18
             text run at (53,0) width 69: "bug 35605"
-        RenderText {#text} at (0,0) size 771x60
+        RenderText {#text} at (0,0) size 771x54
           text run at (121,0) width 639: ": Two lines below have one character from CJK Ideograph, one from CJK Ext A (both in BMP) and"
-          text run at (0,20) width 771: "three characters from CJK Ext B (plane 2). The last group of characters are covered by Japanese fonts on Mac as well as"
-          text run at (0,40) width 334: "two Chinese fonts for Ext B shipped with Windows."
-      RenderBlock {DIV} at (0,76) size 784x90
+          text run at (0,18) width 771: "three characters from CJK Ext B (plane 2). The last group of characters are covered by Japanese fonts on Mac as well as"
+          text run at (0,36) width 334: "two Chinese fonts for Ext B shipped with Windows."
+      RenderBlock {DIV} at (0,70) size 784x90
         RenderBlock {DIV} at (0,0) size 784x45
           RenderText {#text} at (0,5) size 176x36
             text run at (0,5) width 176: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
-        RenderBlock {DIV} at (0,45) size 784x45
+        RenderBlock {DIV} at (0,44) size 784x46
           RenderText {#text} at (0,5) size 176x36
             text run at (0,5) width 176: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"

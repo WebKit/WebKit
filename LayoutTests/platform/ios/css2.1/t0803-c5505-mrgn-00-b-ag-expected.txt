@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x240
-  RenderBlock {HTML} at (0,0) size 800x240
-    RenderBody {BODY} at (8,16) size 784x216 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 296x20
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
+    RenderBody {BODY} at (8,16) size 784x214 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 296x18
           text run at (0,0) width 296: "The five \"matches\" below should be identical "
-        RenderInline {STRONG} at (295,0) size 130x20
-          RenderText {#text} at (295,0) size 131x20
+        RenderInline {STRONG} at (295,0) size 130x18
+          RenderText {#text} at (295,0) size 131x18
             text run at (295,0) width 131: "and equally spaced"
-        RenderText {#text} at (425,0) size 5x20
+        RenderText {#text} at (425,0) size 5x18
           text run at (425,0) width 5: "."
-      RenderBlock {DIV} at (0,36) size 200x180 [color=#FFA500]
+      RenderBlock {DIV} at (0,34) size 200x180 [color=#FFA500]
         RenderBlock {P} at (0,0) size 200x10 [bgcolor=#A52A2A]
           RenderImage {IMG} at (0,0) size 24x10
           RenderText {#text} at (24,0) size 10x10

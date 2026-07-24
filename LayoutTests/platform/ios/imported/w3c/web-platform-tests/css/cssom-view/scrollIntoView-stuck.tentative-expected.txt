@@ -1,4 +1,4 @@
 
 
-FAIL CSSOM View - scrollIntoView doesn't consider scroll-padding when target is stuck assert_equals: Shouldn't have scrolled expected 2324 but got 2422
+FAIL CSSOM View - scrollIntoView doesn't consider scroll-padding when target is stuck assert_equals: Shouldn't have scrolled expected 2321 but got 2420
 

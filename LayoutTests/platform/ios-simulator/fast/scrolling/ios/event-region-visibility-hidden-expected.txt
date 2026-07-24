@@ -9,8 +9,8 @@
       (contentsOpaque 1)
       (children 5
         (GraphicsLayer
-          (position 8.00 425.00)
-          (bounds 50.00 50.00)
+          (position 8.00 423.00)
+          (bounds 50.00 50.50)
           (event region
             (rect (0,0) width=50 height=50)
           )
@@ -57,8 +57,8 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 216.50)
-          (bounds 204.00 204.00)
+          (position 8.00 215.50)
+          (bounds 204.00 204.50)
           (drawsContent 1)
           (event region
             (rect (152,152) width=50 height=50)

@@ -27,15 +27,15 @@
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)
-                          (bounds 310.00 670.00)
+                          (bounds 310.00 666.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 310.00 670.00)
+                              (bounds 310.00 666.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer
                                   (anchor 0.00 0.00)
-                                  (bounds 310.00 670.00)
+                                  (bounds 310.00 666.00)
                                 )
                               )
                             )

@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x576
-  RenderBlock {HTML} at (0,0) size 800x576
-    RenderBody {BODY} at (8,8) size 784x560
+layer at (0,0) size 800x573
+  RenderBlock {HTML} at (0,0) size 800x573
+    RenderBody {BODY} at (8,8) size 784x557
       RenderText {#text} at (222,167) size 4x19
         text run at (222,167) width 4: " "
       RenderText {#text} at (448,167) size 4x19
         text run at (448,167) width 4: " "
       RenderBR {BR} at (674,167) size 0x19
-      RenderText {#text} at (222,353) size 4x20
+      RenderText {#text} at (222,353) size 4x19
         text run at (222,353) width 4: " "
-      RenderText {#text} at (448,353) size 4x20
+      RenderText {#text} at (448,353) size 4x19
         text run at (448,353) width 4: " "
-      RenderBR {BR} at (674,353) size 0x20
-      RenderText {#text} at (222,540) size 4x19
-        text run at (222,540) width 4: " "
-      RenderText {#text} at (448,540) size 4x19
-        text run at (448,540) width 4: " "
+      RenderBR {BR} at (674,353) size 0x19
+      RenderText {#text} at (222,538) size 4x19
+        text run at (222,538) width 4: " "
+      RenderText {#text} at (448,538) size 4x19
+        text run at (448,538) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (18,18) size 202x162
   RenderBlock (relative positioned) {DIV} at (10,10) size 202x162 [border: (1px solid #000000)]
@@ -24,15 +24,15 @@ layer at (244,18) size 202x162
   RenderBlock (relative positioned) {DIV} at (236,10) size 202x162 [border: (1px solid #000000)]
 layer at (470,18) size 202x162
   RenderBlock (relative positioned) {DIV} at (462,10) size 202x162 [border: (1px solid #000000)]
-layer at (18,205) size 202x162
-  RenderBlock (relative positioned) {DIV} at (10,196) size 202x163 [border: (1px solid #000000)]
-layer at (244,205) size 202x162
-  RenderBlock (relative positioned) {DIV} at (236,196) size 202x163 [border: (1px solid #000000)]
-layer at (470,205) size 202x162
-  RenderBlock (relative positioned) {DIV} at (462,196) size 202x163 [border: (1px solid #000000)]
-layer at (18,391) size 202x162
-  RenderBlock (relative positioned) {DIV} at (10,383) size 202x162 [border: (1px solid #000000)]
-layer at (244,391) size 202x162
-  RenderBlock (relative positioned) {DIV} at (236,383) size 202x162 [border: (1px solid #000000)]
-layer at (470,391) size 202x162
-  RenderBlock (relative positioned) {DIV} at (462,383) size 202x162 [border: (1px solid #000000)]
+layer at (18,204) size 202x162
+  RenderBlock (relative positioned) {DIV} at (10,195) size 202x163 [border: (1px solid #000000)]
+layer at (244,204) size 202x162
+  RenderBlock (relative positioned) {DIV} at (236,195) size 202x163 [border: (1px solid #000000)]
+layer at (470,204) size 202x162
+  RenderBlock (relative positioned) {DIV} at (462,195) size 202x163 [border: (1px solid #000000)]
+layer at (18,389) size 202x162
+  RenderBlock (relative positioned) {DIV} at (10,381) size 202x163 [border: (1px solid #000000)]
+layer at (244,389) size 202x162
+  RenderBlock (relative positioned) {DIV} at (236,381) size 202x163 [border: (1px solid #000000)]
+layer at (470,389) size 202x162
+  RenderBlock (relative positioned) {DIV} at (462,381) size 202x163 [border: (1px solid #000000)]

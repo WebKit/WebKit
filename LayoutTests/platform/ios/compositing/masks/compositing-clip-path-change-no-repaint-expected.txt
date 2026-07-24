@@ -4,10 +4,10 @@ Only the second box should have a repaint.
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 660.00)
+  (bounds 800.00 658.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 660.00)
+      (bounds 800.00 658.00)
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer

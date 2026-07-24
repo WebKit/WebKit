@@ -67,23 +67,23 @@ addEventListener("load", async function() {
     await UIHelper.immediateScrollElementAtContentPointToOffset(rect.left + 40, rect.top + 40, 0, 50);
     selectionRectsAfter = await waitForSelectionRectsToChange(selectionRectsBefore);
 
-    shouldBe("selectionRectsBefore[0].top", "109");
+    shouldBe("selectionRectsBefore[0].top", "102");
     shouldBe("selectionRectsBefore[0].width", "320");
     shouldBe("selectionRectsBefore[0].left", "0");
-    shouldBe("selectionRectsBefore[0].height", "28");
-    shouldBe("selectionRectsBefore[1].top", "137");
+    shouldBe("selectionRectsBefore[0].height", "27");
+    shouldBe("selectionRectsBefore[1].top", "129");
     shouldBe("selectionRectsBefore[1].width", "172");
     shouldBe("selectionRectsBefore[1].left", "0");
-    shouldBe("selectionRectsBefore[1].height", "30");
+    shouldBe("selectionRectsBefore[1].height", "27");
 
-    shouldBe("selectionRectsAfter[0].top", "59");
+    shouldBe("selectionRectsAfter[0].top", "52");
     shouldBe("selectionRectsAfter[0].width", "320");
     shouldBe("selectionRectsAfter[0].left", "0");
-    shouldBe("selectionRectsAfter[0].height", "28");
-    shouldBe("selectionRectsAfter[1].top", "87");
+    shouldBe("selectionRectsAfter[0].height", "27");
+    shouldBe("selectionRectsAfter[1].top", "79");
     shouldBe("selectionRectsAfter[1].width", "172");
     shouldBe("selectionRectsAfter[1].left", "0");
-    shouldBe("selectionRectsAfter[1].height", "30");
+    shouldBe("selectionRectsAfter[1].height", "27");
 
     editor.remove();
     button.remove();

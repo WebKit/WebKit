@@ -1,10 +1,10 @@
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 1005.00)
+  (bounds 800.00 1002.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 1005.00)
+      (bounds 800.00 1002.00)
       (contentsOpaque 1)
       (children 6
         (GraphicsLayer
@@ -42,9 +42,8 @@
           )
         )
         (GraphicsLayer
-          (position 13.00 307.50)
-          (bounds 430.00 380.00)
-          (contentsOpaque 1)
+          (position 13.00 306.50)
+          (bounds 430.00 380.50)
           (drawsContent 1)
           (contents layer (media)
             (position 55.00 70.00)
@@ -52,22 +51,24 @@
           )
         )
         (GraphicsLayer
-          (position 13.00 722.00)
-          (bounds 480.00 260.00)
-          (contentsOpaque 1)
+          (position 13.00 720.00)
+          (bounds 480.00 260.50)
           (drawsContent 1)
+          (contents clipping layer
+            (position 40.00 40.20)
+            (bounds 400.00 180.00)
+          )
           (contents layer (media)
             (position 120.00 40.00)
             (bounds 240.00 180.00)
           )
         )
         (GraphicsLayer
-          (position 507.00 702.00)
-          (bounds 200.00 280.00)
-          (contentsOpaque 1)
+          (position 507.00 700.00)
+          (bounds 200.00 280.50)
           (drawsContent 1)
           (contents clipping layer
-            (position 40.00 40.00)
+            (position 40.00 40.20)
             (bounds 120.00 200.00)
           )
           (contents layer (media)

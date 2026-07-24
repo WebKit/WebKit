@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
               text run at (0,4) width 53: "Float Text"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (56,0) size 479x20
+      RenderText {#text} at (56,0) size 479x18
         text run at (56,0) width 479: "The float on the left should have a black border enclosing its text contents."

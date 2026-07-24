@@ -5,6 +5,6 @@ X Y
 PASlegend
 S
 
-FAIL fieldset content before legend assert_equals: expected 20 but got 40
+FAIL fieldset content before legend assert_equals: expected 18 but got 36
 PASS Showing a node just before the rendered legend should not crash
 

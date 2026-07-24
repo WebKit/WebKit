@@ -61,48 +61,48 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (182,0) size 236x108 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=2.00] [width=196.00] [height=96.00]
         [filter="matbad"] RenderSVGResourceFilter {filter} at (182.40,-7.60) size 235.20x115.20
       RenderSVGText {text} at (210,18) size 137x28 contains 1 chunk(s)
-        [filter="matbad"] RenderSVGResourceFilter {filter} at (196.34,15.80) size 163.97x32.40
+        [filter="matbad"] RenderSVGResourceFilter {filter} at (196.34,15.95) size 163.97x31.91
         RenderSVGInlineText {#text} at (0,0) size 137x27
-          [filter="matbad"] RenderSVGResourceFilter {filter} at (196.34,15.80) size 163.95x32.40
+          [filter="matbad"] RenderSVGResourceFilter {filter} at (196.34,15.96) size 163.95x31.89
           chunk 1 text run 1 at (210.00,40.00) startOffset 0 endOffset 14 width 136.63: "Invalid matrix"
       RenderSVGText {text} at (210,48) size 154x28 contains 1 chunk(s)
-        [filter="matbad"] RenderSVGResourceFilter {filter} at (194.67,45.80) size 183.94x32.40
+        [filter="matbad"] RenderSVGResourceFilter {filter} at (194.67,45.95) size 183.94x31.91
         RenderSVGInlineText {#text} at (0,0) size 154x27
-          [filter="matbad"] RenderSVGResourceFilter {filter} at (194.67,45.80) size 183.94x32.40
+          [filter="matbad"] RenderSVGResourceFilter {filter} at (194.67,45.96) size 183.94x31.89
           chunk 1 text run 1 at (210.00,70.00) startOffset 0 endOffset 17 width 153.28: "values attribute."
       RenderSVGRect {rect} at (182,92) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=102.00] [width=196.00] [height=96.00]
         [filter="huebad"] RenderSVGResourceFilter {filter} at (182.40,92.40) size 235.20x115.20
       RenderSVGText {text} at (210,118) size 149x28 contains 1 chunk(s)
-        [filter="huebad"] RenderSVGResourceFilter {filter} at (195.14,115.80) size 178.33x32.40
+        [filter="huebad"] RenderSVGResourceFilter {filter} at (195.14,115.95) size 178.33x31.91
         RenderSVGInlineText {#text} at (0,0) size 149x27
-          [filter="huebad"] RenderSVGResourceFilter {filter} at (195.14,115.80) size 178.33x32.40
+          [filter="huebad"] RenderSVGResourceFilter {filter} at (195.14,115.96) size 178.33x31.89
           chunk 1 text run 1 at (210.00,140.00) startOffset 0 endOffset 16 width 148.61: "Invalid saturate"
       RenderSVGText {text} at (210,148) size 154x28 contains 1 chunk(s)
-        [filter="huebad"] RenderSVGResourceFilter {filter} at (194.67,145.80) size 183.94x32.40
+        [filter="huebad"] RenderSVGResourceFilter {filter} at (194.67,145.95) size 183.94x31.91
         RenderSVGInlineText {#text} at (0,0) size 154x27
-          [filter="huebad"] RenderSVGResourceFilter {filter} at (194.67,145.80) size 183.94x32.40
+          [filter="huebad"] RenderSVGResourceFilter {filter} at (194.67,145.96) size 183.94x31.89
           chunk 1 text run 1 at (210.00,170.00) startOffset 0 endOffset 17 width 153.28: "values attribute."
       RenderSVGRect {rect} at (182,192) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=202.00] [width=196.00] [height=96.00]
         [filter="satbad"] RenderSVGResourceFilter {filter} at (182.40,192.40) size 235.20x115.20
       RenderSVGText {text} at (210,218) size 172x28 contains 1 chunk(s)
-        [filter="satbad"] RenderSVGResourceFilter {filter} at (192.87,215.80) size 205.54x32.40
+        [filter="satbad"] RenderSVGResourceFilter {filter} at (192.87,215.95) size 205.54x31.91
         RenderSVGInlineText {#text} at (0,0) size 172x27
-          [filter="satbad"] RenderSVGResourceFilter {filter} at (192.87,215.80) size 205.54x32.40
+          [filter="satbad"] RenderSVGResourceFilter {filter} at (192.87,215.96) size 205.54x31.89
           chunk 1 text run 1 at (210.00,240.00) startOffset 0 endOffset 17 width 171.28: "Invalid hueRotate"
       RenderSVGText {text} at (210,248) size 154x28 contains 1 chunk(s)
-        [filter="satbad"] RenderSVGResourceFilter {filter} at (194.67,245.80) size 183.94x32.40
+        [filter="satbad"] RenderSVGResourceFilter {filter} at (194.67,245.95) size 183.94x31.91
         RenderSVGInlineText {#text} at (0,0) size 154x27
-          [filter="satbad"] RenderSVGResourceFilter {filter} at (194.67,245.80) size 183.94x32.40
+          [filter="satbad"] RenderSVGResourceFilter {filter} at (194.67,245.96) size 183.94x31.89
           chunk 1 text run 1 at (210.00,270.00) startOffset 0 endOffset 17 width 153.28: "values attribute."
       RenderSVGRect {rect} at (182,292) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=302.00] [width=196.00] [height=96.00]
         [filter="satrange"] RenderSVGResourceFilter {filter} at (182.40,292.40) size 235.20x115.20
       RenderSVGText {text} at (210,318) size 132x28 contains 1 chunk(s)
-        [filter="satrange"] RenderSVGResourceFilter {filter} at (196.87,315.80) size 157.58x32.40
+        [filter="satrange"] RenderSVGResourceFilter {filter} at (196.87,315.95) size 157.58x31.91
         RenderSVGInlineText {#text} at (0,0) size 132x27
-          [filter="satrange"] RenderSVGResourceFilter {filter} at (196.87,315.80) size 157.57x32.40
+          [filter="satrange"] RenderSVGResourceFilter {filter} at (196.87,315.96) size 157.57x31.89
           chunk 1 text run 1 at (210.00,340.00) startOffset 0 endOffset 13 width 131.31: "Saturate must"
       RenderSVGText {text} at (210,348) size 150x28 contains 1 chunk(s)
-        [filter="satrange"] RenderSVGResourceFilter {filter} at (195.01,345.80) size 179.93x32.40
+        [filter="satrange"] RenderSVGResourceFilter {filter} at (195.01,345.95) size 179.93x31.91
         RenderSVGInlineText {#text} at (0,0) size 150x27
-          [filter="satrange"] RenderSVGResourceFilter {filter} at (195.01,345.80) size 179.92x32.40
+          [filter="satrange"] RenderSVGResourceFilter {filter} at (195.01,345.96) size 179.92x31.89
           chunk 1 text run 1 at (210.00,370.00) startOffset 0 endOffset 15 width 149.93: "have one value."

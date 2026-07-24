@@ -14,7 +14,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
           (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (position 20.00 61.00)
+              (position 20.00 59.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
@@ -31,7 +31,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
           (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (position 12.00 129.00)
+              (position 12.00 127.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
@@ -48,7 +48,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
           (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (position 160.00 197.00)
+              (position 160.00 195.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
@@ -65,7 +65,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
           (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (position 12.00 265.00)
+              (position 12.00 263.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
@@ -82,7 +82,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
           (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (position 20.00 333.00)
+              (position 20.00 331.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
@@ -99,7 +99,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
           (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (position 160.00 401.00)
+              (position 160.00 399.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer

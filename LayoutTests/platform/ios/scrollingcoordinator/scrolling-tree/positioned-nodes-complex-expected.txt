@@ -127,7 +127,7 @@ Stacking
       (children 1
         (Positioned node
           (layout constraints
-            (layer-position-at-last-layout (79,50)))
+            (layer-position-at-last-layout (79,48)))
           (related overflow nodes 1)
         )
       )

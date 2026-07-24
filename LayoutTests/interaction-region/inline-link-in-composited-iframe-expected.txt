@@ -13,19 +13,19 @@ This is a link, outside the frame.
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-3.50) width=36.45 height=27)
+        (interaction (-4,-3.86) width=36.45 height=25.72)
         (cornerRadius 8.00)])
       )
       (children 1
         (GraphicsLayer
-          (position 0.00 20.00)
+          (position 0.00 18.00)
           (bounds 204.00 204.00)
           (drawsContent 1)
           (event region
             (rect (2,2) width=200 height=200)
 
           (interaction regions [
-            (interaction (6,6.50) width=36.45 height=27)
+            (interaction (6,6.14) width=36.45 height=25.72)
             (cornerRadius 8.00)])
           )
         )

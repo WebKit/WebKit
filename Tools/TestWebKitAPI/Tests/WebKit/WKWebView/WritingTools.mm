@@ -2463,17 +2463,10 @@ TEST(WritingTools, ShowDetailsForSuggestions)
     RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
-#if PLATFORM(MAC)
     const Vector<WebCore::IntRect> expectedRects {
         { { 8, 9 }, { 40, 18 } },
         { { 97, 9 }, { 47, 18 } },
     };
-#else
-    const Vector<WebCore::IntRect> expectedRects {
-        { { 8, 9 }, { 40, 20 } },
-        { { 97, 9 }, { 47, 20 } },
-    };
-#endif
 
     RetainPtr textViewDelegate = adoptNS([[WKConcreteWTTextViewDelegate alloc] initWithWritingToolsDelegate:[webView writingToolsDelegate] suggestions:suggestions expectedRects:expectedRects]);
 
@@ -4261,17 +4254,10 @@ TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadin
     TestWebKitAPI::Util::run(&finished);
     finished = false;
 
-#if PLATFORM(MAC)
     const Vector<WebCore::IntRect> expectedRects {
         { { 196, 8 }, { 29, 18 } },
         { { 84, 42 }, { 40, 18 } },
     };
-#else
-    const Vector<WebCore::IntRect> expectedRects {
-        { { 196, 8 }, { 29, 20 } },
-        { { 84, 44 }, { 40, 20 } },
-    };
-#endif
 
     for (NSUInteger i = 0; i < [rectValues count]; i++) {
         auto actualRect = [rectValues objectAtIndex:i].rectValue;

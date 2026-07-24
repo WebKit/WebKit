@@ -31,7 +31,7 @@ abs
         )
         (Positioned node
           (layout constraints
-            (layer-position-at-last-layout (32,60)))
+            (layer-position-at-last-layout (32,58)))
           (related overflow nodes 1)
         )
         (Positioned node

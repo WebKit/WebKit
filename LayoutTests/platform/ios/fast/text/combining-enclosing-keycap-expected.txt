@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x43
-  RenderBlock {HTML} at (0,0) size 800x43
-    RenderBody {BODY} at (8,8) size 784x27
+layer at (0,0) size 800x42
+  RenderBlock {HTML} at (0,0) size 800x42
+    RenderBody {BODY} at (8,8) size 784x26
       RenderInline {SPAN} at (0,5) size 21x19
         RenderText {#text} at (0,5) size 21x19
           text run at (0,5) width 21: "#\x{20E3}"

@@ -12,24 +12,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x278 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (14,15) size 252x248
-          RenderText {#text} at (14,15) size 11x28
-            text run at (14,15) width 11: "a"
-          RenderText {#text} at (24,15) size 47x28
-            text run at (24,15) width 47: "new "
-          RenderBR {BR} at (70,15) size 1x28
-          RenderText {#text} at (14,125) size 66x28
-            text run at (14,125) width 66: "nation "
-          RenderInline {I} at (79,125) size 0x28
+      RenderBlock {DIV} at (0,0) size 784x272 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (14,14) size 252x244
+          RenderText {#text} at (14,14) size 11x27
+            text run at (14,14) width 11: "a"
+          RenderText {#text} at (24,14) size 47x27
+            text run at (24,14) width 47: "new "
+          RenderBR {BR} at (70,14) size 1x27
+          RenderText {#text} at (14,122) size 66x28
+            text run at (14,122) width 66: "nation "
+          RenderInline {I} at (79,122) size 0x28
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderImage {IMG} at (79,44) size 77x103
-          RenderText {#text} at (155,125) size 111x28
-            text run at (155,125) width 111: " conceived "
-          RenderBR {BR} at (265,125) size 1x28
-          RenderText {#text} at (14,235) size 60x28
-            text run at (14,235) width 60: "nation"
-          RenderImage {IMG} at (73,154) size 77x103
+          RenderImage {IMG} at (79,41) size 77x103
+          RenderText {#text} at (155,122) size 111x28
+            text run at (155,122) width 111: " conceived "
+          RenderBR {BR} at (265,122) size 1x28
+          RenderText {#text} at (14,231) size 60x27
+            text run at (14,231) width 60: "nation"
+          RenderImage {IMG} at (73,149) size 77x104
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

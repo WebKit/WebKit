@@ -36,6 +36,6 @@
 8
 9
 
-FAIL Grid assert_equals: offsetTop expected 28 but got 8
-FAIL Inline grid assert_equals: offsetTop expected 264 but got 244
+FAIL Grid assert_equals: offsetTop expected 26 but got 8
+FAIL Inline grid assert_equals: offsetTop expected 252 but got 234
 

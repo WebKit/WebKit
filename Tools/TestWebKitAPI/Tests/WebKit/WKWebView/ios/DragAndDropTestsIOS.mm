@@ -303,7 +303,7 @@ TEST(DragAndDropTests, ImageInLinkToInput)
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 170, 2, 240), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 170, 2, 239), [simulator finalSelectionStartRect]);
     checkSuggestedNameAndEstimatedSize(simulator.get(), @"icon.png", { 215, 174 });
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypePNG.identifier, 0);
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
@@ -372,7 +372,7 @@ TEST(DragAndDropTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(960, 205, 2, 223), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(960, 204, 2, 221), [simulator finalSelectionStartRect]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
     EXPECT_TRUE([[[simulator sourceItemProviders].firstObject registeredTypeIdentifiers] containsObject:UTTypeWebArchive.identifier]);
@@ -393,7 +393,7 @@ TEST(DragAndDropTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1033, 203, 2, 240), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1033, 203, 2, 238), [simulator finalSelectionStartRect]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
@@ -449,7 +449,7 @@ TEST(DragAndDropTests, ContentEditableMoveParagraphs)
     EXPECT_FALSE(firstParagraphOffset == NSNotFound);
     EXPECT_FALSE(secondParagraphOffset == NSNotFound);
     EXPECT_GT(firstParagraphOffset, secondParagraphOffset);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(251, 220, 2, 20), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(251, 209, 2, 19), [simulator finalSelectionStartRect]);
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
@@ -474,7 +474,7 @@ TEST(DragAndDropTests, TextAreaToInput)
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1033, 170, 2, 240), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1033, 170, 2, 239), [simulator finalSelectionStartRect]);
 }
 
 TEST(DragAndDropTests, SinglePlainTextWordTypeIdentifiers)
@@ -543,7 +543,7 @@ TEST(DragAndDropTests, LinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
     auto selectionRectWithRoundedWidth = [simulator finalSelectionStartRect];
     selectionRectWithRoundedWidth.size.width = std::round(selectionRectWithRoundedWidth.size.width);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 202, 2, 240), selectionRectWithRoundedWidth);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 199, 2, 239), selectionRectWithRoundedWidth);
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypeURL.identifier, 0);
 }
 
@@ -561,7 +561,7 @@ TEST(DragAndDropTests, BackgroundImageLinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 170, 2, 240), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 170, 2, 239), [simulator finalSelectionStartRect]);
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypeURL.identifier, 0);
 }
 
@@ -1000,7 +1000,7 @@ TEST(DragAndDropTests, ExternalSourceUTF8PlainTextOnly)
     [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ(textPayload.UTF8String, [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1935, 205, 2, 223), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1935, 204, 2, 221), [simulator finalSelectionStartRect]);
 }
 
 TEST(DragAndDropTests, ExternalSourceJPEGOnly)
@@ -1020,7 +1020,7 @@ TEST(DragAndDropTests, ExternalSourceJPEGOnly)
     [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_TRUE([webView editorContainsImageElement]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(214, 201, 2, 223), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(214, 201, 2, 222), [simulator finalSelectionStartRect]);
 }
 
 TEST(DragAndDropTests, ExternalSourceTitledNSURL)

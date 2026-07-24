@@ -2,14 +2,14 @@ From https://bugs.webkit.org/show_bug.cgi?id=44629. The parent is a tiled layer.
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 5114.00)
+  (bounds 800.00 5111.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 5114.00)
+      (bounds 800.00 5111.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 72.00)
+          (position 8.00 68.00)
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (contentsOpaque 1)

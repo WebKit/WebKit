@@ -5952,11 +5952,7 @@ TEST(SiteIsolation, CoordinateTransformation)
         return result;
     };
 
-#if PLATFORM(MAC)
     constexpr auto expectedTransformedY = 38;
-#else
-    constexpr auto expectedTransformedY = 40;
-#endif
     {
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
         [navigationDelegate waitForDidFinishNavigation];

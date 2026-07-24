@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (10,28) size 410x280
       RenderSVGText {text} at (240,28) size 180x180 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 180x180
+        RenderSVGInlineText {#text} at (0,0) size 180x179
           chunk 1 text run 1 at (240.00,60.00) startOffset 0 endOffset 1 width 31.12: "M"
           chunk 1 text run 1 at (260.00,80.00) startOffset 0 endOffset 1 width 17.50: "u"
           chunk 1 text run 1 at (280.00,100.00) startOffset 0 endOffset 1 width 9.72: "l"
@@ -14,15 +14,15 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (360.00,180.00) startOffset 0 endOffset 1 width 25.28: "X"
           chunk 1 text run 1 at (385.28,200.00) startOffset 0 endOffset 2 width 34.03: " Y"
       RenderSVGText {text} at (10,28) size 155x54 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 155x54
+        RenderSVGInlineText {#text} at (0,0) size 155x53
           chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 23.34: "R"
           chunk 1 text run 2 at (33.34,60.00) startOffset 1 endOffset 2 width 25.28: "O"
           chunk 1 text run 3 at (58.62,60.00) startOffset 2 endOffset 3 width 21.38: "T"
           chunk 1 text run 4 at (80.00,60.00) startOffset 3 endOffset 4 width 25.28: "A"
           chunk 1 text run 5 at (105.28,60.00) startOffset 4 endOffset 5 width 21.38: "T"
           chunk 1 text run 6 at (126.66,60.00) startOffset 5 endOffset 6 width 21.38: "E"
-      RenderSVGText {text} at (10,165) size 247x143 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,102) size 247x143
+      RenderSVGText {text} at (10,166) size 247x142 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,102) size 247x142
           chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 1 width 23.34: "B"
           chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 1 width 17.50: "o"
           chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 1 width 9.72: "t"

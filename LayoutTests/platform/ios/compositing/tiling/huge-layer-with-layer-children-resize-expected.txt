@@ -3,14 +3,14 @@ The yellow box should be 500 x 500 on startup. Then it should stretch to be 500 
 First (small layer):
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 614.00)
+  (bounds 800.00 611.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 614.00)
+      (bounds 800.00 611.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 72.00)
+          (position 8.00 68.00)
           (bounds 502.00 502.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -36,14 +36,14 @@ First (small layer):
 Second (huge layer):
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 5114.00)
+  (bounds 800.00 5111.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 5114.00)
+      (bounds 800.00 5111.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 72.00)
+          (position 8.00 68.00)
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (contentsOpaque 1)
@@ -70,14 +70,14 @@ Second (huge layer):
 Third (small layer):
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 614.00)
+  (bounds 800.00 611.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 614.00)
+      (bounds 800.00 611.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 72.00)
+          (position 8.00 68.00)
           (bounds 502.00 502.00)
           (contentsOpaque 1)
           (drawsContent 1)

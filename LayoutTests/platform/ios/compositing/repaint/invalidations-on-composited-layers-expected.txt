@@ -1,7 +1,7 @@
 (repaint rects
-  (rect 8 13 784 14)
-  (rect 8 413 784 27)
-  (rect 0 421 800 27)
+  (rect 8 13 784 15)
+  (rect 8 413 784 28)
+  (rect 0 421 800 28)
 )
 (GraphicsLayer
   (anchor 0.00 0.00)
@@ -12,7 +12,7 @@
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 40.00)
+          (position 8.00 41.00)
           (bounds 400.00 400.00)
           (contentsOpaque 1)
           (children 1

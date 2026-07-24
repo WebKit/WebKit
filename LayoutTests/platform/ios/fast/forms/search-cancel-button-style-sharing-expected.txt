@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 392x20
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 392x18
           text run at (0,0) width 392: "Only the second search field should have a cancel button (\x{D7})."
-      RenderBlock (anonymous) at (0,36) size 784x22
-        RenderTextControl {INPUT} at (0,1) size 154x21 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderFlexibleBox {DIV} at (6,3) size 142x14
-            RenderBlock {DIV} at (0,0) size 142x14
-            RenderBlock {DIV} at (141,7) size 0x0
-        RenderText {#text} at (153,0) size 5x20
+      RenderBlock (anonymous) at (0,34) size 784x20
+        RenderTextControl {INPUT} at (0,0) size 154x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderFlexibleBox {DIV} at (6,3) size 142x13
+            RenderBlock {DIV} at (0,0) size 142x13
+            RenderBlock {DIV} at (141,6) size 0x0
+        RenderText {#text} at (153,0) size 5x18
           text run at (153,0) width 5: " "
-        RenderTextControl {INPUT} at (157,1) size 155x21 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderFlexibleBox {DIV} at (6,3) size 142x14
-            RenderBlock {DIV} at (0,0) size 142x14
-            RenderBlock {DIV} at (141,7) size 0x0
+        RenderTextControl {INPUT} at (157,0) size 155x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderFlexibleBox {DIV} at (6,3) size 142x13
+            RenderBlock {DIV} at (0,0) size 142x13
+            RenderBlock {DIV} at (141,6) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (14,49) size 142x14
-  RenderBlock {DIV} at (0,0) size 142x14
-layer at (172,49) size 142x14
-  RenderBlock {DIV} at (0,0) size 142x14
-    RenderText {#text} at (0,0) size 42x14
+layer at (14,46) size 142x13
+  RenderBlock {DIV} at (0,0) size 142x13
+layer at (172,46) size 142x13
+  RenderBlock {DIV} at (0,0) size 142x13
+    RenderText {#text} at (0,-1) size 42x15
       text run at (0,0) width 42: "this one"

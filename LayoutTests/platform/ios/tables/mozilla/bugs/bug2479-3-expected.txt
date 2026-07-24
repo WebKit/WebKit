@@ -40,7 +40,7 @@ layer at (0,0) size 800x766
           RenderInline {EM} at (288,0) size 192x16
             RenderText {#text} at (288,0) size 192x16
               text run at (288,0) width 192: "does support"
-          RenderText {#text} at (0,0) size 736x34
+          RenderText {#text} at (0,0) size 736x35
             text run at (480,0) width 256: " table values on"
             text run at (0,18) width 164: "'display'. "
           RenderInline {STRONG} at (0,18) size 756x49
@@ -75,19 +75,19 @@ layer at (0,0) size 800x766
             text run at (0,0) width 640: "How does your browser fare on this test?"
           RenderMenuList {SELECT} at (0,16) size 234x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
             RenderBlock {DIV} at (6,3) size 222x14
-              RenderText {#text} at (0,0) size 139x14
+              RenderText {#text} at (0,-1) size 139x15
                 text run at (0,0) width 139: "The test renders correctly."
-          RenderText {#text} at (234,17) size 16x16
-            text run at (234,17) width 16: " "
-          RenderInline {LABEL} at (250,17) size 298x16
-            RenderText {#text} at (250,17) size 144x16
-              text run at (250,17) width 144: "Comment: "
+          RenderText {#text} at (234,16) size 16x17
+            text run at (234,16) width 16: " "
+          RenderInline {LABEL} at (250,16) size 298x17
+            RenderText {#text} at (250,16) size 144x17
+              text run at (250,16) width 144: "Comment: "
             RenderTextControl {INPUT} at (394,16) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-          RenderText {#text} at (547,17) size 17x16
-            text run at (547,17) width 17: " "
+          RenderText {#text} at (547,16) size 17x17
+            text run at (547,16) width 17: " "
           RenderButton {INPUT} at (563,16) size 62x20 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
             RenderBlock (anonymous) at (12,3) size 37x14
-              RenderText at (0,0) size 37x14
+              RenderText at (0,-1) size 37x15
                 text run at (0,0) width 37: "Submit"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,600) size 784x17
@@ -122,7 +122,7 @@ layer at (0,0) size 800x766
       RenderBlock {P} at (0,712) size 784x17
         RenderText {#text} at (0,0) size 432x16
           text run at (0,0) width 432: "Last updated in March 1999."
-layer at (408,571) size 142x14
-  RenderBlock {DIV} at (6,3) size 142x14
+layer at (408,571) size 142x13
+  RenderBlock {DIV} at (6,3) size 142x13
 layer at (8,604) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,582) size 784x3 [color=#808080] [border: (1px inset #808080)]

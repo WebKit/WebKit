@@ -38,14 +38,14 @@ Box
               (contentsScale 2.00)
               (children 1
                 (GraphicsLayer
-                  (position 20.00 40.00)
+                  (position 20.00 38.00)
                   (bounds 100.00 100.00)
                   (contentsOpaque 1)
                   (preserves3D 1)
                   (drawsContent 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 100.00 1.00])
                   (visible rect 0.00, 0.00 100.00 x 100.00)
-                  (coverage rect -15.40, -35.40 480.00 x 360.00)
+                  (coverage rect -15.40, -33.40 480.00 x 360.00)
                   (intersects coverage rect 1)
                   (contentsScale 2.00)
                 )

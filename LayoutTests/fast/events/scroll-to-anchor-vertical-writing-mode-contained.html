@@ -3,6 +3,10 @@
 <head>
 <style>
     html {-webkit-writing-mode: vertical-rl}
+    /* Explicit integer line-height so the vertical column width (== line box cross-size)
+       is device-pixel-exact and independent of the font's intrinsic line metrics; keeps
+       the scroll-to-#last offset from landing on a fractional pixel. */
+    body { line-height: 20px; }
 </style>
 </head>
 <body>

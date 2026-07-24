@@ -1,18 +1,18 @@
 trigger This should be visible This should be visible
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 2630.00)
+  (bounds 800.00 2628.00)
   (backingStoreAttached 1)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 2630.00)
+      (bounds 800.00 2628.00)
       (contentsOpaque 1)
       (backingStoreAttached 1)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
           (anchor 0.50 0.06)
-          (bounds 200.00 2622.00)
+          (bounds 200.00 2620.00)
           (usingTiledLayer 1)
           (drawsContent 1)
           (backingStoreAttached 1)

@@ -349,7 +349,7 @@ TEST(RequestTextInputContext, FocusedEditableLineWithOnlyLineBreak)
 
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 0, 0, 20), contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 0, 18), contexts[0].boundingRect);
 }
 
 TEST(RequestTextInputContext, FocusAfterNavigation)
@@ -526,7 +526,7 @@ TEST(RequestTextInputContext, FocusFieldWithPaddingAndPlaceCaretAtEnd)
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
 
     CGRect boundingRect = [inputElement boundingRect];
-    CGPoint endPosition = CGPointMake(boundingRect.origin.x + boundingRect.size.width, boundingRect.origin.y);
+    CGPoint endPosition = CGPointMake(boundingRect.origin.x + boundingRect.size.width, boundingRect.origin.y + boundingRect.size.height / 2);
     EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:endPosition]);
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     EXPECT_EQ(static_cast<int>(exampleTextLength), [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);

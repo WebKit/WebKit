@@ -1,10 +1,10 @@
 
 (CALayer tree root
-  (layer bounds [x: 0 y: 0 width: 800 height: 550])
+  (layer bounds [x: 0 y: 0 width: 800 height: 546.5])
   (layer position [x: 400 y: 400])
   (sublayers
     (
-      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer bounds [x: 0 y: 0 width: 200 height: 200.5])
       (layer position [x: 100 y: 100])
       (layer opacity 0))
     (
@@ -51,31 +51,31 @@
       (layer opacity 0.8)
       (sublayers
         (
-          (layer bounds [x: 0 y: 0 width: 800 height: 20])
+          (layer bounds [x: 0 y: 0 width: 800 height: 18])
           (layer position [x: 400 y: 400]))
         (
           (layer bounds [x: 0 y: 0 width: 0 height: 0])
           (sublayers
             (
               (type 0)
-              (layer bounds [x: 0 y: 0 width: 32.890625 height: 27])
+              (layer bounds [x: 0 y: 0 width: 32.890625 height: 25.71875])
               (layer position [x: 12.4453125 y: 12.4453125])
               (layer cornerRadius 8))))
         (
-          (layer bounds [x: 0 y: 0 width: 800 height: 40])
+          (layer bounds [x: 0 y: 0 width: 800 height: 36])
           (layer position [x: 400 y: 400])
           (sublayers
             (
-              (layer bounds [x: 0 y: 0 width: 800 height: 20])
+              (layer bounds [x: 0 y: 0 width: 800 height: 18])
               (layer position [x: 400 y: 400]))
             (
               (layer bounds [x: 0 y: 0 width: 0 height: 0])
               (sublayers
                 (
                   (type 0)
-                  (layer bounds [x: 0 y: 0 width: 115.0859375 height: 27])
+                  (layer bounds [x: 0 y: 0 width: 115.0859375 height: 25.71875])
                   (layer position [x: 155.71484375 y: 155.71484375])
                   (layer cornerRadius 8))))))
         (
-          (layer bounds [x: 0 y: 0 width: 800 height: 20])
+          (layer bounds [x: 0 y: 0 width: 800 height: 18])
           (layer position [x: 400 y: 400]))))))

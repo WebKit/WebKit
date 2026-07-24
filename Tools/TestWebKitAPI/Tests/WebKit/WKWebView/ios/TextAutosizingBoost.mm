@@ -62,9 +62,9 @@ TEST(TextAutosizingBoost, ChangeAutosizingBoostAtRuntime)
     };
 
     EXPECT_EQ(125, regularSize.width);
-    EXPECT_EQ(30, regularSize.height);
+    EXPECT_EQ(29, regularSize.height);
     EXPECT_EQ(159, boostedSize.width);
-    EXPECT_EQ(38, boostedSize.height);
+    EXPECT_EQ(37, boostedSize.height);
 }
 
 // Regression test for rdar://113801810: autosized text must not stay inflated at

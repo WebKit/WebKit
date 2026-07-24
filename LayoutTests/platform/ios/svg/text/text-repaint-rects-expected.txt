@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x164
-  RenderBlock {html} at (0,0) size 800x164
-    RenderBody {body} at (8,16) size 784x132
-      RenderBlock {p} at (0,0) size 784x132
+layer at (0,0) size 800x155
+  RenderBlock {html} at (0,0) size 800x155
+    RenderBody {body} at (8,16) size 784x123
+      RenderBlock {p} at (0,0) size 784x123
         RenderText {#text} at (0,32) size 225x19
           text run at (0,32) width 225: "The alphabet A through M is here: "
         RenderSVGRoot {svg} at (232,18) size 501x45
@@ -47,12 +47,12 @@ layer at (0,0) size 800x164
             RenderSVGText {text} at (0,-45) size 45x56 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 45x56
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 44.46: "M"
-        RenderText {#text} at (0,32) size 778x99
+        RenderText {#text} at (0,32) size 778x91
           text run at (724,32) width 5: " "
           text run at (728,32) width 50: "this test"
-          text run at (0,52) width 771: "case is specially constructed so that when the view is sized to 800x600 (the default for DumpRenderTree) the text wraps"
-          text run at (0,72) width 339: "and not all of the text in the SVG is drawn correctly. "
-          text run at (338,72) width 318: "You should see all of A-L (and half of M) above. "
-          text run at (655,72) width 89: "The code was"
-          text run at (0,92) width 742: "incorrectly calculating the PaintInfo::rect (damage rect) when passing it through RenderBlock and render block was"
-          text run at (0,112) width 379: "(correctly) clipping out some of the lineboxes during paint."
+          text run at (0,50) width 771: "case is specially constructed so that when the view is sized to 800x600 (the default for DumpRenderTree) the text wraps"
+          text run at (0,68) width 339: "and not all of the text in the SVG is drawn correctly. "
+          text run at (338,68) width 318: "You should see all of A-L (and half of M) above. "
+          text run at (655,68) width 89: "The code was"
+          text run at (0,86) width 742: "incorrectly calculating the PaintInfo::rect (damage rect) when passing it through RenderBlock and render block was"
+          text run at (0,104) width 379: "(correctly) clipping out some of the lineboxes during paint."

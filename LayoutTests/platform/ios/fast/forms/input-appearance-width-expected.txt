@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 353x20
+      RenderText {#text} at (0,0) size 353x18
         text run at (0,0) width 353: "This tests that the new text fields use the correct width."
-      RenderBR {BR} at (352,0) size 1x20
-      RenderTextControl {INPUT} at (0,20) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderBR {BR} at (153,19) size 1x19
-      RenderTextControl {INPUT} at (0,40) size 200x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderBR {BR} at (200,39) size 0x19
-      RenderTextControl {INPUT} at (0,60) size 364x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderBR {BR} at (363,59) size 1x19
-      RenderTextControl {INPUT} at (0,80) size 200x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderBR {BR} at (200,79) size 0x19
-      RenderTextControl {INPUT} at (0,100) size 84x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderBR {BR} at (83,99) size 1x19
-layer at (14,31) size 142x14
-  RenderBlock {DIV} at (6,3) size 142x14
-layer at (14,51) size 188x14
-  RenderBlock {DIV} at (6,3) size 188x14
-    RenderText {#text} at (0,0) size 101x14
+      RenderBR {BR} at (352,0) size 1x18
+      RenderTextControl {INPUT} at (0,18) size 154x19 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBR {BR} at (153,17) size 1x18
+      RenderTextControl {INPUT} at (0,37) size 200x19 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBR {BR} at (200,36) size 0x18
+      RenderTextControl {INPUT} at (0,56) size 364x19 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBR {BR} at (363,55) size 1x18
+      RenderTextControl {INPUT} at (0,75) size 200x19 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBR {BR} at (200,74) size 0x18
+      RenderTextControl {INPUT} at (0,94) size 84x19 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBR {BR} at (83,93) size 1x18
+layer at (14,29) size 142x13
+  RenderBlock {DIV} at (6,3) size 142x13
+layer at (14,48) size 188x13
+  RenderBlock {DIV} at (6,2) size 188x14
+    RenderText {#text} at (0,-1) size 101x15
       text run at (0,0) width 101: "styled width 200px"
-layer at (14,71) size 352x14
-  RenderBlock {DIV} at (6,3) size 352x14
-    RenderText {#text} at (0,0) size 38x14
+layer at (14,67) size 352x13
+  RenderBlock {DIV} at (6,2) size 352x14
+    RenderText {#text} at (0,-1) size 38x15
       text run at (0,0) width 38: "size 50"
-layer at (14,91) size 188x14
-  RenderBlock {DIV} at (6,3) size 188x14
-    RenderText {#text} at (0,0) size 155x14
+layer at (14,86) size 188x13
+  RenderBlock {DIV} at (6,2) size 188x14
+    RenderText {#text} at (0,-1) size 155x15
       text run at (0,0) width 155: "styled width 200px & size=10"
-layer at (14,111) size 72x14
-  RenderBlock {DIV} at (6,3) size 72x14
-    RenderText {#text} at (0,0) size 37x14
+layer at (14,105) size 72x13
+  RenderBlock {DIV} at (6,2) size 72x14
+    RenderText {#text} at (0,-1) size 37x15
       text run at (0,0) width 37: "size 10"

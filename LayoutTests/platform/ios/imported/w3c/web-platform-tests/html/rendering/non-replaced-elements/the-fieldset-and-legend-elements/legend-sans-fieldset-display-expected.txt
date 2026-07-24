@@ -10,7 +10,7 @@ inline
 foo inline-block
 inline-block
 
-FAIL .table assert_equals: .table height expected "40px" but got "60px"
+FAIL .table assert_equals: .table height expected "36px" but got "54px"
 FAIL .caption assert_equals: .caption display expected "table-caption" but got "block"
 FAIL .col assert_equals: .col display expected "table-column" but got "block"
 FAIL .tbody assert_equals: .tbody display expected "table-row-group" but got "block"

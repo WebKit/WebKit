@@ -6,6 +6,10 @@
     height: 200px;
     width: 200px;
     border: 1px solid black;
+    /* Use Ahem at a size with integer ascent/descent (0.8*20=16, 0.2*20=4) so the caret
+       height is device-pixel-exact and the empty-block and after-text caret-rect paths
+       round identically across platform font metrics. */
+    font: 20px Ahem;
 }
 #verticalDiv {
     -webkit-writing-mode: vertical-rl;

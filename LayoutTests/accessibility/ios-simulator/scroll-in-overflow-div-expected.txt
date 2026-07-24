@@ -9,14 +9,14 @@ AXPageScrolled received: data: AXScroll [position: 0.00 440.00]
 scroll down 1 : success true
 AXPageScrolled received: data: AXScroll [position: 0.00 660.00]
 scroll down 2 : success true
-AXPageScrolled received: data: AXScroll [position: 0.00 716.00]
+AXPageScrolled received: data: AXScroll [position: 0.00 666.00]
 scroll down 3 : success true
 scroll down 4 : success false
-AXPageScrolled received: data: AXScroll [position: 0.00 496.00]
+AXPageScrolled received: data: AXScroll [position: 0.00 446.00]
 scroll up 0 : success true
-AXPageScrolled received: data: AXScroll [position: 0.00 276.00]
+AXPageScrolled received: data: AXScroll [position: 0.00 226.00]
 scroll up 1 : success true
-AXPageScrolled received: data: AXScroll [position: 0.00 56.00]
+AXPageScrolled received: data: AXScroll [position: 0.00 6.00]
 scroll up 2 : success true
 AXPageScrolled received: data: AXScroll [position: 0.00 0.00]
 scroll up 3 : success true

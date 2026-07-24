@@ -3,44 +3,44 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 360x100 [border: (1px outset #000000)]
-        RenderTableSection {TBODY} at (1,1) size 358x98
-          RenderTableRow {TR} at (0,2) size 358x94
-            RenderTableCell {TD} at (2,2) size 354x94 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 350x90 [bgcolor=#FFCC99] [border: (1px outset #000000)]
-                RenderTableSection {TBODY} at (1,1) size 348x88
-                  RenderTableRow {TR} at (0,2) size 348x84
-                    RenderTableCell {TD} at (2,16) size 247x56 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-                      RenderInline {B} at (2,16) size 101x20
-                        RenderText {#text} at (2,16) size 101x20
+      RenderTable {TABLE} at (0,0) size 360x92 [border: (1px outset #000000)]
+        RenderTableSection {TBODY} at (1,1) size 358x90
+          RenderTableRow {TR} at (0,2) size 358x86
+            RenderTableCell {TD} at (2,2) size 354x86 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 350x82 [bgcolor=#FFCC99] [border: (1px outset #000000)]
+                RenderTableSection {TBODY} at (1,1) size 348x80
+                  RenderTableRow {TR} at (0,2) size 348x76
+                    RenderTableCell {TD} at (2,13) size 247x54 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
+                      RenderInline {B} at (2,13) size 101x18
+                        RenderText {#text} at (2,13) size 101x18
                           text run at (2,2) width 101: "Contact MPG:"
-                      RenderBR {BR} at (102,16) size 1x20
-                      RenderInline {FONT} at (2,36) size 234x32
-                        RenderInline {B} at (2,36) size 147x16
-                          RenderInline {A} at (2,36) size 147x16 [color=#551A8B]
-                            RenderText {#text} at (2,36) size 147x16
-                              text run at (2,22) width 33: "Click "
-                              text run at (34,22) width 115: "here to email full list"
-                        RenderText {#text} at (148,36) size 72x16
-                          text run at (148,22) width 72: ", or copy this "
-                        RenderInline {A} at (2,36) size 234x32 [color=#551A8B]
-                          RenderText {#text} at (2,36) size 234x32
-                            text run at (219,22) width 17: "list"
-                            text run at (2,38) width 64: "of addresses"
-                        RenderText {#text} at (65,52) size 42x16
-                          text run at (65,38) width 42: ".  View "
-                        RenderInline {A} at (106,52) size 83x16 [color=#551A8B]
-                          RenderText {#text} at (106,52) size 83x16
-                            text run at (106,38) width 83: "Who is in MPG"
-                        RenderText {#text} at (188,52) size 4x16
-                          text run at (188,38) width 4: "."
+                      RenderBR {BR} at (102,13) size 1x18
+                      RenderInline {FONT} at (2,31) size 234x32
+                        RenderInline {B} at (2,31) size 147x16
+                          RenderInline {A} at (2,31) size 147x16 [color=#551A8B]
+                            RenderText {#text} at (2,31) size 147x16
+                              text run at (2,20) width 33: "Click "
+                              text run at (34,20) width 115: "here to email full list"
+                        RenderText {#text} at (148,31) size 72x16
+                          text run at (148,20) width 72: ", or copy this "
+                        RenderInline {A} at (2,31) size 234x32 [color=#551A8B]
+                          RenderText {#text} at (2,31) size 234x32
+                            text run at (219,20) width 17: "list"
+                            text run at (2,36) width 64: "of addresses"
+                        RenderText {#text} at (65,47) size 42x16
+                          text run at (65,36) width 42: ".  View "
+                        RenderInline {A} at (106,47) size 83x16 [color=#551A8B]
+                          RenderText {#text} at (106,47) size 83x16
+                            text run at (106,36) width 83: "Who is in MPG"
+                        RenderText {#text} at (188,47) size 4x16
+                          text run at (188,36) width 4: "."
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {TD} at (250,2) size 97x84 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
-                      RenderInline {B} at (2,2) size 85x20
-                        RenderText {#text} at (2,2) size 85x20
+                    RenderTableCell {TD} at (250,2) size 97x76 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
+                      RenderInline {B} at (2,2) size 85x18
+                        RenderText {#text} at (2,2) size 85x18
                           text run at (2,2) width 85: "MPG Rules:"
-                      RenderBR {BR} at (86,2) size 1x20
-                      RenderText {#text} at (2,22) size 60x60
-                        text run at (2,22) width 60: "Not at all"
-                        text run at (2,42) width 46: "serious"
-                        text run at (2,62) width 50: "bylaws."
+                      RenderBR {BR} at (86,2) size 1x18
+                      RenderText {#text} at (2,20) size 60x54
+                        text run at (2,20) width 60: "Not at all"
+                        text run at (2,38) width 46: "serious"
+                        text run at (2,56) width 50: "bylaws."

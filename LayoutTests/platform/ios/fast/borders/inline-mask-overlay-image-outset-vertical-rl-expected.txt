@@ -10,4 +10,4 @@ layer at (8,8) size 120x373
       text run at (22,75) width 298: "This content should be masked"
     RenderBR {BR} at (22,372) size 28x1
     RenderText {#text} at (94,0) size 28x160
-      text run at (94,0) width 160: "with a soft glow."
+      text run at (94,0) width 161: "with a soft glow."

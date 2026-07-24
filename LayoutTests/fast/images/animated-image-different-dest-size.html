@@ -3,6 +3,10 @@
 <style>
     canvas {
         will-change: transform;
+        /* Top-align so the (composited) canvas is not positioned on the text baseline,
+           which platform font metrics can shift by a pixel. Keeps this in sync with the
+           reference boxes. */
+        vertical-align: top;
     }
 </style>
 <body>

@@ -5761,6 +5761,7 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-hover.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-popover-exit-animation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-active.html [ ImageOnlyFailure ]
+webkit.org/b/319749 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-font-inheriting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-writing-mode-vertical-rl.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-open-invalidation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-option-arrow-scroll.optional.html [ Skip ]
@@ -8606,6 +8607,16 @@ editing/input/ios/typing-with-inline-predictions.html [ Pass Timeout ] # webkit.
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ] # webkit.org/b/318255
 http/wpt/identity/formats/ISO18013/mixed-requests.https.html [ Failure ] # webkit.org/b/318256
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-constraint-validation.html [ Pass Failure ] # webkit.org/b/318257
+
+# SVG-as-image renders foreignObject text one device pixel below inline SVG on HiDPI (surfaced by the iOS font-metrics convergence).
+webkit.org/b/319748 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-svg-image.html [ ImageOnlyFailure ]
+
+# A container's border/clip edge rasterizes 1px off when it holds zoomed 3D-transform content vs not; surfaced (not caused) by the iOS font-metrics convergence shifting layout onto a sub-pixel position.
+webkit.org/b/319761 imported/w3c/web-platform-tests/css/css-viewport/zoom/perspective.html [ ImageOnlyFailure ]
+
+# Touch-drag selection lands on a different line after the iOS font-metric convergence shifted glyph baselines ~1px
+# (the drag target is computed from glyph rects + a fixed offset). Needs a more robust target; follow-up.
+webkit.org/b/319784 editing/selection/ios/bidi-visually-contiguous-selection-multiline.html [ Failure ]
 
 webkit.org/b/317884 imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html [ Skip ]
 webkit.org/b/256299 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]

@@ -21,7 +21,7 @@ This layer should be composited.
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (anchor 0.00 0.00)
-                  (bounds 200.00 840.00)
+                  (bounds 200.00 841.00)
                   (drawsContent 1)
                   (children 1
                     (GraphicsLayer

@@ -16,19 +16,20 @@
           (bounds 800.00 600.00)
           (drawsContent 1)
           (event region
-            (rect (0,0) width=800 height=43)
+            (rect (0,0) width=800 height=41)
           )
           (children 2
             (GraphicsLayer
-              (position 8.00 29.50)
+              (position 8.00 27.50)
+              (bounds 0.00 0.50)
             )
             (GraphicsLayer
               (bounds 800.00 600.00)
               (drawsContent 1)
               (event region
-                (rect (8,8) width=784 height=22)
+                (rect (8,8) width=784 height=20)
               (editable region
-                (rect (8,9) width=154 height=21)
+                (rect (8,9) width=154 height=19)
               )
               )
             )

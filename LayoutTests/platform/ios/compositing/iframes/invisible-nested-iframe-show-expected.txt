@@ -24,10 +24,10 @@
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)
-                          (bounds 300.00 193.00)
+                          (bounds 300.00 192.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 300.00 193.00)
+                              (bounds 300.00 192.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer
@@ -83,9 +83,9 @@
           )
         )
         (GraphicsLayer
-          (position 18.00 202.50)
-          (bounds 210.00 210.00)
-          (contentsOpaque 1)
+          (position 18.00 201.50)
+          (anchor 0.50 0.50)
+          (bounds 210.00 210.50)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )
       )

@@ -32,8 +32,8 @@
           )
         )
         (GraphicsLayer
-          (position 244.00 244.50)
-          (bounds 202.00 202.00)
+          (position 244.00 243.50)
+          (bounds 202.00 202.50)
           (drawsContent 1)
           (children 1
             (GraphicsLayer

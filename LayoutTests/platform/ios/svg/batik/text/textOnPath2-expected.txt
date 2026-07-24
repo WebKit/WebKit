@@ -28,8 +28,8 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (10,-119) size 410x123 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,103) size 90x18
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 89.78: "This is simple"
-        RenderSVGTextPath {textPath} at (75,0) size 153x119
-          RenderSVGInlineText {#text} at (75,29) size 47x90
+        RenderSVGTextPath {textPath} at (75,0) size 152x119
+          RenderSVGInlineText {#text} at (75,29) size 47x89
             chunk 1 text run 1 at (100.02,-2.22) startOffset 0 endOffset 1 width 4.45: "t"
             chunk 1 text run 2 at (100.20,-7.99) startOffset 1 endOffset 2 width 7.10: "e"
             chunk 1 text run 3 at (100.76,-15.52) startOffset 2 endOffset 3 width 8.00: "x"
@@ -45,7 +45,7 @@ layer at (0,0) size 450x500
             chunk 1 text run 13 at (122.70,-71.28) startOffset 12 endOffset 13 width 4.45: "t"
             chunk 1 text run 14 at (126.98,-75.79) startOffset 13 endOffset 14 width 8.00: "h"
           RenderSVGTSpan {tspan} at (105,0) size 94x35
-            RenderSVGInlineText {#text} at (105,0) size 94x35
+            RenderSVGInlineText {#text} at (105,0) size 93x35
               chunk 1 text run 1 at (134.47,-82.07) startOffset 0 endOffset 1 width 11.55: "w"
               chunk 1 text run 2 at (141.24,-86.33) startOffset 1 endOffset 2 width 4.45: "i"
               chunk 1 text run 3 at (145.21,-88.32) startOffset 2 endOffset 3 width 4.45: "t"
@@ -57,7 +57,7 @@ layer at (0,0) size 450x500
               chunk 1 text run 9 at (182.11,-92.49) startOffset 8 endOffset 9 width 4.45: "t"
               chunk 1 text run 10 at (187.70,-91.03) startOffset 9 endOffset 10 width 7.10: "e"
               chunk 1 text run 11 at (194.74,-88.34) startOffset 10 endOffset 11 width 8.00: "d"
-          RenderSVGTSpan {tspan} at (186,19) size 42x41
+          RenderSVGTSpan {tspan} at (186,19) size 41x41
             RenderSVGInlineText {#text} at (186,19) size 41x41
               chunk 1 text run 1 at (200.08,-85.59) startOffset 0 endOffset 1 width 4.00: " "
               chunk 1 text run 2 at (203.66,-83.36) startOffset 1 endOffset 2 width 4.45: "t"
@@ -78,8 +78,8 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (10,-119) size 421x123 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,103) size 90x18
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 89.78: "This is simple"
-        RenderSVGTextPath {textPath} at (77,0) size 163x93
-          RenderSVGInlineText {#text} at (77,13) size 66x80
+        RenderSVGTextPath {textPath} at (78,0) size 161x93
+          RenderSVGInlineText {#text} at (78,13) size 66x80
             chunk 1 text run 1 at (102.65,-28.14) startOffset 0 endOffset 1 width 4.45: "t"
             chunk 1 text run 2 at (103.93,-33.77) startOffset 1 endOffset 2 width 7.10: "e"
             chunk 1 text run 3 at (106.02,-41.02) startOffset 2 endOffset 3 width 8.00: "x"
@@ -107,7 +107,7 @@ layer at (0,0) size 450x500
               chunk 1 text run 9 at (205.75,-81.91) startOffset 8 endOffset 9 width 4.45: "t"
               chunk 1 text run 10 at (210.26,-78.32) startOffset 9 endOffset 10 width 7.10: "e"
               chunk 1 text run 11 at (215.69,-73.07) startOffset 10 endOffset 11 width 8.00: "d"
-          RenderSVGTSpan {tspan} at (205,39) size 35x44
+          RenderSVGTSpan {tspan} at (205,39) size 34x44
             RenderSVGInlineText {#text} at (205,39) size 34x44
               chunk 1 text run 1 at (219.59,-68.51) startOffset 0 endOffset 1 width 4.00: " "
               chunk 1 text run 2 at (222.11,-65.13) startOffset 1 endOffset 2 width 4.45: "t"
@@ -129,7 +129,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,103) size 90x18
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 89.78: "This is simple"
         RenderSVGTextPath {textPath} at (79,0) size 162x88
-          RenderSVGInlineText {#text} at (79,11) size 70x77
+          RenderSVGInlineText {#text} at (79,11) size 70x76
             chunk 1 (middle anchor) text run 1 at (103.85,-33.49) startOffset 0 endOffset 1 width 4.45: "t"
             chunk 1 (middle anchor) text run 2 at (105.40,-39.05) startOffset 1 endOffset 2 width 7.10: "e"
             chunk 1 (middle anchor) text run 3 at (107.86,-46.19) startOffset 2 endOffset 3 width 8.00: "x"

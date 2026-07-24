@@ -8,7 +8,7 @@ visibleRect	{ left: 0, top: 0, width: 520, height: 1063 }
 After move to second field
 
 scale	0.750
-visibleRect	{ left: 0, top: 780, width: 520, height: 1063 }
+visibleRect	{ left: 0, top: 777, width: 520, height: 1063 }
 After move to first field
 
 scale	0.750

@@ -11,10 +11,10 @@
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (36,20) width=432 height=52),
-        (interaction (36,292) width=432 height=52),
-        (interaction (36,428) width=432 height=52),
-        (interaction (36,496) width=432 height=52)])
+        (interaction (36,20) width=432 height=50),
+        (interaction (36,284) width=432 height=50),
+        (interaction (36,416) width=432 height=50),
+        (interaction (36,482) width=432 height=50)])
       )
     )
   )

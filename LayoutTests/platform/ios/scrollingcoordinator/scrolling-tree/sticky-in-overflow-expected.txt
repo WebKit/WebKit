@@ -30,7 +30,7 @@ Sticky content
           (anchor edges: AnchorEdgeTop )
           (top offset 10.00)
           (containing block rect at (50,50) size 300x1000)
-          (sticky box rect at (50,50) size 300x20)
+          (sticky box rect at (50,50) size 300x18)
           (constraining rect at (0,0) size 400x300)
           (sticky offset at last layout width=0 height=0)
           (layer position at last layout (50,50))
