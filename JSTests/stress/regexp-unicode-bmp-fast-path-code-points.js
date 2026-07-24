@@ -23,25 +23,23 @@ const singleCodePoint = /^.$/u;
 const twoCodePoints = /^(.)(.)$/u;
 const greedy = /^([^X]*)X$/u;
 
-for (let i = 0; i < testLoopCount; ++i) {
-    for (const first of codeUnits) {
-        for (const second of followers) {
-            const subject = String.fromCharCode(first, second);
-            const expected = codePointsOf(subject);
-            const tag = `[${first.toString(16)},${second.toString(16)}]`;
+for (const first of codeUnits) {
+    for (const second of followers) {
+        const subject = String.fromCharCode(first, second);
+        const expected = codePointsOf(subject);
+        const tag = `[${first.toString(16)},${second.toString(16)}]`;
 
-            shouldBe(singleCodePoint.test(subject), expected.length === 1, `single code point ${tag}`);
+        shouldBe(singleCodePoint.test(subject), expected.length === 1, `single code point ${tag}`);
 
-            const matched = twoCodePoints.exec(subject);
-            shouldBe(matched !== null, expected.length === 2, `two code points ${tag}`);
-            if (matched) {
-                shouldBe(matched[1].codePointAt(0), expected[0], `first code point ${tag}`);
-                shouldBe(matched[2].codePointAt(0), expected[1], `second code point ${tag}`);
-            }
-
-            const scanned = greedy.exec(subject + "X");
-            shouldBe(scanned !== null, true, `greedy scan ${tag}`);
-            shouldBe(scanned[1], subject, `greedy capture ${tag}`);
+        const matched = twoCodePoints.exec(subject);
+        shouldBe(matched !== null, expected.length === 2, `two code points ${tag}`);
+        if (matched) {
+            shouldBe(matched[1].codePointAt(0), expected[0], `first code point ${tag}`);
+            shouldBe(matched[2].codePointAt(0), expected[1], `second code point ${tag}`);
         }
+
+        const scanned = greedy.exec(subject + "X");
+        shouldBe(scanned !== null, true, `greedy scan ${tag}`);
+        shouldBe(scanned[1], subject, `greedy capture ${tag}`);
     }
 }
