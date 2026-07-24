@@ -2826,8 +2826,9 @@ imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.htm
 imported/w3c/web-platform-tests/webrtc/transfer-datachannel.html [ Pass Failure ]
 webrtc/encrypted-rtp-header-extensions.html [ Pass Crash ]
 webrtc/h264-baseline.html [ Pass Crash ]
-webrtc/h264-high.html [ Pass Crash ]
+webkit.org/b/311846 webrtc/h264-high.html [ Pass Crash ]
 webrtc/vp8-then-h264.html [ Pass Crash ]
+webkit.org/b/310095 imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Crash Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?rest [ Pass Failure Slow ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer.html?rest [ Slow ]
@@ -2995,7 +2996,7 @@ webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.h
 
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-answer.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-offer.html [ Skip ]
-webkit.org/b/308371 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
+webkit.org/b/308371 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Failure ]
 
 # RTP sender de-activation is not working as expected due to internal queues in rtpbin. The valve we
 # use in our RTPPacketizer is not sufficient, we would need it to be further downstream.
@@ -3004,8 +3005,6 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 # For simulcast outbound streams webrtcbin currently returns the stats for the merged stream.
 # Instead it should create one outbound-rtp stat structure per configured rid.
 imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
-
-webkit.org/b/310095 imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Pass Failure ]
 
 # Legacy Offer options are enabled by default in WPE and GTK ports.
 imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-createOffer-offerToReceive.optional.html [ Pass ]

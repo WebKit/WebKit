@@ -558,7 +558,7 @@ webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-pseudo/backdrop-animate-002.html [ ImageOnlyFailure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Pass ]
 
-webkit.org/b/235885 [ Debug ] webrtc/multi-video.html [ Failure Pass ]
+webkit.org/b/235885 webrtc/multi-video.html [ Failure Pass ]
 webkit.org/b/312138 [ Debug ] webrtc/video-rotation-black.html [ Failure Pass ]
 
 webkit.org/b/257624 [ Release ] fast/mediastream/MediaStream-video-element-enter-background.html [ Failure Pass ]
@@ -1256,7 +1256,6 @@ webkit.org/b/313034 [ Release ] http/tests/resourceLoadStatistics/user-interacti
 webkit.org/b/311861 [ arm64 ] media/video-played-ranges-1.html [ Pass Failure ]
 webkit.org/b/311864 [ arm64 ] fast/events/monotonic-event-time-real-gap.html [ Pass Failure ]
 webkit.org/b/311865 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob.window.html [ Pass Failure ]
-[ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
 
 webkit.org/b/312273 http/tests/media/video-play-waiting.html [ Pass Failure ]
 
@@ -1270,7 +1269,7 @@ webkit.org/b/313036 imported/w3c/web-platform-tests/editing/other/copy-elements-
 
 webkit.org/b/313054 [ arm64 ] compositing/backing/animate-into-view-with-descendant.html [ Pass Failure ]
 webkit.org/b/160119 [ arm64 ] editing/selection/caret-at-bidi-boundary.html [ Pass Timeout ]
-webkit.org/b/313112 [ arm64 ] webrtc/video-mute.html [ Pass Failure Timeout ]
+webkit.org/b/313112 [ arm64 ] webrtc/video-mute.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
@@ -1296,9 +1295,6 @@ webkit.org/b/316583 [ arm64 ] css3/filters/filter-animation-from-none-multi-hw.h
 webkit.org/b/316584 [ arm64 ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_pmin_pmax.wast.js.html [ Pass Failure Timeout ]
 webkit.org/b/316585 [ arm64 ] fullscreen/full-screen-disables-viewport-clipping.html [ Pass ImageOnlyFailure ]
 webkit.org/b/316586 [ arm64 ] http/tests/cache/cache-control-immutable-http.html [ Pass Crash ]
-
-webkit.org/b/315758 imported/w3c/web-platform-tests/webrtc/simulcast/vp8.https.html [ Crash Pass ]
-webkit.org/b/315758 imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.html [ Crash Pass ]
 
 webkit.org/b/316572 [ x86_64 ] webaudio/require-transient-activation.html [ Pass Crash ]
 webkit.org/b/316574 fast/parser/entities-in-html.html [ Pass Timeout ]
@@ -1371,7 +1367,6 @@ webkit.org/b/319326 [ arm64 ] imported/w3c/web-platform-tests/media-source/media
 webkit.org/b/320053 [ Debug ] fast/dom/move-embedded-during-update.html [ Failure Pass ]
 webkit.org/b/320054 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-add-new-track.html [ Failure Pass ]
 webkit.org/b/320056 [ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure Pass ]
-webkit.org/b/320063 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Crash Failure Pass ]
 webkit.org/b/320064 [ x86_64 ] fast/history/site-isolation/history-back-initial-vs-final-url.html [ Failure Pass ]
 webkit.org/b/320065 [ x86_64 ] fast/dom/gc-dom-tree-lifetime-shadow-tree.html [ Failure Pass ]
 
