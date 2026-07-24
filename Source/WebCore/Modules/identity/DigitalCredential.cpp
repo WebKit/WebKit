@@ -43,6 +43,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSOpenID4VPMultisignedRequest.h"
 #include "JSOpenID4VPSignedRequest.h"
+#include "JSOpenID4VPUnsignedRequest.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
@@ -93,6 +94,8 @@ static std::optional<DigitalCredentialPresentationProtocol> convertProtocolStrin
         return DigitalCredentialPresentationProtocol::OrgIsoMdoc;
 
     if (document.settings().digitalCredentialsOpenID4VPEnabled()) {
+        if (protocolString == "openid4vp-v1-unsigned"_s)
+            return DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned;
         if (protocolString == "openid4vp-v1-signed"_s)
             return DigitalCredentialPresentationProtocol::Openid4vpV1Signed;
         if (protocolString == "openid4vp-v1-multisigned"_s)
@@ -124,6 +127,12 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
             return Exception { ExceptionCode::ExistingExceptionError };
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
+    case Openid4vpV1Unsigned: {
+        auto result = convertDictionary<OpenID4VPUnsignedRequest>(*globalObject, request.data.get());
+        if (result.hasException(scope)) [[unlikely]]
+            return Exception { ExceptionCode::ExistingExceptionError };
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
+    }
     case Openid4vpV1Signed: {
         auto result = convertDictionary<OpenID4VPSignedRequest>(*globalObject, request.data.get());
         if (result.hasException(scope)) [[unlikely]]
@@ -136,11 +145,10 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
             return Exception { ExceptionCode::ExistingExceptionError };
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
-    default:
-        // FIXME: Handle "openid4vp-v1-unsigned" once DCQL parsing lands (webkit.org/b/320207).
-        ASSERT_NOT_REACHED();
-        return Exception { ExceptionCode::TypeError, "Unsupported protocol."_s };
     }
+
+    ASSERT_NOT_REACHED();
+    return Exception { ExceptionCode::TypeError, "Unsupported protocol."_s };
 }
 
 ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> DigitalCredential::convertObjectsToDigitalPresentationRequests(const Document& document, const Vector<DigitalCredentialGetRequest>& requests)

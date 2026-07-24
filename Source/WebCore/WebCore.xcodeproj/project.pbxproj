@@ -3303,6 +3303,12 @@
 		7C8E34C41E4A33B00054CE23 /* JSDOMConvertUnion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A91E4A338E0054CE23 /* JSDOMConvertUnion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34C51E4A33B00054CE23 /* JSDOMConvertVariadic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AA1E4A338E0054CE23 /* JSDOMConvertVariadic.h */; };
 		7C8E34C61E4A33B00054CE23 /* JSDOMConvertWebGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AB1E4A338E0054CE23 /* JSDOMConvertWebGL.h */; };
+		E8E7BE000000000000000002 /* DCQLMsoMdocMeta.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BE000000000000000001 /* DCQLMsoMdocMeta.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8E7BE000000000000000005 /* DCQLQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BE000000000000000004 /* DCQLQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8E7BE20000000000000000B /* DCQLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BE20000000000000000A /* DCQLValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8E7BE000000000000000007 /* DCQLSdJwtMeta.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BE000000000000000006 /* DCQLSdJwtMeta.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8E7BE00000000000000000A /* OpenID4VPUnsignedRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BE000000000000000009 /* OpenID4VPUnsignedRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E8E7BE00000000000000000E /* JSDOMConvertDCQL.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BE00000000000000000D /* JSDOMConvertDCQL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34C71E4A33B00054CE23 /* JSDOMConvertXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AC1E4A338E0054CE23 /* JSDOMConvertXPathNSResolver.h */; };
 		7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34E1AA6BF0700A98BAB /* ContentExtensionCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15314,6 +15320,16 @@
 		7CAC6AE8247F082000E61D59 /* ColorMatrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorMatrix.h; sourceTree = "<group>"; };
 		7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorComponents.h; sourceTree = "<group>"; };
 		7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertWebGL.cpp; sourceTree = "<group>"; };
+		E8E7BE000000000000000001 /* DCQLMsoMdocMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCQLMsoMdocMeta.h; sourceTree = "<group>"; };
+		E8E7BE000000000000000003 /* DCQLMsoMdocMeta.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DCQLMsoMdocMeta.idl; sourceTree = "<group>"; };
+		E8E7BE000000000000000004 /* DCQLQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCQLQuery.h; sourceTree = "<group>"; };
+		E8E7BE20000000000000000A /* DCQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCQLValue.h; sourceTree = "<group>"; };
+		E8E7BE000000000000000006 /* DCQLSdJwtMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCQLSdJwtMeta.h; sourceTree = "<group>"; };
+		E8E7BE000000000000000008 /* DCQLSdJwtMeta.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DCQLSdJwtMeta.idl; sourceTree = "<group>"; };
+		E8E7BE000000000000000009 /* OpenID4VPUnsignedRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenID4VPUnsignedRequest.h; sourceTree = "<group>"; };
+		E8E7BE00000000000000000B /* OpenID4VPUnsignedRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OpenID4VPUnsignedRequest.idl; sourceTree = "<group>"; };
+		E8E7BE00000000000000000C /* JSDOMConvertDCQL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertDCQL.cpp; sourceTree = "<group>"; };
+		E8E7BE00000000000000000D /* JSDOMConvertDCQL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertDCQL.h; sourceTree = "<group>"; };
 		7CBBBCC41F560567005EFAAC /* DOMMatrix2DInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMMatrix2DInit.idl; sourceTree = "<group>"; };
 		7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMatrix2DInit.h; sourceTree = "<group>"; };
 		7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrix2DInit.cpp; sourceTree = "<group>"; };
@@ -32530,6 +32546,8 @@
 				7C8E34961E4A338E0054CE23 /* JSDOMConvertCallbacks.h */,
 				7C8E34971E4A338E0054CE23 /* JSDOMConvertDate.cpp */,
 				7C8E34981E4A338E0054CE23 /* JSDOMConvertDate.h */,
+				E8E7BE00000000000000000C /* JSDOMConvertDCQL.cpp */,
+				E8E7BE00000000000000000D /* JSDOMConvertDCQL.h */,
 				7C8E34991E4A338E0054CE23 /* JSDOMConvertDictionary.h */,
 				7C8E349A1E4A338E0054CE23 /* JSDOMConvertEnumeration.h */,
 				7C8E349B1E4A338E0054CE23 /* JSDOMConvertEventListener.h */,
@@ -41591,12 +41609,20 @@
 		E8E7BDE12D94D12A0000A163 /* openid */ = {
 			isa = PBXGroup;
 			children = (
+				E8E7BE000000000000000001 /* DCQLMsoMdocMeta.h */,
+				E8E7BE000000000000000003 /* DCQLMsoMdocMeta.idl */,
+				E8E7BE000000000000000004 /* DCQLQuery.h */,
+				E8E7BE20000000000000000A /* DCQLValue.h */,
+				E8E7BE000000000000000006 /* DCQLSdJwtMeta.h */,
+				E8E7BE000000000000000008 /* DCQLSdJwtMeta.idl */,
 				745C1E395EA6A30D6AE53DCB /* OpenID4VPMultisignedRequest.h */,
 				10DCBDE288D8DF09E9DE8095 /* OpenID4VPMultisignedRequest.idl */,
 				166FD29091573AE0071CC010 /* OpenID4VPSignature.h */,
 				DA1F1A26CC1A22F7F9E51921 /* OpenID4VPSignature.idl */,
 				24318795E4EEC2337746A550 /* OpenID4VPSignedRequest.h */,
 				99AC31211F38CFD6F2485E92 /* OpenID4VPSignedRequest.idl */,
+				E8E7BE000000000000000009 /* OpenID4VPUnsignedRequest.h */,
+				E8E7BE00000000000000000B /* OpenID4VPUnsignedRequest.idl */,
 			);
 			path = openid;
 			sourceTree = "<group>";
@@ -45102,6 +45128,10 @@
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
 				E5F06AEB24D49BF700BBC4F8 /* DateTimeNumericFieldElement.h in Headers */,
 				E5F06AEF24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h in Headers */,
+				E8E7BE000000000000000002 /* DCQLMsoMdocMeta.h in Headers */,
+				E8E7BE000000000000000005 /* DCQLQuery.h in Headers */,
+				E8E7BE20000000000000000B /* DCQLValue.h in Headers */,
+				E8E7BE000000000000000007 /* DCQLSdJwtMeta.h in Headers */,
 				BC4A532D256056D50028C592 /* DebugOverlayRegions.h in Headers */,
 				0F6A12BE1A00923700C6DE72 /* DebugPageOverlays.h in Headers */,
 				45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */,
@@ -46446,6 +46476,7 @@
 				7C8E34B01E4A33AF0054CE23 /* JSDOMConvertBufferSource.h in Headers */,
 				7C8E34B11E4A33B00054CE23 /* JSDOMConvertCallbacks.h in Headers */,
 				7C8E34B31E4A33B00054CE23 /* JSDOMConvertDate.h in Headers */,
+				E8E7BE00000000000000000E /* JSDOMConvertDCQL.h in Headers */,
 				7C8E34B41E4A33B00054CE23 /* JSDOMConvertDictionary.h in Headers */,
 				7C8E34B51E4A33B00054CE23 /* JSDOMConvertEnumeration.h in Headers */,
 				7C8E34B61E4A33B00054CE23 /* JSDOMConvertEventListener.h in Headers */,
@@ -47710,6 +47741,7 @@
 				EB08054AAEA4BB58328F5762 /* OpenID4VPMultisignedRequest.h in Headers */,
 				599DD0B0C2E2D658258CFA9A /* OpenID4VPSignature.h in Headers */,
 				34B3726E71963DE8E6D0A99B /* OpenID4VPSignedRequest.h in Headers */,
+				E8E7BE00000000000000000A /* OpenID4VPUnsignedRequest.h in Headers */,
 				B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */,
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
 				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,

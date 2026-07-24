@@ -594,6 +594,11 @@ sub AddToIncludesForIDLType
             AddToIncludes("JSDOMConvertWebGL.h", $includesRef, $conditional);
             return;
         }
+
+        if ($overrideTypeName eq "IDLDCQLQuery") {
+            AddToIncludes("JSDOMConvertDCQL.h", $includesRef, $conditional);
+            return;
+        }
     }
 
     if ($type->name eq "undefined") {

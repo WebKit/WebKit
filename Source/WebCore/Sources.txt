@@ -706,6 +706,7 @@ bindings/js/JSDOMConstructorWithDocument.cpp
 bindings/js/JSDOMConvertAny.cpp
 bindings/js/JSDOMConvertBoolean.cpp
 bindings/js/JSDOMConvertBufferSource.cpp
+bindings/js/JSDOMConvertDCQL.cpp
 bindings/js/JSDOMConvertDate.cpp
 bindings/js/JSDOMConvertNumbers.cpp
 bindings/js/JSDOMConvertStrings.cpp
@@ -4108,6 +4109,8 @@ JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSCustomStateSet.cpp
 JSCustomXPathNSResolver.cpp
+JSDCQLMsoMdocMeta.cpp
+JSDCQLSdJwtMeta.cpp
 JSDOMAudioSession.cpp
 JSDOMCSSCustomPropertyDescriptor.cpp
 JSDOMCSSNamespace.cpp
@@ -4707,6 +4710,7 @@ JSOffscreenCanvasRenderingContext2D.cpp
 JSOpenID4VPMultisignedRequest.cpp
 JSOpenID4VPSignature.cpp
 JSOpenID4VPSignedRequest.cpp
+JSOpenID4VPUnsignedRequest.cpp
 JSOptionalEffectTiming.cpp
 JSOpusEncoderConfig.cpp
 JSOrigin.cpp

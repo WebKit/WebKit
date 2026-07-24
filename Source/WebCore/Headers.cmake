@@ -490,9 +490,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/identity/protocols/ISO18013/MobileDocumentRequest.h
     Modules/identity/protocols/ISO18013/ValidatedMobileDocumentRequest.h
 
+    Modules/identity/protocols/openid/DCQLMsoMdocMeta.h
+    Modules/identity/protocols/openid/DCQLQuery.h
+    Modules/identity/protocols/openid/DCQLSdJwtMeta.h
+    Modules/identity/protocols/openid/DCQLValue.h
     Modules/identity/protocols/openid/OpenID4VPMultisignedRequest.h
     Modules/identity/protocols/openid/OpenID4VPSignature.h
     Modules/identity/protocols/openid/OpenID4VPSignedRequest.h
+    Modules/identity/protocols/openid/OpenID4VPUnsignedRequest.h
 
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBActiveDOMObjectInlines.h
@@ -935,6 +940,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSDOMConvertBoolean.h
     bindings/js/JSDOMConvertBufferSource.h
     bindings/js/JSDOMConvertCallbacks.h
+    bindings/js/JSDOMConvertDCQL.h
     bindings/js/JSDOMConvertDate.h
     bindings/js/JSDOMConvertDictionary.h
     bindings/js/JSDOMConvertEnumeration.h

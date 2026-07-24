@@ -354,8 +354,59 @@ struct WebCore::OpenID4VPMultisignedRequest {
     Vector<WebCore::OpenID4VPSignature> signatures;
 };
 
+header: <WebCore/DCQLMsoMdocMeta.h>
+[Nested] struct WebCore::DCQLMsoMdocMeta {
+    std::optional<String> doctypeValue;
+};
+
+header: <WebCore/DCQLSdJwtMeta.h>
+[Nested] struct WebCore::DCQLSdJwtMeta {
+    Vector<String> vctValues;
+};
+
+header: <WebCore/DCQLValue.h>
+[Nested] struct WebCore::DCQLValue {
+    Variant<std::nullptr_t, bool, double, String, Vector<Box<WebCore::DCQLValue>>, HashMap<String, Box<WebCore::DCQLValue>>> value;
+};
+
+header: <WebCore/DCQLQuery.h>
+using WebCore::DCQLClaimPathComponent = Variant<String, uint64_t, std::nullptr_t>;
+
+using WebCore::DCQLMeta = Variant<WebCore::DCQLMsoMdocMeta, WebCore::DCQLSdJwtMeta, WebCore::DCQLValue>;
+
+[Nested] struct WebCore::DCQLClaimsQuery {
+    std::optional<String> id;
+    Vector<WebCore::DCQLClaimPathComponent> path;
+};
+
+[Nested] struct WebCore::DCQLCredentialQuery {
+    String id;
+    String format;
+    WebCore::DCQLMeta meta;
+    Vector<WebCore::DCQLClaimsQuery> claims;
+    Vector<Vector<String>> claimSets;
+};
+
+[Nested] struct WebCore::DCQLCredentialSetQuery {
+    Vector<Vector<String>> options;
+    std::optional<bool> required;
+};
+
+[Nested] struct WebCore::DCQLQuery {
+    Vector<WebCore::DCQLCredentialQuery> credentials;
+    Vector<WebCore::DCQLCredentialSetQuery> credentialSets;
+};
+
+header: <WebCore/OpenID4VPUnsignedRequest.h>
+struct WebCore::OpenID4VPUnsignedRequest {
+    String responseType;
+    String responseMode;
+    String nonce;
+    WebCore::DCQLQuery dcqlQuery;
+};
+
 header: <WebCore/UnvalidatedDigitalCredentialRequest.h>
-using WebCore::UnvalidatedDigitalCredentialRequest = Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPSignedRequest, WebCore::OpenID4VPMultisignedRequest>;
+using WebCore::UnvalidatedDigitalCredentialRequest = Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPUnsignedRequest, WebCore::OpenID4VPSignedRequest, WebCore::OpenID4VPMultisignedRequest>;
 
 header: <WebCore/DigitalCredentialsRequestData.h>
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DigitalCredentialsSecurityOriginData {

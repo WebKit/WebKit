@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,41 @@
 
 #pragma once
 
-#include <WebCore/MobileDocumentRequest.h>
-#include <WebCore/OpenID4VPMultisignedRequest.h>
-#include <WebCore/OpenID4VPSignedRequest.h>
-#include <WebCore/OpenID4VPUnsignedRequest.h>
+#include <WebCore/DCQLMsoMdocMeta.h>
+#include <WebCore/DCQLSdJwtMeta.h>
+#include <WebCore/DCQLValue.h>
+#include <optional>
 #include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-// Every alternative must be IPC-serializable; see WebCoreArgumentCodersAuth.serialization.in.
-using UnvalidatedDigitalCredentialRequest = Variant<
-    MobileDocumentRequest,
-    OpenID4VPUnsignedRequest,
-    OpenID4VPSignedRequest,
-    OpenID4VPMultisignedRequest
->;
+using DCQLClaimPathComponent = Variant<String, uint64_t, std::nullptr_t>;
+
+struct DCQLClaimsQuery {
+    std::optional<String> id;
+    Vector<DCQLClaimPathComponent> path;
+};
+
+using DCQLMeta = Variant<DCQLMsoMdocMeta, DCQLSdJwtMeta, DCQLValue>;
+
+struct DCQLCredentialQuery {
+    String id;
+    String format;
+    DCQLMeta meta;
+    Vector<DCQLClaimsQuery> claims;
+    Vector<Vector<String>> claimSets;
+};
+
+struct DCQLCredentialSetQuery {
+    Vector<Vector<String>> options;
+    std::optional<bool> required;
+};
+
+struct DCQLQuery {
+    Vector<DCQLCredentialQuery> credentials;
+    Vector<DCQLCredentialSetQuery> credentialSets;
+};
 
 } // namespace WebCore

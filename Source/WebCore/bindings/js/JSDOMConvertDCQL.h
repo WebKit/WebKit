@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,21 @@
 
 #pragma once
 
-#include <WebCore/MobileDocumentRequest.h>
-#include <WebCore/OpenID4VPMultisignedRequest.h>
-#include <WebCore/OpenID4VPSignedRequest.h>
-#include <WebCore/OpenID4VPUnsignedRequest.h>
-#include <wtf/Variant.h>
+#include <WebCore/DCQLQuery.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertBase.h>
 
 namespace WebCore {
 
-// Every alternative must be IPC-serializable; see WebCoreArgumentCodersAuth.serialization.in.
-using UnvalidatedDigitalCredentialRequest = Variant<
-    MobileDocumentRequest,
-    OpenID4VPUnsignedRequest,
-    OpenID4VPSignedRequest,
-    OpenID4VPMultisignedRequest
->;
+// Custom inbound IDL type for the DCQL query object, used as
+// [OverrideIDLType=IDLDCQLQuery] on OpenID4VPUnsignedRequest so the whole subtree is parsed by
+// one converter that can dispatch each credential's meta on its sibling format.
+struct IDLDCQLQuery : IDLType<DCQLQuery> { };
+
+template<> struct Converter<IDLDCQLQuery> : DefaultConverter<IDLDCQLQuery> {
+    using ReturnType = DCQLQuery;
+
+    static ConversionResult<IDLDCQLQuery> convert(JSC::JSGlobalObject&, JSC::JSValue);
+};
 
 } // namespace WebCore
