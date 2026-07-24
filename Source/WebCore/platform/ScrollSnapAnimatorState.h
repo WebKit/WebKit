@@ -102,6 +102,9 @@ private:
 
     bool preserveCurrentTargetForAxis(ScrollEventAxis, NodeIdentifier);
 
+    std::optional<unsigned> snapOffsetIndexForNode(ScrollEventAxis, NodeIdentifier) const;
+    Markable<NodeIdentifier> focusedOrTargetedNodeForAxis(ScrollEventAxis) const;
+
     Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsetsForAxis(ScrollEventAxis) const;
     HashSet<NodeIdentifier> currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const;
 
@@ -144,6 +147,11 @@ private:
     HashSet<NodeIdentifier> m_currentlySnappedBoxes;
     Markable<NodeIdentifier> m_currentSnapTargetForHorizontalAxis;
     Markable<NodeIdentifier> m_currentSnapTargetForVerticalAxis;
+
+    // The focused/targeted box seen at the last re-snap, per axis, so we can tell a focus/:target
+    // change (a snap-target selection trigger) apart from a pure layout change.
+    Markable<NodeIdentifier> m_lastFocusedOrTargetedNodeX;
+    Markable<NodeIdentifier> m_lastFocusedOrTargetedNodeY;
 
     // Scroll offset and viewport size from the last snap/re-snap, for cross-axis
     // visibility checks.
