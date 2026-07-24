@@ -1,0 +1,15 @@
+{
+    "TestCallbackInterface": {
+        "prototype": {
+            "callbackRequiresThisToPass": "longParam, testNodeParam",
+            "callbackThatTreatsExceptionAsRejectedPromise": "enumParam",
+            "callbackWithArrayParam": "arrayParam",
+            "callbackWithBoolean": "boolParam",
+            "callbackWithEnum": "enumParam",
+            "callbackWithSerializedScriptValueParam": "srzParam, strParam",
+            "callbackWithStringList": "listParam",
+            "callbackWithThisObject": "testObjParam",
+            "customCallback": "testObjParam, testNodeParam"
+        }
+    }
+}
