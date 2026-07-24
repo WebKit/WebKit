@@ -70,9 +70,16 @@ private func createElementContent(for item: WKTextExtractionItem) -> Intelligenc
     }
 }
 
-private func createIntelligenceElement(item: WKTextExtractionItem) -> IntelligenceElement {
+private func createIntelligenceElement(item: WKTextExtractionItem, contextMenuTargetNodeIdentifier: String?) -> IntelligenceElement {
     var element = IntelligenceElement(boundingBox: item.rectInWebView, content: createElementContent(for: item))
-    element.subelements = item.children.map { child in createIntelligenceElement(item: child) }
+    if let contextMenuTargetNodeIdentifier, item.nodeIdentifier == contextMenuTargetNodeIdentifier {
+        #if canImport(UIIntelligenceSupport.Radar165004762)
+        element.isContextMenuSource = true
+        #endif
+    }
+    element.subelements = item.children.map { child in
+        createIntelligenceElement(item: child, contextMenuTargetNodeIdentifier: contextMenuTargetNodeIdentifier)
+    }
     return element
 }
 
@@ -110,8 +117,13 @@ extension WKWebView {
             configuration.eventListenerCategories = []
             configuration.includeAccessibilityAttributes = false
             configuration.filterOptions = []
+            let contextMenuTargetNodeIdentifier = _activeContextMenuTargetNodeIdentifier
             if let rootItem = await _requestTextExtraction(configuration) {
-                collector.collect(createIntelligenceElement(item: rootItem))
+                let rootElement = createIntelligenceElement(
+                    item: rootItem,
+                    contextMenuTargetNodeIdentifier: contextMenuTargetNodeIdentifier
+                )
+                collector.collect(rootElement)
             }
 
             coordinator.finishCollection(collector)

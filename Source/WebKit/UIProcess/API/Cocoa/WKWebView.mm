@@ -7857,7 +7857,25 @@ static NSString *nameForAction(_WKTextExtractionAction action)
 
 @end
 
+#if PLATFORM(IOS_FAMILY)
+static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentifier(WKContentView *contentView)
+{
+    return [contentView activeContextMenuElementContext].and_then([](const auto& elementContext) {
+        return elementContext.nodeIdentifier.asOptional();
+    });
+}
+#endif
+
 @implementation WKWebView (WKTextExtraction)
+
+- (NSString *)_activeContextMenuTargetNodeIdentifier
+{
+#if PLATFORM(IOS_FAMILY)
+    if (auto nodeIdentifier = activeContextMenuTargetNodeIdentifier(_contentView.get()))
+        return [NSString stringWithFormat:@"%llu", nodeIdentifier->toUInt64()];
+#endif
+    return nil;
+}
 
 #if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
@@ -7964,12 +7982,19 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
 #endif
     }();
 
+#if PLATFORM(IOS_FAMILY)
+    auto contextMenuTargetNodeIdentifier = activeContextMenuTargetNodeIdentifier(_contentView.get());
+#else
+    std::optional<WebCore::NodeIdentifier> contextMenuTargetNodeIdentifier;
+#endif
+
     auto makeRequest = [&](Ref<WebKit::WebFrameProxy>&& frame) {
         return WebCore::TextExtraction::Request {
             .clientNodeAttributes = extractClientNodeAttributes(frame.copyRef(), configuration),
             .collectionRectInRootView = rectInRootView,
             .targetNodeHandleIdentifier = jsHandleIdentifierInFrame(frame, configuration.targetNode),
             .handleIdentifiersOfNodesToSkip = extractHandleIdentifiersOfNodesToSkip(frame.copyRef(), configuration),
+            .contextMenuTargetNodeIdentifier = contextMenuTargetNodeIdentifier,
             .mergeParagraphs = mergeParagraphs,
             .skipNearlyTransparentContent = skipNearlyTransparentContent,
             .nodeIdentifierInclusion = nodeIdentifierInclusion,
