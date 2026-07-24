@@ -1974,8 +1974,19 @@ std::optional<SimpleRange> AccessibilityObject::rangeForCharacterRange(const Cha
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
     auto start = startOfLine(visiblePosition);
-    if (start.isNull())
+    if (start.isNull()) {
+        // An out-of-flow (floated or positioned) replaced element generates no inline line
+        // box, so startOfLine() is null and the caret has no line to read. Give it a line of
+        // its own by selecting the element's node. Select the node itself, not its contents,
+        // which are empty for a replaced element, so that reading the line emits the element's
+        // object-replacement attachment.
+        CheckedPtr renderer = this->renderer();
+        if (RefPtr node = this->node(); node && renderer && isReplacedElement()
+            && isRendererReplacedElement(renderer.get())
+            && renderer->isFloatingOrOutOfFlowPositioned())
+            return makeVisiblePositionRange(makeRangeSelectingNode(*node));
         return { };
+    }
 
     // Move from the given visiblePosition forward until it hits the start of the next line or cross over a line break.
     auto end = visiblePosition;
