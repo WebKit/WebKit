@@ -60,7 +60,7 @@ function test()
                 InspectorTest.expectEqual(cookie.name, expected.name, `cookie.name should be '${expected.name}'.`);
                 InspectorTest.expectEqual(cookie.value, expected.value, `cookie.value should be '${expected.value}'.`);
                 if (cookie.expires && expected.expires)
-                    InspectorTest.expectEqual(cookie.expires.getTime(), expected.expires.getTime(), `cookie.expires should be '${expected.expires}'.`);
+                    InspectorTest.expectEqual(cookie.expires.getTime(), expected.expires.getTime(), `cookie.expires should be ${expected.expires.getTime()}.`);
                 else
                     InspectorTest.expectEqual(cookie.expires, expected.expires, `cookie.expires should be '${expected.expires}'.`);
                 InspectorTest.expectEqual(cookie.maxAge, expected.maxAge, `cookie.maxAge should be '${expected.maxAge}'.`);
