@@ -70,6 +70,8 @@ localizedStrings["%s (Case Insensitive) @ Local Override"] = "%s (Case Insensiti
 localizedStrings["%s (Case Insensitive) @ Symbolic Breakpoint"] = "%s (Case Insensitive)";
 /* Label for the IP address of a proxy server used to retrieve a network resource. */
 localizedStrings["%s (Proxy) @ Resource Remote Address"] = "%s (Proxy)";
+/* Label for a source-mapped symbolic breakpoint. */
+localizedStrings["%s (Source Mapped) @ Symbolic Breakpoint"] = "%s (Source Mapped)";
 localizedStrings["%s (default)"] = "%s (default)";
 /* Label modifier indicating that the local override maps to a directory on disk. */
 localizedStrings["%s (directory) @ Local Override Type"] = "%s (directory)";
@@ -1671,6 +1673,7 @@ localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
 /* Title for Source row in Media Sidebar */
 localizedStrings["Source @ Media Sidebar"] = "Source";
+localizedStrings["Source Map"] = "Source Map";
 localizedStrings["Source Map \u0022%s\u0022 has %s"] = "Source Map \u0022%s\u0022 has %s";
 localizedStrings["Source Map loading errors"] = "Source Map loading errors";
 localizedStrings["Source Maps:"] = "Source Maps:";

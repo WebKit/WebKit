@@ -1,0 +1,114 @@
+Tests that a SymbolicBreakpoint set on an original (pre-minified) symbol resolves to the exact minified function via source map names. Bug 246055.
+
+
+== Running test suite: SymbolicBreakpoint.SourceMapped
+-- Running test case: SymbolicBreakpoint.SourceMapped.Configuration
+PASS: Breakpoint should use source maps.
+PASS: Breakpoint should use a regular expression.
+PASS: Breakpoint should not use an ignore count.
+PASS: Source Map mode should be preserved when serializing.
+PASS: Regular Expression mode should be preserved when serializing.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.ExactFunction
+Waiting for source map...
+PASS: Should have a source map for the script.
+PASS: Original symbol "originalFunctionName" should resolve to one generated function.
+PASS: Original symbol "otherOriginalFunctionName" should resolve to one generated function.
+PASS: Original symbol "unrelatedOriginalFunctionName" should resolve to one generated function.
+PASS: Original symbol "originalFunctionName" should resolve to generated symbol "a".
+PASS: Original symbol "otherOriginalFunctionName" should also resolve to generated symbol "a".
+PASS: Original symbol "unrelatedOriginalFunctionName" should resolve to generated symbol "originalFunctionName".
+PASS: Generated functions with the same name should have distinct breakpoint positions.
+Adding breakpoint on the original symbol...
+Triggering other generated function with the same name...
+PASS: Should not pause in the other generated function.
+Triggering unrelated generated function with the original name...
+PASS: Should not pause in an unrelated generated function with the original name.
+Triggering matching generated function...
+PASS: Should pause.
+PASS: Pause reason should be a symbolic function call.
+PASS: Pause data should identify the original symbol.
+PASS: Pause should associate back to the original breakpoint.
+
+Adding breakpoint on the other original symbol...
+Triggering other generated function with the same name...
+PASS: Should pause in the other generated function after adding its breakpoint.
+PASS: Pause reason should be a symbolic function call.
+PASS: Pause data should identify the other original symbol.
+PASS: Pause should associate back to the other original breakpoint.
+
+Removing breakpoints...
+Triggering generated functions...
+PASS: Should not pause again.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.ZeroOffset
+PASS: Original symbol "zeroOffsetOriginalFunctionName" should resolve to one generated function.
+PASS: Original symbol "zeroOffsetOriginalFunctionName" should resolve to generated symbol "z".
+PASS: Generated function should begin at source offset zero.
+Adding breakpoint on the zero-offset function...
+Triggering matching generated function...
+PASS: Should pause in the zero-offset function.
+PASS: Pause data should identify the original symbol.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.Disabled
+Adding breakpoint on the original symbol...
+Disabling breakpoint...
+Triggering matching generated function...
+PASS: Should not pause while disabled.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.Condition
+Adding breakpoint with condition 'false'...
+Triggering matching generated function...
+PASS: Should not pause when condition is false.
+Setting condition to 'true'...
+Triggering matching generated function...
+PASS: Should pause when condition is true.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.CaseInsensitive
+PASS: Case-insensitive original symbol "originalfunctionname" should resolve to one generated function.
+Adding case-insensitive breakpoint...
+Triggering unrelated generated function with the original name...
+PASS: Should not pause in an unrelated generated function with a case-insensitively matching name.
+Triggering matching generated function...
+PASS: Should pause in the matching generated function.
+PASS: Pause data should identify the configured symbol.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.MultipleFunctions
+PASS: Original symbol "duplicatedOriginalFunctionName" should resolve to two generated functions.
+PASS: Generated functions should have distinct offsets.
+Adding breakpoint...
+Triggering first matching generated function...
+PASS: Should pause in the first matching function.
+Triggering second matching generated function...
+PASS: Should pause in the second matching function.
+PASS: Pause data should identify the original symbol.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.RegularExpression
+PASS: Original symbol regular expression "^(original|otherOriginal)FunctionName$" should resolve to two generated functions.
+PASS: Case-insensitive original symbol regular expression "^(original|otheroriginal)functionname$" should resolve to two generated functions.
+PASS: Generated functions should have distinct offsets.
+Adding regular expression breakpoint...
+Triggering unrelated generated function...
+PASS: Should not pause in the generated function for a nonmatching original symbol.
+Triggering first matching generated function...
+PASS: Should pause in the first matching function.
+Triggering second matching generated function...
+PASS: Should pause in the second matching function.
+PASS: Pause data should identify the configured regular expression.
+PASS: Pause should associate back to the regular expression breakpoint.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.MemberAssignment
+PASS: Original symbol "memberAssignmentOriginalFunctionName" should resolve to one generated function.
+PASS: Original symbol "memberAssignmentOriginalFunctionName" should resolve to generated symbol "f".
+Adding breakpoint on the original member name...
+Triggering matching generated function...
+PASS: Should pause in the assigned function.
+PASS: Pause data should identify the original member name.
+
+-- Running test case: SymbolicBreakpoint.SourceMapped.AccessorAction
+PASS: Original symbol "accessorOriginalFunctionName" should resolve to one generated function.
+PASS: Accessor should use the runtime function name.
+Adding auto-continue breakpoint action on the accessor...
+Triggering matching accessor...
+PASS: Breakpoint action should run exactly once.
+
