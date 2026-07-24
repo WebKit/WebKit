@@ -19341,8 +19341,68 @@ IGNORE_CLANG_WARNINGS_END
     {
         LValue globalObject = lowCell(m_node->child1());
         LValue argument = lowString(m_node->child2());
+
+        if (compileRegExpExecNonGlobalOrStickyAnchoredFilter(globalObject, argument))
+            return;
+
         LValue result = vmCall(Int64, operationRegExpExecNonGlobalOrSticky, globalObject, frozenPointer(m_node->cellOperand()), argument);
         setJSValue(result);
+    }
+
+    // Nonzero iff `character` (0..255) might begin a match per the first-character `bitmap`.
+    LValue firstCharacterBitmapContains(LValue character, const uint8_t* bitmap)
+    {
+        LValue bitmapByte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, m_out.constIntPtr(bitmap), m_out.zeroExtPtr(m_out.lShr(character, m_out.constInt32(3)))));
+        LValue bit = m_out.shl(m_out.constInt32(1), m_out.bitAnd(character, m_out.constInt32(7)));
+        return m_out.testNonZero32(bitmapByte, bit);
+    }
+
+    // Anchored non-sticky exec fast-fail; tests input[0].
+    bool compileRegExpExecNonGlobalOrStickyAnchoredFilter(LValue globalObject, LValue argument)
+    {
+        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand()->value());
+        auto localBitmap = Yarr::computeAnchoredFirstCharacterBitmap(regExp->pattern(), regExp->flags());
+        if (!localBitmap)
+            return false;
+        const uint8_t* bitmap = m_ftlState.jitCode->dfgCommon()->m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+
+        LBasicBlock check8Bit = m_out.newBlock();
+        LBasicBlock checkLength = m_out.newBlock();
+        LBasicBlock filterCase = m_out.newBlock();
+        LBasicBlock noMatchCase = m_out.newBlock();
+        LBasicBlock operationCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isRopeString(argument, m_node->child2()), rarely(operationCase), usually(check8Bit));
+
+        LBasicBlock lastNext = m_out.appendTo(check8Bit, checkLength);
+        LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            rarely(operationCase), usually(checkLength));
+
+        // An anchored pattern cannot match empty, so delegate an empty string to the operation.
+        m_out.appendTo(checkLength, filterCase);
+        m_out.branch(m_out.equal(m_out.load32(stringImpl, m_heaps.StringImpl_length), m_out.int32Zero), rarely(operationCase), usually(filterCase));
+
+        m_out.appendTo(filterCase, noMatchCase);
+        LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
+        LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.constIntPtr(0)));
+        m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(noMatchCase));
+
+        m_out.appendTo(noMatchCase, operationCase);
+        ValueFromBlock nullResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsNull())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(operationCase, continuation);
+        ValueFromBlock operationResult = m_out.anchor(vmCall(Int64, operationRegExpExecNonGlobalOrSticky, globalObject, frozenPointer(m_node->cellOperand()), argument));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, nullResult, operationResult));
+        return true;
     }
 
     void compileRegExpExecSticky()
@@ -19350,8 +19410,80 @@ IGNORE_CLANG_WARNINGS_END
         LValue globalObject = lowCell(m_node->child1());
         LValue base = lowRegExpObject(m_node->child2());
         LValue argument = lowString(m_node->child3());
+
+        if (compileRegExpExecStickyFirstCharFilter(globalObject, base, argument))
+            return;
+
         LValue result = vmCall(Int64, operationRegExpExecStickyKnownRegExp, globalObject, frozenPointer(m_node->cellOperand()), base, argument);
         setJSValue(result);
+    }
+
+    // Sticky exec fast-fail; when input[lastIndex] cannot begin a match, reset lastIndex to 0 and
+    // return null inline.
+    bool compileRegExpExecStickyFirstCharFilter(LValue globalObject, LValue base, LValue argument)
+    {
+        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand()->value());
+        ASSERT(regExp->sticky() && !regExp->global());
+
+        auto localBitmap = Yarr::computeStickyFirstCharacterBitmap(regExp->pattern(), regExp->flags());
+        if (!localBitmap)
+            return false;
+        const uint8_t* bitmap = m_ftlState.jitCode->dfgCommon()->m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+
+        LBasicBlock check8Bit = m_out.newBlock();
+        LBasicBlock checkWritable = m_out.newBlock();
+        LBasicBlock checkInt32 = m_out.newBlock();
+        LBasicBlock checkInBounds = m_out.newBlock();
+        LBasicBlock filterCase = m_out.newBlock();
+        LBasicBlock noMatchCase = m_out.newBlock();
+        LBasicBlock operationCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isRopeString(argument, m_node->child3()), rarely(operationCase), usually(check8Bit));
+
+        LBasicBlock lastNext = m_out.appendTo(check8Bit, checkWritable);
+        LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            rarely(operationCase), usually(checkWritable));
+
+        // lastIndex must be writable so the no-match path can reset it to 0.
+        m_out.appendTo(checkWritable, checkInt32);
+        m_out.branch(
+            m_out.testNonZeroPtr(
+                m_out.loadPtr(base, m_heaps.RegExpObject_regExpAndFlags),
+                m_out.constIntPtr(RegExpObject::lastIndexIsNotWritableFlag)),
+            rarely(operationCase), usually(checkInt32));
+
+        m_out.appendTo(checkInt32, checkInBounds);
+        LValue lastIndexJSValue = m_out.load64(base, m_heaps.RegExpObject_lastIndex);
+        m_out.branch(isNotInt32(lastIndexJSValue), rarely(operationCase), usually(checkInBounds));
+
+        // Unsigned compare also rejects negative lastIndex; lastIndex == length is left to the operation.
+        m_out.appendTo(checkInBounds, filterCase);
+        LValue lastIndex = unboxInt32(lastIndexJSValue);
+        LValue stringLength = m_out.load32(stringImpl, m_heaps.StringImpl_length);
+        m_out.branch(m_out.aboveOrEqual(lastIndex, stringLength), rarely(operationCase), usually(filterCase));
+
+        m_out.appendTo(filterCase, noMatchCase);
+        LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
+        LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.zeroExtPtr(lastIndex)));
+        m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(noMatchCase));
+
+        m_out.appendTo(noMatchCase, operationCase);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(0))), base, m_heaps.RegExpObject_lastIndex);
+        ValueFromBlock nullResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsNull())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(operationCase, continuation);
+        ValueFromBlock operationResult = m_out.anchor(vmCall(Int64, operationRegExpExecStickyKnownRegExp, globalObject, frozenPointer(m_node->cellOperand()), base, argument));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, nullResult, operationResult));
+        return true;
     }
 
     void compileRegExpMatchFastGlobal()
@@ -19390,6 +19522,8 @@ IGNORE_CLANG_WARNINGS_END
 
             if (m_node->child3().useKind() == StringUse) {
                 LValue argument = lowString(m_node->child3());
+                if (compileRegExpTestAnchoredFilter(globalObject, base, argument))
+                    return;
                 LValue result = vmCall(Int32, operationRegExpTestString, globalObject, base, argument);
                 setBoolean(result);
                 return;
@@ -19405,6 +19539,64 @@ IGNORE_CLANG_WARNINGS_END
         LValue argument = lowJSValue(m_node->child3());
         LValue result = vmCall(Int32, operationRegExpTestGeneric, globalObject, base, argument);
         setBoolean(result);
+    }
+
+    // Anchored RegExp.test(string) fast-fail on a constant RegExpObject; tests input[0]. A runtime
+    // guard (below) keeps it correct across .compile() without a recompile watchpoint.
+    bool compileRegExpTestAnchoredFilter(LValue globalObject, LValue base, LValue argument)
+    {
+        RegExp* regExp = nullptr;
+        if (RegExpObject* regExpObject = m_node->child2()->dynamicCastConstant<RegExpObject*>())
+            regExp = regExpObject->regExp();
+        else if (m_node->child2()->op() == NewRegExp)
+            regExp = m_node->child2()->castOperand<RegExp*>();
+        if (!regExp || regExp->globalOrSticky())
+            return false;
+        auto localBitmap = Yarr::computeAnchoredFirstCharacterBitmap(regExp->pattern(), regExp->flags());
+        if (!localBitmap)
+            return false;
+        const uint8_t* bitmap = m_ftlState.jitCode->dfgCommon()->m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+
+        LBasicBlock checkRope = m_out.newBlock();
+        LBasicBlock check8Bit = m_out.newBlock();
+        LBasicBlock checkLength = m_out.newBlock();
+        LBasicBlock filterCase = m_out.newBlock();
+        LBasicBlock falseCase = m_out.newBlock();
+        LBasicBlock operationCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        // The object must still wrap the RegExp whose bitmap we baked (guards against .compile()).
+        LValue currentRegExp = m_out.bitAnd(m_out.loadPtr(base, m_heaps.RegExpObject_regExpAndFlags), m_out.constIntPtr(RegExpObject::regExpMask));
+        m_out.branch(m_out.equal(currentRegExp, frozenPointer(m_graph.freeze(regExp))), usually(checkRope), rarely(operationCase));
+
+        LBasicBlock lastNext = m_out.appendTo(checkRope, check8Bit);
+        m_out.branch(isRopeString(argument, m_node->child3()), rarely(operationCase), usually(check8Bit));
+
+        m_out.appendTo(check8Bit, checkLength);
+        LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
+        m_out.branch(
+            m_out.testIsZero32(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())),
+            rarely(operationCase), usually(checkLength));
+
+        m_out.appendTo(checkLength, filterCase);
+        m_out.branch(m_out.equal(m_out.load32(stringImpl, m_heaps.StringImpl_length), m_out.int32Zero), rarely(operationCase), usually(filterCase));
+
+        m_out.appendTo(filterCase, falseCase);
+        LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
+        LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.constIntPtr(0)));
+        m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(falseCase));
+
+        m_out.appendTo(falseCase, operationCase);
+        ValueFromBlock falseResult = m_out.anchor(m_out.int32Zero);
+        m_out.jump(continuation);
+
+        m_out.appendTo(operationCase, continuation);
+        ValueFromBlock operationResult = m_out.anchor(vmCall(Int32, operationRegExpTestString, globalObject, base, argument));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, falseResult, operationResult));
+        return true;
     }
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)

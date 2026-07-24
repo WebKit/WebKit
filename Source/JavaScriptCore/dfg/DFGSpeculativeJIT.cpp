@@ -14154,6 +14154,60 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
             speculateRegExpObject(node->child2(), baseGPR);
             speculateString(node->child3(), argumentGPR);
 
+#if CPU(ARM64) || CPU(X86_64)
+            // Anchored RegExp.test(string) fast-fail on a constant RegExpObject; tests input[0].
+            {
+                RegExp* regExp = nullptr;
+                if (RegExpObject* regExpObject = node->child2()->dynamicCastConstant<RegExpObject*>())
+                    regExp = regExpObject->regExp();
+                else if (node->child2()->op() == NewRegExp)
+                    regExp = node->child2()->castOperand<RegExp*>();
+                std::optional<WTF::BitSet<256>> localBitmap;
+                if (regExp && !regExp->globalOrSticky())
+                    localBitmap = Yarr::computeAnchoredFirstCharacterBitmap(regExp->pattern(), regExp->flags());
+                if (localBitmap) {
+                    const uint8_t* bitmap = jitCode()->common.m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+
+                    GPRTemporary result(this);
+                    GPRTemporary scratch1(this);
+                    GPRTemporary scratch2(this);
+
+                    GPRReg resultGPR = result.gpr();
+                    GPRReg scratch1GPR = scratch1.gpr();
+                    GPRReg scratch2GPR = scratch2.gpr();
+
+                    flushRegisters();
+
+                    JumpList slowCases;
+                    JumpList doneCases;
+
+                    // The object must still wrap the expected RegExp (guards against .compile()).
+                    loadPtr(Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), scratch1GPR);
+                    and64(TrustedImm64(RegExpObject::regExpMask), scratch1GPR);
+                    slowCases.append(branchLinkableConstant(NotEqual, scratch1GPR, LinkableConstant(*this, regExp)));
+
+                    loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
+                    slowCases.append(branchIfRopeStringImpl(scratch1GPR));
+                    slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+                    slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::lengthMemoryOffset())));
+
+                    loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+                    load8(Address(scratch1GPR), scratch2GPR);
+                    emitFirstCharacterBitmapMatch(bitmap, scratch2GPR, scratch1GPR, resultGPR, slowCases);
+
+                    move(TrustedImm32(0), resultGPR);
+                    doneCases.append(jump());
+
+                    slowCases.link(this);
+                    callOperation(operationRegExpTestString, resultGPR, globalObjectGPR, baseGPR, argumentGPR);
+
+                    doneCases.link(this);
+                    unblessedBooleanResult(resultGPR, node);
+                    return;
+                }
+            }
+#endif
+
             flushRegisters();
             GPRFlushedCallResult result(this);
             callOperation(operationRegExpTestString, result.gpr(), globalObjectGPR, baseGPR, argumentGPR);
@@ -14367,6 +14421,51 @@ void SpeculativeJIT::compileRegExpExecNonGlobalOrSticky(Node* node)
 
     speculateString(node->child2(), argumentGPR);
 
+#if CPU(ARM64) || CPU(X86_64)
+    // Anchored non-sticky exec fast-fail; tests input[0].
+    {
+        RegExp* regExp = node->castOperand<RegExp*>();
+        if (auto localBitmap = Yarr::computeAnchoredFirstCharacterBitmap(regExp->pattern(), regExp->flags())) {
+            const uint8_t* bitmap = jitCode()->common.m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+
+            GPRTemporary result(this);
+            GPRTemporary scratch1(this);
+            GPRTemporary scratch2(this);
+            GPRTemporary scratch3(this);
+
+            GPRReg resultGPR = result.gpr();
+            GPRReg scratch1GPR = scratch1.gpr();
+            GPRReg scratch2GPR = scratch2.gpr();
+            GPRReg scratch3GPR = scratch3.gpr();
+
+            flushRegisters();
+
+            JumpList slowCases;
+            JumpList doneCases;
+
+            loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
+            slowCases.append(branchIfRopeStringImpl(scratch1GPR));
+            slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+            // An anchored pattern cannot match empty, so delegate an empty string to the operation.
+            slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::lengthMemoryOffset())));
+
+            loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+            load8(Address(scratch1GPR), scratch2GPR);
+            emitFirstCharacterBitmapMatch(bitmap, scratch2GPR, scratch1GPR, scratch3GPR, slowCases);
+
+            move(TrustedImm64(JSValue::encode(jsNull())), resultGPR);
+            doneCases.append(jump());
+
+            slowCases.link(this);
+            callOperation(operationRegExpExecNonGlobalOrSticky, resultGPR, globalObjectGPR, LinkableConstant(*this, node->cellOperand()->cell()), argumentGPR);
+
+            doneCases.link(this);
+            jsValueResult(resultGPR, node);
+            return;
+        }
+    }
+#endif
+
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
@@ -14388,6 +14487,68 @@ void SpeculativeJIT::compileRegExpExecSticky(Node* node)
 
     speculateRegExpObject(node->child2(), baseGPR);
     speculateString(node->child3(), argumentGPR);
+
+#if CPU(ARM64) || CPU(X86_64)
+    // Sticky exec fast-fail; when input[lastIndex] cannot begin a match, reset lastIndex to 0 and
+    // return null inline.
+    {
+        RegExp* regExp = node->castOperand<RegExp*>();
+        auto localBitmap = Yarr::computeStickyFirstCharacterBitmap(regExp->pattern(), regExp->flags());
+        if (localBitmap) {
+            const uint8_t* bitmap = jitCode()->common.m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+
+            GPRTemporary result(this);
+            GPRTemporary scratch1(this);
+            GPRTemporary scratch2(this);
+            GPRTemporary scratch3(this);
+            GPRReg resultGPR = result.gpr();
+            GPRReg scratch1GPR = scratch1.gpr();
+            GPRReg scratch2GPR = scratch2.gpr();
+            GPRReg scratch3GPR = scratch3.gpr();
+
+            // baseGPR/argumentGPR/globalObjectGPR are preserved across flushRegisters for the
+            // slow-path operation call; the scratch registers are free to clobber.
+            flushRegisters();
+
+            JumpList slowCases;
+            JumpList doneCases;
+
+            // The string must be a resolved 8-bit string.
+            loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
+            slowCases.append(branchIfRopeStringImpl(scratch1GPR));
+            slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+
+            // lastIndex must be writable so the inline no-match path can reset it to 0.
+            slowCases.append(branchTest32(NonZero, Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), TrustedImm32(RegExpObject::lastIndexIsNotWritableFlag)));
+
+            // lastIndex must be an Int32.
+            load64(Address(baseGPR, RegExpObject::offsetOfLastIndex()), scratch2GPR);
+            slowCases.append(branchIfNotInt32(scratch2GPR));
+            zeroExtend32ToWord(scratch2GPR, scratch2GPR);
+
+            // Need 0 <= lastIndex < length. An unsigned compare rejects negatives too.
+            load32(Address(scratch1GPR, StringImpl::lengthMemoryOffset()), scratch3GPR);
+            slowCases.append(branch32(AboveOrEqual, scratch2GPR, scratch3GPR));
+
+            // character = input[lastIndex] (scratch1GPR becomes the data pointer).
+            loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+            load8(BaseIndex(scratch1GPR, scratch2GPR, TimesOne), scratch3GPR);
+            emitFirstCharacterBitmapMatch(bitmap, scratch3GPR, scratch1GPR, scratch2GPR, slowCases);
+
+            // The byte cannot begin a match: reset lastIndex to 0 and return null.
+            store64(TrustedImm64(JSValue::encode(jsNumber(0))), Address(baseGPR, RegExpObject::offsetOfLastIndex()));
+            move(TrustedImm64(JSValue::encode(jsNull())), resultGPR);
+            doneCases.append(jump());
+
+            slowCases.link(this);
+            callOperation(operationRegExpExecStickyKnownRegExp, resultGPR, globalObjectGPR, LinkableConstant(*this, node->cellOperand()->cell()), baseGPR, argumentGPR);
+
+            doneCases.link(this);
+            jsValueResult(resultGPR, node);
+            return;
+        }
+    }
+#endif
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);

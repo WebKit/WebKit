@@ -9980,6 +9980,21 @@ void SpeculativeJIT::compileMultiPutByVal(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::emitFirstCharacterBitmapMatch(const uint8_t* bitmap, GPRReg characterGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, JumpList& matchMaybeCases)
+{
+    move(TrustedImmPtr(bitmap), scratch1GPR);
+#if CPU(ARM64)
+    extractUnsignedBitfield32(characterGPR, TrustedImm32(6), TrustedImm32(2), scratch2GPR);
+    load64(BaseIndex(scratch1GPR, scratch2GPR, TimesEight), scratch2GPR);
+    urshift64(characterGPR, scratch2GPR);
+    matchMaybeCases.append(branchTest64(NonZero, scratch2GPR, TrustedImm32(1)));
+#else
+    urshift32(characterGPR, TrustedImm32(6), scratch2GPR);
+    load64(BaseIndex(scratch1GPR, scratch2GPR, TimesEight), scratch2GPR);
+    matchMaybeCases.append(branchTestBit64(NonZero, scratch2GPR, characterGPR));
+#endif
+}
+
 #endif
 
 } } // namespace JSC::DFG

@@ -1730,6 +1730,7 @@ public:
     void compileRegExpExec(Node*);
     void compileRegExpExecNonGlobalOrSticky(Node*);
     void compileRegExpExecSticky(Node*);
+    void emitFirstCharacterBitmapMatch(const uint8_t* bitmap, GPRReg characterGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, JumpList& matchMaybeCases);
     void compileRegExpMatchFast(Node*);
     void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpSplitFast(Node*);
