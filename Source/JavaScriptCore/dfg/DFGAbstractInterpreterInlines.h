@@ -2750,19 +2750,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case StringCharCodeAt:
     case StringCodePointAt: {
+        bool isOutOfBounds = node->op() == StringCharCodeAt && node->arrayMode().isOutOfBounds();
         if (auto string = node->child1()->tryGetString(m_graph); !string.isNull()) {
             if (node->child2()->isInt32Constant()) {
                 int32_t index = node->child2()->asInt32();
                 if (index >= 0 && static_cast<unsigned>(index) < string.length()) {
-                    if (node->op() == StringCharCodeAt)
-                        setConstant(node, jsNumber(string.codeUnitAt(static_cast<unsigned>(index))));
-                    else
+                    if (node->op() == StringCharCodeAt) {
+                        char16_t code = string.codeUnitAt(static_cast<unsigned>(index));
+                        setConstant(node, isOutOfBounds ? jsDoubleNumber(code) : jsNumber(code));
+                    } else
                         setConstant(node, jsNumber(codePointAt(string, static_cast<unsigned>(index), string.length())));
+                    break;
+                }
+                if (isOutOfBounds) {
+                    setConstant(node, jsNaN());
                     break;
                 }
             }
         }
-        setNonCellTypeForNode(node, SpecInt32Only);
+        if (isOutOfBounds)
+            setNonCellTypeForNode(node, SpecAnyIntAsDouble | SpecDoublePureNaN);
+        else
+            setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
 

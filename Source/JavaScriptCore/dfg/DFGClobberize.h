@@ -239,7 +239,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetScope:
     case SkipScope:
     case GetGlobalObject:
-    case StringCharCodeAt:
     case StringCodePointAt:
     case StringIndexOf:
     case StringLastIndexOf:
@@ -2349,9 +2348,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case StringAt:
+    case StringCharCodeAt:
         // String.prototype.at returns a string when in bounds and undefined when OOB. This is
-        // unlike charAt, which always returns a string. Include arrayMode to prevent CSE across
-        // modes.
+        // unlike charAt, which always returns a string. Likewise charCodeAt returns an int32 when
+        // in bounds and NaN (double) when OOB. Include arrayMode to prevent CSE across modes.
         def(PureValue(node, node->arrayMode().asWord()));
         return;
     case StringCharAt:

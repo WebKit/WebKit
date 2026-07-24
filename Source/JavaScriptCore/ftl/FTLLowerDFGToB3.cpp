@@ -12134,15 +12134,24 @@ IGNORE_CLANG_WARNINGS_END
         LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
         LValue data = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
 
-        if (!m_node->arrayMode().isInBounds()) {
+        bool isOutOfBounds = m_node->arrayMode().isOutOfBounds();
+        ValueFromBlock outOfBoundsResult;
+        LBasicBlock lastNext = nullptr;
+        if (isOutOfBounds) {
             LValue length;
             if (auto stringLength = tryGetConstantStringLength(m_node->child1()))
                 length = m_out.constInt32(*stringLength);
             else
                 length = m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length);
-            speculate(
-                Uncountable, noValue(), nullptr,
-                m_out.aboveOrEqual(index, length));
+            LBasicBlock inBounds = m_out.newBlock();
+            LBasicBlock outOfBounds = m_out.newBlock();
+            m_out.branch(m_out.aboveOrEqual(index, length), rarely(outOfBounds), usually(inBounds));
+
+            lastNext = m_out.appendTo(outOfBounds, inBounds);
+            outOfBoundsResult = m_out.anchor(m_out.constDouble(PNaN));
+            m_out.jump(continuation);
+
+            m_out.appendTo(inBounds, is8Bit);
         }
 
         m_out.branch(
@@ -12151,18 +12160,25 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.constInt32(StringImpl::flagIs8Bit())),
             unsure(is16Bit), unsure(is8Bit));
 
-        LBasicBlock lastNext = m_out.appendTo(is8Bit, is16Bit);
-        ValueFromBlock char8Bit = m_out.anchor(m_out.load8ZeroExt32(baseIndexWithProvenValue(m_heaps.characters8, data, index, m_node->child2())));
+        LBasicBlock next8Bit = m_out.appendTo(is8Bit, is16Bit);
+        if (!lastNext)
+            lastNext = next8Bit;
+        LValue char8BitValue = m_out.load8ZeroExt32(baseIndexWithProvenValue(m_heaps.characters8, data, index, m_node->child2()));
+        ValueFromBlock char8Bit = m_out.anchor(isOutOfBounds ? m_out.intToDouble(char8BitValue) : char8BitValue);
         m_out.jump(continuation);
 
         m_out.appendTo(is16Bit, continuation);
-        ValueFromBlock char16Bit = m_out.anchor(m_out.load16ZeroExt32(baseIndexWithProvenValue(m_heaps.characters16, data, index, m_node->child2())));
+        LValue char16BitValue = m_out.load16ZeroExt32(baseIndexWithProvenValue(m_heaps.characters16, data, index, m_node->child2()));
+        ValueFromBlock char16Bit = m_out.anchor(isOutOfBounds ? m_out.intToDouble(char16BitValue) : char16BitValue);
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
         // We have to keep base alive since that keeps storage alive.
         ensureStillAliveHere(base);
-        setInt32(m_out.phi(Int32, char8Bit, char16Bit));
+        if (isOutOfBounds)
+            setDouble(m_out.phi(Double, outOfBoundsResult, char8Bit, char16Bit));
+        else
+            setInt32(m_out.phi(Int32, char8Bit, char16Bit));
     }
 
     void compileStringCodePointAt()
