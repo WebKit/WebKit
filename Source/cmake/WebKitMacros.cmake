@@ -612,6 +612,41 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         set(_entitlements --entitlements ${${_target}_CODE_SIGN_ENTITLEMENTS})
         list(APPEND _arg_DEPENDS ${${_target}_CODE_SIGN_ENTITLEMENTS})
     endif ()
+
+    get_target_property(_target_type ${_target} TYPE)
+    if (_target_type STREQUAL "EXECUTABLE")
+        # Executables have no "sign last" ordering constraint (unlike a
+        # framework, which must sign after its embedded bundles). Attach the
+        # signing as a POST_BUILD step so that building the target directly,
+        # e.g. `cmake --build . --target jsc`, always signs it. A stamp-based
+        # target that only runs during an `all` build would leave a directly
+        # built executable unsigned and unable to JIT (webkit.org/b/320034).
+        add_custom_command(
+            TARGET ${_target} POST_BUILD
+            # Work around rdar://145010536 when a previous codesign task was interrupted.
+            COMMAND rm -f ${_cstemp_path}
+            COMMAND set -o pipefail &&
+                ${WEBKITADDITIONS_CODESIGN_PRELUDE}
+                /usr/bin/codesign --force --sign ${_identity} ${_entitlements} ${_sign_path} 2>&1 |
+                sed "/replacing existing signature/d"
+            VERBATIM
+            COMMENT "Code signing ${_target}")
+        # A POST_BUILD command only re-runs when the target relinks, so make a
+        # change to the entitlements force a relink; otherwise editing the
+        # entitlements would leave the binary signed with the stale set.
+        if (${_target}_CODE_SIGN_ENTITLEMENTS)
+            set_property(TARGET ${_target} APPEND PROPERTY
+                LINK_DEPENDS ${${_target}_CODE_SIGN_ENTITLEMENTS})
+        endif ()
+        # Preserve a named ${_target}_CodeSign target so ordering edges elsewhere
+        # (e.g. WebKit.framework signing after its XPC services) keep resolving.
+        # The POST_BUILD command above performs the actual signing when the
+        # target builds, so this target only needs to depend on it.
+        add_custom_target(${_target}_CodeSign ALL)
+        add_dependencies(${_target}_CodeSign ${_target})
+        return()
+    endif ()
+
     set(_stamp "${CMAKE_CURRENT_BINARY_DIR}/${_target}-codesign.stamp")
 
     add_custom_command(
