@@ -22,6 +22,7 @@
 #include "config.h"
 #include <wtf/text/WTFString.h>
 
+#include <cmath>
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/Function.h>
@@ -576,30 +577,38 @@ double charactersToFixedDouble(std::span<const char16_t> data, bool* ok)
     return toDoubleType<char16_t, TrailingJunkPolicy::Disallow, WhitespacePolicy::Preserve, ParseMode::Fixed>(data, ok, parsedLength);
 }
 
+static inline float doubleToFloatCheckingOverflow(double number, bool* isValid)
+{
+    float result = static_cast<float>(number);
+    if (isValid && *isValid && std::isfinite(number) && !std::isfinite(result))
+        *isValid = false;
+    return result;
+}
+
 float charactersToFloat(std::span<const Latin1Character> data, bool* ok)
 {
-    // FIXME: This will return ok even when the string fits into a double but not a float.
     size_t parsedLength;
-    return static_cast<float>(toDoubleType<Latin1Character, TrailingJunkPolicy::Disallow, WhitespacePolicy::Skip, ParseMode::General>(data, ok, parsedLength));
+    double number = toDoubleType<Latin1Character, TrailingJunkPolicy::Disallow, WhitespacePolicy::Skip, ParseMode::General>(data, ok, parsedLength);
+    return doubleToFloatCheckingOverflow(number, ok);
 }
 
 float charactersToFloat(std::span<const char16_t> data, bool* ok)
 {
-    // FIXME: This will return ok even when the string fits into a double but not a float.
     size_t parsedLength;
-    return static_cast<float>(toDoubleType<char16_t, TrailingJunkPolicy::Disallow, WhitespacePolicy::Skip, ParseMode::General>(data, ok, parsedLength));
+    double number = toDoubleType<char16_t, TrailingJunkPolicy::Disallow, WhitespacePolicy::Skip, ParseMode::General>(data, ok, parsedLength);
+    return doubleToFloatCheckingOverflow(number, ok);
 }
 
 float charactersToFloat(std::span<const Latin1Character> data, size_t& parsedLength)
 {
-    // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<Latin1Character, TrailingJunkPolicy::Allow, WhitespacePolicy::Skip, ParseMode::General>(data, nullptr, parsedLength));
+    double number = toDoubleType<Latin1Character, TrailingJunkPolicy::Allow, WhitespacePolicy::Skip, ParseMode::General>(data, nullptr, parsedLength);
+    return static_cast<float>(number);
 }
 
 float charactersToFloat(std::span<const char16_t> data, size_t& parsedLength)
 {
-    // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<char16_t, TrailingJunkPolicy::Allow, WhitespacePolicy::Skip, ParseMode::General>(data, nullptr, parsedLength));
+    double number = toDoubleType<char16_t, TrailingJunkPolicy::Allow, WhitespacePolicy::Skip, ParseMode::General>(data, nullptr, parsedLength);
+    return static_cast<float>(number);
 }
 
 const StaticString nullStringData { nullptr };

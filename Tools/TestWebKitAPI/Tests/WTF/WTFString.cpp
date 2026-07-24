@@ -331,6 +331,54 @@ TEST(WTF, StringToDouble)
     EXPECT_FALSE(ok);
 }
 
+TEST(WTF, StringToFloat)
+{
+    bool succeeded = false;
+
+    EXPECT_EQ(0.0f, String().toFloat());
+    EXPECT_EQ(0.0f, String().toFloat(&succeeded));
+    EXPECT_FALSE(succeeded);
+
+    EXPECT_EQ(0.0f, emptyString().toFloat());
+    EXPECT_EQ(0.0f, emptyString().toFloat(&succeeded));
+    EXPECT_FALSE(succeeded);
+
+    EXPECT_EQ(0.0f, String("0"_s).toFloat());
+    EXPECT_EQ(0.0f, String("0"_s).toFloat(&succeeded));
+    EXPECT_TRUE(succeeded);
+
+    EXPECT_EQ(1.0f, String("1"_s).toFloat());
+    EXPECT_EQ(1.0f, String("1"_s).toFloat(&succeeded));
+    EXPECT_TRUE(succeeded);
+
+    // fail if we see leading junk
+    EXPECT_EQ(0.0f, String("x1"_s).toFloat());
+    EXPECT_EQ(0.0f, String("x1"_s).toFloat(&succeeded));
+    EXPECT_FALSE(succeeded);
+
+    // succeed if we see leading spaces
+    EXPECT_EQ(1.0f, String(" 1"_s).toFloat());
+    EXPECT_EQ(1.0f, String(" 1"_s).toFloat(&succeeded));
+    EXPECT_TRUE(succeeded);
+
+    // ignore trailing junk, but return false for "succeeded"
+    EXPECT_EQ(1.0f, String("1x"_s).toFloat());
+    EXPECT_EQ(1.0f, String("1x"_s).toFloat(&succeeded));
+    EXPECT_FALSE(succeeded);
+
+    // fits in a double, but overflows a float: succeeded should be false
+    EXPECT_TRUE(std::isinf(String("1e300"_s).toFloat()));
+    EXPECT_TRUE(std::isinf(String("1e300"_s).toFloat(&succeeded)));
+    EXPECT_FALSE(succeeded);
+
+    EXPECT_TRUE(std::isinf(String("-1e300"_s).toFloat(&succeeded)));
+    EXPECT_FALSE(succeeded);
+
+    // a value that fits comfortably in both double and float should still report success
+    EXPECT_FLOAT_EQ(1e30f, String("1e30"_s).toFloat(&succeeded));
+    EXPECT_TRUE(succeeded);
+}
+
 TEST(WTF, StringhasInfixStartingAt)
 {
     EXPECT_TRUE(String("Test"_s).is8Bit());
