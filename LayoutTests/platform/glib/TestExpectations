@@ -2829,7 +2829,7 @@ webrtc/h264-baseline.html [ Pass Crash ]
 webrtc/h264-high.html [ Pass Crash ]
 webrtc/vp8-then-h264.html [ Pass Crash ]
 
-imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?rest [ Failure Slow ]
+imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?rest [ Pass Failure Slow ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer.html?rest [ Slow ]
 
 # Specific to apple ports.
@@ -2856,7 +2856,6 @@ webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats
 fast/mediastream/video-rotation2.html [ Failure ]
 
 http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
-webrtc/vp9.html [ Failure ]
 
 webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Crash Failure ]
 
@@ -2923,9 +2922,6 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/idlharness.https.window
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-audiolevel.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFrame-timestamps.html [ Skip ]
 http/wpt/webrtc/video-script-transform-simulcast.html [ Skip ]
-http/wpt/webrtc/unset-transform.html [ Failure ]
-
-webrtc/RTCConfiguration-targetLatency.html [ Failure ]
 
 # This test is a constant failure (assert_true: front stream should be small expected true got false).
 webkit.org/b/313153 webrtc/video-replace-track.html [ Failure ]
@@ -2935,31 +2931,17 @@ webkit.org/b/235885 webrtc/video.html [ Skip ]
 
 # Pending investigation.
 webkit.org/b/235885 fast/mediastream/mediastreamtrack-video-clone.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-offer.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 webkit.org/b/235885 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
-webkit.org/b/235885 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationPreference.html [ Failure ]
-webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
 webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Failure ]
 webkit.org/b/235885 [ Release ] webrtc/canvas-to-peer-connection-2d.html [ Failure Pass Crash Timeout ]
 webkit.org/b/235885 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure Pass ]
-webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure Timeout ]
-webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Failure ]
 webkit.org/b/235885 webrtc/negotiatedneeded-event-addStream.html [ Failure Pass ]
 webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Skip ]
 webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Skip ]
-webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Crash Failure Timeout ]
 webkit.org/b/235885 webrtc/video-maxFramerate.html [ Failure ]
 webkit.org/b/235885 webrtc/video-unmute.html [ Pass Failure Timeout ]
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
-
-webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 
 webkit.org/b/258541 webrtc/vp9-profile2.html [ Timeout Pass Failure ]
 webkit.org/b/258541 webrtc/vp9-sw.html [ Timeout Pass Failure ]

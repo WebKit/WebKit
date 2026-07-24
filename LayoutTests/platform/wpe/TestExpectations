@@ -159,7 +159,6 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
 
 # Mediastream
-webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/235885 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
 
@@ -883,9 +882,6 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-constru
 
 # Also webkit.org/b/266573
 webkit.org/b/266577 webgl/2.0.y/conformance2/textures/video/tex-2d-rgb16f-rgb-half_float.html [ Failure Timeout Pass ]
-
-# [WPE] Missing implementation of TestController::setHidden()
-webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
 
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
 
