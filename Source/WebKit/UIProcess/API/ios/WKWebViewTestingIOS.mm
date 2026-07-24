@@ -242,7 +242,7 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     };
 
     auto pointToString = [] (auto point) {
-        return makeString("[x: "_s, point.x, " y: "_s, point.x, ']');
+        return makeString("[x: "_s, point.x, " y: "_s, point.y, ']');
     };
 
 

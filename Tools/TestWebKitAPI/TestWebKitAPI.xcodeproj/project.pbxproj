@@ -980,6 +980,7 @@
 				WebKit/WKWebView/ios/TouchEventTests.mm,
 				WebKit/WKWebView/ios/UIFocusTests.mm,
 				WebKit/WKWebView/ios/UIPasteboardTests.mm,
+				WebKit/WKWebView/ios/UIViewTreeAsText.mm,
 				WebKit/WKWebView/ios/UIWKInteractionViewProtocol.mm,
 				WebKit/WKWebView/ios/UserInterfaceIdiomUpdate.mm,
 				WebKit/WKWebView/ios/Viewport.mm,
