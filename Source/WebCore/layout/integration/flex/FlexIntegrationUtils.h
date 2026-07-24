@@ -32,12 +32,17 @@ namespace WebCore {
 
 enum class LogicalBoxAxis : uint8_t;
 
-namespace Style { enum class MarginTrimSide : uint8_t; }
+namespace Style {
+enum class MarginTrimSide : uint8_t;
+struct PreferredSize;
+}
 
 struct FlexContainerUsedExtents;
 
 class FlexLayoutItem;
 class FlexLayoutState;
+class LayoutPoint;
+class RenderBox;
 class RenderFlexibleBox;
 
 namespace LayoutIntegration {
@@ -53,6 +58,9 @@ public:
     void layoutFlexItemForStretchedCrossSize(const FlexLayoutItem&, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
     void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
     FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
+    void setFlexItemGeometry(const FlexLayoutItem&, const LayoutPoint& location, bool isHorizontalFlow);
+    void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
+    void invalidateFlexItemContentLogicalWidthsIfNeeded(const FlexLayoutItem&);
 
     void setTrimmedMarginForChild(const FlexLayoutItem&, Style::MarginTrimSide);
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const;
@@ -65,6 +73,19 @@ public:
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;
+};
+
+// RAII that temporarily overrides a flex item's main-axis border-box size to its flex basis for the duration of a
+// flex-base-size measurement, restoring it on destruction. Lives here because it mutates the render tree.
+class ScopedFlexBasisAsFlexItemMainSize {
+public:
+    ScopedFlexBasisAsFlexItemMainSize(const FlexLayoutItem&, Style::PreferredSize&&);
+    ~ScopedFlexBasisAsFlexItemMainSize();
+
+private:
+    const CheckedRef<RenderBox> m_flexItem;
+    bool m_mainAxisIsInlineAxis { false };
+    bool m_didOverride { false };
 };
 
 } // namespace LayoutIntegration

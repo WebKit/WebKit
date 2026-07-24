@@ -712,13 +712,13 @@ void FlexFormattingContext::computeFlexItemRects(const FlexLines& flexLines, Fle
                 location.move(0_lu, (crossContentExtent - originalOffset - flexLinesCrossSizeList[lineIndex]) - originalOffset);
             }
             if (isRightToLeftColumn) {
-                // For vertical flows, setFlowAwareLocationForFlexItem will transpose x and
+                // For vertical flows, setFlexItemGeometry will transpose x and
                 // y, so using the y axis for a column cross axis extent is correct.
                 location.setY(crossExtent - flexItemsCrossSizeList[flexItemIndex] - location.y());
                 if (!m_constraints.style->writingMode().isHorizontal())
                     location.move(LayoutSize(0, -m_constraints.crossAxisScrollbarExtent));
             }
-            setFlexItemGeometry(flexItems[flexItemIndex], location);
+            integrationUtils().setFlexItemGeometry(flexItems[flexItemIndex], location, m_constraints.isHorizontalFlow);
         }
     }
 }
@@ -764,7 +764,7 @@ LayoutUnit FlexFormattingContext::placeFlexItems(LayoutUnit crossAxisOffset, std
         auto leadingScrollbarSize = m_constraints.style->writingMode().isInlineFlipped() && m_constraints.style->writingMode().isVertical() ? m_constraints.mainAxisScrollbarExtent : LayoutUnit();
         LayoutPoint location(shouldFlipMainAxis ? totalMainExtent - mainAxisOffset - flexItemMainExtent - leadingScrollbarSize : mainAxisOffset, crossAxisOffset + flexFormattingUtils().flowAwareMarginBeforeForFlexItem(flexLayoutItem));
         positions[i] = location;
-        setFlexItemGeometry(flexLayoutItems[i], positions[i]);
+        integrationUtils().setFlexItemGeometry(flexLayoutItems[i], positions[i], m_constraints.isHorizontalFlow);
         mainAxisOffset += flexItemMainExtent + flexFormattingUtils().flowAwareMarginEndForFlexItem(flexLayoutItem);
 
         if (i != flexLayoutItems.size() - 1) {
@@ -823,7 +823,7 @@ void FlexFormattingContext::layoutColumnReverse(std::span<FlexLayoutItem> flexLa
         ASSERT(!flexItem->isOutOfFlowPositioned());
         mainAxisOffset -= flexFormattingUtils().mainAxisExtentForFlexItem(flexItem) + flexFormattingUtils().flowAwareMarginEndForFlexItem(flexLayoutItem);
         positions[i] = LayoutPoint(mainAxisOffset, crossAxisOffset + flexFormattingUtils().flowAwareMarginBeforeForFlexItem(flexLayoutItem));
-        setFlexItemGeometry(flexLayoutItems[i], positions[i]);
+        integrationUtils().setFlexItemGeometry(flexLayoutItems[i], positions[i], m_constraints.isHorizontalFlow);
         mainAxisOffset -= flexFormattingUtils().flowAwareMarginStartForFlexItem(flexLayoutItem);
 
         if (i != flexLayoutItems.size() - 1) {
@@ -846,45 +846,11 @@ void FlexFormattingContext::setFlexItemCountsForFirstAndLastLine(const FlexLines
     m_result.numberOfFlexItemsOnLastLine = !isWrapReverse ? lastLineItemsCountInOriginalOrder : firstLineItemsCountInOriginalOrder;
 }
 
-// This is a RAII class that is used to temporarily set the flex basis as the child size in the main axis.
-class ScopedFlexBasisAsFlexItemMainSize {
-public:
-    ScopedFlexBasisAsFlexItemMainSize(RenderBox& flexItem, Style::PreferredSize&& flexBasis, bool mainAxisIsInlineAxis)
-        : m_flexItem(flexItem)
-        , m_mainAxisIsInlineAxis(mainAxisIsInlineAxis)
-    {
-        if (flexBasis.isAuto())
-            return;
-
-        if (m_mainAxisIsInlineAxis)
-            m_flexItem->setOverridingBorderBoxLogicalWidthForFlexBasisComputation(WTF::move(flexBasis));
-        else
-            m_flexItem->setOverridingBorderBoxLogicalHeightForFlexBasisComputation(WTF::move(flexBasis));
-        m_didOverride = true;
-    }
-
-    ~ScopedFlexBasisAsFlexItemMainSize()
-    {
-        if (!m_didOverride)
-            return;
-
-        if (m_mainAxisIsInlineAxis)
-            m_flexItem->clearOverridingLogicalWidthForFlexBasisComputation();
-        else
-            m_flexItem->clearOverridingLogicalHeightForFlexBasisComputation();
-    }
-
-private:
-    const CheckedRef<RenderBox> m_flexItem;
-    bool m_mainAxisIsInlineAxis { true };
-    bool m_didOverride { false };
-};
-
 LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     CheckedRef flexItem = flexLayoutItem.renderer;
     auto flexBasis = flexFormattingUtils().flexBasisForFlexItem(flexLayoutItem);
-    auto scoped = ScopedFlexBasisAsFlexItemMainSize { flexItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }), flexLayoutItem.mainAxisIsInlineAxis };
+    auto scoped = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
     // FIXME: While we are supposed to ignore min/max here, the cached
     // The cached block-axis size entry may hold a min/max-constrained size.
     auto blockAxisContentSize = ensureBlockAxisContentSizeForFlexItemIfNeeded(flexLayoutItem);
@@ -1093,13 +1059,11 @@ template<typename SizeType> std::optional<LayoutUnit> FlexFormattingContext::com
     // that here. (Compare code in RenderBlock::computeIntrinsicLogicalWidthContributions)
     if (flexLayoutItem.style().logicalWidth().isAuto() && !FlexFormattingUtils::flexItemHasAspectRatio(flexItem)) {
         if (size.isMinContent()) {
-            if (flexItem->shouldInvalidateContentWidths())
-                flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+            integrationUtils().invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
             return flexItem->minContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
         }
         if (size.isMaxContent()) {
-            if (flexItem->shouldInvalidateContentWidths())
-                flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+            integrationUtils().invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
             return flexItem->maxContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
         }
     }
@@ -1470,7 +1434,7 @@ LayoutUnit FlexFormattingContext::applyStretchAlignmentToFlexItem(const FlexLayo
             integrationUtils().applyStretchedLogicalHeightToFlexItem(flexLayoutItem, blockSize);
         else {
             // This sets the used height for the flex item, making its height definite.
-            flexItem->setOverridingBorderBoxLogicalHeight(blockSize);
+            integrationUtils().setFlexItemOverridingBorderBoxLogicalHeight(flexLayoutItem, blockSize);
         }
         return blockSize;
     }
@@ -1542,19 +1506,6 @@ LayoutUnit FlexFormattingContext::applyStretchMinMaxCrossSize(const FlexLayoutIt
     if (newSize != currentSize)
         integrationUtils().layoutFlexItemForStretchedCrossSize(flexLayoutItem, newSize, crossAxis);
     return newSize;
-}
-
-void FlexFormattingContext::setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint& location)
-{
-    if (m_constraints.isHorizontalFlow)
-        flexItem.setLocation(location);
-    else
-        flexItem.setLocation(location.transposedPoint());
-}
-
-void FlexFormattingContext::setFlexItemGeometry(FlexLayoutItem& flexLayoutItem, const LayoutPoint& location)
-{
-    setFlowAwareLocationForFlexItem(flexLayoutItem.renderer, location);
 }
 
 const FlexFormattingUtils& FlexFormattingContext::flexFormattingUtils() const

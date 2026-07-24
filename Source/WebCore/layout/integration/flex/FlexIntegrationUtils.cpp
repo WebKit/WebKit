@@ -30,6 +30,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderObjectInlines.h"
+#include "StylePreferredSize.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -123,6 +124,24 @@ FlexContainerUsedExtents FlexIntegrationUtils::updateFlexContainerLogicalHeight(
     return flexBox().updateFlexContainerLogicalHeight(flexContentBlockExtent);
 }
 
+void FlexIntegrationUtils::setFlexItemGeometry(const FlexLayoutItem& flexLayoutItem, const LayoutPoint& location, bool isHorizontalFlow)
+{
+    // For vertical flows the flex algorithm works in flow-relative coordinates, so transpose back to physical here.
+    flexLayoutItem.renderer->setLocation(isHorizontalFlow ? location : location.transposedPoint());
+}
+
+void FlexIntegrationUtils::setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem& flexLayoutItem, LayoutUnit blockSize)
+{
+    flexLayoutItem.renderer->setOverridingBorderBoxLogicalHeight(blockSize);
+}
+
+void FlexIntegrationUtils::invalidateFlexItemContentLogicalWidthsIfNeeded(const FlexLayoutItem& flexLayoutItem)
+{
+    auto& flexItem = flexLayoutItem.renderer.get();
+    if (flexItem.shouldInvalidateContentWidths())
+        flexItem.invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+}
+
 void FlexIntegrationUtils::setTrimmedMarginForChild(const FlexLayoutItem& flexLayoutItem, Style::MarginTrimSide side)
 {
     flexBox().setTrimmedMarginForChild(flexLayoutItem.renderer.get(), side);
@@ -156,6 +175,31 @@ void FlexIntegrationUtils::addItemOnLastFlexLine(const FlexLayoutItem& flexLayou
 bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const FlexLayoutItem& flexLayoutItem) const
 {
     return flexBox().flexItemHasPercentHeightDescendants(flexLayoutItem.renderer.get());
+}
+
+ScopedFlexBasisAsFlexItemMainSize::ScopedFlexBasisAsFlexItemMainSize(const FlexLayoutItem& flexLayoutItem, Style::PreferredSize&& flexBasis)
+    : m_flexItem(flexLayoutItem.renderer)
+    , m_mainAxisIsInlineAxis(flexLayoutItem.mainAxisIsInlineAxis)
+{
+    if (flexBasis.isAuto())
+        return;
+
+    if (m_mainAxisIsInlineAxis)
+        m_flexItem->setOverridingBorderBoxLogicalWidthForFlexBasisComputation(WTF::move(flexBasis));
+    else
+        m_flexItem->setOverridingBorderBoxLogicalHeightForFlexBasisComputation(WTF::move(flexBasis));
+    m_didOverride = true;
+}
+
+ScopedFlexBasisAsFlexItemMainSize::~ScopedFlexBasisAsFlexItemMainSize()
+{
+    if (!m_didOverride)
+        return;
+
+    if (m_mainAxisIsInlineAxis)
+        m_flexItem->clearOverridingLogicalWidthForFlexBasisComputation();
+    else
+        m_flexItem->clearOverridingLogicalHeightForFlexBasisComputation();
 }
 
 } // namespace LayoutIntegration

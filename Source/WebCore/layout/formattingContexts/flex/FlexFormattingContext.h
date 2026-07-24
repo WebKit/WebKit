@@ -188,9 +188,6 @@ private:
     LayoutUnit applyStretchAlignmentToFlexItem(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LayoutUnit crossContentExtent);
     LayoutUnit applyStretchMinMaxCrossSize(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis, LayoutUnit crossContentExtent);
 
-    void NODELETE setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint&);
-    void setFlexItemGeometry(FlexLayoutItem&, const LayoutPoint& location);
-
     const FlexFormattingUtils& flexFormattingUtils() const;
     FlexLayoutState& layoutState() const;
     LayoutIntegration::FlexIntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
