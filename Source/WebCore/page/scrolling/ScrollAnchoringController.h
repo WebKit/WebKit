@@ -115,10 +115,11 @@ private:
 
     struct Rects {
         FloatRect boundsRelativeToScrolledContent;
-        FloatRect scrollerContentsVisibleRect; // Takes scroll-padding into account.
+        FloatRect scrollerContentsVisibleRect;
     };
 
-    Rects computeScrollerRelativeRects(RenderObject&) const;
+    enum class RespectScrollPadding : bool { No, Yes };
+    Rects computeScrollerRelativeRects(RenderObject&, RespectScrollPadding) const;
 
     FloatPoint computeOffsetFromOwningScroller(RenderObject&, RenderBox& scrollerBox) const;
 

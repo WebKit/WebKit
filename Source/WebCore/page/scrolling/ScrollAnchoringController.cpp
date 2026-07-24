@@ -224,7 +224,7 @@ static FloatRect candidateLocalRectForAnchoring(RenderObject& renderer)
     return { };
 }
 
-auto ScrollAnchoringController::computeScrollerRelativeRects(RenderObject& candidate) const -> Rects
+auto ScrollAnchoringController::computeScrollerRelativeRects(RenderObject& candidate, RespectScrollPadding respectScrollPadding) const -> Rects
 {
     CheckedPtr scrollerBox = scrollableAreaBox();
     if (!scrollerBox)
@@ -249,7 +249,8 @@ auto ScrollAnchoringController::computeScrollerRelativeRects(RenderObject& candi
         if (!docRenderer)
             return { };
 
-        scrollViewport.contract(docRenderer->scrollPaddingForViewportRect(scrollViewport));
+        if (respectScrollPadding == RespectScrollPadding::Yes)
+            scrollViewport.contract(docRenderer->scrollPaddingForViewportRect(scrollViewport));
 
         return {
             // Map to the RenderView to exclude page scale.
@@ -259,7 +260,8 @@ auto ScrollAnchoringController::computeScrollerRelativeRects(RenderObject& candi
     }
 
     auto scrollerRect = LayoutRect { m_owningScrollableArea->visibleContentRect() };
-    scrollerRect.contract(scrollerBox->scrollPaddingForViewportRect(scrollerRect));
+    if (respectScrollPadding == RespectScrollPadding::Yes)
+        scrollerRect.contract(scrollerBox->scrollPaddingForViewportRect(scrollerRect));
 
     // FIXME: Check for writing modes.
     // FIXME: This really needs to compute bounds relative to the padding box.
@@ -277,7 +279,7 @@ auto ScrollAnchoringController::computeScrollerRelativeRects(RenderObject& candi
 // relative to the block start edge of the scrolling content in the block flow direction of the scroller.
 FloatPoint ScrollAnchoringController::computeOffsetFromOwningScroller(RenderObject& candidate, RenderBox& scrollerBox) const
 {
-    auto rects = computeScrollerRelativeRects(candidate);
+    auto rects = computeScrollerRelativeRects(candidate, RespectScrollPadding::No);
 
     auto candidateCorner = inlineAndBlockStartCorner(rects.boundsRelativeToScrolledContent, candidate.writingMode());
     auto scrollerCorner = inlineAndBlockStartCorner(rects.scrollerContentsVisibleRect, scrollerBox.writingMode());
@@ -429,7 +431,7 @@ AnchorSearchStatus ScrollAnchoringController::examineAnchorCandidate(RenderObjec
         return false;
     };
 
-    auto rects = computeScrollerRelativeRects(candidate);
+    auto rects = computeScrollerRelativeRects(candidate, RespectScrollPadding::Yes);
     if (rects.boundsRelativeToScrolledContent.isEmpty()) {
         if (shouldDescendIntoObjectWithEmptyLayoutOverflow(candidate))
             return AnchorSearchStatus::Continue;
