@@ -968,7 +968,17 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         return;
 
     auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRootParent };
-    removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);
+
+    // Removing an out-of-flow positioned or floating child cannot change
+    // whether the parent's in-flow children need their anonymous block wrappers
+    // (out-of-flow/floating boxes don't participate in the inline/block
+    // determination that creates those wrappers).
+    bool destroyRootParticipatesInInlineLayout = true;
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(destroyRoot.get()))
+        destroyRootParticipatesInInlineLayout = !box->isFloatingOrOutOfFlowPositioned();
+
+    if (destroyRootParticipatesInInlineLayout)
+        removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())
