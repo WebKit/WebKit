@@ -278,17 +278,6 @@ void RemoteMeshProxy::sizeDidChange(unsigned width, unsigned height, CompletionH
 #endif
 }
 
-void RemoteMeshProxy::paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult { sendSync(Messages::RemoteMesh::PaintCurrentFrameToImageBuffer(imageBufferIdentifier, bufferIndex)) };
-    UNUSED_VARIABLE(sendResult);
-#else
-    UNUSED_PARAM(imageBufferIdentifier);
-    UNUSED_PARAM(bufferIndex);
-#endif
-}
-
 std::optional<WebModel::Float4x4> RemoteMeshProxy::entityTransform() const
 {
     return m_computedTransform;

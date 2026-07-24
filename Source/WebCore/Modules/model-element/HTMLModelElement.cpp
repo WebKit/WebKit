@@ -47,9 +47,7 @@
 #include "EventNames.h"
 #include "Exception.h"
 #include "FloatPoint3D.h"
-#include "FloatRect.h"
 #include "FrameDestructionObserverInlines.h"
-#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerCA.h"
 #include "HTMLAnchorElement.h"
@@ -57,7 +55,6 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
-#include "ImageBuffer.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMPromiseDeferred.h"
@@ -884,19 +881,6 @@ void HTMLModelElement::sizeMayHaveChanged()
         modelPlayer->sizeDidChange(contentSize());
     else
         createModelPlayer();
-}
-
-void HTMLModelElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destinationRect)
-{
-    if (destinationRect.isEmpty() || context.paintingDisabled())
-        return;
-
-    RefPtr modelPlayer { m_modelPlayer };
-    if (!modelPlayer)
-        return;
-
-    if (RefPtr imageBuffer { modelPlayer->snapshotCurrentFrame(destinationRect.size().scaled(protect(document())->deviceScaleFactor()), context.colorSpace()) })
-        context.drawImageBuffer(*imageBuffer, destinationRect);
 }
 
 void HTMLModelElement::configureGraphicsLayer(GraphicsLayer& graphicsLayer, Color backgroundColor)

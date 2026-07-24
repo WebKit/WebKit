@@ -1112,9 +1112,3 @@ swift-decls = [
     { name = "UIIntelligenceSupport.UIIntelligenceElementCollector.context" },
 ]
 allow-unused = true
-
-[[legacy]]
-symbols = [
-    "CGImageSetCachingFlags",
-]
-requires = ["ENABLE_GPU_PROCESS_MODEL"]

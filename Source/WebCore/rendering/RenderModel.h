@@ -53,7 +53,9 @@ private:
     bool NODELETE requiresLayer() const final;
     void updateFromElement() final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+#if USE(SYSTEM_PREVIEW)
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
+#endif
 
     void update();
 };

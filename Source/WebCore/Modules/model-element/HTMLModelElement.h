@@ -63,8 +63,6 @@ class DOMPointReadOnly;
 class Event;
 class Exception;
 class FloatPoint;
-class FloatRect;
-class GraphicsContext;
 class GraphicsLayer;
 class LayoutPoint;
 class LayoutSize;
@@ -189,8 +187,6 @@ public:
 #endif
 
     void sizeMayHaveChanged();
-
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
     size_t NODELETE memoryCost() const;
 #if ENABLE(RESOURCE_USAGE)

@@ -89,11 +89,6 @@ private:
     {
         return protect(root().streamClientConnection())->sendWithAsyncReply(WTF::move(message), WTF::move(completionHandler), backing());
     }
-    template<typename T>
-    [[nodiscard]] auto sendSync(T&& message)
-    {
-        return protect(root().streamClientConnection())->sendSync(WTF::move(message), backing());
-    }
 
     void update(Vector<WebModel::UpdateMeshDescriptor>&&) final;
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
@@ -101,7 +96,6 @@ private:
 #if PLATFORM(COCOA)
     std::pair<simd_float4, simd_float4> getCenterAndExtents() const final;
     void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
-    void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
 #endif
     void play(bool) final;
 

@@ -32,7 +32,6 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/PixelFormat.h>
 #include <WebCore/ProcessIdentity.h>
-#include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
@@ -44,7 +43,6 @@ class TextStream;
 namespace WebCore {
 
 class IOSurfacePool;
-class NativeImage;
 
 enum class RenderingPurpose : uint8_t;
 enum class SetNonVolatileResult : uint8_t;

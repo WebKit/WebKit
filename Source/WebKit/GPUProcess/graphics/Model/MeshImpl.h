@@ -52,7 +52,6 @@ public:
 #if PLATFORM(COCOA)
     Vector<MachSendRight> ioSurfaceHandles() final;
     void updateRenderBuffers(WebModel::ResizeMeshDescriptor&&) final;
-    RefPtr<WebCore::NativeImage> getCurrentFrameAsNativeImage(uint32_t bufferIndex) final;
 #endif
 
 private:

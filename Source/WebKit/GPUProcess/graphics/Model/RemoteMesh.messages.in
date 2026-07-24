@@ -42,6 +42,5 @@ messages -> RemoteMesh Stream {
     void SetEnvironmentMap(struct WebModel::UpdateTextureDescriptor imageAsset) NotStreamEncodable
     void UpdateContentsHeadroom(float headroom)
     void UpdateRenderBuffers(unsigned width, unsigned height) -> (Vector<MachSendRight> renderBuffers) NotStreamEncodableReply
-    void PaintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex) -> () Synchronous
 }
 #endif
