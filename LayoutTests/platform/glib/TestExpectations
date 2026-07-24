@@ -1765,7 +1765,6 @@ webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/308037 imported/w3c/web-platform-tests/webrtc/simulcast/vp8.https.html [ Failure Pass ]
 webkit.org/b/308037 imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html [ Crash Failure Pass ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Failure ]
@@ -2809,6 +2808,8 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-maxFramerate.http
 imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html [ Skip ] # Timeout
 webrtc/getDisplayMedia-odd-size.html [ Skip ] # Timeout
 webrtc/video-rotation.html [ Failure ]
+webrtc/video-maxBitrate-vp8.html [ Skip ] # Timeout
+webrtc/video-maxBitrate.html [ Skip ] # Timeout
 
 # Flakies since migration to libwebrtc:
 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Timeout Pass ]
@@ -2849,10 +2850,6 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 
 http/tests/media/video-play-stall-seek.html [ Skip ] # Timeout
 
-# Requires video scaling adaptation.
-webrtc/video-maxBitrate.html [ Failure ]
-webrtc/video-maxBitrate-vp8.html [ Failure ]
-
 # Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
 
@@ -2861,7 +2858,7 @@ fast/mediastream/video-rotation2.html [ Failure ]
 http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
 webrtc/vp9.html [ Failure ]
 
-webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Failure ]
+webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Crash Failure ]
 
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
@@ -2900,7 +2897,6 @@ imported/w3c/web-platform-tests/webrtc/protocol/h265-level-id.https.html [ Skip 
 # Missing support for AV1 in current libwebrtc backend.
 webkit.org/b/302254 webrtc/video-av1.html [ Skip ]
 webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/protocol/av1-profile-asymmetry.https.html [ Skip ]
-webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.html [ Skip ]
 
 # Lack of mDNS support. Currently we expect to communicate with Avahi on host (not guest) but
 # apparently it is not running on current infra.
@@ -3009,6 +3005,11 @@ imported/w3c/web-platform-tests/webrtc/simulcast [ Pass ]
 imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Crash Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-encodings.https.html [ Failure ]
+
+imported/w3c/web-platform-tests/webrtc/simulcast/vp8.https.html [ Failure ] # Timeout
+
+# AV1 not supported yet.
+webkit.org/b/302254 imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.html [ Skip ]
 
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-answer.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-offer.html [ Skip ]

@@ -1378,3 +1378,5 @@ webkit.org/b/320056 [ Release ] imported/w3c/web-platform-tests/css/css-view-tra
 webkit.org/b/320063 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Crash Failure Pass ]
 webkit.org/b/320064 [ x86_64 ] fast/history/site-isolation/history-back-initial-vs-final-url.html [ Failure Pass ]
 webkit.org/b/320065 [ x86_64 ] fast/dom/gc-dom-tree-lifetime-shadow-tree.html [ Failure Pass ]
+
+webkit.org/b/307440 imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Pass Crash ]
