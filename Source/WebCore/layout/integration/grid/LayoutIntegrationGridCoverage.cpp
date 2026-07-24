@@ -46,7 +46,7 @@ enum class ReasonCollectionMode : bool {
 };
 
 enum class GridAvoidanceReason : uint8_t {
-    GridHasVerticalWritingMode,
+    GridHasUnsupportedWritingMode,
     GridHasRTLDirection, // http://webkit.org/b/317334
     GridHasMarginTrim,
     GridNeedsBaseline,
@@ -74,7 +74,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasPercentOrCalcPadding,
     GridItemHasMargin,
     GridItemHasBorderBoxSizing,
-    GridItemHasVerticalWritingMode,
+    GridItemHasUnsupportedWritingMode,
     GridItemHasRTLDirection,
     GridItemHasAspectRatio,
     GridItemHasUnsupportedInlineAxisAlignment,
@@ -313,8 +313,8 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (renderGridStyle->display() != Style::DisplayType::BlockGrid)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::NotAGrid, reasons, reasonCollectionMode);
 
-    if (!renderGridStyle->writingMode().isHorizontal())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasVerticalWritingMode, reasons, reasonCollectionMode);
+    if (!renderGridStyle->writingMode().isHorizontal() || renderGridStyle->writingMode().isBlockFlipped())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedWritingMode, reasons, reasonCollectionMode);
 
     if (renderGridStyle->writingMode().bidiDirection() == TextDirection::RTL)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasRTLDirection, reasons, reasonCollectionMode);
@@ -616,8 +616,8 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (ineligibleRowIndex != notFound)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridNeedsImplicitColumnsForItemsLockedToRow, reasons, reasonCollectionMode);
 
-        if (gridItemStyle->writingMode().isVertical())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasVerticalWritingMode, reasons, reasonCollectionMode);
+        if (gridItemStyle->writingMode().isVertical() || gridItemStyle->writingMode().isBlockFlipped())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedWritingMode, reasons, reasonCollectionMode);
 
         if (gridItemStyle->writingMode().bidiDirection() == TextDirection::RTL)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasRTLDirection, reasons, reasonCollectionMode);
@@ -696,8 +696,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridFormattingContextIntegrationDisabled:
         stream << "grid formatting context integration is disabled";
         break;
-    case GridAvoidanceReason::GridHasVerticalWritingMode:
-        stream << "grid has vertical writing mode";
+    case GridAvoidanceReason::GridHasUnsupportedWritingMode:
+        stream << "grid has unsupported writing mode";
         break;
     case GridAvoidanceReason::GridHasRTLDirection:
         stream << "grid has RTL direction";
@@ -780,8 +780,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemHasBorderBoxSizing:
         stream << "grid item has border-box box-sizing";
         break;
-    case GridAvoidanceReason::GridItemHasVerticalWritingMode:
-        stream << "grid item has vertical writing mode";
+    case GridAvoidanceReason::GridItemHasUnsupportedWritingMode:
+        stream << "grid item has unsupported writing mode";
         break;
     case GridAvoidanceReason::GridItemHasRTLDirection:
         stream << "grid item has RTL direction";
