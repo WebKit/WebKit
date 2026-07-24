@@ -1936,6 +1936,27 @@ static String searchTextNotFoundDescription(const String& searchText)
     return makeString('\'', searchText, "' not found inside the target node"_s);
 }
 
+static bool searchTextMatchesElementLabelOrRenderedText(Element& element, const String& searchText)
+{
+    auto withoutWhitespace = [](const String& string) {
+        return normalizeText(string).removeCharacters([](char16_t character) {
+            return isUnicodeWhitespace(character);
+        });
+    };
+
+    auto strippedSearchText = withoutWhitespace(searchText);
+    if (strippedSearchText.isEmpty()) {
+        // Err on the side of allowing the interaction.
+        return true;
+    }
+
+    if (withoutWhitespace(normalizedLabelText(element)).containsIgnoringASCIICase(strippedSearchText))
+        return true;
+
+    auto range = makeRangeSelectingNodeContents(element);
+    return withoutWhitespace(plainText(range, behaviorsForTextExtraction)).containsIgnoringASCIICase(strippedSearchText);
+}
+
 static constexpr auto nullFrameDescription = "Browsing context has been detached"_s;
 static constexpr auto interactedWithSelectElementDescription = "Successfully updated option in select element"_s;
 
@@ -2045,8 +2066,12 @@ static Expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode
     std::optional<SimpleRange> foundRange;
     if (!searchText.isEmpty()) {
         foundRange = searchForClickTarget(*element, searchText);
-        if (!foundRange && !normalizedLabelText(*element).containsIgnoringASCIICase(normalizeText(searchText)))
-            return makeUnexpected(searchTextNotFoundDescription(searchText));
+        if (!foundRange) {
+            bool targetIsWholePage = element == document->body() || element.get() == document->documentElement();
+            bool matched = targetIsWholePage ? normalizedLabelText(*element).containsIgnoringASCIICase(normalizeText(searchText)) : searchTextMatchesElementLabelOrRenderedText(*element, searchText);
+            if (!matched)
+                return makeUnexpected(searchTextNotFoundDescription(searchText));
+        }
     }
 
     if (scrollTargetIntoView == ScrollTargetIntoView::Yes) {
@@ -2511,16 +2536,19 @@ static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> i
     auto searchTextPrefix = emptyString();
     if (!searchText.isEmpty()) {
         auto range = action == Action::Click ? searchForClickTarget(*target, searchText) : searchForText(*target, searchText);
-        if (!range)
-            return { };
+        if (range) {
+            target = commonInclusiveAncestor<ComposedTree>(*range);
+            if (!target)
+                return { };
 
-        target = commonInclusiveAncestor<ComposedTree>(*range);
-        if (!target)
-            return { };
-
-        auto escapedSearchText = normalizeText(searchText);
-        stringsToValidate.append(escapedSearchText);
-        searchTextPrefix = makeString(wrapWithDoubleQuotes(escapedSearchText), " in "_s);
+            auto escapedSearchText = normalizeText(searchText);
+            stringsToValidate.append(escapedSearchText);
+            searchTextPrefix = makeString(wrapWithDoubleQuotes(escapedSearchText), " in "_s);
+        } else {
+            RefPtr element = dynamicDowncast<Element>(target.get());
+            if (!identifier || !element || !searchTextMatchesElementLabelOrRenderedText(*element, searchText))
+                return { };
+        }
     }
 
     return makeString(WTF::move(searchTextPrefix), textDescription(target.get(), stringsToValidate));

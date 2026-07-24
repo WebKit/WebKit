@@ -421,6 +421,53 @@ TEST(TextExtractionTests, InteractionClicksThroughOccludingOverlay)
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.loginClicked"] boolValue]);
 }
 
+TEST(TextExtractionTests, InteractionWithSearchTextSpanningBlockBoundary)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<a aria-label='Account nav entry' href='#settings'>"
+        "<span style='display:block'>05</span><span style='display:block'>SETTINGS</span></a>"
+        "<script>window.settingsClicked = false;"
+        "document.querySelector('a').addEventListener('click', () => { window.settingsClicked = true; });</script>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr settingsLinkID = extractNodeIdentifier(debugText, @"Account nav entry");
+    EXPECT_NOT_NULL(settingsLinkID);
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:settingsLinkID];
+    [interaction setText:@"05 SETTINGS"];
+
+    RetainPtr description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+    EXPECT_WK_STREQ("Click on link with href “#settings” labeled “Account nav entry”, with rendered text “05 SETTINGS”", description);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.settingsClicked"] boolValue]);
+
+    [webView objectByEvaluatingJavaScript:@"window.settingsClicked = false"];
+    [interaction setText:@"05SETTINGS"];
+
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+    EXPECT_WK_STREQ("Click on link with href “#settings” labeled “Account nav entry”, with rendered text “05 SETTINGS”", description);
+
+    result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.settingsClicked"] boolValue]);
+
+    [webView objectByEvaluatingJavaScript:@"window.settingsClicked = false"];
+    [interaction setText:@"05\u00a0SETTINGS"];
+
+    result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.settingsClicked"] boolValue]);
+}
+
 TEST(TextExtractionTests, InteractionDebugDescriptionWithStaleNodeIdentifier)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
