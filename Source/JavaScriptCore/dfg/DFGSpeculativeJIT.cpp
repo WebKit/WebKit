@@ -2754,24 +2754,13 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
     GPRTemporary scratch(this);
     GPRReg scratchReg = scratch.gpr();
 
-    bool isOutOfBounds = node->arrayMode().isOutOfBounds();
-    std::optional<FPRTemporary> result;
-    FPRReg resultFPR = InvalidFPRReg;
-    if (isOutOfBounds) {
-        result.emplace(this);
-        resultFPR = result->fpr();
-    }
-
     loadPtr(Address(stringReg, JSString::offsetOfValue()), scratchReg);
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
-    Jump outOfBounds;
     if (auto stringLength = tryGetConstantStringLength(node->child1()))
-        outOfBounds = branch32(AboveOrEqual, indexReg, TrustedImm32(*stringLength));
+        speculationCheck(Uncountable, JSValueRegs(), nullptr, branch32(AboveOrEqual, indexReg, TrustedImm32(*stringLength)));
     else
-        outOfBounds = branch32(AboveOrEqual, indexReg, Address(scratchReg, StringImpl::lengthMemoryOffset()));
-    if (!isOutOfBounds)
-        speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
+        speculationCheck(Uncountable, JSValueRegs(), nullptr, branch32(AboveOrEqual, indexReg, Address(scratchReg, StringImpl::lengthMemoryOffset())));
 
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
@@ -2787,17 +2776,7 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
 
     cont8Bit.link(this);
 
-    if (!isOutOfBounds) {
-        strictInt32Result(scratchReg, m_currentNode);
-        return;
-    }
-
-    convertInt32ToDouble(scratchReg, resultFPR);
-    Jump done = jump();
-    outOfBounds.link(this);
-    move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(PNaN)), resultFPR);
-    done.link(this);
-    doubleResult(resultFPR, node);
+    strictInt32Result(scratchReg, m_currentNode);
 }
 
 void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)

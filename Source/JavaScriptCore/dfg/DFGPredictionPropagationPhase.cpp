@@ -1205,14 +1205,7 @@ private:
             break;
         }
 
-        case StringCharCodeAt: {
-            if (m_currentNode->arrayMode().isOutOfBounds())
-                setPrediction(SpecAnyIntAsDouble | SpecDoublePureNaN);
-            else
-                setPrediction(SpecInt32Only);
-            break;
-        }
-
+        case StringCharCodeAt:
         case StringCodePointAt: {
             setPrediction(SpecInt32Only);
             break;

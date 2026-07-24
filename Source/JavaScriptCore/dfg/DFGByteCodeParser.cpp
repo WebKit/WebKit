@@ -3314,7 +3314,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (argumentCountIncludingThis < 1)
                 return CallOptimizationResult::DidNothing;
 
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -3322,10 +3322,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* index = argumentCountIncludingThis == 1
                 ? jsConstant(jsNumber(0))
                 : get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            bool hasOutOfBoundsExitSite = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
-            Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String, Array::Read, hasOutOfBoundsExitSite ? Array::OutOfBounds : Array::InBounds).asWord()), get(thisOperand), index);
-            if (hasOutOfBoundsExitSite)
-                charCode->setResult(NodeResultDouble);
+            Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), index);
 
             setResult(charCode);
             return CallOptimizationResult::Inlined;

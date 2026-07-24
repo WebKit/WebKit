@@ -411,12 +411,6 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         break;
     }
 
-    case StringCharCodeAt: {
-        if (node->arrayMode().isOutOfBounds())
-            break;
-        return Exits;
-    }
-
     case StringReplaceString: {
         if (node->child3().useKind() == StringUse) {
             result = ExitsForExceptions;

@@ -1156,12 +1156,10 @@ private:
         case StringCharCodeAt:
         case StringCodePointAt: {
             // Currently we have no good way of refining these.
-            if (op == StringAt || op == StringCharCodeAt)
+            if (op == StringAt)
                 ASSERT(node->arrayMode() == ArrayMode(Array::String, Array::Read, Array::OutOfBounds) || node->arrayMode() == ArrayMode(Array::String, Array::Read, Array::InBounds));
             else
                 ASSERT(node->arrayMode() == ArrayMode(Array::String, Array::Read));
-            if (op == StringCharCodeAt)
-                ASSERT(node->arrayMode().isOutOfBounds() == (node->result() == NodeResultDouble));
             blessArrayOperation(node->child1(), node->child2(), node->child1()); // Rewrite child1 with ResolveRope.
             fixEdge<KnownStringUse>(node->child1());
             fixEdge<Int32Use>(node->child2());
