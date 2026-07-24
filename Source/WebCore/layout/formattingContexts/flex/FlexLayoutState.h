@@ -26,8 +26,11 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+
+class RenderBox;
 
 class FlexLayoutState {
 public:
@@ -52,8 +55,12 @@ public:
             m_phase = phase;
     }
 
+    void setFlexItemHasCompletedLayout(const RenderBox& flexItem) { m_flexItemsWithCompletedLayout.add(flexItem); }
+    bool hasFlexItemCompletedLayout(const RenderBox& flexItem) const { return m_flexItemsWithCompletedLayout.contains(flexItem); }
+
 private:
     Phase m_phase { Phase::PreparingFlexItems };
+    SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 };
 
 } // namespace WebCore

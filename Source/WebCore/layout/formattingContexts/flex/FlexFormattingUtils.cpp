@@ -580,9 +580,7 @@ LayoutUnit FlexFormattingUtils::marginBoxAscentForFlexItem(const FlexLayoutItem&
 
 bool FlexFormattingUtils::isHorizontalFlow(const RenderFlexibleBox& flexBox)
 {
-    if (flexBox.isHorizontalWritingMode())
-        return !isColumnFlow(flexBox);
-    return isColumnFlow(flexBox);
+    return flexBox.isHorizontalWritingMode() ? !isColumnFlow(flexBox) : isColumnFlow(flexBox);
 }
 
 bool FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem)

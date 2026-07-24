@@ -190,7 +190,7 @@ private:
     void setFlexItemGeometry(FlexLayoutItem&, const LayoutPoint& location);
 
     const FlexFormattingUtils& flexFormattingUtils() const;
-    FlexLayoutState& flexLayoutState() const;
+    FlexLayoutState& layoutState() const;
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
     FlexFormattingUtils m_flexFormattingUtils;

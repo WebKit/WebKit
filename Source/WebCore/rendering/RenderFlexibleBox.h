@@ -167,15 +167,12 @@ private:
     std::optional<LayoutUnit> blockAxisSizeForFlexItem(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
     void cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height);
     LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
-    void applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout);
-    void relayoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
+    void applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit blockSize);
+    void layoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
     void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
-    void setOverridingMainSizeForFlexItem(RenderBox& flexItem, LayoutUnit mainSize);
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
-    void markFlexItemLayoutComplete(const RenderBox& flexItem) { m_flexItemsWithCompletedLayout.add(flexItem); }
-    bool hasFlexItemCompletedLayout(const RenderBox& flexItem) const { return m_flexItemsWithCompletedLayout.contains(flexItem); }
     void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineStart.add(flexItem); }
     void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineEnd.add(flexItem); }
     void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.m_itemsOnFirstFlexLine.add(flexItem); }
@@ -187,13 +184,6 @@ private:
     // This is used to cache the intrinsic size on the cross axis to avoid
     // relayouts when stretching.
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_contentLogicalHeights;
-
-    // This set is used to keep track of which children we laid out in this
-    // current layout iteration. We need it because the ones in this set may
-    // need an additional layout pass for correct stretch alignment handling, as
-    // the first layout likely did not use the correct value for percentage
-    // sizing of children.
-    SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 
     Vector<SingleThreadWeakPtr<RenderBox>> m_flexItems;
     // The flex formatting context integration: RenderFlexibleBox owns it and befriends it so it can reach the

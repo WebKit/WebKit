@@ -72,11 +72,6 @@ static LayoutUnit crossAxisExtent(const RenderFlexibleBox& flexBox)
     return FlexFormattingUtils::isHorizontalFlow(flexBox) ? flexBox.borderBoxSize().height() : flexBox.borderBoxSize().width();
 }
 
-static LayoutUnit mainAxisContentExtentForFlexItemIncludingScrollbar(const RenderFlexibleBox& flexBox, const RenderBox& flexItem)
-{
-    return FlexFormattingUtils::isHorizontalFlow(flexBox) ? flexItem.contentBoxWidth() + flexItem.verticalScrollbarWidth() : flexItem.contentBoxHeight() + flexItem.horizontalScrollbarHeight();
-}
-
 static LayoutUnit computeFlexItemMarginValue(const RenderFlexibleBox& flexBox, const Style::MarginEdge& margin)
 {
     // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
@@ -87,17 +82,6 @@ static LayoutUnit computeFlexItemMarginValue(const RenderFlexibleBox& flexBox, c
 static bool canSetFlexItemContentLogicalHeight(const RenderBox& flexItem)
 {
     return !flexItem.isFloatingOrOutOfFlowPositioned() && !flexItem.shouldComputeLogicalHeightFromAspectRatio() && !is<RenderReplaced>(flexItem);
-}
-
-static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox& flexItem)
-{
-    if (flexItem.isOutOfFlowPositioned())
-        return;
-
-    // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
-    // an auto value. Add a method to determine this, so that we can avoid the relayout.
-    if (relayoutFlexItem || flexItem.hasRelativeLogicalHeight())
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
 }
 
 #define SET_OR_CLEAR_OVERRIDING_SIZE(box, SizeType, size)       \
@@ -206,7 +190,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     LayoutRepainter repainter(*this);
 
     resetLogicalHeightBeforeLayoutIfNeeded();
-    m_flexItemsWithCompletedLayout.clear();
 
     SetForScope flexLayoutStateScope(m_flexLayoutState, FlexLayoutState { });
 
@@ -581,6 +564,7 @@ LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& 
     auto percentResolveDisableScope = FlexPercentResolveDisabler { view().frameView().layoutContext(), flexItem };
     flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     flexItem.layoutIfNeeded();
+    m_flexLayoutState->setFlexItemHasCompletedLayout(flexItem);
 
     auto blockAxisContentSize = [&] {
         auto flexBasis = FlexFormattingUtils::flexBasisForFlexItem(flexItem);
@@ -591,32 +575,22 @@ LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& 
 
     // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
     setBlockAxisSizeForFlexItem(flexItem, blockAxisContentSize);
-    markFlexItemLayoutComplete(flexItem);
     return blockAxisContentSize;
 }
 
-void RenderFlexibleBox::applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout)
+void RenderFlexibleBox::applyStretchedLogicalHeightToFlexItem(RenderBox& flexItem, LayoutUnit blockSize)
 {
-    if (needsRelayout || !flexItem.overridingBorderBoxLogicalHeight())
-        flexItem.setOverridingBorderBoxLogicalHeight(desiredLogicalHeight);
-
-    if (!needsRelayout)
-        return;
-
     // We cache the child's content logical height to avoid it being reset to the stretched height.
     // FIXME: This is fragile. RenderBoxes should be smart enough to determine their content logical height
     // correctly even when there's an overrideHeight.
-    LayoutUnit contentLogicalHeight = flexItemContentLogicalHeight(flexItem);
-    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    auto contentLogicalHeight = flexItemContentLogicalHeight(flexItem);
     dirtyPercentHeightDescendantsWithinFlexItem(flexItem);
-
     // Don't use layoutChildIfNeeded to avoid setting cross axis cached size twice.
-    flexItem.layoutIfNeeded();
-
+    layoutFlexItemForStretchedCrossSize(flexItem, blockSize, LogicalBoxAxis::Block);
     cacheFlexItemContentLogicalHeightIfAllowed(flexItem, contentLogicalHeight);
 }
 
-void RenderFlexibleBox::relayoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis)
+void RenderFlexibleBox::layoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis)
 {
     if (crossAxis == LogicalBoxAxis::Block)
         flexItem.setOverridingBorderBoxLogicalHeight(crossSize);
@@ -649,34 +623,45 @@ void RenderFlexibleBox::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayoutIte
 {
     auto& flexItem = flexLayoutItem.renderer.get();
 
-    setOverridingMainSizeForFlexItem(flexItem, mainSize);
-    // The flexed content size and the override size include the scrollbar
-    // width, so we need to compare to the size including the scrollbar.
-    // FIXME: Should it include the scrollbar?
-    if (mainSize != mainAxisContentExtentForFlexItemIncludingScrollbar(*this, flexItem))
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    else {
-        // To avoid double applying margin changes in
-        // updateAutoMarginsInCrossAxis, we reset the margins here.
+    FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem) ? flexItem.setOverridingBorderBoxLogicalWidth(mainSize + flexItem.borderAndPaddingLogicalWidth())
+        : flexItem.setOverridingBorderBoxLogicalHeight(mainSize + flexItem.borderAndPaddingLogicalHeight());
+    auto mainAxisContentExtentIncludingScrollbar = FlexFormattingUtils::isHorizontalFlow(*this) ? flexItem.contentBoxWidth() + flexItem.verticalScrollbarWidth() : flexItem.contentBoxHeight() + flexItem.horizontalScrollbarHeight();
+    auto mainSizeIsUnchanged = mainSize == mainAxisContentExtentIncludingScrollbar;
+
+    if (mainSizeIsUnchanged) {
+        // To avoid double applying margin changes in updateAutoMarginsInCrossAxis, we reset the margins here.
         resetAutoMarginsAndLogicalTopInCrossAxis(flexItem);
     }
-    // We may have already forced relayout for orthogonal flowing children in
-    // computeInnerFlexBaseSizeForFlexItem.
-    bool forceFlexItemRelayout = flexLayoutItem.shouldInvalidateChildContent && !hasFlexItemCompletedLayout(flexItem);
-    if (!forceFlexItemRelayout && flexItemHasPercentHeightDescendants(flexItem)) {
+
+    // We may have already forced relayout for orthogonal flowing children in computeInnerFlexBaseSizeForFlexItem.
+    auto shouldMarkFlexItemForLayout = [&] {
+        // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
+        // an auto value. Add a method to determine this, so that we can avoid the relayout.
+        if (flexItem.hasRelativeLogicalHeight())
+            return true;
+        if (flexLayoutItem.shouldInvalidateChildContent && !m_flexLayoutState->hasFlexItemCompletedLayout(flexItem))
+            return true;
+        // The flexed content size and the override size include the scrollbar
+        // width, so we need to compare to the size including the scrollbar.
+        // FIXME: Should it include the scrollbar?
+        if (!mainSizeIsUnchanged)
+            return true;
         // Have to force another relayout even though the child is sized
         // correctly, because its descendants are not sized correctly yet. Our
         // previous layout of the child was done without an override height set.
         // So, redo it here.
-        forceFlexItemRelayout = true;
-    }
-    updateFlexItemDirtyBitsBeforeLayout(forceFlexItemRelayout, flexItem);
-    if (!flexItem.needsLayout())
-        flexItem.markForPaginationRelayoutIfNeeded();
-    if (flexItem.needsLayout())
-        markFlexItemLayoutComplete(flexItem);
+        return flexItemHasPercentHeightDescendants(flexItem);
+    };
 
-    flexItem.layoutIfNeeded();
+    if (shouldMarkFlexItemForLayout())
+        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    else
+        flexItem.markForPaginationRelayoutIfNeeded();
+
+    if (flexItem.needsLayout()) {
+        flexItem.layoutIfNeeded();
+        m_flexLayoutState->setFlexItemHasCompletedLayout(flexItem);
+    }
 
     if (!flexLayoutItem.everHadLayout && flexItem.checkForRepaintDuringLayout()) {
         flexItem.repaint();
@@ -684,30 +669,24 @@ void RenderFlexibleBox::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayoutIte
     }
 }
 
-void RenderFlexibleBox::setOverridingMainSizeForFlexItem(RenderBox& flexItem, LayoutUnit preferredSize)
-{
-    if (FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem))
-        flexItem.setOverridingBorderBoxLogicalWidth(preferredSize + flexItem.borderAndPaddingLogicalWidth());
-    else
-        flexItem.setOverridingBorderBoxLogicalHeight(preferredSize + flexItem.borderAndPaddingLogicalHeight());
-}
-
 void RenderFlexibleBox::resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem)
 {
-    if (FlexFormattingUtils::hasAutoMarginsInCrossAxis(flexItem)) {
-        flexItem.updateLogicalHeight();
-        if (FlexFormattingUtils::isHorizontalFlow(*this)) {
-            if (flexItem.style().marginTop().isAuto())
-                flexItem.setMarginTop(0_lu);
-            if (flexItem.style().marginBottom().isAuto())
-                flexItem.setMarginBottom(0_lu);
-        } else {
-            if (flexItem.style().marginLeft().isAuto())
-                flexItem.setMarginLeft(0_lu);
-            if (flexItem.style().marginRight().isAuto())
-                flexItem.setMarginRight(0_lu);
-        }
+    if (!FlexFormattingUtils::hasAutoMarginsInCrossAxis(flexItem))
+        return;
+
+    flexItem.updateLogicalHeight();
+    if (FlexFormattingUtils::isHorizontalFlow(*this)) {
+        if (flexItem.style().marginTop().isAuto())
+            flexItem.setMarginTop(0_lu);
+        if (flexItem.style().marginBottom().isAuto())
+            flexItem.setMarginBottom(0_lu);
+        return;
     }
+
+    if (flexItem.style().marginLeft().isAuto())
+        flexItem.setMarginLeft(0_lu);
+    if (flexItem.style().marginRight().isAuto())
+        flexItem.setMarginRight(0_lu);
 }
 
 bool RenderFlexibleBox::flexItemHasPercentHeightDescendants(const RenderBox& renderer) const
