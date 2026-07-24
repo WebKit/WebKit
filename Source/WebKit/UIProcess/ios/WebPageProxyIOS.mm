@@ -715,7 +715,10 @@ void WebPageProxy::interpretKeyEvent(IPC::Connection& connection, EditorState&& 
         return;
     }
 
-    auto didInterpret = pageClient->interpretKeyEvent(protect(firstQueuedKeyEvent()), WTF::move(context));
+    // firstQueuedKeyEvent() aliases a by-value keyEventQueue element; the nested key interpretation
+    // below can re-enter WebPageProxy and mutate the queue, freeing it, so copy it onto the stack.
+    auto keyEvent = firstQueuedKeyEvent();
+    auto didInterpret = pageClient->interpretKeyEvent(keyEvent, WTF::move(context));
     completionHandler(didInterpret);
 }
 
