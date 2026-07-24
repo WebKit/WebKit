@@ -871,6 +871,11 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
             sessionCapabilities.siteIsolationEnabled = value.boolValue;
     }
 
+    if (NSNumber *value = forwardedCapabilities[WIRControlledByExternalAgent]) {
+        if ([value isKindOfClass:NSNumber.class])
+            sessionCapabilities.controlledByExternalAgent = value.boolValue;
+    }
+
     if (!m_client)
         return;
 
