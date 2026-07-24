@@ -37,7 +37,6 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -53,7 +52,6 @@ namespace Inspector {
 
 using ResourceID = WebCore::ScopedResourceLoaderIdentifier;
 using FrameID = WebCore::FrameIdentifier;
-using ContextID = WebCore::ScriptExecutionContextIdentifier;
 
 class ProxyingNetworkAgent : public RefCounted<ProxyingNetworkAgent>, public WebKit::InspectorAgentBase, public NetworkBackendDispatcherHandler, public IPC::MessageReceiver, public CanMakeCheckedPtr<ProxyingNetworkAgent> {
     WTF_MAKE_TZONE_ALLOCATED(ProxyingNetworkAgent);
@@ -102,12 +100,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC message handlers from WebProcess FrameNetworkAgentProxy
-    void requestWillBeSent(ResourceID, FrameID, ContextID, const String& targetID, const String& documentURL, const WebCore::ResourceRequest&, std::optional<WebCore::ResourceResponse>&&, ResourceType, double timestamp, double walltime);
-    void responseReceived(ResourceID, FrameID, ContextID, const WebCore::ResourceResponse&, ResourceType, double timestamp);
+    void requestWillBeSent(ResourceID, FrameID, const String& loaderId, const String& targetID, const String& documentURL, const WebCore::ResourceRequest&, std::optional<WebCore::ResourceResponse>&&, ResourceType, double timestamp, double walltime);
+    void responseReceived(ResourceID, FrameID, const String& loaderId, const WebCore::ResourceResponse&, ResourceType, double timestamp);
     void dataReceived(ResourceID, int dataLength, int encodedDataLength, double timestamp);
     void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL);
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
-    void requestServedFromMemoryCache(ResourceID, FrameID, ContextID, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp);
+    void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp);
 
     void removeAllRegisteredReceivers();
 

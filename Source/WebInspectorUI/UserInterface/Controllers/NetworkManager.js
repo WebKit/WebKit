@@ -668,7 +668,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         if (framePayload.loaderId === frame.provisionalLoaderIdentifier) {
             // There was a provisional load in progress, commit it.
-            frame.commitProvisionalLoad(framePayload.securityOrigin);
+            frame.commitProvisionalLoad(framePayload.name, framePayload.securityOrigin);
         } else {
             let mainResource = null;
             if (frame.mainResource.url !== framePayload.url || frame.loaderIdentifier !== framePayload.loaderId) {

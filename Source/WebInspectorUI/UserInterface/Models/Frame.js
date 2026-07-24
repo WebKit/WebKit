@@ -108,16 +108,18 @@ WI.Frame = class Frame extends WI.Object
         this.dispatchEventToListeners(WI.Frame.Event.ProvisionalLoadStarted);
     }
 
-    commitProvisionalLoad(securityOrigin)
+    commitProvisionalLoad(name, securityOrigin)
     {
         console.assert(this._provisionalMainResource);
         console.assert(this._provisionalLoaderIdentifier);
         if (!this._provisionalLoaderIdentifier)
             return;
 
+        var oldName = this._name;
         var oldSecurityOrigin = this._securityOrigin;
         var oldMainResource = this._mainResource;
 
+        this._name = name || null;
         this._securityOrigin = securityOrigin || null;
         this._loaderIdentifier = this._provisionalLoaderIdentifier;
         this._mainResource = this._provisionalMainResource;
@@ -145,6 +147,9 @@ WI.Frame = class Frame extends WI.Object
 
         if (this._securityOrigin !== oldSecurityOrigin)
             this.dispatchEventToListeners(WI.Frame.Event.SecurityOriginDidChange, {oldSecurityOrigin});
+
+        if (this._name !== oldName)
+            this.dispatchEventToListeners(WI.Frame.Event.NameDidChange, {oldName});
     }
 
     clearProvisionalLoad(skipProvisionalLoadClearedEvent)

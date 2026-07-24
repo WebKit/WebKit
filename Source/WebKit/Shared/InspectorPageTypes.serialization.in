@@ -33,7 +33,7 @@ header: <WebCore/InspectorResourceUtilities.h>
 };
 
 [CustomHeader] struct Inspector::FrameResourceData {
-    std::optional<WebCore::ScriptExecutionContextIdentifier> loaderId;
+    String loaderId;
     Vector<Inspector::FrameResource> resources;
 };
 

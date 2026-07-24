@@ -30,7 +30,6 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
-#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -68,10 +67,10 @@ struct FrameResource {
 };
 
 // Per-frame data gathered from a frame's hosting WebContent process: the committed document's
-// loaderId (carried as a ScriptExecutionContextIdentifier and converted to the protocol loaderId
-// string at the UIProcess boundary) and the frame's cached subresources.
+// protocol loaderId string (computed by that process so it matches the live Network events) and
+// the frame's cached subresources.
 struct FrameResourceData {
-    std::optional<WebCore::ScriptExecutionContextIdentifier> loaderId;
+    String loaderId;
     Vector<FrameResource> resources;
 };
 

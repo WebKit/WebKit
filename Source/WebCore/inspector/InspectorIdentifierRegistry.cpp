@@ -30,6 +30,7 @@
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrameInlines.h"
+#include "NavigationIdentifier.h"
 #include "ProcessIdentifier.h"
 #include "RemoteFrame.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -127,16 +128,16 @@ Protocol::Network::LoaderId BackendIdentifierRegistry::loaderId(WebCore::Documen
     if (!loader)
         return emptyString();
 
-    // Compute fresh from the current document rather than memoizing by raw DocumentLoader* which can go stale.
-    // protocolLoaderId() is deterministic in the document's ScriptExecutionContextIdentifier, so this matches
-    // the id network events report.
-    if (RefPtr frame = loader->frame()) {
-        if (RefPtr document = frame->document())
-            return protocolLoaderId(document->identifier());
-    }
+    // Derive the id from the loader's navigationID, which is assigned at provisional-load start and
+    // stays fixed for the load. The Network stream computes this at the main resource's
+    // willSendRequest (before commit) and the Page stream at frameNavigated (after commit); anchoring
+    // on navigationID makes both arrive at the same string. It is process-local, so qualify it with
+    // the hosting process.
+    if (auto navigationID = loader->navigationID())
+        return makeString("loader-"_s, WebCore::Process::identifier().toUInt64(), '.', navigationID->toUInt64());
 
-    // Fallback only when no document exists yet (early instrumentation): keep a stable per-loader
-    // id. This produces a legacy-format ID; a deterministic one is used once the document exists.
+    // Fallback only when no navigationID exists yet (early instrumentation / non-navigation loads):
+    // keep a stable per-loader id. This produces a legacy-format ID.
     return m_loaderToIdentifier.ensure(loader, [] {
         return IdentifiersFactory::createIdentifier();
     }).iterator->value;

@@ -36,9 +36,11 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/ElementInlines.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameInlines.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
@@ -148,11 +150,12 @@ void PageAgentProxy::frameNavigated(LocalFrame& frame)
             name = ownerElement->attributeWithoutSynchronization(WebCore::HTMLNames::idAttr);
     }
 
-    // Send the committed document's ScriptExecutionContextIdentifier as the loaderId; the
-    // UIProcess derives the deterministic, hosting-process-qualified protocol loaderId string
-    // from it (consistent across processes, unlike the per-process IdentifierRegistry loaderId).
-    // See webkit.org/b/308895.
-    auto loaderId = document->identifier();
+    // Send the loaderId for the just-committed DocumentLoader. The registry memoizes one string
+    // per loader, so this matches the id the network path already reported for the same loader.
+    Ref inspectedPage = m_inspectedPage.get();
+    Ref registry = inspectedPage->inspectorController().identifierRegistry();
+    RefPtr documentLoader = frame.loader().documentLoader();
+    auto loaderId = registry->loaderId(documentLoader.get());
 
     RefPtr connection = WebProcess::singleton().parentProcessConnection();
     if (!connection)

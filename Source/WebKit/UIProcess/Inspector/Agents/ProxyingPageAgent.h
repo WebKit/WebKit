@@ -33,7 +33,6 @@
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
@@ -108,7 +107,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC message handlers from WebProcess PageAgentProxy
-    void frameNavigated(WebCore::FrameIdentifier, const URL&, const String& mimeType, WebCore::SecurityOriginData&&, std::optional<WebCore::FrameIdentifier> parentFrameID, const String& name, WebCore::ScriptExecutionContextIdentifier loaderId);
+    void frameNavigated(WebCore::FrameIdentifier, const URL&, const String& mimeType, WebCore::SecurityOriginData&&, std::optional<WebCore::FrameIdentifier> parentFrameID, const String& name, const String& loaderId);
     void domContentEventFired(double timestamp);
     void loadEventFired(double timestamp);
     void frameDetached(WebCore::FrameIdentifier);
@@ -139,7 +138,7 @@ private:
         URL url;
         String mimeType;
         WebCore::SecurityOriginData securityOrigin;
-        std::optional<WebCore::ScriptExecutionContextIdentifier> loaderId;
+        String loaderId;
     };
     HashMap<WebCore::FrameIdentifier, CachedFrameDocumentInfo> m_cachedFrameDocumentInfo;
 };

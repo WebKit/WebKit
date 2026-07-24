@@ -94,7 +94,7 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
     return IdentifierRegistry::protocolFrameId(frameID);
 }
 
-void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, SecurityOriginData&& securityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, WebCore::ScriptExecutionContextIdentifier loaderId)
+void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, SecurityOriginData&& securityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
 {
     // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()
     // can report it for cross-origin children, whose commit the inspectedPage's WebFrameProxy
@@ -103,7 +103,7 @@ void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, 
 
     auto frameObject = Protocol::Page::Frame::create()
         .setId(protocolFrameIdForFrameID(frameID))
-        .setLoaderId(IdentifierRegistry::protocolLoaderId(loaderId))
+        .setLoaderId(loaderId)
         .setUrl(url.string())
         .setMimeType(mimeType)
         .setSecurityOrigin(securityOrigin.toString())
@@ -282,7 +282,7 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
     URL url = frame.url();
     SecurityOriginData securityOrigin = frame.documentSecurityOriginData();
     String mimeType = frame.mimeType();
-    std::optional<WebCore::ScriptExecutionContextIdentifier> loaderId;
+    String loaderId;
     if (auto it = m_cachedFrameDocumentInfo.find(frame.frameID()); it != m_cachedFrameDocumentInfo.end()) {
         url = it->value.url;
         securityOrigin = it->value.securityOrigin;
@@ -298,7 +298,7 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
     // before the inspector connected (e.g. the main frame), whose live frameNavigated wasn't cached.
     auto resources = JSON::ArrayOf<Protocol::Page::FrameResource>::create();
     if (auto it = resourcesByFrame.find(frame.frameID()); it != resourcesByFrame.end()) {
-        if (!loaderId)
+        if (loaderId.isEmpty())
             loaderId = it->value.loaderId;
         for (auto& resource : it->value.resources)
             resources->addItem(ResourceUtilities::buildResourceObject(resource));
@@ -306,7 +306,7 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
 
     auto frameObject = Protocol::Page::Frame::create()
         .setId(protocolId)
-        .setLoaderId(loaderId ? IdentifierRegistry::protocolLoaderId(*loaderId) : String())
+        .setLoaderId(loaderId)
         .setUrl(url.string())
         .setMimeType(mimeType.isEmpty() ? "text/html"_s : mimeType)
         .setSecurityOrigin(securityOrigin.toString())

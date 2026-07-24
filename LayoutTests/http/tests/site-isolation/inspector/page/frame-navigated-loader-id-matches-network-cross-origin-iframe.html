@@ -1,0 +1,82 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    const NAV_URL_SUFFIX = "/resource-tree-frame-with-subresource.html";
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.FrameNavigatedLoaderIdMatchesNetwork");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.FrameNavigated.LoaderIdMatchesNetworkMainResource",
+        description: "Under Site Isolation, a cross-origin iframe's Page.frameNavigated loaderId should equal the Network.requestWillBeSent loaderId reported for that navigation's main (Document) resource. Both are derived from the same DocumentLoader (via the hosting process's IdentifierRegistry), so they must be identical -- which is what lets the frontend correlate a navigation's main-resource network events with its frame. The statically-declared iframe is navigated once (post-connect) so both events can be observed live.",
+        async test() {
+            // The cross-origin iframe is declared statically, so it has already committed in its own
+            // process. frameTargetForURLContaining() returns the real (committed) frame target -- not
+            // the parent-process placeholder a single-shot TargetAdded would catch.
+            let frameTarget = await frameTargetForURLContaining("resource-tree-frame.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+
+            // Capture the raw loaderIds carried by the navigation, keyed on the target URL (reliable
+            // across the process boundary): the loaderId on the main-resource Network.requestWillBeSent
+            // (routed through resourceRequestWillBeSent) and the loaderId on Page.frameNavigated (routed
+            // through frameDidNavigate). These are the two streams the fix makes consistent.
+            let capturedNetworkDocumentLoaderId = null;
+            let capturedPageLoaderId = null;
+
+            let originalResourceRequestWillBeSent = WI.networkManager.resourceRequestWillBeSent;
+            WI.networkManager.resourceRequestWillBeSent = function(requestIdentifier, frameIdentifier, loaderIdentifier, request, type) {
+                if (type === InspectorBackend.Enum.Page.ResourceType.Document && request && request.url && request.url.endsWith(NAV_URL_SUFFIX))
+                    capturedNetworkDocumentLoaderId = loaderIdentifier;
+                return originalResourceRequestWillBeSent.apply(this, arguments);
+            };
+
+            let originalFrameDidNavigate = WI.networkManager.frameDidNavigate;
+            WI.networkManager.frameDidNavigate = function(framePayload) {
+                if (framePayload && framePayload.url && framePayload.url.endsWith(NAV_URL_SUFFIX))
+                    capturedPageLoaderId = framePayload.loaderId;
+                return originalFrameDidNavigate.apply(this, arguments);
+            };
+
+            let child = null;
+            try {
+                // Navigate the child within its own process (same-origin relative navigation) so both the
+                // main-resource Network.requestWillBeSent and the Page.frameNavigated commit fire live.
+                // Not awaited: the navigation may tear down the runtime before the reply arrives.
+                frameTarget.RuntimeAgent.evaluate.invoke({expression: `location.href = "${NAV_URL_SUFFIX.slice(1)}"`, objectGroup: "test"}).catch(() => {});
+
+                // Wait until both loaderIds are observed and the frame model reflects the navigation. The
+                // cross-origin child is identified as the main frame's child (its model URL can lag).
+                for (let attempt = 0; attempt < 100; ++attempt) {
+                    child = WI.networkManager.mainFrame ? WI.networkManager.frames.find((frame) => frame.parentFrame === WI.networkManager.mainFrame) : null;
+                    if (capturedPageLoaderId && capturedNetworkDocumentLoaderId && child && child.mainResource && child.mainResource.url.endsWith(NAV_URL_SUFFIX))
+                        break;
+                    await new Promise((resolve) => setTimeout(resolve, 20));
+                }
+            } finally {
+                WI.networkManager.resourceRequestWillBeSent = originalResourceRequestWillBeSent;
+                WI.networkManager.frameDidNavigate = originalFrameDidNavigate;
+            }
+
+            InspectorTest.expectThat(!!child, "Cross-origin child frame should be in the frame model.");
+            InspectorTest.expectThat(!!capturedNetworkDocumentLoaderId, "Network.requestWillBeSent (Document) should fire for the child's navigation.");
+            InspectorTest.expectThat(!!capturedPageLoaderId, "Page.frameNavigated should fire for the child's navigation.");
+
+            // The core of the fix. (loaderId strings embed a process id, so compare for equality rather
+            // than logging the raw values.)
+            InspectorTest.expectThat(capturedNetworkDocumentLoaderId === capturedPageLoaderId, "Page.frameNavigated loaderId should equal the Network.requestWillBeSent loaderId for the same main-resource load.");
+
+            // The frame model reflects the navigation and adopts that same loaderId as its committed one.
+            InspectorTest.expectThat(child && child.mainResource && child.mainResource.url.endsWith(NAV_URL_SUFFIX), "Child frame's main resource should be the newly navigated document.");
+            InspectorTest.expectThat(child && child.loaderIdentifier === capturedPageLoaderId, "Child frame should be committed with the navigation's loaderId.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation a cross-origin iframe's Page.frameNavigated loaderId matches the Network.requestWillBeSent loaderId for its main resource.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/resource-tree-frame.html"></iframe>
+</body>

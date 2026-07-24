@@ -29,7 +29,6 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
-#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -169,11 +168,6 @@ public:
             ObjectIdentifier<WebCore::ProcessIdentifierType>(*pidValue),
             WebCore::FrameIdentifier(*frameValue)
         };
-    }
-
-    static inline String protocolLoaderId(WebCore::ScriptExecutionContextIdentifier contextID)
-    {
-        return makeString("loader-"_s, contextID.processIdentifier().toUInt64(), '.', contextID.object().toString());
     }
 };
 

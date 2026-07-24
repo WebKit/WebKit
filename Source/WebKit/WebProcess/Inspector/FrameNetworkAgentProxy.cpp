@@ -43,11 +43,13 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageInspectorController.h>
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -111,14 +113,16 @@ CommandResult<void> FrameNetworkAgentProxy::disable()
     return { };
 }
 
-static std::optional<ScriptExecutionContextIdentifier> contextIdentifier(DocumentLoader* loader)
+// The loaderId for a resource's DocumentLoader. The registry memoizes one string per loader, so
+// this network path and PageAgentProxy::frameNavigated report the identical id for a navigation.
+static String loaderIdForLoader(WebPage& page, DocumentLoader* loader)
 {
-    if (!loader || !loader->frame())
-        return std::nullopt;
-    auto* document = loader->frame()->document();
-    if (!document)
-        return std::nullopt;
-    return document->identifier();
+    RefPtr corePage = page.corePage();
+    if (!corePage)
+        return { };
+    Ref registry = corePage->inspectorController().identifierRegistry();
+    RefPtr protectedLoader = loader;
+    return registry->loaderId(protectedLoader.get());
 }
 
 static std::optional<FrameIdentifier> frameIdentifier(DocumentLoader* loader)
@@ -176,7 +180,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     if (!page)
         return;
 
-    auto contextID = protectedLoader->frame()->document()->identifier();
+    auto loaderId = loaderIdForLoader(*page, protectedLoader.get());
     auto frameID = frameIdentifier(protectedLoader.get());
     auto resourceType = resourceTypeForRequest(request, protectedLoader.get(), cachedResource);
     if (!frameID)
@@ -193,7 +197,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
-            qualifyResourceID(resourceID), *frameID, contextID, String(), documentURL, request,
+            qualifyResourceID(resourceID), *frameID, loaderId, String(), documentURL, request,
             WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime),
         page->identifier());
 }
@@ -213,9 +217,9 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
     if (!page)
         return;
 
-    auto contextID = contextIdentifier(protectedLoader.get());
+    auto loaderId = loaderIdForLoader(*page, protectedLoader.get());
     auto frameID = frameIdentifier(protectedLoader.get());
-    if (!contextID || !frameID)
+    if (!frameID)
         return;
 
     // FIXME: Map from UncachedLoadType to a more specific ResourceType.
@@ -228,7 +232,7 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
-            qualifyResourceID(resourceID), *frameID, *contextID, String(), documentURL, request,
+            qualifyResourceID(resourceID), *frameID, loaderId, String(), documentURL, request,
             std::nullopt, ResourceType::Other, timestamp, walltime),
         page->identifier());
 }
@@ -243,7 +247,7 @@ void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourc
     if (!page)
         return;
 
-    auto contextID = protectedLoader->frame()->document()->identifier();
+    auto loaderId = loaderIdForLoader(*page, protectedLoader.get());
     auto frameID = frameIdentifier(protectedLoader.get());
     if (!frameID)
         return;
@@ -257,7 +261,7 @@ void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourc
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::ResponseReceived(
-            qualifyResourceID(resourceID), *frameID, contextID, response, resourceType, timestamp),
+            qualifyResourceID(resourceID), *frameID, loaderId, response, resourceType, timestamp),
         page->identifier());
 }
 
@@ -344,7 +348,7 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
         return;
 
     auto resourceID = ResourceLoaderIdentifier::generate();
-    auto contextID = protectedLoader->frame()->document()->identifier();
+    auto loaderId = loaderIdForLoader(*page, protectedLoader.get());
     auto frameID = frameIdentifier(protectedLoader.get());
     auto resourceType = ResourceUtilities::inspectorResourceType(cachedResource);
     if (!frameID)
@@ -371,7 +375,7 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestServedFromMemoryCache(
-            qualifyResourceID(resourceID), *frameID, contextID, documentURL,
+            qualifyResourceID(resourceID), *frameID, loaderId, documentURL,
             cachedResource.response(), resourceType, sourceMapURL, bodySize, timestamp),
         page->identifier());
 }
