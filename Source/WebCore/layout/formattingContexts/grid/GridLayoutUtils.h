@@ -67,8 +67,8 @@ LayoutUnit blockUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&,
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
 LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
 
-LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem&, LayoutUnit blockAxisConstraint, const IntegrationUtils&);
-LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit blockAxisConstraint, const IntegrationUtils&);
+LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem&, const IntegrationUtils&);
+LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem&, const IntegrationUtils&);
 
 LayoutUnit blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
 LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);

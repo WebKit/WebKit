@@ -33,17 +33,17 @@ namespace Layout {
 
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
 {
-    // FIXME: blockAxisConstraint is unused by the inline-axis contribution functions; remove the stale parameter in a follow-up.
+    // The opposite-axis constraint is part of the shared callback signature (blockAxis() uses it), but
+    // inline-axis intrinsic sizes don't depend on it while grid items with a preferred aspect ratio are unsupported.
     return {
-        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
-            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit) {
+            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, integrationUtils);
         },
-        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
-            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit) {
+            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, integrationUtils);
         },
-        [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit blockAxisConstraint) {
-            UNUSED_PARAM(blockAxisConstraint);
-            return GridLayoutUtils::inlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, 0_lu, integrationUtils);
+        [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit) {
+            return GridLayoutUtils::inlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, /*gridAreaInlineSize=*/0_lu, integrationUtils);
         }
     };
 }
