@@ -284,8 +284,6 @@ protected:
 
     AsyncEvaluationOrder m_asyncEvaluationOrder { };
 
-    UncheckedKeyHashMap<String, WriteBarrier<AbstractModuleRecord>> m_dependencies;
-
     WriteBarrier<JSPromise> m_topLevelCapability;
 
     std::optional<int> m_pendingAsyncDependencies;

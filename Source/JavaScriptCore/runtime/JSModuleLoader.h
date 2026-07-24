@@ -114,7 +114,6 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     static AbstractModuleRecord* getImportedModule(AbstractModuleRecord* referrer, const AbstractModuleRecord::ModuleRequest&);
-    static AbstractModuleRecord* maybeGetImportedModule(AbstractModuleRecord* referrer, const Identifier& moduleKey);
 
     // Options correspond to Script Records, Cyclic Module Records and Realm Records, in that order.
     struct ModuleReferrer : Variant<ProgramExecutable*, CyclicModuleRecord*, JSGlobalObject*> {
