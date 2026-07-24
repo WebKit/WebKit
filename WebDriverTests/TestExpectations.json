@@ -264,6 +264,9 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/print_pdf_tests.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/217173"}}
+    },
     "imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py": {
         "subtests": {
             "test_select_by_index_multiple": {
@@ -2306,6 +2309,12 @@
         }
     },
 
+    "imported/w3c/webdriver/tests/classic/print/background.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/217173"}}
+    },
+    "imported/w3c/webdriver/tests/classic/print/orientation.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/217173"}}
+    },
     "imported/w3c/webdriver/tests/classic/print/printcmd.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/217173"}}
     },
