@@ -69,6 +69,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasUnsupportedMaxWidth,
     GridHasUnsupportedMinHeight,
     GridHasUnsupportedMaxHeight,
+    GridHasPercentageRowsWithIndefiniteHeight,
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasPercentOrCalcPadding,
@@ -457,6 +458,32 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (renderGridStyle->maxHeight().isIntrinsic())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
+
+    // GFC sizes percentage row tracks against the grid container's block size. Per
+    // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing, when that block size is indefinite
+    // (auto/intrinsic height) the rows must first be sized with the percentages treated as auto to
+    // find the container's block size, then re-resolved against that size in a second row-sizing
+    // pass. GFC does not yet perform that second pass, so keep such grids on the legacy path.
+    // FIXME: Implement the second row-sizing pass and remove this restriction.
+    auto gridBlockSizeIsIndefinite = renderGridStyle->height().isAuto() || renderGridStyle->height().isIntrinsic();
+    if (gridBlockSizeIsIndefinite) {
+        auto hasPercentageRowTrack = [&] {
+            for (auto& rowsTrackListEntry : gridTemplateRowsTrackList) {
+                auto isPercentageTrack = WTF::switchOn(rowsTrackListEntry,
+                    [&](const Style::GridTrackSize& trackSize) {
+                        return trackSize.minTrackBreadth().isPercentOrCalculated() || trackSize.maxTrackBreadth().isPercentOrCalculated();
+                    },
+                    [&](const auto&) {
+                        return false;
+                    });
+                if (isPercentageTrack)
+                    return true;
+            }
+            return false;
+        };
+        if (hasPercentageRowTrack())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
+    }
 
     ASSERT(renderGridStyle->gridAutoFlow().isRow(),
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
@@ -886,6 +913,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasUnsupportedMaxHeight:
         stream << "grid container has unsupported max-height";
+        break;
+    case GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight:
+        stream << "grid has percentage rows with indefinite height";
         break;
     case GridAvoidanceReason::NotAGrid:
         stream << "not a grid";
