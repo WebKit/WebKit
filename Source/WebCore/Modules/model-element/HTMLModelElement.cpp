@@ -51,7 +51,6 @@
 #include "FrameDestructionObserverInlines.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "GraphicsLayerCA.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLModelElementCamera.h"
 #include "HTMLNames.h"
