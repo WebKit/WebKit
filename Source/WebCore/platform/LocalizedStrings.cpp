@@ -912,6 +912,11 @@ String AXMenuListActionVerb()
     return "select"_s;
 }
 
+String AXShowWritingToolsLabel()
+{
+    return WEB_UI_STRING("Show Writing Tools", "Label for the AX custom action that brings up the Writing Tools affordance");
+}
+
 String AXListItemActionVerb()
 {
     notImplemented();

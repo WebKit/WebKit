@@ -1687,6 +1687,12 @@ void WebPageProxy::didEndPartialIntelligenceTextAnimation(IPC::Connection&)
     didEndPartialIntelligenceTextAnimationImpl();
 }
 
+void WebPageProxy::showWritingToolsAffordance(IPC::Connection&)
+{
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->showWritingToolsAffordance();
+}
+
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
 void WebPageProxy::updateUnderlyingTextVisibilityForTextEffectID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {

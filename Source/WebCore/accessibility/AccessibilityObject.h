@@ -521,6 +521,9 @@ public:
     static TextIterator textIteratorIgnoringFullSizeKana(const SimpleRange&);
     CharacterRange selectedTextRange() const override { return { }; }
     int insertionPointLineNumber() const override { return -1; }
+#if ENABLE(WRITING_TOOLS)
+    bool writingToolsAvailable() const final;
+#endif // ENABLE(WRITING_TOOLS)
 
     URL url() const override { return URL(); }
     VisibleSelection selection() const final;

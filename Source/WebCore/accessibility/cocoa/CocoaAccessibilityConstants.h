@@ -302,6 +302,7 @@
 #endif
 
 #define NSAccessibilityDismissAction @"AXDismissAction"
+#define NSAccessibilityShowWritingToolsAction @"AXShowWritingTools"
 #define NSAccessibilitySyncDecrementAction @"AXSyncDecrementAction"
 #define NSAccessibilitySyncIncrementAction @"AXSyncIncrementAction"
 #define NSAccessibilitySyncPressAction @"AXSyncPressAction"
