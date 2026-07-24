@@ -28,6 +28,7 @@
 #include <WebCore/DNS.h>
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/Site.h>
 #include <wtf/URL.h>
 
 namespace TestWebKitAPI {
@@ -316,6 +317,22 @@ TEST(IPAddressSpace, ResourceResponseAddressSpaceDefaultsToUnknown)
 
     response.setIPAddressSpace(WebCore::IPAddressSpace::Local);
     EXPECT_EQ(response.ipAddressSpace(), WebCore::IPAddressSpace::Local);
+}
+
+TEST(IPAddressSpace, SiteMatchesURLForIPLiterals)
+{
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("http://127.0.0.1/"_s))), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("http://[::1]/"_s))), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("http://192.168.1.1/"_s))), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("http://[fc00::1]/"_s))), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("http://8.8.8.8/"_s))), WebCore::IPAddressSpace::Public);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("https://example.com/"_s))), WebCore::IPAddressSpace::Public);
+}
+
+TEST(IPAddressSpace, SiteDoesNotSpecialCaseLocalhostName)
+{
+    // determineIPAddressSpace currently only classifies IP literals.
+    EXPECT_EQ(WebCore::determineIPAddressSpace(WebCore::Site(URL("http://localhost/"_s))), WebCore::IPAddressSpace::Public);
 }
 
 }

@@ -27,6 +27,7 @@
 #include "IPAddressSpace.h"
 
 #include "DNS.h"
+#include "Site.h"
 #include <array>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -136,14 +137,23 @@ static IPAddressSpace classifyHost(String host)
     return IPAddressSpace::Public;
 }
 
-IPAddressSpace determineIPAddressSpace(const URL& url)
+static IPAddressSpace determineIPAddressSpaceFromHost(StringView host)
 {
     // Defined in https://wicg.github.io/local-network-access/#ip-address-space-section
-    StringView host = url.host();
     if (host.startsWith('[') && host.endsWith(']'))
         host = host.substring(1, host.length() - 2);
 
     return classifyHost(host.toString());
+}
+
+IPAddressSpace determineIPAddressSpace(const URL& url)
+{
+    return determineIPAddressSpaceFromHost(url.host());
+}
+
+IPAddressSpace determineIPAddressSpace(const Site& site)
+{
+    return determineIPAddressSpaceFromHost(site.domain().string());
 }
 
 #if OS(UNIX)

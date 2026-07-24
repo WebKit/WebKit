@@ -6966,6 +6966,48 @@ TEST(SiteIsolation, SharedProcessSameOrigin)
     });
 }
 
+TEST(SiteIsolation, SharedProcessExcludesLoopback)
+{
+    HTTPServer localServer({
+        { "/local"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    HTTPServer server({
+        { "/example"_s, { makeString("<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe><iframe src='https://apple.com/apple'></iframe><iframe src='https://127.0.0.1:"_s, localServer.port(), "/local'></iframe>"_s) } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    enableSiteIsolation(viewConfiguration.get());
+    enableFeature(viewConfiguration.get(), @"SiteIsolationSharedProcessEnabled");
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:viewConfiguration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://example.com"_s,
+            { { RemoteFrame }, { RemoteFrame }, { RemoteFrame } }
+        },
+        {
+            RemoteFrame,
+            { { "https://webkit.org"_s }, { "https://apple.com"_s }, { RemoteFrame } }
+        },
+        {
+            RemoteFrame,
+            { { RemoteFrame }, { RemoteFrame }, { makeString("https://127.0.0.1:"_s, localServer.port()) } }
+        },
+    });
+}
+
 TEST(SiteIsolation, SharedProcessLoadIsolatedSiteInSubframeOfNewWindow)
 {
     HTTPServer server({

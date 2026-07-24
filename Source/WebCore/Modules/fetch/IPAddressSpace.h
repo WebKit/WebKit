@@ -29,6 +29,8 @@ namespace WebCore {
 
 class IPAddress;
 
+class Site;
+
 enum class IPAddressSpace : uint8_t {
     Public,
     Local,
@@ -57,6 +59,7 @@ inline bool isLessPublicThan(IPAddressSpace a, IPAddressSpace b)
 }
 
 WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
+WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const Site&);
 
 WEBCORE_EXPORT IPAddressSpace classifyIPAddressSpace(const IPAddress&);
 

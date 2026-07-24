@@ -37,6 +37,8 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
 
@@ -46,13 +48,25 @@ BrowsingContextGroup::BrowsingContextGroup() = default;
 
 BrowsingContextGroup::~BrowsingContextGroup() = default;
 
+static bool isLoopbackOrLocalNetworkSite(const Site& site)
+{
+    if (determineIPAddressSpace(site) != IPAddressSpace::Public)
+        return true;
+    return SecurityOrigin::isLocalHostOrLoopbackIPAddress(site.domain().string());
+}
+
 void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataStore, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const WebCore::Site& site, const WebCore::Site& mainFrameSite,
     WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, API::PageConfiguration& pageConfiguration, IsMainFrame isMainFrame, CompletionHandler<void(FrameProcess*)>&& completionHandler)
 {
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
         return completionHandler(nullptr);
+
     if (site.isEmpty() || m_processMap.contains(site))
         return completionHandler(nullptr);
+
+    if (isLoopbackOrLocalNetworkSite(site))
+        return completionHandler(nullptr);
+
     if (!m_sharedProcessSites.contains(site)) {
         if (isMainFrame == IsMainFrame::Yes)
             return completionHandler(nullptr);
