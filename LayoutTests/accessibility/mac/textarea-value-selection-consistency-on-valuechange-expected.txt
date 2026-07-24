@@ -1,0 +1,11 @@
+
+This tests that when an AXValueChanged notification fires for a textarea after inserting text, the accessibility selection (caret position) reported at that moment is consistent with the newly-reported value. Regression test for an isolated-tree bug where value updates and selection updates are delivered to the isolated tree on separate channels, leaving it temporarily inconsistent (value updated, selection stale) at the time the value-changed notification is delivered.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Value and selection were consistent at every AXValueChanged notification.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
