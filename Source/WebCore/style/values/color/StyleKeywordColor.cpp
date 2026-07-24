@@ -41,21 +41,19 @@ namespace Style {
 
 Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& state)
 {
-    Ref protectedDocument = state.document;
-
     switch (unresolved.valueID) {
     case CSSValueInternalDocumentTextColor:
-        return { protectedDocument->textColor() };
+        return { state.document->textColor() };
     case CSSValueWebkitLink:
-        return { state.forVisitedLink == ForVisitedLink::Yes ? protectedDocument->visitedLinkColor(state.style) : protectedDocument->linkColor(state.style) };
+        return { state.forVisitedLink == ForVisitedLink::Yes ? state.document->visitedLinkColor(state.style) : state.document->linkColor(state.style) };
     case CSSValueWebkitActivelink:
-        return { protectedDocument->activeLinkColor(state.style) };
+        return { state.document->activeLinkColor(state.style) };
     case CSSValueWebkitFocusRingColor:
-        return { RenderTheme::singleton().focusRingColor(protectedDocument->styleColorOptions(state.style.ptr())) };
+        return { RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr())) };
     case CSSValueCurrentcolor:
         return { CurrentColor() };
     default:
-        return { CSS::colorFromKeyword(unresolved.valueID, protectedDocument->styleColorOptions(state.style.ptr())) };
+        return { CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr())) };
     }
 }
 

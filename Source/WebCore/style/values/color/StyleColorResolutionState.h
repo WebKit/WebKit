@@ -39,8 +39,8 @@ enum class ForVisitedLink : bool;
 // Used to resolve a CSS::Color to a Style::Color during style building.
 
 struct ColorResolutionState {
-    Ref<const Document> document;
-    CheckedRef<const ComputedStyle> style;
+    const Ref<const Document> document;
+    const CheckedRef<const ComputedStyle> style;
     CSSToLengthConversionData conversionData;
     ForVisitedLink forVisitedLink;
 
