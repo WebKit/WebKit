@@ -40,6 +40,7 @@
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/AudioToolboxSoftLink.h>
@@ -192,6 +193,10 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
         return;
     }
 
+    auto disposeScope = makeScopeExit([&remoteIOUnit] {
+        PAL::AudioComponentInstanceDispose(remoteIOUnit);
+    });
+
 #if PLATFORM(IOS_FAMILY)
     UInt32 param = 1;
     error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
@@ -241,6 +246,8 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit AudioUnitInitialize() failed, error = %d", error);
         return;
     }
+
+    disposeScope.release();
     m_remoteIOUnit = remoteIOUnit;
 }
 
