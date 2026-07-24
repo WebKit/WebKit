@@ -240,6 +240,7 @@ protected:
 
     void updateColumnCache() const;
     void invalidateCachedColumns();
+    void invalidateAllTableCellsContentLogicalWidths();
 
     void NODELETE invalidateCachedColumnOffsets();
     
