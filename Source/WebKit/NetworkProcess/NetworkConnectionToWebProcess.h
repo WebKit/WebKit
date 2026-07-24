@@ -72,10 +72,6 @@
 #include "CocoaWindow.h"
 #endif
 
-#if USE(LIBRICE)
-#include "RiceBackend.h"
-#endif
-
 namespace PAL {
 class SessionID;
 }
@@ -453,11 +449,6 @@ private:
     void initializeWebTransportSession(WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, WebPageProxyIdentifier&&, WebCore::ClientOrigin&&, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
     void destroyWebTransportSession(WebTransportSessionIdentifier);
 
-#if USE(LIBRICE)
-    void initializeRiceBackend(WebPageProxyIdentifier&&, CompletionHandler<void(std::optional<RiceBackendIdentifier>)>&&);
-    void destroyRiceBackend(RiceBackendIdentifier);
-#endif
-
     struct ResourceNetworkActivityTracker {
         ResourceNetworkActivityTracker(const ResourceNetworkActivityTracker&) = default;
         ResourceNetworkActivityTracker(ResourceNetworkActivityTracker&&) = default;
@@ -570,10 +561,6 @@ private:
     HashSet<String> m_allowedFilePaths;
 #if ENABLE(IPC_TESTING_API)
     const Ref<IPCTester> m_ipcTester;
-#endif
-
-#if USE(LIBRICE)
-    HashMap<RiceBackendIdentifier, Ref<RiceBackend>> m_gstreamerIceBackends;
 #endif
 
     HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;

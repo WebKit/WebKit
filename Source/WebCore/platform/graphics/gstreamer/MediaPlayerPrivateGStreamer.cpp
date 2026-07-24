@@ -232,8 +232,6 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
     {
         Locker locker { m_decoderConfigurationLock };
         m_codecProbes.clear();
-        m_videoFrameInputProbe = nullptr;
-        m_videoFrameOutputProbe = nullptr;
     }
 
     if (m_fillTimer.isActive())
@@ -3767,61 +3765,7 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
     if (!isMediaStreamPlayer())
         return;
 
-    m_videoDecoderName = configureMediaStreamVideoDecoder(decoder);
-
-    Locker locker { m_decoderConfigurationLock };
-    GRefPtr sinkPad = adoptGRef(gst_element_get_static_pad(decoder, "sink"));
-    m_videoFrameInputProbe = PadProbeHandle<MediaPlayerPrivateGStreamer>::create(*this, WTF::move(sinkPad), GST_PAD_PROBE_TYPE_BUFFER, [](const auto& player, const auto&, auto info) -> GstPadProbeReturn {
-        auto buffer = GST_PAD_PROBE_INFO_BUFFER(info);
-        if (!GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
-            player->m_decodedKeyFrames++;
-        player->m_framesReceived++;
-        return GST_PAD_PROBE_OK;
-    });
-
-    GRefPtr pad = adoptGRef(gst_element_get_static_pad(decoder, "src"));
-    if (!pad) {
-        GST_INFO_OBJECT(pipeline(), "the decoder %s does not have a src pad, probably because it's a hardware decoder sink, can't get decoder stats", name.utf8());
-        return;
-    }
-
-    m_videoFrameOutputProbe = PadProbeHandle<MediaPlayerPrivateGStreamer>::create(*this, WTF::move(pad), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_BUFFER), [](const auto& player, const auto& pad, auto info) -> GstPadProbeReturn {
-        if (GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_BUFFER) {
-            player->incrementDecodedVideoFramesCount();
-
-            GRefPtr decoder = adoptGRef(gst_pad_get_parent_element(pad.get()));
-            auto processingTime = webkitGstBufferGetProcessingTime(gst_pad_probe_info_get_buffer(info), decoder.get());
-            if (processingTime.isInvalid())
-                return GST_PAD_PROBE_OK;
-
-            player->m_totalVideoDecodeTime += processingTime;
-            return GST_PAD_PROBE_OK;
-        }
-
-        if (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_CUSTOM) {
-            auto* query = GST_QUERY_CAST(GST_PAD_PROBE_INFO_DATA(info));
-            auto* structure = gst_query_writable_structure(query);
-            if (gst_structure_has_name(structure, "webkit-video-decoder-stats")) {
-                gst_structure_set(structure, "frames-decoded", G_TYPE_UINT64, player->decodedVideoFramesCount(), "frames-received", G_TYPE_UINT64, player->m_framesReceived,
-                    "key-frames-decoded", G_TYPE_UINT64, player->m_decodedKeyFrames, nullptr);
-
-                if (player->updateVideoSinkStatistics())
-                    gst_structure_set(structure, "frames-dropped", G_TYPE_UINT64, player->m_droppedVideoFrames, "frames-per-second", G_TYPE_DOUBLE, player->m_averageFrameRate, nullptr);
-
-                auto naturalSize = roundedIntSize(player->naturalSize());
-                if (naturalSize.width() && naturalSize.height())
-                    gst_structure_set(structure, "frame-width", G_TYPE_UINT, naturalSize.width(), "frame-height", G_TYPE_UINT, naturalSize.height(), nullptr);
-
-                if (player->m_totalVideoDecodeTime.isValid())
-                    gst_structure_set(structure, "total-decode-time", G_TYPE_DOUBLE, player->m_totalVideoDecodeTime.toDouble(), nullptr);
-                gst_structure_set(structure, "decoder-implementation", G_TYPE_STRING, player->m_videoDecoderName.utf8().data(), nullptr);
-                GST_PAD_PROBE_INFO_DATA(info) = query;
-                return GST_PAD_PROBE_HANDLED;
-            }
-        }
-
-        return GST_PAD_PROBE_OK;
-    });
+    configureMediaStreamVideoDecoder(decoder);
 }
 
 bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
@@ -4571,9 +4515,8 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
 
     auto totalVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
     auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
-    auto averageRate = gstStructureGet<double>(stats.get(), "average-rate"_s);
 
-    if (!totalVideoFrames || !droppedVideoFrames || !averageRate)
+    if (!totalVideoFrames || !droppedVideoFrames)
         return false;
 
     // Caching is required so that metrics queries performed after EOS still return valid values.
@@ -4582,11 +4525,6 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
     if (*droppedVideoFrames)
         m_droppedVideoFrames = *droppedVideoFrames;
 
-    if (*averageRate && m_videoInfo) {
-        double frameRate;
-        gst_util_fraction_to_double(GST_VIDEO_INFO_FPS_N(&m_videoInfo->info), GST_VIDEO_INFO_FPS_D(&m_videoInfo->info), &frameRate);
-        m_averageFrameRate = *averageRate * frameRate;
-    }
     return true;
 }
 

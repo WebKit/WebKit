@@ -554,7 +554,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::GPUProcessConnectionIdentifier"_s,
         "WebKit::ImageBufferSetIdentifier"_s,
         "WebKit::RemoteGraphicsContextGLIdentifier"_s,
-        "WebKit::RiceBackendIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,
         "WebKit::JSObjectID"_s,

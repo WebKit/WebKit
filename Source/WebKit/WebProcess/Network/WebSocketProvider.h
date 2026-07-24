@@ -46,10 +46,6 @@ private:
 
     explicit WebSocketProvider(WebPageProxyIdentifier);
 
-#if USE(LIBRICE)
-    RefPtr<WebCore::RiceBackend> createRiceBackend(WebCore::RiceBackendClient&) final;
-#endif
-
     WebPageProxyIdentifier m_webPageProxyID;
     Lock m_networkProcessConnectionLock;
     Ref<IPC::Connection> m_networkProcessConnection WTF_GUARDED_BY_LOCK(m_networkProcessConnectionLock);

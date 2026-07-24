@@ -37,10 +37,6 @@
 #include "LibWebRTCUtils.h"
 #endif
 
-#if USE(GSTREAMER_WEBRTC)
-#include "GStreamerWebRTCLogSink.h"
-#endif
-
 #endif
 
 namespace WebCore {
@@ -195,18 +191,6 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
         m_logSink->start();
     }
 #endif
-
-#if USE(GSTREAMER_WEBRTC)
-    if (!m_logSink) {
-        m_logSink = makeUnique<GStreamerWebRTCLogSink>([weakThis = WeakPtr { *this }](const auto& logLevel, const auto& logMessage) {
-            ensureOnMainThread([weakThis, logMessage = logMessage.isolatedCopy(), logLevel = logLevel.isolatedCopy()] mutable {
-                if (RefPtr protectedThis = weakThis.get())
-                    protectedThis->m_callback("backend-logs"_s, WTF::move(logMessage), WTF::move(logLevel), nullptr);
-            });
-        });
-        m_logSink->start();
-    }
-#endif
 }
 
 void RTCController::stopGatheringLogs()
@@ -232,7 +216,7 @@ void RTCController::startGatheringStatLogs(RTCPeerConnection& connection)
 
 void RTCController::stopLoggingWebRTCLogs()
 {
-#if USE(LIBWEBRTC) || USE(GSTREAMER_WEBRTC)
+#if USE(LIBWEBRTC)
     if (!m_logSink)
         return;
 

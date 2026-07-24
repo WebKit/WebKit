@@ -463,13 +463,7 @@ protected:
 
     String errorMessage() const override { return m_errorMessage; }
 
-    void incrementDecodedVideoFramesCount() { m_decodedVideoFrames++; }
-    uint64_t decodedVideoFramesCount() const { return m_decodedVideoFrames; }
-
     bool updateVideoSinkStatistics();
-
-    uint64_t m_framesReceived { 0 };
-    uint64_t m_decodedKeyFrames { 0 };
 
 private:
     class TaskAtMediaTimeScheduler {
@@ -662,11 +656,6 @@ private:
 
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
-    uint64_t m_decodedVideoFrames { 0 };
-    double m_averageFrameRate { 0 };
-
-    // https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totaldecodetime
-    MediaTime m_totalVideoDecodeTime { MediaTime::zeroTime() };
 
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
@@ -705,7 +694,6 @@ private:
     // Specific to MediaStream playback.
     MediaTime m_startTime;
     std::optional<MediaTime> m_pausedTime;
-    String m_videoDecoderName;
 
     void setupCodecProbe(GstElement*);
     Lock m_decoderConfigurationLock;
@@ -719,8 +707,6 @@ private:
     HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
 
     std::optional<VideoFrameGStreamer::Info> m_videoInfo;
-    RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>> m_videoFrameInputProbe WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
-    RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>> m_videoFrameOutputProbe WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
 
     bool m_volumeLocked { false };
 

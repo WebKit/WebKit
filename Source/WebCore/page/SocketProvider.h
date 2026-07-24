@@ -46,21 +46,12 @@ struct WebTransportOptions;
 
 using WebTransportSessionPromise = NativePromise<WebTransportConnectionInfo, void>;
 
-#if USE(LIBRICE)
-class RiceBackend;
-class RiceBackendClient;
-#endif
-
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
     virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) = 0;
     virtual std::pair<RefPtr<WebTransportSession>, Ref<WebTransportSessionPromise>> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&, const WebTransportOptions&) = 0;
 
     virtual void countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&& completionHandler) { completionHandler(0); }
-
-#if USE(LIBRICE)
-    virtual RefPtr<RiceBackend> createRiceBackend(RiceBackendClient&) = 0;
-#endif
 
     virtual ~SocketProvider() { };
 };

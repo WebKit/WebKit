@@ -29,8 +29,6 @@
 
 #if USE(LIBWEBRTC)
 #include <WebCore/LibWebRTCProvider.h>
-#elif USE(GSTREAMER_WEBRTC)
-#include <WebCore/GStreamerWebRTCProvider.h>
 #endif
 
 namespace WebKit {
@@ -39,8 +37,6 @@ namespace WebKit {
 
 #if USE(LIBWEBRTC)
 using RemoteWorkerLibWebRTCProviderBase = WebCore::LibWebRTCProvider;
-#else
-using RemoteWorkerLibWebRTCProviderBase = WebCore::GStreamerWebRTCProvider;
 #endif
 
 class RemoteWorkerLibWebRTCProvider final : public RemoteWorkerLibWebRTCProviderBase {

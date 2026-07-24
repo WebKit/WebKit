@@ -95,11 +95,6 @@
 #include "WebKitWebSourceGStreamer.h"
 #endif
 
-#if USE(GSTREAMER_WEBRTC)
-#include "GStreamerRTPVideoRotationHeaderExtension.h"
-#include <gst/webrtc/webrtc-enumtypes.h>
-#endif
-
 #if USE(GSTREAMER_GL)
 #include <gst/gl/gl.h>
 #endif
@@ -570,10 +565,6 @@ void registerWebKitGStreamerElements()
         gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
 #endif
         registerInternalVideoEncoder();
-
-#if USE(GSTREAMER_WEBRTC)
-        gst_element_register(nullptr, "webkitrtpvideorotationheaderextension", GST_RANK_MARGINAL, WEBKIT_TYPE_GST_RTP_VIDEO_ROTATION_HEADER_EXTENSION);
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
         gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_SRC);
@@ -1304,94 +1295,6 @@ GstElement* /* (transfer floating) */ makeGStreamerElement(CStringView factoryNa
     return element;
 }
 
-#if USE(GSTREAMER_WEBRTC)
-static ASCIILiteral webrtcStatsTypeName(int value)
-{
-    switch (value) {
-    case GST_WEBRTC_STATS_CODEC:
-        return "codec"_s;
-    case GST_WEBRTC_STATS_INBOUND_RTP:
-        return "inbound-rtp"_s;
-    case GST_WEBRTC_STATS_OUTBOUND_RTP:
-        return "outbound-rtp"_s;
-    case GST_WEBRTC_STATS_REMOTE_INBOUND_RTP:
-        return "remote-inbound-rtp"_s;
-    case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP:
-        return "remote-outbound-rtp"_s;
-    case GST_WEBRTC_STATS_CSRC:
-        return "csrc"_s;
-    case GST_WEBRTC_STATS_PEER_CONNECTION:
-        return "peer-connection"_s;
-    case GST_WEBRTC_STATS_TRANSPORT:
-        return "transport"_s;
-    case GST_WEBRTC_STATS_STREAM:
-        return "stream"_s;
-    case GST_WEBRTC_STATS_DATA_CHANNEL:
-        return "data-channel"_s;
-    case GST_WEBRTC_STATS_LOCAL_CANDIDATE:
-        return "local-candidate"_s;
-    case GST_WEBRTC_STATS_REMOTE_CANDIDATE:
-        return "remote-candidate"_s;
-    case GST_WEBRTC_STATS_CANDIDATE_PAIR:
-        return "candidate-pair"_s;
-    case GST_WEBRTC_STATS_CERTIFICATE:
-        return "certificate"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-static ASCIILiteral webrtcDtlsTransportStateName(int value)
-{
-    switch (value) {
-    case GST_WEBRTC_DTLS_TRANSPORT_STATE_NEW:
-        return "new"_s;
-    case GST_WEBRTC_DTLS_TRANSPORT_STATE_CLOSED:
-        return "closed"_s;
-    case GST_WEBRTC_DTLS_TRANSPORT_STATE_FAILED:
-        return "failed"_s;
-    case GST_WEBRTC_DTLS_TRANSPORT_STATE_CONNECTING:
-        return "connecting"_s;
-    case GST_WEBRTC_DTLS_TRANSPORT_STATE_CONNECTED:
-        return "connected"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-#if GST_CHECK_VERSION(1, 28, 0)
-static ASCIILiteral webrtcIceTcpCandidateTypeName(int value)
-{
-    switch (value) {
-    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_NONE:
-        return "none"_s;
-    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_ACTIVE:
-        return "active"_s;
-    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_PASSIVE:
-        return "passive"_s;
-    case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_SO:
-        return "so"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-static ASCIILiteral webrtcDtlsRoleName(int value)
-{
-    switch (value) {
-    case GST_WEBRTC_DTLS_ROLE_CLIENT:
-        return "client"_s;
-    case GST_WEBRTC_DTLS_ROLE_SERVER:
-        return "server"_s;
-    case GST_WEBRTC_DTLS_ROLE_UNKNOWN:
-        return "unknown"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-#endif // GST_CHECK_VERSION
-#endif // USE(GSTREAMER_WEBRTC)
-
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure* structure, CStringView key)
 {
@@ -1599,31 +1502,6 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
 
     if (valueType == G_TYPE_STRING)
         return JSON::Value::create(String(byteCast<char8_t>(unsafeSpan(g_value_get_string(value)))))->asValue();
-
-#if USE(GSTREAMER_WEBRTC)
-    if (valueType == GST_TYPE_WEBRTC_STATS_TYPE) {
-        auto name = webrtcStatsTypeName(g_value_get_enum(value));
-        if (!name.isEmpty()) [[likely]]
-            return JSON::Value::create(makeString(name))->asValue();
-    }
-    if (valueType == GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE) {
-        auto name = webrtcDtlsTransportStateName(g_value_get_enum(value));
-        if (!name.isEmpty()) [[likely]]
-            return JSON::Value::create(makeString(name))->asValue();
-    }
-#if GST_CHECK_VERSION(1, 28, 0)
-    if (valueType == GST_TYPE_WEBRTC_ICE_TCP_CANDIDATE_TYPE) {
-        auto name = webrtcIceTcpCandidateTypeName(g_value_get_enum(value));
-        if (!name.isEmpty()) [[likely]]
-            return JSON::Value::create(makeString(name))->asValue();
-    }
-    if (valueType == GST_TYPE_WEBRTC_DTLS_ROLE) {
-        auto name = webrtcDtlsRoleName(g_value_get_enum(value));
-        if (!name.isEmpty()) [[likely]]
-            return JSON::Value::create(makeString(name))->asValue();
-    }
-#endif // GST_CHECK_VERSION
-#endif // USE(GSTREAMER_WEBRTC)
 
     GST_WARNING("Unhandled GValue type: %s", G_VALUE_TYPE_NAME(value));
     return { };
@@ -1987,7 +1865,7 @@ void configureMediaStreamAudioDecoder(GstElement* element)
         g_object_set(element, "max-errors", -1, nullptr);
 }
 
-String configureMediaStreamVideoDecoder(GstElement* element)
+void configureMediaStreamVideoDecoder(GstElement* element)
 {
     if (gstObjectHasProperty(element, "automatic-request-sync-points"_s))
         g_object_set(element, "automatic-request-sync-points", TRUE, nullptr);
@@ -2000,22 +1878,6 @@ String configureMediaStreamVideoDecoder(GstElement* element)
 
     if (gstObjectHasProperty(element, "max-errors"_s))
         g_object_set(element, "max-errors", -1, nullptr);
-
-    auto factoryName = CStringView::unsafeFromUTF8(GST_OBJECT_NAME(gst_element_get_factory(element)));
-    StringBuilder builder;
-    builder.append("GStreamer "_s, factoryName.span());
-    if (factoryName == "vp9dec"_s || factoryName == "vp8dec"_s)
-        builder.append(" (fallback from: libvpx)"_s);
-    return builder.toString();
-}
-
-void configureVideoRTPDepayloader(GstElement* element)
-{
-    if (gstObjectHasProperty(element, "request-keyframe"_s))
-        g_object_set(element, "request-keyframe", TRUE, nullptr);
-
-    if (gstObjectHasProperty(element, "wait-for-keyframe"_s))
-        g_object_set(element, "wait-for-keyframe", TRUE, nullptr);
 }
 
 bool gstObjectHasProperty(GstObject* gstObject, ASCIILiteral name)

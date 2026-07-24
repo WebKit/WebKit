@@ -6649,7 +6649,6 @@ PeerConnectionEnabled:
       default: true
     WebKit:
       "USE(LIBWEBRTC)": WebKit::defaultPeerConnectionEnabledAvailable()
-      "USE(GSTREAMER_WEBRTC)": true
       default: false
     WebCore:
       default: true
@@ -10316,11 +10315,9 @@ WebRTCEncodedTransformEnabled:
       default: false
     WebKit:
       "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
-      "USE(GSTREAMER_WEBRTC)": true
       default: false
     WebCore:
       "USE(LIBWEBRTC)": true
-      "USE(GSTREAMER_WEBRTC)": true
       default: false
   disableInLockdownMode: true
 

@@ -56,8 +56,6 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
 
-NetworkProcess/webrtc/rice/RiceBackend.cpp
-
 Platform/IPC/glib/ConnectionGLib.cpp
 
 Platform/IPC/unix/ArgumentCodersUnix.cpp
@@ -341,8 +339,6 @@ WebProcess/Inspector/gtk/RemoteWebInspectorUIGtk.cpp
 WebProcess/Inspector/gtk/WebInspectorUIGtk.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
-
-WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
 
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 

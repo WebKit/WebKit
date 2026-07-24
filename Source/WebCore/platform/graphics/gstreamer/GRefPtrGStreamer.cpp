@@ -25,13 +25,6 @@
 #include <gst/gl/egl/gsteglimage.h>
 #endif
 
-#if USE(GSTREAMER_WEBRTC)
-#include <gst/rtp/rtp.h>
-#define GST_USE_UNSTABLE_API
-#include <gst/webrtc/webrtc.h>
-#undef GST_USE_UNSTABLE_API
-#endif
-
 namespace WTF {
 
 WTF_DEFINE_GREF_TRAITS(GstEncodingProfile, gst_encoding_profile_ref, gst_encoding_profile_unref)

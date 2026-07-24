@@ -57,10 +57,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(GSTREAMER_WEBRTC)
-#include "GStreamerWebRTCUtils.h"
-#endif
-
 #if USE(LIBWEBRTC)
 #include "LibWebRTCCertificateGenerator.h"
 #include "LibWebRTCProvider.h"
@@ -68,7 +64,7 @@
 
 namespace WebCore {
 
-#if USE(LIBWEBRTC) || USE(GSTREAMER_WEBRTC)
+#if USE(LIBWEBRTC)
 
 std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, const String& kind)
 {
@@ -106,7 +102,7 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(Scri
     ASSERT_NOT_REACHED();
     return { };
 }
-#endif // USE(LIBWEBRTC) || USE(GSTREAMER_WEBRTC)
+#endif // USE(LIBWEBRTC)
 
 #if PLATFORM(WPE) || PLATFORM(GTK)
 class JSONFileHandler {
@@ -762,12 +758,6 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
     LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), webRTCProvider, info, [promise = WTF::move(promise)](auto&& result) mutable {
         promise.settle(WTF::move(result));
     });
-#elif USE(GSTREAMER_WEBRTC)
-    auto certificate = ::WebCore::generateCertificate(document.securityOrigin(), info);
-    if (certificate.has_value())
-        promise.resolve(*certificate);
-    else
-        promise.reject(ExceptionCode::NotSupportedError);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(info);

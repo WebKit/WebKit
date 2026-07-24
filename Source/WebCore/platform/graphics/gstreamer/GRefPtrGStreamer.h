@@ -35,21 +35,6 @@ typedef struct _GstEGLImage GstEGLImage;
 typedef struct _GstGLColorConvert GstGLColorConvert;
 #endif
 
-#if USE(GSTREAMER_WEBRTC)
-typedef struct _GstPromise GstPromise;
-typedef struct _GstWebRTCDTLSTransport GstWebRTCDTLSTransport;
-typedef struct _GstWebRTCDataChannel GstWebRTCDataChannel;
-typedef struct _GstWebRTCICETransport GstWebRTCICETransport;
-typedef struct _GstWebRTCRTPReceiver GstWebRTCRTPReceiver;
-typedef struct _GstWebRTCRTPSender GstWebRTCRTPSender;
-typedef struct _GstWebRTCRTPTransceiver GstWebRTCRTPTransceiver;
-typedef struct _GstRTPHeaderExtension GstRTPHeaderExtension;
-typedef struct _GstWebRTCICE GstWebRTCICE;
-typedef struct _GstWebRTCICEStream GstWebRTCICEStream;
-typedef struct _GstWebRTCSCTPTransport GstWebRTCSCTPTransport;
-
-#endif // USE(GSTREAMER_WEBRTC)
-
 namespace WTF {
 
 WTF_DEFINE_GREF_TRAITS_INLINE(GstMiniObject, gst_mini_object_ref, gst_mini_object_unref)
@@ -96,27 +81,6 @@ WTF_DEFINE_GREF_TRAITS_INLINE(GstGLColorConvert, gst_object_ref_sink, gst_object
 
 WTF_DECLARE_GREF_TRAITS(GstEGLImage)
 #endif
-
-#if USE(GSTREAMER_WEBRTC)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCRTPReceiver, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCRTPSender, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCRTPTransceiver, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-#if GST_CHECK_VERSION(1, 28, 1)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCDTLSTransport, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCICETransport, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCSCTPTransport, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-#else
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCDTLSTransport, gst_object_ref, gst_object_unref)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICETransport, gst_object_ref, gst_object_unref)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCSCTPTransport, gst_object_ref, gst_object_unref)
-#endif
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCICEStream, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstRTPHeaderExtension, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCICE, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
-
-WTF_DEFINE_GREF_TRAITS_INLINE(GstPromise, gst_promise_ref, gst_promise_unref)
-
-#endif // USE(GSTREAMER_WEBRTC)
 
 // GstToc needs to be defined manually because gst_toc_ref() causes a warning if return value is not used.
 template<> struct GRefPtrDefaultRefDerefTraits<GstToc> {

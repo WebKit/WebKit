@@ -87,15 +87,6 @@ GstElement* GStreamerAudioCapturer::createConverter()
     gst_bin_add_many(GST_BIN_CAST(bin), audioconvert, audioresample, nullptr);
     gst_element_link(audioconvert, audioresample);
 
-#if USE(GSTREAMER_WEBRTC)
-    if (auto audioFilter = makeGStreamerElement("audiornnoise"_s)) {
-        auto audioconvert2 = makeGStreamerElement("audioconvert"_s);
-        auto audioresample2 = makeGStreamerElement("audioresample"_s);
-        gst_bin_add_many(GST_BIN_CAST(bin), audioconvert2, audioresample2, audioFilter, nullptr);
-        gst_element_link_many(audioconvert2, audioresample2, audioFilter, audioconvert, nullptr);
-    }
-#endif
-
     if (GRefPtr pad = adoptGRef(gst_bin_find_unlinked_pad(GST_BIN_CAST(bin), GST_PAD_SRC)))
         gst_element_add_pad(GST_ELEMENT_CAST(bin), gst_ghost_pad_new("src", pad.get()));
     if (GRefPtr pad = adoptGRef(gst_bin_find_unlinked_pad(GST_BIN_CAST(bin), GST_PAD_SINK)))

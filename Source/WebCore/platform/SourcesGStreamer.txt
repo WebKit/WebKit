@@ -21,27 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp
-Modules/mediastream/gstreamer/GStreamerDtlsTransportBackend.cpp
-Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
-Modules/mediastream/gstreamer/GStreamerIceStream.cpp
-Modules/mediastream/gstreamer/GStreamerIceTransport.cpp
-Modules/mediastream/gstreamer/GStreamerIceTransportBackend.cpp
-Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp
-Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.cpp
-Modules/mediastream/gstreamer/GStreamerRtpReceiverBackend.cpp
-Modules/mediastream/gstreamer/GStreamerRtpReceiverTransformBackend.cpp
-Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp
-Modules/mediastream/gstreamer/GStreamerRtpSenderTransformBackend.cpp
-Modules/mediastream/gstreamer/GStreamerRtpTransceiverBackend.cpp
-Modules/mediastream/gstreamer/GStreamerRtpTransformBackend.cpp
-Modules/mediastream/gstreamer/GStreamerSctpTransportBackend.cpp
-Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp
-Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
-
 Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
-
-platform/rice/RiceGioBackend.cpp
 
 platform/audio/gstreamer/AudioDecoderGStreamer.cpp
 platform/audio/gstreamer/AudioDestinationGStreamer.cpp
@@ -134,31 +114,16 @@ platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cp
 platform/mediastream/gstreamer/DesktopPortal.cpp
 platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
-platform/mediastream/gstreamer/GStreamerAudioRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/GStreamerCapturer.cpp
-platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
 platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp
-platform/mediastream/gstreamer/GStreamerIncomingTrackProcessor.cpp
 platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp
 platform/mediastream/gstreamer/GStreamerMockDevice.cpp
 platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp
-platform/mediastream/gstreamer/GStreamerRTPPacketizer.cpp
-platform/mediastream/gstreamer/GStreamerRTPVideoRotationHeaderExtension.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
-platform/mediastream/gstreamer/GStreamerVideoRTPPacketizer.cpp
-platform/mediastream/gstreamer/GStreamerWebRTCCommon.cpp
-platform/mediastream/gstreamer/GStreamerWebRTCLogSink.cpp
-platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp
 platform/mediastream/gstreamer/PipeWireCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/MockDisplayCaptureSourceGStreamer.cpp
 platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp
 platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp
-platform/mediastream/gstreamer/RealtimeIncomingAudioSourceGStreamer.cpp
-platform/mediastream/gstreamer/RealtimeIncomingSourceGStreamer.cpp
-platform/mediastream/gstreamer/RealtimeIncomingVideoSourceGStreamer.cpp
 platform/mediastream/gstreamer/RealtimeMediaSourceCenterGStreamer.cpp
-platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp
-platform/mediastream/gstreamer/RealtimeOutgoingMediaSourceGStreamer.cpp
-platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceGStreamer.cpp

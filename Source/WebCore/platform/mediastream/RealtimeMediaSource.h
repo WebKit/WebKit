@@ -134,10 +134,6 @@ public:
 
         // May be called on a background thread.
         virtual void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) = 0;
-
-#if USE(GSTREAMER_WEBRTC)
-        virtual /* transfer full */ GstStructure* queryAdditionalStats() { return nullptr; }
-#endif
     };
 
     virtual ~RealtimeMediaSource();

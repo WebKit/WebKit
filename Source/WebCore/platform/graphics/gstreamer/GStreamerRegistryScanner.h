@@ -34,10 +34,6 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(GSTREAMER_WEBRTC)
-#include <gst/rtp/rtp.h>
-#endif
-
 namespace WebCore {
 class ContentType;
 
@@ -109,15 +105,6 @@ public:
 
     CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse) const;
 
-#if USE(GSTREAMER_WEBRTC)
-    RTCRtpCapabilities audioRtpCapabilities(Configuration);
-    RTCRtpCapabilities videoRtpCapabilities(Configuration);
-    Vector<RTCRtpCapabilities::HeaderExtensionCapability> audioRtpExtensions();
-    Vector<RTCRtpCapabilities::HeaderExtensionCapability> videoRtpExtensions();
-    RegistryLookupResult isRtpPacketizerSupported(const String& encoding);
-    bool isRtpHeaderExtensionSupported(const String&);
-#endif
-
 protected:
     struct ElementFactories {
         enum class Type {
@@ -181,36 +168,6 @@ private:
 
     ASCIILiteral configurationNameForLogging(Configuration) const;
     bool supportsFeatures(const String& features) const;
-
-#if USE(GSTREAMER_WEBRTC)
-    void fillAudioRtpCapabilities(Configuration, RTCRtpCapabilities&);
-    void fillVideoRtpCapabilities(Configuration, RTCRtpCapabilities&);
-
-#define WEBRTC_EXPERIMENTS_HDREXT "http://www.webrtc.org/experiments/rtp-hdrext/"
-    Vector<ASCIILiteral> m_commonRtpExtensions {
-        "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"_s,
-        WEBRTC_EXPERIMENTS_HDREXT "abs-send-time"_s,
-        GST_RTP_HDREXT_BASE "sdes:mid"_s,
-        GST_RTP_HDREXT_BASE "sdes:repaired-rtp-stream-id"_s,
-        GST_RTP_HDREXT_BASE "sdes:rtp-stream-id"_s,
-        GST_RTP_HDREXT_BASE "toffset"_s,
-        GST_RTP_HDREXT_BASE "ntp-64"_s,
-    };
-    Vector<ASCIILiteral> m_allAudioRtpExtensions {
-        GST_RTP_HDREXT_BASE "ssrc-audio-level"_s
-    };
-    Vector<ASCIILiteral> m_allVideoRtpExtensions {
-        WEBRTC_EXPERIMENTS_HDREXT "color-space"_s,
-        WEBRTC_EXPERIMENTS_HDREXT "playout-delay"_s,
-        WEBRTC_EXPERIMENTS_HDREXT "video-content-type"_s,
-        WEBRTC_EXPERIMENTS_HDREXT "video-timing"_s,
-        "urn:3gpp:video-orientation"_s
-    };
-#undef WEBRTC_EXPERIMENTS_HDREXT
-
-    std::optional<Vector<RTCRtpCapabilities::HeaderExtensionCapability>> m_audioRtpExtensions;
-    std::optional<Vector<RTCRtpCapabilities::HeaderExtensionCapability>> m_videoRtpExtensions;
-#endif
 
     bool m_isMediaSource { false };
     HashSet<String> m_decoderMimeTypeSet;

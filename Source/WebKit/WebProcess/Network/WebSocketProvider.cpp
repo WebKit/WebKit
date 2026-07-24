@@ -41,10 +41,6 @@
 #include <WebCore/WorkerGlobalScope.h>
 #include <WebCore/WorkerWebTransportSession.h>
 
-#if USE(LIBRICE)
-#include "RiceBackendProxy.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -94,12 +90,5 @@ std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>>
     auto [session, promise] = WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, options, m_webPageProxyID, document->clientOrigin());
     return { WTF::move(session), WTF::move(promise) };
 }
-
-#if USE(LIBRICE)
-RefPtr<WebCore::RiceBackend> WebSocketProvider::createRiceBackend(WebCore::RiceBackendClient& client)
-{
-    return WebKit::RiceBackendProxy::create(m_webPageProxyID, client);
-}
-#endif
 
 } // namespace WebKit

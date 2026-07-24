@@ -56,8 +56,6 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
 
-NetworkProcess/webrtc/rice/RiceBackend.cpp
-
 Platform/IPC/android/ArgumentCodersAndroid.cpp
 
 Platform/IPC/glib/ConnectionGLib.cpp
@@ -324,8 +322,6 @@ WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 WebProcess/Inspector/wpe/WebInspectorUIWPE.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
-
-WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
 
 WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
 

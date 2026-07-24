@@ -44,10 +44,6 @@ class WeakPtrImplWithEventTargetData;
 class LibWebRTCLogSink;
 #endif
 
-#if USE(GSTREAMER_WEBRTC)
-class GStreamerWebRTCLogSink;
-#endif
-
 class RTCController : public RefCountedAndCanMakeWeakPtr<RTCController> {
 public:
     static Ref<RTCController> create() { return adoptRef(*new RTCController); }
@@ -90,9 +86,6 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_gatheringLogsDocument;
 #if USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCLogSink> m_logSink;
-#endif
-#if USE(GSTREAMER_WEBRTC)
-    std::unique_ptr<GStreamerWebRTCLogSink> m_logSink;
 #endif
 #endif // ENABLE(WEB_RTC)
 };

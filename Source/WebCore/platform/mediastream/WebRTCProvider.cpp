@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCProvider);
 
-#if !USE(LIBWEBRTC) && !USE(GSTREAMER_WEBRTC)
+#if !USE(LIBWEBRTC)
 UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {
     return makeUniqueRef<WebRTCProvider>();
@@ -495,11 +495,6 @@ void WebRTCProvider::setPortAllocatorRange(StringView range)
 std::optional<std::pair<int, int>> WebRTCProvider::portAllocatorRange() const
 {
     return m_portAllocatorRange;
-}
-
-bool WebRTCProvider::isWebCoreGStreamerWebRTCProvider() const
-{
-    return false;
 }
 
 } // namespace WebCore

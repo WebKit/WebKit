@@ -36,12 +36,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(GSTREAMER_WEBRTC)
-#define GST_USE_UNSTABLE_API
-#include <gst/webrtc/webrtc.h>
-#undef GST_USE_UNSTABLE_API
-#endif
-
 #if USE(LIBWEBRTC)
 namespace webrtc {
 class RTCAudioPlayoutStats;
@@ -103,8 +97,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static Stats convert(Type, const webrtc::RTCStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static Stats convert(Type, const GstStructure*);
 #endif
     };
 
@@ -116,8 +108,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static RtpStreamStats convert(Type, const webrtc::RTCRtpStreamStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static RtpStreamStats convert(Type, const GstStructure*);
 #endif
     };
 
@@ -128,8 +118,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static ReceivedRtpStreamStats convert(Type, const webrtc::RTCReceivedRtpStreamStats&, std::optional<uint64_t> packetsReceived);
-#elif USE(GSTREAMER_WEBRTC)
-        static ReceivedRtpStreamStats convert(Type, const GstStructure*);
 #endif
     };
 
@@ -190,8 +178,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static InboundRtpStreamStats convert(const webrtc::RTCInboundRtpStreamStats&, const HashMap<String, String>&);
-#elif USE(GSTREAMER_WEBRTC)
-        static InboundRtpStreamStats convert(const GstStructure*);
 #endif
     };
 
@@ -204,8 +190,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static RemoteInboundRtpStreamStats convert(const webrtc::RTCRemoteInboundRtpStreamStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static RemoteInboundRtpStreamStats convert(const GstStructure*);
 #endif
     };
 
@@ -215,8 +199,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static SentRtpStreamStats convert(Type, const webrtc::RTCSentRtpStreamStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static SentRtpStreamStats convert(Type, const GstStructure*);
 #endif
     };
 
@@ -259,8 +241,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static OutboundRtpStreamStats convert(const webrtc::RTCOutboundRtpStreamStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static OutboundRtpStreamStats convert(const GstStructure*);
 #endif
     };
 
@@ -274,8 +254,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static RemoteOutboundRtpStreamStats convert(const webrtc::RTCRemoteOutboundRtpStreamStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static RemoteOutboundRtpStreamStats convert(const GstStructure*);
 #endif
     };
 
@@ -291,8 +269,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static DataChannelStats convert(const webrtc::RTCDataChannelStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static DataChannelStats convert(const GstStructure*);
 #endif
     };
 
@@ -330,8 +306,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static IceCandidatePairStats convert(const webrtc::RTCIceCandidatePairStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static IceCandidatePairStats convert(const GstStructure*);
 #endif
     };
 
@@ -352,8 +326,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static IceCandidateStats convert(const webrtc::RTCIceCandidateStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static IceCandidateStats convert(GstWebRTCStatsType, const GstStructure*);
 #endif
     };
 
@@ -365,8 +337,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static CertificateStats convert(const webrtc::RTCCertificateStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static CertificateStats convert(const GstStructure*);
 #endif
     };
 
@@ -385,8 +355,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static CodecStats convert(const webrtc::RTCCodecStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static CodecStats convert(const GstStructure*);
 #endif
     };
 
@@ -416,8 +384,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static TransportStats convert(const webrtc::RTCTransportStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static TransportStats convert(const GstStructure*);
 #endif
     };
 
@@ -431,8 +397,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static AudioPlayoutStats convert(const webrtc::RTCAudioPlayoutStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static AudioPlayoutStats convert(const GstStructure*);
 #endif
     };
 
@@ -442,8 +406,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static PeerConnectionStats convert(const webrtc::RTCPeerConnectionStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static PeerConnectionStats convert(const GstStructure*);
 #endif
     };
 
@@ -453,8 +415,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static MediaSourceStats convert(Type, const webrtc::RTCMediaSourceStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static MediaSourceStats convert(Type, const GstStructure*);
 #endif
     };
 
@@ -467,8 +427,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static AudioSourceStats convert(const webrtc::RTCAudioSourceStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static AudioSourceStats convert(const GstStructure*);
 #endif
     };
 
@@ -481,8 +439,6 @@ public:
 
 #if USE(LIBWEBRTC)
         static VideoSourceStats convert(const webrtc::RTCVideoSourceStats&);
-#elif USE(GSTREAMER_WEBRTC)
-        static VideoSourceStats convert(const GstStructure*);
 #endif
     };
 

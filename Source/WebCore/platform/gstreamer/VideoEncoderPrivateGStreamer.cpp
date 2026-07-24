@@ -231,7 +231,6 @@ struct _WebKitVideoEncoderPrivate {
     BitrateMode bitrateMode;
     LatencyMode latencyMode;
     RefPtr<WebKitVideoEncoderBitRateAllocation> bitRateAllocation;
-    double scaleResolutionDownBy;
     bool enableVideoFlip;
 };
 
@@ -244,7 +243,6 @@ enum {
     PROP_KEYFRAME_INTERVAL,
     PROP_BITRATE_MODE,
     PROP_LATENCY_MODE,
-    PROP_SCALE_RESOLUTION_DOWN_BY,
     N_PROPS
 };
 
@@ -271,9 +269,6 @@ static void videoEncoderGetProperty(GObject* object, guint propertyId, GValue* v
         break;
     case PROP_LATENCY_MODE:
         g_value_set_enum(value, priv->latencyMode);
-        break;
-    case PROP_SCALE_RESOLUTION_DOWN_BY:
-        g_value_set_double(value, priv->scaleResolutionDownBy);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -509,21 +504,6 @@ void videoEncoderSetFrameRate(WebKitVideoEncoder* self, double frameRate)
     g_object_set(priv->outputCapsFilter.get(), "caps", writableCaps.get(), nullptr);
 }
 
-void videoEncoderScaleResolutionDownBy(WebKitVideoEncoder* self, double scaleResolutionDownBy)
-{
-    self->priv->scaleResolutionDownBy = scaleResolutionDownBy;
-
-    GRefPtr pad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT_CAST(self), "sink"));
-    if (!pad)
-        return;
-
-    GRefPtr peer = adoptGRef(gst_pad_get_peer(pad.get()));
-    if (!peer)
-        return;
-
-    gst_pad_send_event(peer.get(), gst_event_new_reconfigure());
-}
-
 static void videoEncoderSetProperty(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     auto* self = WEBKIT_VIDEO_ENCODER(object);
@@ -552,9 +532,6 @@ static void videoEncoderSetProperty(GObject* object, guint propertyId, const GVa
             auto encoder = Encoders::definition(priv->encoderId);
             encoder->setLatencyMode(priv->encoder.get(), priv->latencyMode);
         }
-        break;
-    case PROP_SCALE_RESOLUTION_DOWN_BY:
-        videoEncoderScaleResolutionDownBy(self, g_value_get_double(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -612,29 +589,6 @@ static void videoEncoderConstructed(GObject* encoder)
             }
         }
 
-        if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS) {
-            auto self = WEBKIT_VIDEO_ENCODER(parent);
-            auto scaleResolutionDownBy = self->priv->scaleResolutionDownBy;
-            if (scaleResolutionDownBy > 1.0) {
-                GST_DEBUG_OBJECT(self, "Applying scale factor: %f", scaleResolutionDownBy);
-                GstCaps* caps;
-                gst_event_parse_caps(event, &caps);
-                if (caps && gst_caps_get_size(caps)) {
-                    GRefPtr writableCaps = adoptGRef(gst_caps_copy(caps));
-                    auto structure = gst_caps_get_structure(writableCaps.get(), 0);
-                    auto width = gstStructureGet<int>(structure, "width"_s);
-                    auto height = gstStructureGet<int>(structure, "height"_s);
-                    if (width && height) {
-                        int newWidth = *width / scaleResolutionDownBy;
-                        int newHeight = *height / scaleResolutionDownBy;
-                        gst_structure_set(structure, "width", G_TYPE_INT, newWidth, "height", G_TYPE_INT, newHeight, nullptr);
-                        GST_DEBUG_OBJECT(self, "Modified caps: %" GST_PTR_FORMAT, writableCaps.get());
-                        GRefPtr newCapsEvent = adoptGRef(gst_event_new_caps(writableCaps.get()));
-                        gst_event_replace(&event, newCapsEvent.get());
-                    }
-                }
-            }
-        }
         return gst_pad_event_default(pad, parent, event);
     }));
     gst_element_add_pad(GST_ELEMENT_CAST(self), sinkPad);
@@ -1072,8 +1026,6 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
         nullptr, nullptr, VIDEO_ENCODER_TYPE_BITRATE_MODE, CONSTANT_BITRATE_MODE, WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(objectClass, PROP_LATENCY_MODE, g_param_spec_enum("latency-mode",
         nullptr, nullptr, VIDEO_ENCODER_TYPE_LATENCY_MODE, REALTIME_LATENCY_MODE, WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(objectClass, PROP_SCALE_RESOLUTION_DOWN_BY, g_param_spec_double("scale-resolution-down-by",
-        nullptr, nullptr, 0, G_MAXDOUBLE, 1, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
 }
 
 #undef NUMBER_OF_THREADS

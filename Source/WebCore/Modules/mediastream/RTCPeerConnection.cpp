@@ -742,11 +742,6 @@ bool RTCPeerConnection::doClose()
     if (isClosed())
         return false;
 
-#if USE(GSTREAMER_WEBRTC)
-    if (RefPtr backend = m_backend.get())
-        backend->prepareForClose();
-#endif
-
     m_shouldDelayTasks = false;
     m_connectionState = RTCPeerConnectionState::Closed;
     m_iceConnectionState = RTCIceConnectionState::Closed;
