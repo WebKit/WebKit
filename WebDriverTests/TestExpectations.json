@@ -321,6 +321,37 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/virtual_authenticator_tests.py": {
+        "subtests": {
+            "test_add_and_remove_non_resident_credentials": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_add_and_remove_virtual_authenticator": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_add_non_resident_credential_when_authenticator_uses_u2f_protocol": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_add_resident_credential_not_supported_when_authenticator_uses_u2f_protocol": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_get_credentials": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_remove_all_credentials": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_remove_credential_by_b64_urlId": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_remove_credential_by_raw_Id": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            },
+            "test_set_user_verified": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205350"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py": {
         "subtests": {
 
