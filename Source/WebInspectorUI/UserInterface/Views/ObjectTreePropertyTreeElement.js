@@ -321,7 +321,7 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
             }
 
             // Native DOM constructor or on native objects that are not functions.
-            if (parentDescription.endsWith("Constructor") || ["Math", "JSON", "Reflect", "Console"].includes(parentDescription)) {
+            if (parentDescription.endsWith("Constructor") || ["Atomics", "Console", "Intl", "JSON", "Math", "Reflect", "WebAssembly"].includes(parentDescription)) {
                 var name = parentDescription;
                 if (WI.NativeConstructorFunctionParameters[name]) {
                     var params = WI.NativeConstructorFunctionParameters[name][this._property.name];

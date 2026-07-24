@@ -213,6 +213,22 @@ make_path($derivedSourcesDir);
 my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
 copy(File::Spec->catfile($uiRoot, 'Main.html'), File::Spec->catfile($derivedSourcesDir, 'Main.html')) or die "Copy failed: $!";
 
+my $derivedModelsDir = File::Spec->catdir($derivedSourcesDir, 'Models');
+my $targetModelsDir = File::Spec->catdir($targetResourcePath, 'Models');
+my $nativeFunctionParametersScript = File::Spec->catfile($scriptsRoot, 'update-NativeFunctionParameters.py');
+my $nativeFunctionParametersOverrides = File::Spec->catfile($uiRoot, 'Models', 'NativeFunctionParameters-overrides.json');
+my $generatedNativeFunctionParameters = File::Spec->catfile($derivedModelsDir, 'NativeFunctionParameters.js');
+
+my $nativeFunctionParametersJSON = $ENV{'INSPECTOR_NATIVE_FUNCTION_PARAMETERS_JSON'};
+$nativeFunctionParametersJSON = File::Spec->catfile($ENV{'BUILT_PRODUCTS_DIR'}, 'DerivedSources', 'WebCore', 'InspectorNativeFunctionParameters.json') if !$nativeFunctionParametersJSON && defined $ENV{'BUILT_PRODUCTS_DIR'};
+$nativeFunctionParametersJSON = '' unless defined $nativeFunctionParametersJSON;
+
+make_path($derivedModelsDir);
+system($python, $nativeFunctionParametersScript, '--overrides', $nativeFunctionParametersOverrides, '--output', $generatedNativeFunctionParameters, '--json', $nativeFunctionParametersJSON) == 0 or die "Generating NativeFunctionParameters.js failed: $!";
+
+make_path($targetModelsDir);
+copy($generatedNativeFunctionParameters, File::Spec->catfile($targetModelsDir, 'NativeFunctionParameters.js')) or die "Copy of NativeFunctionParameters.js failed: $!";
+
 if (!$shouldIncludeBrowserInspectorFrontendHost) {
     system($perl, $combineResourcesCmd,
         '--input-dir', 'Base',

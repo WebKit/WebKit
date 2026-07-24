@@ -3751,6 +3751,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ModernMediaControls.css
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ModernMediaControls.js
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Namespace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Namespace.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InspectorNativeFunctionParameters.json
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/NodeName.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/NodeName.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PaintWorkletGlobalScopeConstructors.idl
