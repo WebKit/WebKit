@@ -1,7 +1,0 @@
-{
-    "TestNamedDeleterWithIdentifier": {
-        "prototype": {
-            "namedDeleter": "name"
-        }
-    }
-}

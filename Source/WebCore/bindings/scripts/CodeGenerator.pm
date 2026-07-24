@@ -263,59 +263,9 @@ sub ProcessInterfaces
     $object->ProcessInterfaceSupplementalDependencies($interface, $useDocument);
     $object->ProcessDictionaryAndEnumerationImplementedAsOverrides($useDocument);
 
-    $object->WriteInspectorNativeFunctionParameters($interface) if $useGenerator eq "JS";
-
     print "Generating $useGenerator bindings code for IDL interface \"" . $interface->type->name . "\"\n" if $verbose;
     $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
     $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
-}
-
-sub WriteInspectorNativeFunctionParameters
-{
-    my ($object, $interface) = @_;
-
-    return unless $interface->extendedAttributes->{"Exposed"};
-
-    my %entry = ("prototype" => {}, "constructor" => {});
-
-    foreach my $operation (@{$interface->operations}) {
-        my $operationName = $operation->name;
-        next unless defined $operationName && $operationName ne "";
-
-        my $kind = ($interface->isNamespaceObject || $operation->isStatic) ? "constructor" : "prototype";
-        next if exists $entry{$kind}{$operationName}; # Only keep the first overload.
-
-        my @formattedArguments = ();
-        foreach my $argument (@{$operation->arguments}) {
-            my $argumentName = $argument->name;
-            $argumentName =~ s/^_//;
-            if ($argument->isVariadic) {
-                push(@formattedArguments, "...${argumentName}");
-            } elsif ($argument->isOptional) {
-                push(@formattedArguments, "[${argumentName}]");
-            } else {
-                push(@formattedArguments, $argumentName);
-            }
-        }
-        next if scalar @formattedArguments == 0;
-
-        $entry{$kind}{$operationName} = join(", ", @formattedArguments);
-    }
-
-    delete $entry{"prototype"} unless %{$entry{"prototype"}};
-    delete $entry{"constructor"} unless %{$entry{"constructor"}};
-    return unless %entry;
-
-    my $interfaceName = $interface->extendedAttributes->{"InterfaceName"} || $interface->type->name;
-
-    require JSON::PP;
-    my $contents = JSON::PP->new->utf8->canonical->pretty->indent_length(4)->space_before(0)->encode({ $interfaceName => \%entry });
-
-    my $basename = fileparse($useDocument->fileName, ".idl");
-    my $filename = "${basename}.inspector-native-function-parameters.json";
-    open FH, ">", "${useOutputDir}/${filename}" or die "Couldn't open ${filename}: $!\n";
-    print FH $contents;
-    close FH;
 }
 
 sub ProcessCallbackFunctions

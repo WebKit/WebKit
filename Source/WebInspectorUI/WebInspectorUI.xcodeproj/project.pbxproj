@@ -193,9 +193,7 @@
 				"$(SRCROOT)/UserInterface",
 				"$(SRCROOT)/Scripts/generate-userinterface-depfile.sh",
 				"$(SRCROOT)/Scripts/copy-user-interface-resources.pl",
-				"$(SRCROOT)/Scripts/update-NativeFunctionParameters.py",
 				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/InspectorBackendCommands.js",
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InspectorNativeFunctionParameters.json",
 			);
 			name = "Copy User Interface Resources";
 			outputPaths = (

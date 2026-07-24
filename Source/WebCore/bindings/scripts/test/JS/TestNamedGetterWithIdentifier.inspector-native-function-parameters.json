@@ -1,7 +1,0 @@
-{
-    "TestNamedGetterWithIdentifier": {
-        "prototype": {
-            "getterName": "name"
-        }
-    }
-}

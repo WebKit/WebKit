@@ -1,7 +1,0 @@
-{
-    "TestEnabledBySetting": {
-        "prototype": {
-            "enabledBySettingOperation": "testParam"
-        }
-    }
-}

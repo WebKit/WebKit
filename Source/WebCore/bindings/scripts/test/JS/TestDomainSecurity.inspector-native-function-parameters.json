@@ -1,9 +1,0 @@
-{
-    "TestDomainSecurity": {
-        "prototype": {
-            "excitingFunction": "nextChild",
-            "overloadedMethod": "param",
-            "postMessage": "message"
-        }
-    }
-}

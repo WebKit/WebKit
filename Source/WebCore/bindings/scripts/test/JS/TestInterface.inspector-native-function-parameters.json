@@ -1,8 +1,0 @@
-{
-    "TestInterface": {
-        "prototype": {
-            "mixinComplexOperation": "strArg, objArg",
-            "supplementalMethod2": "strArg, objArg"
-        }
-    }
-}
