@@ -27,7 +27,6 @@
 #include "PlacedGridItem.h"
 
 #include "GridAreaLines.h"
-#include "LayoutBoxGeometry.h"
 #include "StyleAlignSelf.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleJustifySelf.h"
@@ -36,17 +35,15 @@
 namespace WebCore {
 namespace Layout {
 
-PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const BoxGeometry& gridItemGeometry, const Style::ComputedStyle& gridContainerStyle)
-    : PlacedGridItem(gridItem, gridAreaLines, gridItemGeometry, gridContainerStyle, gridItem.style())
+PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const Style::ComputedStyle& gridContainerStyle)
+    : PlacedGridItem(gridItem, gridAreaLines, gridContainerStyle, gridItem.style())
 {
 }
 
-PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const BoxGeometry& gridItemGeometry, const Style::ComputedStyle& gridContainerStyle, const Style::ComputedStyle& gridItemStyle)
+PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const Style::ComputedStyle& gridContainerStyle, const Style::ComputedStyle& gridItemStyle)
     : m_layoutBox(gridItem)
     , m_inlineAxisSizes({ gridItemStyle.width(), gridItemStyle.minWidth(), gridItemStyle.maxWidth(), gridItemStyle.marginLeft(), gridItemStyle.marginRight() })
     , m_blockAxisSizes({ gridItemStyle.height(), gridItemStyle.minHeight(), gridItemStyle.maxHeight(), gridItemStyle.marginTop(), gridItemStyle.marginBottom() })
-    , m_usedInlineBorderAndPadding(gridItemGeometry.horizontalBorderAndPadding())
-    , m_usedBlockBorderAndPadding(gridItemGeometry.verticalBorderAndPadding())
     , m_inlineAxisAlignment(gridItemStyle.justifySelf().resolve(&gridContainerStyle))
     , m_blockAxisAlignment(gridItemStyle.alignSelf().resolve(&gridContainerStyle))
     , m_writingMode(gridItemStyle.writingMode())

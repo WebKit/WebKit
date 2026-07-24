@@ -460,7 +460,9 @@ TrackSizes GridLayout::sizeColumnTracks(const PlacedGridItems& placedGridItems, 
 
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto rowSpan = WTF::Range<size_t> { gridItem.rowStartLine(), gridItem.rowEndLine() };
-        return { gridItem, gridItem.inlineAxisSizes(), gridItem.usedInlineBorderAndPadding(),
+        // The inline grid area is indefinite while sizing columns, so the item's cyclic percentage padding resolves against zero.
+        auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), 0_lu).first;
+        return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding,
             { gridItem.columnStartLine(), gridItem.columnEndLine() }, oppositeAxisConstraintForTrackSizing(rowSizesForFirstColumnSizing, rowSpan) };
     });
 
@@ -480,8 +482,11 @@ TrackSizes GridLayout::sizeRowTracks(const PlacedGridItems& placedGridItems, con
 
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto columnSpan = WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
-        return { gridItem, gridItem.blockAxisSizes(), gridItem.usedBlockBorderAndPadding(),
-            { gridItem.rowStartLine(), gridItem.rowEndLine() }, oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan) };
+        auto columnConstraint = oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan);
+        auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutState.usedColumnGap);
+        auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).second;
+        return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding,
+            { gridItem.rowStartLine(), gridItem.rowEndLine() }, columnConstraint };
     });
 
     return TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
@@ -580,15 +585,16 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         auto inlineMargins = computeMarginsForAxis(gridItem.inlineAxisSizes(), gridItem.usedZoom());
         auto blockMargins = computeMarginsForAxis(gridItem.blockAxisSizes(), gridItem.usedZoom());
 
-        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, gridItem.usedInlineBorderAndPadding(), gridAreaInlineSize, integrationUtils, inlineMargins);
+        auto [inlineBorderAndPadding, blockBorderAndPadding] = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize);
+
+        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, inlineMargins);
         usedInlineSizes.append(inlineUsedSize);
 
         // FIXME: investigate to check if we should use the inlineUsedSize or the size of the grid area in the inline direction.
-        auto blockUsedSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, gridItem.usedBlockBorderAndPadding(), gridAreaBlockSize, formattingContext, inlineUsedSize, blockMargins);
+        auto blockUsedSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, inlineUsedSize, blockMargins);
         usedBlockSizes.append(blockUsedSize);
 
-        auto& layoutBox = gridItem.layoutBox();
-        integrationUtils.layoutWithFormattingContextForBox(layoutBox, inlineUsedSize, blockUsedSize);
+        integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
     }
     return { usedInlineSizes, usedBlockSizes };
 }

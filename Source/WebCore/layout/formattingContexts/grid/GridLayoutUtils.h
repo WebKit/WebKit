@@ -57,7 +57,7 @@ LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
 LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&, const UsedMargins&);
 LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint, const UsedMargins&);
 
-LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
+LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, LayoutUnit gridAreaInlineSize, const IntegrationUtils&);
 LayoutUnit blockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint);
 LayoutUnit inlineMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit blockMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);

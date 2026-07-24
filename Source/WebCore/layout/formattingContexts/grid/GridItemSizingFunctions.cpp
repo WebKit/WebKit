@@ -33,6 +33,7 @@ namespace Layout {
 
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
 {
+    // FIXME: blockAxisConstraint is unused by the inline-axis contribution functions; remove the stale parameter in a follow-up.
     return {
         [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
             return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, blockAxisConstraint, integrationUtils);
@@ -42,7 +43,7 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
         },
         [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit blockAxisConstraint) {
             UNUSED_PARAM(blockAxisConstraint);
-            return GridLayoutUtils::inlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, integrationUtils);
+            return GridLayoutUtils::inlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, 0_lu, integrationUtils);
         }
     };
 }

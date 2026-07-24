@@ -50,7 +50,7 @@ struct ComputedSizes {
 
 class PlacedGridItem {
 public:
-    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const Style::ComputedStyle& gridContainerWritingMode);
+    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const Style::ComputedStyle& gridContainerWritingMode);
 
     const ComputedSizes& inlineAxisSizes() const LIFETIME_BOUND { return m_inlineAxisSizes; }
     const ComputedSizes& blockAxisSizes() const LIFETIME_BOUND { return m_blockAxisSizes; }
@@ -64,9 +64,6 @@ public:
     const StyleSelfAlignmentData& inlineAxisAlignment() const LIFETIME_BOUND { return m_inlineAxisAlignment; }
     const StyleSelfAlignmentData& blockAxisAlignment() const LIFETIME_BOUND { return m_blockAxisAlignment; }
 
-    LayoutUnit usedInlineBorderAndPadding() const { return m_usedInlineBorderAndPadding; }
-    LayoutUnit usedBlockBorderAndPadding() const { return m_usedBlockBorderAndPadding; }
-
     const WritingMode& writingMode() const LIFETIME_BOUND { return m_writingMode; }
 
     bool isReplacedElement() const { return m_layoutBox->isReplacedBox(); }
@@ -76,15 +73,12 @@ public:
     const Style::ZoomFactor& usedZoom() const LIFETIME_BOUND { return m_usedZoom; }
 
 private:
-    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const Style::ComputedStyle& gridContainerWritingMode, const Style::ComputedStyle& gridItemWritingMode);
+    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const Style::ComputedStyle& gridContainerWritingMode, const Style::ComputedStyle& gridItemWritingMode);
 
     const CheckedRef<const ElementBox> m_layoutBox;
 
     const ComputedSizes m_inlineAxisSizes;
     const ComputedSizes m_blockAxisSizes;
-
-    const LayoutUnit m_usedInlineBorderAndPadding;
-    const LayoutUnit m_usedBlockBorderAndPadding;
 
     const StyleSelfAlignmentData m_inlineAxisAlignment;
     const StyleSelfAlignmentData m_blockAxisAlignment;

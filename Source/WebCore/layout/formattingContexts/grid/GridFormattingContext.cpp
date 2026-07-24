@@ -224,8 +224,7 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
     for (auto [ unplacedGridItem, gridAreaLines ] : gridAreas) {
         CheckedRef gridItem = unplacedGridItem.m_layoutBox;
         CheckedRef gridContainerStyle = this->gridContainerStyle();
-        auto& boxGeometry = geometryForGridItem(gridItem);
-        placedGridItems.constructAndAppend(gridItem, gridAreaLines, boxGeometry, gridContainerStyle);
+        placedGridItems.constructAndAppend(gridItem, gridAreaLines, gridContainerStyle);
     }
     return placedGridItems;
 }
