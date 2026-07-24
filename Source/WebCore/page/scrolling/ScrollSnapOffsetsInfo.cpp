@@ -433,7 +433,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     LOG_WITH_STREAM(ScrollSnap, stream << "Computing scroll snap offsets for " << scrollableArea << " in snap port " << scrollSnapPort);
 
     for (CheckedRef child : boxesWithScrollSnapPositions) {
-        if (child->enclosingScrollableContainer() != &scrollingElementBox || !child->element())
+        if (child->enclosingScrollSnapContainer() != &scrollingElementBox || !child->element())
             continue;
 
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.

@@ -510,7 +510,23 @@ RenderBox* RenderObject::enclosingScrollableContainer() const
             return downcast<RenderBox>(candidate);
     }
 
-    // If we reach the root, then the root element is the scrolling container.
+    return document().documentElement() ? document().documentElement()->renderBox() : nullptr;
+}
+
+RenderBox* RenderObject::enclosingScrollSnapContainer() const
+{
+    for (auto* candidate = container(); candidate; candidate = candidate->container()) {
+        // Currently the RenderView can look like it has scrollable overflow, but we never
+        // want to return this as our container. Instead we should use the root element.
+        if (candidate->isRenderView())
+            break;
+
+        if (auto* candidateBox = dynamicDowncast<RenderBox>(*candidate)) {
+            if (candidateBox->hasPotentiallyScrollableOverflow() || !candidateBox->style().scrollSnapType().isNone())
+                return candidateBox;
+        }
+    }
+
     return document().documentElement() ? document().documentElement()->renderBox() : nullptr;
 }
 
