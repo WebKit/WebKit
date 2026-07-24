@@ -32,7 +32,7 @@ namespace Style {
 
 // <'padding-*'> = <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-box/#padding-physical
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PaddingEdge, LengthPercentage<CSS::NonnegativeUnzoomed>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PaddingEdge, LengthPercentage<CSS::Nonnegative>);
 
 // <'padding'> = <'padding-top'>{1,4}
 // https://drafts.csswg.org/css-box/#propdef-padding

@@ -543,12 +543,12 @@ inline bool PropertyParserCustom::consumeTextDecorationSkipShorthand(CSSParserTo
 
 inline bool PropertyParserCustom::consumeBorderSpacingShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand&, PropertyParserResult& result)
 {
-    RefPtr horizontalSpacing = CSSPrimitiveValueResolver<Length<NonnegativeUnzoomed>>::consumeAndResolve(range, state);
+    RefPtr horizontalSpacing = CSSPrimitiveValueResolver<Length<Nonnegative>>::consumeAndResolve(range, state);
     if (!horizontalSpacing)
         return false;
     RefPtr verticalSpacing = horizontalSpacing;
     if (!range.atEnd())
-        verticalSpacing = CSSPrimitiveValueResolver<Length<NonnegativeUnzoomed>>::consumeAndResolve(range, state);
+        verticalSpacing = CSSPrimitiveValueResolver<Length<Nonnegative>>::consumeAndResolve(range, state);
     if (!verticalSpacing || !range.atEnd())
         return false;
 
@@ -641,7 +641,7 @@ inline bool PropertyParserCustom::consumeFlexShorthand(CSSParserTokenRange& rang
                 if (isFlexBasisIdent(range.peek().id()))
                     flexBasis = consumeIdent(range);
                 if (!flexBasis)
-                    flexBasis = CSSPrimitiveValueResolver<LengthPercentage<NonnegativeUnzoomed>>::consumeAndResolve(range, state);
+                    flexBasis = CSSPrimitiveValueResolver<LengthPercentage<Nonnegative>>::consumeAndResolve(range, state);
                 if (index == 2 && !range.atEnd())
                     return false;
             }
@@ -1779,7 +1779,7 @@ inline bool PropertyParserCustom::consumeTransformOriginShorthand(CSSParserToken
     if (auto position = consumeOneOrTwoComponentPositionUnresolved(range, state)) {
         range.consumeWhitespace();
         bool atEnd = range.atEnd();
-        auto resultZ = CSSPrimitiveValueResolver<Length<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+        auto resultZ = CSSPrimitiveValueResolver<Length<>>::consumeAndResolve(range, state);
         if ((!resultZ && !atEnd) || !range.atEnd())
             return false;
 

@@ -32,7 +32,7 @@ namespace Style {
 
 // <'margin-*'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-box/#margin-physical
-struct MarginEdge : PrimitiveNumericOrKeyword<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
+struct MarginEdge : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::Keyword::Auto> {
     using Base::Base;
     using Base::hasQuirk;
 

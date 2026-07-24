@@ -32,13 +32,13 @@ namespace CSS {
 // <track-breadth> = <length-percentage [0,∞]> | <flex [0,∞]> | min-content | max-content | auto
 // https://drafts.csswg.org/css-grid/#typedef-track-breadth
 struct GridTrackBreadth {
-    GridTrackBreadth(LengthPercentage<NonnegativeUnzoomed>&& lengthPercentage) : m_value { WTF::move(lengthPercentage) } { }
+    GridTrackBreadth(LengthPercentage<Nonnegative>&& lengthPercentage) : m_value { WTF::move(lengthPercentage) } { }
     GridTrackBreadth(Flex<Nonnegative>&& flex) : m_value { WTF::move(flex) } { }
     GridTrackBreadth(Keyword::MinContent keyword) : m_value { keyword } { }
     GridTrackBreadth(Keyword::MaxContent keyword) : m_value { keyword } { }
     GridTrackBreadth(Keyword::Auto keyword) : m_value { keyword } { }
 
-    bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage<NonnegativeUnzoomed>>(m_value); }
+    bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage<Nonnegative>>(m_value); }
     bool isFlex() const { return WTF::holdsAlternative<Flex<Nonnegative>>(m_value); }
     bool isMinContent() const { return WTF::holdsAlternative<Keyword::MinContent>(m_value); }
     bool isMaxContent() const { return WTF::holdsAlternative<Keyword::MaxContent>(m_value); }
@@ -52,7 +52,7 @@ struct GridTrackBreadth {
     bool operator==(const GridTrackBreadth&) const = default;
 
 private:
-    Variant<LengthPercentage<NonnegativeUnzoomed>, Flex<Nonnegative>, Keyword::MinContent, Keyword::MaxContent, Keyword::Auto> m_value;
+    Variant<LengthPercentage<Nonnegative>, Flex<Nonnegative>, Keyword::MinContent, Keyword::MaxContent, Keyword::Auto> m_value;
 };
 
 } // namespace CSS

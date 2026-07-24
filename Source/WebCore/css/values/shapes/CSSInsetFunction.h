@@ -33,7 +33,7 @@ namespace CSS {
 // <inset()> = inset( <length-percentage>{1,4} [ round <'border-radius'> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-inset
 struct Inset {
-    using Insets = MinimallySerializingSpaceSeparatedRectEdges<LengthPercentage<AllUnzoomed>>;
+    using Insets = MinimallySerializingSpaceSeparatedRectEdges<LengthPercentage<>>;
 
     Insets insets;
     BorderRadius radii;

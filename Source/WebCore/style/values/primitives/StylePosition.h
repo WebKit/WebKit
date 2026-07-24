@@ -31,8 +31,8 @@
 namespace WebCore {
 namespace Style {
 
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PositionX, LengthPercentage<CSS::AllUnzoomed>);
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PositionY, LengthPercentage<CSS::AllUnzoomed>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PositionX, LengthPercentage<>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PositionY, LengthPercentage<>);
 
 struct TwoComponentPositionHorizontal {
     PositionX offset;

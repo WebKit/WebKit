@@ -69,9 +69,12 @@ double UnevaluatedCalculationBase::evaluateBase(CSS::Range range, double percent
     return protect(m_calc)->evaluate(range, percentageBasis, zoom);
 }
 
-double UnevaluatedCalculationBase::evaluateBase(CSS::Range range, double percentageBasis, const ZoomNeeded& token) const
+double UnevaluatedCalculationBase::evaluateBase(CSS::Range range, double percentageBasis) const
 {
-    return protect(m_calc)->evaluate(range, percentageBasis, token);
+    // This overload will only be called by a typed `UnevaluatedCalculation` that has a
+    // non-length/length-percentage category. For these types, `Calculation` dimension
+    // values are independent of zoom, so passing in `ZoomFactor::none()` is appropriate.
+    return protect(m_calc)->evaluate(range, percentageBasis, ZoomFactor::none());
 }
 
 bool UnevaluatedCalculationBase::equal(const UnevaluatedCalculationBase& other) const

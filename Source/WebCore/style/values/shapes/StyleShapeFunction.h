@@ -40,7 +40,7 @@ namespace Style {
 struct Path;
 
 // <coordinate-pair> = <length-percentage>{2}
-using CoordinatePair  = SpaceSeparatedPoint<LengthPercentage<CSS::AllUnzoomed>>;
+using CoordinatePair  = SpaceSeparatedPoint<LengthPercentage<>>;
 
 using CommandAffinity = CSS::CommandAffinity;
 using ArcSweep        = CSS::ArcSweep;
@@ -170,7 +170,7 @@ struct HLineCommand {
     };
     struct By {
         static constexpr CommandAffinity affinity = CSS::Keyword::By { };
-        using Offset = LengthPercentage<CSS::AllUnzoomed>;
+        using Offset = LengthPercentage<>;
 
         Offset offset;
 
@@ -204,7 +204,7 @@ struct VLineCommand {
     };
     struct By {
         static constexpr CommandAffinity affinity = CSS::Keyword::By { };
-        using Offset = LengthPercentage<CSS::AllUnzoomed>;
+        using Offset = LengthPercentage<>;
 
         Offset offset;
 
@@ -334,7 +334,7 @@ struct ArcCommand {
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
 
-    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::AllUnzoomed>>;
+    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<>>;
     SizeOfEllipse size;
 
     ArcSweep arcSweep;

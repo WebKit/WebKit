@@ -34,7 +34,7 @@ namespace Style {
 // <'text-decoration-thickness'> = auto | from-font | <length-percentage>
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-decoration-thickness
 struct TextDecorationThickness {
-    using LengthPercentage = Style::LengthPercentage<CSS::AllUnzoomed>;
+    using LengthPercentage = Style::LengthPercentage<>;
 
     TextDecorationThickness(CSS::Keyword::Auto keyword)
         : m_value { keyword }

@@ -36,7 +36,7 @@ namespace Style {
 // https://drafts.csswg.org/css-text-3/#propdef-tab-size
 struct TabSize {
     using Spaces = Style::Number<CSS::Nonnegative, float>;
-    using Length = Style::Length<CSS::NonnegativeUnzoomed, float>;
+    using Length = Style::Length<CSS::Nonnegative, float>;
 
     constexpr TabSize(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
         : m_value { Spaces { literal } }

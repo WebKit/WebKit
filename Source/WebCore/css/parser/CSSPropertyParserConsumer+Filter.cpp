@@ -90,7 +90,7 @@ static std::optional<CSS::BlurFunction> consumeFilterBlur(CSSParserTokenRange& r
     if (args.atEnd())
         return { CSS::BlurFunction { .parameters = { } } };
 
-    auto parsedValue = MetaConsumer<CSS::Length<CSS::NonnegativeUnzoomed>>::consume(args, state);
+    auto parsedValue = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(args, state);
     if (!parsedValue || !args.atEnd())
         return { };
 
@@ -137,9 +137,9 @@ static std::optional<CSS::DropShadowFunction> consumeFilterDropShadow(CSSParserT
     auto args = consumeFunction(range);
 
     std::optional<CSS::Color> color;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> x;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> y;
-    std::optional<CSS::Length<CSS::NonnegativeUnzoomed>> stdDeviation;
+    std::optional<CSS::Length<>> x;
+    std::optional<CSS::Length<>> y;
+    std::optional<CSS::Length<CSS::Nonnegative>> stdDeviation;
 
     auto consumeOptionalColor = [&] -> bool {
         if (color)
@@ -154,14 +154,14 @@ static std::optional<CSS::DropShadowFunction> consumeFilterDropShadow(CSSParserT
     auto consumeLengths = [&] -> bool {
         if (x)
             return false;
-        x = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(args, state);
+        x = MetaConsumer<CSS::Length<>>::consume(args, state);
         if (!x)
             return false;
-        y = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(args, state);
+        y = MetaConsumer<CSS::Length<>>::consume(args, state);
         if (!y)
             return false;
 
-        stdDeviation = MetaConsumer<CSS::Length<CSS::NonnegativeUnzoomed>>::consume(args, state);
+        stdDeviation = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(args, state);
         return true;
     };
 

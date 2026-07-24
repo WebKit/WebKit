@@ -51,7 +51,7 @@ template<size_t I> const auto& get(const GridMinMaxFunctionParameters& value)
 
 // <fit-content()> = fit-content( <length-percentage [0,∞]> )
 struct GridFitContentFunctionParameters {
-    LengthPercentage<NonnegativeUnzoomed> value;
+    LengthPercentage<Nonnegative> value;
 
     bool operator==(const GridFitContentFunctionParameters&) const = default;
 };

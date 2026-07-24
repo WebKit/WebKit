@@ -55,8 +55,8 @@ public:
     struct GuaranteedInvalid { };
 
     using Value = Variant<
-        LengthPercentage<CSS::AllUnzoomed>,
-        Length<CSS::AllUnzoomed>,
+        LengthPercentage<>,
+        Length<>,
         Number<>,
         Percentage<>,
         Angle<>,

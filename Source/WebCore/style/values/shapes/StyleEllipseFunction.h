@@ -37,7 +37,7 @@ namespace Style {
 
 struct Ellipse {
     using Extent = CSS::Ellipse::Extent;
-    using Length = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
+    using Length = Style::LengthPercentage<CSS::Nonnegative>;
     using RadialSize = Variant<Length, Extent>;
 
     SpaceSeparatedPair<RadialSize> radii;

@@ -44,9 +44,9 @@ namespace Style {
 
 class TranslateTransformFunction final : public TransformFunctionBase {
 public:
-    using X = Style::LengthPercentage<CSS::AllUnzoomed>;
-    using Y = Style::LengthPercentage<CSS::AllUnzoomed>;
-    using Z = Style::Length<CSS::AllUnzoomed>;
+    using X = Style::LengthPercentage<>;
+    using Y = Style::LengthPercentage<>;
+    using Z = Style::Length<>;
 
     static Ref<const TranslateTransformFunction> create(const X&, const Y&, TransformFunctionBase::Type);
     static Ref<const TranslateTransformFunction> create(const X&, const Y&, const Z&, TransformFunctionBase::Type);

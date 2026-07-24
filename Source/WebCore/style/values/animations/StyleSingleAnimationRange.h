@@ -38,7 +38,7 @@ namespace Style {
 
 enum class SingleAnimationRangeType : bool { Start, End };
 
-using SingleAnimationRangeEdgeOffset = LengthPercentage<CSS::AllUnzoomed>;
+using SingleAnimationRangeEdgeOffset = LengthPercentage<>;
 
 template<SingleAnimationRangeType type>
 struct SingleAnimationRangeEdge {

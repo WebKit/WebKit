@@ -678,7 +678,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 
         auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
 
-        using StyleType = LengthPercentage<CSS::NonnegativeUnzoomed, float>;
+        using StyleType = LengthPercentage<CSS::Nonnegative>;
 
         auto handleLength = [](const auto& length) -> float { return length.resolveZoom(ZoomFactor::none()); };
         auto handlePercentage = [&](const auto& percentage) -> float { return percentage.value * parentSize / 100.0f; };

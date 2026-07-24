@@ -67,14 +67,12 @@ struct Range {
     double max {  infinity };
     RangeParseTimeBehavior minParseTimeBehavior { RangeParseTimeBehavior::Default };
     RangeParseTimeBehavior maxParseTimeBehavior { RangeParseTimeBehavior::Default };
-    RangeZoomOptions zoomOptions { RangeZoomOptions::Default };
 
-    constexpr Range(double min, double max, RangeParseTimeBehavior minParseTimeBehavior = RangeParseTimeBehavior::Default, RangeParseTimeBehavior maxParseTimeBehavior = RangeParseTimeBehavior::Default, RangeZoomOptions zoomOptions = RangeZoomOptions::Default)
+    constexpr Range(double min, double max, RangeParseTimeBehavior minParseTimeBehavior = RangeParseTimeBehavior::Default, RangeParseTimeBehavior maxParseTimeBehavior = RangeParseTimeBehavior::Default)
         : min { min }
         , max { max }
         , minParseTimeBehavior { minParseTimeBehavior }
         , maxParseTimeBehavior { maxParseTimeBehavior }
-        , zoomOptions { zoomOptions }
     {
     }
 
@@ -83,51 +81,39 @@ struct Range {
 
 // Constant value for `[−∞,∞]`.
 inline constexpr auto All = Range { -Range::infinity, Range::infinity };
-inline constexpr auto AllUnzoomed = Range { -Range::infinity, Range::infinity, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,∞]`.
 inline constexpr auto Nonnegative = Range { 0, Range::infinity };
-inline constexpr auto NonnegativeUnzoomed = Range { 0, Range::infinity, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[1,∞]`.
 inline constexpr auto Positive = Range { 1, Range::infinity };
-inline constexpr auto PositiveUnzoomed = Range { 1, Range::infinity, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[-∞,-1]`.
 inline constexpr auto Negative = Range { -Range::infinity, -1 };
-inline constexpr auto NegativeUnzoomed = Range { -Range::infinity, -1, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,1]`.
 inline constexpr auto ClosedUnitRange = Range { 0, 1 };
-inline constexpr auto ClosedUnitRangeUnzoomed = Range { 0, 1, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,1(clamp upper)]`.
 inline constexpr auto ClosedUnitRangeClampUpper = Range { 0, 1, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Clamp };
-inline constexpr auto ClosedUnitRangeClampUpperUnzoomed = Range { 0, 1, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Clamp, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,1(clamp both)]`.
 inline constexpr auto ClosedUnitRangeClampBoth = Range { 0, 1, RangeParseTimeBehavior::Clamp, RangeParseTimeBehavior::Clamp };
-inline constexpr auto ClosedUnitRangeClampBothUnzoomed = Range { 0, 1, RangeParseTimeBehavior::Clamp, RangeParseTimeBehavior::Clamp, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,1(ignore both)]`.
 inline constexpr auto ClosedUnitRangeIgnoreBoth = Range { 0, 1, RangeParseTimeBehavior::Ignore, RangeParseTimeBehavior::Ignore };
-inline constexpr auto ClosedUnitRangeIgnoreBothUnzoomed = Range { 0, 1, RangeParseTimeBehavior::Ignore, RangeParseTimeBehavior::Ignore, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,100]`.
 inline constexpr auto ClosedPercentageRange = Range { 0, 100 };
-inline constexpr auto ClosedPercentageRangeUnzoomed = Range { 0, 100, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,100(clamp upper)]`.
 inline constexpr auto ClosedPercentageRangeClampUpper = Range { 0, 100, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Clamp };
-inline constexpr auto ClosedPercentageRangeClampUpperUnzoomed = Range { 0, 100, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Clamp, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,100(clamp both)]`.
 inline constexpr auto ClosedPercentageRangeClampBoth = Range { 0, 100, RangeParseTimeBehavior::Clamp, RangeParseTimeBehavior::Clamp };
-inline constexpr auto ClosedPercentageRangeClampBothUnzoomed = Range { 0, 100, RangeParseTimeBehavior::Clamp, RangeParseTimeBehavior::Clamp, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,100(ignore both)]`.
 inline constexpr auto ClosedPercentageRangeIgnoreBoth = Range { 0, 100, RangeParseTimeBehavior::Ignore, RangeParseTimeBehavior::Ignore };
-inline constexpr auto ClosedPercentageRangeIgnoreBothUnzoomed = Range { 0, 100, RangeParseTimeBehavior::Ignore, RangeParseTimeBehavior::Ignore, RangeZoomOptions::Unzoomed };
 
 // Special Range constants that restrict down to what LayoutUnit supports.
 
@@ -138,11 +124,9 @@ constexpr double maxValueForCssLength = static_cast<double>((INT_MAX / (1 << 6))
 
 // Constant value for `[0,∞]` limited to LayoutUnit restrictions.
 inline constexpr auto AllLayoutUnitClamped = Range { minValueForCssLength, maxValueForCssLength, RangeParseTimeBehavior::Ignore, RangeParseTimeBehavior::Ignore };
-inline constexpr auto AllLayoutUnitClampedUnzoomed = Range { minValueForCssLength, maxValueForCssLength, RangeParseTimeBehavior::Ignore, RangeParseTimeBehavior::Ignore, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,∞]` limited to LayoutUnit restrictions.
 inline constexpr auto NonnegativeLayoutUnitClamped = Range { 0, maxValueForCssLength, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Ignore };
-inline constexpr auto NonnegativeLayoutUnitClampedUnzoomed = Range { 0, maxValueForCssLength, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Ignore, RangeZoomOptions::Unzoomed };
 
 // Returns whether range `a` is equal to or is a subrange of range `b`.
 consteval bool isEqualOrSubrange(Range a, Range b)

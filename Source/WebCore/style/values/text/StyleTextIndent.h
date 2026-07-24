@@ -32,7 +32,7 @@ namespace Style {
 // <'text-indent'> = <length-percentage> && hanging? && each-line?
 // https://drafts.csswg.org/css-text-3/#propdef-text-indent
 struct TextIndent {
-    using Amount = LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>;
+    using Amount = LengthPercentage<CSS::AllLayoutUnitClamped>;
 
     TextIndent(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
         : amount { literal }

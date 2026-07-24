@@ -452,12 +452,12 @@ static RefPtr<const TransformFunctionBase> createPerspectiveTransformFunction(co
         return { };
 
     if (primitiveValue->isLength())
-        return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::NonnegativeUnzoomed>>(state, *primitiveValue));
+        return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, *primitiveValue));
 
     // FIXME: Support for <number> parameters for `perspective` is a quirk that should go away when 3d transforms are finalized.
     if (auto conversionData = state.cssToLengthConversionData(); !conversionData.evaluationTimeZoomEnabled())
-        return PerspectiveTransformFunction::create(Length<CSS::NonnegativeUnzoomed> { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value * conversionData.zoom() });
-    return PerspectiveTransformFunction::create(Length<CSS::NonnegativeUnzoomed> { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value });
+        return PerspectiveTransformFunction::create(Length<CSS::Nonnegative> { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value * conversionData.zoom() });
+    return PerspectiveTransformFunction::create(Length<CSS::Nonnegative> { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value });
 }
 
 // MARK: - Conversion
@@ -528,7 +528,7 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const S
 {
     auto translateLength = [&](const auto& length) -> Ref<CSSValue> {
         if (length.isKnownZero())
-            return createCSSValue(pool, style, Length<CSS::AllUnzoomed> { 0_css_px });
+            return createCSSValue(pool, style, Length<> { 0_css_px });
         else
             return createCSSValue(pool, style, length);
     };
@@ -688,7 +688,7 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
 {
     auto translateLength = [&](const auto& length) {
         if (length.isKnownZero())
-            serializationForCSS(builder, context, style, Length<CSS::AllUnzoomed> { 0_css_px });
+            serializationForCSS(builder, context, style, Length<> { 0_css_px });
         else
             serializationForCSS(builder, context, style, length);
     };

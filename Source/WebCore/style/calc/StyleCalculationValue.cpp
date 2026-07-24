@@ -62,14 +62,6 @@ double Value::evaluate(CSS::Range range, double percentageBasis, ZoomFactor zoom
     return CSS::clampToRange<double>(result, range);
 }
 
-double Value::evaluate(CSS::Range range, double percentageBasis, ZoomNeeded token) const
-{
-    auto result = Calculation::evaluate(m_tree, percentageBasis, token);
-    if (std::isnan(result))
-        return 0;
-    return CSS::clampToRange<double>(result, range);
-}
-
 Tree Value::copyTree() const
 {
     return Calculation::copy(m_tree);

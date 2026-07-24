@@ -225,7 +225,6 @@ protected:
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
     bool borderObscuresBackground() const;
 
-    LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&) const;
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&, const Style::ZoomFactor&) const;
 
 private:

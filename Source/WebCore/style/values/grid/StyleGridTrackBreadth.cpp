@@ -42,7 +42,7 @@ namespace Style {
 auto ToCSS<GridTrackBreadth>::operator()(const GridTrackBreadth& value, const Style::ComputedStyle& style) -> CSS::GridTrackBreadth
 {
     return value.switchOnUsingNumeric(
-        [&](const LengthPercentage<CSS::NonnegativeUnzoomed>& lengthPercentage) -> CSS::GridTrackBreadth {
+        [&](const LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> CSS::GridTrackBreadth {
             return toCSS(lengthPercentage, style);
         },
         [&](const Flex<CSS::Nonnegative>& flex) -> CSS::GridTrackBreadth {
@@ -63,7 +63,7 @@ auto ToCSS<GridTrackBreadth>::operator()(const GridTrackBreadth& value, const St
 auto ToStyle<CSS::GridTrackBreadth>::operator()(const CSS::GridTrackBreadth& value, const BuilderState& state) -> GridTrackBreadth
 {
     return WTF::switchOn(value,
-        [&](const CSS::LengthPercentage<CSS::NonnegativeUnzoomed>& lengthPercentage) -> GridTrackBreadth {
+        [&](const CSS::LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> GridTrackBreadth {
             return GridTrackBreadthLength { toStyle(lengthPercentage, state) };
         },
         [&](const CSS::Flex<CSS::Nonnegative>& flex) -> GridTrackBreadth {

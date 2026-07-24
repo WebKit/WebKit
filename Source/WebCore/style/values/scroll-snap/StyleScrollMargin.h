@@ -38,7 +38,7 @@ namespace Style {
 // <'scroll-margin-*'> = <length>
 // https://drafts.csswg.org/css-scroll-snap-1/#margin-longhands-physical
 struct ScrollMarginEdge {
-    using Fixed = Length<CSS::AllUnzoomed>;
+    using Fixed = Length<>;
 
     ScrollMarginEdge(Fixed&& fixed) : m_value(fixed) { }
     ScrollMarginEdge(const Fixed& fixed) : m_value(fixed) { }

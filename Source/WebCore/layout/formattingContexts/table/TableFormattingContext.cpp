@@ -331,7 +331,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
             }();
             if (fixedWidth) {
                 column.setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthFixed {
-                    Style::Length<CSS::NonnegativeUnzoomed, float> { *fixedWidth }
+                    Style::Length<CSS::Nonnegative, float> { *fixedWidth }
                 });
             }
         }
@@ -450,7 +450,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
             for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
                 if (auto fixedWidth = maximumFixedColumnWidths[columnIndex]) {
                     columnList[columnIndex].setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthFixed {
-                        Style::Length<CSS::NonnegativeUnzoomed, float> { *fixedWidth }
+                        Style::Length<CSS::Nonnegative, float> { *fixedWidth }
                     });
                 }
             }
@@ -469,7 +469,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthForColum
             auto nonPercentColumnWidth = columnIntrinsicWidths[columnIndex].maximum;
             if (auto fixedWidth = maximumFixedColumnWidths[columnIndex]) {
                 columnList[columnIndex].setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidthFixed {
-                    Style::Length<CSS::NonnegativeUnzoomed, float> { *fixedWidth }
+                    Style::Length<CSS::Nonnegative, float> { *fixedWidth }
                 });
                 nonPercentColumnWidth = std::max(nonPercentColumnWidth, *fixedWidth);
             }

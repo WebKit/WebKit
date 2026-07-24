@@ -33,7 +33,7 @@ namespace CSS {
 
 struct WebkitBoxReflection {
     using Direction = Variant<Keyword::Above, Keyword::Below, Keyword::Left, Keyword::Right>;
-    using Offset = LengthPercentage<CSS::AllUnzoomed, float>;
+    using Offset = LengthPercentage<>;
     using Mask = MaskBorder;
 
     Direction direction;

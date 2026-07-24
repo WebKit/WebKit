@@ -29,7 +29,7 @@
 
 namespace WebCore {
 namespace Style {
-using TextDecorationInsetPair = MinimallySerializingSpaceSeparatedPair<Length<CSS::AllUnzoomed>>;
+using TextDecorationInsetPair = MinimallySerializingSpaceSeparatedPair<Length<>>;
 }
 }
 
@@ -38,7 +38,7 @@ using TextDecorationInsetPair = MinimallySerializingSpaceSeparatedPair<Length<CS
 namespace WTF {
 template<> struct MarkableTraits<WebCore::Style::TextDecorationInsetPair> {
     using Pair = WebCore::Style::TextDecorationInsetPair;
-    using Length = WebCore::Style::Length<WebCore::CSS::AllUnzoomed>;
+    using Length = WebCore::Style::Length<>;
     static bool isEmptyValue(const Pair& value) { return MarkableTraits<Length>::isEmptyValue(value.first()); }
     static Pair emptyValue() { return { MarkableTraits<Length>::emptyValue(), MarkableTraits<Length>::emptyValue() }; }
 };
@@ -58,7 +58,7 @@ struct TextDecorationInset : ValueOrKeyword<TextDecorationInsetPair, CSS::Keywor
     using Base::Base;
 
     TextDecorationInset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
-        : Base(Value { Length<CSS::AllUnzoomed> { literal }, Length<CSS::AllUnzoomed> { literal } })
+        : Base(Value { Length<> { literal }, Length<> { literal } })
     {
     }
 

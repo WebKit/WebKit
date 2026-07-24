@@ -316,7 +316,7 @@ template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer
 template<SupportsColorHints supportsColorHints> static std::optional<CSS::GradientLinearColorStopList> consumeLinearColorStopList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     return consumeColorStopList<supportsColorHints, CSS::GradientLinearColorStop>(range, state, [&](auto& range) {
-        return MetaConsumer<CSS::LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>>::consume(range, state);
+        return MetaConsumer<CSS::LengthPercentage<CSS::AllLayoutUnitClamped>>::consume(range, state);
     });
 }
 
@@ -550,8 +550,8 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedRadialGradient(
             };
         }
 
-        if (auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state)) {
-            auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
+        if (auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state)) {
+            auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
             if (!length2)
                 return std::nullopt;
             if (!consumeCommaIncludingWhitespace(range))
@@ -729,7 +729,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
 
     std::optional<ShapeKeyword> shape;
 
-    using Size = Variant<CSS::RadialGradient::Extent, CSS::Length<CSS::NonnegativeUnzoomed>, SpaceSeparatedArray<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>, 2>>;
+    using Size = Variant<CSS::RadialGradient::Extent, CSS::Length<CSS::Nonnegative>, SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>>;
     std::optional<Size> size;
 
     // First part of grammar, the size/shape clause:
@@ -757,12 +757,12 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                 break;
         } else {
             auto rangeCopy = range;
-            auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(rangeCopy, state);
+            auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, state);
             if (!length1)
                 break;
             if (size)
                 return nullptr;
-            if (auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(rangeCopy, state)) {
+            if (auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, state)) {
                 size = SpaceSeparatedArray { WTF::move(*length1), WTF::move(*length2) };
                 range = rangeCopy;
 
@@ -771,7 +771,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
             } else {
                 // Reset to before the first length-percentage, and re-parse to make sure it is a valid <length [0,∞]> production.
                 rangeCopy = range;
-                auto length = MetaConsumer<CSS::Length<CSS::NonnegativeUnzoomed>>::consume(rangeCopy, state);
+                auto length = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(rangeCopy, state);
                 if (!length)
                     return nullptr;
                 size = WTF::move(*length);
@@ -811,11 +811,11 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                             .position = WTF::move(position),
                         };
                     },
-                    [&](CSS::Length<CSS::NonnegativeUnzoomed>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](CSS::Length<CSS::Nonnegative>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
                         // Ellipses must have two length-percentages specified.
                         return std::nullopt;
                     },
-                    [&](SpaceSeparatedArray<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
                         return CSS::RadialGradient::Ellipse {
                             .size = WTF::move(size),
                             .position = WTF::move(position),
@@ -831,13 +831,13 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                             .position = WTF::move(position),
                         };
                     },
-                    [&](CSS::Length<CSS::NonnegativeUnzoomed>&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](CSS::Length<CSS::Nonnegative>&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
                         return CSS::RadialGradient::Circle {
                             .size = WTF::move(length),
                             .position = WTF::move(position),
                         };
                     },
-                    [&](SpaceSeparatedArray<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>, 2>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
                         // Circles must have a maximum of only one length specified.
                         return std::nullopt;
                     }
@@ -869,13 +869,13 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                         .position = WTF::move(position),
                     };
                 },
-                [&](CSS::Length<CSS::NonnegativeUnzoomed>&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
+                [&](CSS::Length<CSS::Nonnegative>&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
                     return CSS::RadialGradient::Circle {
                         .size = WTF::move(length),
                         .position = WTF::move(position),
                     };
                 },
-                [&](SpaceSeparatedArray<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
+                [&](SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
                     return CSS::RadialGradient::Ellipse {
                         .size = WTF::move(size),
                         .position = WTF::move(position),

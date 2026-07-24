@@ -58,7 +58,7 @@ auto ToStyle<CSS::TextShadow>::operator()(const CSS::TextShadow& value, const Bu
     return {
         .color = value.color ? toStyle(*value.color, state) : Color::currentColor(),
         .location = toStyle(value.location, state),
-        .blur = value.blur ? toStyle(*value.blur, state) : Length<CSS::NonnegativeUnzoomed> { 0 },
+        .blur = value.blur ? toStyle(*value.blur, state) : Length<CSS::Nonnegative> { 0 },
     };
 }
 

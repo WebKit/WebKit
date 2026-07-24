@@ -30,7 +30,7 @@ namespace WebCore::Style {
 
 // <'perspective'> = none | <length [0,∞]>
 // https://drafts.csswg.org/css-transforms-2/#propdef-perspective
-struct Perspective : ValueOrKeyword<Length<CSS::NonnegativeUnzoomed, float>, CSS::Keyword::None> {
+struct Perspective : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keyword::None> {
     using Base::Base;
     using Length = typename Base::Value;
 

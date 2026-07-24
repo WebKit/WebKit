@@ -52,7 +52,7 @@ auto CSSValueConversion<WordSpacing>::operator()(BuilderState& state, const CSSV
         auto zoom = state.zoomWithTextZoomFactor();
         if (zoom == state.cssToLengthConversionData().zoom())
             return state.cssToLengthConversionData();
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, WordSpacing::range.zoomOptions);
+        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, CSS::RangeZoomOptions::Unzoomed);
     };
 
     return toStyleFromCSSValue<WordSpacing::Wrapped>(conversionData(state), *primitiveValue);

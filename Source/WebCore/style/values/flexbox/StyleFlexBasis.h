@@ -33,7 +33,7 @@ struct PreferredSize;
 
 // <'flex-basis'> = content | <‘width’>
 // https://drafts.csswg.org/css-flexbox/#propdef-flex-basis
-struct FlexBasis : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeLayoutUnitClampedUnzoomed>, CSS::Keyword::Content, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::Stretch, CSS::Keyword::WebkitFillAvailable, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
+struct FlexBasis : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, CSS::Keyword::Content, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::Stretch, CSS::Keyword::WebkitFillAvailable, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
     using Base::Base;
 
     // `FlexBasis` is a superset of `PreferredSize` and therefore this conversion can fail when type is `content`.

@@ -57,7 +57,7 @@ public:
 
     void paint();
 
-    static inline FloatSize rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<CSS::AllUnzoomed>>& offset, WritingMode, const Style::ZoomFactor&);
+    static inline FloatSize rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<>>& offset, WritingMode, const Style::ZoomFactor&);
 
 protected:
     auto& textBox() const LIFETIME_BOUND { return m_textBox; }
@@ -129,7 +129,7 @@ protected:
     bool m_compositionWithCustomUnderlines { false };
 };
 
-inline FloatSize TextBoxPainter::rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<CSS::AllUnzoomed>>& offset, WritingMode writingMode, const Style::ZoomFactor& zoomFactor)
+inline FloatSize TextBoxPainter::rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<>>& offset, WritingMode writingMode, const Style::ZoomFactor& zoomFactor)
 {
     if (writingMode.isHorizontal()) {
         return {

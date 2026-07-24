@@ -40,7 +40,6 @@ namespace WebCore {
 namespace Style {
 
 struct ZoomFactor;
-struct ZoomNeeded;
 
 namespace Calculation {
 
@@ -51,7 +50,6 @@ public:
     WEBCORE_EXPORT ~Value();
 
     double evaluate(CSS::Range, double percentResolutionLength, ZoomFactor) const;
-    double evaluate(CSS::Range, double percentResolutionLength, ZoomNeeded) const;
 
     const Tree& tree() const LIFETIME_BOUND { return m_tree; }
     Tree copyTree() const;

@@ -74,15 +74,6 @@ float PrimitiveData::nonNanCalculatedValue(CSS::Range range, float maxValue, con
     return result;
 }
 
-float PrimitiveData::nonNanCalculatedValue(CSS::Range range, float maxValue, const ZoomNeeded& token) const
-{
-    ASSERT(m_kind == PrimitiveDataKind::Calculation);
-    float result = protect(calculationValue())->evaluate(range, maxValue, token);
-    if (std::isnan(result))
-        return 0;
-    return result;
-}
-
 bool PrimitiveData::isCalculatedEqual(const PrimitiveData& other) const
 {
     return calculationValue() == other.calculationValue();

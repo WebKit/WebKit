@@ -32,7 +32,7 @@ namespace CSS {
 
 // <mask-border-outset-value> = <length [0,∞]> | <number [0,∞]>
 struct MaskBorderOutsetValue {
-    using Length = CSS::Length<CSS::NonnegativeUnzoomed, float>;
+    using Length = CSS::Length<CSS::Nonnegative, float>;
     using Number = CSS::Number<CSS::Nonnegative, float>;
 
     MaskBorderOutsetValue(Length length) : m_value { length } { }

@@ -31,7 +31,7 @@ namespace Style {
 
 // <'r'> = <length-percentage [0,∞]>
 // https://svgwg.org/svg2-draft/geometry.html#R
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGRadius, LengthPercentage<CSS::NonnegativeUnzoomed>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGRadius, LengthPercentage<CSS::Nonnegative>);
 
 } // namespace Style
 } // namespace WebCore

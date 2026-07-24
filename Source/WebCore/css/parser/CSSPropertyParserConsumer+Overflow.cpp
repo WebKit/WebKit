@@ -52,7 +52,7 @@ RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::Prop
     RefPtr<CSSPrimitiveValue> length;
     auto tryConsumeLength = [&length](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> bool {
         auto consumeLength = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSPrimitiveValue> {
-            return CSSPrimitiveValueResolver<CSS::Length<CSS::NonnegativeUnzoomed>>::consumeAndResolve(range, state);
+            return CSSPrimitiveValueResolver<CSS::Length<CSS::Nonnegative>>::consumeAndResolve(range, state);
         };
         if (length)
             return false;

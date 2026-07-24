@@ -39,7 +39,7 @@ namespace Style {
 // <line-width> = <length [0,∞]> | thin | medium | thick
 // https://drafts.csswg.org/css-backgrounds/#typedef-line-width
 struct LineWidth {
-    using Length = Style::Length<CSS::NonnegativeUnzoomed>;
+    using Length = Style::Length<CSS::Nonnegative>;
 
     Length value;
 

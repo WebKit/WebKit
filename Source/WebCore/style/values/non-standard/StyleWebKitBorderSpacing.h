@@ -32,7 +32,7 @@ namespace Style {
 
 // <'-webkit-border-horizontal-spacing'/'-webkit-border-vertical-spacing'> = <length [0,∞]>
 // NOTE: There is no standard associated with this property.
-using WebkitBorderSpacing = Length<CSS::NonnegativeUnzoomed>;
+using WebkitBorderSpacing = Length<CSS::Nonnegative>;
 
 } // namespace Style
 } // namespace WebCore

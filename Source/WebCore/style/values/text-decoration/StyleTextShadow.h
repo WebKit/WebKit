@@ -35,8 +35,8 @@ namespace Style {
 
 struct TextShadow {
     Color color;
-    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
-    Length<CSS::NonnegativeUnzoomed> blur;
+    SpaceSeparatedPoint<Length<>> location;
+    Length<CSS::Nonnegative> blur;
 
     bool operator==(const TextShadow&) const = default;
 };

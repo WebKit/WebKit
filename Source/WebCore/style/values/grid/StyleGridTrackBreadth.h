@@ -46,7 +46,7 @@ namespace Style {
 
 // FIXME: Make PrimitiveNumericOrKeyword support additional numeric types in addition to the <length-percentage> one and then replace GridTrackBreadth with that.
 
-struct GridTrackBreadthLength : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::Auto> {
+struct GridTrackBreadthLength : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isMinContent() const { return holdsAlternative<CSS::Keyword::MinContent>(); }

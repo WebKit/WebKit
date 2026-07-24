@@ -37,7 +37,7 @@ namespace Style {
 
 struct Circle {
     using Extent = CSS::Circle::Extent;
-    using Length = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
+    using Length = Style::LengthPercentage<CSS::Nonnegative>;
     using RadialSize = Variant<Length, Extent>;
 
     RadialSize radius;

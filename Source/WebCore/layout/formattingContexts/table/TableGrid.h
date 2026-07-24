@@ -98,7 +98,7 @@ public:
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:
-        using ComputedLogicalWidthFixed = Style::ZoomResolved<Style::Length<CSS::NonnegativeUnzoomed, float>>;
+        using ComputedLogicalWidthFixed = Style::ZoomResolved<Style::Length<CSS::Nonnegative, float>>;
         using ComputedLogicalWidthPercentage = Style::Percentage<CSS::Nonnegative, float>;
         using ComputedLogicalWidth = Variant<
             CSS::Keyword::Auto,

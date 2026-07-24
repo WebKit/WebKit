@@ -116,13 +116,13 @@ RefPtr<CSSValue> consumeTranslateFunction(CSSParserTokenRange& range, CSS::Prope
     auto consumeParameters = [](auto& args, auto& state) -> std::optional<CSSValueListBuilder> {
         CSSValueListBuilder arguments;
 
-        auto firstValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(args, state);
+        auto firstValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(args, state);
         if (!firstValue)
             return { };
         arguments.append(firstValue.releaseNonNull());
 
         if (consumeCommaIncludingWhitespace(args)) {
-            auto secondValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(args, state);
+            auto secondValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(args, state);
             if (!secondValue)
                 return { };
             // A second value of `0` is the same as no second argument, so there is no need to store one if we know it is `0`.
@@ -156,21 +156,21 @@ RefPtr<CSSValue> consumeTranslate3dFunction(CSSParserTokenRange& range, CSS::Pro
     // translate3d() = translate3d( <length-percentage> , <length-percentage> , <length> )
 
     auto consumeParameters = [](auto& args, auto& state) -> std::optional<CSSValueListBuilder> {
-        auto firstValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(args, state);
+        auto firstValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(args, state);
         if (!firstValue)
             return { };
 
         if (!consumeCommaIncludingWhitespace(args))
             return { };
 
-        auto secondValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(args, state);
+        auto secondValue = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(args, state);
         if (!secondValue)
             return { };
 
         if (!consumeCommaIncludingWhitespace(args))
             return { };
 
-        auto thirdValue = CSSPrimitiveValueResolver<CSS::Length<CSS::AllUnzoomed>>::consumeAndResolve(args, state);
+        auto thirdValue = CSSPrimitiveValueResolver<CSS::Length<>>::consumeAndResolve(args, state);
         if (!thirdValue)
             return { };
 
@@ -213,7 +213,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSS::PropertyParse
     // value is missing, it defaults to 0px. If three values are given, this specifies a 3d translation, equivalent to the
     // translate3d() function.
 
-    auto x = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+    auto x = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state);
     if (!x)
         return nullptr;
 
@@ -222,7 +222,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSS::PropertyParse
     if (range.atEnd())
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 
-    auto y = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+    auto y = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state);
     if (!y)
         return nullptr;
 
@@ -239,7 +239,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSS::PropertyParse
         return CSSValueList::createSpaceSeparated(x.releaseNonNull(), y.releaseNonNull());
     }
 
-    auto z = CSSPrimitiveValueResolver<CSS::Length<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+    auto z = CSSPrimitiveValueResolver<CSS::Length<>>::consumeAndResolve(range, state);
     if (!z)
         return nullptr;
 

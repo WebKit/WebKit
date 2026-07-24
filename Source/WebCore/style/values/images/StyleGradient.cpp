@@ -128,15 +128,15 @@ static std::optional<float> resolveColorStopPosition(const GradientLinearColorSt
         return std::nullopt;
 
     return WTF::switchOn(*position,
-        [&](const LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>::Dimension& length) -> std::optional<float> {
+        [&](const LengthPercentage<CSS::AllLayoutUnitClamped>::Dimension& length) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
             return evaluate<float>(length, zoom) / gradientLength;
         },
-        [&](const LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>::Percentage& percentage) -> std::optional<float> {
+        [&](const LengthPercentage<CSS::AllLayoutUnitClamped>::Percentage& percentage) -> std::optional<float> {
             return percentage.value / 100.0;
         },
-        [&](const LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>::Calc& calc) -> std::optional<float> {
+        [&](const LengthPercentage<CSS::AllLayoutUnitClamped>::Calc& calc) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
             return evaluate<float>(calc, gradientLength, zoom) / gradientLength;

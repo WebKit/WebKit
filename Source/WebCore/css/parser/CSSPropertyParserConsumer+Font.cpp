@@ -364,7 +364,7 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
 
     auto rangeCopy = range;
 
-    auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(rangeCopy, state);
+    auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, state);
     if (!lengthPercentage)
         return std::nullopt;
 
@@ -382,7 +382,7 @@ static std::optional<UnresolvedFontLineHeight> consumeLineHeightUnresolved(CSSPa
     using Consumer = MetaConsumer<
         CSS::Keyword::Normal,
         CSS::Number<CSS::Nonnegative>,
-        CSS::LengthPercentage<CSS::NonnegativeUnzoomed>
+        CSS::LengthPercentage<CSS::Nonnegative>
     >;
 
     return Consumer::consume(range, state,

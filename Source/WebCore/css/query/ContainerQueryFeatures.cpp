@@ -213,7 +213,7 @@ static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSPa
     }
     // overrideParserMode matches MQ::consumeValue's <length> parsing so quirky/quirks-mode lengths behave
     // identically here. See the FIXME there.
-    if (auto subrange = range; auto value = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(subrange, parserState, { .overrideParserMode = HTMLStandardMode })) {
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Length<>>::consume(subrange, parserState, { .overrideParserMode = HTMLStandardMode })) {
         if (isFullyConsumed(subrange))
             return StyleRangeValue { StyleRangeCategory::Length, Style::evaluate<double>(Style::toStyle(*value, conversionData), style.usedZoomForLength()) };
     }

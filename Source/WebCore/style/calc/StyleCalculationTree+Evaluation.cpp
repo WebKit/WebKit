@@ -169,11 +169,6 @@ double evaluate(const Tree& tree, double percentResolutionLength, const ZoomFact
 }
 
 
-double evaluate(const Tree& tree, double percentResolutionLength, const ZoomNeeded&)
-{
-    return evaluate(tree.root, percentResolutionLength, Style::ZoomFactor { 1.0f });
-}
-
 } // namespace Calculation
 } // namespace Style
 } // namespace WebCore

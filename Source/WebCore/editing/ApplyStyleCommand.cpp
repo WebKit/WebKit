@@ -1520,7 +1520,7 @@ float ApplyStyleCommand::computedFontSize(Node* node)
     RefPtr value = dynamicDowncast<CSSPrimitiveValue>(Style::Extractor(node).propertyValue(CSSPropertyFontSize));
     if (!value)
         return 0;
-    return Style::deprecatedToStyleFromCSSValue<Style::Length<CSS::NonnegativeUnzoomed, float>>(*value)->resolveZoom(Style::ZoomFactor::none());
+    return Style::deprecatedToStyleFromCSSValue<Style::Length<CSS::Nonnegative, float>>(*value)->resolveZoom(Style::ZoomFactor::none());
 }
 
 void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, const Position& end)

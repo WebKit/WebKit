@@ -79,12 +79,12 @@ template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::
     // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
     // https://drafts.csswg.org/css-backgrounds/#propdef-border-radius
 
-    using OptionalRadiiForAxis = std::array<std::optional<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>, 4>;
+    using OptionalRadiiForAxis = std::array<std::optional<CSS::LengthPercentage<CSS::Nonnegative>>, 4>;
 
     OptionalRadiiForAxis horizontalRadii;
     unsigned i = 0;
     for (; i < 4 && !range.atEnd() && range.peek().type() != DelimiterToken; ++i) {
-        horizontalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
+        horizontalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
         if (!horizontalRadii[i])
             return { };
     }
@@ -120,7 +120,7 @@ template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::
 
     OptionalRadiiForAxis verticalRadii;
     for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
-        verticalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
+        verticalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
         if (!verticalRadii[i])
             return { };
     }
@@ -402,7 +402,7 @@ template<CSSPropertyID property> static RefPtr<CSSValue> consumeBackgroundSize(C
     bool shouldCoalesce = true;
     RefPtr<CSSValue> horizontal = consumeIdent<CSSValueAuto>(range);
     if (!horizontal) {
-        horizontal = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consumeAndResolve(range, state);
+        horizontal = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::Nonnegative>>::consumeAndResolve(range, state);
         if (!horizontal)
             return nullptr;
         shouldCoalesce = false;
@@ -412,7 +412,7 @@ template<CSSPropertyID property> static RefPtr<CSSValue> consumeBackgroundSize(C
     if (!range.atEnd()) {
         vertical = consumeIdent<CSSValueAuto>(range);
         if (!vertical)
-            vertical = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consumeAndResolve(range, state);
+            vertical = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::Nonnegative>>::consumeAndResolve(range, state);
     }
     if (!vertical) {
         if constexpr (property == CSSPropertyWebkitBackgroundSize) {
@@ -482,10 +482,10 @@ static std::optional<CSS::BoxShadow> consumeSingleUnresolvedBoxShadow(CSSParserT
     auto rangeCopy = range;
 
     std::optional<CSS::Color> color;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> x;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> y;
-    std::optional<CSS::Length<CSS::NonnegativeUnzoomed>> blur;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> spread;
+    std::optional<CSS::Length<>> x;
+    std::optional<CSS::Length<>> y;
+    std::optional<CSS::Length<CSS::Nonnegative>> blur;
+    std::optional<CSS::Length<>> spread;
     std::optional<CSS::Keyword::Inset> inset;
 
     for (size_t i = 0; i < 3; i++) {
@@ -524,10 +524,10 @@ static std::optional<CSS::BoxShadow> consumeSingleUnresolvedBoxShadow(CSSParserT
             return { };
         }
 
-        x = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(rangeCopy, state);
+        x = MetaConsumer<CSS::Length<>>::consume(rangeCopy, state);
         if (!x)
             return { };
-        y = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(rangeCopy, state);
+        y = MetaConsumer<CSS::Length<>>::consume(rangeCopy, state);
         if (!y)
             return { };
 
@@ -536,13 +536,13 @@ static std::optional<CSS::BoxShadow> consumeSingleUnresolvedBoxShadow(CSSParserT
         // The explicit check for calc() is unfortunate. This is ensuring that we only fail
         // parsing if there is a length, but it fails the range check.
         if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalc::isCalcFunction(token.functionId()))) {
-            blur = MetaConsumer<CSS::Length<CSS::NonnegativeUnzoomed>>::consume(rangeCopy, state);
+            blur = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(rangeCopy, state);
             if (!blur)
                 return { };
         }
 
         if (blur)
-            spread = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(rangeCopy, state);
+            spread = MetaConsumer<CSS::Length<>>::consume(rangeCopy, state);
     }
 
     if (!y)

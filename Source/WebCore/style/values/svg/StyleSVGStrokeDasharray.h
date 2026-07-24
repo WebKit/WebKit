@@ -31,7 +31,7 @@ namespace Style {
 
 // <dasharray-value> = [ <length-percentage [0,∞]> | <number [0,∞]>@(converted-to-px) ]
 struct SVGStrokeDasharrayValue {
-    using LengthPercentage = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
+    using LengthPercentage = Style::LengthPercentage<CSS::Nonnegative>;
     using Fixed = typename LengthPercentage::Fixed;
     using Percentage = typename LengthPercentage::Percentage;
     using Calc = typename LengthPercentage::Calc;

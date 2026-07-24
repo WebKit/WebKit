@@ -37,7 +37,7 @@ namespace Style {
 
 // <border-image-outset-value> = <length [0,∞]> | <number [0,∞]>
 struct BorderImageOutsetValue {
-    using Length = Style::Length<CSS::NonnegativeUnzoomed, float>;
+    using Length = Style::Length<CSS::Nonnegative, float>;
     using Number = Style::Number<CSS::Nonnegative, float>;
 
     constexpr BorderImageOutsetValue(Length length) : m_value { length } { }

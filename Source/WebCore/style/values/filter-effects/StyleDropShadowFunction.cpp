@@ -80,7 +80,7 @@ auto ToStyle<CSS::DropShadow>::operator()(const CSS::DropShadow& value, const Bu
     return {
         .color = value.color ? toStyle(*value.color, state, ForVisitedLink::No) : Style::Color { Descriptor::defaultColorValue },
         .location = toStyle(value.location, state),
-        .stdDeviation = value.stdDeviation ? toStyle(*value.stdDeviation, state) : Length<CSS::NonnegativeUnzoomed> { Descriptor::defaultStdDeviationValue },
+        .stdDeviation = value.stdDeviation ? toStyle(*value.stdDeviation, state) : Length<CSS::Nonnegative> { Descriptor::defaultStdDeviationValue },
     };
 }
 

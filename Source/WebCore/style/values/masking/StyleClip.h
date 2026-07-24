@@ -39,7 +39,7 @@ struct ClipRect;
 namespace Style {
 
 // <clip-edge> = <length> | auto
-struct ClipEdge : ValueOrKeyword<Length<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
+struct ClipEdge : ValueOrKeyword<Length<>, CSS::Keyword::Auto> {
     using Base::Base;
     using Length = typename Base::Value;
 

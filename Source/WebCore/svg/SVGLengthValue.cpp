@@ -81,7 +81,7 @@ static inline CSS::LengthPercentageUnit NODELETE svgLengthTypeToCSSLengthUnit(SV
     }
 }
 
-static Variant<CSS::Number<>, CSS::LengthPercentage<CSS::AllUnzoomed>> createVariantForLengthType(float value, SVGLengthType lengthType)
+static Variant<CSS::Number<>, CSS::LengthPercentage<>> createVariantForLengthType(float value, SVGLengthType lengthType)
 {
     if (lengthType == SVGLengthType::Number)
         return CSS::Number<>(value);
@@ -92,7 +92,7 @@ static Variant<CSS::Number<>, CSS::LengthPercentage<CSS::AllUnzoomed>> createVar
         return CSS::Number<>(value);
     }
 
-    return CSS::LengthPercentage<CSS::AllUnzoomed>(svgLengthTypeToCSSLengthUnit(lengthType), value);
+    return CSS::LengthPercentage<>(svgLengthTypeToCSSLengthUnit(lengthType), value);
 }
 
 
@@ -153,7 +153,7 @@ SVGLengthType SVGLengthValue::lengthType() const
         [](const CSS::Number<>&) -> SVGLengthType {
             return SVGLengthType::Number;
         },
-        [](const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> SVGLengthType {
+        [](const CSS::LengthPercentage<>& length) -> SVGLengthType {
             if (auto raw = length.raw())
                 return cssLengthUnitToSVGLengthType(raw->unit);
 
@@ -177,7 +177,7 @@ bool SVGLengthValue::isRelative() const
         [](const CSS::Number<>&) {
             return false;
         },
-        [](const CSS::LengthPercentage<CSS::AllUnzoomed>& length) {
+        [](const CSS::LengthPercentage<>& length) {
             if (auto raw = length.raw()) {
                 using Unit = CSS::LengthPercentageUnit;
                 switch (raw->unit) {
@@ -243,7 +243,7 @@ float SVGLengthValue::valueAsPercentage() const
 
             return 0.0f;
         },
-        [](const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> float {
+        [](const CSS::LengthPercentage<>& length) -> float {
             if (auto raw = length.raw()) {
                 if (raw->unit == CSS::LengthPercentageUnit::Percentage)
                     return raw->value / 100.0f;
@@ -300,7 +300,7 @@ ExceptionOr<float> SVGLengthValue::valueForBindings(const SVGLengthContext& cont
 
             return Exception { ExceptionCode::NotFoundError };
         },
-        [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> ExceptionOr<float> {
+        [&](const CSS::LengthPercentage<>& length) -> ExceptionOr<float> {
             if (auto raw = length.raw())
                 return context.resolveValueToUserUnits(raw->value, raw->unit, m_lengthMode);
 
@@ -315,9 +315,9 @@ void SVGLengthValue::setValueInSpecifiedUnits(float value)
         [&](const CSS::Number<>&) -> decltype(m_value) {
             return CSS::Number<>(value);
         },
-        [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& current) -> decltype(m_value) {
+        [&](const CSS::LengthPercentage<>& current) -> decltype(m_value) {
             if (auto raw = current.raw())
-                return CSS::LengthPercentage<CSS::AllUnzoomed>(raw->unit, value);
+                return CSS::LengthPercentage<>(raw->unit, value);
 
             return CSS::Number<>(value);
         }
@@ -331,7 +331,7 @@ ExceptionOr<void> SVGLengthValue::setValue(const SVGLengthContext& context, floa
             m_value = CSS::Number<>(value);
             return { };
         },
-        [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& current) -> ExceptionOr<void> {
+        [&](const CSS::LengthPercentage<>& current) -> ExceptionOr<void> {
             if (auto raw = current.raw()) {
                 auto resolvedValue = context.resolveValueFromUserUnits(value, raw->unit, m_lengthMode);
                 if (resolvedValue.hasException())
@@ -381,7 +381,7 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
     CSSTokenizer tokenizer(trimmedString.toString());
     auto tokenRange = tokenizer.tokenRange();
 
-    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<>, CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(tokenRange, parserState, { });
+    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<>, CSS::LengthPercentage<>>::consume(tokenRange, parserState, { });
     if (!parsedValue || !tokenRange.atEnd())
         return Exception { ExceptionCode::SyntaxError };
 
@@ -394,7 +394,7 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
                 m_value = WTF::move(number);
             return { };
         },
-        [&](CSS::LengthPercentage<CSS::AllUnzoomed>&& length) -> ExceptionOr<void> {
+        [&](CSS::LengthPercentage<>&& length) -> ExceptionOr<void> {
             // FIXME: Add support for calculated lengths.
             if (length.isCalc())
                 return Exception { ExceptionCode::SyntaxError };

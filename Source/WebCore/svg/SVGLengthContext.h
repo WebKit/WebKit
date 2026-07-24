@@ -75,7 +75,7 @@ public:
     float valueForLength(const Style::StrokeWidth&, Style::ZoomFactor, SVGLengthMode = SVGLengthMode::Other);
 
     ExceptionOr<float> resolveValueToUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
-    ExceptionOr<CSS::LengthPercentage<CSS::AllUnzoomed>> resolveValueFromUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
+    ExceptionOr<CSS::LengthPercentage<>> resolveValueFromUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
 
     std::optional<FloatSize> viewportSize() const;
 

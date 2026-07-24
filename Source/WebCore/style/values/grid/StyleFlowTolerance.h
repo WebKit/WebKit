@@ -32,7 +32,7 @@ namespace Style {
 
 // <'flow-tolerance'> = normal | <length-percentage [0,∞]> | infinite
 // https://drafts.csswg.org/css-grid-3/#placement-tolerance
-struct FlowTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Normal, CSS::Keyword::Infinite> {
+struct FlowTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Normal, CSS::Keyword::Infinite> {
     using Base::Base;
 
     ALWAYS_INLINE bool isNormal() const { return holdsAlternative<CSS::Keyword::Normal>(); }

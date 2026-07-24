@@ -36,36 +36,36 @@ namespace Style {
 static PageSize pageSizeFromName(BuilderState& state, const CSSKeywordValue& pageSizeName, RefPtr<const CSSKeywordValue> pageOrientation)
 {
     auto mmLength = [](double mm) {
-        return Length<CSS::NonnegativeUnzoomed>(CSS::pixelsPerMm * mm);
+        return Length<CSS::Nonnegative>(CSS::pixelsPerMm * mm);
     };
 
     auto inchLength = [](double inch) {
-        return Length<CSS::NonnegativeUnzoomed>(CSS::pixelsPerInch * inch);
+        return Length<CSS::Nonnegative>(CSS::pixelsPerInch * inch);
     };
 
-    static constexpr Length<CSS::NonnegativeUnzoomed> a5Width(mmLength(148));
-    static constexpr Length<CSS::NonnegativeUnzoomed> a5Height(mmLength(210));
-    static constexpr Length<CSS::NonnegativeUnzoomed> a4Width(mmLength(210));
-    static constexpr Length<CSS::NonnegativeUnzoomed> a4Height(mmLength(297));
-    static constexpr Length<CSS::NonnegativeUnzoomed> a3Width(mmLength(297));
-    static constexpr Length<CSS::NonnegativeUnzoomed> a3Height(mmLength(420));
-    static constexpr Length<CSS::NonnegativeUnzoomed> b5Width(mmLength(176));
-    static constexpr Length<CSS::NonnegativeUnzoomed> b5Height(mmLength(250));
-    static constexpr Length<CSS::NonnegativeUnzoomed> b4Width(mmLength(250));
-    static constexpr Length<CSS::NonnegativeUnzoomed> b4Height(mmLength(353));
-    static constexpr Length<CSS::NonnegativeUnzoomed> jisB5Width(mmLength(182));
-    static constexpr Length<CSS::NonnegativeUnzoomed> jisB5Height(mmLength(257));
-    static constexpr Length<CSS::NonnegativeUnzoomed> jisB4Width(mmLength(257));
-    static constexpr Length<CSS::NonnegativeUnzoomed> jisB4Height(mmLength(364));
-    static constexpr Length<CSS::NonnegativeUnzoomed> letterWidth(inchLength(8.5));
-    static constexpr Length<CSS::NonnegativeUnzoomed> letterHeight(inchLength(11));
-    static constexpr Length<CSS::NonnegativeUnzoomed> legalWidth(inchLength(8.5));
-    static constexpr Length<CSS::NonnegativeUnzoomed> legalHeight(inchLength(14));
-    static constexpr Length<CSS::NonnegativeUnzoomed> ledgerWidth(inchLength(11));
-    static constexpr Length<CSS::NonnegativeUnzoomed> ledgerHeight(inchLength(17));
+    static constexpr Length<CSS::Nonnegative> a5Width(mmLength(148));
+    static constexpr Length<CSS::Nonnegative> a5Height(mmLength(210));
+    static constexpr Length<CSS::Nonnegative> a4Width(mmLength(210));
+    static constexpr Length<CSS::Nonnegative> a4Height(mmLength(297));
+    static constexpr Length<CSS::Nonnegative> a3Width(mmLength(297));
+    static constexpr Length<CSS::Nonnegative> a3Height(mmLength(420));
+    static constexpr Length<CSS::Nonnegative> b5Width(mmLength(176));
+    static constexpr Length<CSS::Nonnegative> b5Height(mmLength(250));
+    static constexpr Length<CSS::Nonnegative> b4Width(mmLength(250));
+    static constexpr Length<CSS::Nonnegative> b4Height(mmLength(353));
+    static constexpr Length<CSS::Nonnegative> jisB5Width(mmLength(182));
+    static constexpr Length<CSS::Nonnegative> jisB5Height(mmLength(257));
+    static constexpr Length<CSS::Nonnegative> jisB4Width(mmLength(257));
+    static constexpr Length<CSS::Nonnegative> jisB4Height(mmLength(364));
+    static constexpr Length<CSS::Nonnegative> letterWidth(inchLength(8.5));
+    static constexpr Length<CSS::Nonnegative> letterHeight(inchLength(11));
+    static constexpr Length<CSS::Nonnegative> legalWidth(inchLength(8.5));
+    static constexpr Length<CSS::Nonnegative> legalHeight(inchLength(14));
+    static constexpr Length<CSS::Nonnegative> ledgerWidth(inchLength(11));
+    static constexpr Length<CSS::Nonnegative> ledgerHeight(inchLength(17));
 
-    Style::Length<CSS::NonnegativeUnzoomed> width { 0 };
-    Style::Length<CSS::NonnegativeUnzoomed> height { 0 };
+    Style::Length<CSS::Nonnegative> width { 0 };
+    Style::Length<CSS::Nonnegative> height { 0 };
 
     switch (pageSizeName.valueID()) {
     case CSSValueA5:
@@ -141,8 +141,8 @@ auto CSSValueConversion<PageSize>::operator()(BuilderState& state, const CSSValu
         RefPtr primitiveValueSecond = dynamicDowncast<CSSPrimitiveValue>(second);
         if (primitiveValueFirst && primitiveValueSecond) {
             return PageSize::Lengths {
-                toStyleFromCSSValue<Length<CSS::NonnegativeUnzoomed>>(state, *primitiveValueFirst),
-                toStyleFromCSSValue<Length<CSS::NonnegativeUnzoomed>>(state, *primitiveValueSecond),
+                toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, *primitiveValueFirst),
+                toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, *primitiveValueSecond),
             };
         }
 
@@ -161,7 +161,7 @@ auto CSSValueConversion<PageSize>::operator()(BuilderState& state, const CSSValu
     // <length [0,∞]> | auto | <page-size> | [ portrait | landscape]
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // <length [0,∞]>
-        auto length = toStyleFromCSSValue<Length<CSS::NonnegativeUnzoomed>>(state, *primitiveValue);
+        auto length = toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, *primitiveValue);
         return PageSize::Lengths { length, length };
     }
 

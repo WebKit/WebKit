@@ -31,7 +31,7 @@ namespace Style {
 
 // <'shape-margin'> = <length-percentage [0,∞]>
 // https://www.w3.org/TR/css-shapes/#propdef-shape-margin
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(ShapeMargin, LengthPercentage<CSS::NonnegativeUnzoomed>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(ShapeMargin, LengthPercentage<CSS::Nonnegative>);
 
 } // namespace Style
 } // namespace WebCore

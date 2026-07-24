@@ -33,7 +33,7 @@ namespace Style {
 // <`-webkit-text-stroke-width`> = <length [0,∞]> | thin | medium | thick
 // NOTE: There is no standard associated with this property.
 struct WebkitTextStrokeWidth {
-    using Length = Style::Length<CSS::NonnegativeUnzoomed>;
+    using Length = Style::Length<CSS::Nonnegative>;
 
     Length value;
 

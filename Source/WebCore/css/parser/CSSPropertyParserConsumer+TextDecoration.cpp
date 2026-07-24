@@ -55,9 +55,9 @@ static std::optional<CSS::TextShadow> consumeSingleUnresolvedTextShadow(CSSParse
     auto rangeCopy = range;
 
     std::optional<CSS::Color> color;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> x;
-    std::optional<CSS::Length<CSS::AllUnzoomed>> y;
-    std::optional<CSS::Length<CSS::NonnegativeUnzoomed>> blur;
+    std::optional<CSS::Length<>> x;
+    std::optional<CSS::Length<>> y;
+    std::optional<CSS::Length<CSS::Nonnegative>> blur;
 
     auto consumeOptionalColor = [&] -> bool {
         if (color)
@@ -72,14 +72,14 @@ static std::optional<CSS::TextShadow> consumeSingleUnresolvedTextShadow(CSSParse
     auto consumeLengths = [&] -> bool {
         if (x)
             return false;
-        x = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(rangeCopy, state);
+        x = MetaConsumer<CSS::Length<>>::consume(rangeCopy, state);
         if (!x)
             return false;
-        y = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(rangeCopy, state);
+        y = MetaConsumer<CSS::Length<>>::consume(rangeCopy, state);
         if (!y)
             return false;
 
-        blur = MetaConsumer<CSS::Length<CSS::NonnegativeUnzoomed>>::consume(rangeCopy, state);
+        blur = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(rangeCopy, state);
         return true;
     };
 

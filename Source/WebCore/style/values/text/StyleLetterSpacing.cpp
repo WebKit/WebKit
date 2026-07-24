@@ -52,7 +52,7 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
         auto zoom = state.zoomWithTextZoomFactor();
         if (zoom == state.cssToLengthConversionData().zoom())
             return state.cssToLengthConversionData();
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, LetterSpacing::range.zoomOptions);
+        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, CSS::RangeZoomOptions::Unzoomed);
     };
 
     return toStyleFromCSSValue<LetterSpacing::Wrapped>(conversionData(state), *primitiveValue);

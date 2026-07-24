@@ -638,7 +638,7 @@ void EditingStyle::extractFontSizeDelta()
     if (!primitiveValue->isPx())
         return;
 
-    m_fontSizeDelta = Style::deprecatedToStyleFromCSSValue<Style::Length<CSS::AllUnzoomed, float>>(*primitiveValue)->resolveZoom(Style::ZoomFactor::none());
+    m_fontSizeDelta = Style::deprecatedToStyleFromCSSValue<Style::Length<CSS::All, float>>(*primitiveValue)->resolveZoom(Style::ZoomFactor::none());
     mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
 }
 
@@ -2120,7 +2120,7 @@ static bool NODELETE isCSSValueLength(CSSPrimitiveValue& value)
 int legacyFontSizeFromCSSValue(Document& document, CSSValue& value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
 {
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value); primitiveValue && isCSSValueLength(*primitiveValue)) {
-        int pixelFontSize = Style::deprecatedToStyleFromCSSValue<Style::Length<CSS::NonnegativeUnzoomed, int>>(*primitiveValue)->resolveZoom(Style::ZoomFactor::none());
+        int pixelFontSize = Style::deprecatedToStyleFromCSSValue<Style::Length<CSS::Nonnegative, int>>(*primitiveValue)->resolveZoom(Style::ZoomFactor::none());
         int legacyFontSize = Style::legacyFontSizeForPixelSize(pixelFontSize, shouldUseFixedFontDefaultSize, document);
         // Use legacy font size only if pixel value matches exactly to that of legacy font size.
         int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;

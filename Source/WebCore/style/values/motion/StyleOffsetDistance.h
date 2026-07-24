@@ -32,7 +32,7 @@ namespace Style {
 
 // <'offset-distance'> = <length-percentage>
 // https://drafts.fxtf.org/motion/#propdef-offset-distance
-struct OffsetDistance : PrimitiveNumericWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
+struct OffsetDistance : PrimitiveNumericWrapperBase<LengthPercentage<>> {
     using Base::Base;
 
 #if ENABLE(THREADED_ANIMATIONS)

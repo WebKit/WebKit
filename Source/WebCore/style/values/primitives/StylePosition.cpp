@@ -39,75 +39,75 @@ using namespace CSS::Literals;
 
 // MARK: Core Keyword Resolution
 
-static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Top, const BuilderState&)
+static LengthPercentage<> NODELETE resolveKeyword(CSS::Keyword::Top, const BuilderState&)
 {
     return 0_css_percentage;
 }
 
-static auto resolveKeyword(CSS::Keyword::Top, const BuilderState& state, const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolveKeyword(CSS::Keyword::Top, const BuilderState& state, const CSS::LengthPercentage<>& length) -> LengthPercentage<>
 {
     return toStyle(length, state);
 }
 
-static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Right, const BuilderState&)
+static LengthPercentage<> NODELETE resolveKeyword(CSS::Keyword::Right, const BuilderState&)
 {
     return 100_css_percentage;
 }
 
-static auto resolveKeyword(CSS::Keyword::Right, const BuilderState& state, const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolveKeyword(CSS::Keyword::Right, const BuilderState& state, const CSS::LengthPercentage<>& length) -> LengthPercentage<>
 {
     return reflect(toStyle(length, state));
 }
 
-static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Bottom, const BuilderState&)
+static LengthPercentage<> NODELETE resolveKeyword(CSS::Keyword::Bottom, const BuilderState&)
 {
     return 100_css_percentage;
 }
 
-static auto resolveKeyword(CSS::Keyword::Bottom, const BuilderState& state, const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolveKeyword(CSS::Keyword::Bottom, const BuilderState& state, const CSS::LengthPercentage<>& length) -> LengthPercentage<>
 {
     return reflect(toStyle(length, state));
 }
 
-static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Left, const BuilderState&)
+static LengthPercentage<> NODELETE resolveKeyword(CSS::Keyword::Left, const BuilderState&)
 {
     return 0_css_percentage;
 }
 
-static auto resolveKeyword(CSS::Keyword::Left, const BuilderState& state, const CSS::LengthPercentage<CSS::AllUnzoomed>& length) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolveKeyword(CSS::Keyword::Left, const BuilderState& state, const CSS::LengthPercentage<>& length) -> LengthPercentage<>
 {
     return toStyle(length, state);
 }
 
-static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Center, const BuilderState&)
+static LengthPercentage<> NODELETE resolveKeyword(CSS::Keyword::Center, const BuilderState&)
 {
     return 50_css_percentage;
 }
 
 // MARK: Mapped value resolution
 
-template<typename... Args> static auto resolveKeyword(CSS::Keyword::XStart, const BuilderState& state, Args&&... args) -> LengthPercentage<CSS::AllUnzoomed>
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::XStart, const BuilderState& state, Args&&... args) -> LengthPercentage<>
 {
     return state.style().writingMode().isAnyLeftToRight()
         ? resolveKeyword(CSS::Keyword::Left { }, state, std::forward<Args>(args)...)
         : resolveKeyword(CSS::Keyword::Right { }, state, std::forward<Args>(args)...);
 }
 
-template<typename... Args> static auto resolveKeyword(CSS::Keyword::XEnd, const BuilderState& state, Args&&... args) -> LengthPercentage<CSS::AllUnzoomed>
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::XEnd, const BuilderState& state, Args&&... args) -> LengthPercentage<>
 {
     return state.style().writingMode().isAnyLeftToRight()
         ? resolveKeyword(CSS::Keyword::Right { }, state, std::forward<Args>(args)...)
         : resolveKeyword(CSS::Keyword::Left { }, state, std::forward<Args>(args)...);
 }
 
-template<typename... Args> static auto resolveKeyword(CSS::Keyword::YStart, const BuilderState& state, Args&&... args) -> LengthPercentage<CSS::AllUnzoomed>
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::YStart, const BuilderState& state, Args&&... args) -> LengthPercentage<>
 {
     return state.style().writingMode().isAnyTopToBottom()
         ? resolveKeyword(CSS::Keyword::Top { }, state, std::forward<Args>(args)...)
         : resolveKeyword(CSS::Keyword::Bottom { }, state, std::forward<Args>(args)...);
 }
 
-template<typename... Args> static auto resolveKeyword(CSS::Keyword::YEnd, const BuilderState& state, Args&&... args) -> LengthPercentage<CSS::AllUnzoomed>
+template<typename... Args> static auto resolveKeyword(CSS::Keyword::YEnd, const BuilderState& state, Args&&... args) -> LengthPercentage<>
 {
     return state.style().writingMode().isAnyTopToBottom()
         ? resolveKeyword(CSS::Keyword::Bottom { }, state, std::forward<Args>(args)...)
@@ -116,31 +116,31 @@ template<typename... Args> static auto resolveKeyword(CSS::Keyword::YEnd, const 
 
 // MARK: Horizontal/Vertical
 
-static auto resolve(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolve(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<>
 {
     return WTF::switchOn(value.offset,
         [&](auto keyword) {
             return resolveKeyword(keyword, state);
         },
-        [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& value) {
+        [&](const CSS::LengthPercentage<>& value) {
             return toStyle(value, state);
         }
     );
 }
 
-static auto resolve(const CSS::TwoComponentPositionVertical& value, const BuilderState& state) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolve(const CSS::TwoComponentPositionVertical& value, const BuilderState& state) -> LengthPercentage<>
 {
     return WTF::switchOn(value.offset,
         [&](auto keyword) {
             return resolveKeyword(keyword, state);
         },
-        [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& value) {
+        [&](const CSS::LengthPercentage<>& value) {
             return toStyle(value, state);
         }
     );
 }
 
-static auto resolve(const CSS::ThreeComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolve(const CSS::ThreeComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<>
 {
     return WTF::switchOn(value.offset,
         [&](auto keyword) {
@@ -149,7 +149,7 @@ static auto resolve(const CSS::ThreeComponentPositionHorizontal& value, const Bu
     );
 }
 
-static auto resolve(const CSS::ThreeComponentPositionVertical& value, const BuilderState& state) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolve(const CSS::ThreeComponentPositionVertical& value, const BuilderState& state) -> LengthPercentage<>
 {
     return WTF::switchOn(value.offset,
         [&](auto keyword) {
@@ -158,7 +158,7 @@ static auto resolve(const CSS::ThreeComponentPositionVertical& value, const Buil
     );
 }
 
-static auto resolve(const CSS::FourComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolve(const CSS::FourComponentPositionHorizontal& value, const BuilderState& state) -> LengthPercentage<>
 {
     return WTF::switchOn(get<0>(value.offset),
         [&](auto keyword) {
@@ -167,7 +167,7 @@ static auto resolve(const CSS::FourComponentPositionHorizontal& value, const Bui
     );
 }
 
-static auto resolve(const CSS::FourComponentPositionVertical& value, const BuilderState& state) -> LengthPercentage<CSS::AllUnzoomed>
+static auto resolve(const CSS::FourComponentPositionVertical& value, const BuilderState& state) -> LengthPercentage<>
 {
     return WTF::switchOn(get<0>(value.offset),
         [&](auto keyword) {
@@ -180,7 +180,7 @@ auto ToCSS<TwoComponentPositionHorizontal>::operator()(const TwoComponentPositio
 {
     return WTF::switchOn(value.offset,
         [&](const auto& value) {
-            return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<CSS::AllUnzoomed> { value }, style) };
+            return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<> { value }, style) };
         }
     );
 }
@@ -194,7 +194,7 @@ auto ToCSS<TwoComponentPositionVertical>::operator()(const TwoComponentPositionV
 {
     return WTF::switchOn(value.offset,
         [&](const auto& value) {
-            return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<CSS::AllUnzoomed> { value }, style) };
+            return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<> { value }, style) };
         }
     );
 }
@@ -211,12 +211,12 @@ auto ToCSS<Position>::operator()(const Position& value, const Style::ComputedSty
     return CSS::TwoComponentPositionHorizontalVertical {
         WTF::switchOn(value.x,
             [&](const auto& value) {
-                return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<CSS::AllUnzoomed> { value }, style) };
+                return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<> { value }, style) };
             }
         ),
         WTF::switchOn(value.y,
             [&](const auto& value) {
-                return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<CSS::AllUnzoomed> { value }, style) };
+                return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<> { value }, style) };
             }
         )
     };
@@ -240,7 +240,7 @@ auto ToCSS<PositionX>::operator()(const PositionX& value, const Style::ComputedS
 {
     return WTF::switchOn(value,
         [&](const auto& value) {
-            return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<CSS::AllUnzoomed> { value }, style) };
+            return CSS::TwoComponentPositionHorizontal { toCSS(LengthPercentage<> { value }, style) };
         }
     );
 }
@@ -260,7 +260,7 @@ auto ToCSS<PositionY>::operator()(const PositionY& value, const Style::ComputedS
 {
     return WTF::switchOn(value,
         [&](const auto& value) {
-            return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<CSS::AllUnzoomed> { value }, style) };
+            return CSS::TwoComponentPositionVertical { toCSS(LengthPercentage<> { value }, style) };
         }
     );
 }

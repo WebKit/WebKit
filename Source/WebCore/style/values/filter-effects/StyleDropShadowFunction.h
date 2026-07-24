@@ -45,8 +45,8 @@ struct ZoomFactor;
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-drop-shadow
 struct DropShadow {
     Color color;
-    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
-    Length<CSS::NonnegativeUnzoomed> stdDeviation;
+    SpaceSeparatedPoint<Length<>> location;
+    Length<CSS::Nonnegative> stdDeviation;
 
     static DropShadow passthroughForInterpolation();
 

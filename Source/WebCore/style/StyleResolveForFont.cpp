@@ -252,9 +252,9 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
             ASSERT_NOT_REACHED();
             return { .size = 0.0f, .keyword = CSSValueInvalid };
         },
-        [&](const CSS::LengthPercentage<CSS::NonnegativeUnzoomed>& lengthPercentage) -> ResolvedFontSize {
+        [&](const CSS::LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> ResolvedFontSize {
             return WTF::switchOn(lengthPercentage,
-                [&](const CSS::LengthPercentage<CSS::NonnegativeUnzoomed>::Raw& lengthPercentage) -> ResolvedFontSize {
+                [&](const CSS::LengthPercentage<CSS::Nonnegative>::Raw& lengthPercentage) -> ResolvedFontSize {
                     return CSS::switchOnUnitType(lengthPercentage.unit,
                         [&](CSS::PercentageUnit) -> ResolvedFontSize {
                             return {
@@ -281,7 +281,7 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                         }
                     );
                 },
-                [&](const CSS::LengthPercentage<CSS::NonnegativeUnzoomed>::Calc& calc) -> ResolvedFontSize {
+                [&](const CSS::LengthPercentage<CSS::Nonnegative>::Calc& calc) -> ResolvedFontSize {
                     // FIXME: Figure out correct behavior when conversion data is required.
                     if (requiresConversionData(calc))
                         return { .size = 0.0f, .keyword = CSSValueInvalid };

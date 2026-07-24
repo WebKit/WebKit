@@ -54,7 +54,7 @@ float TextDecorationInset::resolvedEnd(const Style::ComputedStyle& style, float 
 
 auto CSSValueConversion<TextDecorationInsetPair>::operator()(BuilderState& state, const CSSValue& value) -> TextDecorationInsetPair
 {
-    using Length = Style::Length<CSS::AllUnzoomed>;
+    using Length = Style::Length<>;
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         auto length = toStyleFromCSSValue<Length>(state, *primitiveValue);

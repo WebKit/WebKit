@@ -261,21 +261,21 @@ ExceptionOr<float> SVGLengthContext::resolveValueToUserUnits(float value, const 
     }
 }
 
-ExceptionOr<CSS::LengthPercentage<CSS::AllUnzoomed>> SVGLengthContext::resolveValueFromUserUnits(float value, const CSS::LengthPercentageUnit& targetUnit, SVGLengthMode lengthMode) const
+ExceptionOr<CSS::LengthPercentage<>> SVGLengthContext::resolveValueFromUserUnits(float value, const CSS::LengthPercentageUnit& targetUnit, SVGLengthMode lengthMode) const
 {
     switch (targetUnit) {
     case CSS::LengthPercentageUnit::Percentage: {
         auto percent = convertValueFromUserUnitsToPercentage(value, lengthMode);
         if (percent.hasException())
             return percent.releaseException();
-        return CSS::LengthPercentage<CSS::AllUnzoomed>(targetUnit, percent.releaseReturnValue());
+        return CSS::LengthPercentage<>(targetUnit, percent.releaseReturnValue());
     }
 
     case CSS::LengthPercentageUnit::Ex: {
         auto exVal = convertValueFromUserUnitsToEXS(value);
         if (exVal.hasException())
             return exVal.releaseException();
-        return CSS::LengthPercentage<CSS::AllUnzoomed>(targetUnit, exVal.releaseReturnValue());
+        return CSS::LengthPercentage<>(targetUnit, exVal.releaseReturnValue());
     }
 
     default: {
@@ -289,7 +289,7 @@ ExceptionOr<CSS::LengthPercentage<CSS::AllUnzoomed>> SVGLengthContext::resolveVa
         if (!pxPerUnit)
             return Exception { ExceptionCode::NotSupportedError };
 
-        return CSS::LengthPercentage<CSS::AllUnzoomed>(targetUnit, value / pxPerUnit);
+        return CSS::LengthPercentage<>(targetUnit, value / pxPerUnit);
     }
     }
 }

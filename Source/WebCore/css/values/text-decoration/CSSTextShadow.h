@@ -35,8 +35,8 @@ namespace CSS {
 // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
 struct TextShadow {
     Markable<Color> color;
-    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
-    Markable<Length<CSS::NonnegativeUnzoomed>> blur;
+    SpaceSeparatedPoint<Length<>> location;
+    Markable<Length<CSS::Nonnegative>> blur;
 
     bool operator==(const TextShadow&) const = default;
 };

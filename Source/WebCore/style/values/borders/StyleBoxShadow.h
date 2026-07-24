@@ -36,9 +36,9 @@ namespace Style {
 
 struct BoxShadow {
     Color color;
-    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
-    Length<CSS::NonnegativeUnzoomed> blur;
-    Length<CSS::AllUnzoomed> spread;
+    SpaceSeparatedPoint<Length<>> location;
+    Length<CSS::Nonnegative> blur;
+    Length<> spread;
     std::optional<CSS::Keyword::Inset> inset;
     bool isWebkitBoxShadow;
 

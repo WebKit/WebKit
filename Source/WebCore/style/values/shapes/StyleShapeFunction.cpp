@@ -361,9 +361,9 @@ private:
     {
         switch (mode) {
         case AbsoluteCoordinates:
-            return typename Command::To { .offset = { LengthPercentage<CSS::AllUnzoomed>::Dimension { offset } } };
+            return typename Command::To { .offset = { LengthPercentage<>::Dimension { offset } } };
         case RelativeCoordinates:
-            return typename Command::By { .offset = LengthPercentage<CSS::AllUnzoomed>::Dimension { offset } };
+            return typename Command::By { .offset = LengthPercentage<>::Dimension { offset } };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -542,8 +542,8 @@ private:
             ArcCommand {
                 .toBy = fromOffsetPoint(offsetPoint, mode),
                 .size = {
-                    LengthPercentage<CSS::AllUnzoomed>::Dimension { r1 },
-                    LengthPercentage<CSS::AllUnzoomed>::Dimension { r2 }
+                    LengthPercentage<>::Dimension { r1 },
+                    LengthPercentage<>::Dimension { r2 }
                 },
                 .arcSweep = sweepFlag ? ArcSweep { CSS::Keyword::Cw { } } : ArcSweep { CSS::Keyword::Ccw { } },
                 .arcSize = largeArcFlag ? ArcSize { CSS::Keyword::Large { } } : ArcSize { CSS::Keyword::Small { } },

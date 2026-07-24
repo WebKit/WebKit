@@ -94,9 +94,9 @@ static RefPtr<CSSValue> cssValueForTextShadow(const FontShadow& shadow)
         return nullptr;
 
     auto color = CSS::Color { CSS::ResolvedColor { shadow.color } };
-    auto width = CSS::Length<CSS::AllUnzoomed> { CSS::LengthUnit::Px, shadow.offset.width() };
-    auto height = CSS::Length<CSS::AllUnzoomed> { CSS::LengthUnit::Px, shadow.offset.height() };
-    auto blur = CSS::Length<CSS::NonnegativeUnzoomed> { CSS::LengthUnit::Px, shadow.blurRadius };
+    auto width = CSS::Length<> { CSS::LengthUnit::Px, shadow.offset.width() };
+    auto height = CSS::Length<> { CSS::LengthUnit::Px, shadow.offset.height() };
+    auto blur = CSS::Length<CSS::Nonnegative> { CSS::LengthUnit::Px, shadow.blurRadius };
 
     CSS::TextShadowProperty::List list {
         CSS::TextShadow {

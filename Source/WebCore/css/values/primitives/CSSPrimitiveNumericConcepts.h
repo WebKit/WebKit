@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <WebCore/CSSPrimitiveNumericCategory.h>
 #include <WebCore/CSSPrimitiveNumericRange.h>
 #include <WebCore/CSSValueConcepts.h>
 #include <concepts>
@@ -38,8 +39,6 @@ enum class CSSUnitType : uint8_t;
 template<CSSValueID> struct Constant;
 
 namespace CSS {
-
-enum class Category : uint8_t;
 
 template<typename> struct UnitTraits;
 

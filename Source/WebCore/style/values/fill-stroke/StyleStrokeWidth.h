@@ -34,7 +34,7 @@ namespace Style {
 // FIXME: The current spec has the grammar as <'stroke-width'> = <length-percentage [0,∞]>#.
 // https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-width
 struct StrokeWidth {
-    using LengthPercentage = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
+    using LengthPercentage = Style::LengthPercentage<CSS::Nonnegative>;
 
     using Fixed = LengthPercentage::Fixed;
     using Percentage = LengthPercentage::Percentage;

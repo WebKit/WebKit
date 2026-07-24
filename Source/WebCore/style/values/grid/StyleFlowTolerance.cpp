@@ -57,9 +57,9 @@ auto Blending<FlowTolerance>::blend(const FlowTolerance& a, const FlowTolerance&
 
     // Both must be length-percentage values
     return a.switchOn(
-        [&](const LengthPercentage<CSS::NonnegativeUnzoomed>& aValue) {
+        [&](const LengthPercentage<CSS::Nonnegative>& aValue) {
             return b.switchOn(
-                [&](const LengthPercentage<CSS::NonnegativeUnzoomed>& bValue) -> FlowTolerance {
+                [&](const LengthPercentage<CSS::Nonnegative>& bValue) -> FlowTolerance {
                     return WebCore::Style::blend(aValue, bValue, context);
                 },
                 [&](auto) -> FlowTolerance {

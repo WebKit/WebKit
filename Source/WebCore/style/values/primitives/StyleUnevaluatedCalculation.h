@@ -38,7 +38,6 @@ Ref<Value> CLANG_POINTER_CONVERSION protect(Value&);
 }
 
 struct ZoomFactor;
-struct ZoomNeeded;
 
 // Non-generic base type to allow code sharing and out-of-line definitions.
 class UnevaluatedCalculationBase {
@@ -61,7 +60,7 @@ public:
 
 protected:
     double evaluateBase(CSS::Range, double percentageBasis, const ZoomFactor&) const;
-    double evaluateBase(CSS::Range, double percentageBasis, const ZoomNeeded&) const;
+    double evaluateBase(CSS::Range, double percentageBasis) const;
 
 private:
     Ref<Calculation::Value> m_calc;
@@ -102,13 +101,15 @@ template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalcul
     }
 
     double evaluate(double percentageBasis, const ZoomFactor& zoom) const
+        requires (category == WebCore::CSS::Category::Length || category == WebCore::CSS::Category::LengthPercentage)
     {
         return UnevaluatedCalculationBase::evaluateBase(range, percentageBasis, zoom);
     }
 
-    double evaluate(double percentageBasis, const ZoomNeeded& zoomNeeded) const
+    double evaluate(double percentageBasis) const
+        requires (category != WebCore::CSS::Category::Length && category != WebCore::CSS::Category::LengthPercentage)
     {
-        return UnevaluatedCalculationBase::evaluateBase(range, percentageBasis, zoomNeeded);
+        return UnevaluatedCalculationBase::evaluateBase(range, percentageBasis);
     }
 };
 

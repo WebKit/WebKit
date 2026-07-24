@@ -88,18 +88,13 @@ struct PrimitiveData {
     bool isPossiblyNegative(PrimitiveDataEvaluationKind) const;
 
     template<auto range, typename ReturnType, typename MaximumType>
-    ReturnType minimumValueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomNeeded) const;
-    template<auto range, typename ReturnType, typename MaximumType>
     ReturnType minimumValueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomFactor) const;
 
-    template<auto range, typename ReturnType, typename MaximumType>
-    ReturnType valueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomNeeded) const;
     template<auto range, typename ReturnType, typename MaximumType>
     ReturnType valueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomFactor) const;
 
 private:
     WEBCORE_EXPORT float nonNanCalculatedValue(CSS::Range, float maxValue, const ZoomFactor& usedZoom) const;
-    WEBCORE_EXPORT float nonNanCalculatedValue(CSS::Range, float maxValue, const ZoomNeeded&) const;
     bool isCalculatedEqual(const PrimitiveData&) const;
 
     void initialize(const PrimitiveData&);
@@ -276,27 +271,6 @@ inline bool PrimitiveData::isPossiblyNegative(PrimitiveDataEvaluationKind evalua
 }
 
 template<auto range, typename ReturnType, typename MaximumType>
-ReturnType PrimitiveData::minimumValueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomNeeded token) const
-{
-    switch (evaluationKind) {
-    case PrimitiveDataEvaluationKind::Fixed:
-        ASSERT(m_kind == PrimitiveDataKind::Default);
-        return ReturnType(m_floatValue);
-    case PrimitiveDataEvaluationKind::Percentage:
-        ASSERT(m_kind == PrimitiveDataKind::Default);
-        return ReturnType(static_cast<float>(lazyMaximumValueFunctor() * m_floatValue / 100.0f));
-    case PrimitiveDataEvaluationKind::Calculation:
-        ASSERT(m_kind == PrimitiveDataKind::Calculation);
-        return ReturnType(nonNanCalculatedValue(range, lazyMaximumValueFunctor(), token));
-    case PrimitiveDataEvaluationKind::Flag:
-        ASSERT(m_kind == PrimitiveDataKind::Default);
-        return ReturnType(0);
-    }
-    ASSERT_NOT_REACHED();
-    return ReturnType(0);
-}
-
-template<auto range, typename ReturnType, typename MaximumType>
 ReturnType PrimitiveData::minimumValueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomFactor zoom) const
 {
     switch (evaluationKind) {
@@ -312,27 +286,6 @@ ReturnType PrimitiveData::minimumValueForPrimitiveDataWithLazyMaximum(PrimitiveD
     case PrimitiveDataEvaluationKind::Flag:
         ASSERT(m_kind == PrimitiveDataKind::Default);
         return ReturnType(0);
-    }
-    ASSERT_NOT_REACHED();
-    return ReturnType(0);
-}
-
-template<auto range, typename ReturnType, typename MaximumType>
-ReturnType PrimitiveData::valueForPrimitiveDataWithLazyMaximum(PrimitiveDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, ZoomNeeded token) const
-{
-    switch (evaluationKind) {
-    case PrimitiveDataEvaluationKind::Fixed:
-        ASSERT(m_kind == PrimitiveDataKind::Default);
-        return ReturnType(m_floatValue);
-    case PrimitiveDataEvaluationKind::Percentage:
-        ASSERT(m_kind == PrimitiveDataKind::Default);
-        return ReturnType(static_cast<float>(lazyMaximumValueFunctor() * m_floatValue / 100.0f));
-    case PrimitiveDataEvaluationKind::Calculation:
-        ASSERT(m_kind == PrimitiveDataKind::Calculation);
-        return ReturnType(nonNanCalculatedValue(range, lazyMaximumValueFunctor(), token));
-    case PrimitiveDataEvaluationKind::Flag:
-        ASSERT(m_kind == PrimitiveDataKind::Default);
-        return ReturnType(lazyMaximumValueFunctor());
     }
     ASSERT_NOT_REACHED();
     return ReturnType(0);

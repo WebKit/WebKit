@@ -464,9 +464,9 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomProperty
         case CSSCustomPropertySyntax::Type::CustomIdent:
             return consumeCustomIdent(range, state);
         case CSSCustomPropertySyntax::Type::Length:
-            return CSSPrimitiveValueResolver<CSS::Length<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+            return CSSPrimitiveValueResolver<CSS::Length<>>::consumeAndResolve(range, state);
         case CSSCustomPropertySyntax::Type::LengthPercentage:
-            return CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+            return CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state);
         case CSSCustomPropertySyntax::Type::Percentage:
             return CSSPrimitiveValueResolver<CSS::Percentage<>>::consumeAndResolve(range, state);
         case CSSCustomPropertySyntax::Type::Integer:
@@ -544,9 +544,9 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consume
     auto resolveSyntaxValue = [&, syntaxType = syntaxType](const CSSValue& value) -> std::optional<Style::CustomProperty::Value> {
         switch (syntaxType) {
         case CSSCustomPropertySyntax::Type::LengthPercentage:
-            return Style::toStyleFromCSSValue<Style::LengthPercentage<CSS::AllUnzoomed>>(builderState, downcast<CSSPrimitiveValue>(value));
+            return Style::toStyleFromCSSValue<Style::LengthPercentage<>>(builderState, downcast<CSSPrimitiveValue>(value));
         case CSSCustomPropertySyntax::Type::Length:
-            return Style::toStyleFromCSSValue<Style::Length<CSS::AllUnzoomed>>(builderState, downcast<CSSPrimitiveValue>(value));
+            return Style::toStyleFromCSSValue<Style::Length<>>(builderState, downcast<CSSPrimitiveValue>(value));
         case CSSCustomPropertySyntax::Type::Integer:
         case CSSCustomPropertySyntax::Type::Number:
             return Style::toStyleFromCSSValue<Style::Number<>>(builderState, downcast<CSSPrimitiveValue>(value));

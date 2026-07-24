@@ -35,9 +35,9 @@ namespace CSS {
 // https://drafts.csswg.org/css-backgrounds-3/#typedef-shadow
 struct BoxShadow {
     Markable<Color> color;
-    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
-    Markable<Length<CSS::NonnegativeUnzoomed>> blur;
-    Markable<Length<CSS::AllUnzoomed>> spread;
+    SpaceSeparatedPoint<Length<>> location;
+    Markable<Length<CSS::Nonnegative>> blur;
+    Markable<Length<>> spread;
     std::optional<Keyword::Inset> inset;
     bool isWebkitBoxShadow;
 

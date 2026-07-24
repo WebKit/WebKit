@@ -60,48 +60,22 @@ template<TupleLike StyleType, typename Result> requires (std::tuple_size_v<Style
 template<auto R, typename V, typename Result> struct EvaluationMinimum<LengthPercentage<R, V>, Result> {
     using StyleType = LengthPercentage<R, V>;
 
-    auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomNeeded token) -> Result
-        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Default)
-    {
-        return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor, token);
-    }
-    auto operator()(const StyleType& value, Result maximumValue, ZoomNeeded token) -> Result
-        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Default)
-    {
-        return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return LayoutUnit(maximumValue); }, token);
-    }
-
     auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomFactor zoom) -> Result
-        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
     {
         return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
     }
     auto operator()(const StyleType& value, Result maximumValue, ZoomFactor zoom) -> Result
-        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
     {
         return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return LayoutUnit(maximumValue); }, zoom);
     }
 };
 
 template<LengthPercentageOrKeywordDerived StyleType, typename Result> struct EvaluationMinimum<StyleType, Result> {
-    auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomNeeded token) -> Result
-        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Default)
-    {
-        return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::Numeric, LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor, token);
-    }
-    auto operator()(const StyleType& value, Result maximumValue, ZoomNeeded token) -> Result
-        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Default)
-    {
-        return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return LayoutUnit(maximumValue); }, token);
-    }
-
     auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomFactor zoom) -> Result
-        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
     {
         return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
     }
     auto operator()(const StyleType& value, Result maximumValue, ZoomFactor zoom) -> Result
-        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
     {
         return value.m_value.template minimumValueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return LayoutUnit(maximumValue); }, zoom);
     }

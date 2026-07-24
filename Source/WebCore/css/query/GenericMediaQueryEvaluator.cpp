@@ -50,7 +50,7 @@ static std::optional<LayoutUnit> resolveLength(const Value& value, const CSSToLe
                 return 0_lu;
             return { };
         },
-        [&](const CSS::Length<CSS::AllUnzoomed>& length) -> std::optional<LayoutUnit> {
+        [&](const CSS::Length<>& length) -> std::optional<LayoutUnit> {
             return Style::evaluate<LayoutUnit>(Style::toStyle(length, conversionData), zoom);
         },
         [](const auto&) -> std::optional<LayoutUnit> {

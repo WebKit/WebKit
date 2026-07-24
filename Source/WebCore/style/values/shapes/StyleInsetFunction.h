@@ -37,7 +37,7 @@ struct AcceleratedEffectInsetFunction;
 namespace Style {
 
 struct Inset {
-    using Insets = MinimallySerializingSpaceSeparatedRectEdges<LengthPercentage<CSS::AllUnzoomed>>;
+    using Insets = MinimallySerializingSpaceSeparatedRectEdges<LengthPercentage<>>;
 
     Insets insets;
     BorderRadius radii;

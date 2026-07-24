@@ -32,7 +32,7 @@ namespace CSS {
 // blur() = blur( <length [0,∞]>? )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-blur
 struct Blur {
-    using Parameter = Length<NonnegativeUnzoomed>;
+    using Parameter = Length<Nonnegative>;
 
     Markable<Parameter> value;
 

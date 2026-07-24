@@ -37,7 +37,7 @@ struct AcceleratedEffectPolygonFunction;
 namespace Style {
 
 struct Polygon {
-    using Vertex = SpaceSeparatedPoint<LengthPercentage<CSS::AllUnzoomed>>;
+    using Vertex = SpaceSeparatedPoint<LengthPercentage<>>;
     using Vertices = CommaSeparatedVector<Vertex>;
 
     // FIXME: Add support the "round" clause.

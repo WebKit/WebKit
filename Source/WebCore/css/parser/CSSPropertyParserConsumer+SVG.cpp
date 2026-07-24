@@ -108,7 +108,7 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range, CSS::Propert
     CSSValueListBuilder dashes;
     do {
         // FIXME: Figure out and document why overrideParserMode is explicitly set to HTMLStandardMode here or remove the special case.
-        auto dash = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consumeAndResolve(range, state, { .overrideParserMode = HTMLStandardMode, .unitlessZeroLength = UnitlessZeroQuirk::Forbid });
+        auto dash = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::Nonnegative>>::consumeAndResolve(range, state, { .overrideParserMode = HTMLStandardMode, .unitlessZeroLength = UnitlessZeroQuirk::Forbid });
         if (!dash)
             dash = CSSPrimitiveValueResolver<CSS::Number<CSS::Nonnegative>>::consumeAndResolve(range, state);
         if (!dash || (consumeCommaIncludingWhitespace(range) && range.atEnd()))
