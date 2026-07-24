@@ -1,4 +1,3 @@
-web-platform.test:9000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Simulating cancelled authentication sheet
 
 PASS Fetch with POST with empty ReadableStream
 PASS Fetch with POST with ReadableStream
@@ -10,6 +9,6 @@ PASS Synchronous feature detect fails if feature unsupported
 PASS Streaming upload with body containing a String
 PASS Streaming upload with body containing null
 PASS Streaming upload with body containing a number
-FAIL Streaming upload should fail on a 401 response assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Streaming upload should fail on a 401 response
 PASS ReadbleStream should be closed on signal.abort
 

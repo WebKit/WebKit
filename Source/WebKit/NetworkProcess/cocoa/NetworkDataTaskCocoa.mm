@@ -408,6 +408,15 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
 {
     WTFEmitSignpost(m_task.get(), DataTask, "received challenge");
 
+    if (hasPendingStreamBody() && challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
+        if (RefPtr client = m_client) {
+            WebCore::ResourceError error { WebCore::errorDomainWebKitInternal, 0, firstRequest().url(), "Fetch upload streams cannot handle 401"_s, WebCore::ResourceError::Type::Cancellation };
+            client->didCompleteWithError(error, { });
+        }
+        completionHandler(AuthenticationChallengeDisposition::Cancel, { });
+        return;
+    }
+
     if (tryPasswordBasedAuthentication(challenge, completionHandler))
         return;
 
