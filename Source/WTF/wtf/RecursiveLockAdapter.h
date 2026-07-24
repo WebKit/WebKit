@@ -58,6 +58,8 @@ public:
     // which doesn't support analysis.
     void unlock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
+        ASSERT(isOwner());
+        ASSERT(m_recursionCount);
         if (--m_recursionCount)
             return;
         m_ownerThreadUID = 0;
