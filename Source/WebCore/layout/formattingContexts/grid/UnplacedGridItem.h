@@ -59,7 +59,9 @@ private:
 
     class GridPosition {
     public:
-        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end);
+        // The negative-line offset shifts negative explicit lines forward so the resolved range
+        // maps to non-negative matrix indices. See UnplacedGridItem::resolveExplicitLineRange().
+        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t negativeLineOffset);
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -82,7 +84,7 @@ private:
     };
 
 public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd);
+    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t columnNegativeLineOffset, size_t rowNegativeLineOffset);
     UnplacedGridItem(WTF::HashTableEmptyValueType);
 
     bool operator==(const UnplacedGridItem& other) const;
@@ -91,11 +93,6 @@ public:
     bool isHashTableEmptyValue() const { return m_layoutBox.isHashTableEmptyValue(); }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
-    size_t normalizedColumnStart() const;
-    size_t normalizedColumnEnd() const;
-    size_t normalizedRowStart() const;
-    size_t normalizedRowEnd() const;
-
     bool NODELETE hasDefiniteRowPosition() const;
     bool NODELETE hasDefiniteColumnPosition() const;
     bool NODELETE hasAutoColumnPosition() const;
@@ -103,8 +100,8 @@ public:
     size_t columnSpanSize() const;
     size_t rowSpanSize() const;
 
-    std::pair<size_t, size_t> normalizedRowStartEnd() const;
-    std::pair<size_t, size_t> normalizedColumnStartEnd() const;
+    std::pair<size_t, size_t> NODELETE definiteRowStartEnd() const;
+    std::pair<size_t, size_t> NODELETE definiteColumnStartEnd() const;
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;
@@ -113,19 +110,10 @@ private:
     GridPosition m_columnPosition;
     GridPosition m_rowPosition;
 
-    std::pair<int, int> definiteRowStartEnd() const;
-    std::pair<int, int> definiteColumnStartEnd() const;
-
-    void NODELETE applyGridOffsets(size_t rowOffset, size_t columnOffset);
-
-    // Offsets applied to normalize negative grid positions to non-negative matrix indices.
-    size_t m_rowNormalizationOffset { 0 };
-    size_t m_columnNormalizationOffset { 0 };
-
-    // Flag to track whether applyGridOffsets() has been called.
-    // This helps catch bugs where normalized methods are used before offsets are applied,
-    // or where offsets are applied multiple times.
-    bool m_hasAppliedGridOffsets { false };
+    // Resolves the raw (pre-normalization) 0-based explicit line range [start, end) for an axis, or
+    // std::nullopt when the axis is auto-positioned. Lines may be negative for negative line
+    // placements; the negative-line offset is applied later in GridPosition::create().
+    static std::optional<std::pair<int, int>> resolveExplicitLineRange(const Style::GridPosition& start, const Style::GridPosition& end);
 
     friend class GridFormattingContext;
     friend class GridLayout;

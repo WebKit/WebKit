@@ -70,7 +70,28 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
 
     std::ranges::stable_sort(gridItems, { }, &GridItem::order);
 
+    // First pass: find the smallest (most-negative) explicit line in each axis. Negative line
+    // placements are normalized by shifting every line forward by the magnitude of that line, so
+    // e.g. a column-start of -5 shifts all column lines forward by 5 and maps to matrix column 0.
+    int minimumColumnLine = 0;
+    int minimumRowLine = 0;
+    for (auto& gridItem : gridItems) {
+        CheckedRef gridItemStyle = gridItem.layoutBox->style();
+        if (auto columnRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd())) {
+            auto [startLine, endLine] = *columnRange;
+            minimumColumnLine = std::min({ minimumColumnLine, startLine, endLine });
+        }
+        if (auto rowRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd())) {
+            auto [startLine, endLine] = *rowRange;
+            minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
+        }
+    }
+
     UnplacedGridItems unplacedGridItems;
+    size_t columnNegativeLineOffset = minimumColumnLine < 0 ? static_cast<size_t>(-minimumColumnLine) : 0;
+    size_t rowNegativeLineOffset = minimumRowLine < 0 ? static_cast<size_t>(-minimumRowLine) : 0;
+
+    // Second pass: construct each item with its positions already normalized, then classify it.
     for (auto& gridItem : gridItems) {
         CheckedRef gridItemStyle = gridItem.layoutBox->style();
 
@@ -84,7 +105,9 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
             gridItemColumnStart,
             gridItemColumnEnd,
             gridItemRowStart,
-            gridItemRowEnd
+            gridItemRowEnd,
+            columnNegativeLineOffset,
+            rowNegativeLineOffset
         };
 
         // Check if this item is fully explicitly positioned
