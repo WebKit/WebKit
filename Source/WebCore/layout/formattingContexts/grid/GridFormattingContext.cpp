@@ -92,6 +92,8 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
     UnplacedGridItems unplacedGridItems;
     size_t columnNegativeLineOffset = minimumColumnLine < 0 ? static_cast<size_t>(-minimumColumnLine) : 0;
     size_t rowNegativeLineOffset = minimumRowLine < 0 ? static_cast<size_t>(-minimumRowLine) : 0;
+    unplacedGridItems.columnNegativeLineOffset = columnNegativeLineOffset;
+    unplacedGridItems.rowNegativeLineOffset = rowNegativeLineOffset;
 
     // Second pass: construct each item with its positions already normalized, then classify it.
     for (auto& gridItem : gridItems) {

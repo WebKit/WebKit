@@ -133,6 +133,14 @@ struct UnplacedGridItems {
     Vector<UnplacedGridItem> definiteRowPositionedItems;
     // 4. Position the remaining grid items.
     Vector<UnplacedGridItem> autoPositionedItems;
+
+    // Number of implicit tracks generated before the start of the explicit grid because an item was
+    // placed with a negative line that resolves before line 1 (a leading implicit track). Every
+    // item's resolved line has already been shifted forward by this amount so matrix indices are
+    // non-negative; track sizing and the initial grid dimensions use it to account for those
+    // leading tracks.
+    size_t columnNegativeLineOffset { 0 };
+    size_t rowNegativeLineOffset { 0 };
 };
 
 }
