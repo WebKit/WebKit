@@ -24,6 +24,7 @@ import argparse
 import os
 import re
 import sys
+import time
 
 from .command import Command
 from .commit import Commit
@@ -453,13 +454,18 @@ class PullRequest(Command):
     @classmethod
     def add_comment_to_issue(cls, issue, pr, commit_class=None):
         log.info('Checking issue assignee...')
+        assigned = False
         if issue.assignee != issue.tracker.me() and commit_class != 'Gardening':
             issue.assign(issue.tracker.me())
+            assigned = True
             print('Assigning associated issue to {}'.format(issue.tracker.me()))
         log.info('Checking for pull request link in associated issue...')
         pr_label = 'Test gardening pull request' if commit_class == 'Gardening' else 'Pull request'
         if pr.url and not any([pr.url in comment.content for comment in issue.comments]):
             if issue.opened:
+                # Wait until the next second so Bugzilla sends a notification for the PR opening comment
+                if assigned:
+                    time.sleep(1.1)
                 issue.add_comment('{}: {}'.format(pr_label, pr.url))
             elif commit_class != 'Gardening':
                 issue.open(why='Re-opening for {} {}'.format(pr_label.lower(), pr.url))
