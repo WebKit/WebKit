@@ -1242,7 +1242,7 @@ public:
 
 #if PLATFORM(COCOA)
     WebCore::RenderObject* rendererForSelectionAutoscroll(WebCore::LocalFrame&) const;
-    void startAutoscrollAtPosition(const WebCore::FloatPoint&);
+    void startAutoscrollAtPosition(const WebCore::FloatPoint&, CompletionHandler<void(bool)>&&);
     void cancelAutoscroll();
 #endif
 

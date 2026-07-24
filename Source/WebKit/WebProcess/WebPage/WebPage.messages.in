@@ -163,7 +163,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
 #if PLATFORM(COCOA)
-    StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
+    StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow) -> (bool didStartAutoscrolling)
     CancelAutoscroll()
 #endif
 

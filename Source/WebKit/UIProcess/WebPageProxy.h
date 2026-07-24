@@ -1326,7 +1326,7 @@ public:
 
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
     void cancelAutoscroll();
-    bool isAutoscrolling() const { return m_isAutoscrolling; }
+    bool isAutoscrolling() const { return m_autoscrollState == AutoscrollState::Active; }
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -3843,7 +3843,8 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    bool m_isAutoscrolling { false };
+    enum class AutoscrollState : uint8_t { Inactive, Pending, Active };
+    AutoscrollState m_autoscrollState { AutoscrollState::Inactive };
 #endif
 
     bool m_isTakingSnapshotsForApplicationSuspension { false };
