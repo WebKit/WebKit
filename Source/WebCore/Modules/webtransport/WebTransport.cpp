@@ -381,10 +381,33 @@ void WebTransport::getStats(ScriptExecutionContext& context, Ref<DeferredPromise
     });
 }
 
-void WebTransport::exportKeyingMaterial(BufferSource&&, std::optional<BufferSource>&&, Ref<DeferredPromise>&& promise)
+void WebTransport::exportKeyingMaterial(ScriptExecutionContext& scriptExecutionContext, BufferSource&& label, BufferSource&& context, uint32_t outputLength, Ref<DeferredPromise>&& promise)
 {
-    // FIXME: Implement once libnetcore exposes a keying-material export SPI (rdar://167646346).
-    promise->reject(ExceptionCode::NotSupportedError);
+    // https://www.w3.org/TR/webtransport/#dom-webtransport-exportkeyingmaterial
+    size_t labelLength = label.byteLength();
+    if (labelLength > 255)
+        return promise->reject(ExceptionCode::RangeError);
+
+    size_t contextLength = context.byteLength();
+    if (contextLength > 255)
+        return promise->reject(ExceptionCode::RangeError);
+
+    if (!outputLength || outputLength > 4096)
+        return promise->reject(ExceptionCode::RangeError);
+
+    if (m_state == State::Closed || m_state == State::Failed)
+        return promise->reject(ExceptionCode::InvalidStateError);
+
+    RefPtr session = m_session;
+    if (!session)
+        return promise->reject(ExceptionCode::InvalidStateError);
+
+    scriptExecutionContext.enqueueTaskWhenSettled(session->exportKeyingMaterial(label.span(), context.span(), outputLength), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& keyingMaterial) mutable {
+        if (keyingMaterial)
+            fulfillPromiseWithUint8ArrayFromSpan(WTF::move(promise), keyingMaterial->span());
+        else
+            promise->reject(ExceptionCode::InvalidStateError);
+    });
 }
 
 DOMPromise& WebTransport::ready()

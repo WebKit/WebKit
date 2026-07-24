@@ -82,7 +82,7 @@ public:
     void deref() const final { WebTransportSessionClient::deref(); }
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    void exportKeyingMaterial(BufferSource&& label, std::optional<BufferSource>&& context, Ref<DeferredPromise>&&);
+    void exportKeyingMaterial(ScriptExecutionContext&, BufferSource&& label, BufferSource&& context, uint32_t outputLength, Ref<DeferredPromise>&&);
     DOMPromise& NODELETE ready();
     WebTransportReliabilityMode NODELETE reliability();
     WebTransportCongestionControl NODELETE congestionControl();

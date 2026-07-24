@@ -84,6 +84,7 @@ public:
     void getSendStreamStats(WebCore::WebTransportStreamIdentifier, CompletionHandler<void(std::optional<WebCore::WebTransportSendStreamStats>&&)>&&);
     void getReceiveStreamStats(WebCore::WebTransportStreamIdentifier, CompletionHandler<void(std::optional<WebCore::WebTransportReceiveStreamStats>&&)>&&);
     void getSendGroupStats(WebCore::WebTransportSendGroupIdentifier, CompletionHandler<void(std::optional<WebCore::WebTransportSendStreamStats>&&)>&&);
+    void exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength, CompletionHandler<void(std::optional<Vector<uint8_t>>)>&&);
     void destroyOutgoingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void destroyBidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
@@ -107,10 +108,20 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
     bool isSessionClosed() const;
+#if PLATFORM(COCOA)
+    class SecurityProtocolMetadata : public RefCounted<SecurityProtocolMetadata> {
+    public:
+        static RefPtr<SecurityProtocolMetadata> create() { return adoptRef(new SecurityProtocolMetadata()); }
+        void receivedMetadata(sec_protocol_metadata_t metadata) { m_metadata = metadata; }
+        sec_protocol_metadata_t metadata() const { return m_metadata.get(); }
+    private:
+        RetainPtr<sec_protocol_metadata_t> m_metadata;
+    };
+#endif
 private:
 #if PLATFORM(COCOA)
-    static Ref<NetworkTransportSession> create(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t);
-    NetworkTransportSession(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t);
+    static Ref<NetworkTransportSession> create(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t, RefPtr<SecurityProtocolMetadata>&&);
+    NetworkTransportSession(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t, RefPtr<SecurityProtocolMetadata>&&);
 #else
     NetworkTransportSession();
 #endif
@@ -143,6 +154,7 @@ private:
 #if PLATFORM(COCOA)
     const RetainPtr<nw_connection_group_t> m_connectionGroup;
     const RetainPtr<nw_endpoint_t> m_endpoint;
+    const RefPtr<SecurityProtocolMetadata> m_securityProtocolMetadata;
     RetainPtr<nw_connection_t> m_datagramConnection;
     RetainPtr<nw_protocol_metadata_t> m_sessionMetadata;
 #endif

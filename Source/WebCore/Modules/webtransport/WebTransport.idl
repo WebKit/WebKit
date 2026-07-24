@@ -32,7 +32,7 @@
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional WebTransportOptions options = {});
 
     [CallWith=CurrentScriptExecutionContext] Promise<WebTransportConnectionStats> getStats();
-    Promise<ArrayBuffer> exportKeyingMaterial(BufferSource label, optional BufferSource context);
+    [CallWith=CurrentScriptExecutionContext] Promise<Uint8Array> exportKeyingMaterial(BufferSource label, BufferSource context, unsigned long outputLength);
     readonly attribute Promise<undefined> ready;
     readonly attribute WebTransportReliabilityMode reliability;
     readonly attribute WebTransportCongestionControl congestionControl;

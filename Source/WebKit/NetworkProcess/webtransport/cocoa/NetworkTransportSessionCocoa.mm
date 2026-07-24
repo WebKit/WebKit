@@ -56,17 +56,18 @@
 
 namespace WebKit {
 
-Ref<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t group, nw_endpoint_t endpoint)
+Ref<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t group, nw_endpoint_t endpoint, RefPtr<SecurityProtocolMetadata>&& metadata)
 {
-    return adoptRef(*new NetworkTransportSession(connection, identifier, WTF::move(options), group, endpoint));
+    return adoptRef(*new NetworkTransportSession(connection, identifier, WTF::move(options), group, endpoint, WTF::move(metadata)));
 }
 
-NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t connectionGroup, nw_endpoint_t endpoint)
+NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t connectionGroup, nw_endpoint_t endpoint, RefPtr<SecurityProtocolMetadata>&& metadata)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_options(WTF::move(options))
     , m_connectionGroup(connectionGroup)
     , m_endpoint(endpoint)
+    , m_securityProtocolMetadata(WTF::move(metadata))
 {
     setupConnectionHandler();
 }
@@ -194,7 +195,7 @@ static String joinProtocolStrings(const Vector<String>& protocols)
     return builder.toString();
 }
 
-static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
+static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, RefPtr<NetworkTransportSession::SecurityProtocolMetadata> securityMetadata)
 {
     // https://www.w3.org/TR/webtransport/#web-transport-configuration
     auto configureWebTransport = [
@@ -219,6 +220,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         url = WTF::move(url),
         pageID = WTF::move(pageID),
         hashes = std::exchange(options.serverCertificateHashes, { }),
+        securityMetadata = WTF::move(securityMetadata),
         clientOrigin = WTF::move(clientOrigin)
     ](nw_protocol_options_t options) mutable {
         RetainPtr securityOptions = adoptNS(nw_tls_copy_sec_protocol_options(options));
@@ -232,8 +234,11 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
             url,
             pageID,
             hashes,
+            securityMetadata,
             clientOrigin
         ] (sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) mutable {
+            if (securityMetadata)
+                securityMetadata->receivedMetadata(metadata);
             RefPtr connectionToWebProcess = weakConnection.get();
             if (!connectionToWebProcess) {
                 completion(false);
@@ -268,7 +273,10 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
         return nullptr;
     }
 
-    RetainPtr parameters = createParameters(connectionToWebProcess, WTF::move(url), options, WTF::move(pageID), WTF::move(clientOrigin));
+    // FIXME: Remove SecurityProtocolMetadata once we no longer support platforms without nw_webtransport_metadata_copy_sec_protocol_metadata.
+    RefPtr metadata = canLoad_Network_nw_webtransport_metadata_copy_sec_protocol_metadata() ? nullptr : SecurityProtocolMetadata::create();
+
+    RetainPtr parameters = createParameters(connectionToWebProcess, WTF::move(url), options, WTF::move(pageID), WTF::move(clientOrigin), metadata);
     if (!parameters) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -286,7 +294,7 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
         return nullptr;
     }
 
-    return NetworkTransportSession::create(connectionToWebProcess, identifier, WTF::move(options), connectionGroup.get(), endpoint.get());
+    return NetworkTransportSession::create(connectionToWebProcess, identifier, WTF::move(options), connectionGroup.get(), endpoint.get(), WTF::move(metadata));
 }
 
 void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
@@ -590,4 +598,31 @@ bool NetworkTransportSession::isSessionClosed() const
         return softLink_Network_nw_webtransport_metadata_get_session_closed(m_sessionMetadata.get());
     return false;
 }
+
+void NetworkTransportSession::exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength, CompletionHandler<void(std::optional<Vector<uint8_t>>)>&& completionHandler)
+{
+    if (!m_sessionMetadata)
+        return completionHandler(std::nullopt);
+
+    RetainPtr securityMetadata = canLoad_Network_nw_webtransport_metadata_copy_sec_protocol_metadata() ? adoptNS(softLink_Network_nw_webtransport_metadata_copy_sec_protocol_metadata(m_sessionMetadata.get())) : RetainPtr { m_securityProtocolMetadata->metadata() };
+    if (!securityMetadata)
+        return completionHandler(std::nullopt);
+    RetainPtr data = adoptNS(sec_protocol_metadata_create_secret_with_context(securityMetadata.get(), label.size(), reinterpret_cast<const char*>(label.data()), context.size(), context.data(), outputLength));
+    if (!data)
+        return completionHandler(std::nullopt);
+
+    // FIXME: This is something that should probably be in WTF, and it's duplicate code.
+    auto vectorFromData = [](dispatch_data_t content) {
+        Vector<uint8_t> request;
+        if (content) {
+            dispatch_data_apply_span(content, [&](std::span<const uint8_t> buffer) {
+                request.append(buffer);
+                return true;
+            });
+        }
+        return request;
+    };
+    completionHandler(vectorFromData(data.get()));
+}
+
 }

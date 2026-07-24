@@ -33,6 +33,7 @@ messages -> NetworkTransportSession {
     GetSendStreamStats(WebCore::WebTransportStreamIdentifier identifier) -> (struct std::optional<WebCore::WebTransportSendStreamStats> stats)
     GetReceiveStreamStats(WebCore::WebTransportStreamIdentifier identifier) -> (struct std::optional<WebCore::WebTransportReceiveStreamStats> stats)
     GetSendGroupStats(WebCore::WebTransportSendGroupIdentifier identifier) -> (struct std::optional<WebCore::WebTransportSendStreamStats> stats)
+    ExportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength) -> (std::optional<Vector<uint8_t>> keyingMaterial)
     StreamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin) -> (std::optional<WebCore::Exception> exception)
     CancelReceiveStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<uint64_t> errorCode)
     CancelSendStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<uint64_t> errorCode)

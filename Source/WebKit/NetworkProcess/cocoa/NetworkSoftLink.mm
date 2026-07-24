@@ -80,6 +80,8 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Network, nw_connection_abort_writ
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Network, nw_http_fields_access_value_by_name, void, (nw_http_fields_t fields, const char* name, NS_NOESCAPE nw_http_optional_string_accessor_t accessor), (fields, name, accessor))
 
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Network, nw_webtransport_metadata_copy_sec_protocol_metadata, sec_protocol_metadata_t, (nw_protocol_metadata_t metadata), (metadata));
+
 #if HAVE(NWSETTINGS_UNIFIED_HTTP_WEBKIT)
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Network, nw_settings_get_unified_http_enabled_webkit, bool, (), ())

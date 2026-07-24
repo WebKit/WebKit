@@ -206,6 +206,16 @@ Ref<WebCore::WebTransportSendStreamStatsPromise> WebTransportSession::getSendGro
     });
 }
 
+Ref<WebCore::WebTransportExportKeyingMaterialPromise> WebTransportSession::exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength)
+{
+    return sendWithPromisedReply(Messages::NetworkTransportSession::ExportKeyingMaterial(label, context, outputLength))->whenSettled(RunLoop::mainSingleton(), [] (auto&& keyingMaterial) mutable {
+        ASSERT(RunLoop::isMain());
+        if (!keyingMaterial || !*keyingMaterial)
+            return WebCore::WebTransportExportKeyingMaterialPromise::createAndReject();
+        return WebCore::WebTransportExportKeyingMaterialPromise::createAndResolve(WTF::move(**keyingMaterial));
+    });
+}
+
 Ref<WebCore::WebTransportSendPromise> WebTransportSession::streamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
 {
     return sendWithPromisedReply(Messages::NetworkTransportSession::StreamSendBytes(identifier, bytes, withFin))->whenSettled(RunLoop::mainSingleton(), [] (auto&& exception) {

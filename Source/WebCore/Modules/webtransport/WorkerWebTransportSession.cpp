@@ -216,6 +216,15 @@ Ref<WebTransportSendStreamStatsPromise> WorkerWebTransportSession::getSendGroupS
     return WebTransportSendStreamStatsPromise::createAndReject();
 }
 
+Ref<WebTransportExportKeyingMaterialPromise> WorkerWebTransportSession::exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength)
+{
+    ASSERT(!RunLoop::isMain());
+    if (RefPtr session = m_session)
+        return session->exportKeyingMaterial(label, context, outputLength);
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
+    return WebTransportExportKeyingMaterialPromise::createAndReject();
+}
+
 void WorkerWebTransportSession::terminate(WebTransportSessionErrorCode code, CString&& reason)
 {
     ASSERT(!RunLoop::isMain());
