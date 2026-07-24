@@ -243,6 +243,25 @@ void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentL
     }
 }
 
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+static std::optional<TouchInteraction> touchInteractionForMouseInteraction(MouseInteraction interaction)
+{
+    switch (interaction) {
+    case MouseInteraction::Down:
+        return TouchInteraction::TouchDown;
+    case MouseInteraction::Up:
+        return TouchInteraction::LiftUp;
+    case MouseInteraction::Move:
+        return TouchInteraction::MoveTo;
+    case MouseInteraction::SingleClick:
+    case MouseInteraction::DoubleClick:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+#endif
+
 void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource& inputSource, SimulatedInputSourceState& newState, AutomationCompletionHandler&& completionHandler)
 {
     // Make cases and conditionals more readable by aliasing pre/post states as 'a' and 'b'.
@@ -329,15 +348,26 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
-            if (!a.pressedMouseButton && b.pressedMouseButton) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating TouchDown @ (%d, %d) for transition to %d.%d", this, b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                m_client.simulateTouchInteraction(protect(m_page), TouchInteraction::TouchDown, b.location.value(), std::nullopt, WTF::move(eventDispatchFinished));
-            } else if (a.pressedMouseButton && !b.pressedMouseButton) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating LiftUp @ (%d, %d) for transition to %d.%d", this, b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                m_client.simulateTouchInteraction(protect(m_page), TouchInteraction::LiftUp, b.location.value(), std::nullopt, WTF::move(eventDispatchFinished));
-            } else if (a.location != b.location) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MoveTo from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                m_client.simulateTouchInteraction(protect(m_page), TouchInteraction::MoveTo, b.location.value(), a.duration.value_or(0_s), WTF::move(eventDispatchFinished));
+            if (b.mouseInteraction) {
+                const auto stateTransitionIsNoop = [&a, &b] {
+                    return std::tie(a.location, a.mouseInteraction, a.pressedMouseButton) == std::tie(b.location, b.mouseInteraction, b.pressedMouseButton);
+                }();
+
+                if (!stateTransitionIsNoop) {
+                    auto touchInteraction = touchInteractionForMouseInteraction(b.mouseInteraction.value());
+                    if (!touchInteraction || (touchInteraction == TouchInteraction::MoveTo && a.location == b.location)) {
+                        eventDispatchFinished(std::nullopt);
+                        return;
+                    }
+
+                    std::optional<Seconds> duration = touchInteraction == TouchInteraction::MoveTo ? std::optional<Seconds>(a.duration.value_or(0_s)) : std::nullopt;
+#if !LOG_DISABLED
+                    String interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating touch %s @ (%d, %d) for transition to %d.%d", this, interactionName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+#endif
+                    m_client.simulateTouchInteraction(protect(m_page), touchInteraction.value(), b.location.value(), duration, WTF::move(eventDispatchFinished));
+                } else
+                    eventDispatchFinished({ });
             } else
                 eventDispatchFinished(std::nullopt);
         });
