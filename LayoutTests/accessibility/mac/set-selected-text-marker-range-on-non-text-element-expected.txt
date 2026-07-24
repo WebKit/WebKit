@@ -1,0 +1,9 @@
+This test verifies that setting the accessibility selected-text-marker range to an empty non-text element (e.g. an icon button with no text of its own) does not walk the selection forward into a following contenteditable and steal DOM focus into it.
+
+PASS: selectionEnteredComposer === false
+PASS: focusEnteredComposer === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
