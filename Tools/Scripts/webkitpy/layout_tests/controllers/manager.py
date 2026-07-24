@@ -1081,7 +1081,7 @@ class Manager(object):
                         # Don't print this line if an ancestor directory is all pass also
                         ancestor_dirname = os.path.dirname(dirname)
                         while ancestor_dirname and ancestor_dirname not in device_test_stats:
-                            ancestor_dirname = os.path.dirname(dirname)
+                            ancestor_dirname = os.path.dirname(ancestor_dirname)
                         if ancestor_dirname and device_test_stats[ancestor_dirname]['pass'] == device_test_stats[ancestor_dirname]['count']:
                             continue
                         print(srow_format.format(truncated_dirname, str(count), u"██ PASS", u' ███████', u'████████', u'████████'))
@@ -1090,7 +1090,7 @@ class Manager(object):
                         # Don't print this line if an ancestor directory is all skip also
                         ancestor_dirname = os.path.dirname(dirname)
                         while ancestor_dirname and ancestor_dirname not in device_test_stats:
-                            ancestor_dirname = os.path.dirname(dirname)
+                            ancestor_dirname = os.path.dirname(ancestor_dirname)
                         if ancestor_dirname and device_test_stats[ancestor_dirname]['skip'] == device_test_stats[ancestor_dirname]['count']:
                             continue
                         print(srow_format.format(truncated_dirname, str(count), u'░░░░░░░', u"░░░ SKIP", u' ░░░░░░░', u'░░░░░░░░'))
