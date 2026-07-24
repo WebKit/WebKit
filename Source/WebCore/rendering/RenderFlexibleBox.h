@@ -138,8 +138,6 @@ private:
     friend class FlexFormattingUtils;
     friend class LayoutIntegration::FlexLayout;
 
-    enum class SizeDefiniteness : uint8_t { Definite, Indefinite, Unknown };
-
     using FlexItemBorderBoxRects = Vector<LayoutRect, 4>;
 
     void appendFlexItemBorderBoxRects(FlexItemBorderBoxRects&);
@@ -157,12 +155,8 @@ private:
 
     FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
 
-    void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
-
     FlexLayoutState& flexLayoutState() LIFETIME_BOUND { ASSERT(m_flexLayoutState); return *m_flexLayoutState; }
 
-    SizeDefiniteness hasDefiniteHeight() const { return m_hasDefiniteHeight; }
-    void setHasDefiniteHeight(SizeDefiniteness definiteness) { m_hasDefiniteHeight = definiteness; }
     void setBlockAxisSizeForFlexItem(const RenderBox& flexItem, LayoutUnit size) { m_blockAxisSize.set(flexItem, size); }
     std::optional<LayoutUnit> blockAxisSizeForFlexItem(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
     void cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height);
@@ -200,8 +194,6 @@ private:
     LayoutUnit m_alignContentStartOverflow { 0 };
     LayoutUnit m_justifyContentStartOverflow { 0 };
 
-    // This is SizeIsUnknown outside of layoutBlock()
-    SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     std::optional<FlexLayoutState> m_flexLayoutState;
     bool m_inSimplifiedLayout { false };
     mutable bool m_inFlexItemIntrinsicWidthComputation { false };

@@ -141,7 +141,7 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes.
         flexBaseAndHypotheticalMainSizeList[index] = { flexBase, std::max(minMaxMainSizes.first, std::min(flexBase, minMaxMainSizes.second)), minMaxMainSizes };
         // FIXME: Figure out if we can do this outside of the loop.
-        m_flexBox->resetHasDefiniteHeight();
+        layoutState().resetFlexBoxBlockSizeDefiniteness();
     }
     return flexBaseAndHypotheticalMainSizeList;
 }
@@ -1236,12 +1236,12 @@ template<typename SizeType> bool FlexFormattingContext::flexItemCrossSizeIsDefin
     // container's cross size is definite. We use a dummy percentage for stretch
     // since computePercentageLogicalHeight evaluates the value as a percentage.
     auto crossSizeIsDefinite = [&](const auto& sizeForPercentageComputation) {
-        if (!flexLayoutItem.mainAxisIsInlineAxis || m_flexBox->hasDefiniteHeight() == RenderFlexibleBox::SizeDefiniteness::Definite)
+        if (!flexLayoutItem.mainAxisIsInlineAxis || layoutState().isFlexBoxBlockSizeDefinite())
             return true;
-        if (m_flexBox->hasDefiniteHeight() == RenderFlexibleBox::SizeDefiniteness::Indefinite)
+        if (layoutState().isFlexBoxBlockSizeIndefinite())
             return false;
         bool definite = bool(flexItem->computePercentageLogicalHeight(sizeForPercentageComputation));
-        m_flexBox->setHasDefiniteHeight(definite ? RenderFlexibleBox::SizeDefiniteness::Definite : RenderFlexibleBox::SizeDefiniteness::Indefinite);
+        layoutState().setFlexBoxBlockSizeIsDefinite(definite);
         return definite;
     };
 

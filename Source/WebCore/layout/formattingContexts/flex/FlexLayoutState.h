@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -48,7 +49,6 @@ public:
     };
 
     Phase phase() const { return m_phase; }
-
     void setPhase(Phase phase)
     {
         if (phase > m_phase)
@@ -58,9 +58,15 @@ public:
     void setFlexItemHasCompletedLayout(const RenderBox& flexItem) { m_flexItemsWithCompletedLayout.add(flexItem); }
     bool hasFlexItemCompletedLayout(const RenderBox& flexItem) const { return m_flexItemsWithCompletedLayout.contains(flexItem); }
 
+    bool isFlexBoxBlockSizeDefinite() const { return m_isFlexBoxBlockSizeDefinite && *m_isFlexBoxBlockSizeDefinite; }
+    bool isFlexBoxBlockSizeIndefinite() const { return m_isFlexBoxBlockSizeDefinite && !*m_isFlexBoxBlockSizeDefinite; }
+    void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { m_isFlexBoxBlockSizeDefinite = isDefinite; }
+    void resetFlexBoxBlockSizeDefiniteness() { m_isFlexBoxBlockSizeDefinite = { }; }
+
 private:
     Phase m_phase { Phase::PreparingFlexItems };
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
+    std::optional<bool> m_isFlexBoxBlockSizeDefinite;
 };
 
 } // namespace WebCore

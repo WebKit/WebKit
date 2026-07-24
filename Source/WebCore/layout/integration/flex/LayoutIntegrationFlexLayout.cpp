@@ -128,8 +128,6 @@ FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, 
         if (!flexItem)
             continue;
         auto everHadLayout = flexItem->everHadLayout();
-        if (CheckedPtr flexibleBox = dynamicDowncast<RenderFlexibleBox>(flexItem.get()))
-            flexibleBox->resetHasDefiniteHeight();
         if (everHadLayout && flexItem->hasTrimmedMargin(std::optional<Style::MarginTrimSide> { }))
             flexItem->clearTrimmedMarginsMarkings();
         if (flexItem->shouldInvalidateContentWidths())

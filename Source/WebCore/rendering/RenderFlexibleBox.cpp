@@ -246,11 +246,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     updateLayerTransform();
 
-    // We have to reset this, because changes to our ancestors' style can affect
-    // this value. Also, this needs to be before we call updateAfterLayout, as
-    // that function may re-enter this one.
-    resetHasDefiniteHeight();
-
     repainter.repaintAfterLayout();
 }
 
@@ -821,20 +816,22 @@ void RenderFlexibleBox::repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorder
 
 template<typename SizeType> bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType& flexBasis, UpdatePercentageHeightDescendants updateDescendants)
 {
-    if (!FlexFormattingUtils::isColumnFlow(*this) || m_hasDefiniteHeight == SizeDefiniteness::Definite)
+    if (!FlexFormattingUtils::isColumnFlow(*this))
         return true;
-    if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
-        return false;
+
+    if (m_flexLayoutState) {
+        if (m_flexLayoutState->isFlexBoxBlockSizeDefinite())
+            return true;
+        if (m_flexLayoutState->isFlexBoxBlockSizeIndefinite())
+            return false;
+    }
 
     auto isPercentResolveSuspended = view().frameView().layoutContext().isPercentHeightResolveDisabledFor(flexItem);
     ASSERT(!isPercentResolveSuspended || is<RenderBlock>(flexItem));
 
     bool definite = !isPercentResolveSuspended && flexItem.computePercentageLogicalHeight(flexBasis, updateDescendants).has_value();
-    if (m_flexLayoutState && (isHorizontalWritingMode() == flexItem.isHorizontalWritingMode())) {
-        // We can reach this code even while we're not laying ourselves out, such
-        // as from mainSizeForPercentageResolution.
-        m_hasDefiniteHeight = definite ? SizeDefiniteness::Definite : SizeDefiniteness::Indefinite;
-    }
+    if (m_flexLayoutState && !writingMode().isOrthogonal(flexItem.writingMode()))
+        m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(definite);
     return definite;
 }
 
