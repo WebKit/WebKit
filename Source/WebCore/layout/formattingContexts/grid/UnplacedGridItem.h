@@ -59,9 +59,11 @@ private:
 
     class GridPosition {
     public:
-        // The negative-line offset shifts negative explicit lines forward so the resolved range
-        // maps to non-negative matrix indices. See UnplacedGridItem::resolveExplicitLineRange().
-        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t negativeLineOffset);
+        // explicitTrackCount is the number of explicit tracks in the axis, used to resolve negative
+        // lines against the end of the explicit grid. The negative-line offset then shifts negative
+        // resolved lines forward so the range maps to non-negative matrix indices. See
+        // UnplacedGridItem::resolveExplicitLineRange().
+        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t negativeLineOffset);
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -84,7 +86,7 @@ private:
     };
 
 public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t columnNegativeLineOffset, size_t rowNegativeLineOffset);
+    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount, size_t columnNegativeLineOffset, size_t rowNegativeLineOffset);
     UnplacedGridItem(WTF::HashTableEmptyValueType);
 
     bool operator==(const UnplacedGridItem& other) const;
@@ -110,10 +112,12 @@ private:
     GridPosition m_columnPosition;
     GridPosition m_rowPosition;
 
-    // Resolves the raw (pre-normalization) 0-based explicit line range [start, end) for an axis, or
-    // std::nullopt when the axis is auto-positioned. Lines may be negative for negative line
-    // placements; the negative-line offset is applied later in GridPosition::create().
-    static std::optional<std::pair<int, int>> resolveExplicitLineRange(const Style::GridPosition& start, const Style::GridPosition& end);
+    // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
+    // axis is auto-positioned. explicitTrackCount is used to resolve negative lines against the end
+    // of the explicit grid; the resolved lines may still be negative for negative line placements
+    // that count past the start edge, and the negative-line offset is applied later in
+    // GridPosition::create().
+    static std::optional<std::pair<int, int>> resolveExplicitLineRange(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount);
 
     friend class GridFormattingContext;
     friend class GridLayout;
