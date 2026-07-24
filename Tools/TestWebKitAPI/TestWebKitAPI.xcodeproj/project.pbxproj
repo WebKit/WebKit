@@ -1047,6 +1047,7 @@
 				WebKit/WKWebView/mac/MenuTypesForMouseEvents.mm,
 				WebKit/WKWebView/mac/MouseEventTests.mm,
 				WebKit/WKWebView/mac/NoPolicyDelegateResponse.mm,
+				WebKit/WKWebView/mac/NSRefreshControllerTests.mm,
 				WebKit/WKWebView/mac/NSResponderTests.mm,
 				WebKit/WKWebView/mac/PageVisibilityStateWithWindowChanges.mm,
 				WebKit/WKWebView/mac/RenderedImageFromDOMNode.mm,

@@ -8179,6 +8179,7 @@ void WebViewImpl::setRefreshController(NSRefreshController *refreshController)
         [[m_refreshController refreshControl] removeFromSuperview];
         m_topScrollStretchForRefreshController = 0;
         m_refreshControllerMask = nil;
+        m_suppressRefreshControllerUpdates = false;
     }
 
     m_refreshController = refreshController;
@@ -8214,6 +8215,10 @@ void WebViewImpl::setRefreshController(NSRefreshController *refreshController)
 void WebViewImpl::applyRefreshControllerHeight(CGFloat height, bool animated)
 {
     m_topScrollStretchForRefreshController = height;
+
+    if (!height && m_cachedTopScrollStretch > 0)
+        m_suppressRefreshControllerUpdates = true;
+
     if (CheckedPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy())
         scrollingCoordinator->setTopScrollStretchForRefreshController(height);
 }
@@ -8260,7 +8265,8 @@ void WebViewImpl::updateRefreshControllerFrame()
         [m_refreshControllerMask setPath:maskPath.get()];
     }
 
-    [[m_refreshController refreshControl] update];
+    if (!m_suppressRefreshControllerUpdates)
+        [[m_refreshController refreshControl] update];
 
     if (CheckedPtr scrollingCoordinator = m_page->scrollingCoordinatorProxy())
         scrollingCoordinator->setRefreshControllerSnappingThreshold(refreshControllerSnappingThreshold());
@@ -8272,6 +8278,10 @@ void WebViewImpl::topScrollStretchDidChange(CGFloat topScrollStretch)
         return;
 
     m_cachedTopScrollStretch = topScrollStretch;
+
+    if (m_suppressRefreshControllerUpdates && !topScrollStretch)
+        m_suppressRefreshControllerUpdates = false;
+
     if (m_refreshController)
         updateRefreshControllerFrame();
 }
@@ -8283,8 +8293,10 @@ void WebViewImpl::updateRefreshControllerForWheelEvent(NSEvent *event)
 
     // Track whether this scroll gesture began at the top of the page.
     // Only allow refresh control activation for gestures that started at top.
-    if (event.phase == NSEventPhaseBegan)
+    if (event.phase == NSEventPhaseBegan) {
         m_canShowRefreshController = pageIsScrolledToTop();
+        m_suppressRefreshControllerUpdates = false;
+    }
 }
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
@@ -8295,8 +8307,10 @@ void WebViewImpl::updateRefreshControllerForPanGesture(NSGestureRecognizerState 
 
     // Track whether this scroll gesture began at the top of the page.
     // Only allow refresh control activation for gestures that started at top.
-    if (state == NSGestureRecognizerStateBegan)
+    if (state == NSGestureRecognizerStateBegan) {
         m_canShowRefreshController = pageIsScrolledToTop();
+        m_suppressRefreshControllerUpdates = false;
+    }
 }
 #endif
 
