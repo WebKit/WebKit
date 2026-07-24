@@ -29,6 +29,7 @@
 #include "FontCascade.h"
 #include "TextBoundaries.h"
 #include <limits>
+#include <wtf/ASCIICType.h>
 #include <wtf/Compiler.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -293,6 +294,31 @@ static std::pair<std::span<const char16_t>, size_t> extractSubspanIncludingConte
     return { buffer.subspan(contextStart, contextEnd - contextStart), contextStart };
 }
 
+static std::pair<std::span<const char16_t>, size_t> boundedWordContextForNonComplexText(std::span<const char16_t> buffer, size_t start, size_t length)
+{
+    size_t windowStart = start;
+    while (windowStart && !isASCIIWhitespace(buffer[windowStart - 1]))
+        --windowStart;
+
+    size_t windowEnd = std::min(start + length, buffer.size());
+    while (windowEnd < buffer.size() && !isASCIIWhitespace(buffer[windowEnd]))
+        ++windowEnd;
+
+    if (windowStart)
+        --windowStart;
+    if (windowEnd < buffer.size())
+        ++windowEnd;
+
+    return { buffer.subspan(windowStart, windowEnd - windowStart), windowStart };
+}
+
+static std::pair<std::span<const char16_t>, size_t> wordBreakContext(std::span<const char16_t> buffer, size_t start, size_t length, char32_t firstCharacter)
+{
+    if (requiresContextForWordBoundary(firstCharacter))
+        return extractSubspanIncludingContextNeededForDictionaryBasedWordBreak(buffer, start);
+    return boundedWordContextForNonComplexText(buffer, start, length);
+}
+
 bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t length, FindOptions options)
 {
     ASSERT(options.contains(FindOption::AtWordStarts));
@@ -341,7 +367,7 @@ bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t len
     if (FontCascade::isCJKIdeographOrSymbol(firstCharacter))
         return true;
 
-    auto [contextBuffer, contextOffset] = extractSubspanIncludingContextNeededForDictionaryBasedWordBreak(buffer, start);
+    auto [contextBuffer, contextOffset] = wordBreakContext(buffer, start, length, firstCharacter);
     size_t adjustedStart = start - contextOffset;
 
     // Clamp because the trimmed context window may be shorter than adjustedStart + length.
@@ -357,7 +383,12 @@ bool isWordEndMatch(std::span<const char16_t> buffer, size_t start, size_t lengt
     ASSERT(options.contains(FindOption::AtWordEnds));
     UNUSED_PARAM(options);
 
-    auto [contextBuffer, contextOffset] = extractSubspanIncludingContextNeededForDictionaryBasedWordBreak(buffer, start);
+    int size = buffer.size();
+    int offset = static_cast<int>(start);
+    char32_t firstCharacter;
+    U16_GET(buffer, 0, offset, size, firstCharacter);
+
+    auto [contextBuffer, contextOffset] = wordBreakContext(buffer, start, length, firstCharacter);
     size_t adjustedStart = start - contextOffset;
 
     // Start searching at the end of matched search, so that multiple word matches succeed.
