@@ -181,9 +181,6 @@
             },
             "/webkit/WebKitWebView/cut-copy-paste/editable": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/263417"}}
-            },
-            "/webkit/WebKitWebView/is-playing-audio": {
-                "expected": {"all": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
             }
         }
     },
