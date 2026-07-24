@@ -37,7 +37,8 @@ header: <WebCore/IPAddressSpace.h>
 enum class WebCore::IPAddressSpace : uint8_t {
     Public,
     Local,
-    Loopback
+    Loopback,
+    Unknown
 };
 
 enum class WebCore::NotificationEventType : bool;

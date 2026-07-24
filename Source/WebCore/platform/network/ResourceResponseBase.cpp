@@ -90,7 +90,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_tainting(data ? data->tainting : Tainting::Basic)
     , m_source(data ? data->source : Source::Unknown)
     , m_type(data ? data->type : Type::Default)
-    , m_ipAddressSpace(data ? data->ipAddressSpace : IPAddressSpace::Public)
+    , m_ipAddressSpace(data ? data->ipAddressSpace : IPAddressSpace::Unknown)
 {
 }
 
@@ -1058,7 +1058,7 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
         WTF::move(*proxyName),
         *isRangeRequested,
         WTF::move(*certificateInfo),
-        WebCore::IPAddressSpace::Public
+        WebCore::IPAddressSpace::Unknown
     };
 }
 
