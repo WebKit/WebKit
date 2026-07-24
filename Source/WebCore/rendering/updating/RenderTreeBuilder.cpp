@@ -946,6 +946,8 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
     collapseAndDestroyAnonymousSiblings();
 
+    bool destroyRootWasInFlow = destroyRoot->isInFlow();
+
     // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
     WeakPtr destroyRootParent = destroyRoot->parent();
     if (&rendererToDestroy != destroyRoot.get()) {
@@ -963,7 +965,11 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         return;
 
     auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRootParent };
-    removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);
+
+    // Removing an out-of-flow positioned or floating child cannot change
+    // whether the parent's in-flow children need their anonymous block wrappers
+    if (destroyRootWasInFlow)
+        removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())
