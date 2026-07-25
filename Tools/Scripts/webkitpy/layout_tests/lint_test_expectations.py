@@ -58,7 +58,7 @@ def lint(host, options, logging_stream):
         lint_failed = False
 
         for port_to_lint in ports_to_lint:
-            if port_to_lint in ['gtk', 'wpe']:
+            if port_to_lint.port_name in ['gtk', 'wpe']:
                 port_to_lint._options.additional_expectations = ['LayoutTests/platform/glib/TestExpectations']
             expectations_dict = port_to_lint.expectations_dict()
 

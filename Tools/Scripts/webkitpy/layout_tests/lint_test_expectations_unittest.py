@@ -40,6 +40,8 @@ class FakePort(object):
         self.host = host
         self.name = name
         self.path = path
+        self.port_name = name
+        self._options = optparse.Values({'additional_expectations': []})
 
     def test_configuration(self):
         return None
@@ -105,6 +107,23 @@ class LintTest(unittest.TestCase):
 
         self.assertEqual(res, 0)
         self.assertIn('Lint succeeded', logging_stream.getvalue())
+
+    def test_glib_additional_expectations(self):
+        host = MockHost()
+        host.ports_parsed = []
+        gtk_port = FakePort(host, 'gtk', 'path-to-gtk')
+        wpe_port = FakePort(host, 'wpe', 'path-to-wpe')
+        mac_port = FakePort(host, 'mac', 'path-to-mac')
+        host.port_factory = FakeFactory(host, (gtk_port, wpe_port, mac_port))
+
+        logging_stream = StringIO()
+        options = optparse.Values({'platform': None})
+        res = lint_test_expectations.lint(host, options, logging_stream)
+
+        self.assertEqual(res, 0)
+        self.assertEqual(gtk_port._options.additional_expectations, ['LayoutTests/platform/glib/TestExpectations'])
+        self.assertEqual(wpe_port._options.additional_expectations, ['LayoutTests/platform/glib/TestExpectations'])
+        self.assertEqual(mac_port._options.additional_expectations, [])
 
     def test_lint_test_files__errors(self):
         options = optparse.Values({'platform': 'test', 'debug_rwt_logging': False})
