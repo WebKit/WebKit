@@ -180,9 +180,19 @@ LayoutUnit FlexFormattingUtils::crossAxisExtentForFlexItem(const RenderBox& flex
     return isHorizontalFlow(flexBox()) ? flexItem.borderBoxHeight() : flexItem.borderBoxWidth();
 }
 
+LayoutUnit FlexFormattingUtils::crossAxisExtentForFlexItem(const FlexLayoutItem& flexLayoutItem) const
+{
+    return crossAxisExtentForFlexItem(flexLayoutItem.renderer.get());
+}
+
 LayoutUnit FlexFormattingUtils::mainAxisExtentForFlexItem(const RenderBox& flexItem) const
 {
     return isHorizontalFlow(flexBox()) ? flexItem.borderBoxSize().width() : flexItem.borderBoxSize().height();
+}
+
+LayoutUnit FlexFormattingUtils::mainAxisExtentForFlexItem(const FlexLayoutItem& flexLayoutItem) const
+{
+    return mainAxisExtentForFlexItem(flexLayoutItem.renderer.get());
 }
 
 LayoutUnit FlexFormattingUtils::mainAxisExtent() const
@@ -296,6 +306,11 @@ OverflowAlignment FlexFormattingUtils::overflowAlignmentForFlexItem(const Render
     return flexItem.style().alignSelf().resolve(containerStyle.ptr()).overflow();
 }
 
+OverflowAlignment FlexFormattingUtils::overflowAlignmentForFlexItem(const FlexLayoutItem& flexLayoutItem) const
+{
+    return overflowAlignmentForFlexItem(flexLayoutItem.renderer.get());
+}
+
 bool FlexFormattingUtils::hasAutoMarginsInCrossAxis(const RenderBox& flexItem)
 {
     auto& flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
@@ -348,6 +363,11 @@ bool FlexFormattingUtils::flexItemHasAspectRatio(const RenderBox& flexItem)
     return flexItem.hasIntrinsicAspectRatio()
         || flexItem.style().aspectRatio().hasRatio()
         || isSVGRootWithIntrinsicAspectRatio(flexItem);
+}
+
+bool FlexFormattingUtils::flexItemHasAspectRatio(const FlexLayoutItem& flexLayoutItem)
+{
+    return flexItemHasAspectRatio(flexLayoutItem.renderer.get());
 }
 
 bool FlexFormattingUtils::canResolveFullyConstrainedLogicalHeight(const RenderFlexibleBox& flexBox)
@@ -543,6 +563,11 @@ LayoutUnit FlexFormattingUtils::availableAlignmentSpaceForFlexItem(LayoutUnit li
 {
     LayoutUnit flexItemCrossExtent = crossAxisMarginExtentForFlexItem(flexItem) + crossSize;
     return lineCrossAxisExtent - flexItemCrossExtent;
+}
+
+LayoutUnit FlexFormattingUtils::availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const FlexLayoutItem& flexLayoutItem, LayoutUnit crossSize) const
+{
+    return availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer.get(), crossSize);
 }
 
 LayoutUnit FlexFormattingUtils::marginBoxAscentForFlexItem(const FlexLayoutItem& flexLayoutItem, LayoutUnit crossSize) const

@@ -74,7 +74,9 @@ public:
     LayoutUnit flowAwareMarginBeforeForFlexItem(const FlexLayoutItem&) const;
 
     LayoutUnit crossAxisExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit crossAxisExtentForFlexItem(const FlexLayoutItem&) const;
     LayoutUnit mainAxisExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit mainAxisExtentForFlexItem(const FlexLayoutItem&) const;
     LayoutUnit mainAxisExtent() const;
     static LayoutUnit crossAxisContentExtent(const RenderFlexibleBox&);
 
@@ -101,6 +103,7 @@ public:
 
     static Overflow mainAxisOverflowForFlexItem(const RenderBox& flexItem);
     OverflowAlignment overflowAlignmentForFlexItem(const RenderBox& flexItem) const;
+    OverflowAlignment overflowAlignmentForFlexItem(const FlexLayoutItem&) const;
     static bool hasAutoMarginsInCrossAxis(const RenderBox& flexItem);
     bool hasAutoMarginsInCrossAxis(const FlexLayoutItem&) const;
     static bool useContentBasedMinimumSize(const RenderBox& flexItem);
@@ -108,6 +111,7 @@ public:
     double preferredAspectRatioForFlexItem(const FlexLayoutItem&) const;
 
     static bool flexItemHasAspectRatio(const RenderBox& flexItem);
+    static bool flexItemHasAspectRatio(const FlexLayoutItem&);
     static bool canResolveFullyConstrainedLogicalHeight(const RenderFlexibleBox&);
     bool flexItemHasComputableAspectRatio(const FlexLayoutItem&) const;
     bool needToStretchFlexItemLogicalHeight(const FlexLayoutItem&) const;
@@ -115,6 +119,7 @@ public:
     LayoutUnit innerCrossSizeForFlexItem(const FlexLayoutItem&) const;
     LayoutUnit columnInnerMainSize(LayoutUnit hypotheticalMainSize) const;
     LayoutUnit availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem, LayoutUnit crossSize) const;
+    LayoutUnit availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const FlexLayoutItem&, LayoutUnit crossSize) const;
     LayoutUnit marginBoxAscentForFlexItem(const FlexLayoutItem&, LayoutUnit crossSize) const;
 
     FlowDirection crossAxisDirection() const;
