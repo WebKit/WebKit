@@ -369,8 +369,32 @@ void AXIsolatedTree::queueChange(NodeChange&& nodeChange)
 
     AXID objectID = nodeChange.data.axID;
     Markable parentID = nodeChange.data.parentID;
+    bool isTextControl = AXCoreObject::isTextControl(nodeChange.data.role);
     auto pending = mutablePendingChanges();
     pending->appends.append(WTF::move(nodeChange));
+
+    // An append carries a full, fresh copy of the node's properties, so it supersedes a SelectedTextRange
+    // update already queued for this object in an earlier cycle. Drop that stale update; without this it
+    // would apply after the append on the reader thread (appends are applied before property changes) and
+    // clobber the fresh selection. Updates queued after this append are preserved (last-writer-wins).
+    // Only text controls carry a SelectedTextRange, so this is safely scoped to them, which also avoids
+    // scanning propertyChanges on the common non-text-control append.
+    //
+    // FIXME: An append supersedes *any* earlier-queued property change for the same object (as the
+    // same-cycle dedup in processQueuedNodeUpdates() already assumes), but we limit this to SelectedTextRange
+    // for now since other properties may intentionally be pushed as targeted updates. Consider generalizing.
+    if (isTextControl) {
+        for (auto& change : pending->propertyChanges) {
+            if (change.axID == objectID) {
+                change.properties.removeAllMatching([] (const auto& property) {
+                    return property.first == AXProperty::SelectedTextRange;
+                });
+            }
+        }
+        pending->propertyChanges.removeAllMatching([] (const auto& change) {
+            return change.properties.isEmpty();
+        });
+    }
 
     if (parentID) {
         auto siblingsIDs = m_nodeMap.get(*parentID).childrenIDs;
