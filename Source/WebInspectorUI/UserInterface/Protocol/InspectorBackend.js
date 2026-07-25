@@ -310,7 +310,7 @@ InspectorBackendClass = class InspectorBackendClass
     _startOrStopAutomaticTracing()
     {
         this._defaultTracer.dumpMessagesToConsole = this.dumpInspectorProtocolMessages;
-        this._defaultTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
+        this._defaultTracer.dumpTimingDataToConsole = this.dumpInspectorTimeStats;
         this._defaultTracer.filterMultiplexingBackend = this.filterMultiplexingBackendInspectorProtocolMessages;
     }
 };
