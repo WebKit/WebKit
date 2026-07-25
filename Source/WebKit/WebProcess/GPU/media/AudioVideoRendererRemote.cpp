@@ -557,9 +557,14 @@ Ref<MediaTimePromise> AudioVideoRendererRemote::prepareToSeek(const MediaTime& t
 
 Ref<GenericPromise> AudioVideoRendererRemote::finishSeek(const MediaTime& time)
 {
-    if (!m_seeking)
-        ALWAYS_LOG(LOGIDENTIFIER, "state error");
-    ASSERT(m_seeking, "Invalid seeking state, bad API usage");
+    // m_seeking is set/read on MediaSourcePrivateAVFObjC::queueSingleton() but
+    // cleared on AudioVideoRendererRemote::queueSingleton(), so a superseding
+    // seek (or a GPU-not-running path) can clear it out from under this call.
+    // Treat that as a superseded seek and reject.
+    if (!m_seeking) {
+        ALWAYS_LOG(LOGIDENTIFIER, "seek superseded before finishSeek; skipping");
+        return GenericPromise::createAndReject();
+    }
     return invokeAsync(queueSingleton(), [protectedThis = Ref { *this }, this, time] -> Ref<GenericPromise> {
         cancelPendingSeek();
 
