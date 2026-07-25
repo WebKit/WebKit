@@ -1514,6 +1514,7 @@ void WebViewImpl::handleProcessSwapOrExit()
 #endif
 
     m_contentRelativeViewsNeedToBeRepositioned = false;
+    m_cursorOverlapsSelection = false;
 }
 
 void WebViewImpl::processWillSwap()
@@ -2556,6 +2557,8 @@ void WebViewImpl::pageDidScroll(const IntPoint& scrollOffset)
 
     m_lastPageScrollOffset = scrollOffset;
     m_pageScrollingHysteresis->impulse();
+
+    updateCursorOverlapsSelectionAndNotifyIfNeeded();
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     // While a selection-drag is autoscrolling, keep extending the selection toward the
@@ -3939,6 +3942,31 @@ void WebViewImpl::restoreContentRelativeChildViews()
 #if ENABLE(WRITING_TOOLS)
     [m_view.get() _web_restoreContentRelativeChildViews];
     [m_textAnimationTypeManager restoreTextAnimationType];
+#endif
+}
+
+void WebViewImpl::updateCursorOverlapsSelectionAndNotifyIfNeeded()
+{
+    RetainPtr context = inputContextForSelectionUpdates();
+    if (!context)
+        return;
+
+    bool overlaps = false;
+    RetainPtr view = m_view.get();
+    if (RetainPtr window = [view window]) {
+        auto locationInView = [view convertPoint:[window mouseLocationOutsideOfEventStream] fromView:nil];
+        overlaps = page().selectionBoundingRectInRootViewCoordinates().contains(WebCore::FloatPoint { locationInView });
+    }
+
+    if (std::exchange(m_cursorOverlapsSelection, overlaps) == overlaps)
+        return;
+
+    if (overlaps)
+        return;
+
+#if HAVE(APPKIT_SIRI_AFFORDANCE)
+    if (RetainPtr controller = [NSCampoLightweightUIController sharedInstance]; [controller isVisible])
+        [controller dismiss];
 #endif
 }
 

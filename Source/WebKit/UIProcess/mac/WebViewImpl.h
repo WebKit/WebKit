@@ -936,6 +936,8 @@ private:
     void suppressContentRelativeChildViews();
     void restoreContentRelativeChildViews();
 
+    void updateCursorOverlapsSelectionAndNotifyIfNeeded();
+
     bool m_clientWantsMediaPlaybackControlsView { false };
     bool m_canCreateTouchBars { false };
     bool m_startedListeningToCustomizationEvents { false };
@@ -1078,6 +1080,7 @@ private:
     const UniqueRef<PAL::HysteresisActivity> m_contentRelativeViewsHysteresis;
     std::unique_ptr<PAL::HysteresisActivity> m_pageScrollingHysteresis;
     bool m_contentRelativeViewsNeedToBeRepositioned { false };
+    bool m_cursorOverlapsSelection { false };
 
     RetainPtr<NSColorSpace> m_colorSpace;
 
