@@ -106,7 +106,7 @@ private:
 
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
-    const UniqueRef<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
+    const Ref<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
     const WeakPtr<WebProcessPool> m_processPool;
 
     Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID;
