@@ -930,10 +930,8 @@ std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minMaxMainSizesForFlexI
 std::optional<LayoutUnit> FlexFormattingContext::computeUsedMaxMainSize(const FlexLayoutItem& flexLayoutItem)
 {
     auto max = flexFormattingUtils().maxMainSizeLengthForFlexItem(flexLayoutItem);
-    if (max.isSpecified())
+    if (max.isSpecified() || max.isIntrinsicOrStretch())
         return integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, max, m_constraints.mainAxisSizeForLengthResolution);
-    if (max.isIntrinsicOrStretch())
-        return integrationUtils().computeMainAxisExtentForFlexItemWithCrossAxisOverride(flexLayoutItem, max, m_constraints.mainAxisSizeForLengthResolution);
     return { };
 }
 
@@ -945,11 +943,7 @@ LayoutUnit FlexFormattingContext::computeUsedNonAutoMinMainSize(const FlexLayout
     // keywords (min-content/max-content/fit-content) on the inline axis. Per CSS
     // Sizing 3 § 5.2, intrinsic keywords on the block axis behave like auto, so
     // those go through computeContentBasedMinMainSize instead.
-    auto minExtent = [&] {
-        if (min.isIntrinsicOrStretch())
-            return integrationUtils().computeMainAxisExtentForFlexItemWithCrossAxisOverride(flexLayoutItem, min, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
-        return integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, min, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
-    }();
+    auto minExtent = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, min, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
 
     // We must never return a min size smaller than the min preferred size for tables.
     if (flexLayoutItem.renderer->isRenderTable() && flexLayoutItem.mainAxisIsInlineAxis)
@@ -975,7 +969,7 @@ LayoutUnit FlexFormattingContext::computeContentBasedMinMainSize(const FlexLayou
         contentSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexItemCrossSizeLength);
 
     if (!canComputeSizeThroughAspectRatio || !flexItem->isRenderReplaced()) {
-        auto minContentSize = integrationUtils().computeMainAxisExtentForFlexItemWithCrossAxisOverride(flexLayoutItem, Style::MinimumSize { CSS::Keyword::MinContent { } }, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
+        auto minContentSize = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, Style::MinimumSize { CSS::Keyword::MinContent { } }, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
         contentSize = std::max(contentSize, minContentSize);
     }
 
@@ -1174,9 +1168,7 @@ void FlexFormattingContext::trimMainAxisMarginStart(FlexLayoutItem& flexLayoutIt
 {
     CheckedRef renderer = flexLayoutItem.renderer;
     auto horizontalFlow = m_constraints.isHorizontalFlow;
-    flexLayoutItem.mainAxisMargin -= horizontalFlow
-        ? renderer->marginStart(m_constraints.style->writingMode())
-        : renderer->marginBefore(m_constraints.style->writingMode());
+    flexLayoutItem.mainAxisMargin -= horizontalFlow ? renderer->marginStart(m_constraints.style->writingMode()) : renderer->marginBefore(m_constraints.style->writingMode());
     if (horizontalFlow)
         integrationUtils().setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
     else
@@ -1188,9 +1180,7 @@ void FlexFormattingContext::trimMainAxisMarginEnd(FlexLayoutItem& flexLayoutItem
 {
     CheckedRef renderer = flexLayoutItem.renderer;
     auto horizontalFlow = m_constraints.isHorizontalFlow;
-    flexLayoutItem.mainAxisMargin -= horizontalFlow
-        ? renderer->marginEnd(m_constraints.style->writingMode())
-        : renderer->marginAfter(m_constraints.style->writingMode());
+    flexLayoutItem.mainAxisMargin -= horizontalFlow ? renderer->marginEnd(m_constraints.style->writingMode()) : renderer->marginAfter(m_constraints.style->writingMode());
     if (horizontalFlow)
         integrationUtils().setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
     else

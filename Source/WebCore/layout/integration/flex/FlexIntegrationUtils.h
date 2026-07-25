@@ -79,7 +79,6 @@ public:
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
-    template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItemWithCrossAxisOverride(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
     LayoutUnit maxContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
     LayoutUnit minContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
 

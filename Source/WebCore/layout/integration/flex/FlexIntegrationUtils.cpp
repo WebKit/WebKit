@@ -210,7 +210,7 @@ std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem
     // height, so it's the inverse. So we need the logical width if we have a
     // horizontal flow and horizontal writing mode, or vertical flow and vertical
     // writing mode. Otherwise we need the logical height.
-    if (!flexLayoutItem.mainAxisIsInlineAxis) {
+    auto blockAxisExtent = [&]() -> std::optional<LayoutUnit> {
         // No "auto" check needed: computeContentLogicalHeight returns nullopt for
         // auto and we propagate that below.
         auto height = flexItem->computeContentLogicalHeight(size, flexItemContentLogicalHeight(flexLayoutItem));
@@ -232,23 +232,42 @@ std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem
         // spec, which does not attribute a scrollbar contribution to the flex base
         // size on that path.
         return *height + flexItem->scrollbarLogicalHeight() + captionsHeight;
-    }
+    };
 
-    // For a content size, computeLogicalWidthUsing re-computes the item's intrinsic widths. However, when our logical
-    // width is auto, we can just use our cached value. So let's do that here.
-    // (Compare code in RenderBlock::computeIntrinsicLogicalWidthContributions)
-    if (flexLayoutItem.style().logicalWidth().isAuto() && !FlexFormattingUtils::flexItemHasAspectRatio(flexItem)) {
-        if (size.isMinContent()) {
-            invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
-            return flexItem->minContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
+    auto inlineAxisExtent = [&] {
+        // computeLogicalWidthUsing re-computes the item's intrinsic widths for a content size; when the item's logical
+        // width is auto we can use its cached contribution instead.
+        // (Compare code in RenderBlock::computeIntrinsicLogicalWidthContributions)
+        if (flexLayoutItem.style().logicalWidth().isAuto() && !FlexFormattingUtils::flexItemHasAspectRatio(flexItem)) {
+            if (size.isMinContent()) {
+                invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
+                return flexItem->minContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
+            }
+            if (size.isMaxContent()) {
+                invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
+                return flexItem->maxContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
+            }
         }
-        if (size.isMaxContent()) {
-            invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
-            return flexItem->maxContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
-        }
-    }
+        return flexItem->computeLogicalWidthUsing(size, mainAxisSizeForLengthResolution, flexBox()) - flexItem->borderAndPaddingLogicalWidth();
+    };
 
-    return flexItem->computeLogicalWidthUsing(size, mainAxisSizeForLengthResolution, flexBox()) - flexItem->borderAndPaddingLogicalWidth();
+    // A definite main size resolves to a length without measuring the item's content, so it needs no scope.
+    if (!size.isIntrinsicOrStretch())
+        return flexLayoutItem.mainAxisIsInlineAxis ? inlineAxisExtent() : blockAxisExtent();
+
+    // An intrinsic main size is measured from the item's content, so give the item its definite cross size for the
+    // measurement: the inline (width) branch lays the item's content out, and the block (height) branch resolves a
+    // height that -- for a replaced item, or any item with a preferred aspect ratio -- is computed from the item's used
+    // cross size.
+    // computeMainAxisExtentForFlexItem invalidates the item's content widths itself, hence InvalidateContentWidths::No.
+    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexItem.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::No };
+    if (!flexLayoutItem.mainAxisIsInlineAxis)
+        return blockAxisExtent();
+
+    // The item's width is measured by laying its content out, so mark the container to make that content's percentage
+    // heights resolve against the definite cross size set above.
+    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexItem.get() };
+    return inlineAxisExtent();
 }
 
 // Explicit instantiations for the SizeTypes FlexFormattingContext resolves through the integration from a separate translation unit.
@@ -256,28 +275,6 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentFo
 template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&, LayoutUnit);
 template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&, LayoutUnit);
 template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&, LayoutUnit);
-
-template<typename SizeType>
-std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItemWithCrossAxisOverride(const FlexLayoutItem& flexLayoutItem, const SizeType& size, LayoutUnit mainAxisSizeForLengthResolution)
-{
-    // Both main-axis branches need the container's definite cross size as the item's overriding cross size: the inline
-    // (width) branch measures the item's width by laying its content out, and the block (column/height) branch resolves
-    // an intrinsic height that -- for a replaced item, or any item with a preferred aspect ratio -- is computed from the
-    // item's used cross size.
-    // computeMainAxisExtentForFlexItem invalidates the item's content widths itself, hence InvalidateContentWidths::No.
-    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::No };
-
-    // The intrinsic-width flag, on the other hand, only affects percentage resolution while the item's width is being
-    // measured, so the block branch does not need it.
-    if (!flexLayoutItem.mainAxisIsInlineAxis)
-        return computeMainAxisExtentForFlexItem(flexLayoutItem, size, mainAxisSizeForLengthResolution);
-
-    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
-    return computeMainAxisExtentForFlexItem(flexLayoutItem, size, mainAxisSizeForLengthResolution);
-}
-
-template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItemWithCrossAxisOverride<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&, LayoutUnit);
-template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItemWithCrossAxisOverride<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&, LayoutUnit);
 
 // The item's min/max-content main-axis contribution, read with the container's cross size applied as an override so
 // aspect-ratio and percentage resolution see the definite cross size. Unlike the paths that go through
