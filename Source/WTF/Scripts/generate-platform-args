@@ -10,7 +10,7 @@ import sys
 # Preprocesses wtf/Platform.h with clang, extracts macro definitions, and saves
 # the platform flags to a Swift-style response file containing -D arguments.
 #
-# Two modes:
+# Three modes:
 #
 #   Xcode build phase (default, no args): driven by Xcode env vars
 #   ($SCRIPT_OUTPUT_FILE_0, $ARCHS, $DERIVED_FILES_DIR, ...). Iterates over
@@ -22,6 +22,9 @@ import sys
 #   regular C++ compilation. cmake builds the clang preprocess command itself
 #   (since it owns the configured compiler, sysroot, target triple and
 #   include paths) and passes it after `--`.
+#
+#   cmake feature defines (--print-feature-defines): writes the truthy platform
+#   define names to --output (or stdout) for the generators' --defines-file.
 
 DEFINE_RE = re.compile(r'^#define (\w+) (.+)', re.MULTILINE)
 PLATFORM_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_|WTF_PLATFORM|ASSERT_)')
@@ -132,19 +135,22 @@ def run_xcode_mode():
         open(output_file, 'w').write(swift_args)
 
 
-def run_cmake_mode(args):
-    cmd = args.command
+def run_clang_command(command):
+    """Run the clang preprocess command that follows `--` and return its stdout."""
+    cmd = command
     if cmd and cmd[0] == '--':
         cmd = cmd[1:]
     if not cmd:
         sys.exit('clang command is required after --')
-
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         sys.stderr.write(result.stderr)
         sys.exit(result.returncode)
+    return result.stdout
 
-    swift_defines = platform_defines_from_dM(result.stdout)
+
+def run_cmake_mode(args):
+    swift_defines = platform_defines_from_dM(run_clang_command(args.command))
 
     cmake_seeds = []
     with open(args.cmakeconfig) as f:
@@ -159,35 +165,50 @@ def run_cmake_mode(args):
     for name, value in cmake_seeds:
         out_lines.append('-Xcc')
         out_lines.append(f'-D{name}={value}')
-    new_content = '\n'.join(out_lines) + '\n'
+    write_if_changed(args.output, '\n'.join(out_lines) + '\n')
 
-    # Skip the write (and the resulting mtime bump) if the resp's contents
-    # haven't actually changed. The Swift compile depends on this file via a
-    # custom_command trigger, so an unchanged-content rewrite would otherwise
-    # spuriously rebuild every Swift TU.
+
+def write_if_changed(path, content):
+    """Write only when the content differs, so an unchanged rerun doesn't bump the
+    mtime and rebuild everything that depends on the file."""
     try:
-        with open(args.output) as f:
-            if f.read() == new_content:
+        with open(path) as f:
+            if f.read() == content:
                 return
     except FileNotFoundError:
         pass
-    with open(args.output, 'w') as f:
-        f.write(new_content)
+    with open(path, 'w') as f:
+        f.write(content)
+
+
+def run_print_feature_defines_mode(args):
+    names = platform_defines_from_dM(run_clang_command(args.command))
+    if args.output:
+        write_if_changed(args.output, '\n'.join(names) + '\n')
+    else:
+        for name in names:
+            print(name)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--cmake', action='store_true',
                     help='Run in cmake mode (argparse-driven; otherwise Xcode env-driven).')
+    ap.add_argument('--print-feature-defines', action='store_true',
+                    help='cmake mode: write truthy platform define names to '
+                         '--output (or stdout) for the generators.')
     ap.add_argument('--output',
-                    help='cmake mode: path to write the response file.')
+                    help='cmake mode: output path (--cmake resp or '
+                         '--print-feature-defines names).')
     ap.add_argument('--cmakeconfig',
                     help='cmake mode: path to cmakeconfig.h to seed the clang importer.')
     ap.add_argument('command', nargs=argparse.REMAINDER,
                     help='cmake mode: clang preprocess command (preceded by --).')
     args = ap.parse_args()
 
-    if args.cmake:
+    if args.print_feature_defines:
+        run_print_feature_defines_mode(args)
+    elif args.cmake:
         if not args.output or not args.cmakeconfig:
             ap.error('--cmake requires --output and --cmakeconfig')
         run_cmake_mode(args)

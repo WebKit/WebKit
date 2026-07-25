@@ -11465,10 +11465,19 @@ class BNFParser:
         raise self.unexpected(token, state)
 
 
+def merge_defines(defines, defines_file):
+    names = (defines or '').split()
+    if defines_file:
+        with open(defines_file) as f:
+            names += f.read().split()
+    return ' '.join(names)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process CSS property definitions.')
     parser.add_argument('--properties', default="CSSProperties.json")
     parser.add_argument('--defines')
+    parser.add_argument('--defines-file')
     parser.add_argument('--gperf-executable')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('--dump-unused-grammars', action='store_true')
@@ -11478,7 +11487,7 @@ def main():
     with open(args.properties, "r", encoding="utf-8") as properties_file:
         properties_json = json.load(properties_file)
 
-    parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)
+    parsing_context = ParsingContext(properties_json, defines_string=merge_defines(args.defines, args.defines_file), parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)
     parsing_context.parse_shared_grammar_rules()
     parsing_context.parse_properties_and_descriptors()
 

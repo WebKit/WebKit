@@ -936,6 +936,106 @@ macro(WEBKIT_CREATE_SYMLINK target src dest)
         COMMENT "Create symlink from ${src} to ${dest}")
 endmacro()
 
+# Empty translation unit for the wtf/Platform.h preprocess steps below. Not
+# /dev/null, whose mtime is always "now" and would keep consumers looking dirty.
+function(_webkit_platform_args_empty_input _outvar)
+    set(_empty_input "${CMAKE_BINARY_DIR}/DerivedSources/empty.cpp")
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/DerivedSources")
+    # Rewriting it would bump its mtime on every reconfigure.
+    if (NOT EXISTS "${_empty_input}")
+        file(WRITE "${_empty_input}" "")
+    endif ()
+    set(${_outvar} "${_empty_input}" PARENT_SCOPE)
+endfunction()
+
+# Shared clang preprocess prefix for the two functions below, so the clang-cl
+# workaround lives in one place. Each caller adds its own flags after this.
+function(_webkit_platform_args_clang_prefix _outvar _depfile _mt_target _wtf_include_dir)
+    set(_cmd ${CMAKE_CXX_COMPILER})
+    if (COMPILER_IS_CLANG_CL)
+        # clang-cl's default MSVC driver ignores the GCC-style flags below and
+        # treats their operands as inputs. Flip it to the GCC driver.
+        list(APPEND _cmd --driver-mode=gcc)
+    endif ()
+    # Kept on one line: the style checker alphabetizes multi-line list items.
+    # RELEASE_WITHOUT_OPTIMIZATIONS avoids wtf/Compiler.h's non-Debug #error.
+    list(APPEND _cmd -x c++ -std=c++2b -E -P -dM
+        -MD -MF "${_depfile}" -MT "${_mt_target}"
+        -D __WK_GENERATING_PLATFORM_ARGS__
+        -D RELEASE_WITHOUT_OPTIMIZATIONS
+        -I "${_wtf_include_dir}"
+        -I "${CMAKE_BINARY_DIR}"
+        -include cmakeconfig.h
+        -include wtf/Platform.h
+    )
+    # Custom commands don't inherit add_compile_options; mirror the SDK stubs
+    # OptionsCocoa.cmake feeds C-family compiles, which Platform.h needs too.
+    if (WEBKIT_GENERATED_STUBS_INCLUDE_DIR)
+        list(APPEND _cmd -isystem "${WEBKIT_GENERATED_STUBS_INCLUDE_DIR}")
+    endif ()
+    set(${_outvar} ${_cmd} PARENT_SCOPE)
+endfunction()
+
+# Build-time command deriving the generators' --defines-file (the truthy feature
+# names) by preprocessing wtf/Platform.h, like Xcode's FEATURE_AND_PLATFORM_DEFINES.
+function(webkit_generate_platform_feature_defines_file _out_path_var)
+    set(_defines_file "${CMAKE_BINARY_DIR}/DerivedSources/platform-feature-defines.txt")
+    set(_depfile "${CMAKE_BINARY_DIR}/DerivedSources/platform-feature-defines.d")
+    _webkit_platform_args_empty_input(_empty_input)
+    _webkit_platform_args_clang_prefix(_clang_cmd
+        "${_depfile}" "${_defines_file}" "${CMAKE_SOURCE_DIR}/Source/WTF")
+    # Match what a real C-family compile sees (globals, frameworks, arch, stubs).
+    # Read from a fixed directory so the result doesn't depend on the caller's.
+    get_directory_property(_dir_defs DIRECTORY "${CMAKE_SOURCE_DIR}/Source" COMPILE_DEFINITIONS)
+    foreach (_d IN LISTS _dir_defs)
+        if (NOT _d MATCHES "^(BUILDING_WITH_CMAKE|HAVE_CONFIG_H)($|=)")
+            list(APPEND _clang_cmd "-D${_d}")
+        endif ()
+    endforeach ()
+    if (CMAKE_OSX_SYSROOT)
+        list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
+            "-F" "${CMAKE_BINARY_DIR}"
+            "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
+    endif ()
+    if (CMAKE_OSX_ARCHITECTURES)
+        list(GET CMAKE_OSX_ARCHITECTURES 0 _arch)
+        list(APPEND _clang_cmd "-arch" "${_arch}")
+    endif ()
+    if (CMAKE_OSX_DEPLOYMENT_TARGET)
+        list(APPEND _clang_cmd "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    endif ()
+    if (WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE)
+        list(APPEND _clang_cmd "-ivfsoverlay" "${WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE}")
+    endif ()
+    # Platform.h reads WebKitAdditions headers; prefer the copies staged into the
+    # build directory over the SDK's, and wait for the target that stages them.
+    set(_command_deps "")
+    if (USE_APPLE_INTERNAL_SDK)
+        list(APPEND _clang_cmd "-I" "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}")
+        list(APPEND _command_deps WebKitAdditions_CopyHeaders)
+    endif ()
+    # NDEBUG affects ASSERT_ENABLED -> ENABLE_SECURITY_ASSERTIONS, and
+    # -fsanitize=* drives ASAN_ENABLED -> ENABLE_IPC_TESTING_API.
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type_upper)
+    if (CMAKE_CXX_FLAGS_${_build_type_upper} MATCHES "NDEBUG" OR CMAKE_CXX_FLAGS MATCHES "NDEBUG")
+        list(APPEND _clang_cmd "-DNDEBUG")
+    endif ()
+    list(APPEND _clang_cmd ${ENABLED_COMPILER_SANITIZERS})
+    list(APPEND _clang_cmd "${_empty_input}")
+
+    set(_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
+    add_custom_command(
+        OUTPUT "${_defines_file}"
+        COMMAND ${Python_EXECUTABLE} "${_script}"
+            --print-feature-defines --output "${_defines_file}" -- ${_clang_cmd}
+        DEPFILE "${_depfile}"
+        DEPENDS "${_script}" "${CMAKE_BINARY_DIR}/cmakeconfig.h" ${_command_deps}
+        COMMENT "Deriving generator feature defines from wtf/Platform.h"
+        VERBATIM
+    )
+    set(${_out_path_var} "${_defines_file}" PARENT_SCOPE)
+endfunction()
+
 function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     # All Swift C++-interop targets pass the same -Xcc -D set so the clang
     # importer's module-cache hash matches and bmalloc/wtf/SDK PCMs build once.
@@ -993,34 +1093,9 @@ endfunction()
 # for every cmakeconfig.h entry. DEPFILE re-runs it on Platform header changes.
 function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
     set(_depfile "${_resp_path}.d")
-    # Stable empty file; /dev/null's mtime is "now" and would always look dirty.
-    set(_empty_input "${CMAKE_BINARY_DIR}/DerivedSources/empty.cpp")
-    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/DerivedSources")
-    if (NOT EXISTS "${_empty_input}")
-        file(WRITE "${_empty_input}" "")
-    endif ()
-    set(_clang_cmd ${CMAKE_CXX_COMPILER})
-    if (COMPILER_IS_CLANG_CL)
-        # clang-cl defaults to the MSVC (cl) driver, which silently ignores the
-        # GCC-style preprocess flags below (-std=, -dM, -MF, -include ...) and
-        # then treats their operands as input files, failing with "no such file
-        # or directory: cmakeconfig.h". Flip it to the GCC driver so the flags
-        # are honored. Must precede the flags it governs.
-        list(APPEND _clang_cmd --driver-mode=gcc)
-    endif ()
-    list(APPEND _clang_cmd
-        -x c++ -std=c++2b
-        -E -P -dM
-        -MD -MF "${_depfile}" -MT "${_resp_path}"
-        -D __WK_GENERATING_PLATFORM_ARGS__
-        # Mirrors Xcode's generate-platform-args: avoids wtf/Compiler.h's
-        # #error in non-Debug since the preprocessor never sets __OPTIMIZE__.
-        -D RELEASE_WITHOUT_OPTIMIZATIONS
-        -I "${WTF_FRAMEWORK_HEADERS_DIR}"
-        -I "${CMAKE_BINARY_DIR}"
-        -include cmakeconfig.h
-        -include wtf/Platform.h
-    )
+    _webkit_platform_args_empty_input(_empty_input)
+    _webkit_platform_args_clang_prefix(_clang_cmd
+        "${_depfile}" "${_resp_path}" "${WTF_FRAMEWORK_HEADERS_DIR}")
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}")
     endif ()
@@ -1029,12 +1104,6 @@ function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
     endif ()
     if (WEBKIT_ADDITIONS_INCLUDE_PATH)
         list(APPEND _clang_cmd "-I" "${WEBKIT_ADDITIONS_INCLUDE_PATH}")
-    endif ()
-    # Custom commands don't inherit add_compile_options, so mirror the -isystem
-    # stub OptionsCocoa.cmake feeds C-family compiles: an empty AppleFeatures.h
-    # for SDKs lacking it, which Platform.h's preprocessing needs.
-    if (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs")
-        list(APPEND _clang_cmd "-isystem" "${CMAKE_BINARY_DIR}/generated-stubs")
     endif ()
     # NDEBUG affects ASSERT_ENABLED -> ENABLE_SECURITY_ASSERTIONS -> struct layouts.
     string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type_upper)

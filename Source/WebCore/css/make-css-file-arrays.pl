@@ -28,7 +28,17 @@ use lib "$FindBin::Bin/../bindings/scripts";
 use Getopt::Long;
 
 my $defines;
-GetOptions('defines=s' => \$defines);
+my $definesFile;
+GetOptions('defines=s' => \$defines,
+           'defines-file=s' => \$definesFile);
+
+if (defined $definesFile) {
+    open(my $df, '<', $definesFile) or die "Cannot open --defines-file $definesFile: $!";
+    local $/;
+    my $extra = <$df>;
+    close($df);
+    $defines = join(' ', grep { defined && length } $defines, $extra);
+}
 
 my $header = $ARGV[0];
 shift;

@@ -444,10 +444,19 @@ class GenerationContext:
             )
 
 
+def merge_defines(defines, defines_file):
+    names = (defines or '').split()
+    if defines_file:
+        with open(defines_file) as f:
+            names += f.read().split()
+    return ' '.join(names)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process CSS property definitions.')
     parser.add_argument('--values', action='append')
     parser.add_argument('--defines')
+    parser.add_argument('--defines-file')
     parser.add_argument('--gperf-executable')
     parser.add_argument('-v', '--verbose', action='store_true')
     args = parser.parse_args()
@@ -455,7 +464,7 @@ def main():
     if not args.values:
         args.values = ["CSSValueKeywords.in"]
 
-    parsing_context = ParsingContext(defines_string=args.defines, parsing_for_codegen=True, verbose=args.verbose)
+    parsing_context = ParsingContext(defines_string=merge_defines(args.defines, args.defines_file), parsing_for_codegen=True, verbose=args.verbose)
 
     parsed_values = []
     for values_file_path in args.values:

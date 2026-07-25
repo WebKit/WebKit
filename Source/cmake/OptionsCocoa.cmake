@@ -95,6 +95,8 @@ if (NOT USE_APPLE_INTERNAL_SDK)
     file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
     add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
+    # For the Platform.h preprocess steps, which don't inherit compile options.
+    set(WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE "${_availability_overlay_yaml}")
     unset(_availability_overlay_dir)
     unset(_availability_overlay_yaml)
 endif ()
@@ -105,6 +107,7 @@ if (NOT USE_APPLE_INTERNAL_SDK AND EXISTS "/usr/local/include/WebKitAdditions" A
     file(CONFIGURE OUTPUT "${_apple_features_stub}/AppleFeatures.h" CONTENT
         "/* Auto-generated stub -- AppleFeatures not available in this SDK. */\n")
     add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${CMAKE_BINARY_DIR}/generated-stubs>")
+    set(WEBKIT_GENERATED_STUBS_INCLUDE_DIR "${CMAKE_BINARY_DIR}/generated-stubs")
     message(STATUS "AppleFeatures stub generated (WebKitAdditions present, AppleFeatures SDK absent)")
     unset(_apple_features_stub)
 endif ()

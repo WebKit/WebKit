@@ -130,6 +130,9 @@ function(GENERATE_BINDINGS target)
         --idlAttributesFile ${idl_attributes_file}
         --ignoreStandaloneConstructorAttributes
     )
+    if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+        list(APPEND args --defines-file ${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE})
+    endif ()
     if (arg_SUPPLEMENTAL_DEPFILE)
         list(APPEND args --supplementalDependencyFile ${arg_SUPPLEMENTAL_DEPFILE})
     endif ()
@@ -153,6 +156,9 @@ function(GENERATE_BINDINGS target)
         # Settings can be removed also which requires regeneration.
         ${WTF_WEB_PREFERENCES}
     )
+    if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+        list(APPEND common_generator_dependencies ${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE})
+    endif ()
     if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
         list(APPEND common_generator_dependencies ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
     endif ()

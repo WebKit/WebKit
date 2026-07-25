@@ -938,16 +938,25 @@ class UserAgentPartsGenerator():
 
 # - MARK: Script entry point.
 
+def merge_defines(defines, defines_file):
+    names = (defines or '').split()
+    if defines_file:
+        with open(defines_file) as f:
+            names += f.read().split()
+    return ' '.join(names)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process CSS pseudo-class & pseudo-element definitions.')
     parser.add_argument('--selectors', default='CSSPseudoSelectors.json')
     parser.add_argument('--gperf-executable')
     parser.add_argument('--defines')
+    parser.add_argument('--defines-file')
     args = parser.parse_args()
 
     input_file = open(args.selectors, 'r', encoding='utf-8')
     input_data = json.load(input_file)
-    webcore_defines = [i.strip() for i in args.defines.split(' ')]
+    webcore_defines = merge_defines(args.defines, args.defines_file).split()
 
     InputValidator(input_data)
     GPerfGenerator(input_data, args.gperf_executable, webcore_defines)

@@ -43,6 +43,26 @@ macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _public _value)
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} ${_value})
 endmacro()
 
+# Retires options whose value wtf/Platform.h owns on this port. That value depends
+# on the SDK, so it isn't knowable at configure time: dropping them from the option
+# list keeps cmakeconfig.h from overriding Platform.h, keeps them out of
+# FEATURE_DEFINES, and makes CMake code that reads one fail loudly. The generators
+# get them from the build-time --defines-file instead. Bug 312033.
+macro(WEBKIT_OPTION_OWNED_BY_PLATFORM_H)
+    _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
+
+    foreach (_platform_h_owned_name ${ARGN})
+        _ENSURE_IS_WEBKIT_OPTION(${_platform_h_owned_name})
+
+        # Don't let a value cached before the option was retired survive.
+        unset(${_platform_h_owned_name} CACHE)
+        unset(${_platform_h_owned_name})
+
+        list(REMOVE_ITEM _WEBKIT_AVAILABLE_OPTIONS ${_platform_h_owned_name})
+        list(REMOVE_ITEM _WEBKIT_CONFIG_FILE_VARIABLES ${_platform_h_owned_name})
+    endforeach ()
+endmacro()
+
 macro(WEBKIT_OPTION_CONFLICT _name _conflict)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
     _ENSURE_IS_WEBKIT_OPTION(${_name})
