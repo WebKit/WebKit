@@ -1,0 +1,7 @@
+
+PASS window.open() preserves the initial popup relationship
+PASS window.open('') preserves the initial popup relationship
+PASS window.open('about:blank') preserves the initial popup relationship
+PASS window.open('about:blank#foo') preserves the initial popup relationship
+PASS window.open('about:blank?foo') preserves the initial popup relationship
+

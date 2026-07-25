@@ -2938,7 +2938,10 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (prepareDialogFunction && localNewFrame)
         prepareDialogFunction(*protect(localNewFrame->document()->window()));
 
-    if (created == CreatedNewPage::Yes) {
+    if (created == CreatedNewPage::Yes && localNewFrame && (completedURL.isEmpty() || completedURL.isAboutBlank())) {
+        if (!completedURL.isEmpty() && completedURL != aboutBlankURL())
+            localNewFrame->loader().updateURLAndHistory(completedURL, nullptr);
+    } else if (created == CreatedNewPage::Yes) {
         ResourceRequest resourceRequest { WTF::move(completedURL), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         FrameLoader::addSameSiteInfoToRequestIfNeeded(resourceRequest, openerDocument.get());
         FrameLoadRequest frameLoadRequest { protect(activeWindow.document()).releaseNonNull(), protect(protect(activeWindow.document())->securityOrigin()), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
