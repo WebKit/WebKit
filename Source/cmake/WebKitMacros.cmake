@@ -29,7 +29,10 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
                   string(APPEND _filtered "${_line}\n")
               endif ()
           endforeach ()
-          file(WRITE "${_derivedSourcesPath}/${_sourcesListFile}" "${_filtered}")
+          # file(CONFIGURE) rather than file(WRITE) so an unchanged list keeps its
+          # mtime and doesn't re-run the generators that consume it, matching the
+          # configure_file() below.
+          file(CONFIGURE OUTPUT "${_derivedSourcesPath}/${_sourcesListFile}" CONTENT "${_filtered}" @ONLY)
       else ()
           configure_file("${_sourcesListInput}" "${_derivedSourcesPath}/${_sourcesListFile}" COPYONLY)
       endif ()
@@ -758,9 +761,14 @@ endmacro()
 
 # Delete staged files not in FILES, so a renamed or removed header drops its old
 # copy instead of lingering and colliding as a duplicate in a Clang umbrella
-# module. Only safe when the calling step owns the destination exclusively.
-# `flattened` matches by basename when TRUE, by relative path otherwise.
-function(WEBKIT_PRUNE_STALE_DESTINATION destination flattened)
+# module. `flattened` matches by basename when TRUE, by relative path otherwise.
+#
+# Only files ${target_name} staged itself are candidates, tracked through a
+# manifest of what it staged last time. Header destinations are co-owned (WebKit's
+# own headers and WebKitLegacy's forwarding headers land in the same directory),
+# and deleting whatever one target doesn't expect wipes the other owners' files on
+# every configure, which the next build then has to regenerate.
+function(WEBKIT_PRUNE_STALE_DESTINATION target_name destination flattened)
     set(_expected)
     foreach (file IN LISTS ARGN)
         if (flattened)
@@ -770,12 +778,26 @@ function(WEBKIT_PRUNE_STALE_DESTINATION destination flattened)
         endif ()
         list(APPEND _expected ${_rel})
     endforeach ()
-    file(GLOB_RECURSE _existing RELATIVE ${destination} ${destination}/*)
-    foreach (_entry IN LISTS _existing)
-        if (NOT _entry IN_LIST _expected)
-            file(REMOVE ${destination}/${_entry})
-        endif ()
+
+    set(_manifest "${CMAKE_BINARY_DIR}/CMakeFiles/${target_name}-staged-files.txt")
+    if (EXISTS "${_manifest}")
+        file(STRINGS "${_manifest}" _stale)
+    else ()
+        # Build directory predates the manifest, so sweep the destination once to
+        # clean stale files left by older configures.
+        file(GLOB_RECURSE _stale RELATIVE ${destination} ${destination}/*)
+    endif ()
+    # One list(REMOVE_ITEM) rather than a foreach with IN_LIST: the set difference
+    # runs inside CMake instead of as an O(files^2) interpreted loop.
+    if (_stale AND _expected)
+        list(REMOVE_ITEM _stale ${_expected})
+    endif ()
+    foreach (_entry IN LISTS _stale)
+        file(REMOVE ${destination}/${_entry})
     endforeach ()
+
+    list(JOIN _expected "\n" _manifest_content)
+    file(CONFIGURE OUTPUT "${_manifest}" CONTENT "${_manifest_content}\n" @ONLY)
 endfunction()
 
 function(_WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE _target)
@@ -806,7 +828,7 @@ function(WEBKIT_COPY_FILES target_name)
     set(dst_files)
 
     if (opt_PRUNE_STALE)
-        WEBKIT_PRUNE_STALE_DESTINATION(${opt_DESTINATION} "${opt_FLATTENED}" ${files})
+        WEBKIT_PRUNE_STALE_DESTINATION(${target_name} ${opt_DESTINATION} "${opt_FLATTENED}" ${files})
     endif ()
 
     foreach (file IN LISTS files)
@@ -853,7 +875,7 @@ function(WEBKIT_SYMLINK_FILES target_name)
     file(MAKE_DIRECTORY ${opt_DESTINATION})
 
     if (opt_PRUNE_STALE)
-        WEBKIT_PRUNE_STALE_DESTINATION(${opt_DESTINATION} "${opt_FLATTENED}" ${files})
+        WEBKIT_PRUNE_STALE_DESTINATION(${target_name} ${opt_DESTINATION} "${opt_FLATTENED}" ${files})
     endif ()
 
     foreach (file IN LISTS files)

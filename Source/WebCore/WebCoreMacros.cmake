@@ -106,19 +106,19 @@ function(GENERATE_BINDINGS target)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files})
         set(content "${content}${f}\n")
     endforeach ()
-    file(WRITE ${idl_files_list} ${content})
+    file(CONFIGURE OUTPUT "${idl_files_list}" CONTENT "${content}" @ONLY)
 
     set(pp_content)
     foreach (f ${_abs_pp_input_files})
         set(pp_content "${pp_content}${f}\n")
     endforeach ()
-    file(WRITE ${pp_idl_files_list} ${pp_content})
+    file(CONFIGURE OUTPUT "${pp_idl_files_list}" CONTENT "${pp_content}" @ONLY)
 
     set(include_content)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files} ${_abs_included_files})
         set(include_content "${include_content}${f}\n")
     endforeach ()
-    file(WRITE ${included_idl_files_list} ${include_content})
+    file(CONFIGURE OUTPUT "${included_idl_files_list}" CONTENT "${include_content}" @ONLY)
 
     set(args
         --defines ${arg_FEATURES}

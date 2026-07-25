@@ -391,14 +391,11 @@ if (ENABLE_WEB_AUDIO)
     )
 endif ()
 
-file(WRITE ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    "<?xml version=1.0 encoding=UTF-8?>\n"
-    "<gresources>\n"
-    "    <gresource prefix=\"/org/webkitwpe/resources\">\n"
-    ${WebKitResources}
-    "    </gresource>\n"
-    "</gresources>\n"
-)
+list(JOIN WebKitResources "" _webkit_resources_entries)
+file(CONFIGURE OUTPUT "${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml" CONTENT
+    "<?xml version=1.0 encoding=UTF-8?>\n<gresources>\n    <gresource prefix=\"/org/webkitwpe/resources\">\n${_webkit_resources_entries}    </gresource>\n</gresources>\n"
+    @ONLY)
+unset(_webkit_resources_entries)
 
 GLIB_COMPILE_RESOURCES(
     OUTPUT        ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c

@@ -237,7 +237,7 @@ find_package(Threads REQUIRED)
 if (NOT USE_APPLE_INTERNAL_SDK)
     set(_availability_overlay_dir "${CMAKE_SOURCE_DIR}/WebKitLibraries/AvailabilityOverlay")
     set(_availability_overlay_yaml "${CMAKE_BINARY_DIR}/availability-overlay.yaml")
-    file(WRITE "${_availability_overlay_yaml}.tmp"
+    file(CONFIGURE OUTPUT "${_availability_overlay_yaml}" CONTENT
     "{
       \"version\": 0,
       \"case-sensitive\": false,
@@ -254,8 +254,7 @@ if (NOT USE_APPLE_INTERNAL_SDK)
         }
       ]
     }
-    ")
-    file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
+    " @ONLY)
     add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
     # For the Platform.h preprocess steps, which don't inherit compile options.

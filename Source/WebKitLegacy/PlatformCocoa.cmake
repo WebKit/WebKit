@@ -1177,11 +1177,11 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     string(APPEND _wkl_modulemap_body "    header \"${_name}\"\n")
 endforeach ()
 string(APPEND _wkl_modulemap_body "    header \"WorkAround173516139.h\"\n")
-file(WRITE ${_wkl_fw}/Modules/module.private.modulemap
+file(CONFIGURE OUTPUT "${_wkl_fw}/Modules/module.private.modulemap" CONTENT
 "framework module WebKitLegacy [system] {
 ${_wkl_modulemap_body}    export *
 }
-")
+" @ONLY)
 unset(_wkl_modulemap_body)
 configure_file(${WEBKITLEGACY_DIR}/Modules/WorkAround173516139.h
                ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy/WorkAround173516139.h
@@ -1221,12 +1221,12 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
 endforeach ()
 list(JOIN _wkl_vfs_modules_entries "," _wkl_vfs_modules_str)
 list(JOIN _wkl_vfs_headers_entries "," _wkl_vfs_headers_str)
-file(WRITE "${_wkl_vfs}"
+file(CONFIGURE OUTPUT "${_wkl_vfs}" CONTENT
 "{\"case-sensitive\":\"false\",\"version\":0,\"roots\":[\
 {\"type\":\"directory\",\"name\":\"${_wkl_fw}/Modules\",\"contents\":[${_wkl_vfs_modules_str}]},\
 {\"type\":\"directory\",\"name\":\"${_wkl_fw}/PrivateHeaders\",\"contents\":[${_wkl_vfs_headers_str}]},\
 {\"type\":\"directory\",\"name\":\"${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy\",\"contents\":[${_wkl_vfs_headers_str}]}\
-]}\n")
+]}\n" @ONLY)
 target_compile_options(WebKitLegacy PRIVATE
     "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_wkl_vfs}>")
 unset(_wkl_vfs)

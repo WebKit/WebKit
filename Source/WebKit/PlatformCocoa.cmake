@@ -513,11 +513,11 @@ set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKit")
 configure_file(${WEBKIT_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist)
 execute_process(COMMAND plutil -convert binary1 ${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist)
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h
-    "#if defined(__has_include) && __has_include(<WebKitLegacy/WebKit.h>)\n"
-    "#import <WebKitLegacy/WebKit.h>\n"
-    "#endif\n"
-)
+file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h" CONTENT
+"#if defined(__has_include) && __has_include(<WebKitLegacy/WebKit.h>)
+#import <WebKitLegacy/WebKit.h>
+#endif
+" @ONLY)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h PROPERTIES
     MACOSX_PACKAGE_LOCATION Headers
     GENERATED TRUE
@@ -652,15 +652,17 @@ endif ()
 # file and inject them before the final `}` closing `framework module
 # WebKit_Private` at build time.
 set(_private_modulemap_addendum "${CMAKE_BINARY_DIR}/WebKit/Modules/module.private.addendum.modulemap")
-file(WRITE "${_private_modulemap_addendum}"
+file(CONFIGURE OUTPUT "${_private_modulemap_addendum}" CONTENT
 "  explicit module WKWebViewPrivate {
     header \"WKWebViewPrivate.h\"
     export *
   }
-")
+" @ONLY)
 
 set(_private_modulemap_inject_script "${CMAKE_BINARY_DIR}/WebKit/Modules/inject-addendum.cmake")
-file(WRITE "${_private_modulemap_inject_script}"
+# @ONLY: the ${INPUT}/${ADDENDUM}/${OUTPUT} references below belong to the
+# generated script and must not be substituted while writing it.
+file(CONFIGURE OUTPUT "${_private_modulemap_inject_script}" CONTENT
 "file(READ \"\${INPUT}\" _content)
 file(READ \"\${ADDENDUM}\" _addendum)
 # Strip trailing whitespace, then replace the final `}` (closing
@@ -668,7 +670,7 @@ file(READ \"\${ADDENDUM}\" _addendum)
 string(REGEX REPLACE \"[ \\t\\r\\n]+$\" \"\" _content \"\${_content}\")
 string(REGEX REPLACE \"}$\" \"\${_addendum}}\\n\" _content \"\${_content}\")
 file(WRITE \"\${OUTPUT}\" \"\${_content}\")
-")
+" @ONLY)
 
 add_custom_command(
     OUTPUT "${_private_modulemap_output}"
@@ -804,7 +806,7 @@ unset(_migrate_out_count)
 unset(_migrate_last)
 unset(_migrated_excluded_for_ios)
 
-file(WRITE "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml"
+file(CONFIGURE OUTPUT "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml" CONTENT
 "{
   \"version\": 0,
   \"case-sensitive\": false,
@@ -821,7 +823,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml"
     }
   ]
 }
-")
+" @ONLY)
 # Removed the SDK WebKit.framework -> cmake WebKit redirect: when the WebKit
 # Swift compile loads its own private modulemap via -fmodule-map-file= (and
 # again via -F /Debug auto-discovery), having a third path through the SDK's
@@ -850,7 +852,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml"
 # avoids compiling the offending headers altogether. Bug 312083.
 set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/Internal")
 file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
-file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
+file(CONFIGURE OUTPUT "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap" CONTENT
 "module WebKit_Internal [system] {
     module WKMaterialHostingSupport {
         requires objc
@@ -942,7 +944,7 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
         export *
     }
 }
-")
+" @ONLY)
 set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WebKit_CMAKE_MODULEMAP_DIR}")
 
 
@@ -1583,8 +1585,8 @@ add_custom_command(
 add_custom_target(WebKit_StageSwiftModule DEPENDS ${_webkit_staged_swiftmodule_artifacts})
 
 make_directory("${CMAKE_BINARY_DIR}/WebKit/Modules/WebKit.swiftcrossimport")
-file(WRITE "${CMAKE_BINARY_DIR}/WebKit/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
-"---\nversion: 1\nmodules:\n- name: _WebKit_SwiftUI\n")
+file(CONFIGURE OUTPUT "${CMAKE_BINARY_DIR}/WebKit/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay" CONTENT
+"---\nversion: 1\nmodules:\n- name: _WebKit_SwiftUI\n" @ONLY)
 
 target_link_options(WebKit PRIVATE
     "SHELL:-weak_framework BrowserEngineKit"
@@ -1719,16 +1721,9 @@ with open(sys.argv[2], 'wb') as f:
     endfunction()
 
     set(_sim_get_task_allow "${CMAKE_CURRENT_BINARY_DIR}/XPCService-get-task-allow.entitlements")
-    file(WRITE ${_sim_get_task_allow}
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
-        "<plist version=\"1.0\">\n"
-        "<dict>\n"
-        "\t<key>com.apple.security.get-task-allow</key>\n"
-        "\t<true/>\n"
-        "</dict>\n"
-        "</plist>\n"
-    )
+    file(CONFIGURE OUTPUT "${_sim_get_task_allow}" CONTENT
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>com.apple.security.get-task-allow</key>\n\t<true/>\n</dict>\n</plist>\n"
+        @ONLY)
 
     string(REPLACE "." ";" _sdk_ver_parts "${CMAKE_OSX_DEPLOYMENT_TARGET}")
     list(GET _sdk_ver_parts 0 _sdk_major)

@@ -849,15 +849,13 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     # module.modulemap has "umbrella spi" for the wtf.SPI submodule; Clang requires
     # the umbrella directory to be non-empty or it fails with "cannot create includes file".
     # Provide a stub header so the directory has at least one entry.
-    file(MAKE_DIRECTORY "${WTF_HEADERS_DIR}/spi")
-    file(WRITE "${WTF_HEADERS_DIR}/spi/wtf_spi_stub.h" "")
+    file(CONFIGURE OUTPUT "${WTF_HEADERS_DIR}/spi/wtf_spi_stub.h" CONTENT "" @ONLY)
 
     # module.modulemap declares an explicit `WebCoreThread` submodule referencing
     # ios/WebCoreThread.h, which is Cocoa-only. Clang validates header existence
     # when parsing the modulemap even for unused explicit submodules, so provide
     # an empty stub.
-    file(MAKE_DIRECTORY "${WTF_HEADERS_DIR}/ios")
-    file(WRITE "${WTF_HEADERS_DIR}/ios/WebCoreThread.h" "")
+    file(CONFIGURE OUTPUT "${WTF_HEADERS_DIR}/ios/WebCoreThread.h" CONTENT "" @ONLY)
 endif ()
 
 WEBKIT_FRAMEWORK(WTF)

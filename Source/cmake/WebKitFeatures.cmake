@@ -608,13 +608,11 @@ macro(CREATE_CONFIGURATION_HEADER)
     endforeach ()
     set(_file_contents "${_file_contents}\n#endif /* CMAKECONFIG_H */\n")
 
-    file(WRITE "${CMAKE_BINARY_DIR}/cmakeconfig.h.tmp" "${_file_contents}")
-    execute_process(COMMAND ${CMAKE_COMMAND}
-        -E copy_if_different
-        "${CMAKE_BINARY_DIR}/cmakeconfig.h.tmp"
-        "${CMAKE_BINARY_DIR}/cmakeconfig.h"
-    )
-    file(REMOVE "${CMAKE_BINARY_DIR}/cmakeconfig.h.tmp")
+    # file(CONFIGURE) leaves the header alone when nothing changed, so the ~1300
+    # compiles that include it stay up to date across a no-op reconfigure. It
+    # replaces a write-tmp / copy_if_different / remove-tmp sequence, dropping a
+    # cmake subprocess from every configure.
+    file(CONFIGURE OUTPUT "${CMAKE_BINARY_DIR}/cmakeconfig.h" CONTENT "${_file_contents}" @ONLY)
 endmacro()
 
 macro(GET_WEBKIT_CONFIG_VARIABLES _set_vars)
