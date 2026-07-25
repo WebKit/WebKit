@@ -8911,12 +8911,14 @@ void SpeculativeJIT::compileEnqueueAsyncGeneratorDriver(Node* node)
 {
     SpeculateCellOperand iterator(this, node->child1());
     SpeculateCellOperand driver(this, node->child2());
+    JSValueOperand resumeValue(this, node->child3());
 
     GPRReg iteratorGPR = iterator.gpr();
     GPRReg driverGPR = driver.gpr();
+    JSValueRegs resumeValueRegs = resumeValue.jsValueRegs();
 
     flushRegisters();
-    callOperation(operationEnqueueAsyncGeneratorDriver, LinkableConstant::globalObject(*this, node), iteratorGPR, driverGPR, TrustedImmPtr(&vm().syncResumeCallCache()));
+    callOperation(operationEnqueueAsyncGeneratorDriver, LinkableConstant::globalObject(*this, node), iteratorGPR, driverGPR, resumeValueRegs, TrustedImmPtr(&vm().syncResumeCallCache()));
 
     noResult(node);
 }

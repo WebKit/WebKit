@@ -45,9 +45,9 @@ void asyncModuleResolveEvaluation(JSGlobalObject*, VM&, ThrowScope&, JSModuleRec
 void asyncGeneratorResume(JSGlobalObject*, JSAsyncGenerator*, MicrotaskCallCache*);
 void asyncGeneratorAwaitReturn(JSGlobalObject*, JSAsyncGenerator*);
 
-void enqueueAsyncGeneratorDriver(JSGlobalObject*, JSAsyncGenerator* iterator, JSObject* driver, MicrotaskCallCache*);
+void enqueueAsyncGeneratorDriver(JSGlobalObject*, JSAsyncGenerator* iterator, JSObject* driver, JSValue resumeValue, MicrotaskCallCache*);
 
-JSValue asyncIteratorNextWithDriver(JSGlobalObject*, JSObject* iterator, JSObject* driver, MicrotaskCallCache*);
+JSValue asyncIteratorNextWithDriver(JSGlobalObject*, JSObject* iterator, JSObject* driver, JSValue resumeValue, MicrotaskCallCache*);
 
 JSC_DECLARE_HOST_FUNCTION(asyncFunctionDrive);
 

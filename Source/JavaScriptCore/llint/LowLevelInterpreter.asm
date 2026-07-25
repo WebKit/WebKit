@@ -2415,11 +2415,21 @@ _js_trampoline_llint_function_for_construct_arity_check_tag_wide32:
     crash()
 
 # Value-representation-specific code.
+
+# Shared by LowLevelInterpreter64.asm and LowLevelInterpreter32_64.asm's op_async_iterator_next.
+# yield* forwards a resume value to next() (m_hasValue -> this + value); for-await leaves
+# m_hasValue false, so next() is called with just `this`.
+macro getArgumentIncludingThisCountForAsyncIteratorNext(size, dst)
+    getu(size, OpAsyncIteratorNext, m_hasValue, dst)
+    addi 1, dst
+end
+
 if JSVALUE64
     include LowLevelInterpreter64
 else
     include LowLevelInterpreter32_64
 end
+
 
 
 # Value-representation-agnostic code.

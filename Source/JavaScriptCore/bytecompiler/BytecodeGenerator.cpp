@@ -3679,10 +3679,23 @@ void BytecodeGenerator::emitAsyncIteratorOpen(RegisterID* iterator, RegisterID* 
     OpAsyncIteratorOpen::emit(this, iterator, next, symbolIterator, iterable.thisRegister(), iterable.stackOffset(), nextValueProfileIndex(), nextValueProfileIndex(), nextValueProfileIndex());
 }
 
-RegisterID* BytecodeGenerator::emitAsyncIteratorNext(RegisterID* dst, RegisterID* next, RegisterID* iterator, const ThrowableExpressionData* node)
+void BytecodeGenerator::emitGetGenericAsyncIterator(RegisterID* iterator, RegisterID* next, RegisterID* subject, const ThrowableExpressionData* node)
 {
-    CallArguments nextArguments(*this, nullptr);
+    emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
+    RefPtr<RegisterID> symbolAsyncIterator = emitGetById(newTemporary(), subject, propertyNames().asyncIteratorSymbol);
+    CallArguments args(*this, nullptr, 0);
+    move(args.thisRegister(), subject);
+    emitAsyncIteratorOpen(iterator, next, symbolAsyncIterator.get(), args, node);
+}
+
+RegisterID* BytecodeGenerator::emitAsyncIteratorNext(RegisterID* dst, RegisterID* next, RegisterID* iterator, RegisterID* value, const ThrowableExpressionData* node)
+{
+    // dst is allowed to alias value (emitDelegateYield's async path reuses one temporary for both):
+    // value is read into the call's argument register below before dst is written by OpAsyncIteratorNext::emit.
+    CallArguments nextArguments(*this, nullptr, value ? 1 : 0);
     move(nextArguments.thisRegister(), iterator);
+    if (value)
+        move(nextArguments.argumentRegister(0), value);
 
     // Reserve space for call frame. Mirrors emitIteratorNext / emitAsyncIteratorOpen; the generic
     // branch of op_async_iterator_next makes a real next.call(iterator), so numCalleeLocals must
@@ -3692,7 +3705,7 @@ RegisterID* BytecodeGenerator::emitAsyncIteratorNext(RegisterID* dst, RegisterID
         callFrame.append(newTemporary());
 
     emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
-    OpAsyncIteratorNext::emit(this, kill(dst), next, nextArguments.thisRegister(), generatorRegister(), nextArguments.stackOffset(), nextValueProfileIndex());
+    OpAsyncIteratorNext::emit(this, kill(dst), next, nextArguments.thisRegister(), generatorRegister(), !!value, nextArguments.stackOffset(), nextValueProfileIndex());
     return dst;
 }
 
@@ -4952,13 +4965,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         RefPtr<RegisterID> iterator = newTemporary();
         RefPtr<RegisterID> nextMethod = newTemporary();
 
-        {
-            emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
-            RefPtr<RegisterID> symbolAsyncIterator = emitGetById(newTemporary(), subject.get(), propertyNames().asyncIteratorSymbol);
-            CallArguments args(*this, nullptr, 0);
-            move(args.thisRegister(), subject.get());
-            emitAsyncIteratorOpen(iterator.get(), nextMethod.get(), symbolAsyncIterator.get(), args, node);
-        }
+        emitGetGenericAsyncIterator(iterator.get(), nextMethod.get(), subject.get(), node);
 
         Ref<Label> loopDone = newLabel();
 
@@ -4990,7 +4997,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitDebugHook(forLoopNode->lexpr());
 
             {
-                emitAsyncIteratorNext(value.get(), nextMethod.get(), iterator.get(), node);
+                emitAsyncIteratorNext(value.get(), nextMethod.get(), iterator.get(), nullptr, node);
                 emitAwait(value.get(), value.get(), node->divot());
 
                 Ref<Label> typeIsObject = newLabel();
@@ -5509,47 +5516,23 @@ void BytecodeGenerator::emitIteratorGenericClose(RegisterID* iterator, const Thr
 }
 
 
-RegisterID* BytecodeGenerator::emitGetAsyncIterator(RegisterID* argument, ThrowableExpressionData* node)
-{
-    emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
-    RefPtr<RegisterID> iterator = emitGetById(newTemporary(), argument, propertyNames().asyncIteratorSymbol);
-    Ref<Label> asyncIteratorNotFound = newLabel();
-    Ref<Label> asyncIteratorFound = newLabel();
-    Ref<Label> iteratorReceived = newLabel();
-
-    emitJumpIfTrue(emitIsUndefinedOrNull(newTemporary(), iterator.get()), asyncIteratorNotFound.get());
-
-    emitJump(asyncIteratorFound.get());
-    emitLabel(asyncIteratorNotFound.get());
-
-    RefPtr<RegisterID> commonIterator = emitGetGenericIterator(argument, node);
-    move(iterator.get(), commonIterator.get());
-
-    RefPtr<RegisterID> createAsyncFromSyncIterator = moveLinkTimeConstant(nullptr, LinkTimeConstant::asyncFromSyncIteratorCreate);
-
-    CallArguments args(*this, nullptr, 1);
-    emitLoad(args.thisRegister(), jsUndefined());
-
-    move(args.argumentRegister(0), iterator.get());
-
-    JSTextPosition divot(m_scopeNode->firstLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
-    emitCall(iterator.get(), createAsyncFromSyncIterator.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
-
-    emitJump(iteratorReceived.get());
-
-    emitLabel(asyncIteratorFound.get());
-    emitCallIterator(iterator.get(), argument, node);
-    emitLabel(iteratorReceived.get());
-
-    return iterator.unsafeGet();
-}
-
 RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, ThrowableExpressionData* node)
 {
+    bool isAsync = parseMode() == SourceParseMode::AsyncGeneratorBodyMode;
+    EmitAwait emitAwaitInClose = isAsync ? EmitAwait::Yes : EmitAwait::No;
+
     RefPtr<RegisterID> value = newTemporary();
     {
-        RefPtr<RegisterID> iterator = parseMode() == SourceParseMode::AsyncGeneratorBodyMode ? emitGetAsyncIterator(argument, node) : emitGetGenericIterator(argument, node);
-        RefPtr<RegisterID> nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
+        RefPtr<RegisterID> iterator;
+        RefPtr<RegisterID> nextMethod;
+        if (isAsync) {
+            iterator = newTemporary();
+            nextMethod = newTemporary();
+            emitGetGenericAsyncIterator(iterator.get(), nextMethod.get(), argument, node);
+        } else {
+            iterator = emitGetGenericIterator(argument, node);
+            nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
+        }
 
         Ref<Label> loopDone = newLabel();
         {
@@ -5564,9 +5547,9 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
             Ref<Label> branchOnResult = newLabel();
             {
-                // `yield*` delegates the inner iterator's value without an enclosing Await (the iterator
-                // result was already Awaited above). YieldNoAwait tells the async driver not to await it.
-                // (Sync generators ignore the suspend reason.)
+                // `yield*` delegates the inner iterator's value without an enclosing Await (for the async
+                // case, the iterator result is already Awaited below). YieldNoAwait tells the async driver
+                // not to await it again.
                 emitYieldPoint(value.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::YieldNoAwait);
                 move(value.get(), generatorValueRegister());
 
@@ -5576,14 +5559,14 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                 Ref<Label> returnLabel = newLabel();
                 emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::ReturnMode)), returnLabel.get());
 
-                // Throw.
+                // Throw. throw()/return() have no dedicated opcode, so call them generically (the fast
+                // async driver path only applies to the normal-mode next() below).
                 {
                     Ref<Label> throwMethodFound = newLabel();
                     RefPtr<RegisterID> throwMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().throwKeyword);
                     emitJumpIfFalse(emitIsUndefinedOrNull(newTemporary(), throwMethod.get()), throwMethodFound.get());
 
-                    EmitAwait emitAwaitInIteratorClose = parseMode() == SourceParseMode::AsyncGeneratorBodyMode ? EmitAwait::Yes : EmitAwait::No;
-                    emitIteratorGenericClose(iterator.get(), node, emitAwaitInIteratorClose);
+                    emitIteratorGenericClose(iterator.get(), node, emitAwaitInClose);
 
                     emitThrowTypeError("The iterator, to which yield* delegated iteration, does not have a 'throw' method."_s);
 
@@ -5603,7 +5586,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
                     emitJumpIfFalse(emitIsUndefinedOrNull(newTemporary(), returnMethod.get()), returnMethodFound.get());
 
-                    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+                    if (isAsync)
                         emitAwait(value.get(), value.get(), node->divot());
 
                     Ref<Label> returnSequence = newLabel();
@@ -5615,7 +5598,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     move(returnArguments.argumentRegister(0), value.get());
                     emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
 
-                    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+                    if (isAsync)
                         emitAwait(value.get(), value.get(), node->divot());
 
                     Ref<Label> returnIteratorResultIsObject = newLabel();
@@ -5644,11 +5627,14 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
             }
 
             emitLabel(nextElement.get());
-            emitIteratorGenericNextWithValue(value.get(), nextMethod.get(), iterator.get(), value.get(), node);
+            if (isAsync)
+                emitAsyncIteratorNext(value.get(), nextMethod.get(), iterator.get(), value.get(), node);
+            else
+                emitIteratorGenericNextWithValue(value.get(), nextMethod.get(), iterator.get(), value.get(), node);
 
             emitLabel(branchOnResult.get());
 
-            if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+            if (isAsync)
                 emitAwait(value.get(), value.get(), node->divot());
 
             Ref<Label> iteratorValueIsObject = newLabel();
@@ -5667,7 +5653,6 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
     emitGetById(value.get(), value.get(), propertyNames().value);
     return value.unsafeGet();
 }
-
 
 void BytecodeGenerator::emitGeneratorStateChange(int32_t state)
 {

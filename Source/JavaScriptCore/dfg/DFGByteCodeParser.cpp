@@ -13239,7 +13239,8 @@ void ByteCodeParser::handleAsyncIteratorNext(const JSInstruction* currentInstruc
 
         Node* iterator = get(bytecode.m_iterator);
         Node* driver = get(bytecode.m_driver);
-        addToGraph(EnqueueAsyncGeneratorDriver, iterator, driver);
+        Node* resumeValue = bytecode.m_hasValue ? get(resumeValueOperandFor(bytecode)) : jsConstant(JSValue());
+        addToGraph(EnqueueAsyncGeneratorDriver, iterator, driver, resumeValue);
         set(bytecode.m_dst, jsConstant(m_vm->fastAsyncGeneratorSentinel()));
 
         m_currentIndex = osrExitIndex;
@@ -13277,11 +13278,13 @@ void ByteCodeParser::handleAsyncIteratorNext(const JSInstruction* currentInstruc
 
     if (!generatedCase) {
         // No mode observed (cold site): bail to the baseline, exactly like handleIteratorNext.
-        // Phantom every USES operand (next, iterator, driver) so all are recoverable on exit.
+        // Phantom every USES operand (next, iterator, driver, value) so all are recoverable on exit.
         addToGraph(ForceOSRExit);
         addToGraph(Phantom, get(bytecode.m_next));
         addToGraph(Phantom, get(bytecode.m_iterator));
         addToGraph(Phantom, get(bytecode.m_driver));
+        if (bytecode.m_hasValue)
+            addToGraph(Phantom, get(resumeValueOperandFor(bytecode)));
         set(bytecode.m_dst, jsConstant(jsUndefined()));
 
         m_currentIndex = osrExitIndex;

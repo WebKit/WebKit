@@ -537,7 +537,7 @@ JSC_DEFINE_JIT_OPERATION(operationOpenAsyncFromSyncIterator, JSCell*, (JSGlobalO
     OPERATION_RETURN(scope, createAsyncFromSyncIteratorForIterable(globalObject, JSValue::decode(encodedIterable)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEnqueueAsyncGeneratorDriver, void, (JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver, MicrotaskCallCache* microtaskCallCache))
+JSC_DEFINE_JIT_OPERATION(operationEnqueueAsyncGeneratorDriver, void, (JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver, EncodedJSValue resumeValue, MicrotaskCallCache* microtaskCallCache))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -545,9 +545,9 @@ JSC_DEFINE_JIT_OPERATION(operationEnqueueAsyncGeneratorDriver, void, (JSGlobalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (auto* generator = dynamicDowncast<JSAsyncGenerator>(iterator))
-        enqueueAsyncGeneratorDriver(globalObject, generator, driver, microtaskCallCache);
+        enqueueAsyncGeneratorDriver(globalObject, generator, driver, JSValue::decode(resumeValue), microtaskCallCache);
     else
-        driveAsyncFromSyncIteratorWithDriver(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), driver);
+        driveAsyncFromSyncIteratorWithDriver(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), driver, JSValue::decode(resumeValue));
     OPERATION_RETURN(scope);
 }
 

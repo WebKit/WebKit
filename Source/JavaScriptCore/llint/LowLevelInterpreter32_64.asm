@@ -3214,7 +3214,7 @@ llintOpWithMetadata(op_async_iterator_next, OpAsyncIteratorNext, macro (size, ge
     end
 
     macro getArgumentIncludingThisCount(dst)
-        move 1, dst
+        getArgumentIncludingThisCountForAsyncIteratorNext(size, dst)
     end
 
     metadata(t5, t0)

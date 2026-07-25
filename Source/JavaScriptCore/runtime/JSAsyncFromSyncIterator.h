@@ -90,7 +90,7 @@ private:
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncFromSyncIterator);
 
-void driveAsyncFromSyncIteratorWithDriver(JSGlobalObject*, JSAsyncFromSyncIterator*, JSObject* driver);
+void driveAsyncFromSyncIteratorWithDriver(JSGlobalObject*, JSAsyncFromSyncIterator*, JSObject* driver, JSValue resumeValue);
 JSValue asyncFromSyncIteratorNext(JSGlobalObject*, JSAsyncFromSyncIterator*, JSValue argument);
 
 } // namespace JSC
