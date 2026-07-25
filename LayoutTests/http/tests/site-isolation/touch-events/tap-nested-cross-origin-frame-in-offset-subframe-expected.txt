@@ -1,0 +1,10 @@
+Tapping a cross-origin iframe that is nested inside an offset same-site subframe must reach the iframe. Regression test: potentialTapAtPosition transformed the tap using the nested owner frame's view with a top-level-frame position, double-counting the container's offset so the tap landed outside the cross-origin frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The nested cross-origin iframe received the tap.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
