@@ -35,6 +35,8 @@
 
 @implementation UserMediaCaptureUIDelegate {
     Vector<RetainPtr<WKWebView>> _createdWebViews;
+    RetainPtr<NSMutableDictionary<NSString *, NSNumber *>> _decisionByFrameHost;
+    RetainPtr<NSString> _lastRequestFrameHost;
 }
 @synthesize createWebViewWithConfiguration = _createWebViewWithConfiguration;
 @synthesize numberOfPrompts = _numberOfPrompts;
@@ -48,6 +50,7 @@
         _audioDecision = WKPermissionDecisionGrant;
         _videoDecision = WKPermissionDecisionGrant;
         _getDisplayMediaDecision = WKDisplayCapturePermissionDecisionDeny;
+        _decisionByFrameHost = adoptNS([[NSMutableDictionary alloc] init]);
     }
 
     return self;
@@ -78,6 +81,14 @@
     _getDisplayMediaDecision = decision;
 }
 
+-(void)setDecision:(WKPermissionDecision)decision forFrameHost:(NSString *)host {
+    [_decisionByFrameHost setObject:@(decision) forKey:host];
+}
+
+-(NSString *)lastRequestFrameHost {
+    return _lastRequestFrameHost.get();
+}
+
 - (void)_webView:(WKWebView *)webView queryPermission:(NSString*) name forOrigin:(WKSecurityOrigin *)origin completionHandler:(void (^)(WKPermissionDecision state))completionHandler {
     if ([name isEqualToString:@"camera"]) {
         completionHandler(_videoDecision);
@@ -94,6 +105,13 @@
 - (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     ++_numberOfPrompts;
     _wasPrompted = true;
+    _lastRequestFrameHost = frame.securityOrigin.host;
+
+    if (NSNumber *frameHostDecision = [_decisionByFrameHost objectForKey:frame.securityOrigin.host]) {
+        decisionHandler(static_cast<WKPermissionDecision>(frameHostDecision.integerValue));
+        return;
+    }
+
     switch (type) {
     case WKMediaCaptureTypeCamera:
         if (_videoDecision == WKPermissionDecisionDeny) {

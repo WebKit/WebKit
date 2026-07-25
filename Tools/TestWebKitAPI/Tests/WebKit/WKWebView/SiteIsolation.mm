@@ -5892,7 +5892,126 @@ TEST(SiteIsolation, StopsMediaCaptureInRemoteFrame)
     assertCaptureState(_WKMediaCaptureStateDeprecatedActiveCamera);
 }
 
+TEST(SiteIsolation, MediaCapturePermissionUsesRemoteFrameOrigin)
+{
+    auto mainFrameHTML = "<iframe allow='camera *' src='https://webkit.org/subframe'></iframe>"_s;
+    auto subFrameHTML = "<script>"
+        "async function captureVideo() {"
+        "    try {"
+        "        const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });"
+        "        stream.getTracks().forEach(track => track.stop());"
+        "        return 'granted';"
+        "    } catch (error) {"
+        "        return error.name === 'NotAllowedError' ? 'denied' : `fail (${error.name})`;"
+        "    }"
+        "}"
+        "</script>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, subFrameHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration _setMediaCaptureEnabled:YES];
+
+    RetainPtr preferences = [configuration preferences];
+    [preferences _setMediaCaptureRequiresSecureConnection:NO];
+    [preferences _setMockCaptureDevicesEnabled:YES];
+    [preferences _setGetUserMediaRequiresFocus:NO];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectZero, false);
+    RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [delegate setDecision:WKPermissionDecisionDeny forFrameHost:@"webkit.org"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto captureResultInFrame = [&](WKFrameInfo *frame) -> RetainPtr<NSString> {
+        __block RetainPtr<NSString> result;
+        __block bool done = false;
+        [webView callAsyncJavaScript:@"return captureVideo()" arguments:nil inFrame:frame inContentWorld:WKContentWorld.pageWorld completionHandler:^(id value, NSError *error) {
+            result = (NSString *)value;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    };
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_WK_STREQ([captureResultInFrame(childFrame.get()) UTF8String], "denied");
+    EXPECT_WK_STREQ([delegate lastRequestFrameHost], "webkit.org");
+}
+
 #endif // ENABLE(MEDIA_STREAM)
+
+TEST(SiteIsolation, AutoplayPolicyInRemoteFrameFollowsMainFrame)
+{
+    auto mainFrameHTML = "<script>"
+        "window.onmessage = (event) => window.webkit.messageHandlers.testHandler.postMessage('iframe:' + event.data);"
+        "function playMainVideo() {"
+        "    var video = document.getElementById('video');"
+        "    video.addEventListener('play', () => window.webkit.messageHandlers.testHandler.postMessage('main:autoplayed'));"
+        "    video.play().catch((error) => { if (error.name === 'NotAllowedError') window.webkit.messageHandlers.testHandler.postMessage('main:did-not-play'); });"
+        "}"
+        "</script>"
+        "<body onload='playMainVideo()'>"
+        "<video id='video' webkit-playsinline src='/video-with-audio.mp4'></video>"
+        "<iframe src='https://webkit.org/subframe'></iframe>"
+        "</body>"_s;
+    auto subFrameHTML = "<script>"
+        "function playSubframeVideo() {"
+        "    var video = document.getElementById('video');"
+        "    video.addEventListener('play', () => window.parent.postMessage('autoplayed', '*'));"
+        "    video.play().catch((error) => { if (error.name === 'NotAllowedError') window.parent.postMessage('did-not-play', '*'); });"
+        "}"
+        "</script>"
+        "<body onload='playSubframeVideo()'>"
+        "<video id='video' webkit-playsinline src='/video-with-audio.mp4'></video>"
+        "</body>"_s;
+
+    RetainPtr videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, subFrameHTML } },
+        { "/video-with-audio.mp4"_s, { videoData.get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+    [configuration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:NO];
+#endif
+
+    __block _WKWebsiteAutoplayPolicy mainFramePolicy = _WKWebsiteAutoplayPolicyDeny;
+    __block _WKWebsiteAutoplayPolicy subframePolicy = _WKWebsiteAutoplayPolicyAllow;
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    [navigationDelegate setDecidePolicyForNavigationActionWithPreferences:^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        [preferences _setAutoplayPolicy:[action.request.URL.host isEqualToString:@"webkit.org"] ? subframePolicy : mainFramePolicy];
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    }];
+
+    RetainPtr<NSMutableSet<NSString *>> received = adoptNS([[NSMutableSet alloc] init]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [received addObject:message];
+    }];
+    auto waitForBoth = [&](NSString *mainResult, NSString *iframeResult) {
+        while (![received containsObject:mainResult] || ![received containsObject:iframeResult])
+            TestWebKitAPI::Util::spinRunLoop(10);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    waitForBoth(@"main:did-not-play", @"iframe:did-not-play");
+
+    mainFramePolicy = _WKWebsiteAutoplayPolicyAllow;
+    subframePolicy = _WKWebsiteAutoplayPolicyDeny;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    waitForBoth(@"main:autoplayed", @"iframe:autoplayed");
+}
 
 TEST(SiteIsolation, FrameServerTrust)
 {

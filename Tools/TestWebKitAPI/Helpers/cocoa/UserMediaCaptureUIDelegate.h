@@ -46,8 +46,10 @@
 -(void)setAudioDecision:(WKPermissionDecision)decision;
 -(void)setVideoDecision:(WKPermissionDecision)decision;
 -(void)setGetDisplayMediaDecision:(WKDisplayCapturePermissionDecision)decision;
+-(void)setDecision:(WKPermissionDecision)decision forFrameHost:(NSString *)host;
 
 @property (nonatomic, copy) WKWebView* (^createWebViewWithConfiguration)(WKWebViewConfiguration *, WKNavigationAction *, WKWindowFeatures *);
+@property (nonatomic, readonly, copy) NSString *lastRequestFrameHost;
 
 @end
 
