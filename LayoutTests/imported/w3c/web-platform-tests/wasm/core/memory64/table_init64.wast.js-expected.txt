@@ -1042,7 +1042,5 @@ PASS #1040 Test that WebAssembly compilation succeeds (table_init64.wast:2433)
 PASS #1041 Test that WebAssembly instantiation succeeds (table_init64.wast:2433)
 PASS #1042 Test that WebAssembly compilation succeeds (table_init64.wast:2457)
 PASS #1043 Test that WebAssembly instantiation succeeds (table_init64.wast:2457)
-FAIL #1044 Test that a WebAssembly code returns a specific result (table_init64.wast:2471) assert_equals: assert_return@async_index.js:324:29
-table_init64_wast_js@table_init64.wast.js:2798:14
-global code@table_init64.wast.js:2800:3 expected 1 but got 0
+PASS #1044 Test that a WebAssembly code returns a specific result (table_init64.wast:2471)
 

@@ -34,7 +34,5 @@ PASS #32 Test that WebAssembly instantiation succeeds (array_new_elem.wast:77)
 PASS #33 Test that a WebAssembly code returns a specific result (array_new_elem.wast:103)
 PASS #34 Test that WebAssembly compilation succeeds (array_new_elem.wast:106)
 PASS #35 Test that WebAssembly instantiation succeeds (array_new_elem.wast:106)
-FAIL #36 Test that a WebAssembly code returns a specific result (array_new_elem.wast:121) assert_equals: assert_return@async_index.js:324:29
-array_new_elem_wast_js@array_new_elem.wast.js:88:14
-global code@array_new_elem.wast.js:90:3 expected 1 but got 0
+PASS #36 Test that a WebAssembly code returns a specific result (array_new_elem.wast:121)
 

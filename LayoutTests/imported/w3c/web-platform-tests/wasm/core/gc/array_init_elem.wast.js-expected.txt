@@ -42,12 +42,8 @@ PASS #40 Test that a WebAssembly code returns a specific result (array_init_elem
 PASS #41 Test that a WebAssembly code returns a specific result (array_init_elem.wast:154)
 PASS #42 Test that a WebAssembly code returns a specific result (array_init_elem.wast:155)
 PASS #43 Test that a WebAssembly code returns a specific result (array_init_elem.wast:156)
-FAIL #44 Test that a WebAssembly code returns a specific result (array_init_elem.wast:157) assert_equals: assert_return@async_index.js:324:29
-array_init_elem_wast_js@array_init_elem.wast.js:109:14
-global code@array_init_elem.wast.js:120:3 expected 1 but got 0
+PASS #44 Test that a WebAssembly code returns a specific result (array_init_elem.wast:157)
 PASS #45 Test that WebAssembly compilation succeeds (array_init_elem.wast:160)
 PASS #46 Test that WebAssembly instantiation succeeds (array_init_elem.wast:160)
-FAIL #47 Test that a WebAssembly code returns a specific result (array_init_elem.wast:178) assert_equals: assert_return@async_index.js:324:29
-array_init_elem_wast_js@array_init_elem.wast.js:118:14
-global code@array_init_elem.wast.js:120:3 expected 1 but got 0
+PASS #47 Test that a WebAssembly code returns a specific result (array_init_elem.wast:178)
 

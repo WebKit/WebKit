@@ -442,6 +442,7 @@ private:
 
     static size_t allocationSize(const Wasm::ModuleInformation&);
     bool evaluateConstantExpression(uint64_t, Wasm::Type, uint64_t&);
+    bool ensureConstantExpressionValue(uint64_t constantExpressionIndex, Wasm::Type, uint64_t&);
 
     VM* const m_vm;
     WriteBarrier<JSWebAssemblyModule> m_jsModule;
@@ -462,6 +463,9 @@ private:
     CallFrame* m_temporaryCallFrame { nullptr };
     Wasm::Global::Value* m_globals { nullptr };
     FunctionWrapperMap m_functionWrappers;
+
+    using ConstantExpressionValueMap = UncheckedKeyHashMap<uint64_t, WriteBarrier<Unknown>, IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    ConstantExpressionValueMap m_constantExpressionValues;
     BitVector m_globalsToMark;
     BitVector m_globalsToBinding;
     unsigned m_numImportFunctions { 0 };

@@ -940,7 +940,5 @@ PASS #938 Test that WebAssembly compilation succeeds (table_init.wast:2248)
 PASS #939 Test that WebAssembly instantiation succeeds (table_init.wast:2248)
 PASS #940 Test that WebAssembly compilation succeeds (table_init.wast:2272)
 PASS #941 Test that WebAssembly instantiation succeeds (table_init.wast:2272)
-FAIL #942 Test that a WebAssembly code returns a specific result (table_init.wast:2286) assert_equals: assert_return@async_index.js:324:29
-table_init_wast_js@table_init.wast.js:2500:14
-global code@table_init.wast.js:2502:3 expected 1 but got 0
+PASS #942 Test that a WebAssembly code returns a specific result (table_init.wast:2286)
 
