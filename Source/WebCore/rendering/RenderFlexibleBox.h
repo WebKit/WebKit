@@ -101,35 +101,6 @@ public:
 
     bool isInCrossAxisStretchLayout() const { return m_flexLayoutState && m_flexLayoutState->phase() == FlexLayoutState::Phase::CrossAxisItemSizing; }
 
-    class OverridingSizesScope {
-    public:
-        enum class Axis { Inline, Block, Both };
-
-        OverridingSizesScope(RenderBox&, Axis, std::optional<LayoutUnit> size = std::nullopt);
-        ~OverridingSizesScope();
-
-    private:
-        const CheckedRef<RenderBox> m_box;
-        Axis m_axis;
-        std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalWidth;
-        std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalHeight;
-    };
-
-    class ScopedCrossAxisOverrideForFlexItem {
-    public:
-        enum class InvalidateContentWidths : bool { No, Yes };
-        ScopedCrossAxisOverrideForFlexItem(RenderBox& flexItem, InvalidateContentWidths);
-        ~ScopedCrossAxisOverrideForFlexItem();
-
-    private:
-        SetForScope<bool> m_intrinsicWidthComputation;
-        std::optional<OverridingSizesScope> m_overridingScope;
-#if ASSERT_ENABLED
-        RenderBox& m_flexItem;
-        bool m_didInvalidateContentLogicalWidths { false };
-#endif
-    };
-
 protected:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
@@ -138,6 +109,7 @@ private:
     friend class FlexFormattingUtils;
     friend class LayoutIntegration::FlexLayout;
     friend class LayoutIntegration::FlexIntegrationUtils;
+    friend class LayoutIntegration::ScopedCrossAxisOverrideForFlexItem;
 
     using FlexItemBorderBoxRects = Vector<LayoutRect, 4>;
 

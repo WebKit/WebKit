@@ -27,6 +27,7 @@
 
 #include <WebCore/LayoutUnit.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -77,6 +78,10 @@ public:
     LayoutUnit flexItemContentLogicalHeight(const FlexLayoutItem&) const;
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
+    template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
+    template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItemWithCrossAxisOverride(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
+    LayoutUnit maxContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
+    LayoutUnit minContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;
@@ -93,6 +98,41 @@ private:
     const CheckedRef<RenderBox> m_flexItem;
     bool m_mainAxisIsInlineAxis { false };
     bool m_didOverride { false };
+};
+
+// RAII that defines a scope in which a box's overriding sizes are either replaced (in one axis, when a size is
+// given) or cleared (both axes, when nullopt), restoring the previous overriding sizes on destruction.
+class OverridingSizesScope {
+public:
+    enum class Axis { Inline, Block, Both };
+
+    OverridingSizesScope(RenderBox&, Axis, std::optional<LayoutUnit> size = std::nullopt);
+    ~OverridingSizesScope();
+
+private:
+    const CheckedRef<RenderBox> m_box;
+    Axis m_axis;
+    std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalWidth;
+    std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalHeight;
+};
+
+// RAII that marks the flex container as measuring a flex item's intrinsic main-axis size and, while doing so, applies
+// the container's definite cross size as the item's cross-axis override (clearing all overrides otherwise). With
+// InvalidateContentWidths::Yes the item's preferred widths are invalidated so min/maxContentLogicalWidthContribution()
+// recompute with the override in place. The flex container is derived from the flex item's parent.
+class ScopedCrossAxisOverrideForFlexItem {
+public:
+    enum class InvalidateContentWidths : bool { No, Yes };
+    ScopedCrossAxisOverrideForFlexItem(RenderBox& flexItem, InvalidateContentWidths);
+    ~ScopedCrossAxisOverrideForFlexItem();
+
+private:
+    SetForScope<bool> m_intrinsicWidthComputation;
+    std::optional<OverridingSizesScope> m_overridingScope;
+#if ASSERT_ENABLED
+    RenderBox& m_flexItem;
+    bool m_didInvalidateContentLogicalWidths { false };
+#endif
 };
 
 } // namespace LayoutIntegration
