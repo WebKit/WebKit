@@ -14,7 +14,7 @@
     text-transform: none;
     margin-bottom: 0;
     font-style: normal;
-    line-height: 13px;
+    line-height: 14px;
 }
 
 .it1 {
@@ -42,13 +42,13 @@
     text-transform: none;
     margin-bottom: 0;
     font-style: normal;
-    line-height: 13px;
+    line-height: 14px;
 }
 
 .it2 {
     font-weight: bold;
-    line-height: 17px;
-    font-family: 'LucidaGrande';
+    line-height: 19px;
+    font-family: 'Helvetica';
     font-size: 16;
     margin-top: 0;
     color: rgb(4,40,0);
@@ -56,8 +56,8 @@
 
 .it3 {
     margin-bottom: 0;
-    line-height: 13px;
-    font-family: 'LucidaGrande';
+    line-height: 14px;
+    font-family: 'Helvetica';
     color: rgb(38,38,38);
 }
 

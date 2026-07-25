@@ -6336,7 +6336,6 @@ quicklook/numbers.html [ ImageOnlyFailure ]
 quicklook/pages-09.html [ Failure ]
 quicklook/pages.html [ ImageOnlyFailure ]
 quicklook/multi-sheet-numbers-09.html [ Failure ]
-http/tests/quicklook/secure-document-with-subresources.html [ ImageOnlyFailure ]
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test-timing-attributes-order.html [ Pass Failure ]
 
