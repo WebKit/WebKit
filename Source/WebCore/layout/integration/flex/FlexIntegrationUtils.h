@@ -63,10 +63,16 @@ public:
     void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
     FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
     void setFlexItemGeometry(const FlexLayoutItem&, const LayoutPoint& location, bool isHorizontalFlow);
+    void updateAutoMarginsInMainAxis(const FlexLayoutItem&, LayoutUnit autoMarginOffset);
+    bool updateAutoMarginsInCrossAxis(const FlexLayoutItem&, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace);
     void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
     void invalidateFlexItemContentLogicalWidthsIfNeeded(const FlexLayoutItem&);
 
     void setTrimmedMarginForChild(const FlexLayoutItem&, Style::MarginTrimSide);
+    void trimMainAxisMarginStart(FlexLayoutItem&);
+    void trimMainAxisMarginEnd(FlexLayoutItem&);
+    void trimCrossAxisMarginStart(const FlexLayoutItem&);
+    void trimCrossAxisMarginEnd(const FlexLayoutItem&);
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const;
 
     void addItemAtFlexLineStart(const FlexLayoutItem&);
@@ -83,6 +89,11 @@ public:
     LayoutUnit minContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
     LayoutUnit flexItemIntrinsicLogicalHeight(const FlexLayoutItem&, bool needToStretchLogicalHeight) const;
     LayoutUnit flexItemIntrinsicLogicalWidth(const FlexLayoutItem&, bool crossSizeIsDefinite);
+    LayoutUnit constrainFlexItemLogicalHeightByMinMax(const FlexLayoutItem&, LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
+    LayoutUnit constrainFlexItemLogicalWidthByMinMax(const FlexLayoutItem&, LayoutUnit logicalWidth, LayoutUnit availableWidth) const;
+    template<typename SizeType> std::optional<LayoutUnit> computePercentageLogicalHeightForFlexItem(const FlexLayoutItem&, const SizeType&) const;
+    template<typename SizeType> std::optional<LayoutUnit> computeLogicalHeightUsingForFlexItem(const FlexLayoutItem&, const SizeType&) const;
+    template<typename SizeType> LayoutUnit computeLogicalWidthUsingForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit availableWidth) const;
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;

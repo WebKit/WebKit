@@ -31,6 +31,9 @@
 #include "RenderFlexibleBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderTable.h"
+#include "StyleMarginTrim.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -132,6 +135,85 @@ void FlexIntegrationUtils::setFlexItemGeometry(const FlexLayoutItem& flexLayoutI
     flexLayoutItem.renderer->setLocation(isHorizontalFlow ? location : location.transposedPoint());
 }
 
+void FlexIntegrationUtils::updateAutoMarginsInMainAxis(const FlexLayoutItem& flexLayoutItem, LayoutUnit autoMarginOffset)
+{
+    auto& flexItem = flexLayoutItem.renderer.get();
+    ASSERT(autoMarginOffset >= 0_lu);
+
+    if (FlexFormattingUtils::isHorizontalFlow(flexBox())) {
+        if (flexItem.style().marginLeft().isAuto())
+            flexItem.setMarginLeft(autoMarginOffset);
+        if (flexItem.style().marginRight().isAuto())
+            flexItem.setMarginRight(autoMarginOffset);
+    } else {
+        if (flexItem.style().marginTop().isAuto())
+            flexItem.setMarginTop(autoMarginOffset);
+        if (flexItem.style().marginBottom().isAuto())
+            flexItem.setMarginBottom(autoMarginOffset);
+    }
+}
+
+bool FlexIntegrationUtils::updateAutoMarginsInCrossAxis(const FlexLayoutItem& flexLayoutItem, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace)
+{
+    // 9.6. (#13) Resolve cross-axis auto margins: if both cross-axis margins are auto, split the free space
+    // between them; if only one is auto, give it all the free space so the item's outer cross size fills the line.
+    auto& flexItem = flexLayoutItem.renderer.get();
+    ASSERT(!flexItem.isOutOfFlowPositioned());
+    ASSERT(availableAlignmentSpace >= 0_lu);
+
+    bool isHorizontal = FlexFormattingUtils::isHorizontalFlow(flexBox());
+    auto& style = flexLayoutItem.style();
+    auto& topOrLeft = isHorizontal ? style.marginTop() : style.marginLeft();
+    auto& bottomOrRight = isHorizontal ? style.marginBottom() : style.marginRight();
+    if (topOrLeft.isAuto() && bottomOrRight.isAuto()) {
+        crossOffset += availableAlignmentSpace / 2;
+        if (isHorizontal) {
+            flexItem.setMarginTop(availableAlignmentSpace / 2);
+            flexItem.setMarginBottom(availableAlignmentSpace / 2);
+        } else {
+            flexItem.setMarginLeft(availableAlignmentSpace / 2);
+            flexItem.setMarginRight(availableAlignmentSpace / 2);
+        }
+        return true;
+    }
+    bool shouldAdjustTopOrLeft = true;
+    if (FlexFormattingUtils::isColumnFlow(flexBox()) && flexItem.writingMode().isInlineFlipped()) {
+        // For column flows, only make this adjustment if topOrLeft corresponds to
+        // the "before" margin, so that the rtl-column flip in computeFlexItemRects
+        // will do the right thing.
+        shouldAdjustTopOrLeft = false;
+    }
+    if (!FlexFormattingUtils::isColumnFlow(flexBox()) && flexItem.writingMode().isBlockFlipped()) {
+        // If we are a flipped writing mode, we need to adjust the opposite side.
+        // This is only needed for row flows because this only affects the
+        // block-direction axis.
+        shouldAdjustTopOrLeft = false;
+    }
+
+    if (topOrLeft.isAuto()) {
+        if (shouldAdjustTopOrLeft)
+            crossOffset += availableAlignmentSpace;
+
+        if (isHorizontal)
+            flexItem.setMarginTop(availableAlignmentSpace);
+        else
+            flexItem.setMarginLeft(availableAlignmentSpace);
+        return true;
+    }
+
+    if (bottomOrRight.isAuto()) {
+        if (!shouldAdjustTopOrLeft)
+            crossOffset += availableAlignmentSpace;
+
+        if (isHorizontal)
+            flexItem.setMarginBottom(availableAlignmentSpace);
+        else
+            flexItem.setMarginRight(availableAlignmentSpace);
+        return true;
+    }
+    return false;
+}
+
 void FlexIntegrationUtils::setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem& flexLayoutItem, LayoutUnit blockSize)
 {
     flexLayoutItem.renderer->setOverridingBorderBoxLogicalHeight(blockSize);
@@ -147,6 +229,50 @@ void FlexIntegrationUtils::invalidateFlexItemContentLogicalWidthsIfNeeded(const 
 void FlexIntegrationUtils::setTrimmedMarginForChild(const FlexLayoutItem& flexLayoutItem, Style::MarginTrimSide side)
 {
     flexBox().setTrimmedMarginForChild(flexLayoutItem.renderer.get(), side);
+}
+
+void FlexIntegrationUtils::trimMainAxisMarginStart(FlexLayoutItem& flexLayoutItem)
+{
+    auto& renderer = flexLayoutItem.renderer.get();
+    auto horizontalFlow = FlexFormattingUtils::isHorizontalFlow(flexBox());
+    auto containerWritingMode = flexBox().style().writingMode();
+    flexLayoutItem.mainAxisMargin -= horizontalFlow ? renderer.marginStart(containerWritingMode) : renderer.marginBefore(containerWritingMode);
+    if (horizontalFlow)
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
+    else
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockStart);
+    addItemAtFlexLineStart(flexLayoutItem);
+}
+
+void FlexIntegrationUtils::trimMainAxisMarginEnd(FlexLayoutItem& flexLayoutItem)
+{
+    auto& renderer = flexLayoutItem.renderer.get();
+    auto horizontalFlow = FlexFormattingUtils::isHorizontalFlow(flexBox());
+    auto containerWritingMode = flexBox().style().writingMode();
+    flexLayoutItem.mainAxisMargin -= horizontalFlow ? renderer.marginEnd(containerWritingMode) : renderer.marginAfter(containerWritingMode);
+    if (horizontalFlow)
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
+    else
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);
+    addItemAtFlexLineEnd(flexLayoutItem);
+}
+
+void FlexIntegrationUtils::trimCrossAxisMarginStart(const FlexLayoutItem& flexLayoutItem)
+{
+    if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockStart);
+    else
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
+    addItemOnFirstFlexLine(flexLayoutItem);
+}
+
+void FlexIntegrationUtils::trimCrossAxisMarginEnd(const FlexLayoutItem& flexLayoutItem)
+{
+    if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);
+    else
+        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
+    addItemOnLastFlexLine(flexLayoutItem);
 }
 
 LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const
@@ -332,6 +458,45 @@ LayoutUnit FlexIntegrationUtils::flexItemIntrinsicLogicalWidth(const FlexLayoutI
         flexItem.setOverridingBorderBoxLogicalWidth(*previousOverridingBorderBoxLogicalWidth);
     return values.extent;
 }
+
+LayoutUnit FlexIntegrationUtils::constrainFlexItemLogicalHeightByMinMax(const FlexLayoutItem& flexLayoutItem, LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return flexLayoutItem.renderer->constrainLogicalHeightByMinMax(logicalHeight, intrinsicContentHeight);
+}
+
+LayoutUnit FlexIntegrationUtils::constrainFlexItemLogicalWidthByMinMax(const FlexLayoutItem& flexLayoutItem, LayoutUnit logicalWidth, LayoutUnit availableWidth) const
+{
+    return flexLayoutItem.renderer->constrainLogicalWidthByMinMax(logicalWidth, availableWidth, flexBox());
+}
+
+template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size) const
+{
+    return flexLayoutItem.renderer->computePercentageLogicalHeight(size);
+}
+
+// Explicit instantiations for the SizeTypes FlexFormattingContext resolves through the integration from a separate translation unit.
+template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&) const;
+template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&) const;
+template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&) const;
+template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::PreferredSize::Calc>(const FlexLayoutItem&, const Style::PreferredSize::Calc&) const;
+
+template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size) const
+{
+    return flexLayoutItem.renderer->computeLogicalHeightUsing(size, std::nullopt);
+}
+
+template std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&) const;
+template std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&) const;
+template std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&) const;
+
+template<typename SizeType> LayoutUnit FlexIntegrationUtils::computeLogicalWidthUsingForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size, LayoutUnit availableWidth) const
+{
+    return flexLayoutItem.renderer->computeLogicalWidthUsing(size, availableWidth, flexBox());
+}
+
+template LayoutUnit FlexIntegrationUtils::computeLogicalWidthUsingForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&, LayoutUnit) const;
+template LayoutUnit FlexIntegrationUtils::computeLogicalWidthUsingForFlexItem<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&, LayoutUnit) const;
+template LayoutUnit FlexIntegrationUtils::computeLogicalWidthUsingForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&, LayoutUnit) const;
 
 ScopedFlexBasisAsFlexItemMainSize::ScopedFlexBasisAsFlexItemMainSize(const FlexLayoutItem& flexLayoutItem, Style::PreferredSize&& flexBasis)
     : m_flexItem(flexLayoutItem.renderer)
