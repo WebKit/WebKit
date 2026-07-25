@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "ElementInlines.h"
 #include "EventRegion.h"
+#include "FlexFormattingUtils.h"
 #include "FloatQuad.h"
 #include "FontCascadeInlines.h"
 #include "FrameSelection.h"
@@ -3030,16 +3031,15 @@ bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() con
 
     if (isFlexItem()) {
         auto hasDefiniteHeight = [&] {
-            auto& flexContainer = downcast<RenderFlexibleBox>(*parent());
             // §9.8 rule 3: stretched cross-axis items have definite cross size.
-            if (flexContainer.mainAxisIsFlexItemInlineAxis(*this))
-                return flexContainer.alignmentForFlexItem(*this) == ItemPosition::Stretch;
+            if (FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(*this))
+                return FlexFormattingUtils::alignmentForFlexItem(*this) == ItemPosition::Stretch;
             // §9.8 rule 2: definite flex-basis makes post-flexing main size definite.
-            auto flexBasis = flexContainer.flexBasisForFlexItem(*this);
+            auto flexBasis = FlexFormattingUtils::flexBasisForFlexItem(*this);
             if (!flexBasis.isAuto() && !flexBasis.isContent() && !flexBasis.isPercentOrCalculated() && !flexBasis.isIntrinsic())
                 return true;
             // §9.8 rule 1: definite container main size makes all items definite.
-            return flexContainer.hasDefiniteLogicalHeightForPercentageResolutionFromStyle();
+            return downcast<RenderFlexibleBox>(*parent()).hasDefiniteLogicalHeightForPercentageResolutionFromStyle();
         };
         if (hasDefiniteHeight())
             return true;

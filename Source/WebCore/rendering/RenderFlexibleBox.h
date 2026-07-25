@@ -75,15 +75,10 @@ public:
     // Flex-container queries used by non-flex layout code (RenderBox/RenderBlock/RenderBlockFlow/InspectorOverlay);
     // thin proxies to FlexFormattingUtils, which stays internal to the flex formatting context.
     using GapType = FlexFormattingUtils::GapType;
-    bool useContentBasedMinimumBlockSize(const RenderBox& flexItem) const;
     bool hasStretchedFlexItemWithAspectRatio() const;
     LayoutUnit computeGap(GapType) const;
     bool NODELETE isHorizontalFlow() const;
     bool isMultiline() const;
-    bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const;
-    Style::FlexBasis flexBasisForFlexItem(const RenderBox& flexItem) const;
-    ItemPosition alignmentForFlexItem(const RenderBox& flexItem) const;
-    bool hasDefiniteCrossSizeForFlexItem(const RenderBox& flexItem) const;
 
     std::optional<LayoutUnit> usedFlexItemOverridingLogicalHeightForPercentageResolution(const RenderBox&);
     bool canUseFlexItemForPercentageResolution(const RenderBox&);

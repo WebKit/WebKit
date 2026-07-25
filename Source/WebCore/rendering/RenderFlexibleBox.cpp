@@ -65,20 +65,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFlexibleBox);
 
-// Flow-aware geometry helpers used only by RenderFlexibleBox; the rest of flex's geometry queries live in
-// FlexFormattingUtils (internal to the flex formatting context).
-static LayoutUnit crossAxisExtent(const RenderFlexibleBox& flexBox)
-{
-    return FlexFormattingUtils::isHorizontalFlow(flexBox) ? flexBox.borderBoxSize().height() : flexBox.borderBoxSize().width();
-}
-
-static LayoutUnit computeFlexItemMarginValue(const RenderFlexibleBox& flexBox, const Style::MarginEdge& margin)
-{
-    // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
-    // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
-    return Style::evaluateMinimum<LayoutUnit>(margin, flexBox.contentBoxLogicalWidth(), flexBox.style().usedZoomForLength());
-}
-
 static bool canSetFlexItemContentLogicalHeight(const RenderBox& flexItem)
 {
     return !flexItem.isFloatingOrOutOfFlowPositioned() && !flexItem.shouldComputeLogicalHeightFromAspectRatio() && !is<RenderReplaced>(flexItem);
@@ -585,11 +571,6 @@ bool RenderFlexibleBox::setStaticPositionForPositionedLayout(const RenderBox& fl
     return m_flexLayout.setStaticPositionForPositionedLayout(flexItem);
 }
 
-bool RenderFlexibleBox::useContentBasedMinimumBlockSize(const RenderBox& flexItem) const
-{
-    return !FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem) && FlexFormattingUtils::useContentBasedMinimumSize(flexItem);
-}
-
 bool RenderFlexibleBox::hasStretchedFlexItemWithAspectRatio() const
 {
     for (CheckedRef flexItem : childrenOfType<RenderBox>(*this)) {
@@ -618,26 +599,6 @@ bool RenderFlexibleBox::isHorizontalFlow() const
 bool RenderFlexibleBox::isMultiline() const
 {
     return FlexFormattingUtils::isMultiline(*this);
-}
-
-bool RenderFlexibleBox::mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const
-{
-    return FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem);
-}
-
-Style::FlexBasis RenderFlexibleBox::flexBasisForFlexItem(const RenderBox& flexItem) const
-{
-    return FlexFormattingUtils::flexBasisForFlexItem(flexItem);
-}
-
-ItemPosition RenderFlexibleBox::alignmentForFlexItem(const RenderBox& flexItem) const
-{
-    return FlexFormattingUtils::alignmentForFlexItem(flexItem);
-}
-
-bool RenderFlexibleBox::hasDefiniteCrossSizeForFlexItem(const RenderBox& flexItem) const
-{
-    return FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem);
 }
 
 void RenderFlexibleBox::appendFlexItemBorderBoxRects(FlexItemBorderBoxRects& flexItemBorderBoxRects)
@@ -772,12 +733,17 @@ void RenderFlexibleBox::prepareFlexItemsAndMargins()
     for (auto& flexItem : m_flexItems) {
         // Before running the flex algorithm, 'auto' has a margin of 0.
         // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
+        auto flexItemMarginValue = [&](auto& margin) {
+            // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
+            // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
+            return Style::evaluateMinimum<LayoutUnit>(margin, contentBoxLogicalWidth(), style().usedZoomForLength());
+        };
         if (FlexFormattingUtils::isHorizontalFlow(*this)) {
-            flexItem->setMarginLeft(computeFlexItemMarginValue(*this, flexItem->style().marginLeft()));
-            flexItem->setMarginRight(computeFlexItemMarginValue(*this, flexItem->style().marginRight()));
+            flexItem->setMarginLeft(flexItemMarginValue(flexItem->style().marginLeft()));
+            flexItem->setMarginRight(flexItemMarginValue(flexItem->style().marginRight()));
         } else {
-            flexItem->setMarginTop(computeFlexItemMarginValue(*this, flexItem->style().marginTop()));
-            flexItem->setMarginBottom(computeFlexItemMarginValue(*this, flexItem->style().marginBottom()));
+            flexItem->setMarginTop(flexItemMarginValue(flexItem->style().marginTop()));
+            flexItem->setMarginBottom(flexItemMarginValue(flexItem->style().marginBottom()));
         }
     }
 }
@@ -795,7 +761,8 @@ FlexContainerUsedExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(Lay
     auto minimumHeightForEmptyLine = hasLineIfEmpty() ? borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight() : 0_lu;
     setLogicalHeight(std::max(minimumHeightForEmptyLine, std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent)));
     updateLogicalHeight();
-    return { FlexFormattingUtils::crossAxisContentExtent(*this), crossAxisExtent(*this), contentBoxLogicalHeight(), logicalHeight() };
+    auto crossAxisExtent = FlexFormattingUtils::isHorizontalFlow(*this) ? borderBoxSize().height() : borderBoxSize().width();
+    return { FlexFormattingUtils::crossAxisContentExtent(*this), crossAxisExtent, contentBoxLogicalHeight(), logicalHeight() };
 }
 
 }

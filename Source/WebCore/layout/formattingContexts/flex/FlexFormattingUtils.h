@@ -108,6 +108,7 @@ public:
     bool hasAutoMarginsInCrossAxis(const FlexLayoutItem&) const;
     static bool useContentBasedMinimumSize(const RenderBox& flexItem);
     bool useContentBasedMinimumSize(const FlexLayoutItem&) const;
+    static bool useContentBasedMinimumBlockSize(const RenderBox& flexItem);
     double preferredAspectRatioForFlexItem(const FlexLayoutItem&) const;
 
     static bool flexItemHasAspectRatio(const RenderBox& flexItem);

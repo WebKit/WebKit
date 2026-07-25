@@ -319,6 +319,11 @@ bool FlexFormattingUtils::hasAutoMarginsInCrossAxis(const RenderBox& flexItem)
     return flexItem.style().marginLeft().isAuto() || flexItem.style().marginRight().isAuto();
 }
 
+bool FlexFormattingUtils::useContentBasedMinimumBlockSize(const RenderBox& flexItem)
+{
+    return !mainAxisIsFlexItemInlineAxis(flexItem) && useContentBasedMinimumSize(flexItem);
+}
+
 // https://drafts.csswg.org/css-flexbox/#min-size-auto
 bool FlexFormattingUtils::useContentBasedMinimumSize(const RenderBox& flexItem)
 {

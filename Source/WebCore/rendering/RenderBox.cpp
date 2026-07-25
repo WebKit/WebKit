@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "EditingInlines.h"
 #include "EventHandler.h"
+#include "FlexFormattingUtils.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
 #include "FloatingObjects.h"
@@ -3914,7 +3915,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentA
         },
         [&](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
             if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
-                if (intrinsicContentHeight && isFlexItem() && downcast<RenderFlexibleBox>(parent())->useContentBasedMinimumBlockSize(*this))
+                if (intrinsicContentHeight && isFlexItem() && FlexFormattingUtils::useContentBasedMinimumBlockSize(*this))
                     return adjustIntrinsicLogicalHeightForBoxSizing(*intrinsicContentHeight);
                 return LayoutUnit { 0 };
             } else
@@ -5377,10 +5378,8 @@ bool RenderBox::isBlockSizeResolvableForStretch() const
     // This only applies when the flex item's block axis is the cross axis (row flex).
     // For column flex, the block axis is the main axis and hasDefiniteLogicalHeight()
     // already gives the correct answer during that phase.
-    if (containingBlock->isFlexItem()) {
-        if (auto* flexContainer = dynamicDowncast<RenderFlexibleBox>(containingBlock->parent()))
-            return flexContainer->mainAxisIsFlexItemInlineAxis(*containingBlock) && flexContainer->hasDefiniteCrossSizeForFlexItem(*containingBlock);
-    }
+    if (containingBlock->isFlexItem())
+        return FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(*containingBlock) && FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(*containingBlock);
 
     return false;
 }
