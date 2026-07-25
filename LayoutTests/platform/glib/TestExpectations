@@ -5268,6 +5268,7 @@ webkit.org/b/319954 [ x86_64 ] imported/w3c/web-platform-tests/css/css-text/whit
 webkit.org/b/319954 [ arm64 ] imported/w3c/web-platform-tests/css/css-text/white-space/white-space-trim-inline-block.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/317966 http/tests/web-locks/web-lock-in-serviceworker.html [ Crash Failure Pass ]
+webkit.org/b/320245 [ x86_64 ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Failure ]
 webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html [ Pass Failure ]
 
 webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Pass ]
