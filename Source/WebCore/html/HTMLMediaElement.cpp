@@ -611,6 +611,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
     , m_checkPlaybackTargetCompatibilityTimer(*this, &HTMLMediaElement::checkPlaybackTargetCompatibility)
     , m_seekRequest(NativePromiseRequest::create())
+    , m_playRequest(NativePromiseRequest::create())
     , m_currentIdentifier(MediaUniqueIdentifier::generate())
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
@@ -781,6 +782,9 @@ HTMLMediaElement::~HTMLMediaElement()
 
     if (m_seekRequest->hasCallback())
         m_seekRequest->disconnect();
+
+    if (m_playRequest->hasCallback())
+        m_playRequest->disconnect();
 
     invalidateWatchtimeTimer();
     invalidateBufferingStopwatch();
@@ -4697,41 +4701,36 @@ void HTMLMediaElement::playInternal()
     // other tasks queued during the async session-admission window.
     bool shouldNotifyAboutPlaying = didTransitionFromPaused && m_readyState > HAVE_CURRENT_DATA;
     bool shouldResolvePromises = !didTransitionFromPaused && m_readyState >= HAVE_FUTURE_DATA;
+    // True if the admission completion handler below is guaranteed to settle
+    // m_pendingPlayPromises itself, even if pause() races the in-flight admission.
+    m_playPromiseSettlementGuaranteed = shouldNotifyAboutPlaying || shouldResolvePromises;
     if (didTransitionFromPaused && m_readyState <= HAVE_CURRENT_DATA)
         scheduleEvent(eventNames().waitingEvent);
 
-    // Set m_canBeginPlaybackInFlight to suppress pauseInternal()'s
-    // scheduleRejectPendingPlayPromises while admission is in flight. This
-    // keeps m_pendingPlayPromises in the element so that setReadyState's
-    // natural scheduleNotifyAboutPlaying transition (line ~3373) can pick
-    // them up if readyState transitions to HAVE_FUTURE_DATA during the
-    // admission window. Pre-branch behavior relied on this natural
-    // mechanism — capturing promises into the lambda would hide them from
-    // setReadyState. The flag is cleared in the admission callback before
-    // any other handling runs.
-    m_canBeginPlaybackInFlight = true;
+    if (m_playRequest->hasCallback())
+        m_playRequest->disconnect();
 
-    CompletionHandler<void (bool)> canBeginPlaybackCompletion = [weakThis = WeakPtr { *this }, didTransitionFromPaused, shouldNotifyAboutPlaying, shouldResolvePromises, logSiteIdentifier = WTF::move(logSiteIdentifier)](bool canBegin) mutable {
+    auto onAdmissionSettled = [weakThis = WeakPtr { *this }, didTransitionFromPaused, shouldNotifyAboutPlaying, shouldResolvePromises, logSiteIdentifier](bool canBegin) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-
-        protectedThis->m_canBeginPlaybackInFlight = false;
 
         if (!canBegin) {
             ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "returning because of interruption");
             if (didTransitionFromPaused) {
                 // Revert the synchronous transition since playback was not permitted.
                 // pauseInternal() fires the pause event (balancing the play event we
-                // already scheduled). With m_canBeginPlaybackInFlight cleared above,
-                // pauseInternal will reject pending play promises if !m_paused.
+                // already scheduled) and rejects the pending play promises.
                 protectedThis->pauseInternal();
             }
-            // If pauseInternal didn't reject (e.g., m_paused was already true
-            // because pause() was called during the admission window),
-            // explicitly reject here.
-            if (!protectedThis->m_pendingPlayPromises.isEmpty())
-                protectedThis->rejectPendingPlayPromises(WTF::move(protectedThis->m_pendingPlayPromises), DOMException::create(ExceptionCode::AbortError));
+            // pauseInternal() above only runs (and rejects) when didTransitionFromPaused
+            // is true. When play() is called on an already-playing element and this
+            // admission is later denied (e.g. an interruption or audio session
+            // activation failure), didTransitionFromPaused is false, pauseInternal()
+            // is skipped, and this promise from that play() call would otherwise
+            // never settle. Safe to call unconditionally: already-drained promises
+            // make this a no-op (see scheduleRejectPendingPlayPromises).
+            protectedThis->scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::AbortError));
             return;
         }
 
@@ -4757,7 +4756,28 @@ void HTMLMediaElement::playInternal()
         protectedThis->completePlayInternal();
     };
 
-    mediaSession->clientWillBeginPlayback(WTF::move(canBeginPlaybackCompletion));
+    // Already admitted (e.g. resuming after endInterruption() restores state() to Playing): run inline instead of deferring through whenSettled().
+    if (mediaSession->state() == PlatformMediaSession::State::Playing) {
+        onAdmissionSettled(true);
+        return;
+    }
+
+    GenericPromise::Producer producer;
+    Ref promise = producer.promise();
+    mediaSession->clientWillBeginPlayback([producer = WTF::move(producer)](bool canBegin) mutable {
+        if (canBegin)
+            producer.resolve();
+        else
+            producer.reject();
+    });
+
+    promise->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, onAdmissionSettled = WTF::move(onAdmissionSettled)](auto&& result) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_playRequest->complete();
+        onAdmissionSettled(!!result);
+    })->track(m_playRequest);
 }
 
 void HTMLMediaElement::pause()
@@ -4818,17 +4838,17 @@ void HTMLMediaElement::pauseInternal()
 
     setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
 
+    // A pause() racing an in-flight play() admission must not preempt a settlement
+    // that the admission's own callback is already guaranteed to deliver (see m_playPromiseSettlementGuaranteed).
+    bool hadInFlightPlayRequest = m_playRequest->hasCallback();
+    if (hadInFlightPlayRequest && !m_playPromiseSettlementGuaranteed)
+        m_playRequest->disconnect();
+
     if (!m_paused && !m_pausedInternal) {
         setPaused(true);
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
-        // Suppress promise rejection while an in-flight play() admission is
-        // pending. The admission completion handler resolves promises via
-        // scheduleNotifyAboutPlaying on success, or rejects them on denial.
-        // Without this guard, a pause from an onplay handler (or from the
-        // ended-path's setPaused-then-clientWillPausePlayback) would
-        // spuriously reject the play() promise that has not yet been admitted.
-        if (!m_canBeginPlaybackInFlight)
+        if (!hadInFlightPlayRequest || !m_playPromiseSettlementGuaranteed)
             scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::AbortError));
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             purgeBufferedDataIfPossible();
