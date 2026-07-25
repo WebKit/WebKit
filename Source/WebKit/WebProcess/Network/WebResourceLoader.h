@@ -82,6 +82,8 @@ public:
 private:
     WebResourceLoader(Ref<WebCore::ResourceLoader>&&, const std::optional<TrackingParameters>&, RefPtr<WebCore::PendingStreamState>&&);
 
+    void initPendingStreamState();
+
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
