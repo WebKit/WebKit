@@ -100,39 +100,37 @@ private:
     bool m_didOverride { false };
 };
 
-// RAII that defines a scope in which a box's overriding sizes are either replaced (in one axis, when a size is
-// given) or cleared (both axes, when nullopt), restoring the previous overriding sizes on destruction.
-class OverridingSizesScope {
-public:
-    enum class Axis { Inline, Block, Both };
-
-    OverridingSizesScope(RenderBox&, Axis, std::optional<LayoutUnit> size = std::nullopt);
-    ~OverridingSizesScope();
-
-private:
-    const CheckedRef<RenderBox> m_box;
-    Axis m_axis;
-    std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalWidth;
-    std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalHeight;
-};
-
-// RAII that marks the flex container as measuring a flex item's intrinsic main-axis size and, while doing so, applies
-// the container's definite cross size as the item's cross-axis override (clearing all overrides otherwise). With
-// InvalidateContentWidths::Yes the item's preferred widths are invalidated so min/maxContentLogicalWidthContribution()
-// recompute with the override in place. The flex container is derived from the flex item's parent.
-class ScopedCrossAxisOverrideForFlexItem {
+// RAII for measuring a flex item before it is stretched. When the item is going to be stretched to a definite cross
+// size (flexbox 9.8 rule 1), that size is set as its cross-axis overriding size so the measurement sees the item's
+// final cross size; otherwise the item has no definite cross size, so both of its overriding sizes are cleared. The
+// previous overriding sizes are restored on destruction. With InvalidateContentWidths::Yes the item's preferred widths
+// are invalidated so they recompute against that cross size.
+class FlexItemDefiniteCrossSizeScope {
 public:
     enum class InvalidateContentWidths : bool { No, Yes };
-    ScopedCrossAxisOverrideForFlexItem(RenderBox& flexItem, InvalidateContentWidths);
-    ~ScopedCrossAxisOverrideForFlexItem();
+    FlexItemDefiniteCrossSizeScope(RenderBox& flexItem, InvalidateContentWidths);
+    ~FlexItemDefiniteCrossSizeScope();
+
+private:
+    const CheckedRef<RenderBox> m_flexItem;
+    std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalWidth;
+    std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalHeight;
+    bool m_shouldRestoreInlineSize { false };
+    bool m_shouldRestoreBlockSize { false };
+#if ASSERT_ENABLED
+    bool m_didInvalidateContentLogicalWidths { false };
+#endif
+};
+
+// RAII that marks the flex container as measuring this item's intrinsic width (by laying its content out), so the
+// item's percentage-height content resolves against its overriding definite cross size. Consumed by
+// RenderFlexibleBox::canUseFlexItemForPercentageResolution. The flex container is derived from the flex item's parent.
+class FlexItemIntrinsicWidthComputationScope {
+public:
+    explicit FlexItemIntrinsicWidthComputationScope(RenderBox& flexItem);
 
 private:
     SetForScope<bool> m_intrinsicWidthComputation;
-    std::optional<OverridingSizesScope> m_overridingScope;
-#if ASSERT_ENABLED
-    RenderBox& m_flexItem;
-    bool m_didInvalidateContentLogicalWidths { false };
-#endif
 };
 
 } // namespace LayoutIntegration

@@ -109,7 +109,7 @@ private:
     friend class FlexFormattingUtils;
     friend class LayoutIntegration::FlexLayout;
     friend class LayoutIntegration::FlexIntegrationUtils;
-    friend class LayoutIntegration::ScopedCrossAxisOverrideForFlexItem;
+    friend class LayoutIntegration::FlexItemIntrinsicWidthComputationScope;
 
     using FlexItemBorderBoxRects = Vector<LayoutRect, 4>;
 

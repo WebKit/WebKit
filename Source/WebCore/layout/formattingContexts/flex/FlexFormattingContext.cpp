@@ -1117,11 +1117,18 @@ LayoutUnit FlexFormattingContext::flexItemIntrinsicLogicalWidth(const FlexLayout
     if (flexItemCrossSizeIsDefinite(flexLayoutItem, flexLayoutItem.style().logicalWidth()))
         return flexItem->logicalWidth();
 
+    // computeLogicalWidth returns the overriding width as-is for a flex item, so clear it to get the width the
+    // item computes from its own style.
+    // FIXME: Check whether an overriding inline size can actually be set on an orthogonal flex item at this point
+    // (nothing in this layout pass appears to set one) and remove this if it cannot.
+    auto previousOverridingBorderBoxLogicalWidth = flexItem->overridingBorderBoxLogicalWidth();
+    flexItem->clearOverridingBorderBoxLogicalWidth();
+
     RenderBox::LogicalExtentComputedValues values;
-    {
-        auto cleanOverridingWidthScope = LayoutIntegration::OverridingSizesScope { flexItem, LayoutIntegration::OverridingSizesScope::Axis::Inline };
-        flexItem->computeLogicalWidth(values);
-    }
+    flexItem->computeLogicalWidth(values);
+
+    if (previousOverridingBorderBoxLogicalWidth)
+        flexItem->setOverridingBorderBoxLogicalWidth(*previousOverridingBorderBoxLogicalWidth);
     return values.extent;
 }
 

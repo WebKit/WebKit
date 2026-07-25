@@ -234,9 +234,9 @@ std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem
         return *height + flexItem->scrollbarLogicalHeight() + captionsHeight;
     }
 
-    // computeLogicalWidth always re-computes the intrinsic widths. However, when
-    // our logical width is auto, we can just use our cached value. So let's do
-    // that here. (Compare code in RenderBlock::computeIntrinsicLogicalWidthContributions)
+    // For a content size, computeLogicalWidthUsing re-computes the item's intrinsic widths. However, when our logical
+    // width is auto, we can just use our cached value. So let's do that here.
+    // (Compare code in RenderBlock::computeIntrinsicLogicalWidthContributions)
     if (flexLayoutItem.style().logicalWidth().isAuto() && !FlexFormattingUtils::flexItemHasAspectRatio(flexItem)) {
         if (size.isMinContent()) {
             invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
@@ -260,10 +260,19 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentFo
 template<typename SizeType>
 std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItemWithCrossAxisOverride(const FlexLayoutItem& flexLayoutItem, const SizeType& size, LayoutUnit mainAxisSizeForLengthResolution)
 {
-    // Measure the item's intrinsic main-axis extent with the container's cross size applied as an override, so
-    // aspect-ratio and percentage resolution see the definite cross size. computeMainAxisExtentForFlexItem
-    // invalidates the item's content widths itself, hence InvalidateContentWidths::No here.
-    auto scope = ScopedCrossAxisOverrideForFlexItem { flexLayoutItem.renderer.get(), ScopedCrossAxisOverrideForFlexItem::InvalidateContentWidths::No };
+    // Both main-axis branches need the container's definite cross size as the item's overriding cross size: the inline
+    // (width) branch measures the item's width by laying its content out, and the block (column/height) branch resolves
+    // an intrinsic height that -- for a replaced item, or any item with a preferred aspect ratio -- is computed from the
+    // item's used cross size.
+    // computeMainAxisExtentForFlexItem invalidates the item's content widths itself, hence InvalidateContentWidths::No.
+    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::No };
+
+    // The intrinsic-width flag, on the other hand, only affects percentage resolution while the item's width is being
+    // measured, so the block branch does not need it.
+    if (!flexLayoutItem.mainAxisIsInlineAxis)
+        return computeMainAxisExtentForFlexItem(flexLayoutItem, size, mainAxisSizeForLengthResolution);
+
+    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
     return computeMainAxisExtentForFlexItem(flexLayoutItem, size, mainAxisSizeForLengthResolution);
 }
 
@@ -276,13 +285,15 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentFo
 // rely on the scope to invalidate them (InvalidateContentWidths::Yes).
 LayoutUnit FlexIntegrationUtils::maxContentMainAxisContributionForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
-    auto scope = ScopedCrossAxisOverrideForFlexItem { flexLayoutItem.renderer.get(), ScopedCrossAxisOverrideForFlexItem::InvalidateContentWidths::Yes };
+    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
+    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
     return flexLayoutItem.renderer->maxContentLogicalWidthContribution();
 }
 
 LayoutUnit FlexIntegrationUtils::minContentMainAxisContributionForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
-    auto scope = ScopedCrossAxisOverrideForFlexItem { flexLayoutItem.renderer.get(), ScopedCrossAxisOverrideForFlexItem::InvalidateContentWidths::Yes };
+    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
+    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
     return flexLayoutItem.renderer->minContentLogicalWidthContribution();
 }
 
@@ -327,55 +338,53 @@ static void setOrClearOverridingBorderBoxLogicalHeight(RenderBox& box, std::opti
         box.clearOverridingBorderBoxLogicalHeight();
 }
 
-OverridingSizesScope::OverridingSizesScope(RenderBox& box, Axis axis, std::optional<LayoutUnit> size)
-    : m_box(box)
-    , m_axis(axis)
+FlexItemDefiniteCrossSizeScope::FlexItemDefiniteCrossSizeScope(RenderBox& flexItem, InvalidateContentWidths invalidateContentWidths)
+    : m_flexItem(flexItem)
 {
-    ASSERT(!size || (axis != Axis::Both));
-    if (axis == Axis::Both || axis == Axis::Inline) {
-        m_previousOverridingBorderBoxLogicalWidth = box.overridingBorderBoxLogicalWidth();
-        setOrClearOverridingBorderBoxLogicalWidth(box, size);
+    auto saveAndSetInlineSize = [&](std::optional<LayoutUnit> size) {
+        m_previousOverridingBorderBoxLogicalWidth = flexItem.overridingBorderBoxLogicalWidth();
+        m_shouldRestoreInlineSize = true;
+        setOrClearOverridingBorderBoxLogicalWidth(flexItem, size);
+    };
+    auto saveAndSetBlockSize = [&](std::optional<LayoutUnit> size) {
+        m_previousOverridingBorderBoxLogicalHeight = flexItem.overridingBorderBoxLogicalHeight();
+        m_shouldRestoreBlockSize = true;
+        setOrClearOverridingBorderBoxLogicalHeight(flexItem, size);
+    };
+
+    if (!FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem)) {
+        // No definite cross size to measure against, so make sure no stale overriding size is left in either axis.
+        saveAndSetInlineSize({ });
+        saveAndSetBlockSize({ });
+        return;
     }
-    if (axis == Axis::Both || axis == Axis::Block) {
-        m_previousOverridingBorderBoxLogicalHeight = box.overridingBorderBoxLogicalHeight();
-        setOrClearOverridingBorderBoxLogicalHeight(box, size);
+
+    auto crossSize = FlexFormattingUtils::innerCrossSizeForFlexItem(flexItem);
+    FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem) ? saveAndSetBlockSize(crossSize) : saveAndSetInlineSize(crossSize);
+
+    if (invalidateContentWidths == InvalidateContentWidths::Yes) {
+        flexItem.invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+#if ASSERT_ENABLED
+        m_didInvalidateContentLogicalWidths = true;
+#endif
     }
 }
 
-OverridingSizesScope::~OverridingSizesScope()
-{
-    if (m_axis == Axis::Inline || m_axis == Axis::Both)
-        setOrClearOverridingBorderBoxLogicalWidth(m_box.get(), m_previousOverridingBorderBoxLogicalWidth);
-
-    if (m_axis == Axis::Block || m_axis == Axis::Both)
-        setOrClearOverridingBorderBoxLogicalHeight(m_box.get(), m_previousOverridingBorderBoxLogicalHeight);
-}
-
-ScopedCrossAxisOverrideForFlexItem::ScopedCrossAxisOverrideForFlexItem(RenderBox& flexItem, InvalidateContentWidths invalidateContentWidths)
-    : m_intrinsicWidthComputation(downcast<RenderFlexibleBox>(*flexItem.parent()).m_inFlexItemIntrinsicWidthComputation, true)
-#if ASSERT_ENABLED
-    , m_flexItem(flexItem)
-#endif
-{
-    if (FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem)) {
-        auto axis = FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem) ? OverridingSizesScope::Axis::Block : OverridingSizesScope::Axis::Inline;
-        m_overridingScope.emplace(flexItem, axis, FlexFormattingUtils::innerCrossSizeForFlexItem(flexItem));
-        if (invalidateContentWidths == InvalidateContentWidths::Yes) {
-            flexItem.invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
-#if ASSERT_ENABLED
-            m_didInvalidateContentLogicalWidths = true;
-#endif
-        }
-    } else
-        m_overridingScope.emplace(flexItem, OverridingSizesScope::Axis::Both);
-}
-
-ScopedCrossAxisOverrideForFlexItem::~ScopedCrossAxisOverrideForFlexItem()
+FlexItemDefiniteCrossSizeScope::~FlexItemDefiniteCrossSizeScope()
 {
 #if ASSERT_ENABLED
     if (m_didInvalidateContentLogicalWidths)
-        ASSERT(!m_flexItem.hasInvalidContentLogicalWidths());
+        ASSERT(!m_flexItem->hasInvalidContentLogicalWidths());
 #endif
+    if (m_shouldRestoreInlineSize)
+        setOrClearOverridingBorderBoxLogicalWidth(m_flexItem.get(), m_previousOverridingBorderBoxLogicalWidth);
+    if (m_shouldRestoreBlockSize)
+        setOrClearOverridingBorderBoxLogicalHeight(m_flexItem.get(), m_previousOverridingBorderBoxLogicalHeight);
+}
+
+FlexItemIntrinsicWidthComputationScope::FlexItemIntrinsicWidthComputationScope(RenderBox& flexItem)
+    : m_intrinsicWidthComputation(downcast<RenderFlexibleBox>(*flexItem.parent()).m_inFlexItemIntrinsicWidthComputation, true)
+{
 }
 
 } // namespace LayoutIntegration

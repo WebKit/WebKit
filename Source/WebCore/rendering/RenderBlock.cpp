@@ -2421,7 +2421,8 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeChildIntrinsicLogicalWidth
     // size in scope. Previously this was a virtual hook the flex container
     // overrode; folded inline since flex is the only container that needs it.
     if (isRenderFlexibleBox()) {
-        auto flexScope = LayoutIntegration::ScopedCrossAxisOverrideForFlexItem { childBox, LayoutIntegration::ScopedCrossAxisOverrideForFlexItem::InvalidateContentWidths::Yes };
+        auto definiteCrossSizeScope = LayoutIntegration::FlexItemDefiniteCrossSizeScope { childBox, LayoutIntegration::FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
+        auto intrinsicWidthComputationScope = LayoutIntegration::FlexItemIntrinsicWidthComputationScope { childBox };
         std::tie(minLogicalWidth, maxLogicalWidth) = childIntrinsicLogicalWidths();
     } else
         std::tie(minLogicalWidth, maxLogicalWidth) = childIntrinsicLogicalWidths();
