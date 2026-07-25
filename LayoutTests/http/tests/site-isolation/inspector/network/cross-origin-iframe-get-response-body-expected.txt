@@ -1,0 +1,21 @@
+Tests that Network.getResponseBody returns the correct text and base64-encoded bodies for resources loaded in a cross-origin iframe under Site Isolation, routed through ProxyingNetworkAgent and BackendResourceDataStore.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.LoadResources
+PASS: Text resource should be created.
+PASS: Image resource should be created.
+PASS: Text resource should finish loading.
+PASS: Image resource should finish loading.
+PASS: Text resource should have a request identifier.
+PASS: Image resource should have a request identifier.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.TextContent
+PASS: Text response body should not be base64-encoded.
+PASS: Text response body should match the served content.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.BinaryContent
+PASS: Binary (image) response body should be base64-encoded.
+PASS: Binary response body should not be empty.
+Base64-encoded image body length: 13392
+

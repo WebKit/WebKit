@@ -1,0 +1,115 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addIFrame() {
+    iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/network/resources/get-response-body-iframe.html";
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // Unlike cross-origin-iframe-get-response-body.html, which calls
+    // WI.backendTarget.NetworkAgent.getResponseBody directly, this test drives the *real frontend
+    // content path* -- WI.Resource.requestContent() -> requestContentFromBackend(). That path
+    // issues getResponseBody on the resource's own target, which under Site Isolation defaults to
+    // the page target (the SI proxy sends an empty targetID). The Network domain, however, lives on
+    // the multiplexing backend target (ProxyingNetworkAgent), so the page target's legacy
+    // NetworkAgent answers "Missing resource for given requestId". Resource.requestContentFromBackend
+    // must therefore route to the backend target. This test guards that routing: the direct-agent
+    // tests pass regardless of it, so without this a UI regression would go unnoticed.
+
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function waitForFinished(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    let textResource;
+    let imageResource;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.LoadResources",
+        description: "Load a text resource and a binary image inside a cross-origin iframe and wait for both to finish.",
+        async test() {
+            let textPromise = waitForResource("echo.py");
+            let imagePromise = waitForResource("white.png");
+
+            InspectorTest.evaluateInPage("addIFrame()");
+
+            textResource = await textPromise;
+            imageResource = await imagePromise;
+
+            await waitForFinished(textResource);
+            await waitForFinished(imageResource);
+
+            InspectorTest.expectThat(textResource.finished, "Text resource should finish loading.");
+            InspectorTest.expectThat(imageResource.finished, "Image resource should finish loading.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.TextContent",
+        description: "Resource.requestContent() should resolve with the decoded text body (routed to the backend target under SI).",
+        async test() {
+            let {content, rawContent, rawBase64Encoded, error} = await textResource.requestContent();
+            InspectorTest.expectThat(!error, "requestContent() should succeed for a cross-origin-iframe text resource (no error).");
+            InspectorTest.expectEqual(rawBase64Encoded, false, "Text response body should not be base64-encoded.");
+            InspectorTest.expectEqual(content, "si-cross-origin-response-body", "requestContent() should return the served text content.");
+            InspectorTest.expectEqual(rawContent, "si-cross-origin-response-body", "rawContent should match the served text content.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.BinaryContent",
+        description: "Resource.requestContent() should resolve with a base64-encoded body for a binary (image) resource.",
+        async test() {
+            let {rawContent, rawBase64Encoded, error} = await imageResource.requestContent();
+            InspectorTest.expectThat(!error, "requestContent() should succeed for a cross-origin-iframe image resource (no error).");
+            InspectorTest.expectEqual(rawBase64Encoded, true, "Binary (image) response body should be base64-encoded.");
+            InspectorTest.expectThat(rawContent && rawContent.length > 0, "Binary response body should not be empty.");
+            InspectorTest.log("Base64-encoded image body length: " + (rawContent ? rawContent.length : 0));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.ErrorSurfacing",
+        description: "When getResponseBody fails, requestContent() should surface an error through the UI path (not hang, not return empty content as if successful).",
+        async test() {
+            // Point the resource at a well-formed but unknown requestId: its real, live process but a
+            // resource id that was never created, so BackendResourceDataStore misses. This still routes
+            // through the backend target (the fix under test) and must come back as a failure. We poke
+            // the private _requestIdentifier because requestContent() has no requestId parameter -- it
+            // uses the resource's own -- and mark the content stale so the new id is actually used.
+            textResource._requestIdentifier = textResource.requestIdentifier.replace(/\.\d+$/, ".4294967295");
+            textResource.markContentAsStale();
+
+            let {error, content} = await textResource.requestContent();
+            InspectorTest.expectThat(!!error, "requestContent() should resolve with an error when getResponseBody fails.");
+            InspectorTest.expectThat(!content, "requestContent() should not return content on failure.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that WI.Resource.requestContent() (the frontend content path used by the UI) returns the correct text and base64-encoded bodies for resources loaded in a cross-origin iframe under Site Isolation, routing Network.getResponseBody to the multiplexing backend target where ProxyingNetworkAgent lives.</p>
+</body>

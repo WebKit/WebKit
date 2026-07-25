@@ -1,0 +1,12 @@
+Tests Network.getResponseBody behavior across a cross-origin iframe navigation under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterNavigation
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterNavigation.Before
+PASS: Pre-navigation resource should have a request identifier.
+PASS: Pre-navigation body should match.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterNavigation.After
+PASS: Post-navigation body should match (getResponseBody still works after navigation).
+Pre-navigation resource still retrievable after navigation: true
+

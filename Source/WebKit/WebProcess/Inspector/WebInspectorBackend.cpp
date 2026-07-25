@@ -415,15 +415,17 @@ void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
     m_framePageAgentProxies.remove(frameID);
 }
 
-void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&& completionHandler)
+void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(Expected<std::pair<String, bool>, String>&&)>&& completionHandler)
 {
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto result = resourceDataStore->getResponseBody(resourceID);
-    if (result.has_value()) {
-        auto& [content, base64Encoded] = result.value();
-        completionHandler(content, base64Encoded, String());
-    } else
-        completionHandler(String(), false, result.error());
+    // ProxyingNetworkAgent reads an empty error as the AsyncReplyError connection-loss sentinel, so
+    // every genuine failure here must carry a non-empty message.
+    // FIXME: <https://webkit.org/b/320234> The sibling proxying replies (Page.getResourceContent,
+    // Page.searchInResource) still use a bare error-string reply and should adopt this same
+    // Expected-based discriminator.
+    ASSERT(result.has_value() || !result.error().isEmpty());
+    completionHandler(WTF::move(result));
 }
 
 // Convert the JSON protocol matches from ContentSearchUtilities::searchInTextByLines into the plain

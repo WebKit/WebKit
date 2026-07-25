@@ -1,0 +1,24 @@
+Tests that WI.Resource.requestContent() (the frontend content path used by the UI) returns the correct text and base64-encoded bodies for resources loaded in a cross-origin iframe under Site Isolation, routing Network.getResponseBody to the multiplexing backend target where ProxyingNetworkAgent lives.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.LoadResources
+PASS: Text resource should finish loading.
+PASS: Image resource should finish loading.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.TextContent
+PASS: requestContent() should succeed for a cross-origin-iframe text resource (no error).
+PASS: Text response body should not be base64-encoded.
+PASS: requestContent() should return the served text content.
+PASS: rawContent should match the served text content.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.BinaryContent
+PASS: requestContent() should succeed for a cross-origin-iframe image resource (no error).
+PASS: Binary (image) response body should be base64-encoded.
+PASS: Binary response body should not be empty.
+Base64-encoded image body length: 13392
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ViaRequestContent.ErrorSurfacing
+PASS: requestContent() should resolve with an error when getResponseBody fails.
+PASS: requestContent() should not return content on failure.
+

@@ -30,6 +30,7 @@
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/ResourceResponse.h>
+#include <utility>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
@@ -307,14 +308,14 @@ void BackendResourceDataStore::clear()
     m_contentSize = 0;
 }
 
-Expected<std::tuple<String, bool>, String> BackendResourceDataStore::getResponseBody(ResourceLoaderIdentifier resourceID)
+Expected<std::pair<String, bool>, String> BackendResourceDataStore::getResponseBody(ResourceLoaderIdentifier resourceID)
 {
     ResourceData const* resourceData = data(resourceID);
     if (!resourceData)
         return makeUnexpected("Missing resource for given requestId"_s);
 
     if (resourceData->hasContent())
-        return std::tuple<String, bool> { resourceData->content(), resourceData->base64Encoded() };
+        return std::pair<String, bool> { resourceData->content(), resourceData->base64Encoded() };
 
     if (resourceData->isContentEvicted())
         return makeUnexpected("Resource content was evicted from inspector cache"_s);
@@ -322,7 +323,7 @@ Expected<std::tuple<String, bool>, String> BackendResourceDataStore::getResponse
     if (resourceData->buffer() && !resourceData->textEncodingName().isNull()) {
         String body;
         if (ResourceUtilities::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), false, &body))
-            return std::tuple<String, bool> { body, false };
+            return std::pair<String, bool> { body, false };
     }
 
     return makeUnexpected("Missing content of resource for given requestId"_s);

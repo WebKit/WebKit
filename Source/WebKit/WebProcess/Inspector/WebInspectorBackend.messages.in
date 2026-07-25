@@ -66,7 +66,9 @@ messages -> WebInspectorBackend {
     # isn't found. See webkit.org/b/171780776.
     GetFrameResourceContent(WebCore::FrameIdentifier frameID, String url) -> (String content, bool base64Encoded, String errorString) Async
 
-    GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (String content, bool base64Encoded, String errorString) Async
+    # Reply: value = success; unexpected with a non-empty error = real failure; unexpected with an
+    # empty error = connection loss (AsyncReplyError), which ProxyingNetworkAgent fails explicitly.
+    GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<std::pair<String, bool>, String> result) Async
 
     # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
     SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async

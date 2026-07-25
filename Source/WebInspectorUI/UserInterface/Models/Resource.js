@@ -889,8 +889,16 @@ WI.Resource = class Resource extends WI.SourceCode
         } else {
             // If we have the requestIdentifier we can get the actual response for this specific resource.
             // Otherwise the content will be cached resource data, which might not exist anymore.
-            if (this._requestIdentifier)
-                return this._target.NetworkAgent.getResponseBody(this._requestIdentifier);
+            if (this._requestIdentifier) {
+                // Under Site Isolation the backend target's Network agent owns the response data for
+                // cross-process requestIds that the resource's own target can't resolve; route there.
+                // Gated on enabledNetworkForSiteIsolation rather than hasDomain("Network") alone, which
+                // is statically true on the backend target even when no Network agent is enabled on it.
+                let networkTarget = this._target;
+                if (WI.networkManager.enabledNetworkForSiteIsolation && WI.backendTarget && WI.backendTarget !== this._target && WI.backendTarget.hasDomain("Network"))
+                    networkTarget = WI.backendTarget;
+                return networkTarget.NetworkAgent.getResponseBody(this._requestIdentifier);
+            }
 
             // There is no request identifier or frame to request content from.
             if (this._parentFrame) {

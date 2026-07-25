@@ -42,6 +42,8 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/ProcessQualified.h>
+#include <utility>
+#include <wtf/Expected.h>
 
 namespace Inspector {
 
@@ -354,11 +356,18 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
 
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetResponseBody { resourceID },
-        [callback = WTF::move(callback)](String content, bool base64Encoded, String errorString) mutable {
-            if (!errorString.isEmpty())
-                callback->sendFailure(errorString);
-            else
+        [callback = WTF::move(callback)](Expected<std::pair<String, bool>, String>&& result) mutable {
+            if (result) {
+                auto& [content, base64Encoded] = result.value();
                 callback->sendSuccess(content, base64Encoded);
+            } else if (!result.error().isEmpty()) {
+                // A real failure reported by the target WebProcess (e.g. missing or evicted content).
+                callback->sendFailure(result.error());
+            } else {
+                // Empty error: AsyncReplyError synthesized this reply on connection loss (the target
+                // WebProcess is gone). Fail explicitly so a dead process is never surfaced as success.
+                callback->sendFailure("Target WebProcess for requestId is no longer available"_s);
+            }
         },
         *targetPageID);
 }

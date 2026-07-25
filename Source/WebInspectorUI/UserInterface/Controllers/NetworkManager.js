@@ -275,6 +275,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     get mainFrame() { return this._mainFrame; }
     get localResourceOverrides() { return this._localResourceOverrides; }
     get bootstrapScript() { return this._bootstrapScript; }
+    get enabledNetworkForSiteIsolation() { return this._enabledNetworkForSiteIsolation; }
     get enabledPageForSiteIsolation() { return this._enabledPageForSiteIsolation; }
 
     get frames()

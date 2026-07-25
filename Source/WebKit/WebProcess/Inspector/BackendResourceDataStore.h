@@ -30,6 +30,7 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/TextResourceDecoder.h>
+#include <utility>
 #include <wtf/CheckedRef.h>
 #include <wtf/Expected.h>
 #include <wtf/ListHashSet.h>
@@ -165,7 +166,7 @@ public:
     // process's buffered response bodies for matches.
     template<typename Visitor> void forEach(NOESCAPE const Visitor&) const;
 
-    Expected<std::tuple<String, bool>, String> getResponseBody(WebCore::ResourceLoaderIdentifier);
+    Expected<std::pair<String, bool>, String> getResponseBody(WebCore::ResourceLoaderIdentifier);
 
 private:
     ResourceData* resourceDataForId(WebCore::ResourceLoaderIdentifier);
