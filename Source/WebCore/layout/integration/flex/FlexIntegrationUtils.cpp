@@ -276,22 +276,61 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentFo
 template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&, LayoutUnit);
 template std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&, LayoutUnit);
 
-// The item's min/max-content main-axis contribution, read with the container's cross size applied as an override so
-// aspect-ratio and percentage resolution see the definite cross size. Unlike the paths that go through
-// computeMainAxisExtentForFlexItem (which invalidates the item's content widths itself), these raw contribution reads
-// rely on the scope to invalidate them (InvalidateContentWidths::Yes).
-LayoutUnit FlexIntegrationUtils::maxContentMainAxisContributionForFlexItem(const FlexLayoutItem& flexLayoutItem)
+// The item's max-content main-axis extent with its own main-axis border/padding removed — the flex base size for the
+// case that sizes the item under a content/max-content used flex basis. Measured with the content laid out under the
+// cross-size override (the scope invalidates the item's preferred widths so they recompute with it in place).
+LayoutUnit FlexIntegrationUtils::maxContentMainAxisExtentForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
-    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
-    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
-    return flexLayoutItem.renderer->maxContentLogicalWidthContribution();
+    auto& flexItem = flexLayoutItem.renderer.get();
+    auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexItem, FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
+    auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexItem };
+    auto mainAxisBorderAndPadding = FlexFormattingUtils::isHorizontalFlow(flexBox()) ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent();
+    return flexItem.maxContentLogicalWidthContribution() - mainAxisBorderAndPadding;
 }
 
+// The item's raw min-content main-axis contribution (border/padding included), measured under the cross-size override
+// — used to floor a table flex item's min main size.
 LayoutUnit FlexIntegrationUtils::minContentMainAxisContributionForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
     auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
     return flexLayoutItem.renderer->minContentLogicalWidthContribution();
+}
+
+LayoutUnit FlexIntegrationUtils::flexItemIntrinsicLogicalHeight(const FlexLayoutItem& flexLayoutItem, bool needToStretchLogicalHeight) const
+{
+    auto& flexItem = flexLayoutItem.renderer.get();
+    // This should only be called if the logical height is the cross size.
+    ASSERT(flexLayoutItem.mainAxisIsInlineAxis);
+    if (needToStretchLogicalHeight) {
+        auto flexItemContentHeight = flexItemContentLogicalHeight(flexLayoutItem);
+        auto flexItemLogicalHeight = flexItemContentHeight + flexItem.scrollbarLogicalHeight() + flexItem.borderAndPaddingLogicalHeight();
+        return flexItem.constrainLogicalHeightByMinMax(flexItemLogicalHeight, flexItemContentHeight);
+    }
+    return flexItem.logicalHeight();
+}
+
+LayoutUnit FlexIntegrationUtils::flexItemIntrinsicLogicalWidth(const FlexLayoutItem& flexLayoutItem, bool crossSizeIsDefinite)
+{
+    auto& flexItem = flexLayoutItem.renderer.get();
+    // This should only be called if the logical width is the cross size.
+    ASSERT(!flexLayoutItem.mainAxisIsInlineAxis);
+    if (crossSizeIsDefinite)
+        return flexItem.logicalWidth();
+
+    // computeLogicalWidth returns the overriding width as-is for a flex item, so clear it to get the width the
+    // item computes from its own style.
+    // FIXME: Check whether an overriding inline size can actually be set on an orthogonal flex item at this point
+    // (nothing in this layout pass appears to set one) and remove this if it cannot.
+    auto previousOverridingBorderBoxLogicalWidth = flexItem.overridingBorderBoxLogicalWidth();
+    flexItem.clearOverridingBorderBoxLogicalWidth();
+
+    RenderBox::LogicalExtentComputedValues values;
+    flexItem.computeLogicalWidth(values);
+
+    if (previousOverridingBorderBoxLogicalWidth)
+        flexItem.setOverridingBorderBoxLogicalWidth(*previousOverridingBorderBoxLogicalWidth);
+    return values.extent;
 }
 
 ScopedFlexBasisAsFlexItemMainSize::ScopedFlexBasisAsFlexItemMainSize(const FlexLayoutItem& flexLayoutItem, Style::PreferredSize&& flexBasis)

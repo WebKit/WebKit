@@ -79,8 +79,10 @@ public:
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
-    LayoutUnit maxContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
+    LayoutUnit maxContentMainAxisExtentForFlexItem(const FlexLayoutItem&);
     LayoutUnit minContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
+    LayoutUnit flexItemIntrinsicLogicalHeight(const FlexLayoutItem&, bool needToStretchLogicalHeight) const;
+    LayoutUnit flexItemIntrinsicLogicalWidth(const FlexLayoutItem&, bool crossSizeIsDefinite);
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;

@@ -166,9 +166,6 @@ private:
     LayoutUnit computeContentBasedMinMainSize(const FlexLayoutItem&, std::optional<LayoutUnit> maxExtent);
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const FlexLayoutItem&, const SizeType& crossSizeLength) const;
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem&, LayoutUnit flexItemSize);
-
-    LayoutUnit flexItemIntrinsicLogicalHeight(const FlexLayoutItem&) const;
-    LayoutUnit flexItemIntrinsicLogicalWidth(const FlexLayoutItem&);
     template<typename SizeType> bool flexItemCrossSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
 
     bool flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const FlexLayoutItem&);
