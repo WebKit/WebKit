@@ -8924,7 +8924,7 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 log_environ=False,
                 timeout=60,
-                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-000-branch'],
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/safari-000-branch'],
             ).exit(0)
             .log('stdio', stdout='  safari-000-branch\n  remotes/origin/safari-000-branch\n  remotes/origin/safari-alias\n  remotes/origin/eng/pr-branch\n'),
         )
@@ -8943,7 +8943,7 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 log_environ=False,
                 timeout=60,
-                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-000-branch'],
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/safari-000-branch'],
             ).exit(0)
             .log('stdio', stdout='  safari-000-branch\n  remotes/origin/safari-000-branch\n  remotes/origin/safari-alias\n  remotes/origin/eng/pr-branch\n  remotes/origin/main\n'),
         )
@@ -8962,7 +8962,7 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 log_environ=False,
                 timeout=60,
-                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-alias'],
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/safari-alias'],
             ).exit(0)
             .log('stdio', stdout='  safari-alias\n  remotes/origin/safari-000-branch\n  remotes/origin/safari-alias\n  remotes/origin/eng/pr-branch\n'),
         )
@@ -8981,7 +8981,7 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 log_environ=False,
                 timeout=60,
-                command=['git', 'branch', '-a', '--contains', 'remotes/security/safari-000-branch'],
+                command=['git', 'branch', '-a', '--points-at', 'remotes/security/safari-000-branch'],
             ).exit(0)
             .log('stdio', stdout='  safari-000-branch\n  remotes/security/safari-000-branch\n  remotes/security/safari-alias\n  remotes/security/eng/pr-branch\n  remotes/origin/main\n'),
         )
@@ -9000,7 +9000,7 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 log_environ=False,
                 timeout=60,
-                command=['git', 'branch', '-a', '--contains', 'remotes/security/safari-alias'],
+                command=['git', 'branch', '-a', '--points-at', 'remotes/security/safari-alias'],
             ).exit(0)
             .log('stdio', stdout='  safari-alias\n  remotes/security/safari-000-branch\n  remotes/security/safari-alias\n  remotes/security/eng/pr-branch\n  remotes/origin/main\n'),
         )
@@ -9009,7 +9009,8 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('github.base.ref', 'safari-000-branch')
         return rc
 
-    def test_failure(self):
+    def test_unresolvable_ref_fails_and_halts(self):
+        # A missing base ref makes the query error out; fail, leave the base ref untouched, and halt.
         self.setup_step(MapBranchAlias())
         self.setProperty('remote', 'origin')
         self.setProperty('github.base.ref', 'safari-000-branch')
@@ -9019,12 +9020,104 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 log_environ=False,
                 timeout=60,
-                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-000-branch'],
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/safari-000-branch'],
             ).exit(129)
-            .log('stdio', stdout='error: malformed object name remotes/origin/safari-000-branch\n'),
+            .log('stdio', stdout="error: malformed object name 'remotes/origin/safari-000-branch'\n"),
         )
         self.expect_outcome(result=FAILURE, state_string="Failed to query checkout for aliases of 'safari-000-branch'")
-        return self.run_step()
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'safari-000-branch')
+
+        def check_halting(result):
+            self.assertTrue(self.get_nth_step(0).haltOnFailure, 'unresolvable base ref must halt the queue')
+            return result
+        rc.addCallback(check_halting)
+        return rc
+
+    def test_freshly_cut_release_branch(self):
+        # Regression (build 26800): under --points-at, a freshly-cut branch resolves to itself, not main.
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'webkitglib/2.54')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/webkitglib/2.54'],
+            ).exit(0)
+            .log('stdio', stdout='* webkitglib/2.54\n  remotes/origin/webkitglib/2.54\n'),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="'webkitglib/2.54' is the prevailing alias")
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'webkitglib/2.54')
+        return rc
+
+    def test_diverged_release_branch(self):
+        # No-op guard: a diverged release branch lists only itself and resolves to itself.
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'webkitglib/2.52')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/webkitglib/2.52'],
+            ).exit(0)
+            .log('stdio', stdout='* webkitglib/2.52\n  remotes/origin/webkitglib/2.52\n'),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="'webkitglib/2.52' is the prevailing alias")
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'webkitglib/2.52')
+        return rc
+
+    def test_dev_branch_base_is_found_and_resolves(self):
+        # A dev-branch base resolves to its co-pointing production alias.
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'eng/pr-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/eng/pr-branch'],
+            ).exit(0)
+            .log('stdio', stdout='* eng/pr-branch\n  remotes/origin/eng/pr-branch\n  remotes/origin/safari-000-branch\n'),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="'safari-000-branch' is the prevailing alias")
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'safari-000-branch')
+        return rc
+
+    def test_step_visible_after_remap_to_main(self):
+        # A step that remaps to main did real work and must stay visible (hideStepIf uses the original base ref).
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--points-at', 'remotes/origin/safari-000-branch'],
+            ).exit(0)
+            .log('stdio', stdout='  safari-000-branch\n  remotes/origin/safari-000-branch\n  remotes/origin/main\n'),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="'main' is the prevailing alias")
+        rc = self.run_step()
+
+        def check_visible(result):
+            step = self.get_nth_step(0)
+            self.assertFalse(step.hideStepIf(SUCCESS, step), 'step remapped to main must stay visible')
+            return result
+        rc.addCallback(check_visible)
+        return rc
 
 
 DIFF_NO_MARKERS = (
