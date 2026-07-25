@@ -67,7 +67,13 @@ srtp_debug_module_t srtp_mod_alloc = {
 
 #if defined(HAVE_STDLIB_H)
 
+#if defined(WEBRTC_WEBKIT_BUILD) && defined(_MALLOC_TYPE_ENABLED) && _MALLOC_TYPE_ENABLED
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wallocator-wrappers" // rdar://170138232
+void *srtp_crypto_alloc_typed(size_t size, malloc_type_id_t type_id)
+#else
 void *srtp_crypto_alloc(size_t size)
+#endif
 {
     void *ptr;
 
@@ -75,7 +81,11 @@ void *srtp_crypto_alloc(size_t size)
         return NULL;
     }
 
+#if defined(WEBRTC_WEBKIT_BUILD) && defined(_MALLOC_TYPE_ENABLED) && _MALLOC_TYPE_ENABLED
+    ptr = malloc_type_calloc(1, size, type_id);
+#else
     ptr = calloc(1, size);
+#endif
 
     if (ptr) {
         debug_print(srtp_mod_alloc, "(location: %p) allocated", ptr);
@@ -86,6 +96,9 @@ void *srtp_crypto_alloc(size_t size)
 
     return ptr;
 }
+#if defined(WEBRTC_WEBKIT_BUILD) && defined(_MALLOC_TYPE_ENABLED) && _MALLOC_TYPE_ENABLED
+#pragma clang diagnostic pop
+#endif
 
 void srtp_crypto_free(void *ptr)
 {

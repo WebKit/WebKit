@@ -180,6 +180,15 @@ void bssl::OPENSSL_enable_malloc_failures_for_testing() {
 static int should_fail_allocation() { return 0; }
 #endif
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wallocator-wrappers" // rdar://170138232
+// |OPENSSL_malloc| is taken by-address at line ~516
+// (|allocate = system_malloc ? malloc : OPENSSL_malloc;|), so |_MALLOC_TYPED|
+// cannot be applied -- the rewriter cannot rewrite calls made through a
+// runtime function pointer, and removing the untyped symbol breaks linking
+// of |OPENSSL_vasprintf_internal|.
+#endif
 void *OPENSSL_malloc(size_t size) {
   void *ptr = nullptr;
   if (should_fail_allocation()) {
@@ -215,6 +224,9 @@ err:
   OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
   return nullptr;
 }
+#if defined(WEBRTC_WEBKIT_BUILD)
+#pragma clang diagnostic pop
+#endif
 
 void *OPENSSL_zalloc(size_t size) {
   void *ret = OPENSSL_malloc(size);

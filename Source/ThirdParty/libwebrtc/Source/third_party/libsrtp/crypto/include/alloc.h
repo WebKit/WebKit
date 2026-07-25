@@ -47,6 +47,10 @@
 
 #include "datatypes.h"
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+#include <stdlib.h>  // For _MALLOC_TYPED and malloc_type_id_t.
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,7 +63,12 @@ extern "C" {
  *
  * returns pointer to memory on success or else NULL
  */
+#if defined(WEBRTC_WEBKIT_BUILD) && defined(_MALLOC_TYPE_ENABLED) && _MALLOC_TYPE_ENABLED
+void *srtp_crypto_alloc_typed(size_t size, malloc_type_id_t type_id);
+void *srtp_crypto_alloc(size_t size) _MALLOC_TYPED(srtp_crypto_alloc_typed, 1);
+#else
 void *srtp_crypto_alloc(size_t size);
+#endif
 
 /*
  * srtp_crypto_free

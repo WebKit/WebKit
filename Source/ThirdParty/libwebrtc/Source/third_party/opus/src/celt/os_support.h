@@ -43,27 +43,48 @@
 
 /** Opus wrapper for malloc(). To do your own dynamic allocation replace this function, opus_realloc, and opus_free */
 #ifndef OVERRIDE_OPUS_ALLOC
+#if defined(WEBRTC_WEBKIT_BUILD)
+/* Defined as a function-like macro (rather than a static inline function)
+   so the compiler can perform Typed Memory Operations type inference at
+   each call site. See rdar://170138232. */
+#define opus_alloc(size) malloc(size)
+#else
 static OPUS_INLINE void *opus_alloc (size_t size)
 {
    return malloc(size);
 }
 #endif
+#endif
 
 #ifndef OVERRIDE_OPUS_REALLOC
+#if defined(WEBRTC_WEBKIT_BUILD)
+/* Defined as a function-like macro (rather than a static inline function)
+   so the compiler can perform Typed Memory Operations type inference at
+   each call site. See rdar://170138232. */
+#define opus_realloc(ptr, size) realloc(ptr, size)
+#else
 static OPUS_INLINE void *opus_realloc (void *ptr, size_t size)
 {
    return realloc(ptr, size);
 }
 #endif
+#endif
 
 /** Used only for non-threadsafe pseudostack.
     If desired, this can always return the same area of memory rather than allocating a new one every time. */
 #ifndef OVERRIDE_OPUS_ALLOC_SCRATCH
+#if defined(WEBRTC_WEBKIT_BUILD)
+/* Defined as a function-like macro (rather than a static inline function)
+   so the compiler can perform Typed Memory Operations type inference at
+   each call site. See rdar://170138232. */
+#define opus_alloc_scratch(size) opus_alloc(size)
+#else
 static OPUS_INLINE void *opus_alloc_scratch (size_t size)
 {
    /* Scratch space doesn't need to be cleared */
    return opus_alloc(size);
 }
+#endif
 #endif
 
 /** Opus wrapper for free(). To do your own dynamic allocation replace this function, opus_realloc, and opus_free */

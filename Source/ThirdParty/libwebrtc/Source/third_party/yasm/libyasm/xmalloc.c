@@ -59,6 +59,13 @@ void (*yasm_xfree) (/*@only@*/ /*@out@*/ /*@null@*/ void *p)
     /*@modifies p@*/ = def_xfree;
 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
+#pragma clang diagnostic ignored "-Wallocator-wrappers" // rdar://170138232
+// These three functions are only ever taken by-address to initialize the
+// global yasm_xmalloc / yasm_xcalloc / yasm_xrealloc function pointers
+// (see lines 50-56). Calls go through those function pointers at runtime,
+// so the _MALLOC_TYPED rewriter cannot rewrite them. Suppress as a group.
 static void *
 def_xmalloc(size_t size)
 {
@@ -104,6 +111,7 @@ def_xrealloc(void *oldmem, size_t size)
 
     return newmem;
 }
+#pragma clang diagnostic pop
 
 static void
 def_xfree(void *p)

@@ -50,6 +50,68 @@ void* GetRightAlign(const void* pointer, size_t alignment) {
   return reinterpret_cast<void*>(GetRightAlign(start_pos, alignment));
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+#if defined(_MALLOC_TYPE_ENABLED) && _MALLOC_TYPE_ENABLED
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wallocator-wrappers" // rdar://170138232
+void* AlignedMalloc_typed(size_t size, malloc_type_id_t type_id, size_t alignment) {
+  if (size == 0) {
+    return nullptr;
+  }
+  if (!ValidAlignment(alignment)) {
+    return nullptr;
+  }
+
+  // The memory is aligned towards the lowest address that so only
+  // alignment - 1 bytes needs to be allocated.
+  // A pointer to the start of the memory must be stored so that it can be
+  // retreived for deletion, ergo the sizeof(uintptr_t).
+  void* memory_pointer = malloc_type_malloc(size + sizeof(uintptr_t) + alignment - 1, type_id);
+  RTC_CHECK(memory_pointer) << "Couldn't allocate memory in AlignedMalloc";
+
+  // Aligning after the sizeof(uintptr_t) bytes will leave room for the header
+  // in the same memory block.
+  uintptr_t align_start_pos = reinterpret_cast<uintptr_t>(memory_pointer);
+  align_start_pos += sizeof(uintptr_t);
+  uintptr_t aligned_pos = GetRightAlign(align_start_pos, alignment);
+  void* aligned_pointer = reinterpret_cast<void*>(aligned_pos);
+
+  // Store the address to the beginning of the memory just before the aligned
+  // memory.
+  uintptr_t header_pos = aligned_pos - sizeof(uintptr_t);
+  void* header_pointer = reinterpret_cast<void*>(header_pos);
+  uintptr_t memory_start = reinterpret_cast<uintptr_t>(memory_pointer);
+  memcpy(header_pointer, &memory_start, sizeof(uintptr_t));
+
+  return aligned_pointer;
+}
+#pragma clang diagnostic pop
+#else
+void* AlignedMalloc(size_t size, size_t alignment) {
+  if (size == 0) {
+    return nullptr;
+  }
+  if (!ValidAlignment(alignment)) {
+    return nullptr;
+  }
+
+  void* memory_pointer = malloc(size + sizeof(uintptr_t) + alignment - 1);
+  RTC_CHECK(memory_pointer) << "Couldn't allocate memory in AlignedMalloc";
+
+  uintptr_t align_start_pos = reinterpret_cast<uintptr_t>(memory_pointer);
+  align_start_pos += sizeof(uintptr_t);
+  uintptr_t aligned_pos = GetRightAlign(align_start_pos, alignment);
+  void* aligned_pointer = reinterpret_cast<void*>(aligned_pos);
+
+  uintptr_t header_pos = aligned_pos - sizeof(uintptr_t);
+  void* header_pointer = reinterpret_cast<void*>(header_pos);
+  uintptr_t memory_start = reinterpret_cast<uintptr_t>(memory_pointer);
+  memcpy(header_pointer, &memory_start, sizeof(uintptr_t));
+
+  return aligned_pointer;
+}
+#endif
+#else
 void* AlignedMalloc(size_t size, size_t alignment) {
   if (size == 0) {
     return nullptr;
@@ -81,6 +143,7 @@ void* AlignedMalloc(size_t size, size_t alignment) {
 
   return aligned_pointer;
 }
+#endif
 
 void AlignedFree(void* mem_block) {
   if (mem_block == nullptr) {

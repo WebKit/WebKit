@@ -18,6 +18,9 @@
 // Note: alignment must be a power of two. The alignment is in bytes.
 
 #include <stddef.h>
+#if defined(WEBRTC_WEBKIT_BUILD)
+#include <stdlib.h> // for _MALLOC_TYPED and malloc_type_id_t
+#endif
 
 namespace webrtc {
 
@@ -30,7 +33,12 @@ void* GetRightAlign(const void* ptr, size_t alignment);
 // Allocates memory of `size` bytes aligned on an `alignment` boundry.
 // The return value is a pointer to the memory. Note that the memory must
 // be de-allocated using AlignedFree.
+#if defined(WEBRTC_WEBKIT_BUILD) && defined(_MALLOC_TYPE_ENABLED) && _MALLOC_TYPE_ENABLED
+void* AlignedMalloc_typed(size_t size, malloc_type_id_t type_id, size_t alignment);
+void* AlignedMalloc(size_t size, size_t alignment) _MALLOC_TYPED(AlignedMalloc_typed, 1);
+#else
 void* AlignedMalloc(size_t size, size_t alignment);
+#endif
 // De-allocates memory created using the AlignedMalloc() API.
 void AlignedFree(void* mem_block);
 
