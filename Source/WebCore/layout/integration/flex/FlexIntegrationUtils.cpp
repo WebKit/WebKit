@@ -177,6 +177,27 @@ bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const FlexLayoutI
     return flexBox().flexItemHasPercentHeightDescendants(flexLayoutItem.renderer.get());
 }
 
+LayoutUnit FlexIntegrationUtils::flexItemContentLogicalHeight(const FlexLayoutItem& flexLayoutItem) const
+{
+    return flexBox().flexItemContentLogicalHeight(flexLayoutItem.renderer.get());
+}
+
+LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
+{
+    return flexBox().computeBlockAxisContentSizeForFlexItem(flexLayoutItem.renderer.get());
+}
+
+template<typename SizeType> bool FlexIntegrationUtils::flexItemMainSizeIsDefinite(const FlexLayoutItem& flexLayoutItem, const SizeType& size)
+{
+    return flexBox().flexItemMainSizeIsDefinite(flexLayoutItem.renderer.get(), size);
+}
+
+// Explicit instantiations for the SizeTypes FlexFormattingContext resolves through the integration from a separate translation unit.
+template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::FlexBasis>(const FlexLayoutItem&, const Style::FlexBasis&);
+template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&);
+template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&);
+template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&);
+
 ScopedFlexBasisAsFlexItemMainSize::ScopedFlexBasisAsFlexItemMainSize(const FlexLayoutItem& flexLayoutItem, Style::PreferredSize&& flexBasis)
     : m_flexItem(flexLayoutItem.renderer)
     , m_mainAxisIsInlineAxis(flexLayoutItem.mainAxisIsInlineAxis)

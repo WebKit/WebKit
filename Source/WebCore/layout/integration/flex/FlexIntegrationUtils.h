@@ -34,6 +34,9 @@ enum class LogicalBoxAxis : uint8_t;
 
 namespace Style {
 enum class MarginTrimSide : uint8_t;
+struct FlexBasis;
+struct MaximumSize;
+struct MinimumSize;
 struct PreferredSize;
 }
 
@@ -70,6 +73,10 @@ public:
     void addItemOnFirstFlexLine(const FlexLayoutItem&);
     void addItemOnLastFlexLine(const FlexLayoutItem&);
     bool flexItemHasPercentHeightDescendants(const FlexLayoutItem&) const;
+
+    LayoutUnit flexItemContentLogicalHeight(const FlexLayoutItem&) const;
+    LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
+    template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;

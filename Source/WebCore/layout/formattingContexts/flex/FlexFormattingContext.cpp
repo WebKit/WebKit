@@ -856,7 +856,7 @@ LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& 
     auto blockAxisContentSize = ensureBlockAxisContentSizeForFlexItemIfNeeded(flexLayoutItem);
 
     // A. If the item has a definite used flex basis, that's the flex base size.
-    if (m_flexBox->flexItemMainSizeIsDefinite(flexItem, flexBasis))
+    if (integrationUtils().flexItemMainSizeIsDefinite(flexLayoutItem, flexBasis))
         return std::max(0_lu, computeMainAxisExtentForFlexItem(flexLayoutItem, flexBasis).value());
 
     // B. If the flex item has a preferred aspect ratio, a used flex basis of content, and a definite cross size,
@@ -890,18 +890,17 @@ std::optional<LayoutUnit> FlexFormattingContext::ensureBlockAxisContentSizeForFl
 {
     // Laying the item out, reusing the previously cached size, and caching the new one are all render-tree work; ask RenderFlexibleBox.
     auto flexBaseSizeNeedsBlockAxisContentSize = [&] {
-        CheckedRef flexItem = flexLayoutItem.renderer;
         if (flexLayoutItem.mainAxisIsInlineAxis)
             return false;
 
         auto flexBasis = flexFormattingUtils().flexBasisForFlexItem(flexLayoutItem);
         auto minSize = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
         auto maxSize = flexFormattingUtils().maxMainSizeLengthForFlexItem(flexLayoutItem);
-        // FIXME: we must run m_flexBox->flexItemMainSizeIsDefinite() because it might end up calling computePercentageLogicalHeight()
+        // FIXME: we must run flexItemMainSizeIsDefinite() because it might end up calling computePercentageLogicalHeight()
         // which has some side effects like calling addPercentHeightDescendant() for example so it is not possible to skip
         // the call for example by moving it to the end of the conditional expression. This is error-prone and we should
         // refactor computePercentageLogicalHeight() at some point so that it only computes stuff without those side effects.
-        if (!m_flexBox->flexItemMainSizeIsDefinite(flexItem, flexBasis) || minSize.isIntrinsic() || maxSize.isIntrinsic())
+        if (!integrationUtils().flexItemMainSizeIsDefinite(flexLayoutItem, flexBasis) || minSize.isIntrinsic() || maxSize.isIntrinsic())
             return true;
 
         if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem))
@@ -911,7 +910,7 @@ std::optional<LayoutUnit> FlexFormattingContext::ensureBlockAxisContentSizeForFl
     };
 
     if (flexBaseSizeNeedsBlockAxisContentSize())
-        return m_flexBox->computeBlockAxisContentSizeForFlexItem(flexLayoutItem.renderer.get());
+        return integrationUtils().computeBlockAxisContentSizeForFlexItem(flexLayoutItem);
     return { };
 }
 
@@ -1004,7 +1003,7 @@ LayoutUnit FlexFormattingContext::computeContentBasedMinMainSize(const FlexLayou
 
     // Specified size suggestion: if the item's preferred main size is definite, cap the result by that size.
     auto mainSize = flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem);
-    if (m_flexBox->flexItemMainSizeIsDefinite(flexItem, mainSize)) {
+    if (integrationUtils().flexItemMainSizeIsDefinite(flexLayoutItem, mainSize)) {
         auto resolvedMainSize = computeMainAxisExtentForFlexItem(flexLayoutItem, mainSize).value_or(0);
         ASSERT(resolvedMainSize >= 0);
         auto specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
@@ -1033,7 +1032,7 @@ template<typename SizeType> std::optional<LayoutUnit> FlexFormattingContext::com
     if (!flexLayoutItem.mainAxisIsInlineAxis) {
         // No "auto" check needed: computeContentLogicalHeight returns nullopt for
         // auto and we propagate that below.
-        auto height = flexItem->computeContentLogicalHeight(size, m_flexBox->flexItemContentLogicalHeight(flexItem));
+        auto height = flexItem->computeContentLogicalHeight(size, integrationUtils().flexItemContentLogicalHeight(flexLayoutItem));
         if (!height)
             return height;
 
@@ -1041,7 +1040,7 @@ template<typename SizeType> std::optional<LayoutUnit> FlexFormattingContext::com
         // only includes the size of the rows. That's why we need to add the size of the captions here so that the table
         // layout algorithm behaves appropriately.
         LayoutUnit captionsHeight;
-        if (CheckedPtr table = dynamicDowncast<RenderTable>(flexItem); table && m_flexBox->flexItemMainSizeIsDefinite(flexItem, size))
+        if (CheckedPtr table = dynamicDowncast<RenderTable>(flexItem); table && integrationUtils().flexItemMainSizeIsDefinite(flexLayoutItem, size))
             captionsHeight = table->sumCaptionsLogicalHeight();
 
         // scrollbarLogicalHeight depends on layout having run. flexBaseSizeForFlexItem
@@ -1167,7 +1166,7 @@ LayoutUnit FlexFormattingContext::flexItemIntrinsicLogicalHeight(const FlexLayou
     // This should only be called if the logical height is the cross size
     ASSERT(flexLayoutItem.mainAxisIsInlineAxis);
     if (flexFormattingUtils().needToStretchFlexItemLogicalHeight(flexLayoutItem)) {
-        LayoutUnit flexItemContentHeight = m_flexBox->flexItemContentLogicalHeight(flexItem);
+        LayoutUnit flexItemContentHeight = integrationUtils().flexItemContentLogicalHeight(flexLayoutItem);
         LayoutUnit flexItemLogicalHeight = flexItemContentHeight + flexItem->scrollbarLogicalHeight() + flexItem->borderAndPaddingLogicalHeight();
         return flexItem->constrainLogicalHeightByMinMax(flexItemLogicalHeight, flexItemContentHeight);
     }
@@ -1419,7 +1418,7 @@ LayoutUnit FlexFormattingContext::applyStretchAlignmentToFlexItem(const FlexLayo
         auto stretchedLogicalHeight = std::max(flexItem->borderAndPaddingLogicalHeight(),
             lineCrossAxisExtent - flexFormattingUtils().crossAxisMarginExtentForFlexItem(flexLayoutItem));
         ASSERT(!flexItem->needsLayout());
-        auto blockSize = flexItem->constrainLogicalHeightByMinMax(stretchedLogicalHeight, m_flexBox->flexItemContentLogicalHeight(flexItem));
+        auto blockSize = flexItem->constrainLogicalHeightByMinMax(stretchedLogicalHeight, integrationUtils().flexItemContentLogicalHeight(flexLayoutItem));
 
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         auto flexItemNeedsLayout = [&] {
