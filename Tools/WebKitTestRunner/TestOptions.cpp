@@ -222,6 +222,7 @@ const TestFeatures& TestOptions::defaults()
             { "enableMetalShaderValidation", false },
             { "pageTopColorSamplingEnabled", false },
             { "enhancedSecurityEnabled", false },
+            { "globalPrivacyControl", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },

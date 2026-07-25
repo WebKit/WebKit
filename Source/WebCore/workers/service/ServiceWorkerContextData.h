@@ -61,6 +61,7 @@ struct ServiceWorkerContextData {
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     NavigationPreloadState navigationPreloadState;
     Vector<ServiceWorkerRoute> routes;
+    std::optional<bool> globalPrivacyControlEnabled;
 
     using ImportedScript = ServiceWorkerImportedScript;
 

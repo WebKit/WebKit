@@ -39,6 +39,7 @@ struct WorkerInitializationData {
     std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     String userAgent;
+    std::optional<bool> globalPrivacyControlEnabled;
 
     WorkerInitializationData isolatedCopy() const;
 };
@@ -49,7 +50,8 @@ inline WorkerInitializationData WorkerInitializationData::isolatedCopy() const
         crossThreadCopy(serviceWorkerData),
         clientIdentifier,
         advancedPrivacyProtections,
-        userAgent.isolatedCopy()
+        userAgent.isolatedCopy(),
+        globalPrivacyControlEnabled
     };
 }
 

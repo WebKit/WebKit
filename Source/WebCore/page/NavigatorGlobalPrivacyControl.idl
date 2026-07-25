@@ -27,5 +27,5 @@
 [                                                                                                                           
     ImplementedBy=NavigatorGlobalPrivacyControl                                                                          
 ] interface mixin NavigatorGlobalPrivacyControl {         
-    [ImplementedAs=globalPrivacyControlEnabled] readonly attribute boolean globalPrivacyControl;
+    [EnabledBySetting=GlobalPrivacyControlEnabled, ImplementedAs=globalPrivacyControlEnabled] readonly attribute boolean globalPrivacyControl;
 };

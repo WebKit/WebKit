@@ -77,6 +77,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
+    std::optional<bool> globalPrivacyControlEnabled() const { return m_globalPrivacyControlEnabled; }
 
     const ScriptBuffer& script() const LIFETIME_BOUND { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const LIFETIME_BOUND { return m_contentSecurityPolicy; }
@@ -169,6 +170,7 @@ private:
     WeakPtr<ScriptExecutionContext> m_context;
     String m_userAgentForSharedWorker;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
+    std::optional<bool> m_globalPrivacyControlEnabled;
 };
 
 } // namespace WebCore

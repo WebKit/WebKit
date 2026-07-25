@@ -47,7 +47,8 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const &
         crossThreadCopy(scriptResourceMap),
         serviceWorkerPageIdentifier,
         crossThreadCopy(navigationPreloadState),
-        crossThreadCopy(routes)
+        crossThreadCopy(routes),
+        globalPrivacyControlEnabled
     };
 }
 
@@ -69,7 +70,8 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() &&
         crossThreadCopy(WTF::move(scriptResourceMap)),
         serviceWorkerPageIdentifier,
         crossThreadCopy(WTF::move(navigationPreloadState)),
-        crossThreadCopy(WTF::move(routes))
+        crossThreadCopy(WTF::move(routes)),
+        globalPrivacyControlEnabled
     };
 }
 
@@ -91,7 +93,8 @@ ServiceWorkerContextData ServiceWorkerContextData::copy() const
         scriptResourceMap,
         serviceWorkerPageIdentifier,
         navigationPreloadState,
-        map(routes, [](auto& route) { return route.copy(); })
+        map(routes, [](auto& route) { return route.copy(); }),
+        globalPrivacyControlEnabled
     };
 }
 
