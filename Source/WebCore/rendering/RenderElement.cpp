@@ -2123,8 +2123,11 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
         } else if (is<RenderText>(*o) || o->isBlockLevelReplacedOrAtomicInline()) {
             point = FloatPoint();
             if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*o)) {
-                if (auto run = InlineIterator::lineLeftmostTextBoxFor(*textRenderer))
-                    point.move(textRenderer->linesBoundingBox().x(), run->lineBox()->contentLogicalTop());
+                // Use the text's own bounding box rather than the line box top, so that an inline
+                // element sharing a tall line (e.g. with a large image) scrolls to its actual
+                // position. This mirrors getTrailingCorner()'s use of linesBoundingBox().
+                if (InlineIterator::lineLeftmostTextBoxFor(*textRenderer))
+                    point.moveBy(textRenderer->linesBoundingBox().location());
             } else if (auto* box = dynamicDowncast<RenderBox>(*o))
                 point.moveBy(box->location());
             point = o->container()->localToAbsolute(point, MapCoordinatesMode::UseTransforms, &insideFixed);
