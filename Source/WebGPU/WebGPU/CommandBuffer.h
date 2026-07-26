@@ -94,7 +94,7 @@ private:
     // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
     BinarySemaphore m_commandBufferComplete;
     RefPtr<CommandEncoder> m_commandEncoder;
-} SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer);
+} SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

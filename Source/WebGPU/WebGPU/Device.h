@@ -342,7 +342,7 @@ private:
     bool m_supressAllErrors { false };
     const uint32_t m_maxVerticesPerDrawCall { 0 };
     bool m_shaderValidationEnabled { true };
-} SWIFT_SHARED_REFERENCE(refDevice, derefDevice);
+} SWIFT_SHARED_REFERENCE(refDevice, derefDevice) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

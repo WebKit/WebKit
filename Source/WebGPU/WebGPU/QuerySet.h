@@ -118,7 +118,7 @@ private:
     static Lock querySetLock;
     static std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> m_counterSampleBuffers WTF_GUARDED_BY_LOCK(querySetLock);
     static std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> m_counterSampleBufferFreeRanges WTF_GUARDED_BY_LOCK(querySetLock);
-} SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
+} SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

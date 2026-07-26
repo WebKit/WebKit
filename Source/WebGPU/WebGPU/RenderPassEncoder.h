@@ -224,7 +224,7 @@ private:
     bool m_passEnded { false };
     bool m_ignoreBufferCache { false };
     Vector<bool> m_bindGroupDynamicOffsetsChanged;
-} SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder);
+} SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

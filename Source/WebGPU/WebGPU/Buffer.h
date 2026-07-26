@@ -186,7 +186,7 @@ private:
     bool m_mappedAtCreation { false };
 #endif
     HashMap<uint64_t, bool, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_didReadOOB;
-} SWIFT_SHARED_REFERENCE(refBuffer, derefBuffer) SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift");
+} SWIFT_SHARED_REFERENCE(refBuffer, derefBuffer) SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

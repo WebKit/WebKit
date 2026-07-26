@@ -184,7 +184,7 @@ private:
     std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>> m_leftRightRasterizationMaps;
 
     uint64_t m_sharedEventSignalValue { 0 };
-} SWIFT_SHARED_REFERENCE(refTexture, derefTexture);
+} SWIFT_SHARED_REFERENCE(refTexture, derefTexture) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

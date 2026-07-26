@@ -108,7 +108,7 @@ private:
     std::array<uint32_t, 32> m_maxDynamicOffsetAtIndex;
     NSString *m_lastErrorString { nil };
     bool m_passEnded { false };
-} SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder);
+} SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 
 } // namespace WebGPU

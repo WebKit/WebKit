@@ -211,7 +211,7 @@ private:
 #if ENABLE(WEBGPU_BY_DEFAULT)
     uint32_t m_currentResidencySetCount { 0 };
 #endif
-} SWIFT_SHARED_REFERENCE(refCommandEncoder, derefCommandEncoder) SWIFT_PRIVATE_FILEID("WebGPU/CommandEncoder.swift");
+} SWIFT_SHARED_REFERENCE(refCommandEncoder, derefCommandEncoder) SWIFT_PRIVATE_FILEID("WebGPU/CommandEncoder.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

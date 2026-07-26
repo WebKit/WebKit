@@ -105,7 +105,7 @@ private:
 
     const Ref<Device> m_device;
     const Ref<Texture> m_parentTexture;
-} SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView);
+} SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 

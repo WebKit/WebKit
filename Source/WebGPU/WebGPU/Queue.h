@@ -142,7 +142,7 @@ private:
     const ThreadSafeWeakPtr<Instance> m_instance;
     id<MTLBuffer> _Nullable m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
-} SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
+} SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU
 
