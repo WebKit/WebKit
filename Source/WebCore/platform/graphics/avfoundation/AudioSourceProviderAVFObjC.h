@@ -110,8 +110,8 @@ private:
     std::unique_ptr<AudioStreamBasicDescription> m_outputDescription;
     std::unique_ptr<CARingBuffer> m_ringBuffer;
 
-    MediaTime m_startTimeAtLastProcess;
-    MediaTime m_endTimeAtLastProcess;
+    MediaTime m_startTimeAtLastProcess { MediaTime::invalidTime() };
+    MediaTime m_endTimeAtLastProcess { MediaTime::invalidTime() };
     uint64_t m_readCount { 0 };
     enum { NoSeek = std::numeric_limits<uint64_t>::max() };
     uint64_t m_seekTo { NoSeek };
