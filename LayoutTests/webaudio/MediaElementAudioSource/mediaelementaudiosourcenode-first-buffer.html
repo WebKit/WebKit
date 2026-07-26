@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MediaElementAudioSourceNode delivers the first audio buffer when playback starts at time zero</title>
+<script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/audit.js"></script>
+</head>
+<body>
+<script>
+const sourceURL = '../../imported/w3c/web-platform-tests/webaudio/resources/sin_440Hz_-6dBFS_1s.wav';
+const renderQuantumSize = 128;
+const samplesToCompare = renderQuantumSize - 1;
+
+function firstNonZeroIndex(samples)
+{
+    return samples.findIndex(sample => sample);
+}
+
+promise_test(async () => {
+    const context = new AudioContext({ sampleRate: 44100 });
+    const expectedBuffer = await context.decodeAudioData(await Audit.loadFileFromUrl(sourceURL));
+    const expected = expectedBuffer.getChannelData(0);
+    const expectedStart = firstNonZeroIndex(expected);
+    assert_greater_than_equal(expectedStart, 0, 'reference file contains audio');
+
+    const audio = new Audio(sourceURL);
+    const source = context.createMediaElementSource(audio);
+    const processor = context.createScriptProcessor(2048, 1, 1);
+    const silence = context.createGain();
+    silence.gain.value = 0;
+    source.connect(processor);
+    processor.connect(silence);
+    silence.connect(context.destination);
+
+    const captured = await new Promise((resolve, reject) => {
+        audio.addEventListener('error', () => reject(new Error(`media error ${audio.error.code}`)), { once: true });
+        audio.addEventListener('ended', () => reject(new Error('playback ended before any audio was captured')), { once: true });
+
+        let captureStarted = false;
+        let samples = [];
+        processor.onaudioprocess = event => {
+            let data = Array.from(event.inputBuffer.getChannelData(0));
+            if (!captureStarted) {
+                const start = firstNonZeroIndex(data);
+                if (start < 0)
+                    return;
+                captureStarted = true;
+                data = data.slice(start);
+            }
+            samples = samples.concat(data);
+            if (samples.length >= samplesToCompare)
+                resolve(samples.slice(0, samplesToCompare));
+        };
+
+        context.resume();
+        audio.play().catch(reject);
+    });
+
+    processor.onaudioprocess = null;
+    audio.pause();
+    source.disconnect();
+    processor.disconnect();
+    await context.close();
+
+    assert_array_approx_equals(captured, expected.slice(expectedStart, expectedStart + samplesToCompare), 1e-4, 'first captured samples match the start of the media');
+}, 'MediaElementAudioSourceNode delivers the first audio buffer when playback starts at time zero');
+</script>
+</body>
+</html>
