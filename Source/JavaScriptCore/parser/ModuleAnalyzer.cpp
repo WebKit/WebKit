@@ -35,9 +35,9 @@
 
 namespace JSC {
 
-ModuleAnalyzer::ModuleAnalyzer(JSGlobalObject* globalObject, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures features)
+ModuleAnalyzer::ModuleAnalyzer(JSGlobalObject* globalObject, const Identifier& moduleKey, const SourceCode& sourceCode, CodeFeatures features)
     : m_vm(globalObject->vm())
-    , m_moduleRecord(JSModuleRecord::create(globalObject, m_vm, globalObject->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables, features))
+    , m_moduleRecord(JSModuleRecord::create(globalObject, m_vm, globalObject->moduleRecordStructure(), moduleKey, sourceCode, features))
 {
 }
 
@@ -145,10 +145,10 @@ Expected<JSModuleRecord*, std::tuple<ErrorType, String>> ModuleAnalyzer::analyze
     //     This exports all the names from the specified external module as the current module's name.
     //
     //     export * from "mod"
-    for (const auto& pair : m_moduleRecord->declaredVariables())
+    for (const auto& pair : moduleProgramNode.varDeclarations())
         exportVariable(moduleProgramNode, pair.key, pair.value);
 
-    for (const auto& pair : m_moduleRecord->lexicalVariables())
+    for (const auto& pair : moduleProgramNode.lexicalVariables())
         exportVariable(moduleProgramNode, pair.key, pair.value);
 
     m_moduleRecord->setHasTLA(moduleProgramNode.usesAwait());

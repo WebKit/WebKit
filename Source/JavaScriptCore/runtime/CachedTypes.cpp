@@ -2141,6 +2141,7 @@ public:
     void encode(Encoder& encoder, const UnlinkedModuleProgramCodeBlock& codeBlock)
     {
         Base::encode(encoder, codeBlock);
+        m_varDeclarations.encode(encoder, codeBlock.m_varDeclarations);
         m_moduleEnvironmentSymbolTableConstantRegisterOffset = codeBlock.m_moduleEnvironmentSymbolTableConstantRegisterOffset;
     }
 
@@ -2149,11 +2150,13 @@ public:
         UnlinkedModuleProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(decoder.vm())) UnlinkedModuleProgramCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
+        m_varDeclarations.decode(decoder, codeBlock->m_varDeclarations);
         codeBlock->m_moduleEnvironmentSymbolTableConstantRegisterOffset = m_moduleEnvironmentSymbolTableConstantRegisterOffset;
         return codeBlock;
     }
 
 private:
+    CachedVariableEnvironment m_varDeclarations;
     int m_moduleEnvironmentSymbolTableConstantRegisterOffset;
 };
 

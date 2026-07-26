@@ -84,6 +84,9 @@ public:
 
     bool isAsync() const { return codeFeatures() & AwaitFeature; }
 
+    void setVariableDeclarations(const VariableEnvironment& environment) { m_varDeclarations = environment; }
+    const VariableEnvironment& variableDeclarations() const LIFETIME_BOUND { return m_varDeclarations; }
+
 private:
     friend CachedModuleCodeBlock;
 
@@ -94,6 +97,7 @@ private:
 
     UnlinkedModuleProgramCodeBlock(Decoder&, const CachedModuleCodeBlock&);
 
+    VariableEnvironment m_varDeclarations;
     int m_moduleEnvironmentSymbolTableConstantRegisterOffset { 0 };
 
 public:
