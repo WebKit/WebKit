@@ -287,7 +287,7 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
     }
 
     for (auto& toInvalidate : containersToInvalidate)
-        toInvalidate->invalidateForQueryContainerSizeChange();
+        toInvalidate->invalidateForQueryContainerChange();
 
     return !containersToInvalidate.isEmpty();
 }

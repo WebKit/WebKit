@@ -846,7 +846,7 @@ public:
     void invalidateRenderer();
 
     void invalidateStyleForAnimation();
-    void invalidateForQueryContainerSizeChange();
+    void invalidateForQueryContainerChange();
     void invalidateForAnchorRectChange();
     void invalidateForResumingQueryContainerResolution();
     void invalidateForResumingAnchorPositionedElementResolution();

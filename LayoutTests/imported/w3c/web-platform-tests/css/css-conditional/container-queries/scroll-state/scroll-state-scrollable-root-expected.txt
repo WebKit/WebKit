@@ -1,4 +1,5 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check that scroll-state(scrollable) matches bottom before scroll
+FAIL Check that scroll-state(scrollable) matches both top and bottom in a middle position assert_equals: expected "yes" but got "no"
+FAIL Check that scroll-state(scrollable) matches both top when scrolled to the end assert_equals: expected "yes" but got "no"
 
