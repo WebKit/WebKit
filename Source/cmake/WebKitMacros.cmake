@@ -1002,7 +1002,21 @@ function(webkit_generate_platform_feature_defines_file _out_path_var)
         list(APPEND _clang_cmd "-arch" "${_arch}")
     endif ()
     if (CMAKE_OSX_DEPLOYMENT_TARGET)
-        list(APPEND _clang_cmd "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+        # Platform.h keys off the deployment target, and each Apple platform
+        # spells the flag differently. Only these two have a WebKit port; add a
+        # branch here when another comes online rather than letting Platform.h
+        # evaluate against the wrong platform.
+        if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+            list(APPEND _clang_cmd "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+        elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+            if (CMAKE_IOS_SIMULATOR OR CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+                list(APPEND _clang_cmd "-mios-simulator-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+            else ()
+                list(APPEND _clang_cmd "-miphoneos-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+            endif ()
+        else ()
+            message(FATAL_ERROR "Unhandled Apple platform '${CMAKE_SYSTEM_NAME}': add its -m<platform>-version-min flag here so the generators' feature defines match the compiler's.")
+        endif ()
     endif ()
     if (WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE)
         list(APPEND _clang_cmd "-ivfsoverlay" "${WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE}")
