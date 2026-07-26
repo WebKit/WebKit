@@ -65,11 +65,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFlexibleBox);
 
-static bool canSetFlexItemContentLogicalHeight(const RenderBox& flexItem)
-{
-    return !flexItem.isFloatingOrOutOfFlowPositioned() && !flexItem.shouldComputeLogicalHeightFromAspectRatio() && !is<RenderReplaced>(flexItem);
-}
-
 RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, Style::ComputedStyle&& style)
     : RenderBlock(type, element, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
@@ -417,74 +412,24 @@ bool RenderFlexibleBox::canUseFlexItemForPercentageResolution(const RenderBox& f
 
 void RenderFlexibleBox::invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem)
 {
-    m_blockAxisSize.remove(flexItem);
+    m_flexLayout.invalidateBlockAxisSizeForFlexItem(flexItem);
 }
 
 void RenderFlexibleBox::flexItemWillBeRemoved(const RenderBox& flexItem)
 {
-    m_contentLogicalHeights.remove(flexItem);
-    m_blockAxisSize.remove(flexItem);
+    m_flexLayout.flexItemWillBeRemoved(flexItem);
 }
 
 // https://drafts.csswg.org/css-flexbox/#min-size-auto
 
 LayoutUnit RenderFlexibleBox::flexItemContentLogicalHeight(const RenderBox& flexItem) const
 {
-    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(flexItem))
-        return renderReplaced->intrinsicLogicalHeight();
-
-    if (auto logicalHeight = m_contentLogicalHeights.getOptional(flexItem))
-        return *logicalHeight;
-
-    return flexItem.contentBoxLogicalHeight();
+    return m_flexLayout.flexItemContentLogicalHeight(flexItem);
 }
 
-void RenderFlexibleBox::setFlexItemContentLogicalHeightIfNeeded(const RenderBox& flexItem, LayoutUnit height)
+void RenderFlexibleBox::setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit height)
 {
-    // Captures a flex item's content logical height mid-layout, before computeLogicalHeight
-    // applies fixed/min/max or any overridingBorderBoxLogicalHeight set by the flex
-    // container for stretch alignment.
-    // Reading logicalHeight() at the end of the flex item's layout would give the constrained/overridden value,
-    // not the content height the flex algorithm needs.
-    if (!canSetFlexItemContentLogicalHeight(flexItem))
-        return;
-    if (flexItem.overridingBorderBoxLogicalHeight())
-        return;
-    m_contentLogicalHeights.set(flexItem, height);
-}
-
-void RenderFlexibleBox::cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height)
-{
-    if (canSetFlexItemContentLogicalHeight(flexItem))
-        m_contentLogicalHeights.set(flexItem, height);
-}
-
-LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem)
-{
-    // Reuse the size cached in a previous layout while the item stays clean.
-    if (!flexItem.needsLayout()) {
-        if (auto cachedBlockAxisContentSize = blockAxisSizeForFlexItem(flexItem))
-            return *cachedBlockAxisContentSize;
-    }
-
-    // Don't resolve percentages in children. This is especially important for the min-height calculation,
-    // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
-    // by definition we have an indefinite flex basis here and thus percentages should not resolve.
-    auto percentResolveDisableScope = FlexPercentResolveDisabler { view().frameView().layoutContext(), flexItem };
-    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    flexItem.layoutIfNeeded();
-    m_flexLayoutState->setFlexItemHasCompletedLayout(flexItem);
-
-    auto blockAxisContentSize = [&] {
-        auto flexBasis = FlexFormattingUtils::flexBasisForFlexItem(flexItem);
-        if (flexBasis.isPercentOrCalculated() && !flexItemMainSizeIsDefinite(flexItem, flexBasis))
-            return flexItemContentLogicalHeight(flexItem) + flexItem.scrollbarLogicalHeight();
-        return flexItem.logicalHeight() - flexItem.borderAndPaddingLogicalHeight();
-    }();
-
-    // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
-    setBlockAxisSizeForFlexItem(flexItem, blockAxisContentSize);
-    return blockAxisContentSize;
+    m_flexLayout.setFlexItemContentLogicalHeightFromLayout(flexItem, height);
 }
 
 void RenderFlexibleBox::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)

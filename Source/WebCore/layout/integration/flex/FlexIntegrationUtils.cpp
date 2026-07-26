@@ -26,22 +26,31 @@
 #include "config.h"
 #include "FlexIntegrationUtils.h"
 
+#include "LocalFrameView.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
+#include "RenderReplaced.h"
 #include "RenderTable.h"
+#include "RenderView.h"
 #include "StyleMarginTrim.h"
 #include "StyleMaximumSize.h"
 #include "StyleMinimumSize.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexItemContentCache);
+
 namespace LayoutIntegration {
 
-FlexIntegrationUtils::FlexIntegrationUtils(RenderFlexibleBox& flexBox)
+FlexIntegrationUtils::FlexIntegrationUtils(RenderFlexibleBox& flexBox, FlexItemContentCache& flexItemContentCache)
     : m_flexBox(flexBox)
+    , m_flexItemContentCache(flexItemContentCache)
 {
 }
 
@@ -56,11 +65,11 @@ void FlexIntegrationUtils::applyStretchedLogicalHeightToFlexItem(const FlexLayou
     // We cache the child's content logical height to avoid it being reset to the stretched height.
     // FIXME: This is fragile. RenderBoxes should be smart enough to determine their content logical height
     // correctly even when there's an overrideHeight.
-    auto contentLogicalHeight = flexBox().flexItemContentLogicalHeight(flexItem);
+    auto contentLogicalHeight = flexItemContentLogicalHeight(flexItem);
     flexBox().dirtyPercentHeightDescendantsWithinFlexItem(flexItem);
     // Don't use layoutChildIfNeeded to avoid setting cross axis cached size twice.
     layoutFlexItemForStretchedCrossSize(flexLayoutItem, blockSize, LogicalBoxAxis::Block);
-    flexBox().cacheFlexItemContentLogicalHeightIfAllowed(flexItem, contentLogicalHeight);
+    restoreFlexItemContentLogicalHeight(flexItem, contentLogicalHeight);
 }
 
 void FlexIntegrationUtils::layoutFlexItemForStretchedCrossSize(const FlexLayoutItem& flexLayoutItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis)
@@ -304,12 +313,84 @@ bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const FlexLayoutI
 
 LayoutUnit FlexIntegrationUtils::flexItemContentLogicalHeight(const FlexLayoutItem& flexLayoutItem) const
 {
-    return flexBox().flexItemContentLogicalHeight(flexLayoutItem.renderer.get());
+    return flexItemContentLogicalHeight(flexLayoutItem.renderer.get());
 }
 
 LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
-    return flexBox().computeBlockAxisContentSizeForFlexItem(flexLayoutItem.renderer.get());
+    return computeBlockAxisContentSizeForFlexItem(flexLayoutItem.renderer.get());
+}
+
+static bool canSetFlexItemContentLogicalHeight(const RenderBox& flexItem)
+{
+    return !flexItem.isFloatingOrOutOfFlowPositioned() && !flexItem.shouldComputeLogicalHeightFromAspectRatio() && !is<RenderReplaced>(flexItem);
+}
+
+LayoutUnit FlexIntegrationUtils::flexItemContentLogicalHeight(const RenderBox& flexItem) const
+{
+    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(flexItem))
+        return renderReplaced->intrinsicLogicalHeight();
+
+    if (auto logicalHeight = m_flexItemContentCache.contentLogicalHeight(flexItem))
+        return *logicalHeight;
+
+    return flexItem.contentBoxLogicalHeight();
+}
+
+void FlexIntegrationUtils::setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit height)
+{
+    // Captures a flex item's content logical height mid-layout, before computeLogicalHeight
+    // applies fixed/min/max or any overridingBorderBoxLogicalHeight set by the flex container for stretch alignment.
+    // Reading logicalHeight() at the end of the flex item's layout would give the constrained/overridden value, not the content height the flex algorithm needs.
+    if (!canSetFlexItemContentLogicalHeight(flexItem))
+        return;
+    if (flexItem.overridingBorderBoxLogicalHeight())
+        return;
+    m_flexItemContentCache.setContentLogicalHeight(flexItem, height);
+}
+
+void FlexIntegrationUtils::restoreFlexItemContentLogicalHeight(const RenderBox& flexItem, LayoutUnit height)
+{
+    if (canSetFlexItemContentLogicalHeight(flexItem))
+        m_flexItemContentCache.setContentLogicalHeight(flexItem, height);
+}
+
+LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem)
+{
+    // Reuse the size cached in a previous layout while the item stays clean.
+    if (!flexItem.needsLayout()) {
+        if (auto cachedBlockAxisContentSize = m_flexItemContentCache.blockAxisSize(flexItem))
+            return *cachedBlockAxisContentSize;
+    }
+
+    // Don't resolve percentages in children. This is especially important for the min-height calculation,
+    // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
+    // by definition we have an indefinite flex basis here and thus percentages should not resolve.
+    auto percentResolveDisableScope = FlexPercentResolveDisabler { flexBox().view().frameView().layoutContext(), flexItem };
+    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    flexItem.layoutIfNeeded();
+    flexLayoutState().setFlexItemHasCompletedLayout(flexItem);
+
+    auto blockAxisContentSize = [&] {
+        auto flexBasis = FlexFormattingUtils::flexBasisForFlexItem(flexItem);
+        if (flexBasis.isPercentOrCalculated() && !flexBox().flexItemMainSizeIsDefinite(flexItem, flexBasis))
+            return flexItemContentLogicalHeight(flexItem) + flexItem.scrollbarLogicalHeight();
+        return flexItem.logicalHeight() - flexItem.borderAndPaddingLogicalHeight();
+    }();
+
+    // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
+    m_flexItemContentCache.setBlockAxisSize(flexItem, blockAxisContentSize);
+    return blockAxisContentSize;
+}
+
+void FlexIntegrationUtils::invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem)
+{
+    m_flexItemContentCache.clearBlockAxisSize(flexItem);
+}
+
+void FlexIntegrationUtils::flexItemWillBeRemoved(const RenderBox& flexItem)
+{
+    m_flexItemContentCache.remove(flexItem);
 }
 
 template<typename SizeType> bool FlexIntegrationUtils::flexItemMainSizeIsDefinite(const FlexLayoutItem& flexLayoutItem, const SizeType& size)

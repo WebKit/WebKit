@@ -135,7 +135,7 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
         // FIXME: The logical height of the inner text box should have been added
         // before calling computeLogicalHeight to avoid this hack.
         if (CheckedPtr flexContainer = dynamicDowncast<RenderFlexibleBox>(parent()))
-            flexContainer->setFlexItemContentLogicalHeightIfNeeded(*this, logicalHeight);
+            flexContainer->setFlexItemContentLogicalHeightFromLayout(*this, logicalHeight);
         
         logicalHeight += borderAndPaddingLogicalHeight();
     }

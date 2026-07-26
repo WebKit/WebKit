@@ -716,7 +716,7 @@ void RenderTable::layout()
     // to update the value as its used by flexbox layout. crbug.com/367324
     if (shouldCacheContentLogicalHeightForFlexItem) {
         if (CheckedPtr flexContainer = dynamicDowncast<RenderFlexibleBox>(parent()))
-            flexContainer->setFlexItemContentLogicalHeightIfNeeded(*this, contentBoxLogicalHeight());
+            flexContainer->setFlexItemContentLogicalHeightFromLayout(*this, contentBoxLogicalHeight());
     }
 
     m_columnLogicalWidthChanged = false;

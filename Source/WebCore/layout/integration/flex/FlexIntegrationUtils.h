@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FlexItemContentCache.h>
 #include <WebCore/LayoutUnit.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/SetForScope.h>
@@ -53,7 +54,7 @@ namespace LayoutIntegration {
 
 class FlexIntegrationUtils {
 public:
-    FlexIntegrationUtils(RenderFlexibleBox&);
+    FlexIntegrationUtils(RenderFlexibleBox&, FlexItemContentCache&);
 
     RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
     FlexLayoutState& flexLayoutState() const;
@@ -83,6 +84,13 @@ public:
 
     LayoutUnit flexItemContentLogicalHeight(const FlexLayoutItem&) const;
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
+
+    LayoutUnit flexItemContentLogicalHeight(const RenderBox& flexItem) const;
+    void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit);
+    void restoreFlexItemContentLogicalHeight(const RenderBox& flexItem, LayoutUnit);
+    LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
+    void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
+    void flexItemWillBeRemoved(const RenderBox& flexItem);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
     LayoutUnit maxContentMainAxisExtentForFlexItem(const FlexLayoutItem&);
@@ -97,6 +105,7 @@ public:
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;
+    FlexItemContentCache& m_flexItemContentCache;
 };
 
 // RAII that temporarily overrides a flex item's main-axis border-box size to its flex basis for the duration of a
