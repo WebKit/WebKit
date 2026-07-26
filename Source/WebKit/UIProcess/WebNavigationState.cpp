@@ -114,13 +114,9 @@ void WebNavigationState::clearAllNavigations()
 
 void WebNavigationState::clearNavigationsFromProcess(WebCore::ProcessIdentifier processID)
 {
-    Vector<WebCore::NavigationIdentifier> navigationIDsToRemove;
-    for (auto& navigation : m_navigations.values()) {
-        if (navigation->processID() == processID)
-            navigationIDsToRemove.append(navigation->navigationID());
-    }
-    for (auto navigationID : navigationIDsToRemove)
-        m_navigations.remove(navigationID);
+    m_navigations.removeIf([&](auto& entry) {
+        return entry.value->processID() == processID;
+    });
 }
 
 void WebNavigationState::ref() const

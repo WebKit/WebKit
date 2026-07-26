@@ -89,18 +89,14 @@ void CredentialStorage::remove(const String& partitionName, const ProtectionSpac
 
 void CredentialStorage::removeCredentialsWithOrigin(const SecurityOriginData& origin)
 {
-    Vector<std::pair<String, ProtectionSpace>> keysToRemove;
-    for (auto& keyValuePair : m_protectionSpaceToCredentialMap) {
+    m_protectionSpaceToCredentialMap.removeIf([&](auto& keyValuePair) {
         auto& protectionSpace = keyValuePair.key.second;
-        if (protectionSpace.host() == origin.host()
+        return protectionSpace.host() == origin.host()
             && ((origin.port() && protectionSpace.port() == *origin.port())
                 || (!origin.port() && protectionSpace.port() == 80))
             && ((protectionSpace.serverType() == ProtectionSpace::ServerType::HTTP && origin.protocol() == "http"_s)
-                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && origin.protocol() == "https"_s)))
-            keysToRemove.append(keyValuePair.key);
-    }
-    for (auto& key : keysToRemove)
-        remove(key.first, key.second);
+                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && origin.protocol() == "https"_s));
+    });
 }
 
 HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const

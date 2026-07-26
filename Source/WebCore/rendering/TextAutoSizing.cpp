@@ -191,15 +191,10 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 {
     // Remove stale nodes. Nodes may have had their renderers detached. We'll also need to remove the style from the documents m_textAutoSizedNodes
     // collection. Return true indicates we need to do that removal.
-    Vector<Text*> nodesForRemoval;
-    for (auto& textNode : m_autoSizedNodes) {
+    m_autoSizedNodes.removeIf([&](auto& textNode) {
         auto* renderer = textNode->renderer();
-        if (!renderer || !renderer->style().textSizeAdjust().isAuto() || !renderer->candidateComputedTextSize())
-            nodesForRemoval.append(textNode.ptr());
-    }
-
-    for (auto& node : nodesForRemoval)
-        m_autoSizedNodes.remove(node);
+        return !renderer || !renderer->style().textSizeAdjust().isAuto() || !renderer->candidateComputedTextSize();
+    });
 
     StillHasNodes stillHasNodes = m_autoSizedNodes.isEmpty() ? StillHasNodes::No : StillHasNodes::Yes;
 

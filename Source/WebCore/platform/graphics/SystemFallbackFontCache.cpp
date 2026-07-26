@@ -92,13 +92,9 @@ void SystemFallbackFontCache::remove(Font* font)
         return;
 
     for (auto& characterMap : m_characterFallbackMaps.values()) {
-        Vector<CharacterFallbackMapKey, 512> toRemove;
-        for (auto& entry : characterMap) {
-            if (entry.value == font)
-                toRemove.append(entry.key);
-        }
-        for (auto& key : toRemove)
-            characterMap.remove(key);
+        characterMap.removeIf([&](auto& entry) {
+            return entry.value == font;
+        });
     }
 }
 

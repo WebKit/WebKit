@@ -137,14 +137,9 @@ void CGSubimageCacheWithTimer::clearImageAndSubimages(CGImageRef image)
 {
     Locker locker { m_lock };
     if (m_imageCounts.contains(image)) {
-        Vector<CacheEntry> toBeRemoved;
-        for (const auto& entry : m_cache) {
-            if (entry.image.get() == image)
-                toBeRemoved.append(entry);
-        }
-
-        for (auto& entry : toBeRemoved)
-            m_cache.remove(entry);
+        m_cache.removeIf([&](auto& entry) {
+            return entry.image.get() == image;
+        });
 
         m_imageCounts.removeAll(image);
     }

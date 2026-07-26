@@ -746,13 +746,9 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 void FontCache::platformPurgeInactiveFontData()
 {
-    Vector<CTFontRef> toRemove;
-    for (auto& font : m_fallbackFonts) {
-        if (CFGetRetainCount(font.get()) == 1)
-            toRemove.append(font.get());
-    }
-    for (auto& font : toRemove)
-        m_fallbackFonts.remove(font);
+    m_fallbackFonts.removeIf([](auto& font) {
+        return CFGetRetainCount(font.get()) == 1;
+    });
 
     m_databaseAllowingUserInstalledFonts.clear();
     m_databaseDisallowingUserInstalledFonts.clear();

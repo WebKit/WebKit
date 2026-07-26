@@ -272,14 +272,9 @@ void IconDatabase::clearLoadedIconsTimerFired()
 
     Locker locker { m_loadedIconsLock };
     auto now = MonotonicTime::now();
-    Vector<String> iconsToRemove;
-    for (auto iter : m_loadedIcons) {
-        if (now - iter.value.second >= loadedIconExpirationTime)
-            iconsToRemove.append(iter.key);
-    }
-
-    for (auto& iconURL : iconsToRemove)
-        m_loadedIcons.remove(iconURL);
+    m_loadedIcons.removeIf([&](auto& iter) {
+        return now - iter.value.second >= loadedIconExpirationTime;
+    });
 
     if (!m_loadedIcons.isEmpty())
         startClearLoadedIconsTimer();

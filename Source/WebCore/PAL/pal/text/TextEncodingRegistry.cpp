@@ -186,14 +186,9 @@ static void pruneBlocklistedCodecs() WTF_REQUIRES_LOCK(encodingRegistryLock)
         if (atomName.isNull())
             continue;
 
-        Vector<ASCIILiteral> names;
-        for (auto& entry : textEncodingNameMap) {
-            if (entry.value == atomName)
-                names.append(entry.key);
-        }
-
-        for (auto& name : names)
-            textEncodingNameMap.remove(name);
+        textEncodingNameMap.removeIf([&](auto& entry) {
+            return entry.value == atomName;
+        });
 
         textCodecMap.remove(atomName);
     }

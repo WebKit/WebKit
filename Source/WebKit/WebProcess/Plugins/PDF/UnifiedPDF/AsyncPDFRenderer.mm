@@ -466,14 +466,9 @@ void AsyncPDFRenderer::willRemoveGrid(TiledBacking&, TileGridIdentifier gridIden
         return keyValuePair.key.gridIdentifier == gridIdentifier;
     });
 
-    Vector<TileForGrid> requestsToRemove;
-    for (auto& tileRequests : m_pendingTileRenderOrder) {
-        if (tileRequests.gridIdentifier == gridIdentifier)
-            requestsToRemove.append(tileRequests);
-    }
-
-    for (auto& tile : requestsToRemove)
-        m_pendingTileRenderOrder.remove(tile);
+    m_pendingTileRenderOrder.removeIf([gridIdentifier](auto& tileRequests) {
+        return tileRequests.gridIdentifier == gridIdentifier;
+    });
 
     m_tileGridToLayerIDMap.remove(gridIdentifier);
 }
