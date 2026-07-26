@@ -35,6 +35,8 @@ namespace WebCore {
     
 bool shouldRegisterInsertionUndoGroup(NSAttributedString *string)
 {
+    if (![string length])
+        return false;
     return [string attribute:NSTextInsertionUndoableAttributeName atIndex:0 effectiveRange:nil];
 }
     

@@ -34,6 +34,7 @@
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <AppKit/NSTextAlternatives.h>
 #import <WebCore/Color.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -1145,6 +1146,52 @@ TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeInTextArea)
     EXPECT_GT(rectAfterTyping.size.height, 0);
     EXPECT_EQ(rangeAfterTyping.location, 1U);
     EXPECT_EQ(rangeAfterTyping.length, 0U);
+}
+
+TEST(WKWebViewMacEditingTests, InsertEmptyAttributedStringDoesNotCrash)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable>hello</body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"MoveToEndOfDocument" argument:nil];
+    [webView waitForNextPresentationUpdate];
+
+    [webView insertText:adoptNS([[NSMutableAttributedString alloc] init]).get() replacementRange:NSMakeRange(NSNotFound, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+
+    // The web view is still usable for text input after the empty insertion.
+    [webView insertText:@"!" replacementRange:NSMakeRange(NSNotFound, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("hello!", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(WKWebViewMacEditingTests, InsertEmptyAttributedStringWithAttributesDoesNotCrash)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable>hello</body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"MoveToEndOfDocument" argument:nil];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr alternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:@"" alternativeStrings:@[ @"yellow" ]]);
+    RetainPtr string = adoptNS([[NSMutableAttributedString alloc] init]);
+    [string addAttribute:NSTextAlternativesAttributeName value:alternatives.get() range:NSMakeRange(0, 0)];
+    [string addAttribute:NSTextInsertionUndoableAttributeName value:@YES range:NSMakeRange(0, 0)];
+    EXPECT_EQ(0U, [string length]);
+
+    [webView insertText:string.get() replacementRange:NSMakeRange(NSNotFound, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+
+    // Replacing a range with an empty attributed string should delete that range rather than crash.
+    [webView insertText:string.get() replacementRange:NSMakeRange(0, 1)];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("ello", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
 
 TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeWithNewlinesAndWrapping)

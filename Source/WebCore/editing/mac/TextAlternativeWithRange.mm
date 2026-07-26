@@ -46,6 +46,8 @@ TextAlternativeWithRange::TextAlternativeWithRange(PlatformTextAlternatives *tex
 void collectDictationTextAlternatives(NSAttributedString *string, Vector<TextAlternativeWithRange>& alternatives) {
     NSRange effectiveRange = NSMakeRange(0, 0);
     NSUInteger length = [string length];
+    if (!length)
+        return;
     do {
         RetainPtr<NSDictionary> attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange];
         if (!attributes)
