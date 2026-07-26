@@ -99,6 +99,7 @@ private:
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerDimensionsOnLastUpdate;
     WeakHashMap<Element, RectEdges<bool>, WeakPtrImplWithEventTargetData> m_scrollStatePinnedEdgesOnLastUpdate;
+    WeakHashMap<Element, RectEdges<bool>, WeakPtrImplWithEventTargetData> m_scrollStateScrolledDirectionsOnLastUpdate;
 
     struct AnchorPosition {
         LayoutRect absoluteRect;

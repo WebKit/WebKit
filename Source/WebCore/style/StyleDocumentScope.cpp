@@ -299,6 +299,8 @@ void DocumentScope::invalidateForScrollStateChange()
 
     auto previousPinnedEdges = WTF::move(m_scrollStatePinnedEdgesOnLastUpdate);
     m_scrollStatePinnedEdgesOnLastUpdate.clear();
+    auto previousScrolledDirections = WTF::move(m_scrollStateScrolledDirectionsOnLastUpdate);
+    m_scrollStateScrolledDirectionsOnLastUpdate.clear();
 
     Vector<CheckedPtr<Element>> containersToInvalidate;
 
@@ -312,13 +314,21 @@ void DocumentScope::invalidateForScrollStateChange()
         if (!containerElement)
             continue;
 
-        // Only invalidate containers whose scroll state actually changed, so that scrolling that
-        // doesn't cross a pin/unpin boundary doesn't force a subtree style recalc every frame.
+        // Only invalidate containers whose scroll state (scrollable pinned edges or scrolled directions)
+        // actually changed, so that scrolling that doesn't cross a state boundary doesn't force a subtree
+        // style recalc every frame.
         auto pinnedEdges = containerRenderer.scrollStatePinnedEdges();
-        auto it = previousPinnedEdges.find(*containerElement);
-        if (it == previousPinnedEdges.end() || it->value != pinnedEdges)
+        auto scrolledDirections = containerRenderer.scrollStateScrolledDirections();
+
+        auto pinnedIt = previousPinnedEdges.find(*containerElement);
+        auto scrolledIt = previousScrolledDirections.find(*containerElement);
+        bool changed = pinnedIt == previousPinnedEdges.end() || pinnedIt->value != pinnedEdges
+            || scrolledIt == previousScrolledDirections.end() || scrolledIt->value != scrolledDirections;
+        if (changed)
             containersToInvalidate.append(containerElement);
+
         m_scrollStatePinnedEdgesOnLastUpdate.add(*containerElement, pinnedEdges);
+        m_scrollStateScrolledDirectionsOnLastUpdate.add(*containerElement, scrolledDirections);
     }
 
     for (auto& toInvalidate : containersToInvalidate)

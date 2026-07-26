@@ -333,6 +333,8 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
         return clampedScrollOffset;
 
     auto scrollTypeScope = ScrollTypeScope(*this, options.type);
+    // A scrollBy carries an originalScrollDelta; scroll-state(scrolled) tracks it as a relative scroll.
+    SetForScope currentScrollIsRelative(m_currentScrollIsRelative, options.originalScrollDelta.has_value());
 
     if (options.animated == ScrollIsAnimated::Yes) {
         registerScrollableAreaForAnimatedScroll();

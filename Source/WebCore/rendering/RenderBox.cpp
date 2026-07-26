@@ -344,19 +344,31 @@ void RenderBox::styleWillChange(Style::Difference diff, const Style::ComputedSty
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }
 
+static ScrollableArea* scrollableAreaForScrollStateQuery(const RenderBox& box)
+{
+    // In standards mode the root element scrolls the viewport, which is driven by the frame view rather
+    // than the element's own layer.
+    if (box.isDocumentElementRenderer())
+        return &box.view().frameView();
+    if (CheckedPtr layer = box.layer())
+        return layer->scrollableArea();
+    return nullptr;
+}
+
 RectEdges<bool> RenderBox::scrollStatePinnedEdges() const
 {
-    CheckedPtr<ScrollableArea> scrollableArea = [&]() -> ScrollableArea* {
-        if (isDocumentElementRenderer())
-            return &view().frameView();
-        if (CheckedPtr layer = this->layer())
-            return layer->scrollableArea();
-        return nullptr;
-    }();
-
+    CheckedPtr scrollableArea = scrollableAreaForScrollStateQuery(*this);
     if (!scrollableArea)
         return { true, true, true, true };
     return scrollableArea->edgePinnedState();
+}
+
+RectEdges<bool> RenderBox::scrollStateScrolledDirections() const
+{
+    CheckedPtr scrollableArea = scrollableAreaForScrollStateQuery(*this);
+    if (!scrollableArea)
+        return { };
+    return scrollableArea->scrolledDirections();
 }
 
 void RenderBox::invalidateAncestorBackgroundObscurationStatus()
