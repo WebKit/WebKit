@@ -199,20 +199,20 @@ extension WKPDFHUDView {
     final override func hitTest(_ point: NSPoint) -> NSView? {
         let pointInSelf = convert(point, from: unsafe superview)
 
-        guard isBarVisible else { return webView }
+        guard bounds.contains(pointInSelf) else { return nil }
+
+        guard isBarVisible else { return nil }
 
         let pointInBar = barView.convert(pointInSelf, from: self)
-        if barView.bounds.contains(pointInBar) {
-            for button in [zoomOutButton, zoomInButton, openInPreviewButton, saveButton] {
-                let pointInButton = button.convert(pointInSelf, from: self)
-                if button.bounds.contains(pointInButton) && !button.isHidden {
-                    return button
-                }
-            }
-            return barView
-        }
+        guard barView.bounds.contains(pointInBar) else { return nil }
 
-        return webView
+        for button in [zoomOutButton, zoomInButton, openInPreviewButton, saveButton] {
+            let pointInButton = button.convert(pointInSelf, from: self)
+            if button.bounds.contains(pointInButton) && !button.isHidden {
+                return button
+            }
+        }
+        return barView
     }
 
     final override func mouseMoved(with event: NSEvent) {

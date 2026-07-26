@@ -489,6 +489,58 @@ UNIFIED_PDF_TEST(SetPageZoomFactorDoesNotBailIncorrectly)
     EXPECT_EQ(scaleAfterResetting, 1.0);
 }
 
+UNIFIED_PDF_TEST(PDFHUDMultiplePluginsDoNotInterceptHitTesting)
+{
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"]) {
+            RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+            const char* html = "<embed src='test.pdf' width='300' height='200'><embed src='test.pdf' width='300' height='200'>";
+            [task didReceiveResponse:response];
+            [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
+            [task didFinish];
+        } else {
+            EXPECT_WK_STREQ(task.request.URL.path, "/test.pdf");
+            RetainPtr data = testPDFData();
+            RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:[data length] textEncodingName:nil]);
+            [task didReceiveResponse:response];
+            [task didReceiveData:data];
+            [task didFinish];
+        }
+    }];
+
+    RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
+    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView _setWindowOcclusionDetectionEnabled:NO];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
+    [webView _test_waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // HUDs for <embed> plugins are created asynchronously after navigation, so wait for both to appear.
+    TestWebKitAPI::Util::waitFor([webView] {
+        return [webView _pdfHUDs].count >= 2;
+    });
+
+    RetainPtr huds = [[webView _pdfHUDs] allObjects];
+
+    for (NSView *hud in huds.get()) {
+        RetainPtr bar = [[hud subviews] firstObject];
+        NSRect barInSuperview = [bar convertRect:[bar bounds] toView:[hud superview]];
+        NSPoint barCenter = NSMakePoint(NSMidX(barInSuperview), NSMidY(barInSuperview));
+
+        // The HUD claims a point on its own bar.
+        EXPECT_NOT_NULL([hud hitTest:barCenter]);
+
+        // No other HUD intercepts it (the front-most HUD must not swallow siblings' bar clicks).
+        for (NSView *otherHUD in huds.get()) {
+            if (otherHUD == hud)
+                continue;
+            EXPECT_NULL([otherHUD hitTest:barCenter]);
+        }
+    }
+}
+
 static void checkFrame(NSRect frame, CGFloat x, CGFloat y, CGFloat width, CGFloat height, std::optional<CGFloat> frameOriginTolerance = { })
 {
     if (frameOriginTolerance) {
