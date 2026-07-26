@@ -1,5 +1,5 @@
 
 PASS Check that scroll-state(scrollable) matches bottom before scroll
-FAIL Check that scroll-state(scrollable) matches both top and bottom in a middle position assert_equals: expected "yes" but got "no"
-FAIL Check that scroll-state(scrollable) matches both top when scrolled to the end assert_equals: expected "yes" but got "no"
+PASS Check that scroll-state(scrollable) matches both top and bottom in a middle position
+PASS Check that scroll-state(scrollable) matches both top when scrolled to the end
 

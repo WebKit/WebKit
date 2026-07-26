@@ -275,6 +275,7 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
             controller->scrollPositionDidChange();
 
         updateAnchorPositionedAfterScroll();
+        updateScrollStateContainersAfterScroll();
     }
 }
 

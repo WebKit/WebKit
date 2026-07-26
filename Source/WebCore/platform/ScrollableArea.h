@@ -445,6 +445,9 @@ public:
     // Anchor positioning
     virtual void updateAnchorPositionedAfterScroll() { }
 
+    // Re-evaluate scroll-state container queries whose scroll state changed as a result of this scroll.
+    virtual void updateScrollStateContainersAfterScroll() { }
+
     // Scroll anchoring
     enum class ComputeNewScrollAnchor : bool {
         No,

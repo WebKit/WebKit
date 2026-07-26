@@ -43,15 +43,10 @@
 #include "ComputedStyleDependencies.h"
 #include "ContainerQueryEvaluator.h"
 #include "GenericMediaQueryParser.h"
-#include "LocalFrameView.h"
 #include "RectEdges.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderLayer.h"
-#include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
-#include "RenderView.h"
-#include "ScrollableArea.h"
 #include "StyleBuilder.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -430,22 +425,9 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
         if (!renderer)
             return EvaluationResult::False;
 
-        // The scrollable area whose state is queried. In standards mode the root element scrolls the
-        // viewport, which is driven by the frame view rather than the element's own layer.
-        CheckedPtr<ScrollableArea> scrollableArea = [&]() -> ScrollableArea* {
-            if (renderer->isDocumentElementRenderer())
-                return &renderer->view().frameView();
-            if (auto* layer = renderer->layer())
-                return layer->scrollableArea();
-            return nullptr;
-        }();
-
-        // Edges the container is pinned at, i.e. cannot be scrolled further toward. A container with no
-        // scrollable area is pinned on every edge. edgePinnedState() also treats axes that don't allow
-        // scrolling as pinned, so an edge is scrollable exactly when it is not pinned.
-        RectEdges<bool> pinned { true, true, true, true };
-        if (scrollableArea)
-            pinned = scrollableArea->edgePinnedState();
+        // Edges the container is pinned at, i.e. cannot be scrolled further toward; an edge is scrollable
+        // exactly when it is not pinned.
+        auto pinned = renderer->scrollStatePinnedEdges();
         auto towardSide = [&](BoxSide side) { return !pinned[side]; };
         auto towardAxis = [&](BoxAxis axis) {
             return axis == BoxAxis::Horizontal

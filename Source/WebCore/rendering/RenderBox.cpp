@@ -61,6 +61,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -79,6 +80,7 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
+#include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
@@ -96,6 +98,7 @@
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "ScrollAnimator.h"
+#include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsController.h"
 #include "Settings.h"
@@ -188,6 +191,8 @@ void RenderBox::willBeDestroyed()
             view().unregisterBoxWithScrollSnapPositions(*this);
         if (style().containerType().hasSizeContainment())
             view().unregisterContainerQueryBox(*this);
+        if (style().containerType().hasScrollState())
+            view().unregisterScrollStateContainerBox(*this);
         if (!style().anchorNames().isNone())
             view().unregisterAnchor(*this);
         if (!style().positionTryFallbacks().isNone())
@@ -323,6 +328,11 @@ void RenderBox::styleWillChange(Style::Difference diff, const Style::ComputedSty
     else if (oldStyle && oldStyle->containerType().hasSizeContainment())
         view().unregisterContainerQueryBox(*this);
 
+    if (newStyle.containerType().hasScrollState())
+        view().registerScrollStateContainerBox(*this);
+    else if (oldStyle && oldStyle->containerType().hasScrollState())
+        view().unregisterScrollStateContainerBox(*this);
+
     if (!newStyle.positionTryFallbacks().isNone() && newStyle.hasOutOfFlowPosition())
         view().registerPositionTryBox(*this);
     else if (oldStyle && !oldStyle->positionTryFallbacks().isNone() && oldStyle->hasOutOfFlowPosition())
@@ -332,6 +342,21 @@ void RenderBox::styleWillChange(Style::Difference diff, const Style::ComputedSty
         view().frameView().clearCachedHasAnchorPositionedViewportConstrainedObjects();
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);
+}
+
+RectEdges<bool> RenderBox::scrollStatePinnedEdges() const
+{
+    CheckedPtr<ScrollableArea> scrollableArea = [&]() -> ScrollableArea* {
+        if (isDocumentElementRenderer())
+            return &view().frameView();
+        if (CheckedPtr layer = this->layer())
+            return layer->scrollableArea();
+        return nullptr;
+    }();
+
+    if (!scrollableArea)
+        return { true, true, true, true };
+    return scrollableArea->edgePinnedState();
 }
 
 void RenderBox::invalidateAncestorBackgroundObscurationStatus()

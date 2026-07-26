@@ -292,6 +292,39 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
     return !containersToInvalidate.isEmpty();
 }
 
+void DocumentScope::invalidateForScrollStateChange()
+{
+    if (!m_document->renderView())
+        return;
+
+    auto previousPinnedEdges = WTF::move(m_scrollStatePinnedEdgesOnLastUpdate);
+    m_scrollStatePinnedEdgesOnLastUpdate.clear();
+
+    Vector<CheckedPtr<Element>> containersToInvalidate;
+
+    for (auto& containerRenderer : m_document->renderView()->scrollStateContainerBoxes()) {
+        CheckedPtr containerElement = containerRenderer.element();
+
+        // Invalidation uses real elements, replace ::before/::after with its host.
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(containerElement.get()))
+            containerElement = pseudoElement->hostElement();
+
+        if (!containerElement)
+            continue;
+
+        // Only invalidate containers whose scroll state actually changed, so that scrolling that
+        // doesn't cross a pin/unpin boundary doesn't force a subtree style recalc every frame.
+        auto pinnedEdges = containerRenderer.scrollStatePinnedEdges();
+        auto it = previousPinnedEdges.find(*containerElement);
+        if (it == previousPinnedEdges.end() || it->value != pinnedEdges)
+            containersToInvalidate.append(containerElement);
+        m_scrollStatePinnedEdgesOnLastUpdate.add(*containerElement, pinnedEdges);
+    }
+
+    for (auto& toInvalidate : containersToInvalidate)
+        toInvalidate->invalidateForQueryContainerChange();
+}
+
 bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& context)
 {
     if (!m_document->renderView())
