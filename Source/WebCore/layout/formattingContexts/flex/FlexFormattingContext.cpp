@@ -135,11 +135,9 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
     for (size_t index = 0; index < flexItems.size(); ++index) {
         auto& flexItem = flexItems[index];
         auto flexBase = flexBaseSizeForFlexItem(flexItem);
-        if (!flexItem.mainAxisIsInlineAxis) {
-            // flexBaseSizeForFlexItem just laid out an orthogonal item, so its physical margins are now resolved.
-            CheckedRef renderer = flexItem.renderer;
-            flexItem.mainAxisMargin = m_constraints.isHorizontalFlow ? renderer->horizontalMarginExtent() : renderer->verticalMarginExtent();
-        }
+        // flexBaseSizeForFlexItem just laid out an orthogonal item, so its physical margins are now resolved.
+        if (!flexItem.mainAxisIsInlineAxis)
+            flexItem.mainAxisMargin = flexFormattingUtils().usedMainAxisMarginExtentForFlexItem(flexItem);
         auto minMaxMainSizes = minMaxMainSizesForFlexItem(flexItem);
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes.
         flexBaseAndHypotheticalMainSizeList[index] = { flexBase, std::max(minMaxMainSizes.first, std::min(flexBase, minMaxMainSizes.second)), minMaxMainSizes };
@@ -1054,8 +1052,7 @@ LayoutUnit FlexFormattingContext::computeMainSizeFromAspectRatioUsing(const Flex
     // Ratio applies to border-box dimensions. Compute border-box main size,
     // then subtract main-axis border+padding to return content-box.
     ASSERT(style->boxSizing() == BoxSizing::BorderBox);
-    auto flexItemMainAxisBorderAndPadding = m_constraints.isHorizontalFlow ? flexItem->horizontalBorderAndPaddingExtent() : flexItem->verticalBorderAndPaddingExtent();
-    return std::max(0_lu, LayoutUnit { crossSize * preferredAspectRatio } - flexItemMainAxisBorderAndPadding);
+    return std::max(0_lu, LayoutUnit { crossSize * preferredAspectRatio } - flexLayoutItem.mainAxisBorderAndPadding);
 }
 
 LayoutUnit FlexFormattingContext::adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem& flexLayoutItem, LayoutUnit flexItemSize)
@@ -1123,11 +1120,7 @@ bool FlexFormattingContext::canFitItemWithTrimmedMarginEnd(const FlexLayoutItem&
 
 void FlexFormattingContext::removeMarginEndFromFlexSizes(FlexLayoutItem& flexLayoutItem, LayoutUnit& sumFlexBaseSize, LayoutUnit& sumHypotheticalMainSize) const
 {
-    LayoutUnit margin;
-    if (m_constraints.isHorizontalFlow)
-        margin = flexLayoutItem.renderer->marginEnd(m_constraints.style->writingMode());
-    else
-        margin = flexLayoutItem.renderer->marginAfter(m_constraints.style->writingMode());
+    auto margin = flexFormattingUtils().mainAxisMarginEndForFlexItem(flexLayoutItem);
     sumFlexBaseSize -= margin;
     sumHypotheticalMainSize -= margin;
 }

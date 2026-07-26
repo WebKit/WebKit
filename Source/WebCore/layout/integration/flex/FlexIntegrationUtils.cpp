@@ -246,11 +246,8 @@ void FlexIntegrationUtils::trimMainAxisMarginStart(FlexLayoutItem& flexLayoutIte
 
 void FlexIntegrationUtils::trimMainAxisMarginEnd(FlexLayoutItem& flexLayoutItem)
 {
-    auto& renderer = flexLayoutItem.renderer.get();
-    auto horizontalFlow = FlexFormattingUtils::isHorizontalFlow(flexBox());
-    auto containerWritingMode = flexBox().style().writingMode();
-    flexLayoutItem.mainAxisMargin -= horizontalFlow ? renderer.marginEnd(containerWritingMode) : renderer.marginAfter(containerWritingMode);
-    if (horizontalFlow)
+    flexLayoutItem.mainAxisMargin -= FlexFormattingUtils::mainAxisMarginEndForFlexItem(flexBox(), flexLayoutItem);
+    if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
     else
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);

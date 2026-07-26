@@ -217,10 +217,12 @@ LayoutUnit FlexFormattingUtils::computeGap(const RenderFlexibleBox& flexBox, Gap
     return Style::evaluateMinimum<LayoutUnit>(gap, availableSize, flexBox.style().usedZoomForLength());
 }
 
-LayoutUnit FlexFormattingUtils::mainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const
+// The item's main-axis margins, resolving them first when the item is dirty (an out-of-flow item's static position is
+// computed outside of flex layout, so its margins may not have been resolved yet).
+LayoutUnit FlexFormattingUtils::resolveMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const
 {
     if (!flexItem.needsLayout())
-        return isHorizontalFlow(flexBox()) ? flexItem.horizontalMarginExtent() : flexItem.verticalMarginExtent();
+        return usedMainAxisMarginExtentForFlexItem(flexItem);
 
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
@@ -229,6 +231,30 @@ LayoutUnit FlexFormattingUtils::mainAxisMarginExtentForFlexItem(const RenderBox&
     else
         flexItem.computeBlockDirectionMargins(flexBox(), marginStart, marginEnd);
     return marginStart + marginEnd;
+}
+
+// The item's already-resolved main-axis margins. Only meaningful once the item has been laid out.
+LayoutUnit FlexFormattingUtils::usedMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const
+{
+    return isHorizontalFlow(flexBox()) ? flexItem.horizontalMarginExtent() : flexItem.verticalMarginExtent();
+}
+
+LayoutUnit FlexFormattingUtils::usedMainAxisMarginExtentForFlexItem(const FlexLayoutItem& flexLayoutItem) const
+{
+    return usedMainAxisMarginExtentForFlexItem(flexLayoutItem.renderer.get());
+}
+
+// The item's margin at the main-axis end, in the flex container's writing mode.
+LayoutUnit FlexFormattingUtils::mainAxisMarginEndForFlexItem(const RenderFlexibleBox& flexBox, const FlexLayoutItem& flexLayoutItem)
+{
+    CheckedRef flexItem = flexLayoutItem.renderer;
+    auto containerWritingMode = flexBox.style().writingMode();
+    return isHorizontalFlow(flexBox) ? flexItem->marginEnd(containerWritingMode) : flexItem->marginAfter(containerWritingMode);
+}
+
+LayoutUnit FlexFormattingUtils::mainAxisMarginEndForFlexItem(const FlexLayoutItem& flexLayoutItem) const
+{
+    return mainAxisMarginEndForFlexItem(flexBox(), flexLayoutItem);
 }
 
 LayoutUnit FlexFormattingUtils::crossAxisMarginExtentForFlexItem(const RenderBox& flexItem)

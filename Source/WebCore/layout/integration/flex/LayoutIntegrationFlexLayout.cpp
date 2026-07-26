@@ -273,7 +273,7 @@ CheckedPtr<const RenderBox> FlexLayout::baselineFlexItemInLine(size_t lineStart,
 LayoutUnit FlexLayout::staticMainAxisPositionForPositionedFlexItem(const RenderBox& flexItem)
 {
     FlexFormattingUtils utils { flexBox() };
-    auto flexItemMainExtent = utils.mainAxisMarginExtentForFlexItem(flexItem) + utils.mainAxisExtentForFlexItem(flexItem);
+    auto flexItemMainExtent = utils.resolveMainAxisMarginExtentForFlexItem(flexItem) + utils.mainAxisExtentForFlexItem(flexItem);
     auto mainAxisContentSize = FlexFormattingUtils::isColumnFlow(flexBox()) ? flexBox().contentBoxLogicalHeight() : flexBox().contentBoxLogicalWidth();
     auto availableSpace = mainAxisContentSize - flexItemMainExtent;
     auto isReverse = utils.isColumnOrRowReverse();

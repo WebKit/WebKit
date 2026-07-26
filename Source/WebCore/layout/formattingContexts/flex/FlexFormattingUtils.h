@@ -84,7 +84,11 @@ public:
     static LayoutUnit computeGap(const RenderFlexibleBox&, GapType);
     LayoutUnit computeGap(GapType) const;
 
-    LayoutUnit mainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit resolveMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit usedMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
+    LayoutUnit usedMainAxisMarginExtentForFlexItem(const FlexLayoutItem&) const;
+    static LayoutUnit mainAxisMarginEndForFlexItem(const RenderFlexibleBox&, const FlexLayoutItem&);
+    LayoutUnit mainAxisMarginEndForFlexItem(const FlexLayoutItem&) const;
     static LayoutUnit crossAxisMarginExtentForFlexItem(const RenderBox& flexItem);
     LayoutUnit crossAxisMarginExtentForFlexItem(const FlexLayoutItem&) const;
 
