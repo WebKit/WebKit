@@ -3320,9 +3320,13 @@ def customBuildFlag(platform, fullPlatform):
     return ['--' + platform]
 
 
-def shouldBuildJSCOnly(group_name, platform):
+def usesBuildWebKitForJSC(platform):
     # GTK and WPE use build-webkit rather than build-jsc, so the whole build process (build flags, etc.) matches what post-commit bots do.
-    return group_name == 'jsc' and platform not in ('gtk', 'wpe')
+    return platform in ('gtk', 'wpe')
+
+
+def shouldBuildJSCOnly(group_name, platform):
+    return group_name == 'jsc' and not usesBuildWebKitForJSC(platform)
 
 
 class BuildLogLineObserver(ParseByLineLogObserver):
@@ -3916,13 +3920,12 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
             else:
+                # SetO3OptimizationLevel is only needed by the macOS JSC O3 debug queue (see 305715@main).
                 steps_to_add.append(SetO3OptimizationLevel())
             if self.getProperty('rebuild_without_change_on_builder', False):
                 steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
-            if platform in ('gtk', 'wpe'):
-                steps_to_add.extend([CompileWebKitWithoutChange()])
             else:
-                steps_to_add.extend([CompileJSCWithoutChange()])
+                steps_to_add.append(CompileWebKitWithoutChange() if usesBuildWebKitForJSC(platform) else CompileJSCWithoutChange())
             steps_to_add += [
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
