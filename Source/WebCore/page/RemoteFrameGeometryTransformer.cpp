@@ -44,17 +44,17 @@ RemoteFrameGeometryTransformer& RemoteFrameGeometryTransformer::operator=(Remote
 
 IntPoint RemoteFrameGeometryTransformer::transformToRemoteFrameCoordinates(IntPoint pointInContents) const
 {
-    return Ref { m_remoteView }->rootViewToContents(Ref { m_localView }->contentsToRootView(pointInContents));
+    return Ref { m_remoteView }->convertFromRootView(Ref { m_localView }->contentsToRootView(pointInContents));
 }
 
 FloatPoint RemoteFrameGeometryTransformer::transformToRemoteFrameCoordinates(FloatPoint pointInContents) const
 {
-    return Ref { m_remoteView }->rootViewToContents(Ref { m_localView }->contentsToRootView(pointInContents));
+    return Ref { m_remoteView }->convertFromRootView(Ref { m_localView }->contentsToRootView(pointInContents));
 }
 
 DoublePoint RemoteFrameGeometryTransformer::transformToRemoteFrameCoordinates(DoublePoint pointInContents) const
 {
-    return Ref { m_remoteView }->rootViewToContents(Ref { m_localView }->contentsToRootView(pointInContents));
+    return Ref { m_remoteView }->convertFromRootView(Ref { m_localView }->contentsToRootView(pointInContents));
 }
 
 } // namespace WebCore

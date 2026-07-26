@@ -819,7 +819,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         if (RefPtr remoteFrameView = remoteFrame->view()) {
             immediateActionResult.remoteUserInputEventData = RemoteUserInputEventData {
                 remoteFrame->frameID(),
-                remoteFrameView->rootViewToContents(roundedIntPoint(locationInViewCoordinates))
+                remoteFrameView->convertFromRootView(roundedIntPoint(locationInViewCoordinates))
             };
         }
     }

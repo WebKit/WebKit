@@ -152,7 +152,7 @@ public:
     WEBCORE_EXPORT IntRect convertToRootView(const IntRect&) const;
     FloatRect convertToRootView(const FloatRect&) const;
 
-    IntPoint convertFromRootView(IntPoint) const;
+    WEBCORE_EXPORT IntPoint convertFromRootView(IntPoint) const;
     FloatPoint convertFromRootView(FloatPoint) const;
     DoublePoint convertFromRootView(DoublePoint) const;
     IntRect convertFromRootView(const IntRect&) const;

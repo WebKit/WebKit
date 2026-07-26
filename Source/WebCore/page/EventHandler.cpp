@@ -1975,7 +1975,7 @@ std::optional<RemoteUserInputEventData> EventHandler::userInputEventDataForRemot
 
     return RemoteUserInputEventData {
         remoteFrame->frameID(),
-        remoteFrameView->rootViewToContents(frameView->contentsToRootView(pointInFrame))
+        remoteFrameView->convertFromRootView(frameView->contentsToRootView(pointInFrame))
     };
 }
 
