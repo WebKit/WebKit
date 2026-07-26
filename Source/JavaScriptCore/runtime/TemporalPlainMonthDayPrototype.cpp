@@ -240,9 +240,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject
             merged.month = std::optional<uint32_t>(monthDay->plainMonthDay().month());
     }
 
-    // For non-ISO: month ordinal alone is ambiguous without monthCode (depends on year).
-    if (!isISO && merged.month.has_value() && !merged.monthCode) [[unlikely]]
-        return throwVMTypeError(globalObject, scope, "monthCode is required for non-ISO calendar PlainMonthDay.with()"_s);
+    if (!isISO && merged.month.has_value() && !merged.year && !(merged.era && merged.eraYear)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "year is required with month for non-ISO calendar PlainMonthDay.with()"_s);
 
     // Step 10: isoDate = ? CalendarMonthDayFromFields(calendar, fields, overflow).
     auto resolved = TemporalCore::monthDayFromFields(calendarId, merged, overflow);

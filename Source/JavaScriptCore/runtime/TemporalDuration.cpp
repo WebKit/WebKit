@@ -430,10 +430,6 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
                 throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
                 return { };
             }
-            if (otherMonth && static_cast<double>(otherMonth->monthNumber) != month) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month and monthCode properties must match"_s);
-                return { };
-            }
         }
 
         // Step 5.f: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
