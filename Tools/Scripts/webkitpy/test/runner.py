@@ -53,7 +53,7 @@ class Runner(object):
             return
 
         if message_name != 'finished_test':
-            raise ValueError("unknown message: %r" % message_type)
+            raise ValueError("unknown message: %r" % message_name)
 
         self.tests_run.append(test_name)
         if failures:
