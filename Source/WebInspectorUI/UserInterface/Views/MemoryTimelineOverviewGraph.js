@@ -38,18 +38,10 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
         this._memoryTimeline.addEventListener(WI.MemoryTimeline.Event.MemoryPressureEventAdded, this._memoryTimelineMemoryPressureEventAdded, this);
 
         this._didInitializeCategories = false;
-
-        this._chart = new WI.StackedAreaChart;
-        this._chart.size = new WI.Size(0, this.height);
-        this.addSubview(this._chart);
-        this.element.appendChild(this._chart.element);
+        this._categoryTypes = [];
 
         this._legendElement = this.element.appendChild(document.createElement("div"));
         this._legendElement.classList.add("legend");
-
-        this._memoryPressureMarkersContainerElement = this.element.appendChild(document.createElement("div"));
-        this._memoryPressureMarkersContainerElement.classList.add("memory-pressure-markers-container");
-        this._memoryPressureMarkerElements = [];
 
         this.reset();
 
@@ -72,11 +64,6 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
         this._cachedMaxSize = undefined;
 
         this._updateLegend();
-        this._chart.clear();
-        this._chart.needsLayout();
-
-        this._memoryPressureMarkersContainerElement.removeChildren();
-        this._memoryPressureMarkerElements = [];
     }
 
     layout()
@@ -87,17 +74,20 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
             return;
 
         this._updateLegend();
-        this._chart.clear();
-
-        if (!this._didInitializeCategories)
-            return;
 
         let graphWidth = this.timelineOverview.scrollContainerWidth;
-        if (isNaN(graphWidth))
+        if (isNaN(graphWidth)) {
+            this.clearCanvas();
             return;
+        }
 
-        if (this._chart.size.width !== graphWidth || this._chart.size.height !== this.height)
-            this._chart.size = new WI.Size(graphWidth, this.height);
+        this.updateCanvas();
+    }
+
+    drawCanvas(context)
+    {
+        if (!this._didInitializeCategories)
+            return;
 
         let graphStartTime = this.startTime;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
@@ -109,34 +99,12 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
             return (time - graphStartTime) / secondsPerPixel;
         }
 
-        let height = this.height;
+        let height = this.canvasHeight;
         function yScale(size) {
             return height - ((size / maxCapacity) * height);
         }
 
-        let visibleMemoryPressureEventMarkers = this._visibleMemoryPressureEvents(graphStartTime, visibleEndTime);
-
-        // Reuse existing marker elements.
-        for (let i = 0; i < visibleMemoryPressureEventMarkers.length; ++i) {
-            let markerElement = this._memoryPressureMarkerElements[i];
-            if (!markerElement) {
-                markerElement = this._memoryPressureMarkersContainerElement.appendChild(document.createElement("div"));
-                markerElement.classList.add("memory-pressure-event");
-                this._memoryPressureMarkerElements[i] = markerElement;
-            }
-
-            let memoryPressureEvent = visibleMemoryPressureEventMarkers[i];
-            let property = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
-            markerElement.style.setProperty(property, `${xScale(memoryPressureEvent.timestamp)}px`);
-        }
-
-        // Remove excess marker elements.
-        let excess = this._memoryPressureMarkerElements.length - visibleMemoryPressureEventMarkers.length;
-        if (excess) {
-            let elementsToRemove = this._memoryPressureMarkerElements.splice(visibleMemoryPressureEventMarkers.length);
-            for (let element of elementsToRemove)
-                element.remove();
-        }
+        let visibleMemoryPressureEvents = this._visibleMemoryPressureEvents(graphStartTime, visibleEndTime);
 
         let discontinuities = this.timelineOverview.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);
 
@@ -144,46 +112,50 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
             includeRecordBeforeStart: !discontinuities.length || discontinuities[0].startTime > graphStartTime,
             includeRecordAfterEnd: true,
         });
-        if (!visibleRecords.length)
+        if (!visibleRecords.length) {
+            this._drawMemoryPressureEvents(context, visibleMemoryPressureEvents, xScale);
             return;
-
-        function pointSetForRecord(record) {
-            let size = 0;
-            let ys = [];
-            for (let i = 0; i < record.categories.length; ++i) {
-                size += record.categories[i].size;
-                ys[i] = yScale(size);
-            }
-            return ys;
         }
+
+        function categoryYValuesForRecord(record) {
+            let size = 0;
+            let yForCategoryType = {};
+            for (let category of record.categories) {
+                size += category.size;
+                yForCategoryType[category.type] = yScale(size);
+            }
+            return yForCategoryType;
+        }
+
+        let points = [];
 
         // Extend the first record to the start so it doesn't look like we originate at zero size.
         if (visibleRecords[0] === this._memoryTimeline.records[0] && (!discontinuities.length || discontinuities[0].startTime > visibleRecords[0].startTime))
-            this._chart.addPointSet(0, pointSetForRecord(visibleRecords[0]));
+            points.push({x: 0, yForCategoryType: categoryYValuesForRecord(visibleRecords[0])});
 
         function insertDiscontinuity(previousRecord, startDiscontinuity, endDiscontinuity, nextRecord)
         {
-            console.assert(previousRecord || nextRecord);
-            if (!(previousRecord || nextRecord))
-                return;
+            console.assert(previousRecord || nextRecord, previousRecord, nextRecord);
 
             let xStart = xScale(previousRecord ? previousRecord.endTime : startDiscontinuity.startTime);
             let xEnd = xScale(endDiscontinuity.endTime);
 
             // Extend the previous record to the start of the discontinuity.
             if (previousRecord)
-                this._chart.addPointSet(xStart, pointSetForRecord(previousRecord));
+                points.push({x: xStart, yForCategoryType: categoryYValuesForRecord(previousRecord)});
 
-            let zeroValues = Array((previousRecord || nextRecord).categories.length).fill(yScale(0));
-            this._chart.addPointSet(xStart, zeroValues);
+            let zeroYForCategoryType = {};
+            for (let category of (previousRecord || nextRecord).categories)
+                zeroYForCategoryType[category.type] = yScale(0);
+            points.push({x: xStart, yForCategoryType: zeroYForCategoryType});
 
             if (nextRecord) {
-                this._chart.addPointSet(xEnd, zeroValues);
-                this._chart.addPointSet(xEnd, pointSetForRecord(nextRecord));
+                points.push({x: xEnd, yForCategoryType: zeroYForCategoryType});
+                points.push({x: xEnd, yForCategoryType: categoryYValuesForRecord(nextRecord)});
             } else {
                 // Extend the discontinuity to the visible end time to prevent
                 // drawing artifacts when the next record arrives.
-                this._chart.addPointSet(xScale(visibleEndTime), zeroValues);
+                points.push({x: xScale(visibleEndTime), yForCategoryType: zeroYForCategoryType});
             }
         }
 
@@ -195,28 +167,60 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
                 let endDiscontinuity = startDiscontinuity;
                 while (discontinuities.length && discontinuities[0].endTime <= record.startTime)
                     endDiscontinuity = discontinuities.shift();
-                insertDiscontinuity.call(this, previousRecord, startDiscontinuity, endDiscontinuity, record);
+                insertDiscontinuity(previousRecord, startDiscontinuity, endDiscontinuity, record);
             }
 
             let x = xScale(record.startTime);
-            this._chart.addPointSet(x, pointSetForRecord(record));
+            points.push({x, yForCategoryType: categoryYValuesForRecord(record)});
 
             previousRecord = record;
         }
 
         if (discontinuities.length)
-            insertDiscontinuity.call(this, previousRecord, discontinuities[0], discontinuities[0], null);
+            insertDiscontinuity(previousRecord, discontinuities[0], discontinuities[0], null);
         else {
             // Extend the last value to current / end time.
             let lastRecord = visibleRecords.lastValue;
             if (lastRecord.startTime <= visibleEndTime) {
                 let x = Math.floor(xScale(lastRecord.endTime));
-                this._chart.addPointSet(x, pointSetForRecord(lastRecord));
+                points.push({x, yForCategoryType: categoryYValuesForRecord(lastRecord)});
             }
         }
+
+        this._drawAreas(context, points);
+        this._drawMemoryPressureEvents(context, visibleMemoryPressureEvents, xScale);
     }
 
     // Private
+
+    _drawAreas(context, points)
+    {
+        let canvasHeight = this.canvasHeight;
+        let lastX = points.length ? points.lastValue.x : 0;
+
+        for (let categoryType of this._categoryTypes) {
+            context.beginPath();
+            context.moveTo(0, canvasHeight);
+            for (let point of points)
+                context.lineTo(point.x, point.yForCategoryType[categoryType]);
+            context.lineTo(lastX, canvasHeight);
+            context.closePath();
+
+            let {fill, stroke} = WI.MemoryTimelineOverviewGraph._categoryStyles[categoryType];
+            context.fillStyle = fill;
+            context.fill();
+            context.strokeStyle = stroke;
+            context.stroke();
+        }
+    }
+
+    _drawMemoryPressureEvents(context, events, xScale)
+    {
+        let canvasHeight = this.canvasHeight;
+        context.fillStyle = "black";
+        for (let event of events)
+            context.fillRect(xScale(event.timestamp), 0, 1, canvasHeight);
+    }
 
     _updateLegend()
     {
@@ -261,10 +265,7 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
 
         if (!this._didInitializeCategories) {
             this._didInitializeCategories = true;
-            let types = [];
-            for (let category of memoryTimelineRecord.categories)
-                types.push(category.type);
-            this._chart.initializeSections(types);
+            this._categoryTypes = memoryTimelineRecord.categories.map((category) => category.type).reverse();
         }
     }
 
@@ -272,4 +273,23 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
     {
         this.needsLayout();
     }
+};
+
+WI.MemoryTimelineOverviewGraph._categoryStyles = {
+    [WI.MemoryCategory.Type.JavaScript]: {
+        fill: "hsl(269, 65%, 75%)", // Keep this in sync with `--memory-javascript-fill-color`.
+        stroke: "hsl(269, 33%, 50%)", // Keep this in sync with `--memory-javascript-stroke-color`.
+    },
+    [WI.MemoryCategory.Type.Images]: {
+        fill: "hsl(0, 65%, 75%)", // Keep this in sync with `--memory-images-fill-color`.
+        stroke: "hsl(0, 54%, 50%)", // Keep this in sync with `--memory-images-stroke-color`.
+    },
+    [WI.MemoryCategory.Type.Layers]: {
+        fill: "hsl(76, 49%, 75%)", // Keep this in sync with `--memory-layers-fill-color`.
+        stroke: "hsl(79, 45%, 50%)", // Keep this in sync with `--memory-layers-stroke-color`.
+    },
+    [WI.MemoryCategory.Type.Page]: {
+        fill: "hsl(22, 60%, 70%)", // Keep this in sync with `--memory-page-fill-color`.
+        stroke: "hsl(22, 40%, 50%)", // Keep this in sync with `--memory-page-stroke-color`.
+    },
 };

@@ -1905,6 +1905,8 @@ WI._updateAccentColorClass = function()
         document.body.style.removeProperty("--selected-background-color-active");
         document.body.style.removeProperty("--selected-text-background-color");
     }
+
+    WI.notifications.dispatchEventToListeners(WI.Notification.SystemAppearanceDidChange);
 };
 
 WI._windowKeyDown = function(event)

@@ -44,12 +44,12 @@
 .timeline-record-bar > .segment {
     min-width: 4px;
     height: 100%;
-    background-color: hsl(0, 0%, 88%);
+    background-color: var(--timeline-record-bar-default-fill-color);
     border-top: 1px solid var(--record-bar-segment-border-color);
     border-bottom: 1px solid var(--record-bar-segment-border-color);
     border-inline: var(--record-bar-segment-border-start) var(--record-bar-segment-border-end);
 
-    --record-bar-segment-border-color: hsl(0, 0%, 78%);
+    --record-bar-segment-border-color: var(--timeline-record-bar-default-stroke-color);
     --record-bar-segment-border-start: 1px solid var(--record-bar-segment-border-color);
     --record-bar-segment-border-end: 1px solid var(--record-bar-segment-border-color);
     --record-bar-segment-border-start-radius: 3px;
@@ -80,6 +80,7 @@ body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
     --record-bar-segment-border-end: none;
 }
 
+/* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.prototype.drawCanvas`. */
 .timeline-record-bar.selected > .segment {
     background-color: var(--selected-text-background-color) !important;
     --record-bar-segment-border-color: var(--glyph-color-active) !important;
@@ -104,11 +105,13 @@ body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
     --record-bar-segment-border-start-radius: 0;
 }
 
+/* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.prototype.drawCanvas`. */
 :focus .selected .timeline-record-bar:not(.has-custom-children) > .segment {
     background-color: white !important;
     border: none !important;
 }
 
+/* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.prototype.drawCanvas`. */
 :focus .selected .timeline-record-bar:not(.has-custom-children) > .segment.inactive {
     background-color: hsl(215, 63%, 85%) !important;
 }
@@ -118,52 +121,52 @@ body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment {
-    background-color: hsl(207, 63%, 67%);
-    --record-bar-segment-border-color: hsl(202, 55%, 51%);
+    background-color: var(--timeline-record-bar-network-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-network-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment.inactive {
-    background-color: hsl(208, 66%, 79%);
-    --record-bar-segment-border-color: hsl(202, 57%, 68%);
+    background-color: var(--timeline-record-bar-network-inactive-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-network-inactive-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-layout > .segment {
-    background-color: hsl(0, 65%, 75%);
-    --record-bar-segment-border-color: hsl(0, 54%, 62%);
+    background-color: var(--timeline-record-bar-layout-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-layout-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-layout.invalidate-styles > .segment,
 .timeline-record-bar.timeline-record-type-layout.recalculate-styles > .segment {
-    background-color: hsl(23, 69%, 73%);
-    --record-bar-segment-border-color: hsl(11, 54%, 62%);
+    background-color: var(--timeline-record-bar-style-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-style-stroke-color);
 }
 
 
 .timeline-record-bar.timeline-record-type-layout.paint > .segment,
 .timeline-record-bar.timeline-record-type-layout.composite > .segment {
-    background-color: hsl(76, 49%, 60%);
-    --record-bar-segment-border-color: hsl(79, 45%, 51%);
+    background-color: var(--timeline-record-bar-paint-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-paint-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-layout:is(.first-contentful-paint, .largest-contentful-paint) > .segment {
-    background-color: hsl(172, 48%, 75%);
-    --record-bar-segment-border-color: hsl(173, 46%, 45%);
+    background-color: var(--timeline-record-bar-milestone-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-milestone-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-script > .segment {
-    background-color: hsl(269, 65%, 74%);
-    --record-bar-segment-border-color: hsl(273, 33%, 58%);
+    background-color: var(--timeline-record-bar-script-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-script-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-script.garbage-collected > .segment,
 .timeline-record-bar.timeline-record-type-heap-allocations > .segment {
-    background-color: hsl(0, 0%, 70%);
-    --record-bar-segment-border-color: hsl(0, 0%, 55%);
+    background-color: var(--timeline-record-bar-garbage-collection-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-garbage-collection-stroke-color);
 }
 
 .timeline-record-bar.timeline-record-type-media > .segment {
-    background-color: hsl(143, 24%, 66%);
-    --record-bar-segment-border-color: hsl(153, 24%, 51%);
+    background-color: var(--timeline-record-bar-media-fill-color);
+    --record-bar-segment-border-color: var(--timeline-record-bar-media-stroke-color);
 }
 
 .timeline-record-bar.has-custom-children.timeline-record-type-media > .segment {
