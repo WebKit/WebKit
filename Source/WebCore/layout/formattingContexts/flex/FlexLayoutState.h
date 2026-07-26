@@ -45,7 +45,6 @@ public:
         MainAxisAlignment,        // handleMainAxisAlignment (9.5 #12).
         CrossAxisItemSizing,      // computeCrossSizeForFlexItems — stretch items to the line's cross size (9.4 #11).
         CrossAxisAlignment,       // handleCrossAxisAlignmentForFlexItems (9.6 #13-#14).
-        PostFlexScrollbarLayout,  // Scrollbar reconciliation relayout after flex layout.
     };
 
     Phase phase() const { return m_phase; }

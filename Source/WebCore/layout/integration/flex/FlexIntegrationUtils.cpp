@@ -530,7 +530,13 @@ LayoutUnit FlexIntegrationUtils::flexItemIntrinsicLogicalWidth(const FlexLayoutI
     flexItem.clearOverridingBorderBoxLogicalWidth();
 
     RenderBox::LogicalExtentComputedValues values;
-    flexItem.computeLogicalWidth(values);
+    {
+        // This is an intrinsic width measurement like the ones in maxContentMainAxisExtentForFlexItem and
+        // minContentMainAxisContributionForFlexItem: a percentage resolved against this item while measuring it
+        // answers from the item's cross-size definiteness, not from how far the flex algorithm has got.
+        auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexItem };
+        flexItem.computeLogicalWidth(values);
+    }
 
     if (previousOverridingBorderBoxLogicalWidth)
         flexItem.setOverridingBorderBoxLogicalWidth(*previousOverridingBorderBoxLogicalWidth);

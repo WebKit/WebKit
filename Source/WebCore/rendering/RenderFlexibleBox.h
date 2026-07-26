@@ -111,7 +111,9 @@ private:
     void appendFlexItemBorderBoxRects(FlexItemBorderBoxRects&);
     void repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorderBoxRects&);
 
-    template<typename SizeType> bool canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
+    template<typename SizeType> bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
+    // Whether a percentage resolves at all, for callers that only need the yes/no and have no percentage of their own.
+    bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, UpdatePercentageHeightDescendants);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&);
 
     void initializeMarginTrimState();
@@ -150,6 +152,8 @@ private:
 
     std::optional<FlexLayoutState> m_flexLayoutState;
     bool m_inSimplifiedLayout { false };
+    // FIXME: Remove along with m_flexLayoutState's overly wide scope (see layoutBlock).
+    bool m_inPostFlexUpdateScrollbarLayout { false };
     mutable bool m_inFlexItemIntrinsicWidthComputation { false };
 };
 
