@@ -3320,6 +3320,11 @@ def customBuildFlag(platform, fullPlatform):
     return ['--' + platform]
 
 
+def shouldBuildJSCOnly(group_name, platform):
+    # GTK and WPE use build-webkit rather than build-jsc, so the whole build process (build flags, etc.) matches what post-commit bots do.
+    return group_name == 'jsc' and platform not in ('gtk', 'wpe')
+
+
 class BuildLogLineObserver(ParseByLineLogObserver):
     def __init__(self, errorReceived, searchString='rror:', includeRelatedLines=True, thresholdExceedCallBack=None):
         self.errorReceived = errorReceived
@@ -3467,7 +3472,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
-            if self.getProperty('group') == 'jsc':
+            if shouldBuildJSCOnly(self.getProperty('group'), platform):
                 steps_to_add.append(CompileJSCWithoutChange())
             else:
                 steps_to_add.append(CompileWebKitWithoutChange())
@@ -3565,7 +3570,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
     def run(self):
         self.error_logs = {}
         self.compile_webkit_step = CompileWebKit.name
-        if self.getProperty('group') == 'jsc':
+        if shouldBuildJSCOnly(self.getProperty('group'), self.getProperty('platform')):
             self.compile_webkit_step = CompileJSC.name
         yield self.getResults(self.compile_webkit_step)
         rc = yield self.analyzeResults()
@@ -3574,7 +3579,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
     @defer.inlineCallbacks
     def analyzeResults(self):
         compile_without_patch_step = CompileWebKitWithoutChange.name
-        if self.getProperty('group') == 'jsc':
+        if shouldBuildJSCOnly(self.getProperty('group'), self.getProperty('platform')):
             compile_without_patch_step = CompileJSCWithoutChange.name
         compile_without_patch_result = self.getStepResult(compile_without_patch_step)
 
@@ -3870,6 +3875,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.setProperty('results-db_jsc_pre_existing', sorted(self.preexisting_failures_in_results_db))
 
     def evaluateCommand(self, cmd):
+        platform = self.getProperty('platform')
         rc = super().evaluateCommand(cmd)
         steps_to_add = []
         if SHOULD_FILTER_LOGS is True:
@@ -3904,10 +3910,17 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
                 RevertAppliedChanges(),
                 CleanWorkingDirectory(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                SetO3OptimizationLevel()
             ]
+            if platform == 'wpe':
+                steps_to_add.append(InstallWpeDependencies())
+            elif platform == 'gtk':
+                steps_to_add.append(InstallGtkDependencies())
+            else:
+                steps_to_add.append(SetO3OptimizationLevel())
             if self.getProperty('rebuild_without_change_on_builder', False):
                 steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
+            if platform in ('gtk', 'wpe'):
+                steps_to_add.extend([CompileWebKitWithoutChange()])
             else:
                 steps_to_add.extend([CompileJSCWithoutChange()])
             steps_to_add += [
