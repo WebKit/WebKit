@@ -1048,6 +1048,7 @@ private:
 
     void prepareMediaFragmentURI();
     void applyMediaFragmentURI();
+    void selectTracksForFragment();
 
     void changeNetworkStateFromLoadingToIdle();
 
@@ -1309,6 +1310,7 @@ private:
 
     MediaTime m_fragmentStartTime;
     MediaTime m_fragmentEndTime;
+    Vector<String> m_fragmentTrackIdentifiers;
 
     using PendingActionFlags = unsigned;
     PendingActionFlags m_pendingActionFlags { 0 };

@@ -1,0 +1,12 @@
+A "track=" fragment naming a non-default audio track selects that track and deselects the previously-selected default.
+
+
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks.length == '2') OK
+EXPECTED (video.audioTracks[0].enabled == 'true') OK
+EXPECTED (video.audioTracks[1].enabled == 'false') OK
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks[0].enabled == 'false') OK
+EXPECTED (video.audioTracks[1].enabled == 'true') OK
+END OF TEST
+

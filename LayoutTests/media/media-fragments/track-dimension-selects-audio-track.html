@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script>
+            var secondAudioId;
+
+            function canplaythrough2()
+            {
+                testExpected('video.audioTracks[0].enabled', false);
+                testExpected('video.audioTracks[1].enabled', true);
+                endTest();
+            }
+
+            function canplaythrough1()
+            {
+                // Discover the real id of the non-default track (avoid hardcoding a guessed id).
+                testExpected('video.audioTracks.length', 2);
+                testExpected('video.audioTracks[0].enabled', true);
+                testExpected('video.audioTracks[1].enabled', false);
+                secondAudioId = video.audioTracks[1].id;
+
+                video.src = '../content/vp9-opus-good-3tracks.webm#track=' + encodeURIComponent(secondAudioId);
+                waitForEventOnce('canplaythrough', canplaythrough2);
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.src = '../content/vp9-opus-good-3tracks.webm';
+                waitForEventOnce('canplaythrough', canplaythrough1);
+            }
+        </script>
+    </head>
+
+    <body onload="setup()">
+        <p>A "track=" fragment naming a non-default audio track selects that track and deselects the previously-selected default.</p>
+        <video controls></video>
+    </body>
+</html>

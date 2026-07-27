@@ -5335,6 +5335,7 @@ void HTMLMediaElement::mediaPlayerDidAddAudioTrack(AudioTrackPrivate& track)
     }
 
     addAudioTrack(AudioTrack::create(protect(scriptExecutionContext()).get(), track));
+    selectTracksForFragment();
 }
 
 void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
@@ -5372,6 +5373,7 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
 void HTMLMediaElement::mediaPlayerDidAddVideoTrack(VideoTrackPrivate& track)
 {
     addVideoTrack(VideoTrack::create(protect(scriptExecutionContext()).get(), track));
+    selectTracksForFragment();
 }
 
 void HTMLMediaElement::mediaPlayerDidRemoveAudioTrack(AudioTrackPrivate& track)
@@ -8637,6 +8639,9 @@ void HTMLMediaElement::prepareMediaFragmentURI()
 
     if (m_fragmentStartTime.isValid() && m_readyState < HAVE_FUTURE_DATA)
         prepareToPlay();
+
+    m_fragmentTrackIdentifiers = fragmentParser.trackIdentifiers();
+    selectTracksForFragment();
 }
 
 void HTMLMediaElement::applyMediaFragmentURI()
@@ -8645,6 +8650,34 @@ void HTMLMediaElement::applyMediaFragmentURI()
         m_sentEndEvent = false;
         seek(m_fragmentStartTime);
     }
+}
+
+void HTMLMediaElement::selectTracksForFragment()
+{
+    if (m_fragmentTrackIdentifiers.isEmpty())
+        return;
+
+    RefPtr<AudioTrack> matchedAudioTrack;
+    RefPtr<VideoTrack> matchedVideoTrack;
+    for (auto& identifier : m_fragmentTrackIdentifiers) {
+        AtomString trackId { identifier };
+        if (RefPtr track = m_audioTracks ? m_audioTracks->getTrackById(trackId) : nullptr)
+            matchedAudioTrack = WTF::move(track);
+        if (RefPtr track = m_videoTracks ? m_videoTracks->getTrackById(trackId) : nullptr)
+            matchedVideoTrack = WTF::move(track);
+    }
+
+    // The "track" dimension selects a single track per kind, so disable every
+    // other track of that kind: unlike the temporal dimension, WebKit otherwise
+    // allows multiple audio tracks to be enabled simultaneously.
+    if (matchedAudioTrack) {
+        for (unsigned i = 0; i < m_audioTracks->length(); ++i) {
+            Ref track = m_audioTracks->item(i);
+            track->setEnabled(track.ptr() == matchedAudioTrack.get());
+        }
+    }
+    if (matchedVideoTrack)
+        matchedVideoTrack->setSelected(true);
 }
 
 void HTMLMediaElement::updateSleepDisabling()
