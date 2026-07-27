@@ -102,8 +102,8 @@ public:
     size_t columnSpanSize() const;
     size_t rowSpanSize() const;
 
-    std::pair<size_t, size_t> NODELETE definiteRowStartEnd() const;
-    std::pair<size_t, size_t> NODELETE definiteColumnStartEnd() const;
+    std::pair<size_t, size_t> definiteRowStartEnd() const;
+    std::pair<size_t, size_t> definiteColumnStartEnd() const;
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;
