@@ -282,28 +282,21 @@ void LocalWebLockRegistry::PerOriginRegistry::clientsAreGoingAway(NOESCAPE const
     // FIXME: This is inefficient. We could optimize this by keeping track of which locks map to which clients.
     HashSet<String> namesOfQueuesToProcess;
 
-    Vector<String> namesWithoutRequests;
-    for (auto& pair : m_lockRequestQueueMap) {
+    m_lockRequestQueueMap.removeIf([&](auto& pair) {
         if (!pair.value.removeAllMatching(matchClient))
-            continue;
+            return false;
         if (pair.value.isEmpty())
-            namesWithoutRequests.append(pair.key);
-        else
-            namesOfQueuesToProcess.add(pair.key);
-    }
-    for (auto& name : namesWithoutRequests)
-        m_lockRequestQueueMap.remove(name);
-
-    Vector<String> namesWithoutLocks;
-    for (auto& pair : m_heldLocks) {
-        if (!pair.value.removeAllMatching(matchClient))
-            continue;
-        if (pair.value.isEmpty())
-            namesWithoutLocks.append(pair.key);
+            return true;
         namesOfQueuesToProcess.add(pair.key);
-    }
-    for (auto& name : namesWithoutLocks)
-        m_heldLocks.remove(name);
+        return false;
+    });
+
+    m_heldLocks.removeIf([&](auto& pair) {
+        if (!pair.value.removeAllMatching(matchClient))
+            return false;
+        namesOfQueuesToProcess.add(pair.key);
+        return pair.value.isEmpty();
+    });
 
     for (auto& name : namesOfQueuesToProcess) {
         auto queueIterator = m_lockRequestQueueMap.find(name);

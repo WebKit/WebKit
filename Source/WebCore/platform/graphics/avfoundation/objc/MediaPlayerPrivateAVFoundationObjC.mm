@@ -2988,23 +2988,18 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
     if (!player)
         return;
 
-    Vector<String> fulfilledKeyIds;
-
     ALWAYS_LOG(LOGIDENTIFIER);
-    for (auto& pair : m_keyURIToRequestMap) {
+    m_keyURIToRequestMap.removeIf([&](auto& pair) {
         const String& keyId = pair.key;
         const RetainPtr<AVAssetResourceLoadingRequest>& request = pair.value;
 
         auto keyData = player->cachedKeyForKeyId(keyId);
         if (!keyData)
-            continue;
+            return false;
 
         fulfillRequestWithKeyData(request.get(), keyData.get());
-        fulfilledKeyIds.append(keyId);
-    }
-
-    for (auto& keyId : fulfilledKeyIds)
-        m_keyURIToRequestMap.remove(keyId);
+        return true;
+    });
 }
 
 RefPtr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)

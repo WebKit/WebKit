@@ -596,4 +596,70 @@ TEST(WTF_RobinHoodHashSet, LargeRemoval)
     EXPECT_EQ(set.capacity(), 8u);
 }
 
+TEST(WTF_RobinHoodHashSet, RemoveIf)
+{
+    MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> set;
+
+    // Removing from an empty set removes nothing and returns false.
+    EXPECT_FALSE(set.removeIf([](auto&) {
+        return true;
+    }));
+    EXPECT_TRUE(set.isEmpty());
+
+    for (unsigned i = 1; i <= 100; ++i)
+        set.add(i);
+
+    // A predicate that never matches removes nothing and returns false.
+    EXPECT_FALSE(set.removeIf([](auto&) {
+        return false;
+    }));
+    EXPECT_EQ(100u, set.size());
+
+    // A predicate with a side effect runs exactly once per surviving-or-removed
+    // live entry; the side effect belongs before the returned true.
+    unsigned removedCount = 0;
+    unsigned removedSum = 0;
+    bool removed = set.removeIf([&](auto& value) {
+        if (value % 3)
+            return false;
+        ++removedCount;
+        removedSum += value;
+        return true;
+    });
+    EXPECT_TRUE(removed);
+    EXPECT_EQ(33u, removedCount); // 3, 6, ..., 99
+    EXPECT_EQ(1683u, removedSum); // 3 * (1 + ... + 33)
+    EXPECT_EQ(100u - 33u, set.size());
+    for (unsigned i = 1; i <= 100; ++i)
+        EXPECT_EQ(static_cast<bool>(i % 3), set.contains(i)) << i;
+}
+
+TEST(WTF_RobinHoodHashSet, RemoveIfLarge)
+{
+    MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> set;
+    for (unsigned i = 1; i <= 10000; ++i)
+        set.add(i);
+    EXPECT_EQ(10000u, set.size());
+
+    // Remove every odd key. This drives heavy backward-shift deletion across
+    // many probe clusters (including clusters that wrap past the end of the
+    // table), with a single deferred shrink rather than a shrink per removal.
+    EXPECT_TRUE(set.removeIf([](auto& value) {
+        return value & 0x1u;
+    }));
+    EXPECT_EQ(5000u, set.size());
+
+    // The RobinHood probe-distance invariant must survive the sweep: every
+    // surviving key remains findable, and every removed key is gone.
+    for (unsigned i = 1; i <= 10000; ++i)
+        EXPECT_EQ(!(i & 0x1u), set.contains(i)) << i;
+
+    // Removing the remainder empties the set and shrinks it to the minimum.
+    EXPECT_TRUE(set.removeIf([](auto&) {
+        return true;
+    }));
+    EXPECT_TRUE(set.isEmpty());
+    EXPECT_EQ(8u, set.capacity());
+}
+
 } // namespace TestWebKitAPI

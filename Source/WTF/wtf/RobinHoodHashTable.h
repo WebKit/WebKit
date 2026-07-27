@@ -200,6 +200,7 @@ public:
     void remove(iterator);
     void removeWithoutEntryConsistencyCheck(iterator);
     void removeWithoutEntryConsistencyCheck(const_iterator);
+    bool removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto&);
     void clear();
 
     static bool isEmptyBucket(const ValueType& value) { return isHashTraitsEmptyValue<KeyTraits>(Extractor::extract(value)); }
@@ -242,6 +243,7 @@ private:
     void removeAndInvalidateWithoutEntryConsistencyCheck(ValueType*);
     void removeAndInvalidate(ValueType*);
     void remove(ValueType*);
+    void shiftDeleteWithoutShrink(ValueType*);
 
     static unsigned computeTableHash(ValueType* table) { return DefaultHash<ValueType*>::hash(table); }
 
@@ -615,12 +617,14 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>
-void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::remove(ValueType* pos)
+void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::shiftDeleteWithoutShrink(ValueType* pos)
 {
     // This is removal via "backward-shift-deletion". This basically shift existing entries to removed empty entry place so that we make
     // the table as if no removal happened so far. This decreases distance-to-initial-bucket (DIB) of the subsequent entries by 1. This maintains
     // DIB of the table low and relatively constant even if we have many removals, compared to using tombstones.
     // https://codecapsule.com/2013/11/17/robin-hood-hashing-backward-shift-deletion/
+    // Unlike remove(), this does NOT shrink the table afterwards, so a caller removing many entries (removeIf) can defer a single
+    // shrink to the end instead of rehashing repeatedly mid-removal.
     deleteBucket(*pos);
     initializeBucket(*pos);
     m_keyCount -= 1;
@@ -650,11 +654,57 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
         indexPrevious = index;
         index = (index + 1) & sizeMask;
     }
+}
+
+template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>
+void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::remove(ValueType* pos)
+{
+    shiftDeleteWithoutShrink(pos);
 
     if (shouldShrink())
         shrink();
 
     internalCheckTableConsistency();
+}
+
+template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>
+inline bool RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto& functor)
+{
+    if (!m_table)
+        return false;
+
+    invalidateIterators(this);
+    internalCheckTableConsistency();
+
+    // Sweep the table forward, backward-shift-deleting every matching live entry. Because shiftDeleteWithoutShrink() shifts the
+    // following in-cluster entries down into the just-emptied slot, a not-yet-examined entry can move into the current slot, so we
+    // re-examine the same index after a removal rather than advancing. Backward-shift can only move an entry into an already-swept
+    // slot from an equal-or-lower (already-swept, hence known non-matching) slot, so no match is ever skipped. Deferring shrink()
+    // keeps m_table and tableSize() stable for the whole sweep (a mid-sweep rehash would relocate every entry and invalidate the
+    // index-based iteration); we do a single shrinkToBestSize() at the end, mirroring HashTable::removeIf().
+    //
+    // The per-entry removal work is the same backward shift as the second-loop remove() this replaces (minus its re-find() and
+    // per-removal shrink()), so this is never slower than collect-into-a-Vector-then-remove. A caller deleting a long *contiguous*
+    // run within one probe cluster re-shifts that cluster's tail once per removal, which a "collect doomed slots up front, then
+    // rebuild survivors in one pass" variant would avoid; that is not implemented here because it shares no code with remove() and
+    // RobinHood's low, bounded probe distances (expansion is forced past probeDistanceThreshold) keep clusters short by design.
+    unsigned removedCount = 0;
+    unsigned size = tableSize();
+    for (unsigned index = 0; index < size;) {
+        ValueType* entry = m_table + index;
+        if (isEmptyBucket(*entry) || !functor(*entry)) {
+            ++index;
+            continue;
+        }
+        shiftDeleteWithoutShrink(entry);
+        ++removedCount;
+    }
+
+    if (removedCount && shouldShrink())
+        shrinkToBestSize();
+
+    internalCheckTableConsistency();
+    return removedCount;
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>

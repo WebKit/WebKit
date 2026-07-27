@@ -928,15 +928,15 @@ void updateTracksOfKind(MemoryCompactRobinHoodHashMap<String, RefT>& trackMap, T
             addedPrivateTracks.append(track);
     }
 
-    for (const auto& track : trackMap.values()) {
+    trackMap.removeIf([&](auto& keyValue) {
+        auto& track = keyValue.value;
         Ref streamTrack = track->streamTrack();
         if (currentTracks.containsIf([&streamTrack](auto& track) { return track.ptr() == streamTrack.ptr(); }))
-            continue;
+            return false;
 
         removedTracks.append(track);
-    }
-    for (auto& track : removedTracks)
-        trackMap.remove(track->streamTrack().id());
+        return true;
+    });
 
     for (auto& track : addedPrivateTracks) {
         RefT newTrack = itemFactory(track.get());
