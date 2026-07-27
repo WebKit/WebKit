@@ -33,22 +33,24 @@ namespace WebCore {
 
 class RenderBox;
 
+// How far the flex algorithm has got. Monotonic: the flex formatting context advances it as it works through
+// css-flexbox-1 9.2 - 9.6, and RenderFlexibleBox consults it to tell which of a flex item's sizes are settled.
+enum class LayoutPhase : uint8_t {
+    PreparingFlexItems,       // layoutBlock setup, before the flex algorithm runs.
+    ComputingFlexBaseSizes,   // computeFlexBaseAndHypotheticalMainSizes (CSS Flexbox 9.2).
+    CollectingLines,          // computeFlexLines (9.3 #5).
+    ResolvingFlexibleLengths, // computeMainSizeForFlexItems (9.3 #6).
+    MainAxisItemSizing,       // layoutFlexItems — items laid out at their resolved main size.
+    CrossSizing,              // hypotheticalCrossSizeForFlexItems / crossSizeForFlexLines (9.4 #7-#8).
+    MainAxisAlignment,        // handleMainAxisAlignment (9.5 #12).
+    CrossAxisItemSizing,      // computeCrossSizeForFlexItems — stretch items to the line's cross size (9.4 #11).
+    CrossAxisAlignment,       // handleCrossAxisAlignmentForFlexItems (9.6 #13-#14).
+};
+
 class FlexLayoutState {
 public:
-    enum class Phase : uint8_t {
-        PreparingFlexItems,       // layoutBlock setup, before the flex algorithm runs.
-        ComputingFlexBaseSizes,   // computeFlexBaseAndHypotheticalMainSizes (CSS Flexbox 9.2).
-        CollectingLines,          // computeFlexLines (9.3 #5).
-        ResolvingFlexibleLengths, // computeMainSizeForFlexItems (9.3 #6).
-        MainAxisItemSizing,       // layoutFlexItems — items laid out at their resolved main size.
-        CrossSizing,              // hypotheticalCrossSizeForFlexItems / crossSizeForFlexLines (9.4 #7-#8).
-        MainAxisAlignment,        // handleMainAxisAlignment (9.5 #12).
-        CrossAxisItemSizing,      // computeCrossSizeForFlexItems — stretch items to the line's cross size (9.4 #11).
-        CrossAxisAlignment,       // handleCrossAxisAlignmentForFlexItems (9.6 #13-#14).
-    };
-
-    Phase phase() const { return m_phase; }
-    void setPhase(Phase phase)
+    LayoutPhase phase() const { return m_phase; }
+    void setPhase(LayoutPhase phase)
     {
         if (phase > m_phase)
             m_phase = phase;
@@ -63,7 +65,7 @@ public:
     void resetFlexBoxBlockSizeDefiniteness() { m_isFlexBoxBlockSizeDefinite = { }; }
 
 private:
-    Phase m_phase { Phase::PreparingFlexItems };
+    LayoutPhase m_phase { LayoutPhase::PreparingFlexItems };
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
     std::optional<bool> m_isFlexBoxBlockSizeDefinite;
 };

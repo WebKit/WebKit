@@ -54,10 +54,10 @@ namespace LayoutIntegration {
 
 class FlexIntegrationUtils {
 public:
-    FlexIntegrationUtils(RenderFlexibleBox&, FlexItemContentCache&);
+    FlexIntegrationUtils(RenderFlexibleBox&, FlexLayoutState&, FlexItemContentCache&);
 
     RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
-    FlexLayoutState& flexLayoutState() const;
+    FlexLayoutState& flexLayoutState() const LIFETIME_BOUND;
 
     void applyStretchedLogicalHeightToFlexItem(const FlexLayoutItem&, LayoutUnit blockSize);
     void layoutFlexItemForStretchedCrossSize(const FlexLayoutItem&, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
@@ -99,6 +99,7 @@ public:
 
 private:
     const CheckedRef<RenderFlexibleBox> m_flexBox;
+    FlexLayoutState& m_flexLayoutState;
     FlexItemContentCache& m_flexItemContentCache;
 };
 

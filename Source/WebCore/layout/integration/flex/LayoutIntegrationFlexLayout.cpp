@@ -140,6 +140,8 @@ FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, 
 
 void FlexLayout::layout(RelayoutChildren relayoutChildren)
 {
+    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { } };
+
     // Reset the per-layout line counts the baseline queries read; the flex algorithm below sets them when it runs.
     m_numberOfFlexItemsOnFirstLine = 0;
     m_numberOfFlexItemsOnLastLine = 0;
@@ -151,7 +153,7 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
         return;
     }
 
-    auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, m_flexItemContentCache).layout(flexItems);
+    auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
     if (flexLayoutResult.alignContentStartOverflow)
         flexBox().m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
     flexBox().m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;

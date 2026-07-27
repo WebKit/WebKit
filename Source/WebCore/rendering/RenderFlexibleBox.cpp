@@ -100,8 +100,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     resetLogicalHeightBeforeLayoutIfNeeded();
 
-    SetForScope flexLayoutStateScope(m_flexLayoutState, FlexLayoutState { });
-
     if (!style().marginTrim().isNone())
         initializeMarginTrimState();
 
@@ -136,15 +134,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
         m_flexLayout.layout(relayoutChildren);
 
-        {
-            // FIXME: Remove this along with m_flexLayoutState's overly wide scope. The flex algorithm is done here, but
-            // m_flexLayoutState stays engaged for the rest of layoutBlock, so the flex-content layout this triggers
-            // still reaches canUseFlexItemForPercentageResolution with a phase the flex algorithm is no longer in.
-            // Scoping m_flexLayoutState to m_flexLayout.layout() makes that a "not in flex layout" answer instead and
-            // lets this flag go away.
-            auto scrollbarLayout = SetForScope(m_inPostFlexUpdateScrollbarLayout, true);
-            endAndCommitUpdateScrollInfoAfterLayoutTransaction();
-        }
+        endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
         repaintFlexItemsDuringLayoutIfMoved(oldFlexItemRects);
         // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
@@ -377,27 +367,21 @@ bool RenderFlexibleBox::canUseFlexItemForPercentageResolution(const RenderBox& f
         if (m_inFlexItemIntrinsicWidthComputation)
             return !FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem);
 
-        // FIXME: Remove along with m_flexLayoutState's overly wide scope (see layoutBlock). We run layout on flex
-        // content _after_ performing flex layout to ensure scrollbars are up to date, and that content resolves
-        // percentages against the sizes the finished flex algorithm gave the items.
-        if (m_inPostFlexUpdateScrollbarLayout)
-            return false;
-
-        if (m_flexLayoutState) {
-            switch (m_flexLayoutState->phase()) {
-            case FlexLayoutState::Phase::PreparingFlexItems:
-            case FlexLayoutState::Phase::ComputingFlexBaseSizes:
+        if (auto layoutPhase = m_flexLayout.layoutPhase()) {
+            switch (*layoutPhase) {
+            case LayoutPhase::PreparingFlexItems:
+            case LayoutPhase::ComputingFlexBaseSizes:
                 // The algorithm has not sized anything yet -- PreparingFlexItems is layoutBlock's own setup, which
                 // measures the container's intrinsic widths before the flex algorithm starts. No flexed height exists.
                 return true;
-            case FlexLayoutState::Phase::MainAxisItemSizing:
-            case FlexLayoutState::Phase::MainAxisAlignment:
+            case LayoutPhase::MainAxisItemSizing:
+            case LayoutPhase::MainAxisAlignment:
                 // Only the main size is settled, so the height is usable when the item's block axis is the main axis.
                 // Multi-line column flow re-runs main-axis item sizing from the alignment step, once the container's
                 // main size is known, so that phase lands here too.
                 return FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem);
-            case FlexLayoutState::Phase::CrossAxisItemSizing:
-            case FlexLayoutState::Phase::CrossAxisAlignment:
+            case LayoutPhase::CrossAxisItemSizing:
+            case LayoutPhase::CrossAxisAlignment:
                 // Both axes are settled, so the height is final whichever axis it is.
                 return false;
             default:
@@ -444,6 +428,16 @@ void RenderFlexibleBox::invalidateBlockAxisSizeForFlexItem(const RenderBox& flex
 void RenderFlexibleBox::flexItemWillBeRemoved(const RenderBox& flexItem)
 {
     m_flexLayout.flexItemWillBeRemoved(flexItem);
+}
+
+bool RenderFlexibleBox::isComputingFlexBaseSizes() const
+{
+    return m_flexLayout.layoutPhase() == LayoutPhase::ComputingFlexBaseSizes;
+}
+
+bool RenderFlexibleBox::isInCrossAxisStretchLayout() const
+{
+    return m_flexLayout.layoutPhase() == LayoutPhase::CrossAxisItemSizing;
 }
 
 void RenderFlexibleBox::setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit height)
@@ -600,10 +594,10 @@ template<typename SizeType> bool RenderFlexibleBox::canResolvePercentAgainstCont
     if (!FlexFormattingUtils::isColumnFlow(*this))
         return true;
 
-    if (m_flexLayoutState) {
-        if (m_flexLayoutState->isFlexBoxBlockSizeDefinite())
+    if (m_flexLayout.isInLayout()) {
+        if (m_flexLayout.isFlexBoxBlockSizeDefinite())
             return true;
-        if (m_flexLayoutState->isFlexBoxBlockSizeIndefinite())
+        if (m_flexLayout.isFlexBoxBlockSizeIndefinite())
             return false;
     }
 
@@ -611,8 +605,8 @@ template<typename SizeType> bool RenderFlexibleBox::canResolvePercentAgainstCont
     ASSERT(!isPercentResolveSuspended || is<RenderBlock>(flexItem));
 
     bool definite = !isPercentResolveSuspended && flexItem.computePercentageLogicalHeight(percentSize, updateDescendants).has_value();
-    if (m_flexLayoutState && !writingMode().isOrthogonal(flexItem.writingMode()))
-        m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(definite);
+    if (m_flexLayout.isInLayout() && !writingMode().isOrthogonal(flexItem.writingMode()))
+        m_flexLayout.setFlexBoxBlockSizeIsDefinite(definite);
     return definite;
 }
 

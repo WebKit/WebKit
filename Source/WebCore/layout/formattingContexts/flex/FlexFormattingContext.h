@@ -109,7 +109,7 @@ struct FlexContainerUsedExtents {
 
 class FlexFormattingContext {
 public:
-    FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&, FlexItemContentCache&);
+    FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&, FlexLayoutState&, FlexItemContentCache&);
 
     struct Result {
         std::optional<LayoutUnit> alignContentStartOverflow;

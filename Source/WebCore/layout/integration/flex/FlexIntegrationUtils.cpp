@@ -48,15 +48,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexItemContentCache);
 
 namespace LayoutIntegration {
 
-FlexIntegrationUtils::FlexIntegrationUtils(RenderFlexibleBox& flexBox, FlexItemContentCache& flexItemContentCache)
+FlexIntegrationUtils::FlexIntegrationUtils(RenderFlexibleBox& flexBox, FlexLayoutState& flexLayoutState, FlexItemContentCache& flexItemContentCache)
     : m_flexBox(flexBox)
+    , m_flexLayoutState(flexLayoutState)
     , m_flexItemContentCache(flexItemContentCache)
 {
 }
 
 FlexLayoutState& FlexIntegrationUtils::flexLayoutState() const
 {
-    return m_flexBox->flexLayoutState();
+    return m_flexLayoutState;
 }
 
 void FlexIntegrationUtils::applyStretchedLogicalHeightToFlexItem(const FlexLayoutItem& flexLayoutItem, LayoutUnit blockSize)
