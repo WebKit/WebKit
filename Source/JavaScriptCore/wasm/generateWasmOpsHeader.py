@@ -37,7 +37,7 @@ if len(args) != 3:
 wasm = Wasm(args[0], args[1])
 types = wasm.types
 opcodes = wasm.opcodes
-wasmOpsHFile = open(args[2], "w")
+wasmOpsHFile = open(args[2], "w", encoding="utf-8")
 
 
 def cppType(type):
