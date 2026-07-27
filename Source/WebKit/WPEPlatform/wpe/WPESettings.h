@@ -152,6 +152,7 @@ typedef enum {
 
 /**
  * WPESettingsSubpixelLayout:
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE: no known subpixel geometry.
  * @WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB: horizontal subpixels ordered red, green, blue.
  * @WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR: horizontal subpixels ordered blue, green, red.
  * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB: vertical subpixels ordered red, green, blue.
@@ -161,6 +162,7 @@ typedef enum {
  * rendering.
  */
 typedef enum {
+    WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE,
     WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB,
     WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR,
     WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB,
@@ -174,7 +176,7 @@ typedef enum {
  *
  * VariantType: byte (WPESettingsSubpixelLayout)
  *
- * Default: WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB
+ * Default: WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE
  */
 #define WPE_SETTING_FONT_SUBPIXEL_LAYOUT "/wpe-platform/font-subpixel-layout"
 
