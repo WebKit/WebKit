@@ -109,5 +109,40 @@ RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilit
 Promise resolved OK
 EXPECTED (access.getConfiguration().label == 'encryption-scheme-cbcs') OK
 EXPECTED (access.getConfiguration().videoCapabilities[0].encryptionScheme == 'cbcs') OK
+
+RUN(mock.persistentStateRequirement = "optional")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "not-allowed", "sessionTypes": [ "persistent-license" ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.persistentStateRequirement = "optional")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "optional", "sessionTypes": [ "persistent-license" ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().persistentState == 'required') OK
+EXPECTED (access.getConfiguration().sessionTypes.length == '1') OK
+EXPECTED (access.getConfiguration().sessionTypes[0] == 'persistent-license') OK
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "audioCapabilities": [], "videoCapabilities": [] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "audio/mock; codecs=\"mock\"" }, { "contentType": "video/mock; codecs=\"mock\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().videoCapabilities.length == '1') OK
+EXPECTED (access.getConfiguration().videoCapabilities[0].contentType == 'video/mock; codecs="mock"') OK
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("Org.Webkit.Mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+SET capabilities = '[ { "initDataTypes": [ "MOCK" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
 END OF TEST
 

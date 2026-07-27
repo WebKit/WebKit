@@ -32,6 +32,7 @@
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
 #include "CDMPrivate.h"
+#include "CDMSessionType.h"
 #include "MediaKeyEncryptionScheme.h"
 #include "MediaKeysRequirement.h"
 #include <wtf/HashMap.h>
@@ -88,6 +89,13 @@ public:
     void addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&&);
     const Vector<Ref<SharedBuffer>>* keysForSessionWithID(const String& id) const;
     Vector<Ref<SharedBuffer>> removeKeysFromSessionWithID(const String& id);
+    size_t keyCountForSession(const String& id) const;
+
+    void setSessionType(const String& id, CDMSessionType type) { m_sessionTypes.set(id, type); }
+    std::optional<CDMSessionType> sessionType(const String& id) const;
+
+    double expirationOnUpdate() const { return m_expirationOnUpdate; }
+    void setExpirationOnUpdate(double t) { m_expirationOnUpdate = t; }
 
 private:
     MockCDMFactory();
@@ -106,6 +114,8 @@ private:
     bool m_supportsServerCertificates { true };
     bool m_supportsSessions { true };
     HashMap<String, Vector<Ref<SharedBuffer>>> m_sessions;
+    HashMap<String, CDMSessionType> m_sessionTypes;
+    double m_expirationOnUpdate { std::numeric_limits<double>::quiet_NaN() };
 };
 
 class MockCDM : public CDMPrivate {
@@ -114,7 +124,7 @@ class MockCDM : public CDMPrivate {
 public:
     MockCDM(WeakPtr<MockCDMFactory>, const String&);
 
-    MockCDMFactory* factory() { return m_factory.get(); }
+    RefPtr<MockCDMFactory> factory() const { return m_factory.get(); }
     const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
@@ -144,7 +154,7 @@ class MockCDMInstance : public CDMInstance, public CanMakeWeakPtr<MockCDMInstanc
 public:
     static Ref<MockCDMInstance> create(MockCDM&);
 
-    MockCDMFactory* factory() const { return m_cdm ? m_cdm->factory() : nullptr; }
+    RefPtr<MockCDMFactory> factory() const;
     bool distinctiveIdentifiersAllowed() const { return m_distinctiveIdentifiersAllowed; }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
 
@@ -166,6 +176,8 @@ private:
 class MockCDMInstanceSession : public CDMInstanceSession {
 public:
     explicit MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
+
+    RefPtr<MockCDMFactory> factory() const;
 
 private:
     void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;

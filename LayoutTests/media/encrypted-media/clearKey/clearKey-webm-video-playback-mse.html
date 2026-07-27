@@ -8,13 +8,14 @@
     <script src="encrypted-media-clearKey-handler.js"></script>
     <script>
 
-    const videoConf = streamMedias["simpleClearKeyWebMMSE"].video;
+    const media = streamMedias["simpleClearKeyWebMMSE"];
+    const videoConf = media.video;
 
     function runTest() {
 
         findMediaElement();
 
-        const emeHandler = new EncryptedMediaHandler(video, videoConf);
+        const emeHandler = new EncryptedMediaHandler(video, media);
         if (!emeHandler)
             endTest();
 

@@ -26,7 +26,7 @@ function stringToArray(s)
     return array;
 }
 
-function EncryptedMediaHandler(video, videoConf, audioConf)
+function EncryptedMediaHandler(video, media)
 {
     if (!navigator.requestMediaKeySystemAccess) {
         logResult(false, "EME API is not supported");
@@ -36,15 +36,9 @@ function EncryptedMediaHandler(video, videoConf, audioConf)
     }
 
     this.video = video;
-    this.keys = videoConf.keys;
-    this.audioConf = null;
-    if (audioConf) {
-        for (let attrname in audioConf.keys) {
-            this.keys[attrname] =  audioConf.keys[attrname];
-        }
-        this.audioConf = audioConf;
-    }
-    this.videoConf = videoConf;
+    this.videoConf = media.video || null;
+    this.audioConf = media.audio || null;
+    this.keys = Object.assign({ }, this.videoConf?.keys, this.audioConf?.keys);
     this.sessions = [];
     this.skipUpdateCallback = undefined;
     this.setMediaKeyPromise;
@@ -62,16 +56,14 @@ EncryptedMediaHandler.prototype = {
         let eventVideo = event.target;
 
         if (!this.setMediaKeyPromise) {
-            let options = [
-                {    initDataTypes: [self.videoConf.initDataType],
-                     videoCapabilities: [{contentType : self.videoConf.mimeType}] }
-            ];
+            let primaryConf = self.videoConf || self.audioConf;
+            let config = { initDataTypes: [primaryConf.initDataType] };
+            if (self.videoConf)
+                config.videoCapabilities = [{contentType : self.videoConf.mimeType}];
+            if (self.audioConf)
+                config.audioCapabilities = [{contentType : self.audioConf.mimeType}];
 
-            if (self.audioConf) {
-                options.audioCapabilities = [{contentType : self.audioConf.mimeType}];
-            }
-
-            this.setMediaKeyPromise = navigator.requestMediaKeySystemAccess("org.w3.clearkey", options).then(function(keySystemAccess) {
+            this.setMediaKeyPromise = navigator.requestMediaKeySystemAccess("org.w3.clearkey", [config]).then(function(keySystemAccess) {
                 return keySystemAccess.createMediaKeys();
             }).then(function(mediaKeys) {
                 logResult(true, "MediaKeys is created");

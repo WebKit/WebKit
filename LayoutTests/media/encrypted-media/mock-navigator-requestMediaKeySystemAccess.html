@@ -280,6 +280,96 @@
                     testExpected('access.getConfiguration().videoCapabilities[0].encryptionScheme', 'cbcs');
                 });
         },
+
+        // Behavior 49: persistentState 'not-allowed' with a persistent session type -> NotSupported.
+        function() {
+            run('mock.persistentStateRequirement = "optional"');
+            failingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="mock"' }],
+                    persistentState: 'not-allowed',
+                    sessionTypes: ['persistent-license']
+                }],
+                exceptionCode => {
+                    window.exceptionCode = exceptionCode;
+                    testExpected('exceptionCode.name', 'NotSupportedError');
+                });
+        },
+
+        // Behavior 50: persistentState 'optional' + persistent session type -> normalized to 'required'.
+        function() {
+            run('mock.persistentStateRequirement = "optional"');
+            passingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="mock"' }],
+                    persistentState: 'optional',
+                    sessionTypes: ['persistent-license']
+                }],
+                mediaKeySystemAccess => {
+                    window.access = mediaKeySystemAccess;
+                    testExpected('access.getConfiguration().persistentState', 'required');
+                    testExpected('access.getConfiguration().sessionTypes.length', '1');
+                    testExpected('access.getConfiguration().sessionTypes[0]', 'persistent-license');
+                });
+        },
+
+        // Behavior 51: both audioCapabilities and videoCapabilities empty -> NotSupported.
+        function() {
+            failingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    audioCapabilities: [],
+                    videoCapabilities: []
+                }],
+                exceptionCode => {
+                    window.exceptionCode = exceptionCode;
+                    testExpected('exceptionCode.name', 'NotSupportedError');
+                });
+        },
+
+        // Behavior 66: capability with a wrong-family MIME (audio in videoCapabilities) is filtered
+        // out; only the video-family capability survives.
+        function() {
+            passingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [
+                        { contentType: 'audio/mock; codecs="mock"' },
+                        { contentType: 'video/mock; codecs="mock"' }
+                    ]
+                }],
+                mediaKeySystemAccess => {
+                    window.access = mediaKeySystemAccess;
+                    testExpected('access.getConfiguration().videoCapabilities.length', '1');
+                    testExpected('access.getConfiguration().videoCapabilities[0].contentType', 'video/mock; codecs="mock"');
+                });
+        },
+
+        // Behavior 1: Key System strings are compared case-sensitively — a mis-cased name
+        // MUST NOT match the registered CDM.
+        function() {
+            window.capabilities = [{
+                initDataTypes: ['mock'],
+                videoCapabilities: [{ contentType: 'video/mock; codecs="mock"' }]
+            }];
+            consoleWrite(`SET capabilities = '${ JSON.stringify(window.capabilities, null, 1) }'`);
+            run('promise = navigator.requestMediaKeySystemAccess("Org.Webkit.Mock", capabilities)');
+            shouldReject(promise).then(exceptionCode => {
+                window.exceptionCode = exceptionCode;
+                testExpected('exceptionCode.name', 'NotSupportedError');
+            }).then(next, next);
+        },
+
+        // Behavior 10: initDataType strings are compared case-sensitively — a mis-cased type
+        // ('MOCK' vs registered 'mock') MUST NOT match.
+        function() {
+            failingTestWithCapabilities([{
+                    initDataTypes: ['MOCK'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="mock"' }]
+                }],
+                exceptionCode => {
+                    window.exceptionCode = exceptionCode;
+                    testExpected('exceptionCode.name', 'NotSupportedError');
+                });
+        },
     ];
     </script>
 </head>

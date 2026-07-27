@@ -28,8 +28,8 @@ PASS ContentType formatting must be preserved
 PASS org.w3.clearkey, requestMediaKeySystemAccess: Unsupported audio codec ('audio/webm; codecs=fake') should result in NotSupportedError
 PASS org.w3.clearkey, requestMediaKeySystemAccess: Unsupported video codec () should result in NotSupportedError
 FAIL org.w3.clearkey, requestMediaKeySystemAccess: Mismatched audio container/codec ('audio/webm; codecs=mp4a','audio/webm; codecs=mp4a.40.2') should result in NotSupportedError assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL org.w3.clearkey, requestMediaKeySystemAccess: Video codec specified in audio field ('video/mp4;codecs="avc1.4d401e"') should result in NotSupportedError assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL org.w3.clearkey, requestMediaKeySystemAccess: Audio codec specified in video field ('audio/mp4;codecs="mp4a.40.2"') should result in NotSupportedError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS org.w3.clearkey, requestMediaKeySystemAccess: Video codec specified in audio field ('video/mp4;codecs="avc1.4d401e"') should result in NotSupportedError
+PASS org.w3.clearkey, requestMediaKeySystemAccess: Audio codec specified in video field ('audio/mp4;codecs="mp4a.40.2"') should result in NotSupportedError
 FAIL org.w3.clearkey, requestMediaKeySystemAccess: Mismatched audio container/codec ('audio/webm; codecs=avc1','audio/webm; codecs=avc1.42e01e') should result in NotSupportedError assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL org.w3.clearkey, requestMediaKeySystemAccess: Mismatched audio container/codec ('audio/mp4; codecs=vorbis') should result in NotSupportedError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Two configurations, one supported

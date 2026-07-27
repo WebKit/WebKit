@@ -804,9 +804,15 @@ PlatformDisplayID MediaKeySession::displayID()
     return 0;
 }
 
-void MediaKeySession::updateExpiration(double)
+void MediaKeySession::updateExpiration(double newExpiration)
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#update-expiration
+    // 1. Let the session be the associated MediaKeySession object.
+    // 2. Let expiration time be NaN.
+    // 3. If the license(s) and/or key(s) associated with the session expire at a specific time,
+    //    let expiration time be the expiration time in milliseconds since 01 January 1970 UTC.
+    // 4. Set the session's expiration attribute to expiration time.
+    m_expiration = newExpiration;
 }
 
 void MediaKeySession::sessionClosed()

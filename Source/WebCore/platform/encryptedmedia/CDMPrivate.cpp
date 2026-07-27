@@ -415,6 +415,10 @@ std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesFo
         }
 
         // 3.11. If content type is not strictly a audio/video type, continue to the next iteration.
+        auto expectedTopLevel = (type == AudioVideoType::Video) ? "video/"_s : "audio/"_s;
+        if (!container.startsWithIgnoringASCIICase(expectedTopLevel))
+            continue;
+
         // 3.12. If robustness is not the empty string and contains an unrecognized value or a value not supported by
         //       implementation, continue to the next iteration. String comparison is case-sensitive.
         if (!robustness.isEmpty() && !supportedRobustnesses().contains(robustness))

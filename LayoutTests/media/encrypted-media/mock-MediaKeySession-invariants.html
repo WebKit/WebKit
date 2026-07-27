@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var mock;
+    var promise;
+    var mediaKeySystemAccess;
+    var mediaKeys;
+    var capabilities = {};
+    var kids;
+
+    function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.initializeMockMediaSource()');
+        run('mock = internals.registerMockCDM()');
+        run('mock.supportedDataTypes = ["keyids"]');
+        run('capabilities.initDataTypes = ["keyids"]');
+        run(`capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] `);
+        run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities])');
+        shouldResolve(promise).then(gotMediaKeySystemAccess, failTest);
+    }
+
+    function next() {
+        if (!tests.length) {
+            mock.unregister();
+            endTest()
+            return;
+        }
+        var nextTest = tests.shift();
+        consoleWrite('');
+        nextTest();
+    }
+
+    function gotMediaKeySystemAccess(result) {
+        mediaKeySystemAccess = result;
+        run('promise = mediaKeySystemAccess.createMediaKeys()');
+        shouldResolve(promise).then(gotMediaKeys, failTest);
+    }
+
+    function gotMediaKeys(result) {
+        mediaKeys = result;
+        next();
+    }
+
+    function stringToUInt8Array(str)
+    {
+       var array = new Uint8Array(str.length);
+       for (var i=0; i<str.length; i++)
+            array[i] = str.charCodeAt(i);
+       return array;
+    }
+
+    tests = [
+        // Behaviors 6 and 7: A new Session ID is generated each time a session is
+        // successfully created, and Session IDs are unique within the browsing context.
+        function() {
+            consoleWrite('Two sessions from the same MediaKeys have distinct non-empty sessionIds.');
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('window.session1 = mediaKeys.createSession("temporary")');
+            run('promise = window.session1.generateRequest("keyids", stringToUInt8Array(kids))');
+            shouldResolve(promise).then(() => {
+                run('window.session2 = mediaKeys.createSession("temporary")');
+                run('promise = window.session2.generateRequest("keyids", stringToUInt8Array(kids))');
+                return shouldResolve(promise);
+            }).then(() => {
+                testExpected('window.session1.sessionId.length > 0', true);
+                testExpected('window.session2.sessionId.length > 0', true);
+                testExpected('window.session1.sessionId !== window.session2.sessionId', true);
+                next();
+            }, next);
+        },
+
+        // Behavior 19: session.expiration is NaN when the session has no known
+        // expiration time (no update() has yet processed a license providing one).
+        function() {
+            consoleWrite('Session with no license processed: expiration is NaN.');
+            run('window.session3 = mediaKeys.createSession("temporary")');
+            run('promise = window.session3.generateRequest("keyids", stringToUInt8Array(kids))');
+            shouldResolve(promise).then(() => {
+                testExpected('isNaN(window.session3.expiration)', true);
+                next();
+            }, next);
+        },
+
+        // Behaviors 18 and 20: after update() delivers a license with an expiration,
+        // session.expiration is an ECMA-262 Time value (a finite Number, never Infinity).
+        function() {
+            consoleWrite('After update() with a finite expiration, session.expiration is a finite Number.');
+            run('mock.expirationOnUpdate = 1735689600000');  // 2025-01-01T00:00:00Z (ms since epoch)
+            run('window.session4 = mediaKeys.createSession("temporary")');
+            run('promise = window.session4.generateRequest("keyids", stringToUInt8Array(kids))');
+            shouldResolve(promise).then(() => {
+                run('promise = window.session4.update(stringToUInt8Array("valid-response keys-changed"))');
+                return shouldResolve(promise);
+            }).then(() => {
+                testExpected('typeof window.session4.expiration', 'number');
+                testExpected('isFinite(window.session4.expiration)', true);
+                testExpected('window.session4.expiration', 1735689600000);
+                // Reset so subsequent tests don't inherit an expiration.
+                run('mock.expirationOnUpdate = NaN');
+                next();
+            }, next);
+        },
+
+        // Behavior 5: Key IDs are tracked per-session; different sessions have their own key sets.
+        function() {
+            consoleWrite('Two sessions with different initData: each records its own key IDs.');
+            run('window.kidsA = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('window.kidsB = JSON.stringify({ kids: [ "Njc4OTA=", "MTIzNDU=" ] })');
+            run('window.sessionA = mediaKeys.createSession("temporary")');
+            run('promise = window.sessionA.generateRequest("keyids", stringToUInt8Array(window.kidsA))');
+            shouldResolve(promise).then(() => {
+                run('window.sessionB = mediaKeys.createSession("temporary")');
+                run('promise = window.sessionB.generateRequest("keyids", stringToUInt8Array(window.kidsB))');
+                return shouldResolve(promise);
+            }).then(() => {
+                testExpected('mock.keyCountForSession(window.sessionA.sessionId)', 1);
+                testExpected('mock.keyCountForSession(window.sessionB.sessionId)', 2);
+                next();
+            }, next);
+        },
+    ];
+    </script>
+</head>
+<body onload="doTest()">
+</body>
+</html>

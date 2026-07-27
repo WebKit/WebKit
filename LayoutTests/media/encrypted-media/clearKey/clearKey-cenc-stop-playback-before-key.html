@@ -8,13 +8,14 @@
     <script src="encrypted-media-clearKey-handler.js"></script>
     <script>
 
-     const audioConf = streamMedias["simpleClearKeyMSE"].audio;
+     const media = streamMedias["simpleClearKeyMSE"];
+     const audioConf = media.audio;
 
      function runTest() {
 
          findMediaElement();
 
-         const emeHandler = new EncryptedMediaHandler(video, audioConf);
+         const emeHandler = new EncryptedMediaHandler(video, media);
          if (!emeHandler)
              failTest();
 
