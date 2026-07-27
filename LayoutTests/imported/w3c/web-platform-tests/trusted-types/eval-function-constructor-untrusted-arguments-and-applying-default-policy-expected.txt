@@ -7,12 +7,8 @@ PASS plain string at index 0 (default policy leaving the function text unchanged
 PASS plain string at index 1 (default policy leaving the function text unchanged).
 PASS plain string at index 2 (default policy leaving the function text unchanged).
 PASS plain string at index 3 (default policy leaving the function text unchanged).
-PASS TrustedScript with forged toString() at index 0 (default policy modifying the function text).
-PASS TrustedScript with forged toString() at index 1 (default policy modifying the function text).
-PASS TrustedScript with forged toString() at index 2 (default policy modifying the function text).
-PASS TrustedScript with forged toString() at index 3 (default policy modifying the function text).
-PASS TrustedScript with forged toString() at index 0 (default policy leaving the function text unchanged).
-PASS TrustedScript with forged toString() at index 1 (default policy leaving the function text unchanged).
-PASS TrustedScript with forged toString() at index 2 (default policy leaving the function text unchanged).
-PASS TrustedScript with forged toString() at index 3 (default policy leaving the function text unchanged).
+FAIL TrustedScript with forged toString() at index 0 (default policy not invoked). assert_equals: toString() should never be called on a TrustedScript argument expected 0 but got 2
+FAIL TrustedScript with forged toString() at index 1 (default policy not invoked). assert_equals: toString() should never be called on a TrustedScript argument expected 0 but got 2
+FAIL TrustedScript with forged toString() at index 2 (default policy not invoked). assert_equals: toString() should never be called on a TrustedScript argument expected 0 but got 2
+FAIL TrustedScript with forged toString() at index 3 (default policy not invoked). assert_equals: toString() should never be called on a TrustedScript argument expected 0 but got 2
 

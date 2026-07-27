@@ -60,8 +60,8 @@ PASS AsyncFunction constructor with mixed plain and trusted strings, mask #14
 PASS GeneratorFunction constructor with mixed plain and trusted strings, mask #14
 PASS AsyncGeneratorFunction constructor with mixed plain and trusted strings, mask #14
 PASS Function constructor with mixed plain and trusted strings, mask #15
-PASS Function constructor with trusted strings, and a forged toString() for the one at index 0
-PASS Function constructor with trusted strings, and a forged toString() for the one at index 1
-PASS Function constructor with trusted strings, and a forged toString() for the one at index 2
-PASS Function constructor with trusted strings, and a forged toString() for the one at index 3
+FAIL Function constructor with trusted strings, and a forged toString() for the one at index 0 Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment.
+FAIL Function constructor with trusted strings, and a forged toString() for the one at index 1 Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment.
+FAIL Function constructor with trusted strings, and a forged toString() for the one at index 2 Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment.
+FAIL Function constructor with trusted strings, and a forged toString() for the one at index 3 Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment.
 
