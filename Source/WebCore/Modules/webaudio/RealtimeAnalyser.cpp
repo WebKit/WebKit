@@ -66,6 +66,7 @@ bool RealtimeAnalyser::setFftSize(size_t size)
 
     if (m_fftSize != size) {
         m_analysisFrame = makeUnique<FFTFrame>(size);
+        m_temporaryBuffer.resize(size);
         // m_magnitudeBuffer has size = fftSize / 2 because it contains floats reduced from complex values in m_analysisFrame.
         m_magnitudeBuffer.resize(size / 2);
         m_fftSize = size;
@@ -106,16 +107,17 @@ void RealtimeAnalyser::writeInput(AudioBus& bus, size_t framesToProcess)
 
 namespace {
 
-void applyWindow(std::span<float> p, size_t n)
+void applyWindow(std::span<float> p)
 {
     ASSERT(isMainThread());
-    
+
     // Blackman window
     double alpha = 0.16;
     double a0 = 0.5 * (1 - alpha);
     double a1 = 0.5;
     double a2 = 0.5 * alpha;
-    
+
+    size_t n = p.size();
     for (unsigned i = 0; i < n; ++i) {
         double x = static_cast<double>(i) / static_cast<double>(n);
         double window = a0 - a1 * cos(2 * std::numbers::pi * x) + a2 * cos(4 * std::numbers::pi * x);
@@ -136,22 +138,22 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
 
     // Unroll the input buffer into a temporary buffer, where we'll apply an analysis window followed by an FFT.
     size_t fftSize = this->fftSize();
-    
-    AudioFloatArray temporaryBuffer(fftSize);
+
     auto inputBuffer = m_inputBuffer.span();
-    auto tempP = temporaryBuffer.span();
+    // m_temporaryBuffer is kept in sync with m_fftSize by setFftSize(); take only what this FFT needs.
+    auto tempP = m_temporaryBuffer.span().first(fftSize);
 
     // Take the previous fftSize values from the input buffer and copy into the temporary buffer.
     unsigned writeIndex = m_writeIndex;
     if (writeIndex < fftSize) {
         memcpySpan(tempP, inputBuffer.subspan(writeIndex - fftSize + InputBufferSize, fftSize - writeIndex));
         memcpySpan(tempP.subspan(fftSize - writeIndex), inputBuffer.first(writeIndex));
-    } else 
+    } else
         memcpySpan(tempP, inputBuffer.subspan(writeIndex - fftSize, fftSize));
 
-    
+
     // Window the input samples.
-    applyWindow(tempP, fftSize);
+    applyWindow(tempP);
     
     // Do the analysis.
     m_analysisFrame->doFFT(tempP);

@@ -88,6 +88,9 @@ private:
     std::unique_ptr<FFTFrame> m_analysisFrame;
     void doFFTAnalysisIfNecessary();
     
+    // doFFTAnalysisIfNecessary() unrolls the input buffer here before windowing and doing the FFT.
+    AudioFloatArray m_temporaryBuffer { DefaultFFTSize };
+
     // doFFTAnalysisIfNecessary() stores the floating-point magnitude analysis data here.
     AudioFloatArray m_magnitudeBuffer { DefaultFFTSize / 2 };
     AudioFloatArray& magnitudeBuffer() LIFETIME_BOUND { return m_magnitudeBuffer; }
