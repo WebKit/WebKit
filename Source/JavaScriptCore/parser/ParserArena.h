@@ -30,6 +30,7 @@
 #include <JavaScriptCore/MathCommon.h>
 #include <array>
 #include <type_traits>
+#include <wtf/RefCounted.h>
 #include <wtf/SegmentedVector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -39,13 +40,10 @@ namespace JSC {
     class ParserArenaDeletable;
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IdentifierArena);
-    class IdentifierArena {
+    class IdentifierArena : public RefCounted<IdentifierArena> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IdentifierArena, IdentifierArena);
     public:
-        IdentifierArena()
-        {
-            clear();
-        }
+        static Ref<IdentifierArena> create() { return adoptRef(*new IdentifierArena); }
 
         template <typename T>
         ALWAYS_INLINE const Identifier& makeIdentifier(VM&, std::span<const T> characters);
@@ -70,6 +68,11 @@ namespace JSC {
         }
 
     private:
+        IdentifierArena()
+        {
+            clear();
+        }
+
         IdentifierVector m_identifiers;
         std::array<Identifier*, MaximumCachableCharacter> m_shortIdentifiers;
         std::array<Identifier*, MaximumCachableCharacter> m_recentIdentifiers;
@@ -151,13 +154,17 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(ParserArena);
     public:
         ParserArena();
+        explicit ParserArena(Ref<IdentifierArena>&&);
         ~ParserArena();
 
         void swap(ParserArena& otherArena)
         {
             std::swap(m_freeableMemory, otherArena.m_freeableMemory);
             std::swap(m_freeablePoolEnd, otherArena.m_freeablePoolEnd);
-            m_identifierArena.swap(otherArena.m_identifierArena);
+            if (m_identifierArena)
+                otherArena.m_identifierArena = m_identifierArena;
+            else
+                m_identifierArena = otherArena.m_identifierArena;
             m_freeablePools.swap(otherArena.m_freeablePools);
             m_deletableObjects.swap(otherArena.m_deletableObjects);
         }
@@ -191,7 +198,7 @@ namespace JSC {
         IdentifierArena& identifierArena()
         {
             if (!m_identifierArena) [[unlikely]]
-                m_identifierArena = makeUnique<IdentifierArena>();
+                m_identifierArena = IdentifierArena::create();
             return *m_identifierArena;
         }
 
@@ -210,7 +217,7 @@ namespace JSC {
         char* m_freeableMemory;
         char* m_freeablePoolEnd;
 
-        std::unique_ptr<IdentifierArena> m_identifierArena;
+        RefPtr<IdentifierArena> m_identifierArena;
         Vector<void*> m_freeablePools;
         Vector<ParserArenaDeletable*> m_deletableObjects;
     };

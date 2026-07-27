@@ -711,6 +711,7 @@ llint/LLIntExceptions.cpp
 llint/LLIntSlowPaths.cpp
 llint/LLIntThunks.cpp
 
+parser/EagerIIFERegistry.cpp
 parser/Lexer.cpp
 parser/LexerUnicodeProperties.cpp
 parser/ModuleAnalyzer.cpp

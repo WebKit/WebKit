@@ -818,6 +818,7 @@
 		234E91BF2EE2571E000BAE2C /* JSWebAssemblySuspendError.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E91BD2EE2571E000BAE2C /* JSWebAssemblySuspendError.h */; };
 		234E91C52EE25777000BAE2C /* WebAssemblySuspendErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E91C32EE25777000BAE2C /* WebAssemblySuspendErrorPrototype.h */; };
 		234E91C62EE25777000BAE2C /* WebAssemblySuspendErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E91C12EE25777000BAE2C /* WebAssemblySuspendErrorConstructor.h */; };
+		235A9D742F983D1600A1E8FE /* EagerIIFERegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 235A9D722F983D0100A1E8FE /* EagerIIFERegistry.h */; };
 		237C93DD2E95A87900F62455 /* WebAssemblySuspendingConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 237C93D92E95A85F00F62455 /* WebAssemblySuspendingConstructor.h */; };
 		237C93DE2E95A89A00F62455 /* WebAssemblySuspendingPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 237C93DB2E95A85F00F62455 /* WebAssemblySuspendingPrototype.h */; };
 		23863EEB2E5EC93E00E57879 /* WebAssemblyBuiltinTrampoline.h in Headers */ = {isa = PBXBuildFile; fileRef = 23863EEA2E5EC92900E57879 /* WebAssemblyBuiltinTrampoline.h */; };
@@ -4099,6 +4100,8 @@
 		234E91C22EE25777000BAE2C /* WebAssemblySuspendErrorConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspendErrorConstructor.cpp; path = js/WebAssemblySuspendErrorConstructor.cpp; sourceTree = "<group>"; };
 		234E91C32EE25777000BAE2C /* WebAssemblySuspendErrorPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspendErrorPrototype.h; path = js/WebAssemblySuspendErrorPrototype.h; sourceTree = "<group>"; };
 		234E91C42EE25777000BAE2C /* WebAssemblySuspendErrorPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspendErrorPrototype.cpp; path = js/WebAssemblySuspendErrorPrototype.cpp; sourceTree = "<group>"; };
+		235A9D722F983D0100A1E8FE /* EagerIIFERegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EagerIIFERegistry.h; sourceTree = "<group>"; };
+		235A9D732F983D0100A1E8FE /* EagerIIFERegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EagerIIFERegistry.cpp; sourceTree = "<group>"; };
 		237C93D92E95A85F00F62455 /* WebAssemblySuspendingConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspendingConstructor.h; path = js/WebAssemblySuspendingConstructor.h; sourceTree = "<group>"; };
 		237C93DA2E95A85F00F62455 /* WebAssemblySuspendingConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspendingConstructor.cpp; path = js/WebAssemblySuspendingConstructor.cpp; sourceTree = "<group>"; };
 		237C93DB2E95A85F00F62455 /* WebAssemblySuspendingPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspendingPrototype.h; path = js/WebAssemblySuspendingPrototype.h; sourceTree = "<group>"; };
@@ -8538,6 +8541,8 @@
 			isa = PBXGroup;
 			children = (
 				A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */,
+				235A9D732F983D0100A1E8FE /* EagerIIFERegistry.cpp */,
+				235A9D722F983D0100A1E8FE /* EagerIIFERegistry.h */,
 				93F1981A08245AAE001E9ABC /* Keywords.table */,
 				F692A8650255597D01FF60F7 /* Lexer.cpp */,
 				F692A8660255597D01FF60F7 /* Lexer.h */,
@@ -11705,6 +11710,7 @@
 				E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */,
 				A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */,
 				FFF79F9D2FB2F1B2003FF02A /* DurationArithmetic.h in Headers */,
+				235A9D742F983D1600A1E8FE /* EagerIIFERegistry.h in Headers */,
 				145FF2C8243BB9D600569E71 /* ECMAMode.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
 				1AB2A6FB9608AD5DF73332D4 /* EmbedderArrayLike.h in Headers */,

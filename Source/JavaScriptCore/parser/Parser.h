@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "EagerIIFERegistry.h"
 #include "ExecutableInfo.h"
 #include "Lexer.h"
 #include "ModuleScopeData.h"
@@ -48,8 +49,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+class ASTBuilder;
 class FunctionMetadataNode;
 class FunctionParameters;
+template <typename LexerType> class EagerIIFEParseScope;
 class Identifier;
 class VM;
 class SourceCode;
@@ -150,6 +153,8 @@ ALWAYS_INLINE static bool isContextualKeyword(const JSToken& token)
 }
 
 JS_EXPORT_PRIVATE extern std::atomic<unsigned> globalParseCount;
+JS_EXPORT_PRIVATE extern std::atomic<unsigned> globalIIFEDetectionCount;
+JS_EXPORT_PRIVATE extern std::atomic<unsigned> globalIIFESuccessCount;
 
 struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
@@ -831,6 +836,7 @@ public:
     bool hasNonSimpleParameterList() const { return m_hasNonSimpleParameterList; }
 
     bool hasSloppyModeFunctionHoistingCandidates() const { return !m_sloppyModeFunctionHoistingCandidates.isEmpty(); }
+    void clearSloppyModeFunctionHoistingCandidates() { m_sloppyModeFunctionHoistingCandidates.clear(); }
 
     void copyCapturedVariablesToVector(const UniquedStringImplPtrSet& usedVariables, Vector<UniquedStringImpl*, 8>& vector)
     {
@@ -1048,6 +1054,8 @@ typedef SegmentedVector<Scope, 20, 10> ScopeStack;
 enum class ArgumentType { Normal, Spread };
 enum class ParsingContext { Normal, FunctionConstructor };
 
+static constexpr unsigned NoSourceOffset = UINT_MAX;
+
 template <typename LexerType>
 class JSC_CACHE_LINE_ALIGNED Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
@@ -1170,6 +1178,98 @@ private:
         Scope* m_scope;
         Parser* m_parser;
     };
+
+    // A specialized parser state activated in parseFunctionInfo() to parse a likely IIFE.
+    // See also EagerIIFEParseScope in Parser.cpp.
+    //
+    // The parse state redirects the parser's current arena so that objects created while
+    // the parse state is installed are created in the scope's arena instead of the main
+    // arena of the parser. It also provides methods to parse the function's parameters
+    // and body using an ASTBuilder instead of a SyntaxChecker, collecting the resulting
+    // FunctionParameters and SourceElements.
+    //
+    // Because IIFE parameters and body may themselves contain nested function definitions
+    // (including nested IIFEs), the IIFE parse state marks itself as isInUse while
+    // parsing those constructs. This prevents nested functions from mistakenly reusing
+    // the outer IIFE's parse state — they follow the normal syntax-checking path instead,
+    // or set up their own eager parse state if they are IIFEs too.
+
+    class EagerIIFEParseState {
+    public:
+        EagerIIFEParseState(Parser& parser, ASTBuilder* builder, ParserArena& arena, unsigned startOffset)
+            : m_parser(parser)
+            , m_builder(builder)
+            , m_startOffset(startOffset)
+            , m_savedArena(parser.m_currentArena)
+            , m_savedIIFEParseState(parser.m_iifeParseState)
+            , m_savedSeenTaggedTemplate(parser.m_seenTaggedTemplateInNonReparsingFunctionMode)
+            , m_savedSeenPrivateNameUse(parser.m_seenPrivateNameUseInNonReparsingFunctionMode)
+            , m_savedSeenArgumentsDotLength(parser.m_seenArgumentsDotLength)
+        {
+            parser.setCurrentArena(arena);
+            parser.m_iifeParseState = this;
+            // Reset parser-wide "seen-anywhere" flags so the IIFE body is parsed in
+            // isolation, matching what a lazy reparse (a fresh Parser instance) would
+            // observe. The destructor ORs the IIFE's contribution back into the outer
+            // parser so it still observes everything that was lexically inside its source.
+            parser.m_seenTaggedTemplateInNonReparsingFunctionMode = false;
+            parser.m_seenPrivateNameUseInNonReparsingFunctionMode = false;
+            parser.m_seenArgumentsDotLength = false;
+        }
+
+        ~EagerIIFEParseState()
+        {
+            m_parser.setCurrentArena(*m_savedArena);
+            m_parser.m_iifeParseState = m_savedIIFEParseState;
+            m_parser.m_seenTaggedTemplateInNonReparsingFunctionMode |= m_savedSeenTaggedTemplate;
+            m_parser.m_seenPrivateNameUseInNonReparsingFunctionMode |= m_savedSeenPrivateNameUse;
+            m_parser.m_seenArgumentsDotLength |= m_savedSeenArgumentsDotLength;
+        }
+
+        template <typename TreeBuilder>
+        void parseFunctionParameters(ParserFunctionInfo<TreeBuilder>& functionInfo)
+        {
+            ASSERT(!m_functionParameters);
+            m_isInUse = true;
+            m_functionParameters = m_parser.parseFunctionParameters(*m_builder, functionInfo);
+            m_isInUse = false;
+        }
+
+        SourceElements* parseSourceElements(SourceElementsMode mode)
+        {
+            ASSERT(!m_sourceElements);
+            m_isInUse = true;
+            m_sourceElements = m_parser.parseSourceElements(*m_builder, mode);
+            m_isInUse = false;
+            return m_sourceElements;
+        }
+
+        bool isInUse() const { return m_isInUse; }
+        unsigned startOffset() const { return m_startOffset; }
+
+        CodeFeatures features() const;
+        int numConstants() const;
+        FunctionParameters* functionParameters() const { return m_functionParameters; }
+        SourceElements* sourceElements() const { return m_sourceElements; }
+
+    private:
+        Parser& m_parser;
+        ASTBuilder* m_builder;
+        bool m_isInUse { false };
+        unsigned m_startOffset;
+
+        ParserArena* m_savedArena;
+        EagerIIFEParseState* m_savedIIFEParseState;
+        bool m_savedSeenTaggedTemplate;
+        bool m_savedSeenPrivateNameUse;
+        bool m_savedSeenArgumentsDotLength;
+
+        FunctionParameters* m_functionParameters { nullptr };
+        SourceElements* m_sourceElements { nullptr };
+    };
+
+    friend class EagerIIFEParseState;
+    friend class EagerIIFEParseScope<LexerType>;
 
     ALWAYS_INLINE DestructuringKind destructuringKindFromDeclarationType(DeclarationType type)
     {
@@ -1833,8 +1933,13 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression createResolveAndUseVariable(TreeBuilder&, const Identifier*, bool isEval, const JSTextPosition&, const JSTokenLocation&);
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
-    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, bool nameIsInContainingScope, ConstructorKind, SuperBinding, unsigned functionStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
-    
+    template <class TreeBuilder, bool ExpectIIFE = false> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, bool nameIsInContainingScope, ConstructorKind, SuperBinding, unsigned functionStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBodyForFunctionInfo(TreeBuilder& context, SyntaxChecker&, const JSTokenLocation& startLocation, int startColumn, unsigned functionStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding expectedSuperBinding, FunctionBodyType, unsigned parameterCount);
+    template <class TreeBuilder> ALWAYS_INLINE bool tryLoadCachedFunctionInfo(TreeBuilder& context, ParserFunctionInfo<TreeBuilder>&, AutoPopScope& functionScope, const JSTokenLocation& startLocation, int parametersStart, int startColumn, unsigned functionStart, int functionNameStart, SourceParseMode);
+
+    template <class TreeBuilder> NEVER_INLINE void popScopeAndBuildFunctionNode(AutoPopScope& functionScope, ParserFunctionInfo<TreeBuilder>&, const JSTokenLocation& startLocation, int startColumn);
+    [[nodiscard]] CodeFeatures collectCodeFeatures(CodeFeatures, Scope*);
+
     template <class TreeBuilder> ALWAYS_INLINE bool isArrowFunctionParameters(TreeBuilder&);
     
     template <class TreeBuilder, class FunctionInfoType> NEVER_INLINE typename TreeBuilder::FormalParameterList parseFunctionParameters(TreeBuilder&, FunctionInfoType&);
@@ -2085,6 +2190,11 @@ private:
         m_errorMessage = String();
     }
 
+    ALWAYS_INLINE void setCurrentArena(ParserArena& arena) {
+        ASSERT(m_lexer->identifierArena() == &arena.identifierArena());
+        m_currentArena = &arena;
+    }
+
     // Fields up to m_parserState are arranged according to access frequency and affinity;
     // do not rearrange without careful analysis.
     VM& m_vm;
@@ -2107,6 +2217,7 @@ private:
     bool m_insideSwitchCaseBody { false };
     // offset 192
     ParserState m_parserState;
+    unsigned m_latestParenExpressionStart { NoSourceOffset };
     SourceParseMode m_parseMode;
     ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
     bool m_isInsideOrdinaryFunction;
@@ -2119,6 +2230,9 @@ private:
     RefPtr<SourceProviderCache> m_functionCache;
     CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
     RefPtr<ModuleScopeData> m_moduleScopeData;
+    ParserArena* m_currentArena { nullptr };
+    EagerIIFEParseState* m_iifeParseState { nullptr };
+    RefPtr<EagerIIFERegistry> m_eagerIIFERegistry;
     JSParserScriptMode m_scriptMode;
     SuperBinding m_superBinding;
     bool m_hasStackOverflow;
@@ -2161,6 +2275,26 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
 
     if (ParsedNode::scopeIsFunction)
         m_lexer->setIsReparsingFunction();
+
+    if constexpr (std::is_same_v<ParsedNode, FunctionNode>) {
+        if (m_eagerIIFERegistry) {
+            // The cache is keyed only by source offset; we do not validate that the
+            // requested parse context (lexicallyScopedFeatures, derivedContextType,
+            // evalContextType, parentScopePrivateNames, etc.) matches the context
+            // under which the cached FunctionNode was eagerly built. This is safe
+            // today because each UnlinkedFunctionExecutable that triggers a function
+            // reparse was created during the same outer parse that populated this
+            // entry, so contexts match by construction. If a future change ever
+            // allows the same SourceProvider to be parsed under multiple distinct
+            // contexts with cache entries surviving across them, this lookup would
+            // need to validate (or key on) the context as SourceProviderCacheItem
+            // does at Parser.cpp:2659.
+            if (auto cached = m_eagerIIFERegistry->take(m_source->startOffset())) {
+                m_lexer->clear();
+                return std::unique_ptr<ParsedNode>(cached.release());
+            }
+        }
+    }
 
     errLine = -1;
     errMsg = String();

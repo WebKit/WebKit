@@ -63,6 +63,7 @@ public:
 
     // Functions to set up parsing.
     void setCode(const SourceCode&, ParserArena*);
+    IdentifierArena* identifierArena() const { return m_arena; }
     void setIsReparsingFunction() { m_isReparsingFunction = true; }
     bool isReparsingFunction() const { return m_isReparsingFunction; }
 
@@ -210,7 +211,7 @@ private:
     // Fields up to m_sourceURLDirective are arranged according to access frequency
     // and affinity; do not rearrange without careful analysis.
     VM& m_vm;
-    IdentifierArena* m_arena;
+    SUPPRESS_UNCOUNTED_MEMBER IdentifierArena* m_arena;
     const T* m_code;
     const T* m_codeStart;
     const T* m_codeEnd;
@@ -298,22 +299,22 @@ template<typename T>
 template<typename CharacterType>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(std::span<const CharacterType> characters)
 {
-    return &m_arena->makeIdentifier(m_vm, characters);
+    SUPPRESS_UNCOUNTED_ARG return &m_arena->makeIdentifier(m_vm, characters);
 }
 
 template <>
 ALWAYS_INLINE const Identifier* Lexer<Latin1Character>::makeRightSizedIdentifier(std::span<const char16_t> characters, char16_t)
 {
-    return &m_arena->makeLatin1Identifier(m_vm, characters);
+    SUPPRESS_UNCOUNTED_ARG return &m_arena->makeLatin1Identifier(m_vm, characters);
 }
 
 template <>
 ALWAYS_INLINE const Identifier* Lexer<char16_t>::makeRightSizedIdentifier(std::span<const char16_t> characters, char16_t orAllChars)
 {
     if (!(orAllChars & ~0xff))
-        return &m_arena->makeLatin1Identifier(m_vm, characters);
+        SUPPRESS_UNCOUNTED_ARG return &m_arena->makeLatin1Identifier(m_vm, characters);
 
-    return &m_arena->makeIdentifier(m_vm, characters);
+    SUPPRESS_UNCOUNTED_ARG return &m_arena->makeIdentifier(m_vm, characters);
 }
 
 template <typename T>
@@ -339,13 +340,13 @@ ALWAYS_INLINE void Lexer<char16_t>::setCodeStart(StringView sourceString)
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeLatin1Identifier(std::span<const Latin1Character> characters)
 {
-    return &m_arena->makeIdentifier(m_vm, characters);
+    SUPPRESS_UNCOUNTED_ARG return &m_arena->makeIdentifier(m_vm, characters);
 }
 
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeLatin1Identifier(std::span<const char16_t> characters)
 {
-    return &m_arena->makeLatin1Identifier(m_vm, characters);
+    SUPPRESS_UNCOUNTED_ARG return &m_arena->makeLatin1Identifier(m_vm, characters);
 }
 
 #if ASSERT_ENABLED

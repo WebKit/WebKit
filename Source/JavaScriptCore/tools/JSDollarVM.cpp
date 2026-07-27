@@ -2218,6 +2218,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionDeltaBetweenButterflies);
 static JSC_DECLARE_HOST_FUNCTION(functionCurrentCPUTime);
 static JSC_DECLARE_HOST_FUNCTION(functionTotalGCTime);
 static JSC_DECLARE_HOST_FUNCTION(functionParseCount);
+static JSC_DECLARE_HOST_FUNCTION(functionIIFEDetectionCount);
+static JSC_DECLARE_HOST_FUNCTION(functionIIFESuccessCount);
 static JSC_DECLARE_HOST_FUNCTION(functionIsWasmSupported);
 static JSC_DECLARE_HOST_FUNCTION(functionWasmCanonicalTypeCount);
 static JSC_DECLARE_HOST_FUNCTION(functionMake16BitStringIfPossible);
@@ -3980,6 +3982,18 @@ JSC_DEFINE_HOST_FUNCTION(functionParseCount, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsNumber(globalParseCount.load()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionIIFEDetectionCount, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsNumber(globalIIFEDetectionCount.load()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionIIFESuccessCount, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsNumber(globalIIFESuccessCount.load()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionIsWasmSupported, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -4657,6 +4671,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, alwaysAllow, "totalGCTime"_s, functionTotalGCTime, 0);
 
     addFunction(vm, alwaysAllow, "parseCount"_s, functionParseCount, 0);
+    addFunction(vm, alwaysAllow, "iifeDetectionCount"_s, functionIIFEDetectionCount, 0);
+    addFunction(vm, alwaysAllow, "iifeSuccessCount"_s, functionIIFESuccessCount, 0);
 
     addFunction(vm, alwaysAllow, "isWasmSupported"_s, functionIsWasmSupported, 0);
     addFunction(vm, alwaysAllow, "wasmCanonicalTypeCount"_s, functionWasmCanonicalTypeCount, 0);
