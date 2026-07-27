@@ -44,6 +44,7 @@ from logging import NullHandler
 from webkitcorepy import log
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
+from webkitcorepy._vendored.packaging import tags
 
 from html.parser import HTMLParser
 from urllib.request import urlopen
@@ -205,29 +206,11 @@ class Package(object):
                         if not match:
                             continue
 
-                        # Temporarily disable AutoInstall so we don't try to AutoInstall
-                        # packaging via the below import while installing packaging.
-                        with AutoInstall.temporarily_disable():
-                            try:
-                                from packaging import tags
-                            except ImportError:
-                                # This is a subset of compatible tags, but these are the
-                                # only ones that are particularly common; we need these
-                                # to be able to install packaging and its dependencies.
-                                generic_tags = [
-                                    "py2.py3-none-any",
-                                    "py3.py2-none-any",
-                                    "py3-none-any",
-                                ]
+                        if not cached_tags:
+                            cached_tags = set(AutoInstall.tags())
 
-                                if match.group(1) not in generic_tags:
-                                    continue
-                            else:
-                                if not cached_tags:
-                                    cached_tags = set(AutoInstall.tags())
-
-                                if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
-                                    continue
+                        if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
+                            continue
 
                         extension = 'whl'
 
@@ -748,8 +731,6 @@ class AutoInstall(importlib.abc.MetaPathFinder):
 
     @classmethod
     def tags(cls):
-        from packaging import tags
-
         for tag in tags.sys_tags():
             yield tag
 
