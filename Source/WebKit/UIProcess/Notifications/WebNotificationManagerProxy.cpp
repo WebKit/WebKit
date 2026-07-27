@@ -266,7 +266,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
                 protect(dataStore->networkProcess())->processNotificationEvent(notification->data(), NotificationEventType::Close, [](bool) { });
             else
                 RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification close", notification->sessionID().toUInt64());
-            return;
+            continue;
         }
 
         m_globalNotificationMap.remove(notification->identifier());

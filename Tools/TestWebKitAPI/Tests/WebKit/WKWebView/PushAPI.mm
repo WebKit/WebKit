@@ -1099,6 +1099,105 @@ TEST(PushAPI, fireNotificationCloseEvent)
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
+static unsigned notificationCloseEventCount = 0;
+
+@interface CountNotificationCloseMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation CountNotificationCloseMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    if ([message.body hasPrefix:@"Received notificationclose"])
+        ++notificationCloseEventCount;
+    done = true;
+}
+@end
+
+static constexpr auto fireMultipleNotificationCloseEventsScriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    port = event.data.port;
+    port.postMessage("Ready");
+});
+self.addEventListener("push", (event) => {
+    self.registration.showNotification("notification1", { tag: "tag1" });
+    self.registration.showNotification("notification2", { tag: "tag2" });
+    port.postMessage("Received: " + (event.data ? event.data.text() : "null data"));
+});
+self.addEventListener("notificationclose", async (event) => {
+    for (let client of await self.clients.matchAll({includeUncontrolled:true}))
+        client.postMessage("Received notificationclose: " + event.notification.title);
+});
+)SWRESOURCE"_s;
+
+TEST(PushAPI, fireMultipleNotificationCloseEvents)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { fireNotificationClickEventMainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, fireMultipleNotificationCloseEventsScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = createConfigurationWithNotificationsEnabled();
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
+
+    RetainPtr messageHandler = adoptNS([[CountNotificationCloseMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    notificationCloseEventCount = 0;
+
+    done = false;
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    provider.resetHasReceivedNotification();
+    auto& providerRef = provider;
+
+    done = false;
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Sweet Potatoes";
+
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        EXPECT_TRUE(providerRef.hasReceivedShowNotification());
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    // Both notifications must have reached the provider before we close them together.
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] {
+        return providerRef.pendingNotificationCount() >= 2;
+    }));
+    EXPECT_EQ(providerRef.pendingNotificationCount(), 2u);
+
+    // Wait long enough such that persistent notifications will be allowed to close.
+    TestWebKitAPI::Util::runFor(WebCore::silentPushTimeoutForTesting);
+
+    // Close both persistent notifications in a single provider callback. The buggy implementation
+    // returns after handling the first persistent notification, so the second never fires its
+    // notificationclose event and only one message arrives.
+    EXPECT_TRUE(providerRef.simulateMultipleNotificationsClose());
+
+    // Allow ample time for both notificationclose events to be delivered.
+    pushAPIWaitUntilEvaluatesToTrue([&] {
+        return notificationCloseEventCount >= 2;
+    });
+    EXPECT_EQ(notificationCloseEventCount, 2u);
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
+
 static constexpr auto closeNotificationMainBytes = R"SWRESOURCE(
 <script>
 function log(msg)

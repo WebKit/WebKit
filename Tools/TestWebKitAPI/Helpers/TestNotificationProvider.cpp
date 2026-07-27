@@ -74,6 +74,9 @@ TestNotificationProvider::TestNotificationProvider(Vector<WKNotificationManagerR
 
 TestNotificationProvider::~TestNotificationProvider()
 {
+    for (auto& [manager, identifier] : m_pendingNotifications)
+        WKRelease(manager);
+
     for (auto& manager : m_managers)
         WKNotificationManagerSetProvider(manager, nullptr);
 }
@@ -132,7 +135,7 @@ void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificatio
     WKNotificationManagerProviderDidShowNotification(notificationManager, identifier);
 
     WKRetain(notificationManager);
-    m_pendingNotification = std::make_pair(notificationManager, identifier);
+    m_pendingNotifications.append(std::make_pair(notificationManager, identifier));
 
     m_lastNotificationDataStoreIdentifier = adoptWK(WKNotificationCopyDataStoreIdentifier(notification));
 }
@@ -151,10 +154,10 @@ void TestNotificationProvider::resetHasReceivedNotification()
 
 bool TestNotificationProvider::simulateNotificationClick()
 {
-    if (!m_pendingNotification.first)
+    if (m_pendingNotifications.isEmpty())
         return false;
 
-    callOnMainThread([pair = std::exchange(m_pendingNotification, { })] {
+    callOnMainThread([pair = m_pendingNotifications.takeLast()] {
         WKNotificationManagerProviderDidClickNotification(pair.first, pair.second);
         WKRelease(pair.first);
     });
@@ -164,16 +167,43 @@ bool TestNotificationProvider::simulateNotificationClick()
 
 bool TestNotificationProvider::simulateNotificationClose()
 {
-    if (!m_pendingNotification.first)
+    if (m_pendingNotifications.isEmpty())
         return false;
 
-    callOnMainThread([pair = std::exchange(m_pendingNotification, { })] {
+    callOnMainThread([pair = m_pendingNotifications.takeLast()] {
         auto id = adoptWK(WKUInt64Create(pair.second));
         auto idRef = static_cast<WKTypeRef>(id.get());
         auto wkArray = adoptWK(WKArrayCreate(&idRef, 1));
 
         WKNotificationManagerProviderDidCloseNotifications(pair.first, wkArray.get());
         WKRelease(pair.first);
+    });
+
+    return true;
+}
+
+bool TestNotificationProvider::simulateMultipleNotificationsClose()
+{
+    if (m_pendingNotifications.isEmpty())
+        return false;
+
+    callOnMainThread([pending = std::exchange(m_pendingNotifications, { })] {
+        // A single provider callback may carry notifications belonging to more than one manager,
+        // so group the identifiers by manager and close each manager's notifications in one array.
+        HashMap<WKNotificationManagerRef, Vector<WKRetainPtr<WKUInt64Ref>>> notificationsByManager;
+        for (auto& [manager, identifier] : pending)
+            notificationsByManager.add(manager, Vector<WKRetainPtr<WKUInt64Ref>> { }).iterator->value.append(adoptWK(WKUInt64Create(identifier)));
+
+        for (auto& [manager, identifiers] : notificationsByManager) {
+            Vector<WKTypeRef> notificationIDs;
+            notificationIDs.reserveInitialCapacity(identifiers.size());
+            for (auto& identifier : identifiers)
+                notificationIDs.append(identifier.get());
+
+            auto wkArray = adoptWK(WKArrayCreate(notificationIDs.mutableSpan().data(), notificationIDs.size()));
+            WKNotificationManagerProviderDidCloseNotifications(manager, wkArray.get());
+            WKRelease(manager);
+        }
     });
 
     return true;
