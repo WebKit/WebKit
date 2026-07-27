@@ -69,7 +69,7 @@ private:
     float noiseInjectionMultiplier() const final { return 0.01; }
 
     // One of the waveform types defined in the enum.
-    OscillatorType m_type; // Only used on the main thread.
+    OscillatorType m_type { OscillatorType::Sine }; // Only used on the main thread.
     
     // Frequency value in Hertz.
     const Ref<AudioParam> m_frequency;
