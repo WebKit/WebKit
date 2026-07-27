@@ -109,8 +109,6 @@ void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, Ref
 
     auto keyRequest = session->generateKeyRequest(mimeType, initDataArray.get(), destinationURL, errorCode, systemCode);
 
-    destinationURL = "this is a test string"_s;
-
     completion(convertToOptionalSharedBuffer(keyRequest), destinationURL, errorCode, systemCode);
 }
 
