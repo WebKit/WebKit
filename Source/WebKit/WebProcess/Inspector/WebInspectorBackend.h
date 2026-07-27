@@ -102,6 +102,7 @@ public:
     void enableNetworkInstrumentation();
     void disableNetworkInstrumentation();
     void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(Expected<std::pair<String, bool>, String>&&)>&&);
+    void getSerializedCertificate(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(Expected<String, String>&&)>&&);
 
     void setExtraHTTPHeaders(WebCore::HTTPHeaderMap&&);
     void setResourceCachingDisabled(bool);

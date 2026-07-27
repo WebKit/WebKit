@@ -42,6 +42,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/ProcessQualified.h>
+#include <tuple>
 #include <utility>
 #include <wtf/Expected.h>
 
@@ -323,25 +324,34 @@ CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&
     return { };
 }
 
-void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& requestId, Ref<GetResponseBodyCallback>&& callback)
+// An empty error string on a reply is the AsyncReplyError synthesized on connection loss (the
+// target WebProcess is gone); report that explicitly instead of surfacing it to the frontend as a
+// spurious success. A non-empty error is a genuine backend failure and is forwarded verbatim.
+static String replyFailureString(const String& replyError)
+{
+    if (!replyError.isEmpty())
+        return replyError;
+    return "Target WebProcess for requestId is no longer available"_s;
+}
+
+// Resolve a requestId-routed command to the WebContent process that performed the load. The
+// requestId encodes the owning process identifier (see IdentifierRegistry::protocolRequestId); on
+// failure the returned string is the frontend-facing error. Shared by the requestId-routed
+// commands (getResponseBody, getSerializedCertificate), which then issue their own async IPC to the
+// resolved process.
+static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoaderIdentifier> resolveRequestProcess(WebKit::WebPageProxy* inspectedPage, const Protocol::Network::RequestId& requestId)
 {
     auto parsed = IdentifierRegistry::parseProtocolRequestId(requestId);
-    if (!parsed) {
-        callback->sendFailure("Invalid requestId format"_s);
-        return;
-    }
+    if (!parsed)
+        return makeUnexpected("Invalid requestId format"_s);
 
     auto [processIdentifier, resourceID] = *parsed;
 
-    RefPtr inspectedPage = m_inspectedPage.get();
-    if (!inspectedPage) {
-        callback->sendFailure("Inspected page is gone"_s);
-        return;
-    }
+    if (!inspectedPage)
+        return makeUnexpected("Inspected page is gone"_s);
 
     RefPtr<WebKit::WebProcessProxy> targetProcess;
     std::optional<PageIdentifier> targetPageID;
-
     inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess.coreProcessIdentifier() == processIdentifier) {
             targetProcess = &webProcess;
@@ -349,27 +359,53 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
         }
     });
 
-    if (!targetProcess || !targetPageID) {
-        callback->sendFailure("WebProcess not found for requestId"_s);
+    if (!targetProcess || !targetPageID)
+        return makeUnexpected("WebProcess not found for requestId"_s);
+
+    return { { targetProcess.releaseNonNull(), *targetPageID, resourceID } };
+}
+
+void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& requestId, Ref<GetResponseBodyCallback>&& callback)
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    auto resolved = resolveRequestProcess(inspectedPage.get(), requestId);
+    if (!resolved) {
+        callback->sendFailure(resolved.error());
         return;
     }
 
+    auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetResponseBody { resourceID },
         [callback = WTF::move(callback)](Expected<std::pair<String, bool>, String>&& result) mutable {
             if (result) {
                 auto& [content, base64Encoded] = result.value();
                 callback->sendSuccess(content, base64Encoded);
-            } else if (!result.error().isEmpty()) {
-                // A real failure reported by the target WebProcess (e.g. missing or evicted content).
-                callback->sendFailure(result.error());
-            } else {
-                // Empty error: AsyncReplyError synthesized this reply on connection loss (the target
-                // WebProcess is gone). Fail explicitly so a dead process is never surfaced as success.
-                callback->sendFailure("Target WebProcess for requestId is no longer available"_s);
-            }
+            } else
+                callback->sendFailure(replyFailureString(result.error()));
         },
-        *targetPageID);
+        targetPageID);
+}
+
+void ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::RequestId& requestId, Ref<GetSerializedCertificateCallback>&& callback)
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    auto resolved = resolveRequestProcess(inspectedPage.get(), requestId);
+    if (!resolved) {
+        callback->sendFailure(resolved.error());
+        return;
+    }
+
+    auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
+    targetProcess->sendWithAsyncReply(
+        Messages::WebInspectorBackend::GetSerializedCertificate { resourceID },
+        [callback = WTF::move(callback)](Expected<String, String>&& result) mutable {
+            if (result)
+                callback->sendSuccess(result.value());
+            else
+                callback->sendFailure(replyFailureString(result.error()));
+        },
+        targetPageID);
 }
 
 CommandResult<void> ProxyingNetworkAgent::setResourceCachingDisabled(bool disabled)
@@ -397,12 +433,6 @@ void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId&, const
 {
     // FIXME: Route to correct WebContent process for the frame.
     callback->sendFailure("Not yet implemented"_s);
-}
-
-CommandResult<String> ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::RequestId&)
-{
-    // FIXME: Implement certificate retrieval (P2 -- BackendResourceDataStore).
-    return makeUnexpected("Not yet implemented"_s);
 }
 
 CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId&, const String&)

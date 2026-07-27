@@ -379,6 +379,9 @@ void WebInspectorBackend::enableNetworkInstrumentation()
         m_networkInstrumentationEnabled = true;
         corePage->settings().setDeveloperExtrasEnabled(true);
         corePage->inspectorController().connectRemoteInstrumentation();
+
+        // Buffer certificates only when the page opts in, matching PageNetworkAgent.
+        CheckedRef { m_resourceDataStore.get() }->setSupportsShowingCertificate(corePage->settings().inspectorSupportsShowingCertificate());
     }
 
     corePage->forEachLocalFrame([&](LocalFrame& frame) {
@@ -424,6 +427,15 @@ void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, C
     // FIXME: <https://webkit.org/b/320234> The sibling proxying replies (Page.getResourceContent,
     // Page.searchInResource) still use a bare error-string reply and should adopt this same
     // Expected-based discriminator.
+    ASSERT(result.has_value() || !result.error().isEmpty());
+    completionHandler(WTF::move(result));
+}
+
+void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier resourceID, CompletionHandler<void(Expected<String, String>&&)>&& completionHandler)
+{
+    CheckedRef resourceDataStore = m_resourceDataStore.get();
+    auto result = resourceDataStore->getSerializedCertificate(resourceID);
+    // See getResponseBody: a genuine failure must carry a non-empty message (empty is connection loss).
     ASSERT(result.has_value() || !result.error().isEmpty());
     completionHandler(WTF::move(result));
 }

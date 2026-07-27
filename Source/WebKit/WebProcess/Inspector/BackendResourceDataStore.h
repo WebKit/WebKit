@@ -115,6 +115,7 @@ public:
         void setBuffer(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer) { m_buffer = WTF::move(buffer); }
 
         void setCertificateInfo(std::unique_ptr<WebCore::CertificateInfo>&&);
+        const WebCore::CertificateInfo* certificateInfo() const LIFETIME_BOUND { return m_certificateInfo.get(); }
 
         bool hasBufferedData() const { return hasData(); }
 
@@ -152,6 +153,9 @@ public:
     BackendResourceDataStore(const Settings&);
     ~BackendResourceDataStore();
 
+    // Gates capture of each response's TLS certificate; set from the page's certificate-display setting.
+    void setSupportsShowingCertificate(bool supports) { m_settings.supportsShowingCertificate = supports; }
+
     void resourceCreated(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, Inspector::ResourceType);
     void responseReceived(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&, Inspector::ResourceType);
     void setResourceType(WebCore::ResourceLoaderIdentifier, Inspector::ResourceType);
@@ -167,6 +171,10 @@ public:
     template<typename Visitor> void forEach(NOESCAPE const Visitor&) const;
 
     Expected<std::pair<String, bool>, String> getResponseBody(WebCore::ResourceLoaderIdentifier);
+
+    // Base64-encoded persistence encoding of the response's CertificateInfo, matching
+    // InspectorNetworkAgent::getSerializedCertificate.
+    Expected<String, String> getSerializedCertificate(WebCore::ResourceLoaderIdentifier);
 
 private:
     ResourceData* resourceDataForId(WebCore::ResourceLoaderIdentifier);

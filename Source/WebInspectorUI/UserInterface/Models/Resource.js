@@ -1180,7 +1180,12 @@ WI.Resource = class Resource extends WI.SourceCode
         let errorString = WI.UIString("Unable to show certificate for \u201C%s\u201D").format(this.url);
 
         try {
-            let {serializedCertificate} = await this._target.NetworkAgent.getSerializedCertificate(this._requestIdentifier);
+            // The Network domain (ProxyingNetworkAgent) lives on the backend target under Site
+            // Isolation, not the resource's own (page) target; route there like requestContentFromBackend.
+            let webPageTarget = this._target;
+            if (WI.networkManager.networkEnabledOnBackendTarget && WI.backendTarget && WI.backendTarget !== this._target && WI.backendTarget.hasDomain("Network"))
+                webPageTarget = WI.backendTarget;
+            let {serializedCertificate} = await webPageTarget.NetworkAgent.getSerializedCertificate(this._requestIdentifier);
             if (InspectorFrontendHost.showCertificate(serializedCertificate))
                 return;
         } catch (e) {

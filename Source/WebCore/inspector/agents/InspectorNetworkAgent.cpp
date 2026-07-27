@@ -1008,19 +1008,23 @@ void InspectorNetworkAgent::loadResource(const Inspector::Protocol::Network::Fra
         inspectorThreadableLoaderClient->setLoader(WTF::move(loader));
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(const Inspector::Protocol::Network::RequestId& requestId)
+void InspectorNetworkAgent::getSerializedCertificate(const Inspector::Protocol::Network::RequestId& requestId, Ref<GetSerializedCertificateCallback>&& callback)
 {
     auto* resourceData = m_resourcesData->data(requestId);
-    if (!resourceData)
-        return makeUnexpected("Missing resource for given requestId"_s);
+    if (!resourceData) {
+        callback->sendFailure("Missing resource for given requestId"_s);
+        return;
+    }
 
     auto& certificate = resourceData->certificateInfo();
-    if (!certificate || certificate.value().isEmpty())
-        return makeUnexpected("Missing certificate of resource for given requestId"_s);
+    if (!certificate || certificate.value().isEmpty()) {
+        callback->sendFailure("Missing certificate of resource for given requestId"_s);
+        return;
+    }
 
     WTF::Persistence::Encoder encoder;
     WTF::Persistence::Coder<WebCore::CertificateInfo>::encodeForPersistence(encoder, certificate.value());
-    return base64EncodeToString(encoder.span());
+    callback->sendSuccess(base64EncodeToString(encoder.span()));
 }
 
 RefPtr<WebSocket> InspectorNetworkAgent::webSocketForRequestId(const Inspector::Protocol::Network::RequestId& requestId)

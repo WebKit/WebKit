@@ -70,6 +70,11 @@ messages -> WebInspectorBackend {
     # empty error = connection loss (AsyncReplyError), which ProxyingNetworkAgent fails explicitly.
     GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<std::pair<String, bool>, String> result) Async
 
+    # Serialize the resource's response certificate for Network.getSerializedCertificate. Same
+    # Expected error convention as GetResponseBody (empty errorString on the unexpected means
+    # connection loss); only the success payload differs -- here a single certificate String.
+    GetSerializedCertificate(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<String, String> result) Async
+
     # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
     SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
 

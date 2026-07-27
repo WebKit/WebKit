@@ -1,0 +1,21 @@
+Tests Network.getSerializedCertificate under Site Isolation (routed through ProxyingNetworkAgent to the owning WebContent process's BackendResourceDataStore). A resource loaded over https returns a real certificate; the http, malformed, and unknown-process cases exercise the routing and error paths.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.SecureCertificate
+PASS: Secure resource should have a request identifier.
+PASS: getSerializedCertificate should return a non-empty base64 certificate.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.MissingCertificateOverHTTP
+PASS: Loaded resource should have a request identifier.
+PASS: Real requestId over http (no certificate): getSerializedCertificate should fail.
+  Error: Missing certificate of resource for given requestId
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.Malformed
+PASS: Malformed requestId: getSerializedCertificate should fail.
+  Error: Invalid requestId format
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.UnknownProcess
+PASS: Unknown process: getSerializedCertificate should fail.
+  Error: WebProcess not found for requestId
+
