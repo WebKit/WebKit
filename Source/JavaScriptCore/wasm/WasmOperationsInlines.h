@@ -535,20 +535,16 @@ inline EncodedJSValue externInternalize(EncodedJSValue reference)
     return JSValue::encode(Wasm::internalizeExternref(JSValue::decode(reference)));
 }
 
-inline EncodedJSValue tableGet(JSWebAssemblyInstance* instance, unsigned tableIndex, int32_t signedIndex)
+inline EncodedJSValue tableGet(JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t index)
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
-    if (signedIndex < 0)
-        return 0;
-
-    uint32_t index = signedIndex;
     if (index >= instance->table(tableIndex)->length())
         return 0;
 
     return JSValue::encode(instance->table(tableIndex)->get(index));
 }
 
-inline bool tableSet(JSWebAssemblyInstance* instance, unsigned tableIndex, uint32_t index, EncodedJSValue encValue)
+inline bool tableSet(JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t index, EncodedJSValue encValue)
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
 
@@ -564,7 +560,7 @@ inline bool tableSet(JSWebAssemblyInstance* instance, unsigned tableIndex, uint3
     return true;
 }
 
-inline bool tableInit(JSWebAssemblyInstance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length)
+inline bool tableInit(JSWebAssemblyInstance* instance, unsigned elementIndex, unsigned tableIndex, uint64_t dstOffset, uint32_t srcOffset, uint32_t length)
 {
     ASSERT(elementIndex < instance->module().moduleInformation().elementCount());
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
@@ -572,7 +568,7 @@ inline bool tableInit(JSWebAssemblyInstance* instance, unsigned elementIndex, un
     if (WTF::sumOverflows<uint32_t>(srcOffset, length))
         return false;
 
-    if (WTF::sumOverflows<uint32_t>(dstOffset, length))
+    if (WTF::sumOverflows<uint64_t>(dstOffset, length))
         return false;
 
     if (dstOffset + length > instance->table(tableIndex)->length())
@@ -589,23 +585,23 @@ inline bool tableInit(JSWebAssemblyInstance* instance, unsigned elementIndex, un
     return true;
 }
 
-inline bool tableFill(JSWebAssemblyInstance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count)
+inline bool tableFill(JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t offset, EncodedJSValue fill, uint64_t count)
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
 
-    if (WTF::sumOverflows<uint32_t>(offset, count))
+    if (WTF::sumOverflows<uint64_t>(offset, count))
         return false;
 
     if (offset + count > instance->table(tableIndex)->length())
         return false;
 
-    for (uint32_t index = 0; index < count; ++index)
+    for (uint64_t index = 0; index < count; ++index)
         tableSet(instance, tableIndex, offset + index, fill);
 
     return true;
 }
 
-inline size_t tableGrow(JSWebAssemblyInstance* instance, unsigned tableIndex, EncodedJSValue fill, uint32_t delta)
+inline int64_t tableGrow(JSWebAssemblyInstance* instance, unsigned tableIndex, EncodedJSValue fill, uint64_t delta)
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
     auto oldSize = instance->table(tableIndex)->length();
@@ -619,7 +615,7 @@ inline size_t tableGrow(JSWebAssemblyInstance* instance, unsigned tableIndex, En
     return oldSize;
 }
 
-inline bool tableCopy(JSWebAssemblyInstance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length)
+inline bool tableCopy(JSWebAssemblyInstance* instance, unsigned dstTableIndex, unsigned srcTableIndex, uint64_t dstOffset, uint64_t srcOffset, uint64_t length)
 {
     ASSERT(dstTableIndex < instance->module().moduleInformation().tableCount());
     ASSERT(srcTableIndex < instance->module().moduleInformation().tableCount());
@@ -627,11 +623,8 @@ inline bool tableCopy(JSWebAssemblyInstance* instance, unsigned dstTableIndex, u
     const Table* srcTable = instance->table(srcTableIndex);
     ASSERT(dstTable->type() == srcTable->type());
 
-    if ((srcOffset < 0) || (dstOffset < 0) || (length < 0))
-        return false;
-
-    CheckedUint32 lastDstElementIndexChecked = static_cast<uint32_t>(dstOffset);
-    lastDstElementIndexChecked += static_cast<uint32_t>(length);
+    CheckedUint64 lastDstElementIndexChecked = dstOffset;
+    lastDstElementIndexChecked += length;
 
     if (lastDstElementIndexChecked.hasOverflowed())
         return false;
@@ -639,8 +632,8 @@ inline bool tableCopy(JSWebAssemblyInstance* instance, unsigned dstTableIndex, u
     if (lastDstElementIndexChecked > dstTable->length())
         return false;
 
-    CheckedUint32 lastSrcElementIndexChecked = static_cast<uint32_t>(srcOffset);
-    lastSrcElementIndexChecked += static_cast<uint32_t>(length);
+    CheckedUint64 lastSrcElementIndexChecked = srcOffset;
+    lastSrcElementIndexChecked += length;
 
     if (lastSrcElementIndexChecked.hasOverflowed())
         return false;

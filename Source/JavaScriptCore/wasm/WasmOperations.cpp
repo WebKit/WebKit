@@ -1551,17 +1551,17 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (JSW
     return toUCPUStrictInt32(memoryCopy(instance, dstAddress, srcAddress, count, dstMemoryIndex, srcMemoryIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (JSWebAssemblyInstance* instance, unsigned tableIndex, int32_t signedIndex))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t index))
 {
-    return tableGet(instance, tableIndex, signedIndex);
+    return tableGet(instance, tableIndex, index);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSetWasmTableElement, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSetWasmTableElement, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t signedIndex, EncodedJSValue encValue))
 {
     return toUCPUStrictInt32(tableSet(instance, tableIndex, signedIndex, encValue));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned elementIndex, unsigned tableIndex, uint64_t dstOffset, uint32_t srcOffset, uint32_t length))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
@@ -1575,17 +1575,17 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmElemDrop, void, (JSWebAssemblyIns
     return elemDrop(instance, elementIndex);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableGrow, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned tableIndex, EncodedJSValue fill, uint32_t delta))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableGrow, int64_t, (JSWebAssemblyInstance* instance, unsigned tableIndex, EncodedJSValue fill, uint64_t delta))
 {
-    return toUCPUStrictInt32(tableGrow(instance, tableIndex, fill, delta));
+    return tableGrow(instance, tableIndex, fill, delta);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableFill, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableFill, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t offset, EncodedJSValue fill, uint64_t count))
 {
     return toUCPUStrictInt32(tableFill(instance, tableIndex, offset, fill, count));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableCopy, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableCopy, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dstTableIndex, unsigned srcTableIndex, uint64_t dstOffset, uint64_t srcOffset, uint64_t length))
 {
     return toUCPUStrictInt32(tableCopy(instance, dstTableIndex, srcTableIndex, dstOffset, srcOffset, length));
 }

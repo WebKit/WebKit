@@ -854,7 +854,7 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 [[nodiscard]] PartialResult BBQJIT::addTableSet(unsigned tableIndex, Value index, Value value)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    ASSERT(index.type() == TypeKind::I32);
+    ASSERT(index.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -878,7 +878,7 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length)
 {
-    ASSERT(dstOffset.type() == TypeKind::I32);
+    ASSERT(dstOffset.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
     ASSERT(srcOffset.type() == TypeKind::I32);
     ASSERT(length.type() == TypeKind::I32);
 
@@ -921,7 +921,7 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
         instanceValue(),
         Value::fromI32(tableIndex)
     };
-    result = topValue(TypeKind::I32);
+    result = topValue(m_info.table(tableIndex).addressType().asWasmTypeKind());
     emitCCall(&operationGetWasmTableSize, arguments, result);
 
     LOG_INSTRUCTION("TableSize", tableIndex, RESULT(result));
@@ -930,14 +930,15 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableGrow(unsigned tableIndex, Value fill, Value delta, Value& result)
 {
-    ASSERT(delta.type() == TypeKind::I32);
+    auto tableAddressTypeKind = m_info.table(tableIndex).addressType().asWasmTypeKind();
+    ASSERT(delta.type() == tableAddressTypeKind);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
         Value::fromI32(tableIndex),
         fill, delta
     };
-    result = topValue(TypeKind::I32);
+    result = topValue(tableAddressTypeKind);
     emitCCall(&operationWasmTableGrow, arguments, result);
 
     LOG_INSTRUCTION("TableGrow", tableIndex, fill, delta, RESULT(result));
@@ -946,8 +947,8 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableFill(unsigned tableIndex, Value offset, Value fill, Value count)
 {
-    ASSERT(offset.type() == TypeKind::I32);
-    ASSERT(count.type() == TypeKind::I32);
+    ASSERT(offset.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
+    ASSERT(count.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -969,9 +970,9 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, Value dstOffset, Value srcOffset, Value length)
 {
-    ASSERT(dstOffset.type() == TypeKind::I32);
-    ASSERT(srcOffset.type() == TypeKind::I32);
-    ASSERT(length.type() == TypeKind::I32);
+    ASSERT(dstOffset.type() == m_info.table(srcTableIndex).addressType().asWasmTypeKind());
+    ASSERT(srcOffset.type() == m_info.table(dstTableIndex).addressType().asWasmTypeKind());
+    ASSERT(m_info.table(dstTableIndex).addressType().is64Bit() && m_info.table(srcTableIndex).addressType().is64Bit() ? length.type() == TypeKind::I64 : length.type() == TypeKind::I32);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -4906,7 +4907,9 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
             ASSERT(calleeIndexLocation.isGPR());
 
             JIT_COMMENT(m_jit, "Check the index we are looking for is valid");
-            recordJumpToThrowException(ExceptionType::OutOfBoundsCallIndirect, m_jit.branch32(RelationalCondition::AboveOrEqual, calleeIndexLocation.asGPR(), wasmScratchGPR));
+            if (!tableInformation.addressType().is64Bit())
+                m_jit.zeroExtend32ToWord(calleeIndexLocation.asGPR(), calleeIndexLocation.asGPR());
+            recordJumpToThrowException(ExceptionType::OutOfBoundsCallIndirect, m_jit.branch64(RelationalCondition::AboveOrEqual, calleeIndexLocation.asGPR(), wasmScratchGPR));
 
             // Neither callableFunctionBuffer nor wasmScratchGPR are used before any of these
             // are def'd below, so we can reuse the registers and save some pressure.

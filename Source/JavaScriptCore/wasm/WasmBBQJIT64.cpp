@@ -162,8 +162,9 @@ Value BBQJIT::instanceValue()
 [[nodiscard]] PartialResult BBQJIT::addTableGet(unsigned tableIndex, Value index, Value& result)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    ASSERT(index.type() == TypeKind::I32);
-    TypeKind returnType = m_info.tables[tableIndex].wasmType().kind();
+    auto table = m_info.table(tableIndex);
+    ASSERT(index.type() == table.addressType().asWasmTypeKind());
+    TypeKind returnType = table.wasmType().kind();
     ASSERT(typeKindSizeInBytes(returnType) == 8);
 
     Vector<Value, 8> arguments = {

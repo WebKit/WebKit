@@ -114,7 +114,7 @@ RefPtr<Table> Table::tryCreate(VM& vm, uint32_t initial, std::optional<uint64_t>
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
+std::optional<uint32_t> Table::grow(uint64_t delta, JSValue defaultValue)
 {
     RELEASE_ASSERT(m_owner);
     if (delta == 0)
@@ -122,12 +122,12 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     Locker locker { m_owner->cellLock() };
 
-    CheckedUint32 newLengthChecked = length();
+    CheckedUint64 newLengthChecked = length();
     newLengthChecked += delta;
     if (newLengthChecked.hasOverflowed())
         return std::nullopt;
 
-    uint32_t newLength = newLengthChecked;
+    uint64_t newLength = newLengthChecked;
     if (maximum() && newLength > *maximum())
         return std::nullopt;
     if (!isValidLength(newLength))
