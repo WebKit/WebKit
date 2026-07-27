@@ -43,6 +43,10 @@
 #include <WebCore/SystemSettings.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if ENABLE(DEVELOPER_MODE)
+#include "WPEEventInternal.h"
+#endif
+
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPixmap.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -324,6 +328,37 @@ void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPETople
 }
 
 #if ENABLE(TOUCH_EVENTS)
+#if ENABLE(DEVELOPER_MODE)
+static Vector<WebKit::WebPlatformTouchPoint> platformTouchPoints(const Vector<WPETouchPoint>& touchPoints)
+{
+    Vector<WebPlatformTouchPoint> points;
+    points.reserveInitialCapacity(touchPoints.size());
+    for (const auto& touchPoint : touchPoints) {
+        WebCore::IntPoint position(touchPoint.x, touchPoint.y);
+        WebPlatformTouchPoint::State state = WebPlatformTouchPoint::State::Stationary;
+        switch (touchPoint.state) {
+        case WPETouchPointState::Stationary:
+            state = WebPlatformTouchPoint::State::Stationary;
+            break;
+        case WPETouchPointState::Pressed:
+            state = WebPlatformTouchPoint::State::Pressed;
+            break;
+        case WPETouchPointState::Moved:
+            state = WebPlatformTouchPoint::State::Moved;
+            break;
+        case WPETouchPointState::Released:
+            state = WebPlatformTouchPoint::State::Released;
+            break;
+        case WPETouchPointState::Cancelled:
+            state = WebPlatformTouchPoint::State::Cancelled;
+            break;
+        }
+        points.append(WebPlatformTouchPoint(touchPoint.sequenceID, state, position, position));
+    }
+    return points;
+}
+#endif // ENABLE(DEVELOPER_MODE)
+
 Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent* event)
 {
     auto stateForEvent = [](uint32_t id, WPEEvent* event) -> WebPlatformTouchPoint::State {
@@ -361,6 +396,12 @@ Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent
 
 gboolean ViewPlatform::handleEvent(WPEEvent* event)
 {
+#if ENABLE(TOUCH_EVENTS) && ENABLE(DEVELOPER_MODE)
+    if (wpeEventIsTouchForTesting(event)) {
+        page().handleTouchEvent(nullptr, NativeWebTouchEvent(event, platformTouchPoints(wpeEventTouchPointsForTesting(event))));
+        return TRUE;
+    }
+#endif
     switch (wpe_event_get_event_type(event)) {
     case WPE_EVENT_NONE:
         RELEASE_ASSERT_NOT_REACHED();

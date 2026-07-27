@@ -918,21 +918,11 @@ webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-
 fast/events/mouse-cursor-pseudo-elements.html [ Failure Pass ]
 
 webkit.org/b/278719 fast/events/touch/touch-event-frames.html [ Failure ]
-
-webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/frame-hover-update.html [ Failure ]
-
-webkit.org/b/278719 fast/events/touch/multi-touch-grouped-targets.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/multi-touch-inside-nested-iframes.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure  ]
 webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Pass ]
 webkit.org/b/278719 fast/events/touch/touch-event-pageXY.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/touch-target.html [ Timeout ]
-webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Failure ]
-
-webkit.org/b/278719 fast/events/touch/input-touch-target.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/zoomed-touch-event-pageXY.html [ Failure ]
 
 # The assertion failure occurs to WPE only.

@@ -30,6 +30,11 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 
+#if ENABLE(DEVELOPER_MODE)
+#include "WPEEventInternal.h"
+#include <wtf/Vector.h>
+#endif
+
 struct WPEEventPointerButton {
     WPEModifiers modifiers { static_cast<WPEModifiers>(0) };
     unsigned button { 0 };
@@ -69,6 +74,13 @@ struct WPEEventTouch {
     double y { 0 };
 };
 
+#if ENABLE(DEVELOPER_MODE)
+struct WPEEventTouchForTesting {
+    WPEModifiers modifiers { static_cast<WPEModifiers>(0) };
+    Vector<WPETouchPoint> touchPoints;
+};
+#endif
+
 /**
  * WPEEvent: (ref-func wpe_event_ref) (unref-func wpe_event_unref)
  *
@@ -92,7 +104,11 @@ struct _WPEEvent {
         GDestroyNotify destroyFunction { nullptr };
     } userData;
 
+#if ENABLE(DEVELOPER_MODE)
+    Variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch, WPEEventTouchForTesting> variant;
+#else
     Variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch> variant;
+#endif
 
     int referenceCount { 1 };
 };
@@ -247,6 +263,9 @@ WPEModifiers wpe_event_get_modifiers(WPEEvent* event)
         [](const WPEEventScroll& scroll) { return scroll.modifiers; },
         [](const WPEEventKeyboard& keyboard) { return keyboard.modifiers; },
         [](const WPEEventTouch& touch) { return touch.modifiers; },
+#if ENABLE(DEVELOPER_MODE)
+        [](const WPEEventTouchForTesting& touch) { return touch.modifiers; },
+#endif
         [](const auto&) { return static_cast<WPEModifiers>(0); }
     );
 }
@@ -577,3 +596,24 @@ guint32 wpe_event_touch_get_sequence_id(WPEEvent* event)
 
     return std::get<WPEEventTouch>(event->variant).sequenceID;
 }
+
+#if ENABLE(DEVELOPER_MODE)
+WPEEvent* wpeEventTouchCreateForTesting(WPEEventType type, WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, Vector<WPETouchPoint>&& touchPoints)
+{
+    ASSERT(type == WPE_EVENT_TOUCH_DOWN || type == WPE_EVENT_TOUCH_UP || type == WPE_EVENT_TOUCH_MOVE || type == WPE_EVENT_TOUCH_CANCEL);
+    return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventTouchForTesting { modifiers,  WTF::move(touchPoints) }, 1 };
+}
+
+bool wpeEventIsTouchForTesting(WPEEvent* event)
+{
+    if (!(event->type == WPE_EVENT_TOUCH_DOWN || event->type == WPE_EVENT_TOUCH_UP || event->type == WPE_EVENT_TOUCH_MOVE || event->type == WPE_EVENT_TOUCH_CANCEL))
+        return false;
+    return std::holds_alternative<WPEEventTouchForTesting>(event->variant);
+}
+
+const Vector<WPETouchPoint>& wpeEventTouchPointsForTesting(WPEEvent* event)
+{
+    ASSERT(wpeEventIsTouchForTesting(event));
+    return std::get<WPEEventTouchForTesting>(event->variant).touchPoints;
+}
+#endif
