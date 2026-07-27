@@ -138,6 +138,10 @@ SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView va
     if (!fallbackValue.isNull() && parseError != SVGParsingError::None)
         return SVGLengthValue(lengthMode, fallbackValue);
 
+    // A forbidden negative value must be ignored even without an explicit fallback.
+    if (parseError == SVGParsingError::ForbiddenNegativeValue)
+        return SVGLengthValue(lengthMode);
+
     return length;
 }
 

@@ -1,0 +1,8 @@
+
+PASS ry="-10" should be an invalid attribute value (ignored)
+PASS ry="-10px" should be an invalid attribute value (ignored)
+PASS ry="-10%" should be an invalid attribute value (ignored)
+PASS ry="none" should be an invalid attribute value (ignored)
+PASS ry="10px 20px" should be an invalid attribute value (ignored)
+PASS ry="garbage" should be an invalid attribute value (ignored)
+

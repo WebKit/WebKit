@@ -1,0 +1,9 @@
+
+PASS width="-10" should be an invalid attribute value (ignored)
+PASS width="-10px" should be an invalid attribute value (ignored)
+PASS width="-10%" should be an invalid attribute value (ignored)
+PASS width="auto" should be an invalid attribute value (ignored)
+PASS width="none" should be an invalid attribute value (ignored)
+PASS width="10px 20px" should be an invalid attribute value (ignored)
+PASS width="garbage" should be an invalid attribute value (ignored)
+

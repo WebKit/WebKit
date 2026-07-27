@@ -1,0 +1,8 @@
+
+PASS cx="0" should be a valid attribute value
+PASS cx="5" should be a valid attribute value
+PASS cx="-10" should be a valid attribute value
+PASS cx="5px" should be a valid attribute value
+PASS cx="-10px" should be a valid attribute value
+PASS cx="5%" should be a valid attribute value
+
