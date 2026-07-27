@@ -941,6 +941,23 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (this.treeOutline.editable) {
             if (this.selected && selectedTreeElements.length > 1) {
+                if (WI.cssManager.canForcePseudoClass()) {
+                    let attachedSelectedTreeElements = selectedTreeElements.filter((treeElement) => treeElement.representedObject.attached);
+                    if (attachedSelectedTreeElements.length) {
+                        let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes", "A context menu item to force (override) a DOM node's pseudo-classes"));
+
+                        for (let pseudoClass of Object.values(WI.CSSManager.ForceablePseudoClass)) {
+                            if (!WI.cssManager.canForcePseudoClass(pseudoClass))
+                                continue;
+
+                            let allEnabled = attachedSelectedTreeElements.every((treeElement) => treeElement.representedObject.enabledPseudoClasses.includes(pseudoClass));
+                            pseudoSubMenu.appendCheckboxItem(WI.CSSManager.displayNameForForceablePseudoClass(pseudoClass), () => {
+                                this.treeOutline.toggleSelectedElementsPseudoClass(pseudoClass, !allEnabled);
+                            }, allEnabled);
+                        }
+                    }
+                }
+
                 let forceHidden = !selectedTreeElements.every((treeElement) => treeElement.isNodeHidden);
                 let label = forceHidden ? WI.UIString("Hide Elements") : WI.UIString("Show Elements");
                 contextMenu.appendItem(label, () => {

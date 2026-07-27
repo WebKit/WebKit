@@ -245,6 +245,12 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             treeElement.toggleElementVisibility(forceHidden);
     }
 
+    toggleSelectedElementsPseudoClass(pseudoClass, enabled)
+    {
+        for (let treeElement of this.selectedTreeElements)
+            treeElement.representedObject.setPseudoClassEnabled(pseudoClass, enabled);
+    }
+
     _selectedNodeChanged()
     {
         this.dispatchEventToListeners(WI.DOMTreeOutline.Event.SelectedNodeChanged);
