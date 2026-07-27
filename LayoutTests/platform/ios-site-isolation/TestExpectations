@@ -390,7 +390,6 @@ imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.
 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.https.html [ Failure ]
 media/audio-play-with-video-element.html [ Failure ]
 media/audio-playback-restriction-play.html [ Failure ]
-media/audio-session-category-at-most-recent-playback.html [ Failure ]
 media/audio-session-category-play-unmute-pause.html [ Failure ]
 media/audio-session-category.html [ Failure ]
 media/audioSession/audioSessionType.html [ Failure ]

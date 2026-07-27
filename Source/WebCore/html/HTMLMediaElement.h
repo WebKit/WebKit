@@ -1097,6 +1097,7 @@ private:
     void hardwareMutedStateDidChange(const AudioSession&) final;
 #endif
     void routingContextUIDDidChange(const AudioSession&) final;
+    void categoryDidChange(const AudioSession&) final;
 #endif
 
     bool NODELETE hasMediaSource() const;

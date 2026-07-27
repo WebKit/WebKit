@@ -105,12 +105,19 @@ void RemoteAudioSession::setCategory(CategoryType type, Mode mode, RouteSharingP
     if (type == m_category && mode == m_mode && policy == m_routeSharingPolicy && !m_isPlayingToBluetoothOverrideChanged)
         return;
 
+    bool categoryOrModeChanged = type != m_category || mode != m_mode;
     m_category = type;
     m_mode = mode;
     m_routeSharingPolicy = policy;
     m_isPlayingToBluetoothOverrideChanged = false;
 
     protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetCategory(type, mode, policy), { });
+
+    if (categoryOrModeChanged) {
+        m_configurationChangeObservers.forEach([this](auto& observer) {
+            observer.categoryDidChange(*this);
+        });
+    }
 #else
     UNUSED_PARAM(type);
     UNUSED_PARAM(policy);
