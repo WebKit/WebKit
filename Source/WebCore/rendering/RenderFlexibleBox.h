@@ -120,8 +120,6 @@ private:
 
     void prepareFlexItemsAndMargins();
 
-    FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
-
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;

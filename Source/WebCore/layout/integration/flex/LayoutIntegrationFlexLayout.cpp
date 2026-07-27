@@ -148,10 +148,6 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
 
     auto constraints = flexLayoutConstraints();
     auto flexItems = collectFlexItems(relayoutChildren, constraints);
-    if (flexItems.isEmpty()) {
-        flexBox().updateFlexContainerLogicalHeight(0_lu);
-        return;
-    }
 
     auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
     if (flexLayoutResult.alignContentStartOverflow)

@@ -142,7 +142,20 @@ void FlexIntegrationUtils::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayout
 
 FlexContainerUsedExtents FlexIntegrationUtils::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)
 {
-    return flexBox().updateFlexContainerLogicalHeight(flexContentBlockExtent);
+    // Resolve the container's logical height to the largest of: what is already set, the block-axis extent FlexFormattingContext
+    // built from its line sizes (row flow) or its column lines' main content extent (column flow), and the empty-line
+    // minimum for a container that establishes a line with no in-flow items (e.g. all children are out of flow). The
+    // empty-line minimum is a block-axis floor, so it is folded into the block-axis max here rather than compared
+    // against the physical borderBoxHeight() (which is the inline extent in a vertical writing mode). Then resolve
+    // against the container's own specified/min/max height and box-sizing, and return the used cross extents (line
+    // positioning / item cross sizing / rtl-column flip) and block extents (column re-resolve / column-reverse
+    // placement) so FlexFormattingContext takes them as values rather than reading them back off the container.
+    auto& flexBox = this->flexBox();
+    auto minimumHeightForEmptyLine = flexBox.hasLineIfEmpty() ? flexBox.borderAndPaddingLogicalHeight() + flexBox.lineHeight() + flexBox.scrollbarLogicalHeight() : 0_lu;
+    flexBox.setLogicalHeight(std::max(minimumHeightForEmptyLine, std::max(flexBox.logicalHeight(), flexBox.borderAndPaddingLogicalHeight() + flexContentBlockExtent)));
+    flexBox.updateLogicalHeight();
+    auto crossAxisExtent = FlexFormattingUtils::isHorizontalFlow(flexBox) ? flexBox.borderBoxSize().height() : flexBox.borderBoxSize().width();
+    return { FlexFormattingUtils::crossAxisContentExtent(flexBox), crossAxisExtent, flexBox.contentBoxLogicalHeight(), flexBox.logicalHeight() };
 }
 
 void FlexIntegrationUtils::setFlexItemGeometry(const FlexLayoutItem& flexLayoutItem, const LayoutPoint& location, bool isHorizontalFlow)

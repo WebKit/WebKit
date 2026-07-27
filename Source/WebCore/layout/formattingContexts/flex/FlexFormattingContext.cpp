@@ -58,7 +58,11 @@ FlexFormattingContext::FlexFormattingContext(RenderFlexibleBox& flexBox, const F
 
 FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& flexItems)
 {
-    ASSERT(!flexItems.isEmpty());
+    if (flexItems.isEmpty()) {
+        // No items to lay out, but the container still resolves its own height (it may establish a line even when empty).
+        integrationUtils().updateFlexContainerLogicalHeight(0_lu);
+        return m_result;
+    }
 
     FlexLines flexLines;
     SizeList flexItemsMainSizeList;
