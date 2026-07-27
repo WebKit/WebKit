@@ -124,4 +124,10 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
         m_styleBuilderState->setIsContainerDependent();
 }
 
+void CSSToLengthConversionData::setUsesFontRelativeLength() const
+{
+    if (m_styleBuilderState)
+        m_styleBuilderState->setUsesFontRelativeLength();
+}
+
 } // namespace WebCore

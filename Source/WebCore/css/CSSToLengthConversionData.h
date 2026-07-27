@@ -91,6 +91,7 @@ public:
 
     void NODELETE setUsesViewportUnits() const;
     void NODELETE setUsesContainerUnits() const;
+    void NODELETE setUsesFontRelativeLength() const;
 
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
 

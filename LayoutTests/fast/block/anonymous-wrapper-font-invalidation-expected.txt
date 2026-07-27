@@ -1,0 +1,6 @@
+before
+block
+after
+
+PASS Font invalidation reaches text wrapped in an anonymous block by mixed inline/block content
+

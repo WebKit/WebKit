@@ -609,6 +609,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
             size = smallerFontSize(parentSize);
             break;
         case CSSValueMath:
+            builderState.setUsesFontSizeMath();
             size = determineMathDepthScale(builderState) * parentSize;
             break;
         case CSSValueWebkitRubyText:

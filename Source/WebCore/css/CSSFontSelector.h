@@ -103,7 +103,7 @@ public:
 private:
     explicit CSSFontSelector(ScriptExecutionContext&);
 
-    void dispatchInvalidationCallbacks();
+    void dispatchInvalidationCallbacks(FontInvalidationReason = FontInvalidationReason::Generic);
 
     void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
 

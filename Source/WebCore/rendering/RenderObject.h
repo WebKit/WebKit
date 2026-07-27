@@ -766,6 +766,14 @@ public:
     
     inline void setNeedsLayoutAndInvalidateContentLogicalWidths();
 
+    // Called when the fonts this renderer resolved against changed underneath it. Marks
+    // layout dirty, then drops font-derived cached state via invalidateFontDerivedState().
+    void fontsDidChange();
+
+    // Drops or re-derives state cached from font data. Layout dirtying is not included so
+    // that styleDidChange() can reuse this without forcing layout on a non-layout diff.
+    virtual void invalidateFontDerivedState() { }
+
     void setPositionState(PositionType);
     void clearPositionedState() { m_stateBitfields.clearPositionedState(); }
 

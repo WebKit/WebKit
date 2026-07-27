@@ -116,6 +116,7 @@ public:
     void didChangeViewportSize();
 
     void invalidateMatchedDeclarationsCache();
+    void clearCachedDeclarationsAffectedByFontMetrics();
 
     bool hasPendingUpdate() const { return m_pendingUpdate || m_hasDescendantWithPendingUpdate; }
     void flushPendingUpdate();

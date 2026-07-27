@@ -66,6 +66,7 @@ public:
 
     static void updateStyle(const RenderObject&);
     static void updateContent(const RenderText&);
+    static void updateFontDependentContentCharacteristic(const RenderText&);
 
     const Layout::Box& insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild = nullptr);
     UniqueRef<Layout::Box> remove(const RenderElement& parent, RenderObject& child);

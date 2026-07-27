@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+#light, #host { font: 25px/1 "custom font", monospace; }
+</style>
+</head>
+<body>
+<div id="light"><div id="light-test" style="width: 1ch;"></div></div>
+<div id="host"></div>
+<script>
+const host = document.getElementById("host");
+const shadow = host.attachShadow({ mode: "open" });
+shadow.innerHTML = '<div id="test" style="width: 1ch;"></div>';
+const shadowTest = shadow.getElementById("test");
+const lightTest = document.getElementById("light-test");
+
+function widthOf(el) {
+    return parseFloat(getComputedStyle(el).width);
+}
+
+promise_test(async () => {
+    assert_less_than(widthOf(lightTest), 24, "light: fallback before load");
+    assert_less_than(widthOf(shadowTest), 24, "shadow: fallback before load");
+
+    const face = new FontFace("custom font", "url(../../resources/Ahem.woff)");
+    document.fonts.add(face);
+    await face.load();
+    document.body.offsetHeight;
+
+    assert_approx_equals(widthOf(lightTest), 25, 0.1, "light DOM recalculated after font load");
+    assert_approx_equals(widthOf(shadowTest), 25, 0.1, "shadow tree content recalculated after font load");
+}, "1ch inside a shadow tree is recalculated after loading a web font (phase 1 must reach shadow trees)");
+</script>
+</body>
+</html>

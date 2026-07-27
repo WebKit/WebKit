@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html class="reftest-wait">
 <title>text-box-trim does not interfere with zero clearance</title>
 <link rel="help" href="https://drafts.csswg.org/css-inline-3/#text-box-trim">
 <link rel="help" href="https://drafts.csswg.org/css-inline-3/#text-box-edge">
@@ -29,3 +30,4 @@
   <br class="clear">
 </div>
 <div class="spacer"></div>
+<script>document.fonts.ready.then(() => document.documentElement.classList.remove("reftest-wait"));</script>

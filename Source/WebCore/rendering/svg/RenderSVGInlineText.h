@@ -70,6 +70,7 @@ private:
 
     String originalText() const override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
+    void invalidateFontDerivedState() override;
 
     FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }
 

@@ -54,6 +54,7 @@ protected:
     std::optional<LayoutUnit> firstLineBaseline() const override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void computeIntrinsicLogicalWidthContributions() override;
+    void invalidateFontDerivedState() override;
 
 private:
     bool isRenderMathMLToken() const final { return true; }

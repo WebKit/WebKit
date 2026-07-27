@@ -164,6 +164,7 @@ unsigned FontCascade::fontSelectorVersion() const
 void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 {
     // FIXME: Ideally we'd only update m_generation if the fonts changed.
+    fonts->registerWithFontSelectorIfNeeded(m_fontSelector.get());
     m_fonts = WTF::move(fonts);
     m_generation = ++lastFontCascadeGeneration;
 }
@@ -174,9 +175,16 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
     protect(FontCache::forCurrentThread())->updateFontCascade(*this);
 }
 
+void FontCascade::refreshFonts() const
+{
+    RefPtr fontSelector = m_fontSelector;
+    update(WTF::move(fontSelector));
+    m_canUseSimplifiedTextMeasuringForAutoVariantCache.clearAll();
+}
+
 TextShapingResult FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasis forTextEmphasis) const
 {
-    if (RefPtr fonts = this->fonts()) {
+    if (RefPtr fonts = ensureFonts()) {
         if (auto* cached = fonts->getOrCreateCachedShapedText(run, *this, from, to, forTextEmphasis))
             return cached->textShapingResult;
     }
@@ -316,7 +324,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
             glyphOverflow = nullptr;
     }
 
-    auto* cacheEntry = fonts()->glyphGeometryCache().add(run, { }, TextShapingContext { *this });
+    auto* cacheEntry = ensureFonts()->glyphGeometryCache().add(run, { }, TextShapingContext { *this });
     bool callerNeedsFallbackFonts = fallbackFonts;
     bool canUseFallbackFontCacheEntry = !callerNeedsFallbackFonts && !run.rtl();
 
@@ -420,7 +428,7 @@ float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whites
     if (whitespaceIsCollapsed)
         return text.length() * monospaceCharacterWidth;
 
-    auto* cacheEntry = fonts()->glyphGeometryCache().add(text, { });
+    auto* cacheEntry = ensureFonts()->glyphGeometryCache().add(text, { });
     if (cacheEntry && cacheEntry->width)
         return *cacheEntry->width;
 
@@ -475,7 +483,7 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
 
     auto emojiPolicy = resolvedEmojiPolicy.value_or(resolveEmojiPolicy(m_fontDescription.variantEmoji(), c));
 
-    SUPPRESS_UNCOUNTED_ARG return fonts()->glyphDataForCharacter(c, m_fontDescription, fontSelector(), variant, emojiPolicy);
+    SUPPRESS_UNCOUNTED_ARG return ensureFonts()->glyphDataForCharacter(c, m_fontDescription, fontSelector(), variant, emojiPolicy);
 }
 
 
@@ -1956,8 +1964,8 @@ TextStream& operator<<(TextStream& ts, const FontCascade& fontCascade)
     if (fontCascade.fontSelector())
         ts << ", font selector "_s << fontCascade.fontSelector();
 
-    if (fontCascade.fonts())
-        ts << ", generation "_s << fontCascade.fonts()->generation();
+    if (RefPtr fonts = fontCascade.existingFonts())
+        ts << ", generation "_s << fonts->generation();
 
     return ts;
 }

@@ -4794,6 +4794,9 @@ const Style::ComputedStyle* Element::resolveComputedStyle(ResolveComputedStyleMo
         if (document->hasPendingFullStyleRebuild())
             return document->documentElement();
 
+        if (document->needsFontInvalidation())
+            return document->documentElement();
+
         if (!document->documentElement() || document->documentElement()->hasStateFlag(StateFlag::IsComputedStyleInvalidFlag))
             return document->documentElement();
 

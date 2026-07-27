@@ -1041,6 +1041,7 @@ public:
     void unscheduleStyleRecalc();
     bool NODELETE hasPendingStyleRecalc() const;
     bool NODELETE hasPendingFullStyleRebuild() const;
+    bool needsFontInvalidation() const;
 
     void registerNodeListForInvalidation(LiveNodeList&);
     void unregisterNodeListForInvalidation(LiveNodeList&);

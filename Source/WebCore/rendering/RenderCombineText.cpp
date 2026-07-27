@@ -45,6 +45,19 @@ RenderCombineText::RenderCombineText(Text& textNode, const String& string)
 
 RenderCombineText::~RenderCombineText() = default;
 
+void RenderCombineText::invalidateFontDerivedState()
+{
+    RenderText::invalidateFontDerivedState();
+
+    m_combineFontStyle = Style::ComputedStyle::clonePtr(style());
+    if (m_isCombined) {
+        RenderText::setRenderedText(originalText());
+        m_isCombined = false;
+    }
+    m_needsFontUpdate = true;
+    combineTextIfNeeded();
+}
+
 void RenderCombineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     // FIXME: This is pretty hackish.

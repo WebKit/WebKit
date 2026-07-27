@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+#container { font-family: ProbeFont, monospace; font-size: 50px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="container">before<div>block</div>after</div>
+<script>
+function widthOfTextNode(node) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return range.getBoundingClientRect().width;
+}
+
+promise_test(async () => {
+    const beforeText = container.firstChild;
+    const afterText = container.lastChild;
+    assert_equals(beforeText.nodeType, Node.TEXT_NODE);
+    assert_equals(afterText.nodeType, Node.TEXT_NODE);
+
+    const widthBefore1 = widthOfTextNode(beforeText);
+    const widthBefore2 = widthOfTextNode(afterText);
+
+    const face = new FontFace("ProbeFont", "url(../../resources/Ahem.woff)");
+    await face.load();
+    document.fonts.add(face);
+    container.offsetHeight;
+
+    const widthAfter1 = widthOfTextNode(beforeText);
+    const widthAfter2 = widthOfTextNode(afterText);
+
+    assert_not_equals(widthAfter1, widthBefore1, "text before the block-level sibling picked up the loaded font");
+    assert_not_equals(widthAfter2, widthBefore2, "text after the block-level sibling picked up the loaded font");
+}, "Font invalidation reaches text wrapped in an anonymous block by mixed inline/block content");
+</script>
+</body>
+</html>

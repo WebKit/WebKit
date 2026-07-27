@@ -125,7 +125,19 @@ FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
     m_realizedFallbackRanges.append(FontRanges(protect(FontCache::forCurrentThread())->fontForPlatformData(platformData)));
 }
 
-FontCascadeFonts::~FontCascadeFonts() = default;
+FontCascadeFonts::~FontCascadeFonts()
+{
+    for (Ref fontSelector : m_registeredFontSelectors)
+        fontSelector->unregisterFontCascadeFonts(*this);
+}
+
+void FontCascadeFonts::registerWithFontSelectorIfNeeded(FontSelector* fontSelector)
+{
+    if (!fontSelector || m_registeredFontSelectors.contains(*fontSelector))
+        return;
+    m_registeredFontSelectors.add(*fontSelector);
+    fontSelector->registerFontCascadeFonts(*this);
+}
 
 void FontCascadeFonts::determinePitch(const FontCascadeDescription& description, FontSelector* fontSelector)
 {

@@ -32,6 +32,7 @@
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
 #include "CSSStyleSheet.h"
+#include "ComposedTreeIterator.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
 #include "DocumentView.h"
@@ -39,12 +40,16 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
+#include "FontCascadeFonts.h"
 #include "InspectorInstrumentation.h"
 #include "MatchResultCache.h"
 #include "RenderBoxInlines.h"
+#include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
+#include "RenderText.h"
 #include "RenderView.h"
 #include "RuleSet.h"
 #include "ShadowRoot.h"
@@ -121,6 +126,74 @@ void DocumentScope::releaseMemory()
 
     m_sharedShadowTreeResolvers.clear();
     m_matchResultCache = { };
+}
+
+void DocumentScope::performFontInvalidation()
+{
+    m_needsFontInvalidation = false;
+
+    CheckedPtr renderView = m_document->renderView();
+    if (!renderView)
+        return;
+
+    auto styleNeedsFontMetricsRestyle = [](const Style::ComputedStyle& style) {
+        // font-size-adjust and font-size: math both resolve against the primary font
+        // while style is being built. FontCascadeFonts::isValid() does not track that
+        // state, so it cannot tell us whether the resolved value is still correct.
+        if (!style.fontDescription().fontSizeAdjust().isNone() || style.usesFontSizeMath())
+            return true;
+        if (!style.usesFontRelativeLength())
+            return false;
+        RefPtr fonts = style.fontCascade().existingFonts();
+        return !fonts || !fonts->isValid();
+    };
+
+    auto anyStyleDependsOnFontMetrics = [&](const Element& element) {
+        CheckedPtr style = element.existingComputedStyle();
+        if (!style)
+            return false;
+        if (styleNeedsFontMetricsRestyle(*style))
+            return true;
+        for (auto& [identifier, pseudoStyle] : style->pseudoElementStyles()) {
+            if (pseudoStyle && styleNeedsFontMetricsRestyle(*pseudoStyle))
+                return true;
+        }
+        return false;
+    };
+
+    // Phase 1: restyle elements whose computed value was baked from font metrics.
+    // Selector matching and the cascade never change, only these specific values do.
+    // Walks the composed tree (rather than descendantsOfType<Element>) so elements
+    // inside shadow trees are reached too.
+    bool needsStyleRecalc = false;
+    for (Ref node : composedTreeDescendants(document())) {
+        RefPtr element = dynamicDowncast<Element>(node);
+        if (!element || !anyStyleDependsOnFontMetrics(*element))
+            continue;
+
+        element->invalidateStyle();
+        needsStyleRecalc = true;
+    }
+
+    // Phase 2: relayout renderers whose font actually went invalid, regardless of
+    // whether their style has any font-metric-dependent value.
+    Vector<CheckedRef<RenderObject>> renderersWithInvalidatedFonts;
+    for (auto& element : descendantsOfType<RenderElement>(*renderView)) {
+        RefPtr fontCascadeFonts = element.style().fontCascade().existingFonts();
+        if (!fontCascadeFonts || fontCascadeFonts->isValid())
+            continue;
+
+        renderersWithInvalidatedFonts.append(element);
+        for (CheckedRef textChild : childrenOfType<RenderText>(element))
+            renderersWithInvalidatedFonts.append(textChild);
+    }
+
+    // We call fontsDidChange here instead of directly on the loop above because fontCascadeFonts can be shared, which can change its isValid condition
+    for (auto& renderer : renderersWithInvalidatedFonts)
+        renderer->fontsDidChange();
+
+    if (needsStyleRecalc)
+        m_document->scheduleStyleRecalc();
 }
 
 void DocumentScope::setPreferredStylesheetSetName(const WTF::String& name)

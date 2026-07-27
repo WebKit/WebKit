@@ -135,6 +135,12 @@ void RenderMathMLToken::setMathVariantGlyphDirty()
     setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
 
+void RenderMathMLToken::invalidateFontDerivedState()
+{
+    RenderMathMLBlock::invalidateFontDerivedState();
+    setMathVariantGlyphDirty();
+}
+
 void RenderMathMLToken::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);

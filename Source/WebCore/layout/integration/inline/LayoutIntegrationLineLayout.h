@@ -82,6 +82,7 @@ public:
     void updateFormattingContextGeometries(LayoutUnit availableLogicalWidth);
     void updateOverflow();
     static void updateStyle(const RenderObject&);
+    static void updateFontDependentContentCharacteristic(const RenderText&);
 
     // Partial invalidation.
     bool insertedIntoTree(const RenderElement& parent, RenderObject& child);
@@ -167,6 +168,8 @@ private:
     Layout::ElementBox& rootLayoutBox() { return *m_rootLayoutBox; }
     void clearInlineContent();
     void releaseCachesAndResetDamage();
+    void invalidateCachesIfFontChanged();
+    void fontsNeedUpdate();
 
     LayoutUnit NODELETE baselineForLine(const InlineDisplay::Line&) const;
 
@@ -183,6 +186,7 @@ private:
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
     BoxGeometryUpdater m_boxGeometryUpdater;
+    unsigned m_fontSelectorVersion { 0 };
 };
 
 }

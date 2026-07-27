@@ -63,6 +63,16 @@ inline void ComputedStyleBase::setUsesViewportUnits()
     m_nonInheritedFlags.usesViewportUnits = true;
 }
 
+inline void ComputedStyleBase::setUsesFontRelativeLength()
+{
+    m_nonInheritedFlags.usesFontRelativeLength = true;
+}
+
+inline void ComputedStyleBase::setUsesFontSizeMath()
+{
+    m_nonInheritedFlags.usesFontSizeMath = true;
+}
+
 inline void ComputedStyleBase::setIsContainerDependent()
 {
     m_nonInheritedFlags.isContainerDependent = true;

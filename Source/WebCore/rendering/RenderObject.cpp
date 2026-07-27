@@ -706,6 +706,12 @@ void RenderObject::invalidateContainerContentLogicalWidths(const RenderBlock* an
     }
 }
 
+void RenderObject::fontsDidChange()
+{
+    setNeedsLayoutAndInvalidateContentLogicalWidths();
+    invalidateFontDerivedState();
+}
+
 void RenderObject::notifyInspectorOfLayoutInvalidate()
 {
     InspectorInstrumentation::willInvalidateLayout(*this);

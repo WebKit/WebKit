@@ -111,6 +111,7 @@
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FocusOptions.h"
+#include "FontCascadeFonts.h"
 #include "FontCascadeInlines.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
@@ -251,7 +252,7 @@
 #include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderBoxInlines.h"
-#include "RenderChildIterator.h"
+#include "RenderBlockFlow.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
@@ -2755,7 +2756,7 @@ void Document::scheduleStyleRecalc()
     if (m_styleRecalcTimer.isActive() || backForwardCacheState() != NotInBackForwardCache)
         return;
 
-    ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
+    ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild || styleScope().needsFontInvalidation());
 
     m_styleRecalcTimer.startOneShot(0_s);
 
@@ -2778,6 +2779,11 @@ bool Document::hasPendingStyleRecalc() const
 bool Document::hasPendingFullStyleRebuild() const
 {
     return hasPendingStyleRecalc() && m_needsFullStyleRebuild;
+}
+
+bool Document::needsFontInvalidation() const
+{
+    return styleScope().needsFontInvalidation();
 }
 
 void Document::updateRenderTree(std::unique_ptr<Style::Update> styleUpdate)
@@ -2836,6 +2842,9 @@ void Document::resolveStyle(ResolveStyleType type)
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
+        if (styleScope().needsFontInvalidation())
+            styleScope().performFontInvalidation();
 
         m_inStyleRecalc = true;
 
@@ -2976,6 +2985,9 @@ bool Document::needsStyleRecalc() const
         return false;
 
     if (m_needsFullStyleRebuild)
+        return true;
+
+    if (styleScope().needsFontInvalidation())
         return true;
 
     if (childNeedsStyleRecalc())
@@ -3426,7 +3438,14 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 void Document::fontsNeedUpdate(FontSelector&)
 {
     ASSERT(!deletionHasBegun());
-    invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+
+    styleScope().clearCachedDeclarationsAffectedByFontMetrics();
+
+    if (backForwardCacheState() != NotInBackForwardCache || !renderView())
+        return;
+
+    styleScope().setNeedsFontInvalidation(true);
+    scheduleRenderingUpdate({ });
 }
 
 void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
@@ -3435,6 +3454,7 @@ void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
 
     if (backForwardCacheState() != NotInBackForwardCache || !renderView())
         return;
+
     scheduleFullStyleRebuild();
 }
 
@@ -3593,6 +3613,7 @@ void Document::destroyRenderTree()
 
     clearChildNeedsStyleRecalc();
 
+    styleScope().setNeedsFontInvalidation(false);
     unscheduleStyleRecalc();
 
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
@@ -7623,6 +7644,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
         styleScope().clearResolver();
         m_styleRecalcTimer.stop();
+        styleScope().setNeedsFontInvalidation(false);
 
         clearSharedObjectPool();
 

@@ -42,6 +42,10 @@ public:
 
     void releaseMemory();
 
+    bool needsFontInvalidation() const { return m_needsFontInvalidation; }
+    void setNeedsFontInvalidation(bool needsFontInvalidation) { m_needsFontInvalidation = needsFontInvalidation; }
+    void performFontInvalidation();
+
     void evaluateMediaQueriesForViewportChange();
     void evaluateMediaQueriesForAccessibilitySettingsChange();
     void evaluateMediaQueriesForAppearanceChange();
@@ -87,6 +91,8 @@ private:
     bool invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext&);
 
     WTF::String m_preferredStylesheetSetName;
+
+    bool m_needsFontInvalidation { false };
 
     RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     Vector<Ref<StyleRuleKeyframes>> m_viewTransitionKeyframes;
