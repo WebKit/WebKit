@@ -3106,20 +3106,19 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
 
     RefPtr localMainFrame = protect(*m_page)->localMainFrame();
 
-    if (RefPtr localRootFrame = this->localRootFrame(frameID))
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    if (localRootFrame)
         m_potentialTapNode = localRootFrame->nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
 
     RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(m_potentialTapNode.get());
     if (RefPtr remoteFrame = frameOwner ? dynamicDowncast<RemoteFrame>(frameOwner->contentFrame()) : nullptr) {
-        RefPtr localFrame = frameOwner->document().frame();
-        if (RefPtr frameView = localFrame ? localFrame->view() : nullptr) {
-            if (RefPtr remoteFrameView = remoteFrame->view()) {
-                RemoteFrameGeometryTransformer transformer(remoteFrameView.releaseNonNull(), frameView.releaseNonNull(), remoteFrame->frameID());
-                co_return WebCore::RemoteUserInputEventData {
-                    remoteFrame->frameID(),
-                    transformer.transformToRemoteFrameCoordinates(position)
-                };
-            }
+        RefPtr localRootView = localRootFrame ? localRootFrame->view() : nullptr;
+        if (RefPtr remoteFrameView = remoteFrame->view(); remoteFrameView && localRootView) {
+            RemoteFrameGeometryTransformer transformer(remoteFrameView.releaseNonNull(), localRootView.releaseNonNull(), remoteFrame->frameID());
+            co_return WebCore::RemoteUserInputEventData {
+                remoteFrame->frameID(),
+                transformer.transformToRemoteFrameCoordinates(position)
+            };
         }
     }
 
