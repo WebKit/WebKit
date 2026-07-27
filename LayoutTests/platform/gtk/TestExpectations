@@ -1321,3 +1321,8 @@ webkit.org/b/320214 [ Debug ] inspector/debugger/async-stack-trace-truncate.html
 webkit.org/b/320215 compositing/absolute-inside-out-of-view-fixed.html [ Pass Timeout ]
 webkit.org/b/319067 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure Pass ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure Pass ]
+
+webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
+
+webkit.org/b/320354 compositing/animation/animated-composited-inside-hidden.html [ Timeout Pass ]
+webkit.org/b/320354 compositing/backgrounds/fixed-background-on-descendant.html [ Timeout Pass ]

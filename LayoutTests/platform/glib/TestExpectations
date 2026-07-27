@@ -1767,7 +1767,7 @@ webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
 
 webkit.org/b/308037 imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html [ Crash Failure Pass ]
 
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Failure Pass ]
 
 webkit.org/b/311462 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure Timeout Crash ]
 webkit.org/b/308601 [ Release ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Failure Pass ]
@@ -4148,7 +4148,6 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 webkit.org/b/282165 http/tests/media/video-webm-stall-seek.html [ Failure ]
 
-webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout ]

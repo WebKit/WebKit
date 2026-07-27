@@ -962,7 +962,6 @@ webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mo
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
-webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-closest-farthest-corner.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-transforms/transform-percent-008.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-001.html [ ImageOnlyFailure ]
@@ -1349,3 +1348,5 @@ webkit.org/b/307440 imported/w3c/web-platform-tests/webrtc/simplecall.https.html
 compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
 
 webkit.org/b/317975 [ x86_64 ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Failure Pass ]
+
+webkit.org/b/320351 [ x86_64 ] fast/forms/range/range-set-value-repaint.html [ ImageOnlyFailure Pass ]
