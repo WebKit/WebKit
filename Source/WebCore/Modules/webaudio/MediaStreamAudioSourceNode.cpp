@@ -115,8 +115,6 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels, AudioUtilities::renderQuantumSize, std::bind(&MediaStreamAudioSourceNode::provideInput, this, std::placeholders::_1, std::placeholders::_2));
     }
 
-    m_sourceNumberOfChannels = numberOfChannels;
-
     {
         // The context must be locked when changing the number of output channels.
         Locker contextLocker { context().graphLock() };
