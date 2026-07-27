@@ -410,13 +410,18 @@ void OscillatorNode::process(size_t framesToProcess)
     // start at quantumFrameOffset, but just past that time. Adjust destination and n
     // to reflect that, and adjust virtualReadIndex to start the value at
     // startFrameOffset.
+    // The phase increment for the first rendered frame is phaseIncrements[0]
+    // when we have sample-accurate values; otherwise frequency stays 0 (it is
+    // only assigned in the !hasSampleAccurateValues branch above), so fall back
+    // to frequency * rateScale for the k-rate case.
+    double firstPhaseIncrement = hasSampleAccurateValues ? phaseIncrements[0] : frequency * rateScale;
     if (startFrameOffset > 0) {
         skip(destination, 1);
         --n;
-        virtualReadIndex += (1 - startFrameOffset) * frequency * rateScale;
+        virtualReadIndex += (1 - startFrameOffset) * firstPhaseIncrement;
         ASSERT(virtualReadIndex < m_periodicWave->periodicWaveSize());
     } else if (startFrameOffset < 0)
-        virtualReadIndex = -startFrameOffset * frequency * rateScale;
+        virtualReadIndex = -startFrameOffset * firstPhaseIncrement;
 
     if (hasSampleAccurateValues)
         virtualReadIndex = processARate(n, destination, virtualReadIndex, phaseIncrements);
