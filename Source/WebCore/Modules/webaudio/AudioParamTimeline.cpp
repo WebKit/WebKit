@@ -574,23 +574,27 @@ void AudioParamTimeline::processExponentialRamp(const AutomationState& currentSt
     }
 
     auto deltaTime = currentState.time2 - currentState.time1;
-    float numSampleFrames = deltaTime.value() * currentState.sampleRate;
+    double numSampleFrames = deltaTime.value() * currentState.sampleRate;
+    double ratio = currentState.value2 / static_cast<double>(currentState.value1);
     // The value goes exponentially from value1 to value2 in a duration of deltaTime seconds (corresponding to numSampleFrames).
-    // Compute the per-sample multiplier.
-    float multiplier = powf(currentState.value2 / currentState.value1, 1 / numSampleFrames);
+    // Compute the per-sample multiplier. This is accumulated in double precision because a single precision recurrence
+    // relation would lose several bits of precision over the course of a rendering quantum.
+    double multiplier = std::pow(ratio, 1 / numSampleFrames);
 
     // Set the starting value of the exponential ramp.
-    value = currentState.value1 * pow(currentState.value2 / static_cast<double>(currentState.value1), (currentFrame * currentState.samplingPeriod - currentState.time1.value()) / deltaTime.value());
+    double currentValue = currentState.value1 * std::pow(ratio, (currentFrame * currentState.samplingPeriod - currentState.time1.value()) / deltaTime.value());
 
     for (; writeIndex < currentState.fillToFrame; ++writeIndex) {
-        values[writeIndex] = value;
-        value *= multiplier;
+        values[writeIndex] = currentValue;
+        currentValue *= multiplier;
         ++currentFrame;
     }
 
-    // |value| got updated one extra time in the above loop. Restore it to the last computed value.
+    // |currentValue| got updated one extra time in the above loop. Restore it to the last computed value.
     if (writeIndex >= 1)
-        value /= multiplier;
+        currentValue /= multiplier;
+
+    value = currentValue;
 }
 
 void AudioParamTimeline::processCancelValues(const AutomationState& currentState, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex)
