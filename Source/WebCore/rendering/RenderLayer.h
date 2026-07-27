@@ -765,12 +765,6 @@ public:
     LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
     LayoutRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
 
-    enum class LocalClipRectMode {
-        IncludeCompositingState,
-        ExcludeCompositingState,
-    };
-    LayoutRect localClipRect(bool& clipExceedsBounds, LocalClipRectMode = LocalClipRectMode::IncludeCompositingState) const; // Returns the background clip rect of the layer in the local coordinate space.
-
     bool clipCrossesPaintingBoundary() const;
 
     // Pass offsetFromRoot if known.
