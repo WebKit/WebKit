@@ -105,6 +105,12 @@ void RenderMathMLRoot::styleDidChange(Style::Difference diff, const Style::Compu
     resetRadicalOperator();
 }
 
+void RenderMathMLRoot::fontsDidChange()
+{
+    RenderMathMLRow::fontsDidChange();
+    resetRadicalOperator();
+}
+
 RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters(LayoutUnit indexWidth)
 {
     // Square roots do not require horizontal parameters.

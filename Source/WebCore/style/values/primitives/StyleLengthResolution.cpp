@@ -494,16 +494,21 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
     case QuirkyEm:
         return value * applyTextZoom(resolveEm(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
     case Ex:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveEx(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
     case Cap:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveCap(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
 
     case Ch:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveCh(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
     case Ic:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveIc(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
 
     case Lh:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveLh(conversionData), conversionData);
 
     // MARK: "root font dependent" resolution
@@ -511,15 +516,20 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
     case Rem:
         return value * applyTextZoom(resolveEm(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
     case Rcap:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveCap(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
     case Rch:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveCh(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
     case Rex:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveEx(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
     case Ric:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoom(resolveIc(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
 
     case Rlh:
+        conversionData.setUsesFontRelativeLength();
         return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveRlh(conversionData), conversionData);
 
     // MARK: "viewport-percentage" resolution

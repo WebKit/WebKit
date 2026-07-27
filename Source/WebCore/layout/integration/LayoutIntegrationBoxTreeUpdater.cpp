@@ -353,9 +353,6 @@ void BoxTreeUpdater::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& 
 static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
 {
     CheckedRef rendererStyle = rendererText.style();
-    auto shouldUpdateContentCharacteristic = !rendererStyle->fontCascadeEqual(inlineTextBox.style());
-    if (!shouldUpdateContentCharacteristic)
-        return;
 
     auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
     // These may only change when content changes.
@@ -384,7 +381,8 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
 
     if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
         if (CheckedPtr inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(*layoutBox)) {
-            updateContentCharacteristic(*renderText, *inlineTextBox);
+            if (!renderText->style().fontCascadeEqual(inlineTextBox->style()))
+                updateContentCharacteristic(*renderText, *inlineTextBox);
             inlineTextBox->updateStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::DisplayType::InlineFlow), firstLineStyleFor(*renderText));
             return;
         }
@@ -400,6 +398,12 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
         if (auto* elementBox = dynamicDowncast<Layout::ElementBox>(*layoutBox))
             elementBox->setListMarkerAttributes(calculateListMarkerAttribute(*listMarkerRenderer));
     }
+}
+
+void BoxTreeUpdater::updateFontDependentContentCharacteristic(const RenderText& renderText)
+{
+    if (CheckedPtr inlineTextBox = const_cast<Layout::InlineTextBox*>(renderText.layoutBox()))
+        updateContentCharacteristic(renderText, *inlineTextBox);
 }
 
 void BoxTreeUpdater::updateContent(const RenderText& textRenderer)

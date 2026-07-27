@@ -306,6 +306,13 @@ bool RenderMathMLOperator::useMathOperator() const
     return isStretchy() || (singleCharCodePoint() && isLargeOperatorInDisplayStyle()) || singleCharCodePoint() == minusSign;
 }
 
+void RenderMathMLOperator::fontsDidChange()
+{
+    RenderMathMLToken::fontsDidChange();
+    m_mathOperator.reset(style());
+    resetStretchSize();
+}
+
 void RenderMathMLOperator::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);

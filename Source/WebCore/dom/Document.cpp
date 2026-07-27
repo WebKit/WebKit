@@ -111,6 +111,7 @@
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FocusOptions.h"
+#include "FontCascadeFonts.h"
 #include "FontCascadeInlines.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
@@ -251,6 +252,7 @@
 #include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderBoxInlines.h"
+#include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -2755,7 +2757,7 @@ void Document::scheduleStyleRecalc()
     if (m_styleRecalcTimer.isActive() || backForwardCacheState() != NotInBackForwardCache)
         return;
 
-    ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
+    ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild || m_needsFontInvalidation);
 
     m_styleRecalcTimer.startOneShot(0_s);
 
@@ -2836,6 +2838,9 @@ void Document::resolveStyle(ResolveStyleType type)
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
+        if (m_needsFontInvalidation)
+            performFontInvalidation();
 
         m_inStyleRecalc = true;
 
@@ -2976,6 +2981,9 @@ bool Document::needsStyleRecalc() const
         return false;
 
     if (m_needsFullStyleRebuild)
+        return true;
+
+    if (m_needsFontInvalidation)
         return true;
 
     if (childNeedsStyleRecalc())
@@ -3426,7 +3434,14 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 void Document::fontsNeedUpdate(FontSelector&)
 {
     ASSERT(!deletionHasBegun());
-    invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+
+    styleScope().clearCachedDeclarationsAffectedByFontMetrics();
+
+    if (backForwardCacheState() != NotInBackForwardCache || !renderView())
+        return;
+
+    m_needsFontInvalidation = true;
+    scheduleRenderingUpdate({ });
 }
 
 void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
@@ -3435,7 +3450,70 @@ void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
 
     if (backForwardCacheState() != NotInBackForwardCache || !renderView())
         return;
+
     scheduleFullStyleRebuild();
+}
+
+void Document::performFontInvalidation()
+{
+    m_needsFontInvalidation = false;
+
+    if (!renderView())
+        return;
+
+    auto styleNeedsFontMetricsRestyle = [](const Style::ComputedStyle& style) {
+        // font-size-adjust and font-size: math both resolve against the primary font
+        // while style is being built. FontCascadeFonts::isValid() does not track that
+        // state, so it cannot tell us whether the resolved value is still correct.
+        if (!style.fontDescription().fontSizeAdjust().isNone() || style.usesFontSizeMath())
+            return true;
+        if (!style.usesFontRelativeLength())
+            return false;
+        RefPtr fonts = style.fontCascade().existingFonts();
+        return !fonts || !fonts->isValid();
+    };
+
+    auto anyStyleDependsOnFontMetrics = [&](const Element& element) {
+        CheckedPtr style = element.existingComputedStyle();
+        if (!style)
+            return false;
+        if (styleNeedsFontMetricsRestyle(*style))
+            return true;
+        for (auto& [identifier, pseudoStyle] : style->pseudoElementStyles()) {
+            if (pseudoStyle && styleNeedsFontMetricsRestyle(*pseudoStyle))
+                return true;
+        }
+        return false;
+    };
+
+    // Phase 1: restyle elements whose computed value was baked from font metrics.
+    // Selector matching and the cascade never change, only these specific values do.
+    bool needsStyleRecalc = false;
+    for (Ref element : descendantsOfType<Element>(*this)) {
+        if (!anyStyleDependsOnFontMetrics(element))
+            continue;
+
+        element->invalidateStyle();
+        needsStyleRecalc = true;
+    }
+
+    // Phase 2: relayout renderers whose font actually went invalid, regardless of
+    // whether their style has any font-metric-dependent value.
+    Vector<CheckedRef<RenderObject>> renderersWithInvalidatedFonts;
+    for (CheckedPtr descendant = renderView()->firstChild(); descendant; descendant = descendant->nextInPreOrder(renderView())) {
+        RefPtr fontCascadeFonts = descendant->style().fontCascade().existingFonts();
+        if (!fontCascadeFonts || fontCascadeFonts->isValid())
+            continue;
+
+        renderersWithInvalidatedFonts.append(*descendant);
+    }
+
+    // We call fontsDidChange here instead of directly on the loop above because fontCascadeFonts can be shared, which can change its isValid condition
+    for (auto& renderer : renderersWithInvalidatedFonts)
+        renderer->fontsDidChange();
+
+    if (needsStyleRecalc)
+        scheduleStyleRecalc();
 }
 
 void Document::setIsResolvingTreeStyle(bool value)
@@ -3593,6 +3671,7 @@ void Document::destroyRenderTree()
 
     clearChildNeedsStyleRecalc();
 
+    m_needsFontInvalidation = false;
     unscheduleStyleRecalc();
 
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
@@ -7623,6 +7702,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
         styleScope().clearResolver();
         m_styleRecalcTimer.stop();
+        m_needsFontInvalidation = false;
 
         clearSharedObjectPool();
 

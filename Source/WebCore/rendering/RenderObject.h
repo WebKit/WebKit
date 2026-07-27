@@ -766,6 +766,8 @@ public:
     
     inline void setNeedsLayoutAndInvalidateContentLogicalWidths();
 
+    virtual void fontsDidChange();
+
     void setPositionState(PositionType);
     void clearPositionedState() { m_stateBitfields.clearPositionedState(); }
 

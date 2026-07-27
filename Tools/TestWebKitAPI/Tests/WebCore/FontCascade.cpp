@@ -29,6 +29,7 @@
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/FontCascadeFonts.h>
+#include <WebCore/FontCascadeInlines.h>
 #include <WebCore/TextRun.h>
 #include <WebCore/TextShapingResultAndDisplayList.h>
 #include <wtf/WeakHashSet.h>
@@ -172,7 +173,7 @@ TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
     FontCascade font(WTF::move(description));
     font.update();
 
-    RefPtr fonts = font.fonts();
+    RefPtr fonts = font.ensureFonts();
     ASSERT_TRUE(fonts);
 
     fonts->shapedTextCache().add("hello world"_str, makeUnique<TextShapingResultAndDisplayList>());

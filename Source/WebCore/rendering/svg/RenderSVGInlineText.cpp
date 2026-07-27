@@ -32,6 +32,7 @@
 #include "FontCascadeInlines.h"
 #include "InlineIteratorSVGTextBox.h"
 #include "InlineRunAndOffset.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGRoot.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
@@ -43,6 +44,7 @@
 #include "SVGRootInlineBox.h"
 #include "SVGTextBoxPainter.h"
 #include "SVGTransformComputation.h"
+#include "Settings.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 #include "VisiblePosition.h"
@@ -106,6 +108,18 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
         setRenderedText(newText);
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         textAncestor->subtreeTextDidChange(this);
+}
+
+void RenderSVGInlineText::fontsDidChange()
+{
+    RenderText::fontsDidChange();
+    updateScaledFont();
+
+    if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+        textAncestor->setNeedsLayout();
+
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
 }
 
 void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)

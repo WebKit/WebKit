@@ -161,6 +161,7 @@ public:
 
     void invalidateMatchedDeclarationsCache();
     void clearCachedDeclarationsAffectedByViewportUnits();
+    void clearCachedDeclarationsAffectedByFontMetrics();
 
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() LIFETIME_BOUND { return m_inspectorCSSOMWrappers; }
 

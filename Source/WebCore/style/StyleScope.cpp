@@ -797,6 +797,17 @@ void Scope::invalidateMatchedDeclarationsCache()
         resolver->invalidateMatchedDeclarationsCache();
 }
 
+void Scope::clearCachedDeclarationsAffectedByFontMetrics()
+{
+    if (!m_shadowRoot) {
+        for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
+            const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().clearCachedDeclarationsAffectedByFontMetrics();
+    }
+
+    if (RefPtr resolver = resolverIfExists())
+        resolver->clearCachedDeclarationsAffectedByFontMetrics();
+}
+
 void Scope::pendingUpdateTimerFired()
 {
     flushPendingUpdate();

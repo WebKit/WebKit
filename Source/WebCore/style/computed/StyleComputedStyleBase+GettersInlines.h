@@ -104,6 +104,21 @@ inline bool ComputedStyleBase::usesViewportUnits() const
     return m_nonInheritedFlags.usesViewportUnits;
 }
 
+inline bool ComputedStyleBase::dependsOnFontMetrics() const
+{
+    return m_nonInheritedFlags.usesFontRelativeLength || m_nonInheritedFlags.usesFontSizeMath || !fontDescription().fontSizeAdjust().isNone();
+}
+
+inline bool ComputedStyleBase::usesFontRelativeLength() const
+{
+    return m_nonInheritedFlags.usesFontRelativeLength;
+}
+
+inline bool ComputedStyleBase::usesFontSizeMath() const
+{
+    return m_nonInheritedFlags.usesFontSizeMath;
+}
+
 inline bool ComputedStyleBase::isContainerDependent() const
 {
     return m_nonInheritedFlags.isContainerDependent;

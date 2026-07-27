@@ -1041,6 +1041,7 @@ public:
     void unscheduleStyleRecalc();
     bool NODELETE hasPendingStyleRecalc() const;
     bool NODELETE hasPendingFullStyleRebuild() const;
+    bool needsFontInvalidation() const { return m_needsFontInvalidation; }
 
     void registerNodeListForInvalidation(LiveNodeList&);
     void unregisterNodeListForInvalidation(LiveNodeList&);
@@ -2283,6 +2284,8 @@ private:
     void addToDocumentsMap();
     void removeFromDocumentsMap();
 
+    void performFontInvalidation();
+
     Style::Update& ensurePendingRenderTreeUpdate();
 
     NotificationClient* notificationClient() final;
@@ -2785,6 +2788,7 @@ private:
     bool m_bParsing { false }; // FIXME: rename
 
     bool m_needsFullStyleRebuild { false };
+    bool m_needsFontInvalidation { false };
     bool m_inStyleRecalc { false };
     bool m_inRenderTreeUpdate { false };
     bool m_isResolvingTreeStyle { false };

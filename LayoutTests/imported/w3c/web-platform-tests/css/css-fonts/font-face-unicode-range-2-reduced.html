@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="help" href="http://www.w3.org/TR/css-fonts-3/#unicode-range-desc">
+<link rel="match" href="font-face-unicode-range-2-reduced-expected.html">
+<style>
+  @font-face {
+    font-family: base;
+    src: url(support/fonts/LigatureSymbolsWithSpaces.woff);
+  }
+  @font-face {
+    font-family: swoosh;
+    src: url(support/fonts/Rochester.otf);
+    unicode-range: U+26;
+  }
+  .test {
+    font-family: swoosh, base;
+  }
+  .ref {
+    font-family: base;
+  }
+  .ref .amp {
+	  font-family: swoosh, base;
+  }
+  div {
+	  font-size: 5em;
+  }
+</style>
+<body>
+  <div class="test">A&amp;</div>
+  <div class="ref">This <span class="amp">&amp;</span> That</div>
+</body>
