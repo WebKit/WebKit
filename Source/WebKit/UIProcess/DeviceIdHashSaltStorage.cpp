@@ -32,11 +32,9 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
-#include <wtf/HexNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -211,12 +209,7 @@ void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOrig
         std::array<uint64_t, randomDataSize> randomData;
         cryptographicallyRandomValues(asWritableBytes(std::span<uint64_t> { randomData }));
 
-        StringBuilder builder;
-        builder.reserveCapacity(hashSaltSize);
-        for (uint64_t number : randomData)
-            builder.append(hex(number));
-
-        String deviceIdHashSalt = builder.toString();
+        String deviceIdHashSalt = createDeviceIdHashSaltString(randomData);
 
         auto newHashSaltForOrigin = makeUnique<HashSaltForOrigin>(WTF::move(documentOrigin), WTF::move(parentOrigin), WTF::move(deviceIdHashSalt));
 

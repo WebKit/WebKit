@@ -821,6 +821,7 @@
 				WebCore/WritingModeTests.cpp,
 				WebCore/XRCompositionLayer.cpp,
 				WebCore/YouTubePluginReplacement.cpp,
+				WebKit/DeviceIdHashSaltStorage.cpp,
 				WebKit/WKPage/AboutBlankLoad.cpp,
 				WebKit/WKPage/CanHandleRequest.cpp,
 				WebKit/WKPage/CloseFromWithinCreatePage.cpp,

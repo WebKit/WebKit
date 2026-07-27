@@ -27,14 +27,29 @@
 
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/SecurityOrigin.h>
+#include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/HexNumber.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
+
+// Renders each 64-bit value as a fixed 16-digit (zero-padded) hex string, so a device-ID hash salt
+// built from a fixed number of random values always has a stable, predictable length. hex() without
+// an explicit minimum width would emit only the significant digits, producing shorter salts.
+inline String createDeviceIdHashSaltString(std::span<const uint64_t> randomData)
+{
+    StringBuilder builder;
+    builder.reserveCapacity(randomData.size() * 16);
+    for (uint64_t number : randomData)
+        builder.append(hex(number, 16));
+    return builder.toString();
+}
 
 class DeviceIdHashSaltStorage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DeviceIdHashSaltStorage, WTF::DestructionThread::MainRunLoop> {
 public:
