@@ -86,7 +86,6 @@ public:
     void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
-    LayoutUnit flexItemContentLogicalHeight(const RenderBox& flexItem) const;
     void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit height);
 
     // Returns true if the position changed. In that case, the flexItem will have to be laid out again.

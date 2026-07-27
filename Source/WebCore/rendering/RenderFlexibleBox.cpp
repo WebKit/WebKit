@@ -446,13 +446,6 @@ void RenderFlexibleBox::flexItemWillBeRemoved(const RenderBox& flexItem)
     m_flexLayout.flexItemWillBeRemoved(flexItem);
 }
 
-// https://drafts.csswg.org/css-flexbox/#min-size-auto
-
-LayoutUnit RenderFlexibleBox::flexItemContentLogicalHeight(const RenderBox& flexItem) const
-{
-    return m_flexLayout.flexItemContentLogicalHeight(flexItem);
-}
-
 void RenderFlexibleBox::setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit height)
 {
     m_flexLayout.setFlexItemContentLogicalHeightFromLayout(flexItem, height);

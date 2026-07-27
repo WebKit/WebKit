@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FlexFormattingUtils.h>
+#include <WebCore/FlexIntegrationUtils.h>
 #include <WebCore/RenderBlock.h>
 #include <wtf/Range.h>
 
@@ -108,7 +109,7 @@ struct FlexContainerUsedExtents {
 
 class FlexFormattingContext {
 public:
-    FlexFormattingContext(LayoutIntegration::FlexIntegrationUtils&, const FlexLayoutConstraints&);
+    FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&, FlexItemContentCache&);
 
     struct Result {
         std::optional<LayoutUnit> alignContentStartOverflow;
@@ -192,10 +193,11 @@ private:
 
     const FlexFormattingUtils& flexFormattingUtils() const;
     FlexLayoutState& layoutState() const;
-    LayoutIntegration::FlexIntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
+    const LayoutIntegration::FlexIntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
+    LayoutIntegration::FlexIntegrationUtils& integrationUtils() LIFETIME_BOUND { return m_integrationUtils; }
 
-    const CheckedRef<RenderFlexibleBox> m_flexBox;
-    LayoutIntegration::FlexIntegrationUtils& m_integrationUtils;
+    const CheckedRef<const RenderFlexibleBox> m_flexBox;
+    LayoutIntegration::FlexIntegrationUtils m_integrationUtils;
     FlexFormattingUtils m_flexFormattingUtils;
     const FlexLayoutConstraints m_constraints;
     Result m_result;

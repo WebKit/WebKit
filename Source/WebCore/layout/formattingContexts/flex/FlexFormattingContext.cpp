@@ -48,10 +48,10 @@ static LayoutUnit constrainSizeByMinMax(LayoutUnit size, std::pair<LayoutUnit, L
     return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
 }
 
-FlexFormattingContext::FlexFormattingContext(LayoutIntegration::FlexIntegrationUtils& integration, const FlexLayoutConstraints& constraints)
-    : m_flexBox(integration.flexBox())
-    , m_integrationUtils(integration)
-    , m_flexFormattingUtils(integration.flexBox())
+FlexFormattingContext::FlexFormattingContext(RenderFlexibleBox& flexBox, const FlexLayoutConstraints& constraints, FlexItemContentCache& contentCache)
+    : m_flexBox(flexBox)
+    , m_integrationUtils(flexBox, contentCache)
+    , m_flexFormattingUtils(flexBox)
     , m_constraints(constraints)
 {
 }

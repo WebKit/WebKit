@@ -34,7 +34,6 @@
 #include "RenderBlock.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
-#include "RenderFlexibleBox.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
 #include "TextBoxTrimmer.h"
@@ -262,16 +261,11 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
 
 LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox& box, LogicalHeightType logicalHeightType)
 {
+    UNUSED_PARAM(box);
     ASSERT(box.establishesFormattingContext());
 
-    CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
     switch (logicalHeightType) {
     case LogicalHeightType::MinContent: {
-        // Since currently we can't ask RenderBox for content height, this is limited to flex items
-        // where the legacy flex layout "fixed" this by caching the content height in RenderBox::updateLogicalHeight
-        // before additional height constraints applied.
-        if (CheckedPtr flexContainer = dynamicDowncast<RenderFlexibleBox>(renderer->parent()))
-            return flexContainer->flexItemContentLogicalHeight(renderer.get());
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }

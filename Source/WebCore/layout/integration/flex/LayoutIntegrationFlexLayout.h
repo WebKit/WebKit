@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/FlexFormattingContext.h>
-#include <WebCore/FlexIntegrationUtils.h>
 #include <WebCore/FlexItemContentCache.h>
 #include <wtf/CheckedRef.h>
 
@@ -48,7 +47,6 @@ public:
     // Sets the static position of an out-of-flow flex item; returns true if it changed.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
-    LayoutUnit flexItemContentLogicalHeight(const RenderBox& flexItem) const;
     void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit);
     void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
     void flexItemWillBeRemoved(const RenderBox& flexItem);
@@ -70,7 +68,6 @@ private:
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
     FlexItemContentCache m_flexItemContentCache;
-    FlexIntegrationUtils m_integrationUtils;
 
     size_t m_numberOfFlexItemsOnFirstLine { 0 };
     size_t m_numberOfFlexItemsOnLastLine { 0 };

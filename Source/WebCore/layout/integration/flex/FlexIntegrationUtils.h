@@ -85,12 +85,6 @@ public:
     LayoutUnit flexItemContentLogicalHeight(const FlexLayoutItem&) const;
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
 
-    LayoutUnit flexItemContentLogicalHeight(const RenderBox& flexItem) const;
-    void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit);
-    void restoreFlexItemContentLogicalHeight(const RenderBox& flexItem, LayoutUnit);
-    LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
-    void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
-    void flexItemWillBeRemoved(const RenderBox& flexItem);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
     LayoutUnit maxContentMainAxisExtentForFlexItem(const FlexLayoutItem&);
