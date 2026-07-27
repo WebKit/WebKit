@@ -53,6 +53,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
 #include "ProfilerSupport.h"
+#include "RegExpObject.h"
 #include "SlotVisitorInlines.h"
 #include "Snippet.h"
 #include "StackAlignment.h"
@@ -1583,6 +1584,57 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
             return ObjectPropertyConditionSet::invalid();
     }
     return result;
+}
+
+const WTF::BitSet<256>* Graph::tryGetConstantRegExpFirstCharacterBitmap(Node* node, FirstCharacterFilterPosition position)
+{
+    JSGlobalObject* globalObject = nullptr;
+    RegExp* regExp = nullptr;
+    if (RegExpObject* regExpObject = node->dynamicCastConstant<RegExpObject*>()) {
+        globalObject = regExpObject->realm();
+        regExp = regExpObject->regExp();
+    } else if (node->op() == NewRegExp) {
+        globalObject = globalObjectFor(node->origin.semantic);
+        regExp = node->castOperand<RegExp*>();
+    }
+
+    if (!globalObject || !regExp)
+        return nullptr;
+
+    // The filter reads one fixed position, so the flags must guarantee a match can only begin there.
+    switch (position) {
+    case FirstCharacterFilterPosition::AtStart:
+        if (regExp->globalOrSticky())
+            return nullptr;
+        break;
+    case FirstCharacterFilterPosition::AtLastIndex:
+        if (!regExp->sticky())
+            return nullptr;
+        break;
+    }
+
+    if (globalObject->isRegExpRecompiled())
+        return nullptr;
+
+    const WTF::BitSet<256>* bitmap = regExpFirstCharacterBitmap(regExp, position);
+    if (!bitmap)
+        return nullptr;
+
+    // Only now that a filter will really be emitted is it worth constraining this compilation to the
+    // realm's RegExp-recompiled watchpoint. Registering it earlier would let any .compile() in the
+    // realm jettison code that baked no bitmap at all.
+    watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
+    return bitmap;
+}
+
+const WTF::BitSet<256>* Graph::regExpFirstCharacterBitmap(RegExp* regExp, FirstCharacterFilterPosition position)
+{
+    const WTF::BitSet<256>* bitmap = regExp->firstCharacterBitmap(position);
+    if (!bitmap)
+        return nullptr;
+
+    m_plan.weakReferences().addLazily(regExp);
+    return bitmap;
 }
 
 void Graph::registerFrozenValues()

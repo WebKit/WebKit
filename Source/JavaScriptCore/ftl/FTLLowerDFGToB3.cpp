@@ -19341,25 +19341,15 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.testNonZero32(bitmapByte, bit);
     }
 
-    // Anchored non-sticky exec fast-fail; tests input[0].
-    bool compileRegExpExecNonGlobalOrStickyAnchoredFilter(LValue globalObject, LValue argument)
+    void emitAnchoredFirstCharacterGuardChain(LValue argument, Edge argumentEdge, const uint8_t* bitmap, LBasicBlock operationCase, LBasicBlock noMatchCase)
     {
-        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand()->value());
-        auto localBitmap = Yarr::computeAnchoredFirstCharacterBitmap(regExp->pattern(), regExp->flags());
-        if (!localBitmap)
-            return false;
-        const uint8_t* bitmap = m_ftlState.jitCode->dfgCommon()->m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
-
         LBasicBlock check8Bit = m_out.newBlock();
         LBasicBlock checkLength = m_out.newBlock();
         LBasicBlock filterCase = m_out.newBlock();
-        LBasicBlock noMatchCase = m_out.newBlock();
-        LBasicBlock operationCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isRopeString(argument, m_node->child2()), rarely(operationCase), usually(check8Bit));
+        m_out.branch(isRopeString(argument, argumentEdge), rarely(operationCase), usually(check8Bit));
 
-        LBasicBlock lastNext = m_out.appendTo(check8Bit, checkLength);
+        m_out.appendTo(check8Bit, checkLength);
         LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
         m_out.branch(
             m_out.testIsZero32(
@@ -19367,7 +19357,7 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.constInt32(StringImpl::flagIs8Bit())),
             rarely(operationCase), usually(checkLength));
 
-        // An anchored pattern cannot match empty, so delegate an empty string to the operation.
+        // An anchored pattern that reaches here cannot match empty, so delegate an empty string.
         m_out.appendTo(checkLength, filterCase);
         m_out.branch(m_out.equal(m_out.load32(stringImpl, m_heaps.StringImpl_length), m_out.int32Zero), rarely(operationCase), usually(filterCase));
 
@@ -19375,6 +19365,25 @@ IGNORE_CLANG_WARNINGS_END
         LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
         LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.constIntPtr(0)));
         m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(noMatchCase));
+    }
+
+    // Anchored non-sticky exec fast-fail; tests input[0].
+    bool compileRegExpExecNonGlobalOrStickyAnchoredFilter(LValue globalObject, LValue argument)
+    {
+        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand()->value());
+        ASSERT(!regExp->globalOrSticky());
+
+        auto* localBitmap = m_graph.regExpFirstCharacterBitmap(regExp, FirstCharacterFilterPosition::AtStart);
+        if (!localBitmap)
+            return false;
+        const uint8_t* bitmap = localBitmap->storageBytes().data();
+
+        LBasicBlock noMatchCase = m_out.newBlock();
+        LBasicBlock operationCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(noMatchCase);
+        emitAnchoredFirstCharacterGuardChain(argument, m_node->child2(), bitmap, operationCase, noMatchCase);
 
         m_out.appendTo(noMatchCase, operationCase);
         ValueFromBlock nullResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsNull())));
@@ -19402,30 +19411,17 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(result);
     }
 
-    // Sticky exec fast-fail; when input[lastIndex] cannot begin a match, reset lastIndex to 0 and
-    // return null inline.
-    bool compileRegExpExecStickyFirstCharFilter(LValue globalObject, LValue base, LValue argument)
+    void emitStickyFirstCharacterGuardChain(LValue base, LValue argument, Edge argumentEdge, const uint8_t* bitmap, LBasicBlock operationCase, LBasicBlock noMatchCase)
     {
-        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand()->value());
-        ASSERT(regExp->sticky() && !regExp->global());
-
-        auto localBitmap = Yarr::computeStickyFirstCharacterBitmap(regExp->pattern(), regExp->flags());
-        if (!localBitmap)
-            return false;
-        const uint8_t* bitmap = m_ftlState.jitCode->dfgCommon()->m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
-
         LBasicBlock check8Bit = m_out.newBlock();
         LBasicBlock checkWritable = m_out.newBlock();
         LBasicBlock checkInt32 = m_out.newBlock();
         LBasicBlock checkInBounds = m_out.newBlock();
         LBasicBlock filterCase = m_out.newBlock();
-        LBasicBlock noMatchCase = m_out.newBlock();
-        LBasicBlock operationCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isRopeString(argument, m_node->child3()), rarely(operationCase), usually(check8Bit));
+        m_out.branch(isRopeString(argument, argumentEdge), rarely(operationCase), usually(check8Bit));
 
-        LBasicBlock lastNext = m_out.appendTo(check8Bit, checkWritable);
+        m_out.appendTo(check8Bit, checkWritable);
         LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
         m_out.branch(
             m_out.testIsZero32(
@@ -19455,6 +19451,25 @@ IGNORE_CLANG_WARNINGS_END
         LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
         LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.zeroExtPtr(lastIndex)));
         m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(noMatchCase));
+    }
+
+    // Sticky exec fast-fail; when input[lastIndex] cannot begin a match, reset lastIndex to 0 and return null inline.
+    bool compileRegExpExecStickyFirstCharFilter(LValue globalObject, LValue base, LValue argument)
+    {
+        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand()->value());
+        ASSERT(regExp->sticky() && !regExp->global());
+
+        auto* localBitmap = m_graph.regExpFirstCharacterBitmap(regExp, FirstCharacterFilterPosition::AtLastIndex);
+        if (!localBitmap)
+            return false;
+        const uint8_t* bitmap = localBitmap->storageBytes().data();
+
+        LBasicBlock noMatchCase = m_out.newBlock();
+        LBasicBlock operationCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(noMatchCase);
+        emitStickyFirstCharacterGuardChain(base, argument, m_node->child3(), bitmap, operationCase, noMatchCase);
 
         m_out.appendTo(noMatchCase, operationCase);
         m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(0))), base, m_heaps.RegExpObject_lastIndex);
@@ -19508,6 +19523,8 @@ IGNORE_CLANG_WARNINGS_END
                 LValue argument = lowString(m_node->child3());
                 if (compileRegExpTestAnchoredFilter(globalObject, base, argument))
                     return;
+                if (compileRegExpTestStickyFilter(globalObject, base, argument))
+                    return;
                 LValue result = vmCall(Int32, operationRegExpTestString, globalObject, base, argument);
                 setBoolean(result);
                 return;
@@ -19525,52 +19542,52 @@ IGNORE_CLANG_WARNINGS_END
         setBoolean(result);
     }
 
-    // Anchored RegExp.test(string) fast-fail on a constant RegExpObject; tests input[0]. A runtime
-    // guard (below) keeps it correct across .compile() without a recompile watchpoint.
+    // Anchored RegExp.test(string) fast-fail on a constant RegExpObject; tests input[0].
     bool compileRegExpTestAnchoredFilter(LValue globalObject, LValue base, LValue argument)
     {
-        RegExp* regExp = nullptr;
-        if (RegExpObject* regExpObject = m_node->child2()->dynamicCastConstant<RegExpObject*>())
-            regExp = regExpObject->regExp();
-        else if (m_node->child2()->op() == NewRegExp)
-            regExp = m_node->child2()->castOperand<RegExp*>();
-        if (!regExp || regExp->globalOrSticky())
-            return false;
-        auto localBitmap = Yarr::computeAnchoredFirstCharacterBitmap(regExp->pattern(), regExp->flags());
+        auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(m_node->child2().node(), FirstCharacterFilterPosition::AtStart);
         if (!localBitmap)
             return false;
-        const uint8_t* bitmap = m_ftlState.jitCode->dfgCommon()->m_regExpFirstCharacterBitmaps.add(*localBitmap)->storageBytes().data();
+        const uint8_t* bitmap = localBitmap->storageBytes().data();
 
-        LBasicBlock checkRope = m_out.newBlock();
-        LBasicBlock check8Bit = m_out.newBlock();
-        LBasicBlock checkLength = m_out.newBlock();
-        LBasicBlock filterCase = m_out.newBlock();
         LBasicBlock falseCase = m_out.newBlock();
         LBasicBlock operationCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        // The object must still wrap the RegExp whose bitmap we baked (guards against .compile()).
-        LValue currentRegExp = m_out.bitAnd(m_out.loadPtr(base, m_heaps.RegExpObject_regExpAndFlags), m_out.constIntPtr(RegExpObject::regExpMask));
-        m_out.branch(m_out.equal(currentRegExp, frozenPointer(m_graph.freeze(regExp))), usually(checkRope), rarely(operationCase));
-
-        LBasicBlock lastNext = m_out.appendTo(checkRope, check8Bit);
-        m_out.branch(isRopeString(argument, m_node->child3()), rarely(operationCase), usually(check8Bit));
-
-        m_out.appendTo(check8Bit, checkLength);
-        LValue stringImpl = m_out.loadPtr(argument, m_heaps.JSString_value);
-        m_out.branch(
-            m_out.testIsZero32(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())),
-            rarely(operationCase), usually(checkLength));
-
-        m_out.appendTo(checkLength, filterCase);
-        m_out.branch(m_out.equal(m_out.load32(stringImpl, m_heaps.StringImpl_length), m_out.int32Zero), rarely(operationCase), usually(filterCase));
-
-        m_out.appendTo(filterCase, falseCase);
-        LValue stringData = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
-        LValue character = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, stringData, m_out.constIntPtr(0)));
-        m_out.branch(firstCharacterBitmapContains(character, bitmap), unsure(operationCase), unsure(falseCase));
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(falseCase);
+        emitAnchoredFirstCharacterGuardChain(argument, m_node->child3(), bitmap, operationCase, falseCase);
 
         m_out.appendTo(falseCase, operationCase);
+        ValueFromBlock falseResult = m_out.anchor(m_out.int32Zero);
+        m_out.jump(continuation);
+
+        m_out.appendTo(operationCase, continuation);
+        ValueFromBlock operationResult = m_out.anchor(vmCall(Int32, operationRegExpTestString, globalObject, base, argument));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, falseResult, operationResult));
+        return true;
+    }
+
+    // Sticky RegExp.test(string) fast-fail on a constant RegExpObject; tests input[lastIndex]. `gy`
+    // qualifies too: on a failed match RegExpBuiltinExec resets lastIndex to 0 for global as well as sticky.
+    bool compileRegExpTestStickyFilter(LValue globalObject, LValue base, LValue argument)
+    {
+        auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(m_node->child2().node(), FirstCharacterFilterPosition::AtLastIndex);
+        if (!localBitmap)
+            return false;
+        const uint8_t* bitmap = localBitmap->storageBytes().data();
+
+        LBasicBlock falseCase = m_out.newBlock();
+        LBasicBlock operationCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(falseCase);
+        emitStickyFirstCharacterGuardChain(base, argument, m_node->child3(), bitmap, operationCase, falseCase);
+
+        m_out.appendTo(falseCase, operationCase);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(0))), base, m_heaps.RegExpObject_lastIndex);
         ValueFromBlock falseResult = m_out.anchor(m_out.int32Zero);
         m_out.jump(continuation);
 

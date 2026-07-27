@@ -9995,6 +9995,48 @@ void SpeculativeJIT::emitFirstCharacterBitmapMatch(const uint8_t* bitmap, GPRReg
 #endif
 }
 
+void SpeculativeJIT::emitRegExpAnchoredFirstCharacterFilterGuards(const uint8_t* bitmap, GPRReg argumentGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, JumpList& slowCases)
+{
+    ASSERT(noOverlap(argumentGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+
+    // The string must be a resolved 8-bit string.
+    loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
+    slowCases.append(branchIfRopeStringImpl(scratch1GPR));
+    slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+
+    // An anchored pattern that reaches here cannot match empty, so delegate an empty string.
+    slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::lengthMemoryOffset())));
+
+    loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+    load8(Address(scratch1GPR), scratch2GPR);
+    emitFirstCharacterBitmapMatch(bitmap, scratch2GPR, scratch1GPR, scratch3GPR, slowCases);
+}
+
+void SpeculativeJIT::emitRegExpStickyFirstCharacterFilterGuards(const uint8_t* bitmap, GPRReg baseGPR, GPRReg argumentGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, JumpList& slowCases)
+{
+    ASSERT(noOverlap(baseGPR, argumentGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+
+    // The string must be a resolved 8-bit string.
+    loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
+    slowCases.append(branchIfRopeStringImpl(scratch1GPR));
+    slowCases.append(branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+
+    // lastIndex must be writable so the inline no-match path can reset it to 0.
+    slowCases.append(branchTest32(NonZero, Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), TrustedImm32(RegExpObject::lastIndexIsNotWritableFlag)));
+
+    load64(Address(baseGPR, RegExpObject::offsetOfLastIndex()), scratch2GPR);
+    slowCases.append(branchIfNotInt32(scratch2GPR));
+    zeroExtend32ToWord(scratch2GPR, scratch2GPR);
+
+    // Need 0 <= lastIndex < length.
+    load32(Address(scratch1GPR, StringImpl::lengthMemoryOffset()), scratch3GPR);
+    slowCases.append(branch32(AboveOrEqual, scratch2GPR, scratch3GPR));
+
+    loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch1GPR);
+    load8(BaseIndex(scratch1GPR, scratch2GPR, TimesOne), scratch3GPR);
+    emitFirstCharacterBitmapMatch(bitmap, scratch3GPR, scratch1GPR, scratch2GPR, slowCases);
+}
+
 #endif
 
 } } // namespace JSC::DFG
