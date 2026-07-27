@@ -290,7 +290,7 @@ void FlexIntegrationUtils::trimMainAxisMarginStart(FlexLayoutItem& flexLayoutIte
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
     else
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockStart);
-    addItemAtFlexLineStart(flexLayoutItem);
+    flexBox().flexLayout().addItemAtFlexLineStart(flexLayoutItem.renderer.get());
 }
 
 void FlexIntegrationUtils::trimMainAxisMarginEnd(FlexLayoutItem& flexLayoutItem)
@@ -300,7 +300,7 @@ void FlexIntegrationUtils::trimMainAxisMarginEnd(FlexLayoutItem& flexLayoutItem)
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
     else
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);
-    addItemAtFlexLineEnd(flexLayoutItem);
+    flexBox().flexLayout().addItemAtFlexLineEnd(flexLayoutItem.renderer.get());
 }
 
 void FlexIntegrationUtils::trimCrossAxisMarginStart(const FlexLayoutItem& flexLayoutItem)
@@ -309,7 +309,7 @@ void FlexIntegrationUtils::trimCrossAxisMarginStart(const FlexLayoutItem& flexLa
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockStart);
     else
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
-    addItemOnFirstFlexLine(flexLayoutItem);
+    flexBox().flexLayout().addItemOnFirstFlexLine(flexLayoutItem.renderer.get());
 }
 
 void FlexIntegrationUtils::trimCrossAxisMarginEnd(const FlexLayoutItem& flexLayoutItem)
@@ -318,32 +318,12 @@ void FlexIntegrationUtils::trimCrossAxisMarginEnd(const FlexLayoutItem& flexLayo
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);
     else
         setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
-    addItemOnLastFlexLine(flexLayoutItem);
+    flexBox().flexLayout().addItemOnLastFlexLine(flexLayoutItem.renderer.get());
 }
 
 LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const
 {
     return flexBox().adjustBorderBoxLogicalWidthForBoxSizing(computedLogicalWidth);
-}
-
-void FlexIntegrationUtils::addItemAtFlexLineStart(const FlexLayoutItem& flexLayoutItem)
-{
-    flexBox().flexLayout().addItemAtFlexLineStart(flexLayoutItem.renderer.get());
-}
-
-void FlexIntegrationUtils::addItemAtFlexLineEnd(const FlexLayoutItem& flexLayoutItem)
-{
-    flexBox().flexLayout().addItemAtFlexLineEnd(flexLayoutItem.renderer.get());
-}
-
-void FlexIntegrationUtils::addItemOnFirstFlexLine(const FlexLayoutItem& flexLayoutItem)
-{
-    flexBox().flexLayout().addItemOnFirstFlexLine(flexLayoutItem.renderer.get());
-}
-
-void FlexIntegrationUtils::addItemOnLastFlexLine(const FlexLayoutItem& flexLayoutItem)
-{
-    flexBox().flexLayout().addItemOnLastFlexLine(flexLayoutItem.renderer.get());
 }
 
 void FlexIntegrationUtils::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)

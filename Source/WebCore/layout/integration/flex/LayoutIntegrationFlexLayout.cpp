@@ -269,8 +269,6 @@ bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
 void FlexLayout::layout(RelayoutChildren relayoutChildren)
 {
-    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { } };
-
     m_flexLayoutResult = { };
 
     prepareFlexItemsAndMargins();
@@ -278,6 +276,7 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     auto constraints = flexLayoutConstraints();
     auto flexItems = collectFlexItems(relayoutChildren, constraints);
 
+    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { } };
     m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
 }
 
@@ -350,7 +349,7 @@ CheckedPtr<const RenderBox> FlexLayout::flexItemForFirstBaseline() const
     // The first baseline comes from the visually-first flex line, and within it the item nearest that line's visual
     // start. flex-wrap: wrap-reverse makes the visually-first line the logically-last line; a reversed main axis
     // (row/column-reverse) puts the visual start at the logically-last item, so we scan the line in reverse.
-    auto& flexItems = flexBox().flexItems();
+    auto& flexItems = m_flexItems;
     bool reverse = flexBox().style().flexDirection() == FlexDirection::RowReverse || flexBox().style().flexDirection() == FlexDirection::ColumnReverse;
     if (FlexFormattingUtils::isWrapReverse(flexBox()))
         return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult.numberOfFlexItemsOnLastLine, m_flexLayoutResult.numberOfFlexItemsOnLastLine, reverse);
@@ -362,7 +361,7 @@ CheckedPtr<const RenderBox> FlexLayout::flexItemForLastBaseline() const
     // The last baseline comes from the visually-last flex line, and within it the item nearest that line's visual
     // end (the opposite end to flexItemForFirstBaseline, hence the negated reverse). wrap-reverse makes the
     // visually-last line the logically-first line.
-    auto& flexItems = flexBox().flexItems();
+    auto& flexItems = m_flexItems;
     bool reverse = !(flexBox().style().flexDirection() == FlexDirection::RowReverse || flexBox().style().flexDirection() == FlexDirection::ColumnReverse);
     if (FlexFormattingUtils::isWrapReverse(flexBox()))
         return baselineFlexItemInLine(0, m_flexLayoutResult.numberOfFlexItemsOnFirstLine, reverse);
@@ -375,7 +374,7 @@ CheckedPtr<const RenderBox> FlexLayout::baselineFlexItemInLine(size_t lineStart,
     // in order). Scanning it in the given direction, return the first item that participates in baseline alignment
     // (baseline self-alignment, the main axis is the item's inline axis, and no auto margins in the cross axis), or
     // the first item scanned when none participate.
-    auto& flexItems = flexBox().flexItems();
+    auto& flexItems = m_flexItems;
     CheckedPtr<const RenderBox> fallback = nullptr;
     for (size_t i = 0; i < itemCount; ++i) {
         CheckedPtr flexItem = flexItems[lineStart + (reverse ? itemCount - 1 - i : i)].get();

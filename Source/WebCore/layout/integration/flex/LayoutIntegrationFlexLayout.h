@@ -47,7 +47,6 @@ public:
     // The container's in-flow children in order-modified document order, rebuilt every layout. Weak pointers because
     // painting/hit-testing/baseline queries read the list after layout, when a child may have been removed.
     using FlexItemList = Vector<SingleThreadWeakPtr<RenderBox>>;
-    const FlexItemList& flexItems() const LIFETIME_BOUND { return m_flexItems; }
 
     void paint(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction);
@@ -62,14 +61,9 @@ public:
     // Sets the static position of an out-of-flow flex item; returns true if it changed.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
-    // The state of the flex algorithm, engaged for its duration only. Absent outside of it, which is how
+    // How far the flex algorithm has got, engaged for its duration only. Absent outside of it, which is how
     // RenderFlexibleBox tells that the flex algorithm is not the one asking.
-    bool isInLayout() const { return !!m_flexLayoutState; }
     std::optional<LayoutPhase> layoutPhase() const { return m_flexLayoutState ? std::make_optional(m_flexLayoutState->phase()) : std::nullopt; }
-
-    bool isFlexBoxBlockSizeDefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeDefinite(); }
-    bool isFlexBoxBlockSizeIndefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeIndefinite(); }
-    void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { ASSERT(m_flexLayoutState); m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(isDefinite); }
 
     // Whether the item's height is definite by the phase the flex algorithm is in (9.8: the used sizes become
     // definite as the steps that produce them run). Absent when the algorithm is not running -- only
@@ -99,6 +93,14 @@ public:
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
 private:
+    // The flex container's own block-size definiteness, computed once per layout and cached on the layout state.
+    // The formatting context reaches these through FlexLayoutState directly; here they only back the percentage
+    // resolution above.
+    bool isInLayout() const { return !!m_flexLayoutState; }
+    bool isFlexBoxBlockSizeDefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeDefinite(); }
+    bool isFlexBoxBlockSizeIndefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeIndefinite(); }
+    void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { ASSERT(m_flexLayoutState); m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(isDefinite); }
+
     void prepareFlexItemsAndMargins();
     FlexLayoutItems collectFlexItems(RelayoutChildren, const FlexLayoutConstraints&);
     FlexLayoutConstraints flexLayoutConstraints() const;

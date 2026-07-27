@@ -54,10 +54,7 @@ class RenderFlexibleBox;
 class FlexLayoutItem;
 class StyleContentAlignmentData;
 
-// Stateless geometry and query helpers for the flex formatting context (mirrors the render-side
-// FlexLayoutUtils). These read the flex container and its items through the container reference;
-// RenderFlexibleBox befriends this class so the helpers can reach the container's flow-direction
-// queries. Shared helpers are duplicated from FlexLayoutUtils so the formatting context is self-contained.
+// Stateless geometry and query helpers for the flex formatting context.
 class FlexFormattingUtils {
 public:
     FlexFormattingUtils(const RenderFlexibleBox&);
@@ -87,22 +84,17 @@ public:
     LayoutUnit computeGap(GapType) const;
 
     LayoutUnit resolveMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
-    LayoutUnit usedMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
     LayoutUnit usedMainAxisMarginExtentForFlexItem(const FlexLayoutItem&) const;
     static LayoutUnit mainAxisMarginEndForFlexItem(const RenderFlexibleBox&, const FlexLayoutItem&);
     LayoutUnit mainAxisMarginEndForFlexItem(const FlexLayoutItem&) const;
-    static LayoutUnit crossAxisMarginExtentForFlexItem(const RenderBox& flexItem);
     LayoutUnit crossAxisMarginExtentForFlexItem(const FlexLayoutItem&) const;
 
     LayoutUnit crossAxisScrollbarExtent() const;
     LayoutUnit mainAxisScrollbarExtent() const;
 
-    static const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
-    static const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     const Style::MinimumSize& minMainSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     const Style::MaximumSize& maxMainSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
-    static const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     const Style::MinimumSize& minCrossSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     const Style::MaximumSize& maxCrossSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
@@ -115,7 +107,6 @@ public:
     // Whether the container will stretch the item along containingAxis (RenderBlock::willStretchItem for flex).
     static bool willStretchFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem, LogicalBoxAxis containingAxis, StretchingMode);
     static bool hasStretchedFlexItemWithAspectRatio(const RenderFlexibleBox&);
-    static bool useContentBasedMinimumSize(const RenderBox& flexItem);
     bool useContentBasedMinimumSize(const FlexLayoutItem&) const;
     static bool useContentBasedMinimumBlockSize(const RenderBox& flexItem);
     double preferredAspectRatioForFlexItem(const FlexLayoutItem&) const;
@@ -166,6 +157,13 @@ public:
     static LayoutUnit alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfLines);
 
 private:
+    static LayoutUnit crossAxisMarginExtentForFlexItem(const RenderBox& flexItem);
+    LayoutUnit usedMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
+    static const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
+    static const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
+    static const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
+    static bool useContentBasedMinimumSize(const RenderBox& flexItem);
+
     const RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
 
     const CheckedRef<const RenderFlexibleBox> m_flexBox;
