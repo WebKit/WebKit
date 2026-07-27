@@ -1032,6 +1032,73 @@ TEST(ObscuredContentInsets, ScrollPocketCoversFullScreenTitlebar)
     [NSNotificationCenter.defaultCenter removeObserver:exitObserver.get()];
 }
 
+TEST(ObscuredContentInsets, ScrollPocketIgnoresFullScreenTitlebarHeightForSubscrollers)
+{
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    [NSApp activateIgnoringOtherApps:YES];
+
+    RetainPtr scrollView = adoptNS([[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+
+    [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [scrollView setDocumentView:webView.get()];
+    [webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 0)];
+
+    auto styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
+    RetainPtr toolbar = adoptNS([[NSToolbar alloc] initWithIdentifier:@"ScrollPocketTestToolbar"]);
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO]);
+
+    [window setCollectionBehavior:[window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary];
+    [window setToolbar:toolbar.get()];
+
+    // Attach a titlebar accessory so AppKit does not autohide the fullscreen toolbar mid-test.
+    RetainPtr accessoryViewController = adoptNS([[NSTitlebarAccessoryViewController alloc] init]);
+    [accessoryViewController setView:adoptNS([[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)]).get()];
+    [accessoryViewController setLayoutAttribute:NSLayoutAttributeRight];
+    [window addTitlebarAccessoryViewController:accessoryViewController.get()];
+
+    [[window contentView] addSubview:scrollView];
+    [scrollView setFrame:[[window contentView] bounds]];
+    [webView setFrame:[[window contentView] bounds]];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+    [webView waitForNextPresentationUpdate];
+
+    // Outside fullscreen, with no obscured inset, there is nothing for a top scroll pocket to fill.
+    EXPECT_NULL([webView _topScrollPocket]);
+    EXPECT_EQ(0, [webView _fullScreenTitlebarOverlayHeightForTesting]);
+
+    __block bool didEnter = false;
+    __block bool didExit = false;
+    RetainPtr enterObserver = [NSNotificationCenter.defaultCenter addObserverForName:NSWindowDidEnterFullScreenNotification object:window.get() queue:nil usingBlock:^(NSNotification *) {
+        didEnter = true;
+    }];
+    RetainPtr exitObserver = [NSNotificationCenter.defaultCenter addObserverForName:NSWindowDidExitFullScreenNotification object:window.get() queue:nil usingBlock:^(NSNotification *) {
+        didExit = true;
+    }];
+
+    [window toggleFullScreen:nil];
+    EXPECT_TRUE(Util::runFor(&didEnter, 10_s));
+    [webView waitForNextPresentationUpdate];
+
+    auto overlayHeight = [webView _fullScreenTitlebarOverlayHeightForTesting];
+    EXPECT_GT(overlayHeight, 0);
+
+    EXPECT_NULL([webView _topScrollPocket]);
+
+    [window toggleFullScreen:nil];
+    EXPECT_TRUE(Util::runFor(&didExit, 10_s));
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_NULL([webView _topScrollPocket]);
+
+    [NSNotificationCenter.defaultCenter removeObserver:enterObserver.get()];
+    [NSNotificationCenter.defaultCenter removeObserver:exitObserver.get()];
+}
+
 static RetainPtr<NSWindow> createFullScreenCapableWindow()
 {
     auto styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
