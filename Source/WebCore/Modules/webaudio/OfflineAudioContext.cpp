@@ -98,9 +98,16 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
     if (!target)
         return;
 
+    // The graph may contain feedback cycles (which are legal in Web Audio as long as a
+    // DelayNode breaks the loop), and non-tree topologies may reach the same node via
+    // multiple paths. Track visited nodes so we neither loop forever nor double-count a
+    // node's noise multiplier.
+    HashSet<CheckedPtr<AudioNode>> visited;
     Vector<AudioConnectionRef<AudioNode>, 1> remainingNodes;
-    for (auto& node : referencedSourceNodes())
-        remainingNodes.append(node.copyRef());
+    for (auto& node : referencedSourceNodes()) {
+        if (visited.add(node.ptr()).isNewEntry)
+            remainingNodes.append(node.copyRef());
+    }
 
     while (!remainingNodes.isEmpty()) {
         auto node = remainingNodes.takeLast();
@@ -111,7 +118,8 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
                 continue;
 
             output->forEachInputNode([&](auto& inputNode) {
-                remainingNodes.append(inputNode);
+                if (visited.add(&inputNode).isNewEntry)
+                    remainingNodes.append(inputNode);
             });
         }
     }

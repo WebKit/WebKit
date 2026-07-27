@@ -1322,6 +1322,22 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
     checkFingerprintForNoise(@"testLoopingOscillatorCompressorBiquadFilter");
 }
 
+TEST(AdvancedPrivacyProtections, WebAudioNoiseInjectionWithFeedbackCycle)
+{
+    // With advanced privacy protections enabled, OfflineAudioContext sets up noise injection
+    // by walking the node graph. That walk must terminate even when the graph contains a
+    // feedback cycle; otherwise rendering hangs while holding the graph lock. Confirm the
+    // render completes by checking it returns the expected rendered length.
+    auto testURL = [NSBundle.test_resourcesBundle URLForResource:@"audio-fingerprinting" withExtension:@"html"];
+    auto resourcesURL = NSBundle.test_resourcesBundle.resourceURL;
+
+    auto webView = createWebViewWithAdvancedPrivacyProtections();
+    [webView loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(5000, [[webView callAsyncJavaScriptAndWait:@"return testFeedbackCycle()"] intValue]);
+}
+
 TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIsAfterMultiplePSON)
 {
     [TestProtocol registerWithScheme:@"https"];

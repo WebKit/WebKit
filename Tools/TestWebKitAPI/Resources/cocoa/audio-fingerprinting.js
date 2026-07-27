@@ -41,6 +41,41 @@ async function testOscillatorCompressor() {
     return combineSamples(renderedBuffer.getChannelData(0));
 }
 
+async function testFeedbackCycle() {
+    // Regression test for a hang while setting up noise injection: the graph walk in
+    // OfflineAudioContext::increaseNoiseMultiplierIfNeeded() tracked no visited nodes, so a
+    // feedback cycle (legal in Web Audio when a DelayNode breaks the loop) looped forever
+    // while holding the graph lock. Rendering this graph must complete; we return the
+    // rendered length (a fixed, always-serializable value) so the caller can confirm it did.
+    const length = 5000;
+    const context = new OfflineAudioContext(1, length, 44100);
+
+    const oscillator = context.createOscillator();
+    oscillator.type = "triangle";
+    oscillator.frequency.value = 1000;
+
+    const gain = context.createGain();
+    gain.gain.value = 0.5;
+
+    const delay = context.createDelay();
+    delay.delayTime.value = 0.01;
+
+    // Feedback cycle: gain -> delay -> gain, with the oscillator feeding gain and gain
+    // driving the destination.
+    oscillator.connect(gain);
+    gain.connect(delay);
+    delay.connect(gain);
+    gain.connect(context.destination);
+
+    oscillator.start();
+    const renderedBuffer = await context.startRendering();
+    oscillator.disconnect();
+    gain.disconnect();
+    delay.disconnect();
+
+    return renderedBuffer.length;
+}
+
 function testOscillatorCompressorWorklet() {
     return new Promise(async resolve => {
         const context = new AudioContext;
