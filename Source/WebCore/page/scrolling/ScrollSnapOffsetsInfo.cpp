@@ -32,6 +32,7 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Logging.h"
+#include "Node.h"
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
@@ -376,7 +377,12 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     // https://drafts.csswg.org/css-scroll-snap-1/#re-snap: a focused element, then a fragment-targeted
     // element, then the first box in tree order. isFocused/isTarget accumulate across all areas
     // sharing the offset (not just the first one added).
-    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, bool isFocused, bool isTarget, NodeIdentifier snapTargetID, size_t snapAreaIndices)
+    //
+    // boxesWithScrollSnapPositions is a hash set with arbitrary iteration order, so snapAreaIndices
+    // isn't naturally in tree order like it would be if boxes were visited in tree order. Rather than
+    // sorting every snap box up front, insert each new index in tree order relative only to the other
+    // indices already tied at this exact offset (almost always zero or one of them).
+    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, bool isFocused, bool isTarget, NodeIdentifier snapTargetID, size_t snapAreaIndex, const Vector<CheckedRef<const RenderBox>>& snapBoxesByAreaIndex)
     {
         if (!offsets.isValidKey(newOffset))
             return;
@@ -400,13 +406,23 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         offset.isTarget |= isTarget;
 
         offset.hasSnapAreaLargerThanViewport |= hasSnapAreaLargerThanViewport;
-        offset.snapAreaIndices.append(snapAreaIndices);
+
+        Ref newElement = *snapBoxesByAreaIndex[snapAreaIndex]->element();
+        auto insertionPoint = std::ranges::find_if(offset.snapAreaIndices, [&](size_t existingIndex) {
+            Ref existingElement = *snapBoxesByAreaIndex[existingIndex]->element();
+            return is_lt(treeOrder<ComposedTree>(newElement, existingElement));
+        });
+        offset.snapAreaIndices.insert(insertionPoint - offset.snapAreaIndices.begin(), snapAreaIndex);
     };
 
     HashMap<LayoutUnit, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
     HashMap<LayoutUnit, SnapOffset<LayoutUnit>> horizontalSnapOffsetsMap;
     Vector<LayoutRect> snapAreas;
     Vector<NodeIdentifier> snapAreasIDs;
+
+    // Parallel to snapAreas/snapAreasIDs, used only to compare tree order between areas that tie at
+    // the same snap offset (see addOrUpdateStopForSnapOffset above).
+    Vector<CheckedRef<const RenderBox>> snapBoxesByAreaIndex;
 
     auto maxScrollOffset = scrollableArea.maximumScrollOffset();
     maxScrollOffset.clampNegativeToZero();
@@ -435,7 +451,6 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     for (CheckedRef child : boxesWithScrollSnapPositions) {
         if (child->enclosingScrollableContainer() != &scrollingElementBox || !child->element())
             continue;
-
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.
         // The snap area is the bounding box of the child element's border box, after applying transformations.
         OptionSet<MapCoordinatesMode> options = { MapCoordinatesMode::UseTransforms, MapCoordinatesMode::IgnoreStickyOffsets };
@@ -484,16 +499,17 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         auto isTarget = child->element() ? child->element()->contains(targetElement) : false;
         auto identifier = protect(child->element())->nodeIdentifier();
         snapAreasIDs.append(identifier);
+        snapBoxesByAreaIndex.append(child);
 
         if (snapsHorizontally) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
-            addOrUpdateStopForSnapOffset(horizontalSnapOffsetsMap, absoluteScrollOffset, stop, scrollSnapAreaAsOffsets.width() > scrollSnapPort.width(), isFocused, isTarget, identifier, snapAreas.size() - 1);
+            addOrUpdateStopForSnapOffset(horizontalSnapOffsetsMap, absoluteScrollOffset, stop, scrollSnapAreaAsOffsets.width() > scrollSnapPort.width(), isFocused, isTarget, identifier, snapAreas.size() - 1, snapBoxesByAreaIndex);
         }
         if (snapsVertically) {
             auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.maxY(), yAlign, areaYAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.maxY(), yAlign, areaYAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ 0, roundToInt(absoluteScrollYPosition) }).y(), 0, maxScrollOffset.y());
-            addOrUpdateStopForSnapOffset(verticalSnapOffsetsMap, absoluteScrollOffset, stop, scrollSnapAreaAsOffsets.height() > scrollSnapPort.height(), isFocused, isTarget, identifier, snapAreas.size() - 1);
+            addOrUpdateStopForSnapOffset(verticalSnapOffsetsMap, absoluteScrollOffset, stop, scrollSnapAreaAsOffsets.height() > scrollSnapPort.height(), isFocused, isTarget, identifier, snapAreas.size() - 1, snapBoxesByAreaIndex);
         }
 
         if (!snapAreas.isEmpty())
