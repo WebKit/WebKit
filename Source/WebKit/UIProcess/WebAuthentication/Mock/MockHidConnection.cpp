@@ -209,6 +209,15 @@ void MockHidConnection::feedReports()
         size_t writePosition = payload.size();
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongNonce)
             payload[0]--;
+        if (stagesMatch() && m_configuration.hid->error == Mock::HidError::ShortInitResponse) {
+            // Emit an INIT response whose payload matches the requested nonce but is too short
+            // to contain the subsequent 4-byte channel ID, to exercise the bounds check in
+            // CtapHidDriver::continueAfterChannelAllocated().
+            FidoHidInitPacket shortPacket(kHidBroadcastChannel, FidoHidDeviceCommand::kInit, WTF::move(payload), kHidInitNonceLength);
+            receiveReport(shortPacket.getSerializedData());
+            shouldContinueFeedReports();
+            return;
+        }
         payload.grow(kHidInitResponseSize);
         cryptographicallyRandomValues(payload.mutableSpan().subspan(writePosition, kCtapChannelIdSize));
         auto channel = kHidBroadcastChannel;

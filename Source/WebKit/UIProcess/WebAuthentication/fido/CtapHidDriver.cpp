@@ -216,9 +216,7 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
     ASSERT(message->channelId() == m_channelId);
 
     auto payload = message->getMessagePayload();
-    ASSERT(payload.size() == kHidInitResponseSize);
-    // Restart the transaction in the next run loop when nonce mismatches.
-    if (!spanHasPrefix(payload.span(), m_nonce.span())) {
+    if (payload.size() < kHidInitResponseSize || !spanHasPrefix(payload.span(), m_nonce.span())) {
         m_state = State::Idle;
         RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, data = WTF::move(m_requestData), callback = WTF::move(m_responseCallback)]() mutable {
             if (!weakThis)

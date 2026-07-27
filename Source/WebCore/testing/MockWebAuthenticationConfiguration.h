@@ -50,7 +50,8 @@ struct MockWebAuthenticationConfiguration {
         WrongChannelId,
         MaliciousPayload,
         UnsupportedOptions,
-        WrongNonce
+        WrongNonce,
+        ShortInitResponse
     };
 
     enum class NfcError : uint8_t {

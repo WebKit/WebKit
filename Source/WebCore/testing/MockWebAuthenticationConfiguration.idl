@@ -46,7 +46,8 @@
     "wrong-channel-id",
     "malicious-payload",
     "unsupported-options",
-    "wrong-nonce"
+    "wrong-nonce",
+    "short-init-response"
 };
 
 [

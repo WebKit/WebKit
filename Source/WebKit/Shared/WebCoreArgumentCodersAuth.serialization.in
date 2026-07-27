@@ -219,7 +219,8 @@ enum class WebCore::AuthenticatorAttachment : uint8_t {
     WrongChannelId,
     MaliciousPayload,
     UnsupportedOptions,
-    WrongNonce
+    WrongNonce,
+    ShortInitResponse
 };
 
 [Nested] struct WebCore::MockWebAuthenticationConfiguration::HidConfiguration {

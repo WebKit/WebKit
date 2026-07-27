@@ -45,6 +45,15 @@
     }, "CTAP HID with init sub stage wrong nonce error in a mock hid authenticator.");
 
     promise_test(function(t) {
+        // The authenticator returns a CTAPHID_INIT response whose payload matches the nonce but is
+        // too short to contain the channel ID. This must be rejected without an out-of-bounds read
+        // in CtapHidDriver::continueAfterChannelAllocated(); the transaction is restarted and times out.
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "short-init-response" } });
+        return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
+    }, "CTAP HID with init sub stage short init response in a mock hid authenticator.");
+
+    promise_test(function(t) {
         if (window.internals)
             internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "msg", error: "data-not-sent" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
