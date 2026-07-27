@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PendingStreamState.h"
 
+#include "Logging.h"
 #include "SharedBuffer.h"
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
@@ -117,6 +118,7 @@ void PendingStreamState::setDataAvailableHandler(Function<void()>&& handler)
     invokeHandlerIfNeeded([&] -> RefPtr<DataAvailableHandler> {
         Locker locker { m_lock };
         ASSERT(!m_dataAvailableHandler);
+        RELEASE_LOG_ERROR_IF(m_dataAvailableHandler, Network, "Trying to get upload stream data twice");
         m_dataAvailableHandler = DataAvailableHandler::create(WTF::move(handler));
         if (!m_chunks.isEmpty() || m_ended || m_errorCode)
             return m_dataAvailableHandler;

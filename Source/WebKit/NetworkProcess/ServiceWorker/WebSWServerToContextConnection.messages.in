@@ -47,4 +47,7 @@ messages -> WebSWServerToContextConnection {
 
     [EnabledBy=ServiceWorkersEnabled] OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
     [EnabledBy=ServiceWorkersEnabled] ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestIdentifier);
+
+    [EnabledBy=ServiceWorkersEnabled] StartPendingStreamUploadForwarding(WebCore::FetchIdentifier fetchIdentifier)
+    [EnabledBy=ServiceWorkersEnabled] CancelPendingStreamUploadForwarding(WebCore::FetchIdentifier fetchIdentifier)
 }

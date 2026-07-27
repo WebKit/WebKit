@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/BackgroundFetchInformation.h>
+#include <WebCore/FetchIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/ServiceWorkerClientData.h>
@@ -41,6 +42,7 @@
 
 namespace WebCore {
 
+class PendingStreamState;
 class SecurityOriginData;
 class SerializedScriptValue;
 class ServiceWorkerGlobalScope;
@@ -93,6 +95,9 @@ public:
         bool isClosed() const { return m_isClosed; }
 
         virtual void removeNavigationFetch(SWServerConnectionIdentifier, FetchIdentifier) = 0;
+
+        virtual void startPendingStreamUploadForwarding(PendingStreamState&) = 0;
+        virtual void cancelPendingStreamUploadForwarding(PendingStreamState&) = 0;
 
         virtual bool isWebSWContextManagerConnection() const { return false; }
 

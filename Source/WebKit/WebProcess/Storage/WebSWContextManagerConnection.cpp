@@ -36,6 +36,7 @@
 #include "RemoteWorkerInitializationData.h"
 #include "RemoteWorkerLibWebRTCProvider.h"
 #include "ServiceWorkerFetchTaskMessages.h"
+#include "SharedBufferReference.h"
 #include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
@@ -64,6 +65,7 @@
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/PendingStreamState.h>
 #include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -325,6 +327,11 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         m_ongoingNavigationFetchTasks.add({ serverConnectionIdentifier, fetchIdentifier }, Ref { client });
 
     request.setHTTPBody(formData.takeData());
+    if (RefPtr body = request.httpBody(); body && body->isPendingStream()) {
+        Ref pendingStreamState = WebCore::PendingStreamState::create();
+        pendingStreamState->setServiceWorkerFetchIdentifier(fetchIdentifier);
+        body->setPendingStreamState(WTF::move(pendingStreamState));
+    }
     serviceWorkerThreadProxy->startFetch(serverConnectionIdentifier, fetchIdentifier, WTF::move(client), WTF::move(request), WTF::move(referrer), WTF::move(options), isServiceWorkerNavigationPreloadEnabled, WTF::move(clientIdentifier), WTF::move(resultingClientIdentifier));
 }
 
@@ -643,6 +650,65 @@ void WebSWContextManagerConnection::removeNavigationFetch(WebCore::SWServerConne
         assertIsCurrent(protectedThis->m_queue.get());
         protectedThis->m_ongoingNavigationFetchTasks.remove({ serverConnectionIdentifier, fetchIdentifier });
     });
+}
+
+void WebSWContextManagerConnection::startPendingStreamUploadForwarding(WebCore::PendingStreamState& state)
+{
+    auto fetchIdentifier = state.serviceWorkerFetchIdentifier();
+    ASSERT(fetchIdentifier);
+    if (!fetchIdentifier) {
+        state.errorStream(-1);
+        return;
+    }
+
+    m_queue->dispatch([protectedThis = Ref { *this }, state = Ref { state }, fetchIdentifier = *fetchIdentifier]() mutable {
+        assertIsCurrent(protectedThis->m_queue.get());
+        protectedThis->m_requestPendingStreamStates.add(fetchIdentifier, WTF::move(state));
+        protectedThis->m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::StartPendingStreamUploadForwarding { fetchIdentifier }, 0);
+    });
+}
+
+void WebSWContextManagerConnection::cancelPendingStreamUploadForwarding(WebCore::PendingStreamState& state)
+{
+    auto fetchIdentifier = state.serviceWorkerFetchIdentifier();
+    if (!fetchIdentifier)
+        return;
+
+    m_queue->dispatch([protectedThis = Ref { *this }, fetchIdentifier = *fetchIdentifier] {
+        assertIsCurrent(protectedThis->m_queue.get());
+        if (!protectedThis->m_requestPendingStreamStates.remove(fetchIdentifier))
+            return;
+        protectedThis->m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::CancelPendingStreamUploadForwarding { fetchIdentifier }, 0);
+    });
+}
+
+void WebSWContextManagerConnection::forwardPendingStreamUploadData(WebCore::FetchIdentifier fetchIdentifier, IPC::SharedBufferReference&& chunk)
+{
+    assertIsCurrent(m_queue.get());
+
+    RefPtr state = m_requestPendingStreamStates.get(fetchIdentifier);
+    if (!state)
+        return;
+    RefPtr buffer = chunk.unsafeBuffer();
+    if (!buffer)
+        return;
+    state->appendData(buffer.releaseNonNull());
+}
+
+void WebSWContextManagerConnection::forwardPendingStreamUploadEnd(WebCore::FetchIdentifier fetchIdentifier)
+{
+    assertIsCurrent(m_queue.get());
+
+    if (RefPtr state = m_requestPendingStreamStates.take(fetchIdentifier))
+        state->endStream();
+}
+
+void WebSWContextManagerConnection::forwardPendingStreamUploadError(WebCore::FetchIdentifier fetchIdentifier)
+{
+    assertIsCurrent(m_queue.get());
+
+    if (RefPtr state = m_requestPendingStreamStates.take(fetchIdentifier))
+        state->errorStream(-1);
 }
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)

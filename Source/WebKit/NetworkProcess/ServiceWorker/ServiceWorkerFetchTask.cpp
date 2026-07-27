@@ -160,6 +160,11 @@ ServiceWorkerFetchTask::~ServiceWorkerFetchTask()
     cancelPreloadIfNecessary();
 }
 
+NetworkResourceLoader* ServiceWorkerFetchTask::loader() const
+{
+    return m_loader.get();
+}
+
 RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
 {
     auto* serviceWorkerConnection = m_serviceWorkerConnection.get();

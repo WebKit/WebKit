@@ -420,6 +420,7 @@
 
     [NotSentFromWebContent] MessageParam WebResourceLoader.DidReceiveData data
     [NotSentFromWebContent] MessageParam WebSWClientConnection.NotifyRecordResponseBodyChunk data
+    [NotSentFromWebContent] MessageParam WebSWContextManagerConnection.ForwardPendingStreamUploadData chunk
     [NotSentFromWebContent] MessageParam GPUProcess.ConsumeAudioComponentRegistrations registrationData
     [NotSentFromWebContent] MessageParam WebPage.UpdateAttachmentAttributes associatedElementData
 }

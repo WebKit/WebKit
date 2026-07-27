@@ -1,6 +1,6 @@
 
 PASS global setup
-FAIL The streaming request body is readable in the service worker. promise_test: Unhandled rejection with value: object "TypeError: FetchEvent.respondWith received an error: NotSupportedError: Stream upload reading is not yet supported"
+PASS The streaming request body is readable in the service worker.
 FAIL Network fallback for streaming upload. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 PASS When the streaming request body is used, network fallback fails.
 FAIL Running clone() in the service worker does not prevent network fallback. promise_test: Unhandled rejection with value: object "TypeError: Load failed"

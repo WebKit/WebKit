@@ -223,7 +223,6 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     event->onResponse([client, mode, redirect, requestURL, certificateInfo = WTF::move(certificateInfo), deferredPromise]<typename Result> (Result&& result) mutable {
         processResponse(WTF::move(client), std::forward<Result>(result), mode, redirect, requestURL, WTF::move(certificateInfo), deferredPromise.get());
     });
-
     globalScope.dispatchEvent(event);
 
     if (!event->respondWithEntered()) {

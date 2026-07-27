@@ -38,6 +38,7 @@ namespace WebCore {
 class BlobLoader;
 class Exception;
 class FormData;
+class PendingStreamState;
 class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
@@ -51,7 +52,7 @@ public:
     void start() { read(); }
     void cancel();
 
-    bool hasPendingActivity() const { return !!m_blobLoader || m_isReadingFile; }
+    bool hasPendingActivity() const { return !!m_blobLoader || m_isReadingFile || !!m_pendingStreamState; }
 
 private:
     FormDataConsumer(const FormData&, ScriptExecutionContext&, Callback&&);
@@ -59,6 +60,8 @@ private:
     void consumeData(const Vector<uint8_t>&);
     void consumeFile(const String&);
     void consumeBlob(const URL&);
+    void consumePendingStream(PendingStreamState&);
+    void drainPendingStream();
 
     void consume(std::span<const uint8_t>);
     void read();
@@ -72,7 +75,9 @@ private:
     size_t m_currentElementIndex { 0 };
     const Ref<WorkQueue> m_fileQueue;
     RefPtr<BlobLoader> m_blobLoader;
+    RefPtr<PendingStreamState> m_pendingStreamState;
     bool m_isReadingFile { false };
+    bool m_hasRequestedPendingStream { false };
 };
 
 } // namespace WebCore

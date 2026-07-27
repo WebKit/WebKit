@@ -124,6 +124,8 @@ public:
     void pendingStreamEnd();
     void pendingStreamError();
 
+    WebCore::PendingStreamState* pendingStreamState() const { return m_pendingStreamState.get(); }
+
     void setResponse(WebCore::ResourceResponse&& response) { m_response = WTF::move(response); }
     const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
 

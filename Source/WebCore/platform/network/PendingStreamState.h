@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include <WebCore/FetchIdentifier.h>
 #include <WebCore/PendingStreamIdentifier.h>
 #include <span>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/Markable.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -52,9 +54,13 @@ public:
 
     WEBCORE_EXPORT void appendData(Ref<SharedBuffer>&&);
     WEBCORE_EXPORT void endStream();
+    // FIXME: Provide meaningful PendingStreamState errors.
     WEBCORE_EXPORT void errorStream(int errorCode);
 
     WEBCORE_EXPORT void setHTTPVersionProbe(HTTPVersionProbe&&);
+
+    void setServiceWorkerFetchIdentifier(FetchIdentifier fetchIdentifier) { m_serviceWorkerFetchIdentifier = fetchIdentifier; }
+    Markable<FetchIdentifier> serviceWorkerFetchIdentifier() const { return m_serviceWorkerFetchIdentifier; }
 
     WEBCORE_EXPORT void setDataAvailableHandler(Function<void()>&&);
     WEBCORE_EXPORT void clearDataAvailableHandler();
@@ -78,6 +84,7 @@ private:
     int m_errorCode WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     RefPtr<DataAvailableHandler> m_dataAvailableHandler WTF_GUARDED_BY_LOCK(m_lock);
     HTTPVersionProbe m_httpVersionProbe WTF_GUARDED_BY_LOCK(m_lock);
+    Markable<FetchIdentifier> m_serviceWorkerFetchIdentifier;
 };
 
 } // namespace WebCore
