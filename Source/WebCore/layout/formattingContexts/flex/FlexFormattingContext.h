@@ -27,6 +27,7 @@
 
 #include <WebCore/FlexFormattingUtils.h>
 #include <WebCore/FlexIntegrationUtils.h>
+#include <WebCore/FlexLayoutState.h>
 #include <WebCore/RenderBlock.h>
 #include <wtf/Range.h>
 
@@ -37,7 +38,6 @@ class ComputedStyle;
 struct MinimumSize;
 }
 
-class FlexLayoutState;
 class RenderFlexibleBox;
 
 namespace LayoutIntegration { class FlexIntegrationUtils; }
@@ -112,6 +112,7 @@ public:
     FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&, FlexLayoutState&, FlexItemContentCache&);
 
     struct Result {
+        FlexLayoutState::MarginTrimItems marginTrimItems;
         std::optional<LayoutUnit> alignContentStartOverflow;
         LayoutUnit justifyContentStartOverflow;
         size_t numberOfFlexItemsOnFirstLine { 0 };

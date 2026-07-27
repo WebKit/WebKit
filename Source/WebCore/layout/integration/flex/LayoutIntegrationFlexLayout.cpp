@@ -47,24 +47,24 @@ FlexLayout::FlexLayout(RenderFlexibleBox& flexBox)
 {
 }
 
-void FlexLayout::prepareFlexItemForPositionedLayout(RenderBox& flexItem)
+void FlexLayout::prepareOutOfFlowBoxForPositionedLayout(RenderBox& outOfFlowBox)
 {
-    ASSERT(flexItem.isOutOfFlowPositioned());
-    flexItem.containingBlock()->addOutOfFlowBox(flexItem);
-    CheckedPtr layer = flexItem.layer();
+    ASSERT(outOfFlowBox.isOutOfFlowPositioned());
+    outOfFlowBox.containingBlock()->addOutOfFlowBox(outOfFlowBox);
+    CheckedPtr layer = outOfFlowBox.layer();
     FlexFormattingUtils utils { flexBox() };
     LayoutUnit staticInlinePosition = utils.flowAwareBorderStart() + utils.flowAwarePaddingStart();
     if (layer->staticInlinePosition() != staticInlinePosition) {
         layer->setStaticInlinePosition(staticInlinePosition);
-        if (flexItem.style().hasStaticInlinePosition(flexBox().writingMode().isHorizontal()))
-            flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        if (outOfFlowBox.style().hasStaticInlinePosition(flexBox().writingMode().isHorizontal()))
+            outOfFlowBox.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     }
 
     LayoutUnit staticBlockPosition = utils.flowAwareBorderBefore() + utils.flowAwarePaddingBefore();
     if (layer->staticBlockPosition() != staticBlockPosition) {
         layer->setStaticBlockPosition(staticBlockPosition);
-        if (flexItem.style().hasStaticBlockPosition(flexBox().writingMode().isHorizontal()))
-            flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        if (outOfFlowBox.style().hasStaticBlockPosition(flexBox().writingMode().isHorizontal()))
+            outOfFlowBox.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     }
 }
 
@@ -115,76 +115,15 @@ LayoutUnit FlexLayout::mainAxisAvailableSpace() const
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (flexBox().borderAndPaddingLogicalHeight() + flexBox().scrollbarLogicalHeight()));
 }
 
-FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, const FlexLayoutConstraints& constraints)
+FlexLayoutItems FlexLayout::buildFlexLayoutItems(RelayoutChildren relayoutChildren, const FlexLayoutConstraints& constraints)
 {
-    // Out-of-flow children are not flex items, but the container still establishes their static position.
-    for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
-        if (child->isOutOfFlowPositioned())
-            prepareFlexItemForPositionedLayout(child);
-    }
-
-    // Build the flex items from the container's in-flow children in order-modified document order.
-    FlexLayoutItems flexItems;
+    FlexLayoutItems flexLayoutItems;
+    flexLayoutItems.reserveInitialCapacity(m_flexItems.size());
     for (auto& renderer : m_flexItems) {
         CheckedPtr flexItem = renderer.get();
         if (!flexItem)
             continue;
-        auto everHadLayout = flexItem->everHadLayout();
-        if (everHadLayout && flexItem->hasTrimmedMargin(std::optional<Style::MarginTrimSide> { }))
-            flexItem->clearTrimmedMarginsMarkings();
-        if (flexItem->shouldInvalidateContentWidths())
-            flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
-        flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *flexItem);
-        flexItems.append({ *flexItem, constraints.isHorizontalFlow, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
-    }
-    return flexItems;
-}
 
-void FlexLayout::initializeMarginTrimState()
-{
-    m_marginTrimItems = { };
-
-    // When computeIntrinsicLogicalWidth goes through each of the children, it
-    // will include the margins when computing the flexbox's min and max widths.
-    // We need to trim the margins of the first and last child early so that
-    // these margins do not incorrectly constribute to the box's min/max width
-    auto marginTrim = flexBox().style().marginTrim();
-    auto isRowsFlexbox = FlexFormattingUtils::isHorizontalFlow(flexBox());
-    if (auto flexItem = flexBox().firstInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineStart))
-        isRowsFlexbox ? m_marginTrimItems.itemsAtFlexLineStart.add(*flexItem) : m_marginTrimItems.itemsOnFirstFlexLine.add(*flexItem);
-    if (auto flexItem = flexBox().lastInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineEnd))
-        isRowsFlexbox ? m_marginTrimItems.itemsAtFlexLineEnd.add(*flexItem) : m_marginTrimItems.itemsOnLastFlexLine.add(*flexItem);
-}
-
-bool FlexLayout::isFlexItemEligibleForMarginTrim(Style::MarginTrimSide marginTrimSide, const RenderBox& flexItem) const
-{
-    ASSERT(flexBox().style().marginTrim().contains(marginTrimSide));
-    auto isMarginParallelWithMainAxis = [&](Style::MarginTrimSide marginTrimSide) {
-        if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
-            return marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::BlockEnd;
-        return marginTrimSide == Style::MarginTrimSide::InlineStart || marginTrimSide == Style::MarginTrimSide::InlineEnd;
-    };
-    if (isMarginParallelWithMainAxis(marginTrimSide))
-        return (marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::InlineStart) ? m_marginTrimItems.itemsOnFirstFlexLine.contains(flexItem) : m_marginTrimItems.itemsOnLastFlexLine.contains(flexItem);
-    return (marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::InlineStart) ? m_marginTrimItems.itemsAtFlexLineStart.contains(flexItem) : m_marginTrimItems.itemsAtFlexLineEnd.contains(flexItem);
-}
-
-void FlexLayout::prepareFlexItemsAndMargins()
-{
-    // Collect the in-flow flex items in order-modified document order (a stable sort by the used 'order' value
-    // keeps document order among equal values). This is rebuilt every layout and replaces the order iterator.
-    // Out-of-flow and excluded children are not flex items, so they are left out; the list holds weak pointers
-    // because painting/hit-testing/baseline queries read it after layout, when a child may have been removed.
-    m_flexItems.clear();
-    for (auto& child : childrenOfType<RenderBox>(flexBox())) {
-        if (!child.isOutOfFlowPositioned() && !child.isExcludedFromNormalLayout())
-            m_flexItems.append(child);
-    }
-    std::stable_sort(m_flexItems.begin(), m_flexItems.end(), [](auto& a, auto& b) {
-        return a->style().order().value < b->style().order().value;
-    });
-
-    for (auto& flexItem : m_flexItems) {
         // Before running the flex algorithm, 'auto' has a margin of 0.
         // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
         auto flexItemMarginValue = [&](auto& margin) {
@@ -192,22 +131,111 @@ void FlexLayout::prepareFlexItemsAndMargins()
             // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
             return Style::evaluateMinimum<LayoutUnit>(margin, flexBox().contentBoxLogicalWidth(), flexBox().style().usedZoomForLength());
         };
-        if (FlexFormattingUtils::isHorizontalFlow(flexBox())) {
+        if (constraints.isHorizontalFlow) {
             flexItem->setMarginLeft(flexItemMarginValue(flexItem->style().marginLeft()));
             flexItem->setMarginRight(flexItemMarginValue(flexItem->style().marginRight()));
         } else {
             flexItem->setMarginTop(flexItemMarginValue(flexItem->style().marginTop()));
             flexItem->setMarginBottom(flexItemMarginValue(flexItem->style().marginBottom()));
         }
+
+        auto everHadLayout = flexItem->everHadLayout();
+        if (everHadLayout && flexItem->hasTrimmedMargin(std::optional<Style::MarginTrimSide> { }))
+            flexItem->clearTrimmedMarginsMarkings();
+        if (flexItem->shouldInvalidateContentWidths())
+            flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+        flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *flexItem);
+        flexLayoutItems.append({ *flexItem, constraints.isHorizontalFlow, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
+    return flexLayoutItems;
+}
+
+// RenderFlexibleBox trims the first and last in-flow child's inline margins before the flex algorithm runs, so
+// that they stay out of the container's intrinsic widths. Recompute that from style each layout rather than
+// carrying it in a member the renderer has to remember to seed and clear.
+FlexLayoutState::MarginTrimItems FlexLayout::marginTrimItemsBeforeFlexLayout() const
+{
+    auto marginTrim = flexBox().style().marginTrim();
+    if (marginTrim.isNone())
+        return { };
+
+    // FIXME: Which item starts a flex line is decided by the used 'order' value, not by render tree order. The
+    // flex algorithm below gets this right; the container's intrinsic width, which this feeds, does not.
+    auto marginTrimItems = FlexLayoutState::MarginTrimItems { };
+    auto isRowsFlexbox = FlexFormattingUtils::isHorizontalFlow(flexBox());
+    if (auto flexItem = flexBox().firstInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineStart))
+        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineStart.add(*flexItem) : marginTrimItems.itemsOnFirstFlexLine.add(*flexItem);
+    if (auto flexItem = flexBox().lastInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineEnd))
+        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineEnd.add(*flexItem) : marginTrimItems.itemsOnLastFlexLine.add(*flexItem);
+    return marginTrimItems;
+}
+
+bool FlexLayout::isFlexItemEligibleForMarginTrim(Style::MarginTrimSide marginTrimSide, const RenderBox& flexItem) const
+{
+    ASSERT(flexBox().style().marginTrim().contains(marginTrimSide));
+
+    auto isTrimmed = [&](const FlexLayoutState::MarginTrimItems& marginTrimItems) {
+        auto isMarginParallelWithMainAxis = FlexFormattingUtils::isHorizontalFlow(flexBox())
+            ? marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::BlockEnd
+            : marginTrimSide == Style::MarginTrimSide::InlineStart || marginTrimSide == Style::MarginTrimSide::InlineEnd;
+        auto isStartSide = marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::InlineStart;
+        if (isMarginParallelWithMainAxis)
+            return isStartSide ? marginTrimItems.itemsOnFirstFlexLine.contains(flexItem) : marginTrimItems.itemsOnLastFlexLine.contains(flexItem);
+        return isStartSide ? marginTrimItems.itemsAtFlexLineStart.contains(flexItem) : marginTrimItems.itemsAtFlexLineEnd.contains(flexItem);
+    };
+
+    // The flex algorithm owns the sets while it runs and is still filling them in -- an item asks this as it lays
+    // out, which is mid-algorithm.
+    if (m_flexLayoutState)
+        return isTrimmed(m_flexLayoutState->marginTrimItems());
+
+    // Between a style change and the layout that follows, all that holds is what the container trims up front,
+    // which is also what keeps those margins out of the intrinsic widths computed in between.
+    if (flexBox().needsLayout())
+        return isTrimmed(marginTrimItemsBeforeFlexLayout());
+
+    // Otherwise the last run of the algorithm has the answer, for the queries that arrive once it is done: the
+    // scrollbar reconciliation relayout, and any later layout of an item on its own.
+    if (!m_flexLayoutResult) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return isTrimmed(m_flexLayoutResult->marginTrimItems);
+}
+
+void FlexLayout::buildFlexItemList()
+{
+    // The in-flow children are the flex items, collected in order-modified document order (a stable sort by the
+    // used 'order' value keeps document order among equal values). This is rebuilt every layout and replaces the
+    // order iterator. The list holds weak pointers because painting/hit-testing/baseline queries read it after
+    // layout, when a child may have been removed.
+    m_flexItems.clear();
+    for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
+        // Out-of-flow children are not flex items, but the container still establishes their static position.
+        if (child->isOutOfFlowPositioned()) {
+            prepareOutOfFlowBoxForPositionedLayout(child);
+            continue;
+        }
+        if (!child->isExcludedFromNormalLayout())
+            m_flexItems.append(child.get());
+    }
+    std::stable_sort(m_flexItems.begin(), m_flexItems.end(), [](auto& a, auto& b) {
+        return a->style().order().value < b->style().order().value;
+    });
 }
 
 LayoutOptionalOutsets FlexLayout::adjustAllowedLayoutOverflow(LayoutOptionalOutsets allowance) const
 {
     // How far content-alignment pushed the items past the container's content-box start edges. The flex algorithm
     // only computes the align-content overflow when it has lines to align, so treat "not computed" as no overflow.
-    auto alignContentStartOverflow = m_flexLayoutResult.alignContentStartOverflow.value_or(0_lu);
-    auto justifyContentStartOverflow = m_flexLayoutResult.justifyContentStartOverflow;
+    if (!m_flexLayoutResult) {
+        ASSERT_NOT_REACHED();
+        // The caller's writing-mode allowance is what holds without a flex contribution to add to it.
+        return allowance;
+    }
+
+    auto alignContentStartOverflow = m_flexLayoutResult->alignContentStartOverflow.value_or(0_lu);
+    auto justifyContentStartOverflow = m_flexLayoutResult->justifyContentStartOverflow;
 
     bool isColumnar = flexBox().style().isColumnFlexDirection();
     if (flexBox().isHorizontalWritingMode()) {
@@ -270,19 +298,18 @@ bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 void FlexLayout::layout(RelayoutChildren relayoutChildren)
 {
     m_flexLayoutResult = { };
-
-    prepareFlexItemsAndMargins();
+    buildFlexItemList();
 
     auto constraints = flexLayoutConstraints();
-    auto flexItems = collectFlexItems(relayoutChildren, constraints);
+    auto flexLayoutItems = buildFlexLayoutItems(relayoutChildren, constraints);
 
-    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { } };
-    m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
+    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { marginTrimItemsBeforeFlexLayout() } };
+    m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexLayoutItems);
 }
 
 std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
 {
-    if ((flexBox().isWritingModeRoot() && !flexBox().isFlexItem()) || !m_flexLayoutResult.numberOfFlexItemsOnFirstLine || flexBox().shouldApplyLayoutContainment())
+    if ((flexBox().isWritingModeRoot() && !flexBox().isFlexItem()) || !m_flexLayoutResult || !m_flexLayoutResult->numberOfFlexItemsOnFirstLine || flexBox().shouldApplyLayoutContainment())
         return { };
 
     CheckedPtr baselineFlexItem = flexItemForFirstBaseline();
@@ -314,7 +341,7 @@ std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
 
 std::optional<LayoutUnit> FlexLayout::lastLineBaseline() const
 {
-    if (flexBox().isWritingModeRoot() || !m_flexLayoutResult.numberOfFlexItemsOnLastLine || flexBox().shouldApplyLayoutContainment())
+    if (flexBox().isWritingModeRoot() || !m_flexLayoutResult || !m_flexLayoutResult->numberOfFlexItemsOnLastLine || flexBox().shouldApplyLayoutContainment())
         return { };
 
     CheckedPtr baselineFlexItem = flexItemForLastBaseline();
@@ -346,26 +373,36 @@ std::optional<LayoutUnit> FlexLayout::lastLineBaseline() const
 
 CheckedPtr<const RenderBox> FlexLayout::flexItemForFirstBaseline() const
 {
+    if (!m_flexLayoutResult) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     // The first baseline comes from the visually-first flex line, and within it the item nearest that line's visual
     // start. flex-wrap: wrap-reverse makes the visually-first line the logically-last line; a reversed main axis
     // (row/column-reverse) puts the visual start at the logically-last item, so we scan the line in reverse.
     auto& flexItems = m_flexItems;
     bool reverse = flexBox().style().flexDirection() == FlexDirection::RowReverse || flexBox().style().flexDirection() == FlexDirection::ColumnReverse;
     if (FlexFormattingUtils::isWrapReverse(flexBox()))
-        return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult.numberOfFlexItemsOnLastLine, m_flexLayoutResult.numberOfFlexItemsOnLastLine, reverse);
-    return baselineFlexItemInLine(0, m_flexLayoutResult.numberOfFlexItemsOnFirstLine, reverse);
+        return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult->numberOfFlexItemsOnLastLine, m_flexLayoutResult->numberOfFlexItemsOnLastLine, reverse);
+    return baselineFlexItemInLine(0, m_flexLayoutResult->numberOfFlexItemsOnFirstLine, reverse);
 }
 
 CheckedPtr<const RenderBox> FlexLayout::flexItemForLastBaseline() const
 {
+    if (!m_flexLayoutResult) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     // The last baseline comes from the visually-last flex line, and within it the item nearest that line's visual
     // end (the opposite end to flexItemForFirstBaseline, hence the negated reverse). wrap-reverse makes the
     // visually-last line the logically-first line.
     auto& flexItems = m_flexItems;
     bool reverse = !(flexBox().style().flexDirection() == FlexDirection::RowReverse || flexBox().style().flexDirection() == FlexDirection::ColumnReverse);
     if (FlexFormattingUtils::isWrapReverse(flexBox()))
-        return baselineFlexItemInLine(0, m_flexLayoutResult.numberOfFlexItemsOnFirstLine, reverse);
-    return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult.numberOfFlexItemsOnLastLine, m_flexLayoutResult.numberOfFlexItemsOnLastLine, reverse);
+        return baselineFlexItemInLine(0, m_flexLayoutResult->numberOfFlexItemsOnFirstLine, reverse);
+    return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult->numberOfFlexItemsOnLastLine, m_flexLayoutResult->numberOfFlexItemsOnLastLine, reverse);
 }
 
 CheckedPtr<const RenderBox> FlexLayout::baselineFlexItemInLine(size_t lineStart, size_t itemCount, bool reverse) const

@@ -488,7 +488,7 @@ void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
             RelayoutScopeForScrollbarChange relayoutScope { *block, InOverflowRelayout::No };
 
         // The scrollbar relayout above may have re-dirtied out-of-flow descendants of ancestor containing blocks
-        // (e.g. via prepareFlexItemForPositionedLayout). Process them now since those containing blocks have
+        // (e.g. via prepareOutOfFlowBoxForPositionedLayout). Process them now since those containing blocks have
         // already completed their own layoutOutOfFlowBoxes pass.
         for (CheckedPtr ancestor = block->parent(); ancestor && ancestor != this; ancestor = ancestor->parent()) {
             CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*ancestor);

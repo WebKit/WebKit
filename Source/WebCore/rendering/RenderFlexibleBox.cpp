@@ -105,9 +105,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     resetLogicalHeightBeforeLayoutIfNeeded();
 
-    if (!style().marginTrim().isNone())
-        m_flexLayout.initializeMarginTrimState();
-
     clearFlexItemOverridingSizes();
 
     if (recomputeLogicalWidth())

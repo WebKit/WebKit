@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -49,6 +50,28 @@ enum class LayoutPhase : uint8_t {
 
 class FlexLayoutState {
 public:
+    // Which flex items had a margin trimmed, one set per side the container can trim. The flex algorithm fills
+    // these in as it trims, and the items read them back as they lay out.
+    struct MarginTrimItems {
+        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineStart;
+        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineEnd;
+        SingleThreadWeakHashSet<const RenderBox> itemsOnFirstFlexLine;
+        SingleThreadWeakHashSet<const RenderBox> itemsOnLastFlexLine;
+    };
+
+    FlexLayoutState() = default;
+    // Starts from the margins the container trimmed before the algorithm ran, and adds to them as it trims.
+    explicit FlexLayoutState(MarginTrimItems&& marginTrimItems)
+        : m_marginTrimItems(WTF::move(marginTrimItems))
+    {
+    }
+
+    const MarginTrimItems& marginTrimItems() const LIFETIME_BOUND { return m_marginTrimItems; }
+    void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineStart.add(flexItem); }
+    void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineEnd.add(flexItem); }
+    void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnFirstFlexLine.add(flexItem); }
+    void addItemOnLastFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnLastFlexLine.add(flexItem); }
+
     LayoutPhase phase() const { return m_phase; }
     void setPhase(LayoutPhase phase)
     {
@@ -65,6 +88,7 @@ public:
     void resetFlexBoxBlockSizeDefiniteness() { m_isFlexBoxBlockSizeDefinite = { }; }
 
 private:
+    MarginTrimItems m_marginTrimItems;
     LayoutPhase m_phase { LayoutPhase::PreparingFlexItems };
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
     std::optional<bool> m_isFlexBoxBlockSizeDefinite;

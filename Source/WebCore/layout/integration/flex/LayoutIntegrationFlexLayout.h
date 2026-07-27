@@ -78,15 +78,10 @@ public:
     // Whether a percentage resolves at all, for callers that only need the yes/no and have no percentage of their own.
     bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, RenderBox::UpdatePercentageHeightDescendants);
 
-    // Which items had a margin trimmed, so RenderFlexibleBox::isChildEligibleForMarginTrim can answer for a given
-    // side. Seeded before layout (the first/last item's inline margins affect the container's intrinsic widths) and
-    // filled in by the flex algorithm as it trims.
-    void initializeMarginTrimState();
+    // Whether the given side of the item's margin has been trimmed, for RenderFlexibleBox::isChildEligibleForMarginTrim.
+    // Answered from the running flex algorithm while it is running, and from what it last produced otherwise --
+    // the container is sized before layout, and its items can be laid out on their own after.
     bool isFlexItemEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox& flexItem) const;
-    void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineStart.add(flexItem); }
-    void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineEnd.add(flexItem); }
-    void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnFirstFlexLine.add(flexItem); }
-    void addItemOnLastFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnLastFlexLine.add(flexItem); }
 
     void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit);
     void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
@@ -101,11 +96,13 @@ private:
     bool isFlexBoxBlockSizeIndefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeIndefinite(); }
     void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { ASSERT(m_flexLayoutState); m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(isDefinite); }
 
-    void prepareFlexItemsAndMargins();
-    FlexLayoutItems collectFlexItems(RelayoutChildren, const FlexLayoutConstraints&);
+    FlexLayoutState::MarginTrimItems marginTrimItemsBeforeFlexLayout() const;
+
+    void buildFlexItemList();
+    FlexLayoutItems buildFlexLayoutItems(RelayoutChildren, const FlexLayoutConstraints&);
     FlexLayoutConstraints flexLayoutConstraints() const;
     LayoutUnit mainAxisAvailableSpace() const;
-    void prepareFlexItemForPositionedLayout(RenderBox&);
+    void prepareOutOfFlowBoxForPositionedLayout(RenderBox&);
     CheckedPtr<const RenderBox> flexItemForFirstBaseline() const;
     CheckedPtr<const RenderBox> flexItemForLastBaseline() const;
     CheckedPtr<const RenderBox> baselineFlexItemInLine(size_t lineStart, size_t itemCount, bool reverse) const;
@@ -118,13 +115,9 @@ private:
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
     FlexItemList m_flexItems;
-    struct MarginTrimItems {
-        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineStart;
-        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineEnd;
-        SingleThreadWeakHashSet<const RenderBox> itemsOnFirstFlexLine;
-        SingleThreadWeakHashSet<const RenderBox> itemsOnLastFlexLine;
-    } m_marginTrimItems;
-    FlexFormattingContext::Result m_flexLayoutResult;
+    // What the last run of the flex algorithm produced. Absent until it has run: the container can be painted,
+    // hit-tested and queried for baselines before its first layout.
+    std::optional<FlexFormattingContext::Result> m_flexLayoutResult;
     std::optional<FlexLayoutState> m_flexLayoutState;
     FlexItemContentCache m_flexItemContentCache;
 };

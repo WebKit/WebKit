@@ -61,6 +61,7 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     if (flexItems.isEmpty()) {
         // No items to lay out, but the container still resolves its own height (it may establish a line even when empty).
         integrationUtils().updateFlexContainerLogicalHeight(0_lu);
+        m_result.marginTrimItems = layoutState().marginTrimItems();
         return m_result;
     }
 
@@ -128,6 +129,7 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     performContentAlignment();
 
     computeFlexItemRects(flexLines, flexItems, flexItemsPositionList, flexLinesCrossPositionList, flexLinesCrossSizeList, flexItemsCrossSizeList, crossAxisStartEdge, flexContainerUsedExtents.crossContentBox, flexContainerUsedExtents.crossBorderBox);
+    m_result.marginTrimItems = layoutState().marginTrimItems();
     return m_result;
 }
 
