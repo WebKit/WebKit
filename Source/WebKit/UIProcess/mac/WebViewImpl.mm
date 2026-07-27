@@ -7998,7 +7998,10 @@ void WebViewImpl::updateScrollPocket()
     RetainPtr view = m_view.get();
     CGFloat topContentInset = obscuredContentInsets().top();
     CGFloat additionalHeight = page->overflowHeightForTopScrollEdgeEffect();
-    auto needsTopViewForFullScreenTitlebar = [view _scrollPocketInFullscreenEnabled] && (m_fullScreenTitlebarOverlayHeight > 0);
+    auto needsTopViewForFullScreenTitlebar = [view _scrollPocketInFullscreenEnabled]
+        && (m_fullScreenTitlebarOverlayHeight > 0)
+        && ![view enclosingScrollView];
+
     bool needsTopView = protect(page->preferences())->contentInsetBackgroundFillEnabled()
         && view
         && !view->_reasonsToHideTopScrollPocket
