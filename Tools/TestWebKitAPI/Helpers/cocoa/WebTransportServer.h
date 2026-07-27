@@ -27,7 +27,7 @@
 
 #ifdef __cplusplus
 
-#if PLATFORM(COCOA)
+#if HAVE(WEBTRANSPORT)
 
 #import "Helpers/CoroutineUtilities.h"
 #import "Helpers/cocoa/NetworkConnection.h"
@@ -41,7 +41,6 @@ public:
     ~WebTransportServer();
 
     uint16_t port() const;
-    static bool isAvailable();
 private:
     struct Data;
     Ref<Data> m_data;
@@ -51,6 +50,6 @@ private:
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(COCOA)
+#endif // HAVE(WEBTRANSPORT)
 
 #endif // __cplusplus
