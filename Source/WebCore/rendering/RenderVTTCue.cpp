@@ -351,45 +351,50 @@ bool RenderVTTCue::findNonOverlappingPosition(float& newX, float& newY) const
     newX = x();
     newY = y();
     FloatRect srcRect = unroundedAbsoluteBoundingBoxRect(*backdropBox);
-    FloatRect destRect = srcRect;
+    bool isHorizontal = m_cue->vertical() == VTTCue::DirectionSetting::Horizontal;
 
-    // Move the box up, looking for a non-overlapping position:
-    while (RenderVTTCue* cue = overlappingObjectForRect(destRect)) {
+    // Move the box up (or, for vertical writing directions, left), looking for a non-overlapping position.
+    FloatRect upRect = srcRect;
+    while (RenderVTTCue* cue = overlappingObjectForRect(upRect)) {
         auto* cueBackdropBox = cue->backdropBox();
         if (!cueBackdropBox)
             continue;
-        if (m_cue->vertical() == VTTCue::DirectionSetting::Horizontal)
-            destRect.setY(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).y() - destRect.height());
+        if (isHorizontal)
+            upRect.setY(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).y() - upRect.height());
         else
-            destRect.setX(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).x() - destRect.width());
+            upRect.setX(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).x() - upRect.width());
     }
+    bool upRectFits = rectIsWithinContainer(upRect);
 
-    if (rectIsWithinContainer(destRect)) {
-        newX += destRect.x() - srcRect.x();
-        newY += destRect.y() - srcRect.y();
-        return true;
-    }
-
-    destRect = srcRect;
-
-    // Move the box down, looking for a non-overlapping position:
-    while (RenderVTTCue* cue = overlappingObjectForRect(destRect)) {
+    // Move the box down (or, for vertical writing directions, right), looking for a non-overlapping position.
+    FloatRect downRect = srcRect;
+    while (RenderVTTCue* cue = overlappingObjectForRect(downRect)) {
         auto* cueBackdropBox = cue->backdropBox();
         if (!cueBackdropBox)
             continue;
-        if (m_cue->vertical() == VTTCue::DirectionSetting::Horizontal)
-            destRect.setY(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).maxY());
+        if (isHorizontal)
+            downRect.setY(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).maxY());
         else
-            destRect.setX(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).maxX());
+            downRect.setX(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).maxX());
     }
+    bool downRectFits = rectIsWithinContainer(downRect);
 
-    if (rectIsWithinContainer(destRect)) {
-        newX += destRect.x() - srcRect.x();
-        newY += destRect.y() - srcRect.y();
-        return true;
-    }
+    if (!upRectFits && !downRectFits) // The box does not fit in the container without overlapping other boxes.
+        return false;
 
-    return false;
+    FloatRect finalRect;
+    if (upRectFits && downRectFits) {
+        // Determine which box is closer (if equidistant then use upwardly moved box).
+        auto distance = [isHorizontal](const FloatRect& a, const FloatRect& b) {
+            return isHorizontal ? std::abs(a.y() - b.y()) : std::abs(a.x() - b.x());
+        };
+        finalRect = distance(srcRect, upRect) <= distance(srcRect, downRect) ? upRect : downRect;
+    } else
+        finalRect = upRectFits ? upRect : downRect;
+
+    newX += finalRect.x() - srcRect.x();
+    newY += finalRect.y() - srcRect.y();
+    return true;
 }
 
 void RenderVTTCue::repositionCueSnapToLinesSet()
