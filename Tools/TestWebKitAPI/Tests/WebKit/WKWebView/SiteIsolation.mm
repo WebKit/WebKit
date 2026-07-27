@@ -2747,6 +2747,35 @@ TEST(SiteIsolation, HandleAcceptedCandidateInCrossOriginIframe)
         Util::runFor(10_ms);
     }
 }
+
+TEST(SiteIsolation, ClickingMainFrameContentBlursFocusedElementInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<div id='other' style='height: 300px'>other content</div><iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body><input id='input'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    // Focus the input in the cross-origin iframe. Element::focus() is a no-op for cross-origin
+    // non-main-frame iframes without a user gesture, so use the user-gesture variant, then wait for
+    // the focused-frame state to propagate so the main frame's process knows focus lives in the child.
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('input').focus()" inFrame:childFrame];
+    while (![webView firstChildFrame]._isFocused || [webView mainFrame].info._isFocused)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ("input", [webView stringByEvaluatingJavaScript:@"document.activeElement.id" inFrame:childFrame]);
+
+    [webView sendClickAtPoint:NSMakePoint(400, 570)];
+    [webView waitForPendingMouseEvents];
+
+    int attempts = 0;
+    while ("input"_s == String([webView stringByEvaluatingJavaScript:@"document.activeElement.id" inFrame:childFrame]) && attempts++ < 100)
+        Util::runFor(10_ms);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"document.activeElement.id" inFrame:childFrame]);
+}
 #endif
 
 TEST(SiteIsolation, SetFocusedFrame)
