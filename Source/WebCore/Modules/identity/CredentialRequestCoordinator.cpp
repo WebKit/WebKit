@@ -59,6 +59,40 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CredentialRequestCoordinator);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CredentialRequestCoordinatorClient);
 
+// The per-page coordinator registers as an ActiveDOMObject of the top document, so its own stop()
+// never fires for a subframe requester; this per-request observer supplies that signal from the
+// requesting document and aborts with an AbortError when it stops being fully active.
+class CredentialRequestActivityObserver final : public RefCounted<CredentialRequestActivityObserver>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(CredentialRequestActivityObserver);
+public:
+    static Ref<CredentialRequestActivityObserver> create(ScriptExecutionContext& context, CredentialRequestCoordinator& coordinator)
+    {
+        Ref observer = adoptRef(*new CredentialRequestActivityObserver(context, coordinator));
+        observer->suspendIfNeeded();
+        return observer;
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    CredentialRequestActivityObserver(ScriptExecutionContext& context, CredentialRequestCoordinator& coordinator)
+        : ActiveDOMObject(&context)
+        , m_coordinator(coordinator)
+    {
+    }
+
+    void stop() final
+    {
+        if (RefPtr coordinator = m_coordinator.get())
+            coordinator->abortTheCredentialRequest(Exception { ExceptionCode::AbortError, "The document is no longer fully active."_s });
+    }
+
+    WeakPtr<CredentialRequestCoordinator> m_coordinator;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CredentialRequestActivityObserver);
+
 Ref<CredentialRequestCoordinator> CredentialRequestCoordinator::create(Ref<CredentialRequestCoordinatorClient>&& client, Page& page)
 {
     return adoptRef(*new CredentialRequestCoordinator(WTF::move(client), page));
@@ -132,6 +166,7 @@ template<typename SettleFunction>
 void CredentialRequestCoordinator::queuePromiseSettlement(SettleFunction settle)
 {
     queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [settle = WTF::move(settle)](auto& coordinator) mutable {
+        coordinator.m_activityObserver = nullptr;
         if (!coordinator.hasCurrentPromise())
             return coordinator.setInteractionState(InteractionState::Idle);
         coordinator.clearAbortAlgorithm();
@@ -202,6 +237,9 @@ void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& 
     std::optional<FrameIdentifier> requestingFrameID;
     if (RefPtr frame = document.frame())
         requestingFrameID = frame->frameID();
+
+    if (RefPtr scriptExecutionContext = document.scriptExecutionContext())
+        m_activityObserver = CredentialRequestActivityObserver::create(*scriptExecutionContext, *this);
 
     m_client->showDigitalCredentialsChooser(
         requestingFrameID,

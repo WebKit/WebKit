@@ -42,6 +42,7 @@
 namespace WebCore {
 class AbortSignal;
 class BasicCredential;
+class CredentialRequestActivityObserver;
 class CredentialRequestCoordinatorClient;
 class Document;
 class LocalFrame;
@@ -112,6 +113,7 @@ private:
     std::unique_ptr<CredentialPromise> m_currentPromise;
     std::optional<uint32_t> m_abortAlgorithmIdentifier;
     WeakPtr<Page> m_page;
+    RefPtr<CredentialRequestActivityObserver> m_activityObserver;
 };
 
 } // namespace WebCore
