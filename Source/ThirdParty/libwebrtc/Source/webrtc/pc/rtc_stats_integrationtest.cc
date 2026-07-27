@@ -1245,6 +1245,14 @@ TEST_F(RTCStatsIntegrationTest, GetStatsAfterClose) {
 }
 
 TEST_F(RTCStatsIntegrationTest, ExperimentalPsnrStats) {
+#if !defined(WEBRTC_ENCODER_PSNR_STATS)
+  // PSNR sampling is gated on `WEBRTC_ENCODER_PSNR_STATS` in every
+  // encoder (see e.g. `modules/video_coding/codecs/h264/h264_encoder_impl.cc`
+  // and `modules/video_coding/codecs/av1/libaom_av1_encoder.cc`).  Without
+  // it, no encoder ever calls `EncodedImage::set_psnr()`, so the field-trial
+  // never produces `outbound-rtp.psnrSum` / `psnrMeasurements`.
+  GTEST_SKIP() << "Encoder PSNR stats disabled in this build";
+#else
   StartCall("WebRTC-Video-CalculatePsnr/Enabled,sampling_interval:1000ms/");
 
   // This assumes all other stats are ok and tests the stats which should be
@@ -1265,6 +1273,7 @@ TEST_F(RTCStatsIntegrationTest, ExperimentalPsnrStats) {
       }
     }
   }
+#endif  // !defined(WEBRTC_ENCODER_PSNR_STATS)
 }
 
 TEST_F(RTCStatsIntegrationTest, ExperimentalTransportCcfbStats) {

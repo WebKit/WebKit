@@ -32,6 +32,9 @@
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
+#if defined(WEBRTC_WEBKIT_BUILD)
+#include "rtc_base/logging.h"
+#endif
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/net_test_helpers.h"
 #include "rtc_base/network.h"
@@ -137,6 +140,18 @@ class FakePortAllocatorSession : public PortAllocatorSession {
                                        .ice_username_fragment = username(),
                                        .ice_password = password()},
                                       0, 0, false));
+#if defined(WEBRTC_WEBKIT_BUILD)
+      // Release builds compile out the RTC_DCHECK(port_) below.  A transient
+      // UDP socket creation failure in TestUDPPort::Create() would then
+      // null-deref through the virtual SetIceTiebreaker() call and SIGABRT the
+      // entire test binary.  Fail this gathering attempt gracefully instead so
+      // one flaky port creation only fails its own test.
+      if (!port_) {
+        RTC_LOG(LS_ERROR)
+            << "TestUDPPort::Create() failed; skipping port gathering";
+        return;
+      }
+#endif
       RTC_DCHECK(port_);
       port_->SetIceTiebreaker(allocator_->ice_tiebreaker());
       port_->SubscribePortDestroyed(

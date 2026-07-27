@@ -650,6 +650,11 @@ TEST_F(RtpSenderReceiverTest, AddAndDestroyVideoRtpReceiverWithStreams) {
 }
 
 // Test that the AudioRtpSender applies options from the local audio source.
+#if !defined(WEBRTC_WEBKIT_BUILD)
+// `AudioRtpSender::SetSend()` skips applying `LocalAudioSource::options()`
+// to the voice channel when `WEBRTC_WEBKIT_BUILD` is defined (see
+// `rtp_sender.cc`).  WebKit owns audio options on its own side, so this
+// test asserts behavior that does not hold in the WebKit build.
 TEST_F(RtpSenderReceiverTest, LocalAudioSourceOptionsApplied) {
   AudioOptions options;
   options.echo_cancellation = true;
@@ -660,6 +665,7 @@ TEST_F(RtpSenderReceiverTest, LocalAudioSourceOptionsApplied) {
 
   DestroyAudioRtpSender();
 }
+#endif  // !defined(WEBRTC_WEBKIT_BUILD)
 
 // Test that the stream is muted when the track is disabled, and unmuted when
 // the track is enabled.

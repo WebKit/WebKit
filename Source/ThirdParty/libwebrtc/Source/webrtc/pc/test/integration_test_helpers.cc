@@ -85,6 +85,9 @@
 #include "rtc_base/firewall_socket_server.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helper.h"
+#if defined(WEBRTC_WEBKIT_BUILD)
+#include "rtc_base/sanitizer.h"  // for RTC_HAS_ASAN
+#endif
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_factory.h"
 #include "rtc_base/socket_server.h"
@@ -596,7 +599,11 @@ void PeerConnectionIntegrationWrapper::UpdateDelayStats(std::string tag,
   // quality for sure.
   // Worst bots:
   // linux_x86_dbg at 0.206
-#if !defined(NDEBUG)
+  // WebKit builds this test target with AddressSanitizer, whose instrumentation
+  // slows real-time audio like a slow/debug bot, so use the relaxed debug
+  // thresholds (not the stricter release ones) for the real-time-audio guards
+  // below to avoid flaky failures under load.
+#if !defined(NDEBUG) || (defined(WEBRTC_WEBKIT_BUILD) && RTC_HAS_ASAN)
   EXPECT_GT(0.25, recent_delay) << tag << " size " << desc_size;
 #else
   EXPECT_GT(0.1, recent_delay) << tag << " size " << desc_size;
@@ -612,7 +619,7 @@ void PeerConnectionIntegrationWrapper::UpdateDelayStats(std::string tag,
   // linux_more_configs bot at conceal count 5184
   // android_arm_rel at conceal count 9241
   // linux_x86_dbg at 15174
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) || (defined(WEBRTC_WEBKIT_BUILD) && RTC_HAS_ASAN)
   EXPECT_GT(18000U, delta_concealed) << "Concealed " << delta_concealed
                                      << " of " << delta_samples << " samples";
 #else
@@ -631,7 +638,7 @@ void PeerConnectionIntegrationWrapper::UpdateDelayStats(std::string tag,
   // Require at least 2000 samples (roughly 2x 20ms packets).
   if (delta_samples >= 2000) {
     audio_delay_stats_percentage_checked_ = true;
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) || (defined(WEBRTC_WEBKIT_BUILD) && RTC_HAS_ASAN)
     EXPECT_LT(1.0 * delta_concealed / delta_samples, 0.99)
         << "Concealed " << delta_concealed << " of " << delta_samples
         << " samples";

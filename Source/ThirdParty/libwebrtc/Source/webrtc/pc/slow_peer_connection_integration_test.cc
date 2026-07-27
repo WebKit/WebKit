@@ -39,6 +39,20 @@
 #include "test/gtest.h"
 #include "test/wait_until.h"
 
+#if WEBRTC_WEBKIT_BUILD
+// Rename the four fixture classes to avoid ODR collision with
+// peer_connection_integrationtest.cc when both translation units link into
+// the unified webrtc_unittests binary.  Upstream Chromium builds these as
+// separate gtest binaries (peerconnection_unittests vs slow_peer_connection_unittests),
+// so the collision only happens in WebKit's combined target.
+#define PeerConnectionIntegrationTest SlowPeerConnectionIntegrationTest
+#define PeerConnectionIntegrationTestWithFakeClock SlowPeerConnectionIntegrationTestWithFakeClock
+#define PeerConnectionIntegrationTestPlanB SlowPeerConnectionIntegrationTestPlanB
+#define PeerConnectionIntegrationTestUnifiedPlan SlowPeerConnectionIntegrationTestUnifiedPlan
+#define PeerConnectionIntegrationIceStatesTest SlowPeerConnectionIntegrationIceStatesTest
+#define PeerConnectionIntegrationIceStatesTestWithFakeClock SlowPeerConnectionIntegrationIceStatesTestWithFakeClock
+#endif
+
 namespace webrtc {
 
 namespace {

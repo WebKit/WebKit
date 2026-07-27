@@ -63,6 +63,12 @@ class FactorySignature {
     kWebRtcMoreConfigs1,
     kWebRtcAndroid,
     kGoogleInternal,
+#if defined(WEBRTC_WEBKIT_BUILD)
+    // WebKit's libwebrtc ships VP8 + VP9 in the built-in video factory and
+    // delegates H264/AV1 to platform encoders (VideoToolbox), so the codec
+    // signature differs from upstream.
+    kWebKit,
+#endif
   };
 
   template <typename Sink>
@@ -352,6 +358,29 @@ class FactorySignature {
     if (signature_ == google_internal) {
       return Id::kGoogleInternal;
     }
+#if defined(WEBRTC_WEBKIT_BUILD)
+    std::vector<std::string> webkit = {
+        "Decode audio/opus/48000/2;minptime:10;useinbandfec:1",
+        "Decode audio/G722/8000/1",
+        "Decode audio/PCMU/8000/1",
+        "Decode audio/PCMA/8000/1",
+        "Encode audio/opus/48000/2;minptime:10;useinbandfec:1",
+        "Encode audio/G722/8000/1",
+        "Encode audio/PCMU/8000/1",
+        "Encode audio/PCMA/8000/1",
+        "Decode video/VP8",
+        "Decode video/VP9;profile-id:0",
+        "Decode video/VP9;profile-id:2",
+        "Decode video/VP9;profile-id:1",
+        "Decode video/VP9;profile-id:3",
+        "Encode video/VP8",
+        "Encode video/VP9;profile-id:0",
+        "Encode video/VP9;profile-id:2",
+    };
+    if (signature_ == webkit) {
+      return Id::kWebKit;
+    }
+#endif  // defined(WEBRTC_WEBKIT_BUILD)
     // If unrecognized, produce a debug printout.
     StringBuilder sb;
     sb << "{\n";
@@ -1157,7 +1186,84 @@ TEST_F(PeerConnectionIntegrationTest, BasicOfferAnswerPayloadTypesStable) {
            "2 [99:video/rtx/90000/0;apt=98]",
            "2 [117:video/red/90000/0]",
            "2 [118:video/rtx/90000/0;apt=117]",
-           "2 [119:video/ulpfec/90000/0]"}}};
+           "2 [119:video/ulpfec/90000/0]"}}
+#if defined(WEBRTC_WEBKIT_BUILD)
+      ,
+      {.factory_id = FactorySignature::Id::kWebKit,
+       .caller_local =
+           {"1 [111:audio/opus/48000/2;minptime=10;useinbandfec=1]",
+            "1 [63:audio/red/48000/2;=111/111]",
+            "1 [9:audio/G722/8000/1]",
+            "1 [0:audio/PCMU/8000/1]",
+            "1 [8:audio/PCMA/8000/1]",
+            "1 [13:audio/CN/8000/1]",
+            "1 [110:audio/telephone-event/48000/1]",
+            "1 [126:audio/telephone-event/8000/1]",
+            "2 [96:video/VP8/90000/0]",
+            "2 [97:video/rtx/90000/0;apt=96]",
+            "2 [98:video/VP9/90000/0;profile-id=0]",
+            "2 [99:video/rtx/90000/0;apt=98]",
+            "2 [100:video/VP9/90000/0;profile-id=2]",
+            "2 [101:video/rtx/90000/0;apt=100]",
+            "2 [103:video/red/90000/0]",
+            "2 [104:video/rtx/90000/0;apt=103]",
+            "2 [107:video/ulpfec/90000/0]"},
+       .caller_remote =
+           {"1 [111:audio/opus/48000/2;minptime=10;useinbandfec=1]",
+            "1 [63:audio/red/48000/2;=111/111]",
+            "1 [9:audio/G722/8000/1]",
+            "1 [0:audio/PCMU/8000/1]",
+            "1 [8:audio/PCMA/8000/1]",
+            "1 [13:audio/CN/8000/1]",
+            "1 [110:audio/telephone-event/48000/1]",
+            "1 [126:audio/telephone-event/8000/1]",
+            "2 [96:video/VP8/90000/0]",
+            "2 [97:video/rtx/90000/0;apt=96]",
+            "2 [98:video/VP9/90000/0;profile-id=0]",
+            "2 [99:video/rtx/90000/0;apt=98]",
+            "2 [100:video/VP9/90000/0;profile-id=2]",
+            "2 [101:video/rtx/90000/0;apt=100]",
+            "2 [103:video/red/90000/0]",
+            "2 [104:video/rtx/90000/0;apt=103]",
+            "2 [107:video/ulpfec/90000/0]"},
+       .callee_local =
+           {"1 [111:audio/opus/48000/2;minptime=10;useinbandfec=1]",
+            "1 [63:audio/red/48000/2;=111/111]",
+            "1 [9:audio/G722/8000/1]",
+            "1 [0:audio/PCMU/8000/1]",
+            "1 [8:audio/PCMA/8000/1]",
+            "1 [13:audio/CN/8000/1]",
+            "1 [110:audio/telephone-event/48000/1]",
+            "1 [126:audio/telephone-event/8000/1]",
+            "2 [96:video/VP8/90000/0]",
+            "2 [97:video/rtx/90000/0;apt=96]",
+            "2 [98:video/VP9/90000/0;profile-id=0]",
+            "2 [99:video/rtx/90000/0;apt=98]",
+            "2 [100:video/VP9/90000/0;profile-id=2]",
+            "2 [101:video/rtx/90000/0;apt=100]",
+            "2 [103:video/red/90000/0]",
+            "2 [104:video/rtx/90000/0;apt=103]",
+            "2 [107:video/ulpfec/90000/0]"},
+       .callee_remote =
+           {"1 [111:audio/opus/48000/2;minptime=10;useinbandfec=1]",
+            "1 [63:audio/red/48000/2;=111/111]",
+            "1 [9:audio/G722/8000/1]",
+            "1 [0:audio/PCMU/8000/1]",
+            "1 [8:audio/PCMA/8000/1]",
+            "1 [13:audio/CN/8000/1]",
+            "1 [110:audio/telephone-event/48000/1]",
+            "1 [126:audio/telephone-event/8000/1]",
+            "2 [96:video/VP8/90000/0]",
+            "2 [97:video/rtx/90000/0;apt=96]",
+            "2 [98:video/VP9/90000/0;profile-id=0]",
+            "2 [99:video/rtx/90000/0;apt=98]",
+            "2 [100:video/VP9/90000/0;profile-id=2]",
+            "2 [101:video/rtx/90000/0;apt=100]",
+            "2 [103:video/red/90000/0]",
+            "2 [104:video/rtx/90000/0;apt=103]",
+            "2 [107:video/ulpfec/90000/0]"}}
+#endif  // defined(WEBRTC_WEBKIT_BUILD)
+  };
   auto this_golden_it =
       std::find_if(golden_answers.begin(), golden_answers.end(),
                    [&](const ResultingCodecList& candidate) {

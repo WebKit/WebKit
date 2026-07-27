@@ -67,6 +67,19 @@
 			);
 			productName = Setup;
 		};
+		/* Begin libwebrtc-unit-tests-generated AggregateTarget entries */
+		80806A7C98FC4775A015FC7F /* Unit Tests */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9700DB8457CC464291A0C8F4 /* Build configuration list for PBXAggregateTarget "Unit Tests" */;
+			buildPhases = (
+			);
+			dependencies = (
+				35E78E81707C42C78FED1364 /* PBXTargetDependency */,
+			);
+			name = "Unit Tests";
+			productName = "Unit Tests";
+		};
+		/* End libwebrtc-unit-tests-generated AggregateTarget entries */
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -5198,6 +5211,234 @@
 		DDF30D9127C5C725006A526F /* receive_side_congestion_controller.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF30D9027C5C725006A526F /* receive_side_congestion_controller.h */; };
 		DDF30D9527C5C756006A526F /* bwe_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF30D9327C5C756006A526F /* bwe_defines.h */; };
 		DDF30D9627C5C756006A526F /* remote_bitrate_estimator.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF30D9427C5C756006A526F /* remote_bitrate_estimator.h */; };
+		/* Begin libwebrtc-unit-tests-generated BuildFile entries */
+		7FA92C7AFCDD4391B67D66FD /* opus_audio_decoder_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = B646EC9DE00742E0B2974F73 /* opus_audio_decoder_factory.cc */; };
+		F41962F54BC3420DBABFCC96 /* opus_audio_encoder_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 31B7E17D7F90488987309692 /* opus_audio_encoder_factory.cc */; };
+		213588BC44B14249819995E6 /* create_frame_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4935203CEF344FABAD00CD64 /* create_frame_generator.cc */; };
+		A6060B0BAFE14B61B624299D /* fake_frame_decryptor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 34D8998C3D3441A88AFFBA4D /* fake_frame_decryptor.cc */; };
+		112CA8EC5BEB405BAD122950 /* fake_frame_encryptor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 00EEE41AB0494170B9769F54 /* fake_frame_encryptor.cc */; };
+		9C46A2CA6DAD4A76912490FE /* frame_generator_interface.cc in Sources */ = {isa = PBXBuildFile; fileRef = F358E5828CF940ADA1169019 /* frame_generator_interface.cc */; };
+		B13B4D9ED6C74126BD75F10B /* ecn_marking_counter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 914E3B97A553456BBC8D74D9 /* ecn_marking_counter.cc */; };
+		4F732A9D20974CEC98B939ED /* network_emulation_interfaces.cc in Sources */ = {isa = PBXBuildFile; fileRef = A274F46DEB7147ADA1C90CEA /* network_emulation_interfaces.cc */; };
+		5CEBF5ED756F4F2CAC7C36F3 /* network_emulation_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = C49AA7F8A87443858908B9E1 /* network_emulation_manager.cc */; };
+		B6AC46F4EBD442DC91034ACD /* fake_resource.cc in Sources */ = {isa = PBXBuildFile; fileRef = 75864C65FB6B4B9C8FE2EE3E /* fake_resource.cc */; };
+		C051998949FD45CBB7E8E30E /* allocation_counter.cc in Sources */ = {isa = PBXBuildFile; fileRef = B16E4B1E078F47AA90F7537F /* allocation_counter.cc */; };
+		7E68B80BF8D742D1A0534E42 /* audio_converter_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = D70783419FCD43F8BDD0745D /* audio_converter_unittest.cc */; };
+		ED0B5FEF2131482C94DB6292 /* audio_util_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E1BF9BB426484D43804650AF /* audio_util_unittest.cc */; };
+		A27D36B56AEA4011A58B2087 /* channel_buffer_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 61909363D9AD41E98E847B42 /* channel_buffer_unittest.cc */; };
+		163B166B131F4979911256BA /* fir_filter_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E19EBE899ABD4877978356FF /* fir_filter_unittest.cc */; };
+		634FE1E4AC5441A381250356 /* real_fourier_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE1E831F4DC419C903BB0B9 /* real_fourier_unittest.cc */; };
+		AA132E7E545B4CD9921382E7 /* push_resampler_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 96E5EE1D58774805BB07E1F5 /* push_resampler_unittest.cc */; };
+		A51C930D47A94575B9E44D1B /* push_sinc_resampler_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 64433F085BF04A86AEF375A2 /* push_sinc_resampler_unittest.cc */; };
+		1BBBEBC4800248F4AC162E7D /* resampler_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = DFE636C89CB94B189E148C97 /* resampler_unittest.cc */; };
+		4EFDEE4189B44106AFC4EFB1 /* sinusoidal_linear_chirp_source.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5574ABEB0CF7401B92323EDD /* sinusoidal_linear_chirp_source.cc */; };
+		69B1A1872440461ABD2831E3 /* ring_buffer_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FACCE82DB46CEAAEDA62A /* ring_buffer_unittest.cc */; };
+		306C4CB8A11148E6AA6DCD85 /* signal_processing_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 48B5634D80934FAC87C85F2D /* signal_processing_unittest.cc */; };
+		A05AD538A198489999082810 /* smoothing_filter_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 29AECE0BD3F643179E72C426 /* smoothing_filter_unittest.cc */; };
+		616BFFDAEBD24163A3EC2473 /* vad_core_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6DA42273084546819D6317FD /* vad_core_unittest.cc */; };
+		38562E11B4054943AE1D1DC7 /* vad_filterbank_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C7D393C5C4516A1768AF6 /* vad_filterbank_unittest.cc */; };
+		695C5AC92C9E4346A3BD84F6 /* vad_gmm_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0B1314438B6B4506891D35DF /* vad_gmm_unittest.cc */; };
+		5BF9217E266540FDB32ED941 /* vad_sp_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 40E999C0AD1D47C58CE4DD94 /* vad_sp_unittest.cc */; };
+		903E0B49864A43EE84076062 /* vad_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 19806AC5382E4E3FB4467D49 /* vad_unittest.cc */; };
+		50B7E401B2244847B70522FC /* wav_file_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9F90A5E414E34F5FADE6BCCC /* wav_file_unittest.cc */; };
+		C6DB5D0ACBBB4E2C8FFCD938 /* wav_header_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 81B55FC7BD8443BABF5D5E71 /* wav_header_unittest.cc */; };
+		280BB398C9C049838D4A04C5 /* window_generator_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = EAACD31335054A27B81D7135 /* window_generator_unittest.cc */; };
+		E27A93A4223A4AE7B6D3C10A /* bitrate_adjuster_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6ADAA09FE08D4D179FAA96A1 /* bitrate_adjuster_unittest.cc */; };
+		DE31E9F61156406399A8BCA6 /* frame_rate_estimator_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 733C6BA0F1C149BD97DC7048 /* frame_rate_estimator_unittest.cc */; };
+		9FE0551FD44F43FE9001CD38 /* framerate_controller_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E6CFFC6967CA4C59B01DB328 /* framerate_controller_unittest.cc */; };
+		DD69FF7F777547B8A934F429 /* h264_bitstream_parser_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 36D7CCD392A24D1798399C6A /* h264_bitstream_parser_unittest.cc */; };
+		37763C65469D4D6D923E91C8 /* pps_parser_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 532EEFB6E94E43E29525BE7A /* pps_parser_unittest.cc */; };
+		E659DD49C46446C7882D075A /* sps_parser_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 40F88FE5C27F41B68112B040 /* sps_parser_unittest.cc */; };
+		133D29CE0DB44C29B1D3D974 /* sps_vui_rewriter_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E2C12529B6D2401F9B9CAD20 /* sps_vui_rewriter_unittest.cc */; };
+		BF657A1C12C341E9A00BE3FC /* libyuv_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = A7327C1FCAFE41F291EEDB08 /* libyuv_unittest.cc */; };
+		6D5B289D5CC24597BFA911AA /* video_frame_buffer_pool_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5D5EC14F2D3C4F96BBB4063D /* video_frame_buffer_pool_unittest.cc */; };
+		D2580E21EAF74BD0996C002E /* video_frame_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5C007F6CFEA4067B0B2FA1C /* video_frame_unittest.cc */; };
+		2555353E271C42D598A6AE4C /* fake_rtc_event_log.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4186021EF8164BD5A78DF104 /* fake_rtc_event_log.cc */; };
+		06C91A9136CD43C080C416B7 /* fake_rtc_event_log_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7419D4CB6C70490C8A97086A /* fake_rtc_event_log_factory.cc */; };
+		05DA23EF0FE340CFB70B75D6 /* fake_frame_source.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6AD21E6F2B864FFD940A20F9 /* fake_frame_source.cc */; };
+		7DA90D6595224199ACFE78F3 /* fake_media_engine.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE4D9BFFE534405DB1C99692 /* fake_media_engine.cc */; };
+		DA26EC1195A94FDD9546A06D /* fake_rtp.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4238A92989F54377887538C4 /* fake_rtp.cc */; };
+		F11989F8F67046DFB7EF5E06 /* fake_video_renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0CDB17E44F794755B2422E20 /* fake_video_renderer.cc */; };
+		6BA1CD69719C492793CB97DD /* test_utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = 79141A7B468A401291D7113C /* test_utils.cc */; };
+		A6D10FC806F643B3BD0249B4 /* fake_webrtc_call.cc in Sources */ = {isa = PBXBuildFile; fileRef = ECF031FAD3FC48A9A73229CE /* fake_webrtc_call.cc */; };
+		02A0A82586924C75BD0F3587 /* fake_webrtc_video_engine.cc in Sources */ = {isa = PBXBuildFile; fileRef = 88054114F94940BCB4196A82 /* fake_webrtc_video_engine.cc */; };
+		83C1301D497846BB9413E13B /* opus_speed_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = C10ECAD71FA1441699E4159B /* opus_speed_test.cc */; };
+		84946445F0634623A94E25B2 /* audio_codec_speed_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = AAC90B7966994A46AE49D228 /* audio_codec_speed_test.cc */; };
+		4D676BF98D714D57B345651E /* audio_decoder_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4AE84BCF7197409889D7EBDC /* audio_decoder_unittest.cc */; };
+		A96CFA9A5D314F66AB323C06 /* test_audio_device.cc in Sources */ = {isa = PBXBuildFile; fileRef = 53ECFCE66EA247A490C82A5E /* test_audio_device.cc */; };
+		25C9DA6D569B44B18FA6D420 /* goog_cc_printer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 363EC77FD5604F85ACF69F54 /* goog_cc_printer.cc */; };
+		214FFAE2A08244949FA4BD57 /* module_common_types_public_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = D049642ADC674B59A96D5139 /* module_common_types_public_unittest.cc */; };
+		A7A6E92305E74448B7BACD7D /* video_codec_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = FB3E5F73A6434C13AD16A017 /* video_codec_test.cc */; };
+		6F6E1C3015C04C0D85E8AB90 /* ivf_file_reader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 795DD3C5F8E54E61BC402C8A /* ivf_file_reader.cc */; };
+		DF9FAB30963C4DACA0879D89 /* stun_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = 792679ED618E442C98850EA4 /* stun_server.cc */; };
+		A830F94087A4433E98E9CA22 /* test_stun_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = FB56FFFA67814EA8ABD93AC9 /* test_stun_server.cc */; };
+		11C79CFF4387491CBD0F2200 /* turn_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9CC9A409F7CA4FE9B25C9617 /* turn_server.cc */; };
+		19FC9C56D1A6455FA75BC589 /* audio_rtp_receiver_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1D6556A092C4686923FB449 /* audio_rtp_receiver_unittest.cc */; };
+		4E965FE0706349FAA640867F /* channel_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1D9C940BED6E4E78856D6081 /* channel_unittest.cc */; };
+		20E8AB4B4F59428CBE299692 /* codec_vendor_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E6E31E653F644DAC80C5AF6D /* codec_vendor_unittest.cc */; };
+		ED0FD0D5ACA14144AF0DA085 /* congestion_control_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = FFE509DD20ED419AA2ABFD90 /* congestion_control_integrationtest.cc */; };
+		BEBA26671288472880CC58C1 /* data_channel_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = BFCBF01569114131B0DBC7D6 /* data_channel_integrationtest.cc */; };
+		B8310A39C8B242F5B0A8578D /* sctp_data_channel_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C2A05F702E74466DBE58382E /* sctp_data_channel_unittest.cc */; };
+		CCFE9C2422AD4C4FA2A6ED81 /* datagram_connection_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8CD3D30394D247F595DD55E5 /* datagram_connection_unittest.cc */; };
+		AB36B6F4CD6E4F07865042C3 /* dtls_srtp_transport_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0DA293C891FA48B09985DDBB /* dtls_srtp_transport_integrationtest.cc */; };
+		C4F7747442A84873B267F021 /* dtls_srtp_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = A40D8CB2860942B093D78ED9 /* dtls_srtp_transport_unittest.cc */; };
+		CEB7997AA62A45F98CD05C30 /* dtls_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 48966350DCD1434EBD655B4F /* dtls_transport_unittest.cc */; };
+		6B9E823F880A4CC49B988D75 /* dtmf_sender_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E27D9A8590FC44A59E06CC5F /* dtmf_sender_unittest.cc */; };
+		5D553254942744B292C12FC3 /* ice_server_parsing_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E051AA4E09084AEEA605D5C3 /* ice_server_parsing_unittest.cc */; };
+		863D3876F95D4F71A7D21FBA /* ice_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 08382D5006564D969C21B369 /* ice_transport_unittest.cc */; };
+		71AB6590C6F4410C94B79B15 /* jitter_buffer_delay_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 353EC03575EE46A2BD7E5276 /* jitter_buffer_delay_unittest.cc */; };
+		52745F0F03404F71B342329B /* jsep_session_description_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C4A52E2960F74504A186B839 /* jsep_session_description_unittest.cc */; };
+		CCD68C9909494F57A6578431 /* jsep_transport_controller_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = DF287BD3F0554728BCEBB5D8 /* jsep_transport_controller_unittest.cc */; };
+		FA9D55FC84914AFB9DAA7185 /* jsep_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8BB818D8A1AA486B89D94A2C /* jsep_transport_unittest.cc */; };
+		81E40CCAF6DD45CDA9EA58A1 /* legacy_stats_collector_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 43F6761AA7D44279A72B315B /* legacy_stats_collector_unittest.cc */; };
+		8E304A6867E8421C93D8EE7B /* local_audio_source_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6AD3B63ABD324AE79F2E1366 /* local_audio_source_unittest.cc */; };
+		D8C63B541CA24200849455B1 /* media_session_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70FB97324EF041F9BB6A3A5A /* media_session_unittest.cc */; };
+		CCE7C75764844F81B1DB98FE /* media_stream_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0B58E027F13C451CA329228D /* media_stream_unittest.cc */; };
+		B1CC55DA6F4F4156B43C0AB0 /* peer_connection_adaptation_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2AE2B1B99EE6432DAD7E52AC /* peer_connection_adaptation_integrationtest.cc */; };
+		4439F4A8A4C74E87AE75C427 /* peer_connection_audio_options_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9B229F27AB664B099A40CB1C /* peer_connection_audio_options_unittest.cc */; };
+		19F200A550B7407485686881 /* peer_connection_bundle_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 66285E493C6A4C488BDA45D7 /* peer_connection_bundle_unittest.cc */; };
+		CAD9ECBA6DA347D1BE4B51DE /* peer_connection_crypto_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = B2E19125C03D4948A82CBFF1 /* peer_connection_crypto_unittest.cc */; };
+		B17AC861A03F4A8B9DF4421D /* peer_connection_data_channel_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0DF21D658CC3426E92AB2525 /* peer_connection_data_channel_unittest.cc */; };
+		A5411C4A79504D6A9686AC7D /* peer_connection_encodings_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 36DF933D50E14DCEAD80E838 /* peer_connection_encodings_integrationtest.cc */; };
+		8A186938A2D34A058CE9CFBF /* peer_connection_end_to_end_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C4C5531CDF804A4E9407A82D /* peer_connection_end_to_end_unittest.cc */; };
+		8BF42F94682E437A9A62879C /* peer_connection_factory_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5F8CE3DBA71944D5BBFD864C /* peer_connection_factory_unittest.cc */; };
+		590788EF3B9C416EB50DA4D5 /* peer_connection_field_trial_tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = A20F3D8FF4194D27B07AB639 /* peer_connection_field_trial_tests.cc */; };
+		976E88315AC546B5BF6C4BC1 /* peer_connection_header_extension_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4EF958855FFF49E295E8F4FD /* peer_connection_header_extension_unittest.cc */; };
+		D3E3FDC04BFD4D1FB6656CE3 /* peer_connection_histogram_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 71E4DA11EC1D4F5EBB1478D4 /* peer_connection_histogram_unittest.cc */; };
+		3B3ECAAAA8A448C5993CFCCB /* peer_connection_ice_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = B8E4D0BA3EA4470398F4CAEF /* peer_connection_ice_unittest.cc */; };
+		1B981C33F3CA408E87D6702A /* peer_connection_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 981824C12DC94D7DA2C560E6 /* peer_connection_integrationtest.cc */; };
+		C2C5AB1EFFEA42ACAD3BD56F /* peer_connection_interface_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = F179DF073A6448C284EEC20B /* peer_connection_interface_unittest.cc */; };
+		60A8EE28046F45D1A3012395 /* peer_connection_jsep_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3CAB322A161644F49F34B337 /* peer_connection_jsep_unittest.cc */; };
+		D75F9455B06A4C47BDDB563D /* peer_connection_media_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C2863F5BE92441CEB4635605 /* peer_connection_media_unittest.cc */; };
+		C1EA35FF4DE949698EF46FE7 /* peer_connection_rtp_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4812673BC0354B9796456B5E /* peer_connection_rtp_unittest.cc */; };
+		74EAE51F98E740E0A2AA739A /* peer_connection_signaling_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41782C8C62FD4EAD92F7EFAF /* peer_connection_signaling_unittest.cc */; };
+		5784458F47D04F8B984CC3B1 /* peer_connection_simulcast_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE219AE520B74091BAE35BF9 /* peer_connection_simulcast_unittest.cc */; };
+		C2946082B94341EDB935E26A /* peer_connection_stability_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5DA1005A8434CFDBD68E82B /* peer_connection_stability_integrationtest.cc */; };
+		D3B64D8CA62B43ACB3CCF581 /* peer_connection_svc_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = BA451B7C67724E688DA206D3 /* peer_connection_svc_integrationtest.cc */; };
+		EFDC5C3D24EF4927AE8C52BA /* peer_connection_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6A267E7210264C6AA161ED20 /* peer_connection_wrapper.cc */; };
+		47CF30B95E3448829CAA1D12 /* pranswer_switch_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 57B63CDC37B044099466A7CE /* pranswer_switch_integrationtest.cc */; };
+		A73DC33732EC4556B1AB9514 /* proxy_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8D88831E2AA94B73A1C66844 /* proxy_unittest.cc */; };
+		698B433643B54219BE03F3C4 /* rtc_stats_collector_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F991D27B7F84D10B6B5E8EF /* rtc_stats_collector_unittest.cc */; };
+		E7521C46B47844949E6C150E /* rtc_stats_integrationtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6A38C677F90F4607980F21F3 /* rtc_stats_integrationtest.cc */; };
+		6EC3E969B6664C8096436ABB /* rtc_stats_traversal_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = D6C5DFA90AFE4B42A5421B9C /* rtc_stats_traversal_unittest.cc */; };
+		A70F47EF95DD4519879281A2 /* rtcp_mux_filter_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 37EA8D01EC9C42ED8B8AC4E4 /* rtcp_mux_filter_unittest.cc */; };
+		9883E61E33194C8594A392A8 /* rtp_media_utils_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 84722C99A04148FAA28831E7 /* rtp_media_utils_unittest.cc */; };
+		C9669D847A9E4C819A90224A /* rtp_parameters_conversion_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = FDE4BA69D7EA4D31AC21B412 /* rtp_parameters_conversion_unittest.cc */; };
+		C89C993F461C4BC1A770EA0B /* rtp_sender_receiver_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = A65D8C2B38884EB0A2776B52 /* rtp_sender_receiver_unittest.cc */; };
+		F6328F740F694F408F9F86D9 /* rtp_transceiver_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7F0F8C3E367B43E486BB82B4 /* rtp_transceiver_unittest.cc */; };
+		BABC650FA0CA48DD9EFA67C4 /* rtp_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 99BCFE46224E4FEFBF18B06D /* rtp_transport_unittest.cc */; };
+		0BC82BE6362F4914A8AAAAF0 /* sctp_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 376A202AFEDD4D6C9CEF1F47 /* sctp_transport_unittest.cc */; };
+		10A7B9BDFDCF45C591C46D61 /* sctp_utils_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E83B496C76E647109645F013 /* sctp_utils_unittest.cc */; };
+		41DE65247F4F4411B7464960 /* sdp_munging_detector_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0FA9957666654B0A9FB86B7C /* sdp_munging_detector_unittest.cc */; };
+		602340B73BC0478A976AE78B /* sdp_offer_answer_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E796773D862A4273B1DD760C /* sdp_offer_answer_unittest.cc */; };
+		9AE2F4DFA18E4ED8A8CF53FD /* sdp_payload_type_suggester_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = B082591231B54B389EC24CDB /* sdp_payload_type_suggester_unittest.cc */; };
+		2953E11B5F67431E873C51E8 /* session_description_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 805866EFCD3A49699B4DAC6D /* session_description_unittest.cc */; };
+		0D31E1DC9D5F4E18A9FB0626 /* simulcast_sdp_serializer_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE1FB84E2E5E490591A41C37 /* simulcast_sdp_serializer_unittest.cc */; };
+		43E525526A8E4DDB80F57D50 /* slow_peer_connection_integration_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 80EE7F23F318434494B5DCD0 /* slow_peer_connection_integration_test.cc */; };
+		0CC7E264342542B285904DA8 /* srtp_session_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 101C7331B50E452686D008EE /* srtp_session_unittest.cc */; };
+		7005165999554E85B0092603 /* srtp_transport_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C4DEDAE469C54A73A2603E67 /* srtp_transport_unittest.cc */; };
+		A06F566886554A67AA9BEB0B /* enable_fake_media.cc in Sources */ = {isa = PBXBuildFile; fileRef = 082837FC64C14CD68A8AEC3E /* enable_fake_media.cc */; };
+		00E7867F8285407781CAEA02 /* fake_audio_capture_module.cc in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6BA644EB467ABBB762D8 /* fake_audio_capture_module.cc */; };
+		476CDB02758043F0813C46AE /* fake_audio_capture_module_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0E6E7F5C53574C568986258D /* fake_audio_capture_module_unittest.cc */; };
+		FCB1251213754100BB9387C7 /* integration_test_helpers.cc in Sources */ = {isa = PBXBuildFile; fileRef = ECFA16B0744A4BA58FC7CA65 /* integration_test_helpers.cc */; };
+		EC545155B6094B3AB5799808 /* peer_connection_test_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = CD1715BE97AF467A91B23D82 /* peer_connection_test_wrapper.cc */; };
+		CA6CDAAA56C34F399D483967 /* simulcast_layer_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = EF938DA09C084C2EA2220B0B /* simulcast_layer_util.cc */; };
+		C574C57B00204430AD076EF2 /* svc_e2e_tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0BD3AAB32F80446E9ADA2989 /* svc_e2e_tests.cc */; };
+		38911579914B46D886F0EABE /* track_media_info_map_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = D2956F20989C415E8E65F1A4 /* track_media_info_map_unittest.cc */; };
+		F032B5F6864D42169324AC9F /* video_rtp_receiver_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6A72BA7B558046799850C78B /* video_rtp_receiver_unittest.cc */; };
+		F3812F045A38476E907A0D97 /* video_rtp_track_source_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C34F8E353C294F98BF4619D3 /* video_rtp_track_source_unittest.cc */; };
+		D53A4FE694244A0BB1BE134B /* video_track_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 15CE625937FF4F1A954EE100 /* video_track_unittest.cc */; };
+		CC6C2C4B1FE84A95BE59BD50 /* net_test_helpers.cc in Sources */ = {isa = PBXBuildFile; fileRef = CF306F8FAA9B41F683CD6F5C /* net_test_helpers.cc */; };
+		59E1C26AF1B443ADACCC323A /* task_queue_for_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C85B210236745968BFC57ED /* task_queue_for_test.cc */; };
+		1591ADFAA3AF45B18EF76EC7 /* virtual_socket_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = 190D0C3F4C2D4B52B7C0DD4A /* virtual_socket_server.cc */; };
+		3898058555834C0B90E1C958 /* rtc_stats_report_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = C9011B7B54864FF1A2311102 /* rtc_stats_report_unittest.cc */; };
+		CD8CEEFEE0D840C08E24FE04 /* rtc_stats_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = AA64BDFCCFF84B2389BB8754 /* rtc_stats_unittest.cc */; };
+		D910E43361944264B91F8F05 /* clock_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 61D30D4B9FCD409CBC642DA9 /* clock_unittest.cc */; };
+		E16EE1B3860042B18A880941 /* metrics_default_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3C3E3CB0CFDB48169A30039C /* metrics_default_unittest.cc */; };
+		5F9E4C765FD44A1599E68243 /* metrics_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = F19C5352080A4A92A2F62731 /* metrics_unittest.cc */; };
+		21FBE8B607CB4A2BBF3D1358 /* ntp_time_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1BFFE0A5B6584D3EBD61B4F8 /* ntp_time_unittest.cc */; };
+		80E7F13D987441BB9B2F9A84 /* create_frame_generator_capturer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C56A2C8E4B545A6826415B7 /* create_frame_generator_capturer.cc */; };
+		A1C7ED7A14114487BDDBBF22 /* create_test_environment.cc in Sources */ = {isa = PBXBuildFile; fileRef = A3EA8447183F4923A879BC2D /* create_test_environment.cc */; };
+		F313A33D3E1F494EA7B8BCD6 /* create_test_field_trials_without_absl_flag.cc in Sources */ = {isa = PBXBuildFile; fileRef = 366FE56534964499A95FF836 /* create_test_field_trials_without_absl_flag.cc */; };
+		E0B388D0E461470CAEF0931B /* encoder_settings.cc in Sources */ = {isa = PBXBuildFile; fileRef = CEE638B2CA274FA49265F70E /* encoder_settings.cc */; };
+		B5C5E78E190B4F529E9AEA64 /* fake_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7238FD7B0D8C4A91821E886C /* fake_decoder.cc */; };
+		1258596C7CB84CF8A2D8F1D8 /* fake_encoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3BD67CFC30894488836D7054 /* fake_encoder.cc */; };
+		EC60D7BB60DF4B3CAE98AFF3 /* fake_texture_frame.cc in Sources */ = {isa = PBXBuildFile; fileRef = F48FB399AAEF43D28E9DE504 /* fake_texture_frame.cc */; };
+		038D33D81DD04BC9A45B3E41 /* fake_vp8_encoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6B9C56213EF44B509D02AAD3 /* fake_vp8_encoder.cc */; };
+		9323126128A1406987F97113 /* frame_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = FD87EB74E8A34A55B4D3C8B1 /* frame_generator.cc */; };
+		C2560E66B4304EC0BED1CF32 /* frame_generator_capturer.cc in Sources */ = {isa = PBXBuildFile; fileRef = AED33F8DEC584DAB992AB5B4 /* frame_generator_capturer.cc */; };
+		CA663F914F2844ECA036270A /* frame_utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4259BD14F7644D0F8DCFDB3C /* frame_utils.cc */; };
+		2B6653A48DAD46ED8E48F067 /* file_log_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6B525E29E83D49E8971EF231 /* file_log_writer.cc */; };
+		09C6C8A0FECC4A13B70E1E2C /* log_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8AC657B95125407785BB73AB /* log_writer.cc */; };
+		7804A16F3432491A8F305C87 /* mock_audio_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = A3C66C7B9504488F8D3A8256 /* mock_audio_decoder.cc */; };
+		98FDA482B79F4224BA27EE7C /* cross_traffic.cc in Sources */ = {isa = PBXBuildFile; fileRef = B5A60BE79440437897FC633F /* cross_traffic.cc */; };
+		480D9CF807494B13B08807DC /* emulated_network_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F109DEA6AAF49359DEFD2CD /* emulated_network_manager.cc */; };
+		4B642C6FD82E4C61B0630A28 /* emulated_turn_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = 29719697902D4C1AABA23753 /* emulated_turn_server.cc */; };
+		3C5647308BDE41B9A16E3733 /* fake_network_socket_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = B11A3EF269FC4B3E823EAB2C /* fake_network_socket_server.cc */; };
+		5381172AB26249C3B165D7A0 /* network_emulation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3AC14F40D86F471D9264A233 /* network_emulation.cc */; };
+		B323E605C33A4A6D94C32D56 /* network_emulation_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 656048BC52BE4F35B0C10FCB /* network_emulation_manager.cc */; };
+		D5EF2BB0392E46E0BEA175D3 /* traffic_route.cc in Sources */ = {isa = PBXBuildFile; fileRef = 51878DE204404458AD1518E6 /* traffic_route.cc */; };
+		620A81F90349455E8CE249E2 /* run_loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9E23ADE7C9E14025A3942A6C /* run_loop.cc */; };
+		397DA107E40B4AF1877A5B32 /* audio_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = C8BD071DD7C44E27AE6DB895 /* audio_stream.cc */; };
+		F84DD448CBF9453D978E644A /* call_client.cc in Sources */ = {isa = PBXBuildFile; fileRef = F187AE79CDC04E268FBF4DA0 /* call_client.cc */; };
+		8EA380A48B7F44919C448160 /* column_printer.cc in Sources */ = {isa = PBXBuildFile; fileRef = F096AE37ABBB43CE96757929 /* column_printer.cc */; };
+		69CA74D5054344EEB04F74E1 /* hardware_codecs.cc in Sources */ = {isa = PBXBuildFile; fileRef = 86E8B7959E4A4EB88E1D4536 /* hardware_codecs.cc */; };
+		E827FCCFAB3C4212841891B5 /* network_node.cc in Sources */ = {isa = PBXBuildFile; fileRef = ECB6751295C543CD9C8F74D6 /* network_node.cc */; };
+		CB731753B03C4D5DB0B0C8E2 /* scenario.cc in Sources */ = {isa = PBXBuildFile; fileRef = B57A7BB254784F159ADF8228 /* scenario.cc */; };
+		9ABAE9B5DBBC45F7BE928176 /* scenario_config.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F2F524B3B2E49F487C7E8B6 /* scenario_config.cc */; };
+		0B12347668434249B0899827 /* video_frame_matcher.cc in Sources */ = {isa = PBXBuildFile; fileRef = F2071D0CCC0A426F8B801607 /* video_frame_matcher.cc */; };
+		9D4568A4B8474B8880734C09 /* video_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0EB66E96614A4E57A3565E8B /* video_stream.cc */; };
+		4F897250F9994ACC98A6B556 /* test_video_capturer.cc in Sources */ = {isa = PBXBuildFile; fileRef = A0418C64CB82481095D90D80 /* test_video_capturer.cc */; };
+		68B4036EDB1549AFBFD3ADFA /* copy_to_file_audio_capturer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 779FFBD7FDB34536B132400B /* copy_to_file_audio_capturer.cc */; };
+		D9F4C4B2F4894FD7B470E1C1 /* file_utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = 24883341A0A3483A9A72E398 /* file_utils.cc */; };
+		4802B0448D734FBD812EF9EA /* file_utils_override.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D03EEB433FE4B92888564A5 /* file_utils_override.cc */; };
+		EE1079BB355A4D3E95712D9F /* ivf_video_frame_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B75539CEE704741B03EBDD8 /* ivf_video_frame_generator.cc */; };
+		E3C3D62997144EABA09B6AAE /* mac_file_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = EC8E24ACFFA049AFB9F0E7E9 /* mac_file_utils.mm */; };
+		0E138D6138704B8392A7EA18 /* video_frame_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = B69CB9F1F94C456B8A233D95 /* video_frame_writer.cc */; };
+		8DE8788797C04AA2AECE262A /* y4m_frame_reader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4FFA5CFEEF5C4A3F8F5E09DB /* y4m_frame_reader.cc */; };
+		31DDB71AD2C14AC0927CC2A0 /* y4m_frame_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8C0C0DD2081042B3938E0818 /* y4m_frame_writer.cc */; };
+		BFECD463648646228D20B564 /* yuv_frame_reader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70550B279F94449DBADD9D2D /* yuv_frame_reader.cc */; };
+		A52AB773951844ED97CCB2BE /* yuv_frame_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 586F7E87EA804583BD65F474 /* yuv_frame_writer.cc */; };
+		06C7B30363FE4CA884C48C5F /* real_time_controller.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6B121996BF024C82AD31BB05 /* real_time_controller.cc */; };
+		AF38C3CFCC2643EFB02DDED8 /* simulated_task_queue.cc in Sources */ = {isa = PBXBuildFile; fileRef = 612D2C261CF1406FB0E6FBD5 /* simulated_task_queue.cc */; };
+		32723F79185C4BD88CA7627D /* simulated_thread.cc in Sources */ = {isa = PBXBuildFile; fileRef = B92EA8BBCBA64F09B1EDC75A /* simulated_thread.cc */; };
+		5990B12A21F048DA9BB6424D /* simulated_time_controller.cc in Sources */ = {isa = PBXBuildFile; fileRef = D73B65736E4643D38DA8D9D8 /* simulated_time_controller.cc */; };
+		49191CB46D5F4A9492324AAA /* simulated_time_controller_impl.cc in Sources */ = {isa = PBXBuildFile; fileRef = 267BB446E1EA4268A1138FF0 /* simulated_time_controller_impl.cc */; };
+		A8C44941C0C04DF3A5809E5B /* video_codec_tester.cc in Sources */ = {isa = PBXBuildFile; fileRef = AF4B914BC96D4F219AA2B007 /* video_codec_tester.cc */; };
+		2E2072F6D0FE4B1B96E1EE2B /* wait_until.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3B87EF9617434F16B918F268 /* wait_until.cc */; };
+		117BA95177944CC9867D5A18 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3D3F3D7ED88D4CEC93F7CD9F /* gtest-all.cc */; };
+		6A9AFB1AB9564D2AAE5D225C /* gmock-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9285346DA1894B719390654D /* gmock-all.cc */; };
+		01E79F9DA314453E98C50293 /* str_replace.cc in Sources */ = {isa = PBXBuildFile; fileRef = E026EA41136945019D6F2173 /* str_replace.cc */; };
+		891A3DE7C53446A6B7680A4D /* damerau_levenshtein_distance.cc in Sources */ = {isa = PBXBuildFile; fileRef = D18A242A61E7494087E2B7E0 /* damerau_levenshtein_distance.cc */; };
+		D2209BE20CD9451FA529EAD8 /* parse.cc in Sources */ = {isa = PBXBuildFile; fileRef = 85D1F9A0BDC740A5A625876F /* parse.cc */; };
+		4007E8A2F6BE4A3FAA0F3215 /* reflection.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441390A944E945E5AB07C5C2 /* reflection.cc */; };
+		DDD0D4C421D74D9184CB1155 /* usage.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3B24CFF95E2E493EB44E3D13 /* usage.cc */; };
+		106EDD32B7DF4D439B8E803E /* usage_config.cc in Sources */ = {isa = PBXBuildFile; fileRef = 49FEE916B78240A487408179 /* usage_config.cc */; };
+		57A4CC08EBB54E848A9C011D /* marshalling.cc in Sources */ = {isa = PBXBuildFile; fileRef = E2FBA10A918A4EE0B202FE85 /* marshalling.cc */; };
+		C2C32E995BAD4BF1BA732D8D /* commandlineflag.cc in Sources */ = {isa = PBXBuildFile; fileRef = 648C6BDCE1814F6AB05CBEA6 /* commandlineflag.cc */; };
+		FF0C08BA1A414FAC8B0A4673 /* flag.cc in Sources */ = {isa = PBXBuildFile; fileRef = FB008E36BCB6488BBC684DA0 /* flag.cc */; };
+		1311652F590243CEB40B758D /* commandlineflag.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3A4CEFA804F145BABB3689DB /* commandlineflag.cc */; };
+		16D548C6AF9642BC95A24C4F /* global_metrics_logger_and_exporter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 710AFF63D1F34992939BAD04 /* global_metrics_logger_and_exporter.cc */; };
+		B1224D75B0254C0EB19EB3B1 /* metric.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3E0820C7746C4DA6BF5C7CC1 /* metric.cc */; };
+		275AFD50CE99479CBBE08053 /* metrics_accumulator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8B908A2691EF40C19FCDBCFF /* metrics_accumulator.cc */; };
+		9A60E1D946544E3C8901DBCC /* metrics_logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = D462BB1076D84DC6B8891C01 /* metrics_logger.cc */; };
+		BF5921182D5C4F119947E150 /* private_handle_accessor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9B685BCD0FA443FE9A4F091D /* private_handle_accessor.cc */; };
+		E421ACDE6A0D49CF813719DD /* program_name.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F80A2A005BF4317BD9A2438 /* program_name.cc */; };
+		C459862A17804E9FB452EC56 /* rtc_test_stats.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B35FA5AF85C4AA0B0858A45 /* rtc_test_stats.cc */; };
+		26A69068EA0147EBB4810808 /* test_flags.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C09CEFA7C1B4EFEB821E722 /* test_flags.cc */; };
+		BE3D54B613BF49B2906D7615 /* usage.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9F5C770165034235B7680D35 /* usage.cc */; };
+		4566F33B729F4D1B9A800F22 /* webrtc_unittests_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = B43EA9F473814A52911AC863 /* webrtc_unittests_main.cc */; };
+		6E423E907BD04AF3ABDB8918 /* webrtc_unittests_stubs.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A0300D3DC204E5A99D3F39F /* webrtc_unittests_stubs.cc */; };
+		0E22AECAAEFB4563898A65FA /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		F100990AD133493999BEF7E5 /* codec_vendor_redesign_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B5A69D9B03340729EC8E297 /* codec_vendor_redesign_unittest.cc */; };
+		D462A9D677B649E598EB0D30 /* typed_codec_vendor_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = E85242B13EEC4479A1EA2B95 /* typed_codec_vendor_unittest.cc */; };
+		735EDC2E8AF44FABABA14822 /* scoped_operations_batcher_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = FD17F76C3DF14B0DB6ABBBC0 /* scoped_operations_batcher_unittest.cc */; };
+		BDA5E35CAF6641D3B5BDCEB9 /* loss_estimator_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 83332CAA5F744D92BEB011A1 /* loss_estimator_unittest.cc */; };
+		FC03B7C17B274AE88D47B11A /* scream_feedback_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = A4389CF6543E4EB0AFAA780E /* scream_feedback_unittest.cc */; };
+		DBFD820E11474FEB89035E80 /* decode_time_percentile_filter_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 32A060AE03124A35B4E7A443 /* decode_time_percentile_filter_unittest.cc */; };
+		D2021EA2DA4E4F0D87A65AB7 /* rate_tracker_comparison_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5786BAF6467145D8A4D561DA /* rate_tracker_comparison_unittest.cc */; };
+		AA0076CFCB724502B06E05F0 /* task_queue_gcd_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = CE0A06F2D1994F20A3839B81 /* task_queue_gcd_unittest.cc */; };
+		/* End libwebrtc-unit-tests-generated BuildFile entries */
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -5884,6 +6125,22 @@
 			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
 			remoteInfo = Setup;
 		};
+		/* Begin libwebrtc-unit-tests-generated ContainerItemProxy entries */
+		5F2587515809439D9A843E52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc.dylib;
+		};
+		6DDDFE174F2348669E6FDEFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6641CDA7B9C34649A1987AEA;
+			remoteInfo = webrtc_unittests;
+		};
+		/* End libwebrtc-unit-tests-generated ContainerItemProxy entries */
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -11748,6 +12005,235 @@
 		DDF30D9327C5C756006A526F /* bwe_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bwe_defines.h; sourceTree = "<group>"; };
 		DDF30D9427C5C756006A526F /* remote_bitrate_estimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = remote_bitrate_estimator.h; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libwebrtc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwebrtc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		/* Begin libwebrtc-unit-tests-generated FileReference entries */
+		828FEFEA97804722A2F2994C /* webrtc_unittests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = webrtc_unittests; sourceTree = BUILT_PRODUCTS_DIR; };
+		41AAF46464064A33979EDDA7 /* webrtc_unittests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = webrtc_unittests.xcconfig; sourceTree = "<group>"; };
+		B646EC9DE00742E0B2974F73 /* opus_audio_decoder_factory.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = opus_audio_decoder_factory.cc; path = Source/webrtc/api/audio_codecs/opus_audio_decoder_factory.cc; sourceTree = SOURCE_ROOT; };
+		31B7E17D7F90488987309692 /* opus_audio_encoder_factory.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = opus_audio_encoder_factory.cc; path = Source/webrtc/api/audio_codecs/opus_audio_encoder_factory.cc; sourceTree = SOURCE_ROOT; };
+		4935203CEF344FABAD00CD64 /* create_frame_generator.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = create_frame_generator.cc; path = Source/webrtc/api/test/create_frame_generator.cc; sourceTree = SOURCE_ROOT; };
+		34D8998C3D3441A88AFFBA4D /* fake_frame_decryptor.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_frame_decryptor.cc; path = Source/webrtc/api/test/fake_frame_decryptor.cc; sourceTree = SOURCE_ROOT; };
+		00EEE41AB0494170B9769F54 /* fake_frame_encryptor.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_frame_encryptor.cc; path = Source/webrtc/api/test/fake_frame_encryptor.cc; sourceTree = SOURCE_ROOT; };
+		F358E5828CF940ADA1169019 /* frame_generator_interface.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = frame_generator_interface.cc; path = Source/webrtc/api/test/frame_generator_interface.cc; sourceTree = SOURCE_ROOT; };
+		914E3B97A553456BBC8D74D9 /* ecn_marking_counter.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ecn_marking_counter.cc; path = Source/webrtc/api/test/network_emulation/ecn_marking_counter.cc; sourceTree = SOURCE_ROOT; };
+		A274F46DEB7147ADA1C90CEA /* network_emulation_interfaces.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = network_emulation_interfaces.cc; path = Source/webrtc/api/test/network_emulation/network_emulation_interfaces.cc; sourceTree = SOURCE_ROOT; };
+		C49AA7F8A87443858908B9E1 /* network_emulation_manager.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = network_emulation_manager.cc; path = Source/webrtc/api/test/network_emulation_manager.cc; sourceTree = SOURCE_ROOT; };
+		75864C65FB6B4B9C8FE2EE3E /* fake_resource.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_resource.cc; path = Source/webrtc/call/adaptation/test/fake_resource.cc; sourceTree = SOURCE_ROOT; };
+		B16E4B1E078F47AA90F7537F /* allocation_counter.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = allocation_counter.cc; path = Source/webrtc/common_audio/allocation_counter.cc; sourceTree = SOURCE_ROOT; };
+		D70783419FCD43F8BDD0745D /* audio_converter_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audio_converter_unittest.cc; path = Source/webrtc/common_audio/audio_converter_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E1BF9BB426484D43804650AF /* audio_util_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audio_util_unittest.cc; path = Source/webrtc/common_audio/audio_util_unittest.cc; sourceTree = SOURCE_ROOT; };
+		61909363D9AD41E98E847B42 /* channel_buffer_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = channel_buffer_unittest.cc; path = Source/webrtc/common_audio/channel_buffer_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E19EBE899ABD4877978356FF /* fir_filter_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fir_filter_unittest.cc; path = Source/webrtc/common_audio/fir_filter_unittest.cc; sourceTree = SOURCE_ROOT; };
+		6FE1E831F4DC419C903BB0B9 /* real_fourier_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = real_fourier_unittest.cc; path = Source/webrtc/common_audio/real_fourier_unittest.cc; sourceTree = SOURCE_ROOT; };
+		96E5EE1D58774805BB07E1F5 /* push_resampler_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = push_resampler_unittest.cc; path = Source/webrtc/common_audio/resampler/push_resampler_unittest.cc; sourceTree = SOURCE_ROOT; };
+		64433F085BF04A86AEF375A2 /* push_sinc_resampler_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = push_sinc_resampler_unittest.cc; path = Source/webrtc/common_audio/resampler/push_sinc_resampler_unittest.cc; sourceTree = SOURCE_ROOT; };
+		DFE636C89CB94B189E148C97 /* resampler_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = resampler_unittest.cc; path = Source/webrtc/common_audio/resampler/resampler_unittest.cc; sourceTree = SOURCE_ROOT; };
+		5574ABEB0CF7401B92323EDD /* sinusoidal_linear_chirp_source.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sinusoidal_linear_chirp_source.cc; path = Source/webrtc/common_audio/resampler/sinusoidal_linear_chirp_source.cc; sourceTree = SOURCE_ROOT; };
+		9A6FACCE82DB46CEAAEDA62A /* ring_buffer_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ring_buffer_unittest.cc; path = Source/webrtc/common_audio/ring_buffer_unittest.cc; sourceTree = SOURCE_ROOT; };
+		48B5634D80934FAC87C85F2D /* signal_processing_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = signal_processing_unittest.cc; path = Source/webrtc/common_audio/signal_processing/signal_processing_unittest.cc; sourceTree = SOURCE_ROOT; };
+		29AECE0BD3F643179E72C426 /* smoothing_filter_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = smoothing_filter_unittest.cc; path = Source/webrtc/common_audio/smoothing_filter_unittest.cc; sourceTree = SOURCE_ROOT; };
+		6DA42273084546819D6317FD /* vad_core_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vad_core_unittest.cc; path = Source/webrtc/common_audio/vad/vad_core_unittest.cc; sourceTree = SOURCE_ROOT; };
+		3D5C7D393C5C4516A1768AF6 /* vad_filterbank_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vad_filterbank_unittest.cc; path = Source/webrtc/common_audio/vad/vad_filterbank_unittest.cc; sourceTree = SOURCE_ROOT; };
+		0B1314438B6B4506891D35DF /* vad_gmm_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vad_gmm_unittest.cc; path = Source/webrtc/common_audio/vad/vad_gmm_unittest.cc; sourceTree = SOURCE_ROOT; };
+		40E999C0AD1D47C58CE4DD94 /* vad_sp_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vad_sp_unittest.cc; path = Source/webrtc/common_audio/vad/vad_sp_unittest.cc; sourceTree = SOURCE_ROOT; };
+		19806AC5382E4E3FB4467D49 /* vad_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vad_unittest.cc; path = Source/webrtc/common_audio/vad/vad_unittest.cc; sourceTree = SOURCE_ROOT; };
+		9F90A5E414E34F5FADE6BCCC /* wav_file_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wav_file_unittest.cc; path = Source/webrtc/common_audio/wav_file_unittest.cc; sourceTree = SOURCE_ROOT; };
+		81B55FC7BD8443BABF5D5E71 /* wav_header_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wav_header_unittest.cc; path = Source/webrtc/common_audio/wav_header_unittest.cc; sourceTree = SOURCE_ROOT; };
+		EAACD31335054A27B81D7135 /* window_generator_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = window_generator_unittest.cc; path = Source/webrtc/common_audio/window_generator_unittest.cc; sourceTree = SOURCE_ROOT; };
+		6ADAA09FE08D4D179FAA96A1 /* bitrate_adjuster_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = bitrate_adjuster_unittest.cc; path = Source/webrtc/common_video/bitrate_adjuster_unittest.cc; sourceTree = SOURCE_ROOT; };
+		733C6BA0F1C149BD97DC7048 /* frame_rate_estimator_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = frame_rate_estimator_unittest.cc; path = Source/webrtc/common_video/frame_rate_estimator_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E6CFFC6967CA4C59B01DB328 /* framerate_controller_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = framerate_controller_unittest.cc; path = Source/webrtc/common_video/framerate_controller_unittest.cc; sourceTree = SOURCE_ROOT; };
+		36D7CCD392A24D1798399C6A /* h264_bitstream_parser_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = h264_bitstream_parser_unittest.cc; path = Source/webrtc/common_video/h264/h264_bitstream_parser_unittest.cc; sourceTree = SOURCE_ROOT; };
+		532EEFB6E94E43E29525BE7A /* pps_parser_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = pps_parser_unittest.cc; path = Source/webrtc/common_video/h264/pps_parser_unittest.cc; sourceTree = SOURCE_ROOT; };
+		40F88FE5C27F41B68112B040 /* sps_parser_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sps_parser_unittest.cc; path = Source/webrtc/common_video/h264/sps_parser_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E2C12529B6D2401F9B9CAD20 /* sps_vui_rewriter_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sps_vui_rewriter_unittest.cc; path = Source/webrtc/common_video/h264/sps_vui_rewriter_unittest.cc; sourceTree = SOURCE_ROOT; };
+		A7327C1FCAFE41F291EEDB08 /* libyuv_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = libyuv_unittest.cc; path = Source/webrtc/common_video/libyuv/libyuv_unittest.cc; sourceTree = SOURCE_ROOT; };
+		5D5EC14F2D3C4F96BBB4063D /* video_frame_buffer_pool_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_frame_buffer_pool_unittest.cc; path = Source/webrtc/common_video/video_frame_buffer_pool_unittest.cc; sourceTree = SOURCE_ROOT; };
+		F5C007F6CFEA4067B0B2FA1C /* video_frame_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_frame_unittest.cc; path = Source/webrtc/common_video/video_frame_unittest.cc; sourceTree = SOURCE_ROOT; };
+		4186021EF8164BD5A78DF104 /* fake_rtc_event_log.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_rtc_event_log.cc; path = Source/webrtc/logging/rtc_event_log/fake_rtc_event_log.cc; sourceTree = SOURCE_ROOT; };
+		7419D4CB6C70490C8A97086A /* fake_rtc_event_log_factory.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_rtc_event_log_factory.cc; path = Source/webrtc/logging/rtc_event_log/fake_rtc_event_log_factory.cc; sourceTree = SOURCE_ROOT; };
+		6AD21E6F2B864FFD940A20F9 /* fake_frame_source.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_frame_source.cc; path = Source/webrtc/media/base/fake_frame_source.cc; sourceTree = SOURCE_ROOT; };
+		FE4D9BFFE534405DB1C99692 /* fake_media_engine.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_media_engine.cc; path = Source/webrtc/media/base/fake_media_engine.cc; sourceTree = SOURCE_ROOT; };
+		4238A92989F54377887538C4 /* fake_rtp.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_rtp.cc; path = Source/webrtc/media/base/fake_rtp.cc; sourceTree = SOURCE_ROOT; };
+		0CDB17E44F794755B2422E20 /* fake_video_renderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_video_renderer.cc; path = Source/webrtc/media/base/fake_video_renderer.cc; sourceTree = SOURCE_ROOT; };
+		79141A7B468A401291D7113C /* test_utils.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_utils.cc; path = Source/webrtc/media/base/test_utils.cc; sourceTree = SOURCE_ROOT; };
+		ECF031FAD3FC48A9A73229CE /* fake_webrtc_call.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_webrtc_call.cc; path = Source/webrtc/media/engine/fake_webrtc_call.cc; sourceTree = SOURCE_ROOT; };
+		88054114F94940BCB4196A82 /* fake_webrtc_video_engine.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_webrtc_video_engine.cc; path = Source/webrtc/media/engine/fake_webrtc_video_engine.cc; sourceTree = SOURCE_ROOT; };
+		C10ECAD71FA1441699E4159B /* opus_speed_test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = opus_speed_test.cc; path = Source/webrtc/modules/audio_coding/codecs/opus/opus_speed_test.cc; sourceTree = SOURCE_ROOT; };
+		AAC90B7966994A46AE49D228 /* audio_codec_speed_test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audio_codec_speed_test.cc; path = Source/webrtc/modules/audio_coding/codecs/tools/audio_codec_speed_test.cc; sourceTree = SOURCE_ROOT; };
+		4AE84BCF7197409889D7EBDC /* audio_decoder_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audio_decoder_unittest.cc; path = Source/webrtc/modules/audio_coding/neteq/audio_decoder_unittest.cc; sourceTree = SOURCE_ROOT; };
+		53ECFCE66EA247A490C82A5E /* test_audio_device.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_audio_device.cc; path = Source/webrtc/modules/audio_device/include/test_audio_device.cc; sourceTree = SOURCE_ROOT; };
+		363EC77FD5604F85ACF69F54 /* goog_cc_printer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = goog_cc_printer.cc; path = Source/webrtc/modules/congestion_controller/goog_cc/test/goog_cc_printer.cc; sourceTree = SOURCE_ROOT; };
+		D049642ADC674B59A96D5139 /* module_common_types_public_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = module_common_types_public_unittest.cc; path = Source/webrtc/modules/module_common_types_public_unittest.cc; sourceTree = SOURCE_ROOT; };
+		FB3E5F73A6434C13AD16A017 /* video_codec_test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_codec_test.cc; path = Source/webrtc/modules/video_coding/codecs/test/video_codec_test.cc; sourceTree = SOURCE_ROOT; };
+		795DD3C5F8E54E61BC402C8A /* ivf_file_reader.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ivf_file_reader.cc; path = Source/webrtc/modules/video_coding/utility/ivf_file_reader.cc; sourceTree = SOURCE_ROOT; };
+		792679ED618E442C98850EA4 /* stun_server.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = stun_server.cc; path = Source/webrtc/p2p/test/stun_server.cc; sourceTree = SOURCE_ROOT; };
+		FB56FFFA67814EA8ABD93AC9 /* test_stun_server.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_stun_server.cc; path = Source/webrtc/p2p/test/test_stun_server.cc; sourceTree = SOURCE_ROOT; };
+		9CC9A409F7CA4FE9B25C9617 /* turn_server.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = turn_server.cc; path = Source/webrtc/p2p/test/turn_server.cc; sourceTree = SOURCE_ROOT; };
+		A1D6556A092C4686923FB449 /* audio_rtp_receiver_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audio_rtp_receiver_unittest.cc; path = Source/webrtc/pc/audio_rtp_receiver_unittest.cc; sourceTree = SOURCE_ROOT; };
+		1D9C940BED6E4E78856D6081 /* channel_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = channel_unittest.cc; path = Source/webrtc/pc/channel_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E6E31E653F644DAC80C5AF6D /* codec_vendor_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = codec_vendor_unittest.cc; path = Source/webrtc/pc/codec_vendor_unittest.cc; sourceTree = SOURCE_ROOT; };
+		FFE509DD20ED419AA2ABFD90 /* congestion_control_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = congestion_control_integrationtest.cc; path = Source/webrtc/pc/congestion_control_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		BFCBF01569114131B0DBC7D6 /* data_channel_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = data_channel_integrationtest.cc; path = Source/webrtc/pc/data_channel_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		C2A05F702E74466DBE58382E /* sctp_data_channel_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sctp_data_channel_unittest.cc; path = Source/webrtc/pc/sctp_data_channel_unittest.cc; sourceTree = SOURCE_ROOT; };
+		8CD3D30394D247F595DD55E5 /* datagram_connection_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = datagram_connection_unittest.cc; path = Source/webrtc/pc/datagram_connection_unittest.cc; sourceTree = SOURCE_ROOT; };
+		0DA293C891FA48B09985DDBB /* dtls_srtp_transport_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dtls_srtp_transport_integrationtest.cc; path = Source/webrtc/pc/dtls_srtp_transport_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		A40D8CB2860942B093D78ED9 /* dtls_srtp_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dtls_srtp_transport_unittest.cc; path = Source/webrtc/pc/dtls_srtp_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		48966350DCD1434EBD655B4F /* dtls_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dtls_transport_unittest.cc; path = Source/webrtc/pc/dtls_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E27D9A8590FC44A59E06CC5F /* dtmf_sender_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dtmf_sender_unittest.cc; path = Source/webrtc/pc/dtmf_sender_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E051AA4E09084AEEA605D5C3 /* ice_server_parsing_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ice_server_parsing_unittest.cc; path = Source/webrtc/pc/ice_server_parsing_unittest.cc; sourceTree = SOURCE_ROOT; };
+		08382D5006564D969C21B369 /* ice_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ice_transport_unittest.cc; path = Source/webrtc/pc/ice_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		353EC03575EE46A2BD7E5276 /* jitter_buffer_delay_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = jitter_buffer_delay_unittest.cc; path = Source/webrtc/pc/jitter_buffer_delay_unittest.cc; sourceTree = SOURCE_ROOT; };
+		C4A52E2960F74504A186B839 /* jsep_session_description_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = jsep_session_description_unittest.cc; path = Source/webrtc/pc/jsep_session_description_unittest.cc; sourceTree = SOURCE_ROOT; };
+		DF287BD3F0554728BCEBB5D8 /* jsep_transport_controller_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = jsep_transport_controller_unittest.cc; path = Source/webrtc/pc/jsep_transport_controller_unittest.cc; sourceTree = SOURCE_ROOT; };
+		8BB818D8A1AA486B89D94A2C /* jsep_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = jsep_transport_unittest.cc; path = Source/webrtc/pc/jsep_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		43F6761AA7D44279A72B315B /* legacy_stats_collector_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = legacy_stats_collector_unittest.cc; path = Source/webrtc/pc/legacy_stats_collector_unittest.cc; sourceTree = SOURCE_ROOT; };
+		6AD3B63ABD324AE79F2E1366 /* local_audio_source_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = local_audio_source_unittest.cc; path = Source/webrtc/pc/local_audio_source_unittest.cc; sourceTree = SOURCE_ROOT; };
+		70FB97324EF041F9BB6A3A5A /* media_session_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = media_session_unittest.cc; path = Source/webrtc/pc/media_session_unittest.cc; sourceTree = SOURCE_ROOT; };
+		0B58E027F13C451CA329228D /* media_stream_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = media_stream_unittest.cc; path = Source/webrtc/pc/media_stream_unittest.cc; sourceTree = SOURCE_ROOT; };
+		2AE2B1B99EE6432DAD7E52AC /* peer_connection_adaptation_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_adaptation_integrationtest.cc; path = Source/webrtc/pc/peer_connection_adaptation_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		9B229F27AB664B099A40CB1C /* peer_connection_audio_options_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_audio_options_unittest.cc; path = Source/webrtc/pc/peer_connection_audio_options_unittest.cc; sourceTree = SOURCE_ROOT; };
+		66285E493C6A4C488BDA45D7 /* peer_connection_bundle_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_bundle_unittest.cc; path = Source/webrtc/pc/peer_connection_bundle_unittest.cc; sourceTree = SOURCE_ROOT; };
+		B2E19125C03D4948A82CBFF1 /* peer_connection_crypto_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_crypto_unittest.cc; path = Source/webrtc/pc/peer_connection_crypto_unittest.cc; sourceTree = SOURCE_ROOT; };
+		0DF21D658CC3426E92AB2525 /* peer_connection_data_channel_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_data_channel_unittest.cc; path = Source/webrtc/pc/peer_connection_data_channel_unittest.cc; sourceTree = SOURCE_ROOT; };
+		36DF933D50E14DCEAD80E838 /* peer_connection_encodings_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_encodings_integrationtest.cc; path = Source/webrtc/pc/peer_connection_encodings_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		C4C5531CDF804A4E9407A82D /* peer_connection_end_to_end_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_end_to_end_unittest.cc; path = Source/webrtc/pc/peer_connection_end_to_end_unittest.cc; sourceTree = SOURCE_ROOT; };
+		5F8CE3DBA71944D5BBFD864C /* peer_connection_factory_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_factory_unittest.cc; path = Source/webrtc/pc/peer_connection_factory_unittest.cc; sourceTree = SOURCE_ROOT; };
+		A20F3D8FF4194D27B07AB639 /* peer_connection_field_trial_tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_field_trial_tests.cc; path = Source/webrtc/pc/peer_connection_field_trial_tests.cc; sourceTree = SOURCE_ROOT; };
+		4EF958855FFF49E295E8F4FD /* peer_connection_header_extension_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_header_extension_unittest.cc; path = Source/webrtc/pc/peer_connection_header_extension_unittest.cc; sourceTree = SOURCE_ROOT; };
+		71E4DA11EC1D4F5EBB1478D4 /* peer_connection_histogram_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_histogram_unittest.cc; path = Source/webrtc/pc/peer_connection_histogram_unittest.cc; sourceTree = SOURCE_ROOT; };
+		B8E4D0BA3EA4470398F4CAEF /* peer_connection_ice_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_ice_unittest.cc; path = Source/webrtc/pc/peer_connection_ice_unittest.cc; sourceTree = SOURCE_ROOT; };
+		981824C12DC94D7DA2C560E6 /* peer_connection_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_integrationtest.cc; path = Source/webrtc/pc/peer_connection_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		F179DF073A6448C284EEC20B /* peer_connection_interface_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_interface_unittest.cc; path = Source/webrtc/pc/peer_connection_interface_unittest.cc; sourceTree = SOURCE_ROOT; };
+		3CAB322A161644F49F34B337 /* peer_connection_jsep_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_jsep_unittest.cc; path = Source/webrtc/pc/peer_connection_jsep_unittest.cc; sourceTree = SOURCE_ROOT; };
+		C2863F5BE92441CEB4635605 /* peer_connection_media_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_media_unittest.cc; path = Source/webrtc/pc/peer_connection_media_unittest.cc; sourceTree = SOURCE_ROOT; };
+		4812673BC0354B9796456B5E /* peer_connection_rtp_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_rtp_unittest.cc; path = Source/webrtc/pc/peer_connection_rtp_unittest.cc; sourceTree = SOURCE_ROOT; };
+		41782C8C62FD4EAD92F7EFAF /* peer_connection_signaling_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_signaling_unittest.cc; path = Source/webrtc/pc/peer_connection_signaling_unittest.cc; sourceTree = SOURCE_ROOT; };
+		FE219AE520B74091BAE35BF9 /* peer_connection_simulcast_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_simulcast_unittest.cc; path = Source/webrtc/pc/peer_connection_simulcast_unittest.cc; sourceTree = SOURCE_ROOT; };
+		F5DA1005A8434CFDBD68E82B /* peer_connection_stability_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_stability_integrationtest.cc; path = Source/webrtc/pc/peer_connection_stability_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		BA451B7C67724E688DA206D3 /* peer_connection_svc_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_svc_integrationtest.cc; path = Source/webrtc/pc/peer_connection_svc_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		6A267E7210264C6AA161ED20 /* peer_connection_wrapper.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_wrapper.cc; path = Source/webrtc/pc/peer_connection_wrapper.cc; sourceTree = SOURCE_ROOT; };
+		57B63CDC37B044099466A7CE /* pranswer_switch_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = pranswer_switch_integrationtest.cc; path = Source/webrtc/pc/pranswer_switch_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		8D88831E2AA94B73A1C66844 /* proxy_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = proxy_unittest.cc; path = Source/webrtc/pc/proxy_unittest.cc; sourceTree = SOURCE_ROOT; };
+		8F991D27B7F84D10B6B5E8EF /* rtc_stats_collector_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtc_stats_collector_unittest.cc; path = Source/webrtc/pc/rtc_stats_collector_unittest.cc; sourceTree = SOURCE_ROOT; };
+		6A38C677F90F4607980F21F3 /* rtc_stats_integrationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtc_stats_integrationtest.cc; path = Source/webrtc/pc/rtc_stats_integrationtest.cc; sourceTree = SOURCE_ROOT; };
+		D6C5DFA90AFE4B42A5421B9C /* rtc_stats_traversal_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtc_stats_traversal_unittest.cc; path = Source/webrtc/pc/rtc_stats_traversal_unittest.cc; sourceTree = SOURCE_ROOT; };
+		37EA8D01EC9C42ED8B8AC4E4 /* rtcp_mux_filter_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtcp_mux_filter_unittest.cc; path = Source/webrtc/pc/rtcp_mux_filter_unittest.cc; sourceTree = SOURCE_ROOT; };
+		84722C99A04148FAA28831E7 /* rtp_media_utils_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtp_media_utils_unittest.cc; path = Source/webrtc/pc/rtp_media_utils_unittest.cc; sourceTree = SOURCE_ROOT; };
+		FDE4BA69D7EA4D31AC21B412 /* rtp_parameters_conversion_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtp_parameters_conversion_unittest.cc; path = Source/webrtc/pc/rtp_parameters_conversion_unittest.cc; sourceTree = SOURCE_ROOT; };
+		A65D8C2B38884EB0A2776B52 /* rtp_sender_receiver_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtp_sender_receiver_unittest.cc; path = Source/webrtc/pc/rtp_sender_receiver_unittest.cc; sourceTree = SOURCE_ROOT; };
+		7F0F8C3E367B43E486BB82B4 /* rtp_transceiver_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtp_transceiver_unittest.cc; path = Source/webrtc/pc/rtp_transceiver_unittest.cc; sourceTree = SOURCE_ROOT; };
+		99BCFE46224E4FEFBF18B06D /* rtp_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtp_transport_unittest.cc; path = Source/webrtc/pc/rtp_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		376A202AFEDD4D6C9CEF1F47 /* sctp_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sctp_transport_unittest.cc; path = Source/webrtc/pc/sctp_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E83B496C76E647109645F013 /* sctp_utils_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sctp_utils_unittest.cc; path = Source/webrtc/pc/sctp_utils_unittest.cc; sourceTree = SOURCE_ROOT; };
+		0FA9957666654B0A9FB86B7C /* sdp_munging_detector_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sdp_munging_detector_unittest.cc; path = Source/webrtc/pc/sdp_munging_detector_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E796773D862A4273B1DD760C /* sdp_offer_answer_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sdp_offer_answer_unittest.cc; path = Source/webrtc/pc/sdp_offer_answer_unittest.cc; sourceTree = SOURCE_ROOT; };
+		B082591231B54B389EC24CDB /* sdp_payload_type_suggester_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sdp_payload_type_suggester_unittest.cc; path = Source/webrtc/pc/sdp_payload_type_suggester_unittest.cc; sourceTree = SOURCE_ROOT; };
+		805866EFCD3A49699B4DAC6D /* session_description_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = session_description_unittest.cc; path = Source/webrtc/pc/session_description_unittest.cc; sourceTree = SOURCE_ROOT; };
+		FE1FB84E2E5E490591A41C37 /* simulcast_sdp_serializer_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simulcast_sdp_serializer_unittest.cc; path = Source/webrtc/pc/simulcast_sdp_serializer_unittest.cc; sourceTree = SOURCE_ROOT; };
+		80EE7F23F318434494B5DCD0 /* slow_peer_connection_integration_test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = slow_peer_connection_integration_test.cc; path = Source/webrtc/pc/slow_peer_connection_integration_test.cc; sourceTree = SOURCE_ROOT; };
+		101C7331B50E452686D008EE /* srtp_session_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = srtp_session_unittest.cc; path = Source/webrtc/pc/srtp_session_unittest.cc; sourceTree = SOURCE_ROOT; };
+		C4DEDAE469C54A73A2603E67 /* srtp_transport_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = srtp_transport_unittest.cc; path = Source/webrtc/pc/srtp_transport_unittest.cc; sourceTree = SOURCE_ROOT; };
+		082837FC64C14CD68A8AEC3E /* enable_fake_media.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = enable_fake_media.cc; path = Source/webrtc/pc/test/enable_fake_media.cc; sourceTree = SOURCE_ROOT; };
+		78CC6BA644EB467ABBB762D8 /* fake_audio_capture_module.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_audio_capture_module.cc; path = Source/webrtc/pc/test/fake_audio_capture_module.cc; sourceTree = SOURCE_ROOT; };
+		0E6E7F5C53574C568986258D /* fake_audio_capture_module_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_audio_capture_module_unittest.cc; path = Source/webrtc/pc/test/fake_audio_capture_module_unittest.cc; sourceTree = SOURCE_ROOT; };
+		ECFA16B0744A4BA58FC7CA65 /* integration_test_helpers.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = integration_test_helpers.cc; path = Source/webrtc/pc/test/integration_test_helpers.cc; sourceTree = SOURCE_ROOT; };
+		CD1715BE97AF467A91B23D82 /* peer_connection_test_wrapper.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = peer_connection_test_wrapper.cc; path = Source/webrtc/pc/test/peer_connection_test_wrapper.cc; sourceTree = SOURCE_ROOT; };
+		EF938DA09C084C2EA2220B0B /* simulcast_layer_util.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simulcast_layer_util.cc; path = Source/webrtc/pc/test/simulcast_layer_util.cc; sourceTree = SOURCE_ROOT; };
+		0BD3AAB32F80446E9ADA2989 /* svc_e2e_tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = svc_e2e_tests.cc; path = Source/webrtc/pc/test/svc_e2e_tests.cc; sourceTree = SOURCE_ROOT; };
+		D2956F20989C415E8E65F1A4 /* track_media_info_map_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = track_media_info_map_unittest.cc; path = Source/webrtc/pc/track_media_info_map_unittest.cc; sourceTree = SOURCE_ROOT; };
+		6A72BA7B558046799850C78B /* video_rtp_receiver_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_rtp_receiver_unittest.cc; path = Source/webrtc/pc/video_rtp_receiver_unittest.cc; sourceTree = SOURCE_ROOT; };
+		C34F8E353C294F98BF4619D3 /* video_rtp_track_source_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_rtp_track_source_unittest.cc; path = Source/webrtc/pc/video_rtp_track_source_unittest.cc; sourceTree = SOURCE_ROOT; };
+		15CE625937FF4F1A954EE100 /* video_track_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_track_unittest.cc; path = Source/webrtc/pc/video_track_unittest.cc; sourceTree = SOURCE_ROOT; };
+		CF306F8FAA9B41F683CD6F5C /* net_test_helpers.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = net_test_helpers.cc; path = Source/webrtc/rtc_base/net_test_helpers.cc; sourceTree = SOURCE_ROOT; };
+		5C85B210236745968BFC57ED /* task_queue_for_test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = task_queue_for_test.cc; path = Source/webrtc/rtc_base/task_queue_for_test.cc; sourceTree = SOURCE_ROOT; };
+		190D0C3F4C2D4B52B7C0DD4A /* virtual_socket_server.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = virtual_socket_server.cc; path = Source/webrtc/rtc_base/virtual_socket_server.cc; sourceTree = SOURCE_ROOT; };
+		C9011B7B54864FF1A2311102 /* rtc_stats_report_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtc_stats_report_unittest.cc; path = Source/webrtc/stats/rtc_stats_report_unittest.cc; sourceTree = SOURCE_ROOT; };
+		AA64BDFCCFF84B2389BB8754 /* rtc_stats_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtc_stats_unittest.cc; path = Source/webrtc/stats/rtc_stats_unittest.cc; sourceTree = SOURCE_ROOT; };
+		61D30D4B9FCD409CBC642DA9 /* clock_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = clock_unittest.cc; path = Source/webrtc/system_wrappers/source/clock_unittest.cc; sourceTree = SOURCE_ROOT; };
+		3C3E3CB0CFDB48169A30039C /* metrics_default_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = metrics_default_unittest.cc; path = Source/webrtc/system_wrappers/source/metrics_default_unittest.cc; sourceTree = SOURCE_ROOT; };
+		F19C5352080A4A92A2F62731 /* metrics_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = metrics_unittest.cc; path = Source/webrtc/system_wrappers/source/metrics_unittest.cc; sourceTree = SOURCE_ROOT; };
+		1BFFE0A5B6584D3EBD61B4F8 /* ntp_time_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ntp_time_unittest.cc; path = Source/webrtc/system_wrappers/source/ntp_time_unittest.cc; sourceTree = SOURCE_ROOT; };
+		5C56A2C8E4B545A6826415B7 /* create_frame_generator_capturer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = create_frame_generator_capturer.cc; path = Source/webrtc/test/create_frame_generator_capturer.cc; sourceTree = SOURCE_ROOT; };
+		A3EA8447183F4923A879BC2D /* create_test_environment.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = create_test_environment.cc; path = Source/webrtc/test/create_test_environment.cc; sourceTree = SOURCE_ROOT; };
+		366FE56534964499A95FF836 /* create_test_field_trials_without_absl_flag.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = create_test_field_trials_without_absl_flag.cc; path = Source/webrtc/test/create_test_field_trials_without_absl_flag.cc; sourceTree = SOURCE_ROOT; };
+		CEE638B2CA274FA49265F70E /* encoder_settings.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = encoder_settings.cc; path = Source/webrtc/test/encoder_settings.cc; sourceTree = SOURCE_ROOT; };
+		7238FD7B0D8C4A91821E886C /* fake_decoder.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_decoder.cc; path = Source/webrtc/test/fake_decoder.cc; sourceTree = SOURCE_ROOT; };
+		3BD67CFC30894488836D7054 /* fake_encoder.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_encoder.cc; path = Source/webrtc/test/fake_encoder.cc; sourceTree = SOURCE_ROOT; };
+		F48FB399AAEF43D28E9DE504 /* fake_texture_frame.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_texture_frame.cc; path = Source/webrtc/test/fake_texture_frame.cc; sourceTree = SOURCE_ROOT; };
+		6B9C56213EF44B509D02AAD3 /* fake_vp8_encoder.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_vp8_encoder.cc; path = Source/webrtc/test/fake_vp8_encoder.cc; sourceTree = SOURCE_ROOT; };
+		FD87EB74E8A34A55B4D3C8B1 /* frame_generator.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = frame_generator.cc; path = Source/webrtc/test/frame_generator.cc; sourceTree = SOURCE_ROOT; };
+		AED33F8DEC584DAB992AB5B4 /* frame_generator_capturer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = frame_generator_capturer.cc; path = Source/webrtc/test/frame_generator_capturer.cc; sourceTree = SOURCE_ROOT; };
+		4259BD14F7644D0F8DCFDB3C /* frame_utils.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = frame_utils.cc; path = Source/webrtc/test/frame_utils.cc; sourceTree = SOURCE_ROOT; };
+		6B525E29E83D49E8971EF231 /* file_log_writer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = file_log_writer.cc; path = Source/webrtc/test/logging/file_log_writer.cc; sourceTree = SOURCE_ROOT; };
+		8AC657B95125407785BB73AB /* log_writer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = log_writer.cc; path = Source/webrtc/test/logging/log_writer.cc; sourceTree = SOURCE_ROOT; };
+		A3C66C7B9504488F8D3A8256 /* mock_audio_decoder.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mock_audio_decoder.cc; path = Source/webrtc/test/mock_audio_decoder.cc; sourceTree = SOURCE_ROOT; };
+		B5A60BE79440437897FC633F /* cross_traffic.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = cross_traffic.cc; path = Source/webrtc/test/network/cross_traffic.cc; sourceTree = SOURCE_ROOT; };
+		0F109DEA6AAF49359DEFD2CD /* emulated_network_manager.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = emulated_network_manager.cc; path = Source/webrtc/test/network/emulated_network_manager.cc; sourceTree = SOURCE_ROOT; };
+		29719697902D4C1AABA23753 /* emulated_turn_server.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = emulated_turn_server.cc; path = Source/webrtc/test/network/emulated_turn_server.cc; sourceTree = SOURCE_ROOT; };
+		B11A3EF269FC4B3E823EAB2C /* fake_network_socket_server.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = fake_network_socket_server.cc; path = Source/webrtc/test/network/fake_network_socket_server.cc; sourceTree = SOURCE_ROOT; };
+		3AC14F40D86F471D9264A233 /* network_emulation.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = network_emulation.cc; path = Source/webrtc/test/network/network_emulation.cc; sourceTree = SOURCE_ROOT; };
+		656048BC52BE4F35B0C10FCB /* network_emulation_manager.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = network_emulation_manager.cc; path = Source/webrtc/test/network/network_emulation_manager.cc; sourceTree = SOURCE_ROOT; };
+		51878DE204404458AD1518E6 /* traffic_route.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = traffic_route.cc; path = Source/webrtc/test/network/traffic_route.cc; sourceTree = SOURCE_ROOT; };
+		9E23ADE7C9E14025A3942A6C /* run_loop.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = run_loop.cc; path = Source/webrtc/test/run_loop.cc; sourceTree = SOURCE_ROOT; };
+		C8BD071DD7C44E27AE6DB895 /* audio_stream.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audio_stream.cc; path = Source/webrtc/test/scenario/audio_stream.cc; sourceTree = SOURCE_ROOT; };
+		F187AE79CDC04E268FBF4DA0 /* call_client.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = call_client.cc; path = Source/webrtc/test/scenario/call_client.cc; sourceTree = SOURCE_ROOT; };
+		F096AE37ABBB43CE96757929 /* column_printer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = column_printer.cc; path = Source/webrtc/test/scenario/column_printer.cc; sourceTree = SOURCE_ROOT; };
+		86E8B7959E4A4EB88E1D4536 /* hardware_codecs.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = hardware_codecs.cc; path = Source/webrtc/test/scenario/hardware_codecs.cc; sourceTree = SOURCE_ROOT; };
+		ECB6751295C543CD9C8F74D6 /* network_node.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = network_node.cc; path = Source/webrtc/test/scenario/network_node.cc; sourceTree = SOURCE_ROOT; };
+		B57A7BB254784F159ADF8228 /* scenario.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = scenario.cc; path = Source/webrtc/test/scenario/scenario.cc; sourceTree = SOURCE_ROOT; };
+		8F2F524B3B2E49F487C7E8B6 /* scenario_config.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = scenario_config.cc; path = Source/webrtc/test/scenario/scenario_config.cc; sourceTree = SOURCE_ROOT; };
+		F2071D0CCC0A426F8B801607 /* video_frame_matcher.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_frame_matcher.cc; path = Source/webrtc/test/scenario/video_frame_matcher.cc; sourceTree = SOURCE_ROOT; };
+		0EB66E96614A4E57A3565E8B /* video_stream.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_stream.cc; path = Source/webrtc/test/scenario/video_stream.cc; sourceTree = SOURCE_ROOT; };
+		A0418C64CB82481095D90D80 /* test_video_capturer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_video_capturer.cc; path = Source/webrtc/test/test_video_capturer.cc; sourceTree = SOURCE_ROOT; };
+		779FFBD7FDB34536B132400B /* copy_to_file_audio_capturer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = copy_to_file_audio_capturer.cc; path = Source/webrtc/test/testsupport/copy_to_file_audio_capturer.cc; sourceTree = SOURCE_ROOT; };
+		24883341A0A3483A9A72E398 /* file_utils.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = file_utils.cc; path = Source/webrtc/test/testsupport/file_utils.cc; sourceTree = SOURCE_ROOT; };
+		0D03EEB433FE4B92888564A5 /* file_utils_override.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = file_utils_override.cc; path = Source/webrtc/test/testsupport/file_utils_override.cc; sourceTree = SOURCE_ROOT; };
+		5B75539CEE704741B03EBDD8 /* ivf_video_frame_generator.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ivf_video_frame_generator.cc; path = Source/webrtc/test/testsupport/ivf_video_frame_generator.cc; sourceTree = SOURCE_ROOT; };
+		EC8E24ACFFA049AFB9F0E7E9 /* mac_file_utils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = mac_file_utils.mm; path = Source/webrtc/test/testsupport/mac_file_utils.mm; sourceTree = SOURCE_ROOT; };
+		B69CB9F1F94C456B8A233D95 /* video_frame_writer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_frame_writer.cc; path = Source/webrtc/test/testsupport/video_frame_writer.cc; sourceTree = SOURCE_ROOT; };
+		4FFA5CFEEF5C4A3F8F5E09DB /* y4m_frame_reader.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = y4m_frame_reader.cc; path = Source/webrtc/test/testsupport/y4m_frame_reader.cc; sourceTree = SOURCE_ROOT; };
+		8C0C0DD2081042B3938E0818 /* y4m_frame_writer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = y4m_frame_writer.cc; path = Source/webrtc/test/testsupport/y4m_frame_writer.cc; sourceTree = SOURCE_ROOT; };
+		70550B279F94449DBADD9D2D /* yuv_frame_reader.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = yuv_frame_reader.cc; path = Source/webrtc/test/testsupport/yuv_frame_reader.cc; sourceTree = SOURCE_ROOT; };
+		586F7E87EA804583BD65F474 /* yuv_frame_writer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = yuv_frame_writer.cc; path = Source/webrtc/test/testsupport/yuv_frame_writer.cc; sourceTree = SOURCE_ROOT; };
+		6B121996BF024C82AD31BB05 /* real_time_controller.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = real_time_controller.cc; path = Source/webrtc/test/time_controller/real_time_controller.cc; sourceTree = SOURCE_ROOT; };
+		612D2C261CF1406FB0E6FBD5 /* simulated_task_queue.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simulated_task_queue.cc; path = Source/webrtc/test/time_controller/simulated_task_queue.cc; sourceTree = SOURCE_ROOT; };
+		B92EA8BBCBA64F09B1EDC75A /* simulated_thread.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simulated_thread.cc; path = Source/webrtc/test/time_controller/simulated_thread.cc; sourceTree = SOURCE_ROOT; };
+		D73B65736E4643D38DA8D9D8 /* simulated_time_controller.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simulated_time_controller.cc; path = Source/webrtc/test/time_controller/simulated_time_controller.cc; sourceTree = SOURCE_ROOT; };
+		267BB446E1EA4268A1138FF0 /* simulated_time_controller_impl.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simulated_time_controller_impl.cc; path = Source/webrtc/test/time_controller/simulated_time_controller_impl.cc; sourceTree = SOURCE_ROOT; };
+		AF4B914BC96D4F219AA2B007 /* video_codec_tester.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = video_codec_tester.cc; path = Source/webrtc/test/video_codec_tester.cc; sourceTree = SOURCE_ROOT; };
+		3B87EF9617434F16B918F268 /* wait_until.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wait_until.cc; path = Source/webrtc/test/wait_until.cc; sourceTree = SOURCE_ROOT; };
+		3D3F3D7ED88D4CEC93F7CD9F /* gtest-all.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gtest-all.cc; path = ../gtest/src/gtest-all.cc; sourceTree = SOURCE_ROOT; };
+		9285346DA1894B719390654D /* gmock-all.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gmock-all.cc; path = ../gmock/src/gmock-all.cc; sourceTree = SOURCE_ROOT; };
+		E026EA41136945019D6F2173 /* str_replace.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = str_replace.cc; path = Source/third_party/abseil-cpp/absl/strings/str_replace.cc; sourceTree = SOURCE_ROOT; };
+		D18A242A61E7494087E2B7E0 /* damerau_levenshtein_distance.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = damerau_levenshtein_distance.cc; path = Source/third_party/abseil-cpp/absl/strings/internal/damerau_levenshtein_distance.cc; sourceTree = SOURCE_ROOT; };
+		85D1F9A0BDC740A5A625876F /* parse.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = parse.cc; path = Source/third_party/abseil-cpp/absl/flags/parse.cc; sourceTree = SOURCE_ROOT; };
+		441390A944E945E5AB07C5C2 /* reflection.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = reflection.cc; path = Source/third_party/abseil-cpp/absl/flags/reflection.cc; sourceTree = SOURCE_ROOT; };
+		3B24CFF95E2E493EB44E3D13 /* usage.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = usage.cc; path = Source/third_party/abseil-cpp/absl/flags/usage.cc; sourceTree = SOURCE_ROOT; };
+		49FEE916B78240A487408179 /* usage_config.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = usage_config.cc; path = Source/third_party/abseil-cpp/absl/flags/usage_config.cc; sourceTree = SOURCE_ROOT; };
+		E2FBA10A918A4EE0B202FE85 /* marshalling.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = marshalling.cc; path = Source/third_party/abseil-cpp/absl/flags/marshalling.cc; sourceTree = SOURCE_ROOT; };
+		648C6BDCE1814F6AB05CBEA6 /* commandlineflag.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = commandlineflag.cc; path = Source/third_party/abseil-cpp/absl/flags/commandlineflag.cc; sourceTree = SOURCE_ROOT; };
+		FB008E36BCB6488BBC684DA0 /* flag.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = flag.cc; path = Source/third_party/abseil-cpp/absl/flags/internal/flag.cc; sourceTree = SOURCE_ROOT; };
+		3A4CEFA804F145BABB3689DB /* commandlineflag.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = commandlineflag.cc; path = Source/third_party/abseil-cpp/absl/flags/internal/commandlineflag.cc; sourceTree = SOURCE_ROOT; };
+		710AFF63D1F34992939BAD04 /* global_metrics_logger_and_exporter.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = global_metrics_logger_and_exporter.cc; path = Source/webrtc/api/test/metrics/global_metrics_logger_and_exporter.cc; sourceTree = SOURCE_ROOT; };
+		3E0820C7746C4DA6BF5C7CC1 /* metric.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = metric.cc; path = Source/webrtc/api/test/metrics/metric.cc; sourceTree = SOURCE_ROOT; };
+		8B908A2691EF40C19FCDBCFF /* metrics_accumulator.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = metrics_accumulator.cc; path = Source/webrtc/api/test/metrics/metrics_accumulator.cc; sourceTree = SOURCE_ROOT; };
+		D462BB1076D84DC6B8891C01 /* metrics_logger.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = metrics_logger.cc; path = Source/webrtc/api/test/metrics/metrics_logger.cc; sourceTree = SOURCE_ROOT; };
+		9B685BCD0FA443FE9A4F091D /* private_handle_accessor.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = private_handle_accessor.cc; path = Source/third_party/abseil-cpp/absl/flags/internal/private_handle_accessor.cc; sourceTree = SOURCE_ROOT; };
+		0F80A2A005BF4317BD9A2438 /* program_name.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = program_name.cc; path = Source/third_party/abseil-cpp/absl/flags/internal/program_name.cc; sourceTree = SOURCE_ROOT; };
+		5B35FA5AF85C4AA0B0858A45 /* rtc_test_stats.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rtc_test_stats.cc; path = Source/webrtc/stats/test/rtc_test_stats.cc; sourceTree = SOURCE_ROOT; };
+		5C09CEFA7C1B4EFEB821E722 /* test_flags.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_flags.cc; path = Source/webrtc/test/test_flags.cc; sourceTree = SOURCE_ROOT; };
+		9F5C770165034235B7680D35 /* usage.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = usage.cc; path = Source/third_party/abseil-cpp/absl/flags/internal/usage.cc; sourceTree = SOURCE_ROOT; };
+		B43EA9F473814A52911AC863 /* webrtc_unittests_main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = webrtc_unittests_main.cc; path = Source/webrtc/pc/webrtc_unittests_main.cc; sourceTree = SOURCE_ROOT; };
+		9A0300D3DC204E5A99D3F39F /* webrtc_unittests_stubs.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = webrtc_unittests_stubs.cc; path = Source/webrtc/pc/webrtc_unittests_stubs.cc; sourceTree = SOURCE_ROOT; };
+		5B5A69D9B03340729EC8E297 /* codec_vendor_redesign_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = codec_vendor_redesign_unittest.cc; path = Source/webrtc/pc/codec_vendor_redesign_unittest.cc; sourceTree = SOURCE_ROOT; };
+		E85242B13EEC4479A1EA2B95 /* typed_codec_vendor_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = typed_codec_vendor_unittest.cc; path = Source/webrtc/pc/typed_codec_vendor_unittest.cc; sourceTree = SOURCE_ROOT; };
+		FD17F76C3DF14B0DB6ABBBC0 /* scoped_operations_batcher_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = scoped_operations_batcher_unittest.cc; path = Source/webrtc/pc/scoped_operations_batcher_unittest.cc; sourceTree = SOURCE_ROOT; };
+		83332CAA5F744D92BEB011A1 /* loss_estimator_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = loss_estimator_unittest.cc; path = Source/webrtc/modules/congestion_controller/scream/loss_estimator_unittest.cc; sourceTree = SOURCE_ROOT; };
+		A4389CF6543E4EB0AFAA780E /* scream_feedback_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = scream_feedback_unittest.cc; path = Source/webrtc/modules/congestion_controller/scream/scream_feedback_unittest.cc; sourceTree = SOURCE_ROOT; };
+		32A060AE03124A35B4E7A443 /* decode_time_percentile_filter_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = decode_time_percentile_filter_unittest.cc; path = Source/webrtc/modules/video_coding/timing/decode_time_percentile_filter_unittest.cc; sourceTree = SOURCE_ROOT; };
+		5786BAF6467145D8A4D561DA /* rate_tracker_comparison_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rate_tracker_comparison_unittest.cc; path = Source/webrtc/rtc_base/rate_tracker_comparison_unittest.cc; sourceTree = SOURCE_ROOT; };
+		CE0A06F2D1994F20A3839B81 /* task_queue_gcd_unittest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = task_queue_gcd_unittest.cc; path = Source/webrtc/rtc_base/task_queue_gcd_unittest.cc; sourceTree = SOURCE_ROOT; };
+		/* End libwebrtc-unit-tests-generated FileReference entries */
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -12017,6 +12503,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		/* Begin libwebrtc-unit-tests-generated FrameworksBuildPhase entries */
+		704A5C0EB5B749919E4D3E00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E22AECAAEFB4563898A65FA /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		/* End libwebrtc-unit-tests-generated FrameworksBuildPhase entries */
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -21104,6 +21600,7 @@
 				4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */,
 				444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */,
 				44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */,
+				41AAF46464064A33979EDDA7 /* webrtc_unittests.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
 			path = Configurations;
@@ -21563,6 +22060,7 @@
 				5CB3048A1DE4143400D2C405 /* Frameworks */,
 				FB39D0CC1200EF9B00088E69 /* Products */,
 				FB39D0841200EDEB00088E69 /* Source */,
+				D66D5470989547BB9D369DA2 /* Unit Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -21604,6 +22102,7 @@
 				4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				44D8D1192B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */,
 				44945C692B9BA1C300447FFD /* webm_fuzzer */,
+				828FEFEA97804722A2F2994C /* webrtc_unittests */,
 				448C3A9F2D4C48B300AA535D /* aom_av1_encoder_fuzzer */,
 				44905A0B2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */,
 				44905A202D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */,
@@ -21615,6 +22114,240 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		/* Begin libwebrtc-unit-tests-generated Group entries */
+		D66D5470989547BB9D369DA2 /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B16E4B1E078F47AA90F7537F /* allocation_counter.cc */,
+				AAC90B7966994A46AE49D228 /* audio_codec_speed_test.cc */,
+				D70783419FCD43F8BDD0745D /* audio_converter_unittest.cc */,
+				4AE84BCF7197409889D7EBDC /* audio_decoder_unittest.cc */,
+				A1D6556A092C4686923FB449 /* audio_rtp_receiver_unittest.cc */,
+				C8BD071DD7C44E27AE6DB895 /* audio_stream.cc */,
+				E1BF9BB426484D43804650AF /* audio_util_unittest.cc */,
+				6ADAA09FE08D4D179FAA96A1 /* bitrate_adjuster_unittest.cc */,
+				F187AE79CDC04E268FBF4DA0 /* call_client.cc */,
+				61909363D9AD41E98E847B42 /* channel_buffer_unittest.cc */,
+				1D9C940BED6E4E78856D6081 /* channel_unittest.cc */,
+				61D30D4B9FCD409CBC642DA9 /* clock_unittest.cc */,
+				5B5A69D9B03340729EC8E297 /* codec_vendor_redesign_unittest.cc */,
+				E6E31E653F644DAC80C5AF6D /* codec_vendor_unittest.cc */,
+				F096AE37ABBB43CE96757929 /* column_printer.cc */,
+				648C6BDCE1814F6AB05CBEA6 /* commandlineflag.cc */,
+				3A4CEFA804F145BABB3689DB /* commandlineflag.cc */,
+				FFE509DD20ED419AA2ABFD90 /* congestion_control_integrationtest.cc */,
+				779FFBD7FDB34536B132400B /* copy_to_file_audio_capturer.cc */,
+				4935203CEF344FABAD00CD64 /* create_frame_generator.cc */,
+				5C56A2C8E4B545A6826415B7 /* create_frame_generator_capturer.cc */,
+				A3EA8447183F4923A879BC2D /* create_test_environment.cc */,
+				366FE56534964499A95FF836 /* create_test_field_trials_without_absl_flag.cc */,
+				B5A60BE79440437897FC633F /* cross_traffic.cc */,
+				D18A242A61E7494087E2B7E0 /* damerau_levenshtein_distance.cc */,
+				BFCBF01569114131B0DBC7D6 /* data_channel_integrationtest.cc */,
+				8CD3D30394D247F595DD55E5 /* datagram_connection_unittest.cc */,
+				32A060AE03124A35B4E7A443 /* decode_time_percentile_filter_unittest.cc */,
+				0DA293C891FA48B09985DDBB /* dtls_srtp_transport_integrationtest.cc */,
+				A40D8CB2860942B093D78ED9 /* dtls_srtp_transport_unittest.cc */,
+				48966350DCD1434EBD655B4F /* dtls_transport_unittest.cc */,
+				E27D9A8590FC44A59E06CC5F /* dtmf_sender_unittest.cc */,
+				914E3B97A553456BBC8D74D9 /* ecn_marking_counter.cc */,
+				0F109DEA6AAF49359DEFD2CD /* emulated_network_manager.cc */,
+				29719697902D4C1AABA23753 /* emulated_turn_server.cc */,
+				082837FC64C14CD68A8AEC3E /* enable_fake_media.cc */,
+				CEE638B2CA274FA49265F70E /* encoder_settings.cc */,
+				78CC6BA644EB467ABBB762D8 /* fake_audio_capture_module.cc */,
+				0E6E7F5C53574C568986258D /* fake_audio_capture_module_unittest.cc */,
+				7238FD7B0D8C4A91821E886C /* fake_decoder.cc */,
+				3BD67CFC30894488836D7054 /* fake_encoder.cc */,
+				34D8998C3D3441A88AFFBA4D /* fake_frame_decryptor.cc */,
+				00EEE41AB0494170B9769F54 /* fake_frame_encryptor.cc */,
+				6AD21E6F2B864FFD940A20F9 /* fake_frame_source.cc */,
+				FE4D9BFFE534405DB1C99692 /* fake_media_engine.cc */,
+				B11A3EF269FC4B3E823EAB2C /* fake_network_socket_server.cc */,
+				75864C65FB6B4B9C8FE2EE3E /* fake_resource.cc */,
+				4186021EF8164BD5A78DF104 /* fake_rtc_event_log.cc */,
+				7419D4CB6C70490C8A97086A /* fake_rtc_event_log_factory.cc */,
+				4238A92989F54377887538C4 /* fake_rtp.cc */,
+				F48FB399AAEF43D28E9DE504 /* fake_texture_frame.cc */,
+				0CDB17E44F794755B2422E20 /* fake_video_renderer.cc */,
+				6B9C56213EF44B509D02AAD3 /* fake_vp8_encoder.cc */,
+				ECF031FAD3FC48A9A73229CE /* fake_webrtc_call.cc */,
+				88054114F94940BCB4196A82 /* fake_webrtc_video_engine.cc */,
+				6B525E29E83D49E8971EF231 /* file_log_writer.cc */,
+				24883341A0A3483A9A72E398 /* file_utils.cc */,
+				0D03EEB433FE4B92888564A5 /* file_utils_override.cc */,
+				E19EBE899ABD4877978356FF /* fir_filter_unittest.cc */,
+				FB008E36BCB6488BBC684DA0 /* flag.cc */,
+				FD87EB74E8A34A55B4D3C8B1 /* frame_generator.cc */,
+				AED33F8DEC584DAB992AB5B4 /* frame_generator_capturer.cc */,
+				F358E5828CF940ADA1169019 /* frame_generator_interface.cc */,
+				733C6BA0F1C149BD97DC7048 /* frame_rate_estimator_unittest.cc */,
+				4259BD14F7644D0F8DCFDB3C /* frame_utils.cc */,
+				E6CFFC6967CA4C59B01DB328 /* framerate_controller_unittest.cc */,
+				710AFF63D1F34992939BAD04 /* global_metrics_logger_and_exporter.cc */,
+				9285346DA1894B719390654D /* gmock-all.cc */,
+				363EC77FD5604F85ACF69F54 /* goog_cc_printer.cc */,
+				3D3F3D7ED88D4CEC93F7CD9F /* gtest-all.cc */,
+				36D7CCD392A24D1798399C6A /* h264_bitstream_parser_unittest.cc */,
+				86E8B7959E4A4EB88E1D4536 /* hardware_codecs.cc */,
+				E051AA4E09084AEEA605D5C3 /* ice_server_parsing_unittest.cc */,
+				08382D5006564D969C21B369 /* ice_transport_unittest.cc */,
+				ECFA16B0744A4BA58FC7CA65 /* integration_test_helpers.cc */,
+				795DD3C5F8E54E61BC402C8A /* ivf_file_reader.cc */,
+				5B75539CEE704741B03EBDD8 /* ivf_video_frame_generator.cc */,
+				353EC03575EE46A2BD7E5276 /* jitter_buffer_delay_unittest.cc */,
+				C4A52E2960F74504A186B839 /* jsep_session_description_unittest.cc */,
+				DF287BD3F0554728BCEBB5D8 /* jsep_transport_controller_unittest.cc */,
+				8BB818D8A1AA486B89D94A2C /* jsep_transport_unittest.cc */,
+				43F6761AA7D44279A72B315B /* legacy_stats_collector_unittest.cc */,
+				A7327C1FCAFE41F291EEDB08 /* libyuv_unittest.cc */,
+				6AD3B63ABD324AE79F2E1366 /* local_audio_source_unittest.cc */,
+				8AC657B95125407785BB73AB /* log_writer.cc */,
+				83332CAA5F744D92BEB011A1 /* loss_estimator_unittest.cc */,
+				EC8E24ACFFA049AFB9F0E7E9 /* mac_file_utils.mm */,
+				E2FBA10A918A4EE0B202FE85 /* marshalling.cc */,
+				70FB97324EF041F9BB6A3A5A /* media_session_unittest.cc */,
+				0B58E027F13C451CA329228D /* media_stream_unittest.cc */,
+				3E0820C7746C4DA6BF5C7CC1 /* metric.cc */,
+				8B908A2691EF40C19FCDBCFF /* metrics_accumulator.cc */,
+				3C3E3CB0CFDB48169A30039C /* metrics_default_unittest.cc */,
+				D462BB1076D84DC6B8891C01 /* metrics_logger.cc */,
+				F19C5352080A4A92A2F62731 /* metrics_unittest.cc */,
+				A3C66C7B9504488F8D3A8256 /* mock_audio_decoder.cc */,
+				D049642ADC674B59A96D5139 /* module_common_types_public_unittest.cc */,
+				CF306F8FAA9B41F683CD6F5C /* net_test_helpers.cc */,
+				3AC14F40D86F471D9264A233 /* network_emulation.cc */,
+				A274F46DEB7147ADA1C90CEA /* network_emulation_interfaces.cc */,
+				C49AA7F8A87443858908B9E1 /* network_emulation_manager.cc */,
+				656048BC52BE4F35B0C10FCB /* network_emulation_manager.cc */,
+				ECB6751295C543CD9C8F74D6 /* network_node.cc */,
+				1BFFE0A5B6584D3EBD61B4F8 /* ntp_time_unittest.cc */,
+				B646EC9DE00742E0B2974F73 /* opus_audio_decoder_factory.cc */,
+				31B7E17D7F90488987309692 /* opus_audio_encoder_factory.cc */,
+				C10ECAD71FA1441699E4159B /* opus_speed_test.cc */,
+				85D1F9A0BDC740A5A625876F /* parse.cc */,
+				2AE2B1B99EE6432DAD7E52AC /* peer_connection_adaptation_integrationtest.cc */,
+				9B229F27AB664B099A40CB1C /* peer_connection_audio_options_unittest.cc */,
+				66285E493C6A4C488BDA45D7 /* peer_connection_bundle_unittest.cc */,
+				B2E19125C03D4948A82CBFF1 /* peer_connection_crypto_unittest.cc */,
+				0DF21D658CC3426E92AB2525 /* peer_connection_data_channel_unittest.cc */,
+				36DF933D50E14DCEAD80E838 /* peer_connection_encodings_integrationtest.cc */,
+				C4C5531CDF804A4E9407A82D /* peer_connection_end_to_end_unittest.cc */,
+				5F8CE3DBA71944D5BBFD864C /* peer_connection_factory_unittest.cc */,
+				A20F3D8FF4194D27B07AB639 /* peer_connection_field_trial_tests.cc */,
+				4EF958855FFF49E295E8F4FD /* peer_connection_header_extension_unittest.cc */,
+				71E4DA11EC1D4F5EBB1478D4 /* peer_connection_histogram_unittest.cc */,
+				B8E4D0BA3EA4470398F4CAEF /* peer_connection_ice_unittest.cc */,
+				981824C12DC94D7DA2C560E6 /* peer_connection_integrationtest.cc */,
+				F179DF073A6448C284EEC20B /* peer_connection_interface_unittest.cc */,
+				3CAB322A161644F49F34B337 /* peer_connection_jsep_unittest.cc */,
+				C2863F5BE92441CEB4635605 /* peer_connection_media_unittest.cc */,
+				4812673BC0354B9796456B5E /* peer_connection_rtp_unittest.cc */,
+				41782C8C62FD4EAD92F7EFAF /* peer_connection_signaling_unittest.cc */,
+				FE219AE520B74091BAE35BF9 /* peer_connection_simulcast_unittest.cc */,
+				F5DA1005A8434CFDBD68E82B /* peer_connection_stability_integrationtest.cc */,
+				BA451B7C67724E688DA206D3 /* peer_connection_svc_integrationtest.cc */,
+				CD1715BE97AF467A91B23D82 /* peer_connection_test_wrapper.cc */,
+				6A267E7210264C6AA161ED20 /* peer_connection_wrapper.cc */,
+				532EEFB6E94E43E29525BE7A /* pps_parser_unittest.cc */,
+				57B63CDC37B044099466A7CE /* pranswer_switch_integrationtest.cc */,
+				9B685BCD0FA443FE9A4F091D /* private_handle_accessor.cc */,
+				0F80A2A005BF4317BD9A2438 /* program_name.cc */,
+				8D88831E2AA94B73A1C66844 /* proxy_unittest.cc */,
+				96E5EE1D58774805BB07E1F5 /* push_resampler_unittest.cc */,
+				64433F085BF04A86AEF375A2 /* push_sinc_resampler_unittest.cc */,
+				5786BAF6467145D8A4D561DA /* rate_tracker_comparison_unittest.cc */,
+				6FE1E831F4DC419C903BB0B9 /* real_fourier_unittest.cc */,
+				6B121996BF024C82AD31BB05 /* real_time_controller.cc */,
+				441390A944E945E5AB07C5C2 /* reflection.cc */,
+				DFE636C89CB94B189E148C97 /* resampler_unittest.cc */,
+				9A6FACCE82DB46CEAAEDA62A /* ring_buffer_unittest.cc */,
+				8F991D27B7F84D10B6B5E8EF /* rtc_stats_collector_unittest.cc */,
+				6A38C677F90F4607980F21F3 /* rtc_stats_integrationtest.cc */,
+				C9011B7B54864FF1A2311102 /* rtc_stats_report_unittest.cc */,
+				D6C5DFA90AFE4B42A5421B9C /* rtc_stats_traversal_unittest.cc */,
+				AA64BDFCCFF84B2389BB8754 /* rtc_stats_unittest.cc */,
+				5B35FA5AF85C4AA0B0858A45 /* rtc_test_stats.cc */,
+				37EA8D01EC9C42ED8B8AC4E4 /* rtcp_mux_filter_unittest.cc */,
+				84722C99A04148FAA28831E7 /* rtp_media_utils_unittest.cc */,
+				FDE4BA69D7EA4D31AC21B412 /* rtp_parameters_conversion_unittest.cc */,
+				A65D8C2B38884EB0A2776B52 /* rtp_sender_receiver_unittest.cc */,
+				7F0F8C3E367B43E486BB82B4 /* rtp_transceiver_unittest.cc */,
+				99BCFE46224E4FEFBF18B06D /* rtp_transport_unittest.cc */,
+				9E23ADE7C9E14025A3942A6C /* run_loop.cc */,
+				B57A7BB254784F159ADF8228 /* scenario.cc */,
+				8F2F524B3B2E49F487C7E8B6 /* scenario_config.cc */,
+				FD17F76C3DF14B0DB6ABBBC0 /* scoped_operations_batcher_unittest.cc */,
+				A4389CF6543E4EB0AFAA780E /* scream_feedback_unittest.cc */,
+				C2A05F702E74466DBE58382E /* sctp_data_channel_unittest.cc */,
+				376A202AFEDD4D6C9CEF1F47 /* sctp_transport_unittest.cc */,
+				E83B496C76E647109645F013 /* sctp_utils_unittest.cc */,
+				0FA9957666654B0A9FB86B7C /* sdp_munging_detector_unittest.cc */,
+				E796773D862A4273B1DD760C /* sdp_offer_answer_unittest.cc */,
+				B082591231B54B389EC24CDB /* sdp_payload_type_suggester_unittest.cc */,
+				805866EFCD3A49699B4DAC6D /* session_description_unittest.cc */,
+				48B5634D80934FAC87C85F2D /* signal_processing_unittest.cc */,
+				612D2C261CF1406FB0E6FBD5 /* simulated_task_queue.cc */,
+				B92EA8BBCBA64F09B1EDC75A /* simulated_thread.cc */,
+				D73B65736E4643D38DA8D9D8 /* simulated_time_controller.cc */,
+				267BB446E1EA4268A1138FF0 /* simulated_time_controller_impl.cc */,
+				EF938DA09C084C2EA2220B0B /* simulcast_layer_util.cc */,
+				FE1FB84E2E5E490591A41C37 /* simulcast_sdp_serializer_unittest.cc */,
+				5574ABEB0CF7401B92323EDD /* sinusoidal_linear_chirp_source.cc */,
+				80EE7F23F318434494B5DCD0 /* slow_peer_connection_integration_test.cc */,
+				29AECE0BD3F643179E72C426 /* smoothing_filter_unittest.cc */,
+				40F88FE5C27F41B68112B040 /* sps_parser_unittest.cc */,
+				E2C12529B6D2401F9B9CAD20 /* sps_vui_rewriter_unittest.cc */,
+				101C7331B50E452686D008EE /* srtp_session_unittest.cc */,
+				C4DEDAE469C54A73A2603E67 /* srtp_transport_unittest.cc */,
+				E026EA41136945019D6F2173 /* str_replace.cc */,
+				792679ED618E442C98850EA4 /* stun_server.cc */,
+				0BD3AAB32F80446E9ADA2989 /* svc_e2e_tests.cc */,
+				5C85B210236745968BFC57ED /* task_queue_for_test.cc */,
+				CE0A06F2D1994F20A3839B81 /* task_queue_gcd_unittest.cc */,
+				53ECFCE66EA247A490C82A5E /* test_audio_device.cc */,
+				5C09CEFA7C1B4EFEB821E722 /* test_flags.cc */,
+				FB56FFFA67814EA8ABD93AC9 /* test_stun_server.cc */,
+				79141A7B468A401291D7113C /* test_utils.cc */,
+				A0418C64CB82481095D90D80 /* test_video_capturer.cc */,
+				D2956F20989C415E8E65F1A4 /* track_media_info_map_unittest.cc */,
+				51878DE204404458AD1518E6 /* traffic_route.cc */,
+				9CC9A409F7CA4FE9B25C9617 /* turn_server.cc */,
+				E85242B13EEC4479A1EA2B95 /* typed_codec_vendor_unittest.cc */,
+				3B24CFF95E2E493EB44E3D13 /* usage.cc */,
+				9F5C770165034235B7680D35 /* usage.cc */,
+				49FEE916B78240A487408179 /* usage_config.cc */,
+				6DA42273084546819D6317FD /* vad_core_unittest.cc */,
+				3D5C7D393C5C4516A1768AF6 /* vad_filterbank_unittest.cc */,
+				0B1314438B6B4506891D35DF /* vad_gmm_unittest.cc */,
+				40E999C0AD1D47C58CE4DD94 /* vad_sp_unittest.cc */,
+				19806AC5382E4E3FB4467D49 /* vad_unittest.cc */,
+				FB3E5F73A6434C13AD16A017 /* video_codec_test.cc */,
+				AF4B914BC96D4F219AA2B007 /* video_codec_tester.cc */,
+				5D5EC14F2D3C4F96BBB4063D /* video_frame_buffer_pool_unittest.cc */,
+				F2071D0CCC0A426F8B801607 /* video_frame_matcher.cc */,
+				F5C007F6CFEA4067B0B2FA1C /* video_frame_unittest.cc */,
+				B69CB9F1F94C456B8A233D95 /* video_frame_writer.cc */,
+				6A72BA7B558046799850C78B /* video_rtp_receiver_unittest.cc */,
+				C34F8E353C294F98BF4619D3 /* video_rtp_track_source_unittest.cc */,
+				0EB66E96614A4E57A3565E8B /* video_stream.cc */,
+				15CE625937FF4F1A954EE100 /* video_track_unittest.cc */,
+				190D0C3F4C2D4B52B7C0DD4A /* virtual_socket_server.cc */,
+				3B87EF9617434F16B918F268 /* wait_until.cc */,
+				9F90A5E414E34F5FADE6BCCC /* wav_file_unittest.cc */,
+				81B55FC7BD8443BABF5D5E71 /* wav_header_unittest.cc */,
+				B43EA9F473814A52911AC863 /* webrtc_unittests_main.cc */,
+				9A0300D3DC204E5A99D3F39F /* webrtc_unittests_stubs.cc */,
+				EAACD31335054A27B81D7135 /* window_generator_unittest.cc */,
+				4FFA5CFEEF5C4A3F8F5E09DB /* y4m_frame_reader.cc */,
+				8C0C0DD2081042B3938E0818 /* y4m_frame_writer.cc */,
+				70550B279F94449DBADD9D2D /* yuv_frame_reader.cc */,
+				586F7E87EA804583BD65F474 /* yuv_frame_writer.cc */,
+			);
+			name = "Unit Tests";
+			sourceTree = "<group>";
+		};
+		/* End libwebrtc-unit-tests-generated Group entries */
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -24876,6 +25609,25 @@
 			productReference = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		/* Begin libwebrtc-unit-tests-generated NativeTarget entries */
+		6641CDA7B9C34649A1987AEA /* webrtc_unittests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7E959AD3910D4927ADCF6269 /* Build configuration list for PBXNativeTarget "webrtc_unittests" */;
+			buildPhases = (
+				BC1C0DC73EEF4C0BB214B760 /* Sources */,
+				704A5C0EB5B749919E4D3E00 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7E506FCA91384DECAACF084C /* PBXTargetDependency */,
+			);
+			name = webrtc_unittests;
+			productName = webrtc_unittests;
+			productReference = 828FEFEA97804722A2F2994C /* webrtc_unittests */;
+			productType = "com.apple.product-type.tool";
+		};
+		/* End libwebrtc-unit-tests-generated NativeTarget entries */
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -24960,6 +25712,8 @@
 				4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */,
 				44945C512B9BA1C300447FFD /* webm_fuzzer */,
+				6641CDA7B9C34649A1987AEA /* webrtc_unittests */,
+				80806A7C98FC4775A015FC7F /* Unit Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -27891,6 +28645,240 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		/* Begin libwebrtc-unit-tests-generated SourcesBuildPhase entries */
+		BC1C0DC73EEF4C0BB214B760 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C051998949FD45CBB7E8E30E /* allocation_counter.cc in Sources */,
+				84946445F0634623A94E25B2 /* audio_codec_speed_test.cc in Sources */,
+				7E68B80BF8D742D1A0534E42 /* audio_converter_unittest.cc in Sources */,
+				4D676BF98D714D57B345651E /* audio_decoder_unittest.cc in Sources */,
+				19FC9C56D1A6455FA75BC589 /* audio_rtp_receiver_unittest.cc in Sources */,
+				397DA107E40B4AF1877A5B32 /* audio_stream.cc in Sources */,
+				ED0B5FEF2131482C94DB6292 /* audio_util_unittest.cc in Sources */,
+				E27A93A4223A4AE7B6D3C10A /* bitrate_adjuster_unittest.cc in Sources */,
+				F84DD448CBF9453D978E644A /* call_client.cc in Sources */,
+				A27D36B56AEA4011A58B2087 /* channel_buffer_unittest.cc in Sources */,
+				4E965FE0706349FAA640867F /* channel_unittest.cc in Sources */,
+				D910E43361944264B91F8F05 /* clock_unittest.cc in Sources */,
+				F100990AD133493999BEF7E5 /* codec_vendor_redesign_unittest.cc in Sources */,
+				20E8AB4B4F59428CBE299692 /* codec_vendor_unittest.cc in Sources */,
+				8EA380A48B7F44919C448160 /* column_printer.cc in Sources */,
+				C2C32E995BAD4BF1BA732D8D /* commandlineflag.cc in Sources */,
+				1311652F590243CEB40B758D /* commandlineflag.cc in Sources */,
+				ED0FD0D5ACA14144AF0DA085 /* congestion_control_integrationtest.cc in Sources */,
+				68B4036EDB1549AFBFD3ADFA /* copy_to_file_audio_capturer.cc in Sources */,
+				213588BC44B14249819995E6 /* create_frame_generator.cc in Sources */,
+				80E7F13D987441BB9B2F9A84 /* create_frame_generator_capturer.cc in Sources */,
+				A1C7ED7A14114487BDDBBF22 /* create_test_environment.cc in Sources */,
+				F313A33D3E1F494EA7B8BCD6 /* create_test_field_trials_without_absl_flag.cc in Sources */,
+				98FDA482B79F4224BA27EE7C /* cross_traffic.cc in Sources */,
+				891A3DE7C53446A6B7680A4D /* damerau_levenshtein_distance.cc in Sources */,
+				BEBA26671288472880CC58C1 /* data_channel_integrationtest.cc in Sources */,
+				CCFE9C2422AD4C4FA2A6ED81 /* datagram_connection_unittest.cc in Sources */,
+				DBFD820E11474FEB89035E80 /* decode_time_percentile_filter_unittest.cc in Sources */,
+				AB36B6F4CD6E4F07865042C3 /* dtls_srtp_transport_integrationtest.cc in Sources */,
+				C4F7747442A84873B267F021 /* dtls_srtp_transport_unittest.cc in Sources */,
+				CEB7997AA62A45F98CD05C30 /* dtls_transport_unittest.cc in Sources */,
+				6B9E823F880A4CC49B988D75 /* dtmf_sender_unittest.cc in Sources */,
+				B13B4D9ED6C74126BD75F10B /* ecn_marking_counter.cc in Sources */,
+				480D9CF807494B13B08807DC /* emulated_network_manager.cc in Sources */,
+				4B642C6FD82E4C61B0630A28 /* emulated_turn_server.cc in Sources */,
+				A06F566886554A67AA9BEB0B /* enable_fake_media.cc in Sources */,
+				E0B388D0E461470CAEF0931B /* encoder_settings.cc in Sources */,
+				00E7867F8285407781CAEA02 /* fake_audio_capture_module.cc in Sources */,
+				476CDB02758043F0813C46AE /* fake_audio_capture_module_unittest.cc in Sources */,
+				B5C5E78E190B4F529E9AEA64 /* fake_decoder.cc in Sources */,
+				1258596C7CB84CF8A2D8F1D8 /* fake_encoder.cc in Sources */,
+				A6060B0BAFE14B61B624299D /* fake_frame_decryptor.cc in Sources */,
+				112CA8EC5BEB405BAD122950 /* fake_frame_encryptor.cc in Sources */,
+				05DA23EF0FE340CFB70B75D6 /* fake_frame_source.cc in Sources */,
+				7DA90D6595224199ACFE78F3 /* fake_media_engine.cc in Sources */,
+				3C5647308BDE41B9A16E3733 /* fake_network_socket_server.cc in Sources */,
+				B6AC46F4EBD442DC91034ACD /* fake_resource.cc in Sources */,
+				2555353E271C42D598A6AE4C /* fake_rtc_event_log.cc in Sources */,
+				06C91A9136CD43C080C416B7 /* fake_rtc_event_log_factory.cc in Sources */,
+				DA26EC1195A94FDD9546A06D /* fake_rtp.cc in Sources */,
+				EC60D7BB60DF4B3CAE98AFF3 /* fake_texture_frame.cc in Sources */,
+				F11989F8F67046DFB7EF5E06 /* fake_video_renderer.cc in Sources */,
+				038D33D81DD04BC9A45B3E41 /* fake_vp8_encoder.cc in Sources */,
+				A6D10FC806F643B3BD0249B4 /* fake_webrtc_call.cc in Sources */,
+				02A0A82586924C75BD0F3587 /* fake_webrtc_video_engine.cc in Sources */,
+				2B6653A48DAD46ED8E48F067 /* file_log_writer.cc in Sources */,
+				D9F4C4B2F4894FD7B470E1C1 /* file_utils.cc in Sources */,
+				4802B0448D734FBD812EF9EA /* file_utils_override.cc in Sources */,
+				163B166B131F4979911256BA /* fir_filter_unittest.cc in Sources */,
+				FF0C08BA1A414FAC8B0A4673 /* flag.cc in Sources */,
+				9323126128A1406987F97113 /* frame_generator.cc in Sources */,
+				C2560E66B4304EC0BED1CF32 /* frame_generator_capturer.cc in Sources */,
+				9C46A2CA6DAD4A76912490FE /* frame_generator_interface.cc in Sources */,
+				DE31E9F61156406399A8BCA6 /* frame_rate_estimator_unittest.cc in Sources */,
+				CA663F914F2844ECA036270A /* frame_utils.cc in Sources */,
+				9FE0551FD44F43FE9001CD38 /* framerate_controller_unittest.cc in Sources */,
+				16D548C6AF9642BC95A24C4F /* global_metrics_logger_and_exporter.cc in Sources */,
+				6A9AFB1AB9564D2AAE5D225C /* gmock-all.cc in Sources */,
+				25C9DA6D569B44B18FA6D420 /* goog_cc_printer.cc in Sources */,
+				117BA95177944CC9867D5A18 /* gtest-all.cc in Sources */,
+				DD69FF7F777547B8A934F429 /* h264_bitstream_parser_unittest.cc in Sources */,
+				69CA74D5054344EEB04F74E1 /* hardware_codecs.cc in Sources */,
+				5D553254942744B292C12FC3 /* ice_server_parsing_unittest.cc in Sources */,
+				863D3876F95D4F71A7D21FBA /* ice_transport_unittest.cc in Sources */,
+				FCB1251213754100BB9387C7 /* integration_test_helpers.cc in Sources */,
+				6F6E1C3015C04C0D85E8AB90 /* ivf_file_reader.cc in Sources */,
+				EE1079BB355A4D3E95712D9F /* ivf_video_frame_generator.cc in Sources */,
+				71AB6590C6F4410C94B79B15 /* jitter_buffer_delay_unittest.cc in Sources */,
+				52745F0F03404F71B342329B /* jsep_session_description_unittest.cc in Sources */,
+				CCD68C9909494F57A6578431 /* jsep_transport_controller_unittest.cc in Sources */,
+				FA9D55FC84914AFB9DAA7185 /* jsep_transport_unittest.cc in Sources */,
+				81E40CCAF6DD45CDA9EA58A1 /* legacy_stats_collector_unittest.cc in Sources */,
+				BF657A1C12C341E9A00BE3FC /* libyuv_unittest.cc in Sources */,
+				8E304A6867E8421C93D8EE7B /* local_audio_source_unittest.cc in Sources */,
+				09C6C8A0FECC4A13B70E1E2C /* log_writer.cc in Sources */,
+				BDA5E35CAF6641D3B5BDCEB9 /* loss_estimator_unittest.cc in Sources */,
+				E3C3D62997144EABA09B6AAE /* mac_file_utils.mm in Sources */,
+				57A4CC08EBB54E848A9C011D /* marshalling.cc in Sources */,
+				D8C63B541CA24200849455B1 /* media_session_unittest.cc in Sources */,
+				CCE7C75764844F81B1DB98FE /* media_stream_unittest.cc in Sources */,
+				B1224D75B0254C0EB19EB3B1 /* metric.cc in Sources */,
+				275AFD50CE99479CBBE08053 /* metrics_accumulator.cc in Sources */,
+				E16EE1B3860042B18A880941 /* metrics_default_unittest.cc in Sources */,
+				9A60E1D946544E3C8901DBCC /* metrics_logger.cc in Sources */,
+				5F9E4C765FD44A1599E68243 /* metrics_unittest.cc in Sources */,
+				7804A16F3432491A8F305C87 /* mock_audio_decoder.cc in Sources */,
+				214FFAE2A08244949FA4BD57 /* module_common_types_public_unittest.cc in Sources */,
+				CC6C2C4B1FE84A95BE59BD50 /* net_test_helpers.cc in Sources */,
+				5381172AB26249C3B165D7A0 /* network_emulation.cc in Sources */,
+				4F732A9D20974CEC98B939ED /* network_emulation_interfaces.cc in Sources */,
+				5CEBF5ED756F4F2CAC7C36F3 /* network_emulation_manager.cc in Sources */,
+				B323E605C33A4A6D94C32D56 /* network_emulation_manager.cc in Sources */,
+				E827FCCFAB3C4212841891B5 /* network_node.cc in Sources */,
+				21FBE8B607CB4A2BBF3D1358 /* ntp_time_unittest.cc in Sources */,
+				7FA92C7AFCDD4391B67D66FD /* opus_audio_decoder_factory.cc in Sources */,
+				F41962F54BC3420DBABFCC96 /* opus_audio_encoder_factory.cc in Sources */,
+				83C1301D497846BB9413E13B /* opus_speed_test.cc in Sources */,
+				D2209BE20CD9451FA529EAD8 /* parse.cc in Sources */,
+				B1CC55DA6F4F4156B43C0AB0 /* peer_connection_adaptation_integrationtest.cc in Sources */,
+				4439F4A8A4C74E87AE75C427 /* peer_connection_audio_options_unittest.cc in Sources */,
+				19F200A550B7407485686881 /* peer_connection_bundle_unittest.cc in Sources */,
+				CAD9ECBA6DA347D1BE4B51DE /* peer_connection_crypto_unittest.cc in Sources */,
+				B17AC861A03F4A8B9DF4421D /* peer_connection_data_channel_unittest.cc in Sources */,
+				A5411C4A79504D6A9686AC7D /* peer_connection_encodings_integrationtest.cc in Sources */,
+				8A186938A2D34A058CE9CFBF /* peer_connection_end_to_end_unittest.cc in Sources */,
+				8BF42F94682E437A9A62879C /* peer_connection_factory_unittest.cc in Sources */,
+				590788EF3B9C416EB50DA4D5 /* peer_connection_field_trial_tests.cc in Sources */,
+				976E88315AC546B5BF6C4BC1 /* peer_connection_header_extension_unittest.cc in Sources */,
+				D3E3FDC04BFD4D1FB6656CE3 /* peer_connection_histogram_unittest.cc in Sources */,
+				3B3ECAAAA8A448C5993CFCCB /* peer_connection_ice_unittest.cc in Sources */,
+				1B981C33F3CA408E87D6702A /* peer_connection_integrationtest.cc in Sources */,
+				C2C5AB1EFFEA42ACAD3BD56F /* peer_connection_interface_unittest.cc in Sources */,
+				60A8EE28046F45D1A3012395 /* peer_connection_jsep_unittest.cc in Sources */,
+				D75F9455B06A4C47BDDB563D /* peer_connection_media_unittest.cc in Sources */,
+				C1EA35FF4DE949698EF46FE7 /* peer_connection_rtp_unittest.cc in Sources */,
+				74EAE51F98E740E0A2AA739A /* peer_connection_signaling_unittest.cc in Sources */,
+				5784458F47D04F8B984CC3B1 /* peer_connection_simulcast_unittest.cc in Sources */,
+				C2946082B94341EDB935E26A /* peer_connection_stability_integrationtest.cc in Sources */,
+				D3B64D8CA62B43ACB3CCF581 /* peer_connection_svc_integrationtest.cc in Sources */,
+				EC545155B6094B3AB5799808 /* peer_connection_test_wrapper.cc in Sources */,
+				EFDC5C3D24EF4927AE8C52BA /* peer_connection_wrapper.cc in Sources */,
+				37763C65469D4D6D923E91C8 /* pps_parser_unittest.cc in Sources */,
+				47CF30B95E3448829CAA1D12 /* pranswer_switch_integrationtest.cc in Sources */,
+				BF5921182D5C4F119947E150 /* private_handle_accessor.cc in Sources */,
+				E421ACDE6A0D49CF813719DD /* program_name.cc in Sources */,
+				A73DC33732EC4556B1AB9514 /* proxy_unittest.cc in Sources */,
+				AA132E7E545B4CD9921382E7 /* push_resampler_unittest.cc in Sources */,
+				A51C930D47A94575B9E44D1B /* push_sinc_resampler_unittest.cc in Sources */,
+				D2021EA2DA4E4F0D87A65AB7 /* rate_tracker_comparison_unittest.cc in Sources */,
+				634FE1E4AC5441A381250356 /* real_fourier_unittest.cc in Sources */,
+				06C7B30363FE4CA884C48C5F /* real_time_controller.cc in Sources */,
+				4007E8A2F6BE4A3FAA0F3215 /* reflection.cc in Sources */,
+				1BBBEBC4800248F4AC162E7D /* resampler_unittest.cc in Sources */,
+				69B1A1872440461ABD2831E3 /* ring_buffer_unittest.cc in Sources */,
+				698B433643B54219BE03F3C4 /* rtc_stats_collector_unittest.cc in Sources */,
+				E7521C46B47844949E6C150E /* rtc_stats_integrationtest.cc in Sources */,
+				3898058555834C0B90E1C958 /* rtc_stats_report_unittest.cc in Sources */,
+				6EC3E969B6664C8096436ABB /* rtc_stats_traversal_unittest.cc in Sources */,
+				CD8CEEFEE0D840C08E24FE04 /* rtc_stats_unittest.cc in Sources */,
+				C459862A17804E9FB452EC56 /* rtc_test_stats.cc in Sources */,
+				A70F47EF95DD4519879281A2 /* rtcp_mux_filter_unittest.cc in Sources */,
+				9883E61E33194C8594A392A8 /* rtp_media_utils_unittest.cc in Sources */,
+				C9669D847A9E4C819A90224A /* rtp_parameters_conversion_unittest.cc in Sources */,
+				C89C993F461C4BC1A770EA0B /* rtp_sender_receiver_unittest.cc in Sources */,
+				F6328F740F694F408F9F86D9 /* rtp_transceiver_unittest.cc in Sources */,
+				BABC650FA0CA48DD9EFA67C4 /* rtp_transport_unittest.cc in Sources */,
+				620A81F90349455E8CE249E2 /* run_loop.cc in Sources */,
+				CB731753B03C4D5DB0B0C8E2 /* scenario.cc in Sources */,
+				9ABAE9B5DBBC45F7BE928176 /* scenario_config.cc in Sources */,
+				735EDC2E8AF44FABABA14822 /* scoped_operations_batcher_unittest.cc in Sources */,
+				FC03B7C17B274AE88D47B11A /* scream_feedback_unittest.cc in Sources */,
+				B8310A39C8B242F5B0A8578D /* sctp_data_channel_unittest.cc in Sources */,
+				0BC82BE6362F4914A8AAAAF0 /* sctp_transport_unittest.cc in Sources */,
+				10A7B9BDFDCF45C591C46D61 /* sctp_utils_unittest.cc in Sources */,
+				41DE65247F4F4411B7464960 /* sdp_munging_detector_unittest.cc in Sources */,
+				602340B73BC0478A976AE78B /* sdp_offer_answer_unittest.cc in Sources */,
+				9AE2F4DFA18E4ED8A8CF53FD /* sdp_payload_type_suggester_unittest.cc in Sources */,
+				2953E11B5F67431E873C51E8 /* session_description_unittest.cc in Sources */,
+				306C4CB8A11148E6AA6DCD85 /* signal_processing_unittest.cc in Sources */,
+				AF38C3CFCC2643EFB02DDED8 /* simulated_task_queue.cc in Sources */,
+				32723F79185C4BD88CA7627D /* simulated_thread.cc in Sources */,
+				5990B12A21F048DA9BB6424D /* simulated_time_controller.cc in Sources */,
+				49191CB46D5F4A9492324AAA /* simulated_time_controller_impl.cc in Sources */,
+				CA6CDAAA56C34F399D483967 /* simulcast_layer_util.cc in Sources */,
+				0D31E1DC9D5F4E18A9FB0626 /* simulcast_sdp_serializer_unittest.cc in Sources */,
+				4EFDEE4189B44106AFC4EFB1 /* sinusoidal_linear_chirp_source.cc in Sources */,
+				43E525526A8E4DDB80F57D50 /* slow_peer_connection_integration_test.cc in Sources */,
+				A05AD538A198489999082810 /* smoothing_filter_unittest.cc in Sources */,
+				E659DD49C46446C7882D075A /* sps_parser_unittest.cc in Sources */,
+				133D29CE0DB44C29B1D3D974 /* sps_vui_rewriter_unittest.cc in Sources */,
+				0CC7E264342542B285904DA8 /* srtp_session_unittest.cc in Sources */,
+				7005165999554E85B0092603 /* srtp_transport_unittest.cc in Sources */,
+				01E79F9DA314453E98C50293 /* str_replace.cc in Sources */,
+				DF9FAB30963C4DACA0879D89 /* stun_server.cc in Sources */,
+				C574C57B00204430AD076EF2 /* svc_e2e_tests.cc in Sources */,
+				59E1C26AF1B443ADACCC323A /* task_queue_for_test.cc in Sources */,
+				AA0076CFCB724502B06E05F0 /* task_queue_gcd_unittest.cc in Sources */,
+				A96CFA9A5D314F66AB323C06 /* test_audio_device.cc in Sources */,
+				26A69068EA0147EBB4810808 /* test_flags.cc in Sources */,
+				A830F94087A4433E98E9CA22 /* test_stun_server.cc in Sources */,
+				6BA1CD69719C492793CB97DD /* test_utils.cc in Sources */,
+				4F897250F9994ACC98A6B556 /* test_video_capturer.cc in Sources */,
+				38911579914B46D886F0EABE /* track_media_info_map_unittest.cc in Sources */,
+				D5EF2BB0392E46E0BEA175D3 /* traffic_route.cc in Sources */,
+				11C79CFF4387491CBD0F2200 /* turn_server.cc in Sources */,
+				D462A9D677B649E598EB0D30 /* typed_codec_vendor_unittest.cc in Sources */,
+				DDD0D4C421D74D9184CB1155 /* usage.cc in Sources */,
+				BE3D54B613BF49B2906D7615 /* usage.cc in Sources */,
+				106EDD32B7DF4D439B8E803E /* usage_config.cc in Sources */,
+				616BFFDAEBD24163A3EC2473 /* vad_core_unittest.cc in Sources */,
+				38562E11B4054943AE1D1DC7 /* vad_filterbank_unittest.cc in Sources */,
+				695C5AC92C9E4346A3BD84F6 /* vad_gmm_unittest.cc in Sources */,
+				5BF9217E266540FDB32ED941 /* vad_sp_unittest.cc in Sources */,
+				903E0B49864A43EE84076062 /* vad_unittest.cc in Sources */,
+				A7A6E92305E74448B7BACD7D /* video_codec_test.cc in Sources */,
+				A8C44941C0C04DF3A5809E5B /* video_codec_tester.cc in Sources */,
+				6D5B289D5CC24597BFA911AA /* video_frame_buffer_pool_unittest.cc in Sources */,
+				0B12347668434249B0899827 /* video_frame_matcher.cc in Sources */,
+				D2580E21EAF74BD0996C002E /* video_frame_unittest.cc in Sources */,
+				0E138D6138704B8392A7EA18 /* video_frame_writer.cc in Sources */,
+				F032B5F6864D42169324AC9F /* video_rtp_receiver_unittest.cc in Sources */,
+				F3812F045A38476E907A0D97 /* video_rtp_track_source_unittest.cc in Sources */,
+				9D4568A4B8474B8880734C09 /* video_stream.cc in Sources */,
+				D53A4FE694244A0BB1BE134B /* video_track_unittest.cc in Sources */,
+				1591ADFAA3AF45B18EF76EC7 /* virtual_socket_server.cc in Sources */,
+				2E2072F6D0FE4B1B96E1EE2B /* wait_until.cc in Sources */,
+				50B7E401B2244847B70522FC /* wav_file_unittest.cc in Sources */,
+				C6DB5D0ACBBB4E2C8FFCD938 /* wav_header_unittest.cc in Sources */,
+				4566F33B729F4D1B9A800F22 /* webrtc_unittests_main.cc in Sources */,
+				6E423E907BD04AF3ABDB8918 /* webrtc_unittests_stubs.cc in Sources */,
+				280BB398C9C049838D4A04C5 /* window_generator_unittest.cc in Sources */,
+				8DE8788797C04AA2AECE262A /* y4m_frame_reader.cc in Sources */,
+				31DDB71AD2C14AC0927CC2A0 /* y4m_frame_writer.cc in Sources */,
+				BFECD463648646228D20B564 /* yuv_frame_reader.cc in Sources */,
+				A52AB773951844ED97CCB2BE /* yuv_frame_writer.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		/* End libwebrtc-unit-tests-generated SourcesBuildPhase entries */
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -28235,6 +29223,18 @@
 			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
 			targetProxy = DDAD700F2FF59C930054DF83 /* PBXContainerItemProxy */;
 		};
+		/* Begin libwebrtc-unit-tests-generated TargetDependency entries */
+		7E506FCA91384DECAACF084C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 5F2587515809439D9A843E52 /* PBXContainerItemProxy */;
+		};
+		35E78E81707C42C78FED1364 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6641CDA7B9C34649A1987AEA /* webrtc_unittests */;
+			targetProxy = 6DDDFE174F2348669E6FDEFF /* PBXContainerItemProxy */;
+		};
+		/* End libwebrtc-unit-tests-generated TargetDependency entries */
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -29065,6 +30065,53 @@
 			};
 			name = Release;
 		};
+		/* Begin libwebrtc-unit-tests-generated XCBuildConfiguration entries */
+		A300CA848B2A4461881D17B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41AAF46464064A33979EDDA7 /* webrtc_unittests.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		96B1D3E42B8A4CFABB663A7E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41AAF46464064A33979EDDA7 /* webrtc_unittests.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		9245EC0DFFDA4AA6A11B38E0 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41AAF46464064A33979EDDA7 /* webrtc_unittests.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		22E467DC40ED4C1CB56FB39F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BC857DAD1B344B35AC1599F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		C1A77FB83ABF4058964FA2A7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		/* End libwebrtc-unit-tests-generated XCBuildConfiguration entries */
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -29438,6 +30485,28 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
+		/* Begin libwebrtc-unit-tests-generated XCConfigurationList entries */
+		7E959AD3910D4927ADCF6269 /* Build configuration list for PBXNativeTarget "webrtc_unittests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A300CA848B2A4461881D17B5 /* Debug */,
+				96B1D3E42B8A4CFABB663A7E /* Release */,
+				9245EC0DFFDA4AA6A11B38E0 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		9700DB8457CC464291A0C8F4 /* Build configuration list for PBXAggregateTarget "Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22E467DC40ED4C1CB56FB39F /* Debug */,
+				BC857DAD1B344B35AC1599F8 /* Release */,
+				C1A77FB83ABF4058964FA2A7 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		/* End libwebrtc-unit-tests-generated XCConfigurationList entries */
 /* End XCConfigurationList section */
 	};
 	rootObject = FB39D0701200ED9200088E69 /* Project object */;
