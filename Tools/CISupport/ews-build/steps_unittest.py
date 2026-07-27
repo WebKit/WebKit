@@ -3169,6 +3169,27 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         )
 
     @defer.inlineCallbacks
+    def test_wpe_platform_is_translated_to_uppercase_for_results_db(self):
+        configurations = []
+
+        def fake_is_pre_existing(cls, test, configuration=None, **kwargs):
+            configurations.append(configuration)
+            return defer.succeed({
+                'is_existing_failure': False, 'pass_rate': 100, 'raw_data': {}, 'logs': '', 'request_failed': False,
+            })
+
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+
+        yield step.filter_failures_using_results_db(['real.html'])
+        self.assertEqual(configurations, [dict(platform='WPE', style='release')])
+
+    @defer.inlineCallbacks
     def test_caps_number_of_results_db_queries(self):
         # Only the first MAX_FAILURES_TO_CHECK_RESULTS_DB failures are checked against results-db.
         queried = []
@@ -6322,6 +6343,27 @@ class TestFilterAPITestFailuresUsingResultsDB(BuildStepMixinAdditions, unittest.
             ['suite.AlsoFlaky', 'suite.MultipleAccounts', 'suite.real_failure'],
             {'suite.MultipleAccounts', 'suite.AlsoFlaky'},
         )
+
+    @defer.inlineCallbacks
+    def test_gtk_platform_is_translated_to_uppercase_for_results_db(self):
+        configurations = []
+
+        def fake_is_pre_existing(cls, test, configuration=None, **kwargs):
+            configurations.append(configuration)
+            return defer.succeed({
+                'is_existing_failure': False, 'pass_rate': 100, 'raw_data': {}, 'logs': '', 'request_failed': False,
+            })
+
+        self.setup_step(RunAPITests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+
+        yield step.filter_api_test_failures_using_results_db(['suite.real_failure'])
+        self.assertEqual(configurations, [dict(platform='GTK', style='release')])
 
     @defer.inlineCallbacks
     def test_caps_number_of_results_db_queries(self):
@@ -11800,6 +11842,13 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
 
     def _ok_response(self, payload):
         return TwistedAdditions.Response(status_code=200, content=json.dumps(payload).encode('utf-8'))
+
+    def test_platform_for_query(self):
+        for platform in ('mac', 'ios', 'win', 'playstation', 'watchos', 'tvos', 'visionos'):
+            self.assertEqual(ResultsDatabase.platform_for_query(platform), platform)
+        for platform in ('gtk', 'wpe'):
+            self.assertEqual(ResultsDatabase.platform_for_query(platform), platform.upper())
+            self.assertEqual(ResultsDatabase.platform_for_query(platform), platform.upper())
 
     @defer.inlineCallbacks
     def test_make_request_returns_none_on_no_response(self):

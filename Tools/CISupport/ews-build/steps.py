@@ -3962,7 +3962,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         platform = self.getProperty('platform', None)
         configuration = {}
         if platform:
-            configuration['platform'] = platform
+            configuration['platform'] = ResultsDatabase.platform_for_query(platform)
         style = self.getProperty('configuration', None)
         if style and style in ['debug', 'release']:
             configuration['style'] = style
@@ -4359,7 +4359,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         platform = self.getProperty('platform', None)
         configuration = {}
         if platform:
-            configuration['platform'] = platform
+            configuration['platform'] = ResultsDatabase.platform_for_query(platform)
         style = self.getProperty('configuration', None)
         if style and style in ['debug', 'release']:
             configuration['style'] = style
@@ -6163,7 +6163,7 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
         platform = self.getProperty('platform', None)
         configuration = {}
         if platform:
-            configuration['platform'] = platform
+            configuration['platform'] = ResultsDatabase.platform_for_query(platform)
         style = self.getProperty('configuration', None)
         if style and style in ['debug', 'release']:
             configuration['style'] = style
@@ -8438,7 +8438,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
         platform = self.getProperty('platform', None)
         configuration = {}
         if platform:
-            configuration['platform'] = platform
+            configuration['platform'] = ResultsDatabase.platform_for_query(platform)
         style = self.getProperty('configuration', None)
         if style and style in ['debug', 'release']:
             configuration['style'] = style

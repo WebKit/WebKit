@@ -54,6 +54,12 @@ class ResultsDatabase(object):
     ]
 
     @classmethod
+    def platform_for_query(cls, platform):
+        if platform.lower() in ('gtk', 'wpe'):
+            return platform.upper()
+        return platform
+
+    @classmethod
     @defer.inlineCallbacks
     def make_request(cls, endpoint, suite=None, test=None, commit=None, configuration=None, logger=None):
         logger = logger or (lambda log: None)
