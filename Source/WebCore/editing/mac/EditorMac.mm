@@ -71,6 +71,8 @@ namespace WebCore {
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> options)
 {
     auto range = selectedRange();
+    if (!range)
+        return;
 
     // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
     client()->setInsertionPasteboard(NSPasteboardNameGeneral);

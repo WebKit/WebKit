@@ -131,6 +131,9 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> options)
 {
     auto range = selectedRange();
+    if (!range)
+        return;
+
     bool allowPlainText = options.contains(PasteOption::AllowPlainText);
     WebContentReader reader(*document().frame(), *range, allowPlainText);
     int numberOfPasteboardItems = client()->getPasteboardItemsCount();
