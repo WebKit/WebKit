@@ -60,6 +60,8 @@ public:
     void setStorage(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
 #endif
 
+    std::optional<uint32_t> audioBufferFrameCount() const;
+
     void remoteAudioSamplesAvailable(WTF::MediaTime, uint64_t numberOfFrames);
     void remoteCaptureFailed();
     void remoteSourceStopped();

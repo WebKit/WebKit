@@ -34,6 +34,8 @@
 #include "WebProcessProxy.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, *messageSenderConnection())
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionRemoteRealtimeMediaSourceManager);
@@ -73,8 +75,15 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource(SpeechRecog
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteAudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, const WTF::MediaTime& time, uint64_t numberOfFrames)
 {
-    if (auto source = m_sources.get(identifier).get())
-        source->remoteAudioSamplesAvailable(time, numberOfFrames);
+    RefPtr source = m_sources.get(identifier).get();
+    if (!source)
+        return;
+
+    auto frameCount = source->audioBufferFrameCount();
+    MESSAGE_CHECK(frameCount);
+    MESSAGE_CHECK(numberOfFrames && numberOfFrames <= *frameCount);
+
+    source->remoteAudioSamplesAvailable(time, numberOfFrames);
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier identifier)
@@ -115,5 +124,7 @@ std::optional<SharedPreferencesForWebProcess> SpeechRecognitionRemoteRealtimeMed
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif
