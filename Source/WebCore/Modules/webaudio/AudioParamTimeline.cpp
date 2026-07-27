@@ -519,6 +519,7 @@ void AudioParamTimeline::processLinearRamp(const AutomationState& currentState, 
     // is close enough to zero (less than float min), treat it as zero.
     float k = deltaTime.value() <= std::numeric_limits<float>::min() ? 0 : 1 / deltaTime.value();
 
+    // Truncate loop steps to multiple of 4.
     unsigned fillToFrameTrunc = writeIndex + ((currentState.fillToFrame - writeIndex) / 4) * 4;
     if (fillToFrameTrunc > writeIndex) {
         // Minimize in-loop operations. Calculate starting value and increment.
@@ -539,8 +540,6 @@ void AudioParamTimeline::processLinearRamp(const AutomationState& currentState, 
 
         float inc = 4 * currentState.samplingPeriod * k * valueDelta;
 
-        // Truncate loop steps to multiple of 4.
-        unsigned fillToFrameTrunc = writeIndex + ((currentState.fillToFrame - writeIndex) / 4) * 4;
         // Compute final frame.
         currentFrame += fillToFrameTrunc - writeIndex;
 
