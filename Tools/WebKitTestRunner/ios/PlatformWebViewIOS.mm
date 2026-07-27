@@ -259,9 +259,9 @@ PlatformWindow PlatformWebView::keyWindow()
 {
     size_t i = allWindows.size();
     while (i) {
+        --i;
         if ([allWindows[i] isKeyWindow])
             return allWindows[i];
-        --i;
     }
 
     return nil;
