@@ -371,14 +371,16 @@ def run_test(name: str, command: str, stdout_filter: str | None = None) -> TestR
 
 DEFAULT_MAKE_COMMAND = (
     'make -C {workspace_dir} {configuration} ARGS="'
-    'WK_MACOSX_DEPLOYMENT_TARGET= COMPILATION_CACHE_ENABLE_CACHING=NO -showBuildTimingSummary'
+    'WK_MACOSX_DEPLOYMENT_TARGET={sdk_version} COMPILATION_CACHE_ENABLE_CACHING=NO '
+    '-showBuildTimingSummary'
     '"'
 )
 DEFAULT_CMAKE_BUILD_COMMAND = (
     'xcrun ninja -C {build_dir}'
 )
 DEFAULT_CMAKE_CONFIGURE_COMMAND = (
-    'xcrun cmake -S {source_dir} -B {build_dir} --preset {preset}'
+    'xcrun cmake -S {source_dir} -B {build_dir} --preset {preset} '
+    '-DCMAKE_OSX_DEPLOYMENT_TARGET={sdk_version}'
 )
 
 class Arguments(argparse.Namespace):
@@ -459,11 +461,19 @@ def get_args() -> Arguments:
         parser.error('--build-command must be provided when using a custom '
                      '--configure-command')
 
+    internal_dir = args.source_dir / '../Internal/WebKit'
+    sdk_version = subprocess.check_output(
+        ('xcodebuild', '-version', '-sdk',
+         'macosx.internal' if internal_dir.exists() else 'macosx',
+         'SDKVersion'),
+        text=True
+    ).rstrip()
+
     if args.make:
-        internal_dir = args.source_dir / '../Internal/WebKit'
         args.build_command = DEFAULT_MAKE_COMMAND.format(
             configuration=args.configuration.lower(),
-            workspace_dir=str(internal_dir if internal_dir.exists() else args.source_dir)
+            workspace_dir=str(internal_dir if internal_dir.exists() else args.source_dir),
+            sdk_version=sdk_version,
         )
     elif args.cmake:
         args.build_command = DEFAULT_CMAKE_BUILD_COMMAND.format(
@@ -477,6 +487,7 @@ def get_args() -> Arguments:
             build_dir=str(args.build_dir),
             source_dir=str(args.source_dir),
             preset=cmake_preset,
+            sdk_version=sdk_version,
         )
     if not args.metric_key:
         # e.g. "BuildTime-Debug"
