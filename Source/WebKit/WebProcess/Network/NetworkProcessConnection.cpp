@@ -80,6 +80,10 @@
 #include "WebPaymentCoordinatorMessages.h"
 #endif
 
+#if USE(SOUP)
+#include <WebCore/MIMETypeRegistry.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -359,5 +363,12 @@ void NetworkProcessConnection::storageAccessPermissionChanged(const WebCore::Reg
 {
     WebCore::PermissionController::singleton().storageAccessPermissionChanged(topFrameDomain, subFrameDomain);
 }
+
+#if USE(SOUP)
+void NetworkProcessConnection::canShowMIMEType(const String& mimeType, CompletionHandler<void(bool)>&& callback)
+{
+    callback(MIMETypeRegistry::canShowMIMEType(mimeType));
+}
+#endif
 
 } // namespace WebKit

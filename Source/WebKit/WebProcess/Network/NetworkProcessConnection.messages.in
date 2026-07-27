@@ -53,4 +53,8 @@ messages -> NetworkProcessConnection WantsDispatchMessage {
     LoadCancelledDownloadRedirectRequestInFrame(WebCore::ResourceRequest request, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID)
 
     StorageAccessPermissionChanged(WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain subFrameDomain)
+
+#if USE(SOUP)
+    CanShowMIMEType(String mimeType) -> (bool result)
+#endif
 }

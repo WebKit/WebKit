@@ -28,6 +28,8 @@
 #include "NetworkProcess.h"
 
 #include "NetworkCache.h"
+#include "NetworkConnectionToWebProcess.h"
+#include "NetworkProcessConnectionMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSessionSoup.h"
@@ -193,6 +195,17 @@ void NetworkProcess::setPersistentCredentialStorageEnabled(PAL::SessionID sessio
 {
     if (auto* session = networkSession(sessionID))
         static_cast<NetworkSessionSoup&>(*session).setPersistentCredentialStorageEnabled(enabled);
+}
+
+void NetworkProcess::canShowMIMEType(String mimeType, CompletionHandler<void(bool)>&& callback)
+{
+    if (m_webProcessConnections.isEmpty()) [[unlikely]] {
+        callback(false);
+        return;
+    }
+
+    const auto& webProcessConnection = m_webProcessConnections.values().begin();
+    webProcessConnection->get().connection().sendWithAsyncReply(Messages::NetworkProcessConnection::CanShowMIMEType { mimeType }, WTF::move(callback));
 }
 
 } // namespace WebKit
