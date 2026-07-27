@@ -36,6 +36,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -163,7 +164,8 @@ private:
     };
     InspectorAuditCachedStyleSheetClient m_cachedStyleSheetClient;
 
-    MemoryCompactRobinHoodHashMap<String, CachedResource*> m_resources;
+    MemoryCompactRobinHoodHashMap<String, WeakPtr<CachedResource>> m_resources;
+    WeakHashMap<CachedResource, String> m_resourceIdentifiers;
 };
 
 } // namespace WebCore

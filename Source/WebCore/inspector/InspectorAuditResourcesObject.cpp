@@ -61,8 +61,10 @@ InspectorAuditResourcesObject::InspectorAuditResourcesObject(InspectorAuditAgent
 
 InspectorAuditResourcesObject::~InspectorAuditResourcesObject()
 {
-    for (RefPtr cachedResource : m_resources.values())
-        cachedResource->removeClient(clientForResource(*cachedResource));
+    for (auto& weakResource : m_resources.values()) {
+        if (RefPtr cachedResource = weakResource.get())
+            cachedResource->removeClient(clientForResource(*cachedResource));
+    }
 }
 
 ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResourcesObject::getResources(Document& document)
@@ -80,19 +82,14 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
         resource.url = cachedResource->url().string();
         resource.mimeType = cachedResource->mimeType();
 
-        bool exists = false;
-        for (const auto& entry : m_resources) {
-            if (entry.value == cachedResource) {
-                resource.id = entry.key;
-                exists = true;
-                break;
-            }
-        }
-        if (!exists) {
+        if (auto identifier = m_resourceIdentifiers.getOptional(*cachedResource))
+            resource.id = WTF::move(*identifier);
+        else {
             cachedResource->addClient(clientForResource(*cachedResource));
 
             resource.id = String::number(m_resources.size() + 1);
             m_resources.add(resource.id, cachedResource);
+            m_resourceIdentifiers.add(*cachedResource, resource.id);
         }
 
         resources.append(WTF::move(resource));
