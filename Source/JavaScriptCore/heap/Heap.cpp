@@ -3611,6 +3611,14 @@ void Heap::finalizeWasmCalleeCleanup()
         });
     }
 
+    // We need to ensure our thread sees all the new callsites otherwise we could be discarding a BBQCallee
+    // for foo but a different Callee could still have a stale direct call to foo's BBQ code on this core.
+    // Realistically, this is probably not needed, since we're essentially guarenteed to make a syscall
+    // that will syncronize the instruction cache during GC. That said, this happens so infrequently it's
+    // better to just have the code be clear.
+    if (!wasmCalleesToRelease.isEmpty())
+        WTF::crossModifyingCodeFence();
+
     m_wasmCalleesPendingDestructionSnapshot.clear();
     m_wasmCalleesDiscoveredDuringGC.clear();
 }
