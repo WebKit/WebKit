@@ -33,7 +33,6 @@ set(InspectorResourceScripts
     ${WEBINSPECTORUI_DIR}/Scripts/copy-user-interface-resources.pl
     ${WEBINSPECTORUI_DIR}/Scripts/fix-worker-imports-for-optimized-builds.pl
     ${WEBINSPECTORUI_DIR}/Scripts/remove-console-asserts.pl
-    ${WEBINSPECTORUI_DIR}/Scripts/update-NativeFunctionParameters.py
     ${JavaScriptCore_SCRIPTS_DIR}/cssmin.py
     ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py
 )
@@ -76,10 +75,8 @@ add_custom_command(
     DEPENDS ${InspectorFilesDependencies}
             ${InspectorResourceScripts}
             ${WebInspectorUI_DERIVED_SOURCES_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
-            ${WebCore_DERIVED_SOURCES_DIR}/InspectorNativeFunctionParameters.json
-            ${WEBINSPECTORUI_DIR}/UserInterface/Models/NativeFunctionParameters-overrides.json
     COMMAND ${CMAKE_COMMAND} -E copy ${WebInspectorUI_DERIVED_SOURCES_DIR}/UserInterface/Protocol/InspectorBackendCommands.js ${JavaScriptCore_SCRIPTS_DIR}/InspectorBackendCommands.js
-    COMMAND ${CMAKE_COMMAND} -E env "DERIVED_SOURCES_DIR=${WebInspectorUI_DERIVED_SOURCES_DIR}" "SRCROOT=${WEBINSPECTORUI_DIR}" "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR=${JavaScriptCore_SCRIPTS_DIR}" "TARGET_BUILD_DIR=${WebInspectorUI_RESOURCES_DIR}" "UNLOCALIZED_RESOURCES_FOLDER_PATH=WebInspectorUI" "COMBINE_INSPECTOR_RESOURCES=${COMBINE_INSPECTOR_RESOURCES}" "COMBINE_TEST_RESOURCES=${COMBINE_TEST_RESOURCES}" "INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST=${INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST}" "INSPECTOR_NATIVE_FUNCTION_PARAMETERS_JSON=${WebCore_DERIVED_SOURCES_DIR}/InspectorNativeFunctionParameters.json" PYTHON=${PYTHON_EXECUTABLE} ${PERL_EXECUTABLE} ${WEBINSPECTORUI_DIR}/Scripts/copy-user-interface-resources.pl
+    COMMAND ${CMAKE_COMMAND} -E env "DERIVED_SOURCES_DIR=${WebInspectorUI_DERIVED_SOURCES_DIR}" "SRCROOT=${WEBINSPECTORUI_DIR}" "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR=${JavaScriptCore_SCRIPTS_DIR}" "TARGET_BUILD_DIR=${WebInspectorUI_RESOURCES_DIR}" "UNLOCALIZED_RESOURCES_FOLDER_PATH=WebInspectorUI" "COMBINE_INSPECTOR_RESOURCES=${COMBINE_INSPECTOR_RESOURCES}" "COMBINE_TEST_RESOURCES=${COMBINE_TEST_RESOURCES}" "INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST=${INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST}" PYTHON=${PYTHON_EXECUTABLE} ${PERL_EXECUTABLE} ${WEBINSPECTORUI_DIR}/Scripts/copy-user-interface-resources.pl
     COMMAND ${CMAKE_COMMAND} -E make_directory ${WebInspectorUI_LOCALIZED_STRINGS_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy "${WEBINSPECTORUI_DIR}/Localizations/en.lproj/localizedStrings.js" ${WebInspectorUI_LOCALIZED_STRINGS_DIR}/localizedStrings.js
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/inspector-resources.stamp

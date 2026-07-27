@@ -1,7 +1,0 @@
-{
-    "TestScheduledActionReal": {
-        "prototype": {
-            "method": "action"
-        }
-    }
-}

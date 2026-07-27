@@ -1,7 +1,0 @@
-{
-    "TestIndexedSetterWithIdentifier": {
-        "prototype": {
-            "indexedSetter": "index, value"
-        }
-    }
-}

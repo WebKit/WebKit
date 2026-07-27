@@ -1,8 +1,0 @@
-{
-    "TestNamedSetterWithIndexedGetter": {
-        "prototype": {
-            "indexedSetter": "index",
-            "namedSetter": "name, value"
-        }
-    }
-}

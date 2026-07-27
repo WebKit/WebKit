@@ -62,9 +62,6 @@ endif ()
 
 if (ENABLE_WEBCORE)
     add_subdirectory(WebCore)
-    if (ENABLE_WEBINSPECTORUI)
-        add_dependencies(WebInspectorUI WebCoreBindings-inspector-native-function-parameters)
-    endif ()
 endif ()
 
 if (ENABLE_WEBKIT_LEGACY)
