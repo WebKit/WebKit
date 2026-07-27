@@ -47,9 +47,9 @@ static void zeroFillLatchIfMadvZeroIsSupported()
 
     int rc = madvise(base, pageSize, MADV_ZERO);
     if (rc)
-        madvZeroSupported = true;
+        madvZeroSupported = errno != ENOTSUP;
     else
-        madvZeroSupported = false;
+        madvZeroSupported = true;
     munmap(base, pageSize);
 }
 
