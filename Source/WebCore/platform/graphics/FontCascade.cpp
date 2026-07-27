@@ -247,8 +247,10 @@ RefPtr<const DisplayList::DisplayList> FontCascade::displayListForGlyphBuffer(Gr
     constexpr auto drawGlyphsMode = DisplayList::Recorder::DrawGlyphsMode::Deconstruct;
 #endif
 
-    DisplayList::RecorderImpl recordingContext(context.state().clone(GraphicsContextState::Purpose::Initial), { },
-        context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale), context.colorSpace(), drawGlyphsMode);
+    auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
+    // Seed the CTM without marking the change flag.
+    initialState.ctm() = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    DisplayList::RecorderImpl recordingContext(initialState, { }, context.colorSpace(), drawGlyphsMode);
 
     FloatPoint startPoint = toFloatPoint(WebCore::size(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);

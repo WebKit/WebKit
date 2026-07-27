@@ -171,6 +171,11 @@ public:
     virtual void didUpdateState(GraphicsContextState&) = 0;
     virtual void didUpdateSingleState(GraphicsContextState& state, GraphicsContextState::ChangeIndex) { didUpdateState(state); }
 
+    // Called *before* the CTM changes. Subclasses that buffer draws whose interpretation
+    // depends on the CTM being stable (e.g. batched line strokes) must flush them here,
+    // since such draws are not otherwise revisited when the CTM changes.
+    virtual void willChangeCTM() { }
+
     WEBCORE_EXPORT virtual void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
     WEBCORE_EXPORT virtual void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
 
@@ -331,15 +336,44 @@ public:
 
     // Transforms
 
+    const AffineTransform& ctm() const { return m_state.ctm(); }
+    void setCTM(const AffineTransform& matrix)
+    {
+        willChangeCTM();
+        m_state.setCTM(matrix);
+        didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::TransformationMatrix));
+    }
+
+    void concatCTM(const AffineTransform& matrix)
+    {
+        willChangeCTM();
+        m_state.concatCTM(matrix);
+        didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::TransformationMatrix));
+    }
+
+    void scale(const FloatSize& size)
+    {
+        willChangeCTM();
+        m_state.scale(size);
+        didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::TransformationMatrix));
+    }
     void scale(float s) { scale({ s, s }); }
-    virtual void scale(const FloatSize&) = 0;
-    virtual void rotate(float angleInRadians) = 0;
+
+    void rotate(float angleInRadians)
+    {
+        willChangeCTM();
+        m_state.rotate(angleInRadians);
+        didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::TransformationMatrix));
+    }
+
+    void translate(float x, float y)
+    {
+        willChangeCTM();
+        m_state.translate(x, y);
+        didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::TransformationMatrix));
+    }
     void translate(const FloatSize& size) { translate(size.width(), size.height()); }
     void translate(const FloatPoint& p) { translate(p.x(), p.y()); }
-    virtual void translate(float x, float y) = 0;
-
-    virtual void concatCTM(const AffineTransform&) = 0;
-    virtual void setCTM(const AffineTransform&) = 0;
 
     enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
     virtual AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const = 0;

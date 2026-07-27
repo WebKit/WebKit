@@ -431,10 +431,12 @@ void RemoteGraphicsContext::drawDisplayList(RemoteDisplayListIdentifier identifi
     context().drawDisplayList(*displayList, controlFactory());
 }
 
-void RemoteGraphicsContext::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RemoteGraphicsContext::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options, const AffineTransform& ctm, float alpha)
 {
     RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
     MESSAGE_CHECK(image);
+    context().setCTM(ctm);
+    context().setAlpha(alpha);
     context().drawNativeImage(*image, destRect, srcRect, options);
 }
 

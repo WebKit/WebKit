@@ -97,11 +97,7 @@ private:
 
     void save(WebCore::GraphicsContextState::Purpose) final;
     void restore(WebCore::GraphicsContextState::Purpose) final;
-    void translate(float x, float y) final;
-    void rotate(float angle) final;
-    void scale(const WebCore::FloatSize&) final;
-    void setCTM(const WebCore::AffineTransform&) final;
-    void concatCTM(const WebCore::AffineTransform&) final;
+    void willChangeCTM() final { sendPendingDrawsIfNecessary(); }
     void setLineCap(WebCore::LineCap) final;
     void setLineDash(const WebCore::DashArray&, float dashOffset) final;
     void setLineJoin(WebCore::LineJoin) final;
@@ -172,7 +168,8 @@ private:
 
     // Synchronizes draw state.
 protected:
-    void appendStateChangeItemIfNecessary() final;
+    void appendStateChangeItemIfNecessaryExcluding(WebCore::GraphicsContextState::ChangeFlags);
+    void appendStateChangeItemIfNecessary() final { appendStateChangeItemIfNecessaryExcluding({}); }
 
 private:
     struct InlineStrokeData {

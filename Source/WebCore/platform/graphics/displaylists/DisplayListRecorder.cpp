@@ -45,17 +45,17 @@ namespace DisplayList {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Recorder);
 
-Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
+Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : GraphicsContext(isDeferred, state)
     , m_colorSpace(colorSpace)
-    , m_initialClip(initialCTM.mapRect(initialClip))
+    , m_initialClip(state.ctm().mapRect(initialClip))
     , m_drawGlyphsMode(drawGlyphsMode)
 #if USE(CORE_TEXT)
-    , m_initialScale(initialCTM.xScale())
+    , m_initialScale(state.ctm().xScale())
 #endif
 {
     ASSERT(!state.changes());
-    m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
+    m_stateStack.append({ state, m_initialClip });
 }
 
 Recorder::~Recorder()
@@ -175,7 +175,7 @@ void Recorder::updateStateForSetCTM(const AffineTransform& transform)
 
 AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
 {
-    return currentState().ctm;
+    return currentState().ctm();
 }
 
 void Recorder::updateStateForBeginTransparencyLayer(float opacity)
@@ -221,13 +221,13 @@ FloatRect Recorder::initialClip() const
 void Recorder::updateStateForClip(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
+    currentState().clipBounds.intersect(currentState().ctm().mapRect(rect));
 }
 
 void Recorder::updateStateForClipRoundedRect(const FloatRoundedRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect.rect()));
+    currentState().clipBounds.intersect(currentState().ctm().mapRect(rect.rect()));
 }
 
 void Recorder::updateStateForClipOut(const FloatRect&)
@@ -251,18 +251,18 @@ void Recorder::updateStateForClipOut(const Path&)
 void Recorder::updateStateForClipPath(const Path& path)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(currentState().ctm.mapRect(path.fastBoundingRect()));
+    currentState().clipBounds.intersect(currentState().ctm().mapRect(path.fastBoundingRect()));
 }
 
 void Recorder::updateStateForClipToImageBuffer(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
+    currentState().clipBounds.intersect(currentState().ctm().mapRect(rect));
 }
 
 IntRect Recorder::clipBounds() const
 {
-    if (auto inverse = currentState().ctm.inverse())
+    if (auto inverse = currentState().ctm().inverse())
         return enclosingIntRect(inverse->mapRect(currentState().clipBounds));
 
     // If the CTM is not invertible, return the original rect.
@@ -280,38 +280,36 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
     // Assert that it's only called early on?
 }
 
+/*
 const AffineTransform& Recorder::ctm() const
 {
-    return currentState().ctm;
+    return currentState().ctm();
 }
+*/
 
 void Recorder::ContextState::translate(float x, float y)
 {
-    ctm.translate(x, y);
+    state.translate(x, y);
 }
 
 void Recorder::ContextState::rotate(float angleInRadians)
 {
-    double angleInDegrees = rad2deg(static_cast<double>(angleInRadians));
-    ctm.rotate(angleInDegrees);
-
-    AffineTransform rotation;
-    rotation.rotate(angleInDegrees);
+    state.rotate(angleInRadians);
 }
 
 void Recorder::ContextState::scale(const FloatSize& size)
 {
-    ctm.scale(size);
+    state.scale(size);
 }
 
 void Recorder::ContextState::setCTM(const AffineTransform& matrix)
 {
-    ctm = matrix;
+    state.setCTM(matrix);
 }
 
 void Recorder::ContextState::concatCTM(const AffineTransform& matrix)
 {
-    ctm *= matrix;
+    state.concatCTM(matrix);
 }
 
 } // namespace DisplayList

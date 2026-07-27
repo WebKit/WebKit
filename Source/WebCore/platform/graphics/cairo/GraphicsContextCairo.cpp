@@ -258,13 +258,11 @@ void GraphicsContextCairo::drawDotsForDocumentMarker(const FloatRect& rect, Docu
     Cairo::drawDotsForDocumentMarker(*this, rect, style);
 }
 
-void GraphicsContextCairo::translate(float x, float y)
-{
-    Cairo::translate(*this, x, y);
-}
-
 void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
 {
+    if (state.changes().contains(GraphicsContextState::Change::TransformationMatrix))
+        Cairo::State::setCTM(*this, state.ctm());
+
     if (state.changes().contains(GraphicsContextState::Change::StrokeThickness))
         Cairo::State::setStrokeThickness(*this, state.strokeThickness());
 
@@ -278,16 +276,6 @@ void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
         Cairo::State::setShouldAntialias(*this, state.shouldAntialias());
 
     state.didApplyChanges();
-}
-
-void GraphicsContextCairo::concatCTM(const AffineTransform& transform)
-{
-    Cairo::concatCTM(*this, transform);
-}
-
-void GraphicsContextCairo::setCTM(const AffineTransform& transform)
-{
-    Cairo::State::setCTM(*this, transform);
 }
 
 void GraphicsContextCairo::beginTransparencyLayer(float opacity)
@@ -336,16 +324,6 @@ void GraphicsContextCairo::setMiterLimit(float miter)
 void GraphicsContextCairo::clipOut(const Path& path)
 {
     Cairo::clipOut(*this, path);
-}
-
-void GraphicsContextCairo::rotate(float radians)
-{
-    Cairo::rotate(*this, radians);
-}
-
-void GraphicsContextCairo::scale(const FloatSize& size)
-{
-    Cairo::scale(*this, size);
 }
 
 void GraphicsContextCairo::clipOut(const FloatRect& rect)

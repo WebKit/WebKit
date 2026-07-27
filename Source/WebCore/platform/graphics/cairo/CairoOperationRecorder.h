@@ -85,11 +85,6 @@ private:
     void save(WebCore::GraphicsContextState::Purpose = WebCore::GraphicsContextState::Purpose::SaveRestore) override;
     void restore(WebCore::GraphicsContextState::Purpose = WebCore::GraphicsContextState::Purpose::SaveRestore) override;
 
-    void translate(float, float) override;
-    void rotate(float angleInRadians) override;
-    void scale(const WebCore::FloatSize&) override;
-    void concatCTM(const WebCore::AffineTransform&) override;
-    void setCTM(const WebCore::AffineTransform&) override;
     WebCore::AffineTransform getCTM(WebCore::GraphicsContext::IncludeDeviceScale) const override;
 
     void beginTransparencyLayer(float) override;

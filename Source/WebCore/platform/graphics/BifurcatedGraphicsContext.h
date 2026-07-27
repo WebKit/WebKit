@@ -118,14 +118,6 @@ public:
     void drawVideoFrame(const VideoFrame&, const FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
 
-    using GraphicsContext::scale;
-    void scale(const FloatSize&) final;
-    void rotate(float angleInRadians) final;
-    void translate(float x, float y) final;
-
-    void concatCTM(const AffineTransform&) final;
-    void setCTM(const AffineTransform&) final;
-
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
 
     void drawFocusRing(const Path&, float outlineWidth, const Color&, float zoomFactor) final;

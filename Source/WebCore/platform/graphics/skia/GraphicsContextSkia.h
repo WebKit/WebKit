@@ -65,7 +65,6 @@ public:
     void replayStateOnCanvas(SkCanvas&) const;
 
     void didUpdateState(GraphicsContextState&) final;
-    void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
 
     void setLineCap(LineCap) final;
     void setLineDash(const DashArray&, float) final;
@@ -97,12 +96,6 @@ public:
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
-    void translate(float, float) final;
-    void rotate(float) final;
-    using GraphicsContext::scale;
-    void scale(const FloatSize&) final;
-    void concatCTM(const AffineTransform&) final;
-    void setCTM(const AffineTransform&) final;
     AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
 
     void beginTransparencyLayer(float) final;

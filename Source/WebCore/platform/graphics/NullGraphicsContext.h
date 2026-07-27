@@ -93,11 +93,6 @@ private:
     void setLineJoin(LineJoin) final { }
     void setMiterLimit(float) final { }
     void clipOut(const Path&) final { }
-    void scale(const FloatSize&) final { }
-    void rotate(float) final { }
-    void translate(float, float) final { }
-    void concatCTM(const AffineTransform&) final { }
-    void setCTM(const AffineTransform&) final { }
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const final { return { }; }
     void clearRect(const FloatRect&) final { }
     void resetClip() final { }
