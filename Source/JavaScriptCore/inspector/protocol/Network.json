@@ -230,7 +230,7 @@
         {
             "name": "loadResource",
             "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "async": true,
             "parameters": [
                 { "name": "frameId", "$ref": "FrameId", "description": "Frame to load the resource from." },

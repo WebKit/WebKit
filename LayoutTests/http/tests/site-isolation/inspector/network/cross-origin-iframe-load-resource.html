@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    // Main page is served from 127.0.0.1:8000; the cross-origin host loads in a separate WebContent
+    // process under Site Isolation. The child document just needs to commit in its own process.
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/load-resource-iframe.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // This test exercises Network.loadResource under Site Isolation. It is routed by frameId + URL
+    // (not requestId) and initiates a load, and is issued against the multiplexing (web-page) target's
+    // NetworkAgent -- where ProxyingNetworkAgent lives under SI.
+    //
+    // Loading a resource that is only same-origin to the *iframe* (cross-origin to the main frame) and
+    // asserting on the returned body proves the load ran in the iframe's process: routing to the wrong
+    // (main-frame) process would yield an opaque, empty NoCors response instead of the served content.
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.LoadResource");
+
+    let childFrame;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.LoadResource.AwaitCrossOriginFrame",
+        description: "Add a cross-origin iframe and wait for its frame to appear in the frontend frame model.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let frameTarget = (await targetAddedPromise).data.target;
+
+            // The cross-origin child commits in its own process; its Page.frameNavigated arrives shortly
+            // after. Drive/await the child's execution context and poll the frame model until it appears.
+            for (let attempt = 0; attempt < 50 && !childFrame; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                childFrame = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/load-resource-iframe.html"));
+                if (!childFrame)
+                    await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectThat(!!childFrame, "Cross-origin child frame should appear in WI.networkManager.frames.");
+            if (childFrame)
+                InspectorTest.expectThat(childFrame.securityOrigin !== WI.networkManager.mainFrame.securityOrigin, "Cross-origin child should have a different security origin from the main frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.LoadResource.Success",
+        description: "loadResource should return the decoded body, MIME type, and status for a resource loaded in the cross-origin iframe's context.",
+        async test() {
+            if (!childFrame) {
+                InspectorTest.fail("No cross-origin child frame; cannot run loadResource.");
+                return;
+            }
+
+            // Same-origin to the iframe (not to the main frame), so a correct load returns the served body.
+            let url = childFrame.securityOrigin + "/inspector/network/resources/echo.py?mimetype=text/plain&content=si-load-resource-content";
+            let {content, mimeType, status} = await WI.backendTarget.NetworkAgent.loadResource(childFrame.id, url);
+            InspectorTest.expectEqual(content, "si-load-resource-content", "loadResource should return the served body content.");
+            InspectorTest.expectEqual(mimeType, "text/plain", "loadResource should return the served MIME type.");
+            InspectorTest.expectEqual(status, 200, "loadResource should return HTTP status 200.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.LoadResource.InvalidFrameId",
+        description: "loadResource should fail cleanly for a malformed frameId.",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await WI.backendTarget.NetworkAgent.loadResource("not-a-valid-frame-id", "http://127.0.0.1:8000/inspector/network/resources/echo.py?content=unused");
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that Network.loadResource loads a resource in the context of a cross-origin iframe's frame under Site Isolation, routed through ProxyingNetworkAgent to the frame's owning WebContent process.</p>
+</body>

@@ -429,10 +429,54 @@ CommandResult<void> ProxyingNetworkAgent::setClearResourceDataOnNavigate(bool)
     return { };
 }
 
-void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId&, const String&, Ref<LoadResourceCallback>&& callback)
+void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameId, const String& url, Ref<LoadResourceCallback>&& callback)
 {
-    // FIXME: Route to correct WebContent process for the frame.
-    callback->sendFailure("Not yet implemented"_s);
+    // Routed by frame (frameId + URL), unlike getResponseBody which is routed by requestId: decode the
+    // frame's hosting process from the frameId and forward the load to that process's WebInspectorBackend.
+    auto parsed = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsed) {
+        callback->sendFailure("Invalid frameId format"_s);
+        return;
+    }
+
+    auto [processIdentifier, frameID] = *parsed;
+
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage) {
+        callback->sendFailure("Inspected page is gone"_s);
+        return;
+    }
+
+    RefPtr<WebKit::WebProcessProxy> targetProcess;
+    std::optional<PageIdentifier> targetPageID;
+
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess.coreProcessIdentifier() == processIdentifier) {
+            targetProcess = &webProcess;
+            targetPageID = pageID;
+        }
+    });
+
+    if (!targetProcess || !targetPageID) {
+        callback->sendFailure("WebProcess not found for frameId"_s);
+        return;
+    }
+
+    targetProcess->sendWithAsyncReply(
+        Messages::WebInspectorBackend::LoadResource { frameID, url },
+        [callback = WTF::move(callback)](Expected<std::tuple<String, String, int>, String>&& result) mutable {
+            if (result) {
+                auto& [content, mimeType, status] = result.value();
+                callback->sendSuccess(content, mimeType, status);
+            } else if (!result.error().isEmpty())
+                callback->sendFailure(result.error());
+            else {
+                // Empty error string == AsyncReplyError synthesized on connection loss (target
+                // WebProcess is gone), matching getResponseBody.
+                callback->sendFailure("Target WebProcess for frameId is no longer available"_s);
+            }
+        },
+        *targetPageID);
 }
 
 CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId&, const String&)

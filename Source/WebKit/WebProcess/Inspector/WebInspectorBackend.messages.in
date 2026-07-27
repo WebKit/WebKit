@@ -75,6 +75,11 @@ messages -> WebInspectorBackend {
     # connection loss); only the success payload differs -- here a single certificate String.
     GetSerializedCertificate(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<String, String> result) Async
 
+    # Network.loadResource: load a URL in the given frame's document context on behalf of the inspector,
+    # without cross-origin checks. Reply is {content, mimeType, status}, or an unexpected error string
+    # (same empty-string == connection-loss convention as GetResponseBody above).
+    LoadResource(WebCore::FrameIdentifier frameID, String url) -> (Expected<std::tuple<String, String, int>, String> result) Async
+
     # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
     SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
 

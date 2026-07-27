@@ -33,16 +33,23 @@
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentResourceLoader.h"
+#include "FetchOptions.h"
 #include "FrameLoader.h"
 #include "InspectorResourceType.h"
+#include "InspectorThreadableLoaderClient.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "ResourceLoaderOptions.h"
+#include "ResourceRequest.h"
+#include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
+#include "ThreadableLoader.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/URL.h>
 
 namespace Inspector {
 
@@ -420,6 +427,35 @@ bool cachedResourceContent(CachedResource& resource, String* result, bool* base6
         *result = base64EncodeToString(buffer->makeContiguous()->span());
         return true;
     }
+}
+
+void loadResource(ScriptExecutionContext& context, const String& urlString, LoadResourceCompletionHandler&& completionHandler)
+{
+    // Backs Network.loadResource: load a URL in a document's context on behalf of the inspector,
+    // bypassing cross-origin checks (e.g. to fetch a source map).
+    URL url = context.encodingParseURL(urlString);
+    ResourceRequest request(WTF::move(url));
+    request.setHTTPMethod("GET"_s);
+    request.setHiddenFromInspector(true);
+
+    ThreadableLoaderOptions options;
+    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks; // So InspectorNetworkAgent's willSendRequest/loadingFinished hooks still fire for this hidden request, letting it track and untrack it.
+    options.defersLoadingPolicy = DefersLoadingPolicy::DisallowDefersLoading; // So the request is never deferred.
+    options.mode = FetchOptions::Mode::NoCors;
+    options.credentials = FetchOptions::Credentials::SameOrigin;
+    options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
+
+    Ref client = InspectorThreadableLoaderClient::create(WTF::move(completionHandler));
+    RefPtr loader = ThreadableLoader::create(context, client.get(), WTF::move(request), options);
+    if (!loader) {
+        client->failWithMessage("Could not load requested resource."_s);
+        return;
+    }
+
+    // If the load already finished synchronously the client has disposed itself; only retain the
+    // loader while the load is still in flight.
+    if (client->isActive())
+        client->setLoader(WTF::move(loader));
 }
 
 } // namespace ResourceUtilities

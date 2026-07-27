@@ -440,6 +440,33 @@ void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier reso
     completionHandler(WTF::move(result));
 }
 
+void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const String& url, CompletionHandler<void(Expected<std::tuple<String, String, int>, String>&&)>&& completionHandler)
+{
+    // Site Isolation load leg for Network.loadResource: ProxyingNetworkAgent already routed this to
+    // the frame's hosting process, so resolve the frame locally and run the load in its document
+    // context. Failures carry a non-empty error string (empty is reserved for the connection-loss
+    // AsyncReplyError; see WebInspectorBackend.messages.in).
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        completionHandler(makeUnexpected("Frame not found in this process"_s));
+        return;
+    }
+
+    RefPtr localFrame = webFrame->coreLocalFrame();
+    if (!localFrame) {
+        completionHandler(makeUnexpected("Frame is not local to this process"_s));
+        return;
+    }
+
+    RefPtr document = localFrame->document();
+    if (!document) {
+        completionHandler(makeUnexpected("No document for frame"_s));
+        return;
+    }
+
+    Inspector::ResourceUtilities::loadResource(*document, url, WTF::move(completionHandler));
+}
+
 // Convert the JSON protocol matches from ContentSearchUtilities::searchInTextByLines into the plain
 // typed-IPC mirror, so the UIProcess rebuilds the protocol objects on its side (as with FrameResource).
 static Vector<Inspector::SearchMatch> convertSearchMatches(JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>& matches)

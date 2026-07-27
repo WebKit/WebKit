@@ -25,13 +25,12 @@
 
 #pragma once
 
+#include "InspectorResourceUtilities.h" // for Inspector::LoadResourceCompletionHandler.
 #include "ThreadableLoaderClient.h"
-#include <JavaScriptCore/InspectorBackendDispatchers.h> // for LoadResourceCallback.
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-// FIXME: remove dependency on legacy callbacks in InspectorThreadableLoaderClient.
-using LoadResourceCallback = Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback;
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class TextResourceDecoder;
@@ -42,13 +41,16 @@ namespace Inspector {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient);
 
+// Drives a ThreadableLoader for Network.loadResource and reports {content, mimeType, status} (or an
+// error string) through a completion handler, so it can back both the single-process
+// InspectorNetworkAgent and the Site Isolation WebProcess load leg. Use ResourceUtilities::loadResource().
 class InspectorThreadableLoaderClient final : public ThreadSafeRefCounted<InspectorThreadableLoaderClient, WTF::DestructionThread::Main>, public WebCore::ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient, InspectorThreadableLoaderClient);
 public:
-    static Ref<InspectorThreadableLoaderClient> create(RefPtr<LoadResourceCallback>&& callback)
+    static Ref<InspectorThreadableLoaderClient> create(LoadResourceCompletionHandler&& completionHandler)
     {
-        return adoptRef(*new InspectorThreadableLoaderClient(WTF::move(callback)));
+        return adoptRef(*new InspectorThreadableLoaderClient(WTF::move(completionHandler)));
     }
 
     ~InspectorThreadableLoaderClient() final = default;
@@ -63,9 +65,15 @@ public:
     void didFail(std::optional<WebCore::ScriptExecutionContextIdentifier>, const WebCore::ResourceError&) override;
     void setLoader(RefPtr<WebCore::ThreadableLoader>&&);
 
+    // True until the completion handler has fired; callers use it to decide whether to retain the loader.
+    bool isActive() const { return !m_hasCalledDeref; }
+
+    // Report a failure before a ThreadableLoader could even be created for the load.
+    void failWithMessage(const String&);
+
 private:
-    explicit InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
-        : m_callback(WTF::move(callback))
+    explicit InspectorThreadableLoaderClient(LoadResourceCompletionHandler&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
     {
         // FIXME: This is error-prone, we should avoid explicit calls to ref() / deref().
         ref(); // dispose() is in charge of calling deref();
@@ -73,7 +81,7 @@ private:
 
     void dispose();
 
-    const RefPtr<LoadResourceCallback> m_callback;
+    LoadResourceCompletionHandler m_completionHandler;
     RefPtr<WebCore::ThreadableLoader> m_loader;
     RefPtr<WebCore::TextResourceDecoder> m_decoder;
     String m_mimeType;

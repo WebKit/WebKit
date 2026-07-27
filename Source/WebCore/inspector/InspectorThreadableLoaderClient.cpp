@@ -30,6 +30,8 @@
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
 #include <pal/text/TextEncoding.h>
+#include <tuple>
+#include <wtf/Expected.h>
 
 namespace Inspector {
 
@@ -66,14 +68,28 @@ void InspectorThreadableLoaderClient::didFinishLoading(ScriptExecutionContextIde
     if (RefPtr decoder = m_decoder)
         m_responseText.append(decoder->flush());
 
-    m_callback->sendSuccess(m_responseText.toString(), m_mimeType, m_statusCode);
+    auto completionHandler = WTF::move(m_completionHandler);
+    std::tuple<String, String, int> result { m_responseText.toString(), m_mimeType, m_statusCode };
     dispose();
+    if (completionHandler)
+        completionHandler(WTF::move(result));
 }
 
 void InspectorThreadableLoaderClient::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
-    m_callback->sendFailure(error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s);
+    auto completionHandler = WTF::move(m_completionHandler);
+    auto errorMessage = error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s;
     dispose();
+    if (completionHandler)
+        completionHandler(makeUnexpected(errorMessage));
+}
+
+void InspectorThreadableLoaderClient::failWithMessage(const String& message)
+{
+    auto completionHandler = WTF::move(m_completionHandler);
+    dispose();
+    if (completionHandler)
+        completionHandler(makeUnexpected(message));
 }
 
 void InspectorThreadableLoaderClient::setLoader(RefPtr<ThreadableLoader>&& loader)

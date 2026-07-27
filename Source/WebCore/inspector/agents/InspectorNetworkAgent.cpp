@@ -52,7 +52,6 @@
 #include "InspectorNetworkIntercept.h"
 #include "InspectorResourceType.h"
 #include "InspectorResourceUtilities.h"
-#include "InspectorThreadableLoaderClient.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowCustom.h"
@@ -87,6 +86,8 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <WebCore/HTTPStatusCodes.h>
+#include <tuple>
+#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -983,29 +984,13 @@ void InspectorNetworkAgent::loadResource(const Inspector::Protocol::Network::Fra
         return;
     }
 
-    URL url = context->encodingParseURL(urlString);
-    ResourceRequest request(WTF::move(url));
-    request.setHTTPMethod("GET"_s);
-    request.setHiddenFromInspector(true);
-
-    ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks; // So we remove this from m_hiddenRequestIdentifiers on completion.
-    options.defersLoadingPolicy = DefersLoadingPolicy::DisallowDefersLoading; // So the request is never deferred.
-    options.mode = FetchOptions::Mode::NoCors;
-    options.credentials = FetchOptions::Credentials::SameOrigin;
-    options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
-
-    // InspectorThreadableLoaderClient deletes itself when the load completes or fails.
-    Ref inspectorThreadableLoaderClient = InspectorThreadableLoaderClient::create(callback.copyRef());
-    RefPtr loader = ThreadableLoader::create(*context, inspectorThreadableLoaderClient, WTF::move(request), options);
-    if (!loader) {
-        callback->sendFailure("Could not load requested resource."_s);
-        return;
-    }
-
-    // If the load already completed, no need the set the client.
-    if (callback->isActive())
-        inspectorThreadableLoaderClient->setLoader(WTF::move(loader));
+    ResourceUtilities::loadResource(*context, urlString, [callback = WTF::move(callback)](Expected<std::tuple<String, String, int>, String>&& result) mutable {
+        if (result) {
+            auto& [content, mimeType, status] = result.value();
+            callback->sendSuccess(content, mimeType, status);
+        } else
+            callback->sendFailure(result.error());
+    });
 }
 
 void InspectorNetworkAgent::getSerializedCertificate(const Inspector::Protocol::Network::RequestId& requestId, Ref<GetSerializedCertificateCallback>&& callback)
