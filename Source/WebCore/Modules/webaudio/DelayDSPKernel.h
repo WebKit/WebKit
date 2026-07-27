@@ -58,7 +58,7 @@ private:
     AudioFloatArray m_buffer;
     double m_maxDelayTime;
     size_t m_writeIndex { 0 };
-    double m_desiredDelayFrames;
+    double m_desiredDelayFrames { 0 };
 
     AudioFloatArray m_delayTimes;
     // Temporary buffer used to hold the second sample for interpolation if needed.
