@@ -51,9 +51,8 @@ ImplicitGrid::ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount)
 void ImplicitGrid::insertUnplacedGridItem(const UnplacedGridItem& unplacedGridItem)
 {
     // https://drafts.csswg.org/css-grid/#common-uses-numeric
-    // Grid positions have already been normalized to non-negative matrix indices.
-    auto [columnStart, columnEnd] = unplacedGridItem.normalizedColumnStartEnd();
-    auto [rowStart, rowEnd] = unplacedGridItem.normalizedRowStartEnd();
+    auto [columnStart, columnEnd] = unplacedGridItem.definiteColumnStartEnd();
+    auto [rowStart, rowEnd] = unplacedGridItem.definiteRowStartEnd();
 
     // Multi-cell items (spanning multiple columns) are not yet supported.
     if (columnEnd - columnStart > 1) {
@@ -106,25 +105,25 @@ void ImplicitGrid::insertDefiniteRowItem(const UnplacedGridItem& unplacedGridIte
     ASSERT(columnSpan == 1);
 
     ASSERT(unplacedGridItem.hasDefiniteRowPosition() && !unplacedGridItem.hasDefiniteColumnPosition());
-    auto [normalizedRowStart, normalizedRowEnd] = unplacedGridItem.normalizedRowStartEnd();
+    auto [rowStart, rowEnd] = unplacedGridItem.definiteRowStartEnd();
     // FIXME: Support multi-row spans
-    ASSERT(normalizedRowEnd - normalizedRowStart == 1);
+    ASSERT(rowEnd - rowStart == 1);
 
-    std::optional<size_t> columnPosition = findColumnPositionForDefiniteRowItem(normalizedRowStart, normalizedRowEnd, columnSpan, autoFlowOptions);
+    std::optional<size_t> columnPosition = findColumnPositionForDefiniteRowItem(rowStart, rowEnd, columnSpan, autoFlowOptions);
 
     if (!columnPosition) {
-        growGridColumnsToFit(columnSpan, normalizedRowStart, normalizedRowEnd);
+        growGridColumnsToFit(columnSpan, rowStart, rowEnd);
 
         // Retry finding position in the grown grid
-        columnPosition = findColumnPositionForDefiniteRowItem(normalizedRowStart, normalizedRowEnd, columnSpan, autoFlowOptions);
+        columnPosition = findColumnPositionForDefiniteRowItem(rowStart, rowEnd, columnSpan, autoFlowOptions);
         ASSERT(columnPosition);
-        ASSERT(isCellRangeEmpty(*columnPosition, *columnPosition + columnSpan, normalizedRowStart, normalizedRowEnd));
+        ASSERT(isCellRangeEmpty(*columnPosition, *columnPosition + columnSpan, rowStart, rowEnd));
     }
 
-    insertItemInArea(unplacedGridItem, *columnPosition, *columnPosition + columnSpan, normalizedRowStart, normalizedRowEnd);
+    insertItemInArea(unplacedGridItem, *columnPosition, *columnPosition + columnSpan, rowStart, rowEnd);
 
     if (autoFlowOptions.strategy != PackingStrategy::Dense) {
-        for (size_t row = normalizedRowStart; row < normalizedRowEnd; ++row)
+        for (size_t row = rowStart; row < rowEnd; ++row)
             m_rowCursors.set(row, *columnPosition + columnSpan);
     }
 }
@@ -139,7 +138,7 @@ void ImplicitGrid::determineImplicitGridColumns(const Vector<UnplacedGridItem>& 
     // of the implicit grid as necessary to accommodate those items."
     for (const auto& item : autoPositionedItems) {
         if (item.hasDefiniteColumnPosition()) {
-            auto [columnStart, columnEnd] = item.normalizedColumnStartEnd();
+            auto [columnStart, columnEnd] = item.definiteColumnStartEnd();
             requiredColumns = std::max(requiredColumns, columnEnd);
         }
     }
@@ -195,28 +194,28 @@ std::optional<size_t> ImplicitGrid::findFirstAvailableColumnPosition(size_t rowS
     // If we are unable to find a valid position, signal that we need to grow the grid.
     return std::nullopt;
 }
-std::optional<size_t> ImplicitGrid::findColumnPositionForDefiniteRowItem(size_t normalizedRowStart, size_t normalizedRowEnd, size_t columnSpan, GridAutoFlowOptions autoFlowOptions) const
+std::optional<size_t> ImplicitGrid::findColumnPositionForDefiniteRowItem(size_t rowStart, size_t rowEnd, size_t columnSpan, GridAutoFlowOptions autoFlowOptions) const
 {
     if (autoFlowOptions.strategy == PackingStrategy::Dense) {
         // Dense packing: always start searching from column 0
-        return findFirstAvailableColumnPosition(normalizedRowStart, normalizedRowEnd, columnSpan, 0);
+        return findFirstAvailableColumnPosition(rowStart, rowEnd, columnSpan, 0);
     }
     // Sparse packing: use per-row cursors to maintain placement order
     // For multi-row items, use the maximum cursor position across all spanned rows
     ASSERT(autoFlowOptions.strategy == PackingStrategy::Sparse);
     size_t startSearchColumn = 0;
-    for (size_t row = normalizedRowStart; row < normalizedRowEnd; ++row)
+    for (size_t row = rowStart; row < rowEnd; ++row)
         startSearchColumn = std::max(startSearchColumn, m_rowCursors.get(row));
-    return findFirstAvailableColumnPosition(normalizedRowStart, normalizedRowEnd, columnSpan, startSearchColumn);
+    return findFirstAvailableColumnPosition(rowStart, rowEnd, columnSpan, startSearchColumn);
 }
 
-void ImplicitGrid::growGridColumnsToFit(size_t columnSpan, size_t normalizedRowStart, size_t normalizedRowEnd)
+void ImplicitGrid::growGridColumnsToFit(size_t columnSpan, size_t rowStart, size_t rowEnd)
 {
     auto currentColumnsCount = columnsCount();
 
     // Find the last occupied column in the spanned rows
     size_t lastOccupiedColumn = 0;
-    for (size_t row = normalizedRowStart; row < normalizedRowEnd; ++row) {
+    for (size_t row = rowStart; row < rowEnd; ++row) {
         for (size_t column = currentColumnsCount; column > 0; --column) {
             if (!m_gridMatrix[row][column - 1].isEmpty()) {
                 lastOccupiedColumn = std::max(lastOccupiedColumn, column - 1);
@@ -271,7 +270,7 @@ void ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridI
 
     // Items with definite column position and auto row position
     // Search vertically down the specified column.
-    auto [normalizedColumnStart, normalizedColumnEnd] = item.normalizedColumnStartEnd();
+    auto [columnStart, columnEnd] = item.definiteColumnStartEnd();
     auto rowSpan = item.rowSpanSize();
 
     if (autoFlowOptions.strategy == PackingStrategy::Dense) {
@@ -280,21 +279,21 @@ void ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridI
     } else {
         // Sparse packing: Check if we would be going backwards (to earlier column)
         // If so, advance the row count to avoid backtracking.
-        if (normalizedColumnStart < m_autoPlacementCursorColumn)
+        if (columnStart < m_autoPlacementCursorColumn)
             ++m_autoPlacementCursorRow;
     }
 
     // "Set the column position of the cursor to the grid item's column-start line."
-    m_autoPlacementCursorColumn = normalizedColumnStart;
+    m_autoPlacementCursorColumn = columnStart;
 
     // Increment the cursor's row position until a value is found where the grid item
     // does not overlap any occupied grid cells (creating new rows in the implicit grid as necessary).
     while (true) {
         growRowsToFit(m_autoPlacementCursorRow + rowSpan - 1);
 
-        if (isCellRangeEmpty(normalizedColumnStart, normalizedColumnEnd, m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan)) {
+        if (isCellRangeEmpty(columnStart, columnEnd, m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan)) {
             // Set the item's row-start line to the cursor's row position.
-            insertItemInArea(item, normalizedColumnStart, normalizedColumnEnd,
+            insertItemInArea(item, columnStart, columnEnd,
                 m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan);
             // Cursor remains at the placed position (row at placed row, column was already set).
             break;

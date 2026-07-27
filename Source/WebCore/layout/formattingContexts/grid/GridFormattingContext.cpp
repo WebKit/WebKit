@@ -70,7 +70,32 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
 
     std::ranges::stable_sort(gridItems, { }, &GridItem::order);
 
+    // First pass: find the smallest (most-negative) explicit line in each axis. Negative line
+    // placements are normalized by shifting every line forward by the magnitude of that line, so
+    // e.g. a column-start of -5 shifts all column lines forward by 5 and maps to matrix column 0.
+    auto explicitColumnCount = m_gridBox->style().gridTemplateColumns().sizes.size();
+    auto explicitRowCount = m_gridBox->style().gridTemplateRows().sizes.size();
+    int minimumColumnLine = 0;
+    int minimumRowLine = 0;
+    for (auto& gridItem : gridItems) {
+        CheckedRef gridItemStyle = gridItem.layoutBox->style();
+        if (auto columnRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), explicitColumnCount)) {
+            auto [startLine, endLine] = *columnRange;
+            minimumColumnLine = std::min({ minimumColumnLine, startLine, endLine });
+        }
+        if (auto rowRange = UnplacedGridItem::resolveExplicitLineRange(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), explicitRowCount)) {
+            auto [startLine, endLine] = *rowRange;
+            minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
+        }
+    }
+
     UnplacedGridItems unplacedGridItems;
+    size_t columnNegativeLineOffset = minimumColumnLine < 0 ? static_cast<size_t>(-minimumColumnLine) : 0;
+    size_t rowNegativeLineOffset = minimumRowLine < 0 ? static_cast<size_t>(-minimumRowLine) : 0;
+    unplacedGridItems.columnNegativeLineOffset = columnNegativeLineOffset;
+    unplacedGridItems.rowNegativeLineOffset = rowNegativeLineOffset;
+
+    // Second pass: construct each item with its positions already normalized, then classify it.
     for (auto& gridItem : gridItems) {
         CheckedRef gridItemStyle = gridItem.layoutBox->style();
 
@@ -84,26 +109,25 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
             gridItemColumnStart,
             gridItemColumnEnd,
             gridItemRowStart,
-            gridItemRowEnd
+            gridItemRowEnd,
+            explicitColumnCount,
+            explicitRowCount,
+            columnNegativeLineOffset,
+            rowNegativeLineOffset
         };
 
-        // Check if this item is fully explicitly positioned
-        bool fullyExplicitlyPositionedItem = gridItemColumnStart.isExplicit()
-            && gridItemColumnEnd.isExplicit()
-            && gridItemRowStart.isExplicit()
-            && gridItemRowEnd.isExplicit();
-
-        // FIXME: support definite row/column positioning
-        // We should place items with definite row or column positions
-        // but currently we only support fully explicitly positioned items.
-        // See: https://www.w3.org/TR/css-grid-1/#auto-placement-algo
-        if (fullyExplicitlyPositionedItem) {
+        // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
+        // An item with a definite position in both axes is placed first; an item with only a
+        // definite row is locked to that row and auto-placed in the column axis; everything else
+        // is fully auto-positioned. Definiteness is queried from the item's resolved position, so
+        // e.g. grid-column: 2 (explicit start, auto end) counts as a definite column even though
+        // it is not fully explicit.
+        if (unplacedGridItem.hasDefiniteColumnPosition() && unplacedGridItem.hasDefiniteRowPosition())
             unplacedGridItems.nonAutoPositionedItems.append(unplacedGridItem);
-        } else if (unplacedGridItem.hasDefiniteRowPosition()) {
+        else if (unplacedGridItem.hasDefiniteRowPosition())
             unplacedGridItems.definiteRowPositionedItems.append(unplacedGridItem);
-        } else {
+        else
             unplacedGridItems.autoPositionedItems.append(unplacedGridItem);
-        }
     }
     return unplacedGridItems;
 }

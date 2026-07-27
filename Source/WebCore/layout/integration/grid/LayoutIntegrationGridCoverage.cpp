@@ -69,6 +69,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasUnsupportedMaxWidth,
     GridHasUnsupportedMinHeight,
     GridHasUnsupportedMaxHeight,
+    GridHasPercentageRowsWithIndefiniteHeight,
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasPercentOrCalcPadding,
@@ -82,6 +83,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasNonVisibleOverflow,
     GridItemHasContainsSize,
     GridItemNeedsSecondColumnSizingPass,
+    GridItemHasInFlowPositionWithPercentageOffset,
 
     GridItemColumnStartHasLineName,
     GridItemColumnStartHasNegativeLineNumber,
@@ -152,23 +154,56 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
+// GFC can place grid items into leading (negative-side) and trailing (positive-side) implicit
+// columns. The implicit grid is backed by a dense matrix, so cap how far outside the explicit grid
+// an item may be placed to avoid large allocations for pathological values (e.g. grid-column: 100000
+// or grid-column: -100000); items beyond these caps fall back to the legacy grid path.
+// FIXME: Extend implicit-track support to rows.
+static constexpr size_t maxTrailingImplicitColumns = 10;
+static constexpr size_t maxLeadingImplicitColumns = 10;
+
+// Resolve a 1-indexed CSS grid column line to a 0-based index, matching
+// UnplacedGridItem::explicitLineToIndex. Positive lines count forward from the start of the
+// explicit grid; negative lines count backward from its end. A result < 0 is a leading implicit
+// line (a track before the explicit grid start).
+static int resolveColumnLineToIndex(int line, size_t linesFromGridTemplateColumnsCount)
+{
+    return line > 0 ? line - 1 : static_cast<int>(linesFromGridTemplateColumnsCount) + line;
+}
+
 static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnStart, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
 {
     return WTF::switchOn(columnEnd,
         [](const CSS::Keyword::Auto&) {
-            return false;
+            // An auto end with an explicit start resolves to a single-column span at the start line
+            // (grid shorthand behavior). The start-line cap already bounds how far outside the
+            // explicit grid the item can be, so no additional bound is needed here.
+            return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!columnEnd.namedGridLine().value.isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
+            if (!columnEnd.namedGridLine().value.isEmpty())
+                return false;
+
+            // Resolve the start and end lines to 0-based indices so the bounds and span checks
+            // operate the same way regardless of sign.
+            auto resolvedStart = resolveColumnLineToIndex(explicitColumnStart.position.value, linesFromGridTemplateColumnsCount);
+            auto resolvedEnd = resolveColumnLineToIndex(columnEnd.explicitPosition(), linesFromGridTemplateColumnsCount);
+
+            // A line that resolves before the explicit grid start places the item into a leading
+            // implicit column. Allow this up to the cap; farther-out placements stay on the legacy
+            // path. (The column-start check keeps a leading item on the legacy path when
+            // grid-auto-columns lists multiple sizes, so no such item reaches here.)
+            if (resolvedStart < -static_cast<int>(maxLeadingImplicitColumns) || resolvedEnd < -static_cast<int>(maxLeadingImplicitColumns))
+                return false;
+
+            // Allow the end line to fall into a trailing implicit column, bounded by the cap above.
+            if (resolvedEnd > static_cast<int>(linesFromGridTemplateColumnsCount - 1 + maxTrailingImplicitColumns))
                 return false;
 
             // FIXME: Multi-span items are not yet supported in intrinsic sizing
             // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
             // Only accept items that span a single column.
-            auto startPosition = explicitColumnStart.position.value;
-            auto endPosition = columnEnd.explicitPosition();
-            auto gridLineDistance = endPosition - startPosition;
-            if (gridLineDistance != 1)
+            if (resolvedEnd - resolvedStart != 1)
                 return false;
 
             return true;
@@ -445,6 +480,32 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (renderGridStyle->maxHeight().isIntrinsic())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
 
+    // GFC sizes percentage row tracks against the grid container's block size. Per
+    // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing, when that block size is indefinite
+    // (auto/intrinsic height) the rows must first be sized with the percentages treated as auto to
+    // find the container's block size, then re-resolved against that size in a second row-sizing
+    // pass. GFC does not yet perform that second pass, so keep such grids on the legacy path.
+    // FIXME: Implement the second row-sizing pass and remove this restriction.
+    auto gridBlockSizeIsIndefinite = renderGridStyle->height().isAuto() || renderGridStyle->height().isIntrinsic();
+    if (gridBlockSizeIsIndefinite) {
+        auto hasPercentageRowTrack = [&] {
+            for (auto& rowsTrackListEntry : gridTemplateRowsTrackList) {
+                auto isPercentageTrack = WTF::switchOn(rowsTrackListEntry,
+                    [&](const Style::GridTrackSize& trackSize) {
+                        return trackSize.minTrackBreadth().isPercentOrCalculated() || trackSize.maxTrackBreadth().isPercentOrCalculated();
+                    },
+                    [&](const auto&) {
+                        return false;
+                    });
+                if (isPercentageTrack)
+                    return true;
+            }
+            return false;
+        };
+        if (hasPercentageRowTrack())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
+    }
+
     ASSERT(renderGridStyle->gridAutoFlow().isRow(),
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
     Vector<size_t> explicitlyPlacedItemsInRowCount;
@@ -470,7 +531,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto usedJustifySelf = gridItemStyle->justifySelf().resolve(renderGridStyle.ptr());
 
         if ((usedJustifySelf.position() != ItemPosition::Start && usedJustifySelf.position() != ItemPosition::Normal && usedJustifySelf.position() != ItemPosition::Stretch)
-            || usedJustifySelf.overflow() != OverflowAlignment::Default || usedJustifySelf.positionType() != ItemPositionType::NonLegacy)
+            || usedJustifySelf.overflow() != OverflowAlignment::Default)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedInlineAxisAlignment, reasons, reasonCollectionMode);
 
         auto& gridItemWidth = gridItemStyle->width();
@@ -483,7 +544,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto usedAlignSelf = gridItemStyle->alignSelf().resolve(renderGridStyle.ptr());
 
         if ((usedAlignSelf.position() != ItemPosition::Start && usedAlignSelf.position() != ItemPosition::Normal && usedAlignSelf.position() != ItemPosition::Stretch)
-            || usedAlignSelf.overflow() != OverflowAlignment::Default || usedAlignSelf.positionType() != ItemPositionType::NonLegacy)
+            || usedAlignSelf.overflow() != OverflowAlignment::Default)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedBlockAxisAlignment, reasons, reasonCollectionMode);
 
         auto& gridItemHeight = gridItemStyle->height();
@@ -544,9 +605,21 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 auto columnStartLineNumber = explicitPosition.position.value;
                 if (!columnStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
-                if (columnStartLineNumber < 0)
+                // Resolve a negative start line against the end of the explicit grid.
+                auto resolvedColumnStart = resolveColumnLineToIndex(columnStartLineNumber, linesFromGridTemplateColumnsCount);
+                // A start line that resolves before the explicit grid start places the item into a
+                // leading implicit column. Allow this up to the cap; farther-out placements stay on
+                // the legacy path.
+                if (resolvedColumnStart < -static_cast<int>(maxLeadingImplicitColumns))
+                    return GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid;
+                // Leading implicit columns are sized by grid-auto-columns cycling backwards from the
+                // explicit grid, which GFC only implements for a single grid-auto-columns value.
+                // FIXME: Support multiple grid-auto-columns values for leading implicit columns.
+                if (resolvedColumnStart < 0 && renderGridStyle->gridAutoColumns().size() > 1)
                     return GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber;
-                if (columnStartLineNumber > static_cast<int>(linesFromGridTemplateColumnsCount))
+                // A start line beyond the explicit grid places the item into a trailing implicit
+                // column. Allow this up to the cap; farther-out placements stay on the legacy path.
+                if (resolvedColumnStart > static_cast<int>(linesFromGridTemplateColumnsCount - 1 + maxTrailingImplicitColumns))
                     return GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid;
                 if (!hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
@@ -585,7 +658,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 if (!hasValidRowEnd(explicitPosition, rowEnd, linesFromGridTemplateRowsCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
 
-                ASSERT(rowEnd.isExplicit());
+                ASSERT(rowEnd.isExplicit() || rowEnd.isAuto());
                 size_t rowIndex = rowStartLineNumber + 1;
                 auto rowsCount = explicitlyPlacedItemsInRowCount.size();
                 if (rowIndex > rowsCount)
@@ -624,6 +697,20 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         if (gridItem->isOutOfFlowPositioned())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasOutOfFlowChild, reasons, reasonCollectionMode);
+
+        // A relatively (or sticky) positioned grid item resolves percentage inset offsets against
+        // its containing block, which for a grid item is its grid area. GFC does not yet set the
+        // grid-area size on the item, so such percentages would incorrectly resolve against the
+        // grid container's content box. Keep these items on the legacy path.
+        // FIXME: Plumb the grid-area size onto the grid item so relative offsets resolve correctly,
+        // then remove this restriction.
+        if (gridItemStyle->position() == PositionType::Relative || gridItemStyle->position() == PositionType::Sticky) {
+            auto hasPercentageInsetOffset = gridItemStyle->insetBox().anyOf([](const Style::InsetEdge& insetEdge) {
+                return insetEdge.isPercentOrCalculated();
+            });
+            if (hasPercentageInsetOffset)
+                ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasInFlowPositionWithPercentageOffset, reasons, reasonCollectionMode);
+        }
 
         if (gridItemStyle->aspectRatio().hasRatio())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasAspectRatio, reasons, reasonCollectionMode);
@@ -804,6 +891,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemNeedsSecondColumnSizingPass:
         stream << "grid item needs second column sizing support";
         break;
+    case GridAvoidanceReason::GridItemHasInFlowPositionWithPercentageOffset:
+        stream << "grid item has in-flow position with percentage offset";
+        break;
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
         stream << "grid item column start has line name";
         break;
@@ -854,6 +944,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasUnsupportedMaxHeight:
         stream << "grid container has unsupported max-height";
+        break;
+    case GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight:
+        stream << "grid has percentage rows with indefinite height";
         break;
     case GridAvoidanceReason::NotAGrid:
         stream << "not a grid";

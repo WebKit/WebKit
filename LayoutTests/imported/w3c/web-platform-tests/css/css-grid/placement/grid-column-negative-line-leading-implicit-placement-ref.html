@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: single-track grid item placed into a leading implicit column with a negative line number</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: 100px 100px 100px 100px;
+    grid-template-rows: 100px;
+  }
+  .grid > div {
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 14px/1 sans-serif;
+  }
+  .leading { grid-column: 1; background: green; }
+  .a { grid-column: 2; background: blue; }
+  .b { grid-column: 3; background: purple; }
+  .c { grid-column: 4; background: orange; }
+</style>
+<p>Test passes if there are four adjacent 100px squares in a single row, in this order left to
+right: green "lead" (a leading implicit column), then blue "col 1", purple "col 2", orange "col 3"
+(the three explicit columns). There should be no gaps.</p>
+<div class="grid">
+  <div class="leading">lead</div>
+  <div class="a">col 1</div>
+  <div class="b">col 2</div>
+  <div class="c">col 3</div>
+</div>

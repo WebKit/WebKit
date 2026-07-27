@@ -59,7 +59,11 @@ private:
 
     class GridPosition {
     public:
-        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end);
+        // explicitTrackCount is the number of explicit tracks in the axis, used to resolve negative
+        // lines against the end of the explicit grid. The negative-line offset then shifts negative
+        // resolved lines forward so the range maps to non-negative matrix indices. See
+        // UnplacedGridItem::resolveExplicitLineRange().
+        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t negativeLineOffset);
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -82,7 +86,7 @@ private:
     };
 
 public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd);
+    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount, size_t columnNegativeLineOffset, size_t rowNegativeLineOffset);
     UnplacedGridItem(WTF::HashTableEmptyValueType);
 
     bool operator==(const UnplacedGridItem& other) const;
@@ -91,11 +95,6 @@ public:
     bool isHashTableEmptyValue() const { return m_layoutBox.isHashTableEmptyValue(); }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
-    size_t normalizedColumnStart() const;
-    size_t normalizedColumnEnd() const;
-    size_t normalizedRowStart() const;
-    size_t normalizedRowEnd() const;
-
     bool NODELETE hasDefiniteRowPosition() const;
     bool NODELETE hasDefiniteColumnPosition() const;
     bool NODELETE hasAutoColumnPosition() const;
@@ -103,8 +102,8 @@ public:
     size_t columnSpanSize() const;
     size_t rowSpanSize() const;
 
-    std::pair<size_t, size_t> normalizedRowStartEnd() const;
-    std::pair<size_t, size_t> normalizedColumnStartEnd() const;
+    std::pair<size_t, size_t> NODELETE definiteRowStartEnd() const;
+    std::pair<size_t, size_t> NODELETE definiteColumnStartEnd() const;
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;
@@ -113,19 +112,12 @@ private:
     GridPosition m_columnPosition;
     GridPosition m_rowPosition;
 
-    std::pair<int, int> definiteRowStartEnd() const;
-    std::pair<int, int> definiteColumnStartEnd() const;
-
-    void NODELETE applyGridOffsets(size_t rowOffset, size_t columnOffset);
-
-    // Offsets applied to normalize negative grid positions to non-negative matrix indices.
-    size_t m_rowNormalizationOffset { 0 };
-    size_t m_columnNormalizationOffset { 0 };
-
-    // Flag to track whether applyGridOffsets() has been called.
-    // This helps catch bugs where normalized methods are used before offsets are applied,
-    // or where offsets are applied multiple times.
-    bool m_hasAppliedGridOffsets { false };
+    // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
+    // axis is auto-positioned. explicitTrackCount is used to resolve negative lines against the end
+    // of the explicit grid; the resolved lines may still be negative for negative line placements
+    // that count past the start edge, and the negative-line offset is applied later in
+    // GridPosition::create().
+    static std::optional<std::pair<int, int>> resolveExplicitLineRange(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount);
 
     friend class GridFormattingContext;
     friend class GridLayout;
@@ -141,6 +133,14 @@ struct UnplacedGridItems {
     Vector<UnplacedGridItem> definiteRowPositionedItems;
     // 4. Position the remaining grid items.
     Vector<UnplacedGridItem> autoPositionedItems;
+
+    // Number of implicit tracks generated before the start of the explicit grid because an item was
+    // placed with a negative line that resolves before line 1 (a leading implicit track). Every
+    // item's resolved line has already been shifted forward by this amount so matrix indices are
+    // non-negative; track sizing and the initial grid dimensions use it to account for those
+    // leading tracks.
+    size_t columnNegativeLineOffset { 0 };
+    size_t rowNegativeLineOffset { 0 };
 };
 
 }
