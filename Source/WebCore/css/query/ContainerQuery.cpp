@@ -25,9 +25,14 @@
 #include "config.h"
 #include "ContainerQuery.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSMarkup.h"
+#include "CSSPropertyParser.h"
+#include "CSSTokenizer.h"
 #include "CSSValue.h"
+#include "CSSValueKeywords.h"
 #include "ContainerQueryFeatures.h"
+#include "GenericMediaQueryParser.h"
 #include "GenericMediaQuerySerialization.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -50,6 +55,48 @@ OptionSet<Axis> requiredAxesForFeature(const MQ::Feature& feature)
     return { };
 }
 
+void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>& names)
+{
+    auto collectFromCustomPropertyValue = [&](const CSSCustomPropertyValue& value) {
+        auto& tokens = value.tokens();
+
+        // A bare <custom-property-name> operand is evaluated as var(--name).
+        if (auto name = MQ::bareCustomPropertyName(tokens.span()); !name.isNull())
+            names.add(name);
+
+        // var() references, at any nesting depth.
+        for (size_t i = 0; i < tokens.size(); ++i) {
+            if (tokens[i].type() != FunctionToken || tokens[i].functionId() != CSSValueVar)
+                continue;
+            for (size_t j = i + 1; j < tokens.size(); ++j) {
+                if (CSSTokenizer::isWhitespace(tokens[j].type()))
+                    continue;
+                if (tokens[j].type() == IdentToken && isCustomPropertyName(tokens[j].value()))
+                    names.add(tokens[j].value().toAtomString());
+                break;
+            }
+        }
+    };
+
+    auto collectFromValue = [&](const std::optional<MQ::Value>& value) {
+        if (!value)
+            return;
+        if (auto* customProperty = std::get_if<Ref<CSSCustomPropertyValue>>(&*value))
+            collectFromCustomPropertyValue(customProperty->get());
+    };
+
+    // The queried property of a plain/boolean feature, or the bare-name center of a range.
+    if (isCustomPropertyName(feature.name))
+        names.add(feature.name);
+
+    // Range operands: a non-name center and the comparison bounds may reference further properties.
+    collectFromValue(feature.subject);
+    if (feature.leftComparison)
+        collectFromValue(feature.leftComparison->value);
+    if (feature.rightComparison)
+        collectFromValue(feature.rightComparison->value);
+}
+
 void serialize(StringBuilder& builder, const ContainerQuery& query)
 {
     auto name = query.name;
@@ -63,4 +110,3 @@ void serialize(StringBuilder& builder, const ContainerQuery& query)
 
 }
 }
-

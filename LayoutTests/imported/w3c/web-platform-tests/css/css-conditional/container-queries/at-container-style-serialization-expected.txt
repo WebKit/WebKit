@@ -15,5 +15,5 @@ PASS Subexpressions and extra parens
 PASS Multiple subexpressions and extra parens
 PASS Multiple subexpressions and unknowns
 PASS Escape custom property identifier
-FAIL Escape custom property identifier - range syntax assert_equals: expected "style(100px > --\\{foo > 10px)" but got "style(100px > --\\{foo >10px)"
+PASS Escape custom property identifier - range syntax
 

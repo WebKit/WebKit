@@ -37,6 +37,7 @@ struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser> 
 
     static bool NODELETE isValidFunctionId(CSSValueID);
     static const MQ::FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
+    static std::optional<MQ::Feature> consumeAndValidateFeature(CSSParserTokenRange&, const MediaQueryParserContext&, State&);
     static Vector<const MQ::FeatureSchema*> featureSchemas();
 };
 

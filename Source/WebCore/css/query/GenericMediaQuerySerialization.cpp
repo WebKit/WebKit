@@ -131,7 +131,10 @@ void serialize(StringBuilder& builder, const Feature& feature)
             serializeRangeComparisonOperator(feature.leftComparison->op);
         }
 
-        serializeIdentifier(builder, feature.name);
+        if (feature.subject)
+            serialize(builder, *feature.subject);
+        else
+            serializeIdentifier(builder, feature.name);
 
         if (feature.rightComparison) {
             serializeRangeComparisonOperator(feature.rightComparison->op);

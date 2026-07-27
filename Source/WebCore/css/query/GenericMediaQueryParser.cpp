@@ -40,12 +40,13 @@
 #include "CSSSubstitutionParser.h"
 #include "CSSUnevaluatedCalc.h"
 #include "MediaQueryParserContext.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace MQ {
 
-static AtomString consumeFeatureName(CSSParserTokenRange& range)
+AtomString FeatureParser::consumeFeatureName(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return nullAtom();
@@ -53,6 +54,13 @@ static AtomString consumeFeatureName(CSSParserTokenRange& range)
     if (isCustomPropertyName(name))
         return name.toAtomString();
     return name.convertToASCIILowercaseAtom();
+}
+
+AtomString bareCustomPropertyName(std::span<const CSSParserToken> tokens)
+{
+    if (tokens.size() == 1 && tokens[0].type() == IdentToken && isCustomPropertyName(tokens[0].value()))
+        return tokens[0].value().toAtomString();
+    return nullAtom();
 }
 
 std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
@@ -65,7 +73,7 @@ std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range,
     return consumeRangeFeature(range, context);
 };
 
-static std::optional<Value> consumeCustomPropertyValue(AtomString propertyName, CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<Value> FeatureParser::consumeCustomPropertyValue(const AtomString& propertyName, CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto valueRange = range;
     range.consumeAll();
@@ -142,7 +150,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
         if (op != ComparisonOperator::Equal)
             return { };
 
-        return Feature { featureName, Syntax::Boolean, { }, { } };
+        return Feature { .name = featureName, .syntax = Syntax::Boolean };
     }
 
     if (range.peek().type() != ColonToken)
@@ -158,39 +166,48 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
     if (!range.atEnd())
         return { };
 
-    return Feature { featureName, Syntax::Plain, { }, Comparison { op, WTF::move(value) } };
+    return Feature {
+        .name = featureName,
+        .syntax = Syntax::Plain,
+        .rightComparison = Comparison { op, WTF::move(value) }
+    };
+}
+
+std::optional<ComparisonOperator> FeatureParser::consumeRangeComparisonOperator(CSSParserTokenRange& range)
+{
+    if (range.atEnd())
+        return { };
+    auto opToken = range.consume();
+    if (range.atEnd() || opToken.type() != DelimiterToken)
+        return { };
+
+    switch (opToken.delimiter()) {
+    case '=':
+        range.consumeWhitespace();
+        return ComparisonOperator::Equal;
+    case '<':
+        if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
+            range.consumeIncludingWhitespace();
+            return ComparisonOperator::LessThanOrEqual;
+        }
+        range.consumeWhitespace();
+        return ComparisonOperator::LessThan;
+    case '>':
+        if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
+            range.consumeIncludingWhitespace();
+            return ComparisonOperator::GreaterThanOrEqual;
+        }
+        range.consumeWhitespace();
+        return ComparisonOperator::GreaterThan;
+    default:
+        return { };
+    }
 }
 
 std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
-    auto consumeRangeOperator = [&]() -> std::optional<ComparisonOperator> {
-        if (range.atEnd())
-            return { };
-        auto opToken = range.consume();
-        if (range.atEnd() || opToken.type() != DelimiterToken)
-            return { };
-
-        switch (opToken.delimiter()) {
-        case '=':
-            range.consumeWhitespace();
-            return ComparisonOperator::Equal;
-        case '<':
-            if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
-                range.consumeIncludingWhitespace();
-                return ComparisonOperator::LessThanOrEqual;
-            }
-            range.consumeWhitespace();
-            return ComparisonOperator::LessThan;
-        case '>':
-            if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
-                range.consumeIncludingWhitespace();
-                return ComparisonOperator::GreaterThanOrEqual;
-            }
-            range.consumeWhitespace();
-            return ComparisonOperator::GreaterThan;
-        default:
-            return { };
-        }
+    auto consumeRangeOperator = [&] {
+        return consumeRangeComparisonOperator(range);
     };
 
     bool didFailParsing = false;
@@ -238,19 +255,18 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return false;
         if (!leftComparison || !rightComparison)
             return true;
-        // Disallow comparisons like (a=b=c), (a=b<c).
-        if (leftComparison->op == ComparisonOperator::Equal || rightComparison->op == ComparisonOperator::Equal)
-            return false;
-        // Disallow comparisons like (a<b>c).
-        bool leftIsLess = leftComparison->op == ComparisonOperator::LessThan || leftComparison->op == ComparisonOperator::LessThanOrEqual;
-        bool rightIsLess = rightComparison->op == ComparisonOperator::LessThan || rightComparison->op == ComparisonOperator::LessThanOrEqual;
-        return leftIsLess == rightIsLess;
+        return isConsistentThreeWayComparison(leftComparison->op, rightComparison->op);
     };
 
     if (!range.atEnd() || !validateComparisons())
         return { };
 
-    return Feature { WTF::move(featureName), Syntax::Range, WTF::move(leftComparison), WTF::move(rightComparison) };
+    return Feature {
+        .name = WTF::move(featureName),
+        .syntax = Syntax::Range,
+        .leftComparison = WTF::move(leftComparison),
+        .rightComparison = WTF::move(rightComparison)
+    };
 }
 
 bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
@@ -329,7 +345,9 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                 );
 
             case FeatureSchema::ValueType::CustomProperty:
-                return WTF::holdsAlternative<Ref<CSSCustomPropertyValue>>(*value);
+                // style() features are parsed and validated by consumeStyleFeature, not here.
+                ASSERT_NOT_REACHED();
+                return false;
             }
             ASSERT_NOT_REACHED();
             return false;
@@ -339,10 +357,6 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
             if (feature.syntax == Syntax::Range)
                 return false;
             if (feature.rightComparison && feature.rightComparison->op != ComparisonOperator::Equal)
-                return false;
-        }
-        if (schema.valueType == FeatureSchema::ValueType::CustomProperty) {
-            if (!isCustomPropertyName(feature.name))
                 return false;
         }
         if (feature.leftComparison) {
