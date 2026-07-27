@@ -676,6 +676,7 @@ private:
     bool shouldDisableJITCage() const final;
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     RefPtr<XPCEventHandler> xpcEventHandler() const final;
+    void didReceiveLogsDuringLaunchForTesting() final;
 #endif
 
     void validateFreezerStatus();
@@ -774,15 +775,6 @@ private:
     void updateRuntimeStatistics();
     void enableMediaPlaybackIfNecessary();
     void sharedPreferencesDidChange();
-
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    void createLogStream(IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
-#else
-    void createLogStream(LogStreamIdentifier, CompletionHandler<void()>&&);
-#endif
-    void stopLogStream();
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, URL&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
@@ -965,10 +957,6 @@ private:
 
     bool m_hasRegisteredServiceWorkerClients { true };
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    IPC::ScopedActiveMessageReceiveQueue<LogStream> m_logStream;
-#endif
-
 #if ENABLE(CONTENT_EXTENSIONS)
     bool m_resourceMonitorRuleListRequestedBySomePage { false };
     RefPtr<WebCompiledContentRuleList> m_resourceMonitorRuleList;
@@ -985,18 +973,6 @@ private:
     HashMap<String, SandboxExtension::Handle> m_fileSandboxExtensions;
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    class WebProcessXPCEventHandler final : public XPCEventHandler {
-    public:
-        explicit WebProcessXPCEventHandler(const WebProcessProxy&);
-
-        bool handleXPCEvent(xpc_object_t) final;
-
-    private:
-        WeakPtr<WebProcessProxy> m_webProcess;
-
-        bool m_logEndpointEnabled { true };
-    };
-
     bool m_didReceiveLogsDuringLaunchForTesting { false };
 #endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 } SWIFT_SHARED_REFERENCE(refWebProcessProxy, derefWebProcessProxy);

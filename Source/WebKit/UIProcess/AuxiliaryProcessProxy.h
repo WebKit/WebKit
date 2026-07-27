@@ -45,6 +45,14 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtrFactory.h>
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStream.h"
+#include "LogStreamIdentifier.h"
+#include "ScopedActiveMessageReceiveQueue.h"
+#include "XPCEventHandler.h"
+#include <wtf/OSObjectPtr.h>
+#endif
+
 namespace WebCore {
 class SharedBuffer;
 }
@@ -271,6 +279,30 @@ protected:
     void logInvalidMessage(IPC::Connection&, IPC::MessageName);
     virtual ASCIILiteral processName() const = 0;
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    // Re-emits os_log messages forwarded by a child process during its launch window, before the
+    // streaming LogStream is established. Shared by every process type that forwards logs.
+    class LogXPCEventHandler final : public XPCEventHandler {
+    public:
+        explicit LogXPCEventHandler(const AuxiliaryProcessProxy&);
+
+        bool handleXPCEvent(xpc_object_t) final;
+
+    private:
+        WeakPtr<AuxiliaryProcessProxy> m_process;
+        bool m_logEndpointEnabled { true };
+    };
+
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    void createLogStream(IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
+#else
+    void createLogStream(LogStreamIdentifier, CompletionHandler<void()>&&);
+#endif
+    void stopLogStream();
+
+    virtual void didReceiveLogsDuringLaunchForTesting() { }
+#endif
+
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
     virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { }
 
@@ -325,6 +357,10 @@ private:
     Vector<PendingMessage> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<IPC::Connection> m_connection;
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    IPC::ScopedActiveMessageReceiveQueue<LogStream> m_logStream;
+#endif
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_didBeginResponsivenessChecks { false };

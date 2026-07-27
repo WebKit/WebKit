@@ -39,6 +39,17 @@
 #import <wtf/Scope.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#import "LaunchLogMessages.h"
+#import "LogStreamMessages.h"
+#import "Logging.h"
+#import "XPCEndpoint.h"
+#import <wtf/OSObjectPtr.h>
+#import <wtf/darwin/XPCExtras.h>
+#import <wtf/darwin/XPCObjectPtr.h>
+#import <wtf/spi/cocoa/OSLogSPI.h>
+#endif
+
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
@@ -190,5 +201,71 @@ void AuxiliaryProcessProxy::notifyPreferencesChanged(const String& domain, const
     send(Messages::AuxiliaryProcess::PreferenceDidUpdate(domain, key, encodedValue), 0);
 }
 #endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+AuxiliaryProcessProxy::LogXPCEventHandler::LogXPCEventHandler(const AuxiliaryProcessProxy& process)
+    : m_process(process)
+{
+}
+
+bool AuxiliaryProcessProxy::LogXPCEventHandler::handleXPCEvent(xpc_object_t event)
+{
+    auto messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
+    if (messageName == logMessageName) {
+        RefPtr process = m_process.get();
+        if (!process)
+            return true;
+
+        MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(m_logEndpointEnabled, process->connection(), false);
+
+        auto subsystem = xpcDictionaryGetString(event, subsystemKey);
+        auto category = xpcDictionaryGetString(event, categoryKey);
+        auto messageString = xpcDictionaryGetString(event, messageStringKey);
+        auto logType = xpc_dictionary_get_uint64(event, logTypeKey);
+        auto pid = xpc_connection_get_pid(protect(xpc_dictionary_get_remote_connection(event)));
+
+        OSObjectPtr<os_log_t> osLog;
+        if (!subsystem.isEmpty() && !category.isEmpty())
+            osLog = adoptOSObject(os_log_create(subsystem.utf8().data(), category.utf8().data()));
+
+        process->didReceiveLogsDuringLaunchForTesting();
+        logWithProcessNamePrefix(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), process->processName(), static_cast<int>(pid), messageString.utf8().data());
+    } else if (messageName == disableLogMessageName) {
+        RefPtr process = m_process.get();
+        if (!process)
+            return true;
+        m_logEndpointEnabled = false;
+        RELEASE_LOG(Process, "Log endpoint is disabled");
+    }
+    return false;
+}
+
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+void AuxiliaryProcessProxy::createLogStream(IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+{
+    MESSAGE_CHECK_BASE(!m_logStream.get(), connection());
+    m_logStream = LogStream::create(*this, processName(), WTF::move(serverConnection), identifier, WTF::move(completionHandler));
+}
+#else
+void AuxiliaryProcessProxy::createLogStream(LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    MESSAGE_CHECK_BASE(!m_logStream.get(), connection());
+    Ref logStream = LogStream::create(*this, processName(), protect(connection()), identifier);
+    addMessageReceiver(Messages::LogStream::messageReceiverName(), logStream->identifier(), logStream);
+    m_logStream = WTF::move(logStream);
+    completionHandler();
+}
+#endif
+
+void AuxiliaryProcessProxy::stopLogStream()
+{
+    if (!m_logStream.get())
+        return;
+#if !ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    removeMessageReceiver(Messages::LogStream::messageReceiverName(), m_logStream->identifier());
+#endif
+    m_logStream.reset();
+}
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 } // namespace WebKit

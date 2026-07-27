@@ -423,7 +423,18 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [processName UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
-    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+    bool shouldForwardLogsToUIProcess = false;
+    switch (m_launchOptions.processType) {
+    case ProcessLauncher::ProcessType::Web:
+#if ENABLE(MODEL_PROCESS)
+    case ProcessLauncher::ProcessType::Model:
+#endif
+        shouldForwardLogsToUIProcess = true;
+        break;
+    default:
+        break;
+    }
+    if (shouldForwardLogsToUIProcess) {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
         bool disableLogging = true;
 #else

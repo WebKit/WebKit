@@ -30,6 +30,11 @@
 
 #include "ModelProcessCreationParameters.h"
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "Logging.h"
+#include <wtf/spi/cocoa/OSLogSPI.h>
+#endif
+
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS) && HAVE(CORE_RE)
 
 #include "GPUProcessProxy.h"
@@ -62,6 +67,10 @@ void ModelProcessProxy::updateModelProcessCreationParameters(ModelProcessCreatio
     value = [NSUserDefaults.standardUserDefaults objectForKey:immersiveMemoryLimitFlag];
     if ([value isKindOfClass:NSNumber.class])
         parameters.debugImmersiveEntityMemoryLimit = [value integerValue];
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    parameters.isDebugLoggingEnabled = os_log_debug_enabled(OS_LOG_DEFAULT);
+#endif
 }
 
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS) && ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
@@ -96,8 +105,14 @@ void ModelProcessProxy::requestSharedSimulationConnection(WebCore::ProcessIdenti
 #undef MESSAGE_CHECK
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+RefPtr<XPCEventHandler> ModelProcessProxy::xpcEventHandler() const
+{
+    return adoptRef(new LogXPCEventHandler(*this));
+}
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+
 }
 
 
 #endif // ENABLE(MODEL_PROCESS)
-

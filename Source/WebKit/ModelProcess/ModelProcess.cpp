@@ -214,6 +214,11 @@ void ModelProcess::initializeModelProcess(ModelProcessCreationParameters&& param
 
     applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
     RELEASE_LOG(Process, "%p - ModelProcess::initializeModelProcess:", this);
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    initializeLogForwarding(parameters.isDebugLoggingEnabled);
+#endif
+
     WTF::Thread::setCurrentThreadIsUserInitiated();
     WebCore::initializeCommonAtomStrings();
 

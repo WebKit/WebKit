@@ -40,4 +40,3 @@
             SYS_getsockopt
             SYS_setsockopt)))
 (deny syscall-unix (with no-report))
-(allow mach-lookup (log-services))

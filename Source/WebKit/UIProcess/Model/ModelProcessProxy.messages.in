@@ -40,6 +40,10 @@ messages -> ModelProcessProxy {
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS) && HAVE(CORE_RE)
     RequestSharedSimulationConnection(WebCore::ProcessIdentifier webProcessIdentifier) -> (std::optional<IPC::SharedFileHandle> sharedSimulationConnection)
 #endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT) && ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    CreateLogStream(IPC::StreamServerConnectionHandle connectionHandle, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
+#endif
 }
 
 #endif // ENABLE(MODEL_PROCESS)

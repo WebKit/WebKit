@@ -42,6 +42,12 @@
 #include "LayerHostingContext.h"
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStream.h"
+#include "LogStreamIdentifier.h"
+#include "ScopedActiveMessageReceiveQueue.h"
+#endif
+
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
 namespace IPC {
 class SharedFileHandle;
@@ -101,6 +107,9 @@ private:
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) override;
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    RefPtr<XPCEventHandler> xpcEventHandler() const final;
+#endif
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -133,6 +142,7 @@ private:
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
     bool m_didInitializeSharedSimulationConnection { false };
 #endif
+
 };
 
 } // namespace WebKit

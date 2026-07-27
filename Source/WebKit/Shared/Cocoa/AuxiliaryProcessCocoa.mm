@@ -26,7 +26,6 @@
 #import "config.h"
 #import "AuxiliaryProcess.h"
 
-#import "LibAccessibilitySoftLink.h"
 #import "Logging.h"
 #import "OSStateSPI.h"
 #import "SharedBufferReference.h"
@@ -71,9 +70,144 @@
 #import <wtf/darwin/XPCObjectPtr.h>
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#import "LaunchLogHook.h"
+#import "LogClient.h"
+#import "LogStream.h"
+#import "StreamClientConnection.h"
+#import <WebCore/PublicSuffixStore.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/OSObjectPtr.h>
+#import <wtf/SystemFree.h>
+#import <wtf/SystemTracing.h>
+#import <wtf/Threading.h>
+#import <wtf/spi/cocoa/OSLogSPI.h>
+#endif
+
+#import "LibAccessibilitySoftLink.h"
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+static bool shouldIgnoreLogMessage(std::span<const char> logChannel)
+{
+    return equalSpans(logChannel, "com.apple.xpc\0"_span) || equalSpans(logChannel, "com.apple.CoreAnalytics\0"_span);
+}
+
+#if PLATFORM(IOS_FAMILY)
+static void prewarmLogs()
+{
+    // This call will create container manager log objects.
+    // FIXME: this can be removed if we move all calls to topPrivatelyControlledDomain out of these processes.
+    // This would be desirable, since these processes are blocking access to the container manager daemon.
+    WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain("apple.com"_s);
+
+    static std::array<std::pair<ASCIILiteral, ASCIILiteral>, 5> logs { {
+        { "com.apple.CFBundle"_s, "strings"_s },
+        { "com.apple.network"_s, ""_s },
+        { "com.apple.CFNetwork"_s, "ATS"_s },
+        { "com.apple.coremedia"_s, ""_s },
+        { "com.apple.SafariShared"_s, "Translation"_s },
+    } };
+
+    for (auto& log : logs) {
+        OSObjectPtr logHandle = adoptOSObject(os_log_create(log.first, log.second));
+        bool enabled = os_log_type_enabled(logHandle.get(), OS_LOG_TYPE_ERROR);
+        UNUSED_PARAM(enabled);
+    }
+}
+#endif // PLATFORM(IOS_FAMILY)
+
+static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogClient>&& newLogClient)
+{
+#if PLATFORM(IOS_FAMILY)
+    prewarmLogs();
+#endif
+
+    RELEASE_ASSERT(!WebCore::logClient());
+    WebCore::logClient() = WTF::move(newLogClient);
+
+    // OS_LOG_TYPE_DEFAULT implies default, fault, and error.
+    // OS_LOG_TYPE_DEBUG implies debug, info, default, fault, and error.
+    const auto minimumType = isDebugLoggingEnabled ? OS_LOG_TYPE_DEBUG : OS_LOG_TYPE_DEFAULT;
+
+    LaunchLogHook::singleton().disable();
+
+    static os_log_hook_t prevHook = nullptr;
+
+    prevHook = os_log_set_hook(minimumType, makeBlockPtr([isDebugLoggingEnabled](os_log_type_t type, os_log_message_t msg) {
+        if (prevHook)
+            prevHook(type, msg);
+
+        if (msg->buffer_sz > 1024)
+            return;
+
+        // Don't send debug/info messages unless debug logging is enabled. Even though OS_LOG_TYPE_DEFAULT would be the minimum,
+        // the hook will be called for other subsystems with debug and info types.
+        if (!isDebugLoggingEnabled && type & (OS_LOG_TYPE_DEBUG | OS_LOG_TYPE_INFO))
+            return;
+
+        if (Thread::currentThreadIsRealtime())
+            return;
+
+        auto logChannel = unsafeSpan(msg->subsystem);
+        if (logChannel.size() >= logSubsystemMaxSize)
+            return;
+        if (shouldIgnoreLogMessage(logChannel))
+            return;
+        auto logCategory = unsafeSpan(msg->category);
+        if (logCategory.size() >= logCategoryMaxSize)
+            return;
+
+        if (type == OS_LOG_TYPE_FAULT)
+            type = OS_LOG_TYPE_ERROR;
+
+        if (auto messageString = adoptSystemMalloc(os_log_copy_message_string(msg))) {
+            auto logString = spanConstCast<char>(unsafeSpan(messageString.get()));
+            if (logString.size() >= logStringMaxSize)
+                logString = logString.first(logStringMaxSize - 1);
+            WebCore::logClient()->log(byteCast<uint8_t>(logChannel), byteCast<uint8_t>(logCategory), byteCast<uint8_t>(logString), type);
+        }
+    }).get());
+
+    WTFSignpostIndirectLoggingEnabled = true;
+}
+
+void AuxiliaryProcess::initializeLogForwarding(bool isDebugLoggingEnabled)
+{
+    if (os_trace_get_mode() != OS_TRACE_MODE_OFF)
+        return;
+
+    RefPtr parentConnection = parentProcessConnection();
+    if (!parentConnection)
+        return;
+
+    RELEASE_LOG(Process, "%p - AuxiliaryProcess::initializeLogForwarding: Debug logging enabled: %d", this, isDebugLoggingEnabled);
+
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    static constexpr auto connectionBufferSizeLog2 = 17;
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, 1_s);
+    if (!connectionPair)
+        CRASH();
+    auto [connection, handle] = WTF::move(*connectionPair);
+    protect(connection)->open(protect(*this), RunLoop::currentSingleton());
+    auto newLogClient = makeUnique<LogClient>(Ref { connection });
+    auto identifier = newLogClient->identifier();
+    sendCreateLogStreamToParent(*parentConnection, WTF::move(handle), identifier, [newLogClient = WTF::move(newLogClient), connection = WTF::move(connection), isDebugLoggingEnabled] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
+        connection->setSemaphores(WTF::move(wakeUpSemaphore), WTF::move(clientWaitSemaphore));
+        registerLogClient(isDebugLoggingEnabled, WTF::move(newLogClient));
+    });
+#else
+    auto newLogClient = makeUnique<LogClient>(*parentConnection);
+    auto identifier = newLogClient->identifier();
+    sendCreateLogStreamToParent(*parentConnection, identifier, [newLogClient = WTF::move(newLogClient), isDebugLoggingEnabled] () mutable {
+        registerLogClient(isDebugLoggingEnabled, WTF::move(newLogClient));
+    });
+#endif
+}
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 static void initializeTimerCoalescingPolicy()

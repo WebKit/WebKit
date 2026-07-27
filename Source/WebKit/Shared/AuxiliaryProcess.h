@@ -41,6 +41,10 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStreamIdentifier.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -50,6 +54,10 @@ OBJC_CLASS NSDictionary;
 
 namespace IPC {
 class SharedBufferReference;
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+class Semaphore;
+struct StreamServerConnectionHandle;
+#endif
 }
 
 namespace WebKit {
@@ -128,6 +136,15 @@ protected:
     virtual void initializeProcessName(const AuxiliaryProcessInitializationParameters&);
     virtual void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&);
     virtual void initializeConnection(IPC::Connection*);
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    void initializeLogForwarding(bool isDebugLoggingEnabled);
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    virtual void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore&&, IPC::Semaphore&&)>&&) { ASSERT_NOT_REACHED(); }
+#else
+    virtual void sendCreateLogStreamToParent(IPC::Connection&, LogStreamIdentifier, CompletionHandler<void()>&&) { ASSERT_NOT_REACHED(); }
+#endif
+#endif
 
     virtual bool shouldTerminate() = 0;
     virtual void terminate();

@@ -767,7 +767,11 @@ private:
     void accessibilityRelayProcessSuspended(bool);
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void initializeLogForwarding(const WebProcessCreationParameters&);
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore&&, IPC::Semaphore&&)>&&) override;
+#else
+    void sendCreateLogStreamToParent(IPC::Connection&, LogStreamIdentifier, CompletionHandler<void()>&&) override;
+#endif
 #endif
 
     bool NODELETE isProcessBeingCachedForPerformance();

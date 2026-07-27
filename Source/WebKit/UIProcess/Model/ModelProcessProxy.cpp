@@ -176,6 +176,12 @@ void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
 {
     Ref protectedThis { *this };
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    // Tear down the log stream promptly on process exit rather than waiting for this proxy to be
+    // destroyed, mirroring WebProcessProxy::shutDown(). See rdar://182244946.
+    stopLogStream();
+#endif
+
     switch (reason) {
     case ProcessTerminationReason::ExceededMemoryLimit:
     case ProcessTerminationReason::ExceededCPULimit:

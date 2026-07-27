@@ -39,6 +39,9 @@ struct ModelProcessCreationParameters {
     bool restrictiveRenderingMode { false };
     std::optional<int> debugEntityMemoryLimit;
     std::optional<int> debugImmersiveEntityMemoryLimit;
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    bool isDebugLoggingEnabled { false };
+#endif
 };
 
 } // namespace WebKit
