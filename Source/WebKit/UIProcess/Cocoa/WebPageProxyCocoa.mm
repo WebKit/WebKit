@@ -605,7 +605,7 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
         return;
     }
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTF::move(options) }, webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(focusedOrMainFrame()->frameID(), Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTF::move(options) });
 }
 
 void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternative)

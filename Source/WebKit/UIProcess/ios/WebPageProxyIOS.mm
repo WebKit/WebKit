@@ -411,7 +411,10 @@ void WebPageProxy::didInsertFinalDictationResult()
 
 void WebPageProxy::replaceDictatedText(const String& oldText, const String& newText)
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::ReplaceDictatedText(oldText, newText), webPageIDInMainFrameProcess());
+    RefPtr frame = focusedOrMainFrame();
+    if (!frame)
+        return;
+    sendToProcessContainingFrame(frame->frameID(), Messages::WebPage::ReplaceDictatedText(oldText, newText));
 }
 
 void WebPageProxy::replaceSelectedText(const String& oldText, const String& newText)
