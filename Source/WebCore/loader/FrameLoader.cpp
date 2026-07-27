@@ -4228,7 +4228,29 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     if (!canContinue) {
         FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderContinueLoadAfterNavigationPolicyCannotContinue, static_cast<int>(allowNavigationToInvalidURL), request.url().isValid(), static_cast<int>(navigationPolicyDecision));
 
-        // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
+        // The push/replace navigate event is otherwise dispatched only on the canContinue path below. A
+        // process-swapping cross-origin navigation would skip it and silently ignore preventDefault(), so dispatch
+        // it here -- before the destination process begins loading (the UI process deferred that load until now).
+        if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess) {
+            std::optional<NavigationIdentifier> navigationID = m_policyDocumentLoader ? m_policyDocumentLoader->navigationID() : std::nullopt;
+            if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : std::function<bool()> { }) {
+                // The UI process defers this navigation's destination-process load keyed by navigationID precisely
+                // because it dispatches a navigate event, so there must be an id to proceed with or drop below.
+                ASSERT(navigationID);
+                if (!pendingDispatchNavigateEvent()) {
+                    // preventDefault() cancelled it. setPolicyDocumentLoader(nullptr) sends DidDestroyNavigation,
+                    // which drops the deferred destination-process load in the UI process so it never starts.
+                    setPolicyDocumentLoader(nullptr);
+                    checkCompleted();
+                    return;
+                }
+            }
+            // Not cancelled: let the UI process start the provisional load it deferred in the destination process.
+            if (navigationID)
+                client().proceedWithNavigationInNewProcess(*navigationID);
+        }
+
+        // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we
         // need to report that the client redirect was cancelled.
         // FIXME: The client should be told about ignored non-quick redirects, too.
         if (m_quickRedirectComing)

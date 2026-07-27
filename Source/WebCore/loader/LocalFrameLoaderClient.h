@@ -383,6 +383,11 @@ public:
 
     virtual void documentLoaderDetached(NavigationIdentifier, LoadWillContinueInAnotherProcess) { }
 
+    // Called when a process-swapping navigation's navigate event was not cancelled by preventDefault(), so the
+    // UI process may begin the provisional load it deferred in the destination process. Default no-op: only the
+    // multi-process UIProcess client acts on it.
+    virtual void proceedWithNavigationInNewProcess(NavigationIdentifier);
+
     virtual void frameNameChanged(const String&) { }
 
     virtual RefPtr<HistoryItem> createHistoryItemTree(bool clipAtTarget, BackForwardItemIdentifier) const = 0;

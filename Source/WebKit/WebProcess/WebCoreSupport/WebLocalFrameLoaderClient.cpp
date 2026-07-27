@@ -231,6 +231,16 @@ void WebLocalFrameLoaderClient::documentLoaderDetached(WebCore::NavigationIdenti
         page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }
 
+void WebLocalFrameLoaderClient::proceedWithNavigationInNewProcess(WebCore::NavigationIdentifier navigationID)
+{
+    // The navigate event did not cancel this process-swapping navigation, so let the UI process start the
+    // provisional load it deferred until now. Deferring keeps the destination process from fetching before the
+    // navigate event runs (https://html.spec.whatwg.org/#beginning-navigation, step 22 before step 24) and
+    // lets preventDefault() cancel it with no cross-process teardown.
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::ProceedWithProvisionalLoadInNewProcess(navigationID));
+}
+
 void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     RefPtr webPage = m_frame->page();

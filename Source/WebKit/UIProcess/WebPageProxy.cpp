@@ -1889,6 +1889,11 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+    // Drop any process-swap load still deferred waiting on a navigate event; the page is going away.
+    auto pendingLoads = std::exchange(m_provisionalLoadsPendingNavigateEvent, { });
+    for (auto& continueLoad : pendingLoads.values())
+        continueLoad(ProceedWithProvisionalLoad::No);
+
 #if ENABLE(WEB_AUTHN) && ENABLE(WEBDRIVER_BIDI)
     abortPendingDigitalCredentialWaitHandlers("Page closed."_s);
 #endif
@@ -5895,9 +5900,51 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
+            // Read before navigationAction is moved into receivedPolicyDecision below.
+            auto navigationUpgradeToHTTPSBehavior = navigationAction->data().navigationUpgradeToHTTPSBehavior;
+            bool hasNavigationAPINavigateEvent = navigationAction->data().hasNavigationAPINavigateEvent;
             receivedPolicyDecision(policyAction, navigation.ptr(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::Yes, std::nullopt, WTF::move(message), WTF::move(completionHandler));
             Ref bcgForNavigation = suspendedPage ? suspendedPage->browsingContextGroup() : browsingContextGroup.get();
-            continueNavigationInNewProcess(navigation, frame.get(), WTF::move(suspendedPage), bcgForNavigation, WTF::move(processNavigatingTo), processSwapRequestedByClient, ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, std::nullopt, loadedWebArchive, navigationAction->data().navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition::None, replacedDataStoreForWebArchiveLoad.get());
+
+            CompletionHandler<void(ProceedWithProvisionalLoad)> startProvisionalLoadInNewProcess = [
+                weakThis = WeakPtr { *this },
+                navigation = navigation.copyRef(),
+                frame = frame.copyRef(),
+                suspendedPage = WTF::move(suspendedPage),
+                bcgForNavigation = WTF::move(bcgForNavigation),
+                processNavigatingTo = WTF::move(processNavigatingTo),
+                processSwapRequestedByClient,
+                loadedWebArchive,
+                navigationUpgradeToHTTPSBehavior,
+                replacedDataStoreForWebArchiveLoad,
+                preventNavigationProcessShutdown = WTF::move(preventNavigationProcessShutdown)
+            ] (ProceedWithProvisionalLoad proceed) mutable {
+                // No means the navigate event cancelled the navigation (or it was torn down); drop the load.
+                if (proceed == ProceedWithProvisionalLoad::No)
+                    return;
+                // Deferral lets the source process's navigate event handler (arbitrary script) run before this
+                // fires; it may have destroyed or closed the page, superseded the navigation, or detached the frame.
+                // Re-validate before starting the destination-process load. WeakPtr (not Ref) avoids a retain cycle:
+                // the continuation is stored in the page's own m_provisionalLoadsPendingNavigateEvent.
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis || protectedThis->isClosed() || !protectedThis->m_navigationState->hasNavigation(navigation->navigationID()) || frame->page() != protectedThis.get())
+                    return;
+                protectedThis->continueNavigationInNewProcess(navigation, frame.get(), WTF::move(suspendedPage), bcgForNavigation, WTF::move(processNavigatingTo), processSwapRequestedByClient, ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, std::nullopt, loadedWebArchive, navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition::None, replacedDataStoreForWebArchiveLoad.get());
+            };
+
+            // Only navigations that will dispatch a (preventable) Navigation API navigate event need to wait: the
+            // source process fires that event after this policy decision, and the spec requires it and its
+            // preventDefault() to precede the fetch (https://html.spec.whatwg.org/#beginning-navigation, step 22
+            // before step 24). Defer those until the source confirms via ProceedWithProvisionalLoadInNewProcess (or
+            // drops them via DidDestroyNavigation on preventDefault()). Every other process swap -- redirects,
+            // history/session-restore loads driven by the UI process, parent-initiated child navigations -- has no
+            // such event and must start immediately as before; deferring them would stall since no proceed is sent.
+            // Redirect continuations reuse the navigation ID but the navigate event fired (and was already gated) on
+            // the initial request, so they must not be deferred a second time.
+            if (hasNavigationAPINavigateEvent && !navigation->currentRequestIsRedirect())
+                m_provisionalLoadsPendingNavigateEvent.set(navigation->navigationID(), WTF::move(startProvisionalLoadInNewProcess));
+            else
+                startProvisionalLoadInNewProcess(ProceedWithProvisionalLoad::Yes);
             return;
         }
 
@@ -8114,7 +8161,24 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
 
     RefPtr protectedPageClient { pageClient() };
 
+    // If a process-swapping load was deferred waiting for this navigation's navigate event, the event either
+    // cancelled it via preventDefault() or the navigation was otherwise abandoned; either way drop the deferred
+    // destination-process load so it never starts (and release the destination process it was pinning).
+    if (auto continueLoad = m_provisionalLoadsPendingNavigateEvent.take(navigationID))
+        continueLoad(ProceedWithProvisionalLoad::No);
+
     m_navigationState->didDestroyNavigation(process->coreProcessIdentifier(), navigationID);
+}
+
+void WebPageProxy::proceedWithProvisionalLoadInNewProcess(IPC::Connection& connection, WebCore::NavigationIdentifier navigationID)
+{
+    MESSAGE_CHECK(WebProcessProxy::fromConnection(connection), WebNavigationState::NavigationMap::isValidKey(navigationID));
+
+    // The source process confirmed the navigate event did not cancel this process-swapping navigation. Start the
+    // provisional load that decidePolicyForNavigationAction deferred, so the destination process never fetched
+    // before the navigate event ran and preventDefault() could still cancel it (see the deferral site).
+    if (auto continueLoad = m_provisionalLoadsPendingNavigateEvent.take(navigationID))
+        continueLoad(ProceedWithProvisionalLoad::Yes);
 }
 
 void WebPageProxy::didStartProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
@@ -13923,8 +13987,13 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().scrollPositionDuringLastEditorStateUpdate = { };
 #endif
 
-    if (terminationReason != ProcessTerminationReason::NavigationSwap)
+    if (terminationReason != ProcessTerminationReason::NavigationSwap) {
         m_provisionalPage = nullptr;
+        // Drop any process-swap load still waiting on a navigate event; the process that would confirm it is gone.
+        auto pendingLoads = std::exchange(m_provisionalLoadsPendingNavigateEvent, { });
+        for (auto& continueLoad : pendingLoads.values())
+            continueLoad(ProceedWithProvisionalLoad::No);
+    }
 
     if (protectedPageClient) {
         if (terminationReason == ProcessTerminationReason::NavigationSwap)

@@ -1781,6 +1781,7 @@ public:
 #endif
 
     enum class WillContinueLoadInNewProcess : bool { No, Yes };
+    enum class ProceedWithProvisionalLoad : bool { No, Yes };
     void receivedPolicyDecision(WebCore::PolicyAction, API::Navigation*, std::optional<std::pair<Ref<API::WebsitePolicies>, Ref<WebProcessProxy>>>&&, Ref<API::NavigationAction>&&, WillContinueLoadInNewProcess, std::optional<SandboxExtensionHandle>, std::optional<PolicyDecisionConsoleMessage>&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void receivedNavigationResponsePolicyDecision(WebCore::PolicyAction, API::Navigation*, const WebCore::ResourceRequest&, Ref<API::NavigationResponse>&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void receivedNavigationActionPolicyDecision(WebProcessProxy&, WebCore::PolicyAction, API::Navigation&, Ref<API::NavigationAction>&&, ProcessSwapRequestedByClient, WebFrameProxy&, const FrameInfoData&, WasNavigationIntercepted, std::optional<PolicyDecisionConsoleMessage>&&, CompletionHandler<void(PolicyDecision&&)>&&);
@@ -3152,6 +3153,7 @@ private:
     void setFramePrinting(IPC::Connection&, WebCore::FrameIdentifier, bool printing, const WebCore::FloatSize& pageSize, const WebCore::FloatSize& originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize shouldAdjustViewSize);
 
     void didDestroyNavigation(IPC::Connection&, WebCore::NavigationIdentifier);
+    void proceedWithProvisionalLoadInNewProcess(IPC::Connection&, WebCore::NavigationIdentifier);
 
     void decidePolicyForNavigationAction(Ref<WebProcessProxy>&&, WebFrameProxy&, NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
     RefPtr<FrameState> frameStateForBackForwardChildFrame(WebFrameProxy&, WebCore::BackForwardItemIdentifier);
@@ -4195,6 +4197,13 @@ private:
     RefPtr<ProvisionalPageProxy> m_provisionalPage;
     RefPtr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;
     WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
+
+    // Process-swapping loads whose destination-process provisional load is deferred until the source process
+    // confirms (via ProceedWithProvisionalLoadInNewProcess) that the Navigation API navigate event did not cancel
+    // them. Keyed by navigationID. Each handler is invoked exactly once -- with Yes to start the load, or with No
+    // to drop it (preventDefault via didDestroyNavigationShared, or teardown in close()/resetStateAfterProcessExited).
+    // CompletionHandler asserts if destroyed uncalled, so a lost confirmation surfaces instead of hanging silently.
+    HashMap<WebCore::NavigationIdentifier, CompletionHandler<void(ProceedWithProvisionalLoad)>> m_provisionalLoadsPendingNavigateEvent;
 
     TextManipulationItemCallback m_textManipulationItemCallback;
 

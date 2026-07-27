@@ -93,6 +93,9 @@ struct NavigationActionData {
     WebCore::ResourceRequest request;
     String invalidURLString;
     std::optional<WebCore::NavigationRequester> requester;
+    // True when the source process will dispatch a (preventable) Navigation API navigate event for this
+    // navigation. The UI process uses it to defer a process-swap's destination load until the event resolves.
+    bool hasNavigationAPINavigateEvent { false };
 
     // `originalRequest` is sent as nullopt when it equals `request`; resolve it here.
     const WebCore::ResourceRequest& originalRequestOrFallback() const { return originalRequest ? *originalRequest : request; }
