@@ -173,14 +173,14 @@
             if (this._getIsInline()) {
                 this._mirrorTrack.mode = 'hidden';
                 if (captionContainer)
-                    captionContainer.style.removeProperty('display');
+                    captionContainer.style.removeProperty('visibility');
                 return;
             }
 
             this._player.loadModule('captions');
             this._mirrorTrack.mode = 'showing';
             if (captionContainer)
-                captionContainer.style.setProperty('display', 'none', 'important');
+                captionContainer.style.setProperty('visibility', 'hidden', 'important');
         }
 
         _handleMediaSessionAction(details) {
