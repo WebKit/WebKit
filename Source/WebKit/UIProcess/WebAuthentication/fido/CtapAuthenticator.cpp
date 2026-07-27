@@ -309,7 +309,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         }
         if (error == CtapDeviceResponseCode::kCtap2ErrKeyStoreFull) {
             auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-            if (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required)
+            if (options.authenticatorSelection && (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required))
                 protect(observer())->authenticatorStatusUpdated(WebAuthenticationStatus::KeyStoreFull);
             else if (!m_isKeyStoreFull) {
                 m_isKeyStoreFull = true;
