@@ -791,7 +791,10 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
             return;
 
         if (!isOK) {
-            protectedThis->denyRequest(protect(*protectedThis->m_currentUserMediaRequest), UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+            RefPtr currentUserMediaRequest = protectedThis->m_currentUserMediaRequest;
+            if (!currentUserMediaRequest)
+                return;
+            protectedThis->denyRequest(*currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
             return;
         }
         protectedThis->decidePolicyForUserMediaPermissionRequest();
