@@ -453,7 +453,7 @@ enum EventTargetInterfaceType AudioNode::eventTargetInterface() const
 
 ScriptExecutionContext* AudioNode::scriptExecutionContext() const
 {
-    return static_cast<ActiveDOMObject&>(const_cast<AudioNode*>(this)->context()).scriptExecutionContext();
+    return static_cast<const ActiveDOMObject&>(context()).scriptExecutionContext();
 }
 
 void AudioNode::processIfNecessary(size_t framesToProcess)
