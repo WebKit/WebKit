@@ -482,8 +482,7 @@ class Driver(object):
         else:
             environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = str(self._port.layout_tests_dir())
-        environment['ASAN_OPTIONS'] = "allocator_may_return_null=1"
-        environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
+        self._port._append_sanitizer_options(environment)
 
         # Disable vnode-guard related simulated crashes for WKTR / DRT (rdar://problem/40674034).
         environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = '/'
