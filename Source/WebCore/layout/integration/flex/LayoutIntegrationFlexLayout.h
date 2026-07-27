@@ -30,6 +30,7 @@
 #include <WebCore/FlexLayoutState.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/SetForScope.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -42,6 +43,18 @@ public:
     FlexLayout(RenderFlexibleBox&);
 
     void layout(RelayoutChildren);
+
+    // The container's in-flow children in order-modified document order, rebuilt every layout. Weak pointers because
+    // painting/hit-testing/baseline queries read the list after layout, when a child may have been removed.
+    using FlexItemList = Vector<SingleThreadWeakPtr<RenderBox>>;
+    const FlexItemList& flexItems() const LIFETIME_BOUND { return m_flexItems; }
+
+    void paint(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction);
+
+    // Widens the container's allowed layout overflow by how far content-alignment pushed the items past the
+    // content-box start edges. Takes RenderBox's writing-mode-only allowance, which only the renderer can compute.
+    LayoutOptionalOutsets adjustAllowedLayoutOverflow(LayoutOptionalOutsets) const;
 
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
@@ -58,11 +71,22 @@ public:
     bool isFlexBoxBlockSizeIndefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeIndefinite(); }
     void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { ASSERT(m_flexLayoutState); m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(isDefinite); }
 
+    // Which items had a margin trimmed, so RenderFlexibleBox::isChildEligibleForMarginTrim can answer for a given
+    // side. Seeded before layout (the first/last item's inline margins affect the container's intrinsic widths) and
+    // filled in by the flex algorithm as it trims.
+    void initializeMarginTrimState();
+    bool isFlexItemEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox& flexItem) const;
+    void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineStart.add(flexItem); }
+    void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineEnd.add(flexItem); }
+    void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnFirstFlexLine.add(flexItem); }
+    void addItemOnLastFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnLastFlexLine.add(flexItem); }
+
     void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit);
     void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
 private:
+    void prepareFlexItemsAndMargins();
     FlexLayoutItems collectFlexItems(RelayoutChildren, const FlexLayoutConstraints&);
     FlexLayoutConstraints flexLayoutConstraints() const;
     LayoutUnit mainAxisAvailableSpace() const;
@@ -78,6 +102,17 @@ private:
     RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
 
     const CheckedRef<RenderFlexibleBox> m_flexBox;
+    FlexItemList m_flexItems;
+    struct MarginTrimItems {
+        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineStart;
+        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineEnd;
+        SingleThreadWeakHashSet<const RenderBox> itemsOnFirstFlexLine;
+        SingleThreadWeakHashSet<const RenderBox> itemsOnLastFlexLine;
+    } m_marginTrimItems;
+    // How far content-alignment pushed the items past the container's content-box start edges, in the flex
+    // container's own axes. Set by the flex algorithm, read back by adjustAllowedLayoutOverflow.
+    LayoutUnit m_alignContentStartOverflow;
+    LayoutUnit m_justifyContentStartOverflow;
     std::optional<FlexLayoutState> m_flexLayoutState;
     FlexItemContentCache m_flexItemContentCache;
 

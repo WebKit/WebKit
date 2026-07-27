@@ -27,6 +27,7 @@
 #include "LayoutIntegrationFlexLayout.h"
 
 #include "FlexFormattingUtils.h"
+#include "HitTestResult.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -36,6 +37,7 @@
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleMarginTrim.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -123,7 +125,7 @@ FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, 
 
     // Build the flex items from the container's in-flow children in order-modified document order.
     FlexLayoutItems flexItems;
-    for (auto& renderer : flexBox().flexItems()) {
+    for (auto& renderer : m_flexItems) {
         CheckedPtr flexItem = renderer.get();
         if (!flexItem)
             continue;
@@ -138,6 +140,126 @@ FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, 
     return flexItems;
 }
 
+void FlexLayout::initializeMarginTrimState()
+{
+    // When computeIntrinsicLogicalWidth goes through each of the children, it
+    // will include the margins when computing the flexbox's min and max widths.
+    // We need to trim the margins of the first and last child early so that
+    // these margins do not incorrectly constribute to the box's min/max width
+    auto marginTrim = flexBox().style().marginTrim();
+    auto isRowsFlexbox = FlexFormattingUtils::isHorizontalFlow(flexBox());
+    if (auto flexItem = flexBox().firstInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineStart))
+        isRowsFlexbox ? m_marginTrimItems.itemsAtFlexLineStart.add(*flexItem) : m_marginTrimItems.itemsOnFirstFlexLine.add(*flexItem);
+    if (auto flexItem = flexBox().lastInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineEnd))
+        isRowsFlexbox ? m_marginTrimItems.itemsAtFlexLineEnd.add(*flexItem) : m_marginTrimItems.itemsOnLastFlexLine.add(*flexItem);
+}
+
+bool FlexLayout::isFlexItemEligibleForMarginTrim(Style::MarginTrimSide marginTrimSide, const RenderBox& flexItem) const
+{
+    ASSERT(flexBox().style().marginTrim().contains(marginTrimSide));
+    auto isMarginParallelWithMainAxis = [&](Style::MarginTrimSide marginTrimSide) {
+        if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
+            return marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::BlockEnd;
+        return marginTrimSide == Style::MarginTrimSide::InlineStart || marginTrimSide == Style::MarginTrimSide::InlineEnd;
+    };
+    if (isMarginParallelWithMainAxis(marginTrimSide))
+        return (marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::InlineStart) ? m_marginTrimItems.itemsOnFirstFlexLine.contains(flexItem) : m_marginTrimItems.itemsOnLastFlexLine.contains(flexItem);
+    return (marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::InlineStart) ? m_marginTrimItems.itemsAtFlexLineStart.contains(flexItem) : m_marginTrimItems.itemsAtFlexLineEnd.contains(flexItem);
+}
+
+void FlexLayout::prepareFlexItemsAndMargins()
+{
+    // Collect the in-flow flex items in order-modified document order (a stable sort by the used 'order' value
+    // keeps document order among equal values). This is rebuilt every layout and replaces the order iterator.
+    // Out-of-flow and excluded children are not flex items, so they are left out; the list holds weak pointers
+    // because painting/hit-testing/baseline queries read it after layout, when a child may have been removed.
+    m_flexItems.clear();
+    for (auto& child : childrenOfType<RenderBox>(flexBox())) {
+        if (!child.isOutOfFlowPositioned() && !child.isExcludedFromNormalLayout())
+            m_flexItems.append(child);
+    }
+    std::stable_sort(m_flexItems.begin(), m_flexItems.end(), [](auto& a, auto& b) {
+        return a->style().order().value < b->style().order().value;
+    });
+
+    for (auto& flexItem : m_flexItems) {
+        // Before running the flex algorithm, 'auto' has a margin of 0.
+        // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
+        auto flexItemMarginValue = [&](auto& margin) {
+            // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
+            // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
+            return Style::evaluateMinimum<LayoutUnit>(margin, flexBox().contentBoxLogicalWidth(), flexBox().style().usedZoomForLength());
+        };
+        if (FlexFormattingUtils::isHorizontalFlow(flexBox())) {
+            flexItem->setMarginLeft(flexItemMarginValue(flexItem->style().marginLeft()));
+            flexItem->setMarginRight(flexItemMarginValue(flexItem->style().marginRight()));
+        } else {
+            flexItem->setMarginTop(flexItemMarginValue(flexItem->style().marginTop()));
+            flexItem->setMarginBottom(flexItemMarginValue(flexItem->style().marginBottom()));
+        }
+    }
+}
+
+LayoutOptionalOutsets FlexLayout::adjustAllowedLayoutOverflow(LayoutOptionalOutsets allowance) const
+{
+    bool isColumnar = flexBox().style().isColumnFlexDirection();
+    if (flexBox().isHorizontalWritingMode()) {
+        allowance.top() = isColumnar ? m_justifyContentStartOverflow : m_alignContentStartOverflow;
+        if (flexBox().writingMode().isInlineLeftToRight())
+            allowance.left() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+        else
+            allowance.right() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+    } else {
+        allowance.left() = isColumnar ? m_justifyContentStartOverflow : m_alignContentStartOverflow;
+        if (flexBox().writingMode().isInlineTopToBottom())
+            allowance.top() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+        else
+            allowance.bottom() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+    }
+
+    return allowance;
+}
+
+void FlexLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForFlexItem, bool usePrintRect)
+{
+    for (auto& renderer : m_flexItems) {
+        CheckedPtr flexItem = renderer.get();
+        if (flexItem && !flexBox().paintChild(*flexItem, paintInfo, paintOffset, paintInfoForFlexItem, usePrintRect, RenderBlock::PaintBlockType::PaintAsInlineBlock))
+            return;
+    }
+}
+
+bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
+{
+    if (hitTestAction != HitTestAction::Foreground)
+        return false;
+
+    LayoutPoint scrolledOffset = flexBox().hasNonVisibleOverflow() ? adjustedLocation - toLayoutSize(flexBox().scrollPosition()) : adjustedLocation;
+
+    auto hitTestChild = [&](RenderBox& child) {
+        if (child.hasSelfPaintingLayer())
+            return false;
+        auto location = flexBox().flipForWritingModeForChild(child, scrolledOffset);
+        if (!child.hitTest(request, result, locationInContainer, location))
+            return false;
+        flexBox().updateHitTestResult(result, flexBox().flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
+        return true;
+    };
+
+    // Hit-testing visits children front-to-back, i.e. the reverse of paint order.
+    for (size_t i = m_flexItems.size(); i--;) {
+        if (CheckedPtr flexItem = m_flexItems[i].get(); flexItem && hitTestChild(*flexItem))
+            return true;
+    }
+
+    // A fieldset's legend is excluded from normal layout (placed in the border), so it is not a flex item and is
+    // not in m_flexItems; hit-test it separately.
+    if (CheckedPtr legend = flexBox().isFieldset() ? flexBox().findFieldsetLegend() : nullptr; legend && legend->isExcludedFromNormalLayout())
+        return hitTestChild(*legend);
+
+    return false;
+}
+
 void FlexLayout::layout(RelayoutChildren relayoutChildren)
 {
     auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { } };
@@ -146,13 +268,15 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     m_numberOfFlexItemsOnFirstLine = 0;
     m_numberOfFlexItemsOnLastLine = 0;
 
+    prepareFlexItemsAndMargins();
+
     auto constraints = flexLayoutConstraints();
     auto flexItems = collectFlexItems(relayoutChildren, constraints);
 
     auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
     if (flexLayoutResult.alignContentStartOverflow)
-        flexBox().m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
-    flexBox().m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;
+        m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
+    m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;
     m_numberOfFlexItemsOnFirstLine = flexLayoutResult.numberOfFlexItemsOnFirstLine;
     m_numberOfFlexItemsOnLastLine = flexLayoutResult.numberOfFlexItemsOnLastLine;
 }

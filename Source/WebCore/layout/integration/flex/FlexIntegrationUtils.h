@@ -68,6 +68,7 @@ public:
     bool updateAutoMarginsInCrossAxis(const FlexLayoutItem&, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace);
     void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
     void invalidateFlexItemContentLogicalWidthsIfNeeded(const FlexLayoutItem&);
+    void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
 
     void setTrimmedMarginForChild(const FlexLayoutItem&, Style::MarginTrimSide);
     void trimMainAxisMarginStart(FlexLayoutItem&);
@@ -80,6 +81,8 @@ public:
     void addItemAtFlexLineEnd(const FlexLayoutItem&);
     void addItemOnFirstFlexLine(const FlexLayoutItem&);
     void addItemOnLastFlexLine(const FlexLayoutItem&);
+    void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
+    bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
     bool flexItemHasPercentHeightDescendants(const FlexLayoutItem&) const;
 
     LayoutUnit flexItemContentLogicalHeight(const FlexLayoutItem&) const;

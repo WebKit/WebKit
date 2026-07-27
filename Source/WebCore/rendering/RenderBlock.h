@@ -272,6 +272,9 @@ public:
 
     static void relayoutRenderBlockForScrollbarChange(RenderBlock&);
 
+    enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
+    bool paintChild(RenderBox&, PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect, PaintBlockType paintType = PaintAsBlock);
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
@@ -288,8 +291,6 @@ protected:
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintObject(PaintInfo&, const LayoutPoint&) override;
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);
-    enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
-    bool paintChild(RenderBox&, PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect, PaintBlockType paintType = PaintAsBlock);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

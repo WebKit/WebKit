@@ -60,30 +60,27 @@ public:
     std::optional<LayoutUnit> lastLineBaseline() const override;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
+    void flexItemWillBeRemoved(const RenderBox& flexItem);
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
-    const Vector<SingleThreadWeakPtr<RenderBox>>& flexItems() const LIFETIME_BOUND { return m_flexItems; }
+    const LayoutIntegration::FlexLayout::FlexItemList& flexItems() const LIFETIME_BOUND { return m_flexLayout.flexItems(); }
+    LayoutIntegration::FlexLayout& flexLayout() LIFETIME_BOUND { return m_flexLayout; }
 
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
     virtual bool isFlexibleBoxImpl() const { return false; };
 
-    // Flex-container queries used by non-flex layout code (RenderBox/RenderBlock/RenderBlockFlow/InspectorOverlay);
-    // thin proxies to FlexFormattingUtils, which stays internal to the flex formatting context.
+    // Used by InspectorOverlay; a thin proxy to FlexFormattingUtils, which stays internal to the flex formatting context.
     using GapType = FlexFormattingUtils::GapType;
-    bool hasStretchedFlexItemWithAspectRatio() const;
     LayoutUnit computeGap(GapType) const;
-    bool NODELETE isHorizontalFlow() const;
-    bool isMultiline() const;
 
     std::optional<LayoutUnit> usedFlexItemOverridingLogicalHeightForPercentageResolution(const RenderBox&);
     bool canUseFlexItemForPercentageResolution(const RenderBox&);
 
     void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
-    void flexItemWillBeRemoved(const RenderBox& flexItem);
 
     void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit height);
 
@@ -103,45 +100,25 @@ private:
     friend class LayoutIntegration::FlexIntegrationUtils;
     friend class LayoutIntegration::FlexItemIntrinsicWidthComputationScope;
 
-    using FlexItemBorderBoxRects = Vector<LayoutRect, 4>;
-
-    void appendFlexItemBorderBoxRects(FlexItemBorderBoxRects&);
-    void repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorderBoxRects&);
-
     template<typename SizeType> bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
     // Whether a percentage resolves at all, for callers that only need the yes/no and have no percentage of their own.
     bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, UpdatePercentageHeightDescendants);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&);
 
-    void initializeMarginTrimState();
     bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;
 
     void clearFlexItemOverridingSizes();
 
-    void prepareFlexItemsAndMargins();
+    // The flex items' border box rects as they were before the flex algorithm ran, so layoutBlock can repaint the
+    // ones it moved. Both walk the in-flow children directly (the flex item list is built inside FlexLayout::layout).
+    using FlexItemBorderBoxRects = Vector<LayoutRect, 4>;
+    FlexItemBorderBoxRects flexItemBorderBoxRects() const;
+    void repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorderBoxRects&);
 
-    void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
-    void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
-    bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
-    void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineStart.add(flexItem); }
-    void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineEnd.add(flexItem); }
-    void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.m_itemsOnFirstFlexLine.add(flexItem); }
-    void addItemOnLastFlexLine(const RenderBox& flexItem) { m_marginTrimItems.m_itemsOnLastFlexLine.add(flexItem); }
 
-    Vector<SingleThreadWeakPtr<RenderBox>> m_flexItems;
     // The flex formatting context integration: RenderFlexibleBox owns it and befriends it so it can reach the
     // container's layout-phase state.
     LayoutIntegration::FlexLayout m_flexLayout { *this };
-
-    struct MarginTrimItems {
-        SingleThreadWeakHashSet<const RenderBox> m_itemsAtFlexLineStart;
-        SingleThreadWeakHashSet<const RenderBox> m_itemsAtFlexLineEnd;
-        SingleThreadWeakHashSet<const RenderBox> m_itemsOnFirstFlexLine;
-        SingleThreadWeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
-    } m_marginTrimItems;
-
-    LayoutUnit m_alignContentStartOverflow { 0 };
-    LayoutUnit m_justifyContentStartOverflow { 0 };
 
     bool m_inSimplifiedLayout { false };
     mutable bool m_inFlexItemIntrinsicWidthComputation { false };

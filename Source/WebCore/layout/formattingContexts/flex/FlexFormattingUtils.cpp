@@ -345,6 +345,44 @@ bool FlexFormattingUtils::hasAutoMarginsInCrossAxis(const RenderBox& flexItem)
     return flexItem.style().marginLeft().isAuto() || flexItem.style().marginRight().isAuto();
 }
 
+bool FlexFormattingUtils::willStretchFlexItem(const RenderFlexibleBox& flexBox, const RenderBox& flexItem, LogicalBoxAxis containingAxis, StretchingMode mode)
+{
+    auto physicalAxis = mapAxisLogicalToPhysical(flexBox.writingMode(), containingAxis);
+    if (isHorizontalFlow(flexBox) == (BoxAxis::Horizontal == physicalAxis))
+        return false;
+
+    auto& itemStyle = flexItem.style();
+    bool isVerticalCrossAxis = physicalAxis == BoxAxis::Vertical;
+    auto& crossSize = isVerticalCrossAxis ? itemStyle.height() : itemStyle.width();
+
+    if (!crossSize.isStretch()) {
+        if (!itemStyle.alignSelf().resolve(&flexBox.style()).isStretchy(mode == StretchingMode::Explicit ? ItemPosition::Normal : ItemPosition::Stretch))
+            return false;
+        if (!crossSize.isAuto())
+            return false;
+    }
+
+    return isVerticalCrossAxis ? !itemStyle.marginTop().isAuto() && !itemStyle.marginBottom().isAuto() : !itemStyle.marginLeft().isAuto() && !itemStyle.marginRight().isAuto();
+}
+
+// Whether any in-flow item is a stretched aspect-ratio item, i.e. one whose cross size the container supplies and
+// whose main size then follows from the ratio. Walks the children rather than the collected flex item list because
+// this runs from layout invalidation, before the container has necessarily laid out.
+bool FlexFormattingUtils::hasStretchedFlexItemWithAspectRatio(const RenderFlexibleBox& flexBox)
+{
+    for (CheckedRef flexItem : childrenOfType<RenderBox>(flexBox)) {
+        if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
+            continue;
+        if (!flexItemHasAspectRatio(flexItem))
+            continue;
+        if (alignmentForFlexItem(flexItem) == ItemPosition::Stretch
+            && !hasAutoMarginsInCrossAxis(flexItem)
+            && preferredCrossSizeLengthForFlexItem(flexItem).isAuto())
+            return true;
+    }
+    return false;
+}
+
 bool FlexFormattingUtils::useContentBasedMinimumBlockSize(const RenderBox& flexItem)
 {
     return !mainAxisIsFlexItemInlineAxis(flexItem) && useContentBasedMinimumSize(flexItem);

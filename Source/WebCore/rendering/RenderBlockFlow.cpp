@@ -58,6 +58,7 @@
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderElementStyleInlines.h"
+#include "FlexFormattingUtils.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -777,9 +778,9 @@ static bool formattingContextRootIntrinsicLogicalWidthsDependOnOwnHeight(const R
         //    to the flex item's min and max cross size) and is considered definite."
         // In multi-line containers each line's cross size is driven by its own items, so the
         // container's preferred widths cannot depend on its own height through this mechanism.
-        if (flexBox->isMultiline())
+        if (FlexFormattingUtils::isMultiline(*flexBox))
             return false;
-        if (flexBox->hasStretchedFlexItemWithAspectRatio())
+        if (FlexFormattingUtils::hasStretchedFlexItemWithAspectRatio(*flexBox))
             return true;
     }
     return false;

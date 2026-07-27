@@ -35,8 +35,10 @@ enum class ContentDistribution : uint8_t;
 enum class ContentPosition : uint8_t;
 enum class FlowDirection : uint8_t;
 enum class ItemPosition : uint8_t;
+enum class LogicalBoxAxis : uint8_t;
 enum class Overflow : uint8_t;
 enum class OverflowAlignment : uint8_t;
+enum class StretchingMode;
 enum class TextDirection : bool;
 
 namespace Style {
@@ -110,6 +112,9 @@ public:
     OverflowAlignment overflowAlignmentForFlexItem(const FlexLayoutItem&) const;
     static bool hasAutoMarginsInCrossAxis(const RenderBox& flexItem);
     bool hasAutoMarginsInCrossAxis(const FlexLayoutItem&) const;
+    // Whether the container will stretch the item along containingAxis (RenderBlock::willStretchItem for flex).
+    static bool willStretchFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem, LogicalBoxAxis containingAxis, StretchingMode);
+    static bool hasStretchedFlexItemWithAspectRatio(const RenderFlexibleBox&);
     static bool useContentBasedMinimumSize(const RenderBox& flexItem);
     bool useContentBasedMinimumSize(const FlexLayoutItem&) const;
     static bool useContentBasedMinimumBlockSize(const RenderBox& flexItem);
