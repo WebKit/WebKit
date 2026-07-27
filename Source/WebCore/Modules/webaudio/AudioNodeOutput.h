@@ -148,7 +148,6 @@ private:
 
     using InputsMap = HashMap<AudioNodeInput*, AudioConnectionRefPtr<AudioNode>>;
     InputsMap m_inputs;
-    typedef InputsMap::iterator InputsIterator;
     bool m_isEnabled { true };
 
     // For the purposes of rendering, keeps track of the number of inputs and AudioParams we're connected to.
