@@ -109,15 +109,9 @@ private:
         SingleThreadWeakHashSet<const RenderBox> itemsOnFirstFlexLine;
         SingleThreadWeakHashSet<const RenderBox> itemsOnLastFlexLine;
     } m_marginTrimItems;
-    // How far content-alignment pushed the items past the container's content-box start edges, in the flex
-    // container's own axes. Set by the flex algorithm, read back by adjustAllowedLayoutOverflow.
-    LayoutUnit m_alignContentStartOverflow;
-    LayoutUnit m_justifyContentStartOverflow;
+    FlexFormattingContext::Result m_flexLayoutResult;
     std::optional<FlexLayoutState> m_flexLayoutState;
     FlexItemContentCache m_flexItemContentCache;
-
-    size_t m_numberOfFlexItemsOnFirstLine { 0 };
-    size_t m_numberOfFlexItemsOnLastLine { 0 };
 };
 
 }

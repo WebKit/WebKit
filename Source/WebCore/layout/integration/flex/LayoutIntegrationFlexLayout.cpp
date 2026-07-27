@@ -142,6 +142,8 @@ FlexLayoutItems FlexLayout::collectFlexItems(RelayoutChildren relayoutChildren, 
 
 void FlexLayout::initializeMarginTrimState()
 {
+    m_marginTrimItems = { };
+
     // When computeIntrinsicLogicalWidth goes through each of the children, it
     // will include the margins when computing the flexbox's min and max widths.
     // We need to trim the margins of the first and last child early so that
@@ -202,19 +204,24 @@ void FlexLayout::prepareFlexItemsAndMargins()
 
 LayoutOptionalOutsets FlexLayout::adjustAllowedLayoutOverflow(LayoutOptionalOutsets allowance) const
 {
+    // How far content-alignment pushed the items past the container's content-box start edges. The flex algorithm
+    // only computes the align-content overflow when it has lines to align, so treat "not computed" as no overflow.
+    auto alignContentStartOverflow = m_flexLayoutResult.alignContentStartOverflow.value_or(0_lu);
+    auto justifyContentStartOverflow = m_flexLayoutResult.justifyContentStartOverflow;
+
     bool isColumnar = flexBox().style().isColumnFlexDirection();
     if (flexBox().isHorizontalWritingMode()) {
-        allowance.top() = isColumnar ? m_justifyContentStartOverflow : m_alignContentStartOverflow;
+        allowance.top() = isColumnar ? justifyContentStartOverflow : alignContentStartOverflow;
         if (flexBox().writingMode().isInlineLeftToRight())
-            allowance.left() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+            allowance.left() = isColumnar ? alignContentStartOverflow : justifyContentStartOverflow;
         else
-            allowance.right() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+            allowance.right() = isColumnar ? alignContentStartOverflow : justifyContentStartOverflow;
     } else {
-        allowance.left() = isColumnar ? m_justifyContentStartOverflow : m_alignContentStartOverflow;
+        allowance.left() = isColumnar ? justifyContentStartOverflow : alignContentStartOverflow;
         if (flexBox().writingMode().isInlineTopToBottom())
-            allowance.top() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+            allowance.top() = isColumnar ? alignContentStartOverflow : justifyContentStartOverflow;
         else
-            allowance.bottom() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+            allowance.bottom() = isColumnar ? alignContentStartOverflow : justifyContentStartOverflow;
     }
 
     return allowance;
@@ -264,26 +271,19 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
 {
     auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { } };
 
-    // Reset the per-layout line counts the baseline queries read; the flex algorithm below sets them when it runs.
-    m_numberOfFlexItemsOnFirstLine = 0;
-    m_numberOfFlexItemsOnLastLine = 0;
+    m_flexLayoutResult = { };
 
     prepareFlexItemsAndMargins();
 
     auto constraints = flexLayoutConstraints();
     auto flexItems = collectFlexItems(relayoutChildren, constraints);
 
-    auto flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
-    if (flexLayoutResult.alignContentStartOverflow)
-        m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
-    m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;
-    m_numberOfFlexItemsOnFirstLine = flexLayoutResult.numberOfFlexItemsOnFirstLine;
-    m_numberOfFlexItemsOnLastLine = flexLayoutResult.numberOfFlexItemsOnLastLine;
+    m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexItems);
 }
 
 std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
 {
-    if ((flexBox().isWritingModeRoot() && !flexBox().isFlexItem()) || !m_numberOfFlexItemsOnFirstLine || flexBox().shouldApplyLayoutContainment())
+    if ((flexBox().isWritingModeRoot() && !flexBox().isFlexItem()) || !m_flexLayoutResult.numberOfFlexItemsOnFirstLine || flexBox().shouldApplyLayoutContainment())
         return { };
 
     CheckedPtr baselineFlexItem = flexItemForFirstBaseline();
@@ -315,7 +315,7 @@ std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
 
 std::optional<LayoutUnit> FlexLayout::lastLineBaseline() const
 {
-    if (flexBox().isWritingModeRoot() || !m_numberOfFlexItemsOnLastLine || flexBox().shouldApplyLayoutContainment())
+    if (flexBox().isWritingModeRoot() || !m_flexLayoutResult.numberOfFlexItemsOnLastLine || flexBox().shouldApplyLayoutContainment())
         return { };
 
     CheckedPtr baselineFlexItem = flexItemForLastBaseline();
@@ -353,8 +353,8 @@ CheckedPtr<const RenderBox> FlexLayout::flexItemForFirstBaseline() const
     auto& flexItems = flexBox().flexItems();
     bool reverse = flexBox().style().flexDirection() == FlexDirection::RowReverse || flexBox().style().flexDirection() == FlexDirection::ColumnReverse;
     if (FlexFormattingUtils::isWrapReverse(flexBox()))
-        return baselineFlexItemInLine(flexItems.size() - m_numberOfFlexItemsOnLastLine, m_numberOfFlexItemsOnLastLine, reverse);
-    return baselineFlexItemInLine(0, m_numberOfFlexItemsOnFirstLine, reverse);
+        return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult.numberOfFlexItemsOnLastLine, m_flexLayoutResult.numberOfFlexItemsOnLastLine, reverse);
+    return baselineFlexItemInLine(0, m_flexLayoutResult.numberOfFlexItemsOnFirstLine, reverse);
 }
 
 CheckedPtr<const RenderBox> FlexLayout::flexItemForLastBaseline() const
@@ -365,8 +365,8 @@ CheckedPtr<const RenderBox> FlexLayout::flexItemForLastBaseline() const
     auto& flexItems = flexBox().flexItems();
     bool reverse = !(flexBox().style().flexDirection() == FlexDirection::RowReverse || flexBox().style().flexDirection() == FlexDirection::ColumnReverse);
     if (FlexFormattingUtils::isWrapReverse(flexBox()))
-        return baselineFlexItemInLine(0, m_numberOfFlexItemsOnFirstLine, reverse);
-    return baselineFlexItemInLine(flexItems.size() - m_numberOfFlexItemsOnLastLine, m_numberOfFlexItemsOnLastLine, reverse);
+        return baselineFlexItemInLine(0, m_flexLayoutResult.numberOfFlexItemsOnFirstLine, reverse);
+    return baselineFlexItemInLine(flexItems.size() - m_flexLayoutResult.numberOfFlexItemsOnLastLine, m_flexLayoutResult.numberOfFlexItemsOnLastLine, reverse);
 }
 
 CheckedPtr<const RenderBox> FlexLayout::baselineFlexItemInLine(size_t lineStart, size_t itemCount, bool reverse) const
