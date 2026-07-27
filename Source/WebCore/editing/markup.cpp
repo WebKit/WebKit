@@ -1695,7 +1695,7 @@ static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNod
     for (Ref element : childrenOfType<HTMLElement>(container)) {
         if (is<HTMLHtmlElement>(element)) {
             toRemove.append(element);
-            collectElementsToRemoveFromFragment(WTF::move(element));
+            toRemove.appendVector(collectElementsToRemoveFromFragment(element));
             continue;
         }
         if (isAnyOf<HTMLHeadElement, HTMLBodyElement>(element))
