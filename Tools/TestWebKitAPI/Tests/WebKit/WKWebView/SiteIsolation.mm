@@ -2747,6 +2747,51 @@ TEST(SiteIsolation, HandleAcceptedCandidateInCrossOriginIframe)
         Util::runFor(10_ms);
     }
 }
+
+TEST(SiteIsolation, SetMarkedTextInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body><input id='input'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    // setMarkedText:selectedRange:replacementRange: and unmarkText are NSTextInputClient methods;
+    // parameterize the type so the compiler sees them (WKWebView conforms via a private category).
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    // Set marked (composition) text while the cross-origin iframe's input is focused.
+    // setMarkedText: routes to WebViewImpl::setMarkedText -> WebPageProxy::setCompositionAsync.
+    // The IPC must reach the iframe's process; if it is routed to the main frame the composition
+    // is dropped (the main process has no local focused frame) and the input is never updated.
+    // Use WithUserGesture because Element::focus() is a no-op for cross-origin non-main-frame
+    // iframes without a user gesture. The loop is bounded so a regression fails via the assertion
+    // below rather than hanging forever.
+    bool markedTextLanded = false;
+    for (unsigned attempt = 0; attempt < 500 && !markedTextLanded; ++attempt) {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"input.focus(); input.select()" inFrame:childFrameInfo.get()];
+        Util::runFor(10_ms);
+        [webView setMarkedText:@"hello" selectedRange:NSMakeRange(5, 0) replacementRange:NSMakeRange(NSNotFound, 0)];
+        Util::runFor(10_ms);
+        markedTextLanded = "hello"_s == String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]);
+    }
+    EXPECT_TRUE(markedTextLanded);
+
+    // Confirm the composition. unmarkText routes to WebViewImpl::unmarkText ->
+    // WebPageProxy::confirmCompositionAsync, which must also reach the focused (sub)frame's
+    // process; the committed value must remain in the iframe's input.
+    [webView unmarkText];
+    Util::runFor(10_ms);
+    EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]);
+}
 #endif
 
 TEST(SiteIsolation, SetFocusedFrame)

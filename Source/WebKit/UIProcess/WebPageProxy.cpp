@@ -16189,7 +16189,7 @@ void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
 void WebPageProxy::setTextAsync(const String& text)
 {
     if (hasRunningProcess())
-        send(Messages::WebPage::SetTextAsync(text));
+        sendToFocusedOrMainFrameProcess(Messages::WebPage::SetTextAsync(text));
 }
 
 void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange, InsertTextOptions&& options)
@@ -16259,7 +16259,7 @@ void WebPageProxy::setCompositionAsync(const String& text, const Vector<Composit
         return;
     }
 
-    send(Messages::WebPage::SetCompositionAsync(text, underlines, highlights, annotations, selectionRange, replacementRange));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetCompositionAsync(text, underlines, highlights, annotations, selectionRange, replacementRange));
 }
 
 void WebPageProxy::setWritingSuggestion(const String& text, const EditingRange& selectionRange)
@@ -16270,7 +16270,7 @@ void WebPageProxy::setWritingSuggestion(const String& text, const EditingRange& 
         return;
     }
 
-    send(Messages::WebPage::SetWritingSuggestion(text, selectionRange));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetWritingSuggestion(text, selectionRange));
 }
 
 void WebPageProxy::confirmCompositionAsync()
@@ -16278,7 +16278,7 @@ void WebPageProxy::confirmCompositionAsync()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::ConfirmCompositionAsync());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ConfirmCompositionAsync());
 }
 
 void WebPageProxy::setScrollPerformanceDataCollectionEnabled(bool enabled)
