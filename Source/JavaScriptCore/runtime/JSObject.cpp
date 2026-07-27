@@ -2610,6 +2610,11 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
             RELEASE_AND_RETURN(scope, array->fastToString(globalObject));
     }
 
+    // For a plain default object ordinaryToPrimitive collapses to the cached ToStringTag string
+    // for both hints (primordial valueOf is skipped), so returning it here matches the slow path.
+    if (auto* tag = structure()->defaultToPrimitiveFastAndNonObservable(vm))
+        return tag;
+
     JSValue value = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, preferredType);
     RETURN_IF_EXCEPTION(scope, { });
     if (value)
