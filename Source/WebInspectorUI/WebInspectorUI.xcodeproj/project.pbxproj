@@ -14,6 +14,16 @@
 		DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DD1426592F81000000C1D6A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD1426572F81000000C1D6A8 /* WebCore.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DD041FBE09D9DDBE0010AF2A;
+			remoteInfo = "Derived Sources";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		DDE992FA278D076300F60D26 /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -43,6 +53,7 @@
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUI.cpp; sourceTree = "<group>"; };
 		BF0A00042E18A0A10063278B /* WebInspectorUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUI.h; sourceTree = "<group>"; };
 		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD1426572F81000000C1D6A8 /* WebCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WebCore.xcodeproj; path = ../WebCore/WebCore.xcodeproj; sourceTree = "<group>"; };
 		DDE992FB278D078100F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -81,6 +92,7 @@
 		A54C224B148B23DE00373FA3 = {
 			isa = PBXGroup;
 			children = (
+				DD1426572F81000000C1D6A8 /* WebCore.xcodeproj */,
 				DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */,
 				1C60FE2E14E5F3CD006CD77D /* Configurations */,
 				DDE99320278D100000F60D26 /* Frameworks */,
@@ -97,6 +109,13 @@
 			isa = PBXGroup;
 			children = (
 				A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DD1426582F81000000C1D6A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -126,6 +145,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DD14265A2F81000000C1D6A8 /* PBXTargetDependency */,
 			);
 			name = WebInspectorUI;
 			productName = WebInspector;
@@ -153,6 +173,12 @@
 			mainGroup = A54C224B148B23DE00373FA3;
 			productRefGroup = A54C2258148B23DF00373FA3 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DD1426582F81000000C1D6A8 /* Products */;
+					ProjectRef = DD1426572F81000000C1D6A8 /* WebCore.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A54C2256148B23DF00373FA3 /* WebInspectorUI */,
@@ -193,7 +219,9 @@
 				"$(SRCROOT)/UserInterface",
 				"$(SRCROOT)/Scripts/generate-userinterface-depfile.sh",
 				"$(SRCROOT)/Scripts/copy-user-interface-resources.pl",
+				"$(SRCROOT)/Scripts/update-NativeFunctionParameters.py",
 				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/InspectorBackendCommands.js",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InspectorNativeFunctionParameters.json",
 			);
 			name = "Copy User Interface Resources";
 			outputPaths = (
@@ -234,6 +262,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DD14265A2F81000000C1D6A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Derived Sources";
+			targetProxy = DD1426592F81000000C1D6A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		1C60FF1314E6E35D006CD77D /* localizedStrings.js */ = {

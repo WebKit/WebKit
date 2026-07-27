@@ -59,7 +59,7 @@ option(SHOW_BINDINGS_GENERATION_PROGRESS "Show progress of generating bindings" 
 #       parallelism win.
 function(GENERATE_BINDINGS target)
     set(options)
-    set(oneValueArgs OUTPUT_SOURCE BASE_DIR FEATURES DESTINATION GENERATOR SUPPLEMENTAL_DEPFILE)
+    set(oneValueArgs OUTPUT_SOURCE BASE_DIR FEATURES DESTINATION GENERATOR SUPPLEMENTAL_DEPFILE INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE)
     set(multiValueArgs INPUT_FILES SUPPLEMENTAL_IDL_FILES PP_INPUT_FILES INCLUDED_FILES PP_EXTRA_OUTPUT PP_EXTRA_ARGS EXTRA_OUTPUT)
     cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(binding_generator ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl)
@@ -226,6 +226,20 @@ function(GENERATE_BINDINGS target)
         BYPRODUCTS ${_byproducts}
         ${_uses_terminal})
     add_custom_target(${target} DEPENDS ${_stamp_file})
+
+    if (arg_INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE)
+        add_custom_command(
+            OUTPUT ${arg_INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE}
+            COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/combine-inspector-native-function-parameters.pl --idlFilesList ${included_idl_files_list} --output ${arg_INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE}
+            DEPENDS
+                ${_stamp_file}
+                ${WEBCORE_DIR}/bindings/scripts/combine-inspector-native-function-parameters.pl
+                ${included_idl_files_list}
+            WORKING_DIRECTORY ${arg_BASE_DIR}
+            COMMENT "Combine Web Inspector native function parameters (${target})"
+            VERBATIM)
+        add_custom_target(${target}-inspector-native-function-parameters DEPENDS ${arg_INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE})
+    endif ()
 endfunction()
 
 
