@@ -4,8 +4,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 FAIL outlineOffset == -3 || outlineOffset == -2 should be true. Was false.
-PASS internals.usedOutlineOffset(opt1) is 0
-PASS internals.usedOutlineOffset(opt1) is 0
+PASS internals.usedOutlineOffset(opt1) == 0 is true
+PASS internals.usedOutlineOffset(opt1) == 0 is true
 PASS successfullyParsed is true
 Some tests failed.
 

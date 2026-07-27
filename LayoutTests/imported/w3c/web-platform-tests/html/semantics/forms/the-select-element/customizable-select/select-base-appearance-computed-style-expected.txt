@@ -1,13 +1,13 @@
 button
 SIBLING
 
-FAIL UA styles of base appearance <select>. assert_equals: min-inline-size expected "calc-size(auto, max(size, 24px))" but got "0px"
-PASS UA styles of base appearance select::picker-icon.
-PASS UA styles of base appearance ::picker(select)
-PASS UA styles of base appearance <option>.
-PASS UA styles of base appearance option::checkmark.
+FAIL UA styles of base appearance <select>. assert_equals: border expected "1px solid rgb(255, 0, 0)" but got "1px solid oklab(0.627955 0.224863 0.125846 / 0.5)"
+FAIL UA styles of base appearance select::picker-icon. assert_equals: content expected "counter(fake-counter-name, disclosure-open)" but got "\"⌵\" / \"\""
+FAIL UA styles of base appearance ::picker(select) assert_equals: margin expected "0px" but got "4px 0px"
+FAIL UA styles of base appearance <option>. assert_equals: padding-block-start expected "0px" but got "12px"
+FAIL UA styles of base appearance option::checkmark. assert_equals: font-family expected "monospace" but got "system-ui"
 PASS UA styles of base appearance <optgroup>.
-PASS UA styles of base appearance <legend>.
+FAIL UA styles of base appearance <legend>. assert_equals: padding-inline expected "12px" but got "15.299999px"
 PASS UA styles of base appearance select <button>.
 PASS UA styles of base appearance <option> in <optgroup>.
 

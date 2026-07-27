@@ -192,7 +192,18 @@ jsTestIsAsync = true;
 
     // Test: With a non-evenly-divisible picker height, the partially visible item from
     // the current page remains visible after Page Down (overlap behavior).
-    pickerStyle.textContent = `select, ::picker(select) { appearance: base-select; }\n::picker(select) { max-height: 170px; }`;
+    // Derive the picker height from the measured option height so a partial row is
+    // always present regardless of UA spacing changes: 4 full rows + 1/7 of a row,
+    // plus 2px for the picker's 1px top/bottom border. The fraction is deliberately
+    // not 1/2: with a half row, two pages span an exact integer number of rows and
+    // the straddling row lands precisely on the page fold, so it can never become
+    // fully visible. A smaller fraction leaves a genuine one-row overlap.
+    await openPickerAt(1);
+    optionHeight = getOption(2).getBoundingClientRect().top - getOption(1).getBoundingClientRect().top;
+    await closePicker();
+
+    pickerMaxHeight = Math.round(4 * optionHeight + optionHeight / 7 + 2);
+    pickerStyle.textContent = `select, ::picker(select) { appearance: base-select; }\n::picker(select) { max-height: ${pickerMaxHeight}px; }`;
 
     await openPickerAt(1);
     picker = internals.shadowRoot(select).querySelector('[popover]');

@@ -3,5 +3,5 @@ one
 two
 disabled
 
-PASS Hover styles should be present for appearance:base-select options.
+FAIL Hover styles should be present for appearance:base-select options. assert_equals: Disabled option color while hovering. expected "oklab(0 0 0 / 0.5)" but got "oklab(0 0 0 / 0.55)"
 

@@ -1003,5 +1003,5 @@ Option #1000
 PASS Behavior of Home and End for customizable-<select>
 PASS Behavior of Home and End for customizable-<select>, starting at the top
 PASS Behavior of Home and End for customizable-<select>, starting at the bottom
-FAIL Behavior of PageUp and PageDown for customizable-<select> assert_equals: First page down should not scroll expected 305.390625 but got -240.609375
+FAIL Behavior of PageUp and PageDown for customizable-<select> assert_true: First page down should not scroll expected true got false
 

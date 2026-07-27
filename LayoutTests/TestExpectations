@@ -680,6 +680,10 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-accessibility-minimum-target-size.html [ Skip ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-size-empty-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-size-empty-002.html [ ImageOnlyFailure ]
+# Intrinsic sizing of a base-select inside a flex container differs from the reference.
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-height-in-flex.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-width-in-flex.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-sizing-in-flex.html [ ImageOnlyFailure ]
 
 # Picker fallback positioning failures (potentially related to the max-block-size).
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-fallback-bottom-left-scroller.html [ ImageOnlyFailure ]
@@ -698,6 +702,15 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 
 # Untriaged.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-restore.optional.html [ Skip ]
+
+# <optgroup label> renders bold + black rather than as a gray legend.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-rendering.html [ ImageOnlyFailure ]
+# Our selectedcontent avoids overflow, but test expects it.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-button-text-and-icon-clipping.html [ ImageOnlyFailure ]
+# Overflow handling differences.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-overflow-x.tentative.html [ ImageOnlyFailure ]
+# The picker-icon's negative margin glyph adjustment (margin-block-start: -0.25em) shifts the icon, which the reference doesn't account for.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-display-block.tentative.html [ ImageOnlyFailure ]
 
 # List boxes/<select multiple>.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/ [ Skip ]

@@ -1042,51 +1042,62 @@ select {
 
 select:-internal-uses-menulist {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    padding-inline: -internal-auto-base(0.4em, 0.5em);
+    padding-inline: -internal-auto-base(0.4em, 1em 0.7em);
     color: -internal-auto-base(-apple-system-blue, inherit);
     font: -internal-auto-base(11px system-ui, inherit);
-    border-color: -internal-auto-base(-webkit-control-background, initial);
-    border-radius: -internal-auto-base(initial, 0.5em);
+    border-color: -internal-auto-base(-webkit-control-background, color-mix(currentColor 50%));
+    border-radius: -internal-auto-base(initial, 4px);
 #if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
-    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), transparent);
+    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), light-dark(transparent, color-mix(currentColor 4%)));
 #else
-    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, transparent);
+    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, light-dark(transparent, color-mix(currentColor 4%)));
 #endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
 #else
-    padding-inline: -internal-auto-base(0, 0.5em);
+    padding-inline: -internal-auto-base(0, 1em 0.7em);
     color: -internal-auto-base(CanvasText, inherit);
-    background-color: -internal-auto-base(Canvas, transparent);
-    border-radius: -internal-auto-base(5px, 0.5em);
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
+    border-radius: -internal-auto-base(5px, 4px);
+    background-color: -internal-auto-base(Canvas, light-dark(transparent, color-mix(currentColor 4%)));
     font: -internal-auto-base(-webkit-small-control, inherit);
 #endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
-    padding-block: -internal-auto-base(0, 0.25em);
+    padding-block: -internal-auto-base(0, 0.4em);
     align-items: -internal-auto-base(center, unset);
-    white-space: -internal-auto-base(pre, initial);
-    cursor: -internal-auto-base(default, inherit);
+    white-space: -internal-auto-base(pre, nowrap);
+    cursor: default;
     gap: -internal-auto-base(initial, 0.5em);
+    min-block-size: -internal-auto-base(revert-rule, 24px);
+    min-inline-size: -internal-auto-base(revert-rule, 4em);
+    overflow: -internal-auto-base(revert-rule, clip);
+    text-overflow: -internal-auto-base(revert-rule, ellipsis);
 
     -webkit-rtl-ordering: -internal-auto-base(logical, inherit);
     text-shadow: -internal-auto-base(none, inherit);
-    text-transform: -internal-auto-base(none, initial);
     letter-spacing: -internal-auto-base(normal, inherit);
     word-spacing: -internal-auto-base(normal, inherit);
 }
 
-select:-internal-uses-menulist:enabled:hover {
-    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 10%, transparent));
+select:-internal-uses-menulist:enabled:hover:not(:user-invalid) {
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 70%));
 }
 
 select:-internal-uses-menulist:enabled:active {
-    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 20%, transparent));
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 8%));
 }
 
 select:-internal-uses-menulist:disabled {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill-disabled, transparent);
-    color: -internal-auto-base(-apple-system-tertiary-label, color-mix(currentColor 50%, transparent));
+    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill-disabled, color-mix(currentColor 6%));
+    color: -internal-auto-base(-apple-system-tertiary-label, color-mix(currentColor 55%));
 #else
-    color: -internal-auto-base(GrayText, color-mix(currentColor 50%, transparent));
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 6%));
+    color: -internal-auto-base(GrayText, color-mix(currentColor 55%));
 #endif
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 25%));
+    cursor: -internal-auto-base(revert-rule, not-allowed);
+}
+
+select:-internal-uses-menulist:user-invalid {
+    border-color: -internal-auto-base(revert-rule, light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h)));
 }
 
 select:-internal-uses-menulist:not([popover]) {
@@ -1108,30 +1119,45 @@ select:not([multiple]):-internal-uses-menulist > button:first-child {
     display: contents;
 }
 
+select selectedcontent {
+    overflow: clip;
+    text-overflow: ellipsis;
+    min-inline-size: 0;
+}
+
 select::picker-icon {
-    content: counter(fake-counter-name, disclosure-open);
-    display: block;
+    content: "\2335" / "";
+    font-family: system-ui;
+    font-style: normal;
+    text-orientation: sideways;
+    padding-inline: 0.3em 0.15em;
     margin-inline-start: auto;
+    margin-block-start: -0.25em;
+    align-self: center;
 }
 
 :-internal-select-popover {
     box-sizing: border-box;
-    border: -internal-auto-base(none, 1px solid);
+    border: -internal-auto-base(none, 1px solid color-mix(currentColor 50%));
+    border-radius: 4px;
     padding: 0;
-    color: -internal-auto-base(inherit, CanvasText);
-    background-color: -internal-auto-base(transparent, Canvas);
+    color: inherit;
+    background-color: -internal-auto-base(transparent, color-mix(contrast-color(currentColor), white 15%));
     margin: 0;
+    margin-block: 4px;
     inset: auto;
     min-inline-size: -internal-auto-base(unset, anchor-size(self-inline));
     min-block-size: 1lh;
-    max-block-size: stretch;
+    max-block-size: calc(100svb - 8px);
     overflow: auto;
+    overscroll-behavior: contain;
+    box-shadow:
+        0 4px 6px -1px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35)),
+        0 8px 16px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.25));
     position-area: -internal-auto-base(unset, self-block-end span-self-inline-end);
     position-try-order: -internal-auto-base(unset, most-block-size);
     position-try-fallbacks: -internal-auto-base(unset, {
-        self-block-start span-self-inline-end,
-        self-block-end span-self-inline-start,
-        self-block-start span-self-inline-start });
+        flip-block, flip-inline, flip-block flip-inline });
     display: -internal-auto-base(contents, none);
 }
 
@@ -1142,8 +1168,8 @@ select::picker-icon {
 select:-internal-uses-menulist option {
     min-inline-size: 24px;
     min-block-size: max(24px, 1lh);
-    padding-inline: 0.5em;
-    padding-block-end: 0;
+    padding-block: 0.5em;
+    padding-inline: 0.75em 1.1em;
     display: flex;
     align-items: center;
     gap: 0.5em;
@@ -1151,26 +1177,28 @@ select:-internal-uses-menulist option {
 
 select option {
     white-space: nowrap;
+    box-sizing: border-box;
+    outline-offset: inset;
 }
 
-select option:enabled:hover {
-    background-color: color-mix(currentColor 10%, transparent);
+select option:enabled:hover,
+select option:enabled:focus-visible {
+    background-color: color-mix(currentColor 10%);
 }
 
 select option:enabled:active {
-    background-color: color-mix(currentColor 20%, transparent);
+    background-color: color-mix(currentColor 15%);
 }
 
 select option:disabled {
-    color: color-mix(currentColor 50%, transparent);
-}
-
-select option:focus-visible {
-    outline-offset: inset;
+    color: color-mix(currentColor 55%);
+    cursor: not-allowed;
 }
 
 select option::checkmark {
     content: "\2713" / "";
+    font-family: system-ui;
+    font-style: normal;
 }
 
 select option:not(:checked)::checkmark {
@@ -1180,6 +1208,11 @@ select option:not(:checked)::checkmark {
 optgroup {
     display: block;
     font-weight: bolder;
+    box-sizing: border-box;
+}
+
+select:-internal-uses-menulist optgroup:not(:first-child) {
+    border-block-start: 1px solid color-mix(currentColor 12%);
 }
 
 option {
@@ -1191,8 +1224,31 @@ select optgroup option {
 }
 
 select optgroup legend {
-    padding-inline: 0.5em;
+    box-sizing: border-box;
+    padding-block: 0.6em 0.15em;
+    padding-inline: 0.75em;
     min-block-size: 1lh;
+    font-size: 0.85em;
+    font-weight: 400;
+    color: color-mix(currentColor 70%);
+    cursor: default;
+}
+
+@media (prefers-contrast) {
+    :-internal-select-popover {
+        background-color: Canvas;
+        color: CanvasText;
+        border-color: CanvasText;
+    }
+
+    select option:enabled:is(:hover, :focus-visible, :active) {
+        background-color: SelectedItem;
+        color: SelectedItemText;
+    }
+    select option:disabled,
+    select optgroup legend {
+        color: GrayText;
+    }
 }
 
 select::-internal-fallback-popup-menu {

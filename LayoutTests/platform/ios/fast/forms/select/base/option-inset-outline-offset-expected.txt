@@ -4,10 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 FAIL defaultOffset == -3 || defaultOffset == -2 should be true. Was false.
-FAIL usedOffset should be -2. Was 0.
-FAIL usedOffset should be -10. Was 0.
+PASS usedOffset is -2
+PASS usedOffset is -10
 FAIL zoomedOffset == -6 || zoomedOffset == -4 should be true. Was false.
-FAIL usedOffset should be -10. Was 0.
+PASS usedOffset is -10
 PASS successfullyParsed is true
 Some tests failed.
 

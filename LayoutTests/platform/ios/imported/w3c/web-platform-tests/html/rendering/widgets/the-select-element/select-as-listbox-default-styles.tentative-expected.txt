@@ -49,17 +49,17 @@ PASS <option>1 (in <select multiple="">) - margin-top
 PASS <option>1 (in <select multiple="">) - margin-right
 PASS <option>1 (in <select multiple="">) - margin-bottom
 PASS <option>1 (in <select multiple="">) - margin-left
-PASS <option>1 (in <select multiple="">) - padding-top
-FAIL <option>1 (in <select multiple="">) - padding-right assert_equals: expected "0px" but got "5.5px"
-PASS <option>1 (in <select multiple="">) - padding-bottom
-FAIL <option>1 (in <select multiple="">) - padding-left assert_equals: expected "0px" but got "5.5px"
+FAIL <option>1 (in <select multiple="">) - padding-top assert_equals: expected "0px" but got "5.5px"
+FAIL <option>1 (in <select multiple="">) - padding-right assert_equals: expected "0px" but got "12.1px"
+FAIL <option>1 (in <select multiple="">) - padding-bottom assert_equals: expected "0px" but got "5.5px"
+FAIL <option>1 (in <select multiple="">) - padding-left assert_equals: expected "0px" but got "8.25px"
 PASS <option>1 (in <select multiple="">) - letter-spacing
 PASS <option>1 (in <select multiple="">) - word-spacing
 PASS <option>1 (in <select multiple="">) - text-transform
 PASS <option>1 (in <select multiple="">) - text-indent
 PASS <option>1 (in <select multiple="">) - text-shadow
 PASS <option>1 (in <select multiple="">) - appearance
-PASS <option>1 (in <select multiple="">) - box-sizing
+FAIL <option>1 (in <select multiple="">) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <option>1 (in <select multiple="">) - border-top-width
 PASS <option>1 (in <select multiple="">) - border-right-width
 PASS <option>1 (in <select multiple="">) - border-bottom-width
@@ -105,16 +105,16 @@ PASS <optgroup label="2"><option>3 (in <select multiple="">) - text-transform
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - text-indent
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - text-shadow
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - appearance
-PASS <optgroup label="2"><option>3 (in <select multiple="">) - box-sizing
-PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-top-width
+FAIL <optgroup label="2"><option>3 (in <select multiple="">) - box-sizing assert_equals: expected "content-box" but got "border-box"
+FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-top-width assert_equals: expected "0px" but got "1px"
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-right-width
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-width
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-left-width
-PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-top-style
+FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-top-style assert_equals: expected "none" but got "solid"
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-right-style
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-style
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-left-style
-PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-top-color
+FAIL <optgroup label="2"><option>3 (in <select multiple="">) - border-top-color assert_equals: expected "rgb(0, 0, 0)" but got "oklab(0 0 0 / 0.12)"
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-right-color
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-color
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-left-color
@@ -141,17 +141,17 @@ PASS <option>3 (in <select multiple=""><optgroup label="2">) - margin-top
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - margin-right
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - margin-bottom
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - margin-left
-PASS <option>3 (in <select multiple=""><optgroup label="2">) - padding-top
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - padding-right assert_equals: expected "0px" but got "5.5px"
-PASS <option>3 (in <select multiple=""><optgroup label="2">) - padding-bottom
-FAIL <option>3 (in <select multiple=""><optgroup label="2">) - padding-left assert_equals: expected "0px" but got "5.5px"
+FAIL <option>3 (in <select multiple=""><optgroup label="2">) - padding-top assert_equals: expected "0px" but got "5.5px"
+FAIL <option>3 (in <select multiple=""><optgroup label="2">) - padding-right assert_equals: expected "0px" but got "12.1px"
+FAIL <option>3 (in <select multiple=""><optgroup label="2">) - padding-bottom assert_equals: expected "0px" but got "5.5px"
+FAIL <option>3 (in <select multiple=""><optgroup label="2">) - padding-left assert_equals: expected "0px" but got "8.25px"
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - letter-spacing
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - word-spacing
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - text-transform
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - text-indent
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - text-shadow
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - appearance
-PASS <option>3 (in <select multiple=""><optgroup label="2">) - box-sizing
+FAIL <option>3 (in <select multiple=""><optgroup label="2">) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-top-width
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-right-width
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-bottom-width

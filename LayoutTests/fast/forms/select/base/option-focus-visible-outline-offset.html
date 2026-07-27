@@ -36,13 +36,13 @@ jsTestIsAsync = true;
     await UIHelper.keyDown("\x1B");
     await UIHelper.animationFrame();
 
-    shouldBeEqualToNumber('internals.usedOutlineOffset(opt1)', 0);
+    shouldBeTrue('internals.usedOutlineOffset(opt1) == 0');
 
     // Open via mouse click — option should not have focus-visible outline.
     await UIHelper.activateElement(select);
     await UIHelper.animationFrame();
 
-    shouldBeEqualToNumber('internals.usedOutlineOffset(opt1)', 0);
+    shouldBeTrue('internals.usedOutlineOffset(opt1) == 0');
 
     finishJSTest();
 })();
