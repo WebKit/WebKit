@@ -729,7 +729,7 @@ int
 xdg_mime_media_type_equal (const char *mime_a,
 			   const char *mime_b)
 {
-  char *sep;
+  const char *sep;
 
   sep = strchr (mime_a, '/');
   
