@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing text inside a cross-origin iframe should draw the selection highlight at the correct position in the top-level page (offset by the iframe's location), not at the cross-origin subframe's local coordinates.");
+jsTestIsAsync = true;
+
+const iframeTop = 100;
+let selectionTop;
+
+addEventListener("message", async (event) => {
+    if (event.data !== "ready")
+      return;
+
+    await UIHelper.longPressAtPoint(30, iframeTop + 12);
+
+    let didFail = false;
+    setTimeout(() => {
+        testFailed("Selection did not appear");
+        finishJSTest();
+        didFail = true;
+    }, 3000);
+
+    await UIHelper.waitForSelectionToAppear();
+    if (didFail)
+        return;
+
+    const rects = await UIHelper.getUISelectionViewRects();
+    selectionTop = rects.length ? rects[0].top : -1;
+
+    shouldBeGreaterThanOrEqual("selectionTop", "iframeTop - 20");
+    finishJSTest();
+});
+</script>
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/selectable-text-frame.html"></iframe>

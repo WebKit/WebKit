@@ -1191,11 +1191,18 @@ public:
     void convertEditorStateSelectionRectToMainFrameCoordinates(WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    // When the selection is in a cross-origin subframe, the visual selection rects arrive in that
+    // subframe's local root-view coordinates. Translate them into main-frame coordinates in place so
+    // the selection highlight and handles are drawn at the correct location.
+    void updateSelectionVisualDataToMainFrameCoordinatesIfNeeded();
+#endif
+
     void processWillSuspend();
     void processDidResume();
 
 #if PLATFORM(COCOA)
-    void selectWithGesture(WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
+    void selectWithGesture(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
 
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
     void requestPositionInformation(const InteractionInformationRequest&);
@@ -1203,7 +1210,7 @@ public:
     void selectPositionAtPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void updateSelectionWithExtentPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
     void updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, TextInteractionSource, CompletionHandler<void(bool)>&&);
-    void selectTextWithGranularityAtPoint(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
+    void selectTextWithGranularityAtPoint(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

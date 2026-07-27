@@ -1110,20 +1110,20 @@ public:
 #if PLATFORM(COCOA)
     bool shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection, WebCore::MouseEventInputSource);
     HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> attributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>&);
-    void selectWithGesture(const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
-    void updateFocusBeforeSelectingTextAtLocation(const WebCore::IntPoint&);
+    void selectWithGesture(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void updateFocusBeforeSelectingTextAtLocation(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::LocalFrame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
 
     void requestPositionInformation(const InteractionInformationRequest&);
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
 
     std::optional<WebCore::SimpleRange> rangeForGranularityAtPoint(WebCore::LocalFrame&, const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement);
-    void setSelectionRange(WebCore::IntPoint, WebCore::TextGranularity, bool);
+    void setSelectionRange(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, WebCore::TextGranularity, bool);
 
     void selectPositionAtPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void updateSelectionWithExtentPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
     void updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, TextInteractionSource, CompletionHandler<void(bool)>&&);
-    void selectTextWithGranularityAtPoint(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
+    void selectTextWithGranularityAtPoint(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&&);
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(TWO_PHASE_CLICKS)

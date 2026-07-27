@@ -231,6 +231,11 @@ public:
 #endif
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
+#if PLATFORM(IOS_FAMILY)
+    // Identifier of the EditorState whose visual selection rects have already been translated from a
+    // cross-origin subframe's coordinates into main-frame coordinates, so we never translate twice.
+    std::optional<EditorStateIdentifier> lastSelectionVisualDataConvertedToMainFrameCoordinates;
+#endif
     WebCore::IntSize fixedLayoutSize;
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;

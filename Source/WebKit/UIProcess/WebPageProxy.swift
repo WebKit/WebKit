@@ -37,6 +37,7 @@ extension WebKit.WebPageProxy {
     ) async {
         await withCheckedContinuation { continuation in
             selectWithGesture(
+                nil,
                 point,
                 type,
                 state,
@@ -65,6 +66,7 @@ extension WebKit.WebPageProxy {
     ) async {
         await withCheckedContinuation { continuation in
             selectTextWithGranularityAtPoint(
+                nil,
                 point,
                 granularity,
                 isInteractingWithFocusedElement,

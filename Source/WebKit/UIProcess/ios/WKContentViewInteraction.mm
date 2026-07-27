@@ -5565,7 +5565,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
-    protect(_page)->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
+    protect(_page)->selectWithGesture(std::nullopt, WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
         selectionChangedWithGesture(_textInteractionWrapper.get(), point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
@@ -5946,7 +5946,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     _usingMouseDragForSelection = [_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded;
 #endif
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    protect(_page)->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
+    protect(_page)->selectTextWithGranularityAtPoint(std::nullopt, WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         --view->_suppressNonEditableSingleTapTextInteractionCount;

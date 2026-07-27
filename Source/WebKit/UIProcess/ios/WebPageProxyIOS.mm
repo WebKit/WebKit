@@ -1195,12 +1195,16 @@ void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const
     
     if (newEditorState.shouldIgnoreSelectionChanges)
         return;
-    
+
     updateFontAttributesAfterEditorStateChange();
     // We always need to notify the client on iOS to make sure the selection is redrawn,
     // even during composition to support phrase boundary gesture.
     if (RefPtr pageClient = this->pageClient())
         pageClient->selectionDidChange();
+
+    // If the selection is in a cross-origin subframe, its visual rects arrived in that subframe's
+    // coordinates; translate them to main-frame coordinates and redraw once resolved.
+    updateSelectionVisualDataToMainFrameCoordinatesIfNeeded();
 }
 
 void WebPageProxy::dispatchDidUpdateEditorState()
@@ -1306,6 +1310,80 @@ void WebPageProxy::convertEditorStateSelectionRectToMainFrameCoordinates(WebCore
 
     convertRectToMainFrameCoordinates(rect, editorState().visualData->rootFrameID, [rect, completionHandler = WTF::move(completionHandler)](std::optional<WebCore::FloatRect> convertedRect) mutable {
         completionHandler(convertedRect.value_or(rect));
+    });
+}
+
+void WebPageProxy::updateSelectionVisualDataToMainFrameCoordinatesIfNeeded()
+{
+    RefPtr focusedFrame = this->focusedFrame();
+    if (!focusedFrame)
+        return;
+
+    Ref rootFrame = focusedFrame->rootFrame();
+    if (rootFrame->isMainFrame())
+        return;
+
+    if (!editorState().hasVisualData())
+        return;
+
+    auto stateIdentifier = editorState().identifier;
+
+    // Translate a given EditorState's rects at most once. Mark it up front so an in-flight conversion
+    // isn't launched twice for the same selection.
+    if (internals().lastSelectionVisualDataConvertedToMainFrameCoordinates == stateIdentifier)
+        return;
+    internals().lastSelectionVisualDataConvertedToMainFrameCoordinates = stateIdentifier;
+
+    // The selection rects are relative to the focused frame's local root view. Compute where that
+    // root view's origin lands in main-frame (root view) coordinates, then translate the rects by it
+    // so the selection highlight and handles are drawn in the correct place.
+    convertPointToMainFrameCoordinates(WebCore::FloatPoint { }, rootFrame->frameID(), [weakThis = WeakPtr { *this }, stateIdentifier](std::optional<WebCore::FloatPoint> convertedOrigin) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !convertedOrigin)
+            return;
+
+        // If the selection moved to another frame while we were waiting, that update initiated a
+        // newer conversion (changing the identifier below); this stale one must not apply its offset.
+        if (protectedThis->internals().lastSelectionVisualDataConvertedToMainFrameCoordinates != stateIdentifier)
+            return;
+
+        WebCore::IntSize offset = toIntSize(roundedIntPoint(*convertedOrigin));
+        if (offset.isZero())
+            return;
+
+        // Re-resolve the editor state we need to mutate; bail if the selection changed meanwhile.
+        auto& editorState = [&]() -> EditorState& {
+            if (RefPtr frame = protectedThis->focusedFrame()) {
+                if (RefPtr remotePageProxy = protect(protectedThis->m_browsingContextGroup)->remotePageInProcess(*protectedThis, protect(frame->process())))
+                    return remotePageProxy->editorState();
+            }
+            return protectedThis->internals().editorState;
+        }();
+
+        if (editorState.identifier != stateIdentifier || !editorState.hasVisualData())
+            return;
+
+        auto& visualData = *editorState.visualData;
+        auto moveRect = [&](WebCore::IntRect& rect) { rect.move(offset); };
+        auto moveGeometries = [&](Vector<WebCore::SelectionGeometry>& geometries) {
+            for (auto& geometry : geometries) {
+                auto quad = geometry.quad();
+                quad.move(WebCore::FloatSize { offset });
+                geometry.setQuad(quad);
+            }
+        };
+
+        moveRect(visualData.caretRectAtStart);
+        moveRect(visualData.caretRectAtEnd);
+        moveRect(visualData.selectionClipRect);
+        moveRect(visualData.editableRootBounds);
+        moveRect(visualData.markedTextCaretRectAtStart);
+        moveRect(visualData.markedTextCaretRectAtEnd);
+        moveGeometries(visualData.selectionGeometries);
+        moveGeometries(visualData.markedTextRects);
+
+        if (RefPtr pageClient = protectedThis->pageClient())
+            pageClient->selectionDidChange();
     });
 }
 
