@@ -94,7 +94,7 @@ struct _WPESettingsPrivate {
             { WPE_SETTING_DISABLE_ANIMATIONS, G_VARIANT_TYPE_BOOLEAN, g_variant_ref_sink(g_variant_new_boolean(false)) },
             { WPE_SETTING_FONT_ANTIALIAS, G_VARIANT_TYPE_BOOLEAN, g_variant_ref_sink(g_variant_new_boolean(true)) },
             { WPE_SETTING_FONT_HINTING_STYLE, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_HINTING_STYLE_SLIGHT)) },
-            { WPE_SETTING_FONT_SUBPIXEL_LAYOUT, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB)) },
+            { WPE_SETTING_FONT_SUBPIXEL_LAYOUT, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE)) },
             { WPE_SETTING_FONT_DPI, G_VARIANT_TYPE_DOUBLE, g_variant_ref_sink(g_variant_new_double(96.0)) },
             { WPE_SETTING_KEY_REPEAT_DELAY, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(400)) },
             { WPE_SETTING_KEY_REPEAT_INTERVAL, G_VARIANT_TYPE_UINT32, g_variant_ref_sink(g_variant_new_uint32(80)) },

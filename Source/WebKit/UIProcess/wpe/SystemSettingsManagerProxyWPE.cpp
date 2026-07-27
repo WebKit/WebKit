@@ -137,7 +137,9 @@ String SystemSettingsManagerProxy::xftHintStyle() const
 
 String SystemSettingsManagerProxy::xftRGBA() const
 {
-    switch (getUint8(m_settings, WPE_SETTING_FONT_SUBPIXEL_LAYOUT, WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB)) {
+    switch (getUint8(m_settings, WPE_SETTING_FONT_SUBPIXEL_LAYOUT, WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE)) {
+    case WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE:
+        return { };
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB:
         return "rgb"_s;
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR:
@@ -148,7 +150,7 @@ String SystemSettingsManagerProxy::xftRGBA() const
         return "vbgr"_s;
     }
     ASSERT_NOT_REACHED();
-    return "rgb"_s;
+    return { };
 }
 
 int SystemSettingsManagerProxy::xftDPI() const
