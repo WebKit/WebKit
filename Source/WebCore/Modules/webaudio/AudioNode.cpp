@@ -220,9 +220,8 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
 ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 {
-    Locker locker { context().graphLock() };
-
     ASSERT(isMainThread());
+    Locker locker { context().graphLock() };
 
     INFO_LOG(LOGIDENTIFIER, param.name(), ", output = ", outputIndex);
 
