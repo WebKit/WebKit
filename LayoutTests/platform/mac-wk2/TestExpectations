@@ -2222,8 +2222,6 @@ webkit.org/b/315308 http/tests/inspector/network/cross-origin-iframe-get-respons
 
 webkit.org/b/308165 [ Debug ] scrollingcoordinator/mac/latching/simple-page-rubberbands.html [ Pass Failure ]
 
-webkit.org/b/315578 [ Sequoia ] imported/w3c/web-platform-tests/url/IdnaTestV2.any.html [ Failure ]
-
 webkit.org/b/311759 [ Release arm64 ] imported/w3c/web-platform-tests/event-timing/keydown.html [ Pass Failure ]
 
 webkit.org/b/308325 [ Debug ] http/wpt/cache-storage/cache-in-stopped-context.html [ Pass Failure ]

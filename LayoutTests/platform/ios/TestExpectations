@@ -8485,8 +8485,6 @@ webkit.org/b/316218 fast/scrolling/ios/scroll-into-view-smooth-after-snap.html [
 
 webkit.org/b/316228 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Pass Timeout Failure ]
 
-webkit.org/b/316118 imported/w3c/web-platform-tests/url/IdnaTestV2.any.html [ Failure ]
-
 fast/events/pointerleave-after-ancestor-removal.html [ Skip ]
 
 webkit.org/b/316446 imported/w3c/web-platform-tests/css/css-borders/border-width-rounding.tentative.html [ Failure ]
