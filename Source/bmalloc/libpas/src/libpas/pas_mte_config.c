@@ -117,7 +117,7 @@ static void pas_mte_do_initialization(void)
 
     if (is_env_true("MTE_overrideEnablementForJavaScriptCore")) {
         PAS_ASSERT(!is_env_false("MTE_overrideEnablementForJavaScriptCore"));
-        config->enabled = false;
+        config->enabled = true;
     }
     if (is_env_false("MTE_overrideEnablementForJavaScriptCore"))
         config->enabled = false;
