@@ -7714,6 +7714,13 @@ void Document::resume(ReasonForSuspension reason)
 
     if (settings().serviceWorkersEnabled() && reason == ReasonForSuspension::BackForwardCache)
         setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    if (reason == ReasonForSuspension::BackForwardCache) {
+        if (RefPtr immersive = immersiveIfExists())
+            immersive->didResumeFromBackForwardCache();
+    }
+#endif
 }
 
 void Document::registerForDocumentSuspensionCallbacks(Element& element)

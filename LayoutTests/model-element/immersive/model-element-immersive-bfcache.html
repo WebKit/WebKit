@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ModelElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true UsesBackForwardCache=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<script>
+jsTestIsAsync = true;
+internals.disableModelLoadDelaysForTesting();
+
+let model;
+
+function requestImmersiveWithUserGesture() {
+    return new Promise((resolve, reject) => {
+        internals.withUserGesture(() => {
+            model.requestImmersive().then(resolve, reject);
+        });
+    });
+}
+
+window.addEventListener("pageshow", async (event) => {
+    if (!event.persisted)
+        return;
+
+    debug("Restored from the back/forward cache.");
+    shouldBeNull("document.immersiveElement");
+
+    try {
+        await requestImmersiveWithUserGesture();
+        shouldBe("document.immersiveElement", "model");
+        testPassed("Re-entered the immersive environment after restoring from the back/forward cache.");
+    } catch (error) {
+        testFailed("Could not re-enter the immersive environment after restore: " + error);
+    }
+
+    finishJSTest();
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    description("A page whose &lt;model&gt; is immersive should reset its immersive state when restored from the back/forward cache, so its UI is not stuck active and re-entry works.");
+
+    model = document.getElementById("model");
+    await model.ready;
+
+    await requestImmersiveWithUserGesture();
+    shouldBe("document.immersiveElement", "model");
+
+    debug("Navigating away to place the page in the back/forward cache.");
+    window.location.href = "../resources/go-back-on-load.html";
+});
+</script>
+<body>
+<model id="model"><source src="../resources/cube.usdz"></model>
+<div id="console"></div>
+</body>
+</html>

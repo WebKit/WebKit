@@ -468,6 +468,19 @@ void DocumentImmersive::clear()
     clearPendingEvents();
 }
 
+void DocumentImmersive::didResumeFromBackForwardCache()
+{
+    // The ImmersiveSpace was dismissed by the navigation, clean-up state.
+    RefPtr previouslyImmersiveElement = m_immersiveElement;
+
+    clear();
+
+    if (previouslyImmersiveElement) {
+        previouslyImmersiveElement->exitImmersivePresentation([] { });
+        updateElementIsImmersive(previouslyImmersiveElement.get(), false);
+    }
+}
+
 }
 
 #endif
