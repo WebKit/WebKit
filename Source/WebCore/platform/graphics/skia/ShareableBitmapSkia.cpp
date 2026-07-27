@@ -84,7 +84,10 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
     FloatRect scaledDestRect(dstPoint, srcRect.size());
     scaledDestRect.scale(scaleFactor);
     auto image = createPlatformImage(BackingStoreCopy::DontCopyBackingStore);
-    context.platformContext()->drawImageRect(image.get(), scaledSrcRect, scaledDestRect, { }, nullptr, { });
+    SkPaint paint;
+    if (context.compositeMode().operation == CompositeOperator::Copy)
+        paint.setBlendMode(SkBlendMode::kSrc);
+    context.platformContext()->drawImageRect(image.get(), scaledSrcRect, scaledDestRect, { }, &paint, { });
 }
 
 RefPtr<Image> ShareableBitmap::createImage()
