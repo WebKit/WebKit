@@ -33,6 +33,7 @@
 #import "ImageAdapter.h"
 #import "Logging.h"
 #import "MediaPlayer.h"
+#import "MediaSessionManagerClient.h"
 #import "MediaStrategy.h"
 #import "NowPlayingInfo.h"
 #import "Page.h"
@@ -313,9 +314,7 @@ void MediaSessionManagerCocoa::removeSession(PlatformMediaSessionInterface& sess
 
     if (session.isActiveNowPlayingSession()) {
         session.setActiveNowPlayingSession(false);
-        // FIXME: Make a better abstraction so we don't need to access a WebCore::Page from a PlatformMediaSessionManager.
-        if (RefPtr page = pageIdentifier() ? Page::fromPageIdentifier(*pageIdentifier()) : nullptr)
-            page->hasActiveNowPlayingSessionChanged();
+        client().hasActiveNowPlayingSessionChanged(&session);
     }
 
     if (hasNoSession()) {
@@ -526,9 +525,7 @@ void MediaSessionManagerCocoa::updateActiveNowPlayingSession(RefPtr<PlatformMedi
     });
 
     if (activeSessionChanged) {
-        // FIXME: Make a better abstraction so we don't need to access a WebCore::Page from a PlatformMediaSessionManager.
-        if (RefPtr page = pageIdentifier() ? Page::fromPageIdentifier(*pageIdentifier()) : nullptr)
-            page->hasActiveNowPlayingSessionChanged();
+        client().hasActiveNowPlayingSessionChanged(activeNowPlayingSession.get());
 
         adjustNowPlayingUpdateInterval();
     }
