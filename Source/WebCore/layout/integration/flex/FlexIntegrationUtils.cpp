@@ -441,7 +441,7 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
 
     auto blockAxisContentSize = [&] {
         auto flexBasis = FlexFormattingUtils::flexBasisForFlexItem(renderer);
-        if (flexBasis.isPercentOrCalculated() && !flexBox().flexItemMainSizeIsDefinite(renderer, flexBasis))
+        if (flexBasis.isPercentOrCalculated() && !flexBox().flexLayout().flexItemMainSizeIsDefinite(renderer, flexBasis))
             return flexItemContentLogicalHeight(flexLayoutItem) + renderer.scrollbarLogicalHeight();
         return renderer.logicalHeight() - renderer.borderAndPaddingLogicalHeight();
     }();
@@ -453,7 +453,7 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
 
 template<typename SizeType> bool FlexIntegrationUtils::flexItemMainSizeIsDefinite(const FlexLayoutItem& flexLayoutItem, const SizeType& size)
 {
-    return flexBox().flexItemMainSizeIsDefinite(flexLayoutItem.renderer.get(), size);
+    return flexBox().flexLayout().flexItemMainSizeIsDefinite(flexLayoutItem.renderer.get(), size);
 }
 
 // Explicit instantiations for the SizeTypes FlexFormattingContext resolves through the integration from a separate translation unit.
