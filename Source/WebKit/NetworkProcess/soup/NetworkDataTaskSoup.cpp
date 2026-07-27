@@ -1475,7 +1475,8 @@ void NetworkDataTaskSoup::fileQueryInfoCallback(GFile* file, GAsyncResult* resul
     task->m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
     task->m_response.setExpectedContentLength(g_file_info_get_size(info.get()));
 
-    task->m_session->networkProcess().canShowMIMEType(mimeTypeFromExtension, [task = RefPtr(protectedThis), file = GRefPtr(file), mimeTypeFromExtension = mimeTypeFromExtension.isolatedCopy(), mimeTypeFromContent = WTF::move(mimeTypeFromContent)](bool canShowMIMEType) mutable {
+    RefPtr taskReference = task;
+    taskReference->m_session->networkProcess().canShowMIMEType(mimeTypeFromExtension, [task = WTF::move(protectedThis), file = GRefPtr(file), mimeTypeFromExtension = mimeTypeFromExtension.isolatedCopy(), mimeTypeFromContent = WTF::move(mimeTypeFromContent)](bool canShowMIMEType) mutable {
         if (canShowMIMEType || mimeTypeFromContent.isEmpty())
             task->m_response.setMimeType(WTF::move(mimeTypeFromExtension));
         else
