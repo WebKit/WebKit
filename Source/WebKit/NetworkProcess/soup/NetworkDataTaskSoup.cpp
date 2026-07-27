@@ -1481,7 +1481,8 @@ void NetworkDataTaskSoup::fileQueryInfoCallback(GFile* file, GAsyncResult* resul
             task->m_response.setMimeType(WTF::move(mimeTypeFromExtension));
         else
             task->m_response.setMimeType(WTF::move(mimeTypeFromContent));
-        g_file_read_async(file.get(), RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(readFileCallback), task.leakRef());
+        GRefPtr cancellable = task->m_cancellable;
+        g_file_read_async(file.get(), RunLoopSourcePriority::AsyncIONetwork, cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(readFileCallback), task.leakRef());
     });
 }
 
