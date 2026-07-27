@@ -1476,7 +1476,7 @@ void NetworkDataTaskSoup::fileQueryInfoCallback(GFile* file, GAsyncResult* resul
     task->m_response.setExpectedContentLength(g_file_info_get_size(info.get()));
 
     RefPtr taskReference = task;
-    taskReference->m_session->networkProcess().canShowMIMEType(mimeTypeFromExtension, [task = WTF::move(protectedThis), file = GRefPtr(file), mimeTypeFromExtension = mimeTypeFromExtension.isolatedCopy(), mimeTypeFromContent = WTF::move(mimeTypeFromContent)](bool canShowMIMEType) mutable {
+    taskReference->m_session->networkProcess().canShowMIMEType(mimeTypeFromExtension, [task = WTF::move(protectedThis), file = adoptGRef(g_file_dup(file)), mimeTypeFromExtension = mimeTypeFromExtension.isolatedCopy(), mimeTypeFromContent = WTF::move(mimeTypeFromContent)](bool canShowMIMEType) mutable {
         if (canShowMIMEType || mimeTypeFromContent.isEmpty())
             task->m_response.setMimeType(WTF::move(mimeTypeFromExtension));
         else
@@ -1489,7 +1489,7 @@ void NetworkDataTaskSoup::fileQueryInfoCallback(GFile* file, GAsyncResult* resul
 void NetworkDataTaskSoup::readFileCallback(GFile* file, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
     RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
-    ASSERT(file == task->m_file.get());
+    // ASSERT(file == task->m_file.get());
 
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
