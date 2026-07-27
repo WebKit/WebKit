@@ -1923,9 +1923,10 @@ bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) c
             return false;
     }
 
+    RefPtr frameBeforeLayout = this->frame();
     protect(m_document)->updateLayoutIgnorePendingStylesheets();
     RefPtr frame = this->frame();
-    if (m_document->frame() != frame.get())
+    if (frame != frameBeforeLayout)
         return false;
     if (!frame)
         return false;
