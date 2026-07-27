@@ -82,7 +82,7 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
     const_cast<Image&>(*image).load(protect(document.cachedResourceLoader()), options);
 }
 
-static void loadExternalSVGResource(Document& document, const WTF::URL& url)
+static void loadExternalSVGResource(Document& document, const Element* element, const WTF::URL& url)
 {
     if (url.isNull())
         return;
@@ -97,9 +97,14 @@ static void loadExternalSVGResource(Document& document, const WTF::URL& url)
     if (extensions->hasExternalSVGResource(documentURL))
         return;
 
+    // The resource is fetched as an image, so it is subject to img-src CSP unless it lives in a user-agent
+    // shadow tree (matching loadPendingImage).
+    bool isInUserAgentShadowTree = element && element->isInUserAgentShadowTree();
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
     options.mode = FetchOptions::Mode::SameOrigin;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.contentSecurityPolicyImposition = isInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    options.shouldEnableContentExtensionsCheck = isInUserAgentShadowTree ? ShouldEnableContentExtensionsCheck::No : ShouldEnableContentExtensionsCheck::Yes;
 
     CachedResourceRequest request(ResourceRequest(WTF::URL { documentURL }), options);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
@@ -109,22 +114,34 @@ static void loadExternalSVGResource(Document& document, const WTF::URL& url)
     extensions->addExternalSVGResource(documentURL, *cachedImage, document);
 }
 
-static void loadPendingExternalSVGPaint(Document& document, const Style::SVGPaint& paint)
+static void loadPendingExternalSVGPaint(Document& document, const Element* element, const Style::SVGPaint& paint)
 {
     if (auto url = paint.tryAnyURL())
-        loadExternalSVGResource(document, url->resolved);
+        loadExternalSVGResource(document, element, url->resolved);
 }
 
-static void loadPendingExternalSVGMarker(Document& document, const Style::SVGMarkerResource& marker)
+static void loadPendingExternalSVGMarker(Document& document, const Element* element, const Style::SVGMarkerResource& marker)
 {
     if (auto url = marker.tryURL())
-        loadExternalSVGResource(document, url->resolved);
+        loadExternalSVGResource(document, element, url->resolved);
 }
 
-static void loadPendingExternalSVGClipPath(Document& document, const Style::ClipPath& clipPath)
+static void loadPendingExternalSVGClipPath(Document& document, const Element* element, const Style::ClipPath& clipPath)
 {
     if (auto referencePath = clipPath.tryReference())
-        loadExternalSVGResource(document, referencePath->url().resolved);
+        loadExternalSVGResource(document, element, referencePath->url().resolved);
+}
+
+static void loadPendingExternalSVGFilter(Document& document, const Element* element, const Style::Filter& filter)
+{
+    if (filter.size() != 1)
+        return;
+    WTF::switchOn(filter.first(),
+        [&](const Style::FilterReference& filterReference) {
+            loadExternalSVGResource(document, element, filterReference.url.resolved);
+        },
+        [](const auto&) { }
+    );
 }
 
 void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
@@ -165,27 +182,18 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
         loadPendingImage(document, shapeValueImage.get(), element, LoadPolicy::Anonymous);
 
     if (document.settings().svgExternalResourcesEnabled()) {
-        // Paint servers, markers, and filter= resolve through SVGResources, which only applies to SVG
-        // elements.
+        // Paint servers and markers resolve through SVGResources, which only applies to SVG elements.
         if (element && is<SVGElement>(*element)) {
-            loadPendingExternalSVGPaint(document, style.fill());
-            loadPendingExternalSVGPaint(document, style.stroke());
+            loadPendingExternalSVGPaint(document, element, style.fill());
+            loadPendingExternalSVGPaint(document, element, style.stroke());
 
-            loadPendingExternalSVGMarker(document, style.markerStart());
-            loadPendingExternalSVGMarker(document, style.markerMid());
-            loadPendingExternalSVGMarker(document, style.markerEnd());
-
-            if (style.filter().size() == 1) {
-                WTF::switchOn(style.filter().first(),
-                    [&](const Style::FilterReference& filterReference) {
-                        loadExternalSVGResource(document, filterReference.url.resolved);
-                    },
-                    [](const auto&) { }
-                );
-            }
+            loadPendingExternalSVGMarker(document, element, style.markerStart());
+            loadPendingExternalSVGMarker(document, element, style.markerMid());
+            loadPendingExternalSVGMarker(document, element, style.markerEnd());
         }
 
-        loadPendingExternalSVGClipPath(document, style.clipPath());
+        loadPendingExternalSVGClipPath(document, element, style.clipPath());
+        loadPendingExternalSVGFilter(document, element, style.filter());
     }
 
     // Are there other pseudo-elements that need resource loading?

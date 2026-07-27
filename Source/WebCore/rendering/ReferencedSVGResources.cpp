@@ -355,6 +355,15 @@ RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeSco
     if (filterReference.cachedFragment.isEmpty())
         return nullptr;
 
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(filterReference.url.resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        if (!resolvedDocument)
+            return nullptr;
+        return downcast<SVGFilterElement>(elementForResourceID(*resolvedDocument, filterReference.cachedFragment, SVGNames::filterTag));
+    }
+
     return downcast<SVGFilterElement>(elementForResourceID(treeScope, filterReference.cachedFragment, SVGNames::filterTag));
 }
 

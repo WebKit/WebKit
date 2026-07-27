@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Blocked CSS filter: SVG Test timed out
+PASS Blocked CSS filter: SVG
 
