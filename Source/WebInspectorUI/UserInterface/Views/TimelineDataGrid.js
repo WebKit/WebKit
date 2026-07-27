@@ -47,7 +47,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         }
 
         if (this._scopeBarColumns.length > 1) {
-            console.error("Creating a TimelineDataGrid with more than one filterable column is not yet supported.");
+            console.assert(false, this._scopeBarColumns);
             return;
         }
 

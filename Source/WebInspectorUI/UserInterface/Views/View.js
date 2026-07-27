@@ -91,26 +91,26 @@ WI.View = class View extends WI.Object
 
     insertSubviewBefore(view, referenceView)
     {
-        console.assert(view instanceof WI.View);
-        console.assert(!referenceView || referenceView instanceof WI.View);
-        console.assert(view !== WI.View._rootView, "Root view cannot be a subview.");
+        console.assert(view instanceof WI.View, view);
+        console.assert(!referenceView || referenceView instanceof WI.View, referenceView);
+        console.assert(view !== WI.View._rootView, view);
 
         console.assert(!view.parentView, view);
 
         if (this._subviews.includes(view)) {
-            console.assert(false, "Cannot add view that is already a subview.", view);
+            console.assert(false, view);
             return;
         }
 
         const beforeIndex = referenceView ? this._subviews.indexOf(referenceView) : this._subviews.length;
         if (beforeIndex === -1) {
-            console.assert(false, "Cannot insert view. Invalid reference view.", referenceView);
+            console.assert(false, referenceView);
             return;
         }
 
         this._subviews.insertAtIndex(view, beforeIndex);
 
-        console.assert(!view.element.parentNode || this._element.contains(view.element.parentNode), "Subview DOM element must be a descendant of the parent view element.");
+        console.assert(!view.element.parentNode || this._element.contains(view.element.parentNode), this, view);
         if (!view.element.parentNode)
             this._element.insertBefore(view.element, referenceView ? referenceView.element : null);
 
@@ -119,12 +119,12 @@ WI.View = class View extends WI.Object
 
     removeSubview(view)
     {
-        console.assert(view instanceof WI.View);
-        console.assert(this._element.contains(view.element), "Subview DOM element must be a child of the parent view element.");
+        console.assert(view instanceof WI.View, view);
+        console.assert(this._element.contains(view.element), this, view);
 
         let index = this._subviews.lastIndexOf(view);
         if (index === -1) {
-            console.assert(false, "Cannot remove view which isn't a subview.", view);
+            console.assert(false, view);
             return;
         }
 
@@ -145,7 +145,7 @@ WI.View = class View extends WI.Object
 
     replaceSubview(oldView, newView)
     {
-        console.assert(oldView !== newView, "Cannot replace subview with itself.");
+        console.assert(oldView !== newView, oldView, newView);
         if (oldView === newView)
             return;
 
@@ -233,7 +233,7 @@ WI.View = class View extends WI.Object
 
         for (let parentView = this.parentView; parentView; parentView = parentView.parentView) {
             parentView._dirtyDescendantsCount += this._dirty ? 1 : -1;
-            console.assert(parentView._dirtyDescendantsCount >= 0);
+            console.assert(parentView._dirtyDescendantsCount >= 0, parentView);
         }
     }
 
@@ -249,7 +249,7 @@ WI.View = class View extends WI.Object
         if (dirtyDescendantsCount) {
             for (let view = this.parentView; view; view = view.parentView) {
                 view._dirtyDescendantsCount -= dirtyDescendantsCount;
-                console.assert(view._dirtyDescendantsCount >= 0);
+                console.assert(view._dirtyDescendantsCount >= 0, view);
             }
         }
 

@@ -165,7 +165,7 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
             return;
 
         if (this._resourceType) {
-            console.assert(resource.type !== this._resourceType);
+            console.assert(resource.type !== this._resourceType, resource, this._resourceType);
             this.remove(resource);
             return;
         }

@@ -63,7 +63,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         case CPUTimelineView.SampleType.Style:
             return WI.UIString("Styles");
         }
-        console.error("Unknown sample type", type);
+        console.assert(false, type);
     }
 
     static get cpuUsageViewHeight() { return 135; }
@@ -1241,7 +1241,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                 return false;
 
             default:
-                console.error("Unhandled ScriptTimelineRecord.EventType", record.eventType);
+                console.assert(false, record);
                 return false;
             }
         });
@@ -1267,7 +1267,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                 return false;
 
             default:
-                console.error("Unhandled LayoutTimelineRecord.EventType", record.eventType);
+                console.assert(false, record);
                 return false;
             }
         });
@@ -1557,7 +1557,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         if (event.target.localName === "rect") {
             if (this._attemptSelectIndicatatorTimelineRecord(clickStartTime, clickEndTime))
                 return;
-            console.assert(false, "If the user clicked on a rect there should have been a record in this pixel range");
+            console.assert(false, event, clickStartTime, clickEndTime);
         }
 
         // Spiral out 4 pixels each side to try and select a nearby record.
@@ -1589,7 +1589,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             case WI.LayoutTimelineRecord.EventType.LargestContentfulPaint:
                 return false;
             default:
-                console.error("Unhandled LayoutTimelineRecord.EventType", record.eventType);
+                console.assert(false, record);
                 return false;
             }
         });
@@ -1620,7 +1620,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             case WI.ScriptTimelineRecord.EventType.GarbageCollected:
                 return false;
             default:
-                console.error("Unhandled ScriptTimelineRecord.EventType", record.eventType);
+                console.assert(false, record);
                 return false;
             }
         });

@@ -97,7 +97,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         target.DOMAgent.getDocument((error, root) => {
             if (error) {
-                console.warn("FrameDOMAgent.getDocument failed:", error);
+                console.assert(false, error);
                 return;
             }
 
@@ -586,7 +586,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         return function(error, result) {
             if (error)
-                console.error("Error during DOMAgent operation: " + error);
+                WI.reportInternalError(error);
             callback(error ? null : result);
         };
     }
@@ -873,7 +873,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         function callback(nodeId, error, attributes)
         {
             if (error) {
-                console.error("Error during DOMAgent operation: " + error);
+                WI.reportInternalError(error);
                 return;
             }
             var node = this._idToDOMNode[nodeId];

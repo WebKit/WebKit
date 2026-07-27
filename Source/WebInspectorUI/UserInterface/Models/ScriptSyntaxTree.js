@@ -39,7 +39,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         } catch (error) {
             this._parsedSuccessfully = false;
             this._syntaxTree = null;
-            console.error("Couldn't parse JavaScript File: " + script.url, error);
+            console.assert(false, script, error);
         }
     }
 
@@ -286,7 +286,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 case WI.ScriptSyntaxTree.NodeType.RestElement:
                     return gatherIdentifiers(node.argument);
                 default:
-                    console.assert(false, "Unexpected node type in variable declarator: " + node.type);
+                    console.assert(false, node);
                     return [];
             }
         }
@@ -1078,7 +1078,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
 
         default:
-            console.error("Unsupported Syntax Tree Node: " + node.type, JSON.stringify(node));
+            console.assert(false, node);
             return null;
         }
 

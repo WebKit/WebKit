@@ -117,7 +117,7 @@ WI.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WI.DetailsSecti
 
     addItem(id, label, value, color, checkbox, checked)
     {
-        console.assert(!this._items.has(id), "Already added item with id: " + id);
+        console.assert(!this._items.has(id), id);
         if (this._items.has(id))
             return;
 
@@ -134,7 +134,7 @@ WI.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WI.DetailsSecti
     setItemValue(id, value)
     {
         let item = this._items.get(id);
-        console.assert(item, "Cannot set value for invalid item id: " + id);
+        console.assert(item, id);
         if (!item)
             return;
 

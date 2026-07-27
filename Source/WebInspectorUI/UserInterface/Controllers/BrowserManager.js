@@ -108,7 +108,7 @@ WI.BrowserManager = class BrowserManager
     extensionsEnabled(extensions)
     {
         for (let {extensionId, name} of extensions) {
-            console.assert(!this._extensionNameIdentifierMap.has(extensionId), `Extension already exists with id '${extensionId}'.`);
+            console.assert(!this._extensionNameIdentifierMap.has(extensionId), extensionId);
 
             this._extensionNameIdentifierMap.set(extensionId, name);
         }
@@ -118,7 +118,7 @@ WI.BrowserManager = class BrowserManager
     {
         for (let extensionId of extensionIds) {
             let name = this._extensionNameIdentifierMap.take(extensionId);
-            console.assert(name, `Missing extension with id '${extensionId}'.`);
+            console.assert(name, extensionId);
         }
     }
 };

@@ -147,7 +147,7 @@ FormatterWorker = class FormatterWorker
             return;
         }
 
-        console.error("Unexpected FormatterWorker message", data);
+        console.assert(false, data);
     }
 };
 

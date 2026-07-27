@@ -44,14 +44,10 @@ WI.AuditManager = class AuditManager extends WI.Object
 
     static synthesizeWarning(message)
     {
-        message = WI.UIString("Audit Warning: %s").format(message);
-
-        if (window.InspectorTest) {
-            console.warn(message);
+        if (window.InspectorTest)
             return;
-        }
 
-        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, WI.UIString("Audit Warning: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
@@ -59,14 +55,10 @@ WI.AuditManager = class AuditManager extends WI.Object
 
     static synthesizeError(message)
     {
-        message = WI.UIString("Audit Error: %s").format(message);
-
-        if (window.InspectorTest) {
-            console.error(message);
+        if (window.InspectorTest)
             return;
-        }
 
-        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, WI.UIString("Audit Error: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);

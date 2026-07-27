@@ -414,7 +414,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             break;
 
         default:
-            console.error(`Unknown color format: ${this._color.format}`);
+            console.assert(false, this._color);
             return;
         }
 
@@ -448,7 +448,8 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             break;
 
         default:
-            console.error(`Unknown color format: ${this._color.format}`);
+            console.assert(false, this._color);
+            break;
         }
 
         if (this._color.alpha !== 1 || this._needsAlphaColorInput())

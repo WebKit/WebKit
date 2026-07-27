@@ -287,7 +287,7 @@ WI.TimelineView = class TimelineView extends WI.ContentView
         if (node instanceof WI.ProfileDataGridNode)
             return node.callingContextTreeNode.hasStackTraceInTimeRange(startTime, endTime);
 
-        console.error("Unknown DataGridNode, can't filter by time.");
+        console.assert(false, node);
         return true;
     }
 

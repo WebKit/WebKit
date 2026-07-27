@@ -116,7 +116,7 @@ HeapSnapshotWorker = class HeapSnapshotWorker
             return;
         }
 
-        console.error("Unexpected HeapSnapshotWorker message", data);
+        console.assert(false, data);
     }
 };
 

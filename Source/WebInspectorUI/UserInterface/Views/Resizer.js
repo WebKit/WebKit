@@ -73,7 +73,7 @@ WI.Resizer = class Resizer extends WI.Object
         if (this._orientation === WI.Resizer.RuleOrientation.Horizontal)
             return event.pageY;
 
-        console.assert(false, "Unexpected Resizer orientation.", this._orientation);
+        console.assert(false, this._orientation);
     }
 
     _resizerMouseDown(event)

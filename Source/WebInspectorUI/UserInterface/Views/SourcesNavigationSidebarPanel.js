@@ -657,7 +657,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (representedObject instanceof WI.Script) {
             // If the Script has a URL we should have found it earlier.
             if (representedObject.url) {
-                console.assert(false, "Didn't find a ScriptTreeElement for a Script with a URL.", representedObject);
+                console.assert(false, representedObject);
                 return null;
             }
 
@@ -686,7 +686,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (representedObject instanceof WI.CSSStyleSheet) {
             // If the CSSStyleSheet has a URL we should have found it earlier.
             if (representedObject.url) {
-                console.assert(false, "Didn't find a CSSStyleSheetTreeElement for a CSSStyleSheet with a URL.", representedObject);
+                console.assert(false, representedObject);
                 return null;
             }
 
@@ -706,7 +706,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
            return cssStyleSheetTreeElement;
         }
 
-        console.assert(false, "Didn't find a TreeElement for representedObject", representedObject);
+        console.assert(false, representedObject);
         return null;
     }
 
@@ -874,7 +874,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (treeElement instanceof WI.CSSStyleSheetTreeElement)
                 return selectedScopeBarItem[WI.SourcesNavigationSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.StyleSheet;
 
-            console.assert(treeElement instanceof WI.ResourceTreeElement, "Unknown treeElement", treeElement);
+            console.assert(treeElement instanceof WI.ResourceTreeElement, treeElement);
             if (!(treeElement instanceof WI.ResourceTreeElement))
                 return false;
 
@@ -916,7 +916,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
-        console.assert(false, "not reached", popover);
+        console.assert(false, popover);
     }
 
     // Private
@@ -1405,7 +1405,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         if (!treeElement) {
-            console.error("Unknown sourceCode instance", sourceCode);
+            console.assert(false, sourceCode);
             return null;
         }
 
@@ -1796,18 +1796,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         switch (pauseReason) {
         case WI.DebuggerManager.PauseReason.AnimationFrame:
             if (!this._updatePauseReasonForBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint, WI.UIString("requestAnimationFrame Fired"))) {
-                console.assert(false, "not reached");
+                console.assert(false, WI.domDebuggerManager.allAnimationFramesBreakpoint);
                 break;
             }
             return true;
 
         case WI.DebuggerManager.PauseReason.Assertion: {
             // FIXME: We should include the assertion condition string.
-            console.assert(pauseData, "Expected data with an assertion, but found none.");
+            console.assert(pauseData, pauseReason);
 
             let title = pauseData?.message ? this._createBreakpointPauseReasonTitleWithTooltip(WI.UIString("Assertion Failed: %s"), pauseData.message) : WI.UIString("Assertion Failed");
             if (!this._updatePauseReasonForBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint, title)) {
-                console.assert(false, "not reached");
+                console.assert(false, WI.debuggerManager.assertionFailuresBreakpoint);
                 break;
             }
             return true;
@@ -1828,7 +1828,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         case WI.DebuggerManager.PauseReason.Breakpoint: {
-            console.assert(pauseData, "Expected breakpoint identifier, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData || !pauseData.breakpointId)
                 break;
 
@@ -1838,21 +1838,21 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 break;
 
             if (!this._updatePauseReasonForBreakpoint(breakpoint, WI.UIString("Triggered Breakpoint"))) {
-                console.assert(false, "not reached");
+                console.assert(false, breakpoint);
                 break;
             }
             return true;
         }
 
         case WI.DebuggerManager.PauseReason.CSPViolation: {
-            console.assert(pauseData, "Expected data with a CSP Violation, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData)
                 break;
 
             let breakpoint = WI.debuggerManager.allExceptionsBreakpoint || WI.debuggerManager.uncaughtExceptionsBreakpoint;
             let titleElement = this._createBreakpointPauseReasonTitleWithTooltip(WI.UIString("Content Security Policy violation of directive: %s"), pauseData.directive);
             if (!this._updatePauseReasonForBreakpoint(breakpoint, titleElement)) {
-                console.assert(false, "not reached");
+                console.assert(false, breakpoint);
                 break;
             }
             return true;
@@ -1866,14 +1866,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
 
             if (!this._updatePauseReasonForBreakpoint(WI.debuggerManager.debuggerStatementsBreakpoint, WI.UIString("Debugger Statement"))) {
-                console.assert(false, "not reached");
+                console.assert(false, WI.debuggerManager.debuggerStatementsBreakpoint);
                 break;
             }
             return true;
 
         case WI.DebuggerManager.PauseReason.DOM: {
             console.assert(WI.domDebuggerManager.supported);
-            console.assert(pauseData, "Expected DOM breakpoint data, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData || !pauseData.nodeId)
                 break;
 
@@ -1887,12 +1887,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 }
             }
 
-            console.assert(domBreakpoint, "Missing DOM breakpoint of type for node", pauseData.type, domNode);
+            console.assert(domBreakpoint, pauseData.type, domNode);
             if (!domBreakpoint)
                 break;
 
             if (!this._updatePauseReasonForBreakpoint(domBreakpoint, WI.DOMBreakpoint.displayNameForType(domBreakpoint.type))) {
-                console.assert(false, "not reached");
+                console.assert(false, domBreakpoint);
                 break;
             }
 
@@ -1904,7 +1904,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                     return;
 
                 let node = WI.domManager.nodeForId(nodeId);
-                console.assert(node, "Missing node for id.", nodeId);
+                console.assert(node, nodeId);
                 if (!node)
                     return;
 
@@ -1943,7 +1943,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         case WI.DebuggerManager.PauseReason.Listener:
         case WI.DebuggerManager.PauseReason.EventListener: {
-            console.assert(pauseData, "Expected data with an event listener, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData)
                 break;
 
@@ -1953,13 +1953,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!eventBreakpoint)
                 eventBreakpoint = WI.domDebuggerManager.listenerBreakpointsForEventName(pauseData.eventName)[0];
 
-            console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
+            console.assert(eventBreakpoint, pauseData.eventName);
             if (!eventBreakpoint)
                 break;
 
             let titleElement = this._createBreakpointPauseReasonTitleWithTooltip(WI.UIString("\u201C%s\u201D Event Fired"), pauseData.eventName);
             if (!this._updatePauseReasonForBreakpoint(eventBreakpoint, titleElement)) {
-                console.assert(false, "not reached");
+                console.assert(false, eventBreakpoint);
                 break;
             }
 
@@ -1980,7 +1980,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         case WI.DebuggerManager.PauseReason.Exception: {
-            console.assert(pauseData, "Expected data with an exception, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData)
                 break;
 
@@ -1990,26 +1990,26 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let breakpoint = WI.debuggerManager.allExceptionsBreakpoint || WI.debuggerManager.uncaughtExceptionsBreakpoint;
             let titleElement = this._createBreakpointPauseReasonTitleWithTooltip(WI.UIString("Exception with thrown value: %s"), data.description);
             if (!this._updatePauseReasonForBreakpoint(breakpoint, titleElement)) {
-                console.assert(false, "not reached");
+                console.assert(false, breakpoint);
                 break;
             }
             return true;
         }
 
         case WI.DebuggerManager.PauseReason.FunctionCall: {
-            console.assert(pauseData, "Expected data with an event listener, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData)
                 break;
 
             let symbolicBreakpoint = WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name)[0];
-            console.assert(symbolicBreakpoint, "Expected Symbolic breakpoint for function name.", pauseData.name);
+            console.assert(symbolicBreakpoint, pauseData.name);
             if (!symbolicBreakpoint)
                 break;
 
             const format = WI.UIString("Calling Function \u201C%s\u201D", "Calling Function \u201C%s\u201D @ Sources Navigation Sidebar Panel", "Label shown when JavaScript execution is paused due to a symbolic breakpoint.");
             let titleElement = this._createBreakpointPauseReasonTitleWithTooltip(format, pauseData.name);
             if (!this._updatePauseReasonForBreakpoint(symbolicBreakpoint, titleElement)) {
-                console.assert(false, "not reached");
+                console.assert(false, symbolicBreakpoint);
                 break;
             }
             return true;
@@ -2017,14 +2017,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         case WI.DebuggerManager.PauseReason.Interval:
             if (!this._updatePauseReasonForBreakpoint(WI.debuggerManager.allIntervalsBreakpoint, WI.UIString("setInterval Fired"))) {
-                console.assert(false, "not reached");
+                console.assert(false, WI.debuggerManager.allIntervalsBreakpoint);
                 break;
             }
             return true;
 
         case WI.DebuggerManager.PauseReason.Microtask:
             if (!this._updatePauseReasonForBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint, WI.UIString("Microtask Fired"))) {
-                console.assert(false, "not reached");
+                console.assert(false, WI.debuggerManager.allMicrotasksBreakpoint);
                 break;
             }
             return true;
@@ -2035,7 +2035,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return true;
 
         case WI.DebuggerManager.PauseReason.Timer: {
-            console.assert(pauseData, "Expected data with a timer, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData)
                 break;
 
@@ -2051,7 +2051,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 return true;
             }
 
-            console.assert(false, "not reached");
+            console.assert(false, pauseData);
             break;
         }
 
@@ -2061,7 +2061,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         case WI.DebuggerManager.PauseReason.URL: {
             console.assert(WI.domDebuggerManager.supported);
-            console.assert(pauseData, "Expected URL breakpoint data, but found none.");
+            console.assert(pauseData, pauseReason);
             if (!pauseData)
                 break;
 
@@ -2069,7 +2069,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (pauseData.breakpointURL)
                 urlBreakpoint = WI.domDebuggerManager.urlBreakpointForURL(pauseData.breakpointURL);
             else {
-                console.assert(pauseData.breakpointURL === "", "Should be the All Requests breakpoint which has an empty URL");
+                console.assert(pauseData.breakpointURL === "", pauseData);
                 urlBreakpoint = WI.domDebuggerManager.allRequestsBreakpoint;
             }
             console.assert(urlBreakpoint, pauseData.breakpointURL);
@@ -2078,14 +2078,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             let titleElement = this._createBreakpointPauseReasonTitleWithTooltip(WI.UIString("Requesting \u201C%s\u201D"), pauseData.url);
             if (!this._updatePauseReasonForBreakpoint(urlBreakpoint, titleElement)) {
-                console.assert(false, "not reached");
+                console.assert(false, urlBreakpoint);
                 break;
             }
             return true;
         }
 
         case WI.DebuggerManager.PauseReason.Other:
-            console.error("Paused for unknown reason. We should always have a reason.");
+            console.assert(false, pauseReason);
             break;
         }
 
@@ -2105,7 +2105,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             Constructor = WI.URLBreakpointTreeElement;
         else if (breakpoint instanceof WI.SymbolicBreakpoint)
             Constructor = WI.SymbolicBreakpointTreeElement;
-        console.assert(Constructor);
+        console.assert(Constructor, breakpoint);
         if (!Constructor)
             return false;
 
@@ -2232,7 +2232,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (treeElement instanceof WI.BlackboxedGroupTreeElement)
             return;
 
-        console.error("Unknown tree element", treeElement);
+        console.assert(false, treeElement);
     }
 
     _handleBreakpointTreeOutlineElementRemoved(event)

@@ -925,7 +925,7 @@ WI.TextEditor = class TextEditor extends WI.View
             workerProxy.formatXML(sourceText, indentString, includeSourceMapData, formatCallback);
             break;
         default:
-            console.assert(false, "Unexpected mode attempted to pretty print.");
+            console.assert(false, mode);
             break;
         }
     }

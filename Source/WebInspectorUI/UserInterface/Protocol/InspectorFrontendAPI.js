@@ -176,7 +176,7 @@ InspectorFrontendAPI = {
         }
 
         var methodName = signature.shift();
-        console.assert(InspectorFrontendAPI[methodName], "Unexpected InspectorFrontendAPI method name: " + methodName);
+        console.assert(InspectorFrontendAPI[methodName], methodName);
         if (!InspectorFrontendAPI[methodName])
             return null;
 

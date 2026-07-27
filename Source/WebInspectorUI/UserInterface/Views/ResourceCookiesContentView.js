@@ -198,7 +198,7 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
             break;
 
         default:
-            console.assert("Unexpected sort column", sortColumnIdentifier);
+            console.assert(false, sortColumnIdentifier);
             return null;
         }
 

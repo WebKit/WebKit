@@ -59,7 +59,7 @@ WI.Collection = class Collection extends WI.Object
         if (!isValidType)
             return;
 
-        console.assert(!this._items.has(item));
+        console.assert(!this._items.has(item), this, item);
         this._items.add(item);
 
         this.itemAdded(item);

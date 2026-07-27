@@ -176,7 +176,7 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
             case WI.ScriptClusterTimelineView.ProfileIdentifier:
                 return new WI.ScriptProfileTimelineView(this._displayedTarget, this.representedObject);
             }
-            console.assert(false, "not reached");
+            console.assert(false, contentViewIdentifier);
         });
         this.contentViewContainer.showContentView(contentViewToShow);
     }

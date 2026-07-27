@@ -70,7 +70,7 @@ WI.DirectBackendTarget = class DirectBackendTarget extends WI.Target
                 displayName: WI.UIString("Page"),
             };
         default:
-            console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
+            console.assert(false, WI.sharedApp.debuggableType);
             return {
                 type: WI.TargetType.JavaScript,
                 displayName: WI.UIString("JavaScript Context"),

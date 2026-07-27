@@ -54,19 +54,19 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
 
     get name()
     {
-        console.error("Called name on a MultiplexingBackendTarget");
+        console.assert(false, this);
         return WI.UIString("Page");
     }
 
     get executionContext()
     {
-        console.error("Called executionContext on a MultiplexingBackendTarget");
+        console.assert(false, this);
         return null;
     }
 
     get mainResource()
     {
-        console.error("Called mainResource on a MultiplexingBackendTarget");
+        console.assert(false, this);
         return null;
     }
 };

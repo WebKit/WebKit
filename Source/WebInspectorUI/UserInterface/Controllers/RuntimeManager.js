@@ -130,7 +130,7 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
             this.dispatchEventToListeners(WI.RuntimeManager.Event.DidEvaluate, {objectGroup});
 
             if (error) {
-                console.error(error);
+                WI.reportInternalError(error);
                 callback(null, false);
                 return;
             }

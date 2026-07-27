@@ -228,7 +228,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             return;
         }
 
-        console.error("NavigationSidebarPanel representedObject is missing a saveIdentityToCookie implementation.", representedObject);
+        console.assert(false, representedObject);
     }
 
     // This can be supplemented by subclasses that admit a simpler strategy for static tree elements.

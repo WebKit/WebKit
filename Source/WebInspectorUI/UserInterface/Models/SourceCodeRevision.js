@@ -32,7 +32,7 @@ WI.SourceCodeRevision = class SourceCodeRevision extends WI.Revision
         console.assert(sourceCode instanceof WI.SourceCode);
         console.assert(content === undefined || typeof content === "string");
         console.assert(base64Encoded === undefined || typeof base64Encoded === "boolean");
-        console.assert(mimeType === undefined || typeof mimeType === "string");
+        console.assert(!mimeType || typeof mimeType === "string", mimeType);
 
         this._sourceCode = sourceCode;
 
@@ -69,7 +69,7 @@ WI.SourceCodeRevision = class SourceCodeRevision extends WI.Revision
         }
 
         if (mimeType !== undefined) {
-            console.assert(typeof mimeType === "string");
+            console.assert(!mimeType || typeof mimeType === "string", mimeType);
             this._mimeType = mimeType;
         }
 

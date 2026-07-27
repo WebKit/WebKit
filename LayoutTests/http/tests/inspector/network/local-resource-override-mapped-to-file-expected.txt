@@ -30,7 +30,6 @@ Local Resource Override Content: 'PASS: Should load from file.'
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Linking to file...
 Triggering load...
-WARN: Local Override: could not load “DOES NOT EXIST”
 PASS: Resource Loaded.
 Resource Content: 'PASS: Should not load from file.'
 Local Resource Override Content: 'PASS: Should not load from file.'
@@ -39,7 +38,6 @@ Local Resource Override Content: 'PASS: Should not load from file.'
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Linking to file...
 Triggering load...
-WARN: Local Override: could not load “DOES NOT EXIST”
 PASS: Resource Loaded.
 Resource Content: 'PASS: Should not load from file.'
 Local Resource Override Content: 'PASS: Should not load from file.'

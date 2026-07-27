@@ -95,7 +95,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return null;
         }
 
-        console.assert(false, "not reached", layoutFlag);
+        console.assert(false, layoutFlag);
     }
 
     // Public
@@ -409,7 +409,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 else
                     this.tooltip = WI.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)").format(offsetWidth, offsetHeight, naturalWidth, naturalHeight);
             } catch (e) {
-                console.error(e);
+                WI.reportInternalError(e);
             }
         }
 
@@ -2428,7 +2428,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, popover);
     }
 };
 

@@ -64,8 +64,8 @@ WI.RemoteObject = class RemoteObject
                 this._description = "class " + className;
             }
         } else {
-            // Primitive, BigInt, or null.
-            console.assert(type !== "object" || value === null);
+            // Primitive, BigInt, null, or object returned by value.
+            console.assert(type !== "object" || value === null || typeof value === "object", type, value);
             console.assert(!preview);
 
             this._description = description || (value + "");

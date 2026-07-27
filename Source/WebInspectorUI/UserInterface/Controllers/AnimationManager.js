@@ -102,7 +102,7 @@ WI.AnimationManager = class AnimationManager
 
     animationCreated(animationPayload)
     {
-        console.assert(!this._animationIdMap.has(animationPayload.animationId), `Animation already exists with id ${animationPayload.animationId}.`);
+        console.assert(!this._animationIdMap.has(animationPayload.animationId), animationPayload);
 
         let animation = WI.Animation.fromPayload(animationPayload);
         this._animationCollection.add(animation);

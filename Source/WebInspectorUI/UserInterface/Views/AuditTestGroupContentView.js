@@ -283,7 +283,7 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         if (this.representedObject instanceof WI.AuditTestGroupResult)
             return this.representedObject.results;
 
-        console.error("Unknown representedObject", this.representedObject);
+        console.assert(false, this.representedObject);
         return [];
     }
 

@@ -87,7 +87,7 @@ WI.WebSocketResource = class WebSocketResource extends WI.Resource
 
     requestContentFromBackend()
     {
-        console.assert(false, "A WebSocket's content was requested. WebSockets do not have content so the request is nonsensical.");
+        console.assert(false, this);
 
         return super.requestContentFromBackend();
     }

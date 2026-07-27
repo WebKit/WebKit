@@ -130,7 +130,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
 
         function sourceMapResourceLoadError(error)
         {
-            console.error(error || "There was an unknown error calling Network.loadResource.");
+            WI.reportInternalError(error || "There was an unknown error calling Network.loadResource.");
             this.markAsFailed();
             return Promise.resolve({error: WI.UIString("An error occurred trying to load the resource.")});
         }

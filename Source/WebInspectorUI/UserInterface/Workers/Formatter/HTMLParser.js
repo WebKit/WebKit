@@ -168,7 +168,7 @@ HTMLParser = class HTMLParser {
             return this._parseBogusComment();
         }
 
-        console.assert();
+        console.assert(false, this._mode);
         throw "Missing parser mode";
     }
 

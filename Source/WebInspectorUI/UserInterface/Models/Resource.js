@@ -28,7 +28,7 @@ WI.Resource = class Resource extends WI.SourceCode
 {
     constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, referrerPolicy, integrity, initiatorStackTrace, initiatorSourceCodeLocation, initiatorNode} = {})
     {
-        console.assert(url);
+        console.assert(!url || typeof url === "string", url);
         console.assert(!initiatorStackTrace || initiatorStackTrace instanceof WI.StackTrace, initiatorStackTrace);
 
         super(url);
@@ -182,7 +182,7 @@ WI.Resource = class Resource extends WI.SourceCode
         case WI.Resource.Type.Other:
             return WI.UIString("Other");
         default:
-            console.error("Unknown resource type", type);
+            console.assert(false, type);
             return null;
         }
     }
@@ -285,7 +285,7 @@ WI.Resource = class Resource extends WI.SourceCode
         case InspectorBackend.Enum.Network.ResponseSource.InspectorOverride:
             return WI.Resource.ResponseSource.InspectorOverride;
         default:
-            console.error("Unknown response source type", source);
+            console.assert(false, source);
             return WI.Resource.ResponseSource.Unknown;
         }
     }
@@ -300,7 +300,7 @@ WI.Resource = class Resource extends WI.SourceCode
         case InspectorBackend.Enum.Network.MetricsPriority.High:
             return WI.Resource.NetworkPriority.High;
         default:
-            console.error("Unknown metrics priority", priority);
+            console.assert(false, priority);
             return WI.Resource.NetworkPriority.Unknown;
         }
     }
@@ -803,7 +803,7 @@ WI.Resource = class Resource extends WI.SourceCode
         if (oldType !== type)
             this.dispatchEventToListeners(WI.Resource.Event.TypeDidChange, {oldType});
 
-        console.assert(isNaN(this._estimatedSize));
+        console.assert(isNaN(this._estimatedSize) || this._type === WI.Resource.Type.WebSocket, this, this._estimatedSize, this._type);
         console.assert(isNaN(this._estimatedTransferSize));
 
         // The transferSize becomes 0 when status is 304 or Content-Length is available, so
@@ -1191,7 +1191,7 @@ WI.Resource = class Resource extends WI.SourceCode
             if (InspectorFrontendHost.showCertificate(serializedCertificate))
                 return;
         } catch (e) {
-            console.error(e);
+            WI.reportInternalError(e);
             throw errorString;
         }
 

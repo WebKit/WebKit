@@ -97,7 +97,9 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
     {
         let result = this._chainedOperationsPromise.then(operation);
         this._chainedOperationsPromise = result.catch(() => {});
-        return result.catch((error) => { console.error(error); });
+        return result.catch(function(error) {
+            WI.reportInternalError(error);
+        });
     }
 
     async _undo()
@@ -112,7 +114,7 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
         }
 
         if (!target.hasCommand("DOM.undo")) {
-            console.assert(false, "Edited target should support DOM.undo", target);
+            console.assert(false, target);
             return;
         }
         this._undoTargetStack.pop();
@@ -130,7 +132,7 @@ WI.DOMUndoCoordinator = class DOMUndoCoordinator
         }
 
         if (!target.hasCommand("DOM.redo")) {
-            console.assert(false, "Edited target should support DOM.redo", target);
+            console.assert(false, target);
             return;
         }
         this._redoTargetStack.pop();
