@@ -503,6 +503,20 @@ void AppendPipeline::handleEndOfAppend()
     sourceBufferPrivate().didReceiveAllPendingSamples();
 }
 
+static MediaTime bufferTimeToStreamTime(const GstSegment& segment, GstClockTime bufferTime)
+{
+    if (bufferTime == GST_CLOCK_TIME_NONE)
+        return MediaTime::invalidTime();
+
+    guint64 streamTime;
+    int sign = gst_segment_to_stream_time_full(&segment, GST_FORMAT_TIME, bufferTime, &streamTime);
+    if (!sign) {
+        GST_ERROR("Couldn't map buffer time %" GST_TIME_FORMAT " to segment %" GST_PTR_FORMAT, GST_TIME_ARGS(bufferTime), &segment);
+        return MediaTime::invalidTime();
+    }
+    return sign * fromGstClockTime(streamTime);
+}
+
 void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& sample)
 {
     ASSERT(isMainThread());
@@ -521,28 +535,38 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
         return;
     }
 
+    GstSegment segment;
+    gst_segment_init(&segment, GST_FORMAT_UNDEFINED);
+    gst_segment_copy_into(gst_sample_get_segment(sample.get()), &segment);
+
     auto mediaSample = MediaSampleGStreamer::create(WTF::move(sample), track.presentationSize, track.trackId);
 
-    // Hack, rework when GStreamer >= 1.16 becomes a requirement:
-    // We're not applying edit lists. GStreamer < 1.16 doesn't emit the correct segments to do so.
-    // GStreamer fix in https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/commit/c2a0da8096009f0f99943f78dc18066965be60f9
-    // Also, in order to apply them we would need to convert the timestamps to stream time, which we're not currently
-    // doing for consistency between GStreamer versions.
-    //
-    // In consequence, the timestamps we're handling here are unedited track time. In track time, the first sample is
-    // guaranteed to have DTS == 0, but in the case of streams with B-frames, often PTS > 0. Edit lists fix this by
-    // offsetting all timestamps by that amount in movie time, but we can't do that if we don't have access to them.
-    // (We could assume the track PTS of the sample with track DTS = 0 is the offset, but we don't have any guarantee
-    // we will get appended that sample first, or ever).
-    //
-    // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
-    // results for applications, we extend the duration of this first sample to the left so that it starts at zero.
-    if (mediaSample->decodeTime() == MediaTime::zeroTime() && mediaSample->presentationTime() > MediaTime::zeroTime()
-        && mediaSample->presentationTime() <= MediaTime(1, 1)
-        && mediaSample->isSync()) {
-        GST_DEBUG_OBJECT(pipeline(), "Extending first sample to make it start at PTS=0");
-        mediaSample->extendToTheBeginning();
+    if (segment.format == GST_FORMAT_TIME && (segment.time || segment.start) && GST_BUFFER_PTS_IS_VALID(buffer)) {
+        // MP4 has the concept of edit lists, where some buffer time needs to be offsetted, often very slightly,
+        // to get exact timestamps.
+        MediaTime pts = bufferTimeToStreamTime(segment, GST_BUFFER_PTS(buffer));
+        MediaTime dts = bufferTimeToStreamTime(segment, GST_BUFFER_DTS_IS_VALID(buffer) ? GST_BUFFER_DTS(buffer) : GST_BUFFER_DTS_OR_PTS(buffer));
+        GST_TRACE_OBJECT(track.appsinkPad.get(), "Mapped buffer to segment, PTS %" GST_TIME_FORMAT " -> %s DTS %" GST_TIME_FORMAT " -> %s",
+            GST_TIME_ARGS(GST_BUFFER_PTS(buffer)), pts.toString().utf8().data(), GST_TIME_ARGS(GST_BUFFER_DTS(buffer)), dts.toString().utf8().data());
+        mediaSample->setTimestamps(pts, dts);
+    } else if (!GST_BUFFER_DTS(buffer) && GST_BUFFER_PTS(buffer) > 0
+        && GST_BUFFER_PTS(buffer) <= toGstClockTime(PlatformTimeRanges::timeFudgeFactor())) {
+        // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
+        // results for applications, we used to extend the duration of this first sample to the left so that it starts at zero.
+        // This should be relevant for files that should have an edit list but don't, but we think those files don't exist in
+        // the wild anymore. Instead of correcting the sample, we log a warning. If many users report issues that trigger this
+        // warning, we can consider to return to the old behaviour.
+        GST_WARNING_OBJECT(pipeline(), "Detected first sample of track '%" PRIu64 "' eligible to be extended to "
+            "start at PTS=0 %" GST_PTR_FORMAT ", but extending the first sample has been deprecated after the addition of "
+            "edit lists support. Please report this video for analysis.", track.trackId, buffer);
     }
+
+    GST_TRACE_OBJECT(pipeline(), "append: trackId=%" PRIu64 " PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
+        mediaSample->trackID(),
+        mediaSample->presentationTime().toString().utf8().data(),
+        mediaSample->decodeTime().toString().utf8().data(),
+        mediaSample->duration().toString().utf8().data(),
+        mediaSample->presentationSize().width(), mediaSample->presentationSize().height());
 
     if (track.streamType == StreamType::Text) {
         const auto textTrack = static_cast<InbandTextTrackPrivateGStreamer*>(track.webKitTrack.get());
@@ -1478,6 +1502,7 @@ static GstPadProbeReturn matroskademuxForceSegmentStartToEqualZero(GstPad*, GstP
         gst_event_copy_segment(event, &segment);
 
         segment.start = 0;
+        segment.time = 0;
 
         GRefPtr<GstEvent> newEvent = adoptGRef(gst_event_new_segment(&segment));
         gst_event_replace(reinterpret_cast<GstEvent**>(&info->data), newEvent.get());

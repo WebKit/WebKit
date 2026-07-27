@@ -61,6 +61,7 @@ const PlatformTimeRanges& PlatformTimeRanges::emptyRanges()
 
 MediaTime PlatformTimeRanges::timeFudgeFactor()
 {
+    // Allow hasCurrentTime() to be off by as much as 0.083416s.
     return { 2002, 24000 };
 }
 
