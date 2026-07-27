@@ -18,6 +18,7 @@ TESTS = \
     TestWithStreamBatched \
     TestWithStreamBuffer \
     TestWithStreamServerConnectionHandle \
+    TestWithStreamSwift \
     TestWithSuperclass \
     TestWithSuperclassAndWantsAsyncDispatch \
     TestWithSuperclassAndWantsDispatch \

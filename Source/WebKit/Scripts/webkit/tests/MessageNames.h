@@ -58,19 +58,20 @@ enum class ReceiverName : uint8_t {
     , TestWithStreamBatched = 14
     , TestWithStreamBuffer = 15
     , TestWithStreamServerConnectionHandle = 16
-    , TestWithSuperclass = 17
-    , TestWithSuperclassAndWantsAsyncDispatch = 18
-    , TestWithSuperclassAndWantsDispatch = 19
-    , TestWithSwift = 20
-    , TestWithSwiftConditionally = 21
-    , TestWithValidator = 22
-    , TestWithWantsAsyncDispatch = 23
-    , TestWithWantsDispatch = 24
-    , TestWithWantsDispatchNoSyncMessages = 25
-    , TestWithoutAttributes = 26
-    , TestWithoutUsingIPCConnection = 27
-    , IPC = 28
-    , Invalid = 29
+    , TestWithStreamSwift = 17
+    , TestWithSuperclass = 18
+    , TestWithSuperclassAndWantsAsyncDispatch = 19
+    , TestWithSuperclassAndWantsDispatch = 20
+    , TestWithSwift = 21
+    , TestWithSwiftConditionally = 22
+    , TestWithValidator = 23
+    , TestWithWantsAsyncDispatch = 24
+    , TestWithWantsDispatch = 25
+    , TestWithWantsDispatchNoSyncMessages = 26
+    , TestWithoutAttributes = 27
+    , TestWithoutUsingIPCConnection = 28
+    , IPC = 29
+    , Invalid = 30
 };
 
 enum class MessageName : uint16_t {
@@ -145,6 +146,7 @@ enum class MessageName : uint16_t {
     TestWithStreamBatched_SendString,
     TestWithStreamBuffer_SendStreamBuffer,
     TestWithStreamServerConnectionHandle_SendStreamServerConnection,
+    TestWithStreamSwift_SendString,
     TestWithStream_CallWithIdentifier,
     TestWithStream_CallWithIdentifierReply,
 #if PLATFORM(COCOA)

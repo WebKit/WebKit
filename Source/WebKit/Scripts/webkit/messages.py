@@ -774,6 +774,9 @@ def forward_declarations_and_headers(receiver):
         '<wtf/ThreadSafeRefCounted.h>',
     ])
 
+    if (receiver.swift_receiver or receiver.swift_receiver_build_enabled_by) and receiver.has_attribute(STREAM_ATTRIBUTE):
+        headers.add('"StreamMessageReceiver.h"')
+
     non_template_wtf_types = frozenset([
         'MachSendRight',
         'MediaType',
@@ -874,18 +877,29 @@ def generate_messages_header(receiver):
                 sync_messages.append(message)
 
         result.append('namespace ' + handler_namespace + ' {\n\n')
-        result.append('class ' + forwarder_class + ': public RefCounted<' + forwarder_class + '>, public IPC::MessageReceiver {\n')
+        is_stream = receiver.has_attribute(STREAM_ATTRIBUTE)
+        if is_stream:
+            result.append('class ' + forwarder_class + ' final : public IPC::StreamMessageReceiver {\n')
+        else:
+            result.append('class ' + forwarder_class + ': public RefCounted<' + forwarder_class + '>, public IPC::MessageReceiver {\n')
         result.append('public:\n')
         result.append('    static Ref<' + forwarder_class + '> createFromWeak(' + handler_namespace + '::' + weak_ref_class + '* _Nonnull handler)\n')
         result.append('    {\n')
         result.append('        return adoptRef(*new ' + forwarder_class + '(handler));\n')
         result.append('    }\n')
         result.append('    ~' + forwarder_class + '();\n')
-        result.append('    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);\n')
-        if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
+        if is_stream:
+            result.append('    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;\n')
+        else:
+            result.append('    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);\n')
+        if not is_stream and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
             result.append('    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);\n')
-        result.append('    void ref() const final { RefCounted::ref(); }\n')
-        result.append('    void deref() const final { RefCounted::deref(); }\n')
+        if is_stream:
+            result.append('    void ref() const { StreamMessageReceiver::ref(); }\n')
+            result.append('    void deref() const { StreamMessageReceiver::deref(); }\n')
+        else:
+            result.append('    void ref() const final { RefCounted::ref(); }\n')
+            result.append('    void deref() const final { RefCounted::deref(); }\n')
         result.append('private:\n')
         result.append('    ' + forwarder_class + '(' + handler_namespace + '::' + weak_ref_class + '* _Nonnull);\n')
         result.append('    std::unique_ptr<' + handler_namespace + '::' + class_name + '> getMessageTarget();\n')
@@ -1823,17 +1837,26 @@ def generate_get_target_statements(receiver):
 
     def append_swift_get_target_statements(result):
         result.append('    auto target = getMessageTarget();\n')
-        # If target is a nullptr, this means the Swift message receiver has been destroyed.
-        # This makes no sense, since that Swift message receiver owns this class, the C++
-        # message forwarder, so we should also have been destroyed. If this happens,
-        # something somewhere is keeping an unexpected reference alive.
-        # In debug builds, crash. In release builds, attempt to survive by behaving as if
-        # corrupted data was received from the sender.
-        result.append('    if (!target) {\n')
-        result.append('        FATAL("Something is keeping a reference to the message forwarder");\n')
-        result.append('        decoder.markInvalid();\n')
-        result.append('        return;\n')
-        result.append('    }\n')
+        if receiver.has_attribute(STREAM_ATTRIBUTE):
+            # Stream receivers hold the target weakly and dispatch off the main thread, so a null
+            # target is a benign teardown race that must not crash the process. Mark the message
+            # invalid, which tears the stream connection down cleanly.
+            result.append('    if (!target) {\n')
+            result.append('        decoder.markInvalid();\n')
+            result.append('        return;\n')
+            result.append('    }\n')
+        else:
+            # If target is a nullptr, this means the Swift message receiver has been destroyed.
+            # This makes no sense, since that Swift message receiver owns this class, the C++
+            # message forwarder, so we should also have been destroyed. If this happens,
+            # something somewhere is keeping an unexpected reference alive.
+            # In debug builds, crash. In release builds, attempt to survive by behaving as if
+            # corrupted data was received from the sender.
+            result.append('    if (!target) {\n')
+            result.append('        FATAL("Something is keeping a reference to the message forwarder");\n')
+            result.append('        decoder.markInvalid();\n')
+            result.append('        return;\n')
+            result.append('    }\n')
 
     if_swift_enabled(receiver, result, append_swift_get_target_statements, None)
     return result
