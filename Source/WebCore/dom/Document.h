@@ -470,7 +470,7 @@ public:
     inline static Ref<Document> create(const Settings&, const URL&);
     static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);
-    static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
+    static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& aboutBaseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
 
     virtual ~Document();
 
@@ -898,6 +898,7 @@ public:
     // To understand how these concepts relate to one another, please see the
     // comments surrounding their declaration.
     const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
+    void setAboutBaseURL(const URL&);
     void setBaseURLOverride(const URL&);
     const URL& baseURLOverride() const LIFETIME_BOUND { return m_baseURLOverride; }
     const URL& baseElementURL() const LIFETIME_BOUND { return m_baseElementURL; }
@@ -2326,6 +2327,7 @@ private:
     URLKeepingBlobAlive m_url; // Document.URL: The URL from which this document was retrieved.
     URL m_creationURL; // https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-creation-url.
     URL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
+    URL m_aboutBaseURL; // The creator document's base URL, used by about:-schemed documents.
     URL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
     URL m_baseElementURL; // The URL set by the <base> element.
     URL m_cookieURL; // The URL to use for cookie access.
