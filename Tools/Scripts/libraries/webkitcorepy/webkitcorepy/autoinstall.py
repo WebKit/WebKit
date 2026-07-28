@@ -27,7 +27,6 @@ import json
 import logging
 import math
 import os
-import platform
 import re
 import shutil
 import ssl
@@ -731,16 +730,7 @@ class AutoInstall(importlib.abc.MetaPathFinder):
 
     @classmethod
     def tags(cls):
-        for tag in tags.sys_tags():
-            yield tag
-
-        # FIXME: Work around for https://github.com/pypa/packaging/pull/319 and Big Sur
-        if sys.platform == 'darwin' and Version.from_string(platform.mac_ver()[0]) > Version(10):
-            for override in tags.mac_platforms(version=(10, 16)):
-                for tag in tags.sys_tags():
-                    if not tag.platform:
-                        pass
-                    yield tags.Tag(tag.interpreter, tag.abi, override)
+        yield from tags.sys_tags()
 
     @classmethod
     def log(cls, message, level=logging.WARNING):
