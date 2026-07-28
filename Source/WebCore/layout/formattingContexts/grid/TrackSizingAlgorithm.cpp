@@ -324,7 +324,7 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
                 // size to the maximum of its items’ limited min-content
                 // contributions, floored at zero.
                 if (isSizedUnderMinOrMaxContentConstraint(resolveIntrinsicTrackSizesContext.axisConstraint)) {
-                    ASSERT_NOT_IMPLEMENTED_YET();
+                    notImplemented();
                     return { };
                 }
                 // Otherwise, set the track’s base size to the maximum of its items’ minimum
