@@ -108,7 +108,6 @@ private:
     bool inHeap() const { return m_heapItemWithBitfields.pointer() && m_heapItemWithBitfields.pointer()->isInHeap(); }
 
     bool NODELETE hasValidHeapPosition() const;
-    WEBCORE_EXPORT bool canAccessOnCurrentThread() const;
     void updateHeapIfNeeded(MonotonicTime oldTime);
 
     void heapDecreaseKey();
@@ -198,7 +197,7 @@ inline void TimerBase::stop()
 
 inline bool TimerBase::isActive() const
 {
-    ASSERT(canAccessOnCurrentThread());
+    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
     return static_cast<bool>(nextFireTime());
 }
 

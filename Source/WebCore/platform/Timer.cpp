@@ -256,17 +256,6 @@ private:
 
 // ----------------
 
-static bool shouldSuppressThreadSafetyCheck()
-{
-#if PLATFORM(IOS_FAMILY)
-    return WebThreadIsEnabled() || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::TimerThreadSafetyChecks);
-#elif PLATFORM(MAC)
-    return !isInWebProcess() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::TimerThreadSafetyChecks);
-#else
-    return false;
-#endif
-}
-
 struct SameSizeAsTimer {
     virtual ~SameSizeAsTimer() { }
 
@@ -296,25 +285,9 @@ TimerBase::TimerBase()
 #endif
 }
 
-bool TimerBase::canAccessOnCurrentThread() const
-{
-#if ASSERT_ENABLED
-#if USE(WEB_THREAD)
-    if (m_creationThreadID == currentThreadID())
-        return true;
-    return WebThreadIsCurrent() || pthread_main_np();
-#else
-    return m_creationThreadID == currentThreadID();
-#endif
-#else
-    return true;
-#endif
-}
-
 TimerBase::~TimerBase()
 {
-    ASSERT(canAccessOnCurrentThread());
-    RELEASE_ASSERT(canAccessOnCurrentThread() || shouldSuppressThreadSafetyCheck());
+    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
     stop();
     ASSERT(!inHeap());
     if (auto* item = m_heapItemWithBitfields.pointer())
@@ -324,7 +297,7 @@ TimerBase::~TimerBase()
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 {
-    ASSERT(canAccessOnCurrentThread());
+    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
 
     m_repeatInterval = repeatInterval;
     setNextFireTime(MonotonicTime::now() + nextFireInterval);
@@ -332,7 +305,7 @@ void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 
 void TimerBase::stopSlowCase()
 {
-    ASSERT(canAccessOnCurrentThread());
+    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
 
     m_repeatInterval = 0_s;
     setNextFireTime(MonotonicTime { });
@@ -531,8 +504,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
 #if USE(WEB_THREAD)
     RELEASE_ASSERT(WebThreadIsLockedOrDisabledInMainOrWebThread());
 #endif
-    ASSERT(canAccessOnCurrentThread());
-    RELEASE_ASSERT(canAccessOnCurrentThread() || shouldSuppressThreadSafetyCheck());
+    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
     bool timerHasBeenDeleted = m_unalignedNextFireTime.isNaN();
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!timerHasBeenDeleted);
 

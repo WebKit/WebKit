@@ -55,6 +55,20 @@
 
 
 TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
+
+# webkit.org/b/318834 [ iOS DEBUG ] 2x TestWebKitAPI.ContentRuleList.* (api-tests) are flaky timeouts.
+[ iOS Debug ] TestWebKitAPI.ContentRuleList.RequestMethods [ Pass Timeout ]
+[ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
+
+webkit.org/b/319125 [ ios release ] TestWebKitAPI.WKDownload.BlobDownload [ Pass Timeout ]
+
+webkit.org/b/319000 [ ios ] TestWebKitAPI.WKHTTPCookieStore.ObserveCookiesReceivedFromHTTP [ Pass Failure ]
+
+# webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.
+[ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllAfterNetworkProcessTermination [ Timeout ]
+[ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookieNotFound [ Crash ]
+
 webkit.org/b/246336 TestIPC.ConnectionTest/ConnectionRunLoopTest.RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop/ClientIsA [ Skip ]
 webkit.org/b/246336 TestIPC.ConnectionTest/ConnectionRunLoopTest.RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop/ServerIsA [ Skip ]
 rdar://159131152 [ ios ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendAndInvalidate/ClientIsA [ Skip ]
