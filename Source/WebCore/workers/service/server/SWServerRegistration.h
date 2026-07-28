@@ -36,6 +36,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Identified.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -142,7 +143,7 @@ private:
     RefPtr<SWServerWorker> m_waitingWorker;
     RefPtr<SWServerWorker> m_activeWorker;
 
-    HashSet<CookieChangeSubscription> m_cookieChangeSubscriptions;
+    ListHashSet<CookieChangeSubscription> m_cookieChangeSubscriptions;
 
     WallTime m_lastUpdateTime;
     
