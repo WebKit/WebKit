@@ -6864,8 +6864,6 @@ TEST(SiteIsolation, CreateWebArchiveNestedFrameForCopy)
     validateWebArchiveMainResource([actualNestedFrameArchives.firstObject objectForKey:@"WebMainResource"], expectedNestedFrameResource);
 }
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-
 TEST(SiteIsolation, ReadAttributedStringFromPasteboardAfterCopyWithCrossSiteIframe)
 {
     static constexpr auto mainframeBytes = R"TESTRESOURCE(
@@ -6941,8 +6939,6 @@ TEST(SiteIsolation, ReadAttributedStringFromPasteboardAfterCopyWithCrossSiteIfra
     EXPECT_TRUE([[result string] containsString:@"mainframecontent"]);
     EXPECT_TRUE([[result string] containsString:@"subframecontent"]);
 }
-
-#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 TEST(SiteIsolation, LoadWebArchive)
 {

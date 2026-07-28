@@ -32,8 +32,8 @@ import WebKit_Private.WKSnapshotConfigurationPrivate
 import WebKit_Private.WKWebViewPrivate
 
 @available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WebPage: Transferable {
     /// A specialized configuration of a specific exportable type that can have specific properties unique to the content type.
     public nonisolated struct ExportedContentConfiguration: Sendable {

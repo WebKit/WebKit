@@ -27,8 +27,8 @@ import Foundation
 import WebKit_Internal
 
 @available(anyAppleOSAndDownlevels 27.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKUserContentController {
     /// Adds a data buffer that will be available to JavaScript through the `window.webkit.buffers` object.
     ///

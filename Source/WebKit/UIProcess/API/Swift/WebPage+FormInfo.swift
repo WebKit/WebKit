@@ -25,15 +25,12 @@
 
 public import Foundation
 
-@available(anyAppleOSAndDownlevels 27.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// A type that contains information about a form submission from a webpage.
     @MainActor
     @available(anyAppleOSAndDownlevels 27.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public struct FormInfo {
         init(_ wrapped: WKFormInfo) {
             self.wrapped = wrapped

@@ -29,45 +29,23 @@ if [[ "${WK_PLATFORM_NAME}" == "macosx" ]]; then
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
     [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
 elif [[ "${WK_PLATFORM_NAME}" == "maccatalyst" ]]; then
     # On Mac Catalyst `LLVM_TARGET_TRIPLE_OS_VERSION` will be in the format `ios{major}.{minor}`.
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${LLVM_TARGET_TRIPLE_OS_VERSION#ios}
     [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
 elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
     [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
 elif [[ "${PLATFORM_NAME}" == xr* ]]; then
     [[ -n ${XROS_VERSION} ]] || XROS_VERSION=${XROS_DEPLOYMENT_TARGET}
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
-elif [[ "${WK_PLATFORM_NAME}" =~ "watch" ]]; then
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION=${WATCHOS_DEPLOYMENT_TARGET}
-    [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
-    [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
-    [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
-elif [[ "${WK_PLATFORM_NAME}" =~ "appletv" ]]; then
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION=${TVOS_DEPLOYMENT_TARGET}
-    [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
-    [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
-    [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
 else
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
     [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
-    [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
-    [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
 fi
 
 # Platform version numbers are dynamic: either the release version OR the
@@ -89,16 +67,6 @@ function visionOS {
     echo visionOS ${minVersion}
 }
 
-function watchOS {
-    minVersion=$(printf '%s\n' $1 ${WATCHOS_DEPLOYMENT_TARGET} | sort -V | head -1)
-    echo watchOS ${minVersion}
-}
-
-function tvOS {
-    minVersion=$(printf '%s\n' $1 ${TVOS_DEPLOYMENT_TARGET} | sort -V | head -1)
-    echo tvOS ${minVersion}
-}
-
 releases="
 # Shipped releases which contribute Swift API.
 anyAppleOSAndDownlevels 14.0: $(macOS 10.16), $(iOS 14.0)
@@ -109,20 +77,8 @@ anyAppleOSAndDownlevels 26.0: $(macOS 26.0), $(iOS 26.0), $(visionOS 26.0)
 anyAppleOSAndDownlevels 26.4: $(macOS 26.4), $(iOS 26.4), $(visionOS 26.4)
 anyAppleOSAndDownlevels 27.0: $(macOS 27.0), $(iOS 27.0), $(visionOS 27.0)
 
-# Shipped releases which contribute Swift SPI on watchOS and tvOS.
-watchOSAndOpenSource 26.0: $(watchOS 26.0)
-watchOSAndOpenSource 26.4: $(watchOS 26.4)
-watchOSAndOpenSource 27.0: $(watchOS 27.0)
-tvOSAndOpenSource 26.0: $(tvOS 26.0)
-tvOSAndOpenSource 26.4: $(tvOS 26.4)
-tvOSAndOpenSource 27.0: $(tvOS 27.0)
-
 # Upcoming API, release version unspecified.
 TBA: macOS ${OSX_VERSION}, iOS ${IOS_VERSION}, visionOS ${XROS_VERSION}
-
-# Upcoming SPI on watchOS and tvOS, release version unspecified.
-watchOSAndOpenSourceTBA: watchOS ${WATCHOS_VERSION}
-tvOSAndOpenSourceTBA: tvOS ${TVOS_VERSION}
 
 # Legacy platform-specific versions that work like WebKit's ObjC availability
 # versions.

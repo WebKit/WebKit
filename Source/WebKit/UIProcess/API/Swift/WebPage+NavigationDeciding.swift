@@ -27,9 +27,6 @@ public import Foundation
 
 // MARK: Supporting types
 
-@available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// An object that contains information about an action that causes navigation to occur.
     ///
@@ -37,8 +34,8 @@ extension WebPage {
     /// allow navigation within a web page via a `NavigationDeciding`.
     @MainActor
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public struct NavigationAction {
         init(_ wrapped: WKNavigationAction) {
             self.wrapped = wrapped
@@ -82,8 +79,8 @@ extension WebPage {
     /// allow navigation within a web page via a `NavigationDeciding`.
     @MainActor
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public struct NavigationResponse {
         init(_ wrapped: WKNavigationResponse) {
             self.wrapped = wrapped
@@ -106,16 +103,13 @@ extension WebPage {
 
 // MARK: NavigationDeciding protocol
 
-@available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// Allows providing custom behavior to handle navigation changes and to coordinate these changes for the web page's main page.
     ///
     /// For example, you might use these methods to restrict navigation from specific links within your content.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public protocol NavigationDeciding {
         /// Determines permission to navigate to new content based on the specified preferences and action information.
         ///
@@ -156,8 +150,6 @@ extension WebPage {
         ///
         /// - Parameter formInfo: The form values that will be submitted for this navigation
         @available(anyAppleOSAndDownlevels 27.0, *)
-        @_spi_available(watchOSAndOpenSourceTBA, *)
-        @_spi_available(tvOSAndOpenSourceTBA, *)
         @MainActor
         mutating func willSubmit(formInfo: WebPage.FormInfo) async
     }
@@ -166,8 +158,8 @@ extension WebPage {
 // MARK: Default implementation
 
 @available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WebPage.NavigationDeciding {
     /// By default, this method immediately returns with a policy of `.allow`.
     @MainActor
@@ -194,8 +186,6 @@ extension WebPage.NavigationDeciding {
 
     /// By default, this method does nothing.
     @available(anyAppleOSAndDownlevels 27.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
     @MainActor
     public func willSubmit(formInfo: WebPage.FormInfo) async {
     }

@@ -78,9 +78,7 @@ struct WebPageTests {
         #expect(page.estimatedProgress == 0.0)
         #expect(page.serverTrust == nil)
         #expect(!page.hasOnlySecureContent)
-        #if WTF_PLATFORM_MAC || WTF_PLATFORM_IOS
         #expect(page.themeColor == nil)
-        #endif
 
         // FIXME: (283456) Make this test more comprehensive once Observation supports observing a stream of changes to properties.
     }

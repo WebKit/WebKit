@@ -27,14 +27,11 @@ public import Foundation
 
 // MARK: Supporting types
 
-@available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// The result of handling a JavaScript confirm invocation.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public enum JavaScriptConfirmResult: Hashable, Sendable {
         /// Signals an affirmative action was produced by the invocation.
         case ok
@@ -45,8 +42,8 @@ extension WebPage {
 
     /// The result of handling a JavaScript confirm invocation.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public enum JavaScriptPromptResult: Hashable, Sendable {
         /// Signals an affirmative action was produced by the invocation with the specified text.
         case ok(Swift.String)
@@ -57,8 +54,8 @@ extension WebPage {
 
     /// The result of handling a JavaScript open invocation.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public enum FileInputPromptResult: Hashable, Sendable {
         /// Signals an affirmative action was produced by the invocation with the specified files.
         case selected([Foundation.URL])
@@ -70,9 +67,6 @@ extension WebPage {
 
 // MARK: DialogPresenting protocol
 
-@available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// Allows providing custom behavior to handle JavaScript actions and provide a response.
     ///
@@ -81,8 +75,8 @@ extension WebPage {
     ///
     /// When these methods are invoked, JavaScript is blocked until the async method returns.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @_spi_available(watchOSAndOpenSourceTBA, *)
-    @_spi_available(tvOSAndOpenSourceTBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public protocol DialogPresenting {
         /// A JavaScript `alert()` function has been invoked.
         ///
@@ -132,8 +126,8 @@ extension WebPage {
 // MARK: Default implementation
 
 @available(anyAppleOSAndDownlevels 26.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WebPage.DialogPresenting {
     /// By default, this method immediately returns.
     @MainActor
