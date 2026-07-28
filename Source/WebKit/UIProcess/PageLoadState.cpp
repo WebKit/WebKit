@@ -350,7 +350,8 @@ void PageLoadState::didFailLoad(const Transaction::Token& token)
 void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, const URL& url)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    ASSERT(!m_uncommittedState.url.isEmpty());
+    // The initial empty document does not commit a load in the UI process, but its URL can be updated in place.
+    ASSERT(!m_uncommittedState.url.isEmpty() || url.isAboutBlank());
 
     m_uncommittedState.url = url;
 }
