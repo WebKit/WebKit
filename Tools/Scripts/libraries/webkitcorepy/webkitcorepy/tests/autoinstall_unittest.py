@@ -31,6 +31,7 @@ from urllib.error import URLError
 from webkitcorepy import autoinstall, OutputCapture
 from webkitcorepy.autoinstall import AutoInstall, Package, _default_pypi_indices, _pypi_indices_from_file
 from webkitcorepy.version import Version
+from webkitcorepy._vendored.packaging.version import Version as PackagingVersion
 
 
 class DefaultPyPIIndexTest(unittest.TestCase):
@@ -67,7 +68,7 @@ class ArchiveTest(unittest.TestCase):
     def test_retry(self, mock_urlopen, mock_verify_index):
         with OutputCapture():
             archive = Package.Archive(
-                "dummy", "http://example.example/dummy-1.0-py3-none-any.whl", Version(1, 0)
+                "dummy", "http://example.example/dummy-1.0-py3-none-any.whl", PackagingVersion("1.0")
             )
             with self.assertRaises(URLError):
                 archive.download()
