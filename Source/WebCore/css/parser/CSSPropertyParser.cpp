@@ -34,6 +34,7 @@
 #include "CSSCustomIdentValue.h"
 #include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSKeywordValueInlines.h"
 #include "CSSMarkup.h"
 #include "CSSParserContext.h"
 #include "CSSParserFastPaths.h"
@@ -66,6 +67,8 @@
 #include "CSSTokenizer.h"
 #include "CSSTransformListValue.h"
 #include "CSSURLValue.h"
+#include "CSSValueKeywords.h"
+#include "CSSValuePair.h"
 #include "CSSWideKeyword.h"
 #include "ComputedStyleDependencies.h"
 #include "StyleBuilder.h"
@@ -744,6 +747,13 @@ bool consumePageDescriptor(CSSParserTokenRange& range, const CSSParserContext& c
     if (RefPtr parsedValue = CSSPropertyParsing::parsePageDescriptor(range, property, state)) {
         if (!range.atEnd())
             return false;
+
+        // Portrait is the default and should not be serialized.
+        if (property == CSSPropertySize) {
+            RefPtr pair = dynamicDowncast<CSSValuePair>(parsedValue);
+            if (pair && valueID(pair->second()) == CSSValuePortrait)
+                parsedValue = &pair->first();
+        }
 
         result.addProperty(state, property, CSSPropertyInvalid, WTF::move(parsedValue), IsImportant::No);
         return true;

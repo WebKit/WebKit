@@ -10,7 +10,7 @@
 @page letter_page { size: letter; }
 @page page_widht_height { size: 10cm 15cm; }
 @page page_size_orientation { size: ledger landscape; }
-@page page_orientation_size { size: a4 portrait; }
+@page page_orientation_size { size: a4; }
 @page err_empty_size { }
 @page err_unknow_page_size { }
 @page err_length_and_page_size { }

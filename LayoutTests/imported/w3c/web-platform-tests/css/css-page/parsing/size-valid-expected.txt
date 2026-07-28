@@ -12,6 +12,6 @@ PASS size: b4
 PASS size: jis-b5
 PASS size: jis-b4
 PASS size: landscape
-FAIL size: letter assert_equals: for rule 12 expected "letter;" but got "letter portrait;"
+PASS size: letter
 PASS size: legal landscape
 
