@@ -153,7 +153,6 @@
 #include "WebBackForwardCache.h"
 #include "WebBackForwardCacheEntry.h"
 #include "WebBackForwardList.h"
-#include "WebBackForwardListCounts.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListMessages.h"
@@ -8575,8 +8574,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (!frame)
         return;
 
-    // The current index advances (via the synchronous BackForwardGoToItem) before this commit, so
-    // settle the cross-process traversal queue here; no-op unless a traversal is in flight.
+    // BackForwardGoToItem is sent on the same connection ahead of this commit, so the current index
+    // has already advanced; settle the cross-process traversal queue here; no-op unless a traversal is in flight.
     if (frame->isMainFrame())
         m_sessionHistoryTraversalQueue->traversalDidSettle();
 
@@ -12222,13 +12221,9 @@ void WebPageProxy::backForwardAddItemShared(IPC::Connection& connection, Ref<Fra
 #endif
 }
 
-void WebPageProxy::backForwardGoToItemShared(BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+void WebPageProxy::backForwardGoToItemShared(BackForwardItemIdentifier itemID)
 {
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    backForwardList().backForwardGoToItemShared(itemID, CompletionHandlers::WebBackForwardList::BackForwardGoToItemCompletionHandler::create(WTF::move(completionHandler)).ptr());
-#else
-    backForwardList().backForwardGoToItemShared(itemID, WTF::move(completionHandler));
-#endif
+    backForwardList().backForwardGoToItemShared(itemID);
 }
 
 void WebPageProxy::compositionWasCanceled()

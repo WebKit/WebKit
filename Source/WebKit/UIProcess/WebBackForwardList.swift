@@ -1197,19 +1197,15 @@ final class WebBackForwardList {
     }
 
     @used
-    func backForwardGoToItem(
-        itemID: WebCore.BackForwardItemIdentifier,
-        completionHandler: CompletionHandlers.WebBackForwardList.BackForwardGoToItemCompletionHandler
-    ) {
+    func backForwardGoToItem(itemID: WebCore.BackForwardItemIdentifier) {
         // On process swap, we tell the previous process to ignore the load, which causes it to restore its current back forward item to its previous
         // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
         // Any real new load in the committed process would have cleared m_provisionalPage.
         if let webPageProxy = page.get(), webPageProxy.hasProvisionalPage() {
-            completionHandler.pointee(consuming: rawCounts())
             return
         }
 
-        backForwardGoToItemShared(itemID: itemID, completionHandler: completionHandler)
+        backForwardGoToItemShared(itemID: itemID)
     }
 
     @used
@@ -1221,14 +1217,10 @@ final class WebBackForwardList {
     }
 
     @used
-    func backForwardGoToItemShared(
-        itemID: WebCore.BackForwardItemIdentifier,
-        completionHandler: CompletionHandlers.WebBackForwardList.BackForwardGoToItemCompletionHandler
-    ) {
+    func backForwardGoToItemShared(itemID: WebCore.BackForwardItemIdentifier) {
         if let webPageProxy = page.get() {
-            if messageCheckCompletion(
+            if messageCheck(
                 process: WebKit.RefWebProcessProxy(webPageProxy.legacyMainFrameProcess()),
-                completionHandler: { completionHandler.pointee(consuming: rawCounts()) },
                 !WebKit.isInspectorPage(webPageProxy)
             ) {
                 return
@@ -1243,14 +1235,11 @@ final class WebBackForwardList {
             {
                 let direction = webPageProxy.inFlightTraversalDirection()
                 if (direction < 0 && targetIndex > priorCurrentIndex) || (direction > 0 && targetIndex < priorCurrentIndex) {
-                    completionHandler.pointee(consuming: rawCounts())
                     return
                 }
             }
             goToItem(item: item)
         }
-
-        completionHandler.pointee(consuming: rawCounts())
     }
 
     @used

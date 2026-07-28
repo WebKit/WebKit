@@ -76,12 +76,12 @@ void WebBackForwardListProxy::setChildItem(BackForwardFrameItemIdentifier frameI
 
 void WebBackForwardListProxy::goToItem(HistoryItem& item)
 {
-    if (!m_page)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
 
-    auto sendResult = m_page->sendSync(Messages::WebBackForwardList::BackForwardGoToItem(item.itemID()));
-    auto [backForwardListCounts] = sendResult.takeReplyOr(WebBackForwardListCounts { });
-    m_cachedBackForwardListCounts = backForwardListCounts;
+    m_cachedBackForwardListCounts = std::nullopt;
+    page->send(Messages::WebBackForwardList::BackForwardGoToItem(item.itemID()));
 }
 
 Vector<Ref<HistoryItem>> WebBackForwardListProxy::allItems(FrameIdentifier frameID)

@@ -83,7 +83,6 @@ class WebsiteDataStore;
 struct FrameInfoData;
 struct NavigationActionData;
 struct URLSchemeTaskParameters;
-struct WebBackForwardListCounts;
 struct WebNavigationDataStore;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -189,7 +188,7 @@ private:
     void logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingDictionary&, WebCore::ShouldSample);
     void startURLSchemeTask(IPC::Connection&, URLSchemeTaskParameters&&);
-    void backForwardGoToItem(WebCore::BackForwardItemIdentifier, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
+    void backForwardGoToItem(WebCore::BackForwardItemIdentifier);
     void decidePolicyForNavigationActionSync(IPC::Connection&, NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void backForwardAddItem(IPC::Connection&, Ref<FrameState>&&);
     void didDestroyNavigation(WebCore::NavigationIdentifier);

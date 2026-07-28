@@ -877,17 +877,17 @@ void WebBackForwardList::replaceFrameStateForChild(WebBackForwardListItem& item,
     targetFrameItem->updateFrameStatePayload(WTF::move(newFrameState));
 }
 
-void WebBackForwardList::backForwardGoToItem(BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+void WebBackForwardList::backForwardGoToItem(BackForwardItemIdentifier itemID)
 {
     // On process swap, we tell the previous process to ignore the load, which causes it to restore its current back forward item to its previous
     // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
     // Any real new load in the committed process would have cleared m_provisionalPage.
     if (RefPtr webPageProxy = m_page.get()) {
         if (webPageProxy->hasProvisionalPage())
-            return completionHandler(rawCounts());
+            return;
     }
 
-    backForwardGoToItemShared(itemID, WTF::move(completionHandler));
+    backForwardGoToItemShared(itemID);
 }
 
 void WebBackForwardList::backForwardListContainsItem(WebCore::BackForwardItemIdentifier itemID, CompletionHandler<void(bool)>&& completionHandler)
@@ -895,14 +895,14 @@ void WebBackForwardList::backForwardListContainsItem(WebCore::BackForwardItemIde
     completionHandler(itemForID(itemID));
 }
 
-void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier itemID)
 {
     if (RefPtr webPageProxy = m_page.get())
-        MESSAGE_CHECK_COMPLETION(Ref { webPageProxy->legacyMainFrameProcess() }, !WebKit::isInspectorPage(*webPageProxy), completionHandler(rawCounts()));
+        MESSAGE_CHECK(Ref { webPageProxy->legacyMainFrameProcess() }, !WebKit::isInspectorPage(*webPageProxy));
 
     RefPtr item = itemForID(itemID);
     if (!item)
-        return completionHandler(rawCounts());
+        return;
 
     // A stale/duplicate BackForwardGoToItem from an earlier split-traversal leg can arrive after the
     // index already advanced to a later leg's destination; ignore an index move opposite to the
@@ -916,13 +916,12 @@ void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier ite
                 bool movesForward = targetIndex > *m_currentIndex;
                 bool movesBackward = targetIndex < *m_currentIndex;
                 if ((direction < 0 && movesForward) || (direction > 0 && movesBackward))
-                    return completionHandler(rawCounts());
+                    return;
             }
         }
     }
 
     goToItem(*item);
-    completionHandler(rawCounts());
 }
 
 void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
