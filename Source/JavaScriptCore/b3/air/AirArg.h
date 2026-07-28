@@ -1156,6 +1156,12 @@ public:
         return 1u << m_logScale;
     }
 
+    MacroAssembler::Extend extend() const
+    {
+        ASSERT(kind() == Index);
+        return m_extend;
+    }
+
     unsigned logScale() const
     {
         ASSERT(kind() == Index);
