@@ -44,6 +44,7 @@ from webkitcorepy import log
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 from webkitcorepy._vendored.packaging import tags
+from webkitcorepy._vendored.packaging.utils import parse_wheel_filename, InvalidWheelFilename
 
 from html.parser import HTMLParser
 from urllib.request import urlopen
@@ -201,14 +202,15 @@ class Package(object):
 
                 for package in reversed(packages):
                     if self.wheel or self.wheel is None and package['name'].endswith('.whl'):
-                        match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', package['name'])
-                        if not match:
+                        try:
+                            _, _, _, wheel_tags = parse_wheel_filename(package['name'])
+                        except InvalidWheelFilename:
                             continue
 
                         if not cached_tags:
                             cached_tags = set(AutoInstall.tags())
 
-                        if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
+                        if all(tag not in cached_tags for tag in wheel_tags):
                             continue
 
                         extension = 'whl'
