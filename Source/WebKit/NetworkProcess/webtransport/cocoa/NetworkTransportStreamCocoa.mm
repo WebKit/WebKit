@@ -61,7 +61,12 @@ void NetworkTransportStream::start(NetworkTransportStreamReadyHandler&& readyHan
         case nw_connection_state_invalid:
         case nw_connection_state_waiting:
         case nw_connection_state_preparing:
+            return;
         case nw_connection_state_cancelled:
+            // A connection cancelled before it became ready must still resolve the ready
+            // handler, otherwise the captured one-shot CompletionHandler is destroyed uncalled.
+            if (readyHandler)
+                readyHandler(std::nullopt);
             return;
         case nw_connection_state_ready: {
             if (!protectedThis)
