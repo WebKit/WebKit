@@ -1,0 +1,10 @@
+Tests that a non-text subresource that never buffered content is cleared from the previous loader's resource data on main-frame navigation.
+
+
+== Running test suite: Network.clearResourceDataOnNavigate.NonBufferedResource
+-- Running test case: Network.clearResourceDataOnNavigate.NonBufferedResource.ClearedOnNavigate
+PASS: Should have tracked the image subresource.
+PASS: Should resolve the image body before navigation.
+Reloading page...
+PASS: The previous loader's non-buffered resource should be removed from resource data after navigation.
+

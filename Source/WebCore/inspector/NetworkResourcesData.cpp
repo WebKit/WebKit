@@ -342,6 +342,14 @@ void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
             m_requestIdToResourceDataMap.remove(requestId);
         }
     }
+
+    m_requestIdToResourceDataMap.removeIf([&](auto& entry) {
+        auto& resourceData = *entry.value;
+        if (resourceData.loaderId() == *preservedLoaderId)
+            return false;
+        m_contentSize -= resourceData.evictContent();
+        return true;
+    });
 }
 
 Vector<NetworkResourcesData::ResourceData*> NetworkResourcesData::resources()
