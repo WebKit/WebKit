@@ -8054,8 +8054,6 @@ fast/forms/input-password-logical-widths.html [ Failure ]
 # <rdar://160314418> Tap-and-half selection gesture is broken in WebKit
 editing/selection/ios/select-text-using-tap-and-half.html [ Skip ]
 
-webkit.org/b/296338 http/tests/site-isolation/fullscreen.html [ Pass Failure ]
-
 webkit.org/b/310677 [ Release ] compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
 # webkit.org/b/296017 7x imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image (layout-tests) are flakey image failures
