@@ -44,6 +44,8 @@
 #include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/IntRectHash.h>
 #include <WebCore/KeypressCommand.h>
 #include <WebCore/PlatformPlaybackSessionInterface.h>
 #include <WebCore/ScrollTypes.h>
@@ -292,6 +294,7 @@ public:
 
     void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
+    void convertPDFHUDBoundingBoxToWebViewCoordinates(WebCore::FrameIdentifier, WebCore::IntRect boundingBoxInFrameRootView, CompletionHandler<void(WebCore::IntRect)>&&);
     void removePDFHUD(PDFPluginIdentifier);
     void removeAllPDFHUDs();
     void showPDFHUD(PDFPluginIdentifier);
@@ -1060,6 +1063,8 @@ private:
 #endif
 
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
+    // PDF HUDs awaiting their initial async coordinate conversion, mapped to the latest location update.
+    HashMap<WebKit::PDFPluginIdentifier, WebCore::IntRect> m_pdfHUDsPendingCreation;
 
     RetainPtr<WKShareSheet> _shareSheet;
 

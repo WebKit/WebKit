@@ -118,6 +118,7 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/Editor.h>
 #import <WebCore/FixedContainerEdges.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FrameIdentifier.h>
@@ -1786,28 +1787,77 @@ void WebViewImpl::viewDidEndLiveResize()
     [m_layoutStrategy didEndLiveResize];
 }
 
-void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect)
+void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, const WebCore::IntRect& boundingBoxInFrameRootView)
 {
     removePDFHUD(identifier);
-    RetainPtr hud = adoptNS([[WKPDFHUDView alloc] initWithFrame:rect pluginIdentifier:identifier.toUInt64() frameIdentifier:frameID.toUInt64() webView:m_page->cocoaView().get()]);
-    [m_view.get() addSubview:hud.get()];
-    _pdfHUDViews.add(identifier, WTF::move(hud));
+
+    // The bounding box is in the plugin frame's local root view coordinates.
+    // For cross-origin <iframe> PDFs, this lacks the subframe's offset in the
+    // page, so we need to convert that to top level web view coordinates.
+    m_pdfHUDsPendingCreation.set(identifier, boundingBoxInFrameRootView);
+    convertPDFHUDBoundingBoxToWebViewCoordinates(frameID, boundingBoxInFrameRootView, [weakThis = WeakPtr { *this }, identifier, frameID, requestedBox = boundingBoxInFrameRootView](const WebCore::IntRect& boundingBoxInWebView) {
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
+            return;
+
+        auto latestBoxInFrameRootView = checkedThis->m_pdfHUDsPendingCreation.takeOptional(identifier);
+        // In case the PDF HUD was removed while the conversion was in flight.
+        if (!latestBoxInFrameRootView)
+            return;
+
+        RetainPtr hud = adoptNS([[WKPDFHUDView alloc] initWithFrame:boundingBoxInWebView pluginIdentifier:identifier.toUInt64() frameIdentifier:frameID.toUInt64() webView:checkedThis->m_page->cocoaView()]);
+        [checkedThis->m_view.get() addSubview:hud];
+        checkedThis->_pdfHUDViews.add(identifier, WTF::move(hud));
+
+        // If a HUD update arrived while the conversion was in flight, apply it now that the HUD exists.
+        if (latestBoxInFrameRootView != requestedBox)
+            checkedThis->updatePDFHUDLocation(identifier, *latestBoxInFrameRootView);
+    });
 }
 
-void WebViewImpl::updatePDFHUDLocation(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
+void WebViewImpl::updatePDFHUDLocation(PDFPluginIdentifier identifier, const WebCore::IntRect& boundingBoxInFrameRootView)
 {
-    if (RetainPtr hud = _pdfHUDViews.get(identifier))
-        [hud setFrame:rect];
+    RetainPtr hud = _pdfHUDViews.get(identifier);
+    if (!hud) {
+        if (auto it = m_pdfHUDsPendingCreation.find(identifier); it != m_pdfHUDsPendingCreation.end())
+            it->value = boundingBoxInFrameRootView;
+        return;
+    }
+
+    convertPDFHUDBoundingBoxToWebViewCoordinates(WebCore::FrameIdentifier { [hud frameIdentifier] }, boundingBoxInFrameRootView, [weakThis = WeakPtr { *this }, identifier](const WebCore::IntRect& boundingBoxInWebView) {
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
+            return;
+        if (RetainPtr hud = checkedThis->_pdfHUDViews.get(identifier))
+            [hud setFrame:boundingBoxInWebView];
+    });
+}
+
+void WebViewImpl::convertPDFHUDBoundingBoxToWebViewCoordinates(WebCore::FrameIdentifier pluginFrameID, WebCore::IntRect boundingBoxInFrameRootView, CompletionHandler<void(WebCore::IntRect)>&& completionHandler)
+{
+    RefPtr frame = WebFrameProxy::webFrame(pluginFrameID);
+    if (!frame)
+        return completionHandler(boundingBoxInFrameRootView);
+
+    m_page->convertRectToMainFrameCoordinates(boundingBoxInFrameRootView, frame->rootFrame()->frameID(), [completionHandler = WTF::move(completionHandler), fallback = boundingBoxInFrameRootView](std::optional<WebCore::FloatRect> boundingBoxInWebView) mutable {
+        completionHandler(boundingBoxInWebView
+            .transform([](const auto& floatRect) {
+                return WebCore::enclosingIntRect(floatRect);
+            })
+            .value_or(fallback));
+    });
 }
 
 void WebViewImpl::removePDFHUD(PDFPluginIdentifier identifier)
 {
+    m_pdfHUDsPendingCreation.remove(identifier);
     if (RetainPtr hud = _pdfHUDViews.take(identifier))
         [hud removeFromSuperview];
 }
 
 void WebViewImpl::removeAllPDFHUDs()
 {
+    m_pdfHUDsPendingCreation.clear();
     for (auto& hud : _pdfHUDViews.values())
         [hud removeFromSuperview];
     _pdfHUDViews.clear();

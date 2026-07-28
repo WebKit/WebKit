@@ -758,6 +758,91 @@ UNIFIED_PDF_TEST(PDFHUDMultipleIFrames)
     EXPECT_TRUE(hadRightFrame);
 }
 
+enum class PDFEmbedElement : uint8_t { IFrame, Embed, Object };
+
+class EmbeddedPDFHUDSiteIsolation : public testing::TestWithParam<std::tuple<PDFEmbedElement, bool, bool>> {
+public:
+    PDFEmbedElement embedElement() const { return std::get<0>(GetParam()); }
+    bool crossOrigin() const { return std::get<1>(GetParam()); }
+    bool siteIsolationEnabled() const { return std::get<2>(GetParam()); }
+
+    String mainHTML() const
+    {
+        auto pdfURL = makeString("https://"_s, crossOrigin() ? "webkit.org"_s : "example.com"_s, "/test.pdf"_s);
+        auto layout = "width='300' height='150' style='position:absolute; left:10px; top:28px; border:0'"_s;
+        switch (embedElement()) {
+        case PDFEmbedElement::IFrame:
+            return makeString("<iframe "_s, layout, " src='"_s, pdfURL, "'></iframe>"_s);
+        case PDFEmbedElement::Embed:
+            return makeString("<embed "_s, layout, " src='"_s, pdfURL, "'>"_s);
+        case PDFEmbedElement::Object:
+            return makeString("<object "_s, layout, " type='application/pdf' data='"_s, pdfURL, "'></object>"_s);
+        }
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    static std::string testNameGenerator(testing::TestParamInfo<std::tuple<PDFEmbedElement, bool, bool>> info)
+    {
+        std::string element = [embedElement = std::get<0>(info.param)] {
+            switch (embedElement) {
+            case PDFEmbedElement::IFrame:
+                return "IFrame";
+            case PDFEmbedElement::Embed:
+                return "Embed";
+            case PDFEmbedElement::Object:
+                return "Object";
+            }
+            ASSERT_NOT_REACHED();
+            return "";
+        }();
+        return element
+            + (std::get<1>(info.param) ? "_CrossOrigin" : "_SameOrigin")
+            + (std::get<2>(info.param) ? "_SiteIsolationEnabled" : "_SiteIsolationDisabled");
+    }
+};
+
+TEST_P(EmbeddedPDFHUDSiteIsolation, HUDMatchesOffset)
+{
+    HTTPServer server { {
+        { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML() } },
+        { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFData() } },
+    }, HTTPServer::Protocol::HttpsProxy };
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"UnifiedPDFEnabled"] || [key isEqualToString:@"PDFPluginHUDEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+        else if ([key isEqualToString:@"SiteIsolationEnabled"])
+            [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
+    }
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+    [webView _setWindowOcclusionDetectionEnabled:NO];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+    [webView setNavigationDelegate:navigationDelegate];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    TestWebKitAPI::Util::waitFor([webView] {
+        return [webView _pdfHUDs].count;
+    });
+
+    RetainPtr<NSView> hud = [webView _pdfHUDs].anyObject;
+
+    TestWebKitAPI::Util::waitFor([hud] {
+        return !NSEqualPoints([hud frame].origin, NSZeroPoint);
+    });
+
+    checkFrame([hud frame], 10, 28, 300, 150);
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
+
 UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
 {
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
