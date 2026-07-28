@@ -711,7 +711,9 @@ void FrameSelection::respondToNodeModification(Node& node, bool anchorRemoved, b
             clearDOMTreeSelection = true;
 
         clearRenderTreeSelection = true;
-    } if (startRemoved || endRemoved) {
+    }
+
+    if (startRemoved || endRemoved) {
         Position start = m_selection.start();
         Position end = m_selection.end();
         if (startRemoved)
