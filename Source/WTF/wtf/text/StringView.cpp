@@ -442,34 +442,18 @@ SUPPRESS_NODELETE size_t StringView::reverseFind(StringView matchString, unsigne
 
 String makeStringByReplacingAll(StringView string, char16_t target, char16_t replacement)
 {
-    if (string.is8Bit()) {
-        if (!isLatin1(target)) {
-            // Looking for a 16-bit character in an 8-bit string, so we're done.
-            return string.toString();
-        }
-
-        auto characters = string.span8();
-        size_t i;
-        unsigned length = string.length();
-        for (i = 0; i != characters.size(); ++i) {
-            if (characters[i] == target)
-                break;
-        }
-        if (i == length)
+    auto replaceAll = [&](auto characters) -> String {
+        // find() is SIMD-accelerated, and its Latin1 overload returns notFound for a
+        // non-Latin1 target, so an 8-bit string with a 16-bit target is handled here too.
+        size_t i = find(characters, target);
+        if (i == notFound)
             return string.toString();
         return StringImpl::createByReplacingInCharacters(characters, target, replacement, i);
-    }
+    };
 
-    auto characters = string.span16();
-    size_t i;
-    unsigned length = string.length();
-    for (i = 0; i != characters.size(); ++i) {
-        if (characters[i] == target)
-            break;
-    }
-    if (i == length)
-        return string.toString();
-    return StringImpl::createByReplacingInCharacters(characters, target, replacement, i);
+    if (string.is8Bit())
+        return replaceAll(string.span8());
+    return replaceAll(string.span16());
 }
 
 SUPPRESS_NODELETE std::strong_ordering codePointCompare(StringView lhs, StringView rhs)
