@@ -2038,7 +2038,7 @@ bool WebLocalFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const URL
 Ref<FrameNetworkingContext> WebLocalFrameLoaderClient::createNetworkingContext()
 {
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    return WebFrameNetworkingContext::create(m_frame.ptr());
+    return WebFrameNetworkingContext::create(protect(m_localFrame).ptr());
 }
 
 #if ENABLE(CONTENT_FILTERING)

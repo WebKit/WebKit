@@ -181,6 +181,7 @@
 #include "NavigatorBeacon.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
+#include "NetworkingContext.h"
 #include "Page.h"
 #include "PageInspectorController.h"
 #include "PageOverlay.h"
@@ -982,6 +983,19 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
 {
     CachedResource* resource = resourceFromMemoryCache(url);
     return resource && resource->status() == CachedResource::Cached;
+}
+
+ExceptionOr<bool> Internals::frameNetworkingContextIsValid() const
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    RefPtr context = document->frame()->loader().networkingContext();
+    if (!context)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return context->isValid();
 }
 
 CachedResource* Internals::resourceFromMemoryCache(const String& url)

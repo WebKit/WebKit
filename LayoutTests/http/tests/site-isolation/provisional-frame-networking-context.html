@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("A cross-site iframe's FrameNetworkingContext should be valid. Under site isolation the iframe's FrameLoader is initialized while it is still provisional, so a context built from WebFrame::coreLocalFrame() would capture a null LocalFrame and stay permanently invalid, silently dropping any load that goes through ResourceHandle (QuickLook previews, PDFJS).");
+
+var jsTestIsAsync = true;
+var result = null;
+
+window.addEventListener("message", function(event) {
+    result = event.data;
+    shouldBeTrue("result.networkingContextIsValid");
+    finishJSTest();
+}, false);
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/report-networking-context-validity.html"></iframe>
+</body>
+</html>

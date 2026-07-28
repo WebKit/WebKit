@@ -42,8 +42,8 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(const WebsiteDataS
 {
 }
 
-WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
-    : FrameNetworkingContext(frame->coreLocalFrame())
+WebFrameNetworkingContext::WebFrameNetworkingContext(WebCore::LocalFrame* frame)
+    : FrameNetworkingContext(frame)
 {
 }
 

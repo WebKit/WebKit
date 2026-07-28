@@ -34,7 +34,7 @@ struct WebsiteDataStoreParameters;
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static Ref<WebFrameNetworkingContext> create(WebFrame* frame)
+    static Ref<WebFrameNetworkingContext> create(WebCore::LocalFrame* frame)
     {
         return adoptRef(*new WebFrameNetworkingContext(frame));
     }
@@ -45,8 +45,8 @@ public:
     WebLocalFrameLoaderClient* NODELETE webFrameLoaderClient() const;
 
 private:
-    WebFrameNetworkingContext(WebFrame* frame)
-        : WebCore::FrameNetworkingContext(frame->coreLocalFrame())
+    WebFrameNetworkingContext(WebCore::LocalFrame* frame)
+        : WebCore::FrameNetworkingContext(frame)
     {
     }
 

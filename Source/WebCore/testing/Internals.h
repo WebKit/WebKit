@@ -244,6 +244,7 @@ public:
 
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);
+    ExceptionOr<bool> frameNetworkingContextIsValid() const;
     String fetchResponseSource(FetchResponse&);
     String xhrResponseSource(XMLHttpRequest&);
     bool NODELETE isSharingStyleSheetContents(HTMLLinkElement&, HTMLLinkElement&);

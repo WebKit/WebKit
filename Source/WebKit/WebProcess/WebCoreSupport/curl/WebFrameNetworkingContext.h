@@ -36,7 +36,7 @@ struct WebsiteDataStoreParameters;
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static Ref<WebFrameNetworkingContext> create(WebFrame* frame)
+    static Ref<WebFrameNetworkingContext> create(WebCore::LocalFrame* frame)
     {
         return adoptRef(*new WebFrameNetworkingContext(frame));
     }
@@ -50,7 +50,7 @@ public:
 #endif
 
 private:
-    WebFrameNetworkingContext(WebFrame*);
+    WebFrameNetworkingContext(WebCore::LocalFrame*);
 
     WebCore::NetworkStorageSession* storageSession() const override { return nullptr; }
 };
