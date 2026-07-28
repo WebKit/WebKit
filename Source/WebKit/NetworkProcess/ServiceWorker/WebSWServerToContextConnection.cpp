@@ -460,9 +460,11 @@ void WebSWServerToContextConnection::pendingStreamDataAvailable(WebCore::FetchId
 
 void WebSWServerToContextConnection::cancelPendingStreamUploadForwarding(WebCore::FetchIdentifier fetchIdentifier)
 {
-    // FIXME: We might want to let know the source stream we no longer care about getting any data.
     if (RefPtr state = m_requestPendingStreamStates.take(fetchIdentifier))
         state->clearDataAvailableHandler();
+
+    if (RefPtr fetch = m_ongoingFetches.get(fetchIdentifier))
+        fetch->cancelPendingStreamUpload();
 }
 
 void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)

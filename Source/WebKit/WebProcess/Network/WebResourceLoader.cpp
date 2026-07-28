@@ -406,6 +406,12 @@ void WebResourceLoader::updateResultingClientIdentifier(WTF::UUID currentIdentif
         loader->setNewResultingClientId({ newIdentifier, Process::identifier() });
 }
 
+void WebResourceLoader::cancelPendingStreamUpload()
+{
+    if (RefPtr state = m_pendingStreamState)
+        state->cancel();
+}
+
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 {
     RefPtr coreLoader = m_coreLoader;

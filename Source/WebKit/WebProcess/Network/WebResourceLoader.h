@@ -97,6 +97,7 @@ private:
     void didFailServiceWorkerLoad(const WebCore::ResourceError&);
     void serviceWorkerDidNotHandle();
     void updateResultingClientIdentifier(WTF::UUID currentIdentifier, WTF::UUID newIdentifier);
+    void cancelPendingStreamUpload();
 
     void didBlockAuthenticationChallenge();
     void setServiceWorkerTimingInfo(ServiceWorkerTimingInfo&& info) { m_serviceWorkerTimingInfo = WTF::move(info); }

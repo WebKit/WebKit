@@ -86,6 +86,7 @@ public:
 
     void setConsumePromise(Ref<DeferredPromise>&&);
     void setSource(Ref<FetchBodySource>&&);
+    void cancelReadableStream();
 
     void setAsLoading() { m_isLoading = true; }
 

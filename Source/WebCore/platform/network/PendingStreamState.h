@@ -52,37 +52,40 @@ public:
     WEBCORE_EXPORT static Ref<PendingStreamState> create();
     WEBCORE_EXPORT ~PendingStreamState();
 
+    // Data provider API
     WEBCORE_EXPORT void appendData(Ref<SharedBuffer>&&);
     WEBCORE_EXPORT void endStream();
     // FIXME: Provide meaningful PendingStreamState errors.
     WEBCORE_EXPORT void errorStream(int errorCode);
+    WEBCORE_EXPORT void setCancelCallback(Function<void()>&&);
+
+    // Data consumer API
+    WEBCORE_EXPORT void setDataAvailableHandler(Function<void()>&&);
+    WEBCORE_EXPORT void clearDataAvailableHandler();
+    size_t read(std::span<uint8_t> outBuffer, bool& atEOF, int& errorCode);
+    WEBCORE_EXPORT RefPtr<SharedBuffer> takeNextChunk(bool& atEOF, int& errorCode);
+    bool hasReadyData();
+    WEBCORE_EXPORT void cancel();
 
     WEBCORE_EXPORT void setHTTPVersionProbe(HTTPVersionProbe&&);
+    HTTPVersion currentHTTPVersion();
 
     void setServiceWorkerFetchIdentifier(FetchIdentifier fetchIdentifier) { m_serviceWorkerFetchIdentifier = fetchIdentifier; }
     Markable<FetchIdentifier> serviceWorkerFetchIdentifier() const { return m_serviceWorkerFetchIdentifier; }
 
-    WEBCORE_EXPORT void setDataAvailableHandler(Function<void()>&&);
-    WEBCORE_EXPORT void clearDataAvailableHandler();
-
-    HTTPVersion currentHTTPVersion();
-
-    size_t read(std::span<uint8_t> outBuffer, bool& atEOF, int& errorCode);
-    WEBCORE_EXPORT RefPtr<SharedBuffer> takeNextChunk(bool& atEOF, int& errorCode);
-    bool hasReadyData();
-
 private:
-    class DataAvailableHandler;
+    class CallbackHandler;
     PendingStreamState();
 
-    static void invokeHandlerIfNeeded(NOESCAPE const std::function<RefPtr<DataAvailableHandler>()>&);
+    static void invokeHandlerIfNeeded(NOESCAPE const std::function<RefPtr<CallbackHandler>()>&);
 
     Lock m_lock;
     Deque<Ref<SharedBuffer>> m_chunks WTF_GUARDED_BY_LOCK(m_lock);
     size_t m_frontChunkOffset WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     bool m_ended WTF_GUARDED_BY_LOCK(m_lock) { false };
     int m_errorCode WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    RefPtr<DataAvailableHandler> m_dataAvailableHandler WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CallbackHandler> m_dataAvailableHandler WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CallbackHandler> m_cancelHandler WTF_GUARDED_BY_LOCK(m_lock);
     HTTPVersionProbe m_httpVersionProbe WTF_GUARDED_BY_LOCK(m_lock);
     Markable<FetchIdentifier> m_serviceWorkerFetchIdentifier;
 };

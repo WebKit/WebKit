@@ -471,6 +471,11 @@ void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
         connection->send(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier }, 0);
 }
 
+void ServiceWorkerFetchTask::cancelPendingStreamUpload()
+{
+    sendToClient(Messages::WebResourceLoader::CancelPendingStreamUpload { });
+}
+
 void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
 {
     SWFETCH_RELEASE_LOG("continueFetchTaskWith: (hasServiceWorkerConnection=%d)", !!m_serviceWorkerConnection);

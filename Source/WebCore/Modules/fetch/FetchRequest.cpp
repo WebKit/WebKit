@@ -416,6 +416,12 @@ void FetchRequest::stop()
     FetchBodyOwner::stop();
 }
 
+void FetchRequest::cancel()
+{
+    if (!isBodyNull())
+        body().cancelReadableStream();
+}
+
 WebCoreOpaqueRoot root(FetchRequest* request)
 {
     return WebCoreOpaqueRoot { request };

@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-class PendingStreamState::DataAvailableHandler : public ThreadSafeRefCounted<DataAvailableHandler> {
+class PendingStreamState::CallbackHandler : public ThreadSafeRefCounted<CallbackHandler> {
 public:
-    static Ref<DataAvailableHandler> create(Function<void()>&& function) { return adoptRef(*new DataAvailableHandler(WTF::move(function))); }
+    static Ref<CallbackHandler> create(Function<void()>&& function) { return adoptRef(*new CallbackHandler(WTF::move(function))); }
 
     void invoke()
     {
@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    explicit DataAvailableHandler(Function<void()>&& function)
+    explicit CallbackHandler(Function<void()>&& function)
         : m_function(WTF::move(function))
     {
     }
@@ -68,7 +68,7 @@ void PendingStreamState::setHTTPVersionProbe(HTTPVersionProbe&& probe)
     m_httpVersionProbe = WTF::move(probe);
 }
 
-void PendingStreamState::invokeHandlerIfNeeded(NOESCAPE const std::function<RefPtr<DataAvailableHandler>()>& function)
+void PendingStreamState::invokeHandlerIfNeeded(NOESCAPE const std::function<RefPtr<CallbackHandler>()>& function)
 {
     if (RefPtr handler = function())
         handler->invoke();
@@ -76,7 +76,7 @@ void PendingStreamState::invokeHandlerIfNeeded(NOESCAPE const std::function<RefP
 
 void PendingStreamState::appendData(Ref<SharedBuffer>&& buffer)
 {
-    invokeHandlerIfNeeded([&] -> RefPtr<DataAvailableHandler> {
+    invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
         if (m_ended || m_errorCode)
             return nullptr;
@@ -87,7 +87,7 @@ void PendingStreamState::appendData(Ref<SharedBuffer>&& buffer)
 
 void PendingStreamState::endStream()
 {
-    invokeHandlerIfNeeded([&] -> RefPtr<DataAvailableHandler> {
+    invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
         if (m_ended || m_errorCode)
             return nullptr;
@@ -98,7 +98,7 @@ void PendingStreamState::endStream()
 
 void PendingStreamState::errorStream(int errorCode)
 {
-    invokeHandlerIfNeeded([&] -> RefPtr<DataAvailableHandler> {
+    invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
         if (m_ended || m_errorCode)
             return nullptr;
@@ -115,11 +115,11 @@ void PendingStreamState::setDataAvailableHandler(Function<void()>&& handler)
         return;
     }
 
-    invokeHandlerIfNeeded([&] -> RefPtr<DataAvailableHandler> {
+    invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
         ASSERT(!m_dataAvailableHandler);
         RELEASE_LOG_ERROR_IF(m_dataAvailableHandler, Network, "Trying to get upload stream data twice");
-        m_dataAvailableHandler = DataAvailableHandler::create(WTF::move(handler));
+        m_dataAvailableHandler = CallbackHandler::create(WTF::move(handler));
         if (!m_chunks.isEmpty() || m_ended || m_errorCode)
             return m_dataAvailableHandler;
         return nullptr;
@@ -202,5 +202,37 @@ bool PendingStreamState::hasReadyData()
     Locker locker { m_lock };
     return !m_chunks.isEmpty() || m_ended || m_errorCode;
 }
+
+void PendingStreamState::setCancelCallback(Function<void()>&& handler)
+{
+    if (!handler) {
+        Locker locker { m_lock };
+        m_cancelHandler = nullptr;
+        return;
+    }
+    {
+        Locker locker { m_lock };
+        if (m_ended || m_errorCode)
+            return;
+        m_cancelHandler = CallbackHandler::create(WTF::move(handler));
+    }
+}
+
+void PendingStreamState::cancel()
+{
+    RefPtr<CallbackHandler> cancelHandler;
+    {
+        Locker locker { m_lock };
+        if (m_ended || m_errorCode)
+            return;
+
+        m_errorCode = -1;
+        cancelHandler = m_cancelHandler;
+    }
+
+    if (cancelHandler)
+        cancelHandler->invoke();
+}
+
 
 } // namespace WebCore

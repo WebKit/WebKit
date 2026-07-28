@@ -287,6 +287,12 @@ void FetchBodyConsumer::clean()
     }
 }
 
+void FetchBodyConsumer::cancelReadableStream()
+{
+    if (RefPtr formDataConsumer = m_formDataConsumer)
+        formDataConsumer->cancel();
+}
+
 void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const String& contentType, std::span<const uint8_t> data)
 {
     resolveWithTypeAndData(WTF::move(promise), m_type, contentType, data);

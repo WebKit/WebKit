@@ -106,6 +106,7 @@ private:
     ExceptionOr<void> setBody(FetchRequest&);
 
     void stop() final;
+    void cancel() final;
 
     ResourceRequest m_request;
     URLKeepingBlobAlive m_requestURL;

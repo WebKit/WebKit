@@ -285,7 +285,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
             responseCallback(Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s });
             return;
         }
-        uploadSink = request.body().startPendingStreamUpload();
+        uploadSink = request.body().startPendingStreamUpload(context);
     } else if (request.hasReadableStreamBody()) {
         request.body().convertReadableStreamToArrayBuffer(request, [context = Ref { context }, weakRequest = WeakPtr { request }, responseCallback = WTF::move(responseCallback), initiator](auto&& exception) mutable {
             if (!!exception) {

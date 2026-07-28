@@ -83,6 +83,7 @@ public:
 
     void continueDidReceiveFetchResponse();
     void continueFetchTaskWith(WebCore::ResourceRequest&&);
+    void cancelPendingStreamUpload();
 
     WebCore::FetchIdentifier fetchIdentifier() const { return m_fetchIdentifier; }
     std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }

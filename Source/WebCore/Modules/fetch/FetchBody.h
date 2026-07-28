@@ -107,8 +107,9 @@ public:
 
     void convertReadableStreamToArrayBuffer(FetchBodyOwner&, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
-    Ref<ReadableStreamToSharedBufferSink> startPendingStreamUpload();
+    Ref<ReadableStreamToSharedBufferSink> startPendingStreamUpload(ScriptExecutionContext&);
     PendingStreamState* pendingStreamState() const { return m_pendingStreamState.get(); }
+    void cancelReadableStream();
 
     bool isBlob() const { return std::holds_alternative<Ref<Blob>>(m_data); }
     bool isFormData() const { return std::holds_alternative<Ref<FormData>>(m_data); }
