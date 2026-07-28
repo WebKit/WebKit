@@ -23,6 +23,21 @@ Defines a comma-separated list of logging channels and their levels for WebKit's
       e.g. with `WEBKIT_DEBUG='GLContext=debug'`, backtraces leading to errors are added to the
       error messages.
 
+- `WEBKIT_DEBUG_OUTPUT`
+Selects where the log messages that would be sent the journal should actually go. Only available when
+WebKit is built with journald support (`ENABLE_JOURNALD_LOG`, the default for the GTK and WPE ports).
+It does not alter channel filtering or which messages are enabled.
+    - **Default** (unset): messages go to the systemd journal, if its socket is present, and can be
+      read back filtering by the `WEBKIT_SUBSYSTEM` and `WEBKIT_CHANNEL` fields, e.g.
+      `journalctl WEBKIT_SUBSYSTEM=WPEWebKit WEBKIT_CHANNEL=WebDriverBiDi`. Use `WebKitGTK` as the
+      subsystem for the GTK port. When the journal is not reachable, for instance in a container or
+      a CI image that has no journald running, messages are written to standard error instead.
+    - `journal` - Always write to the systemd journal, even if it's inaccessible.
+    - `stderr` - Always write to standard error, one line per message, prefixed with the subsystem,
+      the channel and the priority, and followed by the source location, if available. Useful to
+      capture the output of a single process into a file, and to force the fallback on a machine
+      that does run journald.
+
 ## Graphics-related variables
 
 #if WPE

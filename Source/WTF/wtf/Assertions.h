@@ -237,6 +237,10 @@ WTF_EXPORT_PRIVATE void WTFLogWithLevel(WTFLogChannel*, WTFLogLevel, const char*
 WTF_EXPORT_PRIVATE void NODELETE WTFSetLogChannelLevel(WTFLogChannel*, WTFLogLevel);
 WTF_EXPORT_PRIVATE bool NODELETE WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
 
+#if ENABLE(JOURNALD_LOG)
+WTF_EXPORT_PRIVATE bool WTFShouldLogToJournal(void);
+#endif
+
 WTF_EXPORT_PRIVATE NEVER_INLINE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefix(const char*);
 WTF_EXPORT_PRIVATE void WTFReportBacktraceWithStackDepth(int);
@@ -788,11 +792,42 @@ inline void wtfCompileTimeCheckPrintfSpecifier(const char* format, ...)
     UNUSED_PARAM(format); // Function intentionally empty.
 }
 
-#define SD_JOURNAL_SEND(channel, priority, file, line, function, ...) do { \
+inline const char* wtfLogPriorityName(int priority)
+{
+    switch (priority) {
+    case LOG_CRIT:
+        return "crit";
+    case LOG_ERR:
+        return "err";
+    case LOG_WARNING:
+        return "warning";
+    case LOG_NOTICE:
+        return "notice";
+    case LOG_INFO:
+        return "info";
+    case LOG_DEBUG:
+        return "debug";
+    default:
+        return "log";
+    }
+}
+
+#define JOURNAL_FALLBACK_LOGF(logChannel, priority, file, line, function, fmt, ...) do { \
+    IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call") \
+    fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%s] " fmt " [" file ":" line " %s]\n", logChannel.name, wtfLogPriorityName(priority), ##__VA_ARGS__, function); \
+    IGNORE_WARNINGS_END \
+} while (0)
+
+#define SD_JOURNAL_SEND(channel, priority, file, line, function, fmt, ...) do { \
     IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
-    wtfCompileTimeCheckPrintfSpecifier(__VA_ARGS__); \
-    if (LOG_CHANNEL(channel).state != WTFLogChannelState::Off) \
-        sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%u", static_cast<unsigned>(priority), "MESSAGE=" __VA_ARGS__, nullptr); \
+    wtfCompileTimeCheckPrintfSpecifier(fmt, ##__VA_ARGS__); \
+    auto& logChannel = LOG_CHANNEL(channel); \
+    if (logChannel.state != WTFLogChannelState::Off) { \
+        if (WTFShouldLogToJournal()) \
+            sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", logChannel.name, "PRIORITY=%u", static_cast<unsigned>(priority), "MESSAGE=" fmt, ##__VA_ARGS__, nullptr); \
+        else \
+            JOURNAL_FALLBACK_LOGF(logChannel, priority, file, line, function, fmt, ##__VA_ARGS__); \
+    } \
     IGNORE_WARNINGS_END \
 } while (0)
 

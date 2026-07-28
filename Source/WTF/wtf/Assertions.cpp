@@ -61,6 +61,11 @@
 #include <wtf/OSObjectPtr.h>
 #endif
 
+#if ENABLE(JOURNALD_LOG)
+#include <stdlib.h>
+#include <unistd.h>
+#endif
+
 #if !RELEASE_LOG_DISABLED && !USE(OS_LOG)
 #include <wtf/StringPrintStream.h>
 #endif
@@ -490,6 +495,28 @@ bool WTFWillLogWithLevel(WTFLogChannel* channel, WTFLogLevel level)
 {
     return channel->level >= level && channel->state != WTFLogChannelState::Off;
 }
+
+#if ENABLE(JOURNALD_LOG)
+bool WTFShouldLogToJournal()
+{
+    static const bool shouldLogToJournal = [] {
+        if (const char* output = getenv("WEBKIT_DEBUG_OUTPUT")) {
+            auto outputSpan = unsafeSpan(output);
+            if (equalSpans(outputSpan, "stderr"_span))
+                return false;
+            if (equalSpans(outputSpan, "journal"_span))
+                return true;
+            WTFLogAlways("Unknown WEBKIT_DEBUG_OUTPUT value '%s', expected 'journal' or 'stderr'.", output);
+        }
+
+        // sd_journal_send() returns success even when journald is not running:
+        // https://man.archlinux.org/man/sd_journal_send_with_location.3.en#RETURN_VALUE
+        return !access("/run/systemd/journal/socket", F_OK);
+    }();
+
+    return shouldLogToJournal;
+}
+#endif // ENABLE(JOURNALD_LOG)
 
 void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* format, ...)
 {
