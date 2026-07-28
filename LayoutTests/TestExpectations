@@ -4049,6 +4049,13 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-canvas.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-border-radius-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-border-radius.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-overflow/flex-column-container-with-scrollable-descendant.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/flex-container-multiple-items-with-scrollable-descendant.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/flex-container-with-scrollable-descendant.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/flex-nested-container-with-scrollable-descendant.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/grid-container-with-scrollable-descendant.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/grid-nested-container-with-scrollable-descendant.html [ ImageOnlyFailure ]
+
 # Tests that failed on the 2026-02-02 import of css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/clip-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/column-style-change-triggers-relayout.html [ ImageOnlyFailure ]

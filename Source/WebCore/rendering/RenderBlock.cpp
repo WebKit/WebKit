@@ -554,22 +554,18 @@ static EnumSet<LogicalBoxAxis> sizesAffectedByScrollbarsForSubtreeRoot(const Ren
     if (layoutContext.subtreeScrollbarChangesState())
         return { };
 
-    EnumSet<LogicalBoxAxis> sizesAffected;
-
     auto& style = renderBlock.style();
     auto& computedLogicalWidth = style.logicalWidth();
-    if (!computedLogicalWidth.isFixed() && (computedLogicalWidth.isIntrinsic() || computedLogicalWidth.isMinIntrinsic() || renderBlock.sizesLogicalWidthToFitContent()))
-        sizesAffected.add(LogicalBoxAxis::Inline);
+    if (computedLogicalWidth.isFixed())
+        return { };
 
-    auto& computedLogicalHeight = style.logicalHeight();
+    if (computedLogicalWidth.isIntrinsic() || computedLogicalWidth.isMinIntrinsic())
+        return LogicalBoxAxis::Inline;
 
-    if (renderBlock.isRenderFlexibleBox() && renderBlock.isBlockLevelBox() && (computedLogicalHeight.isAuto() || computedLogicalHeight.isIntrinsic()))
-        sizesAffected.add(LogicalBoxAxis::Block);
+    if (renderBlock.sizesLogicalWidthToFitContent())
+        return LogicalBoxAxis::Inline;
 
-    if (renderBlock.isRenderGrid() && (computedLogicalHeight.isAuto() || computedLogicalHeight.isIntrinsic()))
-        sizesAffected.add(LogicalBoxAxis::Block);
-
-    return sizesAffected;
+    return { };
 }
 
 static bool canContainDescendantScrollbarChanges(const RenderBlock& renderBlock, const LocalFrameViewLayoutContext& layoutContext)
