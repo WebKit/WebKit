@@ -422,9 +422,12 @@ inline void releaseAssertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_
     RELEASE_ASSERT(runLoop.isCurrent());
 }
 
+WTF_EXPORT_PRIVATE void callOnRunLoop(RunLoop&, Function<void()>&&);
+
 } // namespace WTF
 
 using WTF::RunLoop;
 using WTF::RunLoopMode;
 using WTF::assertIsCurrent;
 using WTF::releaseAssertIsCurrent;
+using WTF::callOnRunLoop;

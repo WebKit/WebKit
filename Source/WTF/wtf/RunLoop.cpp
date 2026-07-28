@@ -237,4 +237,12 @@ String RunLoop::listActiveTimersForLogging() const
     return builder.toString();
 }
 
+void callOnRunLoop(RunLoop& runLoop, Function<void()>&& function)
+{
+    if (&runLoop == &RunLoop::mainSingleton())
+        callOnMainThread(WTF::move(function));
+    else
+        runLoop.dispatch(WTF::move(function));
+}
+
 } // namespace WTF

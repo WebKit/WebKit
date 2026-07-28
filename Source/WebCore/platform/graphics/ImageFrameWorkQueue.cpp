@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,8 +54,6 @@ ImageFrameWorkQueue::RequestQueue& ImageFrameWorkQueue::requestQueue()
 
 void ImageFrameWorkQueue::start()
 {
-    ASSERT(isMainThread());
-
     if (m_workQueue)
         return;
 
@@ -65,7 +63,7 @@ void ImageFrameWorkQueue::start()
 
     m_workQueue = WorkQueue::create("org.webkit.ImageDecoder"_s, WorkQueue::QOS::Default);
 
-    protect(m_workQueue)->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = m_source.get(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
+    protect(m_workQueue)->dispatch([protectedThis = Ref { *this }, weakRunLoop = ThreadSafeWeakPtr { RunLoop::currentSingleton() }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = m_source.get(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
         Request request;
         while (protectedRequestQueue->dequeue(request)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
@@ -93,34 +91,36 @@ void ImageFrameWorkQueue::start()
                     sleep(minimumDecodingDuration - actualDecodingDuration);
             }
 
-            // Even if we fail to decode the frame, it is important to sync the main thread with this result.
-            callOnMainThread([protectedThis, protectedWorkQueue, protectedSource, request, nativeImage = WTF::move(nativeImage)] () mutable {
-                // The WorkQueue may have been recreated before the frame was decoded.
-                if (protectedWorkQueue.ptr() != protectedThis->m_workQueue || protectedSource.ptr() != protectedThis->m_source.get().ptr()) {
-                    LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
-                    return;
-                }
+            if (RefPtr protectedRunLoop = weakRunLoop.get()) {
+                // Even if we fail to decode the frame, it is important to sync the creation thread with this result.
+                callOnRunLoop(*protectedRunLoop, [protectedThis, protectedWorkQueue, protectedSource, request, nativeImage = WTF::move(nativeImage)] () mutable {
+                    // The WorkQueue may have been recreated before the frame was decoded.
+                    if (protectedWorkQueue.ptr() != protectedThis->m_workQueue || protectedSource.ptr() != protectedThis->m_source.get().ptr()) {
+                        LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
+                        return;
+                    }
 
-                // The DecodeQueue may have been cleared before the frame was decoded.
-                if (protectedThis->decodeQueue().isEmpty() || !request.isCompatibleWith(protectedThis->decodeQueue().first())) {
-                    LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. DecodeQueue was cleared at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
-                    return;
-                }
+                    // The DecodeQueue may have been cleared before the frame was decoded.
+                    if (protectedThis->decodeQueue().isEmpty() || !request.isCompatibleWith(protectedThis->decodeQueue().first())) {
+                        LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. DecodeQueue was cleared at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
+                        return;
+                    }
 
-                protectedThis->decodeQueue().removeFirst();
-                protectedSource->imageFrameDecodeAtIndexHasFinished(request.index, request.subsamplingLevel, request.animatingState, request.options, WTF::move(nativeImage));
-            });
+                    protectedThis->decodeQueue().removeFirst();
+                    protectedSource->imageFrameDecodeAtIndexHasFinished(request.index, request.subsamplingLevel, request.animatingState, request.options, WTF::move(nativeImage));
+                });
+            }
         }
 
-        // Ensure destruction happens on creation thread.
-        callOnMainThread([protectedThis = WTF::move(protectedThis), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] () mutable { });
+        if (RefPtr protectedRunLoop = weakRunLoop.get()) {
+            // Ensure destruction happens on creation thread.
+            callOnRunLoop(*protectedRunLoop, [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] () mutable { });
+        }
     });
 }
 
 void ImageFrameWorkQueue::dispatch(const Request& request)
 {
-    ASSERT(isMainThread());
-
     protect(requestQueue())->enqueue(request);
     decodeQueue().append(request);
 
@@ -129,8 +129,6 @@ void ImageFrameWorkQueue::dispatch(const Request& request)
 
 void ImageFrameWorkQueue::stop()
 {
-    ASSERT(isMainThread());
-
     Ref source = m_source.get();
 
     for (auto& request : m_decodeQueue) {
@@ -149,8 +147,6 @@ void ImageFrameWorkQueue::stop()
 
 bool ImageFrameWorkQueue::isPendingDecodingAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
 {
-    ASSERT(isMainThread());
-
     auto it = std::find_if(m_decodeQueue.begin(), m_decodeQueue.end(), [index, subsamplingLevel, &options](const Request& request) {
         return request.index == index && subsamplingLevel >= request.subsamplingLevel && request.options.isCompatibleWith(options);
     });
