@@ -35,6 +35,7 @@
 #include <WebCore/SubstituteData.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -178,6 +179,9 @@ public:
     bool skipNavigateEvent() const { return m_skipNavigateEvent; }
     void setSkipNavigateEvent(bool value) { m_skipNavigateEvent = value; }
 
+    MonotonicTime originalNavigationStartTime() const { return m_originalNavigationStartTime; }
+    void setOriginalNavigationStartTime(MonotonicTime time) { m_originalNavigationStartTime = time; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -193,6 +197,7 @@ private:
     AllowNavigationToInvalidURL m_allowNavigationToInvalidURL { AllowNavigationToInvalidURL::Yes };
     std::optional<OptionSet<AdvancedPrivacyProtections>> m_advancedPrivacyProtections;
     NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Auto };
+    MonotonicTime m_originalNavigationStartTime;
     bool m_isHandledByAboutSchemeHandler { false };
     bool m_skipNavigateEvent { false };
 };

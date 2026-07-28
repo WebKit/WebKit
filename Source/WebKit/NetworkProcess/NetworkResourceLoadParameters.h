@@ -40,6 +40,7 @@
 #include <WebCore/SecurityContext.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {
@@ -133,6 +134,7 @@ struct NetworkResourceLoadParameters {
     bool isInitiatedByDedicatedWorker { false };
     bool globalPrivacyControlEnabled { false };
     bool shouldConsiderEnhancedSecurityForInsecureResponse { false };
+    MonotonicTime originalNavigationStartTime { };
 };
 
 } // namespace WebKit

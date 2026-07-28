@@ -50,6 +50,7 @@ enum class WebCore::LockBackForwardList : bool;
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
+    MonotonicTime originalNavigationStartTime;
     bool isServiceWorkerLoad;
 
 #if PLATFORM(COCOA)

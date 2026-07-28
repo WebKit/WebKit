@@ -77,7 +77,7 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
 
     DidAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID sessionID, bool wasAllowed, URL resourceURL)
 
-    ConsiderProcessSwapForNavigationResponse(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::NavigationIdentifier navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, enum:uint8_t WebCore::NavigationResponseProcessSwapReason reason, WebCore::Site responseSite, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume) -> (bool success)
+    ConsiderProcessSwapForNavigationResponse(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::NavigationIdentifier navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, enum:uint8_t WebCore::NavigationResponseProcessSwapReason reason, WebCore::Site responseSite, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime) -> (bool success)
 
 #if USE(SOUP)
     DidExceedMemoryLimit()

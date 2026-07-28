@@ -2473,6 +2473,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     // Initate the load in WebCore.
     ASSERT(localFrame->document());
     FrameLoadRequest frameLoadRequest { *localFrame, WTF::move(loadParameters.request) };
+    frameLoadRequest.setOriginalNavigationStartTime(loadParameters.originalNavigationStartTime);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
     frameLoadRequest.setLockHistory(loadParameters.lockHistory);

@@ -603,6 +603,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
             loadParameters.navigationRequester = documentLoader->triggeringAction().requester();
             if (auto& requester = loadParameters.navigationRequester; requester && frame && !frame->isMainFrame() && frame->document())
                 loadParameters.navigationLosesFrameSpecificStorageAccess = shouldNavigationLoseFrameSpecificStorageAccess(*requester, frame->frameID(), frame->document()->url(), request.url());
+            loadParameters.originalNavigationStartTime = documentLoader->timing().startTime();
             if (loadParameters.navigationRequester && (!loadParameters.sourceOrigin || loadParameters.sourceOrigin->isOpaque()))
                 loadParameters.sourceOrigin = loadParameters.navigationRequester->securityOrigin.ptr();
         }

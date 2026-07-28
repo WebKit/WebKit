@@ -1159,7 +1159,11 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
     };
 
     auto reason = shouldConsiderProcessSwapForEnhancedSecurity ? NavigationResponseProcessSwapReason::EnhancedSecurity : NavigationResponseProcessSwapReason::COOP;
-    protect(connection->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, responseSite, existingNetworkResourceLoadIdentifierToResume), WTF::move(swapResultHandler));
+
+    // Propagating the original start time to a destination that fails the TAO check would leak cross-origin redirect timing.
+    // https://fetch.spec.whatwg.org/#navigation-tao-check
+    auto originalNavigationStartTime = (m_networkLoadChecker && m_networkLoadChecker->navigationTAOCheckPassed()) ? m_parameters.originalNavigationStartTime : MonotonicTime { };
+    protect(connection->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, responseSite, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime), WTF::move(swapResultHandler));
 }
 
 void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer)

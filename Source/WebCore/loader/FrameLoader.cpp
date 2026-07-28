@@ -1824,6 +1824,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
         request.setSubstituteData(defaultSubstituteDataForURL(request.resourceRequest().url()));
 
     Ref loader = m_client->createDocumentLoader(request.takeResourceRequest(), request.takeSubstituteData(), request.takeOriginalResourceRequest());
+    loader->setOriginalNavigationStartTime(request.originalNavigationStartTime());
     loader->setIsContentRuleListRedirect(request.isContentRuleListRedirect());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
     loader->setIsContinuingLoad(request.shouldTreatAsContinuingLoad());

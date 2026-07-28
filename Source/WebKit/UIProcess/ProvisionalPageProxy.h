@@ -40,6 +40,7 @@
 #include <WebCore/ProcessSwapDisposition.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Site.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -143,7 +144,7 @@ public:
 #endif
 
     void loadData(API::Navigation&, Ref<WebCore::SharedBuffer>&&, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, WebCore::SubstituteData::SessionHistoryVisibility);
-    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&& = nullptr, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt, WebCore::NavigationUpgradeToHTTPSBehavior = WebCore::NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
+    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, WebCore::NavigationUpgradeToHTTPSBehavior, MonotonicTime originalNavigationStartTime);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt, WebCore::ProcessSwapDisposition processSwapDisposition = WebCore::ProcessSwapDisposition::None);
     void cancel();
 

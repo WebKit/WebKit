@@ -39,6 +39,7 @@ public:
     }
 
     void markStartTime() { m_startTime = MonotonicTime::now(); }
+    void setStartTime(MonotonicTime time) { m_startTime = time; }
     void markEndTime() { m_endTime = MonotonicTime::now(); }
 
     MonotonicTime startTime() const { return m_startTime; }

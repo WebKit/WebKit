@@ -41,6 +41,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
+#include <wtf/MonotonicTime.h>
 
 OBJC_CLASS NSDictionary;
 
@@ -84,6 +85,7 @@ struct LoadParameters {
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
+    MonotonicTime originalNavigationStartTime;
     bool isServiceWorkerLoad { false };
 
 #if PLATFORM(COCOA)
