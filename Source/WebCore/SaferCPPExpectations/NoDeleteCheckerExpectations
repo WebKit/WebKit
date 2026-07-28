@@ -2,7 +2,6 @@ Modules/indexeddb/server/IndexValueStore.cpp
 Modules/notifications/NotificationPayload.cpp
 Modules/streams/ReadableByteStreamController.cpp
 Modules/streams/ReadableStreamBYOBReader.cpp
-Modules/webtransport/WebTransportDatagramsWritable.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSPropertyInitialValues.cpp
 css/DOMMatrixReadOnly.cpp
