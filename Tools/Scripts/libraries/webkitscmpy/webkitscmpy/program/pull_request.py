@@ -506,8 +506,10 @@ class PullRequest(Command):
             for issue in commit.issues
         ]
 
-        unreviewed_match = re.compile(r'(Unreviewed|Versioning.)', re.IGNORECASE)
-        bad_commits = [c for c in commits if c.message and unreviewed_match.search(c.message) and 'Reviewed by' in c.message]
+        unreviewed = re.compile(r'(Unreviewed|Versioning.)', re.IGNORECASE)
+        reviewed = re.compile(r'^Reviewed by .+', re.IGNORECASE | re.MULTILINE)
+        bad_commits = [c for c in commits if c.message and unreviewed.search(c.message) and reviewed.search(c.message)]
+
         if bad_commits:
             if len(bad_commits) > 1:
                 sys.stderr.write("Multiple commits are marked 'Unreviewed' or 'Versioning' but contain a 'Reviewed by' line, please fix before posting\n")

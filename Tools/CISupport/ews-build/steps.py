@@ -7652,10 +7652,10 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         commands = [
             f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
             f"git log {head_ref} ^{base_ref} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\"{reviewer_error_msg}' || test $? -eq 1",
-            "git log {} ^{} > commit_msg.txt; grep -q '\\({}\\)' commit_msg.txt || echo 'No reviewer information in commit message';".format(
+            "git log --format=%B {} ^{} > commit_msg.txt; grep -q '^\\({}\\)' commit_msg.txt || echo 'No reviewer information in commit message';".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS)
-            ), "git log {} ^{} | grep '\\({}\\)' || true".format(
+            ), "git log --format=%B {} ^{} | grep '^\\({}\\)' || true".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS[:3]),
             ),

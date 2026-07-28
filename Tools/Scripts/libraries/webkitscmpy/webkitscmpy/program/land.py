@@ -44,7 +44,7 @@ class Land(Command):
            'current branch onto the target production branch and push.'
 
     OOPS_RE = re.compile(r'^[^-]+\(O+P+S!*\)')
-    REVIEWED_BY_RE = re.compile('Reviewed by (?P<approver>.+)')
+    REVIEWED_BY_RE = re.compile('^Reviewed by (?P<approver>.+)', re.MULTILINE)
     GIT_SVN_COMMITTED_RE = re.compile(r'Committed r(?P<revision>\d+)')
     REMOTE = 'origin'
     MIRROR_TIMEOUT = 60
