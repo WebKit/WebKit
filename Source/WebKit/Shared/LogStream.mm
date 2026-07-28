@@ -63,7 +63,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 // All LogStreams share a single work queue: the StreamServerConnection for each LogStream is opened on
 // (and thus bound to) this queue, so all of its connection work -- including invalidate() -- must run
 // on it. See rdar://182244946 and the comment in stopListeningForIPC().
-static IPC::StreamConnectionWorkQueue& logWorkQueue()
+static IPC::StreamConnectionWorkQueue& logWorkQueueSingleton()
 {
     static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> queue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
     return queue.get();
@@ -104,7 +104,7 @@ void LogStream::stopListeningForIPC()
     // soon as this returns), so capture Ref to both the LogStream and its connection: invalidate()
     // clears the connection's CheckedPtr back to us (the client), so the LogStream must outlive the
     // dispatched teardown.
-    logWorkQueue().dispatch([protectedThis = Ref { *this }, connection = Ref { m_connection }, identifier = m_identifier] {
+    logWorkQueueSingleton().dispatch([protectedThis = Ref { *this }, connection = Ref { m_connection }, identifier = m_identifier] {
         connection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), identifier.toUInt64());
         connection->invalidate();
     });
@@ -162,12 +162,11 @@ RefPtr<LogStream> LogStream::create(AuxiliaryProcessProxy& process, ASCIILiteral
         completionHandler(invalidWakeUpSemaphore, invalidClientWaitSemaphore);
         return nullptr;
     }
-    Ref logQueue = logWorkQueue();
 
     Ref instance = adoptRef(*new LogStream(process, processName, connection.releaseNonNull(), identifier));
-    instance->m_connection->open(instance.get(), logQueue.get());
+    instance->m_connection->open(instance.get(), logWorkQueueSingleton());
     instance->m_connection->startReceivingMessages(instance, Messages::LogStream::messageReceiverName(), identifier.toUInt64());
-    completionHandler(logQueue->wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
+    completionHandler(logWorkQueueSingleton().wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
     return instance;
 }
 
