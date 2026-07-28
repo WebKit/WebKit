@@ -2,5 +2,4 @@ API/JSScript.mm
 API/JSValue.mm
 API/JSVirtualMachine.mm
 API/JSWrapperMap.mm
-API/tests/Regress141275.mm
 [ iOS ] runtime/ObjectPrototype.cpp

@@ -1,6 +1,5 @@
 dfg/DFGIntegerRangeOptimizationPhase.cpp
 jit/ScratchRegisterAllocator.cpp
-jsc.cpp
 runtime/IndexingType.cpp
 runtime/JSObject.cpp
 yarr/YarrInterpreter.cpp

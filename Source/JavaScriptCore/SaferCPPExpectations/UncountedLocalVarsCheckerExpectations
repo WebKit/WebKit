@@ -2,7 +2,6 @@ API/JSCallbackObjectFunctions.h
 API/JSTypedArray.cpp
 API/JSValue.mm
 API/JSWrapperMap.mm
-API/tests/testapi.cpp
 builtins/BuiltinNames.cpp
 bytecode/AccessCase.cpp
 bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp
@@ -66,7 +65,6 @@ interpreter/Interpreter.cpp
 interpreter/StackVisitor.cpp
 jit/JITOperations.cpp
 jit/JITWorklist.cpp
-jsc.cpp
 llint/LLIntEntrypoint.cpp
 parser/Lexer.h
 parser/Parser.cpp

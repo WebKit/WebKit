@@ -1,4 +1,3 @@
-API/tests/testapi.cpp
 bytecode/AccessCase.cpp
 bytecode/InlineCacheCompiler.cpp
 bytecode/ObjectPropertyConditionSet.cpp

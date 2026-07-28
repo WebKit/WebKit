@@ -9,8 +9,6 @@ API/JSRetainPtr.h
 API/JSScript.mm
 API/JSTypedArray.cpp
 API/JSWrapperMap.mm
-API/tests/CompareAndSwapTest.cpp
-API/tests/testapi.cpp
 assembler/LinkBuffer.cpp
 b3/B3PatchpointSpecial.cpp
 b3/B3Procedure.cpp
@@ -91,7 +89,6 @@ jit/JITWorklist.cpp
 jit/JITWorklistInlines.h
 jit/JITWorklistThread.cpp
 jit/PolymorphicCallStubRoutine.cpp
-jsc.cpp
 llint/LLIntSlowPaths.cpp
 parser/Lexer.cpp
 parser/Parser.cpp

@@ -47,7 +47,6 @@ interpreter/CallFrame.h
 interpreter/Interpreter.cpp
 jit/JITOperations.cpp
 jit/JITThunks.cpp
-jsc.cpp
 parser/ASTBuilder.h
 parser/NodesAnalyzeModule.cpp
 runtime/ArrayStorage.h
@@ -125,7 +124,6 @@ runtime/SymbolConstructor.cpp
 runtime/SymbolTable.cpp
 runtime/SyntheticModuleRecord.cpp
 runtime/WeakMapImpl.cpp
-runtime/WriteBarrier.h
 tools/CellProfile.h
 tools/HeapVerifier.cpp
 tools/JSDollarVM.cpp

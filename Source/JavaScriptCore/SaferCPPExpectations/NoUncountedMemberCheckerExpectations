@@ -3,7 +3,6 @@ API/JSCallbackObject.h
 API/JSClassRef.h
 API/JSObjectRef.h
 API/JSRetainPtr.h
-API/tests/testapi.cpp
 BytecodeStructs.h
 bytecode/InlineCacheHandler.h
 bytecode/PropertyInlineCacheClearingWatchpoint.h
