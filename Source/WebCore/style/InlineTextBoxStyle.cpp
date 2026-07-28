@@ -255,9 +255,8 @@ bool isAlignedForUnder(const Style::ComputedStyle& decoratingBoxStyle)
         // In vertical typographic modes, the underline is aligned as for under for 'left' and 'right'.
         return true;
     case Style::TextUnderlinePosition::Side::NoPreference:
-        // When left/right support is not enabled.
-        // FIXME: The offset check is mostly about visual overflow, consider splitting out.
-        return underlinePosition.isAuto() && decoratingBoxStyle.textUnderlineOffset().isAuto();
+        // A non-auto text-underline-offset must not disable vertical under-alignment; it is applied within the under branch.
+        return underlinePosition.isAuto();
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

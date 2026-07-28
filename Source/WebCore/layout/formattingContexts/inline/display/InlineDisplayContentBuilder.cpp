@@ -1234,7 +1234,8 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(std::span
             if (!logicalBottomForTextDecoration)
                 logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
             auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
-            return inkOverflowForDecorations(parentStyle, { displayBox.height(), textRunLogicalOffsetFromLineBottom });
+            auto textRunLogicalHeight = isHorizontalWritingMode ? displayBox.height() : displayBox.width();
+            return inkOverflowForDecorations(parentStyle, { textRunLogicalHeight, textRunLogicalOffsetFromLineBottom });
         }();
 
         if (!decorationOverflow.isZero()) {
