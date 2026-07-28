@@ -154,6 +154,18 @@ extension WKPDFHUDView {
         saveButton.target = self
         saveButton.action = #selector(saveAction)
 
+        // FIXME: Remove this compiler guard after the Safer C++ bots have Swift 6.4+.
+        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        if let page = webView?._protectedPage().get(), page.preferences().compositingBordersVisible() {
+            wantsLayer = true
+            layer?.borderWidth = 3
+            layer?.borderColor = NSColor.systemOrange.cgColor
+            barView.wantsLayer = true
+            barView.layer?.borderWidth = 3
+            barView.layer?.borderColor = NSColor.systemPurple.cgColor
+        }
+        #endif
+
         resetHideTimer()
     }
 
