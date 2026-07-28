@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkResourceLoadParameters.h"
 
+#include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
 #include <WebCore/SecurityOriginData.h>
@@ -36,19 +37,27 @@ using namespace WebCore;
 
 void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
 {
-    if (request.url().protocolIsFile()) {
-        String path = request.url().fileSystemPath();
+    if (!request.url().protocolIsFile())
+        return;
+
+    String path = request.url().fileSystemPath();
+    // Log the file-load sandbox extension mint outcome at release level for diagnosis when it fails.
 #if HAVE(AUDIT_TOKEN)
-        if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken()) {
-            if (auto handle = SandboxExtension::createHandleForReadByAuditToken(path, *networkProcessAuditToken))
-                resourceSandboxExtension = WTF::move(*handle);
-        } else
-#endif
-        {
-            if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly))
-                resourceSandboxExtension = WTF::move(*handle);
-        }
+    if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken()) {
+        auto handle = SandboxExtension::createHandleForReadByAuditToken(path, *networkProcessAuditToken);
+        if (handle)
+            resourceSandboxExtension = WTF::move(*handle);
+        else
+            RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandleForReadByAuditToken(networkProcess) failed for '%" PRIVATE_LOG_STRING "'", path.utf8().data());
+        return;
     }
+    RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, network process audit token unavailable; falling back to non-targeted read handle for '%" PRIVATE_LOG_STRING "'", path.utf8().data());
+#endif
+    auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
+    if (handle)
+        resourceSandboxExtension = WTF::move(*handle);
+    else
+        RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandle(ReadOnly) failed for '%" PRIVATE_LOG_STRING "'", path.utf8().data());
 }
 
 RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const
