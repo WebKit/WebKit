@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebTransportSendStreamSink.h"
 
+#include "AbortSignal.h"
+#include "EventLoop.h"
 #include "Exception.h"
 #include "IDLTypes.h"
 #include "JSDOMConvertBufferSource.h"
@@ -50,7 +52,26 @@ WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransport& transport, 
 {
 }
 
-WebTransportSendStreamSink::~WebTransportSendStreamSink() = default;
+WebTransportSendStreamSink::~WebTransportSendStreamSink()
+{
+    if (m_abortSignal && m_abortAlgorithmIdentifier)
+        protect(m_abortSignal)->removeAlgorithm(*m_abortAlgorithmIdentifier);
+}
+
+void WebTransportSendStreamSink::start(std::unique_ptr<WritableStreamDefaultController>&& controller)
+{
+    WritableStreamSink::start(WTF::move(controller));
+
+    // The abort signal fires synchronously during writer.abort(), before the abort() algorithm runs,
+    // so observing it is the only way to cancel an in-flight close().
+    if (RefPtr signal = abortSignal()) {
+        m_abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue reason) {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->cancel(reason);
+        });
+        m_abortSignal = WTF::move(signal);
+    }
+}
 
 RefPtr<WritableStream> WebTransportSendStreamSink::stream() const
 {
@@ -104,35 +125,76 @@ void WebTransportSendStreamSink::write(ScriptExecutionContext& context, JSC::JSV
     });
 }
 
-void WebTransportSendStreamSink::close(JSDOMGlobalObject&)
+// https://w3c.github.io/webtransport/#webtransportsendstream-close
+void WebTransportSendStreamSink::close(JSDOMGlobalObject& globalObject, DOMPromiseDeferred<void>&& promise)
 {
-    if (m_isClosed)
-        return;
+    if (m_isClosed || m_isCancelled)
+        return promise.reject(Exception { ExceptionCode::InvalidStateError });
     m_isClosed = true;
 
-    if (RefPtr transport = m_transport.get()) {
-        transport->session()->streamSendBytes(m_identifier, { }, true);
-        transport->sendStreamClosed(m_identifier);
-    }
+    RefPtr context = globalObject.scriptExecutionContext();
+    if (!context)
+        return promise.reject(Exception { ExceptionCode::InvalidStateError });
+
+    m_closeDeferred = makeUnique<DOMPromiseDeferred<void>>(WTF::move(promise));
+
+    // Defer the FIN so a racing abort() can suppress it and reset the stream instead.
+    // FIXME: Validate this abort-after-close behavior. https://bugs.webkit.org/show_bug.cgi?id=320232
+    protect(context->eventLoop())->queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, context = Ref { *context }] {
+        protectedThis->sendFin(context.get());
+    });
 }
 
-void WebTransportSendStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
+void WebTransportSendStreamSink::sendFin(ScriptExecutionContext& context)
 {
-    auto scope = makeScopeExit([&promise] {
-        promise.resolve();
-    });
+    if (m_isCancelled || !m_closeDeferred)
+        return;
 
+    RefPtr transport = m_transport.get();
+    RefPtr session = transport ? transport->session().ptr() : nullptr;
+    if (!transport || !session)
+        return std::exchange(m_closeDeferred, nullptr)->reject(Exception { ExceptionCode::InvalidStateError });
+
+    transport->sendStreamClosed(m_identifier);
+    context.enqueueTaskWhenSettled(session->streamSendBytes(m_identifier, { }, true), TaskSource::Networking, [protectedThis = Ref { *this }] (auto&& exception) mutable {
+        auto deferred = std::exchange(protectedThis->m_closeDeferred, nullptr);
+        if (!deferred)
+            return;
+        if (!exception)
+            return deferred->reject(Exception { ExceptionCode::NetworkError });
+        if (*exception)
+            return deferred->reject(WTF::move(**exception));
+        deferred->resolve();
+    });
+}
+
+void WebTransportSendStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue reason, DOMPromiseDeferred<void>&& promise)
+{
+    cancel(reason);
+    promise.resolve();
+}
+
+void WebTransportSendStreamSink::cancel(JSC::JSValue reason)
+{
     if (m_isCancelled)
         return;
     m_isCancelled = true;
 
+    // Reject an in-flight close() so its promise rejects rather than resolving after the FIN.
+    if (auto deferred = std::exchange(m_closeDeferred, nullptr)) {
+        deferred->rejectWithCallback([reason](JSDOMGlobalObject&) {
+            return reason;
+        });
+    }
+
     RefPtr transport = m_transport.get();
     if (!transport)
         return;
+
     transport->sendStreamClosed(m_identifier);
 
     std::optional<uint64_t> errorCode;
-    if (auto* jsWebTransportError = dynamicDowncast<JSWebTransportError>(value)) {
+    if (auto* jsWebTransportError = dynamicDowncast<JSWebTransportError>(reason)) {
         auto& webTransportError = jsWebTransportError->wrapped();
         if (auto webTransportErrorCode = webTransportError.streamErrorCode())
             errorCode = static_cast<uint64_t>(*webTransportErrorCode);

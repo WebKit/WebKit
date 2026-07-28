@@ -47,7 +47,7 @@ private:
     explicit DatagramSink(WebTransport*);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close(JSDOMGlobalObject&) final { m_isClosed = true; }
+    void close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&&) final;
 
     void datagramSent();
     void resolveBufferedDatagramsWithRoom();
