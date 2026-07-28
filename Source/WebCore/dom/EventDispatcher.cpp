@@ -27,8 +27,10 @@
 #include "EventDispatcher.h"
 
 #include "CompositionEvent.h"
+#include "DocumentPage.h"
 #include "DocumentView.h"
 #include "EventContext.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "EventPath.h"
 #include "FrameDestructionObserverInlines.h"
@@ -41,6 +43,7 @@
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "NodeDocument.h"
+#include "Page.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -177,6 +180,28 @@ static void resetAfterDispatchInShadowTree(Event& event)
     // FIXME: We should also clear the event's touch target list.
 }
 
+static bool isDiscreteUserInteractionEventType(EventType type)
+{
+    // Deliberately narrower than EventCategory::EventTimingEligible: hover-adjacent and continuous
+    // events (enter/leave/over/out, drag, composition) should not spend rendering priority.
+    switch (type) {
+    case EventType::auxclick:
+    case EventType::click:
+    case EventType::contextmenu:
+    case EventType::dblclick:
+    case EventType::keydown:
+    case EventType::keypress:
+    case EventType::keyup:
+    case EventType::mousedown:
+    case EventType::mouseup:
+    case EventType::pointerdown:
+    case EventType::pointerup:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
@@ -189,6 +214,18 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     auto typeInfo = eventNames().typeInfoForEvent(event.type());
     auto listenerCounts = eventListenerCounts(document, event);
+
+    bool shouldPrioritizeInteractionRendering = document->page() && event.isTrusted() && isDiscreteUserInteractionEventType(typeInfo.type());
+    auto prioritizeInteractionRendering = makeScopeExit([&] {
+        if (!shouldPrioritizeInteractionRendering)
+            return;
+        protect(document->eventLoop())->runAtEndOfMicrotaskCheckpoint([weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }] {
+            if (RefPtr document = weakDocument.get()) {
+                if (RefPtr page = document->page())
+                    page->prioritizeRenderingUpdateAfterInteraction(*document);
+            }
+        });
+    });
 
     RefPtr window = document->window();
     std::optional<PerformanceEventTimingCandidate> pendingEventTiming;

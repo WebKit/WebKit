@@ -29,6 +29,7 @@
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
 #include "MessageReceiver.h"
+#include "TransactionID.h"
 #include "WebPage.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/DisplayRefreshMonitorFactory.h>
@@ -138,6 +139,7 @@ public:
 
     // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;
+    virtual void prioritizeRenderingUpdate() { }
     virtual bool scheduleRenderingUpdate() { return false; }
     virtual void renderingUpdateFramesPerSecondChanged() { }
 
@@ -235,6 +237,7 @@ private:
 
     virtual void setDeviceScaleFactor(float, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void displayDidRefresh(MonotonicTime) { }
+    virtual void displayDidRefreshForTransaction(MonotonicTime start, TransactionID) { displayDidRefresh(start); }
 
     // DisplayRefreshMonitorFactory.
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;

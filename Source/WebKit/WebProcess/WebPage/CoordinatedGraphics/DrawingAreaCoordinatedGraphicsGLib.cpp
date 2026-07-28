@@ -242,6 +242,14 @@ void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
     m_renderer->scheduleRenderingUpdate();
 }
 
+void DrawingAreaCoordinatedGraphics::prioritizeRenderingUpdate()
+{
+    if (!m_renderer)
+        return;
+
+    m_renderer->prioritizeRenderingUpdate();
+}
+
 RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     return WebDisplayRefreshMonitor::create(displayID);

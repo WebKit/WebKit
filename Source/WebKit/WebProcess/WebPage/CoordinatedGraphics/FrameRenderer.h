@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -82,6 +83,7 @@ public:
 
     void setLayerTreeStateIsFrozen(bool);
     void updateRenderingWithForcedRepaintAsync(CompletionHandler<void()>&&);
+    void prioritizeRenderingUpdate();
 
 protected:
     FrameRenderer();
@@ -92,8 +94,10 @@ protected:
     virtual void scheduleRenderingUpdateRunLoopObserver();
     void invalidateRenderingUpdateRunLoopObserver();
     void renderingUpdateRunLoopObserverFired();
+    void prioritizedRenderingUpdateTimerFired();
 
     std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
+    WebCore::Timer m_prioritizedRenderingUpdateTimer;
     bool m_layerTreeStateIsFrozen { false };
     bool m_isSuspended { false };
     bool m_isUpdatingRendering { false };

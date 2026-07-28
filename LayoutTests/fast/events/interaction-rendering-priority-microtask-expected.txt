@@ -1,0 +1,10 @@
+Tests that rendering requested by an interaction microtask runs before a DOM timer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS order.join(',') is "raf,timer"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click
