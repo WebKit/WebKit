@@ -52,7 +52,22 @@ WI.SelectionController = class SelectionController extends WI.Object
 
     static createTreeComparator(itemForRepresentedObject)
     {
-        return (a, b) => {
+        // Within a single sort the tree is not mutated, so each item's index in
+        // its parent's children list is stable. Memoize it so the comparator
+        // stays O(1) per compare instead of doing two linear children.indexOf()
+        // lookups on every comparison. The cache must be reset before each sort
+        // (see comparator.reset) because the tree can change between sorts.
+        let indexInParentCache = new Map;
+        let indexInParent = (item) => {
+            let index = indexInParentCache.get(item);
+            if (index === undefined) {
+                index = item.parent.children.indexOf(item);
+                indexInParentCache.set(item, index);
+            }
+            return index;
+        };
+
+        let comparator = (a, b) => {
             a = itemForRepresentedObject(a);
             b = itemForRepresentedObject(b);
             if (!a || !b)
@@ -65,9 +80,7 @@ WI.SelectionController = class SelectionController extends WI.Object
                 return level;
             };
 
-            let compareSiblings = (s, t) => {
-                return s.parent.children.indexOf(s) - s.parent.children.indexOf(t);
-            };
+            let compareSiblings = (s, t) => indexInParent(s) - indexInParent(t);
 
             if (a.parent === b.parent)
                 return compareSiblings(a, b);
@@ -95,6 +108,10 @@ WI.SelectionController = class SelectionController extends WI.Object
             console.assert(a.parent === b.parent, "Missing common ancestor.", a, b);
             return compareSiblings(a, b);
         };
+
+        comparator.reset = () => indexInParentCache.clear();
+
+        return comparator;
     }
 
     static createListComparator(indexForRepresentedObject)
@@ -240,6 +257,7 @@ WI.SelectionController = class SelectionController extends WI.Object
 
         let operation = this._allowsMultipleSelection ? WI.SelectionController.Operation.Extend : WI.SelectionController.Operation.Direct;
 
+        this._comparator.reset?.();
         let orderedSelection = Array.from(this._selectedItems).sort(this._comparator);
 
         // Try selecting the item preceding the selection.
@@ -346,6 +364,7 @@ WI.SelectionController = class SelectionController extends WI.Object
         // selected range and add the new range between the anchor and clicked item.
 
         let sortItemPair = (a, b) => {
+            this._comparator.reset?.();
             return [a, b].sort(this._comparator);
         };
 
