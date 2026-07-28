@@ -30,8 +30,8 @@ import WebKit_Private.WKWebExtensionPrivate
 #endif
 
 @available(anyAppleOSAndDownlevels 14.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKPDFConfiguration {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -42,8 +42,8 @@ extension WKPDFConfiguration {
 }
 
 @available(anyAppleOSAndDownlevels 14.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -102,8 +102,8 @@ extension WKWebView {
 }
 
 @available(anyAppleOSAndDownlevels 15.0, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -141,8 +141,8 @@ extension WKWebView {
 
 #if ENABLE_WK_WEB_EXTENSIONS
 @available(anyAppleOSAndDownlevels 18.4, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebExtension {
     /// Creates a web extension initialized with a specified app extension bundle.
     ///
@@ -170,8 +170,8 @@ extension WKWebExtension {
 }
 
 @available(anyAppleOSAndDownlevels 18.4, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebExtensionController {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -193,8 +193,8 @@ extension WKWebExtensionController {
 }
 
 @available(anyAppleOSAndDownlevels 18.4, *)
-@_spi_available(watchOSAndOpenSourceTBA, *)
-@_spi_available(tvOSAndOpenSourceTBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebExtensionContext {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
