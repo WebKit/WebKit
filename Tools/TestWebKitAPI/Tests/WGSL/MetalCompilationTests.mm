@@ -676,6 +676,17 @@ TEST_F(WGSLMetalCompilationTests, Packing)
         check("global\\d+\\[0\\] = __pack\\(local\\d+\\[0\\]\\);"_s),
         check("global\\d+\\[__wgslMin\\(unsigned\\(global\\d+\\), \\(2u - 1u\\)\\)\\] = __pack\\(local\\d+\\[__wgslMin\\(unsigned\\(global\\d+\\), \\(2u - 1u\\)\\)\\]\\);"_s));
 
+    // Indexing a packed matrix (rows == 3) yields a PackedVec3 column, which
+    // must be unpacked before it can be swizzled or used as a vec3.
+    testCompilation(prologue(makeString(
+        "@group(0) @binding(9) var<storage, read_write> m43: mat4x3<f32>;"_s,
+        fn(
+            "t.v3f = m43[1].xyz;"
+            "t.v3f = m43[1];"
+            "t.v3f.x = m43[1].x;"_s))),
+        check("__unpack\\(global\\d+\\.columns\\[__wgslMin\\(unsigned\\(1\\), \\(4u - 1u\\)\\)\\]\\)\\.xyz"_s),
+        check("__unpack\\(global\\d+\\.columns\\[__wgslMin\\(unsigned\\(1\\), \\(4u - 1u\\)\\)\\]\\)"_s));
+
     // Test binary operations
     testCompilation(prologue(fn("t.v2f.x = 2 * t1.v2f.x;"_s)), check("global\\d+\\.field\\d\\.x = \\(2. \\* global\\d+\\.field\\d\\.x\\);"_s));
     testCompilation(prologue(fn("t.v3f.x = 2 * t1.v3f.x;"_s)), check("global\\d+\\.field\\d\\.x = \\(2. \\* global\\d+\\.field\\d\\.x\\);"_s));

@@ -594,8 +594,14 @@ Packing RewriteGlobalVariables::getPacking(AST::IndexAccessExpression& expressio
         baseType = pointerType->element;
     if (std::holds_alternative<Types::Vector>(*baseType))
         return Packing::Unpacked;
-    if (std::holds_alternative<Types::Matrix>(*baseType))
+    if (auto* matrixType = std::get_if<Types::Matrix>(baseType)) {
+        // Indexing a packed matrix (rows == 3) yields a PackedVec3 column,
+        // which still needs to be unpacked before it can be swizzled or used
+        // as a vec3. See Type::packing().
+        if (matrixType->rows == 3)
+            return Packing::PackedVec3;
         return Packing::Unpacked;
+    }
     ASSERT(std::holds_alternative<Types::Array>(*baseType));
     auto& arrayType = std::get<Types::Array>(*baseType);
     return packingForType(arrayType.element);
