@@ -2,20 +2,22 @@ description("Tests that put/getImageData work with float16 canvas.");
 
 debug(`canvas.width: ${canvas.width}`)
 debug(`canvas.height: ${canvas.height}`)
+debug(`canvas.dataset.colorSpace: ${canvas.dataset.colorSpace}`)
 
-var context = canvas.getContext("2d", { colorType: "float16" });
+const context = canvas.getContext("2d", { colorSpace: canvas.dataset.colorSpace, colorType: "float16" });
+shouldBe('context.getContextAttributes().colorSpace', 'canvas.dataset.colorSpace');
 shouldBe('context.getContextAttributes().colorType', '"float16"');
 
 if (typeof context.getEffectiveRenderingModeForTesting !== "undefined") {
     debug(`Effective renderingMode: ${context.getEffectiveRenderingModeForTesting()}`);
 }
 
-var r = 0;
-var g = 128;
-var b = 255;
-var a = 255;
-// FIXME: Fill still only works in SRGB/uint8, adapt when extended/float16 support is available.
-context.fillStyle = `rgb(${r} ${g} ${b})`;
+const f_r = 0;
+const f_g = 0.5;
+const f_b = 1;
+const f_a = 1;
+// FIXME: Fill still only works in [0-1], adapt when extended/float16 >1 support is available.
+context.fillStyle = `color(${canvas.dataset.colorSpace} ${f_r} ${f_g} ${f_b})`;
 context.fillRect(0, 0, canvas.width, canvas.height);
 
 const componentsPerPixel = 4;
@@ -60,36 +62,37 @@ function areEqualImageData(imageDataActual, imageDataExpected, tolerance)
 
 const uint8_bytes_per_element = 1;
 const float16_bytes_per_element = 2;
-// Less than half the range of a color component [0..255]/255 unit.
-const float16_nonzero_tolerance = (1 / 256) / 2;
+// Tolerance: Half of the uint8 color component unit.
+const uint8_nonzero_tolerance = 0.5;
+const float16_nonzero_tolerance = uint8_nonzero_tolerance / 255;
 
 var created_imageData_float16 = context.createImageData(1, 1, { pixelFormat: "rgba-float16" });
 verifyImageData('created_imageData_float16', 'Float16Array', float16_bytes_per_element, 0, 0, 0, 0, 0);
 
 var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-float16" });
-verifyImageData('gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
+verifyImageData('gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, f_r, f_g, f_b, f_a, float16_nonzero_tolerance);
 
 var gotten_imageData_float16_last = context.getImageData(canvas.width - 1, canvas.height - 2, 1, 1, { pixelFormat: "rgba-float16" });
-verifyImageData('gotten_imageData_float16_last', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
+verifyImageData('gotten_imageData_float16_last', 'Float16Array', float16_bytes_per_element, f_r, f_g, f_b, f_a, float16_nonzero_tolerance);
 
 var created_imageData_uint8 = context.createImageData(1, 1, { pixelFormat: "rgba-unorm8" });
 verifyImageData('created_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, 0, 0, 0, 0);
 
 // This verifies the basic float16->uint8 conversion:
 var gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-unorm8" });
-verifyImageData('gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
+verifyImageData('gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, f_r * 255, f_g * 255, f_b * 255, f_a * 255, uint8_nonzero_tolerance);
 
 var gotten_imageData_uint8_last = context.getImageData(canvas.width - 1, canvas.height - 2, 1, 1, { pixelFormat: "rgba-unorm8" });
-verifyImageData('gotten_imageData_uint8_last', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
+verifyImageData('gotten_imageData_uint8_last', 'Uint8ClampedArray', uint8_bytes_per_element, f_r * 255, f_g * 255, f_b * 255, f_a * 255, uint8_nonzero_tolerance);
 
 // Put the float16 ImageData back into the (uint8-backed) canvas, and get a default (uint8) ImageData.
 // This verifies the basic uint8->float16 conversion.
 context.clearRect(0, 0, 1, 1);
 context.putImageData(gotten_imageData_float16, 0, 0);
 var gotten_imageData_uint8_from_float16 = context.getImageData(0, 0, 1, 1);
-verifyImageData('gotten_imageData_uint8_from_float16', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
+verifyImageData('gotten_imageData_uint8_from_float16', 'Uint8ClampedArray', uint8_bytes_per_element, f_r * 255, f_g * 255, f_b * 255, f_a * 255, uint8_nonzero_tolerance);
 
-// Exhaustive uint8->float16->uint8 round-trip test for all possible individual SRGB/uint8 component values. Only log errors.
+// Exhaustive uint8->float16->uint8 round-trip test for all possible individual uint8 component values. Only log errors.
 var componentsToTest = componentsPerPixel;
 shouldBeTrue('canvas.width * canvas.height >= 256 * componentsToTest');
 
@@ -100,8 +103,10 @@ var expected_imageData_float16 = context.createImageData(canvas.width, canvas.he
 var pixelOffset = 0;
 for (let v = 0; v < 256; ++v) {
     for (component = 0; component < componentsToTest; ++component) {
-        r = g = b = 0;
-        a = 255;
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let a = 255;
         switch (component) {
         case 0: r = v; break;
         case 1: g = v; break;
@@ -154,13 +159,14 @@ expected_imageData_uint8 = context.createImageData(canvas.width, canvas.height);
 expected_imageData_float16 = context.createImageData(canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
 
 pixelOffset = 0;
-const uint8_nonzero_tolerance = 1 / 2;
 const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
 for (let division = -extraValues.length; division < divisions; ++division) {
     const floatValue = (division >= 0) ? (maxValue * division / divisions) : extraValues[extraValues.length + division];
     for (component = 0; component < componentsToTest; ++component) {
-        r = g = b = 0;
-        a = 1;
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let a = 1;
         switch (component) {
         case 0: r = floatValue; break;
         case 1: g = floatValue; break;
@@ -196,6 +202,9 @@ for (let division = -extraValues.length; division < divisions; ++division) {
 shouldBe('pixelOffset', '(extraValues.length + divisions) * componentsToTest');
 
 context.putImageData(input_imageData_float16, 0, 0);
+
+gotten_imageData_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
+areEqualImageData('gotten_imageData_float16', 'input_imageData_float16', float16_nonzero_tolerance);
 
 gotten_imageData_uint8 = context.getImageData(0, 0, canvas.width, canvas.height, { pixelFormat: "rgba-unorm8" });
 areEqualImageData('gotten_imageData_uint8', 'expected_imageData_uint8', 0);

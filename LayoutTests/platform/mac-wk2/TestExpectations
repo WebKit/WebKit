@@ -1249,6 +1249,8 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 # Only applicable on platforms with HDR support
 [ Sequoia+ ] compositing/hdr [ Pass ]
 [ Sequoia+ ] fast/canvas/hdr [ Pass ]
+webkit.org/b/320158 [ x86_64 ] fast/canvas/hdr/float16-canvas-imagedata-small-accelerated-srgb-linear.html [ Failure ]
+webkit.org/b/320158 [ x86_64 ] fast/canvas/hdr/float16-canvas-imagedata-small-accelerated-display-p3-linear.html [ Failure ]
 [ Sequoia+ ] fast/images/hdr-basic-image.html [ Pass ]
 [ Sequoia+ ] fast/images/hdr-basic-image-dynamic-range-limit.html [ Pass ]
 [ Sequoia+ ] fast/images/hdr-background-image.html [ Pass ]
