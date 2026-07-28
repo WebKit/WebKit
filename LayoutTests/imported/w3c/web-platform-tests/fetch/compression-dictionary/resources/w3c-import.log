@@ -10,15 +10,23 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/clear-site-data.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/compressed-data.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/compressed-data.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/compression-dictionary-util.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/dictionary-fetch-timing-001-subframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/dictionary-fetch-timing-001-subframe.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/dictionary-fetch-with-link-header-in-early-hints.tentative.https.h2.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/dummy
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/early-hint-for-compression-dictionary-test-loader.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/echo-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/echo-headers2.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/empty.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/empty.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/fetch-options-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/handler_utils.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/register-dictionary-network-error.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/register-dictionary.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/register-dictionary.py

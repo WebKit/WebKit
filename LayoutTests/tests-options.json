@@ -2990,6 +2990,12 @@
     "imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-001.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-002.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-cache.tentative.https.html": [
         "slow"
     ],
@@ -2999,7 +3005,13 @@
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-storage.tentative.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-compressed-fetch-with-link-match-dest.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-compressed.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-decompression.tentative.https.h2.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-decompression.tentative.https.html": [
@@ -3008,10 +3020,49 @@
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-no-cors.tentative.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-timing-001.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-timing-002.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-imagesrcset.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-connect-src-nonce.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-connect-src.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-element-baseURL.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-element-crossorigin.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-element-in-body.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-element-invalid-url.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-element.tentative.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-header-in-subresources.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-header.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-integrity.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-referrer-and-referrerpolicy.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-type-attribute.tentative.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-insecure-context.tentative.http.html": [
@@ -3021,6 +3072,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-registration.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/fetch-destination.tentative.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html": [

@@ -1,3 +1,0 @@
-
-FAIL Fetch same origin dictionary using link header assert_true: Headers should be available expected true got false
-

@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/Makefile
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/dcb-header
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/dcz-header
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/image-001.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/image-001.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/script-001.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/script-001.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-image-001.png.dcb
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-image-001.png.dcb.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-image-001.png.dcz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-image-001.png.dcz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-script-001.js.dcb
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-script-001.js.dcb.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-script-001.js.dcz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-script-001.js.dcz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-style-001.css.dcb
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-style-001.css.dcb.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-style-001.css.dcz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-style-001.css.dcz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-subframe-001.html.dcb
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-subframe-001.html.dcb.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-subframe-001.html.dcz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/self-compressed-subframe-001.html.dcz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/style-001.css
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/style-001.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-script-001.html.dcb
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-script-001.html.dcb.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-script-001.html.dcz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-script-001.html.dcz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-style-001.html.dcb
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-style-001.html.dcb.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-style-001.html.dcz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001-compressed-by-style-001.html.dcz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/subframe-001.html.headers

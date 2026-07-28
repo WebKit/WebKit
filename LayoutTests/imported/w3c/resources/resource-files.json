@@ -11554,6 +11554,7 @@
         "web-platform-tests/fetch/api/response/multi-globals/current/current.html",
         "web-platform-tests/fetch/api/response/multi-globals/incumbent/incumbent.html",
         "web-platform-tests/fetch/api/response/multi-globals/relevant/relevant.html",
+        "web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-header-in-early-hints.tentative.https.h2.html",
         "web-platform-tests/fetch/corb/img-html-correctly-labeled.sub-ref.html",
         "web-platform-tests/fetch/corb/img-png-mislabeled-as-html-nosniff.tentative.sub-ref.html",
         "web-platform-tests/fetch/corb/img-png-mislabeled-as-html.sub-ref.html",
