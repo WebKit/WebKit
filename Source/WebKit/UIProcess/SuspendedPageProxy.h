@@ -153,7 +153,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
-} SWIFT_SHARED_REFERENCE(refSuspendedPageProxy, derefSuspendedPageProxy);
+} SWIFT_SHARED_REFERENCE(refSuspendedPageProxy, derefSuspendedPageProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebKit
 

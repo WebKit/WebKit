@@ -153,7 +153,7 @@ private:
     );
 
     Vector<AtomString> m_documentState;
-} SWIFT_SHARED_REFERENCE(refFrameState, derefFrameState);
+} SWIFT_SHARED_REFERENCE(refFrameState, derefFrameState) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 // FIXME(rdar://171785683): see if this SWIFT_ESCAPABLE can be avoided
 struct BackForwardListItemState {

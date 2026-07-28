@@ -288,7 +288,7 @@ private:
 
     CFTypeRef m_wrapper;
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
-} SWIFT_SHARED_REFERENCE(refObject, derefObject);
+} SWIFT_SHARED_REFERENCE(refObject, derefObject) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 template <Object::Type ArgumentType>
 class ObjectImpl : public Object {

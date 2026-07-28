@@ -88,7 +88,7 @@ private:
     }
 
     Vector<RefPtr<Object>> m_elements;
-} SWIFT_SHARED_REFERENCE(refArray, derefArray);
+} SWIFT_SHARED_REFERENCE(refArray, derefArray) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 using RefAPIArray = Ref<Array>;
 

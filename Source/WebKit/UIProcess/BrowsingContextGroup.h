@@ -109,7 +109,7 @@ private:
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 
     HashMap<WebCore::SecurityOriginData, WebCore::OriginKeyed> m_historicalAgentClusterKeyMap;
-} SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup);
+} SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 }
 

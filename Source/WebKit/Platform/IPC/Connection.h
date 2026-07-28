@@ -851,7 +851,7 @@ private:
 #endif
 
     friend class StreamClientConnection;
-} SWIFT_SHARED_REFERENCE(refConnection, derefConnection);
+} SWIFT_SHARED_REFERENCE(refConnection, derefConnection) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 template<typename T>
 Error Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<ThreadQOS> qos)

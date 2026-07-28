@@ -383,7 +383,7 @@ private:
     const ASCIILiteral m_clientName;
     HashMap<Vector<uint8_t>, std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> m_messagesToSendOnResume;
     unsigned m_messagesToSendOnResumeIndex { 0 };
-} SWIFT_SHARED_REFERENCE(refAuxiliaryProcessProxy, derefAuxiliaryProcessProxy);
+} SWIFT_SHARED_REFERENCE(refAuxiliaryProcessProxy, derefAuxiliaryProcessProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 template<typename T>
 bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)

@@ -88,7 +88,7 @@ private:
     RefPtr<SuspendedPageProxy> m_suspendedPage;
     Vector<Ref<WebFrameProxy>> m_cachedChildren;
     RunLoop::Timer m_expirationTimer;
-} SWIFT_SHARED_REFERENCE(refWebBackForwardCacheEntry, derefWebBackForwardCacheEntry);
+} SWIFT_SHARED_REFERENCE(refWebBackForwardCacheEntry, derefWebBackForwardCacheEntry) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebKit
 
