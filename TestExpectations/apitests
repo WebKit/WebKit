@@ -391,3 +391,10 @@ webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.NullPanelHidSuc
 webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionInternalUVPinFallback [ Skip ]
 webkit.org/b/319711 [ ios ] TestWebKitAPI.CopyURL.UnescapedURL [ Skip ]
 webkit.org/b/319711 [ ios ] TestWebKitAPI.CopyURL.ValidURL [ Skip ]
+
+# rdar://183464877 ([ safari-7625-branch ] Batch mark failures slowing down EWS)
+TestWebKitAPI.PrivateClickMeasurement.Basic [ Pass timeout ]
+TestWebKitAPI.PrivateClickMeasurement.MigrateFromResourceLoadStatistics2 [ Pass timeout ]
+TestWebKitAPI.PrivateClickMeasurement.DestinationClickFraudPrevention [ Pass timeout ]
+TestWebKitAPI.CopyHTML.NonEmojiImgWithSVGSourcePreserved [ Pass Failure ]
+TestWebKitAPI.VisualViewport.RotationResize [ Pass Failure ]

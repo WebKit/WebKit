@@ -1964,8 +1964,6 @@ webkit.org/b/297551 imported/w3c/web-platform-tests/event-timing/buffered-and-du
 
 webkit.org/b/296202 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html [ Pass Failure ]
 
-webkit.org/b/297613 [ Debug ] fast/scrolling/mac/stateless-user-scroll-scrollend.html [ Pass Failure ]
-
 # webkit.org/b/297737 [macOS Debug] ipc/send-gradient.html is crashing in EWS
 [ Debug ] ipc/send-gradient.html [ Skip ]
 [ Debug ] ipc/send-filter.html [ Skip ]
@@ -2604,3 +2602,12 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 webkit.org/b/320245 [ Release ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Crash ]
 
 webkit.org/b/319121 [ Release ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-corner-shape-change.html [ Pass ImageOnlyFailure ]
+
+# rdar://183464877 ([ safari-7625-branch ] Batch mark failures slowing down EWS)
+imported/w3c/web-platform-tests/web-locks/held.https.any.sharedworker.html [ Pass Crash ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
+fast/scrolling/mac/stateless-user-scroll-scrollend.html [ Pass Failure ]
+fast/webgpu/forbid-bottom-struct-member.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/web-locks/bfcache/held.tentative.https.html [ Pass Crash ]
+http/tests/webgpu/webgpu/api/operation/render_pass/resolve.html [ Pass Crash ]
