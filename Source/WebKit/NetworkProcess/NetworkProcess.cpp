@@ -3569,9 +3569,9 @@ void NetworkProcess::allowEvaluatedURL(const WebCore::ParentalControlsURLFilterP
         filter->requestPermissionForURL(parameters.urlToAllow, *parameters.referrerURL, WTF::move(completionHandler));
         return;
     }
-#else
-    filter->allowURL(parameters.urlToAllow, WTF::move(completionHandler));
 #endif
+    filter->allowURL(parameters.urlToAllow, WTF::move(completionHandler));
+
 }
 
 void NetworkProcess::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData, CompletionHandler<void()>&& completionHandler)
