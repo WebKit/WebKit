@@ -112,7 +112,7 @@ NetworkProcess* WebSWServerConnection::networkProcess()
 
 std::optional<SharedPreferencesForWebProcess> WebSWServerConnection::sharedPreferencesForWebProcess() const
 {
-    RefPtr networkConnectionToWebProcess = m_networkConnectionToWebProcess;
+    auto* networkConnectionToWebProcess = m_networkConnectionToWebProcess.get();
     if (!networkConnectionToWebProcess)
         return std::nullopt;
 
