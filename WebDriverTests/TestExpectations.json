@@ -1498,6 +1498,27 @@
             },
             "test_element_reference[shadow-root]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+            },
+            "test_node_type[attribute]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[text]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[cdata]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[processing_instruction]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[comment]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[document]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[doctype]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
             }
         }
     },
@@ -1760,6 +1781,30 @@
             },
             "test_detached_shadow_root[top_context]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+            },
+            "test_node_type[attribute]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[text]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[cdata]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[processing_instruction]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[comment]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[document]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_node_type[doctype]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
+            },
+            "test_web_reference[shadow-root]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
             }
         }
     },
