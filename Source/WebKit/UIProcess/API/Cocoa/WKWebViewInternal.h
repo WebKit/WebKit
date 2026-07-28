@@ -761,6 +761,7 @@ struct LiveResizeSnapshotState {
 
 #if HAVE(NSREFRESHCONTROLLER)
 @property (nonatomic, readonly) CGFloat _refreshControlVisibleHeight;
+@property (nonatomic, readonly) BOOL _refreshControlHostIsTracking;
 #endif
 #endif // PLATFORM(MAC)
 

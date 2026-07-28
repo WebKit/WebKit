@@ -898,6 +898,8 @@ public:
     void applyRefreshControllerHeight(CGFloat, bool);
     CGFloat topScrollStretchForRefreshController() const;
     CGFloat refreshControllerSnappingThreshold() const;
+    bool refreshControllerIsTracking() const { return m_refreshControllerIsTracking; }
+    void clearRefreshControllerTracking() { m_refreshControllerIsTracking = false; }
     void updateRefreshControllerForWheelEvent(NSEvent *);
     void updateRefreshControllerForPanGesture(NSGestureRecognizerState);
     void updateRefreshControllerFrame();
@@ -1239,6 +1241,7 @@ private:
     RetainPtr<CAShapeLayer> m_refreshControllerMask;
     CGFloat m_topScrollStretchForRefreshController { 0 };
     bool m_canShowRefreshController { false };
+    bool m_refreshControllerIsTracking { false };
     bool m_suppressRefreshControllerUpdates { false };
     CGFloat m_cachedTopScrollStretch { 0 };
 #endif

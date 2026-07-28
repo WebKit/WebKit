@@ -79,6 +79,13 @@ extension WKWebView: AppKit.NSRefreshControlHosting {
             height: bounds.height - insets.top - insets.bottom
         )
     }
+
+    // Protocol conformance.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @objc(refreshControlHostIsTracking)
+    public var refreshControlHostIsTracking: Bool {
+        _refreshControlHostIsTracking
+    }
 }
 
 #endif // HAVE_NSREFRESHCONTROLLER

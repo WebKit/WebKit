@@ -158,6 +158,15 @@
     return _impl->isPointInScrollbar(locationInView);
 }
 
+- (BOOL)_refreshControlHostIsTrackingForTesting
+{
+#if HAVE(NSREFRESHCONTROLLER)
+    return _impl->refreshControllerIsTracking();
+#else
+    return NO;
+#endif
+}
+
 @end
 
 #endif // PLATFORM(MAC)

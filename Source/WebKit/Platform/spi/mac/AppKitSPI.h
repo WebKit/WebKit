@@ -303,6 +303,9 @@ NS_HEADER_AUDIT_END(nullability, sendability)
 
 - (void)applyWithVerticalInset:(CGFloat)verticalInset animated:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
 - (void)removeWithVerticalInset:(CGFloat)verticalInset animated:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
+
+@optional
+@property (nonatomic, readonly) BOOL refreshControlHostIsTracking;
 @end
 
 #endif

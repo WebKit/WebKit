@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/mac/AppKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTestingMac.h>
 #import <wtf/RetainPtr.h>
 
 @interface TestRefreshControllerTarget : NSObject
@@ -53,17 +54,43 @@
 
 namespace TestWebKitAPI {
 
+// Real momentum events carry a momentum phase and no scroll phase.
+static constexpr auto noScrollPhase = static_cast<CGScrollPhase>(0);
+
+static constexpr auto maximumPullIterations = 200;
+
 static void pullDownAndWaitForRefresh(TestWKWebView *webView, NSRefreshController *refreshController)
 {
     auto eventLocation = NSMakePoint(NSMidX([webView bounds]), NSMidY([webView bounds]));
     [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 1) phase:kCGScrollPhaseBegan momentumPhase:kCGMomentumScrollPhaseNone];
 
-    for (int i = 0; i < 200 && ![refreshController isRefreshing]; ++i) {
+    for (int i = 0; i < maximumPullIterations && ![refreshController isRefreshing]; ++i) {
         [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:kCGScrollPhaseChanged momentumPhase:kCGMomentumScrollPhaseNone];
         [webView waitForNextPresentationUpdate];
     }
 
     [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 0) phase:kCGScrollPhaseEnded momentumPhase:kCGMomentumScrollPhaseNone];
+    [webView waitForNextPresentationUpdate];
+}
+
+static void flickDownAndCoastWithMomentum(TestWKWebView *webView, NSRefreshController *refreshController)
+{
+    auto eventLocation = NSMakePoint(NSMidX([webView bounds]), NSMidY([webView bounds]));
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 1) phase:kCGScrollPhaseBegan momentumPhase:kCGMomentumScrollPhaseNone];
+    [webView waitForNextPresentationUpdate];
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 0) phase:kCGScrollPhaseEnded momentumPhase:kCGMomentumScrollPhaseNone];
+    [webView waitForNextPresentationUpdate];
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseBegin];
+    [webView waitForNextPresentationUpdate];
+
+    for (int i = 0; i < maximumPullIterations && ![refreshController isRefreshing]; ++i) {
+        [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseContinue];
+        [webView waitForNextPresentationUpdate];
+    }
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 0) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseEnd];
     [webView waitForNextPresentationUpdate];
 }
 
@@ -131,6 +158,65 @@ TEST_F(NSRefreshControllerTests, DoesNotRefireDuringSettleAtSmallWindowHeight)
     Util::runFor(1_s);
     EXPECT_EQ([target activationCount], 1U);
     EXPECT_FALSE([refreshController isRefreshing]);
+}
+
+TEST_F(NSRefreshControllerTests, MomentumScrollDoesNotTriggerRefresh)
+{
+    setUpWithWindowHeight(600);
+
+    [webView synchronouslyLoadHTMLString:@"<body style='height: 2000px;'></body>"];
+    [webView waitForNextPresentationUpdate];
+
+    flickDownAndCoastWithMomentum(webView, refreshController.get());
+
+    EXPECT_EQ([target activationCount], 0U);
+    EXPECT_FALSE([refreshController isRefreshing]);
+}
+
+TEST_F(NSRefreshControllerTests, HostIsNotTrackingDuringMomentumScroll)
+{
+    setUpWithWindowHeight(600);
+
+    [webView synchronouslyLoadHTMLString:@"<body style='height: 2000px;'></body>"];
+    [webView waitForNextPresentationUpdate];
+
+    auto eventLocation = NSMakePoint(NSMidX([webView bounds]), NSMidY([webView bounds]));
+
+    EXPECT_FALSE([webView _refreshControlHostIsTrackingForTesting]);
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 1) phase:kCGScrollPhaseBegan momentumPhase:kCGMomentumScrollPhaseNone];
+    EXPECT_TRUE([webView _refreshControlHostIsTrackingForTesting]);
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:kCGScrollPhaseChanged momentumPhase:kCGMomentumScrollPhaseNone];
+    EXPECT_TRUE([webView _refreshControlHostIsTrackingForTesting]);
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 0) phase:kCGScrollPhaseEnded momentumPhase:kCGMomentumScrollPhaseNone];
+    EXPECT_FALSE([webView _refreshControlHostIsTrackingForTesting]);
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseBegin];
+    EXPECT_FALSE([webView _refreshControlHostIsTrackingForTesting]);
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseContinue];
+    EXPECT_FALSE([webView _refreshControlHostIsTrackingForTesting]);
+
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 0) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseEnd];
+    EXPECT_FALSE([webView _refreshControlHostIsTrackingForTesting]);
+}
+
+TEST_F(NSRefreshControllerTests, HostIsTrackingForLegacyMouseWheelScroll)
+{
+    setUpWithWindowHeight(600);
+
+    [webView synchronouslyLoadHTMLString:@"<body style='height: 2000px;'></body>"];
+    [webView waitForNextPresentationUpdate];
+
+    auto eventLocation = NSMakePoint(NSMidX([webView bounds]), NSMidY([webView bounds]));
+
+    // A classic mouse wheel sends no phase and no momentum. Such an event carries no way
+    // to distinguish it from a deliberate pull, so it must still count as tracking;
+    // otherwise pull-to-refresh would be impossible with a mouse.
+    [webView wheelEventAtPoint:eventLocation wheelDelta:CGSizeMake(0, 100) phase:noScrollPhase momentumPhase:kCGMomentumScrollPhaseNone];
+    EXPECT_TRUE([webView _refreshControlHostIsTrackingForTesting]);
 }
 
 } // namespace TestWebKitAPI

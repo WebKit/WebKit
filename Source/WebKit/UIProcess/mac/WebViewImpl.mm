@@ -8259,6 +8259,7 @@ void WebViewImpl::setRefreshController(NSRefreshController *refreshController)
     if (m_refreshController) {
         [[m_refreshController refreshControl] removeFromSuperview];
         m_topScrollStretchForRefreshController = 0;
+        m_refreshControllerIsTracking = false;
         m_refreshControllerMask = nil;
         m_suppressRefreshControllerUpdates = false;
     }
@@ -8378,6 +8379,28 @@ void WebViewImpl::updateRefreshControllerForWheelEvent(NSEvent *event)
         m_canShowRefreshController = pageIsScrolledToTop();
         m_suppressRefreshControllerUpdates = false;
     }
+
+    // Prevent momentum scrolls from triggering the refresh control. Only an active,
+    // ongoing scroll should trigger the control.
+    auto shouldTrackEventForRefreshControl = [](NSEvent *event, bool wasTracking) {
+        if (event.momentumPhase != NSEventPhaseNone)
+            return false;
+
+        switch (event.phase) {
+        case NSEventPhaseBegan:
+        case NSEventPhaseChanged:
+        case NSEventPhaseNone:
+        case NSEventPhaseStationary:
+            return true;
+        case NSEventPhaseCancelled:
+        case NSEventPhaseEnded:
+            return false;
+        case NSEventPhaseMayBegin:
+            return wasTracking;
+        }
+        return false;
+    };
+    m_refreshControllerIsTracking = shouldTrackEventForRefreshControl(event, m_refreshControllerIsTracking);
 }
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
@@ -8392,6 +8415,23 @@ void WebViewImpl::updateRefreshControllerForPanGesture(NSGestureRecognizerState 
         m_canShowRefreshController = pageIsScrolledToTop();
         m_suppressRefreshControllerUpdates = false;
     }
+
+    // Prevent momentum scrolls from triggering the refresh control. Only an active,
+    // ongoing scroll should trigger the control.
+    auto shouldTrackEventForRefreshControl = [](NSGestureRecognizerState state, bool wasTracking) {
+        switch (state) {
+        case NSGestureRecognizerStateBegan:
+        case NSGestureRecognizerStateChanged:
+            return true;
+        case NSGestureRecognizerStateCancelled:
+        case NSGestureRecognizerStateEnded:
+        case NSGestureRecognizerStateFailed:
+            return false;
+        case NSGestureRecognizerStatePossible:
+            return wasTracking;
+        }
+    };
+    m_refreshControllerIsTracking = shouldTrackEventForRefreshControl(state, m_refreshControllerIsTracking);
 }
 #endif
 

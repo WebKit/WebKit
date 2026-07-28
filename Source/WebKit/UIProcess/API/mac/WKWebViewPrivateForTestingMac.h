@@ -63,6 +63,10 @@
 
 @property (nonatomic, readonly) CGFloat _fullScreenTitlebarOverlayHeightForTesting;
 
+// The value NSRefreshControl reads through the NSRefreshControlHosting protocol to decide
+// whether a pull may commit to a refresh. False during momentum so a flick cannot refresh.
+@property (nonatomic, readonly) BOOL _refreshControlHostIsTrackingForTesting;
+
 - (BOOL)isPointInScrollbar:(NSPoint)locationInView;
 
 @end

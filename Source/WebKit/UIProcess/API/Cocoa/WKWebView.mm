@@ -4102,6 +4102,11 @@ struct WKWebViewData {
     return _impl->topScrollStretchForRefreshController();
 }
 
+- (BOOL)_refreshControlHostIsTracking
+{
+    return _impl->refreshControllerIsTracking();
+}
+
 #endif
 
 #endif // PLATFORM(MAC)
