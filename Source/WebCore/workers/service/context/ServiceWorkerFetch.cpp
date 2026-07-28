@@ -175,7 +175,9 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     RefPtr formData = request.httpBody();
     std::optional<FetchBody> body;
+    bool isPendingStream = false;
     if (formData && !formData->isEmpty()) {
+        isPendingStream = formData->isPendingStream();
         body = FetchBody::fromFormData(globalScope, formData.releaseNonNull());
         if (!body) {
             client->didNotHandle();
@@ -226,10 +228,17 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     globalScope.dispatchEvent(event);
 
     if (!event->respondWithEntered()) {
-        if (event->defaultPrevented()) {
-            ResourceError error { errorDomainWebKitInternal, 0, requestURL, "Fetch event was canceled"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes };
+        auto errorCallback = [&](ResourceError&& error) {
             client->didFail(error);
             deferredPromise->reject(Exception { ExceptionCode::NetworkError });
+        };
+        if (event->defaultPrevented()) {
+            errorCallback({ errorDomainWebKitInternal, 0, requestURL, "Fetch event was canceled"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes });
+            return;
+        }
+
+        if (isPendingStream && protect(event->request())->isDisturbed()) {
+            errorCallback({ errorDomainWebKitInternal, 0, requestURL, "Fetch request body is disturbed"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes });
             return;
         }
         client->didNotHandle();
