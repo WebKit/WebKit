@@ -105,6 +105,10 @@ private:
     std::optional<PlatformXR::FrameData::ExternalTexture> exportImageAsAHardwareBuffer(uint64_t image, const OpenXRSwapchain&, uint32_t width, uint32_t height);
 #endif
     bool createExportedImageSyncObjects(ExportedImage&);
+    static bool configureValidation(Vector<const char*>& layers, Vector<const char*>& extensions, VkValidationFeaturesEXT&);
+    void logDeviceAndDriverUUIDs(const char* deviceName) const;
+    void createDebugMessenger();
+    void setDebugName(VkObjectType, uint64_t objectHandle, const char* name);
     bool recordBlitCommandBuffer(ExportedImage&, VkImage swapchainImage);
     void destroyExportedImage(ExportedImage&);
 
@@ -128,6 +132,8 @@ private:
     uint32_t m_queueFamilyIndex { 0 };
     VkQueue m_vkQueue { VK_NULL_HANDLE };
     VkCommandPool m_commandPool { VK_NULL_HANDLE };
+
+    VkDebugUtilsMessengerEXT m_debugMessenger { VK_NULL_HANDLE };
 
 #if USE(GBM)
     bool m_supportsDRMModifiers { false };

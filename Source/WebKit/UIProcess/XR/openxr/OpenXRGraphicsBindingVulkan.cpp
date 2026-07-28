@@ -32,11 +32,14 @@
 #include "OpenXRSwapchain.h"
 #include <array>
 #include <bit>
+#include <cstdlib>
 #include <cstring>
+#include <span>
 #include <utility>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringView.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
@@ -61,6 +64,36 @@ static inline uint64_t toHandle(VkImage image)
 static inline VkImage toVkImage(uint64_t handle)
 {
     return std::bit_cast<VkImage>(handle);
+}
+
+template<typename Handle> static inline uint64_t toDebugHandle(Handle handle)
+{
+    static_assert(sizeof(Handle) == sizeof(uint64_t), "Vulkan non-dispatchable handles are expected to be 64-bit");
+    return std::bit_cast<uint64_t>(handle);
+}
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugUtilsCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* callbackData, void*)
+{
+    if (!callbackData || !callbackData->pMessage)
+        return VK_FALSE;
+
+    [[maybe_unused]] const char* severityLabel = "info";
+    if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+        severityLabel = "error";
+    else if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+        severityLabel = "warning";
+
+    [[maybe_unused]] const char* typeLabel = "general";
+    if (messageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT)
+        typeLabel = "validation";
+    else if (messageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT)
+        typeLabel = "performance";
+
+    // Registering a messenger makes the layer report through it instead of its own default output.
+    LOG(XR, "OpenXR Vulkan [%s/%s] %s", severityLabel, typeLabel, callbackData->pMessage);
+
+    // Always VK_FALSE: returning VK_TRUE aborts the offending call, which would turn a diagnostic into a behaviour change.
+    return VK_FALSE;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRGraphicsBindingVulkan);
@@ -137,9 +170,20 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
     applicationInfo.pApplicationName = "WebKitWebXR";
     applicationInfo.apiVersion = apiVersion;
 
+    Vector<const char*> instanceLayers;
+    Vector<const char*> instanceExtensions;
+    VkValidationFeaturesEXT validationFeatures { };
+    bool validationEnabled = configureValidation(instanceLayers, instanceExtensions, validationFeatures);
+
     VkInstanceCreateInfo vkInstanceCreateInfo { };
     vkInstanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     vkInstanceCreateInfo.pApplicationInfo = &applicationInfo;
+    if (validationFeatures.sType)
+        vkInstanceCreateInfo.pNext = &validationFeatures;
+    vkInstanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(instanceLayers.size());
+    vkInstanceCreateInfo.ppEnabledLayerNames = instanceLayers.span().data();
+    vkInstanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
+    vkInstanceCreateInfo.ppEnabledExtensionNames = instanceExtensions.span().data();
 
     auto xrInstanceCreateInfo = createOpenXRStruct<XrVulkanInstanceCreateInfoKHR, XR_TYPE_VULKAN_INSTANCE_CREATE_INFO_KHR>();
     xrInstanceCreateInfo.systemId = systemId;
@@ -153,6 +197,11 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
         return false;
     }
     volkLoadInstanceTable(&m_instanceTable, m_vkInstance);
+
+    // After volkLoadInstanceTable, which resolves vkCreateDebugUtilsMessengerEXT. Messages from instance creation itself are
+    // reported by the layer directly rather than through the messenger.
+    if (validationEnabled)
+        createDebugMessenger();
 
     auto deviceGetInfo = createOpenXRStruct<XrVulkanGraphicsDeviceGetInfoKHR, XR_TYPE_VULKAN_GRAPHICS_DEVICE_GET_INFO_KHR>();
     deviceGetInfo.systemId = systemId;
@@ -204,6 +253,7 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
     VkPhysicalDeviceProperties physicalDeviceProperties;
     m_instanceTable.vkGetPhysicalDeviceProperties(m_vkPhysicalDevice, &physicalDeviceProperties);
     LOG(XR, "OpenXR Vulkan: runtime selected device '%s'", physicalDeviceProperties.deviceName);
+    logDeviceAndDriverUUIDs(physicalDeviceProperties.deviceName);
     uint32_t availableExtensionCount = 0;
     m_instanceTable.vkEnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &availableExtensionCount, nullptr);
     Vector<VkExtensionProperties> availableExtensions(availableExtensionCount);
@@ -282,6 +332,121 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
     return true;
 }
 
+void OpenXRGraphicsBindingVulkan::logDeviceAndDriverUUIDs(const char* deviceName) const
+{
+    // The device the runtime dictates has to be the one the web process' consumer imports on, and for handle types that are
+    // driver-private (opaque fd) the driver must match too, not just the device. A full check needs the consumer's UUIDs
+    // carried over IPC, which is the same missing plumbing as the modifier intersection; until then, report ours so the two
+    // sides can be compared from a single log.
+    VkPhysicalDeviceIDProperties idProperties { };
+    idProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
+    VkPhysicalDeviceProperties2 properties2 { };
+    properties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+    properties2.pNext = &idProperties;
+    m_instanceTable.vkGetPhysicalDeviceProperties2(m_vkPhysicalDevice, &properties2);
+
+    [[maybe_unused]] auto toHex = [](std::span<const uint8_t, VK_UUID_SIZE> uuid) {
+        static constexpr std::array<char, 16> hexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+        std::array<char, VK_UUID_SIZE * 2 + 1> text { };
+        for (size_t i = 0; i < VK_UUID_SIZE; ++i) {
+            text[i * 2] = hexDigits[(uuid[i] >> 4) & 0xf];
+            text[i * 2 + 1] = hexDigits[uuid[i] & 0xf];
+        }
+        return text;
+    };
+
+    LOG(XR, "OpenXR Vulkan: device '%s' deviceUUID %s driverUUID %s", deviceName,
+        toHex(std::span<const uint8_t, VK_UUID_SIZE> { idProperties.deviceUUID }).data(),
+        toHex(std::span<const uint8_t, VK_UUID_SIZE> { idProperties.driverUUID }).data());
+}
+
+// Optional diagnostics, opt-in via WEBKIT_WEBXR_VULKAN_VALIDATION. Requires the validation layer and VK_EXT_debug_utils
+// to be enabled at instance creation.
+bool OpenXRGraphicsBindingVulkan::configureValidation(Vector<const char*>& layers, Vector<const char*>& extensions, VkValidationFeaturesEXT& features)
+{
+    auto value = StringView::fromLatin1(getenv("WEBKIT_WEBXR_VULKAN_VALIDATION"));
+    const bool shouldEnableVulkanValidation = !value.isEmpty() && value != "0"_s;
+    if (!shouldEnableVulkanValidation)
+        return false;
+
+    uint32_t layerCount = 0;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+    Vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.mutableSpan().data());
+    bool hasValidationLayer = availableLayers.containsIf([](const auto& layer) {
+        return StringView::fromLatin1(layer.layerName) == "VK_LAYER_KHRONOS_validation"_s;
+    });
+
+    uint32_t instanceExtensionCount = 0;
+    vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, nullptr);
+    Vector<VkExtensionProperties> availableInstanceExtensions(instanceExtensionCount);
+    vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, availableInstanceExtensions.mutableSpan().data());
+    bool hasDebugUtils = availableInstanceExtensions.containsIf([](const auto& extension) {
+        return StringView::fromLatin1(extension.extensionName) == VK_EXT_DEBUG_UTILS_EXTENSION_NAME ""_s;
+    });
+
+    if (!hasValidationLayer || !hasDebugUtils) {
+        LOG(XR, "OpenXR Vulkan: WEBKIT_WEBXR_VULKAN_VALIDATION is set but %s is unavailable; continuing without validation",
+            hasValidationLayer ? VK_EXT_DEBUG_UTILS_EXTENSION_NAME : "VK_LAYER_KHRONOS_validation");
+        return false;
+    }
+
+    layers.append("VK_LAYER_KHRONOS_validation");
+    extensions.append(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+    // VK_EXT_validation_features is provided by the layer, not the driver, so it is absent from the unfiltered instance
+    // extension list and must be queried against the layer. Enabling it when absent fails instance creation, and chaining
+    // VkValidationFeaturesEXT without enabling it is invalid, so require it first.
+    uint32_t layerExtensionCount = 0;
+    vkEnumerateInstanceExtensionProperties("VK_LAYER_KHRONOS_validation", &layerExtensionCount, nullptr);
+    Vector<VkExtensionProperties> layerExtensions(layerExtensionCount);
+    vkEnumerateInstanceExtensionProperties("VK_LAYER_KHRONOS_validation", &layerExtensionCount, layerExtensions.mutableSpan().data());
+    if (!layerExtensions.containsIf([](const auto& extension) { return StringView::fromLatin1(extension.extensionName) == VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME ""_s; })) {
+        LOG(XR, "OpenXR Vulkan: %s unavailable; core validation is enabled, synchronization validation is not", VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME);
+        return true;
+    }
+
+    static constexpr std::array<VkValidationFeatureEnableEXT, 1> featureEnables { {
+        VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT,
+    } };
+    extensions.append(VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME);
+    features.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+    features.enabledValidationFeatureCount = static_cast<uint32_t>(featureEnables.size());
+    features.pEnabledValidationFeatures = featureEnables.data();
+    return true;
+}
+
+void OpenXRGraphicsBindingVulkan::createDebugMessenger()
+{
+    if (!m_instanceTable.vkCreateDebugUtilsMessengerEXT) {
+        LOG(XR, "OpenXR Vulkan: vkCreateDebugUtilsMessengerEXT unavailable; validation messages will not be routed and objects will not be named");
+        return;
+    }
+
+    VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo { };
+    messengerCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    messengerCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    messengerCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    messengerCreateInfo.pfnUserCallback = vulkanDebugUtilsCallback;
+    if (m_instanceTable.vkCreateDebugUtilsMessengerEXT(m_vkInstance, &messengerCreateInfo, nullptr, &m_debugMessenger) == VK_SUCCESS)
+        LOG(XR, "OpenXR Vulkan: validation enabled, debug messenger active");
+    else
+        LOG(XR, "OpenXR Vulkan: vkCreateDebugUtilsMessengerEXT failed; validation messages will not be routed and objects will not be named");
+}
+
+void OpenXRGraphicsBindingVulkan::setDebugName(VkObjectType objectType, uint64_t objectHandle, const char* name)
+{
+    if (!objectHandle || m_debugMessenger == VK_NULL_HANDLE || !m_instanceTable.vkSetDebugUtilsObjectNameEXT)
+        return;
+
+    VkDebugUtilsObjectNameInfoEXT nameInfo { };
+    nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+    nameInfo.objectType = objectType;
+    nameInfo.objectHandle = objectHandle;
+    nameInfo.pObjectName = name;
+    m_instanceTable.vkSetDebugUtilsObjectNameEXT(m_vkDevice, &nameInfo);
+}
+
 const void* OpenXRGraphicsBindingVulkan::sessionGraphicsBinding() const
 {
     return &m_graphicsBinding;
@@ -335,26 +500,35 @@ Vector<uint64_t> OpenXRGraphicsBindingVulkan::enumerateSwapchainImages(XrSwapcha
 
 void OpenXRGraphicsBindingVulkan::releaseSessionGraphics()
 {
-    if (m_vkDevice == VK_NULL_HANDLE)
+    if (m_vkDevice == VK_NULL_HANDLE && m_vkInstance == VK_NULL_HANDLE)
         return;
-
-    m_deviceTable.vkDeviceWaitIdle(m_vkDevice);
-
-    for (auto& exportedImage : m_exportedImages.values())
-        destroyExportedImage(exportedImage);
-    m_exportedImages.clear();
 
     m_pendingFenceFD = { };
 
-    if (m_commandPool != VK_NULL_HANDLE) {
-        m_deviceTable.vkDestroyCommandPool(m_vkDevice, m_commandPool, nullptr);
-        m_commandPool = VK_NULL_HANDLE;
-    }
+    if (m_vkDevice != VK_NULL_HANDLE) {
+        m_deviceTable.vkDeviceWaitIdle(m_vkDevice);
 
-    m_deviceTable.vkDestroyDevice(m_vkDevice, nullptr);
-    m_vkDevice = VK_NULL_HANDLE;
+        for (auto& exportedImage : m_exportedImages.values())
+            destroyExportedImage(exportedImage);
+        m_exportedImages.clear();
+
+        if (m_commandPool != VK_NULL_HANDLE) {
+            m_deviceTable.vkDestroyCommandPool(m_vkDevice, m_commandPool, nullptr);
+            m_commandPool = VK_NULL_HANDLE;
+        }
+
+        m_deviceTable.vkDestroyDevice(m_vkDevice, nullptr);
+        m_vkDevice = VK_NULL_HANDLE;
+        m_deviceTable = { };
+    }
     m_vkQueue = VK_NULL_HANDLE;
     m_vkPhysicalDevice = VK_NULL_HANDLE;
+
+    if (m_debugMessenger != VK_NULL_HANDLE) {
+        if (m_instanceTable.vkDestroyDebugUtilsMessengerEXT)
+            m_instanceTable.vkDestroyDebugUtilsMessengerEXT(m_vkInstance, m_debugMessenger, nullptr);
+        m_debugMessenger = VK_NULL_HANDLE;
+    }
 
     if (m_vkInstance != VK_NULL_HANDLE) {
         m_instanceTable.vkDestroyInstance(m_vkInstance, nullptr);
@@ -429,6 +603,9 @@ bool OpenXRGraphicsBindingVulkan::createExportedImageSyncObjects(ExportedImage& 
         RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateSemaphore failed for exported texture");
         return false;
     }
+
+    setDebugName(VK_OBJECT_TYPE_FENCE, toDebugHandle(exportedImage.inFlightFence), "WebXR exported image in-flight fence");
+    setDebugName(VK_OBJECT_TYPE_SEMAPHORE, toDebugHandle(exportedImage.acquireSemaphore), "WebXR exported image acquire semaphore");
     return true;
 }
 
@@ -525,10 +702,10 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
         return std::nullopt;
     }
 
-    // Only TRANSFER_SRC, not COLOR_ATTACHMENT: Vulkan merely transfer-reads this image for the commit blit, while the web
-    // process renders into the exported DMABuf via GL/EGL, and linear-tiled images generally do not support COLOR_ATTACHMENT.
-    // The tiled DRM-modifier path is the validation-clean way to export a DMABuf; the linear fallback is tolerated but not
-    // advertised where the modifier extension is missing, so it renders but emits VUID-VkImageCreateInfo-pNext-00990.
+    // Only TRANSFER_SRC as Vulkan merely transfer reads this image for the commit blit, while the WebProcess
+    // renders into the exported image via OpenGL/EGL, independently of the Vulkan usage. The tiled DRM-modifier path is
+    // the validation-clean way to export a DMABuf. The linear fallback is tolerated but not advertised where the modifier
+    // extension is missing, so it renders but emits VUID-VkImageCreateInfo-pNext-00990.
     // FIXME: the chosen modifier is one our device supports; it is not yet intersected with the modifiers the web process' EGL
     // import can consume (that needs the consumer's list plumbed across IPC). On a single GPU the sets overlap in practice.
     static constexpr VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
@@ -571,6 +748,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
         RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateImage failed for exported texture (useModifiers=%d)", useModifiers);
         return std::nullopt;
     }
+    setDebugName(VK_OBJECT_TYPE_IMAGE, toHandle(exportedImage.image), "WebXR exported image");
 
     auto cleanupOnError = makeScopeExit([&] {
         destroyExportedImage(exportedImage);
@@ -604,6 +782,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
         RELEASE_LOG(XR, "OpenXR Vulkan: vkAllocateMemory failed for exported texture");
         return std::nullopt;
     }
+    setDebugName(VK_OBJECT_TYPE_DEVICE_MEMORY, toDebugHandle(exportedImage.memory), "WebXR exported image memory");
     if (m_deviceTable.vkBindImageMemory(m_vkDevice, exportedImage.image, exportedImage.memory, 0) != VK_SUCCESS) {
         RELEASE_LOG(XR, "OpenXR Vulkan: vkBindImageMemory failed for exported texture");
         return std::nullopt;
