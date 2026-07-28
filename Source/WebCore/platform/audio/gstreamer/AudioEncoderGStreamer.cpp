@@ -85,6 +85,9 @@ private:
 
 Ref<AudioEncoder::CreatePromise> GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
+    if (!ensureGStreamerInitialized()) [[unlikely]]
+        return CreatePromise::createAndReject("GStreamer initialization failed"_s);
+
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_encoder_debug, "webkitaudioencoder", 0, "WebKit WebCodecs Audio Encoder");
