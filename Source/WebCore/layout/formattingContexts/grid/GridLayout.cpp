@@ -63,26 +63,18 @@ GridLayout::GridLayout(const GridFormattingContext& gridFormattingContext)
 
 GridDimensions GridLayout::calculateInitialImplicitGridDimensions(const UnplacedGridItems& unplacedGridItems, size_t explicitColumnsCount, size_t explicitRowsCount)
 {
-    int minimumRowIndex = 0;
-    int minimumColumnIndex = 0;
-    int maximumRowIndex = static_cast<int>(explicitRowsCount);
-    int maximumColumnIndex = static_cast<int>(explicitColumnsCount);
+    size_t maximumColumnIndex = explicitColumnsCount;
+    size_t maximumRowIndex = explicitRowsCount;
 
     auto updateGridBounds = [&](const UnplacedGridItem& item) {
         if (item.hasDefiniteRowPosition()) {
             auto [rowStart, rowEnd] = item.definiteRowStartEnd();
-            minimumRowIndex = std::min(minimumRowIndex, rowStart);
-            minimumRowIndex = std::min(minimumRowIndex, rowEnd);
-            maximumRowIndex = std::max(maximumRowIndex, rowStart);
-            maximumRowIndex = std::max(maximumRowIndex, rowEnd);
+            maximumRowIndex = std::max({ maximumRowIndex, rowStart, rowEnd });
         }
 
         if (item.hasDefiniteColumnPosition()) {
             auto [columnStart, columnEnd] = item.definiteColumnStartEnd();
-            minimumColumnIndex = std::min(minimumColumnIndex, columnStart);
-            minimumColumnIndex = std::min(minimumColumnIndex, columnEnd);
-            maximumColumnIndex = std::max(maximumColumnIndex, columnStart);
-            maximumColumnIndex = std::max(maximumColumnIndex, columnEnd);
+            maximumColumnIndex = std::max({ maximumColumnIndex, columnStart, columnEnd });
         }
     };
 
@@ -91,30 +83,16 @@ GridDimensions GridLayout::calculateInitialImplicitGridDimensions(const Unplaced
     for (const auto& item : unplacedGridItems.definiteRowPositionedItems)
         updateGridBounds(item);
 
-    size_t rowOffset = minimumRowIndex < 0 ? static_cast<size_t>(-minimumRowIndex) : 0;
-    size_t columnOffset = minimumColumnIndex < 0 ? static_cast<size_t>(-minimumColumnIndex) : 0;
-
     return {
-        rowOffset,
-        columnOffset,
-        static_cast<size_t>(maximumColumnIndex) + columnOffset,
-        static_cast<size_t>(maximumRowIndex) + rowOffset
+        maximumColumnIndex,
+        maximumRowIndex
     };
 }
 
-ImplicitGrid GridLayout::constructInitialImplicitGrid(UnplacedGridItems& unplacedGridItems, size_t explicitColumnsCount, size_t explicitRowsCount)
+ImplicitGrid GridLayout::constructInitialImplicitGrid(const UnplacedGridItems& unplacedGridItems, size_t explicitColumnsCount, size_t explicitRowsCount)
 {
-    // Calculate grid dimensions (offsets and total size) for negative grid line positions
     auto initialDimensions = calculateInitialImplicitGridDimensions(
         unplacedGridItems, explicitColumnsCount, explicitRowsCount);
-
-    // Normalize all grid item positions by applying the offsets
-    for (auto& item : unplacedGridItems.nonAutoPositionedItems)
-        item.applyGridOffsets(initialDimensions.rowOffset, initialDimensions.columnOffset);
-    for (auto& item : unplacedGridItems.definiteRowPositionedItems)
-        item.applyGridOffsets(initialDimensions.rowOffset, initialDimensions.columnOffset);
-    for (auto& item : unplacedGridItems.autoPositionedItems)
-        item.applyGridOffsets(initialDimensions.rowOffset, initialDimensions.columnOffset);
 
     ImplicitGrid implicitGrid(initialDimensions.totalColumns, initialDimensions.totalRows);
     // 3. Determine the columns in the implicit grid.

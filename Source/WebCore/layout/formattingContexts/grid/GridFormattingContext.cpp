@@ -60,15 +60,30 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
         int order;
     };
 
+    int minimumColumnLine = 0;
+    int minimumRowLine = 0;
     Vector<GridItem> gridItems;
     for (CheckedRef gridItem : childrenOfType<ElementBox>(m_gridBox)) {
         if (gridItem->isOutOfFlowPositioned())
             continue;
 
-        gridItems.append({ gridItem, gridItem->style().order().value });
+        CheckedRef gridItemStyle = gridItem->style();
+        if (auto columnRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd())) {
+            auto [startLine, endLine] = *columnRange;
+            minimumColumnLine = std::min({ minimumColumnLine, startLine, endLine });
+        }
+        if (auto rowRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd())) {
+            auto [startLine, endLine] = *rowRange;
+            minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
+        }
+
+        gridItems.append({ gridItem, gridItemStyle->order().value });
     }
 
     std::ranges::stable_sort(gridItems, { }, &GridItem::order);
+
+    size_t columnNegativeLineOffset = minimumColumnLine < 0 ? static_cast<size_t>(-minimumColumnLine) : 0;
+    size_t rowNegativeLineOffset = minimumRowLine < 0 ? static_cast<size_t>(-minimumRowLine) : 0;
 
     UnplacedGridItems unplacedGridItems;
     for (auto& gridItem : gridItems) {
@@ -84,7 +99,9 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
             gridItemColumnStart,
             gridItemColumnEnd,
             gridItemRowStart,
-            gridItemRowEnd
+            gridItemRowEnd,
+            columnNegativeLineOffset,
+            rowNegativeLineOffset
         };
 
         // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
