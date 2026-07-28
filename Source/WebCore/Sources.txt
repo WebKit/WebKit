@@ -4704,6 +4704,9 @@ JSOfflineAudioContext.cpp
 JSOfflineAudioContextOptions.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
+JSOpenID4VPMultisignedRequest.cpp
+JSOpenID4VPSignature.cpp
+JSOpenID4VPSignedRequest.cpp
 JSOptionalEffectTiming.cpp
 JSOpusEncoderConfig.cpp
 JSOrigin.cpp

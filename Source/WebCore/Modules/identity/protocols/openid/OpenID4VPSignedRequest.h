@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,12 @@
 
 #pragma once
 
-#include <WebCore/MobileDocumentRequest.h>
-#include <WebCore/OpenID4VPMultisignedRequest.h>
-#include <WebCore/OpenID4VPSignedRequest.h>
-#include <wtf/Variant.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-// Every alternative must be IPC-serializable; see WebCoreArgumentCodersAuth.serialization.in.
-using UnvalidatedDigitalCredentialRequest = Variant<
-    MobileDocumentRequest,
-    OpenID4VPSignedRequest,
-    OpenID4VPMultisignedRequest
->;
+struct OpenID4VPSignedRequest {
+    String request;
+};
 
 } // namespace WebCore

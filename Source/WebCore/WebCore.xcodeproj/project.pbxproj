@@ -7124,6 +7124,9 @@
 		E868034828603E8900799EE3 /* JSWindowEventHandlers+Gamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = E8FC9219285BFD5A004904B2 /* JSWindowEventHandlers+Gamepad.h */; };
 		E8744DA22D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E8744DA02D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E8744DA32D62BD0100E56B11 /* MobileDocumentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E8744D9D2D62BD0100E56B11 /* MobileDocumentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EB08054AAEA4BB58328F5762 /* OpenID4VPMultisignedRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 745C1E395EA6A30D6AE53DCB /* OpenID4VPMultisignedRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		599DD0B0C2E2D658258CFA9A /* OpenID4VPSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = 166FD29091573AE0071CC010 /* OpenID4VPSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		34B3726E71963DE8E6D0A99B /* OpenID4VPSignedRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 24318795E4EEC2337746A550 /* OpenID4VPSignedRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E89BE8AC2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E89BE8AB2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E8BF3AE42D56005800E7ED0B /* DummyCredentialRequestCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E8BF3AE12D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E8E7BDE32D94D20E0000A163 /* DigitalCredentialsProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = E8E7BDE22D94D2020000A163 /* DigitalCredentialsProtocols.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23164,6 +23167,12 @@
 		E8744D9D2D62BD0100E56B11 /* MobileDocumentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileDocumentRequest.h; sourceTree = "<group>"; };
 		E8744D9F2D62BD0100E56B11 /* MobileDocumentRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MobileDocumentRequest.idl; sourceTree = "<group>"; };
 		E8744DA02D62BD0100E56B11 /* ValidatedMobileDocumentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValidatedMobileDocumentRequest.h; sourceTree = "<group>"; };
+		745C1E395EA6A30D6AE53DCB /* OpenID4VPMultisignedRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenID4VPMultisignedRequest.h; sourceTree = "<group>"; };
+		10DCBDE288D8DF09E9DE8095 /* OpenID4VPMultisignedRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OpenID4VPMultisignedRequest.idl; sourceTree = "<group>"; };
+		166FD29091573AE0071CC010 /* OpenID4VPSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenID4VPSignature.h; sourceTree = "<group>"; };
+		DA1F1A26CC1A22F7F9E51921 /* OpenID4VPSignature.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OpenID4VPSignature.idl; sourceTree = "<group>"; };
+		24318795E4EEC2337746A550 /* OpenID4VPSignedRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenID4VPSignedRequest.h; sourceTree = "<group>"; };
+		99AC31211F38CFD6F2485E92 /* OpenID4VPSignedRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OpenID4VPSignedRequest.idl; sourceTree = "<group>"; };
 		E886AA61285AC5A5008FF9F7 /* WindowEventHandlers+Gamepad.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "WindowEventHandlers+Gamepad.idl"; sourceTree = "<group>"; };
 		E89BE8AB2DADBD2F0036B3A5 /* UnvalidatedDigitalCredentialRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnvalidatedDigitalCredentialRequest.h; sourceTree = "<group>"; };
 		E8BF3AE12D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyCredentialRequestCoordinatorClient.h; sourceTree = "<group>"; };
@@ -41582,6 +41591,12 @@
 		E8E7BDE12D94D12A0000A163 /* openid */ = {
 			isa = PBXGroup;
 			children = (
+				745C1E395EA6A30D6AE53DCB /* OpenID4VPMultisignedRequest.h */,
+				10DCBDE288D8DF09E9DE8095 /* OpenID4VPMultisignedRequest.idl */,
+				166FD29091573AE0071CC010 /* OpenID4VPSignature.h */,
+				DA1F1A26CC1A22F7F9E51921 /* OpenID4VPSignature.idl */,
+				24318795E4EEC2337746A550 /* OpenID4VPSignedRequest.h */,
+				99AC31211F38CFD6F2485E92 /* OpenID4VPSignedRequest.idl */,
 			);
 			path = openid;
 			sourceTree = "<group>";
@@ -47692,6 +47707,9 @@
 				314877E31FAA8FE900C05759 /* OffscreenCanvas.h in Headers */,
 				3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */,
 				07E4BDC42A3A6191000D5509 /* OpacityCaretAnimator.h in Headers */,
+				EB08054AAEA4BB58328F5762 /* OpenID4VPMultisignedRequest.h in Headers */,
+				599DD0B0C2E2D658258CFA9A /* OpenID4VPSignature.h in Headers */,
+				34B3726E71963DE8E6D0A99B /* OpenID4VPSignedRequest.h in Headers */,
 				B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */,
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
 				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,

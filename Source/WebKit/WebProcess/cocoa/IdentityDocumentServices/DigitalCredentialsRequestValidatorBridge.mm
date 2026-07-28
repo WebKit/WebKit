@@ -164,17 +164,23 @@ static WebCore::ValidatedMobileDocumentRequest buildValidatedRequest(WKIdentityD
     return validatedRequest;
 }
 
-Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<WebCore::MobileDocumentRequest> &unvalidatedRequests)
+Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<WebCore::UnvalidatedDigitalCredentialRequest> &unvalidatedRequests)
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
 
     Vector<WebCore::ValidatedMobileDocumentRequest> validatedRequests;
 
-    for (auto mobileDocumentRequest : unvalidatedRequests) {
+    for (auto& unvalidatedRequest : unvalidatedRequests) {
+        auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
+        if (!mobileDocumentRequest) {
+            // FIXME: Validate the OpenID4VP protocols once rdar://problem/183338719 is
+            // fulfilled.
+            continue;
+        }
 
-        RetainPtr convertedEncryptionInfo = mobileDocumentRequest.encryptionInfo.createNSString();
-        RetainPtr convertedDeviceRequest = mobileDocumentRequest.deviceRequest.createNSString();
+        RetainPtr convertedEncryptionInfo = mobileDocumentRequest->encryptionInfo.createNSString();
+        RetainPtr convertedDeviceRequest = mobileDocumentRequest->deviceRequest.createNSString();
 
         RetainPtr iso18013Request = adoptNS([WebKit::allocWKISO18013RequestInstance() initWithEncryptionInfo:convertedEncryptionInfo.get() deviceRequest:convertedDeviceRequest.get()]);
 

@@ -41,6 +41,8 @@
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertJSON.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSOpenID4VPMultisignedRequest.h"
+#include "JSOpenID4VPSignedRequest.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
@@ -75,9 +77,7 @@ bool DigitalCredential::userAgentAllowsProtocol(const Document& document, const 
     if (protocol == "org-iso-mdoc"_s)
         return true;
 
-    // The OpenID4VP protocols are gated behind an off-by-default setting while their request
-    // validation and wallet plumbing are still under development, so that the API does not
-    // advertise support for a protocol it cannot yet fulfill.
+    // Off by default: the API must not advertise a protocol it cannot yet fulfill.
     if (document.settings().digitalCredentialsOpenID4VPEnabled()) {
         return protocol == "openid4vp-v1-unsigned"_s
             || protocol == "openid4vp-v1-signed"_s
@@ -87,16 +87,24 @@ bool DigitalCredential::userAgentAllowsProtocol(const Document& document, const 
     return false;
 }
 
-static std::optional<DigitalCredentialPresentationProtocol> convertProtocolString(const String& protocolString)
+static std::optional<DigitalCredentialPresentationProtocol> convertProtocolString(const Document& document, const String& protocolString)
 {
     if (protocolString == "org-iso-mdoc"_s)
         return DigitalCredentialPresentationProtocol::OrgIsoMdoc;
+
+    if (document.settings().digitalCredentialsOpenID4VPEnabled()) {
+        if (protocolString == "openid4vp-v1-signed"_s)
+            return DigitalCredentialPresentationProtocol::Openid4vpV1Signed;
+        if (protocolString == "openid4vp-v1-multisigned"_s)
+            return DigitalCredentialPresentationProtocol::Openid4vpV1Multisigned;
+    }
+
     return std::nullopt;
 }
 
 static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCredentialRequest(const Document& document, const DigitalCredentialGetRequest& request)
 {
-    auto protocol = convertProtocolString(request.protocol);
+    auto protocol = convertProtocolString(document, request.protocol);
     if (!protocol)
         return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt }; // Skip requests with an unsupported protocol.
 
@@ -108,14 +116,28 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
     if (scope.exception()) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
+    using enum DigitalCredentialPresentationProtocol;
     switch (*protocol) {
-    case DigitalCredentialPresentationProtocol::OrgIsoMdoc: {
+    case OrgIsoMdoc: {
         auto result = convertDictionary<MobileDocumentRequest>(*globalObject, request.data.get());
         if (result.hasException(scope)) [[unlikely]]
             return Exception { ExceptionCode::ExistingExceptionError };
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
+    case Openid4vpV1Signed: {
+        auto result = convertDictionary<OpenID4VPSignedRequest>(*globalObject, request.data.get());
+        if (result.hasException(scope)) [[unlikely]]
+            return Exception { ExceptionCode::ExistingExceptionError };
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
+    }
+    case Openid4vpV1Multisigned: {
+        auto result = convertDictionary<OpenID4VPMultisignedRequest>(*globalObject, request.data.get());
+        if (result.hasException(scope)) [[unlikely]]
+            return Exception { ExceptionCode::ExistingExceptionError };
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
+    }
     default:
+        // FIXME: Handle "openid4vp-v1-unsigned" once DCQL parsing lands (webkit.org/b/320207).
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::TypeError, "Unsupported protocol."_s };
     }

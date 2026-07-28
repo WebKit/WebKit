@@ -337,6 +337,26 @@ struct WebCore::MobileDocumentRequest {
     Vector<WebCore::ISO18013PresentmentRequest> presentmentRequests;
 };
 
+header: <WebCore/OpenID4VPSignedRequest.h>
+struct WebCore::OpenID4VPSignedRequest {
+    String request;
+};
+
+header: <WebCore/OpenID4VPSignature.h>
+struct WebCore::OpenID4VPSignature {
+    String protectedHeader;
+    String signature;
+};
+
+header: <WebCore/OpenID4VPMultisignedRequest.h>
+struct WebCore::OpenID4VPMultisignedRequest {
+    String payload;
+    Vector<WebCore::OpenID4VPSignature> signatures;
+};
+
+header: <WebCore/UnvalidatedDigitalCredentialRequest.h>
+using WebCore::UnvalidatedDigitalCredentialRequest = Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPSignedRequest, WebCore::OpenID4VPMultisignedRequest>;
+
 header: <WebCore/DigitalCredentialsRequestData.h>
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DigitalCredentialsSecurityOriginData {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;

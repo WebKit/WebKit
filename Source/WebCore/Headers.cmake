@@ -490,6 +490,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/identity/protocols/ISO18013/MobileDocumentRequest.h
     Modules/identity/protocols/ISO18013/ValidatedMobileDocumentRequest.h
 
+    Modules/identity/protocols/openid/OpenID4VPMultisignedRequest.h
+    Modules/identity/protocols/openid/OpenID4VPSignature.h
+    Modules/identity/protocols/openid/OpenID4VPSignedRequest.h
+
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBActiveDOMObjectInlines.h
     Modules/indexeddb/IDBCursor.h

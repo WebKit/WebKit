@@ -378,7 +378,9 @@ using RawDigitalCredentialsWithRequestInfo = Vector<String>;
 #endif
 
 struct MobileDocumentRequest;
-using UnvalidatedDigitalCredentialRequest = MobileDocumentRequest;
+struct OpenID4VPMultisignedRequest;
+struct OpenID4VPSignedRequest;
+using UnvalidatedDigitalCredentialRequest = Variant<MobileDocumentRequest, OpenID4VPSignedRequest, OpenID4VPMultisignedRequest>;
 using DigitalCredentialsRequestData = Variant<
     WebCore::DigitalCredentialsMobileDocumentRequestData
 #if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)

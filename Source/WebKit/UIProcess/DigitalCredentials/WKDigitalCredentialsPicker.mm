@@ -281,9 +281,14 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
                 RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentRawRequest *>> rawRequests = adoptNS([[NSMutableArray alloc] init]);
 
                 for (auto &&unvalidatedRequest : unvalidatedRequests) {
-                    const auto &mobileDocumentRequest = unvalidatedRequest;
-                    RetainPtr deviceRequest = mobileDocumentRequest.deviceRequest.createNSString();
-                    RetainPtr encryptionInfo = mobileDocumentRequest.encryptionInfo.createNSString();
+                    auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
+                    if (!mobileDocumentRequest) {
+                        // FIXME: Hand off the OpenID4VP protocols once rdar://problem/183338719
+                        // is fulfilled.
+                        continue;
+                    }
+                    RetainPtr deviceRequest = mobileDocumentRequest->deviceRequest.createNSString();
+                    RetainPtr encryptionInfo = mobileDocumentRequest->encryptionInfo.createNSString();
 
                     RetainPtr<NSDictionary<NSString *, id>> jsonRequest = @{
                         @"deviceRequest" : deviceRequest.get(),
