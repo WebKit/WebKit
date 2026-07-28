@@ -1337,8 +1337,10 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             document->securityOrigin().grantLoadLocalResources();
         }
 
-        if (frameLoader()->stateMachine().creatingInitialEmptyDocument())
+        if (frameLoader()->stateMachine().creatingInitialEmptyDocument()) {
+            m_writer.setEncoding(response().textEncodingName(), DocumentWriter::IsEncodingUserChosen::No);
             return;
+        }
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         if (RefPtr archive = m_archive; archive && archive->shouldOverrideBaseURL())
