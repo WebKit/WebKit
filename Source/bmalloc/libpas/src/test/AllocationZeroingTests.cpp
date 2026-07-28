@@ -33,6 +33,9 @@
 #include <algorithm>
 #include <cstdint>
 #include <vector>
+#if !PAS_OS(WINDOWS)
+#include <sys/mman.h>
+#endif
 
 #if PAS_ENABLE_BMALLOC
 
@@ -781,6 +784,108 @@ void testFragmentationReuseWithScavenge()
     runFragmentationReuse(Reuse::WithScavenge);
 }
 
+// Evict the page-aligned interior of [begin, end) so the pages must be faulted back
+// in. Returns false where that cannot be done, in which case the rounds degenerate
+// into plain re-reads and the test still checks zeroing, just over a narrower set of
+// page states. MADV_PAGEOUT is unavailable on platforms whose headers do not define
+// it, and on Darwin is additionally compiled out of kernels built without
+// MACH_ASSERT, where madvise() fails at runtime.
+bool evictRange(uintptr_t alignedBegin, uintptr_t alignedEnd)
+{
+    if (alignedEnd <= alignedBegin)
+        return false;
+#if defined(MADV_PAGEOUT)
+    return !madvise(reinterpret_cast<void*>(alignedBegin), alignedEnd - alignedBegin, MADV_PAGEOUT);
+#else
+    return false;
+#endif
+}
+
+void readFaultRange(uintptr_t alignedBegin, uintptr_t alignedEnd, size_t pageSize)
+{
+    volatile uint8_t sink = 0;
+    for (uintptr_t page = alignedBegin; page < alignedEnd; page += pageSize)
+        sink = static_cast<uint8_t>(sink ^ *reinterpret_cast<volatile uint8_t*>(page));
+    (void)sink;
+}
+
+// Zeroing must be correct over backing that has been evicted and read-faulted
+// repeatedly, not just over resident-dirty or decommitted pages -- which is all the
+// other tests here produce. Pages that come back from a read fault can be left in
+// states those tests never reach, and the kernel is free to account for them
+// differently depending on how often that has happened, so vary the round count.
+void zeroingReuseAfterEvictionRounds(size_t size, FaultOrder order, unsigned rounds, bool& evictionWorked)
+{
+    void* first = allocateZeroed(HeapVariant::Untagged, AlignmentApi::Plain, size, bmallocMinAlign);
+    if (!first)
+        reportParameters(HeapVariant::Untagged, AlignmentApi::Plain, size, bmallocMinAlign, "fresh");
+    CHECK(first);
+    checkIsZeroed(first, size, HeapVariant::Untagged, AlignmentApi::Plain, bmallocMinAlign, "fresh");
+
+    dirtyBuffer(first, size);
+
+    // Only the page-aligned interior is eligible; madvise requires page-aligned
+    // bounds, and the zeroed path memsets the unaligned head/tail slivers anyway.
+    size_t pageSize = pas_page_malloc_alignment();
+    uintptr_t begin = reinterpret_cast<uintptr_t>(first);
+    uintptr_t alignedBegin = pas_round_up_to_power_of_2(begin, pageSize);
+    uintptr_t alignedEnd = pas_round_down_to_power_of_2(begin + size, pageSize);
+
+    for (unsigned round = 0; round < rounds; ++round) {
+        if (evictRange(alignedBegin, alignedEnd))
+            evictionWorked = true;
+        readFaultRange(alignedBegin, alignedEnd, pageSize);
+    }
+
+    deallocateVariant(HeapVariant::Untagged, first);
+
+    void* second = allocateZeroed(HeapVariant::Untagged, AlignmentApi::Plain, size, bmallocMinAlign);
+    if (!second)
+        reportParameters(HeapVariant::Untagged, AlignmentApi::Plain, size, bmallocMinAlign, "reused");
+    CHECK(second);
+    if (second != first) {
+        std::cout << "Note: reuse returned a different region for size " << size
+                  << " (rounds=" << rounds << "); evicted-backing reuse not exercised." << std::endl;
+    }
+    checkIsZeroed(second, size, HeapVariant::Untagged, AlignmentApi::Plain, bmallocMinAlign, "reused", order);
+
+    deallocateVariant(HeapVariant::Untagged, second);
+}
+
+// Cross the fault orders with a randomized number of evict/read-fault rounds, at
+// the threshold and a multi-megabyte size. Untagged/plain only, as with the other
+// VA-path runs: the behaviour under test is variant- and alignment-independent.
+void testZeroingReuseAfterEvictionRounds()
+{
+    constexpr unsigned minEvictionRounds = 1;
+    constexpr unsigned maxEvictionRounds = 10;
+
+    constexpr size_t multiMegabyteSize = static_cast<size_t>(4) << 20;
+    static_assert(multiMegabyteSize >= vaZeroThreshold,
+                  "evicted-reuse sample should stay on the VA-zeroing path");
+
+    pas_scavenger_suspend();
+
+    static constexpr FaultOrder orders[] = {
+        FaultOrder::Ascending, FaultOrder::Descending, FaultOrder::Shuffled,
+    };
+    static constexpr size_t sizes[] = { vaZeroThreshold, multiMegabyteSize };
+
+    bool evictionWorked = false;
+    for (size_t size : sizes) {
+        for (FaultOrder order : orders) {
+            unsigned rounds = minEvictionRounds
+                + deterministicRandomNumber(maxEvictionRounds - minEvictionRounds + 1);
+            zeroingReuseAfterEvictionRounds(size, order, rounds, evictionWorked);
+        }
+    }
+
+    if (!evictionWorked) {
+        std::cout << "Note: could not evict; pages were only re-read, so this run covers a "
+                  << "narrower set of page states." << std::endl;
+    }
+}
+
 } // anonymous namespace
 
 #endif // PAS_ENABLE_BMALLOC
@@ -800,5 +905,6 @@ void addAllocationZeroingTests()
     ADD_TEST(testLargeZeroingFaultOrder());
     ADD_TEST(testFragmentationReuse());
     ADD_TEST(testFragmentationReuseWithScavenge());
+    ADD_TEST(testZeroingReuseAfterEvictionRounds());
 #endif // PAS_ENABLE_BMALLOC
 }
