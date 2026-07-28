@@ -27,7 +27,6 @@ import json
 import logging
 import math
 import os
-import re
 import shutil
 import ssl
 import subprocess
@@ -45,7 +44,7 @@ from webkitcorepy._vendored.packaging.version import Version, InvalidVersion
 from webkitcorepy.file_lock import FileLock
 from webkitcorepy._vendored.packaging import tags
 from webkitcorepy._vendored.packaging.specifiers import SpecifierSet, InvalidSpecifier
-from webkitcorepy._vendored.packaging.utils import parse_wheel_filename, InvalidWheelFilename
+from webkitcorepy._vendored.packaging.utils import parse_wheel_filename, InvalidWheelFilename, parse_sdist_filename, InvalidSdistFilename
 
 from html.parser import HTMLParser
 from urllib.request import urlopen
@@ -204,7 +203,7 @@ class Package(object):
                 for package in reversed(packages):
                     if self.wheel or self.wheel is None and package['name'].endswith('.whl'):
                         try:
-                            _, _, _, wheel_tags = parse_wheel_filename(package['name'])
+                            _, version, _, wheel_tags = parse_wheel_filename(package['name'])
                         except InvalidWheelFilename:
                             continue
 
@@ -216,13 +215,16 @@ class Package(object):
 
                         extension = 'whl'
 
-                    else:
-                        if package['name'].endswith('.tar.gz'):
-                            extension = 'tar.gz'
-                        elif package['name'].endswith('.zip'):
-                            extension = 'zip'
-                        else:
+                    elif package['name'].endswith(('.tar.gz', '.zip')):
+                        try:
+                            _, version = parse_sdist_filename(package['name'])
+                        except InvalidSdistFilename:
                             continue
+
+                        extension = 'tar.gz' if package['name'].endswith('.tar.gz') else 'zip'
+
+                    else:
+                        continue
 
                     requires = package.get('data-requires-python')
                     if requires:
@@ -233,10 +235,6 @@ class Package(object):
                         if not version_matches:
                             continue
 
-                    version_candidate = re.search(r'\d+\.\d+(\.\d+)?', package["name"])
-                    if not version_candidate:
-                        continue
-                    version = Version(version_candidate.group())
                     if self.version and version != self.version:
                         continue
 
