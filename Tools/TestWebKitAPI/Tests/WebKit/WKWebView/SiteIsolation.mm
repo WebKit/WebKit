@@ -1554,6 +1554,75 @@ TEST(SiteIsolation, IframeWithPrompt)
     EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 }
 
+// Make sure the main frame remains responsive even while a cross origin iframe is
+// displaying an alert.
+TEST(SiteIsolation, MainFrameHeartbeatContinuesWhileCrossSiteIframeDialogShown)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>"
+            "window.__heartbeat = 0;"
+            "setInterval(() => { window.__heartbeat++; }, 10);"
+            "</script>"
+            "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>alert('subframe alert')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr protectedWebView = webView;
+
+    // Hold the subframe's alert open; its WebContent process is now blocked in synchronous IPC.
+    __block bool receivedSubframeAlert = false;
+    __block BlockPtr<void()> heldCompletion;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *frameInfo, void (^completionHandler)(void)) {
+        EXPECT_WK_STREQ(message, "subframe alert");
+        EXPECT_WK_STREQ(frameInfo.securityOrigin.host, "webkit.org");
+        heldCompletion = makeBlockPtr(completionHandler);
+        receivedSubframeAlert = true;
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    TestWebKitAPI::Util::run(&receivedSubframeAlert);
+
+    // Read window.__heartbeat from the main frame. Bounded wait: if the main frame's process were
+    // blocked by the subframe's dialog, evaluateJavaScript would not respond and this reports
+    // didRespond == false (a clean failure) rather than hanging.
+    auto readHeartbeat = [&](bool& didRespond) -> int {
+        __block bool done = false;
+        __block int value = -1;
+        [protectedWebView evaluateJavaScript:@"window.__heartbeat" completionHandler:^(id result, NSError *error) {
+            if (!error && [result isKindOfClass:[NSNumber class]])
+                value = [result intValue];
+            done = true;
+        }];
+        for (unsigned attempt = 0; attempt < 100 && !done; ++attempt)
+            TestWebKitAPI::Util::runFor(Seconds(0.05));
+        didRespond = done;
+        return value;
+    };
+
+    bool firstResponded = false;
+    int firstHeartbeat = readHeartbeat(firstResponded);
+    EXPECT_TRUE(firstResponded);
+
+    // The main frame's timer must keep firing while the dialog is held.
+    int laterHeartbeat = firstHeartbeat;
+    for (unsigned attempt = 0; laterHeartbeat <= firstHeartbeat && attempt < 40; ++attempt) {
+        TestWebKitAPI::Util::runFor(Seconds(0.05));
+        bool responded = false;
+        laterHeartbeat = readHeartbeat(responded);
+        if (!responded) {
+            EXPECT_TRUE(responded);
+            break;
+        }
+    }
+    EXPECT_GT(laterHeartbeat, firstHeartbeat);
+
+    if (heldCompletion)
+        heldCompletion();
+}
+
 TEST(SiteIsolation, GrandchildIframe)
 {
     HTTPServer server({
