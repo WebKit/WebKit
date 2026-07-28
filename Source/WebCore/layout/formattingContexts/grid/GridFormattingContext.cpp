@@ -87,23 +87,13 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
             gridItemRowEnd
         };
 
-        // Check if this item is fully explicitly positioned
-        bool fullyExplicitlyPositionedItem = gridItemColumnStart.isExplicit()
-            && gridItemColumnEnd.isExplicit()
-            && gridItemRowStart.isExplicit()
-            && gridItemRowEnd.isExplicit();
-
-        // FIXME: support definite row/column positioning
-        // We should place items with definite row or column positions
-        // but currently we only support fully explicitly positioned items.
-        // See: https://www.w3.org/TR/css-grid-1/#auto-placement-algo
-        if (fullyExplicitlyPositionedItem) {
+        // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
+        if (unplacedGridItem.hasDefiniteColumnPosition() && unplacedGridItem.hasDefiniteRowPosition())
             unplacedGridItems.nonAutoPositionedItems.append(unplacedGridItem);
-        } else if (unplacedGridItem.hasDefiniteRowPosition()) {
+        else if (unplacedGridItem.hasDefiniteRowPosition())
             unplacedGridItems.definiteRowPositionedItems.append(unplacedGridItem);
-        } else {
+        else
             unplacedGridItems.autoPositionedItems.append(unplacedGridItem);
-        }
     }
     return unplacedGridItems;
 }
