@@ -154,8 +154,8 @@ private:
     static constexpr Seconds logTimerInterval = 2_s;
 
     const Ref<WorkQueue> m_queue;
-    bool m_isPlaying { false };
-    webrtc::AudioTransport* m_audioTransport { nullptr };
+    std::atomic<bool> m_isPlaying { false };
+    std::atomic<webrtc::AudioTransport*> m_audioTransport { nullptr };
     MonotonicTime m_pollingTime;
     Timer m_logTimer;
     int m_timeSpent { 0 };
