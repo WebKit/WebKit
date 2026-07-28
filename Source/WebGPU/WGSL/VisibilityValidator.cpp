@@ -48,7 +48,7 @@ private:
     void error(const SourceSpan&, Arguments&&...);
 
     ShaderModule& m_shaderModule;
-    ShaderStage m_stage;
+    ShaderStage m_stage { ShaderStage::Vertex };
 };
 
 VisibilityValidator::VisibilityValidator(ShaderModule& shaderModule)
