@@ -462,12 +462,15 @@ static std::optional<int32_t> stableLunisolarYear(UCalendar* cal, CalendarID cal
     return relatedYear.hasOverflowed() ? std::nullopt : std::optional<int32_t> { relatedYear.value() };
 }
 
-static std::optional<int32_t> actualLunisolarMonthLength(UCalendar* cal, CalendarID calendarId, UErrorCode& status)
+static std::optional<int32_t> actualLunisolarMonthLength(UCalendar* cal, CalendarID calendarId)
 {
-    if (calendarId != chineseCalendarID() && calendarId != dangiCalendarID())
-        return ucal_getLimit(cal, UCAL_DAY_OF_MONTH, UCAL_ACTUAL_MAXIMUM, &status);
-    if (U_FAILURE(status)) [[unlikely]]
-        return std::nullopt;
+    UErrorCode status = U_ZERO_ERROR;
+    if (calendarId != chineseCalendarID() && calendarId != dangiCalendarID()) {
+        int32_t limit = ucal_getLimit(cal, UCAL_DAY_OF_MONTH, UCAL_ACTUAL_MAXIMUM, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            return std::nullopt;
+        return limit;
+    }
     double savedMs = ucal_getMillis(cal, &status);
     if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
@@ -994,7 +997,7 @@ TemporalResult<int32_t> calendarDaysInMonth(CalendarID calendarId, const ISO8601
             return makeUnexpected(rangeError(icuSetCalendarFailed));
         UErrorCode status = U_ZERO_ERROR;
         if (calendarId == chineseCalendarID() || calendarId == dangiCalendarID()) {
-            auto result = actualLunisolarMonthLength(cal, calendarId, status);
+            auto result = actualLunisolarMonthLength(cal, calendarId);
             if (!result) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
             return *result;
@@ -2272,7 +2275,7 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
                 }
                 if (!found && overflow == TemporalOverflow::Reject) [[unlikely]]
                     return makeUnexpected(rangeError("monthCode does not exist in this calendar year"_s)); // Clamp day via ucal_add.
-                auto maxDayOrError = actualLunisolarMonthLength(cal, calendarId, status);
+                auto maxDayOrError = actualLunisolarMonthLength(cal, calendarId);
                 if (!maxDayOrError) [[unlikely]]
                     return makeUnexpected(rangeError(icuReadCalendarFailed));
                 int32_t maxDay = *maxDayOrError;
@@ -2362,7 +2365,7 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
             }
 
             // Clamp day to daysInMonth if constrain.
-            auto maxDayOrError = actualLunisolarMonthLength(cal, calendarId, status);
+            auto maxDayOrError = actualLunisolarMonthLength(cal, calendarId);
             if (!maxDayOrError) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
             int32_t maxDay = *maxDayOrError;
