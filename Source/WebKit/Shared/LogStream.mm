@@ -31,6 +31,7 @@
 #import "StreamConnectionWorkQueue.h"
 #import "StreamServerConnection.h"
 #import "WebProcessProxy.h"
+#import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -45,6 +46,17 @@ namespace WebKit {
 static std::atomic<unsigned> globalLogCountForTesting { 0 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LogStream);
+
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+// All LogStreams share a single work queue: the StreamServerConnection for each LogStream is opened on
+// (and thus bound to) this queue, so all of its connection work -- including invalidate() -- must run
+// on it. See rdar://182244946 and the comment in stopListeningForIPC().
+static IPC::StreamConnectionWorkQueue& logWorkQueue()
+{
+    static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> queue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
+    return queue.get();
+}
+#endif
 
 LogStream::LogStream(WebProcessProxy& process, Ref<ConnectionType>&& connection, LogStreamIdentifier identifier)
     : m_connection(WTF::move(connection))
@@ -67,8 +79,22 @@ void LogStream::stopListeningForIPC()
     // and invalidate() invalidates the underlying IPC::Connection so its Mach port / kqueue workloop is
     // released. Neither alone is sufficient; without this the connection leaked after the WebContent
     // process was gone, until the UI process was killed for resource exhaustion. See rdar://182244946.
-    m_connection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), m_identifier.toUInt64());
-    m_connection->invalidate();
+    //
+    // The connection was opened on the log work queue, so it is bound to that queue's dispatcher and its
+    // teardown must run there too: IPC::Connection::invalidate() asserts it is called on its own
+    // dispatcher (a release ASSERT_WITH_SECURITY_IMPLICATION). Dispatch the teardown onto the queue
+    // rather than running it synchronously on the main thread. The queue is shared by every LogStream,
+    // so we must not stop it (unlike single-owner StreamServerConnection users, which can block in
+    // StreamConnectionWorkQueue::stopAndWaitForCompletion()); we only invalidate our own connection.
+    //
+    // We are typically the last reference holder (ScopedActiveMessageReceiveQueue drops its RefPtr as
+    // soon as this returns), so capture Ref to both the LogStream and its connection: invalidate()
+    // clears the connection's CheckedPtr back to us (the client), so the LogStream must outlive the
+    // dispatched teardown.
+    logWorkQueue().dispatch([protectedThis = Ref { *this }, connection = Ref { m_connection }, identifier = m_identifier] {
+        connection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), identifier.toUInt64());
+        connection->invalidate();
+    });
 #endif
 }
 
@@ -123,12 +149,12 @@ RefPtr<LogStream> LogStream::create(WebProcessProxy& process, IPC::StreamServerC
         completionHandler(invalidWakeUpSemaphore, invalidClientWaitSemaphore);
         return nullptr;
     }
-    static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> logQueue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
+    Ref logQueue = logWorkQueue();
 
     Ref instance = adoptRef(*new LogStream(process, connection.releaseNonNull(), identifier));
     instance->m_connection->open(instance.get(), logQueue.get());
     instance->m_connection->startReceivingMessages(instance, Messages::LogStream::messageReceiverName(), identifier.toUInt64());
-    completionHandler(logQueue.get()->wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
+    completionHandler(logQueue->wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
     return instance;
 }
 
