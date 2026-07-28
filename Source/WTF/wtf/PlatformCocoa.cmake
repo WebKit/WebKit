@@ -145,3 +145,30 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR USE_APPLE_INTERNAL_SDK)
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )
 endif ()
+
+
+if (WEBKIT_SDK_IS_MACOS)
+    find_library(COCOA_LIBRARY Cocoa)
+    list(APPEND WTF_LIBRARIES
+        ${COCOA_LIBRARY}
+    )
+
+    list(APPEND WTF_SOURCES
+        mac/FileSystemMac.mm
+    )
+else ()
+    find_library(UIKIT_LIBRARY UIKit)
+    list(APPEND WTF_LIBRARIES
+        ${UIKIT_LIBRARY}
+    )
+
+    list(APPEND WTF_SOURCES
+        ios/WebCoreThread.cpp
+    )
+
+    list(APPEND WTF_PUBLIC_HEADERS
+        ios/WebCoreThread.h
+    )
+endif ()
+
+WEBKIT_ADD_PREFIX_HEADER(WTF WTFPrefix.h PREFIX_LANGUAGES CXX OBJCXX PREFIX_NO_CODEGEN)

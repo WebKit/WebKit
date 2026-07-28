@@ -1,3 +1,5 @@
+if (WEBKIT_SDK_IS_MACOS)
+
 # MiniBrowser is the primary dev-loop target -- simpler than the test harnesses.
 # Default ON is set via WEBKIT_OPTION_DEFAULT_PORT_VALUE in OptionsMac.cmake.
 if (ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
@@ -33,4 +35,6 @@ if (ENABLE_WEBKIT_TEST_RUNNER AND ENABLE_WEBKIT)
         "-framework IOKit"
         "-framework ApplicationServices"
     )
+endif ()
+
 endif ()

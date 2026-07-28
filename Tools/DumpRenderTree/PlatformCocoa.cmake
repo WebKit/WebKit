@@ -1,3 +1,5 @@
+if (WEBKIT_SDK_IS_MACOS)
+
 # FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
 WEBKIT_ADD_TARGET_CXX_FLAGS(DumpRenderTree -Wno-unused-parameter)
 
@@ -119,3 +121,5 @@ foreach (_file ${DumpRenderTree_RESOURCES})
         file(COPY ${TOOLS_DIR}/DumpRenderTree/fonts/${_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources)
     endif ()
 endforeach ()
+
+endif ()

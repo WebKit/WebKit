@@ -9,7 +9,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Preset values are not replayed on auto-reconfigure; if CMake's "compiler
     # changed" path wipes the cache, these silently revert. Stamp them outside
     # the cache and refuse to proceed if any go missing.
-    set(WEBKIT_IDENTITY_VARS CMAKE_BUILD_TYPE PORT DEVELOPER_MODE ENABLE_SANITIZERS CMAKE_IOS_SIMULATOR CMAKE_OSX_SYSROOT)
+    set(WEBKIT_IDENTITY_VARS CMAKE_BUILD_TYPE PORT DEVELOPER_MODE ENABLE_SANITIZERS WEBKIT_SDK_NAME CMAKE_OSX_SYSROOT)
     set(_config_stamp "${CMAKE_BINARY_DIR}/.webkit-config-stamp")
     if (EXISTS "${_config_stamp}")
         file(STRINGS "${_config_stamp}" _stamp_lines)
@@ -73,6 +73,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Determine which port will be built
     # -----------------------------------------------------------------------------
     set(ALL_PORTS
+        Cocoa
         GTK
         IOS
         JSCOnly
@@ -86,10 +87,16 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     list(FIND ALL_PORTS ${PORT} RET)
     if (${RET} EQUAL -1)
         if (APPLE AND PORT STREQUAL "NOPORT")
-            set(PORT "Mac" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})" FORCE)
+            set(PORT "Cocoa" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})" FORCE)
         else ()
             message(FATAL_ERROR "Please choose which WebKit port to build (one of ${ALL_PORTS})")
         endif ()
+    endif ()
+
+    # Mac and IOS are aliases for the Cocoa port; the target platform is selected
+    # by the SDK (CMAKE_OSX_SYSROOT / WEBKIT_SDK_NAME), not by the port name.
+    if (PORT STREQUAL "Mac" OR PORT STREQUAL "IOS")
+        set(PORT "Cocoa" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})" FORCE)
     endif ()
 
     string(TOLOWER ${PORT} WEBKIT_PORT_DIR)

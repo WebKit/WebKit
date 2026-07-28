@@ -22,3 +22,4 @@ if (DEVELOPER_MODE)
     WEBKIT_GENERATE_ENTITLEMENTS(testair USING ../Scripts/process-entitlements.sh)
     WEBKIT_GENERATE_ENTITLEMENTS(testdfg USING ../Scripts/process-entitlements.sh)
 endif ()
+

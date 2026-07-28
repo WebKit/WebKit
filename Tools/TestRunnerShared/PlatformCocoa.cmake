@@ -1,3 +1,5 @@
+if (WEBKIT_SDK_IS_MACOS)
+
 add_definitions(-DJSC_API_AVAILABLE\\\(...\\\)=)
 
 list(APPEND TestRunnerShared_INTERFACE_INCLUDE_DIRECTORIES
@@ -6,3 +8,5 @@ list(APPEND TestRunnerShared_INTERFACE_INCLUDE_DIRECTORIES
     ${TestRunnerShared_DIR}/mac
     ${TestRunnerShared_DIR}/spi
 )
+
+endif ()

@@ -32,8 +32,8 @@ if (SWIFT_REQUIRED)
     endif ()
 
     # CMake omits -target for swiftc during iOS cross-compilation.
-    if (PORT STREQUAL "IOS")
-        if (CMAKE_IOS_SIMULATOR OR CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+    if (WEBKIT_SDK_IS_IOS_FAMILY)
+        if (WEBKIT_SDK_IS_SIMULATOR)
             set(CMAKE_Swift_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-ios${CMAKE_OSX_DEPLOYMENT_TARGET}-simulator" CACHE STRING "Swift target triple" FORCE)
         else ()
             set(CMAKE_Swift_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-ios${CMAKE_OSX_DEPLOYMENT_TARGET}" CACHE STRING "Swift target triple" FORCE)
@@ -43,7 +43,7 @@ if (SWIFT_REQUIRED)
     enable_language(Swift)
 
     # -F causes Swift to find C++23 framework headers in implicit module builds.
-    if (PORT STREQUAL "IOS")
+    if (WEBKIT_SDK_IS_IOS_FAMILY)
         set(CMAKE_Swift_FRAMEWORK_SEARCH_FLAG "-Xcc -iquote")
     endif ()
 

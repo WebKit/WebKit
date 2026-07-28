@@ -1458,7 +1458,7 @@ if (USE_APPLE_INTERNAL_SDK)
 endif ()
 WEBKIT_ADD_PREFIX_HEADER(WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
 
-if (SWIFT_REQUIRED AND "${PORT}" STREQUAL "Mac")
+if (SWIFT_REQUIRED AND WEBKIT_SDK_IS_MACOS)
     WEBKIT_ADD_SWIFT_PREWARM(WebKit SwiftPrewarmMac.swift)
 endif ()
 
@@ -1512,13 +1512,13 @@ if (APPLE)
         PROPERTY LINK_LIBRARY_OVERRIDE_WebKitLegacy REEXPORT_FRAMEWORK)
 endif ()
 
-if ("${PORT}" STREQUAL "Mac" OR "${PORT}" STREQUAL "IOS")
+if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_IOS_FAMILY)
     WEBKIT_DEFINE_XPC_SERVICES()
     # XPC services have a link dependency on WebKit, but for codesigning we
     # need the reverse. The service bundles all sign, and then WebKit.framework
     # can sign.
-    if (NOT "${PORT}" STREQUAL "IOS")
-        # FIXME: iOS port does not use the shared codesigning macros for
+    if (WEBKIT_SDK_IS_MACOS)
+        # FIXME: iOS build does not use the shared codesigning macros for
         # extension processes.
         add_dependencies(WebKit_CodeSign
             WebProcess_CodeSign

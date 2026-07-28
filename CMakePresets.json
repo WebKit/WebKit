@@ -84,7 +84,11 @@
             "cacheVariables": {
                 "PORT": {
                     "type": "STRING",
-                    "value": "Mac"
+                    "value": "Cocoa"
+                },
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "macosx.internal;macosx"
                 },
                 "ENABLE_EXPERIMENTAL_FEATURES": {
                     "type": "BOOL",
@@ -258,7 +262,15 @@
             "cacheVariables": {
                 "PORT": {
                     "type": "STRING",
-                    "value": "IOS"
+                    "value": "Cocoa"
+                },
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "LIST",
+                    "value": "iphoneos.internal;iphoneos"
+                },
+                "ENABLE_TOOLS": {
+                    "type": "BOOL",
+                    "value": "OFF"
                 }
             },
             "environment": {
@@ -301,15 +313,15 @@
             "cacheVariables": {
                 "PORT": {
                     "type": "STRING",
-                    "value": "IOS"
+                    "value": "Cocoa"
                 },
-                "CMAKE_OSX_ARCHITECTURES": {
+                "CMAKE_OSX_SYSROOT": {
                     "type": "STRING",
-                    "value": "arm64"
+                    "value": "iphonesimulator.internal;iphonesimulator"
                 },
-                "CMAKE_IOS_SIMULATOR": {
+                "ENABLE_TOOLS": {
                     "type": "BOOL",
-                    "value": "ON"
+                    "value": "OFF"
                 },
                 "CMAKE_MAKE_PROGRAM": {
                     "type": "FILEPATH",

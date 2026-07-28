@@ -185,3 +185,103 @@ list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_DIR}/pal/spi/cocoa"
     "${PAL_DIR}/pal/spi/mac"
 )
+
+
+if (WEBKIT_SDK_IS_MACOS)
+
+list(APPEND PAL_PUBLIC_HEADERS
+    spi/mac/HIServicesSPI.h
+    spi/mac/HIToolboxSPI.h
+    spi/mac/LookupSPI.h
+    spi/mac/NSAppearanceSPI.h
+    spi/mac/NSApplicationSPI.h
+    spi/mac/NSCellSPI.h
+    spi/mac/NSColorSPI.h
+    spi/mac/NSColorWellSPI.h
+    spi/mac/NSEventSPI.h
+    spi/mac/NSGraphicsSPI.h
+    spi/mac/NSImageSPI.h
+    spi/mac/NSImmediateActionGestureRecognizerSPI.h
+    spi/mac/NSMenuSPI.h
+    spi/mac/NSPasteboardSPI.h
+    spi/mac/NSPopoverColorWellSPI.h
+    spi/mac/NSPopoverSPI.h
+    spi/mac/NSResponderSPI.h
+    spi/mac/NSScrollViewSPI.h
+    spi/mac/NSScrollerImpSPI.h
+    spi/mac/NSScrollingInputFilterSPI.h
+    spi/mac/NSScrollingMomentumCalculatorSPI.h
+    spi/mac/NSSearchFieldCellSPI.h
+    spi/mac/NSServicesRolloverButtonCellSPI.h
+    spi/mac/NSSharingServicePickerSPI.h
+    spi/mac/NSSharingServiceSPI.h
+    spi/mac/NSSpellCheckerSPI.h
+    spi/mac/NSTextFieldCellSPI.h
+    spi/mac/NSTextFinderSPI.h
+    spi/mac/NSTextInputContextSPI.h
+    spi/mac/NSTextTableSPI.h
+    spi/mac/NSUndoManagerSPI.h
+    spi/mac/NSViewSPI.h
+    spi/mac/NSWindowSPI.h
+    spi/mac/PIPSPI.h
+    spi/mac/QuarantineSPI.h
+    spi/mac/TelephonyUtilitiesSPI.h
+
+)
+
+list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
+    "SourcesMac.txt"
+)
+
+else ()
+
+
+list(APPEND PAL_PUBLIC_HEADERS
+    ios/AVRoutingSoftLink.h
+    ios/ManagedConfigurationSoftLink.h
+    ios/QuickLookSoftLink.h
+    ios/SystemStatusSoftLink.h
+
+    spi/ios/AXRuntimeSPI.h
+    spi/ios/BarcodeSupportSPI.h
+    spi/ios/CelestialSPI.h
+    spi/ios/CoreUISPI.h
+    spi/ios/IOKitSPIIOS.h
+    spi/ios/ManagedConfigurationSPI.h
+    spi/ios/MediaPlayerSPI.h
+    spi/ios/MobileKeyBagSPI.h
+    spi/ios/OpenGLESSPI.h
+    spi/ios/QuickLookSPI.h
+    spi/ios/SBSStatusBarSPI.h
+    spi/ios/SystemPreviewSPI.h
+
+    system/ios/Device.h
+)
+
+list(APPEND PAL_SOURCES
+    ios/AVRoutingSoftLink.mm
+    ios/ManagedConfigurationSoftLink.mm
+    ios/QuickLookSoftLink.mm
+    ios/SystemStatusSoftLink.mm
+    ios/UIKitSoftLink.mm
+
+    spi/ios/DataDetectorsUISoftLink.mm
+
+    system/Sound.cpp
+
+    system/ios/Device.cpp
+    system/ios/SleepDisablerIOS.mm
+    system/ios/UserInterfaceIdiom.mm
+
+    text/KillRing.cpp
+)
+
+list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
+    "${PAL_DIR}/pal/spi/ios"
+    "${PAL_DIR}/pal/system/cocoa"
+    "${PAL_DIR}/pal/system/ios"
+)
+
+target_compile_options(PAL PRIVATE ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG})
+
+endif ()
