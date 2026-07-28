@@ -1600,10 +1600,15 @@ struct WKWebsiteData {
 
 - (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs completionHandler:(void(^)(void))completionHandler
 {
+    [self _installMockParentalControlsURLFilterForTestingWithBlockedURLs:blockedURLs replacementData:nil completionHandler:completionHandler];
+}
+
+- (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs replacementData:(NSData *)replacementData completionHandler:(void(^)(void))completionHandler
+{
 #if HAVE(WEBCONTENTRESTRICTIONS)
     auto urls = makeVector<URL>(blockedURLs);
 
-    protect(*_websiteDataStore)->installMockParentalControlsURLFilterForTesting(WTF::move(urls), [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(*_websiteDataStore)->installMockParentalControlsURLFilterForTesting(WTF::move(urls), span(replacementData), [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 #else

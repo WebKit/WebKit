@@ -3574,9 +3574,9 @@ void NetworkProcess::allowEvaluatedURL(const WebCore::ParentalControlsURLFilterP
 #endif
 }
 
-void NetworkProcess::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData, CompletionHandler<void()>&& completionHandler)
 {
-    Ref mock = WebCore::MockParentalControlsURLFilter::create(WTF::move(blockedURLs));
+    Ref mock = WebCore::MockParentalControlsURLFilter::create(WTF::move(blockedURLs), replacementData);
     WebCore::ParentalControlsURLFilter::setFilterForTesting(WTF::move(mock));
     completionHandler();
 }

@@ -303,7 +303,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     AllowEvaluatedURL(struct WebCore::ParentalControlsURLFilterParameters parameters) -> (bool allowed)
-    InstallMockParentalControlsURLFilterForTesting(Vector<URL> blockedURLs) -> ()
+    InstallMockParentalControlsURLFilterForTesting(Vector<URL> blockedURLs, std::span<const uint8_t> replacementData) -> ()
 #endif
 
 #if HAVE(ENHANCED_SECURITY_LINKS)

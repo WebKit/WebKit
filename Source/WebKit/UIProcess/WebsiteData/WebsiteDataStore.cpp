@@ -2980,9 +2980,9 @@ void WebsiteDataStore::isStorageSuspendedForTesting(CompletionHandler<void(bool)
 }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
-void WebsiteDataStore::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData, CompletionHandler<void()>&& completionHandler)
 {
-    protect(networkProcess())->installMockParentalControlsURLFilterForTesting(WTF::move(blockedURLs), WTF::move(completionHandler));
+    protect(networkProcess())->installMockParentalControlsURLFilterForTesting(WTF::move(blockedURLs), replacementData, WTF::move(completionHandler));
 }
 #endif
 

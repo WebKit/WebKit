@@ -39,10 +39,14 @@ using namespace TestWebKitAPI;
 
 TEST(ParentalControlsContentFilteringTests, BlockedURL)
 {
+    NSData *shieldHTML = [@"<script>"
+    "window.webkit.messageHandlers.testHandler.postMessage('SHIELD_IFRAME_READY', '*');"
+    "</script>" dataUsingEncoding:NSUTF8StringEncoding];
+
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto blockedURL = [NSURL URLWithString:@"https://example.com"];
     __block bool mockInstalled = false;
-    [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] completionHandler:^{
+    [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] replacementData:shieldHTML completionHandler:^{
         mockInstalled = true;
     }];
     Util::run(&mockInstalled);
@@ -57,9 +61,16 @@ TEST(ParentalControlsContentFilteringTests, BlockedURL)
     }];
     [webView setNavigationDelegate:navigationDelegate.get()];
 
+    __block bool iframeShieldDidLoad = false;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message isEqualToString:@"SHIELD_IFRAME_READY"])
+            iframeShieldDidLoad = true;
+    }];
+
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com"]]];
 
     Util::run(&didFail);
+    Util::run(&iframeShieldDidLoad);
 }
 
 

@@ -529,7 +529,7 @@ public:
     void isStorageSuspendedForTesting(CompletionHandler<void(bool)>&&) const;
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    void installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, CompletionHandler<void()>&&);
+    void installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData, CompletionHandler<void()>&&);
 #endif
 
     void trackEnhancedSecurityForDomain(WebCore::RegistrableDomain&&, EnhancedSecurity);

@@ -165,6 +165,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 - (void)_isStorageSuspendedForTesting:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 - (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0));
+- (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs replacementData:(NSData * _Nullable)replacementData completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0));
 
 @end
 

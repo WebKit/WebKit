@@ -38,17 +38,18 @@ class MockParentalControlsURLFilter final : public ParentalControlsURLFilter {
 public:
     // FIXME: This class should compile with WebCoreTestSupport, and then these export macros
     // should be WEBCORE_TESTSUPPORT_EXPORT.
-    WEBCORE_EXPORT static Ref<MockParentalControlsURLFilter> create(Vector<URL>&& blockedURLs);
+    WEBCORE_EXPORT static Ref<MockParentalControlsURLFilter> create(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData);
     WEBCORE_EXPORT ~MockParentalControlsURLFilter();
 
 private:
-    explicit MockParentalControlsURLFilter(Vector<URL>&& blockedURLs);
+    MockParentalControlsURLFilter(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData);
 
     bool isEnabledImpl() const final;
     void isURLAllowedImpl(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&) final;
     void allowURL(const URL&, CompletionHandler<void(bool)>&&) final;
 
     HashSet<URL> m_blockedURLs;
+    RetainPtr<NSData> m_replacementData;
 };
 
 } // namespace WebCore

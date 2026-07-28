@@ -32,15 +32,17 @@
 #import <wtf/MainThread.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebCore {
 
-Ref<MockParentalControlsURLFilter> MockParentalControlsURLFilter::create(Vector<URL>&& blockedURLs)
+Ref<MockParentalControlsURLFilter> MockParentalControlsURLFilter::create(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData)
 {
-    return adoptRef(*new MockParentalControlsURLFilter(WTF::move(blockedURLs)));
+    return adoptRef(*new MockParentalControlsURLFilter(WTF::move(blockedURLs), replacementData));
 }
 
-MockParentalControlsURLFilter::MockParentalControlsURLFilter(Vector<URL>&& blockedURLs)
+MockParentalControlsURLFilter::MockParentalControlsURLFilter(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData)
+    : m_replacementData(WTF::toNSData(replacementData))
 {
     for (auto& url : blockedURLs)
         m_blockedURLs.add(WTF::move(url));
@@ -59,8 +61,9 @@ void MockParentalControlsURLFilter::isURLAllowedImpl(IsMainFrameLoad, const URL&
 
     bool isBlocked = m_blockedURLs.contains(url) || (!mainDocumentURL.isEmpty() && m_blockedURLs.contains(mainDocumentURL));
 
-    workQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), isAllowed = !isBlocked]() mutable {
-        completionHandler(isAllowed, nullptr);
+    // If no replacement data is populated, the shield is null & renders as blank.
+    workQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), replacementData = m_replacementData, isAllowed = !isBlocked]() mutable {
+        completionHandler(isAllowed, replacementData.get());
     });
 }
 

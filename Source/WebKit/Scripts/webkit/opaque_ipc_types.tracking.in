@@ -196,6 +196,7 @@
     [NotSentFromWebContent] MessageParam RTCDataChannelRemoteManager.ReceiveData data
     [NotSentFromWebContent] MessageParam RTCDataChannelRemoteManager.SendData text
     [NotSentFromWebContent] MessageParam NetworkProcessProxy.DataTaskDidReceiveData data
+    [NotSentFromWebContent] MessageParam NetworkProcess.InstallMockParentalControlsURLFilterForTesting replacementData
     [NotSentFromWebContent] MessageParam NetworkProcess.PublishDownloadProgress activityAccessToken
     [NotSentFromWebContent] MessageParam NetworkProcess.PublishDownloadProgress bookmarkData
     [NotSentFromWebContent] MessageParam NetworkProcess.ResumeDownload activityAccessToken
