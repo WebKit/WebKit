@@ -159,14 +159,34 @@ FlexLayoutState::MarginTrimItems FlexLayout::marginTrimItemsBeforeFlexLayout() c
     if (marginTrim.isNone())
         return { };
 
-    // FIXME: Which item starts a flex line is decided by the used 'order' value, not by render tree order. The
-    // flex algorithm below gets this right; the container's intrinsic width, which this feeds, does not.
+    auto trimsInlineStart = marginTrim.contains(Style::MarginTrimSide::InlineStart);
+    auto trimsInlineEnd = marginTrim.contains(Style::MarginTrimSide::InlineEnd);
+    if (!trimsInlineStart && !trimsInlineEnd)
+        return { };
+
+    // The items at the start and end of the container's single line of items, in the order the flex algorithm will
+    // use: the lowest and highest used 'order' value, document order breaking ties. Scanning for them keeps this in
+    // step with buildFlexItemList without having to build the sorted list before the container has been sized.
+    CheckedPtr<RenderBox> firstFlexItem;
+    CheckedPtr<RenderBox> lastFlexItem;
+    for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
+        if (child->isOutOfFlowPositioned() || child->isExcludedFromNormalLayout())
+            continue;
+        auto order = child->style().order().value;
+        if (!firstFlexItem || order < firstFlexItem->style().order().value)
+            firstFlexItem = child.ptr();
+        if (!lastFlexItem || order >= lastFlexItem->style().order().value)
+            lastFlexItem = child.ptr();
+    }
+    if (!firstFlexItem)
+        return { };
+
     auto marginTrimItems = FlexLayoutState::MarginTrimItems { };
     auto isRowsFlexbox = FlexFormattingUtils::isHorizontalFlow(flexBox());
-    if (CheckedPtr flexItem = flexBox().firstInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineStart))
-        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineStart.add(*flexItem) : marginTrimItems.itemsOnFirstFlexLine.add(*flexItem);
-    if (CheckedPtr flexItem = flexBox().lastInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineEnd))
-        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineEnd.add(*flexItem) : marginTrimItems.itemsOnLastFlexLine.add(*flexItem);
+    if (trimsInlineStart)
+        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineStart.add(*firstFlexItem) : marginTrimItems.itemsOnFirstFlexLine.add(*firstFlexItem);
+    if (trimsInlineEnd)
+        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineEnd.add(*lastFlexItem) : marginTrimItems.itemsOnLastFlexLine.add(*lastFlexItem);
     return marginTrimItems;
 }
 
