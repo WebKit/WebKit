@@ -160,7 +160,7 @@ function iteratorZip(iters, nextMethods, mode, padding, finishResults)
     // return() before the first next(), when the closure body has never run) then
     // closes all of them. This is invoked with a return completion, so a failing
     // return() propagates.
-    var underlyingIterators = { };
+    var underlyingIterators = @Object.@create(null);
     underlyingIterators.return = function () {
         @iteratorCloseAllNormal(openIters);
         return { done: true, value: @undefined };
@@ -306,7 +306,7 @@ function getOptionsObject(options)
     // 1. If options is undefined, then
     if (options === @undefined) {
         // 1.a. Return OrdinaryObjectCreate(null).
-        return {};
+        return @Object.@create(null);
     }
 
     // 2. If options is an Object, then
