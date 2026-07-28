@@ -44,6 +44,7 @@ from webkitcorepy import log
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 from webkitcorepy._vendored.packaging import tags
+from webkitcorepy._vendored.packaging.specifiers import SpecifierSet, InvalidSpecifier
 from webkitcorepy._vendored.packaging.utils import parse_wheel_filename, InvalidWheelFilename
 
 from html.parser import HTMLParser
@@ -224,8 +225,13 @@ class Package(object):
                             continue
 
                     requires = package.get('data-requires-python')
-                    if requires and not AutoInstall.version.matches(requires):
-                        continue
+                    if requires:
+                        try:
+                            version_matches = str(AutoInstall.version) in SpecifierSet(requires)
+                        except InvalidSpecifier:
+                            version_matches = True  # be permissive on unparsable metadata, matching old behavior
+                        if not version_matches:
+                            continue
 
                     version_candidate = re.search(r'\d+\.\d+(\.\d+)?', package["name"])
                     if not version_candidate:
