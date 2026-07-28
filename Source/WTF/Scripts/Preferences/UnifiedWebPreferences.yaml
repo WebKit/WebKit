@@ -3798,6 +3798,21 @@ HTMLEnhancedSelectParsingQuirkEnabled:
     WebCore:
       default: false
 
+HTMLInCanvasEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "HTML-in-Canvas"
+  humanReadableDescription: "Enable HTML-in-Canvas"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 HTTPEquivEnabled:
   type: bool
   status: mature
