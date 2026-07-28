@@ -437,9 +437,10 @@ void AliasAnalysis::write(MemoryLocation rootIdentifier)
     if (rootIdentifier.isParameter()) {
         dataLogLnIf(shouldLogAliasAnalysis, "writing parameter "_s, rootIdentifier);
         m_function->writtenParameters.add(rootIdentifier);
-    } else if (rootIdentifier.isGlobal())
+    } else if (rootIdentifier.isGlobal()) {
         dataLogLnIf(shouldLogAliasAnalysis, "writing global "_s, rootIdentifier);
         m_function->writtenGlobals.add(rootIdentifier);
+    }
 }
 
 std::optional<FailedCheck> aliasAnalysis(ShaderModule& shaderModule)
