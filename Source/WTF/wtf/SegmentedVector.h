@@ -293,6 +293,8 @@ namespace WTF {
             T* data() { return m_entries; }
 
         private:
+            friend SegmentedVector;
+
             T m_entries[0];
         };
 
@@ -379,7 +381,18 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         void allocateSegment()
         {
+#if !OS(WINDOWS)
             static_assert(!sizeof(Segment), "Segment must add no header for (sizeof(T) * segSize) to size the buffer");
+#else
+            // The MSVC ABI rounds a class whose only member is a zero-length array up to
+            // alignof(T) instead of the Itanium ABI's 0 bytes, so sizeof() can't express
+            // "no header" here; the entries' offset can. Segment inherits
+            // non-standard-layout from T, which makes offsetof conditionally-supported,
+            // but m_entries is its only member, so the offset is 0 regardless of T's layout.
+            IGNORE_WARNINGS_BEGIN("invalid-offsetof")
+            static_assert(!offsetof(Segment, m_entries), "Segment must add no header for (sizeof(T) * segSize) to size the buffer");
+            IGNORE_WARNINGS_END
+#endif
             size_t segSize = sizeOfSegment(m_segments.size());
             auto* ptr = Malloc::malloc(sizeof(T) * segSize);
             m_segments.append(SegmentPtr(static_cast<Segment*>(ptr), { }));

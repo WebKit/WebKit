@@ -930,8 +930,11 @@ private:
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
 
 #if ASSERT_ENABLED
-    friend void setTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
-    friend void clearTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
+    // JS_EXPORT_PRIVATE matches GCOwnedDataScope.h. Heap.h does not include it, so
+    // whichever declaration a translation unit sees first has to carry the attribute:
+    // adding dllimport in a redeclaration is an error under -Wdll-attribute-on-redeclaration.
+    friend JS_EXPORT_PRIVATE void setTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
+    friend JS_EXPORT_PRIVATE void clearTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
     const void* m_topGCOwnedDataScope { nullptr };
 #endif
     // Use a SegmentedVector rather than a Vector because we don't want to have to copy in order to grow the buffer.

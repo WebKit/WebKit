@@ -184,6 +184,20 @@ WebCore::CertificateInfo::CertificateChain createCertificateChain(X509_STORE_CTX
     return pemDataFromCtx(StackOfX509(ctx));
 }
 
+#if OS(WINDOWS)
+static String toString(const ASN1_STRING* name)
+{
+    unsigned char* data { nullptr };
+    auto length = ASN1_STRING_to_UTF8(&data, name);
+    if (length <= 0)
+        return String();
+
+    String result({ byteCast<Latin1Character>(data), static_cast<size_t>(length) });
+    OPENSSL_free(data);
+    return result;
+}
+#endif
+
 static String getSubjectEntry(const X509* x509, int nid)
 {
     auto subjectName = X509_get_subject_name(x509);
