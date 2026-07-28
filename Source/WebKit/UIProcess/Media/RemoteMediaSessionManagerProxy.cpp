@@ -137,7 +137,7 @@ void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connect
     m_sessionProxies.remove({ state.sessionIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() });
 }
 
-// FIXME: Clean up m_sessionProxies when a web content process crashes.
+// FIXME: Clean up m_sessionProxies and m_audioCaptureSourceCountsByPage when a web content process crashes.
 
 void RemoteMediaSessionManagerProxy::setCurrentMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)
 {
@@ -154,10 +154,30 @@ void RemoteMediaSessionManagerProxy::refreshSessionStates(IPC::Connection& conne
     }
 }
 
-void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, Vector<RemoteMediaSessionState>&& sessions)
+void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, WebCore::PageIdentifier pageIdentifier, Vector<RemoteMediaSessionState>&& sessions, uint64_t audioCaptureSourceCount, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
 {
     refreshSessionStates(connection, sessions);
+
+    WebCore::ProcessQualified<WebCore::PageIdentifier> key { WTF::move(pageIdentifier), WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };
+    if (!audioCaptureSourceCount)
+        m_audioCaptureSourceCountsByPage.remove(key);
+    else
+        m_audioCaptureSourceCountsByPage.set(key, audioCaptureSourceCount);
+
     updateSessionState();
+#if USE(AUDIO_SESSION)
+    completionHandler(m_category, m_mode, m_routeSharingPolicy);
+#else
+    completionHandler(WebCore::AudioSessionCategory::None, WebCore::AudioSessionMode::Default, WebCore::RouteSharingPolicy::Default);
+#endif
+}
+
+int RemoteMediaSessionManagerProxy::countActiveAudioCaptureSources()
+{
+    uint64_t total = 0;
+    for (auto count : m_audioCaptureSourceCountsByPage.values())
+        total += count;
+    return static_cast<int>(total);
 }
 
 void RemoteMediaSessionManagerProxy::mediaSessionStateChanged(IPC::Connection& connection, WebKit::RemoteMediaSessionState&& state)
@@ -179,15 +199,26 @@ void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSes
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
 }
 
-void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(bool, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
 {
+    // Reply with the current audio session category so the WebContent process applies it before
+    // resuming playback. This makes the play() promise observe the up-to-date category — the
+    // capture count has already been folded in via a prior UpdateMediaSessionStates round-trip.
+    auto reply = [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](bool granted) mutable {
+#if USE(AUDIO_SESSION)
+        completionHandler(granted, protectedThis->m_category, protectedThis->m_mode, protectedThis->m_routeSharingPolicy);
+#else
+        completionHandler(granted, WebCore::AudioSessionCategory::None, WebCore::AudioSessionMode::Default, WebCore::RouteSharingPolicy::Default);
+#endif
+    };
+
     RefPtr session = findAndUpdateSession(connection, state);
     if (!session) {
-        completionHandler(false);
+        reply(false);
         return;
     }
 
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(completionHandler));
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(reply));
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)

@@ -29,9 +29,29 @@
 
 namespace WebCore {
 
-enum class AudioSessionCategory : uint8_t;
-enum class AudioSessionMode : uint8_t;
-enum class RouteSharingPolicy : uint8_t;
+enum class RouteSharingPolicy : uint8_t {
+    Default,
+    LongFormAudio,
+    Independent,
+    LongFormVideo
+};
+
+enum class AudioSessionCategory : uint8_t {
+    None,
+    AmbientSound,
+    SoloAmbientSound,
+    MediaPlayback,
+    RecordAudio,
+    PlayAndRecord,
+    AudioProcessing,
+};
+
+enum class AudioSessionMode : uint8_t {
+    // FIXME: This is not exhaustive.
+    Default,
+    VideoChat,
+    MoviePlayback,
+};
 
 enum class PlatformMediaSessionMediaType : uint8_t {
     None,

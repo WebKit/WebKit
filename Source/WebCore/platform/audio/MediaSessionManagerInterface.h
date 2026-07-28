@@ -196,7 +196,7 @@ protected:
     void nowPlayingMetadataChanged(const NowPlayingMetadata&);
     void enqueueTaskOnMainThread(Function<void()>&&);
 
-    int countActiveAudioCaptureSources();
+    virtual int countActiveAudioCaptureSources();
 
     bool computeSupportsSeeking() const;
 

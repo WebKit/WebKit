@@ -270,8 +270,7 @@ enum class WebCore::VideoFrameRotation : uint16_t {
 };
 #endif
 
-#if USE(AUDIO_SESSION)
-header: <WebCore/AudioSession.h>
+header: <WebCore/PlatformMediaSessionTypes.h>
 [CustomHeader] enum class WebCore::RouteSharingPolicy : uint8_t {
     Default,
     LongFormAudio,
@@ -295,6 +294,8 @@ enum class WebCore::AudioSessionMode : uint8_t {
     MoviePlayback,
 };
 
+#if USE(AUDIO_SESSION)
+header: <WebCore/AudioSession.h>
 enum class WebCore::AudioSessionSoundStageSize : uint8_t {
     Automatic,
     Small,

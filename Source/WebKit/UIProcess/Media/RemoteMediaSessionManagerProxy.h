@@ -32,6 +32,7 @@
 #include <WebCore/AudioHardwareListener.h>
 #include <WebCore/AudioSession.h>
 #include <WebCore/MediaSessionIdentifier.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessQualified.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -97,15 +98,17 @@ private:
     void addMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void removeMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void setCurrentMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
-    void updateMediaSessionStates(IPC::Connection&, Vector<RemoteMediaSessionState>&&);
+    void updateMediaSessionStates(IPC::Connection&, WebCore::PageIdentifier, Vector<RemoteMediaSessionState>&&, uint64_t audioCaptureSourceCount, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
     void mediaSessionStateChanged(IPC::Connection&, WebKit::RemoteMediaSessionState&&);
-    void mediaSessionWillBeginPlayback(IPC::Connection&, RemoteMediaSessionState&&, CompletionHandler<void(bool)>&&);
+    void mediaSessionWillBeginPlayback(IPC::Connection&, RemoteMediaSessionState&&, CompletionHandler<void(bool, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
 
     void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
 
     void addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions);
     void removeMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions);
     void resetMediaSessionRestrictions();
+
+    int countActiveAudioCaptureSources() final;
 
 #if PLATFORM(COCOA)
     void remoteAudioHardwareDidBecomeActive();
@@ -149,6 +152,7 @@ private:
 #endif
 
     HashMap<WebCore::ProcessQualified<WebCore::MediaSessionIdentifier>, Ref<RemoteMediaSessionProxy>> m_sessionProxies;
+    HashMap<WebCore::ProcessQualified<WebCore::PageIdentifier>, uint64_t> m_audioCaptureSourceCountsByPage;
 
 #if PLATFORM(COCOA)
     RefPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;

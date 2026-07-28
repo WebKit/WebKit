@@ -111,7 +111,17 @@ void RemoteMediaSessionManager::setCurrentSession(WebCore::PlatformMediaSessionI
 
 void RemoteMediaSessionManager::sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)), WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)),
+        [completionHandler = WTF::move(completionHandler)](bool granted, WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy) mutable {
+#if USE(AUDIO_SESSION)
+            WebCore::AudioSession::singleton().setCategory(category, mode, policy);
+#else
+            UNUSED_PARAM(category);
+            UNUSED_PARAM(mode);
+            UNUSED_PARAM(policy);
+#endif
+            completionHandler(granted);
+        });
 }
 
 void RemoteMediaSessionManager::addRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
@@ -142,7 +152,16 @@ void RemoteMediaSessionManager::updateSessionState()
         return currentSessionState(*session);
     });
 
-    send(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(WTF::move(sessions)));
+    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(m_webPageID, WTF::move(sessions), countActiveAudioCaptureSources()),
+        [](WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy) {
+#if USE(AUDIO_SESSION)
+            WebCore::AudioSession::singleton().setCategory(category, mode, policy);
+#else
+            UNUSED_PARAM(category);
+            UNUSED_PARAM(mode);
+            UNUSED_PARAM(policy);
+#endif
+        });
 }
 
 void RemoteMediaSessionManager::sessionStateChanged(WebCore::PlatformMediaSessionInterface& session)
