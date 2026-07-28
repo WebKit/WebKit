@@ -1,7 +1,10 @@
 //@ skip if $addressBits <= 32
 //@ runDefaultWasm("--useWasmMemory64=1")
 
-load("../spec-harness.js", "caller relative");
+let assert;
+import('../assert.js').then((m) => { assert = m; }, $vm.crash);
+drainMicrotasks();
+load("../v8/resources/wasm-module-builder.js", "caller relative");
 
 // u64 LEB128 encoding of 0xffffffffffffffff
 const kU64MaxLEB128 = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01];
@@ -11,16 +14,16 @@ builder.addMemory64(1);
 
 builder.addFunction("testLoad", makeSig([kWasmI64], [kWasmI32]))
     .addBody([
-        kExprGetLocal, 0,
+        kExprLocalGet, 0,
         kExprI32LoadMem, 0, 1,
     ])
     .exportAs("testLoad");
 
 builder.addFunction("testStore", makeSig([kWasmI64], []))
     .addBody([
-        kExprGetLocal, 0,
+        kExprLocalGet, 0,
         kExprI32Const, 0,
-        kExprI32StoreMem, 0, 1,         
+        kExprI32StoreMem, 0, 1,
     ])
     .exportAs("testStore");
 
@@ -42,7 +45,7 @@ builder.addFunction("constantStore", makeSig([], []))
 builder.addFunction("offsetLoad", makeSig([], [kWasmI32]))
     .addBody([
         kExprI64Const, 0,
-        kExprI32LoadMem, 0, ...kU64MaxLEB128,  
+        kExprI32LoadMem, 0, ...kU64MaxLEB128,
     ])
     .exportAs("offsetLoad");
 
@@ -50,43 +53,43 @@ builder.addFunction("offsetStore", makeSig([], []))
     .addBody([
         kExprI64Const, 0,
         kExprI32Const, 0,
-        kExprI32StoreMem, 0, ...kU64MaxLEB128,  
+        kExprI32StoreMem, 0, ...kU64MaxLEB128,
     ])
     .exportAs("offsetStore");
 
 const { testLoad, testStore, constantLoad, constantStore, offsetStore, offsetLoad } = builder.instantiate().exports;
 
 function testOverflow() {
-  assert.throws(() => testLoad(0xffffffffffffffffn), 
-      WebAssembly.RuntimeError, 
+  assert.throws(() => testLoad(0xffffffffffffffffn),
+      WebAssembly.RuntimeError,
       "Out of bounds memory access (evaluating 'testLoad(0xffffffffffffffffn)')");
 
-  assert.throws(() => testStore(0xffffffffffffffffn), 
-        WebAssembly.RuntimeError, 
+  assert.throws(() => testStore(0xffffffffffffffffn),
+        WebAssembly.RuntimeError,
       "Out of bounds memory access (evaluating 'testStore(0xffffffffffffffffn)')");
 
-  assert.throws(() => testLoad(0xfffffffffffffffen), 
-      WebAssembly.RuntimeError, 
+  assert.throws(() => testLoad(0xfffffffffffffffen),
+      WebAssembly.RuntimeError,
       "Out of bounds memory access (evaluating 'testLoad(0xfffffffffffffffen)')");
 
-  assert.throws(() => testStore(0xfffffffffffffffen), 
-        WebAssembly.RuntimeError, 
+  assert.throws(() => testStore(0xfffffffffffffffen),
+        WebAssembly.RuntimeError,
       "Out of bounds memory access (evaluating 'testStore(0xfffffffffffffffen)')");
 
-  assert.throws(() => constantLoad(), 
-        WebAssembly.RuntimeError, 
+  assert.throws(() => constantLoad(),
+        WebAssembly.RuntimeError,
         "Out of bounds memory access (evaluating 'constantLoad()')");
 
-  assert.throws(() => constantStore(), 
-        WebAssembly.RuntimeError, 
+  assert.throws(() => constantStore(),
+        WebAssembly.RuntimeError,
         "Out of bounds memory access (evaluating 'constantStore()')");
 
-  assert.throws(() => offsetStore(), 
-        WebAssembly.RuntimeError, 
+  assert.throws(() => offsetStore(),
+        WebAssembly.RuntimeError,
         "Out of bounds memory access (evaluating 'offsetStore()')");
 
-    assert.throws(() => offsetLoad(), 
-        WebAssembly.RuntimeError, 
+    assert.throws(() => offsetLoad(),
+        WebAssembly.RuntimeError,
         "Out of bounds memory access (evaluating 'offsetLoad()')");
 }
 
@@ -95,7 +98,13 @@ for (let i = 0; i < wasmTestLoopCount; i++)
 
 // Atomic instruction overflow tests.
 // Every atomic instruction with a memory offset must trap on address overflow.
-
+//
+// This whole section is block-scoped: the v8 wasm-module-builder already defines
+// globals for some of these atomic opcodes (loads, stores, notify, wait), so a
+// block keeps the full local set below from clashing with those globals while
+// still supplying the RMW/cmpxchg sub-opcodes the builder lacks. All sub-opcodes
+// are fed to addBody() as raw bytes.
+{
 const kAtomicPrefix = 0xFE;
 
 const kExprAtomicNotify = 0x00;
@@ -299,7 +308,7 @@ for (const [name, opcode, align, cat, vtype] of atomicOps) {
     const staticSig = rtype !== null ? makeSig([], [rtype]) : makeSig([], []);
 
     atomicBuilder.addFunction("test_" + name, runtimeSig)
-        .addBody(makeAtomicBody(cat, vtype, opcode, align, [kExprGetLocal, 0], [1]))
+        .addBody(makeAtomicBody(cat, vtype, opcode, align, [kExprLocalGet, 0], [1]))
         .exportAs("test_" + name);
 
     atomicBuilder.addFunction("const_" + name, staticSig)
@@ -335,3 +344,5 @@ function testAtomicOverflow() {
 
 for (let i = 0; i < wasmTestLoopCount; i++)
     testAtomicOverflow();
+}
+

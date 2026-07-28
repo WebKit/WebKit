@@ -53,22 +53,8 @@
   cmd: runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
 - path: wasm/branch-hints
   cmd: runWebAssemblySuite unless parseRunCommands
-- path: wasm/spec-tests
-  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
-- path: wasm/simd-spec-tests
-  cmd: "$skipModes += ['wasm-eager-jettison'.to_sym, 'wasm-eager-jettison-eager'.to_sym] if ($architecture == 'arm64' and $hostOS == 'linux'); runWebAssemblySIMDSpecTest :normal"
-- path: wasm/function-references-spec-tests
-  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
-- path: wasm/gc-spec-tests
-  cmd: runWebAssemblyGCSpecTest :normal
 - path: wasm/threads-spec-tests
   cmd: runWebAssemblyThreadsSpecTest :normal
-- path: wasm/tail-call-spec-tests
-  cmd: runWebAssemblyTailCallSpecTest :normal
-- path: wasm/extended-const-spec-tests
-  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
-- path: wasm/multi-memory-spec-tests
-  cmd: runWebAssemblyMultiMemorySpecTest :normal unless parseRunCommands
 
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly

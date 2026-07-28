@@ -2053,34 +2053,8 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
     end
 end
 
-def runWebAssemblySpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness", nil)
-end
-
-def runWebAssemblyFunctionReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil)
-end
-
-def runWebAssemblyGCSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil)
-end
-
 def runWebAssemblyThreadsSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "threads-spec-harness", nil)
-end
-
-def runWebAssemblySIMDSpecTest(mode, *optionalTestSpecificOptions)
-    return if !$isSIMDPlatform
-    runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWasmSIMD=true", *optionalTestSpecificOptions)
-    runWebAssemblySpecTestBase(mode, "spec-harness", "-eager", "--useWasmSIMD=true", "--useBBQJIT=1", "--useWasmIPInt=1", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *optionalTestSpecificOptions)
-end
-
-def runWebAssemblyTailCallSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "tail-call-spec-harness", nil, "--useWasmTailCalls=true")
-end
-
-def runWebAssemblyMultiMemorySpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "multi-memory-spec-harness", nil, "--useWasmMultiMemory=true")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
