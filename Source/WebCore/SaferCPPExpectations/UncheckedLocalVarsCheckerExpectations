@@ -29,7 +29,6 @@ inspector/InspectorOverlay.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
-layout/formattingContexts/flex/FlexFormattingUtils.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineQuirks.cpp
@@ -40,8 +39,6 @@ layout/formattingContexts/table/TableFormattingContext.cpp
 layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
-layout/integration/flex/FlexIntegrationUtils.cpp
-layout/integration/flex/LayoutIntegrationFlexLayout.cpp
 loader/cache/CachedSVGFont.cpp
 [ iOS ] page/DOMTimer.cpp
 page/DragController.cpp

@@ -20,7 +20,6 @@ html/HTMLFormControlsCollection.cpp
 html/HTMLTableElement.cpp
 html/HTMLTableRowsCollection.cpp
 [ macOS ] inspector/InspectorFrontendHost.cpp
-layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
 loader/EmptyClients.cpp
@@ -33,7 +32,6 @@ page/LocalFrameView.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/text-extraction/TextExtraction.cpp
 platform/sql/SQLiteStatementAutoResetScope.cpp
-rendering/RenderBox.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderObject.cpp
 rendering/StyledMarkedText.cpp

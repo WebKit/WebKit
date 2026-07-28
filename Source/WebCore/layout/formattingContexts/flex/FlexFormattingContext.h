@@ -54,8 +54,8 @@ public:
     // The item's current, laid-out geometry.
     LayoutUnit NODELETE logicalWidth() const;
     LayoutUnit NODELETE logicalHeight() const;
-    LayoutUnit NODELETE borderAndPaddingLogicalHeight() const;
-    LayoutSize NODELETE intrinsicSize() const;
+    LayoutUnit borderAndPaddingLogicalHeight() const;
+    LayoutSize intrinsicSize() const;
 #if ASSERT_ENABLED
     bool needsLayout() const;
 #endif

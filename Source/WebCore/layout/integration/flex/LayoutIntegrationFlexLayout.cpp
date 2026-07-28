@@ -163,9 +163,9 @@ FlexLayoutState::MarginTrimItems FlexLayout::marginTrimItemsBeforeFlexLayout() c
     // flex algorithm below gets this right; the container's intrinsic width, which this feeds, does not.
     auto marginTrimItems = FlexLayoutState::MarginTrimItems { };
     auto isRowsFlexbox = FlexFormattingUtils::isHorizontalFlow(flexBox());
-    if (auto flexItem = flexBox().firstInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineStart))
+    if (CheckedPtr flexItem = flexBox().firstInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineStart))
         isRowsFlexbox ? marginTrimItems.itemsAtFlexLineStart.add(*flexItem) : marginTrimItems.itemsOnFirstFlexLine.add(*flexItem);
-    if (auto flexItem = flexBox().lastInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineEnd))
+    if (CheckedPtr flexItem = flexBox().lastInFlowChildBox(); flexItem && marginTrim.contains(Style::MarginTrimSide::InlineEnd))
         isRowsFlexbox ? marginTrimItems.itemsAtFlexLineEnd.add(*flexItem) : marginTrimItems.itemsOnLastFlexLine.add(*flexItem);
     return marginTrimItems;
 }

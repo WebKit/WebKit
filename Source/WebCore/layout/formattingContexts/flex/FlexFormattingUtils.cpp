@@ -351,18 +351,19 @@ bool FlexFormattingUtils::willStretchFlexItem(const RenderFlexibleBox& flexBox, 
     if (isHorizontalFlow(flexBox) == (BoxAxis::Horizontal == physicalAxis))
         return false;
 
-    auto& itemStyle = flexItem.style();
+    CheckedRef itemStyle = flexItem.style();
     bool isVerticalCrossAxis = physicalAxis == BoxAxis::Vertical;
-    auto& crossSize = isVerticalCrossAxis ? itemStyle.height() : itemStyle.width();
+    auto& crossSize = isVerticalCrossAxis ? itemStyle->height() : itemStyle->width();
 
     if (!crossSize.isStretch()) {
-        if (!itemStyle.alignSelf().resolve(&flexBox.style()).isStretchy(mode == StretchingMode::Explicit ? ItemPosition::Normal : ItemPosition::Stretch))
+        CheckedRef containerStyle = flexBox.style();
+        if (!itemStyle->alignSelf().resolve(containerStyle.ptr()).isStretchy(mode == StretchingMode::Explicit ? ItemPosition::Normal : ItemPosition::Stretch))
             return false;
         if (!crossSize.isAuto())
             return false;
     }
 
-    return isVerticalCrossAxis ? !itemStyle.marginTop().isAuto() && !itemStyle.marginBottom().isAuto() : !itemStyle.marginLeft().isAuto() && !itemStyle.marginRight().isAuto();
+    return isVerticalCrossAxis ? !itemStyle->marginTop().isAuto() && !itemStyle->marginBottom().isAuto() : !itemStyle->marginLeft().isAuto() && !itemStyle->marginRight().isAuto();
 }
 
 // Whether any in-flow item is a stretched aspect-ratio item, i.e. one whose cross size the container supplies and

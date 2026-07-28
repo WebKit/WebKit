@@ -661,7 +661,7 @@ bool RenderBox::shouldResetLogicalHeightBeforeLayout() const
     // A flex item resets its logical height while its container is stretching items along the cross axis, so the
     // stretch relayout starts from a clean height. This runs inside the item's own layout, after its LayoutRepainter
     // has captured the pre-stretch bounds, so repaint stays minimal (see webkit.org/b/204380).
-    CheckedPtr flexBoxParent = dynamicDowncast<RenderFlexibleBox>(parent());
+    auto* flexBoxParent = dynamicDowncast<RenderFlexibleBox>(parent());
     return flexBoxParent && flexBoxParent->isInCrossAxisStretchLayout();
 }
 

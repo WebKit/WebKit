@@ -1294,12 +1294,14 @@ LayoutUnit FlexLayoutItem::logicalHeight() const
 
 LayoutUnit FlexLayoutItem::borderAndPaddingLogicalHeight() const
 {
-    return renderer->borderAndPaddingLogicalHeight();
+    CheckedRef flexItem = renderer;
+    return flexItem->borderAndPaddingLogicalHeight();
 }
 
 LayoutSize FlexLayoutItem::intrinsicSize() const
 {
-    return renderer->intrinsicSize();
+    CheckedRef flexItem = renderer;
+    return flexItem->intrinsicSize();
 }
 
 #if ASSERT_ENABLED
