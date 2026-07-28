@@ -3062,7 +3062,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                         if (!virtualKey.isNull())
                             currentState.pressedVirtualKeys.remove(virtualKey);
                         else
-                            currentState.pressedKey = std::nullopt;
+                            currentState.pressedKeys.remove(action.key.value());
                         break;
                     }
                     case Action::Subtype::KeyDown: {
@@ -3071,7 +3071,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                         if (!virtualKey.isNull())
                             currentState.pressedVirtualKeys.add(virtualKey);
                         else
-                            currentState.pressedKey = action.key.value();
+                            currentState.pressedKeys.add(action.key.value());
                         break;
                     }
                     case Action::Subtype::Pause:
@@ -3085,8 +3085,16 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::Scroll:
                         ASSERT_NOT_REACHED();
                     }
-                    if (currentState.pressedKey)
-                        state->setString("pressedCharKey"_s, currentState.pressedKey.value());
+                    if (!currentState.pressedKeys.isEmpty()) {
+                        // 'pressedCharKey' is deprecated and conveys only one key. It is also sent so
+                        // that backends without 'pressedCharKeys' support receive the most recently
+                        // pressed key.
+                        state->setString("pressedCharKey"_s, currentState.pressedKeys.last());
+                        Ref<JSON::Array> charKeys = JSON::Array::create();
+                        for (const auto& charKey : currentState.pressedKeys)
+                            charKeys->pushString(charKey);
+                        state->setArray("pressedCharKeys"_s, WTF::move(charKeys));
+                    }
                     if (!currentState.pressedVirtualKeys.isEmpty()) {
                         // FIXME: support parsing and tracking multiple virtual keys.
                         Ref<JSON::Array> virtualKeys = JSON::Array::create();

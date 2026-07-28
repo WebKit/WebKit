@@ -32,6 +32,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
@@ -256,7 +257,9 @@ private:
         String subtype;
         std::optional<MouseButton> pressedButton;
         std::optional<MouseInteraction> mouseInteraction;
-        std::optional<String> pressedKey;
+        // Ordered so that the last entry is the most recently pressed key, which is what
+        // 'pressedCharKey' conveys.
+        ListHashSet<String> pressedKeys;
         HashSet<String> pressedVirtualKeys;
     };
     InputSourceState& inputSourceState(const String& id);
