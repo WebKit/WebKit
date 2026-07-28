@@ -1264,27 +1264,6 @@ extension AppKitGesturesTests.Basic {
         let down = CGPoint(x: center.x, y: center.y - 250)
         let up = CGPoint(x: center.x, y: center.y + 250)
 
-        func settledScrollY() async throws -> Double {
-            var previous = try await page.callJavaScript(JavaScriptMessages.ScrollPosition()).y
-            var stableSamples = 0
-
-            for _ in 0..<60 {
-                try await Task.sleep(for: .milliseconds(100))
-                let current = try await page.callJavaScript(JavaScriptMessages.ScrollPosition()).y
-
-                if abs(current - previous) < 1 {
-                    stableSamples += 1
-                    if stableSamples >= 2 { return current }
-                } else {
-                    stableSamples = 0
-                }
-
-                previous = current
-            }
-
-            return previous
-        }
-
         func finalFlingDistance(flicks count: Int, reverseLast: Bool = false) async throws -> Double {
             try await page.load(html: html).wait()
             await page.waitForNextPresentationUpdate()
@@ -1300,8 +1279,8 @@ extension AppKitGesturesTests.Basic {
             }
 
             let flingStart = try await page.callJavaScript(JavaScriptMessages.ScrollPosition()).y
-            let settled = try await settledScrollY()
-            return Swift.abs(settled - flingStart)
+            let settled = try await settledScrollPosition()
+            return abs(settled.y - flingStart)
         }
 
         let single = try await finalFlingDistance(flicks: 1) // count 1 -> multiplier 1
@@ -1312,6 +1291,137 @@ extension AppKitGesturesTests.Basic {
         #expect(accelerated > single * 2)
         // Reversing the final swipe resets the chain, so that fling is not accelerated.
         #expect(accelerated > reversed * 2)
+    }
+
+    @Test
+    func diagonalScrollMovesBothAxes() async throws {
+        try await loadScrollableGrid()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript { "window.scrollTo(2000, 8000);" }
+        await page.waitForNextPresentationUpdate()
+        let start = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        await recap.play { composer in
+            // ~45°: neither axis is locked out.
+            composer._wk_scroll(
+                withStart: center,
+                end: CGPoint(x: center.x - 250, y: center.y - 250),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let end = try await settledScrollPosition()
+
+        #expect(end.x - start.x > 20)
+        #expect(end.y - start.y > 20)
+    }
+
+    @Test
+    func shallowScrollLocksToHorizontalAxis() async throws {
+        try await loadScrollableGrid()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript { "window.scrollTo(2000, 8000);" }
+        await page.waitForNextPresentationUpdate()
+        let start = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        await recap.play { composer in
+            // ~7°: the vertical component is suppressed.
+            composer._wk_scroll(
+                withStart: center,
+                end: CGPoint(x: center.x - 250, y: center.y - 30),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let end = try await settledScrollPosition()
+
+        #expect(end.x - start.x > 20)
+        #expect(abs(end.y - start.y) < 1)
+    }
+
+    @Test
+    func steepScrollLocksToVerticalAxis() async throws {
+        try await loadScrollableGrid()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript { "window.scrollTo(2000, 8000);" }
+        await page.waitForNextPresentationUpdate()
+        let start = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        await recap.play { composer in
+            // ~7° from vertical: the horizontal component is suppressed.
+            composer._wk_scroll(
+                withStart: center,
+                end: CGPoint(x: center.x - 30, y: center.y - 250),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let end = try await settledScrollPosition()
+
+        #expect(end.y - start.y > 20)
+        #expect(abs(end.x - start.x) < 1)
+    }
+
+    @Test
+    func scrollCatchingMomentumCanChangeAxis() async throws {
+        try await loadScrollableGrid()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript { "window.scrollTo(2000, 8000);" }
+        await page.waitForNextPresentationUpdate()
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: center, end: CGPoint(x: center.x - 250, y: center.y), duration: .seconds(0.08))
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let after = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: center, end: CGPoint(x: center.x, y: center.y - 250), duration: .seconds(0.3))
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let end = try await settledScrollPosition()
+        #expect(end.y - after.y > 20)
+    }
+
+    @Test
+    func shallowScrollOnVerticalOnlyPageStillScrollsVertically() async throws {
+        try await loadScrollableText()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript { "window.scrollTo(0, 1000);" }
+        await page.waitForNextPresentationUpdate()
+        let start = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        await recap.play { composer in
+            // ~18°: shallow enough to be inside the horizontal lock band, but the page can't scroll
+            // horizontally, so that branch is skipped. The drag is not steep enough for the vertical
+            // branch either, so no lock is taken at all and both components flow — which is what lets
+            // the vertical one scroll here.
+            composer._wk_scroll(
+                withStart: center,
+                end: CGPoint(x: center.x - 250, y: center.y - 80),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let end = try await settledScrollPosition()
+        #expect(end.y - start.y > 20)
     }
 }
 
@@ -1384,6 +1494,43 @@ extension AppKitGesturesTests.Basic {
             <div id="text" style="font-size: 60px; margin: 0;">\(lines)</div>
             """
         try await page.load(html: html).wait()
+    }
+
+    private func loadScrollableGrid() async throws {
+        let html = """
+            <body style="margin: 0; width: 5000px; height: 20000px;
+                         background: repeating-linear-gradient(45deg, blue 0 50px, white 50px 100px);">
+            </body>
+            """
+        try await page.load(html: html).wait()
+    }
+
+    private func settledScrollPosition() async throws -> CGPoint {
+        func read() async throws -> CGPoint {
+            try await CGPoint(page.callJavaScript(JavaScriptMessages.ScrollPosition()))
+        }
+
+        var previous = try await read()
+        var stableSamples = 0
+
+        for _ in 0..<60 {
+            try await Task.sleep(for: .milliseconds(100))
+            let current = try await read()
+
+            if abs(current.x - previous.x) < 1, abs(current.y - previous.y) < 1 {
+                stableSamples += 1
+                if stableSamples >= 2 {
+                    return current
+                }
+            } else {
+                stableSamples = 0
+            }
+
+            previous = current
+        }
+
+        Issue.record("scroll position never settled; last sample was \(previous)")
+        return previous
     }
 }
 

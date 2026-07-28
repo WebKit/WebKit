@@ -54,6 +54,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/Logger+Extras.swift
     ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKAppKitGestureController.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKDirectionalScrollLockTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKFastScrollTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift

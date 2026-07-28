@@ -246,6 +246,7 @@
 		07E4BDC72A3A7089000D5509 /* _WKWebViewTextInputNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E4BDC52A3A7089000D5509 /* _WKWebViewTextInputNotifications.h */; };
 		07E4BDC82A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E4BDC62A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm */; };
 		07F0337C30107D3900B69551 /* WKFastScrollTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */; };
+		07F0337E3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */; };
 		07F327F22CB09B74006D9918 /* _WKTextPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F327F02CB085A4006D9918 /* _WKTextPreview.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F6B5592D719323009F206D /* _WKRectEdge+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F6B5582D719323009F206D /* _WKRectEdge+Extras.swift */; };
 		07FAA74B2CE947AA00128360 /* WebPage+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FAA74A2CE947AA00128360 /* WebPage+Navigation.swift */; };
@@ -3593,6 +3594,7 @@
 		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
 		07EF24BE2E309EFE004429B6 /* WebKitInternalCxx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitInternalCxx.h; sourceTree = "<group>"; };
 		07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKFastScrollTracker.swift; sourceTree = "<group>"; };
+		07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDirectionalScrollLockTracker.swift; sourceTree = "<group>"; };
 		07F1A2B52F900F010000DA03 /* WKWebView+RefreshControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+RefreshControl.swift"; sourceTree = "<group>"; };
 		07F327F02CB085A4006D9918 /* _WKTextPreview.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextPreview.h; sourceTree = "<group>"; };
 		07F327F12CB085A4006D9918 /* _WKTextPreview.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextPreview.mm; sourceTree = "<group>"; };
@@ -17058,6 +17060,7 @@
 				336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */,
 				336E07472EBCC1C100B4D635 /* WKAppKitGestureController.mm */,
 				073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */,
+				07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */,
 				07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */,
 				CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */,
 				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
@@ -22520,6 +22523,7 @@
 				BE6818000000000000000001 /* WKContentWorld.swift in Sources */,
 				075C079A2D92125D00B3E900 /* WKContextMenuElementInfoAdapter.swift in Sources */,
 				079DD3032FAC583900592E03 /* WKDeferringGestureRecognizer.swift in Sources */,
+				07F0337E3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				07F0337C30107D3900B69551 /* WKFastScrollTracker.swift in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
