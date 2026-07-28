@@ -31,8 +31,8 @@ public import SwiftUI
 /// Connect a ``WebView`` with a ``WebPage`` to fully control the browsing experience, including essential functionality such as loading a URL.
 /// Any updates to the webpage propagate the information to the view.
 @available(anyAppleOSAndDownlevels 26.0, *)
-@available(watchOS, unavailable)
-@available(tvOS, unavailable)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 public struct WebView: View {
     /// Create a new WebView.
     ///
@@ -96,11 +96,14 @@ public struct WebView: View {
     }
 }
 
+@available(anyAppleOSAndDownlevels 26.0, *)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebView {
     /// A type that defines the behavior of how horizontal swipe gestures trigger backward and forward page navigation.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct BackForwardNavigationGesturesBehavior: Sendable {
         enum Value {
             case automatic
@@ -133,8 +136,8 @@ extension WebView {
 
     /// The options for controlling the behavior for how magnification gestures interact with web views.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct MagnificationGesturesBehavior: Sendable {
         enum Value {
             case automatic
@@ -167,8 +170,8 @@ extension WebView {
 
     /// A type specifying the behavior for the presentation of link previews when pressing a link.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct LinkPreviewBehavior: Sendable {
         enum Value {
             case automatic
@@ -201,8 +204,8 @@ extension WebView {
 
     /// The behavior that determines whether a web view can display content full screen.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct ElementFullscreenBehavior: Sendable {
         enum Value {
             case automatic
@@ -237,8 +240,8 @@ extension WebView {
     ///
     /// For links, the information contains the URL that is linked to.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct ActivatedElementInfo: Hashable, Sendable {
         /// The URL of the link that the user clicked.
         public let linkURL: URL?

@@ -34,7 +34,7 @@ typealias CocoaView = NSView
 #endif
 
 @MainActor
-class CocoaWebViewAdapter: CocoaView, PlatformTextSearching {
+class CocoaWebViewAdapter: CocoaView {
     #if os(iOS)
     var extrinsicSafeAreaInsets: EdgeInsets? = nil {
         didSet {
@@ -69,7 +69,9 @@ class CocoaWebViewAdapter: CocoaView, PlatformTextSearching {
 
     // MARK: PlatformTextSearching conformance
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION
+
+    #if WTF_PLATFORM_MAC
     typealias FindInteraction = NSTextFinderAdapter
     #else
     typealias FindInteraction = UIFindInteractionAdapter
@@ -103,7 +105,7 @@ class CocoaWebViewAdapter: CocoaView, PlatformTextSearching {
         return .init(wrapped: interaction)
     }()
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     var isFindBarVisible: Bool = false {
         didSet {
             guard oldValue != isFindBarVisible else {
@@ -125,13 +127,15 @@ class CocoaWebViewAdapter: CocoaView, PlatformTextSearching {
     }
 
     var findBarView: CocoaView? = nil
-    #endif
+    #endif // WTF_PLATFORM_MAC
 
     // MARK: Find-in-Page support
 
     #if canImport(SwiftUI, _version: "7.0.57")
     var findContext: FindContext?
     #endif
+
+    #endif // WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION
 
     var scrollPosition: ScrollPositionContext?
 
@@ -340,5 +344,12 @@ extension CocoaWebViewAdapter: WebPageWebView.Delegate {
         onScrollGeometryChange.action(transformedOld, transformedNew)
     }
 }
+
+#if WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION
+
+extension CocoaWebViewAdapter: PlatformTextSearching {
+}
+
+#endif // WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION
 
 #endif

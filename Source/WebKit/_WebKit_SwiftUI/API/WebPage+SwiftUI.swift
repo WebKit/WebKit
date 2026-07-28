@@ -30,8 +30,8 @@ public import SwiftUI
 extension WebPage {
     /// The theme color that the system gets from the first valid meta tag in the webpage.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public var themeColor: Color? {
         self.backingProperty(\.themeColor, backedBy: \.themeColor) { backingValue in
             // The themeColor property is a UIColor/NSColor in WKWebView.

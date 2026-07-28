@@ -29,7 +29,7 @@ import os
 import WebKit_Private.WKPreferencesPrivate
 
 #if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
-internal import WebKit_Private.WKWebViewPrivate
+import WebKit_Private.WKWebViewPrivate
 
 #if os(macOS)
 import AppKit.NSRefreshController
@@ -219,7 +219,7 @@ final class WebViewCoordinator {
         self.refreshAction = context.environment.refresh
         #endif
 
-        #if canImport(SwiftUI, _version: "7.0.57")
+        #if canImport(SwiftUI, _version: "7.0.57") && (WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION)
         updateFindInteraction(view, context: context)
         #endif
         updateScrollPosition(view, context: context)
@@ -255,7 +255,7 @@ final class WebViewCoordinator {
         }
     }
 
-    #if canImport(SwiftUI, _version: "7.0.57")
+    #if canImport(SwiftUI, _version: "7.0.57") && (WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION)
     private func updateFindInteraction(_ view: CocoaWebViewAdapter, context: WebViewRepresentable.Context) {
         guard let webView = view.webView else {
             return
@@ -287,7 +287,7 @@ final class WebViewCoordinator {
             }
         }
     }
-    #endif // canImport(SwiftUI, _version: "7.0.57")
+    #endif // canImport(SwiftUI, _version: "7.0.57") && (WTF_PLATFORM_MAC || HAVE_UIFINDINTERACTION)
 }
 
 #if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
@@ -329,7 +329,7 @@ extension WebViewCoordinator {
         }
     }
 }
-#endif
+#endif // ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
 
 #if canImport(UIKit)
 extension WebViewRepresentable: UIViewRepresentable {

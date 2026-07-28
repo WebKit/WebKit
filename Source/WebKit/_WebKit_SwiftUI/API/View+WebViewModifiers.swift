@@ -29,24 +29,24 @@ public import SwiftUI
 extension View {
     /// Determines whether horizontal swipe gestures trigger backward and forward page navigation.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewBackForwardNavigationGestures(_ value: WebView.BackForwardNavigationGesturesBehavior) -> some View {
         environment(\.webViewAllowsBackForwardNavigationGestures, value)
     }
 
     /// Determines whether magnify gestures change the view’s magnification.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewMagnificationGestures(_ value: WebView.MagnificationGesturesBehavior) -> some View {
         environment(\.webViewMagnificationGestures, value)
     }
 
     /// Determines whether pressing a link displays a preview of the destination for the link.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewLinkPreviews(_ value: WebView.LinkPreviewBehavior) -> some View {
         environment(\.webViewAllowsLinkPreview, value)
     }
@@ -61,8 +61,8 @@ extension View {
 
     /// Determines whether a web view can display content full screen.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewElementFullscreenBehavior(_ value: WebView.ElementFullscreenBehavior) -> some View {
         environment(\.webViewElementFullscreenBehavior, value)
     }
@@ -99,8 +99,8 @@ extension View {
     /// - Parameter visibility: The visibility to use for the background.
     /// - Returns: A view with the specified content background visibility.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewContentBackground(_ visibility: Visibility) -> some View {
         environment(\.webViewContentBackground, visibility)
     }
@@ -115,8 +115,8 @@ extension View {
     ///
     /// - Note: The content size of web content may exceed the current size of the view's frame, however it will never be smaller than it.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewOnScrollGeometryChange<T>(
         for type: T.Type,
         of transform: @escaping (ScrollGeometry) -> T,
@@ -138,8 +138,8 @@ extension View {
     ///
     /// - Note: ``WebView`` does not support scrolling to a view with an identity. It only supports scrolling to a concrete offset, or to an edge.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewScrollPosition(_ position: Binding<ScrollPosition>) -> some View {
         environment(\.webViewScrollPositionContext, .init(position: position))
     }
@@ -151,8 +151,8 @@ extension View {
     ///   - input: The input for which to enable or disable scrolling.
     /// - Returns: A view with the configured scroll input behavior for web views.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public nonisolated func webViewScrollInputBehavior(_ behavior: ScrollInputBehavior, for input: ScrollInputKind) -> some View {
         environment(\.webViewScrollInputBehaviorContext, .init(behavior: behavior, input: input))
     }
