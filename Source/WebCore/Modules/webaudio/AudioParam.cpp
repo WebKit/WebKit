@@ -268,7 +268,9 @@ bool AudioParam::hasSampleAccurateValues() const
 
 float AudioParam::finalValue()
 {
-    float value;
+    // Initialize to the intrinsic value since calculateFinalValues() may bail out
+    // without writing anything (e.g. when called off the audio thread).
+    float value = m_value;
     calculateFinalValues(singleElementSpan(value), false);
     return value;
 }
