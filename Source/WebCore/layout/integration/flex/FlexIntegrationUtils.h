@@ -56,9 +56,6 @@ class FlexIntegrationUtils {
 public:
     FlexIntegrationUtils(RenderFlexibleBox&, FlexLayoutState&, FlexItemContentCache&);
 
-    RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
-    FlexLayoutState& flexLayoutState() const LIFETIME_BOUND;
-
     void applyStretchedLogicalHeightToFlexItem(const FlexLayoutItem&, LayoutUnit blockSize);
     void layoutFlexItemForStretchedCrossSize(const FlexLayoutItem&, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
     void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
@@ -93,6 +90,9 @@ public:
     template<typename SizeType> LayoutUnit computeLogicalWidthUsingForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit availableWidth) const;
 
 private:
+    RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
+    FlexLayoutState& flexLayoutState() const LIFETIME_BOUND;
+
     void setTrimmedMarginForChild(const FlexLayoutItem&, Style::MarginTrimSide);
     void invalidateFlexItemContentLogicalWidthsIfNeeded(const FlexLayoutItem&);
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);

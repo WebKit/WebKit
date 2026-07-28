@@ -167,6 +167,7 @@ private:
     void computeFlexItemRects(const FlexLines&, FlexLayoutItems&, const PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsCrossSizeList, LayoutUnit crossAxisStartEdge, LayoutUnit crossContentExtent, LayoutUnit crossExtent);
 
     LayoutUnit placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
+    LayoutUnit mainAxisFlippedOffsetForRow(const FlexLayoutItem&, LayoutUnit flowRelativeOffset) const;
     void reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines&, FlexLayoutItems&, const SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent, LayoutUnit containerMainBorderBoxExtent);
     void layoutColumnReverse(std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit columnMainBorderBoxExtent);
     void setFlexItemCountsForFirstAndLastLine(const FlexLines&);
@@ -198,6 +199,7 @@ private:
     LayoutIntegration::FlexIntegrationUtils& integrationUtils() LIFETIME_BOUND { return m_integrationUtils; }
 
     const CheckedRef<const RenderFlexibleBox> m_flexBox;
+    FlexLayoutState& m_layoutState;
     LayoutIntegration::FlexIntegrationUtils m_integrationUtils;
     FlexFormattingUtils m_flexFormattingUtils;
     const FlexLayoutConstraints m_constraints;
