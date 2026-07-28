@@ -637,6 +637,7 @@
 		445C4E2483088F91EA3BF4F5 /* es2sLongRunningTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F4BC68F2221441BBA47CC /* es2sLongRunningTests.cpp */; };
 		44EF4D53A634EA5A0968572B /* es3pStateChangeTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D739486DA5E0126F0D0EF4BB /* es3pStateChangeTests.cpp */; };
 		4557460D814F5DF1D5787863 /* es3sLongRunningShaderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7134402C9425888101366367 /* es3sLongRunningShaderTests.cpp */; };
+		457CC0343015771C001DE9FC /* angle_end2end_tests_expectations.txt in State Test Expectations */ = {isa = PBXBuildFile; fileRef = 7BD3D2E82FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt */; };
 		45F4464AB2B8513CB3E3762B /* es3fNegativeStateApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F264D619701179ECB7F6033 /* es3fNegativeStateApiTests.cpp */; };
 		46574F8EBAA668D2A75348A0 /* es3pShaderOperatorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F384DF192F867DA1896E9B2 /* es3pShaderOperatorTests.cpp */; };
 		46724657AF064907DE2EA506 /* deThreadTest.c in Sources */ = {isa = PBXBuildFile; fileRef = ADE748218E43074A54016343 /* deThreadTest.c */; };
@@ -2715,20 +2716,6 @@
 			remoteGlobalIDString = DA5446AEBAE5F6920A4C2227;
 			remoteInfo = ANGLEDeqpSupport;
 		};
-		EABF4011B5554627E06EB304 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DA5446AEBAE5F6920A4C2227;
-			remoteInfo = ANGLEDeqpSupport;
-		};
-		EFA74AB28E9728008475F897 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A3E045FAB988D2834BEDCF23;
-			remoteInfo = ANGLEDeqpGLES2Tests;
-		};
 		DDAD70172FF59CF40054DF83 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -2764,6 +2751,20 @@
 			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
 			remoteInfo = Setup;
 		};
+		EABF4011B5554627E06EB304 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DA5446AEBAE5F6920A4C2227;
+			remoteInfo = ANGLEDeqpSupport;
+		};
+		EFA74AB28E9728008475F897 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3E045FAB988D2834BEDCF23;
+			remoteInfo = ANGLEDeqpGLES2Tests;
+		};
 		FF194FF52744331A006A97A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -2793,6 +2794,17 @@
 				31CD00D12491979C00486F27 /* LICENSE in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		457CC033301576C6001DE9FC /* State Test Expectations */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = src/tests;
+			dstSubfolderSpec = 16;
+			files = (
+				457CC0343015771C001DE9FC /* angle_end2end_tests_expectations.txt in State Test Expectations */,
+			);
+			name = "State Test Expectations";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7BD3D2D82FCDB8A300C386DC /* Copy Test Expectations */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -8336,6 +8348,7 @@
 			buildPhases = (
 				7BE4AA502DE4544900A16F7E /* Sources */,
 				7BE4AA512DE4544900A16F7E /* Frameworks */,
+				457CC033301576C6001DE9FC /* State Test Expectations */,
 			);
 			buildRules = (
 			);
@@ -8717,7 +8730,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nD=\"$BUILT_PRODUCTS_DIR\"; S=\"$SRCROOT\"\nmkdir -p \"$D/vk_gl_cts_data/data\"\n/usr/bin/rsync -a --delete \"$S/third_party/VK-GL-CTS/src/data/gles2/\" \"$D/vk_gl_cts_data/data/gles2/\"\nmkdir -p \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main\" \"$D/src/tests/deqp_support\"\n/bin/cp \"$S/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt\" \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/\"\n/bin/cp \"$S/src/tests/deqp_support/deqp_gles2_test_expectations.txt\" \"$D/src/tests/deqp_support/\"";
+			shellScript = "set -e\nD=\"$BUILT_PRODUCTS_DIR\"; S=\"$SRCROOT\"\nmkdir -p \"$D/vk_gl_cts_data/data\"\n/usr/bin/rsync -a --delete \"$S/third_party/VK-GL-CTS/src/data/gles2/\" \"$D/vk_gl_cts_data/data/gles2/\"\nmkdir -p \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main\" \"$D/src/tests/deqp_support\"\n/bin/cp \"$S/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt\" \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/\"\n/bin/cp \"$S/src/tests/deqp_support/deqp_gles2_test_expectations.txt\" \"$D/src/tests/deqp_support/\"\n";
 			showEnvVarsInLog = 0;
 		};
 		1B104B2593111EC45EE1B461 /* Stage dEQP data */ = {
@@ -8796,21 +8809,6 @@
 			shellPath = /bin/sh;
 			shellScript = "[ -z \"${WK_DERIVED_SDK_HEADERS_DIR}\" -o -d \"${WK_DERIVED_SDK_HEADERS_DIR}\" ] && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
-		ED494454A21948BE9E42F8C8 /* Stage dEQP data */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Stage dEQP data";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nD=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"; S=\"$SRCROOT\"\nmkdir -p \"$D/vk_gl_cts_data/data\"\n/usr/bin/rsync -a --delete \"$S/third_party/VK-GL-CTS/src/data/gles3/\" \"$D/vk_gl_cts_data/data/gles3/\"\nmkdir -p \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main\" \"$D/src/tests/deqp_support\"\n/bin/cp \"$S/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt\" \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/\"\n/bin/cp \"$S/src/tests/deqp_support/deqp_gles3_test_expectations.txt\" \"$D/src/tests/deqp_support/\"";
-			showEnvVarsInLog = 0;
-		};
 		DDAD70162FF59CC60054DF83 /* Public SDK gate */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -8831,6 +8829,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+		ED494454A21948BE9E42F8C8 /* Stage dEQP data */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Stage dEQP data";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nD=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"; S=\"$SRCROOT\"\nmkdir -p \"$D/vk_gl_cts_data/data\"\n/usr/bin/rsync -a --delete \"$S/third_party/VK-GL-CTS/src/data/gles3/\" \"$D/vk_gl_cts_data/data/gles3/\"\nmkdir -p \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main\" \"$D/src/tests/deqp_support\"\n/bin/cp \"$S/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt\" \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/\"\n/bin/cp \"$S/src/tests/deqp_support/deqp_gles3_test_expectations.txt\" \"$D/src/tests/deqp_support/\"";
+			showEnvVarsInLog = 0;
 		};
 		FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11105,21 +11118,6 @@
 			target = 7BB971FF2DE47B8A00455D13 /* ANGLE (static) */;
 			targetProxy = 1F9F42A696C9703F7B04B247 /* PBXContainerItemProxy */;
 		};
-		E26F4E349E4A9C3AAE23C8B4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DA5446AEBAE5F6920A4C2227 /* ANGLEDeqpSupport */;
-			targetProxy = EABF4011B5554627E06EB304 /* PBXContainerItemProxy */;
-		};
-		EAD24D89B44DD2F46EE9F6BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7BFAF76C2DE6EADC00327F7F /* utils */;
-			targetProxy = 375940D29363C30B195CB192 /* PBXContainerItemProxy */;
-		};
-		F0C041F2B6A7C6FAF9BC98EF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9FDB44EAA70594111A0ED0EA /* ANGLEDeqpGLES3Tests */;
-			targetProxy = 31294C019492778D9D742220 /* PBXContainerItemProxy */;
-		};
 		DDAD70182FF59CF40054DF83 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DDAD70112FF59CB70054DF83 /* Setup */;
@@ -11144,6 +11142,21 @@
 			isa = PBXTargetDependency;
 			target = DDAD70112FF59CB70054DF83 /* Setup */;
 			targetProxy = DDAD701F2FF59D000054DF83 /* PBXContainerItemProxy */;
+		};
+		E26F4E349E4A9C3AAE23C8B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DA5446AEBAE5F6920A4C2227 /* ANGLEDeqpSupport */;
+			targetProxy = EABF4011B5554627E06EB304 /* PBXContainerItemProxy */;
+		};
+		EAD24D89B44DD2F46EE9F6BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BFAF76C2DE6EADC00327F7F /* utils */;
+			targetProxy = 375940D29363C30B195CB192 /* PBXContainerItemProxy */;
+		};
+		F0C041F2B6A7C6FAF9BC98EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9FDB44EAA70594111A0ED0EA /* ANGLEDeqpGLES3Tests */;
+			targetProxy = 31294C019492778D9D742220 /* PBXContainerItemProxy */;
 		};
 		FF194FF62744331A006A97A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11594,15 +11607,6 @@
 			};
 			name = Debug;
 		};
-		E7DE457FB500E964D8DADB05 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7CB5479A8D9BBB6D79F1A12F /* ANGLEDeqpGLES3TestsApp.xcconfig */;
-			buildSettings = {
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-			};
-			name = Production;
-		};
 		DDAD70122FF59CB70054DF83 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11624,6 +11628,15 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		E7DE457FB500E964D8DADB05 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CB5479A8D9BBB6D79F1A12F /* ANGLEDeqpGLES3TestsApp.xcconfig */;
+			buildSettings = {
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
 			};
 			name = Production;
 		};
@@ -11854,6 +11867,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
+		DDAD70152FF59CB70054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DDAD70122FF59CB70054DF83 /* Debug */,
+				DDAD70132FF59CB70054DF83 /* Release */,
+				DDAD70142FF59CB70054DF83 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		F25C43B1A89B2A578F39A0DE /* Build configuration list for PBXNativeTarget "ANGLEDeqpGLES3TestsApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -11870,16 +11893,6 @@
 				3332450181D6667B032A60AA /* Debug */,
 				6FAC471F99BD174315920DDD /* Release */,
 				AF6640E096DC860854C31233 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		DDAD70152FF59CB70054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DDAD70122FF59CB70054DF83 /* Debug */,
-				DDAD70132FF59CB70054DF83 /* Release */,
-				DDAD70142FF59CB70054DF83 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
