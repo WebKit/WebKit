@@ -775,6 +775,7 @@
 				WebCore/Logging.cpp,
 				WebCore/LoginStatus.cpp,
 				WebCore/MarkedText.cpp,
+				WebCore/MediaConstraintsTests.cpp,
 				WebCore/MediaReorderQueue.cpp,
 				WebCore/MIMESniffer.cpp,
 				WebCore/MIMETypeRegistry.cpp,

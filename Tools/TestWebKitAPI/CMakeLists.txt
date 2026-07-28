@@ -245,6 +245,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/LayoutUnitTests.cpp
         Tests/WebCore/MIMESniffer.cpp
         Tests/WebCore/MIMETypeRegistry.cpp
+        Tests/WebCore/MediaConstraintsTests.cpp
         Tests/WebCore/MediaReorderQueue.cpp
         Tests/WebCore/MixedContentChecker.cpp
         Tests/WebCore/MonospaceFontTests.cpp
