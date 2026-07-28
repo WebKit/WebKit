@@ -29,6 +29,8 @@
 import WebKit_Private.WKWebExtensionPrivate
 #endif
 
+#if !os(watchOS) && !os(tvOS)
+
 @available(anyAppleOSAndDownlevels 14.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
@@ -40,6 +42,19 @@ extension WKPDFConfiguration {
         set { __rect = newValue ?? .null }
     }
 }
+
+#else
+
+extension WKPDFConfiguration {
+    var rect: CGRect? {
+        get { __rect == .null ? nil : __rect }
+        set { __rect = newValue ?? .null }
+    }
+}
+
+#endif
+
+#if !os(watchOS) && !os(tvOS)
 
 @available(anyAppleOSAndDownlevels 14.0, *)
 @available(watchOS, unavailable)
@@ -101,6 +116,67 @@ extension WKWebView {
     }
 }
 
+#else
+
+extension WKWebView {
+    @preconcurrency
+    func callAsyncJavaScript(
+        _ functionBody: Swift.String,
+        arguments: [Swift.String: Any] = [:],
+        in frame: WKFrameInfo? = nil,
+        in contentWorld: WKContentWorld,
+        completionHandler: (@MainActor (Result<Any, any Error>) -> Void)? = nil
+    ) {
+        let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
+        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: thunk)
+    }
+
+    // This is pre-existing API whose documentation does not use the source code.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @preconcurrency
+    func createPDF(
+        configuration: WKPDFConfiguration = .init(),
+        completionHandler: @MainActor @escaping (Result<Data, any Error>) -> Void
+    ) {
+        __createPDF(with: configuration, completionHandler: ObjCBlockConversion.exclusive(completionHandler))
+    }
+
+    // This is pre-existing API whose documentation does not use the source code.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @preconcurrency
+    func createWebArchiveData(completionHandler: @MainActor @escaping (Result<Data, any Error>) -> Void) {
+        __createWebArchiveData(completionHandler: ObjCBlockConversion.exclusive(completionHandler))
+    }
+
+    // This is pre-existing API whose documentation does not use the source code.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @preconcurrency
+    func evaluateJavaScript(
+        _ javaScript: Swift.String,
+        in frame: WKFrameInfo? = nil,
+        in contentWorld: WKContentWorld,
+        completionHandler: (@MainActor (Result<Any, any Error>) -> Void)? = nil
+    ) {
+        let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
+        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: thunk)
+    }
+
+    // This is pre-existing API whose documentation does not use the source code.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @preconcurrency
+    func find(
+        _ string: Swift.String,
+        configuration: WKFindConfiguration = .init(),
+        completionHandler: @MainActor @escaping (WKFindResult) -> Void
+    ) {
+        __find(string, with: configuration, completionHandler: completionHandler)
+    }
+}
+
+#endif
+
+#if !os(watchOS) && !os(tvOS)
+
 @available(anyAppleOSAndDownlevels 15.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
@@ -138,6 +214,37 @@ extension WKWebView {
         await __find(string, with: configuration)
     }
 }
+
+#else
+
+extension WKWebView {
+    func callAsyncJavaScript(
+        _ functionBody: Swift.String,
+        arguments: [Swift.String: Any] = [:],
+        in frame: WKFrameInfo? = nil,
+        contentWorld: WKContentWorld
+    ) async throws -> Any? {
+        try await __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld)
+    }
+
+    func pdf(configuration: WKPDFConfiguration = .init()) async throws -> Data {
+        try await __createPDF(with: configuration)
+    }
+
+    func evaluateJavaScript(
+        _ javaScript: Swift.String,
+        in frame: WKFrameInfo? = nil,
+        contentWorld: WKContentWorld
+    ) async throws -> Any? {
+        try await __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld)
+    }
+
+    func find(_ string: Swift.String, configuration: WKFindConfiguration = .init()) async throws -> WKFindResult {
+        await __find(string, with: configuration)
+    }
+}
+
+#endif
 
 #if ENABLE_WK_WEB_EXTENSIONS
 @available(anyAppleOSAndDownlevels 18.4, *)

@@ -25,12 +25,15 @@
 
 import Foundation
 
+@available(anyAppleOSAndDownlevels 26.0, *)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// A configuration type that specifies the preferences and behaviors of a webpage.
     @MainActor
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct Configuration {
         /// Creates a new configuration value.
         public init() {
@@ -180,11 +183,14 @@ extension WebPage {
     }
 }
 
+@available(anyAppleOSAndDownlevels 26.0, *)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// A type that describes the authorization permissions policy for the device's sensors a web resource may access.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct DeviceSensorAuthorization {
         /// The kind of sensor permission a web resource may request to access.
         public enum Permission: Hashable, Sendable {
@@ -212,11 +218,14 @@ extension WebPage {
     }
 }
 
+@available(anyAppleOSAndDownlevels 26.0, *)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage.Configuration {
     /// The behavior used when playing HTML video within a page.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     @available(macOS, unavailable)
     public enum MediaPlaybackBehavior: Sendable {
         /// Use the default system value, which is `alwaysFullscreen` for iPhone and `allowsInlinePlayback` for iPad.

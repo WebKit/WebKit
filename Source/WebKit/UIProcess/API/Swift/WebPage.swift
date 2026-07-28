@@ -92,8 +92,8 @@ import WebKit_Internal
 @MainActor
 @Observable
 @available(anyAppleOSAndDownlevels 26.0, *)
-@available(watchOS, unavailable)
-@available(tvOS, unavailable)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 #if compiler(>=6.2.3)
 @_expose(!Cxx)
 #endif
@@ -105,8 +105,8 @@ final public class WebPage {
     ///
     /// You can customize the media type of a ``WebPage`` by using the ``WebPage/mediaType`` property.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct CSSMediaType: Hashable, RawRepresentable, Sendable {
         /// Corresponds to the "all" media type.
         public static let all = CSSMediaType(rawValue: "all")
@@ -132,8 +132,8 @@ final public class WebPage {
 
     /// The set of possible fullscreen states a webpage may be in.
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public enum FullscreenState: Hashable, Sendable {
         /// The page is entering fullscreen.
         case enteringFullscreen
@@ -921,6 +921,12 @@ extension WebPage.EditorStateSnapshot {
             textColor: dictionary["text-color"] as! String
         )
     }
+}
+
+@available(anyAppleOSAndDownlevels 26.0, *)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
+extension WebPage: nonisolated Observation.Observable {
 }
 
 #endif
