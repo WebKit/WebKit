@@ -460,6 +460,7 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
     entry.m_bytecodeIndex = basicBlock.bytecodeBegin;
     entry.m_machineCode = linkBuffer.locationOf<OSREntryPtrTag>(blockHead);
 
+    ASSERT(basicBlock.intersectionOfPastValuesAtHead.size() == basicBlock.variablesAtHead.size());
     FixedOperands<AbstractValue> expectedValues(basicBlock.intersectionOfPastValuesAtHead);
     Vector<OSREntryReshuffling> reshufflings;
 

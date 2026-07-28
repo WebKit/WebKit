@@ -60,7 +60,9 @@ public:
     
     void ensureLocals(unsigned newNumLocals);
     void ensureTmps(unsigned newNumTmps);
-    
+
+    Operands<AbstractValue>& ensureIntersectionOfPastValuesAtHead();
+
     size_t size() const { return m_nodes.size(); }
     bool isEmpty() const { return !size(); }
     Node*& at(size_t i) { return m_nodes[i]; }
@@ -240,7 +242,7 @@ public:
     // would not be a productive optimization: it would make setting up a basic block more
     // expensive and would only benefit bizarre pathological cases.
     Operands<AbstractValue> intersectionOfPastValuesAtHead;
-    
+
     float executionCount;
     
     struct SSAData {

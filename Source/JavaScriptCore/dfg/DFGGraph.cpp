@@ -633,7 +633,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
                 out.print("<empty>");
             out.print("\n");
             out.print(prefix, "  Intersected Vars Before: ");
-            if (block->intersectionOfCFAHasVisited)
+            if (block->intersectionOfCFAHasVisited && block->intersectionOfPastValuesAtHead.size())
                 out.print(inContext(block->intersectionOfPastValuesAtHead, context));
             else
                 out.print("<empty>");

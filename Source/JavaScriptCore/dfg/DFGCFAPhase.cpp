@@ -138,14 +138,19 @@ public:
                     continue;
                 
                 block->intersectionOfCFAHasVisited &= block->cfaHasVisited;
-                for (unsigned i = block->intersectionOfPastValuesAtHead.size(); i--;) {
+
+                if (!block->isOSRTarget || !block->intersectionOfCFAHasVisited)
+                    continue;
+
+                Operands<AbstractValue>& intersection = block->ensureIntersectionOfPastValuesAtHead();
+                for (unsigned i = intersection.size(); i--;) {
                     AbstractValue value = block->valuesAtHead[i];
                     // We need to guarantee that when we do an OSR entry, we validate the incoming
                     // value as if it could be live past an invalidation point. Otherwise, we may
                     // OSR enter with a value with the wrong structure, and an InvalidationPoint's
                     // promise of filtering the structure set of certain values is no longer upheld.
                     value.m_structure.observeInvalidationPoint();
-                    block->intersectionOfPastValuesAtHead[i].filter(value);
+                    intersection[i].filter(value);
                 }
             }
         }
