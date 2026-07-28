@@ -238,6 +238,17 @@ static String mimeTypeFor(std::span<const uint8_t> data)
         return "audio/wav"_s;
     case kAudioFileCAFType:
         return "audio/x-caf"_s;
+    // ISO-BMFF containers. MIMESniffer::getMIMETypeFromContent() only recognizes an MP4 file
+    // when a compatible brand begins with "mp4", so files carrying other valid brands (such as
+    // an M4A whose brands are "M4A "/"isom"/"iso2") reach here and must be handled.
+    case kAudioFileMPEG4Type:
+    case kAudioFileM4AType:
+    case kAudioFileM4BType:
+        return "audio/mp4"_s;
+    case kAudioFile3GPType:
+        return "audio/3gpp"_s;
+    case kAudioFile3GP2Type:
+        return "audio/3gpp2"_s;
     case 'MooV': // kAudioFileQTMovieType
         return "video/quicktime"_s;
     case 'ec-3': // kAudioFileEAC3Type

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding an M4A file whose ftyp box has no &quot;mp4&quot; compatible brand succeeds");
+
+// The MIME sniffing algorithm only reports an ISO-BMFF file as MP4 when one of the compatible
+// brands in the ftyp box starts with "mp4". This file is a valid AAC-LC M4A whose brands are
+// "M4A "/"iso2"/"isom", so sniffing does not identify it and the decoder must fall back to
+// AudioToolbox's file-type detection, which reports kAudioFileM4AType.
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext({ sampleRate: 44100 });
+var request = new XMLHttpRequest();
+request.open("GET", 'resources/media/m4a-no-mp4-brand.m4a', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        if (buffer.numberOfChannels === 1)
+          testPassed("Decoding returned the right number of channels.");
+        else
+          testFailed("Decoding returned the wrong number of channels: " + buffer.numberOfChannels);
+        if (buffer.sampleRate === 44100)
+          testPassed("Decoding returned the right sample rate.");
+        else
+          testFailed("Decoding returned the wrong sample rate: " + buffer.sampleRate);
+        // File is approximately 1s long @ 44100Hz. The exact frame count depends on how many
+        // frames the AAC encoder delay causes to be trimmed, so allow a small tolerance.
+        if (Math.abs(buffer.length - 44100) <= 2048)
+          testPassed("Decoding returned the right number of frames.");
+        else
+          testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+        finishJSTest();
+      }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+      });
+}
+request.send();
+
+</script>
+</body>
+</html>
