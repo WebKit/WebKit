@@ -193,4 +193,45 @@ TEST(ParentalControlsContentFilteringTests, BlockedURLAfterMultipleRedirections_
     Util::run(&didFail);
 }
 
+TEST(ParentalControlsContentFilteringTests, BlockedIframe)
+{
+    auto mainframeHTML = "<script>onload = () => {"
+    "var iframe = document.createElement('iframe');"
+    "document.body.appendChild(iframe);"
+    "iframe.src = 'http://localhost:' + window.location.port + '/blockedIframe'"
+    "}</script>"_s;
+
+    NSData *blockedShieldHTML =[@"<script>"
+    "window.webkit.messageHandlers.testHandler.postMessage('SHIELD_IFRAME_READY', '*');"
+    "</script>" dataUsingEncoding:NSUTF8StringEncoding];
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/blockedIframe"_s, { "<script>window.webkit.messageHandlers.testHandler.postMessage('BLOCKED_IFRAME_LOADED');</script>"_s } }
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto blockedIframeURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%d/blockedIframe", server.port()]];
+    __block bool mockInstalled = false;
+    [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedIframeURL] replacementData:blockedShieldHTML completionHandler:^{
+        mockInstalled = true;
+    }];
+    Util::run(&mockInstalled);
+
+    __block bool iframeShieldDidLoad = false;
+    __block bool blockedIframeLoaded = false;
+
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message isEqualToString:@"SHIELD_IFRAME_READY"])
+            iframeShieldDidLoad = true;
+        if ([message isEqualToString:@"BLOCKED_IFRAME_LOADED"])
+            blockedIframeLoaded = true;
+    }];
+
+    [webView loadRequest:server.request("/mainframe"_s)];
+    Util::run(&iframeShieldDidLoad);
+    EXPECT_FALSE(blockedIframeLoaded);
+}
+
 #endif // HAVE(WEBCONTENTRESTRICTIONS)
