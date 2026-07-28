@@ -213,16 +213,15 @@ void NavigateEvent::finish(Document& document, InterceptionHandlersDidFulfill di
 
     ASSERT(m_interceptionState == InterceptionState::Committed || m_interceptionState == InterceptionState::Scrolled);
     if (focusChanged == FocusDidChange::No && m_focusReset != NavigationFocusReset::Manual) {
-        RefPtr documentElement = document.documentElement();
-        ASSERT(documentElement);
+        if (RefPtr documentElement = document.documentElement()) {
+            RefPtr<Element> focusTarget = documentElement->findAutofocusDelegate();
+            if (!focusTarget)
+                focusTarget = document.body();
+            if (!focusTarget)
+                focusTarget = WTF::move(documentElement);
 
-        RefPtr<Element> focusTarget = documentElement->findAutofocusDelegate();
-        if (!focusTarget)
-            focusTarget = document.body();
-        if (!focusTarget)
-            focusTarget = documentElement;
-
-        document.setFocusedElement(focusTarget.get());
+            document.setFocusedElement(focusTarget.get());
+        }
     }
 
     if (didFulfill == InterceptionHandlersDidFulfill::Yes)
