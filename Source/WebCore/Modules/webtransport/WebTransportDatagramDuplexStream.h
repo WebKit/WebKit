@@ -51,7 +51,7 @@ public:
 
     ReadableStream& readable() { return m_readable; }
     ExceptionOr<Ref<WebTransportDatagramsWritable>> createWritable(ScriptExecutionContext&, WebTransportSendOptions&&);
-    unsigned maxDatagramSize() const { return std::numeric_limits<uint16_t>::max(); }
+    unsigned maxDatagramSize() const;
     std::optional<double> incomingMaxAge() const { return m_incomingMaxAge; }
     std::optional<double> outgoingMaxAge() const { return m_outgoingMaxAge; }
     uint32_t incomingMaxBufferedDatagrams() const { return m_incomingMaxBufferedDatagrams; }
@@ -69,8 +69,8 @@ private:
     RefPtr<WebTransportSession> session();
 
     const Ref<ReadableStream> m_readable;
-    uint32_t m_incomingMaxBufferedDatagrams { std::numeric_limits<uint32_t>::max() };
-    uint32_t m_outgoingMaxBufferedDatagrams { std::numeric_limits<uint32_t>::max() };
+    uint32_t m_incomingMaxBufferedDatagrams { 1 };
+    uint32_t m_outgoingMaxBufferedDatagrams { 1 };
     std::optional<double> m_incomingMaxAge;
     std::optional<double> m_outgoingMaxAge;
     ThreadSafeWeakPtr<WebTransport> m_transport;

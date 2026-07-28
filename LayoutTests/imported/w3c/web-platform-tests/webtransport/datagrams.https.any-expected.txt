@@ -3,10 +3,10 @@ PASS Datagrams are echoed successfully
 PASS Successfully reading datagrams with BYOB reader.
 PASS Reading datagrams with BYOB reader without datagramsReadableType should fail.
 PASS Reading datagrams with insufficient buffer should be rejected.
-FAIL Transfer max-size datagram promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
-FAIL Fail to transfer max-size+1 datagram, handle PMTUD increases promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
+PASS Transfer max-size datagram
+PASS Fail to transfer max-size+1 datagram, handle PMTUD increases
 PASS Sending and receiving datagrams is ready to use before session is established
-FAIL Datagram's outgoingMaxBufferedDatagrams correctly regulates written datagrams assert_true: expected true got false
+PASS Datagram's outgoingMaxBufferedDatagrams correctly regulates written datagrams
 PASS Datagrams read is less than or equal to the incomingMaxBufferedDatagrams
 PASS Datagram MaxAge getters/setters work correctly
 PASS Datagram MaxBufferedDatagrams getters/setters work correctly

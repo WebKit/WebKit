@@ -48,6 +48,13 @@ WebTransportDatagramDuplexStream::WebTransportDatagramDuplexStream(Ref<ReadableS
 
 WebTransportDatagramDuplexStream::~WebTransportDatagramDuplexStream() = default;
 
+unsigned WebTransportDatagramDuplexStream::maxDatagramSize() const
+{
+    // Chrome currently uses 1024, and it's close to 1200, the minimum max datagram size for quic.
+    // FIXME: Adopt rdar://182433814 when it's ready instead.
+    return 1024;
+}
+
 void WebTransportDatagramDuplexStream::attachTo(WebTransport& transport)
 {
     ASSERT(!m_transport.get());

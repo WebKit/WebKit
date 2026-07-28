@@ -49,7 +49,8 @@ ExceptionOr<Ref<WebTransportDatagramsWritable>> WebTransportDatagramsWritable::c
     }
     auto& domGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
 
-    Ref datagramSink = DatagramSink::create(transport ? transport->session().ptr() : nullptr);
+    // FIXME: Reject if transport is nullptr and pass a reference instead of a pointer here.
+    Ref datagramSink = DatagramSink::create(transport.get());
     auto internal = createInternalWritableStream(domGlobalObject, datagramSink.copyRef());
     if (internal.hasException())
         return internal.releaseException();

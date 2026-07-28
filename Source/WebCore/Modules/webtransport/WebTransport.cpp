@@ -137,7 +137,8 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         datagramSource = WTF::move(datagramByteSource);
     } else {
         Ref datagramDefaultSource = DatagramDefaultSource::create();
-        auto readableOrException = ReadableStream::create(domGlobalObject, datagramDefaultSource.copyRef());
+        constexpr double highWaterMark { 0 };
+        auto readableOrException = ReadableStream::create(domGlobalObject, datagramDefaultSource.copyRef(), highWaterMark);
         if (readableOrException.hasException())
             return readableOrException.releaseException();
         incomingDatagrams = readableOrException.releaseReturnValue();
@@ -177,6 +178,7 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
     , m_bidirectionalStreamSource(WTF::move(bidirectionalStreamSource))
 {
     m_datagrams->attachTo(*this);
+    m_datagramSource->setTransport(*this);
     context.enqueueTaskWhenSettled(m_session->initialize(context, url, options, WebCore::clientOrigin(context)), WebCore::TaskSource::Networking, [weakThis = WeakPtr { *this }] (auto&& info) mutable {
         RefPtr strongThis = weakThis.get();
         if (!strongThis)

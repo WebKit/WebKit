@@ -25,29 +25,40 @@
 
 #pragma once
 
+#include "JSDOMPromiseDeferred.h"
 #include "WritableStreamSink.h"
+#include <wtf/Deque.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class WebTransport;
 class WebTransportDatagramsWritable;
-class WebTransportSession;
 
 class DatagramSink : public WritableStreamSink {
 public:
-    static Ref<DatagramSink> create(WebTransportSession* session) { return adoptRef(*new DatagramSink(session)); }
+    static Ref<DatagramSink> create(WebTransport* transport) { return adoptRef(*new DatagramSink(transport)); }
     ~DatagramSink();
 
     void NODELETE attachTo(WebTransportDatagramsWritable&);
 
 private:
-    DatagramSink(WebTransportSession*);
+    explicit DatagramSink(WebTransport*);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
     void close(JSDOMGlobalObject&) final { m_isClosed = true; }
 
-    ThreadSafeWeakPtr<WebTransportSession> m_session;
+    void datagramSent();
+    void resolveBufferedDatagramsWithRoom();
+
+    struct OutgoingDatagram {
+        DOMPromiseDeferred<void> promise;
+        bool settled { false };
+    };
+    Deque<OutgoingDatagram> m_outgoingQueue;
+
+    ThreadSafeWeakPtr<WebTransport> m_transport;
     WeakPtr<WebTransportDatagramsWritable> m_datagrams;
     bool m_isClosed { false };
 };

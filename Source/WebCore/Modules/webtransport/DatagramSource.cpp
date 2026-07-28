@@ -27,6 +27,8 @@
 #include "DatagramSource.h"
 
 #include "Exception.h"
+#include "WebTransport.h"
+#include "WebTransportDatagramDuplexStream.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/StdLibExtras.h>
 
@@ -35,6 +37,54 @@ namespace WebCore {
 DatagramDefaultSource::DatagramDefaultSource() = default;
 
 DatagramDefaultSource::~DatagramDefaultSource() = default;
+
+void DatagramDefaultSource::setTransport(WebTransport& transport)
+{
+    m_transport = transport;
+}
+
+uint32_t DatagramDefaultSource::incomingMaxBufferedDatagrams() const
+{
+    if (RefPtr transport = m_transport.get())
+        return transport->datagrams().incomingMaxBufferedDatagrams();
+    return 1;
+}
+
+bool DatagramDefaultSource::deliverDatagram()
+{
+    ASSERT(!m_incomingQueue.isEmpty());
+    if (controller().enqueue(m_incomingQueue.takeFirst())) {
+        pullFinished();
+        return true;
+    }
+    doCancel();
+    pullFinished();
+    return false;
+}
+
+void DatagramDefaultSource::doStart()
+{
+    startFinished();
+}
+
+void DatagramDefaultSource::doPull()
+{
+    if (m_isCancelled || m_isClosed)
+        return;
+
+    // FIXME: Check if datagrams are too old according to incomingMaxAge.
+    if (!m_incomingQueue.isEmpty()) {
+        if (!deliverDatagram())
+            return;
+        if (m_finReceived && m_incomingQueue.isEmpty() && !m_isClosed) {
+            m_isClosed = true;
+            controller().close();
+        }
+        return;
+    }
+
+    m_pullPending = true;
+}
 
 void DatagramDefaultSource::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<Exception>&& exception)
 {
@@ -46,22 +96,30 @@ void DatagramDefaultSource::receiveDatagram(std::span<const uint8_t> datagram, b
         return;
     }
     if (datagram.size()) {
-        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(datagram.size(), 1);
-        if (arrayBuffer)
+        if (auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(datagram.size(), 1)) {
             memcpySpan(arrayBuffer->mutableSpan(), datagram);
-        if (!controller().enqueue(WTF::move(arrayBuffer)))
-            doCancel({ });
+            while (m_incomingQueue.size() >= incomingMaxBufferedDatagrams())
+                m_incomingQueue.removeFirst();
+            // FIXME: We should remove datagrams that are too old based on IncomingDatagramsExpirationDuration.
+            m_incomingQueue.append(WTF::move(arrayBuffer));
+            if (std::exchange(m_pullPending, false))
+                deliverDatagram();
+        }
     }
     if (withFin) {
-        m_isClosed = true;
-        controller().close();
-        clean();
+        m_finReceived = true;
+        if (m_incomingQueue.isEmpty() && !m_isClosed) {
+            m_isClosed = true;
+            controller().close();
+            clean();
+        }
     }
 }
 
 void DatagramDefaultSource::doCancel()
 {
     m_isCancelled = true;
+    m_incomingQueue.clear();
     cancelFinished();
 }
 

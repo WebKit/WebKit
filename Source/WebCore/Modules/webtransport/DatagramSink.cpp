@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContextInlines.h"
 #include "WebTransport.h"
+#include "WebTransportDatagramDuplexStream.h"
 #include "WebTransportDatagramsWritable.h"
 #include "WebTransportSendGroup.h"
 #include "WebTransportSession.h"
@@ -39,8 +40,8 @@
 
 namespace WebCore {
 
-DatagramSink::DatagramSink(WebTransportSession* session)
-    : m_session(session) { }
+DatagramSink::DatagramSink(WebTransport* transport)
+    : m_transport(transport) { }
 
 DatagramSink::~DatagramSink() = default;
 
@@ -48,6 +49,32 @@ void DatagramSink::attachTo(WebTransportDatagramsWritable& datagrams)
 {
     ASSERT(!m_datagrams);
     m_datagrams = datagrams;
+}
+
+void DatagramSink::resolveBufferedDatagramsWithRoom()
+{
+    RefPtr transport = m_transport.get();
+    uint32_t max = transport ? transport->datagrams().outgoingMaxBufferedDatagrams() : std::numeric_limits<uint32_t>::max();
+    uint32_t index = 0;
+    for (auto& datagram : m_outgoingQueue) {
+        if (index++ >= max)
+            break;
+        if (!datagram.settled) {
+            datagram.settled = true;
+            datagram.promise.resolve();
+        }
+    }
+}
+
+void DatagramSink::datagramSent()
+{
+    ASSERT(!m_outgoingQueue.isEmpty());
+    if (m_outgoingQueue.isEmpty())
+        return;
+    auto sent = m_outgoingQueue.takeFirst();
+    if (!sent.settled)
+        sent.promise.resolve();
+    resolveBufferedDatagramsWithRoom();
 }
 
 void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
@@ -65,8 +92,8 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
     if (bufferSource.hasException(scope)) [[unlikely]]
         return promise.settle(Exception { ExceptionCode::ExistingExceptionError });
 
-    RefPtr session = m_session.get();
-    if (!session)
+    RefPtr transport = m_transport.get();
+    if (!transport)
         return promise.settle(Exception { ExceptionCode::InvalidStateError });
 
     RefPtr datagrams = m_datagrams.get();
@@ -74,13 +101,24 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
     auto identifier = sendGroup ? std::optional(sendGroup->identifier()) : std::nullopt;
 
     WTF::switchOn(bufferSource.releaseReturnValue(), [&](auto&& arrayBufferOrView) {
-        context.enqueueTaskWhenSettled(session->sendDatagram(identifier, arrayBufferOrView->span()), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& exception) mutable {
-            if (!exception)
-                promise.settle(Exception { ExceptionCode::NetworkError });
-            else if (*exception)
-                promise.settle(WTF::move(**exception));
-            else
-                promise.resolve();
+        auto span = arrayBufferOrView->span();
+
+        // https://www.w3.org/TR/webtransport/#writedatagrams
+        // silently drop datagrams that exceed the maximum size.
+        if (span.size() > transport->datagrams().maxDatagramSize())
+            return promise.resolve();
+
+        // Enqueue the datagram into [[OutgoingDatagramsQueue]] and resolve its promise immediately if there
+        // is still room in the outgoing buffer; otherwise leave it pending to apply backpressure to the writer.
+        m_outgoingQueue.append(OutgoingDatagram { WTF::move(promise), false });
+        if (m_outgoingQueue.size() < transport->datagrams().outgoingMaxBufferedDatagrams()) {
+            m_outgoingQueue.last().settled = true;
+            m_outgoingQueue.last().promise.resolve();
+        }
+
+        Ref session = transport->session();
+        context.enqueueTaskWhenSettled(session->sendDatagram(identifier, span), WebCore::TaskSource::Networking, [protectedThis = Ref { *this }] (auto&&) {
+            protectedThis->datagramSent();
         });
     });
 }

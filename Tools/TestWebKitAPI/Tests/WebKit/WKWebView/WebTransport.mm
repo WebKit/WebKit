@@ -249,9 +249,9 @@ TEST(WebTransport, Datagram)
         port];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
     if (!canLoadnw_webtransport_metadata_get_transport_mode())
-        EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc, group sent 3 bytes, maxDatagramSize 65535, reliability pending");
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc, group sent 3 bytes, maxDatagramSize 1024, reliability pending");
     else
-        EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc, group sent 3 bytes, maxDatagramSize 65535, reliability supports-unreliable");
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc, group sent 3 bytes, maxDatagramSize 1024, reliability supports-unreliable");
     EXPECT_TRUE(challenged);
 }
 
