@@ -94,6 +94,12 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
     if (originalOffset)
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / pageScale);
     LayoutSize viewportSize(scrollExtents.viewportSize);
+
+    // Clamp the destination to the reachable scroll range before choosing a snap offset.
+    auto minScrollOffset = valueForAxis(scrollExtents.minimumScrollOffset(), axis);
+    auto maxScrollOffset = valueForAxis(scrollExtents.maximumScrollOffset(), axis);
+    destinationOffset = setValueForAxis(destinationOffset, axis, clampTo<float>(valueForAxis(destinationOffset, axis), minScrollOffset, maxScrollOffset));
+
     LayoutPoint layoutDestinationOffset(destinationOffset.x() / pageScale, destinationOffset.y() / pageScale);
     LayoutUnit offset = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits, selectionMethod).first;
     return offset * pageScale;
@@ -458,8 +464,17 @@ std::pair<float, std::optional<unsigned>> ScrollSnapAnimatorState::targetOffsetF
         return std::make_pair(clampTo<float>(axis == ScrollEventAxis::Horizontal ? predictedOffset.x() : predictedOffset.y(), minScrollOffset, maxScrollOffset), std::nullopt);
 
     LayoutPoint predictedLayoutOffset(predictedOffset.x() / pageScale, predictedOffset.y() / pageScale);
+
+    // Clamp the predicted destination to the reachable scroll range before choosing a snap offset.
+    auto clampedAxisOffset = clampTo<float>(axis == ScrollEventAxis::Horizontal ? predictedOffset.x() : predictedOffset.y(), minScrollOffset, maxScrollOffset) / pageScale;
+    if (axis == ScrollEventAxis::Horizontal)
+        predictedLayoutOffset.setX(LayoutUnit(clampedAxisOffset));
+    else
+        predictedLayoutOffset.setY(LayoutUnit(clampedAxisOffset));
+
     auto [targetOffset, snapIndex] = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutSize { scrollExtents.viewportSize }, predictedLayoutOffset, initialDelta, LayoutUnit(startOffset / pageScale));
-    return std::make_pair(pageScale * clampTo<float>(float { targetOffset }, minScrollOffset, maxScrollOffset), snapIndex);
+    targetOffset = clampTo<float>(float { targetOffset }, minScrollOffset, maxScrollOffset) * pageScale;
+    return std::make_pair(targetOffset, snapIndex);
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)

@@ -55,11 +55,15 @@ bool ScrollSnapOffsetsInfo<UnitType, RectType>::snapOffsetCoversSnapport(const S
 {
     if (!snapOffset.hasSnapAreaLargerThanViewport)
         return false;
+
+    // Tolerance is required because scroll offsets are integral, but snap offsets can be fractional.
+    UnitType tolerance { 0.5f };
     for (auto areaIndex : snapOffset.snapAreaIndices) {
         auto [areaMin, areaMax] = rangeForAxis<UnitType>(snapAreas[areaIndex], axis);
-        if (areaMin <= axisOffset && areaMax >= axisOffset + viewportLength)
+        if (areaMin - tolerance <= axisOffset && areaMax + tolerance >= axisOffset + viewportLength)
             return true;
     }
+
     return false;
 }
 
