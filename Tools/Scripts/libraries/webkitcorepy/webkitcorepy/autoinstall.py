@@ -232,7 +232,7 @@ class Package(object):
                         extension = 'whl'
 
                     else:
-                        if package['name'].endswith(('.tar.gz', '.tar.bz2')):
+                        if package['name'].endswith('.tar.gz'):
                             extension = 'tar.gz'
                         elif package['name'].endswith('.zip'):
                             extension = 'zip'
