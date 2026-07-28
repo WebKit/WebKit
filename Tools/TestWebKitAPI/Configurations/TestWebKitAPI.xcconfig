@@ -34,3 +34,7 @@ SWIFT_OBJC_BRIDGING_HEADER = Runner/TestWebKitAPI-Bridging-Header.h;
 
 OTHER_LDFLAGS = $(inherited) -framework Testing;
 
+WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework;
+WEBKIT_FRAMEWORK_RESOURCES_PATH[sdk=macosx*] = WebKit.framework/Versions/A/Resources;
+INSTALL_PATH = $(PRODUCTION_PUBLIC_FRAMEWORKS_DIR)/$(WEBKIT_FRAMEWORK_RESOURCES_PATH);
+
