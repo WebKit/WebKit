@@ -1197,6 +1197,18 @@
     "name": "Perf-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Release-All-Vulkan"
   },
   {
+    "name": "Perf-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-ANGLE"
+  },
+  {
+    "name": "Perf-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-Graphite_Dawn_D3D11"
+  },
+  {
+    "name": "Perf-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-Graphite_Native_Vulkan"
+  },
+  {
+    "name": "Perf-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-Vulkan"
+  },
+  {
     "name": "Perf-Win11-Clang-NUC6i5SYK-GPU-IntelIris540-x86_64-Release-All-ANGLE"
   },
   {
@@ -1555,6 +1567,9 @@
         "src/sksl/generated/.*"
       ]
     }
+  },
+  {
+    "name": "Test-Android-Clang-Pixel9-GPU-MaliG715-arm64-Release-All-Android_Graphite_Native_Vulkan_AvoidDepth"
   },
   {
     "name": "Test-Android-Clang-Pixel9-GPU-MaliG715-arm64-Release-All-Android_Vulkan",
@@ -2162,6 +2177,27 @@
   },
   {
     "name": "Test-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Release-All-Vulkan"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Debug-All-ANGLE"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Debug-All-Graphite_Dawn_D3D11"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Debug-All-Graphite_Native_Vulkan"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Debug-All-Vulkan"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-Graphite_Dawn_D3D11"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-Graphite_Native_Vulkan"
+  },
+  {
+    "name": "Test-Win11-Clang-NUC13Pro-GPU-IntelArc140V-x86_64-Release-All-Vulkan"
   },
   {
     "name": "Test-Win11-Clang-NUC6i5SYK-GPU-IntelIris540-x86_64-Debug-All-ANGLE"

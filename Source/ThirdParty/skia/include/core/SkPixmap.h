@@ -166,6 +166,11 @@ public:
     int height() const { return fInfo.height(); }
 
     /**
+     *  Returns if the pixmap is empty (from its ImageInfo).
+     */
+    bool isEmpty() const { return fInfo.isEmpty(); }
+
+    /**
      *  Return the dimensions of the pixmap (from its ImageInfo)
      */
     SkISize dimensions() const { return fInfo.dimensions(); }

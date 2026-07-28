@@ -223,6 +223,8 @@ protected:
 
     void writeOuterProduct();
 
+    void writeWorkgroupUniformLoad();
+
     void writeMatrixTimesEqualHelper(const Type& left, const Type& right, const Type& result);
 
     void writeMatrixDivisionHelpers(const Type& type);
@@ -375,6 +377,7 @@ protected:
     bool fWrittenInverse2 = false, fWrittenInverse3 = false, fWrittenInverse4 = false;
     bool fWrittenMatrixCompMult = false;
     bool fWrittenOuterProduct = false;
+    bool fWrittenWorkgroupUniformLoad = false;
 };
 
 static const char* operator_name(Operator op) {
@@ -854,6 +857,21 @@ void MetalCodeGenerator::writeOuterProduct() {
     if (!fWrittenOuterProduct) {
         fWrittenOuterProduct = true;
         fExtraFunctions.writeText(kOuterProduct);
+    }
+}
+
+void MetalCodeGenerator::writeWorkgroupUniformLoad() {
+    static constexpr char kWorkgroupUniformLoad[] =
+"template <typename T>\n"
+"T workgroupUniformLoad(threadgroup const T* p) {\n"
+"    threadgroup_barrier(mem_flags::mem_threadgroup);\n"
+"    T result = *p;\n"
+"    threadgroup_barrier(mem_flags::mem_threadgroup);\n"
+"    return result;\n"
+"}\n";
+    if (!fWrittenWorkgroupUniformLoad) {
+        fWrittenWorkgroupUniformLoad = true;
+        fExtraFunctions.writeText(kWorkgroupUniformLoad);
     }
 }
 
@@ -1359,6 +1377,13 @@ bool MetalCodeGenerator::writeIntrinsicCall(const FunctionCall& c, IntrinsicKind
         case k_workgroupBarrier_IntrinsicKind:
             this->write("threadgroup_barrier(mem_flags::mem_threadgroup)");
             return true;
+        case k_workgroupUniformLoad_IntrinsicKind: {
+            this->writeWorkgroupUniformLoad();
+            this->write("workgroupUniformLoad(&");
+            this->writeExpression(*c.arguments()[0], Precedence::kSequence);
+            this->write(")");
+            return true;
+        }
         case k_atomicAdd_IntrinsicKind:
             this->write("atomic_fetch_add_explicit(&");
             this->writeExpression(*c.arguments()[0], Precedence::kSequence);
@@ -1369,6 +1394,20 @@ bool MetalCodeGenerator::writeIntrinsicCall(const FunctionCall& c, IntrinsicKind
         case k_atomicLoad_IntrinsicKind:
             this->write("atomic_load_explicit(&");
             this->writeExpression(*c.arguments()[0], Precedence::kSequence);
+            this->write(", memory_order_relaxed)");
+            return true;
+        case k_atomicMax_IntrinsicKind:
+            this->write("atomic_fetch_max_explicit(&");
+            this->writeExpression(*c.arguments()[0], Precedence::kSequence);
+            this->write(", ");
+            this->writeExpression(*c.arguments()[1], Precedence::kSequence);
+            this->write(", memory_order_relaxed)");
+            return true;
+        case k_atomicMin_IntrinsicKind:
+            this->write("atomic_fetch_min_explicit(&");
+            this->writeExpression(*c.arguments()[0], Precedence::kSequence);
+            this->write(", ");
+            this->writeExpression(*c.arguments()[1], Precedence::kSequence);
             this->write(", memory_order_relaxed)");
             return true;
         case k_atomicStore_IntrinsicKind:
