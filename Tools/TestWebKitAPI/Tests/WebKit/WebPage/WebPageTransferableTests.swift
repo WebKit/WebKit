@@ -51,6 +51,7 @@ struct WebPageTransferableTests {
         #expect(instanceImportedContentTypes.isEmpty)
     }
 
+    #if HAVE_PDFKIT
     @Test
     func exportToPDFWithFullContent() async throws {
         let webPage = WebPage()
@@ -83,6 +84,7 @@ struct WebPageTransferableTests {
         #expect(page.characterCount == 0)
         #expect(page.color(at: .init(x: 200, y: 150)) == .green)
     }
+    #endif // HAVE_PDFKIT
 
     @Test
     func exportToPDFWithoutLoadingAnyWebContentFails() async throws {

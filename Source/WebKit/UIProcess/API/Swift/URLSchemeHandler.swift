@@ -31,8 +31,8 @@ import WebKit_Internal
 /// Scheme names are case sensitive, must start with an ASCII letter, and may contain only ASCII letters,
 /// numbers, the “+” character, the “-” character, and the “.” character.
 @available(anyAppleOSAndDownlevels 26.0, *)
-@available(watchOS, unavailable)
-@available(tvOS, unavailable)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 public struct URLScheme: Hashable, Sendable {
     /// Creates a new `URLScheme` value from a valid scheme, which WebKit does not already handle.
     ///
@@ -55,8 +55,8 @@ public struct URLScheme: Hashable, Sendable {
 
 /// A value used as part of a sequence of results from a ``URLSchemeHandler``, which can either be a `Data` or a `URLResponse`.
 @available(anyAppleOSAndDownlevels 26.0, *)
-@available(watchOS, unavailable)
-@available(tvOS, unavailable)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 public enum URLSchemeTaskResult: Sendable {
     /// The response to return to WebKit. The response value must include the MIME type of the request resource.
     ///
@@ -91,8 +91,8 @@ public enum URLSchemeTaskResult: Sendable {
 /// the Task responsible for the async sequence. Typically, this may happen when the user navigates to another
 /// page, but may happen for other reasons.
 @available(anyAppleOSAndDownlevels 26.0, *)
-@available(watchOS, unavailable)
-@available(tvOS, unavailable)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 public protocol URLSchemeHandler {
     /// The type of sequence produced by the handler.
     associatedtype TaskSequence: AsyncSequence<URLSchemeTaskResult, any Error>

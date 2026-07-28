@@ -25,6 +25,9 @@
 
 public import Foundation
 
+@available(anyAppleOSAndDownlevels 26.0, *)
+@_spi_available(watchOSAndOpenSourceTBA, *)
+@_spi_available(tvOSAndOpenSourceTBA, *)
 extension WebPage {
     /// An observable representation of a webpage's previously loaded resources.
     ///
@@ -96,8 +99,8 @@ extension WebPage {
     /// are automatically updated.
     @MainActor
     @available(anyAppleOSAndDownlevels 26.0, *)
-    @available(watchOS, unavailable)
-    @available(tvOS, unavailable)
+    @_spi_available(watchOSAndOpenSourceTBA, *)
+    @_spi_available(tvOSAndOpenSourceTBA, *)
     public struct BackForwardList: Equatable, Sendable {
         /// A representation of a resource that a webpage previously visited.
         ///
