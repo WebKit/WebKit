@@ -67,7 +67,7 @@ Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, R
 
 MediaStreamPrivate::MediaStreamPrivate(Ref<const Logger>&& logger, MediaStreamTrackPrivateVector&& tracks, String&& id)
     : m_id(WTF::move(id))
-    , m_tracks(tracks)
+    , m_tracks(WTF::move(tracks))
 #if !RELEASE_LOG_DISABLED
     , m_logger(WTF::move(logger))
     , m_logIdentifier(uniqueLogIdentifier())
