@@ -89,7 +89,7 @@ void CSSPageRule::reattach(StyleRuleBase& rule)
 {
     m_pageRule = downcast<StyleRulePage>(rule);
     if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(m_pageRule.get().mutableProperties());
+        protect(m_propertiesCSSOMWrapper)->reattach(protect(m_pageRule.get().mutableProperties()));
 }
 
 } // namespace WebCore

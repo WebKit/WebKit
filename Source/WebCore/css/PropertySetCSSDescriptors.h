@@ -46,7 +46,7 @@ public:
     virtual ~PropertySetCSSDescriptors();
 
     void clearParentRule() { m_parentRule = nullptr; }
-    void NODELETE reattach(MutableStyleProperties&);
+    void reattach(MutableStyleProperties&);
 
     virtual StyleRuleType ruleType() const = 0;
 

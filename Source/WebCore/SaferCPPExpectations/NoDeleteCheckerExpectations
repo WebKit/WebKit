@@ -6,7 +6,6 @@ Modules/webtransport/WebTransportDatagramsWritable.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSPropertyInitialValues.cpp
 css/DOMMatrixReadOnly.cpp
-css/PropertySetCSSDescriptors.cpp
 css/SelectorChecker.cpp
 css/StyleSheetList.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
