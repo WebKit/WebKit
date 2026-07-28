@@ -89,6 +89,11 @@ private:
 
 void GStreamerVideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
+    if (!ensureGStreamerInitialized()) [[unlikely]] {
+        callback(makeUnexpected("GStreamer initialization failed"_s));
+        return;
+    }
+
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_video_decoder_debug, "webkitvideodecoder", 0, "WebKit WebCodecs Video Decoder");
