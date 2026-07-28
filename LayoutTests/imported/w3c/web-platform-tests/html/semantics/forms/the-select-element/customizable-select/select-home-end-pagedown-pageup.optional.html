@@ -23,9 +23,19 @@ const keyMap = {
   'Home': '\uE011',
   'End': '\uE010',
   'PageUp': '\uE00E',
-  'PageDown': '\uE00F'
+  'PageDown': '\uE00F',
+  'Escape': '\uE00C'
 };
 const select = document.querySelector('select');
+
+// Dismiss the open picker. Clicking the select can't be used reliably: for a
+// long option list the picker grows tall enough to cover its own anchor
+// button, so a click at the select's position lands on an option (selecting
+// it) instead of toggling the picker closed. Escape dismisses without
+// committing a selection.
+async function closePicker() {
+  await test_driver.send_keys(document.activeElement, keyMap.Escape);
+}
 
 for(let i=1;i<=1000;++i) {
   const option = document.createElement('option');
@@ -52,8 +62,8 @@ const middleOption = document.getElementById(500);
     assert_not_equals(document.activeElement, middleOption, 'Focus should move');
 
     select.value = firstOption.value;
-    await test_driver.click(select);
-    assert_false(select.matches(':open'),'Clicking select should close picker');
+    await closePicker();
+    assert_false(select.matches(':open'),'Escape should close picker');
     assert_equals(select.value, firstOption.value, 'Value should stay');
   }, `Behavior of ${keyName} for customizable-<select>`);
 });

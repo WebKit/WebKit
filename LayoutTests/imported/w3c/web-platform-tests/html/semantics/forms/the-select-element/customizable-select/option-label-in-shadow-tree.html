@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class=reftest-wait>
+<style>select::picker(select), select::picker-icon { transition-duration: 0s !important; }</style>
 <link rel=help href="https://html.spec.whatwg.org/multipage/form-elements.html#the-option-element">
 <link rel=match href="option-label-in-shadow-tree-ref.html">
 <script src="/resources/testdriver.js"></script>
@@ -14,6 +15,9 @@ host.attachShadow({ mode: "open" }).innerHTML = `
   <style>
     select, ::picker(select) {
       appearance: base-select;
+    }
+    select::picker(select), select::picker-icon {
+      transition-duration: 0s !important;
     }
     select:focus-visible {
       outline: none;

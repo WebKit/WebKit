@@ -262,7 +262,7 @@ PASS <optgroup><option> (in <select>) - text-shadow
 PASS <optgroup><option> (in <select>) - text-align
 PASS <optgroup><option> (in <select>) - overflow
 PASS <optgroup><option> (in <select>) - overflow-clip-margin
-PASS <optgroup><option> (in <select>) - box-sizing
+FAIL <optgroup><option> (in <select>) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <option> (in <select><optgroup>) - letter-spacing
 PASS <option> (in <select><optgroup>) - word-spacing
 PASS <option> (in <select><optgroup>) - line-height
@@ -272,7 +272,7 @@ PASS <option> (in <select><optgroup>) - text-shadow
 PASS <option> (in <select><optgroup>) - text-align
 PASS <option> (in <select><optgroup>) - overflow
 PASS <option> (in <select><optgroup>) - overflow-clip-margin
-PASS <option> (in <select><optgroup>) - box-sizing
+FAIL <option> (in <select><optgroup>) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <select multiple=""> - letter-spacing
 PASS <select multiple=""> - word-spacing
 PASS <select multiple=""> - line-height
@@ -292,7 +292,7 @@ PASS <optgroup> - text-shadow
 PASS <optgroup> - text-align
 PASS <optgroup> - overflow
 PASS <optgroup> - overflow-clip-margin
-PASS <optgroup> - box-sizing
+FAIL <optgroup> - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <option> - letter-spacing
 PASS <option> - word-spacing
 PASS <option> - line-height

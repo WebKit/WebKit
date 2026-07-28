@@ -22,6 +22,12 @@
 select,::picker(select) {
   appearance: base-select;
 }
+/* Suppress the picker open transition (scale/opacity) so option positions are
+   stable when measured; otherwise getBoundingClientRect() can be sampled
+   mid-animation and vary from run to run. */
+::picker(select) {
+  transition-duration: 0s !important;
+}
 </style>
 
 <select></select>
@@ -31,8 +37,18 @@ const keyMap = {
   'Home': '\uE011',
   'End': '\uE010',
   'PageUp': '\uE00E',
-  'PageDown': '\uE00F'
+  'PageDown': '\uE00F',
+  'Escape': '\uE00C'
 };
+
+// Dismiss the open picker. Clicking the select can't be used reliably: for a
+// long option list the picker grows tall enough to cover its own anchor
+// button, so a click at the select's position lands on an option (selecting
+// it) instead of toggling the picker closed. Escape dismisses without
+// committing a selection.
+async function closePicker() {
+  await test_driver.send_keys(document.activeElement, keyMap.Escape);
+}
 const select = document.querySelector('select');
 
 const nOptions = 1000;
@@ -68,9 +84,9 @@ promise_test(async () => {
   assert_equals(select.value, middleOption.value, 'Selected option should not change');
   assert_equals(document.activeElement, getOption(nOptions), 'Focus should move down to the last option');
 
-  await test_driver.click(select);
+  await closePicker();
   assert_equals(select.value, middleOption.value, 'Selected option should not change');
-  assert_false(select.matches(':open'),'Clicking select should close picker');
+  assert_false(select.matches(':open'),'Escape should close picker');
 }, 'Behavior of Home and End for customizable-<select>');
 
 promise_test(async () => {
@@ -84,9 +100,9 @@ promise_test(async () => {
   assert_equals(select.value, firstOption.value, 'Selected option should not change');
   assert_equals(document.activeElement, getOption(nOptions), 'Focus should move down to the last option');
 
-  await test_driver.click(select);
+  await closePicker();
   assert_equals(select.value, firstOption.value, 'Selected option should not change');
-  assert_false(select.matches(':open'),'Clicking select should close picker');
+  assert_false(select.matches(':open'),'Escape should close picker');
 }, 'Behavior of Home and End for customizable-<select>, starting at the top');
 
 promise_test(async () => {
@@ -100,9 +116,9 @@ promise_test(async () => {
   assert_equals(select.value, lastOption.value, 'Selected option should not change');
   assert_equals(document.activeElement, getOption(1), 'Focus should move up to the first option');
 
-  await test_driver.click(select);
+  await closePicker();
   assert_equals(select.value, lastOption.value, 'Selected option should not change');
-  assert_false(select.matches(':open'),'Clicking select should close picker');
+  assert_false(select.matches(':open'),'Escape should close picker');
 }, 'Behavior of Home and End for customizable-<select>, starting at the bottom');
 
 promise_test(async () => {
@@ -110,30 +126,33 @@ promise_test(async () => {
   await testStart(middleOption);
   assert_equals(document.activeElement, middleOption, 'Focus should be on the middle option');
   const middleOptionPos = middleOption.getBoundingClientRect().top;
-  assert_not_equals(middleOptionPos,0,'Middle option should be scrolled into view, to start');
+  // Compare positions as booleans rather than with assert_equals/assert_not_equals
+  // on the raw coordinates, so pass/fail output carries no environment-dependent
+  // pixel values and the checked-in expectation stays stable across machines.
+  assert_true(middleOptionPos !== 0,'Middle option should be scrolled into view, to start');
 
   await test_driver.send_keys(document.activeElement, keyMap.PageDown);
-  assert_equals(middleOption.getBoundingClientRect().top,middleOptionPos,'First page down should not scroll');
+  assert_true(middleOption.getBoundingClientRect().top === middleOptionPos,'First page down should not scroll');
   const focusedOption2 = document.activeElement;
   assert_not_equals(focusedOption2, middleOption, 'Focused option should change');
 
   await test_driver.send_keys(document.activeElement, keyMap.PageDown);
-  assert_not_equals(middleOption.getBoundingClientRect().top,middleOptionPos,'Second page down should scroll down by one page');
+  assert_true(middleOption.getBoundingClientRect().top !== middleOptionPos,'Second page down should scroll down by one page');
   const focusedOption3 = document.activeElement;
   assert_not_equals(focusedOption3, focusedOption2, 'Focused option should change');
   const focusedOption3ScrollPos = focusedOption3.getBoundingClientRect().top;
 
   await test_driver.send_keys(document.activeElement, keyMap.PageUp);
-  assert_equals(focusedOption3.getBoundingClientRect().top,focusedOption3ScrollPos,'Page up from here should not scroll');
+  assert_true(focusedOption3.getBoundingClientRect().top === focusedOption3ScrollPos,'Page up from here should not scroll');
   const focusedOption4 = document.activeElement;
   assert_not_equals(focusedOption4, focusedOption3, 'Focused option should change');
 
   await test_driver.send_keys(document.activeElement, keyMap.PageUp);
-  assert_not_equals(focusedOption3.getBoundingClientRect().top,focusedOption3ScrollPos,'Page up should scroll up by one page');
+  assert_true(focusedOption3.getBoundingClientRect().top !== focusedOption3ScrollPos,'Page up should scroll up by one page');
   assert_not_equals(document.activeElement, focusedOption4, 'Focused option should change');
 
-  await test_driver.click(select);
+  await closePicker();
   assert_equals(select.value, middleOption.value, 'Selected option should not change');
-  assert_false(select.matches(':open'),'Clicking select should close picker');
+  assert_false(select.matches(':open'),'Escape should close picker');
 }, 'Behavior of PageUp and PageDown for customizable-<select>');
 </script>

@@ -1,0 +1,271 @@
+/*
+ * WebKit UA overrides for a customizable <select> (appearance: base-select),
+ * extracted from Source/WebCore/css/html.css.
+ *
+ * Extraction rules:
+ *   - macOS variants only (the non-WTF_PLATFORM_IOS_FAMILY branches).
+ *   - The base-appearance value of -internal-auto-base(auto, base) i.e. the
+ *     second argument.
+ *   - UA-stylesheet-only selectors rewritten to standard CSS:
+ *       select:-internal-uses-menulist  ->  select
+ *       :-internal-select-popover        ->  select::picker(select)
+ *     and the native listbox fallback (::-internal-fallback-popup-menu-*) and
+ *     non-menulist (multiple/size) rules are omitted as they are not part of
+ *     base-select.
+ *
+ * Each rule additionally targets the .customizable-select-* classes used by the
+ * div-based reference reconstructions in this directory.
+ *
+ * Cascade: the div-based -expected files link this file immediately AFTER
+ * resources/customizable-select-styles.css. Because these rules mirror that
+ * file's selectors at equal specificity, they win over the shared reference
+ * styles by source order, while still losing to the unlayered inline styles
+ * that come later in each individual reference. (The real-<select> references
+ * link this file on its own, for the element-based rules below.)
+ *
+ * Lastly, we force transition-duration to zero at the end, so that reftests
+ * snapshot correctly.
+ */
+
+/* ---- Select button ---- */
+
+select,
+.customizable-select-button {
+  box-sizing: border-box;
+  border: 1px solid color-mix(currentColor 50%);
+  border-radius: 4px;
+  padding-block: 0.4em;
+  padding-inline: 1em 0.7em;
+  color: inherit;
+  font: inherit;
+  background-color: light-dark(transparent, color-mix(currentColor 4%));
+  align-items: unset;
+  white-space: nowrap;
+  cursor: default;
+  gap: 0.5em;
+  min-block-size: 24px;
+  min-inline-size: 4em;
+  overflow: clip;
+  text-overflow: ellipsis;
+  -webkit-rtl-ordering: inherit;
+  text-shadow: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+select:not([popover]),
+.customizable-select-button {
+  display: inline-flex;
+}
+
+select:enabled:hover:not(:user-invalid),
+.customizable-select-button.hover {
+  border-color: color-mix(currentColor 70%);
+}
+
+/* The shared reference sheet tints the button background on hover, but WebKit's
+   base-select hover only changes the border-color. Restore the base background
+   so the div-based .customizable-select-button.hover reference matches (this
+   rule follows customizable-select-styles.css, so it wins at equal specificity). */
+.customizable-select-button.hover {
+  background-color: light-dark(transparent, color-mix(currentColor 4%));
+}
+
+select:enabled:active,
+.customizable-select-button.active {
+  background-color: color-mix(currentColor 8%);
+}
+
+select:disabled,
+.customizable-select-button.disabled {
+  background-color: color-mix(currentColor 6%);
+  color: color-mix(currentColor 55%);
+  border-color: color-mix(currentColor 25%);
+  cursor: not-allowed;
+}
+
+select:user-invalid {
+  border-color: light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h));
+}
+
+select:not([multiple]) > button:first-child {
+  all: unset;
+  display: contents;
+}
+
+/* ---- selectedcontent ---- */
+
+select selectedcontent,
+.customizable-select-selectedcontent {
+  overflow: clip;
+  text-overflow: ellipsis;
+  min-inline-size: 0;
+}
+
+/* ---- Picker icon ---- */
+
+select::picker-icon,
+.customizable-select-button::after {
+  content: "\2335" / "";
+  font-family: system-ui;
+  font-style: normal;
+  text-orientation: sideways;
+  padding-inline: 0.3em 0.15em;
+  margin-inline-start: auto;
+  margin-block-start: -0.25em;
+  align-self: center;
+}
+
+/* ---- Picker popover ---- */
+
+select::picker(select),
+.customizable-select-popover {
+  box-sizing: border-box;
+  border: 1px solid color-mix(currentColor 50%);
+  border-radius: 4px;
+  padding: 0;
+  color: inherit;
+  background-color: color-mix(contrast-color(currentColor), white 15%);
+  margin: 0;
+  margin-block: 4px;
+  inset: auto;
+  min-inline-size: anchor-size(self-inline);
+  min-block-size: 1lh;
+  max-block-size: calc(100svb - 8px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-shadow:
+    0 4px 6px -1px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35)),
+    0 8px 16px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.25));
+  position-area: self-block-end span-self-inline-end;
+  position-try-order: most-block-size;
+  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+}
+
+select::picker(select):popover-open {
+  display: block;
+}
+
+/* ---- Options ---- */
+
+option {
+  display: block;
+}
+
+select option,
+.customizable-select-option {
+  min-inline-size: 24px;
+  min-block-size: max(24px, 1lh);
+  padding-block: 0.5em;
+  padding-inline: 0.75em 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+  box-sizing: border-box;
+  outline-offset: inset;
+}
+
+select option:enabled:hover,
+select option:enabled:focus-visible {
+  background-color: color-mix(currentColor 10%);
+}
+
+select option:enabled:active {
+  background-color: color-mix(currentColor 15%);
+}
+
+select option:disabled,
+.customizable-select-option.disabled {
+  color: color-mix(currentColor 55%);
+  cursor: not-allowed;
+}
+
+select option::checkmark,
+.customizable-select-option::before {
+  content: "\2713" / "";
+  font-family: system-ui;
+  font-style: normal;
+}
+
+select option:not(:checked)::checkmark,
+.customizable-select-option:not(.selected)::before {
+  visibility: hidden;
+}
+
+/* ---- Optgroups ---- */
+
+optgroup,
+.customizable-select-optgroup {
+  display: block;
+  font-weight: bolder;
+  box-sizing: border-box;
+}
+
+select optgroup:not(:first-child),
+.customizable-select-optgroup:not(:first-child) {
+  border-block-start: 1px solid color-mix(currentColor 12%);
+}
+
+select optgroup option,
+.customizable-select-optgroup .customizable-select-option {
+  font-weight: normal;
+}
+
+select optgroup legend,
+.customizable-select-legend {
+  box-sizing: border-box;
+  padding-block: 0.6em 0.15em;
+  padding-inline: 0.75em;
+  min-block-size: 1lh;
+  font-size: 0.85em;
+  font-weight: 400;
+  color: color-mix(currentColor 70%);
+  cursor: default;
+}
+
+/* ---- Media adjustments ---- */
+
+@media (prefers-contrast) {
+  select,
+  .customizable-select-button {
+    background-color: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+  }
+  select:enabled:hover:hover,
+  select:open:enabled:hover:hover,
+  .customizable-select-button.hover {
+    background-color: Canvas;
+  }
+  select:enabled:active:active,
+  .customizable-select-button.active {
+    background-color: SelectedItem;
+    color: SelectedItemText;
+  }
+  select:disabled:disabled,
+  .customizable-select-button.disabled {
+    color: GrayText;
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+  select::picker(select),
+  .customizable-select-popover {
+    background-color: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+}
+
+/* Ensure stable reftest snapshotting */
+
+select::picker(select),
+select::picker(select):popover-open,
+select::picker-icon,
+select:open::picker-icon,
+.customizable-select-popover,
+.customizable-select-button::after,
+.customizable-select-button.open::after {
+  transition-duration: 0s !important;
+}

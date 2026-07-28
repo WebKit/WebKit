@@ -59,7 +59,7 @@ PASS <option>1 (in <select multiple="">) - text-transform
 PASS <option>1 (in <select multiple="">) - text-indent
 PASS <option>1 (in <select multiple="">) - text-shadow
 PASS <option>1 (in <select multiple="">) - appearance
-PASS <option>1 (in <select multiple="">) - box-sizing
+FAIL <option>1 (in <select multiple="">) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <option>1 (in <select multiple="">) - border-top-width
 PASS <option>1 (in <select multiple="">) - border-right-width
 PASS <option>1 (in <select multiple="">) - border-bottom-width
@@ -105,7 +105,7 @@ PASS <optgroup label="2"><option>3 (in <select multiple="">) - text-transform
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - text-indent
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - text-shadow
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - appearance
-PASS <optgroup label="2"><option>3 (in <select multiple="">) - box-sizing
+FAIL <optgroup label="2"><option>3 (in <select multiple="">) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-top-width
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-right-width
 PASS <optgroup label="2"><option>3 (in <select multiple="">) - border-bottom-width
@@ -151,7 +151,7 @@ PASS <option>3 (in <select multiple=""><optgroup label="2">) - text-transform
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - text-indent
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - text-shadow
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - appearance
-PASS <option>3 (in <select multiple=""><optgroup label="2">) - box-sizing
+FAIL <option>3 (in <select multiple=""><optgroup label="2">) - box-sizing assert_equals: expected "content-box" but got "border-box"
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-top-width
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-right-width
 PASS <option>3 (in <select multiple=""><optgroup label="2">) - border-bottom-width
