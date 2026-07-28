@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CSSLinkParameters.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
@@ -68,6 +69,9 @@ public:
     void didChangeFullscreenInsets();
     void setFullscreenAutoHideDuration(Seconds);
 
+    // Replaces the document's link parameters, leaving user-agent constants intact.
+    void setLinkParameters(const CSSLinkParameterList&);
+
 private:
     void buildValues();
 
@@ -79,6 +83,8 @@ private:
 
 
     std::optional<Values> m_values;
+
+    CSSLinkParameterList m_linkParameters;
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };

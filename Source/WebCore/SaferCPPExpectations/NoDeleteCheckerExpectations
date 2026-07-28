@@ -1,6 +1,6 @@
 css/CSSComputedStyleDeclaration.cpp
 css/CSSPropertyInitialValues.cpp
-css/DOMMatrixReadOnly.cpp
+[ iOS ] css/DOMMatrixReadOnly.cpp
 css/StyleSheetList.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
 css/values/color/CSSKeywordColor.cpp

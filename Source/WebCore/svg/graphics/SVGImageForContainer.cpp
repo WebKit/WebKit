@@ -34,6 +34,8 @@ SVGImageForContainer::SVGImageForContainer(SVGImage* image, const FloatSize& con
     , m_containerZoom(containerZoom)
     , m_initialFragmentURL(initialFragmentURL)
 {
+    if (RefPtr protectedImage = m_image.get())
+        protectedImage->applyLinkParametersFromFragment(m_initialFragmentURL);
 }
 
 FloatSize SVGImageForContainer::size(ImageOrientation) const

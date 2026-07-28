@@ -953,6 +953,7 @@ css/CSSKeyframesRule.cpp
 css/CSSLayerBlockRule.cpp
 css/CSSLayerStatementRule.cpp
 css/CSSLightDarkImageValue.cpp
+css/CSSLinkParameters.cpp
 css/CSSMarkup.cpp
 css/CSSMaskBorderOutsetValue.cpp
 css/CSSMaskBorderRepeatValue.cpp

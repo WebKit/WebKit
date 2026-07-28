@@ -28,6 +28,7 @@
 #include "ConstantPropertyMap.h"
 
 #include "CSSCustomPropertyValue.h"
+#include "CSSLinkParameters.h"
 #include "CSSParserTokenRange.h"
 #include "CSSVariableData.h"
 #include "DocumentPage.h"
@@ -166,6 +167,25 @@ void ConstantPropertyMap::didChangeFullscreenInsets()
 void ConstantPropertyMap::setFullscreenAutoHideDuration(Seconds duration)
 {
     setValueForProperty(ConstantProperty::FullscreenAutoHideDuration, variableDataForPositiveDuration(duration));
+    protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+}
+
+void ConstantPropertyMap::setLinkParameters(const CSSLinkParameterList& parameters)
+{
+    if (linkParameterListsAreEqual(parameters, m_linkParameters))
+        return;
+
+    if (!m_values)
+        buildValues();
+
+    for (auto& parameter : m_linkParameters)
+        m_values->remove(parameter.name);
+
+    for (auto& parameter : parameters)
+        m_values->set(parameter.name, Style::CustomProperty::createForVariableData(parameter.name, parameter.value.copyRef()));
+
+    m_linkParameters = parameters;
+
     protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 

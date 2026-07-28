@@ -17106,6 +17106,8 @@
 		9DAC7C561AF2CB6400437C44 /* StyleContentAlignmentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleContentAlignmentData.h; sourceTree = "<group>"; };
 		9E114EAF2FF41ACE007BD399 /* IsolatedSVGDocumentContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsolatedSVGDocumentContext.h; sourceTree = "<group>"; };
 		9E114EB02FF41AF3007BD399 /* IsolatedSVGDocumentContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IsolatedSVGDocumentContext.cpp; sourceTree = "<group>"; };
+		9E15480D3018F28A001E28C6 /* CSSLinkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSLinkParameters.h; sourceTree = "<group>"; };
+		9E15480E3018F28A001E28C6 /* CSSLinkParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSLinkParameters.cpp; sourceTree = "<group>"; };
 		9E3E301A4FF9CC03FB16C8B2 /* UnifiedSource18-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource18-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		9E47A8222F01986A00D57716 /* FEMorphologyCoreImageApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FEMorphologyCoreImageApplier.h; sourceTree = "<group>"; };
 		9E47A8242F0198AA00D57716 /* FEMorphologyCoreImageApplier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FEMorphologyCoreImageApplier.mm; sourceTree = "<group>"; };
@@ -41938,6 +41940,8 @@
 				E4FFCEBA2760AC0100A68B03 /* CSSLayerStatementRule.idl */,
 				4958FE602FCABB9F008AF649 /* CSSLightDarkImageValue.cpp */,
 				4958FE5F2FCABB9F008AF649 /* CSSLightDarkImageValue.h */,
+				9E15480E3018F28A001E28C6 /* CSSLinkParameters.cpp */,
+				9E15480D3018F28A001E28C6 /* CSSLinkParameters.h */,
 				946D37471D6D060C0077084F /* CSSMarkup.cpp */,
 				946D37481D6D060C0077084F /* CSSMarkup.h */,
 				BC0D73392FB657F600952D29 /* CSSMaskBorderOutsetValue.cpp */,

@@ -28,8 +28,10 @@
 #include "config.h"
 #include "SVGImage.h"
 
+#include "CSSLinkParameters.h"
 #include "Chrome.h"
 #include "CommonVM.h"
+#include "ConstantPropertyMap.h"
 #include "ContainerNodeInlines.h"
 #include "DOMParser.h"
 #include "DocumentInlines.h"
@@ -217,6 +219,25 @@ IntSize SVGImage::containerSize() const
         return IntSize(300, 150);
 
     return IntSize(currentSize);
+}
+
+void SVGImage::applyLinkParametersFromFragment(const URL& initialFragmentURL)
+{
+    if (!m_page)
+        return;
+
+    RefPtr localMainFrame = m_page->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    RefPtr document = localMainFrame->document();
+    if (!document)
+        return;
+
+    if (!document->settings().cssLinkParametersEnabled())
+        return;
+
+    document->constantProperties().setLinkParameters(parseLinkParametersFromFragment(initialFragmentURL));
 }
 
 ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -554,6 +575,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setLayerBasedSVGEngineEnabled(parentSettings->layerBasedSVGEngineEnabled());
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
+                m_page->settings().setCSSLinkParametersEnabled(parentSettings->cssLinkParametersEnabled());
                 m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
