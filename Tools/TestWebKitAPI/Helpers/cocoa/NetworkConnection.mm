@@ -30,12 +30,31 @@
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SHA1.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringToIntegerConversion.h>
+
+#if PLATFORM(COCOA)
+SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
+#define nw_webtransport_metadata_set_local_draining softLinknw_webtransport_metadata_set_local_draining
+SOFT_LINK_MAY_FAIL(Network, nw_connection_abort_reads, void, (nw_connection_t connection, uint64_t error_code), (connection, error_code))
+#define nw_connection_abort_reads softLinknw_connection_abort_reads
+SOFT_LINK_MAY_FAIL(Network, nw_connection_abort_writes, void, (nw_connection_t connection, uint64_t error_code), (connection, error_code))
+#define nw_connection_abort_writes softLinknw_connection_abort_writes
+SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_remote_receive_error_handler, void, (nw_protocol_metadata_t metadata, nw_webtransport_receive_error_handler_t handler, dispatch_queue_t queue), (metadata, handler, queue))
+#define nw_webtransport_metadata_set_remote_receive_error_handler softLinknw_webtransport_metadata_set_remote_receive_error_handler
+SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_remote_send_error_handler, void, (nw_protocol_metadata_t metadata, nw_webtransport_send_error_handler_t handler, dispatch_queue_t queue), (metadata, handler, queue))
+#define nw_webtransport_metadata_set_remote_send_error_handler softLinknw_webtransport_metadata_set_remote_send_error_handler
+SOFT_LINK_WITH_NS_RETURNS_RETAINED(Network, nw_protocol_copy_webtransport_definition, nw_protocol_definition_t, (void), ())
+SOFT_LINK_WITH_NS_RETURNS_RETAINED(Network, nw_webtransport_create_options, nw_protocol_options_t, (void), ())
+SOFT_LINK(Network, nw_webtransport_options_set_is_unidirectional, void, (nw_protocol_options_t options, bool is_unidirectional), (options, is_unidirectional))
+SOFT_LINK(Network, nw_webtransport_options_set_is_datagram, void, (nw_protocol_options_t options, bool is_datagram), (options, is_datagram))
+#endif // PLATFORM(COCOA)
 
 namespace TestWebKitAPI {
 
@@ -202,22 +221,24 @@ void Connection::terminate(CompletionHandler<void()>&& completionHandler)
     nw_connection_cancel(m_connection.get());
 }
 
-#if HAVE(WEBTRANSPORT)
+#if PLATFORM(COCOA)
 
 void Connection::abortReads(uint64_t errorCode)
 {
-    nw_connection_abort_reads(m_connection.get(), errorCode);
+    if (canLoadnw_connection_abort_reads())
+        nw_connection_abort_reads(m_connection.get(), errorCode);
 }
 
 void Connection::abortWrites(uint64_t errorCode)
 {
-    nw_connection_abort_writes(m_connection.get(), errorCode);
+    if (canLoadnw_connection_abort_writes())
+        nw_connection_abort_writes(m_connection.get(), errorCode);
 }
 
 void Connection::setRemoteReceiveErrorHandler(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get()));
-    if (metadata) {
+    if (metadata && canLoadnw_webtransport_metadata_set_remote_receive_error_handler()) {
         nw_webtransport_metadata_set_remote_receive_error_handler(metadata.get(), makeBlockPtr([completionHandler = WTF::move(completionHandler)] (uint64_t errorCode) mutable {
             completionHandler(errorCode);
         }).get(), mainDispatchQueueSingleton());
@@ -227,7 +248,7 @@ void Connection::setRemoteReceiveErrorHandler(CompletionHandler<void(uint64_t)>&
 void Connection::setRemoteSendErrorHandler(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get()));
-    if (metadata) {
+    if (metadata && canLoadnw_webtransport_metadata_set_remote_send_error_handler()) {
         nw_webtransport_metadata_set_remote_send_error_handler(metadata.get(), makeBlockPtr([completionHandler = WTF::move(completionHandler)] (uint64_t errorCode) mutable {
             completionHandler(errorCode);
         }).get(), mainDispatchQueueSingleton());
@@ -319,10 +340,10 @@ void ConnectionGroup::receiveIncomingConnection(Connection connection)
 void ConnectionGroup::drainWebTransportSession()
 {
     RetainPtr metadata = nw_connection_group_copy_protocol_metadata(m_data->group.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get());
-    if (metadata)
+    if (metadata && canLoadnw_webtransport_metadata_set_local_draining())
         nw_webtransport_metadata_set_local_draining(metadata.get());
 }
 
-#endif // HAVE(WEBTRANSPORT)
+#endif // PLATFORM(COCOA)
 
 } // namespace TestWebKitAPI

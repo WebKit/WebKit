@@ -233,7 +233,7 @@ void NetworkTransportSession::completeStatsRequestsAfterInitialization(std::opti
         getStats(WTF::move(statsRequest));
 }
 
-#if !HAVE(WEBTRANSPORT)
+#if !PLATFORM(COCOA)
 RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, WebKit::WebPageProxyIdentifier&&, WebCore::ClientOrigin&&)
 {
     return nullptr;

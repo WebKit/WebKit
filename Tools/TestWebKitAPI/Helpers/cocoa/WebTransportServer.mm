@@ -26,13 +26,20 @@
 #import "config.h"
 #import "Helpers/cocoa/WebTransportServer.h"
 
-#if HAVE(WEBTRANSPORT)
+#if PLATFORM(COCOA)
 
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/Utilities.h"
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/darwin/DispatchExtras.h>
+
+SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK(Network, nw_webtransport_options_set_is_datagram, void, (nw_protocol_options_t options, bool is_datagram), (options, is_datagram))
+SOFT_LINK(Network, nw_webtransport_options_set_is_unidirectional, void, (nw_protocol_options_t options, bool is_unidirectional), (options, is_unidirectional))
+SOFT_LINK(Network, nw_webtransport_options_set_connection_max_sessions, void, (nw_protocol_options_t options, uint64_t max_sessions), (options, max_sessions))
+SOFT_LINK_MAY_FAIL(Network, nw_webtransport_options_set_allow_joining_before_ready, void, (nw_protocol_options_t options, bool allow), (options, allow))
 
 namespace TestWebKitAPI {
 
@@ -119,6 +126,11 @@ uint16_t WebTransportServer::port() const
     return nw_listener_get_port(m_data->listener.get());
 }
 
+bool WebTransportServer::isAvailable()
+{
+    return canLoadnw_webtransport_options_set_allow_joining_before_ready();
+}
+
 } // namespace TestWebKitAPI
 
-#endif // HAVE(WEBTRANSPORT)
+#endif // PLATFORM(COCOA)

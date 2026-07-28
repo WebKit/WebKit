@@ -77,7 +77,7 @@ public:
     uint64_t bytesReceived() const { return m_bytesReceived; }
 
 private:
-#if PLATFORM(COCOA) && HAVE(WEBTRANSPORT)
+#if PLATFORM(COCOA)
     NetworkTransportStream(NetworkTransportSession&, nw_connection_t);
     void initializeReadyConnection();
 #else

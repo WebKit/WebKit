@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NetworkTransportStream.h"
 
-#if HAVE(WEBTRANSPORT)
-
 #import "NetworkTransportSession.h"
 #import <WebCore/Exception.h>
 #import <WebCore/ExceptionCode.h>
@@ -115,10 +113,10 @@ void NetworkTransportStream::start(NetworkTransportStreamReadyHandler&& readyHan
 
 void NetworkTransportStream::initializeReadyConnection()
 {
-    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get()));
+    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(softLink_Network_nw_protocol_copy_webtransport_definition()).get()));
 
-    bool isPeerInitiated = nw_webtransport_metadata_get_is_peer_initiated(metadata.get());
-    bool isUnidirectional = nw_webtransport_metadata_get_is_unidirectional(metadata.get());
+    bool isPeerInitiated = canLoad_Network_nw_webtransport_metadata_get_is_peer_initiated() && softLink_Network_nw_webtransport_metadata_get_is_peer_initiated(metadata.get());
+    bool isUnidirectional = canLoad_Network_nw_webtransport_metadata_get_is_unidirectional() && softLink_Network_nw_webtransport_metadata_get_is_unidirectional(metadata.get());
 
     if (!isUnidirectional)
         m_streamType = NetworkTransportStreamType::Bidirectional;
@@ -139,8 +137,8 @@ void NetworkTransportStream::initializeReadyConnection()
         break;
     }
 
-    if (m_streamType != NetworkTransportStreamType::IncomingUnidirectional) {
-        nw_webtransport_metadata_set_remote_receive_error_handler(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
+    if (m_streamType != NetworkTransportStreamType::IncomingUnidirectional && canLoad_Network_nw_webtransport_metadata_set_remote_receive_error_handler()) {
+        softLink_Network_nw_webtransport_metadata_set_remote_receive_error_handler(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -166,8 +164,8 @@ void NetworkTransportStream::initializeReadyConnection()
         }).get(), mainDispatchQueueSingleton());
     }
 
-    if (m_streamType != NetworkTransportStreamType::OutgoingUnidirectional) {
-        nw_webtransport_metadata_set_remote_send_error_handler(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
+    if (m_streamType != NetworkTransportStreamType::OutgoingUnidirectional && canLoad_Network_nw_webtransport_metadata_set_remote_send_error_handler()) {
+        softLink_Network_nw_webtransport_metadata_set_remote_send_error_handler(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -296,12 +294,14 @@ void NetworkTransportStream::cancelReceive(std::optional<WebCore::WebTransportSt
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
         m_streamState = NetworkTransportStreamState::ReadClosed;
-        nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
+        if (canLoad_Network_nw_connection_abort_reads())
+            softLink_Network_nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::WriteClosed: {
         m_streamState = NetworkTransportStreamState::Complete;
-        nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
+        if (canLoad_Network_nw_connection_abort_reads())
+            softLink_Network_nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::ReadClosed:
@@ -315,12 +315,14 @@ void NetworkTransportStream::cancelSend(std::optional<WebCore::WebTransportStrea
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
         m_streamState = NetworkTransportStreamState::WriteClosed;
-        nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
+        if (canLoad_Network_nw_connection_abort_writes())
+            softLink_Network_nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::ReadClosed: {
         m_streamState = NetworkTransportStreamState::Complete;
-        nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
+        if (canLoad_Network_nw_connection_abort_writes())
+            softLink_Network_nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::WriteClosed:
@@ -349,5 +351,3 @@ WebCore::WebTransportReceiveStreamStats NetworkTransportStream::getReceiveStream
 }
 
 }
-
-#endif

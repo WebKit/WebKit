@@ -539,8 +539,8 @@ bool defaultShouldEnableScreenCapture()
 
 bool defaultWebTransportEnabled()
 {
-#if HAVE(WEBTRANSPORT)
-    return true;
+#if PLATFORM(COCOA)
+    return canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready();
 #else
     return false;
 #endif
