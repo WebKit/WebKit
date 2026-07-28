@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WasmOMGIRGenerator.h"
+#include "B3Opcode.h"
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
@@ -1788,7 +1789,7 @@ auto OMGIRGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
 auto OMGIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    result = push(callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationGetWasmTableSize,
+    result = push(callWasmOperation(m_currentBlock, toB3Type(m_info.table(tableIndex).addressType().asWasmType()), operationGetWasmTableSize,
         instanceValue(), constant(Int32, tableIndex)));
 
     return { };
@@ -1796,7 +1797,7 @@ auto OMGIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -
 
 auto OMGIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    result = push(callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmTableGrow,
+    result = push(callWasmOperation(m_currentBlock, toB3Type(m_info.table(tableIndex).addressType().asWasmType()), operationWasmTableGrow,
         instanceValue(), constant(Int32, tableIndex), get(fill), get(delta)));
 
     return { };
@@ -6397,17 +6398,22 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
         }
     }
 
-    // Check the index we are looking for is valid.
+    const bool isTable64 = m_info.table(tableIndex).addressType().is64Bit();
     {
+        Value* comparableLength = callableFunctionBufferLength;
+        if (isTable64)
+            comparableLength = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), callableFunctionBufferLength);
+
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), calleeIndex, callableFunctionBufferLength));
+            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), calleeIndex, comparableLength));
 
         check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsCallIndirect);
         });
     }
 
-    calleeIndex = pointerOfInt32(calleeIndex);
+    if (!isTable64)
+        calleeIndex = pointerOfInt32(calleeIndex);
 
     BasicBlock* continuation = m_proc.addBlock();
 
