@@ -1461,14 +1461,19 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             ++m_depth;
         const unsigned newLineAndIndent = hasGap == HasGap::Yes ? newLineAndIndentSize() : 0;
         structure.forEachProperty(m_vm, [&](const auto& entry) -> bool {
-            // https://tc39.es/ecma262/#sec-serializejsonproperty
-            // Step 2.a's GetV finds an own toJSON regardless of enumerability.
-            if (entry.key() == m_vm.propertyNames->toJSON) [[unlikely]] {
-                recordFailure("object has toJSON"_s);
-                return false;
-            }
-            if (entry.attributes() & PropertyAttribute::DontEnum)
+            if (entry.attributes() & PropertyAttribute::DontEnum) [[unlikely]] {
+                // https://tc39.es/ecma262/#sec-serializejsonproperty
+                // Step 2.a's GetV finds an own toJSON regardless of enumerability, so a
+                // non-enumerable one still applies even though this loop skips the entry.
+                // An enumerable toJSON needs no check.
+                // 1. If it is callable, appending its value below fails the fast path.
+                // 2. If it is not callable the spec serializes it as an ordinary property.
+                if (entry.key() == m_vm.propertyNames->toJSON) [[unlikely]] {
+                    recordFailure("object has non-enumerable toJSON"_s);
+                    return false;
+                }
                 return true;
+            }
             auto& name = *entry.key();
             if (name.isSymbol()) [[unlikely]] {
                 recordFailure("symbol"_s);
