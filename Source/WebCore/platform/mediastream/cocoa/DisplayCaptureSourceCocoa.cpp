@@ -264,19 +264,19 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
     auto frame = m_capturer->generateFrame();
     auto imageSize = WTF::switchOn(frame,
-        [](RetainPtr<IOSurfaceRef> surface) -> IntSize {
+        [](RetainPtr<IOSurfaceRef>& surface) -> IntSize {
             if (!surface)
                 return { };
 
             return IntSize(IOSurfaceGetWidth(surface.get()), IOSurfaceGetHeight(surface.get()));
         },
-        [](RefPtr<NativeImage> image) -> IntSize {
+        [](RefPtr<NativeImage>& image) -> IntSize {
             if (!image)
                 return { };
 
             return image->size();
         },
-        [](RetainPtr<CMSampleBufferRef> sample) -> IntSize {
+        [](RetainPtr<CMSampleBufferRef>& sample) -> IntSize {
             if (!sample)
                 return { };
 
