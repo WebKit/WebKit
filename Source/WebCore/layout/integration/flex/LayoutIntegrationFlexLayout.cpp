@@ -323,7 +323,9 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     auto constraints = flexLayoutConstraints();
     auto flexLayoutItems = buildFlexLayoutItems(relayoutChildren, constraints);
 
-    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { marginTrimItemsBeforeFlexLayout() } };
+    // hasDefiniteLogicalHeight() is asked here, before the algorithm starts installing overriding sizes on the
+    // items, because a percentage has to resolve as it would have before the item was flexed.
+    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { marginTrimItemsBeforeFlexLayout(), flexBox().hasDefiniteLogicalHeight() } };
     m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexLayoutItems);
 }
 
@@ -595,25 +597,44 @@ template bool FlexLayout::flexItemMainSizeIsDefinite<Style::MinimumSize>(const R
 template bool FlexLayout::flexItemMainSizeIsDefinite<Style::MaximumSize>(const RenderBox&, const Style::MaximumSize&);
 template bool FlexLayout::flexItemMainSizeIsDefinite<Style::PreferredSize>(const RenderBox&, const Style::PreferredSize&);
 
+std::optional<bool> FlexLayout::isFlexBoxBlockSizeDefiniteForFlexItem(const RenderBox& flexItem) const
+{
+    if (!isInLayout())
+        return { };
+
+    // An orthogonal item's percentage block size resolves against the container's inline size instead.
+    if (flexBox().writingMode().isOrthogonal(flexItem.writingMode()))
+        return { };
+
+    // A widget substitutes its own intrinsic height for a percentage the container cannot resolve, so it can be
+    // definite where the container is not. See RenderBox::computePercentageLogicalHeight.
+    if (flexItem.style().hasUsedAppearance())
+        return { };
+
+    return m_flexLayoutState->isFlexBoxBlockSizeDefinite();
+}
+
 template<typename SizeType> bool FlexLayout::canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, const SizeType& percentSize, RenderBox::UpdatePercentageHeightDescendants updateDescendants)
 {
     if (!FlexFormattingUtils::isColumnFlow(flexBox()))
         return true;
 
-    if (isInLayout()) {
-        if (isFlexBoxBlockSizeDefinite())
-            return true;
-        if (isFlexBoxBlockSizeIndefinite())
-            return false;
+    if (auto isDefinite = isFlexBoxBlockSizeDefiniteForFlexItem(flexItem)) {
+        // Answering from the container skips computePercentageLogicalHeight, which also registers the item as a
+        // percent-height descendant -- that is what dirties the item when the container is resized. Register it here
+        // instead. The item's containing block is the flex container and the percentage walk cannot leave it, which
+        // is the same reason the container can answer at all.
+        if (updateDescendants == RenderBox::UpdatePercentageHeightDescendants::Yes) {
+            ASSERT(flexItem.containingBlock() == &flexBox());
+            flexBox().addPercentHeightDescendant(const_cast<RenderBox&>(flexItem));
+        }
+        return *isDefinite;
     }
 
     auto isPercentResolveSuspended = flexBox().view().frameView().layoutContext().isPercentHeightResolveDisabledFor(flexItem);
     ASSERT(!isPercentResolveSuspended || is<RenderBlock>(flexItem));
 
-    bool definite = !isPercentResolveSuspended && flexItem.computePercentageLogicalHeight(percentSize, updateDescendants).has_value();
-    if (isInLayout() && !flexBox().writingMode().isOrthogonal(flexItem.writingMode()))
-        setFlexBoxBlockSizeIsDefinite(definite);
-    return definite;
+    return !isPercentResolveSuspended && flexItem.computePercentageLogicalHeight(percentSize, updateDescendants).has_value();
 }
 
 bool FlexLayout::canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, RenderBox::UpdatePercentageHeightDescendants updateDescendants)

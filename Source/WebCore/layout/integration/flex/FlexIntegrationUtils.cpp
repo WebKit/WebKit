@@ -607,6 +607,11 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogica
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&) const;
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::PreferredSize::Calc>(const FlexLayoutItem&, const Style::PreferredSize::Calc&) const;
 
+std::optional<bool> FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem& flexLayoutItem) const
+{
+    return flexBox().flexLayout().isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem.renderer.get());
+}
+
 template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size) const
 {
     CheckedRef flexItem = flexLayoutItem.renderer;

@@ -50,8 +50,6 @@ enum class LayoutPhase : uint8_t {
 
 class FlexLayoutState {
 public:
-    // Which flex items had a margin trimmed, one set per side the container can trim. The flex algorithm fills
-    // these in as it trims, and the items read them back as they lay out.
     struct MarginTrimItems {
         SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineStart;
         SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineEnd;
@@ -59,10 +57,9 @@ public:
         SingleThreadWeakHashSet<const RenderBox> itemsOnLastFlexLine;
     };
 
-    FlexLayoutState() = default;
-    // Starts from the margins the container trimmed before the algorithm ran, and adds to them as it trims.
-    explicit FlexLayoutState(MarginTrimItems&& marginTrimItems)
+    FlexLayoutState(MarginTrimItems&& marginTrimItems, bool isFlexBoxBlockSizeDefinite)
         : m_marginTrimItems(WTF::move(marginTrimItems))
+        , m_isFlexBoxBlockSizeDefinite(isFlexBoxBlockSizeDefinite)
     {
     }
 
@@ -82,16 +79,13 @@ public:
     void setFlexItemHasCompletedLayout(const RenderBox& flexItem) { m_flexItemsWithCompletedLayout.add(flexItem); }
     bool hasFlexItemCompletedLayout(const RenderBox& flexItem) const { return m_flexItemsWithCompletedLayout.contains(flexItem); }
 
-    bool isFlexBoxBlockSizeDefinite() const { return m_isFlexBoxBlockSizeDefinite && *m_isFlexBoxBlockSizeDefinite; }
-    bool isFlexBoxBlockSizeIndefinite() const { return m_isFlexBoxBlockSizeDefinite && !*m_isFlexBoxBlockSizeDefinite; }
-    void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { m_isFlexBoxBlockSizeDefinite = isDefinite; }
-    void resetFlexBoxBlockSizeDefiniteness() { m_isFlexBoxBlockSizeDefinite = { }; }
+    bool isFlexBoxBlockSizeDefinite() const { return m_isFlexBoxBlockSizeDefinite; }
 
 private:
     MarginTrimItems m_marginTrimItems;
     LayoutPhase m_phase { LayoutPhase::PreparingFlexItems };
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
-    std::optional<bool> m_isFlexBoxBlockSizeDefinite;
+    bool m_isFlexBoxBlockSizeDefinite { false };
 };
 
 } // namespace WebCore

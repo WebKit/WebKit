@@ -146,8 +146,6 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
         auto minMaxMainSizes = minMaxMainSizesForFlexItem(flexItem);
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes.
         flexBaseAndHypotheticalMainSizeList[index] = { flexBase, std::max(minMaxMainSizes.first, std::min(flexBase, minMaxMainSizes.second)), minMaxMainSizes };
-        // FIXME: Figure out if we can do this outside of the loop.
-        layoutState().resetFlexBoxBlockSizeDefiniteness();
     }
     return flexBaseAndHypotheticalMainSizeList;
 }
@@ -1066,13 +1064,11 @@ template<typename SizeType> bool FlexFormattingContext::flexItemCrossSizeIsDefin
     // container's cross size is definite. We use a dummy percentage for stretch
     // since computePercentageLogicalHeight evaluates the value as a percentage.
     auto crossSizeIsDefinite = [&](const auto& sizeForPercentageComputation) {
-        if (!flexLayoutItem.mainAxisIsInlineAxis || layoutState().isFlexBoxBlockSizeDefinite())
+        if (!flexLayoutItem.mainAxisIsInlineAxis)
             return true;
-        if (layoutState().isFlexBoxBlockSizeIndefinite())
-            return false;
-        bool definite = bool(integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, sizeForPercentageComputation));
-        layoutState().setFlexBoxBlockSizeIsDefinite(definite);
-        return definite;
+        if (auto isDefinite = integrationUtils().isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem))
+            return *isDefinite;
+        return bool(integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, sizeForPercentageComputation));
     };
 
     if (size.isPercentOrCalculated())

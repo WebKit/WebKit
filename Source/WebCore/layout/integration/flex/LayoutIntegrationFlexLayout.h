@@ -78,6 +78,11 @@ public:
     // Whether a percentage resolves at all, for callers that only need the yes/no and have no percentage of their own.
     bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, RenderBox::UpdatePercentageHeightDescendants);
 
+    // The flex container's own block-size definiteness, computed before the algorithm runs, as it applies to this
+    // item -- absent when the item is one the container cannot answer for. The formatting context asks the same
+    // question through FlexIntegrationUtils.
+    std::optional<bool> isFlexBoxBlockSizeDefiniteForFlexItem(const RenderBox& flexItem) const;
+
     // Whether the given side of the item's margin has been trimmed, for RenderFlexibleBox::isChildEligibleForMarginTrim.
     // Answered from the running flex algorithm while it is running, and from what it last produced otherwise --
     // the container is sized before layout, and its items can be laid out on their own after.
@@ -88,13 +93,7 @@ public:
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
 private:
-    // The flex container's own block-size definiteness, computed once per layout and cached on the layout state.
-    // The formatting context reaches these through FlexLayoutState directly; here they only back the percentage
-    // resolution above.
     bool isInLayout() const { return !!m_flexLayoutState; }
-    bool isFlexBoxBlockSizeDefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeDefinite(); }
-    bool isFlexBoxBlockSizeIndefinite() const { return m_flexLayoutState && m_flexLayoutState->isFlexBoxBlockSizeIndefinite(); }
-    void setFlexBoxBlockSizeIsDefinite(bool isDefinite) { ASSERT(m_flexLayoutState); m_flexLayoutState->setFlexBoxBlockSizeIsDefinite(isDefinite); }
 
     FlexLayoutState::MarginTrimItems marginTrimItemsBeforeFlexLayout() const;
 
