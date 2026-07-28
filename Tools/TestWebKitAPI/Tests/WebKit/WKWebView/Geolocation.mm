@@ -28,6 +28,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <CoreLocation/CLLocation.h>
@@ -150,11 +152,112 @@ static void expectException(void (^completionHandler)())
 
 @end
 
+@interface GeolocationOriginValidationDelegate : NSObject <WKUIDelegatePrivate>
+@property (nonatomic, copy) void (^validationHandler)(WKSecurityOrigin *, WKFrameInfo *);
+@end
+
+@implementation GeolocationOriginValidationDelegate
+- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+{
+    if (_validationHandler)
+        _validationHandler(origin, frame);
+    decisionHandler(WKPermissionDecisionGrant);
+}
+@end
+
+@interface GeolocationURLValidationDelegate : NSObject <WKUIDelegatePrivate>
+@property (nonatomic, copy) void (^validationHandler)(NSURL *);
+@end
+
+@implementation GeolocationURLValidationDelegate
+- (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForURL:(NSURL *)url frame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    if (_validationHandler)
+        _validationHandler(url);
+    decisionHandler(YES);
+}
+@end
+
 namespace TestWebKitAPI {
 
 // These tests need to use TestWKWebView because it sets up a visible window for the web
 // view. Without this, the web process would wait until the page is visible before sending
 // the requests to the UI process.
+
+TEST(Geolocation, PermissionOriginDuringPendingNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/source"_s, { "<script>function requestPosition() { navigator.geolocation.getCurrentPosition(function() { }, function() { }); }</script>"_s } },
+        { "/target"_s, { "hi"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr uiDelegate = adoptNS([[GeolocationOriginValidationDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example1.com/source"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Fire the geolocation request after a navigation to example2.com has started (so the page's
+    // active URL is already example2.com) but before it commits.
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        [webView evaluateJavaScript:@"requestPosition();" completionHandler:nil];
+    };
+    static bool receivedPermissionRequest;
+    receivedPermissionRequest = false;
+    [uiDelegate setValidationHandler:[&](WKSecurityOrigin *origin, WKFrameInfo *frame) {
+        EXPECT_WK_STREQ(origin.protocol, @"https");
+        EXPECT_WK_STREQ(origin.host, @"example1.com");
+        EXPECT_WK_STREQ(frame.securityOrigin.host, @"example1.com");
+        receivedPermissionRequest = true;
+    }];
+    [webView evaluateJavaScript:@"location.href = 'https://example2.com/target'" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedPermissionRequest);
+}
+
+TEST(Geolocation, PermissionURLDuringPendingNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/source"_s, { "<script>function requestPosition() { navigator.geolocation.getCurrentPosition(function() { }, function() { }); }</script>"_s } },
+        { "/target"_s, { "hi"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);
+    coreLocationProvider.get().shouldAuthorizeGeolocation = YES;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] init]);
+    processPool.get()._coreLocationProvider = coreLocationProvider.get();
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().processPool = processPool.get();
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr uiDelegate = adoptNS([[GeolocationURLValidationDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example1.com/source"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        [webView evaluateJavaScript:@"requestPosition();" completionHandler:nil];
+    };
+    static bool receivedAuthorizationRequest;
+    receivedAuthorizationRequest = false;
+    [uiDelegate setValidationHandler:[&](NSURL *url) {
+        EXPECT_WK_STREQ(url.scheme, @"https");
+        EXPECT_WK_STREQ(url.host, @"example1.com");
+        receivedAuthorizationRequest = true;
+    }];
+    [webView evaluateJavaScript:@"location.href = 'https://example2.com/target'" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedAuthorizationRequest);
+}
 
 TEST(Geolocation, DeniedByLocationProvider)
 {
