@@ -35,6 +35,7 @@
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "IntSize.h"
+#include "SkiaCompositingLayer3DRenderingContext.h"
 #include "SkiaCompositingLayerImageSetBatch.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 #include "SkiaDamageRegion.h"
@@ -237,7 +238,9 @@ private:
     TransformationMatrix combinedTransform(const PaintContext&) const;
     IntRect clipBounds(const SkCanvas&, const PaintContext&) const;
     sk_sp<SkImage> maskImage();
-    void collect3DRenderingContextLayers(Vector<Ref<SkiaCompositingLayer>>&);
+    FloatPolygon3D geometryFor3DRenderingContext() const;
+    FloatRect transformedFlattenedBounds() const;
+    void collect3DRenderingContextLayers(Vector<SkiaCompositingLayer3DRenderingContext::Layer>&);
     void recursiveCleanUpAfterPaint();
 
     void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
