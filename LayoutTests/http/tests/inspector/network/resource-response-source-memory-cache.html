@@ -15,6 +15,12 @@ function test()
         suite.addTestCase({
             name, description,
             test(resolve, reject) {
+                let typeDidChangeCount = 0;
+                let typeDidChangeListener = WI.Resource.addEventListener(WI.Resource.Event.TypeDidChange, (event) => {
+                    if (pattern.test(event.target.url))
+                        ++typeDidChangeCount;
+                });
+
                 InspectorTest.reloadPage({ignoreCache});
                 InspectorTest.awaitEvent("LoadComplete").then((event) => {
                     let resource = null;
@@ -25,13 +31,19 @@ function test()
                         }
                     }
                     if (!resource) {
+                        WI.Resource.removeEventListener(WI.Resource.Event.TypeDidChange, typeDidChangeListener);
                         InspectorTest.fail("Failed to find specific resource.");
                         reject();
                         return;
                     }
+
+                    WI.Resource.removeEventListener(WI.Resource.Event.TypeDidChange, typeDidChangeListener);
+
                     InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should exist.");
                     InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
                     InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                    InspectorTest.expectEqual(resource.type, WI.Resource.Type.Script, "Resource type should be Script.");
+                    InspectorTest.expectEqual(typeDidChangeCount, 0, "Resource type should not change when the response resolves to Script.");
                     return resource.requestContentFromBackend();
                 }).then((responseContent) => {
                     InspectorTest.expectTrue(responseContent.body.length, "Response `body` should not be empty.");
