@@ -74,6 +74,8 @@ void DatagramByteSource::receiveDatagram(std::span<const uint8_t> datagram, bool
     if (!globalObject)
         return;
 
+    Locker<JSC::JSLock> locker(globalObject->vm().apiLock());
+
     ASSERT(!m_currentOffset);
     tryEnqueuing(*arrayBuffer, *controller, m_promise.releaseNonNull().get(), globalObject);
     if (!withFin)
@@ -117,6 +119,7 @@ void DatagramByteSource::closeStreamIfPossible()
     if (!globalObject)
         return;
 
+    Locker<JSC::JSLock> locker(globalObject->vm().apiLock());
     closeStream(*globalObject, *controller, *promise);
 }
 

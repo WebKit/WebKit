@@ -183,6 +183,8 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
         RefPtr strongThis = weakThis.get();
         if (!strongThis)
             return;
+        if (strongThis->m_state != State::Connecting)
+            return;
         if (!info)
             return strongThis->cleanupWithSessionError();
         strongThis->m_protocol = WTF::move(info->protocol);
@@ -213,6 +215,9 @@ void WebTransport::receiveDatagram(std::span<const uint8_t> datagram, bool withF
 
 void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier identifier)
 {
+    if (m_state == State::Closed || m_state == State::Failed)
+        return;
+
     RefPtr context = scriptExecutionContext();
     if (!context)
         return;
@@ -221,11 +226,11 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
         return;
 
     auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
+
+    Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+
     Ref incomingStream = WebTransportReceiveStreamByteSource::create(*this, identifier);
-    auto stream = [&] {
-        Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
-        return WebTransportReceiveStream::create(identifier, m_session, jsDOMGlobalObject, incomingStream.copyRef());
-    } ();
+    auto stream = WebTransportReceiveStream::create(identifier, m_session, jsDOMGlobalObject, incomingStream.copyRef());
     if (stream.hasException())
         return;
     Ref receiveStream = stream.releaseReturnValue();
@@ -242,16 +247,13 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
 static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStream(WebTransport& transport, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<WebTransportSendStreamSink>&& sink, Ref<WebTransportReceiveStreamByteSource>&& source, const WebTransportSendStreamOptions& options)
 {
     auto identifier = sink->identifier();
-    auto sendStream = [&] {
-        Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
-        return WebTransportSendStream::create(transport, globalObject, WTF::move(sink), options);
-    } ();
+
+    Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+
+    auto sendStream = WebTransportSendStream::create(transport, globalObject, WTF::move(sink), options);
     if (sendStream.hasException())
         return sendStream.releaseException();
-    auto receiveStream = [&] {
-        Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
-        return WebTransportReceiveStream::create(identifier, session, globalObject, WTF::move(source));
-    } ();
+    auto receiveStream = WebTransportReceiveStream::create(identifier, session, globalObject, WTF::move(source));
     if (receiveStream.hasException())
         return receiveStream.releaseException();
     return WebTransportBidirectionalStream::create(receiveStream.releaseReturnValue(), sendStream.releaseReturnValue());
@@ -259,6 +261,9 @@ static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStre
 
 void WebTransport::receiveBidirectionalStream(WebTransportStreamIdentifier identifier)
 {
+    if (m_state == State::Closed || m_state == State::Failed)
+        return;
+
     RefPtr context = scriptExecutionContext();
     if (!context)
         return;
@@ -268,6 +273,9 @@ void WebTransport::receiveBidirectionalStream(WebTransportStreamIdentifier ident
 
     Ref sink = WebTransportSendStreamSink::create(*this, identifier);
     auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
+
+    Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+
     Ref incomingStream = WebTransportReceiveStreamByteSource::create(*this, identifier);
     auto stream = WebCore::createBidirectionalStream(*this, m_session, jsDOMGlobalObject, sink.copyRef(), incomingStream.copyRef(), WebTransportSendStreamOptions { });
     if (stream.hasException())
@@ -289,6 +297,9 @@ void WebTransport::receiveBidirectionalStream(WebTransportStreamIdentifier ident
 
 void WebTransport::streamReceiveBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> span, bool withFin, std::optional<Exception>&& exception)
 {
+    if (m_state == State::Closed || m_state == State::Failed)
+        return;
+
     ASSERT(m_readStreamSources.contains(identifier));
     if (RefPtr source = m_readStreamSources.get(identifier))
         source->receiveBytes(span, withFin, WTF::move(exception));
@@ -502,6 +513,9 @@ void WebTransport::cleanup(Ref<DOMException>&& exception, std::optional<WebTrans
     } ();
 
     // https://www.w3.org/TR/webtransport/#webtransport-cleanup
+    m_bidirectionalStreamSource->stopReceivingIncomingStreams();
+    m_receiveStreamSource->stopReceivingIncomingStreams();
+
     std::exchange(m_sendStreams, { });
     auto sendStreamSinks = std::exchange(m_sendStreamSinks, { });
     for (auto& sink : sendStreamSinks.values())
@@ -656,6 +670,8 @@ void WebTransport::didFail(std::optional<uint32_t>&& code, String&& message)
 
 void WebTransport::didDrain()
 {
+    if (m_state == State::Closed || m_state == State::Failed)
+        return;
     m_state = State::Draining;
     protect(m_draining.second)->resolve();
 }

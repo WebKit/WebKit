@@ -35,6 +35,9 @@ class WebTransportBidirectionalStreamSource : public RefCountedReadableStreamSou
 public:
     static Ref<WebTransportBidirectionalStreamSource> create() { return adoptRef(*new WebTransportBidirectionalStreamSource()); }
     bool receiveIncomingStream(JSC::JSGlobalObject&, Ref<WebTransportBidirectionalStream>&);
+
+    void stopReceivingIncomingStreams() { m_isCancelled = true; }
+
 private:
     void setActive() final { }
     void setInactive() final { }

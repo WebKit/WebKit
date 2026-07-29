@@ -44,6 +44,8 @@ public:
     static Ref<WebTransportReceiveStreamSource> createIncomingStreamsSource() { return adoptRef(*new WebTransportReceiveStreamSource()); }
     bool receiveIncomingStream(JSC::JSGlobalObject&, Ref<WebTransportReceiveStream>&);
 
+    void stopReceivingIncomingStreams() { m_isCancelled = true; }
+
 private:
     WebTransportReceiveStreamSource() = default;
     void setActive() final { }

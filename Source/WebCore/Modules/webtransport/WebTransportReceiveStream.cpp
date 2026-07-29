@@ -46,8 +46,10 @@ ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(We
     Ref stream = adoptRef(*new WebTransportReceiveStream(protect(globalObject.scriptExecutionContext()).get(), identifier, session));
     stream->suspendIfNeeded();
 
-    ReadableByteStreamController::PullAlgorithm pullAlgorithm = [source](auto& globalObject, auto&) {
-        return source->pull(globalObject);
+    ReadableByteStreamController::PullAlgorithm pullAlgorithm = [source](auto& globalObject, auto& controller) {
+        auto [promise, deferred] = createPromiseAndWrapper(globalObject);
+        source->pull(globalObject, controller, WTF::move(deferred));
+        return promise;
     };
 
     ReadableByteStreamController::CancelAlgorithm cancelAlgorithm = [source](auto& globalObject, auto&, auto&& reason) {

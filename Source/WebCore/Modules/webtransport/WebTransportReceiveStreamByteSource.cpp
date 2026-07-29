@@ -44,22 +44,80 @@
 
 namespace WebCore {
 
-Ref<DOMPromise> WebTransportReceiveStreamByteSource::pull(JSDOMGlobalObject& globalObject)
-{
-    // FIXME: This should implement https://w3c.github.io/webtransport/#webtransportreceivestream-pull-bytes
-    // See DatagramByteSource::pull.
-    auto* promise = JSC::JSPromise::resolvedPromise(&globalObject, JSC::jsUndefined());
-    return DOMPromise::create(globalObject, *promise);
-}
-
 WebTransportReceiveStreamByteSource::WebTransportReceiveStreamByteSource(WebTransport& transport, WebTransportStreamIdentifier identifier)
     : m_transport(transport)
     , m_identifier(identifier)
 {
 }
 
+// https://w3c.github.io/webtransport/#webtransportreceivestream-pull-bytes
+void WebTransportReceiveStreamByteSource::pull(JSDOMGlobalObject& globalObject, ReadableByteStreamController& controller, Ref<DeferredPromise>&& promise)
+{
+    if (m_isCancelled || m_isClosed)
+        return promise->resolve();
+
+    if (m_queue.isEmpty()) {
+        if (!m_finReceived) {
+            ASSERT(!m_pendingPull);
+            m_pendingPull = WTF::move(promise);
+            return;
+        }
+
+        closeStream(globalObject, controller);
+        promise->resolve();
+        return;
+    }
+
+    deliverBytes(globalObject, controller, WTF::move(promise));
+}
+
+void WebTransportReceiveStreamByteSource::deliverBytes(JSDOMGlobalObject& globalObject, ReadableByteStreamController& controller, Ref<DeferredPromise>&& promise)
+{
+    ASSERT(!m_queue.isEmpty());
+    Ref buffer = m_queue.takeFirst();
+    auto byteLength = buffer->byteLength();
+    ASSERT(m_currentOffset < byteLength);
+
+    auto newOffset = controller.pullFromBytes(globalObject, buffer.get(), m_currentOffset);
+    if (newOffset < byteLength) {
+        m_queue.prepend(WTF::move(buffer));
+        m_currentOffset = newOffset;
+    } else
+        m_currentOffset = 0;
+
+    if (m_finReceived && m_queue.isEmpty())
+        closeStream(globalObject, controller);
+
+    promise->resolve();
+}
+
+void WebTransportReceiveStreamByteSource::closeStream(JSDOMGlobalObject& globalObject, ReadableByteStreamController& controller)
+{
+    ASSERT(m_queue.isEmpty());
+    m_isClosed = true;
+    controller.closeAndRespondToPendingPullIntos(globalObject);
+    if (RefPtr transport = m_transport.get())
+        transport->receiveStreamClosed(m_identifier);
+}
+
+void WebTransportReceiveStreamByteSource::errorStream(JSDOMGlobalObject& globalObject, ReadableByteStreamController& controller, const Exception& exception)
+{
+    m_isClosed = true;
+    m_queue.clear();
+    m_currentOffset = 0;
+
+    controller.error(globalObject, exception);
+    if (RefPtr transport = m_transport.get())
+        transport->receiveStreamClosed(m_identifier);
+    if (RefPtr pendingPull = std::exchange(m_pendingPull, nullptr))
+        pendingPull->resolve();
+}
+
 void WebTransportReceiveStreamByteSource::receiveBytes(std::span<const uint8_t> bytes, bool withFin, std::optional<Exception>&& exception)
 {
+    if (withFin)
+        m_finReceived = true;
+
     if (m_isCancelled || m_isClosed)
         return;
 
@@ -73,26 +131,29 @@ void WebTransportReceiveStreamByteSource::receiveBytes(std::span<const uint8_t> 
     if (!controller)
         return;
 
-    if (exception) {
-        controller->error(*globalObject, *exception);
-        if (RefPtr transport = m_transport.get())
-            transport->receiveStreamClosed(m_identifier);
+    Locker<JSC::JSLock> locker(globalObject->vm().apiLock());
+
+    if (exception)
+        return errorStream(*globalObject, *controller, *exception);
+
+    if (bytes.size()) {
+        RefPtr arrayBuffer = ArrayBuffer::tryCreateUninitialized(bytes.size(), 1);
+        if (!arrayBuffer)
+            return errorStream(*globalObject, *controller, Exception { ExceptionCode::RangeError, "Unable to allocate memory for the received bytes"_s });
+        memcpySpan(arrayBuffer->mutableSpan(), bytes);
+        m_queue.append(arrayBuffer.releaseNonNull());
+    }
+
+    if (!m_queue.isEmpty()) {
+        if (RefPtr pendingPull = std::exchange(m_pendingPull, nullptr))
+            deliverBytes(*globalObject, *controller, pendingPull.releaseNonNull());
         return;
     }
 
-    if (bytes.size()) {
-        if (RefPtr arrayBuffer = ArrayBuffer::tryCreateUninitialized(bytes.size(), 1)) {
-            memcpySpan(arrayBuffer->mutableSpan(), bytes);
-            controller->enqueue(*globalObject, *arrayBuffer);
-        }
-        // FIXME: Error the stream if allocation fails.
-    }
-
-    if (withFin) {
-        m_isClosed = true;
-        controller->closeAndRespondToPendingPullIntos(*globalObject);
-        if (RefPtr transport = m_transport.get())
-            transport->receiveStreamClosed(m_identifier);
+    if (m_finReceived) {
+        closeStream(*globalObject, *controller);
+        if (RefPtr pendingPull = std::exchange(m_pendingPull, nullptr))
+            pendingPull->resolve();
     }
 }
 
@@ -101,12 +162,17 @@ void WebTransportReceiveStreamByteSource::receiveError(JSDOMGlobalObject& global
     if (m_isClosed || m_isCancelled)
         return;
     m_isCancelled = true;
+    m_queue.clear();
+    m_currentOffset = 0;
 
     Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
     if (RefPtr stream = m_stream.get()) {
         if (RefPtr controller = stream->controller())
             controller->error(globalObject, error);
     }
+
+    if (RefPtr pendingPull = std::exchange(m_pendingPull, nullptr))
+        pendingPull->resolve();
 
     if (RefPtr transport = m_transport.get())
         transport->receiveStreamClosed(m_identifier);
@@ -121,6 +187,10 @@ void WebTransportReceiveStreamByteSource::cancel(JSC::JSValue reason, Ref<Deferr
     if (m_isCancelled)
         return;
     m_isCancelled = true;
+    m_queue.clear();
+    m_currentOffset = 0;
+    if (RefPtr pendingPull = std::exchange(m_pendingPull, nullptr))
+        pendingPull->resolve();
 
     RefPtr transport = m_transport.get();
     if (!transport)

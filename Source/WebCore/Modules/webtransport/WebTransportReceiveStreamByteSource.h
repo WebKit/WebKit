@@ -26,12 +26,17 @@
 #pragma once
 
 #include "ReadableStreamSource.h"
+#include <wtf/Deque.h>
+
+namespace JSC {
+class ArrayBuffer;
+}
 
 namespace WebCore {
 
-class DOMPromise;
 class DeferredPromise;
 class Exception;
+class ReadableByteStreamController;
 class ReadableStream;
 class WebTransport;
 class WebTransportReceiveStream;
@@ -44,7 +49,7 @@ class WebTransportReceiveStreamByteSource final : public RefCounted<WebTransport
 public:
     static Ref<WebTransportReceiveStreamByteSource> create(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportReceiveStreamByteSource(transport, identifier)); }
 
-    Ref<DOMPromise> pull(JSDOMGlobalObject&);
+    void pull(JSDOMGlobalObject&, ReadableByteStreamController&, Ref<DeferredPromise>&&);
     void receiveBytes(std::span<const uint8_t>, bool, std::optional<Exception>&&);
     void receiveError(JSDOMGlobalObject&, JSC::JSValue error);
     void cancel(JSC::JSValue reason, Ref<DeferredPromise>&&);
@@ -59,8 +64,17 @@ public:
 private:
     WebTransportReceiveStreamByteSource(WebTransport&, WebTransportStreamIdentifier);
 
+    void deliverBytes(JSDOMGlobalObject&, ReadableByteStreamController&, Ref<DeferredPromise>&&);
+    void closeStream(JSDOMGlobalObject&, ReadableByteStreamController&);
+    void errorStream(JSDOMGlobalObject&, ReadableByteStreamController&, const Exception&);
+
     bool m_isCancelled { false };
     bool m_isClosed { false };
+    bool m_finReceived { false };
+
+    Deque<Ref<JSC::ArrayBuffer>> m_queue;
+    size_t m_currentOffset { 0 };
+    RefPtr<DeferredPromise> m_pendingPull;
 
     ThreadSafeWeakPtr<WebTransport> m_transport;
     WeakPtr<ReadableStream> m_stream;
