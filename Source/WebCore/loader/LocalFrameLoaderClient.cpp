@@ -81,6 +81,11 @@ RefPtr<Frame> LocalFrameLoaderClient::provisionalParentFrame() const
     return nullptr;
 }
 
+bool LocalFrameLoaderClient::isProvisionalFrame() const
+{
+    return false;
+}
+
 void LocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, const String& referer, LocalFrame& childFrame)
 {
     Ref loader = m_loader;

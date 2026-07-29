@@ -4142,11 +4142,9 @@ bool Document::isFullyActive() const
     if (!frame || frame->document() != this)
         return false;
 
-    // Walk the ancestor chain: the document is fully active only if it reaches the main
-    // frame. A RemoteFrame ancestor lives in another process, but if it became parentless
-    // without being the main frame, its iframe was removed in the parent process and the
-    // chain was severed. (The local chain may briefly lag that removal until this process
-    // receives the IPC; we treat it as up to date.)
+    // The document is fully active only if the ancestor chain reaches the main frame. A
+    // RemoteFrame ancestor lives in another process, but if it became parentless without
+    // being the main frame, its iframe was removed there and the chain was severed.
     for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
         if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor.get())) {
             if (!localAncestor->document() || localAncestor->document()->frame() != localAncestor)
@@ -4156,7 +4154,10 @@ bool Document::isFullyActive() const
         if (!ancestor->tree().parent())
             return ancestor->isMainFrame();
     }
-    return frame->isMainFrame();
+
+    // A provisional frame for a cross-process navigation is parentless by construction until its
+    // load commits, so parentlessness alone does not mean the chain was severed.
+    return frame->isMainFrame() || frame->loader().client().isProvisionalFrame();
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#fully-active-descendant-of-a-top-level-traversable-with-user-attention

@@ -366,6 +366,10 @@ public:
 
     virtual RefPtr<Frame> provisionalParentFrame() const;
 
+    // True while this frame is a provisional frame for a cross-process navigation that has not
+    // committed yet, and so is not in the frame tree even though it has a parent to be attached to.
+    virtual bool isProvisionalFrame() const;
+
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
 
 #if ENABLE(APP_BOUND_DOMAINS)

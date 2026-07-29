@@ -2175,6 +2175,11 @@ RefPtr<WebCore::Frame> WebLocalFrameLoaderClient::provisionalParentFrame() const
     return nullptr;
 }
 
+bool WebLocalFrameLoaderClient::isProvisionalFrame() const
+{
+    return webFrame().provisionalFrame() == m_localFrame.ptr();
+}
+
 #if ENABLE(CONTENT_EXTENSIONS)
 
 void WebLocalFrameLoaderClient::didExceedNetworkUsageThreshold()
