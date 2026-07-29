@@ -78,10 +78,10 @@ static std::optional<std::string> computeSHA1HashStringForContext(CGContextRef b
 #if PLATFORM(COCOA)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            Vector<uint8_t> buffer(4 * pixelsWide);
+            Vector<uint32_t> buffer(pixelsWide);
             for (unsigned column = 0; column < pixelsWide; column++)
                 buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
-            sha1.addBytes(buffer);
+            sha1.addBytes(asBytes(buffer.span()));
             bitmapData += bytesPerRow;
         }
     } else
