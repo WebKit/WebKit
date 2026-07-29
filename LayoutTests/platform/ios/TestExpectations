@@ -7001,6 +7001,7 @@ webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/tra
 # Layout tests that fail for iOS only for css-highlights
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-vertical-writing-mode-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/264063 platform/ios/mediastream/video-muted-in-background-tab.html [ Skip ]
 

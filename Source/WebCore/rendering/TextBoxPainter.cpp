@@ -634,6 +634,11 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
     auto backgroundRect = snapRectToDevicePixels(selectionRect, m_document->deviceScaleFactor());
+    if (!writingMode().isHorizontal()) {
+        auto ctm = context.getCTM();
+        if (auto inverseCTM = ctm.inverse())
+            backgroundRect = inverseCTM->mapRect(snapRectToDevicePixels(LayoutRect { ctm.mapRect(FloatRect { selectionRect }) }, 1));
+    }
     if (backgroundStyle == BackgroundStyle::Rounded) {
         backgroundRect.expand(-1, -1);
         backgroundRect.move(0.5, 0.5);
