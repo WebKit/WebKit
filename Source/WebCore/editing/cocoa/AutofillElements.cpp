@@ -125,12 +125,23 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
 
 void AutofillElements::autofill(String username, String password)
 {
-    if (m_username)
+    if (m_username) {
         m_username->setValueForUser(username);
-    if (m_password)
+        if (!username.isEmpty())
+            m_username->didCompleteAutofill();
+    }
+
+    if (m_password) {
         m_password->setValueForUser(password);
-    if (m_secondPassword)
+        if (!password.isEmpty())
+            m_password->didCompleteAutofill();
+    }
+
+    if (m_secondPassword) {
         m_secondPassword->setValueForUser(password);
+        if (!password.isEmpty())
+            m_secondPassword->didCompleteAutofill();
+    }
 }
 
 } // namespace WebCore

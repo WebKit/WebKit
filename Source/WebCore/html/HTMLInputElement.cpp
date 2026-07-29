@@ -1519,8 +1519,10 @@ void HTMLInputElement::setAutofilled(bool autoFilled)
     if (autoFilled == m_isAutoFilled)
         return;
 
-    if (autoFilled)
+    if (autoFilled) {
         logUserInteraction();
+        didCompleteAutofill();
+    }
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Autofill, autoFilled);
     m_isAutoFilled = autoFilled;
@@ -1594,6 +1596,12 @@ void HTMLInputElement::setAutofillVisibility(AutofillVisibility state)
         setAutofilledAndObscured(true);
         break;
     }
+}
+
+void HTMLInputElement::didCompleteAutofill()
+{
+    if (RefPtr page = document().page())
+        page->chrome().client().didCompleteAutofill(*this);
 }
 
 bool HTMLInputElement::alpha()

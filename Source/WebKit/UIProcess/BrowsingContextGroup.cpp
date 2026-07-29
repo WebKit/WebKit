@@ -72,6 +72,8 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
             return completionHandler(nullptr);
         if (websitePolicies && !websitePolicies->allowSharedProcess())
             return completionHandler(nullptr);
+        if (websiteDataStore.isolatedSiteStore().contains(site))
+            return completionHandler(nullptr);
     }
     websiteDataStore.fetchDomainsWithUserInteraction([
         protectedThis = Ref { *this },

@@ -58,6 +58,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
     DidCollectPrewarmInformation(WebCore::RegistrableDomain domain, struct WebCore::PrewarmInformation prewarmInformation)
 
+    DidCompleteAutofill(WebCore::Site site)
+
 #if PLATFORM(COCOA)
     CacheMediaMIMETypes(Vector<String> types)
     CacheMediaSourceTypeSupported(String type, bool isSupported)

@@ -27,6 +27,7 @@
 
 #include "EnhancedSecurity.h"
 #include "FrameInfoData.h"
+#include "IsolatedSiteStore.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
@@ -231,6 +232,8 @@ public:
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
     void logTestingEvent(const String&);
     void didHaveUserInteractionForSiteIsolation(const URL&);
+    IsolatedSiteStore& isolatedSiteStore() { return m_isolatedSiteStore; }
+    bool isIsolatedSiteForTesting(const URL&) const;
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
@@ -626,6 +629,7 @@ private:
     std::optional<HashSet<WebCore::RegistrableDomain>> m_domainsWithUserInteractions;
     Vector<WebCore::RegistrableDomain> m_pendingDomainsWithUserInteractions;
     Vector<CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>> m_domainsWithUserInteractionsCompletionHandler;
+    IsolatedSiteStore m_isolatedSiteStore;
 
     bool m_trackingPreventionDebugMode { false };
     enum class TrackingPreventionEnabled : uint8_t { Default, No, Yes };

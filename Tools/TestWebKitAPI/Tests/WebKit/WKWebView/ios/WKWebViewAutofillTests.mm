@@ -34,6 +34,7 @@
 #import "UIKitSPIForTesting.h"
 #import "WKBrowserEngineDefinitions.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/BlockPtr.h>
 
@@ -107,6 +108,28 @@ TEST(WKWebViewAutoFillTests, UsernameAndPasswordField)
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.activeElement.blur()"];
     EXPECT_FALSE([webView acceptsAutoFillLoginCredentials]);
+}
+
+TEST(WKWebViewAutoFillTests, AutofillMarksSiteAsIsolated)
+{
+    RetainPtr webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    NSURL *url = [NSURL URLWithString:@"https://example.com/"];
+    [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'>" baseURL:url];
+
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+    EXPECT_FALSE([dataStore _isIsolatedSiteForTesting:url]);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"user.focus()"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"password.focus()"];
+
+    auto credentialSuggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:@"frederik" password:@"famos"];
+    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion];
+
+    EXPECT_WK_STREQ("famos", [webView stringByEvaluatingJavaScript:@"password.value"]);
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor(^{
+        return (bool)[dataStore _isIsolatedSiteForTesting:url];
+    }));
 }
 
 TEST(WKWebViewAutoFillTests, UsernameAndPasswordFieldAcrossShadowBoundaries)

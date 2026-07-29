@@ -72,6 +72,7 @@
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/Site.h>
 #include <WebCore/StorageUtilities.h>
 #include <WebCore/WebLockRegistry.h>
 #include <algorithm>
@@ -1543,6 +1544,11 @@ void WebsiteDataStore::didHaveUserInteractionForSiteIsolation(const URL& url)
         // notififed of user interaction by the web content process.
         m_pendingDomainsWithUserInteractions.append(registrableDomain);
     }
+}
+
+bool WebsiteDataStore::isIsolatedSiteForTesting(const URL& url) const
+{
+    return m_isolatedSiteStore.contains(WebCore::Site { url });
 }
 
 void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)

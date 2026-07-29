@@ -1258,6 +1258,11 @@ struct WKWebsiteData {
     return protect(*_websiteDataStore)->hasServiceWorkerBackgroundActivityForTesting();
 }
 
+-(BOOL)_isIsolatedSiteForTesting:(NSURL *)url
+{
+    return protect(*_websiteDataStore)->isIsolatedSiteForTesting(url);
+}
+
 - (void)_getPendingPushMessage:(void(^)(NSDictionary *))completionHandler
 {
     RELEASE_LOG(Push, "Getting pending push message");

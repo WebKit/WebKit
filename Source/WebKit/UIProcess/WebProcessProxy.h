@@ -745,6 +745,8 @@ private:
 
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
+    void didCompleteAutofill(const WebCore::Site&);
+
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
     
     void updateRegistrationWithDataStore();

@@ -437,6 +437,8 @@ private:
 
     void handleAutoFillButtonClick(WebCore::HTMLInputElement&) final;
 
+    void didCompleteAutofill(WebCore::HTMLInputElement&) final;
+
     void inputElementDidResignStrongPasswordAppearance(WebCore::HTMLInputElement&) final;
 
     void performSwitchHapticFeedback() final;

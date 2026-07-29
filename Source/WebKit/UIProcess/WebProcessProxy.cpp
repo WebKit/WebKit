@@ -2437,6 +2437,13 @@ void WebProcessProxy::didCollectPrewarmInformation(const WebCore::RegistrableDom
     protect(processPool())->didCollectPrewarmInformation(domain, prewarmInformation);
 }
 
+void WebProcessProxy::didCompleteAutofill(const WebCore::Site& site)
+{
+    MESSAGE_CHECK(!site.isEmpty());
+    if (RefPtr dataStore = websiteDataStore())
+        dataStore->isolatedSiteStore().addSite(site, IsolatedSiteStore::Signal::Autofill);
+}
+
 void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTF::move(completionHandler));

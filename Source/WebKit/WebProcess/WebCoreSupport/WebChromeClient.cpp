@@ -123,6 +123,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
+#include <WebCore/Site.h>
 #include <WebCore/SystemPreviewInfo.h>
 #include <WebCore/TextDetectorInterface.h>
 #include <WebCore/TextIndicator.h>
@@ -1989,6 +1990,15 @@ void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
 
     // Notify the UIProcess.
     page->send(Messages::WebPageProxy::HandleAutoFillButtonClick(UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+}
+
+void WebChromeClient::didCompleteAutofill(HTMLInputElement& inputElement)
+{
+    auto site = Site { inputElement.document().url() };
+    if (site.isEmpty())
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::DidCompleteAutofill(site), 0);
 }
 
 void WebChromeClient::inputElementDidResignStrongPasswordAppearance(HTMLInputElement& inputElement)

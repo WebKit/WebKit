@@ -677,6 +677,7 @@ UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp
 
 UIProcess/WebsiteData/EnhancedSecuritySitesHolder.cpp
 UIProcess/WebsiteData/EnhancedSecuritySitesPersistence.cpp
+UIProcess/WebsiteData/IsolatedSiteStore.cpp
 UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp
 UIProcess/WebsiteData/WebsiteDataRecord.cpp
 UIProcess/WebsiteData/WebsiteDataStore.cpp @cost:5

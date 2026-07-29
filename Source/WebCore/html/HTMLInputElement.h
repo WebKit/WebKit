@@ -269,6 +269,7 @@ public:
     void setAutofillVisibility(AutofillVisibility);
     bool autofillSpellcheck() const { return !m_isSpellcheckDisabledExceptTextReplacement; }
     void setAutofillSpellcheck(bool value) { m_isSpellcheckDisabledExceptTextReplacement = !value; }
+    void didCompleteAutofill();
 
 #if ENABLE(DRAG_SUPPORT)
     // Returns true if the given DragData has more than one dropped file.

@@ -661,6 +661,8 @@ public:
 
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
+    virtual void didCompleteAutofill(HTMLInputElement&) { }
+
     virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { }
 
     virtual void performSwitchHapticFeedback() { }
