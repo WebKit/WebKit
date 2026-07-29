@@ -32,20 +32,30 @@
 namespace WebCore {
 namespace Layout {
 
-// Convert a 1-indexed explicit CSS grid line into a 0-indexed grid line. For example
-// grid-column-start: 1 maps to 0. https://www.w3.org/TR/css-grid-1/#line-placement
-static int explicitLineToIndex(const Style::GridPosition& position)
+// Convert a 1-indexed explicit CSS grid line into a 0-indexed grid line.
+// https://www.w3.org/TR/css-grid-1/#line-placement
+//
+// Positive lines count forward from the start of the explicit grid: grid-column-start: 1 maps to 0.
+// Negative lines count backward from the *end* of the explicit grid: grid-column-start: -1 maps to
+// the last line (explicitTrackCount). The mapping is a single linear formula that stays correct as
+// a negative line counts past the start edge into the leading implicit grid, producing a negative
+// index. For example, with 3 explicit columns (lines 0..3):
+//     -1 -> 3 (last line), -4 -> 0 (first line), -5 -> -1, -6 -> -2 (two lines before the start).
+// A negative index is not a valid matrix position on its own; GridFormattingContext computes the
+// most-negative line across all items and shifts every line forward by that magnitude (the
+// negative-line offset) so, e.g., -2 above maps to matrix column 0. See GridPosition::create().
+static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
 {
     ASSERT(position.isExplicit());
     auto line = position.explicitPosition();
     // A value of zero makes the declaration invalid.
     ASSERT(line);
-    return line > 0 ? line - 1 : line;
+    return line > 0 ? line - 1 : static_cast<int>(explicitTrackCount) + 1 + line;
 }
 
-UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t negativeLineOffset)
+UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t negativeLineOffset)
 {
-    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end);
+    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount);
     if (!explicitRange) {
         // An axis with no explicit line is auto-positioned; carry the span forward for the
         // placement algorithm to resolve.
@@ -73,7 +83,7 @@ UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Styl
     return DefinitePosition { static_cast<size_t>(startLine), static_cast<size_t>(endLine) };
 }
 
-std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end)
+std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount)
 {
     // An axis is only definite when one of its edges references an explicit line. Anything
     // else (auto/auto, span/auto, auto/span) is auto-positioned and has no explicit line range.
@@ -83,20 +93,20 @@ std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(con
     int startLine = 0;
     int endLine = 0;
     if (start.isExplicit() && end.isExplicit()) {
-        startLine = explicitLineToIndex(start);
-        endLine = explicitLineToIndex(end);
+        startLine = explicitLineToIndex(start, explicitTrackCount);
+        endLine = explicitLineToIndex(end, explicitTrackCount);
     } else if (start.isExplicit() && end.isSpan()) {
-        startLine = explicitLineToIndex(start);
+        startLine = explicitLineToIndex(start, explicitTrackCount);
         endLine = startLine + end.spanPosition();
     } else if (start.isSpan() && end.isExplicit()) {
-        endLine = explicitLineToIndex(end);
+        endLine = explicitLineToIndex(end, explicitTrackCount);
         startLine = endLine - static_cast<int>(start.spanPosition());
     } else if (start.isExplicit() && end.isAuto()) {
-        startLine = explicitLineToIndex(start);
+        startLine = explicitLineToIndex(start, explicitTrackCount);
         endLine = startLine + 1;
     } else {
         ASSERT(start.isAuto() && end.isExplicit());
-        endLine = explicitLineToIndex(end);
+        endLine = explicitLineToIndex(end, explicitTrackCount);
         startLine = endLine - 1;
     }
 
@@ -111,17 +121,18 @@ size_t UnplacedGridItem::GridPosition::span() const
 }
 
 UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition columnStart, Style::GridPosition columnEnd,
-    Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t columnNegativeLineOffset, size_t rowNegativeLineOffset)
+    Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount,
+    size_t columnNegativeLineOffset, size_t rowNegativeLineOffset)
     : m_layoutBox(layoutBox)
-    , m_columnPosition(GridPosition::create(columnStart, columnEnd, columnNegativeLineOffset))
-    , m_rowPosition(GridPosition::create(rowStart, rowEnd, rowNegativeLineOffset))
+    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, columnNegativeLineOffset))
+    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, rowNegativeLineOffset))
 {
 }
 
 UnplacedGridItem::UnplacedGridItem(WTF::HashTableEmptyValueType)
     : m_layoutBox(WTF::HashTableEmptyValue)
-    , m_columnPosition(GridPosition::create(Style::ComputedStyle::initialGridItemColumnStart(), Style::ComputedStyle::initialGridItemColumnEnd(), 0))
-    , m_rowPosition(GridPosition::create(Style::ComputedStyle::initialGridItemRowStart(), Style::ComputedStyle::initialGridItemRowEnd(), 0))
+    , m_columnPosition(GridPosition::create(Style::ComputedStyle::initialGridItemColumnStart(), Style::ComputedStyle::initialGridItemColumnEnd(), 0, 0))
+    , m_rowPosition(GridPosition::create(Style::ComputedStyle::initialGridItemRowStart(), Style::ComputedStyle::initialGridItemRowEnd(), 0, 0))
 {
 }
 
