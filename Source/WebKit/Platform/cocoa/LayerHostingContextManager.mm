@@ -31,6 +31,11 @@
 #include <WebCore/IntRect.h>
 #include <wtf/MachSendRightAnnotated.h>
 
+#if USE(EXTENSIONKIT)
+#import <BrowserEngineKit/BELayerHierarchy.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerHostingContextManager);

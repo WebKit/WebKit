@@ -39,6 +39,11 @@
 #import <WebCore/LocalSampleBufferDisplayLayer.h>
 #import <wtf/TZoneMallocInlines.h>
 
+#if USE(EXTENSIONKIT)
+#import <BrowserEngineKit/BELayerHierarchy.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
