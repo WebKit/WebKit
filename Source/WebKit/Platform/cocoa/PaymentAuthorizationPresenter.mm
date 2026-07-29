@@ -316,11 +316,11 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
 #if HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
     [paymentMethodUpdate setInstallmentGroupIdentifier:update->installmentGroupIdentifier.createNSString().get()];
 #endif // HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
-    [protect(platformDelegate()) completePaymentMethodSelection:paymentMethodUpdate.get()];
 #if HAVE(PASSKIT_DEFERRED_PAYMENTS)
     if (auto& deferredPaymentRequest = update->newDeferredPaymentRequest)
         [paymentMethodUpdate setDeferredPaymentRequest:platformDeferredPaymentRequest(WTF::move(*deferredPaymentRequest)).get()];
 #endif
+    [protect(platformDelegate()) completePaymentMethodSelection:paymentMethodUpdate.get()];
 }
 
 void PaymentAuthorizationPresenter::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
