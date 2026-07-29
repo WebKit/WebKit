@@ -132,7 +132,6 @@ InheritedRareData::InheritedRareData()
     , autoRevealsWhenFound(false)
     , insideDefaultButton(false)
     , insideSubmitButton(false)
-    , evaluationTimeZoomEnabled(true)
 #if HAVE(CORE_MATERIAL)
     , usedAppleVisualEffectForSubtree(static_cast<unsigned>(AppleVisualEffect::None))
 #endif
@@ -239,7 +238,6 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , autoRevealsWhenFound(o.autoRevealsWhenFound)
     , insideDefaultButton(o.insideDefaultButton)
     , insideSubmitButton(o.insideSubmitButton)
-    , evaluationTimeZoomEnabled(o.evaluationTimeZoomEnabled)
 #if HAVE(CORE_MATERIAL)
     , usedAppleVisualEffectForSubtree(o.usedAppleVisualEffectForSubtree)
 #endif
@@ -356,7 +354,6 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && listStyleImage == o.listStyleImage
         && listStyleType == o.listStyleType
         && blockEllipsis == o.blockEllipsis
-        && evaluationTimeZoomEnabled == o.evaluationTimeZoomEnabled
         && mathDepth == o.mathDepth;
 }
 
@@ -507,8 +504,6 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
 
     LOG_IF_DIFFERENT(listStyleType);
     LOG_IF_DIFFERENT(blockEllipsis);
-
-    LOG_IF_DIFFERENT(evaluationTimeZoomEnabled);
 
     LOG_IF_DIFFERENT(mathDepth);
 }

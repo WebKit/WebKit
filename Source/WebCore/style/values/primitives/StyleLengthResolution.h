@@ -46,7 +46,7 @@ class ComputedStyle;
 
 // FIXME: These functions have odd names and invariants and could use improvements.
 
-// NOTE: `computeUnzoomedNonCalcLengthDouble` has the following restrictions:
+// NOTE: `computeNonCalcLengthDouble` has the following restrictions:
 //
 // It can never be called with the following LengthUnits:
 //    Lh, Rlh, Cqw, Cqh, Cqi, Cqb, Cqmin, Cqmax (line height, and container-percentage units)
@@ -56,7 +56,7 @@ class ComputedStyle;
 //
 // If `RenderView` is nullptr, the following LengthUnits will all cause a return value of zero:
 //    Vw, Vh, Vmin, Vmax, Vb, Vi, Svw, Svh, Svmin, Svmax, Svb, Svi, Lvw, Lvh, Lvmin, Lvmax, Lvb, Lvi, Dvw, Dvh, Dvmin, Dvmax, Dvb, Dvi (viewport-percentage units)
-double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade* fontCascadeForUnit = nullptr, CSS::RangeZoomOptions = CSS::RangeZoomOptions::Default, const RenderView* = nullptr);
+double computeNonCalcLengthDouble(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade& fontCascadeForUnit, const RenderView*);
 double computeNonCalcLengthDouble(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 double computeCanonicalNonCalcLengthDouble(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
@@ -67,6 +67,8 @@ bool equalForLengthResolution(const Style::ComputedStyle&, const Style::Computed
 
 double emToPxDouble(double value, const CSSToLengthConversionData&);
 double emToPxDouble(double value, const Style::ComputedStyle&);
+double emToPxDoubleZoomed(double value, const CSSToLengthConversionData&);
+double emToPxDoubleZoomed(double value, const Style::ComputedStyle&);
 
 template<typename T> inline T emToPx(double value, const CSSToLengthConversionData& conversionData)
 {
@@ -83,6 +85,23 @@ template<typename T> inline T emToPx(double value, const Style::ComputedStyle& s
         return static_cast<T>(emToPxDouble(value, style));
     else if constexpr (std::integral<T>)
         return roundForImpreciseConversion<T>(emToPxDouble(value, style));
+}
+
+template<typename T> inline T emToPxZoomed(double value, const CSSToLengthConversionData& conversionData)
+{
+    if constexpr (std::floating_point<T>)
+        return static_cast<T>(emToPxDoubleZoomed(value, conversionData));
+    else if constexpr (std::integral<T>)
+        return roundForImpreciseConversion<T>(emToPxDoubleZoomed(value, conversionData));
+}
+
+template<typename T> inline T emToPxZoomed(double value, const Style::ComputedStyle& style)
+{
+    // For `em`, we only need the element's style, so we can overload this to take just a `ComputedStyle`.
+    if constexpr (std::floating_point<T>)
+        return static_cast<T>(emToPxDoubleZoomed(value, style));
+    else if constexpr (std::integral<T>)
+        return roundForImpreciseConversion<T>(emToPxDoubleZoomed(value, style));
 }
 
 } // namespace Style

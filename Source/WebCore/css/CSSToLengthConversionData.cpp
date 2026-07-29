@@ -63,14 +63,12 @@ CSSToLengthConversionData::CSSToLengthConversionData(const Style::ComputedStyle&
 {
 }
 
-CSSToLengthConversionData::CSSToLengthConversionData(const Style::ComputedStyle& style, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView* renderView, const Element* elementForContainerUnitResolution, CSS::RangeZoomOptions rangeZoomOptions)
+CSSToLengthConversionData::CSSToLengthConversionData(const Style::ComputedStyle& style, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView* renderView, const Element* elementForContainerUnitResolution)
     : m_style(&style)
     , m_rootStyle(rootStyle)
     , m_parentStyle(parentStyle)
     , m_renderView(renderView)
     , m_elementForContainerUnitResolution(elementForContainerUnitResolution)
-    , m_zoom(1.f)
-    , m_rangeZoomOption(rangeZoomOptions)
 {
 }
 
@@ -90,7 +88,8 @@ std::optional<CSSToLengthConversionData> CSSToLengthConversionData::tryCreateFor
         elementRenderer->style(),
         documentElement->renderer() ? &documentElement->renderer()->style() : nullptr,
         elementParentRenderer ? &elementParentRenderer->style() : nullptr,
-        document->renderView()
+        document->renderView(),
+        nullptr
     };
 }
 
@@ -111,12 +110,6 @@ const FontCascade& CSSToLengthConversionData::fontCascadeForFontUnits() const
     }
     ASSERT(style());
     return style()->fontCascade();
-}
-
-
-float CSSToLengthConversionData::zoom() const
-{
-    return m_zoom.value_or(m_style ? m_style->usedZoom() : 1.f);
 }
 
 FloatSize CSSToLengthConversionData::defaultViewportFactor() const
@@ -167,12 +160,6 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
 {
     if (m_styleBuilderState)
         m_styleBuilderState->setIsContainerDependent();
-}
-
-bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
-{
-    ASSERT(m_style);
-    return m_style->evaluationTimeZoomEnabled();
 }
 
 } // namespace WebCore

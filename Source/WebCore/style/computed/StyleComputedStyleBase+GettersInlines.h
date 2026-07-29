@@ -302,11 +302,6 @@ inline const CustomPropertyData& ComputedStyleBase::nonInheritedCustomProperties
 
 // MARK: - Zoom
 
-inline bool ComputedStyleBase::evaluationTimeZoomEnabled() const
-{
-    return m_inheritedRareData->evaluationTimeZoomEnabled;
-}
-
 inline bool ComputedStyleBase::useSVGZoomRulesForLength() const
 {
     return m_nonInheritedData->rareData->useSVGZoomRulesForLength;
@@ -331,10 +326,7 @@ inline ZoomFactor ComputedStyleBase::usedZoomForLength() const
     if (useSVGZoomRulesForLength())
         return unzoomed;
 
-    if (evaluationTimeZoomEnabled())
-        return ZoomFactor(usedZoom());
-
-    return unzoomed;
+    return ZoomFactor(usedZoom());
 }
 
 // MARK: - Fonts

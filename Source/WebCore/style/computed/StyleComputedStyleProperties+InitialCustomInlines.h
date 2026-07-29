@@ -95,36 +95,6 @@
 namespace WebCore {
 namespace Style {
 
-constexpr LineWidth ComputedStyleProperties::initialBorderBottomWidth()
-{
-    return LineWidth { 3.0f };
-}
-
-constexpr LineWidth ComputedStyleProperties::initialBorderLeftWidth()
-{
-    return LineWidth { 3.0f };
-}
-
-constexpr LineWidth ComputedStyleProperties::initialBorderRightWidth()
-{
-    return LineWidth { 3.0f };
-}
-
-constexpr LineWidth ComputedStyleProperties::initialBorderTopWidth()
-{
-    return LineWidth { 3.0f };
-}
-
-constexpr LineWidth ComputedStyleProperties::initialColumnRuleWidth()
-{
-    return LineWidth { 3.0f };
-}
-
-constexpr LineWidth ComputedStyleProperties::initialOutlineWidth()
-{
-    return LineWidth { 3.0f };
-}
-
 constexpr WebkitLineBoxContain ComputedStyleProperties::initialLineBoxContain()
 {
     return { WebkitLineBoxContainValue::Block, WebkitLineBoxContainValue::Inline, WebkitLineBoxContainValue::Replaced };

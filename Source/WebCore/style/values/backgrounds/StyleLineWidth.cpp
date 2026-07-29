@@ -73,35 +73,17 @@ LineWidth::Length LineWidth::snapLengthAsBorderWidth(LineWidth::Length length, f
 
 auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSValue& value) -> LineWidth
 {
-    if (!state.document().settings().evaluationTimeZoomEnabled()) {
-        if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-            switch (keywordValue->valueID()) {
-            case CSSValueThin:
-                return LineWidth::snapLengthAsBorderWidth(1.0f * state.style().usedZoom(), state.style().deviceScaleFactor());
-            case CSSValueMedium:
-                return LineWidth::snapLengthAsBorderWidth(3.0f * state.style().usedZoom(), state.style().deviceScaleFactor());
-            case CSSValueThick:
-                return LineWidth::snapLengthAsBorderWidth(5.0f * state.style().usedZoom(), state.style().deviceScaleFactor());
-            default:
-                state.setCurrentPropertyInvalidAtComputedValueTime();
-                return LineWidth::Length { 3.0f };
-            }
-        }
-
-        return LineWidth::snapLengthAsBorderWidth(toStyleFromCSSValue<LineWidth::Length>(state, value), state.style().deviceScaleFactor());
-    }
-
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         case CSSValueThin:
-            return LineWidth { 1.0f };
+            return CSS::Keyword::Thin { };
         case CSSValueMedium:
-            return LineWidth { 3.0f };
+            return CSS::Keyword::Medium { };
         case CSSValueThick:
-            return LineWidth { 5.0f };
+            return CSS::Keyword::Thick { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return LineWidth { 3.0f };
+            return CSS::Keyword::Medium { };
         }
     }
 

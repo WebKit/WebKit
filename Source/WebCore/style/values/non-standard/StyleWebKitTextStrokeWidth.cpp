@@ -41,8 +41,9 @@ auto CSSValueConversion<WebkitTextStrokeWidth>::operator()(BuilderState& state, 
     using namespace CSS::Literals;
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        // FIXME: This should probably use the unzoomed Style::emToPx conversion. Like this, zoom is being applied twice. Once now, once at use time.
         auto convertFromEms = [&](auto ems) -> WebkitTextStrokeWidth::Length {
-            return emToPx<float>(ems, state.renderStyle());
+            return emToPxZoomed<float>(ems, state.renderStyle());
         };
 
         switch (keywordValue->valueID()) {

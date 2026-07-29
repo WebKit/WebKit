@@ -55,11 +55,8 @@ auto CSSValueConversion<Perspective>::operator()(BuilderState& state, const CSSV
     if (primitiveValue->isLength())
         return toStyleFromCSSValue<Perspective::Length>(state, *primitiveValue);
 
-    if (primitiveValue->isNumber()) {
-        if (!state.cssToLengthConversionData().evaluationTimeZoomEnabled())
-            return Perspective::Length { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value * state.cssToLengthConversionData().zoom() };
+    if (primitiveValue->isNumber())
         return Perspective::Length { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value };
-    }
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
     return CSS::Keyword::None { };

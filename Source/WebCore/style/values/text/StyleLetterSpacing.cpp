@@ -46,16 +46,7 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
     if (!primitiveValue)
         return CSS::Keyword::Normal { };
 
-    auto conversionData = [](BuilderState& state) -> CSSToLengthConversionData {
-        if (state.useSVGZoomRulesForLength())
-            return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
-        auto zoom = state.zoomWithTextZoomFactor();
-        if (zoom == state.cssToLengthConversionData().zoom())
-            return state.cssToLengthConversionData();
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, CSS::RangeZoomOptions::Unzoomed);
-    };
-
-    return toStyleFromCSSValue<LetterSpacing::Wrapped>(conversionData(state), *primitiveValue);
+    return toStyleFromCSSValue<LetterSpacing::Wrapped>(state, *primitiveValue);
 }
 
 } // namespace Style

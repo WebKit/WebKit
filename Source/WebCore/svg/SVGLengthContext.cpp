@@ -199,39 +199,7 @@ float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit u
         return 0.0f;
     }
 
-    auto resolvedValue = clampTo<float>(Style::computeNonCalcLengthDouble(inputValue, unit, *conversionData));
-
-    // "Font dependent" or "Root font dependent" resolve against computed font sizes, which may include
-    // CSS zoom scaling. However, lengths within the SVG subtree shall be resolved
-    // excluding zoom, because the (anonymous) RenderSVGViewportContainer applies zooming
-    // for the whole SVG subtree as an affine transform. Therefore any font-relative length
-    // within the SVG subtree needs to exclude the 'zoom' information.
-    if (CSS::isFontOrRootFontRelativeLength(unit))
-        resolvedValue = removeZoomFromFontOrRootFontRelativeLength(resolvedValue, unit);
-
-    return resolvedValue;
-}
-
-float SVGLengthContext::removeZoomFromFontOrRootFontRelativeLength(float value, CSS::LengthUnit unit) const
-{
-    auto* svgElement = m_context->isOutermostSVGSVGElement()
-        ? downcast<SVGSVGElement>(m_context.get())
-        : dynamicDowncast<SVGSVGElement>(m_context->viewportElement());
-
-    if (!svgElement || !svgElement->renderer())
-        return value;
-
-    float usedZoom = 1.0f;
-
-    if (CSS::isFontRelativeLength(unit))
-        usedZoom = svgElement->renderer()->style().usedZoom();
-    else if (CSS::isRootFontRelativeLength(unit)) {
-        auto* rootElement = svgElement->document().documentElement();
-        if (rootElement && rootElement->renderer())
-            usedZoom = rootElement->renderer()->style().usedZoom();
-    }
-
-    return (usedZoom != 1.0f) ? value / usedZoom : value;
+    return clampTo<float>(Style::computeNonCalcLengthDouble(inputValue, unit, *conversionData));
 }
 
 ExceptionOr<float> SVGLengthContext::resolveValueToUserUnits(float value, const CSS::LengthPercentageUnit& targetUnit, SVGLengthMode lengthMode) const

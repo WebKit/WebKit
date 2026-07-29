@@ -3456,8 +3456,7 @@ LayoutSize RenderBlock::intrinsicSize() const
 
     // CSS UI 4: widgets are replaced elements, but WebKit has them as RenderBlock with appearance (not RenderReplaced).
     // Provide intrinsic size from the theme so they participate in replaced-element sizing paths.
-    auto zoom = style().evaluationTimeZoomEnabled() ? 1.0f : style().usedZoom();
-    auto controlSize = theme().controlSize(style().usedAppearance(), style().fontCascade(), { Style::PreferredSize { CSS::Keyword::Auto { } }, Style::PreferredSize { CSS::Keyword::Auto { } } }, zoom);
+    auto controlSize = theme().controlSize(style().usedAppearance(), style().fontCascade(), { Style::PreferredSize { CSS::Keyword::Auto { } }, Style::PreferredSize { CSS::Keyword::Auto { } } }, 1.0f);
 
     auto width = LayoutUnit { };
     if (auto fixedWidth = controlSize.width().tryFixed())

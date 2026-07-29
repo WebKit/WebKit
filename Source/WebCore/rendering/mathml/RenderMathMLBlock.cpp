@@ -118,11 +118,8 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const Style::Compute
     // Zoom for logical units is accounted for either in the font info or referenceValue.
     case MathMLElement::LengthType::Em:
         return LayoutUnit(length.value * style.fontCascade().size());
-    case MathMLElement::LengthType::Ex: {
-        // When evaluation-time zoom is enabled, font metrics already include the zoom factor.
-        auto zoomFactor = style.fontDescription().evaluationTimeZoomEnabled() ? 1.0f : style.usedZoom();
-        return LayoutUnit(length.value * style.metricsOfPrimaryFont().xHeight().value_or(0) * zoomFactor);
-    }
+    case MathMLElement::LengthType::Ex:
+        return LayoutUnit(length.value * style.metricsOfPrimaryFont().xHeight().value_or(0));
     case MathMLElement::LengthType::MathUnit:
         return LayoutUnit(length.value * style.fontCascade().size() / 18);
     case MathMLElement::LengthType::Percentage:

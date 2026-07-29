@@ -11594,7 +11594,6 @@ const Style::ComputedStyle& Document::initialStyle() const
         m_cachedInitialStyle = Style::ComputedStyle::createPtr();
 
         m_cachedInitialStyle->setZoom(zoom);
-        m_cachedInitialStyle->setEvaluationTimeZoomEnabled(settings().evaluationTimeZoomEnabled());
 
         auto initialFontFamily = FontFamily { standardFamily, FontFamilyKind::Generic };
         auto initialSpecifiedFontSize = Style::fontSizeForKeyword(CSSValueMedium, false, settingsValues(), inQuirksMode());
@@ -11608,7 +11607,6 @@ const Style::ComputedStyle& Document::initialStyle() const
         fontDescription.setSpecifiedSize(initialSpecifiedFontSize);
         fontDescription.setComputedSize(initialComputedFontSize, zoomForFontDescription);
         fontDescription.setShouldAllowUserInstalledFonts(allowUserInstalledFonts);
-        fontDescription.setEvaluationTimeZoomEnabled(settings().evaluationTimeZoomEnabled());
 
         m_cachedInitialStyle->setFontDescription(WTF::move(fontDescription));
     }

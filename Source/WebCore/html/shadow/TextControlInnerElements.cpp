@@ -138,7 +138,9 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
         newStyle->setTextOverflow(TextOverflow::Clip);
         newStyle->setOverflowX(Overflow::Hidden);
         newStyle->setOverflowY(Overflow::Hidden);
-        newStyle->setFlexBasis(Style::FlexBasis::Fixed { static_cast<float>(Style::emToPx<int>(1, *newStyle)) });
+
+        // FIXME: This should probably use the unzoomed Style::emToPx conversion. Like this, zoom is being applied twice. Once now, once at use time.
+        newStyle->setFlexBasis(Style::FlexBasis::Fixed { static_cast<float>(Style::emToPxZoomed<int>(1, *newStyle)) });
     }
 
     return Style::UnadjustedStyle { WTF::move(newStyle) };

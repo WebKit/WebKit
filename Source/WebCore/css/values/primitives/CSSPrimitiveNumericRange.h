@@ -46,17 +46,6 @@ enum class RangeParseTimeBehavior {
     Ignore,
 };
 
-// Options to indicate how the primitive should consider its value with regards to zoom.
-// NOTE: This option is only meaningful for Style::Length`.
-// FIXME: These options are temporary while `zoom` is moving from style building time to use time.
-enum class RangeZoomOptions : bool {
-    // `Default` indicates the value held in the primitive has had zoom applied to it.
-    Default,
-
-    // `Unzoomed` indicates the value held in the primitive has NOT had zoom applied to it.
-    Unzoomed
-};
-
 // Representation for `CSS bracketed range notation`. Represents a closed range between (and including) `min` and `max`.
 // https://drafts.csswg.org/css-values-4/#numeric-ranges
 struct Range {

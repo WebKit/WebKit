@@ -105,17 +105,10 @@ public:
     static void applyInitialZoom(BuilderState&);
     static void applyValueZoom(BuilderState&, CSSValue&);
 
-    // Custom handling of initial setting only.
-    static void applyInitialBorderTopWidth(BuilderState&);
-    static void applyInitialBorderRightWidth(BuilderState&);
-    static void applyInitialBorderBottomWidth(BuilderState&);
-    static void applyInitialBorderLeftWidth(BuilderState&);
-    static void applyInitialOutlineWidth(BuilderState&);
-    static void applyInitialColumnRuleWidth(BuilderState&);
     static void applyInitialColor(BuilderState&);
+    static void applyValueColor(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
-    static void applyValueColor(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
 #if ENABLE(TEXT_AUTOSIZING)
@@ -458,54 +451,6 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
             builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, builderState.document()));
     }
-}
-
-inline void BuilderCustom::applyInitialBorderTopWidth(BuilderState& builderState)
-{
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
-        builderState.style().setBorderTopWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
-    else
-        builderState.style().setBorderTopWidth(ComputedStyle::initialBorderTopWidth());
-}
-
-inline void BuilderCustom::applyInitialBorderRightWidth(BuilderState& builderState)
-{
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
-        builderState.style().setBorderRightWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
-    else
-        builderState.style().setBorderRightWidth(ComputedStyle::initialBorderRightWidth());
-}
-
-inline void BuilderCustom::applyInitialBorderBottomWidth(BuilderState& builderState)
-{
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
-        builderState.style().setBorderBottomWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
-    else
-        builderState.style().setBorderBottomWidth(ComputedStyle::initialBorderBottomWidth());
-}
-
-inline void BuilderCustom::applyInitialBorderLeftWidth(BuilderState& builderState)
-{
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
-        builderState.style().setBorderLeftWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
-    else
-        builderState.style().setBorderLeftWidth(ComputedStyle::initialBorderLeftWidth());
-}
-
-inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
-{
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
-        builderState.style().setOutlineWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
-    else
-        builderState.style().setOutlineWidth(ComputedStyle::initialOutlineWidth());
-}
-
-inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
-{
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
-        builderState.style().setColumnRuleWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
-    else
-        builderState.style().setColumnRuleWidth(ComputedStyle::initialColumnRuleWidth());
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

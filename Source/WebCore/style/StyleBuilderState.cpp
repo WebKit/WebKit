@@ -99,12 +99,9 @@ const CSSRegisteredCustomProperty* BuilderState::registeredProperty(const AtomSt
 
 float BuilderState::zoomWithTextZoomFactor()
 {
-    if (auto* frame = document().frame()) {
-        float textZoomFactor = style().textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
-        float usedZoom = evaluationTimeZoomEnabled(*this) ? 1.0f : style().usedZoom();
-        return usedZoom * textZoomFactor;
-    }
-    return cssToLengthConversionData().zoom();
+    if (auto* frame = document().frame())
+        return style().textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
+    return 1.0f;
 }
 
 // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead

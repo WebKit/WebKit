@@ -55,21 +55,12 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
     auto conversionData = state
         .cssToLengthConversionData()
-        .copyForLineHeight(state.zoomWithTextZoomFactor());
+        .copyForLineHeight();
 
-    // If EvaluationTimeZoom is not enabled then we will scale the lengths in the
-    // calc values when we create the CalculationValue below by using the zoom from conversionData.
-    // To avoid double zooming when we evaluate the calc expression we need to make sure
-    // we have a ZoomFactor of 1.0. Otherwise, we defer to whatever is on the conversionData
-    // since EvaluationTimeZoom will set the appropriate value.
-    auto zoomFactor = [&] {
-        if (!state.style().evaluationTimeZoomEnabled())
-            return Style::ZoomFactor { 1.0f };
-        return Style::ZoomFactor { conversionData.zoom() };
-    };
+    auto zoomFactor = Style::ZoomFactor { state.zoomWithTextZoomFactor() };
 
     auto percentageBasis = [&] {
-        return state.style().fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption());
+        return state.style().fontDescription().unzoomedComputedSize();
     };
 
     using StyleSpecified = typename LineHeight::Specified;
@@ -95,11 +86,11 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
         // FIXME: percentage should not be restricted to an integer here.
         auto percentageValue = static_cast<int>(percentage.value);
 
-        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>((percentageValue * percentageBasis() * zoomFactor().value) / 100.0) };
+        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>((percentageValue * percentageBasis() * zoomFactor.value) / 100.0) };
     };
 
     auto handleCalc = [&](const StyleSpecified::Calc& calc) {
-        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>(calc.evaluate(percentageBasis(), zoomFactor()) * multiplier) };
+        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>(calc.evaluate(percentageBasis(), zoomFactor) * multiplier) };
     };
 
     auto handleNumber = [&](const StyleNumber& number) {

@@ -48,7 +48,6 @@ public:
 
     float computedSize() const { return m_computedSize; }
     float usedZoomFactor() const { return m_usedZoomFactor; }
-    float computedSizeForRangeZoomOption(CSS::RangeZoomOptions option) const { return (evaluationTimeZoomEnabled() && option == CSS::RangeZoomOptions::Unzoomed) ? unzoomedComputedSize() : computedSize(); }
     float unzoomedComputedSize() const { return m_computedSize / m_usedZoomFactor; }
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
     float NODELETE adjustedSizeForFontFace(float) const;
@@ -62,7 +61,6 @@ public:
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
     const AtomString& computedLocale() const { return m_locale; } // This is what you should be using for things like text shaping and font fallback
     const AtomString& specifiedLocale() const { return m_specifiedLocale; } // This is what you should be using for web-exposed things like -webkit-locale
-    bool evaluationTimeZoomEnabled() const { return m_evaluationTimeZoomEnabled; }
 
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
@@ -152,8 +150,6 @@ public:
     void setShouldDisableLigaturesForSpacing(bool shouldDisableLigaturesForSpacing) { m_shouldDisableLigaturesForSpacing = shouldDisableLigaturesForSpacing; }
     void setFontPalette(const FontPalette& fontPalette) { m_fontPalette = fontPalette; }
     void setFontSizeAdjust(FontSizeAdjust fontSizeAdjust) { m_sizeAdjust = fontSizeAdjust; }
-    void setEvaluationTimeZoomEnabled(bool evaluationTimeZoomEnabled) { m_evaluationTimeZoomEnabled = evaluationTimeZoomEnabled; }
-
 
     static AtomString platformResolveGenericFamily(UScriptCode, const AtomString& locale, const AtomString& familyName);
 
@@ -204,7 +200,6 @@ private:
     PREFERRED_TYPE(FontOpticalSizing) unsigned m_opticalSizing : 1;
     PREFERRED_TYPE(AllowUserInstalledFonts) unsigned m_shouldAllowUserInstalledFonts : 1; // If this description is allowed to match a user-installed font
     PREFERRED_TYPE(bool) unsigned m_shouldDisableLigaturesForSpacing : 1; // If letter-spacing is nonzero, we need to disable ligatures, which affects font preparation
-    PREFERRED_TYPE(bool) unsigned m_evaluationTimeZoomEnabled : 1;
 };
 
 FontStyleAxis variationStyleAxis(const FontDescription&, const FontSelectionSpecifiedCapabilities& faceCapabilities);

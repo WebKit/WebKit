@@ -40,48 +40,12 @@ namespace Style {
 // Out of line to avoid additional includes.
 double canonicalizeLength(double, CSS::LengthUnit, NoConversionDataRequiredToken);
 double canonicalizeLength(double, CSS::LengthUnit, const CSSToLengthConversionData&);
-float NODELETE adjustForZoom(float, const ComputedStyle&);
-bool NODELETE evaluationTimeZoomEnabled(const ComputedStyle&);
-bool NODELETE evaluationTimeZoomEnabled(const BuilderState&);
 
-// MARK: Conversion Data specialization
+// MARK: Conversion Data Access
 
-template<typename T> struct ConversionDataSpecializer {
-    CSSToLengthConversionData operator()(const BuilderState& state)
-    {
-        return state.cssToLengthConversionData();
-    }
-};
-
-template<auto R, typename V> struct ConversionDataSpecializer<Length<R, V>> {
-    CSSToLengthConversionData operator()(const BuilderState& state)
-    {
-        if (!evaluationTimeZoomEnabled(state)) [[unlikely]] {
-            return state.useSVGZoomRulesForLength()
-                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-                : state.cssToLengthConversionData();
-        }
-
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, CSS::RangeZoomOptions::Unzoomed);
-    }
-};
-
-template<auto R, typename V> struct ConversionDataSpecializer<LengthPercentage<R, V>> {
-    CSSToLengthConversionData operator()(const BuilderState& state)
-    {
-        if (!evaluationTimeZoomEnabled(state)) [[unlikely]] {
-            return state.useSVGZoomRulesForLength()
-                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-                : state.cssToLengthConversionData();
-        }
-
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, CSS::RangeZoomOptions::Unzoomed);
-    }
-};
-
-template<typename T> CSSToLengthConversionData conversionData(const BuilderState& state)
+template<typename> CSSToLengthConversionData conversionData(const BuilderState& state)
 {
-    return ConversionDataSpecializer<T>{}(state);
+    return state.cssToLengthConversionData();
 }
 
 // MARK: - Type maps
@@ -180,13 +144,10 @@ template<auto R, typename V, typename... Rest> LengthPercentage<R, V> canonicali
 
 // MARK: - Conversion from "Style to "CSS"
 
-// Length requires a specialized implementation due to zoom adjustment.
+// Length requires a specialized implementation due to unresolvedValue() usage.
 template<auto R, typename V> struct ToCSS<Length<R, V>> {
-    auto operator()(const Length<R, V>& value, const ComputedStyle& style) -> CSS::Length<R, V>
+    auto operator()(const Length<R, V>& value, const ComputedStyle&) -> CSS::Length<R, V>
     {
-        if (!evaluationTimeZoomEnabled(style)) [[unlikely]]
-            return CSS::LengthRaw<R, V> { value.unit, adjustForZoom(value.unresolvedValue(), style) };
-
         return CSS::LengthRaw<R, V> { value.unit, value.unresolvedValue() };
     }
 };
@@ -228,9 +189,6 @@ template<auto R, typename V> struct ToCSS<LengthPercentage<R, V>> {
     {
         return WTF::switchOn(value,
             [&](const typename LengthPercentage<R, V>::Dimension& length) -> CSS::LengthPercentage<R, V> {
-                if (!evaluationTimeZoomEnabled(style)) [[unlikely]]
-                    return typename CSS::LengthPercentage<R, V>::Raw { length.unit, adjustForZoom(length.unresolvedValue(), style) };
-
                 return typename CSS::LengthPercentage<R, V>::Raw { length.unit, length.unresolvedValue() };
             },
             [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> CSS::LengthPercentage<R, V> {

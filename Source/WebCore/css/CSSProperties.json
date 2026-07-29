@@ -2998,11 +2998,8 @@
                     "resolver": "bottom"
                 },
                 "accepts-quirky-length": true,
-                "style-builder-custom": "Initial",
                 "style-extractor-custom": true,
                 "disables-native-appearance": true,
-                "computed-style-initial-constexpr": true,
-                "computed-style-initial-custom": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.widths()"],
                 "computed-style-storage-container": "physical-group",
                 "computed-style-storage-kind": "reference",
@@ -3560,11 +3557,8 @@
                     "resolver": "left"
                 },
                 "accepts-quirky-length": true,
-                "style-builder-custom": "Initial",
                 "style-extractor-custom": true,
                 "disables-native-appearance": true,
-                "computed-style-initial-constexpr": true,
-                "computed-style-initial-custom": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.widths()"],
                 "computed-style-storage-container": "physical-group",
                 "computed-style-storage-kind": "reference",
@@ -3681,11 +3675,8 @@
                     "resolver": "right"
                 },
                 "accepts-quirky-length": true,
-                "style-builder-custom": "Initial",
                 "style-extractor-custom": true,
                 "disables-native-appearance": true,
-                "computed-style-initial-constexpr": true,
-                "computed-style-initial-custom": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.widths()"],
                 "computed-style-storage-container": "physical-group",
                 "computed-style-storage-kind": "reference",
@@ -3907,11 +3898,8 @@
                     "resolver": "top"
                 },
                 "accepts-quirky-length": true,
-                "style-builder-custom": "Initial",
                 "style-extractor-custom": true,
                 "disables-native-appearance": true,
-                "computed-style-initial-constexpr": true,
-                "computed-style-initial-custom": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "surroundData", "border.widths()"],
                 "computed-style-storage-container": "physical-group",
                 "computed-style-storage-kind": "reference",
@@ -7287,9 +7275,6 @@
                 "thick"
             ],
             "codegen-properties": {
-                "style-builder-custom": "Initial",
-                "computed-style-initial-constexpr": true,
-                "computed-style-initial-custom": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "backgroundData", "outline"],
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "reference",
@@ -10205,9 +10190,6 @@
                 "aliases": [
                     "-webkit-column-rule-width"
                 ],
-                "style-builder-custom": "Initial",
-                "computed-style-initial-constexpr": true,
-                "computed-style-initial-custom": true,
                 "computed-style-storage-name": "width",
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData", "multiCol", "columnRule"],
                 "computed-style-storage-container": "struct",

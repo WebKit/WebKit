@@ -50,12 +50,8 @@ namespace Style {
 
 static double NODELETE adjustValueForPageZoom(double dimension, const CSSToLengthConversionData& conversionData)
 {
-    if (conversionData.rangeZoomOption() != CSS::RangeZoomOptions::Unzoomed)
-        return dimension;
-
-    auto* style = conversionData.style();
     auto* renderView = conversionData.renderView();
-    if (!renderView || !style || !evaluationTimeZoomEnabled(*style))
+    if (!renderView)
         return dimension;
 
     return dimension / renderView->pageZoomFactor();
@@ -85,25 +81,17 @@ static double NODELETE lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis
     return lengthOfViewportPhysicalAxisForLogicalAxis(logicalAxis, size, rootElement->renderStyle());
 }
 
-// Raw font metrics include the usedZoomFactor. In evaluation-time zoom mode with the Unzoomed
-// range option, normalize by usedZoomFactor so that font-relative units (ex, cap, ch, ic) scale
-// consistently with em.
-static double unzoomFontMetricIfNeeded(double metric, const FontDescription& fontDescription, CSS::RangeZoomOptions rangeZoomOption)
+// Raw font metrics include the usedZoomFactor and must be normalized.
+static double unzoomFontMetricIfNeeded(double metric, const FontDescription& fontDescription)
 {
-    if (fontDescription.evaluationTimeZoomEnabled() && rangeZoomOption == CSS::RangeZoomOptions::Unzoomed) {
-        if (auto usedZoomFactor = fontDescription.usedZoomFactor(); usedZoomFactor > 0)
-            return metric / usedZoomFactor;
-    }
+    if (auto usedZoomFactor = fontDescription.usedZoomFactor(); usedZoomFactor > 0)
+        return metric / usedZoomFactor;
     return metric;
 }
 
-double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade* fontCascadeForUnit, CSS::RangeZoomOptions rangeZoomOption, const RenderView* renderView)
+double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const RenderView* renderView)
 {
     using enum CSS::LengthUnit;
-
-    auto effectiveRangeZoomOption = (propertyToCompute == CSSPropertyFontSize)
-        ? CSS::RangeZoomOptions::Unzoomed
-        : rangeZoomOption;
 
     switch (lengthUnit) {
     case Px:
@@ -126,42 +114,37 @@ double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit lengthUn
     case Em:
     case QuirkyEm:
     case Rem: {
-        ASSERT(fontCascadeForUnit);
-        auto& fontDescription = fontCascadeForUnit->fontDescription();
-        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() :  fontDescription.computedSizeForRangeZoomOption(effectiveRangeZoomOption)) * value;
+        auto& fontDescription = fontCascadeForUnit.fontDescription();
+        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() :  fontDescription.unzoomedComputedSize()) * value;
     }
     case Ex:
     case Rex: {
-        ASSERT(fontCascadeForUnit);
-        auto& fontDescription = fontCascadeForUnit->fontDescription();
-        auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
+        auto& fontDescription = fontCascadeForUnit.fontDescription();
+        auto& fontMetrics = fontCascadeForUnit.metricsOfPrimaryFont();
         if (fontMetrics.xHeight())
-            return unzoomFontMetricIfNeeded(fontMetrics.xHeight().value(), fontDescription, effectiveRangeZoomOption) * value;
-        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSizeForRangeZoomOption(effectiveRangeZoomOption)) / 2.0 * value;
+            return unzoomFontMetricIfNeeded(fontMetrics.xHeight().value(), fontDescription) * value;
+        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.unzoomedComputedSize()) / 2.0 * value;
     }
     case Cap:
     case Rcap: {
-        ASSERT(fontCascadeForUnit);
-        auto& fontDescription = fontCascadeForUnit->fontDescription();
-        auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
+        auto& fontDescription = fontCascadeForUnit.fontDescription();
+        auto& fontMetrics = fontCascadeForUnit.metricsOfPrimaryFont();
         if (fontMetrics.capHeight())
-            return unzoomFontMetricIfNeeded(fontMetrics.capHeight().value(), fontDescription, effectiveRangeZoomOption) * value;
-        return unzoomFontMetricIfNeeded(fontMetrics.intAscent(), fontDescription, effectiveRangeZoomOption) * value;
+            return unzoomFontMetricIfNeeded(fontMetrics.capHeight().value(), fontDescription) * value;
+        return unzoomFontMetricIfNeeded(fontMetrics.intAscent(), fontDescription) * value;
     }
     case Ch:
     case Rch: {
-        ASSERT(fontCascadeForUnit);
-        auto& fontDescription = fontCascadeForUnit->fontDescription();
-        return unzoomFontMetricIfNeeded(fontCascadeForUnit->zeroWidth(), fontDescription, effectiveRangeZoomOption) * value;
+        auto& fontDescription = fontCascadeForUnit.fontDescription();
+        return unzoomFontMetricIfNeeded(fontCascadeForUnit.zeroWidth(), fontDescription) * value;
     }
     case Ic:
     case Ric: {
-        ASSERT(fontCascadeForUnit);
-        auto& fontDescription = fontCascadeForUnit->fontDescription();
-        auto ideogramWidth = fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth();
+        auto& fontDescription = fontCascadeForUnit.fontDescription();
+        auto ideogramWidth = fontCascadeForUnit.metricsOfPrimaryFont().ideogramWidth();
         if (!ideogramWidth)
-            return fontDescription.computedSizeForRangeZoomOption(effectiveRangeZoomOption) * value;
-        return unzoomFontMetricIfNeeded(ideogramWidth.value(), fontDescription, effectiveRangeZoomOption) * value;
+            return fontDescription.unzoomedComputedSize() * value;
+        return unzoomFontMetricIfNeeded(ideogramWidth.value(), fontDescription) * value;
     }
 
     // MARK: "viewport percentage" resolution
@@ -230,32 +213,16 @@ double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit lengthUn
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static double adjustZoomStateForFontRelativeUnitsIfNeeded(double value, const CSSToLengthConversionData& conversionData)
+static double applyTextZoom(double value, const CSSToLengthConversionData& conversionData)
 {
-    // Apply text zoom for font-relative units when evaluationTimeZoomEnabled with unzoomed range option.
-    // computedSizeForRangeZoomOption returns unzoomed font size when rangeZoomOption is Unzoomed,
-    // so we need to multiply by text zoom to get the correct final value.
-    // We explicitly use zoomWithTextZoomFactor() here instead of conversionData.zoom() because
-    // zoomWithTextZoomFactor() is guaranteed to return only the text zoom factor (not page zoom or other zoom types)
-    // when evaluationTimeZoomEnabled is true. This ensures font-relative units scale correctly with text zoom
-    // while remaining independent of other zoom mechanisms.
-    if (conversionData.evaluationTimeZoomEnabled() && conversionData.rangeZoomOption() == CSS::RangeZoomOptions::Unzoomed) {
-        if (CheckedPtr builderState = conversionData.styleBuilderState()) {
-            auto textZoom = builderState->zoomWithTextZoomFactor();
-            return value * textZoom;
-        }
-    }
+    if (CheckedPtr builderState = conversionData.styleBuilderState())
+        return value * builderState->zoomWithTextZoomFactor();
     return value;
 }
 
 double computeCanonicalNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
 {
-    // We are only interested in canonicalizing to `px`, not adjusting for zoom, which will be handled later. When computing font-size, zoom is not applied in the same way, so must be special cased here.
-    auto computedValue = computeNonCalcLengthDouble(value, lengthUnit, conversionData);
-    if (conversionData.computingFontSize() || (conversionData.evaluationTimeZoomEnabled() && conversionData.rangeZoomOption() == CSS::RangeZoomOptions::Unzoomed))
-        return computedValue;
-
-    return computedValue / conversionData.style()->usedZoom();
+    return computeNonCalcLengthDouble(value, lengthUnit, conversionData);
 }
 
 double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
@@ -323,8 +290,8 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     case Cap:
     case Ch:
     case Ic:
-        value = computeUnzoomedNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits(), conversionData.rangeZoomOption());
-        value = adjustZoomStateForFontRelativeUnitsIfNeeded(value, conversionData);
+        value = computeNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits(), nullptr);
+        value = applyTextZoom(value, conversionData);
         break;
 
     case Lh:
@@ -333,9 +300,9 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
         } else {
             auto* style = conversionData.style();
-            auto computedFontSize = style->fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption());
+            auto computedFontSize = style->fontDescription().unzoomedComputedSize();
             Style::LineHeightEvaluationContext context { computedFontSize, style->metricsOfPrimaryFont().lineSpacing() };
-            value *= Style::evaluate<float>(style->lineHeight(), context, Style::ZoomFactor { conversionData.zoom() });
+            value *= Style::evaluate<float>(style->lineHeight(), context, Style::ZoomFactor { 1.0f });
         }
         break;
 
@@ -346,8 +313,8 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     case Rem:
     case Rex:
     case Ric:
-        value = computeUnzoomedNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), conversionData.rootStyle() ? &conversionData.rootStyle()->fontCascade() : &conversionData.fontCascadeForFontUnits(), conversionData.rangeZoomOption());
-        value = adjustZoomStateForFontRelativeUnitsIfNeeded(value, conversionData);
+        value = computeNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits(), nullptr);
+        value = applyTextZoom(value, conversionData);
         break;
 
     case Rlh:
@@ -355,9 +322,9 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             if (conversionData.computingLineHeight() || conversionData.computingFontSize())
                 value *= Style::evaluate<float>(rootStyle->specifiedLineHeight(), Style::LineHeightEvaluationContext { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() }, rootStyle->usedZoomForLength());
             else {
-                auto computedFontSize = rootStyle->fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption());
+                auto computedFontSize = rootStyle->fontDescription().unzoomedComputedSize();
                 Style::LineHeightEvaluationContext context { computedFontSize, rootStyle->metricsOfPrimaryFont().lineSpacing() };
-                value *= Style::evaluate<float>(rootStyle->lineHeight(), context, Style::ZoomFactor { conversionData.zoom() });
+                value *= Style::evaluate<float>(rootStyle->lineHeight(), context, Style::ZoomFactor { 1.0f });
             }
         }
         break;
@@ -473,13 +440,10 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
         return std::min(computeNonCalcLengthDouble(value, Cqb, conversionData), computeNonCalcLengthDouble(value, Cqi, conversionData));
     }
 
-    // We do not apply the zoom factor when we are computing the value of the font-size property. The zooming
-    // for font sizes is much more complicated, since we have to worry about enforcing the minimum font size preference
-    // as well as enforcing the implicit "smart minimum."
-    if (conversionData.computingFontSize() || isFontOrRootFontRelativeLength(lengthUnit))
-        return value;
+    if (conversionData.computingLineHeight() && !isFontOrRootFontRelativeLength(lengthUnit))
+        return applyTextZoom(value, conversionData);
 
-    return value * conversionData.zoom();
+    return value;
 }
 
 bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::ComputedStyle& styleB)
@@ -504,12 +468,23 @@ bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::C
 
 double emToPxDouble(double value, const CSSToLengthConversionData& conversionData)
 {
-    return computeNonCalcLengthDouble(value, CSS::LengthUnit::Em, conversionData);
+    return applyTextZoom(value * conversionData.fontCascadeForFontUnits().fontDescription().unzoomedComputedSize(), conversionData);
 }
 
-double emToPxDouble(double value, const Style::ComputedStyle& style)
+double emToPxDouble(double value, const ComputedStyle& style)
 {
-    return computeNonCalcLengthDouble(value, CSS::LengthUnit::Em, CSSToLengthConversionData(style, nullptr, nullptr, nullptr));
+    return emToPxDouble(value, CSSToLengthConversionData(style, nullptr, nullptr, nullptr, nullptr));
+}
+
+double emToPxDoubleZoomed(double value, const CSSToLengthConversionData& conversionData)
+{
+    // Text zoom is not applied here as it is already included in the FontDescription's computedSize().
+    return value * conversionData.fontCascadeForFontUnits().fontDescription().computedSize();
+}
+
+double emToPxDoubleZoomed(double value, const ComputedStyle& style)
+{
+    return emToPxDoubleZoomed(value, CSSToLengthConversionData(style, nullptr, nullptr, nullptr, nullptr));
 }
 
 } // namespace Style

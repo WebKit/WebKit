@@ -614,9 +614,6 @@ public:
 
     // MARK: - Zoom
 
-    inline bool evaluationTimeZoomEnabled() const;
-    inline void setEvaluationTimeZoomEnabled(bool);
-
     inline bool useSVGZoomRulesForLength() const;
     inline void setUseSVGZoomRulesForLength(bool);
 

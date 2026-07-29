@@ -69,18 +69,6 @@ static RefPtr<const TransformFunctionBase> createMatrixTransformFunction(const C
     if (!function)
         return { };
 
-    if (auto conversionData = state.cssToLengthConversionData(); !conversionData.evaluationTimeZoomEnabled()) {
-        auto zoom = conversionData.zoom();
-        return MatrixTransformFunction::create(
-            toStyleFromCSSValue<Number<>>(state, protect(function->item(0))).value,
-            toStyleFromCSSValue<Number<>>(state, protect(function->item(1))).value,
-            toStyleFromCSSValue<Number<>>(state, protect(function->item(2))).value,
-            toStyleFromCSSValue<Number<>>(state, protect(function->item(3))).value,
-            toStyleFromCSSValue<Number<>>(state, protect(function->item(4))).value * zoom,
-            toStyleFromCSSValue<Number<>>(state, protect(function->item(5))).value * zoom
-        );
-    }
-
     return MatrixTransformFunction::create(
         toStyleFromCSSValue<Number<>>(state, protect(function->item(0))).value,
         toStyleFromCSSValue<Number<>>(state, protect(function->item(1))).value,
@@ -100,7 +88,7 @@ static RefPtr<const TransformFunctionBase> createMatrix3dTransformFunction(const
     if (!function)
         return { };
 
-    TransformationMatrix matrix(
+    return Matrix3DTransformFunction::create(TransformationMatrix(
         toStyleFromCSSValue<Number<>>(state, protect(function->item(0))).value,
         toStyleFromCSSValue<Number<>>(state, protect(function->item(1))).value,
         toStyleFromCSSValue<Number<>>(state, protect(function->item(2))).value,
@@ -117,12 +105,7 @@ static RefPtr<const TransformFunctionBase> createMatrix3dTransformFunction(const
         toStyleFromCSSValue<Number<>>(state, protect(function->item(13))).value,
         toStyleFromCSSValue<Number<>>(state, protect(function->item(14))).value,
         toStyleFromCSSValue<Number<>>(state, protect(function->item(15))).value
-    );
-
-    if (auto conversionData = state.cssToLengthConversionData(); !conversionData.evaluationTimeZoomEnabled())
-        matrix.zoom(conversionData.zoom());
-
-    return Matrix3DTransformFunction::create(WTF::move(matrix));
+    ));
 }
 
 // MARK: Rotate
@@ -455,8 +438,6 @@ static RefPtr<const TransformFunctionBase> createPerspectiveTransformFunction(co
         return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, *primitiveValue));
 
     // FIXME: Support for <number> parameters for `perspective` is a quirk that should go away when 3d transforms are finalized.
-    if (auto conversionData = state.cssToLengthConversionData(); !conversionData.evaluationTimeZoomEnabled())
-        return PerspectiveTransformFunction::create(Length<CSS::Nonnegative> { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value * conversionData.zoom() });
     return PerspectiveTransformFunction::create(Length<CSS::Nonnegative> { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value });
 }
 
@@ -635,16 +616,12 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const S
     return createCSSValue(pool, style, CSS::Keyword::None { });
 }
 
-auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const TransformationMatrix& transform) -> Ref<CSSValue>
+auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Style::ComputedStyle&, const TransformationMatrix& transform) -> Ref<CSSValue>
 {
     if (transform.isAffine()) {
-        auto values = [&] -> std::array<double, 6> {
-            if (!style.evaluationTimeZoomEnabled()) {
-                auto zoom = style.usedZoom();
-                return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
-            }
-            return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f() };
-        }();
+        auto values = std::array<double, 6> {
+            transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f(),
+        };
 
         CSSValueListBuilder arguments;
         for (auto value : values)
@@ -652,24 +629,12 @@ auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Sty
         return CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments));
     }
 
-    auto values = [&] -> std::array<double, 16> {
-        if (!style.evaluationTimeZoomEnabled()) {
-            auto zoom = style.usedZoom();
-            return {
-                transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
-                transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
-                transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
-                transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44(),
-            };
-        }
-
-        return {
-            transform.m11(), transform.m12(), transform.m13(), transform.m14(),
-            transform.m21(), transform.m22(), transform.m23(), transform.m24(),
-            transform.m31(), transform.m32(), transform.m33(), transform.m34(),
-            transform.m41(), transform.m42(), transform.m43(), transform.m44(),
-        };
-    }();
+    auto values = std::array<double, 16> {
+        transform.m11(), transform.m12(), transform.m13(), transform.m14(),
+        transform.m21(), transform.m22(), transform.m23(), transform.m24(),
+        transform.m31(), transform.m32(), transform.m33(), transform.m34(),
+        transform.m41(), transform.m42(), transform.m43(), transform.m44(),
+    };
 
     CSSValueListBuilder arguments;
     for (auto value : values)
@@ -856,40 +821,24 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void Serialize<TransformationMatrix>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const TransformationMatrix& transform)
+void Serialize<TransformationMatrix>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle&, const TransformationMatrix& transform)
 {
     if (transform.isAffine()) {
-        auto values = [&] -> std::array<double, 6> {
-            if (!style.evaluationTimeZoomEnabled()) {
-                auto zoom = style.usedZoom();
-                return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
-            }
-            return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f() };
-        }();
+        auto values = std::array<double, 6> {
+            transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f(),
+        };
         builder.append(nameLiteral(CSSValueMatrix), '(', interleave(values, [&](auto& builder, auto& value) {
             CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { value });
         }, ", "_s), ')');
         return;
     }
 
-    auto values = [&] -> std::array<double, 16> {
-        if (!style.evaluationTimeZoomEnabled()) {
-            auto zoom = style.usedZoom();
-            return {
-                transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
-                transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
-                transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
-                transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44(),
-            };
-        }
-
-        return {
-            transform.m11(), transform.m12(), transform.m13(), transform.m14(),
-            transform.m21(), transform.m22(), transform.m23(), transform.m24(),
-            transform.m31(), transform.m32(), transform.m33(), transform.m34(),
-            transform.m41(), transform.m42(), transform.m43(), transform.m44(),
-        };
-    }();
+    auto values = std::array<double, 16> {
+        transform.m11(), transform.m12(), transform.m13(), transform.m14(),
+        transform.m21(), transform.m22(), transform.m23(), transform.m24(),
+        transform.m31(), transform.m32(), transform.m33(), transform.m34(),
+        transform.m41(), transform.m42(), transform.m43(), transform.m44(),
+    };
     builder.append(nameLiteral(CSSValueMatrix3d), '(', interleave(values, [&](auto& builder, auto& value) {
         CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { value });
     }, ", "_s), ')');

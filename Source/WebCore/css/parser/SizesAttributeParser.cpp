@@ -252,7 +252,7 @@ std::optional<CSSToLengthConversionData> SizesAttributeParser::conversionData() 
     // MediaQueries are defined to use the initial style, so that is passed
     // in as the "style", "parent style" and "root style". The `RenderView`
     // is passed in to resolve viewport relative units.
-    return CSSToLengthConversionData { document->initialStyle(), &document->initialStyle(), &document->initialStyle(), renderView.get() };
+    return CSSToLengthConversionData { document->initialStyle(), &document->initialStyle(), &document->initialStyle(), renderView.get(), nullptr };
 }
 
 } // namespace WebCore

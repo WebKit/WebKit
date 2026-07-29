@@ -1195,10 +1195,6 @@ static NSControlSize controlSizeForFont(const Style::ComputedStyle& style)
 
 static IntSize sizeForFont(const Style::ComputedStyle& style, std::span<const IntSize, 4> sizes)
 {
-    if (style.usedZoom() != 1.0f && !style.evaluationTimeZoomEnabled()) {
-        IntSize result = sizes[controlSizeForFont(style)];
-        return IntSize(result.width() * style.usedZoom(), result.height() * style.usedZoom());
-    }
     return sizes[controlSizeForFont(style)];
 }
 
@@ -1228,8 +1224,8 @@ static void setFontFromControlSize(Style::ComputedStyle& style, NSControlSize co
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
     fontDescription.setOneFamily("-apple-system"_s);
-    fontDescription.setComputedSize([font pointSize] * style.usedZoom());
-    fontDescription.setSpecifiedSize([font pointSize] * style.usedZoom());
+    fontDescription.setComputedSize([font pointSize] * style.usedZoom(), style.usedZoom());
+    fontDescription.setSpecifiedSize([font pointSize]);
 
     // Reset line height
     style.setLineHeight(Style::ComputedStyle::initialLineHeight());
@@ -1641,8 +1637,8 @@ std::optional<FontCascadeDescription> RenderThemeMac::controlFont(StyleAppearanc
 
         NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
         fontDescription.setOneFamily("-apple-system"_s);
-        fontDescription.setComputedSize([nsFont pointSize] * zoomFactor);
-        fontDescription.setSpecifiedSize([nsFont pointSize] * zoomFactor);
+        fontDescription.setComputedSize([nsFont pointSize] * zoomFactor, zoomFactor);
+        fontDescription.setSpecifiedSize([nsFont pointSize]);
         return fontDescription;
     }
     default:
