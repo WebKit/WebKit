@@ -397,7 +397,7 @@ void CacheStorageDiskStore::readAllRecordInfosInternal(ReadAllRecordInfosCallbac
         auto partitionNames = FileSystem::listDirectory(recordsDirectory);
         for (auto& partitionName : partitionNames) {
             auto partitionDirectoryPath = FileSystem::pathByAppendingComponent(recordsDirectory, partitionName);
-            auto cacheDirectory = FileSystem::pathByAppendingComponent(partitionDirectoryPath, m_cacheName);
+            auto cacheDirectory = FileSystem::pathByAppendingComponent(partitionDirectoryPath, cacheName);
             for (auto& recordName : FileSystem::listDirectory(cacheDirectory)) {
                 if (recordName.endsWith(blobSuffix))
                     continue;
