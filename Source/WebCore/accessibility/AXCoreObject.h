@@ -1186,6 +1186,12 @@ public:
         return std::nullopt;
     }
 
+    // Resolves this object to its stitch-group representative when it has been stitched away
+    // (i.e. removed from its parent's exposed children); otherwise returns this object. AT-facing
+    // APIs that hand a single object to the client should route through this so a stitched-away
+    // member is never exposed as an element that is absent from the tree.
+    RefPtr<AXCoreObject> stitchRepresentativeOrSelf();
+
     // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) is true, this returns IDs of ignored children.
     // When it is not, it returns IDs of unignored children. After ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     // is the default, we should rename this function to childrenIDsIncludingIgnored, as that is what all

@@ -526,6 +526,13 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
 
     processQueuedIsolatedNodeUpdates();
 
+    // If the selection landed on a stitched-away text run, report the change on the stitch-group
+    // representative (the element actually exposed in the tree) rather than the removed member,
+    // so the SelectedTextChanged notification that VoiceOver uses to move focus during caret
+    // navigation targets an element present in its parent's children. Mirrors the
+    // AXUIElementForTextMarker redirect.
+    axObject = downcast<AccessibilityObject>(axObject->stitchRepresentativeOrSelf());
+
     auto intent = inferDirectionFromIntent(*axObject, originalIntent, selection);
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
