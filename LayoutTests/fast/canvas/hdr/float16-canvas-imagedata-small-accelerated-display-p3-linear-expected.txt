@@ -133,6 +133,8 @@ PASS gotten_imageData_float16.data.length is expected_imageData_float16.data.len
 PASS gotten_imageData_float16.data.byteLength is expected_imageData_float16.data.byteLength
 PASS context.createImageData(1, 1, { pixelFormat: "foo" }) threw exception TypeError: Type error.
 PASS context.getImageData(0, 0, 1, 1, { pixelFormat: "foo" }) threw exception TypeError: Type error.
+PASS new ImageData(new Uint8ClampedArray(4), 1, 1, { colorSpace: "display-p3-linear", pixelFormat: "rgba-float16" }) threw exception InvalidStateError: Mismatched pixel formats in data and settings.
+PASS new ImageData(new Float16Array(4), 1, 1, { colorSpace: "display-p3-linear", pixelFormat: "rgba-unorm8" }) threw exception InvalidStateError: Mismatched pixel formats in data and settings.
 PASS successfullyParsed is true
 
 TEST COMPLETE

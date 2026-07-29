@@ -150,6 +150,9 @@ ExceptionOr<Ref<ImageData>> ImageData::create(ImageDataArray&& array, unsigned s
     if (sh && sh.value() != height)
         return Exception { ExceptionCode::IndexSizeError, "sh value is not equal to height"_s };
 
+    if (settings && settings->pixelFormat != array.pixelFormat())
+        return Exception { ExceptionCode::InvalidStateError, "Mismatched pixel formats in data and settings"_s };
+
     IntSize size(sw, height.value());
     auto dataSize = computeDataSize(size, computePixelFormat(settings));
     if (dataSize.hasOverflowed() || dataSize != length)

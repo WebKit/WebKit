@@ -217,3 +217,5 @@ areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', floa
 
 shouldThrowErrorName(`context.createImageData(1, 1, { pixelFormat: "foo" })`, "TypeError")
 shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { pixelFormat: "foo" })`, "TypeError")
+shouldThrowErrorName(`new ImageData(new Uint8ClampedArray(4), 1, 1, { colorSpace: "${canvas.dataset.colorSpace}", pixelFormat: "rgba-float16" })`, "InvalidStateError")
+shouldThrowErrorName(`new ImageData(new Float16Array(4), 1, 1, { colorSpace: "${canvas.dataset.colorSpace}", pixelFormat: "rgba-unorm8" })`, "InvalidStateError")
