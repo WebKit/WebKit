@@ -36,11 +36,11 @@ public:
     static std::optional<StreamClientConnectionBuffer> create(unsigned dataSizeLog2);
     StreamClientConnectionBuffer(StreamClientConnectionBuffer&&) = default;
     StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&) = default;
+    enum class WakeUpServer : bool { No, Yes };
 
     std::optional<std::span<uint8_t>> tryAcquire(Timeout);
-    std::optional<std::span<uint8_t>> tryAcquireAll(Timeout);
+    std::optional<std::span<uint8_t>> tryAcquireAll(WakeUpServer, Timeout);
 
-    enum class WakeUpServer : bool { No, Yes };
     WakeUpServer release(size_t writeSize);
     void resetClientOffset();
     std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
@@ -129,7 +129,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
     return std::nullopt;
 }
 
-inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquireAll(Timeout timeout)
+inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquireAll(WakeUpServer wakeUpServer, Timeout timeout)
 {
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
@@ -147,7 +147,15 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
-        if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
+        if (!m_semaphores)
+            return std::nullopt;
+        bool waitResult = false;
+        if (wakeUpServer == WakeUpServer::Yes) {
+            waitResult = m_semaphores->clientWait.waitForAfterSignal(m_semaphores->wakeUp, timeout);
+            wakeUpServer = WakeUpServer::No;
+        } else
+            waitResult = m_semaphores->clientWait.waitFor(timeout);
+        if (!waitResult)
             return std::nullopt;
         if (timeout.didTimeOut())
             return std::nullopt;

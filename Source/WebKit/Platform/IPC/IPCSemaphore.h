@@ -66,6 +66,7 @@ public:
     void signal();
     bool wait();
     bool waitFor(Timeout);
+    bool waitForAfterSignal(Semaphore& signal, Timeout waitTimeout);
 
 #if PLATFORM(COCOA)
     explicit Semaphore(MachSendRight&&);

@@ -76,9 +76,17 @@ bool Semaphore::waitFor(Timeout timeout)
     return WAIT_OBJECT_0 == WaitForSingleObject(m_semaphoreHandle.get(), milliseconds);
 }
 
+bool Semaphore::waitForAfterSignal(Semaphore& signaled, Timeout timeout)
+{
+    signaled.signal();
+    return waitFor(timeout);
+}
+
 void Semaphore::destroy()
 {
     m_semaphoreHandle = { };
 }
+
+
 
 } // namespace IPC

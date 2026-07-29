@@ -123,6 +123,12 @@ bool Semaphore::waitFor(Timeout timeout)
 #endif
 }
 
+bool Semaphore::waitForAfterSignal(Semaphore& signaled, Timeout timeout)
+{
+    signaled.signal();
+    return waitFor(timeout);
+}
+
 UnixFileDescriptor Semaphore::duplicateDescriptor() const
 {
     return m_fd.duplicate();
