@@ -41,11 +41,11 @@ Path2D::~Path2D() = default;
 
 ExceptionOr<void> Path2D::addPath(Path2D& path, DOMMatrix2DInit&& matrixInit)
 {
-    auto checkValid = DOMMatrixReadOnly::validateAndFixup(matrixInit);
-    if (checkValid.hasException())
-        return checkValid.releaseException();
+    auto transform = DOMMatrixReadOnly::toAffineTransform(matrixInit);
+    if (transform.hasException())
+        return transform.releaseException();
 
-    m_path.addPath(path.path(), { matrixInit.m11.value(), matrixInit.m12.value(), matrixInit.m21.value(), matrixInit.m22.value(), matrixInit.m41.value(), matrixInit.m42.value() });
+    m_path.addPath(path.path(), transform.releaseReturnValue());
     return { };
 }
 

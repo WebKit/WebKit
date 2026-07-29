@@ -26,12 +26,13 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "DOMMatrix2DInit.h"
+#include "DOMMatrixReadOnly.h"
 #include "ExceptionOr.h"
 #include "SVGValueProperty.h"
 
 namespace WebCore {
 
-// FIXME: Remove this class once SVGMatrix becomes an alias to DOMMatrix.
 class SVGMatrix : public SVGValueProperty<AffineTransform> {
     using Base = SVGValueProperty<AffineTransform>;
     using Base::Base;
@@ -145,10 +146,14 @@ public:
         return { };
     }
 
-    Ref<SVGMatrix> multiply(SVGMatrix& secondMatrix) const
+    ExceptionOr<Ref<SVGMatrix>> multiply(DOMMatrix2DInit&& secondMatrix) const
     {
+        auto other = DOMMatrixReadOnly::toAffineTransform(secondMatrix);
+        if (other.hasException())
+            return other.releaseException();
+
         auto copy = m_value;
-        copy.multiply(secondMatrix.value());
+        copy.multiply(other.releaseReturnValue());
         return SVGMatrix::create(copy);
     }
 

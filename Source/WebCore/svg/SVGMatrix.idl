@@ -36,7 +36,7 @@
     attribute double e;
     attribute double f;
 
-    [NewObject] SVGMatrix multiply(SVGMatrix secondMatrix);
+    [NewObject] SVGMatrix multiply(optional DOMMatrix2DInit secondMatrix = {});
     [NewObject] SVGMatrix inverse();
     [NewObject] SVGMatrix translate(float x, float y);
     [NewObject] SVGMatrix scale(float scaleFactor);

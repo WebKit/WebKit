@@ -11,6 +11,6 @@ features:
   - SVGGraphicsElement*
   - SVGLength-*
   - SVGLengthList-*
-  - SVGMatrix-tentative.html
+  - SVGMatrix.html
   - SVGPathElement.getTotalLength-01.html
   - SVGRect.html

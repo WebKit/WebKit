@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DOMMatrixReadOnly.h"
 
+#include "AffineTransform.h"
 #include "CSSParserContext.h"
 #include "CSSParserMode.h"
 #include "CSSPropertyParserConsumer+Transform.h"
@@ -142,6 +143,15 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init)
         init.m42 = init.f.value_or(0);
 
     return { };
+}
+
+ExceptionOr<AffineTransform> DOMMatrixReadOnly::toAffineTransform(DOMMatrix2DInit& init)
+{
+    auto validation = validateAndFixup(init);
+    if (validation.hasException())
+        return validation.releaseException();
+
+    return AffineTransform { init.m11.value(), init.m12.value(), init.m21.value(), init.m22.value(), init.m41.value(), init.m42.value() };
 }
 
 ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)

@@ -172,8 +172,13 @@ PASS sx.d is 1
 PASS sx.e is 0
 PASS sx.f is 0
 
-Test multiply with missing argument
-PASS m is null
+Test multiply with missing argument (optional DOMMatrix2DInit defaults to identity)
+PASS m.a is 1
+PASS m.b is 0
+PASS m.c is 0
+PASS m.d is 1
+PASS m.e is 100
+PASS m.f is 0
 
 Test inverse
 PASS parseFloat(m2.a) is 0.5

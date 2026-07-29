@@ -85,12 +85,15 @@ test(function() {
   assert_equals(matrix.e, 0);
   assert_equals(matrix.f, 0);
 
-  // Check calling 'multiply' with invalid arguments.
-  assert_throws_js(TypeError, function() { matrix.multiply(); });
+  // Check calling 'multiply' with invalid arguments. Primitive args still
+  // throw TypeError per WebIDL dictionary conversion.
   assert_throws_js(TypeError, function() { matrix.multiply(true); });
   assert_throws_js(TypeError, function() { matrix.multiply(2); });
   assert_throws_js(TypeError, function() { matrix.multiply('aString'); });
-  assert_throws_js(TypeError, function() { matrix.multiply(svgElement); });
+
+  // The identity-multiply cases for a missing argument and for an object with
+  // no recognized keys are covered cross-engine by
+  // imported/w3c/web-platform-tests/svg/types/scripted/SVGMatrix.html
 
   // Check calling 'translate' with invalid arguments.
   assert_throws_js(TypeError, function() { matrix.translate(); });

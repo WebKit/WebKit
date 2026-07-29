@@ -242,12 +242,14 @@ shouldBe('sx.e', '0');
 shouldBe('sx.f', '0');
 
 debug("");
-debug("Test multiply with missing argument");
-m = null;
-try {
-    m = tx.multiply();
-} catch(e) {}
-shouldBe('m', 'null');
+debug("Test multiply with missing argument (optional DOMMatrix2DInit defaults to identity)");
+m = tx.multiply();
+shouldBe('m.a', '1');
+shouldBe('m.b', '0');
+shouldBe('m.c', '0');
+shouldBe('m.d', '1');
+shouldBe('m.e', '100');
+shouldBe('m.f', '0');
 
 debug("");
 debug("Test inverse");

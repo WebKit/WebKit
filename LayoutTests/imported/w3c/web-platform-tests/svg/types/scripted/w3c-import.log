@@ -86,7 +86,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-basics.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-getItem.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGList-parse-invalid-clears-items.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGMatrix-tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGMatrix.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGPathElement.getTotalLength-01.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGPoint.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGRect.html
