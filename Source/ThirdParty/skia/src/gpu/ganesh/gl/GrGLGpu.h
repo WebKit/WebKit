@@ -221,8 +221,6 @@ public:
                                            GrProtected isProtected,
                                            GrMemoryless) override;
 
-    void deleteBackendTexture(const GrBackendTexture&) override;
-
     bool compile(const GrProgramDesc&, const GrProgramInfo&) override;
 
     bool precompileShader(const SkData& key, const SkData& data) override {
@@ -300,6 +298,8 @@ private:
                                                       const GrBackendFormat&,
                                                       skgpu::Mipmapped,
                                                       GrProtected) override;
+
+    void onDeleteBackendTexture(const GrBackendTexture&) override;
 
     bool onClearBackendTexture(const GrBackendTexture&,
                                sk_sp<skgpu::RefCntedCallback> finishedCallback,
@@ -875,6 +875,9 @@ private:
     // since we defer calling flush until submit time. When we call submitToGpu if this is true then
     // we call glFlush and reset this to false.
     bool fNeedsGLFlush = false;
+
+    bool fHasUnflushedQueries = false;
+    void forcefullyFlushQueries();
 
     SkDEBUGCODE(bool fIsExecutingCommandBuffer_DebugOnly = false;)
 

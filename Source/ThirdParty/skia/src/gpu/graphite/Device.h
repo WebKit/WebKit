@@ -238,7 +238,7 @@ public:
     void drawImageLattice(const SkImage*, const SkCanvas::Lattice&,
                           const SkRect& dst, SkFilterMode, const SkPaint&) override;
     void drawAtlas(SkSpan<const SkRSXform>, SkSpan<const SkRect>, SkSpan<const SkColor>,
-                   sk_sp<SkBlender>, const SkPaint&) override {}
+                   sk_sp<SkBlender>, const SkPaint&) override;
 
     void drawDrawable(SkCanvas*, SkDrawable*, const SkMatrix*) override {}
     void drawMesh(const SkMesh&, sk_sp<SkBlender>, const SkPaint&) override {}
@@ -299,10 +299,10 @@ private:
     // the transform, clip, and DrawOrder (although Device still tracks stencil buffer usage).
     void drawClipShape(const Transform&, const Shape&, const Clip&, DrawOrder);
 
-    std::pair<DrawParams*, Insertion> drawClipShapeImmediate(const Transform&,
-                                                             const Shape&,
-                                                             const Clip&,
-                                                             DrawOrder);
+    std::pair<DrawParams*, Layer*> drawClipShapeImmediate(const Transform&,
+                                                          const Shape&,
+                                                          const Clip&,
+                                                          DrawOrder);
 
     void updateNextDepthForClipping(PaintersDepth depth);
 

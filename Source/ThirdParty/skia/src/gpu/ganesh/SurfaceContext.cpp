@@ -292,7 +292,12 @@ bool SurfaceContext::readPixels(GrDirectContext* dContext, GrPixmap dst, SkIPoin
         pt.fY = flip ? srcSurface->height() - pt.fY - dst.height() : pt.fY;
     }
 
-    dContext->priv().flushSurface(srcProxy.get());
+    bool hasPendingTasks =
+            dContext->priv().drawingManager()->getLastRenderTask(srcProxy.get()) != nullptr;
+    GrSemaphoresSubmitted flushResult = dContext->priv().flushSurface(srcProxy.get());
+    if (flushResult == GrSemaphoresSubmitted::kNo && hasPendingTasks) {
+        return false;
+    }
     dContext->submit();
     if (!dContext->priv().getGpu()->readPixels(srcSurface,
                                                SkIRect::MakePtSize(pt, dst.dimensions()),
@@ -580,6 +585,22 @@ bool SurfaceContext::internalWritePixels(GrDirectContext* dContext,
     }
     pt.fY = flip ? dstSurface->height() - pt.fY - src[0].height() : pt.fY;
 
+    auto flushSurfaceAndCheckSuccess = [dContext](GrSurfaceProxy* dstProxy, bool expectsTasks) {
+        const bool hasPendingTasks =
+                dContext->priv().drawingManager()->getLastRenderTask(dstProxy) != nullptr;
+        SkASSERT(!expectsTasks || hasPendingTasks);
+        GrSemaphoresSubmitted flushResult = dContext->priv().flushSurface(dstProxy);
+        return flushResult == GrSemaphoresSubmitted::kYes || !hasPendingTasks;
+    };
+
+    // On platforms that prefer flushes over VRAM use (i.e., ANGLE) we're better off forcing a
+    // complete flush here.
+    if (!caps->preferVRAMUseOverFlushes()) {
+        if (!flushSurfaceAndCheckSuccess(dstProxy, /*expectsTasks=*/false)) {
+            return false;
+        }
+    }
+
     if (!dContext->priv().drawingManager()->newWritePixelsTask(
                 sk_ref_sp(dstProxy),
                 SkIRect::MakePtSize(pt, src[0].dimensions()),
@@ -595,7 +616,9 @@ bool SurfaceContext::internalWritePixels(GrDirectContext* dContext,
     if (!ownAllStorage) {
         // If any pixmap doesn't own its pixels then we must flush so that the pixels are pushed to
         // the GPU before we return.
-        dContext->priv().flushSurface(dstProxy);
+        if (!flushSurfaceAndCheckSuccess(dstProxy, /*expectsTasks=*/true)) {
+            return false;
+        }
     }
     return true;
 }
@@ -1433,9 +1456,11 @@ SurfaceContext::PixelTransferResult SurfaceContext::transferPixels(GrColorType d
 
     SkSafeMath safe;
     size_t bytesPerPixel = GrColorTypeBytesPerPixel(supportedRead.fColorType);
+    SkASSERT(bytesPerPixel > 0);
     size_t rowBytes = safe.mul(bytesPerPixel, rect.width());
     size_t maxTransAlignment = this->caps()->transferBufferRowBytesAlignment();
-    rowBytes = safe.alignUp(rowBytes, maxTransAlignment);
+    size_t alignment = safe.lcm(bytesPerPixel, maxTransAlignment);
+    rowBytes = safe.alignUpNonPow2(rowBytes, alignment);
     size_t size = safe.mul(rowBytes, rect.height());
     if (!safe.ok()) {
         return {};

@@ -19,12 +19,27 @@
   },
   {
     "cmd": [
-      "gsutil",
-      "-m",
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
       "cp",
       "[START_DIR]/test/*.png",
       "gs://skia-infra-gm/dm-images-v1"
     ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
     "name": "upload .png images",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -32,12 +47,27 @@
   },
   {
     "cmd": [
-      "gsutil",
-      "-m",
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
       "cp",
       "[START_DIR]/test/*.png",
       "gs://skia-infra-gm/dm-images-v1"
     ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
     "name": "upload .png images (attempt 2)",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -45,12 +75,27 @@
   },
   {
     "cmd": [
-      "gsutil",
-      "-m",
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (3)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
       "cp",
       "[START_DIR]/test/*.png",
       "gs://skia-infra-gm/dm-images-v1"
     ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
     "name": "upload .png images (attempt 3)",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -58,12 +103,27 @@
   },
   {
     "cmd": [
-      "gsutil",
-      "-m",
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (4)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
       "cp",
       "[START_DIR]/test/*.png",
       "gs://skia-infra-gm/dm-images-v1"
     ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
     "name": "upload .png images (attempt 4)",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -71,12 +131,27 @@
   },
   {
     "cmd": [
-      "gsutil",
-      "-m",
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (5)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
       "cp",
       "[START_DIR]/test/*.png",
       "gs://skia-infra-gm/dm-images-v1"
     ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
     "name": "upload .png images (attempt 5)",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"

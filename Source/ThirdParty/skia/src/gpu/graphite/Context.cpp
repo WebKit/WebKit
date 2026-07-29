@@ -49,9 +49,11 @@
 #include "src/core/SkConvertPixels.h"
 #include "src/core/SkImageInfoPriv.h"
 #include "src/core/SkRectMemcpy.h"
+#include "src/core/SkSafeMath.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/core/SkYUVMath.h"
 #include "src/gpu/AsyncReadTypes.h"
+#include "src/gpu/GlobalResourceStats.h"
 #include "src/gpu/GpuTypesPriv.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/gpu/graphite/AtlasProvider.h"
@@ -750,9 +752,14 @@ Context::PixelTransferResult Context::transferPixels(Recorder* recorder,
         return {};
     }
 
+    SkSafeMath safe;
     int bpp = TextureFormatBytesPerBlock(format);
-    size_t rowBytes = caps->getAlignedTextureDataRowBytes(bpp * srcRect.width());
-    size_t size = SkAlignTo(rowBytes * srcRect.height(), caps->requiredTransferBufferAlignment());
+    size_t rowBytes = caps->getAlignedTextureDataRowBytes(safe.mul(bpp, srcRect.width()), bpp);
+    size_t size = safe.alignUp(safe.mul(rowBytes, srcRect.height()),
+                               caps->requiredTransferBufferAlignment());
+    if (!safe.ok() || rowBytes == 0 || size == 0) {
+        return {};
+    }
     sk_sp<Buffer> buffer = fResourceProvider->findOrCreateNonShareableBuffer(
             size, BufferType::kXferGpuToCpu, AccessPattern::kHostVisible, "TransferToCpu");
     if (!buffer) {
@@ -813,6 +820,8 @@ void Context::checkForFinishedWork(SyncToCpu syncToCpu) {
     // Process the return queue periodically to make sure it doesn't get too big
     fResourceProvider->forceProcessReturnedResources();
     fSharedContext->forceProcessReturnedResources();
+
+    GlobalResourceStats::TraceStatsSummary();
 }
 
 void Context::checkAsyncWorkCompletion() {

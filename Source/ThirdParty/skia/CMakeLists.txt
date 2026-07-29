@@ -279,6 +279,7 @@ add_library(Skia STATIC
     src/gpu/BlurUtils.cpp
     src/gpu/DataUtils.cpp
     src/gpu/DitherUtils.cpp
+    src/gpu/GradientBitmap.cpp
     src/gpu/RectanizerPow2.cpp
     src/gpu/RectanizerSkyline.cpp
     src/gpu/ResourceKey.cpp

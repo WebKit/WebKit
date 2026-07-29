@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_cc_library")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -6,12 +6,13 @@ package(
 
 licenses(["notice"])
 
-LAZY_FILES = [
-    "SkDiscardableMemoryPool.cpp",
-    "SkDiscardableMemoryPool.h",
-]
-
-split_srcs_and_hdrs(
+skia_cc_library(
     name = "lazy",
-    files = LAZY_FILES,
+    srcs = ["SkDiscardableMemoryPool.cpp"],
+    hdrs = ["SkDiscardableMemoryPool.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:core",
+        "//src/core:core_priv",
+    ],
 )

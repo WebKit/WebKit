@@ -12,6 +12,7 @@
 #include "include/gpu/GpuTypes.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendSemaphore.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendSurface.h"
+#include "include/private/SkAlign.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkCompressedDataUtils.h"
 #include "src/core/SkMathPriv.h"
@@ -350,13 +351,17 @@ bool GrMtlGpu::uploadToTexture(GrMtlTexture* tex,
     }
 
     size_t bpp = GrColorTypeBytesPerPixel(dataColorType);
+    int desiredAlignment = (bpp == 3) ? 12 : (bpp > 4 ? bpp : 4);
 
     TArray<size_t> individualMipOffsets(mipLevelCount);
-    size_t combinedBufferSize = GrComputeTightCombinedBufferSize(bpp,
-                                                                 rect.size(),
-                                                                 &individualMipOffsets,
-                                                                 mipLevelCount);
-    SkASSERT(combinedBufferSize);
+    size_t combinedBufferSize = GrComputeCombinedBufferSize(bpp,
+                                                            rect.size(),
+                                                            &individualMipOffsets,
+                                                            mipLevelCount,
+                                                            desiredAlignment);
+    if (combinedBufferSize == 0) {
+        return false;
+    }
 
 
     // offset value must be a multiple of the destination texture's pixel size in bytes
@@ -387,16 +392,17 @@ bool GrMtlGpu::uploadToTexture(GrMtlTexture* tex,
             SkASSERT(1 == mipLevelCount || currentHeight == layerHeight);
             const size_t trimRowBytes = currentWidth * bpp;
             const size_t rowBytes = texels[currentMipLevel].fRowBytes;
+            const size_t alignedRowBytes = SkAlignNonPow2(trimRowBytes, (size_t)desiredAlignment);
 
             // copy data into the buffer, skipping any trailing bytes
             char* dst = bufferData + individualMipOffsets[currentMipLevel];
             const char* src = (const char*)texels[currentMipLevel].fPixels;
-            SkRectMemcpy(dst, trimRowBytes, src, rowBytes, trimRowBytes, currentHeight);
+            SkRectMemcpy(dst, alignedRowBytes, src, rowBytes, trimRowBytes, currentHeight);
 
             [blitCmdEncoder copyFromBuffer: mtlBuffer->mtlBuffer()
                               sourceOffset: slice.fOffset + individualMipOffsets[currentMipLevel]
-                         sourceBytesPerRow: trimRowBytes
-                       sourceBytesPerImage: trimRowBytes*currentHeight
+                         sourceBytesPerRow: alignedRowBytes
+                       sourceBytesPerImage: alignedRowBytes*currentHeight
                                 sourceSize: MTLSizeMake(currentWidth, currentHeight, 1)
                                  toTexture: mtlTexture
                           destinationSlice: 0
@@ -1120,7 +1126,7 @@ bool GrMtlGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendT
     return true;
 }
 
-void GrMtlGpu::deleteBackendTexture(const GrBackendTexture& tex) {
+void GrMtlGpu::onDeleteBackendTexture(const GrBackendTexture& tex) {
     SkASSERT(GrBackendApi::kMetal == tex.backend());
     // Nothing to do here, will get cleaned up when the GrBackendTexture object goes away
 }

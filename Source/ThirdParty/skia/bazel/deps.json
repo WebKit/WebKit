@@ -2,8 +2,14 @@
   "!note": "DO NOT MODIFY BY HAND. Instead, bazelisk run //bazel/deps_parser",
   "direct": [
     {
+      "build_file": "//bazel/external/d3d12allocator:BUILD.bazel",
+      "commit": "169895d529dfce00390a20e69c2f516066fe7a3b",
+      "name": "d3d12allocator",
+      "remote": "https://skia.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git"
+    },
+    {
       "build_file": "//bazel/external/dawn:BUILD.bazel",
-      "commit": "6bcedae5720dd8919b06f181aa906082d713d32a",
+      "commit": "10934785b43bf8cb1a8079c5cc117c0a991dd430",
       "name": "dawn",
       "remote": "https://dawn.googlesource.com/dawn.git"
     },
@@ -127,8 +133,14 @@
     },
     {
       "build_file": "//bazel/external/libjxl:BUILD.bazel",
-      "commit": "a205468bc5d3a353fb15dae2398a101dff52f2d3",
+      "commit": "332feb17d17311c748445f7ee75c4fb55cc38530",
       "name": "libjxl",
+      "patch_cmds": [
+        "rm -f lib/BUILD tools/BUILD"
+      ],
+      "patch_cmds_win": [
+        "del /f /q lib\\BUILD tools\\BUILD"
+      ],
       "remote": "https://chromium.googlesource.com/external/gitlab.com/wg1/jpeg-xl.git"
     },
     {
@@ -180,12 +192,12 @@
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross"
     },
     {
-      "commit": "02c0394e57af6dfdda7f68973df6aa20fc3f5def",
+      "commit": "29981f65241605e08b0ede4cfeb999fe3b723c6a",
       "name": "spirv_headers",
       "remote": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers.git"
     },
     {
-      "commit": "48bd3e9d0c91be4aac0aa5f44dba7e8b97dbc154",
+      "commit": "5f62f05f5f1dac09f81af9f207e7ab6c82b3722e",
       "name": "spirv_tools",
       "remote": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools.git"
     },
@@ -197,19 +209,19 @@
     },
     {
       "build_file": "//bazel/external/vulkan_headers:BUILD.bazel",
-      "commit": "8d6039a455a7ecc7d2a592ff97f62db4e59b70bf",
+      "commit": "d314eae73fdc90847bb8304a86ee7c6a8ee023b6",
       "name": "vulkan_headers",
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers"
     },
     {
       "build_file": "//bazel/external/vulkan_tools:BUILD.bazel",
-      "commit": "6d586e9a4f0d5ffdef862149adaf1ec6b3130182",
+      "commit": "286299bb6b732e4b22771cfb9d7d421542d40501",
       "name": "vulkan_tools",
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools"
     },
     {
       "build_file": "//bazel/external/vulkan_utility_libraries:BUILD.bazel",
-      "commit": "c0e15b2c46f9ae2314925cbbe9d97ed6ea8a717d",
+      "commit": "e9585c3e3d41ab608ee3b098ce4721d357308fc8",
       "name": "vulkan_utility_libraries",
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries"
     },
@@ -233,12 +245,12 @@
       "remote": "https://skia.googlesource.com/external/github.com/google/brotli.git"
     },
     {
-      "commit": "d8e483edd8b44da1845874ee84b42489589bb90f",
+      "commit": "ff6e8ce3e932c16cebd1611c8fc42c45080a0e55",
       "name": "abseil_cpp",
       "remote": "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp"
     },
     {
-      "commit": "424360251cdcfc314cfc528f53c872ecd63af0f0",
+      "commit": "457c891775a7397bdb0376bb1031e6e027af1c48",
       "name": "highway",
       "remote": "https://chromium.googlesource.com/external/github.com/google/highway.git"
     }

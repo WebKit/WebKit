@@ -331,10 +331,14 @@ func (b *TaskBuilder) usesDocker() {
 	b.usesPython()
 }
 
-// usesGSUtil adds the gsutil dependency from CIPD and puts it on PATH.
-func (b *TaskBuilder) usesGSUtil() {
-	b.asset("gsutil")
-	b.addToPATH("gsutil/gsutil")
+// usesGCloud adds the gcloud dependency from CIPD and puts it on PATH.
+func (b *TaskBuilder) usesGCloud() {
+	b.cipd(&specs.CipdPackage{
+		Name:    "infra/3pp/tools/gcloud/${platform}",
+		Version: "version:3@577.0.0.chromium.4",
+		Path:    "cipd_bin_packages/gcloud",
+	})
+	b.addToPATH("cipd_bin_packages/gcloud/bin")
 }
 
 // needsFontsForParagraphTests downloads the skparagraph CIPD package to
@@ -470,7 +474,7 @@ func (b *TaskBuilder) goPlatform() (string, string) {
 	arch := "amd64"
 	if b.Role("Upload") {
 		arch = "amd64"
-	} else if b.MatchArch("Arm64") || b.MatchBazelHost("on_rpi") || b.MatchOs("Android", "ChromeOS", "iOS") {
+	} else if b.MatchArch("Arm64") || b.MatchBazelHost("on_rpi", "arm64") || b.MatchOs("Android", "ChromeOS", "iOS") {
 		// Tests on Android/ChromeOS/iOS are hosted on RPI.
 		// WARNING: This assumption is not necessarily true with Android devices
 		// hosted in other environments.

@@ -43,7 +43,9 @@
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrDataUtils.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
+#include "src/gpu/ganesh/GrDrawingManager.h"
 #include "src/gpu/ganesh/GrImageInfo.h"
+#include "src/gpu/ganesh/GrOnFlushResourceProvider.h"
 #include "src/gpu/ganesh/GrPixmap.h"
 #include "src/gpu/ganesh/GrSamplerState.h"
 #include "src/gpu/ganesh/GrSurfaceProxy.h"
@@ -242,6 +244,19 @@ using GpuWriteDstFn = Result(const T&, const SkIPoint& offset, const SkPixmap&);
 // converting read (i.e. the image info of the returned pixmap matches that of the T).
 template <typename T>
 using GpuReadDstFn = SkAutoPixmapStorage(const T&);
+
+class FailingFlushCallback : public GrOnFlushCallbackObject {
+public:
+    bool preFlush(GrOnFlushResourceProvider*) override {
+        ++fCount;
+        return false;
+    }
+
+    int count() const { return fCount; }
+
+private:
+    int fCount = 0;
+};
 
 }  // anonymous namespace
 
@@ -1512,4 +1527,146 @@ DEF_GANESH_TEST_FOR_GL_CONTEXT(GLReadPixelsUnbindPBO,
     });
 
     ComparePixels(syncResult.pixmap(), asyncResult, tol, error);
+}
+
+// readPixels() that uses an intermediate scratch surface should not return stale recycled scratch
+// contents if the implicit flush of the queued draw into that surface drops its render tasks.
+DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(ReadPixelsIntermediateFailedFlush,
+                                       reporter,
+                                       ctxInfo,
+                                       CtsEnforcement::kNextRelease) {
+    auto dContext = ctxInfo.directContext();
+    if (dContext->supportsProtectedContent()) {
+        return;
+    }
+
+    static constexpr int kSize = 100;
+    static constexpr SkColor kStaleColor = 0xFF112233;
+    static constexpr SkColor kSrcColor = 0xFF008800;
+
+    auto srcII = SkImageInfo::Make({kSize, kSize}, kRGBA_8888_SkColorType, kPremul_SkAlphaType);
+    auto dstII = srcII.makeAlphaType(kUnpremul_SkAlphaType);
+    auto surf = SkSurfaces::RenderTarget(dContext, skgpu::Budgeted::kYes, srcII);
+    if (!surf) {
+        return;
+    }
+
+    SkAutoPixmapStorage pixels;
+    pixels.alloc(dstII);
+
+    // Reading the unpremul destination from the premul source draws through an intermediate
+    // approx-fit surface. Do this once so a matching scratch surface lands in the resource cache
+    // with known stale contents.
+    surf->getCanvas()->clear(kStaleColor);
+    if (!surf->readPixels(pixels, 0, 0)) {
+        return;
+    }
+
+    surf->getCanvas()->clear(kSrcColor);
+    dContext->flushAndSubmit(GrSyncCpu::kYes);
+
+    // From here on the flush-time callback fails so any queued render tasks are discarded.
+    FailingFlushCallback failingCallback;
+    dContext->priv().addOnFlushCallbackObject(&failingCallback);
+
+    pixels.erase(SkColors::kTransparent);
+    bool ok = surf->readPixels(pixels, 0, 0);
+
+    dContext->priv().drawingManager()->testingOnly_removeOnFlushCallbackObject(&failingCallback);
+
+    if (ok) {
+        SkColor result = pixels.getColor(0, 0);
+        REPORTER_ASSERT(reporter,
+                        result == kSrcColor,
+                        "readPixels reported success but returned 0x%08x, expected 0x%08x",
+                        result,
+                        kSrcColor);
+    } else {
+        REPORTER_ASSERT(reporter, failingCallback.count() > 0);
+    }
+}
+
+DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(WritePixelsFailedFlushLeaksScratch,
+                                       reporter,
+                                       ctxInfo,
+                                       CtsEnforcement::kNextRelease) {
+    auto dContext = ctxInfo.directContext();
+    if (dContext->supportsProtectedContent()) {
+        return; // This test performs readbacks
+    }
+
+    // internalWritePixels() calls this function, which flushes work the first time it's called. We
+    // don't want that to happen while the test's FailOnceCallback is installed, so trigger it now.
+    (void) dContext->priv().validPMUPMConversionExists();
+
+    static constexpr int kSize = 16;
+    // alpha=0xFF so the unpremul->premul shader is a no-op and we can compare exact bytes.
+    static constexpr SkColor kStalePixel = SkColorSetARGB(0xFF, 0x33, 0x22, 0x11);
+    static constexpr SkColor kSrcPixel   = SkColorSetARGB(0xFF, 0x00, 0x88, 0x44);
+
+    auto dstII = SkImageInfo::Make({kSize, kSize}, kRGBA_8888_SkColorType, kPremul_SkAlphaType);
+    auto srcII = dstII.makeAlphaType(kUnpremul_SkAlphaType);
+    auto surf = SkSurfaces::RenderTarget(dContext, skgpu::Budgeted::kYes, dstII);
+    if (!surf) {
+        return;
+    }
+
+    SkBitmap srcBM;
+    srcBM.allocPixels(srcII, srcII.minRowBytes());
+    srcBM.eraseColor(kStalePixel);
+
+    // Prime: writePixels(unpremul kStalePixel). canvas2DFastPath uploads kStalePixel into a
+    // fresh kApprox scratch texture and draws it into |surf|. After the flush the scratch
+    // texture (still holding kStalePixel) is returned to the resource cache.
+    if (!surf->getCanvas()->writePixels(srcBM, 0, 0)) {
+        return;
+    }
+    dContext->flushAndSubmit(GrSyncCpu::kYes);
+
+    // Arm a preFlush() that fails exactly once. When it fires on the flush for uploading to a
+    // temporary texture, we should propagate the failure and not use the temporary texture as the
+    // input for the draw that performs the final "write".
+    class FailOnceFlushCallback : public GrOnFlushCallbackObject {
+    public:
+        bool preFlush(GrOnFlushResourceProvider*) override { return ++fCount > 1; }
+        int count() const { return fCount; }
+    private:
+        int fCount = 0;
+    };
+    FailOnceFlushCallback cb;
+    dContext->priv().addOnFlushCallbackObject(&cb);
+
+    // writePixels(unpremul kSrcPixel): tempProxy is instantiated from the recycled
+    // scratch texture (still kStalePixel). The GrWritePixelsTask that would overwrite it with
+    // kSrcPixel is queued and then dropped by the failed flush, leaving the tempProxy stale.
+    srcBM.eraseColor(kSrcPixel);
+    bool ok = surf->getCanvas()->writePixels(srcBM, 0, 0);
+
+    dContext->priv().drawingManager()->testingOnly_removeOnFlushCallbackObject(&cb);
+
+    if (!ok) {
+        // Assuming the various branches are taken inside internalWritePixels to trigger the
+        // FailOnceFlushCallback, it should be propagated as a failure of the overall writePixels().
+        REPORTER_ASSERT(reporter, cb.count() > 0);
+        return;
+    }
+
+    // If none of the code paths triggered an internal flush from the write pixels, it should
+    // execute successfully when we flush here.
+    dContext->flushAndSubmit(GrSyncCpu::kYes);
+
+    SkBitmap readback;
+    readback.allocPixels(dstII);
+    if (!surf->readPixels(readback, 0, 0)) {
+        ERRORF(reporter, "readback failed");
+        return;
+    }
+
+    SkColor got = readback.getColor(0, 0);
+    // Bug: |got| == kStalePixel (recycled scratch contents) instead of kSrcPixel.
+    REPORTER_ASSERT(reporter,
+                    got == kSrcPixel,
+                    "writePixels reported success but destination holds stale scratch "
+                    "contents 0x%08x (expected 0x%08x, stale=0x%08x, preFlush hits=%d)",
+                    got, kSrcPixel, kStalePixel, cb.count());
 }
