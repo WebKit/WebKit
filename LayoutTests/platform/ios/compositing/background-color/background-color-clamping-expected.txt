@@ -1,11 +1,11 @@
 
 (CALayer tree root
   (layer bounds [x: 0 y: 0 width: 784 height: 830])
-  (layer position [x: 400 y: 400])
+  (layer position [x: 400 y: 425])
   (sublayers
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
-      (layer position [x: 110 y: 110])
+      (layer position [x: 110 y: 100])
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
@@ -13,7 +13,7 @@
           (layer background color rgb(255, 255, 255)))))
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
-      (layer position [x: 110 y: 110])
+      (layer position [x: 110 y: 310])
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
@@ -21,7 +21,7 @@
           (layer background color rgb(0, 140, 214)))))
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
-      (layer position [x: 110 y: 110])
+      (layer position [x: 110 y: 520])
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
@@ -29,7 +29,7 @@
           (layer background color rgb(0, 255, 184)))))
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
-      (layer position [x: 110 y: 110])
+      (layer position [x: 110 y: 730])
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])

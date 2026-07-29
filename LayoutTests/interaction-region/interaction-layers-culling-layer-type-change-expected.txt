@@ -1,7 +1,7 @@
 
 (CALayer tree root
   (layer bounds [x: 0 y: 0 width: 800 height: 700])
-  (layer position [x: 400 y: 400])
+  (layer position [x: 400 y: 363])
   (layer background color rgba(0, 0, 0, 0))
   (sublayers
     (
@@ -10,15 +10,15 @@
         (
           (type 0)
           (layer bounds [x: 0 y: 0 width: 700 height: 34])
-          (layer position [x: 400 y: 400])
+          (layer position [x: 400 y: 67])
           (layer cornerRadius 8))
         (
           (type 0)
           (layer bounds [x: 0 y: 0 width: 700 height: 34])
-          (layer position [x: 400 y: 400])
+          (layer position [x: 400 y: 151])
           (layer cornerRadius 8))
         (
           (type 0)
           (layer bounds [x: 0 y: 0 width: 700 height: 34])
-          (layer position [x: 400 y: 400])
+          (layer position [x: 400 y: 235])
           (layer cornerRadius 8))))))

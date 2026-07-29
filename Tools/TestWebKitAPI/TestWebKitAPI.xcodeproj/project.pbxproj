@@ -953,6 +953,7 @@
 				WebKit/WKWebView/ios/ApplicationStateTracking.mm,
 				WebKit/WKWebView/ios/AutocorrectionTestsIOS.mm,
 				WebKit/WKWebView/ios/BacklightLevelNotification.mm,
+				WebKit/WKWebView/ios/CALayerTreeAsText.mm,
 				WebKit/WKWebView/ios/CustomContentViewGestures.mm,
 				WebKit/WKWebView/ios/DataDetectorsTestIOS.mm,
 				WebKit/WKWebView/ios/DataListTextSuggestionTests.mm,

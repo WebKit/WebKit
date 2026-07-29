@@ -2,7 +2,7 @@
 
 (CALayer tree root
   (layer bounds [x: 0 y: 0 width: 800 height: 108])
-  (layer position [x: 400 y: 400])
+  (layer position [x: 400 y: 67])
   (sublayers
     (
       (layer bounds [x: 0 y: 0 width: 0 height: 0])
@@ -10,5 +10,5 @@
         (
           (type 0)
           (layer bounds [x: 0 y: 0 width: 100 height: 100])
-          (layer position [x: 382 y: 382]))))))
+          (layer position [x: 382 y: 58]))))))
 
