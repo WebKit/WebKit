@@ -152,7 +152,6 @@ inspector/agents/InspectorPageAgent.cpp
 inspector/agents/WebHeapAgent.cpp
 inspector/agents/frame/FrameCSSAgent.cpp
 inspector/agents/page/PageCanvasAgent.cpp
-inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageRuntimeAgent.cpp
 inspector/agents/worker/WorkerAuditAgent.cpp
 inspector/agents/worker/WorkerDebuggerAgent.cpp

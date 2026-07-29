@@ -15,9 +15,7 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
 [ iOS ] Modules/webdatabase/DatabaseTracker.cpp
-accessibility/AXTableHelpers.cpp
 accessibility/AccessibilityObject.cpp
-accessibility/AccessibilitySVGObject.cpp
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSCSSRuleListCustom.cpp
@@ -32,55 +30,33 @@ bindings/js/JSPluginElementFunctions.cpp
 bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
 css/CSSStyleSheet.cpp
-css/SelectorChecker.cpp
 css/values/CSSValueAggregates.h
 dom/ContainerNode.cpp
-dom/DocumentFragment.cpp
 dom/Element.cpp
-dom/ElementAndTextDescendantIterator.h
-dom/ImageOverlay.cpp
 dom/Position.cpp
-dom/TreeScope.cpp
-editing/FrameSelection.cpp
-editing/cocoa/WebContentReaderCocoa.mm
-html/HTMLFormControlsCollection.cpp
-html/HTMLFormElement.cpp
-html/HTMLMediaElement.cpp
-html/HTMLObjectElement.cpp
-html/HTMLTableElement.cpp
+[ macOS ] html/HTMLMediaElement.cpp
 inspector/InspectorIdentifierRegistry.cpp
-inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorNetworkAgent.cpp
 inspector/agents/InspectorPageAgent.cpp
-loader/cache/CachedSVGFont.cpp
-page/DragController.cpp
-page/EventHandler.cpp
 page/IntersectionObserver.cpp
-page/LocalFrameView.cpp
+[ iOS ] page/LocalFrameView.cpp
 [ iOS ] page/Quirks.cpp
 [ iOS ] page/ios/FrameIOS.mm
 [ Mac ] page/mac/ServicesOverlayController.mm
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
 rendering/RenderCounter.cpp
-rendering/RenderElement.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderTreeAsText.cpp
 style/ElementRuleCollector.cpp
-style/PseudoElementUtilities.cpp
 style/StyleBuilderCustom.h
 style/StyleDocumentScope.cpp
-style/StyleExtractor.cpp
 style/StyleInvalidationFunctions.h
-style/StyleTreeResolver.cpp
 style/UserAgentStyle.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
-svg/SVGFELightElement.cpp
-svg/SVGSVGElement.cpp
 svg/SVGUseElement.cpp
-svg/animation/SMILTimeContainer.cpp
 testing/Internals.cpp
 testing/LegacyMockCDM.cpp
