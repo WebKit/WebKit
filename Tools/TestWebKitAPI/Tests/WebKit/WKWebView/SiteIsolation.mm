@@ -1623,6 +1623,123 @@ TEST(SiteIsolation, MainFrameHeartbeatContinuesWhileCrossSiteIframeDialogShown)
         heldCompletion();
 }
 
+// With site isolation, a single WKWebView can have more than one WebContent process at once hosting it.
+// Each of those processes can make a JS dialog request to the UI process simultaneously.
+// As far as WKWebView API is concerned, the client would only expect to see one dialog at a time.
+// This test verifies that WebKit queues the requests and sends them to the API client serially.
+TEST(SiteIsolation, SimultaneousDialogsFromMultipleCrossOriginFrames)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"
+            "<iframe src='https://apple.com/apple'></iframe>"
+            "<script>setTimeout(() => alert('example dialog'), 0)</script>"_s } },
+        { "/webkit"_s, { "<script>alert('webkit dialog')</script>"_s } },
+        { "/apple"_s, { "<script>alert('apple dialog')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    // The three frames each request a dialog at roughly the same time, but WebKit must deliver
+    // them to the client one at a time: the next dialog should only appear after the previous
+    // one's completion handler has been called.
+    __block unsigned outstandingDialogs = 0;
+    __block unsigned totalDialogs = 0;
+    __block bool sawMoreThanOneAtOnce = false;
+    __block BlockPtr<void()> pendingCompletion;
+    RetainPtr receivedHosts = adoptNS([NSMutableSet new]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *frameInfo, void (^completionHandler)(void)) {
+        [receivedHosts addObject:frameInfo.securityOrigin.host];
+        totalDialogs++;
+        if (++outstandingDialogs > 1)
+            sawMoreThanOneAtOnce = true;
+        // Hold this dialog open; the test's run loop will release it, and only then should the
+        // next queued dialog be delivered.
+        pendingCompletion = makeBlockPtr(completionHandler);
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+
+    // Release dialogs one at a time until all three have been delivered serially.
+    for (unsigned attempt = 0; attempt < 100 && totalDialogs < 3; ++attempt) {
+        TestWebKitAPI::Util::runFor(Seconds(0.05));
+        if (pendingCompletion) {
+            auto completion = std::exchange(pendingCompletion, nullptr);
+            --outstandingDialogs;
+            completion();
+        }
+    }
+
+    EXPECT_EQ(totalDialogs, 3u);
+    EXPECT_FALSE(sawMoreThanOneAtOnce);
+    EXPECT_TRUE([receivedHosts containsObject:@"example.com"]);
+    EXPECT_TRUE([receivedHosts containsObject:@"webkit.org"]);
+    EXPECT_TRUE([receivedHosts containsObject:@"apple.com"]);
+
+    if (pendingCompletion) {
+        auto completion = std::exchange(pendingCompletion, nullptr);
+        completion();
+    }
+}
+
+// Has two cross-origin iframes request a modal dialog, then navigates the main frame while one
+// of those requests is still queued. Makes sure the still-queued request cancels cleanly.
+TEST(SiteIsolation, QueuedDialogPurgedByMainFrameNavigation)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"
+            "<iframe src='https://apple.com/apple'></iframe>"_s } },
+        { "/webkit"_s, { "<script>alert('webkit dialog')</script>"_s } },
+        { "/apple"_s, { "<script>alert('apple dialog')</script>"_s } },
+        { "/next"_s, { "<p>next</p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    __block unsigned totalDialogs = 0;
+    __block BlockPtr<void()> firstCompletion;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *frameInfo, void (^completionHandler)(void)) {
+        if (!totalDialogs++) {
+            // Hold the first dialog open so the second stays queued in the UI process.
+            firstCompletion = makeBlockPtr(completionHandler);
+            return;
+        }
+        // Reaching here means a queued dialog was delivered after the navigation, which is the bug.
+        completionHandler();
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+
+    // Wait for the first dialog to be shown and held.
+    while (!firstCompletion)
+        TestWebKitAPI::Util::runFor(Seconds(0.05));
+
+    // Give the second cross-origin frame time to get its dialog request queued behind the first. It
+    // cannot be shown while the first is held, so a longer wait here is harmless.
+    TestWebKitAPI::Util::runFor(Seconds(0.5));
+
+    // Navigate the main frame and wait for the new provisional load to start, which is where the queue
+    // is purged.
+    __block bool navigationStarted = false;
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        navigationStarted = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/next"]]];
+    while (!navigationStarted)
+        TestWebKitAPI::Util::runFor(Seconds(0.05));
+
+    // Release the first dialog. If the queued dialog had not been purged, dismissing the first would
+    // let it flow to the API client now.
+    std::exchange(firstCompletion, nullptr)();
+
+    // Let anything still in flight settle, then confirm only the first dialog was ever delivered.
+    TestWebKitAPI::Util::runFor(Seconds(0.5));
+    EXPECT_EQ(totalDialogs, 1u);
+}
+
 TEST(SiteIsolation, GrandchildIframe)
 {
     HTTPServer server({

@@ -378,35 +378,22 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
 }
 
 #if HAVE(SAFE_BROWSING)
-void WebPageProxy::deferModalUntilSafeBrowsingCompletes(CompletionHandler<void(bool)>&& handler)
-{
-    ASSERT(isMainRunLoop());
-    ASSERT(handler);
-
-    if (!m_isSafeBrowsingCheckInProgress)
-        return handler(true);
-    m_deferredModalHandlers.append(WTF::move(handler));
-}
-
 void WebPageProxy::completeSafeBrowsingCheckForModals(bool userProceeded)
 {
     ASSERT(isMainRunLoop());
 
     m_isSafeBrowsingCheckInProgress = false;
 
-    auto& handlers = m_deferredModalHandlers;
-    if (handlers.isEmpty())
-        return;
-
-    for (auto& handler : std::exchange(handlers, { }))
-        handler(userProceeded);
+    if (userProceeded)
+        runNextModalJavaScriptDialogIfNeeded();
+    else
+        purgeQueuedModalDialogs();
 }
 
 void WebPageProxy::drainDeferredModalsForNewNavigation()
 {
     ASSERT(isMainRunLoop());
-    for (auto& handler : std::exchange(m_deferredModalHandlers, { }))
-        handler(false);
+    purgeQueuedModalDialogs();
 
     if (m_isSafeBrowsingCheckInProgress) {
         m_isSafeBrowsingCheckInProgress = false;
