@@ -40,6 +40,7 @@
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/StdLibExtras.h>
 
 @interface FileSystemAccessMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -501,6 +502,64 @@ TEST(FileSystemAccess, FetchDataForThirdParty)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+// A positioned write only consumes quota up to (position + dataLength), not
+// (currentFileOffset + position + dataLength). Overwriting data in place should
+// therefore not be charged more quota than the file's final size.
+static NSString *writableQuotaString = @"<script> \
+    async function test() \
+    { \
+        try { \
+            var rootHandle = await navigator.storage.getDirectory(); \
+            await rootHandle.removeEntry('writable-quota-accounting.txt').then(() => { }, () => { }); \
+            var fileHandle = await rootHandle.getFileHandle('writable-quota-accounting.txt', { 'create' : true }); \
+            var writable = await fileHandle.createWritable(); \
+            var chunkSize = 700 * 1024; \
+            await writable.write(new Uint8Array(chunkSize)); \
+            await writable.write({ type: 'write', position: 0, data: new Uint8Array(chunkSize) }); \
+            await writable.close(); \
+            window.webkit.messageHandlers.testHandler.postMessage('success'); \
+        } catch(err) { \
+            window.webkit.messageHandlers.testHandler.postMessage('error: ' + err.name + ' - ' + err.message); \
+        } \
+    } \
+    test(); \
+    </script>";
+
+TEST(FileSystemAccess, WritableQuotaAccountingForPositionedWrite)
+{
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    [websiteDataStoreConfiguration setVolumeCapacityOverride:@(2 * MB)];
+    // Origin quota is 1 MB.
+    [websiteDataStoreConfiguration setOriginQuotaRatio:@(0.5)];
+    RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    done = false;
+    [websiteDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    RetainPtr handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto preferences = [configuration preferences];
+    preferences._fileSystemAccessEnabled = YES;
+    preferences._accessHandleEnabled = YES;
+    preferences._storageAPIEnabled = YES;
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [webView loadHTMLString:writableQuotaString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    // The two 700 KB writes both target the start of the file, so the file never
+    // exceeds 700 KB and stays well under the 1 MB quota. Before the fix, the
+    // positioned write was charged (currentOffset + position + length), i.e.
+    // 1400 KB, and was spuriously denied with QuotaExceededError.
+    EXPECT_WK_STREQ(@"success", [lastScriptMessage body]);
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)

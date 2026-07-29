@@ -370,12 +370,18 @@ std::optional<size_t> FileSystemStorageHandle::computeCommandSpace(WebCore::File
     if (type == WebCore::FileSystemWriteCommandType::Truncate)
         return *size > *fileSize ? *size - *fileSize : 0;
 
-    uint64_t finalSize;
-    auto currentOffset = activeWritableFile.handle.seek(position.value_or(0), FileSystem::FileSeekOrigin::Current);
-    if (!currentOffset)
-        return { };
+    uint64_t writeStart;
+    if (position)
+        writeStart = *position;
+    else {
+        auto currentOffset = activeWritableFile.handle.seek(0, FileSystem::FileSeekOrigin::Current);
+        if (!currentOffset)
+            return { };
+        writeStart = *currentOffset;
+    }
 
-    if (!WTF::safeAdd(*currentOffset, dataBytes.size(), finalSize))
+    uint64_t finalSize;
+    if (!WTF::safeAdd(writeStart, dataBytes.size(), finalSize))
         return { };
 
     return finalSize > *fileSize ? finalSize - *fileSize : 0;
