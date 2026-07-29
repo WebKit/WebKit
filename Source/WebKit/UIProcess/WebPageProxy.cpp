@@ -18808,6 +18808,14 @@ Ref<WebProcessProxy> WebPageProxy::processContainingFrame(std::optional<WebCore:
     return siteIsolatedProcess();
 }
 
+WebCore::PageIdentifier WebPageProxy::webPageIDInProcessForFrame(std::optional<WebCore::FrameIdentifier> frameID)
+{
+    // For the main frame this resolves to the main frame process and returns m_webPageID,
+    // matching webPageIDInMainFrameProcess(). For an out-of-process frame it returns the identifier the
+    // RemotePage's WebPage is registered under in that frame's process.
+    return webPageIDInProcess(processContainingFrame(frameID));
+}
+
 template<typename F>
 decltype(auto) WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, F&& sendFunction)
 {
