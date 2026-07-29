@@ -11268,4 +11268,29 @@ TEST(SiteIsolation, WebsitePoliciesAppliedToCrossOriginSubframeDocumentLoader)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check inFrame:[webView firstChildFrame]], "available");
 }
 
+#if PLATFORM(MAC)
+TEST(SiteIsolation, CrossOriginSubframeCannotFocusTopWindow)
+{
+    auto mainframeHTML = "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    __block bool focusCalled = false;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setFocusWebView:^(WKWebView *) {
+        focusCalled = true;
+    }];
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView objectByEvaluatingJavaScript:@"top.focus()" inFrame:[webView firstChildFrame]];
+    EXPECT_FALSE(focusCalled);
+}
+#endif
+
 }

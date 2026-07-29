@@ -233,6 +233,7 @@ public:
     bool isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const URL&);
 
 protected:
+    bool isWindowFocusAllowed(const LocalDOMWindow& incumbentWindow) const;
     bool passesSetLocationSecurityChecks(const LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState& navigationState);
     explicit DOMWindow(GlobalWindowIdentifier&&, DOMWindowType);
 

@@ -57,11 +57,13 @@
 #include "ScheduledAction.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "Site.h"
 #include "StyleMedia.h"
 #include "VisualViewport.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebKitPoint.h"
+#include "WindowFocusAllowedIndicator.h"
 #include "WindowProxy.h"
 #include "dom/SandboxFlags.h"
 #include "page/RemoteFrame.h"
@@ -527,6 +529,22 @@ ExceptionOr<bool> DOMWindow::originAgentCluster() const
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->originAgentCluster();
+}
+
+bool DOMWindow::isWindowFocusAllowed(const LocalDOMWindow& incumbentWindow) const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return false;
+
+    RefPtr openerFrame = frame->opener();
+    if (openerFrame && openerFrame != frame && incumbentWindow.frame() == openerFrame) {
+        RefPtr page = openerFrame->page();
+        if (page && page->isVisibleAndActive())
+            return true;
+    }
+
+    return WindowFocusAllowedIndicator::windowFocusAllowed() || !frame->settings().windowFocusRestricted();
 }
 
 void DOMWindow::focus(LocalDOMWindow& incumbentWindow)
