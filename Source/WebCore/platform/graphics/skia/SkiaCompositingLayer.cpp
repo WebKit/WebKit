@@ -38,7 +38,6 @@
 #include "PlatformDisplay.h"
 #include "Region.h"
 #include "SkiaBackingStore.h"
-#include "SkiaCompositingLayer3DRenderingContext.h"
 #include "SkiaCompositingLayerFilters.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 #include "SkiaDamageRegion.h"
@@ -1449,29 +1448,53 @@ void SkiaCompositingLayer::paintWithBlendMode(SkCanvas& canvas, PaintContext& co
     }
 }
 
-void SkiaCompositingLayer::collect3DRenderingContextLayers(Vector<Ref<SkiaCompositingLayer>>& layers)
+FloatRect SkiaCompositingLayer::transformedFlattenedBounds() const
+{
+    auto bounds = m_transforms.combined.mapRect(FloatRect({ }, m_size));
+
+    if (!m_masksToBounds && !m_mask) {
+        for (const auto& child : m_children)
+            bounds.unite(child->transformedFlattenedBounds());
+    }
+
+    return bounds;
+}
+
+FloatPolygon3D SkiaCompositingLayer::geometryFor3DRenderingContext() const
+{
+    FloatRect bounds;
+    if (isLeafOf3DRenderingContext() && !m_children.isEmpty() && !m_masksToBounds && !m_mask && m_transforms.combined.isInvertible()) {
+        auto inverse = m_transforms.combined.inverse().value_or(TransformationMatrix());
+        bounds = inverse.mapRect(transformedFlattenedBounds());
+    } else
+        bounds = FloatRect({ }, m_size);
+
+    return FloatPolygon3D(bounds, m_transforms.combined);
+}
+
+void SkiaCompositingLayer::collect3DRenderingContextLayers(Vector<SkiaCompositingLayer3DRenderingContext::Layer>& layers)
 {
     if (m_preserves3D || isLeafOf3DRenderingContext()) {
         // Add layers to 3d rendering context only if they get actually painted.
         bool hasVisualContentOrFilters = hasVisualContent() || filter() || m_backdrop.filter;
         if (isVisible() && (hasVisualContentOrFilters || (isLeafOf3DRenderingContext() && !m_children.isEmpty())))
-            layers.append(Ref { *this });
+            layers.append(SkiaCompositingLayer3DRenderingContext::Layer(Ref { *this }, geometryFor3DRenderingContext()));
 
         // Stop recursion on 3d rendering context leaf
         if (isLeafOf3DRenderingContext())
             return;
     }
 
-    for (auto& child : m_children)
+    for (const auto& child : m_children)
         child->collect3DRenderingContextLayers(layers);
 }
 
 void SkiaCompositingLayer::paintWith3DRenderingContext(SkCanvas& canvas, PaintContext& context)
 {
-    Vector<Ref<SkiaCompositingLayer>> layers;
+    Vector<SkiaCompositingLayer3DRenderingContext::Layer> layers;
     collect3DRenderingContextLayers(layers);
 
-    SkiaCompositingLayer3DRenderingContext::paint(layers, [&](SkiaCompositingLayer& layer, std::optional<SkPath> clipPath) {
+    SkiaCompositingLayer3DRenderingContext::paint(WTF::move(layers), [&](SkiaCompositingLayer& layer, std::optional<SkPath> clipPath) {
         ScopedFlush autoFlush(canvas, context.imageSetBatch, clipPath ? ScopedFlush::Mode::FlushBeforeAndAfter : ScopedFlush::Mode::DoNothing);
         if (clipPath)
             canvas.clipPath(*clipPath);

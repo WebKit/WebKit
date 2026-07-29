@@ -110,17 +110,10 @@ static inline bool quadsIntersect(const FloatQuad& quadA, const FloatQuad& quadB
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SkiaCompositingLayer3DRenderingContext::LayerNode);
 
-void SkiaCompositingLayer3DRenderingContext::paint(const Vector<Ref<SkiaCompositingLayer>>& compositingLayers, const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>& paintLayerFunction)
+void SkiaCompositingLayer3DRenderingContext::paint(Vector<Layer>&& layers, const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>& paintLayerFunction)
 {
-    if (compositingLayers.isEmpty())
+    if (layers.isEmpty())
         return;
-
-    Vector<Layer> layers;
-    for (auto& compositingLayer : compositingLayers) {
-        FloatPolygon3D geometry(compositingLayer->effectiveLayerRect(), compositingLayer->toSurfaceTransform());
-        BoundingBox boundingBox = computeBoundingBox(geometry);
-        layers.append({ geometry, boundingBox, compositingLayer });
-    }
 
     // Perform a broad-phase sweep-and-prune to identify potential intersections.
     // By determining which layers might intersect, we can limit BSP cutting planes to those areas only,
@@ -149,7 +142,7 @@ void SkiaCompositingLayer3DRenderingContext::paint(const Vector<Ref<SkiaComposit
             return layerA.boundingBox.min.z() < layerB.boundingBox.min.z();
         });
 
-        for (auto& layer : layers)
+        for (const auto& layer : layers)
             paintLayerFunction(layer.compositingLayer.get(), std::nullopt);
         return;
     }
@@ -157,12 +150,14 @@ void SkiaCompositingLayer3DRenderingContext::paint(const Vector<Ref<SkiaComposit
     Deque<Layer> layerDeque;
     for (auto& layer : layers)
         layerDeque.append(WTF::move(layer));
-    layers.clear();
 
     auto root = makeUnique<LayerNode>(layerDeque.takeFirst());
     buildTree(*root, layerDeque);
 
     auto buildClipPath = [](const Layer& layer) -> std::optional<SkPath> {
+        if (layer.isSplit == Layer::IsSplit::No)
+            return std::nullopt;
+
         auto toLayerTransform = layer.compositingLayer->toSurfaceTransform().inverse();
         unsigned numVertices = layer.geometry.numberOfVertices();
         if (!toLayerTransform || numVertices < 3)
@@ -182,14 +177,8 @@ void SkiaCompositingLayer3DRenderingContext::paint(const Vector<Ref<SkiaComposit
 
     // Paint in BSP order, building SkPath clip paths for split layers.
     traverseTree(*root, [&paintLayerFunction, &buildClipPath](LayerNode& node) {
-        for (auto& layer : node.layers) {
-            if (!layer.isSplit) {
-                paintLayerFunction(layer.compositingLayer.get(), std::nullopt);
-                continue;
-            }
-
+        for (const auto& layer : node.layers)
             paintLayerFunction(layer.compositingLayer.get(), buildClipPath(layer));
-        }
     });
 }
 
@@ -278,9 +267,9 @@ void SkiaCompositingLayer3DRenderingContext::buildTree(LayerNode& root, Deque<La
         case LayerPosition::Intersecting:
             auto [backGeometry, frontGeometry] = layer.geometry.split(rootPlane);
             if (backGeometry.numberOfVertices() > 2)
-                backList.append({ backGeometry, { }, layer.compositingLayer, true });
+                backList.append(Layer(layer.compositingLayer.copyRef(), WTF::move(backGeometry), Layer::IsSplit::Yes));
             if (frontGeometry.numberOfVertices() > 2)
-                frontList.append({ frontGeometry, { }, layer.compositingLayer, true });
+                frontList.append(Layer(layer.compositingLayer.copyRef(), WTF::move(frontGeometry), Layer::IsSplit::Yes));
             break;
         }
     }

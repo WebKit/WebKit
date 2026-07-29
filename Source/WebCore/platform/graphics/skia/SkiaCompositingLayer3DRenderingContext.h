@@ -43,8 +43,34 @@ class SkiaCompositingLayer;
 
 class SkiaCompositingLayer3DRenderingContext {
 public:
-    static void paint(const Vector<Ref<SkiaCompositingLayer>>&,
-        const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>&);
+    struct BoundingBox {
+        FloatPoint3D min;
+        FloatPoint3D max;
+    };
+
+    struct Layer {
+        enum class IsSplit : bool { No, Yes };
+
+        Layer(Ref<SkiaCompositingLayer>&& layer, FloatPolygon3D&& layerGeometry, IsSplit layerIsSplit = IsSplit::No)
+            : compositingLayer(WTF::move(layer))
+            , geometry(WTF::move(layerGeometry))
+            , isSplit(layerIsSplit)
+        {
+            if (isSplit == IsSplit::No)
+                boundingBox = computeBoundingBox(geometry);
+        }
+
+        Layer(const Layer&) = delete;
+        Layer& operator=(const Layer&) = delete;
+        Layer(Layer&&) = default;
+        Layer& operator=(Layer&&) = default;
+
+        Ref<SkiaCompositingLayer> compositingLayer;
+        FloatPolygon3D geometry;
+        IsSplit isSplit { IsSplit::No };
+        BoundingBox boundingBox;
+    };
+    static void paint(Vector<Layer>&&, const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>&);
 
 private:
     enum class LayerPosition {
@@ -52,18 +78,6 @@ private:
         Behind,
         Coplanar,
         Intersecting
-    };
-
-    struct BoundingBox {
-        FloatPoint3D min;
-        FloatPoint3D max;
-    };
-
-    struct Layer {
-        FloatPolygon3D geometry;
-        BoundingBox boundingBox;
-        Ref<SkiaCompositingLayer> compositingLayer;
-        bool isSplit { false };
     };
 
     struct LayerNode {
