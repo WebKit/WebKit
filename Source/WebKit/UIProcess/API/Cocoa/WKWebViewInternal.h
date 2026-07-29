@@ -588,6 +588,9 @@ struct LiveResizeSnapshotState {
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     WebCore::RectEdges<RetainPtr<WKColorExtensionView>> _systemBackgroundColorExtensionViews;
     WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement _adjustedColorExtensionsForBannerViewOverlaysEnablement;
+#if PLATFORM(IOS_FAMILY)
+    CGFloat _restingTopSystemBackgroundColorExtensionInset;
+#endif
 #endif
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
@@ -697,8 +700,9 @@ struct LiveResizeSnapshotState {
 #endif
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-- (BOOL)_hasDetectedHorizontalBannerViewOverlays;
 - (void)_updateAppearanceForSystemBackgroundColorExtensionViews;
+- (CGFloat)_webContentDistanceFromLeftEdge;
+- (CGFloat)_webContentDistanceFromRightEdge;
 #endif
 
 - (BOOL)_shouldAdjustColorExtensionsForHorizontalBannerViewOverlays;

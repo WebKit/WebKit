@@ -25,9 +25,6 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC)
-
-#import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
@@ -42,6 +39,14 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <WebKit/WKWebViewPrivateForTestingIOS.h>
+#endif
+
+#if PLATFORM(MAC)
+
+#import "Helpers/mac/AppKitSPI.h"
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
@@ -106,7 +111,11 @@
 }
 @end
 
+#endif // PLATFORM(MAC)
+
 namespace TestWebKitAPI {
+
+#if PLATFORM(MAC)
 
 TEST(TopContentInset, Fullscreen)
 {
@@ -210,7 +219,11 @@ TEST(ObscuredContentInsets, ScrollViewFrameWithObscuredInsets)
     EXPECT_EQ([webView scrollViewFrame], NSMakeRect(150, 0, 640, 600));
 }
 
+#endif // PLATFORM(MAC)
+
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+#if PLATFORM(MAC)
 
 TEST(ObscuredContentInsets, ResizeScrollPocketWithoutHorizontalBannerView)
 {
@@ -531,6 +544,8 @@ TEST(ObscuredContentInsets, TopOverhangColorExtensionLayerRemovedQuicklyAfterNav
     EXPECT_NULL([webView firstLayerWithNameContaining:@"top overhang"]);
 }
 
+#endif // PLATFORM(MAC)
+
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
 
 namespace HorizontalBannerOverlays {
@@ -544,10 +559,19 @@ static constexpr CGFloat overflowPageWidth = 3000;
 
 static RetainPtr<TestWKWebView> setUpWebView(NSString *html)
 {
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight)]);
+#if PLATFORM(MAC)
     [webView _setAutomaticallyAdjustsContentInsets:NO];
     [webView setObscuredContentInsets:NSEdgeInsetsMake(topInset, leftInset, 0, rightInset)];
     [webView setAllowsMagnification:YES];
+#else
+    // Mirror how an app hosting horizontal banner view overlays configures the web view: obscured
+    // insets on the affected edges, plus a matching (non-adjusting) scroll view content inset so the
+    // resting content offset leaves the horizontal inset areas visible for the system background fill.
+    auto insets = UIEdgeInsetsMake(topInset, leftInset, 0, rightInset);
+    [webView _setObscuredInsets:insets];
+    [[webView scrollView] setContentInset:insets];
+#endif
     [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
     [webView synchronouslyLoadHTMLString:html];
     [webView waitForNextPresentationUpdate];
@@ -583,7 +607,11 @@ static PageState capturePageState(TestWKWebView *webView)
         [[values objectAtIndex:0] doubleValue],
         [[values objectAtIndex:1] doubleValue],
         [[values objectAtIndex:2] doubleValue],
+#if PLATFORM(MAC)
         [webView magnification],
+#else
+        [[webView scrollView] zoomScale],
+#endif
         [[values objectAtIndex:3] boolValue],
     };
 }
@@ -592,44 +620,42 @@ static void scrollTo(TestWKWebView *webView, double xCSS)
 {
     [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(%f, 0)", xCSS]];
     [webView waitForNextPresentationUpdate];
+#if PLATFORM(IOS_FAMILY)
+    [webView waitForNextVisibleContentRectUpdate];
+#endif
     [webView waitForNextPresentationUpdate];
 }
 
-struct ExpectedFrames {
-    CGRect leftSystemBackground;
-    std::optional<CGRect> leftFixed;
-    CGRect topScrollPocket;
-    CGRect rightSystemBackground;
-    std::optional<CGRect> rightFixed;
+static void zoomTo(TestWKWebView *webView, CGFloat scale, CGFloat centerX)
+{
+#if PLATFORM(MAC)
+    [webView setMagnification:scale centeredAtPoint:NSMakePoint(centerX, topInset)];
+#else
+    UNUSED_PARAM(centerX);
+    [[webView scrollView] setZoomScale:scale];
+    [webView waitForNextVisibleContentRectUpdate];
+#endif
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+}
+
+struct Geometry {
+    CGFloat scrollOffsetView;
+    CGFloat contentsWidthView;
+    CGFloat distanceFromLeftEdge;
+    CGFloat distanceFromRightEdge;
 };
 
-static ExpectedFrames computeExpectedFrames(const PageState& state, bool leftFixedEdge, bool rightFixedEdge)
+static Geometry computeGeometry(const PageState& state)
 {
-    auto scrollOffsetView = std::trunc((state.scrollXCSS - state.minScrollXCSS) * state.scale);
-    auto contentsWidthView = std::trunc(state.scrollWidthCSS * state.scale);
-
-    auto distLeft = leftInset - scrollOffsetView;
-    auto distRight = viewWidth - leftInset - contentsWidthView + scrollOffsetView;
-
-    auto clampedLeft = std::clamp<CGFloat>(distLeft, 0, leftInset);
-    auto clampedRight = std::clamp<CGFloat>(distRight, 0, rightInset);
-
-    ExpectedFrames frames;
-    frames.leftSystemBackground = CGRectMake(std::min<CGFloat>(distLeft - leftInset, 0), 0, leftInset, viewHeight);
-    frames.rightSystemBackground = CGRectMake(viewWidth - rightInset + std::max<CGFloat>(rightInset - distRight, 0), 0, rightInset, viewHeight);
-    frames.topScrollPocket = CGRectMake(clampedLeft, 0, viewWidth - clampedLeft - clampedRight, topInset);
-
-    if (leftFixedEdge) {
-        CGFloat width = std::clamp<CGFloat>(leftInset - distLeft, 0, leftInset);
-        frames.leftFixed = CGRectMake(leftInset - width, 0, width, viewHeight);
-    }
-
-    if (rightFixedEdge) {
-        CGFloat width = std::clamp<CGFloat>(rightInset - distRight, 0, rightInset);
-        frames.rightFixed = CGRectMake(viewWidth - rightInset, 0, width, viewHeight);
-    }
-
-    return frames;
+    auto scrollOffsetView = static_cast<CGFloat>(std::trunc((state.scrollXCSS - state.minScrollXCSS) * state.scale));
+    auto contentsWidthView = static_cast<CGFloat>(std::trunc(state.scrollWidthCSS * state.scale));
+    return {
+        scrollOffsetView,
+        contentsWidthView,
+        leftInset - scrollOffsetView,
+        viewWidth - leftInset - contentsWidthView + scrollOffsetView,
+    };
 }
 
 static void expectFrameEqualWithTolerance(CGRect actual, CGRect expected, CGFloat tolerance, NSString *fieldLabel)
@@ -638,61 +664,140 @@ static void expectFrameEqualWithTolerance(CGRect actual, CGRect expected, CGFloa
         && std::fabs(actual.origin.y - expected.origin.y) <= tolerance
         && std::fabs(actual.size.width - expected.size.width) <= tolerance
         && std::fabs(actual.size.height - expected.size.height) <= tolerance;
-    EXPECT_TRUE(match) << fieldLabel.UTF8String << ": actual=" << NSStringFromRect(actual).UTF8String
-        << " expected=" << NSStringFromRect(expected).UTF8String
+    EXPECT_TRUE(match) << fieldLabel.UTF8String
+        << ": actual={" << actual.origin.x << ", " << actual.origin.y << ", " << actual.size.width << ", " << actual.size.height << "}"
+        << " expected={" << expected.origin.x << ", " << expected.origin.y << ", " << expected.size.width << ", " << expected.size.height << "}"
         << " (tolerance=" << tolerance << ")";
 }
 
-static void verifyFrames(TestWKWebView *webView, const ExpectedFrames& expected, NSString *label, CGFloat tolerance = 0)
+static CGRect leftSystemBackgroundFrame(const Geometry& geometry)
 {
-    SCOPED_TRACE(label.UTF8String);
+    return CGRectMake(std::min<CGFloat>(geometry.distanceFromLeftEdge - leftInset, 0), 0, leftInset, viewHeight);
+}
 
-    RetainPtr leftSystemBackground = [webView firstLayerWithNameContaining:@"Left system background color extension"];
-    EXPECT_NOT_NULL(leftSystemBackground.get());
-    if (leftSystemBackground)
-        expectFrameEqualWithTolerance([leftSystemBackground frame], expected.leftSystemBackground, tolerance, @"leftSystemBackground");
+static CGRect rightSystemBackgroundFrame(const Geometry& geometry)
+{
+    return CGRectMake(viewWidth - rightInset + std::max<CGFloat>(rightInset - geometry.distanceFromRightEdge, 0), 0, rightInset, viewHeight);
+}
 
-    RetainPtr leftFixed = [webView firstLayerWithNameContaining:@"Fixed color extension fill (Left)"];
-    if (expected.leftFixed) {
-        EXPECT_NOT_NULL(leftFixed.get());
-        if (leftFixed)
-            expectFrameEqualWithTolerance([leftFixed frame], *expected.leftFixed, tolerance, @"leftFixed");
+static void assertLeftColorExtension(TestWKWebView *webView, const PageState& state, bool leftFixedEdge, CGFloat tolerance)
+{
+    auto geometry = computeGeometry(state);
+
+    RetainPtr systemBackground = [webView firstLayerWithNameContaining:@"Left system background color extension"];
+    EXPECT_NOT_NULL(systemBackground.get());
+    if (systemBackground)
+        expectFrameEqualWithTolerance([systemBackground frame], leftSystemBackgroundFrame(geometry), tolerance, @"left system background");
+
+    RetainPtr fixed = [webView firstLayerWithNameContaining:@"Fixed color extension fill (Left)"];
+    if (leftFixedEdge) {
+        auto width = std::clamp<CGFloat>(leftInset - geometry.distanceFromLeftEdge, 0, leftInset);
+#if PLATFORM(MAC)
+        auto expected = CGRectMake(leftInset - width, 0, width, viewHeight);
+#else
+        // On iOS the sampled fixed extension is parented to the scroll view, so its frame is expressed
+        // in content coordinates: the macOS view-coordinate frame translated by the content offset,
+        // which is (scrollOffsetView - leftInset, -topInset) throughout these tests.
+        auto expected = CGRectMake(geometry.scrollOffsetView - width, -topInset, width, viewHeight);
+#endif
+        EXPECT_NOT_NULL(fixed.get());
+        if (fixed)
+            expectFrameEqualWithTolerance([fixed frame], expected, tolerance, @"left fixed");
     } else
-        EXPECT_NULL(leftFixed.get());
+        EXPECT_NULL(fixed.get());
+}
+
+static void assertRightColorExtension(TestWKWebView *webView, const PageState& state, bool rightFixedEdge, CGFloat tolerance)
+{
+    auto geometry = computeGeometry(state);
+
+    RetainPtr systemBackground = [webView firstLayerWithNameContaining:@"Right system background color extension"];
+    EXPECT_NOT_NULL(systemBackground.get());
+    if (systemBackground)
+        expectFrameEqualWithTolerance([systemBackground frame], rightSystemBackgroundFrame(geometry), tolerance, @"right system background");
+
+    RetainPtr fixed = [webView firstLayerWithNameContaining:@"Fixed color extension fill (Right)"];
+    if (rightFixedEdge) {
+        auto width = std::clamp<CGFloat>(rightInset - geometry.distanceFromRightEdge, 0, rightInset);
+#if PLATFORM(MAC)
+        auto expected = CGRectMake(viewWidth - rightInset, 0, width, viewHeight);
+#else
+        auto expected = CGRectMake(viewWidth - rightInset + geometry.scrollOffsetView - leftInset, -topInset, width, viewHeight);
+#endif
+        EXPECT_NOT_NULL(fixed.get());
+        if (fixed)
+            expectFrameEqualWithTolerance([fixed frame], expected, tolerance, @"right fixed");
+    } else
+        EXPECT_NULL(fixed.get());
+}
+
+#if PLATFORM(MAC)
+
+// macOS shows sampled header colors and page content through the top scroll pocket, which is resized
+// and relocated so it never intrudes into the horizontal obscured content inset areas.
+static void assertTopPocket(TestWKWebView *webView, const PageState& state, CGFloat tolerance)
+{
+    auto geometry = computeGeometry(state);
+    auto clampedLeft = std::clamp<CGFloat>(geometry.distanceFromLeftEdge, 0, leftInset);
+    auto clampedRight = std::clamp<CGFloat>(geometry.distanceFromRightEdge, 0, rightInset);
+    auto expected = CGRectMake(clampedLeft, 0, viewWidth - clampedLeft - clampedRight, topInset);
 
     RetainPtr topScrollPocket = [webView _topScrollPocket];
     EXPECT_NOT_NULL(topScrollPocket.get());
     if (topScrollPocket)
-        expectFrameEqualWithTolerance([topScrollPocket frame], expected.topScrollPocket, tolerance, @"topScrollPocket");
-
-    RetainPtr rightSystemBackground = [webView firstLayerWithNameContaining:@"Right system background color extension"];
-    EXPECT_NOT_NULL(rightSystemBackground.get());
-    if (rightSystemBackground)
-        expectFrameEqualWithTolerance([rightSystemBackground frame], expected.rightSystemBackground, tolerance, @"rightSystemBackground");
-
-    RetainPtr rightFixed = [webView firstLayerWithNameContaining:@"Fixed color extension fill (Right)"];
-    if (expected.rightFixed) {
-        EXPECT_NOT_NULL(rightFixed.get());
-        if (rightFixed)
-            expectFrameEqualWithTolerance([rightFixed frame], *expected.rightFixed, tolerance, @"rightFixed");
-    } else
-        EXPECT_NULL(rightFixed.get());
+        expectFrameEqualWithTolerance([topScrollPocket frame], expected, tolerance, @"top scroll pocket");
 }
 
-static void runSubcases(TestWKWebView *webView, bool leftFixedEdge, bool rightFixedEdge)
+#else
+
+static void assertTopColorExtension(TestWKWebView *webView, const PageState& state, bool hasFixedHeader, CGFloat tolerance)
+{
+    auto geometry = computeGeometry(state);
+    auto expected = CGRectMake(0, -topInset, geometry.contentsWidthView, topInset);
+
+    RetainPtr name = hasFixedHeader ? @"Fixed color extension fill (Top)" : @"Top system background color extension";
+    RetainPtr topFill = [webView firstLayerWithNameContaining:name];
+    EXPECT_NOT_NULL(topFill.get());
+    if (topFill)
+        expectFrameEqualWithTolerance([topFill frame], expected, tolerance, name);
+}
+
+#endif
+
+static void verifyColorExtensions(TestWKWebView *webView, bool leftFixedEdge, bool rightFixedEdge, bool hasFixedHeader, NSString *label)
+{
+    SCOPED_TRACE(label.UTF8String);
+
+    auto state = capturePageState(webView);
+    // A couple pixels of tolerance absorbs rounding (RTL scroll origin, zoom, device content scale).
+#if PLATFORM(MAC)
+    auto tolerance = state.isRTL ? 2.0 : 0.0;
+#else
+    auto tolerance = 2.0;
+#endif
+
+    assertLeftColorExtension(webView, state, leftFixedEdge, tolerance);
+    assertRightColorExtension(webView, state, rightFixedEdge, tolerance);
+#if PLATFORM(MAC)
+    UNUSED_PARAM(hasFixedHeader);
+    assertTopPocket(webView, state, tolerance);
+#else
+    assertTopColorExtension(webView, state, hasFixedHeader, tolerance);
+#endif
+}
+
+static void runSubcases(TestWKWebView *webView, bool leftFixedEdge, bool rightFixedEdge, bool hasFixedHeader = false)
 {
     auto initialState = capturePageState(webView);
     // For LTR, scrolling toward trailing means increasing scrollLeft; for RTL it means decreasing it.
     auto trailingDirection = initialState.isRTL ? -1.0 : 1.0;
     auto initialScrollLeft = initialState.scrollXCSS;
     auto contentsWidthCSS = initialState.scrollWidthCSS;
-    // We need a couple pixels of tolerance to avoid rounding issues.
-    auto tolerance = initialState.isRTL ? 2.0 : 0.0;
     auto scrollByOffsetFromLeading = [&](double offsetCSS) {
         scrollTo(webView, initialScrollLeft + trailingDirection * offsetCSS);
     };
     auto verifyAtCurrentState = [&](NSString *label) {
-        verifyFrames(webView, computeExpectedFrames(capturePageState(webView), leftFixedEdge, rightFixedEdge), label, tolerance);
+        verifyColorExtensions(webView, leftFixedEdge, rightFixedEdge, hasFixedHeader, label);
     };
 
     verifyAtCurrentState(@"A: page load");
@@ -702,9 +807,7 @@ static void runSubcases(TestWKWebView *webView, bool leftFixedEdge, bool rightFi
 
     static constexpr auto zoomScale = 1.5;
     auto zoomCenterX = initialState.isRTL ? (viewWidth - rightInset) : leftInset;
-    [webView setMagnification:zoomScale centeredAtPoint:NSMakePoint(zoomCenterX, topInset)];
-    [webView waitForNextPresentationUpdate];
-    [webView waitForNextPresentationUpdate];
+    zoomTo(webView, zoomScale, zoomCenterX);
     scrollByOffsetFromLeading((leftInset * 3.0 / 4.0) / zoomScale);
     verifyAtCurrentState(@"C: zoom + scroll for 25% visible");
 
@@ -737,7 +840,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysNoOverflow)
         )");
 
     RetainPtr webView = setUpWebView(html);
-    runSubcases(webView.get(), false, false);
+    runSubcases(webView, false, false);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflow)
@@ -760,7 +863,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflow)
         )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html.get());
-    runSubcases(webView.get(), false, false);
+    runSubcases(webView, false, false);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeader)
@@ -787,7 +890,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflowWithFixed
     RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html.get());
-    runSubcases(webView.get(), false, false);
+    runSubcases(webView, false, false, /* hasFixedHeader */ true);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeaderAndSidebar)
@@ -815,7 +918,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflowWithFixed
     RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html.get());
-    runSubcases(webView.get(), true, false);
+    runSubcases(webView, true, false, /* hasFixedHeader */ true);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflow)
@@ -838,7 +941,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflow)
         )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html.get());
-    runSubcases(webView.get(), false, false);
+    runSubcases(webView, false, false);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeader)
@@ -865,7 +968,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflowWithFixed
     RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html.get());
-    runSubcases(webView.get(), false, false);
+    runSubcases(webView, false, false, /* hasFixedHeader */ true);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeaderAndSidebar)
@@ -893,7 +996,7 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflowWithFixed
     RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
     RetainPtr webView = setUpWebView(html.get());
-    runSubcases(webView.get(), false, true);
+    runSubcases(webView, false, true, /* hasFixedHeader */ true);
 }
 
 TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorTracksAppearance)
@@ -915,7 +1018,16 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorTracksA
         </html>
         )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
 
-    auto resolveWindowBackgroundColor = [](NSAppearance *appearance) {
+    auto leftSystemBackgroundColor = [](TestWKWebView *webView) {
+        RetainPtr layer = [webView firstLayerWithNameContaining:@"Left system background color extension"];
+        EXPECT_NOT_NULL(layer.get());
+        if (!layer)
+            return RetainPtr<CocoaColor> { };
+        return RetainPtr { [CocoaColor colorWithCGColor:[layer backgroundColor]] };
+    };
+
+#if PLATFORM(MAC)
+    auto resolveSystemBackgroundColor = [](NSAppearance *appearance) {
         __block RetainPtr<NSColor> resolved;
         [appearance performAsCurrentDrawingAppearance:^{
             resolved = [NSColor colorWithCGColor:[NSColor windowBackgroundColor].CGColor];
@@ -923,41 +1035,64 @@ TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorTracksA
         return resolved;
     };
 
-    auto leftSystemBackgroundColor = [](TestWKWebView *webView) {
-        RetainPtr layer = [webView firstLayerWithNameContaining:@"Left system background color extension"];
-        EXPECT_NOT_NULL(layer.get());
-        if (!layer)
-            return RetainPtr<NSColor> { };
-        return RetainPtr { [NSColor colorWithCGColor:[layer backgroundColor]] };
-    };
-
-    RetainPtr aquaAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    RetainPtr darkAquaAppearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+    RetainPtr lightAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    RetainPtr darkAppearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
     [webView _setAutomaticallyAdjustsContentInsets:NO];
     [webView setObscuredContentInsets:NSEdgeInsetsMake(topInset, leftInset, 0, rightInset)];
     [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
-    [webView setAppearance:aquaAppearance.get()];
+    [webView setAppearance:lightAppearance.get()];
     [webView synchronouslyLoadHTMLString:html.get()];
     [webView waitForNextPresentationUpdate];
     [webView waitForNextPresentationUpdate];
 
-    auto expectedAquaColor = resolveWindowBackgroundColor(aquaAppearance.get());
-    EXPECT_TRUE(Util::compareColors(leftSystemBackgroundColor(webView.get()).get(), expectedAquaColor.get()));
+    auto expectedLightColor = resolveSystemBackgroundColor(lightAppearance.get());
+    EXPECT_TRUE(Util::compareColors(leftSystemBackgroundColor(webView.get()).get(), expectedLightColor.get()));
 
     [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
-    [webView setAppearance:darkAquaAppearance.get()];
+    [webView setAppearance:darkAppearance.get()];
     [webView waitForNextPresentationUpdate];
     [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
 
-    auto expectedDarkColor = resolveWindowBackgroundColor(darkAquaAppearance.get());
+    auto expectedDarkColor = resolveSystemBackgroundColor(darkAppearance.get());
+#else
+    auto resolveSystemBackgroundColor = [](UIUserInterfaceStyle style) {
+        RetainPtr traits = [UITraitCollection traitCollectionWithUserInterfaceStyle:style];
+        return RetainPtr { [UIColor.systemBackgroundColor resolvedColorWithTraitCollection:traits.get()] };
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight)]);
+    auto insets = UIEdgeInsetsMake(topInset, leftInset, 0, rightInset);
+    [webView _setObscuredInsets:insets];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [scrollView setContentInset:insets];
+    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    [webView setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
+    [webView synchronouslyLoadHTMLString:html.get()];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    auto expectedLightColor = resolveSystemBackgroundColor(UIUserInterfaceStyleLight);
+    EXPECT_TRUE(Util::compareColors(leftSystemBackgroundColor(webView.get()).get(), expectedLightColor.get()));
+
+    [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
+    [webView setOverrideUserInterfaceStyle:UIUserInterfaceStyleDark];
+    [webView waitForNextPresentationUpdate];
+    [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
+
+    auto expectedDarkColor = resolveSystemBackgroundColor(UIUserInterfaceStyleDark);
+#endif
+
     EXPECT_TRUE(Util::compareColors(leftSystemBackgroundColor(webView.get()).get(), expectedDarkColor.get()));
     // Sanity check to ensure this test is actually meaningful.
-    EXPECT_FALSE(Util::compareColors(expectedAquaColor.get(), expectedDarkColor.get()));
+    EXPECT_FALSE(Util::compareColors(expectedLightColor.get(), expectedDarkColor.get()));
 }
 
 #endif // ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+#if PLATFORM(MAC)
 
 #if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
 
@@ -1256,8 +1391,8 @@ TEST(ObscuredContentInsets, ScrollPocketCoversFullScreenTitlebarAfterMovingIntoF
 
 #endif // ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
 
+#endif // PLATFORM(MAC)
+
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 } // namespace TestWebKitAPI
-
-#endif // PLATFORM(MAC)

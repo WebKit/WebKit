@@ -1167,6 +1167,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     [_systemBackgroundColorExtensionViews.left() cancelFadeAnimation];
     [_systemBackgroundColorExtensionViews.right() cancelFadeAnimation];
+#if PLATFORM(IOS_FAMILY)
+    [_systemBackgroundColorExtensionViews.top() cancelFadeAnimation];
+#endif
 #endif
 }
 

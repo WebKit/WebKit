@@ -327,6 +327,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self registerForTraitChanges:@[[UITraitHDRHeadroomUsageLimit class]] withAction:@selector(_hdrHeadroomUsageLimitDidChange)];
     [self _hdrHeadroomUsageLimitDidChange];
 #endif // HAVE(SUPPORT_HDR_DISPLAY_APIS)
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    [self registerForTraitChanges:@[[UITraitUserInterfaceStyle class], [UITraitUserInterfaceLevel class]] withAction:@selector(_updateAppearanceForSystemBackgroundColorExtensionViews)];
+#endif
 }
 
 - (BOOL)_isShowingVideoPictureInPicture
@@ -2296,21 +2300,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!topColorExtensionView || [topColorExtensionView isHidden])
         return;
 
-    std::optional<NSInteger> refreshControlIndex;
     std::optional<NSInteger> topColorExtensionViewIndex;
     std::optional<NSInteger> contentViewIndex;
 
     NSInteger index = 0;
-    RetainPtr refreshControl = [_scrollView refreshControl];
     for (UIView *subview in [_scrollView subviews]) {
-        if (subview == refreshControl)
-            refreshControlIndex = index;
-        else if (subview == topColorExtensionView)
+        if (subview == topColorExtensionView)
             topColorExtensionViewIndex = index;
         else if (subview == _contentView)
             contentViewIndex = index;
 
-        if (refreshControlIndex && topColorExtensionViewIndex && contentViewIndex)
+        if (topColorExtensionViewIndex && contentViewIndex)
             break;
 
         index++;
@@ -2319,11 +2319,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!topColorExtensionViewIndex)
         return;
 
-    BOOL scrolledBeyondTopExtent = [_scrollView _wk_isScrolledBeyondTopExtent];
-    if (scrolledBeyondTopExtent && refreshControlIndex && *refreshControlIndex < *topColorExtensionViewIndex)
-        [_scrollView insertSubview:topColorExtensionView.get() belowSubview:refreshControl.get()];
-    else if (!scrolledBeyondTopExtent && contentViewIndex && *topColorExtensionViewIndex < *contentViewIndex)
+    if (contentViewIndex && *topColorExtensionViewIndex < *contentViewIndex)
         [_scrollView insertSubview:topColorExtensionView.get() aboveSubview:_contentView.get()];
+
+    if (RetainPtr refreshControl = [_scrollView refreshControl]; refreshControl && [_scrollView _wk_isScrolledBeyondTopExtent])
+        [_scrollView insertSubview:refreshControl aboveSubview:topColorExtensionView];
+
+    for (auto side : { WebCore::BoxSide::Left, WebCore::BoxSide::Right }) {
+        RetainPtr sideColorExtensionView = _fixedColorExtensionViews.at(side);
+        if (sideColorExtensionView && [sideColorExtensionView superview] == [topColorExtensionView superview])
+            [_scrollView insertSubview:sideColorExtensionView belowSubview:topColorExtensionView];
+    }
 }
 
 - (void)_updateNeedsTopScrollPocketDueToVisibleContentInset
@@ -2426,6 +2432,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     [self _updateScrollViewBackground];
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays])
+        [self _updateFixedColorExtensionViewFrames];
+#endif
 
 #if ENABLE(MODEL_PROCESS)
     [_contentView _setTransform3DForModelViews:[scrollView zoomScale]];
