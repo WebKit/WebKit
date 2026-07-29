@@ -127,6 +127,8 @@ endif ()
 
 if (ANDROID)
     list(APPEND WPEPlatform_LIBRARIES Android::Android)
+    list(APPEND WPEPlatform_SOURCES ${WEBKIT_DIR}/WPEPlatform/wpe/WPEProcessManager.cpp)
+    list(APPEND WPEPlatform_INSTALLED_HEADERS ${WEBKIT_DIR}/WPEPlatform/wpe/WPEProcessManager.h)
 endif ()
 
 if (USE_ATK)
