@@ -785,6 +785,53 @@ public:
         return { };
     }
 
+    String scrollableMainHTML() const
+    {
+        // Same embedded PDF, but tall enough that the main frame actually scrolls.
+        return makeString(mainHTML(), "<div style='height:2000px'></div>"_s);
+    }
+
+    void SetUp() override
+    {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML() } },
+            { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFData() } },
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        configuration = server->httpsProxyConfiguration();
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            NSString *key = feature.key;
+            if ([key isEqualToString:@"UnifiedPDFEnabled"] || [key isEqualToString:@"PDFPluginHUDEnabled"])
+                [[configuration preferences] _setEnabled:YES forFeature:feature];
+            else if ([key isEqualToString:@"SiteIsolationEnabled"])
+                [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
+            else if ([key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
+                [[configuration preferences] _setEnabled:siteIsolationSharedProcessEnabled() forFeature:feature];
+        }
+
+        navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+        [webView _setWindowOcclusionDetectionEnabled:NO];
+        [[webView window] makeKeyAndOrderFront:nil];
+        [[webView window] orderFrontRegardless];
+        [webView setNavigationDelegate:navigationDelegate];
+    }
+
+    RetainPtr<NSView> loadAndWaitForHUD()
+    {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        TestWebKitAPI::Util::waitFor([this] {
+            return [webView _pdfHUDs].count;
+        });
+        RetainPtr<NSView> hud = [webView _pdfHUDs].anyObject;
+        TestWebKitAPI::Util::waitFor([hud] {
+            return !NSEqualPoints([hud frame].origin, NSZeroPoint);
+        });
+        return hud;
+    }
+
     static std::string testNameGenerator(testing::TestParamInfo<EmbeddedPDFHUDSiteIsolationParams> info)
     {
         std::string element = [embedElement = std::get<0>(info.param)] {
@@ -804,47 +851,39 @@ public:
             + "_SiteIsolation" + (std::get<2>(info.param) ? "Enabled" : "Disabled")
             + "_SiteIsolationSharedProcess" + (std::get<3>(info.param) ? "Enabled" : "Disabled");
     }
+
+    std::unique_ptr<HTTPServer> server;
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestWKWebView> webView;
 };
 
 TEST_P(EmbeddedPDFHUDSiteIsolation, HUDMatchesOffset)
 {
-    HTTPServer server { {
-        { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML() } },
-        { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFData() } },
-    }, HTTPServer::Protocol::HttpsProxy };
+    RetainPtr hud = loadAndWaitForHUD();
+    checkFrame([hud frame], 10, 28, 300, 150);
+}
 
-    RetainPtr configuration = server.httpsProxyConfiguration();
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        NSString *key = feature.key;
-        if ([key isEqualToString:@"UnifiedPDFEnabled"] || [key isEqualToString:@"PDFPluginHUDEnabled"])
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
-        else if ([key isEqualToString:@"SiteIsolationEnabled"])
-            [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
-        else if ([key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
-            [[configuration preferences] _setEnabled:siteIsolationSharedProcessEnabled() forFeature:feature];
-    }
+TEST_P(EmbeddedPDFHUDSiteIsolation, HUDTracksMainFrameScroll)
+{
+    server->setResponse("/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, scrollableMainHTML() });
 
-    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate allowAnyTLSCertificate];
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
-    [webView _setWindowOcclusionDetectionEnabled:NO];
-    [[webView window] makeKeyAndOrderFront:nil];
-    [[webView window] orderFrontRegardless];
-    [webView setNavigationDelegate:navigationDelegate];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
-    [navigationDelegate waitForDidFinishNavigation];
-
-    TestWebKitAPI::Util::waitFor([webView] {
-        return [webView _pdfHUDs].count;
-    });
-
-    RetainPtr<NSView> hud = [webView _pdfHUDs].anyObject;
-
-    TestWebKitAPI::Util::waitFor([hud] {
-        return !NSEqualPoints([hud frame].origin, NSZeroPoint);
-    });
+    RetainPtr hud = loadAndWaitForHUD();
 
     checkFrame([hud frame], 10, 28, 300, 150);
+
+    bool scrolled = TestWebKitAPI::Util::waitFor([this] {
+        [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 20)"];
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] integerValue] == 20;
+    });
+    EXPECT_TRUE(scrolled);
+
+    TestWebKitAPI::Util::waitFor([this] {
+        [webView waitForNextPresentationUpdate];
+        RetainPtr<NSView> currentHUD = [webView _pdfHUDs].anyObject;
+        return currentHUD && [currentHUD frame].origin.y < 10;
+    });
+    checkFrame([webView _pdfHUDs].anyObject.frame, 10, 8, 300, 150, 1);
 }
 
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool(), testing::Bool()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
