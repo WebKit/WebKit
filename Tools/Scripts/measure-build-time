@@ -462,12 +462,13 @@ def get_args() -> Arguments:
                      '--configure-command')
 
     internal_dir = args.source_dir / '../Internal/WebKit'
-    sdk_version = subprocess.check_output(
-        ('xcodebuild', '-version', '-sdk',
-         'macosx.internal' if internal_dir.exists() else 'macosx',
-         'SDKVersion'),
-        text=True
-    ).rstrip()
+    if args.make or args.cmake:
+        sdk_version = subprocess.check_output(
+            ('xcodebuild', '-version', '-sdk',
+             'macosx.internal' if internal_dir.exists() else 'macosx',
+             'SDKVersion'),
+            text=True
+        ).rstrip()
 
     if args.make:
         args.build_command = DEFAULT_MAKE_COMMAND.format(
