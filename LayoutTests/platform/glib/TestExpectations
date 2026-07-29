@@ -5476,6 +5476,9 @@ webkit.org/b/319950 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-te
 # WebTransport is Cocoa-only (non-Cocoa ports are a stub). https://bugs.webkit.org/show_bug.cgi?id=319008
 imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
+webkit.org/b/320057 imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-old-image.html [ ImageOnlyFailure Pass ]
+webkit.org/b/320056 [ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure Pass ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
