@@ -207,14 +207,29 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
         return;
     }
 
-    auto presentationRequestsOrException = convertObjectsToDigitalPresentationRequests(document, options.digital->requests);
-    if (presentationRequestsOrException.hasException()) {
-        promise.reject(presentationRequestsOrException.releaseException());
+    options.digital->requests.removeAllMatching([&](auto& request) {
+        if (userAgentAllowsProtocol(document, request.protocol))
+            return false;
+        if (RefPtr context = document.scriptExecutionContext()) {
+            String warning = makeString("Ignoring DigitalCredentialGetRequest with unsupported protocol: \""_s, request.protocol, "\""_s);
+            context->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warning);
+        }
+        return true;
+    });
+
+    if (options.digital->requests.isEmpty()) {
+        promise.reject(Exception { ExceptionCode::TypeError, "At least one supported DigitalCredentialGetRequest must be present."_s });
         return;
     }
 
     if (!window->consumeTransientActivation()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "Calling get() needs to be triggered by an activation triggering user event."_s });
+        return;
+    }
+
+    auto presentationRequestsOrException = convertObjectsToDigitalPresentationRequests(document, options.digital->requests);
+    if (presentationRequestsOrException.hasException()) {
+        promise.reject(presentationRequestsOrException.releaseException());
         return;
     }
 

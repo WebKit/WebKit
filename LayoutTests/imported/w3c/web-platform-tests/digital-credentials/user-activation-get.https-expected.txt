@@ -1,6 +1,6 @@
 
 PASS navigator.credentials.get() calling the API without user activation should reject with NotAllowedError.
-FAIL navigator.credentials.get() with non-serializable data and no user activation should reject with NotAllowedError. promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: JSON.stringify cannot serialize BigInt." that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+PASS navigator.credentials.get() with non-serializable data and no user activation should reject with NotAllowedError.
 PASS navigator.credentials.get() with empty protocol array and no user activation needed should reject with TypeError.
 PASS navigator.credentials.get() with early abort does not consume user activation.
 PASS navigator.credentials.get() with late abort consumes user activation.
