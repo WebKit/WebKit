@@ -1650,7 +1650,7 @@ void DocumentLoader::loadApplicationManifest(CompletionHandler<void(const std::o
     if (!document->isTopDocument())
         return;
 
-    if (document->url().isEmpty() || document->url().protocolIsAbout())
+    if (document->url().protocolIsAbout())
         return;
 
     RefPtr head = document->head();
@@ -2485,7 +2485,7 @@ void DocumentLoader::startIconLoading()
     if (!m_frame->isMainFrame())
         return;
 
-    if (document->url().isEmpty() || document->url().protocolIsAbout())
+    if (document->url().protocolIsAbout())
         return;
 
     m_linkIcons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });

@@ -722,13 +722,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     setEventTargetFlag(EventTargetFlag::IsConnected);
     addToDocumentsMap();
 
-    // We depend on the url getting immediately set in subframes, but we
-    // also depend on the url NOT getting immediately set in opened windows.
-    // See fast/dom/early-frame-url.html
-    // and fast/dom/location-new-window-no-crash.html, respectively.
-    // FIXME: Can/should we unify this behavior?
-    if ((frame && frame->ownerElement()) || !url.isEmpty())
-        setURL(URL { url });
+    setURL(URL { url });
 
     if (!frame)
         setUsesNullCustomElementRegistry();
@@ -2050,8 +2044,7 @@ void Document::setReadyState(ReadyState readyState)
             if (auto* eventTiming = documentEventTimingFromNavigationTiming())
                 eventTiming->domLoading = now;
             // We do this here instead of in the Document constructor because monotonicTimestamp() is 0 when the Document constructor is running.
-            if (!url().isEmpty())
-                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
+            WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
             WTFEmitSignpost(this, NavigationAndPaintTiming, "domLoading");
         }
         break;
@@ -4705,7 +4698,7 @@ void Document::setURL(URL&& url)
 const URL& Document::urlForBindings()
 {
     auto shouldAdjustURL = [this] {
-        if (m_url.url().isEmpty() || !loader() || !isTopDocument() || !frame())
+        if (!loader() || !isTopDocument() || !frame())
             return false;
 
         Ref protectedThis { *this };
@@ -4776,7 +4769,7 @@ const URL& Document::urlForBindings()
     if (shouldAdjustURL)
         return m_adjustedURL;
 
-    return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url();
+    return m_url.url();
 }
 
 URL Document::adjustedURL() const
@@ -5839,7 +5832,7 @@ Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, cons
         RELEASE_ASSERT_NOT_REACHED();
     } ();
 
-    ASSERT(clone->m_url == url);
+    ASSERT(clone->m_url == (url.isEmpty() ? aboutBlankURL() : url));
     clone->m_baseURL = baseURL;
     clone->m_aboutBaseURL = aboutBaseURL;
     clone->m_baseURLOverride = baseURLOverride;
