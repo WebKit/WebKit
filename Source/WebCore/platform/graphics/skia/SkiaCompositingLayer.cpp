@@ -91,10 +91,10 @@ void SkiaCompositingLayer::invalidate()
 // size to decide what to damage, and what it has to damage is what the layer is about to paint.
 void SkiaCompositingLayer::setSize(const FloatSize& size)
 {
-    if (m_size == size)
+    if (m_rect.size() == size)
         return;
 
-    m_size = size;
+    m_rect.setSize(size);
     damageWholeLayer();
 }
 
@@ -165,7 +165,7 @@ void SkiaCompositingLayer::updateBackingStore(CoordinatedBackingStoreProxy::Upda
         m_maskImage = nullptr;
 
     ASSERT(m_backingStore);
-    m_backingStore->update(m_size, scale, WTF::move(update));
+    m_backingStore->update(m_rect.size(), scale, WTF::move(update));
 }
 
 bool SkiaCompositingLayer::hasPendingBackingStoreTileUpdates() const
@@ -239,7 +239,7 @@ void SkiaCompositingLayer::setBackdropFiltersRect(const FloatRoundedRect& clipRe
 
 FloatRect SkiaCompositingLayer::paintedLayerRect() const
 {
-    auto rect = effectiveLayerRect();
+    auto rect = m_rect;
     if (paintsContentsRect())
         rect.unite(m_contentsRect);
     if (m_backdrop.filter)
@@ -435,13 +435,13 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
     TransformationMatrix combinedForChildren;
     TransformationMatrix futureCombinedForChildren;
 
-    if (!m_size.isEmpty() || !m_masksToBounds) {
+    if (!m_rect.isEmpty() || !m_masksToBounds) {
 #if ENABLE(DAMAGE_TRACKING)
         TransformationMatrix previousTransform = m_transforms.combined;
 #endif
 
         FloatPoint origin(m_anchorPoint.x(), m_anchorPoint.y());
-        origin.scale(m_size.width(), m_size.height());
+        origin.scale(m_rect.size().width(), m_rect.size().height());
         m_transforms.combined = parentTransform;
         m_transforms.combined
             .translate3d(origin.x() + (m_position.x() - m_boundsOrigin.x()), origin.y() + (m_position.y() - m_boundsOrigin.y()), m_anchorPoint.z())
@@ -543,7 +543,7 @@ bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameD
 #if ENABLE(DAMAGE_TRACKING)
     if (priorTargetDamage) {
         // The damage is in device space, so the surface size the region is tested against must be too.
-        // m_size is in layer coordinates, which the root transform scales to the device by the device
+        // m_rect is in layer coordinates, which the root transform scales to the device by the device
         // pixel ratio - use the canvas device size instead, as the collect walk above already does.
         const auto deviceSize = canvas.getBaseLayerSize();
         const IntSize surfaceSize(deviceSize.width(), deviceSize.height());
@@ -934,7 +934,7 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
         auto childMatrix = canvas.getLocalToDeviceAs3x3() * SkM44(m_children[0]->m_transforms.combined).asM33();
         FloatRect childBounds;
         if (m_children[0]->m_backingStore)
-            childBounds = m_children[0]->effectiveLayerRect();
+            childBounds = m_children[0]->m_rect;
         if (m_children[0]->m_contentsBuffer || m_children[0]->m_imageBackingStore || (m_children[0]->m_contentsSolidColor.isValid() && m_children[0]->m_contentsSolidColor.isVisible()))
             childBounds.unite(m_children[0]->m_contentsRect);
         return matrix.mapRect(SkRect(rect.rect())).contains(childMatrix.mapRect(SkRect(childBounds)));
@@ -950,7 +950,7 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
         if (!contentsRectClipsDescendants)
             clipTransform.translate(m_boundsOrigin.x(), m_boundsOrigin.y());
 
-        FloatRoundedRect rect = contentsRectClipsDescendants ? m_contentsClippingRect : FloatRoundedRect(effectiveLayerRect());
+        FloatRoundedRect rect = contentsRectClipsDescendants ? m_contentsClippingRect : FloatRoundedRect(m_rect);
         if (!canSkipClip(rect, clipTransform))
             clippingRect = rect;
     }
@@ -965,7 +965,7 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
 
 bool SkiaCompositingLayer::isVisible() const
 {
-    if (m_size.isEmpty() && (m_masksToBounds || m_children.isEmpty()))
+    if (m_rect.isEmpty() && (m_masksToBounds || m_children.isEmpty()))
         return false;
     if (!m_visible && m_children.isEmpty())
         return false;
@@ -1001,7 +1001,7 @@ sk_sp<SkImage> SkiaCompositingLayer::maskImage()
 
     // Paint the mask at the same scale the tiles were painted.
     auto scale = m_backingStore->scale();
-    auto rect = effectiveLayerRect();
+    auto rect = m_rect;
     rect.scale(scale);
 
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
@@ -1287,7 +1287,7 @@ void SkiaCompositingLayer::computeOverlapRegions(ComputeOverlapRegionData& data,
 
     FloatRect localBoundingRect;
     if (m_backingStore || m_masksToBounds || m_mask || filter || m_backdrop.filter)
-        localBoundingRect = effectiveLayerRect();
+        localBoundingRect = m_rect;
     else if (paintsContentsRect())
         localBoundingRect = m_contentsRect;
 
@@ -1450,7 +1450,7 @@ void SkiaCompositingLayer::paintWithBlendMode(SkCanvas& canvas, PaintContext& co
 
 FloatRect SkiaCompositingLayer::transformedFlattenedBounds() const
 {
-    auto bounds = m_transforms.combined.mapRect(FloatRect({ }, m_size));
+    auto bounds = m_transforms.combined.mapRect(m_rect);
 
     if (!m_masksToBounds && !m_mask) {
         for (const auto& child : m_children)
@@ -1467,7 +1467,7 @@ FloatPolygon3D SkiaCompositingLayer::geometryFor3DRenderingContext() const
         auto inverse = m_transforms.combined.inverse().value_or(TransformationMatrix());
         bounds = inverse.mapRect(transformedFlattenedBounds());
     } else
-        bounds = FloatRect({ }, m_size);
+        bounds = m_rect;
 
     return FloatPolygon3D(bounds, m_transforms.combined);
 }

@@ -114,7 +114,6 @@ public:
     void setDebugIndicators(Color&& debugBorderColor, std::optional<float> debugBorderWidth, std::optional<unsigned> repaintCount);
 
     const TransformationMatrix& toSurfaceTransform() const { return m_transforms.combined; }
-    FloatRect effectiveLayerRect() const { return FloatRect({ }, m_size); }
 
     // Applies the animations, computes the transforms, then walks the tree. When a frame damage is passed,
     // it is collected first in a walk that draws nothing, before the walk that draws. The draw is limited
@@ -134,12 +133,12 @@ private:
     // Contents are painted into m_contentsRect, which the layer bounds do not have to contain.
     bool paintsContentsRect() const { return m_contentsBuffer || m_imageBackingStore || (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()); }
     bool hasVisualContent() const { return m_backingStore || paintsContentsRect(); }
-    bool hasVisiblePaintableContent() const { return !m_size.isEmpty() && m_visible && m_contentsVisible && hasVisualContent(); }
+    bool hasVisiblePaintableContent() const { return !m_rect.isEmpty() && m_visible && m_contentsVisible && hasVisualContent(); }
 
     // A backdrop filter paints the layer without any content of its own, so it contributes damage too.
-    bool contributesToFrame() const { return hasVisiblePaintableContent() || (!m_size.isEmpty() && m_visible && m_contentsVisible && !!m_backdrop.filter); }
+    bool contributesToFrame() const { return hasVisiblePaintableContent() || (!m_rect.isEmpty() && m_visible && m_contentsVisible && !!m_backdrop.filter); }
 
-    // What the layer actually paints, unlike effectiveLayerRect(), which the contents rect and the
+    // What the layer actually paints, unlike layer rect, which the contents rect and the
     // backdrop rect may both overhang, and which a filter such as a blur may paint outside of.
     FloatRect paintedLayerRect() const;
     Ref<SkiaCompositingLayer> backdropRoot();
@@ -251,11 +250,11 @@ private:
     void damageWholeLayer()
     {
 #if ENABLE(DAMAGE_TRACKING)
-        if (!damagePropagationEnabled() || m_size.isEmpty())
+        if (!damagePropagationEnabled() || m_rect.isEmpty())
             return;
 
         if (!m_layerDamage)
-            m_layerDamage = Damage(m_size, Damage::Mode::Full);
+            m_layerDamage = Damage(m_rect.size(), Damage::Mode::Full);
         else
             m_layerDamage->makeFull();
 #endif
@@ -290,7 +289,7 @@ private:
 
     Vector<Ref<SkiaCompositingLayer>> m_children;
     WeakPtr<SkiaCompositingLayer> m_parent;
-    FloatSize m_size;
+    FloatRect m_rect;
     FloatPoint m_position;
     FloatPoint3D m_anchorPoint { 0.5f, 0.5f, 0 };
     FloatPoint m_boundsOrigin;
