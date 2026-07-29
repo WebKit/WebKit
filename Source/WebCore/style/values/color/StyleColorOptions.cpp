@@ -37,6 +37,7 @@ TextStream& operator<<(TextStream& ts, StyleColorOptions colorOptions)
     case StyleColorOptions::UseSystemAppearance: ts << "UseSystemAppearance"_s; break;
     case StyleColorOptions::UseDarkAppearance: ts << "UseDarkAppearance"_s; break;
     case StyleColorOptions::UseElevatedUserInterfaceLevel: ts << "UseElevatedUserInterfaceLevel"_s; break;
+    case StyleColorOptions::UseAXCustomColorMode: ts << "UseAXCustomColorMode"_s; break;
     }
     return ts;
 }

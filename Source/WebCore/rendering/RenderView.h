@@ -101,6 +101,12 @@ public:
     void repaintViewRectangle(const LayoutRect&);
     void repaintViewAndCompositedLayers();
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    // Some color-filter decisions depend on how boxes actually end up positioned relative to the content
+    // behind them, which is only known once layout has run.
+    void adjustAXCustomColorModeAfterLayout();
+#endif
+
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
     // Return the renderer whose background style is used to paint the root background.

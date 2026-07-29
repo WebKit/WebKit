@@ -88,6 +88,10 @@
 #include "SpatialImageControls.h"
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/RenderImageAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImage);
@@ -308,6 +312,12 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed())
         return;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    m_axCustomColorModeShouldAdjustImage = std::nullopt;
+    m_axCustomColorModeAdjustedBuffer = nullptr;
+    m_axCustomColorModeAdjustedBufferSize = { };
+#endif
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
         RenderReplaced::imageChanged(newImage, rect);
@@ -803,6 +813,12 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     };
 
     auto drawResult = ImageDrawResult::DidNothing;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (axCustomColorModePaintImage(paintInfo, *img, rect))
+        return ImageDrawResult::DidDraw;
+#endif
+
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (isMultiRepresentationHEIC())
         drawResult = paintInfo.context().drawMultiRepresentationHEIC(*img, style().fontCascade().primaryFont(), rect, options);

@@ -77,6 +77,10 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/RenderViewAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderView);

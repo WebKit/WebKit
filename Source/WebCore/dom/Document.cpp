@@ -508,6 +508,10 @@ public:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Document::PendingScrollEventTargetList);
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/DocumentAdditions.cpp>
+#endif
+
 static const Seconds intersectionObserversInitialUpdateDelay { 2000_ms };
 
 static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry>>& entries, ResizeObserver& observer)
@@ -10106,6 +10110,12 @@ bool Document::useElevatedUserInterfaceLevel() const
     return false;
 }
 
+#if !ENABLE(AX_CUSTOM_COLOR_MODE)
+void Document::adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) const
+{
+}
+#endif
+
 OptionSet<StyleColorOptions> Document::styleColorOptions(const Style::ComputedStyle* style) const
 {
     OptionSet<StyleColorOptions> options;
@@ -10115,6 +10125,8 @@ OptionSet<StyleColorOptions> Document::styleColorOptions(const Style::ComputedSt
         options.add(StyleColorOptions::UseDarkAppearance);
     if (useElevatedUserInterfaceLevel())
         options.add(StyleColorOptions::UseElevatedUserInterfaceLevel);
+
+    adjustStyleColorOptionsIfNeeded(options);
     return options;
 }
 

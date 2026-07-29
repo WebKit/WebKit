@@ -165,6 +165,7 @@ typedef NS_ENUM(NSInteger, _WKNavigatorWebDriverActivePolicy) {
 @property (nonatomic, getter=_isSafeBrowsingEnabled, setter=_setSafeBrowsingEnabled:) BOOL _safeBrowsingEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 @property (nonatomic, setter=_setColorFilterEnabled:) BOOL _colorFilterEnabled WK_API_AVAILABLE(macos(10.14), ios(12.0));
+@property (nonatomic, setter=_setAXCustomColorModeEnabled:) BOOL _axCustomColorModeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setPunchOutWhiteBackgroundsInDarkMode:) BOOL _punchOutWhiteBackgroundsInDarkMode WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, setter=_setLowPowerVideoAudioBufferSizeEnabled:) BOOL _lowPowerVideoAudioBufferSizeEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, setter=_setShouldIgnoreMetaViewport:) BOOL _shouldIgnoreMetaViewport WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

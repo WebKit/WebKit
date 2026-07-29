@@ -46,6 +46,8 @@ public:
 
     static constexpr bool isFixedSize = false;
 
+    const Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
+
 private:
     explicit GradientImage(Gradient&&);
 

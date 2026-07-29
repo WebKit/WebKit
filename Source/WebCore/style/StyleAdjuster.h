@@ -79,6 +79,10 @@ private:
     void NODELETE adjustDisplayContentsStyle(Style::ComputedStyle&) const;
     void adjustForSiteSpecificQuirks(Style::ComputedStyle&) const;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void adjustForAXCustomColorMode(Style::ComputedStyle&) const;
+#endif
+
     void adjustThemeStyle(Style::ComputedStyle&, const Style::ComputedStyle& parentStyle) const;
 
     static void adjustAnimations(Style::ComputedStyle&);

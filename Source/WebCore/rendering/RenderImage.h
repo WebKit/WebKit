@@ -32,6 +32,8 @@ namespace WebCore {
 
 class HTMLAreaElement;
 class HTMLMapElement;
+class GraphicsContext;
+class ImageBuffer;
 
 enum ImageSizeChangeType {
     ImageSizeChangeNone,
@@ -143,6 +145,12 @@ private:
 
     bool shouldCollapseToEmpty() const;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool axCustomColorModeShouldAdjustImage(Image&);
+    RefPtr<ImageBuffer> axCustomColorModeAdjustedImageBuffer(GraphicsContext&, Image&, const FloatRect&);
+    bool axCustomColorModePaintImage(PaintInfo&, Image&, const FloatRect&);
+#endif
+
     // Text to display as long as the image isn't available.
     String m_altText;
     std::unique_ptr<RenderImageResource> m_imageResource;
@@ -151,6 +159,11 @@ private:
     bool m_hasShadowControls { false };
     bool m_hasImageOverlay { false };
     float m_imageDevicePixelRatio { 1 };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    std::optional<bool> m_axCustomColorModeShouldAdjustImage;
+    RefPtr<ImageBuffer> m_axCustomColorModeAdjustedBuffer;
+    FloatSize m_axCustomColorModeAdjustedBufferSize;
+#endif
 
     friend class RenderImageScaleObserver;
 };

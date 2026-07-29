@@ -50,6 +50,10 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextBoxPainter.h"
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/BackgroundPainterAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 BackgroundImageGeometry::BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tileSizeWithoutPixelSnapping, const LayoutSize& tileSize, const LayoutSize& phase, const LayoutSize& spaceSize, bool fixedAttachment)
@@ -193,7 +197,11 @@ static void applyBoxShadowForBackground(GraphicsContext& context, const Style::C
                 shadow.location.y().resolveZoom(zoomFactor),
             },
             shadow.blur.resolveZoom(zoomFactor),
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            axCustomColorModeShadowColor(colorResolver, style, shadow.color),
+#else
             colorResolver.colorResolvingCurrentColorApplyingColorFilter(shadow.color),
+#endif
             shadow.isWebkitBoxShadow ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default
         });
         break;
@@ -544,6 +552,14 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                     return m_renderer.imageOrientation();
             }();
 
+            RefPtr imageToDraw = image;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            if constexpr (std::same_as<Layer, Style::BackgroundLayer>) {
+                if (RefPtr adjusted = axCustomColorModeAdjustedBackgroundImage(context, document(), bgImage->cachedImage(), *image, geometry.tileSize, orientation))
+                    imageToDraw = WTF::move(adjusted);
+            }
+#endif
+
             ImagePaintingOptions options = {
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
                 layerBlendMode,
@@ -557,7 +573,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
+            auto drawResult = context.drawTiledImage(*imageToDraw, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
@@ -900,7 +916,11 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style:
             continue;
 
         Style::ColorResolver colorResolver { style };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        auto shadowColor = axCustomColorModeShadowColor(colorResolver, style, shadow.color);
+#else
         auto shadowColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(shadow.color);
+#endif
 
         auto shouldInflateBorderRect = [&]() {
             if (!hasOpaqueBackground)

@@ -4854,6 +4854,11 @@ void LocalFrameView::performPostLayoutTasks()
     LOG(Layout, "LocalFrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (CheckedPtr renderView = this->renderView())
+        renderView->adjustAXCustomColorModeAfterLayout();
+#endif
+
     if (!layoutContext().isLayoutNested() && m_frame->document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
 

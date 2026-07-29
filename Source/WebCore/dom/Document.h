@@ -1646,6 +1646,14 @@ public:
     Ref<DocumentFragment> documentFragmentForInnerOuterHTML();
 
     void didAssociateFormControl(Element&);
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool addAXCustomColorModeAdjustedElement(Element&);
+    bool isAXCustomColorModeAdjustedElement(const Element&) const;
+#endif
+
+    void adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) const;
+
     bool hasDisabledFieldsetElement() const { return m_disabledFieldsetElementsCount; }
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
@@ -2604,6 +2612,9 @@ private:
     Markable<WallTime> m_overrideLastModified;
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_associatedFormControls;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_axCustomColorModeAdjustedElements;
+#endif
 
     const std::unique_ptr<OrientationNotifier> m_orientationNotifier;
     mutable RefPtr<Logger> m_logger;

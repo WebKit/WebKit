@@ -885,6 +885,27 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
     return protect(*_preferences)->colorFilterEnabled();
 }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+- (void)_setAXCustomColorModeEnabled:(BOOL)enabled
+{
+    protect(*_preferences)->setAXCustomColorModeEnabled(enabled);
+}
+
+- (BOOL)_axCustomColorModeEnabled
+{
+    return protect(*_preferences)->axCustomColorModeEnabled();
+}
+#else
+- (void)_setAXCustomColorModeEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_axCustomColorModeEnabled
+{
+    return NO;
+}
+#endif
+
 - (void)_setPunchOutWhiteBackgroundsInDarkMode:(BOOL)punches
 {
     protect(*_preferences)->setPunchOutWhiteBackgroundsInDarkMode(punches);
