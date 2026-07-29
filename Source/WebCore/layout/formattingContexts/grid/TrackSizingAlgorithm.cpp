@@ -319,13 +319,25 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
                 return std::max({ }, std::ranges::max(itemContributions));
             },
             [&](const CSS::Keyword::Auto&) -> LayoutUnit {
-                // If the track has an auto min track sizing function and the grid container
-                // is being sized under a min-/max-content constraint, set the track’s base
-                // size to the maximum of its items’ limited min-content
-                // contributions, floored at zero.
+                // If the track has an auto min track sizing function and the grid container is
+                // being sized under a min-/max-content constraint, its base size should be the
+                // maximum of its items’ limited min-content contributions, floored at zero.
                 if (isSizedUnderMinOrMaxContentConstraint(resolveIntrinsicTrackSizesContext.axisConstraint)) {
-                    notImplemented();
-                    return { };
+                    // The limited min-/max-content contribution of an item is (for this purpose) its min-/max-content contribution (accordingly),
+                    auto minContentSizeContributions = minContentContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions);
+
+                    // limited by the max track sizing function (which could be the argument to a fit-content() track sizing function) if that is fixed
+                    auto fixedMaxTrackSizingFunctionSums = singleSpanningItemsIndexes.map([&](size_t gridItemIndex) {
+                        return fixedMaxTrackSizingFunctionSum(trackSizingItems[gridItemIndex].spannedLines, unsizedTracks);
+                    });
+
+                    // and ultimately floored by its minimum contribution.
+                    auto itemMinimumContributions = minimumContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions, resolveIntrinsicTrackSizesContext.trackSizingFunctionsList);
+
+                    auto limitedContributions = limitedContentContributions(minContentSizeContributions, fixedMaxTrackSizingFunctionSums, itemMinimumContributions);
+                    if (limitedContributions.isEmpty())
+                        return { };
+                    return std::max({ }, std::ranges::max(limitedContributions));
                 }
                 // Otherwise, set the track’s base size to the maximum of its items’ minimum
                 // contributions, floored at zero.
