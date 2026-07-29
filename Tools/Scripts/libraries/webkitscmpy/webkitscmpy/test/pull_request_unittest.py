@@ -1151,6 +1151,48 @@ No pre-PR checks to run""")
         )
         self.assertEqual(captured.stderr.getvalue(), '')
 
+    def test_github_existing_branch_staged_only_no_commit(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), MockTerminal.input('https://bugs.example.com/show_bug.cgi?id=1', 'Yes'):
+
+            repo.checkout('eng/pr-branch', create=True)
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history', '--commit'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+
+            pr = local.Git(self.path).remote().pull_requests.get(1)
+            self.assertEqual(
+                pr.commits[0].message,
+                'Example issue 1\nhttps://bugs.example.com/show_bug.cgi?id=1\nReviewed by Jonathan Bedard\n\n * added.txt',
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Enter issue URL or title of new issue: \n"
+            "Created 'PR 1 | Example issue 1'!\n"
+            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
     def test_github_existing_branch_no_staged_changes(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
                 projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
