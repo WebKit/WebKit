@@ -3671,10 +3671,7 @@ static id handleUIElementForTextMarkerAttribute(WebAccessibilityObjectWrapper*, 
     if (!object)
         return nil;
 
-    if (std::optional<AXID> representativeID = object->stitchedIntoID(); representativeID && *representativeID != object->objectID()) {
-        if (RefPtr representative = AXTextMarker { object->treeID(), *representativeID, 0 }.object())
-            object = WTF::move(representative);
-    }
+    object = object->stitchRepresentativeOrSelf();
 
     RetainPtr wrapper = object->wrapper();
     if (!wrapper)
