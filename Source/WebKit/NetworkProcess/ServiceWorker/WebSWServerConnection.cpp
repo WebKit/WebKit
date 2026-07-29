@@ -112,11 +112,7 @@ NetworkProcess* WebSWServerConnection::networkProcess()
 
 std::optional<SharedPreferencesForWebProcess> WebSWServerConnection::sharedPreferencesForWebProcess() const
 {
-    RefPtr networkConnectionToWebProcess = m_networkConnectionToWebProcess;
-    if (!networkConnectionToWebProcess)
-        return std::nullopt;
-
-    return networkConnectionToWebProcess->sharedPreferencesForWebProcess();
+    return m_networkConnectionToWebProcess ? m_networkConnectionToWebProcess->sharedPreferencesForWebProcess() : std::nullopt;
 }
 
 void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)

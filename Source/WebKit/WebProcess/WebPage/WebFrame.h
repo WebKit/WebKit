@@ -208,7 +208,7 @@ public:
 
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool NODELETE containsAnyFormElements() const;
-    bool NODELETE containsAnyFormControls() const;
+    bool containsAnyFormControls() const;
     void stopLoading();
     void setAccessibleName(const AtomString&);
 
