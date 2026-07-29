@@ -54,17 +54,21 @@ bool ModelPlayer::isWebModelPlayerInstance() const
     return false;
 }
 
-std::optional<ModelPlayerAnimationState> ModelPlayer::currentAnimationState() const
+std::optional<ModelPlayerAnimationState> ModelPlayer::currentAnimationState(NodeIdentifier) const
 {
     return std::nullopt;
 }
 
-std::optional<std::unique_ptr<ModelPlayerTransformState>> ModelPlayer::currentTransformState() const
+std::optional<std::unique_ptr<ModelPlayerTransformState>> ModelPlayer::currentTransformState(NodeIdentifier) const
 {
     return std::nullopt;
 }
 
-void ModelPlayer::reload(Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&)
+void ModelPlayer::reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&)
+{
+}
+
+void ModelPlayer::unload(NodeIdentifier)
 {
 }
 
@@ -83,12 +87,12 @@ RefPtr<ImageBuffer> ModelPlayer::snapshotCurrentFrame(const FloatSize&, const De
 
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
 
-std::optional<FloatPoint3D> ModelPlayer::boundingBoxCenter() const
+std::optional<FloatPoint3D> ModelPlayer::boundingBoxCenter(NodeIdentifier) const
 {
     return std::nullopt;
 }
 
-std::optional<FloatPoint3D> ModelPlayer::boundingBoxExtents() const
+std::optional<FloatPoint3D> ModelPlayer::boundingBoxExtents(NodeIdentifier) const
 {
     return std::nullopt;
 }
@@ -97,12 +101,12 @@ std::optional<FloatPoint3D> ModelPlayer::boundingBoxExtents() const
 
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
 
-std::optional<TransformationMatrix> ModelPlayer::entityTransform() const
+std::optional<TransformationMatrix> ModelPlayer::entityTransform(NodeIdentifier) const
 {
     return std::nullopt;
 }
 
-void ModelPlayer::setEntityTransform(TransformationMatrix)
+void ModelPlayer::setEntityTransform(NodeIdentifier, TransformationMatrix)
 {
 }
 
@@ -129,40 +133,40 @@ void ModelPlayer::setInteractionEnabled(bool)
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
 
-void ModelPlayer::setAutoplay(bool)
+void ModelPlayer::setAutoplay(NodeIdentifier, bool)
 {
 }
 
-void ModelPlayer::setLoop(bool)
+void ModelPlayer::setLoop(NodeIdentifier, bool)
 {
 }
 
-void ModelPlayer::setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate)>&& completionHandler)
+void ModelPlayer::setPlaybackRate(NodeIdentifier, double, CompletionHandler<void(double effectivePlaybackRate)>&& completionHandler)
 {
     completionHandler(1.0);
 }
 
-double ModelPlayer::duration() const
+double ModelPlayer::duration(NodeIdentifier) const
 {
     return 0;
 }
 
-bool ModelPlayer::paused() const
+bool ModelPlayer::paused(NodeIdentifier) const
 {
     return true;
 }
 
-void ModelPlayer::setPaused(bool, CompletionHandler<void(bool succeeded)>&& completionHandler)
+void ModelPlayer::setPaused(NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&& completionHandler)
 {
     completionHandler(false);
 }
 
-Seconds ModelPlayer::currentTime() const
+Seconds ModelPlayer::currentTime(NodeIdentifier) const
 {
     return 0_s;
 }
 
-void ModelPlayer::setCurrentTime(Seconds, CompletionHandler<void()>&& completionHandler)
+void ModelPlayer::setCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }

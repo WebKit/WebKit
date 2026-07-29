@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/NodeIdentifier.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/TransformationMatrix.h>
@@ -45,8 +46,8 @@ class WEBCORE_EXPORT ModelPlayerClient : public AbstractRefCountedAndCanMakeWeak
 public:
     virtual ~ModelPlayerClient();
 
-    virtual void didFinishLoading(ModelPlayer&) = 0;
-    virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
+    virtual void didFinishLoading(ModelPlayer&, NodeIdentifier) = 0;
+    virtual void didFailLoading(ModelPlayer&, NodeIdentifier, const ResourceError&) = 0;
 #if ENABLE(MODEL_PROCESS)
     virtual void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType) = 0;
 #endif
@@ -58,10 +59,10 @@ public:
     virtual void didUpdate(ModelPlayer&) = 0;
 
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
-    virtual void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) = 0;
+    virtual void didUpdateEntityTransform(ModelPlayer&, NodeIdentifier, const TransformationMatrix&) = 0;
 #endif
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
-    virtual void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) = 0;
+    virtual void didUpdateBoundingBox(ModelPlayer&, NodeIdentifier, const FloatPoint3D&, const FloatPoint3D&) = 0;
 #endif
 
     virtual RefPtr<GraphicsLayer> graphicsLayer() const = 0;

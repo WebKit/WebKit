@@ -46,10 +46,10 @@ DummyModelPlayer::DummyModelPlayer(ModelPlayerClient& client)
 
 DummyModelPlayer::~DummyModelPlayer() = default;
 
-void DummyModelPlayer::load(Model& model, LayoutSize, bool)
+void DummyModelPlayer::load(NodeIdentifier nodeIdentifier, Model& model, LayoutSize, bool)
 {
     if (RefPtr client = m_client)
-        client->didFailLoading(*this, ResourceError { errorDomainWebKitInternal, 0, model.url(), "Trying to load model via DummyModelPlayer"_s });
+        client->didFailLoading(*this, nodeIdentifier, ResourceError { errorDomainWebKitInternal, 0, model.url(), "Trying to load model via DummyModelPlayer"_s });
 }
 
 void DummyModelPlayer::configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&)
@@ -84,31 +84,31 @@ void DummyModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHand
 {
 }
 
-void DummyModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+void DummyModelPlayer::isPlayingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
 
-void DummyModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&)
+void DummyModelPlayer::setAnimationIsPlaying(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&)
 {
 }
 
-void DummyModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+void DummyModelPlayer::isLoopingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
 
-void DummyModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&)
+void DummyModelPlayer::setIsLoopingAnimation(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&)
 {
 }
 
-void DummyModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+void DummyModelPlayer::animationDuration(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&)
 {
 }
 
-void DummyModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+void DummyModelPlayer::animationCurrentTime(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&)
 {
 }
 
-void DummyModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&)
+void DummyModelPlayer::setAnimationCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void(bool success)>&&)
 {
 }
 

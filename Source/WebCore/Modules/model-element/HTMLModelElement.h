@@ -251,18 +251,18 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     // ModelPlayerClient overrides.
-    void didFinishLoading(ModelPlayer&) final;
-    void didFailLoading(ModelPlayer&, const ResourceError&) final;
+    void didFinishLoading(ModelPlayer&, NodeIdentifier) final;
+    void didFailLoading(ModelPlayer&, NodeIdentifier, const ResourceError&) final;
 #if ENABLE(MODEL_PROCESS)
     void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType) final;
 #endif
     void didUnload(ModelPlayer&) final;
     void didUpdate(ModelPlayer&) final;
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
-    void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
+    void didUpdateEntityTransform(ModelPlayer&, NodeIdentifier, const TransformationMatrix&) final;
 #endif
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
-    void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
+    void didUpdateBoundingBox(ModelPlayer&, NodeIdentifier, const FloatPoint3D&, const FloatPoint3D&) final;
 #endif
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     void didFinishEnvironmentMapLoading(ModelPlayer&, bool succeeded) final;

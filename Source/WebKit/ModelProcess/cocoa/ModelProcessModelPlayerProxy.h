@@ -73,9 +73,11 @@ public:
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerAnimationState.h>
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <WebCore/NodeIdentifier.h>
 #include <WebCore/StageModeOperations.h>
 #include <WebCore/TransformationMatrix.h>
 #include <simd/simd.h>
+#include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
@@ -123,8 +125,8 @@ public:
 
     // Messages
     void createLayer();
-    void loadModel(Ref<WebCore::Model>&&, WebCore::LayoutSize, bool);
-    void reloadModel(Ref<WebCore::Model>&&, WebCore::LayoutSize, std::optional<WebCore::TransformationMatrix> transformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore);
+    void loadModel(WebCore::NodeIdentifier, Ref<WebCore::Model>&&, WebCore::LayoutSize, bool);
+    void reloadModel(WebCore::NodeIdentifier, Ref<WebCore::Model>&&, WebCore::LayoutSize, std::optional<WebCore::TransformationMatrix> transformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore);
     void modelVisibilityDidChange(bool isVisible);
 
     // WebCore::REModelLoaderClient overrides.
@@ -133,10 +135,10 @@ public:
 
     // WebCore::ModelPlayer overrides.
     WebCore::ModelPlayerIdentifier identifier() const final { return m_id; }
-    void load(WebCore::Model&, WebCore::LayoutSize, bool) final;
+    void load(WebCore::NodeIdentifier, WebCore::Model&, WebCore::LayoutSize, bool) final;
     void sizeDidChange(WebCore::LayoutSize) final;
     void configureGraphicsLayer(WebCore::GraphicsLayer&, WebCore::ModelPlayerGraphicsLayerConfiguration&&) final;
-    void setEntityTransform(WebCore::TransformationMatrix) final;
+    void setEntityTransform(WebCore::NodeIdentifier, WebCore::TransformationMatrix) final;
     void enterFullscreen() final;
     bool supportsMouseInteraction() final;
     bool supportsDragging() final;
@@ -146,22 +148,22 @@ public:
     void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) final;
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
     void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;
-    void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) final;
-    void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) final;
-    void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
+    void isPlayingAnimation(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setAnimationIsPlaying(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) final;
+    void isLoopingAnimation(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setIsLoopingAnimation(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) final;
+    void animationDuration(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void animationCurrentTime(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void setAnimationCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void(bool success)>&&) final;
     WebCore::ModelPlayerAccessibilityChildren accessibilityChildren() final;
-    void setAutoplay(bool) final;
-    void setLoop(bool) final;
-    void setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
-    double duration() const final;
-    bool paused() const final;
-    void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
-    Seconds currentTime() const final;
-    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
+    void setAutoplay(WebCore::NodeIdentifier, bool) final;
+    void setLoop(WebCore::NodeIdentifier, bool) final;
+    void setPlaybackRate(WebCore::NodeIdentifier, double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
+    double duration(WebCore::NodeIdentifier) const final;
+    bool paused(WebCore::NodeIdentifier) const final;
+    void setPaused(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&&) final;
+    Seconds currentTime(WebCore::NodeIdentifier) const final;
+    void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
     void setHasPortal(bool) final;
     void setStageMode(WebCore::StageModeOperation) final;
@@ -200,6 +202,7 @@ private:
     int entityMemoryLimit(bool) const;
 
     WebCore::ModelPlayerIdentifier m_id;
+    Markable<WebCore::NodeIdentifier> m_nodeID;
     bool m_isVisible { true };
     Ref<IPC::Connection> m_webProcessConnection;
     WeakPtr<ModelProcessModelPlayerManagerProxy> m_manager;

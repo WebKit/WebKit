@@ -35,6 +35,7 @@
 #import <WebCore/ModelPlayerAnimationState.h>
 #import <WebCore/ModelPlayerClient.h>
 #import <WebCore/ModelPlayerIdentifier.h>
+#import <WebCore/NodeIdentifier.h>
 #import <WebCore/StageModeOperations.h>
 #import <wtf/Compiler.h>
 
@@ -73,49 +74,49 @@ private:
 
     // Messages
     void didCreateLayer(WebCore::LayerHostingContextIdentifier);
-    void didFinishLoading(const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);
+    void didFinishLoading(WebCore::NodeIdentifier, const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);
     void didConvertModelData(Ref<WebCore::SharedBuffer>&&, const String& convertedMIMEType);
-    void didFailLoading();
-    void didUpdateEntityTransform(const WebCore::TransformationMatrix&);
-    void didUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp);
+    void didFailLoading(WebCore::NodeIdentifier);
+    void didUpdateEntityTransform(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
+    void didUpdateAnimationPlaybackState(WebCore::NodeIdentifier, bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp);
     void didFinishEnvironmentMapLoading(bool succeeded);
 
     // WebCore::ModelPlayer overrides.
     WebCore::ModelPlayerIdentifier identifier() const final { return m_id; }
-    std::optional<WebCore::ModelPlayerAnimationState> currentAnimationState() const final;
-    std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> currentTransformState() const final;
-    void load(WebCore::Model&, WebCore::LayoutSize, bool) final;
-    void reload(WebCore::Model&, WebCore::LayoutSize, WebCore::ModelPlayerAnimationState&, std::unique_ptr<WebCore::ModelPlayerTransformState>&&) final;
+    std::optional<WebCore::ModelPlayerAnimationState> currentAnimationState(WebCore::NodeIdentifier) const final;
+    std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> currentTransformState(WebCore::NodeIdentifier) const final;
+    void load(WebCore::NodeIdentifier, WebCore::Model&, WebCore::LayoutSize, bool) final;
+    void reload(WebCore::NodeIdentifier, WebCore::Model&, WebCore::LayoutSize, WebCore::ModelPlayerAnimationState&, std::unique_ptr<WebCore::ModelPlayerTransformState>&&) final;
     void visibilityStateDidChange() final;
     void sizeDidChange(WebCore::LayoutSize) final;
     void configureGraphicsLayer(WebCore::GraphicsLayer&, WebCore::ModelPlayerGraphicsLayerConfiguration&&) final;
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) final;
     void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) final;
     void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) final;
-    std::optional<WebCore::FloatPoint3D> boundingBoxCenter() const final;
-    std::optional<WebCore::FloatPoint3D> boundingBoxExtents() const final;
-    std::optional<WebCore::TransformationMatrix> entityTransform() const final;
-    void setEntityTransform(WebCore::TransformationMatrix) final;
+    std::optional<WebCore::FloatPoint3D> boundingBoxCenter(WebCore::NodeIdentifier) const final;
+    std::optional<WebCore::FloatPoint3D> boundingBoxExtents(WebCore::NodeIdentifier) const final;
+    std::optional<WebCore::TransformationMatrix> entityTransform(WebCore::NodeIdentifier) const final;
+    void setEntityTransform(WebCore::NodeIdentifier, WebCore::TransformationMatrix) final;
     bool supportsTransform(WebCore::TransformationMatrix) final;
     void enterFullscreen() final;
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
     void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;
-    void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) final;
-    void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) final;
-    void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
+    void isPlayingAnimation(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setAnimationIsPlaying(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) final;
+    void isLoopingAnimation(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setIsLoopingAnimation(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) final;
+    void animationDuration(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void animationCurrentTime(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void setAnimationCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void(bool success)>&&) final;
     WebCore::ModelPlayerAccessibilityChildren accessibilityChildren() final;
-    void setAutoplay(bool) final;
-    void setLoop(bool) final;
-    void setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
-    double duration() const final;
-    bool paused() const final;
-    void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
-    Seconds currentTime() const final;
-    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
+    void setAutoplay(WebCore::NodeIdentifier, bool) final;
+    void setLoop(WebCore::NodeIdentifier, bool) final;
+    void setPlaybackRate(WebCore::NodeIdentifier, double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
+    double duration(WebCore::NodeIdentifier) const final;
+    bool paused(WebCore::NodeIdentifier) const final;
+    void setPaused(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&&) final;
+    Seconds currentTime(WebCore::NodeIdentifier) const final;
+    void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
     void setHasPortal(bool) final;
     void setStageMode(WebCore::StageModeOperation) final;

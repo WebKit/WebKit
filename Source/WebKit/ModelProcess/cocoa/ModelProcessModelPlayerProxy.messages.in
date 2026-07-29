@@ -30,19 +30,19 @@
 ]
 messages -> ModelProcessModelPlayerProxy {
     CreateLayer()
-    ReloadModel(Ref<WebCore::Model> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
+    ReloadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
     ModelVisibilityDidChange(bool isVisible)
     [EnabledBy=AllowTestOnlyIPC] DisableUnloadDelayForTesting()
     
     # WebCore::ModelPlayer
-    LoadModel(Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
+    LoadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
     SizeDidChange(WebCore::LayoutSize layoutSize)
-    SetEntityTransform(WebCore::TransformationMatrix transform)
-    SetAutoplay(bool autoplay)
-    SetLoop(bool loop)
-    SetPlaybackRate(double playbackRate) -> (double effectivePlaybackRate) Async
-    SetPaused(bool paused) -> (bool succeeded) Async
-    SetCurrentTime(Seconds currentTime) -> () Async
+    SetEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
+    SetAutoplay(WebCore::NodeIdentifier nodeID, bool autoplay)
+    SetLoop(WebCore::NodeIdentifier nodeID, bool loop)
+    SetPlaybackRate(WebCore::NodeIdentifier nodeID, double playbackRate) -> (double effectivePlaybackRate) Async
+    SetPaused(WebCore::NodeIdentifier nodeID, bool paused) -> (bool succeeded) Async
+    SetCurrentTime(WebCore::NodeIdentifier nodeID, Seconds currentTime) -> () Async
     SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
     SetHasPortal(bool hasPortal)
     SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)

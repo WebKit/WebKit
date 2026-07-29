@@ -45,7 +45,7 @@ private:
 
     // ModelPlayer overrides.
     ModelPlayerIdentifier identifier() const final { return m_id; }
-    void load(Model&, LayoutSize, bool) override;
+    void load(NodeIdentifier, Model&, LayoutSize, bool) override;
     void NODELETE configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) override;
     void NODELETE sizeDidChange(LayoutSize) override;
     void NODELETE enterFullscreen() override;
@@ -54,13 +54,13 @@ private:
     void NODELETE handleMouseUp(const LayoutPoint&, MonotonicTime) override;
     void NODELETE getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) override;
     void NODELETE setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
-    void NODELETE isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
-    void NODELETE setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
-    void NODELETE isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
-    void NODELETE setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) override;
-    void NODELETE animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
-    void NODELETE animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
-    void NODELETE setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE isPlayingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void NODELETE setAnimationIsPlaying(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE isLoopingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void NODELETE setIsLoopingAnimation(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE animationDuration(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
+    void NODELETE animationCurrentTime(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
+    void NODELETE setAnimationCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void(bool success)>&&) override;
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     ModelPlayerAccessibilityChildren accessibilityChildren() override;
 #endif

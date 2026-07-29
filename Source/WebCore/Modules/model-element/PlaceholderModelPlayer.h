@@ -42,31 +42,31 @@ private:
     // ModelPlayer overrides.
     ModelPlayerIdentifier identifier() const final { return m_id; }
     bool isPlaceholder() const final { return true; }
-    std::optional<ModelPlayerAnimationState> currentAnimationState() const final;
-    std::optional<std::unique_ptr<ModelPlayerTransformState>> currentTransformState() const final;
-    void NODELETE load(Model&, LayoutSize, bool) final;
-    void NODELETE reload(Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&) final;
+    std::optional<ModelPlayerAnimationState> currentAnimationState(NodeIdentifier) const final;
+    std::optional<std::unique_ptr<ModelPlayerTransformState>> currentTransformState(NodeIdentifier) const final;
+    void NODELETE load(NodeIdentifier, Model&, LayoutSize, bool) final;
+    void NODELETE reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&) final;
 
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
-    std::optional<FloatPoint3D> boundingBoxCenter() const final;
-    std::optional<FloatPoint3D> boundingBoxExtents() const final;
+    std::optional<FloatPoint3D> boundingBoxCenter(NodeIdentifier) const final;
+    std::optional<FloatPoint3D> boundingBoxExtents(NodeIdentifier) const final;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
-    std::optional<TransformationMatrix> entityTransform() const final;
-    void setEntityTransform(TransformationMatrix) final;
+    std::optional<TransformationMatrix> entityTransform(NodeIdentifier) const final;
+    void setEntityTransform(NodeIdentifier, TransformationMatrix) final;
     bool supportsTransform(TransformationMatrix) final;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
-    void setAutoplay(bool) final;
-    void setLoop(bool) final;
-    void setPlaybackRate(double playbackRate, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
-    double duration() const final;
-    bool paused() const final;
-    void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
-    Seconds currentTime() const final;
-    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
+    void setAutoplay(NodeIdentifier, bool) final;
+    void setLoop(NodeIdentifier, bool) final;
+    void setPlaybackRate(NodeIdentifier, double playbackRate, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
+    double duration(NodeIdentifier) const final;
+    bool paused(NodeIdentifier) const final;
+    void setPaused(NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&&) final;
+    Seconds currentTime(NodeIdentifier) const final;
+    void setCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_PORTAL)
@@ -92,13 +92,13 @@ private:
 
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
     void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;
-    void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) final;
-    void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) final;
-    void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
+    void isPlayingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setAnimationIsPlaying(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) final;
+    void isLoopingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setIsLoopingAnimation(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) final;
+    void animationDuration(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void animationCurrentTime(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void setAnimationCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void(bool success)>&&) final;
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     ModelPlayerAccessibilityChildren accessibilityChildren() final;
 #endif
