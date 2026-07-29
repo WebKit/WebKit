@@ -150,7 +150,7 @@ private:
     String recordPathForKey(const Key&) const;
     String blobPathForKey(const Key&) const;
 
-    void traverseWithinRootPath(const String& rootPath, const String& type, OptionSet<TraverseFlag>, TraverseHandler&&);
+    void traverseInternal(const String& partitionName, const String& type, OptionSet<TraverseFlag>, TraverseHandler&&);
 
     void synchronize();
     void deleteOldVersions();
