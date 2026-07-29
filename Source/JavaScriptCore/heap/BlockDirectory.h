@@ -80,7 +80,10 @@ public:
 
     inline void forEachBlock(const std::invocable<MarkedBlock::Handle*> auto&);
     inline void forEachNotEmptyBlock(const std::invocable<MarkedBlock::Handle*> auto&);
-    
+
+    // Intended for diagnostics only (rdar://157153895)
+    bool isFreeListedCell(const void*);
+
     RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyBlockSource();
     
     void addBlock(MarkedBlock::Handle*);

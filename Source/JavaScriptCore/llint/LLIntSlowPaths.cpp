@@ -854,7 +854,7 @@ static JSValue performLLIntGetByID(BytecodeIndex bytecodeIndex, CodeBlock* codeB
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::Get);
 
-    JSValue result = baseValue.get(globalObject, ident, slot);
+    JSValue result = baseValue.get<true>(globalObject, ident, slot);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     if (Options::useLLIntICs()

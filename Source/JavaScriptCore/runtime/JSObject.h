@@ -89,6 +89,14 @@ class JSFinalObject;
 #define JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED
 #endif
 
+// Debug-only information handed to getOwnNonIndexPropertySlot on the debugLLIntGetById=true path (rdar://157153895)
+struct PrototypeChainDebugData {
+    // The original base value where getPropertySlot began the prototype walk
+    class JSObject* bottomOfChain;
+    // The prototype-chain child of the object being examined (null if it's the base)
+    class JSObject* previousInChain;
+};
+
 class JSObject : public JSCell {
     friend class BatchedTransitionOptimizer;
     friend class JIT;
@@ -153,7 +161,7 @@ public:
     template<typename T, typename PropertyNameType>
     inline T getAs(JSGlobalObject*, PropertyNameType) const; // Defined in JSObjectInlines.h
 
-    template<bool checkNullStructure = false>
+    template<bool checkNullStructure = false, bool debugLLIntGetById = false>
     bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, unsigned propertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, uint64_t propertyName, PropertySlot&);
@@ -642,7 +650,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
+    template <bool debugLLIntGetById = false>
+    bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&, const PrototypeChainDebugData* = nullptr);
     bool getNonIndexPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
 
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
@@ -818,6 +827,8 @@ private:
     JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
 
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
+
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crashDueToEmptyValueAtValidOffset(Structure*, PropertyName, PropertyOffset, JSObject* bottomOfChain, JSObject* previousInChain, unsigned attributes, int line, const char* filename, const char* function_name);
 };
 
 // JSObjectWithButterfly is a JSObject that has out-of-line property storage (butterfly).
@@ -1103,7 +1114,8 @@ inline JSValue JSObject::getDirectConcurrently(Locker<JSCellLock>&, Structure* e
 
 // It is safe to call this method with a PropertyName that is actually an index,
 // but if so will always return false (doesn't search index storage).
-ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* structure, PropertyName propertyName, PropertySlot& slot)
+template<bool debugLLIntGetById>
+ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* structure, PropertyName propertyName, PropertySlot& slot, const PrototypeChainDebugData* debugData)
 {
     unsigned attributes;
     PropertyOffset offset = structure->get(vm, propertyName, attributes);
@@ -1117,6 +1129,12 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
     ASSERT(!parseIndex(propertyName));
 
     JSValue value = getDirect(offset);
+
+    if constexpr (debugLLIntGetById) {
+        if (!value)
+            crashDueToEmptyValueAtValidOffset(structure, propertyName, offset, debugData->bottomOfChain, debugData->previousInChain, attributes, __LINE__, __FILE__, WTF_PRETTY_FUNCTION);
+    }
+
     if (value.isCell()) {
         ASSERT(value);
         JSCell* cell = value.asCell();
@@ -1180,11 +1198,12 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject
 
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup
-template<bool checkNullStructure>
+template<bool checkNullStructure, bool debugLLIntGetById>
 ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
     JSObject* object = this;
+    JSObject* previous = nullptr;
     while (true) {
         if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags())) [[unlikely]] {
             // If propertyName is an index then we may have missed it (as this loop is using
@@ -1205,13 +1224,21 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, Prope
                 CRASH_WITH_INFO(object->type(), object->structureID().bits());
         }
 #endif
-        if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
-            return true;
+        if constexpr (debugLLIntGetById) {
+            PrototypeChainDebugData debugData { .bottomOfChain = this, .previousInChain = previous };
+            if (object->getOwnNonIndexPropertySlot<debugLLIntGetById>(vm, structure, propertyName, slot, &debugData))
+                return true;
+        } else {
+            if (object->getOwnNonIndexPropertySlot<debugLLIntGetById>(vm, structure, propertyName, slot))
+                return true;
+        }
         // FIXME: This doesn't look like it's following the specification:
         // https://bugs.webkit.org/show_bug.cgi?id=172572
         JSValue prototype = structure->storedPrototype(object);
         if (!prototype.isObject())
             break;
+        if constexpr (debugLLIntGetById)
+            previous = object;
         object = asObject(prototype);
     }
 

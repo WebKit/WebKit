@@ -44,10 +44,11 @@ ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName pr
     return get(globalObject, propertyName, slot);
 }
 
+template<bool debugLLIntGetById>
 ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const
 {
     auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
-    bool hasSlot = getPropertySlot(globalObject, propertyName, slot);
+    bool hasSlot = getPropertySlot<debugLLIntGetById>(globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasSlot);
     if (!hasSlot)
         return jsUndefined();
@@ -70,6 +71,7 @@ ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, Propert
     RELEASE_AND_RETURN(scope, callback(found, slot));
 }
 
+template<bool debugLLIntGetById>
 ALWAYS_INLINE bool JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const
 {
     auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
@@ -90,7 +92,7 @@ ALWAYS_INLINE bool JSValue::getPropertySlot(JSGlobalObject* globalObject, Proper
     } else
         object = asObject(asCell());
 
-    RELEASE_AND_RETURN(scope, object->getPropertySlot(globalObject, propertyName, slot));
+    RELEASE_AND_RETURN(scope, (object->getPropertySlot<false, debugLLIntGetById>(globalObject, propertyName, slot)));
 }
 
 ALWAYS_INLINE bool JSValue::getOwnPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const

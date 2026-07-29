@@ -195,6 +195,18 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock wil
         block->didRemoveFromDirectory();
 }
 
+bool BlockDirectory::isFreeListedCell(const void* cell)
+{
+    Locker locker { m_localAllocatorsLock };
+    bool result = false;
+    m_localAllocators.forEach(
+        [&] (LocalAllocator* allocator) {
+            if (allocator->isFreeListedCell(cell))
+                result = true;
+        });
+    return result;
+}
+
 void BlockDirectory::stopAllocating()
 {
     dataLogLnIf(BlockDirectoryInternal::verbose, RawPointer(this), ": BlockDirectory::stopAllocating!");
