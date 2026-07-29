@@ -4060,8 +4060,14 @@ void BBQJIT::prepareForExceptions()
     // Flush everything below the top N values.
     currentControlData().flushAtBlockBoundary(*this, defaultTarget.targetLocations().size(), results, true);
 
+    unsigned runCount = 0;
+    for (unsigned i = 0; i < targets.size(); ++i) {
+        if (!i || targets[i] != targets[i - 1])
+            ++runCount;
+    }
+
     constexpr unsigned minCasesForTable = 7;
-    if (minCasesForTable <= targets.size()) {
+    if (minCasesForTable <= runCount) {
 #if USE(JSVALUE64)
         auto* jumpTable = m_callee.addJumpTable(targets.size() + 1);
         m_jit.moveConditionally32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()), TrustedImm32(targets.size()), wasmScratchGPR, wasmScratchGPR);
@@ -4101,13 +4107,19 @@ void BBQJIT::prepareForExceptions()
                 jumpTable->at(index) = linkBuffer.locationOf<JSSwitchPtrTag>(*labels[index]);
         });
     } else {
-        Vector<int64_t, 16> cases(targets.size(), [](size_t i) { return i; });
+        Vector<std::tuple<uint32_t, size_t>, 16> runs;
+        runs.reserveInitialCapacity(runCount);
+        for (unsigned i = 0; i < targets.size(); ) {
+            unsigned start = i;
+            while (i < targets.size() && targets[i] == targets[start])
+                ++i;
+            runs.append({ static_cast<uint32_t>(start), static_cast<size_t>(i - start) });
+        }
+        ASSERT(runs.size() == runCount);
 
-        BinarySwitch binarySwitch(wasmScratchGPR, cases.span(), BinarySwitch::Int32);
+        BinarySwitch binarySwitch(wasmScratchGPR, runs.span());
         while (binarySwitch.advance(m_jit)) {
-            unsigned value = binarySwitch.caseValue();
             unsigned index = binarySwitch.caseIndex();
-            ASSERT_UNUSED(value, value == index);
             ASSERT(index < targets.size());
             currentControlData().addExit(*this, targets[index]->targetLocations(), results);
             targets[index]->addBranch(m_jit.jump());

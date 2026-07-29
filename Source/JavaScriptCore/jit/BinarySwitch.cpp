@@ -43,13 +43,16 @@ BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type ty
     : m_weakRandom(globalCounter++)
     , m_type(type)
     , m_value(value)
+    , m_totalCases(cases.size())
 {
+    RELEASE_ASSERT(type == Int32 || type == IntPtr);
+
     if (cases.empty())
         return;
 
     if (BinarySwitchInternal::verbose)
         dataLog("Original cases: ", listDump(cases), "\n");
-    
+
     m_cases.reserveInitialCapacity(cases.size());
     for (unsigned i = 0; i < cases.size(); ++i)
         m_cases.append(Case(cases[i], i));
@@ -65,6 +68,35 @@ BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type ty
 #endif
 
     build(0, false, m_cases.size());
+}
+
+BinarySwitch::BinarySwitch(GPRReg value, std::span<const std::tuple<uint32_t, size_t>> runs)
+    : m_weakRandom(globalCounter++)
+    , m_type(UInt32CheckRuns)
+    , m_value(value)
+{
+    if (runs.empty())
+        return;
+
+    m_cases.reserveInitialCapacity(runs.size());
+    unsigned keyStart = 0;
+    for (auto [firstKey, runLength] : runs) {
+        RELEASE_ASSERT(runLength);
+        RELEASE_ASSERT(firstKey == keyStart);
+        m_cases.append(Case(firstKey, keyStart));
+        keyStart += static_cast<unsigned>(runLength);
+    }
+    m_totalCases = keyStart;
+
+    if (BinarySwitchInternal::verbose)
+        dataLog("CheckRuns cases: ", listDump(m_cases), " totalKeys=", m_totalCases, "\n");
+
+#if ASSERT_ENABLED
+    for (unsigned i = 1; i < m_cases.size(); ++i)
+        ASSERT(m_cases[i - 1].index < m_cases[i].index);
+#endif
+
+    buildCheckRuns(0, m_cases.size());
 }
 
 BinarySwitch::~BinarySwitch() = default;
@@ -96,6 +128,9 @@ bool BinarySwitch::advance(MacroAssembler& jit)
                     MacroAssembler::NotEqual, m_value,
                     MacroAssembler::ImmPtr(std::bit_cast<const void*>(static_cast<intptr_t>(m_cases[code.index].value)))));
                 break;
+            case UInt32CheckRuns:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
             break;
         case NotEqualToPush:
@@ -109,6 +144,9 @@ bool BinarySwitch::advance(MacroAssembler& jit)
                 m_jumpStack.append(jit.branchPtr(
                     MacroAssembler::NotEqual, m_value,
                     MacroAssembler::ImmPtr(std::bit_cast<const void*>(static_cast<intptr_t>(m_cases[code.index].value)))));
+                break;
+            case UInt32CheckRuns:
+                RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
             break;
@@ -124,7 +162,22 @@ bool BinarySwitch::advance(MacroAssembler& jit)
                     MacroAssembler::LessThan, m_value,
                     MacroAssembler::ImmPtr(std::bit_cast<const void*>(static_cast<intptr_t>(m_cases[code.index].value)))));
                 break;
+            case UInt32CheckRuns:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
+            break;
+        case BelowToPush:
+            ASSERT(isCheckRuns());
+            m_jumpStack.append(jit.branch32(
+                MacroAssembler::Below, m_value,
+                MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
+            break;
+        case AboveOrEqualToFallThrough:
+            ASSERT(isCheckRuns());
+            m_fallThrough.append(jit.branch32(
+                MacroAssembler::AboveOrEqual, m_value,
+                MacroAssembler::Imm32(static_cast<int32_t>(m_totalCases))));
             break;
         case Pop:
             m_jumpStack.takeLast().link(&jit);
@@ -375,6 +428,40 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
     build(start, hardStart, medianIndex);
 }
 
+void BinarySwitch::buildCheckRuns(unsigned start, unsigned end)
+{
+    if (BinarySwitchInternal::verbose)
+        dataLog("Building CheckRuns with start = ", start, ", end = ", end, "\n");
+
+    auto append = [&] (const BranchCode& code) {
+        if (BinarySwitchInternal::verbose)
+            dataLog("==> ", code, "\n");
+        m_branches.append(code);
+    };
+
+    unsigned size = end - start;
+    RELEASE_ASSERT(size);
+
+    if (size == 1) {
+        if (end == m_cases.size())
+            append(BranchCode(AboveOrEqualToFallThrough));
+        append(BranchCode(ExecuteCase, start));
+        return;
+    }
+
+    unsigned medianIndex = std::midpoint(start, end);
+    if (size & 1)
+        medianIndex += m_weakRandom.getUint32() & 1;
+
+    RELEASE_ASSERT(medianIndex > start);
+    RELEASE_ASSERT(medianIndex < end);
+
+    append(BranchCode(BelowToPush, medianIndex));
+    buildCheckRuns(medianIndex, end);
+    append(BranchCode(Pop));
+    buildCheckRuns(start, medianIndex);
+}
+
 void BinarySwitch::Case::dump(PrintStream& out) const
 {
     out.print("<value: " , value, ", index: ", index, ">");
@@ -391,6 +478,12 @@ void BinarySwitch::BranchCode::dump(PrintStream& out) const
         break;
     case LessThanToPush:
         out.print("LessThanToPush");
+        break;
+    case BelowToPush:
+        out.print("BelowToPush");
+        break;
+    case AboveOrEqualToFallThrough:
+        out.print("AboveOrEqualToFallThrough");
         break;
     case Pop:
         out.print("Pop");
