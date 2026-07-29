@@ -542,6 +542,7 @@ public:
     void setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount);
 #if ENABLE(VIDEO)
     ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
+    void clearFindCaptionTracks();
 #endif
 
     unsigned numberOfScrollableAreas();

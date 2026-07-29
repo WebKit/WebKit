@@ -138,6 +138,7 @@
 #include "ShadowRoot.h"
 #include "SleepDisabler.h"
 #include "SpeechSynthesis.h"
+#include "TextIterator.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
 #include "TextTrackRepresentation.h"
@@ -145,6 +146,7 @@
 #include "TimeRanges.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
+#include "VTTCue.h"
 #include "VideoPlaybackQuality.h"
 #include "VideoTrack.h"
 #include "VideoTrackConfiguration.h"
@@ -5461,6 +5463,11 @@ void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
     if (!m_textTracks || !m_textTracks->contains(track))
         return;
 
+    if (m_findCaptionTrack == &track) {
+        m_findCaptionTrack = nullptr;
+        m_findCaptionTrackPreviousMode = std::nullopt;
+    }
+
     TrackDisplayUpdateScope scope { *this };
     if (RefPtr cues = track.cues())
         textTrackRemoveCues(track, *cues);
@@ -5901,6 +5908,135 @@ void HTMLMediaElement::configureTextTracks()
     m_processingPreferenceChange = false;
 
     configureTextTrackDisplay();
+}
+
+static bool isSubtitleOrCaptionTrackKind(TextTrack::Kind kind)
+{
+    return kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions;
+}
+
+bool HTMLMediaElement::hasShowingFindSearchableTextTrackExcept(const TextTrack* except) const
+{
+    if (!m_textTracks)
+        return false;
+    for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+        RefPtr track = m_textTracks->item(i);
+        if (!track || track.get() == except)
+            continue;
+        if (track->mode() == TextTrack::Mode::Showing && isSubtitleOrCaptionTrackKind(track->kind()))
+            return true;
+    }
+    return false;
+}
+
+RefPtr<TextTrack> HTMLMediaElement::bestFindCaptionTrack() const
+{
+    if (!m_textTracks)
+        return nullptr;
+
+    RefPtr page = document().page();
+    RefPtr captionPreferences = page ? &protect(page->group())->ensureCaptionPreferences() : nullptr;
+    auto preferredLanguages = captionPreferences ? captionPreferences->preferredLanguages() : Vector<String> { };
+
+    RefPtr<TextTrack> bestLanguageMatch;
+    int bestLanguageScore = 0;
+    RefPtr<TextTrack> defaultTrack;
+
+    for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+        RefPtr track = m_textTracks->item(i);
+        if (!track)
+            continue;
+        if (!isSubtitleOrCaptionTrackKind(track->kind()))
+            continue;
+        if (track->containsOnlyForcedSubtitles() || !track->isMainProgramContent())
+            continue;
+
+        if (!defaultTrack && track->isDefault())
+            defaultTrack = track;
+
+        if (captionPreferences) {
+            int languageScore = captionPreferences->textTrackLanguageSelectionScore(*track, preferredLanguages);
+            if (languageScore > bestLanguageScore) {
+                bestLanguageScore = languageScore;
+                bestLanguageMatch = track;
+            }
+        }
+    }
+
+    if (bestLanguageMatch)
+        return bestLanguageMatch;
+    return defaultTrack;
+}
+
+void HTMLMediaElement::updateFindCaptionTrack()
+{
+    RefPtr best = hasShowingFindSearchableTextTrackExcept(m_findCaptionTrack.get()) ? nullptr : bestFindCaptionTrack();
+    if (m_findCaptionTrack == best)
+        return;
+
+    if (RefPtr previous = m_findCaptionTrack; previous && m_findCaptionTrackPreviousMode && previous->mode() == TextTrack::Mode::Showing)
+        previous->setMode(*m_findCaptionTrackPreviousMode);
+    m_findCaptionTrackPreviousMode = std::nullopt;
+
+    m_findCaptionTrack = best;
+    if (best) {
+        m_findCaptionTrackPreviousMode = best->mode();
+        best->setMode(TextTrack::Mode::Showing);
+    }
+}
+
+void HTMLMediaElement::clearFindCaptionTrack()
+{
+    if (RefPtr findCaptionTrack = m_findCaptionTrack; findCaptionTrack && m_findCaptionTrackPreviousMode && findCaptionTrack->mode() == TextTrack::Mode::Showing)
+        findCaptionTrack->setMode(*m_findCaptionTrackPreviousMode);
+    m_findCaptionTrack = nullptr;
+    m_findCaptionTrackPreviousMode = std::nullopt;
+}
+
+Vector<MediaTime> HTMLMediaElement::findCueMatches(const String& target, FindOptions options)
+{
+    if (!document().settings().findInVideoEnabled())
+        return { };
+
+    updateFindCaptionTrack();
+
+    Vector<MediaTime> matches;
+    if (RefPtr tracks = m_textTracks) {
+        MediaTime duration = durationMediaTime();
+        for (unsigned i = 0; i < tracks->length(); ++i) {
+            RefPtr track = tracks->item(i);
+            if (!track || track->mode() != TextTrack::Mode::Showing)
+                continue;
+            if (!isSubtitleOrCaptionTrackKind(track->kind()))
+                continue;
+            RefPtr cues = track->cues();
+            if (!cues)
+                continue;
+            for (unsigned j = 0; j < cues->length(); ++j) {
+                RefPtr vttCue = dynamicDowncast<VTTCue>(cues->item(j));
+                if (!vttCue)
+                    continue;
+                if (duration.isValid() && vttCue->startMediaTime() >= duration)
+                    break;
+                RefPtr cueAsHTML = vttCue->getCueAsHTML();
+                if (cueAsHTML && containsPlainText(cueAsHTML->textContent(), target, options))
+                    matches.append(vttCue->startMediaTime());
+            }
+        }
+    }
+
+    std::ranges::stable_sort(matches, [](auto& a, auto& b) {
+        return a < b;
+    });
+
+    MediaTime previousTime = MediaTime::invalidTime();
+    matches.removeAllMatching([&previousTime](auto& time) {
+        bool isDuplicate = time == previousTime;
+        previousTime = time;
+        return isDuplicate;
+    });
+
+    return matches;
 }
 
 bool HTMLMediaElement::havePotentialSourceChild()

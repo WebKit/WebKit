@@ -34,6 +34,7 @@
 #include <WebCore/AudioTrackClient.h>
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/CaptionUserPreferences.h>
+#include <WebCore/FindOptions.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
@@ -45,6 +46,7 @@
 #include <WebCore/MediaUniqueIdentifier.h>
 #include <WebCore/MessageTargetForTesting.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
+#include <WebCore/TextTrack.h>
 #include <WebCore/TextTrackClient.h>
 #include <WebCore/URLKeepingBlobAlive.h>
 #include <WebCore/VideoTrackClient.h>
@@ -416,6 +418,9 @@ public:
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();
 
+    Vector<MediaTime> findCueMatches(const String& target, FindOptions);
+    void clearFindCaptionTrack();
+
     virtual void didAddTextTrack(HTMLTrackElement&);
     virtual void didRemoveTextTrack(HTMLTrackElement&);
 
@@ -435,6 +440,10 @@ public:
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&);
     void configureMetadataTextTrackGroup(const TrackGroup&);
+
+    void updateFindCaptionTrack();
+    bool hasShowingFindSearchableTextTrackExcept(const TextTrack*) const;
+    RefPtr<TextTrack> bestFindCaptionTrack() const;
 
     void setSelectedTextTrack(TextTrack*);
 
@@ -1397,6 +1406,9 @@ private:
 
     struct CueData;
     std::unique_ptr<CueData> m_cueData;
+
+    RefPtr<TextTrack> m_findCaptionTrack;
+    std::optional<TextTrack::Mode> m_findCaptionTrackPreviousMode;
 
     int m_ignoreTrackDisplayUpdate { 0 };
 

@@ -374,6 +374,9 @@ void WebFoundTextRangeController::clearAllDecoratedFoundText()
     RefPtr corePage = protect(m_webPage.get())->corePage();
     corePage->unmarkAllTextMatches();
     corePage->removeAllActiveTextMatches();
+#if ENABLE(VIDEO)
+    corePage->clearFindCaptionTracks();
+#endif
 
     m_highlightedRange = { };
     m_textIndicator = nullptr;

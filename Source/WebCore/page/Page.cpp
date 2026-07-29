@@ -1312,6 +1312,13 @@ Vector<CueMatch> Page::findCueMatches(const String& target, FindOptions options)
 
     return results;
 }
+
+void Page::clearFindCaptionTracks()
+{
+    forEachMediaElement([](HTMLMediaElement& element) {
+        element.clearFindCaptionTrack();
+    });
+}
 #endif // ENABLE(VIDEO)
 
 std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::optional<SimpleRange>& referenceRange, FindOptions options)

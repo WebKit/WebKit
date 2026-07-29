@@ -675,6 +675,7 @@ enum ContentsFormat {
     unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
     undefined setCachedFindMatchBufferLimitForTesting(unsigned long maximumRunCount);
     [Conditional=VIDEO] sequence<unrestricted double> findCueMatches(DOMString text, sequence<DOMString> findOptions);
+    [Conditional=VIDEO] undefined clearFindCaptionTracks();
 
     DOMString autofillFieldName(Element formControlElement);
     boolean isSpellcheckDisabledExceptTextReplacement(HTMLInputElement inputElement);

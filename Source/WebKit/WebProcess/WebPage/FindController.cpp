@@ -725,6 +725,9 @@ void FindController::hideFindUI()
 {
     m_findMatches.clear();
     m_lastFoundRange = std::nullopt;
+#if ENABLE(VIDEO)
+    protect(protect(m_webPage.get())->corePage())->clearFindCaptionTracks();
+#endif
     if (RefPtr findPageOverlay = m_findPageOverlay.get())
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 

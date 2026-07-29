@@ -2684,59 +2684,9 @@ Vector<CueMatch> Document::findCueMatches(const String& target, FindOptions opti
         return is_lt(treeOrder<ComposedTree>(a.get(), b.get()));
     });
 
-    // FIXME: Decisions still need to be made on whether we should only include videos that are paused, that have been interacted with, etc.
     for (Ref element : elements) {
-        size_t firstMatchForElement = results.size();
-
-        RefPtr tracks = element->textTracks();
-        if (!tracks)
-            continue;
-        MediaTime duration = element->durationMediaTime();
-        for (unsigned i = 0; i < tracks->length(); ++i) {
-            RefPtr track = tracks->item(i);
-            if (!track)
-                continue;
-            if (track->mode() != TextTrack::Mode::Showing)
-                continue;
-            // Only search tracks whose cues carry text the user reads or hears, skip chapters and metadata tracks.
-            switch (track->kind()) {
-            case TextTrack::Kind::Subtitles:
-            case TextTrack::Kind::Captions:
-            case TextTrack::Kind::Descriptions:
-                break;
-            default:
-                continue;
-            }
-            RefPtr cues = track->cues();
-            if (!cues)
-                continue;
-
-            for (unsigned j = 0; j < cues->length(); ++j) {
-                RefPtr cue = cues->item(j);
-                // Only VTTCue carries searchable caption text.
-                RefPtr vttCue = dynamicDowncast<VTTCue>(cue.get());
-                if (!vttCue)
-                    continue;
-                if (duration.isValid() && vttCue->startMediaTime() >= duration)
-                    break;
-                RefPtr cueAsHTML = vttCue->getCueAsHTML();
-                if (cueAsHTML && containsPlainText(cueAsHTML->textContent(), target, options))
-                    results.append({ element.get(), vttCue->startMediaTime() });
-            }
-        }
-
-        // One element can carry several active text tracks (captions, subtitles, etc.), so sort by cue time.
-        std::ranges::stable_sort(results.mutableSubspan(firstMatchForElement), [](auto& a, auto& b) {
-            return a.seekTime < b.seekTime;
-        });
-
-        // Collapse cues that share a start time
-        MediaTime previousSeekTime = MediaTime::invalidTime();
-        results.removeAllMatching([&previousSeekTime](auto& match) {
-            bool isDuplicate = match.seekTime == previousSeekTime;
-            previousSeekTime = match.seekTime;
-            return isDuplicate;
-        }, firstMatchForElement);
+        for (auto& seekTime : element->findCueMatches(target, options))
+            results.append({ element.get(), seekTime });
     }
 
     return results;

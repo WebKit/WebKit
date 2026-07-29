@@ -3399,6 +3399,12 @@ ExceptionOr<Vector<double>> Internals::findCueMatches(const String& text, const 
         return match.seekTime.toDouble();
     });
 }
+
+void Internals::clearFindCaptionTracks()
+{
+    if (RefPtr document = contextDocument(); document && document->page())
+        document->page()->clearFindCaptionTracks();
+}
 #endif
 
 unsigned Internals::numberOfIDBTransactions() const
