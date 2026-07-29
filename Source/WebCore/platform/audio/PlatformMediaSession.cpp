@@ -446,6 +446,11 @@ void PlatformMediaSession::canProduceAudioChanged()
     }
 }
 
+bool PlatformMediaSession::preparingToPlay() const
+{
+    return m_preparingToPlay;
+}
+
 void PlatformMediaSession::clientCharacteristicsChanged(bool positionChanged)
 {
     if (RefPtr manager = sessionManager())

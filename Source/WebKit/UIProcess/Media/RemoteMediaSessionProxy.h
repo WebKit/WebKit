@@ -67,6 +67,9 @@ private:
 
     bool hasMediaStreamSource() const final { return m_sessionState.hasMediaStreamSource; }
 
+    bool preparingToPlay() const final { return m_sessionState.preparingToPlay; }
+    bool hasPlayedAudiblySinceLastInterruption() const final { return m_sessionState.hasPlayedAudiblySinceLastInterruption; }
+
     bool shouldOverridePauseDuringRouteChange() const final { return m_sessionState.shouldOverridePauseDuringRouteChange; }
 
     bool isNowPlayingEligible() const final { return m_sessionState.isNowPlayingEligible; }

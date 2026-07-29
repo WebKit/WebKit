@@ -71,7 +71,7 @@ public:
     bool activeAudioSessionRequired() const final;
     void canProduceAudioChanged() final;
 
-    bool preparingToPlay() const final { return m_preparingToPlay; }
+    bool preparingToPlay() const override;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const override;
