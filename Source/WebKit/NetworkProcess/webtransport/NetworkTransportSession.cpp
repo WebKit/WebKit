@@ -46,6 +46,8 @@ NetworkTransportSession::~NetworkTransportSession()
 {
     for (auto&& statsRequest : std::exchange(m_statsRequestsBeforeInitialization, { }))
         statsRequest(std::nullopt);
+    for (auto&& streamRequest : std::exchange(m_streamRequestsBeforeInitialization, { }))
+        streamRequest.completionHandler(std::nullopt);
 }
 
 IPC::Connection* NetworkTransportSession::messageSenderConnection() const
@@ -217,7 +219,7 @@ void NetworkTransportSession::getStats(CompletionHandler<void(std::optional<WebC
     });
 }
 
-void NetworkTransportSession::completeStatsRequestsAfterInitialization(std::optional<Seconds> initializationTime)
+void NetworkTransportSession::completeRequestsAfterInitialization(std::optional<Seconds> initializationTime)
 {
     ASSERT(!m_initializationTime);
     ASSERT(m_initializationState == InitializationState::Waiting);
@@ -225,12 +227,16 @@ void NetworkTransportSession::completeStatsRequestsAfterInitialization(std::opti
         m_initializationState = InitializationState::Failed;
         for (auto&& statsRequest : std::exchange(m_statsRequestsBeforeInitialization, { }))
             statsRequest(std::nullopt);
+        for (auto&& streamRequest : std::exchange(m_streamRequestsBeforeInitialization, { }))
+            streamRequest.completionHandler(std::nullopt);
         return;
     }
     m_initializationState = InitializationState::Succeeded;
     m_initializationTime = *initializationTime;
     for (auto&& statsRequest : std::exchange(m_statsRequestsBeforeInitialization, { }))
         getStats(WTF::move(statsRequest));
+    for (auto&& streamRequest : std::exchange(m_streamRequestsBeforeInitialization, { }))
+        createStream(streamRequest.streamType, WTF::move(streamRequest.completionHandler));
 }
 
 #if !HAVE(WEBTRANSPORT)

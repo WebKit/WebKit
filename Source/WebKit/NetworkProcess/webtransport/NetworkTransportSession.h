@@ -30,6 +30,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/WebTransportOptions.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -132,7 +133,7 @@ private:
     void setupDatagramConnection(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
     void receiveDatagramLoop();
     void createStream(NetworkTransportStreamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&&);
-    void completeStatsRequestsAfterInitialization(std::optional<Seconds>);
+    void completeRequestsAfterInitialization(std::optional<Seconds>);
 
     HashMap<WebCore::WebTransportStreamIdentifier, Ref<NetworkTransportStream>> m_streams;
     WeakPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
@@ -140,6 +141,13 @@ private:
     const WebCore::WebTransportOptions m_options;
     HashMap<WebCore::WebTransportSendGroupIdentifier, uint64_t> m_datagramBytesSent;
     uint64_t m_datagramBytesReceived { 0 };
+
+    struct StreamRequestBeforeInitialization {
+        NetworkTransportStreamType streamType;
+        CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)> completionHandler;
+    };
+    Vector<StreamRequestBeforeInitialization> m_streamRequestsBeforeInitialization;
+    Vector<CompletionHandler<void(std::optional<WebCore::WebTransportConnectionStats>&&)>> m_statsRequestsBeforeInitialization;
 
     uint64_t m_bytesSentOnClosedStreams { 0 };
     uint64_t m_bytesReceivedOnClosedStreams { 0 };
@@ -149,7 +157,6 @@ private:
         Succeeded,
         Failed
     } m_initializationState { InitializationState::Waiting };
-    Vector<CompletionHandler<void(std::optional<WebCore::WebTransportConnectionStats>&&)>> m_statsRequestsBeforeInitialization;
 
 #if PLATFORM(COCOA)
     const RetainPtr<nw_connection_group_t> m_connectionGroup;

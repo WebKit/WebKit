@@ -8,7 +8,7 @@ PASS server initiated closure with code and reason
 PASS server initiated connection closure
 PASS opening unidirectional stream before ready
 PASS opening bidirectional stream before ready
-FAIL server initiated closure while opening unidirectional stream before ready assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL server initiated closure while opening bidirectional stream before ready assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS server initiated closure while opening unidirectional stream before ready
+PASS server initiated closure while opening bidirectional stream before ready
 PASS reading closed property after close should work
 

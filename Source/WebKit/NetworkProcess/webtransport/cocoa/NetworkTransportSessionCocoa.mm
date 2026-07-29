@@ -300,7 +300,7 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
         if (!completionHandler)
             return;
         if (RefPtr strongThis = weakThis.get())
-            strongThis->completeStatsRequestsAfterInitialization(connectionInfo ? std::optional(MonotonicTime::now() - initializationStartTime) : std::nullopt);
+            strongThis->completeRequestsAfterInitialization(connectionInfo ? std::optional(MonotonicTime::now() - initializationStartTime) : std::nullopt);
         return completionHandler(WTF::move(connectionInfo));
     };
 
@@ -481,6 +481,16 @@ void NetworkTransportSession::setupConnectionHandler()
 
 void NetworkTransportSession::createStream(NetworkTransportStreamType streamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
 {
+    switch (m_initializationState) {
+    case InitializationState::Waiting:
+        m_streamRequestsBeforeInitialization.append({ streamType, WTF::move(completionHandler) });
+        return;
+    case InitializationState::Failed:
+        return completionHandler(std::nullopt);
+    case InitializationState::Succeeded:
+        break;
+    }
+
     ASSERT(streamType != NetworkTransportStreamType::IncomingUnidirectional);
     RetainPtr webtransportOptions = adoptNS(nw_webtransport_create_options());
     if (!webtransportOptions) {
