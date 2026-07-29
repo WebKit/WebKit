@@ -30,11 +30,6 @@
 #include "ExceptionOr.h"
 #include "ISO18013DocumentRequest.h"
 
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-#include "DigitalCredentialsMobileDocumentRequestDataWithRequestInfo.h"
-#include "ISO18013DocumentRequestInfo.h"
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-
 #include "SecurityOriginData.h"
 #include "ValidatedMobileDocumentRequest.h"
 #include <wtf/text/WTFString.h>
@@ -45,38 +40,6 @@ class DigitalCredentialsRequestDataBuilder {
 
 public:
     static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<ValidatedMobileDocumentRequest>, const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
-
-private:
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-
-    static ExceptionOr<std::pair<DigitalCredentialsMobileDocumentRequestDataWithRequestInfo, RawDigitalCredentialsWithRequestInfo>> buildAndValidateRequestDataWithRequestInfo(const ISO18013DocumentRequest&, const Document&);
-
-    static ExceptionOr<std::pair<String, RawDigitalCredentialsWithRequestInfo>> parseMatchingHintAndRawRequests(const ISO18013DocumentRequest&);
-
-    static ExceptionOr<RawDigitalCredentialsWithRequestInfo> parseRawRequests(const HashMap<String, Box<ISO18013Any>>&);
-
-    static ExceptionOr<String> parseMatchingHint(const HashMap<String, Box<ISO18013Any>>&);
-
-    static ExceptionOr<ResponseType> parseRequestedDataElements(const ISO18013DocumentRequest&);
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/DigitalCredentialsRequestDataBuilderAdditions.h>)
-// FIXME: Properly support using WKA in modules.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
-#include <WebKitAdditions/DigitalCredentialsRequestDataBuilderAdditions.cpp>
-#pragma clang diagnostic pop
-#else
-    static constexpr ASCIILiteral ISO18013RequestInfoDocType = "org.iso.mdoc.requestInfo";
-    static constexpr ASCIILiteral requestInfoNamespace = "mdoc.requestInfo"_s;
-
-    static constexpr ASCIILiteral attestationElementIdentifier = "attestation"_s;
-    static constexpr ASCIILiteral disclosureElementIdentifier = "disclosure"_s;
-
-    static constexpr ASCIILiteral rawRequestKey = "rawRequest"_s;
-    static constexpr ASCIILiteral matchingHintKey = "matchingHint"_s;
-#endif
-
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 };
 
 } // namespace WebCore

@@ -309,11 +309,6 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 
                 completionHandler(rawRequests.get());
         }
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-        , [] (WebCore::RawDigitalCredentialsWithRequestInfo&& unvalidatedRequestsWithRequestInfo) {
-            ASSERT_NOT_IMPLEMENTED_YET();
-        }
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
         );
 
     });

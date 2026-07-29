@@ -367,18 +367,6 @@ struct WebCore::DigitalCredentialsMobileDocumentRequestData : WebCore::DigitalCr
     Vector<WebCore::ValidatedMobileDocumentRequest> requests;
 };
 
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-[Nested] enum class WebCore::ResponseType : uint8_t {
-    Attestation,
-    Disclosure,
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DigitalCredentialsMobileDocumentRequestDataWithRequestInfo : WebCore::DigitalCredentialsSecurityOriginData {
-    WebCore::ResponseType responseType;
-    String matchingHint;
-}
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-
 struct WebCore::DigitalCredentialsResponseData {
     WebCore::DigitalCredentialPresentationProtocol protocol;
     String responseDataJSON;

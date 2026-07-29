@@ -292,10 +292,6 @@
 #define ENABLE_IOS_TOUCH_EVENTS 0
 #endif
 
-#if !defined(ENABLE_ISO18013_DOCUMENT_REQUEST_INFO)
-#define ENABLE_ISO18013_DOCUMENT_REQUEST_INFO 0
-#endif
-
 #if !defined(ENABLE_IPC_TESTING_API)
 /* Enable IPC testing on all ASAN builds and debug builds. Enable it in GLib ports when assertions are enabled. */
 /* In GLib ports, only enable for GCC builds, as this is what we currently test in EWS and clang-18 is significantly */

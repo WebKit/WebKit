@@ -26,9 +26,6 @@
 #pragma once
 
 #include <WebCore/DigitalCredentialsMobileDocumentRequestData.h>
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-#include <WebCore/DigitalCredentialsMobileDocumentRequestDataWithRequestInfo.h>
-#endif
 #include <WebCore/MobileDocumentRequest.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <WebCore/ValidatedMobileDocumentRequest.h>
@@ -42,16 +39,10 @@ using ValidatedDigitalCredentialRequest = ValidatedMobileDocumentRequest;
 
 using DigitalCredentialsRequestData = Variant<
     DigitalCredentialsMobileDocumentRequestData
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-    , DigitalCredentialsMobileDocumentRequestDataWithRequestInfo
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 >;
 
 using DigitalCredentialsRawRequests = Variant<
     Vector<UnvalidatedDigitalCredentialRequest>
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-    , RawDigitalCredentialsWithRequestInfo
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
     >;
 
 } // namespace WebCore

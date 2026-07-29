@@ -372,25 +372,14 @@ struct WrappedCryptoKey;
 struct MockWebAuthenticationConfiguration;
 struct DigitalCredentialsMobileDocumentRequestData;
 
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-struct DigitalCredentialsMobileDocumentRequestDataWithRequestInfo;
-using RawDigitalCredentialsWithRequestInfo = Vector<String>;
-#endif
-
 struct MobileDocumentRequest;
 struct OpenID4VPMultisignedRequest;
 struct OpenID4VPSignedRequest;
 using UnvalidatedDigitalCredentialRequest = Variant<MobileDocumentRequest, OpenID4VPSignedRequest, OpenID4VPMultisignedRequest>;
 using DigitalCredentialsRequestData = Variant<
     WebCore::DigitalCredentialsMobileDocumentRequestData
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-    , WebCore::DigitalCredentialsMobileDocumentRequestDataWithRequestInfo
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 >;
 using DigitalCredentialsRawRequests = Variant<Vector<UnvalidatedDigitalCredentialRequest>
-#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-        , RawDigitalCredentialsWithRequestInfo
-#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
     >;
 struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
