@@ -97,14 +97,36 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 class AdaptiveStringSearcherTables {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AdaptiveStringSearcherTables);
 public:
-    int* badCharShiftTable() LIFETIME_BOUND { return m_badCharShiftTable.data(); }
-    int* goodSuffixShiftTable() LIFETIME_BOUND { return m_goodSuffixShiftTable.data(); }
-    int* suffixTable() LIFETIME_BOUND { return m_suffixTable.data(); }
+    static constexpr size_t badCharShiftTableSize = AdaptiveStringSearcherBase::ucharAlphabetSize;
+    static constexpr size_t shiftTableSize = AdaptiveStringSearcherBase::bmMaxShift + 1;
+
+    std::span<int, badCharShiftTableSize> badCharShiftTable() LIFETIME_BOUND { return m_badCharShiftTable; }
+    std::span<int, shiftTableSize> goodSuffixShiftTable() LIFETIME_BOUND { return m_goodSuffixShiftTable; }
+    std::span<int, shiftTableSize> suffixTable() LIFETIME_BOUND { return m_suffixTable; }
 
 private:
-    std::array<int, AdaptiveStringSearcherBase::ucharAlphabetSize> m_badCharShiftTable { };
-    std::array<int, AdaptiveStringSearcherBase::bmMaxShift> m_goodSuffixShiftTable { };
-    std::array<int, AdaptiveStringSearcherBase::bmMaxShift + 1> m_suffixTable { };
+    std::array<int, badCharShiftTableSize> m_badCharShiftTable { };
+    std::array<int, shiftTableSize> m_goodSuffixShiftTable { };
+    std::array<int, shiftTableSize> m_suffixTable { };
+};
+
+// Maps pattern indices in [start, patternLength] onto a shift table that only covers the last
+// bmMaxShift + 1 positions of the pattern. Unlike a biased pointer, both ends are bounds-checked
+// against the physical table, and the check is against a compile-time constant extent.
+class BiasedShiftTable {
+public:
+    using Table = std::span<int, AdaptiveStringSearcherTables::shiftTableSize>;
+
+    BiasedShiftTable(Table table, int start)
+        : m_table(table)
+        , m_start(start)
+    { }
+
+    int& operator[](int patternIndex) const { return m_table[static_cast<size_t>(patternIndex - m_start)]; }
+
+private:
+    Table m_table;
+    int m_start;
 };
 
 template <typename PatternChar, typename SubjectChar>
@@ -168,23 +190,22 @@ private:
 
     void populateBoyerMooreTable();
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    static inline int charOccurrence(int* badCharOccurrence, SubjectChar charCode)
+    // The index is always reduced into [0, ucharAlphabetSize) so that the bounds check against the
+    // table's constant extent folds away.
+    static inline int charOccurrence(std::span<const int, AdaptiveStringSearcherTables::badCharShiftTableSize> badCharOccurrence, SubjectChar charCode)
     {
         if constexpr (sizeof(SubjectChar) == 1)
-            return badCharOccurrence[static_cast<int>(charCode)];
+            return badCharOccurrence[static_cast<uint8_t>(charCode)];
 
         if constexpr (sizeof(PatternChar) == 1) {
             if (exceedsOneByte(charCode))
                 return -1;
-            return badCharOccurrence[static_cast<unsigned>(charCode)];
+            return badCharOccurrence[static_cast<uint8_t>(charCode)];
         }
         // Both pattern and subject are UC16. Reduce character to equivalence
         // class.
-        int equivClass = charCode % ucharAlphabetSize;
-        return badCharOccurrence[equivClass];
+        return badCharOccurrence[static_cast<uint16_t>(charCode) % ucharAlphabetSize];
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // The following tables are shared by all searches.
     // TODO(lrn): Introduce a way for a pattern to keep its tables
@@ -193,26 +214,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // Store for the BoyerMoore(Horspool) bad char shift table.
     // Return a table covering the last bmMaxShift+1 positions of
     // pattern.
-    int* badCharTable() LIFETIME_BOUND { return m_tables.badCharShiftTable(); }
+    std::span<int, AdaptiveStringSearcherTables::badCharShiftTableSize> badCharTable() LIFETIME_BOUND { return m_tables.badCharShiftTable(); }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    // Store for the BoyerMoore good suffix shift table.
-    int* goodSuffixShiftTable()
-    {
-        // Return biased pointer that maps the range  [m_start..m_pattern.size()
-        // to the kGoodSuffixShiftTable array.
-        return m_tables.goodSuffixShiftTable() - m_start;
-    }
+    // Store for the BoyerMoore good suffix shift table, indexed by pattern index.
+    BiasedShiftTable goodSuffixShiftTable() { return { m_tables.goodSuffixShiftTable(), m_start }; }
 
     // Table used temporarily while building the BoyerMoore good suffix
     // shift table.
-    int* suffixTable()
-    {
-        // Return biased pointer that maps the range  [m_start..m_pattern.size()
-        // to the kSuffixTable array.
-        return m_tables.suffixTable() - m_start;
-    }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    BiasedShiftTable suffixTable() { return { m_tables.suffixTable(), m_start }; }
 
     AdaptiveStringSearcherTables& m_tables;
     // The pattern to search for.
@@ -379,8 +388,8 @@ int AdaptiveStringSearcher<PatternChar, SubjectChar>::boyerMooreSearch(AdaptiveS
     // Only preprocess at most bmMaxShift last characters of pattern.
     int start = search.m_start;
 
-    int* badCharOccurrence = search.badCharTable();
-    int* goodSuffixShift = search.goodSuffixShiftTable();
+    auto badCharOccurrence = search.badCharTable();
+    auto goodSuffixShift = search.goodSuffixShiftTable();
 
     PatternChar lastChar = patternPtr[patternLength - 1];
     int index = startIndex;
@@ -427,8 +436,8 @@ void AdaptiveStringSearcher<PatternChar, SubjectChar>::populateBoyerMooreTable()
 
     // Biased tables so that we can use pattern indices as table indices,
     // even if we only cover the part of the pattern from offset start.
-    int* shiftTable = goodSuffixShiftTable();
-    int* suffixTable = this->suffixTable();
+    auto shiftTable = goodSuffixShiftTable();
+    auto suffixTable = this->suffixTable();
 
     // Initialize table.
     for (int i = start; i < patternLength; i++)
@@ -487,7 +496,7 @@ int AdaptiveStringSearcher<PatternChar, SubjectChar>::boyerMooreHorspoolSearch(A
     const auto* patternPtr = pattern.data();
     int subjectLength = subject.size();
     int patternLength = pattern.size();
-    int* charOccurrences = search.badCharTable();
+    auto charOccurrences = search.badCharTable();
     int badness = -patternLength;
 
     // How bad we are doing without a good-suffix table.
@@ -532,20 +541,16 @@ void AdaptiveStringSearcher<PatternChar, SubjectChar>::populateBoyerMooreHorspoo
 {
     int patternLength = m_pattern.size();
 
-    int* badCharOccurrence = badCharTable();
+    auto badCharOccurrence = badCharTable();
+    static_assert(alphabetSize() == AdaptiveStringSearcherTables::badCharShiftTableSize);
 
     // Only preprocess at most bmMaxShift last characters of pattern.
     int start = m_start;
     // Run forwards to populate badCharTable, so that *last* instance
     // of character equivalence class is the one registered.
     // Notice: Doesn't include the last character.
-    int tableSize = alphabetSize();
-    if (!start) // All patterns less than bmMaxShift in length.
-        memset(badCharOccurrence, -1, tableSize * sizeof(*badCharOccurrence));
-    else {
-        for (int i = 0; i < tableSize; i++)
-            badCharOccurrence[i] = start - 1;
-    }
+    std::ranges::fill(badCharOccurrence, start - 1); // -1 for all patterns shorter than bmMaxShift.
+
     const auto* patternPtr = m_pattern.data();
     for (int i = start; i < patternLength - 1; i++) {
         PatternChar c = patternPtr[i];
