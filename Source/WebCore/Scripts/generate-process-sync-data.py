@@ -294,6 +294,11 @@ def generate_synched_data_header(prefix, variant_sorted_synched_datas, sync_data
     for header in headers:
         result.append('#include %s' % header)
 
+    result.append('')
+    result.append('namespace WTF {')
+    result.append('class TextStream;')
+    result.append('}')
+
     result.append(_synced_data_header_midfix.format(prefix=prefix))
 
     for data in sync_data_sorted_synched_datas:
@@ -329,6 +334,10 @@ def generate_synched_data_header(prefix, variant_sorted_synched_datas, sync_data
 
     result.append(generate_process_sync_data_header(prefix, variant_sorted_synched_datas, sync_data_sorted_synched_datas))
 
+    result.append('WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const %sSyncData&);' % prefix)
+    result.append('WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const %sSyncSerializationData&);' % prefix)
+    result.append('')
+
     result.append('} // namespace WebCore')
     result.append('')
 
@@ -340,6 +349,7 @@ _synched_data_impl_prefix = """
 #include "data_type_name.h"
 
 #include <wtf/EnumTraits.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {{
 
@@ -416,6 +426,43 @@ def generate_synched_data_impl(prefix, synched_datas):
     result.append('{')
     result.append('}')
     result.append('')
+
+    result.append('WTF::TextStream& operator<<(WTF::TextStream& ts, const data_type_name& data)')
+    result.append('{')
+    result.append('    WTF::TextStream::GroupScope scope(ts);')
+    result.append('    ts << "data_type_name"_s;')
+    for data in synched_datas:
+        if data.conditional is not None:
+            result.append('#if %s' % data.conditional)
+        lowercase_name = data.name[0].lower() + data.name[1:]
+        result.append('    ts.dumpProperty("%s"_s, ValueOrEllipsis(data.%s));' % (lowercase_name, lowercase_name))
+        if data.conditional is not None:
+            result.append('#endif')
+    result.append('    return ts;')
+    result.append('}')
+    result.append('')
+
+    result.append('WTF::TextStream& operator<<(WTF::TextStream& ts, const %sSyncSerializationData& data)' % prefix)
+    result.append('{')
+    result.append('    WTF::TextStream::GroupScope scope(ts);')
+    result.append('    ts << "%sSyncSerializationData"_s;' % prefix)
+    result.append('    switch (static_cast<%sSyncDataType>(data.value.index())) {' % prefix)
+    for data in synched_datas:
+        if data.conditional is not None:
+            result.append('#if %s' % data.conditional)
+        lowercase_name = data.name[0].lower() + data.name[1:]
+        result.append('    case %sSyncDataType::%s:' % (prefix, data.name))
+        result.append('        ts.dumpProperty("%s"_s, ValueOrEllipsis(std::get<std::to_underlying(%sSyncDataType::%s)>(data.value)));' % (lowercase_name, prefix, data.name))
+        result.append('        break;')
+        if data.conditional is not None:
+            result.append('#endif')
+    result.append('    default:')
+    result.append('        RELEASE_ASSERT_NOT_REACHED();')
+    result.append('    }')
+    result.append('    return ts;')
+    result.append('}')
+    result.append('')
+
     result.append('} // namespace WebCore')
     result.append('')
 

@@ -33,6 +33,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/URL.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 struct TestSyncSerializationData;
@@ -46,16 +50,16 @@ public:
         return adoptRef(*new TestSyncData(std::forward<Args>(args)...));
     }
     static Ref<TestSyncData> create() { return adoptRef(*new TestSyncData); }
-    void update(const TestSyncSerializationData&);
+    WEBCORE_EXPORT void update(const TestSyncSerializationData&);
 
-    URL mainFrameURLChange = { };
-    bool isAutofocusProcessed = { };
-    bool userDidInteractWithPage = { };
-    StringifyThis anotherOne = { };
+    URL mainFrameURLChange { };
+    bool isAutofocusProcessed { };
+    bool userDidInteractWithPage { };
+    StringifyThis anotherOne { };
 #if ENABLE(DOM_AUDIO_SESSION)
-    WebCore::DOMAudioSessionType audioSessionType = { };
+    WebCore::DOMAudioSessionType audioSessionType { };
 #endif
-    HashSet<URL> multipleHeaders = { };
+    HashSet<URL> multipleHeaders { };
 
 private:
     TestSyncData() = default;
@@ -107,9 +111,11 @@ using TestSyncDataVariant = Variant<
 >;
 
 struct TestSyncSerializationData {
-    TestSyncDataType type;
     TestSyncDataVariant value;
 };
 
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const TestSyncData&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const TestSyncSerializationData&);
 
 } // namespace WebCore

@@ -36,17 +36,6 @@ header: <WebCore/TestSyncData.h>
     HashSet<URL> multipleHeaders;
 };
 
-enum class WebCore::TestSyncDataType : uint8_t {
-#if ENABLE(DOM_AUDIO_SESSION)
-    AudioSessionType,
-#endif
-    MainFrameURLChange,
-    IsAutofocusProcessed,
-    UserDidInteractWithPage,
-    AnotherOne,
-    MultipleHeaders,
-};
- 
 #if !ENABLE(DOM_AUDIO_SESSION)
 using WebCore::DOMAudioSessionType = bool;
 #endif
@@ -54,6 +43,5 @@ using WebCore::DOMAudioSessionType = bool;
 using WebCore::TestSyncDataVariant = Variant<WebCore::DOMAudioSessionType, URL, bool, bool, StringifyThis, HashSet<URL>>;
 
 [CustomHeader] struct WebCore::TestSyncSerializationData {
-    WebCore::TestSyncDataType type;
     WebCore::TestSyncDataVariant value;
 };
