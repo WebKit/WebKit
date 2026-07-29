@@ -156,6 +156,9 @@ public struct HTTPServer: ~Copyable {
     /// - Parameters:
     ///   - protocol: The HTTP protocol to use for this server.
     ///   - route: A group of routes that correspond to a mapping of request paths to responses.
+    #if compiler(>=6.4)
+    @diagnose(ForeignReferenceType, as: ignored, reason: "rdar://183449632")
+    #endif
     public init(protocol: `Protocol`, @RouteBuilder _ route: () -> Route) {
         var entries = unsafe TestWebKitAPI.__CxxHTTPServer.ResponseMap()
 
