@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FlexFormattingContext.h>
+#include <WebCore/FlexIntegrationUtils.h>
 #include <WebCore/FlexItemContentCache.h>
 #include <WebCore/FlexLayoutState.h>
 #include <wtf/CheckedRef.h>

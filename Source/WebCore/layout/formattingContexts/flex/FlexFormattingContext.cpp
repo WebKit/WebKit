@@ -48,10 +48,10 @@ static LayoutUnit constrainSizeByMinMax(LayoutUnit size, std::pair<LayoutUnit, L
     return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
 }
 
-FlexFormattingContext::FlexFormattingContext(RenderFlexibleBox& flexBox, const FlexLayoutConstraints& constraints, FlexLayoutState& layoutState, FlexItemContentCache& contentCache)
+FlexFormattingContext::FlexFormattingContext(RenderFlexibleBox& flexBox, LayoutIntegration::FlexIntegrationUtils& integrationUtils, const FlexLayoutConstraints& constraints, FlexLayoutState& layoutState)
     : m_flexBox(flexBox)
     , m_layoutState(layoutState)
-    , m_integrationUtils(flexBox, layoutState, contentCache)
+    , m_integrationUtils(integrationUtils)
     , m_flexFormattingUtils(flexBox)
     , m_constraints(constraints)
 {
@@ -1157,7 +1157,7 @@ LayoutUnit FlexFormattingContext::applyStretchAlignmentToFlexItem(const FlexLayo
             // Have to force another relayout even though the child is sized correctly,
             // because its descendants are not sized correctly yet.
             // The previous layout of the child was done without an override height set.
-            return layoutState().hasFlexItemCompletedLayout(flexLayoutItem.renderer) && integrationUtils().flexItemHasPercentHeightDescendants(flexLayoutItem);
+            return integrationUtils().hasFlexItemCompletedLayout(flexLayoutItem) && integrationUtils().flexItemHasPercentHeightDescendants(flexLayoutItem);
         };
         if (flexItemNeedsLayout())
             integrationUtils().applyStretchedLogicalHeightToFlexItem(flexLayoutItem, blockSize);

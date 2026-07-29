@@ -74,6 +74,7 @@ public:
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
     bool flexItemHasPercentHeightDescendants(const FlexLayoutItem&) const;
+    bool hasFlexItemCompletedLayout(const FlexLayoutItem&) const;
 
     LayoutUnit flexItemContentLogicalHeight(const FlexLayoutItem&) const;
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);

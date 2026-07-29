@@ -45,7 +45,6 @@
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderElementStyleInlines.h"
-#include "FlexFormattingContext.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectEnums.h"

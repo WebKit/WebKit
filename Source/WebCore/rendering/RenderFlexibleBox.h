@@ -31,7 +31,6 @@
 #pragma once
 
 #include <WebCore/BaselineAlignment.h>
-#include <WebCore/FlexFormattingContext.h>
 #include <WebCore/FlexFormattingUtils.h>
 #include <WebCore/LayoutIntegrationFlexLayout.h>
 #include <WebCore/RenderBlock.h>
@@ -91,10 +90,7 @@ protected:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
 private:
-    friend class FlexFormattingContext;
-    friend class FlexFormattingUtils;
     friend class LayoutIntegration::FlexLayout;
-    friend class LayoutIntegration::FlexIntegrationUtils;
     friend class LayoutIntegration::FlexItemIntrinsicWidthComputationScope;
 
     bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;

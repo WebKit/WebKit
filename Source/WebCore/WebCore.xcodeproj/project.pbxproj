@@ -31597,6 +31597,7 @@
 			children = (
 				FE1A2B3C4D5E6F0011112506 /* FlexIntegrationUtils.cpp */,
 				FE1A2B3C4D5E6F0011112504 /* FlexIntegrationUtils.h */,
+				FE1A2B3C4D5E6F0011112507 /* FlexItemContentCache.h */,
 				6FAC2520281326720045683F /* LayoutIntegrationFlexLayout.cpp */,
 				6FAC251E281326570045683F /* LayoutIntegrationFlexLayout.h */,
 			);
@@ -31610,7 +31611,6 @@
 				FE1A2B3C4D5E6F0011112302 /* FlexFormattingContext.h */,
 				FE1A2B3C4D5E6F0011112401 /* FlexFormattingUtils.cpp */,
 				FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */,
-				FE1A2B3C4D5E6F0011112507 /* FlexItemContentCache.h */,
 				FE1A2B3C4D5E6F0011112502 /* FlexLayoutState.h */,
 			);
 			path = flex;

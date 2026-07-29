@@ -44,9 +44,9 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexItemContentCache);
-
 namespace LayoutIntegration {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexItemContentCache);
 
 FlexIntegrationUtils::FlexIntegrationUtils(RenderFlexibleBox& flexBox, FlexLayoutState& flexLayoutState, FlexItemContentCache& flexItemContentCache)
     : m_flexBox(flexBox)
@@ -384,6 +384,11 @@ bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const RenderBox& 
             return true;
     }
     return false;
+}
+
+bool FlexIntegrationUtils::hasFlexItemCompletedLayout(const FlexLayoutItem& flexLayoutItem) const
+{
+    return flexLayoutState().hasFlexItemCompletedLayout(flexLayoutItem.renderer);
 }
 
 bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const FlexLayoutItem& flexLayoutItem) const

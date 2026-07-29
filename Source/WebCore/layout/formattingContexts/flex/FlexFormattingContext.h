@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/FlexFormattingUtils.h>
-#include <WebCore/FlexIntegrationUtils.h>
 #include <WebCore/FlexLayoutState.h>
 #include <WebCore/RenderBlock.h>
 #include <wtf/Range.h>
@@ -109,7 +108,7 @@ struct FlexContainerUsedExtents {
 
 class FlexFormattingContext {
 public:
-    FlexFormattingContext(RenderFlexibleBox&, const FlexLayoutConstraints&, FlexLayoutState&, FlexItemContentCache&);
+    FlexFormattingContext(RenderFlexibleBox&, LayoutIntegration::FlexIntegrationUtils&, const FlexLayoutConstraints&, FlexLayoutState&);
 
     struct Result {
         FlexLayoutState::MarginTrimItems marginTrimItems;
@@ -198,7 +197,7 @@ private:
 
     const CheckedRef<const RenderFlexibleBox> m_flexBox;
     FlexLayoutState& m_layoutState;
-    LayoutIntegration::FlexIntegrationUtils m_integrationUtils;
+    LayoutIntegration::FlexIntegrationUtils& m_integrationUtils;
     FlexFormattingUtils m_flexFormattingUtils;
     const FlexLayoutConstraints m_constraints;
     Result m_result;

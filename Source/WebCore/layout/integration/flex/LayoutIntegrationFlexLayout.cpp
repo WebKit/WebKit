@@ -323,10 +323,9 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     auto constraints = flexLayoutConstraints();
     auto flexLayoutItems = buildFlexLayoutItems(relayoutChildren, constraints);
 
-    // hasDefiniteLogicalHeight() is asked here, before the algorithm starts installing overriding sizes on the
-    // items, because a percentage has to resolve as it would have before the item was flexed.
     auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { marginTrimItemsBeforeFlexLayout(), flexBox().hasDefiniteLogicalHeight() } };
-    m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), constraints, *m_flexLayoutState, m_flexItemContentCache).layout(flexLayoutItems);
+    auto integrationUtils = FlexIntegrationUtils { flexBox(), *m_flexLayoutState, m_flexItemContentCache };
+    m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), integrationUtils, constraints, *m_flexLayoutState).layout(flexLayoutItems);
 }
 
 std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
