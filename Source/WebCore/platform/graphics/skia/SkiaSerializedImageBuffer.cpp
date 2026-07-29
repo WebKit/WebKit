@@ -77,6 +77,8 @@ RefPtr<ImageBuffer> SkiaSerializedImageBuffer::sinkIntoImageBuffer()
     FloatRect source = destination;
     source.scale(m_imageBuffer->resolutionScale());
     copiedImageBuffer->context().drawNativeImage(*m_image, destination, source, { CompositeOperator::Copy });
+    // Flush the context to ensure all operations are done before the source image buffer is destroyed.
+    copiedImageBuffer->flushDrawingContext();
     return copiedImageBuffer;
 }
 
