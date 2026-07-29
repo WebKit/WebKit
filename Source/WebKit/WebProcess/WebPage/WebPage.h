@@ -983,7 +983,6 @@ public:
     bool isThrottleable() const;
 
 #if PLATFORM(COCOA)
-    void updatePluginsActiveAndFocusedState();
     const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates() const LIFETIME_BOUND { return m_windowFrameInUnflippedScreenCoordinates; }
     const WebCore::FloatRect& viewFrameInWindowCoordinates() const LIFETIME_BOUND { return m_viewFrameInWindowCoordinates; }
 
