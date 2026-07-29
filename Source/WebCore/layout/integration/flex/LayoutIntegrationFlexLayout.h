@@ -73,15 +73,6 @@ public:
     // CSS Flexbox 9.8: whether the item's post-flexing size is definite, which is what makes a percentage
     // resolved against it meaningful.
     bool hasDefiniteSizeForPercentResolution(const RenderBox& flexItem);
-    template<typename SizeType> bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&);
-    template<typename SizeType> bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, const SizeType&, RenderBox::UpdatePercentageHeightDescendants);
-    // Whether a percentage resolves at all, for callers that only need the yes/no and have no percentage of their own.
-    bool canResolvePercentAgainstContainerBlockSize(const RenderBox& flexItem, RenderBox::UpdatePercentageHeightDescendants);
-
-    // The flex container's own block-size definiteness, computed before the algorithm runs, as it applies to this
-    // item -- absent when the item is one the container cannot answer for. The formatting context asks the same
-    // question through FlexIntegrationUtils.
-    std::optional<bool> isFlexBoxBlockSizeDefiniteForFlexItem(const RenderBox& flexItem) const;
 
     // Whether the given side of the item's margin has been trimmed, for RenderFlexibleBox::isChildEligibleForMarginTrim.
     // Answered from the running flex algorithm while it is running, and from what it last produced otherwise --
@@ -93,8 +84,6 @@ public:
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
 private:
-    bool isInLayout() const { return !!m_flexLayoutState; }
-
     FlexLayoutState::MarginTrimItems marginTrimItemsBeforeFlexLayout() const;
 
     void buildFlexItemList();

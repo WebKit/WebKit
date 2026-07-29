@@ -27,6 +27,7 @@
 
 #include <WebCore/FlexItemContentCache.h>
 #include <WebCore/LayoutUnit.h>
+#include <WebCore/RenderBox.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/SetForScope.h>
 
@@ -78,6 +79,14 @@ public:
     LayoutUnit computeBlockAxisContentSizeForFlexItem(const FlexLayoutItem&);
 
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
+
+    // CSS Flexbox 9.8 percentage resolution against the flex container. Static because RenderFlexibleBox asks these
+    // outside of the flex algorithm, when no FlexIntegrationUtils exists: pass the running algorithm's layout state,
+    // or nullptr when it is not running.
+    template<typename SizeType> static bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&, const FlexLayoutState*);
+    template<typename SizeType> static bool canResolvePercentAgainstContainerBlockSize(const RenderBox&, const SizeType&, RenderBox::UpdatePercentageHeightDescendants, const FlexLayoutState*);
+    static bool canResolvePercentAgainstContainerBlockSize(const RenderBox&, RenderBox::UpdatePercentageHeightDescendants, const FlexLayoutState*);
+    static std::optional<bool> isFlexBoxBlockSizeDefiniteForFlexItem(const RenderBox&, const FlexLayoutState*);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
     LayoutUnit maxContentMainAxisExtentForFlexItem(const FlexLayoutItem&);
     LayoutUnit minContentMainAxisContributionForFlexItem(const FlexLayoutItem&);
