@@ -4732,7 +4732,7 @@ IteratorChunkingEnabled:
 
 IteratorIncludesEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "Iterator Includes"
   humanReadableDescription: "Expose the Iterator.includes method."
@@ -4741,7 +4741,7 @@ IteratorIncludesEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 IteratorJoinEnabled:
   type: bool
