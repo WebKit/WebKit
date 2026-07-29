@@ -14865,7 +14865,7 @@ void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, Co
 
     if (RefPtr frame = WebFrameProxy::webFrame(request.frameID())) {
         auto webProcessIdentifier = frame->process().coreProcessIdentifier();
-        gpuProcess->updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), webProcessIdentifier, identifier(), WTF::move(callback));
+        gpuProcess->updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), request.willUseEchoCancellation(), webProcessIdentifier, identifier(), WTF::move(callback));
         gpuProcess->updateCaptureOrigin(request.topLevelDocumentSecurityOrigin().data(), webProcessIdentifier);
     } else
         return callback();
@@ -18246,8 +18246,9 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
     bool activeDisplayCapture = false;
     if (activeAudioCapture || activeVideoCapture) {
         Ref gpuProcess = protect(configuration().processPool())->ensureGPUProcess();
+        constexpr bool willUseEchoCancellation = false;
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-            gpuProcess->updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, webProcess.coreProcessIdentifier(), identifier(), [] { });
+            gpuProcess->updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, willUseEchoCancellation, webProcess.coreProcessIdentifier(), identifier(), [] { });
         });
 #if PLATFORM(IOS_FAMILY)
         gpuProcess->setOrientationForMediaCapture(m_orientationForMediaCapture);

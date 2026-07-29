@@ -1186,11 +1186,15 @@ void GPUConnectionToWebProcess::rotationAngleForCaptureDeviceChanged(const Strin
 #endif
 }
 
-void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture)
+void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation)
 {
 #if PLATFORM(MAC) && ENABLE(MEDIA_STREAM)
-    if (allowAudioCapture)
+    if (willUseEchoCancellation) {
+        ASSERT(allowAudioCapture);
         CoreAudioCaptureUnit::defaultSingleton().prewarmAudioUnitCreation([] { });
+    }
+#else
+    UNUSED_PARAM(willUseEchoCancellation);
 #endif
 
     m_allowsAudioCapture |= allowAudioCapture;

@@ -215,7 +215,7 @@ private:
     void enableMicrophoneMuteStatusAPI();
     void setOrientationForMediaCapture(WebCore::IntDegrees);
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
-    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
@@ -270,6 +270,7 @@ private:
         bool allowAudioCapture { false };
         bool allowVideoCapture { false };
         bool allowDisplayCapture { false };
+        bool willUseEchoCancellation { false };
     };
     HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)

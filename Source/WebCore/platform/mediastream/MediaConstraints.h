@@ -709,6 +709,8 @@ struct MediaConstraints {
 
     enum class DeviceType : bool { Camera, Microphone };
     bool hasDisallowedRequiredConstraintForDeviceSelection(DeviceType) const;
+
+    WEBCORE_EXPORT bool willUseEchoCancellation() const;
 };
 
 } // namespace WebCore

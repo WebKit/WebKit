@@ -104,7 +104,7 @@ public:
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
-    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, WebPageProxyIdentifier, CompletionHandler<void()>&&);
+    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier, WebPageProxyIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();

@@ -65,6 +65,15 @@ UserMediaPermissionRequestManagerProxy* UserMediaPermissionRequestProxy::manager
     return m_manager.get();
 }
 
+bool UserMediaPermissionRequestProxy::willUseEchoCancellation() const
+{
+#if ENABLE(MEDIA_STREAM)
+    return requiresAudioCapture() && m_request.audioConstraints.willUseEchoCancellation();
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(MEDIA_STREAM)
 static inline void setDeviceAsFirst(Vector<CaptureDevice>& devices, const String& deviceID)
 {

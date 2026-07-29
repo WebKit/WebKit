@@ -63,6 +63,7 @@ public:
     bool requiresVideoCapture() const { return !requiresDisplayCapture() && m_eligibleVideoDevices.size(); }
     bool requiresDisplayCapture() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMedia || m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio; }
     bool requiresDisplayCaptureWithAudio() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio; }
+    bool willUseEchoCancellation() const;
 
     void setEligibleVideoDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleVideoDevices = WTF::move(devices); }
     void setEligibleAudioDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleAudioDevices = WTF::move(devices); }

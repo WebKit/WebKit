@@ -190,7 +190,7 @@ public:
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
     void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
-    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
+    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&);
     bool NODELETE setCaptureAttributionString();
     bool allowsAudioCapture() const { return m_allowsAudioCapture; }

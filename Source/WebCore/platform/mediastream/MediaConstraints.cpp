@@ -663,6 +663,32 @@ void MediaConstraints::setDefaultAudioConstraints()
     }
 }
 
+bool MediaConstraints::willUseEchoCancellation() const
+{
+    // Echo cancellation is enabled by default, so we only expect it to be off if it is explicitly asked for.
+    auto requestedValue = [](const MediaTrackConstraintSetMap& constraintSet) -> std::optional<bool> {
+        auto& constraint = constraintSet.echoCancellation();
+        if (!constraint)
+            return { };
+
+        bool value;
+        if (constraint->getExact(value) || constraint->getIdeal(value))
+            return value;
+
+        return { };
+    };
+
+    if (auto value = requestedValue(mandatoryConstraints))
+        return *value;
+
+    for (auto& advancedConstraint : advancedConstraints) {
+        if (auto value = requestedValue(advancedConstraint))
+            return *value;
+    }
+
+    return true;
+}
+
 void MediaConstraints::setDefaultVideoConstraints()
 {
     // 640x480, 30fps camera

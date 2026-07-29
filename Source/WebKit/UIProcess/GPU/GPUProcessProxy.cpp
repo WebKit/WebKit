@@ -421,13 +421,13 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
 #endif // PLATFORM(COCOA)
 }
 
-void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, WebPageProxyIdentifier pageIdentifier, CompletionHandler<void()>&& completionHandler)
+void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier processID, WebPageProxyIdentifier pageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     if (allowAudioCapture)
         m_lastPageUsingMicrophone = pageIdentifier;
 
     updateSandboxAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
-    sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, willUseEchoCancellation, processID }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::updateCaptureOrigin(const WebCore::SecurityOriginData& originData, WebCore::ProcessIdentifier processID)
