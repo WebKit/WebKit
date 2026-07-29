@@ -1462,12 +1462,11 @@ FloatRect SkiaCompositingLayer::transformedFlattenedBounds() const
 
 FloatPolygon3D SkiaCompositingLayer::geometryFor3DRenderingContext() const
 {
-    FloatRect bounds;
-    if (isLeafOf3DRenderingContext() && !m_children.isEmpty() && !m_masksToBounds && !m_mask && m_transforms.combined.isInvertible()) {
-        auto inverse = m_transforms.combined.inverse().value_or(TransformationMatrix());
-        bounds = inverse.mapRect(transformedFlattenedBounds());
-    } else
-        bounds = m_rect;
+    FloatRect bounds = m_rect;
+    if (bounds.isEmpty() && isLeafOf3DRenderingContext() && !m_children.isEmpty() && !m_masksToBounds && !m_mask) {
+        if (auto inverse = m_transforms.combined.inverse())
+            bounds = inverse->mapRect(transformedFlattenedBounds());
+    }
 
     return FloatPolygon3D(bounds, m_transforms.combined);
 }
