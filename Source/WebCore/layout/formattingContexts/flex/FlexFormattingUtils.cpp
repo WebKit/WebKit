@@ -172,7 +172,7 @@ LayoutUnit FlexFormattingUtils::flowAwareMarginBeforeForFlexItem(const FlexLayou
         return flexItem->marginRight();
     }
     ASSERT_NOT_REACHED();
-    return flexBox().marginTop();
+    return flexItem->marginTop();
 }
 
 LayoutUnit FlexFormattingUtils::crossAxisExtentForFlexItem(const RenderBox& flexItem) const
