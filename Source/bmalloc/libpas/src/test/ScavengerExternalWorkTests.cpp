@@ -91,7 +91,7 @@ void addScavengerExternalWorkTests()
             "frequent-scavenging",
             [] () {
                 pas_scavenger_period_in_milliseconds = 1.;
-                pas_scavenger_max_epoch_delta = -1ll * 1000ll * 1000ll;
+                pas_scavenger_max_epoch_delta = 0;
             });
         ADD_TEST(testCallbacksAreCalledWhenExpected(50, 50));
     }
