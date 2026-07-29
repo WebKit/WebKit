@@ -1,0 +1,5 @@
+
+PASS canvas elementFromPoint
+PASS canvas mouseenter
+PASS canvas click
+
