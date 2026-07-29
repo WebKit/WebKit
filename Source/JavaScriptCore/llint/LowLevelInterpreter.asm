@@ -2885,7 +2885,6 @@ end
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
 macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, slowCase)
-    addi 1, CallLinkInfo::m_slowPathCount[t2]
     if JSVALUE64
         btqnz t0, NotCellMask, slowCase
     else

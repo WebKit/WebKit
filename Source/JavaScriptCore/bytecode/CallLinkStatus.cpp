@@ -186,7 +186,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
         RELEASE_ASSERT(edges.first().count() >= edges.last().count());
         
         double totalCallsToKnown = 0;
-        double totalCallsToUnknown = callLinkInfo.slowPathCount();
+        double totalCallsToUnknown = 0;
         CallVariantList variants;
         for (size_t i = 0; i < edges.size(); ++i) {
             CallEdge edge = edges[i];
@@ -231,8 +231,9 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
             variant = variant.despecifiedClosure();
         result.m_variants.append(variant);
     }
-    
-    result.m_couldTakeSlowPath = !!callLinkInfo.slowPathCount();
+
+    // This is fine to be false. When virtual-call is used, we already caught it via clearedByVirtual().
+    result.m_couldTakeSlowPath = false;
 
     return result;
 }
