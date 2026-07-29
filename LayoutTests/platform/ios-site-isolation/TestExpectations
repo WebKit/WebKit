@@ -47,7 +47,6 @@ http/tests/navigation-api/different-origin-entries-removed-after-bfcache.html [ 
 http/tests/navigation/https-in-page-cache.html [ Timeout ]
 http/tests/navigation/page-cache-pending-ping-load-cross-origin.html [ Timeout ]
 http/tests/navigation/page-cache-requestAnimationFrame.html [ Timeout ]
-http/tests/quicklook/secure-document-with-subresources.html [ Timeout ]
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Timeout ]
 http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Timeout ]
 http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Timeout ]

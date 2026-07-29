@@ -1296,24 +1296,24 @@ void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::In
         return;
 
     auto oldRect = frameView->frameRect();
+    auto rectChanged = oldRect != newRect;
 
-    if (oldRect == newRect)
-        return;
+    if (rectChanged) {
+        if (isInitialFrameRect == IsInitialFrameRect::Yes)
+            frameView->primeResizeEventBaseline(newRect.size());
 
-    if (isInitialFrameRect == IsInitialFrameRect::Yes)
-        frameView->primeResizeEventBaseline(newRect.size());
-
-    frameView->setFrameRect(newRect);
+        frameView->setFrameRect(newRect);
+    }
 
 #if PLATFORM(IOS_FAMILY)
-    if (oldRect.size() != frameView->size()) {
-        // FIXME: This ensures cross-site iframe render correctly;
-        // it should be removed after rdar://122429810 is fixed.
-        frameView->setExposedContentRect(FloatRect { { }, frameView->size() });
-        frameView->setUnobscuredContentSize(frameView->size());
-    }
+    // FIXME: This ensures cross-site iframe render correctly;
+    // it should be removed after rdar://122429810 is fixed.
+    frameView->setExposedContentRect(FloatRect { { }, frameView->size() });
+    frameView->setUnobscuredContentSize(frameView->size());
 #endif
 
+    if (!rectChanged)
+        return;
 
     if (RefPtr drawingArea = m_page ? m_page->drawingArea() : nullptr) {
         drawingArea->setNeedsDisplay();
