@@ -1004,7 +1004,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style:
                 influenceRadii.expand(2 * shadowPaintingExtent + shadowSpread);
                 influenceShape.setRadii(influenceRadii);
 
-                if (influenceShape.outerShapeContains(m_paintInfo.rect))
+                if (!shadowShape.hasNonRoundCornerShape() && influenceShape.outerShapeContains(m_paintInfo.rect))
                     context.fillRect(shadowShape.snappedOuterRect(deviceScaleFactor), Color::black);
                 else
                     shadowShape.fillOuterShape(context, Color::black, deviceScaleFactor);
@@ -1026,7 +1026,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style:
             if (!closedEdges.bottom())
                 outerRectExpandedToObscureOpenEdges.setHeight(outerRectExpandedToObscureOpenEdges.height() - std::min<LayoutUnit>(shadowOffset.height(), 0) + shadowInfluence);
 
-            auto shapeForInnerHole = BorderShape(outerRectExpandedToObscureOpenEdges, borderWidthsWithSpread, borderShape.radii());
+            auto shapeForInnerHole = BorderShape(outerRectExpandedToObscureOpenEdges, borderWidthsWithSpread, borderShape.radii(), borderShape.cornerCurvatures());
             if (shapeForInnerHole.snappedInnerRect(deviceScaleFactor).isEmpty()) {
                 shapeForInnerHole.fillOuterShape(context, shadowColor, deviceScaleFactor);
                 continue;

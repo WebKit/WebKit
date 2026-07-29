@@ -29,17 +29,18 @@
 
 #pragma once
 
+#include "FloatRoundedRect.h"
 #include "LayoutRoundedRect.h"
 #include "RectCorners.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
+#include <optional>
 
 namespace WebCore {
 
 class Color;
 class GraphicsContext;
 class FloatRect;
-class FloatRoundedRect;
 class Path;
 
 namespace Style {
@@ -90,6 +91,8 @@ public:
     const LayoutRoundedRectRadii& radii() const LIFETIME_BOUND { return m_borderRect.radii(); }
     void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
 
+    const RectCorners<float>& cornerCurvatures() const LIFETIME_BOUND { return m_cornerCurvatures; }
+
     // Note that the inner edge isn't necessarily a rounded rect, but the radii still represent where the straight edge sections terminate.
     const LayoutRoundedRectRadii& innerEdgeRadii() const LIFETIME_BOUND { return m_innerEdgeRect.radii(); }
 
@@ -100,6 +103,8 @@ public:
 
     bool NODELETE outerShapeIsRectangular() const;
     bool NODELETE innerShapeIsRectangular() const;
+
+    bool hasNonRoundCornerShape() const;
 
     bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
 
@@ -133,19 +138,20 @@ private:
     // Insets the snapped outer rect by device-rounded widths so opposite sides stay equal thickness.
     FloatRoundedRect snappedInnerEdgeRectForPainting(float deviceScaleFactor) const;
 
-    // True if any corner uses a non-`round` shape (curvature != 1), so the shape
-    bool hasNonRoundCornerShape() const;
+    std::optional<FloatRoundedRect> snappedOffsetReferenceRect(float deviceScaleFactor) const;
 
     Path pathForOuterRoundedRect(const FloatRoundedRect& outerSnapped) const;
     Path pathForInnerRoundedRect(const FloatRoundedRect& innerSnapped) const;
 
-    Path pathForOuterCornerShape(const FloatRoundedRect& outerSnapped) const;
-    Path pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped) const;
+    Path pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const;
+    Path pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const;
 
     LayoutRoundedRect m_borderRect;
     LayoutRoundedRect m_innerEdgeRect;
     RectEdges<LayoutUnit> m_borderWidths;
     RectCorners<float> m_cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    std::optional<LayoutRoundedRect> m_offsetReferenceRect;
 };
 
 } // namespace WebCore

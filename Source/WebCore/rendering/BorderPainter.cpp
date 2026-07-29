@@ -676,7 +676,7 @@ void BorderPainter::paintBorderSides(const BorderShape& borderShape, const Sides
             return !firstRadius.isEmpty() || !secondRadius.isEmpty();
         };
 
-        bool usePath = !sides.outerEdgeIsRectangular && (borderStyleHasInnerDetail(edge.style()) || borderWillArcInnerEdge(firstRadius, secondRadius));
+        bool usePath = !sides.outerEdgeIsRectangular && (borderStyleHasInnerDetail(edge.style()) || borderWillArcInnerEdge(firstRadius, secondRadius) || borderShape.hasNonRoundCornerShape());
         paintOneBorderSide(borderShape, sides, sideRect, side, adjacentSide1, adjacentSide2, usePath ? &roundedPath : nullptr, antialias, overrideColor);
     };
 
