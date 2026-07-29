@@ -69,6 +69,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasUnsupportedMaxWidth,
     GridHasUnsupportedMinHeight,
     GridHasUnsupportedMaxHeight,
+    GridHasPercentageRowsWithIndefiniteHeight,
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasMargin,
@@ -444,6 +445,22 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (renderGridStyle->maxHeight().isIntrinsic())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
+
+    // If the contianer has an indefinite (e.g. auto) height and a row with a percentage,
+    // then in order to properly handle this case we need to run the "Find the size of
+    // the grid container," portion of the spec fully before "Given the resulting grid
+    // container size, run the Grid Sizing Algorithm to size the grid." so that the
+    // grid has a height to resolve the percentages again in the second step.
+    auto gridBlockSizeIsIndefinite = renderGridStyle->height().isAuto() || renderGridStyle->height().isIntrinsic();
+    auto hasPercentageRowTrack = [&] {
+        return gridTemplateRowsTrackList.containsIf([&](const auto& rowsTrackListEntry) {
+            if (auto* trackSize = std::get_if<Style::GridTrackSize>(&rowsTrackListEntry))
+                return trackSize->minTrackBreadth().isPercentOrCalculated() || trackSize->maxTrackBreadth().isPercentOrCalculated();
+            return false;
+        });
+    };
+    if (gridBlockSizeIsIndefinite && hasPercentageRowTrack())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
 
     ASSERT(renderGridStyle->gridAutoFlow().isRow(),
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
@@ -854,6 +871,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasUnsupportedMaxHeight:
         stream << "grid container has unsupported max-height";
+        break;
+    case GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight:
+        stream << "grid has percentage rows with indefinite height";
         break;
     case GridAvoidanceReason::NotAGrid:
         stream << "not a grid";
