@@ -376,7 +376,9 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
             }
             return creationCompletionHandler(std::nullopt);
         case nw_connection_group_state_cancelled:
-            return;
+            // A group cancelled before it became ready must still resolve the completion
+            // handler, otherwise the captured one-shot CompletionHandler is destroyed uncalled.
+            return creationCompletionHandler(std::nullopt);
         }
         RELEASE_ASSERT_NOT_REACHED();
     }).get());
