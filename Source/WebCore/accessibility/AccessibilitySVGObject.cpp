@@ -393,8 +393,10 @@ AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole()
         return AccessibilityRole::SVGTextPath;
     if (m_renderer->isRenderSVGTSpan())
         return AccessibilityRole::SVGTSpan;
-    if (is<SVGAElement>(element))
-        return AccessibilityRole::Link;
+    if (is<SVGAElement>(element)) {
+        if (element->isLink() || hasClickHandler())
+            return AccessibilityRole::Link;
+    }
 
     return AccessibilityRenderObject::determineAccessibilityRole();
 }

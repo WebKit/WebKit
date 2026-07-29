@@ -1,0 +1,20 @@
+This test ensures an href-less SVG anchor is only exposed as a link when it has a click handler, matching HTML anchors.
+
+PASS: isExposedAsLink('anchor-with-onclick') === true
+PASS: isExposedAsLink('anchor-without-handler') === false
+PASS: isExposedAsLink('href-toggle-anchor') === true
+PASS: isExposedAsLink('dynamic-anchor-with-onclick') === true
+PASS: isExposedAsLink('click-toggle-anchor') === true
+PASS: isExposedAsLink('click-toggle-anchor') === false
+PASS: isExposedAsLink('href-toggle-anchor') === false
+PASS: isExposedAsLink('href-toggle-anchor') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Anchor with onclick
+Anchor without click handler or href
+Anchor that gains then loses a click handler
+Anchor that loses then regains its href
+Dynamically added SVG anchor with onclick
+
