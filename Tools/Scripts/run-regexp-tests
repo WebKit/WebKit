@@ -110,8 +110,7 @@ sub testapiPath($)
 if (!defined($testFile)) {
     $testFile = $defaultTestFile;
     chdirWebKit();
-    chdir("Source/JavaScriptCore");
-    chdir "tests/regexp" or die;
+    chdir "JSTests/regexp" or die;
 }
 
 my $command = $productDir . "/testRegExp";
