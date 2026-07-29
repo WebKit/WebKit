@@ -71,6 +71,7 @@
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
+#include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -80,6 +81,7 @@
 #include <WebCore/SWServer.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/ShareableResource.h>
 #include <WebCore/SharedBuffer.h>
@@ -867,6 +869,24 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
     return std::nullopt;
 }
 
+// Skipped for main resources: at this point clientAddressSpace/clientIsSecureContext/sourceOrigin
+// still reflect the previous document, since navigating a frame is what establishes the new one.
+std::optional<ResourceError> NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& request, IPAddressSpace connectionAddressSpace)
+{
+    if (isMainResource() || !m_parameters.localNetworkAccessEnabled)
+        return std::nullopt;
+
+    CheckedPtr networkSession = m_connection->networkSession();
+    if (!networkSession)
+        return std::nullopt;
+
+    auto sourceOrigin = m_parameters.sourceOrigin ? m_parameters.sourceOrigin->data() : SecurityOriginData { };
+    return performLocalNetworkAccessCheck(request, connectionAddressSpace, m_parameters.clientAddressSpace, m_parameters.clientIsSecureContext, sourceOrigin,
+        [networkSession](const SecurityOriginData& origin, IPAddressSpace addressSpace) {
+            return networkSession->localNetworkAccessPermission(origin, addressSpace);
+        });
+}
+
 void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_parameters.isClearSiteDataHeaderEnabled)
@@ -1032,6 +1052,17 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     }
 
     initializeReportingEndpoints(m_response);
+
+    // Skipped for main resources: at this point clientAddressSpace/clientIsSecureContext/sourceOrigin
+    // still reflect the previous document, since navigating a frame is what establishes the new one.
+    if (auto error = checkLocalNetworkAccess(m_parameters.request, m_response.ipAddressSpace())) {
+        LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Blocked by Local Network Access check");
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTF::move(*error)] {
+            if (protectedThis->m_networkLoad)
+                protectedThis->didFailLoading(error);
+        });
+        return completionHandler(PolicyAction::Ignore);
+    }
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting main resource load due to CSP frame-ancestors or X-Frame-Options");
@@ -1387,6 +1418,15 @@ void NetworkResourceLoader::continueWillSendRedirectedRequestAfterContentFilteri
     }
 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
+        didFailLoading(*error);
+        return completionHandler({ });
+    }
+
+    // Redirects don't flow through didReceiveResponse, so this hop needs its own Local Network Access check.
+    //
+    // Skipped for main resources: a redirected top-level navigation has no prior document to check against.
+    if (auto error = checkLocalNetworkAccess(redirectRequest, redirectResponse.ipAddressSpace())) {
+        LOADER_RELEASE_LOG_ERROR("willSendRedirectedRequest: Blocked by Local Network Access check");
         didFailLoading(*error);
         return completionHandler({ });
     }
@@ -1808,6 +1848,15 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         didReceiveMainResourceResponse(response);
 
     initializeReportingEndpoints(response);
+
+    // A cache hit still resolved to a real address when the entry was stored, so it needs the same check.
+    //
+    // Skipped for main resources: a cache-served navigation has no prior document to check against.
+    if (auto error = checkLocalNetworkAccess(originalRequest(), response.ipAddressSpace())) {
+        LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Blocked by Local Network Access check");
+        didFailLoading(*error);
+        return;
+    }
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Stopping load due to CSP Frame-Ancestors or X-Frame-Options");

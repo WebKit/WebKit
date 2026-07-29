@@ -34,6 +34,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FetchingWorkerIdentifier.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
@@ -135,6 +136,11 @@ struct NetworkResourceLoadParameters {
     bool globalPrivacyControlEnabled { false };
     bool shouldConsiderEnhancedSecurityForInsecureResponse { false };
     MonotonicTime originalNavigationStartTime { };
+
+    // The resolved connection's address space isn't known at load-schedule time, so it isn't a field here.
+    WebCore::IPAddressSpace clientAddressSpace { WebCore::IPAddressSpace::Public };
+    bool clientIsSecureContext { false };
+    bool localNetworkAccessEnabled { false };
 };
 
 } // namespace WebKit

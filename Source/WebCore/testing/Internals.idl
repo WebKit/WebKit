@@ -1164,6 +1164,8 @@ enum ContentsFormat {
     Promise<File> asyncCreateFile(DOMString url);
     DOMString createTemporaryFile(DOMString name, DOMString contents);
 
+    Promise<undefined> setLocalNetworkAccessPermissionForTesting(DOMString originURL, IPAddressSpace addressSpace, PermissionState decision);
+
     undefined queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
 

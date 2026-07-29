@@ -110,11 +110,14 @@
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLVideoElement.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/Icon.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/PointerLockController.h>
 #include <WebCore/PopupMenuClient.h>
 #include <WebCore/RegistrableDomain.h>
@@ -1360,6 +1363,10 @@ void WebChromeClient::registerBlobPathForTesting(const String& path, CompletionH
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RegisterBlobPathForTesting(path), WTF::move(completionHandler));
 }
 
+void WebChromeClient::setLocalNetworkAccessPermissionForTesting(WebCore::SecurityOriginData&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState decision, CompletionHandler<void()>&& completionHandler)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetLocalNetworkAccessPermissionForTesting(WTF::move(origin), addressSpace, decision), WTF::move(completionHandler));
+}
 
 void WebChromeClient::contentRuleListNotification(const URL& url, const ContentRuleListResults& results)
 {

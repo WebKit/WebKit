@@ -1437,7 +1437,7 @@ public:
     bool loadEventFinished() const { return m_loadEventFinished; }
 
     bool isContextThread() const final;
-    bool isSecureContext() const final;
+    WEBCORE_EXPORT bool isSecureContext() const final;
     bool NODELETE crossOriginIsolated() const final;
     bool NODELETE originAgentCluster() const;
     String agentClusterID() const final;

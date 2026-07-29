@@ -54,8 +54,11 @@
 #include "WebSharedWorkerServer.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SWServer.h>
+#include <WebCore/SecurityOriginData.h>
 #include <numeric>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
@@ -439,6 +442,19 @@ std::optional<WebCore::IPAddress> NetworkSession::firstPartyHostIPAddress(const 
         return std::nullopt;
 
     return { iterator->value };
+}
+
+WebCore::PermissionState NetworkSession::localNetworkAccessPermission(const WebCore::SecurityOriginData& origin, WebCore::IPAddressSpace addressSpace) const
+{
+    auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace });
+    if (iterator == m_localNetworkAccessPermissions.end())
+        return WebCore::PermissionState::Denied;
+    return iterator->value;
+}
+
+void NetworkSession::setLocalNetworkAccessPermissionForTesting(WebCore::SecurityOriginData&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState decision)
+{
+    m_localNetworkAccessPermissions.set({ WTF::move(origin), addressSpace }, decision);
 }
 
 void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& unattributedPrivateClickMeasurement)

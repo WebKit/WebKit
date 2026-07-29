@@ -60,6 +60,7 @@
 
 namespace WebCore {
 class CertificateInfo;
+enum class IPAddressSpace : uint8_t;
 class NetworkStorageSession;
 class ResourceMonitorThrottlerHolder;
 class ResourceRequest;
@@ -68,6 +69,7 @@ class SWServer;
 class SecurityOriginData;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class IncludeHttpOnlyCookies : bool;
+enum class PermissionState : uint8_t;
 enum class ShouldSample : bool;
 enum class IsInitiatedByDedicatedWorker : bool;
 struct ClientOrigin;
@@ -166,6 +168,11 @@ public:
     std::optional<WebCore::RegistrableDomain> thirdPartyCNAMEDomainForTesting() const { return m_thirdPartyCNAMEDomainForTesting; }
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
+
+    // FIXME: Stub permission decision; replace with a real prompt-mediated check once one exists.
+    // Queried from WebCore::performLocalNetworkAccessCheck()'s callback via NetworkResourceLoader.
+    WebCore::PermissionState localNetworkAccessPermission(const WebCore::SecurityOriginData&, WebCore::IPAddressSpace) const;
+    void setLocalNetworkAccessPermissionForTesting(WebCore::SecurityOriginData&&, WebCore::IPAddressSpace, WebCore::PermissionState);
     
 #if ENABLE(APP_BOUND_DOMAINS)
     virtual bool hasAppBoundSession() const { return false; }
@@ -350,6 +357,7 @@ protected:
     HashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
     HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
+    HashMap<std::pair<WebCore::SecurityOriginData, WebCore::IPAddressSpace>, WebCore::PermissionState> m_localNetworkAccessPermissions;
     bool m_isStaleWhileRevalidateEnabled { false };
     const Ref<PCM::ManagerInterface> m_privateClickMeasurement;
     bool m_privateClickMeasurementDebugModeEnabled { false };

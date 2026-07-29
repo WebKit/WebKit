@@ -578,6 +578,15 @@ void ServiceWorkerFetchTask::processPreloadResponse()
         return;
     }
 
+    // The navigation preload response comes from a real network connection, so it needs the same
+    // Local Network Access check as any other network-resolved response reaching NetworkResourceLoader.
+    if (RefPtr loader = m_loader.get()) {
+        if (auto error = loader->checkLocalNetworkAccess(m_currentRequest, response.ipAddressSpace())) {
+            didFail(*error);
+            return;
+        }
+    }
+
     bool needsContinueDidReceiveResponseMessage = m_currentRequest.requester() == ResourceRequestRequester::Main;
     processResponse(WTF::move(response), needsContinueDidReceiveResponseMessage, ShouldSetSource::No);
     if (needsContinueDidReceiveResponseMessage)

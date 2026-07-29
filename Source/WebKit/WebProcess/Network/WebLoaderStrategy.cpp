@@ -404,6 +404,17 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         parameters.isClearSiteDataExecutionContextEnabled = document->settings().clearSiteDataExecutionContextsSupportEnabled();
         parameters.mayBlockNetworkRequest = !isMainFrameNavigation && document->settings().scriptTrackingPrivacyNetworkRequestBlockingEnabled();
         parameters.globalPrivacyControlEnabled = document->settings().globalPrivacyControlEnabled().value_or(false);
+        // The resolved connection's address space is only known in NetworkProcess once the connection completes, so it can't be precomputed here.
+        //
+        // FIXME: document->ipAddressSpace() is currently dead scaffolding: nothing sets
+        // PolicyContainer::ipAddressSpace from a response's classified address space, so every
+        // document reports Public here regardless of what address space it was actually loaded
+        // from. A document itself loaded from a local/loopback address will incorrectly be
+        // treated as Public, making its own same-space subrequests go through the permission
+        // check unnecessarily instead of being recognized as already-local.
+        parameters.clientAddressSpace = document->ipAddressSpace();
+        parameters.clientIsSecureContext = document->isSecureContext();
+        parameters.localNetworkAccessEnabled = document->settings().localNetworkAccessEnabled();
     }
 
     if (RefPtr page = frame->page()) {

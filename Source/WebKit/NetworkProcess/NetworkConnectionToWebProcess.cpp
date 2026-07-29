@@ -82,9 +82,12 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/LoginStatus.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -1318,6 +1321,13 @@ void NetworkConnectionToWebProcess::generalStoragePathForTesting(CompletionHandl
     if (!session)
         return completion({ });
     completion(String { session->storageManager().path() });
+}
+
+void NetworkConnectionToWebProcess::setLocalNetworkAccessPermissionForTesting(WebCore::SecurityOriginData&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState decision, CompletionHandler<void()>&& completion)
+{
+    if (CheckedPtr session = networkSession())
+        session->setLocalNetworkAccessPermissionForTesting(WTF::move(origin), addressSpace, decision);
+    completion();
 }
 
 void NetworkConnectionToWebProcess::allowAccessToFile(const String& path)

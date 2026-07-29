@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// LNA-PROTOTYPE: demonstrates the enforcement path added in NetworkResourceLoader end-to-end,
+// using the Internals stub (Internals::setLocalNetworkAccessPermissionForTesting ->
+// NetworkSession::localNetworkAccessPermission) in place of a real permission prompt, which
+// doesn't exist yet for this feature (see the FIXME in LocalNetworkAccess.cpp).
+//
+// The fetch target is deliberately http://127.0.0.1:8800 rather than location.origin. WebKit's
+// http/wpt/ test harness always navigates this page to http://localhost:8800 (see
+// wpt_webkit_test_path_to_uri in Tools/Scripts/webkitpy/port/driver.py, which hardcodes
+// "localhost" for this subdirectory regardless of the WPT server's configured browser_host) --
+// so location.origin here is http://localhost:8800, not http://127.0.0.1:8800 as an earlier
+// version of this test assumed. "localhost" and "127.0.0.1" are different host strings and
+// therefore different origins per same-origin policy, even though both resolve to the loopback
+// interface and are served by the very same Apache instance. A same-origin loopback fetch would
+// be exempted by performLocalNetworkAccessCheck's Step 1 (same-origin + potentially-trustworthy)
+// regardless of any permission grant, which would defeat the point of this test. mode: 'no-cors'
+// is used so a missing Access-Control-Allow-Origin header (expected, since the target has no CORS
+// setup) isn't a confounding failure reason distinct from the Local Network Access check itself.
+internals.settings.setLocalNetworkAccessEnabled(true);
+
+const crossOriginLoopbackURL = 'http://127.0.0.1:8800/resources/gc.js';
+
+promise_test(async (t) => {
+    await promise_rejects_js(t, TypeError, fetch(crossOriginLoopbackURL, { mode: 'no-cors' }));
+}, 'fetch to a cross-origin loopback address should fail without a Local Network Access permission grant');
+
+promise_test(async (t) => {
+    await internals.setLocalNetworkAccessPermissionForTesting(location.origin, 'loopback', 'granted');
+    await fetch(crossOriginLoopbackURL, { mode: 'no-cors' });
+}, 'fetch to a cross-origin loopback address should succeed once Local Network Access permission is granted');
+
+</script>
+</body>
+</html>

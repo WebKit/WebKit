@@ -57,6 +57,7 @@ namespace WebCore {
 class BlobDataFileReference;
 class ContentFilter;
 class FormData;
+enum class IPAddressSpace : uint8_t;
 class LinkHeader;
 class NetworkStorageSession;
 class PendingStreamState;
@@ -188,6 +189,7 @@ public:
     void NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
+    std::optional<WebCore::ResourceError> checkLocalNetworkAccess(const WebCore::ResourceRequest&, WebCore::IPAddressSpace connectionAddressSpace);
     void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
 
     bool NODELETE isAppInitiated();

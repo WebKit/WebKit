@@ -1,0 +1,4 @@
+
+PASS fetch to a cross-origin loopback address should fail without a Local Network Access permission grant
+PASS fetch to a cross-origin loopback address should succeed once Local Network Access permission is granted
+

@@ -94,7 +94,8 @@ NetworkLoadParameters NetworkResourceLoadParameters::networkLoadParameters() con
         advancedPrivacyProtections,
         isInitiatedByDedicatedWorker,
         requiredCookiesVersion,
-        navigationLosesFrameSpecificStorageAccess
+        navigationLosesFrameSpecificStorageAccess,
+        localNetworkAccessEnabled
     };
 }
 

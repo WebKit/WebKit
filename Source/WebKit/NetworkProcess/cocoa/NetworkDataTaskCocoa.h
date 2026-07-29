@@ -126,6 +126,7 @@ private:
     bool m_navigationLosesFrameSpecificStorageAccess { false };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
     uint64_t m_requiredCookiesVersion { 0 };
+    bool m_localNetworkAccessEnabled { false };
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

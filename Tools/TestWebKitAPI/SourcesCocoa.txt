@@ -195,6 +195,7 @@ Tests/WebKit/WKWebView/LoadFileThenReload.mm @nonARC
 Tests/WebKit/WKWebView/LoadFileURL.mm @nonARC
 Tests/WebKit/WKWebView/LoadInvalidURLRequest.mm @nonARC
 Tests/WebKit/WKWebView/Loading.mm @nonARC
+Tests/WebKit/WKWebView/LocalNetworkAccessTests.mm @nonARC
 Tests/WebKit/WKWebView/LocalStorageClear.mm @nonARC
 Tests/WebKit/WKWebView/LocalStorageDatabaseTracker.mm @nonARC
 Tests/WebKit/WKWebView/LocalStorageNullEntries.mm @nonARC
