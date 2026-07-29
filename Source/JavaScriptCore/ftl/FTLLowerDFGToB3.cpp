@@ -80,6 +80,7 @@
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
 #include "JITThunks.h"
+#include "JSArray.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunction.h"
@@ -9092,76 +9093,73 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileArrayShift()
     {
-        // Inlined code handles length = 0 and length = 1 case. Otherwise, calling operation.
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue base = lowCell(m_node->child1());
         LValue storage = lowStorage(m_node->child2());
 
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
+        case Array::Double:
         case Array::Contiguous: {
             IndexedAbstractHeap& heap = m_heaps.forArrayType(m_node->arrayMode().type());
+            bool isDouble = m_node->arrayMode().type() == Array::Double;
+            bool canShiftElements = m_node->arrayMode().isInBoundsSaneChain();
+            auto shiftElementsOperation = [&] {
+                switch (m_node->arrayMode().type()) {
+                case Array::Int32:
+                    return operationArrayShiftElementsInt32;
+                case Array::Contiguous:
+                    return operationArrayShiftElementsContiguous;
+                default:
+                    ASSERT(m_node->arrayMode().type() == Array::Double);
+                    return operationArrayShiftElementsDouble;
+                }
+            }();
 
             LBasicBlock checkLengthOne = m_out.newBlock();
+            LBasicBlock checkSmallShift = canShiftElements ? m_out.newBlock() : nullptr;
+            LBasicBlock shiftElementsCase = canShiftElements ? m_out.newBlock() : nullptr;
             LBasicBlock loadCase = m_out.newBlock();
             LBasicBlock fastDone = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
+            // Where length != 1 goes: the element-move path when we are allowed to use it,
+            // otherwise straight to the generic shift.
+            LBasicBlock notLengthOneCase = canShiftElements ? checkSmallShift : slowCase;
+
             LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
 
-            Vector<ValueFromBlock, 3> results;
+            Vector<ValueFromBlock, 4> results;
             results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
             m_out.branch(m_out.isZero32(prevLength), rarely(continuation), usually(checkLengthOne));
 
-            LBasicBlock lastNext = m_out.appendTo(checkLengthOne, loadCase);
-            m_out.branch(m_out.equal(prevLength, m_out.int32One), usually(loadCase), rarely(slowCase));
+            LBasicBlock lastNext = m_out.appendTo(checkLengthOne, notLengthOneCase);
+            // Moving elements is the case this node exists to speed up, so it is the likely one.
+            m_out.branch(m_out.equal(prevLength, m_out.int32One), rarely(loadCase), usually(notLengthOneCase));
 
+            if (canShiftElements) {
+                m_out.appendTo(checkSmallShift, shiftElementsCase);
+                m_out.branch(m_out.above(prevLength, m_out.constInt32(JSArray::shiftThreshold)), rarely(slowCase), usually(shiftElementsCase));
+
+                m_out.appendTo(shiftElementsCase, loadCase);
+                LValue shiftResult = vmCall(Int64, shiftElementsOperation, m_vmValue, base);
+                // The operation returns the empty value when it cannot handle element 0.
+                results.append(m_out.anchor(shiftResult));
+                m_out.branch(m_out.notZero64(shiftResult), usually(continuation), rarely(slowCase));
+            }
+
+            // length == 1. This moves no elements, so it needs no prototype chain guarantee.
             m_out.appendTo(loadCase, fastDone);
             TypedPointer pointer = m_out.baseIndex(heap, storage, m_out.intPtrZero);
-            LValue result = m_out.load64(pointer);
-            m_out.branch(m_out.notZero64(result), usually(fastDone), rarely(slowCase));
+            LValue loadedValue = isDouble ? m_out.loadDouble(pointer) : m_out.load64(pointer);
+            LValue isUsable = isDouble ? m_out.doubleEqual(loadedValue, loadedValue) : m_out.notZero64(loadedValue);
+            m_out.branch(isUsable, usually(fastDone), rarely(slowCase));
 
             m_out.appendTo(fastDone, slowCase);
-            m_out.store64(m_out.constInt64(JSValue::encode(JSValue())), pointer);
+            m_out.store64(m_out.constInt64(isDouble ? std::bit_cast<int64_t>(PNaN) : static_cast<int64_t>(JSValue::encode(JSValue()))), pointer);
             m_out.store32(m_out.int32Zero, storage, m_heaps.Butterfly_publicLength);
-            results.append(m_out.anchor(result));
-            m_out.jump(continuation);
-
-            m_out.appendTo(slowCase, continuation);
-            results.append(m_out.anchor(vmCall(Int64, operationArrayShift, weakPointer(globalObject), base)));
-            m_out.jump(continuation);
-
-            m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, results));
-            return;
-        }
-
-        case Array::Double: {
-            LBasicBlock checkLengthOne = m_out.newBlock();
-            LBasicBlock loadCase = m_out.newBlock();
-            LBasicBlock fastDone = m_out.newBlock();
-            LBasicBlock slowCase = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-
-            LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
-
-            Vector<ValueFromBlock, 3> results;
-            results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
-            m_out.branch(m_out.isZero32(prevLength), rarely(continuation), usually(checkLengthOne));
-
-            LBasicBlock lastNext = m_out.appendTo(checkLengthOne, loadCase);
-            m_out.branch(m_out.equal(prevLength, m_out.int32One), usually(loadCase), rarely(slowCase));
-
-            m_out.appendTo(loadCase, fastDone);
-            TypedPointer pointer = m_out.baseIndex(m_heaps.indexedDoubleProperties, storage, m_out.intPtrZero);
-            LValue resultDouble = m_out.loadDouble(pointer);
-            m_out.branch(m_out.doubleEqual(resultDouble, resultDouble), usually(fastDone), rarely(slowCase));
-
-            m_out.appendTo(fastDone, slowCase);
-            m_out.store64(m_out.constInt64(std::bit_cast<int64_t>(PNaN)), pointer);
-            m_out.store32(m_out.int32Zero, storage, m_heaps.Butterfly_publicLength);
-            results.append(m_out.anchor(boxDouble(resultDouble)));
+            results.append(m_out.anchor(isDouble ? boxDouble(loadedValue) : loadedValue));
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);

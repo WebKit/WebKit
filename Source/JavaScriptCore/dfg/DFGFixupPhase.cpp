@@ -1836,6 +1836,19 @@ private:
         case ArrayShift: {
             blessArrayOperation(node->child1(), Edge(), node->child2());
             fixEdge<KnownCellUse>(node->child1());
+
+            // The element-move path moves elements without consulting the prototype, which is
+            // valid only when the structure speculation pins the array prototype and the prototype
+            // chain is known to be sane. Without InBoundsSaneChain the backends emit only the
+            // length 0 and length 1 paths, which never look at the prototype, and route everything
+            // else to operationArrayShift, which does its own prototype check.
+            //
+            // setSaneChainIfPossible() is not usable here: it also clears NodeMustGenerate, which
+            // is only sound for pure loads. ArrayShift mutates the array, so it must stay
+            // must-generate even when its result is unused.
+            ArrayMode arrayMode = node->arrayMode();
+            if (arrayMode.isJSArrayWithOriginalStructure() && watchSaneChain(node))
+                node->setArrayMode(arrayMode.withSpeculation(Array::InBoundsSaneChain));
             break;
         }
 

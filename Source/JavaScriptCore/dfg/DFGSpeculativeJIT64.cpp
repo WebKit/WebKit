@@ -41,6 +41,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "DateInstance.h"
 #include "HasOwnPropertyCache.h"
 #include "IteratorOperations.h"
+#include "JSArray.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
@@ -4507,64 +4508,80 @@ void SpeculativeJIT::compile(Node* node)
     case ArrayShift: {
         ASSERT(node->arrayMode().isJSArray());
 
+        Array::Type arrayType = node->arrayMode().type();
+        auto shiftElementsOperation = [&] {
+            switch (arrayType) {
+            case Array::Int32:
+                return operationArrayShiftElementsInt32;
+            case Array::Contiguous:
+                return operationArrayShiftElementsContiguous;
+            case Array::Double:
+                return operationArrayShiftElementsDouble;
+            default:
+                DFG_CRASH(m_graph, node, "Bad array mode");
+                return operationArrayShiftElementsInt32;
+            }
+        }();
+        bool isDouble = arrayType == Array::Double;
+
         SpeculateCellOperand base(this, node->child1());
         StorageOperand storage(this, node->child2());
         GPRTemporary value(this);
         GPRTemporary storageLength(this);
+        std::optional<FPRTemporary> temp;
 
         GPRReg baseGPR = base.gpr();
         GPRReg storageGPR = storage.gpr();
         GPRReg valueGPR = value.gpr();
         GPRReg storageLengthGPR = storageLength.gpr();
-
-        switch (node->arrayMode().type()) {
-        case Array::Int32:
-        case Array::Contiguous: {
-            JumpList slowCases;
-            load32(Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
-            Jump undefinedCase = branchTest32(Zero, storageLengthGPR);
-            slowCases.append(branch32(NotEqual, storageLengthGPR, TrustedImm32(1)));
-
-            load64(Address(storageGPR), valueGPR);
-            slowCases.append(branchIfEmpty(valueGPR));
-
-            storeTrustedValue(JSValue(), Address(storageGPR));
-            store32(TrustedImm32(0), Address(storageGPR, Butterfly::offsetOfPublicLength()));
-
-            addSlowPathGenerator(slowPathMove(undefinedCase, this, TrustedImm64(JSValue::encode(jsUndefined())), valueGPR));
-            addSlowPathGenerator(slowPathCall(slowCases, this, operationArrayShift, valueGPR, LinkableConstant::globalObject(*this, node), baseGPR));
-
-            jsValueResult(valueGPR, node);
-            break;
+        FPRReg tempFPR = InvalidFPRReg;
+        if (isDouble) {
+            temp.emplace(this);
+            tempFPR = temp->fpr();
         }
 
-        case Array::Double: {
-            FPRTemporary temp(this);
-            FPRReg tempFPR = temp.fpr();
+        JumpList slowCases;
+        JumpList doneCases;
+        load32(Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+        auto undefinedCase = branchTest32(Zero, storageLengthGPR);
+        auto notOneCase = branch32(NotEqual, storageLengthGPR, TrustedImm32(1));
 
-            JumpList slowCases;
-            load32(Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
-            Jump undefinedCase = branchTest32(Zero, storageLengthGPR);
-            slowCases.append(branch32(NotEqual, storageLengthGPR, TrustedImm32(1)));
-
+        // length == 1, fully inlined. It moves no elements, so it needs no guarantee about the
+        // prototype chain.
+        if (isDouble) {
             loadDouble(Address(storageGPR), tempFPR);
             slowCases.append(branchIfNaN(tempFPR));
             boxDouble(tempFPR, valueGPR);
-
             store64(TrustedImm64(std::bit_cast<int64_t>(PNaN)), Address(storageGPR));
-            store32(TrustedImm32(0), Address(storageGPR, Butterfly::offsetOfPublicLength()));
-
-            addSlowPathGenerator(slowPathMove(undefinedCase, this, TrustedImm64(JSValue::encode(jsUndefined())), valueGPR));
-            addSlowPathGenerator(slowPathCall(slowCases, this, operationArrayShift, valueGPR, LinkableConstant::globalObject(*this, node), baseGPR));
-
-            jsValueResult(valueGPR, node);
-            break;
+        } else {
+            load64(Address(storageGPR), valueGPR);
+            slowCases.append(branchIfEmpty(valueGPR));
+            storeTrustedValue(JSValue(), Address(storageGPR));
         }
+        store32(TrustedImm32(0), Address(storageGPR, Butterfly::offsetOfPublicLength()));
 
-        default:
-            DFG_CRASH(m_graph, node, "Bad array mode");
-            break;
-        }
+        if (node->arrayMode().isInBoundsSaneChain()) {
+            doneCases.append(jump());
+            // 2 <= length <= JSArray::shiftThreshold. FixupPhase only marks the array mode sane
+            // chain when the elements can be moved without re-checking the prototype chain. This
+            // is the case the node exists to speed up, so the call stays inline rather than going
+            // out of line through a slow path generator.
+            notOneCase.link(this);
+            slowCases.append(branch32(Above, storageLengthGPR, TrustedImm32(JSArray::shiftThreshold)));
+            silentSpillAllRegisters(valueGPR);
+            callOperationWithoutExceptionCheck(shiftElementsOperation, valueGPR, TrustedImmPtr(&vm()), baseGPR);
+            silentFillAllRegisters();
+
+            // The operation returns the empty value when it cannot handle element 0, so fall back to the generic shift then.
+            slowCases.append(branchIfEmpty(valueGPR));
+        } else
+            slowCases.append(notOneCase);
+
+        addSlowPathGenerator(slowPathMove(undefinedCase, this, TrustedImm64(JSValue::encode(jsUndefined())), valueGPR));
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationArrayShift, valueGPR, LinkableConstant::globalObject(*this, node), baseGPR));
+
+        doneCases.link(this);
+        jsValueResult(valueGPR, node);
         break;
     }
 
