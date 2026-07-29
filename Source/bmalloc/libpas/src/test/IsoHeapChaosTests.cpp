@@ -390,6 +390,46 @@ constexpr size_t sampledStampMarkerBytes = 8;
 constexpr unsigned zeroedAllocationRarity = 4;
 constexpr unsigned hugeAllocationRarity = 250;
 
+constexpr unsigned pageOutBeforeFreeRarity = 8;
+
+// MADV_PAGEOUT is compiled out of kernels built without MACH_ASSERT, where it fails at runtime.
+// Probed on raw pages so the check does not disturb the allocator under test.
+bool pageOutIsAvailable()
+{
+    static bool available = [] () -> bool {
+#if defined(MADV_PAGEOUT)
+        size_t pageSize = pas_page_malloc_alignment();
+        void* base = mmap(nullptr, pageSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (base == MAP_FAILED)
+            return false;
+        memset(base, 1, pageSize);
+        bool ok = !madvise(base, pageSize, MADV_PAGEOUT);
+        munmap(base, pageSize);
+        return ok;
+#else
+        return false;
+#endif
+    }();
+    return available;
+}
+
+void pageOutRange(void* ptr, size_t size)
+{
+#if defined(MADV_PAGEOUT)
+    if (!pageOutIsAvailable())
+        return;
+    size_t pageSize = pas_page_malloc_alignment();
+    uintptr_t begin = reinterpret_cast<uintptr_t>(ptr);
+    uintptr_t alignedBegin = pas_round_up_to_power_of_2(begin, pageSize);
+    uintptr_t alignedEnd = pas_round_down_to_power_of_2(begin + size, pageSize);
+    if (alignedEnd > alignedBegin)
+        madvise(reinterpret_cast<void*>(alignedBegin), alignedEnd - alignedBegin, MADV_PAGEOUT);
+#else
+    PAS_UNUSED_PARAM(ptr);
+    PAS_UNUSED_PARAM(size);
+#endif
+}
+
 // In-place Fisher-Yates shuffle using the seeded test RNG.
 template<typename T>
 void seededShuffle(vector<T>& values)
@@ -478,6 +518,10 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
 {
     PAS_ASSERT(!pas_epoch_is_counter); // We don't want to run these tests in the fake scavenger mode.
 
+    // A single huge allocation must not use too much of the heap budget.
+    PAS_ASSERT(maxTotalSize / 4 > vaZeroThreshold);
+    const size_t hugeObjectSizeLimit = min(hugeObjectMaxSize, static_cast<size_t>(maxTotalSize) / 4);
+
     if (verbose)
         cout << "Starting.\n";
     
@@ -499,16 +543,18 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
     struct Object {
         Object() = default;
         
-        Object(void* ptr, size_t size, uint8_t startValue)
+        Object(void* ptr, size_t size, uint8_t startValue, bool wasZeroed)
             : ptr(ptr)
             , size(size)
             , startValue(startValue)
+            , wasZeroed(wasZeroed)
         {
         }
         
         void* ptr { nullptr };
         size_t size { 0 };
         uint8_t startValue { 0 };
+        bool wasZeroed { false };
     };
     
     vector<Object> objects;
@@ -566,7 +612,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         isolatedHeaps.push_back(selectedHeapRefCreateForSize(deterministicRandomNumber(100)));
     
     auto addObject =
-        [&] (unsigned threadIndex, void* ptr, unsigned size) {
+        [&] (unsigned threadIndex, void* ptr, unsigned size, bool wasZeroed) {
             CHECK(ptr);
             uint8_t startValue = static_cast<uint8_t>(deterministicRandomNumber(255));
 
@@ -592,7 +638,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                     cout << "Adding object " << ptr << "\n";
                 if (testEnumerator)
                     optionalObjects[threadIndex] = OptionalObject();
-                objects.push_back(Object(ptr, size, startValue));
+                objects.push_back(Object(ptr, size, startValue, wasZeroed));
                 totalSize += size;
                 recordLiveRange(ptr, size);
             }
@@ -656,7 +702,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             if (zeroed && !deterministicRandomNumber(hugeAllocationRarity)) {
                 size = static_cast<unsigned>(
                     vaZeroThreshold + deterministicRandomNumber(
-                        static_cast<unsigned>(hugeObjectMaxSize - vaZeroThreshold)));
+                        static_cast<unsigned>(hugeObjectSizeLimit - vaZeroThreshold)));
             }
             logOptionalObject(threadIndex, size);
             void* ptr;
@@ -665,7 +711,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                 verifyZeroed(threadIndex, ptr, size);
             } else
                 ptr = selectedAllocateCommonPrimitive(size, pas_non_compact_allocation_mode);
-            addObject(threadIndex, ptr, size);
+            addObject(threadIndex, ptr, size, zeroed);
             return;
         }
 
@@ -685,7 +731,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             ptr = selectedAllocate(heap, pas_non_compact_allocation_mode);
         else
             ptr = selectedAllocateArray(heap, count, 1, pas_non_compact_allocation_mode);
-        addObject(threadIndex, ptr, size);
+        addObject(threadIndex, ptr, size, false);
     };
     
     auto freeSomething = [&] (unsigned threadIndex) {
@@ -725,6 +771,9 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         if (!testEnumerator)
             validateObject();
 
+        if (!deterministicRandomNumber(pageOutBeforeFreeRarity))
+            pageOutRange(object.ptr, object.size);
+
         selectedDeallocate(object.ptr);
 
         if (testEnumerator) {
@@ -733,6 +782,81 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                 cout << "Freed object " << object.ptr << "\n";
             optionalObjects[threadIndex] = OptionalObject();
         }
+    };
+
+    auto claimMultiPageObject = [&] (unsigned threadIndex, Object& out) -> bool {
+        lock_guard<mutex> locker(lock);
+        if (objects.empty())
+            return false;
+        size_t index = deterministicRandomNumber(static_cast<unsigned>(objects.size()));
+        // Under two pages there is no page-aligned interior to act on.
+        if (objects[index].size < 2 * pas_page_malloc_alignment())
+            return false;
+        out = objects[index];
+        objects[index] = objects.back();
+        objects.pop_back();
+        if (testEnumerator)
+            optionalObjects[threadIndex] = OptionalObject(out.ptr, out.size);
+        return true;
+    };
+
+    auto releaseMultiPageObject = [&] (unsigned threadIndex, const Object& object) {
+        lock_guard<mutex> locker(lock);
+        objects.push_back(object);
+        if (testEnumerator)
+            optionalObjects[threadIndex] = OptionalObject();
+    };
+
+    // Reads rather than writes: a written page is merely dirty, which every other action produces.
+    //
+    // A large object is only ever stamped and checked on a sample of its pages. The pages outside
+    // the stamp were never written, so a zeroed allocation must still read zero there.
+    auto readSomething = [&] (unsigned threadIndex) {
+        Object object;
+        if (!claimMultiPageObject(threadIndex, object))
+            return;
+
+        size_t pageSize = pas_page_malloc_alignment();
+        size_t numPages = (object.size + pageSize - 1) / pageSize;
+
+        const bool checkUnstamped = object.wasZeroed && object.size >= vaZeroThreshold;
+        vector<bool> stamped;
+        if (checkUnstamped) {
+            stamped.assign(numPages, false);
+            for (size_t offset : sampledPageOffsets(object.size, object.startValue))
+                stamped[offset / pageSize] = true;
+        }
+
+        volatile uint8_t sink = 0;
+        for (size_t page = 0; page < numPages; ++page) {
+            size_t offset = page * pageSize;
+            const uint8_t* bytes = static_cast<const uint8_t*>(object.ptr) + offset;
+            if (checkUnstamped && !stamped[page]) {
+                size_t length = std::min(sizeof(uint64_t), object.size - offset);
+                size_t nonZero = firstNonZeroByte(bytes, length);
+                if (nonZero < length) {
+                    lock_guard<mutex> locker(lock);
+                    cout << "  born-dirty: thread=" << threadIndex << " size=" << object.size
+                         << " offset=" << (offset + nonZero) << " value=0x" << hex
+                         << static_cast<unsigned>(bytes[nonZero]) << dec << "\n";
+                    CHECK(!bytes[nonZero]);
+                }
+            }
+            sink = static_cast<uint8_t>(sink ^ bytes[0]);
+        }
+        (void)sink;
+
+        releaseMultiPageObject(threadIndex, object);
+    };
+
+    auto pageOutSomething = [&] (unsigned threadIndex) {
+        Object object;
+        if (!claimMultiPageObject(threadIndex, object))
+            return;
+
+        pageOutRange(object.ptr, object.size);
+
+        releaseMultiPageObject(threadIndex, object);
     };
 
     auto shrinkSomething = [&] (unsigned threadIndex) {
@@ -1014,6 +1138,10 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
     unsigned numThreadsStopped = 0;
     bool didStartThreads = false;
 
+    const unsigned numPageOut = pageOutIsAvailable() ? 1 : 0;
+    const unsigned numShrink = selectedShrink ? 2 : 0;
+    const unsigned numActionWeights = 5 + numPageOut + numShrink;
+
     auto threadFunc = [&] (unsigned threadIndex) {
         if (verbose)
             cout << "    Thread " << (void*)pthread_self() << " starting.\n";
@@ -1027,22 +1155,18 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                 freeSomething(threadIndex);
                 continue;
             }
-            
-            switch (deterministicRandomNumber(selectedShrink ? 3 : 2)) {
-            case 0:
+
+            unsigned roll = deterministicRandomNumber(numActionWeights);
+            if (roll < 2)
                 allocateSomething(threadIndex);
-                break;
-            case 1:
+            else if (roll < 4)
                 freeSomething(threadIndex);
-                break;
-            case 2:
-                PAS_ASSERT(selectedShrink);
+            else if (roll < 5)
+                readSomething(threadIndex);
+            else if (roll < 5 + numPageOut)
+                pageOutSomething(threadIndex);
+            else
                 shrinkSomething(threadIndex);
-                break;
-            default:
-                PAS_ASSERT(!"bad random number");
-                break;
-            }
         }
         if (verbose)
             cout << "    Thread " << (void*)pthread_self() << " stopping.\n";
