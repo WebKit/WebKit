@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>margin-trim: a wrapping flex container's min-content width trims the margins of every item</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-flex">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox/#intrinsic-sizes">
+<meta name="assert" content="The min-content width of a multi-line flex container is measured with a break between every item, so each item is alone on its flex line and margin-trim removes the inline margins of all of them, not only of the two items that begin and end the single line the max-content width is measured over.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.flexbox {
+    display: flex;
+    flex-wrap: wrap;
+    margin-trim: inline-start inline-end;
+    width: min-content;
+}
+.flexbox > div { width: 50px; margin: 0 100px; height: 20px; }
+</style>
+
+<div class="flexbox" id="threeItems"><div></div><div></div><div></div></div>
+<div class="flexbox" id="oneItem"><div></div></div>
+<div class="flexbox" id="maxContent" style="width: max-content"><div></div><div></div><div></div></div>
+<div class="flexbox" id="singleLine" style="flex-wrap: nowrap"><div></div><div></div><div></div></div>
+
+<script>
+function width(id) { return document.getElementById(id).getBoundingClientRect().width; }
+
+test(() => {
+    // Every item is alone on its line, so every item has both inline margins trimmed and only the 50px of
+    // content is left. The interior item must not contribute its 200px of margin.
+    assert_equals(width("threeItems"), 50);
+}, "min-content width of a wrapping flex container trims the inline margins of every item");
+
+test(() => {
+    assert_equals(width("threeItems"), width("oneItem"));
+}, "min-content width does not depend on how many items the container holds");
+
+test(() => {
+    // All three items share one line, so only the first and last item's outer margins are trimmed:
+    // 3 * 50px content + 6 * 100px margin - 2 * 100px trimmed.
+    assert_equals(width("maxContent"), 550);
+}, "max-content width still trims only the items at the ends of the single line");
+
+test(() => {
+    // A single-line container cannot break, so its min-content width trims the same two margins max-content does.
+    assert_equals(width("singleLine"), 550);
+}, "min-content width of a nowrap flex container trims only the items at the ends of the line");
+</script>

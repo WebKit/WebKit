@@ -257,7 +257,19 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeIntrinsicLogicalWidt
         if (writingMode().isOrthogonal(flexItem->writingMode()))
             flexItem->layoutIfNeeded();
 
-        LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*flexItem);
+        auto [marginStart, marginEnd] = intrinsicLogicalMarginStartAndEnd(*flexItem);
+        LayoutUnit margin = marginStart + marginEnd;
+        // The min-content width of a wrapping container puts a break between every item below, so each one is alone
+        // on its line and margin-trim takes both of its inline margins -- not just those of the two items that
+        // happen to start and end the single line the max-content width is measured over.
+        LayoutUnit marginForMinContent = margin;
+        if (!FlexFormattingUtils::isColumnFlow(*this) && FlexFormattingUtils::isMultiline(*this)) {
+            auto marginTrim = style().marginTrim();
+            if (marginTrim.contains(Style::MarginTrimSide::InlineStart))
+                marginForMinContent -= marginStart;
+            if (marginTrim.contains(Style::MarginTrimSide::InlineEnd))
+                marginForMinContent -= marginEnd;
+        }
 
         auto [minContentInParentInlineAxis, maxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
             if (writingMode().isOrthogonal(flexItem->writingMode())) {
@@ -267,7 +279,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeIntrinsicLogicalWidt
             return computeChildIntrinsicLogicalWidths(*flexItem);
         }();
 
-        minContentInParentInlineAxis += margin;
+        minContentInParentInlineAxis += marginForMinContent;
         maxContentInParentInlineAxis += margin;
 
         if (!FlexFormattingUtils::isColumnFlow(*this)) {
