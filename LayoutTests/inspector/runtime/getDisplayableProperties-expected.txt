@@ -18,6 +18,24 @@ Properties:
     "2"          =>  "blue" (string)  [writable | enumerable | configurable | isOwn]
     "__proto__"  =>  "Array" (object array)  [writable | configurable | isOwn]
 
+-- Running test case: Runtime.getDisplayableProperties.NativeInstance
+PASS: Should include "canvas".
+PASS: "canvas" should be invoked automatically.
+
+-- Running test case: Runtime.getDisplayableProperties.NativeConstructor
+PASS: Should include "arguments".
+PASS: "arguments" should remain an accessor.
+PASS: Should include "caller".
+PASS: "caller" should remain an accessor.
+
+-- Running test case: Runtime.getDisplayableProperties.NativePrototype
+PASS: Should include "canvas".
+PASS: "canvas" should remain an accessor.
+
+-- Running test case: Runtime.getDisplayableProperties.NativeInvalidReceiver
+PASS: Should include "canvas".
+PASS: "canvas" should remain an accessor.
+
 -- Running test case: Runtime.getDisplayableProperties.Constructor
 Evaluating expression...
 Getting displayable properties...
@@ -25,8 +43,10 @@ Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "Test" (string)  [configurable | isOwn]
     "prototype"  =>  "Test" (object)  [isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getDisplayableProperties.BoundConstructor
@@ -35,8 +55,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "bound Test" (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "class Test { }" (function class)  []
@@ -48,8 +70,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "bound Test" (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "class Test { }" (function class)  []
@@ -63,8 +87,10 @@ Properties:
     "length"     =>  3 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
     "prototype"  =>  "Object" (object)  [writable | isOwn]
-    "arguments"  =>  null (object null)  [configurable | nativeGetter]
-    "caller"     =>  null (object null)  [configurable | nativeGetter]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getDisplayableProperties.FunctionNoParameters
@@ -74,8 +100,10 @@ Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
     "prototype"  =>  "Object" (object)  [writable | isOwn]
-    "arguments"  =>  null (object null)  [configurable | nativeGetter]
-    "caller"     =>  null (object null)  [configurable | nativeGetter]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getDisplayableProperties.BoundFunction
@@ -84,8 +112,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  3 (number)  [configurable | isOwn]
     "name"       =>  "bound " (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function(a, b, c){}" (function)  []
@@ -97,8 +127,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "bound " (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function(a, b, c){}" (function)  []
@@ -111,8 +143,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "bound " (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function(){}" (function)  []
@@ -124,8 +158,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "bound " (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function(){}" (function)  []
@@ -138,8 +174,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  3 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "boundThis"  =>  undefined (undefined)  []
@@ -150,8 +188,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "boundThis"  =>  undefined (undefined)  []
@@ -162,8 +202,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  3 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "boundThis"  =>  "Object" (object)  []
@@ -174,8 +216,10 @@ Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
-    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"  =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"     =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "boundThis"  =>  "Object" (object)  []
@@ -285,8 +329,10 @@ Properties:
     "toString"                         =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
     "classPublicProperty"              =>  "classPublicPropertyValue parent" (string)  [writable | enumerable | configurable | isOwn]
     "parentClassPublicProperty"        =>  "parentClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
-    "arguments"                        =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"                           =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"                        =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"                        =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"                           =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"                           =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"                        =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getDisplayableProperties.Private.Constructor.Child
@@ -329,8 +375,10 @@ Properties:
     "toString"                        =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
     "classPublicProperty"             =>  "classPublicPropertyValue child" (string)  [writable | enumerable | configurable | isOwn]
     "childClassPublicProperty"        =>  "childClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
-    "arguments"                       =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
-    "caller"                          =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"                       =>  get "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "arguments"                       =>  set "function arguments() {\n    [native code]\n}" (function)  [configurable]
+    "caller"                          =>  get "function caller() {\n    [native code]\n}" (function)  [configurable]
+    "caller"                          =>  set "function caller() {\n    [native code]\n}" (function)  [configurable]
     "__proto__"                       =>  "<redacted>" (function class)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getDisplayableProperties.Private.Prototype.Parent

@@ -725,6 +725,18 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         if (subtype === "proxy" || subtype === "weakref")
             return;
 
+        // Native getters on function and prototype objects may require an instance receiver or be restricted.
+        // Keep those properties as accessors so only an explicit request invokes them.
+        let shouldInvokeNativeGetters = nativeGettersAsValues && typeof object !== "function";
+        if (shouldInvokeNativeGetters) {
+            let constructorDescriptor = @Object.@getOwnPropertyDescriptor(object, "constructor");
+            if (typeof constructorDescriptor?.value === "function") {
+                let prototypeDescriptor = @Object.@getOwnPropertyDescriptor(constructorDescriptor.value, "prototype");
+                if (prototypeDescriptor?.value === object)
+                    shouldInvokeNativeGetters = false;
+            }
+        }
+
         let nameProcessed = new @Set;
 
         // Handled below when `includeProto`.
@@ -756,6 +768,9 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                     fakeDescriptor.value.@then(@undefined, function(){});
                 return fakeDescriptor;
             } catch (e) {
+                if (possibleNativeBindingGetter)
+                    return null;
+
                 let errorDescriptor = @createObjectWithoutPrototype(
                     "name", name,
                     "value", e,
@@ -805,13 +820,13 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 return processDescriptor(fakeDescriptor, isOwnProperty);
             }
 
-            if (nativeGettersAsValues) {
-                if (@String(descriptor.get).@endsWith("[native code]\n}") || (!descriptor.get && @Object.@hasOwn(descriptor, "get") && !descriptor.set && @Object.@hasOwn(descriptor, "set"))) {
-                    // Developers may create such a descriptor, so we should be resilient:
-                    // let x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
-                    let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
+            let possibleNativeBindingGetter = nativeGettersAsValues && (@String(descriptor.get).@endsWith("[native code]\n}") || (!descriptor.get && @Object.@hasOwn(descriptor, "get") && !descriptor.set && @Object.@hasOwn(descriptor, "set")));
+            if (possibleNativeBindingGetter && shouldInvokeNativeGetters) {
+                // Developers may create such a descriptor, so we should be resilient:
+                // let x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
+                let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
+                if (fakeDescriptor)
                     return processDescriptor(fakeDescriptor, isOwnProperty, true);
-                }
             }
 
             descriptor.name = name;
@@ -821,7 +836,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 descriptor.symbol = symbol;
             if (isPrivate)
                 descriptor.isPrivate = true;
-            return processDescriptor(descriptor, isOwnProperty);
+            return processDescriptor(descriptor, isOwnProperty, possibleNativeBindingGetter);
         }
 
         let isArrayLike = false;
