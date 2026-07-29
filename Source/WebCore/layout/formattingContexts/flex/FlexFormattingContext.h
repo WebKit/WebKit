@@ -114,6 +114,7 @@ public:
         FlexLayoutState::MarginTrimItems marginTrimItems;
         std::optional<LayoutUnit> alignContentStartOverflow;
         LayoutUnit justifyContentStartOverflow;
+        // In the order the flex item list is in, i.e. not flipped for wrap-reverse.
         size_t numberOfFlexItemsOnFirstLine { 0 };
         size_t numberOfFlexItemsOnLastLine { 0 };
     };

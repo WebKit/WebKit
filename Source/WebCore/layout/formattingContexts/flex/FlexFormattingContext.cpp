@@ -802,12 +802,11 @@ void FlexFormattingContext::setFlexItemCountsForFirstAndLastLine(const FlexLines
     if (flexLines.ranges.isEmpty())
         return;
 
-    auto isWrapReverse = m_constraints.isWrapReverse;
-    auto firstLineItemsCountInOriginalOrder = flexLines.ranges.first().distance();
-    auto lastLineItemsCountInOriginalOrder = flexLines.ranges.last().distance();
-
-    m_result.numberOfFlexItemsOnFirstLine = !isWrapReverse ? firstLineItemsCountInOriginalOrder : lastLineItemsCountInOriginalOrder;
-    m_result.numberOfFlexItemsOnLastLine = !isWrapReverse ? lastLineItemsCountInOriginalOrder : firstLineItemsCountInOriginalOrder;
+    // Counted in the order the lines were collected, which is the order the flex item list is in: the caller indexes
+    // that list by these counts, so they must not be flipped for wrap-reverse here. Mapping the visually-first and
+    // -last line onto those slices is FlexLayout::flexItemForFirstBaseline's job.
+    m_result.numberOfFlexItemsOnFirstLine = flexLines.ranges.first().distance();
+    m_result.numberOfFlexItemsOnLastLine = flexLines.ranges.last().distance();
 }
 
 LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
