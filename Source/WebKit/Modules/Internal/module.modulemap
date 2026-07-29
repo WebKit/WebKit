@@ -89,6 +89,18 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKAlternatePDFHUDView {
+        requires objc
+        header "../../UIProcess/PDF/WKAlternatePDFHUDView.h"
+        export *
+    }
+
+    module WKDefaultPDFHUDView {
+        requires objc
+        header "../../UIProcess/PDF/WKDefaultPDFHUDView.h"
+        export *
+    }
+
     module WKTextSelectionRect {
         requires cplusplus20
         header "../../UIProcess/Cocoa/WKTextSelectionRect.h"

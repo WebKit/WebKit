@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #if ENABLE(PDF_HUD)
 
+#import "WKPDFHUDView.h"
 #import <AppKit/AppKit.h>
 
 @class WKWebView;
@@ -36,11 +37,9 @@
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
-@protocol WKPDFHUDView
+@interface WKAlternatePDFHUDView : NSView <WKPDFHUDView>
 
-@property (nonatomic, readonly) uint64_t frameIdentifier;
-
-- (void)show;
+- (instancetype)initWithFrame:(NSRect)frame frameIdentifier:(uint64_t)frameIdentifier NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -119,7 +119,7 @@ OBJC_CLASS WebPlaybackControlsManager;
 OBJC_CLASS WKDigitalCredentialsPicker;
 #endif
 
-OBJC_CLASS WKPDFHUDView;
+OBJC_PROTOCOL(WKPDFHUDView);
 
 OBJC_CLASS VKCImageAnalysis;
 OBJC_CLASS VKCImageAnalysisOverlayView;
@@ -1064,7 +1064,7 @@ private:
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
 
-    HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
+    HashMap<WebKit::PDFPluginIdentifier, RetainPtr<NSView<WKPDFHUDView>>> _pdfHUDViews;
     // PDF HUDs awaiting their initial async coordinate conversion, mapped to the latest location update.
     HashMap<WebKit::PDFPluginIdentifier, WebCore::IntRect> m_pdfHUDsPendingCreation;
 

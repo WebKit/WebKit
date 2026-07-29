@@ -9205,6 +9205,19 @@ UseAVCaptureDeviceRotationCoordinatorAPI:
       default: false
   sharedPreferenceForWebProcess: true
 
+UseAlternatePDFHUD:
+  type: bool
+  status: internal
+  category: html
+  humanReadableName: "Alternate PDF HUD"
+  humanReadableDescription: "Use the alternate PDF HUD"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  condition: ENABLE(PDF_HUD)
+  defaultValue:
+    WebKit:
+      default: false
+
 UseAppKitGestures:
   type: bool
   status: internal

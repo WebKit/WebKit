@@ -23,7 +23,7 @@
 
 #if ENABLE_PDF_HUD
 
-public import AppKit
+import AppKit
 public import Foundation
 internal import WebKit_Internal
 private import pal.spi.mac.NSImageSPI
@@ -57,7 +57,7 @@ private func isInRecoveryOS() -> Bool {
 
 @objc
 @implementation
-extension WKPDFHUDView {
+extension WKDefaultPDFHUDView {
     var pluginIdentifier: UInt64
     var frameIdentifier: UInt64
     weak var webView: WKWebView?

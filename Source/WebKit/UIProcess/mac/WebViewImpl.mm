@@ -67,13 +67,14 @@
 #import "UIGamepadProvider.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
+#import "WKAlternatePDFHUDView.h"
 #import "WKAppKitGestureController.h"
+#import "WKDefaultPDFHUDView.h"
 #import "WKEditCommand.h"
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKNSURLExtras.h"
-#import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
@@ -1805,7 +1806,12 @@ void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, WebCore::FrameIde
         if (!latestBoxInFrameRootView)
             return;
 
-        RetainPtr hud = adoptNS([[WKPDFHUDView alloc] initWithFrame:boundingBoxInWebView pluginIdentifier:identifier.toUInt64() frameIdentifier:frameID.toUInt64() webView:checkedThis->m_page->cocoaView()]);
+        RetainPtr<NSView<WKPDFHUDView>> hud;
+        if (protect(checkedThis->m_page->preferences())->useAlternatePDFHUD())
+            hud = adoptNS([[WKAlternatePDFHUDView alloc] initWithFrame:boundingBoxInWebView frameIdentifier:frameID.toUInt64()]);
+        else
+            hud = adoptNS([[WKDefaultPDFHUDView alloc] initWithFrame:boundingBoxInWebView pluginIdentifier:identifier.toUInt64() frameIdentifier:frameID.toUInt64() webView:checkedThis->m_page->cocoaView().get()]);
+
         [checkedThis->m_view.get() addSubview:hud];
         checkedThis->_pdfHUDViews.add(identifier, WTF::move(hud));
 
@@ -4529,7 +4535,7 @@ void WebViewImpl::setInspectorAttachmentView(NSView *newView)
         return;
 
     m_inspectorAttachmentView = newView;
-    
+
     if (RefPtr inspector = m_page->inspector())
         inspector->attachmentViewDidChange(oldView ? oldView.get() : m_view.get().get(), newView ? RetainPtr { newView }.get() : m_view.get().get());
 }

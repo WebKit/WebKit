@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKPDFHUDView.h"
+#import "WKDefaultPDFHUDView.h"
 
 #if ENABLE(PDF_HUD)
 
@@ -32,7 +32,7 @@
 #import "WKWebViewMac.h"
 #import <WebCore/FrameIdentifier.h>
 
-@implementation WKPDFHUDView (Cpp)
+@implementation WKDefaultPDFHUDView (Cpp)
 
 - (void)performPDFZoomIn
 {
