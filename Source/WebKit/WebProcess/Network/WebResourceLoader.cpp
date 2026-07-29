@@ -99,26 +99,23 @@ void WebResourceLoader::initPendingStreamState()
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || !protectedThis->m_pendingStreamState)
                 return;
-            Ref state = *protectedThis->m_pendingStreamState;
-            while (true) {
-                bool atEOF = false;
-                int errorCode = 0;
-                RefPtr chunk = state->takeNextChunk(atEOF, errorCode);
-                if (errorCode) {
-                    protectedThis->send(Messages::NetworkResourceLoader::PendingStreamError { });
-                    protectedThis->m_pendingStreamState = nullptr;
-                    return;
-                }
-                if (chunk)
-                    protectedThis->send(Messages::NetworkResourceLoader::PendingStreamAppendData { IPC::SharedBufferReference(*chunk) });
-                if (atEOF) {
-                    protectedThis->send(Messages::NetworkResourceLoader::PendingStreamEnd { });
-                    protectedThis->m_pendingStreamState = nullptr;
-                    return;
-                }
-                if (!chunk)
-                    return;
+
+            auto result = protect(protectedThis->m_pendingStreamState)->takeAvailableChunks();
+
+            if (!result) {
+                protectedThis->send(Messages::NetworkResourceLoader::PendingStreamError { });
+                protectedThis->m_pendingStreamState = nullptr;
+                return;
             }
+
+            for (Ref chunk : result->first)
+                protectedThis->send(Messages::NetworkResourceLoader::PendingStreamAppendData { IPC::SharedBufferReference(WTF::move(chunk)) });
+
+            if (!result->second)
+                return;
+
+            protectedThis->send(Messages::NetworkResourceLoader::PendingStreamEnd { });
+            protectedThis->m_pendingStreamState = nullptr;
         });
     });
 }

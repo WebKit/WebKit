@@ -433,21 +433,19 @@ static CFIndex pendingStreamRead(CFReadStreamRef, UInt8* buffer, CFIndex bufferL
         return -1;
     }
 
-    bool pendingAtEOF = false;
-    int pendingError = 0;
     auto output = unsafeMakeSpan(buffer, static_cast<size_t>(bufferLength));
-    size_t bytesCopied = fields->state->read(output, pendingAtEOF, pendingError);
+    auto result = fields->state->readInto(output);
 
-    if (pendingError) {
+    if (!result) {
         error->domain = kCFStreamErrorDomainMacOSStatus;
-        error->error = pendingError;
+        error->error = result.error();
         *atEOF = FALSE;
         return -1;
     }
 
     error->error = 0;
-    *atEOF = pendingAtEOF ? TRUE : FALSE;
-    return static_cast<CFIndex>(bytesCopied);
+    *atEOF = result->second;
+    return static_cast<CFIndex>(result->first);
 }
 
 static Boolean pendingStreamCanRead(CFReadStreamRef, void* context)

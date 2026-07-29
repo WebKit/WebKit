@@ -140,14 +140,12 @@ PendingStreamState::HTTPVersion PendingStreamState::currentHTTPVersion()
     return m_httpVersionProbe();
 }
 
-size_t PendingStreamState::read(std::span<uint8_t> outBuffer, bool& atEOF, int& errorCode)
+Expected<std::pair<size_t, bool>, int> PendingStreamState::readInto(std::span<uint8_t> outBuffer)
 {
     Locker locker { m_lock };
-    errorCode = m_errorCode;
-    atEOF = false;
 
-    if (errorCode)
-        return 0;
+    if (m_errorCode)
+        return makeUnexpected(m_errorCode);
 
     size_t written = 0;
     while (written < outBuffer.size() && !m_chunks.isEmpty()) {
@@ -164,37 +162,17 @@ size_t PendingStreamState::read(std::span<uint8_t> outBuffer, bool& atEOF, int& 
         }
     }
 
-    if (m_chunks.isEmpty() && m_ended)
-        atEOF = true;
-
-    return written;
+    return std::make_pair(written, m_chunks.isEmpty() && m_ended);
 }
 
-RefPtr<SharedBuffer> PendingStreamState::takeNextChunk(bool& atEOF, int& errorCode)
+Expected<std::pair<Deque<Ref<SharedBuffer>>, bool>, int> PendingStreamState::takeAvailableChunks()
 {
     Locker locker { m_lock };
-    errorCode = m_errorCode;
-    atEOF = false;
+    ASSERT(!m_frontChunkOffset);
+    if (m_errorCode)
+        return makeUnexpected(m_errorCode);
 
-    if (errorCode)
-        return nullptr;
-
-    if (m_chunks.isEmpty()) {
-        if (m_ended)
-            atEOF = true;
-        return nullptr;
-    }
-
-    RefPtr<SharedBuffer> chunk = m_chunks.takeFirst();
-    if (m_frontChunkOffset) {
-        chunk = SharedBuffer::create(chunk->span().subspan(m_frontChunkOffset));
-        m_frontChunkOffset = 0;
-    }
-
-    if (m_chunks.isEmpty() && m_ended)
-        atEOF = true;
-
-    return chunk;
+    return std::make_pair(WTF::move(m_chunks), m_ended);
 }
 
 bool PendingStreamState::hasReadyData()

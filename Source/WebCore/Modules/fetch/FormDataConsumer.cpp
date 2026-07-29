@@ -173,39 +173,30 @@ void FormDataConsumer::drainPendingStream()
     if (!state)
         return;
 
-    while (m_callback) {
-        bool atEOF = false;
-        int errorCode = 0;
-        RefPtr chunk = state->takeNextChunk(atEOF, errorCode);
+    auto result = state->takeAvailableChunks();
 
-        if (errorCode) {
-            didFail(Exception { ExceptionCode::NetworkError, "Stream upload failed"_s });
-            return;
-        }
+    if (!result) {
+        didFail(Exception { ExceptionCode::NetworkError, "Stream upload failed"_s });
+        return;
+    }
 
-        if (chunk) {
+    for (auto chunk : result->first) {
+        if (m_callback) {
             if (!m_callback(chunk->span())) {
                 cancel();
                 return;
             }
-            if (!m_callback)
-                return;
-        }
-
-        if (atEOF) {
-            state->clearDataAvailableHandler();
-            m_pendingStreamState = nullptr;
-
-            auto callback = std::exchange(m_callback, nullptr);
-            callback(std::span<const uint8_t> { });
-            return;
-        }
-
-        if (!chunk) {
-            // No chunk and not at EOF — wait for the data-available handler to run.
-            return;
         }
     }
+
+    if (!result->second)
+        return;
+
+    state->clearDataAvailableHandler();
+    m_pendingStreamState = nullptr;
+
+    if (auto callback = std::exchange(m_callback, nullptr))
+        callback(std::span<const uint8_t> { });
 }
 
 void FormDataConsumer::consume(std::span<const uint8_t> content)

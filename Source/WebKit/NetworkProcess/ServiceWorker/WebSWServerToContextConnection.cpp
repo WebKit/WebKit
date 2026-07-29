@@ -435,27 +435,23 @@ void WebSWServerToContextConnection::pendingStreamDataAvailable(WebCore::FetchId
     if (!state)
         return;
 
-    while (true) {
-        bool atEOF = false;
-        int errorCode = 0;
-        RefPtr chunk = state->takeNextChunk(atEOF, errorCode);
-        if (errorCode) {
-            connection->send(Messages::WebSWContextManagerConnection::ForwardPendingStreamUploadError { fetchIdentifier }, 0);
-            state->clearDataAvailableHandler();
-            m_requestPendingStreamStates.remove(fetchIdentifier);
-            return;
-        }
-        if (chunk)
-            connection->send(Messages::WebSWContextManagerConnection::ForwardPendingStreamUploadData { fetchIdentifier, IPC::SharedBufferReference { *chunk } }, 0);
-        if (atEOF) {
-            connection->send(Messages::WebSWContextManagerConnection::ForwardPendingStreamUploadEnd { fetchIdentifier }, 0);
-            state->clearDataAvailableHandler();
-            m_requestPendingStreamStates.remove(fetchIdentifier);
-            return;
-        }
-        if (!chunk)
-            return;
+    auto result = state->takeAvailableChunks();
+    if (!result) {
+        connection->send(Messages::WebSWContextManagerConnection::ForwardPendingStreamUploadError { fetchIdentifier }, 0);
+        state->clearDataAvailableHandler();
+        m_requestPendingStreamStates.remove(fetchIdentifier);
+        return;
     }
+
+    for (Ref chunk : result->first)
+        connection->send(Messages::WebSWContextManagerConnection::ForwardPendingStreamUploadData { fetchIdentifier, IPC::SharedBufferReference { WTF::move(chunk) } }, 0);
+
+    if (!result->second)
+        return;
+
+    connection->send(Messages::WebSWContextManagerConnection::ForwardPendingStreamUploadEnd { fetchIdentifier }, 0);
+    state->clearDataAvailableHandler();
+    m_requestPendingStreamStates.remove(fetchIdentifier);
 }
 
 void WebSWServerToContextConnection::cancelPendingStreamUploadForwarding(WebCore::FetchIdentifier fetchIdentifier)
