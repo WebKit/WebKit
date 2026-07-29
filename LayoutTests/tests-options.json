@@ -857,6 +857,15 @@
     "imported/w3c/web-platform-tests/close-watcher/iframes/dialog-same-origin-ynyn.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-allowed.sub.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-blocked.sub.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-hashes.sub.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required_csp-header-crlf.html": [
         "slow"
     ],

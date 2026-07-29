@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-allowed.sub.html
@@ -20,14 +18,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-redirect-to-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-fetch-keepalive-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-fetch-keepalive-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-fetch-keepalive-redirect-to-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-json-import-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-json-import-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-syncxmlhttprequest-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-syncxmlhttprequest-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-syncxmlhttprequest-redirect-to-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-text-import-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-text-import-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-websocket-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-websocket-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-websocket-self.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-allowed.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-blocked.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-hashes.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-xmlhttprequest-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-xmlhttprequest-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-xmlhttprequest-redirect-to-blocked.sub.html

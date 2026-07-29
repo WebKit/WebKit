@@ -45,6 +45,7 @@ accessibility/mac/intersection-with-selection-range.html [ Skip ]
 
 # webkit.org/b/319008 WebTransport-over-HTTP/3 needs Network.framework QUIC SPI only present on Tahoe; skip the suite on Sequoia.
 imported/w3c/web-platform-tests/webtransport [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-blocked.sub.https.html [ Skip ]
 
 
 
