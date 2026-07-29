@@ -6293,6 +6293,7 @@
 		DCA7EDF52C655235000F16C7 /* BoxSides.h in Headers */ = {isa = PBXBuildFile; fileRef = DCA7EDF42C655235000F16C7 /* BoxSides.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD05637D29B6B88100A98258 /* InlineDisplayContent.h in Headers */ = {isa = PBXBuildFile; fileRef = DD05637C29B6B88100A98258 /* InlineDisplayContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD14265D2F81000000C1D6A8 /* InspectorNativeFunctionParameters.json in Headers */ = {isa = PBXBuildFile; fileRef = DD14265E2F81000000C1D6A8 /* InspectorNativeFunctionParameters.json */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD17C082286EC57400D60B58 /* build in Copy PDF.js */ = {isa = PBXBuildFile; fileRef = DD17C07C286EC51900D60B58 /* build */; };
 		DD17C083286EC57700D60B58 /* LICENSE in Copy PDF.js */ = {isa = PBXBuildFile; fileRef = DD17C080286EC51B00D60B58 /* LICENSE */; };
 		DD17C084286EC57A00D60B58 /* web in Copy PDF.js */ = {isa = PBXBuildFile; fileRef = DD17C07E286EC51A00D60B58 /* web */; };
@@ -21842,6 +21843,7 @@
 		DCD61E9000DE48A88138DCA4 /* StyleObjectViewBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleObjectViewBox.cpp; sourceTree = "<group>"; };
 		DD05637C29B6B88100A98258 /* InlineDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineDisplayContent.h; sourceTree = "<group>"; };
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
+		DD14265E2F81000000C1D6A8 /* InspectorNativeFunctionParameters.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = InspectorNativeFunctionParameters.json; sourceTree = "<group>"; };
 		DD17C079286EC51800D60B58 /* README.webkit */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.webkit; sourceTree = "<group>"; };
 		DD17C07B286EC51900D60B58 /* PdfJSFiles.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = PdfJSFiles.cmake; sourceTree = "<group>"; };
 		DD17C07C286EC51900D60B58 /* build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = build; sourceTree = "<group>"; };
@@ -25260,6 +25262,7 @@
 				BC9854430CD3D9D000069BC1 /* Window */,
 				A83B79220CCB00F0000B0825 /* XML */,
 				A83B790C0CCAFF83000B0825 /* XPath */,
+				DD14265E2F81000000C1D6A8 /* InspectorNativeFunctionParameters.json */,
 				BC348BD10DB7F804004ABABB /* WebCoreJSBuiltinInternals.cpp */,
 				BC348BD20DB7F804004ABABB /* WebCoreJSBuiltinInternals.h */,
 				BC348BD10DB7F804004ABABA /* WebCoreJSBuiltins.cpp */,
@@ -46194,6 +46197,7 @@
 				A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */,
 				A5B81CAF1FAA44620037D1E6 /* InspectorLayerTreeAgent.h in Headers */,
 				A5B81CB01FAA44620037D1E6 /* InspectorMemoryAgent.h in Headers */,
+				DD14265D2F81000000C1D6A8 /* InspectorNativeFunctionParameters.json in Headers */,
 				A5B81CB11FAA44620037D1E6 /* InspectorNetworkAgent.h in Headers */,
 				9995243E2E8F0CA50093C3E0 /* InspectorNetworkIntercept.h in Headers */,
 				504AACCE1834455900E3D9BC /* InspectorNodeFinder.h in Headers */,

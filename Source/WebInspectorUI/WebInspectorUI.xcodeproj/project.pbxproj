@@ -10,6 +10,7 @@
 		1C60FF1614E6E3F7006CD77D /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C60FF1314E6E35D006CD77D /* localizedStrings.js */; };
 		1C78EE1717611340002F6AA5 /* WebInspectorUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C78EE1617611340002F6AA5 /* WebInspectorUI.cpp */; };
 		BF0A00032E18A0A10063278B /* WebInspectorUI.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0A00042E18A0A10063278B /* WebInspectorUI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD14265B2F81000000C1D6A8 /* WebCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD14265C2F81000000C1D6A8 /* WebCore.framework */; };
 		DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992FB278D078100F60D26 /* libWebKitAdditions.a */; };
 		DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
@@ -23,6 +24,7 @@
 			files = (
 				DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */,
 				DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+				DD14265B2F81000000C1D6A8 /* WebCore.framework in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +45,7 @@
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUI.cpp; sourceTree = "<group>"; };
 		BF0A00042E18A0A10063278B /* WebInspectorUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUI.h; sourceTree = "<group>"; };
 		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD14265C2F81000000C1D6A8 /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE992FB278D078100F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -82,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */,
+				DD14265C2F81000000C1D6A8 /* WebCore.framework */,
 				1C60FE2E14E5F3CD006CD77D /* Configurations */,
 				DDE99320278D100000F60D26 /* Frameworks */,
 				A54C2258148B23DF00373FA3 /* Products */,
@@ -193,7 +197,9 @@
 				"$(SRCROOT)/UserInterface",
 				"$(SRCROOT)/Scripts/generate-userinterface-depfile.sh",
 				"$(SRCROOT)/Scripts/copy-user-interface-resources.pl",
+				"$(SRCROOT)/Scripts/update-NativeFunctionParameters.py",
 				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/InspectorBackendCommands.js",
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/InspectorNativeFunctionParameters.json",
 			);
 			name = "Copy User Interface Resources";
 			outputPaths = (

@@ -1,0 +1,7 @@
+{
+    "TestSerializedScriptValueInterface": {
+        "prototype": {
+            "function": "value"
+        }
+    }
+}

@@ -62,6 +62,9 @@ endif ()
 
 if (ENABLE_WEBCORE)
     add_subdirectory(WebCore)
+    if (ENABLE_WEBINSPECTORUI)
+        add_dependencies(WebInspectorUI WebCore_CopyPrivateHeaders)
+    endif ()
 endif ()
 
 if (ENABLE_WEBKIT_LEGACY)

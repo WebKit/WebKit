@@ -1,0 +1,8 @@
+{
+    "TestNamedAndIndexedSetterWithIdentifier": {
+        "prototype": {
+            "indexedSetter": "index, value",
+            "namedSetter": "name, value"
+        }
+    }
+}

@@ -3033,6 +3033,7 @@ GENERATE_BINDINGS(WebCoreBindings
     DESTINATION ${WebCore_DERIVED_SOURCES_DIR}
     GENERATOR JS
     SUPPLEMENTAL_DEPFILE ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE ${WebCore_DERIVED_SOURCES_DIR}/InspectorNativeFunctionParameters.json
     # Auxiliary translation unit emitted alongside JSDOMWindow.cpp by
     # CodeGeneratorJS.pm to keep JSDOMWindow.cpp's compile time off the build's
     # critical path.
@@ -3226,6 +3227,7 @@ WEBKIT_ADD_PREFIX_HEADER(WebCore WebCorePrefix.h PREFIX_LANGUAGES CXX OBJCXX)
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/DocumentSyncData.serialization.in
     ${WebCore_DERIVED_SOURCES_DIR}/FrameTreeSyncData.serialization.in
+    ${WebCore_DERIVED_SOURCES_DIR}/InspectorNativeFunctionParameters.json
 
     Modules/WebGPU/InternalAPI/WebGPU.serialization.in
     Modules/indexeddb/IndexedDB.serialization.in

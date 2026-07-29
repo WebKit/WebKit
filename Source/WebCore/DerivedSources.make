@@ -2624,6 +2624,7 @@ WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = WorkletGlobalScopeConstructors.idl
 PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = PaintWorkletGlobalScopeConstructors.idl
 AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = AudioWorkletGlobalScopeConstructors.idl
 IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.json
+INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE = InspectorNativeFunctionParameters.json
 
 IDL_INTERMEDIATE_FILES = \
     $(SUPPLEMENTAL_MAKEFILE_DEPS) \
@@ -2714,6 +2715,10 @@ $(JS_BINDINGS_STAMP): $(JS_BINDING_IDLS) $(JS_BINDINGS_SCRIPTS) \
 		$(addprefix --generatorDependency ,$(JS_BINDINGS_SCRIPTS) $(WEB_PREFERENCES_INPUT_FILES)) \
 		--exclude EventListener.idl
 	touch $(JS_BINDINGS_STAMP)
+
+all : $(INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE)
+$(INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE): $(JS_BINDINGS_STAMP) $(WebCore)/bindings/scripts/combine-inspector-native-function-parameters.pl $(IDL_FILE_NAMES_LIST)
+	$(PERL) $(WebCore)/bindings/scripts/combine-inspector-native-function-parameters.pl --idlFilesList $(IDL_FILE_NAMES_LIST) --output $(INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE)
 
 $(JS_DOM_HEADERS) $(JS_DOM_IMPLEMENTATIONS): $(JS_BINDINGS_STAMP)
 # -------------------------------------------------
