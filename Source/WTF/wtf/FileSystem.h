@@ -189,6 +189,9 @@ WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix = nil);
 WTF_EXPORT_PRIVATE NSString *systemDirectoryPath();
 
+WTF_EXPORT_PRIVATE String darwinCacheDirectory();
+WTF_EXPORT_PRIVATE String darwinTempDirectory();
+
 // Allow reading cloud files with no local copy.
 enum class PolicyScope : uint8_t { Process, Thread };
 WTF_EXPORT_PRIVATE bool setAllowsMaterializingDatalessFiles(bool, PolicyScope);

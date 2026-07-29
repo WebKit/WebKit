@@ -253,19 +253,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
 
 static String sandboxDataVaultParentDirectory()
 {
-    char temp[PATH_MAX];
-    size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
-    if (!length) {
-        WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
-        exitProcess(EX_NOPERM);
-    }
-    RELEASE_ASSERT(length <= sizeof(temp));
-    char resolvedPath[PATH_MAX];
-    if (!realpath(temp, resolvedPath)) {
-        WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
-        exitProcess(EX_NOPERM);
-    }
-    return String::fromUTF8(resolvedPath);
+    return WTF::FileSystemImpl::darwinCacheDirectory();
 }
 
 static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const String& parentDirectory)
