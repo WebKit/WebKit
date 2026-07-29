@@ -445,9 +445,12 @@ FlexFormattingContext::LinesCrossSizeList FlexFormattingContext::crossSizeForFle
         auto lineRange = flexLines.ranges[lineIndex];
 
         LayoutUnit maxFlexItemCrossAxisExtent;
+        // 'baseline' and 'last baseline' items are separate baseline-sharing groups, so each contributes its own
+        // max ascent plus its own max descent -- one group's descent must not be added to the other group's ascent.
         LayoutUnit maxAscent;
         LayoutUnit maxDescent = LayoutUnit::min();
         LayoutUnit lastBaselineMaxAscent;
+        LayoutUnit lastBaselineMaxDescent = LayoutUnit::min();
         for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
             auto& flexLayoutItem = flexItems[flexItemIndex];
 
@@ -456,13 +459,14 @@ FlexFormattingContext::LinesCrossSizeList FlexFormattingContext::crossSizeForFle
             if ((alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline) && !flexFormattingUtils().hasAutoMarginsInCrossAxis(flexLayoutItem)) {
                 LayoutUnit ascent = flexFormattingUtils().marginBoxAscentForFlexItem(flexLayoutItem, flexFormattingUtils().crossAxisExtentForFlexItem(flexLayoutItem));
                 LayoutUnit descent = (flexFormattingUtils().crossAxisMarginExtentForFlexItem(flexLayoutItem) + flexFormattingUtils().crossAxisExtentForFlexItem(flexLayoutItem)) - ascent;
-                maxDescent = std::max(maxDescent, descent);
                 if (alignment == ItemPosition::Baseline) {
                     maxAscent = std::max(maxAscent, ascent);
+                    maxDescent = std::max(maxDescent, descent);
                     flexItemCrossAxisMarginBoxExtent = maxAscent + maxDescent;
                 } else {
                     lastBaselineMaxAscent = std::max(lastBaselineMaxAscent, ascent);
-                    flexItemCrossAxisMarginBoxExtent = lastBaselineMaxAscent + maxDescent;
+                    lastBaselineMaxDescent = std::max(lastBaselineMaxDescent, descent);
+                    flexItemCrossAxisMarginBoxExtent = lastBaselineMaxAscent + lastBaselineMaxDescent;
                 }
             } else
                 flexItemCrossAxisMarginBoxExtent = flexItemsHypotheticalCrossSizeList[flexItemIndex] + flexFormattingUtils().crossAxisMarginExtentForFlexItem(flexLayoutItem);
