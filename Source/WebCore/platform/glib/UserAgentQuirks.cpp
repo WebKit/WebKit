@@ -96,7 +96,7 @@ static bool urlRequiresFirefoxBrowser(const String& domain)
     if (domain == "www.disneyplus.com"_s)
         return true;
 
-    if (domain == "www.hbomax.com"_s || domain == "auth.hbomax.com"_s)
+    if (domain == "www.hbomax.com"_s || domain == "auth.hbomax.com"_s || domain == "play.hbomax.com"_s)
         return true;
 #endif
 

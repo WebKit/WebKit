@@ -121,6 +121,7 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.disneyplus.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.hbomax.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://auth.hbomax.com/");
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://play.hbomax.com/");
 #endif
 
 #if ENABLE(WEBXR) && PLATFORM(WPE)
