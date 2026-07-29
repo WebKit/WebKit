@@ -760,11 +760,14 @@ UNIFIED_PDF_TEST(PDFHUDMultipleIFrames)
 
 enum class PDFEmbedElement : uint8_t { IFrame, Embed, Object };
 
-class EmbeddedPDFHUDSiteIsolation : public testing::TestWithParam<std::tuple<PDFEmbedElement, bool, bool>> {
+using EmbeddedPDFHUDSiteIsolationParams = std::tuple<PDFEmbedElement, bool, bool, bool>;
+
+class EmbeddedPDFHUDSiteIsolation : public testing::TestWithParam<EmbeddedPDFHUDSiteIsolationParams> {
 public:
     PDFEmbedElement embedElement() const { return std::get<0>(GetParam()); }
     bool crossOrigin() const { return std::get<1>(GetParam()); }
     bool siteIsolationEnabled() const { return std::get<2>(GetParam()); }
+    bool siteIsolationSharedProcessEnabled() const { return std::get<3>(GetParam()); }
 
     String mainHTML() const
     {
@@ -782,7 +785,7 @@ public:
         return { };
     }
 
-    static std::string testNameGenerator(testing::TestParamInfo<std::tuple<PDFEmbedElement, bool, bool>> info)
+    static std::string testNameGenerator(testing::TestParamInfo<EmbeddedPDFHUDSiteIsolationParams> info)
     {
         std::string element = [embedElement = std::get<0>(info.param)] {
             switch (embedElement) {
@@ -798,7 +801,8 @@ public:
         }();
         return element
             + (std::get<1>(info.param) ? "_CrossOrigin" : "_SameOrigin")
-            + (std::get<2>(info.param) ? "_SiteIsolationEnabled" : "_SiteIsolationDisabled");
+            + "_SiteIsolation" + (std::get<2>(info.param) ? "Enabled" : "Disabled")
+            + "_SiteIsolationSharedProcess" + (std::get<3>(info.param) ? "Enabled" : "Disabled");
     }
 };
 
@@ -816,6 +820,8 @@ TEST_P(EmbeddedPDFHUDSiteIsolation, HUDMatchesOffset)
             [[configuration preferences] _setEnabled:YES forFeature:feature];
         else if ([key isEqualToString:@"SiteIsolationEnabled"])
             [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
+        else if ([key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
+            [[configuration preferences] _setEnabled:siteIsolationSharedProcessEnabled() forFeature:feature];
     }
 
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -841,7 +847,7 @@ TEST_P(EmbeddedPDFHUDSiteIsolation, HUDMatchesOffset)
     checkFrame([hud frame], 10, 28, 300, 150);
 }
 
-INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool(), testing::Bool()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
 
 UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
 {
