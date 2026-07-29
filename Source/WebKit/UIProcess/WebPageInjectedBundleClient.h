@@ -34,7 +34,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKPageInjectedBundleClientBase> {
-    typedef std::tuple<WKPageInjectedBundleClientV0, WKPageInjectedBundleClientV1> Versions;
+    typedef std::tuple<WKPageInjectedBundleClientV0, WKPageInjectedBundleClientV1, WKPageInjectedBundleClientV2> Versions;
 };
 }
 
@@ -46,7 +46,7 @@ class WebPageInjectedBundleClient : public API::Client<WKPageInjectedBundleClien
     WTF_MAKE_TZONE_ALLOCATED(WebPageInjectedBundleClient);
 public:
     void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, bool fromMainFrameProcess, CompletionHandler<void(RefPtr<API::Object>)>&&);
 };
 
 } // namespace WebKit

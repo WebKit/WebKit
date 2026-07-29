@@ -46,10 +46,11 @@ void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPagePro
     m_client.didReceiveMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
-void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
+void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody, bool fromMainFrameProcess, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
 {
     if (!m_client.didReceiveSynchronousMessageFromInjectedBundle
-        && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener)
+        && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener
+        && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListenerFromMainFrameProcess)
         return completionHandler(nullptr);
 
     if (m_client.didReceiveSynchronousMessageFromInjectedBundle) {
@@ -57,6 +58,9 @@ void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle
         m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
         return completionHandler(adoptRef(toImpl(returnDataRef)));
     }
+
+    if (m_client.didReceiveSynchronousMessageFromInjectedBundleWithListenerFromMainFrameProcess)
+        return m_client.didReceiveSynchronousMessageFromInjectedBundleWithListenerFromMainFrameProcess(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), fromMainFrameProcess, toAPI(API::MessageListener::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
 
     m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
 }

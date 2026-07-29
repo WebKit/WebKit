@@ -1,2 +1,5 @@
 CONSOLE MESSAGE: Pointerlock not supported
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

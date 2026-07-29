@@ -1397,9 +1397,11 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
     if (!m_injectedBundleClient)
         return completionHandler({ });
 
-    RefPtr<API::Object> returnData;
     Ref process = WebProcessProxy::fromConnection(connection);
-    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(this, messageName, process->transformHandlesToObjects(protect(messageBody.object()).get()).get(), [completionHandler = WTF::move(completionHandler), process] (RefPtr<API::Object>&& returnData) mutable {
+    // Whether the sender hosts the committed local main frame (false for a cross-origin subframe process).
+    RefPtr mainFrame = m_mainFrame;
+    bool fromMainFrameProcess = mainFrame && process.ptr() == &mainFrame->process();
+    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(this, messageName, process->transformHandlesToObjects(protect(messageBody.object()).get()).get(), fromMainFrameProcess, [completionHandler = WTF::move(completionHandler), process] (RefPtr<API::Object>&& returnData) mutable {
         completionHandler(UserData(process->transformObjectsToHandles(returnData.get())));
     });
 }

@@ -30,7 +30,11 @@
             console.error("Element still not found after timeout!");
         }
 
-        if (window.eventSender) {
+        // Only activate when pointer lock is actually supported (i.e. not iOS). There is nothing to
+        // activate otherwise, and on iOS UIHelper.activateElement() posts a UI script that relies on
+        // window.webkit.createJSHandle, which is unavailable in this cross-origin subframe under site
+        // isolation and would surface as an unhandled promise rejection.
+        if (window.eventSender && 'pointerLockElement' in document) {
             await UIHelper.activateElement(element);
         }
     };

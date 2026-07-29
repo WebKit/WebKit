@@ -888,11 +888,12 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
     };
     WKPageSetPageNavigationClient(newPage, &pageNavigationClient.base);
 
-    WKPageInjectedBundleClientV1 injectedBundleClient = {
-        { 1, this },
+    WKPageInjectedBundleClientV2 injectedBundleClient = {
+        { 2, this },
         didReceivePageMessageFromInjectedBundle,
         nullptr,
-        didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
+        nullptr,
+        didReceiveSynchronousPageMessageFromInjectedBundleWithListenerFromMainFrameProcess,
     };
     WKPageSetPageInjectedBundleClient(newPage, &injectedBundleClient.base);
 
@@ -1382,11 +1383,12 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     WKPageSetPageNavigationClient(m_mainWebView->page(), &pageNavigationClient.base);
     
     // this should just be done on the page?
-    WKPageInjectedBundleClientV1 injectedBundleClient = {
-        { 1, this },
+    WKPageInjectedBundleClientV2 injectedBundleClient = {
+        { 2, this },
         didReceivePageMessageFromInjectedBundle,
         nullptr,
-        didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
+        nullptr,
+        didReceiveSynchronousPageMessageFromInjectedBundleWithListenerFromMainFrameProcess,
     };
     WKPageSetPageInjectedBundleClient(m_mainWebView->page(), &injectedBundleClient.base);
 
@@ -3416,9 +3418,9 @@ void TestController::didReceivePageMessageFromInjectedBundle(WKPageRef page, WKS
     testController->didReceiveMessageFromInjectedBundle(messageName, messageBody);
 }
 
-void TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListener(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo)
+void TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListenerFromMainFrameProcess(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, bool fromMainFrameProcess, WKMessageListenerRef listener, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody, listener);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody, listener, fromMainFrameProcess);
 }
 
 void TestController::networkProcessDidCrashWithDetails(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo)
@@ -3558,7 +3560,7 @@ RefPtr<TestInvocation> TestController::protectedCurrentInvocation()
     return m_currentInvocation;
 }
 
-void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener)
+void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, bool fromMainFrameProcess)
 {
     auto completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
         WKMessageListenerSendReply(listener.get(), reply);
@@ -3827,7 +3829,7 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         return;
     }
 
-    completionHandler(protectedCurrentInvocation()->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
+    completionHandler(protectedCurrentInvocation()->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody, fromMainFrameProcess).get());
 }
 
 WKRetainPtr<WKTypeRef> TestController::getInjectedBundleInitializationUserData()

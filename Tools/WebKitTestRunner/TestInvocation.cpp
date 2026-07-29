@@ -578,7 +578,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     ASSERT_NOT_REACHED();
 }
 
-WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
+WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, bool fromMainFrameProcess)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "Initialization")) {
         auto settings = createTestSettingsDictionary();
@@ -631,10 +631,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ResolveNotifyDone"))
-        return adoptWK(WKBooleanCreate(resolveNotifyDone(booleanValue(messageBody))));
+        return adoptWK(WKBooleanCreate(resolveNotifyDone(fromMainFrameProcess)));
 
     if (WKStringIsEqualToUTF8CString(messageName, "ResolveForceImmediateCompletion"))
-        return adoptWK(WKBooleanCreate(resolveForceImmediateCompletion(booleanValue(messageBody))));
+        return adoptWK(WKBooleanCreate(resolveForceImmediateCompletion(fromMainFrameProcess)));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
@@ -1483,7 +1483,7 @@ bool TestInvocation::resolveNotifyDone(bool canCompleteSynchronously)
     if (m_options.siteIsolationEnabled()) {
         // If notifyDone() arrived mid-work-queue, defer it until the queue drains.
         bool deferForWorkQueue = TestController::singleton().useWorkQueue() && !TestController::singleton().workQueueManager().isWorkQueueEmpty();
-        // The caller can dump synchronously only if it hosts the local main frame and nothing is pending.
+        // Complete locally only from the main-frame process with no pending work queue; the bundle handles deferral.
         if (canCompleteSynchronously && !deferForWorkQueue)
             return true;
         m_notifyDoneMessageSent = true;

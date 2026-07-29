@@ -610,10 +610,10 @@ private:
 
     // WKPageInjectedBundleClient
     static void didReceivePageMessageFromInjectedBundle(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
-    static void didReceiveSynchronousPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
+    static void didReceiveSynchronousPageMessageFromInjectedBundleWithListenerFromMainFrameProcess(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, bool fromMainFrameProcess, WKMessageListenerRef, const void*);
 
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
-    void didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef);
+    void didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, bool fromMainFrameProcess = false);
     WKRetainPtr<WKTypeRef> getInjectedBundleInitializationUserData();
 
     void didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);

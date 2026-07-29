@@ -32,6 +32,7 @@ typedef void (*WKPageDidReceiveMessageFromInjectedBundleCallback)(WKPageRef page
 typedef void (*WKPageDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
 typedef WKTypeRef (*WKPageGetInjectedBundleInitializationUserDataCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback)(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo);
+typedef void (*WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerFromMainFrameProcessCallback)(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, bool fromMainFrameProcess, WKMessageListenerRef listener, const void* clientInfo);
 
 typedef struct WKPageInjectedBundleClientBase {
     int                                                                 version;
@@ -56,5 +57,19 @@ typedef struct WKPageInjectedBundleClientV1 {
     // Version 1.
     WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback didReceiveSynchronousMessageFromInjectedBundleWithListener;
 } WKPageInjectedBundleClientV1;
+
+typedef struct WKPageInjectedBundleClientV2 {
+    WKPageInjectedBundleClientBase                                   base;
+
+    // Version 0.
+    WKPageDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
+    WKPageDidReceiveSynchronousMessageFromInjectedBundleCallback     didReceiveSynchronousMessageFromInjectedBundle;
+
+    // Version 1.
+    WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback didReceiveSynchronousMessageFromInjectedBundleWithListener;
+
+    // Version 2.
+    WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerFromMainFrameProcessCallback didReceiveSynchronousMessageFromInjectedBundleWithListenerFromMainFrameProcess;
+} WKPageInjectedBundleClientV2;
 
 #endif // WKPageInjectedBundleClient_h
