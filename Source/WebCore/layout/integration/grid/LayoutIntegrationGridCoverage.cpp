@@ -81,6 +81,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasNonVisibleOverflow,
     GridItemHasContainsSize,
     GridItemNeedsSecondColumnSizingPass,
+    RelativeGridItemHasPercentageInset,
 
     GridItemColumnStartHasLineName,
     GridItemColumnStartHasNegativeLineNumber,
@@ -612,6 +613,18 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItem->isOutOfFlowPositioned())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasOutOfFlowChild, reasons, reasonCollectionMode);
 
+        // A relatively (or sticky) positioned grid item resolves percentage inset offsets against
+        // its containing block, which for a grid item is its grid area. GFC does not yet set the
+        // grid-area size on the item, so such percentages would incorrectly resolve against the
+        // grid container's content box. Keep these items on the legacy path.
+        if (gridItemStyle->position() == PositionType::Relative || gridItemStyle->position() == PositionType::Sticky) {
+            auto hasPercentageInsetOffset = gridItemStyle->insetBox().anyOf([](const Style::InsetEdge& insetEdge) {
+                return insetEdge.isPercentOrCalculated();
+            });
+            if (hasPercentageInsetOffset)
+                ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::RelativeGridItemHasPercentageInset, reasons, reasonCollectionMode);
+        }
+
         if (gridItemStyle->aspectRatio().hasRatio())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasAspectRatio, reasons, reasonCollectionMode);
 
@@ -787,6 +800,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemNeedsSecondColumnSizingPass:
         stream << "grid item needs second column sizing support";
+        break;
+    case GridAvoidanceReason::RelativeGridItemHasPercentageInset:
+        stream << "relative grid item has percentage inset";
         break;
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
         stream << "grid item column start has line name";
