@@ -99,7 +99,14 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
     CheckedPtr containerParentStyle = containerParent ? CheckedPtr { styleForContainer(*containerParent, containerQuery.requirements, m_evaluationState) } : containerStyle;
 
     Ref document = element->document();
-    CheckedPtr rootStyle = document->documentElement()->renderStyle();
+
+    CheckedPtr rootStyle = [&] () -> const Style::ComputedStyle* {
+        RefPtr rootElement = document->documentElement();
+        if (!rootElement)
+            return nullptr;
+
+        return styleForContainer(*rootElement, containerQuery.requirements, m_evaluationState);
+    }();
 
     return MQ::FeatureEvaluationContext {
         document.get(),

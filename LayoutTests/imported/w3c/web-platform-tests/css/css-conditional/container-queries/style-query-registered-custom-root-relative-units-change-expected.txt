@@ -1,0 +1,10 @@
+Target 1: rem
+Target 2: rlh
+Target 3: vb
+Target 4: vi
+
+PASS assert_implements_style_container_queries()
+PASS rem in container style queries responds to root font size change
+PASS rlh in container style queries responds to root line height change
+PASS vi, vb in container style queries respond to root writing mode change
+
