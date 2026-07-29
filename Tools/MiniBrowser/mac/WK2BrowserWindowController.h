@@ -31,5 +31,6 @@
 @property (readonly) WKWebView *webView;
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration windowFeatures:(WKWindowFeatures *)windowFeatures;
 
 @end

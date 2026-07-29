@@ -103,6 +103,7 @@ static const int testFooterBannerHeight = 58;
 
 @implementation WK2BrowserWindowController {
     WKWebViewConfiguration *_configuration;
+    WKWindowFeatures *_windowFeatures;
     WKWebView *_webView;
     BOOL _zoomTextOnly;
     BOOL _isPrivateBrowsingWindow;
@@ -198,10 +199,16 @@ static const int testFooterBannerHeight = 58;
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
 {
+    return [self initWithConfiguration:configuration windowFeatures:nil];
+}
+
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration windowFeatures:(WKWindowFeatures *)windowFeatures
+{
     if (!(self = [super initWithWindowNibName:@"BrowserWindow"]))
         return nil;
 
     _configuration = [configuration copy];
+    _windowFeatures = windowFeatures;
     _isPrivateBrowsingWindow = !_configuration.websiteDataStore.isPersistent;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userAgentDidChange:) name:kUserAgentChangedNotificationName object:nil];
@@ -225,6 +232,47 @@ static const int testFooterBannerHeight = 58;
     [progressIndicator unbind:NSValueBinding];
 }
 
+static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *window)
+{
+    NSRect contentRect = [window contentRectForFrameRect:window.frame];
+
+    // The web view insets its viewport underneath the titlebar and toolbar, so that inset has to be
+    // added back on to give the page the size it asked for.
+    CGFloat viewportInset = NSHeight(window.contentView.frame) - NSHeight(window.contentLayoutRect);
+
+    if (features.width.doubleValue > 0)
+        contentRect.size.width = features.width.doubleValue;
+    if (features.height.doubleValue > 0)
+        contentRect.size.height = features.height.doubleValue + viewportInset;
+
+    NSRect frameRect = [window frameRectForContentRect:contentRect];
+
+    if (features.x)
+        frameRect.origin.x = features.x.doubleValue;
+
+    if (features.y)
+        frameRect.origin.y = NSMaxY(NSScreen.screens.firstObject.frame) - features.y.doubleValue - NSHeight(frameRect);
+    else
+        frameRect.origin.y = NSMaxY(window.frame) - NSHeight(frameRect);
+
+    return [window constrainFrameRect:frameRect toScreen:nil];
+}
+
+- (void)applyWindowFeatures
+{
+    if (!_windowFeatures.x && !_windowFeatures.y && !_windowFeatures.width && !_windowFeatures.height)
+        return;
+
+    NSWindow *window = self.window;
+
+    // For windows that are opened with specific geometry, ignore AppKit's frame autosaving (and don't contribute to it).
+    self.windowFrameAutosaveName = @"";
+    window.tabbingMode = NSWindowTabbingModeDisallowed;
+
+    [window layoutIfNeeded];
+    [window setFrame:frameForWindowFeatures(_windowFeatures, window) display:NO];
+}
+
 - (void)windowDidLoad
 {
     [super windowDidLoad];
@@ -232,6 +280,8 @@ static const int testFooterBannerHeight = 58;
     // Private windows get separate identifier so they can't merge with regular windows
     if (_isPrivateBrowsingWindow)
         self.window.tabbingIdentifier = @"MiniBrowserPrivateWindow";
+
+    [self applyWindowFeatures];
 }
 
 - (void)userAgentDidChange:(NSNotification *)notification
@@ -756,9 +806,9 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration windowFeatures:windowFeatures];
     [controller.window makeKeyAndOrderFront:self];
-    
+
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
 
     return controller->_webView;
