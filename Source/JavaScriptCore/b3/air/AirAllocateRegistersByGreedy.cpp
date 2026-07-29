@@ -42,6 +42,7 @@
 #include "AirRegLiveness.h"
 #include "AirRegisterAllocatorStats.h"
 #include "AirTmpMap.h"
+#include "AirTmpSet.h"
 #include "AirTmpWidthInlines.h"
 #include "AirUseCounts.h"
 #include <wtf/GenerationalSet.h>
@@ -1176,6 +1177,51 @@ private:
         return m_tmpWidth.useWidth(tmp);
     }
 
+    // Recomputes liveness in the Early/Late point model used by this allocator and invokes
+    // func(liveSet, inst, instIndex, isLatePhase) at each interference point, scanning each block
+    // backward: once at the block tail (inst == nullptr), then after the late actions of every
+    // instruction (isLatePhase == true) and after its early actions (isLatePhase == false). liveSet
+    // holds the Tmps of `bank` live at that point.
+    //
+    // The standard boundary-based TmpLiveness folds an instruction's late actions and the next
+    // instruction's early actions onto a single liveness boundary, so it treats a late use/def of
+    // inst N as interfering with an early use/def of inst N+1 -- a false conflict that padInterference()
+    // used to avoid by inserting a Nop. Evaluating the late and early points separately models that
+    // distinction directly, which is what lets the greedy allocator validate its results without
+    // padInterference(). liveAtTail() is correct at block granularity (the early/late distinction only
+    // matters within a block), so it is a sound seed.
+    template<Bank bank, typename Func>
+    void forEachInterferencePoint(BasicBlock* block, TmpLiveness<bank>& liveness, const Func& func)
+    {
+        TmpSet live;
+        for (Tmp tmp : liveness.liveAtTail(block))
+            live.add(tmp);
+        func(live, nullptr, block->size(), false); // Block tail (live-out of the last instruction).
+
+        for (unsigned instIndex = block->size(); instIndex--;) {
+            Inst& inst = block->at(instIndex);
+            // Step backward across one phase: defs die, then uses become live (defs before uses, so a
+            // Tmp both used and defined in the phase stays live). Inst::forEachDef/forEachUse select
+            // an instruction's late actions when it is passed as prevInst, and its early actions when
+            // passed as nextInst -- so handling the two phases separately keeps a late use/def from
+            // being conflated with the next instruction's early use/def.
+            auto stepBackward = [&](Inst* prevInst, Inst* nextInst) {
+                Inst::forEachDef<Tmp>(prevInst, nextInst, [&](Tmp& tmp, Arg::Role, Bank argBank, Width) {
+                    if (argBank == bank)
+                        live.remove(tmp);
+                });
+                Inst::forEachUse<Tmp>(prevInst, nextInst, [&](Tmp& tmp, Arg::Role, Bank argBank, Width) {
+                    if (argBank == bank)
+                        live.add(tmp);
+                });
+            };
+            stepBackward(&inst, nullptr);        // Late actions...
+            func(live, &inst, instIndex, true);  // ...then check the late point.
+            stepBackward(nullptr, &inst);        // Early actions...
+            func(live, &inst, instIndex, false); // ...then check the early point.
+        }
+    }
+
     // Debug code to verify that the results of register allocation and finalization fixup is valid.
     // That is, no two Tmps simultaneously alive share the same register (unless they were coalesced).
     template<Bank bank>
@@ -1193,12 +1239,12 @@ private:
             anyFailures = true;
         };
 
-        auto checkConflicts = [&](BasicBlock* block, const typename TmpLiveness<bank>::LocalCalc& localCalc) {
-            for (Tmp a : localCalc.live()) {
+        auto checkConflicts = [&](BasicBlock* block, TmpSet& liveSet) {
+            for (Tmp a : liveSet) {
                 Reg aReg = assignedReg(a);
                 if (!aReg)
                     continue;
-                for (Tmp b : localCalc.live()) {
+                for (Tmp b : liveSet) {
                     if (a == b)
                         continue;
                     Reg bReg = assignedReg(b);
@@ -1229,12 +1275,9 @@ private:
 
         TmpLiveness<bank> liveness(m_code);
         for (BasicBlock* block : m_code) {
-            typename TmpLiveness<bank>::LocalCalc localCalc(liveness, block);
-            for (unsigned instIndex = block->size(); instIndex--;) {
-                checkConflicts(block, localCalc);
-                localCalc.execute(instIndex);
-            }
-            checkConflicts(block, localCalc);
+            forEachInterferencePoint<bank>(block, liveness, [&](TmpSet& liveSet, Inst*, unsigned, bool) {
+                checkConflicts(block, liveSet);
+            });
         }
         if (anyFailures) {
             dataLogLn("IR:\n", m_code);
@@ -1977,25 +2020,25 @@ private:
             return srcGroup != noGroup && srcGroup == tmpToGroup[dst];
         };
 
-        auto checkDefs = [&](BasicBlock* block, unsigned instIndex, const typename TmpLiveness<bank>::LocalCalc& localCalc, bool earlyDefs) {
-            Inst& inst = block->at(instIndex);
+        // At a non-move def of a group member, no other member of the same group may be live.
+        auto checkDefs = [&](BasicBlock* block, Inst& inst, unsigned instIndex, TmpSet& liveSet, bool isLatePhase) {
             if (isSameGroupMove(inst))
                 return;
             inst.forEachTmp([&](Tmp& tmp, Arg::Role role, Bank b, Width) {
                 if (b != bank || tmp.isReg() || !Arg::isAnyDef(role))
                     return;
-                if (earlyDefs ? !Arg::isEarlyDef(role) : !Arg::isLateDef(role))
+                if (isLatePhase ? !Arg::isLateDef(role) : !Arg::isEarlyDef(role))
                     return;
                 auto groupIdx = tmpToGroup[tmp];
                 if (groupIdx == noGroup)
                     return;
-                for (Tmp live : localCalc.live()) {
+                for (Tmp live : liveSet) {
                     if (live == tmp || live.isReg())
                         continue;
                     if (tmpToGroup[live] == groupIdx) {
                         dataLogLn("AIR GREEDY COALESCING VALIDATION FAILURE");
                         dataLogLn("   In BB", *block, " at inst ", instIndex, ": ", inst);
-                        dataLogLn("   Non-move ", earlyDefs ? "early" : "late", " def of group member ", tmp);
+                        dataLogLn("   Non-move ", isLatePhase ? "late" : "early", " def of group member ", tmp);
                         dataLogLn("   But group member ", live, " is simultaneously live");
                         dataLogLn("   Group: ", groups[groupIdx]);
                         anyFailures = true;
@@ -2006,14 +2049,10 @@ private:
 
         TmpLiveness<bank> liveness(m_code);
         for (BasicBlock* block : m_code) {
-            typename TmpLiveness<bank>::LocalCalc localCalc(liveness, block);
-            for (unsigned instIndex = block->size(); instIndex--;) {
-                // Before execute: live set at boundary instIndex+1. Check late defs.
-                checkDefs(block, instIndex, localCalc, false);
-                localCalc.execute(instIndex);
-                // After execute: live set at boundary instIndex. Check early defs.
-                checkDefs(block, instIndex, localCalc, true);
-            }
+            forEachInterferencePoint<bank>(block, liveness, [&](TmpSet& liveSet, Inst* inst, unsigned instIndex, bool isLatePhase) {
+                if (inst)
+                    checkDefs(block, *inst, instIndex, liveSet, isLatePhase);
+            });
         }
         if (anyFailures) {
             dataLogLn("IR:\n", m_code);
