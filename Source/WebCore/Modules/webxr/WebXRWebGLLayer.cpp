@@ -45,7 +45,6 @@
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
