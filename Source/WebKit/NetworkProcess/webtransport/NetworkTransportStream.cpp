@@ -36,7 +36,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportStream);
 
-#if !PLATFORM(COCOA)
+#if !HAVE(WEBTRANSPORT)
 NetworkTransportStream::NetworkTransportStream()
     : m_identifier(WebCore::WebTransportStreamIdentifier::generate())
     , m_streamType(NetworkTransportStreamType::Bidirectional)

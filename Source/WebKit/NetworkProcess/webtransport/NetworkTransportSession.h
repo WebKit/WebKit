@@ -119,7 +119,7 @@ public:
     };
 #endif
 private:
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && HAVE(WEBTRANSPORT)
     static Ref<NetworkTransportSession> create(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t, RefPtr<SecurityProtocolMetadata>&&);
     NetworkTransportSession(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t, RefPtr<SecurityProtocolMetadata>&&);
 #else
