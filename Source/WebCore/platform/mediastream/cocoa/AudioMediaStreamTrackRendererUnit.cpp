@@ -109,8 +109,6 @@ RefPtr<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUni
 
 void AudioMediaStreamTrackRendererUnit::addSource(const String& deviceID, Ref<AudioSampleDataSource>&& source)
 {
-    setLastDeviceUsed(deviceID);
-
     Ref unit = ensureDeviceUnit(deviceID);
     unit->addSource(WTF::move(source));
 }

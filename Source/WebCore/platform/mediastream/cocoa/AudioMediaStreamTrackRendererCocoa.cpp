@@ -139,6 +139,8 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
     if (!m_registeredDataSource)
         return;
 
+    AudioMediaStreamTrackRendererUnit::singleton().setLastDeviceUsed(m_deviceID);
+
     source->setLogger(logger(), logIdentifier());
     source->setVolume(volume());
     rendererUnit().addResetObserver(m_deviceID, m_resetObserver);

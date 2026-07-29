@@ -79,8 +79,6 @@ std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrac
 
 void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifier, Ref<AudioSampleDataSource>&& source)
 {
-    AudioMediaStreamTrackRendererUnit::singleton().setLastDeviceUsed(identifier);
-
     String deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
 #if !RELEASE_LOG_DISABLED
