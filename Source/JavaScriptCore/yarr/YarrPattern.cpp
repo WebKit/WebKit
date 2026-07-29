@@ -2094,124 +2094,149 @@ public:
             && !m_pattern.m_numDuplicateNamedCaptureGroups
             && !m_pattern.m_containsLookbehinds;
 
-        if (m_pattern.m_numSubpatterns && !ignoreCaptures)
-            return;
+        auto& alternatives = m_pattern.m_body->m_alternatives;
+        bool hasObservableCaptures = m_pattern.m_numSubpatterns && !ignoreCaptures;
+        if (!hasObservableCaptures) {
+            alternatives.last()->m_isLastAlternative = true;
 
-        Vector<std::unique_ptr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
-        alternatives.last()->m_isLastAlternative = true;
+            if (alternatives.size() == 1 && alternatives[0]->m_startsWithBOL) {
+                Vector<PatternTerm>& terms = alternatives[0]->m_terms;
 
-        if (alternatives.size() == 1 && alternatives[0]->m_startsWithBOL) {
-            Vector<PatternTerm>& terms = alternatives[0]->m_terms;
+                bool isStringList = false;
 
-            bool isStringList = false;
+                if (terms.size() >= 2
+                    && terms[0].type == PatternTerm::Type::AssertionBOL
+                    && terms[1].type == PatternTerm::Type::ParenthesesSubpattern
+                    && terms[1].quantityType == QuantifierType::FixedCount
+                    && terms[1].quantityMaxCount == 1
+                    && !terms[1].parentheses.isCopy
+                    && (terms.size() == 2
+                        || (terms.size() == 3 && terms[2].type == PatternTerm::Type::AssertionEOL && !m_pattern.multiline()))) {
+                    // We start assuming this is a string list and then prove the negative.
+                    isStringList = true;
 
-            if (terms.size() >= 2
-                && terms[0].type == PatternTerm::Type::AssertionBOL
-                && terms[1].type == PatternTerm::Type::ParenthesesSubpattern
-                && terms[1].quantityType == QuantifierType::FixedCount
-                && terms[1].quantityMaxCount == 1
-                && !terms[1].parentheses.isCopy
-                && (terms.size() == 2
-                    || (terms.size() == 3 && terms[2].type == PatternTerm::Type::AssertionEOL && !m_pattern.multiline()))) {
-                // We start assuming this is a string list and then prove the negative.
-                isStringList = true;
+                    PatternTerm& term = terms[1];
 
-                PatternTerm& term = terms[1];
+                    PatternDisjunction* nestedDisjunction = term.parentheses.disjunction;
+                    constexpr unsigned emptyAlternativeNotFound = std::numeric_limits<unsigned>::max();
+                    unsigned firstEmptyAlternative = emptyAlternativeNotFound;
 
-                PatternDisjunction* nestedDisjunction = term.parentheses.disjunction;
-                constexpr unsigned emptyAlternativeNotFound = std::numeric_limits<unsigned>::max();
-                unsigned firstEmptyAlternative = emptyAlternativeNotFound;
+                    auto isPureCharacterSequence = [](const Vector<PatternTerm>& innerTerms) {
+                        for (auto& innerTerm : innerTerms) {
+                            if (innerTerm.type != PatternTerm::Type::PatternCharacter
+                                || innerTerm.quantityType != QuantifierType::FixedCount
+                                || innerTerm.quantityMaxCount != 1)
+                                return false;
+                        }
+                        return true;
+                    };
 
-                auto isPureCharacterSequence = [](const Vector<PatternTerm>& innerTerms) {
-                    for (auto& innerTerm : innerTerms) {
-                        if (innerTerm.type != PatternTerm::Type::PatternCharacter
-                            || innerTerm.quantityType != QuantifierType::FixedCount
-                            || innerTerm.quantityMaxCount != 1)
-                            return false;
+                    // When ignoring captures, an alternative that is exactly one once-quantified group
+                    // wrapping a pure fixed string (e.g. "(t0)") is equivalent to that string for
+                    // matching purposes. Returns the wrapped disjunction so the caller can flatten the
+                    // alternative to the group's character terms; nullptr if the shape does not match.
+                    auto unwrapSingleGroup = [&](const Vector<PatternTerm>& innerTerms) -> PatternDisjunction* {
+                        if (innerTerms.size() != 1)
+                            return nullptr;
+
+                        const PatternTerm& only = innerTerms[0];
+                        if (only.type != PatternTerm::Type::ParenthesesSubpattern
+                            || only.quantityType != QuantifierType::FixedCount
+                            || only.quantityMinCount != 1
+                            || only.quantityMaxCount != 1
+                            || only.parentheses.isCopy)
+                            return nullptr;
+
+                        PatternDisjunction* inner = only.parentheses.disjunction;
+                        if (inner->m_alternatives.size() != 1)
+                            return nullptr;
+
+                        // Leave an empty capture group (e.g. "()") to the generic path: flattening it to
+                        // an empty sequence would hide it from the empty-alternative bookkeeping below,
+                        // which scans the pre-flattened terms.
+                        if (inner->m_alternatives[0]->m_terms.isEmpty())
+                            return nullptr;
+
+                        if (!isPureCharacterSequence(inner->m_alternatives[0]->m_terms))
+                            return nullptr;
+
+                        return inner;
+                    };
+
+                    // Pass 1: confirm every alternative is a fixed string (possibly after seeing through a
+                    // single wrapping group). Do not mutate the tree yet, so a late non-string alternative
+                    // never leaves a half-rewritten tree.
+                    for (unsigned alt = 0; isStringList && alt < nestedDisjunction->m_alternatives.size(); ++alt) {
+                        const auto& innerTerms = nestedDisjunction->m_alternatives[alt]->m_terms;
+
+                        if (innerTerms.isEmpty() && firstEmptyAlternative == emptyAlternativeNotFound)
+                            firstEmptyAlternative = alt;
+
+                        if (isPureCharacterSequence(innerTerms))
+                            continue;
+                        if (ignoreCaptures && unwrapSingleGroup(innerTerms))
+                            continue;
+                        isStringList = false;
                     }
-                    return true;
-                };
 
-                // When ignoring captures, an alternative that is exactly one once-quantified group
-                // wrapping a pure fixed string (e.g. "(t0)") is equivalent to that string for
-                // matching purposes. Returns the wrapped disjunction so the caller can flatten the
-                // alternative to the group's character terms; nullptr if the shape does not match.
-                auto unwrapSingleGroup = [&](const Vector<PatternTerm>& innerTerms) -> PatternDisjunction* {
-                    if (innerTerms.size() != 1)
-                        return nullptr;
+                    // Pass 2: now that the whole list is confirmed, flatten any wrapped-group alternatives
+                    // by replacing the group term with a copy of its character terms.
+                    if (isStringList && ignoreCaptures) {
+                        for (auto& alternative : nestedDisjunction->m_alternatives) {
+                            if (PatternDisjunction* inner = unwrapSingleGroup(alternative->m_terms))
+                                alternative->m_terms = inner->m_alternatives[0]->m_terms;
+                        }
+                    }
 
-                    const PatternTerm& only = innerTerms[0];
-                    if (only.type != PatternTerm::Type::ParenthesesSubpattern
-                        || only.quantityType != QuantifierType::FixedCount
-                        || only.quantityMinCount != 1
-                        || only.quantityMaxCount != 1
-                        || only.parentheses.isCopy)
-                        return nullptr;
+                    bool isEOLStringList = terms.size() == 3 && terms[2].type == PatternTerm::Type::AssertionEOL;
+                    term.parentheses.isStringList = isStringList;
+                    term.parentheses.isEOLStringList = isEOLStringList;
 
-                    PatternDisjunction* inner = only.parentheses.disjunction;
-                    if (inner->m_alternatives.size() != 1)
-                        return nullptr;
-
-                    // Leave an empty capture group (e.g. "()") to the generic path: flattening it to
-                    // an empty sequence would hide it from the empty-alternative bookkeeping below,
-                    // which scans the pre-flattened terms.
-                    if (inner->m_alternatives[0]->m_terms.isEmpty())
-                        return nullptr;
-
-                    if (!isPureCharacterSequence(inner->m_alternatives[0]->m_terms))
-                        return nullptr;
-
-                    return inner;
-                };
-
-                // Pass 1: confirm every alternative is a fixed string (possibly after seeing through a
-                // single wrapping group). Do not mutate the tree yet, so a late non-string alternative
-                // never leaves a half-rewritten tree.
-                for (unsigned alt = 0; isStringList && alt < nestedDisjunction->m_alternatives.size(); ++alt) {
-                    const auto& innerTerms = nestedDisjunction->m_alternatives[alt]->m_terms;
-
-                    if (innerTerms.isEmpty() && firstEmptyAlternative == emptyAlternativeNotFound)
-                        firstEmptyAlternative = alt;
-
-                    if (isPureCharacterSequence(innerTerms))
-                        continue;
-                    if (ignoreCaptures && unwrapSingleGroup(innerTerms))
-                        continue;
-                    isStringList = false;
-                }
-
-                // Pass 2: now that the whole list is confirmed, flatten any wrapped-group alternatives
-                // by replacing the group term with a copy of its character terms.
-                if (isStringList && ignoreCaptures) {
-                    for (auto& alternative : nestedDisjunction->m_alternatives) {
-                        if (PatternDisjunction* inner = unwrapSingleGroup(alternative->m_terms))
-                            alternative->m_terms = inner->m_alternatives[0]->m_terms;
+                    // In a non-EOL string list the first empty alternative always matches and ends the match, so later
+                    // alternatives are unreachable. Drop them so the empty alternative is last and the JIT can fall through to success.
+                    if (isStringList && !isEOLStringList && firstEmptyAlternative != emptyAlternativeNotFound && firstEmptyAlternative + 1 < nestedDisjunction->m_alternatives.size()) {
+                        nestedDisjunction->m_alternatives.shrink(firstEmptyAlternative + 1);
+                        nestedDisjunction->m_alternatives.last()->m_isLastAlternative = true;
                     }
                 }
 
-                bool isEOLStringList = terms.size() == 3 && terms[2].type == PatternTerm::Type::AssertionEOL;
-                term.parentheses.isStringList = isStringList;
-                term.parentheses.isEOLStringList = isEOLStringList;
-
-                // In a non-EOL string list the first empty alternative always matches and ends the match, so later
-                // alternatives are unreachable. Drop them so the empty alternative is last and the JIT can fall through to success.
-                if (isStringList && !isEOLStringList && firstEmptyAlternative != emptyAlternativeNotFound && firstEmptyAlternative + 1 < nestedDisjunction->m_alternatives.size()) {
-                    nestedDisjunction->m_alternatives.shrink(firstEmptyAlternative + 1);
-                    nestedDisjunction->m_alternatives.last()->m_isLastAlternative = true;
-                }
+                if (isStringList)
+                    return;
             }
-
-            if (isStringList)
-                return;
         }
 
         for (auto& alternative : alternatives) {
             auto& terms = alternative->m_terms;
             if (terms.size()) {
+                // Greedy * or + non-capturing parens in the tail position does not need inter-iteration backtracking state.
+                // 1. For * case (term.quantityMinCount == 0)
+                //
+                // Pattern like /(?:AA|A)*/ can never fail, because * succeeds even with zero iterations.
+                // And because it is in the tail position, all backtracking are coming from the
+                // greedy matching attempt of (?:AA|A). This means that we will never restore the
+                // previous iteration's state to explore a different matching. When we failed in the current
+                // iteration, we can just say "the matching is complete" because we are at the terminal position.
+                //
+                // 2. For + case (term.quantityMinCount == 1)
+                //
+                // Pattern like /(?:AA|A)+/ will need to match at least once. If we failed in this 1st iteration,
+                // since this is the initial iteration, we have no context to restore, and we can simply fail.
+                // If we matched once and in the second iteration, if we failed to match, then we also do not need
+                // to restore to the 1st iteration since we already succeeded the 1st iteration (and + suffices),
+                // and since it is a terminal position, we can just say "the matching is complete"
+                //
+                // As a result, term.quantityMinCount <= 1 cases never require per-iteration ParenContext when
+                // we have these greedy patterns at the terminal position. Thus we mark them `isTerminal` to
+                // skip ParenContext generation as an optimization.
+                //
+                // On the other hand, term.quantityMinCount >= 2 cannot work in this way. Let's have a RegExp matching
+                // `/(?:AA|A){2,}/.exec("AA")`. The right answer is "AA" since "A" and "A" matches with 2 iterations.
+                // But this is achieved by restoring the 1st iteration and taking a different alternative "A" instead of "AA".
+                // Thus, inter-iteration backtracking state is necessary for this case.
                 PatternTerm& term = terms.last();
                 if (term.type == PatternTerm::Type::ParenthesesSubpattern
                     && term.quantityType == QuantifierType::Greedy
-                    && term.quantityMinCount == 0
+                    && term.quantityMinCount <= 1
                     && term.quantityMaxCount == quantifyInfinite
                     && !term.capture()
                     && !term.containsAnyCaptures())

@@ -4319,12 +4319,21 @@ class YarrGenerator final : public YarrJITInfo {
             case YarrOpCode::ParenthesesSubpatternTerminalBegin: {
                 PatternTerm* term = op.m_term;
                 ASSERT(!term->capture());
-                if (term->quantityType == QuantifierType::Greedy)
-                    ASSERT(term->quantityMaxCount == quantifyInfinite);
-                if (term->quantityType == QuantifierType::FixedCount)
-                    ASSERT(term->quantityMaxCount == 1);
+                ASSERT(term->quantityType == QuantifierType::Greedy);
+                ASSERT(term->quantityMaxCount == quantifyInfinite);
+                ASSERT(!term->quantityMinCount || term->quantityMinCount == 1);
 
                 termMatchTargets.append(MatchTargets());
+
+                // A minimum of one has to tell a failed first iteration from a failed later one
+                // when the group backtracks. Every iteration the JIT completes consumes at least
+                // one character, because a group whose body can match emptily is diverted to the
+                // interpreter at ParenthesesSubpatternTerminalEnd below, so the index the group was
+                // entered at is enough: it differs from the current index exactly when an iteration
+                // has completed. Recording it here, above the loop, keeps the iteration itself free
+                // of bookkeeping.
+                if (term->quantityMinCount)
+                    storeToFrame(m_regs.index, term->frameLocation + BackTrackInfoParenthesesTerminal::entryPositionIndex());
 
                 // Upon entry set a label to loop back to.
                 defineReentryLabel(op);
@@ -4337,14 +4346,17 @@ class YarrGenerator final : public YarrJITInfo {
             case YarrOpCode::ParenthesesSubpatternTerminalEnd: {
                 YarrOp& beginOp = m_ops[op.m_previousOp];
                 PatternTerm* term = op.m_term;
+                ASSERT(term->quantityType == QuantifierType::Greedy);
+                ASSERT(term->quantityMaxCount == quantifyInfinite);
+                ASSERT(!term->quantityMinCount || term->quantityMinCount == 1);
 
                 termMatchTargets.takeLast();
 
                 // If the nested alternative matched without consuming any characters, punt this back to the interpreter.
                 // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=200786> Add ability for the YARR JIT to properly
                 // handle nested expressions that can match without consuming characters
-                if (term->quantityType != QuantifierType::FixedCount && !term->parentheses.disjunction->m_minimumSize)
-                    m_abortExecution.append(m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*))));
+                if (!term->parentheses.disjunction->m_minimumSize)
+                    m_abortExecution.append(m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset((term->frameLocation + BackTrackInfoParenthesesTerminal::beginIndex()) * sizeof(void*))));
 
                 // We know that the match is non-zero, we can accept it and
                 // loop back up to the head of the subpattern.
@@ -5117,16 +5129,26 @@ class YarrGenerator final : public YarrJITInfo {
 
             // YarrOpCode::ParenthesesSubpatternTerminalBegin/End
             //
-            // Terminal subpatterns will always match - there is nothing after them to
-            // force a backtrack, and they have a minimum count of 0, and as such will
-            // always produce an acceptable result.
+            // Terminal subpatterns have nothing after them (since it is terminal) to force a backtrack
+            // into the previous iteration, so the only backtrack they ever see is their own inner-iteration's
+            // content-backtracking. Once the minimum count is met, they can simply accept the iterations.
             case YarrOpCode::ParenthesesSubpatternTerminalBegin: {
-                // We will backtrack to this point once the subpattern cannot match any
-                // more. Since no match is accepted as a successful match (we are Greedy
-                // quantified with a minimum of zero) jump back to the forwards matching
-                // path at the end.
+                PatternTerm* term = op.m_term;
                 YarrOp& endOp = m_ops[op.m_nextOp];
-                m_backtrackingState.linkTo(endOp.m_reentry, &m_jit);
+                if (!term->quantityMinCount) {
+                    // With a minimum of zero, any number of iterations is accepted.
+                    // Just accepting and returning back to the forward matching path.
+                    m_backtrackingState.linkTo(endOp.m_reentry, &m_jit);
+                    break;
+                }
+
+                // If we succeed the iteration at least once, then the group's entry index differs
+                // from the current one, and the iterations can be accepted by returning back to the
+                // forward matching path. Otherwise, fallthrough.
+                ASSERT(term->quantityMinCount == 1);
+                m_backtrackingState.link(*this, op);
+                m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, frameAddress().withOffset((term->frameLocation + BackTrackInfoParenthesesTerminal::entryPositionIndex()) * sizeof(void*))).linkTo(endOp.m_reentry, &m_jit);
+                m_backtrackingState.fallthrough();
                 break;
             }
             case YarrOpCode::ParenthesesSubpatternTerminalEnd:
