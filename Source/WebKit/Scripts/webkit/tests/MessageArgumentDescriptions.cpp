@@ -289,6 +289,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection>(globalObject, decoder);
     case MessageName::TestWithStreamSwift_SendString:
         return jsValueForDecodedMessage<MessageName::TestWithStreamSwift_SendString>(globalObject, decoder);
+    case MessageName::TestWithStreamSwift_SendStringSync:
+        return jsValueForDecodedMessage<MessageName::TestWithStreamSwift_SendStringSync>(globalObject, decoder);
     case MessageName::TestWithSuperclass_LoadURL:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_LoadURL>(globalObject, decoder);
 #if ENABLE(TEST_FEATURE)
@@ -432,6 +434,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
     case MessageName::TestWithStream_SendAndReceiveMachSendRight:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendAndReceiveMachSendRight>(globalObject, decoder);
 #endif
+    case MessageName::TestWithStreamSwift_SendStringSync:
+        return jsValueForDecodedMessageReply<MessageName::TestWithStreamSwift_SendStringSync>(globalObject, decoder);
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
@@ -1071,6 +1075,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
         };
+    case MessageName::TestWithStreamSwift_SendStringSync:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s },
+        };
     case MessageName::TestWithSuperclass_LoadURL:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
@@ -1314,6 +1322,10 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
             { "r1"_s, "MachSendRight"_s },
         };
 #endif
+    case MessageName::TestWithStreamSwift_SendStringSync:
+        return Vector<ArgumentDescription> {
+            { "returnValue"_s, "int64_t"_s },
+        };
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return Vector<ArgumentDescription> {

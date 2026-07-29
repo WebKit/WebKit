@@ -28,4 +28,5 @@
 ]
 messages -> TestWithStreamSwift Stream {
     void SendString(String url)
+    void SendStringSync(String url) -> (int64_t returnValue) Synchronous
 }

@@ -195,6 +195,7 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "SyncMessageReply"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_GetPluginProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_TestMultipleAttributes"_s, ReceiverName::TestWithLegacyReceiver, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithStreamSwift_SendStringSync"_s, ReceiverName::TestWithStreamSwift, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if PLATFORM(COCOA)
     MessageDescription { "TestWithStream_ReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStream_SendAndReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },

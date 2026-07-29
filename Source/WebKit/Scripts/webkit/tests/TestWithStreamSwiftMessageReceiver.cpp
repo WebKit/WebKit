@@ -47,6 +47,10 @@ void TestWithStreamSwiftMessageForwarder::didReceiveStreamMessage(IPC::StreamSer
         IPC::handleMessage<Messages::TestWithStreamSwift::SendString>(connection, decoder, target.get(), &TestWithStreamSwift::sendString);
         return;
     }
+    if (decoder.messageName() == Messages::TestWithStreamSwift::SendStringSync::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithStreamSwift::SendStringSync>(connection, decoder, target.get(), &TestWithStreamSwift::sendStringSync);
+        return;
+    }
     RELEASE_LOG_ERROR(IPC, "Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();
 }
@@ -84,6 +88,14 @@ namespace IPC {
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamSwift_SendString>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithStreamSwift::SendString::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamSwift_SendStringSync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStreamSwift::SendStringSync::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStreamSwift_SendStringSync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStreamSwift::SendStringSync::ReplyArguments>(globalObject, decoder);
 }
 
 }

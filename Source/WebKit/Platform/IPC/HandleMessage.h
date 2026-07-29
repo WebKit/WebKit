@@ -514,11 +514,14 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     logMessage(connection, MessageType::name(), object, *arguments);
+    auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
+    [syncRequestID = decoder.syncRequestID(), connection = protect(connection)] (auto&&... args) mutable {
+        logReply(connection, MessageType::name(), args...);
+        connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
+    }));
+
     callMemberFunction(object, function, WTF::move(*arguments),
-        CompletionHandlerType([syncRequestID = decoder.syncRequestID(), connection = protect(connection)] (auto&&... args) mutable {
-            logReply(connection, MessageType::name(), args...);
-            connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
-        }));
+        ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
 }
 
 template<typename MessageType, typename C, typename T, typename U, typename MF>
