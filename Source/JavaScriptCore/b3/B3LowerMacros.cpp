@@ -1209,11 +1209,12 @@ private:
         const unsigned minCasesForTable = 7;
         const unsigned densityLimit = 4;
         if (end - start >= minCasesForTable) {
-            int64_t firstValue = cases[start].caseValue();
-            int64_t lastValue = cases[end - 1].caseValue();
-            if ((lastValue - firstValue + 1) / (end - start) < densityLimit) {
-                size_t tableSize = lastValue - firstValue + 1 + 1; // + 1 for fallthrough
-                Value* index = before->appendNew<Value>(m_proc, Sub, m_origin, child, before->appendIntConstant(m_proc, m_origin, type, firstValue));
+            CheckedInt64 firstValue = cases[start].caseValue();
+            CheckedInt64 lastValue = cases[end - 1].caseValue();
+            CheckedInt64 range = lastValue - firstValue + 1;
+            if (!range.hasOverflowed() && static_cast<uint64_t>(range.value()) / (end - start) < densityLimit) {
+                size_t tableSize = static_cast<size_t>(range.value()) + 1; // + 1 for fallthrough
+                Value* index = before->appendNew<Value>(m_proc, Sub, m_origin, child, before->appendIntConstant(m_proc, m_origin, type, firstValue.value()));
                 Value* fallthroughIndex = before->appendIntConstant(m_proc, m_origin, type, tableSize - 1);
                 index = before->appendNew<B3::Value>(m_proc, Select, m_origin, before->appendNew<Value>(m_proc, AboveEqual, m_origin, index, fallthroughIndex), fallthroughIndex, index);
 
@@ -1242,7 +1243,7 @@ private:
                     FrequentedBlock block = cases[i].target();
                     int64_t value = cases[i].caseValue();
                     before->appendSuccessor(block);
-                    size_t index = value - firstValue;
+                    size_t index = value - firstValue.value();
                     ASSERT(!handledIndices.get(index));
                     handledIndices.set(index);
                 }

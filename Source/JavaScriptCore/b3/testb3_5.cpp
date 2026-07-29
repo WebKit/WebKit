@@ -2967,6 +2967,51 @@ void testSwitchTargettingSameBlockFoldPathConstant()
     }
 }
 
+void testSwitchSparseI64RangeOverflow()
+{
+    static constexpr auto caseValues = WTF::toArray<int64_t>({
+        -7554636318383037360LL, -7454801818899625434LL, -7429423314461979223LL,
+        -7207276661950557992LL, -7131803591814180821LL, -6019758777144226059LL,
+        -5780275611666609265LL, -4358396017616483017LL, -4143042619558893734LL,
+        -2917486167113271335LL, -2784610183734848337LL, -2624729345222129160LL,
+        -2622802681898502475LL, -2183502553742430119LL, -425081688584147149LL,
+        457380681191578133LL, 898638452777906692LL, 950521141494289804LL,
+        1228320887535867596LL, 1732804360746816840LL, 2039119943687723725LL,
+        3865875329656804759LL, 4986947095633979045LL, 5134327459162675121LL,
+        5167461299025127993LL, 5265749391392088513LL, 5268430586848198546LL,
+        5400666402170143952LL, 6290364617955584048LL, 6568062526259002154LL,
+    });
+    static constexpr unsigned numCases = caseValues.size();
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+
+    BasicBlock* fallThrough = proc.addBlock();
+    fallThrough->appendNewControlValue(
+        proc, Return, Origin(),
+        fallThrough->appendNew<Const64Value>(proc, Origin(), -1));
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), arguments[0]);
+    switchValue->setFallThrough(FrequentedBlock(fallThrough));
+
+    for (unsigned i = 0; i < numCases; ++i) {
+        BasicBlock* target = proc.addBlock();
+        target->appendNewControlValue(
+            proc, Return, Origin(),
+            target->appendNew<Const64Value>(proc, Origin(), static_cast<int64_t>(i)));
+        switchValue->appendCase(SwitchCase(caseValues[i], FrequentedBlock(target)));
+    }
+
+    auto code = compileProc(proc);
+
+    for (unsigned i = 0; i < numCases; ++i)
+        CHECK_EQ(invoke<int64_t>(*code, caseValues[i]), static_cast<int64_t>(i));
+    CHECK_EQ(invoke<int64_t>(*code, 0), static_cast<int64_t>(-1));
+    CHECK_EQ(invoke<int64_t>(*code, std::numeric_limits<int64_t>::min()), static_cast<int64_t>(-1));
+    CHECK_EQ(invoke<int64_t>(*code, std::numeric_limits<int64_t>::max()), static_cast<int64_t>(-1));
+}
+
 void testTruncFold(int64_t value)
 {
     Procedure proc;

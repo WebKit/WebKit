@@ -924,6 +924,7 @@ void run(const TestConfig* config)
 
     RUN(testSwitchTargettingSameBlock());
     RUN(testSwitchTargettingSameBlockFoldPathConstant());
+    RUN(testSwitchSparseI64RangeOverflow());
 
     RUN(testTrunc(0));
     RUN(testTrunc(1));

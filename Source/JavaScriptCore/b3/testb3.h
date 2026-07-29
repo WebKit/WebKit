@@ -1227,6 +1227,7 @@ void testSwitchSameCaseAsDefault();
 void testSwitchChillDiv(unsigned degree, unsigned gap);
 void testSwitchTargettingSameBlock();
 void testSwitchTargettingSameBlockFoldPathConstant();
+void testSwitchSparseI64RangeOverflow();
 void testTruncFold(int64_t value);
 void testZExt32(int32_t value);
 void testZExt32Fold(int32_t value);
