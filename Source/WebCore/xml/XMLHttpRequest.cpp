@@ -696,7 +696,7 @@ void XMLHttpRequest::abort()
     if (!internalAbort())
         return;
 
-    clearResponseBuffers();
+    clearResponse();
 
     m_requestHeaders.clear();
     if ((readyState() == OPENED && m_sendFlag) || readyState() == HEADERS_RECEIVED || readyState() == LOADING) {
