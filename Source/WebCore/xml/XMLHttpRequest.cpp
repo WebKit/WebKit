@@ -755,6 +755,7 @@ void XMLHttpRequest::clearResponseBuffers()
     }
     m_binaryResponseBuilder.reset();
     m_responseCacheIsValid = false;
+    m_allResponseHeaders = { };
 }
 
 void XMLHttpRequest::clearRequest()
