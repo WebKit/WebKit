@@ -112,7 +112,7 @@ class FrameLoader final : public CanMakeWeakPtr<FrameLoader> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FrameLoader, Loader);
     friend class PolicyChecker;
 public:
-    FrameLoader(LocalFrame&, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator);
+    FrameLoader(LocalFrame&, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator, RefPtr<Document>&& initialDocumentCreator);
     ~FrameLoader();
 
     WEBCORE_EXPORT void NODELETE ref() const;
@@ -122,6 +122,7 @@ public:
     void initForSynthesizedDocument(const URL&);
 
     WEBCORE_EXPORT LocalFrame& NODELETE frame() const;
+    Document* initialDocumentCreator() const { return m_initialDocumentCreator.get(); }
 
     PolicyChecker& policyChecker() const { return m_policyChecker; }
 
@@ -564,6 +565,7 @@ private:
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
+    RefPtr<Document> m_initialDocumentCreator;
 
     enum class AsyncBackForwardNavigationState : uint8_t { None, Pending, Cancelled };
     AsyncBackForwardNavigationState m_asyncBackForwardNavigationState { AsyncBackForwardNavigationState::None };

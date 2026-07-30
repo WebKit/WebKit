@@ -67,6 +67,7 @@ class DataListSuggestionPicker;
 class DataListSuggestionsClient;
 class DateTimeChooser;
 class DateTimeChooserClient;
+class Document;
 class FileChooser;
 class FileIconLoader;
 class FloatRect;
@@ -172,7 +173,7 @@ public:
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement);
     void focusedFrameChanged(Frame*);
 
-    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, Document* creator, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
     WEBCORE_EXPORT void show();
 
     bool canRunModal() const;

@@ -75,6 +75,7 @@ class CredentialRequestCoordinatorClient;
 class CryptoClient;
 class DatabaseProvider;
 class DiagnosticLoggingClient;
+class Document;
 class DragClient;
 class EditorClient;
 class Frame;
@@ -116,6 +117,7 @@ public:
         CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)> clientCreator;
         SandboxFlags effectiveSandboxFlags;
         ReferrerPolicy effectiveReferrerPolicy { ReferrerPolicy::EmptyString };
+        RefPtr<Document> initialDocumentCreator;
     };
     using MainFrameCreationParameters = Variant<LocalMainFrameCreationParameters, CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>>;
 

@@ -224,9 +224,9 @@ void Chrome::focusedFrameChanged(Frame* frame)
     m_client->focusedFrameChanged(frame);
 }
 
-RefPtr<Page> Chrome::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction& action)
+RefPtr<Page> Chrome::createWindow(LocalFrame& frame, Document* creator, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction& action)
 {
-    RefPtr newPage = m_client->createWindow(frame, openedMainFrameName, features, action);
+    RefPtr newPage = m_client->createWindow(frame, creator, openedMainFrameName, features, action);
     if (!newPage)
         return nullptr;
 

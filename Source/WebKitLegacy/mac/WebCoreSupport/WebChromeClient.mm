@@ -265,7 +265,7 @@ void WebChromeClient::focusedFrameChanged(WebCore::Frame*)
 {
 }
 
-RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, const String& openedMainFrameName, const WebCore::WindowFeatures& features, const WebCore::NavigationAction&)
+RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, WebCore::Document*, const String& openedMainFrameName, const WebCore::WindowFeatures& features, const WebCore::NavigationAction&)
 {
     RetainPtr<id> delegate = [m_webView UIDelegate];
     RetainPtr<WebView> newWebView;

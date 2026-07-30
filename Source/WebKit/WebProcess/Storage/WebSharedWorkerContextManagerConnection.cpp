@@ -120,7 +120,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 
     pageConfiguration.mainFrameCreationParameters = WebCore::PageConfiguration::LocalMainFrameCreationParameters { CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [webPageProxyID = m_webPageProxyID, pageID = m_pageID, userAgent = m_userAgent] (auto&, auto& frameLoader) mutable {
         return makeUniqueRefWithoutRefCountedCheck<RemoteWorkerFrameLoaderClient>(frameLoader, webPageProxyID, pageID, userAgent);
-    } }, WebCore::SandboxFlags { }, WebCore::ReferrerPolicy::EmptyString };
+    } }, WebCore::SandboxFlags { }, WebCore::ReferrerPolicy::EmptyString, nullptr };
 
     Ref page = WebCore::Page::create(WTF::move(pageConfiguration));
     if (m_preferencesStore) {

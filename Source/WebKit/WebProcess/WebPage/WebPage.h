@@ -177,6 +177,7 @@ namespace WebCore {
 class AXIsolatedTree;
 class CachedPage;
 class CaptureDevice;
+class Document;
 class DocumentLoader;
 class DocumentSyncData;
 class DragData;
@@ -618,7 +619,7 @@ String plainTextForDisplay(const std::optional<WebCore::SimpleRange>&);
 
 class WebPage final : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
-    static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&);
+    static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&, RefPtr<WebCore::Document> initialDocumentCreator = nullptr);
 
     virtual ~WebPage();
 
@@ -2236,7 +2237,7 @@ public:
     void updateRemoteIntersectionObservers();
 
 private:
-    WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
+    WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&, RefPtr<WebCore::Document>&&);
 
     void constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters&);
 

@@ -546,11 +546,11 @@ public:
     }
 };
 
-Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters)
+Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters, RefPtr<Document> initialDocumentCreator)
 {
     auto mainFrameOpenerIdentifier = parameters.mainFrameOpenerIdentifier;
     String openedMainFrameName = parameters.openedMainFrameName;
-    auto page = adoptRef(*new WebPage(pageID, WTF::move(parameters)));
+    Ref page = adoptRef(*new WebPage(pageID, WTF::move(parameters), WTF::move(initialDocumentCreator)));
 
     if (RefPtr injectedBundle = WebProcess::singleton().injectedBundle())
         injectedBundle->didCreatePage(page);
@@ -602,7 +602,7 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     });
 }
 
-static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameters(Ref<WebFrame>&& mainFrame, auto frameType, auto initialSandboxFlags, auto initialReferrerPolicy)
+static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameters(Ref<WebFrame>&& mainFrame, auto frameType, auto initialSandboxFlags, auto initialReferrerPolicy, RefPtr<Document>&& initialDocumentCreator)
 {
     auto invalidator = mainFrame->makeInvalidator();
     switch (frameType) {
@@ -612,7 +612,8 @@ static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameter
                 return makeUniqueRefWithoutRefCountedCheck<WebLocalFrameLoaderClient>(localFrame, frameLoader, WTF::move(mainFrame), WTF::move(invalidator));
             } },
             initialSandboxFlags,
-            initialReferrerPolicy
+            initialReferrerPolicy,
+            WTF::move(initialDocumentCreator)
         };
     case Frame::FrameType::Remote:
         return CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)> { [mainFrame = WTF::move(mainFrame), invalidator = WTF::move(invalidator)] (auto&) mutable {
@@ -632,7 +633,7 @@ static RefPtr<Frame> frameFromIdentifier(std::optional<FrameIdentifier> identifi
     return webFrame->coreFrame();
 }
 
-WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
+WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters, RefPtr<Document>&& initialDocumentCreator)
     : m_internals(makeUniqueRef<Internals>())
     , m_identifier(pageID)
     , m_viewSize(parameters.viewSize)
@@ -811,7 +812,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        mainFrameCreationParameters(m_mainFrame.copyRef(), frameType, parameters.initialSandboxFlags, parameters.initialReferrerPolicy),
+        mainFrameCreationParameters(m_mainFrame.copyRef(), frameType, parameters.initialSandboxFlags, parameters.initialReferrerPolicy, WTF::move(initialDocumentCreator)),
         m_mainFrame->frameID(),
         frameFromIdentifier(parameters.mainFrameOpenerIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),

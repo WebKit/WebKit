@@ -134,7 +134,7 @@ using NodeQualifier = Function<RefPtr<Node> (const HitTestResult&, Node* termina
 class LocalFrame final : public Frame {
 public:
     using ClientCreator = CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>;
-    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, Frame* opener, Ref<FrameTreeSyncData>&&);
+    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, Frame* opener, RefPtr<Document>&& initialDocumentCreator, Ref<FrameTreeSyncData>&&);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, HTMLFrameOwnerElement&, Ref<FrameTreeSyncData>&&);
     WEBCORE_EXPORT static Ref<LocalFrame> createProvisionalSubframe(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, ScrollbarMode, Frame& parent, Ref<FrameTreeSyncData>&&);
 
@@ -374,7 +374,7 @@ protected:
 private:
     friend class NavigationDisabler;
 
-    LocalFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, std::optional<ScrollbarMode>, HTMLFrameOwnerElement*, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
+    LocalFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, std::optional<ScrollbarMode>, HTMLFrameOwnerElement*, Frame* parent, Frame* opener, RefPtr<Document>&& initialDocumentCreator, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
 
     void dropChildren();
 

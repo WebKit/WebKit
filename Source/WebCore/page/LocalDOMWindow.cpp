@@ -2912,8 +2912,6 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
         return RefPtr<Frame> { nullptr };
 
     RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
-    if (created == CreatedNewPage::Yes && localNewFrame && !noopener)
-        protect(localNewFrame->document())->setAboutBaseURL(activeDocument->baseURL());
 
     // https://html.spec.whatwg.org/#the-rules-for-choosing-a-navigable
     // Consume user activation when a new browsing context is created.

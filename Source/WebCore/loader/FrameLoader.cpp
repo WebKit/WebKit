@@ -379,7 +379,7 @@ private:
     bool m_inProgress { false };
 };
 
-FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator)
+FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator, RefPtr<Document>&& initialDocumentCreator)
     : m_frame(frame)
     , m_client(clientCreator(frame, *this))
     , m_policyChecker(makeUniqueRef<PolicyChecker>(frame))
@@ -390,6 +390,7 @@ FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFra
     , m_loadType(FrameLoadType::Standard)
     , m_checkTimer(*this, &FrameLoader::checkTimerFired)
     , m_crossOriginParentSyntheticSameDocLoadEventTimer(*this, &FrameLoader::crossOriginParentSyntheticSameDocLoadEventTimerFired)
+    , m_initialDocumentCreator(WTF::move(initialDocumentCreator))
     , m_documentPrefetcher(DocumentPrefetcher::create(frame))
 {
 }
@@ -425,6 +426,7 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()));
     setProvisionalDocumentLoader(m_policyDocumentLoader.copyRef());
     protect(m_provisionalDocumentLoader)->startLoadingMainResource();
+    m_initialDocumentCreator = nullptr;
     setPolicyDocumentLoader(nullptr);
 
     Ref frame = m_frame.get();
@@ -5075,7 +5077,7 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
     NavigationAction action { request, NavigationType::Other };
     action.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
-    RefPtr page = oldPage->chrome().createWindow(openerFrame, openedMainFrameName, features, action);
+    RefPtr page = oldPage->chrome().createWindow(openerFrame, features.wantsNoOpener() ? nullptr : &request.requester(), openedMainFrameName, features, action);
     if (!page)
         return { nullptr, CreatedNewPage::No };
 
