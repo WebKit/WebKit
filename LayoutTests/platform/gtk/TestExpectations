@@ -396,8 +396,6 @@ webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/attr-all-type
 
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 
-webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
-
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
 
 webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
@@ -1098,6 +1096,11 @@ imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-tr
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
+
+webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Timeout ]
 
 webkit.org/b/278719 fast/events/touch/basic-single-touch-events.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/emulate-touch-events.html [ Failure ]

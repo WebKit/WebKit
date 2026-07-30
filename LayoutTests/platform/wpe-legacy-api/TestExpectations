@@ -35,9 +35,13 @@ fast/events/touch/send-oncancel-event.html [ Pass ]
 
 fast/events/touch/touch-event-pageXY.html [ Skip ] # Timeout.
 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ] # Timeout.
-fast/events/touch/touch-target-limited.html [ Skip ] # Timeout.
 fast/events/touch/multi-touch-inside-nested-iframes.html [ Skip ] # Timeout.
 fast/events/touch/multi-touch-grouped-targets.html [ Skip ] # Timeout.
+
+webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Skip ] # Timeout.
+webkit.org/b/278719 fast/events/touch/touch-target.html [ Timeout ]
 
 # These failures appear to be bugs in the EventSender
 fast/html/transient-activation.html [ Skip ] # Timeout
@@ -108,7 +112,6 @@ webkit.org/b/186879 fast/events/open-window-from-another-frame.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-allowed-from-gesture-initiated-event.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-blocked-from-fake-user-gesture.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-blocking-timers1.html [ Timeout ]
-webkit.org/b/278719 fast/events/touch/inserted-fragment-touch-target.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

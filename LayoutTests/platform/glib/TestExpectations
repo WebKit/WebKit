@@ -604,9 +604,6 @@ media/media-source/media-source-inband-cea608-track.html [ Pass ]
 
 media/media-source/media-source-video-seek-pause.html [ Failure Pass ]
 
-# GStreamer seeks to the wrong frame
-webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ ImageOnlyFailure ]
-
 # GStreamer incorrectly demux the webm and creates gaps.
 webkit.org/b/266195 media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Failure ]
 
@@ -1478,7 +1475,7 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.h
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
-webkit.org/b/319525 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ ImageOnlyFailure ]
+webkit.org/b/319525 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013a.html [ Pass ]
@@ -2596,6 +2593,8 @@ fast/text/simple-line-layout-hyphenation-constrains.html [ ImageOnlyFailure ]
 
 webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
 
+webkit.org/b/295127  transitions/svg-text-shadow-transition.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Transitions-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3013,6 +3012,8 @@ imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.https.htm
 
 # Also skipped on mac, timing out because relying on MediaStream::onactive event which is not exposed.
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
+
+webkit.org/b/320603 webrtc/multi-video.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -4437,6 +4438,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-inline-with-offset-from-containing-block-clipped.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-inline-with-offset-from-containing-block-clipped.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-wildcard.html [ ImageOnlyFailure Pass ]
@@ -4591,8 +4593,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pagelo
 webkit.org/b/277255 fast/forms/datalist/datalist-searchinput-appearance.html [ Failure Pass ]
 
 # Touch events related layout tests failing
-webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/document-create-touch.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/document-create-touch-list.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/document-create-touch-list-ios.html [ Failure ]
@@ -4618,8 +4618,6 @@ webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/touch-constructor.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-scaled-scrolled.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/touch-target.html [ Timeout ]
-webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/zoomed-touch-event-pageXY.html [ Timeout ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/historical.html [ Failure ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-retargeting.html [ Failure ]
@@ -5106,8 +5104,6 @@ http/tests/workers/service/service-worker-download-octet-stream-nosniff.https.ht
 
 # Resource timing tests are flaky due to redirect timing variability
 webkit.org/b/197473 imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-requestStart-responseStart.https.html?include=waitingForRedirect [ Pass Failure ]
-
-webkit.org/b/278719 fast/events/touch/inserted-fragment-touch-target.html [ Timeout ]
 
 # This test has been failing on glib ports since its creation.
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-supplementary-ideograph.html [ ImageOnlyFailure ]

@@ -679,8 +679,6 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 ## -- Enhanced <select> tests -- ##
 # No calc-size() in default style.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-accessibility-minimum-target-size.html [ Skip ]
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-size-empty-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-size-empty-002.html [ ImageOnlyFailure ]
 # Intrinsic sizing of a base-select inside a flex container differs from the reference.
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-height-in-flex.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-width-in-flex.html [ ImageOnlyFailure ]
@@ -2946,7 +2944,6 @@ http/wpt/mediarecorder/pause-recording.html [ Slow ]
 http/wpt/mediarecorder/pause-recording-2.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Slow ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-encodings.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationEffect.html [ Failure ]
@@ -5473,7 +5470,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-006.html [ ImageOnlyFailure ]
@@ -5694,7 +5690,6 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/220325 imported/w3c/web-platform-tests/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
 
 # Tests need updating relating to Highlight Spec
-imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-below-selection-transparency.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-inheritance-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-inheritance-002.html [ ImageOnlyFailure ]
 
@@ -5968,7 +5963,6 @@ imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dyna
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-lighting-no-light.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-effect-remove-unattached.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/filter-external-002-test.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-region-transformed-composited-child-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-turbulence-invalid-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-applies-to-float.html [ ImageOnlyFailure ]
