@@ -103,6 +103,7 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
+        self.addStep(ApplyPatch())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateChangeContent())
         self.addStep(KillOldProcesses())
