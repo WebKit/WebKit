@@ -63,6 +63,12 @@ TEST(MIMESniffer, WebMSnifferDoesNotReadPastEnd)
     // read in MIMESniffer.cpp under ASan / libc++ hardened mode.
     constexpr std::array<const uint8_t, 7> truncatedWebM = { 0x1A, 0x45, 0xDF, 0xA3, 0x42, 0x82, 0x80 };
     MIMESniffer::getMIMETypeFromContent(std::span { truncatedWebM });
+
+    // EBML magic (4 bytes) followed by a lone 0x42 as the last byte. The loop
+    // guard only ensures iter < length, so the 0x42 0x82 two-byte compare reads
+    // sequence[iter + 1] one byte past the end when iter == length - 1.
+    constexpr std::array<const uint8_t, 5> truncatedWebMAtMagicByte = { 0x1A, 0x45, 0xDF, 0xA3, 0x42 };
+    MIMESniffer::getMIMETypeFromContent(std::span { truncatedWebMAtMagicByte });
 }
 
 } // namespace TestWebKitAPI
