@@ -325,6 +325,10 @@ public:
     static bool isSeparated(const RenderObject&);
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+    static bool isSpatialPortal(const RenderObject&);
+#endif
+
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
 
     struct WidgetLayerAttachment {

@@ -5278,6 +5278,7 @@ enum class WebCore::ModelContextDisablePortal : bool
     WebCore::PlatformLayerIdentifier modelLayerIdentifier()
     WebCore::LayerHostingContextIdentifier modelContentsLayerHostingContextIdentifier()
     WebCore::LayoutSize modelLayoutSize()
+    WebCore::LayoutPoint modelLayoutOrigin()
     WebCore::ModelContextDisablePortal disablePortal()
     std::optional<WebCore::Color> backgroundColor()
 };

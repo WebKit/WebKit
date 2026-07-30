@@ -72,6 +72,10 @@ class Model;
 class ModelPlayerProvider;
 class MouseRelatedEvent;
 
+#if ENABLE(SPATIAL_PORTAL)
+class SpatialPortalController;
+#endif
+
 template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxy;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
@@ -99,6 +103,12 @@ public:
     bool complete() const { return m_dataComplete; }
 
     void configureGraphicsLayer(GraphicsLayer&, Color backgroundColor);
+
+#if ENABLE(SPATIAL_PORTAL)
+    void didFinishLoadingInsidePortal();
+    void didFailLoadingInsidePortal(const ResourceError&);
+    void spatialPortalContextDidChange();
+#endif
 
     std::optional<PlatformLayerIdentifier> layerID() const;
 
@@ -243,6 +253,7 @@ private:
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }
+    bool rendererIsNeeded(const Style::ComputedStyle&) final;
     void didAttachRenderers() final;
     void willDetachRenderers() final;
 
@@ -290,6 +301,13 @@ private:
 
     LayoutSize contentSize() const;
     bool modelContainerSizeIsEmpty() const;
+
+#if ENABLE(SPATIAL_PORTAL)
+    RefPtr<const Element> findPortalAncestor() const;
+    SpatialPortalController* findPortalController() const;
+    void updateSpatialPortalController();
+    bool isInsidePortal() const;
+#endif
 
     void reportExtraMemoryCost();
 
@@ -354,6 +372,10 @@ private:
     RefPtr<ModelPlayer> m_modelPlayer;
     RefPtr<ModelPlayer> m_pendingModelPlayer;
     EventLoopTimerHandle m_loadModelTimer;
+
+#if ENABLE(SPATIAL_PORTAL)
+    WeakPtr<SpatialPortalController> m_lastRegisteredPortalController;
+#endif
 
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
     Ref<DOMMatrixReadOnly> m_entityTransform;

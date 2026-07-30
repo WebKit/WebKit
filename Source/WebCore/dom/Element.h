@@ -927,8 +927,9 @@ public:
 
 #if ENABLE(SPATIAL_PORTAL)
     SpatialPortalController& ensureSpatialPortalController();
-    SpatialPortalController* spatialPortalController() const;
+    WEBCORE_EXPORT SpatialPortalController* spatialPortalController() const;
     void clearSpatialPortalController();
+    WEBCORE_EXPORT bool establishesSpatialPortal() const;
 #endif
 
 protected:

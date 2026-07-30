@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    #portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<div id="portal"></div>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = document.getElementById("portal");
+
+    const model = document.createElement("model");
+    t.add_cleanup(() => model.remove());
+
+    let loadFired = false;
+    model.addEventListener("load", () => loadFired = true, { once: true });
+    portal.appendChild(model);
+
+    const source = document.createElement("source");
+    source.src = "../model-element/resources/cube.usdz";
+    model.appendChild(source);
+
+    await model.ready;
+    assert_true(loadFired, "dynamically inserted <model> fires load and ready");
+    assert_equals(model.getBoundingClientRect().width, 0, "delegated <model> has no box of its own");
+}, "Dynamically inserting a <model> into a spatial portal loads it");
+
+promise_test(async t => {
+    const portal = document.getElementById("portal");
+
+    const model = document.createElement("model");
+    t.add_cleanup(() => model.remove());
+
+    portal.appendChild(model);
+    const source = document.createElement("source");
+    source.src = "../model-element/resources/cube.usdz";
+    model.appendChild(source);
+
+    await model.ready;
+    assert_equals(model.getBoundingClientRect().width, 0, "delegated <model> has no box while inside the portal");
+
+    portal.style.spatial = "none";
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_greater_than(model.getBoundingClientRect().width, 0, "standalone <model> regains a box of its own");
+}, "Removing spatial: portal renders the child model in standalone mode");
+</script>
+</body>
+</html>

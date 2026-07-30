@@ -445,6 +445,10 @@
 #include "HTMLModelElement.h"
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "SpatialPortalController.h"
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
@@ -8755,6 +8759,19 @@ String Internals::modelElementState(HTMLModelElement& element)
 bool Internals::isModelElementIntersectingViewport(HTMLModelElement& element)
 {
     return element.isIntersectingViewport();
+}
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+unsigned Internals::numberOfHostedModelsInSpatialPortal(Element& element)
+{
+    CheckedPtr controller = element.spatialPortalController();
+    return controller ? controller->numberOfHostedModels() : 0;
+}
+
+bool Internals::establishesSpatialPortal(Element& element)
+{
+    return element.establishesSpatialPortal();
 }
 #endif
 

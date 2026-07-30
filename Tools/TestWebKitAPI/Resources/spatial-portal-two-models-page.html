@@ -1,0 +1,15 @@
+<style>
+    #portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<script>
+    internals.disableModelLoadDelaysForTesting()
+</script>
+<div id="portal">
+    <model><source src='cube.usdz'></model>
+    <model><source src='cube.usdz'></model>
+</div>
+<script>
+    const models = [...document.querySelectorAll('model')];
+    // FIXME: rdar://182292429 (Multi model support, switch to Promise.all)
+    Promise.allSettled(models.map(model => model.ready)).then(() => window.webkit.messageHandlers.modelLoading.postMessage('READY'));
+</script>

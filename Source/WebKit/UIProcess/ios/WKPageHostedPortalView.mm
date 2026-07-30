@@ -289,14 +289,16 @@
     [self.layer setValue:(__bridge id)cachedCGColor(backgroundColor->opaqueColor()).get() forKeyPath:@"separatedOptions.material.clearColor"];
 }
 
-#if HAVE(RE_STEREO_CONTENT_SUPPORT)
 - (void)layoutSubviews
 {
     [super layoutSubviews];
 
+    [_containerView setFrame:self.bounds];
+
+#if HAVE(RE_STEREO_CONTENT_SUPPORT)
     [_stereoContentLayer setFrame:self.bounds];
-}
 #endif
+}
 
 - (void)setPortalCrossing:(BOOL)enabled
 {

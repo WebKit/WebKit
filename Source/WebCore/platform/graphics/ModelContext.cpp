@@ -28,15 +28,16 @@
 
 namespace WebCore {
 
-Ref<ModelContext> ModelContext::create(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
+Ref<ModelContext> ModelContext::create(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, const LayoutPoint& origin, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
 {
-    return adoptRef(*new ModelContext(modelLayerIdentifier, modelContentsLayerHostingContextIdentifier, size, disablePortal, backgroundColor));
+    return adoptRef(*new ModelContext(modelLayerIdentifier, modelContentsLayerHostingContextIdentifier, size, origin, disablePortal, backgroundColor));
 }
 
-ModelContext::ModelContext(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
+ModelContext::ModelContext(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, const LayoutPoint& origin, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
     : m_modelLayerIdentifier(modelLayerIdentifier)
     , m_modelContentsLayerHostingContextIdentifier(modelContentsLayerHostingContextIdentifier)
     , m_modelLayoutSize(size)
+    , m_modelLayoutOrigin(origin)
     , m_disablePortal(disablePortal)
     , m_backgroundColor(backgroundColor)
 {

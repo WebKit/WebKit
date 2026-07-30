@@ -1,0 +1,3 @@
+
+PASS A <model> in nested spatial portals delegates to the outer portal
+

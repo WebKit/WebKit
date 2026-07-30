@@ -1796,7 +1796,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         bool needsForegroundLayer = !!layer.negativeZOrderLayers().size();
 #if ENABLE(SPATIAL_PORTAL)
         // Same thing for `spatial: portal` elements.
-        needsForegroundLayer = needsForegroundLayer || layer.renderer().style().spatial() == SpatialType::Portal;
+        needsForegroundLayer = needsForegroundLayer || isSpatialPortal(layer.renderer());
 #endif
         if (needsForegroundLayer && layerBacking && layerBacking->foregroundLayer())
             childList.append(Ref { *layerBacking->foregroundLayer() });
@@ -3828,6 +3828,17 @@ bool RenderLayerCompositor::isSeparated(const RenderObject& renderer)
 }
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+bool RenderLayerCompositor::isSpatialPortal(const RenderObject& renderer)
+{
+    CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer);
+    if (!renderElement)
+        return false;
+    RefPtr element = renderElement->element();
+    return element && element->establishesSpatialPortal();
+}
+#endif
+
 // Return true if the given layer is a stacking context and has compositing child
 // layers that it needs to clip. In this case we insert a clipping GraphicsLayer
 // into the hierarchy between this layer and its children in the z-order hierarchy.
@@ -4040,7 +4051,7 @@ bool RenderLayerCompositor::requiresCompositingForModel(RenderLayerModelObject& 
 bool RenderLayerCompositor::requiresCompositingForSpatialPortal(RenderLayerModelObject& renderer) const
 {
 #if ENABLE(SPATIAL_PORTAL)
-    return renderer.style().spatial() == SpatialType::Portal;
+    return isSpatialPortal(renderer);
 #else
     UNUSED_PARAM(renderer);
     return false;
@@ -4533,7 +4544,7 @@ bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer& lay
 
 #if ENABLE(SPATIAL_PORTAL)
     // DOM content goes in the foreground layer by default, the content layer will be a StereoLayer for models.
-    if (layer.renderer().style().spatial() == SpatialType::Portal)
+    if (isSpatialPortal(layer.renderer()))
         return true;
 #endif
 

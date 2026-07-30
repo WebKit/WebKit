@@ -115,6 +115,12 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "ElementAncestorIteratorInlines.h"
+#include "HTMLModelElement.h"
+#include "TypedElementDescendantIteratorInlines.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBox);
@@ -344,12 +350,42 @@ void RenderBox::invalidateAncestorBackgroundObscurationStatus()
 }
 
 #if ENABLE(SPATIAL_PORTAL)
-static void spatialPortalStyleDidChange(Element& element, SpatialType oldSpatial, SpatialType newSpatial)
+static bool isNestedInsideSpatialPortal(const Element& element)
 {
-    if (oldSpatial == SpatialType::None && newSpatial == SpatialType::Portal)
+    for (Ref ancestor : ancestorsOfType<Element>(element)) {
+        if (ancestor->establishesSpatialPortal())
+            return true;
+    }
+    return false;
+}
+
+static void updateSpatialPortalController(Element& element)
+{
+    bool hadController = element.establishesSpatialPortal();
+
+    CheckedPtr box = dynamicDowncast<RenderBox>(element.renderer());
+    if (box && box->style().spatial() == SpatialType::Portal && !isNestedInsideSpatialPortal(element))
         element.ensureSpatialPortalController();
-    else if (oldSpatial == SpatialType::Portal && newSpatial == SpatialType::None)
+    else
         element.clearSpatialPortalController();
+
+    if (box && hadController != element.establishesSpatialPortal()) {
+        if (CheckedPtr layer = box->layer())
+            layer->setNeedsCompositingConfigurationUpdate();
+    }
+}
+
+static void spatialPortalStyleDidChange(Element& element)
+{
+    updateSpatialPortalController(element);
+
+    for (Ref descendant : descendantsOfType<Element>(element)) {
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(descendant->renderer()); box && box->style().spatial() == SpatialType::Portal)
+            updateSpatialPortalController(descendant);
+    }
+
+    for (Ref model : descendantsOfType<HTMLModelElement>(element))
+        model->spatialPortalContextDidChange();
 }
 #endif
 
@@ -472,7 +508,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
     auto oldSpatial = oldStyle ? oldStyle->spatial() : SpatialType::None;
     if (oldSpatial != newStyle.spatial()) {
         if (RefPtr element = this->element())
-            spatialPortalStyleDidChange(*element, oldSpatial, newStyle.spatial());
+            spatialPortalStyleDidChange(*element);
     }
 #endif
 }

@@ -28,6 +28,7 @@
 #if ENABLE(MODEL_ELEMENT)
 
 #include <WebCore/Color.h>
+#include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
 #include <WebCore/Model.h>
 #include <wtf/RefPtr.h>
@@ -37,6 +38,7 @@ namespace WebCore {
 struct ModelPlayerGraphicsLayerConfiguration {
     RefPtr<Model> model;
     LayoutSize contentSize;
+    LayoutPoint contentOrigin;
     Color backgroundColor;
     bool isInteractive;
 #if ENABLE(MODEL_ELEMENT_PORTAL)

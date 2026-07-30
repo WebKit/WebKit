@@ -27,6 +27,7 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -37,22 +38,24 @@ enum class ModelContextDisablePortal : bool { No, Yes };
 
 class ModelContext final : public RefCounted<ModelContext> {
 public:
-    WEBCORE_EXPORT static Ref<ModelContext> NODELETE create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, ModelContextDisablePortal, std::optional<Color>);
+    WEBCORE_EXPORT static Ref<ModelContext> NODELETE create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, const LayoutPoint&, ModelContextDisablePortal, std::optional<Color>);
     WEBCORE_EXPORT ~ModelContext();
 
     PlatformLayerIdentifier modelLayerIdentifier() const { return m_modelLayerIdentifier; }
     LayerHostingContextIdentifier modelContentsLayerHostingContextIdentifier() const { return m_modelContentsLayerHostingContextIdentifier; }
     LayoutSize modelLayoutSize() const { return m_modelLayoutSize; }
+    LayoutPoint modelLayoutOrigin() const { return m_modelLayoutOrigin; }
     ModelContextDisablePortal disablePortal() const { return m_disablePortal; }
     std::optional<Color> backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(std::optional<Color> backgroundColor) { m_backgroundColor = backgroundColor; }
 
 private:
-    explicit ModelContext(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, ModelContextDisablePortal, std::optional<Color>);
+    explicit ModelContext(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, const LayoutPoint&, ModelContextDisablePortal, std::optional<Color>);
 
     PlatformLayerIdentifier m_modelLayerIdentifier;
     LayerHostingContextIdentifier m_modelContentsLayerHostingContextIdentifier;
     LayoutSize m_modelLayoutSize;
+    LayoutPoint m_modelLayoutOrigin;
     ModelContextDisablePortal m_disablePortal;
     std::optional<Color> m_backgroundColor;
 };

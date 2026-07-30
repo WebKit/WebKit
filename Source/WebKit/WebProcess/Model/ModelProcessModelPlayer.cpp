@@ -250,6 +250,7 @@ void ModelProcessModelPlayer::configureGraphicsLayer(WebCore::GraphicsLayer& gra
             *modelLayerIdentifier,
             *layerHostingContextIdentifier,
             configuration.contentSize,
+            configuration.contentOrigin,
             configuration.hasPortal ? WebCore::ModelContextDisablePortal::No : WebCore::ModelContextDisablePortal::Yes,
             configuration.backgroundColor
         ),

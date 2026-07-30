@@ -108,6 +108,11 @@
 #include <WebCore/TouchEvent.h>
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "ElementAncestorIteratorInlines.h"
+#include "SpatialPortalController.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -360,12 +365,97 @@ void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
 RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (isInsidePortal())
+        return nullptr;
+#endif
+
     if (RefPtr page = document().page()) {
         if (RefPtr provider = page->modelPlayerProvider(); provider && !provider->isAvailable())
             return HTMLElement::createElementRenderer(WTF::move(style), position);
     }
     return createRenderer<RenderModel>(*this, WTF::move(style));
 }
+
+bool HTMLModelElement::rendererIsNeeded(const Style::ComputedStyle& style)
+{
+#if ENABLE(SPATIAL_PORTAL)
+    if (isInsidePortal())
+        return false;
+#endif
+    return HTMLElement::rendererIsNeeded(style);
+}
+
+#if ENABLE(SPATIAL_PORTAL)
+RefPtr<const Element> HTMLModelElement::findPortalAncestor() const
+{
+    if (!document().settings().spatialPortalEnabled())
+        return nullptr;
+
+    for (Ref ancestor : ancestorsOfType<Element>(*this)) {
+        if (ancestor->establishesSpatialPortal())
+            return ancestor.ptr();
+    }
+
+    return nullptr;
+}
+
+bool HTMLModelElement::isInsidePortal() const
+{
+    return !!findPortalAncestor();
+}
+
+SpatialPortalController* HTMLModelElement::findPortalController() const
+{
+    RefPtr ancestor = findPortalAncestor();
+    return ancestor ? ancestor->spatialPortalController() : nullptr;
+}
+
+void HTMLModelElement::updateSpatialPortalController()
+{
+    CheckedPtr controller = findPortalController();
+
+    if (CheckedPtr previous = m_lastRegisteredPortalController.get(); previous && previous.get() != controller.get())
+        previous->unregisterChildModel(*this);
+
+    if (controller) {
+        m_lastRegisteredPortalController = *controller;
+        controller->registerChildModel(*this);
+    } else
+        m_lastRegisteredPortalController = nullptr;
+}
+
+void HTMLModelElement::didFinishLoadingInsidePortal()
+{
+    reportExtraMemoryCost();
+    if (!m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
+}
+
+void HTMLModelElement::didFailLoadingInsidePortal(const ResourceError&)
+{
+    if (!m_readyPromise->isFulfilled())
+        m_readyPromise->reject(Exception { ExceptionCode::AbortError });
+
+    m_dataMemoryCost.store(0, std::memory_order_relaxed);
+    reportExtraMemoryCost();
+}
+
+void HTMLModelElement::spatialPortalContextDidChange()
+{
+    updateSpatialPortalController();
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
+        element.deletePendingModelPlayer();
+        element.deleteModelPlayer();
+        element.m_shouldCreateModelPlayerUponRendererAttachment = true;
+        element.invalidateStyleAndRenderersForSubtree();
+
+        if (CheckedPtr controller = element.findPortalController())
+            controller->childModelDidChange(element);
+    });
+}
+#endif
 
 void HTMLModelElement::didAttachRenderers()
 {
@@ -604,6 +694,13 @@ RefPtr<GraphicsLayer> HTMLModelElement::graphicsLayer() const
 
 bool HTMLModelElement::isVisible() const
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (RefPtr portal = findPortalAncestor()) {
+        if (CheckedPtr controller = portal->spatialPortalController())
+            return controller->isPortalVisible();
+        return !protect(document())->hidden();
+    }
+#endif
     bool isVisibleInline = !protect(document())->hidden() && m_isIntersectingViewport;
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     return isVisibleInline || m_detachedForImmersive;
@@ -635,6 +732,14 @@ void HTMLModelElement::modelDidChange()
         triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "Model not associated with a page"_s });
         return;
     }
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (isInsidePortal()) {
+        if (CheckedPtr controller = findPortalController())
+            controller->childModelDidChange(*this);
+        return;
+    }
+#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     bool hasRenderer = this->renderer() || m_detachedForImmersive;
@@ -931,6 +1036,7 @@ void HTMLModelElement::configureGraphicsLayer(GraphicsLayer& graphicsLayer, Colo
     modelPlayer->configureGraphicsLayer(graphicsLayer, {
         .model = model(),
         .contentSize = contentSize(),
+        .contentOrigin = { },
         .backgroundColor = backgroundColor,
         .isInteractive = isInteractive(),
 #if ENABLE(MODEL_ELEMENT_PORTAL)
@@ -1964,6 +2070,15 @@ Node::NeedsPostConnectionSteps HTMLModelElement::insertionSteps(InsertionType in
             m_modelPlayerProvider = page->modelPlayerProvider();
             LazyLoadModelObserver::observe(*this);
         }
+#if ENABLE(SPATIAL_PORTAL)
+        updateSpatialPortalController();
+        if (isInsidePortal()) {
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
+                if (CheckedPtr controller = element.findPortalController())
+                    controller->childModelDidChange(element);
+            });
+        }
+#endif
     }
 
     return insertResult;
@@ -1982,6 +2097,12 @@ void HTMLModelElement::removingSteps(RemovalType removalType, ContainerNode& old
 
         deletePendingModelPlayer();
         deleteModelPlayer();
+
+#if ENABLE(SPATIAL_PORTAL)
+        if (CheckedPtr controller = m_lastRegisteredPortalController.get())
+            controller->unregisterChildModel(*this);
+        m_lastRegisteredPortalController = nullptr;
+#endif
     }
 }
 

@@ -289,6 +289,7 @@ Tests/WebKit/WKWebView/ShouldOpenAppLinks.mm @nonARC
 Tests/WebKit/WKWebView/SiteIsolation.mm @nonARC
 Tests/WebKit/WKWebView/SnapshotStore.mm @nonARC
 Tests/WebKit/WKWebView/ImmersiveVideoMetadata.mm @nonARC
+Tests/WebKit/WKWebView/SpatialPortal.mm @nonARC
 Tests/WebKit/WKWebView/SpeechRecognition.mm @nonARC
 Tests/WebKit/WKWebView/StopSuspendResumeAllMedia.mm @nonARC
 Tests/WebKit/WKWebView/StorageQuota.mm @nonARC

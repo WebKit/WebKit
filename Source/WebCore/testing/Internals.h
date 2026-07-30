@@ -1693,6 +1693,11 @@ public:
     bool NODELETE isModelElementIntersectingViewport(HTMLModelElement&);
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+    unsigned NODELETE numberOfHostedModelsInSpatialPortal(Element&);
+    bool NODELETE establishesSpatialPortal(Element&);
+#endif
+
     ExceptionOr<void> copyImageAtLocation(int x, int y);
 
     bool NODELETE hasMediaSessionManager() const;

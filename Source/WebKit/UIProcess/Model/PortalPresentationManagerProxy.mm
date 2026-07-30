@@ -34,6 +34,8 @@
 #import "WKPageHostedPortalView.h"
 #import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
+#import <WebCore/FloatPoint.h>
+#import <WebCore/FloatSize.h>
 #import <wtf/RefPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -57,8 +59,8 @@ RetainPtr<WKPageHostedPortalView> PortalPresentationManagerProxy::setUpModelView
     auto& modelPresentation = ensurePortalPresentation(modelContext, *webPageProxy);
     auto view = modelPresentation.pageHostedPortalView;
     CGRect frame = [view frame];
-    frame.size.width = modelContext->modelLayoutSize().width().toFloat();
-    frame.size.height = modelContext->modelLayoutSize().height().toFloat();
+    frame.origin = WebCore::FloatPoint { modelContext->modelLayoutOrigin() };
+    frame.size = WebCore::FloatSize { modelContext->modelLayoutSize() };
     [view setFrame:frame];
     [view setShouldDisablePortal:modelContext->disablePortal() == WebCore::ModelContextDisablePortal::Yes];
     [view applyBackgroundColor:modelContext->backgroundColor()];

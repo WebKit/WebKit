@@ -5786,7 +5786,7 @@ SpatialPortalController& Element::ensureSpatialPortalController()
 {
     auto& rareData = ensureElementRareData();
     if (!rareData.spatialPortalController())
-        rareData.setSpatialPortalController(makeUnique<SpatialPortalController>());
+        rareData.setSpatialPortalController(makeUnique<SpatialPortalController>(*this));
     return *rareData.spatialPortalController();
 }
 
@@ -5801,6 +5801,11 @@ void Element::clearSpatialPortalController()
 {
     if (hasRareData())
         elementRareData()->setSpatialPortalController(nullptr);
+}
+
+bool Element::establishesSpatialPortal() const
+{
+    return !!spatialPortalController();
 }
 #endif
 
