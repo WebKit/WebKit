@@ -26,8 +26,10 @@
 
 #pragma once
 
+#include <JavaScriptCore/MatchResult.h>
 #include <array>
 #include <wtf/DebugHeap.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,31 +40,52 @@ namespace JSC {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(StringSplitCache, WTF_INTERNAL);
 
 class JSCellButterfly;
+class RegExp;
 
 class StringSplitCache {
     WTF_MAKE_TZONE_ALLOCATED(StringSplitCache);
     WTF_MAKE_NONCOPYABLE(StringSplitCache);
 public:
-    static constexpr unsigned cacheSize = 64;
-
     StringSplitCache() = default;
 
-    struct Entry {
+    struct StringEntry {
         RefPtr<AtomStringImpl> m_subject { nullptr };
         RefPtr<AtomStringImpl> m_separator { nullptr };
         JSCellButterfly* m_butterfly { nullptr };
     };
 
-    JSCellButterfly* get(const String& subject, const String& separator);
-    void set(const String& subject, const String& separator, JSCellButterfly*);
+    struct RegExpEntry {
+        RefPtr<AtomStringImpl> m_subject { nullptr };
+        RegExp* m_regExp { nullptr };
+        JSCellButterfly* m_butterfly { nullptr };
+        MatchResult m_lastMatch { };
+    };
+
+    JSCellButterfly* getForString(const String& subject, const String& separator);
+    void setForString(const String& subject, const String& separator, JSCellButterfly*);
+
+    JSCellButterfly* getForRegExp(const String& subject, RegExp*, MatchResult& lastMatch);
+    void setForRegExp(const String& subject, RegExp*, JSCellButterfly*, MatchResult lastMatch);
 
     void clear()
     {
-        m_entries.fill(Entry { });
+        m_stringEntries.fill(StringEntry { });
+        m_regExpEntries.fill(RegExpEntry { });
     }
 
 private:
-    std::array<Entry, cacheSize> m_entries { };
+    static constexpr unsigned stringCacheSize = 64;
+    static constexpr unsigned regExpCacheSize = 256;
+    static_assert(!(stringCacheSize & (stringCacheSize - 1)));
+    static_assert(!(regExpCacheSize & (regExpCacheSize - 1)));
+
+    size_t regExpEntryIndex(AtomStringImpl* subject, RegExp* regExp) const
+    {
+        return pairIntHash(subject->hash(), PtrHash<RegExp*>::hash(regExp)) & (m_regExpEntries.size() - 1);
+    }
+
+    std::array<StringEntry, stringCacheSize> m_stringEntries { };
+    std::array<RegExpEntry, regExpCacheSize> m_regExpEntries { };
 };
 
 } // namespace JSC

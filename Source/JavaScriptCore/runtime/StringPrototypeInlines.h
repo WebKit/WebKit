@@ -1601,6 +1601,11 @@ ALWAYS_INLINE JSString* replace(VM& vm, JSGlobalObject* globalObject, JSValue th
     RELEASE_AND_RETURN(scope, replaceUsingStringSearch<replaceMode>(vm, globalObject, string, thisString, WTF::move(searchString), replaceValue));
 }
 
+ALWAYS_INLINE bool isASCIIIdentifierStart(char16_t ch)
+{
+    return isASCIIAlpha(ch) || ch == '_' || ch == '$';
+}
+
 ALWAYS_INLINE char32_t codePointAt(const String& string, unsigned position, unsigned length)
 {
     RELEASE_ASSERT(position < length);

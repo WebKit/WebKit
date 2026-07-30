@@ -42,7 +42,6 @@ runtime/JSGlobalObject.h
 runtime/JSGlobalObjectInlines.h
 runtime/PropertySlot.h
 runtime/StringReplaceCache.h
-runtime/StringSplitCache.h
 runtime/Structure.h
 runtime/VM.h
 runtime/WriteBarrier.h

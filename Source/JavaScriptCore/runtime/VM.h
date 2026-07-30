@@ -46,7 +46,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/NumericStrings.h>
 #include <JavaScriptCore/SmallStrings.h>
 #include <JavaScriptCore/StringReplaceCache.h>
-#include <JavaScriptCore/StringSplitCache.h>
 #include <JavaScriptCore/StrongForward.h>
 #include <JavaScriptCore/VMThreadContext.h>
 #include <JavaScriptCore/WeakGCMap.h>
@@ -150,6 +149,7 @@ class SourceProvider;
 class SourceProviderCache;
 enum class SourceTaintedOrigin : uint8_t;
 class StackFrame;
+class StringSplitCache;
 class Structure;
 class Symbol;
 class TypedArrayController;
@@ -623,7 +623,6 @@ public:
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
     KeyAtomStringCache keyAtomStringCache;
-    StringSplitCache stringSplitCache;
     Vector<unsigned> stringSplitIndice;
     StringReplaceCache stringReplaceCache;
 
@@ -931,6 +930,10 @@ public:
     LazyUniqueRef<VM, MegamorphicCache> m_megamorphicCache;
     ALWAYS_INLINE MegamorphicCache* megamorphicCache() { return m_megamorphicCache.getIfExists(); }
     MegamorphicCache& ensureMegamorphicCache() { return m_megamorphicCache.get(*this); }
+
+    LazyUniqueRef<VM, StringSplitCache> m_stringSplitCache;
+    ALWAYS_INLINE StringSplitCache* stringSplitCache() { return m_stringSplitCache.getIfExists(); }
+    StringSplitCache& ensureStringSplitCache() { return m_stringSplitCache.get(*this); }
 
     const UniqueRef<MicrotaskCallCache> m_syncResumeCallCache;
     MicrotaskCallCache& syncResumeCallCache() { return m_syncResumeCallCache.get(); }
