@@ -198,6 +198,10 @@ private:
     void notifyModelPlayerOfEntityTransformChange();
     void applyDefaultIBL();
     void updateForCurrentStageMode();
+#if HAVE(CORE_RE)
+    void ensurePortalEntityHierarchy();
+    void parentToContainer(WKRKEntity *);
+#endif
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier();
     int entityMemoryLimit(bool) const;
 
@@ -215,6 +219,7 @@ private:
     REPtr<RESceneRef> m_scene;
     REPtr<REEntityRef> m_hostingEntity;
     REPtr<REEntityRef> m_containerEntity;
+    RetainPtr<WKRKEntity> m_containerEntityWrapper;
 #endif
     RetainPtr<WKModelProcessModelPlayerProxyObjCAdapter> m_objCAdapter;
 

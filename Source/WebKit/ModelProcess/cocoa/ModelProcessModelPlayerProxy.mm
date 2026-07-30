@@ -632,10 +632,23 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfEntityTransformChange()
 
 void ModelProcessModelPlayerProxy::updateTransform()
 {
-    if (!m_modelRKEntity || !m_layer)
+    if (!m_layer)
+        return;
+
+#if HAVE(CORE_RE)
+    if (!m_containerEntityWrapper)
+        return;
+
+    // The container owns the global transforms (stagemode, portal-transform) and the model sits beneath with only its original scale applied.
+    [m_containerEntityWrapper setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
+    if (m_modelRKEntity)
+        [m_modelRKEntity setTransform:WKEntityTransform({ m_originalEntityScale, simd_quaternion(0, simd_make_float3(1, 0, 0)), simd_make_float3(0, 0, 0) })];
+#else
+    if (!m_modelRKEntity)
         return;
 
     [m_modelRKEntity setTransform:WKEntityTransform({ m_transformSRT.scale * m_originalEntityScale, m_transformSRT.rotation, m_transformSRT.translation })];
+#endif
 }
 
 void ModelProcessModelPlayerProxy::updateTransformAfterLayout()
@@ -728,35 +741,10 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     m_originalBoundingBoxCenter = [m_modelRKEntity boundingBoxCenter] * m_originalEntityScale;
 
 #if HAVE(CORE_RE)
-    m_hostingEntity = adoptRE(REEntityCreate());
-    REEntitySetName(m_hostingEntity.get(), "WebKit:EntityWithRootComponent");
+    ensurePortalEntityHierarchy();
 
-    REPtr<REComponentRef> layerComponent = adoptRE(RECALayerServiceCreateRootComponent(webDefaultLayerService(), CALayerGetContext(m_layer.get()), m_hostingEntity.get(), nil));
-    RESceneAddEntity(m_scene.get(), m_hostingEntity.get());
-
-    CALayer *contextEntityLayer = RECALayerClientComponentGetCALayer(layerComponent.get());
-    [contextEntityLayer setSeparatedState:kCALayerSeparatedStateTracked];
-
-    RECALayerClientComponentSetShouldSyncToRemotes(layerComponent.get(), true);
-
-    auto clientComponent = RECALayerGetCALayerClientComponent(m_layer.get());
-    auto clientComponentEntity = REComponentGetEntity(clientComponent);
-    REEntitySetName(clientComponentEntity, "WebKit:ClientComponentEntity");
-    if (canLoadWithRealityKit)
-        [model->rootRKEntity() setName:@"WebKit:ModelRootEntity"];
-    else
-        REEntitySetName(model->rootEntity(), "WebKit:ModelRootEntity");
-
-    if (canLoadWithRealityKit)
-        [model->rootRKEntity() setParentCoreEntity:clientComponentEntity preservingWorldTransform:NO];
-    else {
-        REEntitySetParent(model->rootEntity(), clientComponentEntity);
-    }
-
-    m_stageModeInteractionDriver = adoptNS([allocWKStageModeInteractionDriverInstance() initWithModel:m_modelRKEntity.get() container:clientComponentEntity delegate:m_objCAdapter.get()]);
-
-    REEntitySubtreeAddNetworkComponentRecursive([m_stageModeInteractionDriver interactionContainerRef]);
-    RENetworkMarkEntityMetadataDirty([m_stageModeInteractionDriver interactionContainerRef]);
+    [m_modelRKEntity setName:@"WebKit:ModelRootEntity"];
+    parentToContainer(m_modelRKEntity.get());
 
     applyStageModeOperationToDriver();
 
@@ -1193,7 +1181,11 @@ void ModelProcessModelPlayerProxy::updateForCurrentStageMode()
 {
     if (m_stageModeOperation != WebCore::StageModeOperation::None) {
         computeTransform(false);
+#if HAVE(CORE_RE)
+        [m_containerEntityWrapper recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
+#else
         [m_modelRKEntity recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale * m_originalEntityScale, m_transformSRT.rotation, m_transformSRT.translation })];
+#endif
         updateTransformSRT();
     }
 
@@ -1217,12 +1209,27 @@ void ModelProcessModelPlayerProxy::setStageMode(WebCore::StageModeOperation stag
 
 void ModelProcessModelPlayerProxy::updateTransformSRT()
 {
+#if HAVE(CORE_RE)
+    if (!m_containerEntityWrapper)
+        return;
+
+    WKEntityTransform containerTransform = [m_containerEntityWrapper transform];
+    m_transformSRT = RESRT {
+        .scale = containerTransform.scale,
+        .rotation = containerTransform.rotation,
+        .translation = containerTransform.translation
+    };
+#else
+    if (!m_modelRKEntity)
+        return;
+
     WKEntityTransform entityTransform = [m_modelRKEntity transform];
     m_transformSRT = RESRT {
         .scale = entityTransform.scale / m_originalEntityScale,
         .rotation = entityTransform.rotation,
         .translation = entityTransform.translation
     };
+#endif
 
     notifyModelPlayerOfEntityTransformChange();
 }
@@ -1244,6 +1251,62 @@ void ModelProcessModelPlayerProxy::applyStageModeOperationToDriver()
 }
 #endif // HAVE(CORE_RE)
 
+#if HAVE(CORE_RE)
+void ModelProcessModelPlayerProxy::ensurePortalEntityHierarchy()
+{
+    if (m_hostingEntity && m_containerEntity)
+        return;
+
+    if (!m_hostingEntity) {
+        m_hostingEntity = adoptRE(REEntityCreate());
+        REEntitySetName(m_hostingEntity.get(), "WebKit:EntityWithRootComponent");
+
+        REPtr<REComponentRef> layerComponent = adoptRE(RECALayerServiceCreateRootComponent(webDefaultLayerService(), CALayerGetContext(m_layer.get()), m_hostingEntity.get(), nil));
+        RESceneAddEntity(m_scene.get(), m_hostingEntity.get());
+
+        CALayer *contextEntityLayer = RECALayerClientComponentGetCALayer(layerComponent.get());
+        [contextEntityLayer setSeparatedState:kCALayerSeparatedStateTracked];
+
+        RECALayerClientComponentSetShouldSyncToRemotes(layerComponent.get(), true);
+    }
+
+    auto clientComponent = RECALayerGetCALayerClientComponent(m_layer.get());
+    auto clientComponentEntity = REComponentGetEntity(clientComponent);
+    REEntitySetName(clientComponentEntity, "WebKit:ClientComponentEntity");
+
+    if (!m_containerEntity) {
+        m_containerEntity = adoptRE(REEntityCreate());
+        REEntitySetName(m_containerEntity.get(), "WebKit:PortalContainer");
+        REEntitySetParent(m_containerEntity.get(), clientComponentEntity);
+
+        m_containerEntityWrapper = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:m_containerEntity.get()]);
+        [m_containerEntityWrapper setTransform:WKEntityTransform({
+            .scale = simd_make_float3(1, 1, 1),
+            .rotation = simd_quaternion(0, simd_make_float3(1, 0, 0)),
+            .translation = simd_make_float3(0, 0, 0)
+        })];
+
+        REEntitySubtreeAddNetworkComponentRecursive(m_containerEntity.get());
+        RENetworkMarkEntityMetadataDirty(m_containerEntity.get());
+
+        // StageMode operates on the whole portal.
+        m_stageModeInteractionDriver = adoptNS([allocWKStageModeInteractionDriverInstance()
+            initWithModel:m_containerEntityWrapper.get()
+            container:clientComponentEntity
+            delegate:m_objCAdapter.get()]);
+
+        REEntitySubtreeAddNetworkComponentRecursive([m_stageModeInteractionDriver interactionContainerRef]);
+        RENetworkMarkEntityMetadataDirty([m_stageModeInteractionDriver interactionContainerRef]);
+    }
+}
+
+void ModelProcessModelPlayerProxy::parentToContainer(WKRKEntity *childEntity)
+{
+    [childEntity setParentCoreEntity:m_containerEntity.get() preservingWorldTransform:NO];
+    [childEntity setReferenceEntity:m_containerEntityWrapper.get()];
+}
+#endif // HAVE(CORE_RE)
+
 void ModelProcessModelPlayerProxy::applyDefaultIBL()
 {
     [m_modelRKEntity applyDefaultIBL];
@@ -1258,9 +1321,15 @@ void ModelProcessModelPlayerProxy::teardownEntity()
         m_loader = nullptr;
     }
 #if HAVE(CORE_RE)
+    if (m_containerEntity.get())
+        REEntityRemoveFromSceneOrParent(m_containerEntity.get());
+    m_containerEntity = nullptr;
+    m_containerEntityWrapper = nil;
+
     if (m_hostingEntity.get())
         REEntityRemoveFromSceneOrParent(m_hostingEntity.get());
     m_hostingEntity = nullptr;
+
     [m_stageModeInteractionDriver removeInteractionContainerFromSceneOrParent];
     m_stageModeInteractionDriver = nil;
 #endif

@@ -63,6 +63,7 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, readonly) float boundingRadius;
 @property (nonatomic, readonly) simd_float3 interactionPivotPoint;
 @property (nonatomic) WKEntityTransform transform;
+@property (nonatomic, weak) WKRKEntity * _Nullable referenceEntity;
 @property (nonatomic) float opacity;
 @property (nonatomic, readonly) NSTimeInterval duration;
 @property (nonatomic) BOOL loop;
