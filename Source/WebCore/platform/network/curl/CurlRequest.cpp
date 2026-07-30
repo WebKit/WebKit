@@ -187,7 +187,7 @@ void CurlRequest::runOnWorkerThreadIfRequired(Function<void()>&& task)
 CURL* CurlRequest::setupTransfer()
 {
     auto httpHeaderFields = m_request.httpHeaderFields();
-    appendAcceptLanguageHeader(httpHeaderFields);
+    appendAcceptLanguageHeaderIfNeeded(httpHeaderFields);
 
     m_curlHandle = makeUnique<CurlHandle>();
 
@@ -542,8 +542,11 @@ int CurlRequest::didReceiveDebugInfo(curl_infotype type, std::span<const char> d
     return 0;
 }
 
-void CurlRequest::appendAcceptLanguageHeader(HTTPHeaderMap& header)
+void CurlRequest::appendAcceptLanguageHeaderIfNeeded(HTTPHeaderMap& header)
 {
+    if (header.contains(HTTPHeaderName::AcceptLanguage))
+        return;
+
     for (const auto& language : userPreferredLanguages())
         header.add(HTTPHeaderName::AcceptLanguage, language);
 }

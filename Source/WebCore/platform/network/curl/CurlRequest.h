@@ -117,7 +117,7 @@ private:
     int didReceiveDebugInfo(curl_infotype, std::span<const char>);
 
     // For setup 
-    void appendAcceptLanguageHeader(HTTPHeaderMap&);
+    void appendAcceptLanguageHeaderIfNeeded(HTTPHeaderMap&);
     void setupPOST();
     void setupPUT();
 
