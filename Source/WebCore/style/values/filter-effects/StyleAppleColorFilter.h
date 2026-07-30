@@ -36,6 +36,14 @@
 #include <WebCore/StyleSepiaFunction.h>
 #include <wtf/StdLibExtras.h>
 
+#if ENABLE(NEUTRALIZE_COLOR_FILTER)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#include <WebKitAdditions/AppleNeutralizeFunction.h>
+#pragma clang diagnostic pop
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -51,6 +59,9 @@ namespace Style {
 // Any <apple-color-filter-function>.
 // (Equivalent of https://drafts.fxtf.org/filter-effects/#typedef-filter-function)
 using AppleColorFilterValueKind = Variant<
+#if ENABLE(NEUTRALIZE_COLOR_FILTER)
+    AppleNeutralizeFunction,
+#endif
     AppleInvertLightnessFunction,
     BrightnessFunction,
     ContrastFunction,
