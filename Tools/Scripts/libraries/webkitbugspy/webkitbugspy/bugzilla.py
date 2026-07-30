@@ -49,6 +49,8 @@ class Tracker(GenericTracker):
     NAME = 'Bugzilla'
     DEFAULT_TIMEOUT = 30
     MAX_SUMMARY_LENGTH = 255
+    # FIXME: We should make this class project agnostic by specifying this in trackers.json.
+    DEFAULT_VERSION = 'WebKit Nightly Build'
 
     # Security keywords to detect in title/description.
     # These trigger a prompt to use Security product.
@@ -672,7 +674,7 @@ class Tracker(GenericTracker):
                     continue
                 result[product['name']] = dict(
                     description=product['description'],
-                    versions=[version['name'] for version in product['versions']],
+                    versions=[version['name'] for version in product['versions'] if version['is_active']],
                     components=dict(),
                 )
                 for component in product['components']:
@@ -723,15 +725,19 @@ class Tracker(GenericTracker):
         if component not in self.projects[project]['components']:
             raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
 
-        if not version:
-            # This is the default option, aligned to webkit-patch behavior.
-            # FIXME: We should make this class project agnostic by specifying this in trackers.json.
-            version = "WebKit Nightly Build"
-            if version not in self.projects[project]['versions']:
-                # If the default option does not exist on the list, we pick the last one from versions.
-                version = self.projects[project]['versions'][-1]
-        if version not in self.projects[project]['versions']:
-            raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
+        versions = self.projects[project]['versions']
+        if not versions:
+            raise ValueError("'{}' has no active versions on {}".format(project, self.url))
+        if version not in versions:
+            fallback = self.DEFAULT_VERSION if self.DEFAULT_VERSION in versions else versions[-1]
+            # A caller may inherit a version from an existing bug (git-webkit revert does), and that
+            # version may since have been retired. Bugzilla rejects inactive versions, so fall back
+            # to the default instead of failing to file the bug.
+            if version:
+                sys.stderr.write("'{}' is not an active version for '{}', using '{}' instead\n".format(
+                    version, project, fallback,
+                ))
+            version = fallback
 
         keywords = keywords or []
         for keyword in keywords:

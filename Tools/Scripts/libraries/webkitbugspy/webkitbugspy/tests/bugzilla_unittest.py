@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import json
 import logging
 import re
@@ -523,6 +524,70 @@ What component in 'WebKit' should the bug be associated with?:
             self.assertEqual(len(created.title), 255)
             self.assertEqual(created.title, 'A' * 252 + '...')
             self.assertEqual(created.description, 'Creating new bug')
+
+    def test_create_falls_back_to_default_version(self):
+        projects = copy.deepcopy(mocks.PROJECTS)
+        projects['WebKit']['versions'].insert(0, '528+ (Nightly build)')
+        projects['WebKit']['inactive_versions'] = ['528+ (Nightly build)']
+        projects['WebKit']['versions'].append('WebKit Nightly Build')
+
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=projects, issues=mocks.ISSUES):
+            with OutputCapture() as captured:
+                created = bugzilla.Tracker(self.URL).create(
+                    'New bug', 'Creating new bug',
+                    project='WebKit', component='Tables', version='528+ (Nightly build)',
+                )
+            self.assertIsNotNone(created)
+            self.assertEqual(created.version, 'WebKit Nightly Build')
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                "'528+ (Nightly build)' is not an active version for 'WebKit', using 'WebKit Nightly Build' instead\n",
+            )
+
+    def test_create_falls_back_to_last_version(self):
+        projects = copy.deepcopy(mocks.PROJECTS)
+        projects['WebKit']['versions'].insert(0, '528+ (Nightly build)')
+        projects['WebKit']['inactive_versions'] = ['528+ (Nightly build)']
+
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=projects, issues=mocks.ISSUES):
+            with OutputCapture():
+                created = bugzilla.Tracker(self.URL).create(
+                    'New bug', 'Creating new bug',
+                    project='WebKit', component='Tables', version='528+ (Nightly build)',
+                )
+            self.assertIsNotNone(created)
+            self.assertEqual(created.version, 'WebKit Local Build')
+
+    def test_create_no_version_is_silent(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
+            with OutputCapture() as captured:
+                created = bugzilla.Tracker(self.URL).create(
+                    'New bug', 'Creating new bug',
+                    project='WebKit', component='Tables',
+                )
+            self.assertIsNotNone(created)
+            self.assertEqual(created.version, 'WebKit Local Build')
+            self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_projects_excludes_inactive_versions(self):
+        projects = copy.deepcopy(mocks.PROJECTS)
+        projects['WebKit']['versions'].insert(0, '528+ (Nightly build)')
+        projects['WebKit']['inactive_versions'] = ['528+ (Nightly build)']
+
+        with mocks.Bugzilla(self.URL.split('://')[1], projects=projects):
+            self.assertEqual(
+                bugzilla.Tracker(self.URL).projects['WebKit']['versions'],
+                ['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+            )
 
     def test_set_component(self):
         with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(

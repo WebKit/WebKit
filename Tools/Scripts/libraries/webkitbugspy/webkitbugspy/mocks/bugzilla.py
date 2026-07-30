@@ -393,7 +393,7 @@ class Bugzilla(Base, mocks.Requests):
                     ) for component, details in product['components'].items()],
                     versions=[dict(
                         name=version,
-                        is_active=True,
+                        is_active=version not in product.get('inactive_versions', []),
                     ) for version in product['versions']],
                 )]), url=url,
             )
@@ -434,6 +434,18 @@ class Bugzilla(Base, mocks.Requests):
                     error=True,
                     code=104,
                     message='The text you entered in the Summary field is too long ({} characters, above the maximum length allowed of 255 characters).'.format(len(data['summary'])),
+                )),
+                url=url,
+            )
+
+        inactive_versions = self.projects.get(data['product'], {}).get('inactive_versions', [])
+        if data['version'] in inactive_versions:
+            return mocks.Response(
+                status_code=400,
+                text=json.dumps(dict(
+                    error=True,
+                    code=106,
+                    message="The version value '{}' is not active.".format(data['version']),
                 )),
                 url=url,
             )
