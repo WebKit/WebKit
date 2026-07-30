@@ -15,7 +15,7 @@ PASS @container conditionText serialization: (10px <=  width  <=  100px)
 PASS @container conditionText serialization: (100px>WIDTH>10px)
 PASS @container conditionText serialization: (  100px >= width >= 10px  )
 PASS @container conditionText serialization: (calc(1em + 1px) >= width >= max(10em, 10px))
-FAIL @container conditionText serialization: (width),(height) ,--foo ,--bar assert_equals: expected 1 but got 0
+PASS @container conditionText serialization: (width),(height) ,--foo ,--bar
 PASS @container conditionText serialization:   --NAMe
 PASS @container conditionText serialization: NAMe   (inline-sizE  < 1300px )
 

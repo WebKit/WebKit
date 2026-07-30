@@ -53,14 +53,19 @@ ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, Selecti
 
 bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery) const
 {
-    auto context = featureEvaluationContextForQuery(containerQuery);
-    if (!context)
-        return false;
+    for (const auto& condition : containerQuery) {
+        auto context = featureEvaluationContextForCondition(condition);
+        if (!context)
+            continue;
 
-    if (containerQuery.condition.queries.isEmpty() && !containerQuery.name.isEmpty())
-        return true;
+        if (condition.condition.queries.isEmpty() && !condition.name.isEmpty())
+            return true;
 
-    return evaluateCondition(containerQuery.condition, *context) == MQ::EvaluationResult::True;
+        if (evaluateCondition(condition.condition, *context) == MQ::EvaluationResult::True)
+            return true;
+    };
+
+    return false;
 }
 
 static const Style::ComputedStyle* styleForContainer(const Element& container, CQ::ContainerRequirements requirements, const ContainerQueryEvaluationState* evaluationState)
@@ -74,7 +79,7 @@ static const Style::ComputedStyle* styleForContainer(const Element& container, C
     return container.existingComputedStyle();
 }
 
-auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::ContainerQuery& containerQuery) const -> std::optional<MQ::FeatureEvaluationContext>
+auto ContainerQueryEvaluator::featureEvaluationContextForCondition(const CQ::ContainerCondition& condition) const -> std::optional<MQ::FeatureEvaluationContext>
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -83,20 +88,20 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
     // https://drafts.csswg.org/css-contain-3/#container-rule
 
     // "If the <container-query> contains unknown or unsupported container features, no query container will be selected."
-    if (containerQuery.containsUnknownFeature == CQ::ContainsUnknownFeature::Yes)
+    if (condition.containsUnknownFeature == CQ::ContainsUnknownFeature::Yes)
         return { };
 
     Ref element = m_element;
-    RefPtr container = selectContainer(containerQuery.requirements, containerQuery.name, element.get(), m_selectionMode, m_scopeOrdinal, m_evaluationState);
+    RefPtr container = selectContainer(condition.requirements, condition.name, element.get(), m_selectionMode, m_scopeOrdinal, m_evaluationState);
     if (!container)
         return { };
 
-    CheckedPtr containerStyle = styleForContainer(*container.get(), containerQuery.requirements, m_evaluationState);
+    CheckedPtr containerStyle = styleForContainer(*container.get(), condition.requirements, m_evaluationState);
     if (!containerStyle)
         return { };
 
     RefPtr containerParent = container->parentElementInComposedTree();
-    CheckedPtr containerParentStyle = containerParent ? CheckedPtr { styleForContainer(*containerParent, containerQuery.requirements, m_evaluationState) } : containerStyle;
+    CheckedPtr containerParentStyle = containerParent ? CheckedPtr { styleForContainer(*containerParent, condition.requirements, m_evaluationState) } : containerStyle;
 
     Ref document = element->document();
 
@@ -105,7 +110,7 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
         if (!rootElement)
             return nullptr;
 
-        return styleForContainer(*rootElement, containerQuery.requirements, m_evaluationState);
+        return styleForContainer(*rootElement, condition.requirements, m_evaluationState);
     }();
 
     return MQ::FeatureEvaluationContext {

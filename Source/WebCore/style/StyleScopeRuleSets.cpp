@@ -443,10 +443,12 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
         auto collectPropertyNames = [&](auto* ruleSet) {
             if (!ruleSet)
                 return;
-            for (auto query : ruleSet->containerQueryRules()) {
-                traverseFeatures(query->containerQuery().condition, [&](auto& containerFeature) {
-                    CQ::collectCustomPropertyNames(containerFeature, propertyNames);
-                });
+            for (auto rule : ruleSet->containerQueryRules()) {
+                for (const auto& condition : rule->containerQuery()) {
+                    traverseFeatures(condition.condition, [&](auto& containerFeature) {
+                        CQ::collectCustomPropertyNames(containerFeature, propertyNames);
+                    });
+                }
             }
         };
 

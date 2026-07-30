@@ -66,12 +66,18 @@ struct ContainerRequirements {
 
 enum class ContainsUnknownFeature : bool { No, Yes };
 
-struct ContainerQuery {
+// Per spec, this is <container-condition>, a single condition.
+struct ContainerCondition {
     AtomString name;
     MQ::Condition condition;
     ContainerRequirements requirements;
     ContainsUnknownFeature containsUnknownFeature;
 };
+
+void serialize(StringBuilder&, const ContainerCondition&);
+
+// Per spec, this is <container-condition>#, a comma-separated list of conditions.
+using ContainerQuery = Vector<ContainerCondition>;
 
 void serialize(StringBuilder&, const ContainerQuery&);
 

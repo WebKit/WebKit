@@ -158,21 +158,21 @@ PASS: Setting text should fail.
 PASS: Text should not change.
 PASS: Text should not change on the same grouping attached to a different rule.
 Setting text to 'screen, (max-width: 9999px)'.
-PASS: Setting text should fail.
-PASS: Text should not change.
-PASS: Text should not change on the same grouping attached to a different rule.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
 Setting text to 'not all'.
 PASS: Setting text should fail.
 PASS: Text should not change.
 PASS: Text should not change on the same grouping attached to a different rule.
-Setting text to 'invalidkeyword, (max-width: 9999px)'.
-PASS: Setting text should fail.
-PASS: Text should not change.
-PASS: Text should not change on the same grouping attached to a different rule.
-Setting text to '(max-width: 9999px), invalidkeyword'.
-PASS: Setting text should fail.
-PASS: Text should not change.
-PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'totally-not-supported-but-valid-syntactivally, (max-width: 9999px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(max-width: 9999px), totally-not-supported-but-valid-syntactivally'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
 Setting text to '(min-width:1px) {} @container(min-width:1px)'.
 PASS: Setting text should fail.
 PASS: Text should not change.

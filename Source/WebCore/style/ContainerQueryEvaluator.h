@@ -51,7 +51,7 @@ public:
     static RefPtr<const Element> selectContainer(CQ::ContainerRequirements, const WTF::String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
 
 private:
-    std::optional<MQ::FeatureEvaluationContext> featureEvaluationContextForQuery(const CQ::ContainerQuery&) const;
+    std::optional<MQ::FeatureEvaluationContext> featureEvaluationContextForCondition(const CQ::ContainerCondition&) const;
 
     const Ref<const Element> m_element;
     const SelectionMode m_selectionMode;

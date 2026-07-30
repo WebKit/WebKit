@@ -1385,9 +1385,8 @@ RefPtr<StyleRuleContainer> CSSParser::consumeContainerRule(CSSParserTokenRange p
     if (!query)
         return nullptr;
 
-    prelude.consumeWhitespace();
-    if (!prelude.atEnd())
-        return nullptr;
+    // If we successfully parsed any conditions, there has to be at least one.
+    ASSERT(!query->isEmpty());
 
     if (RefPtr observerWrapper = m_observerWrapper.get()) {
         observerWrapper->observer().startRuleHeader(StyleRuleType::Container, observerWrapper->startOffset(originalPreludeRange));

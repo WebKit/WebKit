@@ -33,7 +33,16 @@ namespace WebCore {
 namespace CQ {
 
 struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser>  {
-    static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
+    // Parse the container query, which is a `<container-condition>#`, a comma-separated
+    // list of container conditions. The method expects the token range to contain the
+    // whole query, and returns `std::nullopt` if it can't consume the entire range.
+    static std::optional<ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
+
+    // Parse `<container-condition>`, the condition for a @container rule to apply.
+    // If successful, returns the first condition that can be parsed in the token
+    // range, and the range is advanced to be past the parsed condition. Otherwise
+    // returns `std::nullopt`.
+    static std::optional<ContainerCondition> consumeContainerCondition(CSSParserTokenRange&, const MediaQueryParserContext&);
 
     static bool NODELETE isValidFunctionId(CSSValueID);
     static const MQ::FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
