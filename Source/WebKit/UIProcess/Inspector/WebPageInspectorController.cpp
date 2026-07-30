@@ -455,13 +455,20 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
     String newTargetID = FrameInspectorTarget::toTargetID(frameID, newProcessID);
 
     CheckedPtr targetAgent = m_targetAgent;
-    CheckedPtr newTarget = m_targets.get(newTargetID);
-    ASSERT(newTarget);
-    newTarget->didCommitProvisionalTarget();
-    targetAgent->didCommitProvisionalTarget(oldTargetID, newTargetID);
 
-    if (auto oldTarget = m_targets.take(oldTargetID))
-        targetAgent->targetDestroyed(protect(*oldTarget));
+    // Under site isolation the frame's target may already be gone (for example a cross-site main-frame
+    // commit wiped this page's frame targets before this late subframe commit arrived). Skip the target
+    // notifications in that case, but still run the instrumentation migration below.
+    if (CheckedPtr newTarget = m_targets.get(newTargetID)) {
+        newTarget->didCommitProvisionalTarget();
+        targetAgent->didCommitProvisionalTarget(oldTargetID, newTargetID);
+    }
+
+    // A same-process commit has oldTargetID == newTargetID; taking it would destroy what we just committed.
+    if (oldTargetID != newTargetID) {
+        if (auto oldTarget = m_targets.take(oldTargetID))
+            targetAgent->targetDestroyed(protect(*oldTarget));
+    }
 
     // Instrument the new process for network events now that the frame has
     // committed in its final process. Also disable instrumentation for the

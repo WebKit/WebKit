@@ -10896,6 +10896,71 @@ TEST(SiteIsolation, MultiProcessBFCacheRestoreWithCrossSiteIframeDoesNotCrash)
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker ? true : false" inFrame:[webView firstChildFrame]] boolValue]);
 }
 
+TEST(SiteIsolation, ProvisionalSubframeCommitAfterMainFrameSwapDoesNotCrash)
+{
+    // A cross-site subframe navigation is still provisional when the main frame commits cross-site:
+    // didCommitProvisionalPage() wipes the page's frame targets, so the subframe's later commit finds
+    // none. Without the fix the UI process aborts, so surviving to the end of this test is the point.
+    // No inspector frontend is needed: frame targets are tracked whenever site isolation is enabled.
+    HTTPServer server({
+        { "/a"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "subframe content"_s } },
+        { "/held"_s, { "held subframe content"_s } },
+        { "/c"_s, { "page c"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // MultiProcessBackForwardCacheEnabled is load-bearing: without it the main-frame commit runs
+    // removeChildFrames() and tears the provisional subframe down instead of suspending it, so no
+    // late commit could ever arrive.
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    });
+
+    pid_t subframePID = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    EXPECT_NE(subframePID, 0);
+
+    // Hold the subframe's response so its ProvisionalFrameProxy and provisional inspector target
+    // exist but cannot commit until we release it.
+    bool didHoldSubframeResponse { false };
+    BlockPtr<void(WKNavigationResponsePolicy)> releaseSubframeResponse;
+    navigationDelegate.get().decidePolicyForNavigationResponse = makeBlockPtr([&](WKNavigationResponse *navigationResponse, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        if (!navigationResponse.forMainFrame && [navigationResponse.response.URL.absoluteString isEqualToString:@"https://d.com/held"]) {
+            releaseSubframeResponse = makeBlockPtr(completionHandler);
+            didHoldSubframeResponse = true;
+            return;
+        }
+        completionHandler(WKNavigationResponsePolicyAllow);
+    }).get();
+
+    [webView evaluateJavaScript:@"location.href = 'https://d.com/held'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    Util::run(&didHoldSubframeResponse);
+
+    // Commit a cross-site main-frame navigation while the subframe is still provisional. This is what
+    // removes every frame target belonging to the page, including the held subframe's.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://c.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Guard against passing vacuously: if the outgoing page were torn down rather than suspended,
+    // there would be no subframe left to commit and the release below would be a no-op.
+    EXPECT_TRUE(processStillRunning(subframePID));
+
+    // Let the subframe commit into a page whose frame targets are gone.
+    releaseSubframeResponse(WKNavigationResponsePolicyAllow);
+
+    // Drain the commit IPC so a UI-process crash lands in-window.
+    Util::runFor(0.5_s);
+
+    EXPECT_WK_STREQ(@"https://c.com/c", [webView URL].absoluteString);
+}
+
 TEST(SiteIsolation, MultiProcessBFCacheSameSiteNavAfterRestore)
 {
     // Regression test for stale process in processForTheFrameItem.
