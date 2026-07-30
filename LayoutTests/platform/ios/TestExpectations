@@ -8625,3 +8625,9 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ]
+
+# webkit.org/b/320584 [iOS] 4x imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.* (layout-tests) are constant text failures.
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Failure ]
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
