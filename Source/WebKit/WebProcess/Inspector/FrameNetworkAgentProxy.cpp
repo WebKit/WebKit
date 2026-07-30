@@ -190,16 +190,13 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
+    auto targetId = request.initiatorIdentifier();
     auto documentURL = protectedLoader->url().string();
     std::optional<ResourceResponse> optionalRedirectResponse;
     if (!redirectResponse.isNull())
         optionalRedirectResponse = redirectResponse;
 
-    protect(WebProcess::singleton().parentProcessConnection())->send(
-        Messages::ProxyingNetworkAgent::RequestWillBeSent(
-            qualifyResourceID(resourceID), *frameID, loaderId, String(), documentURL, request,
-            WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime),
-        page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::ProxyingNetworkAgent::RequestWillBeSent(qualifyResourceID(resourceID), *frameID, loaderId, targetId, documentURL, request, WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime), page->identifier());
 }
 
 void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType)
@@ -228,13 +225,10 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
+    auto targetId = request.initiatorIdentifier();
     auto documentURL = protectedLoader->url().string();
 
-    protect(WebProcess::singleton().parentProcessConnection())->send(
-        Messages::ProxyingNetworkAgent::RequestWillBeSent(
-            qualifyResourceID(resourceID), *frameID, loaderId, String(), documentURL, request,
-            std::nullopt, ResourceType::Other, timestamp, walltime),
-        page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::ProxyingNetworkAgent::RequestWillBeSent(qualifyResourceID(resourceID), *frameID, loaderId, targetId, documentURL, request, std::nullopt, ResourceType::Other, timestamp, walltime), page->identifier());
 }
 
 void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader*)
