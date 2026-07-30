@@ -120,8 +120,11 @@ bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& filterEffect
 {
     auto& effect = downcast<FEDropShadow>(filterEffect);
     switch (attrName.nodeName()) {
-    case AttributeNames::stdDeviationAttr:
-        return effect.setStdDeviationX(stdDeviationX()) || effect.setStdDeviationY(stdDeviationY());
+    case AttributeNames::stdDeviationAttr: {
+        bool stdDeviationXChanged = effect.setStdDeviationX(stdDeviationX());
+        bool stdDeviationYChanged = effect.setStdDeviationY(stdDeviationY());
+        return stdDeviationXChanged || stdDeviationYChanged;
+    }
     case AttributeNames::dxAttr:
         return effect.setDx(dx());
     case AttributeNames::dyAttr:
