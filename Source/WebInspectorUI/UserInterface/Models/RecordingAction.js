@@ -25,7 +25,7 @@
 
 WI.RecordingAction = class RecordingAction extends WI.Object
 {
-    constructor(name, parameters, swizzleTypes, stackTrace, snapshot)
+    constructor(name, parameters, swizzleTypes, stackTrace, snapshot, renderTargets)
     {
         super();
 
@@ -34,11 +34,13 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._payloadSwizzleTypes = swizzleTypes;
         this._payloadStackTrace = stackTrace;
         this._payloadSnapshot = snapshot ?? -1;
+        this._payloadRenderTargets = Array.isArray(renderTargets) ? renderTargets : [];
 
         this._name = "";
         this._parameters = [];
         this._stackTrace = null;
         this._snapshot = "";
+        this._renderTargets = [];
 
         this._valid = true;
         this._isFunction = false;
@@ -98,11 +100,20 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             payload[4] = -1;
         }
 
+        if (payload.length > 5 && !Array.isArray(payload[5])) {
+            WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("renderTargets")));
+            payload[5] = [];
+        }
+
         return new WI.RecordingAction(...payload);
     }
 
     static isFunctionForType(type, name)
     {
+        // WebGPU commands have no reflectable context prototype; every recorded WebGPU action is a method call (draw, setPipeline, submit, ...), so treat them all as functions.
+        if (type === WI.Recording.Type.CanvasWebGPU)
+            return true;
+
         let prototype = WI.RecordingAction._prototypeForType(type);
         if (!prototype)
             return false;
@@ -228,6 +239,9 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             if (window.WebGL2RenderingContext)
                 return WebGL2RenderingContext.prototype;
             break;
+        case WI.Recording.Type.CanvasWebGPU:
+            // WebGPU commands are issued on encoder/queue objects rather than the canvas context, so there is no single prototype to validate action names against.
+            return null;
         }
 
         WI.reportInternalError("Unknown recording type: " + type);
@@ -241,6 +255,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get swizzleTypes() { return this._payloadSwizzleTypes; }
     get stackTrace() { return this._stackTrace; }
     get snapshot() { return this._snapshot; }
+    get renderTargets() { return this._renderTargets; }
     get valid() { return this._valid; }
     get isFunction() { return this._isFunction; }
     get isGetter() { return this._isGetter; }
@@ -262,7 +277,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         this._processed = true;
 
-        if (recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
+        if (recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2 || recording.type === WI.Recording.Type.CanvasWebGPU) {
             // We add each RecordingAction to the list of visualActionIndexes after it is processed.
             if (this._valid && this._isVisual) {
                 let contentBefore = recording.visualActionIndexes.length ? recording.actions[recording.visualActionIndexes.lastValue].snapshot : recording.initialState.content;
@@ -363,6 +378,17 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._stackTrace = stackTrace;
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
+
+        // Resolve WebGPU per-draw render targets: each entry is [labelIndex, imageDataIndex].
+        if (this._payloadRenderTargets.length) {
+            this._renderTargets = await Promise.all(this._payloadRenderTargets.map(async ([labelIndex, imageIndex]) => {
+                let [label, dataURL] = await Promise.all([
+                    recording.swizzle(labelIndex, WI.Recording.Swizzle.String),
+                    recording.swizzle(imageIndex, WI.Recording.Swizzle.String),
+                ]);
+                return {label, dataURL};
+            }));
+        }
 
         if (recording.isCanvas) {
             if (this._name === "width" || this._name === "height") {
@@ -727,6 +753,14 @@ WI.RecordingAction._visualNames = {
         "drawArraysInstanced",
         "drawElements",
         "drawElementsInstanced",
+    ]),
+    [WI.Recording.Type.CanvasWebGPU]: new Set([
+        "beginRenderPass",
+        "draw",
+        "drawIndexed",
+        "drawIndirect",
+        "drawIndexedIndirect",
+        "submit",
     ]),
 };
 WI.RecordingAction._visualNames[WI.Recording.Type.OffscreenCanvasBitmapRenderer] = WI.RecordingAction._visualNames[WI.Recording.Type.CanvasBitmapRenderer];

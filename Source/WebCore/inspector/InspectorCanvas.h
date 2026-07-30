@@ -47,6 +47,7 @@ namespace WebCore {
 class CanvasGradient;
 class CanvasPattern;
 class Element;
+class GPUDevice;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -54,6 +55,7 @@ class ImageBitmap;
 class ImageData;
 class OffscreenCanvas;
 class CSSStyleImageValue;
+class WeakPtrImplWithEventTargetData;
 
 template<typename> struct InspectorCanvasArgumentProcessor;
 
@@ -78,6 +80,10 @@ public:
     void resetRecordingData();
     bool NODELETE hasRecordingData() const;
     bool NODELETE currentFrameHasData() const;
+
+    // The WebGPU device whose per-draw image capture this recording owns (only the first recording per device claims it); stored so capture routing and the recording-count increment/decrement target the same device even if the canvas is later reconfigured.
+    void setInspectorRecordingDevice(GPUDevice*);
+    GPUDevice* inspectorRecordingDevice() const;
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
 
@@ -137,6 +143,9 @@ private:
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
 
+    // Attaches the per-draw images captured this frame (drained from the GPU process at submit time) to their recorded draw actions.
+    void attachWebGPUCapturedImages();
+
     String m_identifier;
 
     WeakRef<CanvasRenderingContext> m_context;
@@ -155,6 +164,12 @@ private:
     std::optional<size_t> m_frameCount;
     size_t m_framesCaptured { 0 };
     bool m_contentChanged { false };
+    // WebGPU capture actions recorded this frame, in execution order, awaiting their images (per pass: the beginRenderPass baseline action then each draw action).
+    Vector<Ref<JSON::ArrayOf<JSON::Value>>> m_webGPUCaptureActions;
+    // beginRenderPass action held until its pass has a draw, so it aligns with the GPU process's baseline group.
+    RefPtr<JSON::ArrayOf<JSON::Value>> m_webGPUPendingBeginRenderPass;
+    // The device whose GPU-process image capture this recording owns; see setInspectorRecordingDevice().
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_inspectorRecordingDevice;
 };
 
 } // namespace WebCore

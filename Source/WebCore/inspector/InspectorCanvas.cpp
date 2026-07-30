@@ -39,6 +39,8 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatPoint.h"
+#include "GPUCanvasContext.h"
+#include "GPUDevice.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -61,6 +63,7 @@
 #include "JSCanvasTextBaseline.h"
 #include "JSDOMWrapperCache.h"
 #include "JSExecState.h"
+#include "JSGPUCanvasContext.h"
 #include "JSImageBitmapRenderingContext.h"
 #include "JSImageSmoothingQuality.h"
 #include "JSPredefinedColorSpace.h"
@@ -128,6 +131,8 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
     if (is<WebGL2RenderingContext>(m_context))
         return toJS(exec, globalObject, protect(downcast<WebGL2RenderingContext>(m_context.get())));
 #endif
+    if (is<GPUCanvasContext>(m_context))
+        return toJS(exec, globalObject, protect(downcast<GPUCanvasContext>(m_context.get())));
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -165,8 +170,8 @@ void InspectorCanvas::resetRecordingData()
     m_frameCount = std::nullopt;
     m_framesCaptured = 0;
     m_contentChanged = false;
-
-    // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
+    m_webGPUCaptureActions.clear();
+    m_webGPUPendingBeginRenderPass = nullptr;
 
     m_context->setHasActiveInspectorCanvasCallTracer(false);
 }
@@ -184,6 +189,21 @@ bool InspectorCanvas::currentFrameHasData() const
 static bool shouldSnapshotBitmapRendererAction(const String& name)
 {
     return name == "transferFromImageBitmap"_s;
+}
+
+// WebGPU presents to the canvas when the queue is submitted, so that is the natural point to snapshot.
+static bool shouldSnapshotWebGPUAction(const String& name)
+{
+    return name == "submit"_s;
+}
+
+// Draw calls whose per-draw color-attachment capture the GPU process produces (in execution order).
+static bool isWebGPUDrawAction(const String& name)
+{
+    return name == "draw"_s
+        || name == "drawIndexed"_s
+        || name == "drawIndirect"_s
+        || name == "drawIndexedIndirect"_s;
 }
 
 #if ENABLE(WEBGL)
@@ -232,8 +252,6 @@ void InspectorCanvas::recordAction(String&& name, InspectorCanvasProcessedArgume
 
     appendActionSnapshotIfNeeded();
 
-    // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
-
     if (is<ImageBitmapRenderingContext>(m_context) && shouldSnapshotBitmapRendererAction(name))
         m_contentChanged = true;
 #if ENABLE(WEBGL)
@@ -242,14 +260,99 @@ void InspectorCanvas::recordAction(String&& name, InspectorCanvasProcessedArgume
     else if (is<WebGL2RenderingContext>(m_context) && shouldSnapshotWebGL2Action(name))
         m_contentChanged = true;
 #endif
+    else if (is<GPUCanvasContext>(m_context) && shouldSnapshotWebGPUAction(name))
+        m_contentChanged = true;
+
+    bool isWebGPUContext = is<GPUCanvasContext>(m_context);
+    bool actionIsWebGPUDraw = isWebGPUContext && isWebGPUDrawAction(name);
+    bool actionIsWebGPUBeginRenderPass = isWebGPUContext && name == "beginRenderPass"_s;
 
     m_lastRecordedAction = buildAction(WTF::move(name), WTF::move(arguments));
     m_bufferUsed += protect(m_lastRecordedAction)->memoryCost();
     protect(m_currentActions)->addItem(*m_lastRecordedAction);
+
+    // Track WebGPU capture actions in order for attachWebGPUCapturedImages(): per pass the GPU process emits a cleared baseline (beginRenderPass) then one image per draw, so hold beginRenderPass pending until its pass's first draw.
+    if (actionIsWebGPUBeginRenderPass)
+        m_webGPUPendingBeginRenderPass = m_lastRecordedAction;
+    else if (actionIsWebGPUDraw) {
+        if (m_webGPUPendingBeginRenderPass) {
+            m_webGPUCaptureActions.append(m_webGPUPendingBeginRenderPass.releaseNonNull());
+            m_webGPUPendingBeginRenderPass = nullptr;
+        }
+        m_webGPUCaptureActions.append(*m_lastRecordedAction);
+    }
+}
+
+void InspectorCanvas::setInspectorRecordingDevice(GPUDevice* device)
+{
+    m_inspectorRecordingDevice = device;
+}
+
+GPUDevice* InspectorCanvas::inspectorRecordingDevice() const
+{
+    return m_inspectorRecordingDevice.get();
+}
+
+void InspectorCanvas::attachWebGPUCapturedImages()
+{
+    RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get());
+    if (!context) {
+        m_webGPUCaptureActions.clear();
+        m_webGPUPendingBeginRenderPass = nullptr;
+        return;
+    }
+
+    // Drain from the device this recording owns, not the context's current configuredDevice(): they differ if the canvas was reconfigured, and only the owner should drain.
+    RefPtr device = m_inspectorRecordingDevice.get();
+    if (!device) {
+        m_webGPUCaptureActions.clear();
+        m_webGPUPendingBeginRenderPass = nullptr;
+        return;
+    }
+
+    auto groups = device->takeInspectorCapturedImages();
+    // Groups arrive in the recorded action order (per pass: a cleared baseline for beginRenderPass, then one per draw). Each action gains a 5th element (primary image) and a 6th (array of [labelIndex, imageDataIndex] pairs for the target selector).
+    for (size_t i = 0; i < m_webGPUCaptureActions.size() && i < groups.size(); ++i) {
+        auto& group = groups[i];
+        if (group.isEmpty())
+            continue;
+
+        Ref action = m_webGPUCaptureActions[i];
+        m_bufferUsed -= action->memoryCost();
+
+        auto renderTargets = JSON::ArrayOf<JSON::Value>::create();
+        std::optional<int> primaryImageIndex;
+        for (auto& target : group) {
+            if (!target.image)
+                continue;
+            auto dataURL = encodeDataURL(target.image, "image/png"_s);
+            if (dataURL.isEmpty())
+                continue;
+            int imageIndex = indexForData(dataURL);
+            if (!primaryImageIndex)
+                primaryImageIndex = imageIndex;
+            auto pair = JSON::ArrayOf<JSON::Value>::create();
+            pair->addItem(indexForData(target.label));
+            pair->addItem(imageIndex);
+            renderTargets->addItem(WTF::move(pair));
+        }
+
+        // Element 4: primary target's image (legacy single-snapshot slot). Element 5: labeled targets.
+        action->addItem(primaryImageIndex.value_or(-1));
+        action->addItem(WTF::move(renderTargets));
+
+        m_bufferUsed += action->memoryCost();
+    }
+
+    m_webGPUCaptureActions.clear();
+    m_webGPUPendingBeginRenderPass = nullptr;
 }
 
 void InspectorCanvas::finalizeFrame()
 {
+    // Attach WebGPU per-draw images now: finalizeFrame() runs after the frame's queue.submit() has executed, so the GPU process has committed the work to capture.
+    attachWebGPUCapturedImages();
+
     appendActionSnapshotIfNeeded();
 
     if (m_frames && m_frames->length() && !m_currentFrameStartTime.isNaN()) {
@@ -397,6 +500,8 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
             return Inspector::Protocol::Canvas::ContextType::WebGL2;
         }
 #endif
+        if (is<GPUCanvasContext>(m_context))
+            return Inspector::Protocol::Canvas::ContextType::WebGPU;
 
         ASSERT_NOT_REACHED();
         return Inspector::Protocol::Canvas::ContextType::Canvas2D;
@@ -439,8 +544,6 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
     ASSERT(!m_lastRecordedAction);
     ASSERT(!m_frames);
 
-    // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
-
     bool isOffscreen = false;
 #if ENABLE(OFFSCREEN_CANVAS)
     if (is<OffscreenCanvas>(m_context->canvasBase()))
@@ -464,6 +567,8 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
     } else if (is<WebGL2RenderingContext>(m_context)) {
         type = isOffscreen ? Inspector::Protocol::Recording::Type::OffscreenCanvasWebGL2 : Inspector::Protocol::Recording::Type::CanvasWebGL2;
 #endif
+    } else if (is<GPUCanvasContext>(m_context)) {
+        type = Inspector::Protocol::Recording::Type::CanvasWebGPU;
     } else {
         ASSERT_NOT_REACHED();
         type = Inspector::Protocol::Recording::Type::Canvas2D;
@@ -754,8 +859,11 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
     if (parametersPayload->length())
         initialStatePayload->setParameters(WTF::move(parametersPayload));
 
-    if (auto content = getContentAsDataURL())
-        initialStatePayload->setContent(*content);
+    // For WebGPU, obtaining the content presents the drawable and advances the swap chain, unsafe mid-frame (the page may have an open encoder); the per-submit snapshots captured during recording provide the content instead.
+    if (!is<GPUCanvasContext>(m_context)) {
+        if (auto content = getContentAsDataURL())
+            initialStatePayload->setContent(*content);
+    }
 
     return initialStatePayload;
 }

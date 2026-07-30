@@ -53,12 +53,15 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             shaderTypeContainer.classList.add("shader-type");
 
             let textEditor = new WI.TextEditor;
-            textEditor.readOnly = false;
+            // WebGPU shader modules cannot be recompiled from the frontend, so WGSL is shown read-only.
+            textEditor.readOnly = isWebGPU;
             textEditor.addEventListener(WI.TextEditor.Event.Focused, this._editorFocused, this);
             textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
-            textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, function(event) {
-                contentDidChangeDebouncer.delayForTime(250, event);
-            }, textEditor);
+            if (!isWebGPU) {
+                textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, function(event) {
+                    contentDidChangeDebouncer.delayForTime(250, event);
+                }, textEditor);
+            }
 
             switch (shaderType) {
             case WI.ShaderProgram.ShaderType.Compute:

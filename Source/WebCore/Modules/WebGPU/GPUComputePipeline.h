@@ -26,19 +26,20 @@
 #pragma once
 
 #include "GPUBindGroupLayout.h"
+#include "GPUShaderModule.h"
 #include "WebGPUComputePipeline.h"
 #include <cstdint>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUComputePipeline : public RefCounted<GPUComputePipeline> {
+class GPUComputePipeline : public RefCountedAndCanMakeWeakPtr<GPUComputePipeline> {
 public:
-    static Ref<GPUComputePipeline> create(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId)
+    static Ref<GPUComputePipeline> create(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId, Ref<GPUShaderModule>&& computeModule, String&& computeEntryPoint)
     {
-        return adoptRef(*new GPUComputePipeline(WTF::move(backing), uniqueId));
+        return adoptRef(*new GPUComputePipeline(WTF::move(backing), uniqueId, WTF::move(computeModule), WTF::move(computeEntryPoint)));
     }
 
     String NODELETE label() const;
@@ -49,15 +50,23 @@ public:
     WebGPU::ComputePipeline& backing() { return m_backing; }
     const WebGPU::ComputePipeline& backing() const { return m_backing; }
 
+    // Shader module that this pipeline was created from. Retained for Web Inspector.
+    GPUShaderModule& computeModule() { return m_computeModule; }
+    const String& computeEntryPoint() const LIFETIME_BOUND { return m_computeEntryPoint; }
+
 private:
-    GPUComputePipeline(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId)
+    GPUComputePipeline(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId, Ref<GPUShaderModule>&& computeModule, String&& computeEntryPoint)
         : m_backing(WTF::move(backing))
         , m_uniqueId(uniqueId)
+        , m_computeModule(WTF::move(computeModule))
+        , m_computeEntryPoint(WTF::move(computeEntryPoint))
     {
     }
 
     const Ref<WebGPU::ComputePipeline> m_backing;
     const uint64_t m_uniqueId;
+    const Ref<GPUShaderModule> m_computeModule;
+    const String m_computeEntryPoint;
 };
 
 }

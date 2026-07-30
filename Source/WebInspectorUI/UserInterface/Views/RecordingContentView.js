@@ -35,10 +35,12 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._action = null;
         this._snapshots = [];
         this._initialContent = null;
+        this._renderTargetScopeBar = null;
+        this._selectedRenderTargetIndex = 0;
         this._generateContentThrottler = new Throttler(() => {
             if (this.representedObject.isCanvas2D)
                 this._generateContentCanvas2D(this._index);
-            else if (this.representedObject.isCanvasBitmapRenderer || this.representedObject.isCanvasWebGL || this.representedObject.isCanvasWebGL2)
+            else if (this.representedObject.isCanvasBitmapRenderer || this.representedObject.isCanvasWebGL || this.representedObject.isCanvasWebGL2 || this.representedObject.isCanvasWebGPU)
                 this._generateContentFromSnapshot(this._index);
         }, 200);
 
@@ -87,6 +89,11 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             navigationItems.push(this._showPathButtonNavigationItem);
 
         navigationItems.push(this._showGridButtonNavigationItem);
+
+        // WebGPU: allow selecting which render target of the current draw to preview.
+        if (this._renderTargetScopeBar)
+            navigationItems.push(this._renderTargetScopeBar);
+
         return navigationItems;
     }
 
@@ -109,12 +116,13 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         this._index = index;
 
+        this._action = this.representedObject.actions[this._index];
+        this._updateRenderTargetScopeBar();
+
         this._updateSliderValue();
 
         if (this.didInitialLayout)
             this._generateContentThrottler.fire();
-
-        this._action = this.representedObject.actions[this._index];
 
         this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }
@@ -453,6 +461,27 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         while (!actions[visualIndex].isVisual && !(actions[visualIndex] instanceof WI.RecordingInitialStateAction))
             visualIndex--;
 
+        // WebGPU: if the visual action captured multiple render targets, show the selected one.
+        let renderTargets = actions[visualIndex].renderTargets;
+        if (renderTargets && renderTargets.length) {
+            let targetIndex = Math.max(0, Math.min(this._selectedRenderTargetIndex, renderTargets.length - 1));
+            let dataURL = renderTargets[targetIndex].dataURL;
+            let cacheKey = `${visualIndex}:${targetIndex}`;
+            let targetSnapshot = this._snapshots[cacheKey];
+            if (!targetSnapshot) {
+                targetSnapshot = this._snapshots[cacheKey] = {element: new Image};
+                targetSnapshot.element.src = dataURL;
+                targetSnapshot.element.addEventListener("load", imageLoad);
+                return;
+            }
+            if (targetSnapshot.element) {
+                this._previewContainer.removeChildren();
+                this._previewContainer.appendChild(targetSnapshot.element);
+                this._updateImageGrid();
+            }
+            return;
+        }
+
         let snapshot = this._snapshots[visualIndex];
         if (!snapshot) {
             if (actions[visualIndex].snapshot) {
@@ -466,12 +495,49 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 snapshot = this._snapshots[visualIndex] = {element: this._initialContent};
         }
 
-        if (snapshot) {
+        if (snapshot && snapshot.element) {
             this._previewContainer.removeChildren();
             this._previewContainer.appendChild(snapshot.element);
 
             this._updateImageGrid();
         }
+    }
+
+    _updateRenderTargetScopeBar()
+    {
+        let renderTargets = this._action ? this._action.renderTargets : null;
+
+        // Always show the picker when the current action captured render targets, so the target's label is visible even for a single target.
+        if (!renderTargets || !renderTargets.length) {
+            if (this._renderTargetScopeBar) {
+                this._renderTargetScopeBar = null;
+                this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+            }
+            return;
+        }
+
+        this._selectedRenderTargetIndex = Math.min(this._selectedRenderTargetIndex, renderTargets.length - 1);
+
+        let items = renderTargets.map((target, i) => new WI.ScopeBarItem(`render-target-${i}`, target.label || WI.UIString("Target %d").format(i)));
+        this._renderTargetScopeBar = new WI.ScopeBar("recording-render-target-scope-bar", items, items[this._selectedRenderTargetIndex]);
+        this._renderTargetScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._renderTargetScopeBarSelectionChanged, this);
+
+        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+    }
+
+    _renderTargetScopeBarSelectionChanged()
+    {
+        let selectedItems = this._renderTargetScopeBar.selectedItems;
+        if (!selectedItems.length)
+            return;
+
+        let index = this._renderTargetScopeBar.items.indexOf(selectedItems[0]);
+        if (index < 0)
+            return;
+
+        this._selectedRenderTargetIndex = index;
+        if (this.didInitialLayout)
+            this._generateContentThrottler.fire();
     }
 
     _updateExportButton()

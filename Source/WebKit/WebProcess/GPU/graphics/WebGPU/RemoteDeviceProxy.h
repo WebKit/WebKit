@@ -77,6 +77,11 @@ private:
     {
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
+    template<typename T>
+    [[nodiscard]] IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    {
+        return protect(root().streamClientConnection())->sendSync(WTF::move(message), backing());
+    }
 
     Ref<WebCore::WebGPU::Queue> NODELETE queue() final;
 
@@ -122,6 +127,8 @@ private:
     Ref<WebCore::WebGPU::RenderPassEncoder> NODELETE invalidRenderPassEncoder() final;
     Ref<WebCore::WebGPU::ComputePassEncoder> NODELETE invalidComputePassEncoder() final;
     void pauseAllErrorReporting(bool pause) final;
+    void setInspectorCapturing(bool) final;
+    Vector<Vector<WebCore::WebGPU::Device::InspectorCapturedTarget>> takeInspectorCapturedImages() final;
 
     bool isRemoteDeviceProxy() const final { return true; }
 

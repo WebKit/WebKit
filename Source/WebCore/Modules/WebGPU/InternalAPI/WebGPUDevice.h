@@ -38,6 +38,7 @@
 #include <wtf/Platform.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,6 +49,10 @@
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 #include <WebCore/MediaPlayerIdentifier.h>
 #endif
+
+namespace WebCore {
+class NativeImage;
+}
 
 namespace WebCore::WebGPU {
 
@@ -141,6 +146,15 @@ public:
     virtual Ref<RenderPassEncoder> invalidRenderPassEncoder() = 0;
     virtual Ref<ComputePassEncoder> invalidComputePassEncoder() = 0;
     virtual void pauseAllErrorReporting(bool pause) = 0;
+
+    // Web Inspector per-draw capture toggle (see RenderPassEncoder capture in the GPU process backend).
+    virtual void setInspectorCapturing(bool) { }
+    // Per draw call, a group of captured render targets (label + image), in draw-execution order.
+    struct InspectorCapturedTarget {
+        String label;
+        RefPtr<WebCore::NativeImage> image;
+    };
+    virtual Vector<Vector<InspectorCapturedTarget>> takeInspectorCapturedImages() = 0;
 
     virtual bool isRemoteDeviceProxy() const { return false; }
     virtual bool isDeviceImpl() const { return false; }

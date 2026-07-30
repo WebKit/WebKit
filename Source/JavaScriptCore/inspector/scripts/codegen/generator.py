@@ -56,6 +56,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     'offscreen-canvas-webgl': 'OffscreenCanvasWebGL',
     'canvas-webgl2': 'CanvasWebGL2',
     'offscreen-canvas-webgl2': 'OffscreenCanvasWebGL2',
+    'canvas-webgpu': 'CanvasWebGPU',
 
     # Canvas.ContextType
     'bitmaprenderer': 'BitmapRenderer',

@@ -39,8 +39,10 @@ namespace WebCore {
 class GPUBindGroup;
 class GPUBuffer;
 class GPUComputePipeline;
+class GPUDevice;
 class GPUQuerySet;
 template<typename> class ExceptionOr;
+class WeakPtrImplWithEventTargetData;
 
 namespace WebGPU {
 class Device;
@@ -48,9 +50,9 @@ class Device;
 
 class GPUComputePassEncoder : public RefCounted<GPUComputePassEncoder> {
 public:
-    static Ref<GPUComputePassEncoder> create(Ref<WebGPU::ComputePassEncoder>&& backing, WebGPU::Device& device)
+    static Ref<GPUComputePassEncoder> create(Ref<WebGPU::ComputePassEncoder>&& backing, WebGPU::Device& device, GPUDevice* inspectorDevice)
     {
-        return adoptRef(*new GPUComputePassEncoder(WTF::move(backing), device));
+        return adoptRef(*new GPUComputePassEncoder(WTF::move(backing), device, inspectorDevice));
     }
 
     String NODELETE label() const;
@@ -77,11 +79,15 @@ public:
     WebGPU::ComputePassEncoder& backing() { return m_backing; }
     const WebGPU::ComputePassEncoder& backing() const { return m_backing; }
 
+    GPUDevice* inspectorRecordingDevice() const;
+    bool hasActiveInspectorWebGPUCallTracer() const;
+
 private:
-    GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&&, WebGPU::Device&);
+    GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&&, WebGPU::Device&, GPUDevice*);
 
     Ref<WebGPU::ComputePassEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_inspectorDevice;
     std::optional<String> m_overrideLabel;
 };
 

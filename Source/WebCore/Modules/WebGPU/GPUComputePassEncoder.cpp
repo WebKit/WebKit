@@ -30,15 +30,28 @@
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
 #include "GPUComputePipeline.h"
+#include "GPUDevice.h"
 #include "GPUQuerySet.h"
 #include "WebGPUDevice.h"
 
 namespace WebCore {
 
-GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, WebGPU::Device& device)
+GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, WebGPU::Device& device, GPUDevice* inspectorDevice)
     : m_backing(WTF::move(backing))
     , m_device(&device)
+    , m_inspectorDevice(inspectorDevice)
 {
+}
+
+GPUDevice* GPUComputePassEncoder::inspectorRecordingDevice() const
+{
+    return m_inspectorDevice.get();
+}
+
+bool GPUComputePassEncoder::hasActiveInspectorWebGPUCallTracer() const
+{
+    RefPtr inspectorDevice = m_inspectorDevice.get();
+    return inspectorDevice && inspectorDevice->isInspectorRecording();
 }
 
 String GPUComputePassEncoder::label() const

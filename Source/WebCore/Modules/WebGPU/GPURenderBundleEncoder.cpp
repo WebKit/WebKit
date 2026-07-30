@@ -29,10 +29,28 @@
 #include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
+#include "GPUDevice.h"
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
 
 namespace WebCore {
+
+GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, GPUDevice* inspectorDevice)
+    : m_backing(WTF::move(backing))
+    , m_inspectorDevice(inspectorDevice)
+{
+}
+
+GPUDevice* GPURenderBundleEncoder::inspectorRecordingDevice() const
+{
+    return m_inspectorDevice.get();
+}
+
+bool GPURenderBundleEncoder::hasActiveInspectorWebGPUCallTracer() const
+{
+    RefPtr inspectorDevice = m_inspectorDevice.get();
+    return inspectorDevice && inspectorDevice->isInspectorRecording();
+}
 
 String GPURenderBundleEncoder::label() const
 {

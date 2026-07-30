@@ -45,6 +45,7 @@
 #include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
 #include "FrameRuntimeAgent.h"
+#include "GPUDevice.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -1309,6 +1310,38 @@ bool InspectorInstrumentation::isWebGLProgramHighlightedImpl(InstrumentingAgents
     return false;
 }
 #endif
+
+void InspectorInstrumentation::didCreateWebGPURenderPipelineSlow(GPUDevice& device, GPURenderPipeline& pipeline)
+{
+    if (RefPtr agents = instrumentingAgents(device.scriptExecutionContextForInspector()))
+        didCreateWebGPURenderPipelineImpl(*agents, device, pipeline);
+}
+
+void InspectorInstrumentation::didCreateWebGPUComputePipelineSlow(GPUDevice& device, GPUComputePipeline& pipeline)
+{
+    if (RefPtr agents = instrumentingAgents(device.scriptExecutionContextForInspector()))
+        didCreateWebGPUComputePipelineImpl(*agents, device, pipeline);
+}
+
+void InspectorInstrumentation::didCreateWebGPURenderPipelineImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, GPURenderPipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didCreateWebGPURenderPipeline(device, pipeline);
+}
+
+void InspectorInstrumentation::didCreateWebGPUComputePipelineImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, GPUComputePipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didCreateWebGPUComputePipeline(device, pipeline);
+}
+
+void InspectorInstrumentation::recordWebGPUAction(GPUDevice& device, String&& name, InspectorCanvasProcessedArguments&& arguments)
+{
+    if (RefPtr agents = instrumentingAgents(device.scriptExecutionContextForInspector())) {
+        if (CheckedPtr canvasAgent = agents->enabledCanvasAgent())
+            canvasAgent->recordWebGPUAction(device, WTF::move(name), WTF::move(arguments));
+    }
+}
 
 void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {

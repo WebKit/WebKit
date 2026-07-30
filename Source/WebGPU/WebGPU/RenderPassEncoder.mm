@@ -31,19 +31,24 @@
 #import "BindableResource.h"
 #import "Buffer.h"
 #import "CommandEncoder.h"
+#import "Device.h"
 #import "ExternalTexture.h"
 #import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
+#import "Texture.h"
 #import "TextureOrTextureView.h"
 #import "TextureView.h"
 #import <wtf/IndexedRange.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebGPU {
+
 
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
@@ -715,6 +720,11 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
         vertexCount:vertexCount
         instanceCount:instanceCount
         baseInstance:firstInstance];
+
+    recordInspectorCommand([vertexCount, instanceCount, firstVertex, firstInstance](RenderPassEncoder& encoder) {
+        encoder.draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    });
+    noteInspectorDrawForReplay();
 }
 
 std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCount(const RenderPipeline* pipeline, bool& needsValidationLayerWorkaround, uint64_t (^computeBufferSize)(uint32_t))
@@ -1029,6 +1039,11 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
         [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:indirectBufferOffset];
     } else if (useIndirectCall == IndexCall::Draw)
         [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+
+    recordInspectorCommand([indexCount, instanceCount, firstIndex, baseVertex, firstInstance](RenderPassEncoder& encoder) {
+        encoder.drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    });
+    noteInspectorDrawForReplay();
 }
 
 void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
@@ -1078,6 +1093,11 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
     if (m_indexBufferOffset > indexBuffer.length || (indexBuffer.length - m_indexBufferOffset) / indexSizeInBytes < verticesPerPrimitive(m_primitiveType))
         return;
     [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
+
+    recordInspectorCommand([indirectBuffer = Ref { indirectBuffer }, indirectOffset](RenderPassEncoder& encoder) {
+        encoder.drawIndexedIndirect(indirectBuffer, indirectOffset);
+    });
+    noteInspectorDrawForReplay();
 }
 
 bool RenderPassEncoder::splitRenderPass()
@@ -1124,6 +1144,256 @@ bool RenderPassEncoder::splitRenderPass()
     return true;
 }
 
+void RenderPassEncoder::recordInspectorCommand(Function<void(RenderPassEncoder&)>&& command)
+{
+    if (m_inspectorReplaying || !m_device->isInspectorCapturing())
+        return;
+    m_inspectorRecordedCommands.append(WTF::move(command));
+}
+
+void RenderPassEncoder::noteInspectorDrawForReplay()
+{
+    if (m_inspectorReplaying || !m_device->isInspectorCapturing())
+        return;
+    // Mark that a capture point (draw) exists at the current command count.
+    m_inspectorDrawCommandIndices.append(m_inspectorRecordedCommands.size());
+}
+
+void RenderPassEncoder::replayForInspectorCapture()
+{
+    if (m_inspectorReplaying || m_inspectorDrawCommandIndices.isEmpty())
+        return;
+
+    RefPtr device = m_device.ptr();
+
+    // The WebProcess records one capture point per draw plus a cleared baseline for the pass and correlates them to GPU-side groups by position, so emit exactly that many groups: pad with empty placeholders on every early exit or per-prefix failure below (MSAA, unsupported format, allocation failure) to keep subsequent passes aligned. Also releases the recorded command closures (which hold Refs) on every exit path.
+    size_t capturePointCount = 1 + m_inspectorDrawCommandIndices.size();
+    size_t emittedGroups = 0;
+    auto finalize = makeScopeExit([&] {
+        while (emittedGroups < capturePointCount) {
+            device->addInspectorCaptureTargetGroup({ });
+            ++emittedGroups;
+        }
+        m_inspectorRecordedCommands.clear();
+        m_inspectorDrawCommandIndices.clear();
+    });
+
+    // MSAA attachments would need a resolve; skip capture for those.
+    if (m_rasterSampleCount != 1 || m_colorAttachmentViews.isEmpty())
+        return;
+
+    id<MTLDevice> mtlDevice = device->device();
+    if (!mtlDevice)
+        return;
+
+    // Describe the color attachments (WebGPU format + size) from the live pass; each replay re-renders a draw prefix into fresh WebGPU textures, never touching the page's own attachments. Rendering through real WebGPU primitives (not raw Metal) keeps pipeline/bind-group validation and pre-commit sampler binding identical to the live pass.
+    struct AttachmentInfo {
+        size_t index { 0 };
+        WGPUTextureFormat format { WGPUTextureFormat_Undefined };
+        MTLPixelFormat pixelFormat { MTLPixelFormatInvalid };
+        WGPULoadOp loadOp { WGPULoadOp_Clear };
+        WGPUColor clearValue { 0, 0, 0, 0 };
+        RetainPtr<id<MTLTexture>> sourceTexture;
+        String label;
+    };
+    Vector<AttachmentInfo> colorInfos;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    for (size_t i = 0; i < m_colorAttachmentViews.size(); ++i) {
+        auto& view = m_colorAttachmentViews[i];
+        if (view.isDestroyed())
+            continue;
+        id<MTLTexture> sourceTexture = view.texture();
+        if (!sourceTexture)
+            continue;
+        auto pixelFormat = sourceTexture.pixelFormat;
+        // Only formats createCGImageFromStagingTexture can read back are supported for now.
+        if (pixelFormat != MTLPixelFormatBGRA8Unorm && pixelFormat != MTLPixelFormatBGRA8Unorm_sRGB && pixelFormat != MTLPixelFormatRGBA16Float)
+            continue;
+        // Preserve the live pass's load op and clear color so the replayed background matches (a Load pass is seeded from the live attachment below). Prefer the texture's author-assigned label; fall back to the attachment index when unlabeled.
+        WGPULoadOp loadOp = i < m_descriptorColorAttachments.size() ? m_descriptorColorAttachments[i].loadOp : WGPULoadOp_Clear;
+        WGPUColor clearValue = i < m_descriptorColorAttachments.size() ? m_descriptorColorAttachments[i].clearValue : WGPUColor { 0, 0, 0, 0 };
+        colorInfos.append({ i, view.format(), pixelFormat, loadOp, clearValue, RetainPtr { sourceTexture }, String { sourceTexture.label } });
+        width = view.width();
+        height = view.height();
+    }
+    if (colorInfos.isEmpty() || !width || !height)
+        return;
+
+    // A depth attachment is needed during replay so depth testing matches the live pass (not read back); match the live depth view's WebGPU format.
+    WGPUTextureFormat depthFormat = WGPUTextureFormat_Undefined;
+    if (m_depthStencilView && !m_depthStencilView->isDestroyed() && m_depthStencilView->texture())
+        depthFormat = m_depthStencilView->format();
+
+    // Replay each capture prefix into fresh textures on a dedicated command buffer we submit and wait on: Metal only guarantees a render target is readable once its command buffer completes, so a per-prefix submit+wait is what makes per-draw state observable. The first prefix (0 commands) captures the cleared baseline after beginRenderPass's loadOp but before any draw.
+    Vector<size_t> capturePrefixes;
+    capturePrefixes.reserveInitialCapacity(m_inspectorDrawCommandIndices.size() + 1);
+    capturePrefixes.append(0);
+    capturePrefixes.appendVector(m_inspectorDrawCommandIndices);
+
+    for (size_t prefixOrdinal = 0; prefixOrdinal < capturePrefixes.size(); ++prefixOrdinal) {
+        size_t commandCount = capturePrefixes[prefixOrdinal];
+
+        // Emit an empty placeholder group if replay setup fails partway, so the group count stays equal to the number of capture points.
+        bool emitted = false;
+        auto emitGroup = [&](Vector<Device::InspectorCaptureTarget>&& group) {
+            device->addInspectorCaptureTargetGroup(WTF::move(group));
+            ++emittedGroups;
+            emitted = true;
+        };
+        auto emitPlaceholderIfNeeded = makeScopeExit([&] {
+            if (!emitted)
+                emitGroup({ });
+        });
+
+        Vector<Ref<Texture>> replayColorTextures;
+        Vector<Ref<TextureView>> replayColorViews;
+        Vector<RetainPtr<id<MTLTexture>>> readbackTextures;
+        Vector<WGPURenderPassColorAttachment> colorAttachments;
+        bool setupFailed = false;
+        for (size_t c = 0; c < colorInfos.size(); ++c) {
+            WGPUExtent3D textureSize { width, height, 1 };
+            WGPUTextureDescriptor colorTextureDescriptor { };
+            colorTextureDescriptor.usage = WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst;
+            colorTextureDescriptor.dimension = WGPUTextureDimension_2D;
+            colorTextureDescriptor.size = textureSize;
+            colorTextureDescriptor.format = colorInfos[c].format;
+            colorTextureDescriptor.mipLevelCount = 1;
+            colorTextureDescriptor.sampleCount = 1;
+            Ref colorTexture = device->createTexture(colorTextureDescriptor);
+            if (!colorTexture->isValid()) {
+                setupFailed = true;
+                break;
+            }
+            WGPUTextureViewDescriptor viewDescriptor { };
+            viewDescriptor.mipLevelCount = WGPU_MIP_LEVEL_COUNT_UNDEFINED;
+            viewDescriptor.arrayLayerCount = WGPU_ARRAY_LAYER_COUNT_UNDEFINED;
+            Ref colorView = colorTexture->createView(viewDescriptor);
+            if (!colorView->isValid()) {
+                setupFailed = true;
+                break;
+            }
+
+            MTLTextureDescriptor *readbackDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorInfos[c].pixelFormat width:width height:height mipmapped:NO];
+            readbackDescriptor.storageMode = MTLStorageModeShared;
+            readbackDescriptor.usage = MTLTextureUsageShaderRead;
+            RetainPtr<id<MTLTexture>> readbackTexture = adoptNS([mtlDevice newTextureWithDescriptor:readbackDescriptor]);
+            if (!readbackTexture) {
+                setupFailed = true;
+                break;
+            }
+
+            WGPURenderPassColorAttachment colorAttachment { };
+            colorAttachment.view = colorView.ptr();
+            colorAttachment.loadOp = colorInfos[c].loadOp;
+            colorAttachment.storeOp = WGPUStoreOp_Store;
+            colorAttachment.clearValue = colorInfos[c].clearValue;
+            colorAttachments.append(colorAttachment);
+
+            replayColorTextures.append(WTF::move(colorTexture));
+            replayColorViews.append(WTF::move(colorView));
+            readbackTextures.append(WTF::move(readbackTexture));
+        }
+        if (setupFailed)
+            continue;
+
+        RefPtr<Texture> replayDepthTexture;
+        RefPtr<TextureView> replayDepthView;
+        WGPURenderPassDepthStencilAttachment depthAttachment { };
+        if (depthFormat != WGPUTextureFormat_Undefined) {
+            WGPUExtent3D depthSize { width, height, 1 };
+            WGPUTextureDescriptor depthTextureDescriptor { };
+            depthTextureDescriptor.usage = WGPUTextureUsage_RenderAttachment;
+            depthTextureDescriptor.dimension = WGPUTextureDimension_2D;
+            depthTextureDescriptor.size = depthSize;
+            depthTextureDescriptor.format = depthFormat;
+            depthTextureDescriptor.mipLevelCount = 1;
+            depthTextureDescriptor.sampleCount = 1;
+            replayDepthTexture = device->createTexture(depthTextureDescriptor);
+            if (replayDepthTexture->isValid()) {
+                WGPUTextureViewDescriptor depthViewDescriptor { };
+                depthViewDescriptor.mipLevelCount = WGPU_MIP_LEVEL_COUNT_UNDEFINED;
+                depthViewDescriptor.arrayLayerCount = WGPU_ARRAY_LAYER_COUNT_UNDEFINED;
+                replayDepthView = replayDepthTexture->createView(depthViewDescriptor);
+                if (replayDepthView->isValid()) {
+                    depthAttachment.view = replayDepthView.get();
+                    depthAttachment.depthLoadOp = WGPULoadOp_Clear;
+                    depthAttachment.depthStoreOp = WGPUStoreOp_Store;
+                    depthAttachment.depthClearValue = 1.0;
+                    // Stencil load/store ops must only be specified when the format has a stencil aspect.
+                    if (Texture::containsStencilAspect(depthFormat)) {
+                        depthAttachment.stencilLoadOp = WGPULoadOp_Clear;
+                        depthAttachment.stencilStoreOp = WGPUStoreOp_Store;
+                    }
+                }
+            }
+        }
+
+        WGPUCommandEncoderDescriptor commandEncoderDescriptor { };
+        Ref replayParentEncoder = device->createCommandEncoder(commandEncoderDescriptor);
+
+        // For attachments the live pass loads rather than clears, seed the replay texture with the attachment's pre-pass contents; this replay command buffer runs before the page's own, so the live texture still holds what a Load would read.
+        {
+            bool needsSeed = false;
+            for (auto& info : colorInfos) {
+                if (info.loadOp == WGPULoadOp_Load) {
+                    needsSeed = true;
+                    break;
+                }
+            }
+            if (needsSeed) {
+                id<MTLBlitCommandEncoder> seedBlit = replayParentEncoder->ensureBlitCommandEncoder();
+                for (size_t c = 0; c < colorInfos.size(); ++c) {
+                    if (colorInfos[c].loadOp != WGPULoadOp_Load || !colorInfos[c].sourceTexture)
+                        continue;
+                    [seedBlit copyFromTexture:colorInfos[c].sourceTexture.get() sourceSlice:0 sourceLevel:0 sourceOrigin:MTLOriginMake(0, 0, 0) sourceSize:MTLSizeMake(width, height, 1) toTexture:replayColorTextures[c]->texture() destinationSlice:0 destinationLevel:0 destinationOrigin:MTLOriginMake(0, 0, 0)];
+                }
+                replayParentEncoder->finalizeBlitCommandEncoder();
+            }
+        }
+
+        WGPURenderPassDescriptor replayPassDescriptor { };
+        replayPassDescriptor.maxDrawCount = m_maxDrawCount;
+        replayPassDescriptor.colorAttachmentCount = colorAttachments.size();
+        replayPassDescriptor.colorAttachments = colorAttachments.span().data();
+        if (replayDepthView && depthAttachment.view)
+            replayPassDescriptor.depthStencilAttachment = &depthAttachment;
+
+        Ref replayEncoder = replayParentEncoder->beginRenderPass(replayPassDescriptor);
+        if (!replayEncoder->isValid())
+            continue;
+        replayEncoder->m_inspectorReplaying = true;
+
+        for (size_t i = 0; i < commandCount && i < m_inspectorRecordedCommands.size(); ++i)
+            m_inspectorRecordedCommands[i](replayEncoder.get());
+
+        replayEncoder->endPass();
+
+        // Copy each replay color target into a Shared readback texture in the same command buffer.
+        id<MTLBlitCommandEncoder> blit = replayParentEncoder->ensureBlitCommandEncoder();
+        for (size_t c = 0; c < replayColorTextures.size(); ++c)
+            [blit copyFromTexture:replayColorTextures[c]->texture() sourceSlice:0 sourceLevel:0 sourceOrigin:MTLOriginMake(0, 0, 0) sourceSize:MTLSizeMake(width, height, 1) toTexture:readbackTextures[c].get() destinationSlice:0 destinationLevel:0 destinationOrigin:MTLOriginMake(0, 0, 0)];
+        replayParentEncoder->finalizeBlitCommandEncoder();
+
+        WGPUCommandBufferDescriptor commandBufferDescriptor { };
+        // Grab the underlying MTLCommandBuffer before finish()/submit() so we can wait on it directly.
+        RetainPtr<id<MTLCommandBuffer>> mtlReplayCommandBuffer = replayParentEncoder->commandBuffer();
+        Ref commandBuffer = replayParentEncoder->finish(commandBufferDescriptor);
+        Vector<Ref<WebGPU::CommandBuffer>> commandBuffers;
+        commandBuffers.append(WTF::move(commandBuffer));
+        device->getQueue()->submit(WTF::move(commandBuffers));
+        // Reading the replay attachment back requires the command buffer (render + readback blit) to have fully completed, so wait on the exact command buffer we submitted rather than the queue's async completion handlers.
+        [mtlReplayCommandBuffer waitUntilCompleted];
+
+        Vector<Device::InspectorCaptureTarget> group;
+        for (size_t c = 0; c < readbackTextures.size(); ++c) {
+            String label = colorInfos[c].label.isEmpty() ? makeString("Color "_s, String::number(colorInfos[c].index)) : colorInfos[c].label;
+            group.append({ WTF::move(label), readbackTextures[c] });
+        }
+        emitGroup(WTF::move(group));
+    }
+}
+
 void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     RETURN_IF_FINISHED();
@@ -1156,6 +1426,11 @@ void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOf
         return;
 
     [renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:mtlIndirectBuffer indirectBufferOffset:adjustedIndirectBufferOffset];
+
+    recordInspectorCommand([indirectBuffer = Ref { indirectBuffer }, indirectOffset](RenderPassEncoder& encoder) {
+        encoder.drawIndirect(indirectBuffer, indirectOffset);
+    });
+    noteInspectorDrawForReplay();
 }
 
 void RenderPassEncoder::endPass()
@@ -1198,6 +1473,10 @@ void RenderPassEncoder::endPass()
         m_queryBufferIndicesToClear.clear();
         m_parentEncoder->finalizeBlitCommandEncoder();
     }
+
+    // Web Inspector: after the live pass has ended, replay each recorded draw prefix into fresh command buffers to capture per-draw state, using only throwaway encoders/textures.
+    if (m_device->isInspectorCapturing())
+        replayForInspectorCapture();
 }
 
 bool RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
@@ -1448,6 +1727,9 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* group
         m_bindGroupDynamicOffsets.remove(groupIndex);
         m_bindGroupDynamicOffsetsChanged[groupIndex] = true;
         m_maxDynamicOffsetAtIndex[groupIndex] = 0;
+        recordInspectorCommand([groupIndex](RenderPassEncoder& encoder) {
+            encoder.setBindGroup(groupIndex, nullptr, std::nullopt);
+        });
         return;
     }
 
@@ -1466,6 +1748,11 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* group
         makeInvalid([NSString stringWithFormat:@"GPURenderPassEncoder.setBindGroup: %@", error]);
         return;
     }
+
+    // Past validation this call always succeeds; record a replayable copy before dynamicOffsets is moved.
+    recordInspectorCommand([groupIndex, group = Ref { group }, offsetsCopy = dynamicOffsets](RenderPassEncoder& encoder) mutable {
+        encoder.setBindGroup(groupIndex, group.ptr(), WTF::move(offsetsCopy));
+    });
 
     m_maxBindGroupSlot = std::max(groupIndex, m_maxBindGroupSlot);
     if (dynamicOffsets && dynamicOffsets->size()) {
@@ -1503,6 +1790,10 @@ void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
     RETURN_IF_FINISHED();
 
     m_blendColor = color;
+
+    recordInspectorCommand([color](RenderPassEncoder& encoder) {
+        encoder.setBlendConstant(color);
+    });
 }
 
 void RenderPassEncoder::setIndexBuffer(Buffer& buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
@@ -1533,6 +1824,10 @@ void RenderPassEncoder::setIndexBuffer(Buffer& buffer, WGPUIndexFormat format, u
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
     addResourceToActiveResources(&buffer, BindGroupEntryUsage::Input);
+
+    recordInspectorCommand([buffer = Ref { buffer }, format, offset, size](RenderPassEncoder& encoder) {
+        encoder.setIndexBuffer(buffer, format, offset, size);
+    });
 }
 
 NSString* RenderPassEncoder::errorValidatingPipeline(const RenderPipeline& pipeline) const
@@ -1576,6 +1871,10 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
         m_fragmentDynamicOffsets.grow(RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
     static_assert(RenderBundleEncoder::startIndexForFragmentDynamicOffsets > 2, "code path assumes value is greater than 2");
     m_fragmentDynamicOffsets[2] = pipeline.sampleMask();
+
+    recordInspectorCommand([pipeline = Ref { pipeline }](RenderPassEncoder& encoder) {
+        encoder.setPipeline(pipeline);
+    });
 }
 
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -1586,6 +1885,10 @@ void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, u
         makeInvalid();
         return;
     }
+
+    recordInspectorCommand([x, y, width, height](RenderPassEncoder& encoder) {
+        encoder.setScissorRect(x, y, width, height);
+    });
 
     if (id<MTLRasterizationRateMap> map = m_rasterizationRateMap) {
         MTLSize physSize = [map physicalSizeForLayer:0];
@@ -1609,6 +1912,10 @@ void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
     RETURN_IF_FINISHED();
     m_stencilReferenceValue = reference & 0xFF;
+
+    recordInspectorCommand([reference](RenderPassEncoder& encoder) {
+        encoder.setStencilReference(reference);
+    });
 }
 
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuffer, uint64_t offset, uint64_t size)
@@ -1618,6 +1925,9 @@ void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuf
         if (slot <= m_device->limits().maxBindGroupsPlusVertexBuffers)
             m_vertexBuffers[slot] = { };
 
+        recordInspectorCommand([slot, offset, size](RenderPassEncoder& encoder) {
+            encoder.setVertexBuffer(slot, nullptr, offset, size);
+        });
         return;
     }
 
@@ -1654,6 +1964,10 @@ void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuf
         return;
     }
     addResourceToActiveResources(&buffer, BindGroupEntryUsage::Input);
+
+    recordInspectorCommand([buffer = Ref { buffer }, slot, offset, size](RenderPassEncoder& encoder) {
+        encoder.setVertexBuffer(slot, buffer.ptr(), offset, size);
+    });
 }
 
 void RenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
@@ -1675,6 +1989,10 @@ void RenderPassEncoder::setViewport(float x, float y, float width, float height,
         .znear = minDepth,
         .zfar = maxDepth
     };
+
+    recordInspectorCommand([x, y, width, height, minDepth, maxDepth](RenderPassEncoder& encoder) {
+        encoder.setViewport(x, y, width, height, minDepth, maxDepth);
+    });
 }
 
 void RenderPassEncoder::setLabel(String&& label)

@@ -52,6 +52,8 @@ messages -> RemoteDevice Stream {
     void ResolveDeviceLostPromise() -> (WebCore::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)
     void PauseAllErrorReporting(bool pauseErrorReporting)
+    void SetInspectorCapturing(bool capturing)
+    void TakeInspectorCapturedImages() -> (Vector<Vector<std::pair<String, WebCore::ShareableBitmapHandle>>> targetGroups) Synchronous NotStreamEncodableReply
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable

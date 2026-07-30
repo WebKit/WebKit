@@ -44,7 +44,9 @@ namespace WebCore {
 
 class GPUBuffer;
 class GPUCommandBuffer;
+class GPUDevice;
 class GPUQuerySet;
+class WeakPtrImplWithEventTargetData;
 
 namespace WebGPU {
 class Device;
@@ -52,9 +54,9 @@ class Device;
 
 class GPUCommandEncoder : public RefCounted<GPUCommandEncoder> {
 public:
-    static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing, WebGPU::Device& device)
+    static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing, WebGPU::Device& device, GPUDevice* inspectorDevice)
     {
-        return adoptRef(*new GPUCommandEncoder(WTF::move(backing), device));
+        return adoptRef(*new GPUCommandEncoder(WTF::move(backing), device, inspectorDevice));
     }
 
     String NODELETE label() const;
@@ -114,11 +116,15 @@ public:
     const WebGPU::CommandEncoder& backing() const { return m_backing; }
     void setBacking(WebGPU::CommandEncoder&);
 
+    GPUDevice* inspectorRecordingDevice() const;
+    bool hasActiveInspectorWebGPUCallTracer() const;
+
 private:
-    GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, WebGPU::Device&);
+    GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, WebGPU::Device&, GPUDevice*);
 
     Ref<WebGPU::CommandEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_inspectorDevice;
     std::optional<String> m_overrideLabel;
 };
 

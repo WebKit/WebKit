@@ -50,10 +50,14 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
+class GPUCanvasContext;
+class GPUComputePipeline;
+class GPUDevice;
+class GPURenderPipeline;
+class InspectorShaderProgram;
 class ScriptExecutionContext;
 
 #if ENABLE(WEBGL)
-class InspectorShaderProgram;
 class WebGLProgram;
 class WebGLRenderingContextBase;
 #endif // ENABLE(WEBGL)
@@ -82,8 +86,8 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setRecordingAutoCaptureFrameCount(int);
     Inspector::Protocol::ErrorStringOr<void> startRecording(const Inspector::Protocol::Canvas::CanvasId&, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit);
     Inspector::Protocol::ErrorStringOr<void> stopRecording(const Inspector::Protocol::Canvas::CanvasId&);
-#if ENABLE(WEBGL)
     Inspector::Protocol::ErrorStringOr<String> requestShaderSource(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType);
+#if ENABLE(WEBGL)
     Inspector::Protocol::ErrorStringOr<void> updateShader(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType, const String& source);
     Inspector::Protocol::ErrorStringOr<void> setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId&, bool disabled);
     Inspector::Protocol::ErrorStringOr<void> setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId&, bool highlighted);
@@ -108,6 +112,9 @@ public:
     bool isWebGLProgramDisabled(WebGLProgram&);
     bool isWebGLProgramHighlighted(WebGLProgram&);
 #endif // ENABLE(WEBGL)
+    void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
+    void didCreateWebGPUComputePipeline(GPUDevice&, GPUComputePipeline&);
+    void recordWebGPUAction(GPUDevice&, String&&, InspectorCanvasProcessedArguments&&);
 
     void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
 
@@ -136,17 +143,17 @@ private:
         std::optional<String> name;
     };
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
+    void stopInspectorRecordingDevice(InspectorCanvas&);
 
     void canvasDestroyedTimerFired();
-#if ENABLE(WEBGL)
     void programDestroyedTimerFired();
-#endif // ENABLE(WEBGL)
 
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
+    void bindWebGPUPipelines(GPUCanvasContext&, InspectorCanvas&);
 
-#if ENABLE(WEBGL)
     void unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, const String& programId);
+#if ENABLE(WEBGL)
     RefPtr<InspectorShaderProgram> NODELETE findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
 
@@ -157,11 +164,9 @@ private:
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
 
-#if ENABLE(WEBGL)
     MemoryCompactRobinHoodHashMap<String, Ref<InspectorShaderProgram>> m_identifierToInspectorProgram;
     Vector<String> m_removedProgramIdentifiers;
     Timer m_programDestroyedTimer;
-#endif // ENABLE(WEBGL)
 
     MemoryCompactRobinHoodHashSet<String> m_recordingCanvasIdentifiers;
 

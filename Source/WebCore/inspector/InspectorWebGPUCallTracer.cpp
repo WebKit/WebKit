@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpucomputepassencoder
+#include "config.h"
+#include "InspectorWebGPUCallTracer.h"
 
-// https://bugs.webkit.org/show_bug.cgi?id=232548 These shouldn't need to be here.
-typedef [EnforceRange] unsigned long GPUSize32;
-typedef [EnforceRange] unsigned long long GPUSize64;
+#include "GPUDevice.h"
+#include "InspectorInstrumentation.h"
 
-[
-    EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,Worker),
-    SecureContext,
-    CallTracer=InspectorWebGPUCallTracer
-]
-interface GPUComputePassEncoder {
-    undefined setPipeline(GPUComputePipeline pipeline);
-    undefined dispatchWorkgroups(GPUSize32 workgroupCountX, optional GPUSize32 workgroupCountY = 1, optional GPUSize32 workgroupCountZ = 1);
-    undefined dispatchWorkgroupsIndirect(GPUBuffer indirectBuffer, GPUSize64 indirectOffset);
+namespace WebCore {
 
-    undefined end();
-};
-GPUComputePassEncoder includes GPUObjectBase;
-GPUComputePassEncoder includes GPUCommandsMixin;
-GPUComputePassEncoder includes GPUDebugCommandsMixin;
-GPUComputePassEncoder includes GPUProgrammablePassEncoder;
+void InspectorWebGPUCallTracer::recordActionForDevice(GPUDevice* device, String&& name, ProcessedArguments&& arguments)
+{
+    if (!device)
+        return;
+    InspectorInstrumentation::recordWebGPUAction(*device, WTF::move(name), WTF::move(arguments));
+}
+
+} // namespace WebCore

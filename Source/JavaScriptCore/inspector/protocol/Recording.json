@@ -12,7 +12,8 @@
                 "canvas-2d", "offscreen-canvas-2d",
                 "canvas-bitmaprenderer", "offscreen-canvas-bitmaprenderer",
                 "canvas-webgl", "offscreen-canvas-webgl",
-                "canvas-webgl2", "offscreen-canvas-webgl2"
+                "canvas-webgl2", "offscreen-canvas-webgl2",
+                "canvas-webgpu"
             ],
             "description": "The type of the recording."
         },
@@ -37,7 +38,7 @@
             "type": "object",
             "description": "Container object for a single frame of the recording.",
             "properties": [
-                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, stackTrace, snapshot], where name is a string, parameters is an array, swizzleTypes is an array, stackTrace is a Console.StackTrace, and snapshot is a data URL image of the current contents after this action."},
+                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, stackTrace, snapshot, renderTargets], where name is a string, parameters is an array, swizzleTypes is an array, stackTrace is a Console.StackTrace, snapshot is a data URL image of the current contents after this action, and renderTargets is an optional array of [labelIndex, imageDataIndex] pairs (WebGPU per-draw render targets)."},
                 { "name": "duration", "type": "number", "optional": true, "description": "Total execution time of all actions recorded in this frame in milliseconds. " },
                 { "name": "incomplete", "type": "boolean", "optional": true, "description": "Flag indicating if the recording was stopped before this frame ended." }
             ]

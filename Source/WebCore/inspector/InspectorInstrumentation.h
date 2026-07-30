@@ -40,6 +40,7 @@
 #include "FormData.h"
 #include "Frame.h"
 #include "HitTestResult.h"
+#include "InspectorCanvasProcessedArguments.h"
 #include "InspectorInstrumentationPublic.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
@@ -116,6 +117,9 @@ enum class PlatformEventModifier : uint8_t;
 #if ENABLE(WEBGL)
 class WebGLProgram;
 #endif
+class GPUComputePipeline;
+class GPUDevice;
+class GPURenderPipeline;
 
 using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 enum class StorageType : uint8_t;
@@ -330,6 +334,9 @@ public:
     static bool isWebGLProgramDisabled(WebGLRenderingContextBase&, WebGLProgram&);
     static bool isWebGLProgramHighlighted(WebGLRenderingContextBase&, WebGLProgram&);
 #endif
+    static void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
+    static void didCreateWebGPUComputePipeline(GPUDevice&, GPUComputePipeline&);
+    static void recordWebGPUAction(GPUDevice&, String&&, InspectorCanvasProcessedArguments&&);
 
     static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationName(WebAnimation&);
@@ -537,6 +544,10 @@ private:
     static bool isWebGLProgramDisabledImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isWebGLProgramHighlightedImpl(InstrumentingAgents&, WebGLProgram&);
 #endif
+    static void didCreateWebGPURenderPipelineImpl(InstrumentingAgents&, GPUDevice&, GPURenderPipeline&);
+    static void didCreateWebGPUComputePipelineImpl(InstrumentingAgents&, GPUDevice&, GPUComputePipeline&);
+    static void didCreateWebGPURenderPipelineSlow(GPUDevice&, GPURenderPipeline&);
+    static void didCreateWebGPUComputePipelineSlow(GPUDevice&, GPUComputePipeline&);
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
@@ -1509,6 +1520,18 @@ inline bool InspectorInstrumentation::isWebGLProgramHighlighted(WebGLRenderingCo
     return false;
 }
 #endif
+
+inline void InspectorInstrumentation::didCreateWebGPURenderPipeline(GPUDevice& device, GPURenderPipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didCreateWebGPURenderPipelineSlow(device, pipeline);
+}
+
+inline void InspectorInstrumentation::didCreateWebGPUComputePipeline(GPUDevice& device, GPUComputePipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didCreateWebGPUComputePipelineSlow(device, pipeline);
+}
 
 inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {

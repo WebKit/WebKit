@@ -43,7 +43,9 @@
 namespace WebCore {
 
 class GPUBuffer;
+class GPUDevice;
 struct GPUImageCopyExternalImage;
+class WeakPtrImplWithEventTargetData;
 
 namespace WebGPU {
 class Device;
@@ -86,11 +88,16 @@ public:
     WebGPU::Queue& backing() { return m_backing; }
     const WebGPU::Queue& backing() const { return m_backing; }
 
+    void setInspectorRecordingDevice(GPUDevice*);
+    GPUDevice* inspectorRecordingDevice() const;
+    bool hasActiveInspectorWebGPUCallTracer() const;
+
 private:
     GPUQueue(Ref<WebGPU::Queue>&&, WebGPU::Device&);
 
     const Ref<WebGPU::Queue> m_backing;
     WeakPtr<WebGPU::Device> m_device;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_inspectorDevice;
 };
 
 }

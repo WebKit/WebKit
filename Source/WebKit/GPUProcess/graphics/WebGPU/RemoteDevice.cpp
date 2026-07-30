@@ -54,6 +54,8 @@
 #include "WebGPUObjectHeap.h"
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUValidationError.h"
+#include <WebCore/NativeImage.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/VideoFrame.h>
 #include <WebCore/WebGPUBindGroup.h>
 #include <WebCore/WebGPUBindGroupDescriptor.h>
@@ -186,6 +188,30 @@ void RemoteDevice::setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&& han
 void RemoteDevice::pauseAllErrorReporting(bool pauseErrorReporting)
 {
     m_backing->pauseAllErrorReporting(pauseErrorReporting);
+}
+
+void RemoteDevice::setInspectorCapturing(bool capturing)
+{
+    m_backing->setInspectorCapturing(capturing);
+}
+
+void RemoteDevice::takeInspectorCapturedImages(CompletionHandler<void(Vector<Vector<std::pair<String, WebCore::ShareableBitmapHandle>>>&&)>&& completionHandler)
+{
+    Vector<Vector<std::pair<String, WebCore::ShareableBitmapHandle>>> groups;
+    for (auto& group : m_backing->takeInspectorCapturedImages()) {
+        Vector<std::pair<String, WebCore::ShareableBitmapHandle>> handleGroup;
+        for (auto& target : group) {
+            if (!target.image)
+                continue;
+            RefPtr bitmap = WebCore::ShareableBitmap::createFromImagePixels(*target.image);
+            if (!bitmap)
+                continue;
+            if (auto handle = bitmap->createHandle(WebCore::SharedMemory::Protection::ReadOnly))
+                handleGroup.append({ target.label, WTF::move(*handle) });
+        }
+        groups.append(WTF::move(handleGroup));
+    }
+    completionHandler(WTF::move(groups));
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

@@ -26,19 +26,21 @@
 #pragma once
 
 #include "GPUBindGroupLayout.h"
+#include "GPUShaderModule.h"
 #include "WebGPURenderPipeline.h"
 #include <cstdint>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
+class GPURenderPipeline : public RefCountedAndCanMakeWeakPtr<GPURenderPipeline> {
 public:
-    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
+    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId, Ref<GPUShaderModule>&& vertexModule, String&& vertexEntryPoint, RefPtr<GPUShaderModule>&& fragmentModule, String&& fragmentEntryPoint)
     {
-        return adoptRef(*new GPURenderPipeline(WTF::move(backing), uniqueId));
+        return adoptRef(*new GPURenderPipeline(WTF::move(backing), uniqueId, WTF::move(vertexModule), WTF::move(vertexEntryPoint), WTF::move(fragmentModule), WTF::move(fragmentEntryPoint)));
     }
 
     String NODELETE label() const;
@@ -49,15 +51,31 @@ public:
     WebGPU::RenderPipeline& backing() { return m_backing; }
     const WebGPU::RenderPipeline& backing() const { return m_backing; }
 
+    // Shader modules that this pipeline was created from. Retained for Web Inspector.
+    GPUShaderModule& vertexModule() { return m_vertexModule; }
+    const String& vertexEntryPoint() const LIFETIME_BOUND { return m_vertexEntryPoint; }
+    GPUShaderModule* fragmentModule() { return m_fragmentModule.get(); }
+    const String& fragmentEntryPoint() const LIFETIME_BOUND { return m_fragmentEntryPoint; }
+
+    bool sharesVertexFragmentModule() const { return m_fragmentModule && m_fragmentModule.get() == m_vertexModule.ptr(); }
+
 private:
-    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
+    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId, Ref<GPUShaderModule>&& vertexModule, String&& vertexEntryPoint, RefPtr<GPUShaderModule>&& fragmentModule, String&& fragmentEntryPoint)
         : m_backing(WTF::move(backing))
         , m_uniqueId(uniqueId)
+        , m_vertexModule(WTF::move(vertexModule))
+        , m_vertexEntryPoint(WTF::move(vertexEntryPoint))
+        , m_fragmentModule(WTF::move(fragmentModule))
+        , m_fragmentEntryPoint(WTF::move(fragmentEntryPoint))
     {
     }
 
     const Ref<WebGPU::RenderPipeline> m_backing;
     const uint64_t m_uniqueId;
+    const Ref<GPUShaderModule> m_vertexModule;
+    const String m_vertexEntryPoint;
+    const RefPtr<GPUShaderModule> m_fragmentModule;
+    const String m_fragmentEntryPoint;
 };
 
 }

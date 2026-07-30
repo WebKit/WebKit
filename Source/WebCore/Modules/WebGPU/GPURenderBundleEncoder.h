@@ -34,21 +34,24 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUBindGroup;
 class GPUBuffer;
+class GPUDevice;
 class GPURenderBundle;
 class GPURenderPipeline;
 template<typename> class ExceptionOr;
+class WeakPtrImplWithEventTargetData;
 
 class GPURenderBundleEncoder : public RefCounted<GPURenderBundleEncoder> {
 public:
-    static Ref<GPURenderBundleEncoder> create(Ref<WebGPU::RenderBundleEncoder>&& backing)
+    static Ref<GPURenderBundleEncoder> create(Ref<WebGPU::RenderBundleEncoder>&& backing, GPUDevice* inspectorDevice)
     {
-        return adoptRef(*new GPURenderBundleEncoder(WTF::move(backing)));
+        return adoptRef(*new GPURenderBundleEncoder(WTF::move(backing), inspectorDevice));
     }
 
     String NODELETE label() const;
@@ -86,13 +89,14 @@ public:
     WebGPU::RenderBundleEncoder& backing() { return m_backing; }
     const WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
 
+    GPUDevice* inspectorRecordingDevice() const;
+    bool hasActiveInspectorWebGPUCallTracer() const;
+
 private:
-    GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing)
-        : m_backing(WTF::move(backing))
-    {
-    }
+    GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, GPUDevice*);
 
     const Ref<WebGPU::RenderBundleEncoder> m_backing;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_inspectorDevice;
 };
 
 }

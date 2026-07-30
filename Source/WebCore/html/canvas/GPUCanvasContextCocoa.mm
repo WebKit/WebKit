@@ -36,6 +36,7 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerEnums.h"
 #include "ImageBitmap.h"
+#include "InspectorInstrumentation.h"
 #include "PlatformCALayerDelegatedContents.h"
 #include "PlatformScreen.h"
 #include "RenderBox.h"
@@ -118,8 +119,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, GPU& gpu, Document* document)
 {
     auto context = GPUCanvasContextCocoa::create(canvas, gpu, document);
-    if (context)
+    if (context) {
         context->suspendIfNeeded();
+        InspectorInstrumentation::didCreateCanvasRenderingContext(*context);
+    }
     return context;
 }
 
@@ -364,7 +367,7 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
     }
     RefPtr<ImageBuffer> buffer = m_readDisplayBuffer;
 
-    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
+    // An unconfigured context has never presented, so an empty buffer is the correct Web Inspector representation.
     if (!m_configuration)
         return buffer;
 
@@ -384,7 +387,7 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
         if (buffer && protectedThis->m_configuration) {
             buffer->flushDrawingContext();
             protectedThis->m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, frameCount);
-            protectedThis->present(frameCount);
+            // Do not present() here: this read-only snapshot must not advance the swap chain and destroy m_currentTexture, which would invalidate any command encoder the page has open (e.g. while recording a frame).
         }
     });
     return buffer;
@@ -553,6 +556,13 @@ std::optional<GPUCanvasConfiguration> GPUCanvasContextCocoa::getConfiguration() 
     }
 
     return configuration;
+}
+
+RefPtr<GPUDevice> GPUCanvasContextCocoa::configuredDevice() const
+{
+    if (!m_configuration)
+        return nullptr;
+    return m_configuration->device.ptr();
 }
 
 ExceptionOr<Ref<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()

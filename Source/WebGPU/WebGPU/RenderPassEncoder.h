@@ -29,6 +29,7 @@
 #import "CommandsMixin.h"
 #import "TextureOrTextureView.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/HashTraits.h>
@@ -147,6 +148,10 @@ private:
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectBufferToValidValues(Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);
     void setCachedRenderPassState(id<MTLRenderCommandEncoder>);
+    // Web Inspector per-draw capture: record the pass's commands while capturing, then at endPass replay draw prefixes into fresh textures (one submit+wait per draw) and read back each color target.
+    void recordInspectorCommand(Function<void(RenderPassEncoder&)>&&);
+    void noteInspectorDrawForReplay();
+    void replayForInspectorCapture();
     void emitMemoryBarrier(id<MTLRenderCommandEncoder>);
     void setVertexBuffer(id<MTLRenderCommandEncoder>, id<MTLBuffer>, uint32_t offset, uint32_t bufferIndex);
     void setFragmentBuffer(id<MTLRenderCommandEncoder>, id<MTLBuffer>, uint32_t offset, uint32_t bufferIndex);
@@ -224,6 +229,11 @@ private:
     bool m_passEnded { false };
     bool m_ignoreBufferCache { false };
     Vector<bool> m_bindGroupDynamicOffsetsChanged;
+
+    // Web Inspector per-draw capture state.
+    Vector<Function<void(RenderPassEncoder&)>> m_inspectorRecordedCommands;
+    Vector<size_t> m_inspectorDrawCommandIndices; // index into m_inspectorRecordedCommands after each draw
+    bool m_inspectorReplaying { false };
 } SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU

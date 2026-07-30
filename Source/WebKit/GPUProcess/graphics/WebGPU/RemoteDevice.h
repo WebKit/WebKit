@@ -62,6 +62,7 @@ class StreamServerConnection;
 
 namespace WebCore {
 class MediaPlayer;
+class ShareableBitmapHandle;
 class SharedMemoryHandle;
 class VideoFrame;
 }
@@ -154,6 +155,8 @@ private:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
     void pauseAllErrorReporting(bool pauseErrorReporting);
+    void setInspectorCapturing(bool);
+    void takeInspectorCapturedImages(CompletionHandler<void(Vector<Vector<std::pair<String, WebCore::ShareableBitmapHandle>>>&&)>&&);
 
     const Ref<WebCore::WebGPU::Device> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

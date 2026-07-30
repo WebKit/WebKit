@@ -67,6 +67,22 @@ GPUQueue::GPUQueue(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
 {
 }
 
+GPUDevice* GPUQueue::inspectorRecordingDevice() const
+{
+    return m_inspectorDevice.get();
+}
+
+void GPUQueue::setInspectorRecordingDevice(GPUDevice* inspectorDevice)
+{
+    m_inspectorDevice = inspectorDevice;
+}
+
+bool GPUQueue::hasActiveInspectorWebGPUCallTracer() const
+{
+    RefPtr inspectorDevice = m_inspectorDevice.get();
+    return inspectorDevice && inspectorDevice->isInspectorRecording();
+}
+
 String GPUQueue::label() const
 {
     return m_backing->label();

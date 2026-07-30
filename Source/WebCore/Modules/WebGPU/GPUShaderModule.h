@@ -40,9 +40,9 @@ class DeferredPromise;
 
 class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
 public:
-    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing)
+    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing, String&& wgslSource)
     {
-        return adoptRef(*new GPUShaderModule(WTF::move(backing)));
+        return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(wgslSource)));
     }
 
     String NODELETE label() const;
@@ -51,16 +51,21 @@ public:
     using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
     void getCompilationInfo(CompilationInfoPromise&&);
 
+    // The WGSL source passed to GPUDevice.createShaderModule(). Retained for Web Inspector.
+    const String& wgslSource() const LIFETIME_BOUND { return m_wgslSource; }
+
     WebGPU::ShaderModule& backing() { return m_backing; }
     const WebGPU::ShaderModule& backing() const { return m_backing; }
 
 private:
-    GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing)
+    GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing, String&& wgslSource)
         : m_backing(WTF::move(backing))
+        , m_wgslSource(WTF::move(wgslSource))
     {
     }
 
     const Ref<WebGPU::ShaderModule> m_backing;
+    const String m_wgslSource;
 };
 
 }

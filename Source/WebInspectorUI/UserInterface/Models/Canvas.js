@@ -184,7 +184,6 @@ WI.Canvas = class Canvas extends WI.Object
     static supportsRequestContentForContextType(contextType)
     {
         switch (contextType) {
-        case Canvas.ContextType.WebGPU:
         case Canvas.ContextType.WebMetal:
             return false;
         }
@@ -218,9 +217,9 @@ WI.Canvas = class Canvas extends WI.Object
         case WI.Canvas.ContextType.OffscreenWebGL:
         case WI.Canvas.ContextType.WebGL2:
         case WI.Canvas.ContextType.OffscreenWebGL2:
+        case WI.Canvas.ContextType.WebGPU:
             return true;
 
-        case WI.Canvas.ContextType.WebGPU:
         case WI.Canvas.ContextType.WebMetal:
             return false;
         }

@@ -69,6 +69,7 @@ public:
     void unconfigure() override;
     std::optional<GPUCanvasConfiguration> getConfiguration() const override;
     ExceptionOr<Ref<GPUTexture>> getCurrentTexture() override;
+    RefPtr<GPUDevice> configuredDevice() const override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)

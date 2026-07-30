@@ -1931,6 +1931,7 @@ inspector/InspectorResourceUtilities.cpp
 inspector/InspectorShaderProgram.cpp
 inspector/InspectorStyleSheet.cpp
 inspector/InspectorThreadableLoaderClient.cpp
+inspector/InspectorWebGPUCallTracer.cpp
 inspector/InstrumentingAgents.cpp
 inspector/NetworkResourcesData.cpp
 inspector/FrameDebugger.cpp

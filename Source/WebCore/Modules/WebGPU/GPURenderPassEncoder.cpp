@@ -29,6 +29,7 @@
 #include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
+#include "GPUDevice.h"
 #include "GPUQuerySet.h"
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
@@ -36,10 +37,22 @@
 
 namespace WebCore {
 
-GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device& device)
+GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device& device, GPUDevice* inspectorDevice)
     : m_backing(WTF::move(backing))
     , m_device(&device)
+    , m_inspectorDevice(inspectorDevice)
 {
+}
+
+GPUDevice* GPURenderPassEncoder::inspectorRecordingDevice() const
+{
+    return m_inspectorDevice.get();
+}
+
+bool GPURenderPassEncoder::hasActiveInspectorWebGPUCallTracer() const
+{
+    RefPtr inspectorDevice = m_inspectorDevice.get();
+    return inspectorDevice && inspectorDevice->isInspectorRecording();
 }
 
 String GPURenderPassEncoder::label() const

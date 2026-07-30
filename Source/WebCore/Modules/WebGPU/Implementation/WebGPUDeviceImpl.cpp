@@ -63,6 +63,7 @@
 #include "WebGPUValidationError.h"
 #include "WebGPUXRBindingImpl.h"
 #include <CoreGraphics/CGColorSpace.h>
+#include <WebCore/NativeImage.h>
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/SegmentedVector.h>
@@ -736,6 +737,23 @@ void DeviceImpl::resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU
 void DeviceImpl::pauseAllErrorReporting(bool pause)
 {
     wgpuDevicePauseErrorReporting(m_backing.get(), pause);
+}
+
+void DeviceImpl::setInspectorCapturing(bool capturing)
+{
+    wgpuDeviceSetInspectorCapturing(m_backing.get(), capturing);
+}
+
+Vector<Vector<Device::InspectorCapturedTarget>> DeviceImpl::takeInspectorCapturedImages()
+{
+    auto groups = wgpuDeviceTakeInspectorCapturedImages(m_backing.get());
+    return WTF::map(WTF::move(groups), [](auto&& group) {
+        return WTF::compactMap(WTF::move(group), [](auto&& target) -> std::optional<Device::InspectorCapturedTarget> {
+            if (RefPtr nativeImage = WebCore::NativeImage::create(WTF::move(target.image)))
+                return Device::InspectorCapturedTarget { WTF::move(target.label), WTF::move(nativeImage) };
+            return std::nullopt;
+        });
+    });
 }
 
 void DeviceImpl::setLabelInternal(const String& label)

@@ -47,6 +47,8 @@
 #include "SharedVideoFrame.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <WebCore/NativeImage.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/WebGPUBindGroupLayoutDescriptor.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -467,6 +469,30 @@ void RemoteDeviceProxy::pauseAllErrorReporting(bool pause)
 {
     auto sendResult = send(Messages::RemoteDevice::PauseAllErrorReporting(pause));
     UNUSED_PARAM(sendResult);
+}
+
+void RemoteDeviceProxy::setInspectorCapturing(bool capturing)
+{
+    auto sendResult = send(Messages::RemoteDevice::SetInspectorCapturing(capturing));
+    UNUSED_PARAM(sendResult);
+}
+
+Vector<Vector<WebCore::WebGPU::Device::InspectorCapturedTarget>> RemoteDeviceProxy::takeInspectorCapturedImages()
+{
+    auto sendResult = sendSync(Messages::RemoteDevice::TakeInspectorCapturedImages());
+    if (!sendResult.succeeded())
+        return { };
+    auto [targetGroups] = sendResult.takeReply();
+    return WTF::map(WTF::move(targetGroups), [](Vector<std::pair<String, WebCore::ShareableBitmapHandle>>&& group) {
+        return WTF::compactMap(WTF::move(group), [](std::pair<String, WebCore::ShareableBitmapHandle>&& target) -> std::optional<WebCore::WebGPU::Device::InspectorCapturedTarget> {
+            RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(target.second), WebCore::SharedMemory::Protection::ReadOnly);
+            if (!bitmap)
+                return std::nullopt;
+            if (RefPtr nativeImage = WebCore::NativeImage::create(bitmap->createPlatformImage()))
+                return WebCore::WebGPU::Device::InspectorCapturedTarget { WTF::move(target.first), WTF::move(nativeImage) };
+            return std::nullopt;
+        });
+    });
 }
 
 Ref<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::invalidCommandEncoder()

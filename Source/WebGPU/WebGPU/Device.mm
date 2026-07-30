@@ -560,6 +560,68 @@ void Device::generateAnInternalError(String&& message)
     }
 }
 
+static RetainPtr<CGImageRef> createCGImageFromStagingTexture(id<MTLTexture> texture)
+{
+    if (!texture)
+        return nullptr;
+
+    bool fp16 = texture.pixelFormat == MTLPixelFormatRGBA16Float;
+    if (!fp16 && texture.pixelFormat != MTLPixelFormatBGRA8Unorm && texture.pixelFormat != MTLPixelFormatBGRA8Unorm_sRGB)
+        return nullptr;
+
+    auto width = texture.width;
+    auto height = texture.height;
+    if (!width || !height)
+        return nullptr;
+
+    auto bytesPerPixel = fp16 ? 8 : 4;
+    auto bytesPerRow = bytesPerPixel * width;
+    auto bitsPerComponent = fp16 ? 16 : 8;
+    auto bitsPerPixel = bytesPerPixel * 8;
+    size_t imageBytesSize = bytesPerRow * height;
+    void* imageBytes = FastMalloc::tryMalloc(imageBytesSize);
+    if (!imageBytes)
+        return nullptr;
+    [texture getBytes:imageBytes bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    CGBitmapInfo bitmapInfo = fp16
+        ? static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents)
+        : static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little);
+
+    auto freeImageBytes = [](void* imageBytes, const void*, size_t) {
+        FastMalloc::free(imageBytes);
+    };
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithData(imageBytes, imageBytes, imageBytesSize, freeImageBytes));
+    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+}
+
+void Device::addInspectorCaptureTargetGroup(Vector<InspectorCaptureTarget>&& group)
+{
+    // Empty groups are kept intentionally: placeholders for capture points whose pass could not be replayed (e.g. MSAA or unsupported format), keeping the group count aligned by position with the WebProcess's capture points.
+    m_inspectorCaptureTargetGroups.append(WTF::move(group));
+}
+
+Vector<Vector<Device::InspectorCapturedTarget>> Device::takeInspectorCapturedImages()
+{
+    // Wait for all committed GPU work so the staging blits have finished, then read back synchronously here; reading synchronously (not in an async completion handler) avoids a race where the drain runs before the images are appended.
+    getQueue()->waitForAllCommitedWorkToComplete();
+
+    Vector<Vector<InspectorCapturedTarget>> groups;
+    groups.reserveInitialCapacity(m_inspectorCaptureTargetGroups.size());
+    for (auto& group : m_inspectorCaptureTargetGroups) {
+        Vector<InspectorCapturedTarget> capturedGroup;
+        capturedGroup.reserveInitialCapacity(group.size());
+        for (auto& target : group) {
+            if (RetainPtr<CGImageRef> image = createCGImageFromStagingTexture(target.stagingTexture.get()))
+                capturedGroup.append({ target.label, WTF::move(image) });
+        }
+        groups.append(WTF::move(capturedGroup));
+    }
+    m_inspectorCaptureTargetGroups.clear();
+    return groups;
+}
+
 id<MTLBuffer> Device::newBufferWithBytes(const void* pointer, size_t length, MTLResourceOptions options, bool skipAttribution) const
 {
     id<MTLBuffer> buffer = [m_device newBufferWithBytes:pointer length:length options:options];
@@ -1139,6 +1201,21 @@ WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGP
 void wgpuDevicePauseErrorReporting(WGPUDevice device, WGPUBool pauseErrors)
 {
     WebGPU::fromAPI(device).pauseErrorReporting(!!pauseErrors);
+}
+
+void wgpuDeviceSetInspectorCapturing(WGPUDevice device, WGPUBool capturing)
+{
+    WebGPU::fromAPI(device).setInspectorCapturing(!!capturing);
+}
+
+Vector<Vector<WGPUInspectorCapturedTarget>> wgpuDeviceTakeInspectorCapturedImages(WGPUDevice device)
+{
+    auto groups = WebGPU::fromAPI(device).takeInspectorCapturedImages();
+    return WTF::map(WTF::move(groups), [](auto&& group) {
+        return WTF::map(WTF::move(group), [](auto&& target) {
+            return WGPUInspectorCapturedTarget { WTF::move(target.label), WTF::move(target.image) };
+        });
+    });
 }
 
 void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncCallback callback, void* userdata)

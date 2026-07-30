@@ -39,6 +39,7 @@
 #include "ScriptExecutionContext.h"
 #include "WebGPUDevice.h"
 #include <optional>
+#include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
@@ -57,6 +58,7 @@ class GPUBuffer;
 struct GPUBufferDescriptor;
 class GPUCommandEncoder;
 struct GPUCommandEncoderDescriptor;
+class NativeImage;
 class GPUComputePipeline;
 struct GPUComputePipelineDescriptor;
 class GPUExternalTexture;
@@ -155,6 +157,24 @@ public:
     void addBufferToUnmap(GPUBuffer&);
     Ref<GPUAdapterInfo> NODELETE adapterInfo() const;
 
+    // Pipeline tracking for Web Inspector. Pipelines register themselves at creation time.
+    void addRenderPipeline(GPURenderPipeline&);
+    void addComputePipeline(GPUComputePipeline&);
+    ScriptExecutionContext* scriptExecutionContextForInspector() const { return scriptExecutionContext(); }
+
+    // Web Inspector command recording: while >0, the backing device captures per-draw images.
+    void incrementInspectorRecordingCount();
+    void decrementInspectorRecordingCount();
+    // Per draw call, a group of captured render targets (label + image), in draw-execution order.
+    struct InspectorCapturedTarget {
+        String label;
+        RefPtr<NativeImage> image;
+    };
+    Vector<Vector<InspectorCapturedTarget>> takeInspectorCapturedImages();
+    bool isInspectorRecording() const { return m_inspectorRecordingCount; }
+    void forEachRenderPipeline(NOESCAPE const Function<void(GPURenderPipeline&)>&);
+    void forEachComputePipeline(NOESCAPE const Function<void(GPUComputePipeline&)>&);
+
 #if ENABLE(VIDEO)
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
 #endif
@@ -176,6 +196,9 @@ private:
     const Ref<GPUQueue> m_queue;
     RefPtr<GPUPipelineLayout> m_autoPipelineLayout;
     WeakHashSet<GPUBuffer> m_buffersToUnmap;
+    WeakHashSet<GPURenderPipeline> m_renderPipelines;
+    WeakHashSet<GPUComputePipeline> m_computePipelines;
+    unsigned m_inspectorRecordingCount { 0 };
 
 #if ENABLE(VIDEO)
     GPUExternalTexture* externalTextureForDescriptor(const GPUExternalTextureDescriptor&);

@@ -44,6 +44,7 @@
 #import <wtf/HashTable.h>
 #import <wtf/KeyValuePair.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
@@ -155,6 +156,20 @@ public:
     void generateAValidationError(String&& message);
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);
+
+    // Web Inspector per-draw capture: while active, RenderPassEncoder copies each color attachment into a per-draw staging texture, read back when the WebProcess drains a frame.
+    struct InspectorCaptureTarget {
+        String label;
+        RetainPtr<id<MTLTexture>> stagingTexture;
+    };
+    struct InspectorCapturedTarget {
+        String label;
+        RetainPtr<CGImageRef> image;
+    };
+    void setInspectorCapturing(bool capturing) { m_inspectorCapturing = capturing; }
+    bool isInspectorCapturing() const { return m_inspectorCapturing; }
+    void addInspectorCaptureTargetGroup(Vector<InspectorCaptureTarget>&&);
+    Vector<Vector<InspectorCapturedTarget>> takeInspectorCapturedImages();
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
 #if CPU(X86_64)
@@ -297,6 +312,9 @@ private:
     bool m_isLost { false };
     bool m_destroyed { false };
     id<NSObject> m_deviceObserver { nil };
+
+    bool m_inspectorCapturing { false };
+    Vector<Vector<InspectorCaptureTarget>> m_inspectorCaptureTargetGroups;
 
     HardwareCapabilities m_capabilities { };
 

@@ -29,15 +29,28 @@
 #include "ExceptionOr.h"
 #include "GPUBuffer.h"
 #include "GPUCommandBuffer.h"
+#include "GPUDevice.h"
 #include "GPUQuerySet.h"
 #include "WebGPUDevice.h"
 
 namespace WebCore {
 
-GPUCommandEncoder::GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&& backing, WebGPU::Device& device)
+GPUCommandEncoder::GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&& backing, WebGPU::Device& device, GPUDevice* inspectorDevice)
     : m_backing(WTF::move(backing))
     , m_device(&device)
+    , m_inspectorDevice(inspectorDevice)
 {
+}
+
+GPUDevice* GPUCommandEncoder::inspectorRecordingDevice() const
+{
+    return m_inspectorDevice.get();
+}
+
+bool GPUCommandEncoder::hasActiveInspectorWebGPUCallTracer() const
+{
+    RefPtr inspectorDevice = m_inspectorDevice.get();
+    return inspectorDevice && inspectorDevice->isInspectorRecording();
 }
 
 String GPUCommandEncoder::label() const
@@ -56,7 +69,7 @@ ExceptionOr<Ref<GPURenderPassEncoder>> GPUCommandEncoder::beginRenderPass(const 
     RefPtr device { m_device };
     if (!encoder || !device)
         return Exception { ExceptionCode::InvalidStateError, "GPUCommandEncoder.beginRenderPass: Unable to begin render pass."_s };
-    return GPURenderPassEncoder::create(encoder.releaseNonNull(), *device);
+    return GPURenderPassEncoder::create(encoder.releaseNonNull(), *device, m_inspectorDevice.get());
 }
 
 ExceptionOr<Ref<GPUComputePassEncoder>> GPUCommandEncoder::beginComputePass(const std::optional<GPUComputePassDescriptor>& computePassDescriptor)
@@ -65,7 +78,7 @@ ExceptionOr<Ref<GPUComputePassEncoder>> GPUCommandEncoder::beginComputePass(cons
     RefPtr device { m_device };
     if (!computePass || !device)
         return Exception { ExceptionCode::InvalidStateError, "GPUCommandEncoder.beginComputePass: Unable to begin compute pass."_s };
-    return GPUComputePassEncoder::create(computePass.releaseNonNull(), *device);
+    return GPUComputePassEncoder::create(computePass.releaseNonNull(), *device, m_inspectorDevice.get());
 }
 
 void GPUCommandEncoder::copyBufferToBuffer(

@@ -40,6 +40,7 @@ namespace WebCore {
 class CanvasBase;
 class Document;
 class GPU;
+class GPUDevice;
 class GPUTexture;
 class ImageBitmap;
 struct GPUCanvasConfiguration;
@@ -62,6 +63,9 @@ public:
     virtual void unconfigure() = 0;
     virtual std::optional<GPUCanvasConfiguration> getConfiguration() const = 0;
     virtual ExceptionOr<Ref<GPUTexture>> getCurrentTexture() = 0;
+
+    // The GPUDevice this context is configured with (nullptr if unconfigured); used by Web Inspector to enumerate this canvas's pipelines/shader modules.
+    virtual RefPtr<GPUDevice> configuredDevice() const = 0;
 
 protected:
     GPUCanvasContext(CanvasBase&);

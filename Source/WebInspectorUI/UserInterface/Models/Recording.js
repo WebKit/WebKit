@@ -92,6 +92,9 @@ WI.Recording = class Recording extends WI.Object
         case InspectorBackend.Enum.Recording.Type.OffscreenCanvasWebGL2:
             type = WI.Recording.Type.OffscreenCanvasWebGL2;
             break;
+        case InspectorBackend.Enum.Recording.Type.CanvasWebGPU:
+            type = WI.Recording.Type.CanvasWebGPU;
+            break;
         default:
             WI.Recording.synthesizeWarning(WI.UIString("unknown %s \u0022%s\u0022").format(WI.unlocalizedString("type"), payload.type));
             type = String(payload.type);
@@ -172,6 +175,8 @@ WI.Recording = class Recording extends WI.Object
             return WI.UIString("WebGL2", "Recording Type Canvas WebGL2", "A type of canvas recording in the Graphics Tab.");
         case Recording.Type.OffscreenCanvasWebGL2:
             return WI.UIString("WebGL2 (Offscreen)", "Recording Type Offscreen Canvas WebGL2", "A type of canvas recording in the Graphics Tab.");
+        case Recording.Type.CanvasWebGPU:
+            return WI.UIString("WebGPU", "Recording Type Canvas WebGPU", "A type of canvas recording in the Graphics Tab.");
         }
 
         console.assert(false, "Unknown recording type", recordingType);
@@ -291,7 +296,7 @@ WI.Recording = class Recording extends WI.Object
 
     get isCanvas()
     {
-        return this.isCanvas2D || this.isCanvasBitmapRender || this.isCanvasWebGL || this.isCanvasWebGL2;
+        return this.isCanvas2D || this.isCanvasBitmapRender || this.isCanvasWebGL || this.isCanvasWebGL2 || this.isCanvasWebGPU;
     }
 
     get isCanvas2D()
@@ -312,6 +317,11 @@ WI.Recording = class Recording extends WI.Object
     get isCanvasWebGL2()
     {
         return this._type === WI.Recording.Type.CanvasWebGL2 || this._type === WI.Recording.Type.OffscreenCanvasWebGL2;
+    }
+
+    get isCanvasWebGPU()
+    {
+        return this._type === WI.Recording.Type.CanvasWebGPU;
     }
 
     startProcessing()
@@ -591,6 +601,9 @@ WI.Recording = class Recording extends WI.Object
             return createCanvasContext("webgl2");
         case WI.Recording.Type.OffscreenCanvasWebGL2:
             return createOffscreenCanvasContext("webgl2");
+        case WI.Recording.Type.CanvasWebGPU:
+            // WebGPU recordings are snapshot-driven and are not replayed against a live context.
+            return { context: null, element: null };
         }
 
         console.error("Unknown recording type", this._type);
@@ -893,7 +906,9 @@ WI.Recording = class Recording extends WI.Object
     async _process()
     {
         if (!this._processContext) {
-            this._processContext = this.createContext().context;
+            // WebGPU recordings are snapshot-driven: the backend supplies a per-action image and the frontend does not replay commands, so there is nothing to create.
+            if (!this.isCanvasWebGPU)
+                this._processContext = this.createContext().context;
 
             if (this.isCanvas2D) {
                 let initialContent = await WI.ImageUtilities.promisifyLoad(this._initialState.content);
@@ -997,6 +1012,7 @@ WI.Recording.Type = {
     OffscreenCanvasWebGL: "offscreen-canvas-webgl",
     CanvasWebGL2: "canvas-webgl2",
     OffscreenCanvasWebGL2: "offscreen-canvas-webgl2",
+    CanvasWebGPU: "canvas-webgpu",
 };
 
 // Keep this in sync with WebCore::RecordingSwizzleType.

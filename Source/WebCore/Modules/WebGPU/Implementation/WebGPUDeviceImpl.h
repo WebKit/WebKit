@@ -97,6 +97,8 @@ private:
 
     void setLabelInternal(const String&) final;
     void pauseAllErrorReporting(bool pause) final;
+    void setInspectorCapturing(bool) final;
+    Vector<Vector<InspectorCapturedTarget>> takeInspectorCapturedImages() final;
 
     [[noreturn]] Ref<CommandEncoder> NODELETE invalidCommandEncoder() final;
     [[noreturn]] Ref<CommandBuffer> NODELETE invalidCommandBuffer() final;
