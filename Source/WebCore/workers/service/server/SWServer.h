@@ -357,7 +357,8 @@ private:
     void originImportComplete(const SecurityOriginData& topOrigin, MonotonicTime startTime);
     void fireAllOriginImportCallbacks();
 
-    ResourceRequest createScriptRequest(const URL&, const ServiceWorkerJobData&, SWServerRegistration&);
+    enum class IsMainScript : bool { No, Yes };
+    ResourceRequest createScriptRequest(const URL&, const ServiceWorkerJobData&, SWServerRegistration&, IsMainScript);
 
     enum class ShouldUpdateRegistrations : bool { No, Yes };
     void unregisterServiceWorkerClientInternal(const ClientOrigin&, ScriptExecutionContextIdentifier, ShouldUpdateRegistrations);

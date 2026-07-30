@@ -716,7 +716,25 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
     connection->resolveUnregistrationJobInClient(jobData.identifier().jobIdentifier, registrationKey, unregistrationResult);
 }
 
-ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorkerJobData& jobData, SWServerRegistration& registration)
+static void addFetchMetadataHeaders(ResourceRequest& request, const SecurityOrigin& scriptOrigin, ASCIILiteral destination, ASCIILiteral mode)
+{
+    Ref requestOrigin = SecurityOrigin::create(request.url());
+    ASSERT(requestOrigin->isPotentiallyTrustworthy());
+
+    auto site = [&]() -> ASCIILiteral {
+        if (scriptOrigin.isSameOriginAs(requestOrigin))
+            return "same-origin"_s;
+        if (scriptOrigin.isSameSiteAs(requestOrigin))
+            return "same-site"_s;
+        return "cross-site"_s;
+    }();
+
+    request.setHTTPHeaderField(HTTPHeaderName::SecFetchDest, destination);
+    request.setHTTPHeaderField(HTTPHeaderName::SecFetchMode, mode);
+    request.setHTTPHeaderField(HTTPHeaderName::SecFetchSite, site);
+}
+
+ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorkerJobData& jobData, SWServerRegistration& registration, IsMainScript isMainScript)
 {
     ResourceRequest request { URL { url } };
 
@@ -732,6 +750,14 @@ ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorke
     request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
     request.setPriority(ResourceLoadPriority::Low);
     request.setIsAppInitiated(registration.isAppInitiated());
+
+    if (isMainScript == IsMainScript::Yes) {
+        request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+        addFetchMetadataHeaders(request, origin, "serviceworker"_s, "same-origin"_s);
+    } else if (jobData.workerType == WorkerType::Module)
+        addFetchMetadataHeaders(request, origin, "serviceworker"_s, "cors"_s);
+    else
+        addFetchMetadataHeaders(request, origin, "script"_s, "no-cors"_s);
 
     return request;
 }
@@ -755,8 +781,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
     if (jobData.connectionIdentifier() == Process::identifier()) {
         ASSERT(jobData.type == ServiceWorkerJobType::Update);
         // This is a soft-update job, create directly a network load to fetch the script.
-        auto request = createScriptRequest(jobData.scriptURL, jobData, registration);
-        request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+        auto request = createScriptRequest(jobData.scriptURL, jobData, registration, IsMainScript::Yes);
         protect(*m_delegate)->softUpdate(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTF::move(request), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](WorkerFetchResult&& result) {
             std::optional<ProcessIdentifier> requestingProcessIdentifier;
             if (RefPtr protectedThis = weakThis.get())
@@ -813,7 +838,7 @@ void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWSer
     auto handler = RefreshImportedScriptsHandler::create(urls.size(), WTF::move(callback));
     CheckedRef delegate = *m_delegate;
     for (auto& url : urls) {
-        delegate->softUpdate(ServiceWorkerJobData { jobData }, shouldRefreshCache, createScriptRequest(url, jobData, registration), [handler, url, size = urls.size()](WorkerFetchResult&& result) {
+        delegate->softUpdate(ServiceWorkerJobData { jobData }, shouldRefreshCache, createScriptRequest(url, jobData, registration, IsMainScript::No), [handler, url, size = urls.size()](WorkerFetchResult&& result) {
             handler->add(url, WTF::move(result));
         });
     }
