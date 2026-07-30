@@ -389,6 +389,7 @@ struct PendingStreamFields {
     Ref<PendingStreamState> state;
     WeakObjCPtr<NSInputStream> formStream;
     std::optional<bool> isHTTP2OrLater;
+    bool isOpened { false };
 };
 
 static void* pendingStreamCreate(CFReadStreamRef stream, void* context)

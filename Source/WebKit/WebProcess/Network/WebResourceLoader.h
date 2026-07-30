@@ -98,11 +98,14 @@ private:
     void serviceWorkerDidNotHandle();
     void updateResultingClientIdentifier(WTF::UUID currentIdentifier, WTF::UUID newIdentifier);
     void cancelPendingStreamUpload();
+    void serviceWorkerPendingStreamForwardingNeedData();
 
     void didBlockAuthenticationChallenge();
     void setServiceWorkerTimingInfo(ServiceWorkerTimingInfo&& info) { m_serviceWorkerTimingInfo = WTF::move(info); }
 
     void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(const WebCore::ResourceResponse&);
+
+    void drainPendingStreamIfPossible();
 
     WebCore::MainFrameMainResource mainFrameMainResource() const;
     
@@ -121,6 +124,9 @@ private:
     const std::optional<TrackingParameters> m_trackingParameters;
     WebResourceInterceptController m_interceptController;
     RefPtr<WebCore::PendingStreamState> m_pendingStreamState;
+    uint64_t m_pendingStreamBytesForwardedToNetworkProcess { 0 };
+    uint64_t m_pendingStreamBytesSentByNetwork { 0 };
+    bool m_isServiceWorkerPendingStreamForwarding { false };
     size_t m_numBytesReceived { 0 };
     size_t m_bytesTransferredOverNetwork { 0 };
 

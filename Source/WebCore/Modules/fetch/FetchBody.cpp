@@ -302,6 +302,7 @@ Ref<ReadableStreamToSharedBufferSink> FetchBody::startPendingStreamUpload(Script
     Ref state = PendingStreamState::create();
     m_pendingStreamState = state.copyRef();
 
+    static constexpr size_t desiredBufferingSize = 64 * 1024;
     Ref sink = ReadableStreamToSharedBufferSink::create([state](auto&& result) mutable {
         WTF::switchOn(result,
             [&](std::nullptr_t) { state->endStream(); },
@@ -309,6 +310,13 @@ Ref<ReadableStreamToSharedBufferSink> FetchBody::startPendingStreamUpload(Script
             [&](JSC::JSValue) { state->errorStream(-1); },
             [&](Exception&) { state->errorStream(-1); }
         );
+    }, desiredBufferingSize);
+
+    state->setQueueDrainedHandler([weakSink = WeakPtr { sink.get() }, identifier = context.identifier()] {
+        ScriptExecutionContext::postTaskTo(identifier, [weakSink](auto&) {
+            if (RefPtr sink = weakSink)
+                sink->resumeReading();
+        });
     });
     state->setCancelCallback([weakSink = WeakPtr { sink }, contextIdentifier = context.identifier()] {
         ScriptExecutionContext::postTaskTo(contextIdentifier, [weakSink](auto& context) {

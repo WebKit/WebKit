@@ -96,28 +96,50 @@ void WebResourceLoader::initPendingStreamState()
         return;
     state->setDataAvailableHandler([weakThis = WeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis || !protectedThis->m_pendingStreamState)
-                return;
-
-            auto result = protect(protectedThis->m_pendingStreamState)->takeAvailableChunks();
-
-            if (!result) {
-                protectedThis->send(Messages::NetworkResourceLoader::PendingStreamError { });
-                protectedThis->m_pendingStreamState = nullptr;
-                return;
-            }
-
-            for (Ref chunk : result->first)
-                protectedThis->send(Messages::NetworkResourceLoader::PendingStreamAppendData { IPC::SharedBufferReference(WTF::move(chunk)) });
-
-            if (!result->second)
-                return;
-
-            protectedThis->send(Messages::NetworkResourceLoader::PendingStreamEnd { });
-            protectedThis->m_pendingStreamState = nullptr;
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->drainPendingStreamIfPossible();
         });
     });
+}
+
+static constexpr uint64_t kMaxInFlightBytes = 64 * 1024;
+
+void WebResourceLoader::drainPendingStreamIfPossible()
+{
+    if (!m_isServiceWorkerPendingStreamForwarding) {
+        if (m_pendingStreamBytesForwardedToNetworkProcess >= m_pendingStreamBytesSentByNetwork + kMaxInFlightBytes)
+            return;
+    }
+
+    RefPtr state = m_pendingStreamState;
+    if (!state)
+        return;
+
+    auto result = state->takeAvailableChunks();
+
+    if (!result) {
+        send(Messages::NetworkResourceLoader::PendingStreamError { });
+        m_pendingStreamState = nullptr;
+        return;
+    }
+
+    for (Ref chunk : result->first) {
+        m_pendingStreamBytesForwardedToNetworkProcess += chunk->size();
+        send(Messages::NetworkResourceLoader::PendingStreamAppendData { IPC::SharedBufferReference(WTF::move(chunk)) });
+    }
+
+    if (!result->second)
+        return;
+
+    send(Messages::NetworkResourceLoader::PendingStreamEnd { });
+    m_pendingStreamState = nullptr;
+}
+
+void WebResourceLoader::serviceWorkerPendingStreamForwardingNeedData()
+{
+    // FIXME: We should implement backpressure for service worker stream uploads as well.
+    m_isServiceWorkerPendingStreamForwarding = true;
+    drainPendingStreamIfPossible();
 }
 
 WebResourceLoader::~WebResourceLoader() = default;
@@ -188,6 +210,11 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
 
 void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
+    ASSERT(bytesSent >= m_pendingStreamBytesSentByNetwork);
+    if (bytesSent > m_pendingStreamBytesSentByNetwork) {
+        m_pendingStreamBytesSentByNetwork = bytesSent;
+        drainPendingStreamIfPossible();
+    }
     protect(resourceLoader())->didSendData(bytesSent, totalBytesToBeSent);
 }
 

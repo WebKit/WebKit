@@ -36,6 +36,7 @@ messages -> WebResourceLoader {
     ServiceWorkerDidNotHandle()
     UpdateResultingClientIdentifier(WTF::UUID currentIdentifier, WTF::UUID newIdentifier);
     CancelPendingStreamUpload()
+    ServiceWorkerPendingStreamForwardingNeedData()
     DidBlockAuthenticationChallenge()
 
     StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(WebCore::ResourceResponse response)

@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include <wtf/Locker.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -74,10 +75,28 @@ void PendingStreamState::invokeHandlerIfNeeded(NOESCAPE const std::function<RefP
         handler->invoke();
 }
 
+template<typename Result>
+Result PendingStreamState::invokeDrainedHandlerIfNeeded(NOESCAPE const std::function<Result(RefPtr<CallbackHandler>&)>& function)
+{
+    RefPtr<CallbackHandler> handler;
+    auto result = function(handler);
+    if (handler) {
+#if ASSERT_ENABLED
+        m_isInvokingQueueDrainedHandler = true;
+        auto scope = makeScopeExit([&] {
+            m_isInvokingQueueDrainedHandler = false;
+        });
+#endif
+        handler->invoke();
+    }
+    return result;
+}
+
 void PendingStreamState::appendData(Ref<SharedBuffer>&& buffer)
 {
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
+        ASSERT(!m_isInvokingQueueDrainedHandler);
         if (m_ended || m_errorCode)
             return nullptr;
         m_chunks.append(WTF::move(buffer));
@@ -89,6 +108,7 @@ void PendingStreamState::endStream()
 {
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
+        ASSERT(!m_isInvokingQueueDrainedHandler);
         if (m_ended || m_errorCode)
             return nullptr;
         m_ended = true;
@@ -100,6 +120,7 @@ void PendingStreamState::errorStream(int errorCode)
 {
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
+        ASSERT(!m_isInvokingQueueDrainedHandler);
         if (m_ended || m_errorCode)
             return nullptr;
         m_errorCode = errorCode ? errorCode : -1;
@@ -118,6 +139,7 @@ void PendingStreamState::setDataAvailableHandler(Function<void()>&& handler)
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
         ASSERT(!m_dataAvailableHandler);
+        ASSERT(!m_isInvokingQueueDrainedHandler);
         RELEASE_LOG_ERROR_IF(m_dataAvailableHandler, Network, "Trying to get upload stream data twice");
         m_dataAvailableHandler = CallbackHandler::create(WTF::move(handler));
         if (!m_chunks.isEmpty() || m_ended || m_errorCode)
@@ -132,6 +154,17 @@ void PendingStreamState::clearDataAvailableHandler()
     m_dataAvailableHandler = nullptr;
 }
 
+void PendingStreamState::setQueueDrainedHandler(Function<void()>&& handler)
+{
+    Locker locker { m_lock };
+    if (!handler) {
+        m_queueDrainedHandler = nullptr;
+        return;
+    }
+    ASSERT(!m_queueDrainedHandler);
+    m_queueDrainedHandler = CallbackHandler::create(WTF::move(handler));
+}
+
 PendingStreamState::HTTPVersion PendingStreamState::currentHTTPVersion()
 {
     Locker locker { m_lock };
@@ -140,39 +173,49 @@ PendingStreamState::HTTPVersion PendingStreamState::currentHTTPVersion()
     return m_httpVersionProbe();
 }
 
-Expected<std::pair<size_t, bool>, int> PendingStreamState::readInto(std::span<uint8_t> outBuffer)
+PendingStreamState::ReadResult PendingStreamState::readInto(std::span<uint8_t> outBuffer)
 {
-    Locker locker { m_lock };
+    return invokeDrainedHandlerIfNeeded<ReadResult>([&](auto& drainedHandler) -> ReadResult {
+        Locker locker { m_lock };
+        ASSERT(!m_isInvokingQueueDrainedHandler);
 
-    if (m_errorCode)
-        return makeUnexpected(m_errorCode);
+        if (m_errorCode)
+            return makeUnexpected(m_errorCode);
 
-    size_t written = 0;
-    while (written < outBuffer.size() && !m_chunks.isEmpty()) {
-        auto chunkSpan = protect(m_chunks.first())->span();
-        size_t available = chunkSpan.size() - m_frontChunkOffset;
-        size_t remaining = outBuffer.size() - written;
-        size_t toCopy = std::min(available, remaining);
-        memcpySpan(outBuffer.subspan(written, toCopy), chunkSpan.subspan(m_frontChunkOffset, toCopy));
-        written += toCopy;
-        m_frontChunkOffset += toCopy;
-        if (m_frontChunkOffset >= chunkSpan.size()) {
-            m_chunks.removeFirst();
-            m_frontChunkOffset = 0;
+        size_t written = 0;
+        while (written < outBuffer.size() && !m_chunks.isEmpty()) {
+            auto chunkSpan = protect(m_chunks.first())->span();
+            size_t available = chunkSpan.size() - m_frontChunkOffset;
+            size_t remaining = outBuffer.size() - written;
+            size_t toCopy = std::min(available, remaining);
+            memcpySpan(outBuffer.subspan(written, toCopy), chunkSpan.subspan(m_frontChunkOffset, toCopy));
+            written += toCopy;
+            m_frontChunkOffset += toCopy;
+            if (m_frontChunkOffset >= chunkSpan.size()) {
+                m_chunks.removeFirst();
+                m_frontChunkOffset = 0;
+            }
         }
-    }
 
-    return std::make_pair(written, m_chunks.isEmpty() && m_ended);
+        if (m_chunks.isEmpty())
+            drainedHandler = m_queueDrainedHandler;
+        return std::make_pair(written, m_chunks.isEmpty() && m_ended);
+    });
 }
 
-Expected<std::pair<Deque<Ref<SharedBuffer>>, bool>, int> PendingStreamState::takeAvailableChunks()
+PendingStreamState::TakeResult PendingStreamState::takeAvailableChunks()
 {
-    Locker locker { m_lock };
-    ASSERT(!m_frontChunkOffset);
-    if (m_errorCode)
-        return makeUnexpected(m_errorCode);
+    return invokeDrainedHandlerIfNeeded<TakeResult>([&](auto& drainedHandler) -> TakeResult {
+        Locker locker { m_lock };
+        ASSERT(!m_frontChunkOffset);
+        ASSERT(!m_isInvokingQueueDrainedHandler);
 
-    return std::make_pair(WTF::move(m_chunks), m_ended);
+        if (m_errorCode)
+            return makeUnexpected(m_errorCode);
+
+        drainedHandler = m_queueDrainedHandler;
+        return std::make_pair(std::exchange(m_chunks, { }), m_ended);
+    });
 }
 
 bool PendingStreamState::hasReadyData()

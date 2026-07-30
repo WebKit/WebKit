@@ -37,6 +37,7 @@
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "SharedBufferReference.h"
+#include "WebResourceLoaderMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerConnection.h"
 #include <WebCore/NotificationData.h>
@@ -418,6 +419,8 @@ void WebSWServerToContextConnection::startPendingStreamUploadForwarding(WebCore:
     }
 
     m_requestPendingStreamStates.add(fetchIdentifier, *state);
+
+    loader->connectionToWebProcess().connection().send(Messages::WebResourceLoader::ServiceWorkerPendingStreamForwardingNeedData { }, loader->coreIdentifier());
 
     state->setDataAvailableHandler([weakThis = WeakPtr { *this }, fetchIdentifier] {
         if (RefPtr protectedThis = weakThis)

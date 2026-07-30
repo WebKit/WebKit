@@ -106,8 +106,9 @@ private:
     WeakPtr<ScriptExecutionContext> m_context;
 };
 
-ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink(Callback&& callback)
+ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink(Callback&& callback, std::optional<size_t> backpressureThreshold)
     : m_callback { WTF::move(callback) }
+    , m_backpressureThreshold { backpressureThreshold }
 {
 }
 
@@ -139,8 +140,23 @@ void ReadableStreamToSharedBufferSink::enqueue(const Ref<JSC::Uint8Array>& buffe
     if (buffer->byteLength()) {
         if (m_callback)
             m_callback(buffer->span());
+        m_dataStored += buffer->byteLength();
     }
 
+    if (m_backpressureThreshold && m_dataStored >= *m_backpressureThreshold)
+        return;
+
+    scheduleKeepReading();
+}
+
+void ReadableStreamToSharedBufferSink::resumeReading()
+{
+    m_dataStored = 0;
+    scheduleKeepReading();
+}
+
+void ReadableStreamToSharedBufferSink::scheduleKeepReading()
+{
     RefPtr context = m_readRequest ? m_readRequest->context() : nullptr;
     if (!context)
         return;

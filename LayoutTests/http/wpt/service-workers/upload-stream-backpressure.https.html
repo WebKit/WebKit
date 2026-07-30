@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload stream backpressure releases when a service worker consumes the body</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const scope = "resources";
+const endpoint = "resources/backpressure-endpoint";
+const releaseUrl = "resources/backpressure-endpoint?release=1";
+const CHUNK_SIZE = 16 * 1024;   // 16 KB per pull
+const MAX_TOTAL   = 4 * 1024 * 1024; // 4 MB safety cap
+let activeWorker;
+let controlledFrame;
+
+function withIframe(url) {
+    return new Promise((resolve) => {
+        const iframe = document.createElement("iframe");
+        iframe.src = url;
+        iframe.onload = () => resolve(iframe);
+        document.body.appendChild(iframe);
+    });
+}
+
+function makeCountedStream(counters) {
+    const chunk = new Uint8Array(CHUNK_SIZE);
+    for (let i = 0; i < CHUNK_SIZE; ++i)
+        chunk[i] = i & 0xff;
+    return new ReadableStream({
+        pull(controller) {
+            if (counters.bytesEnqueued >= MAX_TOTAL) {
+                controller.close();
+                return;
+            }
+            counters.pullCount += 1;
+            counters.bytesEnqueued += CHUNK_SIZE;
+            counters.lastPullTime = performance.now();
+            controller.enqueue(chunk);
+        },
+    });
+}
+
+promise_test(async () => {
+    const registration = await navigator.serviceWorker.register("upload-stream-backpressure-worker.js", { scope });
+    activeWorker = registration.active || registration.installing;
+    if (activeWorker.state !== "activated") {
+        await new Promise(resolve => {
+            activeWorker.addEventListener("statechange", () => {
+                if (activeWorker.state === "activated") resolve();
+            });
+        });
+    }
+    controlledFrame = await withIframe("resources/empty.html");
+}, "Setup: register service worker");
+
+promise_test(async () => {
+    const counters = { pullCount: 0, bytesEnqueued: 0, lastPullTime: 0 };
+    const stream = makeCountedStream(counters);
+
+    const responsePromise = controlledFrame.contentWindow.fetch(endpoint, {
+        method: "POST",
+        body: stream,
+        duplex: "half",
+    });
+
+    // Phase 1a: wait for pull() to actually start firing.
+    const startDeadline = performance.now() + 3000;
+    while (counters.pullCount === 0 && performance.now() < startDeadline)
+        await new Promise(r => step_timeout(r, 25));
+    assert_greater_than(counters.pullCount, 0, "pull() must fire at least once");
+
+    // Phase 1b: wait for pull() to stabilize — i.e., the same count observed
+    // twice in a row across a short window. That's the signal that backpressure
+    // has kicked in and the ReadableStream is no longer being pulled.
+    const STABILITY_POLL_MS = 50;
+    const STABILITY_HITS_REQUIRED = 4; // ~200ms of no-change
+    const stabilizeDeadline = performance.now() + 5000;
+    let stableHits = 0;
+    let lastCount = counters.pullCount;
+    while (stableHits < STABILITY_HITS_REQUIRED && performance.now() < stabilizeDeadline) {
+        await new Promise(r => step_timeout(r, STABILITY_POLL_MS));
+        if (counters.pullCount === lastCount)
+            stableHits++;
+        else {
+            stableHits = 0;
+            lastCount = counters.pullCount;
+        }
+    }
+    assert_equals(stableHits, STABILITY_HITS_REQUIRED,
+        `pull() count never stabilized (last=${lastCount}, current=${counters.pullCount})`);
+
+    const pullsAfterFill = counters.pullCount;
+    const bytesAfterFill = counters.bytesEnqueued;
+
+    // The amount pulled before backpressure should be close to the sink threshold (64KB)
+    // + the loader in-flight allowance. Upper-bound guards against runaway pulls.
+    assert_less_than(bytesAfterFill, 2 * 1024 * 1024,
+        `pulled bytes before backpressure must be bounded (${bytesAfterFill})`);
+
+    // Phase 2: tell the SW to release. pull() should resume once the network
+    // process starts forwarding to the SW.
+    await controlledFrame.contentWindow.fetch(releaseUrl);
+
+    const resumeDeadline = performance.now() + 5000;
+    while (counters.pullCount === pullsAfterFill && performance.now() < resumeDeadline)
+        await new Promise(r => step_timeout(r, 25));
+    assert_greater_than(counters.pullCount, pullsAfterFill,
+        "pull() must resume once the service worker starts reading the body");
+
+    const response = await responsePromise;
+    assert_true(response.ok, "network response ok");
+    const totalReceived = parseInt(await response.text(), 10);
+    assert_equals(totalReceived, counters.bytesEnqueued, "server saw exactly the bytes the stream enqueued");
+}, "Backpressure pauses the ReadableStream pull() and resumes once the service worker consumes the body");
+
+promise_test(async () => {
+    if (activeWorker) {
+        const registration = await navigator.serviceWorker.getRegistration(scope);
+        await registration?.unregister();
+    }
+}, "Cleanup: unregister service worker");
+</script>
+</body>
+</html>

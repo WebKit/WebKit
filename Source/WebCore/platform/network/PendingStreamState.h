@@ -58,12 +58,15 @@ public:
     // FIXME: Provide meaningful PendingStreamState errors.
     WEBCORE_EXPORT void errorStream(int errorCode);
     WEBCORE_EXPORT void setCancelCallback(Function<void()>&&);
+    WEBCORE_EXPORT void setQueueDrainedHandler(Function<void()>&&);
 
     // Data consumer API
     WEBCORE_EXPORT void setDataAvailableHandler(Function<void()>&&);
     WEBCORE_EXPORT void clearDataAvailableHandler();
-    Expected<std::pair<size_t, bool>, int> readInto(std::span<uint8_t>);
-    WEBCORE_EXPORT Expected<std::pair<Deque<Ref<SharedBuffer>>, bool>, int> takeAvailableChunks();
+    using ReadResult = Expected<std::pair<size_t, bool>, int>;
+    ReadResult readInto(std::span<uint8_t>);
+    using TakeResult = Expected<std::pair<Deque<Ref<SharedBuffer>>, bool>, int>;
+    WEBCORE_EXPORT TakeResult takeAvailableChunks();
     bool hasReadyData();
     WEBCORE_EXPORT void cancel();
 
@@ -78,6 +81,8 @@ private:
     PendingStreamState();
 
     static void invokeHandlerIfNeeded(NOESCAPE const std::function<RefPtr<CallbackHandler>()>&);
+    template<typename Result>
+    Result invokeDrainedHandlerIfNeeded(NOESCAPE const std::function<Result(RefPtr<CallbackHandler>&)>&);
 
     Lock m_lock;
     Deque<Ref<SharedBuffer>> m_chunks WTF_GUARDED_BY_LOCK(m_lock);
@@ -86,8 +91,12 @@ private:
     int m_errorCode WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     RefPtr<CallbackHandler> m_dataAvailableHandler WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<CallbackHandler> m_cancelHandler WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CallbackHandler> m_queueDrainedHandler WTF_GUARDED_BY_LOCK(m_lock);
     HTTPVersionProbe m_httpVersionProbe WTF_GUARDED_BY_LOCK(m_lock);
     Markable<FetchIdentifier> m_serviceWorkerFetchIdentifier;
+#if ASSERT_ENABLED
+    std::atomic<bool> m_isInvokingQueueDrainedHandler { false };
+#endif
 };
 
 } // namespace WebCore
