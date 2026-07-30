@@ -4325,6 +4325,12 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldAttachLayerToPlayer()
         return false;
 #endif
 
+    // 311380@main started detaching the video layer from the player when the page or the
+    // element became non-visible. Some clients keep displaying the video layer they host
+    // after hiding their web view, so for those keep the layer attached as it was before.
+    if (m_disableTeardownOnVisibilityChange)
+        return true;
+
     if (!pageIsVisible())
         return false;
 

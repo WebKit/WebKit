@@ -254,6 +254,7 @@ header: <WebCore/MediaPlayer.h>
     WebCore::ContentType contentType;
     bool requiresRemotePlayback;
     bool supportsLimitedMatroska;
+    bool disableTeardownOnVisibilityChange;
     std::optional<bool> supportsProgressMonitoringOverride;
     OptionSet<WebCore::VideoRendererPreference> videoRendererPreferences;
 };

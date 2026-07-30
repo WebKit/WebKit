@@ -643,6 +643,12 @@ bool IOSApplication::isDOFUSTouch()
     return isDOFUSTouch;
 }
 
+bool IOSApplication::isMoonPlayer()
+{
+    static bool isMoonPlayer = applicationBundleIsEqualTo("com.innovis.moonplayer"_s);
+    return isMoonPlayer;
+}
+
 bool IOSApplication::isMyRideK12()
 {
     static bool isMyRideK12 = applicationBundleIsEqualTo("com.tylertech.myridek12"_s);
