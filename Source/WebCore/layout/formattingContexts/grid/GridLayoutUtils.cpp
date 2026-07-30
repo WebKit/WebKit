@@ -187,7 +187,24 @@ static std::optional<BorderBoxSize> inlineSpecifiedSizeSuggestion(const PlacedGr
     }
     if (preferredSize.isAuto())
         return { };
-    ASSERT_NOT_IMPLEMENTED_YET();
+
+    // https://drafts.csswg.org/css-sizing-3/#definite
+    // The intrinsic sizing keywords (min-content, max-content, fit-content, and the non-standard
+    // intrinsic/min-intrinsic) size the box from its contents, so the preferred size is not
+    // definite and there is no specified size suggestion.
+    if (preferredSize.isIntrinsic() || preferredSize.isIntrinsicKeyword() || preferredSize.isMinIntrinsic())
+        return { };
+
+    // stretch/-webkit-fill-available resolve to the stretch-fit size, which is only definite when
+    // the grid area size is known.
+    if (preferredSize.isStretch()) {
+        if (!containingBlockSize)
+            return { };
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
+
+    ASSERT_NOT_REACHED();
     return { };
 }
 
@@ -220,7 +237,24 @@ static std::optional<BorderBoxSize> blockSpecifiedSizeSuggestion(const PlacedGri
     }
     if (preferredSize.isAuto())
         return { };
-    ASSERT_NOT_IMPLEMENTED_YET();
+
+    // https://drafts.csswg.org/css-sizing-3/#definite
+    // The intrinsic sizing keywords (min-content, max-content, fit-content, and the non-standard
+    // intrinsic/min-intrinsic) size the box from its contents, so the preferred size is not
+    // definite and there is no specified size suggestion.
+    if (preferredSize.isIntrinsic() || preferredSize.isIntrinsicKeyword() || preferredSize.isMinIntrinsic())
+        return { };
+
+    // stretch/-webkit-fill-available resolve to the stretch-fit size, which is only definite when
+    // the grid area size is known.
+    if (preferredSize.isStretch()) {
+        if (!containingBlockSize)
+            return { };
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
+
+    ASSERT_NOT_REACHED();
     return { };
 }
 
