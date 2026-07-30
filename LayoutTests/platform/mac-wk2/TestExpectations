@@ -2439,3 +2439,17 @@ webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html 
 webkit.org/b/319798 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Pass Failure ]
 
 webkit.org/b/320245 [ Release x86_64 ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Crash ]
+
+# webkit.org/b/320584 [ macOS ] 4x imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.* (layout-tests) are constant text failures.
+[ Debug x86_64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Failure ]
+[ Debug x86_64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
+[ Debug x86_64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
+[ Debug x86_64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
+[ Debug arm64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Pass Failure ]
+[ Debug arm64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Pass Failure ]
+[ Debug arm64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Pass Failure ]
+[ Debug arm64 ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
