@@ -163,16 +163,16 @@
                   {
                     "name": "bot10009",
                     "platform": "mac-tahoe",
-                    "os": "macOS Tahoe 26.2-25C56",
+                    "os": "macOS Tahoe 26.6-25G72",
                     "device": "Mac16,11",
-                    "xcode": "Xcode 26.2-17C52"
+                    "xcode": "Xcode 26.5-17F42"
                   },
                   {
                     "name": "bot10010",
                     "platform": "mac-tahoe",
-                    "os": "macOS Tahoe 26.2-25C56",
+                    "os": "macOS Tahoe 26.6-25G72",
                     "device": "Mac16,11",
-                    "xcode": "Xcode 26.2-17C52"
+                    "xcode": "Xcode 26.5-16F42"
                   },
                   {
                     "name": "bot10011",
