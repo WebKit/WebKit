@@ -2754,7 +2754,7 @@ void HTMLMediaElement::textTrackLanguageChanged(TextTrack& track)
 void HTMLMediaElement::willRemoveTextTrack(TextTrack& track)
 {
     if (track.trackType() == TextTrack::InBand)
-        removeTextTrack(track);
+        removeTextTrack(track, ScheduleEvent::Yes);
 }
 
 void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack& track)
@@ -5459,10 +5459,10 @@ void HTMLMediaElement::removeAudioTrack(TrackID trackID)
         removeAudioTrack(downcast<AudioTrack>(*track));
 }
 
-void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
+bool HTMLMediaElement::removeTextTrack(TextTrack& track, ScheduleEvent scheduleEvent)
 {
     if (!m_textTracks || !m_textTracks->contains(track))
-        return;
+        return false;
 
     if (m_findCaptionTrack == &track) {
         m_findCaptionTrack = nullptr;
@@ -5474,10 +5474,11 @@ void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
         textTrackRemoveCues(track, *cues);
     track.clearClient(*this);
     if (m_textTracks)
-        m_textTracks->remove(track, scheduleEvent);
+        m_textTracks->remove(track, scheduleEvent == ScheduleEvent::Yes);
+    return true;
 }
 
-void HTMLMediaElement::removeTextTrack(TrackID trackID, bool scheduleEvent)
+void HTMLMediaElement::removeTextTrack(TrackID trackID, ScheduleEvent scheduleEvent)
 {
     if (!m_textTracks)
         return;
@@ -5512,7 +5513,7 @@ void HTMLMediaElement::forgetResourceSpecificTracks()
         for (int i = m_textTracks->length() - 1; i >= 0; --i) {
             Ref track = *m_textTracks->item(i);
             if (track->trackType() == TextTrack::InBand)
-                removeTextTrack(track, false);
+                removeTextTrack(track, ScheduleEvent::No);
         }
     }
 
@@ -5560,6 +5561,17 @@ ExceptionOr<Ref<TextTrack>> HTMLMediaElement::addTextTrack(const AtomString& kin
     track->setMode(TextTrack::Mode::Hidden);
 
     return track;
+}
+
+ExceptionOr<void> HTMLMediaElement::removeTextTrack(TextTrack& track)
+{
+    if (track.trackType() != TextTrack::AddTrack)
+        return Exception { ExceptionCode::NotFoundError };
+
+    if (!removeTextTrack(track, ScheduleEvent::Yes))
+        return Exception { ExceptionCode::NotFoundError };
+
+    return { };
 }
 
 AudioTrackList& HTMLMediaElement::ensureAudioTracks()
@@ -5624,7 +5636,7 @@ void HTMLMediaElement::didRemoveTextTrack(HTMLTrackElement& trackElement)
     // When a track element's parent element changes and the old parent was a media element,
     // then the user agent must remove the track element's corresponding text track from the
     // media element's list of text tracks.
-    removeTextTrack(textTrack);
+    removeTextTrack(textTrack, ScheduleEvent::Yes);
 
     m_textTracksWhenResourceSelectionBegan.removeFirst(textTrack.ptr());
 }

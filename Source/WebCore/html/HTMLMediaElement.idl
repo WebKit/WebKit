@@ -119,6 +119,7 @@ typedef (
 
     // tracks
     TextTrack addTextTrack([AtomString] DOMString kind, optional [AtomString] DOMString label = "", optional [AtomString] DOMString language = "");
+    undefined removeTextTrack(TextTrack track);
     [SameObject, ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
     [SameObject, ImplementedAs=ensureTextTracks] readonly attribute TextTrackList textTracks;
     [SameObject, ImplementedAs=ensureVideoTracks] readonly attribute VideoTrackList videoTracks;

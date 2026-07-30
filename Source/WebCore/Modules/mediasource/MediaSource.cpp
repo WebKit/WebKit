@@ -951,7 +951,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement textTracks list.
                 if (isMainThread()) {
                     ensureWeakOnHTMLMediaElementContext([track = track](HTMLMediaElement& mediaElement) mutable {
-                        mediaElement.removeTextTrack(WTF::move(track));
+                        mediaElement.removeTextTrack(WTF::move(track), HTMLMediaElement::ScheduleEvent::Yes);
                     });
                 } else {
                     ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {

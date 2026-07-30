@@ -395,6 +395,7 @@ public:
     bool shouldForceControlsDisplay() const;
 
     ExceptionOr<Ref<TextTrack>> addTextTrack(const AtomString& kind, const AtomString& label, const AtomString& language);
+    ExceptionOr<void> removeTextTrack(TextTrack&);
 
     AudioTrackList& ensureAudioTracks();
     TextTrackList& ensureTextTracks();
@@ -410,8 +411,9 @@ public:
     void addVideoTrack(Ref<VideoTrack>&&);
     void removeAudioTrack(AudioTrack&);
     void removeAudioTrack(TrackID);
-    void removeTextTrack(TextTrack&, bool scheduleEvent = true);
-    void removeTextTrack(TrackID, bool scheduleEvent = true);
+    enum class ScheduleEvent : bool { No, Yes };
+    bool removeTextTrack(TextTrack&, ScheduleEvent);
+    void removeTextTrack(TrackID, ScheduleEvent = ScheduleEvent::Yes);
     void removeVideoTrack(VideoTrack&);
     void removeVideoTrack(TrackID);
     void forgetResourceSpecificTracks();

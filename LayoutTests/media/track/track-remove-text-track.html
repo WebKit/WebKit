@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests HTMLMediaElement.removeTextTrack().");
+
+jsTestIsAsync = true;
+
+var video = document.createElement('video');
+
+// A track added via addTextTrack() can be removed with removeTextTrack(), which synchronously
+// removes it from textTracks and asynchronously fires a 'removetrack' event at the media
+// element's TextTrackList.
+var removeEvent = null;
+var addedTrack = video.addTextTrack('captions', 'Captions', 'en');
+video.textTracks.onremovetrack = function(event) {
+    removeEvent = event;
+    shouldBeTrue("removeEvent instanceof TrackEvent");
+    shouldBe("removeEvent.target", "video.textTracks");
+    shouldBe("removeEvent.track", "addedTrack");
+    finishJSTest();
+};
+shouldBe("video.textTracks.length", "1");
+shouldBe("video.removeTextTrack(addedTrack)", "undefined");
+shouldBe("video.textTracks.length", "0");
+
+// Removing it again should throw NotFoundError, since it is no longer in the list of text tracks.
+shouldThrowErrorName("video.removeTextTrack(addedTrack)", "NotFoundError");
+
+// A <track> element's corresponding TextTrack was not added via addTextTrack(), and so cannot be
+// removed with removeTextTrack().
+var trackElement = document.createElement('track');
+trackElement.kind = 'subtitles';
+video.appendChild(trackElement);
+shouldBe("video.textTracks.length", "1");
+shouldThrowErrorName("video.removeTextTrack(trackElement.track)", "NotFoundError");
+shouldBe("video.textTracks.length", "1");
+
+// A TextTrack belonging to a different media element cannot be removed.
+var otherVideo = document.createElement('video');
+var otherTrack = otherVideo.addTextTrack('subtitles');
+shouldThrowErrorName("video.removeTextTrack(otherTrack)", "NotFoundError");
+shouldBe("otherVideo.textTracks.length", "1");
+</script>
+</body>
+</html>
