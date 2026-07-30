@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-class SVGGlyphElement;
-
 class SVGAltGlyphElement final : public SVGTextPositioningElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGAltGlyphElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAltGlyphElement);
@@ -39,8 +37,6 @@ public:
     ExceptionOr<void> setGlyphRef(const AtomString&);
     const AtomString& NODELETE format() const;
     ExceptionOr<void> setFormat(const AtomString&);
-
-    bool hasValidGlyphElements(Vector<String>& glyphNames) const;
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAltGlyphElement, SVGTextPositioningElement, SVGURIReference>;
 

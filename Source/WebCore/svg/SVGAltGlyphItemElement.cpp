@@ -21,10 +21,8 @@
 
 #include "SVGAltGlyphItemElement.h"
 
-#include "ElementChildIteratorInlines.h"
-#include "SVGElementTypeHelpers.h"
-#include "SVGGlyphRefElement.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -40,29 +38,6 @@ inline SVGAltGlyphItemElement::SVGAltGlyphItemElement(const QualifiedName& tagNa
 Ref<SVGAltGlyphItemElement> SVGAltGlyphItemElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGAltGlyphItemElement(tagName, document));
-}
-
-bool SVGAltGlyphItemElement::hasValidGlyphElements(Vector<String>& glyphNames) const
-{
-    // Spec: http://www.w3.org/TR/SVG/text.html#AltGlyphItemElement
-    // The ‘altGlyphItem’ element defines a candidate set of possible glyph substitutions.
-    // The first ‘altGlyphItem’ element whose referenced glyphs are all available is chosen.
-    // Its glyphs are rendered instead of the character(s) that are inside of the referencing
-    // ‘altGlyph’ element.
-    //
-    // Here we fill glyphNames and return true only if all referenced glyphs are valid and
-    // there is at least one glyph.
-
-    for (Ref glyphRef : childrenOfType<SVGGlyphRefElement>(*this)) {
-        String referredGlyphName;
-        if (glyphRef->hasValidGlyphElement(referredGlyphName))
-            glyphNames.append(referredGlyphName);
-        else {
-            glyphNames.clear();
-            return false;
-        }
-    }
-    return !glyphNames.isEmpty();
 }
 
 }

@@ -24,12 +24,8 @@
 #include "SVGAltGlyphElement.h"
 
 #include "RenderSVGTSpan.h"
-#include "SVGAltGlyphDefElement.h"
 #include "SVGElementInlines.h"
-#include "SVGElementTypeHelpers.h"
-#include "SVGGlyphElement.h"
 #include "SVGNames.h"
-#include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -76,20 +72,6 @@ bool SVGAltGlyphElement::childShouldCreateRenderer(const Node& child) const
 RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
-}
-
-bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
-{
-    // No need to support altGlyph referencing another node inside a shadow tree.
-    auto target = targetElementFromIRIString(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), protect(document()));
-
-    if (is<SVGGlyphElement>(target.element)) {
-        glyphNames.append(target.identifier);
-        return true;
-    }
-    
-    RefPtr altGlyphDefElement = downcast<SVGAltGlyphDefElement>(target.element.get());
-    return altGlyphDefElement && altGlyphDefElement->hasValidGlyphElements(glyphNames);
 }
 
 }

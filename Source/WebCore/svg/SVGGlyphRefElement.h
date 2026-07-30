@@ -32,8 +32,6 @@ class SVGGlyphRefElement final : public SVGElement, public SVGURIReference {
 public:
     static Ref<SVGGlyphRefElement> create(const QualifiedName&, Document&);
 
-    bool hasValidGlyphElement(String& glyphName) const;
-
     float x() const { return m_x; }
     void setX(float);
     float y() const { return m_y; }

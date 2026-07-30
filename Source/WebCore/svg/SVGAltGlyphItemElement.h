@@ -20,7 +20,6 @@
 #pragma once
 
 #include "SVGElement.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -29,8 +28,6 @@ class SVGAltGlyphItemElement final : public SVGElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAltGlyphItemElement);
 public:
     static Ref<SVGAltGlyphItemElement> create(const QualifiedName&, Document&);
-
-    bool hasValidGlyphElements(Vector<String>& glyphNames) const;
 
 private:
     SVGAltGlyphItemElement(const QualifiedName&, Document&);

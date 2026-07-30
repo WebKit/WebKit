@@ -22,11 +22,8 @@
 #include "SVGGlyphRefElement.h"
 
 #include "NodeName.h"
-#include "SVGElementTypeHelpers.h"
-#include "SVGGlyphElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
@@ -44,16 +41,6 @@ inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Docu
 Ref<SVGGlyphRefElement> SVGGlyphRefElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGGlyphRefElement(tagName, document));
-}
-
-bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
-{
-    // FIXME: We only support xlink:href so far.
-    // https://bugs.webkit.org/show_bug.cgi?id=64787
-    // No need to support glyphRef referencing another node inside a shadow tree.
-    auto target = targetElementFromIRIString(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), protect(document()));
-    glyphName = target.identifier;
-    return is<SVGGlyphElement>(target.element);
 }
 
 static float parseFloat(const AtomString& value)
