@@ -44,9 +44,9 @@ class IntegrationUtils {
 public:
     IntegrationUtils(const LayoutState&);
 
-    void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint = { }, std::optional<LayoutUnit> heightConstraint = { }) const;
+    void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth = { }, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight = { }) const;
     std::pair<LayoutUnit, LayoutUnit> borderAndPaddingForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
-    void layoutGridItem(const ElementBox&, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint, LayoutUnit gridAreaInlineSize) const;
+    void layoutGridItem(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize) const;
     LayoutUnit maxContentWidth(const ElementBox&) const;
     LayoutUnit maxContentWidthForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
     LayoutUnit minContentWidth(const ElementBox&) const;

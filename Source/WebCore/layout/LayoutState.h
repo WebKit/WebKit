@@ -104,9 +104,9 @@ public:
 
     const ElementBox& root() const { return m_rootContainer; }
 
-    // A height constraint is primarily given by Grid Formatting Contexts since it is able to determine
+    // An overridingBorderBoxLogicalHeight is primarily given by Grid Formatting Contexts since it is able to determine
     // one for grid items in many cases which drives the use of setOverridingBorderBoxLogicalHeight.
-    void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint) const;
+    void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight) const;
     LayoutUnit logicalWidthWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalWidthType) const;
     LayoutUnit logicalHeightWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalHeightType) const;
     void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;

@@ -152,9 +152,9 @@ void LayoutState::destroyBlockFormattingState(const ElementBox& formattingContex
     m_blockFormattingStates.remove(formattingContextRoot);
 }
 
-void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint) const
+void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight) const
 {
-    const_cast<LayoutState&>(*this).m_formattingContextLayoutFunction(box, widthConstraint, heightConstraint, const_cast<LayoutState&>(*this));
+    const_cast<LayoutState&>(*this).m_formattingContextLayoutFunction(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, const_cast<LayoutState&>(*this));
 }
 
 LayoutUnit LayoutState::logicalWidthWithFormattingContextForBox(const ElementBox& box, LayoutIntegration::LogicalWidthType logicalWidthType) const

@@ -52,39 +52,45 @@ static inline const Layout::ElementBox& rootLayoutBox(const Layout::ElementBox& 
     return *ancestor;
 }
 
-// FIXME: Rename widthConstraint/heightConstraint to borderBoxLogicalWidth/borderBoxLogicalHeight; they are an
-// overriding border-box size to lay the box out at, not a constraint.
-static void layoutBoxWithOverridingBorderBoxSize(RenderBox& renderer, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint)
+static void layoutRendererWithOverridingBorderBoxSize(RenderBox& renderer, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight)
 {
-    if (widthConstraint) {
-        renderer.setOverridingBorderBoxLogicalWidth(*widthConstraint);
+    if (overridingBorderBoxLogicalWidth) {
+        renderer.setOverridingBorderBoxLogicalWidth(*overridingBorderBoxLogicalWidth);
         renderer.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
     }
 
-    if (heightConstraint) {
-        renderer.setOverridingBorderBoxLogicalHeight(*heightConstraint);
+    if (overridingBorderBoxLogicalHeight) {
+        renderer.setOverridingBorderBoxLogicalHeight(*overridingBorderBoxLogicalHeight);
         renderer.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
     }
 
     renderer.layoutIfNeeded();
 
-    if (widthConstraint)
+    if (overridingBorderBoxLogicalWidth)
         renderer.clearOverridingBorderBoxLogicalWidth();
 
-    if (heightConstraint)
+    if (overridingBorderBoxLogicalHeight)
         renderer.clearOverridingBorderBoxLogicalHeight();
 }
 
-void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint, Layout::LayoutState& layoutState)
+// Lay the renderer out at the given overriding border-box size, then feed the result back into modern
+// layout's BoxGeometry. containingBlockInlineSize is the inline size positions resolve against.
+static void layoutRendererAndUpdateBoxGeometry(const Layout::ElementBox& box, RenderBox& renderer, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit containingBlockInlineSize, Layout::LayoutState& layoutState)
 {
-    CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
-    layoutBoxWithOverridingBorderBoxSize(renderer.get(), widthConstraint, heightConstraint);
+    layoutRendererWithOverridingBorderBoxSize(renderer, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
 
     auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(box) };
-    updater.updateBoxGeometryAfterIntegrationLayout(box, widthConstraint.value_or(renderer->containingBlock()->contentBoxLogicalWidth()));
+    updater.updateBoxGeometryAfterIntegrationLayout(box, containingBlockInlineSize);
 }
 
-void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint, LayoutUnit gridAreaInlineSize, Layout::LayoutState& layoutState)
+void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, Layout::LayoutState& layoutState)
+{
+    CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
+    auto containingBlockInlineSize = overridingBorderBoxLogicalWidth.value_or(renderer->containingBlock()->contentBoxLogicalWidth());
+    layoutRendererAndUpdateBoxGeometry(box, renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, containingBlockInlineSize, layoutState);
+}
+
+void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, Layout::LayoutState& layoutState)
 {
     ASSERT(box.isGridItem());
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
@@ -93,12 +99,7 @@ void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::opt
     // descendants resolve percentage/calc sizes against it during layout, and resolve the item's own geometry
     // against it below rather than against the grid container's content box.
     renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
-
-    layoutBoxWithOverridingBorderBoxSize(renderer.get(), widthConstraint, heightConstraint);
-
-    auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(box) };
-    updater.updateBoxGeometryAfterIntegrationLayout(box, gridAreaInlineSize);
-
+    layoutRendererAndUpdateBoxGeometry(box, renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, layoutState);
     renderer->clearGridAreaContentSize();
 }
 

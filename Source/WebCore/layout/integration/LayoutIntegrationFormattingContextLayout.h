@@ -40,8 +40,8 @@ class LayoutState;
 
 namespace LayoutIntegration {
 
-void layoutWithFormattingContextForBox(const Layout::ElementBox&, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint, Layout::LayoutState&);
-void layoutGridItemWithFormattingContext(const Layout::ElementBox&, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint, LayoutUnit gridAreaInlineSize, Layout::LayoutState&);
+void layoutWithFormattingContextForBox(const Layout::ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, Layout::LayoutState&);
+void layoutGridItemWithFormattingContext(const Layout::ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, Layout::LayoutState&);
 
 enum class LogicalWidthType : uint8_t  {
     MaxContentContribution,
