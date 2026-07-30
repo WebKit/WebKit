@@ -92,6 +92,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
 #endif
     , m_itemID(item.m_itemID)
     , m_frameItemID(item.m_frameItemID)
+    , m_inheritedOrigin(item.m_inheritedOrigin)
     , m_client(item.m_client)
 {
 }
@@ -415,6 +416,15 @@ void HistoryItem::setWasCreatedByJSWithoutUserInteraction(bool wasCreatedByJSWit
         return;
 
     m_wasCreatedByJSWithoutUserInteraction = wasCreatedByJSWithoutUserInteraction;
+    notifyChanged();
+}
+
+void HistoryItem::setInheritedOrigin(const std::optional<SecurityOriginData>& inheritedOrigin)
+{
+    if (m_inheritedOrigin == inheritedOrigin)
+        return;
+
+    m_inheritedOrigin = inheritedOrigin;
     notifyChanged();
 }
 

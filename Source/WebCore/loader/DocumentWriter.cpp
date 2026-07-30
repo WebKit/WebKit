@@ -240,6 +240,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             return document->loader() && document->loader()->substituteData().isValid();
         };
 
+        std::optional<SecurityOriginData> inheritedOrigin;
         if (triggeringAction && triggeringAction->type() == NavigationType::BackForward && currentHistoryItem && currentHistoryItem->policyContainer()) {
             const auto& policyContainerFromHistory = currentHistoryItem->policyContainer();
             ASSERT(policyContainerFromHistory);
@@ -248,16 +249,24 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             RefPtr parentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
             if (parentFrame && parentFrame->document()) {
                 document->inheritPolicyContainerFrom(parentFrame->document()->policyContainer());
-                protect(document->contentSecurityPolicy())->updateSourceSelf(protect(protect(parentFrame->document())->securityOrigin()));
+                Ref parentOrigin = protect(parentFrame->document())->securityOrigin();
+                protect(document->contentSecurityPolicy())->updateSourceSelf(parentOrigin);
+                inheritedOrigin = parentOrigin->data();
             }
         } else if (triggeringAction && triggeringAction->requester() && !isLoadingBrowserControlledHTML()) {
             document->inheritPolicyContainerFrom(triggeringAction->requester()->policyContainer);
             protect(document->contentSecurityPolicy())->updateSourceSelf(triggeringAction->requester()->securityOrigin);
+            if (url.isAboutBlank())
+                inheritedOrigin = triggeringAction->requester()->securityOrigin->data();
         }
 
         // https://html.spec.whatwg.org/multipage/origin.html#requires-storing-the-policy-container-in-history
-        if (triggeringAction && triggeringAction->type() != NavigationType::BackForward && currentHistoryItem)
+        if (triggeringAction && triggeringAction->type() != NavigationType::BackForward && currentHistoryItem) {
             currentHistoryItem->setPolicyContainer(document->policyContainer());
+            // Remember the initiator origin so a later traversal back to this entry can be placed with that origin
+            // rather than with the frame performing the traversal, which is the initiator of a history navigation.
+            currentHistoryItem->setInheritedOrigin(inheritedOrigin);
+        }
     }
 
     if (existingDocument && existingDocument->contentSecurityPolicy() && document->contentSecurityPolicy())

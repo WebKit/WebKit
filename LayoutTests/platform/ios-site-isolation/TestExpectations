@@ -29,7 +29,6 @@ imported/w3c/web-platform-tests/html/interaction/focus/focus-input-type-switch.h
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-toggle-source.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Failure ]
 media/audio-play-with-video-element-interrupted.html [ Pass Failure Timeout ]
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
 webkit.org/b/327859 imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html?rest [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
