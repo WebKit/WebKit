@@ -32,14 +32,15 @@
 #import "WKPDFHUDView.h"
 #import <AppKit/AppKit.h>
 
-@class WKWebView;
-
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
 @interface WKAlternatePDFHUDView : NSView <WKPDFHUDView>
 
-- (instancetype)initWithFrame:(NSRect)frame frameIdentifier:(uint64_t)frameIdentifier NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFrame:(NSRect)frame frameIdentifier:(uint64_t)frameIdentifier compositingBordersVisible:(BOOL)compositingBordersVisible actionHandler:(NS_SWIFT_UI_ACTOR void(^)(WKPDFHUDViewControlAction))actionHandler;
+
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(NSRect)frame NS_UNAVAILABLE;
 
 @end
 

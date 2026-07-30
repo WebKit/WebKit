@@ -1792,11 +1792,37 @@ void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, WebCore::FrameIde
 {
     removePDFHUD(identifier);
 
+    auto actionHandler = makeBlockPtr([weakThis = WeakPtr { *this }, identifier, frameID](WKPDFHUDViewControlAction action) {
+        CheckedPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        Ref page = protectedThis->page();
+
+        switch (action) {
+        case WKPDFHUDViewControlActionZoomIn:
+            page->pdfZoomIn(identifier, frameID);
+            return;
+
+        case WKPDFHUDViewControlActionZoomOut:
+            page->pdfZoomOut(identifier, frameID);
+            return;
+
+        case WKPDFHUDViewControlActionOpenInPreview:
+            page->pdfOpenWithPreview(identifier, frameID);
+            return;
+
+        case WKPDFHUDViewControlActionSavePDF:
+            page->pdfSaveToPDF(identifier, frameID);
+            return;
+        }
+    });
+
     // The bounding box is in the plugin frame's local root view coordinates.
     // For cross-origin <iframe> PDFs, this lacks the subframe's offset in the
     // page, so we need to convert that to top level web view coordinates.
     m_pdfHUDsPendingCreation.set(identifier, boundingBoxInFrameRootView);
-    convertPDFHUDBoundingBoxToWebViewCoordinates(frameID, boundingBoxInFrameRootView, [weakThis = WeakPtr { *this }, identifier, frameID, requestedBox = boundingBoxInFrameRootView](const WebCore::IntRect& boundingBoxInWebView) {
+    convertPDFHUDBoundingBoxToWebViewCoordinates(frameID, boundingBoxInFrameRootView, [weakThis = WeakPtr { *this }, identifier, frameID, requestedBox = boundingBoxInFrameRootView, actionHandler](const WebCore::IntRect& boundingBoxInWebView) {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
             return;
@@ -1806,11 +1832,10 @@ void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, WebCore::FrameIde
         if (!latestBoxInFrameRootView)
             return;
 
-        RetainPtr<NSView<WKPDFHUDView>> hud;
-        if (protect(checkedThis->m_page->preferences())->useAlternatePDFHUD())
-            hud = adoptNS([[WKAlternatePDFHUDView alloc] initWithFrame:boundingBoxInWebView frameIdentifier:frameID.toUInt64()]);
-        else
-            hud = adoptNS([[WKDefaultPDFHUDView alloc] initWithFrame:boundingBoxInWebView pluginIdentifier:identifier.toUInt64() frameIdentifier:frameID.toUInt64() webView:checkedThis->m_page->cocoaView().get()]);
+        const auto compositingBordersVisible = protect(checkedThis->m_page->preferences())->compositingBordersVisible();
+
+        RetainPtr<Class> hudType = protect(checkedThis->m_page->preferences())->useAlternatePDFHUD() ? WKAlternatePDFHUDView.class : WKDefaultPDFHUDView.class;
+        RetainPtr<NSView<WKPDFHUDView>> hud = adoptNS([[hudType alloc] initWithFrame:boundingBoxInWebView frameIdentifier:frameID.toUInt64() compositingBordersVisible:compositingBordersVisible actionHandler:actionHandler.get()]);
 
         [checkedThis->m_view.get() addSubview:hud];
         checkedThis->_pdfHUDViews.add(identifier, WTF::move(hud));

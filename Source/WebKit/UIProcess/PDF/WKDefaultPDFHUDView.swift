@@ -58,9 +58,8 @@ private func isInRecoveryOS() -> Bool {
 @objc
 @implementation
 extension WKDefaultPDFHUDView {
-    var pluginIdentifier: UInt64
-    var frameIdentifier: UInt64
-    weak var webView: WKWebView?
+    let frameIdentifier: UInt64
+
     @nonobjc
     final private var barView: NSView
     @nonobjc
@@ -83,19 +82,17 @@ extension WKDefaultPDFHUDView {
     final private var initialHideTimerFired: Bool = false
     @nonobjc
     final private var hideTimerTask: Task<Void, Never>? = nil
+    @nonobjc
+    final private let actionHandler: @MainActor @Sendable (WKPDFHUDViewControlAction) -> Void
 
-    // The initializer is required to be `public`, but the class itself is `internal` so this is not API.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    @objc(initWithFrame:pluginIdentifier:frameIdentifier:webView:)
     init(
         frame: NSRect,
-        pluginIdentifier: UInt64,
         frameIdentifier: UInt64,
-        webView: WKWebView?
+        compositingBordersVisible: Bool,
+        actionHandler: @MainActor @Sendable @escaping (WKPDFHUDViewControlAction) -> Void
     ) {
-        self.pluginIdentifier = pluginIdentifier
         self.frameIdentifier = frameIdentifier
-        self.webView = webView
+        self.actionHandler = actionHandler
 
         self.zoomOutButton = Self.makeButton(symbolName: "minus.magnifyingglass", accessibilityLabel: "Zoom Out")
         self.zoomInButton = Self.makeButton(symbolName: "plus.magnifyingglass", accessibilityLabel: "Zoom In")
@@ -154,9 +151,7 @@ extension WKDefaultPDFHUDView {
         saveButton.target = self
         saveButton.action = #selector(saveAction)
 
-        // FIXME: Remove this compiler guard after the Safer C++ bots have Swift 6.4+.
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-        if let page = webView?._protectedPage().get(), page.preferences().compositingBordersVisible() {
+        if compositingBordersVisible {
             wantsLayer = true
             layer?.borderWidth = 3
             layer?.borderColor = NSColor.systemOrange.cgColor
@@ -164,7 +159,6 @@ extension WKDefaultPDFHUDView {
             barView.layer?.borderWidth = 3
             barView.layer?.borderColor = NSColor.systemPurple.cgColor
         }
-        #endif
 
         resetHideTimer()
     }
@@ -245,28 +239,28 @@ extension WKDefaultPDFHUDView {
     @objc
     private func zoomOutAction() {
         guard isBarVisible else { return }
-        performPDFZoomOut()
+        actionHandler(.zoomOut)
         resetHideTimer()
     }
 
     @objc
     private func zoomInAction() {
         guard isBarVisible else { return }
-        performPDFZoomIn()
+        actionHandler(.zoomIn)
         resetHideTimer()
     }
 
     @objc
     private func openInPreviewAction() {
         guard isBarVisible else { return }
-        performPDFOpenWithPreview()
+        actionHandler(.openInPreview)
         resetHideTimer()
     }
 
     @objc
     private func saveAction() {
         guard isBarVisible else { return }
-        performPDFSaveToPDF()
+        actionHandler(.savePDF)
         resetHideTimer()
     }
 

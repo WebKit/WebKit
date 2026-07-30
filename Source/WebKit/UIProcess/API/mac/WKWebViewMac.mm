@@ -2292,36 +2292,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 @end
 
-#if ENABLE(PDF_HUD)
-
-@implementation WKWebView (WKPDFHUD)
-
-- (void)_pdfZoomIn:(WebKit::PDFPluginIdentifier)pluginIdentifier frameIdentifier:(WebCore::FrameIdentifier)frameIdentifier
-{
-    if (RefPtr page = _page)
-        page->pdfZoomIn(pluginIdentifier, frameIdentifier);
-}
-
-- (void)_pdfZoomOut:(WebKit::PDFPluginIdentifier)pluginIdentifier frameIdentifier:(WebCore::FrameIdentifier)frameIdentifier
-{
-    if (RefPtr page = _page)
-        page->pdfZoomOut(pluginIdentifier, frameIdentifier);
-}
-
-- (void)_pdfOpenWithPreview:(WebKit::PDFPluginIdentifier)pluginIdentifier frameIdentifier:(WebCore::FrameIdentifier)frameIdentifier
-{
-    if (RefPtr page = _page)
-        page->pdfOpenWithPreview(pluginIdentifier, frameIdentifier);
-}
-
-- (void)_pdfSaveToPDF:(WebKit::PDFPluginIdentifier)pluginIdentifier frameIdentifier:(WebCore::FrameIdentifier)frameIdentifier
-{
-    if (RefPtr page = _page)
-        page->pdfSaveToPDF(pluginIdentifier, frameIdentifier);
-}
-
-@end
-
-#endif // ENABLE(PDF_HUD)
-
 #endif // PLATFORM(MAC)

@@ -3477,7 +3477,6 @@
 		0736B75D260D4A4F00E06994 /* RemoteMediaSessionCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaSessionCoordinatorProxy.messages.in; sourceTree = "<group>"; };
 		0736B75E260D4A5000E06994 /* RemoteMediaSessionCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionCoordinatorProxy.h; sourceTree = "<group>"; };
 		0739EAEA301561FE0066ED1B /* WKPDFHUDView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPDFHUDView.h; sourceTree = "<group>"; };
-		0739EAEB301561FE0066ED1B /* WKDefaultPDFHUDView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDefaultPDFHUDView.mm; sourceTree = "<group>"; };
 		0739EAEC301561FE0066ED1B /* WKDefaultPDFHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDefaultPDFHUDView.swift; sourceTree = "<group>"; };
 		0739EAED301561FE0066ED1B /* WKPDFPageNumberIndicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPDFPageNumberIndicator.h; sourceTree = "<group>"; };
 		0739EAEE301561FE0066ED1B /* WKPDFPageNumberIndicator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFPageNumberIndicator.mm; sourceTree = "<group>"; };
@@ -9561,7 +9560,6 @@
 				0739EAF7301563080066ED1B /* WKAlternatePDFHUDView.h */,
 				0739EAF9301563480066ED1B /* WKAlternatePDFHUDView.swift */,
 				0739EAF5301562A20066ED1B /* WKDefaultPDFHUDView.h */,
-				0739EAEB301561FE0066ED1B /* WKDefaultPDFHUDView.mm */,
 				0739EAEC301561FE0066ED1B /* WKDefaultPDFHUDView.swift */,
 				0739EAEA301561FE0066ED1B /* WKPDFHUDView.h */,
 				0739EAED301561FE0066ED1B /* WKPDFPageNumberIndicator.h */,

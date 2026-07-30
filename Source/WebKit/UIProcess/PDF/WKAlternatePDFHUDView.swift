@@ -28,7 +28,6 @@ public import Foundation
 internal import WebKit_Internal
 @_weakLinked import SwiftUI
 
-// FIXME: Add actions to the buttons.
 // FIXME: Add fade animations.
 // FIXME: Add localizable strings support.
 // FIXME: Implement `WKAlternatePDFHUDView.show`.
@@ -36,15 +35,8 @@ internal import WebKit_Internal
 
 private let barVerticalOffset: CGFloat = 40
 
-private enum ControlsAction {
-    case zoomIn
-    case zoomOut
-    case openInPreview
-    case savePDF
-}
-
 private struct Controls: View {
-    let action: (ControlsAction) -> Void
+    let action: (WKPDFHUDViewControlAction) -> Void
 
     var body: some View {
         ControlGroup {
@@ -83,14 +75,17 @@ private struct Controls: View {
 extension WKAlternatePDFHUDView {
     let frameIdentifier: UInt64
 
-    init(frame: NSRect, frameIdentifier: UInt64) {
+    init(
+        frame: NSRect,
+        frameIdentifier: UInt64,
+        compositingBordersVisible: Bool,
+        actionHandler: @MainActor @Sendable @escaping (WKPDFHUDViewControlAction) -> Void
+    ) {
         self.frameIdentifier = frameIdentifier
 
         super.init(frame: frame)
 
-        let controls = Controls { action in
-            print(action)
-        }
+        let controls = Controls(action: actionHandler)
 
         let hostingView = NSHostingView(rootView: controls)
         hostingView.translatesAutoresizingMaskIntoConstraints = false

@@ -31,14 +31,23 @@
 
 #import <AppKit/AppKit.h>
 
-@class WKWebView;
-
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+typedef NS_ENUM(NSInteger, WKPDFHUDViewControlAction) {
+    WKPDFHUDViewControlActionZoomIn,
+    WKPDFHUDViewControlActionZoomOut,
+    WKPDFHUDViewControlActionOpenInPreview,
+    WKPDFHUDViewControlActionSavePDF,
+};
 
 NS_SWIFT_UI_ACTOR
 @protocol WKPDFHUDView
 
 @property (nonatomic, readonly) uint64_t frameIdentifier;
+
+// FIXME: Ideally this initializer would be a requirement of this protocol, but Swift 6.3 has a bug
+// when dealing with `required` initializers of internal protocol types.
+// - (instancetype)initWithFrame:(NSRect)frame frameIdentifier:(uint64_t)frameIdentifier compositingBordersVisible:(BOOL)compositingBordersVisible actionHandler:(NS_SWIFT_UI_ACTOR void(^)(WKPDFHUDViewControlAction))actionHandler;
 
 - (void)show;
 

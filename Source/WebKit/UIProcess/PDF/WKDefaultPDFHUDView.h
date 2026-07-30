@@ -32,28 +32,15 @@
 #import "WKPDFHUDView.h"
 #import <AppKit/AppKit.h>
 
-@class WKWebView;
-
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
 @interface WKDefaultPDFHUDView : NSView <WKPDFHUDView>
 
-@property (nonatomic, readonly) uint64_t pluginIdentifier;
-@property (nonatomic, readonly, weak, nullable) WKWebView *webView;
+- (instancetype)initWithFrame:(NSRect)frame frameIdentifier:(uint64_t)frameIdentifier compositingBordersVisible:(BOOL)compositingBordersVisible actionHandler:(NS_SWIFT_UI_ACTOR void(^)(WKPDFHUDViewControlAction))actionHandler;
 
-- (instancetype)initWithFrame:(NSRect)frame pluginIdentifier:(uint64_t)pluginIdentifier frameIdentifier:(uint64_t)frameIdentifier webView:(nullable WKWebView *)webView NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)frame NS_UNAVAILABLE;
-
-@end
-
-@interface WKDefaultPDFHUDView (Cpp)
-
-- (void)performPDFZoomIn;
-- (void)performPDFZoomOut;
-- (void)performPDFOpenWithPreview;
-- (void)performPDFSaveToPDF;
 
 @end
 
