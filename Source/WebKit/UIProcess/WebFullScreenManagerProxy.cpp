@@ -251,6 +251,13 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
     m_fullscreenState = FullscreenState::EnteringFullscreen;
     page->fullscreenClient().willEnterFullscreen(page.get());
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (CheckedPtr client = m_client; client && client->isUsingQuickLook()) {
+        didEnterFullScreen([] (bool) { });
+        co_return true;
+    }
+#endif
+
     auto needsPresentationUpdate = co_await AwaitableFromCompletionHandler<NeedsPresentationUpdate> { [this, protectedThis = Ref { *this }, frameID] (auto completionHandler) {
         enterFullScreenForOwnerElementsInOtherProcesses(frameID, WTF::move(completionHandler));
     } };

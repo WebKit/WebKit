@@ -66,6 +66,7 @@ public:
     virtual bool isFullScreen() = 0;
     virtual void enterFullScreen(WebCore::FloatSize mediaDimensions, CompletionHandler<void(bool)>&&) = 0;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+    virtual bool isUsingQuickLook() const { return false; }
     virtual void updateImageSource() = 0;
 #endif
     virtual void exitFullScreen(CompletionHandler<void()>&&) = 0;

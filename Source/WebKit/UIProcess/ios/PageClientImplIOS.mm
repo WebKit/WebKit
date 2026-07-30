@@ -936,6 +936,11 @@ void PageClientImpl::enterFullScreen(FloatSize mediaDimensions, CompletionHandle
 }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+bool PageClientImpl::isUsingQuickLook() const
+{
+    return [webView() fullScreenWindowController].isUsingQuickLook;
+}
+
 void PageClientImpl::updateImageSource()
 {
     [[webView() fullScreenWindowController] updateImageSource];
