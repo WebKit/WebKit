@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Checking the media controls of a <video> element in a MathML document.
+CONSOLE MESSAGE: PASS: document.createElement("div").namespaceURI is null.
+CONSOLE MESSAGE: PASS: the first shadow root child is style.
+CONSOLE MESSAGE: PASS: the stylesheet namespace is http://www.w3.org/1999/xhtml.
+CONSOLE MESSAGE: PASS: the stylesheet is applied.
+CONSOLE MESSAGE: PASS: the controls container element is div.
+CONSOLE MESSAGE: PASS: the controls container namespace is http://www.w3.org/1999/xhtml.
+CONSOLE MESSAGE: PASS: the controls container is an HTMLElement.
+CONSOLE MESSAGE: PASS: typeof the controls container offsetWidth is number.
+CONSOLE MESSAGE: PASS: typeof the controls container offsetHeight is number.
+CONSOLE MESSAGE: PASS: the controls container has descendants.
+CONSOLE MESSAGE: PASS: the number of controls elements outside of the HTML namespace is 0.
+

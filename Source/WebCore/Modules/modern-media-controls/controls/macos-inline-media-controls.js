@@ -113,7 +113,7 @@ class MacOSInlineMediaControls extends InlineMediaControls
             return;
 
         if (this.mediaControlsHost?.isMediaControlsMacInlineSizeSpecsEnabled && !this.element.classList.contains('audio')) {
-            if (this.rightContainer?.element) {
+            if (this.rightContainer?.element?.style) {
                 this.rightContainer.element.style.removeProperty('left');
                 this.rightContainer._dirtyProperties.delete('x');
             }
