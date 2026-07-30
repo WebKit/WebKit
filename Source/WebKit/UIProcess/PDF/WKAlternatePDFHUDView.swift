@@ -25,10 +25,9 @@
 
 import AppKit
 public import Foundation
-internal import WebKit_Internal
+import WebKit_Internal
 @_weakLinked @_spi(Private) import SwiftUI
 
-// FIXME: Add fade animations.
 // FIXME: Add localizable strings support.
 // FIXME: Implement `WKAlternatePDFHUDView.show`.
 // FIXME: Figure out the final design.
@@ -36,7 +35,19 @@ internal import WebKit_Internal
 private let barVerticalOffset: CGFloat = 40
 
 private struct Controls: View {
+    private static let autoHideDelay: Duration = .seconds(3)
+
     let action: (WKPDFHUDViewControlAction) -> Void
+
+    @State
+    private var initialHideTimerFired = false
+
+    @State
+    private var isHovered = false
+
+    private var isVisible: Bool {
+        !initialHideTimerFired || isHovered
+    }
 
     var body: some View {
         ControlGroup {
@@ -63,9 +74,19 @@ private struct Controls: View {
             }
         }
         .labelStyle(.iconOnly)
+        .opacity(isVisible ? 1 : 0)
+        .animation(.easeInOut, value: isVisible)
         #if USE_APPLE_INTERNAL_SDK && HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE
         .controlGroupStyle(.toolbar)
         #endif
+        .onHover {
+            isHovered = $0
+        }
+        .task {
+            try? await Task.sleep(for: Self.autoHideDelay)
+            guard !Task.isCancelled else { return }
+            initialHideTimerFired = true
+        }
     }
 }
 
