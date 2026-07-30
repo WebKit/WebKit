@@ -836,8 +836,6 @@ css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
 
 webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 
-webrtc/vp8-then-h264.html [ Pass ]
-
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
 
 # Flaky tests Nov2023
