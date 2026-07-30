@@ -304,7 +304,8 @@ Product multiply(Child&& a, Child&& b)
 
 Sum subtract(Child&& a, Child&& b)
 {
-    return add(WTF::move(a), makeChild(Negate { .a = WTF::move(b) }, getType(b)));
+    auto type = getType(b);
+    return add(WTF::move(a), makeChild(Negate { .a = WTF::move(b) }, type));
 }
 
 Child makeChildWithValueBasedOn(double value, const Number&)

@@ -1134,7 +1134,8 @@ void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vecto
     if (!networkProcessWillCheckBlobFileAccess())
         return completionHandler();
 
-    protect(dataStore->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(coreProcessIdentifier(), WTF::move(paths)), [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, paths, completionHandler = WTF::move(completionHandler)] mutable {
+    auto messagePaths = paths;
+    protect(dataStore->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(coreProcessIdentifier(), WTF::move(messagePaths)), [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, paths = WTF::move(paths), completionHandler = WTF::move(completionHandler)] mutable {
         if (!weakThis || !weakPage)
             return completionHandler();
 

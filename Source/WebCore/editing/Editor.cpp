@@ -1220,7 +1220,7 @@ static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRo
     const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<Ref<StaticRange>>& targetRanges = { })
 {
     if (startRoot)
-        dispatchInputEvent(*startRoot, inputTypeName, isInputMethodComposing, data, WTF::move(dataTransfer), targetRanges);
+        dispatchInputEvent(*startRoot, inputTypeName, isInputMethodComposing, data, dataTransfer.copyRef(), targetRanges);
     if (endRoot && endRoot != startRoot)
         dispatchInputEvent(*endRoot, inputTypeName, isInputMethodComposing, data, WTF::move(dataTransfer), targetRanges);
 }

@@ -451,9 +451,10 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInf
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
 
         Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(serviceWorkerGlobalScope->registration());
+        auto failureReason = info.failureReason;
         BackgroundFetchEventInit eventInit { { }, manager->backgroundFetchRegistrationInstance(serviceWorkerGlobalScope, WTF::move(info)) };
         RefPtr<ExtendableEvent> event;
-        switch (info.failureReason) {
+        switch (failureReason) {
         case BackgroundFetchFailureReason::EmptyString:
             event = BackgroundFetchUpdateUIEvent::create(eventNames().backgroundfetchsuccessEvent, WTF::move(eventInit), Event::IsTrusted::Yes);
             break;

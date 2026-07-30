@@ -824,8 +824,8 @@ void PushService::updateTopicLists(CompletionHandler<void()>&& completionHandler
         PushServiceConnection::TopicLists topicLists;
         topicLists.enabledTopics = WTF::move(topics.enabledTopics);
         topicLists.ignoredTopics = WTF::move(topics.ignoredTopics);
-        protectedThis->m_connection->setTopicLists(WTF::move(topicLists));
         protectedThis->m_topicCount = topicLists.enabledTopics.size() + topicLists.ignoredTopics.size();
+        protectedThis->m_connection->setTopicLists(WTF::move(topicLists));
         completionHandler();
     });
 }

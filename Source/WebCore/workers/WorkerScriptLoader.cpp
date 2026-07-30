@@ -148,7 +148,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     ThreadableLoaderOptions options { WTF::move(fetchOptions) };
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
-    if (fetchOptions.destination == FetchOptions::Destination::Serviceworker)
+    if (options.destination == FetchOptions::Destination::Serviceworker)
         options.certificateInfoPolicy = CertificateInfoPolicy::IncludeCertificateInfo;
 
     // FIXME: We should drop the sameOriginDataURLFlag flag and implement the latest Fetch specification.
