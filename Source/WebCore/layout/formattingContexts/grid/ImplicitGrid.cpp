@@ -44,7 +44,6 @@ namespace Layout {
 
 ImplicitGrid::ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount)
     : m_gridMatrix(Vector<Vector<GridCell>>(FillWith { }, totalRowsCount, Vector<GridCell>(totalColumnsCount)))
-    , m_initialColumnsCount(totalColumnsCount)
 {
 }
 

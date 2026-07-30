@@ -43,7 +43,7 @@ public:
     ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount);
 
     size_t rowsCount() const { return m_gridMatrix.size(); }
-    size_t columnsCount() const { return rowsCount() ? m_gridMatrix[0].size() : m_initialColumnsCount; }
+    size_t columnsCount() const { return m_gridMatrix[0].size(); }
 
     void insertUnplacedGridItem(const UnplacedGridItem&);
     void insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions);
@@ -67,10 +67,6 @@ private:
     void placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem&, GridAutoFlowOptions);
 
     GridMatrix m_gridMatrix;
-
-    // Track column count. This is needed when the initial grid has 0 rows and the column
-    // count would otherwise be lost.
-    size_t m_initialColumnsCount { 0 };
 
     // Per-row cursors for sparse packing in Step 2 (definite row items only).
     RowCursors m_rowCursors;
