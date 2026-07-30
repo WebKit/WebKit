@@ -457,6 +457,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!Wasm::isSubtype(actualType, expectedType) || !Wasm::isSubtype(expectedType, actualType))
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "provided a 'type' that is wrong"_s)));
 
+            if (table->table()->addressType() != moduleInformation.tables[import.kindIndex].addressType())
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "provided an 'address' that is different from the module's declared 'address' import table attribute"_s)));
+
             // ii. Append v to tables.
             // iii. Append v.[[Table]] to imports.
             m_instance->setTable(vm, import.kindIndex, table);
