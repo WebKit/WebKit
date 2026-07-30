@@ -2109,7 +2109,6 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
         .contentType = WTF::move(contentType),
         .requiresRemotePlayback = !!m_remotePlaybackConfiguration,
         .supportsLimitedMatroska = limitedMatroskaSupportEnabled(),
-        .disableTeardownOnVisibilityChange = protect(document())->quirks().shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk(),
 #if ENABLE(MEDIA_SOURCE)
         .supportsProgressMonitoringOverride = protect(document())->quirks().needsSupportsProgressMonitoring() ? std::optional<bool> { true } : std::nullopt,
 #endif

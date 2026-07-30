@@ -205,12 +205,6 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
     setPreload(m_preload);
 }
 
-void MediaPlayerPrivateAVFoundation::load(const URL& url, const LoadOptions& options)
-{
-    m_disableTeardownOnVisibilityChange = options.disableTeardownOnVisibilityChange;
-    load(url.string());
-}
-
 #if ENABLE(MEDIA_SOURCE)
 void MediaPlayerPrivateAVFoundation::load(const URL&, const LoadOptions&, MediaSourcePrivateClient&)
 {
