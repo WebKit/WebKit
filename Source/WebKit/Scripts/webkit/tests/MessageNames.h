@@ -52,26 +52,27 @@ enum class ReceiverName : uint8_t {
     , TestWithImageData = 8
     , TestWithLegacyReceiver = 9
     , TestWithMultiLineExtendedAttributes = 10
-    , TestWithSemaphore = 11
-    , TestWithSpanOfConst = 12
-    , TestWithStream = 13
-    , TestWithStreamBatched = 14
-    , TestWithStreamBuffer = 15
-    , TestWithStreamServerConnectionHandle = 16
-    , TestWithStreamSwift = 17
-    , TestWithSuperclass = 18
-    , TestWithSuperclassAndWantsAsyncDispatch = 19
-    , TestWithSuperclassAndWantsDispatch = 20
-    , TestWithSwift = 21
-    , TestWithSwiftConditionally = 22
-    , TestWithValidator = 23
-    , TestWithWantsAsyncDispatch = 24
-    , TestWithWantsDispatch = 25
-    , TestWithWantsDispatchNoSyncMessages = 26
-    , TestWithoutAttributes = 27
-    , TestWithoutUsingIPCConnection = 28
-    , IPC = 29
-    , Invalid = 30
+    , TestWithMultipleDispatchedFrom = 11
+    , TestWithSemaphore = 12
+    , TestWithSpanOfConst = 13
+    , TestWithStream = 14
+    , TestWithStreamBatched = 15
+    , TestWithStreamBuffer = 16
+    , TestWithStreamServerConnectionHandle = 17
+    , TestWithStreamSwift = 18
+    , TestWithSuperclass = 19
+    , TestWithSuperclassAndWantsAsyncDispatch = 20
+    , TestWithSuperclassAndWantsDispatch = 21
+    , TestWithSwift = 22
+    , TestWithSwiftConditionally = 23
+    , TestWithValidator = 24
+    , TestWithWantsAsyncDispatch = 25
+    , TestWithWantsDispatch = 26
+    , TestWithWantsDispatchNoSyncMessages = 27
+    , TestWithoutAttributes = 28
+    , TestWithoutUsingIPCConnection = 29
+    , IPC = 30
+    , Invalid = 31
 };
 
 enum class MessageName : uint16_t {
@@ -138,6 +139,7 @@ enum class MessageName : uint16_t {
     TestWithLegacyReceiver_TouchEvent,
 #endif
     TestWithMultiLineExtendedAttributes_AlwaysEnabled,
+    TestWithMultipleDispatchedFrom_AlwaysEnabled,
     TestWithSemaphore_ReceiveSemaphore,
     TestWithSemaphore_ReceiveSemaphoreReply,
     TestWithSemaphore_SendSemaphore,

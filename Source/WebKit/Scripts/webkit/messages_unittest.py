@@ -51,6 +51,7 @@ _test_receiver_names = [
     'TestWithImageData',
     'TestWithLegacyReceiver',
     'TestWithMultiLineExtendedAttributes',
+    'TestWithMultipleDispatchedFrom',
     'TestWithoutAttributes',
     'TestWithoutUsingIPCConnection',
     'TestWithSemaphore',

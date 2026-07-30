@@ -1796,18 +1796,28 @@ def generate_header_includes_from_conditions(header_conditions):
     return result
 
 
+PROCESS_NAME_PREDICATES = {
+    "UI": "!isInAuxiliaryProcess()",
+    "Networking": "isInNetworkProcess()",
+    "GPU": "isInGPUProcess()",
+    "WebContent": "isInWebProcess()",
+    "Model": "isInModelProcess()",
+}
+
+
 def generate_dispatched_for_x(dispatched_x, spacing='    '):
-    if dispatched_x == "WebContent":
-        return ['%sASSERT(isInWebProcess());\n' % spacing]
-    elif dispatched_x == "Networking":
-        return ['%sASSERT(isInNetworkProcess());\n' % spacing]
-    elif dispatched_x == "GPU":
-        return ['%sASSERT(isInGPUProcess());\n' % spacing]
-    elif dispatched_x == "UI":
-        return ['%sASSERT(!isInAuxiliaryProcess());\n' % spacing]
-    elif dispatched_x == "Model":
-        return ['%sASSERT(isInModelProcess());\n' % spacing]
-    return []
+    if not dispatched_x:
+        return []
+    predicates = [PROCESS_NAME_PREDICATES[name] for name in dispatched_x.split('|') if name in PROCESS_NAME_PREDICATES]
+    if not predicates:
+        return []
+    return ['%sASSERT(%s);\n' % (spacing, ' || '.join(predicates))]
+
+
+def process_name_enumerator(dispatched_x):
+    if not dispatched_x or '|' in dispatched_x:
+        return "Unknown"
+    return dispatched_x
 
 
 def generate_enabled_by_for_receiver(receiver, messages):
@@ -2293,11 +2303,11 @@ def generate_message_names_implementation(receivers):
                 result.append(', %s' % value)
             result.append(', %s' % ("true" if enumerator.messages[0].is_async_reply else "false"))
             if enumerator.messages[0].is_async_reply:
-                result.append(', ProcessName::%s' % (enumerator.receiver.receiver_dispatched_to or "Unknown"))
-                result.append(', ProcessName::%s' % (enumerator.receiver.receiver_dispatched_from or "Unknown"))
+                result.append(', ProcessName::%s' % process_name_enumerator(enumerator.receiver.receiver_dispatched_to))
+                result.append(', ProcessName::%s' % process_name_enumerator(enumerator.receiver.receiver_dispatched_from))
             else:
-                result.append(', ProcessName::%s' % (enumerator.receiver.receiver_dispatched_from or "Unknown"))
-                result.append(', ProcessName::%s' % (enumerator.receiver.receiver_dispatched_to or "Unknown"))
+                result.append(', ProcessName::%s' % process_name_enumerator(enumerator.receiver.receiver_dispatched_from))
+                result.append(', ProcessName::%s' % process_name_enumerator(enumerator.receiver.receiver_dispatched_to))
             result.append(' },\n')
         if condition:
             result.append('#endif\n')
