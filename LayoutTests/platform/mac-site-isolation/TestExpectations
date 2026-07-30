@@ -13,7 +13,6 @@ http/tests/security/referrer-policy-header-same-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin-when-cross-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-unsafe-url.html [ Crash ]
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash ]
 
 #######################
 # Tests that time out #
