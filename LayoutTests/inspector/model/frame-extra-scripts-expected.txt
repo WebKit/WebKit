@@ -7,6 +7,10 @@ WI.Frame.extraScriptCollection.
 -- Running test case: FrameHasNoExtraScriptsYet
 PASS: Main frame should have no dynamic scripts.
 
+-- Running test case: HiddenConsoleEvaluationIsNotExtraScript
+PASS: Console evaluations should be hidden by default.
+PASS: The hidden console evaluation should not add an extra script.
+
 -- Running test case: AddExtraScript
 PASS: ExtraScriptAdded event fired.
 PASS: Script should identify as dynamic.

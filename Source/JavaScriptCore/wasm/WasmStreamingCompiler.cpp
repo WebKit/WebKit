@@ -42,7 +42,7 @@
 
 namespace JSC { namespace Wasm {
 
-StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL)
+StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
     : m_vm(vm)
     , m_compilerMode(compilerMode)
     , m_compileOptions(WTF::move(compileOptions))
@@ -51,6 +51,7 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     , m_source(source)
 {
     m_info->sourceURL = Name(byteCast<char8_t>(wasmSourceURL.utf8().span()));
+    m_info->requestIdentifier = requestIdentifier;
     Vector<JSCell*> dependencies;
     dependencies.append(globalObject);
     if (importObject)
@@ -71,9 +72,9 @@ StreamingCompiler::~StreamingCompiler()
     m_ticket = nullptr;
 }
 
-Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL)
+Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
 {
-    return adoptRef(*new StreamingCompiler(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL)));
+    return adoptRef(*new StreamingCompiler(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL), requestIdentifier));
 }
 
 bool StreamingCompiler::didReceiveFunctionData(FunctionCodeIndex functionIndex, const Wasm::FunctionData&)

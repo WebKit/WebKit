@@ -85,7 +85,7 @@ private:
         ~BlobLoader();
 
         // FetchLoaderClient API
-        void didReceiveResponse(const WebCore::ResourceResponse&) final { }
+        void didReceiveResponse(std::optional<WebCore::ResourceLoaderIdentifier>, const WebCore::ResourceResponse&) final { }
         void didReceiveData(const WebCore::SharedBuffer&) final;
         void didFail(const WebCore::ResourceError&) final;
         void didSucceed(const WebCore::NetworkLoadMetrics&) final;

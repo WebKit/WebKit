@@ -637,7 +637,9 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
     }
 
     String wasmSourceURL = inputResponse->url();
-    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), WTF::move(wasmSourceURL));
+    auto resourceLoaderIdentifier = inputResponse->resourceLoaderIdentifier();
+    uint64_t requestIdentifier = resourceLoaderIdentifier ? resourceLoaderIdentifier->toUInt64() : 0;
+    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), WTF::move(wasmSourceURL), requestIdentifier);
 
     if (inputResponse->isBodyReceivedByChunk()) {
         inputResponse->consumeBodyReceivedByChunk([vmPtr = &vm, compiler = WTF::move(compiler)](auto&& result) mutable {

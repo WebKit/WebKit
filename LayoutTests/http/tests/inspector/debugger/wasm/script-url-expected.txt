@@ -1,0 +1,75 @@
+Tests that WebAssembly modules preserve URLs supplied by streaming fetches and the module loader.
+
+
+== Running test suite: WI.Script.URL.WebAssembly
+-- Running test case: WI.Script.URL.WebAssembly.Streaming
+PASS: Should preserve the WebAssembly module's real URL.
+PASS: Should not expose the resource URL as a `sourceURL` directive.
+PASS: Should use the WebAssembly module's name section as the display name.
+PASS: Should associate the WebAssembly script with a Resource.
+PASS: Should associate the WebAssembly script with the resource for the module URL.
+PASS: The associated Resource should use the WebAssembly module's name section as its display name.
+PASS: The Resource should be associated with the WebAssembly script.
+PASS: The associated Resource should be treated as a script.
+PASS: The WebAssembly script should belong to the main frame.
+PASS: The associated Resource should belong to the main frame.
+PASS: The resource-backed WebAssembly script should not be an extra script.
+
+-- Running test case: WI.Script.URL.WebAssembly.StreamingResponseClone
+PASS: Should preserve the WebAssembly module's real URL.
+PASS: Should not expose the resource URL as a `sourceURL` directive.
+PASS: Should use the WebAssembly module's name section as the display name.
+PASS: Should associate the WebAssembly script with a Resource.
+PASS: Should associate the WebAssembly script with the resource for the module URL.
+PASS: The associated Resource should use the WebAssembly module's name section as its display name.
+PASS: The Resource should be associated with the WebAssembly script.
+PASS: The associated Resource should be treated as a script.
+PASS: The WebAssembly script should belong to the main frame.
+PASS: The associated Resource should belong to the main frame.
+PASS: The resource-backed WebAssembly script should not be an extra script.
+PASS: Only one WebAssembly script should associate with a cloned Response's Resource.
+PASS: The additional clone should remain visible as an extra script.
+
+-- Running test case: WI.Script.URL.WebAssembly.ModuleLoader
+PASS: Should preserve the WebAssembly module's real URL.
+PASS: Should not expose the resource URL as a `sourceURL` directive.
+PASS: Should use the WebAssembly module's name section as the display name.
+PASS: Should associate the WebAssembly script with a Resource.
+PASS: Should associate the WebAssembly script with the resource for the module URL.
+PASS: The associated Resource should use the WebAssembly module's name section as its display name.
+PASS: The Resource should be associated with the WebAssembly script.
+PASS: The associated Resource should be treated as a script.
+PASS: The WebAssembly script should belong to the main frame.
+PASS: The associated Resource should belong to the main frame.
+PASS: The resource-backed WebAssembly script should not be an extra script.
+
+-- Running test case: WI.Script.URL.WebAssembly.WorkerStreaming
+PASS: Should create a Worker target.
+PASS: The Worker's WebAssembly script should associate with a Resource.
+PASS: The associated Resource should belong to the Worker target.
+PASS: The Worker's associated Resource should not belong to a frame.
+PASS: The resource-backed WebAssembly script should not remain an extra script.
+
+-- Running test case: WI.Script.URL.WebAssembly.RepeatedStreamingURL
+PASS: Should associate the repeated WebAssembly script with a Resource.
+PASS: Should preserve the repeated WebAssembly module's final response URL.
+PASS: Repeated loads of the same URL should associate with distinct Resources.
+PASS: Repeated loads of the same URL should preserve distinct request identifiers.
+
+-- Running test case: WI.Script.URL.WebAssembly.MemoryCache
+PASS: Should associate the initial WebAssembly script with a Resource.
+PASS: Should associate the cached WebAssembly script with a Resource.
+PASS: The repeated load should use the memory cache.
+PASS: The cached WebAssembly script should use the newly-created Resource.
+PASS: The cached WebAssembly script should not remain an extra script.
+
+-- Running test case: WI.Script.URL.WebAssembly.FetchedBytes
+PASS: The fetched bytes should have a Resource.
+PASS: The module should not associate after its fetch provenance is lost.
+PASS: The resource-less module should remain visible as an extra script.
+
+-- Running test case: WI.Script.URL.WebAssembly.DirectBytes
+PASS: Should not associate the WebAssembly script with a Resource.
+PASS: The WebAssembly script should belong to the main frame.
+PASS: The resource-less WebAssembly script should be an extra script.
+

@@ -31,6 +31,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
         this._resource = resource;
         this._resource.addEventListener(WI.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
+        this._resource.addEventListener(WI.Resource.Event.MIMETypeDidChange, this._resourceTypeDidChange, this);
         this._resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         this._disableDropZone = disableDropZone || false;
 
@@ -249,6 +250,8 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         case WI.Resource.Type.Document:
         case WI.Resource.Type.Script:
         case WI.Resource.Type.StyleSheet:
+            if (!WI.shouldTreatMIMETypeAsText(this._resource.mimeType))
+                return null;
             return new WI.TextResourceContentView(this._resource);
 
         case WI.Resource.Type.Image:

@@ -36,6 +36,7 @@
 #include "DeferGC.h"
 #include "ExecutableBaseInlines.h"
 #include "HeapIterationScope.h"
+#include "IdentifiersFactory.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InternalFunction.h"
@@ -1602,6 +1603,14 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script
     return script.sourceMappingURL;
 }
 
+String InspectorDebuggerAgent::requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script& script)
+{
+    if (!script.requestIdentifier)
+        return { };
+
+    return IdentifiersFactory::requestId(script.requestIdentifier);
+}
+
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts(bool shouldPause)
 {
     if (shouldPause == m_pauseForInternalScripts)
@@ -1853,8 +1862,9 @@ void InspectorDebuggerAgent::didParseSource(JSC::JSGlobalObject* globalObject, J
     bool hasSourceURL = !script.sourceURL.isEmpty();
     String sourceURL = script.sourceURL;
     String sourceMappingURL = sourceMapURLForScript(script);
+    String requestId = requestIdForScript(globalObject, script);
 
-    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, injectedScriptManager().injectedScriptIdFor(globalObject), scriptTypeForScript(script), script.isContentScript, sourceURL, sourceMappingURL, script.displayName);
+    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, injectedScriptManager().injectedScriptIdFor(globalObject), scriptTypeForScript(script), script.isContentScript, sourceURL, sourceMappingURL, script.displayName, requestId);
 
     m_scripts.set(sourceID, script);
 

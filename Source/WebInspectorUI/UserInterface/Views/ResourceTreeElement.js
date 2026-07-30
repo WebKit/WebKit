@@ -124,7 +124,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
     get filterableData()
     {
         let urlComponents = this._resource.urlComponents;
-        return {text: [urlComponents.lastPathComponent, urlComponents.path, this._resource.url]};
+        return {text: [this._resource.displayName, urlComponents.lastPathComponent, urlComponents.path, this._resource.url]};
     }
 
     ondblclick()
@@ -152,6 +152,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
             this._resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, this.updateStatus, this);
             this._resource.removeEventListener(WI.Resource.Event.LoadingDidFail, this._loadingDidFail, this);
             this._resource.removeEventListener(WI.Resource.Event.ResponseReceived, this._responseReceived, this);
+            this._resource.removeEventListener(WI.Resource.Event.ScriptAssociated, this._handleScriptAssociated, this);
         }
 
         this._updateSourceCode(resource);
@@ -163,6 +164,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this.updateStatus, this);
         resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._loadingDidFail, this);
         resource.addEventListener(WI.Resource.Event.ResponseReceived, this._responseReceived, this);
+        resource.addEventListener(WI.Resource.Event.ScriptAssociated, this._handleScriptAssociated, this);
 
         this._updateTitles();
         this.updateStatus();
@@ -175,7 +177,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
     get mainTitleText()
     {
         // Overridden by subclasses if needed.
-        return WI.displayNameForURL(this._resource.url, this._resource.urlComponents, {
+        return this._resource.scripts.find((script) => script.customName)?.customName || WI.displayNameForURL(this._resource.url, this._resource.urlComponents, {
             allowDirectoryAsName: this._allowDirectoryAsName,
         });
     }
@@ -321,6 +323,12 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
     _responseReceived(event)
     {
         this._updateIcon();
+    }
+
+    _handleScriptAssociated(event)
+    {
+        this._updateTitles();
+        this.updateStatus();
     }
 };
 

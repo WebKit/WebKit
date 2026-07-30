@@ -163,10 +163,10 @@ RefPtr<FragmentedSharedBuffer> FetchLoader::startStreaming()
     return firstChunk;
 }
 
-void FetchLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
+void FetchLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier> resourceLoaderIdentifier, const ResourceResponse& response)
 {
     if (RefPtr client = m_client.get())
-        client->didReceiveResponse(response);
+        client->didReceiveResponse(resourceLoaderIdentifier, response);
 }
 
 void FetchLoader::didReceiveData(const SharedBuffer& buffer)

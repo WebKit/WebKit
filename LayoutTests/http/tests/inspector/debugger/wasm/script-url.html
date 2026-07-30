@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/inspector-test.js"></script>
+<script>
+let wasmInstances = new Set;
+let wasmModuleNamespaces = new Set;
+let wasmResourceWorker = null;
+
+function instantiateWasmURL(url)
+{
+    return WebAssembly.instantiateStreaming(fetch(url)).then((result) => {
+        wasmInstances.add(result.instance);
+        return result;
+    });
+}
+
+async function instantiateWasmResponseClones(url)
+{
+    let response = await fetch(url);
+    let results = await Promise.all([
+        WebAssembly.instantiateStreaming(response.clone()),
+        WebAssembly.instantiateStreaming(response.clone()),
+    ]);
+    for (let result of results)
+        wasmInstances.add(result.instance);
+    return results;
+}
+
+async function instantiateWasmFetchedBytes(url)
+{
+    let response = await fetch(url);
+    let result = await WebAssembly.instantiate(await response.arrayBuffer());
+    wasmInstances.add(result.instance);
+    return result;
+}
+
+function importWasmURL(url)
+{
+    return import(url).then((namespace) => {
+        wasmModuleNamespaces.add(namespace);
+        return namespace;
+    });
+}
+
+function instantiateWasmBytes()
+{
+    let bytes = new Uint8Array([
+        0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
+        0x01, 0x05, 0x01, 0x60, 0x00, 0x01, 0x7f,
+        0x03, 0x02, 0x01, 0x00,
+        0x07, 0x07, 0x01, 0x03, 0x72, 0x75, 0x6e, 0x00, 0x00,
+        0x0a, 0x06, 0x01, 0x04, 0x00, 0x41, 0x2a, 0x0b,
+    ]);
+    let instance = new WebAssembly.Instance(new WebAssembly.Module(bytes));
+    wasmInstances.add(instance);
+    return instance;
+}
+
+function createWasmResourceWorker()
+{
+    wasmResourceWorker = new Worker("resources/resource-worker.js");
+}
+
+function instantiateWasmInWorker(url)
+{
+    return new Promise((resolve, reject) => {
+        function handleMessage(event)
+        {
+            if (event.data?.error) {
+                wasmResourceWorker.removeEventListener("message", handleMessage);
+                wasmResourceWorker.removeEventListener("error", handleError);
+                reject(new Error(event.data.error));
+                return;
+            }
+            if (event.data?.result !== "instantiated")
+                return;
+            wasmResourceWorker.removeEventListener("message", handleMessage);
+            wasmResourceWorker.removeEventListener("error", handleError);
+            resolve();
+        }
+
+        function handleError(event)
+        {
+            wasmResourceWorker.removeEventListener("message", handleMessage);
+            wasmResourceWorker.removeEventListener("error", handleError);
+            reject(event.error || new Error(event.message));
+        }
+
+        wasmResourceWorker.addEventListener("message", handleMessage);
+        wasmResourceWorker.addEventListener("error", handleError);
+        wasmResourceWorker.postMessage(url);
+    });
+}
+
+function test()
+{
+    async function evaluateAndAwaitPromise(expression)
+    {
+        let {result, wasThrown} = await WI.mainTarget.RuntimeAgent.evaluate.invoke({expression});
+        if (wasThrown)
+            throw new Error(result.description);
+        if (result.className === "Promise") {
+            let response = await WI.mainTarget.RuntimeAgent.awaitPromise.invoke({promiseObjectId: result.objectId});
+            if (response.wasThrown)
+                throw new Error(response.result.description);
+        }
+    }
+
+    function scriptsForTarget(target)
+    {
+        let scripts = [];
+        for (let candidate of target ? [target] : WI.targets) {
+            if (candidate.hasDomain("Debugger"))
+                scripts.pushAll(WI.debuggerManager.dataForTarget(candidate).scripts);
+        }
+        return scripts;
+    }
+
+    async function evaluateAndAwaitWebAssemblyScripts(expression, {target = null, count = 1} = {})
+    {
+        let knownScripts = new Set(scriptsForTarget(target));
+        await evaluateAndAwaitPromise(expression);
+        let scripts;
+        await retryUntil(() => {
+            scripts = scriptsForTarget(target).filter((script) => script.sourceType === WI.Script.SourceType.WebAssembly && !knownScripts.has(script));
+            return scripts.length >= count;
+        });
+        return scripts;
+    }
+
+    async function evaluateAndAwaitWebAssemblyScript(expression)
+    {
+        return (await evaluateAndAwaitWebAssemblyScripts(expression))[0];
+    }
+
+    async function awaitResourceAssociation(script)
+    {
+        await retryUntil(() => script.resource);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WI.Script.URL.WebAssembly");
+    let streamingScript = null;
+
+    [
+        {
+            name: "Streaming",
+            description: "A streamed WebAssembly module should preserve its final response URL.",
+            functionName: "instantiateWasmURL",
+            query: "streaming",
+            redirect: true,
+        },
+        {
+            name: "StreamingResponseClone",
+            description: "Cloned Responses should retain Resource provenance without assigning one Resource to multiple WebAssembly scripts.",
+            functionName: "instantiateWasmResponseClones",
+            query: "response-clone",
+            scriptCount: 2,
+        },
+        {
+            name: "ModuleLoader",
+            description: "A WebAssembly module imported by the module loader should preserve its module URL.",
+            functionName: "importWasmURL",
+            query: "module-loader",
+        },
+    ].forEach(function({name, description, functionName, query, redirect, scriptCount}) {
+        suite.addTestCase({
+            name: "WI.Script.URL.WebAssembly." + name,
+            description,
+            async test() {
+                let origin = await InspectorTest.evaluateInPage("location.origin");
+                let expectedURL = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?" + query;
+                let requestURL = redirect ? origin + "/resources/redirect.py?url=" + encodeURIComponent(expectedURL) : expectedURL;
+                let scripts = await evaluateAndAwaitWebAssemblyScripts(`${functionName}(${JSON.stringify(requestURL)})`, {count: scriptCount});
+                let script = scripts[0];
+                await awaitResourceAssociation(script);
+                InspectorTest.expectEqual(script.url, expectedURL, "Should preserve the WebAssembly module's real URL.");
+                InspectorTest.expectNull(script.sourceURL, "Should not expose the resource URL as a `sourceURL` directive.");
+                InspectorTest.expectEqual(script.displayName, "embedded-name.wasm", "Should use the WebAssembly module's name section as the display name.");
+                InspectorTest.expectTrue(script.resource instanceof WI.Resource, "Should associate the WebAssembly script with a Resource.");
+                InspectorTest.expectEqual(script.resource?.url, expectedURL, "Should associate the WebAssembly script with the resource for the module URL.");
+                InspectorTest.expectEqual(script.resource?.displayName, "embedded-name.wasm", "The associated Resource should use the WebAssembly module's name section as its display name.");
+                InspectorTest.expectTrue(script.resource?.scripts.includes(script), "The Resource should be associated with the WebAssembly script.");
+                InspectorTest.expectEqual(script.resource?.type, WI.Resource.Type.Script, "The associated Resource should be treated as a script.");
+                InspectorTest.expectEqual(script.parentFrame, WI.networkManager.mainFrame, "The WebAssembly script should belong to the main frame.");
+                InspectorTest.expectEqual(script.resource?.parentFrame, WI.networkManager.mainFrame, "The associated Resource should belong to the main frame.");
+                InspectorTest.expectFalse(WI.networkManager.mainFrame.extraScriptCollection.has(script), "The resource-backed WebAssembly script should not be an extra script.");
+
+                if (name === "StreamingResponseClone") {
+                    let additionalScript = scripts[1];
+                    InspectorTest.expectNull(additionalScript.resource, "Only one WebAssembly script should associate with a cloned Response's Resource.");
+                    InspectorTest.expectTrue(WI.networkManager.mainFrame.extraScriptCollection.has(additionalScript), "The additional clone should remain visible as an extra script.");
+                }
+
+                if (name === "Streaming")
+                    streamingScript = script;
+            },
+        });
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.URL.WebAssembly.WorkerStreaming",
+        description: "A streamed WebAssembly script should associate with the Resource owned by its Worker target.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            await InspectorTest.evaluateInPage("createWasmResourceWorker()");
+            let {target: workerTarget} = (await targetAddedPromise).data;
+            InspectorTest.expectTrue(workerTarget instanceof WI.WorkerTarget, "Should create a Worker target.");
+
+            let origin = await InspectorTest.evaluateInPage("location.origin");
+            let requestURL = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?worker-streaming";
+            let scripts = await evaluateAndAwaitWebAssemblyScripts(`instantiateWasmInWorker(${JSON.stringify(requestURL)})`, {target: workerTarget});
+            let script = scripts[0];
+            await awaitResourceAssociation(script);
+            InspectorTest.expectTrue(script.resource instanceof WI.Resource, "The Worker's WebAssembly script should associate with a Resource.");
+            InspectorTest.expectEqual(script.resource?.target, workerTarget, "The associated Resource should belong to the Worker target.");
+            InspectorTest.expectNull(script.resource?.parentFrame, "The Worker's associated Resource should not belong to a frame.");
+            InspectorTest.expectFalse(workerTarget.extraScriptCollection.has(script), "The resource-backed WebAssembly script should not remain an extra script.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.URL.WebAssembly.RepeatedStreamingURL",
+        description: "Repeated streaming loads should associate each WebAssembly script with the exact Resource for its request.",
+        async test() {
+            let origin = await InspectorTest.evaluateInPage("location.origin");
+            let expectedURL = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?streaming";
+            let requestURL = origin + "/resources/redirect.py?url=" + encodeURIComponent(expectedURL);
+            let script = await evaluateAndAwaitWebAssemblyScript(`instantiateWasmURL(${JSON.stringify(requestURL)})`);
+            await awaitResourceAssociation(script);
+            InspectorTest.expectTrue(script.resource instanceof WI.Resource, "Should associate the repeated WebAssembly script with a Resource.");
+            InspectorTest.expectEqual(script.resource?.url, expectedURL, "Should preserve the repeated WebAssembly module's final response URL.");
+            InspectorTest.expectNotEqual(script.resource, streamingScript.resource, "Repeated loads of the same URL should associate with distinct Resources.");
+            InspectorTest.expectNotEqual(script.resource?.requestIdentifier, streamingScript.resource?.requestIdentifier, "Repeated loads of the same URL should preserve distinct request identifiers.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.URL.WebAssembly.MemoryCache",
+        description: "Repeated streaming loads from the memory cache should associate with the only unassociated Resource.",
+        async test() {
+            let origin = await InspectorTest.evaluateInPage("location.origin");
+            let requestURL = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?memory-cache";
+
+            let firstScript = await evaluateAndAwaitWebAssemblyScript(`instantiateWasmURL(${JSON.stringify(requestURL)})`);
+            await awaitResourceAssociation(firstScript);
+            InspectorTest.expectTrue(firstScript.resource instanceof WI.Resource, "Should associate the initial WebAssembly script with a Resource.");
+
+            let cachedScript = await evaluateAndAwaitWebAssemblyScript(`instantiateWasmURL(${JSON.stringify(requestURL)})`);
+            await awaitResourceAssociation(cachedScript);
+            InspectorTest.expectTrue(cachedScript.resource instanceof WI.Resource, "Should associate the cached WebAssembly script with a Resource.");
+            InspectorTest.expectTrue(cachedScript.resource?.cached, "The repeated load should use the memory cache.");
+            InspectorTest.expectNotEqual(cachedScript.resource, firstScript.resource, "The cached WebAssembly script should use the newly-created Resource.");
+            InspectorTest.expectFalse(WI.networkManager.mainFrame.extraScriptCollection.has(cachedScript), "The cached WebAssembly script should not remain an extra script.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.URL.WebAssembly.FetchedBytes",
+        description: "A module compiled from a fetched ArrayBuffer should not guess that the fetch Resource is its owner.",
+        async test() {
+            let origin = await InspectorTest.evaluateInPage("location.origin");
+            let requestURL = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?fetched-bytes";
+            let script = await evaluateAndAwaitWebAssemblyScript(`instantiateWasmFetchedBytes(${JSON.stringify(requestURL)})`);
+            let resources = WI.networkManager.mainFrame.resourceCollection.resourcesForURL(requestURL);
+            InspectorTest.expectEqual(resources.size, 1, "The fetched bytes should have a Resource.");
+            InspectorTest.expectNull(script.resource, "The module should not associate after its fetch provenance is lost.");
+            InspectorTest.expectTrue(WI.networkManager.mainFrame.extraScriptCollection.has(script), "The resource-less module should remain visible as an extra script.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.URL.WebAssembly.DirectBytes",
+        description: "A WebAssembly module created directly from bytes should remain resource-less.",
+        async test() {
+            let script = await evaluateAndAwaitWebAssemblyScript("instantiateWasmBytes()");
+            InspectorTest.expectNull(script.resource, "Should not associate the WebAssembly script with a Resource.");
+            InspectorTest.expectEqual(script.parentFrame, WI.networkManager.mainFrame, "The WebAssembly script should belong to the main frame.");
+            InspectorTest.expectTrue(WI.networkManager.mainFrame.extraScriptCollection.has(script), "The resource-less WebAssembly script should be an extra script.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WebAssembly modules preserve URLs supplied by streaming fetches and the module loader.</p>
+</body>
+</html>

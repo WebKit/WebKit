@@ -387,7 +387,8 @@
                 { "name": "isContentScript", "type": "boolean", "optional": true, "description": "Determines whether this script is a user extension script." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "sourceURL name of the script (if any)." },
                 { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with script (if any)." },
-                { "name": "displayName", "type": "string", "optional": true, "description": "Human-readable name of the script." }
+                { "name": "displayName", "type": "string", "optional": true, "description": "Human-readable name of the script." },
+                { "name": "requestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this script (if any)." }
             ]
         },
         {

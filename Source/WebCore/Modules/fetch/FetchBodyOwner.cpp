@@ -343,7 +343,7 @@ FetchBodyOwner::BlobLoader::BlobLoader(FetchBodyOwner& owner)
 
 FetchBodyOwner::BlobLoader::~BlobLoader() = default;
 
-void FetchBodyOwner::BlobLoader::didReceiveResponse(const ResourceResponse& response)
+void FetchBodyOwner::BlobLoader::didReceiveResponse(std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     if (response.httpStatusCode() != httpStatus200OK)
         didFail({ });

@@ -39,7 +39,7 @@ WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
         WI.debuggerManager.globalObjectCleared(this._target);
     }
 
-    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName)
+    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName, requestId)
     {
         if (this._legacyScriptParsed) {
             // COMPATIBILITY (macOS X.Y, iOS X.Y): Older backends report `module` instead of `scriptType`.
@@ -51,7 +51,7 @@ WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
             scriptType = isModule ? InspectorBackend.Enum.Debugger.ScriptType.Module : InspectorBackend.Enum.Debugger.ScriptType.Program;
         }
 
-        WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName);
+        WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName, requestId);
     }
 
     scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)

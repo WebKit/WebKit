@@ -1,0 +1,189 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let wasmFrameLoadedPromise;
+let wasmResourceWorker = null;
+
+function createCrossOriginFrame()
+{
+    let iframe = document.createElement("iframe");
+    iframe.name = "wasm-frame";
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/debugger/resources/wasm-frame.html`;
+    wasmFrameLoadedPromise = new Promise((resolve) => iframe.addEventListener("load", resolve, {once: true}));
+    document.body.appendChild(iframe);
+}
+
+function instantiateWasmInCrossOriginFrame(message)
+{
+    wasmFrameLoadedPromise.then(() => {
+        frames["wasm-frame"].postMessage(message, "*");
+    });
+}
+
+function createWasmResourceWorker()
+{
+    wasmResourceWorker = new Worker("/inspector/debugger/wasm/resources/resource-worker.js");
+}
+
+function instantiateWasmInWorker(url)
+{
+    return new Promise((resolve, reject) => {
+        function handleMessage(event)
+        {
+            if (event.data?.error) {
+                wasmResourceWorker.removeEventListener("message", handleMessage);
+                wasmResourceWorker.removeEventListener("error", handleError);
+                reject(new Error(event.data.error));
+                return;
+            }
+            if (event.data?.result !== "instantiated")
+                return;
+            wasmResourceWorker.removeEventListener("message", handleMessage);
+            wasmResourceWorker.removeEventListener("error", handleError);
+            resolve();
+        }
+
+        function handleError(event)
+        {
+            wasmResourceWorker.removeEventListener("message", handleMessage);
+            wasmResourceWorker.removeEventListener("error", handleError);
+            reject(event.error || new Error(event.message));
+        }
+
+        wasmResourceWorker.addEventListener("message", handleMessage);
+        wasmResourceWorker.addEventListener("error", handleError);
+        wasmResourceWorker.postMessage(url);
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebAssembly.FrameTarget.Placement");
+
+    async function evaluateAndAwaitPromise(expression)
+    {
+        let {result, wasThrown} = await WI.mainTarget.RuntimeAgent.evaluate.invoke({expression});
+        if (wasThrown)
+            throw new Error(result.description);
+        if (result.className === "Promise") {
+            let response = await WI.mainTarget.RuntimeAgent.awaitPromise.invoke({promiseObjectId: result.objectId});
+            if (response.wasThrown)
+                throw new Error(response.result.description);
+        }
+    }
+
+    async function awaitFrameTargetForFrame(frame)
+    {
+        while (true) {
+            let target = WI.targets.find((candidate) => candidate instanceof WI.FrameTarget && candidate.executionContext?.frame === frame);
+            if (target)
+                return target;
+
+            let promises = [WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded)];
+            for (let frameTarget of WI.targets.filter((candidate) => candidate instanceof WI.FrameTarget))
+                promises.push(frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded));
+            await Promise.race(promises);
+        }
+    }
+
+    async function instantiateAndAwaitWebAssemblyScript(target, message)
+    {
+        let knownScripts = new Set(WI.debuggerManager.dataForTarget(target).scripts);
+        await InspectorTest.evaluateInPage(`instantiateWasmInCrossOriginFrame(${JSON.stringify(message)})`);
+
+        let script;
+        await retryUntil(() => {
+            script = WI.debuggerManager.dataForTarget(target).scripts.find((candidate) => candidate.sourceType === WI.Script.SourceType.WebAssembly && !knownScripts.has(candidate));
+            return script;
+        });
+        return script;
+    }
+
+    let frame;
+    let target;
+
+    suite.addTestCase({
+        name: "WebAssembly.FrameTarget.Placement.CrossOriginFrame",
+        description: "A WebAssembly script should belong to the site-isolated frame that created it.",
+        async test() {
+            let frameAddedPromise = WI.networkManager.awaitEvent(WI.NetworkManager.Event.FrameWasAdded);
+            await InspectorTest.evaluateInPage("createCrossOriginFrame()");
+
+            let frameAddedEvent = await frameAddedPromise;
+            frame = frameAddedEvent.data.frame;
+            InspectorTest.expectEqual(frame.name, "wasm-frame", "Should create the named child frame.");
+
+            target = await awaitFrameTargetForFrame(frame);
+            InspectorTest.expectEqual(target.executionContext.frame, frame, "The FrameTarget execution context should identify its frame.");
+
+            let script = await instantiateAndAwaitWebAssemblyScript(target, "instantiate-wasm");
+
+            InspectorTest.expectEqual(script.parentFrame, frame, "The WebAssembly script should belong to the cross-origin child frame.");
+            InspectorTest.expectFalse(WI.networkManager.mainFrame.extraScriptCollection.has(script), "The main frame should not contain the child frame's WebAssembly script.");
+            InspectorTest.expectTrue(frame.extraScriptCollection.has(script), "The child frame should contain its WebAssembly script.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebAssembly.FrameTarget.Placement.Resource",
+        description: "A streamed WebAssembly script should associate with the Resource owned by its site-isolated frame.",
+        async test() {
+            let script = await instantiateAndAwaitWebAssemblyScript(target, "instantiate-streaming");
+            await retryUntil(() => script.resource);
+            InspectorTest.expectTrue(script.resource instanceof WI.Resource, "The WebAssembly script should associate with a Resource.");
+            InspectorTest.expectEqual(script.parentFrame, frame, "The WebAssembly script should belong to the cross-origin child frame.");
+            InspectorTest.expectEqual(script.resource?.parentFrame, frame, "The associated Resource should belong to the cross-origin child frame.");
+            InspectorTest.expectTrue(script.resource?.scripts.includes(script), "The Resource should be associated with the WebAssembly script.");
+            InspectorTest.expectFalse(frame.extraScriptCollection.has(script), "The Resource-backed WebAssembly script should not remain an extra script.");
+
+            let repeatedScript = await instantiateAndAwaitWebAssemblyScript(target, "instantiate-streaming");
+            await retryUntil(() => repeatedScript.resource);
+            InspectorTest.expectNotEqual(repeatedScript.resource, script.resource, "Repeated loads of the same URL should associate with distinct Resources.");
+            InspectorTest.expectNotEqual(repeatedScript.resource?.requestIdentifier, script.resource?.requestIdentifier, "Repeated loads of the same URL should preserve distinct request identifiers.");
+            InspectorTest.expectTrue(repeatedScript.resource?.requestIdentifier?.startsWith("request-"), "The repeated Resource should use a site-isolation-qualified request identifier.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebAssembly.FrameTarget.Placement.WorkerResource",
+        description: "A streamed WebAssembly script should associate with the Resource owned by its Worker under Site Isolation.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            await InspectorTest.evaluateInPage("createWasmResourceWorker()");
+            let {target: workerTarget} = (await targetAddedPromise).data;
+            InspectorTest.expectTrue(workerTarget instanceof WI.WorkerTarget, "Should create a Worker target.");
+
+            let origin = await InspectorTest.evaluateInPage("location.origin");
+            let expectedURL = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?site-isolation-worker";
+            let requestURL = origin + "/resources/redirect.py?url=" + encodeURIComponent(expectedURL);
+            let knownScripts = new Set(WI.debuggerManager.dataForTarget(workerTarget).scripts);
+            await evaluateAndAwaitPromise(`instantiateWasmInWorker(${JSON.stringify(requestURL)})`);
+
+            let script;
+            await retryUntil(() => {
+                script = WI.debuggerManager.dataForTarget(workerTarget).scripts.find((candidate) => candidate.sourceType === WI.Script.SourceType.WebAssembly && !knownScripts.has(candidate));
+                return script;
+            });
+            await retryUntil(() => script.resource);
+
+            InspectorTest.expectTrue(script.resource instanceof WI.Resource, "The Worker's WebAssembly script should associate with a Resource.");
+            InspectorTest.expectEqual(script.resource?.url, expectedURL, "The Worker's associated Resource should use the final response URL.");
+            InspectorTest.expectEqual(script.resource?.target, workerTarget, "The associated Resource should belong to the Worker target.");
+            InspectorTest.expectTrue(workerTarget.resourceCollection.has(script.resource), "The Worker target should contain the associated Resource.");
+            InspectorTest.expectNull(script.resource?.parentFrame, "The Worker's associated Resource should not belong to a frame.");
+            InspectorTest.expectTrue(script.resource?.requestIdentifier?.startsWith("request-"), "The associated Resource should use a site-isolation-qualified request identifier.");
+            InspectorTest.expectFalse(workerTarget.extraScriptCollection.has(script), "The Resource-backed WebAssembly script should not remain an extra script.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebAssembly source placement for a site-isolated frame.</p>
+</body>
+</html>

@@ -29,4 +29,11 @@ WI.GenericResourceContentView = class GenericResourceContentView extends WI.Reso
     {
         super(resource, "generic");
     }
+
+    // Public
+
+    contentAvailable(content, base64Encoded)
+    {
+        this.showMessage(WI.UIString("Resource has binary content."));
+    }
 };

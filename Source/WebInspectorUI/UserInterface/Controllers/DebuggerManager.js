@@ -48,6 +48,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
         WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, this._frameWasRemoved, this);
 
         WI.settings.blackboxBreakpointEvaluations.addEventListener(WI.Setting.Event.Changed, this._handleBlackboxBreakpointEvaluationsChange, this);
@@ -58,6 +59,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
+        WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
+        WI.Resource.addEventListener(WI.Resource.Event.URLDidChange, this._handleResourceChanged, this);
+        WI.Resource.addEventListener(WI.Resource.Event.MIMETypeDidChange, this._handleResourceChanged, this);
 
         WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._handleSourceCodeSourceMapAdded, this);
 
@@ -1106,7 +1111,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         InspectorFrontendHost.beep();
     }
 
-    scriptDidParse(target, scriptIdentifier, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName)
+    scriptDidParse(target, scriptIdentifier, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName, requestId)
     {
         let targetData = this.dataForTarget(target);
 
@@ -1127,12 +1132,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         let range = new WI.TextRange(startLine, startColumn, endLine, endColumn);
 
         let parentFrame = this._frameForExecutionContext(target, executionContextId);
-        let script = new WI.Script(target, scriptIdentifier, range, url, scriptType, isContentScript, sourceURL, sourceMapURL, parentFrame, displayName);
+        let script = new WI.Script(target, scriptIdentifier, range, url, scriptType, isContentScript, sourceURL, sourceMapURL, parentFrame, displayName, requestId);
 
         targetData.addScript(script);
-
-        if (!script.resource && script.sourceType === WI.Script.SourceType.WebAssembly)
-            script.parentFrame?.addExtraScript(script);
 
         // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
         // We make the main resource of a WorkerTarget the Script instead of the Resource
@@ -1164,8 +1166,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptAdded, {script});
 
-        if ((target !== WI.mainTarget || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) && !script.isMainResource() && !script.resource)
-            target.addScript(script);
+        if (!script.resource && !script.isMainResource()) {
+            // FIXME: Should we use `!script.dynamicallyAddedScriptElement` here instead?
+            if (script.sourceType === WI.Script.SourceType.WebAssembly)
+                script.parentFrame?.addExtraScript(script);
+
+            if (target !== WI.mainTarget || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
+                target.addScript(script);
+        }
     }
 
     scriptDidFail(target, url, scriptSource)
@@ -1509,6 +1517,32 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             target.DebuggerAgent.setBlackboxBreakpointEvaluations(WI.settings.blackboxBreakpointEvaluations.value);
     }
 
+    _tryAssociateScripts(resource)
+    {
+        if (!(resource instanceof WI.Resource))
+            return;
+
+        for (let targetData of this._targetDebuggerDataMap.values()) {
+            for (let script of targetData.scripts) {
+                if (script.resource)
+                    continue;
+                if (script.url !== resource.url)
+                    continue;
+
+                let resourceCollection = script.parentFrame?.resourceCollection || script.target?.resourceCollection;
+                if (!resourceCollection?.has(resource) && !resource.isMainResource())
+                    continue;
+                if (!script.tryAssociateWithResource(resource))
+                    continue;
+
+                script.parentFrame?.extraScriptCollection.remove(script);
+                script.target?.extraScriptCollection.remove(script);
+
+                script.dispatchEventToListeners(WI.Script.Event.ResourceChanged);
+            }
+        }
+    }
+
     _breakpointDisplayLocationDidChange(event)
     {
         if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
@@ -1712,6 +1746,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
     }
 
+    _handleFrameWasAdded(event)
+    {
+        this._tryAssociateScripts(event.data.frame.mainResource);
+    }
+
     _frameWasRemoved(event)
     {
         event.data.frame.extraScriptCollection.clear();
@@ -1738,10 +1777,22 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _mainResourceDidChange(event)
     {
+        this._tryAssociateScripts(event.target.mainResource);
+
         if (!event.target.isMainFrame())
             return;
 
         this._didResumeInternal(WI.mainTarget);
+    }
+
+    _handleResourceAdded(event)
+    {
+        this._tryAssociateScripts(event.data.resource);
+    }
+
+    _handleResourceChanged(event)
+    {
+        this._tryAssociateScripts(event.target);
     }
 
     _handleSourceCodeSourceMapAdded(event)

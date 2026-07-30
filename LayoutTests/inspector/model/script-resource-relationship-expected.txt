@@ -18,6 +18,12 @@ PASS: Resource should be related to the newly added script.
 PASS: Script should be related to the resource.
 PASS: Script should have a sourceURL.
 
+-- Running test case: RepeatedScriptsWithResources
+PASS: Should add two JavaScript scripts.
+PASS: Each JavaScript script should associate with a Resource.
+PASS: Each JavaScript script should associate with a distinct Resource.
+PASS: Each Resource should associate with its JavaScript script.
+
 -- Running test case: ScriptWithoutResource
 PASS: Script was added.
 PASS: Script should not be associated with a Resource.

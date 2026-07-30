@@ -321,6 +321,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         WI.settings.resourceGroupingMode.addEventListener(WI.Setting.Event.Changed, this._handleResourceGroupingModeChanged, this);
 
+        WI.Script.addEventListener(WI.Script.Event.ResourceChanged, this._handleScriptResourceChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
         WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
@@ -491,6 +492,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel())
             WI.SourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._handleSourceCodeSourceMapAdded, this);
 
+        WI.Script.removeEventListener(WI.Script.Event.ResourceChanged, this._handleScriptResourceChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
         WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
@@ -619,6 +621,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 resourceOrFrame = resourceOrFrame.sourceMap.originalSourceCode;
             }
 
+            if (resourceOrFrame instanceof WI.Script && resourceOrFrame.resource) {
+                if (resourceOrFrame.resource === ancestor)
+                    return true;
+                resourceOrFrame = resourceOrFrame.resource;
+            }
+
             let currentFrame = resourceOrFrame.parentFrame;
             while (currentFrame) {
                 if (currentFrame === ancestor)
@@ -632,6 +640,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             // SourceMapResources are descendants of another SourceCode object.
             if (resourceOrFrame instanceof WI.SourceMapResource)
                 return resourceOrFrame.sourceMap.originalSourceCode;
+            if (resourceOrFrame instanceof WI.Script && resourceOrFrame.resource)
+                return resourceOrFrame.resource;
             return resourceOrFrame.parentFrame;
         }
 
@@ -1344,6 +1354,28 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         this._addBreakpointsForSourceCode(script);
         this._addIssuesForSourceCode(script);
+    }
+
+    _removeScript(script)
+    {
+        if (script.parentFrame && WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {
+            this._handleResourceGroupingModeChanged();
+            return;
+        }
+
+        let scriptTreeElement = this._resourcesTreeOutline.findTreeElement(script);
+        if (!scriptTreeElement)
+            return;
+
+        let parentTreeElement = scriptTreeElement.parent;
+        parentTreeElement.removeChild(scriptTreeElement);
+
+        if (parentTreeElement.representedObject instanceof WI.ScriptCollection) {
+            parentTreeElement.representedObject.remove(script);
+
+            if (!parentTreeElement.children.length)
+                parentTreeElement.parent.removeChild(parentTreeElement);
+        }
     }
 
     _addWorkerTargetWithMainResource(target)
@@ -2444,6 +2476,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _handleScriptResourceChanged(event)
+    {
+        let script = event.target;
+        this._removeScript(script);
+        this._addScript(script);
+    }
+
     _handleFrameMainResourceDidChange(event)
     {
         let frame = event.target;
@@ -2527,20 +2566,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerScriptRemoved(event)
     {
-        let script = event.data.script;
-        let scriptTreeElement = this._resourcesTreeOutline.findTreeElement(script);
-        if (!scriptTreeElement)
-            return;
-
-        let parentTreeElement = scriptTreeElement.parent;
-        parentTreeElement.removeChild(scriptTreeElement);
-
-        if (parentTreeElement.representedObject instanceof WI.ScriptCollection) {
-            parentTreeElement.representedObject.remove(script);
-
-            if (!parentTreeElement.children.length)
-                parentTreeElement.parent.removeChild(parentTreeElement);
-        }
+        this._removeScript(event.data.script);
     }
 
     _handleDebuggerScriptsCleared(event)

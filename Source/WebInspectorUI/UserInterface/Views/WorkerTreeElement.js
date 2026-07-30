@@ -68,6 +68,24 @@ WI.WorkerTreeElement = class WorkerTreeElement extends WI.ScriptTreeElement
 
     get target() { return this._target; }
 
+    descendantResourceTreeElementTypeDidChange(resourceTreeElement, oldType)
+    {
+        // Called by descendant ResourceTreeElements.
+
+        // Add the tree element again, which will move it to the new location
+        // based on sorting and possible folder changes.
+        this._addTreeElement(resourceTreeElement);
+    }
+
+    descendantResourceTreeElementMainTitleDidChange(resourceTreeElement, oldMainTitle)
+    {
+        // Called by descendant ResourceTreeElements.
+
+        // Add the tree element again, which will move it to the new location
+        // based on sorting and possible folder changes.
+        this._addTreeElement(resourceTreeElement);
+    }
+
     // Protected (TreeElement)
 
     onexpand()

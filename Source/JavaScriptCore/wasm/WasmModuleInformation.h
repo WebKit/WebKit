@@ -221,6 +221,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     using ConstantExpressionAndSourceOffset = std::pair<Vector<uint8_t>, size_t>;
     Vector<ConstantExpressionAndSourceOffset> constantExpressions;
     Name sourceURL;
+    uint64_t requestIdentifier { 0 };
     Name sourceMappingURL;
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;

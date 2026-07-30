@@ -221,6 +221,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(JSDOMGlobalObject& globalOb
     clone->cloneBody(globalObject, *this);
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
+    clone->m_resourceLoaderIdentifier = m_resourceLoaderIdentifier;
     return clone;
 }
 
@@ -396,11 +397,15 @@ FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& re
 
 FetchResponse::Loader::~Loader() = default;
 
-void FetchResponse::Loader::didReceiveResponse(const ResourceResponse& resourceResponse)
+void FetchResponse::Loader::didReceiveResponse(std::optional<ResourceLoaderIdentifier> resourceLoaderIdentifier, const ResourceResponse& resourceResponse)
 {
     RefPtr response = m_response.get();
     if (!response)
         return;
+
+    if (resourceResponse.source() == ResourceResponse::Source::MemoryCache || resourceResponse.source() == ResourceResponse::Source::MemoryCacheAfterValidation)
+        resourceLoaderIdentifier = std::nullopt;
+    response->m_resourceLoaderIdentifier = resourceLoaderIdentifier;
 
     if (RefPtr document = dynamicDowncast<Document>(response->scriptExecutionContext()))
         document->quirks().clearLogoutSurvivingIdentityCookiesIfNeeded(resourceResponse.url(), resourceResponse.httpStatusCode());

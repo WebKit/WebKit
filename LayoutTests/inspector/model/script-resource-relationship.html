@@ -11,9 +11,22 @@
   </script>
 <script>
 function triggerResourceWithNormalScript() {
-    let script = document.createElement("script");
-    script.src = "resources/relationship-normal.js";
-    document.body.appendChild(script);
+    loadNormalScript();
+}
+
+function loadNormalScript() {
+    return new Promise((resolve, reject) => {
+        let script = document.createElement("script");
+        script.src = "resources/relationship-normal.js";
+        script.addEventListener("load", resolve, {once: true});
+        script.addEventListener("error", reject, {once: true});
+        document.body.appendChild(script);
+    });
+}
+
+async function triggerRepeatedResourcesWithNormalScripts() {
+    await loadNormalScript();
+    await loadNormalScript();
 }
 
 function triggerResourceWithNamedScript() {
@@ -121,6 +134,47 @@ function test()
     });
 
     suite.addTestCase({
+        name: "RepeatedScriptsWithResources",
+        description: "Repeated loads of the same JavaScript URL should each associate with the only unassociated Resource.",
+        async test() {
+            await NetworkAgent.setResourceCachingDisabled(true);
+
+            let scripts = [];
+            let resourceChangedPromises = [];
+
+            let scriptsAddedPromise = new Promise((resolve) => {
+                function handleScriptAdded(event) {
+                    let script = event.data.script;
+                    if (!script.url?.endsWith("/relationship-normal.js"))
+                        return;
+
+                    scripts.push(script);
+                    if (!script.resource)
+                        resourceChangedPromises.push(script.awaitEvent(WI.Script.Event.ResourceChanged));
+                    if (scripts.length !== 2)
+                        return;
+
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, handleScriptAdded);
+                    resolve();
+                }
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, handleScriptAdded);
+            });
+
+            InspectorTest.evaluateInPage("triggerRepeatedResourcesWithNormalScripts()");
+            await scriptsAddedPromise;
+            await Promise.all(resourceChangedPromises);
+
+            let resources = scripts.map((script) => script.resource);
+            InspectorTest.expectEqual(scripts.length, 2, "Should add two JavaScript scripts.");
+            InspectorTest.expectTrue(resources.every((resource) => resource instanceof WI.Resource), "Each JavaScript script should associate with a Resource.");
+            InspectorTest.expectEqual(new Set(resources).size, 2, "Each JavaScript script should associate with a distinct Resource.");
+            InspectorTest.expectTrue(resources.every((resource, index) => resource.scripts.includes(scripts[index])), "Each Resource should associate with its JavaScript script.");
+
+            await NetworkAgent.setResourceCachingDisabled(false);
+        }
+    });
+
+    suite.addTestCase({
         name: "ScriptWithoutResource",
         description: "A named eval does not have a resource.",
         test(resolve, reject) {
@@ -175,8 +229,11 @@ function test()
     suite.addTestCase({
         name: "DocumentWithInlineScripts",
         description: "A document resource may be associated with multiple inline scripts.",
-        test(resolve, reject) {
+        async test() {
             let mainResource = WI.networkManager.mainFrame.mainResource;
+            while (mainResource.scripts.length < 4)
+                await mainResource.awaitEvent(WI.Resource.Event.ScriptAssociated);
+
             let scripts = mainResource.scripts.slice().sort((a, b) => a.range.startLine - b.range.startLine);
 
             // Scripts are:
@@ -195,8 +252,6 @@ function test()
             InspectorTest.expectThat(scripts[1].range.startLine < 15, "Inline script 2 should have a low start line.");
             InspectorTest.expectThat(scripts[2].range.startLine < 15, "Inline script 3 should have a low start line.");
             InspectorTest.expectThat(scripts[3].range.startLine > 100, "Inline script 4 should have a high start line.");
-
-            resolve();
         }
     });
 

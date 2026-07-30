@@ -126,7 +126,7 @@ private:
         ~BlobLoader();
 
         // FetchLoaderClient API
-        void didReceiveResponse(const ResourceResponse&) final;
+        void didReceiveResponse(std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
         void didFail(const ResourceError&) final;
         void didSucceed(const NetworkLoadMetrics&) final;

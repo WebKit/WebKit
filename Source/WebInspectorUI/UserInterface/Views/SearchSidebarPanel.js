@@ -460,8 +460,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         };
 
         if (treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement) {
-            const cookie = null;
-            WI.showRepresentedObject(treeElement.representedObject, cookie, options);
+            WI.showSourceCode(treeElement.representedObject, options);
             return;
         }
 

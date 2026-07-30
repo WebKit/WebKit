@@ -25,7 +25,7 @@
 
 WI.Script = class Script extends WI.SourceCode
 {
-    constructor(target, id, range, url, sourceType, injected, sourceURL, sourceMapURL, parentFrame, displayName)
+    constructor(target, id, range, url, sourceType, injected, sourceURL, sourceMapURL, parentFrame, displayName, requestId)
     {
         super(url);
 
@@ -43,6 +43,7 @@ WI.Script = class Script extends WI.SourceCode
         this._displayName = displayName || null;
         this._dynamicallyAddedScriptElement = false;
         this._scriptSyntaxTree = null;
+        this._requestId = requestId || null;
 
         this._resource = this._resolveResource();
 
@@ -85,7 +86,7 @@ WI.Script = class Script extends WI.SourceCode
         if (sourceCode instanceof WI.Script)
             return sourceCode.sourceType === WI.Script.SourceType.WebAssembly;
 
-        return sourceCode instanceof WI.Resource && (sourceCode.mimeTypeComponents.type === "application/wasm" || sourceCode.scripts.some((script) => script.sourceType === WI.Script.SourceType.WebAssembly));
+        return sourceCode instanceof WI.Resource && (sourceCode.mimeTypeComponents.type === "application/wasm" || sourceCode.scripts.some((script) => WI.Script.isWebAssembly(script)));
     }
 
     // Public
@@ -98,6 +99,7 @@ WI.Script = class Script extends WI.SourceCode
     get sourceMappingURL() { return this._sourceMappingURL; }
     get injected() { return this._injected; }
     get parentFrame() { return this._parentFrame; }
+    get customName() { return this._displayName; }
 
     get contentIdentifier()
     {
@@ -209,6 +211,25 @@ WI.Script = class Script extends WI.SourceCode
     get resource()
     {
         return this._resource;
+    }
+
+    tryAssociateWithResource(resource)
+    {
+        console.assert(resource instanceof WI.Resource, resource);
+
+        if (this._resource)
+            return false;
+
+        if (this._resolveResource() !== resource)
+            return false;
+
+        this._resource = resource;
+        this._resource.associateWithScript(this);
+        for (let sourceMap of this.sourceMaps) {
+            if (!this._resource.sourceMaps.includes(sourceMap))
+                this._resource.addSourceMap(sourceMap);
+        }
+        return true;
     }
 
     get scriptSyntaxTree()
@@ -338,11 +359,6 @@ WI.Script = class Script extends WI.SourceCode
 
     _resolveResource()
     {
-        // FIXME: Associate WebAssembly scripts with a `WI.Resource` once the backend reports enough
-        // information to uniquely identify it.
-        if (this._sourceType === WI.Script.SourceType.WebAssembly)
-            return null;
-
         // FIXME: We should be able to associate a Script with a Resource through identifiers,
         // we shouldn't need to lookup by URL, which is not safe with frames, where there might
         // be multiple resources with the same URL.
@@ -350,6 +366,58 @@ WI.Script = class Script extends WI.SourceCode
 
         // No URL, no resource.
         if (!this._url)
+            return null;
+
+        let resourceCollection = this._parentFrame?.resourceCollection || this._target?.resourceCollection;
+        if (resourceCollection) {
+            let hasMatchingScript = (resource) => resource.scripts.some((script) => script.sourceType === this._sourceType);
+            let isMatchingResource = (resource) => resource.url === this._url && resource.mimeTypeComponents.type === this.syntheticMIMEType;
+
+            if (this._requestId) {
+                let resource = WI.networkManager.resourceForRequestIdentifier(this._requestId);
+                if (resource && resourceCollection.has(resource) && isMatchingResource(resource))
+                    return hasMatchingScript(resource) ? null : resource;
+
+                for (resource of resourceCollection) {
+                    if (resource.requestIdentifier === this._requestId && isMatchingResource(resource))
+                        return hasMatchingScript(resource) ? null : resource;
+                }
+
+                let matchingResource = null;
+                for (resource of resourceCollection.resourcesForURL(this._url)) {
+                    if (resource.requestIdentifier)
+                        continue;
+                    if (!isMatchingResource(resource))
+                        continue;
+                    if (hasMatchingScript(resource))
+                        continue;
+                    if (matchingResource)
+                        return null;
+                    matchingResource = resource;
+                }
+                return matchingResource;
+            }
+
+            let matchingResource = null;
+            let foundMatchingResource = false;
+            for (let resource of resourceCollection.resourcesForURL(this._url)) {
+                if (!isMatchingResource(resource))
+                    continue;
+
+                foundMatchingResource = true;
+
+                if (hasMatchingScript(resource))
+                    continue;
+
+                if (matchingResource)
+                    return null;
+                matchingResource = resource;
+            }
+            if (foundMatchingResource)
+                return matchingResource;
+        }
+
+        if (this._requestId)
             return null;
 
         let isOtherTarget = this._target && this._target !== WI.mainTarget;
@@ -413,6 +481,10 @@ WI.Script = class Script extends WI.SourceCode
 
         this._scriptSyntaxTree = new WI.ScriptSyntaxTree(sourceText, this);
     }
+};
+
+WI.Script.Event = {
+    ResourceChanged: "script-resource-changed",
 };
 
 WI.Script.SourceType = {

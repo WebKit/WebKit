@@ -65,6 +65,8 @@ protected:
     void internalEnable() override;
     void internalDisable(bool isBeingDestroyed) override;
 
+    String requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script&) override;
+
     void didClearAsyncStackTraceData() final;
 
     WeakRef<InstrumentingAgents> m_instrumentingAgents;

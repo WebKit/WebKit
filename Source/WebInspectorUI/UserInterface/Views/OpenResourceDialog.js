@@ -161,6 +161,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
     didDismissDialog()
     {
+        WI.Script.removeEventListener(WI.Script.Event.ResourceChanged, this._handleScriptResourceChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasRemoved, this._resourceWasRemoved, this);
@@ -178,6 +179,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
     didPresentDialog()
     {
+        WI.Script.addEventListener(WI.Script.Event.ResourceChanged, this._handleScriptResourceChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasRemoved, this._resourceWasRemoved, this);
@@ -429,6 +431,15 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         for (let localResourceOverride of WI.networkManager.localResourceOverrides)
             this._addResource(localResourceOverride.localResource, suppressFilterUpdate);
+    }
+
+    _handleScriptResourceChanged(event)
+    {
+        let script = event.target;
+
+        const suppressFilterUpdate = true;
+        this._addResource(script.resource, suppressFilterUpdate);
+        this._removeResource(script);
     }
 
     _mainResourceDidChange(event)

@@ -256,9 +256,11 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ScriptExecutio
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, workerRequestIdentifier = m_workerRequestIdentifier, mainContextIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         auto response = ResourceResponse::fromCrossThreadData(WTF::move(responseData));
-        workerClientWrapper->didReceiveResponse(mainContextIdentifier, identifier, response);
-        if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context))
+        if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context)) {
+            workerClientWrapper->didReceiveResponse(mainContextIdentifier, workerRequestIdentifier, response);
             InspectorInstrumentation::didReceiveResourceResponse(*serviceWorkerGlobalScope, workerRequestIdentifier, response);
+        } else
+            workerClientWrapper->didReceiveResponse(mainContextIdentifier, identifier, response);
     }, m_taskMode);
 }
 

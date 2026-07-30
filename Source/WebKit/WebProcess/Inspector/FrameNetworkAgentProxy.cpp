@@ -197,7 +197,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
-            qualifyResourceID(resourceID), *frameID, loaderId, String(), documentURL, request,
+            qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
             WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime),
         page->identifier());
 }
@@ -232,7 +232,7 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
-            qualifyResourceID(resourceID), *frameID, loaderId, String(), documentURL, request,
+            qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
             std::nullopt, ResourceType::Other, timestamp, walltime),
         page->identifier());
 }

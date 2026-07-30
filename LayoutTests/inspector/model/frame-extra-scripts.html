@@ -95,6 +95,21 @@ function test()
     });
 
     suite.addTestCase({
+        name: "HiddenConsoleEvaluationIsNotExtraScript",
+        description: "A hidden console evaluation should not be added to the frame's extra script collection.",
+        async test() {
+            InspectorTest.expectFalse(WI.settings.debugShowConsoleEvaluations.value, "Console evaluations should be hidden by default.");
+
+            let initialExtraScriptCount = mainFrame.extraScriptCollection.size;
+            await new Promise((resolve) => {
+                WI.runtimeManager.evaluateInInspectedWindow("1 + 1", {objectGroup: "test"}, resolve);
+            });
+
+            InspectorTest.expectEqual(mainFrame.extraScriptCollection.size, initialExtraScriptCount, "The hidden console evaluation should not add an extra script.");
+        }
+    });
+
+    suite.addTestCase({
         name: "AddExtraScript",
         description: "Add extra script.",
         test(resolve, reject) {

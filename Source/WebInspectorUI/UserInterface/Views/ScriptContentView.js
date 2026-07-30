@@ -240,7 +240,7 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     _contentDidPopulate(event)
     {
-        if (this._script.sourceType === WI.Script.SourceType.WebAssembly && !this._textEditor.string) {
+        if (!WI.shouldTreatMIMETypeAsText(this._script.mimeType) && !this._textEditor.string) {
             this.removeAllSubviews();
             this.element.appendChild(WI.createMessageTextView(WI.UIString("Resource has binary content.")));
             return;

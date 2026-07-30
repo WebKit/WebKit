@@ -26,9 +26,12 @@
 #include "config.h"
 #include "WebDebuggerAgent.h"
 
+#include "DocumentSettingsValues.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "InspectorIdentifierRegistry.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -50,6 +53,20 @@ WebDebuggerAgent::~WebDebuggerAgent() = default;
 bool WebDebuggerAgent::enabled() const
 {
     return Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent() == this && InspectorDebuggerAgent::enabled();
+}
+
+String WebDebuggerAgent::requestIdForScript(JSC::JSGlobalObject* globalObject, const JSC::Debugger::Script& script)
+{
+    auto requestId = InspectorDebuggerAgent::requestIdForScript(globalObject, script);
+    if (requestId.isEmpty())
+        return requestId;
+
+    if (RefPtr context = uncheckedDowncast<JSDOMGlobalObject>(globalObject)->scriptExecutionContext()) {
+        if (context->settingsValues().siteIsolationEnabled && !context->isServiceWorkerGlobalScope())
+            return Inspector::IdentifierRegistry::protocolRequestId(context->identifier().processIdentifier(), ResourceLoaderIdentifier(script.requestIdentifier));
+    }
+
+    return requestId;
 }
 
 void WebDebuggerAgent::internalEnable()

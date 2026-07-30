@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <WebCore/ResourceLoaderIdentifier.h>
+#include <optional>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 
@@ -41,7 +43,7 @@ class FetchLoaderClient : public AbstractRefCountedAndCanMakeWeakPtr<FetchLoader
 public:
     virtual ~FetchLoaderClient() = default;
 
-    virtual void didReceiveResponse(const ResourceResponse&) { }
+    virtual void didReceiveResponse(std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) { }
 
     virtual void didReceiveData(const SharedBuffer&) { }
 

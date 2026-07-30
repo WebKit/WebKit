@@ -181,6 +181,7 @@ protected:
     virtual void unmuteConsole() = 0;
 
     virtual String sourceMapURLForScript(const JSC::Debugger::Script&);
+    virtual String requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script&);
 
     void didClearGlobalObject();
     virtual void didClearAsyncStackTraceData();
