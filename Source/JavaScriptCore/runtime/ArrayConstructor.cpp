@@ -33,8 +33,10 @@
 #include "JSMapIterator.h"
 #include "JSSet.h"
 #include "JSSetInlines.h"
+#include "JSSetIterator.h"
 #include "MapIteratorPrototypeInlines.h"
 #include "ProxyObject.h"
+#include "SetIteratorPrototypeInlines.h"
 #include <wtf/text/MakeString.h>
 
 #include "VMInlines.h"
@@ -578,6 +580,115 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
     return JSArray::createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
 }
 
+static JSArray* tryCreateArrayFromSetIterator(JSGlobalObject* globalObject, JSSetIterator* setIterator)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSSet* set = setIterator->iteratedObject();
+    if (!set) [[unlikely]]
+        return nullptr;
+
+    ASSERT(setIterator->kind() == IterationKind::Keys || setIterator->kind() == IterationKind::Values);
+
+    JSCell* storageCell = setIterator->tryGetStorage();
+    if (storageCell == vm.orderedHashTableSentinel())
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+    if (!storageCell) {
+        storageCell = set->storageOrSentinel(vm);
+        if (storageCell == vm.orderedHashTableSentinel())
+            RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+    }
+
+    JSSet::Helper::Entry startEntry = setIterator->entry();
+    auto* storage = uncheckedDowncast<JSSet::Storage>(storageCell);
+
+    IndexingType indexingType = IsArray;
+    JSSet::Helper::Entry entry = startEntry;
+    unsigned length = 0;
+
+    while (true) {
+        JSCell* nextCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+        if (nextCell == vm.orderedHashTableSentinel())
+            break;
+
+        auto* currentStorage = uncheckedDowncast<JSSet::Storage>(nextCell);
+        entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
+        JSValue entryValue = JSSet::Helper::getIterationEntryKey(*currentStorage);
+
+        indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, entryValue);
+        ++length;
+        storage = currentStorage;
+    }
+
+    if (!length)
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+    IndexingType resultIndexingType = resultStructure->indexingType();
+
+    if (hasAnyArrayStorage(resultIndexingType)) [[unlikely]]
+        return nullptr;
+
+    ASSERT(!globalObject->isHavingABadTime());
+
+    auto vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, length);
+    void* memory = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (!memory) [[unlikely]]
+        return nullptr;
+    auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
+    resultButterfly->setVectorLength(vectorLength);
+    resultButterfly->setPublicLength(length);
+
+    storageCell = setIterator->tryGetStorage();
+    if (!storageCell)
+        storageCell = set->storageOrSentinel(vm);
+    storage = uncheckedDowncast<JSSet::Storage>(storageCell);
+    entry = startEntry;
+    size_t i = 0;
+
+    if (hasDouble(resultIndexingType)) {
+        while (true) {
+            JSCell* nextCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+            if (nextCell == vm.orderedHashTableSentinel())
+                break;
+
+            auto* currentStorage = uncheckedDowncast<JSSet::Storage>(nextCell);
+            entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
+            JSValue value = JSSet::Helper::getIterationEntryKey(*currentStorage);
+
+            ASSERT(value.isNumber());
+            resultButterfly->contiguousDouble().atUnsafe(i) = value.asNumber();
+            ++i;
+            storage = currentStorage;
+        }
+    } else if (hasInt32(resultIndexingType) || hasContiguous(resultIndexingType)) {
+        while (true) {
+            JSCell* nextCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+            if (nextCell == vm.orderedHashTableSentinel())
+                break;
+
+            auto* currentStorage = uncheckedDowncast<JSSet::Storage>(nextCell);
+            entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
+            JSValue value = JSSet::Helper::getIterationEntryKey(*currentStorage);
+
+            resultButterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(value);
+            ++i;
+            storage = currentStorage;
+        }
+    } else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    Butterfly::clearRange(resultIndexingType, resultButterfly, length, vectorLength);
+
+    setIterator->close(vm);
+
+    return JSArray::createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
+}
+
 JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -638,6 +749,13 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
         auto* mapIterator = uncheckedDowncast<JSMapIterator>(items.asCell());
         if (mapIterator->kind() != IterationKind::Entries && mapIteratorProtocolIsFastAndNonObservable(vm, mapIterator)) [[likely]] {
             result = tryCreateArrayFromMapIterator(globalObject, mapIterator);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    } else if (items && items.isCell() && items.asCell()->type() == JSSetIteratorType) {
+        // For `Array.from(set.keys())`, `Array.from(set.values())`
+        auto* setIterator = uncheckedDowncast<JSSetIterator>(items.asCell());
+        if (setIterator->kind() != IterationKind::Entries && setIteratorProtocolIsFastAndNonObservable(vm, setIterator)) [[likely]] {
+            result = tryCreateArrayFromSetIterator(globalObject, setIterator);
             RETURN_IF_EXCEPTION(scope, { });
         }
     }
