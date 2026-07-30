@@ -649,9 +649,8 @@ SUPPRESS_NODELETE ALWAYS_INLINE const UnsignedType* NODELETE findImpl(const Unsi
         return current == character;
     };
 
-    constexpr size_t threshold = 32;
     auto* end = pointer + length;
-    auto* cursor = SIMD::find<UnsignedType, threshold>(std::span { pointer, end }, vectorMatch, scalarMatch);
+    auto* cursor = SIMD::find(std::span { pointer, end }, vectorMatch, scalarMatch);
     if (cursor == end)
         return nullptr;
     return cursor;

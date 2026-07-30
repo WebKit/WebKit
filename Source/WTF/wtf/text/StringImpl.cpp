@@ -430,11 +430,13 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingInde
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
     auto span = span8();
+    copyCharacters(data8, span.first(failingIndex));
+#if ASSERT_ENABLED
     for (unsigned i = 0; i < failingIndex; ++i) {
         ASSERT(isASCII(span[i]));
         ASSERT(!isASCIIUpper(span[i]));
-        data8[i] = span[i];
     }
+#endif
 
     for (unsigned i = failingIndex; i < span.size(); ++i) {
         Latin1Character character = span[i];
@@ -479,11 +481,13 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
     auto newImpl = createUninitialized(m_length, destination);
 
     auto span = span8();
+    copyCharacters(destination, span.first(failingIndex));
+#if ASSERT_ENABLED
     for (unsigned i = 0; i < failingIndex; ++i) {
         ASSERT(isASCII(span[i]));
         ASSERT(!isASCIILower(span[i]));
-        destination[i] = span[i];
     }
+#endif
 
     // Do a faster loop for the case where all the characters are ASCII.
     unsigned ored = 0;
