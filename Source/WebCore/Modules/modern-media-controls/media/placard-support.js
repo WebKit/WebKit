@@ -119,7 +119,7 @@ class PlacardSupport extends MediaControllerSupport
 
 function escapeHTML(unsafeString)
 {
-    var div = document.createElement("div");
+    var div = createHTMLElement("div");
     div.textContent = unsafeString;
     return div.innerHTML;
 }
