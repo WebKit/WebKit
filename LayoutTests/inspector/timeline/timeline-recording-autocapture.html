@@ -18,6 +18,18 @@ function test()
         });
     }
 
+    function awaitTimelineMarker(recording, markerType) {
+        return new Promise((resolve) => {
+            let listener = recording.addEventListener(WI.TimelineRecording.Event.MarkerAdded, (event) => {
+                if (event.data.marker.type !== markerType)
+                    return;
+
+                recording.removeEventListener(WI.TimelineRecording.Event.MarkerAdded, listener);
+                resolve();
+            });
+        });
+    }
+
     suite.addTestCase({
         name: "Timeline.AutoCapture",
         description: "Verify that a page reload triggers auto-capture of a timeline recording.",
@@ -33,10 +45,13 @@ function test()
             InspectorTest.log("Reload");
             await Promise.all([
                 InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
-                InspectorTest.reloadPage(),
                 awaitCapturingState(WI.TimelineManager.CapturingState.Active),
+                awaitTimelineMarker(recording, WI.TimelineMarker.Type.LoadEvent),
+                InspectorTest.reloadPage(),
             ]);
 
+            InspectorTest.expectFalse(isNaN(WI.networkManager.mainFrame.domContentReadyEventTimestamp), "The first reload should have a DOMContentLoaded timestamp.");
+            InspectorTest.expectFalse(isNaN(WI.networkManager.mainFrame.loadEventTimestamp), "The first reload should have a load timestamp.");
             InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should be capturing after reload with auto-capture enabled.");
             InspectorTest.expectTrue(recording.capturing, "TimelineRecording should be capturing.");
 
@@ -71,13 +86,25 @@ function test()
             });
 
             InspectorTest.log("Reload");
+            let mainFrame = WI.networkManager.mainFrame;
+            let mainResourceDidChangePromise = new Promise((resolve) => {
+                mainFrame.singleFireEventListener(WI.Frame.Event.MainResourceDidChange, () => {
+                    InspectorTest.expectTrue(isNaN(mainFrame.domContentReadyEventTimestamp), "A new navigation should clear the previous DOMContentLoaded timestamp.");
+                    InspectorTest.expectTrue(isNaN(mainFrame.loadEventTimestamp), "A new navigation should clear the previous load timestamp.");
+                    resolve();
+                });
+            });
             await Promise.all([
                 InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+                mainResourceDidChangePromise,
+                awaitTimelineMarker(recording, WI.TimelineMarker.Type.LoadEvent),
                 InspectorTest.reloadPage(),
             ]);
 
             WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, autoCaptureListener);
 
+            InspectorTest.expectFalse(isNaN(mainFrame.domContentReadyEventTimestamp), "The second reload should have a DOMContentLoaded timestamp.");
+            InspectorTest.expectFalse(isNaN(mainFrame.loadEventTimestamp), "The second reload should have a load timestamp.");
             InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should still be capturing after reload.");
             InspectorTest.expectEqual(WI.timelineManager.activeRecording, recording, "TimelineManager active recording should not have changed.");
             InspectorTest.expectFalse(autoCaptureDidFire, "Auto-capture should not have stopped the active recording.");

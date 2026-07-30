@@ -76,6 +76,9 @@ WI.Frame = class Frame extends WI.Object
         this._mainResource = mainResource;
         this._mainResource._parentFrame = this;
 
+        this._domContentReadyEventTimestamp = NaN;
+        this._loadEventTimestamp = NaN;
+
         if (oldMainResource && this._mainResource !== oldMainResource)
             this._disassociateWithResource(oldMainResource);
 
