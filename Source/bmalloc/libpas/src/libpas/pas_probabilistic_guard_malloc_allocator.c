@@ -220,6 +220,7 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     value->alloc_backtrace              = pas_utility_heap_allocate(sizeof(pas_backtrace_metadata), "pas_alloc_backtrace_metadata");
     value->alloc_backtrace->frame_size  = backtrace(value->alloc_backtrace->backtrace_buffer, PAS_PGM_BACKTRACE_MAX_FRAMES);
     value->dealloc_backtrace            = NULL;
+    value->free_status                  = false;
     value->mem_to_waste                 = mem_to_waste;
     value->size_of_data_pages           = mem_to_alloc - (lower_guard_size + upper_guard_size);
     value->start_of_data_pages          = result.begin + lower_guard_size;
