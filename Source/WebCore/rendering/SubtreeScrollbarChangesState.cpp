@@ -147,12 +147,9 @@ SubtreeScrollbarChangesHandler::~SubtreeScrollbarChangesHandler()
 
     auto& subtreeRoot = subtreeScrollbarChangesState->subtreeRoot;
     for (auto& rendererScrollbarChange : descendantsWithScrollbarChange) {
-        CheckedRef renderer = rendererScrollbarChange.renderer;
-        ASSERT(renderer->isDescendantOf(subtreeRoot.ptr()));
-        if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Block))
-            renderer->setNeedsLayout();
-        if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Inline))
-            renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkContainingBlockChain, protect(subtreeRoot->containingBlock()));
+        if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.containsOnly(LogicalBoxAxis::Block))
+            continue;
+        protect(rendererScrollbarChange.renderer)->invalidateContentLogicalWidths(MarkingBehavior::MarkContainingBlockChain, protect(subtreeRoot->containingBlock()));
     }
     descendantsWithScrollbarChange.clear();
 
