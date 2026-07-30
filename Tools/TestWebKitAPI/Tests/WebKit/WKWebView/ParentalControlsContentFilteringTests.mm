@@ -40,12 +40,16 @@ using namespace TestWebKitAPI;
 
 TEST(ParentalControlsContentFilteringTests, BlockedURL)
 {
+    HTTPServer server({
+        { "/blockedSite"_s, { "<p>This site should be blocked</p>"_s } },
+    });
+
     NSData *shieldHTML = [@"<script>"
     "window.webkit.messageHandlers.testHandler.postMessage('SHIELD_IFRAME_READY', '*');"
     "</script>" dataUsingEncoding:NSUTF8StringEncoding];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
-    auto blockedURL = [NSURL URLWithString:@"https://example.com"];
+    auto blockedURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/blockedSite", server.port()]];
     __block bool mockInstalled = false;
     [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] replacementData:shieldHTML completionHandler:^{
         mockInstalled = true;
@@ -68,7 +72,7 @@ TEST(ParentalControlsContentFilteringTests, BlockedURL)
             iframeShieldDidLoad = true;
     }];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com"]]];
+    [webView loadRequest:server.request("/blockedSite"_s)];
 
     Util::run(&didFail);
     Util::run(&iframeShieldDidLoad);
@@ -238,7 +242,8 @@ TEST(ParentalControlsContentFilteringTests, BlockedIframe)
 TEST(ParentalControlsContentFilteringTests, OpenBlockedPopUp)
 {
     auto mainframeHTML = "<script>"
-    "window.open('https://example.com');"
+    "var blockedUrl = 'http://localhost:' + window.location.port + '/blockedSite';"
+    "window.open(blockedUrl);"
     "</script>"_s;
 
     NSData *popupReplacementHTML = [@"<script>"
@@ -247,6 +252,7 @@ TEST(ParentalControlsContentFilteringTests, OpenBlockedPopUp)
 
     HTTPServer server({
         { "/mainframe"_s, { mainframeHTML } },
+        { "/blockedSite"_s, { "<p>This site should be blocked</p>"_s } },
     });
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
@@ -268,7 +274,7 @@ TEST(ParentalControlsContentFilteringTests, OpenBlockedPopUp)
     };
     [webView setUIDelegate:uiDelegate];
 
-    auto blockedURL = [NSURL URLWithString:@"https://example.com"];
+    auto blockedURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%d/blockedSite", server.port()]];
     __block bool mockInstalled = false;
     [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] replacementData:popupReplacementHTML completionHandler:^{
         mockInstalled = true;
@@ -281,8 +287,9 @@ TEST(ParentalControlsContentFilteringTests, OpenBlockedPopUp)
 
 TEST(ParentalControlsContentFilteringTests, BlockedNavigationFromLinkClick)
 {
-    auto mainframeHTML = "<html><a id='jsClickHere' href='https://example.com'></a></html>"
+    auto mainframeHTML = "<html><a id='jsClickHere'></a></html>"
     "<script>"
+    "jsClickHere.href = 'http://localhost:' + window.location.port + '/blockedSite';"
     "jsClickHere.click()"
     "</script>"_s;
 
@@ -292,11 +299,12 @@ TEST(ParentalControlsContentFilteringTests, BlockedNavigationFromLinkClick)
 
     HTTPServer server({
         { "/mainframe"_s, { mainframeHTML } },
+        { "/blockedSite"_s, { "<p>This site should be blocked</p>"_s } },
     });
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    auto blockedURL = [NSURL URLWithString:@"https://example.com"];
+    auto blockedURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%d/blockedSite", server.port()]];
     __block bool mockInstalled = false;
     [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] replacementData:replacementHTML completionHandler:^{
         mockInstalled = true;
