@@ -51,11 +51,6 @@ struct GridDimensions {
     size_t totalRows { 0 };
 };
 
-struct GridLayoutResult {
-    UsedTrackSizes usedTrackSizes;
-    GridItemRects gridItemRects;
-};
-
 enum class GridLayoutScope : bool {
     Full, // Run the whole grid sizing algorithm, lay out the grid items, and align them.
     ColumnSizingOnly // Run only the first step of the grid sizing algorithm (size the columns); skip row sizing, grid-item layout, and alignment.

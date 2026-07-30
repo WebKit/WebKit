@@ -183,7 +183,7 @@ static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(co
     return Style::GridTemplateList { WTF::move(transformedList) };
 }
 
-UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
+GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto unplacedGridItems = constructUnplacedGridItems();
     CheckedRef gridStyle = root().style();
@@ -224,12 +224,12 @@ UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstra
             auto columnPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes, layoutState.usedColumnGap);
             auto rowPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes, layoutState.usedRowGap);
 
-            gridItemRect.borderBoxRect.moveBy({ columnPosition, rowPosition });
+            gridItemRect.borderBoxRect.moveBy(LayoutPoint { columnPosition, rowPosition });
         }
     };
     mapGridItemLocationsToGrid();
     setGridItemGeometries(gridItemRects);
-    return usedTrackSizes;
+    return { WTF::move(usedTrackSizes), WTF::move(gridItemRects) };
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const

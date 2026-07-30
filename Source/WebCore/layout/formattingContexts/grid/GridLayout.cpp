@@ -232,7 +232,7 @@ GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, const 
 
     auto gridItemRects = computeGridItemRects(placedGridItems, inlineAxisPositions, blockAxisPositions, usedInlineSizes, usedBlockSizes, usedInlineMargins, usedBlockMargins);
 
-    return { usedTrackSizes, gridItemRects };
+    return { WTF::move(usedTrackSizes), WTF::move(gridItemRects) };
 }
 
 BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins, const UsedInlineSizes& borderBoxSizes,

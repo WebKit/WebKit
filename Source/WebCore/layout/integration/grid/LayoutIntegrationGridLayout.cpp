@@ -28,6 +28,7 @@
 
 #include "FormattingContextBoxIterator.h"
 #include "GridFormattingContext.h"
+#include "GridItemRect.h"
 #include "GridLayoutConstraints.h"
 #include "GridLayoutUtils.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
@@ -171,11 +172,23 @@ void GridLayout::updateGridItemRenderers()
     }
 }
 
-void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints& layoutConstraints, const Layout::UsedTrackSizes& usedTrackSizes)
+void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints& layoutConstraints, const Layout::UsedTrackSizes& usedTrackSizes, const Layout::GridItemRects& gridItemRects)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto& currentGrid = renderGrid->currentGrid();
+
+    // Render tree clients which consult the grid area of a grid item outside of layout (e.g.
+    // RenderGrid::isExtrinsicallySized) would otherwise read from an empty map.
+    for (auto& gridItemRect : gridItemRects) {
+        auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
+        auto gridArea = GridArea {
+            GridSpan::translatedDefiniteGridSpan(static_cast<unsigned>(lineNumbersForGridArea.rowStartLine), static_cast<unsigned>(lineNumbersForGridArea.rowEndLine)),
+            GridSpan::translatedDefiniteGridSpan(static_cast<unsigned>(lineNumbersForGridArea.columnStartLine), static_cast<unsigned>(lineNumbersForGridArea.columnEndLine))
+        };
+        currentGrid.setGridItemArea(downcast<RenderBox>(*protect(gridItemRect.layoutBox->rendererForIntegration())), gridArea);
+    }
     currentGrid.setNeedsItemsPlacement(false);
+
     OrderIteratorPopulator orderIteratorPopulator(currentGrid.orderIterator());
 
     if (layoutConstraints.blockAxis.scenario() != Layout::AxisConstraint::FreeSpaceScenario::Definite) {
@@ -209,9 +222,9 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
 void GridLayout::layout()
 {
     auto gridLayoutConstraints = constraintsForGridContent(gridBox());
-    auto usedTrackSizes = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);
+    auto [ usedTrackSizes, gridItemRects ] = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);
     updateGridItemRenderers();
-    updateFormattingContextRootRenderer(gridLayoutConstraints, usedTrackSizes);
+    updateFormattingContextRootRenderer(gridLayoutConstraints, usedTrackSizes, gridItemRects);
     layoutOutOfFlowBoxes(usedTrackSizes);
 
     CheckedRef renderGrid = gridBoxRenderer();

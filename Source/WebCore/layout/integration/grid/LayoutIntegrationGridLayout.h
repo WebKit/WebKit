@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GridTypeAliases.h"
 #include "LayoutState.h"
 #include <wtf/CheckedPtr.h>
 
@@ -53,9 +54,10 @@ public:
 
     void layout();
 
-    // A GFC layout marks the legacy grid as placed without populating it, since the GFC path does not
-    // rely on the legacy grid state. Reverts that stale state so a subsequent legacy (non-GFC) layout
-    // treats the grid as needing a fresh layout, for example re-placing items to rebuild its tracks.
+    // A GFC layout marks the legacy grid as placed and sets the grid area of each item, but
+    // leaves the rest of the legacy grid state (e.g. its grid matrix) untouched. Reverts that
+    // partial state so a subsequent legacy (non-GFC) layout treats the grid as needing a fresh
+    // layout, for example re-placing items to rebuild its tracks.
     static void invalidateFormattingContextRootRenderer(RenderGrid&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidths();
@@ -64,7 +66,7 @@ public:
 
 private:
     void updateGridItemRenderers();
-    void updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints&, const Layout::UsedTrackSizes&);
+    void updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints&, const Layout::UsedTrackSizes&, const Layout::GridItemRects&);
     void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&);
     void updateOverflow(RenderGrid&);
     void populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes&);

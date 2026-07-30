@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GridTypeAliases.h"
+#include "UsedTrackSizes.h"
 #include <WebCore/LayoutIntegrationUtils.h>
 #include <WebCore/LayoutState.h>
 #include <WebCore/StyleGapGutter.h>
@@ -45,7 +46,6 @@ class UnplacedGridItem;
 struct GridAreaLines;
 struct GridLayoutConstraints;
 struct UnplacedGridItems;
-struct UsedTrackSizes;
 
 enum class PackingStrategy : bool {
     Sparse,
@@ -60,6 +60,11 @@ enum class GridAutoFlowDirection : bool {
 struct GridAutoFlowOptions {
     PackingStrategy strategy;
     GridAutoFlowDirection direction;
+};
+
+struct GridLayoutResult {
+    UsedTrackSizes usedTrackSizes;
+    GridItemRects gridItemRects;
 };
 
 // https://drafts.csswg.org/css-grid-1/#grid-definition
@@ -86,7 +91,7 @@ public:
 
     GridFormattingContext(const ElementBox& gridBox, LayoutState&);
 
-    UsedTrackSizes layout(GridLayoutConstraints);
+    GridLayoutResult layout(GridLayoutConstraints);
 
     struct IntrinsicWidths {
         LayoutUnit minimum;
