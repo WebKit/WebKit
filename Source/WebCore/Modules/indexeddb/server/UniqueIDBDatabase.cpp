@@ -47,6 +47,7 @@
 #include <algorithm>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -1515,7 +1516,7 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
     return currentTransaction;
 }
 
-void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&& transaction)
+void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&& transaction, ShouldStartRunnableWork shouldStartRunnableWork)
 {
     ASSERT(transaction);
     ASSERT(!m_inProgressTransactions.contains(transaction->info().identifier()));
@@ -1531,6 +1532,9 @@ void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction
 
     if (m_versionChangeTransaction == transaction)
         m_versionChangeTransaction = nullptr;
+
+    if (shouldStartRunnableWork == ShouldStartRunnableWork::No)
+        return;
 
     // Previously blocked operations might be runnable.
     handleDatabaseOperations();
@@ -1640,6 +1644,10 @@ void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
     if (m_pendingTransactions.isEmpty() || m_inProgressTransactions.isEmpty())
         return;
 
+    SetForScope recursionScope(m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth, m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth + 1);
+    if (m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth > 5)
+        RELEASE_LOG_ERROR(IndexedDB, "UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients - recursion depth reaches %u", m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth);
+
     Vector<Ref<UniqueIDBDatabaseTransaction>> transactionsToAbort;
     for (auto& transaction : m_inProgressTransactions.values()) {
         RefPtr databaseConnection = transaction->databaseConnection();
@@ -1649,9 +1657,8 @@ void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
             transactionsToAbort.append(transaction);
     }
 
+    bool abortedAnyTransaction = false;
     for (auto& transaction : transactionsToAbort) {
-        // transactionCompleted() below re-enters handleTransactions(), which may have already
-        // aborted this transaction in a nested pass.
         auto transactionIdentifier = transaction->info().identifier();
         auto takenTransaction = m_inProgressTransactions.take(transactionIdentifier);
         if (!takenTransaction)
@@ -1678,10 +1685,15 @@ void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
             error = backingStore->abortTransaction(transactionIdentifier);
         transaction->setSuspensionAbortResult(error);
 
-        // Completing the transaction lets the next pending transaction begin. The transaction
-        // object stays in its connection's transaction map so a client that later resumes can
-        // still abort or commit it and learn about the suspension abort.
-        transactionCompleted(WTF::move(takenTransaction));
+        // The transaction object stays in its connection's transaction map so a client that
+        // later resumes can still abort or commit it and learn about the suspension abort.
+        transactionCompleted(WTF::move(takenTransaction), ShouldStartRunnableWork::No);
+        abortedAnyTransaction = true;
+    }
+
+    if (abortedAnyTransaction) {
+        handleDatabaseOperations();
+        handleTransactions();
     }
 }
 
