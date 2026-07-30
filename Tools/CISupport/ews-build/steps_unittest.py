@@ -32,6 +32,7 @@ import time
 from unittest import skip as skipTest
 from unittest.mock import call, create_autospec, patch
 
+from buildbot.process import properties
 from buildbot.process import remotetransfer
 from buildbot.process.results import SUCCESS, FAILURE, WARNINGS, SKIPPED, RETRY
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -2993,6 +2994,23 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string=message)
         rc = self.run_step()
         self.expect_property('build_summary', message)
+        return rc
+
+    def test_retry_build_triggers_only_current_queue(self):
+        self.configureStep()
+        self.setProperty('buildername', 'iOS-13-Simulator-WK2-Tests-EWS')
+        self.setProperty('triggered_by', 'ios-13-sim-build-ews')
+        self.setProperty('scheduler', 'ios-13-sim-wk2-tests-ews')
+        self.setProperty('first_run_failures', ['test1'])
+        self.setProperty('second_run_failures', ['test1'])
+        self.setProperty('clean_tree_results_exceed_failure_limit', True)
+        self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 30)])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.expect_outcome(result=SUCCESS, state_string='Unable to confirm if test failures are introduced by change, retrying build')
+        rc = self.run_step()
+        self.assertEqual(len(next_steps), 1)
+        self.assertEqual(next_steps[0].set_properties['triggers'], ['ios-13-sim-wk2-tests-ews'])
         return rc
 
     def test_clean_tree_has_lot_of_failures(self):
@@ -11825,6 +11843,18 @@ class TestTrigger(BuildStepMixinAdditions, unittest.TestCase):
         step = Trigger(schedulerNames=['test-scheduler'], triggers=['trigger1', 'trigger2'])
         props = step.propertiesToPassToTriggers()
         self.assertIn('triggers', props)
+
+    def test_triggers_property_passes_explicit_list(self):
+        step = Trigger(schedulerNames=['test-scheduler'], triggers=['tester-a'])
+        props = step.propertiesToPassToTriggers()
+        # Property overloads __eq__ to return a renderable, so assert the type before the value.
+        self.assertIsInstance(props['triggers'], list)
+        self.assertEqual(props['triggers'], ['tester-a'])
+
+    def test_triggers_property_is_not_a_renderable(self):
+        step = Trigger(schedulerNames=['test-scheduler'], triggers=['tester-a'])
+        props = step.propertiesToPassToTriggers()
+        self.assertNotIsInstance(props['triggers'], properties.Property)
 
     def test_ews_revision_excluded_when_include_revision_false(self):
         step = Trigger(schedulerNames=['test-scheduler'], include_revision=False)

@@ -2991,10 +2991,9 @@ class Trigger(trigger.Trigger):
                 'github.head.repo.full_name', 'github.number', 'github.title',
                 'repository', 'project', 'owners', 'classification', 'identifier',
             ]
-        if self.triggers:
-            property_names.append('triggers')
-
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
+        if self.triggers:
+            properties_to_pass['triggers'] = self.triggers
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
         if not self.triggers:
             properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
