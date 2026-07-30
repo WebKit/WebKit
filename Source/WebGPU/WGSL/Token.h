@@ -221,6 +221,9 @@ struct Token {
 
     Token& operator=(const Token& other)
     {
+        if (type == TokenType::Identifier)
+            ident.~String();
+
         type = other.type;
         span = other.span;
 
