@@ -463,9 +463,15 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
             protect(networkSession->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(webPageProxyID, frameID, subFrameDomain, topFrameDomain, storageAccessQuirk), WTF::move(requestConfirmationCompletionHandler));
             return;
         }
-        case StorageAccessStatus::HasAccess:
-            completionHandler({ storageAccessWasGrantedValueForFrame(frameID, subFrameDomain), StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
+        case StorageAccessStatus::HasAccess: {
+            auto wasGranted = storageAccessWasGrantedValueForFrame(frameID, subFrameDomain);
+            // If YesWithException, the grant is recorded so a reloaded frame in a new process
+            // (Site Isolation) can re-request without a user gesture.
+            if (wasGranted == StorageAccessWasGranted::YesWithException)
+                wasGrantedStorageAccessPermissionInPage(webPageProxyID, topFrameDomain, subFrameDomain);
+            completionHandler({ wasGranted, StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
             return;
+        }
         }
     };
 
@@ -1676,13 +1682,23 @@ void WebResourceLoadStatisticsStore::recordFrameLoadForStorageAccess(WebPageProx
 
 void WebResourceLoadStatisticsStore::clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 {
+    // Preserve records where a storage access request was already made: the timestamp is needed
+    // for storageAccessWasGrantedValueForFrame to correctly return Yes after a Site Isolation
+    // process swap reload, even if this clear races with the new process's ScheduleResourceLoad.
     m_storageAccessRequestRecords.removeIf([&](auto& record) {
-        return record.key.first == frameID;
+        return record.key.first == frameID && !record.value.lastRequestTime;
+    });
+    m_framesAwaitingStorageAccessReload.removeIf([&](auto& key) {
+        return key.first == frameID;
     });
 }
 
 void WebResourceLoadStatisticsStore::clearFrameLoadRecordsForStorageAccess(WebPageProxyIdentifier webPageProxyID)
 {
+    m_framesAwaitingStorageAccessReload.removeIf([&](auto& key) {
+        auto iter = m_storageAccessRequestRecords.find(key);
+        return iter != m_storageAccessRequestRecords.end() && iter->value.webPageProxyID == webPageProxyID;
+    });
     m_storageAccessRequestRecords.removeIf([&](auto& record) {
         return record.value.webPageProxyID == webPageProxyID;
     });
@@ -1699,7 +1715,23 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::storageAccessWasGrantedV
     if (!value.lastRequestTime)
         value.lastRequestTime = WallTime::now();
 
-    return value.lastRequestTime.value() < value.lastLoadTime ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::YesWithException;
+    if (value.lastRequestTime.value() < value.lastLoadTime)
+        return StorageAccessWasGranted::Yes;
+
+    if (auto pageProxyID = iter->value.webPageProxyID) {
+        bool isNew = m_framesAwaitingStorageAccessReload.add(StorageAccessRequestRecordKey { frameID, domain }).isNewEntry;
+        if (isNew) {
+            if (CheckedPtr networkSession = m_networkSession.get())
+                protect(networkSession->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::StorageAccessReloadableFrameRecorded(*pageProxyID), 0);
+        }
+    }
+    return StorageAccessWasGranted::YesWithException;
+}
+
+bool WebResourceLoadStatisticsStore::needsProcessSwapForStorageAccessReload(WebCore::FrameIdentifier frameID, const WebCore::RegistrableDomain& domain)
+{
+    StorageAccessRequestRecordKey key { frameID, domain };
+    return m_framesAwaitingStorageAccessReload.remove(key);
 }
 
 void WebResourceLoadStatisticsStore::setStorageAccessPermissionForTesting(bool granted, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain, CompletionHandler<void()>&& completionHandler)

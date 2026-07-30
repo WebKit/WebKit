@@ -57,6 +57,11 @@ public:
     void decrementFrameCount() { m_frameCount--; }
     unsigned frameCount() const { return m_frameCount; }
 
+    // Set when a storage access reload forced a new process for the same site, evicting this
+    // FrameProcess from BrowsingContextGroup's process map before it was destroyed.
+    void markEvictedFromProcessMap() { m_evictedFromProcessMap = true; }
+    bool wasEvictedFromProcessMap() const { return m_evictedFromProcessMap; }
+
 private:
     friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
     static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite,
@@ -72,6 +77,7 @@ private:
     const WebCore::Site m_mainFrameSite;
     bool m_isArchiveProcess;
     Checked<unsigned> m_frameCount { 0 };
+    bool m_evictedFromProcessMap { false };
 };
 
 }

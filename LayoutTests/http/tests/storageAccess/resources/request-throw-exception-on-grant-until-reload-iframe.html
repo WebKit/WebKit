@@ -11,6 +11,7 @@
         }
 
         function messageToTop(message) {
+            top.postMessage("iframe 1 pid: " + window.internals.processIdentifier, "http://127.0.0.1:8000");
             top.postMessage(message, "http://127.0.0.1:8000");
         }
 

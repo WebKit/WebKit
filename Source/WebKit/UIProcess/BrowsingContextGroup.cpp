@@ -107,7 +107,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     });
 }
 
-Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
+Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate, bool forceReplaceExistingProcess)
 {
     if (preferences.siteIsolationEnabled()) {
         if ((m_sharedProcess && m_sharedProcessSites.contains(site)) || process.isSharedProcess()) {
@@ -117,6 +117,15 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
         if (RefPtr existingProcess = processForSite(site)) {
             if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
                 return existingProcess.releaseNonNull();
+        }
+        // When a storage access reload forces a new process for the same site, evict the old entry
+        // so addFrameProcessWithoutInjectingPageContext can register the new one. The old FrameProcess
+        // remains alive (held by WebFrameProxy) and its destructor will skip the map removal since it
+        // is no longer the current entry.
+        if (forceReplaceExistingProcess) {
+            if (RefPtr existingFrameProcess = m_processMap.get(site))
+                existingFrameProcess->markEvictedFromProcessMap();
+            m_processMap.remove(site);
         }
     }
 
@@ -227,10 +236,10 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
         m_sharedProcessSites.clear();
     } else {
         auto& site = *process.site();
-        // Either we are still the current entry for this site (normal teardown), or a
-        // later navigation already replaced us under the same conditions used by
-        // addFrameProcess.
-        ASSERT(m_processMap.get(site) == &process || canReplaceFrameProcessInProcessMap(site, process));
+        // Either we are still the current entry for this site (normal teardown), a later navigation
+        // already replaced us under the same conditions used by addFrameProcess, or we were
+        // explicitly evicted by a storage access reload process swap.
+        ASSERT(m_processMap.get(site) == &process || canReplaceFrameProcessInProcessMap(site, process) || process.wasEvictedFromProcessMap());
         if (m_processMap.get(site) == &process)
             m_processMap.remove(site);
     }

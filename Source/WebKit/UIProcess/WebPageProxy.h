@@ -2294,6 +2294,7 @@ public:
 #endif // ENABLE(WRITING_TOOLS)
 
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&&);
+    void storageAccessReloadableFrameRecorded();
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
     void getLoadedSubresourceDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&);
     void clearLoadedSubresourceDomains();
@@ -3740,6 +3741,7 @@ private:
 
     void beginSiteHasStorageCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
     void beginEnhancedSecurityLinkCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
+    void beginStorageAccessReloadCheck(WebCore::FrameIdentifier, const WebCore::RegistrableDomain&, API::Navigation&, WebFramePolicyListenerProxy&);
 
     Ref<BrowsingContextGroup> browsingContextGroupForNavigation(WebFrameProxy&, API::Navigation&, WebsiteDataStore&, ProcessSwapRequestedByClient);
 
@@ -4326,6 +4328,7 @@ private:
     RefPtr<WebPageProxyTesting> m_pageForTesting;
 
     bool m_hasNetworkRequestsInProgress { false };
+    unsigned m_pendingStorageAccessReloadFrameCount { 0 };
 
     HashSet<CheckedRef<WebProcessProxy>> m_unresponsiveProcesses;
 } SWIFT_SHARED_REFERENCE(refWebPageProxy, derefWebPageProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;

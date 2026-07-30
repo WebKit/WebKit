@@ -504,6 +504,7 @@ public:
 #if HAVE(ENHANCED_SECURITY_LINKS)
     void isEnhancedSecurityLink(const URL&, CompletionHandler<void(bool)>&&);
 #endif
+    void needsProcessSwapForStorageAccessReload(PAL::SessionID, WebCore::FrameIdentifier, const WebCore::RegistrableDomain&, CompletionHandler<void(bool)>&&);
 
 private:
     explicit NetworkProcess(AuxiliaryProcessInitializationParameters&&);

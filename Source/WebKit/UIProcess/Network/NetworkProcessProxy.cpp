@@ -1089,6 +1089,12 @@ void NetworkProcessProxy::requestStorageAccessConfirm(WebPageProxyIdentifier pag
     page->requestStorageAccessConfirm(subFrameDomain, topFrameDomain, frameID, WTF::move(organizationStorageAccessPromptQuirk), WTF::move(completionHandler));
 }
 
+void NetworkProcessProxy::storageAccessReloadableFrameRecorded(WebPageProxyIdentifier pageID)
+{
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
+        page->storageAccessReloadableFrameRecorded();
+}
+
 void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String> domains)>&& completionHandler)
 {
     if (!canSendMessage()) {

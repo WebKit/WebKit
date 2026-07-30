@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLinkCheck)
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLinkCheck, ShouldWaitForStorageAccessReloadCheck shouldWaitForStorageAccessReloadCheck)
     : m_reply(WTF::move(reply))
 {
     if (expectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::No)
@@ -48,6 +48,8 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldEx
         didReceiveSiteHasStorageResults();
     if (shouldWaitForEnhancedSecurityLinkCheck == ShouldWaitForEnhancedSecurityLinkCheck::No)
         didReceiveEnhancedSecurityLinkResults();
+    if (shouldWaitForStorageAccessReloadCheck == ShouldWaitForStorageAccessReloadCheck::No)
+        didReceiveStorageAccessReloadCheckResults();
 }
 
 WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
@@ -56,7 +58,7 @@ void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(std::optional<N
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
+    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink && m_doneWaitingForStorageAccessReloadCheck) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
     } else
@@ -66,7 +68,7 @@ void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(std::optional<N
 void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults()
 {
     ASSERT(isMainRunLoop());
-    if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
+    if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink && m_doneWaitingForStorageAccessReloadCheck) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
     }
@@ -79,7 +81,7 @@ void WebFramePolicyListenerProxy::didReceiveInitialLinkDecorationFilteringData()
     ASSERT(RunLoop::isMain());
     ASSERT(!m_doneWaitingForLinkDecorationFilteringData);
 
-    if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForSafeBrowsing && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
+    if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForSafeBrowsing && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink && m_doneWaitingForStorageAccessReloadCheck) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
         return;
@@ -93,7 +95,7 @@ void WebFramePolicyListenerProxy::didReceiveSiteHasStorageResults()
     ASSERT(RunLoop::isMain());
     ASSERT(!m_doneWaitingForSiteHasStorage);
 
-    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForEnhancedSecurityLink) {
+    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForEnhancedSecurityLink && m_doneWaitingForStorageAccessReloadCheck) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
         return;
@@ -107,7 +109,7 @@ void WebFramePolicyListenerProxy::didReceiveEnhancedSecurityLinkResults()
     ASSERT(RunLoop::isMain());
     ASSERT(!m_doneWaitingForEnhancedSecurityLink);
 
-    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage) {
+    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForStorageAccessReloadCheck) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
         return;
@@ -116,9 +118,23 @@ void WebFramePolicyListenerProxy::didReceiveEnhancedSecurityLinkResults()
     m_doneWaitingForEnhancedSecurityLink = true;
 }
 
+void WebFramePolicyListenerProxy::didReceiveStorageAccessReloadCheckResults()
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_doneWaitingForStorageAccessReloadCheck);
+
+    if (m_policyResult && m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
+        if (m_reply)
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
+        return;
+    }
+
+    m_doneWaitingForStorageAccessReloadCheck = true;
+}
+
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
-    if (m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink) {
+    if (m_doneWaitingForSafeBrowsing && m_isNavigatingToAppBoundDomain && m_doneWaitingForLinkDecorationFilteringData && m_doneWaitingForSiteHasStorage && m_doneWaitingForEnhancedSecurityLink && m_doneWaitingForStorageAccessReloadCheck) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, *m_isNavigatingToAppBoundDomain, WasNavigationIntercepted::No);
     } else if (!m_policyResult)
