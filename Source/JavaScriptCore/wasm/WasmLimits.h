@@ -65,6 +65,9 @@ constexpr size_t maxTableEntries = 10000000;
 constexpr size_t maxTableInitializationEntries = 10000000;
 constexpr unsigned maxTables = 100000;
 
+constexpr uint64_t maxMemoryPages = 1ULL << 16;
+constexpr uint64_t maxMemory64Pages = (1ULL << 37) - 1;
+
 // Limit of GC arrays in bytes. This is not included in the limits in the
 // JS API spec, but we set a limit to avoid complicated boundary conditions.
 constexpr size_t maxArraySizeInBytes = 1 << 30;

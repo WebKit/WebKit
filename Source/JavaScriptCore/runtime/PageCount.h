@@ -26,7 +26,7 @@
 #pragma once
 
 #include <algorithm>
-#include <limits.h>
+#include <limits>
 #include <wtf/MathExtras.h>
 
 namespace WTF {
@@ -48,10 +48,8 @@ static_assert(sizeof(size_t) == sizeof(uint32_t));
 class PageCount {
 public:
     PageCount()
-        : m_pageCount(UINT_MAX)
-    {
-        static_assert(maxPageCount < UINT_MAX, "We rely on this here.");
-    }
+        : m_pageCount(invalidPageCount)
+    { }
 
     PageCount(uint64_t pageCount)
         : m_pageCount(pageCount)
@@ -97,7 +95,7 @@ public:
 
     explicit operator bool() const
     {
-        return m_pageCount != UINT_MAX;
+        return m_pageCount != invalidPageCount;
     }
 
     friend auto operator<=>(const PageCount&, const PageCount&) = default;
@@ -120,6 +118,8 @@ private:
     // that large will fail, which is acceptable according to the spec. Nevertheless, we should
     // be able to parse such a memory and instantiate it with a smaller initial size.
     static constexpr uint32_t maxPageCount = std::max<uint32_t>(64*1024, MAX_ARRAY_BUFFER_SIZE / static_cast<uint64_t>(pageSize));
+    static constexpr uint64_t invalidPageCount = std::numeric_limits<uint64_t>::max();
+    static_assert(maxPageCount < invalidPageCount);
 
     uint64_t m_pageCount;
 };
