@@ -4307,12 +4307,12 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
     for (const NthChildOfSelectorInfo& nthChildOfSelectorInfo : fragment.nthChildOfFilters)
         generateElementMatchesSelectorList(failureCases, elementAddressRegister, nthChildOfSelectorInfo.selectorList);
 
-    Vector<const NthChildOfSelectorInfo*> validSubsetFilters;
-    for (const NthChildOfSelectorInfo& nthChildOfSelectorInfo : fragment.nthChildOfFilters) {
+    auto validSubsetFilters = WTF::compactMap(fragment.nthChildOfFilters, [](auto& nthChildOfSelectorInfo) -> std::optional<const NthChildOfSelectorInfo*> {
         if (nthFilterIsAlwaysSatisified(nthChildOfSelectorInfo.a, nthChildOfSelectorInfo.b))
-            continue;
-        validSubsetFilters.append(&nthChildOfSelectorInfo);
-    }
+            return std::nullopt;
+        return &nthChildOfSelectorInfo;
+    });
+
     if (validSubsetFilters.isEmpty())
         return;
 
