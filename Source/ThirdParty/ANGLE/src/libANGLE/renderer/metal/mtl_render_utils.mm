@@ -249,11 +249,8 @@ struct ScopedDisableOcclusionQuery
     }
     ~ScopedDisableOcclusionQuery()
     {
-        if (!mOcclusionQueryIsEnabled)
-        {
-            return;
-        }
-        *mResultOut = mContextMtl->enableOcclusionQueryInRenderPass();
+        *mResultOut = mOcclusionQueryIsEnabled ? mContextMtl->enableOcclusionQueryInRenderPass()
+                                               : angle::Result::Continue;
 #ifndef NDEBUG
         mEncoder->popDebugGroup();
 #else
