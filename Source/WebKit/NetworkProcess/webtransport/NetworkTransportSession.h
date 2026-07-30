@@ -151,7 +151,6 @@ private:
 
     uint64_t m_bytesSentOnClosedStreams { 0 };
     uint64_t m_bytesReceivedOnClosedStreams { 0 };
-    Seconds m_initializationTime;
     enum class InitializationState : uint8_t {
         Waiting,
         Succeeded,

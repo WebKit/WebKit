@@ -6,5 +6,5 @@ PASS WebTransport client should be able to provide valid stats when requested be
 PASS WebTransport client should throw an error when stats are requested for a failed connection
 PASS WebTransport client should be able to handle multiple concurrent stats requests
 PASS WebTransport client should be able to handle multiple sequential stats requests
-FAIL WebTransport client should be able to provide droppedIncoming values for datagrams assert_greater_than: expected a number greater than 0 but got 0
+PASS WebTransport client should be able to provide droppedIncoming values for datagrams
 

@@ -32,19 +32,18 @@ typedef double DOMHighResTimeStamp;
     JSGenerateToNativeObject,
 ] dictionary WebTransportConnectionStats {
     [ImplementationDefaultValue=0] unsigned long long bytesSent;
-    // FIXME: Add support for `bytesSentOverhead`.
-    // [ImplementationDefaultValue=0] unsigned long long bytesSentOverhead;
-    // FIXME: Add support for `bytesAcknowledged`.
-    // [ImplementationDefaultValue=0] unsigned long long bytesAcknowledged;
-    [ImplementationDefaultValue=0] unsigned long long packetsSent;
-    [ImplementationDefaultValue=0] unsigned long long bytesLost;
-    [ImplementationDefaultValue=0] unsigned long long packetsLost;
+    // Commented members are not supported.
+    // unsigned long long bytesSentOverhead;
+    // unsigned long long bytesAcknowledged;
+    // unsigned long long packetsSent;
+    // unsigned long long bytesLost;
+    // unsigned long long packetsLost;
     [ImplementationDefaultValue=0] unsigned long long bytesReceived;
-    [ImplementationDefaultValue=0] unsigned long long packetsReceived;
-    required DOMHighResTimeStamp smoothedRtt;
-    required DOMHighResTimeStamp rttVariation;
-    required DOMHighResTimeStamp minRtt;
-    required WebTransportDatagramStats datagrams;
-    unsigned long long? estimatedSendRate = null;
-    boolean atSendCapacity = false;
+    // unsigned long long packetsReceived;
+    // required DOMHighResTimeStamp smoothedRtt;
+    // required DOMHighResTimeStamp rttVariation;
+    // required DOMHighResTimeStamp minRtt;
+    // required WebTransportDatagramStats datagrams;
+    // unsigned long long? estimatedSendRate = null;
+    // boolean atSendCapacity = false;
 };

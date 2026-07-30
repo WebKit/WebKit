@@ -22,17 +22,7 @@
 
 struct WebCore::WebTransportConnectionStats {
     uint64_t bytesSent
-    uint64_t packetsSent
-    uint64_t bytesLost
-    uint64_t packetsLost
     uint64_t bytesReceived
-    uint64_t packetsReceived
-    double smoothedRtt
-    double rttVariation
-    double minRtt
-    WebCore::WebTransportDatagramStats datagrams
-    std::optional<uint64_t> estimatedSendRate
-    bool atSendCapacity
 }
 
 struct WebCore::WebTransportDatagramStats {
