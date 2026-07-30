@@ -427,7 +427,7 @@ void CacheStorageManager::sizeDecreased(uint64_t amount)
     if (!m_size || !amount)
         return;
 
-    m_size = *m_size - amount;
+    m_size = *m_size > amount ? *m_size - amount : 0;
     writeSizeFile(m_path, *m_size);
 }
 
