@@ -682,6 +682,7 @@ AVCapturePhotoOutput* AVVideoCaptureSource::photoOutput()
     }
     if (![session() canAddOutput:m_photoOutput.get()]) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "unable to add photo output");
+        m_photoOutput = nullptr;
         return nullptr;
     }
     [session() addOutput:m_photoOutput.get()];
