@@ -2353,7 +2353,6 @@ endif ()
 list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
-    UIProcess/PDF/WKDefaultPDFHUDView.mm
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
     ${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
