@@ -841,11 +841,26 @@ _llint_op_enter:
     addq 1, t2
     btqnz t2, .opEnterLoop
 .opEnterDone:
-    callSlowPath(_slow_path_enter)
+    loadp CodeBlock[cfr], t2
+    loadi CodeBlock::m_numberOfArgumentsToSkipAndCouldBeTainted[t2], t1
+    btis t1, .opEnterSlow
+    loadp CodeBlock::m_vm[t2], t0
+    loadb JSCell::m_cellState[t2], t1
+    loadi (constexpr (VM::offsetOfHeapBarrierThreshold()))[t0], t0
+    bibeq t1, t0, .opEnterSlow
+    loadis CodeBlock::m_scopeRegister[t2], t1
+    loadp Callee[cfr], t0
+    loadp JSCallee::m_scope[t0], t0
+    storeq t0, [cfr, t1, 8]
 
+.opEnterDispatch:
     checkTraps(macro()
         dispatchOp(narrow, op_enter)
     end)
+
+.opEnterSlow:
+    callSlowPath(_slow_path_enter)
+    jmp .opEnterDispatch
 
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)

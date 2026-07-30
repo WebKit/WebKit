@@ -301,8 +301,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_isJettisoned(false)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
-    , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
-    , m_couldBeTainted(other.m_couldBeTainted)
+    , m_numberOfArgumentsToSkipAndCouldBeTainted(other.m_numberOfArgumentsToSkipAndCouldBeTainted)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
@@ -380,6 +379,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     setNumParameters(unlinkedCodeBlock->numParameters(), allocateArgumentValueProfiles);
 
     m_couldBeTainted = source().provider()->couldBeTainted();
+    ASSERT(couldBeTainted() == !!(m_numberOfArgumentsToSkipAndCouldBeTainted & 0x80000000));
     vm.heap.codeBlockSet().add(this);
     checker().set(CrashChecker::This, checker().hash(this));
     checker().set(CrashChecker::Metadata, checker().hash(this, m_metadata.get()));

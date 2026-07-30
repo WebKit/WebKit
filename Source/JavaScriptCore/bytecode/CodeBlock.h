@@ -969,8 +969,14 @@ private:
     const unsigned m_numCalleeLocals;
     const unsigned m_numVars;
     unsigned m_numParameters;
-    unsigned m_numberOfArgumentsToSkip : 31 { 0 };
-    unsigned m_couldBeTainted : 1 { 0 };
+    union {
+        // The LLInt reads this union as a word and tests the sign bit to check m_couldBeTainted.
+        unsigned m_numberOfArgumentsToSkipAndCouldBeTainted { 0 };
+        struct {
+            unsigned m_numberOfArgumentsToSkip : 31;
+            unsigned m_couldBeTainted : 1;
+        };
+    };
     uint32_t m_osrExitCounter { 0 };
     union {
         unsigned m_debuggerRequests;
