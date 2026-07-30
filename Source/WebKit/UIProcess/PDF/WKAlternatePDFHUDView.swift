@@ -26,7 +26,7 @@
 import AppKit
 public import Foundation
 internal import WebKit_Internal
-@_weakLinked import SwiftUI
+@_weakLinked @_spi(Private) import SwiftUI
 
 // FIXME: Add fade animations.
 // FIXME: Add localizable strings support.
@@ -63,9 +63,8 @@ private struct Controls: View {
             }
         }
         .labelStyle(.iconOnly)
-        .controlSize(.extraLarge)
-        #if HAVE_LIQUID_GLASS
-        .glassEffect(.regular.interactive())
+        #if USE_APPLE_INTERNAL_SDK && HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE
+        .controlGroupStyle(.toolbar)
         #endif
     }
 }
