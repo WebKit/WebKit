@@ -28,6 +28,7 @@
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
 #import "HTTPServer.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -232,6 +233,50 @@ TEST(ParentalControlsContentFilteringTests, BlockedIframe)
     [webView loadRequest:server.request("/mainframe"_s)];
     Util::run(&iframeShieldDidLoad);
     EXPECT_FALSE(blockedIframeLoaded);
+}
+
+TEST(ParentalControlsContentFilteringTests, OpenBlockedPopUp)
+{
+    auto mainframeHTML = "<script>"
+    "window.open('https://example.com');"
+    "</script>"_s;
+
+    NSData *popupReplacementHTML = [@"<script>"
+    "window.webkit.messageHandlers.testHandler.postMessage('popup_html_loaded');"
+    "</script>" dataUsingEncoding:NSUTF8StringEncoding];
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = true;
+
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    [[[webView configuration] userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    __block bool popupLoaded = false;
+    [messageHandler addMessage:@"popup_html_loaded" withHandler:^{
+        popupLoaded = true;
+    }];
+
+    __block RetainPtr<WKWebView> popupWindow;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        popupWindow = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        return popupWindow.get();
+    };
+    [webView setUIDelegate:uiDelegate];
+
+    auto blockedURL = [NSURL URLWithString:@"https://example.com"];
+    __block bool mockInstalled = false;
+    [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] replacementData:popupReplacementHTML completionHandler:^{
+        mockInstalled = true;
+    }];
+    Util::run(&mockInstalled);
+
+    [webView loadRequest:server.request("/mainframe"_s)];
+    Util::run(&popupLoaded);
 }
 
 #endif // HAVE(WEBCONTENTRESTRICTIONS)
