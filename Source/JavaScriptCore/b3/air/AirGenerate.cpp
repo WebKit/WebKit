@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "AirAllocateRegistersAndStackAndGenerateCode.h"
-#include "AirAllocateRegistersByGraphColoring.h"
 #include "AirAllocateRegistersByGreedy.h"
 #include "AirAllocateStackByGraphColoring.h"
 #include "AirCode.h"
@@ -111,10 +110,7 @@ void prepareForGeneration(Code& code)
 
     // Register allocation for all the Tmps that do not have a corresponding machine
     // register. After this phase, every Tmp has a reg.
-    if (Options::airUseGreedyRegAlloc())
-        allocateRegistersByGreedy(code);
-    else
-        allocateRegistersByGraphColoring(code);
+    allocateRegistersByGreedy(code);
 
     if (Options::logAirRegisterPressure()) {
         dataLog("Register pressure after register allocation:\n");

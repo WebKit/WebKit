@@ -64,7 +64,6 @@ assembler/ProbeStack.cpp
 assembler/SecureARM64EHashPins.cpp
 
 b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
-b3/air/AirAllocateRegistersByGraphColoring.cpp
 b3/air/AirAllocateRegistersByGreedy.cpp
 b3/air/AirAllocateStackByGraphColoring.cpp
 b3/air/AirArg.cpp

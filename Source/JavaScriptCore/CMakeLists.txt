@@ -652,7 +652,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/X86Assembler.h
     assembler/X86_64Registers.h
 
-    b3/air/AirAllocateRegistersByGraphColoring.h
     b3/air/AirDisassembler.h
     b3/B3CanonicalizePrePostIncrements.h
     b3/B3Common.h
