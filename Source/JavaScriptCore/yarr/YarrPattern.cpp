@@ -1762,7 +1762,7 @@ public:
         if ((term.type != PatternTerm::Type::ParenthesesSubpattern) && (term.type != PatternTerm::Type::ParentheticalAssertion))
             return PatternTerm(term);
         
-        if (auto* newDisjunction = copyDisjunction(term.parentheses.disjunction, filterStartsWithBOL)) {
+        if (auto* newDisjunction = copyDisjunction(term.parentheses.disjunction, filterStartsWithBOL && !term.invert())) {
             PatternTerm termCopy = term;
             termCopy.parentheses.disjunction = newDisjunction;
             m_pattern.m_hasCopiedParenSubexpressions = true;
