@@ -326,15 +326,14 @@ HTMLFormatter = class HTMLFormatter
         console.assert(false, "Unhandled node type", node.type, node);
     }
 
-    _formatWithNestedFormatter(sourceText, parentNode, textNode, formatterCallback)
+    _formatNestedContent(sourceText, textNode, formatCallback)
     {
         this._builder.appendNewline();
 
         let originalIndentLevel = this._builder.indentLevel;
         this._builder.originalOffset = textNode.pos;
 
-        let formatter = formatterCallback();
-        if (!formatter.success) {
+        if (!formatCallback()) {
             this._builder.removeLastNewline();
             this._builder.originalOffset = 0;
             return false;
@@ -349,31 +348,72 @@ HTMLFormatter = class HTMLFormatter
 
     _formatScript(sourceText, scriptNode, textNode)
     {
-        // <script type="module">.
-        let isModule = false;
+        let type = null;
         if (scriptNode.attributes) {
             for (let {name, value} of scriptNode.attributes) {
-                if (name === "type") {
-                    if (value && value.toLowerCase() === "module")
-                        isModule = true;
+                if (name.toLowerCase() === "type") {
+                    type = value || "";
                     break;
                 }
             }
         }
 
-        return this._formatWithNestedFormatter(sourceText, scriptNode, textNode, () => {
-            let sourceType = isModule ? JSFormatter.SourceType.Module : JSFormatter.SourceType.Script;
-            return new JSFormatter(sourceText, sourceType, this._builder);
+        let sourceType = JSFormatter.SourceType.Script;
+        if (type) {
+            let lowercaseType = type.toLowerCase();
+            if (lowercaseType === "module")
+                sourceType = JSFormatter.SourceType.Module;
+            else if (!HTMLFormatter.JavaScriptMIMETypes.has(lowercaseType.trim())) {
+                let formattedJSON;
+                try {
+                    formattedJSON = JSON.stringify(JSON.parse(sourceText), null, this._builder.indentString);
+                } catch { }
+                if (formattedJSON) {
+                    return this._formatNestedContent(sourceText, textNode, () => {
+                        for (let line of formattedJSON.split("\n")) {
+                            this._builder.appendNonToken(line);
+                            this._builder.appendNewline();
+                        }
+                        return true;
+                    });
+                }
+            }
+        }
+
+        return this._formatNestedContent(sourceText, textNode, () => {
+            let formatter = new JSFormatter(sourceText, sourceType, this._builder);
+            return formatter.success;
         });
     }
 
     _formatStyle(sourceText, styleNode, textNode)
     {
-        return this._formatWithNestedFormatter(sourceText, styleNode, textNode, () => {
-            return new CSSFormatter(sourceText, this._builder);
+        return this._formatNestedContent(sourceText, textNode, () => {
+            let formatter = new CSSFormatter(sourceText, this._builder);
+            return formatter.success;
         });
     }
 };
+
+// https://mimesniff.spec.whatwg.org/#javascript-mime-type
+HTMLFormatter.JavaScriptMIMETypes = new Set([
+    "application/ecmascript",
+    "application/javascript",
+    "application/x-ecmascript",
+    "application/x-javascript",
+    "text/ecmascript",
+    "text/javascript",
+    "text/javascript1.0",
+    "text/javascript1.1",
+    "text/javascript1.2",
+    "text/javascript1.3",
+    "text/javascript1.4",
+    "text/javascript1.5",
+    "text/jscript",
+    "text/livescript",
+    "text/x-ecmascript",
+    "text/x-javascript",
+]);
 
 HTMLFormatter.SourceType = {
     HTML: "html",

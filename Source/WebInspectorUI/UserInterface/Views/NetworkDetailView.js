@@ -52,12 +52,7 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
         if (!this._contentBrowser)
             return;
 
-        this._showPreferredContentView();
-
-        if (this._contentViewCookie) {
-            this._contentBrowser.showContentView(this._contentBrowser.currentContentView, this._contentViewCookie);
-            this._contentViewCookie = null;
-        }
+        this.showContentViewForCookie();
     }
 
     dispose()
@@ -70,6 +65,9 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
     willShowWithCookie(cookie)
     {
         this._contentViewCookie = cookie;
+
+        if (this.isAttached && this._contentBrowser)
+            this.showContentViewForCookie();
     }
 
     // Protected
@@ -98,7 +96,7 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
 
         this.addSubview(this._contentBrowser);
 
-        this._showPreferredContentView();
+        this.showContentViewForCookie();
     }
 
     createDetailNavigationItem(identifier, toolTip)
@@ -114,6 +112,17 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
     showContentViewForIdentifier(identifier)
     {
         // Implemented by subclasses.
+    }
+
+    showContentViewForCookie()
+    {
+        this._showPreferredContentView();
+
+        if (!this._contentViewCookie)
+            return;
+
+        this._contentBrowser.showContentView(this._contentBrowser.currentContentView, this._contentViewCookie);
+        this._contentViewCookie = null;
     }
 
     // Private
