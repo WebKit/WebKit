@@ -664,10 +664,17 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     }
 
     String bundlePath = webKit2BundleSingleton().bundlePath;
-    if (!bundlePath.startsWith("/System/Library/Frameworks"_s))
+    // A WebKit framework installed outside /System/Library/Frameworks (e.g. relocated into an
+    // app bundle by a spade Performance build, or a development install) is not covered by the
+    // system-framework or Cryptex file-map-executable sandbox grants, so the soft-linked
+    // libWebKitSwift.dylib cannot be mapped. Signal this relocated case to the sandbox so it can
+    // allow mapping that one dylib; shipping root and Cryptex installs are unaffected.
+    bool isRelocatedFramework = !bundlePath.startsWith("/System/Library/Frameworks"_s);
+    if (isRelocatedFramework)
         bundlePath = webKit2BundleSingleton().bundlePath.stringByDeletingLastPathComponent;
 
     sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, bundlePath.utf8().data());
+    sandboxParameters.addParameter("WK_FRAMEWORKS_ARE_RELOCATED"_s, isRelocatedFramework ? "YES"_span : "NO"_span);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 

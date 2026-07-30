@@ -68,11 +68,10 @@
     "IOAudioSelectorControl"
     "IOMobileFramebufferShim"))
 
-#if !RC_XBS
 ;; Allow development dylibs to be loaded
-(allow file-read* file-map-executable
-    (literal (string-append (param "WEBKIT2_FRAMEWORK_DIR") "/libWebKitSwift.dylib")))
-#endif
+(when (equal? (param "WK_FRAMEWORKS_ARE_RELOCATED") "YES")
+    (allow file-read* file-map-executable
+        (literal (string-append (param "WEBKIT2_FRAMEWORK_DIR") "/libWebKitSwift.dylib"))))
 
 (allow file-map-executable (subpath
     "/System/Library/Components"
