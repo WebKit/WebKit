@@ -37,7 +37,7 @@ import traceback
 from webkitpy.common.host import Host
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
 from webkitpy.layout_tests.controllers.manager import Manager
-from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
+from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS, RunDetails
 from webkitpy.port import configuration_options, platform_options
 from webkitpy.layout_tests.views import buildbot_results
 from webkitpy.layout_tests.views import printing
@@ -84,6 +84,11 @@ def main(argv, stdout, stderr):
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
         printer = printing.Printer(port, options, stderr, logger=logger)
+
+        if options.interop_labels:
+            args = _add_interop_tests(port, options, args)
+            if args is None:
+                return EXCEPTIONAL_EXIT_STATUS
 
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)
@@ -283,6 +288,10 @@ def parse_args(args):
             help="directories or test to ignore (may specify multiple times)"),
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
+        optparse.make_option("--interop-label", action="append", default=[], dest="interop_labels", metavar="LABEL",
+            help="Run the imported WPT tests which carry this Interop label on wpt.fyi "
+                 "(e.g. interop-2026-scroll-snap). Tests which aren't imported into LayoutTests "
+                 "are ignored. Specify multiple times to run multiple labels."),
         optparse.make_option("--skipped", action="store", default="default",
             choices=["default", "ignore", "only", "always"],
             help=("control how tests marked SKIP are run. "
@@ -468,6 +477,39 @@ def parse_args(args):
     return options, args
 
 
+def _add_interop_tests(port, options, args):
+    """Expand --interop-label into the paths of the matching imported WPT tests.
+
+    :return Optional[List[str]]: the test paths to run, or None if the labels
+        don't match any test in this checkout.
+    """
+    # Imported lazily, since this hits the network and most runs don't need it.
+    from webkitpy.layout_tests.interop.interop_data import find_wpt_tests
+    from webkitpy.layout_tests.interop.layout_test_paths import imported_layout_test_paths
+
+    labels = ', '.join(options.interop_labels)
+    _log.info('Looking up the tests labelled %s on wpt.fyi ...' % labels)
+
+    try:
+        wpt_tests = find_wpt_tests(labels=options.interop_labels)
+    except Exception as e:
+        _log.critical('Unable to find the tests labelled %s: %s' % (labels, str(e)))
+        return None
+
+    if not wpt_tests:
+        _log.critical('No WPT test is labelled %s, see https://wpt.fyi/ for the labels in use' % labels)
+        return None
+
+    paths, not_imported = imported_layout_test_paths(port.host.filesystem, port.layout_tests_dir(), wpt_tests)
+    if not paths:
+        _log.critical('None of the %d tests labelled %s are imported into LayoutTests' % (len(wpt_tests), labels))
+        return None
+
+    _log.info('Found %d of the %d tests labelled %s in LayoutTests' % (len(paths), len(wpt_tests), labels))
+    if not_imported:
+        _log.debug('Tests labelled %s which are not imported into LayoutTests:\n  %s' % (labels, '\n  '.join(not_imported)))
+
+    return args + paths
 
 
 def _set_up_derived_options(port, options):
@@ -606,6 +648,11 @@ def run(port, options, args, logging_stream):
                 GDBCrashLogStartupHandler()
             except (OSError, ImportError) as e:
                 _log.error(f'Failed to initialize crash log handler: {e}')
+
+        if options.interop_labels:
+            args = _add_interop_tests(port, options, args)
+            if args is None:
+                return RunDetails(exit_code=-1)
 
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)
