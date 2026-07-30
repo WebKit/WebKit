@@ -84,6 +84,10 @@ private:
     template<typename Result>
     Result invokeDrainedHandlerIfNeeded(NOESCAPE const std::function<Result(RefPtr<CallbackHandler>&)>&);
 
+#if ASSERT_ENABLED
+    bool isInvokingQueueDrainedHandlerInSameThread() const;
+#endif
+
     Lock m_lock;
     Deque<Ref<SharedBuffer>> m_chunks WTF_GUARDED_BY_LOCK(m_lock);
     size_t m_frontChunkOffset WTF_GUARDED_BY_LOCK(m_lock) { 0 };
@@ -95,7 +99,7 @@ private:
     HTTPVersionProbe m_httpVersionProbe WTF_GUARDED_BY_LOCK(m_lock);
     Markable<FetchIdentifier> m_serviceWorkerFetchIdentifier;
 #if ASSERT_ENABLED
-    std::atomic<bool> m_isInvokingQueueDrainedHandler { false };
+    std::atomic<uint32_t> m_invokingQueueDrainedHandlerThreadUID { 0 };
 #endif
 };
 

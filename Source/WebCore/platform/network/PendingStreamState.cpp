@@ -31,6 +31,7 @@
 #include <wtf/Locker.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -82,9 +83,9 @@ Result PendingStreamState::invokeDrainedHandlerIfNeeded(NOESCAPE const std::func
     auto result = function(handler);
     if (handler) {
 #if ASSERT_ENABLED
-        m_isInvokingQueueDrainedHandler = true;
+        m_invokingQueueDrainedHandlerThreadUID = Thread::currentSingleton().uid();
         auto scope = makeScopeExit([&] {
-            m_isInvokingQueueDrainedHandler = false;
+            m_invokingQueueDrainedHandlerThreadUID = 0;
         });
 #endif
         handler->invoke();
@@ -92,11 +93,18 @@ Result PendingStreamState::invokeDrainedHandlerIfNeeded(NOESCAPE const std::func
     return result;
 }
 
+#if ASSERT_ENABLED
+bool PendingStreamState::isInvokingQueueDrainedHandlerInSameThread() const
+{
+    return m_invokingQueueDrainedHandlerThreadUID.load() == Thread::currentSingleton().uid();
+}
+#endif
+
 void PendingStreamState::appendData(Ref<SharedBuffer>&& buffer)
 {
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
-        ASSERT(!m_isInvokingQueueDrainedHandler);
+        ASSERT(!isInvokingQueueDrainedHandlerInSameThread());
         if (m_ended || m_errorCode)
             return nullptr;
         m_chunks.append(WTF::move(buffer));
@@ -108,7 +116,7 @@ void PendingStreamState::endStream()
 {
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
-        ASSERT(!m_isInvokingQueueDrainedHandler);
+        ASSERT(!isInvokingQueueDrainedHandlerInSameThread());
         if (m_ended || m_errorCode)
             return nullptr;
         m_ended = true;
@@ -120,7 +128,7 @@ void PendingStreamState::errorStream(int errorCode)
 {
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
-        ASSERT(!m_isInvokingQueueDrainedHandler);
+        ASSERT(!isInvokingQueueDrainedHandlerInSameThread());
         if (m_ended || m_errorCode)
             return nullptr;
         m_errorCode = errorCode ? errorCode : -1;
@@ -139,7 +147,7 @@ void PendingStreamState::setDataAvailableHandler(Function<void()>&& handler)
     invokeHandlerIfNeeded([&] -> RefPtr<CallbackHandler> {
         Locker locker { m_lock };
         ASSERT(!m_dataAvailableHandler);
-        ASSERT(!m_isInvokingQueueDrainedHandler);
+        ASSERT(!isInvokingQueueDrainedHandlerInSameThread());
         RELEASE_LOG_ERROR_IF(m_dataAvailableHandler, Network, "Trying to get upload stream data twice");
         m_dataAvailableHandler = CallbackHandler::create(WTF::move(handler));
         if (!m_chunks.isEmpty() || m_ended || m_errorCode)
@@ -177,7 +185,7 @@ PendingStreamState::ReadResult PendingStreamState::readInto(std::span<uint8_t> o
 {
     return invokeDrainedHandlerIfNeeded<ReadResult>([&](auto& drainedHandler) -> ReadResult {
         Locker locker { m_lock };
-        ASSERT(!m_isInvokingQueueDrainedHandler);
+        ASSERT(!isInvokingQueueDrainedHandlerInSameThread());
 
         if (m_errorCode)
             return makeUnexpected(m_errorCode);
@@ -208,7 +216,7 @@ PendingStreamState::TakeResult PendingStreamState::takeAvailableChunks()
     return invokeDrainedHandlerIfNeeded<TakeResult>([&](auto& drainedHandler) -> TakeResult {
         Locker locker { m_lock };
         ASSERT(!m_frontChunkOffset);
-        ASSERT(!m_isInvokingQueueDrainedHandler);
+        ASSERT(!isInvokingQueueDrainedHandlerInSameThread());
 
         if (m_errorCode)
             return makeUnexpected(m_errorCode);
