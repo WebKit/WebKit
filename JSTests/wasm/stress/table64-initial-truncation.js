@@ -1,5 +1,4 @@
 //@ skip if $addressBits <= 32
-//@ runDefaultWasm("-m", "--useWasmMemory64=1", "--useBBQJIT=0", "--useOMGJIT=0")
 import * as assert from "../assert.js";
 
 function leb128(value) {

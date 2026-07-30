@@ -1,4 +1,3 @@
-//@ requireOptions("--useWasmMemory64=1")
 (function table_grow64_wast_js() {
 
 // table_grow64.wast:1

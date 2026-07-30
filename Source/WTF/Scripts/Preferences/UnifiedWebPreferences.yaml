@@ -9797,7 +9797,7 @@ WasmJSTypesEnabled:
 
 WasmMemory64Enabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "WebAssembly Memory64"
   humanReadableDescription: "Allow the Memory64 proposal for WebAssembly. This feature is currently only supported in the IPInt tier."
@@ -9806,7 +9806,7 @@ WasmMemory64Enabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 WasmMemoryToBufferAPIsEnabled:
   type: bool

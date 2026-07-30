@@ -1,5 +1,4 @@
 //@ skip if $addressBits <= 32
-//@ runDefaultWasm("--useWasmMemory64=1")
 
 let assert;
 import('../assert.js').then((m) => { assert = m; }, $vm.crash);
@@ -62,35 +61,35 @@ const { testLoad, testStore, constantLoad, constantStore, offsetStore, offsetLoa
 function testOverflow() {
   assert.throws(() => testLoad(0xffffffffffffffffn),
       WebAssembly.RuntimeError,
-      "Out of bounds memory access (evaluating 'testLoad(0xffffffffffffffffn)')");
+      "Out of bounds memory access");
 
   assert.throws(() => testStore(0xffffffffffffffffn),
         WebAssembly.RuntimeError,
-      "Out of bounds memory access (evaluating 'testStore(0xffffffffffffffffn)')");
+      "Out of bounds memory access");
 
   assert.throws(() => testLoad(0xfffffffffffffffen),
       WebAssembly.RuntimeError,
-      "Out of bounds memory access (evaluating 'testLoad(0xfffffffffffffffen)')");
+      "Out of bounds memory access");
 
   assert.throws(() => testStore(0xfffffffffffffffen),
         WebAssembly.RuntimeError,
-      "Out of bounds memory access (evaluating 'testStore(0xfffffffffffffffen)')");
+      "Out of bounds memory access");
 
   assert.throws(() => constantLoad(),
         WebAssembly.RuntimeError,
-        "Out of bounds memory access (evaluating 'constantLoad()')");
+        "Out of bounds memory access");
 
   assert.throws(() => constantStore(),
         WebAssembly.RuntimeError,
-        "Out of bounds memory access (evaluating 'constantStore()')");
+        "Out of bounds memory access");
 
   assert.throws(() => offsetStore(),
         WebAssembly.RuntimeError,
-        "Out of bounds memory access (evaluating 'offsetStore()')");
+        "Out of bounds memory access");
 
     assert.throws(() => offsetLoad(),
         WebAssembly.RuntimeError,
-        "Out of bounds memory access (evaluating 'offsetLoad()')");
+        "Out of bounds memory access");
 }
 
 for (let i = 0; i < wasmTestLoopCount; i++)

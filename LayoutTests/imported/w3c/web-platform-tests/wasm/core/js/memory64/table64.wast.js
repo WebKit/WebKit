@@ -1,4 +1,3 @@
-//@ requireOptions("--useWasmMemory64=1")
 (function table64_wast_js() {
 
 // table64.wast:1

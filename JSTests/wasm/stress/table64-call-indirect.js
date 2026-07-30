@@ -1,5 +1,4 @@
 //@ skip if $addressBits <= 32
-//@ runDefaultWasm("-m", "--useWasmMemory64=1")
 import { instantiate } from "../wabt-wrapper.js";
 import * as assert from "../assert.js";
 
