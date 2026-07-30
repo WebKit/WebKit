@@ -234,6 +234,7 @@ struct BorderImageSlice;
 struct BorderImageSource;
 struct BorderImageWidth;
 struct BorderRadius;
+struct BorderShape;
 struct BoxShadow;
 struct CaretColor;
 struct Clip;

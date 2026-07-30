@@ -3329,6 +3329,7 @@ style/values/backgrounds/StyleBorderImage.cpp @cost:5
 style/values/backgrounds/StyleLineWidth.cpp @header:RenderStyleGetters @cost:5
 style/values/backgrounds/StyleRepeatStyle.cpp
 style/values/borders/StyleBorderRadius.cpp
+style/values/borders/StyleBorderShape.cpp
 style/values/borders/StyleBoxShadow.cpp @header:RenderStyleGetters @cost:5
 style/values/borders/StyleCornerShapeValue.cpp
 style/values/box/StyleMarginTrim.cpp

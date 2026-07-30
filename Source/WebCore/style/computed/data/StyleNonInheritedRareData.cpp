@@ -63,6 +63,7 @@ NonInheritedRareData::NonInheritedRareData()
     , perspective(ComputedStyle::initialPerspective())
     , perspectiveOrigin({ ComputedStyle::initialPerspectiveOriginX(), ComputedStyle::initialPerspectiveOriginY() })
     , clipPath(ComputedStyle::initialClipPath())
+    , borderShape(ComputedStyle::initialBorderShape())
     , customProperties(CustomPropertyData::create())
     // customPaintWatchedProperties
     , rotate(ComputedStyle::initialRotate())
@@ -175,6 +176,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , perspective(o.perspective)
     , perspectiveOrigin(o.perspectiveOrigin)
     , clipPath(o.clipPath)
+    , borderShape(o.borderShape)
     , customProperties(o.customProperties)
     , customPaintWatchedProperties(o.customPaintWatchedProperties)
     , rotate(o.rotate)
@@ -294,6 +296,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && perspective == o.perspective
         && perspectiveOrigin == o.perspectiveOrigin
         && clipPath == o.clipPath
+        && borderShape == o.borderShape
         && textDecorationColor == o.textDecorationColor
         && customProperties == o.customProperties
         && customPaintWatchedProperties == o.customPaintWatchedProperties
@@ -431,6 +434,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(perspectiveOrigin);
 
     LOG_IF_DIFFERENT(clipPath);
+    LOG_IF_DIFFERENT(borderShape);
 
     LOG_IF_DIFFERENT(textDecorationColor);
 

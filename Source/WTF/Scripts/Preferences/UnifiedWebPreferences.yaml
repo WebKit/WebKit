@@ -1143,6 +1143,20 @@ CSSBaselineSourceEnabled:
     WebCore:
       default: false
 
+CSSBorderShapeEnabled:
+  type: bool
+  category: css
+  status: testable
+  humanReadableName: "CSS border-shape property"
+  humanReadableDescription: "Enable support for CSS border-shape property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCalcMixEnabled:
   type: bool
   category: css

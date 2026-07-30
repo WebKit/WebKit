@@ -129,6 +129,7 @@ struct BasicShapePath {
     }
 
 private:
+    friend BorderShape;
     friend ClipPath;
     friend OffsetPath;
     friend std::optional<WebCore::Path> tryPath(const BasicShapePath&, const TransformOperationData&, ZoomFactor);

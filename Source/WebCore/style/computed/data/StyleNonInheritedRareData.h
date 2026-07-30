@@ -29,6 +29,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/StyleAnchorName.h>
 #include <WebCore/StyleBlockStepSize.h>
+#include <WebCore/StyleBorderShape.h>
 #include <WebCore/StyleClip.h>
 #include <WebCore/StyleClipPath.h>
 #include <WebCore/StyleColor.h>
@@ -161,6 +162,8 @@ public:
     PerspectiveOrigin perspectiveOrigin;
 
     ClipPath clipPath;
+
+    BorderShape borderShape;
 
     DataRef<CustomPropertyData> customProperties;
     HashSet<AtomString> customPaintWatchedProperties;
