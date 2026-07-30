@@ -127,6 +127,13 @@ static bool NODELETE isZeroToOneCompositionType(WritingTools::Session::Compositi
     }
 }
 
+static CharacterRange rangeClampedToLength(CharacterRange range, unsigned length)
+{
+    range.location = std::min<uint64_t>(range.location, length);
+    range.length = std::min<uint64_t>(range.length, length - range.location);
+    return range;
+}
+
 static std::optional<SimpleRange> contextRangeForSession(Document& document, const std::optional<WritingTools::Session>& session)
 {
     // If the selection is a range, the range of the context should be the range of the paragraph
@@ -268,6 +275,12 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
     if (attributedStringFromRange.string.isEmpty())
         RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().data() : "");
 
+    auto attributedStringLength = attributedStringFromRange.string.length();
+    if (auto clampedRange = rangeClampedToLength(selectedTextCharacterRange, attributedStringLength); clampedRange != selectedTextCharacterRange) [[unlikely]] {
+        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => selected range (%llu, %llu) does not fit within attributed string (length %u)", session ? session->identifier.toString().utf8().data() : "", selectedTextCharacterRange.location, selectedTextCharacterRange.length, attributedStringLength);
+        selectedTextCharacterRange = clampedRange;
+    }
+
     if (!session) {
         // If there is no session, this implies that the Writing Tools delegate is used for the "non-inline editing" case;
         // as such, no mutating delegate methods will be invoked, and so there need not be any state tracked.
@@ -294,14 +307,13 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
         break;
     }
 
-    auto attributedStringCharacterCount = attributedStringFromRange.string.length();
     auto contextRangeCharacterCount = characterCount(*contextRange);
 
     // Postcondition: the selected text character range must be a valid range within the
     // attributed string formed by the context range; the length of the entire context range
     // being equal to the length of the attributed string implies the range is valid.
-    if (attributedStringCharacterCount != contextRangeCharacterCount) [[unlikely]] {
-        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
+    if (attributedStringLength != contextRangeCharacterCount) [[unlikely]] {
+        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().data(), attributedStringLength, contextRangeCharacterCount);
         ASSERT_NOT_REACHED();
         completionHandler({ });
         return;
