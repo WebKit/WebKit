@@ -792,6 +792,23 @@ static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingB
             // necessarily enclose this box.
             return destroyRootWithLayer->layer()->needsFullRepaint() || destroyRootWithLayer->isOutOfFlowPositioned();
         };
+
+        auto repaintUsingCachedRectIfNeeded = [&] {
+            if (!destroyRoot.hasLayer() || !destroyRoot.isOutOfFlowPositioned())
+                return false;
+            CheckedPtr container = destroyRoot.container();
+            if (!container || !container->isInFlowPositioned() || !is<RenderInline>(*container))
+                return false;
+            CheckedPtr layer = downcast<RenderLayerModelObject>(destroyRoot).layer();
+            auto cachedRepaintRect = layer->cachedClippedOverflowRect();
+            if (!cachedRepaintRect)
+                return false;
+            destroyRoot.repaintUsingContainer(layer->repaintContainer(), *cachedRepaintRect, false);
+            return true;
+        };
+        if (repaintUsingCachedRectIfNeeded())
+            return;
+
         destroyRoot.repaint(shouldForceRepaint() ? RenderObject::ForceRepaint::Yes : RenderObject::ForceRepaint::No);
     };
 
