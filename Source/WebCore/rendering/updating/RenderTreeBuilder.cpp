@@ -954,15 +954,10 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         destroy(rendererToDestroy);
     }
 
-    bool destroyRootWasInFlow = destroyRoot->isInFlow();
-
     if (destroyRoot) {
         auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRoot.get() != &rendererToDestroy ? destroyRoot : nullptr };
         destroy(*destroyRoot);
     }
-
-    if (!destroyRootWasInFlow)
-        return;
 
     if (!destroyRootParent)
         return;
