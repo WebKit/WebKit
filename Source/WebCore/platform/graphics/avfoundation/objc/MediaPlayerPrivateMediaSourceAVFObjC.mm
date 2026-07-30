@@ -432,6 +432,16 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
     return mediaSourcePrivate && mediaSourcePrivate->hasAudio();
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldTeardownOnVisibilityChange() const
+{
+    assertIsMainThread();
+    // Some clients continue to display the video layer they host after hiding their web view.
+    // For those, neither the page's visibility nor the element's position in the viewport
+    // indicate whether the video is on screen, and tearing the layer down would leave the
+    // client displaying a black frame.
+    return !m_loadOptions.disableTeardownOnVisibilityChange;
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
 {
     assertIsMainThread();
@@ -459,7 +469,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateRendererVisibility()
     assertIsMainThread();
     bool visible = m_pageIsVisible && m_viewportVisibility != ViewportVisibility::NotVisible;
     m_renderer->setIsVisible(visible);
-    acceleratedRenderingStateChanged();
+    // 311380@main started letting the page's and the element's visibility release the video
+    // renderer. Some clients keep displaying the video layer they host after hiding their web
+    // view, so for those restore the previous behaviour where visibility had no such effect.
+    if (shouldTeardownOnVisibilityChange())
+        acceleratedRenderingStateChanged();
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::duration() const
@@ -972,11 +986,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 
     RefPtr player = m_player.get();
 
+    bool canBeAccelerated = player && player->renderingCanBeAccelerated();
+
     // Don't create a layer if the player is not visible:
-    bool canBeAccelerated = m_pageIsVisible
-        && m_viewportVisibility != ViewportVisibility::NotVisible
-        && player
-        && player->renderingCanBeAccelerated();
+    if (shouldTeardownOnVisibilityChange())
+        canBeAccelerated = canBeAccelerated && m_pageIsVisible && m_viewportVisibility != ViewportVisibility::NotVisible;
     m_renderer->renderingCanBeAcceleratedChanged(canBeAccelerated);
 }
 
