@@ -629,8 +629,12 @@ class Sequence
             end
             
             if address.is_a? BaseIndex
+                registerOffsetForm = $currentSettings["ADDRESS64"] &&
+                    !isLoadStorePairOp &&
+                    node.opcode !~ /^loadqinc$|^atomic|^loadlinkacq|^storecondrel|^loadv$|^storev$/
                 address.offset.value == 0 and
-                    (node.opcode =~ /^lea/ or address.scale == 1 or address.scale == size)
+                    (node.opcode =~ /^lea/ or
+                     (registerOffsetForm and (address.scaleValue == 1 or address.scaleValue == size)))
             elsif address.is_a? Address
                 if isLoadStorePairOp
                     not isMalformedArm64LoadStorePairAddress(node.opcode, address)
