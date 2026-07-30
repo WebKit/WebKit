@@ -1188,7 +1188,7 @@ CSSConstrainedDynamicRangeLimitEnabled:
 CSSCornerShapeEnabled:
   type: bool
   category: css
-  status: testable
+  status: preview
   humanReadableName: "CSS corner-shape property"
   humanReadableDescription: "Enable support for CSS corner-shape property"
   defaultValue:

@@ -4304,7 +4304,7 @@
             }
         },
         "corner-shape": {
-            "animation-type": "discrete",
+            "animation-type": "by computed value",
             "initial": "round",
             "codegen-properties": {
                 "settings-flag": "cssCornerShapeEnabled",
