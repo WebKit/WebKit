@@ -57,7 +57,7 @@ AutoInstall.register(Package('markupsafe', Version(3, 0, 3), pypi_name='MarkupSa
 AutoInstall.register(Package('jinja2', Version(3, 1, 4), implicit_deps=['markupsafe']))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
 AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
-AutoInstall.register(Package('webkitbugspy', Version(0, 15, 3)), local=True)
+AutoInstall.register(Package('webkitbugspy', Version(0, 15, 4)), local=True)
 
 if sys.version_info >= (3, 10):
     AutoInstall.register(Package('rapidfuzz', Version(3, 14, 3), wheel=True))

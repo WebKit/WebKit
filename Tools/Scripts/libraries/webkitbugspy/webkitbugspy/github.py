@@ -161,6 +161,13 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         )
 
     @classmethod
+    def decode_json(cls, response):
+        try:
+            return response.json()
+        except ValueError:
+            return {}
+
+    @classmethod
     def api_error_hint(cls, response) -> str:
         status_code = response.status_code
         if status_code in (403, 429) and (
@@ -202,7 +209,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if error_message:
                 sys.stderr.write("{}\n".format(error_message))
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-            message = response.json().get('message')
+            message = self.decode_json(response).get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             if auth:
@@ -232,7 +239,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         )
         if response.status_code // 100 != 2:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-            message = response.json().get('message')
+            message = self.decode_json(response).get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             sys.stderr.write(self.api_error_hint(response))

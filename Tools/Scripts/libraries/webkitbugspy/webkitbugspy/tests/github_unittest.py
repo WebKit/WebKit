@@ -66,6 +66,20 @@ class TestGitHub(unittest.TestCase):
         self.assertEqual(github.Tracker.api_error_hint(resp(404)), '')
         self.assertEqual(github.Tracker.api_error_hint(resp(422)), '')
 
+    def test_decode_json(self):
+        class Response(object):
+            def __init__(self, payload):
+                self.payload = payload
+
+            def json(self):
+                if self.payload is None:
+                    raise json.JSONDecodeError('Expecting value', '', 0)
+                return self.payload
+
+        self.assertEqual(github.Tracker.decode_json(Response({'message': 'Server Error'})), {'message': 'Server Error'})
+        self.assertEqual(github.Tracker.decode_json(Response(None)), {})
+        self.assertEqual(github.Tracker.decode_json(Response(None)).get('message'), None)
+
     def test_users(self):
         with mocks.GitHub(self.URL.split('://')[1], users=mocks.USERS):
             tracker = github.Tracker(self.URL)
