@@ -375,6 +375,7 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     
     pas_thread_local_cache* new_thread_local_cache;
     pas_thread_local_cache_layout_node layout_node;
+    pas_lock* scavenger_lock;
     unsigned old_index_upper_bound;
     unsigned desired_index_upper_bound;
 
@@ -388,8 +389,9 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     pas_thread_local_cache_flush_deallocation_log(thread_local_cache, heap_lock_hold_mode);
     
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-    pas_lock_lock(&thread_local_cache->node->scavenger_lock);
-    
+    scavenger_lock = &thread_local_cache->node->scavenger_lock;
+    pas_lock_lock(scavenger_lock);
+
     PAS_ASSERT(desired_allocator_index < pas_thread_local_cache_layout_next_allocator_index);
 
     desired_index_upper_bound = pas_thread_local_cache_layout_next_allocator_index;
@@ -456,7 +458,7 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     if (thread_local_cache != new_thread_local_cache)
         deallocate(thread_local_cache);
 
-    pas_lock_unlock(&thread_local_cache->node->scavenger_lock);
+    pas_lock_unlock(scavenger_lock);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
 
     if (thread_local_cache != new_thread_local_cache)
