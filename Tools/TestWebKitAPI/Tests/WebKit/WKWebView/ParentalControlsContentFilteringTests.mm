@@ -279,4 +279,38 @@ TEST(ParentalControlsContentFilteringTests, OpenBlockedPopUp)
     Util::run(&popupLoaded);
 }
 
+TEST(ParentalControlsContentFilteringTests, BlockedNavigationFromLinkClick)
+{
+    auto mainframeHTML = "<html><a id='jsClickHere' href='https://example.com'></a></html>"
+    "<script>"
+    "jsClickHere.click()"
+    "</script>"_s;
+
+    NSData *replacementHTML =[@"<script>"
+    "window.webkit.messageHandlers.testHandler.postMessage('replacement_html_loaded', '*');"
+    "</script>" dataUsingEncoding:NSUTF8StringEncoding];
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto blockedURL = [NSURL URLWithString:@"https://example.com"];
+    __block bool mockInstalled = false;
+    [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] replacementData:replacementHTML completionHandler:^{
+        mockInstalled = true;
+    }];
+    Util::run(&mockInstalled);
+
+    __block bool shieldLoaded = false;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message isEqualToString:@"replacement_html_loaded"])
+            shieldLoaded = true;
+    }];
+
+    [webView loadRequest:server.request("/mainframe"_s)];
+    Util::run(&shieldLoaded);
+}
+
 #endif // HAVE(WEBCONTENTRESTRICTIONS)
