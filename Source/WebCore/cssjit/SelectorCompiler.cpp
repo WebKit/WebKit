@@ -1505,9 +1505,11 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector& rootSelec
     , m_purpose(purpose)
     , m_originalSelector(rootSelector)
 {
-    auto selectorTextUTF8 = m_originalSelector.selectorText().utf8();
-    auto selectorTextSpan = selectorTextUTF8.span();
-    dataLogFIf(shouldDumpCSSJITDisassembly(), "Compiling \"%.*s\"\n", static_cast<int>(selectorTextSpan.size()), selectorTextSpan.data());
+    if (shouldDumpCSSJITDisassembly()) [[unlikely]] {
+        auto selectorTextUTF8 = m_originalSelector.selectorText().utf8();
+        auto selectorTextSpan = selectorTextUTF8.span();
+        dataLogF("Compiling \"%.*s\"\n", static_cast<int>(selectorTextSpan.size()), selectorTextSpan.data());
+    }
 
     // In QuerySelector context, :visited always has no effect due to security issues.
     // :has() argument selectors also disable visited matching (see SelectorChecker::matchHasPseudoClass).
