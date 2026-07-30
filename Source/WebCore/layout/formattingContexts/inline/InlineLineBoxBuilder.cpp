@@ -712,7 +712,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineLevelBox);
         else if (inlineLevelBox.isAtomicInlineBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.logicalHeight();
-            InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
+            InlineLayoutUnit ideographicBaseline = inlineLevelBoxHeight / 2;
             // Move the baseline position but keep the same logical height.
             inlineLevelBox.setAscentAndDescent({ ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline });
             inlineLevelBox.setLayoutBounds({ ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline });
