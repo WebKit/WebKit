@@ -111,9 +111,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         let responseData = this._pendingResponses.take(sequenceId) || {};
         let {request, command, callback, promise} = responseData;
 
-        let processingStartTimestamp = performance.now();
-        for (let tracer of InspectorBackend.activeTracers)
-            tracer.logWillHandleResponse(this, messageObject);
+        InspectorBackend.logProtocolMessage(this, InspectorBackend.ProtocolMessageType.Response, messageObject);
 
         InspectorBackend.currentDispatchState.request = request;
         InspectorBackend.currentDispatchState.response = messageObject;
@@ -127,12 +125,6 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         InspectorBackend.currentDispatchState.request = null;
         InspectorBackend.currentDispatchState.response = null;
-
-        let processingTime = (performance.now() - processingStartTimestamp).toFixed(3);
-        let roundTripTime = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
-
-        for (let tracer of InspectorBackend.activeTracers)
-            tracer.logDidHandleResponse(this, messageObject, {rtt: roundTripTime, dispatch: processingTime});
 
         if (this._deferredCallbacks.length && !this._pendingResponses.size)
             this._flushPendingScripts();
@@ -199,9 +191,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
             return;
         }
 
-        let processingStartTimestamp = performance.now();
-        for (let tracer of InspectorBackend.activeTracers)
-            tracer.logWillHandleEvent(this, messageObject);
+        InspectorBackend.logProtocolMessage(this, InspectorBackend.ProtocolMessageType.Event, messageObject);
 
         InspectorBackend.currentDispatchState.event = messageObject;
 
@@ -209,17 +199,12 @@ InspectorBackend.Connection = class InspectorBackendConnection
             let params = messageObject.params || {};
             handler.apply(dispatcher, event._parameterNames.map((name) => params[name]));
         } catch (e) {
-            for (let tracer of InspectorBackend.activeTracers)
-                tracer.logFrontendException(this, messageObject, e);
+            InspectorBackend.logProtocolMessage(this, InspectorBackend.ProtocolMessageType.Exception, messageObject, e);
 
             WI.reportInternalError(e, {"cause": `An uncaught exception was thrown while handling event: ${qualifiedName}`});
         }
 
         InspectorBackend.currentDispatchState.event = null;
-
-        let processingDuration = (performance.now() - processingStartTimestamp).toFixed(3);
-        for (let tracer of InspectorBackend.activeTracers)
-            tracer.logDidHandleEvent(this, messageObject, {dispatch: processingDuration});
     }
 
     _sendCommandToBackendWithCallback(command, parameters, callback)
@@ -235,9 +220,6 @@ InspectorBackend.Connection = class InspectorBackendConnection
             messageObject["params"] = parameters;
 
         let responseData = {command, request: messageObject, callback};
-
-        if (InspectorBackend.activeTracer)
-            responseData.sendRequestTimestamp = performance.now();
 
         this._pendingResponses.set(sequenceId, responseData);
         this._sendMessageToBackend(messageObject);
@@ -257,9 +239,6 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let responseData = {command, request: messageObject};
 
-        if (InspectorBackend.activeTracer)
-            responseData.sendRequestTimestamp = performance.now();
-
         let responsePromise = new Promise(function(resolve, reject) {
             responseData.promise = {resolve, reject};
         });
@@ -272,8 +251,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
     _sendMessageToBackend(messageObject)
     {
-        for (let tracer of InspectorBackend.activeTracers)
-            tracer.logFrontendRequest(this, messageObject);
+        InspectorBackend.logProtocolMessage(this, InspectorBackend.ProtocolMessageType.Request, messageObject);
 
         this.sendMessageToBackend(JSON.stringify(messageObject));
     }

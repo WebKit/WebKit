@@ -28,7 +28,6 @@ WI._messagesToDispatch = [];
 
 WI.dispatchNextQueuedMessageFromBackend = function()
 {
-    const startCount = WI._messagesToDispatch.length;
     const startTimestamp = performance.now();
     const timeLimitPerRunLoop = 10; // milliseconds
 
@@ -48,13 +47,6 @@ WI.dispatchNextQueuedMessageFromBackend = function()
     } else {
         WI._messagesToDispatch = WI._messagesToDispatch.slice(i);
         WI._dispatchTimeout = setTimeout(WI.dispatchNextQueuedMessageFromBackend, 0);
-    }
-
-    if (InspectorBackend.dumpInspectorTimeStats) {
-        let messageDuration = (performance.now() - startTimestamp).toFixed(3);
-        let dispatchedCount = startCount - WI._messagesToDispatch.length;
-        let remainingCount = WI._messagesToDispatch.length;
-        console.log(`time-stats: --- RunLoop duration: ${messageDuration}ms; dispatched: ${dispatchedCount}; remaining: ${remainingCount}`);
     }
 };
 

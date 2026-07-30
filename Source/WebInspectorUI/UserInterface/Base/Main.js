@@ -1928,26 +1928,6 @@ WI._contextMenuRequested = function(event)
         proposedContextMenu.appendItem(WI.unlocalizedString("Reload Web Inspector"), () => {
             InspectorFrontendHost.reopen();
         });
-
-        let protocolSubMenu = proposedContextMenu.appendSubMenuItem(WI.unlocalizedString("Protocol Debugging"), null, false);
-        let isCapturingTraffic = InspectorBackend.activeTracer instanceof WI.CapturingProtocolTracer;
-
-        protocolSubMenu.appendCheckboxItem(WI.unlocalizedString("Capture Trace"), () => {
-            if (isCapturingTraffic)
-                InspectorBackend.activeTracer = null;
-            else
-                InspectorBackend.activeTracer = new WI.CapturingProtocolTracer;
-        }, isCapturingTraffic);
-
-        let trace = InspectorBackend.activeTracer?.trace;
-        if (trace && WI.FileUtilities.canSave(trace.saveMode)) {
-            protocolSubMenu.appendSeparator();
-
-            protocolSubMenu.appendItem(WI.unlocalizedString("Export Trace\u2026"), () => {
-                const forceSaveAs = true;
-                WI.FileUtilities.save(trace.saveMode, trace.saveData, forceSaveAs);
-            }, !isCapturingTraffic);
-        }
     } else {
         const onlyExisting = true;
         proposedContextMenu = WI.ContextMenu.createFromEvent(event, onlyExisting);

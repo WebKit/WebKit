@@ -251,7 +251,6 @@ WI.settings = {
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),
     protocolAutoLogMessages: new WI.Setting("protocol-auto-log-messages", false),
-    protocolAutoLogTimeStats: new WI.Setting("protocol-auto-log-time-stats", false),
     protocolFilterMultiplexingBackendMessages: new WI.Setting("protocol-filter-multiplexing-backend-messages", true),
 
     // Engineering

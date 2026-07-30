@@ -36,19 +36,12 @@ InspectorBackendClass = class InspectorBackendClass
     {
         this._registeredDomains = {};
         this._activeDomains = {};
-
-        this._customTracer = null;
-        this._defaultTracer = new WI.LoggingProtocolTracer;
-        this._activeTracers = [this._defaultTracer];
+        this._logToConsole = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log;
 
         // FIXME: <https://webkit.org/b/213632> Web Inspector: release unused backend domains/events/commands once the debuggable type is known
         this._supportedDomainsForTargetType = new Multimap;
         this._supportedCommandParameters = new Map;
         this._supportedEventParameters = new Map;
-
-        WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
-        WI.settings.protocolAutoLogTimeStats.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
-        this._startOrStopAutomaticTracing();
 
         this.currentDispatchState = {
             event: null,
@@ -67,15 +60,9 @@ InspectorBackendClass = class InspectorBackendClass
         return this._registeredDomains;
     }
 
-    // It's still possible to set this flag on InspectorBackend to just
-    // dump protocol traffic as it happens. For more complex uses of
-    // protocol data, install a subclass of WI.ProtocolTracer.
     set dumpInspectorProtocolMessages(value)
     {
-        // Implicitly cause automatic logging to start if it's allowed.
         WI.settings.protocolAutoLogMessages.value = value;
-
-        this._defaultTracer.dumpMessagesToConsole = value;
     }
 
     get dumpInspectorProtocolMessages()
@@ -83,63 +70,14 @@ InspectorBackendClass = class InspectorBackendClass
         return WI.settings.protocolAutoLogMessages.value;
     }
 
-    set dumpInspectorTimeStats(value)
-    {
-        WI.settings.protocolAutoLogTimeStats.value = value;
-
-        if (!this.dumpInspectorProtocolMessages)
-            this.dumpInspectorProtocolMessages = true;
-
-        this._defaultTracer.dumpTimingDataToConsole = value;
-    }
-
-    get dumpInspectorTimeStats()
-    {
-        return WI.settings.protocolAutoLogTimeStats.value;
-    }
-
     set filterMultiplexingBackendInspectorProtocolMessages(value)
     {
         WI.settings.protocolFilterMultiplexingBackendMessages.value = value;
-
-        this._defaultTracer.filterMultiplexingBackend = value;
     }
 
     get filterMultiplexingBackendInspectorProtocolMessages()
     {
         return WI.settings.protocolFilterMultiplexingBackendMessages.value;
-    }
-
-    set customTracer(tracer)
-    {
-        console.assert(!tracer || tracer instanceof WI.ProtocolTracer, tracer);
-        console.assert(!tracer || tracer !== this._defaultTracer, tracer);
-
-        // Bail early if no state change is to be made.
-        if (!tracer && !this._customTracer)
-            return;
-
-        if (tracer === this._customTracer)
-            return;
-
-        if (tracer === this._defaultTracer)
-            return;
-
-        if (this._customTracer)
-            this._customTracer.logFinished();
-
-        this._customTracer = tracer;
-        this._activeTracers = [this._defaultTracer];
-
-        if (this._customTracer) {
-            this._customTracer.logStarted();
-            this._activeTracers.push(this._customTracer);
-        }
-    }
-
-    get activeTracers()
-    {
-        return this._activeTracers;
     }
 
     registerDomain(domainName, targetTypes)
@@ -299,6 +237,38 @@ InspectorBackendClass = class InspectorBackendClass
         return domain._invokeCommand(commandName, targetType, connection, commandArguments, callback);
     }
 
+    logProtocolMessage(connection, type, message, exception = null)
+    {
+        if (!this.dumpInspectorProtocolMessages)
+            return;
+
+        let targetId = connection.target?.identifier;
+        if (this.filterMultiplexingBackendInspectorProtocolMessages && targetId === "multi")
+            return;
+
+        let prefix = `${type} (${targetId || "unknown"})`;
+        if (!window.InspectorTest && InspectorFrontendHost.isBeingInspected() && !WI.settings.protocolLogAsText.value) {
+            switch (type) {
+            case InspectorBackend.ProtocolMessageType.Request:
+            case InspectorBackend.ProtocolMessageType.Exception:
+                console.trace(prefix, message);
+                break;
+
+            case InspectorBackend.ProtocolMessageType.Event:
+            case InspectorBackend.ProtocolMessageType.Response:
+                this._logToConsole(prefix, message);
+                break;
+            }
+        } else
+            this._logToConsole(`${prefix}: ${JSON.stringify(message)}`);
+
+        if (exception) {
+            this._logToConsole(exception);
+            if (exception.stack)
+                this._logToConsole(exception.stack);
+        }
+    }
+
     // Private
 
     _makeAgent(domainName, target)
@@ -306,16 +276,16 @@ InspectorBackendClass = class InspectorBackendClass
         let domain = this._activeDomains[domainName];
         return domain._makeAgent(target);
     }
-
-    _startOrStopAutomaticTracing()
-    {
-        this._defaultTracer.dumpMessagesToConsole = this.dumpInspectorProtocolMessages;
-        this._defaultTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
-        this._defaultTracer.filterMultiplexingBackend = this.filterMultiplexingBackendInspectorProtocolMessages;
-    }
 };
 
 InspectorBackend = new InspectorBackendClass;
+
+InspectorBackend.ProtocolMessageType = {
+    Event: "event",
+    Exception: "exception",
+    Request: "request",
+    Response: "response",
+};
 
 InspectorBackend.Domain = class InspectorBackendDomain
 {
