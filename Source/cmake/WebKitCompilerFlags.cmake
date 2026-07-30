@@ -368,6 +368,13 @@ elseif (LTO_MODE AND COMPILER_IS_CLANG AND MSVC AND NOT DEVELOPER_MODE)
     set(CMAKE_MODULE_LINKER_FLAGS "/opt:lldlto=2 ${CMAKE_MODULE_LINKER_FLAGS}")
 endif ()
 
+# PRESERVE_MOST is only profitable under LTO: without it, hot/cold splitting gives the extracted
+# cold region the default calling convention, so the preserve_most parent saves X9-X15 on its hot
+# path. See rdar://183555125.
+if (LTO_MODE AND COMPILER_IS_CLANG)
+    add_definitions(-DHAVE_PRESERVE_MOST=1)
+endif ()
+
 if (COMPILER_IS_CLANG)
     foreach (_lang C CXX OBJC OBJCXX)
         set(CMAKE_${_lang}_COMPILE_OPTIONS_INSTANTIATE_TEMPLATES_PCH -fpch-instantiate-templates)

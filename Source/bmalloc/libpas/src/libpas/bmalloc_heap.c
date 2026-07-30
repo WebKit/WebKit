@@ -35,32 +35,32 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_NEVER_INLINE void* bmalloc_try_allocate_casual(size_t size, pas_allocation_mode allocation_mode)
+PAS_NEVER_INLINE PAS_PRESERVE_MOST void* bmalloc_try_allocate_casual(size_t size, pas_allocation_mode allocation_mode)
 {
     if (allocation_mode == pas_always_compact_allocation_mode)
         return (void*)bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size, allocation_mode);
     return (void*)bmalloc_try_allocate_impl_casual_case(size, 1, allocation_mode).begin;
 }
 
-PAS_NEVER_INLINE void* bmalloc_allocate_casual(size_t size, pas_allocation_mode allocation_mode)
+PAS_NEVER_INLINE PAS_PRESERVE_MOST void* bmalloc_allocate_casual(size_t size, pas_allocation_mode allocation_mode)
 {
     if (allocation_mode == pas_always_compact_allocation_mode)
         return (void*)bmalloc_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size, allocation_mode);
     return (void*)bmalloc_allocate_impl_casual_case(size, 1, allocation_mode).begin;
 }
 
-PAS_NEVER_INLINE void* bmalloc_try_allocate_auxiliary_with_alignment_casual(
+PAS_NEVER_INLINE PAS_PRESERVE_MOST void* bmalloc_try_allocate_auxiliary_with_alignment_casual(
     pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
 {
     return (void*)bmalloc_try_allocate_auxiliary_impl_casual_case(heap_ref, size, alignment, allocation_mode).begin;
 }
 
-PAS_NEVER_INLINE void bmalloc_deallocate_casual(void* ptr)
+PAS_NEVER_INLINE PAS_PRESERVE_MOST void bmalloc_deallocate_casual(void* ptr)
 {
     pas_deallocate_casual_case(ptr, BMALLOC_HEAP_CONFIG);
 }
 
-PAS_NEVER_INLINE void* bmalloc_allocate_auxiliary_with_alignment_casual(
+PAS_NEVER_INLINE PAS_PRESERVE_MOST void* bmalloc_allocate_auxiliary_with_alignment_casual(
     pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
 {
     return (void*)bmalloc_allocate_auxiliary_impl_casual_case(heap_ref, size, alignment, allocation_mode).begin;

@@ -178,8 +178,8 @@ void* pas_mar_record_deallocation(pas_mar_registry*, void* address, unsigned num
 struct pas_mar_exported_allocation_record pas_mar_get_allocation_record(pas_mar_registry*, void* address);
 
 void pas_mar_initialize(void);
-void* pas_mar_did_allocate(pas_mar_registry*, void* address, size_t allocation_size);
-void* pas_mar_did_allocate_and_zero(pas_mar_registry*, pas_allocation_result, size_t allocation_size);
+PAS_PRESERVE_MOST void* pas_mar_did_allocate(pas_mar_registry*, void* address, size_t allocation_size);
+PAS_PRESERVE_MOST void* pas_mar_did_allocate_and_zero(pas_mar_registry*, pas_allocation_result, size_t allocation_size);
 void* pas_mar_did_deallocate(pas_mar_registry*, void* address);
 
 extern bool pas_mar_enabled;

@@ -50,7 +50,7 @@ Data::Data(std::span<const uint8_t> data)
     auto span = MallocSpan<uint8_t>::malloc(data.size());
     memcpySpan(span.mutableSpan(), data);
     auto* copiedData = span.leakSpan().data();
-    m_buffer = adoptGRef(g_bytes_new_with_free_func(copiedData, data.size(), fastFree, copiedData));
+    m_buffer = adoptGRef(g_bytes_new_with_free_func(copiedData, data.size(), fastFreeCallback, copiedData));
 }
 
 Data::Data(GRefPtr<GBytes>&& buffer, FileSystem::FileHandle&& fileHandle)
@@ -111,7 +111,7 @@ Data concatenate(const Data& a, const Data& b)
     memcpySpan(span.mutableSpan().last(b.size()), b.span());
     auto* data = span.leakSpan().data();
 
-    return { adoptGRef(g_bytes_new_with_free_func(data, size, fastFree, data)) };
+    return { adoptGRef(g_bytes_new_with_free_func(data, size, fastFreeCallback, data)) };
 }
 
 struct MapWrapper {

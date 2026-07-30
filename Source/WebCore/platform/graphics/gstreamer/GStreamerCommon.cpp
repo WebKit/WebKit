@@ -1274,7 +1274,7 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
 
 GstBuffer* /* (transfer full) */ gstBufferNewWrappedFast(void* data, size_t length)
 {
-    return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), data, length, 0, length, data, fastFree);
+    return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), data, length, 0, length, data, fastFreeCallback);
 }
 
 GstElement* /* (transfer floating) */ makeGStreamerElement(CStringView factoryName, const String& name)

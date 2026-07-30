@@ -305,6 +305,23 @@
 #define RETURNS_NONNULL __attribute__((returns_nonnull))
 #endif
 
+/* PRESERVE_MOST */
+
+// Shrinks the register set a caller must spill around a call.
+// See: https://clang.llvm.org/docs/AttributeReference.html#preserve-most
+//
+// Requires LTO, so the build defines HAVE_PRESERVE_MOST only when LTO is on. Without LTO,
+// LLVM's hot/cold splitting extracts cold regions into separate functions that get the default
+// calling convention, and the preserve_most parent then has to save X9-X15 for them in its entry
+// block (on the hot path), which costs more than the attribute saves. See rdar://183555125.
+#if !defined(PRESERVE_MOST)
+#if defined(HAVE_PRESERVE_MOST) && HAVE_PRESERVE_MOST && defined(__aarch64__)
+#define PRESERVE_MOST __attribute__((preserve_most))
+#else
+#define PRESERVE_MOST
+#endif
+#endif
+
 /* OBJC_CLASS */
 
 #if !defined(OBJC_CLASS) && defined(__OBJC__)

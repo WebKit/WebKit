@@ -104,7 +104,7 @@ void SQLiteDatabase::useFastMalloc()
 
     static sqlite3_mem_methods fastMallocMethods = {
         [](int n) { return fastMalloc(n); },
-        fastFree,
+        fastFreeCallback,
         [](void *p, int n) { return fastRealloc(p, n); },
         [](void *p) { return static_cast<int>(fastMallocSize(p)); },
         [](int n) { return static_cast<int>(fastMallocGoodSize(n)); },

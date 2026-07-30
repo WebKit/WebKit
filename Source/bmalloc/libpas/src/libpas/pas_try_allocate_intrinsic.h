@@ -288,7 +288,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
         pas_force_size_lookup, \
         (result_filter)); \
     \
-    static PAS_NEVER_INLINE pas_allocation_result \
+    static PAS_NEVER_INLINE PAS_PRESERVE_MOST pas_allocation_result \
     name ## _casual_case(size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
     { \
         return pas_try_allocate_intrinsic_impl_casual_case( \

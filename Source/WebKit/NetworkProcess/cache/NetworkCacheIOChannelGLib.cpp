@@ -93,7 +93,7 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
 
                 size_t bufferSize = std::min<size_t>(size, fileSize - offset);
                 uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
-                GRefPtr<GBytes> buffer = adoptGRef(g_bytes_new_with_free_func(bufferData, bufferSize, fastFree, bufferData));
+                GRefPtr<GBytes> buffer = adoptGRef(g_bytes_new_with_free_func(bufferData, bufferSize, fastFreeCallback, bufferData));
                 gsize bytesRead;
                 if (g_input_stream_read_all(m_inputStream.get(), bufferData, bufferSize, &bytesRead, nullptr, nullptr)) {
                     GRefPtr<GBytes> bytes = bufferSize == bytesRead ? buffer : adoptGRef(g_bytes_new_from_bytes(buffer.get(), 0, bytesRead));

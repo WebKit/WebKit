@@ -458,7 +458,7 @@ GBytes* jsc_value_to_string_as_bytes(JSCValue* value)
     }
 
     // Ignore the null character added by JSStringGetUTF8CString.
-    return g_bytes_new_with_free_func(string, stringSize - 1, fastFree, string);
+    return g_bytes_new_with_free_func(string, stringSize - 1, fastFreeCallback, string);
 }
 
 /**

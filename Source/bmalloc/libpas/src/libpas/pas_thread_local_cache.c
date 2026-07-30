@@ -1265,7 +1265,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
     return result;
 }
 
-PAS_NEVER_INLINE void pas_thread_local_cache_append_deallocation_slow(
+PAS_NEVER_INLINE PAS_PRESERVE_MOST void pas_thread_local_cache_append_deallocation_slow(
     pas_thread_local_cache* thread_local_cache,
     uintptr_t begin,
     pas_segregated_page_config_kind kind)

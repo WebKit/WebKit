@@ -5005,7 +5005,7 @@ void webkit_web_view_run_javascript_from_gresource(WebKitWebView* webView, const
     }
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new(0, 0, fastRealloc, fastFree));
+    GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new(0, 0, fastRealloc, fastFreeCallback));
     g_output_stream_splice_async(outputStream.get(), inputStream.get(),
         static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
         G_PRIORITY_DEFAULT, cancellable, resourcesStreamReadCallback, task);
@@ -5195,7 +5195,7 @@ GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* 
     ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task));
     auto bytes = data->webData->span();
     if (!bytes.empty())
-        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), fastMemDup(bytes.data(), bytes.size()), bytes.size(), fastFree);
+        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), fastMemDup(bytes.data(), bytes.size()), bytes.size(), fastFreeCallback);
 
     return dataStream;
 #else

@@ -211,7 +211,7 @@ pas_try_allocate_primitive_impl_inline_only(
         pas_avoid_size_lookup, \
         (result_filter)); \
     \
-    static PAS_NEVER_INLINE pas_allocation_result name ## _casual_case( \
+    static PAS_NEVER_INLINE PAS_PRESERVE_MOST pas_allocation_result name ## _casual_case( \
         pas_primitive_heap_ref* heap_ref, \
         size_t size, \
         size_t alignment, \

@@ -28,6 +28,7 @@
 
 #include <bmalloc/bmalloc.h>
 #include <string.h>
+#include <string_view>
 #include <wtf/Atomics.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/PageBlock.h>
@@ -57,6 +58,11 @@
 #include <notify.h>
 #endif
 
+#endif
+
+#if defined(PAS_PRESERVE_MOST)
+static_assert(std::string_view { _STRINGIFY(PRESERVE_MOST) } == std::string_view { _STRINGIFY(PAS_PRESERVE_MOST) },
+    "PRESERVE_MOST and PAS_PRESERVE_MOST disagree; this is catastrophic for performance");
 #endif
 
 namespace WTF {
@@ -330,7 +336,7 @@ bool isFastMallocEnabled()
     return bmalloc::api::isEnabled();
 }
 
-void* fastMalloc(size_t size)
+PRESERVE_MOST void* fastMalloc(size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -390,13 +396,18 @@ void* fastRealloc(void* object, size_t size)
     return result;
 }
 
-void fastFree(void* object)
+PRESERVE_MOST void fastFree(void* object)
 {
     bmalloc::api::free(object);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
     if (!AvoidRecordingScope::avoidRecordingCount())
         MallocCallTracker::singleton().recordFree(object);
 #endif
+}
+
+void fastFreeCallback(void* object)
+{
+    fastFree(object);
 }
 
 size_t fastMallocSize(const void* p)
@@ -421,7 +432,7 @@ size_t fastMallocGoodSize(size_t size)
 #endif
 }
 
-void* fastAlignedMalloc(size_t alignment, size_t size)
+PRESERVE_MOST void* fastAlignedMalloc(size_t alignment, size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -434,7 +445,7 @@ void* fastAlignedMalloc(size_t alignment, size_t size)
     return result;
 }
 
-void* tryFastAlignedMalloc(size_t alignment, size_t size)
+PRESERVE_MOST void* tryFastAlignedMalloc(size_t alignment, size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -447,7 +458,7 @@ void* tryFastAlignedMalloc(size_t alignment, size_t size)
     return result;
 }
 
-TryMallocReturnValue tryFastMalloc(size_t size)
+PRESERVE_MOST TryMallocReturnValue tryFastMalloc(size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -475,7 +486,7 @@ TryMallocReturnValue tryFastRealloc(void* object, size_t newSize)
     return result;
 }
 
-void* fastCompactMalloc(size_t size)
+PRESERVE_MOST void* fastCompactMalloc(size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -533,7 +544,7 @@ void* fastCompactRealloc(void* object, size_t size)
     return result;
 }
 
-void* fastCompactAlignedMalloc(size_t alignment, size_t size)
+PRESERVE_MOST void* fastCompactAlignedMalloc(size_t alignment, size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -546,7 +557,7 @@ void* fastCompactAlignedMalloc(size_t alignment, size_t size)
     return result;
 }
 
-void* tryFastCompactAlignedMalloc(size_t alignment, size_t size)
+PRESERVE_MOST void* tryFastCompactAlignedMalloc(size_t alignment, size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
@@ -559,7 +570,7 @@ void* tryFastCompactAlignedMalloc(size_t alignment, size_t size)
     return result;
 }
 
-TryMallocReturnValue tryFastCompactMalloc(size_t size)
+PRESERVE_MOST TryMallocReturnValue tryFastCompactMalloc(size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
     assertMallocRestrictionForCurrentThreadScope();
