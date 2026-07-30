@@ -28,15 +28,10 @@ public import Foundation
 import WebKit_Internal
 @_weakLinked @_spi(Private) import SwiftUI
 
-// FIXME: Add localizable strings support.
-// FIXME: Implement `WKAlternatePDFHUDView.show`.
-// FIXME: Figure out the final design.
-
-private let barVerticalOffset: CGFloat = 40
-
 private struct Controls: View {
     private static let autoHideDelay: Duration = .seconds(3)
 
+    let showSystemActions: Bool
     let action: (WKPDFHUDViewControlAction) -> Void
 
     @State
@@ -59,18 +54,20 @@ private struct Controls: View {
                 action(.zoomIn)
             }
 
-            Button {
-                action(.openInPreview)
-            } label: {
-                Label {
-                    Text("Open in Preview")
-                } icon: {
-                    Image(_internalSystemName: "preview")
+            if showSystemActions {
+                Button {
+                    action(.openInPreview)
+                } label: {
+                    Label {
+                        Text("Open in Preview")
+                    } icon: {
+                        Image(_internalSystemName: "preview")
+                    }
                 }
-            }
 
-            Button("Save PDF", systemImage: "arrow.down.circle") {
-                action(.savePDF)
+                Button("Save PDF", systemImage: "arrow.down.circle") {
+                    action(.savePDF)
+                }
             }
         }
         .labelStyle(.iconOnly)
@@ -93,6 +90,8 @@ private struct Controls: View {
 @objc
 @implementation
 extension WKAlternatePDFHUDView {
+    private static let barVerticalOffset: CGFloat = 40
+
     let frameIdentifier: UInt64
 
     init(
@@ -105,14 +104,14 @@ extension WKAlternatePDFHUDView {
 
         super.init(frame: frame)
 
-        let controls = Controls(action: actionHandler)
+        let controls = Controls(showSystemActions: !isInRecoveryOS(), action: actionHandler)
 
         let hostingView = NSHostingView(rootView: controls)
         hostingView.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(hostingView)
         hostingView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        hostingView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -barVerticalOffset).isActive = true
+        hostingView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.barVerticalOffset).isActive = true
     }
 
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -123,6 +122,7 @@ extension WKAlternatePDFHUDView {
     }
 
     func show() {
+        // FIXME: Implement `WKAlternatePDFHUDView.show`.
     }
 }
 

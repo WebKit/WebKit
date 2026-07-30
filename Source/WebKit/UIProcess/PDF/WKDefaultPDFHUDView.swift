@@ -51,7 +51,7 @@ private let autoHideDelay: TimeInterval = 3.0
 private let hoverInset: CGFloat = -16.0
 
 // FIXME: (rdar://164559261) understand/document/remove unsafety
-private func isInRecoveryOS() -> Bool {
+func isInRecoveryOS() -> Bool {
     unsafe os_variant_is_basesystem("WebKit")
 }
 
