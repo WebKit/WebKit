@@ -2288,9 +2288,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.networkSessionParameters = WTF::move(networkSessionParameters);
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = trackingPreventionEnabled();
     platformSetNetworkParameters(parameters);
-#if PLATFORM(COCOA)
-    parameters.networkSessionParameters.useNetworkLoader = useNetworkLoader();
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     if (isPersistent()) {

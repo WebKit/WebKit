@@ -355,9 +355,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (readwrite, assign) BOOL _allowsHTTP3;
 #endif
 @property (nullable, retain) _NSHSTSStorage *_hstsStorage;
-#if HAVE(NETWORK_LOADER)
 @property BOOL _usesNWLoader;
-#endif
 @property (readwrite, assign) NSInteger _connectionCacheNumPriorityLevels;
 @property (readwrite, assign) NSInteger _connectionCacheNumFastLanes;
 @property (readwrite, assign) NSInteger _connectionCacheMinimumFastLanePriority;

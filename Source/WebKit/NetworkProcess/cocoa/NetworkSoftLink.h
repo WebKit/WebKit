@@ -35,10 +35,4 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, Network)
 // FIXME: Stop soft linking when we no longer support platforms without rdar://183055377.
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_WITH_NS_RETURNS_RETAINED(WebKit, Network, nw_webtransport_metadata_copy_sec_protocol_metadata, sec_protocol_metadata_t, (nw_protocol_metadata_t metadata), (metadata));
 
-#if HAVE(NWSETTINGS_UNIFIED_HTTP_WEBKIT)
-
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebKit, Network, nw_settings_get_unified_http_enabled_webkit, bool, (), ())
-
-#endif
-
 #endif // PLATFORM(COCOA)

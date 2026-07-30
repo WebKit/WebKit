@@ -796,6 +796,11 @@ TEST(WKHTTPCookieStore, CookieAccessAfterNetworkProcessTermination)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "key=value");
 }
 
+// Skip these tests on platforms without rdar://177637761
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000 \
+    || ((PLATFORM(MACCATALYST) || PLATFORM(IOS)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 270000) \
+    || (!PLATFORM(MAC) && !PLATFORM(IOS) && !PLATFORM(MACCATALYST))
+
 TEST(WKHTTPCookieStore, WebSocketCookies)
 {
     using namespace TestWebKitAPI;
@@ -1082,6 +1087,8 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/ninja", serverPort]]]];
     Util::run(&receivedWebSocket);
 }
+
+#endif
 
 TEST(WKHTTPCookieStore, CookiesSetBeforeLoad)
 {

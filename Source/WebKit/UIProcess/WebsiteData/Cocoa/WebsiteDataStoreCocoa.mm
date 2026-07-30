@@ -256,41 +256,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
 }
 
-std::optional<bool> WebsiteDataStore::useNetworkLoader()
-{
-#if !HAVE(NETWORK_LOADER)
-    return false;
-#else
-
-    [[maybe_unused]] const auto isSafari =
-#if PLATFORM(MAC)
-        WTF::MacApplication::isSafari();
-#elif PLATFORM(IOS_FAMILY)
-        WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
-#else
-        false;
-#endif
-
-    if (auto isEnabled = optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt))
-        return isEnabled;
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UseCFNetworkNetworkLoader))
-        return std::nullopt;
-#if HAVE(NWSETTINGS_UNIFIED_HTTP) && defined(NW_SETTINGS_HAS_UNIFIED_HTTP)
-    if (isRunningTest(applicationBundleIdentifier()))
-        return true;
-    if (nw_settings_get_unified_http_enabled() && isSafari)
-        return true;
-#endif // HAVE(NWSETTINGS_UNIFIED_HTTP) && defined(NW_SETTINGS_HAS_UNIFIED_HTTP)
-
-#if HAVE(NWSETTINGS_UNIFIED_HTTP_WEBKIT)
-    if (canLoad_Network_nw_settings_get_unified_http_enabled_webkit())
-        return softLink_Network_nw_settings_get_unified_http_enabled_webkit();
-#endif
-    return std::nullopt;
-
-#endif // NETWORK_LOADER
-}
-
 void WebsiteDataStore::platformInitialize()
 {
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -1046,19 +1046,6 @@ BuiltInNotificationsEnabled:
       default: defaultBuiltInNotificationsEnabled()
   sharedPreferenceForWebProcess: true
 
-CFNetworkNetworkLoaderEnabled:
-  type: bool
-  status: testable
-  category: networking
-  humanReadableName: "Enable experimental network loader"
-  humanReadableDescription: "Enable experimental network loader"
-  webcoreBinding: none
-  condition: HAVE(NETWORK_LOADER)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
 CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
   type: bool
   status: preview

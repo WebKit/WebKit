@@ -71,7 +71,6 @@ enum class WebKit::AllowsCellularAccess : bool;
     bool shouldRunServiceWorkersOnMainThreadForTesting;
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication;
-    std::optional<bool> useNetworkLoader;
     bool allowsHSTSWithUntrustedRootCertificate;
     String pcmMachServiceName;
     String webPushMachServiceName;

@@ -325,10 +325,6 @@ public:
 
     void dispatchOnQueue(Function<void()>&&);
 
-#if PLATFORM(COCOA)
-    static std::optional<bool> useNetworkLoader();
-#endif
-
 #if USE(CURL)
     void setNetworkProxySettings(WebCore::CurlProxySettings&&);
     const WebCore::CurlProxySettings& networkProxySettings() const LIFETIME_BOUND { return m_proxySettings; }
