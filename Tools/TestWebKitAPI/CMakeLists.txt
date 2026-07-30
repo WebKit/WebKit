@@ -255,6 +255,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PathTests.cpp
         Tests/WebCore/PixelBufferConversionTests.cpp
         Tests/WebCore/PlatformDynamicRangeLimitTests.cpp
+        Tests/WebCore/PlatformMediaSessionManagerTests.cpp
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/RegionTests.cpp
         Tests/WebCore/RenderStyleChange.cpp

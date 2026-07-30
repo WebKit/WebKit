@@ -590,7 +590,7 @@ void MediaSessionManagerInterface::sessionWillEndPlayback(PlatformMediaSessionIn
     MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(SessionWillEndPlayback, pausingSession.logIdentifier());
 #endif
 
-    auto sessions = this->sessions();
+    auto& sessions = this->sessions();
     auto sessionCount = sessions.computeSize();
     if (sessionCount < 2)
         return;

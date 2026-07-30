@@ -788,6 +788,7 @@
 				WebCore/PixelBufferConversionTests.cpp,
 				WebCore/PlatformCAAnimationKeyPath.cpp,
 				WebCore/PlatformDynamicRangeLimitTests.cpp,
+				WebCore/PlatformMediaSessionManagerTests.cpp,
 				WebCore/PODIntervalTree.cpp,
 				WebCore/PrivateClickMeasurement.cpp,
 				WebCore/PublicSuffix.cpp,
