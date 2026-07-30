@@ -689,6 +689,11 @@ public:
     WEBCORE_EXPORT void setViewExposedRect(std::optional<FloatRect>);
     std::optional<FloatRect> viewExposedRect() const { return m_viewExposedRect; }
 
+    // Set once the main WCP has supplied this iframe root's exposed content rect via childrenFrameLayoutInfo,
+    // so a compositing flush that precedes the first sync doesn't clamp coverage to a stale/empty rect.
+    void setHasSetExposedContentRectFromEmbedder() { m_hasSetExposedContentRectFromEmbedder = true; }
+    bool hasEverSetExposedContentRectFromEmbedder() const { return m_hasSetExposedContentRectFromEmbedder; }
+
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
 
@@ -1040,6 +1045,7 @@ private:
     std::optional<LayoutRect> m_visualViewportOverrideRect; // Used when the iOS keyboard is showing.
 
     std::optional<FloatRect> m_viewExposedRect;
+    bool m_hasSetExposedContentRectFromEmbedder { false };
 
     OptionSet<PaintBehavior> m_paintBehavior;
 

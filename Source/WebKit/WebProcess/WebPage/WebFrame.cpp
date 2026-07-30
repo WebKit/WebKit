@@ -1306,10 +1306,16 @@ void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::In
     }
 
 #if PLATFORM(IOS_FAMILY)
-    // FIXME: This ensures cross-site iframe render correctly;
-    // it should be removed after rdar://122429810 is fixed.
-    frameView->setExposedContentRect(FloatRect { { }, frameView->size() });
+    // The iframe root's unobscured content size is its natural frame size: it drives the scrolling
+    // tree's scrollable-area size and CSS viewport units, so it must never be clamped to the visible
+    // region (doing so collapses an off-screen frame's scrolling node to 0x0).
     frameView->setUnobscuredContentSize(frameView->size());
+    // Tile coverage (exposedContentRect) is normally driven by the embedder-visible rect in
+    // WebPage::updateExposedRectFromParent, so a below-fold frame commits ~0 tiles. Until that
+    // path has supplied a rect at least once, back the whole frame so nothing blanks if the first
+    // compositor flush precedes the first childrenFrameLayoutInfo sync (see rdar://122429810 history).
+    if (!frameView->hasEverSetExposedContentRectFromEmbedder())
+        frameView->setExposedContentRect(FloatRect { { }, frameView->size() });
 #endif
 
     if (!rectChanged)

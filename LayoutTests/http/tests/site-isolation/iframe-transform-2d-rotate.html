@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!-- An out-of-process iframe rotated in 2D must render its full content. rotate() makes
+     visibleRectOfChild's axis-aligned box larger than the frame, so the projection back
+     into child coordinates must not clip the rotated content (coverage clamp correctness). -->
+<head><meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-2000"/>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+onmessage = (event) => {
+    if (window.testRunner && event.data == "onload")
+        setTimeout(() => testRunner.notifyDone(), 100);
+};
+</script>
+</head>
+<body style="margin:0;background:blue">
+<iframe src="http://localhost:8000/site-isolation/resources/green-background.html" frameborder=0
+    style="position:absolute; border:0; left:180px; top:120px; width:200px; height:150px;
+           transform:rotate(35deg); transform-origin:0 0"></iframe>
+</body>

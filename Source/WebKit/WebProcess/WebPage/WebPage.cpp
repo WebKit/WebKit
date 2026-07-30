@@ -1432,6 +1432,10 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 
             break;
 
+        case FrameTreeSyncDataType::ChildrenFrameLayoutInfo:
+            updateExposedRectFromParent(*coreFrame);
+            break;
+
         default:
             break;
         }
@@ -1447,8 +1451,76 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
         return;
 
     RefPtr coreFrame = frame->coreFrame();
-    if (coreFrame)
+    if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(WTF::move(data));
+        updateExposedRectFromParent(*coreFrame);
+    }
+}
+
+void WebPage::updateExposedRectFromParent(WebCore::Frame& parentCoreFrame)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=320601 - Align iOS and macOS behavior regarding m_exposedContentRect
+#if PLATFORM(IOS_FAMILY)
+    // When a RemoteFrame parent broadcasts childrenFrameLayoutInfo, each entry carries the child's visible
+    // rect in the parent (already clamped to the top-level viewport on the sender side).
+    // Project that rect into the child's own root-content coords and use it as the frame's exposedContentRect,
+    // so its tiled backing covers only the on-screen portion, matching the rect with site isolation off.
+    if (!m_page || !m_page->settings().siteIsolationEnabled())
+        return;
+
+    auto& childrenInfo = parentCoreFrame.frameTreeSyncData().childrenFrameLayoutInfo;
+    if (childrenInfo.isEmpty())
+        return;
+
+    bool needsRenderingUpdate = false;
+    for (RefPtr child = parentCoreFrame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        RefPtr localChild = dynamicDowncast<LocalFrame>(child.get());
+        if (!localChild)
+            continue;
+        RefPtr childView = localChild->view();
+        if (!childView)
+            continue;
+        auto it = childrenInfo.find(localChild->frameID());
+        if (it == childrenInfo.end())
+            continue;
+
+        // Project the parent-supplied visible rect into this child's root-content coordinates. A missing
+        // rect (fully below the fold / clipped out) maps to an empty rect so all tiles can be released.
+        Ref layoutInfo = it->value;
+        auto visibleRectInParent = layoutInfo->visibleRectInParent();
+        bool visibleRectInParentIsEmpty = !visibleRectInParent || visibleRectInParent->isEmpty();
+        auto projected = layoutInfo->projectVisibleRectToChildContent().value_or(FloatRect { });
+        projected.intersect(FloatRect { { }, childView->size() });
+
+        // If the main WCP says this frame is visible but the projection is empty, fallback to the full
+        // rect until we get updated geometry from the main WCP
+        if (!visibleRectInParentIsEmpty && projected.isEmpty())
+            projected = FloatRect { { }, childView->size() };
+
+        // This runs once per parent rendering update, so only touch the frame (and schedule a rendering
+        // update) when the coverage rect actually changes — or the first time the embedder supplies a rect,
+        // which flips WebFrame's full-size fallback off. This keeps steady-state (no scroll/resize)
+        // broadcasts from scheduling redundant rendering updates.
+        // exposedContentRect tracks the main WCP visible region, while unobscured content size stays at
+        // the child view's size (setUnobscuredContentSize is itself a no-op when unchanged).
+        if (childView->exposedContentRect() != projected) {
+            childView->setExposedContentRect(projected);
+            needsRenderingUpdate = true;
+        }
+        childView->setUnobscuredContentSize(childView->size());
+        if (!childView->hasEverSetExposedContentRectFromEmbedder()) {
+            childView->setHasSetExposedContentRectFromEmbedder();
+            needsRenderingUpdate = true;
+        }
+    }
+
+    if (needsRenderingUpdate) {
+        if (RefPtr drawingArea = this->drawingArea())
+            drawingArea->triggerRenderingUpdate();
+    }
+#else
+    UNUSED_PARAM(parentCoreFrame);
+#endif
 }
 
 void WebPage::updateUserActivationState(const Vector<FrameIdentifier>& frameIDs, MonotonicTime activationTime)

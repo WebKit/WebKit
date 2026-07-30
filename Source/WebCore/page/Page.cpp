@@ -2224,8 +2224,22 @@ void Page::syncLocalFrameInfoToRemote()
 
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+            auto childVisibleRect = frameView->visibleRectOfChild(*child.get());
+
+            // Clamp the child's visible rect to the portion of the page actually on-screen, so an offscreen
+            // iframe commits ~0 tiles — matching the single-tiled-backing coverage decision the page makes
+            // with site isolation off. visibleRectOfChild() clips through the compositor tree but not the
+            // top-level viewport, so a fully-below-fold iframe can still return a non-empty box; intersect
+            // it here with the parent's exposed viewport.
+#if PLATFORM(IOS_FAMILY)
+            if (childVisibleRect && frame.settings().siteIsolationEnabled()) {
+                auto viewport = LayoutRect { frameView->exposedContentRect() };
+                childVisibleRect->intersect(viewport);
+            }
+#endif
+
             childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo::create(
-                frameView->visibleRectOfChild(*child.get()),
+                childVisibleRect,
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 frameView->absoluteToChildFrameOwnerLocalTransform(*child),
                 frame.usedZoomForChild(*child),

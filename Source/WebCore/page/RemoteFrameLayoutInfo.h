@@ -57,6 +57,10 @@ public:
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
+    // Inverse of LocalFrameView::visibleRectOfChild - iframes use this to clamp its
+    // tiled-backing coverage to the embedder-visible region (setExposedContentRect).
+    WEBCORE_EXPORT std::optional<FloatRect> projectVisibleRectToChildContent() const;
+
 private:
     RemoteFrameLayoutInfo(std::optional<LayoutRect>, TransformationMatrix, TransformationMatrix, float, LayoutPoint, OptionSet<FrameOwnerElementAppearance>);
 

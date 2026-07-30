@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteFrameLayoutInfo.h"
 
+#include "FloatRect.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -45,6 +46,23 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(std::optional<LayoutRect> visibleRe
     , m_contentBoxLocation(contentBoxLocation)
     , m_ownerElementAppearance(ownerElementAppearance)
 {
+}
+
+std::optional<FloatRect> RemoteFrameLayoutInfo::projectVisibleRectToChildContent() const
+{
+    if (!m_visibleRectInParent)
+        return std::nullopt;
+
+    ASSERT(m_absoluteToChildFrameOwnerLocalTransform.isAffine());
+    // Inverse of LocalFrameView::visibleRectOfChild(): visibleRectInParent is in the parent document's
+    // coordinates. Map it into the iframe owner element's local space, subtract the owner content-box
+    // offset so the rect is relative to the iframe content origin, and undo the owner's used CSS zoom so
+    // the result is in the child frame's unzoomed root-content coordinates (its RenderView space).
+    auto ownerLocal = m_absoluteToChildFrameOwnerLocalTransform.mapRect(FloatRect { *m_visibleRectInParent });
+    ownerLocal.moveBy(-FloatPoint { m_contentBoxLocation });
+    if (m_usedZoom > 0)
+        ownerLocal.scale(1.0f / m_usedZoom);
+    return ownerLocal;
 }
 
 } // namespace WebCore

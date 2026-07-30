@@ -867,6 +867,10 @@ public:
     void frameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
     void allFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, Ref<WebCore::FrameTreeSyncData>&&);
 
+    // Clamps local iframe-root children's exposedContentRect to the embedder-visible rect carried in
+    // the parent's childrenFrameLayoutInfo.
+    void updateExposedRectFromParent(WebCore::Frame& parentCoreFrame);
+
     void updateUserActivationState(const Vector<WebCore::FrameIdentifier>&, MonotonicTime);
     void consumeUserActivations(const Vector<WebCore::FrameIdentifier>&);
 
