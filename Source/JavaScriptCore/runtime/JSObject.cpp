@@ -2861,6 +2861,9 @@ JSString* JSObject::toString(JSGlobalObject* globalObject) const
             RELEASE_AND_RETURN(scope, array->fastToString(globalObject));
     }
 
+    if (auto* tag = structure()->defaultToPrimitiveFastAndNonObservable(vm))
+        return tag;
+
     JSValue primitive = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, PreferString);
     RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
     if (!primitive) [[likely]] {
