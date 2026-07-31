@@ -1,0 +1,50 @@
+
+PASS default value of anchor.tabIndex
+PASS changing tabindex from "3" to "" resets anchor.tabIndex
+PASS changing tabindex from "3" to "invalid" resets anchor.tabIndex
+PASS changing tabindex from "3" to " " resets anchor.tabIndex
+PASS changing tabindex from "3" to "9999999999" resets anchor.tabIndex
+PASS changing tabindex from "3" to "-9999999999" resets anchor.tabIndex
+PASS trailing garbage after the digits of anchor's tabindex is ignored
+PASS removing tabindex resets anchor.tabIndex
+PASS default value of rect.tabIndex
+PASS changing tabindex from "3" to "" resets rect.tabIndex
+PASS changing tabindex from "3" to "invalid" resets rect.tabIndex
+PASS changing tabindex from "3" to " " resets rect.tabIndex
+PASS changing tabindex from "3" to "9999999999" resets rect.tabIndex
+PASS changing tabindex from "3" to "-9999999999" resets rect.tabIndex
+PASS trailing garbage after the digits of rect's tabindex is ignored
+PASS removing tabindex resets rect.tabIndex
+PASS default value of g.tabIndex
+PASS changing tabindex from "3" to "" resets g.tabIndex
+PASS changing tabindex from "3" to "invalid" resets g.tabIndex
+PASS changing tabindex from "3" to " " resets g.tabIndex
+PASS changing tabindex from "3" to "9999999999" resets g.tabIndex
+PASS changing tabindex from "3" to "-9999999999" resets g.tabIndex
+PASS trailing garbage after the digits of g's tabindex is ignored
+PASS removing tabindex resets g.tabIndex
+PASS default value of circle.tabIndex
+PASS changing tabindex from "3" to "" resets circle.tabIndex
+PASS changing tabindex from "3" to "invalid" resets circle.tabIndex
+PASS changing tabindex from "3" to " " resets circle.tabIndex
+PASS changing tabindex from "3" to "9999999999" resets circle.tabIndex
+PASS changing tabindex from "3" to "-9999999999" resets circle.tabIndex
+PASS trailing garbage after the digits of circle's tabindex is ignored
+PASS removing tabindex resets circle.tabIndex
+PASS default value of text.tabIndex
+PASS changing tabindex from "3" to "" resets text.tabIndex
+PASS changing tabindex from "3" to "invalid" resets text.tabIndex
+PASS changing tabindex from "3" to " " resets text.tabIndex
+PASS changing tabindex from "3" to "9999999999" resets text.tabIndex
+PASS changing tabindex from "3" to "-9999999999" resets text.tabIndex
+PASS trailing garbage after the digits of text's tabindex is ignored
+PASS removing tabindex resets text.tabIndex
+PASS default value of nested.tabIndex
+PASS changing tabindex from "3" to "" resets nested.tabIndex
+PASS changing tabindex from "3" to "invalid" resets nested.tabIndex
+PASS changing tabindex from "3" to " " resets nested.tabIndex
+PASS changing tabindex from "3" to "9999999999" resets nested.tabIndex
+PASS changing tabindex from "3" to "-9999999999" resets nested.tabIndex
+PASS trailing garbage after the digits of nested's tabindex is ignored
+PASS removing tabindex resets nested.tabIndex
+

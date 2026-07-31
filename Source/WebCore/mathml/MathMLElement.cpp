@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
  * Copyright (C) 2016 Igalia S.L.
  *
@@ -96,10 +96,10 @@ void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString
             downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
         break;
     case AttributeNames::tabindexAttr:
-        if (newValue.isEmpty())
-            setTabIndexExplicitly(std::nullopt);
-        else if (auto optionalTabIndex = parseHTMLInteger(newValue))
+        if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
+        else
+            setTabIndexExplicitly(std::nullopt);
         break;
     default:
         if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); !eventName.isNull()) {
