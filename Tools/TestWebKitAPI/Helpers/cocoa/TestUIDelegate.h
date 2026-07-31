@@ -65,6 +65,7 @@
 
 @interface WKWebView (TestUIDelegateExtras)
 - (NSString *)_test_waitForAlert;
+- (NSString *)_test_waitForAlertAndSubframeLoads:(int)expectedSubframeCount;
 - (NSString *)_test_waitForConfirm;
 - (NSString *)_test_waitForPromptWithReply:(NSString *)reply;
 - (void)_test_waitForInspectorToShow;

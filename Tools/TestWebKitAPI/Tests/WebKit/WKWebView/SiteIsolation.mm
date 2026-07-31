@@ -4904,6 +4904,102 @@ TEST(SiteIsolation, GoBackToNestedIframeCreatedAfterNavigatingSibling)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "c");
 }
 
+TEST(SiteIsolation, MultipleIframeBackForwardAfterSessionRestore)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/source'></iframe><iframe src='https://apple.com/other'></iframe>"_s } },
+        { "/source"_s, { "<script> alert('source'); </script>"_s } },
+        { "/destination"_s, { "<script> alert('destination'); </script>"_s } },
+        { "/other"_s, { "other frame"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "source");
+
+    // Navigate first iframe to /destination.
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:childFrame.get() completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
+
+    // Session restore to a new web view.
+    RetainPtr sessionState = [webView _sessionState];
+    auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [newWebView _restoreSessionState:sessionState.get() andNavigate:YES];
+    EXPECT_WK_STREQ([newWebView _test_waitForAlert], "destination");
+
+    // Go back — first iframe should go back to 'source', second iframe stays at 'other'.
+    // Wait for both the alert from the 'source' iframe and the silent 'other' iframe to load.
+    [newWebView goBack];
+    EXPECT_WK_STREQ([newWebView _test_waitForAlertAndSubframeLoads:2], "source");
+
+    // After session restore, child frame ordering may differ from HTML source order.
+    // Verify both iframes have the expected URLs regardless of order.
+    NSString *url1 = [newWebView objectByEvaluatingJavaScript:@"location.href" inFrame:[newWebView firstChildFrame]];
+    NSString *url2 = [newWebView objectByEvaluatingJavaScript:@"location.href" inFrame:[newWebView secondChildFrame]];
+    if ([url1 isEqualToString:@"https://webkit.org/source"])
+        EXPECT_WK_STREQ("https://apple.com/other", url2);
+    else {
+        EXPECT_WK_STREQ("https://apple.com/other", url1);
+        EXPECT_WK_STREQ("https://webkit.org/source", url2);
+    }
+
+    // Go forward — first iframe should go forward to 'destination'.
+    [newWebView goForward];
+    EXPECT_WK_STREQ([newWebView _test_waitForAlert], "destination");
+}
+
+TEST(SiteIsolation, BackAndForwardNavigationWithCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/a"_s, { "<iframe src='https://frame.com/frame'></iframe>"_s } },
+        { "/b"_s, { "page b"_s } },
+        { "/c"_s, { "page c"_s } },
+        { "/frame"_s, { "frame content"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    // Build history: A (with cross-origin iframe) → B → C
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://c.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Go back: C → B.
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("https://b.com/b", [webView objectByEvaluatingJavaScript:@"location.href"]);
+
+    // Go back: B → A (page A has cross-origin iframe, exercises frame tree rebuild).
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    [navigationDelegate waitForDidFinishLoadInSubframe];
+
+    // Should be at page A with its cross-origin iframe.
+    EXPECT_WK_STREQ("https://a.com/a", [webView objectByEvaluatingJavaScript:@"location.href"]);
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://frame.com"_s } }
+        },
+    });
+
+    // Go forward: A → B.
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("https://b.com/b", [webView objectByEvaluatingJavaScript:@"location.href"]);
+
+    // Go forward: B → C.
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ("https://c.com/c", [webView objectByEvaluatingJavaScript:@"location.href"]);
+}
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];

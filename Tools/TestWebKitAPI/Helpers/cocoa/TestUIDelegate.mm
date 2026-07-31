@@ -27,6 +27,7 @@
 #import "Helpers/cocoa/TestUIDelegate.h"
 
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
@@ -269,6 +270,27 @@
     self.UIDelegate = uiDelegate.get();
     NSString *alert = [uiDelegate waitForAlert];
     self.UIDelegate = nil;
+    return alert;
+}
+
+- (NSString *)_test_waitForAlertAndSubframeLoads:(int)expectedSubframeCount
+{
+    EXPECT_TRUE([self.navigationDelegate isKindOfClass:[TestNavigationDelegate class]]);
+    auto navigationDelegate = (TestNavigationDelegate *)self.navigationDelegate;
+    EXPECT_FALSE(navigationDelegate.didFinishLoadWithRequestInFrame);
+
+    __block int subframeLoadCount = 0;
+    __block bool subframesReady = (expectedSubframeCount <= 0);
+    navigationDelegate.didFinishLoadWithRequestInFrame = ^(WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
+        if (!frame.isMainFrame && ++subframeLoadCount >= expectedSubframeCount)
+            subframesReady = true;
+    };
+
+    NSString *alert = [self _test_waitForAlert];
+
+    if (!subframesReady)
+        TestWebKitAPI::Util::run(&subframesReady);
+    navigationDelegate.didFinishLoadWithRequestInFrame = nil;
     return alert;
 }
 
