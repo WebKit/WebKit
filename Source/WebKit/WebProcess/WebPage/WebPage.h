@@ -663,6 +663,7 @@ public:
     void updatePDFHUDLocation(PDFPluginBase&, const WebCore::IntRect&);
     void removePDFHUD(PDFPluginBase&);
     void showPDFHUD(PDFPluginBase&);
+    void updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
 #endif
 
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)

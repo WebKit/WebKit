@@ -265,6 +265,7 @@ public:
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
     void save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
+    void updateHUDLocation();
 #endif
 
     void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
@@ -451,7 +452,6 @@ protected:
     virtual void incrementalLoadingDidFinish() { }
 
 #if ENABLE(PDF_HUD)
-    void updateHUDLocation();
     WebCore::IntRect frameForHUDInRootViewCoordinates() const;
     bool NODELETE hudEnabled() const;
     bool shouldShowHUD() const;
