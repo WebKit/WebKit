@@ -774,6 +774,17 @@ class Instruction
             $asm.puts ".word #{operands[0].value}"
             afterData.lower("ARM")
             $asm.puts "ldr #{operands[1].armOperand}, #{LocalLabelReference.new(codeOrigin, data).asmLabel}"
+        when "pcrtoaddr"
+            labelRef = operands[0]
+            dest = operands[1].armOperand
+
+            uid = $asm.newUID
+            pcLabel = "Ljsc_llint_pcrtoaddr_#{uid}"
+
+            $asm.puts "movw #{dest}, :lower16:(#{labelRef.asmLabel}-(#{pcLabel}+4))"
+            $asm.puts "movt #{dest}, :upper16:(#{labelRef.asmLabel}-(#{pcLabel}+4))"
+            $asm.puts "#{pcLabel}:"
+            $asm.puts "add #{dest}, #{dest}, pc"
         when "sxb2i"
             $asm.puts "sxtb #{armFlippedOperands(operands)}"
         when "sxh2i"
