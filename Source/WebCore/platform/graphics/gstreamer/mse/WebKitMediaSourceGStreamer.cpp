@@ -202,6 +202,9 @@ struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
 static void dumpPipeline([[maybe_unused]] ASCIILiteral description, [[maybe_unused]] const RefPtr<Stream>& stream)
 {
 #ifndef GST_DISABLE_GST_DEBUG
+    if (!enableMSEAdditionalPipelineDumps())
+        return;
+
     auto pipeline = findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source)));
     auto fileName = makeString(unsafeSpan(GST_OBJECT_NAME(pipeline.get())), '-', stream->track->id(), '-', description);
     dumpBinToDotFile(pipeline, fileName);

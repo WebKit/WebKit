@@ -371,7 +371,8 @@ GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*
     }
 
     GST_TRACE_OBJECT(pipeline(), "Posting end-of-append task to the main thread");
-    dumpBinToDotFile(m_pipeline, makeString(unsafeSpan(GST_ELEMENT_NAME(m_pipeline.get())), "-end-of-append"_s));
+    if (enableMSEAdditionalPipelineDumps())
+        dumpBinToDotFile(m_pipeline, makeString(unsafeSpan(GST_ELEMENT_NAME(m_pipeline.get())), "-end-of-append"_s));
     m_taskQueue.enqueueTask([this]() {
         handleEndOfAppend();
     });
@@ -737,12 +738,13 @@ void AppendPipeline::didReceiveInitializationSegment()
         }
     }
 
-    auto dotFileName = makeString(unsafeSpan(GST_ELEMENT_NAME(m_pipeline.get())), "-received-init-segment"_s, m_pendingInitializationSegmentForChangeType ? "-for-change-type"_s : ""_s);
     m_hasReceivedFirstInitializationSegment = true;
-    m_pendingInitializationSegmentForChangeType = false;
 
     GST_DEBUG_OBJECT(pipeline(), "Notifying SourceBuffer of initialization segment.");
-    dumpBinToDotFile(m_pipeline, dotFileName);
+    if (enableMSEAdditionalPipelineDumps())
+        dumpBinToDotFile(m_pipeline, makeString(unsafeSpan(GST_ELEMENT_NAME(m_pipeline.get())), "-received-init-segment"_s, m_pendingInitializationSegmentForChangeType ? "-for-change-type"_s : ""_s));
+
+    m_pendingInitializationSegmentForChangeType = false;
     m_sourceBufferPrivate.didReceiveInitializationSegment(WTF::move(initializationSegment));
 }
 
@@ -1247,15 +1249,15 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
 void AppendPipeline::linkPadWithTrack(GstPad* demuxerSrcPad, Track& track)
 {
     auto pipelineName = unsafeSpan(GST_ELEMENT_NAME(m_pipeline.get()));
-    auto dotFileNameBefore = makeString(pipelineName, "-before-link"_s);
-    auto dotFileNameAfter = makeString(pipelineName, "-after-link"_s);
 
     GST_DEBUG_OBJECT(demuxerSrcPad, "Linking to track %" PRIu64 "", track.trackId);
-    dumpBinToDotFile(m_pipeline, dotFileNameBefore);
+    if (enableMSEAdditionalPipelineDumps())
+        dumpBinToDotFile(m_pipeline, makeString(pipelineName, "-before-link"_s));
     ASSERT(!GST_PAD_IS_LINKED(track.entryPad.get()));
     gst_pad_link(demuxerSrcPad, track.entryPad.get());
     ASSERT(GST_PAD_IS_LINKED(track.entryPad.get()));
-    dumpBinToDotFile(m_pipeline, dotFileNameAfter);
+    if (enableMSEAdditionalPipelineDumps())
+        dumpBinToDotFile(m_pipeline, makeString(pipelineName, "-after-link"_s));
 }
 
 Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(Track& appendPipelineTrack, int trackIndex, TrackID trackId)

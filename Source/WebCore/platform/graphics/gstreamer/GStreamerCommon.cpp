@@ -2201,6 +2201,12 @@ void dumpBinToDotFile(const GRefPtr<GstElement>& element, const String& filename
     dumpBinToDotFile(GST_BIN_CAST(element.get()), filename, details);
 }
 
+bool enableMSEAdditionalPipelineDumps()
+{
+    static bool result = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_MSE_VERBOSE_PIPELINE_DUMPS")) == "1"_s;
+    return result;
+}
+
 GstDebugLevel gstDebugLevelFromWTFLogLevel(WTFLogLevel level)
 {
     switch (level) {

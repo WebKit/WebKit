@@ -449,6 +449,8 @@ private:
     PadProbeCallback m_callback;
 };
 
+bool enableMSEAdditionalPipelineDumps();
+
 } // namespace WebCore
 
 #ifndef GST_BUFFER_DTS_OR_PTS
