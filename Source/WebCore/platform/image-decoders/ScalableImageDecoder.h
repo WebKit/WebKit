@@ -122,17 +122,9 @@ public:
         return true;
     }
 
-    // Lazily-decodes enough of the image to get the frame count (if
-    // possible), without decoding the individual frames.
-    // FIXME: Right now that has to be done by each subclass; factor the
-    // decode call out and use it here.
-    size_t frameCount() const override { return 1; }
+    size_t frameCount() const override;
 
     RepetitionCount repetitionCount() const override { return RepetitionCountNone; }
-
-    // Decodes as much of the requested frame as possible, and returns an
-    // ScalableImageDecoder-owned pointer.
-    virtual ScalableImageDecoderFrame* frameBufferAtIndex(size_t) = 0;
 
     bool frameIsCompleteAtIndex(size_t) const override;
 
@@ -167,16 +159,28 @@ public:
 
     bool failed() const { return m_encodedDataStatus == EncodedDataStatus::Error; }
 
-    // Clears decoded pixel data from before the provided frame unless that
-    // data may be needed to decode future frames (e.g. due to GIF frame
-    // compositing).
-    void clearFrameBufferCache(size_t) override { }
+    void clearFrameBufferCache(size_t) override;
 
     // If the image has a cursor hot-spot, stores it in the argument
     // and returns true. Otherwise returns false.
     std::optional<IntPoint> hotSpot() const override { return std::nullopt; }
 
 protected:
+    // Decodes as much of the requested frame as possible, and returns an
+    // ScalableImageDecoder-owned pointer.
+    virtual ScalableImageDecoderFrame* frameBufferAtIndex(size_t) WTF_REQUIRES_LOCK(m_lock) = 0;
+
+    // Lazily-decodes enough of the image to get the frame count (if
+    // possible), without decoding the individual frames.
+    // FIXME: Right now that has to be done by each subclass; factor the
+    // decode call out and use it here.
+    virtual size_t decodeIfNeededAndGetFrameCount() const WTF_REQUIRES_LOCK(m_lock) { return 1; }
+
+    // Clears decoded pixel data from before the provided frame unless that
+    // data may be needed to decode future frames (e.g. due to GIF frame
+    // compositing).
+    virtual void clearDecodedPixelDataIfNeeded(size_t) WTF_REQUIRES_LOCK(m_lock) { }
+
     RefPtr<const SharedBuffer> m_data;
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache WTF_GUARDED_BY_LOCK(m_lock);
     mutable Lock m_lock;

@@ -763,8 +763,10 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::SwapChain:
     switch (m_type) {
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
 #if USE(GBM) || OS(ANDROID)
-    case Type::EGLImage:
+    case Type::EGLImage: {
+        Locker locker { m_bufferFormatLock };
         return RenderTargetEGLImage::create(m_surface.get(), m_size, m_bufferFormat);
+    }
 #endif
     case Type::Texture:
         return RenderTargetTexture::create(m_surface.get(), m_size);
@@ -1034,6 +1036,7 @@ uint64_t AcceleratedSurface::window()
 bool AcceleratedSurface::isOpaque() const
 {
     ASSERT(RunLoop::isMain());
+    Locker locker { m_backgroundColorLock };
     return !m_backgroundColor || m_backgroundColor->isOpaque();
 }
 

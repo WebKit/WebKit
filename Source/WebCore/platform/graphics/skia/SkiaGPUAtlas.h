@@ -71,7 +71,8 @@ public:
     void wait()
     {
         Locker locker { m_lock };
-        m_condition.wait(m_lock, [this]() WTF_REQUIRES_LOCK(m_lock) {
+        m_condition.wait(m_lock, [this]() {
+            assertIsHeld(m_lock);
             return !m_pendingCount;
         });
     }

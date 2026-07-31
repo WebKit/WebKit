@@ -49,7 +49,7 @@ namespace WebCore {
 
         // ScalableImageDecoder
         String filenameExtension() const override { return "png"_s; }
-        size_t frameCount() const override { return m_frameCount; }
+        size_t decodeIfNeededAndGetFrameCount() const override { return m_frameCount; }
         RepetitionCount repetitionCount() const override;
         ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
@@ -65,10 +65,11 @@ namespace WebCore {
         void frameHeader();
 
         void init();
-        void clearFrameBufferCache(size_t clearBeforeFrame) override;
+        void clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame) override;
 
         bool isComplete() const
         {
+            assertIsHeld(m_lock);
             if (m_frameBufferCache.isEmpty())
                 return false;
 
@@ -82,8 +83,11 @@ namespace WebCore {
 
         bool isCompleteAtIndex(size_t index)
         {
+            assertIsHeld(m_lock);
             return (index < m_frameBufferCache.size() && m_frameBufferCache[index].isComplete());
         }
+
+        ScalableImageDecoderFrame* firstFrameBuffer();
 
     private:
         PNGImageDecoder(AlphaOption, GammaAndColorProfileOption);

@@ -58,6 +58,7 @@ void BMPImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataRe
 
 ScalableImageDecoderFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
 {
+    assertIsHeld(m_lock);
     if (index)
         return 0;
 
@@ -78,6 +79,7 @@ bool BMPImageDecoder::setFailed()
 
 void BMPImageDecoder::decode(bool onlySize, bool allDataReceived)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 
@@ -93,6 +95,7 @@ void BMPImageDecoder::decode(bool onlySize, bool allDataReceived)
 
 bool BMPImageDecoder::decodeHelper(bool onlySize)
 {
+    assertIsHeld(m_lock);
     size_t imgDataOffset = 0;
     if ((m_decodedOffset < sizeOfFileHeader) && !processFileHeader(&imgDataOffset))
         return false;

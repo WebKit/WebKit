@@ -57,8 +57,9 @@ bool GIFImageDecoder::setSize(const IntSize& size)
     return ScalableImageDecoder::setSize(size);
 }
 
-size_t GIFImageDecoder::frameCount() const
+size_t GIFImageDecoder::decodeIfNeededAndGetFrameCount() const
 {
+    assertIsHeld(m_lock);
     const_cast<GIFImageDecoder*>(this)->decode(std::numeric_limits<unsigned>::max(), GIFFrameCountQuery, isAllDataReceived());
     return m_frameBufferCache.size();
 }
@@ -98,6 +99,7 @@ RepetitionCount GIFImageDecoder::repetitionCount() const
 
 size_t GIFImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex)
 {
+    assertIsHeld(m_lock);
     // The first frame doesn't depend on any other.
     if (!frameIndex)
         return 0;
@@ -133,7 +135,8 @@ size_t GIFImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex)
 
 ScalableImageDecoderFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index >= frameCount())
+    assertIsHeld(m_lock);
+    if (index >= decodeIfNeededAndGetFrameCount())
         return 0;
 
     auto& frame = m_frameBufferCache[index];
@@ -151,8 +154,9 @@ bool GIFImageDecoder::setFailed()
     return ScalableImageDecoder::setFailed();
 }
 
-void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
+void GIFImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 {
+    assertIsHeld(m_lock);
     // In some cases, like if the decoder was destroyed while animating, we
     // can be asked to clear more frames than we currently have.
     if (m_frameBufferCache.isEmpty())
@@ -209,6 +213,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels)
 {
+    assertIsHeld(m_lock);
     const GIFFrameContext* frameContext = m_reader->frameContext();
     // The pixel data and coordinates supplied to us are relative to the frame's
     // origin within the entire image size, i.e.
@@ -268,6 +273,7 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
 
 bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, ScalableImageDecoderFrame::DisposalMethod disposalMethod)
 {
+    assertIsHeld(m_lock);
     // Initialize the frame if necessary.  Some GIFs insert do-nothing frames,
     // in which case we never reach haveDecodedRow() before getting here.
     auto& buffer = m_frameBufferCache[frameIndex];
@@ -326,6 +332,7 @@ void GIFImageDecoder::gifComplete()
 
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query, bool allDataReceived)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 
@@ -363,6 +370,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query, bool allDataR
 
 bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 {
+    assertIsHeld(m_lock);
     // Initialize the frame rect in our buffer.
     const GIFFrameContext* frameContext = m_reader->frameContext();
     IntRect frameRect(frameContext->xOffset, frameContext->yOffset, frameContext->width, frameContext->height);

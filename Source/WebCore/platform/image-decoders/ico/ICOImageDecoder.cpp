@@ -86,16 +86,18 @@ bool ICOImageDecoder::setSize(const IntSize& size)
     return m_frameSize.isEmpty() ? ScalableImageDecoder::setSize(size) : ((size == m_frameSize) || setFailed());
 }
 
-size_t ICOImageDecoder::frameCount() const
+size_t ICOImageDecoder::decodeIfNeededAndGetFrameCount() const
 {
+    assertIsHeld(m_lock);
     const_cast<ICOImageDecoder*>(this)->decode(0, true, isAllDataReceived());
     return m_frameBufferCache.size();
 }
 
 ScalableImageDecoderFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
 {
+    assertIsHeld(m_lock);
     // Ensure |index| is valid.
-    if (index >= frameCount())
+    if (index >= decodeIfNeededAndGetFrameCount())
         return 0;
 
     auto* buffer = &m_frameBufferCache[index];
@@ -152,6 +154,7 @@ void ICOImageDecoder::setDataForPNGDecoderAtIndex(size_t index)
 
 void ICOImageDecoder::decode(size_t index, bool onlySize, bool allDataReceived)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 
@@ -186,6 +189,7 @@ bool ICOImageDecoder::decodeDirectory()
 
 bool ICOImageDecoder::decodeAtIndex(size_t index)
 {
+    assertIsHeld(m_lock);
     ASSERT_WITH_SECURITY_IMPLICATION(index < m_dirEntries.size());
     const IconDirectoryEntry& dirEntry = m_dirEntries[index];
     const ImageType imageType = imageTypeAtIndex(index);
@@ -195,7 +199,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     if (imageType == BMP) {
         if (!m_bmpReaders[index]) {
             // We need to have already sized m_frameBufferCache before this, and
-            // we must not resize it again later (see caution in frameCount()).
+            // we must not resize it again later (see caution in decodeIfNeededAndGetFrameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
             m_bmpReaders[index] = makeUnique<BMPImageReader>(this, dirEntry.m_imageOffset, 0, true);
             m_bmpReaders[index]->setData(*m_data);
@@ -215,7 +219,8 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     // in the directory.
     if (m_pngDecoders[index]->encodedDataStatus() >= EncodedDataStatus::SizeAvailable && (m_pngDecoders[index]->size() != dirEntry.m_size))
         return setFailed();
-    m_frameBufferCache[index] = *m_pngDecoders[index]->frameBufferAtIndex(0);
+
+    m_frameBufferCache[index] = *static_cast<PNGImageDecoder*>(m_pngDecoders[index].get())->firstFrameBuffer();
     return !m_pngDecoders[index]->failed() || setFailed();
 }
 

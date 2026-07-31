@@ -173,7 +173,7 @@ void CoordinatedPlatformLayer::notifyCompositionRequired()
 
 void CoordinatedPlatformLayer::setPosition(FloatPoint&& position)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     m_pendingState.position = WTF::move(position);
 }
 
@@ -185,7 +185,7 @@ void CoordinatedPlatformLayer::setPositionForScrolling(const FloatPoint& positio
 
 const FloatPoint& CoordinatedPlatformLayer::position() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_position;
 }
 
@@ -207,7 +207,7 @@ FloatPoint CoordinatedPlatformLayer::topLeftPositionForScrolling()
 
 void CoordinatedPlatformLayer::setBoundsOrigin(const FloatPoint& origin)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     m_pendingState.boundsOrigin = origin;
 }
 
@@ -219,13 +219,13 @@ void CoordinatedPlatformLayer::setBoundsOriginForScrolling(const FloatPoint& ori
 
 const FloatPoint& CoordinatedPlatformLayer::boundsOrigin() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_boundsOrigin;
 }
 
 void CoordinatedPlatformLayer::setAnchorPoint(FloatPoint3D&& point)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_anchorPoint == point)
         return;
 
@@ -236,13 +236,13 @@ void CoordinatedPlatformLayer::setAnchorPoint(FloatPoint3D&& point)
 
 const FloatPoint3D& CoordinatedPlatformLayer::anchorPoint() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_anchorPoint;
 }
 
 void CoordinatedPlatformLayer::setSize(FloatSize&& size)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_size == size)
         return;
 
@@ -253,19 +253,19 @@ void CoordinatedPlatformLayer::setSize(FloatSize&& size)
 
 const FloatSize& CoordinatedPlatformLayer::size() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_size;
 }
 
 FloatRect CoordinatedPlatformLayer::bounds() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return FloatRect({ }, m_size);
 }
 
 void CoordinatedPlatformLayer::setTransform(const TransformationMatrix& matrix)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_transform == matrix)
         return;
 
@@ -276,13 +276,13 @@ void CoordinatedPlatformLayer::setTransform(const TransformationMatrix& matrix)
 
 const TransformationMatrix& CoordinatedPlatformLayer::transform() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_transform;
 }
 
 void CoordinatedPlatformLayer::setChildrenTransform(const TransformationMatrix& matrix)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_childrenTransform == matrix)
         return;
 
@@ -293,7 +293,7 @@ void CoordinatedPlatformLayer::setChildrenTransform(const TransformationMatrix& 
 
 const TransformationMatrix& CoordinatedPlatformLayer::childrenTransform() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_childrenTransform;
 }
 
@@ -304,7 +304,7 @@ void CoordinatedPlatformLayer::didUpdateLayerTransform()
 
 void CoordinatedPlatformLayer::setVisibleRect(const FloatRect& visibleRect)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_visibleRect == visibleRect)
         return;
 
@@ -313,13 +313,13 @@ void CoordinatedPlatformLayer::setVisibleRect(const FloatRect& visibleRect)
 
 const FloatRect& CoordinatedPlatformLayer::visibleRect() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_visibleRect;
 }
 
 void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVisibleRect, IntRect&& transformedVisibleRectIncludingFuture)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_transformedVisibleRect == transformedVisibleRect && m_transformedVisibleRectIncludingFuture == transformedVisibleRectIncludingFuture)
         return;
 
@@ -331,7 +331,7 @@ void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVi
 #if ENABLE(SCROLLING_THREAD)
 void CoordinatedPlatformLayer::setScrollingNodeID(std::optional<ScrollingNodeID> nodeID)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_scrollingNodeID == nodeID)
         return;
 
@@ -342,14 +342,14 @@ void CoordinatedPlatformLayer::setScrollingNodeID(std::optional<ScrollingNodeID>
 
 const Markable<ScrollingNodeID>& CoordinatedPlatformLayer::scrollingNodeID() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_scrollingNodeID;
 }
 #endif
 
 void CoordinatedPlatformLayer::setDrawsContent(bool drawsContent)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_drawsContent == drawsContent)
         return;
 
@@ -360,7 +360,7 @@ void CoordinatedPlatformLayer::setDrawsContent(bool drawsContent)
 
 void CoordinatedPlatformLayer::setMasksToBounds(bool masksToBounds)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_masksToBounds == masksToBounds)
         return;
 
@@ -372,7 +372,7 @@ void CoordinatedPlatformLayer::setMasksToBounds(bool masksToBounds)
 
 void CoordinatedPlatformLayer::setPreserves3D(bool preserves3D)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_preserves3D == preserves3D)
         return;
 
@@ -383,7 +383,7 @@ void CoordinatedPlatformLayer::setPreserves3D(bool preserves3D)
 
 void CoordinatedPlatformLayer::setBackfaceVisibility(bool backfaceVisibility)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_backfaceVisibility == backfaceVisibility)
         return;
 
@@ -394,7 +394,7 @@ void CoordinatedPlatformLayer::setBackfaceVisibility(bool backfaceVisibility)
 
 void CoordinatedPlatformLayer::setOpacity(float opacity)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_opacity == opacity)
         return;
 
@@ -405,7 +405,7 @@ void CoordinatedPlatformLayer::setOpacity(float opacity)
 
 void CoordinatedPlatformLayer::setBlendMode(BlendMode blendMode)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_blendMode == blendMode)
         return;
 
@@ -417,7 +417,7 @@ void CoordinatedPlatformLayer::setBlendMode(BlendMode blendMode)
 
 void CoordinatedPlatformLayer::setContentsVisible(bool contentsVisible)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsVisible == contentsVisible)
         return;
 
@@ -429,13 +429,13 @@ void CoordinatedPlatformLayer::setContentsVisible(bool contentsVisible)
 
 bool CoordinatedPlatformLayer::contentsVisible() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_contentsVisible;
 }
 
 void CoordinatedPlatformLayer::setContentsOpaque(bool contentsOpaque)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsOpaque == contentsOpaque)
         return;
 
@@ -448,7 +448,7 @@ void CoordinatedPlatformLayer::setContentsOpaque(bool contentsOpaque)
 
 void CoordinatedPlatformLayer::setContentsRect(const FloatRect& contentsRect)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsRect == contentsRect)
         return;
 
@@ -460,7 +460,7 @@ void CoordinatedPlatformLayer::setContentsRect(const FloatRect& contentsRect)
 
 void CoordinatedPlatformLayer::setContentsRectClipsDescendants(bool contentsRectClipsDescendants)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsRectClipsDescendants == contentsRectClipsDescendants)
         return;
 
@@ -472,7 +472,7 @@ void CoordinatedPlatformLayer::setContentsRectClipsDescendants(bool contentsRect
 
 void CoordinatedPlatformLayer::setContentsClippingRect(const FloatRoundedRect& contentsClippingRect)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsClippingRect == contentsClippingRect)
         return;
 
@@ -484,7 +484,7 @@ void CoordinatedPlatformLayer::setContentsClippingRect(const FloatRoundedRect& c
 
 void CoordinatedPlatformLayer::setContentsScale(float contentsScale)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsScale == contentsScale)
         return;
 
@@ -495,13 +495,13 @@ void CoordinatedPlatformLayer::setContentsScale(float contentsScale)
 
 float CoordinatedPlatformLayer::contentsScale() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_contentsScale;
 }
 
 bool CoordinatedPlatformLayer::hasCommittedContentsBuffer() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
 #if USE(SKIA)
     if (m_skiaTarget)
         return !!m_skiaTarget->contentsBuffer();
@@ -512,7 +512,7 @@ bool CoordinatedPlatformLayer::hasCommittedContentsBuffer() const
 
 void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (!buffer && !m_contentsBuffer.pending && !hasCommittedContentsBuffer())
         return;
 
@@ -558,7 +558,7 @@ void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
 
 void CoordinatedPlatformLayer::setContentsImage(NativeImage* image)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (image) {
         if (m_imageBackingStore.current && m_imageBackingStore.current->isSameNativeImage(*image))
             return;
@@ -577,7 +577,7 @@ void CoordinatedPlatformLayer::setContentsImage(NativeImage* image)
 
 void CoordinatedPlatformLayer::setContentsColor(const Color& color)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsColor == color)
         return;
 
@@ -588,7 +588,7 @@ void CoordinatedPlatformLayer::setContentsColor(const Color& color)
 
 void CoordinatedPlatformLayer::setContentsTileSize(const FloatSize& contentsTileSize)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsTileSize == contentsTileSize)
         return;
 
@@ -600,7 +600,7 @@ void CoordinatedPlatformLayer::setContentsTileSize(const FloatSize& contentsTile
 
 void CoordinatedPlatformLayer::setContentsTilePhase(const FloatSize& contentsTilePhase)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_contentsTilePhase == contentsTilePhase)
         return;
 
@@ -612,7 +612,7 @@ void CoordinatedPlatformLayer::setContentsTilePhase(const FloatSize& contentsTil
 
 void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     auto dirtyRegion = damage.rects();
     if (m_dirtyRegion != dirtyRegion) {
         m_dirtyRegion = WTF::move(dirtyRegion);
@@ -627,6 +627,7 @@ void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 #if ENABLE(DAMAGE_TRACKING)
 void CoordinatedPlatformLayer::addDamage(Damage&& damage)
 {
+    assertIsHeld(m_lock);
     if (!m_damage)
         m_damage = WTF::move(damage);
     else
@@ -638,6 +639,7 @@ void CoordinatedPlatformLayer::addDamage(Damage&& damage)
 void CoordinatedPlatformLayer::damageWholeLayer()
 {
 #if ENABLE(DAMAGE_TRACKING)
+    assertIsHeld(m_lock);
     // An empty Damage rejects everything added to it later, so it must never become the layer's damage.
     if (!m_damagePropagationEnabled || m_size.isEmpty())
         return;
@@ -648,7 +650,7 @@ void CoordinatedPlatformLayer::damageWholeLayer()
 
 void CoordinatedPlatformLayer::setFilters(const FilterOperations& filters)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_filters == filters)
         return;
 
@@ -660,7 +662,7 @@ void CoordinatedPlatformLayer::setFilters(const FilterOperations& filters)
 
 void CoordinatedPlatformLayer::setMask(CoordinatedPlatformLayer* mask)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_mask == mask)
         return;
 
@@ -672,7 +674,7 @@ void CoordinatedPlatformLayer::setMask(CoordinatedPlatformLayer* mask)
 
 void CoordinatedPlatformLayer::setReplica(CoordinatedPlatformLayer* replica)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_replica == replica)
         return;
 
@@ -684,7 +686,7 @@ void CoordinatedPlatformLayer::setReplica(CoordinatedPlatformLayer* replica)
 
 void CoordinatedPlatformLayer::setBackdrop(CoordinatedPlatformLayer* backdrop)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_backdrop == backdrop)
         return;
 
@@ -694,7 +696,7 @@ void CoordinatedPlatformLayer::setBackdrop(CoordinatedPlatformLayer* backdrop)
 
 void CoordinatedPlatformLayer::notifyBackdropFiltersChanged()
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     m_pendingChanges.add(Change::Backdrop);
     damageWholeLayer();
     notifyCompositionRequired();
@@ -702,7 +704,7 @@ void CoordinatedPlatformLayer::notifyBackdropFiltersChanged()
 
 void CoordinatedPlatformLayer::setBackdropRect(const FloatRoundedRect& backdropRect)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_backdropRect == backdropRect)
         return;
 
@@ -714,7 +716,7 @@ void CoordinatedPlatformLayer::setBackdropRect(const FloatRoundedRect& backdropR
 
 void CoordinatedPlatformLayer::setIsBackdropRoot(bool isBackdropRoot)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_isBackdropRoot == isBackdropRoot)
         return;
 
@@ -725,7 +727,7 @@ void CoordinatedPlatformLayer::setIsBackdropRoot(bool isBackdropRoot)
 
 void CoordinatedPlatformLayer::setAnimations(const TextureMapperAnimations& animations)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     m_animations = animations;
     m_pendingChanges.add(Change::Animations);
     notifyCompositionRequired();
@@ -733,7 +735,7 @@ void CoordinatedPlatformLayer::setAnimations(const TextureMapperAnimations& anim
 
 void CoordinatedPlatformLayer::setChildren(Vector<Ref<CoordinatedPlatformLayer>>&& children)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_children == children)
         return;
 
@@ -744,25 +746,25 @@ void CoordinatedPlatformLayer::setChildren(Vector<Ref<CoordinatedPlatformLayer>>
 
 const Vector<Ref<CoordinatedPlatformLayer>>& CoordinatedPlatformLayer::children() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_children;
 }
 
 void CoordinatedPlatformLayer::setEventRegion(const EventRegion& eventRegion)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     m_eventRegion = eventRegion;
 }
 
 const EventRegion& CoordinatedPlatformLayer::eventRegion() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     return m_eventRegion;
 }
 
 void CoordinatedPlatformLayer::setClipPath(const Path& path, WindRule windRule)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     m_clipPath.path = path;
     m_clipPath.windRule = windRule;
     m_pendingChanges.add(Change::ClipPath);
@@ -771,7 +773,7 @@ void CoordinatedPlatformLayer::setClipPath(const Path& path, WindRule windRule)
 
 void CoordinatedPlatformLayer::setDebugBorder(Color&& borderColor, float borderWidth)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_debugBorderColor == borderColor && m_debugBorderWidth == borderWidth)
         return;
 
@@ -783,7 +785,7 @@ void CoordinatedPlatformLayer::setDebugBorder(Color&& borderColor, float borderW
 
 void CoordinatedPlatformLayer::setShowRepaintCounter(bool showRepaintCounter)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if ((m_repaintCount != -1 && showRepaintCounter) || (m_repaintCount == -1 && !showRepaintCounter))
         return;
 
@@ -794,7 +796,7 @@ void CoordinatedPlatformLayer::setShowRepaintCounter(bool showRepaintCounter)
 
 bool CoordinatedPlatformLayer::needsBackingStore() const
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (!m_owner)
         return false;
 
@@ -846,7 +848,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
 
 void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
 
     if (needsBackingStore()) {
         if (!m_backingStoreProxy) {
@@ -933,7 +935,7 @@ void CoordinatedPlatformLayer::didPaintTile()
 
 Ref<CoordinatedTileBuffer> CoordinatedPlatformLayer::paint(const IntRect& dirtyRect)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     ASSERT(m_client);
     ASSERT(m_owner);
 #if USE(CAIRO)
@@ -960,7 +962,7 @@ sk_sp<GrContextThreadSafeProxy> CoordinatedPlatformLayer::threadSafeGrContext() 
 
 Ref<SkiaRecordingResult> CoordinatedPlatformLayer::record(const IntRect& recordRect, unsigned dirtyTilesCount)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     ASSERT(m_client);
     ASSERT(m_owner);
     return m_client->paintingEngine().record(*m_owner, recordRect, m_contentsOpaque, m_contentsScale, dirtyTilesCount);
@@ -968,7 +970,7 @@ Ref<SkiaRecordingResult> CoordinatedPlatformLayer::record(const IntRect& recordR
 
 Ref<CoordinatedTileBuffer> CoordinatedPlatformLayer::replay(Ref<SkiaRecordingResult>&& recording, const IntRect& tileRect, const IntRect& dirtyRect)
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     ASSERT(m_client);
     ASSERT(m_owner);
     return m_client->paintingEngine().replay(*m_owner, WTF::move(recording), tileRect, dirtyRect);
@@ -1030,6 +1032,7 @@ void CoordinatedPlatformLayer::flushPositionChanges(const OptionSet<CompositionR
         return;
 
     auto applyPositionChanges = [this](auto& layer) {
+        assertIsHeld(m_lock);
         if (m_pendingChanges.contains(Change::Position)) {
             layer.setPosition(m_position);
             m_pendingChanges.remove(Change::Position);
@@ -1074,6 +1077,7 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
 
 void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<CompositionReason>& reasons, TextureMapperLayer& layer)
 {
+    assertIsHeld(m_lock);
     if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling })) {
         if (m_pendingChanges.contains(Change::ContentsRect)) {
             layer.setContentsRect(m_contentsRect);
@@ -1261,6 +1265,7 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
 #if USE(SKIA)
 void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet<CompositionReason>& reasons, SkiaCompositingLayer& layer)
 {
+    assertIsHeld(m_lock);
     if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling })) {
         if (m_pendingChanges.contains(Change::ContentsRect)) {
             layer.setContentsRect(m_contentsRect);
@@ -1375,12 +1380,17 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
             m_pendingChanges.remove(Change::Replica);
         }
 
-        if (m_pendingChanges.contains(Change::Backdrop) || (m_backdrop && m_backdrop->m_pendingChanges.contains(Change::Filters))) {
-            // FIXME: stop creating a layer for backdrop filters when switching to SkiaCompositingLayer.
-            layer.setBackdropFilters(m_backdrop ? m_backdrop->m_filters : FilterOperations());
+        // FIXME: stop creating a layer for backdrop filters when switching to SkiaCompositingLayer.
+        if (m_pendingChanges.contains(Change::Backdrop) && !m_backdrop) {
+            layer.setBackdropFilters(FilterOperations());
             m_pendingChanges.remove(Change::Backdrop);
-            if (m_backdrop)
+        } else if (m_backdrop) {
+            Locker locker { m_backdrop->lock() };
+            if (m_pendingChanges.contains(Change::Backdrop) || m_backdrop->m_pendingChanges.contains(Change::Filters)) {
+                layer.setBackdropFilters(m_backdrop->m_filters);
+                m_pendingChanges.remove(Change::Backdrop);
                 m_backdrop->m_pendingChanges.remove(Change::Filters);
+            }
         }
 
         if (m_pendingChanges.contains(Change::BackdropRect)) {
@@ -1449,6 +1459,7 @@ bool CoordinatedPlatformLayer::hasPendingBackingStoreTileUpdates() const
         return m_skiaTarget->hasPendingBackingStoreTileUpdates();
 #endif
 
+    Locker locker { m_lock };
     if (m_backingStore)
         return m_backingStore->hasPendingUpdates();
 
@@ -1466,6 +1477,7 @@ void CoordinatedPlatformLayer::processPendingBackingStoreTileUpdates()
     }
 #endif
 
+    Locker locker { m_lock };
     if (m_backingStore)
         m_backingStore->processPendingUpdates();
 }

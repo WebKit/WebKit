@@ -116,6 +116,7 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
         auto nativeSurfaceHandle = (GLNativeWindowType)m_surface->window();
         auto context = GLContext::create(PlatformDisplay::sharedDisplay(), nativeSurfaceHandle);
         if (!context || !context->makeContextCurrent()) {
+            Locker locker { m_state.lock };
             m_state.state = State::Invalidated;
             return;
         }
@@ -174,7 +175,7 @@ void ThreadedCompositor::invalidate()
 
 void ThreadedCompositor::startRenderTimer()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     ASSERT(!m_state.isRenderTimerActive);
     m_state.isRenderTimerActive = true;
     updateRenderTimer();
@@ -182,14 +183,14 @@ void ThreadedCompositor::startRenderTimer()
 
 void ThreadedCompositor::stopRenderTimer()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     m_state.isRenderTimerActive = false;
     updateRenderTimer();
 }
 
 void ThreadedCompositor::updateRenderTimer()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
 
     // m_renderTimer is bound to the compositor thread's run loop (m_workQueue), so it must be started
     // and stopped there. The render timer's desired state is tracked synchronously under m_state.lock by
@@ -212,7 +213,7 @@ void ThreadedCompositor::updateRenderTimer()
 
 bool ThreadedCompositor::isOnlyRenderingUpdatePendingAndWaitingForTiles() const
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     return m_state.reasons.containsOnly({ CompositionReason::RenderingUpdate }) && m_state.isWaitingForTiles;
 }
 
@@ -650,7 +651,7 @@ ASCIILiteral ThreadedCompositor::stateToString(ThreadedCompositor::State state)
 
 void ThreadedCompositor::scheduleUpdateLocked()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", reasonsToString(m_state.reasons).ascii().data(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
 
     switch (m_state.state) {

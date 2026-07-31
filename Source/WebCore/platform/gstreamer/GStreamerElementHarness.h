@@ -53,7 +53,7 @@ public:
 
         const GRefPtr<GstPad>& pad() const { return m_pad; }
         const GRefPtr<GstPad>& targetPad() const { return m_targetPad; }
-        const GRefPtr<GstCaps>& outputCaps();
+        GRefPtr<GstCaps> outputCaps();
 
         const RefPtr<GStreamerElementHarness> downstreamHarness() const { return m_downstreamHarness; }
 

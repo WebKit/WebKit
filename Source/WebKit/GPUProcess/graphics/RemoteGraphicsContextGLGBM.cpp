@@ -64,6 +64,7 @@ void RemoteGraphicsContextGLGBM::prepareForDisplay(CompletionHandler<void(uint64
 
     UnixFileDescriptor fenceFD;
     m_context->prepareForDisplayWithFinishedSignal([this, &fenceFD] {
+        assertIsCurrent(workQueue());
         fenceFD = m_context->createExportedFence();
         if (!fenceFD)
             m_context->flush();

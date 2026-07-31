@@ -81,6 +81,7 @@ Ref<ScrollingTreeNode> ScrollingTreeCoordinated::createScrollingTreeNode(Scrolli
 
 void ScrollingTreeCoordinated::applyLayerPositionsInternal()
 {
+    assertIsHeld(m_treeLock);
     auto* rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return;
@@ -113,6 +114,7 @@ void ScrollingTreeCoordinated::didCompletePlatformRenderingUpdate()
 
 static bool traverseDescendantLayersAtPoint(const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point, const Function<bool(const Ref<CoordinatedPlatformLayer>&, const FloatPoint&)>& function)
 {
+    assertIsHeld(parent->lock());
     for (auto& child : parent->children() | std::views::reverse) {
         Locker childLocker { child->lock() };
         FloatPoint transformedPoint(point);
@@ -150,6 +152,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeCoordinated::scrollingNodeForPoint(FloatP
 
     RefPtr<ScrollingTreeNode> result = rootScrollingNode;
     traverseDescendantLayersAtPoint(Ref { *rootContentsLayer }, point, [&](const Ref<CoordinatedPlatformLayer>& layer, const FloatPoint&) {
+        assertIsHeld(layer->lock());
         if (!layer->scrollingNodeID())
             return false;
         auto* scrollingNode = nodeForID(layer->scrollingNodeID());
@@ -190,6 +193,7 @@ OptionSet<EventListenerRegionType> ScrollingTreeCoordinated::eventListenerRegion
 
     OptionSet<EventListenerRegionType> result;
     traverseDescendantLayersAtPoint(rootContentsLayer, point, [&](const Ref<CoordinatedPlatformLayer>& layer, const FloatPoint& point) {
+        assertIsHeld(layer->lock());
         result = layer->eventRegion().eventListenerRegionTypesForPoint(roundedIntPoint(point));
         return true;
     });

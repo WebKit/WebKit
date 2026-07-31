@@ -48,14 +48,14 @@ public:
     String filenameExtension() const final { return "gif"_s; }
     void setData(const FragmentedSharedBuffer& data, bool allDataReceived) final;
     bool setSize(const IntSize&) final;
-    size_t frameCount() const final;
+    size_t decodeIfNeededAndGetFrameCount() const final;
     RepetitionCount repetitionCount() const final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final;
     // CAUTION: setFailed() deletes |m_reader|. Be careful to avoid
     // accessing deleted memory, especially when calling this from inside
     // GIFImageReader!
     bool setFailed() final;
-    void clearFrameBufferCache(size_t clearBeforeFrame) final;
+    void clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame) final;
 
     // Callbacks from the GIF reader.
     bool haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels);

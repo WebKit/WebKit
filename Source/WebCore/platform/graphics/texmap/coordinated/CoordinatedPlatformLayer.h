@@ -95,7 +95,7 @@ public:
     virtual ~CoordinatedPlatformLayer();
 
     PlatformLayerIdentifier id() const { return m_id; }
-    Lock& lock() LIFETIME_BOUND { return m_lock; }
+    Lock& lock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
     Client& client() const { ASSERT(m_client); return *m_client; }
     void invalidateClient();
@@ -115,84 +115,83 @@ public:
     void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTF::move(damage); }
 #endif
 
-    void setPosition(FloatPoint&&);
+    void setPosition(FloatPoint&&) WTF_REQUIRES_LOCK(m_lock);
     void setPositionForScrolling(const FloatPoint&);
-    const FloatPoint& position() const;
+    const FloatPoint& position() const WTF_REQUIRES_LOCK(m_lock);
     void setTopLeftPositionForScrolling(const FloatPoint&);
     FloatPoint topLeftPositionForScrolling();
-    void setBoundsOrigin(const FloatPoint&);
+    void setBoundsOrigin(const FloatPoint&) WTF_REQUIRES_LOCK(m_lock);
     void setBoundsOriginForScrolling(const FloatPoint&);
-    const FloatPoint& boundsOrigin() const;
-    void setAnchorPoint(FloatPoint3D&&);
-    const FloatPoint3D& anchorPoint() const;
-    void setSize(FloatSize&&);
-    const FloatSize& size() const;
-    FloatRect bounds() const;
+    const FloatPoint& boundsOrigin() const WTF_REQUIRES_LOCK(m_lock);
+    void setAnchorPoint(FloatPoint3D&&) WTF_REQUIRES_LOCK(m_lock);
+    const FloatPoint3D& anchorPoint() const WTF_REQUIRES_LOCK(m_lock);
+    void setSize(FloatSize&&) WTF_REQUIRES_LOCK(m_lock);
+    const FloatSize& size() const WTF_REQUIRES_LOCK(m_lock);
+    FloatRect bounds() const WTF_REQUIRES_LOCK(m_lock);
 
-    void setTransform(const TransformationMatrix&);
-    const TransformationMatrix& transform() const;
-    void setChildrenTransform(const TransformationMatrix&);
-    const TransformationMatrix& childrenTransform() const;
+    void setTransform(const TransformationMatrix&) WTF_REQUIRES_LOCK(m_lock);
+    const TransformationMatrix& transform() const WTF_REQUIRES_LOCK(m_lock);
+    void setChildrenTransform(const TransformationMatrix&) WTF_REQUIRES_LOCK(m_lock);
+    const TransformationMatrix& childrenTransform() const WTF_REQUIRES_LOCK(m_lock);
     void didUpdateLayerTransform();
 
-    void setVisibleRect(const FloatRect&);
-    const FloatRect& visibleRect() const;
-    void setTransformedVisibleRect(IntRect&& visibleRect, IntRect&& visibleRectIncludingFuture);
+    void setVisibleRect(const FloatRect&) WTF_REQUIRES_LOCK(m_lock);
+    const FloatRect& visibleRect() const WTF_REQUIRES_LOCK(m_lock);
+    void setTransformedVisibleRect(IntRect&& visibleRect, IntRect&& visibleRectIncludingFuture) WTF_REQUIRES_LOCK(m_lock);
 
 #if ENABLE(SCROLLING_THREAD)
-    void setScrollingNodeID(std::optional<ScrollingNodeID>);
-    const Markable<ScrollingNodeID>& scrollingNodeID() const;
+    void setScrollingNodeID(std::optional<ScrollingNodeID>) WTF_REQUIRES_LOCK(m_lock);
+    const Markable<ScrollingNodeID>& scrollingNodeID() const WTF_REQUIRES_LOCK(m_lock);
 #endif
 
-    void setDrawsContent(bool);
-    void setMasksToBounds(bool);
-    void setPreserves3D(bool);
-    void setBackfaceVisibility(bool);
-    void setOpacity(float);
-    void setBlendMode(BlendMode);
+    void setDrawsContent(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setMasksToBounds(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setPreserves3D(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setBackfaceVisibility(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setOpacity(float) WTF_REQUIRES_LOCK(m_lock);
+    void setBlendMode(BlendMode) WTF_REQUIRES_LOCK(m_lock);
 
-    void setContentsVisible(bool);
-    bool contentsVisible() const;
-    void setContentsOpaque(bool);
-    void setContentsRect(const FloatRect&);
-    void setContentsRectClipsDescendants(bool);
-    void setContentsClippingRect(const FloatRoundedRect&);
-    void setContentsScale(float);
-    float contentsScale() const;
+    void setContentsVisible(bool) WTF_REQUIRES_LOCK(m_lock);
+    bool contentsVisible() const WTF_REQUIRES_LOCK(m_lock);
+    void setContentsOpaque(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsRect(const FloatRect&) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsRectClipsDescendants(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsClippingRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsScale(float) WTF_REQUIRES_LOCK(m_lock);
+    float contentsScale() const WTF_REQUIRES_LOCK(m_lock);
     enum class RequireComposition : bool { No, Yes };
-    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes);
+    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes) WTF_REQUIRES_LOCK(m_lock);
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     void replaceCurrentContentsBufferWithCopy();
 #endif
-    void setContentsBufferNeedsDisplay();
-    void setContentsImage(NativeImage*);
-    void setContentsColor(const Color&);
-    void setContentsTileSize(const FloatSize&);
-    void setContentsTilePhase(const FloatSize&);
-    void setDirtyRegion(Damage&&);
+    void setContentsImage(NativeImage*) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsColor(const Color&) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsTileSize(const FloatSize&) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsTilePhase(const FloatSize&) WTF_REQUIRES_LOCK(m_lock);
+    void setDirtyRegion(Damage&&) WTF_REQUIRES_LOCK(m_lock);
 
-    void setFilters(const FilterOperations&);
-    void setMask(CoordinatedPlatformLayer*);
-    void setReplica(CoordinatedPlatformLayer*);
-    void setBackdrop(CoordinatedPlatformLayer*);
-    void notifyBackdropFiltersChanged();
-    void setBackdropRect(const FloatRoundedRect&);
-    void setIsBackdropRoot(bool);
+    void setFilters(const FilterOperations&) WTF_REQUIRES_LOCK(m_lock);
+    void setMask(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
+    void setReplica(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
+    void setBackdrop(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
+    void notifyBackdropFiltersChanged() WTF_REQUIRES_LOCK(m_lock);
+    void setBackdropRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
+    void setIsBackdropRoot(bool) WTF_REQUIRES_LOCK(m_lock);
 
-    void setAnimations(const TextureMapperAnimations&);
+    void setAnimations(const TextureMapperAnimations&) WTF_REQUIRES_LOCK(m_lock);
 
-    void setChildren(Vector<Ref<CoordinatedPlatformLayer>>&&);
-    const Vector<Ref<CoordinatedPlatformLayer>>& children() const;
+    void setChildren(Vector<Ref<CoordinatedPlatformLayer>>&&) WTF_REQUIRES_LOCK(m_lock);
+    const Vector<Ref<CoordinatedPlatformLayer>>& children() const WTF_REQUIRES_LOCK(m_lock);
 
-    void setEventRegion(const EventRegion&);
-    const EventRegion& eventRegion() const;
+    void setEventRegion(const EventRegion&) WTF_REQUIRES_LOCK(m_lock);
+    const EventRegion& eventRegion() const WTF_REQUIRES_LOCK(m_lock);
 
-    void setClipPath(const Path&, WindRule);
+    void setClipPath(const Path&, WindRule) WTF_REQUIRES_LOCK(m_lock);
 
-    void setDebugBorder(Color&&, float);
-    void setShowRepaintCounter(bool);
+    void setDebugBorder(Color&&, float) WTF_REQUIRES_LOCK(m_lock);
+    void setShowRepaintCounter(bool) WTF_REQUIRES_LOCK(m_lock);
 
-    void updateContents(bool affectedByTransformAnimation);
+    void updateContents(bool affectedByTransformAnimation) WTF_REQUIRES_LOCK(m_lock);
     void updateBackingStore();
 
     void flushPendingState();
@@ -207,10 +206,10 @@ public:
     RunLoop* compositingRunLoop() const;
     int maxTextureSize() const;
 
-    Ref<CoordinatedTileBuffer> paint(const IntRect&);
+    Ref<CoordinatedTileBuffer> paint(const IntRect&) WTF_REQUIRES_LOCK(m_lock);
 #if USE(SKIA)
-    Ref<SkiaRecordingResult> record(const IntRect&, unsigned dirtyTilesCount);
-    Ref<CoordinatedTileBuffer> replay(Ref<SkiaRecordingResult>&&, const IntRect&, const IntRect&);
+    Ref<SkiaRecordingResult> record(const IntRect&, unsigned dirtyTilesCount) WTF_REQUIRES_LOCK(m_lock);
+    Ref<CoordinatedTileBuffer> replay(Ref<SkiaRecordingResult>&&, const IntRect&, const IntRect&) WTF_REQUIRES_LOCK(m_lock);
 #endif
     void willPaintTile();
     void didPaintTile();
@@ -224,12 +223,12 @@ private:
     bool needsBackingStore() const;
     void purgeBackingStores();
 
-    bool hasCommittedContentsBuffer() const;
+    bool hasCommittedContentsBuffer() const WTF_REQUIRES_LOCK(m_lock);
 
 #if ENABLE(DAMAGE_TRACKING)
-    void addDamage(Damage&&);
+    void addDamage(Damage&&) WTF_REQUIRES_LOCK(m_lock);
 #endif
-    void damageWholeLayer();
+    void damageWholeLayer() WTF_REQUIRES_LOCK(m_lock);
 
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
 #if USE(SKIA)
@@ -295,7 +294,7 @@ private:
     std::shared_ptr<Damage> m_damageInGlobalCoordinateSpace;
 #endif
 
-    Lock m_lock;
+    mutable Lock m_lock;
     EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_position WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint3D m_anchorPoint WTF_GUARDED_BY_LOCK(m_lock) { 0.5f, 0.5f, 0 };
