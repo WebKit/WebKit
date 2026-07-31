@@ -332,12 +332,7 @@ void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVi
 void CoordinatedPlatformLayer::setScrollingNodeID(std::optional<ScrollingNodeID> nodeID)
 {
     assertIsHeld(m_lock);
-    if (m_scrollingNodeID == nodeID)
-        return;
-
     m_scrollingNodeID = nodeID;
-    m_pendingChanges.add(Change::ScrollingNode);
-    notifyCompositionRequired();
 }
 
 const Markable<ScrollingNodeID>& CoordinatedPlatformLayer::scrollingNodeID() const
@@ -350,12 +345,7 @@ const Markable<ScrollingNodeID>& CoordinatedPlatformLayer::scrollingNodeID() con
 void CoordinatedPlatformLayer::setDrawsContent(bool drawsContent)
 {
     assertIsHeld(m_lock);
-    if (m_drawsContent == drawsContent)
-        return;
-
     m_drawsContent = drawsContent;
-    m_pendingChanges.add(Change::DrawsContent);
-    notifyCompositionRequired();
 }
 
 void CoordinatedPlatformLayer::setMasksToBounds(bool masksToBounds)
@@ -1363,6 +1353,7 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
             auto clipPath = *m_clipPath.path.platformPath();
             clipPath.setFillType(m_clipPath.windRule == WindRule::EvenOdd ? SkPathFillType::kEvenOdd : SkPathFillType::kWinding);
             layer.setClipPath(WTF::move(clipPath));
+            m_pendingChanges.remove(Change::ClipPath);
         }
 
         if (m_pendingChanges.contains(Change::Filters)) {

@@ -261,7 +261,6 @@ private:
         Damage,
 #endif
         DebugIndicators,
-        DrawsContent,
         Filters,
         Mask,
         MasksToBounds,
@@ -269,9 +268,6 @@ private:
         Position,
         Preserves3D,
         Replica,
-#if ENABLE(SCROLLING_THREAD)
-        ScrollingNode,
-#endif
         Size,
         Transform,
     };
