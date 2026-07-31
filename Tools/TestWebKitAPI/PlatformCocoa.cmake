@@ -53,6 +53,16 @@ set(TESTWEBKITAPI_SWIFT_FLAGS
     "$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}>"
 )
+
+# Mirrors the EMB block in _WEBKIT_TARGET_SETUP, which these hand-rolled flags
+# bypass. The -Xcc flags are required: clang rejects the cached SwiftShims PCM
+# without them.
+list(APPEND TESTWEBKITAPI_SWIFT_FLAGS
+    "$<$<COMPILE_LANGUAGE:Swift>:-explicit-module-build>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-bounds-safety-attributes>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-late-parse-attributes>"
+)
+
 foreach (_f IN LISTS _test_swift_cc_flags)
     list(APPEND TESTWEBKITAPI_SWIFT_FLAGS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_f}>")
 endforeach ()
