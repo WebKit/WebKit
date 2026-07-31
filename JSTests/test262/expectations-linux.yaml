@@ -46,6 +46,21 @@ test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
   strict mode: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
+test/intl402/Temporal/PlainDate/prototype/monthCode/chinese-calendar-dates.js:
+  default: 'Test262Error: constructing PlainDate from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+  strict mode: 'Test262Error: constructing PlainDate from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+test/intl402/Temporal/PlainDateTime/prototype/monthCode/chinese-calendar-dates.js:
+  default: 'Test262Error: constructing PlainDateTime from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+  strict mode: 'Test262Error: constructing PlainDateTime from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+test/intl402/Temporal/PlainMonthDay/prototype/monthCode/chinese-calendar-dates.js:
+  default: 'Test262Error: md: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+  strict mode: 'Test262Error: md: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+test/intl402/Temporal/PlainYearMonth/prototype/monthCode/chinese-calendar-dates.js:
+  default: 'Test262Error: constructing PlainYearMonth from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+  strict mode: 'Test262Error: constructing PlainYearMonth from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+test/intl402/Temporal/ZonedDateTime/prototype/monthCode/chinese-calendar-dates.js:
+  default: 'Test262Error: constructing ZonedDateTime from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
+  strict mode: 'Test262Error: constructing ZonedDateTime from month number: monthCode result: Expected SameValue(«"M07"», «"M06L"») to be true'
 test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js:
   default: 'Test262Error: Actual [binding::source, binding::sourceKey, sourceKey, get source, binding::defaultValue, binding::varTarget] and expected [binding::source, binding::sourceKey, sourceKey, binding::varTarget, get source, binding::defaultValue] should have the same contents. '
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
