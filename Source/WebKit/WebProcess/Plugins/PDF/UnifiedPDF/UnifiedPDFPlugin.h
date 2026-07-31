@@ -27,6 +27,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "PDFAccessibilityDisplayMode.h"
 #include "PDFDocumentLayout.h"
 #include "PDFPageCoverage.h"
 #include "PDFPluginBase.h"
@@ -170,6 +171,8 @@ public:
     float documentFittingScale() const { return m_documentLayout.scale(); }
 
     bool shouldCachePagePreviews() const;
+
+    PDFAccessibilityDisplayMode accessibilityDisplayMode() const;
 
     WebCore::FloatRect convertFromPDFPageToScreenForAccessibility(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
 #if PLATFORM(MAC)
@@ -746,6 +749,8 @@ private:
     HashMap<WebFoundTextRange::PDFData, RetainPtr<PDFSelection>> m_webFoundTextRangePDFDataSelectionMap;
 
     mutable std::optional<bool> m_cachedIsFullMainFramePlugin;
+
+    PDFAccessibilityDisplayMode m_accessibilityDisplayMode { PDFAccessibilityDisplayMode::None };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, RepaintRequirement);

@@ -173,6 +173,34 @@ using namespace WebKit::PDFAnnotationTypeHelpers;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UnifiedPDFPlugin);
 
+#if ENABLE(AX_PDF_SUPPORT)
+#include <WebKitAdditions/UnifiedPDFPluginAdditions.mm>
+#else
+PDFAccessibilityDisplayMode UnifiedPDFPlugin::accessibilityDisplayMode() const
+{
+    return PDFAccessibilityDisplayMode::None;
+}
+
+void applyPDFContentAXColorAdjustment(CGContextRef, PDFPage *, PDFAccessibilityDisplayMode)
+{
+}
+
+WebCore::Color pdfPageBackgroundColor(PDFAccessibilityDisplayMode)
+{
+    return WebCore::Color::white;
+}
+
+WebCore::BlendMode pdfSelectionBlendMode(PDFAccessibilityDisplayMode)
+{
+    return WebCore::BlendMode::Multiply;
+}
+
+WebCore::ScrollbarOverlayStyle pdfScrollbarOverlayStyle(PDFAccessibilityDisplayMode, bool pageUsesDarkAppearance)
+{
+    return pageUsesDarkAppearance ? WebCore::ScrollbarOverlayStyle::Light : WebCore::ScrollbarOverlayStyle::Default;
+}
+#endif
+
 Ref<UnifiedPDFPlugin> UnifiedPDFPlugin::create(HTMLPlugInElement& pluginElement)
 {
     return adoptRef(*new UnifiedPDFPlugin(pluginElement));
@@ -187,6 +215,8 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
 {
     this->setVerticalScrollElasticity(ScrollElasticity::Automatic);
     this->setHorizontalScrollElasticity(ScrollElasticity::Automatic);
+
+    m_accessibilityDisplayMode = accessibilityDisplayMode();
 
     Ref document = element.document();
     Ref annotationContainer = document->createElement(HTMLNames::divTag, false);
@@ -751,6 +781,17 @@ void UnifiedPDFPlugin::didChangeSettings()
         propagateSettingsToLayer(*layerForScrollCorner);
 
     protect(m_presentationController)->updateDebugBorders(showDebugBorders, showRepaintCounter);
+
+    auto displayMode = accessibilityDisplayMode();
+    if (m_accessibilityDisplayMode != displayMode) {
+        m_accessibilityDisplayMode = displayMode;
+
+        RefPtr presentationController = m_presentationController;
+        presentationController->invalidateRenderedContentForAccessibilityDisplayModeChange();
+        presentationController->updateForAccessibilityDisplayModeChange(displayMode);
+        updateScrollbarOverlayStyle();
+        setNeedsRepaintForIncrementalLoad();
+    }
 }
 
 void UnifiedPDFPlugin::notifyFlushRequired(const GraphicsLayer*)
@@ -857,6 +898,7 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
     auto stateSaver = GraphicsContextStateSaver(context);
 
     auto showDebugIndicators = shouldShowDebugIndicators();
+    auto displayMode = accessibilityDisplayMode();
 
     auto pageWithAnnotation = pageIndexWithHoveredAnnotation();
 
@@ -905,7 +947,7 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
         context.clip(pageDestinationRect);
 
         if (!asyncRenderer)
-            context.fillRect(pageDestinationRect, Color::white);
+            context.fillRect(pageDestinationRect, pdfPageBackgroundColor(displayMode));
 
         // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
         // from this page's drawing origin.
@@ -914,7 +956,9 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
 
         if (!asyncRenderer) {
             LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
-            [page drawWithBox:kPDFDisplayBoxCropBox toContext:protect(context.platformContext()).get()];
+            RetainPtr platformContext = context.platformContext();
+            applyPDFContentAXColorAdjustment(platformContext, page.get(), displayMode);
+            [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext];
         }
 
         if constexpr (hasFullAnnotationSupport) {
@@ -947,13 +991,14 @@ void UnifiedPDFPlugin::paintPDFSelection(const GraphicsLayer* layer, GraphicsCon
     if (RefPtr page = this->page())
         isVisibleAndActive = page->isVisibleAndActive();
 
-    auto selectionColor = [renderer = CheckedPtr { m_element->renderer() }, isVisibleAndActive] {
+    auto displayMode = accessibilityDisplayMode();
+    auto selectionColor = [renderer = CheckedPtr { m_element->renderer() }, isVisibleAndActive, displayMode] {
         auto& renderTheme = renderer ? renderer->theme() : RenderTheme::singleton();
         OptionSet<StyleColorOptions> styleColorOptions;
         if (renderer)
             styleColorOptions = renderer->styleColorOptions() - WebCore::StyleColorOptions::UseDarkAppearance;
         auto selectionColor = isVisibleAndActive ? renderTheme.activeSelectionBackgroundColor(styleColorOptions) : renderTheme.inactiveSelectionBackgroundColor(styleColorOptions);
-        return blendSourceOver(Color::white, selectionColor);
+        return blendSourceOver(pdfPageBackgroundColor(displayMode), selectionColor);
     }();
 
     auto tilingScaleFactor = 1.0f;
@@ -1719,15 +1764,12 @@ void UnifiedPDFPlugin::scrollbarStyleChanged(WebCore::ScrollbarStyle, bool force
 
 void UnifiedPDFPlugin::updateScrollbarOverlayStyle()
 {
-    if (!isFullMainFramePlugin())
-        return;
-
     RefPtr page = this->page();
     if (!page)
         return;
 
-    using enum WebCore::ScrollbarOverlayStyle;
-    setScrollbarOverlayStyle(page->useDarkAppearance() ? Light : Default);
+    auto overlayStyle = pdfScrollbarOverlayStyle(accessibilityDisplayMode(), isFullMainFramePlugin() && page->useDarkAppearance());
+    setScrollbarOverlayStyle(overlayStyle);
 
     if (m_scrollingNodeID) {
         if (RefPtr scrollingCoordinator = page->scrollingCoordinator())

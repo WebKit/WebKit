@@ -169,7 +169,7 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
         selectionLayer->setAnchorPoint({ });
         selectionLayer->setDrawsContent(true);
         selectionLayer->setAcceleratesDrawing(true);
-        selectionLayer->setBlendMode(BlendMode::Multiply);
+        selectionLayer->setBlendMode(pdfSelectionBlendMode(accessibilityDisplayMode()));
 
         // m_selectionLayer will be parented on-demand in `setSelectionLayerEnabled`.
     }
@@ -312,6 +312,27 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
 
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->setShowDebugBorders(showDebugBorders);
+}
+
+void PDFScrollingPresentationController::updateForAccessibilityDisplayModeChange(PDFAccessibilityDisplayMode accessibilityDisplayMode)
+{
+#if ENABLE(PDFKIT_PAINTED_SELECTIONS)
+    if (RefPtr selectionLayer = m_selectionLayer)
+        selectionLayer->setBlendMode(pdfSelectionBlendMode(accessibilityDisplayMode));
+#endif
+
+    RefPtr pageBackgroundsContainerLayer = m_pageBackgroundsContainerLayer;
+    if (!pageBackgroundsContainerLayer)
+        return;
+
+    auto backgroundColor = pdfPageBackgroundColor(accessibilityDisplayMode);
+    for (auto& pageContainerLayer : pageBackgroundsContainerLayer->children()) {
+        if (!pageContainerLayer->children().size())
+            continue;
+        Ref pageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(pageContainerLayer);
+        pageBackgroundLayer->setBackgroundColor(backgroundColor);
+        pageBackgroundLayer->setNeedsDisplay();
+    }
 }
 
 void PDFScrollingPresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability> scrollability)

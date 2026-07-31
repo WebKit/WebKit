@@ -1127,7 +1127,7 @@ void PDFDiscretePresentationController::buildRows()
         rowSelectionLayer->setAnchorPoint({ });
         rowSelectionLayer->setDrawsContent(true);
         rowSelectionLayer->setAcceleratesDrawing(true);
-        rowSelectionLayer->setBlendMode(BlendMode::Multiply);
+        rowSelectionLayer->setBlendMode(pdfSelectionBlendMode(accessibilityDisplayMode()));
         m_layerToRowIndexMap.set(WTF::move(rowSelectionLayer), rowIndex);
 
         parentRowLayers(row);
@@ -1320,6 +1320,25 @@ void PDFDiscretePresentationController::updateDebugBorders(bool showDebugBorders
 
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->setShowDebugBorders(showDebugBorders);
+}
+
+void PDFDiscretePresentationController::updateForAccessibilityDisplayModeChange(PDFAccessibilityDisplayMode accessibilityDisplayMode)
+{
+    auto applyToBackgroundLayer = [backgroundColor = pdfPageBackgroundColor(accessibilityDisplayMode)](GraphicsLayer& layer) {
+        layer.setBackgroundColor(backgroundColor);
+        layer.setNeedsDisplay();
+    };
+
+    for (auto& row : m_rows) {
+        if (row.leftPageContainerLayer)
+            applyToBackgroundLayer(row.leftPageBackgroundLayer());
+
+        if (RefPtr rightPageBackgroundLayer = row.rightPageBackgroundLayer())
+            applyToBackgroundLayer(*rightPageBackgroundLayer);
+
+        if (RefPtr selectionLayer = row.selectionLayer)
+            selectionLayer->setBlendMode(pdfSelectionBlendMode(accessibilityDisplayMode));
+    }
 }
 
 void PDFDiscretePresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability> scrollability)

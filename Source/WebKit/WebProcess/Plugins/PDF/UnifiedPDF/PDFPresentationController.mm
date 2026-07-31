@@ -128,7 +128,7 @@ Ref<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocument
     pageContainerLayer->setAnchorPoint({ });
 
     pageBackgroundLayer->setAnchorPoint({ });
-    pageBackgroundLayer->setBackgroundColor(Color::white);
+    pageBackgroundLayer->setBackgroundColor(pdfPageBackgroundColor(accessibilityDisplayMode()));
     pageBackgroundLayer->setDrawsContent(true);
     pageBackgroundLayer->setAcceleratesDrawing(!shouldUseInProcessBackingStore());
     pageBackgroundLayer->setShouldUpdateRootRelativeScaleFactor(false);
@@ -156,6 +156,12 @@ void PDFPresentationController::releaseMemory()
         asyncRenderer->releaseMemory();
 }
 
+void PDFPresentationController::invalidateRenderedContentForAccessibilityDisplayModeChange()
+{
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->invalidateAllRenderedContent();
+}
+
 RetainPtr<PDFDocument> PDFPresentationController::pluginPDFDocument() const
 {
     return m_plugin->pdfDocument();
@@ -169,6 +175,11 @@ FloatRect PDFPresentationController::layoutBoundsForPageAtIndex(PDFDocumentLayou
 bool PDFPresentationController::pluginShouldCachePagePreviews() const
 {
     return m_plugin->shouldCachePagePreviews();
+}
+
+PDFAccessibilityDisplayMode PDFPresentationController::accessibilityDisplayMode() const
+{
+    return m_plugin->accessibilityDisplayMode();
 }
 
 float PDFPresentationController::scaleForPagePreviews() const

@@ -87,6 +87,8 @@ public:
     virtual void updateIsInWindow(bool isInWindow) = 0;
     virtual void updateDebugBorders(bool showDebugBorders, bool showRepaintCounters) = 0;
 
+    virtual void updateForAccessibilityDisplayModeChange(PDFAccessibilityDisplayMode) = 0;
+
     virtual void updateForCurrentScrollability(OptionSet<WebCore::TiledBackingScrollability>) = 0;
 
     virtual void didGeneratePreviewForPage(PDFDocumentLayout::PageIndex) = 0;
@@ -115,8 +117,11 @@ public:
     virtual bool handleWheelEvent(const WebWheelEvent&) { return false; }
 
     void releaseMemory();
+
+    void invalidateRenderedContentForAccessibilityDisplayModeChange();
     RetainPtr<PDFDocument> pluginPDFDocument() const;
     bool pluginShouldCachePagePreviews() const;
+    PDFAccessibilityDisplayMode accessibilityDisplayMode() const;
 
     virtual std::optional<WebCore::PlatformLayerIdentifier> contentsLayerIdentifier() const { return std::nullopt; }
 
