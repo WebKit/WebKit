@@ -165,12 +165,20 @@ skia_filegroup(
 
 skia_cc_library(
     name = "rust_png_encoder",
-    srcs = [":rust_png_srcs"],
+    srcs = [
+        ":rust_png_srcs",
+        "//src/codec:common_png_srcs",
+    ],
     hdrs = [
         "//include/encode:encode_hdrs",
         "//include/encode:rust_png_public_hdrs",
     ],
-    defines = ["SK_CODEC_ENCODES_PNG_WITH_RUST"],
+    defines = [
+        "SK_CODEC_ENCODES_PNG_WITH_RUST",
+    ] + select({
+        "//rust/png:for_android_true": ["SK_CODEC_USES_PNG_WITH_RUST_FOR_ANDROID"],
+        "//conditions:default": [],
+    }),
     features = ["layering_check"],
     visibility = ["//:__pkg__"],
     deps = [

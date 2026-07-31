@@ -41,7 +41,7 @@ def get_stage_names(skia_root: str) -> List[str]:
 
 # Known Raster Pipeline namespaces to avoid capturing unrelated symbols with similar names (e.g. 'clear')
 RP_NAMESPACES = {
-    'ml3', 'ml4', 'avx', 'avx2', 'sse2', 'sse41', 'ssse3', 'neon', 'scalar', 'lsx', 'lasx',
+    'ml3', 'ml4', 'avx', 'avx2', 'sse2', 'sse41', 'sse3', 'ssse3', 'neon', 'scalar', 'lsx', 'lasx',
 }
 
 def find_symbols_in_binary(bin_path: str, ops: List[str]) -> Dict[str, Dict[str, Any]]:
@@ -259,6 +259,7 @@ def main() -> None:
     parser.add_argument("--mcpu", default="x86-64-v4", help="CPU model for llvm-mca.")
     parser.add_argument("--mca_path", default="/usr/bin/llvm-mca-19", help="Path to llvm-mca.")
     parser.add_argument("--list-stages", action="store_true", help="Just list found stages and exit.")
+    parser.add_argument("--reset-experiments", action="store_true", help="Remove all columns except the first (typically the control) before adding the new results.")
 
     args = parser.parse_args()
 
@@ -332,6 +333,9 @@ def main() -> None:
             for row in reader:
                 symbol = row['Symbol']
                 all_data[symbol] = row
+
+    if args.reset_experiments and versions:
+        versions = [versions[0]]
 
     if args.name not in versions:
         versions.append(args.name)

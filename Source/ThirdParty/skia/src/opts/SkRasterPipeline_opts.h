@@ -432,6 +432,113 @@ namespace SK_OPTS_NS {
         dst[ix[15]] = after[15];
     }
 
+    // The compiler often scalarizes integer division into scalar idiv loops because
+    // AVX512 and below don't have vectorized integer division. We can force vectorization by
+    // performing the division in double precision. A 64-bit double has 53 bits of mantissa,
+    // which is enough to represent any 32-bit integer exactly.
+    SI void div_fn(I32* dst, I32* src) {
+        // Load using 256-bit registers to avoid 512-bit performance issues
+        __m256i d_lo = _mm256_loadu_si256((const __m256i*)dst + 0);
+        __m256i d_hi = _mm256_loadu_si256((const __m256i*)dst + 1);
+        __m256i s_lo = _mm256_loadu_si256((const __m256i*)src + 0);
+        __m256i s_hi = _mm256_loadu_si256((const __m256i*)src + 1);
+
+        // Split lower 256-bit into two 128-bit registers (each holding 4 lanes)
+        __m128i d0 = _mm256_castsi256_si128(d_lo);
+        __m128i d1 = _mm256_extractf128_si256(d_lo, 1);
+        __m128i s0 = _mm256_castsi256_si128(s_lo);
+        __m128i s1 = _mm256_extractf128_si256(s_lo, 1);
+
+        // Split upper 256-bit into two 128-bit registers (each holding 4 lanes)
+        __m128i d2 = _mm256_castsi256_si128(d_hi);
+        __m128i d3 = _mm256_extractf128_si256(d_hi, 1);
+        __m128i s2 = _mm256_castsi256_si128(s_hi);
+        __m128i s3 = _mm256_extractf128_si256(s_hi, 1);
+
+        // Execute four independent 256-bit divisions (F64 vector width 4) (which can be pipelined)
+        // Double-precision division natively handles dividing by zero (producing +/-Inf/NaN)
+        // and INT_MIN / -1 overflow (producing +2147483648.0) without any hardware crash.
+        // Upon truncation back to I32, both saturate to INT_MIN (0x80000000).
+        __m256d fd0 = _mm256_cvtepi32_pd(d0);    // convert to double
+        __m256d fs0 = _mm256_cvtepi32_pd(s0);
+        __m256d fr0 = _mm256_div_pd(fd0, fs0);   // divide
+        __m128i r0  = _mm256_cvttpd_epi32(fr0);  // convert to int (truncates toward zero)
+
+        __m256d fd1 = _mm256_cvtepi32_pd(d1);
+        __m256d fs1 = _mm256_cvtepi32_pd(s1);
+        __m256d fr1 = _mm256_div_pd(fd1, fs1);
+        __m128i r1  = _mm256_cvttpd_epi32(fr1);
+
+        __m256d fd2 = _mm256_cvtepi32_pd(d2);
+        __m256d fs2 = _mm256_cvtepi32_pd(s2);
+        __m256d fr2 = _mm256_div_pd(fd2, fs2);
+        __m128i r2  = _mm256_cvttpd_epi32(fr2);
+
+        __m256d fd3 = _mm256_cvtepi32_pd(d3);
+        __m256d fs3 = _mm256_cvtepi32_pd(s3);
+        __m256d fr3 = _mm256_div_pd(fd3, fs3);
+        __m128i r3  = _mm256_cvttpd_epi32(fr3);
+
+        // Recombine the four 128-bit blocks into two 256-bit registers and store
+        __m256i r_lo = _mm256_insertf128_si256(_mm256_castsi128_si256(r0), r1, 1);
+        __m256i r_hi = _mm256_insertf128_si256(_mm256_castsi128_si256(r2), r3, 1);
+
+        _mm256_storeu_si256((__m256i*)dst + 0, r_lo);
+        _mm256_storeu_si256((__m256i*)dst + 1, r_hi);
+    }
+    #define SKRP_SUPPORTS_OPTIMIZED_DIV_INT
+
+    SI void div_fn(U32* dst, U32* src) {
+        // Load using 256-bit registers to avoid 512-bit performance issues.
+        __m256i d_lo = _mm256_loadu_si256((const __m256i*)dst + 0);
+        __m256i d_hi = _mm256_loadu_si256((const __m256i*)dst + 1);
+        __m256i s_lo = _mm256_loadu_si256((const __m256i*)src + 0);
+        __m256i s_hi = _mm256_loadu_si256((const __m256i*)src + 1);
+
+        // Split lower 256-bit into two 128-bit registers (each holding 4 lanes)
+        __m128i d0 = _mm256_castsi256_si128(d_lo);
+        __m128i d1 = _mm256_extractf128_si256(d_lo, 1);
+        __m128i s0 = _mm256_castsi256_si128(s_lo);
+        __m128i s1 = _mm256_extractf128_si256(s_lo, 1);
+
+        // Split upper 256-bit into two 128-bit registers (each holding 4 lanes)
+        __m128i d2 = _mm256_castsi256_si128(d_hi);
+        __m128i d3 = _mm256_extractf128_si256(d_hi, 1);
+        __m128i s2 = _mm256_castsi256_si128(s_hi);
+        __m128i s3 = _mm256_extractf128_si256(s_hi, 1);
+
+        // Convert double, divide, and convert back to U32.
+        // Double-precision division natively handles dividing by zero (producing +Inf/NaN).
+        // Upon truncation back to U32, both saturate to INT_MIN (0x80000000).
+        __m256d fd0 = _mm256_cvtepu32_pd(d0);   // convert to double
+        __m256d fs0 = _mm256_cvtepu32_pd(s0);
+        __m256d fr0 = _mm256_div_pd(fd0, fs0);  // divide
+        __m128i r0  = _mm256_cvttpd_epu32(fr0); // convert to uint (truncates toward zero)
+
+        __m256d fd1 = _mm256_cvtepu32_pd(d1);
+        __m256d fs1 = _mm256_cvtepu32_pd(s1);
+        __m256d fr1 = _mm256_div_pd(fd1, fs1);
+        __m128i r1  = _mm256_cvttpd_epu32(fr1);
+
+        __m256d fd2 = _mm256_cvtepu32_pd(d2);
+        __m256d fs2 = _mm256_cvtepu32_pd(s2);
+        __m256d fr2 = _mm256_div_pd(fd2, fs2);
+        __m128i r2  = _mm256_cvttpd_epu32(fr2);
+
+        __m256d fd3 = _mm256_cvtepu32_pd(d3);
+        __m256d fs3 = _mm256_cvtepu32_pd(s3);
+        __m256d fr3 = _mm256_div_pd(fd3, fs3);
+        __m128i r3  = _mm256_cvttpd_epu32(fr3);
+
+        // Recombine the four 128-bit blocks into two 256-bit registers and store
+        __m256i r_lo = _mm256_insertf128_si256(_mm256_castsi128_si256(r0), r1, 1);
+        __m256i r_hi = _mm256_insertf128_si256(_mm256_castsi128_si256(r2), r3, 1);
+
+        _mm256_storeu_si256((__m256i*)dst + 0, r_lo);
+        _mm256_storeu_si256((__m256i*)dst + 1, r_hi);
+    }
+    #define SKRP_SUPPORTS_OPTIMIZED_DIV_UINT
+
     SI void load2(const uint16_t* ptr, U16* r, U16* g) {
         __m256i _01234567 = _mm256_loadu_si256(((const __m256i*)ptr) + 0);
         __m256i _89abcdef = _mm256_loadu_si256(((const __m256i*)ptr) + 1);
@@ -666,6 +773,69 @@ namespace SK_OPTS_NS {
         dst[ix[7]] = after[7];
     }
 
+    // The compiler often scalarizes integer division into scalar idiv loops because
+    // AVX512 and below don't have vectorized integer division. We can force vectorization by
+    // performing the division in double precision. A 64-bit double has 53 bits of mantissa,
+    // which is enough to represent any 32-bit integer exactly.
+    SI void div_fn(I32* dst, I32* src) {
+        // Load using 128-bit registers to avoid 256-bit extraction overhead
+        __m128i d0 = _mm_loadu_si128((const __m128i*)dst + 0);
+        __m128i d1 = _mm_loadu_si128((const __m128i*)dst + 1);
+        __m128i s0 = _mm_loadu_si128((const __m128i*)src + 0);
+        __m128i s1 = _mm_loadu_si128((const __m128i*)src + 1);
+
+        // Convert lower 4 lanes to double, divide, and convert back to integer.
+        // Double-precision division natively handles dividing by zero (producing +/-Inf/NaN)
+        // and INT_MIN / -1 overflow (producing +2147483648.0) without any hardware crash.
+        // Upon truncation back to I32, both saturate to INT_MIN (0x80000000).
+        __m256d fd0 = _mm256_cvtepi32_pd(d0);
+        __m256d fs0 = _mm256_cvtepi32_pd(s0);
+        __m256d fr0 = _mm256_div_pd(fd0, fs0);
+        __m128i r0  = _mm256_cvttpd_epi32(fr0);  // (truncates toward zero)
+        // Same for upper 4 lanes.
+        __m256d fd1 = _mm256_cvtepi32_pd(d1);
+        __m256d fs1 = _mm256_cvtepi32_pd(s1);
+        __m256d fr1 = _mm256_div_pd(fd1, fs1);
+        __m128i r1  = _mm256_cvttpd_epi32(fr1);
+        // Recombine lanes
+        _mm_storeu_si128((__m128i*)dst + 0, r0);
+        _mm_storeu_si128((__m128i*)dst + 1, r1);
+    }
+    #define SKRP_SUPPORTS_OPTIMIZED_DIV_INT
+
+    SI void div_fn(U32* dst, U32* src) {
+        // Load using 128-bit registers to avoid 256-bit extraction overhead
+        __m128i d0 = _mm_loadu_si128((const __m128i*)dst + 0);
+        __m128i d1 = _mm_loadu_si128((const __m128i*)dst + 1);
+        __m128i s0 = _mm_loadu_si128((const __m128i*)src + 0);
+        __m128i s1 = _mm_loadu_si128((const __m128i*)src + 1);
+
+        // AVX2 (and below) lack a way to turn unsigned integers to doubles directly so we
+        // clamp to INT_MAX before converting to doubles.
+        __m128i max_safe = _mm_set1_epi32(0x7FFFFFFF);
+        __m128i d0_safe  = _mm_min_epu32(d0, max_safe);
+        __m128i d1_safe  = _mm_min_epu32(d1, max_safe);
+        __m128i s0_safe  = _mm_min_epu32(s0, max_safe);
+        __m128i s1_safe  = _mm_min_epu32(s1, max_safe);
+
+        // Convert lower 4 lanes to double, divide, and convert back to U32.
+        // Double-precision division natively handles dividing by zero (producing +Inf/NaN).
+        // Upon truncation back to U32, both saturate to INT_MIN (0x80000000).
+        __m256d fd0  = _mm256_cvtepi32_pd(d0_safe);
+        __m256d fs0  = _mm256_cvtepi32_pd(s0_safe);
+        __m256d fr0  = _mm256_div_pd(fd0, fs0);
+        __m128i r0   = _mm256_cvttpd_epi32(fr0);  // (truncates toward zero)
+        // Same for upper 4 lanes.
+        __m256d fd1  = _mm256_cvtepi32_pd(d1_safe);
+        __m256d fs1  = _mm256_cvtepi32_pd(s1_safe);
+        __m256d fr1  = _mm256_div_pd(fd1, fs1);
+        __m128i r1   = _mm256_cvttpd_epi32(fr1);
+        // Recombine lanes
+        _mm_storeu_si128((__m128i*)dst + 0, r0);
+        _mm_storeu_si128((__m128i*)dst + 1, r1);
+    }
+    #define SKRP_SUPPORTS_OPTIMIZED_DIV_UINT
+
     SI void load2(const uint16_t* ptr, U16* r, U16* g) {
         __m128i _0123 = _mm_loadu_si128(((const __m128i*)ptr) + 0),
                 _4567 = _mm_loadu_si128(((const __m128i*)ptr) + 1);
@@ -807,6 +977,67 @@ namespace SK_OPTS_NS {
     SI F   rcp_precise (F v)   { F e = rcp_approx(v); return e * (2.0f - v * e); }
     SI F   rsqrt_approx(F v)   { return _mm_rsqrt_ps(v);    }
     SI F    sqrt_(F v)         { return _mm_sqrt_ps (v);    }
+
+    // The compiler often scalarizes integer division into scalar idiv loops because
+    // AVX512 and below don't have vectorized integer division. We can force vectorization by
+    // performing the division in double precision. A 64-bit double has 53 bits of mantissa,
+    // which is enough to represent any 32-bit integer exactly.
+    SI void div_fn(I32* dst, I32* src) {
+        __m128i d = (__m128i)*dst;
+        __m128i s = (__m128i)*src;
+        // Convert top 2 lanes to double, divide, and convert back to integer.
+        // Double-precision division natively handles dividing by zero (producing +/-Inf/NaN)
+        // and INT_MIN / -1 overflow (producing +2147483648.0) without any hardware crash.
+        // Upon truncation back to I32, both saturate to INT_MIN (0x80000000).
+        __m128d fd_lo = _mm_cvtepi32_pd(d);
+        __m128d fs_lo = _mm_cvtepi32_pd(s);
+        __m128d fr_lo = _mm_div_pd(fd_lo, fs_lo);
+        __m128i r_lo  = _mm_cvttpd_epi32(fr_lo);
+        // Same for upper 2 lanes.
+        __m128d fd_hi = _mm_cvtepi32_pd(_mm_srli_si128(d, 8));
+        __m128d fs_hi = _mm_cvtepi32_pd(_mm_srli_si128(s, 8));
+        __m128d fr_hi = _mm_div_pd(fd_hi, fs_hi);
+        __m128i r_hi  = _mm_cvttpd_epi32(fr_hi);
+        // Recombine lanes
+        *dst = (I32)_mm_unpacklo_epi64(r_lo, r_hi); // Combine halves
+    }
+    #define SKRP_SUPPORTS_OPTIMIZED_DIV_INT
+
+    SI void div_fn(U32* dst, U32* src) {
+        __m128i d_raw = (__m128i)*dst;
+        __m128i s_raw = (__m128i)*src;
+
+        // AVX2 (and below) lack a way to turn unsigned integers to doubles directly so we
+        // clamp to INT_MAX before converting to doubles.
+#if defined(SKRP_CPU_SSE41) || defined(SKRP_CPU_AVX)
+        __m128i max_safe = _mm_set1_epi32(0x7FFFFFFF);
+        __m128i d = _mm_min_epu32(d_raw, max_safe);
+        __m128i s = _mm_min_epu32(s_raw, max_safe);
+#else   // SSE2/SSSE3 clamp fallback
+        __m128i max_safe = _mm_set1_epi32(0x7FFFFFFF);
+        __m128i d_mask   = _mm_srai_epi32(d_raw, 31);
+        __m128i d        = _mm_or_si128(_mm_andnot_si128(d_mask, d_raw),
+                                        _mm_and_si128(d_mask, max_safe));
+        __m128i s_mask   = _mm_srai_epi32(s_raw, 31);
+        __m128i s        = _mm_or_si128(_mm_andnot_si128(s_mask, s_raw),
+                                        _mm_and_si128(s_mask, max_safe));
+#endif
+        // Convert lower 2 lanes to double, divide, and convert back to U32.
+        // Double-precision division natively handles dividing by zero (producing +Inf/NaN).
+        // Upon truncation back to U32, both saturate to INT_MIN (0x80000000).
+        __m128d fd_lo = _mm_cvtepi32_pd(d);
+        __m128d fs_lo = _mm_cvtepi32_pd(s);
+        __m128d fr_lo = _mm_div_pd(fd_lo, fs_lo);
+        __m128i r_lo  = _mm_cvttpd_epi32(fr_lo);
+        // Same for upper 2 lanes.
+        __m128d fd_hi = _mm_cvtepi32_pd(_mm_srli_si128(d, 8));
+        __m128d fs_hi = _mm_cvtepi32_pd(_mm_srli_si128(s, 8));
+        __m128d fr_hi = _mm_div_pd(fd_hi, fs_hi);
+        __m128i r_hi  = _mm_cvttpd_epi32(fr_hi);
+        // Recombine lanes
+        *dst = (U32)_mm_unpacklo_epi64(r_lo, r_hi);
+    }
+    #define SKRP_SUPPORTS_OPTIMIZED_DIV_UINT
 
     SI I32 iround(F v)         { return (I32)_mm_cvtps_epi32(v); }
     SI U32 round(F v)          { return (U32)_mm_cvtps_epi32(v); }
@@ -4710,6 +4941,13 @@ SI void mul_fn(T* dst, T* src) {
     *dst *= *src;
 }
 
+SI void div_fn(F* dst, F* src) {
+    *dst /= *src;
+}
+
+// For some architectures, we are able to write code that vectorizes better for bulk integer
+// divisions. If we didn't define that above, use a general-purpose version.
+#ifndef SKRP_SUPPORTS_OPTIMIZED_DIV_INT
 SI void div_fn(I32* dst, I32* src) {
     I32 divisor = *src;
     // Integer division crashes when we divide by 0, but we can divide by -1 to not crash (the
@@ -4720,7 +4958,9 @@ SI void div_fn(I32* dst, I32* src) {
     divisor += ((I32)cond_to_mask(divisor == -1 && *dst == std::numeric_limits<int32_t>::lowest()));
     *dst /= divisor;
 }
+#endif
 
+#ifndef SKRP_SUPPORTS_OPTIMIZED_DIV_UINT
 SI void div_fn(U32* dst, U32* src) {
     U32 divisor = *src;
     // Integer division crashes when we divide by 0, but we can divide by something else to not
@@ -4728,10 +4968,9 @@ SI void div_fn(U32* dst, U32* src) {
     divisor |= ((U32)cond_to_mask(divisor == 0));
     *dst /= divisor;
 }
-
-SI void div_fn(F* dst, F* src) {
-    *dst /= *src;
-}
+#endif
+#undef SKRP_SUPPORTS_OPTIMIZED_DIV_INT
+#undef SKRP_SUPPORTS_OPTIMIZED_DIV_UINT
 
 SI void bitwise_and_fn(I32* dst, I32* src) {
     *dst &= *src;
@@ -5445,8 +5684,6 @@ static void start_pipeline(size_t x0,     size_t y0,
                          U16& dr, U16& dg, U16& db, U16& da)
 #endif
 
-// ~~~~~~ Commonly used helper functions ~~~~~~ //
-
 /**
  * Helpers to to properly rounded division (by 255). The ideal answer we want to compute is slow,
  * thanks to a division by a non-power of two:
@@ -5492,21 +5729,6 @@ SI U16 div255_accurate(U16 v) {
 
 SI U16 inv(U16 v) { return 255-v; }
 
-SI U16 if_then_else(I16 c, U16 t, U16 e) {
-    return (t & sk_bit_cast<U16>(c)) | (e & sk_bit_cast<U16>(~c));
-}
-SI U32 if_then_else(I32 c, U32 t, U32 e) {
-    return (t & sk_bit_cast<U32>(c)) | (e & sk_bit_cast<U32>(~c));
-}
-
-SI U16 max(U16 x, U16 y) { return if_then_else(x < y, y, x); }
-SI U16 min(U16 x, U16 y) { return if_then_else(x < y, x, y); }
-
-SI U16 max(U16      a, uint16_t b) { return max(     a , U16_(b)); }
-SI U16 max(uint16_t a, U16      b) { return max(U16_(a),      b ); }
-SI U16 min(U16      a, uint16_t b) { return min(     a , U16_(b)); }
-SI U16 min(uint16_t a, U16      b) { return min(U16_(a),      b ); }
-
 SI U16 from_float(float f) { return U16_(f * 255.0f + 0.5f); }
 
 SI U16 lerp(U16 from, U16 to, U16 t) { return div255( from*inv(t) + to*t ); }
@@ -5536,45 +5758,164 @@ SI F if_then_else(I32 c, F t, F e) {
 }
 SI F if_then_else(I32 c, F     t, float e) { return if_then_else(c,    t , F_(e)); }
 SI F if_then_else(I32 c, float t, F     e) { return if_then_else(c, F_(t),    e ); }
+SI I32 if_then_else(I32 c, I32 t, I32 e) {
+    return (t & c) | (e & ~c);
+}
+SI U16 if_then_else(I16 c, U16 t, U16 e) {
+    return (t & sk_bit_cast<U16>(c)) | (e & sk_bit_cast<U16>(~c));
+}
+SI U32 if_then_else(I32 c, U32 t, U32 e) {
+    return (t & sk_bit_cast<U32>(c)) | (e & sk_bit_cast<U32>(~c));
+}
 
 SI F max(F x, F y) { return if_then_else(x < y, y, x); }
 SI F min(F x, F y) { return if_then_else(x < y, x, y); }
 
-SI F max(F     a, float b) { return max(   a , F_(b)); }
-SI F max(float a, F     b) { return max(F_(a),    b ); }
-SI F min(F     a, float b) { return min(   a , F_(b)); }
-SI F min(float a, F     b) { return min(F_(a),    b ); }
+SI I32 max(I32 x, I32 y) { return if_then_else(x < y, y, x); }
+SI I32 min(I32 x, I32 y) { return if_then_else(x < y, x, y); }
 
-SI I32 if_then_else(I32 c, I32 t, I32 e) {
-    return (t & c) | (e & ~c);
+SI U16 max(U16 x, U16 y) { return if_then_else(x < y, y, x); }
+SI U16 min(U16 x, U16 y) { return if_then_else(x < y, x, y); }
+
+#if defined(SKRP_CPU_ML4)
+// This helps split the broadcast (copying the float to all lanes of the register)
+// from the min/max operation which helps free up ports.
+SI F max(F     a, float b) { return max(a, (F)_mm512_set1_ps(b)); }
+SI F max(float a, F b) { return max((F)_mm512_set1_ps(a), b); }
+SI F min(F     a, float b) { return min(a, (F)_mm512_set1_ps(b)); }
+SI F min(float a, F b) { return min((F)_mm512_set1_ps(a), b); }
+
+SI I32 max(I32     a, int32_t b) { return max(a, (I32)_mm512_set1_epi32(b)); }
+SI I32 max(int32_t a, I32     b) { return max((I32)_mm512_set1_epi32(a), b); }
+SI I32 min(I32     a, int32_t b) { return min(a, (I32)_mm512_set1_epi32(b)); }
+SI I32 min(int32_t a, I32     b) { return min((I32)_mm512_set1_epi32(a), b); }
+#else
+SI F max(F a, float b) { return max(a, F_(b)); }
+SI F max(float a, F b) { return max(F_(a), b); }
+SI F min(F a, float b) { return min(a, F_(b)); }
+SI F min(float a, F b) { return min(F_(a), b); }
+
+SI I32 max(I32 a, int32_t b) { return max(a, I32_(b)); }
+SI I32 max(int32_t a, I32 b) { return max(I32_(a), b); }
+SI I32 min(I32 a, int32_t b) { return min(a, I32_(b)); }
+SI I32 min(int32_t a, I32 b) { return min(I32_(a), b); }
+#endif
+SI U16 max(U16      a, uint16_t b) { return max(     a , U16_(b)); }
+SI U16 max(uint16_t a, U16      b) { return max(U16_(a),      b ); }
+SI U16 min(U16      a, uint16_t b) { return min(     a , U16_(b)); }
+SI U16 min(uint16_t a, U16      b) { return min(U16_(a),      b ); }
+
+// Using explicit hardware min/max instructions can provide a speedup when the compiler doesn't
+// know to turn the bitmasking fromif_then_else into intrinsics.
+// DO NOT globally replace the conditional (bitwise) min/max with these.
+// In highly complex stages (like mirror_x_1 or gradient), intrinsics can cause regressions from
+// port contention (e.g. creating a traffic jam on AVX-512 math execution ports).
+#if defined(SKRP_CPU_ML4)
+SI F max_intr(F x, F y) { return _mm512_max_ps(x, y); }
+SI F min_intr(F x, F y) { return _mm512_min_ps(x, y); }
+SI I32 max_intr(I32 x, I32 y) { return (I32)_mm512_max_epi32((__m512i)x, (__m512i)y); }
+SI I32 min_intr(I32 x, I32 y) { return (I32)_mm512_min_epi32((__m512i)x, (__m512i)y); }
+SI U16 max_intr(U16 x, U16 y) { return (U16)_mm256_max_epu16((__m256i)x, (__m256i)y); }
+SI U16 min_intr(U16 x, U16 y) { return (U16)_mm256_min_epu16((__m256i)x, (__m256i)y); }
+#elif defined(SKRP_CPU_AVX2)
+SI F max_intr(F x, F y) {
+    __m256 x_lo, x_hi, y_lo, y_hi;
+    split(x, &x_lo, &x_hi);
+    split(y, &y_lo, &y_hi);
+    return join<F>(_mm256_max_ps(x_lo, y_lo), _mm256_max_ps(x_hi, y_hi));
 }
-#if defined(SKRP_CPU_AVX2)
-// Some compilers did not vectorize this, so explicitly call the intrinsics
-SI I32 max(I32 x, I32 y) {
+SI F min_intr(F x, F y) {
+    __m256 x_lo, x_hi, y_lo, y_hi;
+    split(x, &x_lo, &x_hi);
+    split(y, &y_lo, &y_hi);
+    return join<F>(_mm256_min_ps(x_lo, y_lo), _mm256_min_ps(x_hi, y_hi));
+}
+SI I32 max_intr(I32 x, I32 y) {
     __m256i x_lo, x_hi, y_lo, y_hi;
     split(x, &x_lo, &x_hi);
     split(y, &y_lo, &y_hi);
     return join<I32>(_mm256_max_epi32(x_lo, y_lo), _mm256_max_epi32(x_hi, y_hi));
 }
-SI I32 min(I32 x, I32 y) {
+SI I32 min_intr(I32 x, I32 y) {
     __m256i x_lo, x_hi, y_lo, y_hi;
     split(x, &x_lo, &x_hi);
     split(y, &y_lo, &y_hi);
     return join<I32>(_mm256_min_epi32(x_lo, y_lo), _mm256_min_epi32(x_hi, y_hi));
 }
-#elif defined(SKRP_CPU_NEON)
-// TODO(kjlubick) make sure NEON code is handled well.
-SI I32 max(I32 x, I32 y) { return if_then_else(x < y, y, x); }
-SI I32 min(I32 x, I32 y) { return if_then_else(x < y, x, y); }
+SI U16 max_intr(U16 x, U16 y) { return (U16)_mm256_max_epu16((__m256i)x, (__m256i)y); }
+SI U16 min_intr(U16 x, U16 y) { return (U16)_mm256_min_epu16((__m256i)x, (__m256i)y); }
+#elif defined(SKRP_CPU_SSE2) || defined(SKRP_CPU_SSE41) || defined(SKRP_CPU_AVX)
+SI F max_intr(F x, F y) {
+    __m128 x_lo, x_hi, y_lo, y_hi;
+    split(x, &x_lo, &x_hi);
+    split(y, &y_lo, &y_hi);
+    return join<F>(_mm_max_ps(x_lo, y_lo), _mm_max_ps(x_hi, y_hi));
+}
+SI F min_intr(F x, F y) {
+    __m128 x_lo, x_hi, y_lo, y_hi;
+    split(x, &x_lo, &x_hi);
+    split(y, &y_lo, &y_hi);
+    return join<F>(_mm_min_ps(x_lo, y_lo), _mm_min_ps(x_hi, y_hi));
+}
+#if defined(SKRP_CPU_SSE41) || defined(SKRP_CPU_AVX)
+SI I32 max_intr(I32 x, I32 y) {
+    __m128i x_lo, x_hi, y_lo, y_hi;
+    split(x, &x_lo, &x_hi);
+    split(y, &y_lo, &y_hi);
+    return join<I32>(_mm_max_epi32(x_lo, y_lo), _mm_max_epi32(x_hi, y_hi));
+}
+SI I32 min_intr(I32 x, I32 y) {
+    __m128i x_lo, x_hi, y_lo, y_hi;
+    split(x, &x_lo, &x_hi);
+    split(y, &y_lo, &y_hi);
+    return join<I32>(_mm_min_epi32(x_lo, y_lo), _mm_min_epi32(x_hi, y_hi));
+}
+SI U16 max_intr(U16 x, U16 y) { return (U16)_mm_max_epu16((__m128i)x, (__m128i)y); }
+SI U16 min_intr(U16 x, U16 y) { return (U16)_mm_min_epu16((__m128i)x, (__m128i)y); }
 #else
-SI I32 max(I32 x, I32 y) { return if_then_else(x < y, y, x); }
-SI I32 min(I32 x, I32 y) { return if_then_else(x < y, x, y); }
+SI I32 max_intr(I32 x, I32 y) { return max(x, y); }
+SI I32 min_intr(I32 x, I32 y) { return min(x, y); }
+SI U16 max_intr(U16 x, U16 y) { return max(x, y); }
+SI U16 min_intr(U16 x, U16 y) { return min(x, y); }
+#endif // defined(SKRP_CPU_SSE41) || defined(SKRP_CPU_AVX)
+#else
+// TODO(kjlubick) make sure NEON and other architectures are handling this well
+SI F   max_intr(F x, F y) { return max(x, y); }
+SI F   min_intr(F x, F y) { return min(x, y); }
+SI I32 max_intr(I32 x, I32 y) { return max(x, y); }
+SI I32 min_intr(I32 x, I32 y) { return min(x, y); }
+SI U16 max_intr(U16 x, U16 y) { return max(x, y); }
+SI U16 min_intr(U16 x, U16 y) { return min(x, y); }
 #endif
 
-SI I32 max(I32     a, int32_t b) { return max(     a , I32_(b)); }
-SI I32 max(int32_t a, I32     b) { return max(I32_(a),      b ); }
-SI I32 min(I32     a, int32_t b) { return min(     a , I32_(b)); }
-SI I32 min(int32_t a, I32     b) { return min(I32_(a),      b ); }
+#if defined(SKRP_CPU_ML4)
+// This helps split the broadcast (copying the float to all lanes of the register)
+// from the min/max operation which helps free up ports.
+SI F max_intr(F     a, float b) { return max_intr(a, (F)_mm512_set1_ps(b)); }
+SI F max_intr(float a, F b) { return max_intr((F)_mm512_set1_ps(a), b); }
+SI F min_intr(F     a, float b) { return min_intr(a, (F)_mm512_set1_ps(b)); }
+SI F min_intr(float a, F b) { return min_intr((F)_mm512_set1_ps(a), b); }
+
+SI I32 max_intr(I32     a, int32_t b) { return max_intr(a, (I32)_mm512_set1_epi32(b)); }
+SI I32 max_intr(int32_t a, I32     b) { return max_intr((I32)_mm512_set1_epi32(a), b); }
+SI I32 min_intr(I32     a, int32_t b) { return min_intr(a, (I32)_mm512_set1_epi32(b)); }
+SI I32 min_intr(int32_t a, I32     b) { return min_intr((I32)_mm512_set1_epi32(a), b); }
+#else
+SI F max_intr(F a, float b) { return max_intr(a, F_(b)); }
+SI F max_intr(float a, F b) { return max_intr(F_(a), b); }
+SI F min_intr(F a, float b) { return min_intr(a, F_(b)); }
+SI F min_intr(float a, F b) { return min_intr(F_(a), b); }
+
+SI I32 max_intr(I32 a, int32_t b) { return max_intr(a, I32_(b)); }
+SI I32 max_intr(int32_t a, I32 b) { return max_intr(I32_(a), b); }
+SI I32 min_intr(I32 a, int32_t b) { return min_intr(a, I32_(b)); }
+SI I32 min_intr(int32_t a, I32 b) { return min_intr(I32_(a), b); }
+#endif
+
+SI U16 max_intr(U16      a, uint16_t b) { return max_intr(     a , U16_(b)); }
+SI U16 max_intr(uint16_t a, U16      b) { return max_intr(U16_(a),      b ); }
+SI U16 min_intr(U16      a, uint16_t b) { return min_intr(     a , U16_(b)); }
+SI U16 min_intr(uint16_t a, U16      b) { return min_intr(U16_(a),      b ); }
 
 SI F mad(F     f, F     m, F     a) { return a+f*m; }
 SI F mad(F     f, F     m, float a) { return mad(   f ,    m , F_(a)); }
@@ -5939,9 +6280,9 @@ LOWP_STAGE_PP(swap_src_dst, NoCtx) {
     }                                                    \
     SI U16 name##_channel(U16 s, U16 d, U16 sa, U16 da)
 
-    BLEND_MODE(darken)     { return s + d -   div255( max(s*da, d*sa) ); }
-    BLEND_MODE(lighten)    { return s + d -   div255( min(s*da, d*sa) ); }
-    BLEND_MODE(difference) { return s + d - 2*div255( min(s*da, d*sa) ); }
+    BLEND_MODE(darken)     { return s + d -   div255( max_intr(s*da, d*sa) ); }
+    BLEND_MODE(lighten)    { return s + d -   div255( min_intr(s*da, d*sa) ); }
+    BLEND_MODE(difference) { return s + d - 2*div255( min_intr(s*da, d*sa) ); }
     BLEND_MODE(exclusion)  { return s + d - 2*div255( s*d ); }
 
     BLEND_MODE(hardlight) {
@@ -5969,8 +6310,8 @@ SI U32 ix_and_ptr(T** ptr, const SkRasterPipelineContexts::GatherCtx* ctx, F x, 
 
     const F z = F_(std::numeric_limits<float>::min());
 
-    x = min(max(z, x), w);
-    y = min(max(z, y), h);
+    x = min_intr(max_intr(z, x), w);
+    y = min_intr(max_intr(z, y), h);
 
     x = sk_bit_cast<F>(sk_bit_cast<U32>(x) - (uint32_t)ctx->roundDownAtInteger);
     y = sk_bit_cast<F>(sk_bit_cast<U32>(y) - (uint32_t)ctx->roundDownAtInteger);
@@ -5987,8 +6328,8 @@ SI U32 ix_and_ptr(T** ptr, const SkRasterPipelineContexts::GatherCtx* ctx, I32 x
     const I32 w = I32_( ctx->width - 1),
               h = I32_(ctx->height - 1);
 
-    U32 ax = cast<U32>(min(max(0, x), w)),
-        ay = cast<U32>(min(max(0, y), h));
+    U32 ax = cast<U32>(min_intr(max_intr(0, x), w)),
+        ay = cast<U32>(min_intr(max_intr(0, y), h));
 
     *ptr = (const T*)ctx->pixels;
     return ay * ctx->stride + ax;
@@ -6529,8 +6870,8 @@ LOWP_STAGE_PP(lerp_u8, const SkRasterPipelineContexts::MemoryCtx* ctx) {
 
 // Derive alpha's coverage from rgb coverage and the values of src and dst alpha.
 SI U16 alpha_coverage_from_rgb_coverage(U16 a, U16 da, U16 cr, U16 cg, U16 cb) {
-    return if_then_else(a < da, min(cr, min(cg,cb))
-                              , max(cr, max(cg,cb)));
+    return if_then_else(a < da, min_intr(cr, min_intr(cg,cb))
+                              , max_intr(cr, max_intr(cg,cb)));
 }
 LOWP_STAGE_PP(scale_565, const SkRasterPipelineContexts::MemoryCtx* ctx) {
     U16 cr,cg,cb;
@@ -6567,9 +6908,10 @@ LOWP_STAGE_PP(emboss, const SkRasterPipelineContexts::EmbossCtx* ctx) {
 // Clamp x to [0,1], both sides inclusive (think, gradients).
 // Even repeat and mirror funnel through a clamp to handle bad inputs like +Inf, NaN.
 SI F clamp_01_(F v) { return min(max(0, v), 1); }
+SI F fast_clamp_01_(F v) { return min_intr(max_intr(0, v), 1); }
 
-LOWP_STAGE_GG(clamp_x_1 , NoCtx) { x = clamp_01_(x); }
-LOWP_STAGE_GG(repeat_x_1, NoCtx) { x = clamp_01_(x - floor_(x)); }
+LOWP_STAGE_GG(clamp_x_1 , NoCtx) { x = fast_clamp_01_(x); }
+LOWP_STAGE_GG(repeat_x_1, NoCtx) { x = fast_clamp_01_(x - floor_(x)); }
 LOWP_STAGE_GG(mirror_x_1, NoCtx) {
     auto two = [](F x){ return x+x; };
     x = clamp_01_(abs_( (x-1.0f) - two(floor_((x-1.0f)*0.5f)) - 1.0f ));
@@ -6591,8 +6933,8 @@ LOWP_STAGE_GG(decal_x_and_y, SkRasterPipelineContexts::DecalTileCtx* ctx) {
     sk_unaligned_store(ctx->mask, cond_to_mask_16((0 <= x) & (x < w) & (0 <= y) & (y < h)));
 }
 LOWP_STAGE_GG(clamp_x_and_y, SkRasterPipelineContexts::CoordClampCtx* ctx) {
-    x = min(ctx->max_x, max(ctx->min_x, x));
-    y = min(ctx->max_y, max(ctx->min_y, y));
+    x = min_intr(ctx->max_x, max_intr(ctx->min_x, x));
+    y = min_intr(ctx->max_y, max_intr(ctx->min_y, y));
 }
 LOWP_STAGE_PP(check_decal_mask, SkRasterPipelineContexts::DecalTileCtx* ctx) {
     auto mask = sk_unaligned_load<U16>(ctx->mask);
