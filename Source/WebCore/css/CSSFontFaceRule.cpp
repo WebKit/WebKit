@@ -73,7 +73,7 @@ void CSSFontFaceRule::reattach(StyleRuleBase& rule)
 {
     m_fontFaceRule = downcast<StyleRuleFontFace>(rule);
     if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(protect(m_fontFaceRule)->mutableProperties());
+        protect(m_propertiesCSSOMWrapper)->reattach(protect(protect(m_fontFaceRule)->mutableProperties()));
 }
 
 } // namespace WebCore
