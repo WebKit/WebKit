@@ -3443,7 +3443,9 @@ static void handleBingQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
         // bing.com rdar://133223599
         QuirksData::SiteSpecificQuirk::MaybeBypassBackForwardCache,
         // bing.com rdar://126573838
-        QuirksData::SiteSpecificQuirk::NeedsMediaRewriteRangeRequestQuirk
+        QuirksData::SiteSpecificQuirk::NeedsMediaRewriteRangeRequestQuirk,
+        // bing.com rdar://162696610 (and formerly rdar://64147813)
+        QuirksData::SiteSpecificQuirk::ShouldAutoplayWebAudioForArbitraryUserGestureQuirk
     });
 }
 
