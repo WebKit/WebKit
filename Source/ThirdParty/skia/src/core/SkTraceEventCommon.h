@@ -42,16 +42,12 @@
 // Counters are created with the following macro:
 //   TRACE_COUNTER1("MY_SUBSYSTEM", "myCounter", g_myCounterValue);
 //
-// Counters are process-specific. The macro itself can be issued from any thread, however.
+// Counters are process-specific. The macro itself can be issued from any thread, however. The
+// counter name must be unique.
 //
 // Sometimes, you want to track two counters at once. You can do this with two counter macros:
 //   TRACE_COUNTER1("MY_SUBSYSTEM", "myCounter0", g_myCounterValue[0]);
 //   TRACE_COUNTER1("MY_SUBSYSTEM", "myCounter1", g_myCounterValue[1]);
-// Or you can do it with a combined macro:
-//   TRACE_COUNTER2("MY_SUBSYSTEM", "myCounter",
-//                  "bytesPinned", g_myCounterValue[0],
-//                  "bytesAllocated", g_myCounterValue[1]);
-// The tracing UI will show these counters in a single graph, as a summed area chart.
 
 #if defined(TRACE_EVENT0)
     #error "Another copy of this file has already been included."
@@ -249,7 +245,7 @@ static inline void sk_noop(Args...) {}
     #define TRACE_EVENT_OBJECT_SNAPSHOT_WITH_ID(cg, n, id, ss) TRACE_EMPTY(cg, n, id, ss)
     #define TRACE_EVENT_OBJECT_DELETED_WITH_ID(cg, n, id) TRACE_EMPTY(cg, n, id)
     #define TRACE_COUNTER1(cg, n, value) TRACE_EMPTY(cg, n, value)
-    #define TRACE_COUNTER2(cg, n, v1n, v1v, v2n, v2v) TRACE_EMPTY(cg, n, v1n, v1v, v2n, v2v)
+    #define TRACE_COUNTER1_ALWAYS(cg, n, value) TRACE_EMPTY(cg, n, value)
 
 #elif defined(SK_ANDROID_FRAMEWORK_USE_PERFETTO)
 
@@ -548,7 +544,7 @@ namespace skia_private {
 #define TRACE_EVENT_INSTANT2_ALWAYS(category_group, name, scope, arg1_name, arg1_val, \
                                     arg2_name, arg2_val)                              \
     do { TRACE_EVENT_ATRACE_OR_PERFETTO_FORCEABLE(/* force_always_trace = */ true,    \
-                                                  category_group,                     \
+                                                  category_group ".always",           \
                                                   name,                               \
                                                   arg1_name,                          \
                                                   arg1_val,                           \
@@ -566,19 +562,11 @@ namespace skia_private {
             ATRACE_INT(name, value);                                    \
         }                                                               \
     }
-
-// Records the values of a multi-parted counter called "name" immediately.
-// In Chrome, this macro produces a stacked bar chart. Perfetto doesn't support
-// that (related: b/242349575), so this just produces two separate counters.
-#define TRACE_COUNTER2(category_group, name, value1_name, value1_val, value2_name, value2_val)  \
-    if (CC_UNLIKELY(SkAndroidFrameworkTraceUtil::getEnableTracing())) {                         \
-        if (SkAndroidFrameworkTraceUtil::getUsePerfettoTrackEvents()) {                         \
-            TRACE_COUNTER(category_group, name "-" value1_name, value1_val);                    \
-            TRACE_COUNTER(category_group, name "-" value2_name, value2_val);                    \
-        } else {                                                                                \
-            ATRACE_INT(name "-" value1_name, value1_val);                                       \
-            ATRACE_INT(name "-" value2_name, value2_val);                                       \
-        }                                                                                       \
+#define TRACE_COUNTER1_ALWAYS(category_group, name, value)          \
+    if (SkAndroidFrameworkTraceUtil::getUsePerfettoTrackEvents()) { \
+        TRACE_COUNTER(category_group ".always", name, value);       \
+    } else {                                                        \
+        ATRACE_INT(name, value);                                    \
     }
 
 // ATrace has no object tracking, and would require a legacy shim for Perfetto (which likely no-ops
@@ -661,16 +649,10 @@ namespace skia_private {
   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_COUNTER, category_group, name, \
                            TRACE_EVENT_FLAG_NONE, "value",                  \
                            static_cast<int>(value))
-
-// Records the values of a multi-parted counter called "name" immediately.
-// The UI will treat value1 and value2 as parts of a whole, displaying their
-// values as a stacked-bar chart.
-#define TRACE_COUNTER2(category_group, name, value1_name, value1_val,       \
-                       value2_name, value2_val)                             \
+#define TRACE_COUNTER1_ALWAYS(category_group, name, value)                  \
   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_COUNTER, category_group, name, \
-                           TRACE_EVENT_FLAG_NONE, value1_name,              \
-                           static_cast<int>(value1_val), value2_name,       \
-                           static_cast<int>(value2_val))
+                           TRACE_EVENT_FLAG_NONE, "value",                  \
+                           static_cast<int>(value))
 
 #define TRACE_EVENT_ASYNC_BEGIN0(category, name, id)                                           \
     INTERNAL_TRACE_EVENT_ADD_WITH_ID(                                                          \

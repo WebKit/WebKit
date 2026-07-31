@@ -9,6 +9,7 @@ package gen_tasks_logic
 */
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -21,10 +22,15 @@ import (
 	"strings"
 	"time"
 
+	"go.skia.org/infra/go/auth"
 	"go.skia.org/infra/go/cas/rbe"
 	"go.skia.org/infra/go/cipd"
+	"go.skia.org/infra/go/httputils"
+	swarmingv2 "go.skia.org/infra/go/swarming/v2"
+	"go.skia.org/infra/task_scheduler/go/orphaned_tasks_machines"
 	"go.skia.org/infra/task_scheduler/go/specs"
 	"go.skia.org/skia/bazel/device_specific_configs"
+	"golang.org/x/oauth2/google"
 )
 
 const (
@@ -356,10 +362,7 @@ func In(s string, a []string) bool {
 	return false
 }
 
-// GenTasks regenerates the tasks.json file. Loads the job list from a jobs.json
-// file which is the sibling of the calling gen_tasks.go file. If cfg is nil, it
-// is similarly loaded from a cfg.json file which is the sibling of the calling
-// gen_tasks.go file.
+// FormatJobsJSON formats the jobs.json file for readability and consistency.
 func FormatJobsJSON(jobsFilePath string) []*JobInfo {
 	var jobsWithInfo []*JobInfo
 	LoadJSON(jobsFilePath, &jobsWithInfo)
@@ -391,6 +394,10 @@ func FormatJobsJSON(jobsFilePath string) []*JobInfo {
 	return jobsWithInfo
 }
 
+// GenTasks regenerates the tasks.json file. Loads the job list from a jobs.json
+// file which is the sibling of the calling gen_tasks.go file. If cfg is nil, it
+// is similarly loaded from a cfg.json file which is the sibling of the calling
+// gen_tasks.go file.
 func GenTasks(cfg *Config) {
 	b := specs.MustNewTasksCfgBuilder()
 
@@ -626,6 +633,9 @@ func GenTasks(cfg *Config) {
 	generateCompileCAS(b, cfg)
 
 	builder.MustFinish()
+
+	// Check that all tasks actually have machine(s) which can run them.
+	warnForOrphanedTasks(builder)
 }
 
 // getThisDirName returns the infra/bots directory which is an ancestor of this
@@ -844,7 +854,7 @@ var androidDeviceInfos = map[string][]string{
 	"JioNext":         {"msm8937", "RKQ1.210602.002"},
 	"Mokey":           {"mokey", "UP1A.231105.001"},
 	"MokeyGo32":       {"mokey_go32", "UQ1A.240105.003.A1"},
-	"MotoG73":         {"devonf", "U1TN34.82-12-17"},
+	"MotoG73":         {"devonf", "U1TNS34.82-12-17-3"},
 	"Nexus5":          {"hammerhead", "M4B30Z_3437181"},
 	"P30":             {"HWELE", "HUAWEIELE-L29"},
 	"Pixel3a":         {"sargo", "QP1A.190711.020"},
@@ -1039,6 +1049,7 @@ func (b *TaskBuilder) defaultSwarmDimensions() {
 				gpu, ok := map[string]string{
 					"GTX1660":             "10de:2184-31.0.15.4601",
 					"IntelArc140V":        "8086:64a0-32.0.101.7029",
+					"IntelArcB570":        "8086:e20c-32.0.101.8132",
 					"IntelHD4400":         "8086:0a16-10.0.26100.1",
 					"IntelIris540":        "8086:1926-31.0.101.2115",
 					"IntelIris655":        "8086:3ea5-26.20.100.7463",
@@ -1507,7 +1518,7 @@ func (b *jobBuilder) infra() {
 		b.kitchenTask("infra", OUTPUT_NONE)
 		b.cas(CAS_WHOLE_REPO)
 		b.serviceAccount(b.cfg.ServiceAccountCompile)
-		b.usesGSUtil()
+		b.usesGCloud()
 		b.idempotent()
 		b.usesGo()
 	})
@@ -1543,7 +1554,7 @@ func (b *jobBuilder) buildstats() {
 			b.Name = uploadName
 			b.serviceAccount(b.cfg.ServiceAccountUploadNano)
 			b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-			b.usesGSUtil()
+			b.usesGCloud()
 			b.dep(depName)
 		})
 	}
@@ -1679,7 +1690,7 @@ func (b *TaskBuilder) commonTestPerfAssets() {
 func (b *TaskBuilder) directUpload(gsBucket, serviceAccount string) {
 	b.recipeProp("gs_bucket", gsBucket)
 	b.serviceAccount(serviceAccount)
-	b.usesGSUtil()
+	b.usesGCloud()
 }
 
 // dm generates a Test task using dm.
@@ -1790,7 +1801,7 @@ func (b *jobBuilder) dm() {
 			b.kitchenTask("upload_dm_results", OUTPUT_NONE)
 			b.serviceAccount(b.cfg.ServiceAccountUploadGM)
 			b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-			b.usesGSUtil()
+			b.usesGCloud()
 			b.dep(depName)
 		})
 	}
@@ -1918,7 +1929,7 @@ func (b *jobBuilder) puppeteer() {
 		b.Name = uploadName
 		b.serviceAccount(b.cfg.ServiceAccountUploadNano)
 		b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-		b.usesGSUtil()
+		b.usesGCloud()
 		b.dep(depName)
 	})
 }
@@ -2013,7 +2024,7 @@ func (b *jobBuilder) perf() {
 			b.Name = uploadName
 			b.serviceAccount(b.cfg.ServiceAccountUploadNano)
 			b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-			b.usesGSUtil()
+			b.usesGCloud()
 			b.dep(depName)
 		})
 	}
@@ -2195,6 +2206,7 @@ func (b *jobBuilder) bazelBuild() {
 			// We only run builds in GCE.
 			"linux_x64":   bazelCacheDirOnGCELinux,
 			"mac_arm64":   bazelCacheDirOnMac,
+			"mac_x64":     bazelCacheDirOnMac,
 			"windows_x64": bazelCacheDirOnWindows,
 		}[host]
 		if !ok {
@@ -2209,7 +2221,7 @@ func (b *jobBuilder) bazelBuild() {
 
 		cmd := []string{
 			"luci-auth", "context",
-			b.taskDriver("bazel_build", host != "windows_x64"),
+			b.taskDriver("bazel_build", false),
 			"--project_id=skia-swarming-bots",
 			"--task_id=" + specs.PLACEHOLDER_TASK_ID,
 			"--task_name=" + b.Name,
@@ -2234,11 +2246,23 @@ func (b *jobBuilder) bazelBuild() {
 				fmt.Sprintf("os:%s", DEFAULT_OS_WIN_GCE),
 				"pool:Skia",
 			)
+			// bazel.exe is dynamically linked against the MSVC C++ runtime (e.g. VCRUNTIME140.dll)
+			// So we need the win_toolchain available to even invoke it. Bazel itself will download
+			// this in the Windows hermetic toolchain (see download_windows_amd64_toolchain.bzl).
+			b.asset("win_toolchain")
 			b.usesBazel("windows_x64")
 			cmd = append(cmd, "--bazel_arg=--experimental_scale_timeouts=2.0")
 		} else if host == "mac_arm64" {
 			b.usesBazel("mac_arm64")
 			b.dimension("cpu:arm64-64-Apple_M4", "pool:Skia")
+			b.usesXCode()
+		} else if host == "mac_x64" {
+			b.usesBazel("mac_x64")
+			b.dimension(
+				"cpu:x86-64-i9-8950HK",
+				"cipd_platform:mac-amd64",
+				"pool:Skia",
+			)
 			b.usesXCode()
 		} else {
 			panic("unsupported Bazel host " + host)
@@ -2387,4 +2411,37 @@ func setPkgPaths(path string, pkgs ...*cipd.Package) []*cipd.Package {
 		pkg.Path = path
 	}
 	return pkgs
+}
+
+func warnForOrphanedTasks(b *builder) {
+	const swarmingServer = "chromium-swarm.appspot.com" // TODO(borent): Don't hard-code.
+
+	ctx := context.Background()
+	ts, err := google.DefaultTokenSource(ctx, auth.ScopeUserinfoEmail)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARNING: Failed to check that all tasks have associated machines: %s\n", err)
+		return
+	}
+	c := httputils.DefaultClientConfig().WithTokenSource(ts).Client()
+	swarm := swarmingv2.NewDefaultClient(c, swarmingServer)
+	report, err := orphaned_tasks_machines.GenerateReport(context.Background(), b.Config(), swarm)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARNING: Failed to check that all tasks have associated machines: %s\n", err)
+		return
+	}
+	if len(report.NoMatchingMachines) > 0 {
+		fmt.Fprintf(os.Stderr, "WARNING: The following tasks have no machines which can run them:\n")
+		for idx, group := range report.NoMatchingMachines {
+			fmt.Fprintf(os.Stderr, "%d:\n", idx)
+			fmt.Fprintf(os.Stderr, "  Dimensions:\n")
+			for _, dim := range group.Dimensions {
+				fmt.Fprintf(os.Stderr, "    - %s\n", dim)
+			}
+			fmt.Fprintf(os.Stderr, "  Tasks:\n")
+			for _, task := range group.Tasks {
+				fmt.Fprintf(os.Stderr, "    - %s\n", task)
+			}
+			fmt.Fprintf(os.Stderr, "\n")
+		}
+	}
 }

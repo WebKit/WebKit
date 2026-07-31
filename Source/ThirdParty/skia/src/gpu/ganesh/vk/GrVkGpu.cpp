@@ -27,6 +27,7 @@
 #include "include/gpu/vk/VulkanMemoryAllocator.h"
 #include "include/gpu/vk/VulkanMutableTextureState.h"
 #include "include/gpu/vk/VulkanTypes.h"
+#include "include/private/SkAlign.h"
 #include "include/private/SkDebug.h"
 #include "include/private/SkTemplates.h"
 #include "include/private/SkTo.h"
@@ -34,6 +35,7 @@
 #include "src/core/SkCompressedDataUtils.h"
 #include "src/core/SkMipmap.h"
 #include "src/core/SkRectMemcpy.h"
+#include "src/core/SkSafeMath.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/DataUtils.h"
 #include "src/gpu/RefCntedCallback.h"
@@ -72,6 +74,7 @@
 #include <algorithm>
 #include <cstring>
 #include <functional>
+#include <numeric>
 #include <utility>
 
 class GrAttachment;
@@ -80,10 +83,6 @@ class GrManagedResource;
 class GrProgramDesc;
 class GrSemaphore;
 struct GrContextOptions;
-
-#if defined(SK_USE_VMA)
-#include "src/gpu/vk/vulkanmemoryallocator/VulkanMemoryAllocatorPriv.h"
-#endif
 
 using namespace skia_private;
 
@@ -157,14 +156,6 @@ std::unique_ptr<GrGpu> GrVkGpu::Make(const skgpu::VulkanBackendContext& backendC
     }
 
     sk_sp<skgpu::VulkanMemoryAllocator> memoryAllocator = backendContext.fMemoryAllocator;
-#if defined(SK_USE_VMA)
-    if (!memoryAllocator) {
-        // We were not given a memory allocator at creation
-        memoryAllocator =
-                skgpu::VulkanMemoryAllocators::Make(backendContext,
-                                                    skgpu::ThreadSafe::kNo);
-    }
-#endif
     if (!memoryAllocator) {
         SkDEBUGFAIL("No supplied vulkan memory allocator and unable to create one internally.");
         return nullptr;
@@ -620,8 +611,12 @@ bool GrVkGpu::onTransferPixelsTo(GrTexture* texture,
         return false;
     }
 
-    // Vulkan only supports offsets that are both 4-byte aligned and aligned to a pixel.
-    if ((bufferOffset & 0x3) || (bufferOffset % bpp)) {
+    SkASSERT(bpp > 0);
+    // Technically transferBufferRowBytesAlignment() could be unbounded and then finding lcm could
+    // overflow. However, in practice this alignment will never be a large enough value to
+    // overflow.
+    size_t alignment = std::lcm(bpp, this->vkCaps().transferBufferRowBytesAlignment());
+    if (bufferOffset % alignment != 0) {
         return false;
     }
     GrVkTexture* tex = static_cast<GrVkTexture*>(texture);
@@ -719,7 +714,16 @@ bool GrVkGpu::onTransferPixelsFrom(GrSurface* surface,
     VkBufferImageCopy region;
     memset(&region, 0, sizeof(VkBufferImageCopy));
     region.bufferOffset = offset;
-    region.bufferRowLength = rect.width();
+    size_t bpp = GrColorTypeBytesPerPixel(bufferColorType);
+    SkASSERT(bpp > 0);
+    SkSafeMath safe;
+    size_t alignment = safe.lcm(bpp, this->vkCaps().transferBufferRowBytesAlignment());
+    size_t rowBytes = safe.mul(bpp, rect.width());
+    size_t alignedRowBytes = safe.alignUpNonPow2(rowBytes, alignment);
+    if (!safe.ok()) {
+        return false;
+    }
+    region.bufferRowLength = alignedRowBytes / bpp;
     region.bufferImageHeight = 0;
     region.imageSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
     region.imageOffset = {rect.left(), rect.top(), 0};
@@ -864,7 +868,8 @@ bool GrVkGpu::uploadTexDataLinear(GrVkImage* texImage,
 
 // This fills in the 'regions' vector in preparation for copying a buffer to an image.
 // 'individualMipOffsets' is filled in as a side-effect.
-static size_t fill_in_compressed_regions(GrStagingBufferManager* stagingBufferManager,
+static size_t fill_in_compressed_regions(const GrVkCaps& vkCaps,
+                                         GrStagingBufferManager* stagingBufferManager,
                                          TArray<VkBufferImageCopy>* regions,
                                          TArray<size_t>* individualMipOffsets,
                                          GrStagingBufferManager::Slice* slice,
@@ -888,12 +893,10 @@ static size_t fill_in_compressed_regions(GrStagingBufferManager* stagingBufferMa
     SkASSERT(individualMipOffsets->size() == numMipLevels);
 
     // Get a staging buffer slice to hold our mip data.
-    // Vulkan requires offsets in the buffer to be aligned to multiple of the texel size and 4
-    size_t alignment = bytesPerBlock;
-    switch (alignment & 0b11) {
-        case 0:                     break;   // alignment is already a multiple of 4.
-        case 2:     alignment *= 2; break;   // alignment is a multiple of 2 but not 4.
-        default:    alignment *= 4; break;   // alignment is not a multiple of 2.
+    SkSafeMath safe;
+    size_t alignment = safe.lcm(bytesPerBlock, vkCaps.transferBufferRowBytesAlignment());
+    if (!safe.ok() || alignment == 0) {
+        return 0;
     }
     *slice = stagingBufferManager->allocateStagingBufferSlice(bufferSize, alignment);
     if (!slice->fBuffer) {
@@ -949,30 +952,30 @@ bool GrVkGpu::uploadTexDataOptimal(GrVkImage* texImage,
     AutoTArray<GrMipLevel> texelsShallowCopy(mipLevelCount);
     std::copy_n(texels, mipLevelCount, texelsShallowCopy.get());
 
-    TArray<size_t> individualMipOffsets;
-    size_t combinedBufferSize;
-    if (mipLevelCount > 1) {
-        combinedBufferSize = GrComputeTightCombinedBufferSize(bpp,
-                                                              rect.size(),
-                                                              &individualMipOffsets,
-                                                              mipLevelCount);
-    } else {
-        SkASSERT(texelsShallowCopy[0].fPixels && texelsShallowCopy[0].fRowBytes);
-        combinedBufferSize = rect.width()*rect.height()*bpp;
-        individualMipOffsets.push_back(0);
+    SkASSERT(bpp > 0);
+    SkSafeMath safe;
+    size_t rowAlignment = safe.lcm(bpp, this->vkCaps().transferBufferRowBytesAlignment());
+    if (!safe.ok()) {
+        return false;
     }
-    SkASSERT(combinedBufferSize);
+
+    if (mipLevelCount == 1) {
+        SkASSERT(texelsShallowCopy[0].fPixels && texelsShallowCopy[0].fRowBytes);
+    }
+
+    TArray<size_t> individualMipOffsets;
+    size_t combinedBufferSize = GrComputeCombinedBufferSize(bpp,
+                                                            rect.size(),
+                                                            &individualMipOffsets,
+                                                            mipLevelCount,
+                                                            rowAlignment);
+    if (combinedBufferSize == 0) {
+        return false;
+    }
 
     // Get a staging buffer slice to hold our mip data.
-    // Vulkan requires offsets in the buffer to be aligned to multiple of the texel size and 4
-    size_t alignment = bpp;
-    switch (alignment & 0b11) {
-        case 0:                     break;   // alignment is already a multiple of 4.
-        case 2:     alignment *= 2; break;   // alignment is a multiple of 2 but not 4.
-        default:    alignment *= 4; break;   // alignment is not a multiple of 2.
-    }
     GrStagingBufferManager::Slice slice =
-            fStagingBufferManager.allocateStagingBufferSlice(combinedBufferSize, alignment);
+            fStagingBufferManager.allocateStagingBufferSlice(combinedBufferSize, rowAlignment);
     if (!slice.fBuffer) {
         return false;
     }
@@ -987,18 +990,22 @@ bool GrVkGpu::uploadTexDataOptimal(GrVkImage* texImage,
     int currentHeight = rect.height();
     for (int currentMipLevel = 0; currentMipLevel < mipLevelCount; currentMipLevel++) {
         if (texelsShallowCopy[currentMipLevel].fPixels) {
-            const size_t trimRowBytes = currentWidth * bpp;
+            const size_t trimRowBytes = safe.mul(currentWidth, bpp);
             const size_t rowBytes = texelsShallowCopy[currentMipLevel].fRowBytes;
+            size_t alignedRowBytes = safe.alignUpNonPow2(trimRowBytes, rowAlignment);
+            if (!safe.ok()) {
+                return false;
+            }
 
             // copy data into the buffer, skipping the trailing bytes
             char* dst = buffer + individualMipOffsets[currentMipLevel];
             const char* src = (const char*)texelsShallowCopy[currentMipLevel].fPixels;
-            SkRectMemcpy(dst, trimRowBytes, src, rowBytes, trimRowBytes, currentHeight);
+            SkRectMemcpy(dst, alignedRowBytes, src, rowBytes, trimRowBytes, currentHeight);
 
             VkBufferImageCopy& region = regions.push_back();
             memset(&region, 0, sizeof(VkBufferImageCopy));
             region.bufferOffset = slice.fOffset + individualMipOffsets[currentMipLevel];
-            region.bufferRowLength = currentWidth;
+            region.bufferRowLength = alignedRowBytes / bpp;
             region.bufferImageHeight = currentHeight;
             region.imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, SkToU32(currentMipLevel), 0, 1};
             region.imageOffset = {uploadLeft, uploadTop, 0};
@@ -1061,7 +1068,8 @@ bool GrVkGpu::uploadTexDataCompressed(GrVkImage* uploadTexture,
     GrStagingBufferManager::Slice slice;
     TArray<VkBufferImageCopy> regions;
     TArray<size_t> individualMipOffsets;
-    SkDEBUGCODE(size_t combinedBufferSize =) fill_in_compressed_regions(&fStagingBufferManager,
+    SkDEBUGCODE(size_t combinedBufferSize =) fill_in_compressed_regions(this->vkCaps(),
+                                                                        &fStagingBufferManager,
                                                                         &regions,
                                                                         &individualMipOffsets,
                                                                         &slice,
@@ -1840,7 +1848,8 @@ bool GrVkGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendTe
     TArray<size_t> individualMipOffsets;
     GrStagingBufferManager::Slice slice;
 
-    fill_in_compressed_regions(&fStagingBufferManager,
+    fill_in_compressed_regions(this->vkCaps(),
+                               &fStagingBufferManager,
                                &regions,
                                &individualMipOffsets,
                                &slice,
@@ -2000,7 +2009,7 @@ void GrVkGpu::xferBarrier(GrRenderTarget* rt, GrXferBarrierType barrierType) {
                                 dstStage, true, &barrier);
 }
 
-void GrVkGpu::deleteBackendTexture(const GrBackendTexture& tex) {
+void GrVkGpu::onDeleteBackendTexture(const GrBackendTexture& tex) {
     SkASSERT(GrBackendApi::kVulkan == tex.fBackend);
 
     GrVkImageInfo info;
@@ -2545,11 +2554,17 @@ bool GrVkGpu::onReadPixels(GrSurface* surface,
     region.imageOffset = offset;
     region.imageExtent = { (uint32_t)rect.width(), (uint32_t)rect.height(), 1 };
 
-    size_t transBufferRowBytes = bpp * region.imageExtent.width;
+    SkSafeMath safe;
+    size_t alignment = safe.lcm(bpp, this->vkCaps().transferBufferRowBytesAlignment());
+    size_t transBufferRowBytes = safe.alignUpNonPow2(bpp * region.imageExtent.width, alignment);
     size_t imageRows = region.imageExtent.height;
+    size_t size = safe.mul(transBufferRowBytes, imageRows);
+    if (!safe.ok() || size == 0) {
+        return false;
+    }
     GrResourceProvider* resourceProvider = this->getContext()->priv().resourceProvider();
     sk_sp<GrGpuBuffer> transferBuffer = resourceProvider->createBuffer(
-            transBufferRowBytes * imageRows,
+            size,
             GrGpuBufferType::kXferGpuToCpu,
             kDynamic_GrAccessPattern,
             GrResourceProvider::ZeroInit::kNo);
@@ -2562,7 +2577,7 @@ bool GrVkGpu::onReadPixels(GrSurface* surface,
 
     // Copy the image to a buffer so we can map it to cpu memory
     region.bufferOffset = 0;
-    region.bufferRowLength = 0; // Forces RowLength to be width. We handle the rowBytes below.
+    region.bufferRowLength = transBufferRowBytes / bpp;
     region.bufferImageHeight = 0; // Forces height to be tightly packed. Only useful for 3d images.
     region.imageSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
 

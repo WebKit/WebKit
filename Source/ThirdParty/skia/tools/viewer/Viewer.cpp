@@ -30,11 +30,13 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkSurfaceProps.h"
 #include "include/core/SkTextBlob.h"
+#include "include/gpu/graphite/Context.h"
 #include "include/private/SkDebug.h"
 #include "include/private/SkLog.h"
 #include "include/private/SkTPin.h"
 #include "include/private/SkTo.h"
 #include "include/utils/SkPaintFilterCanvas.h"
+#include "src/capture/SkCapture.h"
 #include "src/core/SkAutoPixmapStorage.h"
 #include "src/core/SkBase64.h"
 #include "src/core/SkColorPriv.h"
@@ -58,7 +60,7 @@
 #include "src/utils/SkShaderUtils.h"
 #include "tools/CodecUtils.h"
 #include "tools/DecodeUtils.h"
-#include "tools/DeserialProcsUtils.h"
+#include "tools/ProcsUtils.h"
 #include "tools/Resources.h"
 #include "tools/RuntimeBlendUtils.h"
 #include "tools/SkMetaData.h"
@@ -115,6 +117,7 @@
 
 #if defined(SK_GRAPHITE)
 #include "include/gpu/graphite/Context.h"
+#include "include/gpu/graphite/Image.h"
 #include "include/gpu/graphite/Recorder.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/GlobalCache.h"
@@ -620,6 +623,7 @@ Viewer::Viewer(int argc, char** argv, void* platformData)
         : fCurrentSlide(-1)
         , fRefresh(false)
         , fSaveToSKP(false)
+        , fToggleCapture(false)
         , fShowSlideDimensions(false)
         , fShowImGuiDebugWindow(false)
         , fShowSlidePicker(false)
@@ -702,6 +706,7 @@ Viewer::Viewer(int argc, char** argv, void* platformData)
 #if defined(SK_GRAPHITE)
     skiatest::graphite::TestOptions gto;
     CommonFlags::SetTestOptions(&gto);
+    gto.fContextOptions.fEnableCapture = true;
     gto.fOptionsPriv.fPathRendererStrategy = get_path_renderer_strategy_type(FLAGS_pathstrategy[0]);
     if (FLAGS_msaa <= 0) {
         gto.fContextOptions.fInternalMultisampleCount = skgpu::graphite::SampleCount::k1;
@@ -854,6 +859,10 @@ Viewer::Viewer(int argc, char** argv, void* platformData)
     });
     fCommands.addCommand('K', "IO", "Save slide to SKP", [this]() {
         fSaveToSKP = true;
+        fWindow->inval();
+    });
+    fCommands.addCommand('T', "IO", "Toggle capturing", [this]() {
+        fToggleCapture = true;
         fWindow->inval();
     });
     fCommands.addCommand('&', "Overlays", "Show slide dimensions", [this]() {
@@ -1899,17 +1908,59 @@ public:
     Viewer::SkFontFields* fFontOverrides;
 };
 
-static SkSerialProcs serial_procs_using_png() {
-    SkSerialProcs sProcs;
-    sProcs.fImageProc = [](SkImage* img, void*) -> SkSerialReturnType {
-#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
-        return SkPngRustEncoder::Encode(
-                as_IB(img)->directContext(), img, SkPngRustEncoder::Options{});
+
+void Viewer::checkCaptureAndSerialize() {
+    if (!fToggleCapture) {
+        return;
+    }
+    fToggleCapture = false;
+
+#if defined(SK_GRAPHITE)
+    skgpu::graphite::Context* gctx = fWindow->graphiteContext();
+    if (!gctx) {
+        SKIA_LOG_D(
+                "Failed to acquire graphite context. Capturing is only supported on the graphite "
+                "backend\n");
+        return;
+    }
+
+    if (fCurrentlyCapturing) {
+        SKIA_LOG_I("Ending Capture\n");
+        sk_sp<SkCapture> capt = gctx->endCapture();
+
+        if (!capt) {
+            SKIA_LOG_W("gctx->endCapture() returned null.\n");
+            return;
+        }
+
+        sk_sp<SkData> data = capt->serializeCapture();
+        if (!data) {
+            SKIA_LOG_W("capt->serializeCapture() returned null.\n");
+            return;
+        }
+
+        // TODO(b/334925727) allow user to specify a path
+        SkFILEWStream stream("sample_app.capt");
+        if (!stream.isValid()) {
+            SkLog(SkLogPriority::kDebug,
+                  "Error: Failed to open SkFILEWStream for 'sample_app.capt'.\n");
+            return;
+        }
+
+        if (stream.write(data->data(), data->size())) {
+            SKIA_LOG_D("Successfully wrote capture to 'sample_app.capt'.\n");
+        } else {
+            SKIA_LOG_D("Failed to write data to the stream.\n");
+        }
+        fCurrentlyCapturing = false;
+    } else {
+        SKIA_LOG_I("Starting Capture\n");
+        gctx->startCapture();
+        fCurrentlyCapturing = true;
+    }
 #else
-        return SkPngEncoder::Encode(as_IB(img)->directContext(), img, SkPngEncoder::Options{});
+    SKIA_LOG_D("Capture is currently only supported on the Graphite backend.\n");
 #endif
-    };
-    return sProcs;
 }
 
 void Viewer::drawSlide(SkSurface* surface) {
@@ -1938,10 +1989,12 @@ void Viewer::drawSlide(SkSurface* surface) {
         fSlides[fCurrentSlide]->draw(recorderCanvas);
         sk_sp<SkPicture> picture(recorder.finishRecordingAsPicture());
         SkFILEWStream stream("sample_app.skp");
-        SkSerialProcs sProcs = serial_procs_using_png();
+        SkSerialProcs    sProcs = ToolUtils::default_serial_procs();
         picture->serialize(&stream, &sProcs);
         fSaveToSKP = false;
     }
+
+    checkCaptureAndSerialize();
 
     // Grab some things we'll need to make surfaces (for tiling or general offscreen rendering)
     SkColorType colorType;
@@ -2053,10 +2106,10 @@ void Viewer::drawSlide(SkSurface* surface) {
 
     if (recorderRestoreCanvas) {
         sk_sp<SkPicture> picture(recorder.finishRecordingAsPicture());
-        SkSerialProcs sProcs = serial_procs_using_png();
+        SkSerialProcs sProcs = ToolUtils::default_serial_procs();
         auto data = picture->serialize(&sProcs);
         slideCanvas = recorderRestoreCanvas;
-        SkDeserialProcs dProcs = ToolUtils::get_default_skp_deserial_procs();
+        SkDeserialProcs dProcs = ToolUtils::default_deserial_procs();
         slideCanvas->drawPicture(SkPicture::MakeFromData(data.get(), &dProcs));
     }
 
@@ -2070,6 +2123,17 @@ void Viewer::drawSlide(SkSurface* surface) {
         fLastImage = offscreenSurface->makeImageSnapshot();
 
         SkCanvas* canvas = surface->getCanvas();
+
+#if defined(SK_GRAPHITE)
+        // Convert directly to a texture so that we aren't caching every frame in the default
+        // TestingImageProvider (which holds on to a lot of images).
+        // For Ganesh, the gen-id listening will automatically recycle the backing texture so no
+        // intervention is required.
+        if (!fLastImage->isTextureBacked() && canvas->recorder()) {
+            fLastImage = SkImages::TextureFromImage(canvas->recorder(), std::move(fLastImage));
+        }
+#endif
+
         SkPaint paint;
         paint.setBlendMode(SkBlendMode::kSrc);
         SkSamplingOptions sampling;
@@ -3532,7 +3596,7 @@ void Viewer::updateUIState() {
     }
 
     SkDynamicMemoryWStream memStream;
-    SkJSONWriter writer(&memStream);
+    SkJSONWriter writer(&memStream, ToolUtils::default_serial_procs());
     writer.beginArray();
 
     // Slide state

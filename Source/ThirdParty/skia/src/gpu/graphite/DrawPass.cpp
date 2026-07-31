@@ -28,12 +28,12 @@ namespace skgpu::graphite {
 DrawPass::DrawPass(sk_sp<TextureProxy> target,
                    std::pair<LoadOp, StoreOp> ops,
                    std::array<float, 4> clearColor,
-                   sk_sp<FloatStorageManager> floatStorageManager)
+                   sk_sp<StorageBufferManager> storageBufferManager)
         : fTarget(std::move(target))
         , fBounds(SkIRect::MakeEmpty())
         , fOps(ops)
         , fClearColor(clearColor)
-        , fFloatStorageManager(floatStorageManager) {}
+        , fStorageBufferManager(std::move(storageBufferManager)) {}
 
 DrawPass::~DrawPass() = default;
 
@@ -89,8 +89,10 @@ bool DrawPass::prepareResources(ResourceProvider* resourceProvider,
     // GraphicsPipelineHandle (plausible since we either have the pipeline with its label, or we
     // likely calculated the label as part of triggering a cache miss).
     {
-        TRACE_EVENT0_ALWAYS("skia.shaders", "GraphitePipelineUse");
-        TRACE_EVENT0_ALWAYS("skia.shaders", TRACE_STR_COPY(renderPassDesc.toString().c_str()));
+        TRACE_EVENT1_ALWAYS("skia.shaders",
+                            "GraphitePipelineUse",
+                            "# pipelines",
+                            fFullPipelines.size());
         for (int i = 0 ; i < fFullPipelines.size(); ++i) {
             TRACE_EVENT_INSTANT1_ALWAYS(
                     "skia.shaders",

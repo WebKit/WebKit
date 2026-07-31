@@ -126,7 +126,9 @@ bool GrDrawingManager::flush(SkSpan<GrSurfaceProxy*> proxies,
             if (info.fSubmittedProc) {
                 info.fSubmittedProc(info.fSubmittedContext, true);
             }
-            return false;
+            // Nothing to flush is a success (fSubmittedProc is already called with `true`
+            // above).
+            return true;
         }
     }
 
@@ -175,6 +177,7 @@ bool GrDrawingManager::flush(SkSpan<GrSurfaceProxy*> proxies,
     }
 
     bool cachePurgeNeeded = false;
+    bool flushSuccessful = false;
 
     if (preFlushSuccessful) {
         bool usingReorderedDAG = false;
@@ -205,8 +208,10 @@ bool GrDrawingManager::flush(SkSpan<GrSurfaceProxy*> proxies,
             resourceAllocator.assign();
         }
 
-        cachePurgeNeeded = !resourceAllocator.failedInstantiation() &&
-                           this->executeRenderTasks(&flushState);
+        if (!resourceAllocator.failedInstantiation()) {
+            cachePurgeNeeded = this->executeRenderTasks(&flushState);
+            flushSuccessful = true;
+        }
     }
     this->removeRenderTasks();
 
@@ -226,7 +231,7 @@ bool GrDrawingManager::flush(SkSpan<GrSurfaceProxy*> proxies,
     }
     fFlushing = false;
 
-    return true;
+    return flushSuccessful;
 }
 
 bool GrDrawingManager::submitToGpu() {
@@ -507,8 +512,9 @@ static void resolve_and_mipmap(GrGpu* gpu, GrSurfaceProxy* proxy) {
     if (auto* textureProxy = proxy->asTextureProxy()) {
         if (textureProxy->mipmapsAreDirty()) {
             SkASSERT(textureProxy->peekTexture());
-            gpu->regenerateMipMapLevels(textureProxy->peekTexture());
-            textureProxy->markMipmapsClean();
+            if (gpu->regenerateMipMapLevels(textureProxy->peekTexture())) {
+                textureProxy->markMipmapsClean();
+            }
         }
     }
 }
@@ -538,8 +544,11 @@ GrSemaphoresSubmitted GrDrawingManager::flushSurfaces(SkSpan<GrSurfaceProxy*> pr
     // portion of the DAG required by 'proxies' in order to restore some of the
     // semantics of this method.
     bool didFlush = this->flush(proxies, access, info, newState);
-    for (GrSurfaceProxy* proxy : proxies) {
-        resolve_and_mipmap(gpu, proxy);
+    if (didFlush) {
+        // Only resolve/regen mips if the flush actually executed the render tasks.
+        for (GrSurfaceProxy* proxy : proxies) {
+            resolve_and_mipmap(gpu, proxy);
+        }
     }
 
     SkDEBUGCODE(this->validate());
@@ -986,16 +995,6 @@ bool GrDrawingManager::newWritePixelsTask(sk_sp<GrSurfaceProxy> dst,
     SkASSERT(fContext);
 
     this->closeActiveOpsTask();
-    const GrCaps& caps = *fContext->priv().caps();
-
-    // On platforms that prefer flushes over VRAM use (i.e., ANGLE) we're better off forcing a
-    // complete flush here.
-    if (!caps.preferVRAMUseOverFlushes()) {
-        this->flushSurfaces(SkSpan<GrSurfaceProxy*>{},
-                            SkSurfaces::BackendSurfaceAccess::kNoAccess,
-                            GrFlushInfo{},
-                            nullptr);
-    }
 
     GrRenderTask* task = this->appendTask(GrWritePixelsTask::Make(this,
                                                                   std::move(dst),

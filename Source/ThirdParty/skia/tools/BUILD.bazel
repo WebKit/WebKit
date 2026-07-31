@@ -58,6 +58,7 @@ skia_cc_library(
     visibility = [
         "//bench:__pkg__",
         "//dm:__pkg__",
+        "//tools/ganesh:__pkg__",
         "//tools/gpu:__pkg__",
     ],
     deps = ["//:core"],
@@ -66,6 +67,7 @@ skia_cc_library(
 skia_objc_library(
     name = "autorelease_pool_objc",
     hdrs = ["AutoreleasePool.h"],
+    mac_frameworks = ["Foundation"],
     non_arc_srcs = ["AutoreleasePool.mm"],
     visibility = ["//tools/ganesh:__pkg__"],
     deps = ["//:core"],
@@ -196,23 +198,27 @@ skia_cc_library(
 )
 
 skia_cc_library(
-    name = "deserial_procs_utils",
+    name = "procs_utils",
     testonly = True,
     srcs = [
-        "DeserialProcsUtils.cpp",
+        "ProcsUtils.cpp",
     ],
     hdrs = [
-        "DeserialProcsUtils.h",
+        "ProcsUtils.h",
     ],
     visibility = [
         "//bench:__subpackages__",
         "//dm:__pkg__",
         "//gm:__subpackages__",
+        "//tools/debugger:__pkg__",
+        "//tools/trace:__pkg__",
         "//tools/viewer:__pkg__",
     ],
     deps = [
         "//:core",
         "//:png_decode_libpng",
+        "//:png_encode_libpng",
+        "//src/core:core_priv",
         "//tools/fonts:font_tool_utils",
     ],
 )

@@ -27,13 +27,14 @@ load(
 load("@rules_cc//cc/common:cc_common.bzl", "cc_common")
 load(":clang_layering_check.bzl", "make_layering_check_features")
 
-# The location of the created clang toolchain.
-EXTERNAL_TOOLCHAIN = "external/+_repo_rules+clang_linux_amd64"
-
 def _linux_amd64_toolchain_info(ctx):
-    action_configs = _make_action_configs()
+    # https://bazel.build/rules/lib/builtins/Label#repo_name
+    clang_repo_name = ctx.attr.clang_linux_amd64.label.repo_name
+    external_toolchain = "external/" + clang_repo_name
+
+    action_configs = _make_action_configs(external_toolchain)
     features = []
-    features += _make_default_flags()
+    features += _make_default_flags(external_toolchain)
     features += make_layering_check_features()
     features += _make_diagnostic_flags()
 
@@ -46,12 +47,12 @@ def _linux_amd64_toolchain_info(ctx):
         action_configs = action_configs,
         # This is important because the linker will complain if the libc shared libraries are not
         # under this directory. Because we extract the libc libraries to
-        # EXTERNAL_TOOLCHAIN/lib, and the various headers and shared libraries to
-        # EXTERNAL_TOOLCHAIN/usr, we make the top level folder the sysroot so the linker can
-        # find the referenced libraries (e.g. EXTERNAL_TOOLCHAIN/usr/lib/x86_64-linux-gnu/libc.so
+        # external_toolchain/lib, and the various headers and shared libraries to
+        # external_toolchain/usr, we make the top level folder the sysroot so the linker can
+        # find the referenced libraries (e.g. external_toolchain/usr/lib/x86_64-linux-gnu/libc.so
         # is just a text file that refers to "/lib/x86_64-linux-gnu/libc.so.6" and
         # "/lib64/ld-linux-x86-64.so.2" which will use the sysroot as the root).
-        builtin_sysroot = EXTERNAL_TOOLCHAIN,
+        builtin_sysroot = external_toolchain,
         # These are required, but do nothing
         compiler = "",
         target_cpu = "",
@@ -61,64 +62,60 @@ def _linux_amd64_toolchain_info(ctx):
     )
 
 provide_linux_amd64_toolchain_config = rule(
-    attrs = {},
+    attrs = {
+        "clang_linux_amd64": attr.label(default = "@clang_linux_amd64//:compile_files"),
+    },
     provides = [CcToolchainConfigInfo],
     implementation = _linux_amd64_toolchain_info,
 )
 
-def _make_action_configs():
+def _make_action_configs(external_toolchain):
     """
     This function sets up the tools needed to perform the various compile/link actions.
 
-    Bazel normally restricts us to referring to (and therefore running) executables/scripts
-    that are in this directory (That is EXEC_ROOT/toolchain). However, the executables we want
-    to run are brought in via WORKSPACE.bazel and are located in EXEC_ROOT/external/clang....
-    Therefore, we make use of "trampoline scripts" that will call the binaries from the
-    toolchain directory.
-
-    These action_configs also let us dynamically specify arguments from the Bazel
-    environment if necessary (see cpp_link_static_library_action).
+    Tools:
+    https://cs.opensource.google/bazel/bazel/+/master:tools/cpp/cc_toolchain_config_lib.bzl;l=435;drc=3b9e6f201a9a3465720aad8712ab7bcdeaf2e5da
+    Action Configs:
+    https://cs.opensource.google/bazel/bazel/+/master:tools/cpp/cc_toolchain_config_lib.bzl;l=488;drc=3b9e6f201a9a3465720aad8712ab7bcdeaf2e5da
     """
 
-    # https://cs.opensource.google/bazel/bazel/+/master:tools/cpp/cc_toolchain_config_lib.bzl;l=435;drc=3b9e6f201a9a3465720aad8712ab7bcdeaf2e5da
-    clang_tool = tool(path = "linux_trampolines/clang_trampoline_linux.sh")
-    ar_tool = tool(path = "linux_trampolines/ar_trampoline_linux.sh")
+    compile_tool = tool(path = "../" + external_toolchain + "/bin/clang")
+    archive_tool = tool(path = "../" + external_toolchain + "/bin/llvm-ar")
 
-    # https://cs.opensource.google/bazel/bazel/+/master:tools/cpp/cc_toolchain_config_lib.bzl;l=488;drc=3b9e6f201a9a3465720aad8712ab7bcdeaf2e5da
     assemble_action = action_config(
         action_name = ACTION_NAMES.assemble,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
     c_compile_action = action_config(
         action_name = ACTION_NAMES.c_compile,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
     cpp_compile_action = action_config(
         action_name = ACTION_NAMES.cpp_compile,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
     linkstamp_compile_action = action_config(
         action_name = ACTION_NAMES.linkstamp_compile,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
     preprocess_assemble_action = action_config(
         action_name = ACTION_NAMES.preprocess_assemble,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
 
     cpp_link_dynamic_library_action = action_config(
         action_name = ACTION_NAMES.cpp_link_dynamic_library,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
     cpp_link_executable_action = action_config(
         action_name = ACTION_NAMES.cpp_link_executable,
-        # Bazel assumes it is talking to clang when building an executable. There are
-        # "-Wl" flags on the command: https://releases.llvm.org/6.0.1/tools/clang/docs/ClangCommandLineReference.html#cmdoption-clang-Wl
-        tools = [clang_tool],
+        # Bazel assumes it is talking to a "compile driver" when building an executable.
+        # That compile driver will forward commands to the linker.
+        tools = [compile_tool],
     )
     cpp_link_nodeps_dynamic_library_action = action_config(
         action_name = ACTION_NAMES.cpp_link_nodeps_dynamic_library,
-        tools = [clang_tool],
+        tools = [compile_tool],
     )
 
     # This is the same rule as
@@ -178,7 +175,7 @@ def _make_action_configs():
                 ],
             ),
         ],
-        tools = [ar_tool],
+        tools = [archive_tool],
     )
 
     action_configs = [
@@ -194,7 +191,7 @@ def _make_action_configs():
     ]
     return action_configs
 
-def _make_default_flags():
+def _make_default_flags(external_toolchain):
     """Here we define the flags for certain actions that are always applied.
 
     For any flag that might be conditionally applied, it should be defined in //bazel/copts.bzl.
@@ -217,16 +214,16 @@ def _make_default_flags():
                     # error (or, without -no-canonical-prefixes, a mysterious case where files
                     # are included with an absolute path and fail the build).
                     "-isystem",
-                    EXTERNAL_TOOLCHAIN + "/include/c++/v1",
+                    external_toolchain + "/include/c++/v1",
                     # https://github.com/llvm/llvm-project/issues/57104
                     "-isystem",
-                    EXTERNAL_TOOLCHAIN + "/include/x86_64-unknown-linux-gnu/c++/v1/",
+                    external_toolchain + "/include/x86_64-unknown-linux-gnu/c++/v1/",
                     "-isystem",
-                    EXTERNAL_TOOLCHAIN + "/usr/include",
+                    external_toolchain + "/usr/include",
                     "-isystem",
-                    EXTERNAL_TOOLCHAIN + "/lib/clang/18/include",
+                    external_toolchain + "/lib/clang/18/include",
                     "-isystem",
-                    EXTERNAL_TOOLCHAIN + "/usr/include/x86_64-linux-gnu",
+                    external_toolchain + "/usr/include/x86_64-linux-gnu",
                     # We do not want clang to search in absolute paths for files. This makes
                     # Bazel think we are using an outside resource and fail the compile.
                     "-no-canonical-prefixes",
@@ -264,9 +261,9 @@ def _make_default_flags():
                     "-stdlib=libc++",
                     # We statically include these libc++ libraries so they do not need to be
                     # on a developer's machine (they can be tricky to get).
-                    EXTERNAL_TOOLCHAIN + "/lib/x86_64-unknown-linux-gnu/libc++.a",
-                    EXTERNAL_TOOLCHAIN + "/lib/x86_64-unknown-linux-gnu/libc++abi.a",
-                    EXTERNAL_TOOLCHAIN + "/lib/x86_64-unknown-linux-gnu/libunwind.a",
+                    external_toolchain + "/lib/x86_64-unknown-linux-gnu/libc++.a",
+                    external_toolchain + "/lib/x86_64-unknown-linux-gnu/libc++abi.a",
+                    external_toolchain + "/lib/x86_64-unknown-linux-gnu/libunwind.a",
                     # Dynamically Link in the other parts of glibc (not needed in glibc 2.34+)
                     "-lpthread",
                     "-lm",
@@ -279,9 +276,6 @@ def _make_default_flags():
     cpp20_flags = flag_set(
         actions = [
             ACTION_NAMES.cpp_compile,
-            ACTION_NAMES.cpp_link_executable,
-            ACTION_NAMES.cpp_link_dynamic_library,
-            ACTION_NAMES.cpp_link_nodeps_dynamic_library,
         ],
         flag_groups = [
             flag_group(
