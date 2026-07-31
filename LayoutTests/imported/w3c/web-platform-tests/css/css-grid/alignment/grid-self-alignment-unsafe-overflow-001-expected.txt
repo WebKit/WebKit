@@ -1,0 +1,12 @@
+
+PASS justify-self: center on an item wider than its grid area overflows the start edge
+PASS justify-self: end on an item wider than its grid area overflows the start edge
+PASS justify-self: unsafe center on an item wider than its grid area overflows the start edge
+PASS align-self: center on an item taller than its grid area overflows the start edge
+PASS align-self: end on an item taller than its grid area overflows the start edge
+PASS align-self: unsafe center on an item taller than its grid area overflows the start edge
+PASS justify-self: center on an item overflowing the second column overflows toward the first column
+PASS justify-self: end on an item overflowing the second column overflows toward the first column
+PASS align-self: center on an item overflowing the second row overflows toward the first row
+PASS align-self: end on an item overflowing the second row overflows toward the first row
+

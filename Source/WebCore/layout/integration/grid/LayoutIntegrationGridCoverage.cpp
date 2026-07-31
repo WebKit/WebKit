@@ -268,10 +268,14 @@ static bool gridItemHasValidWidth(const Style::PreferredSize& width)
     );
 }
 
-static bool canComputeAutomaticInlineSize(const RenderBox& gridItem, const StyleSelfAlignmentData& usedJustifySelf)
+// A grid item with an automatic size which is not stretched is sized to its fit-content size in
+// the axis. GFC does not implement the remaining cases from grid item sizing, where a replaced
+// item uses its natural size and an item with a preferred aspect ratio transfers its size through
+// that ratio.
+// https://drafts.csswg.org/css-grid-1/#grid-item-sizing
+static bool canComputeAutomaticSize(const RenderBox& gridItem)
 {
-    return (usedJustifySelf.position() == ItemPosition::Normal || usedJustifySelf.position() == ItemPosition::Stretch)
-        && !protect(gridItem.element())->isReplaced()
+    return !protect(gridItem.element())->isReplaced()
         && !gridItem.style().aspectRatio().hasRatio();
 }
 
@@ -288,13 +292,6 @@ static bool gridItemHasValidHeight(const Style::PreferredSize& height)
             return false;
         }
     );
-}
-
-static bool canComputeAutomaticBlockSize(const RenderBox& gridItem, const StyleSelfAlignmentData& usedAlignSelf)
-{
-    return (usedAlignSelf.position() == ItemPosition::Normal || usedAlignSelf.position() == ItemPosition::Stretch)
-        && !protect(gridItem.element())->isReplaced()
-        && !gridItem.style().aspectRatio().hasRatio();
 }
 
 static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& renderGrid, ReasonCollectionMode reasonCollectionMode)
@@ -486,28 +483,30 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         auto usedJustifySelf = gridItemStyle->justifySelf().resolve(renderGridStyle.ptr());
 
-        if ((usedJustifySelf.position() != ItemPosition::Start && usedJustifySelf.position() != ItemPosition::Normal && usedJustifySelf.position() != ItemPosition::Stretch)
-            || usedJustifySelf.overflow() != OverflowAlignment::Default)
+        // Every non-baseline self-alignment value is handled by GridLayout's self alignment,
+        // including the safe overflow alignment. Baseline alignment additionally requires the
+        // track sizing algorithm to form baseline-sharing groups and to grow the tracks which
+        // those groups span, which GFC does not implement yet.
+        if (isBaselinePosition(usedJustifySelf.position()))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedInlineAxisAlignment, reasons, reasonCollectionMode);
 
         auto& gridItemWidth = gridItemStyle->width();
         if (!gridItemHasValidWidth(gridItemWidth))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedWidthValue, reasons, reasonCollectionMode);
 
-        if (gridItemWidth.isAuto() && !canComputeAutomaticInlineSize(gridItem, usedJustifySelf))
+        if (gridItemWidth.isAuto() && !canComputeAutomaticSize(gridItem))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedAutomaticInlineSizing, reasons, reasonCollectionMode);
 
         auto usedAlignSelf = gridItemStyle->alignSelf().resolve(renderGridStyle.ptr());
 
-        if ((usedAlignSelf.position() != ItemPosition::Start && usedAlignSelf.position() != ItemPosition::Normal && usedAlignSelf.position() != ItemPosition::Stretch)
-            || usedAlignSelf.overflow() != OverflowAlignment::Default)
+        if (isBaselinePosition(usedAlignSelf.position()))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedBlockAxisAlignment, reasons, reasonCollectionMode);
 
         auto& gridItemHeight = gridItemStyle->height();
         if (!gridItemHasValidHeight(gridItemHeight))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedHeightValue, reasons, reasonCollectionMode);
 
-        if (gridItemHeight.isAuto() && !canComputeAutomaticBlockSize(gridItem, usedAlignSelf))
+        if (gridItemHeight.isAuto() && !canComputeAutomaticSize(gridItem))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedAutomaticBlockSizing, reasons, reasonCollectionMode);
 
         auto& minWidth = gridItemStyle->minWidth();
