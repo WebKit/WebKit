@@ -1143,7 +1143,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
         case pas_deallocator_scavenge_flush_log_if_clean_action:
             if (cache->deallocation_log_dirty) {
                 cache->deallocation_log_dirty = false;
-                result = !!cache->deallocation_log_index;
+                result |= !!cache->deallocation_log_index;
             } else
                 flush_deallocation_log_for_scavenger(cache);
             break;
