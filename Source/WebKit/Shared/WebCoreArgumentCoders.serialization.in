@@ -1087,7 +1087,6 @@ header: <WebCore/PlatformPathImpl.h>
 };
 
 struct WebCore::ViewportArguments {
-    WebCore::ViewportArguments::Type type;
     float width;
     float height;
     float zoom;
@@ -1096,6 +1095,7 @@ struct WebCore::ViewportArguments {
     float userZoom;
     float orientation;
     float shrinkToFit;
+    WebCore::ViewportArguments::Type type;
     WebCore::ViewportFit viewportFit;
     bool widthWasExplicit;
     WebCore::InteractiveWidget interactiveWidget;

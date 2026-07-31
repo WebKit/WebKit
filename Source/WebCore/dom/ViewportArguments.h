@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
@@ -80,7 +80,7 @@ struct ViewportArguments {
         ImageDocument,
 #endif
         ViewportMeta,
-    } type;
+    };
 
     static constexpr int ValueAuto = -1;
     static constexpr int ValueDeviceWidth = -2;
@@ -93,9 +93,8 @@ struct ViewportArguments {
     {
     }
 
-    ViewportArguments(Type type, float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, ViewportFit viewportFit, bool widthWasExplicit, InteractiveWidget interactiveWidget)
-        : type(type)
-        , width(width)
+    ViewportArguments(float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, Type type, ViewportFit viewportFit, bool widthWasExplicit, InteractiveWidget interactiveWidget)
+        : width(width)
         , height(height)
         , zoom(zoom)
         , minZoom(minZoom)
@@ -103,6 +102,7 @@ struct ViewportArguments {
         , userZoom(userZoom)
         , orientation(orientation)
         , shrinkToFit(shrinkToFit)
+        , type(type)
         , viewportFit(viewportFit)
         , widthWasExplicit(widthWasExplicit)
         , interactiveWidget(interactiveWidget)
@@ -120,6 +120,7 @@ struct ViewportArguments {
     float userZoom { ValueAuto };
     float orientation { ValueAuto };
     float shrinkToFit { ValueAuto };
+    Type type { Type::Implicit };
     ViewportFit viewportFit { ViewportFit::Auto };
     bool widthWasExplicit { false };
     InteractiveWidget interactiveWidget { InteractiveWidget::ResizesVisual };
@@ -148,7 +149,7 @@ struct ViewportArguments {
 #endif
 };
 
-WEBCORE_EXPORT ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
+WEBCORE_EXPORT ViewportAttributes computeViewportAttributes(const ViewportArguments&, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
 
 WEBCORE_EXPORT void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio);
 WEBCORE_EXPORT void NODELETE restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
