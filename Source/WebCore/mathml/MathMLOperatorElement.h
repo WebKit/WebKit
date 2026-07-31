@@ -80,7 +80,7 @@ private:
     const MathMLOperatorDictionary::Property& dictionaryProperty() LIFETIME_BOUND;
 
     struct OperatorProperties {
-        unsigned short flags;
+        unsigned short flags { 0 };
         unsigned short dirtyFlags { MathMLOperatorDictionary::allFlags };
     };
     OperatorProperties m_properties;
