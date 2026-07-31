@@ -135,7 +135,8 @@ my $noProgress;
 
 my $test262Dir;
 my $webkitTest262Dir = abs_path("$Bin/../../../JSTests/test262");
-my $expectationsFile = abs_path("$webkitTest262Dir/expectations.yaml");
+my $expectationsFilename = $^O eq 'linux' ? "expectations-linux.yaml" : "expectations.yaml";
+my $expectationsFile = abs_path("$webkitTest262Dir/$expectationsFilename");
 my $configFile = abs_path("$webkitTest262Dir/config.yaml");
 
 my $resultsDir = $ENV{PWD} . "/test262-results";
