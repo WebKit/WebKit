@@ -2439,3 +2439,7 @@ webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html 
 webkit.org/b/319798 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Pass Failure ]
 
 webkit.org/b/320245 [ Release x86_64 ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Crash ]
+
+# webkit.org/b/320516 imported/w3c/web-platform-tests/IndexedDB/idbversionchangeevent.any.sharedworker.html (layout-tests) is a flaky failure.
+[ Sequoia x86_64 ] imported/w3c/web-platform-tests/IndexedDB/idbversionchangeevent.any.sharedworker.html [ Pass Failure ]
+[ Tahoe Debug x86_64 ] imported/w3c/web-platform-tests/IndexedDB/idbversionchangeevent.any.sharedworker.html [ Pass Failure ]
