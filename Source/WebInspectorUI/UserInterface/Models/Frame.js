@@ -367,10 +367,10 @@ WI.Frame = class Frame extends WI.Object
 
     removeAllChildFrames()
     {
-        this._detachFromParentFrame();
-
-        for (let childFrame of this._childFrameCollection)
+        for (let childFrame of this._childFrameCollection) {
             childFrame.removeAllChildFrames();
+            childFrame._detachFromParentFrame();
+        }
 
         this._childFrameCollection.clear();
         this._childFrameIdentifierMap.clear();

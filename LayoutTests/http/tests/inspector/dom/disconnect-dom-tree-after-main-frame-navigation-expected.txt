@@ -13,6 +13,14 @@ DOMTree instance count: 1
 PASS: There should be four DOMTrees listening to DOMTreeManager events after touching each Frame.
 DOMTree instance count: 4
 
+-- Running test case: CheckFrameTreeAfterChildFrameNavigation
+PASS: The navigated frame should remain attached to the main frame.
+PASS: The main frame should still contain the navigated frame.
+PASS: The navigated frame should no longer contain its previous child.
+PASS: The previous child should be detached.
+PASS: The previous child should no longer contain its child.
+PASS: The previous grandchild should be detached.
+
 -- Running test case: CheckDOMTreeCountAfterReloading
 PASS: There should not be any DOMTrees listening to DOMTreeManager events after a main frame navigation.
 DOMTree instance count: 0

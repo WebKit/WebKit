@@ -48,6 +48,29 @@ function test()
     });
 
     suite.addTestCase({
+        name: "CheckFrameTreeAfterChildFrameNavigation",
+        description: "Check that navigating a child frame detaches its descendants without detaching the child frame.",
+        async test() {
+            let mainFrame = WI.networkManager.mainFrame;
+            let childFrame = Array.from(mainFrame.childFrameCollection)[0];
+            let grandchildFrame = Array.from(childFrame.childFrameCollection)[0];
+            let greatGrandchildFrame = Array.from(grandchildFrame.childFrameCollection)[0];
+
+            await Promise.all([
+                childFrame.awaitEvent(WI.Frame.Event.MainResourceDidChange),
+                InspectorTest.evaluateInPage(`document.querySelector("iframe").src = "resources/nested-frame-base.html"`),
+            ]);
+
+            InspectorTest.expectEqual(childFrame.parentFrame, mainFrame, "The navigated frame should remain attached to the main frame.");
+            InspectorTest.expectEqual(mainFrame.childFrameForIdentifier(childFrame.id), childFrame, "The main frame should still contain the navigated frame.");
+            InspectorTest.expectEqual(childFrame.childFrameCollection.size, 0, "The navigated frame should no longer contain its previous child.");
+            InspectorTest.expectNull(grandchildFrame.parentFrame, "The previous child should be detached.");
+            InspectorTest.expectEqual(grandchildFrame.childFrameCollection.size, 0, "The previous child should no longer contain its child.");
+            InspectorTest.expectNull(greatGrandchildFrame.parentFrame, "The previous grandchild should be detached.");
+        }
+    });
+
+    suite.addTestCase({
         name: "CheckDOMTreeCountAfterReloading",
         description: "Check that the count of connected DOMTrees is correct after a reload.",
         test(resolve, reject) {
