@@ -326,7 +326,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
 #endif // CPU(ARM_THUMB2)
 
-#if ASAN_ENABLED
+#if ASAN_ENABLED || defined(__clang_analyzer__)
 #define WTFBreakpointTrap()  __builtin_trap()
 #elif CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM_THUMB2)
 #define WTFBreakpointTrap()  __asm__ volatile (WTF_FATAL_CRASH_INST)

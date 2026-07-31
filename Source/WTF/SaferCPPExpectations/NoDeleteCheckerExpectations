@@ -1,4 +1,2 @@
 wtf/Assertions.cpp
-wtf/MetaAllocator.cpp
 wtf/StdLibExtras.h
-wtf/text/StringBuilder.cpp
