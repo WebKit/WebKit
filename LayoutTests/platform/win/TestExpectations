@@ -112,6 +112,10 @@ fast/webcodecs/audio-data-copy-to-crash.html [ Skip ]
 # WebGPU is disabled
 http/tests/webgpu [ Skip ]
 fast/webgpu [ Skip ]
+inspector/canvas/create-context-webgpu.html [ Skip ]
+inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/resolveContext-webgpu.html [ Skip ]
+inspector/canvas/worker-webgpu.html [ Skip ]
 
 # QUOTA is disabled
 fast/workers/worker-storagequota-query-usage.html [ Skip ]

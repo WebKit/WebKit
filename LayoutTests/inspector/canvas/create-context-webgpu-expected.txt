@@ -1,0 +1,18 @@
+Test that CanvasManager tracks creation and destruction of WebGPU devices.
+
+
+== Running test suite: Canvas.CreateContextWebGPU
+-- Running test case: Canvas.CreateContextWebGPU.NoDevices
+PASS: CanvasManager should initially have no canvases.
+
+-- Running test case: Canvas.CreateContextWebGPU.DeviceLifecycle
+PASS: Added a Canvas.
+PASS: Canvas should represent a WebGPU device.
+PASS: CanvasManager should contain one Canvas.
+PASS: Canvas should contain WebGPU features.
+PASS: Canvas should report every enabled WebGPU feature.
+PASS: Canvas should report the enabled WebGPU feature names.
+PASS: Canvas should not report WebGPU features as extensions.
+PASS: Removed the previously added Canvas.
+PASS: CanvasManager should again have no canvases.
+

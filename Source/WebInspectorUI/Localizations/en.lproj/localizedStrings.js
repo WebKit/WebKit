@@ -784,6 +784,7 @@ localizedStrings["Failed to upgrade"] = "Failed to upgrade";
 localizedStrings["Failure status code"] = "Failure status code";
 /* Section title for font feature properties. */
 localizedStrings["Feature Properties @ Font Details Sidebar Section"] = "Feature Properties";
+localizedStrings["Features"] = "Features";
 /* Resource loaded via 'fetch' method */
 localizedStrings["Fetch"] = "Fetch";
 /* Resources loaded via 'fetch' method */

@@ -35,6 +35,7 @@
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/HashSet.h>
+#include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
 
 namespace JSC {
@@ -47,6 +48,7 @@ namespace WebCore {
 class CanvasGradient;
 class CanvasPattern;
 class Element;
+class GPUDevice;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -54,26 +56,30 @@ class ImageBitmap;
 class ImageData;
 class OffscreenCanvas;
 class CSSStyleImageValue;
+class WeakPtrImplWithEventTargetData;
 
 template<typename> struct InspectorCanvasArgumentProcessor;
 
 class InspectorCanvas final : public RefCountedAndCanMakeWeakPtr<InspectorCanvas> {
 public:
     static Ref<InspectorCanvas> create(CanvasRenderingContext&);
+    static Ref<InspectorCanvas> create(GPUDevice&);
 
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
 
-    const CanvasRenderingContext& canvasContext() const { return m_context; }
-    CanvasRenderingContext& canvasContext() { return m_context; }
-    HTMLCanvasElement* NODELETE canvasElement() const;
+    CanvasRenderingContext* canvasContext() const;
+    GPUDevice* deviceContext() const;
+
+    HTMLCanvasElement* canvasElement() const;
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
     JSC::JSValue resolveContext(JSC::JSGlobalObject*);
 
     HashSet<Element*> clientNodes() const;
+    size_t memoryCost() const;
 
-    void NODELETE canvasChanged();
+    void canvasChanged();
 
     void resetRecordingData();
     bool NODELETE hasRecordingData() const;
@@ -99,12 +105,13 @@ public:
     Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();
 
     static Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL(CanvasRenderingContext&);
-    Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL() { return getContentAsDataURL(m_context); };
+    Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL();
 
 private:
     template<typename> friend struct InspectorCanvasArgumentProcessor;
 
     explicit InspectorCanvas(CanvasRenderingContext&);
+    explicit InspectorCanvas(GPUDevice&);
 
     void appendActionSnapshotIfNeeded();
 
@@ -139,7 +146,10 @@ private:
 
     String m_identifier;
 
-    WeakRef<CanvasRenderingContext> m_context;
+    Variant<
+        WeakRef<CanvasRenderingContext>,
+        WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>
+    > m_context;
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> m_frames;

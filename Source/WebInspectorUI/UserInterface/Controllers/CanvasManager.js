@@ -313,7 +313,12 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         let {target} = event.data;
 
-        this._canvasForIdentifierForTargetMap.delete(target);
+        for (let canvas of (this._canvasForIdentifierForTargetMap.take(target)?.values() || [])) {
+            this._saveRecordings(canvas);
+            this._canvasCollection.remove(canvas);
+            canvas.shaderProgramCollection.clear();
+        }
+
         this._shaderProgramForIdentifierForTargetMap.delete(target);
     }
 

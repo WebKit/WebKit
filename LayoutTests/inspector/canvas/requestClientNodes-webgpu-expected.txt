@@ -1,0 +1,33 @@
+Test that CanvasAgent tracks GPUCanvasContext client nodes for WebGPU devices.
+
+
+== Running test suite: Canvas.requestClientNodes.WebGPU
+-- Running test case: Canvas.requestClientNodes.WebGPU.Initial
+PASS: GPUDevice should initially have no client nodes.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.Configure
+PASS: Client nodes changed for the expected Canvas.
+PASS: GPUDevice should have one client node.
+PASS: Client node should be the configured canvas element.
+PASS: GPUCanvasContext should not create a separate Canvas.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.MultipleCanvases
+PASS: Client nodes changed for the expected Canvas.
+PASS: GPUDevice should have two client nodes.
+PASS: GPUDevice should include the original canvas element.
+PASS: GPUDevice should include the additional canvas element.
+PASS: Two GPUCanvasContexts should still create only one Canvas.
+PASS: Client nodes changed after unconfiguring one canvas.
+PASS: GPUDevice should retain one client node.
+PASS: Remaining client node should be the original canvas element.
+PASS: Unconfiguring one client should preserve the single GPUDevice Canvas.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.Unconfigure
+PASS: Client nodes changed for the expected Canvas.
+PASS: GPUDevice should again have no client nodes.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.OffscreenCanvas
+PASS: Client nodes changed for the expected Canvas.
+PASS: OffscreenCanvas should not create a DOM client node.
+PASS: OffscreenCanvas GPUCanvasContext should not create a separate Canvas.
+

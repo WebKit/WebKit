@@ -1,0 +1,16 @@
+Test WebGPU Canvas instrumentation for a Worker rendering to an OffscreenCanvas.
+
+
+== Running test suite: Canvas.WebGPU.Worker
+-- Running test case: Canvas.WebGPU.Worker.Device
+PASS: Worker target should expose the Canvas domain.
+PASS: WebGPU Canvas should belong to the Worker target.
+PASS: Payload should have type "object".
+PASS: Payload should have className "GPUDevice".
+PASS: Worker GPUDevice should have no DOM client nodes.
+
+-- Running test case: Canvas.WebGPU.Worker.Terminate
+PASS: Removed the expected Worker target.
+PASS: Removed the Worker GPUDevice Canvas.
+PASS: CanvasManager should not retain the Worker GPUDevice Canvas.
+

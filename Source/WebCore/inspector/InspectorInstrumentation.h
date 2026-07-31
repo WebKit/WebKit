@@ -39,6 +39,7 @@
 #include "EventTarget.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "GPUDevice.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentationPublic.h"
 #include "InstrumentingAgents.h"
@@ -83,6 +84,7 @@ class Document;
 class DocumentLoader;
 class DocumentThreadableLoader;
 class EventListener;
+class GPUDevice;
 class HTTPHeaderMap;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
@@ -330,6 +332,9 @@ public:
     static bool isWebGLProgramDisabled(WebGLRenderingContextBase&, WebGLProgram&);
     static bool isWebGLProgramHighlighted(WebGLRenderingContextBase&, WebGLProgram&);
 #endif
+    static void didCreateWebGPUDevice(GPUDevice&);
+    static void willDestroyWebGPUDevice(GPUDevice&);
+    static void didChangeGPUDeviceClientNodes(GPUDevice&);
 
     static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationName(WebAnimation&);
@@ -537,6 +542,9 @@ private:
     static bool isWebGLProgramDisabledImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isWebGLProgramHighlightedImpl(InstrumentingAgents&, WebGLProgram&);
 #endif
+    static void didCreateWebGPUDeviceImpl(InstrumentingAgents&, GPUDevice&);
+    static void willDestroyWebGPUDeviceImpl(InstrumentingAgents&, GPUDevice&);
+    static void didChangeGPUDeviceClientNodesImpl(InstrumentingAgents&, GPUDevice&);
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
@@ -1509,6 +1517,27 @@ inline bool InspectorInstrumentation::isWebGLProgramHighlighted(WebGLRenderingCo
     return false;
 }
 #endif
+
+inline void InspectorInstrumentation::didCreateWebGPUDevice(GPUDevice& device)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
+        didCreateWebGPUDeviceImpl(*agents, device);
+}
+
+inline void InspectorInstrumentation::willDestroyWebGPUDevice(GPUDevice& device)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
+        willDestroyWebGPUDeviceImpl(*agents, device);
+}
+
+inline void InspectorInstrumentation::didChangeGPUDeviceClientNodes(GPUDevice& device)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
+        didChangeGPUDeviceClientNodesImpl(*agents, device);
+}
 
 inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {

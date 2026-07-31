@@ -63,6 +63,7 @@
 #include "GPUTextureFormat.h"
 #include "GPUUncapturedErrorEvent.h"
 #include "HTMLVideoElement.h"
+#include "InspectorInstrumentation.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
@@ -77,11 +78,34 @@
 #include "SecurityOrigin.h"
 #include "WebGPUXRBinding.h"
 #include "XRGPUBinding.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUDevice);
+
+Lock GPUDevice::s_instancesLock;
+
+HashSet<GPUDevice*>& GPUDevice::instances()
+{
+    static NeverDestroyed<HashSet<GPUDevice*>> instances;
+    return instances;
+}
+
+Lock& GPUDevice::instancesLock()
+{
+    return s_instancesLock;
+}
+
+Ref<GPUDevice> GPUDevice::create(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel, GPUAdapterInfo& adapterInfo)
+{
+    Ref device = adoptRef(*new GPUDevice(scriptExecutionContext, WTF::move(backing), WTF::move(queueLabel), adapterInfo));
+
+    InspectorInstrumentation::didCreateWebGPUDevice(device);
+
+    return device;
+}
 
 GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel, GPUAdapterInfo& adapterInfo)
     : ActiveDOMObject { scriptExecutionContext }
@@ -92,11 +116,30 @@ GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU:
     , m_features(GPUSupportedFeatures::create(m_backing->features()))
     , m_limits(GPUSupportedLimits::create(m_backing->limits()))
     , m_adapterInfo(adapterInfo)
+    , m_owningThreadUID(currentThreadID())
 {
     m_queue->setLabel(WTF::move(queueLabel));
+
+    Locker locker { instancesLock() };
+    instances().add(this);
 }
 
-GPUDevice::~GPUDevice() = default;
+GPUDevice::~GPUDevice()
+{
+    {
+        Locker locker { instancesLock() };
+        instances().remove(this);
+    }
+
+    InspectorInstrumentation::willDestroyWebGPUDevice(*this);
+}
+
+void GPUDevice::contextDestroyed()
+{
+    InspectorInstrumentation::willDestroyWebGPUDevice(*this);
+
+    ActiveDOMObject::contextDestroyed();
+}
 
 String GPUDevice::label() const
 {

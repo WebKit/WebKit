@@ -128,6 +128,10 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._extensionsSection.element.hidden = true;
         this._sections.push(this._extensionsSection);
 
+        this._featuresSection = new WI.DetailsSection("canvas-features", WI.UIString("Features"));
+        this._featuresSection.element.hidden = true;
+        this._sections.push(this._featuresSection);
+
         this._clientNodesRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
 
         this._clientsSection = new WI.DetailsSection("canvas-clients", WI.UIString("Clients"));
@@ -168,6 +172,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._refreshSourceSection();
         this._refreshAttributesSection();
         this._refreshExtensionsSection();
+        this._refreshFeaturesSection();
         this._refreshClientsSection();
         this._refreshBacktraceSection();
     }
@@ -301,6 +306,21 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
             listElement.textContent = extension;
         }
         this._extensionsSection.groups = [{element}];
+    }
+
+    _refreshFeaturesSection()
+    {
+        let hasFeatures = this._canvas.features.length > 0;
+        this._featuresSection.element.hidden = !hasFeatures;
+        if (!hasFeatures)
+            return;
+
+        let element = document.createElement("ul");
+        for (let feature of this._canvas.features) {
+            let listElement = element.appendChild(document.createElement("li"));
+            listElement.textContent = feature;
+        }
+        this._featuresSection.groups = [{element}];
     }
 
     _refreshClientsSection()

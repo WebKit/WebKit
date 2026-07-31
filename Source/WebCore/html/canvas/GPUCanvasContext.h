@@ -40,6 +40,7 @@ namespace WebCore {
 class CanvasBase;
 class Document;
 class GPU;
+class GPUDevice;
 class GPUTexture;
 class ImageBitmap;
 struct GPUCanvasConfiguration;
@@ -61,6 +62,7 @@ public:
     virtual ExceptionOr<void> configure(GPUCanvasConfiguration&&) = 0;
     virtual void unconfigure() = 0;
     virtual std::optional<GPUCanvasConfiguration> getConfiguration() const = 0;
+    virtual GPUDevice* device() const = 0;
     virtual ExceptionOr<Ref<GPUTexture>> getCurrentTexture() = 0;
 
 protected:

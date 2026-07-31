@@ -1,0 +1,163 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true OffscreenCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let adapter = null;
+let device = null;
+let clientCanvas = null;
+let clientContext = null;
+let additionalClientCanvas = null;
+let additionalClientContext = null;
+let offscreenCanvas = null;
+let offscreenContext = null;
+
+async function load() {
+    adapter = await navigator.gpu.requestAdapter();
+    device = await adapter.requestDevice();
+    runTest();
+}
+
+function configureClient() {
+    clientCanvas = document.body.appendChild(document.createElement("canvas"));
+    clientCanvas.id = "webgpu-client";
+    clientContext = clientCanvas.getContext("webgpu");
+    clientContext.configure({
+        device,
+        format: navigator.gpu.getPreferredCanvasFormat(),
+    });
+}
+
+function unconfigureClient() {
+    clientContext.unconfigure();
+    clientCanvas.remove();
+    clientContext = null;
+    clientCanvas = null;
+}
+
+function configureAdditionalClient() {
+    additionalClientCanvas = document.body.appendChild(document.createElement("canvas"));
+    additionalClientCanvas.id = "additional-webgpu-client";
+    additionalClientContext = additionalClientCanvas.getContext("webgpu");
+    additionalClientContext.configure({
+        device,
+        format: navigator.gpu.getPreferredCanvasFormat(),
+    });
+}
+
+function unconfigureAdditionalClient() {
+    additionalClientContext.unconfigure();
+    additionalClientCanvas.remove();
+    additionalClientContext = null;
+    additionalClientCanvas = null;
+}
+
+function configureOffscreenClient() {
+    offscreenCanvas = new OffscreenCanvas(4, 4);
+    offscreenContext = offscreenCanvas.getContext("webgpu");
+    offscreenContext.configure({
+        device,
+        format: navigator.gpu.getPreferredCanvasFormat(),
+    });
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestClientNodes.WebGPU");
+    let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
+    InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
+
+    function requestClientNodes() {
+        return new Promise((resolve) => canvas.requestClientNodes(resolve));
+    }
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.WebGPU.Initial",
+        description: "Check that an unused GPUDevice has no client nodes.",
+        async test() {
+            let clientNodes = await requestClientNodes();
+            InspectorTest.expectEqual(clientNodes.length, 0, "GPUDevice should initially have no client nodes.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.WebGPU.Configure",
+        description: "Check that configuring a GPUCanvasContext adds its canvas as a GPUDevice client node.",
+        async test() {
+            let clientNodesChangedPromise = canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged);
+            InspectorTest.evaluateInPage(`configureClient()`);
+
+            let event = await clientNodesChangedPromise;
+            InspectorTest.expectEqual(event.target, canvas, "Client nodes changed for the expected Canvas.");
+            let clientNodes = await requestClientNodes();
+            InspectorTest.expectEqual(clientNodes.length, 1, "GPUDevice should have one client node.");
+            InspectorTest.expectEqual(clientNodes[0].appropriateSelectorFor(), "canvas#webgpu-client", "Client node should be the configured canvas element.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "GPUCanvasContext should not create a separate Canvas.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.WebGPU.MultipleCanvases",
+        description: "Check that one GPUDevice simultaneously tracks multiple canvas client nodes and preserves one when the other is unconfigured.",
+        async test() {
+            let clientNodesChangedPromise = canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged);
+            InspectorTest.evaluateInPage(`configureAdditionalClient()`);
+
+            let event = await clientNodesChangedPromise;
+            InspectorTest.expectEqual(event.target, canvas, "Client nodes changed for the expected Canvas.");
+            let clientNodes = await requestClientNodes();
+            InspectorTest.expectEqual(clientNodes.length, 2, "GPUDevice should have two client nodes.");
+            let selectors = new Set(clientNodes.map((node) => node.appropriateSelectorFor()));
+            InspectorTest.expectTrue(selectors.has("canvas#webgpu-client"), "GPUDevice should include the original canvas element.");
+            InspectorTest.expectTrue(selectors.has("canvas#additional-webgpu-client"), "GPUDevice should include the additional canvas element.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "Two GPUCanvasContexts should still create only one Canvas.");
+
+            clientNodesChangedPromise = canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged);
+            InspectorTest.evaluateInPage(`unconfigureAdditionalClient()`);
+
+            event = await clientNodesChangedPromise;
+            InspectorTest.expectEqual(event.target, canvas, "Client nodes changed after unconfiguring one canvas.");
+            clientNodes = await requestClientNodes();
+            InspectorTest.expectEqual(clientNodes.length, 1, "GPUDevice should retain one client node.");
+            InspectorTest.expectEqual(clientNodes[0].appropriateSelectorFor(), "canvas#webgpu-client", "Remaining client node should be the original canvas element.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "Unconfiguring one client should preserve the single GPUDevice Canvas.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.WebGPU.Unconfigure",
+        description: "Check that unconfiguring a GPUCanvasContext removes its canvas from the GPUDevice client nodes.",
+        async test() {
+            let clientNodesChangedPromise = canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged);
+            InspectorTest.evaluateInPage(`unconfigureClient()`);
+
+            let event = await clientNodesChangedPromise;
+            InspectorTest.expectEqual(event.target, canvas, "Client nodes changed for the expected Canvas.");
+            let clientNodes = await requestClientNodes();
+            InspectorTest.expectEqual(clientNodes.length, 0, "GPUDevice should again have no client nodes.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.requestClientNodes.WebGPU.OffscreenCanvas",
+        description: "Check that an OffscreenCanvas can use the GPUDevice without creating a DOM client node or a separate Canvas.",
+        async test() {
+            let clientNodesChangedPromise = canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged);
+            InspectorTest.evaluateInPage(`configureOffscreenClient()`);
+
+            let event = await clientNodesChangedPromise;
+            InspectorTest.expectEqual(event.target, canvas, "Client nodes changed for the expected Canvas.");
+            let clientNodes = await requestClientNodes();
+            InspectorTest.expectEqual(clientNodes.length, 0, "OffscreenCanvas should not create a DOM client node.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "OffscreenCanvas GPUCanvasContext should not create a separate Canvas.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="window.testRunner?.waitUntilDone(); load()">
+    <p>Test that CanvasAgent tracks GPUCanvasContext client nodes for WebGPU devices.</p>
+</body>
+</html>

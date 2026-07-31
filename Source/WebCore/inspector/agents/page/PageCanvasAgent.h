@@ -48,6 +48,7 @@ public:
     // InspectorInstrumentation
     void frameNavigated(LocalFrame&);
     void didChangeCSSCanvasClientNodes(CanvasBase&);
+    void didChangeGPUDeviceClientNodes(GPUDevice&);
 
 private:
     bool enabled() const override;

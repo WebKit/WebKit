@@ -50,6 +50,7 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
+class GPUDevice;
 class ScriptExecutionContext;
 
 #if ENABLE(WEBGL)
@@ -108,11 +109,14 @@ public:
     bool isWebGLProgramDisabled(WebGLProgram&);
     bool isWebGLProgramHighlighted(WebGLProgram&);
 #endif // ENABLE(WEBGL)
+    void didCreateWebGPUDevice(GPUDevice&);
+    void willDestroyWebGPUDevice(GPUDevice&);
 
     void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
 
     RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
-    RefPtr<InspectorCanvas> NODELETE findInspectorCanvas(const CanvasRenderingContext&);
+    RefPtr<InspectorCanvas> findInspectorCanvas(const CanvasRenderingContext&);
+    RefPtr<InspectorCanvas> findInspectorCanvas(const GPUDevice&);
 
 protected:
     InspectorCanvasAgent(WebAgentContext&);
@@ -143,6 +147,7 @@ private:
 #endif // ENABLE(WEBGL)
 
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
+    InspectorCanvas& bindCanvas(GPUDevice&, bool captureBacktrace);
 
 #if ENABLE(WEBGL)
     void unbindProgram(InspectorShaderProgram&);

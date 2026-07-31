@@ -1,0 +1,78 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let adapter = null;
+let device = null;
+let garbageCollectionInterval = null;
+
+async function createDevice() {
+    adapter = await navigator.gpu.requestAdapter();
+    let firstSupportedFeature = adapter.features.values().next().value;
+    device = await adapter.requestDevice({requiredFeatures: firstSupportedFeature ? [firstSupportedFeature] : []});
+    TestPage.dispatchEventToFrontend("WebGPUDeviceReady");
+}
+
+function releaseDevice() {
+    device = null;
+    adapter = null;
+    garbageCollectionInterval = setInterval(() => { GCController.collect(); }, 0);
+}
+
+function stopCollectingGarbage() {
+    clearInterval(garbageCollectionInterval);
+    garbageCollectionInterval = null;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.CreateContextWebGPU");
+
+    suite.addTestCase({
+        name: "Canvas.CreateContextWebGPU.NoDevices",
+        description: "Check that the CanvasManager has no WebGPU devices initially.",
+        test(resolve, reject) {
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 0, "CanvasManager should initially have no canvases.");
+            resolve();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.CreateContextWebGPU.DeviceLifecycle",
+        description: "Check that creating and collecting a GPUDevice adds and removes a WebGPU Canvas.",
+        async test() {
+            let canvasAddedPromise = WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+            let deviceReadyPromise = InspectorTest.awaitEvent("WebGPUDeviceReady");
+            InspectorTest.evaluateInPage(`void createDevice()`);
+
+            let canvasAddedEvent = await canvasAddedPromise;
+            await deviceReadyPromise;
+            let canvas = canvasAddedEvent.data.item;
+            InspectorTest.expectThat(canvas instanceof WI.Canvas, "Added a Canvas.");
+            InspectorTest.expectEqual(canvas.contextType, WI.Canvas.ContextType.WebGPU, "Canvas should represent a WebGPU device.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "CanvasManager should contain one Canvas.");
+            let enabledFeatures = JSON.parse(await InspectorTest.evaluateInPage(`JSON.stringify(Array.from(device.features))`));
+            InspectorTest.expectTrue(Array.isArray(canvas.features), "Canvas should contain WebGPU features.");
+            InspectorTest.expectEqual(canvas.features.length, enabledFeatures.length, "Canvas should report every enabled WebGPU feature.");
+            InspectorTest.expectTrue(enabledFeatures.every((feature) => canvas.features.includes(feature)), "Canvas should report the enabled WebGPU feature names.");
+            InspectorTest.expectEqual(canvas.extensions.size, 0, "Canvas should not report WebGPU features as extensions.");
+
+            let canvasRemovedPromise = WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemRemoved);
+            InspectorTest.evaluateInPage(`releaseDevice()`);
+
+            let canvasRemovedEvent = await canvasRemovedPromise;
+            InspectorTest.expectEqual(canvasRemovedEvent.data.item, canvas, "Removed the previously added Canvas.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 0, "CanvasManager should again have no canvases.");
+            await InspectorTest.evaluateInPage(`stopCollectingGarbage()`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasManager tracks creation and destruction of WebGPU devices.</p>
+</body>
+</html>

@@ -159,6 +159,15 @@ void PageCanvasAgent::didChangeCSSCanvasClientNodes(CanvasBase& canvasBase)
     m_frontendDispatcher->clientNodesChanged(inspectorCanvas->identifier());
 }
 
+void PageCanvasAgent::didChangeGPUDeviceClientNodes(GPUDevice& device)
+{
+    RefPtr inspectorCanvas = findInspectorCanvas(device);
+    if (!inspectorCanvas)
+        return;
+
+    m_frontendDispatcher->clientNodesChanged(inspectorCanvas->identifier());
+}
+
 bool PageCanvasAgent::matchesCurrentContext(ScriptExecutionContext* scriptExecutionContext) const
 {
     auto* document = dynamicDowncast<Document>(scriptExecutionContext);

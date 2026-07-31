@@ -192,7 +192,6 @@ html/canvas/PlaceholderRenderingContext.cpp
 inspector/DOMEditor.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorCanvas.cpp
-inspector/InspectorCanvas.h
 inspector/InspectorCanvasCallTracer.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorResourceUtilities.cpp

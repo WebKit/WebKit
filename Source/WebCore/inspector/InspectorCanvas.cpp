@@ -39,6 +39,8 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatPoint.h"
+#include "GPUCanvasContext.h"
+#include "GPUDevice.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -61,6 +63,7 @@
 #include "JSCanvasTextBaseline.h"
 #include "JSDOMWrapperCache.h"
 #include "JSExecState.h"
+#include "JSGPUDevice.h"
 #include "JSImageBitmapRenderingContext.h"
 #include "JSImageSmoothingQuality.h"
 #include "JSPredefinedColorSpace.h"
@@ -72,6 +75,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Scope.h>
@@ -94,58 +98,155 @@ Ref<InspectorCanvas> InspectorCanvas::create(CanvasRenderingContext& context)
     return adoptRef(*new InspectorCanvas(context));
 }
 
+Ref<InspectorCanvas> InspectorCanvas::create(GPUDevice& device)
+{
+    return adoptRef(*new InspectorCanvas(device));
+}
+
 InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
     : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
     , m_context(context)
 {
 }
 
+CanvasRenderingContext* InspectorCanvas::canvasContext() const
+{
+    auto* context = std::get_if<WeakRef<CanvasRenderingContext>>(&m_context);
+    return context ? context->ptr() : nullptr;
+}
+
+InspectorCanvas::InspectorCanvas(GPUDevice& device)
+    : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
+    , m_context(device)
+{
+}
+
+GPUDevice* InspectorCanvas::deviceContext() const
+{
+    auto* device = std::get_if<WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>>(&m_context);
+    return device ? device->ptr() : nullptr;
+}
+
+static bool canvasContextMatchesDevice(const CanvasRenderingContext& context, const GPUDevice& device)
+{
+    auto* gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(context);
+    return gpuCanvasContext && gpuCanvasContext->device() == &device;
+}
+
 HTMLCanvasElement* InspectorCanvas::canvasElement() const
 {
-    return dynamicDowncast<HTMLCanvasElement>(m_context->canvasBase());
+    return WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+            return dynamicDowncast<HTMLCanvasElement>(context->canvasBase());
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>&) -> HTMLCanvasElement* {
+            return nullptr;
+        }
+    );
 }
 
 ScriptExecutionContext* InspectorCanvas::scriptExecutionContext() const
 {
-    return protect(m_context)->canvasBase().scriptExecutionContext();
+    return WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+            return context->canvasBase().scriptExecutionContext();
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+            return device->scriptExecutionContext();
+        }
+    );
 }
 
 JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
 {
     JSC::JSLockHolder lock(exec);
     auto* globalObject = deprecatedGlobalObjectForPrototype(exec);
-    if (is<CanvasRenderingContext2D>(m_context))
-        return toJS(exec, globalObject, protect(downcast<CanvasRenderingContext2D>(m_context.get())));
+
+    return WTF::switchOn(m_context,
+        [&](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+            if (is<CanvasRenderingContext2D>(context))
+                return toJS(exec, globalObject, downcast<CanvasRenderingContext2D>(context));
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (is<OffscreenCanvasRenderingContext2D>(m_context))
-        return toJS(exec, globalObject, protect(downcast<OffscreenCanvasRenderingContext2D>(m_context.get())));
+            if (is<OffscreenCanvasRenderingContext2D>(context))
+                return toJS(exec, globalObject, downcast<OffscreenCanvasRenderingContext2D>(context));
 #endif
-    if (is<ImageBitmapRenderingContext>(m_context))
-        return toJS(exec, globalObject, protect(downcast<ImageBitmapRenderingContext>(m_context.get())));
+            if (is<ImageBitmapRenderingContext>(context))
+                return toJS(exec, globalObject, downcast<ImageBitmapRenderingContext>(context));
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(m_context))
-        return toJS(exec, globalObject, protect(downcast<WebGLRenderingContext>(m_context.get())));
-    if (is<WebGL2RenderingContext>(m_context))
-        return toJS(exec, globalObject, protect(downcast<WebGL2RenderingContext>(m_context.get())));
+            if (is<WebGLRenderingContext>(context))
+                return toJS(exec, globalObject, downcast<WebGLRenderingContext>(context));
+            if (is<WebGL2RenderingContext>(context))
+                return toJS(exec, globalObject, downcast<WebGL2RenderingContext>(context));
 #endif
-    RELEASE_ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+            return toJS(exec, globalObject, device);
+        }
+    );
 }
 
 HashSet<Element*> InspectorCanvas::clientNodes() const
 {
-    return protect(m_context)->canvasBase().cssCanvasClients();
+    return WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+            return context->canvasBase().cssCanvasClients();
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+            HashSet<Element*> clientNodes;
+            Locker locker { CanvasRenderingContext::instancesLock() };
+            for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
+                if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
+                    continue;
+                if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase()))
+                    clientNodes.add(canvasElement);
+            }
+            return clientNodes;
+        }
+    );
+}
+
+size_t InspectorCanvas::memoryCost() const
+{
+    return WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+
+            return context->memoryCost();
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) -> size_t {
+            Ref device = weakDevice;
+
+            CheckedSize memoryCost;
+            Locker locker { CanvasRenderingContext::instancesLock() };
+            for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
+                if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
+                    continue;
+                memoryCost += context->memoryCost();
+            }
+            return memoryCost;
+        }
+    );
 }
 
 void InspectorCanvas::canvasChanged()
 {
-    if (!m_context->hasActiveInspectorCanvasCallTracer())
+    Ref context = std::get<WeakRef<CanvasRenderingContext>>(m_context);
+    if (!context->hasActiveInspectorCanvasCallTracer())
         return;
 
     // Since 2D contexts are able to be fully reproduced in the frontend, we don't need snapshots.
-    if (is<CanvasRenderingContext2D>(m_context))
+    if (is<CanvasRenderingContext2D>(context))
         return;
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (is<OffscreenCanvasRenderingContext2D>(m_context))
+    if (is<OffscreenCanvasRenderingContext2D>(context))
         return;
 #endif
 
@@ -168,7 +269,8 @@ void InspectorCanvas::resetRecordingData()
 
     // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
 
-    m_context->setHasActiveInspectorCanvasCallTracer(false);
+    Ref context = std::get<WeakRef<CanvasRenderingContext>>(m_context);
+    context->setHasActiveInspectorCanvasCallTracer(false);
 }
 
 bool InspectorCanvas::hasRecordingData() const
@@ -234,12 +336,13 @@ void InspectorCanvas::recordAction(String&& name, InspectorCanvasProcessedArgume
 
     // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
 
-    if (is<ImageBitmapRenderingContext>(m_context) && shouldSnapshotBitmapRendererAction(name))
+    Ref context = std::get<WeakRef<CanvasRenderingContext>>(m_context);
+    if (is<ImageBitmapRenderingContext>(context) && shouldSnapshotBitmapRendererAction(name))
         m_contentChanged = true;
 #if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContext>(m_context) && shouldSnapshotWebGLAction(name))
+    else if (is<WebGLRenderingContext>(context) && shouldSnapshotWebGLAction(name))
         m_contentChanged = true;
-    else if (is<WebGL2RenderingContext>(m_context) && shouldSnapshotWebGL2Action(name))
+    else if (is<WebGL2RenderingContext>(context) && shouldSnapshotWebGL2Action(name))
         m_contentChanged = true;
 #endif
 
@@ -363,66 +466,88 @@ static RefPtr<Inspector::Protocol::Canvas::ContextAttributes> buildObjectForCanv
 
 Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool captureBacktrace)
 {
-    auto contextType = [&] {
-        bool isOffscreen = false;
+    Ref canvas = WTF::switchOn(m_context,
+        [&](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+
+            auto contextType = [&] {
+                bool isOffscreen = false;
 #if ENABLE(OFFSCREEN_CANVAS)
-        if (is<OffscreenCanvas>(m_context->canvasBase()))
-            isOffscreen = true;
+                if (is<OffscreenCanvas>(context->canvasBase()))
+                    isOffscreen = true;
 #endif
 
-        if (is<CanvasRenderingContext2D>(m_context)) {
-            ASSERT(!isOffscreen);
-            return Inspector::Protocol::Canvas::ContextType::Canvas2D;
-        }
+                if (is<CanvasRenderingContext2D>(context)) {
+                    ASSERT(!isOffscreen);
+                    return Inspector::Protocol::Canvas::ContextType::Canvas2D;
+                }
 #if ENABLE(OFFSCREEN_CANVAS)
-        if (is<OffscreenCanvasRenderingContext2D>(m_context)) {
-            ASSERT(isOffscreen);
-            return Inspector::Protocol::Canvas::ContextType::OffscreenCanvas2D;
-        }
+                if (is<OffscreenCanvasRenderingContext2D>(context)) {
+                    ASSERT(isOffscreen);
+                    return Inspector::Protocol::Canvas::ContextType::OffscreenCanvas2D;
+                }
 #endif
-        if (is<ImageBitmapRenderingContext>(m_context)) {
-            if (isOffscreen)
-                return Inspector::Protocol::Canvas::ContextType::OffscreenBitmapRenderer;
-            return Inspector::Protocol::Canvas::ContextType::BitmapRenderer;
-        }
+                if (is<ImageBitmapRenderingContext>(context)) {
+                    if (isOffscreen)
+                        return Inspector::Protocol::Canvas::ContextType::OffscreenBitmapRenderer;
+                    return Inspector::Protocol::Canvas::ContextType::BitmapRenderer;
+                }
 #if ENABLE(WEBGL)
-        if (is<WebGLRenderingContext>(m_context)) {
-            if (isOffscreen)
-                return Inspector::Protocol::Canvas::ContextType::OffscreenWebGL;
-            return Inspector::Protocol::Canvas::ContextType::WebGL;
-        }
-        if (is<WebGL2RenderingContext>(m_context)) {
-            if (isOffscreen)
-                return Inspector::Protocol::Canvas::ContextType::OffscreenWebGL2;
-            return Inspector::Protocol::Canvas::ContextType::WebGL2;
-        }
+                if (is<WebGLRenderingContext>(context)) {
+                    if (isOffscreen)
+                        return Inspector::Protocol::Canvas::ContextType::OffscreenWebGL;
+                    return Inspector::Protocol::Canvas::ContextType::WebGL;
+                }
+                if (is<WebGL2RenderingContext>(context)) {
+                    if (isOffscreen)
+                        return Inspector::Protocol::Canvas::ContextType::OffscreenWebGL2;
+                    return Inspector::Protocol::Canvas::ContextType::WebGL2;
+                }
 #endif
 
-        ASSERT_NOT_REACHED();
-        return Inspector::Protocol::Canvas::ContextType::Canvas2D;
-    }();
+                RELEASE_ASSERT_NOT_REACHED();
+            }();
 
-    const auto& size = m_context->canvasBase().size();
+            auto result = Inspector::Protocol::Canvas::Canvas::create()
+                .setCanvasId(m_identifier)
+                .setContextType(contextType)
+                .release();
 
-    auto canvas = Inspector::Protocol::Canvas::Canvas::create()
-        .setCanvasId(m_identifier)
-        .setContextType(contextType)
-        .setWidth(size.width())
-        .setHeight(size.height())
-        .release();
+            const auto& size = context->canvasBase().size();
+            result->setWidth(size.width());
+            result->setHeight(size.height());
 
-    if (RefPtr node = canvasElement()) {
-        String cssCanvasName = node->document().nameForCSSCanvasElement(*node);
-        if (!cssCanvasName.isEmpty())
-            canvas->setCssCanvasName(cssCanvasName);
+            if (RefPtr node = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
+                String cssCanvasName = node->document().nameForCSSCanvasElement(*node);
+                if (!cssCanvasName.isEmpty())
+                    result->setCssCanvasName(cssCanvasName);
 
-        // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
-    }
+                // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
+            }
 
-    if (auto attributes = buildObjectForCanvasContextAttributes(protect(m_context.get())))
-        canvas->setContextAttributes(attributes.releaseNonNull());
+            if (auto attributes = buildObjectForCanvasContextAttributes(context))
+                result->setContextAttributes(attributes.releaseNonNull());
 
-    if (size_t memoryCost = m_context->memoryCost())
+            return result;
+        },
+        [&](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+
+            auto result = Inspector::Protocol::Canvas::Canvas::create()
+                .setCanvasId(m_identifier)
+                .setContextType(Inspector::Protocol::Canvas::ContextType::WebGPU)
+                .release();
+
+            auto features = JSON::ArrayOf<String>::create();
+            for (const String& feature : device->backing().features().features())
+                features->addItem(feature);
+            result->setFeatures(WTF::move(features));
+
+            return result;
+        }
+    );
+
+    if (size_t memoryCost = this->memoryCost())
         canvas->setMemoryCost(memoryCost);
 
     if (captureBacktrace) {
@@ -439,29 +564,30 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
     ASSERT(!m_lastRecordedAction);
     ASSERT(!m_frames);
 
+    Ref context = std::get<WeakRef<CanvasRenderingContext>>(m_context);
     // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
 
     bool isOffscreen = false;
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (is<OffscreenCanvas>(m_context->canvasBase()))
+    if (is<OffscreenCanvas>(context->canvasBase()))
         isOffscreen = true;
 #endif
 
     Inspector::Protocol::Recording::Type type;
-    if (is<CanvasRenderingContext2D>(m_context)) {
+    if (is<CanvasRenderingContext2D>(context)) {
         ASSERT(!isOffscreen);
         type = Inspector::Protocol::Recording::Type::Canvas2D;
 #if ENABLE(OFFSCREEN_CANVAS)
-    } else if (is<OffscreenCanvasRenderingContext2D>(m_context)) {
+    } else if (is<OffscreenCanvasRenderingContext2D>(context)) {
         ASSERT(isOffscreen);
         type = Inspector::Protocol::Recording::Type::OffscreenCanvas2D;
 #endif
-    } else if (is<ImageBitmapRenderingContext>(m_context)) {
+    } else if (is<ImageBitmapRenderingContext>(context)) {
         type = isOffscreen ? Inspector::Protocol::Recording::Type::OffscreenCanvasBitmapRenderer : Inspector::Protocol::Recording::Type::CanvasBitmapRenderer;
 #if ENABLE(WEBGL)
-    } else if (is<WebGLRenderingContext>(m_context)) {
+    } else if (is<WebGLRenderingContext>(context)) {
         type = isOffscreen ? Inspector::Protocol::Recording::Type::OffscreenCanvasWebGL : Inspector::Protocol::Recording::Type::CanvasWebGL;
-    } else if (is<WebGL2RenderingContext>(m_context)) {
+    } else if (is<WebGL2RenderingContext>(context)) {
         type = isOffscreen ? Inspector::Protocol::Recording::Type::OffscreenCanvasWebGL2 : Inspector::Protocol::Recording::Type::CanvasWebGL2;
 #endif
     } else {
@@ -488,6 +614,19 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL(
 {
     auto surfaceBuffer = context.compositingResultsNeedUpdating() ? CanvasRenderingContext::SurfaceBuffer::DrawingBuffer : CanvasRenderingContext::SurfaceBuffer::DisplayBuffer;
     return encodeDataURL(context.surfaceBufferToImageBuffer(surfaceBuffer), "image/png"_s);
+}
+
+Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL()
+{
+    return WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+            return getContentAsDataURL(context);
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>&) -> Inspector::Protocol::ErrorStringOr<String> {
+            return makeUnexpected("Canvas content is not available for WebGPU devices"_s);
+        }
+    );
 }
 
 void InspectorCanvas::appendActionSnapshotIfNeeded()
@@ -673,19 +812,20 @@ static Ref<JSON::ArrayOf<double>> buildArrayForAffineTransform(const AffineTrans
 
 Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
 {
+    Ref context = std::get<WeakRef<CanvasRenderingContext>>(m_context);
     // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
 
     auto initialStatePayload = Inspector::Protocol::Recording::InitialState::create().release();
 
     auto attributesPayload = JSON::Object::create();
-    attributesPayload->setInteger("width"_s, protect(m_context)->canvasBase().width());
-    attributesPayload->setInteger("height"_s, protect(m_context)->canvasBase().height());
+    attributesPayload->setInteger("width"_s, context->canvasBase().width());
+    attributesPayload->setInteger("height"_s, context->canvasBase().height());
 
     auto statesPayload = JSON::ArrayOf<JSON::Object>::create();
 
     auto parametersPayload = JSON::ArrayOf<JSON::Value>::create();
 
-    if (RefPtr context2d = dynamicDowncast<CanvasRenderingContext2DBase>(m_context.get())) {
+    if (RefPtr context2d = dynamicDowncast<CanvasRenderingContext2DBase>(context)) {
         for (auto& state : context2d->stateStack()) {
             auto statePayload = JSON::Object::create();
 
@@ -743,7 +883,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
         }
     }
 
-    if (auto contextAttributes = buildObjectForCanvasContextAttributes(protect(m_context.get())))
+    if (auto contextAttributes = buildObjectForCanvasContextAttributes(context))
         parametersPayload->addItem(contextAttributes.releaseNonNull());
 
     initialStatePayload->setAttributes(WTF::move(attributesPayload));
@@ -754,7 +894,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
     if (parametersPayload->length())
         initialStatePayload->setParameters(WTF::move(parametersPayload));
 
-    if (auto content = getContentAsDataURL())
+    if (auto content = getContentAsDataURL(context))
         initialStatePayload->setContent(*content);
 
     return initialStatePayload;

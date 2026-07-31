@@ -27,7 +27,8 @@
                 "canvas-2d", "offscreen-canvas-2d",
                 "bitmaprenderer", "offscreen-bitmaprenderer",
                 "webgl", "offscreen-webgl",
-                "webgl2", "offscreen-webgl2"
+                "webgl2", "offscreen-webgl2",
+                "webgpu"
             ],
             "description": "The type of rendering context backing the canvas element."
         },
@@ -68,11 +69,12 @@
             "properties": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
                 { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
-                { "name": "width", "type": "number", "description": "Width of the canvas in pixels." },
-                { "name": "height", "type": "number", "description": "Height of the canvas in pixels." },
+                { "name": "width", "type": "number", "optional": true, "description": "Width of the canvas in pixels." },
+                { "name": "height", "type": "number", "optional": true, "description": "Height of the canvas in pixels." },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
                 { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." },
                 { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
+                { "name": "features", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Enabled WebGPU device features." },
                 { "name": "memoryCost", "type": "number", "optional": true, "description": "Memory usage of the canvas in bytes." },
                 { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Backtrace that was captured when this canvas context was created." }
             ]

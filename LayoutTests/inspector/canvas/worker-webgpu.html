@@ -1,0 +1,72 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true OffscreenCanvasEnabled=true OffscreenCanvasInWorkersEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../worker/resources/worker-utilities.js"></script>
+<script>
+let workerReadyPromise = Promise.withResolvers();
+let worker = new Worker("resources/webgpu-worker.js");
+worker.addEventListener("message", (event) => {
+    if (event.data === "ready")
+        workerReadyPromise.resolve();
+});
+worker.addEventListener("error", workerReadyPromise.reject);
+
+function terminateWorker() {
+    worker.terminate();
+}
+
+async function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.WebGPU.Worker");
+    let workerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName.endsWith("webgpu-worker.js"));
+    InspectorTest.assert(workerTarget, "There should be a Worker target.");
+
+    let findCanvas = () => Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.target === workerTarget && canvas.contextType === WI.Canvas.ContextType.WebGPU);
+    let canvas = findCanvas();
+    while (!canvas) {
+        await WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+        canvas = findCanvas();
+    }
+    InspectorTest.assert(canvas, "There should be a worker-owned WebGPU Canvas.");
+
+    suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.Device",
+        description: "Check that a GPUDevice created in a Worker is discovered on the Worker target and can be resolved.",
+        async test() {
+            InspectorTest.expectTrue(workerTarget.hasDomain("Canvas"), "Worker target should expose the Canvas domain.");
+            InspectorTest.expectEqual(canvas.target, workerTarget, "WebGPU Canvas should belong to the Worker target.");
+
+            const objectGroup = "test";
+            let {object} = await canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup);
+            InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+            InspectorTest.expectEqual(object.className, "GPUDevice", `Payload should have className "GPUDevice".`);
+
+            let clientNodes = await new Promise((resolve) => canvas.requestClientNodes(resolve));
+            InspectorTest.expectEqual(clientNodes.length, 0, "Worker GPUDevice should have no DOM client nodes.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.Terminate",
+        description: "Check that terminating a Worker removes its WebGPU Canvas.",
+        async test() {
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            let canvasRemovedPromise = WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemRemoved);
+            InspectorTest.evaluateInPage(`terminateWorker()`);
+
+            let [targetRemovedEvent, canvasRemovedEvent] = await Promise.all([targetRemovedPromise, canvasRemovedPromise]);
+            InspectorTest.expectEqual(targetRemovedEvent.data.target, workerTarget, "Removed the expected Worker target.");
+            InspectorTest.expectEqual(canvasRemovedEvent.data.item, canvas, "Removed the Worker GPUDevice Canvas.");
+            InspectorTest.expectFalse(WI.canvasManager.canvasCollection.has(canvas), "CanvasManager should not retain the Worker GPUDevice Canvas.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="testRunner.waitUntilDone(); workerReadyPromise.promise.then(runTest)">
+    <p>Test WebGPU Canvas instrumentation for a Worker rendering to an OffscreenCanvas.</p>
+</body>
+</html>

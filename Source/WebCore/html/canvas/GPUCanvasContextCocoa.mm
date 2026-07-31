@@ -29,6 +29,7 @@
 #include "DestinationColorSpace.h"
 #include "GPUAdapter.h"
 #include "GPUCanvasConfiguration.h"
+#include "GPUDevice.h"
 #include "GPUPresentationContext.h"
 #include "GPUPresentationContextDescriptor.h"
 #include "GPUTextureDescriptor.h"
@@ -36,6 +37,7 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerEnums.h"
 #include "ImageBitmap.h"
+#include "InspectorInstrumentation.h"
 #include "PlatformCALayerDelegatedContents.h"
 #include "PlatformScreen.h"
 #include "RenderBox.h"
@@ -205,6 +207,14 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
 #endif
 }
 
+GPUCanvasContextCocoa::~GPUCanvasContextCocoa()
+{
+    CanvasRenderingContext::updateMemoryCost(0);
+
+    if (auto configuration = std::exchange(m_configuration, std::nullopt))
+        InspectorInstrumentation::didChangeGPUDeviceClientNodes(configuration->device);
+}
+
 #if HAVE(SUPPORT_HDR_DISPLAY)
 static float NODELETE interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
 {
@@ -335,6 +345,8 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
 
     auto configuration = WTF::move(m_configuration);
     m_configuration.reset();
+    if (configuration)
+        InspectorInstrumentation::didChangeGPUDeviceClientNodes(configuration->device);
     unconfigure();
     if (configuration) {
         GPUCanvasConfiguration canvasConfiguration {
@@ -519,6 +531,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         WTF::move(renderBuffers),
         0,
     };
+    InspectorInstrumentation::didChangeGPUDeviceClientNodes(m_configuration->device);
     return { };
 }
 
@@ -530,11 +543,14 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
 void GPUCanvasContextCocoa::unconfigure()
 {
     m_presentationContext->unconfigure();
-    m_configuration = std::nullopt;
+    auto configuration = std::exchange(m_configuration, std::nullopt);
     m_currentTexture = nullptr;
     m_readDisplayBuffer = nullptr;
     updateMemoryCost();
     ASSERT(!isConfigured());
+
+    if (configuration)
+        InspectorInstrumentation::didChangeGPUDeviceClientNodes(configuration->device);
 }
 
 std::optional<GPUCanvasConfiguration> GPUCanvasContextCocoa::getConfiguration() const

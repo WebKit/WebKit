@@ -51,6 +51,8 @@ class GPUCanvasContextCocoa final : public GPUCanvasContext {
 public:
     static std::unique_ptr<GPUCanvasContextCocoa> create(CanvasBase&, GPU&, Document*);
 
+    ~GPUCanvasContextCocoa();
+
     DestinationColorSpace colorSpace() const override;
     bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
@@ -68,6 +70,7 @@ public:
     ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
     void unconfigure() override;
     std::optional<GPUCanvasConfiguration> getConfiguration() const override;
+    GPUDevice* device() const override { return m_configuration ? m_configuration->device.ptr() : nullptr; }
     ExceptionOr<Ref<GPUTexture>> getCurrentTexture() override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 

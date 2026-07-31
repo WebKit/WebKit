@@ -25,7 +25,7 @@
 
 WI.Canvas = class Canvas extends WI.Object
 {
-    constructor(target, identifier, contextType, size, {domNode, cssCanvasName, contextAttributes, memoryCost, stackTrace} = {})
+    constructor(target, identifier, contextType, size, {domNode, cssCanvasName, contextAttributes, features, memoryCost, stackTrace} = {})
     {
         super();
 
@@ -42,6 +42,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._domNode = domNode || null;
         this._cssCanvasName = cssCanvasName || "";
         this._contextAttributes = contextAttributes || {};
+        this._features = features || [];
         this._extensions = new Set;
         this._memoryCost = memoryCost || NaN;
         this._stackTrace = stackTrace || null;
@@ -121,6 +122,7 @@ WI.Canvas = class Canvas extends WI.Object
             domNode: payload.nodeId ? WI.domManager.nodeForId(payload.nodeId) : null,
             cssCanvasName: payload.cssCanvasName,
             contextAttributes: payload.contextAttributes,
+            features: payload.features,
             memoryCost: payload.memoryCost,
             stackTrace: WI.StackTrace.fromPayload(target, payload.stackTrace),
         });
@@ -194,6 +196,7 @@ WI.Canvas = class Canvas extends WI.Object
     get memoryCost() { return this._memoryCost; }
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
+    get features() { return this._features; }
     get extensions() { return this._extensions; }
     get stackTrace() { return this._stackTrace; }
     get shaderProgramCollection() { return this._shaderProgramCollection; }
