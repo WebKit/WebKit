@@ -914,6 +914,12 @@ function(WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS _target)
     endif ()
 endfunction()
 
+function(WEBKIT_ADD_TARGET_THREAD_SAFETY_WARNINGS _target)
+    if (ENABLE_THREAD_SAFETY_WARNING)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(${_target} -Wthread-safety)
+    endif ()
+endfunction()
+
 macro(WEBKIT_POPULATE_LIBRARY_VERSION library_name)
     if (NOT DEFINED ${library_name}_VERSION_MAJOR)
         set(${library_name}_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
