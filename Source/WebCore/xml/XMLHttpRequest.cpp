@@ -747,7 +747,6 @@ void XMLHttpRequest::clearResponse()
 void XMLHttpRequest::clearResponseBuffers()
 {
     m_responseBuilder.clear();
-    m_responseEncoding = String();
     m_createdDocument = false;
     {
         Locker locker { m_gcLock };
@@ -971,7 +970,6 @@ void XMLHttpRequest::didFinishLoading(ScriptExecutionContextIdentifier, std::opt
 
     m_sendFlag = false;
     changeState(DONE);
-    m_responseEncoding = String();
     m_decoder = nullptr;
 
     m_timeoutTimer.stop();
@@ -1023,11 +1021,14 @@ static inline bool NODELETE shouldDecodeResponse(XMLHttpRequest::ResponseType ty
 // https://xhr.spec.whatwg.org/#final-charset
 PAL::TextEncoding XMLHttpRequest::finalResponseCharset() const
 {
-    StringView label = m_responseEncoding;
+    // The charset of the response MIME type, if any, is overridden by the charset of the override MIME type.
+    StringView label = m_response.textEncodingName();
 
-    StringView overrideResponseCharset = extractCharsetFromMediaType(label);
-    if (!overrideResponseCharset.isEmpty())
-        label = overrideResponseCharset;
+    if (!m_mimeTypeOverride.isEmpty()) {
+        StringView overrideResponseCharset = extractCharsetFromMediaType(m_mimeTypeOverride);
+        if (!overrideResponseCharset.isEmpty())
+            label = overrideResponseCharset;
+    }
 
     return PAL::TextEncoding(label);
 }
@@ -1077,11 +1078,6 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
 
     if (readyState() < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
-
-    if (!m_mimeTypeOverride.isEmpty())
-        m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride).toString();
-    if (m_responseEncoding.isEmpty())
-        m_responseEncoding = m_response.textEncodingName();
 
     bool useDecoder = shouldDecodeResponse(responseType());
 

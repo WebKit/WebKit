@@ -236,8 +236,6 @@ private:
     };
     std::optional<LoadingActivity> m_loadingActivity;
 
-    String m_responseEncoding;
-
     ResourceResponse m_response;
 
     RefPtr<TextResourceDecoder> m_decoder;
