@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resizes-content"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+        body {
+            background-color: pink;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+            window.initialLayoutViewportHeight = internals.layoutViewportRect().height;
+            window.smallerInset = 50;
+            window.biggerInset = 600;
+
+            // Test the bottom inset being smaller than the keyboard.
+            await UIHelper.setObscuredInsets(0, 0, window.smallerInset, 0);
+            await UIHelper.renderingUpdate();
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+
+            window.keyboardTopInView = (await UIHelper.inputViewBoundsInWebView()).top;
+
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+
+            shouldBeTrue('internals.layoutViewportRect().height == window.keyboardTopInView');
+
+            // Test the bottom inset being bigger than the keyboard.
+            await UIHelper.setObscuredInsets(0, 0, window.biggerInset, 0);
+            await UIHelper.renderingUpdate();
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.layoutViewportRect().height == window.initialLayoutViewportHeight - window.biggerInset');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+</html>

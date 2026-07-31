@@ -128,6 +128,7 @@ private:
     JSObjectRef selectionCaretViewRect(id<UICoordinateSpace>) const;
     JSObjectRef selectionRangeViewRects() const override;
     JSObjectRef inputViewBounds() const override;
+    JSObjectRef inputViewBoundsInWebView() const override;
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;
     JSRetainPtr<JSStringRef> uiViewTreeAsText() const override;
     JSRetainPtr<JSStringRef> uiViewTreeAsTextForViewWithLayerID(unsigned long long) const override;

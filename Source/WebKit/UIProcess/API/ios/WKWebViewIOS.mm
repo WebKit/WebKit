@@ -2556,6 +2556,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!_page)
         return;
 
+    if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::ResizesContent) {
+        CGRect keyboardInView = [self convertRect:[self _inputViewBoundsForViewportCalculations] fromView:nil];
+        if (!CGRectIsEmpty(keyboardInView)) {
+            CGFloat contentTop = [self _computedObscuredInset].top;
+            CGFloat maxHeight = CGRectGetMinY(keyboardInView) - contentTop;
+            viewLayoutSize.setHeight(std::max<float>(0, std::min<float>(viewLayoutSize.height(), maxHeight)));
+        }
+    }
+
     auto newMinimumEffectiveDeviceWidth = _page->minimumEffectiveDeviceWidth();
     if (_perProcessState.lastSentViewLayoutSize && CGSizeEqualToSize(_perProcessState.lastSentViewLayoutSize.value(), viewLayoutSize) && _perProcessState.lastSentMinimumEffectiveDeviceWidth && _perProcessState.lastSentMinimumEffectiveDeviceWidth == newMinimumEffectiveDeviceWidth)
         return;
@@ -2924,6 +2933,11 @@ static CGFloat liveResizeMinimumWidthDifference()
     if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent)
         return CGRectZero;
     return _inputViewBoundsInWindow;
+}
+
+- (WebCore::InteractiveWidget)_viewportMetaTagInteractiveWidget
+{
+    return _perProcessState.viewportMetaTagInteractiveWidget;
 }
 
 // Unobscured content rect where the user can interact. When the keyboard is up, this should be the area above or below the keyboard, wherever there is enough space.
@@ -3540,6 +3554,7 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     })();
 
     BOOL keyboardShouldOverlayContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent;
+    BOOL keyboardShouldResizeContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::ResizesContent;
 
     if (adjustScrollView && !keyboardShouldOverlayContent) {
         CGFloat bottomInsetBeforeAdjustment = [_scrollView contentInset].bottom;
@@ -3555,6 +3570,9 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
     if (selectionWasVisible && [_contentView _hasFocusedElement] && !CGRectIsEmpty(previousInputViewBounds) && !CGRectIsEmpty(_inputViewBoundsInWindow) && !CGRectEqualToRect(previousInputViewBounds, _inputViewBoundsInWindow))
         [self _scrollToAndRevealSelectionIfNeeded];
+
+    if (keyboardShouldResizeContent)
+        [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
 
     [self _scheduleVisibleContentRectUpdate];
 }

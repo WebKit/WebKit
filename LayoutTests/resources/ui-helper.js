@@ -1599,6 +1599,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static inputViewBoundsInWebView()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(JSON.stringify(uiController.inputViewBoundsInWebView));
+                })()`, jsonString => {
+                    resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
     static calendarType()
     {
         if (!this.isWebKit2())

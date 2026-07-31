@@ -418,6 +418,11 @@ WebCore::FloatRect PageClientImpl::documentRect() const
     return [contentView() bounds];
 }
 
+WebCore::InteractiveWidget PageClientImpl::viewportMetaTagInteractiveWidget() const
+{
+    return [webView() _viewportMetaTagInteractiveWidget];
+}
+
 void PageClientImpl::setCursor(const Cursor& cursor)
 {
     // The Web process may have asked to change the cursor when the view was in an active window, but

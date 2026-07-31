@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resizes-content"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+            window.topInset = 100;
+
+            // Keyboard up, no top inset.
+            await UIHelper.setObscuredInsets(0, 0, 0, 0);
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensurePresentationUpdate();
+
+            window.layoutViewportHeightNoTopInset = internals.layoutViewportRect().height;
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+
+            // Add the top inset.
+            await UIHelper.setObscuredInsets(window.topInset, 0, 0, 0);
+            await UIHelper.ensurePresentationUpdate();
+
+            window.layoutViewportHeightWithTopInset = internals.layoutViewportRect().height;
+
+            // The height should have dropped by exactly the top inset. 
+            shouldBeTrue('window.layoutViewportHeightNoTopInset - window.layoutViewportHeightWithTopInset == window.topInset')
+
+            // The two viewports still agree with each other.
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+</html>

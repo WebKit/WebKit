@@ -234,6 +234,7 @@ private:
 
     double minimumZoomScale() const override;
     WebCore::FloatRect documentRect() const override;
+    WebCore::InteractiveWidget viewportMetaTagInteractiveWidget() const override;
 
     void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) override;
     void hideInspectorHighlight() override;

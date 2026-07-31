@@ -384,6 +384,7 @@ interface UIScriptController {
     readonly attribute object calendarType;
     undefined setDefaultCalendarType(DOMString calendarIdentifier, DOMString localeIdentifier);
     readonly attribute object inputViewBounds;
+    readonly attribute object inputViewBoundsInWebView;
 
     undefined setKeyboardInputModeIdentifier(DOMString identifier);
     undefined setFocusStartsInputSessionPolicy(DOMString policy);

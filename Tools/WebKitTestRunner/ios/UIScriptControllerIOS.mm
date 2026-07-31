@@ -1162,6 +1162,12 @@ JSObjectRef UIScriptControllerIOS::inputViewBounds() const
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._inputViewBoundsInWindow) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
+JSObjectRef UIScriptControllerIOS::inputViewBoundsInWebView() const
+{
+    CGRect boundsInWebView = [webView() convertRect:webView()._inputViewBoundsInWindow fromView:nil];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(boundsInWebView) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
 JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollingTreeAsText() const
 {
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
