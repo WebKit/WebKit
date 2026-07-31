@@ -28,6 +28,7 @@
 #include "LiteralParser.h"
 
 #include "CodeBlock.h"
+#include "GCDeferralContextInlines.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSONAtomStringCacheInlines.h"
@@ -1387,7 +1388,13 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
     auto scope = DECLARE_THROW_SCOPE(vm);
     TokenType type = m_lexer.currentToken()->type;
     if (type == TokLBracket) {
-        JSArray* array = constructEmptyArray(m_globalObject, nullptr);
+        GCDeferralContext deferralContext(vm);
+        ObjectInitializationScope initializationScope(vm);
+        JSArray* array = JSArray::tryCreateUninitializedRestricted(initializationScope, &deferralContext, m_globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
+        if (!array) [[unlikely]] {
+            throwOutOfMemoryError(m_globalObject, scope);
+            return { };
+        }
         RETURN_IF_EXCEPTION(scope, { });
         TokenType type = m_lexer.next();
         if (type == TokRBracket) {
