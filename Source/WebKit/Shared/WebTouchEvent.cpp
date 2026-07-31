@@ -56,7 +56,7 @@ void WebTouchEvent::transformToRemoteFrameCoordinates(const WebCore::RemoteFrame
 {
     ASSERT(!std::exchange(m_hasTransformedToRemoteFrameCoordinates, true));
 
-    m_position = transformer.transformToRemoteFrameCoordinates(m_position);
+    m_position = transformer.transformRootViewPointToRemoteFrameCoordinates(m_position);
     for (auto& touchPoint : m_touchPoints)
         touchPoint.transformToRemoteFrameCoordinates(transformer);
     for (auto& event : m_coalescedEvents)
@@ -67,8 +67,8 @@ void WebTouchEvent::transformToRemoteFrameCoordinates(const WebCore::RemoteFrame
 
 void WebPlatformTouchPoint::transformToRemoteFrameCoordinates(const WebCore::RemoteFrameGeometryTransformer& transformer)
 {
-    m_locationInRootView = transformer.transformToRemoteFrameCoordinates(m_locationInRootView);
-    m_previousLocationInRootView = transformer.transformToRemoteFrameCoordinates(m_previousLocationInRootView);
+    m_locationInRootView = transformer.transformRootViewPointToRemoteFrameCoordinates(m_locationInRootView);
+    m_previousLocationInRootView = transformer.transformRootViewPointToRemoteFrameCoordinates(m_previousLocationInRootView);
 
     // When translating to the coordinate space of a site isolated iframe,
     // viewport coordinates become the same as root view coordinates because

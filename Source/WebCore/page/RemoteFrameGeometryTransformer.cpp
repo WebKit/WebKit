@@ -62,4 +62,9 @@ DoublePoint RemoteFrameGeometryTransformer::transformToRemoteFrameCoordinates(Do
     return Ref { m_remoteView }->convertFromRootView(Ref { m_localView }->contentsToRootView(pointInContents));
 }
 
+DoublePoint RemoteFrameGeometryTransformer::transformRootViewPointToRemoteFrameCoordinates(DoublePoint pointInRootView) const
+{
+    return Ref { m_remoteView }->convertFromRootView(pointInRootView);
+}
+
 } // namespace WebCore
