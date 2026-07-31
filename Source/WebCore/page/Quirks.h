@@ -248,6 +248,7 @@ public:
     WEBCORE_EXPORT bool shouldDisableAdSkippingInPip() const;
 #endif
     bool shouldDisableLazyIframeLoadingQuirk() const;
+    bool shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk() const;
 
     bool shouldBlockFetchWithNewlineAndLessThan() const;
     bool shouldDisableFetchMetadata() const;
