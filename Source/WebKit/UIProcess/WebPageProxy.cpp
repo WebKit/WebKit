@@ -18954,6 +18954,8 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::CommitPot
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::PotentialTapAtPosition);
 #endif
 #if PLATFORM(IOS_FAMILY)
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectWithGesture);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectTextWithGranularityAtPoint);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::ApplyAutocorrection);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::DrawToImage);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::DrawToPDFiOS);
@@ -19180,9 +19182,38 @@ void WebPageProxy::bindRemoteAccessibilityFrames(int processIdentifier, WebCore:
     completionHandler(frameDataToken, frameProcessIdentifier);
 }
 
-void WebPageProxy::updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
+void WebPageProxy::updateRemoteFrameOffsetInMainFrame(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
 {
-    sendToProcessContainingFrame(frameID, Messages::WebPage::UpdateRemotePageAccessibilityOffset(frameID, offset));
+    // The offset pushed from the web process is this frame's origin within its immediate parent
+    // frame. To convert selection rects to main-frame coordinates, each frame's process needs the
+    // cumulative offset (the sum of its ancestors' origins). Record the per-parent offset here and
+    // recompute the cumulative offset for this frame and its descendants, so out-of-order arrival of
+    // ancestor and descendant offsets converges to the correct result.
+    internals().remoteFrameOffsetsInParent.set(frameID, offset);
+
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    pushCumulativeOffsetInMainFrame(*frame);
+    for (RefPtr descendant = frame->traverseNext(frame.get()); descendant; descendant = descendant->traverseNext(frame.get()))
+        pushCumulativeOffsetInMainFrame(*descendant);
+}
+
+void WebPageProxy::pushCumulativeOffsetInMainFrame(WebFrameProxy& frame)
+{
+    auto frameID = frame.frameID();
+    auto it = internals().remoteFrameOffsetsInParent.find(frameID);
+    if (it == internals().remoteFrameOffsetsInParent.end())
+        return;
+
+    WebCore::IntPoint cumulativeOffset;
+    for (RefPtr ancestor = &frame; ancestor; ancestor = ancestor->parentFrame()) {
+        if (auto ancestorOffset = internals().remoteFrameOffsetsInParent.getOptional(ancestor->frameID()))
+            cumulativeOffset.moveBy(*ancestorOffset);
+    }
+
+    sendToProcessContainingFrame(frameID, Messages::WebPage::UpdateRemotePageOffsetInMainFrame(frameID, cumulativeOffset));
 }
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)

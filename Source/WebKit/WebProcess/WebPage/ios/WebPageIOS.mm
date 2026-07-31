@@ -460,6 +460,26 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
         if (shouldComputeEnclosingLayerID)
             computeEnclosingLayerID(result, selection);
     }
+
+    // When the selection is in a cross-origin subframe, the rects above are in this frame's local
+    // root-view coordinates. Offset them by the frame's origin within the top-level page (pushed from
+    // the parent process) so they're in main-frame coordinates, and UIKit reads the correct location
+    // synchronously without a UI-process round-trip.
+    if (auto& remoteFrameOffset = m_remoteFrameOffsetInMainFrame; !remoteFrameOffset.isZero()) {
+        auto offset = toIntSize(remoteFrameOffset);
+        auto moveGeometries = [&](Vector<SelectionGeometry>& geometries) {
+            for (auto& geometry : geometries)
+                geometry.move(offset.width(), offset.height());
+        };
+        visualData.caretRectAtStart.move(offset);
+        visualData.caretRectAtEnd.move(offset);
+        visualData.selectionClipRect.move(offset);
+        visualData.editableRootBounds.move(offset);
+        visualData.markedTextCaretRectAtStart.move(offset);
+        visualData.markedTextCaretRectAtEnd.move(offset);
+        moveGeometries(visualData.selectionGeometries);
+        moveGeometries(visualData.markedTextRects);
+    }
 }
 
 void WebPage::platformWillPerformEditingCommand()
@@ -722,14 +742,13 @@ void WebPage::getSelectionContext(CompletionHandler<void(const String&, const St
     completionHandler(selectedText, textBefore, textAfter);
 }
     
-void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint offset)
+void WebPage::updateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier, WebCore::IntPoint offset)
 {
-#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    // With local frame support, position data is sent from the UI process in frameScreenPosition.
-    UNUSED_PARAM(offset);
-#else
-    [protect(accessibilityRemoteObject()) setRemoteFrameOffset:offset];
-#endif
+    // Store the offset unconditionally (even when accessibility is not active) so that
+    // remoteFrameOffsetInMainFrame() returns it for both accessibility and selection; the latter is
+    // used by getPlatformEditorStateCommon() to convert selection rects to main-frame coordinates in
+    // the web process.
+    m_remoteFrameOffsetInMainFrame = offset;
 }
 
 static RetainPtr<NSDictionary> createAccessibillityTokenDictionary(WebCore::AccessibilityRemoteToken elementToken)
@@ -772,9 +791,9 @@ void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void
     completionHandler({ });
 }
 
-WebCore::IntPoint WebPage::accessibilityRemoteFrameOffset()
+WebCore::IntPoint WebPage::remoteFrameOffsetInMainFrame()
 {
-    return [m_mockAccessibilityElement accessibilityRemoteFrameOffset];
+    return m_remoteFrameOffsetInMainFrame;
 }
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)

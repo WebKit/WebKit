@@ -445,9 +445,8 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
 
 - (void)_selectionBoundingRectInMainFrameCoordinatesForTesting:(void (^)(CGRect))completionHandler
 {
-    _page->convertEditorStateSelectionRectToMainFrameCoordinates(_page->selectionBoundingRectInRootViewCoordinates(), [completionHandler = makeBlockPtr(completionHandler)](WebCore::FloatRect rect) {
-        completionHandler(rect);
-    });
+    // The editor state's selection rects are already in main-frame coordinates.
+    completionHandler(_page->selectionBoundingRectInRootViewCoordinates());
 }
 
 - (UIGestureRecognizer *)_imageAnalysisGestureRecognizer

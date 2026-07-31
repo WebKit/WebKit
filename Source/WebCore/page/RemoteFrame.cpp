@@ -115,9 +115,9 @@ void RemoteFrame::loadFrameRequest(FrameLoadRequest&& request, Event*)
     m_client->changeLocation(WTF::move(request), std::nullopt);
 }
 
-void RemoteFrame::updateRemoteFrameAccessibilityOffset(IntPoint offset)
+void RemoteFrame::updateRemoteFrameOffsetInMainFrame(IntPoint offset)
 {
-    m_client->updateRemoteFrameAccessibilityOffset(frameID(), offset);
+    m_client->updateRemoteFrameOffsetInMainFrame(frameID(), offset);
 }
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)

@@ -151,10 +151,10 @@ void WebRemoteFrameClient::unbindRemoteAccessibilityFrames(int processIdentifier
 #endif
 }
 
-void WebRemoteFrameClient::updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
+void WebRemoteFrameClient::updateRemoteFrameOffsetInMainFrame(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
 {
     if (RefPtr page = m_frame->page())
-        page->send(Messages::WebPageProxy::UpdateRemoteFrameAccessibilityOffset(frameID, offset));
+        page->send(Messages::WebPageProxy::UpdateRemoteFrameOffsetInMainFrame(frameID, offset));
 }
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)

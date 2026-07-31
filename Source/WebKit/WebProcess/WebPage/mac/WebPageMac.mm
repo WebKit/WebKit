@@ -471,7 +471,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     return didPerformAction;
 }
 
-void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint offset)
+void WebPage::updateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier, WebCore::IntPoint offset)
 {
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     // With local frame support, position data is sent from the UI process in frameScreenPosition.
@@ -550,7 +550,7 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, Complet
     completionHandler(buffer.releaseNonNull());
 }
 
-WebCore::IntPoint WebPage::accessibilityRemoteFrameOffset()
+WebCore::IntPoint WebPage::remoteFrameOffsetInMainFrame()
 {
     return [m_mockAccessibilityElement accessibilityRemoteFrameOffset];
 }

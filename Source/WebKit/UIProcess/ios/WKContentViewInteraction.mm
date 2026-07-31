@@ -4407,10 +4407,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         auto selectionContext = makeString(textBefore, selectedText, textAfter);
         NSRange selectedRangeInContext = NSMakeRange(textBefore.length(), selectedText.length());
 
-        page->convertEditorStateSelectionRectToMainFrameCoordinates(presentationRect, [view, selectionContext, selectedRangeInContext](WebCore::FloatRect convertedRect) {
-            if (auto textSelectionAssistant = view->_textInteractionWrapper)
-                [textSelectionAssistant lookup:selectionContext.createNSString().get() withRange:selectedRangeInContext fromRect:convertedRect];
-        });
+        // The editor state's selection rects are already in main-frame coordinates.
+        if (auto textSelectionAssistant = view->_textInteractionWrapper)
+            [textSelectionAssistant lookup:selectionContext.createNSString().get() withRange:selectedRangeInContext fromRect:presentationRect];
     });
 }
 
@@ -4436,9 +4435,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (selectionGeometries.isEmpty())
             return;
 
-        page->convertEditorStateSelectionRectToMainFrameCoordinates(selectionGeometries.first().rect(), [view, string](WebCore::FloatRect convertedRect) {
-            [view->_textInteractionWrapper showShareSheetFor:string.createNSString().get() fromRect:convertedRect];
-        });
+        // The editor state's selection rects are already in main-frame coordinates.
+        [view->_textInteractionWrapper showShareSheetFor:string.createNSString().get() fromRect:selectionGeometries.first().rect()];
     });
 }
 
@@ -4466,9 +4464,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (page->editorState().visualData->selectionGeometries.isEmpty())
             return;
 
-        page->convertEditorStateSelectionRectToMainFrameCoordinates(page->selectionBoundingRectInRootViewCoordinates(), [strongSelf, string](WebCore::FloatRect convertedRect) {
-            [strongSelf->_textInteractionWrapper translate:string.createNSString().get() fromRect:convertedRect];
-        });
+        // selectionBoundingRectInRootViewCoordinates() is already in main-frame coordinates.
+        [strongSelf->_textInteractionWrapper translate:string.createNSString().get() fromRect:page->selectionBoundingRectInRootViewCoordinates()];
     });
 }
 
@@ -4488,12 +4485,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     if (selectionGeometries.isEmpty())
         return;
     RetainPtr selectedText = [self selectedText];
-    page->convertEditorStateSelectionRectToMainFrameCoordinates(selectionGeometries.first().rect(), [weakSelf = WeakObjCPtr<WKContentView>(self), selectedText](WebCore::FloatRect convertedRect) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-        [strongSelf->_textInteractionWrapper showTextServiceFor:selectedText.get() fromRect:convertedRect];
-    });
+    // The editor state's selection rects are already in main-frame coordinates.
+    [_textInteractionWrapper showTextServiceFor:selectedText.get() fromRect:selectionGeometries.first().rect()];
 }
 
 - (NSString *)selectedText
@@ -5565,7 +5558,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
-    protect(_page)->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
+    protect(_page)->selectWithGesture(std::nullopt, WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
         selectionChangedWithGesture(_textInteractionWrapper.get(), point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
@@ -5946,7 +5939,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     _usingMouseDragForSelection = [_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded;
 #endif
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    protect(_page)->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
+    protect(_page)->selectTextWithGranularityAtPoint(std::nullopt, WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         --view->_suppressNonEditableSingleTapTextInteractionCount;

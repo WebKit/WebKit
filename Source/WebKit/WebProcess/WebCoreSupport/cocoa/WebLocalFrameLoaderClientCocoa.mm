@@ -37,7 +37,7 @@ using namespace WebCore;
 WebCore::IntPoint WebLocalFrameLoaderClient::accessibilityRemoteFrameOffset()
 {
     RefPtr webPage = m_frame->page();
-    return webPage ? webPage->accessibilityRemoteFrameOffset() : IntPoint();
+    return webPage ? webPage->remoteFrameOffsetInMainFrame() : IntPoint();
 }
 
 RemoteAXObjectRef WebLocalFrameLoaderClient::accessibilityRemoteObject()

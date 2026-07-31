@@ -57,6 +57,12 @@ void RemoteFrameView::setFrameRect(const IntRect& newRect)
     if (newRect != oldRect) {
         m_frame->client().frameRectDidChange(newRect);
 
+        // Push this remote frame's origin within its immediate parent to its process. The UI process
+        // accumulates these across ancestors into a cumulative main-frame offset (see
+        // WebPageProxy::updateRemoteFrameOffsetInMainFrame), which the frame's process uses to emit
+        // selection rects in main-frame coordinates (and for accessibility).
+        m_frame->updateRemoteFrameOffsetInMainFrame(newRect.location());
+
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
         if (AXObjectCache::accessibilityEnabled()) {
             if (RefPtr page = m_frame->page())

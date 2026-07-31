@@ -401,7 +401,7 @@ void AccessibilityScrollView::addRemoteFrameChild()
             RefPtr parentAXScrollView = frameRootScrollView();
             if (RefPtr parentScrollView = parentAXScrollView ? parentAXScrollView->scrollView() : nullptr)
                 iframePosition = parentScrollView->contentsToView(iframePosition);
-            scrollFrame->updateRemoteFrameAccessibilityOffset(iframePosition);
+            scrollFrame->updateRemoteFrameOffsetInMainFrame(iframePosition);
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
             InheritedFrameState state { isHostingFrameHidden(), isHostingFrameInert(), isHostingFrameRenderHidden() };

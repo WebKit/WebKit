@@ -79,7 +79,7 @@ public:
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
     void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
-    void updateRemoteFrameAccessibilityOffset(IntPoint);
+    void updateRemoteFrameOffsetInMainFrame(IntPoint);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     void updateRemoteFrameAccessibilityInheritedState(const InheritedFrameState&);
 #endif

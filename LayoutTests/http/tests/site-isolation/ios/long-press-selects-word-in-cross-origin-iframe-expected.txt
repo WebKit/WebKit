@@ -1,0 +1,10 @@
+Long-pressing text inside a cross-origin iframe should select a word in that iframe, not select the whole iframe element in the parent frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS A word was selected inside the cross-origin iframe.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
