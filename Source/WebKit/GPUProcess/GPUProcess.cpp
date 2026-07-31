@@ -608,6 +608,21 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
 }
 #endif
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+void GPUProcess::tryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier identifier, bool active, CompletionHandler<void(GenericPromise::Result&&)>&& completionHandler)
+{
+#if USE(AUDIO_SESSION)
+    protect(audioSessionManager())->tryToSetActiveForProcess(identifier, active)->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        completionHandler(WTF::move(result));
+    });
+#else
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(active);
+    completionHandler(makeUnexpected(GenericPromise::RejectValueType { }));
+#endif
+}
+#endif
+
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 {

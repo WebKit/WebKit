@@ -45,6 +45,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/NativePromise.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -229,6 +230,9 @@ private:
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt();
+#endif
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    void tryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier, bool, CompletionHandler<void(GenericPromise::Result&&)>&&);
 #endif
 #if PLATFORM(MAC)
     void NODELETE setScreenProperties(const WebCore::ScreenProperties&);

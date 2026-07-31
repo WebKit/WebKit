@@ -43,6 +43,7 @@ struct RemoteAudioSessionConfiguration {
     String sceneIdentifier;
     WebCore::AudioSessionSoundStageSize soundStageSize { WebCore::AudioSessionSoundStageSize::Automatic };
     WebCore::AudioSessionCategory categoryOverride { WebCore::AudioSession::CategoryType::None };
+    bool isActive { false };
 };
 
 } // namespace WebKit

@@ -84,6 +84,7 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
         m_sceneIdentifier,
         m_soundStageSize,
         session->categoryOverride(),
+        m_active,
     };
 }
 

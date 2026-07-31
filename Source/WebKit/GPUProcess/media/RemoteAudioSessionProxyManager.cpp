@@ -205,6 +205,32 @@ static void providePresentingApplicationPID(RemoteAudioSessionProxy& proxy)
 }
 #endif
 
+Ref<AudioSession::SetActivePromise> RemoteAudioSessionProxyManager::tryToSetActiveForProcess(WebCore::ProcessIdentifier identifier, bool active)
+{
+    for (Ref proxy : m_proxies) {
+        if (proxy->processIdentifier() != identifier)
+            continue;
+
+        // Route through RemoteAudioSessionProxy::tryToSetActive (rather than the per-proxy overload
+        // below directly) so the proxy's active state, interruption flag, and the ConfigurationChanged
+        // push back to the WebContent process all happen — exactly as for a WebContent-initiated
+        // activation. Otherwise the proxy's isActive() stays stale, corrupting cross-process
+        // aggregation, and the original WebContent process never learns when the session's active
+        // state changes.
+        AudioSession::SetActivePromise::Producer producer;
+        Ref promise = producer.promise();
+        proxy->tryToSetActive(active, [producer = WTF::move(producer)](bool succeeded) mutable {
+            if (succeeded)
+                producer.resolve();
+            else
+                producer.reject();
+        });
+        return promise;
+    }
+
+    return AudioSession::SetActivePromise::createAndReject();
+}
+
 Ref<AudioSession::SetActivePromise> RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
 {
     ASSERT(m_proxies.contains(proxy));

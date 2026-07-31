@@ -49,6 +49,7 @@ struct SharedPreferencesForWebProcess;
 class RemoteAudioSessionProxy
     : public RefCounted<RemoteAudioSessionProxy>, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSessionProxy);
+    friend class RemoteAudioSessionProxyManager;
 public:
     static Ref<RemoteAudioSessionProxy> create(GPUConnectionToWebProcess& gpuConnection)
     {

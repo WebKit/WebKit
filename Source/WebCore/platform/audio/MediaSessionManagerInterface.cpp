@@ -54,6 +54,16 @@ public:
         : m_pageIdentifier(pageIdentifier) { }
 
 private:
+    Ref<GenericPromise> tryToSetAudioSessionActive(bool active, PlatformMediaSessionInterface*) final
+    {
+#if USE(AUDIO_SESSION)
+        return AudioSession::singleton().tryToSetActive(active);
+#else
+        UNUSED_PARAM(active);
+        return GenericPromise::createAndResolve();
+#endif
+    }
+
     void hasActiveNowPlayingSessionChanged(PlatformMediaSessionInterface*) final
     {
         if (RefPtr page = m_pageIdentifier ? Page::fromPageIdentifier(*m_pageIdentifier) : nullptr)
@@ -78,6 +88,11 @@ MediaSessionManagerInterface::MediaSessionManagerInterface(std::optional<PageIde
 MediaSessionManagerClient& MediaSessionManagerInterface::client() const
 {
     return *m_client;
+}
+
+void MediaSessionManagerInterface::setClient(std::unique_ptr<MediaSessionManagerClient>&& client)
+{
+    m_client = WTF::move(client);
 }
 
 MediaSessionManagerInterface::~MediaSessionManagerInterface()

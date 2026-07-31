@@ -59,6 +59,7 @@ class PlatformMediaSessionInterface;
 namespace WebKit {
 
 class RemoteMediaSessionManagerAudioHardwareListener;
+class RemoteMediaSessionManagerProxyClient;
 class RemoteMediaSessionProxy;
 class WebPageProxy;
 class WebProcessProxy;
@@ -72,12 +73,16 @@ class RemoteMediaSessionManagerProxy
 #endif
     , public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManagerProxy);
+    friend class RemoteMediaSessionManagerProxyClient;
 public:
     USING_CAN_MAKE_WEAKPTR(MessageReceiver);
 
     static Ref<RemoteMediaSessionManagerProxy> singleton();
+    static RefPtr<RemoteMediaSessionManagerProxy> singletonIfCreated();
 
     virtual ~RemoteMediaSessionManagerProxy();
+
+    void webProcessWillShutDown(WebCore::ProcessIdentifier);
 
     // IPC::MessageReceiver, WebCore::AudioSession.
     void ref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::ref(); }
@@ -163,6 +168,7 @@ private:
     Mode m_mode { Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     mutable RemoteAudioSessionConfiguration m_audioConfiguration;
+    std::optional<WebCore::ProcessIdentifier> m_activatedTargetProcess;
 #endif
 
     bool m_isInterruptedForTesting { false };

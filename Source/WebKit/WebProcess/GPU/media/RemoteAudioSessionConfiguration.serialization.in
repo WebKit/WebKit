@@ -34,6 +34,7 @@ struct WebKit::RemoteAudioSessionConfiguration {
     String sceneIdentifier;
     WebCore::AudioSessionSoundStageSize soundStageSize;
     WebCore::AudioSessionCategory categoryOverride;
+    bool isActive;
 };
 
 #endif

@@ -505,6 +505,13 @@ void GPUProcessProxy::cancelGetDisplayMediaPrompt()
 }
 #endif
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+Ref<GenericPromise> GPUProcessProxy::tryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier identifier, bool active)
+{
+    return protect(connection())->sendWithPromisedReply<WTF::GenericPromiseConverter>(Messages::GPUProcess::TryToSetAudioSessionActiveForProcess(identifier, active));
+}
+#endif
+
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::ProcessType::GPU;

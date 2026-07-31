@@ -40,6 +40,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <memory>
 #include <pal/SessionID.h>
+#include <wtf/NativePromise.h>
 #include <wtf/TZoneMalloc.h>
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -121,6 +122,10 @@ public:
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt();
+#endif
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    Ref<GenericPromise> tryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier, bool);
 #endif
 
     void removeSession(PAL::SessionID);

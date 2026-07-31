@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/NativePromise.h>
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
 class PlatformMediaSessionInterface;
@@ -36,6 +39,10 @@ class PlatformMediaSessionInterface;
 class MediaSessionManagerClient {
 public:
     virtual ~MediaSessionManagerClient() = default;
+
+    // Activate/deactivate the audio session on behalf of a session (may be null). The returned
+    // promise resolves on success, rejects on failure to activate.
+    virtual Ref<GenericPromise> tryToSetAudioSessionActive(bool active, PlatformMediaSessionInterface*) = 0;
 
     // Notify the environment (the owning page) that the active NowPlaying session changed.
     virtual void hasActiveNowPlayingSessionChanged(PlatformMediaSessionInterface*) = 0;

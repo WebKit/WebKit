@@ -798,6 +798,14 @@ void WebProcessProxy::shutDown()
         routingArbitrator->processDidTerminate();
 #endif
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    // Under site isolation the process-wide RemoteMediaSessionManagerProxy holds this process's audio
+    // sessions; drop them now so the shared audio session can deactivate instead of staying wedged
+    // active on behalf of a process that no longer exists.
+    if (RefPtr remoteMediaSessionManagerProxy = RemoteMediaSessionManagerProxy::singletonIfCreated())
+        remoteMediaSessionManagerProxy->webProcessWillShutDown(coreProcessIdentifier());
+#endif
+
     Ref<WebProcessPool> { processPool() }->disconnectProcess(*this);
 }
 
