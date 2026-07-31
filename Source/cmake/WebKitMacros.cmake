@@ -663,6 +663,7 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         COMMENT "Code signing ${_target}")
     add_custom_target(${_target}_CodeSign ALL DEPENDS ${_stamp})
     add_dependencies(${_target}_CodeSign ${_target})
+    set_target_properties(${_target} PROPERTIES CODESIGN_STAMP ${_stamp})
 endfunction()
 
 macro(_WEBKIT_TARGET_INTERFACE _target)
@@ -680,7 +681,16 @@ macro(_WEBKIT_TARGET_INTERFACE _target)
         target_compile_definitions(${_target}_PostBuild INTERFACE "STATICALLY_LINKED_WITH_${_target}")
     endif ()
     if (TARGET ${_target}_CodeSign)
-        add_dependencies(${_target}_PostBuild ${_target}_CodeSign)
+        get_target_property(_codesign_stamp ${_target} CODESIGN_STAMP)
+        if (_codesign_stamp)
+            # add_dependencies() on a utility target would order every consumer's
+            # objects behind signing; only linking reads the signed binary.
+            set_property(TARGET ${_target}_PostBuild APPEND PROPERTY
+                INTERFACE_LINK_DEPENDS ${_codesign_stamp})
+        else ()
+            # Executables sign in POST_BUILD and have no stamp.
+            add_dependencies(${_target}_PostBuild ${_target}_CodeSign)
+        endif ()
     endif ()
     add_library(WebKit::${_target} ALIAS ${_target}_PostBuild)
 endmacro()
