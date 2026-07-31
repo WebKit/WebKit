@@ -194,6 +194,11 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
         return;
     }
 
+    if (request.isTopSite()) {
+        protect(task()).get()._cookieTransformCallback = nil;
+        return;
+    }
+
     // Cap expiry of incoming cookies in response if it is a same-site subresource but
     // it resolves to a different CNAME or IP address range than the top site request,
     // i.e. third-party CNAME or IP address cloaking.
