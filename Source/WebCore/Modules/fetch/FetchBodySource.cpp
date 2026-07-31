@@ -75,6 +75,12 @@ Ref<DOMPromise> FetchBodySource::pull(JSDOMGlobalObject& globalObject, ReadableB
     auto [promise, deferred] = createPromiseAndWrapper(globalObject);
     m_isPulling = true;
     m_pullPromise = WTF::move(deferred);
+
+    if (m_byteController) {
+        if (RefPtr bodyOwner = m_bodyOwner.get())
+            bodyOwner->feedStream();
+    }
+
     return promise;
 }
 

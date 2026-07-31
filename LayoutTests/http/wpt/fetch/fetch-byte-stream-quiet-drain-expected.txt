@@ -1,0 +1,3 @@
+
+PASS Fetch body delivers bytes that arrived while no read was pending, after the stream goes quiet
+
