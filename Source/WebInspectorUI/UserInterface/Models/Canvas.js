@@ -105,9 +105,6 @@ WI.Canvas = class Canvas extends WI.Object
         case InspectorBackend.Enum.Canvas.ContextType.WebGPU:
             contextType = WI.Canvas.ContextType.WebGPU;
             break;
-        case InspectorBackend.Enum.Canvas.ContextType.WebMetal:
-            contextType = WI.Canvas.ContextType.WebMetal;
-            break;
         default:
             console.error("Invalid canvas context type", payload.contextType);
         }
@@ -150,8 +147,6 @@ WI.Canvas = class Canvas extends WI.Object
             return WI.UIString("WebGL2 (Offscreen)", "WebGL2 @ Offscreen Canvas Context Type", "WebGL2 is a type of rendering context associated with a OffscreenCanvas.");
         case WI.Canvas.ContextType.WebGPU:
             return WI.UIString("WebGPU", "WebGPU @ Canvas Context Type", "WebGPU is a type of rendering context associated with a <canvas> element.");
-        case WI.Canvas.ContextType.WebMetal:
-            return WI.UIString("WebMetal", "WebMetal @ Canvas Context Type", "WebMetal is a type of rendering context associated with a <canvas> element.");
         }
 
         console.assert(false, "Unknown canvas context type", contextType);
@@ -185,7 +180,6 @@ WI.Canvas = class Canvas extends WI.Object
     {
         switch (contextType) {
         case Canvas.ContextType.WebGPU:
-        case Canvas.ContextType.WebMetal:
             return false;
         }
         return true;
@@ -221,7 +215,6 @@ WI.Canvas = class Canvas extends WI.Object
             return true;
 
         case WI.Canvas.ContextType.WebGPU:
-        case WI.Canvas.ContextType.WebMetal:
             return false;
         }
 
@@ -522,7 +515,6 @@ WI.Canvas.ContextType = {
     WebGL2: "webgl2",
     OffscreenWebGL2: "offscreen-webgl2",
     WebGPU: "webgpu",
-    WebMetal: "webmetal",
 };
 
 WI.Canvas.ColorSpace = {

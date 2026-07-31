@@ -47,7 +47,7 @@
     content: url(../Images/Canvas2D.svg);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.webgl, .webgl2, .webgpu, .webmetal) .icon {
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.webgl, .webgl2, .webgpu) .icon {
     content: url(../Images/Canvas3D.svg);
 }
 

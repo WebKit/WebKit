@@ -2038,8 +2038,6 @@ localizedStrings["WebGL2 @ Offscreen Canvas Context Type"] = "WebGL2 (Offscreen)
 /* WebGPU is a type of rendering context associated with a <canvas> element. */
 localizedStrings["WebGPU @ Canvas Context Type"] = "WebGPU";
 localizedStrings["WebKit Threads"] = "WebKit Threads";
-/* WebMetal is a type of rendering context associated with a <canvas> element. */
-localizedStrings["WebMetal @ Canvas Context Type"] = "WebMetal";
 localizedStrings["WebP"] = "WebP";
 localizedStrings["WebRTC"] = "WebRTC";
 localizedStrings["WebRTC Logging:"] = "WebRTC Logging:";
