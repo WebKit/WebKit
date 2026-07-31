@@ -42,18 +42,15 @@ template<typename> class ExceptionOr;
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    WEBCORE_EXPORT static Ref<ImageData> create(Ref<ByteArrayPixelBuffer>&&, std::optional<ImageDataPixelFormat> = { });
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    WEBCORE_EXPORT static Ref<ImageData> create(Ref<Float16ArrayPixelBuffer>&&, std::optional<ImageDataPixelFormat> = { });
-#endif
+    WEBCORE_EXPORT static Ref<ImageData> create(Ref<ArrayPixelBuffer>&&, std::optional<ImageDataPixelFormat> = { });
     WEBCORE_EXPORT static RefPtr<ImageData> create(Ref<PixelBuffer>&&, std::optional<ImageDataPixelFormat> = { });
-    WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<ByteArrayPixelBuffer>&&, std::optional<ImageDataPixelFormat> = { });
+    WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<ArrayPixelBuffer>&&, std::optional<ImageDataPixelFormat> = { });
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, PredefinedColorSpace, ImageDataPixelFormat = ImageDataPixelFormat::RgbaUnorm8);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, ImageDataArray&&, PredefinedColorSpace);
 
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh, PredefinedColorSpace defaultColorSpace, std::optional<ImageDataSettings> = std::nullopt, std::span<const uint8_t> = { });
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh, std::optional<ImageDataSettings>);
-    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(ImageDataArray&&, unsigned sw, std::optional<unsigned> sh, std::optional<ImageDataSettings>);
+    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(Ref<JSC::ArrayBufferView>&&, unsigned sw, std::optional<unsigned> sh, std::optional<ImageDataSettings>);
 
     WEBCORE_EXPORT ~ImageData();
 

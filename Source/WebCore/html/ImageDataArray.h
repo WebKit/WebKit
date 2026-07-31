@@ -41,8 +41,7 @@ public:
     static constexpr bool isSupported(JSC::TypedArrayType type) { return !!toImageDataPixelFormat(type); }
     static bool NODELETE isSupported(const JSC::ArrayBufferView&);
 
-    ImageDataArray(Ref<JSC::Uint8ClampedArray>&&);
-    ImageDataArray(Ref<JSC::Float16Array>&&);
+    ImageDataArray(Ref<JSC::ArrayBufferView>&&);
     ImageDataArray(ImageDataArray&& original, std::optional<ImageDataPixelFormat> overridingPixelFormat);
 
     static std::optional<ImageDataArray> tryCreate(size_t, ImageDataPixelFormat, std::span<const uint8_t> = { });
@@ -60,8 +59,6 @@ public:
     Ref<JSON::Value> copyToJSONArray() const;
 
 private:
-    ImageDataArray(Ref<JSC::ArrayBufferView>&&);
-
     Ref<ArrayBufferView> extractBufferViewWithPixelFormat(std::optional<ImageDataPixelFormat>) &&;
 
     // Needed by `toJS<IDLUnion<IDLUint8ClampedArray, ...>, const ImageDataArray&>()`

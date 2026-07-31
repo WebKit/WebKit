@@ -52,14 +52,6 @@ ImageDataArray::ImageDataArray(Ref<JSC::ArrayBufferView>&& arrayBufferView)
     ASSERT(isSupported(m_arrayBufferView.get()));
 }
 
-ImageDataArray::ImageDataArray(Ref<JSC::Uint8ClampedArray>&& data)
-    : ImageDataArray(Ref<JSC::ArrayBufferView>(WTF::move(data)))
-{ }
-
-ImageDataArray::ImageDataArray(Ref<JSC::Float16Array>&& data)
-    : ImageDataArray(Ref<JSC::ArrayBufferView>(WTF::move(data)))
-{ }
-
 ImageDataArray::ImageDataArray(ImageDataArray&& original, std::optional<ImageDataPixelFormat> overridingPixelFormat)
     : m_arrayBufferView(WTF::move(original).extractBufferViewWithPixelFormat(overridingPixelFormat))
 { }

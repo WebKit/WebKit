@@ -54,37 +54,25 @@ static ImageDataPixelFormat NODELETE computePixelFormat(std::optional<ImageDataS
     return settings ? settings->pixelFormat : defaultPixelFormat;
 }
 
-Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
+Ref<ImageData> ImageData::create(Ref<ArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
 {
-    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), WTF::move(pixelBuffer.get()).takeData(), *colorSpace, overridingPixelFormat));
-}
-
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-Ref<ImageData> ImageData::create(Ref<Float16ArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
-{
-    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
     auto size = pixelBuffer->size();
-    return adoptRef(*new ImageData(size, WTF::move(pixelBuffer.get()).takeData(), *colorSpace, overridingPixelFormat));
-}
-#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
-
-RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
-{
-    if (!pixelBuffer)
-        return nullptr;
-    return create(pixelBuffer.releaseNonNull(), overridingPixelFormat);
+    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
+    return adoptRef(*new ImageData(size, ImageDataArray(WTF::move(pixelBuffer.get()).takeData()), *colorSpace, overridingPixelFormat));
 }
 
 RefPtr<ImageData> ImageData::create(Ref<PixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
 {
-    if (is<ByteArrayPixelBuffer>(pixelBuffer))
-        return create(uncheckedDowncast<ByteArrayPixelBuffer>(WTF::move(pixelBuffer)), overridingPixelFormat);
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    if (is<Float16ArrayPixelBuffer>(pixelBuffer))
-        return create(uncheckedDowncast<Float16ArrayPixelBuffer>(WTF::move(pixelBuffer)), overridingPixelFormat);
-#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (is<ArrayPixelBuffer>(pixelBuffer))
+        return create(uncheckedDowncast<ArrayPixelBuffer>(WTF::move(pixelBuffer)), overridingPixelFormat);
     return nullptr;
+}
+
+RefPtr<ImageData> ImageData::create(RefPtr<ArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
+{
+    if (!pixelBuffer)
+        return nullptr;
+    return create(pixelBuffer.releaseNonNull(), overridingPixelFormat);
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace colorSpace, ImageDataPixelFormat imageDataPixelFormat)
@@ -133,8 +121,10 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, std::opt
     return create(sw, sh, PredefinedColorSpace::SRGB, settings);
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(ImageDataArray&& array, unsigned sw, std::optional<unsigned> sh, std::optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::create(Ref<JSC::ArrayBufferView>&& arrayBufferView, unsigned sw, std::optional<unsigned> sh, std::optional<ImageDataSettings> settings)
 {
+    auto array = ImageDataArray(WTF::move(arrayBufferView));
+
     auto length = array.length();
     if (!length || length % 4)
         return Exception { ExceptionCode::InvalidStateError, "Length is not a non-zero multiple of 4"_s };
