@@ -28,6 +28,7 @@
 
 #include "ReadableStreamSource.h"
 #include <WebCore/ActiveDOMObject.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -38,9 +39,10 @@ namespace WebCore {
 class DOMPromise;
 class Exception;
 class FetchBodyOwner;
+class FormDataConsumer;
 class ReadableByteStreamController;
 
-class FetchBodySource final : public RefCounted<FetchBodySource> {
+class FetchBodySource final : public RefCountedAndCanMakeWeakPtr<FetchBodySource> {
 public:
     static std::pair<Ref<FetchBodySource>, Ref<RefCountedReadableStreamSource>> createNonByteSource(FetchBodyOwner&);
     static Ref<FetchBodySource> createByteSource(FetchBodyOwner&);
@@ -60,6 +62,8 @@ public:
     void setByteController(ReadableByteStreamController&);
     Ref<DOMPromise> pull(JSDOMGlobalObject&, ReadableByteStreamController&);
     Ref<DOMPromise> cancel(JSDOMGlobalObject&, ReadableByteStreamController&, std::optional<JSC::JSValue>&&);
+
+    void setFormDataConsumer(Ref<FormDataConsumer>&&);
 
 private:
     class NonByteSource;
@@ -98,12 +102,12 @@ private:
 
     WeakPtr<FetchBodyOwner> m_bodyOwner;
     bool m_isCancelling { false };
-    bool m_isPulling { false };
 
     const RefPtr<NonByteSource> m_nonByteSource;
 
     WeakPtr<ReadableByteStreamController> m_byteController;
     RefPtr<DeferredPromise> m_pullPromise;
+    RefPtr<FormDataConsumer> m_formDataConsumer;
 };
 
 } // namespace WebCore

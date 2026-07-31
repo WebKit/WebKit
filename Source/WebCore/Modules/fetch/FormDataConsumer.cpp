@@ -29,9 +29,11 @@
 #include "BlobLoader.h"
 #include "ExceptionOr.h"
 #include "FormData.h"
+#include "JSDOMPromiseDeferred.h"
 #include "PendingStreamState.h"
 #include "SWContextManager.h"
 #include "SharedBuffer.h"
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
@@ -39,11 +41,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FormDataConsumer);
 
-FormDataConsumer::FormDataConsumer(const FormData& formData, ScriptExecutionContext& context, Callback&& callback)
+FormDataConsumer::FormDataConsumer(const FormData& formData, ScriptExecutionContext& context, Callback&& callback, Mode mode)
     : m_formData(formData.copy())
     , m_context(&context)
     , m_callback(WTF::move(callback))
     , m_fileQueue(WorkQueue::create("FormDataConsumer file queue"_s))
+    , m_mode(mode)
 {
     // We explicitly copy pendingStreamState as FormData::copy does not, to limit the risk of trying to consume mulitple times the same pendingStreamState.
     if (RefPtr state = formData.pendingStreamState())
@@ -160,8 +163,6 @@ void FormDataConsumer::consumePendingStream(PendingStreamState& state)
                 connection->startPendingStreamUploadForwarding(state.get());
         });
     }
-
-    drainPendingStream();
 }
 
 void FormDataConsumer::drainPendingStream()
@@ -173,12 +174,25 @@ void FormDataConsumer::drainPendingStream()
     if (!state)
         return;
 
+    if (m_mode == Mode::Pull && !m_pendingPullPromise)
+        return;
+
     auto result = state->takeAvailableChunks();
 
     if (!result) {
         didFail(Exception { ExceptionCode::NetworkError, "Stream upload failed"_s });
         return;
     }
+
+    if (result->first.isEmpty() && !result->second) {
+        // We do not have data, let's wait for data availability notification.
+        return;
+    }
+
+    auto scope = makeScopeExit([promise = std::exchange(m_pendingPullPromise, { })] {
+        if (promise)
+            promise->resolve();
+    });
 
     for (auto chunk : result->first) {
         if (m_callback) {
@@ -197,6 +211,13 @@ void FormDataConsumer::drainPendingStream()
 
     if (auto callback = std::exchange(m_callback, nullptr))
         callback(std::span<const uint8_t> { });
+}
+
+void FormDataConsumer::resume(RefPtr<DeferredPromise>&& promise)
+{
+    ASSERT(m_mode == Mode::Pull);
+    m_pendingPullPromise = WTF::move(promise);
+    drainPendingStream();
 }
 
 void FormDataConsumer::consume(std::span<const uint8_t> content)

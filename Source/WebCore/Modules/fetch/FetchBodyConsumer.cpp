@@ -340,8 +340,11 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
     if (!context)
         return;
 
-    m_formDataConsumer = FormDataConsumer::create(formData, *context, [source = Ref { source }](auto&& result) {
-        auto protectedSource = source;
+    m_formDataConsumer = FormDataConsumer::create(formData, *context, [weakSource = WeakPtr { source }](auto&& result) {
+        RefPtr source = weakSource.get();
+        if (!source)
+            return false;
+
         if (result.hasException()) {
             source->error(result.releaseException());
             return false;
@@ -354,7 +357,10 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
         }
 
         return source->enqueue(ArrayBuffer::tryCreate(value));
-    });
+    }, FormDataConsumer::Mode::Pull);
+
+    source.setFormDataConsumer(*m_formDataConsumer);
+
     protect(m_formDataConsumer)->start();
 }
 

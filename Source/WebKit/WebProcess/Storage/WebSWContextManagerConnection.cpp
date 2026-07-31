@@ -330,6 +330,9 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
     if (RefPtr body = request.httpBody(); body && body->isPendingStream()) {
         Ref pendingStreamState = WebCore::PendingStreamState::create();
         pendingStreamState->setServiceWorkerFetchIdentifier(fetchIdentifier);
+        pendingStreamState->setQueueDrainedHandler([connection = m_connectionToNetworkProcess, fetchIdentifier] {
+            connection->send(Messages::WebSWServerToContextConnection::PendingStreamUploadNeedData { fetchIdentifier }, 0);
+        });
         body->setPendingStreamState(WTF::move(pendingStreamState));
     }
     serviceWorkerThreadProxy->startFetch(serverConnectionIdentifier, fetchIdentifier, WTF::move(client), WTF::move(request), WTF::move(referrer), WTF::move(options), isServiceWorkerNavigationPreloadEnabled, WTF::move(clientIdentifier), WTF::move(resultingClientIdentifier));

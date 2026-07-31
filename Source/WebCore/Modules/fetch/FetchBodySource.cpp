@@ -29,6 +29,7 @@
 #include "ContextDestructionObserverInlines.h"
 
 #include "FetchResponse.h"
+#include "FormDataConsumer.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableByteStreamController.h"
@@ -73,9 +74,18 @@ Ref<DOMPromise> FetchBodySource::pull(JSDOMGlobalObject& globalObject, ReadableB
     ASSERT_UNUSED(controller, &controller == m_byteController.get() || !m_byteController);
 
     auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-    m_isPulling = true;
-    m_pullPromise = WTF::move(deferred);
+    if (RefPtr consumer = m_formDataConsumer)
+        consumer->resume(WTF::move(deferred));
+    else
+        m_pullPromise = WTF::move(deferred);
     return promise;
+}
+
+void FetchBodySource::setFormDataConsumer(Ref<FormDataConsumer>&& consumer)
+{
+    m_formDataConsumer = WTF::move(consumer);
+    if (RefPtr pullPromise = std::exchange(m_pullPromise, { }))
+        protect(m_formDataConsumer)->resume(WTF::move(pullPromise));
 }
 
 Ref<DOMPromise> FetchBodySource::cancel(JSDOMGlobalObject& globalObject, ReadableByteStreamController& controller, std::optional<JSC::JSValue>&&)
@@ -157,7 +167,11 @@ void FetchBodySource::error(const Exception& exception)
 
 bool FetchBodySource::isPulling() const
 {
-    return m_nonByteSource ? m_nonByteSource->isPulling() : m_isPulling;
+    if (m_nonByteSource)
+        return m_nonByteSource->isPulling();
+    if (m_formDataConsumer)
+        return m_formDataConsumer->hasPendingPull();
+    return !!m_pullPromise;
 }
 
 bool FetchBodySource::isCancelling() const
@@ -172,7 +186,6 @@ void FetchBodySource::resolvePullPromise()
         return;
     }
 
-    m_isPulling = false;
     if (auto pullPromise = std::exchange(m_pullPromise, { }))
         pullPromise->resolve();
 }

@@ -126,7 +126,6 @@ private:
     RefPtr<WebCore::PendingStreamState> m_pendingStreamState;
     uint64_t m_pendingStreamBytesForwardedToNetworkProcess { 0 };
     uint64_t m_pendingStreamBytesSentByNetwork { 0 };
-    bool m_isServiceWorkerPendingStreamForwarding { false };
     size_t m_numBytesReceived { 0 };
     size_t m_bytesTransferredOverNetwork { 0 };
 

@@ -106,10 +106,8 @@ static constexpr uint64_t kMaxInFlightBytes = 64 * 1024;
 
 void WebResourceLoader::drainPendingStreamIfPossible()
 {
-    if (!m_isServiceWorkerPendingStreamForwarding) {
-        if (m_pendingStreamBytesForwardedToNetworkProcess >= m_pendingStreamBytesSentByNetwork + kMaxInFlightBytes)
-            return;
-    }
+    if (m_pendingStreamBytesForwardedToNetworkProcess >= m_pendingStreamBytesSentByNetwork + kMaxInFlightBytes)
+        return;
 
     RefPtr state = m_pendingStreamState;
     if (!state)
@@ -137,8 +135,7 @@ void WebResourceLoader::drainPendingStreamIfPossible()
 
 void WebResourceLoader::serviceWorkerPendingStreamForwardingNeedData()
 {
-    // FIXME: We should implement backpressure for service worker stream uploads as well.
-    m_isServiceWorkerPendingStreamForwarding = true;
+    m_pendingStreamBytesSentByNetwork = m_pendingStreamBytesForwardedToNetworkProcess;
     drainPendingStreamIfPossible();
 }
 

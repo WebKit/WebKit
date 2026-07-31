@@ -1,6 +1,6 @@
 
 
 PASS Setup: register service worker
-PASS Backpressure pauses the ReadableStream pull() and resumes once the service worker consumes the body
+PASS Backpressure pauses the ReadableStream pull() and re-engages when the service worker stops reading
 PASS Cleanup: unregister service worker
 

@@ -50,4 +50,5 @@ messages -> WebSWServerToContextConnection {
 
     [EnabledBy=ServiceWorkersEnabled] StartPendingStreamUploadForwarding(WebCore::FetchIdentifier fetchIdentifier)
     [EnabledBy=ServiceWorkersEnabled] CancelPendingStreamUploadForwarding(WebCore::FetchIdentifier fetchIdentifier)
+    [EnabledBy=ServiceWorkersEnabled] PendingStreamUploadNeedData(WebCore::FetchIdentifier fetchIdentifier)
 }

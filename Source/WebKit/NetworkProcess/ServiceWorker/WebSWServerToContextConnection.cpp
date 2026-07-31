@@ -466,6 +466,17 @@ void WebSWServerToContextConnection::cancelPendingStreamUploadForwarding(WebCore
         fetch->cancelPendingStreamUpload();
 }
 
+void WebSWServerToContextConnection::pendingStreamUploadNeedData(WebCore::FetchIdentifier fetchIdentifier)
+{
+    RefPtr fetch = m_ongoingFetches.get(fetchIdentifier);
+    if (!fetch)
+        return;
+    RefPtr loader = fetch->loader();
+    if (!loader)
+        return;
+    loader->connectionToWebProcess().connection().send(Messages::WebResourceLoader::ServiceWorkerPendingStreamForwardingNeedData { }, loader->coreIdentifier());
+}
+
 void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     MESSAGE_CHECK(ObjectIdentifier<FetchIdentifierType>::isValidIdentifier(decoder.destinationID()));

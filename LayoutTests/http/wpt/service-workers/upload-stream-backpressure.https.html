@@ -9,7 +9,8 @@
 <script>
 const scope = "resources";
 const endpoint = "resources/backpressure-endpoint";
-const releaseUrl = "resources/backpressure-endpoint?release=1";
+const releaseUrl1 = "resources/backpressure-endpoint?release=1";
+const releaseUrl2 = "resources/backpressure-endpoint?release=2";
 const CHUNK_SIZE = 16 * 1024;   // 16 KB per pull
 const MAX_TOTAL   = 4 * 1024 * 1024; // 4 MB safety cap
 let activeWorker;
@@ -42,6 +43,22 @@ function makeCountedStream(counters) {
     });
 }
 
+async function waitForPullCountToStabilize(counters, { hits = 4, pollMs = 50, timeoutMs = 5000 } = {}) {
+    const deadline = performance.now() + timeoutMs;
+    let stableHits = 0;
+    let lastCount = counters.pullCount;
+    while (stableHits < hits && performance.now() < deadline) {
+        await new Promise(r => step_timeout(r, pollMs));
+        if (counters.pullCount === lastCount)
+            stableHits++;
+        else {
+            stableHits = 0;
+            lastCount = counters.pullCount;
+        }
+    }
+    return stableHits === hits;
+}
+
 promise_test(async () => {
     const registration = await navigator.serviceWorker.register("upload-stream-backpressure-worker.js", { scope });
     activeWorker = registration.active || registration.installing;
@@ -71,49 +88,51 @@ promise_test(async () => {
         await new Promise(r => step_timeout(r, 25));
     assert_greater_than(counters.pullCount, 0, "pull() must fire at least once");
 
-    // Phase 1b: wait for pull() to stabilize — i.e., the same count observed
-    // twice in a row across a short window. That's the signal that backpressure
-    // has kicked in and the ReadableStream is no longer being pulled.
-    const STABILITY_POLL_MS = 50;
-    const STABILITY_HITS_REQUIRED = 4; // ~200ms of no-change
-    const stabilizeDeadline = performance.now() + 5000;
-    let stableHits = 0;
-    let lastCount = counters.pullCount;
-    while (stableHits < STABILITY_HITS_REQUIRED && performance.now() < stabilizeDeadline) {
-        await new Promise(r => step_timeout(r, STABILITY_POLL_MS));
-        if (counters.pullCount === lastCount)
-            stableHits++;
-        else {
-            stableHits = 0;
-            lastCount = counters.pullCount;
-        }
-    }
-    assert_equals(stableHits, STABILITY_HITS_REQUIRED,
-        `pull() count never stabilized (last=${lastCount}, current=${counters.pullCount})`);
+    // Phase 1b: pull() must stabilize before the SW starts consuming, proving
+    // that source-side backpressure engaged.
+    let stabilized = await waitForPullCountToStabilize(counters);
+    assert_true(stabilized, `pull() count never stabilized (current=${counters.pullCount})`);
 
-    const pullsAfterFill = counters.pullCount;
     const bytesAfterFill = counters.bytesEnqueued;
-
-    // The amount pulled before backpressure should be close to the sink threshold (64KB)
-    // + the loader in-flight allowance. Upper-bound guards against runaway pulls.
+    const pullsAfterFill = counters.pullCount;
     assert_less_than(bytesAfterFill, 2 * 1024 * 1024,
         `pulled bytes before backpressure must be bounded (${bytesAfterFill})`);
 
-    // Phase 2: tell the SW to release. pull() should resume once the network
-    // process starts forwarding to the SW.
-    await controlledFrame.contentWindow.fetch(releaseUrl);
+    // Phase 2: tell the SW to read a bounded number of chunks and then pause,
+    // exercising the NeedData → drain credit-refresh loop between source and
+    // network.
+    await controlledFrame.contentWindow.fetch(releaseUrl1);
 
+    // pull() must resume once the service worker starts reading.
     const resumeDeadline = performance.now() + 5000;
     while (counters.pullCount === pullsAfterFill && performance.now() < resumeDeadline)
         await new Promise(r => step_timeout(r, 25));
     assert_greater_than(counters.pullCount, pullsAfterFill,
         "pull() must resume once the service worker starts reading the body");
 
+    // Phase 2b: SW paused after reading a bounded number of chunks. Wait for
+    // pull() to stabilize again — this proves end-to-end backpressure
+    // re-engaged rather than the stream draining unbounded once SW opened the
+    // pipe.
+    stabilized = await waitForPullCountToStabilize(counters);
+    assert_true(stabilized, `pull() count never re-stabilized (current=${counters.pullCount})`);
+
+    const bytesAfterPartialRead = counters.bytesEnqueued;
+    assert_greater_than(bytesAfterPartialRead, bytesAfterFill,
+        "pull() must have made progress while SW was reading");
+    assert_less_than(bytesAfterPartialRead, MAX_TOTAL,
+        `stream must not be fully drained while SW is paused (${bytesAfterPartialRead})`);
+    assert_less_than(bytesAfterPartialRead, 1 * 1024 * 1024,
+        `backpressure must re-engage when SW pauses (${bytesAfterPartialRead})`);
+
+    // Phase 3: let the SW consume the rest.
+    await controlledFrame.contentWindow.fetch(releaseUrl2);
+
     const response = await responsePromise;
     assert_true(response.ok, "network response ok");
     const totalReceived = parseInt(await response.text(), 10);
     assert_equals(totalReceived, counters.bytesEnqueued, "server saw exactly the bytes the stream enqueued");
-}, "Backpressure pauses the ReadableStream pull() and resumes once the service worker consumes the body");
+}, "Backpressure pauses the ReadableStream pull() and re-engages when the service worker stops reading");
 
 promise_test(async () => {
     if (activeWorker) {
