@@ -401,13 +401,15 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
             if (RefPtr openerCorePage = frame->opener()->page()) {
                 RefPtr openerWebPage = WebPage::fromCorePage(*openerCorePage);
                 RefPtr webPage = WebPage::fromCorePage(*protect(protect(mainFrameDocument)->page()));
+                RELEASE_LOG_FORWARDABLE(SiteIsolation, WebResourceLoadObserverLogUserInteractionWithReducedTimeResolutionWithRemoteFrame, openerWebPage ? openerWebPage->identifier().toUInt64() : 0);
                 if (webPage && openerWebPage) {
                     if (auto openerURL = webPage->mainFrameOpenerURL(); !openerURL.isEmpty()) {
                         RegistrableDomain openerDomain { openerURL };
                         if (topFrameDomain != openerDomain && !mainFrameDocument->hasRequestedPageSpecificStorageAccessWithUserInteraction(topFrameDomain)) {
                             openerWebPage->addDomainWithPageLevelStorageAccess(openerDomain, topFrameDomain);
-                            Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->send(
-                                Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(topFrameDomain, openerWebPage->identifier(), openerDomain), 0);
+                            // FIXME: this message and the message in requestStorageAccessUnderOpener should instead be sent from the UI process. See rdar://183732418.
+                            Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+                            connection->send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(topFrameDomain, openerWebPage->identifier(), openerDomain), 0);
                             mainFrameDocument->setHasRequestedPageSpecificStorageAccessWithUserInteraction(topFrameDomain);
                         }
                     }

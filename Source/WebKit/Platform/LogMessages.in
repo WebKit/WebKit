@@ -59,6 +59,7 @@ WebProcessFreezeAllLayerTrees, "[sessionID=%" PRIu64 "] WebProcess::freezeAllLay
 WebProcessMarkAllLayersVolatile, "[sessionID=%" PRIu64 "] WebProcess::markAllLayersVolatile:", (uint64_t), DEFAULT, ProcessSuspension
 WebProcessPrepareToSuspend, "[sessionID=%" PRIu64 "] WebProcess::prepareToSuspend: isSuspensionImminent=%d, remainingRunTime=%fs", (uint64_t, int, double), DEFAULT, ProcessSuspension
 WebProcessReadyToSuspend, "[sessionID=%" PRIu64 "] WebProcess::prepareToSuspend: Process is ready to suspend", (uint64_t), DEFAULT, ProcessSuspension
+WebResourceLoadObserverLogUserInteractionWithReducedTimeResolutionWithRemoteFrame, "WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution; opener is remote frame with page ID = %" PRIu64, (uint64_t), DEFAULT, SiteIsolation
 WebResourceLoaderConstructor, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::WebResourceLoader", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WebResourceLoaderDidBlockAuthenticationChallenge, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didBlockAuthenticationChallenge", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
 WebResourceLoaderDidFailResourceLoad, "[webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::didFailResourceLoad", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
