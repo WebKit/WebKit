@@ -1050,7 +1050,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     UNUSED_VARIABLE(pushUnreachable);
     UNUSED_PARAM(optionalRelation);
 
-    auto parseMemOp = [&] (uint32_t& offset, TypedExpression& pointer, uint8_t& memoryIndex) -> PartialResult {
+    auto parseMemOp = [&] (uint64_t& offset, TypedExpression& pointer, uint8_t& memoryIndex) -> PartialResult {
         uint32_t maxAlignment;
         switch (op) {
         case SIMDLaneOperation::LoadLane8:
@@ -1093,7 +1093,13 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         uint32_t alignment;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get simd memory op alignment"_s);
         WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get simd memory index"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get simd memory op offset"_s);
+        if (m_info.memory(memoryIndex).isMemory64())
+            WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get simd memory op offset"_s);
+        else {
+            uint32_t offset32;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get simd memory op offset"_s);
+            offset = offset32;
+        }
 
         WASM_VALIDATOR_FAIL_IF(alignment > maxAlignment, "alignment: "_s, alignment, " can't be larger than max alignment for simd operation: "_s, maxAlignment);
 
@@ -1101,7 +1107,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
             return { };
 
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "simd memory op pointer"_s);
-        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), "pointer must be i32"_s);
+        WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), "pointer type mismatch"_s);
 
         return { };
     };
@@ -1208,7 +1214,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::LoadSplat32:
     case SIMDLaneOperation::LoadSplat64:
     case SIMDLaneOperation::Load: {
-        uint32_t offset;
+        uint64_t offset;
         TypedExpression pointer;
         uint8_t memoryIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
@@ -1235,7 +1241,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
             WASM_VALIDATOR_FAIL_IF(!val.type().isV128(), "store vector must be v128"_s);
         }
 
-        uint32_t offset;
+        uint64_t offset;
         TypedExpression pointer;
         uint8_t memoryIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
@@ -1251,7 +1257,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::LoadLane16:
     case SIMDLaneOperation::LoadLane32:
     case SIMDLaneOperation::LoadLane64: {
-        uint32_t offset;
+        uint64_t offset;
         TypedExpression pointer;
         TypedExpression vector;
         uint8_t laneIndex;
@@ -1294,7 +1300,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::StoreLane16:
     case SIMDLaneOperation::StoreLane32:
     case SIMDLaneOperation::StoreLane64: {
-        uint32_t offset;
+        uint64_t offset;
         TypedExpression pointer;
         TypedExpression vector;
         uint8_t laneIndex;
@@ -1335,7 +1341,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::LoadExtend16S:
     case SIMDLaneOperation::LoadExtend32U:
     case SIMDLaneOperation::LoadExtend32S: {
-        uint32_t offset;
+        uint64_t offset;
         TypedExpression pointer;
         uint8_t memoryIndex;
 
@@ -1354,7 +1360,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     }
     case SIMDLaneOperation::LoadPad32:
     case SIMDLaneOperation::LoadPad64: {
-        uint32_t offset;
+        uint64_t offset;
         TypedExpression pointer;
         uint8_t memoryIndex;
 
