@@ -29,6 +29,7 @@
 #include "DateConstructor.h"
 #include "ISOArithmetic.h"
 #include "IntlObject.h"
+#include <array>
 #include <unicode/ucal.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
@@ -213,6 +214,15 @@ static bool setCalendarToISODate(UCalendar* cal, const ISO8601::PlainDate& isoDa
     return U_SUCCESS(status);
 }
 
+// isoDateFromEpochDaysChecked — internal: converts ISO epoch days to a PlainDate; returns nullopt if outside the supported ISO year range
+static std::optional<ISO8601::PlainDate> isoDateFromEpochDaysChecked(int32_t days)
+{
+    auto [year, month, day] = WTF::yearMonthDayFromDays(days);
+    if (!ISO8601::isYearWithinLimits(year)) [[unlikely]]
+        return std::nullopt;
+    return ISO8601::PlainDate(year, static_cast<uint8_t>(month + 1), static_cast<uint8_t>(day));
+}
+
 // isoDateFromCalendarChecked — internal: reads back ISO date from ICU calendar's current epoch ms; returns nullopt if outside the supported ISO year range
 static std::optional<ISO8601::PlainDate> isoDateFromCalendarChecked(UCalendar* cal)
 {
@@ -221,11 +231,7 @@ static std::optional<ISO8601::PlainDate> isoDateFromCalendarChecked(UCalendar* c
     if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
     WTF::Int64Milliseconds msWT(static_cast<int64_t>(epochMs));
-    int32_t days = WTF::msToDays(msWT);
-    auto [year, month, day] = WTF::yearMonthDayFromDays(days);
-    if (!ISO8601::isYearWithinLimits(year)) [[unlikely]]
-        return std::nullopt;
-    return ISO8601::PlainDate(year, static_cast<uint8_t>(month + 1), static_cast<uint8_t>(day));
+    return isoDateFromEpochDaysChecked(WTF::msToDays(msWT));
 }
 
 // Japanese era table — start years are historically fixed calendar facts.
@@ -1879,6 +1885,143 @@ Expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID calendarI
     return 1972;
 }
 
+// A lunisolar year's month layout, as ICU computes it. For chinese/dangi this is the output of
+// astronomical work — each month starts on the day containing a true new moon, and which month is the
+// leap month follows from the winter solstice and the no-zhongqi rule — and ICU memoizes none of it, so
+// it is recomputed on every query. Recording the layout once per (calendar, extendedYear) lets every
+// later resolution in that year be plain arithmetic. Month codes are packed as
+// (monthNumber << 1) | isLeapMonth, which is monotone in (monthNumber, isLeapMonth) and therefore
+// orders codes exactly as their strings do: M05 < M05L < M06. Calendar structure is fixed for the
+// process lifetime, so entries never need invalidation.
+struct LunisolarYear {
+    // Zero marks an unused slot; calendarId is nonzero for every lunisolar calendar, so no live entry
+    // can look empty. monthCount is checked alongside it so a zeroed slot can never be read as a hit.
+    uint64_t key { 0 };
+    uint8_t monthCount { 0 };
+    std::array<uint8_t, 14> codes { };
+    std::array<uint8_t, 14> lengths { };
+    std::array<int32_t, 14> startEpochDays { };
+};
+
+static constexpr uint8_t packMonthCode(uint8_t monthNumber, bool isLeapMonth)
+{
+    return static_cast<uint8_t>((monthNumber << 1) | (isLeapMonth ? 1 : 0));
+}
+
+// Walk cal (positioned at the year start, day 1) recording each month's code, length and ISO start
+// until the year rolls over. Uses the caller's open UCalendar, so there is no nested withCalendar and
+// no re-entrant lock. Restores cal to the year start before returning.
+static LunisolarYear buildLunisolarYear(UCalendar* cal, CalendarID calendarId, int32_t savedYear, double yearStartMs, uint64_t key, UErrorCode& status)
+{
+    LunisolarYear year;
+    int32_t nextYearStartDays = 0;
+    bool rolledOver = false;
+    for (unsigned i = 0; i < year.codes.size(); i++) {
+        // getMonthCode also completes the calendar, which the day-length limit below depends on:
+        // without it ACTUAL_MAXIMUM can resolve from a stale explicitly-set MONTH.
+        auto code = getMonthCode(cal, calendarId);
+        if (!code) [[unlikely]] {
+            status = U_INTERNAL_PROGRAM_ERROR;
+            break;
+        }
+        auto parsed = ISO8601::parseMonthCode(*code);
+        if (!parsed) [[unlikely]] {
+            status = U_INTERNAL_PROGRAM_ERROR;
+            break;
+        }
+        int32_t length = ucal_getLimit(cal, UCAL_DAY_OF_MONTH, UCAL_ACTUAL_MAXIMUM, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            break;
+        double monthStartMs = ucal_getMillis(cal, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            break;
+
+        year.codes[i] = packMonthCode(parsed->monthNumber, parsed->isLeapMonth);
+        year.lengths[i] = static_cast<uint8_t>(length);
+        year.startEpochDays[i] = WTF::msToDays(WTF::Int64Milliseconds(static_cast<int64_t>(monthStartMs)));
+        year.monthCount = static_cast<uint8_t>(i + 1);
+
+        ucal_add(cal, UCAL_MONTH, 1, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            break;
+        int32_t curYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            break;
+        double afterMs = ucal_getMillis(cal, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            break;
+        nextYearStartDays = WTF::msToDays(WTF::Int64Milliseconds(static_cast<int64_t>(afterMs)));
+        if (curYear != savedYear) {
+            rolledOver = true;
+            break;
+        }
+    }
+
+    UErrorCode restore = U_ZERO_ERROR;
+    ucal_setMillis(cal, yearStartMs, &restore);
+    if (U_SUCCESS(status) && U_FAILURE(restore))
+        status = restore;
+    if (U_FAILURE(status)) [[unlikely]]
+        return year;
+
+    // Without a rollover the loop ran out of slots, so nextYearStartDays is a month inside this year
+    // and the tiling check below would compare against the wrong bound. No lunisolar calendar has more
+    // than 13 months, so treat it as an ICU inconsistency rather than trusting a partial layout.
+    if (!rolledOver) [[unlikely]] {
+        status = U_INTERNAL_PROGRAM_ERROR;
+        return year;
+    }
+
+    // The layout is only usable if the months tile the year exactly. Checking it once here is what
+    // makes it safe to clamp days and compute dates from the cached values without asking ICU again.
+    // The first month must also be M01, which is what lets the resolution loop step back from a
+    // missing leap month without running off the front of the array.
+    if (year.codes[0] != packMonthCode(1, false)) [[unlikely]] {
+        status = U_INTERNAL_PROGRAM_ERROR;
+        return year;
+    }
+    for (unsigned i = 0; i < year.monthCount; i++) {
+        int32_t expectedNext = (i + 1 < year.monthCount) ? year.startEpochDays[i + 1] : nextYearStartDays;
+        if (!year.lengths[i] || year.startEpochDays[i] + year.lengths[i] != expectedNext) [[unlikely]] {
+            status = U_INTERNAL_PROGRAM_ERROR;
+            return year;
+        }
+    }
+    year.key = key;
+    return year;
+}
+
+static TemporalResult<LunisolarYear> lunisolarYearForKey(UCalendar* cal, CalendarID calendarId, int32_t savedYear, double yearStartMs)
+{
+    // Years reach here from script (bounded only by checkYearRange), so this must not grow without
+    // limit. A direct-mapped table bounds it exactly. Indexing on the year's low bits rather than a
+    // hash is deliberate: within a calendar, consecutive years land in distinct slots, which is the
+    // access pattern real workloads have. A collision only ever costs a rebuild of the displaced
+    // entry, since the full key is rechecked on lookup.
+    constexpr unsigned tableSize = 16;
+    static Lock lock;
+    static std::array<LunisolarYear, tableSize> table;
+
+    ASSERT(calendarId);
+    uint64_t key = (static_cast<uint64_t>(calendarId) << 32) | static_cast<uint32_t>(savedYear);
+    unsigned index = (static_cast<unsigned>(savedYear) ^ (calendarId * 7)) & (tableSize - 1);
+
+    {
+        Locker locker { lock };
+        if (table[index].key == key && table[index].monthCount)
+            return table[index];
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto year = buildLunisolarYear(cal, calendarId, savedYear, yearStartMs, key, status);
+    if (U_FAILURE(status) || !year.monthCount) [[unlikely]]
+        return makeUnexpected(rangeError(icuReadCalendarFailed));
+
+    Locker locker { lock };
+    table[index] = year;
+    return year;
+}
+
 // calendarDateFromFields — temporal_rs: Calendar::date_from_fields (src/builtins/core/calendar.rs)
 //   temporal_rs delegates to icu4x: ArithmeticDate::from_fields (components/calendar/src/calendar_arithmetic.rs)
 //   ICU4C has no equivalent: we implement the same field-resolution logic using ucal_set + ucal_get.
@@ -1978,77 +2121,88 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
             ucal_set(cal, UCAL_EXTENDED_YEAR, year.value_or(0));
 
         if (monthCode) {
-            // Month codes > M13 are always invalid. M13 is only valid for Coptic/Ethiopian.
-            if (monthCode->monthNumber > 13) [[unlikely]]
+            // Month codes outside M01..M13 are always invalid; M13 is only valid for Coptic/Ethiopian.
+            // parseMonthCode admits M00L, which exists in no calendar — rejecting monthNumber 0 here
+            // also keeps the ordinal search below in range.
+            if (!monthCode->monthNumber || monthCode->monthNumber > 13) [[unlikely]]
                 return makeUnexpected(rangeError("month is out of range"_s));
             if (monthCode->monthNumber == 13 && calendarId != copticCalendarID() && calendarId != ethiopicCalendarID() && calendarId != ethioaaCalendarID()) [[unlikely]]
                 return makeUnexpected(rangeError("month is out of range"_s));
 
             if (calendarIsLunisolar(calendarId)) {
-                // Lunisolar: walk months from start of year to find target monthCode.
-                // ICU4X uses precomputed year.packed.leap_month() for O(1) lookup; ICU4C
-                // doesn't expose this data, so we walk. The walk is correct and safe.
+                // Resolve the month code against this year's cached layout. ICU4X reads a precomputed
+                // leap_month for this; ICU4C exposes no such data, so the layout is walked once per
+                // year and reused. The era path is excluded so it keeps falling through to the
+                // era/year consistency check at the end of this function.
+                ucal_set(cal, UCAL_MONTH, 0);
+                ucal_set(cal, UCAL_IS_LEAP_MONTH, 0);
+                ucal_set(cal, UCAL_DAY_OF_MONTH, 1);
+                double yearStartMs = ucal_getMillis(cal, &status);
+                if (U_FAILURE(status)) [[unlikely]]
+                    return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
+                int32_t savedYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
+                if (U_FAILURE(status)) [[unlikely]]
+                    return makeUnexpected(rangeError(icuReadCalendarFailed));
+
+                auto yearOrError = lunisolarYearForKey(cal, calendarId, savedYear, yearStartMs);
+                if (!yearOrError) [[unlikely]]
+                    return makeUnexpected(yearOrError.error());
+                const auto& layout = *yearOrError;
+
+                uint8_t targetCode = packMonthCode(monthCode->monthNumber, monthCode->isLeapMonth);
+                int32_t monthCount = layout.monthCount;
+                // Default to the year's last month, matching a walk that runs off the end.
+                int32_t ordinal = monthCount - 1;
+                bool found = false;
+                for (int32_t i = 0; i < monthCount; i++) {
+                    if (layout.codes[i] == targetCode) {
+                        ordinal = i;
+                        found = true;
+                        break;
+                    }
+                    if (layout.codes[i] > targetCode) {
+                        // Target month is absent this year. Constrain maps a missing leap month onto
+                        // an existing one: Hebrew M05L to Adar (this month), Chinese/Dangi to the
+                        // preceding month. codes[0] is always M01, so i is never 0 here.
+                        if (overflow == TemporalOverflow::Constrain && monthCode->isLeapMonth) {
+                            ordinal = (calendarId == hebrewCalendarID()) ? i : i - 1;
+                            found = true;
+                        } else
+                            ordinal = i;
+                        break;
+                    }
+                }
+                if (!found && overflow == TemporalOverflow::Reject) [[unlikely]]
+                    return makeUnexpected(rangeError("monthCode does not exist in this calendar year"_s));
+                ASSERT(ordinal >= 0 && ordinal < monthCount);
+
+                uint8_t clampedDay = day ? day : 1;
+                if (clampedDay > layout.lengths[ordinal]) {
+                    if (overflow == TemporalOverflow::Reject) [[unlikely]]
+                        return makeUnexpected(rangeError("Day is out of range for the given month in this calendar"_s));
+                    clampedDay = layout.lengths[ordinal];
+                }
+
+                // The layout was verified contiguous when it was built, so the date is the month's
+                // first day plus the day offset; no further ICU call is needed.
+                if (!tookEraPath) {
+                    auto resolved = isoDateFromEpochDaysChecked(layout.startEpochDays[ordinal] + clampedDay - 1);
+                    if (!resolved) [[unlikely]]
+                        return makeUnexpected(rangeError("Resolved calendar date is outside representable range"_s));
+                    return *resolved;
+                }
+
+                // Era path: position the calendar so the shared tail can verify era against year.
                 ucal_set(cal, UCAL_MONTH, 0);
                 ucal_set(cal, UCAL_IS_LEAP_MONTH, 0);
                 ucal_set(cal, UCAL_DAY_OF_MONTH, 1);
                 ucal_getMillis(cal, &status);
                 if (U_FAILURE(status)) [[unlikely]]
                     return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
-
-                String targetCode = makeString("M"_s, monthCode->monthNumber < 10 ? "0"_s : ""_s,
-                    monthCode->monthNumber, monthCode->isLeapMonth ? "L"_s : ""_s);
-                int32_t savedYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuReadCalendarFailed));
-                bool found = false;
-                for (int i = 0; i < 14; i++) {
-                    auto curCode = getMonthCode(cal, calendarId);
-                    if (!curCode) [[unlikely]]
-                        return makeUnexpected(rangeError(icuReadCalendarFailed));
-                    if (*curCode == targetCode) {
-                        found = true;
-                        break;
-                    }
-                    // For constrain: if we've passed the target code, stop at previous.
-                    if (codePointCompare(*curCode, targetCode) > 0) {
-                        // Leap month doesn't exist — constrain to previous month.
-                        if (overflow == TemporalOverflow::Constrain && monthCode->isLeapMonth) {
-                            if (calendarId == hebrewCalendarID()) {
-                                // M05L -> M06 (Adar), which is this current month.
-                                found = true;
-                            } else {
-                                // Chinese/Dangi: M01L->M01, revert one step.
-                                ucal_add(cal, UCAL_MONTH, -1, &status);
-                                if (U_FAILURE(status)) [[unlikely]]
-                                    return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
-                                found = true;
-                            }
-                        }
-                        break;
-                    }
-                    ucal_add(cal, UCAL_MONTH, 1, &status);
+                if (ordinal > 0) {
+                    ucal_add(cal, UCAL_MONTH, ordinal, &status);
                     if (U_FAILURE(status)) [[unlikely]]
                         return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
-                    int32_t curYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-                    if (U_FAILURE(status)) [[unlikely]]
-                        return makeUnexpected(rangeError(icuReadCalendarFailed));
-                    if (curYear != savedYear) {
-                        ucal_add(cal, UCAL_MONTH, -1, &status);
-                        if (U_FAILURE(status)) [[unlikely]]
-                            return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
-                        break;
-                    }
-                }
-                if (!found && overflow == TemporalOverflow::Reject) [[unlikely]]
-                    return makeUnexpected(rangeError("monthCode does not exist in this calendar year"_s)); // Clamp day via ucal_add.
-                int32_t maxDay = ucal_getLimit(cal, UCAL_DAY_OF_MONTH, UCAL_ACTUAL_MAXIMUM, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuReadCalendarFailed));
-                uint8_t clampedDay = day;
-                if (day > maxDay) {
-                    if (overflow == TemporalOverflow::Reject) [[unlikely]]
-                        return makeUnexpected(rangeError("Day is out of range for the given month in this calendar"_s));
-                    clampedDay = static_cast<uint8_t>(maxDay);
                 }
                 if (clampedDay > 1) {
                     ucal_add(cal, UCAL_DAY_OF_MONTH, clampedDay - 1, &status);
@@ -2179,8 +2333,8 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
                 if (calendarIsLunisolar(calendarId)) {
                     // For lunisolar calendars, ICU slot numbers != monthCode numbers (e.g. Hebrew
                     // M05L at slot 5 gives UCAL_MONTH+1=6, and ICU4C never sets IS_LEAP_MONTH).
-                    // Use getMonthCode to verify the actual month — the walk already positioned
-                    // the calendar at the target month, so we only need to verify the day.
+                    // Use getMonthCode to verify the actual month — the calendar is already
+                    // positioned at the target month, so we only need to verify the day.
                     if (resolvedDay != static_cast<int32_t>(day)) [[unlikely]]
                         return makeUnexpected(rangeError("Day is out of range for the given month in this calendar"_s));
                 } else {
