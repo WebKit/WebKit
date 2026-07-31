@@ -107,7 +107,7 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
     auto closedEdges = RectEdges<bool> { true };
 
     auto outlineEdgeWidths = RectEdges<LayoutUnit> { outlineWidth };
-    auto outlineShape = BorderShape::shapeForOffsetRect(styleToUse.get(), paintRect, outerRect, outlineEdgeWidths, closedEdges);
+    auto outlineShape = BorderShape::shapeForOffsetRect(styleToUse.get(), paintRect, outerRect, outlineEdgeWidths, closedEdges, ConstantThicknessOffset::Yes);
 
     auto bleedAvoidance = BleedAvoidance::ShrinkBackground;
     auto appliedClipAlready = false;
@@ -314,7 +314,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
         auto borderRect = focusRingRects[0];
         auto outlineRect = borderRect;
         outlineRect.inflate(LayoutUnit(outlineOffset));
-        auto outlineShape = BorderShape::shapeForOffsetRect(style.get(), borderRect, outlineRect, RectEdges<LayoutUnit> { }, RectEdges<bool> { true });
+        auto outlineShape = BorderShape::shapeForOffsetRect(style.get(), borderRect, outlineRect, RectEdges<LayoutUnit> { }, RectEdges<bool> { true }, ConstantThicknessOffset::Yes);
         auto path = outlineShape.pathForOuterShape(deviceScaleFactor);
         drawFocusRing(m_paintInfo.context(), path, style.get(), focusRingColor);
         return;

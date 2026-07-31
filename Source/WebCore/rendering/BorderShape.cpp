@@ -113,7 +113,7 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
     return BorderShape { borderRect, usedBorderWidths };
 }
 
-BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
+BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges, ConstantThicknessOffset constantThickness)
 {
     auto usedEdgeWidths = applyClosedEdges(edgeWidths, closedEdges);
 
@@ -142,6 +142,7 @@ BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, c
         if (!referenceRadii.areRenderableInRect(borderRect))
             referenceRadii.makeRenderableInRect(borderRect);
         shape.m_offsetReferenceRect = LayoutRoundedRect { borderRect, referenceRadii };
+        shape.m_constantThicknessOffset = constantThickness == ConstantThicknessOffset::Yes;
 
         return shape;
     }
@@ -179,6 +180,7 @@ BorderShape BorderShape::shapeWithBorderWidths(const RectEdges<LayoutUnit>& bord
 {
     auto shape = BorderShape(m_borderRect.rect(), borderWidths, m_borderRect.radii(), m_cornerCurvatures);
     shape.m_offsetReferenceRect = m_offsetReferenceRect;
+    shape.m_constantThicknessOffset = m_constantThicknessOffset;
     return shape;
 }
 
@@ -408,6 +410,43 @@ std::optional<FloatRoundedRect> BorderShape::snappedOffsetReferenceRect(float de
     return m_offsetReferenceRect->pixelSnappedRoundedRectForPainting(deviceScaleFactor);
 }
 
+static bool cornersHaveConvexSuperellipse(const RectCorners<float>& cornerCurvatures)
+{
+    auto isConvexSuperellipse = [](float curvature) {
+        return std::isfinite(curvature) && curvature > 1.0f;
+    };
+    return isConvexSuperellipse(cornerCurvatures.topLeft()) || isConvexSuperellipse(cornerCurvatures.topRight())
+        || isConvexSuperellipse(cornerCurvatures.bottomLeft()) || isConvexSuperellipse(cornerCurvatures.bottomRight());
+}
+
+// "Aligned-to-curve offset" generates the moved contour by offsetting the border-box corner curve at
+// constant distance (see addAlignedToCurveOffsetContour), not by scaling radii. Only needed for corners
+// whose shape can't be reproduced by scaling: finite superellipses with curvature < 1 and != 0.
+static bool cornersUseAlignedToCurveOffset(const RectCorners<float>& cornerCurvatures)
+{
+    auto usesAlignedOffset = [](float curvature) {
+        return std::isfinite(curvature) && curvature < 1.0f && curvature != 0.0f;
+    };
+    return usesAlignedOffset(cornerCurvatures.topLeft()) || usesAlignedOffset(cornerCurvatures.topRight())
+        || usesAlignedOffset(cornerCurvatures.bottomLeft()) || usesAlignedOffset(cornerCurvatures.bottomRight());
+}
+
+// Offset the border-box reference curve to targetRect at constant thickness: outset corners miter out to the edges along their tangent, inset corners trim to the rect.
+static void addAlignedToCurveOffsetContour(Path& path, const FloatRoundedRect& referenceSnapped, const RectCorners<float>& cornerCurvatures, const FloatRect& targetRect)
+{
+    auto referenceRect = referenceSnapped.rect();
+    double leftOffset = referenceRect.x() - targetRect.x();
+    double topOffset = referenceRect.y() - targetRect.y();
+    double rightOffset = targetRect.maxX() - referenceRect.maxX();
+    double bottomOffset = targetRect.maxY() - referenceRect.maxY();
+
+    RectCorners<CornerInput> referenceCorners;
+    buildCornerInputs(referenceSnapped, cornerCurvatures, -leftOffset, -topOffset, -rightOffset, -bottomOffset, referenceCorners);
+
+    auto outsetMiter = referenceRect.contains(targetRect) ? OutsetMiter::No : OutsetMiter::Yes;
+    borderContourPath(path, referenceCorners, &targetRect, outsetMiter);
+}
+
 static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
 {
     RectCorners<CornerInput> cornerRects;
@@ -419,6 +458,14 @@ static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
 Path BorderShape::pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const
 {
     Path path;
+    bool useAlignedToCurve = snappedOffsetReference
+        && (cornersUseAlignedToCurveOffset(m_cornerCurvatures)
+            || (m_constantThicknessOffset && cornersHaveConvexSuperellipse(m_cornerCurvatures)));
+    if (useAlignedToCurve) {
+        addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, outerSnapped.rect());
+        if (!path.isEmpty())
+            return path;
+    }
     addOuterCornerShapeToPath(path, outerSnapped, m_cornerCurvatures, snappedOffsetReference);
     if (!path.isEmpty())
         return path;
@@ -444,6 +491,14 @@ static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
 Path BorderShape::pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const
 {
     Path path;
+    bool useAlignedToCurve = snappedOffsetReference
+        && (cornersUseAlignedToCurveOffset(m_cornerCurvatures)
+            || (m_constantThicknessOffset && cornersHaveConvexSuperellipse(m_cornerCurvatures)));
+    if (useAlignedToCurve) {
+        addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, innerSnapped.rect());
+        if (!path.isEmpty())
+            return path;
+    }
     addInnerCornerShapeToPath(path, outerSnapped, innerSnapped, m_cornerCurvatures, snappedOffsetReference);
     if (path.isEmpty())
         return pathForInnerRoundedRect(innerSnapped);
@@ -614,6 +669,7 @@ void BorderShape::fillRectWithInnerHoleShape(GraphicsContext& context, const Lay
         Path path;
         path.addRect(outerSnapped);
         addInnerShapeToPath(path, deviceScaleFactor);
+        context.setFillRule(WindRule::EvenOdd);
         context.setFillColor(color);
         context.fillPath(path);
         return;

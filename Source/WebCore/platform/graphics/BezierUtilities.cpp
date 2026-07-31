@@ -28,6 +28,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
+#include "Path.h"
 #include "RectEdges.h"
 #include <algorithm>
 #include <cmath>
@@ -110,19 +111,6 @@ Vector<double, 3> solveCubicForParametersInUnitInterval(double cubicCoefficient,
     for (int rootIndex = 0; rootIndex < 3; ++rootIndex)
         addRoot(magnitude * std::cos((angle - twoPi * rootIndex) / 3.0) - shift);
     return parametersInUnitInterval;
-}
-
-FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter)
-{
-    double oneMinusParameter = 1.0 - parameter;
-    double weightStart = oneMinusParameter * oneMinusParameter * oneMinusParameter;
-    double weightControl1 = 3.0 * oneMinusParameter * oneMinusParameter * parameter;
-    double weightControl2 = 3.0 * oneMinusParameter * parameter * parameter;
-    double weightEnd = parameter * parameter * parameter;
-    return {
-        static_cast<float>(curve.start.x() * weightStart + curve.controlPoint1.x() * weightControl1 + curve.controlPoint2.x() * weightControl2 + curve.end.x() * weightEnd),
-        static_cast<float>(curve.start.y() * weightStart + curve.controlPoint1.y() * weightControl1 + curve.controlPoint2.y() * weightControl2 + curve.end.y() * weightEnd),
-    };
 }
 
 Vector<BezierIntersection> intersectBezierAndLine(const BezierSegment& curve, const FloatPoint& lineStart, const FloatPoint& lineEnd)
@@ -220,6 +208,21 @@ static bool boxesTouchOrOverlap(const FloatRect& first, const FloatRect& second)
 
 } // namespace
 
+// `parameter` is the Bézier curve parameter t in [0, 1] (the variable of the Bernstein basis
+// below, and of solveCubicForParametersInUnitInterval): t = 0 is curve.start, t = 1 is curve.end.
+FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter)
+{
+    double oneMinusParameter = 1.0 - parameter;
+    double weightStart = oneMinusParameter * oneMinusParameter * oneMinusParameter;
+    double weightControl1 = 3.0 * oneMinusParameter * oneMinusParameter * parameter;
+    double weightControl2 = 3.0 * oneMinusParameter * parameter * parameter;
+    double weightEnd = parameter * parameter * parameter;
+    return {
+        static_cast<float>(curve.start.x() * weightStart + curve.controlPoint1.x() * weightControl1 + curve.controlPoint2.x() * weightControl2 + curve.end.x() * weightEnd),
+        static_cast<float>(curve.start.y() * weightStart + curve.controlPoint1.y() * weightControl1 + curve.controlPoint2.y() * weightControl2 + curve.end.y() * weightEnd),
+    };
+}
+
 Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect& rect)
 {
     // The curve stays within its control points' convex hull
@@ -250,6 +253,101 @@ Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRe
         curves = clipped;
     }
     return curves;
+}
+
+// Resample a flattened polyline to `count` points spaced evenly along its arc length
+Vector<FloatPoint> resampleByArcLength(const Vector<FloatPoint>& polyline, unsigned count)
+{
+    Vector<float> cumulativeLength;
+    cumulativeLength.reserveInitialCapacity(polyline.size());
+    cumulativeLength.append(0.0f);
+    for (size_t pointIndex = 1; pointIndex < polyline.size(); ++pointIndex)
+        cumulativeLength.append(cumulativeLength[pointIndex - 1] + (polyline[pointIndex] - polyline[pointIndex - 1]).diagonalLength());
+    float totalLength = cumulativeLength.last();
+    if (totalLength <= 0.0f)
+        totalLength = 1.0f;
+    Vector<FloatPoint> resampled;
+    resampled.reserveInitialCapacity(count);
+    size_t segmentIndex = 0;
+    for (unsigned sample = 0; sample < count; ++sample) {
+        float targetLength = totalLength * sample / (count - 1);
+        while (segmentIndex + 2 < polyline.size() && cumulativeLength[segmentIndex + 1] < targetLength)
+            ++segmentIndex;
+        float segmentLength = cumulativeLength[segmentIndex + 1] - cumulativeLength[segmentIndex];
+        float fraction = segmentLength > 0.0f ? (targetLength - cumulativeLength[segmentIndex]) / segmentLength : 0.0f;
+        resampled.append(polyline[segmentIndex] + (polyline[segmentIndex + 1] - polyline[segmentIndex]).scaled(fraction));
+    }
+    return resampled;
+}
+
+// Cubic Hermite blend of two point-for-point corresponding curves. `interpolationFraction` runs
+// from 0 (return startPoints, moving with startVelocities) to 1 (return endPoints, moving with
+// endVelocities); the velocities are the endpoint tangents that make the blend smooth.
+//
+// For each point, with t = interpolationFraction, p0 = startPoints, v0 = startVelocities,
+// p1 = endPoints, v1 = endVelocities, the standard Hermite basis is:
+//     h00(t) =  2t^3 - 3t^2 + 1   (startPositionWeight)
+//     h10(t) =   t^3 - 2t^2 + t   (startVelocityWeight)
+//     h01(t) = -2t^3 + 3t^2       (endPositionWeight)
+//     h11(t) =   t^3 -  t^2       (endVelocityWeight)
+// and the blended point is:
+//     p(t) = h00(t)*p0 + h10(t)*v0 + h01(t)*p1 + h11(t)*v1
+Vector<FloatPoint> hermiteInterpolate(const Vector<FloatPoint>& startPoints, const Vector<FloatSize>& startVelocities, const Vector<FloatPoint>& endPoints, const Vector<FloatSize>& endVelocities, double interpolationFraction)
+{
+    double startPositionWeight = 2.0 * interpolationFraction * interpolationFraction * interpolationFraction - 3.0 * interpolationFraction * interpolationFraction + 1.0;
+    double startVelocityWeight = interpolationFraction * interpolationFraction * interpolationFraction - 2.0 * interpolationFraction * interpolationFraction + interpolationFraction;
+    double endPositionWeight = -2.0 * interpolationFraction * interpolationFraction * interpolationFraction + 3.0 * interpolationFraction * interpolationFraction;
+    double endVelocityWeight = interpolationFraction * interpolationFraction * interpolationFraction - interpolationFraction * interpolationFraction;
+    Vector<FloatPoint> blended;
+    blended.reserveInitialCapacity(startPoints.size());
+    for (size_t index = 0; index < startPoints.size(); ++index) {
+        blended.append({
+            float(startPositionWeight * startPoints[index].x() + startVelocityWeight * startVelocities[index].width() + endPositionWeight * endPoints[index].x() + endVelocityWeight * endVelocities[index].width()),
+            float(startPositionWeight * startPoints[index].y() + startVelocityWeight * startVelocities[index].height() + endPositionWeight * endPoints[index].y() + endVelocityWeight * endVelocities[index].height()),
+        });
+    }
+    return blended;
+}
+
+// Converts each Catmull-Rom span to a cubic Bézier: control points sit 1/6 of the neighbor-to-neighbor tangent out from each endpoint, giving one smooth curve through every knot
+void addCatmullRomBeziers(Path& path, const Vector<FloatPoint>& points, unsigned segmentCount, bool& started)
+{
+    if (points.size() < 2)
+        return;
+    unsigned knotCount = std::min<unsigned>(points.size(), segmentCount + 1);
+    auto knots = knotCount < points.size() ? resampleByArcLength(points, knotCount) : points;
+    if (knots.size() < 2)
+        return;
+
+    if (!started) {
+        path.moveTo(knots[0]);
+        started = true;
+    } else
+        path.addLineTo(knots[0]);
+
+    // End tangents taken from the dense curve so the fit leaves/arrives along its true direction
+    auto knotAt = [&](int index) {
+        return knots[std::clamp(index, 0, static_cast<int>(knots.size()) - 1)];
+    };
+    size_t tail = std::min<size_t>(3, points.size() - 1);
+    auto startTravel = (points[tail] - points[0]).normalized();
+    auto endTravel = (points[points.size() - 1] - points[points.size() - 1 - tail]).normalized();
+    unsigned lastSpan = knots.size() - 2;
+
+    for (unsigned spanIndex = 0; spanIndex + 1 < knots.size(); ++spanIndex) {
+        auto previous = knotAt(static_cast<int>(spanIndex) - 1);
+        auto current = knots[spanIndex];
+        auto next = knots[spanIndex + 1];
+        auto following = knotAt(static_cast<int>(spanIndex) + 2);
+        auto controlPoint1 = current + (next - previous).scaled(1.0f / 6.0f);
+        auto controlPoint2 = next - (following - current).scaled(1.0f / 6.0f);
+        float third = (next - current).diagonalLength() / 3.0f;
+        if (!spanIndex)
+            controlPoint1 = current + startTravel.scaled(third);
+        if (spanIndex == lastSpan)
+            controlPoint2 = next - endTravel.scaled(third);
+        path.addBezierCurveTo(controlPoint1, controlPoint2, next);
+    }
 }
 
 } // namespace WebCore
