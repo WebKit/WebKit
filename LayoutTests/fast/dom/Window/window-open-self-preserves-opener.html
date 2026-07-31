@@ -3,15 +3,15 @@
 <body>
 <script src="../../../resources/js-test.js"></script>
 <script>
-description("Tests navigating a window whose opener is itself");
+description("Tests that open('', '_self') does not change the opener");
 jsTestIsAsync = true;
 
 onload = function() {
     w = window.open("resources/window-opens-self.html", "foo");
     shouldBe("w.opener", "self");
     w.onload = function() {
-        w.setOpenerAsSelf();
-        shouldBe("w.opener", "w");
+        w.openSelf();
+        shouldBe("w.opener", "self");
 
         w = window.open("about:blank", "foo");
         shouldBe("w.opener", "self");
