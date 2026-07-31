@@ -8531,10 +8531,14 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     if (m_provisionalPage && m_provisionalPage->mainFrame() == &frame)
         m_provisionalPage = nullptr;
 
-    if (auto provisionalFrame = frame.takeProvisionalFrame()) {
+    if (RefPtr provisionalFrame = frame.provisionalFrame()) {
+        if (navigationID && provisionalFrame->navigationID() != *navigationID)
+            return;
+
         ASSERT(m_preferences->siteIsolationEnabled());
         ASSERT(!frame.isMainFrame());
-        ASSERT_UNUSED(provisionalFrame, provisionalFrame->process().coreProcessIdentifier() != frame.process().coreProcessIdentifier());
+        ASSERT(provisionalFrame->process().coreProcessIdentifier() != frame.process().coreProcessIdentifier());
+        frame.takeProvisionalFrame();
         frame.notifyParentOfLoadCompletion(process);
         frame.broadcastFrameTreeSyncData(FrameTreeSyncData::create());
     }

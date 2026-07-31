@@ -40,10 +40,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProvisionalFrameProxy);
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess, CommitTiming commitTiming)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess, CommitTiming commitTiming, WebCore::NavigationIdentifier navigationID)
     : m_frame(frame)
     , m_frameProcess(WTF::move(frameProcess))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
+    , m_navigationID(navigationID)
 {
     Ref process = this->process();
     process->markProcessAsRecentlyUsed();

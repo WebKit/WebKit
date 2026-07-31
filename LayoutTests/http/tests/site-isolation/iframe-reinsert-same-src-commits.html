@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const src = "http://localhost:8000/site-isolation/resources/frame-reports-commit-to-top.html";
+const totalIterations = 5;
+let reinsertCommits = 0;
+let done = false;
+
+function finish() {
+    if (done)
+        return;
+    done = true;
+    document.body.textContent = reinsertCommits === totalIterations
+        ? "PASS: all " + totalIterations + " re-inserted cross-origin iframes committed."
+        : "FAIL: only " + reinsertCommits + " of " + totalIterations + " re-inserted iframes committed (rest stuck at about:blank).";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runIteration() {
+    const f = document.createElement("iframe");
+    let commitsForThisFrame = 0;
+
+    const onMessage = (event) => {
+        if (event.source !== f.contentWindow)
+            return;
+        if (typeof event.data !== "string" || !event.data.startsWith("committed:"))
+            return;
+
+        commitsForThisFrame++;
+        if (commitsForThisFrame === 1) {
+            f.remove();
+            document.body.appendChild(f);
+            f.src = src;
+        } else if (commitsForThisFrame === 2) {
+            window.removeEventListener("message", onMessage);
+            if (++reinsertCommits === totalIterations)
+                finish();
+        }
+    };
+    window.addEventListener("message", onMessage);
+
+    f.src = src;
+    document.body.appendChild(f);
+}
+
+onload = () => {
+    for (let i = 0; i < totalIterations; i++)
+        runIteration();
+
+    setTimeout(finish, 8000);
+};
+</script>
+</body>
+</html>

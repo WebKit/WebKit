@@ -1,0 +1,1 @@
+PASS: all 5 re-inserted cross-origin iframes committed.
