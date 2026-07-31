@@ -93,7 +93,7 @@ private:
     FloatSize naturalSize() const final { return { }; }
     bool hasVideo() const final { return true; }
     bool hasAudio() const final;
-    void setPageIsVisible(bool) final { }
+    void setIsVisible(bool) final { }
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
     bool paused() const final;
     MediaPlayer::NetworkState networkState() const final { return m_networkState; }

@@ -256,6 +256,7 @@ header: <WebCore/MediaPlayer.h>
     bool supportsLimitedMatroska;
     std::optional<bool> supportsProgressMonitoringOverride;
     OptionSet<WebCore::VideoRendererPreference> videoRendererPreferences;
+    Seconds videoLayerVisibilityDelay;
 };
 
 #endif

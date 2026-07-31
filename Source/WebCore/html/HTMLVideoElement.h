@@ -155,6 +155,11 @@ public:
     bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
     void viewportIntersectionChanged(bool isIntersecting);
 
+    // Reported by the UI process: whether the video's layer is actually on screen. A client
+    // may host that layer outside of the web view, where the page's visibility no longer
+    // says anything about whether the video can be seen.
+    WEBCORE_EXPORT void setVideoLayerIsVisible(std::optional<bool>);
+
 private:
     friend class HTMLVideoElementPictureInPicture;
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
@@ -220,6 +225,7 @@ private:
     Vector<UniqueRef<VideoFrameRequest>> m_servicedVideoFrameRequests;
     unsigned m_nextVideoFrameRequestIndex { 0 };
     bool m_isIntersectingViewport { false };
+    std::optional<bool> m_videoLayerIsVisible;
 
 #if USE(GSTREAMER)
     bool m_enableGStreamerHolePunching { false };

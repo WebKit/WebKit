@@ -305,7 +305,7 @@ private:
     bool hasVideo() const final;
     bool hasAudio() const final;
 
-    void setPageIsVisible(bool) final;
+    void setIsVisible(bool) final;
     void setViewportVisibility(ViewportVisibility) final;
 
     MediaTime getStartDate() const final;
@@ -537,7 +537,7 @@ private:
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_waitingForKey { false };
     std::optional<bool> m_shouldMaintainAspectRatio;
-    std::optional<bool> m_pageIsVisible;
+    std::optional<bool> m_isVisible;
     ViewportVisibility m_viewportVisibility { ViewportVisibility::NotVisible };
     RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;
 #if PLATFORM(COCOA)

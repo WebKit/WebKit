@@ -546,7 +546,7 @@ bool MediaPlayerPrivateWebM::timeIsProgressing() const
     return m_renderer->timeIsProgressing();
 }
 
-void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
+void MediaPlayerPrivateWebM::setIsVisible(bool visible)
 {
     assertIsMainThread();
     if (m_visible == visible)

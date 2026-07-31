@@ -207,8 +207,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setPageIsVisible(bool) final;
-    void setViewportVisibility(ViewportVisibility) final;
+    void setIsVisible(bool) final;
     void updateRendererVisibility();
 
     MediaTime duration() const override;
@@ -377,8 +376,7 @@ private:
     mutable bool m_loadingProgressed WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     bool m_hasAvailableVideoFrame WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     bool m_allRenderersHaveAvailableSamples WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
-    bool m_pageIsVisible WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
-    ViewportVisibility m_viewportVisibility WTF_GUARDED_BY_CAPABILITY(mainThread) { ViewportVisibility::NotVisible };
+    bool m_isVisible WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget WTF_GUARDED_BY_CAPABILITY(mainThread);
     bool m_shouldPlayToTarget WTF_GUARDED_BY_CAPABILITY(mainThread) { false };

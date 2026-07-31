@@ -49,6 +49,7 @@ messages -> VideoPresentationManager {
     FullscreenMayReturnToInline(WebCore::MediaPlayerClientIdentifier contextId, bool isPageVisible)
     RequestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier contextId) -> (enum:uint8_t WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID)
     EnsureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatSize existingVideoDimensions)
+    SetVideoLayerIsVisible(WebCore::MediaPlayerClientIdentifier contextId, std::optional<bool> isVisible)
     SetRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier contextId, bool requiresTextTrackRepresentation)
     SetTextTrackRepresentationBounds(WebCore::MediaPlayerClientIdentifier contextId, WebCore::IntRect bounds)
 }

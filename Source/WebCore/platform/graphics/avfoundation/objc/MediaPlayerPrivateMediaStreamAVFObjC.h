@@ -132,9 +132,8 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setPageIsVisible(bool) final;
+    void setIsVisible(bool) final;
     void setVisibleForCanvas(bool) final;
-    void setViewportVisibility(ViewportVisibility) final;
 
     MediaTime duration() const override;
     MediaTime currentTime() const override;
@@ -306,8 +305,7 @@ private:
     bool m_muted { false };
     bool m_ended { false };
     bool m_hasEverEnqueuedVideoFrame { false };
-    bool m_isPageVisible { false };
-    bool m_isVisibleInViewPort { false };
+    bool m_isVisible { false };
     bool m_haveSeenMetadata { false };
     bool m_waitingForFirstImage { false };
     bool m_isActiveVideoTrackEnabled { true };

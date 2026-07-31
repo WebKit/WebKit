@@ -144,6 +144,21 @@ bool RemoteLayerTreeHost::updateBannerLayers(const std::optional<MainFrameData>&
 }
 #endif
 
+// A commit that only carries new backing store cannot have moved or clipped anything, and a
+// page playing a video produces those constantly. Only a change to geometry can alter what is
+// on screen, so only those are worth re-measuring a video layer for.
+static constexpr OptionSet<LayerChange> layerChangesAffectingGeometry {
+    LayerChange::TransformChanged,
+    LayerChange::SublayerTransformChanged,
+    LayerChange::ChildrenChanged,
+    LayerChange::PositionChanged,
+    LayerChange::AnchorPointChanged,
+    LayerChange::BoundsChanged,
+    LayerChange::HiddenChanged,
+    LayerChange::MasksToBoundsChanged,
+    LayerChange::AnimationsChanged,
+};
+
 bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, const RemoteLayerTreeTransaction& transaction, const std::optional<MainFrameData>& mainFrameData, float indicatorScaleFactor)
 {
     if (!m_drawingArea)
@@ -206,9 +221,12 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
         protect(*m_drawingArea)->updateTimelinesRegistration(processIdentifier, transaction.timelinesUpdate(), MonotonicTime::now());
 #endif
 
+    bool geometryChanged = false;
     for (auto& changedLayer : transaction.changedLayerProperties()) {
         auto layerID = changedLayer.key;
         const auto& properties = changedLayer.value.get();
+
+        geometryChanged |= properties.changedProperties.containsAny(layerChangesAffectingGeometry);
 
         RefPtr node = nodeForID(layerID);
         ASSERT(node);
@@ -237,6 +255,16 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
 
     for (auto& destroyedLayer : transaction.destroyedLayers())
         layerWillBeRemoved(processIdentifier, destroyedLayer);
+
+#if HAVE(AVKIT)
+    // Anything that moves, resizes or clips a video layer reaches us here, so let the manager
+    // work out whether the videos it vended layers for are still on screen.
+    if (geometryChanged && !m_videoLayers.isEmpty()) {
+        RefPtr page = drawingArea().page();
+        if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr)
+            videoManager->videoLayerTreeDidChange();
+    }
+#endif
 
     // Drop the contents of any layers which were unparented; the Web process will re-send
     // the backing store in the commit that reparents them.

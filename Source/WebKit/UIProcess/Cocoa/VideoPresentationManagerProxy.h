@@ -43,8 +43,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MachSendRightAnnotated.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Observer.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -211,6 +213,21 @@ public:
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, const WebCore::HostingContext&, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);
+
+    // Tell the web process whether the video layer we vended is actually on screen. A client
+    // may host it outside of the web view, in which case the page's own visibility says
+    // nothing about whether the video can be seen.
+    //
+    // Anything that moves, resizes or clips a video layer reaches us as a layer tree commit,
+    // but working out what is on screen means walking a superview chain per video and commits
+    // arrive every frame. Note that something changed instead and coalesce the answer, so the
+    // cost is paid at most once per updateVideoLayerIsVisibleInterval.
+    void videoLayerTreeDidChange();
+    void applicationDidEnterBackground();
+    void applicationWillEnterForeground();
+    void updateVideoLayerIsVisibleTimerFired();
+    void updateVideoLayerIsVisible(PlaybackSessionContextIdentifier, ASCIILiteral reason);
+    void updateVideoLayerIsVisibleForAllContexts(ASCIILiteral reason);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
     void swapFullscreenModes(PlaybackSessionContextIdentifier, PlaybackSessionContextIdentifier);
@@ -319,6 +336,12 @@ private:
     const Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfacePair> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
+    HashMap<PlaybackSessionContextIdentifier, bool> m_videoLayerIsVisible;
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
+    static constexpr Seconds updateVideoLayerIsVisibleInterval { 100_ms };
+    RunLoop::Timer m_updateVideoLayerIsVisibleTimer;
+    MonotonicTime m_lastVideoLayerIsVisibleUpdate;
+#endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
     Markable<PlaybackSessionContextIdentifier> m_lastInteractedWithVideo;

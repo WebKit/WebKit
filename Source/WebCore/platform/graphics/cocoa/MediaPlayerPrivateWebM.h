@@ -138,7 +138,7 @@ private:
     bool hasVideo() const final { return m_hasVideo.load(std::memory_order_relaxed); }
     bool hasAudio() const final { return m_hasAudio.load(std::memory_order_relaxed); }
 
-    void setPageIsVisible(bool) final;
+    void setIsVisible(bool) final;
 
     MediaTime timeFudgeFactor() const { return { 1, 10 }; }
     MediaTime currentTime() const final;

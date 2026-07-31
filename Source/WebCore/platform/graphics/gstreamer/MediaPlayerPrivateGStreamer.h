@@ -160,7 +160,7 @@ public:
     void setMuted(bool) final;
     MediaPlayer::NetworkState networkState() const final;
     MediaPlayer::ReadyState readyState() const final;
-    void setPageIsVisible(bool visible) final { m_pageIsVisible = visible; }
+    void setIsVisible(bool visible) final { m_isVisible = visible; }
     void setViewportVisibility(ViewportVisibility) final;
     void setPresentationSize(const IntSize&) final;
     MediaTime duration() const override;
@@ -628,8 +628,8 @@ private:
 
     bool m_isVisibleInViewport { true };
 
-    // Whether the page containing the HTMLMediaElement is visible, reflects: setPageIsVisible()
-    bool m_pageIsVisible { false };
+    // Whether the page containing the HTMLMediaElement is visible, reflects: setIsVisible()
+    bool m_isVisible { false };
 
     // playbin3 only:
     bool m_waitingForStreamsSelectedEvent { true };

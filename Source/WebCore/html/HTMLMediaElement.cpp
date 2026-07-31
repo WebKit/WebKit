@@ -2112,6 +2112,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
 #if ENABLE(MEDIA_SOURCE)
         .supportsProgressMonitoringOverride = protect(document())->quirks().needsSupportsProgressMonitoring() ? std::optional<bool> { true } : std::nullopt,
 #endif
+        .videoLayerVisibilityDelay = Seconds { document().settings().videoLayerVisibilityDelay() },
     };
 
 #if ENABLE(MEDIA_SOURCE)

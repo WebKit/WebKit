@@ -888,7 +888,11 @@ void AudioVideoRendererAVFObjC::setIsVisible(bool visible)
 {
     if (m_visible == visible)
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, visible);
     m_visible = visible;
+    // There is no point holding on to a video renderer for something nobody can see.
+    updateDisplayLayerIfNeeded();
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
 #endif
@@ -1314,7 +1318,7 @@ bool AudioVideoRendererAVFObjC::shouldEnsureLayerOrVideoRenderer() const
     if (!canUseDecompressionSession())
         return true;
 
-    return m_renderingCanBeAccelerated;
+    return m_renderingCanBeAccelerated && m_visible;
 }
 
 WebSampleBufferVideoRendering *AudioVideoRendererAVFObjC::layerOrVideoRenderer() const

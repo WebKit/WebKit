@@ -127,11 +127,29 @@ public:
     virtual bool hasVideo() const = 0;
     virtual bool hasAudio() const = 0;
 
-    virtual void setPageIsVisible(bool) = 0;
-    virtual void setVisibleForCanvas(bool visible) { setPageIsVisible(visible); }
-
     using ViewportVisibility = MediaPlayer::ViewportVisibility;
+
+    // These two answer different questions, and only the first one is about whether anything
+    // can be seen.
+    //
+    // setIsVisible() is the resolved answer to "can this video be seen at all", which
+    // MediaPlayer works out from the video layer's own visibility where a layer reports it -
+    // a client may host that layer outside of the web view, where the element's position in
+    // the page says nothing - and from the page and the viewport where none does. This is
+    // what to consult before giving up a layer or a renderer.
+    //
+    // setViewportVisibility() describes where the element's box sits in the viewport, plus
+    // the fullscreen and picture-in-picture cases where the video is on screen although its
+    // box may not be. It is an input to the above, not a substitute for it, and is passed on
+    // for decisions that are genuinely about the box - whether it is worth keeping a pipeline
+    // running for something scrolled far away, say - rather than about visibility.
+    virtual void setIsVisible(bool) = 0;
     virtual void setViewportVisibility(ViewportVisibility) { }
+
+    // Latched on, and never off, the first time the video is drawn into a canvas. Such a video
+    // has to keep decoding while nothing on screen shows it, so this arrives independently of
+    // the visibility above rather than as another input to it.
+    virtual void setVisibleForCanvas(bool visible) { setIsVisible(visible); }
 
     virtual MediaTime duration() const { return MediaTime::zeroTime(); }
 

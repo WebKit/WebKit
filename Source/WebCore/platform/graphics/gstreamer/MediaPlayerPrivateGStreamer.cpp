@@ -4235,7 +4235,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (context.paintingDisabled())
         return;
 
-    if (!m_pageIsVisible || isSuspended())
+    if (!m_isVisible || isSuspended())
         return;
 
     // Keep a reference to the sample to avoid keeping the sampleMutex locked, which would be prone

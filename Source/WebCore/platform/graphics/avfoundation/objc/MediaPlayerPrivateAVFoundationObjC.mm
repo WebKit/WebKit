@@ -1440,16 +1440,11 @@ void MediaPlayerPrivateAVFoundationObjC::didEnd(double now)
     MediaPlayerPrivateAVFoundation::didEnd(now);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::platformPageIsVisibleChanged(bool)
+void MediaPlayerPrivateAVFoundationObjC::platformIsVisibleChanged(bool)
 {
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
 #endif
-    updateLayerAttachment();
-}
-
-void MediaPlayerPrivateAVFoundationObjC::platformViewportVisibilityChanged(ViewportVisibility)
-{
     updateLayerAttachment();
 }
 
@@ -4161,7 +4156,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
         RetainPtr experience = createSpatialAudioExperienceWithOptions({
             .hasLayer = !!m_videoLayer,
             .hasTarget = !!m_videoTarget,
-            .isVisible = pageIsVisible(),
+            .isVisible = isVisible(),
             .soundStageSize = player->soundStageSize(),
             .sceneIdentifier = player->sceneIdentifier(),
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -4184,7 +4179,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
         return;
     }
 
-    if (m_videoLayer && pageIsVisible()) {
+    if (m_videoLayer && isVisible()) {
         // If the media player has a renderer, and that renderer belongs to a page that is visible,
         // then let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
         ALWAYS_LOG(LOGIDENTIFIER, "No videoLayer, set STSLabel: nil");
@@ -4325,13 +4320,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldAttachLayerToPlayer()
         return false;
 #endif
 
-    if (!pageIsVisible())
-        return false;
-
-    if (viewportVisibility() == ViewportVisibility::NotVisible)
-        return false;
-
-    return true;
+    return isVisible();
 }
 
 #if PLATFORM(MAC)
