@@ -291,7 +291,6 @@ public:
     JS_EXPORT_PRIVATE JSGlobalObject* NODELETE deprecatedVMEntryGlobalObject(JSGlobalObject*) const;
 
     WeakRandom& random() LIFETIME_BOUND { return m_random; }
-    WeakRandom& heapRandom() LIFETIME_BOUND { return m_heapRandom; }
     Integrity::Random& integrityRandom() LIFETIME_BOUND { return m_integrityRandom; }
 
     template<typename Type, typename Functor>
@@ -428,7 +427,6 @@ private:
     const Ref<WTF::RunLoop> m_runLoop;
 
     WeakRandom m_random;
-    WeakRandom m_heapRandom;
     Integrity::Random m_integrityRandom;
 
     bool hasEntryScopeServiceRequest(EntryScopeService service)

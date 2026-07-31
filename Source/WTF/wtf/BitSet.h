@@ -86,6 +86,11 @@ public:
 
     constexpr size_t findBit(size_t startIndex, bool value) const;
 
+    // strideMask(k): a WordType with bits set at 0, k, 2k, ... < wordSize.
+    // Compute once and pass into findBitInStride in hot code paths.
+    static constexpr WordType strideMask(unsigned stride);
+    constexpr size_t findBitInStride(size_t startIndex, bool value, unsigned stride, WordType strideMask) const;
+
     class iterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
@@ -437,11 +442,47 @@ inline constexpr size_t BitSet<bitSetSize, WordType>::findBit(size_t startIndex,
             if (findBitInWord(word, index, wordSize, value))
                 return wordIndex * wordSize + index;
         }
-        
+
         wordIndex++;
         startIndexInWord = 0;
     }
-    
+
+    return bitSetSize;
+}
+
+// WordType with bits set at 0, stride, 2*stride, ... < wordSize.
+template<size_t bitSetSize, typename WordType>
+inline constexpr WordType BitSet<bitSetSize, WordType>::strideMask(unsigned stride)
+{
+    ASSERT(stride >= 1);
+    WordType mask = 0;
+    for (unsigned i = 0; i < wordSize; i += stride)
+        mask |= one << i;
+    return mask;
+}
+
+// Find the smallest i in [startIndex, bitSetSize) such that (i - startIndex) is a
+// multiple of stride and get(i) == value. Returns bitSetSize if none is found.
+// Callers cache mask to avoid recomputing on every call.
+template<size_t bitSetSize, typename WordType>
+inline constexpr size_t BitSet<bitSetSize, WordType>::findBitInStride(size_t startIndex, bool value, unsigned stride, WordType mask) const
+{
+    ASSERT(stride >= 1);
+    ASSERT(mask == strideMask(stride));
+
+    while (startIndex < bitSetSize) {
+        unsigned wordIndex = startIndex / wordSize;
+        unsigned bitIndex = startIndex % wordSize;
+        WordType word = bits[wordIndex];
+        WordType candidates = (value ? word : ~word) & (mask << bitIndex);
+        if (candidates) {
+            unsigned leadingZeros = ctz(candidates);
+            return wordIndex * wordSize + leadingZeros;
+        }
+        // Skip forward past every stride-aligned position in the remainder of this word.
+        unsigned bitsRemaining = wordSize - bitIndex;
+        startIndex += ((bitsRemaining + stride - 1) / stride) * stride;
+    }
     return bitSetSize;
 }
 

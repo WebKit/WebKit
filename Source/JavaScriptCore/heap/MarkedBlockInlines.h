@@ -260,7 +260,6 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     VM& vm = this->vm();
     bool isMarking = space()->isMarking();
-    uint64_t secret = vm.heapRandom().getUint64();
 
     auto destroy = [&] (void* cell) {
         JSCell* jsCell = static_cast<JSCell*>(cell);
@@ -313,9 +312,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         if (sweepMode == SweepToFreeList) {
             if (scribbleMode == Scribble) [[unlikely]]
                 scribble(payloadBegin, payloadEnd - payloadBegin);
-            FreeCell* interval = reinterpret_cast_ptr<FreeCell*>(payloadBegin);
-            interval->makeLast(payloadEnd - payloadBegin, secret);
-            freeList->initialize(interval, secret, payloadEnd - payloadBegin);
+            freeList->initializeEmpty(payloadBegin, payloadEnd);
         }
         dataLogLnIf(verbose, "Quickly swept block ", RawPointer(this), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), " isMarking: ", isMarking, " sweepMode: ", sweepMode);
         return;
@@ -344,49 +341,39 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     auto sweepBlock = [&]<bool needsDestruction>() ALWAYS_INLINE_LAMBDA {
         size_t freedBytes = 0;
-        FreeCell* head = nullptr;
-        FreeCell* cursor = nullptr;
-        size_t cursorIntervalBytes = 0;
-        auto pushInterval = [&](FreeCell* cell, size_t intervalBytes) {
-            if constexpr (needsDestruction) {
-                for (char* target = std::bit_cast<char*>(cell); target < (std::bit_cast<char*>(cell) + intervalBytes); target += cellSize)
-                    destroy(target);
-            }
+        if (needsDestruction || (sweepMode == SweepToFreeList && scribbleMode == Scribble)) {
+            auto pushInterval = [&](char* cell, size_t intervalBytes) {
+                if constexpr (needsDestruction) {
+                    for (char* target = cell; target < (cell + intervalBytes); target += cellSize)
+                        destroy(target);
+                }
 
-            if (sweepMode == SweepToFreeList) {
-                if (scribbleMode == Scribble) [[unlikely]]
-                    scribble(cell, intervalBytes);
+                if (sweepMode == SweepToFreeList) {
+                    if (scribbleMode == Scribble) [[unlikely]]
+                        scribble(cell, intervalBytes);
+                    freedBytes += intervalBytes;
+                }
+            };
 
-                if (!head)
-                    head = cell;
-
-                if (cursor) [[likely]]
-                    cursor->setNext(cell, cursorIntervalBytes, secret);
-
-                cursor = cell;
-                cursorIntervalBytes = intervalBytes;
-                freedBytes += intervalBytes;
-            }
-        };
-
-        unsigned potentiallyFreeCell = m_startAtom;
-        auto handleLiveCell = [&](unsigned index) {
-            ASSERT(!((index - m_startAtom) % m_atomsPerCell));
-            if (potentiallyFreeCell != index) {
-                FreeCell* cell = std::bit_cast<FreeCell*>(&block.atoms()[potentiallyFreeCell]);
-                pushInterval(cell, (index - potentiallyFreeCell) * atomSize);
-            }
-            potentiallyFreeCell = index + m_atomsPerCell;
-        };
-        live.forEachSetBit([&](unsigned index) {
-            handleLiveCell(index);
-        });
-        handleLiveCell(endAtom);
+            unsigned potentiallyFreeCell = m_startAtom;
+            auto handleLiveCell = [&](unsigned index) {
+                ASSERT(!((index - m_startAtom) % m_atomsPerCell));
+                if (potentiallyFreeCell != index) {
+                    char* cell = std::bit_cast<char*>(&block.atoms()[potentiallyFreeCell]);
+                    pushInterval(cell, (index - potentiallyFreeCell) * atomSize);
+                }
+                potentiallyFreeCell = index + m_atomsPerCell;
+            };
+            live.forEachSetBit([&](unsigned index) {
+                handleLiveCell(index);
+            });
+            handleLiveCell(endAtom);
+        }
 
         if (sweepMode == SweepToFreeList) {
-            if (cursor)
-                cursor->makeLast(cursorIntervalBytes, secret);
-            freeList->initialize(head, secret, freedBytes);
+            if (!(needsDestruction || (sweepMode == SweepToFreeList && scribbleMode == Scribble)))
+                freedBytes = (MarkedBlock::endAtom - m_startAtom) * MarkedBlock::atomSize - live.count() * cellSize;
+            freeList->initialize(this, live, m_startAtom, freedBytes);
         }
     };
 

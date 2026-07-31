@@ -118,7 +118,7 @@ void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
     m_directory->didFinishUsingBlock(this);
 }
 
-void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
+void MarkedBlock::Handle::stopAllocating(FreeList& freeList)
 {
     Locker locker { blockHeader().m_lock };
     
@@ -152,7 +152,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
             return IterationStatus::Continue;
         });
 
-    freeList.forEach(
+    freeList.consumeRemaining(
         [&] (HeapCell* cell) {
             if constexpr (MarkedBlockInternal::verbose)
                 dataLog("Free cell: ", RawPointer(cell), "\n");
