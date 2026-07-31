@@ -1981,6 +1981,12 @@ public:
                     error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition, currentCallFrameSize);
                     if (hasError(error))
                         return error;
+                    // The JIT saves this group's interior frame slots [base+4, m_callFrameSize) into a
+                    // ParenContext using indices relative to base+4, so the saved-frame area only needs to
+                    // hold the max size across all repeating groups.
+                    unsigned innerFrameBase = term.frameLocation + YarrStackSpaceForBackTrackInfoParentheses;
+                    ASSERT(term.parentheses.disjunction->m_callFrameSize >= innerFrameBase);
+                    m_pattern.m_maxParenContextFrameSize = std::max(m_pattern.m_maxParenContextFrameSize, term.parentheses.disjunction->m_callFrameSize - innerFrameBase);
                 }
                 // Fixed count of 1 could be accepted, if they have a fixed size *AND* if all alternatives are of the same length.
                 alternative->m_hasFixedSize = false;
