@@ -16,9 +16,9 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkTextBlob.h"
 #include "include/core/SkTypeface.h"
-#include "include/private/base/SkTemplates.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkTemplates.h"
 #include "src/core/SkFontPriv.h"
+#include "src/core/SkRandom.h"
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 

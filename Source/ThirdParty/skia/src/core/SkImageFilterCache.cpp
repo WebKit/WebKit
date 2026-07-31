@@ -7,14 +7,14 @@
 
 #include "src/core/SkImageFilterCache.h"
 
-#include "include/private/base/SkMutex.h"
-#include "include/private/base/SkOnce.h"
-#include "src/base/SkTInternalLList.h"
+#include "include/private/SkMutex.h"
+#include "include/private/SkOnce.h"
 #include "src/core/SkChecksum.h"
 #include "src/core/SkImageFilterTypes.h"
 #include "src/core/SkSpecialImage.h"
 #include "src/core/SkTDynamicHash.h"
 #include "src/core/SkTHash.h"
+#include "src/core/SkTInternalLList.h"
 
 #include <vector>
 

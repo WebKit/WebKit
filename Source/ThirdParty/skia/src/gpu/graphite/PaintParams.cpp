@@ -202,6 +202,15 @@ SkColor4f PaintParams::Color4fPrepForDst(SkColor4f srcColor, const SkColorInfo& 
     return result;
 }
 
+#if defined(SK_DEBUG)
+PaintParams PaintParams::MakeOpaque(const PaintParams& paint) {
+    PaintParams opaque = paint;
+    opaque.fFinalBlend = {nullptr, SkBlendMode::kSrc};
+    opaque.fColor = opaque.fColor.makeOpaque();
+    return opaque;
+}
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 ShadingParams::ShadingParams(const Caps* caps,
@@ -369,6 +378,7 @@ bool ShadingParams::handleDithering(const KeyContext& keyContext) const {
 
 void ShadingParams::handleClipping(const KeyContext& keyContext) const {
     if (!fNonMSAAClip.isEmpty()) {
+#if defined(SK_GRAPHITE_USE_LEGACY_RRECT_CLIP_SHADER)
         const AnalyticClip& analyticClip = fNonMSAAClip.fAnalyticClip;
         SkPoint radiusPair;
         SkRect analyticBounds;
@@ -418,6 +428,25 @@ void ShadingParams::handleClipping(const KeyContext& keyContext) const {
             // Without a clip shader, the analytic clip can be the clipping root node.
             NonMSAAClipBlock::AddBlock(keyContext, data);
         }
+#else
+        if (fClipShader) {
+            // For both an analytic clip and clip shader, we need to compose them together into
+            // a single clipping root node.
+            Blend(keyContext,
+                  /* addBlendToKey= */ [&]() -> void {
+                      AddFixedBlendMode(keyContext, SkBlendMode::kModulate);
+                  },
+                  /* addSrcToKey= */ [&]() -> void {
+                      AddAnalyticClip(keyContext, fNonMSAAClip);
+                  },
+                  /* addDstToKey= */ [&]() -> void {
+                      AddToKey(keyContext, fClipShader);
+                  });
+        } else {
+            // Without a clip shader, the analytic clip can be the clipping root node.
+            AddAnalyticClip(keyContext, fNonMSAAClip);
+        }
+#endif // SK_GRAPHITE_USE_LEGACY_RRECT_CLIP_SHADER
     } else if (fClipShader) {
         // Since there's no analytic clip, the clipping root node can be fClipShader directly.
         AddToKey(keyContext, fClipShader);
@@ -428,7 +457,7 @@ std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyC
     SkDEBUGCODE(keyContext.pipelineDataGatherer()->checkReset());
     SkDEBUGCODE(keyContext.paintParamsKeyBuilder()->checkReset());
     SkDEBUGCODE(const Caps* caps = keyContext.caps();)
-    SkDEBUGCODE(TextureFormat targetFormat = keyContext.drawContext()->target().proxy()->format();)
+    SkDEBUGCODE(TextureFormat format = keyContext.drawContext()->target().proxy()->format();)
     SkDEBUGCODE(bool paintDependsOnDst = true;)
 
     // Root Node 0 is the source color, which is the output of all effects post dithering
@@ -448,19 +477,36 @@ std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyC
         // need blending or only need blending due to the renderer (e.g. inner fill eligible), then
         // try to keep the final blend snippet as Src when it wouldn't impact the rendering.
         const bool optimizeSrcBlend =
-                (dstUsage == DstUsage::kNone || dstUsage == DstUsage::kDstOnlyUsedByRenderer) &&
+                (dstUsage == DstUsage::kNone ||
+                        SkToBool(dstUsage & DstUsage::kDstOnlyUsedByRenderer)) &&
                 SkToBool(keyContext.flags() & KeyGenFlags::kPreferFixedSrcBlend);
 
         // fDstUsage was almost fully specified, except for kSrcOver, which was assumed to be
-        // opaque. If we're src over and not opaque, we have to adjust flags.
-        if (finalBlendMode == SkBlendMode::kSrcOver && !isOpaque) {
-            dstUsage &= ~DstUsage::kDstOnlyUsedByRenderer;
-            dstUsage |= DstUsage::kDependsOnDst;
+        // opaque and eligible for conversion to kSrc. If we're src over and not opaque, or not
+        // eligible for reducing to kSrc, we have to adjust flags.
+        if (finalBlendMode == SkBlendMode::kSrcOver) {
+            if (isOpaque) {
+                if (dstUsage == DstUsage::kNone && optimizeSrcBlend) {
+                    // We can change the blend mode here without re-checking
+                    // CanUseHardwareBlending() because DstUsage::kNone implies there's no analytic
+                    // coverage and we're just changing from one Porter-Duff blend mode to another.
+                    SkASSERT(CanUseHardwareBlending(caps, format, SkBlendMode::kSrc, fCoverage));
+                    finalBlendMode = SkBlendMode::kSrc;
+                } else {
+                    // We don't have to remove kDstOnlyUsedByRenderer, but since we aren't
+                    // optimizing to Src, add the optimistically avoided kDependsOnDst
+                    dstUsage |= DstUsage::kDependsOnDst;
+                }
+            } else {
+                // Definitely not eligible for conversion to kSrc, remove optimistically added flag
+                dstUsage &= ~DstUsage::kDstOnlyUsedByRenderer;
+                dstUsage |= DstUsage::kDependsOnDst;
+            }
         }
 
-        SkDEBUGCODE(paintDependsOnDst =
-                    !(finalBlendMode == SkBlendMode::kSrc ||
-                     (finalBlendMode == SkBlendMode::kSrcOver && isOpaque)));
+        SkDEBUGCODE(paintDependsOnDst = finalBlendMode != SkBlendMode::kSrc;)
+        // Reset isOpaque to false if we aren't src-over to ensure later assert logic is narrow.
+        SkDEBUGCODE(isOpaque &= finalBlendMode == SkBlendMode::kSrcOver;)
         if (!(dstUsage & DstUsage::kDstReadRequired) ||
             (finalBlendMode == SkBlendMode::kSrc && optimizeSrcBlend)) {
             // With no shader blending, be as explicit as possible about the final blend. We also
@@ -491,11 +537,14 @@ std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyC
                                               fCoverage != Coverage::kNone));
 
     // If kDstOnlyUsedByRenderer is set, the paint shouldn't depend on the dst and the dst usage
-    // when the Renderer has Coverage::kNone should equal kNone
+    // when the Renderer has Coverage::kNone should equal kNone.
     SkDEBUGCODE(auto dstUsageNoCoverage =
-            get_dst_usage(caps, targetFormat, fPaint, Coverage::kNone, fClipShader, fNonMSAAClip);)
+            get_dst_usage(caps, format, fPaint, Coverage::kNone, fClipShader, fNonMSAAClip);)
+    // This checks isOpaque in addition to !paintDependsOnDst to handle the case where src-over +
+    // opaque wasn't converted to src for *this* pipeline but remains kDstOnlyUsedByRenderer for
+    // a possible inner fill.
     SkASSERT(!(dstUsage & DstUsage::kDstOnlyUsedByRenderer) ||
-             (!paintDependsOnDst && dstUsageNoCoverage == DstUsage::kNone));
+             ((isOpaque || !paintDependsOnDst) && dstUsageNoCoverage == DstUsage::kNone));
     UniquePaintParamsID paintID =
             keyContext.recorder()->priv().shaderCodeDictionary()->findOrCreate(
                     keyContext.paintParamsKeyBuilder());
@@ -505,5 +554,87 @@ std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyC
         return Result{paintID, dstUsage};
     }
 }
+
+UniquePaintParamsID ShadingParams::optimizeForOpacity(const KeyContext& keyContext,
+                                                      UniquePaintParamsID origPaint) const {
+    // The builder should be starting from exactly the same state toKey() ended in.
+    PaintParamsKeyBuilder* builder = keyContext.paintParamsKeyBuilder();
+    SkASSERT(*builder == keyContext.recorder()->priv().shaderCodeDictionary()->lookup(origPaint));
+
+    // We only support optimizing opacity when our dst usage is none and the final blend mode can
+    // be switched to kSrc. This requires that there is no analytic clipping that adds a 3rd render
+    // node, or an SkBlender that may have child blocks. With these conditions, we can simply
+    // replace the last block ID with kSrc.
+    //
+    // Assuming the originally generated key returned kNone or kDstOnlyUsedByRenderer, these
+    // requirements should be met. If these assumptions are violated, it'll be detected in
+    // debug-only builds that regenerate the opaque coverage-less PaintParams from scratch.
+    BuiltInCodeSnippetID oldID = builder->replaceLastBlock(BuiltInCodeSnippetID::kFixedBlend_Src);
+    // We should only be calling into optimizeForOpacity for src and src-over blends
+    SkASSERT(oldID == BuiltInCodeSnippetID::kFixedBlend_Src ||
+             oldID == BuiltInCodeSnippetID::kFixedBlend_SrcOver);
+    // And if we are already kSrc, the opaque paint ID is the original ID so skip lookup
+    if (oldID == BuiltInCodeSnippetID::kFixedBlend_Src) {
+        return origPaint;
+    }
+
+    // NOTE: If we choose to include paint-alpha multiplication in pipelines by default to avoid
+    // 2x combinations just because the SkPaint changed from 1 to anything else, we could include
+    // removing the paint alpha multiplication as part of this rewriting if we restructure paint
+    // alpha handling to maintain an equivalent ShaderNode structure while just eliding the multiply
+
+    UniquePaintParamsID opaqueID =
+            keyContext.recorder()->priv().shaderCodeDictionary()->findOrCreate(builder);
+    SkASSERT(opaqueID == this->validateOpacityOptimization(keyContext));
+    return opaqueID;
+}
+
+#if defined(SK_DEBUG)
+
+UniquePaintParamsID ShadingParams::validateOpacityOptimization(const KeyContext& keyContext) const {
+    // Validate that the modified paint ID matches what we would have reached with a ShadingParams
+    // and PaintParams adjusted to use kSrc blending and have no renderer coverage. These extracted
+    // uniforms should match what was originally extracted as well.
+    PaintParams opaquePaint = PaintParams::MakeOpaque(fPaint);
+    NonMSAAClip emptyClip{};
+    ShadingParams opaqueShading{keyContext.recorder()->priv().caps(),
+                                opaquePaint,
+                                /*nonMSAAClip=*/emptyClip,
+                                /*clipShader=*/nullptr,
+                                Coverage::kNone,
+                                keyContext.targetFormat()};
+
+    // Create a new KeyContext that writes to a different key builder and pipeline data gatherer.
+    // We have to use the original FloatStorageManager since its global state impacts the other
+    // extracted uniforms, but everything will be a cache hit in the second call to toKey(), so it
+    // shouldn't change size.
+    const int fsmSize = keyContext.floatStorageManager()->size();
+
+    const Layout layout = keyContext.pipelineDataGatherer()->uniformManager()->layout();
+    PaintParamsKeyBuilder opaqueBuilder{keyContext.dict()};
+    PipelineDataGatherer opaqueGatherer{layout};
+    KeyContext opaqueContext{keyContext.recorder(),
+                             keyContext.drawContext(),
+                             keyContext.floatStorageManager(),
+                             &opaqueBuilder,
+                             &opaqueGatherer,
+                             keyContext.local2Dev(),
+                             keyContext.clipDrawBounds(),
+                             keyContext.dstColorInfo(),
+                             keyContext.flags(),
+                             opaqueShading.fPaint.color()};
+
+    auto result = opaqueShading.toKey(opaqueContext);
+    SkASSERT(result.has_value());
+
+    auto [actualOpaqueID, actualDstUsage] = *result;
+    SkASSERT(actualDstUsage == DstUsage::kNone);
+    opaqueGatherer.checkEquivalent(keyContext.pipelineDataGatherer());
+    SkASSERT(keyContext.floatStorageManager()->size() == fsmSize);
+
+    return actualOpaqueID;
+}
+
+#endif
 
 } // namespace skgpu::graphite

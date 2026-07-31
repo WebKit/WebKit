@@ -10,10 +10,10 @@
 
 #include "include/core/SkRect.h"
 #include "include/core/SkScalar.h"
-#include "include/private/base/SkAttributes.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "src/base/SkUtils.h"
-#include "src/base/SkVx.h"
+#include "include/private/SkAttributes.h"
+#include "include/private/SkFloatingPoint.h"
+#include "src/core/SkUtils.h"
+#include "src/core/SkVx.h"
 
 namespace skgpu::graphite {
 

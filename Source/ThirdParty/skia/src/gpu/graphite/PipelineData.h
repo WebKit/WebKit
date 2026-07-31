@@ -14,8 +14,8 @@
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkSpan.h"
 #include "include/core/SkTileMode.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkArenaAlloc.h"
+#include "include/private/SkTDArray.h"
+#include "src/core/SkArenaAlloc.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkTHash.h"
 #include "src/gpu/graphite/BufferManager.h"
@@ -370,6 +370,27 @@ public:
     void checkRewind() const {
         SkASSERT(fTextures.size() == fPaintTextureCount);
     }
+
+    void checkEquivalent(const PipelineDataGatherer* other) const {
+        // We don't call finish() here because we don't want to modify any of the required
+        // alignment and offsets that UniformManager is tracking for being able to rewind and
+        // be combined with RenderStep data.
+        SkASSERT(fUniformManager.fStorage == other->fUniformManager.fStorage);
+
+        // We don't check textures for exact equality because picture shaders and
+        // non-Graphite-backed images could generate new proxies from the second call to toKey()
+        // depending on the ImageProvider implementation. As long as their properties and samplers
+        // are the same, we consider them equivalent.
+        SkASSERT(fTextures.size() == other->fTextures.size());
+        for (int t = 0; t < fTextures.size(); ++t) {
+            auto [tex, sampler] = fTextures[t];
+            auto [oTex, oSampler] = other->fTextures[t];
+
+            SkASSERT(tex->dimensions() == oTex->dimensions());
+            SkASSERT(tex->textureInfo() == oTex->textureInfo());
+            SkASSERT(sampler == oSampler);
+        }
+    }
 #endif // SK_DEBUG
 
     // If a renderstep performs shading, then alignment should occur on the combined
@@ -481,6 +502,8 @@ class FloatStorageManager : public SkRefCnt {
                         <= (uint32_t) std::numeric_limits<int>::max());
 public:
     FloatStorageManager() { this->reset(); }
+
+    int size() const { return fGradientStorage.size(); }
 
     void reset() {
         // Remove the manually added refs on the keys in fGradientOffsetCache

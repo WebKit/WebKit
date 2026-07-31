@@ -78,8 +78,7 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(BufferManagerStaleAllocatorTest, report
     // Keep a reference to the buffer to prevent reuse false positives.
     sk_sp<const Buffer> rawBuffer;
     {
-        auto [writer, binding, allocator] =
-                dbm->getMappedUniformBuffer(/*stride=*/16, /*headroom=*/16);
+        auto [writer, binding, allocator] = dbm->getMappedIndexBuffer(/*count=*/16);
         REPORTER_ASSERT(reporter, allocator.isValid());
         rawBuffer = sk_ref_sp(binding.fBuffer);
         REPORTER_ASSERT(reporter, rawBuffer != nullptr);
@@ -102,8 +101,7 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(BufferManagerStaleAllocatorTest, report
     recorder->setMaxBudgetedBytes(originalBudget); // probably unnecessary but safe
 
     // Get another allocator
-    auto [staleWriter, staleBinding, staleAllocator] =
-            dbm->getMappedUniformBuffer(/*stride=*/16, /*headroom=*/16);
+    auto [staleWriter, staleBinding, staleAllocator] = dbm->getMappedIndexBuffer(/*count=*/16);
     REPORTER_ASSERT(reporter, staleAllocator.isValid());
 
     // The buffer should not be the same as rawBuffer
@@ -114,4 +112,3 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(BufferManagerStaleAllocatorTest, report
 }
 
 }  // namespace skgpu::graphite
-

@@ -19,7 +19,7 @@
 #include "include/core/SkYUVAPixmaps.h"
 #include "include/private/SkEncodedInfo.h"
 #include "include/private/SkHdrMetadata.h"
-#include "include/private/base/SkNoncopyable.h"
+#include "include/private/SkNoncopyable.h"
 #include "modules/skcms/skcms.h"
 
 #include <cstddef>
@@ -1129,7 +1129,7 @@ private:
     friend class PNGCodecGM;    // for fillIncompleteImage
     friend class SkSampledCodec;
     friend class SkIcoCodec;
-    friend class SkPngCodec;     // for onGetGainmapCodec
+    friend class SkPngCodecBase;  // for onGetGainmapCodec
     friend class SkAndroidCodec;  // for handleFrameIndex
     friend class SkCodecPriv;     // for fEncodedInfo
 };

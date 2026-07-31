@@ -6,8 +6,8 @@
  */
 
 #include "include/core/SkSurface.h"
-#include "include/private/base/SkLog.h"
-#include "src/base/SkAutoMalloc.h"
+#include "include/private/SkLog.h"
+#include "src/core/SkAutoMalloc.h"
 #include "tools/window/RasterWindowContext.h"
 #include "tools/window/win/WindowContextFactory_win.h"
 

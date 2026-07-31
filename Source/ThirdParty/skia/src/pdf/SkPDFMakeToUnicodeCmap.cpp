@@ -9,8 +9,8 @@
 
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkUTF.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkUTF.h"
 #include "src/pdf/SkPDFGlyphUse.h"
 #include "src/pdf/SkPDFUtils.h"
 

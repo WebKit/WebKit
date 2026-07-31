@@ -25,10 +25,10 @@
 #if defined(SK_TYPEFACE_FACTORY_FREETYPE)
 #include "include/ports/SkFontScanner_FreeType.h"
 #endif
-#include "include/private/base/SkMutex.h"
+#include "include/private/SkMutex.h"
 #include "include/utils/SkCustomTypeface.h"
-#include "src/base/SkUTF.h"
 #include "src/core/SkOSFile.h"
+#include "src/core/SkUTF.h"
 #include "tools/Resources.h"
 #include "tools/flags/CommandLineFlags.h"
 #include "tools/fonts/TestFontMgr.h"

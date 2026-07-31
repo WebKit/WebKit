@@ -12,6 +12,7 @@
 #include "include/core/SkPaint.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkPixmap.h"
+#include "include/core/SkPoint.h"
 #include "include/core/SkPoint3.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
@@ -19,14 +20,13 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkString.h"
 #include "include/gpu/ganesh/GrRecordingContext.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkMalloc.h"
-#include "include/private/base/SkMath.h"
-#include "include/private/base/SkPoint_impl.h"
-#include "include/private/base/SkTArray.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkMalloc.h"
+#include "include/private/SkMath.h"
+#include "include/private/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
-#include "src/base/SkAutoMalloc.h"
+#include "src/core/SkAutoMalloc.h"
 #include "src/core/SkAutoPixmapStorage.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkDistanceFieldGen.h"
@@ -68,7 +68,7 @@
 #include "src/gpu/ganesh/ops/SmallPathShapeData.h"
 
 #if defined(GPU_TEST_UTILS)
-#include "src/base/SkRandom.h"
+#include "src/core/SkRandom.h"
 #include "src/gpu/ganesh/GrTestUtils.h"
 #endif
 
@@ -734,11 +734,24 @@ PathRenderer::CanDrawPath SmallPathRenderer::onCanDrawPath(const CanDrawPathArgs
         return CanDrawPath::kNo;
     }
 
+    const SkRect bounds = args.fShape->styledBounds();
+
     SkScalar scaleFactors[2] = { 1, 1 };
-    // TODO: handle perspective distortion
-    if (!args.fViewMatrix->hasPerspective() && !args.fViewMatrix->getMinMaxScales(scaleFactors)) {
-        return CanDrawPath::kNo;
+    if (args.fViewMatrix->hasPerspective()) {
+        if (bounds.isEmpty()) {
+            return CanDrawPath::kNo;
+        }
+        const SkRect xformedBounds = args.fViewMatrix->mapRect(bounds);
+        const float sx = xformedBounds.width()  / bounds.width(),
+                    sy = xformedBounds.height() / bounds.height();
+        scaleFactors[0] = std::min(sx, sy);
+        scaleFactors[1] = std::max(sx, sy);
+    } else {
+        if (!args.fViewMatrix->getMinMaxScales(scaleFactors)) {
+            return CanDrawPath::kNo;
+        }
     }
+
     // For affine transformations, too much shear can produce artifacts.
     if (!scaleFactors[0] || scaleFactors[1]/scaleFactors[0] > 4) {
         return CanDrawPath::kNo;
@@ -746,7 +759,6 @@ PathRenderer::CanDrawPath SmallPathRenderer::onCanDrawPath(const CanDrawPathArgs
     // Only support paths with bounds within kMaxDim by kMaxDim,
     // scaled to have bounds within kMaxSize by kMaxSize.
     // The goal is to accelerate rendering of lots of small paths that may be scaling.
-    SkRect bounds = args.fShape->styledBounds();
     SkScalar minDim = std::min(bounds.width(), bounds.height());
     SkScalar maxDim = std::max(bounds.width(), bounds.height());
     SkScalar minSize = minDim * SkScalarAbs(scaleFactors[0]);

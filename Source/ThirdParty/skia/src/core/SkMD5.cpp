@@ -13,11 +13,11 @@
 //SK_CPU_LENDIAN allows 32 bit <=> 8 bit conversions without copies (if alligned).
 //SK_CPU_FAST_UNALIGNED_ACCESS allows 32 bit <=> 8 bit conversions without copies if SK_CPU_LENDIAN.
 
-#include "src/base/SkUtils.h"
 #include "src/core/SkMD5.h"
+#include "src/core/SkUtils.h"
 
-#include "include/private/base/SkFeatures.h"
-#include "include/private/base/SkMalloc.h"
+#include "include/private/SkFeatures.h"
+#include "include/private/SkMalloc.h"
 
 /** MD5 basic transformation. Transforms state based on block. */
 static void transform(uint32_t state[4], const uint8_t block[64]);

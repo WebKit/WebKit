@@ -5,10 +5,10 @@
  * found in the LICENSE file.
  */
 
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkSpan_impl.h"
-#include "src/base/SkBezierCurves.h"
-#include "src/base/SkQuads.h"
+#include "include/core/SkSpan.h"
+#include "include/private/SkFloatingPoint.h"
+#include "src/core/SkBezierCurves.h"
+#include "src/core/SkQuads.h"
 #include "tests/Test.h"
 
 #include <algorithm>

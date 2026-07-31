@@ -10,11 +10,11 @@
 #include "include/core/SkFontMetrics.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
+#include "include/core/SkSpan.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkMutex.h"
-#include "include/private/base/SkSpan_impl.h"
-#include "include/private/base/SkThreadAnnotations.h"
-#include "src/base/SkArenaAlloc.h"
+#include "include/private/SkMutex.h"
+#include "include/private/SkThreadAnnotations.h"
+#include "src/core/SkArenaAlloc.h"
 #include "src/core/SkGlyph.h"
 #include "src/core/SkScalerContext.h"
 #include "src/core/SkStrikeSpec.h"
@@ -89,6 +89,13 @@ public:
 
     SkSpan<const SkGlyph*> metrics(
             SkSpan<const SkGlyphID> glyphIDs, const SkGlyph* results[]) SK_EXCLUDES(fStrikeLock);
+
+    void getWidthsStrided(unsigned count,
+                          const uint32_t* first_glyph,
+                          unsigned glyph_stride_32,
+                          SkScalar* first_advance,
+                          unsigned advance_stride_32,
+                          SkScalar scale) SK_EXCLUDES(fStrikeLock);
 
     SkSpan<const SkGlyph*> preparePaths(
             SkSpan<const SkGlyphID> glyphIDs, const SkGlyph* results[]) SK_EXCLUDES(fStrikeLock);

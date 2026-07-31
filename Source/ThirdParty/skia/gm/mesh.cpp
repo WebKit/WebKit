@@ -20,9 +20,9 @@
 #include "include/effects/SkGradient.h"
 #include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkMeshGanesh.h"
-#include "include/private/base/SkAssert.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkAssert.h"
 #include "src/core/SkCanvasPriv.h"
+#include "src/core/SkRandom.h"
 #include "tools/DecodeUtils.h"
 #include "tools/timer/TimeUtils.h"
 

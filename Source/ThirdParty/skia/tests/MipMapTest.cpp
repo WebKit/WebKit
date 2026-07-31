@@ -20,10 +20,10 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkMalloc.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkMalloc.h"
 #include "src/core/SkMipmap.h"
 #include "src/core/SkMipmapBuilder.h"
+#include "src/core/SkRandom.h"
 #include "tests/Test.h"
 #include "tools/DecodeUtils.h"
 

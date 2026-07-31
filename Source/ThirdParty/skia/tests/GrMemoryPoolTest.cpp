@@ -5,9 +5,9 @@
  * found in the LICENSE file.
  */
 
-#include "include/private/base/SkTArray.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkTArray.h"
+#include "include/private/SkTDArray.h"
+#include "src/core/SkRandom.h"
 #include "src/gpu/ganesh/GrMemoryPool.h"
 #include "tests/Test.h"
 

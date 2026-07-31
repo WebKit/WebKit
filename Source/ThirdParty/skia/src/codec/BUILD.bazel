@@ -84,7 +84,6 @@ skia_cc_library(
     ],
     deps = [
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
     ],
@@ -164,7 +163,6 @@ skia_cc_library(
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
     ],
@@ -199,7 +197,6 @@ skia_cc_library(
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
     ],
@@ -220,7 +217,6 @@ skia_cc_library(
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
         "@wuffs",
@@ -245,7 +241,6 @@ skia_cc_library(
     features = ["layering_check"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
         "//modules/skcms",
@@ -298,7 +293,6 @@ skia_cc_library(
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
         "@libjpeg_turbo",
@@ -324,16 +318,21 @@ skia_cc_library(
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
         "@libjxl",
     ],
 )
 
-PNG_CODEC_BASE_SRCS = ["SkPngCodecBase.cpp"]
+PNG_CODEC_BASE_SRCS = [
+    "SkPngCodecBase.cpp",
+    "SkPngCompositeChunkReader.cpp",
+]
 
-PNG_CODEC_BASE_HDRS = ["SkPngCodecBase.h"]
+PNG_CODEC_BASE_HDRS = [
+    "SkPngCodecBase.h",
+    "SkPngCompositeChunkReader.h",
+]
 
 skia_filegroup(
     name = "png_codec_base_srcs",
@@ -350,12 +349,12 @@ skia_cc_library(
     srcs = [":png_codec_base_srcs"],
     hdrs = PNG_CODEC_BASE_HDRS + [
         "//include/codec:any_codec_hdrs",
+        "//include/codec:png_public_hdrs",
     ],
     features = ["layering_check"],
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
     ],
@@ -363,12 +362,10 @@ skia_cc_library(
 
 BUFFET_LIBPNG_HDRS = [
     "SkPngCodec.h",
-    "SkPngCompositeChunkReader.h",
 ]
 
 BUFFET_LIBPNG_SRCS = [
     "SkPngCodec.cpp",
-    "SkPngCompositeChunkReader.cpp",
 ]
 
 skia_filegroup(
@@ -376,11 +373,11 @@ skia_filegroup(
     srcs = BUFFET_LIBPNG_SRCS + BUFFET_LIBPNG_HDRS,
 )
 
-COMMON_LIBPNG_HDRS = ["SkPngPriv.h"]
+COMMON_PNG_HDRS = ["SkPngPriv.h"]
 
 skia_filegroup(
-    name = "common_libpng_srcs",
-    srcs = COMMON_LIBPNG_HDRS,
+    name = "common_png_srcs",
+    srcs = COMMON_PNG_HDRS,
     visibility = ["//src/encode:__pkg__"],
 )
 
@@ -388,7 +385,7 @@ skia_cc_library(
     name = "png_decode",
     srcs = [
         ":buffet_libpng_srcs",
-        ":common_libpng_srcs",
+        ":common_png_srcs",
     ],
     hdrs = [
         "//include/codec:any_codec_hdrs",
@@ -404,7 +401,6 @@ skia_cc_library(
         ":any_decoder",
         ":png_codec_base",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
         "@libpng",
@@ -423,10 +419,16 @@ skia_filegroup(
 skia_cc_library(
     name = "rust_png_decoder",
     srcs = [
+        ":common_png_srcs",
         ":rust_png_srcs",
     ],
     hdrs = ["//include/codec:rust_png_public_hdrs"],
-    defines = ["SK_CODEC_DECODES_PNG_WITH_RUST"],
+    defines = [
+        "SK_CODEC_DECODES_PNG_WITH_RUST",
+    ] + select({
+        "//rust/png:use_unknown_chunks_true": ["SK_CODEC_DECODES_PNG_WITH_RUST_UNKNOWN_CHUNKS"],
+        "//conditions:default": [],
+    }),
     features = ["layering_check"],
     visibility = ["//:__pkg__"],
     deps = [
@@ -437,7 +439,6 @@ skia_cc_library(
         "//rust/common:ffi_utils",
         "//rust/png:cxx_bridge",
         "//rust/png:ffi_cpp",
-        "//src/base",
         "//src/core:core_priv",
         "@crates//:cxx_cc",
     ],
@@ -469,7 +470,6 @@ skia_cc_library(
         ":any_decoder",
         ":bmp_decode",  # Avoid ODR violations by not duplicating .cpp files
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
     ],
@@ -492,7 +492,6 @@ skia_cc_library(
     deps = [
         ":any_decoder",
         "//modules/skcms",
-        "//src/base",
         "//src/core",
         "//src/core:core_priv",
         "@libwebp",
@@ -527,7 +526,7 @@ generate_cpp_files_for_headers(
               JPEGXL_DECODE_HDRS +
               PNG_CODEC_BASE_HDRS +
               BUFFET_LIBPNG_HDRS +
-              COMMON_LIBPNG_HDRS +
+              COMMON_PNG_HDRS +
               WBMP_DECODE_HDRS +
               WEBP_DECODE_HDRS + [
         "SkAvifCodec.h",

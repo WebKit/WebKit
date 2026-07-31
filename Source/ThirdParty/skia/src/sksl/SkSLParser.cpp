@@ -8,11 +8,12 @@
 #include "src/sksl/SkSLParser.h"
 
 #include "include/core/SkSpan.h"
-#include "include/private/base/SkTArray.h"
+#include "include/private/SkEnumBitMask.h"
+#include "include/private/SkTArray.h"
 #include "include/sksl/SkSLVersion.h"
-#include "src/base/SkEnumBitMask.h"
-#include "src/base/SkNoDestructor.h"
+#include "src/core/SkNoDestructor.h"
 #include "src/core/SkTHash.h"
+#include "src/partition_alloc/raw_ptr.h"
 #include "src/sksl/SkSLBuiltinTypes.h"
 #include "src/sksl/SkSLCompiler.h"
 #include "src/sksl/SkSLConstantFolder.h"
@@ -121,7 +122,7 @@ public:
     }
 
 private:
-    Parser* fParser;
+    raw_ptr<Parser> fParser;
     int fDepth;
 };
 

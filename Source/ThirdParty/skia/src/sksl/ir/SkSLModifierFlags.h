@@ -8,8 +8,8 @@
 #ifndef SKSL_MODIFIERFLAGS
 #define SKSL_MODIFIERFLAGS
 
-#include "include/private/base/SkTo.h"
-#include "src/base/SkEnumBitMask.h"
+#include "include/private/SkEnumBitMask.h"
+#include "include/private/SkTo.h"
 
 #include <string>
 

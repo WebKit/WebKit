@@ -838,7 +838,6 @@ func (b *TaskBuilder) swarmDimensions() {
 var androidDeviceInfos = map[string][]string{
 	"AndroidOne":      {"sprout", "MOB30Q"},
 	"GalaxyS7_G930FD": {"herolte", "R16NW"}, // This is Oreo.
-	"GalaxyS9":        {"exynos9810", "QP1A.190711.020"},
 	"GalaxyS20":       {"exynos990", "QP1A.190711.020"},
 	"GalaxyS24":       {"pineapple", "UP1A.231005.007"},
 	"GalaxyS25Plus":   {"sun", "BP2A.250605.031.A3"},
@@ -847,7 +846,6 @@ var androidDeviceInfos = map[string][]string{
 	"MokeyGo32":       {"mokey_go32", "UQ1A.240105.003.A1"},
 	"MotoG73":         {"devonf", "U1TN34.82-12-17"},
 	"Nexus5":          {"hammerhead", "M4B30Z_3437181"},
-	"Nexus7":          {"grouper", "LMY47V"}, // 2012 Nexus 7
 	"P30":             {"HWELE", "HUAWEIELE-L29"},
 	"Pixel3a":         {"sargo", "QP1A.190711.020"},
 	"Pixel4":          {"flame", "RPB2.200611.009"}, // R Preview
@@ -858,7 +856,6 @@ var androidDeviceInfos = map[string][]string{
 	"Pixel7":          {"panther", "AP4A.241205.013"},
 	"Pixel7Pro":       {"cheetah", "TD1A.221105.002"},
 	"Pixel9":          {"tokay", "AP4A.241205.013"},
-	"Pixel10":         {"frankel", "BP41.250916.012.A1"},
 	"TecnoSpark3Pro":  {"TECNO-KB8", "PPR1.180610.011"},
 	"Wembley":         {"wembley", "SP2A.220505.008"},
 }
@@ -881,7 +878,7 @@ func (b *TaskBuilder) defaultSwarmDimensions() {
 			"Mac11":       "Mac-11",
 			"Mac12":       "Mac-12",
 			"Mac13":       "Mac-13",
-			"Mac14":       "Mac-14.7",
+			"Mac14":       "Mac-14.8",
 			"Mac15":       "Mac-15.7",
 			"Mokey":       "Android",
 			"MokeyGo32":   "Android",
@@ -1119,7 +1116,7 @@ func (b *TaskBuilder) defaultSwarmDimensions() {
 				"MacBookPro11.5": {"mac_model": "MacBookPro11,5", "os": "Mac-12.7"},
 				"MacBookPro15.1": {"mac_model": "MacBookPro15,1", "os": "Mac-15.3"},
 				"MacBookPro15.3": {"mac_model": "Mac15,3", "os": "Mac-13.5"},
-				"MacMini8.1":     {"mac_model": "Macmini8,1"}, // on both 14.5 and 14.7
+				"MacMini8.1":     {"mac_model": "Macmini8,1"}, // on both 14.5 and 14.8
 				"MacMini9.1":     {"mac_model": "Macmini9,1", "os": "Mac-14.7"},
 				"MacMini16.10":   {"mac_model": "Mac16,10", "os": "Mac-15.7"},
 			}[b.Parts["model"]]; ok {
@@ -1382,10 +1379,10 @@ func (b *jobBuilder) recreateSKPs() {
 			"gce:1",
 			fmt.Sprintf("os:%s", DEFAULT_OS_LINUX_GCE),
 		)
-		b.usesGo()
 		b.cache(CACHES_WORKDIR...)
 		b.timeout(8 * time.Hour)
 		b.usesPython()
+		b.usesGit()
 		b.attempts(2)
 	})
 }

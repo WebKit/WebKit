@@ -59,10 +59,10 @@
 #include "include/encode/SkJpegEncoder.h"
 #include "include/encode/SkPngEncoder.h"
 #include "include/encode/SkWebpEncoder.h"
-#include "include/private/base/SkOnce.h"
+#include "include/private/SkOnce.h"
 #include "include/utils/SkParsePath.h"
 #include "include/utils/SkShadowUtils.h"
-#include "src/base/SkFloatBits.h"
+#include "src/core/SkFloatBits.h"
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkPathRaw.h"
 #include "src/core/SkResourceCache.h"
@@ -544,6 +544,10 @@ void ApplyTransform(SkPathBuilder& p,
     SkMatrix m =
             SkMatrix::MakeAll(scaleX, skewX, transX, skewY, scaleY, transY, pers0, pers1, pers2);
     p.transform(m);
+}
+
+void ApplySetFillType(SkPathBuilder& p, SkPathFillType ft) {
+    p.setFillType(ft);
 }
 
 #ifdef CK_INCLUDE_PATHOPS
@@ -2469,7 +2473,7 @@ EMSCRIPTEN_BINDINGS(Skia) {
             .function("_rMoveTo", &ApplyRMoveTo)
             .function("_rQuadTo", &ApplyRQuadTo)
             .function("reset", &ApplyReset)
-            .function("setFillType", &SkPathBuilder::setFillType)
+            .function("_setFillType", &ApplySetFillType)
             .function("snapshot", optional_override([](SkPathBuilder& self) -> SkPath {
                           return self.snapshot();
                       }))

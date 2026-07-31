@@ -8,9 +8,9 @@
 #include "include/core/SkYUVAPixmaps.h"
 
 #include "include/core/SkAlphaType.h"
-#include "include/private/base/SkDebug.h"
-#include "src/base/SkRectMemcpy.h"
+#include "include/private/SkDebug.h"
 #include "src/core/SkImageInfoPriv.h"
+#include "src/core/SkRectMemcpy.h"
 #include "src/core/SkYUVAInfoLocation.h"
 
 #include <algorithm>

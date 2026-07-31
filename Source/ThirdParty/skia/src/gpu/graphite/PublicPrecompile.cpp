@@ -10,7 +10,7 @@
 #include "include/gpu/graphite/PrecompileContext.h"
 #include "include/gpu/graphite/precompile/Precompile.h"
 #include "include/gpu/graphite/precompile/PrecompileColorFilter.h"
-#include "include/private/base/SkLog.h"
+#include "include/private/SkLog.h"
 #include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/ContextUtils.h"
@@ -180,6 +180,7 @@ void Precompile(PrecompileContext* precompileContext,
                 // For color emoji text, shaders don't affect the final color
                 PaintOptions tmp = options;
                 tmp.setShaders({});
+                tmp.priv().setPrimitiveBlendMode(SkBlendMode::kDstIn);
 
                 // ARGB text doesn't emit coverage and always has a primitive blender
                 PrecompileCombinations(rendererProvider,

@@ -49,7 +49,7 @@ def perf_steps(api):
     api.flavor.create_clean_device_dir(lotties_device)
 
     # Make a temp directory and then copy to a *non-existing* subfolder (otherwise copytree crashes).
-    lotties_no_symlinks = api.path.mkdtemp('lwa').joinpath('nosymlinks')
+    lotties_no_symlinks = api.path.mkdtemp('lwa').joinpath('lotties_with_assets')
     api.file.copytree('Copying files on host to remove symlinks', lotties_host, lotties_no_symlinks)
     lotties_host = lotties_no_symlinks
     api.flavor.copy_directory_contents_to_device(lotties_host, lotties_device)
@@ -194,7 +194,7 @@ def RunSteps(api):
 
   with api.context():
     try:
-      api.flavor.install(resources=True, lotties=True)
+      api.flavor.install(resources=True)
       perf_steps(api)
     finally:
       api.flavor.cleanup_steps()

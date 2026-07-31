@@ -6,8 +6,8 @@
  */
 
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "src/base/SkSafeMath.h"
+#include "include/private/SkFloatingPoint.h"
+#include "src/core/SkSafeMath.h"
 #include "src/sksl/SkSLAnalysis.h"
 #include "src/sksl/SkSLConstantFolder.h"
 #include "src/sksl/SkSLErrorReporter.h"
@@ -74,7 +74,7 @@ static int calculate_count_int(int32_t start, int32_t end, int32_t delta,
     int roundUp = delta > 0 ? math.subInt(delta, 1) : math.addInt(delta, 1);
     int width = math.subInt(end, start);
     int iterations = math.divInt(math.addInt(width, roundUp), delta);
-    if (inclusive == Inclusive::kYes && width % delta == 0) {
+    if (inclusive == Inclusive::kYes && math.modInt(width, delta) == 0) {
         iterations = math.addInt(iterations, 1);
     }
     // Check that we won't overflow while looping
@@ -313,7 +313,7 @@ std::unique_ptr<LoopUnrollInfo> Analysis::GetLoopUnrollInfo(const Context& conte
     // wraparound behavior that would occur at runtime on the GPU. (For 'float' variables,
     // the existing double-precision calculation is sufficient.)
     LoopType loop;
-    if (initDecl.baseType().isSigned()) {
+    if (initDecl.baseType().isInteger()) {
         SkASSERT(initDecl.baseType().bitWidth() == 32);
         loop = LoopType::kInt;
     } else {

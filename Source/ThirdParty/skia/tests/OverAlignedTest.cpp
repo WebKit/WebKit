@@ -6,9 +6,9 @@
  */
 
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkAlign.h"
-#include "include/private/base/SkMalloc.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkAlign.h"
+#include "include/private/SkMalloc.h"
+#include "src/core/SkRandom.h"
 #include "tests/Test.h"
 #include <stdint.h>
 

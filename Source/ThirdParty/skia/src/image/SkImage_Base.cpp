@@ -16,15 +16,21 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkSize.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkDebug.h"
+#include "include/private/SkDebug.h"
 #include "src/core/SkBitmapCache.h"
 #include "src/image/SkRescaleAndReadPixels.h"
 
 #include <atomic>
 #include <utility>
 
-SkImage_Base::SkImage_Base(const SkImageInfo& info, uint32_t uniqueID)
-        : SkImage(info, uniqueID), fAddedToRasterCache(false) {}
+SkImage_Base::SkImage_Base(const SkImageInfo& info, uint32_t uniqueID,
+                           sk_sp<SkPixelStorage> storage)
+        : SkImage(info, uniqueID)
+        , fAddedToRasterCache(false) {
+    if (storage) {
+        fPixelStorages.push_back(std::move(storage));
+    }
+}
 
 SkImage_Base::~SkImage_Base() {
     if (fAddedToRasterCache.load()) {

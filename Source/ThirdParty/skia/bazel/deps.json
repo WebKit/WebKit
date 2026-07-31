@@ -3,7 +3,7 @@
   "direct": [
     {
       "build_file": "//bazel/external/dawn:BUILD.bazel",
-      "commit": "ce586f1e2a62f3eb3c5d18d7b08dfe42d83f66d7",
+      "commit": "cbf8e7390fe1e11fa47571d5fb302ffd12db38e3",
       "name": "dawn",
       "remote": "https://dawn.googlesource.com/dawn.git"
     },
@@ -78,7 +78,7 @@
     },
     {
       "build_file": "//bazel/external/icu:BUILD.bazel",
-      "commit": "364118a1d9da24bb5b770ac3d762ac144d6da5a4",
+      "commit": "d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738",
       "name": "icu",
       "patch_cmds": [
         "rm source/i18n/BUILD.bazel",
@@ -180,12 +180,12 @@
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross"
     },
     {
-      "commit": "1e770e7de8373a8dd49f23416cf7ca4001d01040",
+      "commit": "c63848ecf2200425511319fd8bf2c17b751e501e",
       "name": "spirv_headers",
       "remote": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers.git"
     },
     {
-      "commit": "b3d6ad90f5154b61764cddec32450640ec7d1f92",
+      "commit": "113784c9cf103b775fdadb1ef194f6b963e24a7e",
       "name": "spirv_tools",
       "remote": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools.git"
     },
@@ -197,19 +197,19 @@
     },
     {
       "build_file": "//bazel/external/vulkan_headers:BUILD.bazel",
-      "commit": "015e25c3c91b70eb1a754d36fb14c4ba6ad9b0b9",
+      "commit": "01393c3df0e5285b54ee6527466513f9e614be94",
       "name": "vulkan_headers",
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers"
     },
     {
       "build_file": "//bazel/external/vulkan_tools:BUILD.bazel",
-      "commit": "e3d18f90c0b8ef1f52539e0674a42f0adfe30381",
+      "commit": "db008c1ac735713164b498f36b796bc7f00387f3",
       "name": "vulkan_tools",
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools"
     },
     {
       "build_file": "//bazel/external/vulkan_utility_libraries:BUILD.bazel",
-      "commit": "8383c46b129c2b3a5f3833e602d946d2fcc57e39",
+      "commit": "8183a0b86632bf1107553eab1e69d7b85d455477",
       "name": "vulkan_utility_libraries",
       "remote": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries"
     },
@@ -233,7 +233,7 @@
       "remote": "https://skia.googlesource.com/external/github.com/google/brotli.git"
     },
     {
-      "commit": "d16e32215c3ab90ba57c2e904a5344d85c7353e4",
+      "commit": "a09ceefd500400d44708586515203b7804b73760",
       "name": "abseil_cpp",
       "remote": "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp"
     },

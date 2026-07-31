@@ -20,8 +20,8 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkSwizzle.h"
 #include "include/core/SkVertices.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkTime.h"
+#include "include/private/SkTDArray.h"
+#include "src/core/SkTime.h"
 #include "tools/skui/InputState.h"
 #include "tools/skui/Key.h"
 

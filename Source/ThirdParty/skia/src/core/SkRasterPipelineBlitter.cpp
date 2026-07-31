@@ -18,11 +18,11 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurfaceProps.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkCPUTypes.h"
-#include "include/private/base/SkOnce.h"
-#include "include/private/base/SkTemplates.h"
-#include "src/base/SkArenaAlloc.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkCPUTypes.h"
+#include "include/private/SkOnce.h"
+#include "include/private/SkTemplates.h"
+#include "src/core/SkArenaAlloc.h"
 #include "src/core/SkBlendModePriv.h"
 #include "src/core/SkBlenderBase.h"
 #include "src/core/SkBlitter.h"
@@ -264,7 +264,7 @@ SkBlitter* CreateBlitter(const SkPixmap& dst,
 
     for (size_t i = 0; i < stages.size(); i++) {
         shaderPipeline2.append(stages[i].stage, stages[i].ctx);
-        auto stage = debugStages[i];
+        const auto& stage = debugStages[i];
         SkASSERT_RELEASE(stage.panels.size() == stage.ops.size());
         for (size_t j = 0; j < stage.panels.size() && j < stage.ops.size(); j++) {
             auto panelCtx = alloc->make<SkRasterPipelineContexts::MemoryCtx>();

@@ -5,11 +5,11 @@
  * found in the LICENSE file.
  */
 
-#include "src/base/SkQuads.h"
+#include "src/core/SkQuads.h"
 
 #include "include/core/SkSpan.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkFloatingPoint.h"
+#include "include/private/SkFloatingPoint.h"
 #include "src/pathops/SkPathOpsQuad.h"
 #include "tests/Test.h"
 

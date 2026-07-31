@@ -28,207 +28,146 @@ $pure half4 sk_passthrough(half4 color) {
     return color;
 }
 
-$pure half4 sk_rgb_opaque(float4 colorParam) {
-    return half4(colorParam.rgb, 1.0);
+$pure half4 sk_rgb_opaque(half4 color) {
+    return color.rgb1;
 }
 
-$pure half4 sk_alpha_only(float4 colorParam) {
-    return half4(0.0, 0.0, 0.0, colorParam.a);
+$pure half4 sk_alpha_only(half4 color) {
+    return color.000a;
 }
+
+// ------------------------------------------------------------------------------------------------
+// **** Color space transform building blocks ****
 
 $pure float3 $apply_srgb_xfer_fn(float3 x, float4 gabc, float3 def) {
-    return mix(pow(gabc[1] * x + gabc[2], float3(gabc[0])) + def[1],
-               (gabc[3] * x) + def[2],
-               lessThan(x, float3(def[0])));
+    // | (a*x + b)^g + e if x >= d
+    // | c*x + f         if x < d
+    float3 s = sign(x);
+    x = abs(x);
+    return s * mix(pow(gabc[1] * x + gabc[2], float3(gabc[0])) + def[1],
+                   (gabc[3] * x) + def[2],
+                   lessThan(x, float3(def[0])));
 }
 
 $pure float3 $apply_pq_xfer_fn(float3 x, float3 abc, float3 def) {
-    float3 x_C = pow(x, float3(abc[2]));
-    return pow(max(abc[0] + abc[1] * x_C, 0) / (def[0] + def[1] * x_C), float3(def[2]));
+    // (max(a + b*x^c, 0) / (d + e*x^c))^f
+    float3 s = sign(x);
+    x = pow(abs(x), float3(abc[2]));
+    return s * pow(max(abc[0] + abc[1] * x, 0) / (def[0] + def[1] * x), float3(def[2]));
 }
 
 $pure float3 $apply_hlg_xfer_fn(float3 x, float3 abc, float3 def) {
-    return (def[2] + 1) * mix(exp((x - def[1]) * abc[2]) + def[0],
-                              pow(x * abc[0], float3(abc[1])),
-                              lessThanEqual(x * abc[0], float3(1)));
+    // (f + 1) * | e^(c*(x-E)) + d if a*x >= 1
+    //           | (a*x)^b         if a*x < 1
+    float3 s = sign(x);
+    x = abs(x);
+    return s * (def[2] + 1) * mix(exp((x - def[1]) * abc[2]) + def[0],
+                                  pow(x * abc[0], float3(abc[1])),
+                                  lessThanEqual(x * abc[0], float3(1)));
 }
 
 $pure float3 $apply_hlg_inv_xfer_fn(float3 x, float3 abc, float3 def) {
-    x /= (def[2] + 1);
-    return mix(abc[2] * log(x - def[0]) + def[1],
-               abc[0] * pow(x, float3(abc[1])),
-               lessThanEqual(x, float3(1)));
+    // f' * | c' * log(x - d) + e if x >= 1
+    //      | a' * x^b'           if x < 1
+    // This assumes that f' = 1/(f+1), a' = 1/a, b' = 1/b and c' = 1/c
+    float3 s = sign(x);
+    x = abs(x) * def[2];
+    return s * mix(abc[2] * log(x - def[0]) + def[1],
+                   abc[0] * pow(x, float3(abc[1])),
+                   lessThanEqual(x, float3(1)));
 }
 
-$pure half4 sk_color_space_transform(half4 color,
-                                     half3x3 gamut,
-                                     float4 srcGABC,
-                                     float4 srcDEF_args,
-                                     float4 dstGABC,
-                                     float4 dstDEF_args,
-                                     float4 srcOOTF_args,
-                                     float4 dstOOTF_args) {
-    // To encode whether to do premul/unpremul or make the output opaque, we use
-    // srcDEF_args.w and dstDEF_args.w:
-    // - identity: {0, 1}
-    // - do unpremul: {-1, 1}
-    // - do premul: {0, 0}
-    // - do both: {-1, 0}
-    // - alpha swizzle 1: {1, 1}
-    // - alpha swizzle r: {1, 0}
-    //
-    // This depends on the assumption that if we're doing an alpha swizzle, we're not premultiplying
-    // or unpremultiplying, so the alpha swizzle cases are mutually exclusive with the premul cases.
+$pure float3 $apply_ootf(float3 x, float4 ootf) {
+    if (ootf.w != 0) {
+        float Y = dot(ootf.rgb, x);
+        x *= sign(Y) * pow(abs(Y), ootf.w);
+    }
+    return x;
+}
 
-    if (srcDEF_args.w < 0) {
-        color = unpremul(color);
+// Alpha stages
 
+// General form handling unpremul, forcing to opaque, or no-op
+$pure half4 sk_csxform_prealpha(half4 color, half mode) {
+    if (mode < 0) {
+        return unpremul(color);
     } else {
-        // Alpha swizzle cases; we set alpha = {a, r, 1} . {1 - x, x - x * y, x * y}.
-        // Given the encoded inputs described above, and ignoring the do unpremul case, we have:
-        //  1. No-op ({x, y} = {0, 1} or {0, 0}) -> {a, r, 1} . {1, 0, 0} = a
-        //  2. Use R ({x, y} = {1, 0})           -> {a, r, 1} . {0, 1, 0} = r
-        //  3. Use 1 ({x, y} = {1, 1})           -> {a, r, 1} . {0, 0, 1} = 1
-        half alphaSwizzleA = 1.0 - half(srcDEF_args.w);
-        half alphaSwizzle1 = half(srcDEF_args.w) * half(dstDEF_args.w);
-        half alphaSwizzleR = half(srcDEF_args.w) - alphaSwizzle1;
-        color.a = dot(color.ar1, half3(alphaSwizzleA, alphaSwizzleR, alphaSwizzle1));
+        // mode = 1 forces to opaque, mode = 0 is a no-op
+        half alpha = max(color.a, mode);
+        return half4(color.rgb, alpha);
     }
+}
 
-    // To encode which transfer function to apply, we use the src and dst gamma values:
-    // - identity: 0
-    // - sRGB: g > 0
-    // - PQ: -2
-    // - HLG: -1
-    float3 colorF = float3(color.rgb);
-    if (srcGABC.x > 0) {
-        colorF = sign(colorF) * $apply_srgb_xfer_fn(abs(colorF), srcGABC, srcDEF_args.xyz);
-    } else if (srcGABC.x < -1 ) {
-        colorF = sign(colorF) * $apply_pq_xfer_fn(abs(colorF), srcGABC.yzw, srcDEF_args.xyz);
-    } else if (srcGABC.x < 0) {
-        colorF = sign(colorF) * $apply_hlg_xfer_fn(abs(colorF), srcGABC.yzw, srcDEF_args.xyz);
+// Alpha-only handling either returns 000a or 000r
+$pure half4 sk_csxform_alphaonly(half4 color, half mode) {
+    half alpha = mix(color.a, color.r, mode);
+    return half4(0, 0, 0, alpha);
+}
+
+// Handles premul or no-op
+$pure half4 sk_csxform_postalpha(half4 color, half mode) {
+    // mode = 0 is premul, mode = 1 is no-op
+    color.rgb *= max(color.a, mode);
+    return color;
+}
+
+// Transfer function stages
+$pure half4 sk_csxform_srgb(half4 color, float4 gabc, float3 def) {
+    if (gabc.x > 0.0) {
+        color.rgb = half3($apply_srgb_xfer_fn(color.rgb, gabc, def));
     }
+    return color;
+}
 
-    if (srcOOTF_args.w != 0) {
-        float Y = dot(srcOOTF_args.rgb, colorF);
-        colorF *= sign(Y) * pow(abs(Y), srcOOTF_args.w);
-    }
+// NOTE: For PQ and HLG, Skia currently supports "ish" variants that have custom coefficients, but
+// eventually these will be locked down to a specific set of values parameterized by peak
+// display luminance. This will allow these functions to be simplified.
+$pure half4 sk_csxform_pq(half4 color, float3 abc, float3 def) {
+    color.rgb = half3($apply_pq_xfer_fn(color.rgb, abc, def));
+    return color;
+}
 
-    colorF = gamut * colorF;
+$pure half4 sk_csxform_hlg(half4 color, float4 ootf, float3 abc, float3 def) {
+    float3 rgb = $apply_hlg_xfer_fn(color.rgb, abc, def);
+    color.rgb = half3($apply_ootf(rgb, ootf));
+    return color;
+}
 
-    if (dstOOTF_args.w != 0) {
-        float Y = dot(dstOOTF_args.rgb, colorF);
-        colorF *= sign(Y) * pow(abs(Y), dstOOTF_args.w);
-    }
+$pure half4 sk_csxform_hlginv(half4 color, float4 ootf, float3 abc, float3 def) {
+    float3 rgb = $apply_ootf(color.rgb, ootf);
+    color.rgb = half3($apply_hlg_inv_xfer_fn(rgb, abc, def));
+    return color;
+}
 
-    if (dstGABC.x > 0) {
-        colorF = sign(colorF) * $apply_srgb_xfer_fn(abs(colorF), dstGABC, dstDEF_args.xyz);
-    } else if (dstGABC.x < -1 ) {
-        colorF = sign(colorF) * $apply_pq_xfer_fn(abs(colorF), dstGABC.yzw, dstDEF_args.xyz);
-    } else if (dstGABC.x < 0) {
-        colorF = sign(colorF) * $apply_hlg_inv_xfer_fn(abs(colorF), dstGABC.yzw, dstDEF_args.xyz);
-    }
-
-    // Premul cases:
-    //  1. No-op (noPremul = 1) -> max(...) = 1.0 -> identity function
-    //  2. Premultiply (noPremul = 0) -> max(...) = color.a -> premul
-    //
-    // "noPremul" is 0 in the premul case, but also in the alpha-swizzle-r case, but the only time
-    // we swizzle r to alpha is for a read swizzle of 000R, in which case the RGB channels are zero
-    // and it doesn't matter what we multiply them by here.
-    half noPremul = half(dstDEF_args.w);
-    color.rgb = half3(colorF.rgb) * max(color.a, noPremul);
+// Generic transfer function
+$pure half4 sk_csxform_transfer(half4 color, float4 ootf, float4 gabc, float3 def) {
+    if (gabc.x > 0) {
+        color.rgb = half3($apply_srgb_xfer_fn(color.rgb, gabc, def));
+    } else if (gabc.x < -2) {
+        color.rgb = half3($apply_pq_xfer_fn(color.rgb, gabc.yzw, def));
+    } else if (gabc.x < -1) {
+        float3 rgb = $apply_hlg_xfer_fn(color.rgb, gabc.yzw, def);
+        color.rgb = half3($apply_ootf(rgb, ootf));
+    } else if (gabc.x < 0) {
+        float3 rgb = $apply_ootf(color.rgb, ootf);
+        color.rgb = half3($apply_hlg_inv_xfer_fn(rgb, gabc.yzw, def));
+    } // else gamma = 0 -> identity transfer function
 
     return color;
 }
 
-$pure half4 sk_color_space_transform_premul(half4 color, half2 args) {
-    // This shader can either do nothing, or perform one of three actions. These four possibilities
-    // are encoded in a half2 argument as:
-    // - identity: {0, 1}
-    // - do unpremul: {-1, 1}
-    // - do premul: {0, 0}
-    // - make opaque: {1, 1}
-    if (args.x < 0) {
-        // Unpremul case (mutually exclusive with other cases, and costly).
-        color = unpremul(color);
-
-    } else {
-        // The other cases (identity, premul, make opaque) are branchless.
-        half opaque = args.x;
-        half noPremul = args.y;
-
-        // Opaque cases:
-        //  1. No-op (opaque = 0) -> max(...) = color.a -> identity function
-        //  2. Make opaque (opaque = 1) -> max(...) = 1.0 -> make opaque
-        color.a = max(color.a, opaque);
-
-        // Premul cases:
-        //  1. No-op (noPremul = 1) -> max(...) = 1.0 -> identity function
-        //  2. Premultiply (noPremul = 0) -> max(...) = color.a -> premul
-        color.rgb = color.rgb * max(color.a, noPremul);
-    }
-
+// Gamut transform stage
+$pure half4 sk_csxform_gamut(half4 color, half3x3 gamut) {
+    color.rgb = gamut * color.rgb;
     return color;
 }
 
-$pure half4 sk_color_space_transform_srgb(half4 color,
-                                          half3x3 gamut,
-                                          float4 srcGABC,
-                                          float4 srcDEF_args,
-                                          float4 dstGABC,
-                                          float4 dstDEF_args) {
-    // To encode whether to do premul/unpremul or make the output opaque, we use
-    // srcDEF_args.w and dstDEF_args.w:
-    // - identity: {0, 1}
-    // - do unpremul: {-1, 1}
-    // - do premul: {0, 0}
-    // - do both: {-1, 0}
-    // - alpha swizzle 1: {1, 1}
-    // - alpha swizzle r: {1, 0}
-    //
-    // This depends on the assumption that if we're doing an alpha swizzle, we're not premultiplying
-    // or unpremultiplying, so the alpha swizzle cases are mutually exclusive with the premul cases.
+// ------------------------------------------------------------------------------------------------
 
-    if (srcDEF_args.w < 0) {
-        color = unpremul(color);
-
-    } else {
-        // Alpha swizzle cases; we set alpha = {a, r, 1} . {1 - x, x - x * y, x * y}.
-        // Given the encoded inputs described above, and ignoring the do unpremul cases, we have:
-        //  1. No-op ({x, y} = {0, 1} or {0, 0}) -> {a, r, 1} . {1, 0, 0} = a
-        //  2. Use R ({x, y} = {1, 0})           -> {a, r, 1} . {0, 1, 0} = r
-        //  3. Use 1 ({x, y} = {1, 1})           -> {a, r, 1} . {0, 0, 1} = 1
-        half alphaSwizzleA = 1.0 - half(srcDEF_args.w);
-        half alphaSwizzle1 = half(srcDEF_args.w) * half(dstDEF_args.w);
-        half alphaSwizzleR = half(srcDEF_args.w) - alphaSwizzle1;
-        color.a = dot(color.ar1, half3(alphaSwizzleA, alphaSwizzleR, alphaSwizzle1));
-    }
-
-    float3 colorF = float3(color.rgb);
-    colorF = sign(colorF) * $apply_srgb_xfer_fn(abs(colorF), srcGABC, srcDEF_args.xyz);
-
-    colorF = gamut * colorF;
-
-    colorF = sign(colorF) * $apply_srgb_xfer_fn(abs(colorF), dstGABC, dstDEF_args.xyz);
-
-    // Premul cases:
-    //  1. No-op (noPremul = 1) -> max(...) = 1.0 -> identity function
-    //  2. Premultiply (noPremul = 0) -> max(...) = color.a -> premul
-    //
-    // "noPremul" is 0 in the premul case, but also in the alpha-swizzle-r case, but the only time
-    // we swizzle r to alpha is for a read swizzle of 000R, in which case the RGB channels are zero
-    // and it doesn't matter what we multiply them by here.
-    half noPremul = half(dstDEF_args.w);
-    color.rgb = half3(colorF.rgb) * max(color.a, noPremul);
-
-    return color;
-}
-
-$pure half4 sk_analytic_clip(float2 coords,
-                             float4 rect,
-                             float2 radiusPlusHalf,
-                             half4 edgeSelect) {
+$pure half4 sk_analytic_clip_legacy(float2 coords,
+                                    float4 rect,
+                                    float2 radiusPlusHalf,
+                                    half4 edgeSelect) {
     // Negative x indicates inverse fill
     float2 radius = float2(abs(radiusPlusHalf.x));
     float2 dxy0 = edgeSelect.LT*((rect.LT + radius) - coords);
@@ -248,15 +187,99 @@ $pure half4 sk_analytic_clip(float2 coords,
     return half4(alpha);
 }
 
+$pure half4 sk_analytic_and_atlas_clip_legacy(float2 coords,
+                                              float4 rect,
+                                              float2 radiusPlusHalf,
+                                              half4 edgeSelect,
+                                              float2 texCoordOffset,
+                                              float4 maskBounds,
+                                              float2 invAtlasSize,
+                                              sampler2D atlasSampler) {
+    half4 analyticClip = sk_analytic_clip_legacy(coords, rect, radiusPlusHalf, edgeSelect);
+
+    float2 texCoord = coords + texCoordOffset;
+    float2 clampedTexCoord = clamp(texCoord, maskBounds.LT, maskBounds.RB);
+
+    half atlasClip = sample(atlasSampler, clampedTexCoord * invAtlasSize).r;
+
+    return analyticClip * atlasClip;
+}
+
+/**
+ * `xform` is the 2x2 inverse of the original clip's local-to-device matrix (limited to it being
+ * affine). Any translation from that transform should be pre-applied to `rect`. `rect` and `radii`
+ * describe the circular rrect (although each corner can have a different radii).
+ *
+ * The actual `radii` is calculated from `radiiWithInverse` as "abs(r) - 1". It's assumed that 1
+ * was added to the original radius per corner so that the uniforms would be non-zero. The signs
+ * of `radiiWithInverse` reconstruct a scale and bias added to the final coverage to switch between
+ * intersect and difference clips.
+ *
+ * Assuming that `radiiWithInverse != 0`, the scale factor is sign(r.x) and the bias factor is
+ * 0.5 * (sign(r.y) + sign(r.z)). An intersect clip can be encoded with signs matching (1, -1, 1, 1)
+ * and a difference clip can be encoded with signs matching (-1, 1, 1, 1).
+ */
+$pure half4 sk_analytic_clip(float2 coords,
+                             float4 xform,
+                             float4 rect,
+                             float4 radiiWithInverse) {
+    // Transform the device coordinate to the local space of the round rect
+    coords = float2x2(xform) * coords;
+
+    // Reconstruct scale and bias applied to coverage and the original radii >= 0
+    half4 signs = half4(sign(radiiWithInverse));
+    half scale = signs.x;
+    half bias = 0.5 * (signs.y + signs.z);
+
+    float4 radii = abs(radiiWithInverse) - 1.0;
+
+    // Calculate derivatives for either the corner quarter circles or edge lines
+    float4 dxs = coords.x + float4(-1, 1, 1, -1)*radii - rect.LRRL;
+    float4 dys = coords.y + float4(-1, -1, 1, 1)*radii - rect.TTBB;
+
+    bool4 isEdge = bool4(dxs[0] >= 0.0 || dys[0] >= 0.0,
+                         dxs[1] <= 0.0 || dys[1] >= 0.0,
+                         dxs[2] <= 0.0 || dys[2] <= 0.0,
+                         dxs[3] >= 0.0 || dys[3] <= 0.0);
+
+    dxs = mix(dxs, float4(-0.5, 0, 0.5, 0), isEdge);
+    dys = mix(dys, float4(0, -0.5, 0, -0.5), isEdge);
+
+    // Apply the Jacobian for the local->device transform (which because we're restricted to a 2x2,
+    // is equal to the device->local transform in `xform` already). For the circle equation, the
+    // local gradient is (2dx, 2dy); we push the 2 into the denominator of `invGradLen`. For edges,
+    // the gradient should be (+/-1,0) or (0,+/-1) but by setting them to +/-0.5 lets them use the
+    // same equation.
+    float4 devGradXs = (dxs * xform.x + dys * xform.y);
+    float4 devGradYs = (dxs * xform.z + dys * xform.w);
+    float4 invGradLen = 0.5 / (abs(devGradXs) + abs(devGradYs)); // L1 norm, e.g. fwidth
+
+    // Select either the circular distance or edge distance
+    float4 distances = mix(radii*radii - dxs*dxs - dys*dys,
+                           float4(coords, rect.RB) - float4(rect.LT, coords),
+                           isEdge);
+
+    // Divide the local distance by the gradient length and bias by 0.5 so we're interpolating
+    // between 0 and 1 on either side of the level set.
+    half4 alphas = saturate(0.5 + half4(invGradLen * distances));
+    // Instead of performing three min's, we assume that at most one alpha component will be < 1
+    // so modulation behaves the same. In the event that the rrect is subpixel and a fragment is
+    // affected by multiple edges and corners, modulation looks smoother.
+    half minAlpha = alphas.x * alphas.y * alphas.z * alphas.w;
+
+    // Apply inversion to coverage if needed
+    return half4(bias + scale*minAlpha);
+}
+
 $pure half4 sk_analytic_and_atlas_clip(float2 coords,
+                                       float4 xform,
                                        float4 rect,
-                                       float2 radiusPlusHalf,
-                                       half4 edgeSelect,
-                                       float2 texCoordOffset,
+                                       float4 radiiWithInverse,
                                        float4 maskBounds,
+                                       float2 texCoordOffset,
                                        float2 invAtlasSize,
                                        sampler2D atlasSampler) {
-    half4 analyticClip = sk_analytic_clip(coords, rect, radiusPlusHalf, edgeSelect);
+    half4 analyticClip = sk_analytic_clip(coords, xform, rect, radiiWithInverse);
 
     float2 texCoord = coords + texCoordOffset;
     float2 clampedTexCoord = clamp(texCoord, maskBounds.LT, maskBounds.RB);
@@ -1361,7 +1384,7 @@ $pure half4 sk_gaussian_colorfilter(half4 inColor) {
     return half4(factor);
 }
 
-$pure half4 sample_indexed_atlas(float2 unormTexCoords, // unormalized texture coords
+$pure half4 sample_indexed_atlas(float2 textureCoords,
                                  int atlasIndex,
                                  sampler2D atlas0,
                                  sampler2D atlas1,
@@ -1369,17 +1392,17 @@ $pure half4 sample_indexed_atlas(float2 unormTexCoords, // unormalized texture c
                                  sampler2D atlas3) {
     switch (atlasIndex) {
         case 1:
-            return sample(atlas1, unormTexCoords / float2(textureSize(atlas1)));
+            return sample(atlas1, textureCoords);
         case 2:
-            return sample(atlas2, unormTexCoords / float2(textureSize(atlas2)));
+            return sample(atlas2, textureCoords);
         case 3:
-            return sample(atlas3, unormTexCoords / float2(textureSize(atlas3)));
+            return sample(atlas3, textureCoords);
         default:
-            return sample(atlas0, unormTexCoords / float2(textureSize(atlas0)));
+            return sample(atlas0, textureCoords);
     }
 }
 
-$pure half3 $sample_indexed_atlas_lcd(float2 unormTexCoords, // unormalized texture coords
+$pure half3 $sample_indexed_atlas_lcd(float2 textureCoords,
                                       int atlasIndex,
                                       float2 offset,
                                       sampler2D atlas0,
@@ -1387,28 +1410,23 @@ $pure half3 $sample_indexed_atlas_lcd(float2 unormTexCoords, // unormalized text
                                       sampler2D atlas2,
                                       sampler2D atlas3) {
     half3 distance = half3(1);
-    float2 textureCoords;
     switch (atlasIndex) {
         case 1:
-            textureCoords = unormTexCoords / float2(textureSize(atlas1));
             distance.x = sample(atlas1, textureCoords - offset).r;
             distance.y = sample(atlas1, textureCoords).r;
             distance.z = sample(atlas1, textureCoords + offset).r;
             break;
         case 2:
-            textureCoords = unormTexCoords / float2(textureSize(atlas2));
             distance.x = sample(atlas2, textureCoords - offset).r;
             distance.y = sample(atlas2, textureCoords).r;
             distance.z = sample(atlas2, textureCoords + offset).r;
             break;
         case 3:
-            textureCoords = unormTexCoords / float2(textureSize(atlas3));
             distance.x = sample(atlas3, textureCoords - offset).r;
             distance.y = sample(atlas3, textureCoords).r;
             distance.z = sample(atlas3, textureCoords + offset).r;
             break;
         default:
-            textureCoords = unormTexCoords / float2(textureSize(atlas0));
             distance.x = sample(atlas0, textureCoords - offset).r;
             distance.y = sample(atlas0, textureCoords).r;
             distance.z = sample(atlas0, textureCoords + offset).r;
@@ -1423,8 +1441,8 @@ $pure half4 bitmap_text_coverage_fn(half4 texColor, int maskFormat) {
 }
 
 $pure half4 sdf_text_coverage_fn(half texColor,
-                                 float2 unormTexCoords, // unormalized texture coords
-                                 half2 gammaParams) {
+                                 half2 gammaParams,
+                                 float2 unormTexCoords) {
     // TODO: To minimize the number of shaders generated this is the full affine shader.
     // For best performance it may be worth creating the uniform scale shader as well,
     // as that's the most common case.
@@ -1470,9 +1488,10 @@ $pure half4 sdf_text_coverage_fn(half texColor,
     }
 }
 
-$pure half4 sdf_text_lcd_coverage_fn(half2 pixelGeometryDelta,
+$pure half4 sdf_text_lcd_coverage_fn(float2 textureCoords,
+                                     half2 pixelGeometryDelta,
                                      half4 gammaParams,
-                                     float2 unormTexCoords, // unormalized texture coords
+                                     float2 unormTexCoords,
                                      float texIndex,
                                      sampler2D atlas0,
                                      sampler2D atlas1,
@@ -1485,7 +1504,7 @@ $pure half4 sdf_text_lcd_coverage_fn(half2 pixelGeometryDelta,
     float2x2 jacobian = float2x2(dFdx(unormTexCoords), dFdy(unormTexCoords));
     float2 offset = jacobian * float2(pixelGeometryDelta);
 
-    half3 distance = $sample_indexed_atlas_lcd(unormTexCoords,
+    half3 distance = $sample_indexed_atlas_lcd(textureCoords,
                                                int(texIndex),
                                                offset,
                                                atlas0,

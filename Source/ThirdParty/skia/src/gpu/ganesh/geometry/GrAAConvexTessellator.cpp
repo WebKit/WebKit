@@ -11,11 +11,11 @@
 #include "include/core/SkPath.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkRect.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkTPin.h"
-#include "src/base/SkSafeMath.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkFloatingPoint.h"
+#include "include/private/SkTPin.h"
 #include "src/core/SkPathPriv.h"
+#include "src/core/SkSafeMath.h"
 #include "src/gpu/ganesh/geometry/GrPathUtils.h"
 
 #include <algorithm>

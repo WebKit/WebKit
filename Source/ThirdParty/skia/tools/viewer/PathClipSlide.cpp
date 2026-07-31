@@ -13,10 +13,10 @@
 #include "include/core/SkShader.h"
 #include "include/core/SkTypeface.h"
 #include "include/effects/SkGradient.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkTime.h"
-#include "src/base/SkUTF.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkColorPriv.h"
+#include "src/core/SkTime.h"
+#include "src/core/SkUTF.h"
 #include "tools/viewer/ClickHandlerSlide.h"
 
 #include <utility>

@@ -9,9 +9,9 @@
 
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkTInternalLList.h"
+#include "include/private/SkTDArray.h"
 #include "src/core/SkTHash.h"
+#include "src/core/SkTInternalLList.h"
 #include "src/gpu/ResourceKey.h"
 #include "src/gpu/graphite/ClipStack.h"
 #include "src/gpu/graphite/DrawAtlas.h"

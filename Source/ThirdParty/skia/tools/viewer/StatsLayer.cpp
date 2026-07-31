@@ -18,9 +18,9 @@
 #include "include/core/SkString.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypeface.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkTDArray.h"
-#include "src/base/SkTime.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkTDArray.h"
+#include "src/core/SkTime.h"
 #include "tools/fonts/FontToolUtils.h"
 
 #include <algorithm>

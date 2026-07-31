@@ -18,9 +18,9 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkDebug.h"
-#include "src/base/SkFloatBits.h"
+#include "include/private/SkDebug.h"
 #include "src/core/SkCubicClipper.h"
+#include "src/core/SkFloatBits.h"
 #include "tests/Test.h"
 
 // Currently the supersampler blitter uses int16_t for its index into an array

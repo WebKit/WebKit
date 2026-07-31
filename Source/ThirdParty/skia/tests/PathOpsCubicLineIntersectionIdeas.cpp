@@ -5,8 +5,8 @@
  * found in the LICENSE file.
  */
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkDebug.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkDebug.h"
+#include "src/core/SkRandom.h"
 #include "src/pathops/SkPathOpsCubic.h"
 #include "src/pathops/SkPathOpsPoint.h"
 #include "src/pathops/SkPathOpsQuad.h"

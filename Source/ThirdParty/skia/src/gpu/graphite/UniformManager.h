@@ -16,12 +16,12 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSize.h"
 #include "include/core/SkSpan.h"
-#include "include/private/base/SkAlign.h"
-#include "include/private/base/SkMath.h"
-#include "include/private/base/SkTArray.h"
-#include "src/base/SkHalf.h"
-#include "src/base/SkMathPriv.h"
+#include "include/private/SkAlign.h"
+#include "include/private/SkMath.h"
+#include "include/private/SkTArray.h"
 #include "src/core/SkColorData.h"
+#include "src/core/SkHalf.h"
+#include "src/core/SkMathPriv.h"
 #include "src/core/SkMatrixPriv.h"
 #include "src/core/SkSLTypeShared.h"
 #include "src/gpu/graphite/ResourceTypes.h"
@@ -355,9 +355,9 @@ public:
             // Validate expected uniforms, but don't write a second copy since the paint color
             // uniform can only ever be declared once in the final SkSL program.
             SkDEBUGCODE(
-                    this->checkExpected(/*dst=*/nullptr, SkSLType::kFloat4, Uniform::kNonArray));
+                    this->checkExpected(/*dst=*/nullptr, SkSLType::kHalf4, Uniform::kNonArray));
         } else {
-            this->write<SkSLType::kFloat4>(&color);
+            this->write<SkSLType::kHalf4>(&color);
             fWrotePaintColor = true;
         }
     }
@@ -469,6 +469,8 @@ private:
     void checkExpected(const void* dst, SkSLType, int count);
     void checkBeginStruct(int baseAlignment);
     void checkEndStruct();
+
+    friend class PipelineDataGatherer; // peak into fStorage for checkEquivalent() avoiding finish()
 #endif // SK_DEBUG
 };
 

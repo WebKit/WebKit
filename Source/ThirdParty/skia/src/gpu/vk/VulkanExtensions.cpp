@@ -7,9 +7,9 @@
 
 #include "include/gpu/vk/VulkanExtensions.h"
 
-#include "include/private/base/SkAssert.h"
-#include "src/base/SkTSearch.h"
-#include "src/base/SkTSort.h"
+#include "include/private/SkAssert.h"
+#include "src/core/SkTSearch.h"
+#include "src/core/SkTSort.h"
 
 #include <utility>
 

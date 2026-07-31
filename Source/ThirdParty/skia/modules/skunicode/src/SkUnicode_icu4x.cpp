@@ -7,14 +7,14 @@
 #include "include/core/SkSpan.h"
 #include "include/core/SkString.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkAssert.h"
-#include "include/private/base/SkTArray.h"
-#include "include/private/base/SkTo.h"
+#include "include/private/SkAssert.h"
+#include "include/private/SkTArray.h"
+#include "include/private/SkTo.h"
 #include "modules/skunicode/include/SkUnicode.h"
 #include "modules/skunicode/include/SkUnicode_icu4x.h"
 #include "modules/skunicode/src/SkUnicode_hardcoded.h"
-#include "src/base/SkBitmaskEnum.h"
-#include "src/base/SkUTF.h"
+#include "src/core/SkBitmaskEnum.h"
+#include "src/core/SkUTF.h"
 
 #include <ICU4XBidi.hpp>
 #include <ICU4XCaseMapper.hpp>

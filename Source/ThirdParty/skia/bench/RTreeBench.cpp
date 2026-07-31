@@ -8,9 +8,9 @@
 #include "bench/Benchmark.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkString.h"
-#include "include/private/base/SkTemplates.h"
-#include "src/base/SkRandom.h"
+#include "include/private/SkTemplates.h"
 #include "src/core/SkRTree.h"
+#include "src/core/SkRandom.h"
 
 using namespace skia_private;
 

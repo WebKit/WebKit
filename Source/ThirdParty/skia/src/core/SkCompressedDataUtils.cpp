@@ -12,11 +12,11 @@
 #include "include/core/SkData.h"
 #include "include/core/SkScalar.h"
 #include "include/core/SkSize.h"
-#include "include/private/base/SkTPin.h"
-#include "include/private/base/SkTo.h"
-#include "src/base/SkMathPriv.h"
+#include "include/private/SkTPin.h"
+#include "include/private/SkTo.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkColorPriv.h"
+#include "src/core/SkMathPriv.h"
 #include "src/core/SkMipmap.h"
 
 #include <algorithm>
