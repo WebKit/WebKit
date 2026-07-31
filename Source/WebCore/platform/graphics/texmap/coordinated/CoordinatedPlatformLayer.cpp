@@ -317,14 +317,13 @@ const FloatRect& CoordinatedPlatformLayer::visibleRect() const
     return m_visibleRect;
 }
 
-void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVisibleRect, IntRect&& transformedVisibleRectIncludingFuture)
+void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVisibleRect)
 {
     assertIsHeld(m_lock);
-    if (m_transformedVisibleRect == transformedVisibleRect && m_transformedVisibleRectIncludingFuture == transformedVisibleRectIncludingFuture)
+    if (m_transformedVisibleRect == transformedVisibleRect)
         return;
 
     m_transformedVisibleRect = WTF::move(transformedVisibleRect);
-    m_transformedVisibleRectIncludingFuture = WTF::move(transformedVisibleRectIncludingFuture);
     m_needsTilesUpdate = true;
 }
 
@@ -816,7 +815,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
 
     Damage damage(m_size, Damage::Mode::Rectangles);
     IntRect contentsRect(IntPoint::zero(), IntSize(m_size));
-    auto updateResult = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRectIncludingFuture, contentsRect, m_contentsScale, m_pendingTilesCreation || m_needsTilesUpdate, m_dirtyRegion, damage, *this);
+    auto updateResult = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, contentsRect, m_contentsScale, m_pendingTilesCreation || m_needsTilesUpdate, m_dirtyRegion, damage, *this);
     m_needsTilesUpdate = false;
 #if ENABLE(DAMAGE_TRACKING)
     addDamage(WTF::move(damage));

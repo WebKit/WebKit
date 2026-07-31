@@ -215,9 +215,8 @@ private:
     struct {
         GraphicsLayerTransform current;
         GraphicsLayerTransform future;
-        TransformationMatrix cachedInverse;
-        TransformationMatrix cachedFutureInverse;
-        TransformationMatrix cachedCombined;
+        std::optional<TransformationMatrix> cachedInverse;
+        std::optional<TransformationMatrix> cachedFutureInverse;
     } m_layerTransform;
     bool m_needsUpdateLayerTransform { false };
     bool m_shouldUpdateRootRelativeScaleFactor : 1 { false };
