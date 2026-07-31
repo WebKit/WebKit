@@ -56,10 +56,10 @@ Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& ta
     return adoptRef(*new MathMLOperatorElement(tagName, document));
 }
 
-MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(const String& string)
+MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(StringView string)
 {
     OperatorChar operatorChar;
-    String trimmed = string.trim(isASCIIWhitespaceWithoutFF<UChar>);
+    auto trimmed = string.trim(isASCIIWhitespaceWithoutFF<UChar>);
     if (trimmed.isEmpty())
         return operatorChar;
 
@@ -83,7 +83,7 @@ MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(con
 
     if (length == 2) {
         // A surrogate pair encoding a single code point (e.g. U+1EEF0, U+1EEF1).
-        if (auto codePoint = StringView(trimmed).convertToSingleCodePoint()) {
+        if (auto codePoint = trimmed.convertToSingleCodePoint()) {
             setOperatorChar(codePoint.value());
             return operatorChar;
         }

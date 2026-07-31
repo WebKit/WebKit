@@ -30,6 +30,7 @@
 #include "MathMLOperatorDictionary.h"
 #include "MathMLTokenElement.h"
 #include <array>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ public:
             {
             }
     };
-    static OperatorChar parseOperatorChar(const String&);
+    static OperatorChar parseOperatorChar(StringView);
     const OperatorChar& operatorChar() LIFETIME_BOUND;
     void setOperatorFormDirty();
     MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
