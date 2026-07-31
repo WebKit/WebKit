@@ -1,4 +1,5 @@
 
 PASS Aborting before read
 PASS Aborting after read
+PASS Aborting a reused reader after a previous read completed
 

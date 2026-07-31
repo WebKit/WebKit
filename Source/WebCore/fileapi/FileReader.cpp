@@ -129,6 +129,7 @@ ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadTyp
     m_blob = blob;
     m_readType = type;
     m_state = LOADING;
+    m_finishedLoading = false;
     m_error = nullptr;
 
     Ref loader = FileReaderLoader::create(m_readType, static_cast<FileReaderLoaderClient*>(this));
