@@ -55,6 +55,7 @@ public:
     std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
     
     void scheduleUpdateCaptureDevices();
+    void scheduleMediaServicesWereReset();
 
     void enableAllDevicesQuery();
     void disableAllDevicesQuery();
