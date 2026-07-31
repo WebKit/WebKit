@@ -8,6 +8,41 @@ chomp(my $ninja = `which ninja 2>/dev/null` || `xcrun -f ninja`);
 
 # CMake configuration
 if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
+    # CMake ends every generate with "<make program> -C <build dir> -t restat ...".
+    # It used to run "-t cleandead" around there too, but no longer does, so do it
+    # ourselves. Restatting afterwards then fixes up the
+    # log entries for whatever we just removed.
+    my ($toolIndex) = grep({ $ARGV[$_] eq '-t' } 0 .. $#ARGV);
+    my $isRestat = defined($toolIndex) && ($ARGV[$toolIndex + 1] // '') eq 'restat';
+
+    # CMake runs us from wherever it was invoked, not from the build directory, so
+    # cleandead has to be told where to look. try_compile scratch builds get their
+    # own restat; skip those, they are disposable.
+    my $buildDir;
+    for my $i (0 .. $#ARGV) {
+        $buildDir = $ARGV[$i + 1], last if $ARGV[$i] eq '-C';
+        $buildDir = $1, last if $ARGV[$i] =~ /^-C(.+)$/;
+    }
+    my $isScratch = getcwd() =~ m{/CMakeFiles/} || ($buildDir // '') =~ m{/CMakeFiles/};
+
+    if ($isRestat && !$isScratch && !$ENV{WK_DISABLE_CLEANDEAD} && !grep({ /^-f/ } @ARGV)) {
+        my $dirArg = defined($buildDir) ? "-C \"$buildDir\"" : "";
+        my $cleanDead = `"$ninja" $dirArg -v -t cleandead 2>&1`;
+        # Report errors to the tty and a log, and then allow restat to continue
+        # as normal.
+        if ($?) {
+            my $message = "ninja-wrapper: cleandead failed:\n$cleanDead";
+            if (open(my $fh, '>', "$buildDir/cleandead.log")) {
+                print($fh $message);
+                close($fh);
+            }
+            print(STDERR $message);
+            if (open(my $tty, '>', '/dev/tty')) {
+                print($tty $message);
+                close($tty);
+            }
+        }
+    }
     exec($ninja, @ARGV);
 }
 
