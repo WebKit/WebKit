@@ -26,6 +26,9 @@
 #pragma once
 
 #include <WebCore/FetchIdentifier.h>
+#include <WebCore/FetchOptionsMode.h>
+#include <WebCore/FetchOptionsRedirect.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -39,7 +42,6 @@ struct FetchOptions;
 class FetchResponse;
 class FormData;
 class NetworkLoadMetrics;
-class ResourceError;
 class ResourceRequest;
 class ServiceWorkerGlobalScope;
 class ServiceWorkerGlobalScope;
@@ -77,6 +79,8 @@ inline void Client::cancel()
 }
 
 void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+
+WEBCORE_EXPORT ResourceError validateResponse(const ResourceResponse&, FetchOptionsMode, FetchOptionsRedirect);
 };
 
 } // namespace WebCore

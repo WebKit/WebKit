@@ -1,0 +1,5 @@
+
+
+PASS Cache source must reject an opaque cross-origin response for a same-origin fetch
+PASS Cache source must not serve an opaque cross-origin response as a navigation
+
