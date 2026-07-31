@@ -37,6 +37,7 @@
 #include <wtf/EnumSet.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -67,7 +68,7 @@ class PaintingEngine;
 }
 #endif
 
-class CoordinatedPlatformLayer : public ThreadSafeRefCounted<CoordinatedPlatformLayer> {
+class CoordinatedPlatformLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoordinatedPlatformLayer> {
 public:
     // FIXME: remove this client when a subclass is added for the WebProcess.
     class Client {
@@ -146,6 +147,7 @@ public:
 
     void setDrawsContent(bool) WTF_REQUIRES_LOCK(m_lock);
     void setMasksToBounds(bool) WTF_REQUIRES_LOCK(m_lock);
+    bool masksToBounds() const WTF_REQUIRES_LOCK(m_lock);
     void setPreserves3D(bool) WTF_REQUIRES_LOCK(m_lock);
     void setBackfaceVisibility(bool) WTF_REQUIRES_LOCK(m_lock);
     void setOpacity(float) WTF_REQUIRES_LOCK(m_lock);
@@ -172,6 +174,7 @@ public:
 
     void setFilters(const FilterOperations&) WTF_REQUIRES_LOCK(m_lock);
     void setMask(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
+    CoordinatedPlatformLayer* mask() const WTF_REQUIRES_LOCK(m_lock);
     void setReplica(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     void setBackdrop(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     void notifyBackdropFiltersChanged() WTF_REQUIRES_LOCK(m_lock);
@@ -179,6 +182,8 @@ public:
     void setIsBackdropRoot(bool) WTF_REQUIRES_LOCK(m_lock);
 
     void setAnimations(const TextureMapperAnimations&) WTF_REQUIRES_LOCK(m_lock);
+
+    RefPtr<CoordinatedPlatformLayer> parent() const WTF_REQUIRES_LOCK(m_lock);
 
     void setChildren(Vector<Ref<CoordinatedPlatformLayer>>&&) WTF_REQUIRES_LOCK(m_lock);
     const Vector<Ref<CoordinatedPlatformLayer>>& children() const WTF_REQUIRES_LOCK(m_lock);
@@ -217,6 +222,8 @@ public:
 
 private:
     explicit CoordinatedPlatformLayer(Client*);
+
+    void removeFromParent();
 
     void notifyCompositionRequired();
 
@@ -339,6 +346,7 @@ private:
     FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
     bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
     TextureMapperAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
+    ThreadSafeWeakPtr<CoordinatedPlatformLayer> m_parent WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Ref<CoordinatedPlatformLayer>> m_children WTF_GUARDED_BY_LOCK(m_lock);
     EventRegion m_eventRegion WTF_GUARDED_BY_LOCK(m_lock);
     Color m_debugBorderColor WTF_GUARDED_BY_LOCK(m_lock);
