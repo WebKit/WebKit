@@ -3870,7 +3870,10 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample
 
 void MediaPlayerPrivateGStreamer::repaint()
 {
-    ASSERT(m_sample);
+    if (ASSERT_ENABLED) {
+        Locker sampleLocker { m_sampleMutex };
+        ASSERT(m_sample);
+    }
     ASSERT(isMainThread());
 
     if (RefPtr player = m_player.get())

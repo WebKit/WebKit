@@ -143,8 +143,8 @@ public:
 private:
     void open(bool overwrite)
     {
+        assertIsHeld(m_clientsLock);
         ASSERT(!m_logFile);
-        ASSERT(m_clientsLock.isHeld());
 
         m_logFile = FilePrintStream::open(m_path.utf8().data(), overwrite ? "w" : "a");
 
