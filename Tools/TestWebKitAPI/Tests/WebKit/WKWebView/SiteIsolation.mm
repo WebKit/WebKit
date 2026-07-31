@@ -8092,6 +8092,123 @@ TEST(SiteIsolation, SharedProcessWithUserInteractionOverride)
     });
 }
 
+TEST(SiteIsolation, StorageAccessUnderOpenerWithRemoteFrameOpener)
+{
+    // This test verifies that when Site Isolation is enabled and a popup
+    // triggers user interaction, a cross-origin iframe (in a different
+    // WebProcess) can access its unpartitioned cookies.
+
+    auto iframeHTML = "<script>"
+        "window.addEventListener('message', function(e) {"
+        "    e.source.postMessage(document.cookie, '*');"
+        "});"
+        "</script>"_s;
+
+    auto popupHTML = "popup content"_s;
+
+    auto mainHTML = "<iframe src='https://webkit.org/iframe'></iframe>"
+        "<script>"
+        "window.addEventListener('message', function(e) {"
+        "    document.title = e.data;"
+        "});"
+        "</script>"_s;
+
+    HTTPServer server({
+        { "/main"_s, { mainHTML } },
+        { "/iframe"_s, { iframeHTML } },
+        { "/popup"_s, { { { "Set-Cookie"_s, "auth=loggedin; path=/; SameSite=None; Secure"_s } }, popupHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *dataStoreRoot = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"StorageAccessUnderOpenerDataStore"] isDirectory:YES];
+    NSURL *itpRoot = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"StorageAccessUnderOpenerITP"] isDirectory:YES];
+    auto defaultFileManager = [NSFileManager defaultManager];
+    [defaultFileManager removeItemAtPath:dataStoreRoot.path error:nil];
+    [defaultFileManager removeItemAtPath:itpRoot.path error:nil];
+    [defaultFileManager createDirectoryAtURL:dataStoreRoot withIntermediateDirectories:YES attributes:nil error:nil];
+    [defaultFileManager createDirectoryAtURL:itpRoot withIntermediateDirectories:YES attributes:nil error:nil];
+
+    NSURL *itpDatabaseFile = [itpRoot URLByAppendingPathComponent:@"observations.db"];
+    NSURL *sourceFile = [NSBundle.test_resourcesBundle URLForResource:@"basicITPDatabase" withExtension:@"db"];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:sourceFile.path]);
+    [defaultFileManager copyItemAtPath:sourceFile.path toPath:itpDatabaseFile.path error:nil];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:itpDatabaseFile.path]);
+
+    // Mark webkit.org as prevalent so its third-party cookies are blocked by ITP.
+    auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
+    EXPECT_TRUE(database->open(itpDatabaseFile.path));
+    EXPECT_TRUE(database->executeCommand("UPDATE ObservedDomains SET isPrevalent = 1 WHERE registrableDomain = 'webkit.org'"_s));
+    database->close();
+
+    RetainPtr dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:dataStoreRoot]);
+    dataStoreConfiguration.get()._resourceLoadStatisticsDirectory = itpRoot;
+    [dataStoreConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [dataStore _setResourceLoadStatisticsDebugMode:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    enableSiteIsolation(configuration.get());
+
+    __block RetainPtr<TestWKWebView> popupWebView;
+
+    RetainPtr openerNavDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerNavDelegate allowAnyTLSCertificate];
+
+    RetainPtr popupNavDelegate = adoptNS([TestNavigationDelegate new]);
+    [popupNavDelegate allowAnyTLSCertificate];
+
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *config, WKNavigationAction *action, WKWindowFeatures *features) {
+        enableSiteIsolation(config);
+        popupWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:config]);
+        popupWebView.get().navigationDelegate = popupNavDelegate.get();
+        return popupWebView.get();
+    };
+
+    RetainPtr openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    openerWebView.get().navigationDelegate = openerNavDelegate.get();
+    openerWebView.get().UIDelegate = uiDelegate.get();
+    openerWebView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [openerNavDelegate waitForDidFinishNavigation];
+
+    // Wait for the cross-origin iframe to load in its own process.
+    while (![[openerWebView firstChildFrame].securityOrigin.host isEqualToString:@"webkit.org"])
+        Util::spinRunLoop();
+
+    // Verify that webkit.org cookies are blocked as third-party under example.com.
+    NSString *cookieBefore = [openerWebView stringByEvaluatingJavaScript:@"document.cookie" inFrame:[openerWebView firstChildFrame]];
+    EXPECT_WK_STREQ(cookieBefore, "");
+
+    // Open a popup to webkit.org which sets a cookie in first-party context.
+    [openerWebView evaluateJavaScript:@"window.open('https://webkit.org/popup')" completionHandler:nil];
+    [popupNavDelegate waitForDidFinishNavigation];
+
+    // The popup is in a different process from the opener (Site Isolation).
+    // The opener is a RemoteFrame from the popup's perspective.
+    EXPECT_NE([openerWebView _webProcessIdentifier], [popupWebView _webProcessIdentifier]);
+
+    NSString *cookieInPopup = [popupWebView stringByEvaluatingJavaScript:@"document.cookie"];
+    EXPECT_WK_STREQ(cookieInPopup, "auth=loggedin");
+
+    // Simulate user interaction in the popup.
+    [popupWebView sendClicksAtPoint:NSMakePoint(50, 50) numberOfClicks:1];
+    [popupWebView waitForPendingMouseEvents];
+
+    // Poll until the iframe can read its unpartitioned cookie.
+    NSString *cookieAfter = @"";
+    while (true) {
+        cookieAfter = [openerWebView stringByEvaluatingJavaScript:@"document.cookie" inFrame:[openerWebView firstChildFrame]];
+        if ([cookieAfter length] > 0)
+            break;
+        Util::runFor(0.1_s);
+    }
+    EXPECT_WK_STREQ(cookieAfter, "auth=loggedin");
+}
+
 #endif
 
 static auto advanceFocusAcrossFramesMainFrame = R"FOCUSRESOURCE(
