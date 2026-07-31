@@ -44,7 +44,7 @@ public:
 
     void setTargetLayer(CoordinatedPlatformLayer*);
     void consumePendingBufferIfNeeded();
-    void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
+    void setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&);
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     enum class ShouldWait : bool { No, Yes };
@@ -56,7 +56,7 @@ private:
 
     Lock m_lock;
     RefPtr<CoordinatedPlatformLayer> m_layer WTF_GUARDED_BY_LOCK(m_lock);
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_pendingBuffer WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayerBuffer> m_pendingBuffer WTF_GUARDED_BY_LOCK(m_lock);
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     RefPtr<RunLoop> m_compositingRunLoop WTF_GUARDED_BY_LOCK(m_lock);
 #endif

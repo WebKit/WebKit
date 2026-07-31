@@ -157,8 +157,6 @@ void ScrollerCoordinated::updateValues()
 
     grContext->flushAndSubmit(surface.get(), GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
     auto buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), { TextureMapperFlags::ShouldBlend }, GLFence::create(display.glDisplay()));
-    if (!buffer)
-        return;
 
     Locker layerLocker { hostLayer->lock() };
     hostLayer->setContentsRect(state.frameRect);

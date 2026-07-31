@@ -53,15 +53,15 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> CoordinatedPlatformLayerBufferExternalOES::create(unsigned textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
+Ref<CoordinatedPlatformLayerBufferExternalOES> CoordinatedPlatformLayerBufferExternalOES::create(unsigned textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferExternalOES>(textureID, size, flags, WTF::move(fence));
+    return adoptRef(*new CoordinatedPlatformLayerBufferExternalOES(textureID, size, flags, WTF::move(fence)));
 }
 
 #if USE(GSTREAMER) && USE(GBM)
-std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> CoordinatedPlatformLayerBufferExternalOES::create(GRefPtr<GstBuffer>&& buffer, uint32_t fourcc, const IntSize& size, OptionSet<TextureMapperFlags> flags)
+Ref<CoordinatedPlatformLayerBufferExternalOES> CoordinatedPlatformLayerBufferExternalOES::create(GRefPtr<GstBuffer>&& buffer, uint32_t fourcc, const IntSize& size, OptionSet<TextureMapperFlags> flags)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferExternalOES>(WTF::move(buffer), fourcc, size, flags);
+    return adoptRef(*new CoordinatedPlatformLayerBufferExternalOES(WTF::move(buffer), fourcc, size, flags));
 }
 #endif
 

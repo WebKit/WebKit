@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(SKIA)
@@ -56,7 +57,7 @@ private:
     CoordinatedImageBackingStore(Ref<NativeImage>&&, const sk_sp<GrContextThreadSafeProxy>&);
 #endif
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> m_buffer;
     uint64_t m_uniqueID { 0 };
 };
 

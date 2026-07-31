@@ -81,7 +81,7 @@ void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()
         m_pendingBuffer = nullptr;
 }
 
-void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
+void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
     RefPtr<CoordinatedPlatformLayer> layer;
     {

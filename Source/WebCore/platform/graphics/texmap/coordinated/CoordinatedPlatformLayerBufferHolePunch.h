@@ -38,10 +38,10 @@ class GStreamerQuirksManager;
 
 class CoordinatedPlatformLayerBufferHolePunch final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> create(const IntSize&);
+    static Ref<CoordinatedPlatformLayerBufferHolePunch> create(const IntSize&);
     explicit CoordinatedPlatformLayerBufferHolePunch(const IntSize&);
 #if USE(GSTREAMER)
-    static std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> create(const IntSize&, GstElement*, RefPtr<GStreamerQuirksManager>&&);
+    static Ref<CoordinatedPlatformLayerBufferHolePunch> create(const IntSize&, GstElement*, RefPtr<GStreamerQuirksManager>&&);
     CoordinatedPlatformLayerBufferHolePunch(const IntSize&, GstElement*, RefPtr<GStreamerQuirksManager>&&);
 #endif
     virtual ~CoordinatedPlatformLayerBufferHolePunch();
