@@ -293,6 +293,12 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferDMABuf::skiaImage()
 }
 #endif
 
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferDMABuf::copyBuffer(OptionSet<TextureMapperFlags> flags) const
+{
+    auto buffer = m_dmabuf.copyRef();
+    return CoordinatedPlatformLayerBufferDMABuf::create(WTF::move(buffer), flags, m_fenceFD.duplicate());
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS) && USE(GBM)

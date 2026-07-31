@@ -293,6 +293,15 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferYUV::skiaImage()
 }
 #endif
 
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferYUV::copyBuffer(OptionSet<TextureMapperFlags> flags) const
+{
+    const auto& size = this->size();
+    std::array<unsigned, 4> planes = m_planes;
+    std::array<unsigned, 4> yuvPlane = m_yuvPlane;
+    std::array<unsigned, 4> yuvPlaneOffset = m_yuvPlaneOffset;
+    return CoordinatedPlatformLayerBufferYUV::create(m_format, m_planeCount, WTF::move(planes), WTF::move(yuvPlane), WTF::move(yuvPlaneOffset), m_yuvToRgbColorSpace, m_transferFunction, size, flags, nullptr);
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

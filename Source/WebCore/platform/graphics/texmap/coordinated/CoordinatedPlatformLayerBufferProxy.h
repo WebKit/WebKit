@@ -47,8 +47,7 @@ public:
     void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-    enum class ShouldWait : bool { No, Yes };
-    void dropCurrentBufferWhilePreservingTexture(ShouldWait);
+    void dropCurrentBufferWhilePreservingTexture();
 #endif
 
 private:

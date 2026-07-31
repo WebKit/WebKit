@@ -103,7 +103,7 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
 }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTexture(ShouldWait shouldWait)
+void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTexture()
 {
     RefPtr<RunLoop> compositingRunLoop;
     {
@@ -121,11 +121,6 @@ void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTextur
 
         m_layer->replaceCurrentContentsBufferWithCopy();
     };
-
-    if (shouldWait == ShouldWait::No) {
-        compositingRunLoop->dispatch(WTF::move(dropCurrentBuffer));
-        return;
-    }
 
     BinarySemaphore semaphore;
     compositingRunLoop->dispatch([&semaphore, function = WTF::move(dropCurrentBuffer)]() mutable {
