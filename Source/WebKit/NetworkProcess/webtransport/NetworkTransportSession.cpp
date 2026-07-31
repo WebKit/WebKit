@@ -160,11 +160,6 @@ void NetworkTransportSession::datagramIncomingMaxAgeUpdated(std::optional<double
     // FIXME: Use this value.
 }
 
-void NetworkTransportSession::datagramOutgoingMaxAgeUpdated(std::optional<double>)
-{
-    // FIXME: Use this value.
-}
-
 void NetworkTransportSession::incomingMaxBufferedDatagramsUpdated(uint32_t)
 {
     // FIXME: Use this value.
@@ -264,6 +259,10 @@ bool NetworkTransportSession::isSessionClosed() const
 void NetworkTransportSession::exportKeyingMaterial(std::span<const uint8_t>, std::span<const uint8_t>, uint32_t, CompletionHandler<void(std::optional<Vector<uint8_t>>)>&& completionHandler)
 {
     completionHandler(std::nullopt);
+}
+
+void NetworkTransportSession::datagramOutgoingMaxAgeUpdated(std::optional<double>)
+{
 }
 #endif
 

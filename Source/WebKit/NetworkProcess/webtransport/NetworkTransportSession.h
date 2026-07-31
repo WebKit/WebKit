@@ -91,7 +91,7 @@ public:
     void streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void terminate(WebCore::WebTransportSessionErrorCode, CString&&);
     void NODELETE datagramIncomingMaxAgeUpdated(std::optional<double>);
-    void NODELETE datagramOutgoingMaxAgeUpdated(std::optional<double>);
+    void datagramOutgoingMaxAgeUpdated(std::optional<double>);
     void NODELETE incomingMaxBufferedDatagramsUpdated(uint32_t);
     void NODELETE outgoingMaxBufferedDatagramsUpdated(uint32_t);
 
@@ -141,6 +141,7 @@ private:
     const WebCore::WebTransportOptions m_options;
     HashMap<WebCore::WebTransportSendGroupIdentifier, uint64_t> m_datagramBytesSent;
     uint64_t m_datagramBytesReceived { 0 };
+    std::optional<double> m_datagramOutgoingMaxAge;
 
     struct StreamRequestBeforeInitialization {
         NetworkTransportStreamType streamType;
@@ -163,6 +164,7 @@ private:
     const RefPtr<SecurityProtocolMetadata> m_securityProtocolMetadata;
     RetainPtr<nw_connection_t> m_datagramConnection;
     RetainPtr<nw_protocol_metadata_t> m_sessionMetadata;
+    RetainPtr<nw_content_context_t> m_datagramContext;
 #endif
 };
 
