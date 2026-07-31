@@ -31,6 +31,7 @@
 #include <JavaScriptCore/YarrFlags.h>
 #include <JavaScriptCore/YarrUnicodeProperties.h>
 #include <array>
+#include <limits>
 #include <wtf/BitSet.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
@@ -770,6 +771,8 @@ struct YarrPattern {
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     bool hasDuplicateNamedCaptureGroups() const { return !!m_numDuplicateNamedCaptureGroups; }
+    static constexpr unsigned endAnchoredFixedSizeNotSet = std::numeric_limits<unsigned>::max();
+    bool hasEndAnchoredFixedSize() const { return m_endAnchoredFixedSize != endAnchoredFixedSizeNotSet; }
 
     CompileMode compileMode() const
     {
@@ -793,6 +796,7 @@ struct YarrPattern {
     ExecutionMode m_executionMode { ExecutionMode::IncludeSubpatterns };
     OptionSet<Flags> m_flags;
     SpecificPattern m_specificPattern { SpecificPattern::None };
+    unsigned m_endAnchoredFixedSize { endAnchoredFixedSizeNotSet };
     unsigned m_numSubpatterns { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };
     unsigned m_numDuplicateNamedCaptureGroups { 0 };

@@ -6728,6 +6728,20 @@ class YarrGenerator final : public YarrJITInfo {
         return registers;
     }
 
+    void skipToEndAnchoredStart()
+    {
+        if (!m_pattern.hasEndAnchoredFixedSize())
+            return;
+
+        unsigned endAnchoredFixedSize = m_pattern.m_endAnchoredFixedSize;
+        MacroAssembler::JumpList noStartAdjustment;
+        noStartAdjustment.append(m_jit.branch32(MacroAssembler::Below, m_regs.length, MacroAssembler::TrustedImm32(endAnchoredFixedSize)));
+        m_jit.sub32(m_regs.length, MacroAssembler::TrustedImm32(endAnchoredFixedSize), m_regs.regT0);
+        noStartAdjustment.append(m_jit.branch32(MacroAssembler::AboveOrEqual, m_regs.index, m_regs.regT0));
+        m_jit.move(m_regs.regT0, m_regs.index);
+        noStartAdjustment.link(&m_jit);
+    }
+
     void generateEnter()
     {
 #if CPU(X86_64) || CPU(ARM_THUMB2) || CPU(RISCV64)
@@ -6998,6 +7012,8 @@ public:
         generateFailReturn();
         hasInput.link(&m_jit);
 
+        skipToEndAnchoredStart();
+
         if (m_callFrameSizeInBytes) {
             // Check stack size
             m_jit.addPtr(MacroAssembler::TrustedImm32(-m_callFrameSizeInBytes), MacroAssembler::stackPointerRegister, m_regs.regT0);
@@ -7054,11 +7070,15 @@ public:
         // Initialize subpatterns' starts. And initialize matchStart if `!m_pattern.m_body->m_hasFixedSize`.
         // If shouldRecordSubpatterns(), then matchStart is subpatterns[0]'s start.
         emitClearAllCaptures();
-        if (!m_pattern.m_body->m_hasFixedSize)
+        if (!m_pattern.m_body->m_hasFixedSize) {
+            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
             setMatchStart(m_regs.index);
+        }
 
-        if (m_pattern.m_saveInitialStartValue)
+        if (m_pattern.m_saveInitialStartValue) {
+            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
             storeToFrame(m_regs.index, m_pattern.m_initialStartValueFrameLocation);
+        }
 
         generate();
         if (m_disassembler)
@@ -7184,6 +7204,8 @@ public:
         generateFailReturn();
         hasInput.link(&m_jit);
 
+        skipToEndAnchoredStart();
+
         if (m_callFrameSizeInBytes) {
             // Create space on stack for matching context data.
             // Note that this stack check cannot clobber m_regs.regT1 as it is needed for the slow path we call if we fail the stack check.
@@ -7205,11 +7227,15 @@ public:
 #endif
 
         emitClearAllCaptures();
-        if (!m_pattern.m_body->m_hasFixedSize)
+        if (!m_pattern.m_body->m_hasFixedSize) {
+            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
             setMatchStart(m_regs.index);
+        }
 
-        if (m_pattern.m_saveInitialStartValue)
+        if (m_pattern.m_saveInitialStartValue) {
+            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
             storeToFrame(m_regs.index, m_pattern.m_initialStartValueFrameLocation);
+        }
 
         generate();
         if (m_disassembler)

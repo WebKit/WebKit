@@ -506,11 +506,13 @@ public:
         m_userCharacterClasses.shrinkToFit();
 
         m_numDuplicateNamedCaptureGroups = pattern.m_numDuplicateNamedCaptureGroups;
+        m_endAnchoredFixedSize = pattern.m_endAnchoredFixedSize;
     }
 
     size_t estimatedSizeInBytes() const { return m_body->estimatedSizeInBytes(); }
 
     bool hasDuplicateNamedCaptureGroups() const { return !!m_numDuplicateNamedCaptureGroups; }
+    bool hasEndAnchoredFixedSize() const { return m_endAnchoredFixedSize != YarrPattern::endAnchoredFixedSizeNotSet; }
 
     unsigned offsetForDuplicateNamedGroupId(unsigned duplicateNamedGroupId)
     {
@@ -546,6 +548,7 @@ public:
     ConcurrentJSLock* m_lock;
 
     unsigned m_numDuplicateNamedCaptureGroups;
+    unsigned m_endAnchoredFixedSize { YarrPattern::endAnchoredFixedSizeNotSet };
     unsigned m_offsetVectorBaseForNamedCaptures;
     unsigned m_offsetsSize;
     Vector<unsigned> m_duplicateNamedGroupForSubpatternId;

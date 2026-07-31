@@ -2249,6 +2249,9 @@ public:
         if (!input.isAvailableInput(0))
             return offsetNoMatch;
 
+        if (pattern->hasEndAnchoredFixedSize() && input.end() >= pattern->m_endAnchoredFixedSize)
+            input.setPos(std::max(input.getPos(), input.end() - pattern->m_endAnchoredFixedSize));
+
         ConcurrentJSLocker locker(pattern->m_lock);
 
         for (unsigned i = 0; i < pattern->m_body->m_numSubpatterns + 1; ++i)
