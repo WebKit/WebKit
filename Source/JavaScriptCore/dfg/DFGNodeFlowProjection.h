@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGNode.h"
+#include <wtf/HashFunctions.h>
 #include <wtf/HashTable.h>
 
 namespace JSC { namespace DFG {
@@ -69,7 +71,7 @@ public:
     
     unsigned hash() const
     {
-        return m_word;
+        return WTF::IntHash<uintptr_t>::hash(m_word);
     }
     
     friend bool operator==(const NodeFlowProjection&, const NodeFlowProjection&) = default;
@@ -135,4 +137,3 @@ template<> struct HashTraits<JSC::DFG::NodeFlowProjection> : SimpleClassHashTrai
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
