@@ -68,7 +68,7 @@ public:
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
 
     CoordinatedPlatformLayerBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
-    void setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
+    void setBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&);
 
 private:
     explicit DMABufBuffer(Attributes&&);
@@ -78,7 +78,7 @@ private:
     Attributes m_attributes;
     std::optional<ColorSpace> m_colorSpace;
     std::optional<TransferFunction> m_transferFunction;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 
 } // namespace WebCore

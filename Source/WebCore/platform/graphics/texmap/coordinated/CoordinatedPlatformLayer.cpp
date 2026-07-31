@@ -32,7 +32,6 @@
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "CoordinatedPlatformLayerBuffer.h"
-#include "CoordinatedPlatformLayerBufferHolePunch.h"
 #include "CoordinatedPlatformLayerBufferVideo.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
@@ -124,20 +123,6 @@ SkiaCompositingLayer& CoordinatedPlatformLayer::ensureSkiaTarget()
 }
 #endif
 
-static bool shouldReleaseBuffer(CoordinatedPlatformLayerBuffer* buffer)
-{
-    if (!buffer)
-        return false;
-
-#if ENABLE(VIDEO)
-    // Do not release hole punch buffers early. See https://bugs.webkit.org/show_bug.cgi?id=267322.
-    if (is<CoordinatedPlatformLayerBufferHolePunch>(*buffer))
-        return false;
-#endif
-
-    return true;
-}
-
 void CoordinatedPlatformLayer::invalidateTarget()
 {
     ASSERT(!isMainThread());
@@ -145,8 +130,7 @@ void CoordinatedPlatformLayer::invalidateTarget()
         Locker locker { m_lock };
         m_backingStore = nullptr;
         m_imageBackingStore.committed = nullptr;
-        if (shouldReleaseBuffer(m_contentsBuffer.committed.get()))
-            m_contentsBuffer.committed = nullptr;
+        m_contentsBuffer.committed = nullptr;
     }
     m_target = nullptr;
 #if USE(SKIA)
@@ -510,7 +494,7 @@ bool CoordinatedPlatformLayer::hasCommittedContentsBuffer() const
     return !!m_contentsBuffer.committed;
 }
 
-void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
+void CoordinatedPlatformLayer::setContentsBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
 {
     ASSERT(m_lock.isHeld());
     if (!buffer && !m_contentsBuffer.pending && !hasCommittedContentsBuffer())
@@ -892,8 +876,7 @@ void CoordinatedPlatformLayer::purgeBackingStores()
         m_animatedBackingStoreClient = nullptr;
     }
     m_imageBackingStore.current = nullptr;
-    if (shouldReleaseBuffer(m_contentsBuffer.pending.get()))
-        m_contentsBuffer.pending = nullptr;
+    m_contentsBuffer.pending = nullptr;
 }
 
 bool CoordinatedPlatformLayer::isCompositionRequiredOrOngoing() const

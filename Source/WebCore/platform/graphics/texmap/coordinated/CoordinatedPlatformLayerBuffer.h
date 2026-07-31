@@ -30,6 +30,7 @@
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayer.h"
 #include <wtf/OptionSet.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -39,7 +40,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-class CoordinatedPlatformLayerBuffer : public TextureMapperPlatformLayer {
+class CoordinatedPlatformLayerBuffer : public ThreadSafeRefCounted<CoordinatedPlatformLayerBuffer>, public TextureMapperPlatformLayer {
     WTF_MAKE_NONCOPYABLE(CoordinatedPlatformLayerBuffer);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CoordinatedPlatformLayerBuffer);
 public:

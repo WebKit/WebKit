@@ -231,7 +231,7 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
     if (contextAttributes().alpha)
         flags.add(TextureMapperFlags::ShouldBlend);
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> buffer;
     if (fenceFD)
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD));
     else

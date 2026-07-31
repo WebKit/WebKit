@@ -1066,7 +1066,7 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
             if (!m_contentsDisplayDelegate->display(m_platformLayer.get(), std::exchange(m_contentsDirtyRegion, std::nullopt)))
                 contentsBufferNeedsDisplay = true;
         } else if (m_contentsBufferProxy)
-            m_contentsBufferProxy->consumePendingBufferIfNeeded();
+            m_contentsBufferProxy->setTargetBufferIfNeeded();
     }
 
     if (m_pendingChanges.containsAny(Change::Geometry))

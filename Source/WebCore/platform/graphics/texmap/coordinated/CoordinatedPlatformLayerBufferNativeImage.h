@@ -34,7 +34,7 @@ class NativeImage;
 
 class CoordinatedPlatformLayerBufferNativeImage final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> create(Ref<NativeImage>&&, std::unique_ptr<GLFence>&&);
+    static Ref<CoordinatedPlatformLayerBufferNativeImage> create(Ref<NativeImage>&&, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferNativeImage(Ref<NativeImage>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     virtual ~CoordinatedPlatformLayerBufferNativeImage();
 
@@ -51,7 +51,7 @@ private:
     bool tryEnsureBuffer(UseSkiaForCompositing = UseSkiaForCompositing::No);
 
     RefPtr<NativeImage> m_image;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 
 } // namespace WebCore

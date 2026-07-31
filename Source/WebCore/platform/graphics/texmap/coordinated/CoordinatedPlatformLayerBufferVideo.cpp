@@ -51,10 +51,10 @@
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+Ref<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
 {
     auto size = frame->presentationSize();
-    return makeUnique<CoordinatedPlatformLayerBufferVideo>(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags);
+    return adoptRef(*new CoordinatedPlatformLayerBufferVideo(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags));
 }
 
 CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
@@ -67,7 +67,7 @@ CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<Vid
 
 CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo() = default;
 
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
+RefPtr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
 {
     if (!m_buffer || !is<CoordinatedPlatformLayerBufferRGB>(*m_buffer))
         return nullptr;
@@ -83,7 +83,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
 }
 
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
+RefPtr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
 {
     const auto& sample = m_videoFrame->sample();
     auto buffer = gst_sample_get_buffer(sample.get());
@@ -131,7 +131,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 }
 
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromDMABufMemory()
+Ref<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromDMABufMemory()
 {
     auto videoInfo = m_videoFrame->info();
     if (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo))
@@ -177,7 +177,7 @@ static std::optional<CoordinatedPlatformLayerBufferYUV::Format> yuvFormatFromGst
     return std::nullopt;
 }
 
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory()
+RefPtr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory()
 {
     const auto& sample = m_videoFrame->sample();
     m_mappedVideoFrame.emplace(GstMappedFrame(sample, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)));

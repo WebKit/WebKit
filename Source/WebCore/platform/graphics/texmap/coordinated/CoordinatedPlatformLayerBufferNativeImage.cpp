@@ -53,12 +53,12 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> CoordinatedPlatformLayerBufferNativeImage::create(Ref<NativeImage>&& nativeImage, std::unique_ptr<GLFence>&& fence)
+Ref<CoordinatedPlatformLayerBufferNativeImage> CoordinatedPlatformLayerBufferNativeImage::create(Ref<NativeImage>&& nativeImage, std::unique_ptr<GLFence>&& fence)
 {
     OptionSet<TextureMapperFlags> flags;
     if (nativeImage->hasAlpha())
         flags.add(TextureMapperFlags::ShouldBlend);
-    return makeUnique<CoordinatedPlatformLayerBufferNativeImage>(WTF::move(nativeImage), flags, WTF::move(fence));
+    return adoptRef(*new CoordinatedPlatformLayerBufferNativeImage(WTF::move(nativeImage), flags, WTF::move(fence)));
 }
 
 CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeImage(Ref<NativeImage>&& nativeImage, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
