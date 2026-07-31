@@ -183,6 +183,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, validateGraphAtEachPhase, false, Normal, nullptr) \
     v(Bool, verboseValidationFailure, false, Normal, nullptr) \
     v(Bool, verboseOSR, false, Normal, nullptr) \
+    v(Bool, logUnlinkedCodeBlockEvents, false, Normal, nullptr) \
+    v(Bool, useStableDFGExecutionCount, true, Normal, nullptr) \
     v(Bool, verboseDFGOSRExit, false, Normal, nullptr) \
     v(Bool, verboseFTLOSRExit, false, Normal, nullptr) \
     v(Bool, verboseCallLink, false, Normal, nullptr) \

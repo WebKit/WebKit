@@ -2297,6 +2297,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     VM& vm = *m_vm;
 
+    bool wasAlreadyJettisoned = m_isJettisoned;
     m_isJettisoned = true;
 
 #if ENABLE(DFG_JIT)
@@ -2313,6 +2314,73 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     CODEBLOCK_LOG_EVENT(codeBlock, "jettison", ("due to ", reason, ", counting = ", mode == CountReoptimization, ", detail = ", pointerDump(detail)));
 
     RELEASE_ASSERT(reason != Profiler::NotJettisoned);
+
+#if ENABLE(DFG_JIT)
+    if (Options::useStableDFGExecutionCount() && jitType() == JITType::DFGJIT
+        && (reason == Profiler::JettisonDueToUnprofiledWatchpoint
+            || reason == Profiler::JettisonDueToProfiledWatchpoint
+            || reason == Profiler::JettisonDueToWeakReference)) {
+        auto* unlinkedCB = unlinkedCodeBlock();
+        CodeBlock* baseline = baselineAlternative();
+        unsigned execCount = baseline->m_savedExecutionCount;
+        if (auto* data = baseline->baselineJITData())
+            execCount += static_cast<unsigned>(data->executeCounter().count());
+        if (auto* dfg = dfgJITData()) {
+            double dfgCount = dfg->tierUpCounter().count();
+            if (dfgCount > 0)
+                execCount += static_cast<unsigned>(dfgCount);
+        }
+        if (!baseline->m_ftlInstallCount) {
+            if (execCount < unlinkedCB->m_stableDFGExecutionCount + 10000)
+                unlinkedCB->m_stableDFGExecutionCount = execCount;
+        }
+    }
+#endif
+
+    if (Options::logUnlinkedCodeBlockEvents()) [[unlikely]] {
+        auto* unlinked = unlinkedCodeBlock();
+        CodeBlock* baseline = baselineAlternative();
+        if (jitType() == JITType::DFGJIT) {
+            baseline->m_dfgJettisonCount++;
+#if ENABLE(DFG_JIT)
+            if (auto* dfg = dfgJITData()) {
+                double dfgCount = dfg->tierUpCounter().count();
+                if (dfgCount > 0)
+                    baseline->m_savedExecutionCount += static_cast<unsigned>(dfgCount);
+            }
+#endif
+        } else if (jitType() == JITType::FTLJIT) {
+            baseline->m_ftlJettisonCount++;
+        }
+        unsigned execCount = baseline->m_savedExecutionCount;
+        if (auto* data = baseline->baselineJITData())
+            execCount += static_cast<unsigned>(data->executeCounter().count());
+#if ENABLE(DFG_JIT)
+        if (jitType() == JITType::FTLJIT) {
+            if (auto* dfgCodeBlock = alternative()) {
+                if (auto* dfg = dfgCodeBlock->dfgJITData()) {
+                    double dfgCount = dfg->tierUpCounter().count();
+                    if (dfgCount > 0)
+                        execCount += static_cast<unsigned>(dfgCount);
+                }
+            }
+        }
+#endif
+        CompilationEvent entry;
+        entry.type = CompilationEvent::Type::Jettison;
+        entry.fromTier = jitType();
+        entry.toTier = alternative() ? alternative()->jitType() : JITType::InterpreterThunk;
+        entry.jettisonReason = reason;
+        entry.wasAlreadyInvalidated = wasAlreadyJettisoned;
+        entry.executionCount = execCount;
+        entry.dfgInstalls = baseline->m_dfgInstallCount;
+        entry.dfgJettisons = baseline->m_dfgJettisonCount;
+        entry.ftlInstalls = baseline->m_ftlInstallCount;
+        entry.ftlJettisons = baseline->m_ftlJettisonCount;
+        entry.timestamp = MonotonicTime::now();
+        entry.signpostMessage = vm.heap.currentThreadIsDoingGCWork() ? String() : vm.currentSignpostMessage();
+        unlinked->logCompilationEvent(this, WTF::move(entry));
+    }
 
 #if ENABLE(JIT)
     {
@@ -2727,15 +2795,29 @@ bool CodeBlock::checkIfOptimizationThresholdReached()
 void CodeBlock::optimizeNextInvocation()
 {
     dataLogLnIf(Options::verboseOSR(), *this, ": Optimizing next invocation.");
-    if (auto* jitData = baselineJITData())
+    if (auto* jitData = baselineJITData()) {
+        if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+            double count = jitData->executeCounter().count();
+            if (count > 0)
+                m_savedExecutionCount += static_cast<unsigned>(count);
+        }
         jitData->executeCounter().setNewThreshold(0, this);
+    }
 }
 
 void CodeBlock::dontOptimizeAnytimeSoon()
 {
     dataLogLnIf(Options::verboseOSR(), *this, ": Not optimizing anytime soon.");
-    if (auto* jitData = baselineJITData())
+    if (auto* jitData = baselineJITData()) {
+        if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+            double count = jitData->executeCounter().count();
+            if (count > 0)
+                m_savedExecutionCount += static_cast<unsigned>(count);
+        }
+        if (Options::logUnlinkedCodeBlockEvents()) [[unlikely]]
+            dataLogLn("dontOptimizeAnytimeSoon: ", RawPointer(unlinkedCodeBlock()), " ", inferredNameWithHash());
         jitData->executeCounter().deferIndefinitely();
+    }
 }
 
 template<CodeBlock::QuickTierUpCheck check>
@@ -2744,8 +2826,16 @@ void CodeBlock::optimizeAfterWarmUpImpl()
     dataLogLnIf(Options::verboseOSR(), *this, ": Optimizing after warm-up.");
 #if ENABLE(DFG_JIT)
     if (auto* jitData = baselineJITData()) {
+        if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+            double count = jitData->executeCounter().count();
+            if (count > 0)
+                m_savedExecutionCount += static_cast<unsigned>(count);
+        }
         int32_t threshold = Options::thresholdForOptimizeAfterWarmUp();
-        if constexpr (check == QuickTierUpCheck::Apply) {
+        unsigned stableCount = unlinkedCodeBlock()->m_stableDFGExecutionCount;
+        if (Options::useStableDFGExecutionCount() && stableCount > 0 && !m_dfgInstallCount)
+            threshold = static_cast<int32_t>(stableCount);
+        else if constexpr (check == QuickTierUpCheck::Apply) {
             if (unlinkedCodeBlock()->isQuickDFGTierUp()) {
                 threshold = static_cast<int32_t>(threshold * Options::quickDFGTierUpThresholdFactor());
                 dataLogLnIf(Options::verboseOSR(), *this, ": Quick DFG tier-up enabled and code is stable, bytecodeCost=", bytecodeCost(), ", codeType=", codeType(), ", adjustedThreshold=", threshold, ", finalThreshold=", adjustedCounterValue(threshold), " optimizationDelayCounter=", m_optimizationDelayCounter);

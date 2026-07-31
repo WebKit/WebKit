@@ -629,6 +629,8 @@ JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject* globalObject, CallFrame*
 void JSGlobalObject::startSignpost(String&& message)
 {
     ++activeJSGlobalObjectSignpostIntervalCount;
+    if (Options::logUnlinkedCodeBlockEvents()) [[unlikely]]
+        vm().m_currentSignpostMessage = message;
     auto* identifier = std::bit_cast<void*>(static_cast<uintptr_t>(m_signposts.ensure(message, [] {
         return JSCJSGlobalObjectSignpostIdentifier::generate();
     }).iterator->value.toUInt64()));
@@ -648,6 +650,8 @@ void JSGlobalObject::stopSignpost(String&& message)
     WTFEndSignpostAlways(identifier, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, string.data());
     ProfilerSupport::markEnd(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTF::move(string));
     --activeJSGlobalObjectSignpostIntervalCount;
+    if (Options::logUnlinkedCodeBlockEvents()) [[unlikely]]
+        vm().m_currentSignpostMessage = String();
 }
 
 JSC_DEFINE_HOST_FUNCTION(enableSuperSampler, (JSGlobalObject*, CallFrame*))

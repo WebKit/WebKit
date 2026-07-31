@@ -25,6 +25,8 @@
 #include "ContainerNodeInlines.h"
 #include "FrameInlines.h"
 #include "FrameLoader.h"
+#include "GarbageCollectionController.h"
+#include <JavaScriptCore/Options.h>
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
@@ -89,6 +91,8 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
             frame->disconnectOwnerElement();
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(frame != m_contentFrame.get());
     }
+    // if (JSC::Options::logUnlinkedCodeBlockEvents()) [[unlikely]]
+    //     GarbageCollectionController::singleton().garbageCollectNow();
 }
 
 HTMLFrameOwnerElement::~HTMLFrameOwnerElement()

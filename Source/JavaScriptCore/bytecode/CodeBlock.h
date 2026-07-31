@@ -834,6 +834,13 @@ public:
 
     bool m_visitChildrenSkippedDueToOldAge { false };
 
+    // TODO: I think these should actually go in BaselineJITData.
+    unsigned m_dfgInstallCount { 0 };
+    unsigned m_dfgJettisonCount { 0 };
+    unsigned m_ftlInstallCount { 0 };
+    unsigned m_ftlJettisonCount { 0 };
+    unsigned m_savedExecutionCount { 0 };
+
     // Internal methods for use by validation code. It would be private if it wasn't
     // for the fact that we use it from anonymous namespaces.
     void beginValidationDidFail();
@@ -1040,7 +1047,7 @@ private:
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
 #if !ASSERT_ENABLED
-static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
+static_assert(sizeof(CodeBlock) <= 248, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>

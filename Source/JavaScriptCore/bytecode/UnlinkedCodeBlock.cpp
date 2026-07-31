@@ -31,10 +31,13 @@
 #include "BytecodeLivenessAnalysis.h"
 #include "BytecodeStructs.h"
 #include "ClassInfo.h"
+#include "CodeBlock.h"
+#include "DFGJITCode.h"
 #include "ExecutableInfo.h"
 #include "InstructionStream.h"
 #include "JSCJSValueInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
+#include "VM.h"
 #include <wtf/DataLog.h>
 
 namespace JSC {
@@ -120,6 +123,8 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     extraMemory += thisObject->m_constantsSourceCodeRepresentation.byteSize();
     extraMemory += thisObject->m_functionDecls.byteSize();
     extraMemory += thisObject->m_functionExprs.byteSize();
+    // if (thisObject->m_compilationEventLog)
+    //     extraMemory += thisObject->m_compilationEventLog->capacity() * sizeof(CompilationEvent);
 
     visitor.reportExtraMemoryVisited(extraMemory);
 }
@@ -132,6 +137,8 @@ size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
     size_t extraSize = thisObject->metadataSizeInBytes();
     if (thisObject->m_instructions)
         extraSize += thisObject->m_instructions->sizeInBytes();
+    // if (thisObject->m_compilationEventLog)
+    //     extraSize += thisObject->m_compilationEventLog->capacity() * sizeof(CompilationEvent);
     return Base::estimatedSize(cell, vm) + extraSize;
 }
 
@@ -224,6 +231,15 @@ bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned byt
 
 UnlinkedCodeBlock::~UnlinkedCodeBlock()
 {
+    if (m_compilationEventLog && !m_compilationEventLog->isEmpty()) [[unlikely]]
+        dumpAndClearCompilationEvents();
+
+    if (m_compilationEventLog) [[unlikely]] {
+        VM& vm = this->vm();
+        Locker locker(vm.m_compilationEventLogLock);
+        vm.m_unlinkedCodeBlocksWithEvents.remove(this);
+    }
+
     if (Options::returnEarlyFromInfiniteLoopsForFuzzing()) [[unlikely]] {
         if (auto* instructions = m_instructions.get()) {
             VM& vm = this->vm();
@@ -233,6 +249,55 @@ UnlinkedCodeBlock::~UnlinkedCodeBlock()
             }
         }
     }
+}
+
+void UnlinkedCodeBlock::logCompilationEvent(CodeBlock* codeBlock, CompilationEvent&& entry)
+{
+    {
+        ConcurrentJSLocker locker(m_lock);
+        if (!m_compilationEventLog)
+            m_compilationEventLog = makeUnique<Vector<CompilationEvent>>();
+        if (m_compilationEventLogName.isNull() && codeBlock)
+            m_compilationEventLogName = codeBlock->inferredNameWithHash();
+        m_compilationEventLog->append(WTF::move(entry));
+    }
+    VM& vm = this->vm();
+    Locker locker(vm.m_compilationEventLogLock);
+    vm.m_unlinkedCodeBlocksWithEvents.add(this);
+}
+
+void UnlinkedCodeBlock::dumpAndClearCompilationEvents()
+{
+    ConcurrentJSLocker locker(m_lock);
+    if (!m_compilationEventLog || m_compilationEventLog->isEmpty())
+        return;
+    static std::once_flag headerFlag;
+    std::call_once(headerFlag, [] {
+        dataLogLn("ucb,name,builtin,event,from,to,reason,exec_count,dfg_installs,dfg_jettisons,ftl_installs,ftl_jettisons,time,signpost");
+    });
+    for (size_t i = 0; i < m_compilationEventLog->size(); ++i) {
+        const auto& e = m_compilationEventLog->at(i);
+        const char* event = nullptr;
+        switch (e.type) {
+        case CompilationEvent::Type::TierUp: event = "TierUp"; break;
+        case CompilationEvent::Type::Jettison: event = "Jettison"; break;
+        case CompilationEvent::Type::Recompilation: event = "Recompilation"; break;
+        case CompilationEvent::Type::GCDestruction: event = "GCDestruction"; break;
+        }
+        dataLog(RawPointer(this), ",", m_compilationEventLogName, ",",
+            (isBuiltinFunction() ? "true" : "false"), ",", event, ",",
+            JITCode::typeName(e.fromTier), ",", JITCode::typeName(e.toTier), ",");
+        if (e.type == CompilationEvent::Type::Jettison) {
+            dataLog(e.jettisonReason);
+            if (e.wasAlreadyInvalidated)
+                dataLog("+repeat");
+        }
+        dataLogLn(",", e.executionCount, ",",
+            e.dfgInstalls, ",", e.dfgJettisons, ",",
+            e.ftlInstalls, ",", e.ftlJettisons, ",",
+            e.timestamp.secondsSinceEpoch().value(), ",", e.signpostMessage);
+    }
+    m_compilationEventLog->clear();
 }
 
 const JSInstructionStream& UnlinkedCodeBlock::instructions() const

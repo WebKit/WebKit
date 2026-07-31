@@ -2118,4 +2118,12 @@ Wasm::DebugState* VM::debugState()
 }
 #endif
 
+void VM::dumpAndClearCompilationEventLogs()
+{
+    Locker locker(m_compilationEventLogLock);
+    for (auto* ucb : m_unlinkedCodeBlocksWithEvents)
+        ucb->dumpAndClearCompilationEvents();
+    m_unlinkedCodeBlocksWithEvents.clear();
+}
+
 } // namespace JSC

@@ -336,6 +336,11 @@ void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing next invocation.");
+    if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+        double count = codeBlock->dfgJITData()->tierUpCounter().count();
+        if (count > 0)
+            codeBlock->baselineAlternative()->m_savedExecutionCount += static_cast<unsigned>(count);
+    }
     codeBlock->dfgJITData()->tierUpCounter().setNewThreshold(0, codeBlock);
 }
 
@@ -343,6 +348,11 @@ void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Not FTL-optimizing anytime soon.");
+    if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+        double count = codeBlock->dfgJITData()->tierUpCounter().count();
+        if (count > 0)
+            codeBlock->baselineAlternative()->m_savedExecutionCount += static_cast<unsigned>(count);
+    }
     codeBlock->dfgJITData()->tierUpCounter().deferIndefinitely();
 }
 
@@ -350,6 +360,11 @@ void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing after warm-up.");
+    if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+        double count = codeBlock->dfgJITData()->tierUpCounter().count();
+        if (count > 0)
+            codeBlock->baselineAlternative()->m_savedExecutionCount += static_cast<unsigned>(count);
+    }
     CodeBlock* baseline = codeBlock->baselineVersion();
     int32_t threshold = Options::thresholdForFTLOptimizeAfterWarmUp();
     if (baseline->unlinkedCodeBlock()->isQuickFTLTierUp()) {

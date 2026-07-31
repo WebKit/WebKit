@@ -35,9 +35,11 @@
 #include <JavaScriptCore/HandlerInfo.h>
 #include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/InstructionStream.h>
+#include <JavaScriptCore/JITCode.h>
 #include <JavaScriptCore/JSCast.h>
 #include <JavaScriptCore/Opcode.h>
 #include <JavaScriptCore/ParserModes.h>
+#include <JavaScriptCore/ProfilerJettisonReason.h>
 #include <JavaScriptCore/RegExp.h>
 #include <JavaScriptCore/UnlinkedFunctionExecutable.h>
 #include <JavaScriptCore/UnlinkedMetadataTable.h>
@@ -46,6 +48,7 @@
 #include <algorithm>
 #include <wtf/BitVector.h>
 #include <wtf/FixedVector.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
@@ -75,6 +78,22 @@ class CachedCodeBlock;
 
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
+
+struct CompilationEvent {
+    enum class Type : uint8_t { TierUp, Jettison, Recompilation, GCDestruction };
+    Type type;
+    JITType fromTier;
+    JITType toTier;
+    Profiler::JettisonReason jettisonReason { Profiler::NotJettisoned };
+    bool wasAlreadyInvalidated { false };
+    unsigned executionCount { 0 };
+    unsigned dfgInstalls { 0 };
+    unsigned dfgJettisons { 0 };
+    unsigned ftlInstalls { 0 };
+    unsigned ftlJettisons { 0 };
+    MonotonicTime timestamp;
+    String signpostMessage;
+};
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedCodeBlock_RareData);
 
@@ -388,6 +407,9 @@ public:
 
     int32_t NODELETE thresholdForJIT(int32_t threshold);
 
+    void logCompilationEvent(CodeBlock*, CompilationEvent&&);
+    void dumpAndClearCompilationEvents();
+
 protected:
     UnlinkedCodeBlock(VM&, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
 
@@ -444,6 +466,7 @@ private:
 
 public:
     ConcurrentJSLock m_lock;
+    unsigned m_stableDFGExecutionCount { 0 };
 #if ENABLE(JIT)
     RefPtr<BaselineJITCode> m_unlinkedBaselineCode;
 #endif
@@ -522,6 +545,8 @@ private:
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
     std::unique_ptr<ExpressionInfo> m_expressionInfo;
+    std::unique_ptr<Vector<CompilationEvent>> m_compilationEventLog;
+    String m_compilationEventLogName;
     BaselineExecutionCounter m_llintExecuteCounter;
     FixedVector<UnlinkedValueProfile> m_valueProfiles;
     FixedVector<UnlinkedArrayProfile> m_arrayProfiles;

@@ -27,6 +27,7 @@
 
 #include "CodeBlock.h"
 #include "Debugger.h"
+#include "DFGJITCode.h"
 #include "EvalCodeBlock.h"
 #include "FunctionCodeBlock.h"
 #include "FunctionExecutableInlines.h"
@@ -200,7 +201,62 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         genericCodeBlock->m_isJettisoned = false;
         
         dataLogLnIf(Options::verboseOSR(), "Installing ", *genericCodeBlock);
-        
+
+        if (Options::useStableDFGExecutionCount()) [[unlikely]] {
+            if (genericCodeBlock->jitType() == JITType::BaselineJIT
+                && (!oldCodeBlock || oldCodeBlock == genericCodeBlock)) {
+                double llintCount = genericCodeBlock->unlinkedCodeBlock()->llintExecuteCounter().count();
+                if (llintCount > 0)
+                    genericCodeBlock->m_savedExecutionCount += static_cast<unsigned>(llintCount);
+            }
+        }
+
+        if (Options::logUnlinkedCodeBlockEvents() && reason == Profiler::NotJettisoned) [[unlikely]] {
+            auto* unlinked = genericCodeBlock->unlinkedCodeBlock();
+            JITType fromTier;
+            if (!oldCodeBlock)
+                fromTier = JITType::None;
+            else if (oldCodeBlock == genericCodeBlock)
+                fromTier = JITType::InterpreterThunk;
+            else
+                fromTier = oldCodeBlock->jitType();
+            CodeBlock* baseline = genericCodeBlock->baselineAlternative();
+            if (genericCodeBlock->jitType() == JITType::BaselineJIT && fromTier == JITType::InterpreterThunk) {
+                double llintCount = unlinked->llintExecuteCounter().count();
+                if (llintCount > 0)
+                    baseline->m_savedExecutionCount += static_cast<unsigned>(llintCount);
+            } else if (genericCodeBlock->jitType() == JITType::DFGJIT)
+                baseline->m_dfgInstallCount++;
+            else if (genericCodeBlock->jitType() == JITType::FTLJIT)
+                baseline->m_ftlInstallCount++;
+            unsigned execCount = baseline->m_savedExecutionCount;
+            if (auto* data = baseline->baselineJITData())
+                execCount += static_cast<unsigned>(data->executeCounter().count());
+#if ENABLE(DFG_JIT)
+            if (genericCodeBlock->jitType() == JITType::FTLJIT) {
+                if (auto* dfgCodeBlock = genericCodeBlock->alternative()) {
+                    if (auto* dfg = dfgCodeBlock->dfgJITData()) {
+                        double dfgCount = dfg->tierUpCounter().count();
+                        if (dfgCount > 0)
+                            execCount += static_cast<unsigned>(dfgCount);
+                    }
+                }
+            }
+#endif
+            CompilationEvent entry;
+            entry.type = CompilationEvent::Type::TierUp;
+            entry.fromTier = fromTier;
+            entry.toTier = genericCodeBlock->jitType();
+            entry.executionCount = execCount;
+            entry.dfgInstalls = baseline->m_dfgInstallCount;
+            entry.dfgJettisons = baseline->m_dfgJettisonCount;
+            entry.ftlInstalls = baseline->m_ftlInstallCount;
+            entry.ftlJettisons = baseline->m_ftlJettisonCount;
+            entry.timestamp = MonotonicTime::now();
+            entry.signpostMessage = vm.currentSignpostMessage();
+            unlinked->logCompilationEvent(genericCodeBlock, WTF::move(entry));
+        }
+
         if (vm.m_perBytecodeProfiler) [[unlikely]]
             vm.m_perBytecodeProfiler->ensureBytecodesFor(genericCodeBlock);
         
