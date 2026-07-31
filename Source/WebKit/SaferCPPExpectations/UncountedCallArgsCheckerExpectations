@@ -1,0 +1,7 @@
+[ macOS ] Platform/IPC/HandleMessage.h
+[ macOS ] UIProcess/API/C/WKBackForwardListRef.cpp
+[ macOS ] UIProcess/API/Cocoa/WKBackForwardList.mm
+[ macOS ] UIProcess/ProvisionalPageProxy.cpp
+[ macOS ] UIProcess/RemotePageProxy.cpp
+[ macOS ] UIProcess/WebBackForwardList.cpp
+[ macOS ] UIProcess/WebPageProxy.cpp
