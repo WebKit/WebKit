@@ -160,7 +160,10 @@ void Frame::detachFromPage()
 {
     if (isRootFrame()) {
         if (RefPtr page = m_page.get()) {
-            page->removeRootFrame(downcast<LocalFrame>(*this));
+            // WebPage::suspendWithFrameItem may have already removed this frame from
+            // Page::rootFrames(), so there is no need to remove it again.
+            if (page->rootFrames().contains(downcast<LocalFrame>(*this)))
+                page->removeRootFrame(downcast<LocalFrame>(*this));
             if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->rootFrameWasRemoved(frameID());
         }

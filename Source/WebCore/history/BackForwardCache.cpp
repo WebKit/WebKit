@@ -769,4 +769,14 @@ bool BackForwardCache::hasCachedPageExpired(BackForwardFrameItemIdentifier ident
     return (*cachedPage)->hasExpired();
 }
 
+void BackForwardCache::setDetachedRootFramesForFrameItem(BackForwardFrameItemIdentifier identifier, HashSet<WeakRef<LocalFrame>>&& frames)
+{
+    auto it = m_cachedPageMap.find(identifier);
+    if (it == m_cachedPageMap.end())
+        return;
+
+    if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&it->value))
+        (*cachedPage)->setDetachedRootFrames(WTF::move(frames));
+}
+
 } // namespace WebCore

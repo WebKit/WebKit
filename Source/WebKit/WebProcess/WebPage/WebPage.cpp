@@ -9018,8 +9018,8 @@ void WebPage::setIsSuspended(bool suspended, CompletionHandler<void(std::optiona
 
 void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_isSuspended)
-        return completionHandler(BackForwardCache::singleton().isInBackForwardCache(identifier));
+    if (BackForwardCache::singleton().isInBackForwardCache(identifier))
+        return completionHandler(true);
 
     RefPtr page = corePage();
     if (!page) {
@@ -9027,7 +9027,6 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
         return completionHandler(false);
     }
 
-    freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
     flushDeferredDidReceiveMouseEvent();
 
@@ -9036,6 +9035,16 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
         return completionHandler(false);
     }
 
+    // Detach the current root frames instead of freezing the whole page, so a same-site navigation
+    // later reusing this WebPage for a new root frame doesn't get frozen too.
+    HashSet<WeakRef<WebCore::LocalFrame>> detachedFrames;
+    for (auto& weakFrame : copyToVector(page->rootFrames())) {
+        Ref frame = weakFrame.get();
+        detachedFrames.add(weakFrame);
+        page->removeRootFrame(frame);
+    }
+    BackForwardCache::singleton().setDetachedRootFramesForFrameItem(identifier, WTF::move(detachedFrames));
+
     m_isSuspended = true;
     WEBPAGE_RELEASE_LOG(ProcessSwapping, "suspendWithFrameItem: Successfully cached page");
     completionHandler(true);
@@ -9043,7 +9052,7 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
 
 void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, std::optional<std::pair<URL, SecurityOriginData>>&& mainFrameURLAndOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!m_isSuspended)
+    if (!BackForwardCache::singleton().isInBackForwardCache(identifier))
         return completionHandler(true);
 
     RefPtr page = corePage();
@@ -9055,6 +9064,7 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
     auto cachedPage = BackForwardCache::singleton().take(identifier, page);
     if (!cachedPage) {
         WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "restoreWithFrameItem: take failed, cache entry missing or expired");
+        m_isSuspended = false;
         return completionHandler(false);
     }
 
@@ -9065,8 +9075,15 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
         page->setMainFrameURLAndOrigin(mainFrameURLAndOrigin->first, mainFrameURLAndOrigin->second.securityOrigin());
 
     m_isSuspended = false;
-    unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    auto restoredFrames = cachedPage->takeDetachedRootFrames();
     detachResidualSubframesForBackForwardCacheRestore(*page);
+
+    // Resume rendering for the frames detached in suspendWithFrameItem.
+    for (auto& weakFrame : restoredFrames) {
+        Ref frame = weakFrame.get();
+        page->addRootFrame(frame);
+    }
+
     cachedPage->restore(*page);
     completionHandler(true);
 }

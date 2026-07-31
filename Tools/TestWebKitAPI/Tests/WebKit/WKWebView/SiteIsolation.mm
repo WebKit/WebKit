@@ -524,6 +524,23 @@ static pid_t findFramePID(NSSet<_WKFrameTreeNode *> *set, FrameType local)
     return 0;
 }
 
+static void startCountingAnimationFrames(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    [webView objectByEvaluatingJavaScript:@"window.__rafCount = 0; (function tick() { window.__rafCount++; requestAnimationFrame(tick); })();" inFrame:frame];
+}
+
+static long long animationFrameCount(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    return [[webView objectByEvaluatingJavaScript:@"window.__rafCount" inFrame:frame] longLongValue];
+}
+
+static void expectAnimationFrameCountToIncrease(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    auto initialCount = animationFrameCount(webView, frame);
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_GT(animationFrameCount(webView, frame), initialCount);
+}
+
 TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
 {
     auto exampleHTML = "<script>"
@@ -11076,6 +11093,160 @@ TEST(SiteIsolation, ProvisionalSubframeCommitAfterMainFrameSwapDoesNotCrash)
     Util::runFor(0.5_s);
 
     EXPECT_WK_STREQ(@"https://c.com/c", [webView URL].absoluteString);
+}
+
+TEST(SiteIsolation, MultiProcessBFCacheSameSiteReusedIframeNotFrozen)
+{
+    HTTPServer server({
+        { "/a1"_s, { "<iframe src='https://b.com/frame1'></iframe>"_s } },
+        { "/a2"_s, { "<iframe src='https://b.com/frame2'></iframe>"_s } },
+        { "/frame1"_s, { "frame1"_s } },
+        { "/frame2"_s, { "frame2"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a1"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    pid_t iframePID1 = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    EXPECT_NE(iframePID1, 0);
+
+    // frame1 renders normally before ever being cached.
+    startCountingAnimationFrames(webView.get(), [webView firstChildFrame]);
+    expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a2"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    // frame2's rendering must not have been frozen by frame1's earlier caching.
+    startCountingAnimationFrames(webView.get(), [webView firstChildFrame]);
+    expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
+}
+
+TEST(SiteIsolation, MultiProcessBFCacheRestoreRerendersReattachedIframe)
+{
+    HTTPServer server({
+        { "/a1"_s, { "<iframe src='https://b.com/frame1'></iframe>"_s } },
+        { "/a2"_s, { "<iframe src='https://b.com/frame2'></iframe>"_s } },
+        { "/frame1"_s, { "frame1"_s } },
+        { "/frame2"_s, { "frame2"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a1"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a1 = true"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a2"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(@"https://a.com/a1", [webView URL].absoluteString);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a1 ? true : false"] boolValue]);
+
+    Vector<ExpectedFrameTree> expectedAfterGoBack = {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
+        TestWebKitAPI::Util::spinRunLoop();
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
+
+    // Verify rendering is resumed.
+    startCountingAnimationFrames(webView.get(), [webView firstChildFrame]);
+    expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
+}
+
+TEST(SiteIsolation, MultiProcessBFCacheRepeatedSameSiteSuspendCachesEachEntry)
+{
+    HTTPServer server({
+        { "/a1"_s, { "<iframe src='https://b.com/frame1'></iframe>"_s } },
+        { "/a2"_s, { "<iframe src='https://b.com/frame2'></iframe>"_s } },
+        { "/a3"_s, { "<iframe src='https://b.com/frame3'></iframe>"_s } },
+        { "/frame1"_s, { "frame1"_s } },
+        { "/frame2"_s, { "frame2"_s } },
+        { "/frame3"_s, { "frame3"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a1"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    pid_t iframePID1 = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    EXPECT_NE(iframePID1, 0);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a2"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a2 = true" inFrame:[webView firstChildFrame]];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a3"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    // frame3 must render normally regardless of how many times this WebPage was suspended before.
+    startCountingAnimationFrames(webView.get(), [webView firstChildFrame]);
+    expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://a.com/a2", [webView URL].absoluteString);
+
+    Vector<ExpectedFrameTree> expectedAfterGoBack = {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
+        TestWebKitAPI::Util::spinRunLoop();
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
+
+    // Confirm page is restored from cache.
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a2 ? true : false" inFrame:[webView firstChildFrame]] boolValue]);
+}
+
+TEST(SiteIsolation, MultiProcessBFCacheSameSiteEvictionDoesNotCrashIframe)
+{
+    HTTPServer server({
+        { "/a1"_s, { "<iframe src='https://b.com/frame1'></iframe>"_s } },
+        { "/a2"_s, { "<iframe src='https://b.com/frame2'></iframe>"_s } },
+        { "/frame1"_s, { "frame1"_s } },
+        { "/frame2"_s, { "frame2"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a1"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a1 = true" inFrame:[webView firstChildFrame]];
+
+    pid_t iframePID = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    EXPECT_NE(iframePID, 0);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a2"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    [webView _clearBackForwardCache];
+
+    startCountingAnimationFrames(webView.get(), [webView firstChildFrame]);
+    // Verify process does not crash after processing ClearCachedPage message.
+    EXPECT_TRUE(processStillRunning(iframePID));
+    expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
+
+    // Confirm the entry was actually evicted and page is loaded from network.
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://a.com/a1", [webView URL].absoluteString);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a1 ? true : false" inFrame:[webView firstChildFrame]] boolValue]);
 }
 
 TEST(SiteIsolation, MultiProcessBFCacheSameSiteNavAfterRestore)

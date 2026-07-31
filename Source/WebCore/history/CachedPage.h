@@ -28,6 +28,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/CachedFrame.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -37,6 +38,7 @@ namespace WebCore {
 class BackForwardController;
 class Document;
 class DocumentLoader;
+class LocalFrame;
 class Page;
 class RegistrableDomain;
 
@@ -72,6 +74,9 @@ public:
     void setItemID(BackForwardItemIdentifier itemID) { m_itemID = itemID; }
     std::optional<BackForwardItemIdentifier> itemID() const { return m_itemID; }
 
+    void setDetachedRootFrames(HashSet<WeakRef<LocalFrame>>&& frames) { m_detachedRootFrames = WTF::move(frames); }
+    HashSet<WeakRef<LocalFrame>> takeDetachedRootFrames() { return std::exchange(m_detachedRootFrames, { }); }
+
 private:
     void restoreNavigationAPIHistoryItems(LocalFrame&, BackForwardController*);
 
@@ -79,6 +84,7 @@ private:
     MonotonicTime m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
     std::optional<BackForwardItemIdentifier> m_itemID;
+    HashSet<WeakRef<LocalFrame>> m_detachedRootFrames;
 #if ENABLE(VIDEO)
     bool m_needsCaptionPreferencesChanged { false };
 #endif

@@ -29,9 +29,11 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/HistoryItem.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -81,6 +83,8 @@ public:
 
     WEBCORE_EXPORT bool NODELETE isInBackForwardCache(BackForwardFrameItemIdentifier) const;
     bool hasCachedPageExpired(BackForwardFrameItemIdentifier) const;
+
+    WEBCORE_EXPORT void setDetachedRootFramesForFrameItem(BackForwardFrameItemIdentifier, HashSet<WeakRef<LocalFrame>>&&);
 
 private:
     BackForwardCache();
