@@ -248,7 +248,7 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
 
     bool isBackForward = lastNavigationAction && lastNavigationAction->navigationType == NavigationType::BackForward;
     bool isReload = lastNavigationAction && lastNavigationAction->navigationType == NavigationType::Reload;
-    bool isInitialUIDriven = navigation.isRequestFromClientOrUserInput() && !navigation.currentRequestIsRedirect();
+    bool isInitialUIDriven = lastNavigationAction && lastNavigationAction->isRequestFromClientOrUserInput && !navigation.currentRequestIsRedirect();
 
     if (isBackForward) {
         handleBackForwardNavigation(navigation);

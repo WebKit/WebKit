@@ -28,6 +28,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
@@ -297,6 +298,37 @@ static void runHttpLoad(bool useSiteIsolation)
     EXPECT_EQ(plaintextServer.totalRequests(), 1u);
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLoad)
+
+static void runHttpFragmentNavigation(bool useSiteIsolation)
+{
+    auto pageBody = "<a id='link' href='#target'>target</a><div id='target'></div>"
+        "<script>"
+        "alert('insecure-page');"
+        "window.onhashchange = () => alert('after-fragment-navigation');"
+        "window.onload = () => { document.getElementById('link').click(); };"
+        "</script>"_s;
+
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { pageBody } },
+        { "http://insecure.example.internal/#target"_s, { pageBody } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Enabled },
+        { "after-fragment-navigation"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/#target");
+
+    // Allow a moment for the provisional load to begin, if it is going to.
+    TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_EQ([webView _provisionalWebProcessIdentifier], 0);
+    EXPECT_EQ(plaintextServer.totalRequests(), 1u);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpFragmentNavigation)
 
 static void runHttpLoadWithCOOP(bool useSiteIsolation)
 {
