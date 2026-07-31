@@ -1,0 +1,6 @@
+Should be green
+
+PASS Initially, container does not match. Target is red.
+FAIL Changing viewBox to '10 10 10 10' in container makes target color green assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Changing viewbox to ' ' in container does not affect target assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

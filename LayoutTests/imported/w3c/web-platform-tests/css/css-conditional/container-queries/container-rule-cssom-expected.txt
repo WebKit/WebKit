@@ -2,4 +2,9 @@
 PASS containerName without query
 PASS containerQuery without name
 PASS containerName and containerQuery
+FAIL .conditions undefined is not an object (evaluating 'rule.conditions.length')
+FAIL .conditions without name undefined is not an object (evaluating 'rule.conditions.length')
+FAIL .conditions without query undefined is not an object (evaluating 'rule.conditions.length')
+FAIL style() undefined is not an object (evaluating 'rule.conditions.length')
+FAIL multiple conditions undefined is not an object (evaluating 'rule.conditions.length')
 

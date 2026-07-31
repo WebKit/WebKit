@@ -1,10 +1,13 @@
 
+PASS Matching --match-zero
 PASS Matching --match-unknown
 FAIL Matching --match-unknown-fallback assert_equals: expected "yes" but got "no"
 FAIL Matching --match-unregistered assert_equals: expected "yes" but got "no"
 PASS Matching --match-unregistered-keyword
 PASS Matching --match-unregistered-number
+FAIL Matching --match-unregistered-number-zero assert_equals: expected "yes" but got "no"
 FAIL Matching --match-registered assert_equals: expected "yes" but got "no"
 PASS Matching --match-registered-keyword
 PASS Matching --match-registered-number
+FAIL Matching --match-registered-number-zero assert_equals: expected "yes" but got "no"
 

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/WEB_FEATURES.yml
@@ -68,5 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-container-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-layout-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-snapshot-after-scroll.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-snapshot.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-writing-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-target-query-change.html

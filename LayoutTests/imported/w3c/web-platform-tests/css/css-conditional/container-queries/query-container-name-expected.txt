@@ -2,4 +2,6 @@
 PASS match closest named container
 PASS match ancestor named container
 PASS no match for unused container name
+PASS match named container in shadow
+PASS match named container in outer scope
 

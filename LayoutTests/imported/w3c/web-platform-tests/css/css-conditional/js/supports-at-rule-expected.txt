@@ -10,4 +10,18 @@ FAIL @supports at-rule 7 assert_equals: CSS.supports(at-rule(@swash)) expected t
 FAIL @supports at-rule 8 assert_equals: CSS.supports(at-rule(@starting-style)) expected true but got false
 PASS @supports at-rule 9
 PASS @supports at-rule 10
+FAIL @supports at-rule 11 assert_equals: CSS.supports(at-rule(@supports) and (color: red)) expected true but got false
+FAIL @supports at-rule 12 assert_equals: CSS.supports(at-rule(@media) and (display: flex)) expected true but got false
+PASS @supports at-rule 13
+PASS @supports at-rule 14
+PASS @supports at-rule 15
+PASS @supports at-rule 16
+FAIL @supports at-rule 17 assert_equals: CSS.supports(at-rule(@supports) or (doesnotexist: red)) expected true but got false
+PASS @supports at-rule 18
+FAIL @supports at-rule 19 assert_equals: CSS.supports(not at-rule(@supports)) expected false but got true
+PASS @supports at-rule 20
+FAIL @supports at-rule 21 assert_equals: CSS.supports((color: red) and at-rule(@supports)) expected true but got false
+PASS @supports at-rule 22
+PASS @supports at-rule 23
+PASS @supports at-rule 24
 

@@ -1,0 +1,4 @@
+
+FAIL Should allow <general-enclosed> but match the valid query assert_equals: expected "yes" but got "no"
+PASS Invalid queries, not matching <general-enclosed>, makes the whole rule invalid
+

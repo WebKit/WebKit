@@ -1,0 +1,10 @@
+
+FAIL Element.matchContainer correctly matches the size of its container query. target.matchContainer is not a function. (In 'target.matchContainer("(width: 200px)")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer handles an invalid query. target.matchContainer is not a function. (In 'target.matchContainer("(invalid-feature)")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer handles syntax errors and empty queries. target.matchContainer is not a function. (In 'target.matchContainer("???")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer .matches reflects container size changes dynamically. target.matchContainer is not a function. (In 'target.matchContainer("(width > 100px)")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer .matches still evaluates when target is display:none. target.matchContainer is not a function. (In 'target.matchContainer("(width > 100px)")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer .matches updates when the target is removed from and re-inserted into the dom tree. target.matchContainer is not a function. (In 'target.matchContainer("(width > 100px)")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer matches style queries on a style container. target.matchContainer is not a function. (In 'target.matchContainer("style(--my-prop: foo)")', 'target.matchContainer' is undefined)
+FAIL Element.matchContainer .matches reflects custom property changes on the style container dynamically. target.matchContainer is not a function. (In 'target.matchContainer("style(--my-prop: foo)")', 'target.matchContainer' is undefined)
+

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/br-crash.html
@@ -26,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-372358471-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-385317081-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-439886903-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-491994185-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-custom-highlight-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-layout-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-quotes-crash.html
@@ -33,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/columns-in-table-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/columns-in-table-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/container-in-canvas-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/container-query-nested-oof-invalidation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/container-type-change-chrome-legacy-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/dialog-backdrop-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/dialog-backdrop-display-none-crash.html

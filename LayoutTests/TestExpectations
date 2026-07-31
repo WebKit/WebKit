@@ -5705,9 +5705,14 @@ webanimations/transform-property-and-transform-animation-with-delay-on-forced-la
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
 
 # Container queries
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-001.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-002.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-003.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-004.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/query-style-color.html [ ImageOnlyFailure ]
 
 # Scroll-state container queries (evaluation unsupported), enable parsing/serialization and computed-value tests only.
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state [ Skip ]
