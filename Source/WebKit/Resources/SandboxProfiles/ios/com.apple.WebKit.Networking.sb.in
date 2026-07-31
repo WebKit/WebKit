@@ -278,6 +278,8 @@
 (deny syscall-unix NO_REPORT (syscall-number
     SYS___nexus_set_opt))
 (allow syscall-unix (syscall-unix-allowed))
+(allow syscall-unix (with telemetry)
+    (syscall-unix-allowed-with-telemetry))
 
 (deny syscall-mach (with telemetry))
 (allow syscall-mach (syscall-mach-allowed))

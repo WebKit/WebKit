@@ -374,6 +374,9 @@
     (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
     (syscall-quicklook))
 
+(allow syscall-unix (with telemetry)
+    (syscall-unix-allowed-with-telemetry))
+
 #if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
 (with-filter
     (require-all
