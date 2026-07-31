@@ -73,7 +73,7 @@ std::optional<float> SizesAttributeParser::effectiveSizeDefaultValue()
     auto conversionData = this->conversionData();
     if (!conversionData)
         return std::nullopt;
-    auto result = CSS::clampToRange<CSS::Nonnegative, float>(Style::computeNonCalcLengthDouble(100.0, CSS::LengthUnit::Vw, *conversionData));
+    auto result = CSS::clampToRange<CSS::Nonnegative, float>(Style::resolveLength(100.0, CSS::LengthUnit::Vw, *conversionData));
     if (!result)
         return std::nullopt;
     return result;
@@ -145,7 +145,7 @@ std::optional<float> SizesAttributeParser::parseDimension(CSSParserTokenRange to
     auto value = token.numericValue();
 
     auto resolve = [&] -> std::optional<float> {
-        auto result = CSS::clampToRange<CSS::All, float>(Style::computeNonCalcLengthDouble(value, *unit, *conversionData));
+        auto result = CSS::clampToRange<CSS::All, float>(Style::resolveLength(value, *unit, *conversionData));
         if (result < 0)
             return std::nullopt;
         return result;

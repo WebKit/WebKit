@@ -112,48 +112,10 @@ const FontCascade& CSSToLengthConversionData::fontCascadeForFontUnits() const
     return style()->fontCascade();
 }
 
-FloatSize CSSToLengthConversionData::defaultViewportFactor() const
+void CSSToLengthConversionData::setUsesViewportUnits() const
 {
     if (m_styleBuilderState)
         m_styleBuilderState->setUsesViewportUnits();
-
-    if (!m_renderView)
-        return { };
-
-    return m_renderView->sizeForCSSDefaultViewportUnits() / 100.0;
-}
-
-FloatSize CSSToLengthConversionData::smallViewportFactor() const
-{
-    if (m_styleBuilderState)
-        m_styleBuilderState->setUsesViewportUnits();
-
-    if (!m_renderView)
-        return { };
-
-    return m_renderView->sizeForCSSSmallViewportUnits() / 100.0;
-}
-
-FloatSize CSSToLengthConversionData::largeViewportFactor() const
-{
-    if (m_styleBuilderState)
-        m_styleBuilderState->setUsesViewportUnits();
-
-    if (!m_renderView)
-        return { };
-
-    return m_renderView->sizeForCSSLargeViewportUnits() / 100.0;
-}
-
-FloatSize CSSToLengthConversionData::dynamicViewportFactor() const
-{
-    if (m_styleBuilderState)
-        m_styleBuilderState->setUsesViewportUnits();
-
-    if (!m_renderView)
-        return { };
-
-    return m_renderView->sizeForCSSDynamicViewportUnits() / 100.0;
 }
 
 void CSSToLengthConversionData::setUsesContainerUnits() const

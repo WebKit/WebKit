@@ -335,7 +335,7 @@ Child toStyle(const CSSCalc::CanonicalDimension& root, const ToStyleConversionOp
 
     switch (root.dimension) {
     case CSSCalc::CanonicalDimension::Dimension::Length:
-        return dimension(Style::computeNonCalcLengthDouble(root.value, CSS::LengthUnit::Px, *options.evaluation.conversionData));
+        return dimension(resolveLength(root.value, CSS::LengthUnit::Px, *options.evaluation.conversionData));
 
     case CSSCalc::CanonicalDimension::Dimension::Angle:
     case CSSCalc::CanonicalDimension::Dimension::Time:

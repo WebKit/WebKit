@@ -287,7 +287,7 @@ double Value::computeLengthPx(const CSSToLengthConversionData& conversionData, c
         .conversionData = conversionData,
         .symbolTable = symbolTable
     };
-    return clampToPermittedRange(Style::computeNonCalcLengthDouble(evaluateDouble(m_tree, options).value_or(0), CSS::LengthUnit::Px, conversionData));
+    return clampToPermittedRange(Style::resolveLength(evaluateDouble(m_tree, options).value_or(0), CSS::LengthUnit::Px, conversionData));
 }
 
 Ref<Style::Calculation::Value> Value::createCalculationValue(const CSSToLengthConversionData& conversionData) const

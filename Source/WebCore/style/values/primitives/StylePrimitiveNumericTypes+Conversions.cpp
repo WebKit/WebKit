@@ -37,12 +37,12 @@ namespace Style {
 
 double canonicalizeLength(double value, CSS::LengthUnit unit, NoConversionDataRequiredToken)
 {
-    return computeNonCalcLengthDouble(value, unit, { });
+    return resolveLength(value, unit, { });
 }
 
 double canonicalizeLength(double value, CSS::LengthUnit unit, const CSSToLengthConversionData& conversionData)
 {
-    return computeNonCalcLengthDouble(value, unit, conversionData);
+    return resolveLength(value, unit, conversionData);
 }
 
 } // namespace Style

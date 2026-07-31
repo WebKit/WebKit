@@ -187,7 +187,7 @@ float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::Zo
 float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit unit) const
 {
     if (!conversionToCanonicalUnitRequiresConversionData(unit))
-        return clampTo<float>(Style::computeNonCalcLengthDouble(inputValue, unit, { }));
+        return clampTo<float>(Style::resolveLength(inputValue, unit, { }));
 
 
     auto conversionData = cssConversionData();
@@ -199,7 +199,7 @@ float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit u
         return 0.0f;
     }
 
-    return clampTo<float>(Style::computeNonCalcLengthDouble(inputValue, unit, *conversionData));
+    return clampTo<float>(Style::resolveLength(inputValue, unit, *conversionData));
 }
 
 ExceptionOr<float> SVGLengthContext::resolveValueToUserUnits(float value, const CSS::LengthPercentageUnit& targetUnit, SVGLengthMode lengthMode) const
@@ -213,7 +213,7 @@ ExceptionOr<float> SVGLengthContext::resolveValueToUserUnits(float value, const 
     }
 
     case CSS::LengthPercentageUnit::Ex:
-        // FIXME: Legacy quirk. Using the computeNonCalcLengthDouble conversion here causes test failures
+        // FIXME: Legacy quirk. Using the resolveLength conversion here causes test failures
         // (e.g. coords-units-03-b.svg drifting from 150 > ~139). Needs deeper investigation before unifying.
         return convertValueFromEXSToUserUnits(value);
 

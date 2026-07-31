@@ -75,11 +75,6 @@ public:
 
     const FontCascade& NODELETE fontCascadeForFontUnits() const;
 
-    FloatSize defaultViewportFactor() const;
-    FloatSize smallViewportFactor() const;
-    FloatSize largeViewportFactor() const;
-    FloatSize dynamicViewportFactor() const;
-
     CSSToLengthConversionData copyForFontSize() const
     {
         CSSToLengthConversionData copy(*this);
@@ -94,6 +89,7 @@ public:
         return copy;
     }
 
+    void NODELETE setUsesViewportUnits() const;
     void NODELETE setUsesContainerUnits() const;
 
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }

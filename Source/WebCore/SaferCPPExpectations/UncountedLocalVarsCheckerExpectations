@@ -57,6 +57,7 @@ style/StyleInvalidationFunctions.h
 style/UserAgentStyle.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
+style/values/primitives/StyleLengthResolution.cpp
 svg/SVGUseElement.cpp
 testing/Internals.cpp
 testing/LegacyMockCDM.cpp
