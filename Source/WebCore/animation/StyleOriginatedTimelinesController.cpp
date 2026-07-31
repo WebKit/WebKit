@@ -475,9 +475,7 @@ void StyleOriginatedTimelinesController::unregisterNamedTimelinesAssociatedWithE
 {
     LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::unregisterNamedTimelinesAssociatedWithElement element: " << styleable);
 
-    HashSet<AtomString> namesToClear;
-
-    for (auto& entry : m_nameToTimelineMap) {
+    m_nameToTimelineMap.removeIf([&](auto& entry) {
         auto& timelines = entry.value;
         for (size_t i = 0; i < timelines.size(); ++i) {
             auto& timeline = timelines[i];
@@ -486,12 +484,8 @@ void StyleOriginatedTimelinesController::unregisterNamedTimelinesAssociatedWithE
                 timelines.removeAt(i--);
             }
         }
-        if (timelines.isEmpty())
-            namesToClear.add(entry.key);
-    }
-
-    for (auto& name : namesToClear)
-        m_nameToTimelineMap.remove(name);
+        return timelines.isEmpty();
+    });
 }
 
 void StyleOriginatedTimelinesController::styleableWasRemoved(const Styleable& styleable)

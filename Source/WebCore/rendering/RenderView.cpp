@@ -1009,13 +1009,9 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
     for (auto& pair : toRemove)
         removeRendererWithPausedImageAnimations(*pair.first, protect(*pair.second));
 
-    Vector<Ref<SVGSVGElement>> svgSvgElementsToRemove;
-    m_SVGSVGElementsWithPausedImageAnimation.forEach([&] (WeakPtr<SVGSVGElement, WeakPtrImplWithEventTargetData> svgSvgElement) {
-        if (svgSvgElement && svgSvgElement->resumePausedAnimationsIfNeeded(visibleRect))
-            svgSvgElementsToRemove.append(*svgSvgElement);
+    m_SVGSVGElementsWithPausedImageAnimation.removeIf([&](auto& svgSvgElement) {
+        return svgSvgElement.resumePausedAnimationsIfNeeded(visibleRect);
     });
-    for (auto& svgSvgElement : svgSvgElementsToRemove)
-        m_SVGSVGElementsWithPausedImageAnimation.remove(svgSvgElement.get());
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

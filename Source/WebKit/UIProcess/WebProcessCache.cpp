@@ -371,38 +371,32 @@ void WebProcessCache::clear()
 
 void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
 {
-    Vector<std::tuple<WebCore::Site, WebCore::Site>> keysToRemove;
-    for (auto& pair : m_processesPerSite) {
+    m_processesPerSite.removeIf([&](auto& pair) {
         RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
-            keysToRemove.append(pair.key);
+            return true;
         }
-    }
-    for (auto& key : keysToRemove)
-        m_processesPerSite.remove(key);
+        return false;
+    });
 
-    HashMap<WebCore::Site, Ref<CachedProcess>> sharedProcessesPerSite;
-    for (auto& pair : m_sharedProcessesPerSite) {
+    m_sharedProcessesPerSite.removeIf([&](auto& pair) {
         RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting shared process because its session was destroyed", pair.value->process().processID());
-            continue;
+            return true;
         }
-        sharedProcessesPerSite.add(pair.key, pair.value);
-    }
-    m_sharedProcessesPerSite = std::exchange(sharedProcessesPerSite, { });
+        return false;
+    });
 
-    Vector<uint64_t> pendingRequestsToRemove;
-    for (auto& pair : m_pendingAddRequests) {
+    m_pendingAddRequests.removeIf([&](auto& pair) {
         RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
-            pendingRequestsToRemove.append(pair.key);
+            return true;
         }
-    }
-    for (auto& key : pendingRequestsToRemove)
-        m_pendingAddRequests.remove(key);
+        return false;
+    });
 }
 
 void WebProcessCache::setApplicationIsActive(bool isActive)

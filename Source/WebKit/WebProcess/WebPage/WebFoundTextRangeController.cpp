@@ -279,16 +279,12 @@ void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextR
                 flashTextIndicatorAndUpdateSelectionWithRange(*simpleRange);
 
             if (ancestorsRevealed) {
-                HashSet<WebFoundTextRange> rangesToRemove;
-                for (auto unhighlightedRange : m_unhighlightedFoundRanges) {
-                    if (auto unhighlightedSimpleRange = simpleRangeFromFoundTextRange(unhighlightedRange)) {
-                        auto addedMarker = protect(protect(unhighlightedSimpleRange->start.document())->markers())->addMarker(*unhighlightedSimpleRange, WebCore::DocumentMarkerType::TextMatch);
-                        if (addedMarker)
-                            rangesToRemove.add(unhighlightedRange);
-                    }
-                }
-                for (auto rangeToRemove : rangesToRemove)
-                    m_unhighlightedFoundRanges.remove(rangeToRemove);
+                m_unhighlightedFoundRanges.removeIf([&](auto& unhighlightedRange) {
+                    auto unhighlightedSimpleRange = simpleRangeFromFoundTextRange(unhighlightedRange);
+                    if (!unhighlightedSimpleRange)
+                        return false;
+                    return protect(protect(unhighlightedSimpleRange->start.document())->markers())->addMarker(*unhighlightedSimpleRange, WebCore::DocumentMarkerType::TextMatch);
+                });
             }
             break;
         }

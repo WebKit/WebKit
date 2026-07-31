@@ -224,6 +224,8 @@ void WebBackForwardCache::removeEntriesMatching(NOESCAPE const Function<bool(Web
             itemsWithEntriesToClear.append(WTF::move(item));
     }
     for (Ref item : itemsWithEntriesToClear) {
+        // Clearing the BackForwardCache entry can destroy its SuspendedPageProxy, whose teardown
+        // can re-enter WebBackForwardCache and mutate m_itemsWithCachedPage, so remove before clearing.
         m_itemsWithCachedPage.remove(item.get());
         item->setBackForwardCacheEntry(nullptr);
     }

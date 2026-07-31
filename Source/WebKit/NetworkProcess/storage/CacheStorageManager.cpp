@@ -475,19 +475,17 @@ void CacheStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
     m_activeConnections.remove(connection);
 
-    HashSet<WebCore::DOMCacheIdentifier> unusedCacheIdentifiers;
-    for (auto& [identifier, refConnections] : m_cacheRefConnections) {
+    m_cacheRefConnections.removeIf([&](auto& entry) {
+        auto& [identifier, refConnections] = entry;
         refConnections.removeAllMatching([&](auto refConnection) {
             return refConnection == connection;
         });
         if (refConnections.isEmpty()) {
             removeUnusedCache(identifier);
-            unusedCacheIdentifiers.add(identifier);
+            return true;
         }
-    }
-
-    for (auto& identifier : unusedCacheIdentifiers)
-        m_cacheRefConnections.remove(identifier);
+        return false;
+    });
 }
 
 void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIdentifier)

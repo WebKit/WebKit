@@ -1773,25 +1773,22 @@ void CachedResourceLoader::loadDone(LoadCompletionType type, bool shouldPerformP
 // remove it from the map.
 void CachedResourceLoader::garbageCollectDocumentResources()
 {
-    typedef Vector<String, 10> StringVector;
-    StringVector resourcesToDelete;
+    [[maybe_unused]] auto documentResourceCountBefore = m_documentResources.size();
 
-    for (auto& resourceEntry : m_documentResources) {
+    m_documentResources.removeIf([&](auto& resourceEntry) {
         Ref resource = *resourceEntry.value;
 
         // A refcount of 2 is guaranteed by the m_documentResources ref and `resource` variable ref.
         // If the resource is in the memory cache then the cache is also holding a ref, making the ref-count 3.
         bool resourceHasExternalUsers = resource->refCount() > (resource->inCache() ? 3u : 2u);
         if (!resourceHasExternalUsers && !resource->loader() && !resource->isPreloaded()) {
-            resourcesToDelete.append(resourceEntry.key);
             m_resourceTimingInfo.removeResourceTiming(resource);
+            return true;
         }
-    }
+        return false;
+    });
 
-    LOG_WITH_STREAM(ResourceLoading, stream << "CachedResourceLoader " << this << " garbageCollectDocumentResources - deleting " << resourcesToDelete.size() << " resources");
-
-    for (auto& resource : resourcesToDelete)
-        m_documentResources.remove(resource);
+    LOG_WITH_STREAM(ResourceLoading, stream << "CachedResourceLoader " << this << " garbageCollectDocumentResources - deleting " << (documentResourceCountBefore - m_documentResources.size()) << " resources");
 }
 
 void CachedResourceLoader::performPostLoadActions()

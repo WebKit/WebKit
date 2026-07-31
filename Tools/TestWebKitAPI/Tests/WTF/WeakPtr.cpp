@@ -623,6 +623,62 @@ TEST(WTF_WeakPtr, WeakHashSetBasic)
     EXPECT_EQ(s_baseWeakReferences, 0u);
 }
 
+TEST(WTF_WeakPtr, WeakHashSetRemoveIf)
+{
+    {
+        WeakHashSet<Base> weakHashSet;
+        Base object1;
+        Base object2;
+        Base object3;
+        weakHashSet.add(object1);
+        weakHashSet.add(object2);
+        weakHashSet.add(object3);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 3u);
+
+        bool removedAny = weakHashSet.removeIf([&](Base& item) {
+            return &item == &object2;
+        });
+        EXPECT_TRUE(removedAny);
+        EXPECT_TRUE(weakHashSet.contains(object1));
+        EXPECT_FALSE(weakHashSet.contains(object2));
+        EXPECT_TRUE(weakHashSet.contains(object3));
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 2u);
+
+        bool removedNone = weakHashSet.removeIf([](Base&) {
+            return false;
+        });
+        EXPECT_FALSE(removedNone);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 2u);
+        weakHashSet.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    {
+        // removeIf() drops dead (null) weak references as it iterates and reports them
+        // as removed, but never invokes the predicate for them.
+        WeakHashSet<Base> weakHashSet;
+        auto object1 = makeUnique<Base>();
+        Base object2;
+        weakHashSet.add(*object1);
+        weakHashSet.add(object2);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        object1 = nullptr;
+
+        unsigned predicateCalls = 0;
+        bool removedAny = weakHashSet.removeIf([&](Base& item) {
+            ++predicateCalls;
+            EXPECT_EQ(&item, &object2);
+            return false;
+        });
+        EXPECT_TRUE(removedAny);
+        EXPECT_EQ(predicateCalls, 1u);
+        EXPECT_TRUE(weakHashSet.contains(object2));
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        weakHashSet.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+}
+
 TEST(WTF_WeakPtr, WeakHashSetConstObjects)
 {
     {
@@ -2150,6 +2206,62 @@ TEST(WTF_WeakPtr, WeakListHashMapConstObjects)
         EXPECT_EQ(computeSizeOfWeakListHashSet(weakListHashSet), 0u);
         EXPECT_FALSE(weakListHashSet.contains(object));
     }
+}
+
+TEST(WTF_WeakPtr, WeakListHashSetRemoveIf)
+{
+    {
+        WeakListHashSet<Base> weakListHashSet;
+        Base object1;
+        Base object2;
+        Base object3;
+        Base object4;
+        weakListHashSet.add(object1);
+        weakListHashSet.add(object2);
+        weakListHashSet.add(object3);
+        weakListHashSet.add(object4);
+        EXPECT_EQ(computeSizeOfWeakListHashSet(weakListHashSet), 4u);
+
+        // Remove object2 and object3; object1 and object4 must remain in insertion order.
+        bool removedAny = weakListHashSet.removeIf([&](Base& item) {
+            return &item == &object2 || &item == &object3;
+        });
+        EXPECT_TRUE(removedAny);
+        EXPECT_EQ(computeSizeOfWeakListHashSet(weakListHashSet), 2u);
+
+        Vector<Base*> objectsInIterationOrder;
+        for (auto& object : weakListHashSet)
+            objectsInIterationOrder.append(&object);
+        EXPECT_EQ(objectsInIterationOrder.size(), 2u);
+        EXPECT_EQ(objectsInIterationOrder[0], &object1);
+        EXPECT_EQ(objectsInIterationOrder[1], &object4);
+        weakListHashSet.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    {
+        // removeIf() drops dead (null) weak references without invoking the predicate.
+        WeakListHashSet<Base> weakListHashSet;
+        auto object1 = makeUnique<Base>();
+        Base object2;
+        weakListHashSet.add(*object1);
+        weakListHashSet.add(object2);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        object1 = nullptr;
+
+        unsigned predicateCalls = 0;
+        bool removedAny = weakListHashSet.removeIf([&](Base& item) {
+            ++predicateCalls;
+            EXPECT_EQ(&item, &object2);
+            return false;
+        });
+        EXPECT_TRUE(removedAny);
+        EXPECT_EQ(predicateCalls, 1u);
+        EXPECT_TRUE(weakListHashSet.contains(object2));
+        EXPECT_EQ(computeSizeOfWeakListHashSet(weakListHashSet), 1u);
+        weakListHashSet.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
 }
 
 TEST(WTF_WeakPtr, WeakListHashSetRemoveIterator)

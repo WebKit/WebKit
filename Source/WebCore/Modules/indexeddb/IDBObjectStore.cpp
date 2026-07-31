@@ -701,21 +701,18 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
 
     Locker locker { m_referencedIndexLock };
 
-    Vector<IDBIndexIdentifier> identifiersToRemove;
     Vector<std::unique_ptr<IDBIndex>> indexesToDelete;
-    for (auto& iterator : m_deletedIndexes) {
-        if (m_info.hasIndex(iterator.key)) {
-            auto name = iterator.value->info().name();
-            auto result = m_referencedIndexes.add(name, nullptr);
-            if (!result.isNewEntry)
-                indexesToDelete.append(std::exchange(result.iterator->value, nullptr));
-            result.iterator->value = std::exchange(iterator.value, nullptr);
-            identifiersToRemove.append(iterator.key);
-        }
-    }
-
-    for (auto identifier : identifiersToRemove)
-        m_deletedIndexes.remove(identifier);
+    m_deletedIndexes.removeIf([&](auto& iterator) {
+        assertIsHeld(m_referencedIndexLock);
+        if (!m_info.hasIndex(iterator.key))
+            return false;
+        auto name = iterator.value->info().name();
+        auto result = m_referencedIndexes.add(name, nullptr);
+        if (!result.isNewEntry)
+            indexesToDelete.append(std::exchange(result.iterator->value, nullptr));
+        result.iterator->value = std::exchange(iterator.value, nullptr);
+        return true;
+    });
 
     for (auto& index : m_referencedIndexes.values())
         index->rollbackInfoForVersionChangeAbort();

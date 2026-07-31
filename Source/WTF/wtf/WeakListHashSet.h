@@ -289,6 +289,17 @@ public:
         return result;
     }
 
+    template<typename Functor>
+    bool removeIf(NOESCAPE Functor&& functor)
+    {
+        bool result = m_set.removeIf([&](const KeyType& item) {
+            auto* pointer = item.get();
+            return !pointer || functor(*pointer);
+        });
+        cleanupHappened();
+        return result;
+    }
+
     void clear()
     {
         m_set.clear();

@@ -99,17 +99,14 @@ void CGSubimageCacheWithTimer::prune()
 {
     auto now = MonotonicTime::now();
 
-    Vector<CacheEntry> toBeRemoved;
-
-    for (const auto& entry : m_cache) {
-        if ((now - entry.lastAccessTime) > CGSubimageCacheWithTimer::cacheEntryLifetime)
-            toBeRemoved.append(entry);
-    }
-
-    for (auto& entry : toBeRemoved) {
-        m_imageCounts.remove(entry.image.get());
-        m_cache.remove(entry);
-    }
+    m_cache.removeIf([&](auto& entry) {
+        assertIsHeld(m_lock);
+        if ((now - entry.lastAccessTime) > CGSubimageCacheWithTimer::cacheEntryLifetime) {
+            m_imageCounts.remove(entry.image.get());
+            return true;
+        }
+        return false;
+    });
 }
 
 RetainPtr<CGImageRef> CGSubimageCacheWithTimer::subimage(CGImageRef image, const FloatRect& rect)

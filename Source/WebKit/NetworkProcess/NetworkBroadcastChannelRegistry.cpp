@@ -118,21 +118,13 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
 
 void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connection)
 {
-    Vector<WebCore::ClientOrigin> originsToRemove;
-    for (auto& entry : m_broadcastChannels) {
-        Vector<String> namesToRemove;
-        for (auto& innerEntry : entry.value) {
+    m_broadcastChannels.removeIf([&](auto& entry) {
+        entry.value.removeIf([&](auto& innerEntry) {
             innerEntry.value.removeFirst(connection.uniqueID());
-            if (innerEntry.value.isEmpty())
-                namesToRemove.append(innerEntry.key);
-        }
-        for (auto& nameToRemove : namesToRemove)
-            entry.value.remove(nameToRemove);
-        if (entry.value.isEmpty())
-            originsToRemove.append(entry.key);
-    }
-    for (auto& originToRemove : originsToRemove)
-        m_broadcastChannels.remove(originToRemove);
+            return innerEntry.value.isEmpty();
+        });
+        return entry.value.isEmpty();
+    });
 }
 
 std::optional<SharedPreferencesForWebProcess> NetworkBroadcastChannelRegistry::sharedPreferencesForWebProcess(const IPC::Connection& connection) const

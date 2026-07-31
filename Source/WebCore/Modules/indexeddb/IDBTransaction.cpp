@@ -231,21 +231,18 @@ void IDBTransaction::abortInternal()
         Locker locker { m_objectStoresLock };
 
         auto& info = m_database->info();
-        Vector<IDBObjectStoreIdentifier> identifiersToRemove;
         Vector<std::unique_ptr<IDBObjectStore>> objectStoresToDelete;
-        for (auto& iterator : m_deletedObjectStores) {
-            if (info.infoForExistingObjectStore(iterator.key)) {
-                auto name = iterator.value->info().name();
-                auto result = m_referencedObjectStores.add(name, nullptr);
-                if (!result.isNewEntry)
-                    objectStoresToDelete.append(std::exchange(result.iterator->value, nullptr));
-                result.iterator->value = std::exchange(iterator.value, nullptr);
-                identifiersToRemove.append(iterator.key);
-            }
-        }
-
-        for (auto identifier : identifiersToRemove)
-            m_deletedObjectStores.remove(identifier);
+        m_deletedObjectStores.removeIf([&](auto& iterator) {
+            assertIsHeld(m_objectStoresLock);
+            if (!info.infoForExistingObjectStore(iterator.key))
+                return false;
+            auto name = iterator.value->info().name();
+            auto result = m_referencedObjectStores.add(name, nullptr);
+            if (!result.isNewEntry)
+                objectStoresToDelete.append(std::exchange(result.iterator->value, nullptr));
+            result.iterator->value = std::exchange(iterator.value, nullptr);
+            return true;
+        });
 
         for (auto& objectStore : m_referencedObjectStores.values())
             objectStore->rollbackForVersionChangeAbort();

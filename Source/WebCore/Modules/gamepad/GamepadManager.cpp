@@ -275,34 +275,24 @@ void GamepadManager::updateQuarantineStatus()
     if (m_gamepadQuarantinedNavigators.isEmptyIgnoringNullReferences() && m_gamepadQuarantinedDOMWindows.isEmptyIgnoringNullReferences())
         return;
 
-    WeakHashSet<Navigator> navigators;
-    WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> windows;
-    for (auto& navigator : m_gamepadQuarantinedNavigators) {
+    m_gamepadQuarantinedNavigators.removeIf([&](auto& navigator) {
         RefPtr page = navigator.page();
         if (page && page->gamepadAccessGranted()) {
             LOG(Gamepad, "(%u) GamepadManager found navigator %p to release from quarantine", (unsigned)getpid(), &navigator);
-            navigators.add(navigator);
+            m_gamepadBlindNavigators.add(navigator);
+            return true;
         }
-    }
-    for (auto& window : m_gamepadQuarantinedDOMWindows) {
+        return false;
+    });
+    m_gamepadQuarantinedDOMWindows.removeIf([&](auto& window) {
         RefPtr page = window.page();
         if (page && page->gamepadAccessGranted()) {
             LOG(Gamepad, "(%u) GamepadManager found window %p to release from quarantine", (unsigned)getpid(), &window);
-            windows.add(window);
+            m_gamepadBlindDOMWindows.add(window);
+            return true;
         }
-    }
-
-    if (navigators.isEmptyIgnoringNullReferences() && windows.isEmptyIgnoringNullReferences())
-        return;
-
-    for (auto& navigator : navigators) {
-        m_gamepadBlindNavigators.add(navigator);
-        m_gamepadQuarantinedNavigators.remove(navigator);
-    }
-    for (auto& window : windows) {
-        m_gamepadBlindDOMWindows.add(window);
-        m_gamepadQuarantinedDOMWindows.remove(window);
-    }
+        return false;
+    });
 }
 #endif // PLATFORM(VISION)
 
