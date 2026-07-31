@@ -80,9 +80,14 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
 
     showDetailsSidebarPanels()
     {
-        super.showDetailsSidebarPanels();
+        let sidebarPanelToSelect = super.showDetailsSidebarPanels();
 
         if (!this._showScopeChainDetailsSidebarPanel)
+            return;
+
+        this._showScopeChainDetailsSidebarPanel = false;
+
+        if (sidebarPanelToSelect)
             return;
 
         let scopeChainDetailsSidebarPanel = this.detailsSidebarPanels.find((item) => item instanceof WI.ScopeChainDetailsSidebarPanel);
@@ -91,8 +96,6 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
 
         WI.detailsSidebar.selectedSidebarPanel = scopeChainDetailsSidebarPanel;
         WI.detailsSidebar.collapsed = false;
-
-        this._showScopeChainDetailsSidebarPanel = false;
     }
 
     showScopeChainDetailsSidebarPanel()
