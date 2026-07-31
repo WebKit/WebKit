@@ -8,10 +8,42 @@ find_library(NETWORK_LIBRARY Network)
 find_library(SECURITY_LIBRARY Security)
 find_library(UNIFORMTYPEIDENTIFIERS_LIBRARY UniformTypeIdentifiers)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
+find_library(CORESERVICES_LIBRARY CoreServices)
 find_library(DEVICEIDENTITY_LIBRARY DeviceIdentity HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 if (NOT DEVICEIDENTITY_LIBRARY)
     set(DEVICEIDENTITY_LIBRARY "" CACHE FILEPATH "" FORCE)
 endif ()
+
+find_library(CFNETWORK_LIBRARY CFNetwork)
+find_library(COREAUDIO_LIBRARY CoreAudio)
+find_library(COREFOUNDATION_LIBRARY CoreFoundation)
+find_library(COREGRAPHICS_LIBRARY CoreGraphics)
+find_library(CORETEXT_LIBRARY CoreText)
+find_library(FOUNDATION_LIBRARY Foundation)
+find_library(GRAPHICSSERVICES_LIBRARY GraphicsServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(IMAGEIO_LIBRARY ImageIO)
+find_library(IOKIT_LIBRARY IOKit)
+find_library(IOSURFACE_LIBRARY IOSurface)
+find_library(METAL_LIBRARY Metal)
+find_library(MOBILECORESERVICES_LIBRARY MobileCoreServices)
+find_library(SPRINGBOARDSERVICES_LIBRARY SpringBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(UIKITSERVICES_LIBRARY UIKitServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(UIKIT_LIBRARY UIKit)
+find_library(APPSTOREDAEMON_LIBRARY AppStoreDaemon HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(BACKBOARDSERVICES_LIBRARY BackBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(CONTACTS_LIBRARY Contacts)
+find_library(CORETELEPHONY_LIBRARY CoreTelephony)
+find_library(FRONTBOARDSERVICES_LIBRARY FrontBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(GAMECONTROLLERUI_LIBRARY GameControllerUI HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(INSTALLCOORDINATION_LIBRARY InstallCoordination HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(MOBILEKEYBAG_LIBRARY MobileKeyBag HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(NETWORKEXTENSION_LIBRARY NetworkExtension)
+find_library(PDFKIT_LIBRARY PDFKit)
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
+find_library(CARBON_LIBRARY Carbon)
+find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
+find_library(QUARTZ_LIBRARY Quartz)
+find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
 
 add_compile_options(
     "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-DWK_XPC_SERVICE_SUFFIX=\".Development\">"
@@ -63,11 +95,15 @@ list(APPEND WebKit_SOURCES
 
     Platform/IPC/cocoa/SharedFileHandleCocoa.cpp
 
+    Platform/cocoa/WKMaterialHostingSupport.swift
+
     Shared/API/Cocoa/WKMain.mm
 
     Shared/Cocoa/DefaultWebBrowserChecks.mm
     Shared/Cocoa/XPCEndpoint.mm
     Shared/Cocoa/XPCEndpointClient.mm
+
+    Shared/Model/WKStageModeOrbitSimulator.swift
 
     UIProcess/API/Cocoa/WKContentWorld.mm
     UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientInputs.mm
@@ -85,11 +121,13 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/Cocoa/_WKPublicKeyCredentialUserEntity.mm
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/Logger+Extras.swift
 
     UIProcess/Cocoa/PreferenceObserver.mm
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
 
     UIProcess/PDF/WKPDFPageNumberIndicator.mm
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtraction.swift
@@ -98,87 +136,121 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp
     WebProcess/cocoa/LaunchServicesDatabaseManager.mm
+
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 )
 
 # FIXME: Add the remaining `${WEBKIT_DIR}/UIProcess/API/Swift/` files once CMake has proper framework directories.
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
-    "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders"
     "${WEBKIT_DIR}/GPUProcess/graphics/Model"
+    "${WEBKIT_DIR}/GPUProcess/mac"
     "${WEBKIT_DIR}/GPUProcess/media/cocoa"
-    "${WEBKIT_DIR}/NetworkProcess/cocoa"
+    "${WEBKIT_DIR}/GPUProcess/media/ios"
+    "${WEBKIT_DIR}/NetworkProcess/Downloads/cocoa"
+    "${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/Daemon"
     "${WEBKIT_DIR}/NetworkProcess/PrivateClickMeasurement/cocoa"
-    "${WEBKIT_DIR}/UIProcess/ios"
-    "${WEBKIT_DIR}/UIProcess/API/C/mac"
-    "${WEBKIT_DIR}/UIProcess/API/Cocoa"
-    "${WEBKIT_DIR}/UIProcess/Authentication/cocoa"
-    "${WEBKIT_DIR}/UIProcess/Cocoa"
-    "${WEBKIT_DIR}/UIProcess/Cocoa/Separated"
-    "${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization"
-    "${WEBKIT_DIR}/UIProcess/Cocoa/TextExtraction"
-    "${WEBKIT_DIR}/UIProcess/Extensions/Cocoa"
-    "${WEBKIT_DIR}/UIProcess/Inspector/Cocoa"
-    "${WEBKIT_DIR}/UIProcess/Launcher/mac"
-    "${WEBKIT_DIR}/UIProcess/Media/cocoa"
-    "${WEBKIT_DIR}/UIProcess/Notifications/cocoa"
-    "${WEBKIT_DIR}/UIProcess/PDF"
-    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
-    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"
-    "${WEBKIT_DIR}/UIProcess/WebAuthentication/Cocoa"
-    "${WEBKIT_DIR}/UIProcess/WebAuthentication/Virtual"
-    "${WEBKIT_DIR}/UIProcess/WebsiteData/Cocoa"
+    "${WEBKIT_DIR}/NetworkProcess/cocoa"
+    "${WEBKIT_DIR}/NetworkProcess/ios"
+    "${WEBKIT_DIR}/NetworkProcess/mac"
+    "${WEBKIT_DIR}/Platform/IPC/cocoa"
+    "${WEBKIT_DIR}/Platform/IPC/darwin"
+    "${WEBKIT_DIR}/Platform/IPC/mac"
     "${WEBKIT_DIR}/Platform/cg"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/classifier/cocoa"
     "${WEBKIT_DIR}/Platform/cocoa"
     "${WEBKIT_DIR}/Platform/ios"
     "${WEBKIT_DIR}/Platform/mac"
-    "${WEBKIT_DIR}/Platform/unix"
-    "${WEBKIT_DIR}/WebKitSwift/GroupActivities"
-    "${WEBKIT_DIR}/WebKitSwift/MarketplaceKit"
-    "${WEBKIT_DIR}/WebKitSwift/WritingTools"
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
+    "${WEBKIT_DIR}/Platform/spi/Cocoa/Modules/WritingToolsUI_Private_SPI"
+    "${WEBKIT_DIR}/Platform/spi/Cocoa/Modules/WritingTools_SPI"
     "${WEBKIT_DIR}/Platform/spi/ios"
     "${WEBKIT_DIR}/Platform/spi/mac"
     "${WEBKIT_DIR}/Platform/spi/visionos"
-    "${WEBKIT_DIR}/Platform/IPC/darwin"
-    "${WEBKIT_DIR}/Platform/IPC/mac"
-    "${WEBKIT_DIR}/Platform/IPC/cocoa"
+    "${WEBKIT_DIR}/Platform/unix"
     "${WEBKIT_DIR}/Shared/API/Cocoa"
     "${WEBKIT_DIR}/Shared/API/c/cf"
     "${WEBKIT_DIR}/Shared/API/c/cg"
     "${WEBKIT_DIR}/Shared/API/c/mac"
     "${WEBKIT_DIR}/Shared/ApplePay/cocoa/"
     "${WEBKIT_DIR}/Shared/Authentication/cocoa"
-    "${WEBKIT_DIR}/Shared/cf"
     "${WEBKIT_DIR}/Shared/Cocoa"
     "${WEBKIT_DIR}/Shared/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
+    "${WEBKIT_DIR}/Shared/Sandbox"
     "${WEBKIT_DIR}/Shared/Scrolling"
+    "${WEBKIT_DIR}/Shared/cf"
+    "${WEBKIT_DIR}/Shared/ios"
+    "${WEBKIT_DIR}/Shared/mac"
+    "${WEBKIT_DIR}/UIProcess/API/C/mac"
+    "${WEBKIT_DIR}/UIProcess/API/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/API/ios"
+    "${WEBKIT_DIR}/UIProcess/API/mac"
+    "${WEBKIT_DIR}/UIProcess/Authentication/cocoa"
+    "${WEBKIT_DIR}/UIProcess/Cocoa"
     "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
+    "${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization"
+    "${WEBKIT_DIR}/UIProcess/Cocoa/Separated"
+    "${WEBKIT_DIR}/UIProcess/Cocoa/TextExtraction"
+    "${WEBKIT_DIR}/UIProcess/Extensions/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/Inspector/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/Inspector/ios"
+    "${WEBKIT_DIR}/UIProcess/Inspector/mac"
+    "${WEBKIT_DIR}/UIProcess/Launcher/cocoa"
+    "${WEBKIT_DIR}/UIProcess/Launcher/mac"
     "${WEBKIT_DIR}/UIProcess/Media"
+    "${WEBKIT_DIR}/UIProcess/Media/cocoa"
+    "${WEBKIT_DIR}/UIProcess/Notifications/cocoa"
+    "${WEBKIT_DIR}/UIProcess/PDF"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
+    "${WEBKIT_DIR}/UIProcess/WebAuthentication/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/WebAuthentication/Virtual"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/fido"
-    "${WEBKIT_DIR}/WebProcess/DigitalCredentials"
-    "${WEBKIT_DIR}/WebProcess/WebAuthentication"
-    "${WEBKIT_DIR}/WebProcess/cocoa"
-    "${WEBKIT_DIR}/WebProcess/cocoa/IdentityDocumentServices"
-    "${WEBKIT_DIR}/WebProcess/Extensions/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/WebsiteData/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/XR/ios"
+    "${WEBKIT_DIR}/UIProcess/XR/xros"
+    "${WEBKIT_DIR}/UIProcess/ios"
+    "${WEBKIT_DIR}/UIProcess/ios/forms"
+    "${WEBKIT_DIR}/UIProcess/ios/fullscreen"
+    "${WEBKIT_DIR}/UIProcess/mac"
+    "${WEBKIT_DIR}/WebKitSwift/GroupActivities"
     "${WEBKIT_DIR}/WebKitSwift/IdentityDocumentServices"
-    "${WEBKIT_DIR}/WebProcess/mac"
+    "${WEBKIT_DIR}/WebKitSwift/MarketplaceKit"
+    "${WEBKIT_DIR}/WebKitSwift/Preview"
+    "${WEBKIT_DIR}/WebKitSwift/TextAnimation"
+    "${WEBKIT_DIR}/WebKitSwift/WritingTools"
+    "${WEBKIT_DIR}/WebProcess/API/Cocoa"
+    "${WEBKIT_DIR}/WebProcess/DigitalCredentials"
+    "${WEBKIT_DIR}/WebProcess/Extensions/Cocoa"
     "${WEBKIT_DIR}/WebProcess/GPU/graphics/cocoa"
-    "${WEBKIT_DIR}/WebProcess/Inspector/mac"
+    "${WEBKIT_DIR}/WebProcess/GPU/media/cocoa"
+    "${WEBKIT_DIR}/WebProcess/GPU/media/ios"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/Cocoa"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/mac"
+    "${WEBKIT_DIR}/WebProcess/Inspector/mac"
     "${WEBKIT_DIR}/WebProcess/MediaSession"
+    "${WEBKIT_DIR}/WebProcess/Model/mac"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF/UnifiedPDF"
+    "${WEBKIT_DIR}/WebProcess/WebAuthentication"
+    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/cocoa"
+    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/ios"
+    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
     "${WEBKIT_DIR}/WebProcess/WebPage/Cocoa"
     "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
+    "${WEBKIT_DIR}/WebProcess/WebPage/ios"
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
-    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/cocoa"
+    "${WEBKIT_DIR}/WebProcess/cocoa"
+    "${WEBKIT_DIR}/WebProcess/cocoa/IdentityDocumentServices"
+    "${WEBKIT_DIR}/WebProcess/mac"
     "${WEBKIT_DIR}/webpushd"
     "${WEBKIT_DIR}/webpushd/webpushtool"
+    "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders"
     "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
 )
 
@@ -186,6 +258,11 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
 set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU.Development)
+
+# Entry point shared by all three auxiliary processes on both SDKs.
+set(WebProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
+set(NetworkProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
+set(GPUProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
 
 set(WebKit_SWIFT_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
@@ -386,16 +463,134 @@ list(APPEND WebKit_SOURCES
     webpushd/_WKMockUserNotificationCenter.mm
 )
 
+if (WEBKIT_SDK_IS_MACOS)
+list(APPEND WebKit_SOURCES
+    NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
+
+    UIProcess/PDF/WKDefaultPDFHUDView.mm
+    ${WEBKIT_DIR}/Platform/cocoa/FloatRectCG.swift
+    ${WEBKIT_DIR}/Platform/cocoa/IntRectCG.swift
+    ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
+    ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
+    ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
+    ${WEBKIT_DIR}/UIProcess/mac/WKAppKitGestureController.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKDirectionalScrollLockTracker.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKFastScrollTracker.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
+    ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView.swift
+    ${WEBKIT_DIR}/UIProcess/PDF/WKDefaultPDFHUDView.swift
+)
+elseif (WEBKIT_SDK_IS_IOS_FAMILY)
+list(APPEND WebKit_SOURCES
+    Shared/ios/WebAutocorrectionData.mm
+
+    UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm
+
+    UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm
+    UIProcess/ios/_WKCaptionStyleMenuControllerAVKit.mm
+    UIProcess/ios/_WKCaptionStyleMenuControllerIOS.mm
+
+    UIProcess/ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp
+
+    ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/ExtensionEventHandler.mm
+
+    ${WEBKIT_DIR}/ModelProcess/cocoa/WKUSDStageConverter.swift
+    ${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffect.swift
+    ${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffectView.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/ObjectiveCBlockConversions.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WebKitSwiftOverlay.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewConfiguration+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebpagePreferences+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKRectEdge+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/URLSchemeHandler.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+BackForwardList.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Configuration.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+DialogPresenting.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+FormInfo.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+FrameInfo.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+ImmersiveEnvironment.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Navigation.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationDeciding.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationPreferences.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Transferable.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/CALayer+CoreRE.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Analysis.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Generation.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Rendering.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Surface.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageViewConstants.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKNavigationDelegateAdapter.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKUIDelegateAdapter.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WebPageWebView.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKScrollGeometryAdapter.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKURLSchemeHandlerAdapter.swift
+    ${WEBKIT_DIR}/UIProcess/WKMouseDeviceObserver.swift
+)
+endif ()
+
 find_library(CRYPTOTOKENKIT_LIBRARY CryptoTokenKit)
 find_library(USERNOTIFICATIONS_LIBRARY UserNotifications)
 find_library(WRITINGTOOLS_LIBRARY WritingTools HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(APPLEPUSHSERVICE_LIBRARY ApplePushService HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 list(APPEND WebKit_PRIVATE_LIBRARIES
+    "-weak_framework PowerLog"
+    Accessibility
+    ${CORESERVICES_LIBRARY}
     ${CRYPTOTOKENKIT_LIBRARY}
     ${USERNOTIFICATIONS_LIBRARY}
     ${WRITINGTOOLS_LIBRARY}
     ${APPLEPUSHSERVICE_LIBRARY}
+    ${NETWORK_LIBRARY}
+    ${UNIFORMTYPEIDENTIFIERS_LIBRARY}
+    ${DEVICEIDENTITY_LIBRARY}
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        ${APPLICATIONSERVICES_LIBRARY}
+        ${SECURITYINTERFACE_LIBRARY}
+        $<$<BOOL:${AVFAUDIO_LIBRARY}>:${AVFAUDIO_LIBRARY}>
+    )
+    if (USE_APPLE_INTERNAL_SDK)
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            "-weak_framework CoreML"
+            "-weak_framework NaturalLanguage"
+        )
+    endif ()
+elseif (WEBKIT_SDK_IS_IOS_FAMILY)
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        -Wl,-delay_framework,CoreTelephony
+        -lnetworkextension
+        -lsqlite3
+        ${CFNETWORK_LIBRARY}
+        ${CONTACTS_LIBRARY}
+        ${COREAUDIO_LIBRARY}
+        ${COREFOUNDATION_LIBRARY}
+        ${COREGRAPHICS_LIBRARY}
+        ${CORETEXT_LIBRARY}
+        ${FOUNDATION_LIBRARY}
+        ${IMAGEIO_LIBRARY}
+        ${IOKIT_LIBRARY}
+        ${IOSURFACE_LIBRARY}
+        ${METAL_LIBRARY}
+        ${NETWORKEXTENSION_LIBRARY}
+        ${PDFKIT_LIBRARY}
+        ${UIKIT_LIBRARY}
+        $<$<BOOL:${APPSTOREDAEMON_LIBRARY}>:${APPSTOREDAEMON_LIBRARY}>
+        $<$<BOOL:${BACKBOARDSERVICES_LIBRARY}>:${BACKBOARDSERVICES_LIBRARY}>
+        $<$<BOOL:${CORETELEPHONY_LIBRARY}>:${CORETELEPHONY_LIBRARY}>
+        $<$<BOOL:${FRONTBOARDSERVICES_LIBRARY}>:${FRONTBOARDSERVICES_LIBRARY}>
+        $<$<BOOL:${GAMECONTROLLERUI_LIBRARY}>:${GAMECONTROLLERUI_LIBRARY}>
+        $<$<BOOL:${GRAPHICSSERVICES_LIBRARY}>:${GRAPHICSSERVICES_LIBRARY}>
+        $<$<BOOL:${INSTALLCOORDINATION_LIBRARY}>:${INSTALLCOORDINATION_LIBRARY}>
+        $<$<BOOL:${MOBILECORESERVICES_LIBRARY}>:${MOBILECORESERVICES_LIBRARY}>
+        $<$<BOOL:${MOBILEKEYBAG_LIBRARY}>:${MOBILEKEYBAG_LIBRARY}>
+        $<$<BOOL:${SPRINGBOARDSERVICES_LIBRARY}>:${SPRINGBOARDSERVICES_LIBRARY}>
+        $<$<BOOL:${UIKITSERVICES_LIBRARY}>:${UIKITSERVICES_LIBRARY}>
+    )
+endif ()
 
 set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Platform
@@ -476,34 +671,6 @@ list(APPEND WebKit_ARC_SOURCES ${WebKit_DERIVED_SOURCES_DIR}/JSWebExtensionAPIUn
 # FIXME: Continue merging forked iOS/Mac code here.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
 
-find_library(CFNETWORK_LIBRARY CFNetwork)
-find_library(COREAUDIO_LIBRARY CoreAudio)
-find_library(COREFOUNDATION_LIBRARY CoreFoundation)
-find_library(COREGRAPHICS_LIBRARY CoreGraphics)
-find_library(CORESERVICES_LIBRARY CoreServices)
-find_library(CORETEXT_LIBRARY CoreText)
-find_library(FOUNDATION_LIBRARY Foundation)
-find_library(GRAPHICSSERVICES_LIBRARY GraphicsServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(IMAGEIO_LIBRARY ImageIO)
-find_library(IOKIT_LIBRARY IOKit)
-find_library(IOSURFACE_LIBRARY IOSurface)
-find_library(METAL_LIBRARY Metal)
-find_library(MOBILECORESERVICES_LIBRARY MobileCoreServices)
-find_library(SPRINGBOARDSERVICES_LIBRARY SpringBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(UIKITSERVICES_LIBRARY UIKitServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(UIKIT_LIBRARY UIKit)
-
-find_library(APPSTOREDAEMON_LIBRARY AppStoreDaemon HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(BACKBOARDSERVICES_LIBRARY BackBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(CONTACTS_LIBRARY Contacts)
-find_library(CORETELEPHONY_LIBRARY CoreTelephony)
-find_library(FRONTBOARDSERVICES_LIBRARY FrontBoardServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(GAMECONTROLLERUI_LIBRARY GameControllerUI HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(INSTALLCOORDINATION_LIBRARY InstallCoordination HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(MOBILEKEYBAG_LIBRARY MobileKeyBag HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(NETWORKEXTENSION_LIBRARY NetworkExtension)
-find_library(PDFKIT_LIBRARY PDFKit)
-
 add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-DHAVE_CORE_PREDICTION=1>")
 
 set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
@@ -522,110 +689,6 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h PROPERTIE
     MACOSX_PACKAGE_LOCATION Headers
     GENERATED TRUE
 )
-
-list(APPEND WebKit_PRIVATE_LIBRARIES
-    -lnetworkextension
-    -lsqlite3
-    Accessibility
-    ${CFNETWORK_LIBRARY}
-    ${CONTACTS_LIBRARY}
-    ${COREAUDIO_LIBRARY}
-    ${COREFOUNDATION_LIBRARY}
-    ${COREGRAPHICS_LIBRARY}
-    ${CORESERVICES_LIBRARY}
-    ${CORETEXT_LIBRARY}
-    ${FOUNDATION_LIBRARY}
-    ${IMAGEIO_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${IOSURFACE_LIBRARY}
-    ${METAL_LIBRARY}
-    ${NETWORK_LIBRARY}
-    ${NETWORKEXTENSION_LIBRARY}
-    ${PDFKIT_LIBRARY}
-    ${UNIFORMTYPEIDENTIFIERS_LIBRARY}
-    ${UIKIT_LIBRARY}
-)
-
-target_link_options(WebKit PRIVATE "-Wl,-delay_framework,CoreTelephony")
-
-foreach (_pfw
-    APPSTOREDAEMON_LIBRARY
-    BACKBOARDSERVICES_LIBRARY
-    CORETELEPHONY_LIBRARY
-    FRONTBOARDSERVICES_LIBRARY
-    GAMECONTROLLERUI_LIBRARY
-    GRAPHICSSERVICES_LIBRARY
-    INSTALLCOORDINATION_LIBRARY
-    MOBILECORESERVICES_LIBRARY
-    MOBILEKEYBAG_LIBRARY
-    SPRINGBOARDSERVICES_LIBRARY
-    UIKITSERVICES_LIBRARY
-)
-    if (${_pfw})
-        list(APPEND WebKit_PRIVATE_LIBRARIES ${${_pfw}})
-    endif ()
-endforeach ()
-unset(_pfw)
-
-if (DEVICEIDENTITY_LIBRARY)
-    list(APPEND WebKit_PRIVATE_LIBRARIES ${DEVICEIDENTITY_LIBRARY})
-endif ()
-
-list(APPEND WebKit_SOURCES
-    Shared/ios/WebAutocorrectionData.mm
-
-    UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm
-
-    UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm
-    UIProcess/ios/_WKCaptionStyleMenuControllerAVKit.mm
-    UIProcess/ios/_WKCaptionStyleMenuControllerIOS.mm
-
-    UIProcess/ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp
-)
-
-list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
-    "${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}"
-    "${WEBKIT_DIR}/GPUProcess/mac"
-    "${WEBKIT_DIR}/GPUProcess/media/ios"
-    "${WEBKIT_DIR}/NetworkProcess/Downloads/cocoa"
-    "${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/Daemon"
-    "${WEBKIT_DIR}/NetworkProcess/ios"
-    "${WEBKIT_DIR}/NetworkProcess/mac"
-    "${WEBKIT_DIR}/Platform/generic"
-    "${WEBKIT_DIR}/Platform/spi/Cocoa/Modules/WritingTools_SPI"
-    "${WEBKIT_DIR}/Platform/spi/Cocoa/Modules/WritingToolsUI_Private_SPI"
-    "${WEBKIT_DIR}/Shared/Sandbox"
-    "${WEBKIT_DIR}/Shared/ios"
-    "${WEBKIT_DIR}/Shared/mac"
-    "${WEBKIT_DIR}/UIProcess/API/ios"
-    "${WEBKIT_DIR}/UIProcess/API/mac"
-    "${WEBKIT_DIR}/UIProcess/Inspector/ios"
-    "${WEBKIT_DIR}/UIProcess/Inspector/mac"
-    "${WEBKIT_DIR}/UIProcess/Launcher/cocoa"
-    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
-    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
-    "${WEBKIT_DIR}/UIProcess/XR/ios"
-    "${WEBKIT_DIR}/UIProcess/XR/xros"
-    "${WEBKIT_DIR}/UIProcess/ios/forms"
-    "${WEBKIT_DIR}/UIProcess/ios/fullscreen"
-    "${WEBKIT_DIR}/UIProcess/mac"
-    "${WEBKIT_DIR}/WebKitSwift/Preview"
-    "${WEBKIT_DIR}/WebKitSwift/TextAnimation"
-    "${WEBKIT_DIR}/WebProcess/API/Cocoa"
-    "${WEBKIT_DIR}/WebProcess/GPU/media/cocoa"
-    "${WEBKIT_DIR}/WebProcess/GPU/media/ios"
-    "${WEBKIT_DIR}/WebProcess/Model/mac"
-    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/ios"
-    "${WEBKIT_DIR}/WebProcess/WebPage/ios"
-)
-
-list(APPEND WebKit_SOURCES
-    ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/ExtensionEventHandler.mm
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
-)
-set(WebProcess_SOURCES ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
-set(NetworkProcess_SOURCES ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
-set(GPUProcess_SOURCES ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
 
 set(WebKit_USE_PREFIX_HEADER ON)
 
@@ -1058,46 +1121,6 @@ target_compile_options(WebKit PRIVATE
 # fail with cyclic-dep / WEBCORE_EXPORT errors. https://bugs.webkit.org/show_bug.cgi?id=312083
 set(WebKit_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
 
-list(APPEND WebKit_SOURCES
-    ${WEBKIT_DIR}/ModelProcess/cocoa/WKUSDStageConverter.swift
-    ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
-    ${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffect.swift
-    ${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffectView.swift
-    ${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/Logger+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/ObjectiveCBlockConversions.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WebKitSwiftOverlay.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewConfiguration+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebpagePreferences+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKRectEdge+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/URLSchemeHandler.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+BackForwardList.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Configuration.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+DialogPresenting.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+FormInfo.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+FrameInfo.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+ImmersiveEnvironment.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Navigation.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationDeciding.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationPreferences.swift
-    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Transferable.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/CALayer+CoreRE.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Analysis.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Generation.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Rendering.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Surface.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageViewConstants.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKNavigationDelegateAdapter.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKUIDelegateAdapter.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WebPageWebView.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKScrollGeometryAdapter.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKURLSchemeHandlerAdapter.swift
-    ${WEBKIT_DIR}/UIProcess/WKMouseDeviceObserver.swift
-)
-
 if (WEBKIT_ADDITIONS_SWIFT_SOURCES)
     # WebViewRepresentable+Extras.swift belongs to the _WebKit_SwiftUI overlay
     # module (per the pbxproj); compiling it in main WebKit clashes with
@@ -1140,11 +1163,6 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/KeyEventInterpretationContext.serialization.in
     Shared/UserInterfaceIdiom.serialization.in
 )
-
-find_library(POWERLOG_LIBRARY PowerLog HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-if (POWERLOG_LIBRARY)
-    list(APPEND WebKit_PRIVATE_LIBRARIES "-weak_framework PowerLog")
-endif ()
 
 list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS ${WebKit_PUBLIC_FRAMEWORK_HEADERS})
 set(WebKit_PUBLIC_FRAMEWORK_HEADERS "")
@@ -2305,90 +2323,14 @@ add_custom_command(TARGET _WebKit_SwiftUI POST_BUILD
 )
 
 unset(_swiftui_dir)
-    return ()
+    return()
 endif (WEBKIT_SDK_IS_IOS_FAMILY)
-
-find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
-find_library(CARBON_LIBRARY Carbon)
-find_library(CORESERVICES_LIBRARY CoreServices)
-find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
-find_library(QUARTZ_LIBRARY Quartz)
-find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
-add_compile_options(
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${QUARTZ_LIBRARY}/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CARBON_LIBRARY}/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks>"
-)
-list(APPEND WebKit_COMPILE_OPTIONS
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${QUARTZ_LIBRARY}/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CARBON_LIBRARY}/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks>"
-)
-
-add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CORESERVICES_LIBRARY}/Versions/Current/Frameworks>")
-list(APPEND WebKit_COMPILE_OPTIONS "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CORESERVICES_LIBRARY}/Versions/Current/Frameworks>")
-
-list(APPEND WebKit_PRIVATE_LIBRARIES
-    Accessibility
-    ${APPLICATIONSERVICES_LIBRARY}
-    ${CORESERVICES_LIBRARY}
-    ${DEVICEIDENTITY_LIBRARY}
-    ${NETWORK_LIBRARY}
-    ${SECURITYINTERFACE_LIBRARY}
-    ${UNIFORMTYPEIDENTIFIERS_LIBRARY}
-)
-
-if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
-    list(APPEND WebKit_LIBRARIES ${AVFAUDIO_LIBRARY})
-endif ()
-
-list(APPEND WebKit_PRIVATE_LIBRARIES "-weak_framework PowerLog")
-if (USE_APPLE_INTERNAL_SDK)
-    list(APPEND WebKit_PRIVATE_LIBRARIES
-        "-weak_framework CoreML"
-        "-weak_framework NaturalLanguage"
-    )
-endif ()
-
-list(APPEND WebKit_SOURCES
-    NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
-
-    ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
-    ${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
-    ${WEBKIT_DIR}/Platform/cocoa/FloatRectCG.swift
-    ${WEBKIT_DIR}/Platform/cocoa/IntRectCG.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/Logger+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKAppKitGestureController.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKDirectionalScrollLockTracker.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKFastScrollTracker.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
-    ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView.swift
-    ${WEBKIT_DIR}/UIProcess/PDF/WKDefaultPDFHUDView.swift
-
-    WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
-)
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
-    "${WEBKIT_DIR}/GPUProcess/mac"
-    "${WEBKIT_DIR}/NetworkProcess/mac"
-    "${WEBKIT_DIR}/UIProcess/mac"
-    "${WEBKIT_DIR}/UIProcess/API/mac"
-    "${WEBKIT_DIR}/UIProcess/Inspector/mac"
-    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
-    # WebKitSwift ObjC interface headers — self-guard with feature checks.
-    "${WEBKIT_DIR}/Shared/mac"
-    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
-    "${WEBKIT_DIR}/WebProcess/Model/mac"
     "${WEBKITLEGACY_DIR}"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
 )
-
-set(WebProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
-set(NetworkProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
-set(GPUProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
 
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
@@ -2485,15 +2427,6 @@ add_custom_command(
     VERBATIM
 )
 
-list(APPEND WebKit_SOURCES
-    UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
-    UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
-)
-
-list(APPEND WebKit_PRIVATE_LIBRARIES
-    "-weak_framework PowerLog"
-)
-
 foreach (_header IN LISTS WebKit_PUBLIC_FRAMEWORK_HEADERS)
     file(READ ${WEBKIT_DIR}/${_header} _contents)
     # Only run headers through the replacement script if they actually contain
@@ -2513,11 +2446,9 @@ foreach (_header IN LISTS WebKit_PUBLIC_FRAMEWORK_HEADERS)
     endif ()
 endforeach ()
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 # -Wl,-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
 target_link_options(WebKit PRIVATE
     -lsandbox
-    -framework AuthKit
     -F${CMAKE_BINARY_DIR}
     -weak_framework WebInspectorUI
     -Wl,-u,_WebInspectorUIFrameworkLoad
@@ -2600,8 +2531,6 @@ add_custom_command(
 add_custom_target(WebKit_SwiftCrossImport ALL DEPENDS
     "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay")
 add_dependencies(WebKit WebKit_SwiftCrossImport)
-
-set(WebKit_OUTPUT_NAME WebKit)
 
 # XPC Services
 

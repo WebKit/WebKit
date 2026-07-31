@@ -44,6 +44,25 @@ find_library(SYSTEMCONFIGURATION_LIBRARY SystemConfiguration)
 find_library(UNIFORMTYPEIDENTIFIERS_LIBRARY UniformTypeIdentifiers)
 find_library(VIDEOTOOLBOX_LIBRARY VideoToolbox)
 find_library(XML2_LIBRARY XML2)
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
+find_library(AUDIOUNIT_LIBRARY AudioUnit)
+find_library(CARBON_LIBRARY Carbon)
+find_library(COCOA_LIBRARY Cocoa)
+find_library(CORESERVICES_LIBRARY CoreServices)
+find_library(DISKARBITRATION_LIBRARY DiskArbitration)
+find_library(OPENGL_LIBRARY OpenGL)
+find_library(QUARTZ_LIBRARY Quartz)
+find_library(LOOKUP_FRAMEWORK Lookup HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(APPSUPPORT_LIBRARY AppSupport HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(IOSURFACEACCELERATOR_LIBRARY IOSurfaceAccelerator HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(IMAGEIO_LIBRARY ImageIO)
+find_library(CORETEXT_LIBRARY CoreText)
+find_library(COREIMAGE_LIBRARY CoreImage)
+find_library(COREVIDEO_LIBRARY CoreVideo)
+find_library(GRAPHICSSERVICES_LIBRARY GraphicsServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+find_library(MOBILEGESTALT_LIBRARY MobileGestalt HINTS ${CMAKE_OSX_SYSROOT}/usr/lib)
+find_library(MOBILECORESERVICES_LIBRARY MobileCoreServices)
+find_library(UIKIT_LIBRARY UIKit)
 
 # SQLite3::SQLite3 and ZLIB::ZLIB are declared in OptionsCocoa.cmake; only search
 # if missing (e.g. ANGLE/WebCore configured standalone).
@@ -78,6 +97,7 @@ list(APPEND WebCore_LIBRARIES
     ${COMPRESSION_LIBRARY}
     ${COREAUDIO_LIBRARY}
     ${COREMEDIA_LIBRARY}
+    ${FONTPARSER_LIBRARY}
     ${IOKIT_LIBRARY}
     ${IOSURFACE_LIBRARY}
     ${LIBACCESSIBILITY_LIBRARY}
@@ -91,6 +111,34 @@ list(APPEND WebCore_LIBRARIES
     ${VIDEOTOOLBOX_LIBRARY}
     ${XML2_LIBRARY}
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND WebCore_LIBRARIES
+        ${AUDIOUNIT_LIBRARY}
+        ${CARBON_LIBRARY}
+        ${COCOA_LIBRARY}
+        ${CORESERVICES_LIBRARY}
+        ${DISKARBITRATION_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${QUARTZ_LIBRARY}
+        $<$<BOOL:${LOOKUP_FRAMEWORK}>:${LOOKUP_FRAMEWORK}>
+    )
+endif ()
+
+if (WEBKIT_SDK_IS_IOS_FAMILY)
+    list(APPEND WebCore_LIBRARIES
+        ${COREIMAGE_LIBRARY}
+        ${CORETEXT_LIBRARY}
+        ${COREVIDEO_LIBRARY}
+        ${IMAGEIO_LIBRARY}
+        ${MOBILECORESERVICES_LIBRARY}
+        ${UIKIT_LIBRARY}
+        $<$<BOOL:${APPSUPPORT_LIBRARY}>:${APPSUPPORT_LIBRARY}>
+        $<$<BOOL:${GRAPHICSSERVICES_LIBRARY}>:${GRAPHICSSERVICES_LIBRARY}>
+        $<$<BOOL:${MOBILEGESTALT_LIBRARY}>:${MOBILEGESTALT_LIBRARY}>
+        $<$<BOOL:${IOSURFACEACCELERATOR_LIBRARY}>:${IOSURFACEACCELERATOR_LIBRARY}>
+    )
+endif ()
 
 if (USE_APPLE_INTERNAL_SDK AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     # FIXME: WebCore's precompiled header, when built with -fpch-codegen,
@@ -231,6 +279,36 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/spi/cocoa"
     "${WEBCORE_DIR}/platform/video-codecs"
     "${WEBCORE_DIR}/rendering/cocoa"
+
+    "${WEBCORE_DIR}/accessibility/ios"
+    "${WEBCORE_DIR}/accessibility/isolatedtree/mac"
+    "${WEBCORE_DIR}/accessibility/mac"
+    "${WEBCORE_DIR}/dom/mac"
+    "${WEBCORE_DIR}/editing/ios"
+    "${WEBCORE_DIR}/editing/mac"
+    "${WEBCORE_DIR}/loader/ios"
+    "${WEBCORE_DIR}/Modules/system-preview"
+    "${WEBCORE_DIR}/page/ios"
+    "${WEBCORE_DIR}/page/mac"
+    "${WEBCORE_DIR}/page/scrolling/mac"
+    "${WEBCORE_DIR}/platform/audio/ios"
+    "${WEBCORE_DIR}/platform/audio/mac"
+    "${WEBCORE_DIR}/platform/graphics/ios"
+    "${WEBCORE_DIR}/platform/graphics/ios/controls"
+    "${WEBCORE_DIR}/platform/graphics/mac"
+    "${WEBCORE_DIR}/platform/graphics/mac/controls"
+    "${WEBCORE_DIR}/platform/ios"
+    "${WEBCORE_DIR}/platform/ios/wak"
+    "${WEBCORE_DIR}/platform/mac"
+    "${WEBCORE_DIR}/platform/mediastream/ios"
+    "${WEBCORE_DIR}/platform/mediastream/mac"
+    "${WEBCORE_DIR}/platform/network/ios"
+    "${WEBCORE_DIR}/platform/network/mac"
+    "${WEBCORE_DIR}/platform/spi/mac"
+    "${WEBCORE_DIR}/platform/text/mac"
+    "${WEBCORE_DIR}/plugins/mac"
+    "${WEBCORE_DIR}/rendering/ios"
+
     "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
 )
 
@@ -495,6 +573,117 @@ list(APPEND WebCore_SOURCES
 
     workers/service/ServiceWorkerRoute.mm
 )
+
+if (WEBKIT_SDK_IS_MACOS)
+list(APPEND WebCore_SOURCES
+    accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
+    accessibility/isolatedtree/mac/AXIsolatedTreeMac.mm
+
+    accessibility/mac/AXObjectCacheMac.mm
+    accessibility/mac/AccessibilityObjectMac.mm
+    accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+
+    dom/DataTransferMac.mm
+
+    editing/mac/EditorMac.mm
+    editing/mac/TextAlternativeWithRange.mm
+    editing/mac/TextUndoInsertionMarkupMac.mm
+
+    page/mac/EventHandlerMac.mm
+    page/mac/ServicesOverlayController.mm
+    page/mac/WheelEventDeltaFilterMac.mm
+
+    page/scrolling/mac/ScrollingCoordinatorMac.mm
+    page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
+    page/scrolling/mac/ScrollingTreeMac.mm
+
+    platform/audio/mac/AudioHardwareListenerMac.cpp
+
+    platform/gamepad/mac/HIDGamepad.cpp
+
+    platform/graphics/mac/ColorMac.mm
+    platform/graphics/mac/GraphicsChecksMac.cpp
+    platform/graphics/mac/IconMac.mm
+    platform/graphics/mac/PDFDocumentImageMac.mm
+
+    platform/mac/CursorMac.mm
+    platform/mac/KeyEventMac.mm
+    platform/mac/LocalCurrentGraphicsContextMac.mm
+    platform/mac/NSScrollerImpDetails.mm
+    platform/mac/PasteboardMac.mm
+    platform/mac/PasteboardWriter.mm
+    platform/mac/PlatformEventFactoryMac.mm
+    platform/mac/PlatformPasteboardMac.mm
+    platform/mac/PlatformScreenMac.mm
+    platform/mac/PowerObserverMac.cpp
+    platform/mac/RevealUtilities.mm
+    platform/mac/ScrollAnimatorMac.mm
+    platform/mac/ScrollViewMac.mm
+    platform/mac/ScrollbarThemeMac.mm
+    platform/mac/ScrollingEffectsController.mm
+    platform/mac/SerializedPlatformDataCueMac.mm
+    platform/mac/SuddenTermination.mm
+    platform/mac/ThemeMac.mm
+    platform/mac/ThreadCheck.mm
+    platform/mac/UserActivityMac.mm
+    platform/mac/ValidationBubbleMac.mm
+    platform/mac/WebCoreFullScreenPlaceholderView.mm
+    platform/mac/WebCoreFullScreenWarningView.mm
+    platform/mac/WebCoreFullScreenWindow.mm
+    platform/mac/WidgetMac.mm
+
+    platform/text/mac/TextCheckingMac.mm
+
+    rendering/mac/RenderThemeMac.mm
+)
+endif ()
+
+if (WEBKIT_SDK_IS_IOS_FAMILY)
+list(APPEND WebCore_SOURCES
+    accessibility/AccessibilityMediaHelpers.cpp
+
+    accessibility/ios/AXObjectCacheIOS.mm
+    accessibility/ios/AccessibilityObjectIOS.mm
+    accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+
+    editing/ios/EditorIOS.mm
+
+    page/ios/EventHandlerIOS.mm
+    page/ios/FrameIOS.mm
+
+    platform/cocoa/WebAVPlayerLayerView.mm
+
+    platform/graphics/ios/IconIOS.mm
+
+    platform/ios/ColorIOS.mm
+    platform/ios/DragImageIOS.mm
+    platform/ios/KeyEventIOS.mm
+    platform/ios/LocalCurrentGraphicsContextIOS.mm
+    platform/ios/LocalCurrentTraitCollection.mm
+    platform/ios/LocalizedDeviceModel.mm
+    platform/ios/PasteboardIOS.mm
+    platform/ios/PlatformEventFactoryIOS.mm
+    platform/ios/PlatformPasteboardIOS.mm
+    platform/ios/PlatformScreenIOS.mm
+    platform/ios/ScrollAnimatorIOS.mm
+    platform/ios/ScrollViewIOS.mm
+    platform/ios/ScrollbarThemeIOS.mm
+    platform/ios/ThemeIOS.mm
+    platform/ios/UIFoundationSoftLink.mm
+    platform/ios/UserAgentIOS.mm
+    platform/ios/ValidationBubbleIOS.mm
+    platform/ios/WidgetIOS.mm
+
+    platform/ios/wak/WAKAppKitStubs.mm
+    platform/ios/wak/WAKClipView.mm
+    platform/ios/wak/WAKResponder.mm
+    platform/ios/wak/WKUtilities.cpp
+
+    platform/mediastream/ios/MediaCaptureStatusBarManager.mm
+
+    rendering/ios/RenderThemeIOS.mm
+)
+endif ()
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
@@ -1424,8 +1613,12 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/mac/TextUndoInsertionMarkupMac.h
     editing/mac/UniversalAccessZoom.h
 
+    page/mac/WebCoreFrameView.h
+
     platform/gamepad/mac/HIDGamepadProvider.h
     platform/gamepad/mac/MultiGamepadProvider.h
+
+    platform/graphics/mac/ColorMac.h
 
     platform/mac/LegacyNSPasteboardTypes.h
     platform/mac/NSScrollerImpDetails.h
@@ -1544,26 +1737,6 @@ WEBKIT_COPY_FILES(WebCore_CopyModernMediaControlsImages
     FLATTENED NO_SYMLINK)
 add_dependencies(WebCore WebCore_CopyModernMediaControlsImages)
 
-find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
-find_library(AUDIOUNIT_LIBRARY AudioUnit)
-find_library(CARBON_LIBRARY Carbon)
-find_library(COCOA_LIBRARY Cocoa)
-find_library(CORESERVICES_LIBRARY CoreServices)
-find_library(DISKARBITRATION_LIBRARY DiskArbitration)
-find_library(OPENGL_LIBRARY OpenGL)
-find_library(QUARTZ_LIBRARY Quartz)
-
-list(APPEND WebCore_LIBRARIES
-    ${AUDIOUNIT_LIBRARY}
-    ${CARBON_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${CORESERVICES_LIBRARY}
-    ${DISKARBITRATION_LIBRARY}
-    ${FONTPARSER_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${QUARTZ_LIBRARY}
-)
-
 add_compile_options(
     "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks>"
     "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks>"
@@ -1572,98 +1745,12 @@ add_compile_options(
     "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${QUARTZ_LIBRARY}/Frameworks>"
 )
 
-find_library(LOOKUP_FRAMEWORK Lookup HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-if (NOT LOOKUP_FRAMEWORK-NOTFOUND)
-    list(APPEND WebCore_LIBRARIES ${LOOKUP_FRAMEWORK})
-endif ()
-
-list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/accessibility/isolatedtree/mac"
-    "${WEBCORE_DIR}/accessibility/mac"
-    "${WEBCORE_DIR}/dom/mac"
-    "${WEBCORE_DIR}/editing/mac"
-    "${WEBCORE_DIR}/page/mac"
-    "${WEBCORE_DIR}/page/scrolling/mac"
-    "${WEBCORE_DIR}/platform/audio/mac"
-    "${WEBCORE_DIR}/platform/graphics/mac"
-    "${WEBCORE_DIR}/platform/graphics/mac/controls"
-    "${WEBCORE_DIR}/platform/ios"
-    "${WEBCORE_DIR}/platform/mac"
-    "${WEBCORE_DIR}/platform/mediastream/mac"
-    "${WEBCORE_DIR}/platform/network/mac"
-    "${WEBCORE_DIR}/platform/text/mac"
-    "${WEBCORE_DIR}/platform/spi/mac"
-    "${WEBCORE_DIR}/plugins/mac"
-)
-
-list(APPEND WebCore_SOURCES
-    accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
-    accessibility/isolatedtree/mac/AXIsolatedTreeMac.mm
-    accessibility/mac/AXObjectCacheMac.mm
-    accessibility/mac/AccessibilityObjectMac.mm
-    accessibility/mac/WebAccessibilityObjectWrapperMac.mm
-
-    dom/DataTransferMac.mm
-
-    editing/mac/EditorMac.mm
-    editing/mac/TextAlternativeWithRange.mm
-    editing/mac/TextUndoInsertionMarkupMac.mm
-
-    page/mac/EventHandlerMac.mm
-    page/mac/ServicesOverlayController.mm
-    page/mac/WheelEventDeltaFilterMac.mm
-
-    page/scrolling/mac/ScrollingCoordinatorMac.mm
-    page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
-    page/scrolling/mac/ScrollingTreeMac.mm
-
-    platform/audio/mac/AudioHardwareListenerMac.cpp
-
-    platform/gamepad/mac/HIDGamepad.cpp
-
-    platform/graphics/mac/ColorMac.mm
-    platform/graphics/mac/GraphicsChecksMac.cpp
-    platform/graphics/mac/IconMac.mm
-    platform/graphics/mac/PDFDocumentImageMac.mm
-
-    platform/mac/CursorMac.mm
-    platform/mac/KeyEventMac.mm
-    platform/mac/LocalCurrentGraphicsContextMac.mm
-    platform/mac/NSScrollerImpDetails.mm
-    platform/mac/PasteboardMac.mm
-    platform/mac/PasteboardWriter.mm
-    platform/mac/PlatformEventFactoryMac.mm
-    platform/mac/PlatformPasteboardMac.mm
-    platform/mac/PlatformScreenMac.mm
-    platform/mac/PowerObserverMac.cpp
-    platform/mac/RevealUtilities.mm
-    platform/mac/ScrollAnimatorMac.mm
-    platform/mac/ScrollViewMac.mm
-    platform/mac/ScrollbarThemeMac.mm
-    platform/mac/ScrollingEffectsController.mm
-    platform/mac/SerializedPlatformDataCueMac.mm
-    platform/mac/SuddenTermination.mm
-    platform/mac/ThemeMac.mm
-    platform/mac/ThreadCheck.mm
-    platform/mac/UserActivityMac.mm
-    platform/mac/ValidationBubbleMac.mm
-    platform/mac/WebCoreFullScreenPlaceholderView.mm
-    platform/mac/WebCoreFullScreenWarningView.mm
-    platform/mac/WebCoreFullScreenWindow.mm
-    platform/mac/WidgetMac.mm
-
-    platform/text/mac/TextCheckingMac.mm
-
-    rendering/mac/RenderThemeMac.mm
-)
-
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/html/shadow/mac/imageControlsMac.css
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/mac/CorrectionIndicator.h
-    page/mac/WebCoreFrameView.h
 
     page/scrolling/mac/ScrollerMac.h
     page/scrolling/mac/ScrollerPairMac.h
@@ -1683,7 +1770,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/avfoundation/FormatDescriptionUtilities.h
 
     platform/graphics/mac/AppKitControlSystemImage.h
-    platform/graphics/mac/ColorMac.h
     platform/graphics/mac/GraphicsChecksMac.h
     platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.h
 
@@ -1749,108 +1835,6 @@ add_custom_command(TARGET WebCore POST_BUILD
 configure_file("${WEBCORE_DIR}/WebCore_Private.modulemap"
                "${_wc_fw}/Modules/module.private.modulemap" COPYONLY)
 
-find_library(APPSUPPORT_LIBRARY AppSupport HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(IOSURFACEACCELERATOR_LIBRARY IOSurfaceAccelerator HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(IMAGEIO_LIBRARY ImageIO)
-find_library(CORETEXT_LIBRARY CoreText)
-find_library(COREIMAGE_LIBRARY CoreImage)
-find_library(COREVIDEO_LIBRARY CoreVideo)
-find_library(GRAPHICSSERVICES_LIBRARY GraphicsServices HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(MOBILEGESTALT_LIBRARY MobileGestalt HINTS ${CMAKE_OSX_SYSROOT}/usr/lib)
-find_library(MOBILECORESERVICES_LIBRARY MobileCoreServices)
-find_library(UIKIT_LIBRARY UIKit)
-
-list(APPEND WebCore_LIBRARIES
-    ${COREIMAGE_LIBRARY}
-    ${CORETEXT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-    ${IMAGEIO_LIBRARY}
-    ${MOBILECORESERVICES_LIBRARY}
-    ${UIKIT_LIBRARY}
-)
-
-if (APPSUPPORT_LIBRARY)
-    list(APPEND WebCore_LIBRARIES ${APPSUPPORT_LIBRARY})
-endif ()
-if (FONTPARSER_LIBRARY)
-    list(APPEND WebCore_LIBRARIES ${FONTPARSER_LIBRARY})
-endif ()
-if (GRAPHICSSERVICES_LIBRARY)
-    list(APPEND WebCore_LIBRARIES ${GRAPHICSSERVICES_LIBRARY})
-endif ()
-if (MOBILEGESTALT_LIBRARY)
-    list(APPEND WebCore_LIBRARIES ${MOBILEGESTALT_LIBRARY})
-endif ()
-
-if (IOSURFACEACCELERATOR_LIBRARY)
-    list(APPEND WebCore_LIBRARIES ${IOSURFACEACCELERATOR_LIBRARY})
-endif ()
-
-list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${CMAKE_SOURCE_DIR}/Source/WebCore/accessibility/ios"
-    "${WEBCORE_DIR}/platform/mac"
-    "${WEBCORE_DIR}/platform/graphics/mac"
-    "${WEBCORE_DIR}/editing/mac"
-    "${WEBCORE_DIR}/loader/ios"
-    "${WEBCORE_DIR}/page/mac"
-    "${WEBCORE_DIR}/Modules/system-preview"
-    "${WEBCORE_DIR}/editing/ios"
-    "${WEBCORE_DIR}/page/ios"
-    "${WEBCORE_DIR}/platform/audio/ios"
-    "${WEBCORE_DIR}/platform/graphics/ios"
-    "${WEBCORE_DIR}/platform/graphics/ios/controls"
-    "${WEBCORE_DIR}/platform/ios"
-    "${WEBCORE_DIR}/platform/ios/wak"
-    "${WEBCORE_DIR}/platform/mediastream/ios"
-    "${WEBCORE_DIR}/platform/network/ios"
-    "${WEBCORE_DIR}/rendering/ios"
-)
-
-list(APPEND WebCore_SOURCES
-    accessibility/AccessibilityMediaHelpers.cpp
-
-    accessibility/ios/AXObjectCacheIOS.mm
-    accessibility/ios/AccessibilityObjectIOS.mm
-    accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-
-    editing/ios/EditorIOS.mm
-
-    page/ios/EventHandlerIOS.mm
-    page/ios/FrameIOS.mm
-
-    platform/cocoa/WebAVPlayerLayerView.mm
-
-    platform/graphics/ios/IconIOS.mm
-
-    platform/ios/ColorIOS.mm
-    platform/ios/DragImageIOS.mm
-    platform/ios/KeyEventIOS.mm
-    platform/ios/LocalCurrentGraphicsContextIOS.mm
-    platform/ios/LocalCurrentTraitCollection.mm
-    platform/ios/LocalizedDeviceModel.mm
-    platform/ios/PasteboardIOS.mm
-    platform/ios/PlatformEventFactoryIOS.mm
-    platform/ios/PlatformPasteboardIOS.mm
-    platform/ios/PlatformScreenIOS.mm
-    platform/ios/ScrollAnimatorIOS.mm
-    platform/ios/ScrollViewIOS.mm
-    platform/ios/ScrollbarThemeIOS.mm
-    platform/ios/ThemeIOS.mm
-    platform/ios/UIFoundationSoftLink.mm
-    platform/ios/UserAgentIOS.mm
-    platform/ios/ValidationBubbleIOS.mm
-    platform/ios/WidgetIOS.mm
-
-    platform/ios/wak/WAKAppKitStubs.mm
-    platform/ios/wak/WAKClipView.mm
-    platform/ios/wak/WAKResponder.mm
-    platform/ios/wak/WKUtilities.cpp
-
-    platform/mediastream/ios/MediaCaptureStatusBarManager.mm
-
-    rendering/ios/RenderThemeIOS.mm
-)
-
 set_source_files_properties(
     ${WEBCORE_DIR}/platform/ios/wak/WAKAppKitStubs.mm
     ${WEBCORE_DIR}/platform/ios/wak/WAKClipView.mm
@@ -1864,12 +1848,8 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/TouchEvent.h
 
-    page/mac/WebCoreFrameView.h
-
     platform/audio/ios/MediaDeviceRouteController.h
     platform/audio/ios/MediaDeviceRouteLoadURLResult.h
-
-    platform/graphics/mac/ColorMac.h
 
     platform/ios/AbstractPasteboard.h
 

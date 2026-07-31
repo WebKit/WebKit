@@ -3,17 +3,41 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitLegacy -Wno-unused-parameter)
 
 WEBKIT_ADD_PREFIX_HEADER(WebKitLegacy WebKitLegacyPrefix.h PREFIX_LANGUAGES CXX OBJC OBJCXX)
 
+find_library(UIKIT_LIBRARY UIKit)
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
+find_library(QUARTZ_LIBRARY Quartz)
+find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
+
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     PAL
 )
+if (WEBKIT_SDK_IS_IOS_FAMILY)
+    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${UIKIT_LIBRARY})
+endif ()
+if (WEBKIT_SDK_IS_MACOS)
+    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${SECURITYINTERFACE_LIBRARY})
+endif ()
 
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_FRAMEWORK_HEADERS_DIR}"
     "${WEBKITLEGACY_DIR}"
+    "${WEBKITLEGACY_DIR}/Modules"
+    "${WEBKITLEGACY_DIR}/ios"
+    "${WEBKITLEGACY_DIR}/ios/DefaultDelegates"
+    "${WEBKITLEGACY_DIR}/ios/Misc"
+    "${WEBKITLEGACY_DIR}/ios/WebCoreSupport"
+    "${WEBKITLEGACY_DIR}/ios/WebView"
     "${WEBKITLEGACY_DIR}/mac"
+    "${WEBKITLEGACY_DIR}/mac/DOM"
+    "${WEBKITLEGACY_DIR}/mac/DefaultDelegates"
+    "${WEBKITLEGACY_DIR}/mac/History"
     "${WEBKITLEGACY_DIR}/mac/Misc"
-    "${WEBKITLEGACY_DIR}/mac/WebView"
+    "${WEBKITLEGACY_DIR}/mac/Panels"
+    "${WEBKITLEGACY_DIR}/mac/Plugins"
+    "${WEBKITLEGACY_DIR}/mac/Storage"
     "${WEBKITLEGACY_DIR}/mac/WebCoreSupport"
+    "${WEBKITLEGACY_DIR}/mac/WebInspector"
+    "${WEBKITLEGACY_DIR}/mac/WebView"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy"
     "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
@@ -39,6 +63,17 @@ list(APPEND WebKitLegacy_SOURCES
     WebCoreSupport/WebCryptoClient.mm
 
     cf/WebCoreSupport/WebInspectorClientCF.cpp
+
+    mac/DefaultDelegates/WebDefaultEditingDelegate.m
+
+    mac/Misc/WebKitErrors.m
+    mac/Misc/WebKitLogging.m
+    mac/Misc/WebKitStatistics.m
+    mac/Misc/WebNSDictionaryExtras.m
+    mac/Misc/WebNSURLRequestExtras.m
+
+    mac/WebView/WebFeature.m
+    mac/WebView/WebFormDelegate.m
 )
 
 # Preferences codegen.
@@ -65,74 +100,25 @@ list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesExperimentalFeatures.mm
 )
 
-set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
+if (WEBKIT_SDK_IS_MACOS)
+list(APPEND WebKitLegacy_SOURCES
+    mac/History/WebURLsWithTitles.m
 
-# Platform-specific configuration, selected by the target SDK.
+    mac/Misc/WebNSControlExtras.m
+    mac/Misc/WebNSEventExtras.m
+    mac/Misc/WebNSImageExtras.m
+    mac/Misc/WebNSPrintOperationExtras.m
+    mac/Misc/WebNSViewExtras.m
+    mac/Misc/WebNSWindowExtras.m
+
+    mac/Panels/WebAuthenticationPanel.m
+    mac/Panels/WebPanelAuthenticationHandler.m
+
+    mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
+)
+endif ()
+
 if (WEBKIT_SDK_IS_IOS_FAMILY)
-
-find_library(UIKIT_LIBRARY UIKit)
-
-list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-    ${UIKIT_LIBRARY}
-)
-
-target_compile_options(WebKitLegacy PRIVATE
-    "$<$<COMPILE_LANGUAGE:OBJC>:-std=gnu99>")
-
-set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
-set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
-set(PRODUCT_NAME "WebKitLegacy")
-set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKitLegacy")
-configure_file(${WEBKITLEGACY_DIR}/mac/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
-execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
-execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2]" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
-
-set(WebKitLegacy_POST_BUILD_COMMAND
-    ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework/Info.plist
-)
-set_target_properties(WebKitLegacy PROPERTIES
-    INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
-)
-target_link_options(WebKitLegacy PRIVATE
-    -compatibility_version 1.0.0
-    -current_version ${WEBKIT_MAC_VERSION}
-)
-
-target_link_options(WebKitLegacy PRIVATE
-    -exported_symbols_list ${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp
-)
-
-# FIXME: Generate this list dynamically (from `tapi reexport` against the
-# migrated WebCore headers + ios/WebKit.iOS.exp + mac/WebKit.exp) instead of
-# relying on a static snapshot. https://bugs.webkit.org/show_bug.cgi?id=312083
-# WebKitLegacy-iOS-unexported.exp is no longer applied: -exported_symbols_list
-# is a whitelist, so any symbol not in WebKitLegacy-iOS.exp is implicitly
-# unexported. ld errors if both lists are passed. Note: `-undefined
-# dynamic_lookup` is rejected by ld for shared-cache-eligible dylibs, so
-# stale entries in the snapshot must be removed by hand until the dynamic
-# generation lands.
-
-list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBKITLEGACY_DIR}/Modules"
-
-    "${WEBKITLEGACY_DIR}/ios"
-
-    "${WEBKITLEGACY_DIR}/ios/DefaultDelegates"
-    "${WEBKITLEGACY_DIR}/ios/Misc"
-    "${WEBKITLEGACY_DIR}/ios/WebCoreSupport"
-    "${WEBKITLEGACY_DIR}/ios/WebView"
-
-    "${WEBKITLEGACY_DIR}/mac/DOM"
-    "${WEBKITLEGACY_DIR}/mac/DefaultDelegates"
-    "${WEBKITLEGACY_DIR}/mac/History"
-    "${WEBKITLEGACY_DIR}/mac/Panels"
-    "${WEBKITLEGACY_DIR}/mac/Plugins"
-    "${WEBKITLEGACY_DIR}/mac/Storage"
-    "${WEBKITLEGACY_DIR}/mac/WebInspector"
-    "${WEBKITLEGACY_DIR}/mac/WebView"
-)
-
 list(APPEND WebKitLegacy_SOURCES
     ios/DefaultDelegates/WebDefaultFormDelegate.m
     ios/DefaultDelegates/WebDefaultFrameLoadDelegate.m
@@ -160,20 +146,11 @@ list(APPEND WebKitLegacy_SOURCES
     ios/WebView/WebPDFViewPlaceholder.mm
     ios/WebView/WebPlainWhiteView.mm
 
-    mac/DefaultDelegates/WebDefaultEditingDelegate.m
     mac/DefaultDelegates/WebDefaultPolicyDelegate.mm
     mac/DefaultDelegates/WebDefaultUIDelegate.mm
 
     mac/WebView/WebPDFDocumentExtras.mm
-)
 
-list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-    "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-    "-framework WebCore"
-)
-add_dependencies(WebKitLegacy WebCore)
-
-list(APPEND WebKitLegacy_SOURCES
     mac/History/BackForwardList.mm
     mac/History/BinaryPropertyList.cpp
     mac/History/HistoryPropertyList.mm
@@ -184,20 +161,15 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebCoreStatistics.mm
     mac/Misc/WebDownload.mm
     mac/Misc/WebElementDictionary.mm
-    mac/Misc/WebKitErrors.m
     mac/Misc/WebKitLogInitialization.mm
-    mac/Misc/WebKitLogging.m
     mac/Misc/WebKitNSStringExtras.mm
-    mac/Misc/WebKitStatistics.m
     mac/Misc/WebKitVersionChecks.mm
     mac/Misc/WebLocalizableStrings.mm
     mac/Misc/WebLocalizableStringsInternal.mm
     mac/Misc/WebNSDataExtras.mm
-    mac/Misc/WebNSDictionaryExtras.m
     mac/Misc/WebNSFileManagerExtras.mm
     mac/Misc/WebNSObjectExtras.mm
     mac/Misc/WebNSURLExtras.mm
-    mac/Misc/WebNSURLRequestExtras.m
     mac/Misc/WebNSUserDefaultsExtras.mm
     mac/Misc/WebUserContentURLPattern.mm
 
@@ -241,8 +213,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebDeviceOrientation.mm
     mac/WebView/WebDeviceOrientationProviderMock.mm
     mac/WebView/WebDocumentLoaderMac.mm
-    mac/WebView/WebFeature.m
-    mac/WebView/WebFormDelegate.m
     mac/WebView/WebGeolocationPosition.mm
     mac/WebView/WebHTMLRepresentation.mm
     mac/WebView/WebIndicateLayer.mm
@@ -257,6 +227,55 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebTextIterator.mm
     mac/WebView/WebViewData.mm
 )
+endif ()
+
+set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
+
+# Platform-specific configuration, selected by the target SDK.
+if (WEBKIT_SDK_IS_IOS_FAMILY)
+
+target_compile_options(WebKitLegacy PRIVATE
+    "$<$<COMPILE_LANGUAGE:OBJC>:-std=gnu99>")
+
+set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
+set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
+set(PRODUCT_NAME "WebKitLegacy")
+set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKitLegacy")
+configure_file(${WEBKITLEGACY_DIR}/mac/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
+execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
+execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2]" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
+
+set(WebKitLegacy_POST_BUILD_COMMAND
+    ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework/Info.plist
+)
+set_target_properties(WebKitLegacy PROPERTIES
+    INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
+)
+target_link_options(WebKitLegacy PRIVATE
+    -compatibility_version 1.0.0
+    -current_version ${WEBKIT_MAC_VERSION}
+)
+
+target_link_options(WebKitLegacy PRIVATE
+    -exported_symbols_list ${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp
+)
+
+# FIXME: Generate this list dynamically (from `tapi reexport` against the
+# migrated WebCore headers + ios/WebKit.iOS.exp + mac/WebKit.exp) instead of
+# relying on a static snapshot. https://bugs.webkit.org/show_bug.cgi?id=312083
+# WebKitLegacy-iOS-unexported.exp is no longer applied: -exported_symbols_list
+# is a whitelist, so any symbol not in WebKitLegacy-iOS.exp is implicitly
+# unexported. ld errors if both lists are passed. Note: `-undefined
+# dynamic_lookup` is rejected by ld for shared-cache-eligible dylibs, so
+# stale entries in the snapshot must be removed by hand until the dynamic
+# generation lands.
+
+list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+    "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    "-framework WebCore"
+)
+add_dependencies(WebKitLegacy WebCore)
 
 set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     ${WEBCORE_DIR}/bridge/objc/WebScriptObject.h
@@ -1237,41 +1256,8 @@ unset(_wkl_vfs_headers_str)
     return ()
 endif ()
 
-find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
-find_library(QUARTZ_LIBRARY Quartz)
-find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
-
-list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-    ${SECURITYINTERFACE_LIBRARY}
-)
-
-list(APPEND WebKitLegacy_SOURCES
-    mac/DefaultDelegates/WebDefaultEditingDelegate.m
-
-    mac/History/WebURLsWithTitles.m
-
-    mac/Misc/WebKitErrors.m
-    mac/Misc/WebKitLogging.m
-    mac/Misc/WebKitStatistics.m
-    mac/Misc/WebNSControlExtras.m
-    mac/Misc/WebNSDictionaryExtras.m
-    mac/Misc/WebNSEventExtras.m
-    mac/Misc/WebNSImageExtras.m
-    mac/Misc/WebNSPrintOperationExtras.m
-    mac/Misc/WebNSURLRequestExtras.m
-    mac/Misc/WebNSViewExtras.m
-    mac/Misc/WebNSWindowExtras.m
-
-    mac/Panels/WebAuthenticationPanel.m
-    mac/Panels/WebPanelAuthenticationHandler.m
-
-    mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
-
-    mac/WebView/WebFeature.m
-    mac/WebView/WebFormDelegate.m
-)
 
 
 # WebKit reexports WebKitLegacy, so the legacy ObjC API is part of WebKit's
