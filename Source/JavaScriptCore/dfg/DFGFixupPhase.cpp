@@ -3058,7 +3058,7 @@ private:
                 blessArrayOperation(base, index, storageEdge);
 
                 ArrayMode arrayMode = node->arrayMode();
-                if (arrayMode.benefitsFromOriginalArray())
+                if (arrayMode.isJSArrayWithOriginalStructure() && arrayMode.benefitsFromOriginalArray())
                     setSaneChainIfPossible(node, arrayMode.speculation() == Array::InBounds ? Array::InBoundsSaneChain : Array::OutOfBoundsSaneChain);
             }
 
