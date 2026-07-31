@@ -5844,11 +5844,12 @@ class GenerateStyleInterpolationWrapperMap:
                     return m_wrappers[id];
                 }
 
+                ~WrapperMap() = default;
+
             private:
                 friend class WTF::NeverDestroyed<WrapperMap>;
 
                 WrapperMap();
-                ~WrapperMap() = delete;
 
                 std::array<WrapperBase*, cssPropertyIDEnumValueCount> m_wrappers;
             };""")

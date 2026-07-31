@@ -69,9 +69,10 @@ public:
 
     WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin&);
 
+    ~DatabaseManager() = default;
+
 private:
     DatabaseManager() = default;
-    ~DatabaseManager() = delete;
 
     void platformInitialize(const String& databasePath);
 

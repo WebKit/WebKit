@@ -68,13 +68,13 @@ public:
     operator T*();
     T& operator*();
 
-private:
     // Not implemented. It's technically possible to destroy a thread specific key, but one would need
     // to make sure that all values have been destroyed already (usually, that all threads that used it
     // have exited). It's unlikely that any user of this call will be in that situation - and having
     // a destructor defined can be confusing, given that it has such strong pre-requisites to work correctly.
-    ~ThreadSpecific();
+    ~ThreadSpecific() = default;
 
+private:
     struct Data {
         WTF_MAKE_NONCOPYABLE(Data);
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Data);
