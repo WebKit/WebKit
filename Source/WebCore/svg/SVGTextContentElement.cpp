@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -174,8 +174,7 @@ void SVGTextContentElement::attributeChanged(const QualifiedName& name, const At
 
     if (name == SVGNames::lengthAdjustAttr) {
         auto propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue);
+        m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue > 0 ? propertyValue : SVGLengthAdjustSpacing);
     } else if (name == SVGNames::textLengthAttr)
         m_textLength->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
 

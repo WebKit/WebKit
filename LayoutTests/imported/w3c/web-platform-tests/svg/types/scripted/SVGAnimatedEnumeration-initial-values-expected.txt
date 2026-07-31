@@ -41,8 +41,8 @@ FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.pattern
 FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternUnits (invalid value) assert_equals: initial after expected 2 but got 1
 FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternContentUnits (remove) assert_equals: initial after expected 1 but got 2
 FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternContentUnits (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (invalid value) assert_equals: initial after expected 1 but got 2
+PASS SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (invalid value)
 FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.method (remove) assert_equals: initial after expected 1 but got 2
 FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.method (invalid value) assert_equals: initial after expected 1 but got 2
 FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.spacing (remove) assert_equals: initial after expected 2 but got 1
