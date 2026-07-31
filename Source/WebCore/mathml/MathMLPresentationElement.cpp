@@ -175,7 +175,7 @@ MathMLElement::Length MathMLPresentationElement::parseNamedSpace(StringView stri
     return length;
 }
 
-MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String& string, bool acceptLegacyMathMLLengths)
+MathMLElement::Length MathMLPresentationElement::parseMathMLLength(StringView string, bool acceptLegacyMathMLLengths)
 {
     // The regular expression from the MathML Relax NG schema is as follows:
     //
@@ -185,8 +185,7 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
     // Instead, we just use isASCIIWhitespace and toFloat to parse these parts.
 
     // We first skip whitespace from both ends of the string.
-    StringView stringView = string;
-    StringView trimmedLength = stringView.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    StringView trimmedLength = string.trim(isASCIIWhitespaceWithoutFF<char16_t>);
 
     if (trimmedLength.isEmpty())
         return Length();
