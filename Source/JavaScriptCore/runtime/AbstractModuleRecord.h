@@ -85,10 +85,11 @@ public:
         };
 
         static ExportEntry NODELETE createLocal(const Identifier& exportName, const Identifier& localName);
-        static ExportEntry NODELETE createIndirect(const Identifier& exportName, const Identifier& importName, const Identifier& moduleName);
-        static ExportEntry NODELETE createNamespace(const Identifier& exportName, const Identifier& moduleName);
+        static ExportEntry NODELETE createIndirect(const Identifier& exportName, const Identifier& importName, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType);
+        static ExportEntry NODELETE createNamespace(const Identifier& exportName, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType);
 
         Type type;
+        ScriptFetchParameters::Type moduleRequestType { ScriptFetchParameters::Type::JavaScript };
         Identifier exportName;
         Identifier moduleName;
         Identifier importName;
@@ -101,12 +102,31 @@ public:
     struct ImportEntry {
         ImportEntryType type;
         ModulePhase phase { ModulePhase::Evaluation };
+        ScriptFetchParameters::Type moduleRequestType { ScriptFetchParameters::Type::JavaScript };
         Identifier moduleRequest;
         Identifier importName;
         Identifier localName;
     };
 
-    using OrderedIdentifierSet = OrderedHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+    using StarExportEntry = std::pair<RefPtr<UniquedStringImpl>, ScriptFetchParameters::Type>;
+
+    struct StarExportEntryHash {
+        static unsigned hash(const StarExportEntry& entry)
+        {
+            unsigned identifierHash = entry.first ? entry.first->existingSymbolAwareHash() : 0;
+            unsigned enumHash(entry.second);
+            return WTF::pairIntHash(identifierHash, enumHash);
+        }
+
+        static bool equal(const StarExportEntry& a, const StarExportEntry& b)
+        {
+            return a == b;
+        }
+
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
+    };
+    using StarExportEntries = OrderedHashSet<StarExportEntry, StarExportEntryHash>;
+
     using ImportEntries = OrderedHashMap<RefPtr<UniquedStringImpl>, ImportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
     using ExportEntries = OrderedHashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>>;
 
@@ -128,7 +148,7 @@ public:
     DECLARE_EXPORT_INFO;
 
     void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&, ModulePhase = ModulePhase::Evaluation);
-    void addStarExportEntry(const Identifier&);
+    void addStarExportEntry(const Identifier&, ScriptFetchParameters::Type);
     void addImportEntry(const ImportEntry&);
     void addExportEntry(const ExportEntry&);
 
@@ -163,7 +183,7 @@ public:
     const ModuleMap<LoadedModuleRequest>& loadedModules() const LIFETIME_BOUND { return m_loadedModules; }
     const ExportEntries& exportEntries() const LIFETIME_BOUND { return m_exportEntries; }
     const ImportEntries& importEntries() const LIFETIME_BOUND { return m_importEntries; }
-    const OrderedIdentifierSet& starExportEntries() const LIFETIME_BOUND { return m_starExportEntries; }
+    const StarExportEntries& starExportEntries() const LIFETIME_BOUND { return m_starExportEntries; }
     const Vector<WriteBarrier<AbstractModuleRecord>>& asyncParentModules() const LIFETIME_BOUND { return m_asyncParentModules; }
     CyclicModuleRecord* cycleRoot() const { return m_cycleRoot.get(); }
     AsyncEvaluationOrder asyncEvaluationOrder() const { return m_asyncEvaluationOrder; }
@@ -198,7 +218,7 @@ public:
     Resolution resolveExport(JSGlobalObject*, const Identifier& exportName);
     Resolution resolveImport(JSGlobalObject*, const Identifier& localName);
 
-    AbstractModuleRecord* hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName);
+    AbstractModuleRecord* hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType);
 
     JSModuleNamespaceObject* getModuleNamespace(JSGlobalObject*, ModulePhase = ModulePhase::Evaluation);
 
@@ -255,7 +275,7 @@ private:
     ExportEntries m_exportEntries;
 
     // Save the occurrence order since resolveExport requires it.
-    OrderedIdentifierSet m_starExportEntries;
+    StarExportEntries m_starExportEntries;
 
     // Save the occurrence order since the module loader loads and runs the modules in this order.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation

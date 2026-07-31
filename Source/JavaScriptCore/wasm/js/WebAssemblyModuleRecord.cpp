@@ -207,7 +207,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             value = object->get(globalObject, fieldName);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
-            AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, moduleName);
+            AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, moduleName, ScriptFetchParameters::Type::JavaScript);
             RETURN_IF_EXCEPTION(scope, void());
             Resolution resolution = importedModule->resolveExport(globalObject, fieldName);
             RETURN_IF_EXCEPTION(scope, void());

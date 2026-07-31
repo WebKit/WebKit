@@ -27,6 +27,7 @@
 
 #include "ErrorType.h"
 #include "JSModuleRecord.h"
+#include "ModuleMap.h"
 #include "Nodes.h"
 #include <wtf/EnumeratedArray.h>
 
@@ -57,7 +58,7 @@ private:
 
     VM& m_vm;
     JSModuleRecord* m_moduleRecord;
-    EnumeratedArray<AbstractModuleRecord::ModulePhase, IdentifierSet, AbstractModuleRecord::ModulePhase::Defer> m_requestedModules;
+    EnumeratedArray<AbstractModuleRecord::ModulePhase, UncheckedKeyHashSet<ModuleMapKey, ModuleMapHash>, AbstractModuleRecord::ModulePhase::Defer> m_requestedModules;
     std::tuple<ErrorType, String> m_errorMessage;
 };
 

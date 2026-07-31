@@ -153,7 +153,7 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
     if (jsModule) {
         for (const auto& [key, in] : importEntries()) {
             // 7.a. Let importedModule be GetImportedModule(module, in.[[ModuleRequest]]).
-            AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, in.moduleRequest);
+            AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, in.moduleRequest, in.moduleRequestType);
             RETURN_IF_EXCEPTION(scope, void());
 #if CPU(ADDRESS64)
             // rdar://107531050: Speculative crash mitigation

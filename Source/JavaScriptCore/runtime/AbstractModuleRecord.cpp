@@ -138,9 +138,9 @@ void AbstractModuleRecord::appendRequestedModule(const Identifier& moduleName, R
     m_requestedModules.append({ moduleName, WTF::move(attributes), phase });
 }
 
-void AbstractModuleRecord::addStarExportEntry(const Identifier& moduleName)
+void AbstractModuleRecord::addStarExportEntry(const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType)
 {
-    m_starExportEntries.add(moduleName.impl());
+    m_starExportEntries.add({ moduleName.impl(), moduleRequestType });
 }
 
 void AbstractModuleRecord::addImportEntry(const ImportEntry& entry)
@@ -173,17 +173,17 @@ auto AbstractModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> s
 
 auto AbstractModuleRecord::ExportEntry::createLocal(const Identifier& exportName, const Identifier& localName) -> ExportEntry
 {
-    return ExportEntry { Type::Local, exportName, Identifier(), Identifier(), localName };
+    return ExportEntry { Type::Local, ScriptFetchParameters::Type::JavaScript, exportName, Identifier(), Identifier(), localName };
 }
 
-auto AbstractModuleRecord::ExportEntry::createIndirect(const Identifier& exportName, const Identifier& importName, const Identifier& moduleName) -> ExportEntry
+auto AbstractModuleRecord::ExportEntry::createIndirect(const Identifier& exportName, const Identifier& importName, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType) -> ExportEntry
 {
-    return ExportEntry { Type::Indirect, exportName, moduleName, importName, Identifier() };
+    return ExportEntry { Type::Indirect, moduleRequestType, exportName, moduleName, importName, Identifier() };
 }
 
-auto AbstractModuleRecord::ExportEntry::createNamespace(const Identifier& exportName, const Identifier& moduleName) -> ExportEntry
+auto AbstractModuleRecord::ExportEntry::createNamespace(const Identifier& exportName, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType) -> ExportEntry
 {
-    return ExportEntry { Type::Namespace, exportName, moduleName, Identifier(), Identifier() };
+    return ExportEntry { Type::Namespace, moduleRequestType, exportName, moduleName, Identifier(), Identifier() };
 }
 
 auto AbstractModuleRecord::Resolution::notFound() -> Resolution
@@ -201,12 +201,10 @@ auto AbstractModuleRecord::Resolution::ambiguous() -> Resolution
     return Resolution { Type::Ambiguous, nullptr, Identifier() };
 }
 
-AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName)
+AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType)
 {
-    for (auto type : { ScriptFetchParameters::Type::JavaScript, ScriptFetchParameters::Type::JSON, ScriptFetchParameters::Type::WebAssembly, ScriptFetchParameters::Type::None }) {
-        if (auto iter = m_loadedModules.find(ModuleMapKey { moduleName.impl(), type }); iter != m_loadedModules.end())
-            return iter->value.m_module.get();
-    }
+    if (auto iter = m_loadedModules.find(ModuleMapKey { moduleName.impl(), moduleRequestType }); iter != m_loadedModules.end())
+        return iter->value.m_module.get();
     return nullptr;
 }
 
@@ -223,7 +221,7 @@ auto AbstractModuleRecord::resolveImport(JSGlobalObject* globalObject, const Ide
     if (importEntry.type == AbstractModuleRecord::ImportEntryType::Namespace)
         return Resolution::notFound();
 
-    AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, importEntry.moduleRequest);
+    AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, importEntry.moduleRequest, importEntry.moduleRequestType);
     RETURN_IF_EXCEPTION(scope, Resolution::error());
 
     RELEASE_AND_RETURN(scope, importedModule->resolveExport(globalObject, importEntry.importName));
@@ -600,8 +598,8 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
 
         // Enqueue the tasks in reverse order.
         for (auto iterator = query.moduleRecord->starExportEntries().rbegin(), end = query.moduleRecord->starExportEntries().rend(); iterator != end; ++iterator) {
-            const RefPtr<UniquedStringImpl>& starModuleName = *iterator;
-            AbstractModuleRecord* importedModuleRecord = query.moduleRecord->hostResolveImportedModule(globalObject, Identifier::fromUid(vm, starModuleName.get()));
+            const auto& [starModuleName, starModuleRequestType] = *iterator;
+            AbstractModuleRecord* importedModuleRecord = query.moduleRecord->hostResolveImportedModule(globalObject, Identifier::fromUid(vm, starModuleName.get()), starModuleRequestType);
             RETURN_IF_EXCEPTION(scope, false);
             pendingTasks.append(Task { ResolveQuery(importedModuleRecord, query.exportName.get()), Type::Query });
         }
@@ -690,7 +688,7 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
                     }
                 }
 
-                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName);
+                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName, exportEntry.moduleRequestType);
                 RETURN_IF_EXCEPTION(scope, Resolution::error());
 
                 // When the imported module does not produce any resolved binding, we need to look into the stars in the *current*
@@ -703,7 +701,7 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
             }
 
             case ExportEntry::Type::Namespace: {
-                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName);
+                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName, exportEntry.moduleRequestType);
                 RETURN_IF_EXCEPTION(scope, Resolution::error());
                 Resolution resolution { Resolution::Type::Resolved, importedModuleRecord, vm.propertyNames->starNamespacePrivateName };
                 if (!mergeToCurrentTop(resolution))
@@ -774,7 +772,7 @@ auto AbstractModuleRecord::resolveExport(JSGlobalObject* globalObject, const Ide
             ASSERT(!entry.localName.isNull());
             return Resolution { Resolution::Type::Resolved, this, entry.localName };
         case ExportEntry::Type::Namespace: {
-            AbstractModuleRecord* importedModuleRecord = hostResolveImportedModule(globalObject, entry.moduleName);
+            AbstractModuleRecord* importedModuleRecord = hostResolveImportedModule(globalObject, entry.moduleName, entry.moduleRequestType);
             RETURN_IF_EXCEPTION(scope, Resolution::error());
             return Resolution { Resolution::Type::Resolved, importedModuleRecord, vm.propertyNames->starNamespacePrivateName };
         }
@@ -856,7 +854,7 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
                 candidate = { Resolution::Type::Resolved, moduleRecord, exportEntry.localName };
                 break;
             case ExportEntry::Type::Namespace: {
-                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName);
+                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName, exportEntry.moduleRequestType);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 candidate = { Resolution::Type::Resolved, importedModuleRecord, vm.propertyNames->starNamespacePrivateName };
                 break;
@@ -883,8 +881,8 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
             }
         }
 
-        for (const auto& starModuleName : moduleRecord->starExportEntries()) {
-            AbstractModuleRecord* requestedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, Identifier::fromUid(vm, starModuleName.get()));
+        for (const auto& [starModuleName, starModuleRequestType] : moduleRecord->starExportEntries()) {
+            AbstractModuleRecord* requestedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, Identifier::fromUid(vm, starModuleName.get()), starModuleRequestType);
             RETURN_IF_EXCEPTION(scope, nullptr);
             pendingModules.append(requestedModuleRecord);
         }
@@ -1474,8 +1472,8 @@ void AbstractModuleRecord::dump()
             break;
         }
     }
-    for (const auto& moduleName : m_starExportEntries)
-        dataLog("      [Star] module(", printableName(moduleName.get()), ")\n");
+    for (const auto& starExportEntry : m_starExportEntries)
+        dataLog("      [Star] module(", printableName(starExportEntry.first), ")\n");
 }
 
 } // namespace JSC
