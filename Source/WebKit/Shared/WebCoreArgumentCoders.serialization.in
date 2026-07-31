@@ -2876,6 +2876,7 @@ using WebCore::ScrollRequestData = Vector<WebCore::RequestedScrollData, 2>;
     Vector<WebCore::FloatSnapOffset> verticalSnapOffsets;
     Vector<WebCore::FloatRect> snapAreas;
     Vector<WebCore::NodeIdentifier> snapAreasIDs;
+    bool scrollerHasVerticalWritingMode;
 }
 
 enum class WebCore::ScrollSnapStop : bool;

@@ -105,28 +105,31 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
     return offset * pageScale;
 }
 
+// The snap offset nodeID contributes to in this axis, plus nodeID's own area at that offset: a box can
+// be any of the areas sharing an offset, not just its representative snapTargetID, so we find both here.
+auto ScrollSnapAnimatorState::snapOffsetAndAreaIndicesForNode(ScrollEventAxis axis, NodeIdentifier nodeID) const -> std::optional<SnapOffsetAndAreaIndices>
+{
+    const auto& snapOffsets = snapOffsetsForAxis(axis);
+    const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
+
+    for (unsigned offsetIndex = 0; offsetIndex < snapOffsets.size(); ++offsetIndex) {
+        const auto& offset = snapOffsets[offsetIndex];
+        for (auto areaIndex : offset.snapAreaIndices) {
+            if (areaIndex < areaIDs.size() && areaIDs[areaIndex] == nodeID)
+                return SnapOffsetAndAreaIndices { offsetIndex, areaIndex };
+        }
+        if (offset.snapTargetID == nodeID)
+            return SnapOffsetAndAreaIndices { offsetIndex, std::nullopt };
+    }
+    return std::nullopt;
+}
+
 // Returns the index of the snap offset that nodeID contributes to, if any.
 std::optional<unsigned> ScrollSnapAnimatorState::snapOffsetIndexForNode(ScrollEventAxis axis, NodeIdentifier nodeID) const
 {
-    const auto& snapOffsets = snapOffsetsForAxis(axis);
-
-    // A single snap offset can be shared by several snap areas, but only one of them is recorded
-    // as the offset's representative snapTargetID. Our box may be one of the other areas at that
-    // offset, so check every area contributing to the offset, not just snapTargetID.
-    auto offsetContainsBox = [&](const SnapOffset<LayoutUnit>& offset) {
-        if (offset.snapTargetID == nodeID)
-            return true;
-        for (auto areaIndex : offset.snapAreaIndices) {
-            if (areaIndex < m_snapOffsetsInfo.snapAreasIDs.size() && m_snapOffsetsInfo.snapAreasIDs[areaIndex] == nodeID)
-                return true;
-        }
-        return false;
-    };
-
-    auto found = snapOffsets.findIf(offsetContainsBox);
-    if (found == notFound)
-        return std::nullopt;
-    return found;
+    if (auto indices = snapOffsetAndAreaIndicesForNode(axis, nodeID))
+        return indices->offsetIndex;
+    return std::nullopt;
 }
 
 // Returns whether the snap point is changed or not
@@ -142,24 +145,26 @@ bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis,
     return true;
 }
 
+// The first box among this axis's snap offsets carrying flag as the offset's representative target and
+// accepted by isEligible; callers ask for isFocused before isTarget to get the spec's preference order.
+Markable<NodeIdentifier> ScrollSnapAnimatorState::flaggedNodeForAxis(ScrollEventAxis axis, bool SnapOffset<LayoutUnit>::*flag, NOESCAPE const SnapOffsetPredicate& isEligible) const
+{
+    for (const auto& offset : snapOffsetsForAxis(axis)) {
+        if (offset.*flag && offset.snapTargetID && (!isEligible || isEligible(offset)))
+            return offset.snapTargetID;
+    }
+    return { };
+}
+
 // The focused (then fragment-targeted) box among all of this axis's snap offsets, evaluated fresh so
 // a focus/:target change can be detected. Unlike focusedOrTargetedBox() this is not restricted to the
 // currently-snapped boxes and does not apply the cross-axis visibility filter: it is only a change
 // signal, not a selection.
 Markable<NodeIdentifier> ScrollSnapAnimatorState::focusedOrTargetedNodeForAxis(ScrollEventAxis axis) const
 {
-    const auto& offsets = snapOffsetsForAxis(axis);
-    auto findFlagged = [&](bool SnapOffset<LayoutUnit>::*flag) -> Markable<NodeIdentifier> {
-        for (const auto& offset : offsets) {
-            if (offset.*flag && offset.snapTargetID)
-                return offset.snapTargetID;
-        }
-        return { };
-    };
-
-    if (auto box = findFlagged(&SnapOffset<LayoutUnit>::isFocused))
+    if (auto box = flaggedNodeForAxis(axis, &SnapOffset<LayoutUnit>::isFocused))
         return box;
-    return findFlagged(&SnapOffset<LayoutUnit>::isTarget);
+    return flaggedNodeForAxis(axis, &SnapOffset<LayoutUnit>::isTarget);
 }
 
 Vector<SnapOffset<LayoutUnit>> ScrollSnapAnimatorState::currentlySnappedOffsetsForAxis(ScrollEventAxis axis) const
@@ -316,10 +321,11 @@ bool ScrollSnapAnimatorState::isSnapAreaVisibleInCrossAxis(size_t areaIndex, Scr
 // it isn't a valid snap position, so it must not win the preference.
 std::optional<NodeIdentifier> ScrollSnapAnimatorState::focusedOrTargetedBox(ScrollEventAxis axis, const HashSet<NodeIdentifier>& snappedBoxes) const
 {
-    const auto& offsets = snapOffsetsForAxis(axis);
     const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
 
-    auto representativeAreaIsVisible = [&](const SnapOffset<LayoutUnit>& offset) {
+    SnapOffsetPredicate isEligible = [&](const SnapOffset<LayoutUnit>& offset) {
+        if (!snappedBoxes.contains(*offset.snapTargetID))
+            return false;
         for (auto areaIndex : offset.snapAreaIndices) {
             if (areaIndex < areaIDs.size() && areaIDs[areaIndex] == *offset.snapTargetID)
                 return isSnapAreaVisibleInCrossAxis(areaIndex, axis);
@@ -327,20 +333,62 @@ std::optional<NodeIdentifier> ScrollSnapAnimatorState::focusedOrTargetedBox(Scro
         return true;
     };
 
-    auto findFlagged = [&](bool SnapOffset<LayoutUnit>::*flag) -> std::optional<NodeIdentifier> {
-        auto found = std::ranges::find_if(offsets, [&](const SnapOffset<LayoutUnit>& offset) {
-            return offset.snapTargetID && snappedBoxes.contains(*offset.snapTargetID) && offset.*flag && representativeAreaIsVisible(offset);
-        });
-        if (found != offsets.end())
-            return *found->snapTargetID;
-        return std::nullopt;
-    };
-
-    if (auto box = findFlagged(&SnapOffset<LayoutUnit>::isFocused))
-        return box;
-    if (auto box = findFlagged(&SnapOffset<LayoutUnit>::isTarget))
-        return box;
+    if (auto box = flaggedNodeForAxis(axis, &SnapOffset<LayoutUnit>::isFocused, isEligible))
+        return *box;
+    if (auto box = flaggedNodeForAxis(axis, &SnapOffset<LayoutUnit>::isTarget, isEligible))
+        return *box;
     return std::nullopt;
+}
+
+// The snap area rect (scroll-offset space) and this axis's snap offset for the area contributed by
+// nodeID, if it establishes an offset in this axis. The rect lets us test whether both axes' boxes coexist.
+std::optional<std::pair<LayoutRect, LayoutUnit>> ScrollSnapAnimatorState::snapAreaAndOffsetForNode(ScrollEventAxis axis, NodeIdentifier nodeID) const
+{
+    auto indices = snapOffsetAndAreaIndicesForNode(axis, nodeID);
+    if (!indices || !indices->areaIndex || *indices->areaIndex >= m_snapOffsetsInfo.snapAreas.size())
+        return std::nullopt;
+
+    return std::make_pair(m_snapOffsetsInfo.snapAreas[*indices->areaIndex], snapOffsetsForAxis(axis)[indices->offsetIndex].offset);
+}
+
+// Per https://drafts.csswg.org/css-scroll-snap/#re-snap, when the two axes pick different boxes that
+// can't both be snapped (snapping one pushes the other offscreen), collapse to one: focused, then
+// targeted, then the block-axis box. Returns nullopt when both boxes can be snapped simultaneously.
+std::optional<NodeIdentifier> ScrollSnapAnimatorState::resolvePreferredBoxForAxisConflict(NodeIdentifier horizontalBox, NodeIdentifier verticalBox) const
+{
+    if (horizontalBox == verticalBox)
+        return std::nullopt;
+
+    auto horizontal = snapAreaAndOffsetForNode(ScrollEventAxis::Horizontal, horizontalBox);
+    auto vertical = snapAreaAndOffsetForNode(ScrollEventAxis::Vertical, verticalBox);
+    if (!horizontal || !vertical)
+        return std::nullopt;
+
+    if (m_lastViewportSize.isEmpty())
+        return std::nullopt;
+
+    // Both boxes can be snapped only if both areas still intersect the snapport at the combined
+    // position (the x that aligns the H box, the y that aligns the V box); else it's a conflict.
+    LayoutPoint combinedOffset(horizontal->second, vertical->second);
+    auto areaIntersectsSnapport = [&](const LayoutRect& area) {
+        LayoutRect snapport(combinedOffset, m_lastViewportSize);
+        return area.intersects(snapport);
+    };
+    if (areaIntersectsSnapport(horizontal->first) && areaIntersectsSnapport(vertical->first))
+        return std::nullopt;
+
+    // Conflict: prefer focused, then targeted, then the block-axis box.
+    SnapOffsetPredicate isConflictingBox = [&](const SnapOffset<LayoutUnit>& offset) {
+        return *offset.snapTargetID == horizontalBox || *offset.snapTargetID == verticalBox;
+    };
+    for (auto flag : { &SnapOffset<LayoutUnit>::isFocused, &SnapOffset<LayoutUnit>::isTarget }) {
+        for (auto axis : { ScrollEventAxis::Horizontal, ScrollEventAxis::Vertical }) {
+            if (auto box = flaggedNodeForAxis(axis, flag, isConflictingBox))
+                return *box;
+        }
+    }
+
+    return m_snapOffsetsInfo.blockAxis() == ScrollEventAxis::Horizontal ? horizontalBox : verticalBox;
 }
 
 bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
@@ -389,6 +437,14 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
 
     auto targetForHorizontalAxis = targetForAxis(ScrollEventAxis::Horizontal, previousSnapTargetForHorizontalAxis, focusOrTargetChangedX);
     auto targetForVerticalAxis = targetForAxis(ScrollEventAxis::Vertical, previousSnapTargetForVerticalAxis, focusOrTargetChangedY);
+
+    // §4.1.3 "prefer block axis": if the two axes' boxes conflict, collapse both onto the one box.
+    if (targetForHorizontalAxis && targetForVerticalAxis) {
+        if (auto preferredBox = resolvePreferredBoxForAxisConflict(*targetForHorizontalAxis, *targetForVerticalAxis)) {
+            targetForHorizontalAxis = *preferredBox;
+            targetForVerticalAxis = *preferredBox;
+        }
+    }
 
     if (targetForHorizontalAxis)
         snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal, *targetForHorizontalAxis);

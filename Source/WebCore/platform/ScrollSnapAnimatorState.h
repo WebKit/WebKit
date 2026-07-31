@@ -33,6 +33,7 @@
 #include <WebCore/ScrollAnimationMomentum.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
@@ -102,7 +103,17 @@ private:
 
     bool preserveCurrentTargetForAxis(ScrollEventAxis, NodeIdentifier);
 
+    struct SnapOffsetAndAreaIndices {
+        unsigned offsetIndex { 0 };
+        std::optional<size_t> areaIndex;
+    };
+    std::optional<SnapOffsetAndAreaIndices> snapOffsetAndAreaIndicesForNode(ScrollEventAxis, NodeIdentifier) const;
+
     std::optional<unsigned> snapOffsetIndexForNode(ScrollEventAxis, NodeIdentifier) const;
+
+    using SnapOffsetPredicate = Function<bool(const SnapOffset<LayoutUnit>&)>;
+    Markable<NodeIdentifier> flaggedNodeForAxis(ScrollEventAxis, bool SnapOffset<LayoutUnit>::*flag, NOESCAPE const SnapOffsetPredicate& isEligible = { }) const;
+
     Markable<NodeIdentifier> focusedOrTargetedNodeForAxis(ScrollEventAxis) const;
 
     Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsetsForAxis(ScrollEventAxis) const;
@@ -116,6 +127,14 @@ private:
     // The snap areas aligned at this axis's active offset with enclosing ancestors removed, in tree
     // order — the per-axis candidate list after the spec's ancestor-removal step.
     Vector<size_t, 1> innermostAlignedAreaIndicesForAxis(ScrollEventAxis) const;
+
+    // On a block/inline axis conflict (both boxes can't be snapped), the single box both axes snap to
+    // per https://drafts.csswg.org/css-scroll-snap/#re-snap: focused, then targeted, then block axis.
+    // nullopt when there's no conflict.
+    std::optional<NodeIdentifier> resolvePreferredBoxForAxisConflict(NodeIdentifier horizontalBox, NodeIdentifier verticalBox) const;
+
+    // The snap area rect (scroll-offset space) for the box establishing this axis's snap offset.
+    std::optional<std::pair<LayoutRect, LayoutUnit>> snapAreaAndOffsetForNode(ScrollEventAxis, NodeIdentifier) const;
 
     // This axis's focused/targeted snapped box, skipping any whose area is off-screen in a
     // non-snapping cross axis.

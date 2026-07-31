@@ -65,10 +65,13 @@ struct ScrollSnapOffsetsInfo {
     Vector<SnapOffset<UnitType>> verticalSnapOffsets;
     Vector<RectType> snapAreas;
     Vector<NodeIdentifier> snapAreasIDs;
+    bool scrollerHasVerticalWritingMode { false };
+
+    ScrollEventAxis blockAxis() const { return scrollerHasVerticalWritingMode ? ScrollEventAxis::Horizontal : ScrollEventAxis::Vertical; }
 
     bool isEqual(const ScrollSnapOffsetsInfo<UnitType, RectType>& other) const
     {
-        return strictness == other.strictness && horizontalSnapOffsets == other.horizontalSnapOffsets && verticalSnapOffsets == other.verticalSnapOffsets && snapAreas == other.snapAreas;
+        return strictness == other.strictness && horizontalSnapOffsets == other.horizontalSnapOffsets && verticalSnapOffsets == other.verticalSnapOffsets && snapAreas == other.snapAreas && scrollerHasVerticalWritingMode == other.scrollerHasVerticalWritingMode;
     }
 
     bool isEmpty() const

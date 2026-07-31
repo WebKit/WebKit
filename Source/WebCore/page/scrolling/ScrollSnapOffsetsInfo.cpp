@@ -542,7 +542,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         horizontalSnapOffsets,
         verticalSnapOffsets,
         snapAreas,
-        snapAreasIDs
+        snapAreasIDs,
+        scrollerHasVerticalWritingMode
     });
 }
 
@@ -581,7 +582,8 @@ static ScrollSnapOffsetsInfo<OutputType, OutputRectType> convertOffsetInfo(const
         convertOffsets(input.horizontalSnapOffsets),
         convertOffsets(input.verticalSnapOffsets),
         convertRects(input.snapAreas),
-        input.snapAreasIDs
+        input.snapAreasIDs,
+        input.scrollerHasVerticalWritingMode
     };
 }
 
