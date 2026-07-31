@@ -41,7 +41,6 @@ public:
 
 private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;
 
     bool acceptsLegacyMathVariantAttribute() final;
