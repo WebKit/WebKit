@@ -599,9 +599,15 @@ private:
     // inverse through a span whose extent is fixed at compile time.
     static_assert(maxFixedCachedModDivisorSize <= maxCachedModDivisorSize);
     static void cachedModMakeInverse(VM&, std::span<const Digit> b);
+    static Digit cachedModFoldFactor(std::span<const Digit> b);
     static std::span<const Digit> cachedMod(VM&, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
     template<size_t N, size_t ASize>
     static void cachedModFixed(VM&, std::span<Digit, N> r, std::span<const Digit, ASize>, std::span<const Digit, N> b);
+    template<typename RSpan, typename ASpan, typename BSpan>
+    static void cachedModFoldImpl(RSpan r, ASpan, BSpan b, Digit c);
+    template<size_t N, size_t ASize>
+    static void cachedModFoldFixed(std::span<Digit, N> r, std::span<const Digit, ASize>, std::span<const Digit, N> b, Digit c);
+    static void cachedModFold(std::span<Digit> r, std::span<const Digit>, std::span<const Digit> b, Digit c);
     static bool NODELETE greaterThanOrEqual(std::span<const Digit>, std::span<const Digit>);
 
     static std::span<Digit> rightShift(std::span<Digit> z, std::span<const Digit> x, unsigned);

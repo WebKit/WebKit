@@ -1989,6 +1989,147 @@ void JSBigInt::cachedModMakeInverse(VM& vm, std::span<const Digit> b)
     }
 }
 
+// Reduction factor for divisors close to a power of the digit base. With n = b.size() and
+// T = 2^(n * digitBits), returns C = T mod B when T = q * B + C has a single-digit C and
+// q <= maxFoldQuotient, and 0 otherwise.
+JSBigInt::Digit JSBigInt::cachedModFoldFactor(std::span<const Digit> b)
+{
+    // We would like to prepare for Crandall reduction, which is efficient when the divisor `b` is a
+    // pseudo-Mersenne number 2^k - c with a small c. A Mersenne number is 2^k - 1, like 0xff.
+    // Note the fold factor returned here is c << (n * digitBits - k) rather than c itself, since T
+    // sits at the next whole digit boundary at or above b.
+    // Efficiency needs the factor to be a single digit, which keeps each fold one multiply, and q
+    // to be small, which is what bounds the corrective loop.
+    size_t n = b.size();
+    RELEASE_ASSERT(n >= 2 && n <= maxCachedModDivisorSize);
+
+    // T is 1 followed by n zero digits, so it needs n + 1 digits. The quotient of an (n + 1)-digit
+    // value by an n-digit one needs at most two digits, and the remainder at most n.
+    std::array<Digit, maxCachedModDivisorSize + 1> t;
+    for (size_t i = 0; i < n; ++i)
+        t[i] = 0;
+    t[n] = 1;
+
+    std::array<Digit, 2> q;
+    std::array<Digit, maxCachedModDivisorSize> r;
+    // Only the returned spans are meaningful, and neither is guaranteed to have its leading zero
+    // digits trimmed, so normalize before judging their widths.
+    auto [qSpanRaw, rSpanRaw] = divideSchoolbook(std::span { q }, std::span { r }.first(n), std::span { t }.first(n + 1), b);
+    auto qSpan = normalize(qSpanRaw);
+    auto rSpan = normalize(rSpanRaw);
+
+    // A divisor B of n digits qualifies for the folding reduction when T = 2^(n * digitBits)
+    // satisfies T = q * B + C with C a single digit and q no larger than this bound.
+    //
+    // The two conditions do different jobs. C fitting one digit is what keeps each fold a
+    // single-digit multiply and caps the carry out of a fold at one digit, which is what makes two
+    // folds always sufficient. q is independent of that and sets how far the twice-folded value can
+    // still exceed B, so it alone decides how many times the corrective loop subtracts.
+    //
+    // Cost is therefore flat in C but linear in q, and it crosses the multiplicative inverse path
+    // it replaces at roughly q = 12 for a 4-digit divisor. Divisors with a single-digit C and a
+    // large q do exist (2^(n * digitBits - k) - 1 has C = 2^k and q = 2^k), so the bound is real
+    // rather than defensive. It sits well below the crossover because the moduli this path exists
+    // for cluster at the bottom of the range: the ed25519 and secp256k1 field primes give q of 2
+    // and 1, and nothing observed needs more.
+    constexpr Digit maxFoldQuotient = 4;
+    if (qSpan.size() != 1 || qSpan[0] > maxFoldQuotient)
+        return 0;
+
+    // The fold stays a single-digit multiply only when the remainder is one digit. An empty
+    // remainder would mean B divides T exactly, so B is a power of two, which the shift paths
+    // handle and which would collide with the not-qualifying sentinel anyway.
+    if (rSpan.size() != 1)
+        return 0;
+
+    return rSpan[0];
+}
+
+// This is Crandall reduction implementation. When factor is not appropriate for efficiency, we use
+// Barrett reduction instead.
+//
+// R = A mod B for a divisor whose reduction factor C = 2^(n * digitBits) mod B is a single digit.
+//
+// Splitting A into low and high halves of n digits gives A = lo + hi * 2^(n * digitBits), and
+// since 2^(n * digitBits) is congruent to C, that is congruent to lo + hi * C. Each such fold is a
+// row of single-digit multiplies.
+//
+// Two folds always suffice. Write D for the digit base. The first fold's running carry never
+// exceeds C: a column computes a[i] + a[n + i] * C + carry, so if the incoming carry is at most C
+// the total is at most (D - 1) + (D - 1) * C + C = C * D + D - 1, whose high half is again at most
+// C. The carry starts at zero, so one digit above the low n always holds it. Folding that digit
+// back multiplies it by C once more, adding less than D^2 to a value below D^n, so with n >= 2 the
+// final carry out is at most 1 and the residue stays below 2 * D^n. Since B = (D^n - C) / q, that
+// is roughly 2 * q * B, so the corrective loop runs a bounded number of times given the q cap the
+// factor check enforces.
+//
+// This wants a single-digit C, which is the Pseudo-Mersenne shape 2^k - c for a small c.
+//
+// The span extents are template parameters so that one body serves both the size-specialized and
+// the size-agnostic callers. When they are static the sizes are compile-time constants, so the fold
+// loop unrolls and the per-column bound arithmetic folds away; when they are dynamic the same source
+// keeps its loops.
+template<typename RSpan, typename ASpan, typename BSpan>
+ALWAYS_INLINE void JSBigInt::cachedModFoldImpl(RSpan r, ASpan a, BSpan b, Digit c)
+{
+    size_t n = b.size();
+
+    // First fold: r = a[0..n-1] + a[n..a.size()-1] * c, keeping the carry out separately.
+    Digit carry = 0;
+    for (size_t i = 0; i < n; ++i) {
+        Digit high = 0;
+        Digit low = a[i];
+        if (n + i < a.size()) {
+            auto [productLow, productHigh] = digitMul(a[n + i], c);
+            high = productHigh;
+            Digit addCarry = 0;
+            low = digitAdd(low, productLow, addCarry);
+            high += addCarry;
+        }
+        Digit sumCarry = 0;
+        r[i] = digitAdd(low, carry, sumCarry);
+        carry = high + sumCarry;
+    }
+
+    // Second fold: the single digit above the low n is worth c times its value.
+    if (carry) {
+        auto [productLow, productHigh] = digitMul(carry, c);
+        Digit addCarry = 0;
+        r[0] = digitAdd(r[0], productLow, addCarry);
+        Digit propagate = productHigh + addCarry;
+        for (size_t i = 1; i < n && propagate; ++i) {
+            Digit nextCarry = 0;
+            r[i] = digitAdd(r[i], propagate, nextCarry);
+            propagate = nextCarry;
+        }
+        carry = propagate;
+    }
+
+    while (carry || greaterThanOrEqual(r, b))
+        carry -= inplaceSub(r, b);
+}
+
+template<size_t N, size_t ASize>
+ALWAYS_INLINE void JSBigInt::cachedModFoldFixed(std::span<Digit, N> r, std::span<const Digit, ASize> a, std::span<const Digit, N> b, Digit c)
+{
+    static_assert(N >= 2);
+    static_assert(ASize >= N && ASize <= 2 * N);
+
+    cachedModFoldImpl(r, a, b, c);
+}
+
+void JSBigInt::cachedModFold(std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b, Digit c)
+{
+    size_t n = b.size();
+    // A one-digit divisor would leave the second fold's carry unpropagated and turn the corrective
+    // loop into a walk over the whole digit range, so fail here rather than spin.
+    RELEASE_ASSERT(n >= 2);
+    RELEASE_ASSERT(r.size() == n);
+    RELEASE_ASSERT(a.size() >= n && a.size() <= 2 * n);
+
+    cachedModFoldImpl(r, a, b, c);
+}
+
 // Compile-time-specialized form of cachedMod for a divisor of exactly N digits and a dividend of
 // exactly ASize digits. Every span size is static, so the special multiplies unroll and the
 // scratch buffer becomes a stack array with no zeroing. The arithmetic is identical to cachedMod;
@@ -2063,6 +2204,35 @@ std::span<const JSBigInt::Digit> JSBigInt::cachedMod(VM& vm, std::span<Digit> r,
     ASSERT(r.size() >= n);
 
     r = r.first(n);
+
+    // Divisors close to a power of the digit base reduce by folding the high half down with a single-digit multiply.
+    if (Digit foldFactor = vm.m_bigIntFoldFactor) {
+        if (n <= maxFixedCachedModDivisorSize) {
+            auto dispatchDividend = [&]<size_t N, size_t ASize>(auto&& self) ALWAYS_INLINE_LAMBDA -> bool {
+                if constexpr (ASize <= 2 * N) {
+                    if (a.size() == ASize) {
+                        cachedModFoldFixed<N, ASize>(r.first<N>(), a.first<ASize>(), b.first<N>(), foldFactor);
+                        return true;
+                    }
+                    return self.template operator()<N, ASize + 1>(self);
+                } else
+                    return false;
+            };
+            auto dispatchDivisor = [&]<size_t N>(auto&& self) ALWAYS_INLINE_LAMBDA -> bool {
+                if constexpr (N >= 2) {
+                    if (b.size() == N)
+                        return dispatchDividend.template operator()<N, N>(dispatchDividend);
+                    return self.template operator()<N - 1>(self);
+                } else
+                    return false;
+            };
+            if (dispatchDivisor.template operator()<maxFixedCachedModDivisorSize>(dispatchDivisor))
+                return r;
+        }
+        cachedModFold(r, a, b, foldFactor);
+        return r;
+    }
+
     // cachedModFixed reads the inverse through a static-extent span, which has no bounds check of
     // its own, and the size-agnostic path below indexes it up to n. Both rely on the inverse having
     // been rebuilt for this divisor, which happens in cachedModMakeInverse when the divisor is
@@ -2276,7 +2446,9 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
         } else if (vm.m_nextCachedBigIntDivisor.get() == y.toHeapBigInt(globalObject)) {
             if (++vm.m_bigIntDivisorCount >= 100) {
                 vm.m_cachedBigIntDivisor.setWithoutWriteBarrier(y.toHeapBigInt(globalObject));
-                cachedModMakeInverse(vm, ySpan);
+                vm.m_bigIntFoldFactor = cachedModFoldFactor(ySpan);
+                if (!vm.m_bigIntFoldFactor)
+                    cachedModMakeInverse(vm, ySpan); // Compute inverse when appropriate fold-factor is not found.
             }
         } else if (ySpan.size() >= 2 && ySpan.size() <= maxCachedModDivisorSize) {
             vm.m_nextCachedBigIntDivisor.setWithoutWriteBarrier(y.toHeapBigInt(globalObject));
