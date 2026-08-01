@@ -42,12 +42,13 @@ Bignum::Bignum()
   }
 }
 
-
+#if ASSERT_ENABLED
 template<typename S>
-static int BitSize(S value) {
+static inline int BitSize(S value) {
   (void) value;  // Mark variable as used.
   return 8 * sizeof(value);
 }
+#endif // ASSERT_ENABLED
 
 // Guaranteed to lie in one Bigit.
 void Bignum::AssignUInt16(uint16_t value) {

@@ -2121,7 +2121,7 @@ inline Vector<typename CopyOrMoveToVectorResult<Collection>::Type> moveToVector(
     return moveToVectorOf<typename CopyOrMoveToVectorResult<Collection>::Type>(collection);
 }
 
-template<typename T, size_t inlineCapacity = 0> static bool insertInUniquedSortedVector(Vector<T, inlineCapacity>& vector, const T& value)
+template<typename T, size_t inlineCapacity = 0> bool insertInUniquedSortedVector(Vector<T, inlineCapacity>& vector, const T& value)
 {
     auto it = std::ranges::lower_bound(vector, value);
     if (it != vector.end() && *it == value) [[unlikely]]

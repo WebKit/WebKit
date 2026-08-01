@@ -1544,7 +1544,7 @@ Ref<NativePromise<S, E>> createSettledPromise(Expected<S, E>&& result)
 // is itself resolved or rejected.
 // The lambda can return an Expected<T, U> or void.
 template<typename Function>
-static auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, const Logger::LogSiteIdentifier& callerName = DEFAULT_LOGSITEIDENTIFIER)
+auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, const Logger::LogSiteIdentifier& callerName = DEFAULT_LOGSITEIDENTIFIER)
 {
     static_assert(!std::is_lvalue_reference_v<Function>, "Function object must not be passed by lvalue-ref (to avoid unplanned copies); WTF::move() the object.");
     using ReturnType = decltype(function());

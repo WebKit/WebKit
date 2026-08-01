@@ -181,14 +181,14 @@ static const int kCharSize = sizeof(char);
 
 // Returns the maximum of the two parameters.
 template <typename T>
-static T Max(T a, T b) {
+static inline T Max(T a, T b) {
   return a < b ? b : a;
 }
 
 
 // Returns the minimum of the two parameters.
 template <typename T>
-static T Min(T a, T b) {
+static inline T Min(T a, T b) {
   return a < b ? a : b;
 }
 

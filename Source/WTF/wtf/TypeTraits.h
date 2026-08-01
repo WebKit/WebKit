@@ -45,23 +45,6 @@
 
 namespace WTF {
 
-namespace detail {
-
-// IsRefcountedSmartPointer implementation.
-template<typename CVRemoved>
-struct IsRefcountedSmartPointerHelper : std::false_type { };
-
-template<typename Pointee>
-struct IsRefcountedSmartPointerHelper<RefPtr<Pointee>> : std::true_type { };
-
-template<typename Pointee>
-struct IsRefcountedSmartPointerHelper<Ref<Pointee>> : std::true_type { };
-
-} // namespace detail
-
-template<typename T>
-struct IsRefcountedSmartPointer : detail::IsRefcountedSmartPointerHelper<std::remove_cv_t<T>> { };
-
 // IsSmartRef implementation
 namespace detail {
 
@@ -99,9 +82,6 @@ struct RemoveSmartPointerHelper<T, Ref<Pointee>> {
 template<typename T>
 struct RemoveSmartPointer : detail::RemoveSmartPointerHelper<T, std::remove_cv_t<T>> { };
 
-template<typename T>
-using RemoveCVSmartPointer = std::remove_cvref_t<typename RemoveSmartPointer<T>::type>;
-
 // HasRefPtrMemberFunctions implementation
 namespace detail {
 
@@ -109,9 +89,9 @@ template<typename>
 struct SFINAE1True : std::true_type { };
 
 template<class T>
-static auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->ref(), static_cast<std::remove_cv_t<T>*>(nullptr)->deref())>;
+static inline auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->ref(), static_cast<std::remove_cv_t<T>*>(nullptr)->deref())>;
 template<class>
-static auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static inline auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 } // namespace detail
 
@@ -122,9 +102,9 @@ struct HasRefPtrMemberFunctions : decltype(detail::HasRefPtrMemberFunctionsTest<
 namespace detail {
 
 template<class T>
-static auto HasWeakPtrFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->weakImpl(), static_cast<std::remove_cv_t<T>*>(nullptr)->weakCount())>;
+static inline auto HasWeakPtrFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->weakImpl(), static_cast<std::remove_cv_t<T>*>(nullptr)->weakCount())>;
 template<class>
-static auto HasWeakPtrFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static inline auto HasWeakPtrFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 }
 
@@ -135,9 +115,9 @@ struct HasWeakPtrFunctions : decltype(detail::HasWeakPtrFunctionsTest<T>(SFINAE_
 namespace detail {
 
 template<class T>
-static auto HasThreadSafeWeakPtrFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->weakRefCount())>;
+static inline auto HasThreadSafeWeakPtrFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->weakRefCount())>;
 template<class>
-static auto HasThreadSafeWeakPtrFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static inline auto HasThreadSafeWeakPtrFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 }
 
@@ -148,9 +128,9 @@ struct HasThreadSafeWeakPtrFunctions : decltype(detail::HasThreadSafeWeakPtrFunc
 namespace detail {
 
 template<class T>
-static auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->incrementCheckedPtrCount(), static_cast<std::remove_cv_t<T>*>(nullptr)->decrementCheckedPtrCount())>;
+static inline auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->incrementCheckedPtrCount(), static_cast<std::remove_cv_t<T>*>(nullptr)->decrementCheckedPtrCount())>;
 template<class>
-static auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static inline auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 } // namespace detail
 
@@ -160,21 +140,6 @@ struct HasCheckedPtrMemberFunctions : decltype(detail::HasCheckedPtrMemberFuncti
 template<typename T>
 concept IsCompleteType = requires { sizeof(T); };
 
-// HasIsolatedCopy()
-namespace detail {
-
-// FIXME: This test is incorrectly false for RefCounted objects because
-// substitution for std::declval<T>() fails when the constructor is private.
-template<class T>
-static auto HasIsolatedCopyTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(std::declval<T>().isolatedCopy())>;
-template<class>
-static auto HasIsolatedCopyTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
-
-} // namespace detail
-
-template<class T>
-struct HasIsolatedCopy : decltype(detail::HasIsolatedCopyTest<T>(SFINAE_OVERLOAD)) { };
-
 // LooksLikeRCSerialDispatcher implementation
 namespace detail {
 
@@ -182,11 +147,11 @@ template <bool b, typename>
 struct SFINAE1If : std::integral_constant<bool, b> { };
 
 template <bool b, class T>
-static auto LooksLikeRCSerialDispatcherTest(SFINAE_OVERLOAD_PREFERRED)
+static inline auto LooksLikeRCSerialDispatcherTest(SFINAE_OVERLOAD_PREFERRED)
     -> SFINAE1If<b, decltype(std::declval<T>().ref(), std::declval<T>().deref())>;
 
 template <bool, typename>
-static auto LooksLikeRCSerialDispatcherTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static inline auto LooksLikeRCSerialDispatcherTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 } // namespace detail
 

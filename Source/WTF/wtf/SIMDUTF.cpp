@@ -33,6 +33,7 @@ IGNORE_WARNINGS_BEGIN("cast-qual")
 IGNORE_WARNINGS_BEGIN("cast-align")
 IGNORE_WARNINGS_BEGIN("documentation")
 IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
+IGNORE_WARNINGS_BEGIN("unused-template")
 
 // FIXME: Temporary fix to be removed when the SDK is updated in the future.
 #if PLATFORM(PLAYSTATION)
@@ -49,6 +50,7 @@ IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
 #endif
 #endif
 
+IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
