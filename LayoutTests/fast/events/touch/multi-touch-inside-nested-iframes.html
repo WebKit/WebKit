@@ -107,53 +107,53 @@ function onTouch(event, receiver)
     touchEventCount++;
 }
 
-function runTest() {
+async function runTest() {
     if (window.eventSender) {
         eventSender.clearTouchPoints();
         // Touch the center of innter iframe. 50px is offset to outer iframe in main frame,
         // 2px for the iframe borders, 100px to get to centre.
         debug('First touch is on inner iframe.');
         eventSender.addTouchPoint(152, 152);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
         debug('');
 
         debug('Second touch is on outer iframe, nothing should happen.');
         eventSender.addTouchPoint(71, 71);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
         debug('');
 
         debug('Moves the first touch outside inner iframe.');
         eventSender.updateTouchPoint(0, 302, 302);
-        eventSender.touchMove();
+        await eventSender.asyncTouchMove();
         debug('');
 
         debug('Release the first touch.');
         eventSender.releaseTouchPoint(0);
-        eventSender.touchEnd();
+        await eventSender.asyncTouchEnd();
         debug('');
 
         debug('Third touch is on outer iframe, nothing should happen.');
         eventSender.addTouchPoint(81, 81);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
         debug('');
 
         debug('Release all touches on outer iframe, and touch outer iframe again.');
         eventSender.releaseTouchPoint(0);
         eventSender.releaseTouchPoint(1);
-        eventSender.touchEnd();
+        await eventSender.asyncTouchEnd();
         eventSender.addTouchPoint(81, 81);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
         debug('');
 
         debug('Touch inner iframe, this will trigger onTouch as it is inside outer iframe.');
         eventSender.addTouchPoint(152, 152);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
         debug('');
 
         debug('Release all touches.');
         eventSender.releaseTouchPoint(0);
         eventSender.releaseTouchPoint(1);
-        eventSender.touchEnd();
+        await eventSender.asyncTouchEnd();
     } else {
        debug('This test requires DRT.');
     }

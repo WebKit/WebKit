@@ -32,13 +32,13 @@ function touchcancelHandler() {
 }
     
 
-window.onload = function() {
+window.onload = async function() {
     if (window.eventSender) {
         document.addEventListener("touchcancel", touchcancelHandler, false);
         eventSender.addTouchPoint(touchX, touchY);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
         eventSender.cancelTouchPoint(0);
-        eventSender.touchCancel();
+        await eventSender.asyncTouchCancel();
     } else
         debug("This test requires DumpRenderTree.");
 }

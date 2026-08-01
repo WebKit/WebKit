@@ -46,25 +46,26 @@ div.addEventListener("touchstart", onTouchStart, false);
 div.addEventListener("touchend", onTouchEnd, false);
 document.body.insertBefore(div, document.body.firstChild);
 
-function touchTargets()
+async function touchTargets()
 {
     eventSender.clearTouchPoints();
     eventSender.addTouchPoint(20, 20);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
     eventSender.updateTouchPoint(0, 50, 50);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 }
 
+description("Check tap highlight color in touch event");
+window.jsTestIsAsync = true;
 
-if (window.eventSender && eventSender.clearTouchPoints) {
-    description("Check tap highlight color in touch event");
-    window.jsTestIsAsync = true;
-
-    touchTargets();
-} else {
-    debug("This test requires DumpRenderTree && WebKit built with ENABLE(TOUCH_EVENT).")
+onload = async () => {
+    if (window.eventSender && eventSender.clearTouchPoints) {
+        await touchTargets();
+    } else {
+        debug("This test requires DumpRenderTree && WebKit built with ENABLE(TOUCH_EVENT).")
+    }
 }
 </script>
 </body>

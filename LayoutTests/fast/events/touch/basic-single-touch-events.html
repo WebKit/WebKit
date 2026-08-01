@@ -103,53 +103,52 @@ function verifyTouch(which) {
     }
 }
 
-function singleTouchSequence()
+async function singleTouchSequence()
 {
     if (eventSender.setTouchPointRadius)
         eventSender.setTouchPointRadius(10,10);
     eventSender.addTouchPoint(10, 10);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     if (eventSender.setTouchPointRadius)
         eventSender.setTouchPointRadius(12,12);
     eventSender.updateTouchPoint(0, 50, 50);
     eventSender.setTouchModifier("shift", true);
     eventSender.setTouchModifier("alt", true);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 
     eventSender.setTouchModifier("shift", false);
     eventSender.setTouchModifier("alt", false);
 
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 }
 
-function touchTargets()
+async function touchTargets()
 {
     eventSender.addTouchPoint(20, 20);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     eventSender.updateTouchPoint(0, 1000, 1000);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 }
 
+description("This tests basic single touch event support.");
+window.jsTestIsAsync = true;
 
-if (window.eventSender) {
-    description("This tests basic single touch event support.");
-    window.jsTestIsAsync = true;
-
-    lastEvent = null;
-    eventSender.clearTouchPoints();
-    singleTouchSequence();
-
-    lastEvent = null;
-    eventSender.clearTouchPoints();
-    touchTargets();
-
-} else {
-    debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+onload = async () => {
+    if (window.eventSender) {
+        lastEvent = null;
+        eventSender.clearTouchPoints();
+        await singleTouchSequence();
+    
+        lastEvent = null;
+        eventSender.clearTouchPoints();
+        await touchTargets();
+    } else {
+        debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+    }
 }
-
 
 </script>
 </body>

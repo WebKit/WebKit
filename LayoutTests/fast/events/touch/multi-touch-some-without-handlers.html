@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -29,15 +29,6 @@ function touchEventCallback() {
         verifyTouch(touchEventsReceived++);
     } else {
         debug(event.type);
-    }
-
-    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL) {
-        // If we've got here, we can safely say we were successfully parsed :) We need to
-        // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
-        // footer message.
-        successfullyParsed = true;
-        isSuccessfullyParsed();
-        testRunner.notifyDone();
     }
 }
 
@@ -93,7 +84,7 @@ function verifyTouch(which) {
     }
 }
 
-function multiTouchSequence()
+async function multiTouchSequence()
 {
     debug("multi touch sequence");
 
@@ -101,38 +92,40 @@ function multiTouchSequence()
     debug("Two touchpoints, 1 in the target, 1 on the body without a target");
     eventSender.addTouchPoint(10, 10);
     eventSender.addTouchPoint(200, 200)
-    eventSender.touchStart(); // Begin, Begin.
+    await eventSender.asyncTouchStart(); // Begin, Begin.
 
     debug("");
     debug("First touchpoint moved");
     eventSender.markAllTouchesAsStationary();
     eventSender.updateTouchPoint(0, 20, 30);
-    eventSender.touchMove(); // Moved, Stationary.
+    await eventSender.asyncTouchMove(); // Moved, Stationary.
 
     debug("");
     debug("Second touchpoint moved");
     eventSender.markAllTouchesAsStationary();
     eventSender.updateTouchPoint(1, 150, 150);
-    eventSender.touchMove(); // Stationary, Moved.
+    await eventSender.asyncTouchMove(); // Stationary, Moved.
 
     debug("");
     debug("First touchpoint is released");
     eventSender.markAllTouchesAsStationary();
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd(); // Ended, Stationary.
+    await eventSender.asyncTouchEnd(); // Ended, Stationary.
 }
 
-if (window.eventSender) {
-    description("This tests multi touch event support where one of the touches has no touch event handler.");
+description("This tests multi touch event support where one of the touches has no touch event handler.");
+window.jsTestIsAsync = true;
 
-    lastEvent = null;
-    eventSender.clearTouchPoints();
-    multiTouchSequence();
-} else {
-    debug("This test requires DumpRenderTree.")
+onload = async () => {
+    if (window.eventSender) {
+        lastEvent = null;
+        eventSender.clearTouchPoints();
+        await multiTouchSequence();
+    } else {
+        debug("This test requires DumpRenderTree.")
+    }
+    finishJSTest();
 }
-
-var successfullyParsed = true;
 </script>
 </body>
 </html>

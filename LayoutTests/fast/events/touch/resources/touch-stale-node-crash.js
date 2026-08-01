@@ -12,9 +12,11 @@ description("If this test does not crash then you pass!");
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-if (window.eventSender) {
-    eventSender.clearTouchPoints();
-    eventSender.addTouchPoint(50, 150);
-    eventSender.touchStart();
-} else
-    debug('This test requires DRT.');
+onload = async () => {
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        eventSender.addTouchPoint(50, 150);
+        await eventSender.asyncTouchStart();
+    } else
+        debug('This test requires DRT.');
+}

@@ -4616,7 +4616,7 @@ webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-iframe-editab
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-page-not-propagated.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-page-propagated.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-sideways.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Failure ]

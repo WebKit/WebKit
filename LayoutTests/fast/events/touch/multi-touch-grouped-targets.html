@@ -78,24 +78,30 @@ description("Tests that the an event is sent for every touch listener, and targe
 window.jsTestIsAsync = true;
 
 
-if (window.eventSender) {
-    eventSender.clearTouchPoints();
-    eventSender.addTouchPoint(50, 150);
-    eventSender.addTouchPoint(50, 250);
-    eventSender.addTouchPoint(50, 150);
-    eventSender.touchStart();
+async function runTest() {
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        eventSender.addTouchPoint(50, 150);
+        eventSender.addTouchPoint(50, 250);
+        eventSender.addTouchPoint(50, 150);
+        await eventSender.asyncTouchStart();
 
-    eventSender.updateTouchPoint(0, 200, 150);
-    eventSender.updateTouchPoint(1, 300, 250);
-    eventSender.updateTouchPoint(2, 400, 150);
-    eventSender.touchMove();
+        eventSender.updateTouchPoint(0, 200, 150);
+        eventSender.updateTouchPoint(1, 300, 250);
+        eventSender.updateTouchPoint(2, 400, 150);
+        await eventSender.asyncTouchMove();
 
-    eventSender.releaseTouchPoint(0);
-    eventSender.releaseTouchPoint(1);
-    eventSender.releaseTouchPoint(2);
-    eventSender.touchEnd();
-} else
-    debug('This test requires DRT.');
+        eventSender.releaseTouchPoint(0);
+        eventSender.releaseTouchPoint(1);
+        eventSender.releaseTouchPoint(2);
+        await eventSender.asyncTouchEnd();
+    } else
+        debug('This test requires DRT.');
+}
+
+onload = async () => {
+    await runTest();
+}
 
 </script>
 </body>

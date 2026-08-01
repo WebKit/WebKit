@@ -23,7 +23,7 @@ async function runTest() {
     if (window.eventSender) {
         eventSender.clearTouchPoints();
         eventSender.addTouchPoint(30, 70);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
     } else
         debug("This test requires DumpRenderTree.");
 }

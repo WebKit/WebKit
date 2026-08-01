@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -28,14 +28,6 @@ function touchEventCallback() {
         verifyTouch(touchEventsReceived++);
     } else {
         debug(event.type);
-    }
-
-    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL) {
-        // If we've got here, we can safely say we were successfully parsed :) We need to
-        // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
-        // footer message.
-        isSuccessfullyParsed();
-        testRunner.notifyDone();
     }
 }
 
@@ -95,36 +87,40 @@ function verifyTouch(which) {
     }
 }
 
-function multiTouchSequence()
+async function multiTouchSequence()
 {
     debug("multi touch sequence");
 
     debug("Two touchpoints pressed");
     eventSender.addTouchPoint(10, 10);
     eventSender.addTouchPoint(20, 30);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     debug("First touchpoint moved");
     eventSender.updateTouchPoint(0, 15, 15);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 
     debug("First touchpoint is released");
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 
     debug("Last remaining touchpoint is released");
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 }
 
-if (window.eventSender) {
-    description("This tests basic multi touch event support.");
+description("This tests basic multi touch event support.");
+window.jsTestIsAsync = true;
 
-    lastEvent = null;
-    eventSender.clearTouchPoints();
-    multiTouchSequence();
-} else {
-    debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+onload = async () => {
+    if (window.eventSender) {
+        lastEvent = null;
+        eventSender.clearTouchPoints();
+        await multiTouchSequence();
+    } else {
+        debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+    }
+    finishJSTest();
 }
 </script>
 </body>
