@@ -252,6 +252,11 @@ void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(s
     completionHandler(std::nullopt);
 }
 
+void NetworkTransportSession::createStream(NetworkTransportStreamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
+{
+    completionHandler(std::nullopt);
+}
+
 void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode, CString&&)
 {
 }
