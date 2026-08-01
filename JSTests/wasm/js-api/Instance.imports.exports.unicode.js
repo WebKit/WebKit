@@ -81,14 +81,17 @@ b = b.End();
 
 const module = new WebAssembly.Module(b.WebAssembly().get());
 
-for (let idxModule = 0; idxModule < names.length; ++idxModule)   
+const imports = WebAssembly.Module.imports(module);
+for (let idxModule = 0; idxModule < names.length; ++idxModule)
     for (let idxField = 0; idxField < names.length; ++idxField) {
-        assert.eq(WebAssembly.Module.imports(module)[idxModule * names.length + idxField].module, names[idxModule]);
-        assert.eq(WebAssembly.Module.imports(module)[idxModule * names.length + idxField].name, names[idxField]);
+        const reflectedImport = imports[idxModule * names.length + idxField];
+        assert.eq(reflectedImport.module, names[idxModule]);
+        assert.eq(reflectedImport.name, names[idxField]);
     }
 
+const exports = WebAssembly.Module.exports(module);
 for (let idx = 0; idx < names.length; ++idx)
-    assert.eq(WebAssembly.Module.exports(module)[idx].name, names[idx]);
+    assert.eq(exports[idx].name, names[idx]);
 
 const instance = new WebAssembly.Instance(module, importObject);
 
