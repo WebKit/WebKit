@@ -50,6 +50,8 @@ public:
     void takeTextExtractionAssertion();
 
     void reset();
+
+    void dropAllActivities();
     void dropVisibleActivity();
     void dropAudibleActivity();
     void dropCapturingActivity();
@@ -62,6 +64,9 @@ public:
     bool NODELETE hasValidCapturingActivity() const;
     bool NODELETE hasValidMutedCaptureAssertion() const;
     bool NODELETE hasValidNetworkActivity() const;
+
+    // True if any of the activities that dropAllActivities() releases is still held.
+    bool NODELETE hasAnyActivityForTesting() const;
 
 #if PLATFORM(IOS_FAMILY)
     void takeOpeningAppLinkActivity();

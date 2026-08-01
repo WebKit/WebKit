@@ -89,6 +89,11 @@ public:
 
     bool hasSubframeInProcess(WebCore::ProcessIdentifier) const;
 
+    // Number of remote pages of `page` that are held by a suspended page and still hold an activity.
+    // Should be zero once the page has been suspended: nothing can reach them after
+    // suspendCurrentPageIfPossible() replaces the page's BrowsingContextGroup.
+    static unsigned remotePagesHoldingActivityCountForTesting(const WebPageProxy&);
+
     std::optional<WebCore::BackForwardFrameItemIdentifier> suspendedFrameItemID() const { return m_suspendedFrameItemID; }
     HashSet<Ref<WebProcessProxy>> iframeProcesses() const;
 
@@ -114,6 +119,7 @@ private:
     void didProcessRequestToSuspend(SuspensionState);
     void suspensionTimedOut();
     void suspendSubframeProcesses(WebCore::BackForwardFrameItemIdentifier);
+    void dropActivitiesOnAllRemotePages();
     void maybeCompleteSuspension();
 
     void close();

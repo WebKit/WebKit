@@ -1035,6 +1035,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
+- (NSUInteger)_suspendedRemotePageActivityCountForTesting
+{
+    return _page ? _page->suspendedRemotePageActivityCountForTesting() : 0;
+}
+
 - (BOOL)_hasAccessibilityActivityForTesting
 {
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)

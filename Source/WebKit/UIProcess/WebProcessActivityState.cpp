@@ -156,6 +156,27 @@ void WebProcessActivityState::reset()
 #endif
 }
 
+void WebProcessActivityState::dropAllActivities()
+{
+    reset();
+    m_networkActivity = nullptr;
+}
+
+bool WebProcessActivityState::hasAnyActivityForTesting() const
+{
+    return m_isVisibleActivity
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+        || m_wasRecentlyVisibleActivity->activity()
+#endif
+        || m_isAudibleActivity
+        || m_isCapturingActivity
+        || m_isMutedCaptureAssertion
+#if PLATFORM(IOS_FAMILY)
+        || m_openingAppLinkActivity
+#endif
+        || m_networkActivity;
+}
+
 void WebProcessActivityState::dropVisibleActivity()
 {
 #if PLATFORM(MAC)

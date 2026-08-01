@@ -3009,6 +3009,8 @@ public:
 
     void takeActivitiesOnRemotePage(RemotePageProxy&);
 
+    unsigned suspendedRemotePageActivityCountForTesting() const;
+
     void didCreateRemotePage(RemotePageProxy&);
     void willDestroyRemotePage(RemotePageProxy&);
 

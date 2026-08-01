@@ -8043,6 +8043,82 @@ TEST(SiteIsolation, SharedProcessInProcessCacheAfterNavigation)
     }
 }
 
+// A RemotePageProxy mirrors the activity state of its WebPageProxy, and those activities can only be
+// released by a drop that reaches that particular remote page. suspendCurrentPageIfPossible()
+// replaces the page's BrowsingContextGroup and hands the old one to the SuspendedPageProxy, so once
+// the previous page is in the back/forward cache the drop paths can no longer reach its remote pages.
+// Anything left on them is held for the whole life of the cache entry, keeping the iframe process
+// runnable long after the navigation completed.
+TEST(SiteIsolation, SharedProcessDropsActivitiesWhenPageIsSuspended)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "webkit"_s } },
+        { "/plain"_s, { "<!DOCTYPE html><p>plain"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::No, nil, nil, nil, EnableBackForwardCache::Yes);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://example.com"_s,
+            { { RemoteFrame } }
+        },
+        {
+            RemoteFrame,
+            { { "https://webkit.org"_s } }
+        },
+    });
+    auto sharedProcess = [webView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_NE(sharedProcess, [webView mainFrame].info._processIdentifier);
+
+    // The example.com page enters the back/forward cache, taking its BrowsingContextGroup and its
+    // webkit.org remote page with it.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://other.com/plain"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The process is deliberately kept alive so the cached page can be restored. That is exactly why
+    // the activities have to be dropped explicitly rather than by process teardown.
+    EXPECT_TRUE(processStillRunning(sharedProcess));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![webView _suspendedRemotePageActivityCountForTesting];
+    }));
+}
+
+// Same as above, except the shared process has already lost its frame before the cross-site
+// navigation: a same-site navigation to a page with no cross-site iframe destroys the frame but
+// leaves the RemotePageProxy behind. Such a remote page receives no SuspendWithFrameItem, so
+// suspendSubframeProcesses() has to release its activities directly.
+TEST(SiteIsolation, SharedProcessDropsActivitiesForStaleRemotePageWhenPageIsSuspended)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "webkit"_s } },
+        { "/no-iframe"_s, { "<!DOCTYPE html><p>no iframe"_s } },
+        { "/plain"_s, { "<!DOCTYPE html><p>plain"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::No, nil, nil, nil, EnableBackForwardCache::Yes);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView mainFrame].childFrames.count, 1u);
+
+    // Same-site, same-process navigation. The webkit.org frame in the shared process is destroyed.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/no-iframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView mainFrame].childFrames.count, 0u);
+
+    // Cross-site navigation, which suspends the example.com page.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://other.com/plain"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![webView _suspendedRemotePageActivityCountForTesting];
+    }));
+}
+
 TEST(SiteIsolation, WebProcessCacheCrashWithZeroSharedProcess)
 {
     HTTPServer server({

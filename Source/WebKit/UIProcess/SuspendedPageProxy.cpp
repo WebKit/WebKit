@@ -43,6 +43,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcessActivityState.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include <wtf/CallbackAggregator.h>
@@ -57,6 +58,11 @@ using namespace WebCore;
 
 static const Seconds suspensionTimeout { 10_s };
 
+static void dropActivitiesOnRemotePage(RemotePageProxy& remotePage)
+{
+    remotePage.processActivityState().dropAllActivities();
+}
+
 static WeakHashSet<SuspendedPageProxy>& NODELETE allSuspendedPages()
 {
     static NeverDestroyed<WeakHashSet<SuspendedPageProxy>> map;
@@ -64,6 +70,20 @@ static WeakHashSet<SuspendedPageProxy>& NODELETE allSuspendedPages()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
+
+unsigned SuspendedPageProxy::remotePagesHoldingActivityCountForTesting(const WebPageProxy& page)
+{
+    unsigned count = 0;
+    for (Ref suspendedPage : allSuspendedPages()) {
+        if (suspendedPage->page() != &page)
+            continue;
+        suspendedPage->m_browsingContextGroup->forEachRemotePage(page, [&count](auto& remotePage) {
+            if (remotePage.processActivityState().hasAnyActivityForTesting())
+                ++count;
+        });
+    }
+    return count;
+}
 
 RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
 {
@@ -166,8 +186,12 @@ void SuspendedPageProxy::startSuspension(std::optional<BackForwardFrameItemIdent
     if (mainFrameItemID) {
         m_suspendedFrameItemID = *mainFrameItemID;
         suspendSubframeProcesses(*mainFrameItemID);
-    } else
+    } else {
         m_allSubframesSuspended = true;
+        // No subframe suspension handshake will happen, so no remote page process has anything left
+        // to do on behalf of this page.
+        dropActivitiesOnAllRemotePages();
+    }
 
     m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, *this);
     m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
@@ -373,6 +397,16 @@ void SuspendedPageProxy::suspensionTimedOut()
     protect(backForwardCache())->removeEntry(*this); // Will destroy |this|.
 }
 
+void SuspendedPageProxy::dropActivitiesOnAllRemotePages()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+    m_browsingContextGroup->forEachRemotePage(*page, [](auto& remotePage) {
+        dropActivitiesOnRemotePage(remotePage);
+    });
+}
+
 void SuspendedPageProxy::suspendSubframeProcesses(BackForwardFrameItemIdentifier mainFrameItemID)
 {
     ASSERT(!m_allSubframesSuspended);
@@ -409,13 +443,24 @@ void SuspendedPageProxy::suspendSubframeProcesses(BackForwardFrameItemIdentifier
 
     m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }, &aggregator, mainFrameItemID](auto& remotePage) {
         Ref process = remotePage.siteIsolatedProcess();
-        if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
+        if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier())) {
+            // This process hosts no subframe of the page being suspended, so it receives no
+            // SuspendWithFrameItem and has nothing left to do for this page.
+            dropActivitiesOnRemotePage(remotePage);
             return;
+        }
         process->addSuspendedPageProxy(suspendedPage);
 
         RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::suspendSubframeProcesses: Sending SuspendWithFrameItem to pid %i", &suspendedPage, process->processID());
 
-        process->sendWithAsyncReply(Messages::WebPage::SuspendWithFrameItem(mainFrameItemID), aggregator->chain(), remotePage.identifierInSiteIsolatedProcess());
+        process->sendWithAsyncReply(Messages::WebPage::SuspendWithFrameItem(mainFrameItemID), [
+            chain = aggregator->chain(),
+            weakRemotePage = WeakPtr<RemotePageProxy> { remotePage }
+        ](bool success) mutable {
+            if (RefPtr protectedRemotePage = weakRemotePage.get())
+                dropActivitiesOnRemotePage(*protectedRemotePage);
+            chain(success);
+        }, remotePage.identifierInSiteIsolatedProcess());
     });
 }
 

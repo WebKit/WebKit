@@ -175,6 +175,11 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 @property (nonatomic, readonly) BOOL _hasAccessibilityActivityForTesting;
 
+// Number of remote pages belonging to a back/forward cached version of this web view's page that
+// still hold a ProcessThrottler activity. Nothing can release these once the page is suspended, so
+// this must be zero.
+@property (nonatomic, readonly) NSUInteger _suspendedRemotePageActivityCountForTesting;
+
 - (void)_setMediaVolumeForTesting:(float)volume;
 
 - (void)_textFragmentRangesWithCompletionHandlerForTesting:(void(^)(NSArray<NSValue *> *fragmentRanges))completionHandler WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));

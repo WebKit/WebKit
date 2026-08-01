@@ -754,6 +754,11 @@ bool WebPageProxy::hasValidNetworkActivity() const
     return hasValidNetworkActivity;
 }
 
+unsigned WebPageProxy::suspendedRemotePageActivityCountForTesting() const
+{
+    return SuspendedPageProxy::remotePagesHoldingActivityCountForTesting(*this);
+}
+
 bool WebPageProxy::hasValidMainFrameVisibleActivity() const
 {
     return m_mainFrameProcessActivityState->hasValidVisibleActivity();
@@ -9367,9 +9372,12 @@ void WebPageProxy::processIsNoLongerAssociatedWithPage(WebProcessProxy& process)
     m_navigationState->clearNavigationsFromProcess(process.coreProcessIdentifier());
 }
 
-void WebPageProxy::isNoLongerAssociatedWithRemotePage(RemotePageProxy&)
+void WebPageProxy::isNoLongerAssociatedWithRemotePage(RemotePageProxy& page)
 {
     internals().updatePlayingMediaDidChangeTimer.startOneShot(0_s);
+
+    // XXX: rename reset and explain why we don't reset network activity state here.
+    page.processActivityState().reset();
 }
 
 bool WebPageProxy::hasAllowedToRunInTheBackgroundActivity() const
