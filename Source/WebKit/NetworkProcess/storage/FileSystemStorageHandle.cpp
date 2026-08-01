@@ -213,6 +213,12 @@ Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> FileSystemStora
     if (!acquired)
         return makeUnexpected(FileSystemStorageError::InvalidState);
 
+    bool isLockReleaseNeeded = true;
+    auto lockReleaser = makeScopeExit([&] {
+        if (isLockReleaseNeeded)
+            manager->releaseLockForFile(m_path);
+    });
+
     auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::ReadWrite);
     if (!handle)
         return makeUnexpected(FileSystemStorageError::Unknown);
@@ -220,6 +226,8 @@ Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> FileSystemStora
     auto ipcHandle = IPC::SharedFileHandle::create(WTF::move(handle));
     if (!ipcHandle)
         return makeUnexpected(FileSystemStorageError::BackendNotSupported);
+
+    isLockReleaseNeeded = false;
 
     ASSERT(!m_activeSyncAccessHandle);
     m_activeSyncAccessHandle = SyncAccessHandleInfo { WebCore::FileSystemSyncAccessHandleIdentifier::generate() };
@@ -255,6 +263,12 @@ Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError
     if (!acquired)
         return makeUnexpected(FileSystemStorageError::InvalidState);
 
+    bool isLockReleaseNeeded = true;
+    auto lockReleaser = makeScopeExit([&] {
+        if (isLockReleaseNeeded)
+            manager->releaseLockForFile(m_path);
+    });
+
     auto path = FileSystem::createTemporaryFile("FileSystemWritableStream"_s);
     if (keepExistingData)
         FileSystem::copyFile(path, m_path);
@@ -266,6 +280,7 @@ Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError
     if (!activeWritableFile)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
+    isLockReleaseNeeded = false;
     m_activeWritableFiles.add(streamIdentifier, FileHandleWithPath { WTF::move(activeWritableFile), WTF::move(path) });
     return streamIdentifier;
 }

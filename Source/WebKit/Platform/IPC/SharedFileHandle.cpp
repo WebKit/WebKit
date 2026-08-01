@@ -28,7 +28,27 @@
 
 namespace IPC {
 
-#if !PLATFORM(COCOA)
+#if USE(UNIX_DOMAIN_SOCKETS)
+
+std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::FileHandle&& handle)
+{
+    if (!handle)
+        return std::nullopt;
+
+    return SharedFileHandle { WTF::move(handle) };
+}
+
+SharedFileHandle::SharedFileHandle(UnixFileDescriptor&& descriptor)
+    : m_handle(FileSystem::FileHandle::adopt(descriptor.release()))
+{
+}
+
+UnixFileDescriptor SharedFileHandle::toUnixFileDescriptor() const
+{
+    return UnixFileDescriptor { m_handle.platformHandle(), UnixFileDescriptor::Duplicate };
+}
+
+#elif !PLATFORM(COCOA)
 
 std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::FileHandle&&)
 {

@@ -211,9 +211,11 @@ AccessHandleEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)" : true
       default: false
     WebCore:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)" : true
       default: false
 
 AccessibilityTextStitchingEnabled:
@@ -3291,9 +3293,11 @@ FileSystemEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)" : true
       default: false
     WebCore:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)" : true
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
@@ -3327,9 +3331,11 @@ FileSystemWritableStreamEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true

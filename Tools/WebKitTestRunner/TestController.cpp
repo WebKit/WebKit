@@ -254,6 +254,13 @@ static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
     return view->windowFrame();
 }
 
+#if !PLATFORM(COCOA)
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long currentQuota, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
+{
+    return TestController::singleton().decideStorageQuota(currentQuota, currentDatabaseUsage, expectedUsage);
+}
+#endif
+
 static void setWindowFrame(WKPageRef page, WKRect frame, const void* clientInfo)
 {
     PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
@@ -791,7 +798,11 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         runBeforeUnloadConfirmPanel,
         nullptr, // didDraw
         nullptr, // pageDidScroll
+#if PLATFORM(COCOA)
         nullptr, // exceededDatabaseQuota
+#else
+        exceededDatabaseQuota,
+#endif
         runOpenPanel,
         decidePolicyForGeolocationPermissionRequest,
         nullptr, // headerHeight
@@ -1021,6 +1032,7 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         WKWebsiteDataStoreConfigurationSetCookieStorageFile(configuration, toWK(makeString(temporaryFolder, pathSeparator, "cookies"_s, pathSeparator, randomNumber, pathSeparator, "cookiejar.db"_s)).get());
 #endif
         WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration, 400 * 1024);
+        WKWebsiteDataStoreConfigurationSetOriginQuotaRatio(configuration, 0.6);
         WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration, true);
@@ -1280,7 +1292,11 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         runBeforeUnloadConfirmPanel,
         nullptr, // didDraw
         nullptr, // pageDidScroll
+#if PLATFORM(COCOA)
         nullptr, // exceededDatabaseQuota,
+#else
+        exceededDatabaseQuota,
+#endif
         options.shouldHandleRunOpenPanel() ? runOpenPanel : nullptr,
         decidePolicyForGeolocationPermissionRequest,
         nullptr, // headerHeight
@@ -5081,14 +5097,24 @@ uint64_t TestController::domCacheSize(WKStringRef origin)
 }
 
 #if !PLATFORM(COCOA)
-void TestController::setAllowStorageQuotaIncrease(bool)
+void TestController::setAllowStorageQuotaIncrease(bool value)
 {
-    // FIXME: To implement.
+    m_allowStorageQuotaIncrease = value;
 }
 
-void TestController::setQuota(uint64_t)
+void TestController::setQuota(uint64_t quota)
 {
-    // FIXME: To implement.
+    m_quota = quota;
+}
+
+unsigned long long TestController::decideStorageQuota(unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long spaceRequired)
+{
+    auto totalSpaceRequired = currentUsage + spaceRequired;
+    if (m_allowStorageQuotaIncrease || totalSpaceRequired <= m_quota)
+        return totalSpaceRequired;
+
+    // Deny the request by leaving the quota unchanged.
+    return currentQuota;
 }
 
 bool TestController::isDoingMediaCapture() const

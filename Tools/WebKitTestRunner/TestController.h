@@ -377,6 +377,12 @@ public:
     void setQuota(uint64_t);
     void setOriginQuotaRatioEnabled(bool);
 
+#if !PLATFORM(COCOA)
+    // Mirrors -[TestWebsiteDataStoreDelegate requestStorageSpace:...]. Returns the quota to use,
+    // which is the unchanged current quota when the request is denied.
+    unsigned long long decideStorageQuota(unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long spaceRequired);
+#endif
+
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
 
@@ -909,6 +915,14 @@ private:
     bool m_shouldSwapToEphemeralSessionOnNextNavigation { false };
     bool m_shouldSwapToDefaultSessionOnNextNavigation { false };
     std::optional<bool> m_globalPrivacyControlEnabled;
+
+#if !PLATFORM(COCOA)
+    // Cocoa answers storage space requests from TestWebsiteDataStoreDelegate. Other ports have no
+    // such delegate, so the quota set by testRunner.setQuota() is tracked here and applied from the
+    // page UI client instead.
+    uint64_t m_quota { 0 };
+    bool m_allowStorageQuotaIncrease { true };
+#endif
     
 #if PLATFORM(COCOA)
     bool m_hasSetApplicationBundleIdentifier { false };

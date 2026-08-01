@@ -199,6 +199,11 @@ bool WKWebsiteDataStoreConfigurationHasOriginQuotaRatio(WKWebsiteDataStoreConfig
     return !!WebKit::toImpl(configuration)->originQuotaRatio();
 }
 
+void WKWebsiteDataStoreConfigurationSetOriginQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration, double ratio)
+{
+    WebKit::toImpl(configuration)->setOriginQuotaRatio(ratio);
+}
+
 void WKWebsiteDataStoreConfigurationClearOriginQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)
 {
     WebKit::toImpl(configuration)->setOriginQuotaRatio(std::nullopt);

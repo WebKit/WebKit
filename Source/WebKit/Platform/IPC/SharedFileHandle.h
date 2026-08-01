@@ -28,6 +28,10 @@
 #include <fcntl.h>
 #include <wtf/FileHandle.h>
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
 namespace IPC {
 
 class Decoder;
@@ -40,6 +44,11 @@ public:
 #if PLATFORM(COCOA)
     explicit SharedFileHandle(MachSendRight&&);
     MachSendRight toMachSendRight() const;
+#endif
+
+#if USE(UNIX_DOMAIN_SOCKETS)
+    explicit SharedFileHandle(UnixFileDescriptor&&);
+    UnixFileDescriptor toUnixFileDescriptor() const;
 #endif
 
     SharedFileHandle() = default;

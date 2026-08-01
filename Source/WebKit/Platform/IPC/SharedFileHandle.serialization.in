@@ -22,8 +22,15 @@
 
 header: "SharedFileHandle.h"
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+headers: <wtf/unix/UnixFileDescriptor.h> "ArgumentCodersUnix.h"
+#endif
+
 [CustomHeader] class IPC::SharedFileHandle {
 #if PLATFORM(COCOA)
     MachSendRight toMachSendRight();
+#endif
+#if USE(UNIX_DOMAIN_SOCKETS)
+    UnixFileDescriptor toUnixFileDescriptor();
 #endif
 };
