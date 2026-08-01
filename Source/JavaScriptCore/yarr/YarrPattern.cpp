@@ -907,7 +907,7 @@ private:
             return;
 
         while (lhsMatchIndex < m_matches32.size() || lhsRangeIndex < m_ranges32.size() || rhsMatchIndex < rhsMatches32.size() || rhsRangeIndex < rhsRanges32.size()) {
-            if (rhsMatchIndex >= rhsMatches32.size() && rhsRangeIndex > rhsRanges32.size() && m_setOp == CharacterClassSetOp::Intersection) {
+            if (rhsMatchIndex >= rhsMatches32.size() && rhsRangeIndex >= rhsRanges32.size() && m_setOp == CharacterClassSetOp::Intersection) {
                 // RHS is exhausted, we can short cut from here. Can't intersect anything more so bail out.
                 break;
             }
