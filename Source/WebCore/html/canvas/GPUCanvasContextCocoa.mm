@@ -362,7 +362,7 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
     }
 }
 
-RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer)
+RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer sourceBuffer)
 {
     RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
     if (!scriptExecutionContext)
@@ -376,7 +376,6 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
     }
     RefPtr<ImageBuffer> buffer = m_readDisplayBuffer;
 
-    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
     if (!m_configuration)
         return buffer;
 
@@ -384,6 +383,14 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
 #if HAVE(SUPPORT_HDR_DISPLAY)
     updateScreenHeadroomFromScreenPropertiesIfNeeded();
 #endif
+
+    if (sourceBuffer == SurfaceBuffer::DisplayBufferForInspector && m_configuration->lastPresentedFrameIndex) {
+        if (buffer) {
+            buffer->flushDrawingContext();
+            m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, *m_configuration->lastPresentedFrameIndex);
+        }
+        return buffer;
+    }
 
     auto frameCount = m_configuration->frameCount;
     m_compositorIntegration->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }, frameCount, buffer] {
@@ -418,6 +425,9 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
         m_compositorIntegration->paintCompositedResultsToCanvas(bufferRef, m_configuration->frameCount);
         m_currentTexture = nullptr;
         m_presentationContext->present(m_configuration->frameCount, true);
+        m_configuration->lastPresentedFrameIndex = std::nullopt;
+        m_readDisplayBuffer = nullptr;
+        updateMemoryCost();
     }
     return bufferRef;
 }
@@ -530,6 +540,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         configuration.alphaMode,
         WTF::move(renderBuffers),
         0,
+        std::nullopt,
     };
     InspectorInstrumentation::didChangeGPUDeviceClientNodes(m_configuration->device);
     return { };
@@ -621,6 +632,7 @@ void GPUCanvasContextCocoa::present(uint32_t frameIndex)
         return;
 
     m_compositingResultsNeedsUpdating = false;
+    m_configuration->lastPresentedFrameIndex = frameIndex;
     m_configuration->frameCount = (m_configuration->frameCount + 1) % m_configuration->renderBuffers.size();
     if (RefPtr currentTexture = m_currentTexture)
         currentTexture->destroy();

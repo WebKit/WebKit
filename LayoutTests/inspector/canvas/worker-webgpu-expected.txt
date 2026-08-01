@@ -8,6 +8,7 @@ PASS: WebGPU Canvas should belong to the Worker target.
 PASS: Payload should have type "object".
 PASS: Payload should have className "GPUDevice".
 PASS: Worker GPUDevice should have no DOM client nodes.
+PASS: Worker WebGPU Canvas content should not be empty.
 
 -- Running test case: Canvas.WebGPU.Worker.Terminate
 PASS: Removed the expected Worker target.

@@ -612,7 +612,7 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
 
 Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL(CanvasRenderingContext& context)
 {
-    auto surfaceBuffer = context.compositingResultsNeedUpdating() ? CanvasRenderingContext::SurfaceBuffer::DrawingBuffer : CanvasRenderingContext::SurfaceBuffer::DisplayBuffer;
+    auto surfaceBuffer = context.compositingResultsNeedUpdating() ? CanvasRenderingContext::SurfaceBuffer::DrawingBuffer : CanvasRenderingContext::SurfaceBuffer::DisplayBufferForInspector;
     return encodeDataURL(context.surfaceBufferToImageBuffer(surfaceBuffer), "image/png"_s);
 }
 
@@ -623,8 +623,24 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL(
             Ref context = weakContext;
             return getContentAsDataURL(context);
         },
-        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>&) -> Inspector::Protocol::ErrorStringOr<String> {
-            return makeUnexpected("Canvas content is not available for WebGPU devices"_s);
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) -> Inspector::Protocol::ErrorStringOr<String> {
+            Ref device = weakDevice;
+            RefPtr<CanvasRenderingContext> context;
+            {
+                Locker locker { CanvasRenderingContext::instancesLock() };
+                for (SUPPRESS_UNCOUNTED_ARG auto* candidate : CanvasRenderingContext::instances()) {
+                    if (!candidate->isContextThread() || !canvasContextMatchesDevice(*candidate, device))
+                        continue;
+                    if (context) {
+                        context = nullptr;
+                        break;
+                    }
+                    context = candidate;
+                }
+            }
+            if (!context)
+                return makeUnexpected("GPUDevice must be configured for one <canvas>."_s);
+            return getContentAsDataURL(*context);
         }
     );
 }

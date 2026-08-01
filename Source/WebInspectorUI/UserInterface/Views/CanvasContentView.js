@@ -254,7 +254,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._previewImageElement.remove();
 
         if (!this._errorElement) {
-            let isError = WI.Canvas.supportsRequestContentForContextType(this.representedObject.contextType);
+            const isError = true;
             this._errorElement = WI.createMessageTextView(WI.UIString("No Preview Available"), isError);
         }
 

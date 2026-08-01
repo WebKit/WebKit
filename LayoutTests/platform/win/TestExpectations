@@ -114,6 +114,7 @@ http/tests/webgpu [ Skip ]
 fast/webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/requestContent-webgpu.html [ Skip ]
 inspector/canvas/resolveContext-webgpu.html [ Skip ]
 inspector/canvas/worker-webgpu.html [ Skip ]
 

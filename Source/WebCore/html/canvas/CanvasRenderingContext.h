@@ -91,7 +91,8 @@ public:
     // Web Inspector and similar reads from the engine reads both.
     enum class SurfaceBuffer : uint8_t {
         DrawingBuffer,
-        DisplayBuffer
+        DisplayBuffer,
+        DisplayBufferForInspector,
     };
 
     // Draws the source buffer to the canvasBase().buffer().

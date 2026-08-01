@@ -44,6 +44,9 @@ async function test() {
 
             let clientNodes = await new Promise((resolve) => canvas.requestClientNodes(resolve));
             InspectorTest.expectEqual(clientNodes.length, 0, "Worker GPUDevice should have no DOM client nodes.");
+
+            let content = await canvas.requestContent();
+            InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Worker WebGPU Canvas content should not be empty.");
         },
     });
 

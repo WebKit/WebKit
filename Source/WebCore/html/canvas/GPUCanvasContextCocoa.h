@@ -111,6 +111,7 @@ private:
         GPUCanvasAlphaMode compositingAlphaMode { GPUCanvasAlphaMode::Opaque };
         Vector<MachSendRight> renderBuffers;
         unsigned frameCount { 0 };
+        std::optional<unsigned> lastPresentedFrameIndex;
     };
     std::optional<Configuration> m_configuration;
 

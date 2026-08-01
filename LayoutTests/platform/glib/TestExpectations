@@ -4246,6 +4246,7 @@ fast/webgpu [ Skip ]
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/requestContent-webgpu.html [ Skip ]
 inspector/canvas/resolveContext-webgpu.html [ Skip ]
 inspector/canvas/worker-webgpu.html [ Skip ]
 
