@@ -48,7 +48,7 @@ public:
     bool atEnd() const;
     bool NODELETE atStartOfNode() const;
     bool atEndOfNode() const;
-    bool isCandidate() const;
+    bool isCandidate(AllowUserSelectNone = AllowUserSelectNone::No) const;
 
 private:
     RefPtr<Node> m_anchorNode;

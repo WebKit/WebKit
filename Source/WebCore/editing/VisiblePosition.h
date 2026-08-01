@@ -40,7 +40,7 @@ public:
     VisiblePosition() = default;
 
     // This constructor will ignore the passed-in affinity if the position is not at the end of a line.
-    WEBCORE_EXPORT VisiblePosition(const Position&, Affinity = defaultAffinity);
+    WEBCORE_EXPORT VisiblePosition(const Position&, Affinity = defaultAffinity, AllowUserSelectNone = AllowUserSelectNone::No);
 
     bool isNull() const { return m_deepPosition.isNull(); }
     bool isNotNull() const { return m_deepPosition.isNotNull(); }
@@ -48,6 +48,7 @@ public:
 
     Position deepEquivalent() const { return m_deepPosition; }
     Affinity affinity() const { return m_affinity; }
+    AllowUserSelectNone allowUserSelectNone() const { return m_allowUserSelectNone; }
 
     void setAffinity(Affinity affinity) { m_affinity = affinity; }
 
@@ -98,13 +99,14 @@ public:
 #endif
 
 private:
-    static Position canonicalPosition(const Position&);
+    static Position canonicalPosition(const Position&, AllowUserSelectNone = AllowUserSelectNone::No);
 
     Position leftVisuallyDistinctCandidate() const;
     Position rightVisuallyDistinctCandidate() const;
 
     Position m_deepPosition;
     Affinity m_affinity { defaultAffinity };
+    AllowUserSelectNone m_allowUserSelectNone;
 };
 
 bool operator==(const VisiblePosition&, const VisiblePosition&);

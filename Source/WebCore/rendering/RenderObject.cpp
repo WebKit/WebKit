@@ -1847,10 +1847,10 @@ PositionWithAffinity RenderObject::positionForPoint(const LayoutPoint&, HitTestS
     return createPositionWithAffinity(caretMinOffset(), Affinity::Downstream);
 }
 
-VisiblePosition RenderObject::visiblePositionForPoint(const LayoutPoint& point, HitTestSource source)
+VisiblePosition RenderObject::visiblePositionForPoint(const LayoutPoint& point, HitTestSource source, AllowUserSelectNone allowUserSelectNone)
 {
     auto positionWithAffinity = positionForPoint(point, source, nullptr);
-    return VisiblePosition(positionWithAffinity.position(), positionWithAffinity.affinity());
+    return VisiblePosition(positionWithAffinity.position(), positionWithAffinity.affinity(), allowUserSelectNone);
 }
 
 bool RenderObject::isComposited() const

@@ -2022,7 +2022,7 @@ VisiblePosition AccessibilityNodeObject::visiblePositionForIndex(int index) cons
         return { };
 #if USE(ATSPI)
     // We need to consider replaced elements for GTK, as they will be presented with the 'object replacement character' (0xFFFC).
-    return WebCore::visiblePositionForIndex(index, node.get(), TextIteratorBehavior::EmitsObjectReplacementCharacters);
+    return WebCore::visiblePositionForIndex(index, node.get(), TextIteratorBehavior::EmitsObjectReplacementCharacters, AllowUserSelectNone::Yes);
 #else
     return visiblePositionForIndexUsingCharacterIterator(*node, index);
 #endif
