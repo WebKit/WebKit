@@ -13515,6 +13515,8 @@
 		57FEDD401DB6D73A00EB96F5 /* JSRsaKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRsaKeyGenParams.h; sourceTree = "<group>"; };
 		57FEDD421DB6D76000EB96F5 /* JSRsaKeyGenParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRsaKeyGenParams.cpp; sourceTree = "<group>"; };
 		5803715F1A66F00A00BAF519 /* ClipRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipRect.cpp; sourceTree = "<group>"; };
+		C11FFA7E5C09E00000000001 /* ClipPathPaintScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipPathPaintScope.cpp; sourceTree = "<group>"; };
+		C11FFA7E5C09E00000000002 /* ClipPathPaintScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipPathPaintScope.h; sourceTree = "<group>"; };
 		580371601A66F00A00BAF519 /* ClipRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipRect.h; sourceTree = "<group>"; };
 		580371631A66F1D300BAF519 /* LayerFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFragment.h; sourceTree = "<group>"; };
 		582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDecorationPainter.cpp; sourceTree = "<group>"; };
@@ -42173,6 +42175,8 @@
 				BCEA4816097D93020094C9E4 /* BreakablePositions.h */,
 				E4F0BE3025710A76009E7431 /* CaretRectComputation.cpp */,
 				E4F0BE2E25710A75009E7431 /* CaretRectComputation.h */,
+				C11FFA7E5C09E00000000001 /* ClipPathPaintScope.cpp */,
+				C11FFA7E5C09E00000000002 /* ClipPathPaintScope.h */,
 				5803715F1A66F00A00BAF519 /* ClipRect.cpp */,
 				580371601A66F00A00BAF519 /* ClipRect.h */,
 				CA7E9B4824361DC5004E89F6 /* ContentfulPaintChecker.cpp */,

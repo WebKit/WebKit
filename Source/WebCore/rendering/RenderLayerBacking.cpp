@@ -35,6 +35,7 @@
 #include "CachedImage.h"
 #include "CanvasRenderingContext2DBase.h"
 #include "Chrome.h"
+#include "ClipPathPaintScope.h"
 #include "ColorBlending.h"
 #include "ContainerNodeInlines.h"
 #include "CornerRadii.h"
@@ -1961,7 +1962,7 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
             LayoutRect boundingBox = m_owningLayer.boundingBox(&m_owningLayer);
             LayoutRect referenceBoxForClippedInline = LayoutRect(snapRectToDevicePixelsIfNeeded(boundingBox, renderer()));
             LayoutSize offset = LayoutSize(snapSizeToDevicePixel(-m_subpixelOffsetFromRenderer, LayoutPoint(), deviceScaleFactor()));
-            auto [clipPath, windRule] = m_owningLayer.computeClipPath(offset, referenceBoxForClippedInline);
+            auto [clipPath, windRule] = ClipPathPaintScope::computeClipPath(renderer(), offset, referenceBoxForClippedInline);
 
             FloatSize pathOffset = m_maskLayer->offsetFromRenderer();
             if (!pathOffset.isZero())

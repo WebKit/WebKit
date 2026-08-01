@@ -16,9 +16,11 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=0.50] [color=#FFA500]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
+      RenderSVGRect {rect} at (0,144.48) size 200x45 [fill={[type=SOLID] [color=#00000000]}] [x=100.00] [y=160.00] [width=200.00] [height=45.00]
       RenderSVGText {text} at (200,173) size 66x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 66x14
           chunk 1 text run 1 at (300.00,200.00) startOffset 0 endOffset 13 width 65.66: "(System font)"
+      RenderSVGRect {rect} at (0,244.48) size 200x45 [fill={[type=SOLID] [color=#00000000]}] [x=100.00] [y=260.00] [width=200.00] [height=45.00]
       RenderSVGText {text} at (200,273) size 55x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 55x14
           chunk 1 text run 1 at (300.00,300.00) startOffset 0 endOffset 10 width 54.33: "(SVG font)"
@@ -32,10 +34,6 @@ layer at (100,251.72) size 155x61
     RenderSVGText {text} at (0,0) size 155x60 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 155x60
         chunk 1 text run 1 at (100.00,300.00) startOffset 0 endOffset 5 width 154.11: "BATIK"
-layer at (100,160) size 200x46
-  RenderSVGRect {rect} at (0,144.48) size 200x45 [fill={[type=SOLID] [color=#00000000]}] [x=100.00] [y=160.00] [width=200.00] [height=45.00]
-layer at (100,260) size 200x46
-  RenderSVGRect {rect} at (0,244.48) size 200x45 [fill={[type=SOLID] [color=#00000000]}] [x=100.00] [y=260.00] [width=200.00] [height=45.00]
 layer at (0,0) size 447x497
   RenderSVGTransformableContainer {use} at (0,0) size 447x497
     RenderSVGTransformableContainer {g} at (0,0) size 447x497

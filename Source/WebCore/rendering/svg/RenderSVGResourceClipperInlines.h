@@ -27,6 +27,7 @@
 
 #include "RenderSVGResourceClipper.h"
 #include "SVGClipPathElement.h"
+#include "SVGElementTypeHelpers.h"
 
 namespace WebCore {
 

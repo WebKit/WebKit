@@ -93,18 +93,22 @@ inline bool RenderElement::canContainFixedPositionObjects(const Style::ComputedS
         || (isRenderBlock() && style.willChange().createsContainingBlockForOutOfFlowPositioned(isDocumentElementRenderer()));
 }
 
-inline bool RenderElement::createsGroupForStyle(const Style::ComputedStyle& style)
+inline bool RenderElement::createsGroupForStyleExcludingClipPath(const Style::ComputedStyle& style)
 {
     return !style.opacity().isOpaque()
         || Style::hasImageInAnyLayer(style.maskLayers())
         || !style.maskBorderSource().isNone()
-        || !style.clipPath().isNone()
         || !style.filter().isNone()
         || !style.backdropFilter().isNone()
 #if HAVE(CORE_MATERIAL)
         || style.appleVisualEffect() != AppleVisualEffect::None
 #endif
         || style.blendMode() != BlendMode::Normal;
+}
+
+inline bool RenderElement::createsGroupForStyle(const Style::ComputedStyle& style)
+{
+    return createsGroupForStyleExcludingClipPath(style) || !style.clipPath().isNone();
 }
 
 inline bool RenderElement::shouldApplyAnyContainment() const

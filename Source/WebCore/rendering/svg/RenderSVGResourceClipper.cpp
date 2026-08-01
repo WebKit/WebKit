@@ -84,7 +84,19 @@ RefPtr<SVGGraphicsElement> RenderSVGResourceClipper::shouldApplyPathClipping() c
 {
     if (currentClippingMode() == ClippingMode::MaskClipping)
         return nullptr;
-    return protect(clipPathElement())->shouldApplyPathClipping();
+    // This walks the SVGClipPathElement's children to decide whether path-based clipping is viable.
+    // The result only changes on structural or style changes in the clip-path subtree, but without
+    // caching it would run per shape per frame in animations (in scenes like MotionMark and Suits
+    // about half the shapes are clip-pathed, thousands per frame).
+    if (!m_cachedShouldApplyPathClippingResult)
+        m_cachedShouldApplyPathClippingResult = WeakPtr { protect(clipPathElement())->shouldApplyPathClipping() };
+    return m_cachedShouldApplyPathClippingResult->get();
+}
+
+void RenderSVGResourceClipper::repaintAllClients() const
+{
+    m_cachedShouldApplyPathClippingResult = std::nullopt;
+    RenderSVGResourceContainer::repaintAllClients();
 }
 
 void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox, SVGGraphicsElement& graphicsElement)
@@ -101,7 +113,20 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
 
     AffineTransform clipPathTransform;
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        // objectBoundingBox.location() is already in the target's absolute user space, so it positions
+        // the clip on its own. The caller does not translate the context for objectBoundingBox units
+        // (only for userSpaceOnUse), so there is nothing to undo here.
         clipPathTransform.translate(objectBoundingBox.location());
+        // <foreignObject> paints its content at layout location() while its objectBoundingBox top-left
+        // sits at its x/y, so re-anchor the clip to the content origin by current minus nominal. Shapes,
+        // images and text paint at the nominal origin, where objectBoundingBox.location() already
+        // matches, so they must not get this term.
+        // FIXME: Make <foreignObject> and text agree on content vs bounding-box origin so this
+        // <foreignObject>-only adjustment can be removed.
+        if (targetRenderer.isRenderSVGForeignObject()) {
+            auto contentOriginAdjustment = targetRenderer.currentSVGLayoutLocation() - targetRenderer.nominalSVGLayoutLocation();
+            clipPathTransform.translate(contentOriginAdjustment.width().toFloat(), contentOriginAdjustment.height().toFloat());
+        }
         clipPathTransform.scale(objectBoundingBox.size());
     } else if (!targetRenderer.isSVGLayerAwareRenderer()) {
         clipPathTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
@@ -139,7 +164,6 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
 {
     ASSERT(hasLayer());
     ASSERT(layer()->isSelfPaintingLayer());
-    ASSERT(targetRenderer.hasLayer());
 
     static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 

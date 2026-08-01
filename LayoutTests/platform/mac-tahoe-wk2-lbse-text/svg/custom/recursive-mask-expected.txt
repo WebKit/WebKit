@@ -25,8 +25,7 @@ layer at (0,100) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=100.00] [width=50.00] [height=50.00]
 layer at (0,100) size 50x50
   RenderSVGResourceMasker {mask} at (0,0) size 50x50
-layer at (0,100) size 50x50
-  RenderSVGTransformableContainer {use} at (0,0) size 50x50
+    RenderSVGTransformableContainer {use} at (0,0) size 50x50
 layer at (0,100) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=100.00] [width=50.00] [height=50.00]
 layer at (0,0) size 100x100

@@ -175,11 +175,10 @@ layer at (-42.50,-27.50) size 86x36 backgroundClip at (0,0) size 450x500 clip at
         chunk 1 (middle anchor) text run 1 at (-42.49,0.00) startOffset 0 endOffset 6 width 84.98: "sample"
 layer at (-51.09,-25) size 103x50 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (35.48,11) size 102.19x50
+    RenderSVGRect {rect} at (1.09,0) size 100x50 [fill={[type=SOLID] [color=#00000000]}] [x=-50.00] [y=-25.00] [width=100.00] [height=50.00]
     RenderSVGText {text} at (0,26) size 103x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 103x18
         chunk 1 (middle anchor) text run 1 at (-51.09,15.00) startOffset 0 endOffset 17 width 102.19: "text as clip-path"
-layer at (-50,-25) size 101x50 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (1.09,0) size 100x50 [fill={[type=SOLID] [color=#00000000]}] [x=-50.00] [y=-25.00] [width=100.00] [height=50.00]
 layer at (0,0) size 447x497
   RenderSVGTransformableContainer {use} at (0,0) size 447x497
     RenderSVGTransformableContainer {g} at (0,0) size 447x497

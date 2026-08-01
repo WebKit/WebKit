@@ -8,6 +8,7 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 353x21
         chunk 1 (middle anchor) text run 1 at (63.55,35.00) startOffset 0 endOffset 51 width 352.90: "Testing stroke inclusion for 'clip-path' and 'mask'"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGRect {rect} at (150,0) size 200x200 [fill={[type=SOLID] [color=#00008B]}] [x=150.00] [y=0.00] [width=200.00] [height=200.00]
     RenderSVGText {text} at (50,96) size 115x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 115x18
         chunk 1 text run 1 at (50.00,110.00) startOffset 0 endOffset 19 width 114.17: "With a 'clip-path':"
@@ -23,8 +24,6 @@ layer at (0.09,0.30) size 1x1
   RenderSVGResourceClipper {clipPath} at (0.09,0.30) size 0.81x0.41
     RenderSVGEllipse {circle} at (0,0) size 0.41x0.41 [stroke={[type=SOLID] [color=#FF0000] [stroke width=0.15]}] [cx=0.30] [cy=0.50] [r=0.20]
     RenderSVGEllipse {circle} at (0.41,0) size 0.41x0.41 [cx=0.70] [cy=0.50] [r=0.20]
-layer at (150,0) size 200x200
-  RenderSVGRect {rect} at (150,0) size 200x200 [fill={[type=SOLID] [color=#00008B]}] [x=150.00] [y=0.00] [width=200.00] [height=200.00]
 layer at (0.09,0.30) size 1x1
   RenderSVGResourceMasker {mask} at (0.09,0.30) size 0.81x0.41
     RenderSVGEllipse {circle} at (0,0) size 0.41x0.41 [stroke={[type=SOLID] [color=#FF0000] [stroke width=0.15]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=0.30] [cy=0.50] [r=0.20]

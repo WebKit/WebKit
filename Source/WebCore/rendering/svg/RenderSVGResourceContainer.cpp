@@ -27,6 +27,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
+#include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGResourceElementClient.h"
 #include "SVGVisitedElementTracking.h"
@@ -43,6 +44,7 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& el
     , m_id(element.getIdAttribute())
 {
     ASSERT(isRenderSVGResourceContainer());
+    ASSERT(SVGElement::isResourceContainerTagName(element.tagQName()));
 }
 
 RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;

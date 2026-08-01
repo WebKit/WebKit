@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="clip-path-shape-polygon-in-group-expected.html">
+<meta name="fuzzy" content="maxDifference=1; totalPixels=0-183" />
+</head>
+<body style="margin: 0">
+<!-- polygon() basic-shape clip on a positioned shape nested inside a plain (non-layer) group. The
+     remaining green area should be the triangle, aligned with the shape. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<g>
+    <rect x="50" y="50" width="200" height="200" fill="green" style="-webkit-clip-path: polygon(0% 0%, 100% 0%, 0% 100%)"/>
+</g>
+</svg>
+</body>
+</html>

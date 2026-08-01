@@ -135,6 +135,8 @@ protected:
 private:
     LayoutSize NODELETE cachedSizeForOverflowClip() const;
 
+    bool isInsideSVGResourceContainer() const;
+
     LayoutRect m_layoutRect;
     std::optional<AffineTransform> m_localTransform;
 

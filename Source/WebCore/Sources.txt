@@ -2932,6 +2932,7 @@ rendering/BorderShape.cpp @header:RenderStyleGetters @cost:5
 rendering/BreakablePositions.cpp
 rendering/CSSFilterRenderer.cpp @header:RenderStyleGetters @cost:6
 rendering/CaretRectComputation.cpp @header:RenderStyleGetters @cost:6
+rendering/ClipPathPaintScope.cpp
 rendering/ClipRect.cpp
 rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
