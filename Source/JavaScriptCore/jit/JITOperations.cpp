@@ -52,6 +52,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JITWorklist.h"
 #include "JSArrayIterator.h"
+#include "JSArrayIteratorInlines.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncFunctionGenerator.h"
@@ -3438,38 +3439,11 @@ JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject
         metadata.m_iterableProfile.observeStructureID(array->structureID());
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | mode;
 
-        auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
-        int64_t index = indexSlot.get().asAnyInt();
-        ASSERT(index == JSArrayIterator::doneIndex || (0 <= index && index <= maxSafeInteger()));
-
         JSValue value;
-        bool done = index == JSArrayIterator::doneIndex || index >= array->length();
-        if (!done) {
-            // No need for a barrier here because we know this is a primitive.
-            indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
-            ASSERT(index == static_cast<unsigned>(index));
-            switch (kind) {
-            case IterationKind::Values:
-                value = array->getIndex(globalObject, static_cast<unsigned>(index));
-                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
-                break;
-            case IterationKind::Keys:
-                value = jsNumber(static_cast<unsigned>(index));
-                break;
-            case IterationKind::Entries: {
-                JSValue element = array->getIndex(globalObject, static_cast<unsigned>(index));
-                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
-                value = constructArrayPair(globalObject, jsNumber(static_cast<unsigned>(index)), element);
-                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
-                break;
-            }
-            }
-        } else {
-            // No need for a barrier here because we know this is a primitive.
-            indexSlot.setWithoutWriteBarrier(jsNumber(-1));
-        }
+        bool hasNext = arrayIterator->next(globalObject, value);
+        OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
 
-        OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
+        OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(!hasNext)), JSValue::encode(value)));
     }
 
     if (auto* mapIterator = dynamicDowncast<JSMapIterator>(iterator)) {

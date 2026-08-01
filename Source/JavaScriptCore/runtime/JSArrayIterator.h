@@ -67,6 +67,15 @@ public:
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
     JSObject* iteratedObject() const { return uncheckedDowncast<JSObject>(internalField(Field::IteratedObject).get()); }
+    int64_t index() const { return internalField(Field::Index).get().asAnyInt(); }
+
+    // The index is a primitive, so no write barrier is required.
+    void setIndex(int64_t index) { internalField(Field::Index).setWithoutWriteBarrier(jsNumber(index)); }
+
+    // Returns the index to load from the iterated array, advancing the iterator, or std::nullopt once
+    // it is exhausted. Only valid when the iterated object is a JSArray.
+    inline std::optional<uint32_t> nextWithAdvance();
+    inline bool next(JSGlobalObject*, JSValue&);
 
     JS_EXPORT_PRIVATE static JSArrayIterator* create(VM&, Structure*, JSObject* iteratedObject, JSValue kind);
     static JSArrayIterator* create(VM& vm, Structure* structure, JSObject* iteratedObject, IterationKind kind)

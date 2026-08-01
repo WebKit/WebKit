@@ -1200,6 +1200,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSArrayBufferViewInlinesLight.h
     runtime/JSArrayInlines.h
     runtime/JSArrayIterator.h
+    runtime/JSArrayIteratorInlines.h
     runtime/JSArrayBuffer.h
     runtime/JSBigInt.h
     runtime/JSBigIntInlines.h

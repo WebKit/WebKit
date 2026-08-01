@@ -38,6 +38,7 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JSArrayIterator.h"
+#include "JSArrayIteratorInlines.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunctionGenerator.h"
 #include "JSAsyncGenerator.h"
@@ -1060,38 +1061,13 @@ ALWAYS_INLINE UGPRPair iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObj
         }
 
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | mode;
-        auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
-        int64_t index = indexSlot.get().asAnyInt();
-        ASSERT(index == JSArrayIterator::doneIndex || (0 <= index && index <= maxSafeInteger()));
 
         JSValue value;
-        bool done = index == JSArrayIterator::doneIndex || index >= array->length();
-        GET(bytecode.m_done) = jsBoolean(done);
-        if (!done) {
-            // No need for a barrier here because we know this is a primitive.
-            indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
-            ASSERT(index == static_cast<unsigned>(index));
-            switch (kind) {
-            case IterationKind::Values:
-                value = array->getIndex(globalObject, static_cast<unsigned>(index));
-                CHECK_EXCEPTION();
-                break;
-            case IterationKind::Keys:
-                value = jsNumber(static_cast<unsigned>(index));
-                break;
-            case IterationKind::Entries: {
-                JSValue element = array->getIndex(globalObject, static_cast<unsigned>(index));
-                CHECK_EXCEPTION();
-                value = constructArrayPair(globalObject, jsNumber(static_cast<unsigned>(index)), element);
-                CHECK_EXCEPTION();
-                break;
-            }
-            }
+        bool hasNext = arrayIterator->next(globalObject, value);
+        CHECK_EXCEPTION();
+        GET(bytecode.m_done) = jsBoolean(!hasNext);
+        if (hasNext)
             PROFILE_VALUE_IN(value, m_valueValueProfile);
-        } else {
-            // No need for a barrier here because we know this is a primitive.
-            indexSlot.setWithoutWriteBarrier(jsNumber(-1));
-        }
 
         GET(bytecode.m_value) = value;
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(mode)));
