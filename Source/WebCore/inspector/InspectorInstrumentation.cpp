@@ -1328,6 +1328,30 @@ void InspectorInstrumentation::didChangeGPUDeviceClientNodesImpl(InstrumentingAg
         pageCanvasAgent->didChangeGPUDeviceClientNodes(device);
 }
 
+void InspectorInstrumentation::didCreateWebGPUComputePipelineImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, GPUComputePipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didCreateWebGPUComputePipeline(device, pipeline);
+}
+
+void InspectorInstrumentation::willDestroyWebGPUComputePipelineImpl(InstrumentingAgents& instrumentingAgents, GPUComputePipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->willDestroyWebGPUComputePipeline(pipeline);
+}
+
+void InspectorInstrumentation::didCreateWebGPURenderPipelineImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, GPURenderPipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didCreateWebGPURenderPipeline(device, pipeline);
+}
+
+void InspectorInstrumentation::willDestroyWebGPURenderPipelineImpl(InstrumentingAgents& instrumentingAgents, GPURenderPipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->willDestroyWebGPURenderPipeline(pipeline);
+}
+
 void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {
     if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())

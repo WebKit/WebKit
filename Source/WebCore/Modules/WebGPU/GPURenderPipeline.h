@@ -28,18 +28,27 @@
 #include "GPUBindGroupLayout.h"
 #include "WebGPURenderPipeline.h"
 #include <cstdint>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
+class GPUDevice;
+class WeakPtrImplWithEventTargetData;
+
+class GPURenderPipeline : public RefCountedAndCanMakeWeakPtr<GPURenderPipeline> {
 public:
-    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
-    {
-        return adoptRef(*new GPURenderPipeline(WTF::move(backing), uniqueId));
-    }
+    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader);
+
+    ~GPURenderPipeline();
+
+    static HashMap<GPURenderPipeline*, GPUDevice*>& NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
+    static Lock& NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static void willDestroyDevice(GPUDevice&);
 
     String NODELETE label() const;
     void setLabel(String&&);
@@ -49,15 +58,22 @@ public:
     WebGPU::RenderPipeline& backing() { return m_backing; }
     const WebGPU::RenderPipeline& backing() const { return m_backing; }
 
+    GPUDevice* device() const;
+    const String& vertexShaderSource() const { return m_vertexShaderSource; }
+    const String& fragmentShaderSource() const { return m_fragmentShaderSource; }
+    bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }
+
 private:
-    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
-        : m_backing(WTF::move(backing))
-        , m_uniqueId(uniqueId)
-    {
-    }
+    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader);
+
+    static Lock s_instancesLock;
 
     const Ref<WebGPU::RenderPipeline> m_backing;
     const uint64_t m_uniqueId;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
+    String m_vertexShaderSource;
+    String m_fragmentShaderSource;
+    const bool m_sharesVertexFragmentShader;
 };
 
 }

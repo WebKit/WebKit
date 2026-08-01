@@ -10,8 +10,18 @@ PASS: Payload should have className "GPUDevice".
 PASS: Worker GPUDevice should have no DOM client nodes.
 PASS: Worker WebGPU Canvas content should not be empty.
 
+-- Running test case: Canvas.WebGPU.Worker.Pipelines
+PASS: Worker GPUDevice should have two ShaderPrograms.
+PASS: Found the Worker compute ShaderProgram.
+PASS: Compute ShaderProgram should expose its WGSL source.
+PASS: Found the Worker render ShaderProgram.
+PASS: Worker render pipeline should report its shared shader module.
+PASS: Shared Worker vertex and fragment stages should expose the same WGSL source.
+PASS: Render ShaderProgram should expose both WGSL entry points.
+
 -- Running test case: Canvas.WebGPU.Worker.Terminate
 PASS: Removed the expected Worker target.
 PASS: Removed the Worker GPUDevice Canvas.
 PASS: CanvasManager should not retain the Worker GPUDevice Canvas.
+PASS: Worker GPUDevice Canvas should have no remaining ShaderPrograms.
 

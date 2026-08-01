@@ -1,0 +1,55 @@
+Test that CanvasManager tracks creation and destruction of WebGPU pipelines.
+
+
+== Running test suite: Canvas.ShaderProgram.WebGPU
+-- Running test case: Canvas.ShaderProgram.WebGPU.Existing
+PASS: Found the existing compute ShaderProgram.
+PASS: Compute ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Found the existing render ShaderProgram.
+PASS: Render ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Canvas should initially have two ShaderPrograms.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.OffscreenCanvas
+PASS: Rendered with the pipeline to an OffscreenCanvas.
+PASS: OffscreenCanvas should use the existing GPUDevice Canvas.
+PASS: Rendering to an OffscreenCanvas should preserve the pipeline collection.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.CreateComputePipeline
+PASS: Added a "compute" ShaderProgram.
+PASS: ShaderProgram should have the expected type.
+PASS: ShaderProgram should have the WebGPU Canvas as its parent.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.CreateRenderPipeline
+PASS: Added a "render" ShaderProgram.
+PASS: ShaderProgram should have the expected type.
+PASS: ShaderProgram should have the WebGPU Canvas as its parent.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.CreateFragmentlessRenderPipeline
+PASS: Added a "vertex" ShaderProgram.
+PASS: ShaderProgram should have the expected type.
+PASS: ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Fragmentless render ShaderProgram should not report vertex and fragment shader module sharing.
+PASS: Fragmentless render ShaderProgram should expose its vertex WGSL source.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.CreateComputePipelineAsync
+PASS: Added a "compute" ShaderProgram.
+PASS: ShaderProgram should have the expected type.
+PASS: ShaderProgram should have the WebGPU Canvas as its parent.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.CreateRenderPipelineAsync
+PASS: Added a "render" ShaderProgram.
+PASS: ShaderProgram should have the expected type.
+PASS: ShaderProgram should have the WebGPU Canvas as its parent.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.DeleteComputePipeline
+PASS: Removed the previously added compute ShaderProgram.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.DeleteRenderPipeline
+PASS: Removed the previously added render ShaderProgram.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.ParentDeviceRemoved
+PASS: All ShaderPrograms should be removed before the GPUDevice Canvas.
+PASS: Removed the WebGPU Canvas after its GPUDevice was collected.
+PASS: GPUDevice Canvas should have no remaining ShaderPrograms.
+PASS: Page should still retain its WebGPU pipeline wrappers.
+

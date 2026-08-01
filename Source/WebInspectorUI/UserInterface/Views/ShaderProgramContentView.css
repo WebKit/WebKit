@@ -38,17 +38,18 @@
 
 .content-view.shader-program > .shader.compute,
 .content-view.shader-program > .shader.vertex.shares-vertex-fragment-shader,
-.content-view.shader-program > .shader.fragment {
+.content-view.shader-program > .shader.fragment,
+.content-view.shader-program.vertex > .shader.vertex {
     inset-inline-end: 0;
 }
 
-body[dir=ltr] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader),
-body[dir=rtl] .content-view.shader-program > .shader.fragment {
+body[dir=ltr] .content-view.shader-program.render > .shader.vertex:not(.shares-vertex-fragment-shader),
+body[dir=rtl] .content-view.shader-program.render > .shader.fragment {
     width: calc(50% - 1px);
 }
 
-body[dir=ltr] .content-view.shader-program > .shader.fragment,
-body[dir=rtl] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader) {
+body[dir=ltr] .content-view.shader-program.render > .shader.fragment,
+body[dir=rtl] .content-view.shader-program.render > .shader.vertex:not(.shares-vertex-fragment-shader) {
     width: calc(50% + 1px);
 }
 

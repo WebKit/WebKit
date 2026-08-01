@@ -60,7 +60,8 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 
         case WI.Canvas.ContextType.WebGPU:
             return programType === ShaderProgram.ProgramType.Compute
-                || programType === ShaderProgram.ProgramType.Render;
+                || programType === ShaderProgram.ProgramType.Render
+                || programType === ShaderProgram.ProgramType.Vertex;
         }
 
         console.assert();
@@ -76,6 +77,9 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         case ShaderProgram.ProgramType.Render:
             return shaderType === ShaderProgram.ShaderType.Fragment
                 || shaderType === ShaderProgram.ShaderType.Vertex;
+
+        case ShaderProgram.ProgramType.Vertex:
+            return shaderType === ShaderProgram.ShaderType.Vertex;
         }
 
         console.assert();
@@ -106,14 +110,17 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
                 format = WI.UIString("Compute Pipeline %d");
                 break;
             case ShaderProgram.ProgramType.Render:
+            case ShaderProgram.ProgramType.Vertex:
                 format = WI.UIString("Render Pipeline %d");
                 break;
             }
             break;
         }
         console.assert(format);
-        if (!this._uniqueDisplayNumber)
-            this._uniqueDisplayNumber = this._canvas.nextShaderProgramDisplayNumberForProgramType(this._programType);
+        if (!this._uniqueDisplayNumber) {
+            let programType = this._programType === ShaderProgram.ProgramType.Vertex ? ShaderProgram.ProgramType.Render : this._programType;
+            this._uniqueDisplayNumber = this._canvas.nextShaderProgramDisplayNumberForProgramType(programType);
+        }
         return format.format(this._uniqueDisplayNumber);
     }
 
@@ -185,6 +192,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 WI.ShaderProgram.ProgramType = {
     Compute: "compute",
     Render: "render",
+    Vertex: "vertex",
 };
 
 WI.ShaderProgram.ShaderType = {

@@ -1,0 +1,161 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true OffscreenCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+async function load() {
+    await initializeWebGPU();
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.ShaderProgram.WebGPU");
+    let canvas = InspectorTest.WebGPU.canvas();
+    InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
+
+    let asynchronousComputeProgram = null;
+    let asynchronousRenderProgram = null;
+
+    async function createAndAwaitProgram(programType, expression) {
+        let programAddedPromise = canvas.shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+        InspectorTest.evaluateInPage(expression);
+
+        let event = await programAddedPromise;
+        let shaderProgram = event.data.item;
+        InspectorTest.expectThat(shaderProgram instanceof WI.ShaderProgram, `Added a "${programType}" ShaderProgram.`);
+        InspectorTest.expectEqual(shaderProgram.programType, programType, "ShaderProgram should have the expected type.");
+        InspectorTest.expectEqual(shaderProgram.canvas, canvas, "ShaderProgram should have the WebGPU Canvas as its parent.");
+        return shaderProgram;
+    }
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.Existing",
+        description: "Check that pipelines created before CanvasAgent is enabled are discovered.",
+        async test() {
+            let computeProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
+            InspectorTest.expectThat(computeProgram instanceof WI.ShaderProgram, "Found the existing compute ShaderProgram.");
+            InspectorTest.expectEqual(computeProgram.canvas, canvas, "Compute ShaderProgram should have the WebGPU Canvas as its parent.");
+
+            let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
+            InspectorTest.expectThat(renderProgram instanceof WI.ShaderProgram, "Found the existing render ShaderProgram.");
+            InspectorTest.expectEqual(renderProgram.canvas, canvas, "Render ShaderProgram should have the WebGPU Canvas as its parent.");
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "Canvas should initially have two ShaderPrograms.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.OffscreenCanvas",
+        description: "Check that a tracked render pipeline can render to an OffscreenCanvas without creating another Canvas-domain object.",
+        async test() {
+            const eventName = "WebGPUOffscreenRendered";
+            let renderedPromise = InspectorTest.awaitEvent(eventName);
+            InspectorTest.evaluateInPage(`void renderWithOffscreenPipeline("${eventName}")`);
+            let event = await renderedPromise;
+            InspectorTest.expectTrue(event.data.rendered, "Rendered with the pipeline to an OffscreenCanvas.");
+            InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "OffscreenCanvas should use the existing GPUDevice Canvas.");
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "Rendering to an OffscreenCanvas should preserve the pipeline collection.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.CreateComputePipeline",
+        description: "Check that creating a synchronous compute pipeline adds a ShaderProgram.",
+        async test() {
+            await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Compute, `void createComputePipeline()`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.CreateRenderPipeline",
+        description: "Check that creating a synchronous render pipeline adds a ShaderProgram.",
+        async test() {
+            await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Render, `void createRenderPipeline()`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.CreateFragmentlessRenderPipeline",
+        description: "Check that a render pipeline without a fragment stage exposes only its vertex shader.",
+        async test() {
+            let shaderProgram = await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Vertex, `void createFragmentlessRenderPipeline()`);
+            InspectorTest.expectFalse(shaderProgram.sharesVertexFragmentShader, "Fragmentless render ShaderProgram should not report vertex and fragment shader module sharing.");
+            let {source} = await shaderProgram.target.CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
+            InspectorTest.expectTrue(source.includes("@vertex") && source.includes("vertexMain"), "Fragmentless render ShaderProgram should expose its vertex WGSL source.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.CreateComputePipelineAsync",
+        description: "Check that creating an asynchronous compute pipeline adds a ShaderProgram.",
+        async test() {
+            asynchronousComputeProgram = await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Compute, `void createComputePipeline({asynchronously: true})`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.CreateRenderPipelineAsync",
+        description: "Check that creating an asynchronous render pipeline adds a ShaderProgram.",
+        async test() {
+            asynchronousRenderProgram = await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Render, `void createRenderPipeline({asynchronously: true})`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.DeleteComputePipeline",
+        description: "Check that collecting a compute pipeline removes its ShaderProgram.",
+        async test() {
+            let programRemovedPromise = canvas.shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemRemoved);
+            InspectorTest.evaluateInPage(`releaseLastComputePipeline()`);
+
+            let event = await programRemovedPromise;
+            InspectorTest.expectEqual(event.data.item, asynchronousComputeProgram, "Removed the previously added compute ShaderProgram.");
+            await InspectorTest.evaluateInPage(`stopCollectingGarbage()`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.DeleteRenderPipeline",
+        description: "Check that collecting a render pipeline removes its ShaderProgram.",
+        async test() {
+            let programRemovedPromise = canvas.shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemRemoved);
+            InspectorTest.evaluateInPage(`releaseLastRenderPipeline()`);
+
+            let event = await programRemovedPromise;
+            InspectorTest.expectEqual(event.data.item, asynchronousRenderProgram, "Removed the previously added render ShaderProgram.");
+            await InspectorTest.evaluateInPage(`stopCollectingGarbage()`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.ParentDeviceRemoved",
+        description: "Check that Inspector instrumentation does not keep a GPUDevice alive through its pipeline wrappers.",
+        async test() {
+            let allProgramsRemovedBeforeCanvas = false;
+            let canvasRemovedPromise = new Promise((resolve) => {
+                WI.canvasManager.canvasCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+                    allProgramsRemovedBeforeCanvas = !canvas.shaderProgramCollection.size;
+                    resolve(event);
+                });
+            });
+            InspectorTest.evaluateInPage(`releaseDeviceKeepingPipelines()`);
+
+            let event = await canvasRemovedPromise;
+            InspectorTest.expectTrue(allProgramsRemovedBeforeCanvas, "All ShaderPrograms should be removed before the GPUDevice Canvas.");
+            InspectorTest.expectEqual(event.data.item, canvas, "Removed the WebGPU Canvas after its GPUDevice was collected.");
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 0, "GPUDevice Canvas should have no remaining ShaderPrograms.");
+            let hasPipelineWrappers = await InspectorTest.evaluateInPage(`computePipelines.length > 0 && renderPipelines.length > 0`);
+            InspectorTest.expectTrue(hasPipelineWrappers, "Page should still retain its WebGPU pipeline wrappers.");
+            await InspectorTest.evaluateInPage(`stopCollectingGarbage()`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager tracks creation and destruction of WebGPU pipelines.</p>
+</body>
+</html>

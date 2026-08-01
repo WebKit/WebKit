@@ -39,7 +39,9 @@
 #include "EventTarget.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "GPUComputePipeline.h"
 #include "GPUDevice.h"
+#include "GPURenderPipeline.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentationPublic.h"
 #include "InstrumentingAgents.h"
@@ -335,6 +337,10 @@ public:
     static void didCreateWebGPUDevice(GPUDevice&);
     static void willDestroyWebGPUDevice(GPUDevice&);
     static void didChangeGPUDeviceClientNodes(GPUDevice&);
+    static void didCreateWebGPUComputePipeline(GPUDevice&, GPUComputePipeline&);
+    static void willDestroyWebGPUComputePipeline(GPUComputePipeline&);
+    static void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
+    static void willDestroyWebGPURenderPipeline(GPURenderPipeline&);
 
     static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationName(WebAnimation&);
@@ -545,6 +551,10 @@ private:
     static void didCreateWebGPUDeviceImpl(InstrumentingAgents&, GPUDevice&);
     static void willDestroyWebGPUDeviceImpl(InstrumentingAgents&, GPUDevice&);
     static void didChangeGPUDeviceClientNodesImpl(InstrumentingAgents&, GPUDevice&);
+    static void didCreateWebGPUComputePipelineImpl(InstrumentingAgents&, GPUDevice&, GPUComputePipeline&);
+    static void willDestroyWebGPUComputePipelineImpl(InstrumentingAgents&, GPUComputePipeline&);
+    static void didCreateWebGPURenderPipelineImpl(InstrumentingAgents&, GPUDevice&, GPURenderPipeline&);
+    static void willDestroyWebGPURenderPipelineImpl(InstrumentingAgents&, GPURenderPipeline&);
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
@@ -1537,6 +1547,38 @@ inline void InspectorInstrumentation::didChangeGPUDeviceClientNodes(GPUDevice& d
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
         didChangeGPUDeviceClientNodesImpl(*agents, device);
+}
+
+inline void InspectorInstrumentation::didCreateWebGPUComputePipeline(GPUDevice& device, GPUComputePipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
+        didCreateWebGPUComputePipelineImpl(*agents, device, pipeline);
+}
+
+inline void InspectorInstrumentation::willDestroyWebGPUComputePipeline(GPUComputePipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr device = pipeline.device()) {
+        if (RefPtr agents = instrumentingAgents(protect(device->scriptExecutionContext())))
+            willDestroyWebGPUComputePipelineImpl(*agents, pipeline);
+    }
+}
+
+inline void InspectorInstrumentation::didCreateWebGPURenderPipeline(GPUDevice& device, GPURenderPipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
+        didCreateWebGPURenderPipelineImpl(*agents, device, pipeline);
+}
+
+inline void InspectorInstrumentation::willDestroyWebGPURenderPipeline(GPURenderPipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr device = pipeline.device()) {
+        if (RefPtr agents = instrumentingAgents(protect(device->scriptExecutionContext())))
+            willDestroyWebGPURenderPipelineImpl(*agents, pipeline);
+    }
 }
 
 inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)

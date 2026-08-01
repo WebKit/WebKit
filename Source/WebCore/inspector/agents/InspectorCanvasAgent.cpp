@@ -36,7 +36,9 @@
 #include "DOMPointInit.h"
 #include "EventLoop.h"
 #include "GPUCanvasContext.h"
+#include "GPUComputePipeline.h"
 #include "GPUDevice.h"
+#include "GPURenderPipeline.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -99,9 +101,7 @@ InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
     , m_backendDispatcher(Inspector::CanvasBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_canvasDestroyedTimer(*this, &InspectorCanvasAgent::canvasDestroyedTimerFired)
-#if ENABLE(WEBGL)
     , m_programDestroyedTimer(*this, &InspectorCanvasAgent::programDestroyedTimerFired)
-#endif
 {
 }
 
@@ -201,6 +201,42 @@ void InspectorCanvasAgent::internalEnable()
         }
     }
 #endif
+
+    Vector<std::pair<WeakPtr<GPUComputePipeline>, WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData>>> computePipelines;
+    {
+        Locker locker { GPUComputePipeline::instancesLock() };
+        for (SUPPRESS_UNCOUNTED_ARG auto& [pipeline, device] : GPUComputePipeline::instances()) {
+            if (!device || !device->isContextThread())
+                continue;
+            RefPtr scriptExecutionContext = device->scriptExecutionContext();
+            if (!scriptExecutionContext)
+                continue;
+            if (matchesCurrentContext(scriptExecutionContext))
+                computePipelines.append({ *pipeline, *device });
+        }
+    }
+    for (auto& [pipeline, device] : computePipelines) {
+        if (pipeline && device)
+            didCreateWebGPUComputePipeline(*device, *pipeline);
+    }
+
+    Vector<std::pair<WeakPtr<GPURenderPipeline>, WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData>>> renderPipelines;
+    {
+        Locker locker { GPURenderPipeline::instancesLock() };
+        for (SUPPRESS_UNCOUNTED_ARG auto& [pipeline, device] : GPURenderPipeline::instances()) {
+            if (!device || !device->isContextThread())
+                continue;
+            RefPtr scriptExecutionContext = device->scriptExecutionContext();
+            if (!scriptExecutionContext)
+                continue;
+            if (matchesCurrentContext(scriptExecutionContext))
+                renderPipelines.append({ *pipeline, *device });
+        }
+    }
+    for (auto& [pipeline, device] : renderPipelines) {
+        if (pipeline && device)
+            didCreateWebGPURenderPipeline(*device, *pipeline);
+    }
 }
 
 void InspectorCanvasAgent::internalDisable()
@@ -309,8 +345,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::stopRecording(con
     return { };
 }
 
-#if ENABLE(WEBGL)
-
 Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestShaderSource(const Inspector::Protocol::Canvas::ProgramId& programId, Inspector::Protocol::Canvas::ShaderType shaderType)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -325,6 +359,8 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestShaderSo
 
     return source;
 }
+
+#if ENABLE(WEBGL)
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::updateShader(const Inspector::Protocol::Canvas::ProgramId& programId, Inspector::Protocol::Canvas::ShaderType shaderType, const String& source)
 {
@@ -577,6 +613,50 @@ void InspectorCanvasAgent::willDestroyWebGPUDevice(GPUDevice& device)
     unbindCanvas(*inspectorCanvas);
 }
 
+void InspectorCanvasAgent::didCreateWebGPUComputePipeline(GPUDevice& device, GPUComputePipeline& pipeline)
+{
+    auto inspectorCanvas = findInspectorCanvas(device);
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    auto inspectorProgramRef = InspectorShaderProgram::create(pipeline, *inspectorCanvas);
+    Ref inspectorProgram = inspectorProgramRef.get();
+    m_identifierToInspectorProgram.set(inspectorProgram->identifier(), WTF::move(inspectorProgramRef));
+    m_frontendDispatcher->programCreated(inspectorProgram->buildObjectForShaderProgram());
+}
+
+void InspectorCanvasAgent::willDestroyWebGPUComputePipeline(GPUComputePipeline& pipeline)
+{
+    auto inspectorProgram = findInspectorProgram(pipeline);
+    if (!inspectorProgram)
+        return;
+
+    unbindProgram(*inspectorProgram);
+}
+
+void InspectorCanvasAgent::didCreateWebGPURenderPipeline(GPUDevice& device, GPURenderPipeline& pipeline)
+{
+    auto inspectorCanvas = findInspectorCanvas(device);
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    auto inspectorProgramRef = InspectorShaderProgram::create(pipeline, *inspectorCanvas);
+    Ref inspectorProgram = inspectorProgramRef.get();
+    m_identifierToInspectorProgram.set(inspectorProgram->identifier(), WTF::move(inspectorProgramRef));
+    m_frontendDispatcher->programCreated(inspectorProgram->buildObjectForShaderProgram());
+}
+
+void InspectorCanvasAgent::willDestroyWebGPURenderPipeline(GPURenderPipeline& pipeline)
+{
+    auto inspectorProgram = findInspectorProgram(pipeline);
+    if (!inspectorProgram)
+        return;
+
+    unbindProgram(*inspectorProgram);
+}
+
 void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasRenderingContext.hasActiveInspectorCanvasCallTracer());
@@ -666,8 +746,6 @@ void InspectorCanvasAgent::canvasDestroyedTimerFired()
     m_removedCanvasIdentifiers.clear();
 }
 
-#if ENABLE(WEBGL)
-
 void InspectorCanvasAgent::programDestroyedTimerFired()
 {
     if (!m_removedProgramIdentifiers.size())
@@ -678,8 +756,6 @@ void InspectorCanvasAgent::programDestroyedTimerFired()
 
     m_removedProgramIdentifiers.clear();
 }
-
-#endif
 
 void InspectorCanvasAgent::reset()
 {
@@ -693,12 +769,10 @@ void InspectorCanvasAgent::reset()
     if (m_canvasDestroyedTimer.isActive())
         m_canvasDestroyedTimer.stop();
 
-#if ENABLE(WEBGL)
     m_identifierToInspectorProgram.clear();
     m_removedProgramIdentifiers.clear();
     if (m_programDestroyedTimer.isActive())
         m_programDestroyedTimer.stop();
-#endif
 
     m_recordingCanvasIdentifiers.clear();
 }
@@ -744,7 +818,6 @@ void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
         context->canvasBase().removeObserver(*this);
     }
 
-#if ENABLE(WEBGL)
     Vector<InspectorShaderProgram*> programsToRemove;
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
         if (&inspectorProgram->canvas() == &inspectorCanvas)
@@ -752,7 +825,6 @@ void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
     }
     for (RefPtr inspectorProgram : programsToRemove)
         unbindProgram(*inspectorProgram);
-#endif
 
     String identifier = inspectorCanvas.identifier();
     m_identifierToInspectorCanvas.remove(identifier);
@@ -794,8 +866,6 @@ RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(const GPUDevic
     return nullptr;
 }
 
-#if ENABLE(WEBGL)
-
 void InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgram)
 {
     String identifier = inspectorProgram.identifier();
@@ -820,15 +890,35 @@ RefPtr<InspectorShaderProgram> InspectorCanvasAgent::assertInspectorProgram(Insp
     return inspectorProgram;
 }
 
+#if ENABLE(WEBGL)
+
 RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(WebGLProgram& program)
 {
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
-        if (&inspectorProgram->program() == &program)
+        if (inspectorProgram->program() == &program)
             return inspectorProgram.ptr();
     }
     return nullptr;
 }
 
 #endif // ENABLE(WEBGL)
+
+RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(GPUComputePipeline& pipeline)
+{
+    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
+        if (inspectorProgram->computePipeline() == &pipeline)
+            return inspectorProgram.ptr();
+    }
+    return nullptr;
+}
+
+RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(GPURenderPipeline& pipeline)
+{
+    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
+        if (inspectorProgram->renderPipeline() == &pipeline)
+            return inspectorProgram.ptr();
+    }
+    return nullptr;
+}
 
 } // namespace WebCore

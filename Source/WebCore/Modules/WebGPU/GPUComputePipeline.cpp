@@ -27,8 +27,73 @@
 #include "GPUComputePipeline.h"
 
 #include "GPUBindGroupLayout.h"
+#include "GPUDevice.h"
+#include "InspectorInstrumentation.h"
+#include <wtf/Locker.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+Lock GPUComputePipeline::s_instancesLock;
+
+Ref<GPUComputePipeline> GPUComputePipeline::create(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId, GPUDevice* device, const String& shaderSource)
+{
+    Ref result = adoptRef(*new GPUComputePipeline(WTF::move(backing), uniqueId, device, shaderSource));
+
+    if (device)
+        InspectorInstrumentation::didCreateWebGPUComputePipeline(*device, result);
+
+    return result;
+}
+
+HashMap<GPUComputePipeline*, GPUDevice*>& GPUComputePipeline::instances()
+{
+    static NeverDestroyed<HashMap<GPUComputePipeline*, GPUDevice*>> instances;
+    return instances;
+}
+
+Lock& GPUComputePipeline::instancesLock()
+{
+    return s_instancesLock;
+}
+
+void GPUComputePipeline::willDestroyDevice(GPUDevice& device)
+{
+    Locker locker { instancesLock() };
+    for (auto& registeredDevice : instances().values()) {
+        if (registeredDevice == &device) {
+            // Don't remove any GPUComputePipeline from the instances list, as they may still exist.
+            // Only remove the association with a GPUDevice.
+            registeredDevice = nullptr;
+        }
+    }
+}
+
+GPUComputePipeline::GPUComputePipeline(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId, GPUDevice* device, const String& shaderSource)
+    : m_backing(WTF::move(backing))
+    , m_uniqueId(uniqueId)
+    , m_shaderSource(shaderSource)
+{
+    if (device) {
+        m_device = *device;
+
+        Locker locker { instancesLock() };
+        instances().add(this, device);
+    }
+}
+
+GPUComputePipeline::~GPUComputePipeline()
+{
+    InspectorInstrumentation::willDestroyWebGPUComputePipeline(*this);
+
+    Locker locker { instancesLock() };
+    instances().remove(this);
+}
+
+GPUDevice* GPUComputePipeline::device() const
+{
+    return m_device;
+}
 
 String GPUComputePipeline::label() const
 {

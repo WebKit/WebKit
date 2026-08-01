@@ -1,100 +1,160 @@
-if (window.internals)
-    window.internals.settings.setWebGPUEnabled(true);
-
-if (window.testRunner) {
-    testRunner.dumpAsText();
+if (window.testRunner)
     testRunner.waitUntilDone();
-}
 
-const computePipelineSource = `
-[numthreads(2, 1, 1)]
-compute void computeShader(device float[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
-    buffer[uint(threadID.x)] = buffer[uint(threadID.x)] * 2.0;
-}
-`;
+const computeShaderSource = `@compute @workgroup_size(1)
+fn computeMain() {
+}`;
 
-const renderPipelineSource = `
-vertex float4 vertexShader(float4 position : attribute(0), float i : attribute(1)) : SV_Position {
-    return position;
-}
+const vertexShaderSource = `@vertex
+fn vertexMain(@builtin(vertex_index) vertexIndex: u32) -> @builtin(position) vec4<f32> {
+    let positions = array(
+        vec2<f32>(-1.0, -1.0),
+        vec2<f32>(3.0, -1.0),
+        vec2<f32>(-1.0, 3.0)
+    );
+    return vec4<f32>(positions[vertexIndex], 0.0, 1.0);
+}`;
 
-fragment float4 fragmentShader(float4 position : SV_Position) : SV_Target 0 {
-    return position;
-}
-`;
+const fragmentShaderSource = `@fragment
+fn fragmentMain() -> @location(0) vec4<f32> {
+    return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+}`;
 
+let adapter = null;
 let device = null;
+let presentationFormat = null;
+let computePipelines = [];
+let renderPipelines = [];
+let offscreenWebGPUCanvas = null;
+let offscreenWebGPUCanvasContext = null;
+let garbageCollectionInterval = null;
 
-async function createComputePipeline(code = computePipelineSource) {
-    // Copied from webgpu/whlsl/compute.html.
-    const shaderModule = device.createShaderModule({code});
-    const computeStage = {module: shaderModule, entryPoint: "computeShader"};
-    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}]};
-    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
-    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
-    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
-    device.createComputePipeline({computeStage, layout: pipelineLayout});
-}
-
-async function createRenderPipeline(code = renderPipelineSource) {
-    // Copied from webgpu/whlsl/whlsl.html.
-    const shaderModule = device.createShaderModule({code});
-    const vertexStage = {module: shaderModule, entryPoint: "vertexShader"};
-    const fragmentShaderModule = device.createShaderModule({code});
-    const fragmentStage = {module: shaderModule, entryPoint: "fragmentShader"};
-    const primitiveTopology = "triangle-strip";
-    const rasterizationState = {frontFace: "cw", cullMode: "none"};
-    const alphaBlend = {};
-    const colorBlend = {};
-    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWrite.ALL
-    const depthStencilState = null;
-    const attribute0 = {shaderLocation: 0, format: "float4"};
-    const attribute1 = {shaderLocation: 1, format: "float"};
-    const input0 = {stride: 16, attributeSet: [attribute0]};
-    const input1 = {stride: 4, attributeSet: [attribute1]};
-    const inputs = [input0, input1];
-    const vertexInput = {vertexBuffers: inputs};
-    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "uniform-buffer"}]};
-    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
-    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
-    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
-    device.createRenderPipeline({vertexStage, fragmentStage, primitiveTopology, rasterizationState, colorStates, depthStencilState, vertexInput, sampleCount: 1, layout: pipelineLayout});
-}
-
-function deleteDevice() {
-    device = null;
-    // Force GC to make sure the device is destroyed, otherwise the frontend
-    // does not receive Canvas.canvasRemoved events.
-    setTimeout(() => { GCController.collect(); }, 0);
-}
-
-async function load() {
-    let adapter = await navigator.gpu.requestAdapter();
+async function initializeWebGPU() {
+    adapter = await navigator.gpu.requestAdapter();
     device = await adapter.requestDevice();
+    presentationFormat = navigator.gpu.getPreferredCanvasFormat();
 
-    await Promise.all([
-        createComputePipeline(),
-        createRenderPipeline(),
-    ]);
+    await createComputePipeline();
+    await createRenderPipeline();
+}
 
-    if (window.beforeTest)
-        await beforeTest();
+async function createComputePipeline({asynchronously = false} = {}) {
+    let shaderModule = device.createShaderModule({code: computeShaderSource});
+    let descriptor = {
+        layout: "auto",
+        compute: {
+            module: shaderModule,
+            entryPoint: "computeMain",
+        },
+    };
+    let pipeline = asynchronously ? await device.createComputePipelineAsync(descriptor) : device.createComputePipeline(descriptor);
+    computePipelines.push(pipeline);
+}
 
-    runTest();
+async function createRenderPipeline({asynchronously = false} = {}) {
+    let vertexShaderModule = device.createShaderModule({code: vertexShaderSource});
+    let fragmentShaderModule = device.createShaderModule({code: fragmentShaderSource});
+    let descriptor = {
+        layout: "auto",
+        vertex: {
+            module: vertexShaderModule,
+            entryPoint: "vertexMain",
+        },
+        fragment: {
+            module: fragmentShaderModule,
+            entryPoint: "fragmentMain",
+            targets: [{format: presentationFormat}],
+        },
+        primitive: {topology: "triangle-list"},
+    };
+    let pipeline = asynchronously ? await device.createRenderPipelineAsync(descriptor) : device.createRenderPipeline(descriptor);
+    renderPipelines.push(pipeline);
+}
+
+function createFragmentlessRenderPipeline() {
+    let shaderModule = device.createShaderModule({code: vertexShaderSource});
+    let pipeline = device.createRenderPipeline({
+        layout: "auto",
+        vertex: {
+            module: shaderModule,
+            entryPoint: "vertexMain",
+        },
+        primitive: {topology: "triangle-list"},
+    });
+    renderPipelines.push(pipeline);
+}
+
+function renderToContext(context) {
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{
+            view: context.getCurrentTexture().createView(),
+            clearValue: {r: 0, g: 0, b: 0, a: 1},
+            loadOp: "clear",
+            storeOp: "store",
+        }],
+    });
+    renderPassEncoder.setPipeline(renderPipelines[0]);
+    renderPassEncoder.draw(3);
+    renderPassEncoder.end();
+    device.queue.submit([commandEncoder.finish()]);
+}
+
+async function renderWithOffscreenPipeline(eventName) {
+    if (!offscreenWebGPUCanvasContext) {
+        offscreenWebGPUCanvas = new OffscreenCanvas(4, 4);
+        offscreenWebGPUCanvasContext = offscreenWebGPUCanvas.getContext("webgpu");
+        offscreenWebGPUCanvasContext.configure({
+            device,
+            format: presentationFormat,
+            alphaMode: "opaque",
+        });
+    }
+
+    renderToContext(offscreenWebGPUCanvasContext);
+    await device.queue.onSubmittedWorkDone();
+    TestPage.dispatchEventToFrontend(eventName, {rendered: true});
+}
+
+function startCollectingGarbage() {
+    if (!garbageCollectionInterval)
+        garbageCollectionInterval = setInterval(() => { GCController.collect(); }, 0);
+}
+
+function stopCollectingGarbage() {
+    clearInterval(garbageCollectionInterval);
+    garbageCollectionInterval = null;
+}
+
+function releaseLastComputePipeline() {
+    computePipelines.pop();
+    startCollectingGarbage();
+}
+
+function releaseLastRenderPipeline() {
+    renderPipelines.pop();
+    startCollectingGarbage();
+}
+
+function releaseDeviceKeepingPipelines() {
+    if (offscreenWebGPUCanvasContext)
+        offscreenWebGPUCanvasContext.unconfigure();
+    offscreenWebGPUCanvasContext = null;
+    offscreenWebGPUCanvas = null;
+
+    device = null;
+    adapter = null;
+    startCollectingGarbage();
 }
 
 TestPage.registerInitializer(() => {
-    if (!InspectorTest.ShaderProgram)
-        InspectorTest.ShaderProgram = {};
+    InspectorTest.WebGPU = {};
 
-    InspectorTest.ShaderProgram.programForType = function(programType) {
-        let result = null;
-        for (let shaderProgram of WI.canvasManager.shaderPrograms) {
-            if (shaderProgram.programType === programType) {
-                InspectorTest.assert(!result);
-                result = shaderProgram;
-            }
-        }
-        return result;
+    InspectorTest.WebGPU.canvas = function() {
+        return Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
+    };
+
+    InspectorTest.WebGPU.shaderProgramForType = function(canvas, programType) {
+        return Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === programType);
     };
 });

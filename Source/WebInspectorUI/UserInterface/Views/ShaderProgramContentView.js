@@ -53,22 +53,24 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             shaderTypeContainer.classList.add("shader-type");
 
             let textEditor = new WI.TextEditor;
-            textEditor.readOnly = false;
+            textEditor.readOnly = isWebGPU;
             textEditor.addEventListener(WI.TextEditor.Event.Focused, this._editorFocused, this);
             textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
-            textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, function(event) {
-                contentDidChangeDebouncer.delayForTime(250, event);
-            }, textEditor);
+            if (!isWebGPU) {
+                textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, function(event) {
+                    contentDidChangeDebouncer.delayForTime(250, event);
+                }, textEditor);
+            }
 
             switch (shaderType) {
             case WI.ShaderProgram.ShaderType.Compute:
                 shaderTypeContainer.textContent = WI.UIString("Compute Shader");
-                textEditor.mimeType = isWebGPU ? "x-pipeline/x-compute" : "x-shader/x-compute";
+                textEditor.mimeType = isWebGPU ? "text/wgsl" : "x-shader/x-compute";
                 break;
 
             case WI.ShaderProgram.ShaderType.Fragment:
                 shaderTypeContainer.textContent = WI.UIString("Fragment Shader");
-                textEditor.mimeType = isWebGPU ? "x-pipeline/x-render" : "x-shader/x-fragment";
+                textEditor.mimeType = isWebGPU ? "text/wgsl" : "x-shader/x-fragment";
                 break;
 
             case WI.ShaderProgram.ShaderType.Vertex:
@@ -76,7 +78,7 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
                     shaderTypeContainer.textContent = WI.UIString("Vertex/Fragment Shader");
                 else
                     shaderTypeContainer.textContent = WI.UIString("Vertex Shader");
-                textEditor.mimeType = isWebGPU ? "x-pipeline/x-render" : "x-shader/x-vertex";
+                textEditor.mimeType = isWebGPU ? "text/wgsl" : "x-shader/x-vertex";
                 break;
             }
 
@@ -102,6 +104,13 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             if (!sharesVertexFragmentShader) {
                 this._fragmentEditor = createEditor(WI.ShaderProgram.ShaderType.Fragment);
             }
+
+            this._lastActiveEditor = this._vertexEditor;
+            break;
+        }
+
+        case WI.ShaderProgram.ProgramType.Vertex: {
+            this._vertexEditor = createEditor(WI.ShaderProgram.ShaderType.Vertex);
 
             this._lastActiveEditor = this._vertexEditor;
             break;
@@ -177,7 +186,7 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
                 extension = WI.unlocalizedString(".glsl");
                 break;
             case WI.Canvas.ContextType.WebGPU:
-                extension = WI.unlocalizedString(".wsl");
+                extension = WI.unlocalizedString(".wgsl");
                 break;
             }
             console.assert(extension);
@@ -284,8 +293,12 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
         case WI.ShaderProgram.ProgramType.Render:
             this.representedObject.requestShaderSource(WI.ShaderProgram.ShaderType.Vertex, createCallback(this._vertexEditor));
-            if (!this.representedObject.sharesVertexFragmentShader)
+            if (this._fragmentEditor)
                 this.representedObject.requestShaderSource(WI.ShaderProgram.ShaderType.Fragment, createCallback(this._fragmentEditor));
+            return;
+
+        case WI.ShaderProgram.ProgramType.Vertex:
+            this.representedObject.requestShaderSource(WI.ShaderProgram.ShaderType.Vertex, createCallback(this._vertexEditor));
             return;
         }
 

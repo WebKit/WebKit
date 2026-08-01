@@ -1076,6 +1076,7 @@
         },
         {
             "name": "extensionEnabled",
+            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
                 { "name": "extension", "type": "string", "description": "Name of the extension that was enabled." }

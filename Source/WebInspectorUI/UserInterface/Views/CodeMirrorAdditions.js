@@ -675,6 +675,9 @@
     // FIXME: Add WHLSL specific modes.
     CodeMirror.defineMIME("x-pipeline/x-compute", CodeMirror.resolveMode("x-shader/x-vertex"));
     CodeMirror.defineMIME("x-pipeline/x-render", CodeMirror.resolveMode("x-shader/x-vertex"));
+
+    // FIXME: Add a WGSL-specific mode.
+    CodeMirror.defineMIME("text/wgsl", "null");
 })();
 
 WI.compareCodeMirrorPositions = function(a, b)

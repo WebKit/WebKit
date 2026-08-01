@@ -11,7 +11,6 @@
         },
         {
             "id": "ProgramId",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "type": "string",
             "description": "Unique shader program identifier."
         },
@@ -34,13 +33,11 @@
         },
         {
             "id": "ProgramType",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "type": "string",
-            "enum": ["compute", "render"]
+            "enum": ["compute", "render", "vertex"]
         },
         {
             "id": "ShaderType",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "type": "string",
             "enum": ["compute", "fragment", "vertex"]
         },
@@ -81,13 +78,13 @@
         },
         {
             "id": "ShaderProgram",
-            "description": "Information about a WebGL/WebGL2 shader program.",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
+            "description": "Information about a WebGL/WebGL2 shader program or WebGPU shader pipeline.",
             "type": "object",
             "properties": [
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "programType", "$ref": "ProgramType" },
-                { "name": "canvasId", "$ref": "CanvasId"}
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "sharesVertexFragmentShader", "type": "boolean", "optional": true, "description": "Indicates whether the vertex and fragment shader modules are the same object for a WebGPU render pipeline." }
             ]
         }
     ],
@@ -169,7 +166,6 @@
         {
             "name": "requestShaderSource",
             "description": "Requests the source of the shader of the given type from the program with the given id.",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "parameters": [
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "shaderType", "$ref": "ShaderType" }
@@ -237,6 +233,7 @@
         },
         {
             "name": "extensionEnabled",
+            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
                 { "name": "extension", "type": "string", "description": "Name of the extension that was enabled." }
@@ -273,14 +270,12 @@
         },
         {
             "name": "programCreated",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "parameters": [
                 { "name": "shaderProgram", "$ref": "ShaderProgram" }
             ]
         },
         {
             "name": "programDeleted",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "parameters": [
                 { "name": "programId", "$ref": "ProgramId" }
             ]

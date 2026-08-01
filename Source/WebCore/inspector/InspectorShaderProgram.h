@@ -25,24 +25,37 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
-
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Ref.h>
+#include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
 
+class GPUComputePipeline;
+class GPURenderPipeline;
 class InspectorCanvas;
+
+#if ENABLE(WEBGL)
 class WebGLProgram;
+#endif // ENABLE(WEBGL)
 
 class InspectorShaderProgram final : public RefCounted<InspectorShaderProgram> {
 public:
+#if ENABLE(WEBGL)
     static Ref<InspectorShaderProgram> create(WebGLProgram&, InspectorCanvas&);
+#endif // ENABLE(WEBGL)
+    static Ref<InspectorShaderProgram> create(GPUComputePipeline&, InspectorCanvas&);
+    static Ref<InspectorShaderProgram> create(GPURenderPipeline&, InspectorCanvas&);
 
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
     InspectorCanvas& canvas() const { return m_canvas; }
-    WebGLProgram& program() const { return m_program; }
+
+#if ENABLE(WEBGL)
+    WebGLProgram* program() const;
+#endif // ENABLE(WEBGL)
+    GPUComputePipeline* computePipeline() const;
+    GPURenderPipeline* renderPipeline() const;
 
     String requestShaderSource(Inspector::Protocol::Canvas::ShaderType);
     bool updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source);
@@ -56,15 +69,24 @@ public:
     Ref<Inspector::Protocol::Canvas::ShaderProgram> buildObjectForShaderProgram();
 
 private:
+
+#if ENABLE(WEBGL)
     InspectorShaderProgram(WebGLProgram&, InspectorCanvas&);
+#endif // ENABLE(WEBGL)
+    InspectorShaderProgram(GPUComputePipeline&, InspectorCanvas&);
+    InspectorShaderProgram(GPURenderPipeline&, InspectorCanvas&);
 
     String m_identifier;
     WeakRef<InspectorCanvas> m_canvas;
-    WeakRef<WebGLProgram> m_program;
+    Variant<
+#if ENABLE(WEBGL)
+        WeakRef<WebGLProgram>,
+#endif // ENABLE(WEBGL)
+        WeakRef<GPUComputePipeline>,
+        WeakRef<GPURenderPipeline>
+    > m_program;
     bool m_disabled { false };
     bool m_highlighted { false };
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL)

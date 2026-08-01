@@ -40,9 +40,9 @@ class DeferredPromise;
 
 class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
 public:
-    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing)
+    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing, String&& source)
     {
-        return adoptRef(*new GPUShaderModule(WTF::move(backing)));
+        return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(source)));
     }
 
     String NODELETE label() const;
@@ -53,14 +53,17 @@ public:
 
     WebGPU::ShaderModule& backing() { return m_backing; }
     const WebGPU::ShaderModule& backing() const { return m_backing; }
+    const String& source() const { return m_source; }
 
 private:
-    GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing)
+    GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing, String&& source)
         : m_backing(WTF::move(backing))
+        , m_source(WTF::move(source))
     {
     }
 
     const Ref<WebGPU::ShaderModule> m_backing;
+    String m_source;
 };
 
 }
