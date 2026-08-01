@@ -119,11 +119,7 @@ void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister value = bytecode.m_operand;
 
-#if USE(JSVALUE64)
     emitGetVirtualRegister(value, regT0);
-#elif USE(JSVALUE32_64)
-    emitGetVirtualRegisterTag(value, regT0);
-#endif
     isEmpty(regT0, regT0);
 
     boxBoolean(regT0, jsRegT10);
@@ -195,14 +191,9 @@ void JIT::emit_op_is_boolean(const JSInstruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister value = bytecode.m_operand;
 
-#if USE(JSVALUE64)
     emitGetVirtualRegister(value, regT0);
     xor64(TrustedImm32(JSValue::ValueFalse), regT0);
     test64(Zero, regT0, TrustedImm32(static_cast<int32_t>(~1)), regT0);
-#elif USE(JSVALUE32_64)
-    emitGetVirtualRegisterTag(value, regT0);
-    compare32(Equal, regT0, TrustedImm32(JSValue::BooleanTag), regT0);
-#endif
 
     boxBoolean(regT0, jsRegT10);
     emitPutVirtualRegister(dst, jsRegT10);
@@ -214,14 +205,8 @@ void JIT::emit_op_is_number(const JSInstruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister value = bytecode.m_operand;
 
-#if USE(JSVALUE64)
     emitGetVirtualRegister(value, regT0);
     test64(NonZero, regT0, numberTagRegister, regT0);
-#elif USE(JSVALUE32_64)
-    emitGetVirtualRegisterTag(value, regT0);
-    add32(TrustedImm32(1), regT0);
-    compare32(Below, regT0, TrustedImm32(JSValue::LowestTag + 1), regT0);
-#endif
 
     boxBoolean(regT0, jsRegT10);
     emitPutVirtualRegister(dst, jsRegT10);
@@ -398,7 +383,6 @@ void JIT::emit_op_jfalse(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_condition, valueJSR);
 
     JumpList fallThrough;
-#if USE(JSVALUE64)
     // Quick fast path.
     auto isNotBoolean = branchIfNotBoolean(valueJSR, scratch1GPR);
     addJump(branchTest64(Zero, valueJSR.payloadGPR(), TrustedImm32(0x1)), target);
@@ -411,7 +395,6 @@ void JIT::emit_op_jfalse(const JSInstruction* currentInstruction)
 
     isNotInt32.link(this);
     addJump(branchIfOther(valueJSR, scratch1GPR), target);
-#endif
 
     nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsFalseyGenerator).retaggedCode<NoPtrTag>() });
     addJump(branchTest32(NonZero, regT0), target);
@@ -501,11 +484,7 @@ void JIT::emit_op_jundefined_or_null(const JSInstruction* currentInstruction)
     VirtualRegister value = bytecode.m_value;
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
-#if USE(JSVALUE64)
     emitGetVirtualRegister(value, jsRegT10);
-#elif USE(JSVALUE32_64)
-    emitGetVirtualRegisterTag(value, jsRegT10.tagGPR());
-#endif
 
     emitTurnUndefinedIntoNull(jsRegT10);
     addJump(branchIfNull(jsRegT10), target);
@@ -517,11 +496,7 @@ void JIT::emit_op_jnundefined_or_null(const JSInstruction* currentInstruction)
     VirtualRegister value = bytecode.m_value;
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
-#if USE(JSVALUE64)
     emitGetVirtualRegister(value, jsRegT10);
-#elif USE(JSVALUE32_64)
-    emitGetVirtualRegisterTag(value, jsRegT10.tagGPR());
-#endif
 
     emitTurnUndefinedIntoNull(jsRegT10);
     addJump(branchIfNotNull(jsRegT10), target);
@@ -534,15 +509,8 @@ void JIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitGetVirtualRegister(src, jsRegT10);
-#if USE(JSVALUE32_64)
-    // ON JSVALUE64 the pointer comparison below catches this case
-    Jump notCell = branchIfNotCell(jsRegT10);
-#endif
     loadCodeBlockConstantPayload(bytecode.m_specialPointer, regT2);
     addJump(branchPtr(Equal, jsRegT10.payloadGPR(), regT2), target);
-#if USE(JSVALUE32_64)
-    notCell.link(this);
-#endif
 }
 
 void JIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
@@ -552,21 +520,12 @@ void JIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     
     emitGetVirtualRegister(src, jsRegT10);
-#if USE(JSVALUE32_64)
-    // ON JSVALUE64 the pointer comparison below catches this case
-    Jump notCell = branchIfNotCell(jsRegT10);
-#endif
     loadCodeBlockConstantPayload(bytecode.m_specialPointer, regT2);
     CCallHelpers::Jump equal = branchPtr(Equal, jsRegT10.payloadGPR(), regT2);
-#if USE(JSVALUE32_64)
-    notCell.link(this);
-#endif
     store8ToMetadata(TrustedImm32(1), bytecode, OpJneqPtr::Metadata::offsetOfHasJumped());
     addJump(jump(), target);
     equal.link(this);
 }
-
-#if USE(JSVALUE64)
 
 void JIT::emit_op_eq(const JSInstruction* currentInstruction)
 {
@@ -589,8 +548,6 @@ void JIT::emit_op_jeq(const JSInstruction* currentInstruction)
     addJump(branch32(Equal, regT0, regT1), target);
 }
 
-#endif
-
 void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJtrue>();
@@ -602,7 +559,6 @@ void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_condition, valueJSR);
 
     JumpList fallThrough;
-#if USE(JSVALUE64)
     // Quick fast path.
     auto isNotBoolean = branchIfNotBoolean(valueJSR, scratch1GPR);
     addJump(branchTest64(NonZero, valueJSR.payloadGPR(), TrustedImm32(0x1)), target);
@@ -615,7 +571,6 @@ void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
 
     isNotInt32.link(this);
     fallThrough.append(branchIfOther(valueJSR, scratch1GPR));
-#endif
 
     nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsTruthyGenerator).retaggedCode<NoPtrTag>() });
     addJump(branchTest32(NonZero, regT0), target);
@@ -650,8 +605,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "valueIsTruthy"_s, "Baseline: valueIsTruthy");
 }
 
-#if USE(JSVALUE64)
-
 void JIT::emit_op_neq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNeq>();
@@ -673,8 +626,6 @@ void JIT::emit_op_jneq(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     addJump(branch32(NotEqual, regT0, regT1), target);
 }
-
-#endif
 
 void JIT::emit_op_throw(const JSInstruction* currentInstruction)
 {
@@ -719,8 +670,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
     patchBuffer.link<OperationPtrTag>(operation, operationThrow);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "op_throw_handler"_s, "Baseline: op_throw_handler");
 }
-
-#if USE(JSVALUE64)
 
 template<typename Op>
 void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
@@ -1116,8 +1065,6 @@ void JIT::emitSlow_op_jnstricteq(const JSInstruction* currentInstruction, Vector
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
-#endif
-
 void JIT::emit_op_to_number(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToNumber>();
@@ -1304,11 +1251,7 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
     notInt32.link(this);
     JumpList failureCases;
     failureCases.append(branchIfNotNumber(jsRegT10, regT2));
-#if USE(JSVALUE64)
     unboxDoubleWithoutAssertions(jsRegT10.payloadGPR(), regT2, fpRegT0);
-#else
-    unboxDouble(jsRegT10.tagGPR(), jsRegT10.payloadGPR(), fpRegT0);
-#endif
     branchConvertDoubleToInt32(fpRegT0, jsRegT10.payloadGPR(), failureCases, fpRegT1, /* shouldCheckNegativeZero */ false);
     jump().linkTo(dispatch, this);
     addJump(failureCases, defaultOffset);
@@ -1668,15 +1611,9 @@ void JIT::emit_op_create_this(const JSInstruction* currentInstruction)
 void JIT::emit_op_check_tdz(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCheckTdz>();
-#if USE(JSVALUE64)
     emitGetVirtualRegister(bytecode.m_targetVirtualRegister, regT0);
-#elif USE(JSVALUE32_64)
-    emitGetVirtualRegisterTag(bytecode.m_targetVirtualRegister, regT0);
-#endif
     addSlowCase(branchIfEmpty(regT0));
 }
-
-#if USE(JSVALUE64)
 
 // Slow cases
 
@@ -1724,8 +1661,6 @@ void JIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowC
     callOperation(operationCompareEq, regT2, regT0, regT1);
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
-
-#endif // USE(JSVALUE64)
 
 void JIT::emit_op_debug(const JSInstruction* currentInstruction)
 {
@@ -2142,11 +2077,7 @@ void JIT::emit_op_profile_control_flow(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpProfileControlFlow>();
     auto& metadata = bytecode.metadata(m_profiledCodeBlock);
     BasicBlockLocation* basicBlockLocation = metadata.m_basicBlockLocation;
-#if USE(JSVALUE64)
     basicBlockLocation->emitExecuteCode(*this);
-#else
-    basicBlockLocation->emitExecuteCode(*this, regT0);
-#endif
 }
 
 void JIT::emit_op_argument_count(const JSInstruction* currentInstruction)

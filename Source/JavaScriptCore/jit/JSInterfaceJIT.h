@@ -58,36 +58,6 @@ namespace JSC {
         VM* const m_vm;
     };
 
-#if USE(JSVALUE32_64)
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(VirtualRegister virtualRegister, RegisterID payload)
-    {
-        ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
-        loadPtr(payloadFor(virtualRegister), payload);
-        return branchIfNotCell(tagFor(virtualRegister));
-    }
-
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(VirtualRegister virtualRegister, RegisterID dst)
-    {
-        ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
-        loadPtr(payloadFor(virtualRegister), dst);
-        return branch32(NotEqual, tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag));
-    }
-
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(VirtualRegister virtualRegister, FPRegisterID dst, RegisterID scratch)
-    {
-        ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
-        loadPtr(tagFor(virtualRegister), scratch);
-        Jump isDouble = branch32(Below, scratch, TrustedImm32(JSValue::LowestTag));
-        Jump notInt = branch32(NotEqual, scratch, TrustedImm32(JSValue::Int32Tag));
-        loadPtr(payloadFor(virtualRegister), scratch);
-        convertInt32ToDouble(scratch, dst);
-        Jump done = jump();
-        isDouble.link(this);
-        loadDouble(addressFor(virtualRegister), dst);
-        done.link(this);
-        return notInt;
-    }
-#elif USE(JSVALUE64)
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(VirtualRegister virtualRegister, RegisterID dst)
     {
         load64(addressFor(virtualRegister), dst);
@@ -114,7 +84,6 @@ namespace JSC {
         done.link(this);
         return notNumber;
     }
-#endif
 
 inline void JSInterfaceJIT::emitLoadJSValue(VirtualRegister virtualRegister, JSValueRegs dst)
 {

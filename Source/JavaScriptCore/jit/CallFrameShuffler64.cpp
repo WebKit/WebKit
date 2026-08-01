@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CallFrameShuffler.h"
 
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 
 #include "CCallHelpers.h"
 #include "DataFormat.h"
@@ -367,4 +367,4 @@ bool CallFrameShuffler::tryAcquireNumberTagRegister()
 
 } // namespace JSC
 
-#endif // ENABLE(JIT) && USE(JSVALUE64)
+#endif // ENABLE(JIT)

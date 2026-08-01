@@ -964,7 +964,7 @@
 #endif
 
 #if ENABLE(JIT)
-#if CPU(ARM_THUMB2) || CPU(ARM64)
+#if CPU(ARM64)
 #define ENABLE_BRANCH_COMPACTION 1
 #endif
 #endif

@@ -926,7 +926,6 @@ ValueKey Value::key() const
     case ZExt32:
     case Clz:
     case Trunc:
-    case TruncHigh:
     case IToD:
     case IToF:
     case FloatToDouble:
@@ -971,7 +970,6 @@ ValueKey Value::key() const
     case CheckAdd:
     case CheckSub:
     case CheckMul:
-    case Stitch:
         return ValueKey(kind(), type(), child(0), child(1));
     case Select:
         return ValueKey(kind(), type(), child(0), child(1), child(2));
@@ -1240,7 +1238,6 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case AboveEqual:
     case BelowEqual:
     case EqualOrUnordered:
-    case TruncHigh:
         return Int32;
     case Trunc:
         return firstChild->type() == Int64 ? Int32 : Float;
@@ -1248,7 +1245,6 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case SExt16To64:
     case SExt32:
     case ZExt32:
-    case Stitch:
         return Int64;
     case FloatToDouble:
     case IToD:

@@ -32,13 +32,9 @@ namespace JSC {
 
 void JITBitAndGenerator::generateFastPath(CCallHelpers& jit)
 {
-#if USE(JSVALUE64)
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
     ASSERT(m_scratchGPR != m_right.payloadGPR());
-#else
-    UNUSED_PARAM(m_scratchGPR);
-#endif
 
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
 
@@ -52,41 +48,27 @@ void JITBitAndGenerator::generateFastPath(CCallHelpers& jit)
         m_slowPathJumpList.append(jit.branchIfNotInt32(var));
         
         if (constOpr.asConstInt32() != static_cast<int32_t>(0xffffffff)) {
-#if USE(JSVALUE64)
             jit.and64(CCallHelpers::Imm32(constOpr.asConstInt32()), var.payloadGPR(), m_result.payloadGPR());
             if (constOpr.asConstInt32() >= 0)
                 jit.boxInt32(m_result.payloadGPR(), m_result);
-#else
-            jit.moveValueRegs(var, m_result);
-            jit.and32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
-#endif
         } else
             jit.moveValueRegs(var, m_result);
         return;
     }
 
-#if USE(JSVALUE64)
     if (m_leftOperand.definitelyIsBoolean() && m_rightOperand.definitelyIsBoolean()) {
         jit.and32(m_left.payloadGPR(), m_right.payloadGPR(), m_result.payloadGPR());
         jit.and32(CCallHelpers::TrustedImm32(1), m_result.payloadGPR());
         jit.boxInt32(m_result.payloadGPR(), m_result);
         return;
     }
-#endif
 
     ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
 
     // Try to do intVar & intVar.
-#if USE(JSVALUE64)
     jit.and64(m_left.payloadGPR(), m_right.payloadGPR(), m_scratchGPR);
     m_slowPathJumpList.append(jit.branchIfNotInt32(m_scratchGPR));
     jit.move(m_scratchGPR, m_result.payloadGPR());
-#else
-    m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
-    m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
-    jit.moveValueRegs(m_left, m_result);
-    jit.and32(m_right.payloadGPR(), m_result.payloadGPR());
-#endif
 }
 
 } // namespace JSC

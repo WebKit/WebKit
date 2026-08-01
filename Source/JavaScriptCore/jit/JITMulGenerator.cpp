@@ -91,12 +91,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
     ASSERT(m_scratchGPR != m_right.payloadGPR());
-#if USE(JSVALUE64)
     ASSERT(m_scratchGPR != m_result.payloadGPR());
-#else
-    ASSERT(m_scratchGPR != m_left.tagGPR());
-    ASSERT(m_scratchGPR != m_right.tagGPR());
-#endif
 
     ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
 
@@ -185,7 +180,6 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         // done to simplify the checking algorithm.
 
         const int64_t negativeZeroBits = 1ll << 63;
-#if USE(JSVALUE64)
         jit.moveDoubleTo64(m_leftFPR, m_result.payloadGPR());
 
         CCallHelpers::Jump notNegativeZero = jit.branch64(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm64(negativeZeroBits));
@@ -206,31 +200,6 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
         done.link(&jit);
         jit.sub64(GPRInfo::numberTagRegister, m_result.payloadGPR()); // Box the double.
-#else
-        jit.boxDouble(m_leftFPR, m_result);
-        CCallHelpers::JumpList notNegativeZero;
-        notNegativeZero.append(jit.branch32(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm32(0)));
-        notNegativeZero.append(jit.branch32(CCallHelpers::NotEqual, m_result.tagGPR(), CCallHelpers::TrustedImm32(negativeZeroBits >> 32)));
-
-        arithProfile->emitUnconditionalSet(jit, ObservedResults::NegZeroDouble);
-        CCallHelpers::Jump done = jit.jump();
-
-        notNegativeZero.link(&jit);
-        arithProfile->emitUnconditionalSet(jit, ObservedResults::NonNegZeroDouble);
-
-        jit.move(m_result.tagGPR(), m_scratchGPR);
-        jit.urshiftPtr(CCallHelpers::Imm32(52 - 32), m_scratchGPR);
-        jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
-        CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
-
-        arithProfile->emitUnconditionalSet(jit, ObservedResults::Int52Overflow);
-
-        endJumpList.append(noInt52Overflow);
-        if (m_scratchGPR == m_result.tagGPR() || m_scratchGPR == m_result.payloadGPR())
-            jit.boxDouble(m_leftFPR, m_result);
-
-        endJumpList.append(done);
-#endif
     }
 
     return true;

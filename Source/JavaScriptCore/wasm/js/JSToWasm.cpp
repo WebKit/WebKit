@@ -63,8 +63,6 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
             auto isNaN = jit.branchIfNaN(src.fpr());
 #if USE(JSVALUE64)
             jit.boxDouble(src.fpr(), dst, DoNotHaveTagRegisters);
-#else
-            jit.boxDouble(src.fpr(), dst);
 #endif
             isNaN.link(&jit);
             break;
@@ -90,26 +88,16 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
 #if USE(JSVALUE64)
             using ResultType = typename FunctionTraits<decltype(operationConvertToBigInt)>::ResultType;
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-#else
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
-            exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
 #endif
         } else
             boxNativeCalleeResult(jit, signature.returnType(0), wasmFrameConvention.results[0].location, JSRInfo::returnValueJSR);
     } else {
         IndexingType indexingType = ArrayWithUndecided;
         JSValueRegs scratchJSR = JSValueRegs {
-#if USE(JSVALUE32_64)
-            wasmCallingConvention().prologueScratchGPRs[2],
-#endif
             wasmCallingConvention().prologueScratchGPRs[1]
         };
 
         ASSERT(scratchJSR.payloadGPR() != GPRReg::InvalidGPRReg);
-#if USE(JSVALUE32_64)
-        ASSERT(scratchJSR.tagGPR() != GPRReg::InvalidGPRReg);
-        ASSERT(scratchJSR.payloadGPR() != scratchJSR.tagGPR());
-#endif
 
         // We can use the first floating point register as a scratch since it will always be moved onto the stack before other values.
         FPRReg fprScratch = wasmCallingConvention().fprArgs[0];
@@ -121,9 +109,6 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
 
             hasI64 |= type.isI64();
             if (loc.isGPR() || loc.isFPR()) {
-#if USE(JSVALUE32_64)
-                ASSERT(!loc.isGPR() || savedResultRegisters.find(loc.jsr().payloadGPR())->offset() + 4 == savedResultRegisters.find(loc.jsr().tagGPR())->offset());
-#endif
                 auto address = CCallHelpers::Address(CCallHelpers::stackPointerRegister, wasmFrameConvention.headerAndArgumentStackSizeInBytes);
                 switch (type.kind()) {
                 case TypeKind::F32:
@@ -195,9 +180,6 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
                 CCallHelpers::Address readAddress { CCallHelpers::stackPointerRegister };
                 CCallHelpers::Address writeAddress { CCallHelpers::stackPointerRegister };
                 if (loc.isGPR() || loc.isFPR()) {
-#if USE(JSVALUE32_64)
-                    ASSERT(savedResultRegisters.find(loc.jsr().payloadGPR())->offset() + 4 == savedResultRegisters.find(loc.jsr().tagGPR())->offset());
-#endif
                     auto offset = savedResultRegisters.find(loc.jsr().payloadGPR())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes;
                     readAddress = readAddress.withOffset(offset);
                     writeAddress = writeAddress.withOffset(offset);
@@ -213,9 +195,6 @@ static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const Call
 #if USE(JSVALUE64)
                 using ResultType = typename FunctionTraits<decltype(operationConvertToBigInt)>::ResultType;
                 exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-#else
-                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
-                exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
 #endif
                 jit.storeValue(JSRInfo::returnValueJSR, writeAddress);
             }
@@ -281,12 +260,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
 #if USE(JSVALUE64)
         jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::wasmBaseMemoryPointer);
         jit.transferPtr(CCallHelpers::Address(GPRInfo::regWS0, WebAssemblyFunction::offsetOfBoxedJSToWasmCallee()), CCallHelpers::addressFor(CallFrameSlot::callee));
-#else
-        jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regWS1);
-        jit.push(GPRInfo::regWS1);
-        jit.push(GPRInfo::regWS1);
-        jit.transferPtr(CCallHelpers::Address(GPRInfo::regWS0, WebAssemblyFunction::offsetOfBoxedJSToWasmCallee()), CCallHelpers::addressFor(CallFrameSlot::callee));
-        jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), CCallHelpers::addressFor(CallFrameSlot::callee).withOffset(TagOffset));
 #endif
 
         // Prepare frame
@@ -296,9 +269,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         // Restore Callee slot regardless
 #if USE(JSVALUE64)
         jit.storePtr(GPRInfo::wasmBaseMemoryPointer, CCallHelpers::addressFor(CallFrameSlot::callee));
-#else
-        jit.transferPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0), CCallHelpers::addressFor(CallFrameSlot::callee));
-        jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(void*)), CCallHelpers::stackPointerRegister);
 #endif
 
         {
@@ -331,9 +301,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         jit.load64(CCallHelpers::Address(CCallHelpers::stackPointerRegister, 3 * 8), GPRInfo::regWA3);
         jit.load64(CCallHelpers::Address(CCallHelpers::stackPointerRegister, 4 * 8), GPRInfo::regWA4);
         jit.load64(CCallHelpers::Address(CCallHelpers::stackPointerRegister, 5 * 8), GPRInfo::regWA5);
-#else
-        jit.loadPair32(CCallHelpers::stackPointerRegister, CCallHelpers::TrustedImm32(0 * 8), GPRInfo::regWA0, GPRInfo::regWA1);
-        jit.loadPair32(CCallHelpers::stackPointerRegister, CCallHelpers::TrustedImm32(1 * 8), GPRInfo::regWA2, GPRInfo::regWA3);
 #endif
 
 #if CPU(ARM64)
@@ -350,15 +317,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 5) * 8), FPRInfo::argumentFPR5);
         jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 6) * 8), FPRInfo::argumentFPR6);
         jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 7) * 8), FPRInfo::argumentFPR7);
-#elif CPU(ARM_THUMB2)
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 0 * 8), FPRInfo::argumentFPR0);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 1 * 8), FPRInfo::argumentFPR1);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 2 * 8), FPRInfo::argumentFPR2);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 3 * 8), FPRInfo::argumentFPR3);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 4 * 8), FPRInfo::argumentFPR4);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 5 * 8), FPRInfo::argumentFPR5);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 6 * 8), FPRInfo::argumentFPR6);
-        jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 7 * 8), FPRInfo::argumentFPR7);
 #endif
 
         // Pop argument space values
@@ -387,9 +345,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         JIT_COMMENT(jit, "Set the callee's interpreter Wasm::Callee");
 #if USE(JSVALUE64)
         jit.transferPtr(CCallHelpers::Address(GPRInfo::regWS1, WebAssemblyFunction::offsetOfBoxedCallee()), CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
-#else
-        jit.transferPtr(CCallHelpers::Address(GPRInfo::regWS1, WebAssemblyFunction::offsetOfBoxedCallee() + PayloadOffset), CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::callee));
-        jit.transferPtr(CCallHelpers::Address(GPRInfo::regWS1, WebAssemblyFunction::offsetOfBoxedCallee() + TagOffset), CCallHelpers::calleeFrameTagSlot(CallFrameSlot::callee));
 #endif
 
         jit.call(GPRInfo::regWS0, WasmEntryPtrTag);
@@ -417,9 +372,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         jit.store64(GPRInfo::regWA3, CCallHelpers::Address(CCallHelpers::stackPointerRegister, 3 * 8));
         jit.store64(GPRInfo::regWA4, CCallHelpers::Address(CCallHelpers::stackPointerRegister, 4 * 8));
         jit.store64(GPRInfo::regWA5, CCallHelpers::Address(CCallHelpers::stackPointerRegister, 5 * 8));
-#else
-        jit.storePair32(GPRInfo::regWA0, GPRInfo::regWA1, CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0 * 8));
-        jit.storePair32(GPRInfo::regWA2, GPRInfo::regWA3, CCallHelpers::Address(CCallHelpers::stackPointerRegister, 1 * 8));
 #endif
 #if CPU(ARM64)
         jit.storePairDouble(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1, CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  0) * 8));
@@ -435,15 +387,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         jit.storeDouble(FPRInfo::argumentFPR5, CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  5) * 8));
         jit.storeDouble(FPRInfo::argumentFPR6, CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  6) * 8));
         jit.storeDouble(FPRInfo::argumentFPR7, CCallHelpers::Address(CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  7) * 8));
-#elif CPU(ARM_THUMB2)
-        jit.storeDouble(FPRInfo::argumentFPR0, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  0 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR1, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  1 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR2, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  2 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR3, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  3 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR4, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  4 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR5, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  5 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR6, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  6 * 8));
-        jit.storeDouble(FPRInfo::argumentFPR7, CCallHelpers::Address(CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  7 * 8));
 #endif
 
         // Prepare frame
@@ -455,11 +398,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
             static_assert(CCallHelpers::operationExceptionRegister<ResultType>() != InvalidGPRReg, "We don't have a VM readily available so we rely on exception being returned");
             JIT_COMMENT(jit, "Exception check: ", CCallHelpers::operationExceptionRegister<ResultType>());
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-#else
-            static_assert(CCallHelpers::operationExceptionRegister<ResultType>() == InvalidGPRReg);
-            jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regWA2);
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::regWA2, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::regWA2);
-            exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::regWA2, VM::exceptionOffset())));
 #endif
         }
 
@@ -576,19 +514,11 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
     totalFrameSize += wasmCallInfo.headerAndArgumentStackSizeInBytes;
     totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
 
-#if USE(JSVALUE32_64)
-    if (argumentsOrResultsIncludeI64())
-        return nullptr;
-#endif
-
     jit.emitFunctionPrologue();
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
     jit.emitSave(registersToSpill);
 
     JSValueRegs scratchJSR {
-#if USE(JSVALUE32_64)
-        Wasm::wasmCallingConvention().prologueScratchGPRs[2],
-#endif
         Wasm::wasmCallingConvention().prologueScratchGPRs[1]
     };
     GPRReg stackLimitGPR = Wasm::wasmCallingConvention().prologueScratchGPRs[0];
@@ -645,14 +575,8 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
             if (isStack) {
                 CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
                 jit.store32(scratchJSR.payloadGPR(), addr.withOffset(PayloadOffset));
-#if USE(JSVALUE32_64)
-                jit.store32(CCallHelpers::TrustedImm32(0), addr.withOffset(TagOffset));
-#endif
             } else {
                 jit.zeroExtend32ToWord(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR());
-#if USE(JSVALUE32_64)
-                jit.move(CCallHelpers::TrustedImm32(0), wasmCallInfo.params[i].location.jsr().tagGPR());
-#endif
             }
             break;
         }
@@ -674,9 +598,6 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 }
                 jit.toBigInt64(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR());
             }
-#else
-            UNUSED_PARAM(scratchGPR);
-            UNREACHABLE_FOR_PLATFORM();
 #endif
             break;
         }
@@ -739,14 +660,10 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
             jit.loadValue(jsParam, scratchJSR);
 #if USE(JSVALUE64)
             slowPath.append(jit.branchIfNotNumber(scratchJSR, InvalidGPRReg));
-#elif USE(JSVALUE32_64)
-            slowPath.append(jit.branchIfNotNumber(scratchJSR, stackLimitGPR));
 #endif
             auto isInt32 = jit.branchIfInt32(scratchJSR);
 #if USE(JSVALUE64)
             jit.unboxDouble(scratchJSR.payloadGPR(), scratchJSR.payloadGPR(), scratchFPR);
-#elif USE(JSVALUE32_64)
-            jit.unboxDouble(scratchJSR, scratchFPR);
 #endif
             if (argumentType(i).isF32())
                 jit.convertDoubleToFloat(scratchFPR, scratchFPR);
@@ -762,9 +679,6 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
                 if (argumentType(i).isF32()) {
                     jit.storeFloat(scratchFPR, addr.withOffset(PayloadOffset));
-#if USE(JSVALUE32_64)
-                    jit.store32(CCallHelpers::TrustedImm32(0), addr.withOffset(TagOffset));
-#endif
                 } else
                     jit.storeDouble(scratchFPR, addr);
             }
@@ -789,14 +703,8 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
     jit.loadPtr(MacroAssembler::Address(stackLimitGPR), stackLimitGPR);
 
     jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(jsToWasmICCallee.ptr())), scratchJSR.payloadGPR());
-#if USE(JSVALUE32_64)
-    jit.storePtr(scratchJSR.payloadGPR(), CCallHelpers::addressFor(CallFrameSlot::callee));
-    jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), CCallHelpers::addressFor(CallFrameSlot::callee).withOffset(TagOffset));
-    jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
-#else
     static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
     jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchJSR.payloadGPR(), GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
-#endif
 
     JIT_COMMENT(jit, "Make the call");
     jit.call(stackLimitGPR, WasmEntryPtrTag);

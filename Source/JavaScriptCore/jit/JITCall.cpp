@@ -49,7 +49,7 @@ void JIT::emit_op_ret(const JSInstruction* currentInstruction)
 {
     static_assert(noOverlap(returnValueJSR, callFrameRegister));
 
-    // Return the result in returnValueGPR (returnValueGPR2/returnValueGPR on 32-bit).
+    // Return the result in returnValueGPR.
     auto bytecode = currentInstruction->as<OpRet>();
     emitGetVirtualRegister(bytecode.m_value, returnValueJSR);
     jumpThunk(CodeLocationLabel { vm().getCTIStub(CommonJITThunkID::ReturnFromBaseline).retaggedCode<NoPtrTag>() });
@@ -86,11 +86,7 @@ void JIT::compileSetupFrame(const Op& bytecode)
             emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
         }
 
-#if USE(JSVALUE64)
         addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), regT1, stackPointerRegister);
-#elif USE(JSVALUE32_64)
-        addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(6 * sizeof(void*)))), regT1, stackPointerRegister);
-#endif
 
         {
             emitGetVirtualRegister(arguments, jsRegT32);
@@ -255,7 +251,6 @@ void JIT::compileOpCall(const JSInstruction* instruction)
         compileCallDirectEval(bytecode);
         return;
     } else if constexpr (Op::opcodeID == op_super_construct || Op::opcodeID == op_super_construct_varargs) {
-#if USE(JSVALUE64)
         loadPtr(calleeFramePayloadSlot(CallFrameSlot::thisArgument), BaselineJITRegisters::Call::callTargetGPR);
         loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfCachedCallee(), BaselineJITRegisters::Call::callLinkInfoGPR);
         auto done = branchPtr(Equal, BaselineJITRegisters::Call::callTargetGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
@@ -264,7 +259,6 @@ void JIT::compileOpCall(const JSInstruction* instruction)
         store.link(this);
         storePtrToMetadata(BaselineJITRegisters::Call::callLinkInfoGPR, bytecode, Op::Metadata::offsetOfCachedCallee());
         done.link(this);
-#endif
     }
 
     materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
@@ -277,9 +271,6 @@ void JIT::compileOpCall(const JSInstruction* instruction)
                 emitRestoreCalleeSaves();
                 prepareForTailCallSlow(RegisterSet {
                     BaselineJITRegisters::Call::calleeJSR.payloadGPR(),
-#if USE(JSVALUE32_64)
-                    BaselineJITRegisters::Call::calleeJSR.tagGPR(),
-#endif
                     BaselineJITRegisters::Call::callLinkInfoGPR,
                     BaselineJITRegisters::Call::callTargetGPR,
                 });
@@ -511,7 +502,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     compileOpCall<OpIteratorNext>(instruction);
     advanceToNextCheckpoint();
 
-    // call result ({ done, value } JSObject) in regT0  (regT1/regT0 or 32-bit)
+    // call result ({ done, value } JSObject) in regT0
     static_assert(noOverlap(resultJSR, propertyCacheGPR));
 
     moveValueRegs(returnValueJSR, baseJSR);
@@ -746,9 +737,6 @@ void JIT::emit_op_instanceof(const JSInstruction* instruction)
             Instanceof::propertyCacheGPR);
 
         gen.generateDataICFastPath(*this);
-#if USE(JSVALUE32_64)
-        boxBoolean(Instanceof::resultJSR.payloadGPR(), Instanceof::resultJSR);
-#endif
         addSlowCase();
         m_instanceOfs.append(gen);
 

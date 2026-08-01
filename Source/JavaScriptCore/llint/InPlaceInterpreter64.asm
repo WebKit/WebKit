@@ -12567,7 +12567,7 @@ end
 if X86_64
     pop sc1, sc0
     storep sc0, ReturnPC[sc2]
-elsif ARM64 or ARM64E or ARMv7 or RISCV64
+elsif ARM64 or ARM64E or RISCV64
     pop sc1, lr
 end
 

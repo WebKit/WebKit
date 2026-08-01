@@ -459,21 +459,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32,
     return toUCPUStrictInt32(toIntImpl<int32_t, ToIntMode::Int32AfterSensibleConversionAttempt>(number));
 }
 
-#if HAVE(ARM_IDIV_INSTRUCTIONS)
-static inline bool isStrictInt32(double value)
-{
-    int32_t valueAsInt32 = truncateDoubleToInt32(value);
-    if (value != valueAsInt32)
-        return false;
-
-    if (!valueAsInt32) {
-        if (std::signbit(value))
-            return false;
-    }
-    return true;
-}
-#endif
-
 extern "C" {
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(jsRound, double, (double value))
@@ -542,25 +527,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(stdPowFloat, float, (float x, float y))
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(fmodDouble, double, (double x, double y))
 {
-#if HAVE(ARM_IDIV_INSTRUCTIONS)
-    // fmod() does not have exact results for integer on ARMv7.
-    // When DFG/FTL use IDIV, the result of op_mod can change if we use fmod().
-    //
-    // We implement here the same algorithm and conditions as the upper tier to keep
-    // a stable result when tiering up.
-    if (y) {
-        if (isStrictInt32(x) && isStrictInt32(y)) {
-            int32_t xAsInt32 = static_cast<int32_t>(x);
-            int32_t yAsInt32 = static_cast<int32_t>(y);
-            int32_t quotient = xAsInt32 / yAsInt32;
-            if (!productOverflows<int32_t>(quotient, yAsInt32)) {
-                int32_t remainder = xAsInt32 - (quotient * yAsInt32);
-                if (remainder || xAsInt32 >= 0)
-                    return remainder;
-            }
-        }
-    }
-#endif
     return fmod(x, y);
 }
 
@@ -606,15 +572,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float operand)) { retur
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double operand)) { return roundeven(operand); }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float operand)) { return std::trunc(operand); }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double operand)) { return std::trunc(operand); }
-
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t a, int32_t b)) { return a / b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t a, uint32_t b)) { return a / b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_rem_s, int32_t, (int32_t a, int32_t b)) { return a % b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t a, uint32_t b)) { return a % b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_div_s, int64_t, (int64_t a, int64_t b)) { return a / b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t a, uint64_t b)) { return a / b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_rem_s, int64_t, (int64_t a, int64_t b)) { return a % b; }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t a, uint64_t b)) { return a % b; }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float operand)) { return truncateFloatToUint64(operand); }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float operand)) { return truncateFloatToInt64(operand); }

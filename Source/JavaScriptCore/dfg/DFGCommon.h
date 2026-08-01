@@ -96,11 +96,7 @@ inline bool validationEnabled()
 
 inline bool constexpr enableInt52()
 {
-#if USE(JSVALUE64)
     return true;
-#else
-    return false;
-#endif
 }
 
 // The prediction propagator effectively does four passes, with the last pass

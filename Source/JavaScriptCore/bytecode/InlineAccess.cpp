@@ -42,11 +42,7 @@ void InlineAccess::dumpCacheSizesAndCrash()
 {
     GPRReg base = GPRInfo::regT0;
     GPRReg value = GPRInfo::regT1;
-#if USE(JSVALUE32_64)
-    JSValueRegs regs(base, value);
-#else
     JSValueRegs regs(base);
-#endif
     {
         CCallHelpers jit;
 
@@ -213,12 +209,6 @@ ALWAYS_INLINE static GPRReg getScratchRegister(PropertyInlineCache& propertyCach
     allocator.lock(propertyCache.m_valueGPR);
     allocator.lock(propertyCache.m_extraGPR);
     allocator.lock(propertyCache.m_extra2GPR);
-#if USE(JSVALUE32_64)
-    allocator.lock(propertyCache.m_baseTagGPR);
-    allocator.lock(propertyCache.m_valueTagGPR);
-    allocator.lock(propertyCache.m_extraTagGPR);
-    allocator.lock(propertyCache.m_extra2TagGPR);
-#endif
     allocator.lock(propertyCache.m_propertyCacheGPR);
     allocator.lock(propertyCache.m_arrayProfileGPR);
     GPRReg scratch = allocator.allocateScratchGPR();

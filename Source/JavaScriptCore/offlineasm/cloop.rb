@@ -25,11 +25,9 @@ require "config"
 require "ast"
 require "opt"
 
-# The CLoop llint backend is initially based on the ARMv7 backend, and
-# then further enhanced with a few instructions from the x86 backend to
-# support building for X64 targets.  Hence, the shape of the generated
-# code and the usage convention of registers will look a lot like the
-# ARMv7 backend's.
+# The CLoop llint backend generates portable C++ from the offlineasm sources,
+# with a few instructions modeled on the x86 backend to support building for
+# X64 targets.
 
 def cloopMapType(type)
     case type
@@ -1080,12 +1078,12 @@ class Instruction
             $asm.putc "    t0 = (uint32_t)(dividend / divisor); // quotient"
             $asm.putc "}"
 
-        # 32-bit instruction: fii2d int32LoOp int32HiOp dblOp (based on ARMv7)
+        # 32-bit instruction: fii2d int32LoOp int32HiOp dblOp
         # Decode 2 32-bit ints (low and high) into a 64-bit double.
         when "fii2d"
             $asm.putc "#{operands[2].clLValue(:double)} = ints2Double(#{operands[0].clValue(:uint32)}, #{operands[1].clValue(:uint32)}); // fii2d"
 
-        # 32-bit instruction: f2dii dblOp int32LoOp int32HiOp (based on ARMv7)
+        # 32-bit instruction: f2dii dblOp int32LoOp int32HiOp
         # Encode a 64-bit double into 2 32-bit ints (low and high).
         when "fd2ii"
             $asm.putc "double2Ints(#{operands[0].clValue(:double)}, #{operands[1].clDump}, #{operands[2].clDump}); // fd2ii"

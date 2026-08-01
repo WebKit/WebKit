@@ -33,35 +33,14 @@
 
 #if ENABLE(C_LOOP)
 #define OFFLINE_ASM_C_LOOP 1
-#define OFFLINE_ASM_ARMv7 0
 #define OFFLINE_ASM_ARM64 0
 #define OFFLINE_ASM_ARM64E 0
 #define OFFLINE_ASM_X86_64 0
-#define OFFLINE_ASM_ARMv7k 0
-#define OFFLINE_ASM_ARMv7s 0
 #define OFFLINE_ASM_RISCV64 0
 
 #else // ENABLE(C_LOOP)
 
 #define OFFLINE_ASM_C_LOOP 0
-
-#ifdef __ARM_ARCH_7K__
-#define OFFLINE_ASM_ARMv7k 1
-#else
-#define OFFLINE_ASM_ARMv7k 0
-#endif
-
-#ifdef __ARM_ARCH_7S__
-#define OFFLINE_ASM_ARMv7s 1
-#else
-#define OFFLINE_ASM_ARMv7s 0
-#endif
-
-#if CPU(ARM_THUMB2)
-#define OFFLINE_ASM_ARMv7 1
-#else
-#define OFFLINE_ASM_ARMv7 0
-#endif
 
 #if CPU(X86_64)
 #define OFFLINE_ASM_X86_64 1

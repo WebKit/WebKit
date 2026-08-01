@@ -2206,14 +2206,8 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned
 
 void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 {
-#if USE(JSVALUE32_64)
-    // Only 32bit Baseline JIT is touching m_constantRegisters address directly.
-    if (shrinkMode == ShrinkMode::EarlyShrink)
-        m_constantRegisters.shrinkToFit();
-#else
     UNUSED_PARAM(shrinkMode);
     m_constantRegisters.shrinkToFit();
-#endif
 }
 
 void CodeBlock::linkIncomingCall(JSCell* caller, CallLinkInfoBase* incoming)

@@ -8029,10 +8029,7 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN_BINARY(testBitOrArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testBitOrImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testBitOrArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
-    if (!isARM_THUMB2()) {
-        // Not enough argument registers to pass in 3 64-bit arguments on 32-bit ARM.
-        RUN_TERNARY(testBitOrAndAndArgs, int64Operands(), int64Operands(), int64Operands());
-    }
+    RUN_TERNARY(testBitOrAndAndArgs, int64Operands(), int64Operands(), int64Operands());
     RUN_TERNARY(testBitOrAndAndArgs32, int32Operands(), int32Operands(), int32Operands());
     RUN_BINARY(testBitOrAndSameArgs, int64Operands(), int64Operands());
     RUN_BINARY(testBitOrAndSameArgs32, int32Operands(), int32Operands());

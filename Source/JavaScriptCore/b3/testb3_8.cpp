@@ -42,9 +42,6 @@ void testAtomicWeakCAS()
         if (isX86()) {
             checkUsesInstruction(compilation, "lock");
             checkUsesInstruction(compilation, "cmpxchg");
-        } else if (isARM_THUMB2()) {
-            checkUsesInstruction(compilation, "ldrex");
-            checkUsesInstruction(compilation, "strex");
         } else {
             if (isARM64_LSE())
                 checkUsesInstruction(compilation, "casal");
@@ -303,9 +300,6 @@ void testAtomicStrongCAS()
         if (isX86()) {
             checkUsesInstruction(compilation, "lock");
             checkUsesInstruction(compilation, "cmpxchg");
-        } else if (isARM_THUMB2()) {
-            checkUsesInstruction(compilation, "ldrex");
-            checkUsesInstruction(compilation, "strex");
         } else {
             if (isARM64_LSE())
                 checkUsesInstruction(compilation, "casal");
@@ -681,9 +675,6 @@ void testAtomicXchg(B3::Opcode opcode)
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
                 }
-            } else if (isARM_THUMB2()) {
-                checkUsesInstruction(compilation, "ldrex");
-                checkUsesInstruction(compilation, "strex");
             } else {
                 if (fenced) {
                     checkUsesInstruction(compilation, "ldax");

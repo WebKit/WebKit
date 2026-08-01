@@ -318,8 +318,8 @@ private:
     } m_storage;
 };
 
-#if USE(JSVALUE64) && !OS(WINDOWS)
-static_assert(sizeof(Inst) == 64, "Air::Inst is expected to stay 64 bytes on JSVALUE64.");
+#if !OS(WINDOWS)
+static_assert(sizeof(Inst) == 64, "Air::Inst is expected to stay 64 bytes.");
 #endif
 static_assert(std::is_trivially_destructible_v<Arg>);
 

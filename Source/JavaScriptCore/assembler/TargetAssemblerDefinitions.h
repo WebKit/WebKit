@@ -70,10 +70,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto name##Ptr(Args&&... args) -> decltype(auto) { return name##32(std::forward<Args>(args)...); }
 #endif
 
-#if CPU(ARM_THUMB2)
-#define TARGET_ASSEMBLER ARMv7Assembler
-
-#elif CPU(ARM64E)
+#if CPU(ARM64E)
 #define TARGET_ASSEMBLER ARM64EAssembler
 
 #elif CPU(ARM64)

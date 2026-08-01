@@ -570,9 +570,7 @@ bool doesGC(Graph& graph, Node* node)
     case CompareGreater:
     case CompareGreaterEq:
         if (node->isBinaryUseKind(Int32Use)
-#if USE(JSVALUE64)
             || node->isBinaryUseKind(Int52RepUse)
-#endif
             || node->isBinaryUseKind(DoubleRepUse)
             || node->isBinaryUseKind(BigInt32Use)
             || node->isBinaryUseKind(HeapBigIntUse)
@@ -592,9 +590,7 @@ bool doesGC(Graph& graph, Node* node)
         if (node->isBinaryUseKind(BooleanUse)
             || node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse)
             || node->isBinaryUseKind(Int32Use)
-#if USE(JSVALUE64)
             || node->isBinaryUseKind(Int52RepUse)
-#endif
             || node->isBinaryUseKind(DoubleRepUse)
             || node->isBinaryUseKind(SymbolUse)
             || node->isSymmetricBinaryUseKind(SymbolUse, UntypedUse)

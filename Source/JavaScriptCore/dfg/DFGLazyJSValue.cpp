@@ -246,9 +246,6 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result, Plan& planRef) con
     }
 
     // It must be some kind of cell.
-#if USE(JSVALUE32_64)
-    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), result.tagGPR());
-#endif
     CCallHelpers::DataLabelPtr label = jit.moveWithPatch(
         CCallHelpers::TrustedImmPtr(static_cast<size_t>(0xd1e7beeflu)),
         result.payloadGPR());

@@ -50,15 +50,11 @@ const WasmCallingConvention& wasmCallingConvention()
     std::call_once(staticWasmCallingConventionFlag, [] () {
 #if USE(JSVALUE64) // One value per GPR
         constexpr unsigned numberOfArgumentJSRs = GPRInfo::numberOfArgumentRegisters;
-#elif USE(JSVALUE32_64) // One value per consecutive GPR pair
-        constexpr unsigned numberOfArgumentJSRs = GPRInfo::numberOfArgumentRegisters / 2;
 #endif
         Vector<JSValueRegs> jsrArgumentRegisters(numberOfArgumentJSRs);
         for (unsigned i = 0; i < numberOfArgumentJSRs; ++i) {
 #if USE(JSVALUE64)
             jsrArgumentRegisters[i] = JSValueRegs { GPRInfo::toArgumentRegister(i) };
-#elif USE(JSVALUE32_64)
-            jsrArgumentRegisters[i] = JSValueRegs { GPRInfo::toArgumentRegister(2 * i + 1), GPRInfo::toArgumentRegister(2 * i) };
 #endif
         }
 
@@ -73,9 +69,6 @@ const WasmCallingConvention& wasmCallingConvention()
         scratch.exclude(RegisterSet::stackRegisters());
         for (JSValueRegs jsr : jsrArgumentRegisters) {
             scratch.remove(jsr.payloadGPR());
-#if USE(JSVALUE32_64)
-            scratch.remove(jsr.tagGPR());
-#endif
         }
 
         Vector<GPRReg> scratchGPRs;
@@ -85,8 +78,6 @@ const WasmCallingConvention& wasmCallingConvention()
         // Need at least one JSValue and an additional GPR
 #if USE(JSVALUE64)
         RELEASE_ASSERT(scratchGPRs.size() >= 2);
-#elif USE(JSVALUE32_64)
-        RELEASE_ASSERT(scratchGPRs.size() >= 3);
 #endif
 
         staticWasmCallingConvention.construct(WTF::move(jsrArgumentRegisters), WTF::move(fprArgumentRegisters), WTF::move(scratchGPRs), RegisterSet::calleeSaveRegisters());
@@ -94,45 +85,6 @@ const WasmCallingConvention& wasmCallingConvention()
 
     return staticWasmCallingConvention;
 }
-
-#if CPU(ARM_THUMB2)
-
-const CCallingConventionArmThumb2& cCallingConventionArmThumb2()
-{
-    static LazyNeverDestroyed<CCallingConventionArmThumb2> staticCCallingConventionArmThumb2;
-    static std::once_flag staticCCallingConventionArmThumb2Flag;
-    std::call_once(staticCCallingConventionArmThumb2Flag, [] () {
-        constexpr unsigned numberOfArgumentGPRs = GPRInfo::numberOfArgumentRegisters;
-        Vector<GPRReg> gprArgumentRegisters(numberOfArgumentGPRs);
-        for (unsigned i = 0; i < numberOfArgumentGPRs; ++i)
-            gprArgumentRegisters[i] = GPRInfo::toArgumentRegister(i);
-
-        Vector<FPRReg> fprArgumentRegisters(FPRInfo::numberOfArgumentRegisters);
-        for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i)
-            fprArgumentRegisters[i] = FPRInfo::toArgumentRegister(i);
-
-        RegisterSet scratch = RegisterSet::allGPRs();
-        scratch.exclude(RegisterSet::vmCalleeSaveRegisters().includeWholeRegisterWidth());
-        scratch.exclude(RegisterSet::macroClobberedGPRs());
-        scratch.exclude(RegisterSet::reservedHardwareRegisters());
-        scratch.exclude(RegisterSet::stackRegisters());
-        for (GPRReg gpr : gprArgumentRegisters)
-            scratch.remove(gpr);
-
-        Vector<GPRReg> scratchGPRs;
-        for (Reg reg : scratch)
-            scratchGPRs.append(reg.gpr());
-
-        // Need at least one JSValue and an additional GPR
-        RELEASE_ASSERT(scratchGPRs.size() >= 3);
-
-        staticCCallingConventionArmThumb2.construct(WTF::move(gprArgumentRegisters), WTF::move(fprArgumentRegisters), WTF::move(scratchGPRs), RegisterSet::calleeSaveRegisters());
-    });
-
-    return staticCCallingConventionArmThumb2;
-}
-
-#endif
 
 } // namespace JSC::Wasm
 

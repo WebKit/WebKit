@@ -5256,7 +5256,6 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         }
 
         case FunctionBindIntrinsic: {
-#if USE(JSVALUE64)
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
 
@@ -5276,9 +5275,6 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* resultNode = addToGraph(Node::VarArg, FunctionBind, OpInfo(0), OpInfo(static_cast<unsigned>(argumentCountIncludingThis >= 2 ? argumentCountIncludingThis - 2 : 0)));
             setResult(resultNode);
             return CallOptimizationResult::Inlined;
-#else
-            return CallOptimizationResult::DidNothing;
-#endif
         }
 
         case NumberConstructorIntrinsic: {
@@ -5769,11 +5765,6 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
-#if USE(JSVALUE32_64)
-        if (mayBeResizableOrGrowableSharedTypedArray)
-            return false;
-#endif
-
         insertChecks();
         NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
         Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode);
@@ -5809,11 +5800,6 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
-#if USE(JSVALUE32_64)
-        if (mayBeResizableOrGrowableSharedTypedArray)
-            return false;
-#endif
-
         insertChecks();
         NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
         set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
@@ -5839,11 +5825,6 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
-
-#if USE(JSVALUE32_64)
-        if (mayBeResizableOrGrowableSharedTypedArray)
-            return false;
-#endif
 
         insertChecks();
         NodeType op = mayBeLargeTypedArray ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
@@ -7045,14 +7026,12 @@ void ByteCodeParser::handleGetById(
             return;
         }
     }
-#if USE(JSVALUE64)
     if (type == AccessType::GetById) {
         if (getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, identifier.uid())) {
             set(destination, addToGraph(GetByIdMegamorphic, OpInfo(data), OpInfo(prediction), base));
             return;
         }
     }
-#endif
 
     // Special path for custom accessors since custom's offset does not have any meaning.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.

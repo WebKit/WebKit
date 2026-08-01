@@ -56,15 +56,8 @@ private:
         MacroAssembler::Jump isNeg = jit->branch32(
             MacroAssembler::LessThan, m_propertyReg, MacroAssembler::TrustedImm32(0));
         
-#if USE(JSVALUE64)
         jit->move(
             MacroAssembler::TrustedImm64(JSValue::encode(jsUndefined())), m_resultRegs.gpr());
-#else
-        jit->move(
-            MacroAssembler::TrustedImm32(JSValue::UndefinedTag), m_resultRegs.tagGPR());
-        jit->move(
-            MacroAssembler::TrustedImm32(0), m_resultRegs.payloadGPR());
-#endif
         jumpTo(jit);
         
         isNeg.link(jit);

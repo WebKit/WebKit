@@ -69,22 +69,11 @@ public:
     }
 
 #if ENABLE(WEBASSEMBLY)
-#if USE(JSVALUE32_64)
-    ConstrainedValue(Value* value, const Wasm::ArgumentLocation& loc)
-        : m_value(value)
-    {
-        if (loc.location.isGPR() && loc.usedWidth == Width32)
-            m_rep = B3::ValueRep(loc.location.jsr().payloadGPR());
-        else
-            m_rep = B3::ValueRep(loc.location);
-    }
-#else
     ConstrainedValue(Value* value, const Wasm::ArgumentLocation& loc)
         : m_value(value)
         , m_rep(loc.location)
     {
     }
-#endif // USE(JSVALUE32_64)
 #endif // ENABLE(WEBASSEMBLY)
 
     explicit operator bool() const { return m_value || m_rep; }

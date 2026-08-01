@@ -197,11 +197,7 @@ template<typename T> T NODELETE nextID(T id) { return static_cast<T>(id + 1); }
 #define testWord32(x) (TESTWORD32 + static_cast<uint32_t>(x))
 #define testWord64(x) (TESTWORD64 + static_cast<uint64_t>(x))
 
-#if USE(JSVALUE64)
 #define testWord(x) testWord64(x)
-#else
-#define testWord(x) testWord32(x)
-#endif
 
 // Nothing fancy for now; we just use the existing WTF assertion machinery.
 #define CHECK_EQ(_actual, _expected) do {                               \
@@ -224,12 +220,8 @@ template<typename T> T NODELETE nextID(T id) { return static_cast<T>(id + 1); }
 
 bool NODELETE isPC(MacroAssembler::RegisterID id)
 {
-#if CPU(ARM_THUMB2)
-    return id == ARMRegisters::pc;
-#else
     UNUSED_PARAM(id);
     return false;
-#endif
 }
 
 bool NODELETE isSP(MacroAssembler::RegisterID id)
@@ -299,20 +291,10 @@ T compileAndRun(Generator&& generator, Arguments... arguments)
 void emitFunctionPrologue(CCallHelpers& jit)
 {
     jit.emitFunctionPrologue();
-#if CPU(ARM_THUMB2)
-    // MacroAssemblerARMv7 uses r6 as a temporary register, which is a
-    // callee-saved register, see 5.1.1 of the Procedure Call Standard for
-    // the ARM Architecture.
-    // http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf
-    jit.push(ARMRegisters::r6);
-#endif
 }
 
 void emitFunctionEpilogue(CCallHelpers& jit)
 {
-#if CPU(ARM_THUMB2)
-    jit.pop(ARMRegisters::r6);
-#endif
     jit.emitFunctionEpilogue();
 }
 
@@ -5298,17 +5280,10 @@ void testProbeReadsArgumentRegisters()
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
         jit.move(CCallHelpers::TrustedImm32(testWord32(1)), GPRInfo::argumentGPR0);
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT1);
-#if USE(JSVALUE64)
         jit.move(CCallHelpers::TrustedImm64(testWord(0)), GPRInfo::argumentGPR0);
         jit.move(CCallHelpers::TrustedImm64(testWord(1)), GPRInfo::argumentGPR1);
         jit.move(CCallHelpers::TrustedImm64(testWord(2)), GPRInfo::argumentGPR2);
         jit.move(CCallHelpers::TrustedImm64(testWord(3)), GPRInfo::argumentGPR3);
-#else
-        jit.move(CCallHelpers::TrustedImm32(testWord(0)), GPRInfo::argumentGPR0);
-        jit.move(CCallHelpers::TrustedImm32(testWord(1)), GPRInfo::argumentGPR1);
-        jit.move(CCallHelpers::TrustedImm32(testWord(2)), GPRInfo::argumentGPR2);
-        jit.move(CCallHelpers::TrustedImm32(testWord(3)), GPRInfo::argumentGPR3);
-#endif
 
         jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
@@ -5344,17 +5319,10 @@ void testProbeWritesArgumentRegisters()
         jit.pushPair(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
 
         // Pre-initialize with non-expected values.
-#if USE(JSVALUE64)
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR0);
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR1);
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR2);
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR3);
-#else
-        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR0);
-        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR1);
-        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR2);
-        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR3);
-#endif
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT1);
 
@@ -5503,9 +5471,6 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
 #if CPU(X86_64)
     auto flagsSPR = X86Registers::eflags;
     uintptr_t flagsMask = 0xc5;
-#elif CPU(ARM_THUMB2)
-    auto flagsSPR = ARMRegisters::apsr;
-    uintptr_t flagsMask = 0xf8000000;
 #elif CPU(ARM64)
     auto flagsSPR = ARM64Registers::nzcv;
     uintptr_t flagsMask = 0xf0000000;
@@ -5679,9 +5644,6 @@ void testProbeModifiesStackValues()
 #if CPU(X86_64)
     MacroAssembler::SPRegisterID flagsSPR = X86Registers::eflags;
     uintptr_t flagsMask = 0xc5;
-#elif CPU(ARM_THUMB2)
-    MacroAssembler::SPRegisterID flagsSPR = ARMRegisters::apsr;
-    uintptr_t flagsMask = 0xf8000000;
 #elif CPU(ARM64)
     MacroAssembler::SPRegisterID flagsSPR = ARM64Registers::nzcv;
     uintptr_t flagsMask = 0xf0000000;

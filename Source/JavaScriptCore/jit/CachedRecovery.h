@@ -86,15 +86,10 @@ public:
     // result of these calls will stay valid after loads and/or stores.
     bool boxingRequiresGPR() const
     {
-#if USE(JSVALUE64)
         return recovery().dataFormat() == DataFormatDouble;
-#else
-        return false;
-#endif
     }
     bool boxingRequiresFPR() const
     {
-#if USE(JSVALUE64)
         switch (recovery().dataFormat()) {
         case DataFormatInt52:
         case DataFormatStrictInt52:
@@ -103,9 +98,6 @@ public:
         default:
             return false;
         }
-#else
-        return false;
-#endif
     }
     
     // This is used to determine what kind of register we need to be

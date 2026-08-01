@@ -838,9 +838,7 @@ void Options::notifyOptionsChanged()
     Options::forceUnlinkedDFG() = false;
     Options::useWasmSIMD() = false;
     Options::useWasmIPInt() = false;
-#if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
-#endif
 #endif
 
 #if !CPU(ARM64)
@@ -861,12 +859,6 @@ void Options::notifyOptionsChanged()
 
     if (!Options::useWasmIPInt())
         Options::thresholdForBBQOptimizeAfterWarmUp() = 0; // Trigger immediate BBQ tier up.
-
-#if CPU(ARM_THUMB2)
-    // WasmIPInt is not supported on ARM32, so disable wasm if BBQJIT is disabled.
-    if (Options::useWasm() && !Options::useBBQJIT())
-        Options::useWasm() = false;
-#endif
 
 #if ENABLE(WEBASSEMBLY)
 #if CPU(ARM64)

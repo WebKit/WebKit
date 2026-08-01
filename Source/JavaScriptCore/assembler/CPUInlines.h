@@ -30,11 +30,6 @@
 
 namespace JSC {
 
-inline bool optimizeForARMv7IDIVSupported()
-{
-    return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();
-}
-
 inline bool optimizeForARM64()
 {
     return isARM64() && Options::useArchitectureSpecificOptimizations();

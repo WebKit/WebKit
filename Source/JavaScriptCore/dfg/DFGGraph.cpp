@@ -286,11 +286,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, intrinsicName(node->intrinsic()));
     if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
-#if USE(JSVALUE64)
         out.print(", ID:"_s, node->transition()->next->id().bits());
-#else
-        out.print(", ID:"_s, RawPointer(node->transition()->next.get()));
-#endif
     }
     if (node->hasCellOperand()) {
         if (!node->cellOperand()->value() || !node->cellOperand()->value().isCell())

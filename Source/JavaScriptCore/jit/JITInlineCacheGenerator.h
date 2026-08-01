@@ -152,11 +152,6 @@ public:
             propertyCache.m_valueGPR = valueRegs.payloadGPR();
             propertyCache.m_extraGPR = InvalidGPRReg;
             propertyCache.m_propertyCacheGPR = propertyCacheGPR;
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_valueTagGPR = valueRegs.tagGPR();
-            propertyCache.m_extraTagGPR = InvalidGPRReg;
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(valueRegs);
@@ -223,9 +218,6 @@ public:
         JITByIdGenerator::setUpPropertyInlineCacheImpl(propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSiteIndex, usedRegisters, propertyName, baseRegs, valueRegs, propertyCacheGPR);
         if constexpr (!std::is_same_v<std::decay_t<PropertyInlineCache>, BaselineUnlinkedPropertyInlineCache>) {
             propertyCache.m_extraGPR = thisRegs.payloadGPR();
-#if USE(JSVALUE32_64)
-            propertyCache.m_extraTagGPR = thisRegs.tagGPR();
-#endif
         } else
             UNUSED_PARAM(thisRegs);
     }
@@ -291,11 +283,6 @@ public:
                 propertyCache.m_arrayProfileGPR = arrayProfileGPR;
             else
                 UNUSED_PARAM(arrayProfileGPR);
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_valueTagGPR = valueRegs.tagGPR();
-            propertyCache.m_extraTagGPR = propertyRegs.tagGPR();
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -343,11 +330,6 @@ public:
             propertyCache.m_extraGPR = propertyRegs.payloadGPR();
             propertyCache.m_valueGPR = resultRegs.payloadGPR();
             propertyCache.m_propertyCacheGPR = propertyCacheGPR;
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_valueTagGPR = resultRegs.tagGPR();
-            propertyCache.m_extraTagGPR = propertyRegs.tagGPR();
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -427,11 +409,6 @@ public:
                 propertyCache.m_arrayProfileGPR = arrayProfileGPR;
             else
                 UNUSED_PARAM(arrayProfileGPR);
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_valueTagGPR = resultRegs.tagGPR();
-            propertyCache.m_extraTagGPR = propertyRegs.tagGPR();
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -497,11 +474,6 @@ public:
             propertyCache.m_valueGPR = resultGPR;
             propertyCache.m_extraGPR = prototypeGPR;
             propertyCache.m_propertyCacheGPR = propertyCacheGPR;
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = InvalidGPRReg;
-            propertyCache.m_valueTagGPR = InvalidGPRReg;
-            propertyCache.m_extraTagGPR = InvalidGPRReg;
-#endif
         } else {
             UNUSED_PARAM(valueGPR);
             UNUSED_PARAM(resultGPR);
@@ -551,11 +523,6 @@ public:
                 propertyCache.m_arrayProfileGPR = arrayProfileGPR;
             else
                 UNUSED_PARAM(arrayProfileGPR);
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_valueTagGPR = resultRegs.tagGPR();
-            propertyCache.m_extraTagGPR = propertyRegs.tagGPR();
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -608,12 +575,6 @@ public:
                 propertyCache.m_arrayProfileGPR = arrayProfileGPR;
             else
                 UNUSED_PARAM(arrayProfileGPR);
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_valueTagGPR = resultRegs.tagGPR();
-            propertyCache.m_extraTagGPR = thisRegs.tagGPR();
-            propertyCache.m_extra2TagGPR = propertyRegs.tagGPR();
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -661,11 +622,6 @@ public:
             propertyCache.m_extraGPR = brandRegs.payloadGPR();
             propertyCache.m_valueGPR = InvalidGPRReg;
             propertyCache.m_propertyCacheGPR = propertyCacheGPR;
-#if USE(JSVALUE32_64)
-            propertyCache.m_baseTagGPR = baseRegs.tagGPR();
-            propertyCache.m_extraTagGPR = brandRegs.tagGPR();
-            propertyCache.m_valueTagGPR = InvalidGPRReg;
-#endif
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(brandRegs);

@@ -1479,11 +1479,6 @@ public:
     UncheckedKeyHashSet<String> m_localStrings;
     UncheckedKeyHashSet<String> m_copiedStrings;
 
-#if USE(JSVALUE32_64)
-    UncheckedKeyHashMap<GenericHashKey<int64_t>, double*> m_doubleConstantsMap;
-    Bag<double> m_doubleConstants;
-#endif
-
     Vector<LinkerIR::Value> m_constantPool;
     UncheckedKeyHashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;
     

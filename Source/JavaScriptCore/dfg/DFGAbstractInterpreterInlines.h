@@ -3801,13 +3801,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // We've compiled assuming we're not having a bad time, so to be consistent
             // with StructureRegisterationPhase we must say we produce an original array
             // allocation structure.
-#if USE(JSVALUE64)
             BitVector* bitVector = node->bitVector();
             if (node->numChildren() == 1 && bitVector->get(0)) {
                 setForNode(node, globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
                 break;
             }
-#endif
         }
         setForNode(node, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
         break;

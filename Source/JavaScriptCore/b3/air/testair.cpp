@@ -1055,7 +1055,6 @@ void testShuffleRotateAllRegs()
         CHECK(things[i] == 35 + static_cast<int32_t>(i) - 1);
 }
 
-#if USE(JSVALUE64)
 
 void testShuffleSimpleSwap64()
 {
@@ -1207,7 +1206,6 @@ void testShuffleShiftMixedWidth()
     CHECK(things[4] == static_cast<uint32_t>(40000000000000000ll));
 }
 
-#endif
 
 void testShuffleShiftMemory()
 {
@@ -1347,7 +1345,6 @@ void testShuffleShiftMemoryAllRegs()
     CHECK(memory[1] == 35);
 }
 
-#if USE(JSVALUE64)
 
 void testShuffleShiftMemoryAllRegs64()
 {
@@ -1467,7 +1464,6 @@ void testShuffleShiftMemoryAllRegsMixedWidth()
     CHECK(memory[1] == 35000000000000ll);
 }
 
-#endif
 
 void testShuffleRotateMemory()
 {
@@ -1515,7 +1511,6 @@ void testShuffleRotateMemory()
     CHECK(memory[1] == 35);
 }
 
-#if USE(JSVALUE64)
 
 void testShuffleRotateMemory64()
 {
@@ -1713,7 +1708,6 @@ void testShuffleRotateMemoryAllRegsMixedWidth()
     CHECK(memory[1] == 35000000000000ll);
 }
 
-#endif
 
 void testShuffleSwapDouble()
 {
@@ -2172,7 +2166,6 @@ void testArgumentRegPinned3()
     CHECK(r == 10 + 42 + 42);
 }
 
-#if USE(JSVALUE64)
 void testLea64()
 {
     B3::Procedure proc;
@@ -2189,7 +2182,6 @@ void testLea64()
     int64_t r = compileAndRun<int64_t>(proc, a);
     CHECK(r == a + b);
 }
-#endif
 
 void testLea32()
 {
@@ -2199,7 +2191,7 @@ void testLea32()
     BasicBlock* root = code.addBlock();
 
     int32_t a = 0x11223344;
-    int32_t b = 1 << (isARM_THUMB2() ? 11 : 13);
+    int32_t b = 1 << 13;
 
     root->append(Lea32, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), b), Tmp(GPRInfo::returnValueGPR));
     root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
@@ -2239,18 +2231,13 @@ void testElideSimpleMove()
 
         auto compilation = compile(proc);
         CString disassembly = compilation->disassembly();
-        std::regex findRRMove(isARM64() ? "mov\\s+x\\d+, x\\d+\\n" : isARM_THUMB2() ? "mov\\s+\\w+, \\w+\\n" : "mov %\\w+, %\\w+\\n");
+        std::regex findRRMove(isARM64() ? "mov\\s+x\\d+, x\\d+\\n" : "mov %\\w+, %\\w+\\n");
         auto result = matchAll(disassembly, findRRMove);
         if (isARM64()) {
             if (!Options::defaultB3OptLevel())
                 CHECK(result.size() == 2);
             else
                 CHECK(result.size() == 0);
-        } else if (isARM_THUMB2()) {
-            if (!Options::defaultB3OptLevel())
-                CHECK(result.size() == 4);
-            else
-                CHECK(result.size() == 2);
         } else if (isX86()) {
             // sp -> fp; arg0 -> ret0; fp -> sp
             // fp -> sp only happens in O0 because we don't actually need to move the stack in general.
@@ -2333,7 +2320,7 @@ void testElideMoveThenRealloc()
 
         Tmp tmp = code.newTmp(B3::GP);
         Arg negOne;
-        if (isARM64() || isARM_THUMB2()) {
+        if (isARM64()) {
             negOne = code.newTmp(B3::GP);
             root->append(Move, nullptr, Arg::bigImm(-1), negOne);
         } else if (isX86())
@@ -2502,7 +2489,6 @@ void testLinearScanSpillRangesEarlyDef()
     CHECK(runResult == 99);
 }
 
-#if USE(JSVALUE64)
 void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
 {
     // This test runs slowly in Debug builds so run it less frequently. B3OptLevel 1 and 2 behave the same w.r.t. this code anyway.
@@ -2994,7 +2980,6 @@ void testStorePairClobberMemoryLoad()
     CHECK(values1[1] == 43);
 }
 #endif
-#endif
 
 // Test loop-aware live range splitting.
 // Fast tmps create register pressure to steer which side spills.
@@ -3390,26 +3375,20 @@ void run(const char* filter)
     RUN(testShuffleShiftAndRotate());
     RUN(testShuffleShiftAllRegs());
     RUN(testShuffleRotateAllRegs());
-#if USE(JSVALUE64)
     RUN(testShuffleSimpleSwap64());
     RUN(testShuffleSimpleShift64());
     RUN(testShuffleSwapMixedWidth());
     RUN(testShuffleShiftMixedWidth());
-#endif
     RUN(testShuffleShiftMemory());
     RUN(testShuffleShiftMemoryLong());
     RUN(testShuffleShiftMemoryAllRegs());
-#if USE(JSVALUE64)
     RUN(testShuffleShiftMemoryAllRegs64());
     RUN(testShuffleShiftMemoryAllRegsMixedWidth());
-#endif
     RUN(testShuffleRotateMemory());
-#if USE(JSVALUE64)
     RUN(testShuffleRotateMemory64());
     RUN(testShuffleRotateMemoryMixedWidth());
     RUN(testShuffleRotateMemoryAllRegs64());
     RUN(testShuffleRotateMemoryAllRegsMixedWidth());
-#endif
     RUN(testShuffleSwapDouble());
     RUN(testShuffleShiftDouble());
 
@@ -3440,9 +3419,7 @@ void run(const char* filter)
     RUN(testArgumentRegPinned3());
 
     RUN(testLea32());
-#if USE(JSVALUE64)
     RUN(testLea64());
-#endif
 
     RUN(testElideSimpleMove());
     RUN(testElideHandlesEarlyClobber());
@@ -3451,7 +3428,6 @@ void run(const char* filter)
     RUN(testLinearScanSpillRangesLateUse());
     RUN(testLinearScanSpillRangesEarlyDef());
 
-#if USE(JSVALUE64)
     RUN(testMoveDoubleZeroConstant());
     RUN(testMoveFloatZeroConstant());
     RUN(testMoveDoubleConstant());
@@ -3472,7 +3448,6 @@ void run(const char* filter)
     RUN(testStorePairClobber());
     RUN(testStorePairClobberMemoryStore());
     RUN(testStorePairClobberMemoryLoad());
-#endif
 #endif
 
     if (!tasks.isEmpty()) {

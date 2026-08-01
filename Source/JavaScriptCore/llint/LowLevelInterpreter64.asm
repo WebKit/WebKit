@@ -176,7 +176,6 @@ end
 
 macro doVMEntry(makeCall)
     functionPrologue()
-    pushCalleeSaves()
 
     const entry = a0
     const vm = a1
@@ -308,7 +307,6 @@ macro doVMEntry(makeCall)
 
     subp cfr, CalleeRegisterSaveSize, sp
 
-    popCalleeSaves()
     functionEpilogue()
     ret
 end
@@ -333,7 +331,6 @@ _llint_throw_stack_overflow_error_from_vm_entry:
     move ValueUndefined, r0
 
     subp cfr, CalleeRegisterSaveSize, sp
-    popCalleeSaves()
     functionEpilogue()
     ret
 
@@ -391,18 +388,15 @@ op(llint_handle_uncaught_exception, macro ()
     move ValueUndefined, r0
 
     subp cfr, CalleeRegisterSaveSize, sp
-    popCalleeSaves()
     functionEpilogue()
     ret
 end)
 
 op(llint_get_host_call_return_value, macro ()
     functionPrologue()
-    pushCalleeSaves()
     loadp Callee[cfr], t0
     convertJSCalleeToVM(t0)
     loadq VM::encodedHostCallReturnValue[t0], t0
-    popCalleeSaves()
     functionEpilogue()
     ret
 end)
@@ -2562,12 +2556,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
         move r1, sp
     else
         # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
-        if ARMv7
-            subp r1, CallerFrameAndPCSize, t2
-            move t2, sp
-        else
-            subp r1, CallerFrameAndPCSize, sp
-        end
+        subp r1, CallerFrameAndPCSize, sp
     end
     callCallSlowPath(
         slowPath,

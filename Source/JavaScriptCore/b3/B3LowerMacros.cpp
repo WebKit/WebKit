@@ -112,15 +112,6 @@ public:
     }
     
 private:
-    template <class Fn>
-    void replaceWithBinaryCall(Fn &&function)
-    {
-        Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(function));
-        Value* result = m_insertionSet.insert<CCallValue>(m_index, m_value->type(), m_origin, Effects::none(), functionAddress, m_value->child(0), m_value->child(1));
-        m_value->replaceWithIdentity(result);
-        m_changed = true;
-    }
-
     void processCurrentBlock()
     {
         for (m_index = 0; m_index < m_block->size(); ++m_index) {
@@ -281,14 +272,6 @@ private:
                     break;
                 }
 
-                if constexpr (isARM_THUMB2()) {
-                    if (m_value->type() == Int64)
-                        replaceWithBinaryCall(Math::i64_rem_s);
-                    else
-                        replaceWithBinaryCall(Math::i32_rem_s);
-                    break;
-                }
-
                 if (isARM64()) {
                     Value* divResult = m_insertionSet.insert<Value>(m_index, chill(Div), m_origin, m_value->child(0), m_value->child(1));
                     Value* multipliedBack = m_insertionSet.insert<Value>(m_index, Mul, m_origin, divResult, m_value->child(1));
@@ -301,13 +284,6 @@ private:
             }
 
             case UMod: {
-                if constexpr (isARM_THUMB2()) {
-                    if (m_value->child(0)->type() == Int64)
-                        replaceWithBinaryCall(Math::i64_rem_u);
-                    else
-                        replaceWithBinaryCall(Math::i32_rem_u);
-                    break;
-                }
                 if (isARM64()) {
                     Value* divResult = m_insertionSet.insert<Value>(m_index, UDiv, m_origin, m_value->child(0), m_value->child(1));
                     Value* multipliedBack = m_insertionSet.insert<Value>(m_index, Mul, m_origin, divResult, m_value->child(1));
@@ -318,18 +294,9 @@ private:
                 break;
             }
 
-            case UDiv: {
-                if constexpr (!isARM_THUMB2())
-                    break;
-                if (m_value->type() == Int64)
-                    replaceWithBinaryCall(Math::i64_div_u);
-                else
-                    replaceWithBinaryCall(Math::i32_div_u);
-                break;
-            }
             case FMax:
             case FMin: {
-                if (isX86() || isARM_THUMB2()) {
+                if (isX86()) {
                     bool isMax = m_value->opcode() == FMax;
 
                     Value* a = m_value->child(0);
@@ -391,14 +358,6 @@ private:
             case Div: {
                 if (m_value->isChill())
                     makeDivisionChill(Div);
-                else if (isARM_THUMB2() && (m_value->type() == Int64 || m_value->type() == Int32)) {
-                    BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index);
-                    before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
-                    Value* result = callDivModHelper(before, Div, m_value->child(0), m_value->child(1));
-                    before->appendNewControlValue(m_proc, Jump, m_origin, FrequentedBlock(m_block));
-                    m_value->replaceWithIdentity(result);
-                    m_changed = true;
-                }
                 break;
             }
 
@@ -1032,7 +991,6 @@ private:
                 break;
             }
 
-#if USE(JSVALUE64)
             case WasmRefCast:
             case WasmRefTest: {
                 WasmRefTypeCheckValue* typeCheck = m_value->as<WasmRefTypeCheckValue>();
@@ -1044,7 +1002,6 @@ private:
                 m_changed = true;
                 break;
             }
-#endif
 
             default:
                 break;
@@ -1065,30 +1022,6 @@ private:
         m_changed = true;
     }
 
-#if USE(JSVALUE32_64)
-    Value* callDivModHelper(BasicBlock* block, Opcode nonChillOpcode, Value* num, Value* den)
-    {
-        Type type = num->type();
-        Value* functionAddress;
-        if (nonChillOpcode == Div) {
-            if (m_value->type() == Int64)
-                functionAddress = block->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(Math::i64_div_s));
-            else
-                functionAddress = block->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(Math::i32_div_s));
-        } else {
-            if (m_value->type() == Int64)
-                functionAddress = block->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(Math::i64_rem_s));
-            else
-                functionAddress = block->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(Math::i32_rem_s));
-        }
-        return block->appendNew<CCallValue>(m_proc, type, m_origin, Effects::none(), functionAddress, num, den);
-    }
-#else
-    Value* NODELETE callDivModHelper(BasicBlock*, Opcode, Value*, Value*)
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-#endif
     void makeDivisionChill(Opcode nonChillOpcode)
     {
         ASSERT(nonChillOpcode == Div || nonChillOpcode == Mod);
@@ -1135,11 +1068,7 @@ private:
             FrequentedBlock(normalDivCase, FrequencyClass::Normal),
             FrequentedBlock(shadyDenCase, FrequencyClass::Rare));
 
-        Value* innerResult;
-        if (isARM_THUMB2() && (m_value->type() == Int64 || m_value->type() == Int32))
-            innerResult = callDivModHelper(normalDivCase, nonChillOpcode, num, den);
-        else
-            innerResult = normalDivCase->appendNew<Value>(m_proc, nonChillOpcode, m_origin, num, den);
+        Value* innerResult = normalDivCase->appendNew<Value>(m_proc, nonChillOpcode, m_origin, num, den);
         UpsilonValue* normalResult = normalDivCase->appendNew<UpsilonValue>(
             m_proc, m_origin,
             innerResult);
@@ -1334,7 +1263,6 @@ private:
         recursivelyBuildSwitch(cases, fallThrough, medianIndex, true, end, right);
     }
 
-#if USE(JSVALUE64)
     Value* emitRefTestOrCast(WasmRefTypeCheckValue* typeCheck, BasicBlock* before, BasicBlock* continuation)
     {
         enum class CastKind { Cast, Test };
@@ -1658,7 +1586,6 @@ private:
 
         return result;
     }
-#endif
 
     PatchpointValue* emitWasmGCAllocationPatchpoint(BasicBlock* allocBlock, Value* allocator, BasicBlock* fastInit, BasicBlock* slowPath)
     {

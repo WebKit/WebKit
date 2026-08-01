@@ -1334,10 +1334,6 @@ ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg
     allocator.lock(m_propertyCache.valueRegs());
     allocator.lock(m_propertyCache.m_extraGPR);
     allocator.lock(m_propertyCache.m_extra2GPR);
-#if USE(JSVALUE32_64)
-    allocator.lock(m_propertyCache.m_extraTagGPR);
-    allocator.lock(m_propertyCache.m_extra2TagGPR);
-#endif
     allocator.lock(m_propertyCache.m_propertyCacheGPR);
     allocator.lock(m_propertyCache.m_arrayProfileGPR);
     allocator.lock(extraToLock);
@@ -1392,10 +1388,6 @@ void InlineCacheCompiler::emitDataICPrepareForCall(CCallHelpers& jit)
 #elif CPU(ARM64)
     static_assert(!maxFrameExtentForSlowPathCall);
     jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-#elif CPU(ARM_THUMB2)
-    static_assert(maxFrameExtentForSlowPathCall);
-    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 #elif CPU(RISCV64)
     static_assert(!maxFrameExtentForSlowPathCall);
     jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
@@ -1656,10 +1648,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& v
     jit.setupArguments<SlowOperatoin>(baseJSR, propertyJSR, valueJSR, propertyCacheGPR, profileGPR);
     jit.call(CCallHelpers::Address(propertyCacheGPR, HandlerPropertyInlineCache::offsetOfSlowOperation()), OperationPtrTag);
     InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
-#if CPU(ARM_THUMB2)
-    // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
-    JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
-#endif
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
@@ -1790,9 +1778,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     case AccessType::GetByValWithThis: {
 #if USE(JSVALUE64)
         return vm.getCTIStub(getByValWithThisSlowPathCodeGenerator);
-#else
-        RELEASE_ASSERT_NOT_REACHED();
-        return { };
 #endif
     }
 
@@ -1906,9 +1891,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 #if USE(JSVALUE64)
                         jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
                         fallThrough.append(jit.branch64(CCallHelpers::NotEqual, baseForAccessGPR, CCallHelpers::TrustedImm64(JSValue::ValueNull)));
-#else
-                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
-                        fallThrough.append(jit.branchTestPtr(CCallHelpers::NonZero, baseForAccessGPR));
 #endif
                     }
                 } else {
@@ -1940,9 +1922,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 #if USE(JSVALUE64)
                         jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
                         fallThrough.append(jit.branch64(CCallHelpers::Equal, baseForAccessGPR, CCallHelpers::TrustedImm64(JSValue::ValueNull)));
-#else
-                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
-                        fallThrough.append(jit.branchTestPtr(CCallHelpers::Zero, baseForAccessGPR));
 #endif
                     }
                 }
@@ -2160,15 +2139,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             jit.moveTrustedValue(jsBoolean(true), valueRegs);
         else
             jit.move(scratchGPR, valueRegs.payloadGPR());
-#else
-        jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratch2GPR, scratchGPR));
-        failAndIgnore.append(jit.branchIfEmpty(scratch2GPR));
-        if (forInBy(accessCase.m_type))
-            jit.moveTrustedValue(jsBoolean(true), valueRegs);
-        else {
-            jit.move(scratchGPR, valueRegs.payloadGPR());
-            jit.move(scratch2GPR, valueRegs.tagGPR());
-        }
 #endif
 
         done.link(&jit);
@@ -2440,8 +2410,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedUndefinedKeyTransition: {
 #if USE(JSVALUE64)
         fallThrough.append(jit.branchIfNotUndefined(m_propertyCache.propertyGPR()));
-#else
-        fallThrough.append(jit.branchIfNotUndefined(m_propertyCache.propertyTagGPR()));
 #endif
         emitDefaultGuard();
         break;
@@ -2453,8 +2421,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedNullKeyTransition: {
 #if USE(JSVALUE64)
         fallThrough.append(jit.branchIfNotNull(m_propertyCache.propertyGPR()));
-#else
-        fallThrough.append(jit.branchIfNotNull(m_propertyCache.propertyTagGPR()));
 #endif
         emitDefaultGuard();
         break;
@@ -2466,9 +2432,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedTrueKeyTransition: {
 #if USE(JSVALUE64)
         fallThrough.append(jit.branchIfNotTrue(m_propertyCache.propertyGPR()));
-#else
-        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, m_propertyCache.propertyTagGPR(), CCallHelpers::TrustedImm32(JSValue::BooleanTag)));
-        fallThrough.append(jit.branchTest32(CCallHelpers::Zero, m_propertyCache.propertyPayloadGPR(), CCallHelpers::TrustedImm32(1)));
 #endif
         emitDefaultGuard();
         break;
@@ -2480,9 +2443,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedFalseKeyTransition: {
 #if USE(JSVALUE64)
         fallThrough.append(jit.branchIfNotFalse(m_propertyCache.propertyGPR()));
-#else
-        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, m_propertyCache.propertyTagGPR(), CCallHelpers::TrustedImm32(JSValue::BooleanTag)));
-        fallThrough.append(jit.branchTest32(CCallHelpers::NonZero, m_propertyCache.propertyPayloadGPR(), CCallHelpers::TrustedImm32(1)));
 #endif
         emitDefaultGuard();
         break;
@@ -2507,9 +2467,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
 
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
-#if USE(JSVALUE32_64)
-        GPRReg scratch3GPR = allocator.allocateScratchGPR();
-#endif
         ScratchRegisterAllocator::PreservedState preservedState;
 
         CCallHelpers::JumpList failAndIgnore;
@@ -2534,15 +2491,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                 jit.moveTrustedValue(jsBoolean(true), valueRegs);
             else
                 jit.move(scratchGPR, valueRegs.payloadGPR());
-#else
-            jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs(scratch3GPR, scratchGPR));
-            failAndIgnore.append(jit.branchIfEmpty(scratch3GPR));
-            if (forInBy(accessCase.m_type))
-                jit.moveTrustedValue(jsBoolean(true), valueRegs);
-            else {
-                jit.move(scratchGPR, valueRegs.payloadGPR());
-                jit.move(scratch3GPR, valueRegs.tagGPR());
-            }
 #endif
         } else {
             IndexingType expectedShape;
@@ -2588,15 +2536,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                     jit.moveTrustedValue(jsBoolean(true), valueRegs);
                 else
                     jit.move(scratchGPR, valueRegs.payloadGPR());
-#else
-                jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratch3GPR, scratchGPR));
-                failAndIgnore.append(jit.branchIfEmpty(scratch3GPR));
-                if (forInBy(accessCase.m_type))
-                    jit.moveTrustedValue(jsBoolean(true), valueRegs);
-                else {
-                    jit.move(scratchGPR, valueRegs.payloadGPR());
-                    jit.move(scratch3GPR, valueRegs.tagGPR());
-                }
 #endif
             }
         }
@@ -2650,8 +2589,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
 #if USE(JSVALUE64)
             isOutOfBounds.append(jit.branchTest64(CCallHelpers::Zero, CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset())));
-#else
-            isOutOfBounds.append(jit.branch32(CCallHelpers::Equal, CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset() + JSValue::offsetOfTag()), CCallHelpers::TrustedImm32(JSValue::EmptyValueTag)));
 #endif
 
             storeResult = jit.label();
@@ -2690,8 +2627,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                 notInt.link(&jit);
 #if USE(JSVALUE64)
                 jit.unboxDoubleWithoutAssertions(valueRegs.payloadGPR(), scratch2GPR, m_scratchFPR);
-#else
-                jit.unboxDouble(valueRegs, m_scratchFPR);
 #endif
                 failAndRepatch.append(jit.branchIfNaN(m_scratchFPR));
                 ready.link(&jit);
@@ -2803,9 +2738,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 #if USE(JSVALUE64)
             m_failAndRepatch.append(jit.branchIfNotNumber(valueRegs.payloadGPR()));
             jit.unboxDoubleWithoutAssertions(valueRegs.payloadGPR(), scratchGPR, m_scratchFPR);
-#else
-            m_failAndRepatch.append(jit.branch32(CCallHelpers::Above, valueRegs.tagGPR(), CCallHelpers::TrustedImm32(JSValue::LowestTag)));
-            jit.unboxDouble(valueRegs, m_scratchFPR);
 #endif
             ready.link(&jit);
         }
@@ -2934,10 +2866,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 #if USE(JSVALUE64)
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
         JSValueRegs scratchRegs(scratch2GPR);
-#else
-        GPRReg scratch2GPR = allocator.allocateScratchGPR();
-        GPRReg scratch3GPR = allocator.allocateScratchGPR();
-        JSValueRegs scratchRegs(scratch2GPR, scratch3GPR);
 #endif
 
         if (!m_propertyCache.prototypeIsKnownObject)
@@ -2954,8 +2882,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         jit.move(scratchRegs.payloadGPR(), scratchGPR);
 #if USE(JSVALUE64)
         jit.branchIfCell(JSValueRegs(scratchGPR)).linkTo(loop, &jit);
-#else
-        jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR).linkTo(loop, &jit);
 #endif
 
         jit.boxBooleanPayload(false, valueRegs.payloadGPR());
@@ -3583,8 +3509,6 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
 
 #if USE(JSVALUE64)
                 jit.load64(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), scratchGPR);
-#else
-                jit.load32(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset) + PayloadOffset), scratchGPR);
 #endif
             }
         }
@@ -3681,10 +3605,6 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             CallLinkInfo::emitDataICFastPath(jit);
         } else {
             jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
-#if USE(JSVALUE32_64)
-            // We *always* know that the getter/setter, if non-null, is a cell.
-            jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
-#endif
             m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_propertyCache.codeOrigin, nullptr);
             auto* callLinkInfo = m_callLinkInfos[index].get();
             callLinkInfo->setUpCall(CallLinkInfo::Call);
@@ -4263,10 +4183,6 @@ void InlineCacheCompiler::emitModuleNamespaceLoad(ModuleNamespaceAccessCase& acc
     jit.loadValue(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset()), JSValueRegs { scratchGPR });
     m_failAndIgnore.append(jit.branchIfEmpty(JSValueRegs { scratchGPR }));
     jit.moveValueRegs(JSValueRegs { scratchGPR }, valueRegs);
-#else
-    jit.load32(std::bit_cast<uint8_t*>(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset())) + TagOffset, scratchGPR);
-    m_failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
-    jit.loadValue(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset()), valueRegs);
 #endif
     succeed();
 }
@@ -4426,14 +4342,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
         CallLinkInfo::emitDataICFastPath(jit);
     } else {
         jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
-#if USE(JSVALUE32_64)
-        // We *always* know that the proxy function, if non-null, is a cell.
-        jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
-#endif
-#if CPU(ARM_THUMB2)
-        // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
-        JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
-#endif
         m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_propertyCache.codeOrigin, nullptr);
         auto* callLinkInfo = m_callLinkInfos[index].get();
         callLinkInfo->setUpCall(CallLinkInfo::Call);
@@ -4478,10 +4386,6 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(PropertyInlineCache& propertyCa
     case DataViewByteLengthIntrinsic: {
         if (structure->typeInfo().type() != DataViewType)
             return false;
-#if USE(JSVALUE32_64)
-        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()))
-            return false;
-#endif
         return true;
     }
     case TypedArrayByteOffsetIntrinsic:
@@ -4489,10 +4393,6 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(PropertyInlineCache& propertyCa
     case TypedArrayLengthIntrinsic: {
         if (!isTypedView(structure->typeInfo().type()))
             return false;
-#if USE(JSVALUE32_64)
-        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()))
-            return false;
-#endif
         return true;
     }
     case UnderscoreProtoIntrinsic: {
@@ -4500,11 +4400,7 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(PropertyInlineCache& propertyCa
         return info.isObject() && !info.overridesGetPrototype();
     }
     case SpeciesGetterIntrinsic: {
-#if USE(JSVALUE32_64)
-        return false;
-#else
         return !structure->classInfoForCells()->isSubClassOf(JSScope::info());
-#endif
     }
     case WebAssemblyInstanceExportsIntrinsic:
         return structure->typeInfo().type() == WebAssemblyInstanceType;
@@ -4950,10 +4846,6 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
             if (!canUseMegamorphicPutById(vm(), identifier.uid()))
                 allAreSimpleReplaceOrTransition = false;
 
-#if USE(JSVALUE32_64)
-            allAreSimpleReplaceOrTransition = false;
-#endif
-
             if (allAreSimpleReplaceOrTransition)
                 return AccessCase::create(vm(), codeBlock, AccessCase::StoreMegamorphic, useHandlerIC() ? nullptr : identifier);
             return nullptr;
@@ -4979,10 +4871,6 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
                     break;
                 }
             }
-
-#if USE(JSVALUE32_64)
-            allAreSimpleReplaceOrTransition = false;
-#endif
 
             if (allAreSimpleReplaceOrTransition)
                 return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicStore, nullptr);
@@ -5213,8 +5101,6 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
                 if (!m_propertyCache.propertyIsInt32) {
 #if USE(JSVALUE64)
                     notInt32.append(jit.branchIfNotInt32(m_propertyCache.propertyGPR()));
-#else
-                    notInt32.append(jit.branchIfNotInt32(m_propertyCache.propertyTagGPR()));
 #endif
                 }
                 JIT_COMMENT(jit, "Cases start (needsInt32PropertyCheck)");
@@ -5237,12 +5123,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
                 CCallHelpers::JumpList notString;
                 GPRReg propertyGPR = m_propertyCache.propertyGPR();
                 if (!m_propertyCache.propertyIsString) {
-#if USE(JSVALUE32_64)
-                    GPRReg propertyTagGPR = m_propertyCache.propertyTagGPR();
-                    notString.append(jit.branchIfNotCell(propertyTagGPR));
-#else
                     notString.append(jit.branchIfNotCell(propertyGPR));
-#endif
                     notString.append(jit.branchIfNotString(propertyGPR));
                 }
 
@@ -5270,12 +5151,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
                 CCallHelpers::JumpList notSymbol;
                 if (!m_propertyCache.propertyIsSymbol) {
                     GPRReg propertyGPR = m_propertyCache.propertyGPR();
-#if USE(JSVALUE32_64)
-                    GPRReg propertyTagGPR = m_propertyCache.propertyTagGPR();
-                    notSymbol.append(jit.branchIfNotCell(propertyTagGPR));
-#else
                     notSymbol.append(jit.branchIfNotCell(propertyGPR));
-#endif
                     notSymbol.append(jit.branchIfNotSymbol(propertyGPR));
                 }
 
@@ -6488,18 +6364,6 @@ static CCallHelpers::JumpList emitNonStringPrimitiveKeyCheck(CCallHelpers& jit, 
         fallThrough.append(jit.branchIfNotTrue(propertyJSR.payloadGPR()));
     else
         fallThrough.append(jit.branchIfNotFalse(propertyJSR.payloadGPR()));
-#else
-    if constexpr (keyType == NonStringPrimitiveKeyType::Undefined)
-        fallThrough.append(jit.branchIfNotUndefined(propertyJSR.tagGPR()));
-    else if constexpr (keyType == NonStringPrimitiveKeyType::Null)
-        fallThrough.append(jit.branchIfNotNull(propertyJSR.tagGPR()));
-    else if constexpr (keyType == NonStringPrimitiveKeyType::True) {
-        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, propertyJSR.tagGPR(), CCallHelpers::TrustedImm32(JSValue::BooleanTag)));
-        fallThrough.append(jit.branchTest32(CCallHelpers::Zero, propertyJSR.payloadGPR(), CCallHelpers::TrustedImm32(1)));
-    } else {
-        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, propertyJSR.tagGPR(), CCallHelpers::TrustedImm32(JSValue::BooleanTag)));
-        fallThrough.append(jit.branchTest32(CCallHelpers::NonZero, propertyJSR.payloadGPR(), CCallHelpers::TrustedImm32(1)));
-    }
 #endif
     return fallThrough;
 }
@@ -8225,8 +8089,6 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
             if (!m_propertyCache.propertyIsInt32) {
 #if USE(JSVALUE64)
                 notInt32.append(jit.branchIfNotInt32(m_propertyCache.propertyGPR()));
-#else
-                notInt32.append(jit.branchIfNotInt32(m_propertyCache.propertyTagGPR()));
 #endif
             }
             m_failAndRepatch.append(notInt32);
@@ -8234,12 +8096,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
             CCallHelpers::JumpList notString;
             GPRReg propertyGPR = m_propertyCache.propertyGPR();
             if (!m_propertyCache.propertyIsString) {
-#if USE(JSVALUE32_64)
-                GPRReg propertyTagGPR = m_propertyCache.propertyTagGPR();
-                notString.append(jit.branchIfNotCell(propertyTagGPR));
-#else
                 notString.append(jit.branchIfNotCell(propertyGPR));
-#endif
                 notString.append(jit.branchIfNotString(propertyGPR));
             }
             jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfValue()), m_scratchGPR);
@@ -8249,12 +8106,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
             CCallHelpers::JumpList notSymbol;
             if (!m_propertyCache.propertyIsSymbol) {
                 GPRReg propertyGPR = m_propertyCache.propertyGPR();
-#if USE(JSVALUE32_64)
-                GPRReg propertyTagGPR = m_propertyCache.propertyTagGPR();
-                notSymbol.append(jit.branchIfNotCell(propertyTagGPR));
-#else
                 notSymbol.append(jit.branchIfNotCell(propertyGPR));
-#endif
                 notSymbol.append(jit.branchIfNotSymbol(propertyGPR));
             }
             m_failAndRepatch.append(notSymbol);

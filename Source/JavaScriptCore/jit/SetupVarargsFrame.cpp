@@ -96,15 +96,8 @@ static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numU
 
     CCallHelpers::Label copyLoop = jit.label();
     int argOffset = (firstArgumentReg.offset() - 1 + firstVarArgOffset) * static_cast<int>(sizeof(Register));
-#if USE(JSVALUE64)
     jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset), scratchGPR3);
     jit.store64(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
-#else // USE(JSVALUE64), so this begins the 32-bit case
-    jit.load32(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset + TagOffset), scratchGPR3);
-    jit.store32(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)) + TagOffset));
-    jit.load32(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset + PayloadOffset), scratchGPR3);
-    jit.store32(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)) + PayloadOffset));
-#endif // USE(JSVALUE64), end of 32-bit case
     jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR1).linkTo(copyLoop, &jit);
     
     done.link(&jit);

@@ -56,11 +56,7 @@ void printAllRegisters(PrintStream& out, Context& context)
 
     INDENT; out.print("cpu: {\n");
 
-#if USE(JSVALUE32_64)
-    #define INTPTR_HEX_VALUE_FORMAT "0x%08" PRIxPTR
-#else
     #define INTPTR_HEX_VALUE_FORMAT "0x%016" PRIxPTR
-#endif
 
     for (auto id = MacroAssembler::firstRegister(); id <= MacroAssembler::lastRegister(); id = nextID(id)) {
         intptr_t value = static_cast<intptr_t>(cpu.gpr(id));

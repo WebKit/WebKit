@@ -110,8 +110,6 @@ ALWAYS_INLINE bool Value::mustExecute() const
     case SExt8: \
     case SExt16: \
     case Trunc: \
-    case TruncHigh: \
-    case Stitch: \
     case SExt8To64: \
     case SExt16To64: \
     case SExt32: \

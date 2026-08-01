@@ -37,43 +37,26 @@ class AdjacencyList;
 class Edge {
 public:
     explicit Edge(Node* node = nullptr, UseKind useKind = UntypedUse, ProofStatus proofStatus = NeedsCheck, KillStatus killStatus = DoesNotKill)
-#if USE(JSVALUE64)
         : m_encodedWord(makeWord(node, useKind, proofStatus, killStatus))
-#else
-        : m_node(node)
-        , m_encodedWord(makeWord(useKind, proofStatus, killStatus))
-#endif
     {
     }
     
-#if USE(JSVALUE64)
     static constexpr uintptr_t shift() { return 48; }
     static constexpr uintptr_t addressMask() { return ~(0xffull << shift()); }
 
     Node* node() const { return std::bit_cast<Node*>(m_encodedWord & addressMask()); }
-#else
-    Node* node() const { return m_node; }
-#endif
 
     Node& operator*() const { return *node(); }
     Node* operator->() const { return node(); }
     
     void setNode(Node* node)
     {
-#if USE(JSVALUE64)
         m_encodedWord = makeWord(node, useKind(), proofStatus(), killStatus());
-#else
-        m_node = node;
-#endif
     }
     
     UseKind useKindUnchecked() const
     {
-#if USE(JSVALUE64)
         unsigned shifted = m_encodedWord >> (2 + shift()) & 0x3f;
-#else
-        unsigned shifted = static_cast<UseKind>(m_encodedWord) >> 2;
-#endif
         ASSERT(shifted < static_cast<unsigned>(LastUseKind));
         UseKind result = static_cast<UseKind>(shifted);
         ASSERT(node() || result == UntypedUse);
@@ -87,20 +70,12 @@ public:
     void setUseKind(UseKind useKind)
     {
         ASSERT(node());
-#if USE(JSVALUE64)
         m_encodedWord = makeWord(node(), useKind, proofStatus(), killStatus());
-#else
-        m_encodedWord = makeWord(useKind, proofStatus(), killStatus());
-#endif
     }
 
     ProofStatus proofStatusUnchecked() const
     {
-#if USE(JSVALUE64)
         return proofStatusForIsProved(m_encodedWord >> shift() & 1);
-#else
-        return proofStatusForIsProved(m_encodedWord & 1);
-#endif
     }
     ProofStatus proofStatus() const
     {
@@ -110,11 +85,7 @@ public:
     void setProofStatus(ProofStatus proofStatus)
     {
         ASSERT(node());
-#if USE(JSVALUE64)
         m_encodedWord = makeWord(node(), useKind(), proofStatus, killStatus());
-#else
-        m_encodedWord = makeWord(useKind(), proofStatus, killStatus());
-#endif
     }
     bool isProved() const
     {
@@ -132,11 +103,7 @@ public:
     
     KillStatus killStatusUnchecked() const
     {
-#if USE(JSVALUE64)
         return killStatusForDoesKill(m_encodedWord >> shift() & 2);
-#else
-        return killStatusForDoesKill(m_encodedWord & 2);
-#endif
     }
     KillStatus killStatus() const
     {
@@ -146,11 +113,7 @@ public:
     void setKillStatus(KillStatus killStatus)
     {
         ASSERT(node());
-#if USE(JSVALUE64)
         m_encodedWord = makeWord(node(), useKind(), proofStatus(), killStatus);
-#else
-        m_encodedWord = makeWord(useKind(), proofStatus(), killStatus);
-#endif
     }
     bool doesKill() const { return DFG::doesKill(killStatus()); }
 
@@ -159,11 +122,7 @@ public:
     Edge sanitized() const
     {
         Edge result = *this;
-#if USE(JSVALUE64)
         result.m_encodedWord = makeWord(node(), useKindUnchecked(), NeedsCheck, DoesNotKill);
-#else
-        result.m_encodedWord = makeWord(useKindUnchecked(), NeedsCheck, DoesNotKill);
-#endif
         return result;
     }
 
@@ -176,17 +135,12 @@ public:
     
     unsigned hash() const
     {
-#if USE(JSVALUE64)
         return IntHash<uintptr_t>::hash(m_encodedWord);
-#else
-        return PtrHash<Node*>::hash(m_node) + m_encodedWord;
-#endif
     }
 
 private:
     friend class AdjacencyList;
     
-#if USE(JSVALUE64)
     static uintptr_t makeWord(Node* node, UseKind useKind, ProofStatus proofStatus, KillStatus killStatus)
     {
         ASSERT(sizeof(node) == 8);
@@ -213,16 +167,7 @@ private:
         return result;
     }
     
-#else
-    static uintptr_t makeWord(UseKind useKind, ProofStatus proofStatus, KillStatus killStatus)
-    {
-        return (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | static_cast<uintptr_t>(DFG::isProved(proofStatus));
-    }
-    
-    Node* m_node;
-#endif
-    // On 64-bit this holds both the pointer and the use kind, while on 32-bit
-    // this just holds the use kind. In both cases this may be hijacked by
+    // This holds both the pointer and the use kind. It may be hijacked by
     // AdjacencyList for storing firstChild and numChildren.
     uintptr_t m_encodedWord;
 };

@@ -55,7 +55,7 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 
     // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
     // the macro assembler might assert scratch register usage on store operations emitted by emitSave.
-    AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM_THUMB2());
+    AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
 
     if (code.frameSize()) {
         jit.subPtr(MacroAssembler::TrustedImm32(code.frameSize()), MacroAssembler::stackPointerRegister);
@@ -83,25 +83,6 @@ Code::Code(Procedure& proc)
             RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
             all.exclude(RegisterSet::stackRegisters());
             all.exclude(RegisterSet::reservedHardwareRegisters());
-#if CPU(ARM)
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=243888
-            // Unfortunately, the extra registers provided by the neon/vfpv3
-            // extensions can't be used by Air right now, because they are
-            // invalid as f32 operands, and Air doesn't know about anything
-            // other than a single class of FP registers.
-#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
-            if (bank == FP) {
-                for (auto reg = ARMRegisters::d16; reg <= ARMRegisters::d31; reg = MacroAssembler::nextFPRegister(reg))
-                    all.remove(reg);
-            }
-#endif
-            all.remove(MacroAssembler::fpTempRegister);
-            // FIXME We should allow this to be used. See the note
-            // in https://commits.webkit.org/257808@main for more
-            // info about why masm is using scratch registers on
-            // ARM-only.
-            all.remove(MacroAssembler::addressTempRegister);
-#endif // CPU(ARM)
             auto calleeSave = RegisterSet::calleeSaveRegisters();
             all.forEach(
                 [&] (Reg reg) {
@@ -123,10 +104,6 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
-#if CPU(ARM_THUMB2)
-    if (auto reg = extendedOffsetAddrRegister())
-        pinRegister(reg);
-#endif
     m_pinnedRegs.add(MacroAssembler::framePointerRegister, IgnoreVectors);
 }
 

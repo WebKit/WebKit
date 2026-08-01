@@ -5602,13 +5602,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationFModOnInts, double, (int32_t a, int32
     return fmod(a, b);
 }
 
-#if USE(JSVALUE32_64)
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationRandom, double, (JSGlobalObject* globalObject))
-{
-    return globalObject->weakRandomNumber();
-}
-#endif
-
 JSC_DEFINE_JIT_OPERATION(operationStringFromCharCode, JSCell*, (JSGlobalObject* globalObject, int32_t op1))
 {
     VM& vm = globalObject->vm();

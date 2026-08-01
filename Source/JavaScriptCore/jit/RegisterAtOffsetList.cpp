@@ -43,10 +43,8 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSetBuilder, Offse
 
     size_t sizeOfAreaInBytes = registerSetBuilder.byteSizeOfSetRegisters();
     m_sizeOfAreaInBytes = sizeOfAreaInBytes;
-#if USE(JSVALUE64)
     static_assert(sizeof(CPURegister) == sizeof(double));
     ASSERT(this->sizeOfAreaInBytes() == registerCount() * sizeof(CPURegister) || Options::useWasmSIMD());
-#endif    
 
     ptrdiff_t startOffset = 0;
     if (offsetBaseType == FramePointerBased)

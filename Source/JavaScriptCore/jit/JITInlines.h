@@ -33,7 +33,6 @@
 
 namespace JSC {
 
-#if USE(JSVALUE64)
 ALWAYS_INLINE bool JIT::isOperandConstantDouble(VirtualRegister src)
 {
     if (!src.isConstant())
@@ -42,7 +41,6 @@ ALWAYS_INLINE bool JIT::isOperandConstantDouble(VirtualRegister src)
         return false;
     return getConstantOperand(src).isDouble();
 }
-#endif
 
 ALWAYS_INLINE bool JIT::isOperandConstantInt(VirtualRegister src)
 {
@@ -354,12 +352,10 @@ ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
     return getConstantOperand(src).asInt32();
 }
 
-#if USE(JSVALUE64)
 ALWAYS_INLINE double JIT::getOperandConstantDouble(VirtualRegister src)
 {
     return getConstantOperand(src).asDouble();
 }
-#endif
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst)
 {
@@ -381,36 +377,9 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, JSValueRegs 
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst)
 {
-#if USE(JSVALUE64)
     emitGetVirtualRegister(src, JSValueRegs { dst });
-#elif USE(JSVALUE32_64)
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    if (src.isConstant()) {
-        if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
-            move(Imm32(m_unlinkedCodeBlock->getConstant(src).payload()), dst);
-        else
-            loadCodeBlockConstantPayload(src, dst);
-        return;
-    }
-    load32(payloadFor(src), dst);
-#endif
 }
 
-#if USE(JSVALUE32_64)
-ALWAYS_INLINE void JIT::emitGetVirtualRegisterTag(VirtualRegister src, RegisterID dst)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    if (src.isConstant()) {
-        if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
-            move(Imm32(m_unlinkedCodeBlock->getConstant(src).tag()), dst);
-        else
-            loadCodeBlockConstantTag(src, dst);
-        return;
-    }
-    load32(tagFor(src), dst);
-}
-
-#elif USE(JSVALUE64)
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
 {
     emitGetVirtualRegister(src, JSValueRegs { dst });
@@ -436,7 +405,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID gpr)
 {
     emitJumpSlowCaseIfNotInt(JSValueRegs { gpr });
 }
-#endif
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(JSValueRegs jsr)
 {
@@ -628,21 +596,8 @@ ALWAYS_INLINE void JIT::loadCodeBlockConstantPayload(VirtualRegister constant, R
     RELEASE_ASSERT(constant.isConstant());
     loadAddrOfCodeBlockConstantBuffer(*this, dst);
     Address address(dst, constant.toConstantIndex() * sizeof(Register));
-#if USE(JSVALUE64)
     load64(address, dst);
-#elif USE(JSVALUE32_64)
-    load32(address.withOffset(PayloadOffset), dst);
-#endif
 }
-
-#if USE(JSVALUE32_64)
-ALWAYS_INLINE void JIT::loadCodeBlockConstantTag(VirtualRegister constant, RegisterID dst)
-{
-    RELEASE_ASSERT(constant.isConstant());
-    loadAddrOfCodeBlockConstantBuffer(*this, dst);
-    load32(Address(dst, constant.toConstantIndex() * sizeof(Register) + TagOffset), dst);
-}
-#endif
 
 } // namespace JSC
 

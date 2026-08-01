@@ -84,7 +84,6 @@ private:
 
     // These constants are used to set priorities for spill order for
     // the register allocator.
-#if USE(JSVALUE64)
     enum SpillOrder {
         SpillOrderConstant = 1, // no spill, and cheap fill
         SpillOrderSpilled  = 2, // no spill
@@ -95,18 +94,6 @@ private:
         SpillOrderBoolean  = 5, // needs spill and box
         SpillOrderDouble   = 6, // needs spill and convert
     };
-#elif USE(JSVALUE32_64)
-    enum SpillOrder {
-        SpillOrderConstant = 1, // no spill, and cheap fill
-        SpillOrderSpilled  = 2, // no spill
-        SpillOrderJS       = 4, // needs spill
-        SpillOrderStorage  = 4, // needs spill
-        SpillOrderDouble   = 4, // needs spill
-        SpillOrderInteger  = 5, // needs spill and box
-        SpillOrderCell     = 5, // needs spill and box
-        SpillOrderBoolean  = 5, // needs spill and box
-    };
-#endif
 
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
     
@@ -172,11 +159,7 @@ public:
         }
     }
     
-#if USE(JSVALUE64)
     GPRReg fillJSValue(Edge);
-#elif USE(JSVALUE32_64)
-    bool fillJSValue(Edge, GPRReg&, GPRReg&, FPRReg&);
-#endif
     GPRReg fillStorage(Edge);
 
     // lock and unlock GPR & FPR registers.
@@ -231,11 +214,6 @@ public:
         VirtualRegister spillMe;
         GPRReg gpr = m_gprs.allocate(spillMe);
         if (spillMe.isValid()) {
-#if USE(JSVALUE32_64)
-            GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
-            if ((info.registerFormat() & DataFormatJS))
-                m_gprs.release(info.tagGPR() == gpr ? info.payloadGPR() : info.tagGPR());
-#endif
             spill(spillMe);
         }
         return gpr;
@@ -248,12 +226,6 @@ public:
 #endif
         VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
         if (spillMe.isValid()) {
-#if USE(JSVALUE32_64)
-            GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
-            RELEASE_ASSERT(info.registerFormat() != DataFormatJSDouble);
-            if ((info.registerFormat() & DataFormatJS))
-                m_gprs.release(info.tagGPR() == specific ? info.payloadGPR() : info.tagGPR());
-#endif
             spill(spillMe);
         }
         return specific;
@@ -302,20 +274,10 @@ public:
 
         // Release the associated machine registers.
         DataFormat registerFormat = info.registerFormat();
-#if USE(JSVALUE64)
         if (registerFormat == DataFormatDouble)
             m_fprs.release(info.fpr());
         else if (registerFormat != DataFormatNone)
             m_gprs.release(info.gpr());
-#elif USE(JSVALUE32_64)
-        if (registerFormat == DataFormatDouble)
-            m_fprs.release(info.fpr());
-        else if (registerFormat & DataFormatJS) {
-            m_gprs.release(info.tagGPR());
-            m_gprs.release(info.payloadGPR());
-        } else if (registerFormat != DataFormatNone)
-            m_gprs.release(info.gpr());
-#endif
     }
     void use(Edge nodeUse)
     {
@@ -434,11 +396,7 @@ public:
     template<typename CollectionType>
     void silentSpillAllRegistersImpl(bool doSpill, CollectionType& plans, JSValueRegs exclude)
     {
-#if USE(JSVALUE32_64)
-        silentSpillAllRegistersImpl(doSpill, plans, exclude.tagGPR(), exclude.payloadGPR());
-#else
         silentSpillAllRegistersImpl(doSpill, plans, exclude.gpr());
-#endif
     }
     
     void silentSpillAllRegisters(GPRReg exclude, GPRReg exclude2 = InvalidGPRReg, FPRReg fprExclude = InvalidFPRReg)
@@ -451,11 +409,7 @@ public:
     }
     void silentSpillAllRegisters(JSValueRegs exclude)
     {
-#if USE(JSVALUE64)
         silentSpillAllRegisters(exclude.payloadGPR());
-#else
-        silentSpillAllRegisters(exclude.payloadGPR(), exclude.tagGPR());
-#endif
     }
 
     void silentFillAllRegisters()
@@ -465,7 +419,6 @@ public:
     }
 
     // These methods convert between doubles, and doubles boxed and JSValues.
-#if USE(JSVALUE64)
     using Base::boxDouble;
     GPRReg boxDouble(FPRReg fpr)
     {
@@ -474,17 +427,12 @@ public:
     
     using Base::boxInt52;
     void boxInt52(GPRReg sourceGPR, GPRReg targetGPR, DataFormat);
-#endif
 
     // Spill a VirtualRegister to the JSStack.
     void spill(VirtualRegister spillMe)
     {
         GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
 
-#if USE(JSVALUE32_64)
-        if (info.registerFormat() == DataFormatNone) // it has been spilled. JS values which have two GPRs can reach here
-            return;
-#endif
         // Check the GenerationInfo to see if this value need writing
         // to the JSStack - if not, mark it as spilled & return.
         if (!info.needsSpill()) {
@@ -508,7 +456,6 @@ public:
             return;
         }
 
-#if USE(JSVALUE64)
         case DataFormatDouble: {
             storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, DataFormatDouble);
@@ -536,29 +483,6 @@ public:
             store64(reg, JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, (DataFormat)(spillFormat | DataFormatJS));
             return;
-#elif USE(JSVALUE32_64)
-        case DataFormatCell:
-        case DataFormatBoolean: {
-            store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(m_stream, spillMe, spillFormat);
-            return;
-        }
-
-        case DataFormatDouble: {
-            // On JSVALUE32_64 boxing a double is a no-op.
-            storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
-            info.spill(m_stream, spillMe, DataFormatDouble);
-            return;
-        }
-
-        default:
-            // The following code handles JSValues.
-            RELEASE_ASSERT(spillFormat & DataFormatJS);
-            store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
-            store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
-            info.spill(m_stream, spillMe, spillFormat);
-            return;
-#endif
         }
     }
     
@@ -610,12 +534,10 @@ public:
         return true;
     }
 
-#if USE(JSVALUE64)
     static Imm64 valueOfJSConstantAsImm64(Node* node)
     {
         return Imm64(JSValue::encode(node->asJSValue()));
     }
-#endif
 
     // Helper functions to enable code sharing in implementations of bit/shift ops.
     void bitOp(NodeType op, int32_t imm, GPRReg op1, GPRReg result)
@@ -710,21 +632,9 @@ public:
 
     void compileCheckDetached(Node*);
 
-#if USE(JSVALUE64)
     void cachedGetById(Node*, CodeOrigin, JSValueRegs base, JSValueRegs result, CacheableIdentifier, bool needsBaseCellCheck, AccessType, CacheType);
     void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, CacheableIdentifier, AccessType);
     void cachedGetByIdWithThis(Node*, CodeOrigin, JSValueRegs baseRegs, JSValueRegs thisRegs, JSValueRegs resultRegs, CacheableIdentifier, bool needsBaseAndThisCellCheck);
-#elif USE(JSVALUE32_64)
-    void cachedGetById(Node*, CodeOrigin, JSValueRegs base, JSValueRegs result, GPRReg propertyCacheGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg propertyCacheGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, AccessType, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedGetById(Node*, CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg propertyCacheGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedGetByIdWithThis(Node*, CodeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg propertyCacheGPR, GPRReg scratchGPR, CacheableIdentifier, const JITCompiler::JumpList& slowPathTarget = JITCompiler::JumpList());
-    void cachedGetById(Node*, CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg propertyCacheGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedGetByIdWithThis(Node*, CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPROrNone, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg propertyCacheGPR, GPRReg scratchGPR, CacheableIdentifier, const JITCompiler::JumpList& slowPathTarget = JITCompiler::JumpList());
-    void compileGetByIdFlush(Node*, AccessType);
-    void compilePutByIdFlush(Node*);
-    void compileInstanceOfForCells(Node*, JSValueRegs, JSValueRegs, GPRReg, GPRReg, Jump);
-#endif
 
     void compileDeleteById(Node*);
     void compileDeleteByVal(Node*);
@@ -786,14 +696,10 @@ public:
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
             info.initInt32(node, node->refCount(), reg);
         } else {
-#if USE(JSVALUE64)
             RELEASE_ASSERT(format == DataFormatJSInt32);
             jitAssertIsJSInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
             info.initJSValue(node, node->refCount(), reg, format);
-#elif USE(JSVALUE32_64)
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         }
     }
     void strictInt32Result(GPRReg reg, Node* node, UseChildrenMode mode)
@@ -837,20 +743,13 @@ public:
     }
     void blessedBooleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
-#if USE(JSVALUE64)
         jsValueResult(reg, node, DataFormatJSBoolean, mode);
-#else
-        booleanResult(reg, node, mode);
-#endif
     }
     void unblessedBooleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
-#if USE(JSVALUE64)
         blessBoolean(reg);
-#endif
         blessedBooleanResult(reg, node, mode);
     }
-#if USE(JSVALUE64)
     void jsValueResult(GPRReg reg, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
         if (format == DataFormatJSInt32)
@@ -868,40 +767,9 @@ public:
     {
         jsValueResult(reg, node, DataFormatJS, mode);
     }
-#elif USE(JSVALUE32_64)
-    void booleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
-    {
-        if (mode == CallUseChildren)
-            useChildren(node);
-
-        VirtualRegister virtualRegister = node->virtualRegister();
-        m_gprs.retain(reg, virtualRegister, SpillOrderBoolean);
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        info.initBoolean(node, node->refCount(), reg);
-    }
-    void jsValueResult(GPRReg tag, GPRReg payload, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
-    {
-        if (mode == CallUseChildren)
-            useChildren(node);
-
-        VirtualRegister virtualRegister = node->virtualRegister();
-        m_gprs.retain(tag, virtualRegister, SpillOrderJS);
-        m_gprs.retain(payload, virtualRegister, SpillOrderJS);
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        info.initJSValue(node, node->refCount(), tag, payload, format);
-    }
-    void jsValueResult(GPRReg tag, GPRReg payload, Node* node, UseChildrenMode mode)
-    {
-        jsValueResult(tag, payload, node, DataFormatJS, mode);
-    }
-#endif
     void jsValueResult(JSValueRegs regs, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
-#if USE(JSVALUE64)
         jsValueResult(regs.gpr(), node, format, mode);
-#else
-        jsValueResult(regs.tagGPR(), regs.payloadGPR(), node, format, mode);
-#endif
     }
     void storageResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
@@ -944,18 +812,13 @@ public:
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
             info.initInt32(node, refCount, reg);
         } else {
-#if USE(JSVALUE64)
             RELEASE_ASSERT(format == DataFormatJSInt32);
             jitAssertIsJSInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
             info.initJSValue(node, refCount, reg, format);
-#elif USE(JSVALUE32_64)
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         }
     }
 
-#if USE(JSVALUE64)
     void jsValueTupleResultWithoutUsingChildren(GPRReg reg, Node* node, unsigned index, DataFormat format = DataFormatJS)
     {
         ASSERT(index < node->tupleSize());
@@ -969,7 +832,6 @@ public:
         m_gprs.retain(reg, virtualRegister, SpillOrderJS);
         info.initJSValue(node, refCount, reg, format);
     }
-#endif
 
     void cellTupleResultWithoutUsingChildren(GPRReg reg, Node* node, unsigned index)
     {
@@ -1220,7 +1082,7 @@ public:
 
     void prepareForExternalCall()
     {
-#if !defined(NDEBUG) && !CPU(ARM_THUMB2)
+#if !defined(NDEBUG)
         // We're about to call out to a "native" helper function. The helper
         // function is expected to set topCallFrame itself with the CallFrame
         // that is passed to it.
@@ -1304,14 +1166,12 @@ public:
         return addBranch(Base::branchTest32(cond, value), destination);
     }
     
-#if USE(JSVALUE64)
     using Base::branch64;
     template<typename T, typename U>
     void branch64(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
         return addBranch(Base::branch64(cond, left, right), destination);
     }
-#endif
     
     using Base::branch8;
     template<typename T, typename U>
@@ -1429,9 +1289,7 @@ public:
     void compileHeapBigIntEquality(Node*);
     void compileHeapBigIntCompare(Node*, RelationalCondition);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
-#if USE(JSVALUE64)
     void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Node*, Edge neitherDoubleNorHeapBigInt, Edge notDouble);
-#endif
     void emitBitwiseJSValueEquality(JSValueRegs&, JSValueRegs&, GPRReg& result);
     void emitBranchOnBitwiseJSValueEquality(JSValueRegs&, JSValueRegs&, BasicBlock* taken, BasicBlock* notTaken);
     void compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
@@ -1683,18 +1541,10 @@ public:
     bool getIntTypedArrayStoreOperand(
         GPRTemporary& value,
         GPRReg property,
-#if USE(JSVALUE32_64)
-        GPRTemporary& propertyTag,
-        GPRTemporary& valueTag,
-#endif
         Edge valueUse, JITCompiler::JumpList& slowPathCases, bool isClamped = false);
     bool getIntTypedArrayStoreOperandForAtomics(
         GPRTemporary& value,
         GPRReg property,
-#if USE(JSVALUE32_64)
-        GPRTemporary& propertyTag,
-        GPRTemporary& valueTag,
-#endif
         Edge valueUse);
     void loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
     void setIntTypedArrayLoadResult(Node*, JSValueRegs resultRegs, TypedArrayType, bool canSpeculate, bool shouldBox, FPRReg, Jump);
@@ -1851,9 +1701,7 @@ public:
     void compileStringIndexOf(Node*);
     void compileStringLastIndexOf(Node*);
     void compileStringStartsOrEndsWith(Node*);
-#if USE(JSVALUE64)
     void compileStringStartsOrEndsWithConstant(Node*, bool isStartsWith, std::span<const Latin1Character> search);
-#endif
     void compileStringSplit(Node*);
     void compileStringMatch(Node*);
     void compileStringSearch(Node*);
@@ -1980,11 +1828,9 @@ public:
     
     void speculateInt32(Edge);
     void speculateInt32(Edge, JSValueRegs);
-#if USE(JSVALUE64)
     void convertAnyInt(Edge, GPRReg resultGPR, bool canIgnoreNegativeZero);
     void speculateAnyInt(Edge);
     void speculateDoubleRepAnyInt(Edge);
-#endif // USE(JSVALUE64)
 #if USE(BIGINT32)
     void speculateBigInt32(Edge);
     void speculateAnyBigInt(Edge);
@@ -2072,10 +1918,8 @@ public:
     unsigned appendOSRExit(OSRExit&&, bool isExceptionHandler = false);
     unsigned appendExceptionHandlingOSRExit(ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
 
-#if USE(JSVALUE64)
     void unboxRealNumberDouble(Node*, FPRReg boxedFPR, FPRReg resultFPR, GPRReg scratchGPR);
     void boxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR);
-#endif
 
     template<bool strict>
     GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
@@ -2179,70 +2023,31 @@ public:
     explicit JSValueOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
-#if USE(JSVALUE64)
         , m_gprOrInvalid(InvalidGPRReg)
-#elif USE(JSVALUE32_64)
-        , m_isDouble(false)
-#endif
     {
         ASSERT(m_jit);
         if (!edge)
             return;
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == UntypedUse);
-#if USE(JSVALUE64)
         if (jit->isFilled(node()))
             gpr();
-#elif USE(JSVALUE32_64)
-        m_register.pair.tagGPR = InvalidGPRReg;
-        m_register.pair.payloadGPR = InvalidGPRReg;
-        if (jit->isFilled(node()))
-            fill();
-#endif
     }
 
     explicit JSValueOperand(JSValueOperand&& other)
         : m_jit(other.m_jit)
         , m_edge(other.m_edge)
     {
-#if USE(JSVALUE64)
         m_gprOrInvalid = other.m_gprOrInvalid;
-#elif USE(JSVALUE32_64)
-        m_register.pair.tagGPR = InvalidGPRReg;
-        m_register.pair.payloadGPR = InvalidGPRReg;
-        m_isDouble = other.m_isDouble;
-
-        if (m_edge) {
-            if (m_isDouble)
-                m_register.fpr = other.m_register.fpr;
-            else
-                m_register.pair = other.m_register.pair;
-        }
-#endif
         other.m_edge = Edge();
-#if USE(JSVALUE64)
         other.m_gprOrInvalid = InvalidGPRReg;
-#elif USE(JSVALUE32_64)
-        other.m_isDouble = false;
-#endif
     }
 
     ~JSValueOperand()
     {
         if (!m_edge)
             return;
-#if USE(JSVALUE64)
         ASSERT(m_gprOrInvalid != InvalidGPRReg);
         m_jit->unlock(m_gprOrInvalid);
-#elif USE(JSVALUE32_64)
-        if (m_isDouble) {
-            ASSERT(m_register.fpr != InvalidFPRReg);
-            m_jit->unlock(m_register.fpr);
-        } else {
-            ASSERT(m_register.pair.tagGPR != InvalidGPRReg && m_register.pair.payloadGPR != InvalidGPRReg);
-            m_jit->unlock(m_register.pair.tagGPR);
-            m_jit->unlock(m_register.pair.payloadGPR);
-        }
-#endif
     }
     
     Edge edge() const
@@ -2257,7 +2062,6 @@ public:
 
     JSValueRegs regs() { return jsValueRegs(); }
 
-#if USE(JSVALUE64)
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
@@ -2268,46 +2072,6 @@ public:
     {
         return JSValueRegs(gpr());
     }
-#elif USE(JSVALUE32_64)
-    bool isDouble() { return m_isDouble; }
-
-    void fill()
-    {
-        if (m_register.pair.tagGPR == InvalidGPRReg && m_register.pair.payloadGPR == InvalidGPRReg)
-            m_isDouble = !m_jit->fillJSValue(m_edge, m_register.pair.tagGPR, m_register.pair.payloadGPR, m_register.fpr);
-    }
-
-    GPRReg tagGPR()
-    {
-        fill();
-        ASSERT(!m_isDouble);
-        return m_register.pair.tagGPR;
-    } 
-
-    GPRReg payloadGPR()
-    {
-        fill();
-        ASSERT(!m_isDouble);
-        return m_register.pair.payloadGPR;
-    }
-    
-    JSValueRegs jsValueRegs()
-    {
-        return JSValueRegs(tagGPR(), payloadGPR());
-    }
-
-    GPRReg gpr(WhichValueWord which = PayloadWord)
-    {
-        return jsValueRegs().gpr(which);
-    }
-
-    FPRReg fpr()
-    {
-        fill();
-        ASSERT(m_isDouble);
-        return m_register.fpr;
-    }
-#endif
 
     void use()
     {
@@ -2317,18 +2081,7 @@ public:
 private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
-#if USE(JSVALUE64)
     GPRReg m_gprOrInvalid;
-#elif USE(JSVALUE32_64)
-    union {
-        struct {
-            GPRReg tagGPR;
-            GPRReg payloadGPR;
-        } pair;
-        FPRReg fpr;
-    } m_register;
-    bool m_isDouble;
-#endif
 };
 
 class StorageOperand {
@@ -2487,33 +2240,14 @@ public:
     JSValueRegs NODELETE regs();
 
 private:
-#if USE(JSVALUE64)
     GPRTemporary m_gpr;
-#else
-    GPRTemporary m_payloadGPR;
-    GPRTemporary m_tagGPR;
-#endif
 };
 
-#if USE(JSVALUE64)
 template<typename T>
 JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord)
     : m_gpr(jit, Reuse, operand)
 {
 }
-#else
-template<typename T>
-JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord resultWord)
-{
-    if (resultWord == PayloadWord) {
-        m_payloadGPR = GPRTemporary(jit, Reuse, operand);
-        m_tagGPR = GPRTemporary(jit);
-    } else {
-        m_payloadGPR = GPRTemporary(jit);
-        m_tagGPR = GPRTemporary(jit, Reuse, operand);
-    }
-}
-#endif
 
 class FPRTemporary {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(FPRTemporary);
@@ -2522,9 +2256,6 @@ public:
     FPRTemporary(SpeculativeJIT*);
     FPRTemporary(SpeculativeJIT*, SpeculateDoubleOperand&);
     FPRTemporary(SpeculativeJIT*, SpeculateDoubleOperand&, SpeculateDoubleOperand&);
-#if USE(JSVALUE32_64)
-    FPRTemporary(SpeculativeJIT*, JSValueOperand&);
-#endif
 
     ~FPRTemporary()
     {
@@ -2591,31 +2322,17 @@ class JSValueRegsFlushedCallResult {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(JSValueRegsFlushedCallResult);
 public:
     JSValueRegsFlushedCallResult(SpeculativeJIT* jit)
-#if USE(JSVALUE64)
         : m_gpr(jit)
-#else
-        : m_payloadGPR(jit)
-        , m_tagGPR(jit)
-#endif
     {
     }
 
     JSValueRegs regs()
     {
-#if USE(JSVALUE64)
         return JSValueRegs { m_gpr.gpr() };
-#else
-        return JSValueRegs { m_tagGPR.gpr(), m_payloadGPR.gpr() };
-#endif
     }
 
 private:
-#if USE(JSVALUE64)
     GPRFlushedCallResult m_gpr;
-#else
-    GPRFlushedCallResult m_payloadGPR;
-    GPRFlushedCallResult2 m_tagGPR;
-#endif
 };
 
 

@@ -96,29 +96,11 @@ public:
     {
         initGPR(node, useCount, reg, DataFormatStrictInt52);
     }
-#if USE(JSVALUE64)
     void initJSValue(Node* node, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
         initGPR(node, useCount, gpr, format);
     }
-#elif USE(JSVALUE32_64)
-    void initJSValue(Node* node, uint32_t useCount, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
-    {
-        ASSERT(format & DataFormatJS);
-
-        m_node = node;
-        m_useCount = useCount;
-        m_registerFormat = format;
-        m_spillFormat = DataFormatNone;
-        m_canFill = false;
-        u.v.tagGPR = tagGPR;
-        u.v.payloadGPR = payloadGPR;
-        m_bornForOSR = false;
-        m_isConstant = false;
-        ASSERT(m_useCount);
-    }
-#endif
     void initCell(Node* node, uint32_t useCount, GPRReg gpr)
     {
         initGPR(node, useCount, gpr, DataFormatCell);
@@ -253,17 +235,9 @@ public:
     }
 
     // Get the machine resister currently holding the value.
-#if USE(JSVALUE64)
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
     FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble); return u.fpr; }
     JSValueRegs jsValueRegs() { ASSERT(m_registerFormat & DataFormatJS); return JSValueRegs(u.gpr); }
-#elif USE(JSVALUE32_64)
-    GPRReg gpr() { ASSERT(!(m_registerFormat & DataFormatJS) && m_registerFormat != DataFormatDouble); return u.gpr; }
-    GPRReg tagGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.tagGPR; }
-    GPRReg payloadGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.payloadGPR; }
-    FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble || m_registerFormat == DataFormatJSDouble); return u.fpr; }
-    JSValueRegs jsValueRegs() { ASSERT(m_registerFormat & DataFormatJS); return JSValueRegs(u.v.tagGPR, u.v.payloadGPR); }
-#endif
 
     // Check whether a value needs spilling in order to free up any associated machine registers.
     bool needsSpill()
@@ -321,28 +295,11 @@ public:
 
     // Record that this value is filled into machine registers,
     // tracking which registers, and what format the value has.
-#if USE(JSVALUE64)
     void fillJSValue(VariableEventStreamBuilder& stream, GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
         fillGPR(stream, gpr, format);
     }
-#elif USE(JSVALUE32_64)
-    void fillJSValue(VariableEventStreamBuilder& stream, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
-    {
-        ASSERT(format & DataFormatJS);
-        m_registerFormat = format;
-        u.v.tagGPR = tagGPR; // FIXME: for JSValues with known type (boolean, integer, cell etc.) no tagGPR is needed?
-        u.v.payloadGPR = payloadGPR;
-        
-        if (m_bornForOSR)
-            appendFill(Fill, stream);
-    }
-    void fillCell(VariableEventStreamBuilder& stream, GPRReg gpr)
-    {
-        fillGPR(stream, gpr, DataFormatCell);
-    }
-#endif
     void fillInt32(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatInt32);
@@ -391,13 +348,6 @@ public:
         if (m_registerFormat == DataFormatDouble)
             return ValueRecovery::inFPR(u.fpr, DataFormatDouble);
 
-#if USE(JSVALUE32_64)
-        if (m_registerFormat & DataFormatJS) {
-            if (m_registerFormat == DataFormatJS)
-                return ValueRecovery::inPair(u.v.tagGPR, u.v.payloadGPR);
-            return ValueRecovery::inGPR(u.v.payloadGPR, static_cast<DataFormat>(m_registerFormat & ~DataFormatJS));
-        }
-#endif
         if (m_registerFormat)
             return ValueRecovery::inGPR(u.gpr, m_registerFormat);
 
@@ -420,12 +370,6 @@ private:
             stream.appendAndLog(VariableEvent::fillFPR(kind, MinifiedID(m_node), u.fpr));
             return;
         }
-#if USE(JSVALUE32_64)
-        if (m_registerFormat & DataFormatJS) {
-            stream.appendAndLog(VariableEvent::fillPair(kind, MinifiedID(m_node), u.v.tagGPR, u.v.payloadGPR));
-            return;
-        }
-#endif
         stream.appendAndLog(VariableEvent::fillGPR(kind, MinifiedID(m_node), u.gpr, m_registerFormat));
     }
     
@@ -445,12 +389,6 @@ private:
     union {
         GPRReg gpr;
         FPRReg fpr;
-#if USE(JSVALUE32_64)
-        struct {
-            GPRReg tagGPR;
-            GPRReg payloadGPR;
-        } v;
-#endif
     } u;
 };
 

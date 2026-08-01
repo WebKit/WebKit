@@ -395,21 +395,8 @@ X86_SIMD_INSTRUCTIONS =
 
 ARM_INSTRUCTIONS =
     [
-     "adci",
-     "bcs",
-     "clrbp",
-     "mvlbl",
      "globaladdr",
-     "sbci",
      "moveii",
-     "loadlinkb",
-     "loadlinkh",
-     "loadlinki",
-     "loadlink2i",
-     "storecondb",
-     "storecondh",
-     "storecondi",
-     "storecond2i",
      "writefence",
     ]
 

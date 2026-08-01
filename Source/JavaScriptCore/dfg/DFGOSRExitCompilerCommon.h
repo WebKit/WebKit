@@ -97,9 +97,7 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM& vm, JITT
     //     = -frameRegisterCount
     jit.neg32(GPRInfo::regT0);
     jit.mul32(MacroAssembler::TrustedImm32(sizeof(Register)), GPRInfo::regT0, GPRInfo::regT0);
-#if USE(JSVALUE64)
     jit.signExtend32ToPtr(GPRInfo::regT0, GPRInfo::regT0);
-#endif
     jit.addPtr(GPRInfo::callFrameRegister, GPRInfo::regT0);
     jit.move(GPRInfo::regT0, MacroAssembler::stackPointerRegister);
 

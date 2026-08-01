@@ -442,7 +442,7 @@ private:
 #if DUMP_LINK_STATISTICS
     static void dumpLinkStatistics(void* code, size_t initialSize, size_t finalSize);
 #endif
-    
+
 #if DUMP_CODE
     static void dumpCode(void* code, size_t);
 #endif

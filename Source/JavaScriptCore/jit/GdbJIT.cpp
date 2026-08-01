@@ -688,9 +688,7 @@ private:
         uint32_t numCommands;
         uint32_t sizeOfCommands;
         uint32_t flags;
-#if USE(JSVALUE64)
         uint32_t reserved;
-#endif
     } __attribute__((packed,aligned(1)));
 
     struct MachOSegmentCommand {
@@ -863,12 +861,7 @@ private:
     {
         ASSERT(!writer->position());
         Writer::Slot<ELFHeader> header = writer->createSlotHere<ELFHeader>();
-#if CPU(ARM_THUMB2)
-        const uint8_t ident[16] = {
-            0x7F, 'E', 'L', 'F', 1, 1, 1, 0,
-            0, 0, 0, 0, 0, 0, 0, 0
-        };
-#elif CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
         const uint8_t ident[16] = {
             0x7F, 'E', 'L', 'F', 2, 1, 1, 0,
             0, 0, 0, 0, 0, 0, 0, 0
@@ -883,10 +876,6 @@ private:
         // System V ABI, AMD64 Supplement
         // http://www.x86-64.org/documentation/abi.pdf
         header->machine = 62;
-#elif CPU(ARM_THUMB2)
-        // Set to EM_ARM, defined as 40, in "ARM ELF File Format" at
-        // infocenter.arm.com/help/topic/com.arm.doc.dui0101a/DUI0101A_Elf.pdf
-        header->machine = 40;
 #elif CPU(ARM64)
         // AARCH64
         header->machine = 0xB7;
@@ -975,26 +964,7 @@ public:
 
     Binding binding() const { return static_cast<Binding>(m_info >> 4); }
 
-#if CPU(ARM_THUMB2)
-    struct SerializedLayout {
-        SerializedLayout(uint32_t name, uintptr_t value, uintptr_t size, Binding binding, Type type, uint16_t section)
-            : m_name(name)
-            , m_value(value)
-            , m_size(size)
-            , m_info((binding << 4) | type)
-            , m_other(0)
-            , m_section(section)
-        {
-        }
-
-        uint32_t m_name;
-        uintptr_t m_value;
-        uintptr_t m_size;
-        uint8_t m_info;
-        uint8_t m_other;
-        uint16_t m_section;
-    } __attribute__((packed,aligned(1)));
-#elif CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     struct SerializedLayout {
         SerializedLayout(uint32_t name, uintptr_t value, uintptr_t size, Binding binding, Type type, uint16_t section)
             : m_name(name)

@@ -443,12 +443,6 @@ public:
         case UnboxedDoubleInFPR:
             func(fpr());
             return;
-#if USE(JSVALUE32_64)
-        case InPair:
-            func(jsValueRegs().payloadGPR());
-            func(jsValueRegs().tagGPR());
-            return;
-#endif
         default:
             return;
         }

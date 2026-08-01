@@ -308,20 +308,6 @@ public:
                     || (value->type() == Float && value->child(0)->type() == Double),
                     ("At ", *value));
                 break;
-            case TruncHigh:
-                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
-                VALIDATE(value->numChildren() == 1, ("At ", *value));
-                VALIDATE(
-                    (value->type() == Int32 && value->child(0)->type() == Int64),
-                    ("At ", *value));
-                break;
-            case Stitch:
-                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
-                VALIDATE(value->numChildren() == 2, ("At ", *value));
-                VALIDATE(value->type() == Int64, ("At ", *value));
-                VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
-                VALIDATE(value->child(1)->type() == Int32, ("At ", *value));
-                break;
             case Abs:
             case Ceil:
             case Floor:
@@ -830,10 +816,7 @@ public:
                     // FIXME: Right now we only support a pair of two GPR values since on every calling
                     // convention we support that's returned in returnValueGPR/returnValueGPR2, respectively.
                     VALIDATE(m_procedure.resultCount(value->type()) == 2, ("At ", *value));
-                    if (is32Bit())
-                        VALIDATE(m_procedure.typeAtOffset(value->type(), 0) == registerType(), ("At ", *value));
-                    else
-                        VALIDATE(m_procedure.typeAtOffset(value->type(), 0).isInt(), ("At ", *value));
+                    VALIDATE(m_procedure.typeAtOffset(value->type(), 0).isInt(), ("At ", *value));
                     VALIDATE(m_procedure.typeAtOffset(value->type(), 1) == registerType(), ("At ", *value));
                 }
 
@@ -858,7 +841,7 @@ public:
                 break;
             case Extract: {
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
-                VALIDATE(value->child(0)->type().isTuple() || (isARM_THUMB2() && value->child(0)->type() == Int64), ("At ", *value));
+                VALIDATE(value->child(0)->type().isTuple(), ("At ", *value));
                 VALIDATE(value->type().isNumeric(), ("At ", *value));
                 break;
             }
@@ -1075,9 +1058,6 @@ private:
                     VALIDATE(value.value()->type().isFloat() || value.value()->type().isVector(), ("At ", *context, ": ", value));
             }
             break;
-#if USE(JSVALUE32_64)
-        case ValueRep::RegisterPair:
-#endif
         case ValueRep::Constant:
         case ValueRep::Stack:
             VALIDATE(false, ("At ", *context, ": ", value));

@@ -168,27 +168,18 @@ public:
     JSValueRegs valueRegs() const
     {
         return JSValueRegs(
-#if USE(JSVALUE32_64)
-            m_valueTagGPR,
-#endif
             m_valueGPR);
     }
 
     JSValueRegs propertyRegs() const
     {
         return JSValueRegs(
-#if USE(JSVALUE32_64)
-            propertyTagGPR(),
-#endif
             propertyGPR());
     }
 
     JSValueRegs baseRegs() const
     {
         return JSValueRegs(
-#if USE(JSVALUE32_64)
-            m_baseTagGPR,
-#endif
             m_baseGPR);
     }
 
@@ -405,20 +396,6 @@ public:
         }
     }
 
-#if USE(JSVALUE32_64)
-    GPRReg thisTagGPR() const { return m_extraTagGPR; }
-    GPRReg prototypeTagGPR() const { return m_extraTagGPR; }
-    GPRReg propertyTagGPR() const
-    {
-        switch (accessType) {
-        case AccessType::GetByValWithThis:
-            return m_extra2TagGPR;
-        default:
-            return m_extraTagGPR;
-        }
-    }
-#endif
-
     CodeOrigin codeOrigin { };
     PropertyOffset byIdSelfOffset;
     WriteBarrierStructureID m_inlineAccessBaseStructureID;
@@ -449,14 +426,6 @@ public:
     GPRReg m_extra2GPR { InvalidGPRReg };
     GPRReg m_propertyCacheGPR { InvalidGPRReg };
     GPRReg m_arrayProfileGPR { InvalidGPRReg };
-#if USE(JSVALUE32_64)
-    GPRReg m_valueTagGPR { InvalidGPRReg };
-    // FIXME: [32-bits] Check if PropertyInlineCache::m_baseTagGPR is used somewhere.
-    // https://bugs.webkit.org/show_bug.cgi?id=204726
-    GPRReg m_baseTagGPR { InvalidGPRReg };
-    GPRReg m_extraTagGPR { InvalidGPRReg };
-    GPRReg m_extra2TagGPR { InvalidGPRReg };
-#endif
 
     AccessType accessType { AccessType::GetById };
 protected:

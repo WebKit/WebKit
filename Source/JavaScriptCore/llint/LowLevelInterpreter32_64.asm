@@ -130,8 +130,6 @@ end
 macro cCall2(function)
     if C_LOOP
         cloopCallSlowPath function, a0, a1
-    elsif ARMv7
-        call function
     else
         error
     end
@@ -148,8 +146,6 @@ end
 macro cCall3(function)
     if C_LOOP
         cloopCallSlowPath3 function, a0, a1, a2
-    elsif ARMv7
-        call function
     else
         error
     end
@@ -158,8 +154,6 @@ end
 macro cCall4(function)
     if C_LOOP
         cloopCallSlowPath4 function, a0, a1, a2, a3
-    elsif ARMv7
-        call function
     else
         error
     end
@@ -187,7 +181,6 @@ end
 
 macro doVMEntry(makeCall)
     functionPrologue()
-    pushCalleeSaves()
 
     const entry = a0
     const vm = a1
@@ -197,12 +190,7 @@ macro doVMEntry(makeCall)
     # Since we have the guarantee that tX != aY when X != Y, we are safe from
     # aliasing problems with our arguments.
 
-    if ARMv7
-        vmEntryRecord(cfr, t3)
-        move t3, sp
-    else
-        vmEntryRecord(cfr, sp)
-    end
+    vmEntryRecord(cfr, sp)
 
     storep vm, VMEntryRecord::m_vm[sp]
     loadp ProtoCallFrame::context[protoCallFrame], t4
@@ -211,14 +199,6 @@ macro doVMEntry(makeCall)
     storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
     loadp VM::topEntryFrame[vm], t4
     storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
-
-    # Align stack pointer
-    if ARMv7
-        addp CallFrameAlignSlots * SlotSize, sp, t3
-        clrbp t3, StackAlignmentMask, t3
-        subp t3, CallFrameAlignSlots * SlotSize, t3
-        move t3, sp
-    end
 
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
     addp CallFrameHeaderSlots, t4, t4
@@ -289,12 +269,7 @@ macro doVMEntry(makeCall)
 
     makeCall(entry, protoCallFrame, t3, t4)
 
-    if ARMv7
-        vmEntryRecord(cfr, t3)
-        move t3, sp
-    else
-        vmEntryRecord(cfr, sp)
-    end
+    vmEntryRecord(cfr, sp)
 
     loadp VMEntryRecord::m_vm[sp], t5
     loadp VMEntryRecord::m_prevTopCallFrame[sp], t4
@@ -302,14 +277,8 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_prevTopEntryFrame[sp], t4
     storep t4, VM::topEntryFrame[t5]
 
-    if ARMv7
-        subp cfr, CalleeRegisterSaveSize, t5
-        move t5, sp
-    else
-        subp cfr, CalleeRegisterSaveSize, sp
-    end
+    subp cfr, CalleeRegisterSaveSize, sp
 
-    popCalleeSaves()
     functionEpilogue()
     ret
 end
@@ -324,12 +293,7 @@ _llint_throw_stack_overflow_error_from_vm_entry:
     move protoCallFrame, a1
     cCall2(_llint_throw_stack_overflow_error)
 
-    if ARMv7
-        vmEntryRecord(cfr, t3)
-        move t3, sp
-    else
-        vmEntryRecord(cfr, sp)
-    end
+    vmEntryRecord(cfr, sp)
 
     loadp VMEntryRecord::m_vm[sp], t5
     loadp VMEntryRecord::m_prevTopCallFrame[sp], t4
@@ -341,14 +305,8 @@ _llint_throw_stack_overflow_error_from_vm_entry:
     move UndefinedTag, r1
     move 0, r0
 
-    if ARMv7
-        subp cfr, CalleeRegisterSaveSize, t5
-        move t5, sp
-    else
-        subp cfr, CalleeRegisterSaveSize, sp
-    end
+    subp cfr, CalleeRegisterSaveSize, sp
 
-    popCalleeSaves()
     functionEpilogue()
     ret
 
@@ -391,12 +349,7 @@ op(llint_handle_uncaught_exception, macro()
     storep 0, VM::callFrameForCatch[t3]
 
     loadp VM::topEntryFrame[t3], cfr
-    if ARMv7
-        vmEntryRecord(cfr, t3)
-        move t3, sp
-    else
-        vmEntryRecord(cfr, sp)
-    end
+    vmEntryRecord(cfr, sp)
 
     loadp VMEntryRecord::m_vm[sp], t3
     loadp VMEntryRecord::m_prevTopCallFrame[sp], t5
@@ -408,26 +361,18 @@ op(llint_handle_uncaught_exception, macro()
     move UndefinedTag, r1
     move 0, r0
 
-    if ARMv7
-        subp cfr, CalleeRegisterSaveSize, t3
-        move t3, sp
-    else
-        subp cfr, CalleeRegisterSaveSize, sp
-    end
+    subp cfr, CalleeRegisterSaveSize, sp
 
-    popCalleeSaves()
     functionEpilogue()
     ret
 end)
 
 op(llint_get_host_call_return_value, macro ()
     functionPrologue()
-    pushCalleeSaves()
     loadp Callee + PayloadOffset[cfr], t0
     convertJSCalleeToVM(t0)
     loadi VM::encodedHostCallReturnValue + TagOffset[t0], t1
     loadi VM::encodedHostCallReturnValue + PayloadOffset[t0], t0
-    popCalleeSaves()
     functionEpilogue()
     ret
 end)
@@ -790,10 +735,9 @@ macro functionArityCheck(opcodeName, doneLabel)
     move 0, PC
     jmp doneLabel
 
-    # It is required in ARMv7 because global label definitions
-    # for those architectures generates a set of instructions
-    # that can clobber LLInt execution, resulting in unexpected
-    # crashes.
+    # The js_trampoline_* opcodes in BytecodeList.rb need a label on every
+    # backend to fill the opcode map, but only ARM64E dispatches through them,
+    # so reaching one here is a bug.
     _js_trampoline_%opcodeName%_untag:
     _js_trampoline_%opcodeName%_tag:
     crash()
@@ -2360,12 +2304,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
         move r1, sp
     else
         # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
-        if ARMv7
-            subp r1, CallerFrameAndPCSize, t2
-            move t2, sp
-        else
-            subp r1, CallerFrameAndPCSize, sp
-        end
+        subp r1, CallerFrameAndPCSize, sp
     end
     callCallSlowPath(
         slowPath,

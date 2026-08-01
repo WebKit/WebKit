@@ -332,7 +332,6 @@ inline UseKind useKindForResult(NodeFlags result)
 
 inline bool checkMayCrashIfInputIsEmpty(UseKind kind)
 {
-#if USE(JSVALUE64)
     switch (kind) {
     case UntypedUse:
     case Int32Use:
@@ -357,10 +356,6 @@ inline bool checkMayCrashIfInputIsEmpty(UseKind kind)
     default:
         return true;
     }
-#else
-    UNUSED_PARAM(kind);
-    return true;
-#endif
 }
 
 } } // namespace JSC::DFG

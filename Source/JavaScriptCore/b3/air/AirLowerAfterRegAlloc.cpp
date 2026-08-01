@@ -168,8 +168,6 @@ void lowerAfterRegAlloc(Code& code)
             }
 
             case ColdCCall: {
-                if constexpr (is32Bit())
-                    UNREACHABLE_FOR_PLATFORM(); // Needs porting when used
                 CCallValue* value = inst.origin->as<CCallValue>();
                 Kind oldKind = inst.kind;
 

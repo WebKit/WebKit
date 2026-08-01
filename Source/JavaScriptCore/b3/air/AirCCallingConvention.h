@@ -44,7 +44,6 @@ class Code;
 Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
 size_t NODELETE cCallResultCount(Code&, CCallValue*);
-bool NODELETE cCallArgumentEvenRegisterAlignment(Type);
 
 /*
  * On some platforms (well, on 32-bit platforms,) C functions can take arguments
@@ -78,11 +77,7 @@ template<> constexpr inline Type b3Type<double> = Double;
 template<typename T> constexpr inline Type b3Type<T*> = pointerType();
 
 // This maps between B3 args and air args.
-// On 32-bit platforms only, this may be an n:m mapping.
 struct ArgumentValueList {
-#if CPU(ARM_THUMB2)
-    JS_EXPORT_PRIVATE Value* makeStitch(B3::BasicBlock*, Value* hi, Value* low) const;
-#endif
     JS_EXPORT_PRIVATE Value* makeCCallValue(B3::BasicBlock*, Type, Air::Arg) const;
     JS_EXPORT_PRIVATE Value* makeCCallValue(B3::BasicBlock*, size_t idx) const;
 

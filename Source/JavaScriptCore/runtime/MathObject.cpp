@@ -227,7 +227,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncHypot, (JSGlobalObject* globalObject, Call
         // For libc++ versions before 20.1 (commit 72825fd, "Fix undue
         // overflowing of std::hypot(x,y,z)"), use hypot2. Unfortunately, that
         // introduces an LSB difference in the result when using libstdc++ on at
-        // least x86_64 and ARMv7.
+        // least x86_64.
         return JSValue::encode(jsDoubleNumber(std::hypotl(std::hypotl(arg0, arg1), arg2)));
 #else
         if (std::isnan(arg0) || std::isnan(arg1) || std::isnan(arg2))

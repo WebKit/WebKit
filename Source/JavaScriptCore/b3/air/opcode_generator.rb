@@ -233,7 +233,7 @@ def isKind(token)
 end
 
 def isArch(token)
-    token =~ /\A((x86)|(x86_32)|(x86_64_avx)|(x86_64)|(arm)|(armv7)|(arm64e)|(arm64_lse)|(arm64_sha3)|(arm64)|(32)|(64))\Z/
+    token =~ /\A((x86_64_avx)|(x86_64)|(arm64e)|(arm64_lse)|(arm64_sha3)|(arm64)|(64))\Z/
 end
 
 def isWidth(token)
@@ -321,20 +321,10 @@ class Parser
         result = []
         while isArch(token)
             case token.string
-            when "x86"
-                result << "X86"
-                result << "X86_64"
-            when "x86_32"
-                result << "X86"
             when "x86_64"
                 result << "X86_64"
             when "x86_64_avx"
                 result << "X86_64_AVX"
-            when "arm"
-                result << "ARM_THUMB2"
-                result << "ARM64"
-            when "armv7"
-                result << "ARM_THUMB2"
             when "arm64"
                 result << "ARM64"
             when "arm64e"
@@ -343,9 +333,6 @@ class Parser
                 result << "ARM64_LSE"
             when "arm64_sha3"
                 result << "ARM64_SHA3"
-            when "32"
-                result << "X86"
-                result << "ARM_THUMB2"
             when "64"
                 result << "X86_64"
                 result << "ARM64"
@@ -1067,7 +1054,7 @@ writeH("OpcodeGenerated") {
                         outp.puts "OPGEN_RETURN(false);"
                     end
                 when "Index"
-                    outp.puts "if (!Arg::isValidIndexForm(this->kind.opcode, args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
+                    outp.puts "if (!Arg::isValidIndexForm(args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
                     outp.puts "OPGEN_RETURN(false);"
                 when "PreIndex"
                     outp.puts "if (!Arg::isValidIncrementIndexForm(args[#{index}].offset()))"

@@ -221,9 +221,7 @@ private:
                     child2.setNode(m_node->child1().node());
                     m_changed = true;
                     break;
-#if USE(JSVALUE64)
                 case Int52RepUse:
-#endif
                 case Int32Use:
                     // For integers, we can only convert compatible modes.
                     // ArithAdd does handle do negative zero check for example.

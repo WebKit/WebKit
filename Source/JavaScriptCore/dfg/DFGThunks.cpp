@@ -48,9 +48,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
     adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITType::DFGJIT);
 
-#if USE(JSVALUE64)
     jit.store32(GPRInfo::numberTagRegister, &vm.osrExitIndex);
-#endif
 
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);
@@ -71,11 +69,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
         // We're using the firstGPR as the bufferGPR, and need to save it manually.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 1);
         RELEASE_ASSERT(bufferGPR == GPRInfo::toRegister(0));
-#if USE(JSVALUE64)
         jit.store64(bufferGPR, buffer);
-#else
-        jit.store32(bufferGPR, buffer);
-#endif
     }
 
     jit.move(CCallHelpers::TrustedImmPtr(buffer), bufferGPR);
@@ -117,11 +111,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     if constexpr (firstGPR) {
         // We're using the firstGPR as the bufferGPR, and need to restore it manually.
         ASSERT(bufferGPR == GPRInfo::toRegister(0));
-#if USE(JSVALUE64)
         jit.load64(buffer, bufferGPR);
-#else
-        jit.load32(buffer, bufferGPR);
-#endif
     }
 
     jit.farJump(MacroAssembler::AbsoluteAddress(&vm.osrExitJumpDestination), OSRExitPtrTag);
@@ -167,10 +157,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
 
     jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.emitMaterializeTagCheckRegisters();
-#if USE(JSVALUE64)
     jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
-#endif
 
     jit.farJump(GPRInfo::regT1, GPRInfo::callFrameRegister);
 

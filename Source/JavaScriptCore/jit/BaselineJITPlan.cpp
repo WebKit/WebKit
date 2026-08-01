@@ -55,13 +55,9 @@ auto BaselineJITPlan::compileInThreadImpl(JITCompilationEffort effort) -> Compil
         safepoint.begin(false);
 
         if (Options::useLOLJIT()) {
-#if USE(JSVALUE64)
             LOL::LOLJIT jit(*m_vm, *this, m_codeBlock);
             auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);
             m_jitCode = WTF::move(jitCode);
-#else
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         } else {
             JIT jit(*m_vm, *this, m_codeBlock);
             auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);

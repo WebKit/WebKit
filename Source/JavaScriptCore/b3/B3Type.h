@@ -145,8 +145,6 @@ inline bool Type::isVector() const
 
 constexpr Type pointerType()
 {
-    if (is32Bit())
-        return Int32;
     return Int64;
 }
 

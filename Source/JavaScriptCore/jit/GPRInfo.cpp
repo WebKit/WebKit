@@ -32,11 +32,7 @@ namespace JSC {
 
 void JSValueRegs::dump(PrintStream& out) const
 {
-#if USE(JSVALUE64)
     out.print(m_gpr);
-#else
-    out.print("(tag:", tagGPR(), ", payload:", payloadGPR(), ")");
-#endif
 }
 
 } // namespace JSC

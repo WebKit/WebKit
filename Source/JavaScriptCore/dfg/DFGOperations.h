@@ -510,10 +510,6 @@ JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase*));
 
-#if USE(JSVALUE32_64)
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationRandom, double, (JSGlobalObject*));
-#endif
-
 #if ENABLE(FTL_JIT)
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerTierUpNow, void, (VM*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerTierUpNowInLoop, void, (VM*, unsigned bytecodeIndexBits));

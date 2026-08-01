@@ -307,12 +307,6 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
                         liveAtOSRExit.add(recovery.gpr(), IgnoreVectors);
                     else if (recovery.isInFPR())
                         liveAtOSRExit.add(recovery.fpr(), IgnoreVectors);
-#if USE(JSVALUE32_64)
-                    else if (recovery.isInJSValueRegs()) {
-                        liveAtOSRExit.add(recovery.payloadGPR(), IgnoreVectors);
-                        liveAtOSRExit.add(recovery.tagGPR(), IgnoreVectors);
-                    }
-#endif
                     else
                         RELEASE_ASSERT_NOT_REACHED();
                 }

@@ -29,7 +29,6 @@
 
 #if ENABLE(B3_JIT)
 
-#if USE(JSVALUE64)
 #include "AirBlockInsertionSet.h"
 #include "AirCCallSpecial.h"
 #include "AirCCallingConvention.h"
@@ -561,7 +560,7 @@ private:
     }
 
     template<IsLegalOffset Int>
-    std::optional<unsigned> NODELETE scaleForShl(Air::Opcode opcode, Value* shl, Int offset, std::optional<Width> width = std::nullopt)
+    std::optional<unsigned> NODELETE scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
             return std::nullopt;
@@ -578,7 +577,7 @@ private:
         if (!isRepresentableAs<int32_t>(bigScale))
             return std::nullopt;
         unsigned scale = static_cast<int32_t>(bigScale);
-        if (!Arg::isValidIndexForm(opcode, scale, offset, width))
+        if (!Arg::isValidIndexForm(scale, offset, width))
             return std::nullopt;
         return scale;
     }
@@ -607,7 +606,7 @@ private:
             Value* right = address->child(1);
 
             auto tryIndex = [&] (Value* index, Value* base) -> Arg {
-                std::optional<unsigned> scale = scaleForShl(Air::Move, index, offset, width);
+                std::optional<unsigned> scale = scaleForShl(index, offset, width);
                 if (!scale)
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
@@ -621,7 +620,7 @@ private:
                 return result;
 
             if (m_locked.contains(left) || m_locked.contains(right)
-                || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
+                || !Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
             if (isMergeableValue(left, ZExt32) || isMergeableValue(left, SExt32))
@@ -636,7 +635,7 @@ private:
             // amount is greater than 1, then there isn't really anything smart that we could do here.
             // We avoid using baseless indexes because their encoding isn't particularly efficient.
             if (m_locked.contains(left) || !address->child(1)->isInt32(1)
-                || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
+                || !Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
             return indexArg(tmp(left), left, 1, offset);
@@ -654,7 +653,7 @@ private:
             // Why don't we need to check m_locked here? WasmAddressValue is purely used for address computation,
             // which is different from the other operations. And we already know that numUses(address) is below the threshold.
             // If we ensure that all use of WasmAddress gets indexArg form, we do not need to have WasmAddressValue's instruction actually.
-            if (!Arg::isValidIndexForm(Air::Move, 1, offset, width))
+            if (!Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
             // FIXME: We should support ARM64 LDR 32-bit addressing, which will
@@ -3327,7 +3326,7 @@ private:
         }
         
         auto tryShl = [&] (Value* shl, Value* other) -> bool {
-            std::optional<unsigned> scale = scaleForShl(leaOpcode, shl, offset);
+            std::optional<unsigned> scale = scaleForShl(shl, offset);
             if (!scale)
                 return false;
             if (!canBeInternal(shl))
@@ -6067,7 +6066,7 @@ private:
 
         case B3::CCall: {
             CCallValue* cCall = m_value->as<CCallValue>();
-            bool deferToAfterRegAlloc = m_isRare && m_code.optLevel() >= 2 && !isARM_THUMB2();
+            bool deferToAfterRegAlloc = m_isRare && m_code.optLevel() >= 2;
             if (deferToAfterRegAlloc) {
                 m_procedure.setUsesColdCCall(true);
 
@@ -6180,9 +6179,6 @@ private:
                 break;
             case Int64:
                 append(Move, cCallResult(m_code, cCall, 0), resultDst0);
-#if USE(JSVALUE32_64)
-                append(Move, cCallResult(m_code, cCall, 1), resultDst1);
-#endif
                 break;
             case V128:
                 ASSERT(is64Bit());
@@ -6855,7 +6851,5 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #pragma pop_macro("StoreFence")
 #pragma pop_macro("LoadFence")
 #pragma pop_macro("MemoryFence")
-
-#endif // USE(JSVALUE64)
 
 #endif // ENABLE(B3_JIT)

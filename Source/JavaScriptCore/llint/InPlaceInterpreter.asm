@@ -104,19 +104,6 @@ elsif RISCV64
     const sc1 = ws1
     const sc2 = csr9
     const sc3 = csr10
-elsif ARMv7
-    const PC = csr1
-    const MC = t6
-
-    # Wasm Pinned Registers
-    const WI = csr0
-    const MB = invalidGPR
-    const BC = invalidGPR
-
-    const sc0 = t4
-    const sc1 = t5
-    const sc2 = csr0
-    const sc3 = t7
 else
     const PC = invalidGPR
     const MC = invalidGPR
@@ -151,9 +138,6 @@ const wasmInstance = csr0
 if X86_64 or ARM64 or ARM64E or RISCV64
     const memoryBase = csr3
     const boundsCheckingSize = csr4
-elsif ARMv7
-    const memoryBase = t2
-    const boundsCheckingSize = t3
 else
     const memoryBase = invalidGPR
     const boundsCheckingSize = invalidGPR
@@ -176,10 +160,6 @@ if X86_64
     const NumberOfVolatileGPRs = NumberOfWasmArgumentGPRs + 2 // +2 for ws0 and ws1
 elsif ARM64 or ARM64E or RISCV64
     const NumberOfWasmArgumentGPRs = 8
-    const NumberOfVolatileGPRs = NumberOfWasmArgumentGPRs
-elsif ARMv7
-    # These 4 GPR holds only 2 JSValues in 2 pairs.
-    const NumberOfWasmArgumentGPRs = 4
     const NumberOfVolatileGPRs = NumberOfWasmArgumentGPRs
 else
     error
@@ -433,9 +413,7 @@ macro ipintReloadMemory(scratch)
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
-    if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, scratch)
-    end
+    cagedPrimitiveMayBeNull(memoryBase, scratch)
 end
 
 # Call site tracking
@@ -532,18 +510,14 @@ if WEBASSEMBLY_BBQJIT
 
     preserveWasmArgumentRegisters()
 
-if not ARMv7
     ipintReloadMemory(t2)
     push memoryBase, boundsCheckingSize
-end
 
     move cfr, a1
     operationCall(macro() cCall2(_ipint_extern_prologue_osr) end)
     move r0, ws0
 
-if not ARMv7
     pop boundsCheckingSize, memoryBase
-end
 
     restoreWasmArgumentRegisters()
 
@@ -560,14 +534,11 @@ end
     end
 
 .continue:
-    if ARMv7
-        break # FIXME: ipint support.
-    end # ARMv7
 end # WEBASSEMBLY_BBQJIT
 end
 
 macro ipintLoopOSR(increment)
-if WEBASSEMBLY_BBQJIT and not ARMv7
+if WEBASSEMBLY_BBQJIT
     validateOpcodeConfig(ws0)
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::IPIntTierUpCounter::m_counter[ws0], .continue
@@ -598,7 +569,7 @@ end
 end
 
 macro ipintEpilogueOSR(increment)
-if WEBASSEMBLY_BBQJIT and not ARMv7
+if WEBASSEMBLY_BBQJIT
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::IPIntTierUpCounter::m_counter[ws0], .continue
 
@@ -753,26 +724,14 @@ end
 end
 
 macro reloadMemoryRegistersFromInstance(instance, scratch1)
-if not ARMv7
     loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[instance], memoryBase
     loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + sizeof(void*))[instance], boundsCheckingSize
     cagedPrimitiveMayBeNull(memoryBase, scratch1) # If boundsCheckingSize is 0, pointer can be a nullptr.
-end
 end
 
 macro throwException(exception)
     storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
     jmp _wasm_throw_from_slow_path_trampoline
-end
-
-if ARMv7
-macro branchIfWasmException(exceptionTarget)
-    loadp CodeBlock[cfr], t3
-    loadp JSWebAssemblyInstance::m_vm[t3], t3
-    btpz VM::m_exception[t3], .noException
-    jmp exceptionTarget
-.noException:
-end
 end
 
 ##############################
@@ -797,13 +756,6 @@ op(js_to_wasm_wrapper_entry, macro ()
             emit "movz x16, #0xBAD"
             emit "movz x17, #0xBAD"
             emit "movz x18, #0xBAD"
-        elsif ARMv7
-            emit "mov r4, #0xBAD"
-            emit "mov r5, #0xBAD"
-            emit "mov r6, #0xBAD"
-            emit "mov r8, #0xBAD"
-            emit "mov r9, #0xBAD"
-            emit "mov r12, #0xBAD"
         end
     end
 
@@ -957,9 +909,7 @@ end
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
-    if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, wa0)
-    end
+    cagedPrimitiveMayBeNull(memoryBase, wa0)
 
     # Arguments
 
@@ -1050,11 +1000,7 @@ end
     move cfr, a1
     cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
 
-if ARMv7
-    branchIfWasmException(.unwind)
-else
     btpnz r1, .unwind
-end
 
     # Clean up and return
     restoreJSToWasmRegisters()
@@ -1077,7 +1023,7 @@ end
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(a0, a1)
 
 # Should be (not USE_BUILTIN_FRAME_ADDRESS) but need to keep down the size of LLIntAssembly.h
-if ASSERT_ENABLED or ARMv7
+if ASSERT_ENABLED
     storep cfr, JSWebAssemblyInstance::m_temporaryCallFrame[wasmInstance]
 end
 
@@ -1112,9 +1058,7 @@ end
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
-    if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, ws1)
-    end
+    cagedPrimitiveMayBeNull(memoryBase, ws1)
 
     jmp ws0, WasmEntryPtrTag
 end)
@@ -1159,7 +1103,7 @@ op(wasm_to_js_wrapper_entry, macro()
         end
     end)
 
-if ASSERT_ENABLED or ARMv7
+if ASSERT_ENABLED
     storep cfr, JSWebAssemblyInstance::m_temporaryCallFrame[wasmInstance]
 end
 
@@ -1247,7 +1191,7 @@ end
     loadp JSWebAssemblyInstance::m_vm[wasmInstance], a0
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(a0, a1)
 
-if ASSERT_ENABLED or ARMv7
+if ASSERT_ENABLED
     storep cfr, JSWebAssemblyInstance::m_temporaryCallFrame[wasmInstance]
 end
 
@@ -1341,7 +1285,7 @@ op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
 end)
 
 op(ipint_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     preserveCallerPCAndCFR()
     saveIPIntRegisters()
     storep wasmInstance, CodeBlock[cfr]
@@ -1355,7 +1299,7 @@ else
 end
 end)
 
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
 .ipint_entry_end_local:
     loadp UnboxedWasmCalleeStackSlot[cfr], MC
     loadp Wasm::IPIntCallee::m_localInitBytecode + VectorBufferOffset[MC], MC
@@ -1368,12 +1312,7 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
 
     loadp CodeBlock[cfr], wasmInstance
     # OSR Check
-if ARMv7
-    ipintPrologueOSR(500000) # FIXME: support IPInt.
-    break
-else
     ipintPrologueOSR(5)
-end
     move cfr, a1
     operationCall(macro() cCall2(_ipint_extern_prepare_function_body) end)
     move r0, ws0
@@ -1410,15 +1349,9 @@ macro ipintCatchCommon()
     loadp VM::targetInterpreterPCForThrow[t3], PC
     loadp VM::targetInterpreterMetadataPCForThrow[t3], MC
 
-if ARMv7
-    push MC
-end
     loadp Callee[cfr], ws0
     unboxWasmCallee(ws0, ws1)
     storep ws0, UnboxedWasmCalleeStackSlot[cfr]
-if ARMv7
-    pop MC
-end
 
     loadp CodeBlock[cfr], wasmInstance
     loadp Wasm::IPIntCallee::m_bytecode[ws0], t1
@@ -1478,7 +1411,7 @@ end
 end)
 
 op(ipint_table_catch_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintCatchCommon()
 
     # push arguments but no ref: sp in a2, call normal operation
@@ -1496,7 +1429,7 @@ end
 end)
 
 op(ipint_table_catch_ref_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintCatchCommon()
 
     # push both arguments and ref
@@ -1514,7 +1447,7 @@ end
 end)
 
 op(ipint_table_catch_all_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintCatchCommon()
 
     # do nothing: 0 in sp for no arguments, call normal operation
@@ -1532,7 +1465,7 @@ end
 end)
 
 op(ipint_table_catch_allref_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintCatchCommon()
 
     # push only the ref

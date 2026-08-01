@@ -42,24 +42,7 @@ struct YarrJITDefaultRegisters {
 public:
     static constexpr YarrRegisters registersAssignments = YarrRegisters::DefaultRegisters;
 
-#if CPU(ARM_THUMB2)
-    static constexpr GPRReg input = ARMRegisters::r0;
-    static constexpr GPRReg index = ARMRegisters::r1;
-    static constexpr GPRReg length = ARMRegisters::r2;
-    static constexpr GPRReg output = ARMRegisters::r3;
-
-    static constexpr GPRReg regT0 = ARMRegisters::r4;
-    static constexpr GPRReg regT1 = ARMRegisters::r5;
-    // r6 is reserved for MacroAssemblerARMv7,
-    // r7 is fp.
-    static constexpr GPRReg regT2 = ARMRegisters::r8;
-    // r9 is sb in EABI.
-    static constexpr GPRReg regT3 = ARMRegisters::r10; // r10 is SL, but no longer a special register.
-
-    static constexpr GPRReg returnRegister = ARMRegisters::r0;
-    static constexpr GPRReg returnRegister2 = ARMRegisters::r1;
-
-#elif CPU(ARM64)
+#if CPU(ARM64)
     // Argument registers
     static constexpr GPRReg input = ARM64Registers::x0;
     static constexpr GPRReg index = ARM64Registers::x1;

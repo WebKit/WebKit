@@ -255,9 +255,6 @@ namespace JSC {
 
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
-#if USE(JSVALUE32_64)
-        void loadCodeBlockConstantTag(VirtualRegister, RegisterID);
-#endif
 
         void exceptionCheck(Jump jumpToHandler);
         void exceptionCheck();
@@ -288,14 +285,8 @@ namespace JSC {
         template<typename Op>
         void emitPutCallResult(const Op&);
 
-#if USE(JSVALUE64)
         template<typename Op> void compileOpStrictEq(const JSInstruction*);
         template<typename Op> void compileOpStrictEqJump(const JSInstruction*);
-#elif USE(JSVALUE32_64)
-        void compileOpEqCommon(VirtualRegister src1, VirtualRegister src2);
-        void compileOpEqSlowCommon(Vector<SlowCaseEntry>::iterator&);
-        void compileOpStrictEqCommon(VirtualRegister src1,  VirtualRegister src2);
-#endif
 
         enum class WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
 #if COMPILER(GCC) && GCC_VERSION < 120300
@@ -344,9 +335,6 @@ namespace JSC {
         void emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
 
-#if USE(JSVALUE32_64)
-        void emitGetVirtualRegisterTag(VirtualRegister src, RegisterID dst);
-#elif USE(JSVALUE64)
         // Machine register variants purely for convenience
         void emitGetVirtualRegister(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, RegisterID from);
@@ -354,7 +342,6 @@ namespace JSC {
         Jump emitJumpIfNotInt(RegisterID, RegisterID, RegisterID scratch);
         void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
         void emitJumpSlowCaseIfNotInt(RegisterID);
-#endif
 
         void emitJumpSlowCaseIfNotInt(JSValueRegs, JSValueRegs, RegisterID scratch);
         void emitJumpSlowCaseIfNotInt(JSValueRegs);
@@ -650,10 +637,8 @@ namespace JSC {
 
         JSValue getConstantOperand(VirtualRegister);
 
-#if USE(JSVALUE64)
         bool isOperandConstantDouble(VirtualRegister);
         double getOperandConstantDouble(VirtualRegister src);
-#endif
         bool isOperandConstantInt(VirtualRegister);
         int32_t getOperandConstantInt(VirtualRegister src);
         bool isOperandConstantChar(VirtualRegister);

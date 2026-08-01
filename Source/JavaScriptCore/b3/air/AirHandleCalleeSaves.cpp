@@ -63,13 +63,6 @@ void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
     usedCalleeSaves.filter(code.mutableRegs());
     usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 
-#if CPU(ARM)
-    // See AirCode for a similar comment about why ARMv7 acts weird here.
-    // Essentially, we might at any point clobber this, and it is a callee-save.
-    // This should be fixed.
-    usedCalleeSaves.add(MacroAssembler::addressTempRegister, IgnoreVectors);
-#endif
-
     auto calleSavesToSave = usedCalleeSaves;
 
     if (!calleSavesToSave.numberOfSetRegisters())

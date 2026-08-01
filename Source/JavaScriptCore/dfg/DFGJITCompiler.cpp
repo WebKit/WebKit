@@ -100,7 +100,6 @@ void JITCompiler::linkOSRExits()
             info.m_replacementDestination = label();
 
         jitAssertHasValidCallFrame();
-#if USE(JSVALUE64)
         move(TrustedImm32(i), GPRInfo::numberTagRegister);
         if (m_graph.m_plan.isUnlinked()) {
             if (info.m_replacementDestination.isSet())
@@ -109,15 +108,8 @@ void JITCompiler::linkOSRExits()
                 dispatchCases.append(jump());
         } else
             info.m_patchableJump = patchableJump();
-#else
-        UNUSED_VARIABLE(dispatchCases);
-        UNUSED_VARIABLE(dispatchCasesWithoutLinkedFailures);
-        store32(TrustedImm32(i), &vm().osrExitIndex);
-        info.m_patchableJump = patchableJump();
-#endif
     }
 
-#if USE(JSVALUE64)
     if (m_graph.m_plan.isUnlinked()) {
         // When jumping to OSR exit handler via exception, we do not have proper callFrameRegister and jitDataRegister.
         // We should reload appropriate callFrameRegister from VM::callFrameForCatch to materialize constants buffer register.
@@ -139,7 +131,6 @@ void JITCompiler::linkOSRExits()
         addPtr(GPRInfo::notCellMaskRegister, GPRInfo::jitDataRegister);
         farJump(Address(GPRInfo::jitDataRegister, JITData::ExitVector::Storage::offsetOfData()), OSRExitPtrTag);
     }
-#endif
 }
 
 void JITCompiler::compileEntry()
@@ -159,15 +150,11 @@ void JITCompiler::compileEntry()
 void JITCompiler::compileSetupRegistersForEntry()
 {
     emitSaveCalleeSaves();
-#if USE(JSVALUE64)
     // Use numberTagRegister as a scratch since it is recovered after this.
     jitAssertCodeBlockOnCallFrameWithType(GPRInfo::numberTagRegister, JITType::DFGJIT);
-#endif
     emitMaterializeTagCheckRegisters();
-#if USE(JSVALUE64)
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
     loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
-#endif
 }
 
 void JITCompiler::compileEntryExecutionFlag()
@@ -195,10 +182,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
     m_jitCode->common.m_concatKeyAtomStringCaches = WTF::move(m_graph.m_concatKeyAtomStringCaches);
 
-#if USE(JSVALUE32_64)
-    m_jitCode->common.doubleConstants = WTF::move(m_graph.m_doubleConstants);
-#endif
-    
     m_graph.registerFrozenValues();
 
     ASSERT(m_jitCode->m_stringSwitchJumpTables.isEmpty());
@@ -428,19 +411,6 @@ void JITCompiler::collectSourceCodeDumpDebugInfo(LinkBuffer& linkBuffer)
     linkBuffer.setSourceCodeDumpDebugInfo(WTF::move(debugInfo));
 }
 
-#if USE(JSVALUE32_64)
-void* JITCompiler::addressOfDoubleConstant(Node* node)
-{
-    double value = node->asNumber();
-    int64_t valueBits = std::bit_cast<int64_t>(value);
-    return m_graph.m_doubleConstantsMap.ensure(valueBits, [&]{
-        double* addressInConstantPool = m_graph.m_doubleConstants.add();
-        *addressInConstantPool = value;
-        return addressInConstantPool;
-    }).iterator->value;
-}
-#endif
-
 void JITCompiler::noticeCatchEntrypoint(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer, Vector<FlushFormat>&& argumentFormats)
 {
     RELEASE_ASSERT(basicBlock.isCatchEntrypoint);
@@ -531,24 +501,12 @@ void JITCompiler::makeCatchOSREntryBuffer()
 
 void JITCompiler::loadConstant(LinkerIR::Constant index, GPRReg dest)
 {
-#if USE(JSVALUE64)
     loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfTrailingData() + sizeof(void*) * index), dest);
-#else
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(dest);
-    RELEASE_ASSERT_NOT_REACHED();
-#endif
 }
 
 void JITCompiler::loadPropertyInlineCache(PropertyInlineCacheIndex index, GPRReg dest)
 {
-#if USE(JSVALUE64)
     subPtr(GPRInfo::jitDataRegister, TrustedImm32(static_cast<uintptr_t>(index.m_index + 1) * sizeof(HandlerPropertyInlineCache)), dest);
-#else
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(dest);
-    RELEASE_ASSERT_NOT_REACHED();
-#endif
 }
 
 void JITCompiler::loadLinkableConstant(LinkableConstant constant, GPRReg dest)
@@ -591,23 +549,19 @@ JITCompiler::LinkableConstant::LinkableConstant(JITCompiler& jit, GlobalObjectTa
 
 void JITCompiler::LinkableConstant::materialize(CCallHelpers& jit, GPRReg resultGPR)
 {
-#if USE(JSVALUE64)
     if (isUnlinked()) {
         jit.loadPtr(unlinkedAddress(), resultGPR);
         return;
     }
-#endif
     jit.move(TrustedImmPtr(m_pointer), resultGPR);
 }
 
 void JITCompiler::LinkableConstant::store(CCallHelpers& jit, CCallHelpers::Address address)
 {
-#if USE(JSVALUE64)
     if (isUnlinked()) {
         jit.transferPtr(unlinkedAddress(), address);
         return;
     }
-#endif
     jit.storePtr(TrustedImmPtr(m_pointer), address);
 }
 

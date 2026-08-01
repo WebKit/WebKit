@@ -272,12 +272,6 @@ unsigned VariableEventStream::reconstruct(
                 valueRecoveries[i] = ValueRecovery::inFPR(info.u.fpr, DataFormatDouble);
                 continue;
             }
-#if USE(JSVALUE32_64)
-            if (info.format & DataFormatJS) {
-                valueRecoveries[i] = ValueRecovery::inPair(info.u.pair.tagGPR, info.u.pair.payloadGPR);
-                continue;
-            }
-#endif
             valueRecoveries[i] = ValueRecovery::inGPR(info.u.gpr, info.format);
             continue;
         }

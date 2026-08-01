@@ -79,10 +79,6 @@ void VariableEvent::dumpFillInfo(const char* name, PrintStream& out) const
     out.print(name, "(", id(), ", ");
     if (dataFormat() == DataFormatDouble)
         out.printf("%s", FPRInfo::debugName(fpr()).characters());
-#if USE(JSVALUE32_64)
-    else if (dataFormat() & DataFormatJS)
-        out.printf("%s:%s", GPRInfo::debugName(tagGPR()).characters(), GPRInfo::debugName(payloadGPR()).characters());
-#endif
     else
         out.printf("%s", GPRInfo::debugName(gpr()).characters());
     out.printf(", %s)", dataFormatToString(dataFormat()));

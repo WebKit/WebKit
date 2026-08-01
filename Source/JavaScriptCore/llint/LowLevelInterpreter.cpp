@@ -308,11 +308,9 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     // Define the pseudo registers used by the LLINT C Loop backend:
     static_assert(sizeof(CLoopRegister) == sizeof(intptr_t));
 
-    // The CLoop llint backend is initially based on the ARMv7 backend, and
-    // then further enhanced with a few instructions from the x86 backend to
-    // support building for X64 targets. Hence, the shape of the generated
-    // code and the usage convention of registers will look a lot like the
-    // ARMv7 backend's.
+    // The CLoop llint backend generates portable C++ from the offlineasm sources,
+    // with a few instructions modeled on the x86 backend to support building for
+    // X64 targets.
     //
     // For example, on a 32-bit build:
     // 1. Outgoing args will be set up as follows:
@@ -510,9 +508,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 // For the spacer instruction, we'll choose a breakpoint instruction. However, we can
 // also just emit an unused piece of data. A breakpoint instruction is preferable.
 
-#if CPU(ARM_THUMB2)
-#define OFFLINE_ASM_BEGIN_SPACER "bkpt #0\n"
-#elif CPU(ARM64)
+#if CPU(ARM64)
 #define OFFLINE_ASM_BEGIN_SPACER "brk #" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) "\n"
 #elif CPU(X86_64)
 #define OFFLINE_ASM_BEGIN_SPACER "int3\n"
@@ -563,17 +559,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #define OFFLINE_ASM_TEXT_SECTION ".text\n"
 #endif
 
-#if CPU(ARM_THUMB2)
-#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT, VISIBILITY) \
-    OFFLINE_ASM_TEXT_SECTION                     \
-    ALIGNMENT                                    \
-    ALT_ENTRY(label)                             \
-    ".globl " SYMBOL_STRING(label) "\n"          \
-    VISIBILITY(label) "\n"                       \
-    ".thumb\n"                                   \
-    ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
-    SYMBOL_STRING(label) ":\n"
-#elif CPU(RISCV64)
+#if CPU(RISCV64)
 #define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT, VISIBILITY) \
     OFFLINE_ASM_TEXT_SECTION                    \
     ALIGNMENT                                   \
@@ -679,19 +665,6 @@ __asm__(
     ".cfi_offset fp, -16\n"
     OFFLINE_ASM_BEGIN_SPACER
 );
-#elif CPU(ARM_THUMB2)
-__asm__(
-    ".cfi_startproc\n"
-    OFFLINE_ASM_BEGIN_SPACER
-    ".cfi_def_cfa r7, 8\n"
-    ".cfi_offset lr, -4\n"
-    ".cfi_offset fp, -8\n"
-    OFFLINE_ASM_BEGIN_SPACER
-    ".cfi_def_cfa r7, 8\n"
-    ".cfi_offset lr, -4\n"
-    ".cfi_offset fp, -8\n"
-    OFFLINE_ASM_BEGIN_SPACER
-);
 #endif
 #endif
 
@@ -701,7 +674,7 @@ __asm__(
 
 // See GdbJIT.cpp for a detailed explanation.
 #if !OS(DARWIN) && COMPILER(CLANG)
-#if CPU(ARM64) || CPU(ARM_THUMB2)
+#if CPU(ARM64)
 __asm__(
     ".cfi_endproc\n"
 );

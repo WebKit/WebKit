@@ -2808,9 +2808,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
     RegisterSet clobberAll = RegisterSet::allFPRs();
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
-#if !CPU(ARM_THUMB2)
     clobberAll.remove(FPRInfo::argumentFPR2);
-#endif
     patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));

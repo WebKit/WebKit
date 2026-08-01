@@ -233,7 +233,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::baseJSR;
     using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::valueJSR;
-    using BaselineJITRegisters::PutByVal::profileGPR; // Keep in mind that this can be a metadataTable register in ARMv7.
+    using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
 
@@ -260,10 +260,6 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
 
     gen.generateDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
-#if CPU(ARM_THUMB2)
-    // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
-    emitMaterializeMetadataAndConstantPoolRegisters();
-#endif
     addSlowCase();
     m_putByVals.append(gen);
 
@@ -1797,8 +1793,6 @@ void JIT::emit_op_put_internal_field(const JSInstruction* currentInstruction)
     emitWriteBarrier(base, value, ShouldFilterValue);
 }
 
-#if USE(JSVALUE64)
-
 void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByValWithThis>();
@@ -2185,86 +2179,17 @@ void JIT::emitSlow_op_enumerator_put_by_val(const JSInstruction* currentInstruct
     generatePutByValSlowCase(currentInstruction->as<OpEnumeratorPutByVal>(), iter);
 }
 
-#elif USE(JSVALUE32_64)
-
-void JIT::emit_op_get_by_val_with_this(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_get_by_val_with_this);
-    slowPathCall.call();
-}
-
-void JIT::emitSlow_op_get_by_val_with_this(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-void JIT::emit_op_get_property_enumerator(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_get_property_enumerator);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_enumerator_next(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_next);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_enumerator_get_by_val(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_get_by_val);
-    slowPathCall.call();
-}
-
-void JIT::emitSlow_op_enumerator_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-void JIT::emit_op_enumerator_in_by_val(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_in_by_val);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_enumerator_put_by_val(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_put_by_val);
-    slowPathCall.call();
-}
-
-void JIT::emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-void JIT::emit_op_enumerator_has_own_property(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_has_own_property);
-    slowPathCall.call();
-}
-
-#endif
-
 void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
 {
     // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
     Jump valueNotCell;
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
-#if USE(JSVALUE64)
         emitGetVirtualRegister(value, regT0);
-#elif USE(JSVALUE32_64)
-        emitGetVirtualRegisterTag(value, regT0);
-#endif
         valueNotCell = branchIfNotCell(regT0);
     }
 
     constexpr GPRReg arg1GPR = preferredArgumentGPR<decltype(operationWriteBarrierSlowPath), 1>();
-#if USE(JSVALUE64)
     constexpr JSValueRegs tmpJSR { arg1GPR };
-#elif USE(JSVALUE32_64)
-    constexpr JSValueRegs tmpJSR { regT0, arg1GPR };
-#endif
     static_assert(noOverlap(regT0, arg1GPR, regT2));
 
     emitGetVirtualRegister(owner, tmpJSR);

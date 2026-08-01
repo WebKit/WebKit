@@ -728,9 +728,6 @@ void testCheckAdd()
     CHECK_EQ(invoke<double>(*code, 2147483647, 42), 2147483689.0);
 }
 
-#if CPU(ARM_THUMB2)
-void testCheckAdd64() { } // TODO
-#else
 void testCheckAdd64()
 {
     Procedure proc;
@@ -745,18 +742,6 @@ void testCheckAdd64()
     checkAdd->appendSomeRegister(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-#if CPU(ARM_THUMB2)
-                CHECK_EQ(params.size(), 4u);
-                CHECK(params[0].isGPR());
-                CHECK(params[1].isGPR());
-                CHECK(params[2].isGPR());
-                CHECK(params[3].isGPR());
-                jit.convertInt64ToDouble(params[0].gpr(), params[1].gpr(), FPRInfo::fpRegT0);
-                jit.convertInt64ToDouble(params[2].gpr(), params[3].gpr(), FPRInfo::fpRegT0);
-                jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
-                jit.emitFunctionEpilogue();
-                jit.ret();
-#else
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CHECK_EQ(params.size(), 2u);
                 CHECK(params[0].isGPR());
@@ -766,7 +751,6 @@ void testCheckAdd64()
                 jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
                 jit.emitFunctionEpilogue();
                 jit.ret();
-#endif
     });
     root->appendNewControlValue(
         proc, Return, Origin(),
@@ -779,7 +763,6 @@ void testCheckAdd64()
     CHECK_EQ(invoke<double>(*code, 42ll, 42ll), 84.0);
     CHECK_EQ(invoke<double>(*code, 9223372036854775807ll, 42ll), static_cast<double>(9223372036854775807ll) + 42.0);
 }
-#endif
 
 void testCheckAdd64Range()
 {
@@ -1223,9 +1206,6 @@ NEVER_INLINE double doubleSub(double a, double b)
     return a - b;
 }
 
-#if CPU(ARM_THUMB2)
-void testCheckSub64() { } // TODO
-#else
 void testCheckSub64()
 {
     Procedure proc;
@@ -1260,7 +1240,6 @@ void testCheckSub64()
     CHECK_EQ(invoke<double>(*code, 42ll, 42ll), 0.0);
     CHECK_EQ(invoke<double>(*code, -9223372036854775807ll, 42ll), doubleSub(static_cast<double>(-9223372036854775807ll), 42.0));
 }
-#endif
 
 void testCheckSubFold(int a, int b)
 {
@@ -1338,9 +1317,6 @@ void testCheckNeg()
     CHECK_EQ(invoke<double>(*code, -2147483647 - 1), 2147483648.0);
 }
 
-#if CPU(ARM_THUMB2)
-void testCheckNeg64() { } // TODO
-#else
 void testCheckNeg64()
 {
     Procedure proc;
@@ -1372,7 +1348,6 @@ void testCheckNeg64()
     CHECK_EQ(invoke<double>(*code, 42ll), -42.0);
     CHECK_EQ(invoke<double>(*code, -9223372036854775807ll - 1), 9223372036854775808.0);
 }
-#endif
 
 void testCheckMul()
 {
@@ -1501,9 +1476,6 @@ void testCheckMul2()
     CHECK_EQ(invoke<double>(*code, 2147483647), 2147483647.0 * 2.0);
 }
 
-#if CPU(ARM_THUMB2)
-void testCheckMul64() { } // TODO
-#else
 void testCheckMul64()
 {
     Procedure proc;
@@ -1538,7 +1510,6 @@ void testCheckMul64()
     CHECK_EQ(invoke<double>(*code, 42, 42), 42.0 * 42.0);
     CHECK_EQ(invoke<double>(*code, 9223372036854775807ll, 42), static_cast<double>(9223372036854775807ll) * 42.0);
 }
-#endif
 
 void testCheckMulFold(int a, int b)
 {
@@ -1661,9 +1632,6 @@ void testCheckMulArgumentAliasing32()
     CHECK_EQ(compileAndRun<int32_t>(proc, 2, 3, 4), 72);
 }
 
-#if CPU(ARM_THUMB2)
-void testCheckMul64SShr() { } // TODO
-#else
 void testCheckMul64SShr()
 {
     Procedure proc;
@@ -1704,7 +1672,6 @@ void testCheckMul64SShr()
     CHECK_EQ(invoke<double>(*code, 42ll, 42ll), (42.0 / 2.0) * (42.0 / 2.0));
     CHECK_EQ(invoke<double>(*code, 10000000000ll, 10000000000ll), 25000000000000000000.0);
 }
-#endif
 
 template<typename LeftFunctor, typename RightFunctor, typename InputType>
 void genericTestCompare(

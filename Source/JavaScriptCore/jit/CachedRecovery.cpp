@@ -31,15 +31,13 @@
 namespace JSC {
 
 // We prefer loading doubles and undetermined JSValues into FPRs
-// because it would otherwise use up GPRs.  Two in JSVALUE32_64.
+// because it would otherwise use up GPRs.
 bool CachedRecovery::loadsIntoFPR() const
 {
     switch (recovery().technique()) {
     case DoubleDisplacedInJSStack:
     case DisplacedInJSStack:
-#if USE(JSVALUE64)
     case CellDisplacedInJSStack:
-#endif
         return true;
 
     default:
@@ -52,13 +50,9 @@ bool CachedRecovery::loadsIntoGPR() const
 {
     switch (recovery().technique()) {
     case Int32DisplacedInJSStack:
-#if USE(JSVALUE32_64)
-    case Int32TagDisplacedInJSStack:
-#elif USE(JSVALUE64)
     case Int52DisplacedInJSStack:
     case StrictInt52DisplacedInJSStack:
     case DisplacedInJSStack:
-#endif
     case BooleanDisplacedInJSStack:
     case CellDisplacedInJSStack:
         return true;

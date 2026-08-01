@@ -303,9 +303,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
     auto singletonCallee = CalleeBits::boxNativeCallee(&WasmToJSCallee::singleton());
     *access.operator()<uintptr_t>(callFrame, CallFrameSlot::codeBlock * sizeof(Register)) = std::bit_cast<uintptr_t>(instance);
     *access.operator()<uintptr_t>(callFrame, CallFrameSlot::callee * sizeof(Register)) = std::bit_cast<uintptr_t>(singletonCallee);
-#if USE(JSVALUE32_64)
-    *access.operator()<uintptr_t>(callFrame, CallFrameSlot::callee * sizeof(Register) + TagOffset) = JSValue::NativeCalleeTag;
-#endif
 
     CallFrame* calleeFrame = std::bit_cast<CallFrame*>(reinterpret_cast<uintptr_t>(sp) - sizeof(CallerFrameAndPC));
     ASSERT(instance);
@@ -363,11 +360,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
 #if USE(JSVALUE64)
                 if (argType.isI32())
                     *access.operator()<uint64_t>(calleeFrame, dst) = static_cast<uint32_t>(raw) | JSValue::NumberTag;
-#else
-                if (argType.isI32()) {
-                    *access.operator()<uint32_t>(calleeFrame, dst + PayloadOffset) = static_cast<uint32_t>(raw);
-                    *access.operator()<uint32_t>(calleeFrame, dst + TagOffset) = JSValue::Int32Tag;
-                }
 #endif
                 else
                     *access.operator()<uint64_t>(calleeFrame, dst) = raw;
@@ -378,12 +370,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
                     *access.operator()<uint64_t>(calleeFrame, dst) = static_cast<uint32_t>(raw) | JSValue::NumberTag;
                 else
                     *access.operator()<uint64_t>(calleeFrame, dst) = raw;
-#else
-                if (argType.isI32()) {
-                    *access.operator()<uint32_t>(calleeFrame, dst + PayloadOffset) = static_cast<uint32_t>(raw);
-                    *access.operator()<uint32_t>(calleeFrame, dst + TagOffset) = JSValue::Int32Tag;
-                } else
-                    *access.operator()<uint32_t>(calleeFrame, dst) = raw;
 #endif
             }
             break;
@@ -517,8 +503,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                 } else {
 #if USE(JSVALUE64)
                     uint64_t intermediate = *access.operator()<uint64_t>(registerSpace, 0) + JSValue::NumberTag;
-#else
-                    uint64_t intermediate = *access.operator()<uint64_t>(registerSpace, 0);
 #endif
                     double d = std::bit_cast<double>(intermediate);
                     *access.operator()<uint64_t>(registerSpace, offset) = static_cast<uint64_t>(std::bit_cast<uint32_t>(static_cast<float>(d)));
@@ -540,8 +524,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                 } else {
 #if USE(JSVALUE64)
                     uint64_t intermediate = *access.operator()<uint64_t>(registerSpace, 0) + JSValue::NumberTag;
-#else
-                    uint64_t intermediate = *access.operator()<uint64_t>(registerSpace, 0);
 #endif
                     double d = std::bit_cast<double>(intermediate);
                     *access.operator()<double>(registerSpace, offset) = d;
@@ -753,15 +735,6 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, Wasm:
     for (unsigned index = 0; index < values.size(); ++index) {
         const OSREntryValue& value = values[index];
         dataLogLnIf(Options::verboseOSR() || verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
-#if USE(JSVALUE32_64)
-        if (value.isRegPair(B3::ValueRep::OSRValueRep)) {
-            std::bit_cast<uint32_t*>(buffer + index)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
-            std::bit_cast<uint32_t*>(buffer + index)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
-            dataLogLnIf(verbose, "GPR Pair for value ", index, " ",
-                value.gprLo(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprLo(B3::ValueRep::OSRValueRep)), " ",
-                value.gprHi(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprHi(B3::ValueRep::OSRValueRep)));
-        } else
-#endif
 
         if (value.isGPR()) {
             switch (value.type().kind()) {
@@ -887,11 +860,6 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
     // popPair(framePointerRegister, linkRegister);
     context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
     context.gpr(RISCV64Registers::ra) = std::bit_cast<UCPURegister>(*(framePointer + 1));
-    context.sp() = framePointer + 2;
-    static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
-#elif CPU(ARM)
-    context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
-    context.gpr(ARMRegisters::lr) = std::bit_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #else
@@ -1173,12 +1141,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
         if (value.isGPR()) {
             ASSERT(!type.isFloat() && !type.isVector());
             context.gpr(value.gpr()) = *bufferSlot;
-#if USE(JSVALUE32_64)
-        } else if (value.isRegPair(B3::ValueRep::OSRValueRep)) {
-            uint64_t encodedValue = *bufferSlot;
-            context.gpr(value.gprHi(B3::ValueRep::OSRValueRep)) = (encodedValue >> 32) & 0xffffffff;
-            context.gpr(value.gprLo(B3::ValueRep::OSRValueRep)) = encodedValue & 0xffffffff;
-#endif
         } else if (value.isFPR()) {
             if (type.isVector()) {
 #if CPU(X86_64) || CPU(ARM64)
@@ -1740,28 +1702,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatcha
     ASSERT_UNUSED(didClear, didClear);
 
     return { JSValue::encode(thrownValue), jumpTarget };
-}
-#else
-// Same as JSVALUE64 version, but returns thrownValue on stack
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void*, (JSWebAssemblyInstance* instance, EncodedJSValue* thrownValue))
-{
-    VM& vm = instance->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    RELEASE_ASSERT(!!throwScope.exception());
-
-    vm.callFrameForCatch = nullptr;
-    auto* jumpTarget = std::exchange(vm.targetMachinePCAfterCatch, nullptr);
-
-    Exception* exception = throwScope.exception();
-    *thrownValue = JSValue::encode(exception->value());
-
-    // We want to clear the exception here rather than in the catch prologue
-    // JIT code because clearing it also entails clearing a bit in an Atomic
-    // bit field in VMTraps.
-    (void)throwScope.tryClearException();
-
-    return jumpTarget;
 }
 #endif // USE(JSVALUE64)
 

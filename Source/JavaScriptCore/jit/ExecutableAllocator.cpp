@@ -97,12 +97,6 @@ static constexpr size_t fixedExecutableMemoryPoolSize = 512 * MB;
 #else
 static constexpr size_t fixedExecutableMemoryPoolSize = 128 * MB;
 #endif
-#elif CPU(ARM_THUMB2)
-#if ENABLE(JUMP_ISLANDS)
-static constexpr size_t fixedExecutableMemoryPoolSize = 32 * MB;
-#else
-static constexpr size_t fixedExecutableMemoryPoolSize = 16 * MB;
-#endif
 #elif CPU(X86_64)
 static constexpr size_t fixedExecutableMemoryPoolSize = 1 * GB;
 #else
@@ -112,9 +106,6 @@ static constexpr size_t fixedExecutableMemoryPoolSize = 32 * MB;
 #if ENABLE(JUMP_ISLANDS)
 #if CPU(ARM64)
 static constexpr double islandRegionSizeFraction = 0.125;
-static constexpr size_t islandSizeInBytes = 4;
-#elif CPU(ARM_THUMB2)
-static constexpr double islandRegionSizeFraction = 0.05;
 static constexpr size_t islandSizeInBytes = 4;
 #endif
 #endif
@@ -287,12 +278,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> ALWAYS_INLINE jitWriteThunkGenerato
 {
     g_jscConfig.startOfFixedWritableMemoryPool = reinterpret_cast<uintptr_t>(address);
     void* function = reinterpret_cast<void*>(&genericWriteToJITRegion);
-#if CPU(ARM_THUMB2)
-    // Handle thumb offset
-    uintptr_t functionAsInt = reinterpret_cast<uintptr_t>(function);
-    functionAsInt -= 1;
-    function = reinterpret_cast<void*>(functionAsInt);
-#endif
     auto codePtr = CodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
     return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(codePtr);
 }

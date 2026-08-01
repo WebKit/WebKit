@@ -433,8 +433,6 @@ static constexpr size_t prologueSizeInBytesDataIC = 1;
 static constexpr size_t prologueSizeInBytesDataIC = 4;
 #elif CPU(ARM64)
 static constexpr size_t prologueSizeInBytesDataIC = 0;
-#elif CPU(ARM_THUMB2)
-static constexpr size_t prologueSizeInBytesDataIC = 0;
 #elif CPU(RISCV64)
 static constexpr size_t prologueSizeInBytesDataIC = 0;
 #else

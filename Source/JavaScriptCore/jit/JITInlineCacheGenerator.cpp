@@ -118,7 +118,7 @@ void JITByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 void JITByIdGenerator::generateFastCommon(CCallHelpers& jit, size_t inlineICSize)
 {
     ASSERT(is<RepatchingPropertyInlineCache>(*m_propertyCache));
-    jit.padBeforePatch(); // On ARMv7, this ensures that the patchable jump does not make the inline code too large.
+    jit.padBeforePatch();
     m_start = jit.label();
     size_t startSize = jit.m_assembler.buffer().codeSize();
     m_slowPathJump = jit.jump();
@@ -516,13 +516,11 @@ void JITGetByValWithThisGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-#if USE(JSVALUE64)
 void JITGetByValWithThisGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::GetByValWithThis::propertyCacheGPR;
     JITInlineCacheGenerator::generateDataICFastPath(jit, propertyCacheGPR);
 }
-#endif
 
 void JITGetByValWithThisGenerator::generateEmptyPath(CCallHelpers& jit)
 {

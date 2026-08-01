@@ -154,7 +154,7 @@ public:
     }
 
 private:
-    static constexpr bool hasPairOp = isARM_THUMB2() || isARM64();
+    static constexpr bool hasPairOp = isARM64();
 
     Op& op() { return *reinterpret_cast<Op*>(this); }
 
@@ -182,11 +182,7 @@ private:
 #if CPU(ARM64) || CPU(ARM)
     ALWAYS_INLINE void executePair(ptrdiff_t offset, GPRReg reg1, GPRReg reg2)
     {
-#if USE(JSVALUE64)
         m_jit.loadPair64(m_baseGPR, TrustedImm32(offset), reg1, reg2);
-#else
-        m_jit.loadPair32(m_baseGPR, TrustedImm32(offset), reg1, reg2);
-#endif
     }
     ALWAYS_INLINE void executePair(ptrdiff_t offset, FPRReg reg1, FPRReg reg2)
     {
@@ -199,11 +195,7 @@ private:
 
     ALWAYS_INLINE void executeSingle(ptrdiff_t offset, GPRReg reg)
     {
-#if USE(JSVALUE64)
         m_jit.load64(Address(m_baseGPR, offset), reg);
-#else
-        m_jit.load32(Address(m_baseGPR, offset), reg);
-#endif
     }
 
     ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg)
@@ -213,13 +205,7 @@ private:
 
     ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
     {
-#if USE(JSVALUE64)
         m_jit.loadVector(Address(m_baseGPR, offset), reg);
-#else
-        UNUSED_PARAM(offset);
-        UNUSED_PARAM(reg);
-        UNREACHABLE_FOR_PLATFORM();
-#endif
     }
 
     friend class AssemblyHelpers::Spooler<LoadRegSpooler>;
@@ -243,11 +229,7 @@ private:
 #if CPU(ARM64) || CPU(ARM)
     ALWAYS_INLINE void executePair(ptrdiff_t offset, GPRReg reg1, GPRReg reg2)
     {
-#if USE(JSVALUE64)
         m_jit.storePair64(reg1, reg2, m_baseGPR, TrustedImm32(offset));
-#else
-        m_jit.storePair32(reg1, reg2, m_baseGPR, TrustedImm32(offset));
-#endif
     }
     ALWAYS_INLINE void executePair(ptrdiff_t offset, FPRReg reg1, FPRReg reg2)
     {
@@ -260,11 +242,7 @@ private:
 
     ALWAYS_INLINE void executeSingle(ptrdiff_t offset, GPRReg reg)
     {
-#if USE(JSVALUE64)
         m_jit.store64(reg, Address(m_baseGPR, offset));
-#else
-        m_jit.store32(reg, Address(m_baseGPR, offset));
-#endif
     }
 
     ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg)
@@ -274,13 +252,7 @@ private:
 
     ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
     {
-#if USE(JSVALUE64)
         m_jit.storeVector(reg, Address(m_baseGPR, offset));
-#else
-        UNUSED_PARAM(offset);
-        UNUSED_PARAM(reg);
-        UNREACHABLE_FOR_PLATFORM();
-#endif
     }
 
     friend class AssemblyHelpers::Spooler<StoreRegSpooler>;
@@ -315,10 +287,7 @@ public:
         , m_temp1FPR(fpTemp1)
         , m_temp2FPR(fpTemp2)
         , m_bufferRegsAttr(attribute)
-        {
-        if constexpr (hasPairOp && !(isARM_THUMB2() || isARM64()))
-            RELEASE_ASSERT_NOT_REACHED(); // unsupported architecture.
-    }
+    { }
 
     CopySpooler(JIT& jit, GPRReg srcBuffer, GPRReg destBuffer, GPRReg temp1, GPRReg temp2, FPRReg fpTemp1 = InvalidFPRReg, FPRReg fpTemp2 = InvalidFPRReg)
         : CopySpooler(BufferRegs::NeedPreservation, jit, srcBuffer, destBuffer, temp1, temp2, fpTemp1, fpTemp2)
@@ -545,14 +514,10 @@ public:
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 protected:
-#if USE(JSVALUE64)
     ALWAYS_INLINE void move(EncodedJSValue value, GPRReg dest)
     {
         m_jit.move(TrustedImm64(value), dest);
     }
-#else
-    NO_RETURN_DUE_TO_CRASH void move(EncodedJSValue, GPRReg) { RELEASE_ASSERT_NOT_REACHED(); }
-#endif
 
     ALWAYS_INLINE void load(int offset, GPRReg dest)
     {
@@ -577,11 +542,7 @@ protected:
 #if CPU(ARM64) || CPU(ARM)
     ALWAYS_INLINE void loadPair(int offset, GPRReg dest1, GPRReg dest2)
     {
-#if USE(JSVALUE64)
         m_jit.loadPair64(m_srcBufferGPR, TrustedImm32(offset), dest1, dest2);
-#else
-        m_jit.loadPair32(m_srcBufferGPR, TrustedImm32(offset), dest1, dest2);
-#endif
     }
 
     ALWAYS_INLINE void loadPair(int offset, FPRReg dest1, FPRReg dest2)
@@ -591,11 +552,7 @@ protected:
 
     ALWAYS_INLINE void storePair(GPRReg src1, GPRReg src2, int offset)
     {
-#if USE(JSVALUE64)
         m_jit.storePair64(src1, src2, m_dstBufferGPR, TrustedImm32(offset));
-#else
-        m_jit.storePair32(src1, src2, m_dstBufferGPR, TrustedImm32(offset));
-#endif
     }
 
     ALWAYS_INLINE void storePair(FPRReg src1, FPRReg src2, int offset)

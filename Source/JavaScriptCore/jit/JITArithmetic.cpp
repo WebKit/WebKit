@@ -395,11 +395,7 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
     }
 
     auto unboxDouble = [this](JSValueRegs src, FPRReg dst) {
-#if USE(JSVALUE64)
         this->unboxDoubleWithoutAssertions(src.payloadGPR(), src.payloadGPR(), dst);
-#elif USE(JSVALUE32_64)
-        this->unboxDouble(src, dst);
-#endif
     };
 
     auto handleConstantIntOperandSlow = [&](VirtualRegister op, JSValueRegs jsReg1, FPRReg fpReg1, JSValueRegs jsReg2, FPRReg fpReg2) {
@@ -612,11 +608,7 @@ void JIT::emit_op_pow(const JSInstruction* currentInstruction)
     Jump lhsReady = jump();
     lhsNotInt.link(this);
     addSlowCase(branchIfNotNumber(leftRegs, scratchGPR));
-#if USE(JSVALUE64)
     unboxDouble(leftRegs.payloadGPR(), scratchGPR, fpRegT0);
-#else
-    unboxDouble(leftRegs, fpRegT0);
-#endif
     lhsReady.link(this);
 
     move(TrustedImm32(1), scratchGPR);
@@ -714,9 +706,7 @@ void JIT::emit_op_bitnot(const JSInstruction* currentInstruction)
 
     addSlowCase(branchIfNotInt32(jsRegT10));
     not32(jsRegT10.payloadGPR());
-#if USE(JSVALUE64)
     boxInt32(jsRegT10.payloadGPR(), jsRegT10);
-#endif
     emitPutVirtualRegister(result, jsRegT10);
 }
 
@@ -1044,16 +1034,12 @@ void JIT::emit_op_div(const JSInstruction* currentInstruction)
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
-#if USE(JSVALUE64)
     else if (isOperandConstantDouble(op1))
         leftOperand.setConstDouble(getOperandConstantDouble(op1));
-#endif
     else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
-#if USE(JSVALUE64)
     else if (isOperandConstantDouble(op2))
         rightOperand.setConstDouble(getOperandConstantDouble(op2));
-#endif
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 

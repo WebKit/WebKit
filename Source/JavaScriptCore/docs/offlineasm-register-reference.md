@@ -21,7 +21,7 @@ JavaScriptCore's offline assembler (offlineasm) uses portable logical register n
 | t4 | a4, wa4 | wa4 | x4/w4 | r8 | Argument 4 / Temp |
 | t5 | a5, wa5 | wa5, PL (X86_64) | x5/w5 | r10 | Argument 5 / Temp / Pointer to Locals |
 | t6 | a6, wa6 | wa6, PL (ARM64) | x6/w6 | rdi | Argument 6 / Temp / Pointer to Locals |
-| t7 | a7, wa7 | wa7, PL (ARMv7) | x7/w7 | r9 | Argument 7 / Temp / Pointer to Locals |
+| t7 | a7, wa7 | wa7 | x7/w7 | r9 | Argument 7 / Temp |
 | t8 | - | - | x8/w8 | - | Temp |
 | t9 | ws0 | ws0, sc0 | x9/w9 | - | Wasm scratch 0 / Safe call 0 |
 | t10 | ws1 | ws1, sc1 | x10/w10 | - | Wasm scratch 1 / Safe call 1 |

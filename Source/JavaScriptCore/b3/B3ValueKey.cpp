@@ -86,7 +86,6 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case FloatToDouble:
     case DoubleToFloat:
     case BitwiseCast:
-    case TruncHigh:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0));
     case Add:
     case Sub:
@@ -118,7 +117,6 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case AboveEqual:
     case BelowEqual:
     case EqualOrUnordered:
-    case Stitch:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0), child(proc, 1));
     case Select:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0), child(proc, 1), child(proc, 2));

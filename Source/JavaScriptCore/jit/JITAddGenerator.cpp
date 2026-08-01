@@ -77,10 +77,6 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
     ASSERT(m_scratchGPR != m_right.payloadGPR());
-#if USE(JSVALUE32_64)
-    ASSERT(m_scratchGPR != m_left.tagGPR());
-    ASSERT(m_scratchGPR != m_right.tagGPR());
-#endif
 
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
     

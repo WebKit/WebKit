@@ -360,15 +360,6 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double));
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t, int32_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t, uint32_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_rem_s, int32_t, (int32_t, int32_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t, uint32_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_div_s, int64_t, (int64_t, int64_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t, uint64_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_rem_s, int64_t, (int64_t, int64_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t, uint64_t));
-
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double));

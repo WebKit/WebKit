@@ -57,8 +57,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace DFG {
 
-#if USE(JSVALUE64)
-
 void SpeculativeJIT::boxInt52(GPRReg sourceGPR, GPRReg targetGPR, DataFormat format)
 {
     GPRReg tempGPR;
@@ -9201,7 +9199,6 @@ void SpeculativeJIT::compileStringIteratorNext(Node* node)
 // JSPromise inline allocation. The packed-pointer-and-flags layout assumed
 // here (flags in the high 16 bits of the 64-bit slot) only holds on
 // CPU(ADDRESS64) builds with CompactPointerTuple's 48-bit pointer encoding.
-// JSVALUE32_64 builds keep their definitions in DFGSpeculativeJIT32_64.cpp.
 static_assert(CompactPointerTuple<JSCell*, uint16_t>::maxNumberOfBitsInPointer == 48,
     "JSPromise JIT initialization assumes a 48-bit pointer / 16-bit type packing");
 
@@ -10053,8 +10050,6 @@ void SpeculativeJIT::emitRegExpStickyFirstCharacterFilterGuards(const uint8_t* b
     load8(BaseIndex(scratch1GPR, scratch2GPR, TimesOne), scratch3GPR);
     emitFirstCharacterBitmapMatch(bitmap, scratch3GPR, scratch1GPR, scratch2GPR, slowCases);
 }
-
-#endif
 
 } } // namespace JSC::DFG
 

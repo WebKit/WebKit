@@ -813,10 +813,6 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             accessType = AccessCase::IndexedProxyObjectLoad;
         else if (isTypedView(base->type())) {
             auto* typedArray = uncheckedDowncast<JSArrayBufferView>(base);
-#if USE(JSVALUE32_64)
-            if (typedArray->isResizableOrGrowableShared())
-                return GiveUpOnCache;
-#endif
             switch (typedArray->type()) {
             case Int8ArrayType:
                 accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt8Load : AccessCase::IndexedTypedArrayInt8Load;
@@ -1385,10 +1381,6 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
             }
         } else if (isTypedView(base->type())) {
             auto* typedArray = uncheckedDowncast<JSArrayBufferView>(base);
-#if USE(JSVALUE32_64)
-            if (typedArray->isResizableOrGrowableShared())
-                return GiveUpOnCache;
-#endif
             switch (typedArray->type()) {
             case Int8ArrayType:
                 accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt8Store : AccessCase::IndexedTypedArrayInt8Store;
@@ -1990,10 +1982,6 @@ static InlineCacheAction tryCacheArrayInByVal(JSGlobalObject* globalObject, Code
             accessType = AccessCase::IndexedProxyObjectIn;
         else if (isTypedView(base->type())) {
             auto* typedArray = uncheckedDowncast<JSArrayBufferView>(base);
-#if USE(JSVALUE32_64)
-            if (typedArray->isResizableOrGrowableShared())
-                return GiveUpOnCache;
-#endif
             switch (typedArray->type()) {
             case Int8ArrayType:
                 accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt8In : AccessCase::IndexedTypedArrayInt8In;

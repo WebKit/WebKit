@@ -660,22 +660,6 @@ private:
     uint8_t m_rightShift { 0 };
 };
 
-ALWAYS_INLINE bool isValidARMThumb2Immediate(int64_t value)
-{
-    if (value < 0)
-        return false;
-    if (value > UINT32_MAX)
-        return false;
-    if (value < 256)
-        return true;
-    // If it can be expressed as an 8-bit number, left sifted by a constant
-    const int64_t mask = (value ^ (value & (value - 1))) * 0xff;
-    if ((value & mask) == value)
-        return true;
-    // FIXME: there are a few more valid forms, see section 4.2 in the Thumb-2 Supplement
-    return false;
-}
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 ALWAYS_INLINE void* memcpyAtomic(void* dst, const void* src, size_t n)

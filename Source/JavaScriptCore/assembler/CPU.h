@@ -33,29 +33,6 @@ namespace JSC {
 
 using UCPUStrictInt32 = UCPURegister;
 
-constexpr bool isARMv7IDIVSupported()
-{
-#if HAVE(ARM_IDIV_INSTRUCTIONS)
-    return true;
-#else
-    return false;
-#endif
-}
-
-constexpr bool isARM_THUMB2()
-{
-#if CPU(ARM_THUMB2)
-    return true;
-#else
-    return false;
-#endif
-}
-
-constexpr bool hasUnalignedFPMemoryAccess()
-{
-    return !isARM_THUMB2();
-}
-
 constexpr bool isARM64()
 {
 #if CPU(ARM64)
@@ -177,12 +154,6 @@ constexpr bool isRegister64Bit()
     return registerSize() == 8;
 }
 
-constexpr bool isRegister32Bit()
-{
-    return registerSize() == 4;
-}
-
-inline bool optimizeForARMv7IDIVSupported();
 inline bool optimizeForARM64();
 inline bool optimizeForX86();
 inline bool optimizeForX86_64();
@@ -220,7 +191,7 @@ constexpr size_t prologueStackPointerDelta()
 #elif CPU(X86_64)
     // Prologue only saves the framePointerRegister
     return sizeof(CPURegister);
-#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64)
+#elif CPU(ARM64) || CPU(RISCV64)
     // Prologue saves the framePointerRegister and linkRegister
     return 2 * sizeof(CPURegister);
 #else

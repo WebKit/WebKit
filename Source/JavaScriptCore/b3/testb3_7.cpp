@@ -1652,7 +1652,7 @@ void testDepend32()
     values[1] = 0xbeef;
 
     auto code = compileProc(proc);
-    if (isARM64() || isARM_THUMB2())
+    if (isARM64())
         checkUsesInstruction(*code, "eor");
     else if (isX86()) {
         checkDoesNotUseInstruction(*code, "mfence");
@@ -2210,10 +2210,8 @@ static void testSimpleTuplePairUnused(unsigned first, int64_t second)
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
-#if !CPU(ARM_THUMB2) // FIXME
         jit.move(CCallHelpers::TrustedImm64(second), params[1].gpr());
         jit.move64ToDouble(CCallHelpers::Imm64(std::bit_cast<uint64_t>(0.0)), params[2].fpr());
-#endif
     });
     Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),
         root->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 0));
@@ -2234,9 +2232,7 @@ static void testSimpleTuplePairStack(unsigned first, int64_t second)
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
-#if !CPU(ARM_THUMB2) // FIXME
         jit.store64(CCallHelpers::TrustedImm64(second), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
-#endif
     });
     Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),
         root->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 0));
@@ -2314,9 +2310,7 @@ static void tailDupedTuplePair(unsigned first, double second)
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
-#if !CPU(ARM_THUMB2) // FIXME
         jit.store64(CCallHelpers::TrustedImm64(std::bit_cast<uint64_t>(second)), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
-#endif
     });
     root->appendNew<VariableValue>(proc, Set, Origin(), var, patchpoint);
     root->appendNewControlValue(proc, Branch, Origin(), test, FrequentedBlock(truthy), FrequentedBlock(falsey));
@@ -2379,10 +2373,8 @@ static void tuplePairVariableLoop(unsigned first, uint64_t second)
             AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params[3].gpr() != params[0].gpr());
             CHECK(params[2].gpr() != params[0].gpr());
-#if !CPU(ARM_THUMB2) // FIXME
             jit.add64(CCallHelpers::TrustedImm32(1), params[3].gpr(), params[0].gpr());
             jit.store64(params[0].gpr(), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
-#endif
 
             jit.move(params[2].gpr(), params[0].gpr());
             jit.urshift32(CCallHelpers::TrustedImm32(1), params[0].gpr());

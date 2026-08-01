@@ -326,11 +326,6 @@ void CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkInfo, CCallHelpers& ji
 {
     if (callLinkInfo)
         jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), BaselineJITRegisters::Call::callLinkInfoGPR);
-#if USE(JSVALUE32_64)
-    // We need this on JSVALUE32_64 only as on JSVALUE64 a pointer comparison in the DataIC fast
-    // path catches this.
-    auto failed = jit.branchIfNotCell(BaselineJITRegisters::Call::calleeJSR);
-#endif
 
     // For RISCV64, scratch register usage here collides with MacroAssembler's internal usage
     // that's necessary for the test-and-branch operation but is avoidable by loading from the callee
@@ -350,9 +345,6 @@ void CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkInfo, CCallHelpers& ji
         found.append(jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR, CCallHelpers::TrustedImm32(polymorphicCalleeMask)));
     }
 
-#if USE(JSVALUE32_64)
-    failed.link(&jit);
-#endif
     jit.move(CCallHelpers::TrustedImmPtr(LLInt::defaultCall().code().taggedPtr()), BaselineJITRegisters::Call::callTargetGPR);
 
     found.link(&jit);

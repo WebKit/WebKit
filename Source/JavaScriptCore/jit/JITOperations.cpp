@@ -2619,11 +2619,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompareEq, size_t, (JSGlobalObject* globalObje
     OPERATION_RETURN(scope, JSValue::equalSlowCaseInline(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
-#if USE(JSVALUE64)
 JSC_DEFINE_JIT_OPERATION(operationCompareStringEq, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* left, JSCell* right))
-#else
-JSC_DEFINE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject* globalObject, JSCell* left, JSCell* right))
-#endif
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2631,11 +2627,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject* glob
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     bool result = asString(left)->equalInline(globalObject, asString(right));
-#if USE(JSVALUE64)
     OPERATION_RETURN(scope, JSValue::encode(jsBoolean(result)));
-#else
-    OPERATION_RETURN(scope, result);
-#endif
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareStrictEq, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
@@ -3354,7 +3346,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutSetterByVal, void, (JSGlobalObject* globalO
     OPERATION_RETURN(scope);
 }
 
-#if USE(JSVALUE64)
 JSC_DEFINE_JIT_OPERATION(operationPutGetterSetter, void, (JSGlobalObject* globalObject, JSCell* object, UniquedStringImpl* uid, int32_t attribute, EncodedJSValue encodedGetterValue, EncodedJSValue encodedSetterValue))
 {
     VM& vm = globalObject->vm();
@@ -3372,26 +3363,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutGetterSetter, void, (JSGlobalObject* global
     CommonSlowPaths::putDirectAccessorWithReify(vm, globalObject, baseObject, uid, accessor, attribute);
     OPERATION_RETURN(scope);
 }
-
-#else
-JSC_DEFINE_JIT_OPERATION(operationPutGetterSetter, void, (JSGlobalObject* globalObject, JSCell* object, UniquedStringImpl* uid, int32_t attribute, JSCell* getterCell, JSCell* setterCell))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    ASSERT(object && object->isObject());
-    JSObject* baseObject = asObject(object);
-
-    ASSERT(getterCell || setterCell);
-    JSObject* getter = getterCell ? getterCell->getObject() : nullptr;
-    JSObject* setter = setterCell ? setterCell->getObject() : nullptr;
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject, getter, setter);
-    CommonSlowPaths::putDirectAccessorWithReify(vm, globalObject, baseObject, uid, accessor, attribute);
-    OPERATION_RETURN(scope);
-}
-#endif
 
 JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance))
 {

@@ -52,7 +52,6 @@ assembler/JITOperationList.cpp
 assembler/LinkBuffer.cpp
 assembler/MacroAssembler.cpp
 assembler/MacroAssemblerARM64.cpp @no-unify-when(bundle<=8)
-assembler/MacroAssemblerARMv7.cpp @no-unify-when(bundle<=8)
 assembler/MacroAssemblerCodeRef.cpp
 assembler/MacroAssemblerPrinter.cpp
 assembler/MacroAssemblerRISCV64.cpp @no-unify-when(bundle<=8)
@@ -436,7 +435,6 @@ dfg/DFGSSAConversionPhase.cpp
 dfg/DFGSSALoweringPhase.cpp
 dfg/DFGSnippetParams.cpp
 dfg/DFGSpeculativeJIT.cpp @no-unify-when(bundle<=8) @cost:9
-dfg/DFGSpeculativeJIT32_64.cpp @no-unify-when(bundle<=8)
 dfg/DFGSpeculativeJIT64.cpp @no-unify-when(bundle<=8) @cost:4
 dfg/DFGStackLayoutPhase.cpp
 dfg/DFGStaticExecutionCountEstimationPhase.cpp
@@ -641,7 +639,6 @@ jit/CCallHelpers.cpp
 jit/CachedRecovery.cpp
 jit/CallFrameShuffleData.cpp
 jit/CallFrameShuffler.cpp
-jit/CallFrameShuffler32_64.cpp
 jit/CallFrameShuffler64.cpp
 jit/ExecutableAllocationFuzz.cpp
 jit/ExecutableAllocator.cpp
@@ -671,7 +668,6 @@ jit/JITMulGenerator.cpp
 jit/JITNegGenerator.cpp
 jit/JITOpaqueByproducts.cpp
 jit/JITOpcodes.cpp
-jit/JITOpcodes32_64.cpp
 jit/JITOperations.cpp
 jit/JITPlan.cpp
 jit/JITPropertyAccess.cpp

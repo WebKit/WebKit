@@ -113,7 +113,6 @@ void AssemblyHelpers::clearSamplingFlag(int32_t flag)
 #endif
 
 #if ASSERT_ENABLED
-#if USE(JSVALUE64)
 void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
@@ -183,58 +182,6 @@ void AssemblyHelpers::jitAssertTagsInPlace()
     abortWithReason(AHNotCellMaskNotInPlace);
     ok.link(this);
 }
-#elif USE(JSVALUE32_64)
-void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
-{
-    if (!Options::useJITAsserts())
-        return;
-    UNUSED_PARAM(gpr);
-}
-
-void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
-{
-    if (!Options::useJITAsserts())
-        return;
-    Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
-    abortWithReason(AHIsNotJSInt32);
-    checkJSInt32.link(this);
-}
-
-void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
-{
-    if (!Options::useJITAsserts())
-        return;
-    Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
-    Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
-    abortWithReason(AHIsNotJSNumber);
-    checkJSInt32.link(this);
-    checkJSDouble.link(this);
-}
-
-void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
-{
-    if (!Options::useJITAsserts())
-        return;
-    Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
-    abortWithReason(AHIsNotJSDouble);
-    checkJSDouble.link(this);
-}
-
-void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
-{
-    if (!Options::useJITAsserts())
-        return;
-    Jump checkCell = branchIfCell(gpr);
-    abortWithReason(AHIsNotCell);
-    checkCell.link(this);
-}
-
-void AssemblyHelpers::jitAssertTagsInPlace()
-{
-    if (!Options::useJITAsserts())
-        return;
-}
-#endif // USE(JSVALUE32_64)
 
 void AssemblyHelpers::jitAssertHasValidCallFrame()
 {
@@ -319,11 +266,7 @@ void AssemblyHelpers::jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratc
 void AssemblyHelpers::jitReleaseAssertNoException(VM& vm)
 {
     Jump noException;
-#if USE(JSVALUE64)
     noException = branchTest64(Zero, AbsoluteAddress(vm.addressOfException()));
-#elif USE(JSVALUE32_64)
-    noException = branch32(Equal, AbsoluteAddress(vm.addressOfException()), TrustedImm32(0));
-#endif
     abortWithReason(JITUncaughtExceptionAfterCall);
     noException.link(this);
 }
@@ -335,11 +278,7 @@ void AssemblyHelpers::callExceptionFuzz(VM& vm, GPRReg exceptionReg)
     EncodedJSValue* buffer = vm.exceptionFuzzingBuffer(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters));
 
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
-#if USE(JSVALUE64)
         store64(GPRInfo::toRegister(i), buffer + i);
-#else
-        store32(GPRInfo::toRegister(i), buffer + i);
-#endif
     }
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
@@ -357,11 +296,7 @@ void AssemblyHelpers::callExceptionFuzz(VM& vm, GPRReg exceptionReg)
         loadDouble(Address(GPRInfo::regT0), FPRInfo::toRegister(i));
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
-#if USE(JSVALUE64)
         load64(buffer + i, GPRInfo::toRegister(i));
-#else
-        load32(buffer + i, GPRInfo::toRegister(i));
-#endif
     }
 
     if (exceptionReg != InvalidGPRReg)
@@ -413,7 +348,6 @@ AssemblyHelpers::Jump AssemblyHelpers::emitNonPatchableExceptionCheck(VM& vm, GP
 void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest)
 {
     const Structure* structurePtr = reinterpret_cast<const Structure*>(structure.m_value);
-#if USE(JSVALUE64)
     jit.store64(TrustedImm64(static_cast<uint64_t>(structurePtr->id().bits()) | (static_cast<uint64_t>(structurePtr->typeInfoBlob()) << 32)), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
     if (ASSERT_ENABLED) {
         Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id().bits()));
@@ -432,11 +366,6 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
         jit.abortWithReason(AHTypeInfoInlineTypeFlagsAreValid);
         correctFlags.link(&jit);
     }
-#else
-    // Do a 32-bit wide store to initialize the cell's fields.
-    jit.store32(TrustedImm32(structurePtr->typeInfoBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
-    jit.storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#endif
 }
 
 void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs result)
@@ -488,7 +417,6 @@ void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg off
     storeValue(value, BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
 
-#if USE(JSVALUE64)
 template<uint32_t primaryMask, ptrdiff_t primaryEntriesOffset, uint32_t secondaryMask, ptrdiff_t secondaryEntriesOffset>
 AssemblyHelpers::JumpList AssemblyHelpers::findMegamorphicCacheEntry(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
@@ -802,7 +730,6 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
 
     return slowCases;
 }
-#endif
 
 AssemblyHelpers::JumpList AssemblyHelpers::loadCacheableIdentifierImpl(GPRReg propertyGPR, GPRReg destGPR, bool propertyIsString, bool propertyIsSymbol, bool canBeRope)
 {
@@ -889,7 +816,6 @@ void AssemblyHelpers::reclaimSpaceOnStackForCCall()
         addPtr(TrustedImm32(stackOffset), stackPointerRegister);
 }
 
-#if USE(JSVALUE64)
 template<typename LoadFromHigh, typename StoreToHigh, typename LoadFromLow, typename StoreToLow>
 void emitRandomThunkImpl(AssemblyHelpers& jit, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result, const LoadFromHigh& loadFromHigh, const StoreToHigh& storeToHigh, const LoadFromLow& loadFromLow, const StoreToLow& storeToLow)
 {
@@ -990,7 +916,6 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 
     emitRandomThunkImpl(*this, scratch0, scratch1, scratch2, result, loadFromHigh, storeToHigh, loadFromLow, storeToLow);
 }
-#endif
 
 void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath, SlowAllocationResult slowAllocationResult)
 {
@@ -1302,7 +1227,6 @@ void AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject(VM& vm, GPRReg ca
     nearCallThunk(CodeLocationLabel<JITStubRoutinePtrTag> { vm.getCTIVirtualCall(callMode).code() });
 }
 
-#if USE(JSVALUE64)
 void AssemblyHelpers::rapidHashMix64(GPRReg inputAndResult, GPRReg scratch1, GPRReg scratch2)
 {
     // rapidhash "mum" mixer. Keep in sync with WTF intHash and FTL rapidHashMix64 code
@@ -1392,7 +1316,6 @@ void AssemblyHelpers::rapidHashMix64(GPRReg inputAndResult, GPRReg scratch1, GPR
     // return static_cast<unsigned>(result)
     zeroExtend32ToWord(inputAndResult, inputAndResult);
 }
-#endif // USE(JSVALUE64)
 
 void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRReg result, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg valueAsFPR, FPRReg tempFPR, bool shouldCheckMasqueradesAsUndefined, JSGlobalObject* globalObject, bool invert)
 {
@@ -1453,11 +1376,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 
     notInt32.link(this);
     auto notDouble = branchIfNotDoubleKnownNotInt32(value);
-#if USE(JSVALUE64)
     unboxDouble(value.gpr(), result, valueAsFPR);
-#else
-    unboxDouble(value, valueAsFPR);
-#endif
     moveZeroToDouble(tempFPR);
     compareDouble(invert ? DoubleEqualOrUnordered : DoubleNotEqualAndOrdered, valueAsFPR, tempFPR, result);
     done.append(jump());
@@ -1472,13 +1391,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 
     isNotBigInt32.link(this);
 #endif // USE(BIGINT32)
-#if USE(JSVALUE64)
     compare64(invert ? NotEqual : Equal, value.gpr(), TrustedImm32(JSValue::ValueTrue), result);
-#else
-    move(invert ? TrustedImm32(1) : TrustedImm32(0), result);
-    done.append(branchIfNotBoolean(value, InvalidGPRReg));
-    compare32(invert ? Equal : NotEqual, value.payloadGPR(), TrustedImm32(0), result);
-#endif
 
     done.link(this);
 }
@@ -1555,11 +1468,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 
     notInt32.link(this);
     auto notDouble = branchIfNotDoubleKnownNotInt32(value);
-#if USE(JSVALUE64)
     unboxDouble(value.gpr(), scratch, valueAsFPR);
-#else
-    unboxDouble(value, valueAsFPR);
-#endif
     if (invert) {
         truthy.append(branchDoubleZeroOrNaN(valueAsFPR, tempFPR));
         done.append(jump());
@@ -1578,16 +1487,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 
     isNotBigInt32.link(this);
 #endif // USE(BIGINT32)
-#if USE(JSVALUE64)
     truthy.append(branch64(invert ? NotEqual : Equal, value.gpr(), TrustedImm64(JSValue::encode(jsBoolean(true)))));
-#else
-    auto notBoolean = branchIfNotBoolean(value, InvalidGPRReg);
-    if (invert)
-        truthy.append(notBoolean);
-    else
-        done.append(notBoolean);
-    truthy.append(branch32(invert ? Equal : NotEqual, value.payloadGPR(), TrustedImm32(0)));
-#endif
 
     done.link(this);
 
@@ -1869,13 +1769,9 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
             continue;
         RELEASE_ASSERT(entry.reg().isGPR());
 
-#if USE(JSVALUE32_64)
-        UNUSED_PARAM(tagRegisterMode);
-#else
         if (tagRegisterMode == CopyBaselineCalleeSavedRegistersFromBaseFrame)
             spooler.loadGPR(entry.offset());
         else
-#endif
             spooler.copyGPR(entry.reg().gpr());
         spooler.storeGPR(entry.offset());
     }
@@ -1910,8 +1806,6 @@ void AssemblyHelpers::getArityPadding(VM& vm, unsigned numberOfParameters, GPRRe
     subPtr(stackPointerRegister, scratchGPR0, scratchGPR1);
     stackOverflow.append(branchPtr(GreaterThan, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
 }
-
-#if USE(JSVALUE64)
 
 AssemblyHelpers::JumpList AssemblyHelpers::branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType> typedArrayType)
 {
@@ -2146,7 +2040,6 @@ void AssemblyHelpers::loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRR
     loadTypedArrayByteLengthCommonImpl(baseGPR, valueGPR, scratchGPR, scratch2GPR, typedArrayType, TypedArrayField::Length);
 }
 
-#endif // ENABLE(JSVALUE64)
 
 #if ENABLE(WEBASSEMBLY)
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64) || CPU(ARM)

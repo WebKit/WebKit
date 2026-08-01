@@ -34,11 +34,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(ASSEMBLER)
 
-#if CPU(ARM_THUMB2)
-#define TARGET_MACROASSEMBLER MacroAssemblerARMv7
-#include <JavaScriptCore/MacroAssemblerARMv7.h>
-
-#elif CPU(ARM64E)
+#if CPU(ARM64E)
 #define TARGET_MACROASSEMBLER MacroAssemblerARM64E
 #include <JavaScriptCore/MacroAssemblerARM64E.h>
 
@@ -137,7 +133,7 @@ public:
     using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
     using MacroAssemblerBase::branchMul32;
-#if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
     using MacroAssemblerBase::branchPtr;
 #endif
 #if CPU(X86_64)
@@ -155,7 +151,7 @@ public:
     using MacroAssemblerBase::urshift32;
     using MacroAssemblerBase::xor32;
 
-#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64) || CPU(ARM_THUMB2)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
     using MacroAssemblerBase::convertInt32ToDouble;
 #endif
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
@@ -430,7 +426,7 @@ public:
         branchTestPtr(cond, reg).linkTo(target, this);
     }
 
-#if !CPU(ARM_THUMB2) && !CPU(ARM64)
+#if !CPU(ARM64)
     PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(nullptr))
     {
         padBeforePatch();
@@ -529,11 +525,7 @@ public:
     // consumes some register in some way.
     void retVoid() { ret(); }
     void ret32(RegisterID) { ret(); }
-#if CPU(ARM_THUMB2)
-    void ret64(RegisterID, RegisterID) { ret(); }
-#else
     void ret64(RegisterID) { ret(); }
-#endif
     void retFloat(FPRegisterID) { ret(); }
     void retDouble(FPRegisterID) { ret(); }
 
@@ -587,11 +579,9 @@ public:
         case Width32:
             load32(address, dest);
             break;
-#if USE(JSVALUE64)
         case Width64:
             load64(address, dest);
             break;
-#endif
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -631,11 +621,9 @@ public:
         case Width32:
             store32(src, address);
             break;
-#if USE(JSVALUE64)
         case Width64:
             store64(src, address);
             break;
-#endif
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -1575,7 +1563,6 @@ public:
 #  error "Unknown register size"
 #endif
 
-#if USE(JSVALUE64)
     bool shouldBlindDouble(double value)
     {
         // Don't trust NaN or +/-Infinity
@@ -1930,8 +1917,6 @@ public:
 
         compare64(cond, left, right.asTrustedImm64(), dest);
     }
-
-#endif // USE(JSVALUE64)
 
 #if CPU(X86_64)
     void move32ToFloat(Imm32 imm, FPRegisterID dest)

@@ -690,11 +690,6 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     RegisterSet::macroClobberedFPRs().forEach([&](Reg reg) {
         fprSetBuilder.remove(reg);
     });
-#if USE(JSVALUE32_64) && CPU(ARM_NEON)
-    // Remove NEON fprs
-    for (auto reg = ARMRegisters::d16; reg <= ARMRegisters::d31; reg = MacroAssembler::nextFPRegister(reg))
-        fprSetBuilder.remove(reg);
-#endif
     // TODO: handle callee-saved registers better.
     RegisterSet::vmCalleeSaveRegisters().forEach([&](Reg reg) {
         fprSetBuilder.remove(reg);
@@ -704,9 +699,6 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     RegisterSet callerSaveFprs = fprSetBuilder;
 
     gprSetBuilder.remove(wasmScratchGPR);
-#if USE(JSVALUE32_64)
-    gprSetBuilder.remove(wasmScratchGPR2);
-#endif
     fprSetBuilder.remove(wasmScratchFPR);
 
     ASCIILiteral logPrefix = Options::verboseBBQJITAllocation() ? "BBQ"_s : ASCIILiteral();
@@ -3558,10 +3550,6 @@ B3::Type BBQJIT::toB3Type(TypeKind kind)
 
 B3::ValueRep BBQJIT::toB3Rep(Location location)
 {
-#if USE(JSVALUE32_64)
-    if (location.isGPR2())
-        return B3::ValueRep(B3::ValueRep::OSRValueRep, Reg(location.asGPRlo()), Reg(location.asGPRhi()));
-#endif
     if (location.isRegister())
         return B3::ValueRep(location.isGPR() ? Reg(location.asGPR()) : Reg(location.asFPR()));
     if (location.isStack())
@@ -4071,9 +4059,6 @@ void BBQJIT::prepareForExceptions()
 #if USE(JSVALUE64)
         auto* jumpTable = m_callee.addJumpTable(targets.size() + 1);
         m_jit.moveConditionally32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()), TrustedImm32(targets.size()), wasmScratchGPR, wasmScratchGPR);
-#else
-        auto* jumpTable = m_callee.addJumpTable(targets.size());
-        auto fallThrough = m_jit.branch32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()));
 #endif
         m_jit.zeroExtend32ToWord(wasmScratchGPR, wasmScratchGPR);
         if constexpr (is64Bit())
@@ -4098,8 +4083,6 @@ void BBQJIT::prepareForExceptions()
         });
 #if USE(JSVALUE64)
         labels.append(Box<CCallHelpers::Label>::create(m_jit.label()));
-#else
-        fallThrough.link(&m_jit);
 #endif
 
         m_jit.addLinkTask([labels = WTF::move(labels), jumpTable](LinkBuffer& linkBuffer) {
@@ -4515,7 +4498,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister), callerFramePointer);
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64)
     m_jit.loadPairPtr(MacroAssembler::framePointerRegister, callerFramePointer, MacroAssembler::linkRegister);
 #else
     UNUSED_PARAM(callerFramePointer);
@@ -4791,7 +4774,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64)
     auto preserved = callingConvention.argumentGPRs();
     preserved.add(importableFunction, IgnoreVectors);
     if constexpr (isARM64E())
@@ -4848,7 +4831,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP), wasmScratchGPR);
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     m_jit.move(wasmScratchGPR, MacroAssembler::framePointerRegister);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64)
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(CallerFrameAndPC))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     m_jit.move(callerFramePointer, MacroAssembler::framePointerRegister);
 #else
@@ -5094,8 +5077,6 @@ BBQJIT::Jump BBQJIT::emitFusedBranchCompareBranch(OpType opType, ExpressionType,
     case OpType::I64Eqz:
 #if USE(JSVALUE64)
         return m_jit.branchTest64(ResultCondition::NonZero, operandLocation.asGPR());
-#else
-        return m_jit.branchTest64(ResultCondition::NonZero, operandLocation.asGPRhi(), operandLocation.asGPRlo());
 #endif
     default:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a unary comparison and should not have been fused.\n", makeString(opType).characters());
@@ -5273,12 +5254,6 @@ static MacroAssembler::Jump emitBranchI64(CCallHelpers& jit, MacroAssembler::Rel
     if (left.isConst())
         return jit.branch64(MacroAssembler::commute(condition), rightLocation.asGPR(), MacroAssembler::Imm64(left.asI64()));
     return jit.branch64(condition, leftLocation.asGPR(), rightLocation.asGPR());
-#else
-    if (right.isConst())
-        return jit.branch64(condition, leftLocation.asGPRhi(), leftLocation.asGPRlo(), MacroAssembler::TrustedImm64(right.asI64()));
-    if (left.isConst())
-        return jit.branch64(MacroAssembler::commute(condition), rightLocation.asGPRhi(), rightLocation.asGPRlo(), MacroAssembler::TrustedImm64(left.asI64()));
-    return jit.branch64(condition, leftLocation.asGPRhi(), leftLocation.asGPRlo(), rightLocation.asGPRhi(), rightLocation.asGPRlo());
 #endif
 }
 

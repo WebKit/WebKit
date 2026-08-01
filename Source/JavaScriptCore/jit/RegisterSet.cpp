@@ -42,9 +42,7 @@ RegisterAtOffsetList* RegisterSet::vmCalleeSaveRegisterOffsets()
     static std::once_flag calleeSavesFlag;
     std::call_once(calleeSavesFlag, [] () {
         result = new RegisterAtOffsetList(vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
-#if USE(JSVALUE64)
         ASSERT(result->registerCount() == result->sizeOfAreaInBytes() / sizeof(CPURegister));
-#endif
     });
     return result;
 }
@@ -92,14 +90,10 @@ RegisterSet RegisterSet::reservedHardwareRegisters()
 
 RegisterSet RegisterSet::runtimeTagRegisters()
 {
-#if USE(JSVALUE64)
     RegisterSet result;
     result.add(GPRInfo::numberTagRegister);
     result.add(GPRInfo::notCellMaskRegister);
     return result;
-#else
-    return { };
-#endif
 }
 
 RegisterSet RegisterSet::specialRegisters()
@@ -130,9 +124,6 @@ RegisterSet RegisterSet::macroClobberedGPRs()
 #elif CPU(ARM64) || CPU(RISCV64)
     result.add(MacroAssembler::dataTempRegister);
     result.add(MacroAssembler::memoryTempRegister);
-#elif CPU(ARM_THUMB2)
-    result.add(MacroAssembler::dataTempRegister);
-    result.add(MacroAssembler::addressTempRegister);
 #endif
     return result;
 }
@@ -140,7 +131,7 @@ RegisterSet RegisterSet::macroClobberedGPRs()
 RegisterSet RegisterSet::macroClobberedFPRs()
 {
     RegisterSet result;
-#if CPU(X86_64) || CPU(ARM64) || CPU(ARM_THUMB2)
+#if CPU(X86_64) || CPU(ARM64)
     result.add(MacroAssembler::fpTempRegister, IgnoreVectors);
 #elif CPU(RISCV64)
     result.add(MacroAssembler::fpTempRegister, IgnoreVectors);
@@ -195,15 +186,6 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.add(FPRInfo::fpRegCS5, Width64);
     result.add(FPRInfo::fpRegCS6, Width64);
     result.add(FPRInfo::fpRegCS7, Width64);
-#elif CPU(ARM_THUMB2)
-    result.add(GPRInfo::regCS0);
-    result.add(GPRInfo::regCS1);
-    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
 #elif CPU(RISCV64)
     result.add(GPRInfo::regCS0);
     result.add(GPRInfo::regCS1);
@@ -243,9 +225,6 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS2);
     result.add(GPRInfo::regCS3);
     result.add(GPRInfo::regCS4);
-#elif CPU(ARM_THUMB2)
-    result.add(GPRInfo::regCS0);
-    result.add(GPRInfo::regCS1);
 #elif CPU(ARM64) || CPU(RISCV64)
     result.add(GPRInfo::regCS6);
     static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
@@ -272,9 +251,6 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     result.add(GPRInfo::regCS2);
     result.add(GPRInfo::regCS3);
     result.add(GPRInfo::regCS4);
-#elif CPU(ARM_THUMB2)
-    result.add(GPRInfo::regCS0);
-    result.add(GPRInfo::regCS1);
 #elif CPU(ARM64) || CPU(RISCV64)
     static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
