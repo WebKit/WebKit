@@ -22,6 +22,8 @@ if (NOT "$ENV{WK_USE_CCACHE}" STREQUAL "NO" AND NOT CMAKE_CXX_COMPILER_LAUNCHER)
 export CCACHE_BASEDIR='${CMAKE_SOURCE_DIR}'
 export CCACHE_NOHASHDIR=true
 export CCACHE_PCH_EXTSUM=true
+# Hash the -MD depfile rather than preprocessing, so a cache miss is cheap.
+export CCACHE_DEPEND=true
 export CCACHE_SLOPPINESS='pch_defines,time_macros,include_file_mtime,include_file_ctime'
 for arg; do
     if [ \"$arg\" = \"-emit-pch\" ]; then
