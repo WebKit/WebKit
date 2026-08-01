@@ -28,6 +28,7 @@
 
 #include "URLSchemeTaskParameters.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include "WebURLSchemeTask.h"
 
 namespace WebKit {
@@ -42,26 +43,15 @@ WebURLSchemeHandler::~WebURLSchemeHandler()
 
 void WebURLSchemeHandler::startTask(WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, URLSchemeTaskParameters&& parameters, SyncLoadCompletionHandler&& completionHandler)
 {
-    auto taskIdentifier = parameters.taskIdentifier;
+    ScopedResourceLoaderIdentifier taskIdentifier { parameters.taskIdentifier, process.coreProcessIdentifier() };
     auto result = m_tasks.add({ taskIdentifier, page.identifier() }, WebURLSchemeTask::create(*this, page, process, webPageID, WTF::move(parameters), WTF::move(completionHandler)));
     ASSERT(result.isNewEntry);
 
-    auto pageEntry = m_tasksByPageIdentifier.add(page.identifier(), HashSet<WebCore::ResourceLoaderIdentifier>());
+    auto pageEntry = m_tasksByPageIdentifier.add(page.identifier(), HashSet<WebCore::ScopedResourceLoaderIdentifier>());
     ASSERT(!pageEntry.iterator->value.contains(taskIdentifier));
     pageEntry.iterator->value.add(taskIdentifier);
 
     platformStartTask(page, result.iterator->value);
-}
-
-WebProcessProxy* WebURLSchemeHandler::processForTaskIdentifier(WebPageProxy& page, WebCore::ResourceLoaderIdentifier taskIdentifier) const
-{
-    auto key = std::make_pair(taskIdentifier, page.identifier());
-    if (!decltype(m_tasks)::isValidKey(key))
-        return nullptr;
-    auto iterator = m_tasks.find(key);
-    if (iterator == m_tasks.end())
-        return nullptr;
-    return &iterator->value->process();
 }
 
 void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProxy* process)
@@ -71,18 +61,17 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
         return;
 
     auto& tasksByPage = iterator->value;
-    auto taskIdentifiersToStop = WTF::compactMap(tasksByPage, [&](auto& taskIdentifier) -> std::optional<WebCore::ResourceLoaderIdentifier> {
-        if (!process || processForTaskIdentifier(page, taskIdentifier) == process)
+    auto taskIdentifiersToStop = WTF::compactMap(tasksByPage, [&](auto& taskIdentifier) -> std::optional<WebCore::ScopedResourceLoaderIdentifier> {
+        if (!process || taskIdentifier.processIdentifier() == process->coreProcessIdentifier())
             return taskIdentifier;
         return std::nullopt;
     });
 
     for (auto& taskIdentifier : taskIdentifiersToStop)
         stopTask(page, taskIdentifier);
-
 }
 
-void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ResourceLoaderIdentifier taskIdentifier)
+void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ScopedResourceLoaderIdentifier taskIdentifier)
 {
     auto key = std::make_pair(taskIdentifier, page.identifier());
     if (!decltype(m_tasks)::isValidKey(key))
@@ -101,14 +90,15 @@ void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ResourceLoaderId
 
 void WebURLSchemeHandler::taskCompleted(WebPageProxyIdentifier pageID, WebURLSchemeTask& task)
 {
-    auto takenTask = m_tasks.take({ task.resourceLoaderID(), pageID });
+    ScopedResourceLoaderIdentifier taskIdentifier { task.resourceLoaderID(), task.process().coreProcessIdentifier() };
+    auto takenTask = m_tasks.take({ taskIdentifier, pageID });
     ASSERT_UNUSED(takenTask, takenTask == &task);
-    removeTaskFromPageMap(*task.pageProxyID(), task.resourceLoaderID());
+    removeTaskFromPageMap(*task.pageProxyID(), taskIdentifier);
 
     platformTaskCompleted(task);
 }
 
-void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, WebCore::ResourceLoaderIdentifier taskID)
+void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, WebCore::ScopedResourceLoaderIdentifier taskID)
 {
     auto iterator = m_tasksByPageIdentifier.find(pageID);
     ASSERT(iterator != m_tasksByPageIdentifier.end());

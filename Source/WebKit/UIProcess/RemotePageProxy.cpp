@@ -137,8 +137,12 @@ void RemotePageProxy::disconnect()
     RefPtr page = m_page;
     if (page)
         page->isNoLongerAssociatedWithRemotePage(*this);
-    if (m_drawingArea)
+    if (m_drawingArea) {
+        // The process's own stop messages would arrive after stopReceivingMessages() below, so stop its tasks here.
+        if (page)
+            page->stopAllURLSchemeTasks(m_process.ptr());
         m_process->sendPageCloseMessage(page ? std::optional { page->identifier() } : std::nullopt, m_webPageID);
+    }
     m_process->removeRemotePageProxy(*this);
 
     m_drawingArea = nullptr;
@@ -220,6 +224,7 @@ void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTermi
     RefPtr page = m_page.get();
     if (!page)
         return;
+    page->stopAllURLSchemeTasks(&process);
     if (RefPtr drawingArea = page->drawingArea())
         drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
     if (RefPtr mainFrame = page->mainFrame())

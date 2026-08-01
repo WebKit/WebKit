@@ -267,6 +267,151 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+@interface TrackingURLSchemeHandler : NSObject <WKURLSchemeHandler>
+@property (nonatomic, copy) void (^startURLSchemeTaskHandler)(TrackingURLSchemeHandler *, id<WKURLSchemeTask>);
+- (BOOL)deliveredSameTaskTwice;
+- (BOOL)raisedException;
+- (NSUInteger)stopCountForURLPathPrefix:(NSString *)prefix;
+- (void)park:(id<WKURLSchemeTask>)task;
+- (NSUInteger)parkedCountForURLPathPrefix:(NSString *)prefix;
+- (void)respond:(id<WKURLSchemeTask>)task text:(const char *)text mimeType:(NSString *)mimeType;
+- (void)respondToParkedTasksWithURLPathPrefix:(NSString *)prefix text:(const char *)text;
+@end
+
+@implementation TrackingURLSchemeHandler {
+    BlockPtr<void(TrackingURLSchemeHandler *, id<WKURLSchemeTask>)> _startURLSchemeTaskHandler;
+    RetainPtr<NSMutableArray> _liveTasks;
+    RetainPtr<NSMutableArray> _parkedTasks;
+    RetainPtr<NSMutableArray<NSString *>> _stoppedURLStrings;
+    BOOL _deliveredSameTaskTwice;
+    BOOL _raisedException;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    _liveTasks = adoptNS([NSMutableArray new]);
+    _parkedTasks = adoptNS([NSMutableArray new]);
+    _stoppedURLStrings = adoptNS([NSMutableArray new]);
+    return self;
+}
+
+- (void)setStartURLSchemeTaskHandler:(void (^)(TrackingURLSchemeHandler *, id<WKURLSchemeTask>))block
+{
+    _startURLSchemeTaskHandler = makeBlockPtr(block);
+}
+
+- (void (^)(TrackingURLSchemeHandler *, id<WKURLSchemeTask>))startURLSchemeTaskHandler
+{
+    return _startURLSchemeTaskHandler.get();
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id<WKURLSchemeTask>)task
+{
+    if ([_liveTasks indexOfObjectIdenticalTo:task] != NSNotFound) {
+        _deliveredSameTaskTwice = YES;
+        return;
+    }
+    [_liveTasks addObject:task];
+
+    if (_startURLSchemeTaskHandler)
+        _startURLSchemeTaskHandler(self, task);
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id<WKURLSchemeTask>)task
+{
+    [_stoppedURLStrings addObject:task.request.URL.absoluteString];
+    [_liveTasks removeObjectIdenticalTo:task];
+    [_parkedTasks removeObjectIdenticalTo:task];
+}
+
+- (BOOL)deliveredSameTaskTwice
+{
+    return _deliveredSameTaskTwice;
+}
+
+- (BOOL)raisedException
+{
+    return _raisedException;
+}
+
+- (NSUInteger)stopCountForURLPathPrefix:(NSString *)prefix
+{
+    NSUInteger count = 0;
+    for (NSString *urlString in _stoppedURLStrings.get()) {
+        if ([[NSURL URLWithString:urlString].path hasPrefix:prefix])
+            ++count;
+    }
+    return count;
+}
+
+- (void)park:(id<WKURLSchemeTask>)task
+{
+    [_parkedTasks addObject:task];
+}
+
+- (NSUInteger)parkedCountForURLPathPrefix:(NSString *)prefix
+{
+    NSUInteger count = 0;
+    for (id<WKURLSchemeTask> task in _parkedTasks.get()) {
+        if ([task.request.URL.path hasPrefix:prefix])
+            ++count;
+    }
+    return count;
+}
+
+- (void)respond:(id<WKURLSchemeTask>)task text:(const char *)text mimeType:(NSString *)mimeType
+{
+    RetainPtr data = [NSData dataWithBytes:text length:strlen(text)];
+    RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:[data length] textEncodingName:nil]);
+    @try {
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data.get()];
+        [task didFinish];
+    } @catch (NSException *exception) {
+        _raisedException = YES;
+    }
+    [_liveTasks removeObjectIdenticalTo:task];
+    [_parkedTasks removeObjectIdenticalTo:task];
+}
+
+- (void)respondToParkedTasksWithURLPathPrefix:(NSString *)prefix text:(const char *)text
+{
+    RetainPtr<NSArray> tasks = [NSArray arrayWithArray:_parkedTasks.get()];
+    for (id<WKURLSchemeTask> task in tasks.get()) {
+        if ([task.request.URL.path hasPrefix:prefix])
+            [self respond:task text:text mimeType:@"text/plain"];
+    }
+}
+
+@end
+
+// Unlike -_test_waitForAlert, this waits with a bound, so a wedged load fails the test instead of hanging it.
+@interface BoundedAlertRecorder : NSObject <WKUIDelegate>
+- (NSString *)waitForAlert;
+@end
+
+@implementation BoundedAlertRecorder {
+    RetainPtr<NSString> _message;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    _message = message;
+    completionHandler();
+}
+
+- (NSString *)waitForAlert
+{
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return !!_message;
+    }));
+    return _message.get();
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 static void enableFeature(WKWebViewConfiguration *configuration, NSString *featureName)
@@ -5025,6 +5170,285 @@ TEST(SiteIsolation, URLSchemeTask)
             { { "customscheme://webkit.org"_s } }
         },
     });
+}
+
+// Wide enough that two processes parking a block each are practically guaranteed overlapping identifier ranges.
+constexpr NSUInteger parkedLoadsPerFrame = 20;
+
+static NSString *loadParkingHTML(NSString *pathPrefix, NSUInteger count)
+{
+    return [NSString stringWithFormat:@"<body><script>"
+        "window.results = { };"
+        "for (let i = 0; i < %lu; ++i) {"
+            "let path = '%@' + i;"
+            "let xhr = new XMLHttpRequest();"
+            "xhr.open('GET', path);"
+            "xhr.onload = function () { window.results[path] = xhr.responseText; };"
+            "xhr.send();"
+        "}"
+        "</script>", static_cast<unsigned long>(count), pathPrefix];
+}
+
+// A nil frame targets the main frame without -mainFrame, which needs a reply from every process in the tree.
+static NSUInteger resultCount(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    if (!frame)
+        return [[webView objectByEvaluatingJavaScript:@"Object.keys(window.results).length"] unsignedLongValue];
+    return [[webView objectByEvaluatingJavaScript:@"Object.keys(window.results).length" inFrame:frame] unsignedLongValue];
+}
+
+static bool waitForParkedLoads(TrackingURLSchemeHandler *handler, NSString *pathPrefix, NSUInteger count)
+{
+    return Util::waitFor([&] {
+        return [handler parkedCountForURLPathPrefix:pathPrefix] >= count;
+    });
+}
+
+static bool waitForParkedLoadsOrDuplicateTask(TrackingURLSchemeHandler *handler, NSString *pathPrefix, NSUInteger count)
+{
+    return Util::waitFor([&] {
+        return [handler parkedCountForURLPathPrefix:pathPrefix] >= count || [handler deliveredSameTaskTwice];
+    });
+}
+
+static bool waitForStoppedLoads(TrackingURLSchemeHandler *handler, NSString *pathPrefix, NSUInteger count)
+{
+    return Util::waitFor([&] {
+        return [handler stopCountForURLPathPrefix:pathPrefix] >= count;
+    });
+}
+
+static bool waitForResults(TestWKWebView *webView, WKFrameInfo *frame, NSUInteger count)
+{
+    return Util::waitFor([&] {
+        return resultCount(webView, frame) >= count;
+    });
+}
+
+static void addCrossSiteIframe(TestWKWebView *webView, NSString *url)
+{
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"const f = document.createElement('iframe'); f.id = 'child'; f.src = '%@'; document.body.appendChild(f)", url] completionHandler:nil];
+}
+
+static RetainPtr<TrackingURLSchemeHandler> parkingSchemeHandler()
+{
+    RetainPtr handler = adoptNS([TrackingURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(TrackingURLSchemeHandler *trackingHandler, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main"])
+            [trackingHandler respond:task text:loadParkingHTML(@"/aparked", parkedLoadsPerFrame).UTF8String mimeType:@"text/html"];
+        else if ([path isEqualToString:@"/iframe"])
+            [trackingHandler respond:task text:loadParkingHTML(@"/bparked", parkedLoadsPerFrame).UTF8String mimeType:@"text/html"];
+        else if ([path hasPrefix:@"/aparked"] || [path hasPrefix:@"/bparked"])
+            [trackingHandler park:task];
+        else
+            EXPECT_TRUE(false);
+    };
+    return handler;
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> viewAndDelegateWithSchemeHandler(TrackingURLSchemeHandler *handler, bool siteIsolationEnabled)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler forURLScheme:@"customscheme"];
+    return siteIsolatedViewAndDelegate(configuration, CGRectZero, siteIsolationEnabled);
+}
+
+TEST(SiteIsolation, URLSchemeTaskIdentifierCollisionAcrossProcesses)
+{
+    RetainPtr handler = parkingSchemeHandler();
+    auto [webView, navigationDelegate] = viewAndDelegateWithSchemeHandler(handler.get(), true);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/aparked", parkedLoadsPerFrame));
+
+    addCrossSiteIframe(webView.get(), @"customscheme://webkit.org/iframe");
+    EXPECT_TRUE(waitForParkedLoadsOrDuplicateTask(handler.get(), @"/bparked", parkedLoadsPerFrame));
+
+    EXPECT_FALSE([handler deliveredSameTaskTwice]);
+    EXPECT_EQ([handler parkedCountForURLPathPrefix:@"/bparked"], parkedLoadsPerFrame);
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [webView firstChildFrame]._processIdentifier);
+
+    [handler respondToParkedTasksWithURLPathPrefix:@"/aparked" text:"a-data"];
+    [handler respondToParkedTasksWithURLPathPrefix:@"/bparked" text:"b-data"];
+    EXPECT_FALSE([handler raisedException]);
+
+    EXPECT_TRUE(waitForResults(webView.get(), nil, parkedLoadsPerFrame));
+    EXPECT_TRUE(waitForResults(webView.get(), [webView firstChildFrame], parkedLoadsPerFrame));
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.results['/aparked0']"], "a-data");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.results['/bparked0']" inFrame:[webView firstChildFrame]], "b-data");
+}
+
+TEST(SiteIsolation, URLSchemeTaskIdentifierCollisionWithoutSiteIsolation)
+{
+    RetainPtr handler = parkingSchemeHandler();
+    auto [webView, navigationDelegate] = viewAndDelegateWithSchemeHandler(handler.get(), false);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/aparked", parkedLoadsPerFrame));
+
+    addCrossSiteIframe(webView.get(), @"customscheme://webkit.org/iframe");
+    EXPECT_TRUE(waitForParkedLoadsOrDuplicateTask(handler.get(), @"/bparked", parkedLoadsPerFrame));
+
+    EXPECT_FALSE([handler deliveredSameTaskTwice]);
+    EXPECT_EQ([handler parkedCountForURLPathPrefix:@"/bparked"], parkedLoadsPerFrame);
+
+    [handler respondToParkedTasksWithURLPathPrefix:@"/aparked" text:"a-data"];
+    [handler respondToParkedTasksWithURLPathPrefix:@"/bparked" text:"b-data"];
+    EXPECT_FALSE([handler raisedException]);
+    EXPECT_TRUE(waitForResults(webView.get(), nil, parkedLoadsPerFrame));
+}
+
+TEST(SiteIsolation, URLSchemeTaskCancellationDoesNotCrossProcesses)
+{
+    RetainPtr handler = parkingSchemeHandler();
+    auto [webView, navigationDelegate] = viewAndDelegateWithSchemeHandler(handler.get(), true);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/aparked", parkedLoadsPerFrame));
+
+    addCrossSiteIframe(webView.get(), @"customscheme://webkit.org/iframe");
+    EXPECT_TRUE(waitForParkedLoadsOrDuplicateTask(handler.get(), @"/bparked", parkedLoadsPerFrame));
+    EXPECT_FALSE([handler deliveredSameTaskTwice]);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('child').remove()"];
+    EXPECT_TRUE(waitForStoppedLoads(handler.get(), @"/bparked", parkedLoadsPerFrame));
+
+    EXPECT_EQ([handler stopCountForURLPathPrefix:@"/aparked"], 0u);
+    EXPECT_EQ([handler parkedCountForURLPathPrefix:@"/aparked"], parkedLoadsPerFrame);
+
+    [handler respondToParkedTasksWithURLPathPrefix:@"/aparked" text:"a-data"];
+    EXPECT_FALSE([handler raisedException]);
+    EXPECT_TRUE(waitForResults(webView.get(), nil, parkedLoadsPerFrame));
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.results['/aparked0']"], "a-data");
+}
+
+TEST(SiteIsolation, SynchronousURLSchemeTaskFromCrossSiteIframe)
+{
+    RetainPtr handler = adoptNS([TrackingURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(TrackingURLSchemeHandler *trackingHandler, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main"])
+            [trackingHandler respond:task text:loadParkingHTML(@"/aparked", parkedLoadsPerFrame).UTF8String mimeType:@"text/html"];
+        else if ([path isEqualToString:@"/iframe"]) {
+            [trackingHandler respond:task text:"<script>"
+                "let xhr = new XMLHttpRequest();"
+                "xhr.open('GET', '/syncsubresource', false);"
+                "try { xhr.send(null); alert('sync:' + xhr.responseText); }"
+                "catch (e) { alert('sync-failed:' + e); }"
+                "</script>" mimeType:@"text/html"];
+        } else if ([path isEqualToString:@"/syncsubresource"])
+            [trackingHandler respond:task text:"sync-data" mimeType:@"text/plain"];
+        else if ([path hasPrefix:@"/aparked"])
+            [trackingHandler park:task];
+        else
+            EXPECT_TRUE(false);
+    };
+    auto [webView, navigationDelegate] = viewAndDelegateWithSchemeHandler(handler.get(), true);
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/aparked", parkedLoadsPerFrame));
+
+    addCrossSiteIframe(webView.get(), @"customscheme://webkit.org/iframe");
+
+    EXPECT_WK_STREQ([alertRecorder waitForAlert], "sync:sync-data");
+    EXPECT_FALSE([handler deliveredSameTaskTwice]);
+    EXPECT_FALSE([handler raisedException]);
+    EXPECT_EQ([handler stopCountForURLPathPrefix:@"/aparked"], 0u);
+    EXPECT_EQ([handler parkedCountForURLPathPrefix:@"/aparked"], parkedLoadsPerFrame);
+
+    [handler respondToParkedTasksWithURLPathPrefix:@"/aparked" text:"a-data"];
+    EXPECT_FALSE([handler raisedException]);
+    EXPECT_TRUE(waitForResults(webView.get(), nil, parkedLoadsPerFrame));
+    for (NSUInteger i = 0; i < parkedLoadsPerFrame; ++i) {
+        NSString *script = [NSString stringWithFormat:@"window.results['/aparked%lu']", static_cast<unsigned long>(i)];
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:script], "a-data");
+    }
+}
+
+TEST(SiteIsolation, URLSchemeTasksStoppedWhenIframeProcessTerminates)
+{
+    RetainPtr handler = adoptNS([TrackingURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(TrackingURLSchemeHandler *trackingHandler, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main"])
+            [trackingHandler respond:task text:loadParkingHTML(@"/aparked", 1).UTF8String mimeType:@"text/html"];
+        else if ([path isEqualToString:@"/iframe"])
+            [trackingHandler respond:task text:loadParkingHTML(@"/bparked", 1).UTF8String mimeType:@"text/html"];
+        else if ([path hasPrefix:@"/aparked"] || [path hasPrefix:@"/bparked"])
+            [trackingHandler park:task];
+        else
+            EXPECT_TRUE(false);
+    };
+    auto [webView, navigationDelegate] = viewAndDelegateWithSchemeHandler(handler.get(), true);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/aparked", 1));
+
+    addCrossSiteIframe(webView.get(), @"customscheme://webkit.org/iframe");
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/bparked", 1));
+
+    // Query the frame tree before the kill; -mainFrame waits for a reply from every process with no timeout.
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    pid_t iframePID = [webView firstChildFrame]._processIdentifier;
+    ASSERT_NE(iframePID, 0);
+    ASSERT_NE(iframePID, mainFramePID);
+
+    kill(iframePID, 9);
+
+    EXPECT_TRUE(waitForStoppedLoads(handler.get(), @"/bparked", 1));
+
+    EXPECT_EQ([handler stopCountForURLPathPrefix:@"/aparked"], 0u);
+    EXPECT_EQ([handler parkedCountForURLPathPrefix:@"/aparked"], 1u);
+    [handler respondToParkedTasksWithURLPathPrefix:@"/aparked" text:"a-data"];
+    EXPECT_FALSE([handler raisedException]);
+}
+
+TEST(SiteIsolation, URLSchemeTaskRedirectFromCrossSiteIframeWithCollidingIdentifiers)
+{
+    RetainPtr handler = adoptNS([TrackingURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(TrackingURLSchemeHandler *trackingHandler, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main"])
+            [trackingHandler respond:task text:loadParkingHTML(@"/aparked", parkedLoadsPerFrame).UTF8String mimeType:@"text/html"];
+        else if ([path isEqualToString:@"/iframe"]) {
+            [trackingHandler respond:task text:"<script>"
+                "let xhr = new XMLHttpRequest();"
+                "xhr.open('GET', '/beforeredirect');"
+                "xhr.onload = function () { alert(xhr.responseURL + ' ' + xhr.responseText); };"
+                "xhr.send();"
+                "</script>" mimeType:@"text/html"];
+        } else if ([path isEqualToString:@"/beforeredirect"]) {
+            RetainPtr newRequest = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"customscheme://webkit.org/afterredirect"]]);
+            [(id<WKURLSchemeTaskPrivate>)task _willPerformRedirection:adoptNS([NSURLResponse new]).get() newRequest:newRequest.get() completionHandler:^(NSURLRequest *) {
+                [trackingHandler respond:task text:"redirected-data" mimeType:@"text/plain"];
+            }];
+        } else if ([path hasPrefix:@"/aparked"])
+            [trackingHandler park:task];
+        else
+            EXPECT_TRUE(false);
+    };
+    auto [webView, navigationDelegate] = viewAndDelegateWithSchemeHandler(handler.get(), true);
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(waitForParkedLoads(handler.get(), @"/aparked", parkedLoadsPerFrame));
+
+    addCrossSiteIframe(webView.get(), @"customscheme://webkit.org/iframe");
+
+    EXPECT_WK_STREQ([alertRecorder waitForAlert], "customscheme://webkit.org/afterredirect redirected-data");
+    EXPECT_FALSE([handler deliveredSameTaskTwice]);
+    EXPECT_FALSE([handler raisedException]);
 }
 
 TEST(SiteIsolation, StorageSiteValidationCustomScheme)
