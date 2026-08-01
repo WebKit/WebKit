@@ -70,7 +70,7 @@
 #define USE_GLIB 1
 #endif
 
-#if PLATFORM(COCOA) || USE(GLIB)
+#if OS(DARWIN) || USE(GLIB)
 #define USE_TIME_ZONE_CHANGE_NOTIFICATIONS 1
 #endif
 
