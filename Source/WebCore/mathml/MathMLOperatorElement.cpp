@@ -59,7 +59,7 @@ Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& ta
 MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(StringView string)
 {
     OperatorChar operatorChar;
-    auto trimmed = string.trim(isASCIIWhitespaceWithoutFF<UChar>);
+    auto trimmed = string.trim(isASCIIWhitespaceWithoutFF<char16_t>);
     if (trimmed.isEmpty())
         return operatorChar;
 
@@ -90,9 +90,9 @@ MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(Str
         // Base character followed by U+0338 COMBINING LONG SOLIDUS OVERLAY
         // or U+20D2 COMBINING LONG VERTICAL LINE OVERLAY. The base character
         // is used for dictionary lookup and must not be substituted.
-        constexpr UChar combiningLongSolidusOverlay = 0x0338;
-        constexpr UChar combiningLongVerticalLineOverlay = 0x20D2;
-        UChar second = trimmed[1];
+        constexpr char16_t combiningLongSolidusOverlay = 0x0338;
+        constexpr char16_t combiningLongVerticalLineOverlay = 0x20D2;
+        char16_t second = trimmed[1];
         if (second == combiningLongSolidusOverlay || second == combiningLongVerticalLineOverlay) {
             setOperatorChar(trimmed[0]);
             return operatorChar;
