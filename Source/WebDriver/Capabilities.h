@@ -64,6 +64,12 @@ struct Proxy {
     Vector<String> ignoreAddressList;
 };
 
+struct ProxySettings {
+    std::optional<bool> enable;
+    std::optional<bool> allowClearTextPassword;
+    Vector<String> bypassList;
+};
+
 struct Capabilities {
     std::optional<String> browserName;
     std::optional<String> browserVersion;
@@ -75,6 +81,7 @@ struct Capabilities {
     std::optional<PageLoadStrategy> pageLoadStrategy;
     std::optional<UnhandledPromptBehavior> unhandledPromptBehavior;
     std::optional<Proxy> proxy;
+    std::optional<ProxySettings> proxySettings;
     std::optional<String> targetAddr;
     std::optional<int> targetPort;
     std::optional<uint64_t> processID;

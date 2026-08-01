@@ -797,6 +797,24 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     if (auto webSocketURL = matchedCapabilities.getBoolean("webSocketUrl"_s))
         capabilities.webSocketURL = *webSocketURL;
 
+    auto webKitProxySettings = matchedCapabilities.getObject("webKit:proxySettings"_s);
+    if (webKitProxySettings) {
+        ProxySettings settings;
+        if (auto enable = webKitProxySettings->getBoolean("enable"_s))
+            settings.enable = *enable;
+        if (auto allowClearTextPassword = webKitProxySettings->getBoolean("allowClearTextPassword"_s))
+            settings.allowClearTextPassword = *allowClearTextPassword;
+        if (auto bypassList = webKitProxySettings->getArray("bypassList"_s)) {
+            unsigned length = bypassList->length();
+            for (unsigned i = 0; i < length; ++i) {
+                auto item = bypassList->get(i)->asString();
+                if (item)
+                    settings.bypassList.append(item);
+            }
+        }
+        capabilities.proxySettings = WTF::move(settings);
+    }
+
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
 

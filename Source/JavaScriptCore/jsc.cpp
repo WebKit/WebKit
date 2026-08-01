@@ -497,6 +497,8 @@ public:
     bool m_dumpMemoryFootprint { false };
     bool m_dumpLinkBufferStats { false };
     bool m_dumpSamplingProfilerData { false };
+    bool m_heapSnapshotOnExit { false };
+    String m_heapSnapshotOutputPath;
     bool m_inspectable { false };
     bool m_canBlockIsFalse { false };
     bool m_reprl { false }; // Set to true to use Fuzzilli.
@@ -4073,6 +4075,7 @@ static void runInteractive(GlobalObject* globalObject)
     fprintf(stderr, "  --can-block-is-false       Make main thread's Atomics.wait throw\n");
     fprintf(stderr, "  --singleStringSubArgList=<args>   Parse args as a space separated list of arguments. (For VSCode debuggers to pass arguments).\n");
     fprintf(stderr, "  --wasm-debugger[=port]        Enable WebAssembly debugging server (default port 1234)\n");
+    fprintf(stderr, "  --heap-snapshot-on-exit[=file]  Dump heap snapshot on exit (optionally write to file)\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Files with a .mjs extension will always be evaluated as modules.\n");
     fprintf(stderr, "\n");
@@ -4341,6 +4344,18 @@ void CommandLine::parseArguments(int argc, char** argv, int start)
             continue;
         }
 
+        if (!strcmp(arg, "--heap-snapshot-on-exit")) {
+            m_heapSnapshotOnExit = true;
+            continue;
+        }
+
+        static const unsigned heapSnapshotOnExitStrLength = strlen("--heap-snapshot-on-exit=");
+        if (!strncmp(arg, "--heap-snapshot-on-exit=", heapSnapshotOnExitStrLength)) {
+            m_heapSnapshotOnExit = true;
+            m_heapSnapshotOutputPath = String::fromLatin1(arg + heapSnapshotOnExitStrLength);
+            continue;
+        }
+
         static const unsigned useJITCodeValidationsStrLength = strlen("--useJITCodeValidations=");
         if (!strncmp(arg, "--useJITCodeValidations=", useJITCodeValidationsStrLength)) {
             const char* valueStr = argv[i] + useJITCodeValidationsStrLength;
@@ -4544,6 +4559,23 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 #else
             dataLog("Sampling profiler is not enabled on this platform\n");
 #endif
+        }
+
+        if (options.m_heapSnapshotOnExit) {
+            JSLockHolder locker(&vm);
+            HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::InspectorSnapshot);
+            snapshotBuilder.buildSnapshot();
+            String jsonString = snapshotBuilder.json();
+            if (snapshotBuilder.hasOverflowed()) {
+                fprintf(stderr, "Heap snapshot overflowed\n");
+            } else if (!options.m_heapSnapshotOutputPath.isEmpty()) {
+                auto utf8 = jsonString.utf8();
+                FileSystem::writeToFile(options.m_heapSnapshotOutputPath, utf8.span());
+                fprintf(stderr, "Heap snapshot written to '%s'\n", options.m_heapSnapshotOutputPath.utf8().data());
+            } else {
+                auto utf8 = jsonString.utf8();
+                printf("%s\n", utf8.data());
+            }
         }
 
 #if ENABLE(JIT)

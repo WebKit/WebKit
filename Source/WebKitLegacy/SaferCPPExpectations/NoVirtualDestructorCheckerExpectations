@@ -1,0 +1,3 @@
+Source/JavaScriptCore/jsc.cpp
+Source/WebCore/editing/TextCheckingHelper.cpp
+Source/WebDriver/WebDriverService.cpp

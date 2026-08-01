@@ -269,7 +269,8 @@ auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::
             first = {
                 {
                     text.substring(misspellingLocation, misspellingLength).toString(),
-                    currentChunkOffset + misspellingLocation
+                    currentChunkOffset + misspellingLocation,
+                    std::nullopt
                 },
                 WTF::move(misspellingRange)
             };
@@ -380,7 +381,8 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                         spellingOffset += characterCount({ m_range.start, paragraphRange.start });
                     firstFoundItem = MisspelledWord {
                         misspelledWord,
-                        spellingOffset
+                        spellingOffset,
+                        std::nullopt
                     };
                     break;
                 }
@@ -391,7 +393,8 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                     firstFoundItem = UngrammaticalPhrase {
                         badGrammarPhrase,
                         grammarPhraseOffset,
-                        grammarDetail
+                        grammarDetail,
+                        std::nullopt
                     };
                     break;
                 }

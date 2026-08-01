@@ -86,11 +86,13 @@ public:
     struct MisspelledWord {
         String word;
         uint64_t offset { 0 };
+        std::optional<float> confidence;
     };
     struct UngrammaticalPhrase {
         String phrase;
         uint64_t offset { 0 };
         GrammarDetail detail;
+        std::optional<float> confidence;
     };
 
     MisspelledWord findFirstMisspelledWord() const;
