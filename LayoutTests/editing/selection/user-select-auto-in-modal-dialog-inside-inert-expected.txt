@@ -1,0 +1,7 @@
+
+PASS 'user-select: auto' inside a modal dialog is selectable
+PASS A modal dialog marks outside nodes as inert, making them unselectable
+PASS 'user-select: auto' inside a modal dialog stays selectable when an ancestor of the dialog is inert
+PASS 'user-select: text' in an inert subtree is not selectable
+PASS 'user-select: auto' inside an inert modal dialog is not selectable
+wrapper explicitText

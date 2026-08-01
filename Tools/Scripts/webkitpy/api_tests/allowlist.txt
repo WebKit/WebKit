@@ -4028,6 +4028,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.CopyRTF.StripsDataDetectorsLinks
 [ ios ] TestWebKitAPI.CopyRTF.StripsDefaultTextColorOfDarkContent
 [ ios ] TestWebKitAPI.CopyRTF.StripsDefaultTextColorOfLightContent
+[ ios ] TestWebKitAPI.CopyRTF.StripsUserSelectInitialInsideNone
 [ ios ] TestWebKitAPI.CopyRTF.StripsUserSelectNone
 [ ios ] TestWebKitAPI.CopyRTF.StripsUserSelectNoneQuirks
 [ ios ] TestWebKitAPI.CopyURL.MalformedURL

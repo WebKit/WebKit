@@ -554,6 +554,15 @@ public:
     inline StyleAppearance usedAppearance() const;
     inline void setUsedAppearance(StyleAppearance);
 
+    // The adjuster produces usedUserSelect by resolving `user-select: auto` against the
+    // parent's usedUserSelect. The userSelect property itself is not inherited.
+    // ComputedStyle::usedUserSelect() overrides the value to None for inert elements because
+    // external callers use it to determine whether content is selectable;
+    // usedUserSelectIgnoringEffectiveInert() is provided as an escape hatch to get the actual
+    // stored used value, which is only needed by the adjuster itself.
+    inline UserSelect usedUserSelectIgnoringEffectiveInert() const;
+    inline void setUsedUserSelect(UserSelect);
+
     // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
     // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
     // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.

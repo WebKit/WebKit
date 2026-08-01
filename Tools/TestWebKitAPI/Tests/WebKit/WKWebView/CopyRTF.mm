@@ -171,17 +171,27 @@ TEST(CopyRTF, StripsDataDetectorsLinks)
 TEST(CopyRTF, StripsUserSelectNone)
 {
     auto attributedString = copyAttributedStringFromHTML(@"hello <span style='-webkit-user-select: none; user-select: none;'>world "
-        "<span style='-webkit-user-select: initial; user-select: initial;'>WebKit </span></span>"
+        "<span style='-webkit-user-select: text; user-select: text;'>WebKit </span></span>"
         "<div style='-webkit-user-select: none; user-select: none;'>some<br>user-select-none<br>content</div><span inert>foo </span>bar", false);
 
     EXPECT_WK_STREQ([attributedString string].UTF8String, "hello WebKit bar");
+}
+
+TEST(CopyRTF, StripsUserSelectInitialInsideNone)
+{
+    // 'user-select: initial' resolves to auto, so it does not escape 'none'.
+    auto attributedString = copyAttributedStringFromHTML(@"hello <span style='-webkit-user-select: none; user-select: none;'>world "
+        "<span style='-webkit-user-select: auto; user-select: auto;'>WebKit </span>"
+        "<span style='-webkit-user-select: initial; user-select: initial;'>rocks </span></span>bar", false);
+
+    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello bar");
 }
 
 TEST(CopyRTF, StripsUserSelectNoneQuirks)
 {
     auto attributedString = copyAttributedStringFromHTML(@"<meta name='confluence-request-time' content='1689029750234'>"
         "hello <span style='-webkit-user-select: none; user-select: none;'>world "
-        "<span style='-webkit-user-select: initial; user-select: initial;'>WebKit </span></span>"
+        "<span style='-webkit-user-select: text; user-select: text;'>WebKit </span></span>"
         "<div style='-webkit-user-select: none; user-select: none;'>some<br>user-select-none<br>content</div><span inert>foo </span>bar", false);
 
     EXPECT_WK_STREQ([attributedString string].UTF8String, "hello world WebKit\nsome\nuser-select-none\ncontent\nfoo bar");

@@ -239,6 +239,11 @@ inline StyleAppearance ComputedStyleBase::usedAppearance() const
     return static_cast<StyleAppearance>(m_nonInheritedData->miscData->usedAppearance);
 }
 
+inline UserSelect ComputedStyleBase::usedUserSelectIgnoringEffectiveInert() const
+{
+    return static_cast<UserSelect>(m_inheritedRareData->usedUserSelect);
+}
+
 inline ContentVisibility ComputedStyleBase::usedContentVisibility() const
 {
     return static_cast<ContentVisibility>(m_inheritedRareData->usedContentVisibility);

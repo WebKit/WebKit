@@ -91,7 +91,6 @@ InheritedRareData::InheritedRareData()
     , overflowWrap(static_cast<unsigned>(ComputedStyle::initialOverflowWrap()))
     , nbspMode(static_cast<unsigned>(NBSPMode::Normal))
     , lineBreak(static_cast<unsigned>(LineBreak::Auto))
-    , userSelect(static_cast<unsigned>(ComputedStyle::initialUserSelect()))
     , speakAs(ComputedStyle::initialSpeakAs().toRaw())
     , hyphens(static_cast<unsigned>(Hyphens::Manual))
     , textCombine(static_cast<unsigned>(ComputedStyle::initialTextCombine()))
@@ -129,6 +128,7 @@ InheritedRareData::InheritedRareData()
     , isInSubtreeWithBlendMode(false)
     , isForceHidden(false)
     , usedContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
+    , usedUserSelect(static_cast<unsigned>(UserSelect::Text))
     , autoRevealsWhenFound(false)
     , insideDefaultButton(false)
     , insideSubmitButton(false)
@@ -198,7 +198,6 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , overflowWrap(o.overflowWrap)
     , nbspMode(o.nbspMode)
     , lineBreak(o.lineBreak)
-    , userSelect(o.userSelect)
     , speakAs(o.speakAs)
     , hyphens(o.hyphens)
     , textCombine(o.textCombine)
@@ -236,6 +235,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
     , isForceHidden(o.isForceHidden)
     , usedContentVisibility(o.usedContentVisibility)
+    , usedUserSelect(o.usedUserSelect)
     , autoRevealsWhenFound(o.autoRevealsWhenFound)
     , insideDefaultButton(o.insideDefaultButton)
     , insideSubmitButton(o.insideSubmitButton)
@@ -295,7 +295,6 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
 #if ENABLE(TEXT_AUTOSIZING)
         && textSizeAdjust == o.textSizeAdjust
 #endif
-        && userSelect == o.userSelect
         && speakAs == o.speakAs
         && hyphens == o.hyphens
         && hyphenateLimitBefore == o.hyphenateLimitBefore
@@ -344,6 +343,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && effectivelyTransparent == o.effectivelyTransparent
         && effectiveWrapInsideAvoid == o.effectiveWrapInsideAvoid
         && usedContentVisibility == o.usedContentVisibility
+        && usedUserSelect == o.usedUserSelect
         && insideDefaultButton == o.insideDefaultButton
         && insideSubmitButton == o.insideSubmitButton
 #if HAVE(CORE_MATERIAL)
@@ -412,7 +412,6 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT_WITH_CAST(OverflowWrap, overflowWrap);
     LOG_IF_DIFFERENT_WITH_CAST(NBSPMode, nbspMode);
     LOG_IF_DIFFERENT_WITH_CAST(LineBreak, lineBreak);
-    LOG_IF_DIFFERENT_WITH_CAST(UserSelect, userSelect);
 
     LOG_IF_DIFFERENT_WITH_FROM_RAW(SpeakAs, speakAs);
 
@@ -467,6 +466,7 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT_WITH_CAST(bool, autoRevealsWhenFound);
 
     LOG_IF_DIFFERENT_WITH_CAST(ContentVisibility, usedContentVisibility);
+    LOG_IF_DIFFERENT_WITH_CAST(UserSelect, usedUserSelect);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideDefaultButton);
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideSubmitButton);

@@ -509,7 +509,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
     bool applyUserSelectAll = [&] {
         auto* renderer = dynamicDowncast<RenderImage>(element.renderer());
-        return document->isImageDocument() || (renderer && renderer->style().userSelect() != UserSelect::None);
+        return document->isImageDocument() || (renderer && renderer->style().usedUserSelect() != UserSelect::None);
     }();
 
     for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {

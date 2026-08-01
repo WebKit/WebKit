@@ -525,14 +525,16 @@ UsedFloat ComputedStyle::usedFloat(const RenderElement& renderer)
 
 UserSelect ComputedStyle::usedUserSelect() const
 {
+    // Inertness is applied here rather than being baked into the stored value:
     if (effectiveInert())
         return UserSelect::None;
 
-    auto value = userSelect();
-    if (userModify() != UserModify::ReadOnly && userDrag() != UserDrag::Element)
-        return value == UserSelect::None ? UserSelect::Text : value;
+    auto used = usedUserSelectIgnoringEffectiveInert();
 
-    return value;
+    if (userModify() != UserModify::ReadOnly && userDrag() != UserDrag::Element)
+        return used == UserSelect::None ? UserSelect::Text : used;
+
+    return used;
 }
 
 WebCore::Color ComputedStyle::usedScrollbarThumbColor() const

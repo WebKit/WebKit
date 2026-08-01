@@ -16,7 +16,14 @@ document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()
 {
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).webkitUserSelect", "none");
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.selectAllChildren(document.body);
+    window.selectedText = selection.toString();
+    shouldBeTrue('selectedText.includes("text selection is turned off")');
+    shouldBeEqualToString("mediaControls.statusLabel.element.textContent", "Hello");
+    shouldBeTrue("mediaControls.statusLabel.element.getClientRects().length > 0");
+    shouldBeFalse('selectedText.includes("Hello")');
     shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).cursor", "default");
     mediaControls.element.remove();
     debug("");

@@ -803,6 +803,16 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     }
 
     adjustForSiteSpecificQuirks(style);
+
+    // usedUserSelect must be adjusted after applying quirks to userSelect (see needsPrimeVideoUserSelectNoneQuirk()).
+    auto resolvedUserSelect = style.userSelect();
+    if (resolvedUserSelect == UserSelect::Auto) {
+        // 'auto' resolves against the ancestor chain: it takes the parent's used value when that
+        // is 'all' or 'none', and is 'text' otherwise
+        auto parentUsed = m_parentStyle.usedUserSelectIgnoringEffectiveInert();
+        resolvedUserSelect = (parentUsed == UserSelect::All || parentUsed == UserSelect::None) ? parentUsed : UserSelect::Text;
+    }
+    style.setUsedUserSelect(resolvedUserSelect);
 }
 
 static bool NODELETE hasEffectiveDisplayNoneForDisplayContents(const Element& element)

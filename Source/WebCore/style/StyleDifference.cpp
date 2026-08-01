@@ -800,7 +800,7 @@ public:
     {
         return a.effectiveInert != b.effectiveInert
             || a.userModify != b.userModify
-            || a.userSelect != b.userSelect
+            || a.usedUserSelect != b.usedUserSelect
             || a.appleColorFilter != b.appleColorFilter
             || a.imageRendering != b.imageRendering
             || a.accentColor != b.accentColor
