@@ -54,6 +54,7 @@
     "web-platform-tests/css/CSS2": "skip",
     "web-platform-tests/css/CSS2/abspos": "import",
     "web-platform-tests/css/CSS2/box-display": "import",
+    "web-platform-tests/css/CSS2/css1": "import",
     "web-platform-tests/css/CSS2/floats": "import",
     "web-platform-tests/css/CSS2/linebox": "import",
     "web-platform-tests/css/CSS2/normal-flow": "import",

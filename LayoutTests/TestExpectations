@@ -8139,6 +8139,14 @@ imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-005.svg [ ImageO
 
 webkit.org/b/312264 imported/w3c/web-platform-tests/css/cssom-view/interrupt-hidden-smooth-scroll.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/css/CSS2/css1/c43-rpl-ibx-000.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5502-imrgn-r-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5504-imrgn-l-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5507-ipadn-r-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5507-padn-r-000.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5509-ipadn-l-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5510-padn-000.xht [ ImageOnlyFailure ]
+
 webkit.org/b/310217 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointer_boundary_events_after_removing_last_over_element.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/form-submit-and-window-stop.html [ Skip ] # timeout
