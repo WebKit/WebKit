@@ -467,7 +467,6 @@ if (WEBKIT_SDK_IS_MACOS)
 list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
-    UIProcess/PDF/WKDefaultPDFHUDView.mm
     ${WEBKIT_DIR}/Platform/cocoa/FloatRectCG.swift
     ${WEBKIT_DIR}/Platform/cocoa/IntRectCG.swift
     ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
