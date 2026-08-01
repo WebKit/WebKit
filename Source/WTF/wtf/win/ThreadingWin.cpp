@@ -87,7 +87,6 @@
 #include <wtf/Threading.h>
 
 #include <bmalloc/BPlatform.h>
-#include <bmalloc/pas_process.h>
 #include <errno.h>
 #include <process.h>
 #include <windows.h>
@@ -98,6 +97,21 @@
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
+
+bool processIsShuttingDown()
+{
+    using RtlDllShutdownInProgressPtr = BOOLEAN (WINAPI *)();
+    static RtlDllShutdownInProgressPtr resolved;
+    static bool didResolve;
+
+    if (!didResolve) {
+        if (HMODULE ntdll = GetModuleHandleW(L"ntdll.dll"))
+            resolved = reinterpret_cast<RtlDllShutdownInProgressPtr>(GetProcAddress(ntdll, "RtlDllShutdownInProgress"));
+        didResolve = true;
+    }
+
+    return resolved && resolved();
+}
 
 Thread::~Thread()
 {
@@ -264,7 +278,7 @@ void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier thr
 struct Thread::ThreadHolder {
     ~ThreadHolder()
     {
-        if (pas_process_is_shutting_down())
+        if (processIsShuttingDown())
             return;
 
         if (thread) {

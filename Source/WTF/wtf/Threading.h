@@ -86,6 +86,8 @@ class PrintStream;
 
 WTF_EXPORT_PRIVATE void initialize();
 
+WTF_EXPORT_PRIVATE bool processIsShuttingDown();
+
 class ThreadSuspendLocker {
     WTF_MAKE_NONCOPYABLE(ThreadSuspendLocker);
 public:

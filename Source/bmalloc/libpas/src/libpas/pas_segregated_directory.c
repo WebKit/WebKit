@@ -24,10 +24,10 @@
  */
 
 #include "pas_config.h"
-#include "pas_segregated_view_kind.h"
 
 #if LIBPAS_ENABLED
 
+#include "pas_segregated_view_kind.h"
 #include "pas_segregated_directory.h"
 
 #include "pas_heap_lock.h"

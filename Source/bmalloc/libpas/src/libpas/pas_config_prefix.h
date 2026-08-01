@@ -45,19 +45,7 @@
 #define __PAS_ARM64E 0
 #endif
 
-#if (defined(arm) || defined(__arm__) || defined(ARM) || defined(_ARM_)) && !__PAS_ARM64
-#define __PAS_ARM32 1
-#else
-#define __PAS_ARM32 0
-#endif
-
-#define __PAS_ARM (!!__PAS_ARM64 || !!__PAS_ARM32)
-
-#if defined(__i386__) || defined(i386) || defined(_M_IX86) || defined(_X86_) || defined(__THW_INTEL)
-#define __PAS_X86 1
-#else
-#define __PAS_X86 0
-#endif
+#define __PAS_ARM (!!__PAS_ARM64)
 
 #if defined(__x86_64__) || defined(_M_X64)
 #define __PAS_X86_64 1

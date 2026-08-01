@@ -457,8 +457,6 @@ kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_range(ta
         if (!candidate_pointer)
             continue;
 
-#if PAS_CPU(ADDRESS64)
-
 #if PAS_ARM
         if (candidate_pointer > MACH_VM_MAX_ADDRESS_RAW)
             continue;
@@ -475,7 +473,6 @@ kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_range(ta
         /* First page on x64 process is unmapped. */
         if (candidate_pointer < (4ULL << 10))
             continue;
-#endif
 #endif
 
         /* FIXME: We can add more filtering via pas_root information later. */

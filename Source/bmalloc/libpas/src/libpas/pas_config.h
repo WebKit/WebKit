@@ -67,6 +67,10 @@
 #undef LIBPAS_ENABLED
 #define LIBPAS_ENABLED 0
 #endif
+
+#if BENABLE(LIBPAS) && !PAS_CPU(ADDRESS64)
+#error "libpas requires a 64-bit address space"
+#endif
 #endif
 
 #if ((PAS_OS(DARWIN) && __PAS_ARM64 && !__PAS_ARM64E) || PAS_PLATFORM(PLAYSTATION)) && defined(NDEBUG)
@@ -81,7 +85,6 @@
 #endif
 
 #define PAS_ARM64 __PAS_ARM64
-#define PAS_ARM32 __PAS_ARM32
 
 #define PAS_ARM __PAS_ARM
 
@@ -177,4 +180,3 @@
 #endif
 
 #endif /* PAS_CONFIG_H */
-

@@ -202,9 +202,7 @@
 /* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
 #if __SIZEOF_POINTER__ == 8
 #define PAS_CPU_ADDRESS64 1
-#elif __SIZEOF_POINTER__ == 4
-#define PAS_CPU_ADDRESS32 1
-#else
+#elif __SIZEOF_POINTER__ != 4
 #error "Unsupported pointer width"
 #endif
 #elif PAS_COMPILER(MSVC)

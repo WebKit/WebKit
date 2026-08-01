@@ -122,11 +122,9 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ARM64 __PAS_ARM64
 #define PAS_ARM64E __PAS_ARM64E
-#define PAS_ARM32 __PAS_ARM32
 
 #define PAS_ARM __PAS_ARM
 
-#define PAS_X86 __PAS_X86
 #define PAS_X86_64 __PAS_X86_64
 
 #define PAS_RISCV __PAS_RISCV
@@ -867,20 +865,12 @@ static inline bool pas_compare_and_swap_bool_strong(bool* ptr, bool old_value, b
 
 static inline bool pas_compare_and_swap_uintptr_weak(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
 {
-#if PAS_CPU(ADDRESS64)
     return pas_compare_and_swap_uint64_weak((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
-#else
-    return pas_compare_and_swap_uint32_weak((uint32_t*)ptr, (uint32_t)old_value, (uint32_t)new_value);
-#endif
 }
 
 static inline uintptr_t pas_compare_and_swap_uintptr_strong(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
 {
-#if PAS_CPU(ADDRESS64)
     return (uintptr_t)pas_compare_and_swap_uint64_strong((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
-#else
-    return (uintptr_t)pas_compare_and_swap_uint32_strong((uint32_t*)ptr, (uint32_t)old_value, (uint32_t)new_value);
-#endif
 }
 
 static inline bool pas_compare_and_swap_ptr_weak(void* ptr, const void* old_value, const void* new_value)
@@ -921,7 +911,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_opaque(uintptr_t value)
     return value;
 }
 
-#if PAS_COMPILER(CLANG) || PAS_ARM32
+#if PAS_COMPILER(CLANG)
 
 struct pas_pair;
 typedef struct pas_pair pas_pair;
@@ -1007,17 +997,9 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
     return cond;
 #elif PAS_COMPILER(CLANG)
 PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
-#if PAS_CPU(ADDRESS64)
     PAS_TESTING_ASSERT(!((uintptr_t)raw_ptr % 16)); // CMPXCHG16B requires destination be 16-byte aligned
-#endif
     return __c11_atomic_compare_exchange_weak((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 PAS_IGNORE_WARNINGS_END
-#elif PAS_ARM32
-    PAS_ASSERT_IF(true, !"Should not be reached");
-    PAS_UNUSED_PARAM(raw_ptr);
-    PAS_UNUSED_PARAM(old_value);
-    PAS_UNUSED_PARAM(new_value);
-    return false;
 #else
     return __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 #endif
@@ -1056,16 +1038,9 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
     return pas_pair_create(low, high);
 #elif PAS_COMPILER(CLANG)
 PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
-#if PAS_CPU(ADDRESS64)
     PAS_TESTING_ASSERT(!((uintptr_t)raw_ptr % 16)); // CMPXCHG16B requires destination be 16-byte aligned
-#endif
     __c11_atomic_compare_exchange_strong((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 PAS_IGNORE_WARNINGS_END
-    return old_value;
-#elif PAS_ARM32
-    PAS_ASSERT_IF(true, !"Should not be reached");
-    PAS_UNUSED_PARAM(raw_ptr);
-    PAS_UNUSED_PARAM(new_value);
     return old_value;
 #else
     __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
@@ -1090,10 +1065,6 @@ static inline pas_pair pas_atomic_load_pair_relaxed(void* raw_ptr)
 PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     return __c11_atomic_load((_Atomic pas_pair*)raw_ptr, __ATOMIC_RELAXED);
 PAS_IGNORE_WARNINGS_END
-#elif PAS_ARM32
-    PAS_ASSERT_IF(true, !"Should not be reached");
-    PAS_UNUSED_PARAM(raw_ptr);
-    return *(pas_pair*)raw_ptr;
 #else
     return __atomic_load_n((pas_pair*)raw_ptr, __ATOMIC_RELAXED);
 #endif
@@ -1119,10 +1090,6 @@ static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
 PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
 PAS_IGNORE_WARNINGS_END
-#elif PAS_ARM32
-    PAS_ASSERT_IF(true, !"Should not be reached");
-    PAS_UNUSED_PARAM(raw_ptr);
-    PAS_UNUSED_PARAM(value);
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
 #endif
@@ -1135,10 +1102,6 @@ static inline void pas_atomic_store_pair_relaxed(void* raw_ptr, pas_pair value)
 PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
 PAS_IGNORE_WARNINGS_END
-#elif PAS_ARM32
-    PAS_ASSERT_IF(true, !"Should not be reached");
-    PAS_UNUSED_PARAM(raw_ptr);
-    PAS_UNUSED_PARAM(value);
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
 #endif

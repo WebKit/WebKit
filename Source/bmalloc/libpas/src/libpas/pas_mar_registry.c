@@ -54,8 +54,6 @@ struct pas_mar_registry* pas_mar_registry_for_crash_reporter_enumeration = NULL;
 
 // Backtrace hashing
 
-#if PAS_CPU(ADDRESS64)
-
 static uint32_t hash_backtrace(unsigned num_stack_frames, void** backtrace)
 {
     // This implements Murmur hash on the low 32b of each backtrace
@@ -102,7 +100,6 @@ unsigned pas_mar_insert_backtrace(pas_mar_registry* registry, unsigned num_stack
     return index;
 }
 
-#endif /* PAS_CPU(ADDRESS64) */
 
 // MAR Registry
 

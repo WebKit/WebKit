@@ -27,7 +27,6 @@
 #include <wtf/Threading.h>
 
 #include <bmalloc/BPlatform.h>
-#include <bmalloc/pas_process.h>
 #include <cstring>
 #include <wtf/DateMath.h>
 #include <wtf/FastMalloc.h>
@@ -301,9 +300,16 @@ Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, Thr
     return thread;
 }
 
+#if !OS(WINDOWS)
+bool processIsShuttingDown()
+{
+    return false;
+}
+#endif
+
 void Thread::didExit()
 {
-    if (pas_process_is_shutting_down())
+    if (processIsShuttingDown())
         return;
 
     allThreads().remove(*this);

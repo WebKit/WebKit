@@ -67,18 +67,6 @@
 #define CRASH_GPR5 "x22"
 #define CRASH_GPR6 "x23"
 
-#elif PAS_ARM32
-
-#define PAS_FATAL_CRASH_INST "bkpt #0"
-
-#define CRASH_GPR0 "r4"
-#define CRASH_GPR1 "r5"
-#define CRASH_GPR2 "r6"
-#define CRASH_GPR3 "r8"
-#define CRASH_GPR4 "r9"
-#define CRASH_GPR5 "r10"
-#define CRASH_GPR6 "r11"
-
 #endif
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
@@ -89,7 +77,7 @@
 #endif // defined(__has_include)
 #endif // defined(PAS_BMALLOC) && PAS_BMALLOC
 
-#if PAS_X86_64 || PAS_ARM64 || PAS_ARM32
+#if PAS_X86_64 || PAS_ARM64
 
 #if (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
 

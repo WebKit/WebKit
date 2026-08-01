@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "pas_config.h"
+
+#if LIBPAS_ENABLED
+
 #include "pas_process.h"
 
 #if PAS_OS(WINDOWS)
@@ -58,3 +62,5 @@ bool pas_process_is_shutting_down(void)
 }
 
 #endif /* PAS_OS(WINDOWS) */
+
+#endif /* LIBPAS_ENABLED */
