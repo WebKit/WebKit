@@ -117,19 +117,14 @@ public:
         return makeUniqueRefWithoutRefCountedCheck<BuilderState>(style, WTF::move(builderContext));
     }
 
-    ComputedStyle& style() { return m_style; }
-    const ComputedStyle& style() const { return m_style; }
+    ComputedStyle& style() LIFETIME_BOUND { return m_style; }
+    const ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
 
-    Style::ComputedStyle& renderStyle() LIFETIME_BOUND { return m_style; }
-    const Style::ComputedStyle& renderStyle() const LIFETIME_BOUND { return m_style; }
-
-    const ComputedStyle& parentStyle() const { return *m_context.parentStyle; }
-    const Style::ComputedStyle& parentRenderStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
+    const ComputedStyle& parentStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
 
     Builder* callingContextBuilder() const { return m_context.callingContextBuilder; }
 
-    const ComputedStyle* rootElementStyle() const { return m_context.rootElementStyle; }
-    const Style::ComputedStyle* rootElementRenderStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
+    const Style::ComputedStyle* rootElementStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
 
     const Document& document() const { return m_context.document; }
     const Element* element() const { return m_context.element.get(); }

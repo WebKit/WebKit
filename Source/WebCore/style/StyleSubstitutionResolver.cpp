@@ -296,7 +296,7 @@ RefPtr<MutableStyleProperties> SubstitutionResolver::resolveAndRegisterDashedFun
 
     auto builderContext = BuilderContext {
         .document = m_styleBuilder.state().document(),
-        .parentStyle = &m_styleBuilder.state().renderStyle(),
+        .parentStyle = &m_styleBuilder.state().style(),
         .element = m_styleBuilder.state().element(),
         .localPropertyRegistry = &argumentRegistrations,
         .callingContextBuilder = &m_styleBuilder
@@ -443,7 +443,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     // properties on demand via the calling context's builder (https://drafts.csswg.org/css-mixins/#evaluating-custom-functions).
     auto builderContext = BuilderContext {
         .document = m_styleBuilder.state().document(),
-        .parentStyle = &m_styleBuilder.state().renderStyle(),
+        .parentStyle = &m_styleBuilder.state().style(),
         .element = m_styleBuilder.state().element(),
         .localPropertyRegistry = &registrations,
         .callingContextBuilder = &m_styleBuilder
