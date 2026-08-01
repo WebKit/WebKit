@@ -116,8 +116,8 @@ WI.ResourceTimingData = class ResourceTimingData
     markResponseEndTime(responseEnd)
     {
         console.assert(typeof responseEnd === "number");
-        console.assert(isNaN(responseEnd) || responseEnd >= this.startTime, "responseEnd time should be greater than the start time", this.startTime, responseEnd);
-        console.assert(isNaN(responseEnd) || responseEnd >= this.requestStart, "responseEnd time should be greater than the request time", this.requestStart, responseEnd);
+        console.assert(isNaN(responseEnd) || isNaN(this.startTime) || responseEnd >= this.startTime, "responseEnd time should be greater than the start time", this.startTime, responseEnd);
+        console.assert(isNaN(responseEnd) || isNaN(this.requestStart) || responseEnd >= this.requestStart, "responseEnd time should be greater than the request time", this.requestStart, responseEnd);
         this._responseEnd = responseEnd;
     }
 };
