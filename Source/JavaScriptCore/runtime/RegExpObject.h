@@ -71,7 +71,7 @@ public:
         return std::bit_cast<RegExp*>(m_regExpAndFlags & regExpMask);
     }
 
-    bool setLastIndex(JSGlobalObject* globalObject, size_t lastIndex)
+    bool setLastIndex(JSGlobalObject* globalObject, uint64_t lastIndex)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
