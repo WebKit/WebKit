@@ -580,6 +580,51 @@ size_t Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& regis
 #endif
 }
 
+void Thread::barrierInstructionCache()
+{
+#if CPU(X86_64)
+    // x86-64 has a coherent instruction cache: instruction fetches on every core observe stores to
+    // code without any explicit synchronization, so there is nothing to publish.
+    return;
+#else
+    RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::currentSingleton(), "We do not support synchronizing the current thread itself.");
+    // Every mechanism below synchronizes the core the target thread is running on at the time. It is
+    // therefore only sufficient because the kernel is responsible for instruction-cache maintenance
+    // when it migrates a thread to another core; nothing here can cover a core the thread has not run
+    // on yet.
+#if OS(DARWIN) && CPU(ARM64)
+    // Reading a thread's register state forces it through a context-synchronizing kernel round-trip
+    // (the ERET on the way back to user code is an ISB), so it re-fetches modified instructions
+    // without taking the thread-suspend lock. thread_get_state's count is an in/out argument, so
+    // restore the buffer capacity before each attempt.
+    auto metadata = threadStateMetadata();
+    const unsigned stateCapacity = metadata.userCount;
+    PlatformRegisters registers;
+    kern_return_t result;
+    do {
+        metadata.userCount = stateCapacity;
+        result = thread_get_state(m_platformThread, metadata.flavor, (thread_state_t)&registers, &metadata.userCount);
+    } while (result == KERN_ABORTED);
+    ASSERT(result == KERN_SUCCESS);
+#elif CPU(RISCV64)
+    // Not implemented on RISC-V, which means the wasm JITs cannot publish code there. Instruction
+    // fetch coherence on RISC-V requires FENCE.I to execute on the hart that will run the modified
+    // code, and neither suspend/resume nor returning from a signal is architecturally guaranteed to
+    // imply one. Publishing needs an explicit remote fence — on Linux,
+    // membarrier(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) — rather than the mechanism below.
+    // Failing loudly is preferable to silently letting a hart execute stale instructions.
+    RELEASE_ASSERT_NOT_REACHED();
+#else
+    // Suspending and then resuming the thread makes the OS run a context-synchronizing exception
+    // return on it as it resumes, so it re-fetches modified instructions.
+    ThreadSuspendLocker locker;
+    if (!suspend(locker))
+        return;
+    resume(locker);
+#endif
+#endif
+}
+
 void Thread::establishPlatformSpecificHandle(pthread_t handle)
 {
     Locker locker { m_mutex };

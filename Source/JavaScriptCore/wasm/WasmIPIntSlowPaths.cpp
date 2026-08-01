@@ -184,8 +184,14 @@ static inline RefPtr<Wasm::JITCallee> jitCompileAndSetHeuristics(Wasm::IPIntCall
     auto getReplacement = [&] () -> RefPtr<Wasm::JITCallee> {
         switch (osrFor) {
         case OSRFor::Prologue: {
-            if (!Options::useWasmIPInt() || needsSIMDReplacement) [[unlikely]]
-                return calleeGroup.tryGetReplacementConcurrently(functionIndex);
+            if (!Options::useWasmIPInt() || needsSIMDReplacement) [[unlikely]] {
+                // Deliberately not the lock-free peek used for loops: needsSIMDReplacement means
+                // IPInt cannot interpret this function at all, so we must find the JIT callee that
+                // IPIntPlan forced to be compiled, whether it is BBQ or OMG. This path is disabled
+                // in the default configuration, so it is not worth optimizing for contention.
+                Locker locker { calleeGroup.m_lock };
+                return calleeGroup.replacement(locker, callee.index());
+            }
             return nullptr;
         }
         case OSRFor::Epilogue: {

@@ -1021,15 +1021,29 @@ public:
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
     }
     
-    template<PtrTag callTag, PtrTag destTag>
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush, PtrTag callTag, PtrTag destTag>
     static void repatchNearCall(CodeLocationNearCall<callTag> nearCall, CodeLocationLabel<destTag> destination)
     {
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
-            AssemblerType::relinkTailCall(nearCall.dataLocation(), destination.dataLocation());
+            AssemblerType::template relinkTailCall<repatch>(nearCall.dataLocation(), destination.dataLocation());
             return;
         case NearCallMode::Regular:
-            AssemblerType::relinkCall(nearCall.dataLocation(), destination.untaggedPtr());
+            AssemblerType::template relinkCall<repatch>(nearCall.dataLocation(), destination.untaggedPtr());
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    template<PtrTag callTag>
+    static void flushNearCall(CodeLocationNearCall<callTag> nearCall)
+    {
+        switch (nearCall.callMode()) {
+        case NearCallMode::Tail:
+            AssemblerType::flushTailCall(nearCall.dataLocation());
+            return;
+        case NearCallMode::Regular:
+            AssemblerType::flushCall(nearCall.dataLocation());
             return;
         }
         RELEASE_ASSERT_NOT_REACHED();

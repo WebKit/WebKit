@@ -99,7 +99,9 @@ void BBQPlan::work()
     Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection().get(functionIndexSpace), Ref { m_profiledCallee });
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls);
 
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
+    // The finished code is patched further (wasm call-site linking in installOptimizedCallee) and
+    // flushed once afterward, so skip LinkBuffer's finalize instruction-cache flush.
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail, LinkBuffer::CacheFlushOnFinalize::No);
     if (linkBuffer.didFailToAllocate()) [[unlikely]] {
         fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex.rawIndex()), CompilationError::OutOfMemory);
         return;
@@ -131,10 +133,13 @@ void BBQPlan::work()
             callee->setPCToCodeOriginMap(WTF::move(context.pcToCodeOriginMap));
         }
 
+        CalleeGroup::CallerCallsiteFlushes deferredFlushes;
         {
             Locker locker { m_calleeGroup->m_lock };
-            m_calleeGroup->installOptimizedCallee(locker, m_moduleInformation, m_functionIndex, callee.copyRef(), function->outgoingJITDirectCallees);
+            m_calleeGroup->installOptimizedCallee(locker, m_moduleInformation, m_functionIndex, callee.copyRef(), function->outgoingJITDirectCallees, deferredFlushes);
         }
+        // Flush the repatched callsites now that m_lock is released, keeping the icache flushes out of the critical section.
+        deferredFlushes.flush();
         {
             Locker locker { m_profiledCallee->tierUpCounter().m_lock };
             m_profiledCallee->tierUpCounter().setCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);

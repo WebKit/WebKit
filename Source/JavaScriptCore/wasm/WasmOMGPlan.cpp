@@ -146,7 +146,9 @@ void OMGPlan::work()
     }
 
     Entrypoint omgEntrypoint;
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
+    // The finished code is patched further (wasm call-site linking in installOptimizedCallee) and
+    // flushed once afterward, so skip LinkBuffer's finalize instruction-cache flush.
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail, LinkBuffer::CacheFlushOnFinalize::No);
     if (linkBuffer.didFailToAllocate()) [[unlikely]] {
         Locker locker { m_lock };
         Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex.rawIndex()), CompilationError::OutOfMemory);
@@ -169,6 +171,7 @@ void OMGPlan::work()
     omgEntrypoint.calleeSaveRegisters = WTF::move(internalFunction->entrypoint.calleeSaveRegisters);
 
     bool newlyInstalled = false;
+    CalleeGroup::CallerCallsiteFlushes deferredFlushes;
     CodePtr<WasmEntryPtrTag> entrypoint;
     {
         ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
@@ -181,7 +184,7 @@ void OMGPlan::work()
         }
 
         Locker locker { m_calleeGroup->m_lock };
-        newlyInstalled = m_calleeGroup->installOptimizedCallee(locker, m_moduleInformation, m_functionIndex, callee.copyRef(), internalFunction->outgoingJITDirectCallees);
+        newlyInstalled = m_calleeGroup->installOptimizedCallee(locker, m_moduleInformation, m_functionIndex, callee.copyRef(), internalFunction->outgoingJITDirectCallees, deferredFlushes);
 
         if (newlyInstalled) {
             if (RefPtr bbqCallee = m_calleeGroup->bbqCallee(locker, m_functionIndex)) {
@@ -193,6 +196,9 @@ void OMGPlan::work()
             ipintCallee.tierUpCounter().setCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);
         }
     }
+
+    // Flush the repatched callsites now that m_lock is released, keeping the icache flushes out of the critical section.
+    deferredFlushes.flush();
 
     if (newlyInstalled) {
         if (Options::freeRetiredWasmCode()) {

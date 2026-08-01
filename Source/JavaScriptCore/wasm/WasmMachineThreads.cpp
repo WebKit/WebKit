@@ -30,7 +30,6 @@
 
 #include "MachineStackMarker.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadMessage.h>
 
 namespace JSC { namespace Wasm {
 
@@ -51,16 +50,16 @@ void startTrackingCurrentThread()
     wasmThreads().addCurrentThread();
 }
 
-void resetInstructionCacheOnAllThreads()
+// FIXME: Use Linux's membarrier(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) here.
+void barrierInstructionCacheOnAllThreads()
 {
+#if CPU(X86_64)
+    return;
+#else
     Locker locker { wasmThreads().getLock() };
-    ThreadSuspendLocker threadSuspendLocker;
-    for (auto& thread : wasmThreads().threads(locker)) {
-        sendMessage(threadSuspendLocker, thread.get(), [] (const PlatformRegisters&) {
-            // It's likely that the signal handler will already reset the instruction cache but we might as well be sure.
-            WTF::crossModifyingCodeFence();
-        });
-    }
+    for (auto& thread : wasmThreads().threads(locker))
+        thread->barrierInstructionCache();
+#endif
 }
 
     

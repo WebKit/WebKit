@@ -6407,20 +6407,29 @@ public:
         setPointer(static_cast<char*>(code) + where.offset(), value);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkJump(void* from, void* to)
     {
         setRel32(from, to);
     }
-    
+
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkCall(void* from, void* to)
     {
         setRel32(from, to);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkTailCall(void* from, void* to)
     {
-        relinkJump(from, to);
+        relinkJump<repatch>(from, to);
     }
+
+    // Flushing is a no-op on x86: instruction fetch is coherent with data writes, so the relink
+    // functions above never flush either.
+    static void flushJump(void*) { }
+    static void flushCall(void*) { }
+    static void flushTailCall(void*) { }
 
     static void repatchPointer(void* where, void* value)
     {

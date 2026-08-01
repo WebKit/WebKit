@@ -92,7 +92,6 @@ void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
     ASSERT_UNUSED(functionIndexSpace, &m_moduleInformation->rtt(functionIndexSpace) == &m_moduleInformation->rtt(typeSignatureIndex));
 
     beginCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
-    m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
     auto parseAndCompileResult = parseAndCompileMetadata(function.data, signature, m_moduleInformation.get(), functionIndex);
     endCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
 
@@ -150,22 +149,6 @@ void IPIntPlan::didCompleteCompilation()
         NativeCalleeRegistry::singleton().registerCallees(*m_ipintCallees);
         if (Options::useWasmTailCalls())
             RestoreFrameCallee::singleton();
-    }
-
-    if (m_compilerMode == CompilerMode::Validation)
-        return;
-
-    for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
-        for (auto& call : unlinked) {
-            CodePtr<WasmEntryPtrTag> executableAddress;
-            if (m_moduleInformation->isImportedFunctionFromFunctionIndexSpace(call.functionIndexSpace)) {
-                // FIXME: imports could have been linked in B3, instead of generating a patchpoint. This condition should be replaced by a RELEASE_ASSERT.
-                // https://bugs.webkit.org/show_bug.cgi?id=166462
-                executableAddress = m_wasmToWasmExitStubs.at(call.functionIndexSpace).code();
-            } else
-                executableAddress = m_ipintCallees->at(call.functionIndexSpace - m_moduleInformation->importFunctionCount())->entrypoint();
-            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(executableAddress));
-        }
     }
 }
 

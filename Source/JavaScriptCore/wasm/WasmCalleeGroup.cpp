@@ -160,40 +160,17 @@ void CalleeGroup::compileAsync(VM& vm, AsyncCompilationCallback&& task)
     task->run(Ref { *this }, isAsync);
 }
 
-RefPtr<JITCallee> CalleeGroup::tryGetReplacementConcurrently(FunctionCodeIndex functionIndex) const
-{
-    if (m_optimizedCallees.isEmpty())
-        return nullptr;
-
-    // Do not use optimizedCalleesTuple. optimizedCalleesTuple handles currently-installing Callee. But we do not want to handle it actually.
-    // We would like to peek the callee when it is stored into m_optimizedCallees without taking a lock.
-    auto* tuple = &m_optimizedCallees[functionIndex];
-    UNUSED_PARAM(tuple);
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-    if (RefPtr callee = tuple->m_omgCallee)
-        return callee;
-#endif
-#if ENABLE(WEBASSEMBLY_BBQJIT)
-    {
-        Locker locker { tuple->m_bbqCalleeLock };
-        if (RefPtr callee = tuple->m_bbqCallee.get())
-            return callee;
-    }
-#endif
-    return nullptr;
-}
-
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 RefPtr<BBQCallee> CalleeGroup::tryGetBBQCalleeForLoopOSRConcurrently(VM& vm, FunctionCodeIndex functionIndex)
 {
     if (m_optimizedCallees.isEmpty())
         return nullptr;
 
-    // Do not use optimizedCalleesTuple. optimizedCalleesTuple adjusts the result with currently-installing Callee. But we do not want to handle it actually.
-    // We would like to peek the callee when it is stored into m_optimizedCallees without taking a lock.
     auto* tuple = &m_optimizedCallees[functionIndex];
     RefPtr<BBQCallee> bbqCallee;
     {
+        // get() and isStrong() must be read as one atomic pair: split, we could see a strong callee
+        // and then miss that it was retired, skipping the report below.
         Locker bbqLocker { tuple->m_bbqCalleeLock };
         bbqCallee = tuple->m_bbqCallee.get();
         if (!bbqCallee)
@@ -231,6 +208,8 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker& locker, FunctionCodeInd
             return;
         bbqCallee = tuple->m_bbqCallee.convertToWeak();
     }
+    // Reported outside m_bbqCalleeLock: this takes the heap's own lock, and nothing in the heap
+    // reaches back into CalleeGroup.
     bbqCallee->reportToVMsForDestruction();
 }
 #endif
@@ -238,18 +217,81 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker& locker, FunctionCodeInd
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 RefPtr<OMGCallee> CalleeGroup::tryGetOMGCalleeConcurrently(FunctionCodeIndex functionIndex)
 {
+    // See tryGetBBQCalleeForLoopOSRConcurrently for why reading m_optimizedCallees without m_lock is
+    // safe. m_omgCallee itself is written once and never cleared, so the worst case is that we miss
+    // a tier-up that just landed.
     if (m_optimizedCallees.isEmpty())
         return nullptr;
 
-    // Do not use optimizedCalleesTuple. optimizedCalleesTuple handles currently-installing Callee. But we do not want to handle it actually.
-    // We would like to peek the callee when it is stored into m_optimizedCallees without taking a lock.
-    auto* tuple = &m_optimizedCallees[functionIndex];
-    return tuple->m_omgCallee;
+    return m_optimizedCallees[functionIndex].m_omgCallee;
 }
 #endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCodeIndex functionIndex, OptimizingJITCallee& callee)
+void CalleeGroup::CallerCallsiteFlushes::flush()
+{
+    // This only invalidates the caller's instruction cache; it does not context-synchronize the
+    // threads executing those callers. So a core that already prefetched the old branch target may
+    // keep calling the previous callee for an architecturally unbounded time after this returns.
+    // That is safe because retired code is not freed until Heap::finalizeWasmCalleeCleanup() runs
+    // with the world stopped in every VM that could be running it, and stopping a thread is itself a
+    // context-synchronizing event. Anything that shortens a retired callee's lifetime must preserve
+    // that property.
+
+    // FIXME: Maybe it's worth doing a cpuid here on X86_64. We don't do any earlier in the callee
+    // publication process as it's not strictly necessary.
+    for (auto& callsite : callsites)
+        MacroAssembler::flushNearCall(callsite.callLocation);
+}
+
+// Reserves this callee's place before any of its code is linked, so a competing install for the same
+// function loses here rather than part-way through publication. Must run before reportCallees, or a
+// loser would leave itself permanently recorded as a caller of everything it calls.
+bool CalleeGroup::tryReserveCalleeForInstall(const AbstractLocker& locker, FunctionCodeIndex functionIndex, OptimizingJITCallee& callee)
+{
+    switch (callee.compilationMode()) {
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    case CompilationMode::OMGMode: {
+        // Why does it happen? It is possible that some code is still running IPIntCallee, and OMGCallee is installed and BBQCallee gets retired.
+        // But since IPIntCallee can only tier up to BBQCallee, it may spin up BBQCallee again.
+        // And because of BBQCallee's new TierUpCounter, we may start introducing OMGCallee again.
+        // For now, we make this defensive: making installation failed when OMGCallee is already installed.
+        // This is only a reservation; publishing happens after the code is flushed, so it is rechecked
+        // there too.
+        auto* slot = optimizedCalleesTuple(locker, functionIndex);
+        ASSERT(slot);
+        if (slot->m_omgCallee) [[unlikely]]
+            return false;
+
+        for (auto& pending : m_pendingPublishCallees) {
+            if (toCodeIndex(pending->index()) == functionIndex && pending->compilationMode() == CompilationMode::OMGMode) [[unlikely]]
+                return false;
+        }
+        break;
+    }
+
+    case CompilationMode::OMGForOSREntryMode:
+        // This only reserves/registers the callee, OMGOSREntryCallee's are only reachable via the
+        // BBQCallee (after BBQCallee::setOSREntryCallee is called).
+        if (!m_osrEntryCallees.add(functionIndex, ThreadSafeWeakPtr<OMGOSREntryCallee> { downcast<OMGOSREntryCallee>(callee) }).isNewEntry)
+            return false;
+        break;
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+    case CompilationMode::BBQMode:
+        // The IPInt tier-up counter's compilation status already serializes BBQ plans for a function.
+        break;
+#endif
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    addPendingPublishCallee(locker, callee);
+    return true;
+
+}
+
+bool CalleeGroup::installOptimizedCallee(Locker<Lock>& locker, const ModuleInformation& info, FunctionCodeIndex functionIndex, Ref<OptimizingJITCallee>&& callee, const FixedBitVector& outgoingJITDirectCallees, CallerCallsiteFlushes& deferred)
 {
     auto* slot = optimizedCalleesTuple(locker, functionIndex);
     if (!slot) [[unlikely]] {
@@ -258,102 +300,111 @@ bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCo
     }
     ASSERT(slot);
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-    if (callee.compilationMode() == CompilationMode::OMGMode) {
-        // Why does it happen? It is possible that some code is still running IPIntCallee, and OMGCallee is installed and BBQCallee gets retired.
-        // But since IPIntCallee can only tier up to BBQCallee, it may spin up BBQCallee again.
-        // And because of BBQCallee's new TierUpCounter, we may start introducing OMGCallee again.
-        // For now, we make this defensive: making installation failed when OMGCallee is already installed.
-        if (slot->m_omgCallee) [[unlikely]]
-            return false;
-        m_currentlyInstallingOptimizedCallees.m_omgCallee = Ref { uncheckedDowncast<OMGCallee>(callee) };
-    } else
-        m_currentlyInstallingOptimizedCallees.m_omgCallee = slot->m_omgCallee;
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
-    {
-        Locker replacerLocker { m_currentlyInstallingOptimizedCallees.m_bbqCalleeLock };
-        Locker locker { slot->m_bbqCalleeLock };
-        if (callee.compilationMode() == CompilationMode::BBQMode)
-            m_currentlyInstallingOptimizedCallees.m_bbqCallee = Ref { uncheckedDowncast<BBQCallee>(callee) };
-        else
-            m_currentlyInstallingOptimizedCallees.m_bbqCallee = slot->m_bbqCallee;
-    }
-    m_currentlyInstallingOptimizedCalleesIndex = functionIndex;
-    return true;
-}
-
-void CalleeGroup::finalizeInstallingCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
-{
-    RELEASE_ASSERT(m_currentlyInstallingOptimizedCalleesIndex == functionIndex);
-    auto* slot = &m_optimizedCallees[functionIndex];
-    {
-        Locker replacerLocker { m_currentlyInstallingOptimizedCallees.m_bbqCalleeLock };
-        Locker locker { slot->m_bbqCalleeLock };
-        slot->m_bbqCallee = m_currentlyInstallingOptimizedCallees.m_bbqCallee;
-        m_currentlyInstallingOptimizedCallees.m_bbqCallee = nullptr;
-    }
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-    slot->m_omgCallee = std::exchange(m_currentlyInstallingOptimizedCallees.m_omgCallee, nullptr);
-#endif
-    m_currentlyInstallingOptimizedCalleesIndex = { };
-}
-
-bool CalleeGroup::installOptimizedCallee(const AbstractLocker& locker, const ModuleInformation& info, FunctionCodeIndex functionIndex, Ref<OptimizingJITCallee>&& callee, const FixedBitVector& outgoingJITDirectCallees)
-{
-    // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
-    // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they
-    // will update. It's also ok if they publish their code before we reset the instruction caches because after we release
-    // the lock our code is ready to be published too.
-
-    if (!startInstallingCallee(locker, functionIndex, callee.get()))
+    // Tracking callees in the process of getting published is required for correctness. It avoids the
+    // race of callee A (which calls B) dropping the lock below, B's OMGCallee going through the whole
+    // process and never updating A. A would be stuck linking calls to the now retired BBQCallee and
+    // could end up calling released code.
+    if (!tryReserveCalleeForInstall(locker, functionIndex, callee.get())) [[unlikely]]
         return false;
+
+    // OSREntryCallees are only valid for the specific loop they were compiled for and can't be used as
+    // a general entrypoint.
+    const bool weAreTheEntrypoint = callee->compilationMode() != CompilationMode::OMGForOSREntryMode;
+
+    // Record who we call before dropping the lock below. This is what lets another thread that
+    // retires one of our callees find us and relink our callsites while we are unpublished.
     reportCallees(locker, callee.ptr(), outgoingJITDirectCallees);
 
+    auto ourEntrypoint = CodeLocationLabel<WasmEntryPtrTag>(callee->entrypoint().retagged<WasmEntryPtrTag>());
+    auto ourSpaceIndex = callee->index();
     for (auto& call : callee->wasmToWasmCallsites()) {
         CodePtr<WasmEntryPtrTag> entrypoint;
         if (call.functionIndexSpace < info.importFunctionCount())
             entrypoint = m_wasmToWasmExitStubs[call.functionIndexSpace].code();
-        else {
+        else if (weAreTheEntrypoint && call.functionIndexSpace == ourSpaceIndex) {
+            // Recursive call. We are deliberately not in m_optimizedCallees yet, so resolve it against
+            // ourselves rather than looking it up. An OSR entry callee shares this index but is not the
+            // function's entrypoint, so a recursive call from it resolves like any other call.
+            entrypoint = ourEntrypoint;
+        } else {
             Ref calleeCallee = wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace);
             entrypoint = calleeCallee->entrypoint().retagged<WasmEntryPtrTag>();
         }
 
-        // FIXME: This does an icache flush for each of these... which doesn't make any sense since this code isn't runnable here
-        // and any stale cache will be evicted when updateCallsitesToCallUs is called.
-        MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
+        // Link the call site without flushing. LinkBuffer skipped its finalize instruction-cache
+        // flush for this code, and the whole function is flushed once below, after every outgoing
+        // call is linked. A per-site flush would be wasteful; relying on the finalize flush would be
+        // unsafe, because these targets are written after it and an adjacent live instruction sharing
+        // a cache line with a call site could pull the stale pre-link bytes into the instruction cache.
+        MacroAssembler::repatchNearCall<jitMemcpyRepatchAtomic>(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
     }
+
     {
-        Ref calleeCallee = wasmEntrypointCalleeFromFunctionIndexSpace(locker, callee->index());
-        if (calleeCallee == callee) [[likely]] {
-            auto entrypoint = calleeCallee->entrypoint().retagged<WasmEntryPtrTag>();
-            updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), functionIndex);
-        } else
-            resetInstructionCacheOnAllThreads();
+        // Flushing the instruction cache and synchronizing every wasm thread is pure cache maintenance:
+        // it touches no CalleeGroup state, so it does not need m_lock, and it is far too slow to hold
+        // the lock across. Our code stays unreachable to execution threads while the lock is dropped,
+        // so it is safe to publish it only after this completes.
+        // FIXME: Maybe we shouldn't drop the lock on X86_64. The stuff below is essentially a no-op there.
+        DropLockForScope unlocked(locker);
+
+        // Every outgoing call is linked, so flush the finished function before it is published. This is
+        // the single instruction-cache flush that makes this code coherent. It must cover the whole
+        // range, not just the call sites as the LinkBuffer didn't do it.
+        auto [start, end] = callee->range();
+        MacroAssembler::cacheFlush(start, static_cast<size_t>(static_cast<char*>(end) - static_cast<char*>(start)));
+
+        barrierInstructionCacheOnAllThreads();
     }
-    WTF::storeStoreFence();
-    finalizeInstallingCallee(locker, functionIndex);
+
+    // At this point the callee is ready to be published.
+    removePendingPublishCallee(locker, callee.get());
+
+    if (!weAreTheEntrypoint)
+        return true;
+
+    // Another callee for this index may have been installed while the lock was dropped, so re-read
+    // the slot before deciding what to publish.
+    slot = optimizedCalleesTuple(locker, functionIndex);
+    ASSERT(slot);
+
+    // FIXME: We should do a better job ensuring that we don't compile callees while they're already tiering up.
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    if (callee->compilationMode() == CompilationMode::OMGMode) {
+        RELEASE_ASSERT(!slot->m_omgCallee);
+        slot->m_omgCallee = Ref { uncheckedDowncast<OMGCallee>(callee.get()) };
+    }
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+    if (callee->compilationMode() == CompilationMode::BBQMode) {
+        Locker bbqLocker { slot->m_bbqCalleeLock };
+        // A retired BBQCallee may still be here: releaseBBQCallee re-arms IPInt's tier-up counter, so
+        // a function can be compiled to BBQ again before the previous callee is destroyed. Overwriting
+        // that weak reference is fine, it does not own the callee. Overwriting a strong one would drop
+        // the last reference to code that may still be executing.
+        RELEASE_ASSERT(!slot->m_bbqCallee.isStrong() || !slot->m_bbqCallee.get());
+        slot->m_bbqCallee = Ref { uncheckedDowncast<BBQCallee>(callee.get()) };
+    }
+#endif
+
+    // We dropped the lock so a higher tier callee could have installed in that time frame.
+    Ref currentCallee = wasmEntrypointCalleeFromFunctionIndexSpace(locker, ourSpaceIndex);
+    if (currentCallee.ptr() == callee.ptr()) [[likely]]
+        updateCallsitesToCallUs(locker, ourEntrypoint, functionIndex, deferred);
+
     return true;
 }
 
-void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex)
+void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex, CallerCallsiteFlushes& deferred)
 {
     constexpr bool verbose = false;
     dataLogLnIf(verbose, "Updating callsites for ", functionIndex, " to target ", RawPointer(entrypoint.taggedPtr()));
-    struct Callsite {
-        CodeLocationNearCall<WasmEntryPtrTag> callLocation;
-        CodeLocationLabel<WasmEntryPtrTag> target;
-    };
 
     // This is necessary since Callees are released under `Heap::stopThePeriphery()`, but that only stops JS compiler
     // threads and not wasm ones. So a weakly held BBQCallee and its OMGOSREntryCallee could die between the time we
-    // collect the callsites and when we actually repatch its callsites. Additionally, after a re-tier (where a fresh
+    // collect the callsites and when we flush them. Additionally, after a re-tier (where a fresh
     // BBQCallee replaces a retired one), m_osrEntryCallees may hold a stale weak ref to an OMGOSREntryCallee not
-    // owned by the current BBQCallee, so we always keep it alive unconditionally.
-
-    // FIXME: These inline capacities were picked semi-randomly. We should figure out if there's a better number.
-    Vector<Ref<BBQCallee>, 4> keepAliveBBQCallees;
-    Vector<Ref<OMGOSREntryCallee>, 4> keepAliveOSREntryCallees;
-    Vector<Callsite, 16> callsites;
+    // owned by the current BBQCallee, so we always keep it alive unconditionally. These references live in `deferred`
+    // so the caller code backing each callsite stays alive until the deferred flush runs after m_lock is released.
 
     auto functionSpaceIndex = toSpaceIndex(functionIndex);
     auto collectCallsites = [&](JITCallee* caller) {
@@ -361,13 +412,18 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
             return;
 
         // FIXME: This should probably be a variant of FixedVector<UnlinkedWasmToWasmCall> and UncheckedKeyHashMap<FunctionIndex, FixedVector<UnlinkedWasmToWasmCall>> for big functions.
+        bool hadCall = false;
         for (UnlinkedWasmToWasmCall& callsite : caller->wasmToWasmCallsites()) {
             if (callsite.functionIndexSpace == functionSpaceIndex) {
                 dataLogLnIf(verbose, "Repatching call [", toCodeIndex(caller->index()), "] at: ", RawPointer(callsite.callLocation.dataLocation()), " to ", RawPointer(entrypoint.taggedPtr()));
                 CodeLocationLabel<WasmEntryPtrTag> target = MacroAssembler::prepareForAtomicRepatchNearCallConcurrently(callsite.callLocation, entrypoint);
-                callsites.append({ callsite.callLocation, target });
+                deferred.callsites.append({ callsite.callLocation, target });
+                hadCall = true;
             }
         }
+
+        if (hadCall)
+            deferred.keepAliveCallees.append(*caller);
     };
 
     auto handleCallerIndex = [&](size_t caller) {
@@ -382,13 +438,12 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         // that we're going to want to destroy.
         RefPtr<BBQCallee> bbqCallee;
         {
-            Locker locker { tuple->m_bbqCalleeLock };
+            Locker bbqLocker { tuple->m_bbqCalleeLock };
             bbqCallee = tuple->m_bbqCallee.get();
         }
         if (bbqCallee) {
             collectCallsites(bbqCallee.get());
             ASSERT(!bbqCallee->osrEntryCallee() || m_osrEntryCallees.find(callerIndex) != m_osrEntryCallees.end());
-            keepAliveBBQCallees.append(bbqCallee.releaseNonNull());
         }
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
@@ -397,7 +452,6 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
             if (RefPtr callee = iter->value.get()) {
                 // Since there is a OMGOSREntryCallee, we need to collect all the callsites there and also keep it alive until we patch it.
                 collectCallsites(callee.get());
-                keepAliveOSREntryCallees.append(callee.releaseNonNull());
             } else
                 m_osrEntryCallees.remove(iter);
         }
@@ -406,31 +460,34 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
 
     WTF::switchOn(m_callers[functionIndex],
         [&](SparseCallers& callers) {
-            callsites.reserveInitialCapacity(callers.size());
+            deferred.callsites.reserveInitialCapacity(callers.size());
             for (uint32_t caller : callers)
                 handleCallerIndex(caller);
         },
         [&](DenseCallers& callers) {
-            callsites.reserveInitialCapacity(callers.bitCount());
+            deferred.callsites.reserveInitialCapacity(callers.bitCount());
             for (uint32_t caller : callers)
                 handleCallerIndex(caller);
         }
     );
 
-    // It's important to make sure we do this before we make any of the code we just compiled visible. If we didn't, we could end up
-    // where we are tiering up some function A to A' and we repatch some function B to call A' instead of A. Another CPU could see
-    // the updates to B but still not have reset its cache of A', which would lead to all kinds of badness.
-    resetInstructionCacheOnAllThreads();
+    // Callees that are linked but not yet published are not reachable through m_optimizedCallees, yet
+    // they may already hold direct calls to us. If we are being retired they must be relinked too, or
+    // they would call code that is about to be freed once they publish.
+    for (auto& pending : m_pendingPublishCallees)
+        collectCallsites(pending.ptr());
+
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
     m_wasmIndirectCallEntrypoints[functionIndex] = entrypoint;
 
-    // FIXME: This does an icache flush for each repatch but we
-    // 1) only need one at the end.
-    // 2) probably don't need one at all because we don't compile wasm on mutator threads so we don't have to worry about cache coherency.
-    for (auto& callsite : callsites) {
+    // Store the new call targets now (a single atomic instruction each, no flush), but defer the
+    // instruction-cache flush until m_lock is released, via `deferred`. The previous callee stays
+    // valid, so a caller that has not yet observed the new target simply keeps calling it until the
+    // deferred flush makes the store visible.
+    for (auto& callsite : deferred.callsites) {
         dataLogLnIf(verbose, "Repatching call at: ", RawPointer(callsite.callLocation.dataLocation()), " to ", RawPointer(entrypoint.taggedPtr()));
-        MacroAssembler::repatchNearCall(callsite.callLocation, callsite.target);
+        MacroAssembler::repatchNearCall<jitMemcpyRepatchAtomic>(callsite.callLocation, callsite.target);
     }
 }
 
@@ -503,7 +560,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker& locker, Wasm::Cal
             if (!tuple)
                 return TriState::Indeterminate;
 
-            Locker locker { tuple->m_bbqCalleeLock };
+            Locker bbqLocker { tuple->m_bbqCalleeLock };
             if (tuple->m_bbqCallee.get())
                 return TriState::True;
             return TriState::Indeterminate;

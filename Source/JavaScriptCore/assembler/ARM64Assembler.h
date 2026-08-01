@@ -3973,21 +3973,41 @@ public:
     // and jump patching as they're modifying existing (linked) code,
     // so the address being provided is correct for relative address
     // computation.
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkJump(void* from, void* to)
     {
-        relinkJumpOrCall<BranchType_JMP>(reinterpret_cast<int*>(from), reinterpret_cast<const int*>(from), to);
-        cacheFlush(from, sizeof(int));
+        relinkJumpOrCall<BranchType_JMP, noFlush(repatch)>(reinterpret_cast<int*>(from), reinterpret_cast<const int*>(from), to);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushJump(from);
     }
-    
+
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkCall(void* from, void* to)
     {
-        relinkJumpOrCall<BranchType_CALL>(reinterpret_cast<int*>(from) - 1, reinterpret_cast<const int*>(from) - 1, to);
+        relinkJumpOrCall<BranchType_CALL, noFlush(repatch)>(reinterpret_cast<int*>(from) - 1, reinterpret_cast<const int*>(from) - 1, to);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushCall(from);
+    }
+
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
+    static void relinkTailCall(void* from, void* to)
+    {
+        relinkJump<repatch>(from, to);
+    }
+
+    static void flushJump(void* from)
+    {
+        cacheFlush(from, sizeof(int));
+    }
+
+    static void flushCall(void* from)
+    {
         cacheFlush(reinterpret_cast<int*>(from) - 1, sizeof(int));
     }
 
-    static void relinkTailCall(void* from, void* to)
+    static void flushTailCall(void* from)
     {
-        relinkJump(from, to);
+        flushJump(from);
     }
 
 #if ENABLE(JUMP_ISLANDS)
@@ -4336,7 +4356,7 @@ protected:
         }
     }
 
-    template<BranchType type>
+    template<BranchType type, RepatchingInfo repatch = jitMemcpyRepatch>
     static void relinkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
         static_assert(type == BranchType_JMP || type == BranchType_CALL);
@@ -4353,7 +4373,7 @@ protected:
                 if (imm19 == 8)
                     condition = invert(condition);
 
-                linkConditionalBranch<IndirectBranch>(condition, from - 1, fromInstruction - 1, to);
+                linkConditionalBranch<IndirectBranch, repatch>(condition, from - 1, fromInstruction - 1, to);
                 return;
             }
 
@@ -4366,7 +4386,7 @@ protected:
                 if (imm19 == 8)
                     op = !op;
 
-                linkCompareAndBranch<IndirectBranch>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, fromInstruction - 1, to);
+                linkCompareAndBranch<IndirectBranch, repatch>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, fromInstruction - 1, to);
                 return;
             }
 
@@ -4378,12 +4398,12 @@ protected:
                 if (imm14 == 8)
                     op = !op;
 
-                linkTestAndBranch<IndirectBranch>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, fromInstruction - 1, to);
+                linkTestAndBranch<IndirectBranch, repatch>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, fromInstruction - 1, to);
                 return;
             }
         }
 
-        linkJumpOrCall<type>(from, fromInstruction, to);
+        linkJumpOrCall<type, repatch>(from, fromInstruction, to);
     }
 
     static int* addressOf(void* code, AssemblerLabel label)

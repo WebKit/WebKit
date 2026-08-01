@@ -1632,23 +1632,43 @@ public:
         cacheFlush(location, sizeof(uint32_t) * 8);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkJump(void* from, void* to)
     {
         uint32_t* location = static_cast<uint32_t*>(from);
         LinkJumpImpl::apply(location, to);
-        cacheFlush(location, sizeof(uint32_t) * 2);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushJump(from);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkCall(void* from, void* to)
     {
         uint32_t* location = static_cast<uint32_t*>(from);
         LinkCallImpl::apply(location, to);
-        cacheFlush(location, sizeof(uint32_t) * 2);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushCall(from);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkTailCall(void* from, void* to)
     {
-        relinkJump(from, to);
+        relinkJump<repatch>(from, to);
+    }
+
+    static void flushJump(void* from)
+    {
+        cacheFlush(static_cast<uint32_t*>(from), sizeof(uint32_t) * 2);
+    }
+
+    static void flushCall(void* from)
+    {
+        cacheFlush(static_cast<uint32_t*>(from), sizeof(uint32_t) * 2);
+    }
+
+    static void flushTailCall(void* from)
+    {
+        flushJump(from);
     }
 
     static void replaceWithVMHalt(void* where)

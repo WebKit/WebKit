@@ -122,10 +122,6 @@ void EntryPlan::prepare()
         return;
     if (!tryReserveCapacity(m_wasmToJSExitStubs, importFunctionCount, " WebAssembly to JavaScript stubs"_s))
         return;
-    if (!tryReserveCapacity(m_unlinkedWasmToWasmCalls, functions.size(), " unlinked WebAssembly to WebAssembly calls"_s))
-        return;
-
-    m_unlinkedWasmToWasmCalls.resize(functions.size());
 
     for (const auto& exp : m_moduleInformation->exports) {
         if (exp.kindIndex >= importFunctionCount)

@@ -246,6 +246,23 @@ size_t Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& regis
     return sizeof(CONTEXT);
 }
 
+void Thread::barrierInstructionCache()
+{
+#if CPU(X86_64)
+    // x86-64 has a coherent instruction cache, so there is nothing to publish.
+    return;
+#else
+    RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::currentSingleton(), "We do not support synchronizing the current thread itself.");
+    // Suspending and then resuming the thread makes the OS run a context-synchronizing return on it
+    // as it resumes, so it re-fetches modified instructions. suspend()/resume() need the
+    // thread-suspend lock, so take it here rather than requiring it from the caller.
+    ThreadSuspendLocker locker;
+    if (!suspend(locker))
+        return;
+    resume(locker);
+#endif
+}
+
 Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, ThreadIdentifier is not established yet.

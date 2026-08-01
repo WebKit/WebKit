@@ -38,7 +38,7 @@ namespace JSC { namespace Wasm {
 
 void startTrackingCurrentThread();
 
-void resetInstructionCacheOnAllThreads();
+void barrierInstructionCacheOnAllThreads();
     
 } } // namespace JSC::Wasm
 
@@ -47,7 +47,7 @@ void resetInstructionCacheOnAllThreads();
 namespace JSC { namespace Wasm {
 
 inline void startTrackingCurrentThread() { }
-inline void resetInstructionCacheOnAllThreads() { }
+inline void barrierInstructionCacheOnAllThreads() { }
 
 } } // namespace JSC::Wasm
 

@@ -2730,6 +2730,7 @@ public:
     // the write and executable address for call and jump patching
     // as they're modifying existing (linked) code, so the address being
     // provided is correct for relative address computation.
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkJump(void* from, void* to)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 1));
@@ -2737,9 +2738,11 @@ public:
 
         linkJumpAbsolute(reinterpret_cast<uint16_t*>(from), reinterpret_cast<uint16_t*>(from), to);
 
-        cacheFlush(reinterpret_cast<uint16_t*>(from) - 5, 5 * sizeof(uint16_t));
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushJump(from);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkCall(void* from, void* to)
     {
         ASSERT(isEven(from));
@@ -2747,19 +2750,46 @@ public:
         uint16_t* location = reinterpret_cast<uint16_t*>(from);
         if (isBL(location - 2)) {
             linkBranch(location, location, makeEven(to), BranchWithLink::Yes);
-            cacheFlush(location - 2, 2 * sizeof(uint16_t));
+            if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+                cacheFlush(location - 2, 2 * sizeof(uint16_t));
             return;
         }
 
-        setPointer<jitMemcpyRepatchFlush>(location - 1, to);
+        setPointer<repatch>(location - 1, to);
     }
 
+    template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkTailCall(void* from, void* to)
     {
         ASSERT(isEven(from));
 
         uint16_t* location = reinterpret_cast<uint16_t*>(from);
         linkBranch(location, location, to, BranchWithLink::No);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushTailCall(from);
+    }
+
+    // Unlike the other ports, relinkTailCall here writes a direct branch rather than
+    // delegating to relinkJump's absolute jump sequence, so flushJump and flushTailCall
+    // cover different ranges.
+    static void flushJump(void* from)
+    {
+        cacheFlush(reinterpret_cast<uint16_t*>(from) - 5, 5 * sizeof(uint16_t));
+    }
+
+    static void flushCall(void* from)
+    {
+        uint16_t* location = reinterpret_cast<uint16_t*>(from);
+        if (isBL(location - 2)) {
+            cacheFlush(location - 2, 2 * sizeof(uint16_t));
+            return;
+        }
+        cacheFlush(location - 5, 4 * sizeof(uint16_t));
+    }
+
+    static void flushTailCall(void* from)
+    {
+        uint16_t* location = reinterpret_cast<uint16_t*>(from);
         cacheFlush(location - 2, 2 * sizeof(uint16_t));
     }
 

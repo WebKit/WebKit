@@ -37,9 +37,12 @@ enum class MessageStatus {
     ThreadExited,
 };
 
-// This method allows us to send a message which will be run in a signal handler on the desired thread.
-// There are several caveates to this method however, This function uses signals so your message should
-// be sync signal safe.
+// Suspends targetThread, snapshots its register state, and runs func on the calling thread with
+// that snapshot while the target remains suspended; targetThread is resumed before returning. func
+// does not run on targetThread -- it runs on the caller and can inspect the suspended thread (its
+// registers, stack, and the code it is stopped in). Because the target is frozen, func must not
+// block on any resource (e.g. a lock) that the suspended thread might currently hold, or it will
+// deadlock. Returns ThreadExited if targetThread had already exited.
 WTF_EXPORT_PRIVATE MessageStatus sendMessageScoped(const ThreadSuspendLocker&, Thread&, const ThreadMessage&);
 
 template<typename Functor>
