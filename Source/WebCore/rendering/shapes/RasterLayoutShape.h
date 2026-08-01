@@ -42,14 +42,15 @@ class RasterShapeIntervals {
     WTF_MAKE_TZONE_ALLOCATED(RasterShapeIntervals);
 public:
     explicit RasterShapeIntervals(unsigned size, int offset = 0)
-        : m_intervals(clampTo<int>(size))
-        , m_offset(offset)
+        : m_offset(offset)
     {
+        m_allocationSucceeded = m_intervals.tryGrow(clampTo<int>(size));
     }
 
     void initializeBounds();
     const IntRect& bounds() const LIFETIME_BOUND { return m_bounds; }
     bool isEmpty() const { return m_bounds.isEmpty(); }
+    bool allocationSucceeded() const { return m_allocationSucceeded; }
 
     IntShapeInterval& intervalAt(int y) LIFETIME_BOUND
     {
@@ -75,14 +76,16 @@ private:
     IntRect m_bounds;
     Vector<IntShapeInterval> m_intervals;
     int m_offset;
+    bool m_allocationSucceeded { false };
 };
 
 class RasterLayoutShape final : public LayoutShape {
     WTF_MAKE_NONCOPYABLE(RasterLayoutShape);
 public:
-    RasterLayoutShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
+    RasterLayoutShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize, float logicalBoxWidthForFlipping)
         : m_intervals(WTF::move(intervals))
         , m_marginRectSize(marginRectSize)
+        , m_logicalBoxWidthForFlipping(logicalBoxWidthForFlipping)
     {
         m_intervals->initializeBounds();
     }
@@ -104,6 +107,7 @@ private:
     const std::unique_ptr<RasterShapeIntervals> m_intervals;
     const std::unique_ptr<RasterShapeIntervals> m_marginIntervals;
     IntSize m_marginRectSize;
+    float m_logicalBoxWidthForFlipping;
 };
 
 } // namespace WebCore

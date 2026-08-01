@@ -32,7 +32,11 @@
 #include "CachedImage.h"
 #include "StyleBuilderChecking.h"
 #include "StyleKeyword+CSSValueConversion.h"
+#include "StyleKeyword+CSSValueCreation.h"
+#include "StyleKeyword+Serialization.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+CSSValueCreation.h"
+#include "StylePrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 namespace Style {
@@ -137,12 +141,6 @@ auto CSSValueConversion<ShapeOutside>::operator()(BuilderState& state, const CSS
         processSingleValue(value);
 
     if (shape) {
-        // FIXME: Add support for `path()` and `shape()` functions in `shape-outside`.
-        if (WTF::holdsAlternative<PathFunction>(*shape) || WTF::holdsAlternative<ShapeFunction>(*shape)) {
-            state.setCurrentPropertyInvalidAtComputedValueTime();
-            return CSS::Keyword::None { };
-        }
-
         if (referenceBox != CSSBoxType::BoxMissing)
             return ShapeOutside::ShapeAndShapeBox { WTF::move(*shape), referenceBox };
         return ShapeOutside::Shape { WTF::move(*shape) };
@@ -153,6 +151,58 @@ auto CSSValueConversion<ShapeOutside>::operator()(BuilderState& state, const CSS
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
     return CSS::Keyword::None { };
+}
+
+Ref<CSSValue> CSSValueCreation<ShapeOutside>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const ShapeOutside& value)
+{
+    if (value.isNone())
+        return createCSSValue(pool, style, CSS::Keyword::None { });
+
+    if (auto* shape = value.shape()) {
+        Ref shapeValue = createCSSValue(pool, style, *shape, PathConversion::ForceAbsolute);
+        if (auto* shapeBox = value.shapeBox())
+            return CSSValueList::createSpaceSeparated(WTF::move(shapeValue), createCSSValue(pool, style, *shapeBox));
+        return shapeValue;
+    }
+
+    if (auto* shapeBox = value.shapeBox())
+        return createCSSValue(pool, style, *shapeBox);
+
+    if (auto* image = value.imageWrapper())
+        return createCSSValue(pool, style, *image);
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// MARK: - Serialization
+
+void Serialize<ShapeOutside>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ShapeOutside& value)
+{
+    if (value.isNone()) {
+        serializationForCSS(builder, context, style, CSS::Keyword::None { });
+        return;
+    }
+
+    if (auto* shape = value.shape()) {
+        serializationForCSS(builder, context, style, *shape, PathConversion::ForceAbsolute);
+        if (auto* shapeBox = value.shapeBox()) {
+            builder.append(' ');
+            serializationForCSS(builder, context, style, *shapeBox);
+        }
+        return;
+    }
+
+    if (auto* shapeBox = value.shapeBox()) {
+        serializationForCSS(builder, context, style, *shapeBox);
+        return;
+    }
+
+    if (auto* image = value.imageWrapper()) {
+        serializationForCSS(builder, context, style, *image);
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 // MARK: - Blending

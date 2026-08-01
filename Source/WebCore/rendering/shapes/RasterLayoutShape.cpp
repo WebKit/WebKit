@@ -40,6 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RasterShapeIntervals);
 class MarginIntervalGenerator {
 public:
     explicit MarginIntervalGenerator(unsigned radius);
+    bool isValid() const { return !m_xIntercepts.isEmpty(); }
     void set(int y, const IntShapeInterval&);
     IntShapeInterval intervalAt(int y) const;
 
@@ -51,19 +52,21 @@ private:
 };
 
 MarginIntervalGenerator::MarginIntervalGenerator(unsigned radius)
-    : m_xIntercepts(radius + 1)
-    , m_y(0)
+    : m_y(0)
     , m_x1(0)
     , m_x2(0)
 {
-    unsigned radiusSquared = radius * radius;
+    if (!m_xIntercepts.tryGrow(radius + 1))
+        return;
+
+    double radiusSquared = static_cast<double>(radius) * radius;
     for (unsigned y = 0; y <= radius; y++)
-        m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - y * y));
+        m_xIntercepts[y] = sqrt(radiusSquared - static_cast<double>(y) * y);
 }
 
 void NODELETE MarginIntervalGenerator::set(int y, const IntShapeInterval& interval)
 {
-    ASSERT(y >= 0 && interval.x1() >= 0);
+    ASSERT(!interval.isEmpty());
     m_y = y;
     m_x1 = interval.x1();
     m_x2 = interval.x2();
@@ -71,16 +74,24 @@ void NODELETE MarginIntervalGenerator::set(int y, const IntShapeInterval& interv
 
 IntShapeInterval MarginIntervalGenerator::intervalAt(int y) const
 {
-    unsigned xInterceptsIndex = std::abs(y - m_y);
+    uint64_t xInterceptsIndex = std::abs(static_cast<int64_t>(y) - m_y);
     int dx = (xInterceptsIndex >= m_xIntercepts.size()) ? 0 : m_xIntercepts[xInterceptsIndex];
-    return IntShapeInterval(m_x1 - dx, m_x2 + dx);
+    return IntShapeInterval(clampTo<int>(static_cast<int64_t>(m_x1) - dx), clampTo<int>(static_cast<int64_t>(m_x2) + dx));
 }
 
 std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(int shapeMargin) const
 {
-    int marginIntervalsSize = (offset() > shapeMargin) ? size() : size() - offset() * 2 + shapeMargin * 2;
-    auto result = makeUnique<RasterShapeIntervals>(marginIntervalsSize, std::max(shapeMargin, offset()));
+    int64_t marginIntervalsSize = (offset() > shapeMargin) ? size() : static_cast<int64_t>(size()) - static_cast<int64_t>(offset()) * 2 + static_cast<int64_t>(shapeMargin) * 2;
+    if (!isInBounds<int>(marginIntervalsSize))
+        return makeUnique<RasterShapeIntervals>(0);
+
+    auto result = makeUnique<RasterShapeIntervals>(static_cast<unsigned>(marginIntervalsSize), std::max(shapeMargin, offset()));
+    if (!result->allocationSucceeded())
+        return result;
+
     MarginIntervalGenerator marginIntervalGenerator(shapeMargin);
+    if (!marginIntervalGenerator.isValid())
+        return result;
 
     for (int y = bounds().y(); y < bounds().maxY(); ++y) {
         const IntShapeInterval& intervalAtY = intervalAt(y);
@@ -88,8 +99,8 @@ std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIn
             continue;
 
         marginIntervalGenerator.set(y, intervalAtY);
-        int marginY0 = std::max(minY(), y - shapeMargin);
-        int marginY1 = std::min(maxY(), y + shapeMargin + 1);
+        int marginY0 = clampTo<int>(std::max<int64_t>(minY(), static_cast<int64_t>(y) - shapeMargin));
+        int marginY1 = clampTo<int>(std::min<int64_t>(maxY(), static_cast<int64_t>(y) + shapeMargin + 1));
 
         for (int marginY = y - 1; marginY >= marginY0; --marginY) {
             if (marginY > bounds().y() && intervalAt(marginY).contains(intervalAtY))
@@ -141,11 +152,11 @@ void RasterShapeIntervals::buildBoundsPath(Path& path) const
 const RasterShapeIntervals& RasterLayoutShape::marginIntervals() const
 {
     ASSERT(shapeMargin() >= 0);
-    if (!shapeMargin())
+    if (!shapeMargin() || m_intervals->isEmpty())
         return *m_intervals;
 
     int shapeMarginInt = clampToPositiveInteger(ceil(shapeMargin()));
-    int maxShapeMarginInt = std::max(m_marginRectSize.width(), m_marginRectSize.height()) * sqrt(2);
+    int maxShapeMarginInt = clampToPositiveInteger(static_cast<double>(std::max(m_marginRectSize.width(), m_marginRectSize.height())) * sqrt(2));
     if (!m_marginIntervals)
         lazyInitialize(m_marginIntervals, m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt)));
 
@@ -178,7 +189,7 @@ LineSegment RasterLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layout
     if (!shouldFlipStartAndEndPoints(writingMode()))
         return LineSegment(excludedInterval.x1(), excludedInterval.x2());
 
-    auto x1 = m_marginRectSize.width() - excludedInterval.x2();
+    auto x1 = m_logicalBoxWidthForFlipping - excludedInterval.x2();
     return LineSegment(x1, x1 + excludedInterval.width());
 }
 

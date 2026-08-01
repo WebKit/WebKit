@@ -1,0 +1,8 @@
+PASS -webkit-shape-outside accepts path()
+PASS -webkit-shape-outside accepts shape()
+PASS path() honors a content-box offset
+PASS shape() percentages honor a content-box offset
+PASS path() preserves an evenodd hole
+PASS shape() preserves an evenodd hole
+PASS shape-margin expands a path() raster
+PASS shape-margin expands a shape() raster

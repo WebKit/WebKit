@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>shape-outside path() and shape() raster geometry</title>
+<style>
+body { margin: 0; }
+#tests { font: 20px/20px Ahem; width: 300px; }
+.case { height: 100px; width: 300px; }
+.float { float: left; height: 100px; width: 100px; }
+</style>
+<div id="tests"></div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function lineOffsets(shapeOutside, options = {}) {
+    const container = document.createElement('div');
+    container.className = 'case';
+
+    const float = document.createElement('div');
+    float.className = 'float';
+    float.style.shapeOutside = shapeOutside;
+    if (options.referenceBox) {
+        float.style.border = '10px solid transparent';
+        float.style.padding = '20px';
+    }
+    if (options.shapeMargin)
+        float.style.shapeMargin = options.shapeMargin;
+    container.appendChild(float);
+
+    const lines = [];
+    for (let i = 0; i < 5; ++i) {
+        const line = document.createElement('span');
+        line.textContent = 'X';
+        lines.push(line);
+        container.append(line, document.createElement('br'));
+    }
+    tests.appendChild(container);
+
+    const containerLeft = container.getBoundingClientRect().left;
+    const offsets = lines.map(line => Math.round(line.getBoundingClientRect().left - containerLeft));
+    container.remove();
+    return offsets;
+}
+
+function check(name, actual, expected) {
+    const passed = actual.length === expected.length && actual.every((value, index) => Math.abs(value - expected[index]) <= 1);
+    results.textContent += `${passed ? 'PASS' : 'FAIL'} ${name}`;
+    if (!passed)
+        results.textContent += `: expected [${expected}], got [${actual}]`;
+    results.textContent += '\n';
+}
+
+function checkSupport(name, property, value) {
+    const element = document.createElement('div');
+    element.style.setProperty(property, value);
+    tests.appendChild(element);
+    const passed = CSS.supports(property, value)
+        && !!element.style.getPropertyValue(property)
+        && !!getComputedStyle(element).getPropertyValue(property);
+    element.remove();
+    results.textContent += `${passed ? 'PASS' : 'FAIL'} ${name}\n`;
+}
+
+checkSupport('-webkit-shape-outside accepts path()', '-webkit-shape-outside', "path('M 0 0 H 10 V 10 Z') border-box");
+checkSupport('-webkit-shape-outside accepts shape()', '-webkit-shape-outside', 'shape(from 0 0, line to 10px 10px) padding-box');
+
+check('path() honors a content-box offset',
+    lineOffsets("path('M 0 0 H 50 V 100 H 0 Z') content-box", { referenceBox: true }),
+    [0, 80, 80, 80, 80]);
+check('shape() percentages honor a content-box offset',
+    lineOffsets('shape(from 0 0, line to 50% 0, line to 50% 100%, line to 0 100%, close) content-box', { referenceBox: true }),
+    [0, 80, 80, 80, 80]);
+
+check('path() preserves an evenodd hole',
+    lineOffsets("path(evenodd, 'M 0 0 H 100 V 100 H 0 Z M 0 15 H 100 V 85 H 0 Z')"),
+    [100, 0, 0, 0, 100]);
+check('shape() preserves an evenodd hole',
+    lineOffsets('shape(evenodd from 0 0, line to 100px 0, line to 100px 100px, line to 0 100px, close, move to 0 15px, line to 100px 15px, line to 100px 85px, line to 0 85px, close)'),
+    [100, 0, 0, 0, 100]);
+
+check('shape-margin expands a path() raster',
+    lineOffsets("path('M 0 0 H 50 V 100 H 0 Z')", { shapeMargin: '20px' }),
+    [70, 70, 70, 70, 70]);
+check('shape-margin expands a shape() raster',
+    lineOffsets('shape(from 0 0, line to 50px 0, line to 50px 100px, line to 0 100px, close)', { shapeMargin: '20px' }),
+    [70, 70, 70, 70, 70]);
+
+results.textContent = results.textContent.trimEnd();
+tests.remove();
+</script>
