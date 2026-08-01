@@ -7009,6 +7009,7 @@ void SpeculativeJIT::compile(Node* node)
     case Upsilon:
     case ExtractOSREntryLocal:
     case AssertInBounds:
+    case IROFactPoison:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ArithIMul:

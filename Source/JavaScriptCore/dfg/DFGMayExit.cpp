@@ -132,6 +132,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case LogShadowChickenTail:
     case PerformPromiseThen:
     case PerformPromiseThenOneHandler:
+    case AssertInBounds:
         break;
 
     case Switch: {
