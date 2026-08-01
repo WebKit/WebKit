@@ -31,9 +31,19 @@
 #include "FunctionExecutable.h"
 #include "JSCellInlines.h"
 #include "JSFunctionInlines.h"
+#include "Options.h"
+#include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
+
+// Richer Wasm Error.stack (index-stable location, names-section prefix, IPInt :0xOFF)
+// is debugger-only for now so default stacks do not differ by compilation tier.
+// enableWasmDebugger forces IPInt (no BBQ/OMG) on supported platforms.
+static bool useDetailedWasmStackTraces()
+{
+    return Options::enableWasmDebugger();
+}
 
 StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee)
     : m_frameData(JSFrameData {
@@ -73,12 +83,12 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, CodeBlock* codeBlock, BytecodeInde
 }
 
 StackFrame::StackFrame(Wasm::IndexOrName indexOrName)
-    : m_frameData(WasmFrameData { WTF::move(indexOrName), 0 })
+    : m_frameData(WasmFrameData { WTF::move(indexOrName), 0, std::nullopt })
 {
 }
 
-StackFrame::StackFrame(Wasm::IndexOrName indexOrName, size_t functionIndex)
-    : m_frameData(WasmFrameData { WTF::move(indexOrName), functionIndex })
+StackFrame::StackFrame(Wasm::IndexOrName indexOrName, size_t functionIndex, std::optional<uint32_t> binaryOffset)
+    : m_frameData(WasmFrameData { WTF::move(indexOrName), functionIndex, binaryOffset })
 {
 }
 
@@ -154,6 +164,21 @@ static String processSourceURL(VM& vm, const JSC::StackFrame& frame, const Strin
     return emptyString();
 }
 
+static String wasmStackLocation(const WasmFrameData& wasmFrame)
+{
+    String location;
+    if (wasmFrame.functionIndexOrName.nameSection()) {
+        auto moduleName = wasmFrame.functionIndexOrName.moduleName();
+        if (!moduleName.empty())
+            location = makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, ']');
+    }
+    if (location.isNull())
+        location = makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
+    if (useDetailedWasmStackTraces() && wasmFrame.binaryOffset)
+        return makeString(location, ":0x"_s, hex(*wasmFrame.binaryOffset, Lowercase));
+    return location;
+}
+
 String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
 {
     return WTF::switchOn(m_frameData,
@@ -170,10 +195,7 @@ String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
             return processSourceURL(vm, *this, jsFrame.codeBlock->ownerExecutable()->sourceURL(), allowOverride);
         },
         [](const WasmFrameData& wasmFrame) -> String {
-            auto moduleName = wasmFrame.functionIndexOrName.moduleName();
-            if (moduleName.empty())
-                return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
-            return makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, ']');
+            return wasmStackLocation(wasmFrame);
         }
     );
 }
@@ -194,10 +216,7 @@ String StackFrame::sourceURLStripped(VM& vm) const
             return processSourceURL(vm, *this, jsFrame.codeBlock->ownerExecutable()->sourceURLStripped());
         },
         [](const WasmFrameData& wasmFrame) -> String {
-            auto moduleName = wasmFrame.functionIndexOrName.moduleName();
-            if (moduleName.empty())
-                return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
-            return makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, ']');
+            return wasmStackLocation(wasmFrame);
         }
     );
 }
@@ -235,6 +254,14 @@ String StackFrame::functionName(VM& vm) const
             return name;
         },
         [](const WasmFrameData& wasmFrame) -> String {
+            if (useDetailedWasmStackTraces()) {
+                // Location carries wasm-function[index](:0x). Names-section label is only the prefix before '@'.
+                if (wasmFrame.functionIndexOrName.isEmpty() || !wasmFrame.functionIndexOrName.nameSection())
+                    return emptyString();
+                if (!wasmFrame.functionIndexOrName.isIndex())
+                    return WTF::toString(wasmFrame.functionIndexOrName.name()->span());
+                return emptyString();
+            }
             if (wasmFrame.functionIndexOrName.isEmpty() || !wasmFrame.functionIndexOrName.nameSection())
                 return "wasm-stub"_s;
             if (wasmFrame.functionIndexOrName.isIndex())
@@ -264,6 +291,14 @@ String StackFrame::toString(VM& vm) const
 {
     String functionName = this->functionName(vm);
     String sourceURL = this->sourceURLStripped(vm);
+
+    // Debugger mode: omit empty name so the frame is just wasm-function[N]:0xOFF
+    // (e.g. _eggs@wasm-function[21]:0x3b3, or wasm-function[0]:0x20 with no names section).
+    if (useDetailedWasmStackTraces() && std::holds_alternative<WasmFrameData>(m_frameData)) {
+        if (functionName.isEmpty())
+            return sourceURL;
+        return makeString(functionName, '@', sourceURL);
+    }
 
     if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
         return makeString(functionName, '@', sourceURL);

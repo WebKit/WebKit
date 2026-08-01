@@ -873,6 +873,7 @@ void Options::notifyOptionsChanged()
     if (Options::enableWasmDebugger()) [[unlikely]] {
         Options::useBBQJIT() = false;
         Options::useOMGJIT() = false;
+        Options::useEagerWasmModuleHashing() = true;
     }
 #else
     Options::enableWasmDebugger() = false;

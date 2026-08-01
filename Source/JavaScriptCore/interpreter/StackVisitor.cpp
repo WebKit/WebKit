@@ -32,6 +32,7 @@
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
 #include "NativeCallee.h"
+#include "Options.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmCallee.h"
 #include "WasmIndexOrName.h"
@@ -386,9 +387,20 @@ String StackVisitor::Frame::functionName() const
     String traceLine;
 
     switch (codeType()) {
-    case CodeType::Wasm:
-        traceLine = makeString(m_wasmFunctionIndexOrName);
+    case CodeType::Wasm: {
+        if (Options::enableWasmDebugger()) {
+            if (m_wasmFunctionIndexOrName.nameSection()) {
+                auto moduleName = m_wasmFunctionIndexOrName.moduleName();
+                if (!moduleName.empty()) {
+                    traceLine = makeString(moduleName, ":wasm-function["_s, m_wasmFunctionIndex, ']');
+                    break;
+                }
+            }
+            traceLine = makeString("wasm-function["_s, m_wasmFunctionIndex, ']');
+        } else
+            traceLine = makeString(m_wasmFunctionIndexOrName);
         break;
+    }
     case CodeType::Eval:
         traceLine = "eval code"_s;
         break;
@@ -429,7 +441,8 @@ String StackVisitor::Frame::sourceURL() const
         traceLine = "[native code]"_s;
         break;
     case CodeType::Wasm:
-        traceLine = "[wasm code]"_s;
+        if (!Options::enableWasmDebugger())
+            traceLine = "[wasm code]"_s;
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;
