@@ -750,6 +750,12 @@ writeH("OpcodeUtils") {
     outp.puts ""
     outp.puts "#if ENABLE(B3_JIT)"
 
+    outp.puts "#include \"AirCustom.h\""
+    outp.puts "#include \"AirInst.h\""
+    outp.puts "#include \"AirFormTable.h\""
+
+    # The undefs have to follow every #include: <windows.h> defines macros named
+    # after some opcodes, so anything that pulls it in later would put them back.
     outp.puts "#pragma push_macro(\"RotateLeft32\")"
     outp.puts "#pragma push_macro(\"RotateLeft64\")"
     outp.puts "#pragma push_macro(\"RotateRight32\")"
@@ -765,9 +771,6 @@ writeH("OpcodeUtils") {
     outp.puts "#undef LoadFence"
     outp.puts "#undef MemoryFence"
 
-    outp.puts "#include \"AirCustom.h\""
-    outp.puts "#include \"AirInst.h\""
-    outp.puts "#include \"AirFormTable.h\""
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
     
     outp.puts "inline bool opgenHiddenTruth() { return true; }"
@@ -922,6 +925,13 @@ writeH("OpcodeGenerated") {
     outp.puts ""
     outp.puts "#if ENABLE(B3_JIT)"
 
+    outp.puts "#include \"AirInstInlines.h\""
+    outp.puts "#include \"B3ProcedureInlines.h\""
+    outp.puts "#include \"CCallHelpers.h\""
+    outp.puts "#include \"wtf/PrintStream.h\""
+
+    # The undefs have to follow every #include: <windows.h> defines macros named
+    # after some opcodes, so anything that pulls it in later would put them back.
     outp.puts "#pragma push_macro(\"RotateLeft32\")"
     outp.puts "#pragma push_macro(\"RotateLeft64\")"
     outp.puts "#pragma push_macro(\"RotateRight32\")"
@@ -937,10 +947,6 @@ writeH("OpcodeGenerated") {
     outp.puts "#undef LoadFence"
     outp.puts "#undef MemoryFence"
 
-    outp.puts "#include \"AirInstInlines.h\""
-    outp.puts "#include \"B3ProcedureInlines.h\""
-    outp.puts "#include \"CCallHelpers.h\""
-    outp.puts "#include \"wtf/PrintStream.h\""
     outp.puts "namespace WTF {"
     outp.puts "void printInternal(PrintStream& out, JSC::B3::Air::Opcode opcode)"
     outp.puts "{"
