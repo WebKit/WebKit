@@ -1725,13 +1725,7 @@ void WebExtension::populateExternallyConnectableIfNeeded()
                 continue;
 
             if (RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
-                if (matchPattern->matchesAllURLs() || !matchPattern->isSupported()) {
-                    shouldReportError = true;
-                    continue;
-                }
-
-                // URL patterns must contain at least a second-level domain. Top level domains and wildcards are not standalone patterns.
-                if (matchPattern->hostIsPublicSuffix()) {
+                if (!matchPattern || !matchPattern->isSupported()) {
                     shouldReportError = true;
                     continue;
                 }

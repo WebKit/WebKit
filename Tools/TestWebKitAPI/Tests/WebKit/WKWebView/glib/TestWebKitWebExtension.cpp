@@ -1116,24 +1116,23 @@ static void testExternallyConnectableParsing(Test*, gconstpointer)
     g_assert_null(webkit_web_extension_get_all_requested_match_patterns(extension.get()));
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
 
-    // Expect an error if <all_urls> is specified.
-    extension = parse("{ \"externally_connectable\": { \"matches\": [ \"<all_urls>\" ] }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
-    g_assert_null(webkit_web_extension_get_all_requested_match_patterns(extension.get()));
-    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-
-    // Still expect the errork, but have a valid match pattern
-    extension = parse("{ \"externally_connectable\": { \"matches\": [ \"*://*.example.com/\", \"<all_urls>\" ] }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    // Should not expect an error if <all_urls> or "*://*/*" are specified, since wildcard hosts are allowed.
+    extension = parse("{ \"externally_connectable\": { \"matches\": [ \"<all_urls>\", \"*://*/*\" ] }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     guint patternLength = 0;
     auto matchPatterns = webkit_web_extension_get_all_requested_match_patterns(extension.get());
     for (; *matchPatterns != nullptr; matchPatterns++)
         patternLength++;
-    g_assert_cmpint(patternLength, ==, 1);
-    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    g_assert_cmpint(patternLength, ==, 2);
+    g_assert_no_error(error.get());
 
-    // Expect an error for not having a second level domain.
+    // Expect no error for a wildcard subdomain of a top level domain.
     extension = parse("{ \"externally_connectable\": { \"matches\": [ \"*://*.com/\" ] }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
-    g_assert_null(webkit_web_extension_get_all_requested_match_patterns(extension.get()));
-    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    patternLength = 0;
+    matchPatterns = webkit_web_extension_get_all_requested_match_patterns(extension.get());
+    for (; *matchPatterns != nullptr; matchPatterns++)
+        patternLength++;
+    g_assert_cmpint(patternLength, ==, 1);
+    g_assert_no_error(error.get());
 
     // Match for *://*.example.com/*
     auto* matchingPattern = webkit_web_extension_match_pattern_new_with_string("*://*.example.com/", nullptr);

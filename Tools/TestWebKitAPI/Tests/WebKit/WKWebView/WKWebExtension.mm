@@ -2310,23 +2310,17 @@ TEST(WKWebExtension, ExternallyConnectableParsing)
     EXPECT_EQ(testExtension.allRequestedMatchPatterns.count, 0ul);
     EXPECT_EQ(testExtension.errors.count, 1ul);
 
-    // Expect an error if <all_urls> is specified.
-    testManifestDictionary[@"externally_connectable"] = @{ @"matches": @[ @"<all_urls>" ] };
+    // Should not expect an error if <all_urls> or "*://*/*" are specified, since wildcard hosts are allowed.
+    testManifestDictionary[@"externally_connectable"] = @{ @"matches": @[ @"<all_urls>", @"*://*/*" ] };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    EXPECT_EQ(testExtension.allRequestedMatchPatterns.count, 0ul);
-    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_EQ(testExtension.allRequestedMatchPatterns.count, 2ul);
+    EXPECT_EQ(testExtension.errors.count, 0ul);
 
-    // Still expect the error, but have a valid requested match pattern.
-    testManifestDictionary[@"externally_connectable"] = @{ @"matches": @[ @"*://*.example.com/", @"<all_urls>" ] };
-    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    EXPECT_EQ(testExtension.allRequestedMatchPatterns.count, 1ul);
-    EXPECT_EQ(testExtension.errors.count, 1ul);
-
-    // Expect an error for not have a second level domain.
+    // Should not expect an error for a wildcard subdomain of a top level domain.
     testManifestDictionary[@"externally_connectable"] = @{ @"matches": @[ @"*://*.com/" ] };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    EXPECT_EQ(testExtension.allRequestedMatchPatterns.count, 0ul);
-    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_EQ(testExtension.allRequestedMatchPatterns.count, 1ul);
+    EXPECT_EQ(testExtension.errors.count, 0ul);
 
     // Should have a match for *://*.example.com/*.
     auto *matchingPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/" ];
