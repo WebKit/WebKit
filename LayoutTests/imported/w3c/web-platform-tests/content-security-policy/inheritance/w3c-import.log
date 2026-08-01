@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/auxiliary-blank-document.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-inherits-from-meta-http-equiv-with-invalid-characters.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-child-frame-self-navigate-inherits.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html

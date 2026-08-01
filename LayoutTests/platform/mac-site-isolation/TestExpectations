@@ -13,7 +13,6 @@ http/tests/security/referrer-policy-header-same-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin-when-cross-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-unsafe-url.html [ Crash ]
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash ]
 
 #######################
 # Tests that time out #
@@ -30,6 +29,7 @@ http/tests/local/blob/download-blob-from-iframe.html [ Timeout ]
 http/tests/media/media-stream/enumerate-devices-source-id.html [ Timeout ]
 http/tests/webrtc/audioSessionInFrames.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
+imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-cross-origin.html [ Timeout ]
 loader/go-back-to-different-window-size.html [ Timeout ]
 media/restore-from-page-cache.html [ Timeout ]
@@ -69,6 +69,7 @@ imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.
 imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/keepalive.any.html
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-replace-with-cross-origin-redirect.sub.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-failure.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay.html [ Failure ]

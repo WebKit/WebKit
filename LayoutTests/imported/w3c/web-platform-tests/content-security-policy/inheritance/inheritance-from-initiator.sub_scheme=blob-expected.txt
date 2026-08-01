@@ -1,0 +1,8 @@
+
+
+PASS blob: Setting src inherits from parent (apart from javascript:, which keeps target policies).
+PASS blob: Changing contentWindow.location inherits from who changed it (apart from javascript:, which keeps target policies, and blob:, which always inherits from creator).
+PASS blob: Changing contentWindow.location indirectly inherits from who changed it directly (apart from javascript:, which keeps target policies).
+PASS blob: window.open() inherits from caller (apart from javascript:, which keeps target policies, and blob:, which always inherits from creator).
+PASS blob: Click on anchor inherits from owner of the anchor (apart from javascript:, which keeps target policies, and blob:, which always inherits from creator).
+

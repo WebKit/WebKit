@@ -8604,6 +8604,7 @@ fast/forms/ios/zoom-to-reveal-focused-element-after-delay.html [ Timeout ] # web
 editing/caret/ios/place-caret-after-autocorrected-word.html [ Failure ] # webkit.org/b/318253
 editing/input/ios/typing-with-inline-predictions.html [ Pass Timeout ] # webkit.org/b/318254
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ] # webkit.org/b/318255
+imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Skip ] # webkit.org/b/320543
 http/wpt/identity/formats/ISO18013/mixed-requests.https.html [ Failure ] # webkit.org/b/318256
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-constraint-validation.html [ Pass Failure ] # webkit.org/b/318257
 

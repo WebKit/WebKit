@@ -1,0 +1,10 @@
+
+
+PASS data: Setting src inherits from parent (apart from javascript:, which keeps target policies).
+PASS data: Changing contentWindow.location inherits from who changed it (apart from javascript:, which keeps target policies, and blob:, which always inherits from creator).
+PASS data: Changing contentWindow.location indirectly inherits from who changed it directly (apart from javascript:, which keeps target policies).
+PASS data: window.open() inherits from caller (apart from javascript:, which keeps target policies, and blob:, which always inherits from creator).
+PASS data: Click on anchor inherits from owner of the anchor (apart from javascript:, which keeps target policies, and blob:, which always inherits from creator).
+PASS data: Form submission through submit() inherits  from owner of form (apart from javascript:, which keeps target policies).
+PASS data: Form submission through button click inherits from owner of form (apart from javascript:, which keeps target policies).
+
