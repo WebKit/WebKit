@@ -33,32 +33,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
-#if CPU(NEEDS_ALIGNED_ACCESS)
-
-#define COMPARE_2CHARS(address, char1, char2) \
-(((address)[0] == char1) && ((address)[1] == char2))
-#define COMPARE_4CHARS(address, char1, char2, char3, char4) \
-    (COMPARE_2CHARS(address, char1, char2) && COMPARE_2CHARS((address) + 2, char3, char4))
-#define COMPARE_2UCHARS(address, char1, char2) \
-    (((address)[0] == char1) && ((address)[1] == char2))
-#define COMPARE_4UCHARS(address, char1, char2, char3, char4) \
-    (COMPARE_2UCHARS(address, char1, char2) && COMPARE_2UCHARS((address) + 2, char3, char4))
-
-#else // CPU(NEEDS_ALIGNED_ACCESS)
-
-#if CPU(BIG_ENDIAN)
-
-#define CHARPAIR_TOUINT16(a, b) \
-((((uint16_t)(a)) << 8) + (uint16_t)(b))
-#define CHARQUAD_TOUINT32(a, b, c, d) \
-    ((((uint32_t)(CHARPAIR_TOUINT16(a, b))) << 16) + CHARPAIR_TOUINT16(c, d))
-#define UCHARPAIR_TOUINT32(a, b) \
-    ((((uint32_t)(a)) << 16) + (uint32_t)(b))
-#define UCHARQUAD_TOUINT64(a, b, c, d) \
-    ((((uint64_t)(UCHARPAIR_TOUINT32(a, b))) << 32) + UCHARPAIR_TOUINT32(c, d))
-
-#else // CPU(BIG_ENDIAN)
-
 #define CHARPAIR_TOUINT16(a, b) \
 ((((uint16_t)(b)) << 8) + (uint16_t)(a))
 #define CHARQUAD_TOUINT32(a, b, c, d) \
@@ -67,9 +41,6 @@ namespace WTF {
     ((((uint32_t)(b)) << 16) + (uint32_t)(a))
 #define UCHARQUAD_TOUINT64(a, b, c, d) \
     ((((uint64_t)(UCHARPAIR_TOUINT32(c, d))) << 32) + UCHARPAIR_TOUINT32(a, b))
-
-#endif // CPU(BIG_ENDIAN)
-
 
 #define COMPARE_2CHARS(address, char1, char2) \
     ((reinterpret_cast_ptr<const uint16_t*>(address))[0] == CHARPAIR_TOUINT16(char1, char2))
@@ -91,8 +62,6 @@ namespace WTF {
     (COMPARE_2UCHARS(address, char1, char2) && COMPARE_2UCHARS((address) + 2, char3, char4))
 
 #endif // CPU(X86_64) || CPU(ARM64)
-
-#endif // CPU(NEEDS_ALIGNED_ACCESS)
 
 #define COMPARE_3CHARS(address, char1, char2, char3) \
     (COMPARE_2CHARS(address, char1, char2) && ((address)[2] == (char3)))

@@ -145,11 +145,7 @@ public:
         // https://bugs.webkit.org/show_bug.cgi?id=197754
         uintptr_t value = 0;
 
-#if CPU(LITTLE_ENDIAN)
         memcpySpan(asMutableByteSpan(value), std::span { m_storage });
-#else
-        memcpySpan(asMutableByteSpan(value).last(storageSize), std::span { m_storage });
-#endif
 
         if (isAlignmentShiftProfitable)
             value <<= alignmentShiftSize;
@@ -175,11 +171,7 @@ public:
         uintptr_t value = std::bit_cast<uintptr_t>(passedValue);
         if (isAlignmentShiftProfitable)
             value >>= alignmentShiftSize;
-#if CPU(LITTLE_ENDIAN)
         memcpySpan(std::span { m_storage }, asByteSpan(value).first(storageSize));
-#else
-        memcpySpan(std::span { m_storage }, asByteSpan(value).last(storageSize));
-#endif
         ASSERT(get() == passedValue);
     }
 

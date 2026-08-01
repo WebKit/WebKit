@@ -60,7 +60,6 @@ concept StructuredCloneDeserializerHandler = requires(Derived& d, SerializationT
 
 namespace StructuredCloneInternal {
 
-#if JSC_ASSUME_LITTLE_ENDIAN
 template<typename T> inline bool readLittleEndian(std::span<const uint8_t>& span, T& value)
 {
     if (span.size() < sizeof(value))
@@ -68,23 +67,6 @@ template<typename T> inline bool readLittleEndian(std::span<const uint8_t>& span
     value = consumeAndReinterpretCastTo<const T>(span);
     return true;
 }
-#else
-template<typename T> inline bool readLittleEndian(std::span<const uint8_t>& span, T& value)
-{
-    if (span.size() < sizeof(value))
-        return false;
-
-    if constexpr (sizeof(T) == 1)
-        value = consume(span);
-    else {
-        value = 0;
-        for (size_t i = 0; i < sizeof(T); ++i)
-            value += static_cast<T>(span[i]) << (i * 8);
-        skip(span, sizeof(T));
-    }
-    return true;
-}
-#endif
 
 } // namespace StructuredCloneInternal
 
@@ -269,23 +251,11 @@ protected:
         if (span.size() < size)
             return false;
 
-#if JSC_ASSUME_LITTLE_ENDIAN
         auto stringSpan = consumeSpan(span, size);
         if (shouldAtomize == ShouldAtomize::Yes)
             str = AtomString(spanReinterpretCast<const char16_t>(stringSpan));
         else
             str = String(spanReinterpretCast<const char16_t>(stringSpan));
-#else
-        std::span<char16_t> characters;
-        str = String::createUninitialized(length, characters);
-        for (unsigned i = 0; i < length; ++i) {
-            uint16_t c;
-            StructuredCloneInternal::readLittleEndian(span, c);
-            characters[i] = c;
-        }
-        if (shouldAtomize == ShouldAtomize::Yes)
-            str = AtomString { str };
-#endif
         return true;
     }
 

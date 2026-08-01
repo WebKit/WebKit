@@ -48,9 +48,6 @@ public:
     {
         uint16_t result;
         memcpySpan(asMutableByteSpan(result), data.span().subspan(offset, 2));
-#if CPU(BIG_ENDIAN)
-        result = ((result & 0xff) << 8) | ((result & 0xff00) >> 8);
-#endif
         return result;
     }
 
@@ -58,9 +55,6 @@ public:
     {
         uint32_t result;
         memcpySpan(asMutableByteSpan(result), data.span().subspan(offset, 4));
-#if CPU(BIG_ENDIAN)
-        result = ((result & 0xff) << 24) | ((result & 0xff00) << 8) | ((result & 0xff0000) >> 8) | ((result & 0xff000000) >> 24);
-#endif
         return result;
     }
 
@@ -207,9 +201,6 @@ private:
             // won't read it.
             uint32_t pixel;
             memcpySpan(asMutableByteSpan(pixel), m_data->span().subspan(m_decodedOffset + offset, 3));
-#if CPU(BIG_ENDIAN)
-            pixel = ((pixel & 0xff00) << 8) | ((pixel & 0xff0000) >> 8) | ((pixel & 0xff000000) >> 24);
-#endif
             return pixel;
         }
 

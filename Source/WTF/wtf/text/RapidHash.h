@@ -178,7 +178,6 @@ private:
         };
 
         auto read64 = [&](size_t off) ALWAYS_INLINE_LAMBDA -> uint64_t {
-#if CPU(LITTLE_ENDIAN)
             if (!std::is_constant_evaluated()) {
                 if constexpr (std::is_same_v<Converter, DefaultConverter>) {
                     if constexpr (sizeof(T) == 1)
@@ -196,7 +195,6 @@ private:
                     }
                 }
             }
-#endif
             uint64_t result = 0;
             for (size_t i = 0; i < 8; ++i)
                 result |= static_cast<uint64_t>(foldByte(off + i)) << (i * 8);
@@ -204,7 +202,6 @@ private:
         };
 
         auto read32 = [&](size_t off) ALWAYS_INLINE_LAMBDA -> uint64_t {
-#if CPU(LITTLE_ENDIAN)
             if (!std::is_constant_evaluated()) {
                 if constexpr (std::is_same_v<Converter, DefaultConverter>) {
                     if constexpr (sizeof(T) == 1)
@@ -221,7 +218,6 @@ private:
                     }
                 }
             }
-#endif
             uint64_t result = 0;
             for (size_t i = 0; i < 4; ++i)
                 result |= static_cast<uint64_t>(foldByte(off + i)) << (i * 8);
@@ -250,10 +246,8 @@ private:
         };
 
         auto read64 = [&](size_t byteOff) ALWAYS_INLINE_LAMBDA -> uint64_t {
-#if CPU(LITTLE_ENDIAN)
             if (!std::is_constant_evaluated())
                 return unalignedLoad<uint64_t>(reinterpret_cast<const uint8_t*>(p) + byteOff);
-#endif
             uint64_t r = 0;
             for (size_t i = 0; i < 8; ++i)
                 r |= static_cast<uint64_t>(readByte(byteOff + i)) << (i * 8);
@@ -261,10 +255,8 @@ private:
         };
 
         auto read32 = [&](size_t byteOff) ALWAYS_INLINE_LAMBDA -> uint64_t {
-#if CPU(LITTLE_ENDIAN)
             if (!std::is_constant_evaluated())
                 return static_cast<uint64_t>(unalignedLoad<uint32_t>(reinterpret_cast<const uint8_t*>(p) + byteOff));
-#endif
             uint64_t r = 0;
             for (size_t i = 0; i < 4; ++i)
                 r |= static_cast<uint64_t>(readByte(byteOff + i)) << (i * 8);

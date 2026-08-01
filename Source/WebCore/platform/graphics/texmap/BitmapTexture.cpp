@@ -580,11 +580,7 @@ OptionSet<TextureMapperFlags> BitmapTexture::colorConvertFlags() const
     // Our GL textures are stored in RGBA format. If we received an update in BGRA format, we write that BGRA data into
     // the RGBA GL texture without pixel format conversions, but instead use a shader program to transparently handle
     // the color conversion on-the-fly, when painting the texture.
-#if CPU(LITTLE_ENDIAN)
     return TextureMapperFlags::ShouldConvertTextureBGRAToRGBA;
-#else
-    return TextureMapperFlags::ShouldConvertTextureARGBToRGBA;
-#endif
 }
 
 #if USE(SKIA)

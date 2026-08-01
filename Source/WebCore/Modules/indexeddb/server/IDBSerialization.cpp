@@ -185,27 +185,6 @@ static SIDBKeyType serializedTypeForKeyType(IndexedDB::KeyType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-#if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
-template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
-{
-    for (unsigned i = 0; i < sizeof(T); i++) {
-        buffer.append(value & 0xFF);
-        value >>= 8;
-    }
-}
-
-template <typename T> static bool readLittleEndian(std::span<const uint8_t>& data, T& value)
-{
-    if (data.size() < sizeof(value))
-        return false;
-
-    value = 0;
-    for (size_t i = 0; i < sizeof(T); i++)
-        value += ((T)data[i]) << (i * 8);
-    skip(data, sizeof(T));
-    return true;
-}
-#else
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
     buffer.append(asByteSpan(value));
@@ -219,7 +198,6 @@ template <typename T> static bool NODELETE readLittleEndian(std::span<const uint
     value = consumeAndReinterpretCastTo<const T>(data);
     return true;
 }
-#endif
 
 static void writeDouble(Vector<uint8_t>& data, double d)
 {

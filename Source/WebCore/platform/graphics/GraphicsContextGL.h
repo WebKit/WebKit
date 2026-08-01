@@ -1193,17 +1193,12 @@ public:
     static ALWAYS_INLINE bool srcFormatComesFromDOMElementOrImageData(DataFormat SrcFormat)
     {
 #if USE(CG)
-#if CPU(BIG_ENDIAN)
-    return SrcFormat == DataFormat::RGBA8 || SrcFormat == DataFormat::ARGB8 || SrcFormat == DataFormat::RGB8
-        || SrcFormat == DataFormat::RA8 || SrcFormat == DataFormat::AR8 || SrcFormat == DataFormat::R8 || SrcFormat == DataFormat::A8;
-#else
-    // That LITTLE_ENDIAN case has more possible formats than BIG_ENDIAN case is because some decoded image data is actually big endian
+    // This has more possible formats than BIG_ENDIAN case is because some decoded image data is actually big endian
     // even on little endian architectures.
     return SrcFormat == DataFormat::BGRA8 || SrcFormat == DataFormat::ABGR8 || SrcFormat == DataFormat::BGR8
         || SrcFormat == DataFormat::RGBA8 || SrcFormat == DataFormat::ARGB8 || SrcFormat == DataFormat::RGB8
         || SrcFormat == DataFormat::R8 || SrcFormat == DataFormat::A8
         || SrcFormat == DataFormat::RA8 || SrcFormat == DataFormat::AR8;
-#endif
 #else
     return SrcFormat == DataFormat::BGRA8 || SrcFormat == DataFormat::RGBA8;
 #endif

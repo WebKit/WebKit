@@ -58,20 +58,10 @@ concept StructuredCloneSerializerHandler = requires(Derived& d, JSObject* obj, S
 
 namespace StructuredCloneInternal {
 
-#if JSC_ASSUME_LITTLE_ENDIAN
 template<typename T> inline void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
     buffer.append(asByteSpan(value));
 }
-#else
-template<typename T> inline void writeLittleEndian(Vector<uint8_t>& buffer, T value)
-{
-    for (unsigned i = 0; i < sizeof(T); i++) {
-        buffer.append(value & 0xFF);
-        value >>= 8;
-    }
-}
-#endif
 
 template<> inline void writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, uint8_t value)
 {
@@ -83,17 +73,7 @@ template<typename T> inline bool writeLittleEndian(Vector<uint8_t>& buffer, std:
     if (values.size() > std::numeric_limits<uint32_t>::max() / sizeof(T))
         return false;
 
-#if JSC_ASSUME_LITTLE_ENDIAN
     buffer.append(asBytes(values));
-#else
-    for (unsigned i = 0; i < values.size(); i++) {
-        T value = values[i];
-        for (unsigned j = 0; j < sizeof(T); j++) {
-            buffer.append(static_cast<uint8_t>(value & 0xFF));
-            value >>= 8;
-        }
-    }
-#endif
     return true;
 }
 

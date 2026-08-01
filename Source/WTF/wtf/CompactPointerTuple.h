@@ -61,12 +61,10 @@ public:
     static constexpr unsigned maxNumberOfBitsInPointer = 48;
     static_assert(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) <= maxNumberOfBitsInPointer);
 
-#if CPU(LITTLE_ENDIAN)
     static constexpr ptrdiff_t offsetOfType()
     {
         return maxNumberOfBitsInPointer / 8;
     }
-#endif
 
     static constexpr uint64_t pointerMask = (1ULL << maxNumberOfBitsInPointer) - 1;
 

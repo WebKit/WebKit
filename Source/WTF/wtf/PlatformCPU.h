@@ -332,6 +332,6 @@
 #error "Unknown endian"
 #endif
 
-#if !CPU(LITTLE_ENDIAN) && !CPU(BIG_ENDIAN)
+#if !CPU(LITTLE_ENDIAN)
 #error "Unsupported endian"
 #endif

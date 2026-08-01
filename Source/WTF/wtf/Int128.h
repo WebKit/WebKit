@@ -195,15 +195,8 @@ class UInt128Impl {
 
   // TODO(strel) Update implementation to use __int128 once all users of
   // UInt128Impl are fixed to not depend on alignof(UInt128Impl) == 8.
-#if CPU(LITTLE_ENDIAN)
   uint64_t lo_;
   uint64_t hi_;
-#elif CPU(BIG_ENDIAN)
-  uint64_t hi_;
-  uint64_t lo_;
-#else  // byte order
-#error "Unsupported byte order: must be little-endian or big-endian."
-#endif  // byte order
 };
 
 // allow UInt128Impl to be logged
@@ -395,15 +388,8 @@ class Int128Impl {
  private:
   constexpr Int128Impl(int64_t high, uint64_t low);
 
-#if CPU(LITTLE_ENDIAN)
   uint64_t lo_;
   int64_t hi_;
-#elif CPU(BIG_ENDIAN)
-  int64_t hi_;
-  uint64_t lo_;
-#else  // byte order
-#error "Unsupported byte order: must be little-endian or big-endian."
-#endif  // byte order
 };
 
 WTF_EXPORT_PRIVATE std::ostream& operator<<(std::ostream& os, Int128Impl v);
@@ -552,7 +538,6 @@ constexpr uint64_t UInt128High64(UInt128Impl v) { return v.hi_; }
 
 // Constructors from integer types.
 
-#if CPU(LITTLE_ENDIAN)
 
 constexpr UInt128Impl::UInt128Impl(uint64_t high, uint64_t low)
     : lo_{low}, hi_{high} {}
@@ -576,33 +561,6 @@ constexpr UInt128Impl::UInt128Impl(unsigned long long v) : lo_{v}, hi_{0} {}
 constexpr UInt128Impl::UInt128Impl(Int128Impl v)
     : lo_{Int128Low64(v)}, hi_{static_cast<uint64_t>(Int128High64(v))} {}
 
-#elif CPU(BIG_ENDIAN)
-
-constexpr UInt128Impl::UInt128Impl(uint64_t high, uint64_t low)
-    : hi_{high}, lo_{low} {}
-
-constexpr UInt128Impl::UInt128Impl(int v)
-    : hi_{v < 0 ? (std::numeric_limits<uint64_t>::max)() : 0},
-      lo_{static_cast<uint64_t>(v)} {}
-constexpr UInt128Impl::UInt128Impl(long v)  // NOLINT(runtime/int)
-    : hi_{v < 0 ? (std::numeric_limits<uint64_t>::max)() : 0},
-      lo_{static_cast<uint64_t>(v)} {}
-constexpr UInt128Impl::UInt128Impl(long long v)  // NOLINT(runtime/int)
-    : hi_{v < 0 ? (std::numeric_limits<uint64_t>::max)() : 0},
-      lo_{static_cast<uint64_t>(v)} {}
-
-constexpr UInt128Impl::UInt128Impl(unsigned int v) : hi_{0}, lo_{v} {}
-// NOLINTNEXTLINE(runtime/int)
-constexpr UInt128Impl::UInt128Impl(unsigned long v) : hi_{0}, lo_{v} {}
-// NOLINTNEXTLINE(runtime/int)
-constexpr UInt128Impl::UInt128Impl(unsigned long long v) : hi_{0}, lo_{v} {}
-
-constexpr UInt128Impl::UInt128Impl(Int128Impl v)
-    : hi_{static_cast<uint64_t>(Int128High64(v))}, lo_{Int128Low64(v)} {}
-
-#else  // byte order
-#error "Unsupported byte order: must be little-endian or big-endian."
-#endif  // byte order
 
 // Conversion operators to integer types.
 
@@ -952,7 +910,6 @@ constexpr uint64_t Int128Low64(Int128Impl v) { return v.lo_; }
 
 constexpr int64_t Int128High64(Int128Impl v) { return v.hi_; }
 
-#if CPU(LITTLE_ENDIAN)
 
 constexpr Int128Impl::Int128Impl(int64_t high, uint64_t low) :
     lo_(low), hi_(high) {}
@@ -973,30 +930,6 @@ constexpr Int128Impl::Int128Impl(unsigned long long v) : lo_{v}, hi_{0} {}
 constexpr Int128Impl::Int128Impl(UInt128Impl v)
     : lo_{UInt128Low64(v)}, hi_{static_cast<int64_t>(UInt128High64(v))} {}
 
-#elif CPU(BIG_ENDIAN)
-
-constexpr Int128Impl::Int128Impl(int64_t high, uint64_t low) :
-    hi_{high}, lo_{low} {}
-
-constexpr Int128Impl::Int128Impl(int v)
-    : hi_{v < 0 ? ~int64_t{0} : 0}, lo_{static_cast<uint64_t>(v)} {}
-constexpr Int128Impl::Int128Impl(long v)  // NOLINT(runtime/int)
-    : hi_{v < 0 ? ~int64_t{0} : 0}, lo_{static_cast<uint64_t>(v)} {}
-constexpr Int128Impl::Int128Impl(long long v)  // NOLINT(runtime/int)
-    : hi_{v < 0 ? ~int64_t{0} : 0}, lo_{static_cast<uint64_t>(v)} {}
-
-constexpr Int128Impl::Int128Impl(unsigned int v) : hi_{0}, lo_{v} {}
-// NOLINTNEXTLINE(runtime/int)
-constexpr Int128Impl::Int128Impl(unsigned long v) : hi_{0}, lo_{v} {}
-// NOLINTNEXTLINE(runtime/int)
-constexpr Int128Impl::Int128Impl(unsigned long long v) : hi_{0}, lo_{v} {}
-
-constexpr Int128Impl::Int128Impl(UInt128Impl v)
-    : hi_{static_cast<int64_t>(UInt128High64(v))}, lo_{UInt128Low64(v)} {}
-
-#else  // byte order
-#error "Unsupported byte order: must be little-endian or big-endian."
-#endif  // byte order
 
 constexpr Int128Impl::operator bool() const { return lo_ || hi_; }
 

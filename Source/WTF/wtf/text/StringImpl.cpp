@@ -1571,11 +1571,7 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(st
 {
     ASSERT(bufferVector.size() == span.size() * 3);
 
-#if CPU(BIG_ENDIAN)
-    auto conversionResult = simdutf::convert_utf16be_to_utf8_with_errors(span, bufferVector.mutableSpan());
-#else
     auto conversionResult = simdutf::convert_utf16le_to_utf8_with_errors(span, bufferVector.mutableSpan());
-#endif
 
     if (conversionResult.error == simdutf::error_code::SUCCESS)
         return conversionResult.count;
@@ -1598,20 +1594,12 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(st
 
 size_t StringImpl::utf8LengthFromUTF16(std::span<const char16_t> characters)
 {
-#if CPU(BIG_ENDIAN)
-    return simdutf::utf8_length_from_utf16be(characters);
-#else
     return simdutf::utf8_length_from_utf16le(characters);
-#endif
 }
 
 size_t StringImpl::tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::span<char8_t> destination)
 {
-#if CPU(BIG_ENDIAN)
-    auto result = simdutf::convert_utf16be_to_utf8_with_errors(source, destination);
-#else
     auto result = simdutf::convert_utf16le_to_utf8_with_errors(source, destination);
-#endif
     if (result.error == simdutf::error_code::SUCCESS)
         return result.count;
     return notFound;

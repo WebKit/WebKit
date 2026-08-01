@@ -36,11 +36,7 @@ namespace WTF {
 
 constexpr bool needToFlipBytesIfLittleEndian(bool littleEndian)
 {
-#if CPU(BIG_ENDIAN)
-    return littleEndian;
-#else
     return !littleEndian;
-#endif
 }
 
 template<typename T>

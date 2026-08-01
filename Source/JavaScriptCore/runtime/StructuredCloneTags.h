@@ -31,16 +31,6 @@
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringCommon.h>
 
-// Most CPUs we support are little-endian and accept unaligned loads of the
-// integer widths the wire format uses, so the read/write helpers fast-path
-// to a single load/store. Architectures that need byte-by-byte handling
-// (big-endian, middle-endian, alignment-strict) take the portable path.
-#if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
-#define JSC_ASSUME_LITTLE_ENDIAN 0
-#else
-#define JSC_ASSUME_LITTLE_ENDIAN 1
-#endif
-
 namespace JSC {
 
 /*

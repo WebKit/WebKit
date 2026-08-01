@@ -116,20 +116,12 @@ template<Replacement replacement = Replacement::None, typename SourceCharacterTy
 
 ConversionResult<char8_t> convert(std::span<const char16_t> source, std::span<char8_t> buffer)
 {
-#if CPU(BIG_ENDIAN)
-    size_t requiredLength = simdutf::utf8_length_from_utf16be(source);
-#else
     size_t requiredLength = simdutf::utf8_length_from_utf16le(source);
-#endif
 
     if (buffer.size() < requiredLength)
         return convertInternal(source, buffer);
 
-#if CPU(BIG_ENDIAN)
-    auto result = simdutf::convert_utf16be_to_utf8_with_errors(source, buffer);
-#else
     auto result = simdutf::convert_utf16le_to_utf8_with_errors(source, buffer);
-#endif
 
     if (result.error == simdutf::error_code::SUCCESS) {
         bool isAllASCII = result.count == source.size();
