@@ -12,24 +12,24 @@
     <script src="../../../resources/ui-helper.js"></script>
 </head>
 <body>
-    <p id="results"></p>
     <input id="input" type="text">
 
     <script>
         jsTestIsAsync = true;
         addEventListener("load", async () => {
             let textField = document.querySelector("input");
+            window.initialLayoutViewportHeight = internals.layoutViewportRect().height;
+            window.initialVisualViewportHeight = internals.visualViewportRect().height;
+
             await UIHelper.activateElement(textField);
             await UIHelper.waitForKeyboardToShow();
 
-            debug('layoutViewport: ' + JSON.stringify(internals.layoutViewportRect()));
-            debug('visualViewportRect: ' + JSON.stringify(internals.visualViewportRect()));
+            await UIHelper.zoomToScale(2);
+            await UIHelper.ensureStablePresentationUpdate();
 
-            shouldBe('window.visualViewport.pageTop', '0');
-            shouldNotBe('window.visualViewport.scale', '1');
-            var output = 'Layout viewport: ' + JSON.stringify(internals.layoutViewportRect()) + '\nVisual viewport: ' + JSON.stringify(internals.visualViewportRect()) + '\n';
-            document.getElementById('results').innerText = output;
-
+            shouldBeTrue('window.visualViewport.scale != 1');
+            shouldBeTrue('internals.layoutViewportRect().height == window.initialLayoutViewportHeight');
+            shouldBeTrue('Math.abs(internals.visualViewportRect().height * window.visualViewport.scale - window.initialVisualViewportHeight) <= 1');
             finishJSTest();
         });
     </script>

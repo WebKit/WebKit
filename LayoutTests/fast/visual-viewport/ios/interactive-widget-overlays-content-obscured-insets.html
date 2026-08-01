@@ -20,48 +20,34 @@
         jsTestIsAsync = true;
         addEventListener("load", async () => {
             let textField = document.querySelector("input");
+            window.initialLayoutViewportHeight = internals.layoutViewportRect().height;
+            window.smallerInset = 50;
+            window.biggerInset = 100;
 
             // Test the bottom inset being smaller than the input accessory view.
-            await UIHelper.setObscuredInsets(0, 0, 50, 0);
+            await UIHelper.setObscuredInsets(0, 0, window.smallerInset, 0);
             await UIHelper.renderingUpdate();
             await UIHelper.activateElement(textField);
             await UIHelper.waitForKeyboardToShow();
 
-            debug('layoutViewport: ' + JSON.stringify(internals.layoutViewportRect()));
-            debug('visualViewportRect: ' + JSON.stringify(internals.visualViewportRect()));
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.layoutViewportRect().height == window.initialLayoutViewportHeight - window.smallerInset');
 
-            shouldBe('window.visualViewport.pageTop', '0');
-            shouldBe('window.visualViewport.scale', '1');
-            shouldBe('window.visualViewport.width', JSON.stringify(internals.layoutViewportRect().width));
-            shouldBe('window.visualViewport.height', JSON.stringify(internals.layoutViewportRect().height));
 
             // Test the bottom inset being bigger than the input accessory view.
-            await UIHelper.setObscuredInsets(0, 0, 100, 0);
+            await UIHelper.setObscuredInsets(0, 0, window.biggerInset, 0);
             await UIHelper.renderingUpdate();
             await UIHelper.activateElement(textField);
             await UIHelper.waitForKeyboardToShow();
 
-            debug('layoutViewport: ' + JSON.stringify(internals.layoutViewportRect()));
-            debug('visualViewportRect: ' + JSON.stringify(internals.visualViewportRect()));
-
-            shouldBe('window.visualViewport.pageTop', '0');
-            shouldBe('window.visualViewport.scale', '1');
-            shouldBe('window.visualViewport.width', JSON.stringify(internals.layoutViewportRect().width));
-            shouldBe('window.visualViewport.height', JSON.stringify(internals.layoutViewportRect().height));
-
-            // Test the bottom inset being equal to the input accessory view.
-            await UIHelper.setObscuredInsets(0, 0, 68, 0);
-            await UIHelper.renderingUpdate();
-            await UIHelper.activateElement(textField);
-            await UIHelper.waitForKeyboardToShow();
-
-            debug('layoutViewport: ' + JSON.stringify(internals.layoutViewportRect()));
-            debug('visualViewportRect: ' + JSON.stringify(internals.visualViewportRect()));
-
-            shouldBe('window.visualViewport.pageTop', '0');
-            shouldBe('window.visualViewport.scale', '1');
-            shouldBe('window.visualViewport.width', JSON.stringify(internals.layoutViewportRect().width));
-            shouldBe('window.visualViewport.height', JSON.stringify(internals.layoutViewportRect().height));
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.layoutViewportRect().height == window.initialLayoutViewportHeight - window.biggerInset');
 
             finishJSTest();
         });

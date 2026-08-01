@@ -18,16 +18,16 @@
         jsTestIsAsync = true;
         addEventListener("load", async () => {
             let textField = document.querySelector("input");
+            window.initialLayoutViewportHeight = internals.layoutViewportRect().height;
+
             await UIHelper.activateElement(textField);
             await UIHelper.waitForKeyboardToShow();
 
-            debug('layoutViewport: ' + JSON.stringify(internals.layoutViewportRect()));
-            debug('visualViewportRect: ' + JSON.stringify(internals.visualViewportRect()));
-
-            shouldBe('window.visualViewport.pageTop', '0');
-            shouldBe('window.visualViewport.scale', '1');
-            shouldBe('window.visualViewport.width', JSON.stringify(internals.layoutViewportRect().width));
-            shouldBe('window.visualViewport.height', JSON.stringify(internals.layoutViewportRect().height));
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+            shouldBeTrue('window.initialLayoutViewportHeight == internals.layoutViewportRect().height');
 
             finishJSTest();
         });

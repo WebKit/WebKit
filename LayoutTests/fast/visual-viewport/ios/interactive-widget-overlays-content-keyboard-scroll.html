@@ -24,25 +24,25 @@
             await UIHelper.activateElement(textField);
             await UIHelper.waitForKeyboardToShow();
 
-            window.scrollTo(40, 1048);
-            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+            window.targetScrollTop = Math.floor((document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight) / 2);
+            window.scrollTo(40, window.targetScrollTop);
 
-            shouldBe('document.scrollingElement.scrollTop', '1048');
-            shouldBe('document.scrollingElement.scrollLeft', '40');
-            shouldNotBe('window.visualViewport.pageTop', '0');
-            shouldBe('window.visualViewport.scale', '1');
-            shouldBe('window.visualViewport.width', JSON.stringify(internals.layoutViewportRect().width));
-            shouldBe('window.visualViewport.height', JSON.stringify(internals.layoutViewportRect().height));
+            shouldBeTrue('document.scrollingElement.scrollTop == window.targetScrollTop');
+            shouldBeTrue('document.scrollingElement.scrollLeft == 40');
+            shouldBeTrue('window.visualViewport.pageTop != 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
 
             window.scrollTo(0, 0);
             debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
 
-            shouldBe('document.scrollingElement.scrollTop', '0');
-            shouldBe('document.scrollingElement.scrollLeft', '0');
-            shouldBe('window.visualViewport.pageTop', '0');
-            shouldBe('window.visualViewport.scale', '1');
-            shouldBe('window.visualViewport.width', JSON.stringify(internals.layoutViewportRect().width));
-            shouldBe('window.visualViewport.height', JSON.stringify(internals.layoutViewportRect().height));
+            shouldBeTrue('document.scrollingElement.scrollTop == 0');
+            shouldBeTrue('document.scrollingElement.scrollLeft == 0');
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
 
             finishJSTest();
         });
