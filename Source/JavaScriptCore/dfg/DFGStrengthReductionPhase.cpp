@@ -130,6 +130,7 @@ private:
         case ArithTrunc:
         case ArithSqrt:
         case ArithAbs:
+        case ArithSign:
         case ArithNegate:
         case ArithUnary: {
             if (foldPurifyNaNOnUnary(m_node))

@@ -220,6 +220,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArithDiv:
     case ArithMod:
     case ArithAbs:
+    case ArithSign:
     case ArithMin:
     case ArithMax:
     case ArithPow:

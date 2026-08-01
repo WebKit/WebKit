@@ -1485,6 +1485,35 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ArithSign: {
+        JSValue child = forNode(node->child1()).value();
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            if (std::optional<double> number = child.toNumberFromPrimitive()) {
+                JSValue result = jsNumber(Math::sign(*number));
+                if (result.isInt32()) {
+                    setConstant(node, result);
+                    break;
+                }
+            }
+            setNonCellTypeForNode(node, SpecInt32Only);
+            break;
+        case DoubleRepUse:
+            if (std::optional<double> number = child.toNumberFromPrimitive()) {
+                setConstant(node, jsDoubleNumber(Math::sign(*number)));
+                break;
+            }
+            setNonCellTypeForNode(node, typeOfDoubleAbs(forNode(node->child1()).m_type));
+            break;
+        default:
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+            clobberWorld();
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
+            break;
+        }
+        break;
+    }
+
     case ArithPow: {
         JSValue childY = forNode(node->child2()).value();
         if (childY && childY.isNumber()) {

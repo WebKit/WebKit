@@ -117,7 +117,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "pow"_s), 2, mathProtoFuncPow, ImplementationVisibility::Public, PowIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "random"_s), 0, mathProtoFuncRandom, ImplementationVisibility::Public, RandomIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "round"_s), 1, mathProtoFuncRound, ImplementationVisibility::Public, RoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sign"_s), 1, mathProtoFuncSign, ImplementationVisibility::Public, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sign"_s), 1, mathProtoFuncSign, ImplementationVisibility::Public, SignIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sin"_s), 1, mathProtoFuncSin, ImplementationVisibility::Public, SinIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sinh"_s), 1, mathProtoFuncSinh, ImplementationVisibility::Public, SinhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sqrt"_s), 1, mathProtoFuncSqrt, ImplementationVisibility::Public, SqrtIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -345,12 +345,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncRound, (JSGlobalObject* globalObject, Call
 
 JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSign, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    double arg = callFrame->argument(0).toNumber(globalObject);
-    if (std::isnan(arg))
-        return JSValue::encode(jsNaN());
-    if (!arg)
-        return JSValue::encode(std::signbit(arg) ? jsNumber(-0.0) : jsNumber(0));
-    return JSValue::encode(jsNumber(std::signbit(arg) ? -1 : 1));
+    return JSValue::encode(jsNumber(Math::sign(callFrame->argument(0).toNumber(globalObject))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSin, (JSGlobalObject* globalObject, CallFrame* callFrame))

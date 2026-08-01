@@ -1633,6 +1633,7 @@ public:
     void compileMakeRope(Node*);
     void compileMakeAtomString(Node*);
     void compileArithAbs(Node*);
+    void compileArithSign(Node*);
     void compileArithClz32(Node*);
     void compileArithSub(Node*);
     void compileIncOrDec(Node*);
