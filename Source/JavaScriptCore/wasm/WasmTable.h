@@ -85,6 +85,7 @@ public:
 
     void clear(uint32_t);
     void set(uint32_t, JSValue);
+    void fill(VM&, JSValue);
     JSValue get(uint32_t);
 
     std::optional<uint32_t> grow(uint64_t delta, JSValue defaultValue);
@@ -123,6 +124,7 @@ public:
 
     void clear(uint32_t);
     void set(uint32_t, JSValue);
+    void fill(VM&, JSValue);
     JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
 
 private:
@@ -164,6 +166,7 @@ public:
 
     void clear(uint32_t);
     void set(uint32_t, JSValue);
+    void fill(VM&, JSValue);
     WebAssemblyFunctionBase* get(uint32_t index);
 
     void registerInstance(JSWebAssemblyInstance&);

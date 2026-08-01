@@ -140,13 +140,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         : callFrame->uncheckedArgument(1);
     if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(defaultValue))
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.constructor expects the second argument to be null or an instance of WebAssembly.Function"_s);
-    for (uint32_t tableIndex = 0; tableIndex < initial; ++tableIndex) {
-        if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull())
-            jsWebAssemblyTable->set(tableIndex, defaultValue);
-        if (jsWebAssemblyTable->table()->isExternrefTable())
-            jsWebAssemblyTable->set(tableIndex, defaultValue);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    }
+
+    if (!defaultValue.isNull())
+        jsWebAssemblyTable->table()->fill(vm, defaultValue);
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(jsWebAssemblyTable));
 }

@@ -213,6 +213,16 @@ void Table::set(uint32_t index, JSValue value)
     });
 }
 
+void Table::fill(VM& vm, JSValue value)
+{
+    ASSERT(m_owner);
+    Locker locker { m_owner->cellLock() };
+    Integrity::auditCell<Integrity::AuditLevel::Full>(vm, value);
+    visitDerived([&](auto& table) {
+        table.fill(vm, value);
+    });
+}
+
 JSValue Table::get(uint32_t index)
 {
     ASSERT(index < length());
@@ -274,6 +284,14 @@ void ExternOrAnyRefTable::clear(uint32_t index)
 void ExternOrAnyRefTable::set(uint32_t index, JSValue value)
 {
     m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
+}
+
+void ExternOrAnyRefTable::fill(VM& vm, JSValue value)
+{
+    auto* slots = m_jsValues.get();
+    for (uint32_t i = 0; i < length(); ++i)
+        slots[i].setWithoutWriteBarrier(value);
+    vm.writeBarrier(m_owner, value);
 }
 
 FuncRefTable::FuncRefTable(VM& vm, uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType addressType)
@@ -390,6 +408,29 @@ void FuncRefTable::set(uint32_t index, JSValue value)
         clear(index);
     else
         setFunction(index, uncheckedDowncast<WebAssemblyFunctionBase>(value));
+}
+
+void FuncRefTable::fill(VM& vm, JSValue value)
+{
+    auto* functions = m_importableFunctions.get();
+    auto* wrappers = m_wrappers.get();
+    if (value.isNull()) {
+        for (uint32_t i = 0; i < length(); ++i) {
+            functions[i] = FuncRefTable::Function { };
+            ASSERT(functions[i].isEmpty());
+            wrappers[i].clear();
+        }
+        return;
+    }
+
+    auto* function = uncheckedDowncast<WebAssemblyFunctionBase>(value);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSubtype(function->type(), wasmType()));
+    auto importable = function->importableFunction();
+    for (uint32_t i = 0; i < length(); ++i) {
+        functions[i] = importable;
+        wrappers[i].setWithoutWriteBarrier(function);
+    }
+    vm.writeBarrier(m_owner, function);
 }
 
 void FuncRefTable::registerInstance(JSWebAssemblyInstance& instance)
