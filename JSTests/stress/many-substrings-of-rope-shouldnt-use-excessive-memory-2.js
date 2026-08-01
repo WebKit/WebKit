@@ -1,4 +1,4 @@
-//@ skip if $architecture == "x86_64" and $hostOS == "linux"
+//@ skip if $hostOS == "linux"
 //@ runDefault
 
 let total_slice_call_count = 0;
