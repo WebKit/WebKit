@@ -762,6 +762,12 @@ void repatchGetBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue ba
         case GetByKind::ByValWithThis:
             repatchSlowPathCall(codeBlock, propertyCache, operationGetByValWithThisMegamorphic);
             break;
+        case GetByKind::PrivateName:
+            repatchSlowPathCall(codeBlock, propertyCache, operationGetPrivateNameMegamorphic);
+            break;
+        case GetByKind::PrivateNameById:
+            repatchSlowPathCall(codeBlock, propertyCache, operationGetPrivateNameByIdMegamorphic);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

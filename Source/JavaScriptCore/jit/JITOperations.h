@@ -306,10 +306,12 @@ JSC_DECLARE_JIT_OPERATION(operationInstanceOfGeneric, EncodedJSValue, (JSGlobalO
 
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedFieldName, PropertyInlineCache*));
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameGaveUp, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedFieldName, PropertyInlineCache*));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameMegamorphic, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedFieldName, PropertyInlineCache*));
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
 
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (EncodedJSValue, PropertyInlineCache*));
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGaveUp, EncodedJSValue, (EncodedJSValue, PropertyInlineCache*));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdMegamorphic, EncodedJSValue, (EncodedJSValue, PropertyInlineCache*));
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 
 // End of IC related functions and generic helpers.
