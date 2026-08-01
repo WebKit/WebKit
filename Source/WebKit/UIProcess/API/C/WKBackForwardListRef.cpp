@@ -40,7 +40,8 @@ WKTypeID WKBackForwardListGetTypeID()
 
 WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef listRef)
 {
-    return toAPI(protect(toImpl(listRef)->currentItem()).get());
+    RefPtr currentItem = protect(toImpl(listRef))->currentItem();
+    return toAPI(currentItem.get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef listRef)

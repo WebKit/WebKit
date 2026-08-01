@@ -30,7 +30,6 @@
 #include "AccessCase.h"
 #include "CallLinkInfo.h"
 #include "JITStubRoutine.h"
-#include "PropertyInlineCacheClearingWatchpoint.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -40,6 +39,7 @@ class InlineCacheCompiler;
 class InlineCacheHandlerWithJSCall;
 class PolymorphicAccessJITStubRoutine;
 class PropertyInlineCache;
+class PropertyInlineCacheClearingWatchpoint;
 
 enum class CacheType : int8_t {
     Unset,

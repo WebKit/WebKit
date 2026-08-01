@@ -32,7 +32,7 @@
 #include "JITStubRoutine.h"
 #include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
-#include "PropertyInlineCacheClearingWatchpoint.h"
+#include "PropertyInlineCache.h"
 #include "ScratchRegisterAllocator.h"
 #include <wtf/Vector.h>
 

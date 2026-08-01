@@ -37,6 +37,7 @@
 #include "JSModuleNamespaceObject.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PropertyInlineCache.h"
+#include "PropertyInlineCacheClearingWatchpoint.h"
 #include "SharedJITStubSet.h"
 
 namespace JSC {

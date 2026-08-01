@@ -42,6 +42,18 @@ static constexpr bool verbose = false;
 
 PropertyInlineCache::~PropertyInlineCache() = default;
 
+RepatchingPropertyInlineCache::RepatchingPropertyInlineCache()
+    : PropertyInlineCache(PropertyInlineCacheType::Repatching)
+{
+}
+
+RepatchingPropertyInlineCache::RepatchingPropertyInlineCache(AccessType accessType, CodeOrigin codeOrigin)
+    : PropertyInlineCache(PropertyInlineCacheType::Repatching, accessType, codeOrigin)
+{
+}
+
+RepatchingPropertyInlineCache::~RepatchingPropertyInlineCache() = default;
+
 void PropertyInlineCache::initGetByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* inlineAccessBaseStructure, PropertyOffset offset)
 {
     ASSERT(m_cacheType == CacheType::Unset);

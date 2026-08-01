@@ -53,7 +53,8 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (WKBackForwardListItem *)currentItem
 {
-    return WebKit::wrapper(protect((*_list).currentItem()).get());
+    RefPtr currentItem = protect(*_list)->currentItem();
+    return WebKit::wrapper(currentItem.get());
 }
 
 - (WKBackForwardListItem *)backItem

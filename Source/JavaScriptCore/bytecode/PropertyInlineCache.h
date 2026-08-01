@@ -32,7 +32,6 @@
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Options.h"
-#include "PropertyInlineCacheClearingWatchpoint.h"
 #include "PropertyInlineCacheSummary.h"
 #include "RegisterSet.h"
 #include "Structure.h"
@@ -685,13 +684,9 @@ public:
 class RepatchingPropertyInlineCache final : public PropertyInlineCache {
     WTF_MAKE_NONCOPYABLE(RepatchingPropertyInlineCache);
 public:
-    RepatchingPropertyInlineCache()
-        : PropertyInlineCache(PropertyInlineCacheType::Repatching)
-    { }
-
-    RepatchingPropertyInlineCache(AccessType accessType, CodeOrigin codeOrigin)
-        : PropertyInlineCache(PropertyInlineCacheType::Repatching, accessType, codeOrigin)
-    { }
+    RepatchingPropertyInlineCache();
+    RepatchingPropertyInlineCache(AccessType, CodeOrigin);
+    ~RepatchingPropertyInlineCache();
 
     // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'instanceof' caches.
     CodeLocationLabel<JITStubRoutinePtrTag> startLocation;

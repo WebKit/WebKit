@@ -1125,7 +1125,8 @@ WebPageProxy::~WebPageProxy()
 void WebPageProxy::addAllMessageReceivers()
 {
     Ref process = m_legacyMainFrameProcess;
-    internals().messageReceiverRegistration.startReceivingMessages(process, m_webPageID, *this, backForwardListMessageReceiver());
+    Ref backForwardListReceiver = backForwardListMessageReceiver();
+    internals().messageReceiverRegistration.startReceivingMessages(process, m_webPageID, *this, backForwardListReceiver);
     process->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID, protect(internals().notificationManagerMessageHandler));
 }
 

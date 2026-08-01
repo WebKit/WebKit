@@ -1125,7 +1125,7 @@ void setFrameStateBackForwardItemIdentifier(WebKit::FrameState& frameState, cons
 
 Ref<WebKit::WebBackForwardListItem> createItemFromState(const WebKit::BackForwardListItemState& itemState, WebKit::WebPageProxyIdentifier pageIdentifier)
 {
-    Ref stateCopy = itemState.frameState->copy();
+    Ref stateCopy = protect(itemState.frameState)->copy();
     setBackForwardItemIdentifiers(stateCopy, WebCore::BackForwardItemIdentifier::generate());
     return WebKit::WebBackForwardListItem::create(WTF::move(stateCopy), pageIdentifier, itemState.navigatedFrameID);
 }

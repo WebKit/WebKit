@@ -34,6 +34,7 @@
 #include "VM.h"
 #include "JITStubRoutineSet.h"
 #include "JSCellInlines.h"
+#include "PropertyInlineCacheClearingWatchpoint.h"
 #include "SharedJITStubSet.h"
 #include <wtf/RefPtr.h>
 

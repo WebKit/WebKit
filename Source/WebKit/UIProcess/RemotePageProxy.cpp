@@ -103,10 +103,11 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
     , m_site(site)
     , m_processActivityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
+    Ref backForwardListReceiver = protect(page)->backForwardListMessageReceiver();
     if (registrationToTransfer)
-        m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this, page.backForwardListMessageReceiver());
+        m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this, backForwardListReceiver);
     else
-        m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, page.backForwardListMessageReceiver());
+        m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, backForwardListReceiver);
 }
 
 void RemotePageProxy::initializeAfterAdoption()
@@ -272,7 +273,8 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
         return;
 
     if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName()) {
-        page->backForwardListMessageReceiver().didReceiveMessage(connection, decoder);
+        Ref backForwardListReceiver = page->backForwardListMessageReceiver();
+        backForwardListReceiver->didReceiveMessage(connection, decoder);
         return;
     }
     page->didReceiveMessage(connection, decoder);
@@ -281,9 +283,10 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
 void RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
     if (RefPtr page = m_page.get()) {
-        if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName())
-            page->backForwardListMessageReceiver().didReceiveSyncMessage(connection, decoder, encoder);
-        else
+        if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName()) {
+            Ref backForwardListReceiver = page->backForwardListMessageReceiver();
+            backForwardListReceiver->didReceiveSyncMessage(connection, decoder, encoder);
+        } else
             page->didReceiveSyncMessage(connection, decoder, encoder);
     }
 }

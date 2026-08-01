@@ -742,7 +742,8 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
             auto clearHandlingProvisionalMessage = makeScopeExit([&] {
                 page->backForwardList().setHandlingProvisionalMessage(false);
             });
-            page->backForwardListMessageReceiver().didReceiveMessage(connection, decoder);
+            Ref backForwardListReceiver = page->backForwardListMessageReceiver();
+            backForwardListReceiver->didReceiveMessage(connection, decoder);
 #else
             page->backForwardList().didReceiveProvisionalMessage(connection, decoder);
 #endif
@@ -882,9 +883,10 @@ void ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IP
 
     RefPtr page = m_page.get();
     if (page) {
-        if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName())
-            page->backForwardListMessageReceiver().didReceiveSyncMessage(connection, decoder, replyEncoder);
-        else
+        if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName()) {
+            Ref backForwardListReceiver = page->backForwardListMessageReceiver();
+            backForwardListReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
+        } else
             page->didReceiveSyncMessage(connection, decoder, replyEncoder);
     }
 }
