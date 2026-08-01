@@ -83,13 +83,15 @@ struct TextCheckingResult {
     CharacterRange range;
     Vector<GrammarDetail> details;
     String replacement;
+    std::optional<float> confidence;
 
     TextCheckingResult isolatedCopy() && {
         return {
             type,
             range,
             crossThreadCopy(WTF::move(details)),
-            WTF::move(replacement).isolatedCopy()
+            WTF::move(replacement).isolatedCopy(),
+            confidence
         };
     }
 };
