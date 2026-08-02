@@ -900,26 +900,6 @@
 #define ENABLE_YARR_JIT_DEBUG 0
 #endif
 
-/* Enable JIT'ing Regular Expressions that have nested parenthesis . */
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
-#define ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS 1
-#define ENABLE_YARR_JIT_REGEXP_TEST_INLINE 1
-#endif
-
-/* Enable JIT'ing Regular Expressions that have back references. */
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
-#define ENABLE_YARR_JIT_BACKREFERENCES 1
-#if CPU(ARM64) || CPU(X86_64)
-#define ENABLE_YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS 1
-#else
-#define ENABLE_YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS 0
-#endif
-#endif
-
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
-#define ENABLE_YARR_JIT_UNICODE_EXPRESSIONS 1
-#endif
-
 /* Enables an optimiztion to advance two codepoints when we fail to match a non-BMP character */
 #if ENABLE(YARR_JIT) && CPU(ARM64)
 #define ENABLE_YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP 1

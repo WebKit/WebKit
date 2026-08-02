@@ -1140,7 +1140,6 @@ private:
                 return true;
             };
 
-#if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
             auto convertTestToTestInline = [&] {
                 if (m_node->op() != RegExpTest)
                     return false;
@@ -1177,7 +1176,6 @@ private:
                 m_changed = true;
                 return true;
             };
-#endif
 
             auto convertToStatic = [&] {
                 if (m_node->op() != RegExpExec)
@@ -1216,10 +1214,8 @@ private:
                     break;
             }
 
-#if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
             if (convertTestToTestInline())
                 break;
-#endif
 
             if (convertToStatic())
                 break;

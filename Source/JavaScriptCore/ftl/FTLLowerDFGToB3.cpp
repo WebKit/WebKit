@@ -19598,7 +19598,6 @@ IGNORE_CLANG_WARNINGS_END
         return true;
     }
 
-#if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
     void compileRegExpTestInline()
     {
         RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand2()->value());
@@ -19753,12 +19752,6 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(Int32, inlineresult, operationResult));
     }
-#else
-    [[noreturn]] void compileRegExpTestInline()
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-#endif
 
     void compileRegExpMatchFast()
     {

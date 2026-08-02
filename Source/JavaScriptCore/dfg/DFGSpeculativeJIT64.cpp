@@ -3060,7 +3060,6 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
     } }
 }
 
-#if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
 void SpeculativeJIT::compileRegExpTestInline(Node* node)
 {
     RegExp* regExp = uncheckedDowncast<RegExp>(node->cellOperand2()->value());
@@ -3191,14 +3190,6 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
     doneCases.link(this);
     unblessedBooleanResult(temp0GPR, node);
 }
-#else
-void SpeculativeJIT::compileRegExpTestInline(Node* node)
-{
-    UNUSED_PARAM(node);
-    ASSERT_NOT_REACHED();
-    compileRegExpTest(node);
-}
-#endif
 
 #if USE(LARGE_TYPED_ARRAYS)
 void SpeculativeJIT::compileNewTypedArrayWithInt52Size(Node* node)
