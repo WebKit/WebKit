@@ -187,7 +187,6 @@
         {
             "name": "setShaderProgramDisabled",
             "description": "Enable/disable the visibility of the given shader program.",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
             "parameters": [
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "disabled", "type": "boolean" }

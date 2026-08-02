@@ -31,6 +31,7 @@
 #include "GPUBuffer.h"
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
+#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ void GPURenderBundleEncoder::setLabel(String&& label)
 
 void GPURenderBundleEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
 {
+    m_currentPipeline = renderPipeline;
     m_backing->setPipeline(renderPipeline.backing());
 }
 
@@ -63,6 +65,8 @@ void GPURenderBundleEncoder::draw(GPUSize32 vertexCount,
     GPUSize32 instanceCount,
     GPUSize32 firstVertex, GPUSize32 firstInstance)
 {
+    if (RefPtr pipeline = m_currentPipeline; pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
+        return;
     m_backing->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
@@ -72,16 +76,22 @@ void GPURenderBundleEncoder::drawIndexed(GPUSize32 indexCount,
     GPUSignedOffset32 baseVertex,
     GPUSize32 firstInstance)
 {
+    if (RefPtr pipeline = m_currentPipeline; pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
+        return;
     m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void GPURenderBundleEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
+    if (RefPtr pipeline = m_currentPipeline; pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
+        return;
     m_backing->drawIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPURenderBundleEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
+    if (RefPtr pipeline = m_currentPipeline; pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
+        return;
     m_backing->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
@@ -129,6 +139,7 @@ static WebGPU::RenderBundleDescriptor NODELETE convertToBacking(const std::optio
 ExceptionOr<Ref<GPURenderBundle>> GPURenderBundleEncoder::finish(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
 {
     RefPtr bundle = m_backing->finish(convertToBacking(renderBundleDescriptor));
+    m_currentPipeline = nullptr;
     if (!bundle)
         return Exception { ExceptionCode::InvalidStateError, "GPURenderBundleEncoder.finish: Unable to finish."_s };
     return GPURenderBundle::create(bundle.releaseNonNull());

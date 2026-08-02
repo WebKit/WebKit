@@ -5,8 +5,10 @@ Test that CanvasManager tracks creation and destruction of WebGPU pipelines.
 -- Running test case: Canvas.ShaderProgram.WebGPU.Existing
 PASS: Found the existing compute ShaderProgram.
 PASS: Compute ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Compute ShaderProgram should not support disabling.
 PASS: Found the existing render ShaderProgram.
 PASS: Render ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Render ShaderProgram should support disabling.
 PASS: Canvas should initially have two ShaderPrograms.
 
 -- Running test case: Canvas.ShaderProgram.WebGPU.OffscreenCanvas
@@ -29,6 +31,7 @@ PASS: Added a "vertex" ShaderProgram.
 PASS: ShaderProgram should have the expected type.
 PASS: ShaderProgram should have the WebGPU Canvas as its parent.
 PASS: Fragmentless render ShaderProgram should not report vertex and fragment shader module sharing.
+PASS: Fragmentless render ShaderProgram should support disabling.
 PASS: Fragmentless render ShaderProgram should expose its vertex WGSL source.
 
 -- Running test case: Canvas.ShaderProgram.WebGPU.CreateComputePipelineAsync

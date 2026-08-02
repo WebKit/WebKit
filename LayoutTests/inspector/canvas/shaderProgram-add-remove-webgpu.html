@@ -37,10 +37,12 @@ function test() {
             let computeProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
             InspectorTest.expectThat(computeProgram instanceof WI.ShaderProgram, "Found the existing compute ShaderProgram.");
             InspectorTest.expectEqual(computeProgram.canvas, canvas, "Compute ShaderProgram should have the WebGPU Canvas as its parent.");
+            InspectorTest.expectFalse(computeProgram.supportsDisabling, "Compute ShaderProgram should not support disabling.");
 
             let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
             InspectorTest.expectThat(renderProgram instanceof WI.ShaderProgram, "Found the existing render ShaderProgram.");
             InspectorTest.expectEqual(renderProgram.canvas, canvas, "Render ShaderProgram should have the WebGPU Canvas as its parent.");
+            InspectorTest.expectTrue(renderProgram.supportsDisabling, "Render ShaderProgram should support disabling.");
             InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "Canvas should initially have two ShaderPrograms.");
         },
     });
@@ -81,6 +83,7 @@ function test() {
         async test() {
             let shaderProgram = await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Vertex, `void createFragmentlessRenderPipeline()`);
             InspectorTest.expectFalse(shaderProgram.sharesVertexFragmentShader, "Fragmentless render ShaderProgram should not report vertex and fragment shader module sharing.");
+            InspectorTest.expectTrue(shaderProgram.supportsDisabling, "Fragmentless render ShaderProgram should support disabling.");
             let {source} = await shaderProgram.target.CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
             InspectorTest.expectTrue(source.includes("@vertex") && source.includes("vertexMain"), "Fragmentless render ShaderProgram should expose its vertex WGSL source.");
         },

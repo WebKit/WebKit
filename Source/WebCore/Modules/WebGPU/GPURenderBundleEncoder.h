@@ -34,6 +34,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -93,6 +94,7 @@ private:
     }
 
     const Ref<WebGPU::RenderBundleEncoder> m_backing;
+    WeakPtr<GPURenderPipeline> m_currentPipeline;
 };
 
 }

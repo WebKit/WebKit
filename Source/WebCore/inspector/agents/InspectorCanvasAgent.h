@@ -88,7 +88,9 @@ public:
     Inspector::Protocol::ErrorStringOr<String> requestShaderSource(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType);
 #if ENABLE(WEBGL)
     Inspector::Protocol::ErrorStringOr<void> updateShader(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType, const String& source);
+#endif
     Inspector::Protocol::ErrorStringOr<void> setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId&, bool disabled);
+#if ENABLE(WEBGL)
     Inspector::Protocol::ErrorStringOr<void> setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId&, bool highlighted);
 #endif // ENABLE(WEBGL)
 
@@ -117,6 +119,7 @@ public:
     void willDestroyWebGPUComputePipeline(GPUComputePipeline&);
     void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
     void willDestroyWebGPURenderPipeline(GPURenderPipeline&);
+    bool isWebGPURenderPipelineDisabled(GPURenderPipeline&);
 
     void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
 

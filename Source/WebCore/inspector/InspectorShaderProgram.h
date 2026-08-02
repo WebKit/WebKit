@@ -61,7 +61,7 @@ public:
     bool updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source);
 
     bool disabled() const { return m_disabled; }
-    void setDisabled(bool disabled) { m_disabled = disabled; }
+    bool setDisabled(bool);
 
     bool highlighted() const { return m_highlighted; }
     void setHighlighted(bool value) { m_highlighted = value; }

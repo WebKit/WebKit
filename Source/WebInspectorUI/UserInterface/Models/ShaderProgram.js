@@ -94,6 +94,19 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     get canvas() { return this._canvas; }
     get sharesVertexFragmentShader() { return this._sharesVertexFragmentShader; }
 
+    get supportsDisabling()
+    {
+        switch (this._programType) {
+        case ShaderProgram.ProgramType.Render:
+        case ShaderProgram.ProgramType.Vertex:
+            return true;
+        case ShaderProgram.ProgramType.Compute:
+            return false;
+        }
+        console.assert(false, this._programType);
+        return false;
+    }
+
     get displayName()
     {
         let format = null;
@@ -131,11 +144,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 
     set disabled(disabled)
     {
-        console.assert(this._programType === ShaderProgram.ProgramType.Render);
-        console.assert(this._canvas.isWebGL || this._canvas.isWebGL2);
-
-        if (this._canvas.contextType === WI.Canvas.ContextType.WebGPU)
-            return;
+        console.assert(this.supportsDisabling);
 
         if (this._disabled === disabled)
             return;

@@ -1,0 +1,88 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+async function load() {
+    await initializeWebGPU();
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.setShaderProgramDisabled.WebGPU");
+    let canvas = InspectorTest.WebGPU.canvas();
+    InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
+    let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
+    InspectorTest.assert(renderProgram, "There should be a render ShaderProgram.");
+
+    async function renderContent() {
+        const eventName = "WebGPUCanvasSnapshot";
+        let snapshotPromise = InspectorTest.awaitEvent(eventName);
+        InspectorTest.evaluateInPage(`void renderWithPipeline("${eventName}")`);
+        let event = await snapshotPromise;
+        return event.data.content;
+    }
+
+    async function renderBundleContent() {
+        const eventName = "WebGPUCanvasRenderBundleSnapshot";
+        let snapshotPromise = InspectorTest.awaitEvent(eventName);
+        InspectorTest.evaluateInPage(`void renderWithRenderBundle("${eventName}")`);
+        let event = await snapshotPromise;
+        return event.data.content;
+    }
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramDisabled.WebGPU.RenderPipeline",
+        description: "Check that disabling a render pipeline suppresses its draw calls and re-enabling it restores rendering.",
+        async test() {
+            InspectorTest.expectTrue(renderProgram.supportsDisabling, "WebGPU render ShaderProgram should support disabling.");
+
+            let enabledContent = await renderContent();
+            await renderProgram.target.CanvasAgent.setShaderProgramDisabled(renderProgram.identifier, true);
+            let disabledContent = await renderContent();
+            InspectorTest.expectNotEqual(disabledContent, enabledContent, "Disabling the render pipeline should change render output.");
+
+            await renderProgram.target.CanvasAgent.setShaderProgramDisabled(renderProgram.identifier, false);
+            let reenabledContent = await renderContent();
+            InspectorTest.expectEqual(reenabledContent, enabledContent, "Re-enabling the render pipeline should restore render output.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramDisabled.WebGPU.RenderBundlePipeline",
+        description: "Check that disabling a render pipeline suppresses draw calls encoded into a render bundle.",
+        async test() {
+            let enabledContent = await renderBundleContent();
+            await renderProgram.target.CanvasAgent.setShaderProgramDisabled(renderProgram.identifier, true);
+            let disabledContent = await renderBundleContent();
+            InspectorTest.expectNotEqual(disabledContent, enabledContent, "Disabling the render pipeline should suppress a render bundle draw call.");
+
+            await renderProgram.target.CanvasAgent.setShaderProgramDisabled(renderProgram.identifier, false);
+            let reenabledContent = await renderBundleContent();
+            InspectorTest.expectEqual(reenabledContent, enabledContent, "Re-enabling the render pipeline should restore render bundle encoding.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramDisabled.WebGPU.UnsupportedActions",
+        description: "Check that unsupported WebGPU ShaderProgram actions return protocol errors.",
+        async test() {
+            let computeProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
+            InspectorTest.expectThat(computeProgram instanceof WI.ShaderProgram, "There should be a compute ShaderProgram.");
+
+            let disableError = await computeProgram.target.CanvasAgent.setShaderProgramDisabled(computeProgram.identifier, true).then(() => null, (error) => error);
+            InspectorTest.expectTrue(!!disableError, "Disabling a compute pipeline should return an error.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests Canvas.setShaderProgramDisabled for a WebGPU render pipeline.</p>
+    <canvas id="webgpu-canvas" width="4" height="4"></canvas>
+</body>
+</html>

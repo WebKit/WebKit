@@ -1352,6 +1352,13 @@ void InspectorInstrumentation::willDestroyWebGPURenderPipelineImpl(Instrumenting
         canvasAgent->willDestroyWebGPURenderPipeline(pipeline);
 }
 
+bool InspectorInstrumentation::isWebGPURenderPipelineDisabledImpl(InstrumentingAgents& instrumentingAgents, GPURenderPipeline& pipeline)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        return canvasAgent->isWebGPURenderPipelineDisabled(pipeline);
+    return false;
+}
+
 void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {
     if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())

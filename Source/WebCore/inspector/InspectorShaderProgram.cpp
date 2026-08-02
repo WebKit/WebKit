@@ -200,6 +200,23 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
     );
 }
 
+bool InspectorShaderProgram::setDisabled(bool disabled)
+{
+    return WTF::switchOn(m_program
+#if ENABLE(WEBGL)
+        , [&](const WeakRef<WebGLProgram>&) {
+            m_disabled = disabled;
+            return true;
+        }
+#endif // ENABLE(WEBGL)
+        , [](const WeakRef<GPUComputePipeline>&) { return false; }
+        , [&](const WeakRef<GPURenderPipeline>&) {
+            m_disabled = disabled;
+            return true;
+        }
+    );
+}
+
 Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObjectForShaderProgram()
 {
     auto programType = Inspector::Protocol::Canvas::ProgramType::Render;

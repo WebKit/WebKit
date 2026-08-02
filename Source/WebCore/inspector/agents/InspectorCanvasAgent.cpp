@@ -376,6 +376,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::updateShader(cons
     return { };
 }
 
+#endif // ENABLE(WEBGL)
+
 Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId& programId, bool disabled)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -384,10 +386,13 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramD
     if (!inspectorProgram)
         return makeUnexpected(errorString);
 
-    inspectorProgram->setDisabled(disabled);
+    if (!inspectorProgram->setDisabled(disabled))
+        return makeUnexpected("Failed to disable shader for given programId"_s);
 
     return { };
 }
+
+#if ENABLE(WEBGL)
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId& programId, bool highlighted)
 {
@@ -655,6 +660,16 @@ void InspectorCanvasAgent::willDestroyWebGPURenderPipeline(GPURenderPipeline& pi
         return;
 
     unbindProgram(*inspectorProgram);
+}
+
+bool InspectorCanvasAgent::isWebGPURenderPipelineDisabled(GPURenderPipeline& pipeline)
+{
+    RefPtr inspectorProgram = findInspectorProgram(pipeline);
+    ASSERT(inspectorProgram);
+    if (!inspectorProgram)
+        return false;
+
+    return inspectorProgram->disabled();
 }
 
 void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)

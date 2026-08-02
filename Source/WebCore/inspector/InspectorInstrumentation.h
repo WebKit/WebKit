@@ -341,6 +341,7 @@ public:
     static void willDestroyWebGPUComputePipeline(GPUComputePipeline&);
     static void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
     static void willDestroyWebGPURenderPipeline(GPURenderPipeline&);
+    static bool isWebGPURenderPipelineDisabled(GPURenderPipeline&);
 
     static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationName(WebAnimation&);
@@ -555,6 +556,7 @@ private:
     static void willDestroyWebGPUComputePipelineImpl(InstrumentingAgents&, GPUComputePipeline&);
     static void didCreateWebGPURenderPipelineImpl(InstrumentingAgents&, GPUDevice&, GPURenderPipeline&);
     static void willDestroyWebGPURenderPipelineImpl(InstrumentingAgents&, GPURenderPipeline&);
+    static bool isWebGPURenderPipelineDisabledImpl(InstrumentingAgents&, GPURenderPipeline&);
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
@@ -1579,6 +1581,16 @@ inline void InspectorInstrumentation::willDestroyWebGPURenderPipeline(GPURenderP
         if (RefPtr agents = instrumentingAgents(protect(device->scriptExecutionContext())))
             willDestroyWebGPURenderPipelineImpl(*agents, pipeline);
     }
+}
+
+inline bool InspectorInstrumentation::isWebGPURenderPipelineDisabled(GPURenderPipeline& pipeline)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (RefPtr device = pipeline.device()) {
+        if (RefPtr agents = instrumentingAgents(protect(device->scriptExecutionContext())))
+            return isWebGPURenderPipelineDisabledImpl(*agents, pipeline);
+    }
+    return false;
 }
 
 inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
