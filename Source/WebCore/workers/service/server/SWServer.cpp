@@ -922,11 +922,12 @@ void SWServer::tryInstallContextData(const std::optional<ProcessIdentifier>& req
     RefPtr connection = contextConnectionForRegistrableDomain(site.domain());
     if (!connection) {
         auto firstPartyForCookies = data.registration.key.firstPartyForCookies();
+        auto serviceWorkerPageIdentifier = data.serviceWorkerPageIdentifier;
         m_pendingContextDatas.ensure(site.domain(), [] {
             return Vector<ServiceWorkerContextData> { };
         }).iterator->value.append(WTF::move(data));
 
-        createContextConnection(site, data.serviceWorkerPageIdentifier);
+        createContextConnection(site, serviceWorkerPageIdentifier);
         return;
     }
 

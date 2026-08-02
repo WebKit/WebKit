@@ -45,7 +45,7 @@ struct ClipPath {
     ClipPath(BoxPath&& box) : operation { WTF::move(box.operation) } { }
     ClipPath(const BoxPath& box) : operation { box.operation } { }
 
-    explicit ClipPath(RefPtr<PathOperation>&& operation) : operation { WTF::move(operation) } { RELEASE_ASSERT(isValid(operation)); }
+    explicit ClipPath(RefPtr<PathOperation>&& operation) : operation { WTF::move(operation) } { RELEASE_ASSERT(isValid(this->operation)); }
     explicit ClipPath(const RefPtr<PathOperation>& operation) : operation { operation } { RELEASE_ASSERT(isValid(operation)); }
 
     bool isNone() const { return !operation; }

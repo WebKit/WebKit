@@ -432,9 +432,9 @@ void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient>&
 
 void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 {
+    LOG_WITH_STREAM(Language, stream << "WebProcessPool is setting OverrideLanguages: " << languages);
     WebKit::setOverrideLanguages(WTF::move(languages));
 
-    LOG_WITH_STREAM(Language, stream << "WebProcessPool is setting OverrideLanguages: " << languages);
     sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(overrideLanguages()));
 
 #if ENABLE(GPU_PROCESS)

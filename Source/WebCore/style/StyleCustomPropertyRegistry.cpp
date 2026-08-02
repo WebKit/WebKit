@@ -129,9 +129,10 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
 
     // Last rule wins.
     // https://drafts.css-houdini.org/css-properties-values-api/#determining-registration
-    m_propertiesFromStylesheet.set(property.name, makeUniqueRef<CSSRegisteredCustomProperty>(WTF::move(property)));
+    auto name = property.name;
+    m_propertiesFromStylesheet.set(name, makeUniqueRef<CSSRegisteredCustomProperty>(WTF::move(property)));
 
-    invalidate(property.name);
+    invalidate(name);
 }
 
 void CustomPropertyRegistry::clearRegisteredFromStylesheets()
