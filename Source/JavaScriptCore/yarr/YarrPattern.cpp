@@ -890,6 +890,26 @@ private:
         size_t rhsMatchIndex = 0;
         size_t rhsRangeIndex = 0;
 
+        auto lhsHasMore = [&] {
+            return lhsMatchIndex < m_matches32.size() || lhsRangeIndex < m_ranges32.size();
+        };
+        auto rhsHasMore = [&] {
+            return rhsMatchIndex < rhsMatches32.size() || rhsRangeIndex < rhsRanges32.size();
+        };
+        auto canProduceMore = [&] {
+            switch (m_setOp) {
+            case CharacterClassSetOp::Default:
+            case CharacterClassSetOp::Union:
+                return lhsHasMore() || rhsHasMore();
+            case CharacterClassSetOp::Intersection:
+                return lhsHasMore() && rhsHasMore();
+            case CharacterClassSetOp::Subtraction:
+                return lhsHasMore();
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+            return false;
+        };
+
         if (!m_matches32.isEmpty())
             chunkLo = std::min(chunkLo, m_matches32[0]);
 
@@ -902,16 +922,7 @@ private:
         if (!rhsRanges32.isEmpty())
             chunkLo = std::min(chunkLo, rhsRanges32[0].begin);
 
-        // If both the LHS and RHS are empty, bail out.
-        if (chunkLo == INT_MAX)
-            return;
-
-        while (lhsMatchIndex < m_matches32.size() || lhsRangeIndex < m_ranges32.size() || rhsMatchIndex < rhsMatches32.size() || rhsRangeIndex < rhsRanges32.size()) {
-            if (rhsMatchIndex >= rhsMatches32.size() && rhsRangeIndex > rhsRanges32.size() && m_setOp == CharacterClassSetOp::Intersection) {
-                // RHS is exhausted, we can short cut from here. Can't intersect anything more so bail out.
-                break;
-            }
-
+        while (canProduceMore()) {
             chunkHi = chunkLo + chunkSize - 1;
 
             for (; lhsMatchIndex < m_matches32.size(); ++lhsMatchIndex) {
