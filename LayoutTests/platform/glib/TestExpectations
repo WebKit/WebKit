@@ -934,6 +934,8 @@ imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square
 
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
+imported/w3c/web-platform-tests/storage/ [ Pass ]
+storage/storagemanager/ [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
@@ -3756,9 +3758,6 @@ imported/w3c/web-platform-tests/css/cssom-view/visual-scrollIntoView-003.html [ 
 webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base-data.html [ Failure ]
 webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base-javascript.html [ Failure ]
 webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative.html [ Failure ]
-
-webkit.org/b/264591 imported/w3c/web-platform-tests/storage/storagemanager-estimate.https.any.html [ Failure ]
-webkit.org/b/264591 imported/w3c/web-platform-tests/storage/storagemanager-estimate.https.any.worker.html [ Failure ]
 
 # This test is constantly timing out.
 webkit.org/b/217621 media/video-buffering-allowed.html [ Skip ] # Timeout.

@@ -8513,9 +8513,11 @@ StorageAPIEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 StorageAPIEstimateEnabled:
@@ -8529,9 +8531,11 @@ StorageAPIEstimateEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)" : true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 StorageAccessAPIEnabled:
