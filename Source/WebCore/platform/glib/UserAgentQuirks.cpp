@@ -77,7 +77,7 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
 // quirk is good for websites that do macOS-specific things we don't want on
 // other platforms, and when the risk of the website doing Firefox-specific
 // things is relatively low.
-static bool urlRequiresFirefoxBrowser(const String& domain)
+static bool urlRequiresFirefoxBrowser(const String& domain, [[maybe_unused]] const String& baseDomain)
 {
     // Red Hat Bugzilla displays a warning page when performing searches with WebKitGTK's standard
     // user agent.
@@ -96,7 +96,7 @@ static bool urlRequiresFirefoxBrowser(const String& domain)
     if (domain == "www.disneyplus.com"_s)
         return true;
 
-    if (domain == "www.hbomax.com"_s || domain == "auth.hbomax.com"_s || domain == "play.hbomax.com"_s)
+    if (baseDomain == "hbomax.com"_s)
         return true;
 #endif
 
@@ -201,7 +201,7 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
-    else if (urlRequiresFirefoxBrowser(domain))
+    else if (urlRequiresFirefoxBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
 
     if (urlRequiresMacintoshPlatform(domain, baseDomain))
