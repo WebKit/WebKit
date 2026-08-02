@@ -61,6 +61,8 @@ public:
     static Ref<InlineCacheHandler> create(Ref<InlineCacheHandler>&&, CodeBlock*, PropertyInlineCache&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&&, unsigned callLinkInfoCount);
     static Ref<InlineCacheHandler> createPreCompiled(Ref<InlineCacheHandler>&&, CodeBlock*, PropertyInlineCache&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&&, AccessCase&, CacheType);
 
+    ~InlineCacheHandler();
+
     void operator delete(InlineCacheHandler*, std::destroying_delete_t);
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }

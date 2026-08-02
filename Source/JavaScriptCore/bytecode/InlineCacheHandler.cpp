@@ -71,6 +71,8 @@ InlineCacheHandler::InlineCacheHandler(bool makesJSCalls, Ref<InlineCacheHandler
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+InlineCacheHandler::~InlineCacheHandler() = default;
+
 InlineCacheHandlerWithJSCall::InlineCacheHandlerWithJSCall(Ref<InlineCacheHandler>&& previous, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&& watchpoint, CacheType cacheType)
     : InlineCacheHandler(true, WTF::move(previous), WTF::move(stubRoutine), WTF::move(watchpoint), cacheType)
 {
