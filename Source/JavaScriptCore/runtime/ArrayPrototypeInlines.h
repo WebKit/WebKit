@@ -35,7 +35,6 @@
 #include "JSStringJoiner.h"
 #include "JSStringInlines.h"
 #include "ObjectPrototype.h"
-#include "StringRecursionChecker.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

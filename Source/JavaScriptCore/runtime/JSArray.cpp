@@ -32,6 +32,7 @@
 #include "ScopedArguments.h"
 #include "TopExceptionScope.h"
 #include "TypeError.h"
+#include "VMInlines.h"
 #include <wtf/Assertions.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -1055,10 +1056,13 @@ JSString* JSArray::fastToString(JSGlobalObject* globalObject)
 
     unsigned length = this->length();
 
-    StringRecursionChecker checker(globalObject, this);
-    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return jsEmptyString(vm);
+    // JSObject::toPrimitive and JSObject::toString call this directly instead of going through
+    // Interpreter::executeCall, so an array nested in itself recurses here without ever crossing a
+    // call frame that would perform the usual stack check.
+    if (!vm.isSafeToRecurseSoft()) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return nullptr;
+    }
 
     if (canUseFastArrayJoin(this)) [[likely]] {
         const Latin1Character comma = ',';

@@ -23,7 +23,6 @@
 
 #include "IntegrityInlines.h"
 #include "JSCInlines.h"
-#include "StringRecursionChecker.h"
 
 namespace JSC {
 
@@ -80,12 +79,6 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
         return throwVMTypeError(globalObject, scope);
     JSObject* thisObj = asObject(thisValue);
     Integrity::auditStructureID(thisObj->structureID());
-
-    // Guard against recursion!
-    StringRecursionChecker checker(globalObject, thisObj);
-    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return JSValue::encode(earlyReturnValue);
 
     // 3. Let name be the result of calling the [[Get]] internal method of O with argument "name".
     JSValue name = thisObj->get(globalObject, vm.propertyNames->name);

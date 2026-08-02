@@ -37,7 +37,6 @@
 #include "RegExpObject.h"
 #include "RegExpObjectInlines.h"
 #include "RegExpPrototypeInlines.h"
-#include "StringRecursionChecker.h"
 #include "StringSplitCacheInlines.h"
 #include "YarrFlags.h"
 #include <wtf/text/StringBuilder.h>
@@ -413,11 +412,6 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncToString, (JSGlobalObject* globalObject,
 
     JSObject* thisObject = asObject(thisValue);
     Integrity::auditStructureID(thisObject->structureID());
-
-    StringRecursionChecker checker(globalObject, thisObject);
-    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return JSValue::encode(earlyReturnValue);
 
     JSValue sourceValue = thisObject->get(globalObject, vm.propertyNames->source);
     RETURN_IF_EXCEPTION(scope, { });

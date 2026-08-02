@@ -5182,8 +5182,6 @@
 		932F5BE10822A1C700736975 /* jsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jsc; sourceTree = BUILT_PRODUCTS_DIR; };
 		93303FE80E6A72B500786E6A /* SmallStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmallStrings.cpp; sourceTree = "<group>"; };
 		93303FEA0E6A72C000786E6A /* SmallStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallStrings.h; sourceTree = "<group>"; };
-		93345A8712D838C400302BE3 /* StringRecursionChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringRecursionChecker.cpp; sourceTree = "<group>"; };
-		93345A8812D838C400302BE3 /* StringRecursionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringRecursionChecker.h; sourceTree = "<group>"; };
 		933A349A038AE7C6008635CE /* Identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* Identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		937B63CC09E766D200A671DD /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
@@ -9511,8 +9509,6 @@
 				BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */,
 				BC18C3C60E16EE3300B34460 /* StringPrototype.h */,
 				E325A35F2221158A007349A1 /* StringPrototypeInlines.h */,
-				93345A8712D838C400302BE3 /* StringRecursionChecker.cpp */,
-				93345A8812D838C400302BE3 /* StringRecursionChecker.h */,
 				8C469C292D8EBC8A008C6403 /* StringReplaceCache.cpp */,
 				E35B36062A2E981E004EC264 /* StringReplaceCache.h */,
 				E35B36052A2E981E004EC264 /* StringReplaceCacheInlines.h */,

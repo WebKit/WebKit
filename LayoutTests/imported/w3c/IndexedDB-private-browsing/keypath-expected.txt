@@ -17,5 +17,5 @@ PASS Keypath - [['x'], 'y'] (stringifies)
 PASS Keypath - ['x', {toString->'y'}] (stringifies)
 PASS Keypath - name,type
 PASS Keypath - name,type.name
-PASS Keypath - array loop -> stringify becomes ['']
+PASS Keypath - a self-referential array key path exhausts the stack
 

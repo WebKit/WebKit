@@ -1,83 +1,97 @@
-Verify that we do not recurse infinitely through one of the Array->string conversion.
+Verify that an Array->string conversion of an array that reaches itself terminates by throwing a RangeError, rather than recursing infinitely or silently substituting the empty string.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS var arrayDirectlyContainingItself = [];
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.toString(); is ""
+    arrayDirectlyContainingItself.toString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayDirectlyContainingItself = [];
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.toLocaleString(); is ""
+    arrayDirectlyContainingItself.toLocaleString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayDirectlyContainingItself = [];
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.join(","); is ""
-PASS var arrayDirectlyContainingItself = [];
-    arrayDirectlyContainingItself.push(1);
-    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.push("WebKit!");
-    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.toString(); is "1,,WebKit!,"
+    arrayDirectlyContainingItself.join(","); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayDirectlyContainingItself = [];
     arrayDirectlyContainingItself.push(1);
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
     arrayDirectlyContainingItself.push("WebKit!");
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.toLocaleString(); is "1,,WebKit!,"
+    arrayDirectlyContainingItself.toString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayDirectlyContainingItself = [];
     arrayDirectlyContainingItself.push(1);
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
     arrayDirectlyContainingItself.push("WebKit!");
     arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
-    arrayDirectlyContainingItself.join("-"); is "1--WebKit!-"
+    arrayDirectlyContainingItself.toLocaleString(); threw exception RangeError: Maximum call stack size exceeded..
+PASS var arrayDirectlyContainingItself = [];
+    arrayDirectlyContainingItself.push(1);
+    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
+    arrayDirectlyContainingItself.push("WebKit!");
+    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
+    arrayDirectlyContainingItself.join("-"); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyContainingItself = [];
     arrayIndirectlyContainingItself.push(1);
     arrayIndirectlyContainingItself.push([1, 2, [5, 6, [arrayIndirectlyContainingItself]]]);
     arrayIndirectlyContainingItself.push("WebKit!");
-    arrayIndirectlyContainingItself.toString(); is "1,1,2,5,6,,WebKit!"
+    arrayIndirectlyContainingItself.toString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyContainingItself = [];
     arrayIndirectlyContainingItself.push(1);
     arrayIndirectlyContainingItself.push([1, 2, [5, 6, [arrayIndirectlyContainingItself]]]);
     arrayIndirectlyContainingItself.push("WebKit!");
-    arrayIndirectlyContainingItself.toLocaleString(); is "1,1,2,5,6,,WebKit!"
+    arrayIndirectlyContainingItself.toLocaleString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyContainingItself = [];
     arrayIndirectlyContainingItself.push(1);
     arrayIndirectlyContainingItself.push([1, 2, [5, 6, [arrayIndirectlyContainingItself]]]);
     arrayIndirectlyContainingItself.push("WebKit!");
-    arrayIndirectlyContainingItself.join("="); is "1=1,2,5,6,=WebKit!"
+    arrayIndirectlyContainingItself.join("="); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyContainingItself = [];
     arrayIndirectlyContainingItself.push(1);
     arrayIndirectlyContainingItself.push([1, 2, [5, 6, [arrayIndirectlyContainingItself]]]);
     arrayIndirectlyContainingItself.push("WebKit!");
-    ["z", arrayIndirectlyContainingItself, 9].toString(); is "z,1,1,2,5,6,,WebKit!,9"
+    ["z", arrayIndirectlyContainingItself, 9].toString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyContainingItself = [];
     arrayIndirectlyContainingItself.push(1);
     arrayIndirectlyContainingItself.push([1, 2, [5, 6, [arrayIndirectlyContainingItself]]]);
     arrayIndirectlyContainingItself.push("WebKit!");
-    ["z", arrayIndirectlyContainingItself, 9].toLocaleString(); is "z,1,1,2,5,6,,WebKit!,9"
+    ["z", arrayIndirectlyContainingItself, 9].toLocaleString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyContainingItself = [];
     arrayIndirectlyContainingItself.push(1);
     arrayIndirectlyContainingItself.push([1, 2, [5, 6, [arrayIndirectlyContainingItself]]]);
     arrayIndirectlyContainingItself.push("WebKit!");
-    ["z", arrayIndirectlyContainingItself, 9].join("&"); is "z&1,1,2,5,6,,WebKit!&9"
+    ["z", arrayIndirectlyContainingItself, 9].join("&"); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyConvertingItself = ["a"];
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.toString() } });
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.toLocaleString() } });
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.join("~") } });
     arrayIndirectlyConvertingItself.push("WebKit!");
-    ["z", arrayIndirectlyConvertingItself, 9].toString(); is "z,a,,,,WebKit!,9"
+    ["z", arrayIndirectlyConvertingItself, 9].toString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyConvertingItself = ["a"];
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.toString() } });
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.toLocaleString() } });
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.join("~") } });
     arrayIndirectlyConvertingItself.push("WebKit!");
-    ["z", arrayIndirectlyConvertingItself, 9].toLocaleString(); is "z,a,,,,WebKit!,9"
+    ["z", arrayIndirectlyConvertingItself, 9].toLocaleString(); threw exception RangeError: Maximum call stack size exceeded..
 PASS var arrayIndirectlyConvertingItself = ["a"];
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.toString() } });
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.toLocaleString() } });
     arrayIndirectlyConvertingItself.push({ array: arrayIndirectlyConvertingItself, toString: function() { return this.array.join("~") } });
     arrayIndirectlyConvertingItself.push("WebKit!");
-    ["z", arrayIndirectlyConvertingItself, 9].join("*"); is "z*a,,,,WebKit!*9"
+    ["z", arrayIndirectlyConvertingItself, 9].join("*"); threw exception RangeError: Maximum call stack size exceeded..
+PASS var arrayDirectlyContainingItself = [];
+    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
+    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
+    arrayDirectlyContainingItself.toString(); threw exception RangeError: Maximum call stack size exceeded..
+PASS var shared = [1, 2];
+    [shared, shared].toString(); is "1,2,1,2"
+PASS var shared = [1, 2];
+    [shared, shared].toLocaleString(); is "1,2,1,2"
+PASS var shared = [1, 2];
+    [shared, shared].join("|"); is "1,2|1,2"
+PASS var arrayDirectlyContainingItself = [];
+    arrayDirectlyContainingItself.push(arrayDirectlyContainingItself);
+    try { arrayDirectlyContainingItself.toString(); } catch (e) { }
+    [1, 2].toString(); is "1,2"
 PASS successfullyParsed is true
 
 TEST COMPLETE

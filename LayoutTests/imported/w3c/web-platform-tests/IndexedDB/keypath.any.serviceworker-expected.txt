@@ -18,5 +18,5 @@ PASS undefined - ['x', {toString->'y'}] (stringifies)
 PASS undefined - name,type
 PASS undefined - name,type.name
 PASS undefined - list with 1 field
-PASS undefined - array loop -> stringify becomes ['']
+PASS Key path conversion: a self-referential array exhausts the stack
 

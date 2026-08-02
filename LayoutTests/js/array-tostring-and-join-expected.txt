@@ -1,9 +1,13 @@
-This test checks that toString and join share the same HashSet for visited elements.
+This test checks that an Array->string conversion that reaches the same array again, either directly or through another object's toString, throws a RangeError instead of substituting the empty string for the repeat visit.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS arr.join() is '1,2,,**'
+PASS arr.join() threw exception RangeError: Maximum call stack size exceeded..
+PASS arr.toString() threw exception RangeError: Maximum call stack size exceeded..
+PASS String(arr) threw exception RangeError: Maximum call stack size exceeded..
+PASS [3, plain].join() is "3,*1,2*"
+PASS [3, plain].toString() is "3,*1,2*"
 PASS successfullyParsed is true
 
 TEST COMPLETE

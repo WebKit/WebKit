@@ -1,11 +1,15 @@
-This test checks that toString() does not have a problem when an object has itself as a property.
+This test checks that a string conversion of an object that reaches itself throws a RangeError rather than silently substituting the empty string.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS var array = []; array[0] = array; array + '' is ''
-PASS var error = new Error; error.name = error; error.message = error; error + '' is ''
+PASS var array = []; array[0] = array; array + '' threw exception RangeError: Maximum call stack size exceeded..
+PASS var error = new Error; error.name = error; error.message = error; error + '' threw exception RangeError: Maximum call stack size exceeded..
 PASS var regexp = /a/; regexp.source = regexp; regexp + '' is '/a/'
+PASS var regexp = /a/; Object.defineProperty(regexp, 'source', { get: function() { return regexp; } }); regexp + '' threw exception RangeError: Maximum call stack size exceeded..
+PASS var array = []; array[0] = { toString: function() { return Error.prototype.toString.call(array); } }; array.join() is "Error"
+PASS var array = []; array[0] = { toString: function() { return RegExp.prototype.toString.call(array); } }; array.join() is "/undefined/undefined"
+PASS var object = { length: 2, 0: 'x', 1: 'y' }; object.name = { toString: function() { return Array.prototype.join.call(object, '-'); } }; Error.prototype.toString.call(object) is "x-y"
 PASS successfullyParsed is true
 
 TEST COMPLETE

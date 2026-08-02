@@ -24,4 +24,9 @@ regexp.lastIndex = {
 let result = foo(arr, regexp, "abcd");
 
 assertEq(arr[1], "3.54484805889626e-310");
-assertEq(result, ",3.54484805889626e-310,3.3");
+assertEq(arr[2], "3.3");
+
+// arr[0] was set to arr above, so foo returned the array itself. Check that by identity: arr is
+// cyclic, and converting a cyclic array to a string exhausts the stack.
+assertEq(arr[0] === arr, true);
+assertEq(result === arr, true);

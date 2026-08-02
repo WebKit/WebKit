@@ -41,7 +41,6 @@
 #include "ObjectConstructor.h"
 #include "ObjectPrototypeInlines.h"
 #include "StableSort.h"
-#include "StringRecursionChecker.h"
 #include "VMEntryScopeInlines.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
@@ -325,11 +324,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToLocaleString, (JSGlobalObject* globalOb
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    StringRecursionChecker checker(globalObject, thisObject);
-    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return JSValue::encode(earlyReturnValue);
-
     // 2. Let len be ? ToLength(? Get(array, "length")).
     uint64_t length = toLength(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -463,11 +457,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (!thisObject) [[unlikely]]
         return encodedJSValue();
-
-    StringRecursionChecker checker(globalObject, thisObject);
-    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return JSValue::encode(earlyReturnValue);
 
     // 2. Let len be ? ToLength(? Get(O, "length")).
     uint64_t length = toLength(globalObject, thisObject);
