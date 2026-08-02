@@ -67,6 +67,9 @@ extension EnvironmentValues {
     @Entry
     var webViewImmersiveEnvironmentRequestContext: ImmersiveEnvironmentRequestContext? = nil
     #endif
+
+    @Entry
+    var webViewContentEnvironment = WebView.ContentEnvironment_v0.standard
 }
 
 #endif

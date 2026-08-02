@@ -246,6 +246,27 @@ extension WebView {
         /// The URL of the link that the user clicked.
         public let linkURL: URL?
     }
+
+    /// Defines a specific set of semantics representing how the webpage contents are used.
+    @_spi(Experimental)
+    public struct ContentEnvironment_v0: Sendable {
+        enum Storage: Sendable {
+            case standard
+            case editable
+        }
+
+        /// The standard environment with no specialized behavior changes.
+        @_spi(Experimental)
+        public static let standard = Self(storage: .standard)
+
+        /// An environment suitable for editable contents.
+        ///
+        /// This environment imbues `contenteditable` and other affordances that are designed for editable use cases.
+        @_spi(Experimental)
+        public static let editable = Self(storage: .editable)
+
+        let storage: Storage
+    }
 }
 
 extension WebView {

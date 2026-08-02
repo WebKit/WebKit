@@ -217,6 +217,15 @@ extension View {
         return self
         #endif
     }
+
+    /// The semantic environment describing how the contents of the web view will be used in.
+    ///
+    /// - Parameter value: The kind of environment.
+    /// - Returns: A view with the specified content environment configured.
+    @_spi(Experimental)
+    public nonisolated func webViewContentEnvironmentV0(_ value: WebView.ContentEnvironment_v0) -> some View {
+        environment(\.webViewContentEnvironment, value)
+    }
 }
 
 #endif

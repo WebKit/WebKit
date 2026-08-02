@@ -570,6 +570,7 @@
 				WebKit/WebPage/WebPageScrollbarTests.swift,
 				WebKit/WebPage/WebPageTests.swift,
 				WebKit/WebPage/WebPageTransferableTests.swift,
+				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
@@ -1361,6 +1362,7 @@
 				WebKit/WebPage/WebPageScrollbarTests.swift,
 				WebKit/WebPage/WebPageTests.swift,
 				WebKit/WebPage/WebPageTransferableTests.swift,
+				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 				WTF/cocoa/SwiftCxxInteropTestbed.cpp,

@@ -139,6 +139,8 @@ struct WebViewRepresentable {
         webView.configuration.preferences.isTextInteractionEnabled = environment.webViewTextSelection
         webView.configuration.preferences.isElementFullscreenEnabled = environment.webViewElementFullscreenBehavior.value == .enabled
 
+        webView._isEditable = environment.webViewContentEnvironment.storage == .editable
+
         platformView.onScrollGeometryChange = environment.webViewOnScrollGeometryChange
 
         #if ENABLE_MODEL_ELEMENT_IMMERSIVE
