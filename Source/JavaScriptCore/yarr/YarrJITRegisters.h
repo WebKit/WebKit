@@ -61,7 +61,6 @@ public:
     static constexpr GPRReg regUnicodeInputAndTrail = ARM64Registers::x10;
     static constexpr GPRReg unicodeAndSubpatternIdTemp = ARM64Registers::x5;
 
-    static constexpr GPRReg firstCharacterAdditionalReadSize { ARM64Registers::x12 };
     static constexpr GPRReg endOfStringAddress = ARM64Registers::x15;
 
     static constexpr GPRReg returnRegister = ARM64Registers::x0;
@@ -193,7 +192,6 @@ public:
     GPRReg regUnicodeInputAndTrail { InvalidGPRReg };
     GPRReg unicodeAndSubpatternIdTemp { InvalidGPRReg };
     GPRReg endOfStringAddress { InvalidGPRReg };
-    GPRReg firstCharacterAdditionalReadSize { InvalidGPRReg };
 
     // SIMD registers for Boyer-Moore SIMD lookahead
     // These are not used for inline JIT, but need to be present for template instantiation.
