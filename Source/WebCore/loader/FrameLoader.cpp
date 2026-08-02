@@ -423,7 +423,10 @@ LocalFrame& FrameLoader::frame() const
 void FrameLoader::init()
 {
     // This somewhat odd set of steps gives the frame an initial empty document.
-    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()));
+    ResourceRequest initialRequest { URL({ }, emptyString()) };
+    initialRequest.setIsSameSite(true);
+    initialRequest.setIsTopSite(m_frame->isMainFrame());
+    setPolicyDocumentLoader(m_client->createDocumentLoader(WTF::move(initialRequest), SubstituteData()));
     setProvisionalDocumentLoader(m_policyDocumentLoader.copyRef());
     protect(m_provisionalDocumentLoader)->startLoadingMainResource();
     m_initialDocumentCreator = nullptr;

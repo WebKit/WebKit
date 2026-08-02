@@ -45,6 +45,7 @@
 #include "WebStorageProvider.h"
 #include "WebUserContentController.h"
 #include "WebWorkerClient.h"
+#include <WebCore/Document.h>
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
