@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/text/ASCIILiteral.h>
+
 #ifdef __OBJC__
 
 #import <Foundation/Foundation.h>
