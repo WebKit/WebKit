@@ -58,6 +58,7 @@
     "web-platform-tests/css/CSS2/floats": "import",
     "web-platform-tests/css/CSS2/linebox": "import",
     "web-platform-tests/css/CSS2/normal-flow": "import",
+    "web-platform-tests/css/CSS2/reference": "import",
     "web-platform-tests/css/CSS2/stacking-context": "import",
     "web-platform-tests/css/CSS2/tables": "import",
     "web-platform-tests/css/CSS2/visudet": "import",
