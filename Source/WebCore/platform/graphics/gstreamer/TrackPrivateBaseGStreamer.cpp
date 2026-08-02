@@ -300,7 +300,10 @@ void TrackDataHolder::disconnect()
         m_stream.clear();
     }
 
-    m_tags.clear();
+    {
+        Locker locker { m_tagMutex };
+        m_tags.clear();
+    }
 
     m_notifier->cancelPendingNotifications();
 

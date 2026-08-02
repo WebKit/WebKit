@@ -31,7 +31,7 @@ namespace WTF {
 class ActivityObserver : public ThreadSafeRefCounted<ActivityObserver> {
     WTF_MAKE_TZONE_ALLOCATED(ActivityObserver);
 public:
-    using Callback = Function<void()>;
+    using Callback = std::function<void()>;
 
     static Ref<ActivityObserver> create(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
     {
@@ -45,7 +45,10 @@ public:
 
     void start()
     {
-        ASSERT(m_callback);
+        if (ASSERT_ENABLED) {
+            Locker lock { m_callbackLock };
+            ASSERT(m_callback);
+        }
         if (auto runLoop = m_runLoop.get())
             runLoop->observeActivity(*this);
     }
@@ -69,13 +72,16 @@ public:
 
     void notify()
     {
+        Callback callback;
         {
             Locker lock { m_callbackLock };
             if (!m_callback)
                 return;
+
+            callback = m_callback;
         }
 
-        m_callback();
+        callback();
 
         if (!m_isRepeating)
             stop();

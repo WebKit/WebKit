@@ -882,6 +882,7 @@ void GraphicsLayerCoordinated::computePixelAlignmentIfNeeded(float pageScaleFact
 
 void GraphicsLayerCoordinated::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
+    assertIsHeld(m_platformLayer->lock());
     FloatPoint adjustedPosition;
     FloatPoint adjustedBoundsOrigin;
     FloatPoint3D adjustedAnchorPoint;
@@ -951,6 +952,7 @@ void GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(FloatRect& rect, cons
 
 void GraphicsLayerCoordinated::updateVisibleRect(const FloatRect& rect)
 {
+    assertIsHeld(m_platformLayer->lock());
     m_platformLayer->setVisibleRect(rect);
 
     IntRect visibleRect;
@@ -979,6 +981,7 @@ void GraphicsLayerCoordinated::updateVisibleRect(const FloatRect& rect)
 
 void GraphicsLayerCoordinated::updateBackdropFilters()
 {
+    assertIsHeld(m_platformLayer->lock());
     bool canHaveBackdropFilters = needsBackdrop();
     if (!canHaveBackdropFilters) {
         m_platformLayer->setBackdrop(nullptr);
@@ -1018,6 +1021,7 @@ void GraphicsLayerCoordinated::updateBackdropFilters()
 
 void GraphicsLayerCoordinated::updateBackdropFiltersRect()
 {
+    assertIsHeld(m_platformLayer->lock());
     if (!m_backdropLayer)
         return;
 
@@ -1032,6 +1036,8 @@ void GraphicsLayerCoordinated::updateBackdropFiltersRect()
 
 void GraphicsLayerCoordinated::updateAnimations()
 {
+    assertIsHeld(m_platformLayer->lock());
+
     m_animations.setTranslate(client().transformMatrixForProperty(AnimatedProperty::Translate));
     m_animations.setRotate(client().transformMatrixForProperty(AnimatedProperty::Rotate));
     m_animations.setScale(client().transformMatrixForProperty(AnimatedProperty::Scale));
@@ -1042,6 +1048,8 @@ void GraphicsLayerCoordinated::updateAnimations()
 
 void GraphicsLayerCoordinated::updateIndicators()
 {
+    assertIsHeld(m_platformLayer->lock());
+
     Color borderColor;
     float borderWidth = 0;
     if (m_showDebugBorder)

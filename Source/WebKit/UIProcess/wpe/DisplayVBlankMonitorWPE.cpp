@@ -69,6 +69,7 @@ WPEScreenSyncObserver* DisplayVBlankMonitorWPE::observer() const
 
 void DisplayVBlankMonitorWPE::addCallbackIfNeeded()
 {
+    assertIsHeld(m_lock);
     if (m_callbackID)
         return;
 
@@ -83,6 +84,7 @@ void DisplayVBlankMonitorWPE::addCallbackIfNeeded()
 
 void DisplayVBlankMonitorWPE::removeCallbackIfNeeded()
 {
+    assertIsHeld(m_lock);
     if (!m_callbackID)
         return;
 

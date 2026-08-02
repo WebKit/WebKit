@@ -425,7 +425,7 @@ private:
         Vector<std::unique_ptr<RenderTarget>, s_maximumBuffers> m_lockedTargets;
         bool m_initialTargetsCreated { false };
 #if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
-        Lock m_bufferFormatLock;
+        mutable Lock m_bufferFormatLock;
         BufferFormat m_bufferFormat WTF_GUARDED_BY_LOCK(m_bufferFormatLock);
         bool m_bufferFormatChanged WTF_GUARDED_BY_LOCK(m_bufferFormatLock) { false };
 #endif
@@ -492,7 +492,7 @@ private:
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     bool m_hardwareAccelerationEnabled { true };
 #endif
-    Lock m_backgroundColorLock;
+    mutable Lock m_backgroundColorLock;
     std::optional<WebCore::Color> m_backgroundColor WTF_GUARDED_BY_LOCK(m_backgroundColorLock);
     SwapChain m_swapChain;
     RenderTarget* m_target { nullptr };

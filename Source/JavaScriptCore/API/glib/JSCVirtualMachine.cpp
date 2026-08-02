@@ -115,7 +115,11 @@ static void jsc_virtual_machine_class_init(JSCVirtualMachineClass* klass)
 
 GRefPtr<JSCVirtualMachine> jscVirtualMachineGetOrCreate(JSContextGroupRef jsContextGroup)
 {
-    GRefPtr<JSCVirtualMachine> vm = wrapperMap().get(jsContextGroup);
+    GRefPtr<JSCVirtualMachine> vm;
+    {
+        Locker locker { wrapperCacheMutex };
+        vm = wrapperMap().get(jsContextGroup);
+    }
     if (!vm) {
         vm = adoptGRef(jsc_virtual_machine_new());
         jscVirtualMachineSetContextGroup(vm.get(), jsContextGroup);
