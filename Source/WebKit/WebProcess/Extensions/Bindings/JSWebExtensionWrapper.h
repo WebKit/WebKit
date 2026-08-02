@@ -207,6 +207,9 @@ JSValueRef toJSValueRef(JSContextRef, const String&, NullOrEmptyString = NullOrE
 JSValueRef toWindowObject(JSContextRef, WebFrame&);
 JSValueRef toWindowObject(JSContextRef, WebPage&);
 
+RefPtr<JSON::Value> fromJSValue(JSContextRef, JSValueRef);
+RefPtr<JSON::Value> toJSONValue(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed, ValuePolicy = ValuePolicy::Recursive);
+
 #ifdef __OBJC__
 
 id toNSObject(JSContextRef, JSValueRef, Class containingObjectsOfClass = Nil, NullValuePolicy = NullValuePolicy::NotAllowed, ValuePolicy = ValuePolicy::Recursive);

@@ -613,6 +613,7 @@ UIProcess/Extensions/WebExtensionDeclarativeNetRequestSQLiteStore.cpp
 UIProcess/Extensions/WebExtensionMatchPattern.cpp
 UIProcess/Extensions/WebExtensionStorageSQLiteStore.cpp
 
+UIProcess/Extensions/API/WebExtensionContextAPIAlarms.cpp
 UIProcess/Extensions/API/WebExtensionContextAPIDeclarativeNetRequest.cpp
 UIProcess/Extensions/API/WebExtensionContextAPIStorage.cpp @cost:3
 
@@ -706,6 +707,7 @@ WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 WebProcess/Extensions/WebExtensionContextProxy.cpp
 WebProcess/Extensions/WebExtensionControllerProxy.cpp
 
+WebProcess/Extensions/API/WebExtensionAPIAlarms.cpp
 WebProcess/Extensions/API/WebExtensionAPITest.cpp
 
 WebProcess/FileAPI/BlobRegistryProxy.cpp

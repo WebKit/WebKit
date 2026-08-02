@@ -51,6 +51,21 @@ public:
     void invokeListenersWithJSONArgument(const String& argument1);
     void invokeListenersWithJSONArgument(const String& argument1, const String& argument2);
 
+    template<typename T>
+    void invokeListenersWithParametersArgument(T& argument)
+    {
+        if (m_listeners.isEmpty())
+            return;
+
+        // Copy the listeners since call() can trigger a mutation of the listeners.
+        auto listenersCopy = m_listeners;
+
+        for (RefPtr listener : listenersCopy) {
+            // This is a safer cpp false positive (rdar://163760990).
+            SUPPRESS_UNCOUNTED_ARG listener->call(toWebAPI(listener->globalContext(), argument));
+        }
+    }
+
     const ListenerVector& listeners() const LIFETIME_BOUND { return m_listeners; }
 
     void addListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>);

@@ -38,7 +38,7 @@
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
-#import "WebProcess/Extensions/API/Cocoa/WebExtensionAPIKeys.h"
+#import "WebProcess/Extensions/API/WebExtensionAPIKeys.h"
 #import "_WKResourceLoadInfo.h"
 #import <wtf/text/MakeString.h>
 

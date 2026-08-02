@@ -112,6 +112,9 @@
         "NSDictionary": {
             "contextsAllowed": ["argument", "attribute", "operation"]
         },
+        "JSONValue": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
         "NSObject": {
             "contextsAllowed": ["argument", "attribute", "operation"]
         },

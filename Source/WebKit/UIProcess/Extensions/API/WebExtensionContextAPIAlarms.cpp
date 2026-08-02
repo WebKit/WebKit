@@ -23,18 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
-
-#import "config.h"
-#import "WebExtensionContext.h"
+#include "config.h"
+#include "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WebExtensionAlarm.h"
-#import "WebExtensionContextProxyMessages.h"
-#import "WebExtensionPermission.h"
+#include "WebExtensionAlarm.h"
+#include "WebExtensionContextProxyMessages.h"
+#include "WebExtensionPermission.h"
 
 namespace WebKit {
 

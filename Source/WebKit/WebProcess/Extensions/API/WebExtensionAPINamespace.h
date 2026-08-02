@@ -68,7 +68,9 @@ public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     WebExtensionAPIAction& action();
+#endif
     WebExtensionAPIAlarms& alarms();
+#if PLATFORM(COCOA)
     WebExtensionAPIAction& browserAction() { return action(); }
     WebExtensionAPICommands& commands();
     WebExtensionAPICookies& cookies();

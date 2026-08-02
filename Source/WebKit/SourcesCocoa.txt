@@ -503,7 +503,6 @@ UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.mm @nonARC
 UIProcess/Extensions/Cocoa/_WKWebExtensionDeclarativeNetRequestRule.mm
 UIProcess/Extensions/Cocoa/_WKWebExtensionDeclarativeNetRequestTranslator.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIActionCocoa.mm
-UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIAlarmsCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIBookmarksCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPICommandsCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPICookiesCocoa.mm
@@ -757,7 +756,6 @@ WebProcess/cocoa/IdentityDocumentServices/DigitalCredentialsRequestValidatorBrid
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm @nonARC
 
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIActionCocoa.mm
-WebProcess/Extensions/API/Cocoa/WebExtensionAPIAlarmsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIBookmarksCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPICommandsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPICookiesCocoa.mm

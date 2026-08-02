@@ -27,9 +27,9 @@
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,
     ReturnsPromiseWhenCallbackIsOmitted,
+    UseCPPAPI
 ] interface WebExtensionAPIAlarms {
-
-    [RaisesException, ImplementedAs=createAlarm] void create([Optional] DOMString name, [NSDictionary] any info);
+    [RaisesStringException, ImplementedAs=createAlarm] void create([Optional] DOMString name, [JSONValue] any info);
 
     void get([Optional] DOMString name, [Optional, CallbackHandler] function callback);
     void getAll([Optional, CallbackHandler] function callback);

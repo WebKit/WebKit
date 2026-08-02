@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __OBJC__
+
 #import <Foundation/Foundation.h>
 
 static NSString * const accessLevelKey = @"accessLevel";
@@ -64,7 +66,6 @@ static NSString * const cssOriginKey = @"cssOrigin";
 static NSString * const currentWindowKey = @"currentWindow";
 static NSString * const darkKey = @"dark";
 static NSString * const dateAddedKey = @"dateAdded";
-static NSString * const delayInMinutesKey = @"delayInMinutes";
 static NSString * const deprecatedColorSchemesKey = @"color_schemes";
 static NSString * const deprecatedIconVariantsKey = @"icon_variants";
 static NSString * const descriptionKey = @"description";
@@ -79,7 +80,6 @@ static NSString * const documentStart = @"document_start";
 static NSString * const documentURLPatternsKey = @"documentUrlPatterns";
 static NSString * const domainKey = @"domain";
 static NSString * const editableKey = @"editable";
-static NSString * const emptyAlarmName = @"";
 static NSString * const emptyDataURLValue = @"data:,";
 static NSString * const emptyTitleValue = @"";
 static NSString * const emptyURLValue = @"";
@@ -171,7 +171,6 @@ static NSString * const parentFrameIdKey = @"parentFrameId";
 static NSString * const parentIdKey = @"parentId";
 static NSString * const parentMenuItemIDKey = @"parentMenuItemId";
 static NSString * const pathKey = @"path";
-static NSString * const periodInMinutesKey = @"periodInMinutes";
 static NSString * const permissionsKey = @"permissions";
 static NSString * const persistAcrossSessionsKey = @"persistAcrossSessions";
 static NSString * const persistentPrefix = @"persistent-";
@@ -203,7 +202,6 @@ static NSString * const ruleKey = @"rule";
 static NSString * const rulesetIdKey = @"rulesetId";
 static NSString * const runAtKey = @"runAt";
 static NSString * const sameSiteKey = @"sameSite";
-static NSString * const scheduledTimeKey = @"scheduledTime";
 static NSString * const schemeKey = @"scheme";
 static NSString * const secureKey = @"secure";
 static NSString * const selectedKey = @"selected";
@@ -240,9 +238,16 @@ static NSString * const versionKey = @"version";
 static NSString * const videoKey = @"video";
 static NSString * const visibleKey = @"visible";
 static NSString * const wasCheckedKey = @"wasChecked";
-static NSString * const whenKey = @"when";
 static NSString * const widthKey = @"width";
 static NSString * const windowIdKey = @"windowId";
 static NSString * const windowTypeKey = @"windowType";
 static NSString * const windowTypesKey = @"windowTypes";
 static NSString * const worldKey = @"world";
+
+#endif
+
+static constexpr auto delayInMinutesKey = "delayInMinutes"_s;
+static constexpr auto emptyAlarmName = ""_s;
+static constexpr auto periodInMinutesKey = "periodInMinutes"_s;
+static constexpr auto scheduledTimeKey = "scheduledTime"_s;
+static constexpr auto whenKey = "when"_s;

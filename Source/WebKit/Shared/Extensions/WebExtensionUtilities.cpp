@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2024-2026 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,6 +178,146 @@ String toErrorString(const String& callingAPIName, const String& sourceKey, cons
 JSObjectRef toJSError(JSContextRef context, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
 {
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
+}
+
+static String classToClassString(JSON::Value::Type classType)
+{
+    switch (classType) {
+    case JSON::Value::Type::Integer:
+    case JSON::Value::Type::Double:
+        return "a number"_s;
+    case JSON::Value::Type::Null:
+        return "null"_s;
+    case JSON::Value::Type::Boolean:
+        return "a boolean"_s;
+    case JSON::Value::Type::Object:
+        return "an object"_s;
+    case JSON::Value::Type::String:
+        return "a string"_s;
+    case JSON::Value::Type::Array:
+        return "an array"_s;
+    default:
+        return "a value"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return "unknown"_s;
+}
+
+static String valueToTypeString(RefPtr<JSON::Value>& value)
+{
+    if (auto number = value->asDouble(); (value->type() == JSON::Value::Type::Double || value->type() == JSON::Value::Type::Integer)) {
+        if (std::isnan(number.value_or(0)))
+            return "NaN"_s;
+
+        if (std::isinf(number.value_or(0)))
+            return "Infinity"_s;
+    }
+
+    return classToClassString(value->type());
+}
+
+static String constructExpectedMessage(const String& key, const String& expected, const String& found)
+{
+    ASSERT(expected);
+    ASSERT(found);
+
+    if (!key.isEmpty())
+        return makeString("'"_s, key, "' is expected to be "_s, expected, ", but "_s, found, " was provided"_s);
+    return makeString("'"_s, expected, "' is expected, but "_s, found, " was provided"_s);
+}
+
+static bool validate(const String& key, RefPtr<JSON::Value> value, JSON::Value::Type expectedValueType, String& outExceptionString)
+{
+    auto number = value->asDouble();
+
+    if (number && std::isnan(number.value_or(0))) {
+        outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
+        return false;
+    }
+
+    if (number && std::isinf(number.value_or(0))) {
+        outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
+        return false;
+    }
+
+    if (!(value->type() == expectedValueType)) {
+        outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
+        return false;
+    }
+
+    if (number && expectedValueType != JSON::Value::Type::Boolean && value->asBoolean()) {
+        outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
+        return false;
+    }
+
+    return true;
+}
+
+static String formatList(Vector<String>& list)
+{
+    auto count = list.size();
+    if (!count)
+        return emptyString();
+
+    if (count == 1)
+        return makeString("'"_s, list.first(), "'"_s);
+
+    if (count == 2)
+        return makeString("'"_s, list.first(), "' and '"_s, list.last(), "'"_s);
+
+    auto allButLast = list.subvector(0, count - 1);
+    auto formattedInitialItems = makeStringByJoining(allButLast, "', '"_s);
+    return makeString("'"_s, formattedInitialItems, "' and '"_s, list.last(), "'"_s);
+}
+
+bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<String> requiredKeys, HashMap<String, JSON::Value::Type> keyTypes, String& outExceptionString)
+{
+    ASSERT(!keyTypes.isEmpty());
+
+    RefPtr<JSON::Object> object = dictionary->asObject();
+    if (!object) {
+        outExceptionString = toErrorString(nullString(), sourceKey, "an object is expected"_s);
+        return false;
+    }
+
+    Vector<String> remainingRequiredKeys = requiredKeys;
+    HashSet<String> requiredKeysSet;
+    for (auto& key : requiredKeys)
+        requiredKeysSet.addVoid(key);
+    HashSet<String> optionalKeysSet;
+    for (auto& key : keyTypes.keys())
+        optionalKeysSet.addVoid(key);
+    optionalKeysSet.formDifference(requiredKeysSet);
+
+    String errorString;
+
+    for (auto& key : object->keys()) {
+        if (!requiredKeysSet.contains(key) && !optionalKeysSet.contains(key))
+            continue;
+
+        JSON::Value::Type expectedValueType = keyTypes.get(key);
+        auto value = object->getValue(key);
+
+        if (!validate(key, value, expectedValueType, errorString))
+            break;
+
+        if (requiredKeysSet.contains(key)) {
+            remainingRequiredKeys.removeFirstMatching([&key](auto& k) -> bool {
+                return k == key;
+            });
+        }
+    }
+
+    // Prioritize type errors over missing required key errors, since the dictionary *might* actually have
+    // all the required keys, but we stopped checking. We do know for sure that the type is wrong though.
+    if (!remainingRequiredKeys.isEmpty() && errorString.isEmpty())
+        errorString = makeString("it is missing required keys: "_s, formatList(remainingRequiredKeys));
+
+    if (!errorString.isEmpty())
+        outExceptionString = toErrorString(nullString(), sourceKey, errorString);
+
+    return errorString.isEmpty();
 }
 
 } // namespace WebKit

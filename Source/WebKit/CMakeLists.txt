@@ -143,7 +143,6 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
 set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIAction
-    WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms
     WebProcess/Extensions/Interfaces/WebExtensionAPIBookmarks
     WebProcess/Extensions/Interfaces/WebExtensionAPICommands
     WebProcess/Extensions/Interfaces/WebExtensionAPICookies
@@ -180,6 +179,7 @@ set(WebKit_BINDINGS_IN_FILES
 )
 
 set(WebKit_CPP_BINDINGS_IN_FILES
+    WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms
     WebProcess/Extensions/Interfaces/WebExtensionAPITest
 )
 
@@ -1102,6 +1102,7 @@ list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "^[A-Za-z0-9_]+MessageReceiver\\.cpp"
 #   _cpp_inputs are .idl files to generate (CPP sources only).
 macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
     unset(_input_files)
+    unset(_cpp_input_files)
     unset(_outputs)
     unset(_import_names)
     foreach (_file IN ITEMS ${_inputs})
@@ -1124,7 +1125,7 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
 
             ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h
         )
-        list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.cpp)
+        list(APPEND _cpp_import_names JS${_name}.cpp)
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h)
     endforeach ()
 
@@ -1132,6 +1133,7 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
         OUTPUT
             ${_outputs}
             ${WebKit_DERIVED_SOURCES_DIR}/JSWebExtensionAPIUnified.mm
+            ${WebKit_DERIVED_SOURCES_DIR}/JSWebExtensionAPIUnified.cpp
         MAIN_DEPENDENCY ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl
         DEPENDS
             ${_input_files}
@@ -1142,7 +1144,8 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
            "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl"
            "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json"
         COMMAND ${PERL_EXECUTABLE} -I "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts" ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --outputDir . --generator Extensions --idlAttributesFile "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json" --idlFileNamesList WebExtensionIDLFileNamesList.txt ${_input_files}
-        COMMAND ${PERL_EXECUTABLE} "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl" JSWebExtensionAPIUnified.mm ${_import_names}
+        COMMAND ${PERL_EXECUTABLE} "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl" --output=JSWebExtensionAPIUnified.mm -- ${_import_names}
+        COMMAND ${PERL_EXECUTABLE} "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl" --cpp --output=JSWebExtensionAPIUnified.cpp -- ${_cpp_import_names}
         WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
         VERBATIM
     )
@@ -1179,6 +1182,7 @@ list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersCommon.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    ${WebKit_DERIVED_SOURCES_DIR}/JSWebExtensionAPIUnified.cpp
 )
 
 set(_serializers_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.serializers-stage)

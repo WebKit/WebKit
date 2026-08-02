@@ -41,6 +41,7 @@
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSArray;
 OBJC_CLASS DDScannerResult;
 
 namespace WebKit {

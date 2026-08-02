@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Igalia, S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,67 +24,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
+#include "config.h"
+#include "WebExtensionAPIAlarms.h"
 
-#import "config.h"
-#import "WebExtensionAPIAlarms.h"
-#import "WebExtensionAPIKeys.h"
+#include "WebExtensionAPIKeys.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-
-#import "CocoaHelpers.h"
-#import "Logging.h"
-#import "MessageSenderInlines.h"
-#import "WebExtensionAPINamespace.h"
-#import "WebExtensionConstants.h"
-#import "WebExtensionContextMessages.h"
-#import "WebExtensionContextProxy.h"
-#import "WebExtensionUtilities.h"
-#import "WebProcess.h"
-#import <wtf/DateMath.h>
+#include "Logging.h"
+#include "MessageSenderInlines.h"
+#include "WebExtensionAPINamespace.h"
+#include "WebExtensionConstants.h"
+#include "WebExtensionContextMessages.h"
+#include "WebExtensionContextProxy.h"
+#include "WebExtensionUtilities.h"
+#include "WebProcess.h"
+#include <wtf/DateMath.h>
 
 namespace WebKit {
 
-static inline NSDictionary *toWebAPI(const WebExtensionAlarmParameters& alarm)
-{
-    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:3];
+static constexpr auto nameKey = "name"_s;
 
-    result[nameKey] = alarm.name.createNSString().get();
-    result[scheduledTimeKey] = @(floor(alarm.nextScheduledTime.approximate<WallTime>().secondsSinceEpoch().milliseconds()));
+static inline JSValueRef toWebAPI(JSContextRef context, const WebExtensionAlarmParameters& alarm)
+{
+    JSObjectRef result = JSObjectMake(context, 0, 0);
+
+    JSObjectSetProperty(context, result, toJSString(nameKey).get(), toJSValueRef(context, alarm.name), 0, nullptr);
+    JSObjectSetProperty(context, result, toJSString(scheduledTimeKey).get(), JSValueMakeNumber(context, floor(alarm.nextScheduledTime.approximate<WallTime>().secondsSinceEpoch().milliseconds())), 0, nullptr);
 
     if (alarm.repeatInterval)
-        result[periodInMinutesKey] = @(alarm.repeatInterval.minutes());
+        JSObjectSetProperty(context, result, toJSString(periodInMinutesKey).get(), JSValueMakeNumber(context, alarm.repeatInterval.minutes()), 0, nullptr);
 
-    return [result copy];
+    return result;
 }
 
-void WebExtensionAPIAlarms::createAlarm(NSString *name, NSDictionary *alarmInfo, NSString **outExceptionString)
+void WebExtensionAPIAlarms::createAlarm(const String& name, RefPtr<JSON::Value> alarmInfo, String& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/create
 
-    static NSDictionary<NSString *, id> *types = @{
-        whenKey: NSNumber.class,
-        delayInMinutesKey: NSNumber.class,
-        periodInMinutesKey: NSNumber.class,
-    };
-
-    if (!validateDictionary(alarmInfo, @"info", nil, types, outExceptionString))
+    if (!validateDictionary(alarmInfo, "info"_s, { }, {
+        { whenKey, JSON::Value::Type::Double },
+        { delayInMinutesKey, JSON::Value::Type::Double },
+        { periodInMinutesKey, JSON::Value::Type::Double },
+    }, outExceptionString))
         return;
 
-    auto *whenNumber = objectForKey<NSNumber>(alarmInfo, whenKey);
-    auto *delayNumber = objectForKey<NSNumber>(alarmInfo, delayInMinutesKey);
-    auto *periodNumber = objectForKey<NSNumber>(alarmInfo, periodInMinutesKey);
+    auto alarmObject = alarmInfo->asObject();
+    if (!alarmObject)
+        return;
+
+    auto whenNumber = alarmObject->getDouble(whenKey);
+    auto delayNumber = alarmObject->getDouble(delayInMinutesKey);
+    auto periodNumber = alarmObject->getDouble(periodInMinutesKey);
 
     if (whenNumber && delayNumber) {
-        *outExceptionString = toErrorString(nullString(), @"info", @"it cannot specify both 'delayInMinutes' and 'when'").createNSString().autorelease();
+        outExceptionString = toErrorString(nullString(), "info"_s, "it cannot specify both 'delayInMinutes' and 'when'"_s);
         return;
     }
 
-    Seconds when = Seconds::fromMilliseconds(whenNumber.doubleValue);
-    Seconds delay = Seconds::fromMinutes(delayNumber.doubleValue);
-    Seconds period = Seconds::fromMinutes(periodNumber.doubleValue);
+    Seconds when = Seconds::fromMilliseconds(whenNumber.value_or(0));
+    Seconds delay = Seconds::fromMinutes(delayNumber.value_or(0));
+    Seconds period = Seconds::fromMinutes(periodNumber.value_or(0));
     Seconds currentTime = Seconds::fromMilliseconds(jsCurrentTime());
 
     Seconds initialInterval;
@@ -107,15 +107,15 @@ void WebExtensionAPIAlarms::createAlarm(NSString *name, NSDictionary *alarmInfo,
         repeatInterval = repeatInterval ? std::max(repeatInterval, webExtensionMinimumAlarmInterval) : 0_s;
     }
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::AlarmsCreate(name ?: emptyAlarmName, initialInterval, repeatInterval), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::AlarmsCreate(!name.isEmpty() ? name : emptyAlarmName, initialInterval, repeatInterval), extensionContext().identifier());
 }
 
-void WebExtensionAPIAlarms::get(NSString *name, Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIAlarms::get(const String& name, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/get
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGet(name ?: emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::optional<WebExtensionAlarmParameters>&& alarm) {
-        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(alarm)));
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGet(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::optional<WebExtensionAlarmParameters>&& alarm) {
+        callback->call(toWebAPI(callback->globalContext(), alarm));
     }, extensionContext().identifier());
 }
 
@@ -124,15 +124,15 @@ void WebExtensionAPIAlarms::getAll(Ref<WebExtensionCallbackHandler>&& callback)
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/getAll
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGetAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Vector<WebExtensionAlarmParameters> alarms) {
-        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(alarms)));
+        callback->call(toWebAPI(callback->globalContext(), alarms));
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIAlarms::clear(NSString *name, Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIAlarms::clear(const String& name, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/clear
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClear(name ?: emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)]() {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClear(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)]() {
         callback->call();
     }, extensionContext().identifier());
 }
@@ -160,10 +160,8 @@ void WebExtensionContextProxy::dispatchAlarmsEvent(const WebExtensionAlarmParame
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
 
-    auto *details = toWebAPI(alarm);
-
     enumerateNamespaceObjects([&](auto& namespaceObject) {
-        namespaceObject.alarms().onAlarm().invokeListenersWithArgument(details);
+        namespaceObject.alarms().onAlarm().invokeListenersWithParametersArgument(alarm);
     });
 }
 

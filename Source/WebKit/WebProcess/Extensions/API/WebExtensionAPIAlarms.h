@@ -31,29 +31,24 @@
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 
-OBJC_CLASS NSDictionary;
-OBJC_CLASS NSString;
-
 namespace WebKit {
 
 class WebExtensionAPIAlarms : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAlarms, alarms, alarms);
 
 public:
-#if PLATFORM(COCOA)
-    void createAlarm(NSString *name, NSDictionary *alarmInfo, NSString **outExceptionString);
+    void createAlarm(const String& name, RefPtr<JSON::Value> alarmInfo, String& outExceptionString);
 
-    void get(NSString *name, Ref<WebExtensionCallbackHandler>&&);
+    void get(const String& name, Ref<WebExtensionCallbackHandler>&&);
     void getAll(Ref<WebExtensionCallbackHandler>&&);
 
-    void clear(NSString *name, Ref<WebExtensionCallbackHandler>&&);
+    void clear(const String& name, Ref<WebExtensionCallbackHandler>&&);
     void clearAll(Ref<WebExtensionCallbackHandler>&&);
 
     WebExtensionAPIEvent& onAlarm();
 
 private:
     RefPtr<WebExtensionAPIEvent> m_onAlarm;
-#endif
 };
 
 } // namespace WebKit
