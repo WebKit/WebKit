@@ -1,10 +1,16 @@
 include(platform/Adwaita.cmake)
 include(platform/CoordinatedGraphics.cmake)
-include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Skia.cmake)
 include(platform/Soup.cmake)
+
+if (USE_OPENSSL_BACKEND)
+    include(platform/OpenSSL.cmake)
+    list(APPEND WebCore_LIBRARIES OpenSSL::Crypto)
+else ()
+    include(platform/GCrypt.cmake)
+endif ()
 
 if (USE_TEXTURE_MAPPER)
     include(platform/TextureMapper.cmake)
@@ -64,10 +70,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/x11/XErrorTrapper.h
 
     platform/text/enchant/TextCheckerEnchant.h
-)
-
-list(APPEND WebCore_PRIVATE_LIBRARIES
-    Tasn1::Tasn1
 )
 
 list(APPEND WebCore_LIBRARIES

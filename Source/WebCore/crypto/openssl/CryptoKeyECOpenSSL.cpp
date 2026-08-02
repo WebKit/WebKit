@@ -28,6 +28,7 @@
 
 #include "JsonWebKey.h"
 #include "OpenSSLUtilities.h"
+#include <openssl/asn1.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

@@ -1,10 +1,16 @@
 include(platform/Adwaita.cmake)
 include(platform/CoordinatedGraphics.cmake)
-include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Skia.cmake)
 include(platform/Soup.cmake)
+
+if (USE_OPENSSL_BACKEND)
+    include(platform/OpenSSL.cmake)
+    list(APPEND WebCore_LIBRARIES OpenSSL::Crypto)
+else ()
+    include(platform/GCrypt.cmake)
+endif ()
 
 if (USE_EXTERNAL_HOLEPUNCH)
     include(platform/HolePunch.cmake)
@@ -72,10 +78,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 )
 
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/wpe/RenderThemeWPE.cpp)
-
-list(APPEND WebCore_PRIVATE_LIBRARIES
-    Tasn1::Tasn1
-)
 
 list(APPEND WebCore_LIBRARIES
     GLib::Module
