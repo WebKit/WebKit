@@ -43,7 +43,7 @@ class YarrCodeBlock;
 
 class YarrJITInfo {
 public:
-    virtual ~YarrJITInfo() { };
+    virtual ~YarrJITInfo() = default;
     virtual const char* variant() = 0;
     virtual unsigned opCount() = 0;
     virtual void dumpPatternString(PrintStream&) = 0;

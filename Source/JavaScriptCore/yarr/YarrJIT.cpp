@@ -2195,6 +2195,92 @@ class YarrGenerator final : public YarrJITInfo {
         backtrackTermDefault(opIndex);
     }
 
+    void generateAssertionBOI(size_t opIndex)
+    {
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+
+        if (term->inputPosition)
+            op.m_jumps.append(m_jit.jump());
+        else
+            op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, MacroAssembler::Imm32(op.m_checkedOffset)));
+    }
+    void backtrackAssertionBOI(size_t opIndex)
+    {
+        backtrackTermDefault(opIndex);
+    }
+
+    void generateAssertionEOI(size_t opIndex)
+    {
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+
+        if (term->m_withOptionalLineTerminator) {
+            // Equivalent to (?=(?:\r\n|\n|\r|\u2028|\u2029)?(?-m:$))
+
+            const MacroAssembler::RegisterID character = m_regs.regT0;
+            const MacroAssembler::RegisterID scratch = m_regs.regT1;
+
+            MacroAssembler::JumpList success;
+
+            // Condition 1: already at EOI
+            if (term->inputPosition == op.m_checkedOffset)
+                success.append(atEndOfInput());
+
+            readCharacter(op.m_checkedOffset - term->inputPosition, character);
+
+            // Not a line terminator -> failure.
+            MacroAssembler::JumpList isLineTerminator;
+            matchCharacterClass(character, scratch, isLineTerminator, m_pattern.newlineCharacterClass());
+            op.m_jumps.append(m_jit.jump());
+            isLineTerminator.link(&m_jit);
+
+            // Condition 2: consuming this one line terminator reaches EOI
+            if (term->inputPosition == op.m_checkedOffset) {
+                m_jit.sub32(m_regs.length, MacroAssembler::TrustedImm32(1), scratch);
+                success.append(m_jit.branch32(MacroAssembler::Equal, m_regs.index, scratch));
+            } else if (term->inputPosition + 1 == op.m_checkedOffset)
+                success.append(atEndOfInput());
+
+            // Dispatch on \r vs single-char line terminator
+            MacroAssembler::Jump isCR = m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32('\r'));
+            op.m_jumps.append(m_jit.jump()); // single-char line terminator not at EOI -> failure.
+
+            // \r: condition 3 (\r\n)
+            isCR.link(&m_jit);
+
+            // Condition 3: \r\n
+            if (term->inputPosition == op.m_checkedOffset) {
+                m_jit.sub32(m_regs.length, MacroAssembler::TrustedImm32(2), scratch);
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, scratch));
+                m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index, scratch);
+                readCharacter(0, character, scratch);
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, character, MacroAssembler::TrustedImm32('\n')));
+            } else if (term->inputPosition + 1 == op.m_checkedOffset) {
+                m_jit.sub32(m_regs.length, MacroAssembler::TrustedImm32(1), scratch);
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, scratch));
+                readCharacter(0, character);
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, character, MacroAssembler::TrustedImm32('\n')));
+            } else if (term->inputPosition + 2 == op.m_checkedOffset) {
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, m_regs.length));
+                readCharacter(1, character);
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, character, MacroAssembler::TrustedImm32('\n')));
+            } else
+                op.m_jumps.append(m_jit.jump()); // \r not at EOI -> failure.
+
+            success.link(&m_jit);
+        } else {
+            if (term->inputPosition == op.m_checkedOffset)
+                op.m_jumps.append(notAtEndOfInput());
+            else
+                op.m_jumps.append(m_jit.jump());
+        }
+    }
+    void backtrackAssertionEOI(size_t opIndex)
+    {
+        backtrackTermDefault(opIndex);
+    }
+
     // Also falls though on nextIsNotWordChar.
     void matchAssertionWordchar(size_t opIndex, MacroAssembler::JumpList& nextIsWordChar, MacroAssembler::JumpList& nextIsNotWordChar)
     {
@@ -3678,6 +3764,14 @@ class YarrGenerator final : public YarrJITInfo {
             generateAssertionEOL(opIndex);
             break;
 
+        case PatternTerm::Type::AssertionBOI:
+            generateAssertionBOI(opIndex);
+            break;
+
+        case PatternTerm::Type::AssertionEOI:
+            generateAssertionEOI(opIndex);
+            break;
+
         case PatternTerm::Type::AssertionWordBoundary:
             generateAssertionWordBoundary(opIndex);
             break;
@@ -3758,6 +3852,14 @@ class YarrGenerator final : public YarrJITInfo {
 
         case PatternTerm::Type::AssertionEOL:
             backtrackAssertionEOL(opIndex);
+            break;
+
+        case PatternTerm::Type::AssertionBOI:
+            backtrackAssertionBOI(opIndex);
+            break;
+
+        case PatternTerm::Type::AssertionEOI:
+            backtrackAssertionEOI(opIndex);
             break;
 
         case PatternTerm::Type::AssertionWordBoundary:
@@ -5885,6 +5987,8 @@ class YarrGenerator final : public YarrJITInfo {
         switch (term.type) {
         case PatternTerm::Type::AssertionBOL:
         case PatternTerm::Type::AssertionEOL:
+        case PatternTerm::Type::AssertionBOI:
+        case PatternTerm::Type::AssertionEOI:
         case PatternTerm::Type::AssertionWordBoundary:
             // Conservatively say any assertions just match.
             return cursor;
@@ -7280,6 +7384,14 @@ public:
 
             case PatternTerm::Type::AssertionEOL:
                 out.printf("Assert EOL checked-offset:(%u)", op.m_checkedOffset.value());
+                break;
+
+            case PatternTerm::Type::AssertionBOI:
+                out.printf("Assert BOI checked-offset:(%u),with-line-terminator:(%u)", op.m_checkedOffset.value(), term->m_withOptionalLineTerminator);
+                break;
+
+            case PatternTerm::Type::AssertionEOI:
+                out.printf("Assert EOI checked-offset:(%u),with-line-terminator:(%u)", op.m_checkedOffset.value(), term->m_withOptionalLineTerminator);
                 break;
 
             case PatternTerm::Type::NumberedBackReference:

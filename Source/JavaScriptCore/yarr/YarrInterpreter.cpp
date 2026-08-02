@@ -713,6 +713,42 @@ public:
         return (input.atEnd()) || (term.multiline() && testCharacterClass(pattern->newlineCharacterClass, input.read()));
     }
 
+    bool matchAssertionBOI(ByteTerm& term)
+    {
+        return input.atStart(term.inputPosition);
+    }
+
+    bool matchAssertionEOI(ByteTerm& term)
+    {
+        // \z: succeed at EOI
+        if (!term.m_withOptionalLineTerminator)
+            return term.inputPosition ? input.atEnd(term.inputPosition) : input.atEnd();
+
+        // \Z: succeed at EOI, or at a line terminator immediately before EOI.
+        unsigned assertionPos = input.getPos() - term.inputPosition;
+        unsigned inputLength = input.end();
+
+        if (assertionPos == inputLength)
+            return true;
+
+        char32_t ch = input.readCheckedDontAdvance(term.inputPosition);
+
+        if (!testCharacterClass(pattern->newlineCharacterClass, ch))
+            return false;
+
+        if (ch != '\r')
+            return assertionPos + 1 == inputLength;
+
+        if (assertionPos + 1 == inputLength)
+            return true; // \r alone at EOI
+
+        if (assertionPos + 2 != inputLength)
+            return false;
+
+        // Check for \r\n: read the char at assertionPos + 1.
+        return input.reread(assertionPos + 1) == '\n';
+    }
+
     bool matchAssertionWordBoundary(ByteTerm& term)
     {
         unsigned inputOffset = term.inputPosition;
@@ -1832,6 +1868,14 @@ public:
             if (matchAssertionEOL(currentTerm()))
                 MATCH_NEXT();
             BACKTRACK();
+        case ByteTerm::Type::AssertionBOI:
+            if (matchAssertionBOI(currentTerm()))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::Type::AssertionEOI:
+            if (matchAssertionEOI(currentTerm()))
+                MATCH_NEXT();
+            BACKTRACK();
         case ByteTerm::Type::AssertionWordBoundary:
             if (matchAssertionWordBoundary(currentTerm()))
                 MATCH_NEXT();
@@ -2143,6 +2187,8 @@ public:
 
         case ByteTerm::Type::AssertionBOL:
         case ByteTerm::Type::AssertionEOL:
+        case ByteTerm::Type::AssertionBOI:
+        case ByteTerm::Type::AssertionEOI:
         case ByteTerm::Type::AssertionWordBoundary:
             BACKTRACK();
 
@@ -2375,6 +2421,16 @@ public:
     void assertionEOL(unsigned inputPosition, OptionSet<Flags> flags)
     {
         m_bodyDisjunction->terms.append(ByteTerm::EOL(inputPosition, flags));
+    }
+
+    void assertionBOI(unsigned inputPosition, OptionSet<Flags> flags)
+    {
+        m_bodyDisjunction->terms.append(ByteTerm::BOI(inputPosition, flags));
+    }
+
+    void assertionEOI(bool withOptionalLineTerminator, unsigned inputPosition, OptionSet<Flags> flags)
+    {
+        m_bodyDisjunction->terms.append(ByteTerm::EOI(inputPosition, flags, withOptionalLineTerminator));
     }
 
     void assertionWordBoundary(bool invert, MatchDirection matchDirection, unsigned inputPosition, OptionSet<Flags> flags)
@@ -2794,6 +2850,22 @@ public:
                     break;
                 }
 
+                case PatternTerm::Type::AssertionBOI: {
+                    auto currentInputPosition = currentCountAlreadyChecked - term.inputPosition;
+                    if (currentInputPosition.hasOverflowed())
+                        return ErrorCode::OffsetTooLarge;
+                    assertionBOI(currentInputPosition, term.m_currentFlags);
+                    break;
+                }
+
+                case PatternTerm::Type::AssertionEOI: {
+                    auto currentInputPosition = currentCountAlreadyChecked - term.inputPosition;
+                    if (currentInputPosition.hasOverflowed())
+                        return ErrorCode::OffsetTooLarge;
+                    assertionEOI(term.m_withOptionalLineTerminator, currentInputPosition, term.m_currentFlags);
+                    break;
+                }
+
                 case PatternTerm::Type::AssertionWordBoundary: {
                     auto currentInputPosition = currentCountAlreadyChecked - term.inputPosition;
                     if (currentInputPosition.hasOverflowed())
@@ -3064,6 +3136,14 @@ void ByteTermDumper::dumpTerm(size_t idx, ByteTerm term)
     case ByteTerm::Type::AssertionEOL:
         outputTermIndexAndNest(idx, m_nesting);
         out.print("AssertionEOL");
+        break;
+    case ByteTerm::Type::AssertionBOI:
+        outputTermIndexAndNest(idx, m_nesting);
+        out.print("AssertionBOI");
+        break;
+    case ByteTerm::Type::AssertionEOI:
+        outputTermIndexAndNest(idx, m_nesting);
+        out.print("AssertionEOI ", term.m_withOptionalLineTerminator ? "(\\Z)" : "(\\z)");
         break;
     case ByteTerm::Type::AssertionWordBoundary:
         outputTermIndexAndNest(idx, m_nesting);

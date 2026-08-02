@@ -163,6 +163,25 @@ public:
         m_floatingTerm = Term(Term::EndOfLineAssertionTerm);
     }
 
+    void assertionBOI()
+    {
+        if (hasError())
+            return;
+
+        if (m_floatingTerm.isValid() || !m_sunkTerms.isEmpty() || !m_openGroups.isEmpty()) {
+            fail(URLFilterParser::MisplacedStartOfLine);
+            return;
+        }
+
+        m_hasBeginningOfLineAssertion = true;
+    }
+
+    void assertionEOI(bool)
+    {
+        // URLs do not contain newlines, so \z and \Z are equivalent here.
+        assertionEOL();
+    }
+
     void NODELETE assertionWordBoundary(bool)
     {
         fail(URLFilterParser::WordBoundary);
@@ -389,7 +408,7 @@ URLFilterParser::ParseStatus URLFilterParser::addPattern(StringView pattern, boo
 
     ParseStatus status = Ok;
     PatternParser patternParser(patternIsCaseSensitive);
-    if (!JSC::Yarr::hasError(JSC::Yarr::parse(patternParser, pattern, JSC::Yarr::CompileMode::Legacy, 0, false)))
+    if (!JSC::Yarr::hasError(JSC::Yarr::parse(patternParser, pattern, JSC::Yarr::CompileMode::Legacy, 0, false, false)))
         patternParser.finalize(patternId, m_combinedURLFilters);
     else
         status = YarrError;

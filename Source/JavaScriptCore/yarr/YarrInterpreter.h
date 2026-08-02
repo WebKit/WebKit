@@ -90,6 +90,8 @@ struct ByteTerm {
         SubpatternEnd,
         AssertionBOL,
         AssertionEOL,
+        AssertionBOI, // beginning of input (\A)
+        AssertionEOI, // end of input (\z, \Z)
         AssertionWordBoundary,
         // Character Types
         PatternCharacterOnce,
@@ -119,6 +121,7 @@ struct ByteTerm {
     OptionSet<Flags> m_flags;
     bool m_capture : 1;
     bool m_invert : 1;
+    bool m_withOptionalLineTerminator : 1;
     MatchDirection m_matchDirection : 1;
     unsigned inputPosition { 0 };
 
@@ -127,6 +130,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(false)
         , m_invert(false)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
@@ -155,6 +159,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(false)
         , m_invert(false)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
@@ -184,6 +189,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(false)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
@@ -198,6 +204,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(capture)
         , m_invert(false)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
@@ -214,6 +221,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(false)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
     {
         atom.quantityType = QuantifierType::FixedCount;
@@ -226,6 +234,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(capture)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
@@ -241,6 +250,7 @@ struct ByteTerm {
         , m_flags(flags)
         , m_capture(capture)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
@@ -254,6 +264,13 @@ struct ByteTerm {
     static ByteTerm BOL(unsigned inputPos, OptionSet<Flags> flags)
     {
         ByteTerm term(Type::AssertionBOL, flags);
+        term.inputPosition = inputPos;
+        return term;
+    }
+
+    static ByteTerm BOI(unsigned inputPos, OptionSet<Flags> flags)
+    {
+        ByteTerm term(Type::AssertionBOI, flags);
         term.inputPosition = inputPos;
         return term;
     }
@@ -283,6 +300,14 @@ struct ByteTerm {
     {
         ByteTerm term(Type::AssertionEOL, flags);
         term.inputPosition = inputPos;
+        return term;
+    }
+
+    static ByteTerm EOI(unsigned inputPos, OptionSet<Flags> flags, bool withOptionalLineTerminator)
+    {
+        ByteTerm term(Type::AssertionEOI, flags);
+        term.inputPosition = inputPos;
+        term.m_withOptionalLineTerminator = withOptionalLineTerminator;
         return term;
     }
 

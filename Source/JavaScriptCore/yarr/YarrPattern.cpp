@@ -1292,6 +1292,20 @@ public:
     {
         m_alternative->m_terms.append(PatternTerm::EOL(m_flags));
     }
+    void assertionBOI()
+    {
+        // FIXME: \A always anchors to the start of input, like ^ in non-multiline mode,
+        // but unlike assertionBOL(), this doesn't set m_startsWithBOL/m_containsBOL,
+        // and recomputeStartsWithBOL() doesn't recognize AssertionBOI. Wiring it in
+        // would let optimizeBOL() & friends unroll \A-anchored alternatives too.
+        auto boiTerm = PatternTerm::BOI(m_flags);
+        boiTerm.setMatchDirection(parenthesisMatchDirection());
+        m_alternative->m_terms.append(boiTerm);
+    }
+    void assertionEOI(bool withOptionalLineTerminator)
+    {
+        m_alternative->m_terms.append(PatternTerm::EOI(withOptionalLineTerminator, m_flags));
+    }
     void assertionWordBoundary(bool invert)
     {
         m_alternative->m_terms.append(PatternTerm::WordBoundary(invert, m_flags));
@@ -1899,6 +1913,8 @@ public:
             switch (term.type) {
             case PatternTerm::Type::AssertionBOL:
             case PatternTerm::Type::AssertionEOL:
+            case PatternTerm::Type::AssertionBOI:
+            case PatternTerm::Type::AssertionEOI:
             case PatternTerm::Type::AssertionWordBoundary:
                 term.inputPosition = currentInputPosition;
                 break;
@@ -3065,7 +3081,7 @@ ErrorCode YarrPattern::compile(StringView patternString)
     YarrPatternConstructor constructor(*this, m_flags);
 
     {
-        ErrorCode error = parse(constructor, patternString, compileMode());
+        ErrorCode error = parse(constructor, patternString, compileMode(), quantifyInfinite, true, Options::useRegExpBufferBoundaries());
         if (hasError(constructor.error()))
             return constructor.error();
 
@@ -3293,6 +3309,12 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         break;
     case Type::AssertionEOL:
         out.println("EOL");
+        break;
+    case Type::AssertionBOI:
+        out.println("BOI");
+        break;
+    case Type::AssertionEOI:
+        out.println("EOI ", m_withOptionalLineTerminator ? "(\\Z)" : "(\\z)");
         break;
     case Type::AssertionWordBoundary:
         out.println("word boundary");

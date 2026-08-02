@@ -7110,6 +7110,19 @@ ReadableStreamTransferEnabled:
     WebKit:
       default: true
 
+RegExpBufferBoundariesEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "RegExp Buffer Boundaries"
+  humanReadableDescription: "Allow the use in regular expressions of \\\\A, \\\\z and \\\\Z from the RegExp Buffer Boundaries proposal"
+  webcoreBinding: none
+  jscOptionName: useRegExpBufferBoundaries
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 RemoteMediaSessionManagerEnabled:
   type: bool
   status: unstable

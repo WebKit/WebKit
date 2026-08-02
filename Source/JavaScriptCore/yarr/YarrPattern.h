@@ -226,6 +226,8 @@ struct PatternTerm {
     enum class Type : uint8_t {
         AssertionBOL,
         AssertionEOL,
+        AssertionBOI,
+        AssertionEOI,
         AssertionWordBoundary,
         PatternCharacter,
         CharacterClass,
@@ -241,6 +243,7 @@ struct PatternTerm {
     OptionSet<Flags> m_currentFlags;
     bool m_capture : 1;
     bool m_invert : 1;
+    bool m_withOptionalLineTerminator : 1;
     MatchDirection m_matchDirection : 1;
     QuantifierType quantityType;
     Checked<unsigned> quantityMinCount;
@@ -277,6 +280,7 @@ struct PatternTerm {
         , m_currentFlags(currFlags)
         , m_capture(false)
         , m_invert(false)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(matchDirection)
     {
         patternCharacter = ch;
@@ -289,6 +293,7 @@ struct PatternTerm {
         , m_currentFlags(currFlags)
         , m_capture(false)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(matchDirection)
     {
         characterClass = charClass;
@@ -301,6 +306,7 @@ struct PatternTerm {
         , m_currentFlags(currFlags)
         , m_capture(capture)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(matchDirection)
     {
         parentheses.disjunction = disjunction;
@@ -318,6 +324,7 @@ struct PatternTerm {
         , m_currentFlags(currFlags)
         , m_capture(false)
         , m_invert(invert)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
     {
         quantityType = QuantifierType::FixedCount;
@@ -329,6 +336,7 @@ struct PatternTerm {
         , m_currentFlags(currFlags)
         , m_capture(false)
         , m_invert(false)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
     {
         backReferenceSubpatternId = spatternId;
@@ -341,6 +349,7 @@ struct PatternTerm {
         , m_currentFlags(currFlags)
         , m_capture(false)
         , m_invert(false)
+        , m_withOptionalLineTerminator(false)
         , m_matchDirection(Forward)
     {
         anchors.bolAnchor = bolAnchor;
@@ -379,6 +388,18 @@ struct PatternTerm {
     static PatternTerm EOL(OptionSet<Flags> currFlags)
     {
         return PatternTerm(Type::AssertionEOL, currFlags);
+    }
+
+    static PatternTerm BOI(OptionSet<Flags> currFlags)
+    {
+        return PatternTerm(Type::AssertionBOI, currFlags);
+    }
+
+    static PatternTerm EOI(bool withOptionalLineTerminator, OptionSet<Flags> currFlags)
+    {
+        auto term = PatternTerm(Type::AssertionEOI, currFlags);
+        term.m_withOptionalLineTerminator = withOptionalLineTerminator;
+        return term;
     }
 
     static PatternTerm WordBoundary(bool invert, OptionSet<Flags> currFlags)
