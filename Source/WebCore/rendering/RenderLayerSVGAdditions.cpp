@@ -675,6 +675,8 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
         }
 
         for (auto phase : childToPaint.phasesToPaint) {
+            if ((phase == PaintPhase::Outline || phase == PaintPhase::SelfOutline) && !childRenderer->hasOutline())
+                continue;
             paintNonLayerChildForFragmentsForSVG(childRenderer.get(), childToPaint.accumulatedAncestorOffset,
                 phase, layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer, containerBaseOffset, isSVGRoot, sharedClipSaver.has_value());
         }
@@ -810,10 +812,12 @@ void RenderLayer::paintRendererByApplyingTransformForSVG(GraphicsContext& contex
                 } else if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(rendererToPaint.get()))
                     recursionBase = svgModel->nominalSVGLayoutLocation();
                 paintSubtreeWithinTransformScopeForSVG(context, rendererToPaint.get(), recursionBase, transformedPaintingInfo, adjustedPaintFlags, paintBehavior, subtreePaintRoot);
-                paintInScope(PaintPhase::SelfOutline, selfPaintOffset);
+                if (rendererToPaint->hasOutline())
+                    paintInScope(PaintPhase::SelfOutline, selfPaintOffset);
             } else {
                 paintInScope(PaintPhase::Foreground, selfPaintOffset);
-                paintInScope(PaintPhase::Outline, selfPaintOffset);
+                if (rendererToPaint->hasOutline())
+                    paintInScope(PaintPhase::Outline, selfPaintOffset);
             }
         }
     }

@@ -189,7 +189,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
 
         child->paint(childPaintInfo, adjustedPaintOffset);
 
-        if (paintInfo.phase == PaintPhase::Foreground) {
+        if (paintInfo.phase == PaintPhase::Foreground && child->hasOutline()) {
             // Paint each child's outline immediately so later DOM siblings paint on top of it.
             PaintInfo outlinePaintInfo(childPaintInfo);
             outlinePaintInfo.phase = PaintPhase::Outline;
