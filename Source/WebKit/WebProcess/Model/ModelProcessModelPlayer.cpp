@@ -187,6 +187,13 @@ void ModelProcessModelPlayer::load(WebCore::NodeIdentifier nodeID, WebCore::Mode
     send(Messages::ModelProcessModelPlayerProxy::LoadModel(nodeID, model, size, isForImmersive));
 }
 
+void ModelProcessModelPlayer::unload(WebCore::NodeIdentifier nodeID)
+{
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer unload model nodeID=%" PRIu64 " id=%" PRIu64, this, nodeID.toUInt64(), m_id.toUInt64());
+
+    send(Messages::ModelProcessModelPlayerProxy::UnloadModel(nodeID));
+}
+
 void ModelProcessModelPlayer::didUnload()
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer unload model id=%" PRIu64, this, m_id.toUInt64());

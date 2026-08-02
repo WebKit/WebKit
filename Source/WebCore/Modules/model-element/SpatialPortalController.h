@@ -30,6 +30,7 @@
 #include "LayoutSize.h"
 #include <WebCore/NodeIdentifier.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -64,7 +65,8 @@ public:
     void childModelDidChange(HTMLModelElement&);
 
     ModelPlayer* modelPlayer() const { return m_modelPlayer.get(); }
-    unsigned numberOfHostedModels() const { return m_model ? 1 : 0; }
+    unsigned numberOfHostedModels() const { return m_hostedModels.size(); }
+    WEBCORE_EXPORT unsigned numberOfLoadedModels() const;
     void configureGraphicsLayer(GraphicsLayer&, const Color& backgroundColor);
     void sizeMayHaveChanged();
 
@@ -80,18 +82,26 @@ private:
     void viewportIntersectionChanged(bool isIntersecting);
 
     ModelPlayer* ensureModelPlayer();
-    void loadChildModelIfReady();
-    void unloadModel();
+    void loadChildModelsIfReady();
+    void loadChildModelIfReady(HTMLModelElement&);
+    void deleteModelPlayer();
+    void unloadChildModel(NodeIdentifier);
+    HTMLModelElement* hostedModelElement(NodeIdentifier) const;
     void reconfigurePortalLayer();
     void observePortalVisibility();
     LayoutSize portalContentSize() const;
 
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
-    WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_childModel;
+
+    struct HostedModel {
+        WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> element;
+        RefPtr<Model> loadedModel;
+    };
+    HashMap<NodeIdentifier, HostedModel> m_hostedModels;
+
     WeakPtr<ModelPlayerProvider> m_modelPlayerProvider;
     RefPtr<ModelPlayer> m_modelPlayer;
     const RefPtr<PortalModelPlayerClient> m_playerClient;
-    RefPtr<Model> m_model;
     RefPtr<IntersectionObserver> m_intersectionObserver;
     bool m_isIntersectingViewport { false };
 };

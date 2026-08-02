@@ -36,6 +36,7 @@ messages -> ModelProcessModelPlayerProxy {
     
     # WebCore::ModelPlayer
     LoadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
+    UnloadModel(WebCore::NodeIdentifier nodeID)
     SizeDidChange(WebCore::LayoutSize layoutSize)
     SetEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
     SetAutoplay(WebCore::NodeIdentifier nodeID, bool autoplay)

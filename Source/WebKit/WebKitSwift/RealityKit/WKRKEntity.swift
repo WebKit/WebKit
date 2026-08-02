@@ -494,6 +494,10 @@ extension WKRKEntity {
     }
     #endif
 
+    func removeFromParentEntity() {
+        entity.removeFromParent()
+    }
+
     @objc(interactionContainerDidRecenterFromTransform:)
     func interactionContainerDidRecenter(fromTransform transform: simd_float4x4) {
         entity.setTransformMatrix(transform, relativeTo: nil)

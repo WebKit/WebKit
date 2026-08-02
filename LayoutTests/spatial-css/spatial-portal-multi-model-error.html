@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+// error-case.usdz downloads successfully but cannot be decoded, so the failure is reported by the
+// model player rather than by the resource load, and `ready` rejects with an AbortError.
+promise_test(async t => {
+    const portal = createPortal(t);
+    const valid = appendModel(portal, "cube.usdz");
+    const invalid = appendModel(portal, "error-case.usdz");
+
+    await promise_rejects_dom(t, "AbortError", invalid.ready, "the undecodable model rejects its ready promise");
+    await valid.ready;
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the failed load leaves both models registered with the portal");
+    assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), 1, "only the valid model is loaded");
+}, "A failing <model> in a spatial portal does not prevent its sibling from loading");
+
+</script>
+</body>
+</html>

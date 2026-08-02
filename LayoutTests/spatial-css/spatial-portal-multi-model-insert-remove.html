@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "cube.usdz");
+    const second = appendModel(portal, "cube.usdz");
+    await Promise.all([first.ready, second.ready]);
+
+    const third = appendModel(portal, "2x2x2-center.usdz");
+    await third.ready;
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 3, "the portal hosts the dynamically added model too");
+}, "A <model> added to a spatial portal that already hosts models loads as well");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const staying = appendModel(portal, "cube.usdz");
+    const removed = appendModel(portal, "cube.usdz");
+    await Promise.all([staying.ready, removed.ready]);
+
+    removed.remove();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 1, "the portal still hosts the remaining model");
+    await staying.ready;
+}, "Removing one of two <model>s from a spatial portal leaves its sibling loaded");
+
+</script>
+</body>
+</html>

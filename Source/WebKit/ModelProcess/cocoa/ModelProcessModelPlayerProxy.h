@@ -77,6 +77,7 @@ public:
 #include <WebCore/StageModeOperations.h>
 #include <WebCore/TransformationMatrix.h>
 #include <simd/simd.h>
+#include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -120,12 +121,12 @@ public:
     void unloadModelTimerFired();
     void updateTransformAfterLayout();
     void updateOpacity();
-    void startAnimating();
     void animationPlaybackStateDidUpdate();
 
     // Messages
     void createLayer();
     void loadModel(WebCore::NodeIdentifier, Ref<WebCore::Model>&&, WebCore::LayoutSize, bool);
+    void unloadModel(WebCore::NodeIdentifier);
     void reloadModel(WebCore::NodeIdentifier, Ref<WebCore::Model>&&, WebCore::LayoutSize, std::optional<WebCore::TransformationMatrix> transformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore);
     void modelVisibilityDidChange(bool isVisible);
 
@@ -187,6 +188,15 @@ public:
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&, std::optional<int>, std::optional<int>);
 
+    struct HostedModelEntity {
+        RefPtr<WebCore::REModelLoader> loader;
+        RetainPtr<WKRKEntity> entity;
+        simd_float3 originalEntityScale { simd_make_float3(1, 1, 1) };
+        simd_float3 originalBoundingBoxCenter { simd_make_float3(0, 0, 0) };
+        simd_float3 originalBoundingBoxExtents { simd_make_float3(0, 0, 0) };
+    };
+    using HostedModelEntityMap = HashMap<WebCore::NodeIdentifier, HostedModelEntity>;
+
     RESRT modelStandardizedTransformSRT(RESRT originalSRT);
     RESRT modelLocalizedTransformSRT(RESRT originalSRT);
     void computeTransform(bool);
@@ -198,6 +208,11 @@ private:
     void notifyModelPlayerOfEntityTransformChange();
     void applyDefaultIBL();
     void updateForCurrentStageMode();
+    void setUpLoadedEntity(WKRKEntity *);
+    simd_float3 reportingModelScale() const;
+    void clearReportingModelIfNeeded(WebCore::NodeIdentifier);
+    HostedModelEntityMap::iterator findHostedEntityForLoader(const WebCore::REModelLoader&);
+    void cancelAllLoaders();
 #if HAVE(CORE_RE)
     void ensurePortalEntityHierarchy();
     void parentToContainer(WKRKEntity *);
@@ -213,7 +228,11 @@ private:
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<WKModelProcessModelLayer> m_layer;
-    RefPtr<WebCore::REModelLoader> m_loader;
+
+    HostedModelEntityMap m_hostedEntities;
+
+    // The first model loaded reports animation playback state for the portal until that is
+    // generalized: rdar://182292543 (Child model animation forwarding).
     RetainPtr<WKRKEntity> m_modelRKEntity;
 #if HAVE(CORE_RE)
     REPtr<RESceneRef> m_scene;
@@ -223,9 +242,6 @@ private:
 #endif
     RetainPtr<WKModelProcessModelPlayerProxyObjCAdapter> m_objCAdapter;
 
-    simd_float3 m_originalBoundingBoxCenter { simd_make_float3(0, 0, 0) };
-    simd_float3 m_originalBoundingBoxExtents { simd_make_float3(0, 0, 0) };
-    simd_float3 m_originalEntityScale { simd_make_float3(1, 1, 1) };
     float m_pitch { 0 };
 
     RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.

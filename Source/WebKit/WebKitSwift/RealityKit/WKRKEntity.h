@@ -78,6 +78,7 @@ NS_SWIFT_UI_ACTOR
 - (void)interactionContainerDidRecenterFromTransform:(simd_float4x4)transform;
 - (void)recenterEntityAtTransform:(WKEntityTransform)transform;
 - (void)applyDefaultIBL;
+- (void)removeFromParentEntity;
 
 #if HAVE(CORE_RE)
 - (instancetype)initWithCoreEntity:(REEntityRef)coreEntity;

@@ -51,6 +51,7 @@
 #include "ResourceError.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -175,64 +176,90 @@ SpatialPortalController::~SpatialPortalController()
 {
     if (RefPtr observer = m_intersectionObserver)
         observer->disconnect();
-    unloadModel();
+    deleteModelPlayer();
+}
+
+unsigned SpatialPortalController::numberOfLoadedModels() const
+{
+    unsigned count = 0;
+    for (auto& hostedModel : m_hostedModels.values()) {
+        if (hostedModel.loadedModel)
+            ++count;
+    }
+    return count;
+}
+
+HTMLModelElement* SpatialPortalController::hostedModelElement(NodeIdentifier nodeID) const
+{
+    auto it = m_hostedModels.find(nodeID);
+    if (it == m_hostedModels.end())
+        return nullptr;
+    return it->value.element.get();
 }
 
 void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
 {
-    if (m_childModel.get() != &model)
+    auto nodeID = model.nodeIdentifier();
+    if (hostedModelElement(nodeID) != &model)
         return;
-    m_childModel = nullptr;
-    unloadModel();
+
+    unloadChildModel(nodeID);
+    m_hostedModels.remove(nodeID);
+
+    if (m_hostedModels.isEmpty())
+        deleteModelPlayer();
 }
 
 void SpatialPortalController::registerChildModel(HTMLModelElement& model)
 {
-    if (m_childModel && m_childModel.get() != &model) {
-        // FIXME: rdar://182292429
-        model.didFailLoadingInsidePortal(ResourceError { errorDomainWebKitInternal, 0, { }, "Only one model is supported per spatial portal"_s });
-        return;
-    }
-    m_childModel = model;
+    m_hostedModels.ensure(model.nodeIdentifier(), [&] {
+        return HostedModel { model, nullptr };
+    });
 
     observePortalVisibility();
 
     model.visibilityStateChanged();
-    loadChildModelIfReady();
+    loadChildModelIfReady(model);
 }
 
 void SpatialPortalController::childModelDidChange(HTMLModelElement& model)
 {
-    if (m_childModel.get() != &model)
+    if (hostedModelElement(model.nodeIdentifier()) != &model)
         return;
-    loadChildModelIfReady();
+    loadChildModelIfReady(model);
 }
 
-void SpatialPortalController::loadChildModelIfReady()
+void SpatialPortalController::loadChildModelsIfReady()
 {
-    RefPtr child = m_childModel.get();
-    if (!child)
+    for (auto& hostedModel : copyToVector(m_hostedModels.values())) {
+        if (RefPtr element = hostedModel.element.get())
+            loadChildModelIfReady(*element);
+    }
+}
+
+void SpatialPortalController::loadChildModelIfReady(HTMLModelElement& model)
+{
+    auto nodeID = model.nodeIdentifier();
+
+    RefPtr modelData = model.model();
+    if (!modelData) {
+        unloadChildModel(nodeID);
         return;
+    }
 
     if (!isPortalVisible())
         return;
 
-    RefPtr modelData = child->model();
-    if (!modelData)
+    auto it = m_hostedModels.find(nodeID);
+    if (it == m_hostedModels.end() || it->value.loadedModel == modelData)
         return;
-
-    if (m_modelPlayer && m_model == modelData)
-        return;
-
-    if (m_modelPlayer)
-        unloadModel();
 
     RefPtr player = ensureModelPlayer();
     if (!player)
         return;
 
-    m_model = modelData;
-    player->load(child->nodeIdentifier(), *modelData, portalContentSize(), false);
+    it->value.loadedModel = modelData;
+    player->load(nodeID, *modelData, portalContentSize(), false);
 }
 
 void SpatialPortalController::observePortalVisibility()
@@ -265,11 +292,13 @@ void SpatialPortalController::viewportIntersectionChanged(bool isIntersecting)
     if (RefPtr player = m_modelPlayer)
         player->visibilityStateDidChange();
 
-    if (RefPtr child = m_childModel.get())
-        child->visibilityStateChanged();
+    for (auto& hostedModel : copyToVector(m_hostedModels.values())) {
+        if (RefPtr element = hostedModel.element.get())
+            element->visibilityStateChanged();
+    }
 
     if (isIntersecting)
-        loadChildModelIfReady();
+        loadChildModelsIfReady();
 }
 
 ModelPlayer* SpatialPortalController::ensureModelPlayer()
@@ -297,15 +326,27 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
     return m_modelPlayer.get();
 }
 
-void SpatialPortalController::unloadModel()
+void SpatialPortalController::deleteModelPlayer()
 {
     if (m_modelPlayer) {
-        // FIXME: rdar://182292429 - Remove model without destroying the player.
         if (RefPtr provider = m_modelPlayerProvider.get())
             provider->deleteModelPlayer(*m_modelPlayer);
         m_modelPlayer = nullptr;
     }
-    m_model = nullptr;
+    for (auto& hostedModel : m_hostedModels.values())
+        hostedModel.loadedModel = nullptr;
+}
+
+void SpatialPortalController::unloadChildModel(NodeIdentifier nodeID)
+{
+    auto it = m_hostedModels.find(nodeID);
+    if (it == m_hostedModels.end() || !it->value.loadedModel)
+        return;
+
+    it->value.loadedModel = nullptr;
+
+    if (RefPtr player = m_modelPlayer)
+        player->unload(nodeID);
 }
 
 LayoutSize SpatialPortalController::portalContentSize() const
@@ -324,13 +365,12 @@ void SpatialPortalController::configureGraphicsLayer(GraphicsLayer& graphicsLaye
     if (!player)
         return;
 
-    RefPtr child = m_childModel.get();
     player->configureGraphicsLayer(graphicsLayer, {
-        .model = m_model,
+        .model = nullptr,
         .contentSize = portalContentSize(),
         .contentOrigin = LayoutPoint(graphicsLayer.contentsRect().location()),
         .backgroundColor = backgroundColor,
-        .isInteractive = child && child->isInteractive(),
+        .isInteractive = false,
 #if ENABLE(MODEL_ELEMENT_PORTAL)
         .hasPortal = true, // N/A
 #endif
@@ -348,8 +388,8 @@ void SpatialPortalController::sizeMayHaveChanged()
 
 void SpatialPortalController::modelDidFinishLoading(ModelPlayer&, NodeIdentifier nodeID)
 {
-    RefPtr child = m_childModel.get();
-    if (!child || child->nodeIdentifier() != nodeID)
+    RefPtr child = hostedModelElement(nodeID);
+    if (!child)
         return;
 
     child->didFinishLoadingInsidePortal();
@@ -359,11 +399,14 @@ void SpatialPortalController::modelDidFinishLoading(ModelPlayer&, NodeIdentifier
 
 void SpatialPortalController::modelDidFailLoading(ModelPlayer&, NodeIdentifier nodeID, const ResourceError& error)
 {
-    RefPtr child = m_childModel.get();
-    if (!child || child->nodeIdentifier() != nodeID)
+    auto it = m_hostedModels.find(nodeID);
+    if (it == m_hostedModels.end())
         return;
 
-    child->didFailLoadingInsidePortal(error);
+    it->value.loadedModel = nullptr;
+
+    if (RefPtr child = it->value.element.get())
+        child->didFailLoadingInsidePortal(error);
 }
 
 void SpatialPortalController::modelDidUnload(ModelPlayer& player)
@@ -372,9 +415,9 @@ void SpatialPortalController::modelDidUnload(ModelPlayer& player)
     if (m_modelPlayer != &player)
         return;
 
-    unloadModel();
+    deleteModelPlayer();
     // FIXME: rdar://148027600 Prevent infinite reloading of model.
-    loadChildModelIfReady();
+    loadChildModelsIfReady();
 }
 
 void SpatialPortalController::modelDidUpdate(ModelPlayer&)

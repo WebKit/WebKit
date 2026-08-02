@@ -316,6 +316,11 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
     m_shouldCreateModelPlayerUponRendererAttachment = false;
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (CheckedPtr controller = findPortalController())
+        controller->childModelDidChange(*this);
+#endif
+
     if (m_sourceURL.isEmpty()) {
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         reportExtraMemoryCost();

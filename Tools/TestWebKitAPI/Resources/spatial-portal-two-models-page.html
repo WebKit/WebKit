@@ -10,6 +10,5 @@
 </div>
 <script>
     const models = [...document.querySelectorAll('model')];
-    // FIXME: rdar://182292429 (Multi model support, switch to Promise.all)
-    Promise.allSettled(models.map(model => model.ready)).then(() => window.webkit.messageHandlers.modelLoading.postMessage('READY'));
+    Promise.all(models.map(model => model.ready)).finally(() => window.webkit.messageHandlers.modelLoading.postMessage('READY'));
 </script>

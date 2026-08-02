@@ -86,6 +86,7 @@ private:
     std::optional<WebCore::ModelPlayerAnimationState> currentAnimationState(WebCore::NodeIdentifier) const final;
     std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> currentTransformState(WebCore::NodeIdentifier) const final;
     void load(WebCore::NodeIdentifier, WebCore::Model&, WebCore::LayoutSize, bool) final;
+    void unload(WebCore::NodeIdentifier) final;
     void reload(WebCore::NodeIdentifier, WebCore::Model&, WebCore::LayoutSize, WebCore::ModelPlayerAnimationState&, std::unique_ptr<WebCore::ModelPlayerTransformState>&&) final;
     void visibilityStateDidChange() final;
     void sizeDidChange(WebCore::LayoutSize) final;
