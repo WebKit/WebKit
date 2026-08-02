@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-001-expected.xht
@@ -66,6 +64,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/remove-block-between-inline-and-abspos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-fixed-inside-abspos-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-fixed-inside-abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-float-inside-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-float-inside-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-002-expected.xht
