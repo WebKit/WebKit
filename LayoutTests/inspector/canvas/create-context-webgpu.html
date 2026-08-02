@@ -11,7 +11,7 @@ let garbageCollectionInterval = null;
 async function createDevice() {
     adapter = await navigator.gpu.requestAdapter();
     let firstSupportedFeature = adapter.features.values().next().value;
-    device = await adapter.requestDevice({requiredFeatures: firstSupportedFeature ? [firstSupportedFeature] : []});
+    device = await adapter.requestDevice({label: "Labeled WebGPU Device", requiredFeatures: firstSupportedFeature ? [firstSupportedFeature] : []});
     TestPage.dispatchEventToFrontend("WebGPUDeviceReady");
 }
 
@@ -51,6 +51,7 @@ function test() {
             let canvas = canvasAddedEvent.data.item;
             InspectorTest.expectThat(canvas instanceof WI.Canvas, "Added a Canvas.");
             InspectorTest.expectEqual(canvas.contextType, WI.Canvas.ContextType.WebGPU, "Canvas should represent a WebGPU device.");
+            InspectorTest.expectEqual(canvas.displayName, "Labeled WebGPU Device", "Canvas should use the GPUDevice label as its display name.");
             InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 1, "CanvasManager should contain one Canvas.");
             let enabledFeatures = JSON.parse(await InspectorTest.evaluateInPage(`JSON.stringify(Array.from(device.features))`));
             InspectorTest.expectTrue(Array.isArray(canvas.features), "Canvas should contain WebGPU features.");

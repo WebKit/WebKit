@@ -25,7 +25,7 @@
 
 WI.Canvas = class Canvas extends WI.Object
 {
-    constructor(target, identifier, contextType, size, {domNode, cssCanvasName, contextAttributes, features, memoryCost, stackTrace} = {})
+    constructor(target, identifier, contextType, size, {domNode, cssCanvasName, contextAttributes, features, memoryCost, stackTrace, displayName} = {})
     {
         super();
 
@@ -34,6 +34,7 @@ WI.Canvas = class Canvas extends WI.Object
         console.assert(contextType);
         console.assert(!size || size instanceof WI.Size, size);
         console.assert(!stackTrace || stackTrace instanceof WI.StackTrace, stackTrace);
+        console.assert(!displayName || typeof displayName === "string", displayName);
 
         this._target = target;
         this._identifier = identifier;
@@ -46,6 +47,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._extensions = new Set;
         this._memoryCost = memoryCost || NaN;
         this._stackTrace = stackTrace || null;
+        this._displayName = displayName || "";
 
         this._clientNodes = null;
         this._shaderProgramCollection = new WI.ShaderProgramCollection;
@@ -125,6 +127,7 @@ WI.Canvas = class Canvas extends WI.Object
             features: payload.features,
             memoryCost: payload.memoryCost,
             stackTrace: WI.StackTrace.fromPayload(target, payload.stackTrace),
+            displayName: payload.name,
         });
     }
 
@@ -202,6 +205,9 @@ WI.Canvas = class Canvas extends WI.Object
 
     get displayName()
     {
+        if (this._displayName)
+            return this._displayName;
+
         if (this._cssCanvasName)
             return WI.UIString("CSS canvas \u201C%s\u201D").format(this._cssCanvasName);
 

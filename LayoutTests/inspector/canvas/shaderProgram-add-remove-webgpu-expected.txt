@@ -5,9 +5,11 @@ Test that CanvasManager tracks creation and destruction of WebGPU pipelines.
 -- Running test case: Canvas.ShaderProgram.WebGPU.Existing
 PASS: Found the existing compute ShaderProgram.
 PASS: Compute ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Compute ShaderProgram should use the pipeline label as its display name.
 PASS: Compute ShaderProgram should not support disabling.
 PASS: Found the existing render ShaderProgram.
 PASS: Render ShaderProgram should have the WebGPU Canvas as its parent.
+PASS: Render ShaderProgram should use the pipeline label as its display name.
 PASS: Render ShaderProgram should support disabling.
 PASS: Canvas should initially have two ShaderPrograms.
 

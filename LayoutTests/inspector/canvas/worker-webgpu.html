@@ -36,6 +36,7 @@ async function test() {
         async test() {
             InspectorTest.expectTrue(workerTarget.hasDomain("Canvas"), "Worker target should expose the Canvas domain.");
             InspectorTest.expectEqual(canvas.target, workerTarget, "WebGPU Canvas should belong to the Worker target.");
+            InspectorTest.expectEqual(canvas.displayName, "Labeled Worker WebGPU Device", "Worker Canvas should use the GPUDevice label as its display name.");
 
             const objectGroup = "test";
             let {object} = await canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup);
@@ -59,12 +60,14 @@ async function test() {
 
             let computeProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Compute);
             InspectorTest.expectThat(computeProgram instanceof WI.ShaderProgram, "Found the Worker compute ShaderProgram.");
+            InspectorTest.expectEqual(computeProgram.displayName, "Labeled Worker Compute Pipeline", "Worker compute ShaderProgram should use the pipeline label as its display name.");
             let computeSourceResult = await computeProgram.target.CanvasAgent.requestShaderSource(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute);
             let computeSource = computeSourceResult.source;
             InspectorTest.expectTrue(computeSource.includes("@compute") && computeSource.includes("computeMain"), "Compute ShaderProgram should expose its WGSL source.");
 
             let renderProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Render);
             InspectorTest.expectThat(renderProgram instanceof WI.ShaderProgram, "Found the Worker render ShaderProgram.");
+            InspectorTest.expectEqual(renderProgram.displayName, "Labeled Worker Render Pipeline", "Worker render ShaderProgram should use the pipeline label as its display name.");
             InspectorTest.expectTrue(renderProgram.sharesVertexFragmentShader, "Worker render pipeline should report its shared shader module.");
             let vertexSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
             let vertexSource = vertexSourceResult.source;

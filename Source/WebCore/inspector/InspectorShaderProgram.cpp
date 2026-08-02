@@ -221,12 +221,17 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
 {
     auto programType = Inspector::Protocol::Canvas::ProgramType::Render;
     bool sharesVertexFragmentShader = false;
+    String name;
     WTF::switchOn(m_program
 #if ENABLE(WEBGL)
         , [](const WeakRef<WebGLProgram>&) { }
 #endif // ENABLE(WEBGL)
-        , [&](const WeakRef<GPUComputePipeline>&) {
+        , [&](const WeakRef<GPUComputePipeline>& weakPipeline) {
+            Ref pipeline = weakPipeline.get();
+
             programType = Inspector::Protocol::Canvas::ProgramType::Compute;
+
+            name = pipeline->label();
         }
         , [&](const WeakRef<GPURenderPipeline>& weakPipeline) {
             Ref pipeline = weakPipeline.get();
@@ -236,6 +241,8 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
                 programType = Inspector::Protocol::Canvas::ProgramType::Vertex;
             else
                 sharesVertexFragmentShader = pipeline->sharesVertexFragmentShader();
+
+            name = pipeline->label();
         }
     );
     auto payload = Inspector::Protocol::Canvas::ShaderProgram::create()
@@ -245,6 +252,8 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
         .release();
     if (sharesVertexFragmentShader)
         payload->setSharesVertexFragmentShader(true);
+    if (!name.isEmpty())
+        payload->setName(name);
     return payload;
 }
 

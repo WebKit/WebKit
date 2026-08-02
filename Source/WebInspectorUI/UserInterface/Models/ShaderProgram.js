@@ -25,7 +25,7 @@
 
 WI.ShaderProgram = class ShaderProgram extends WI.Object
 {
-    constructor(target, identifier, programType, canvas, {sharesVertexFragmentShader} = {})
+    constructor(target, identifier, programType, canvas, {sharesVertexFragmentShader, displayName} = {})
     {
         console.assert(target instanceof WI.Target, target);
         console.assert(target === canvas.target, target, canvas.target);
@@ -33,6 +33,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         console.assert(Object.values(ShaderProgram.ProgramType).includes(programType));
         console.assert(canvas instanceof WI.Canvas);
         console.assert(ShaderProgram.contextTypeSupportsProgramType(canvas.contextType, programType));
+        console.assert(!displayName || typeof displayName === "string", displayName);
 
         super();
 
@@ -40,6 +41,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         this._identifier = identifier;
         this._programType = programType;
         this._canvas = canvas;
+        this._displayName = displayName || "";
 
         this._sharesVertexFragmentShader = !!sharesVertexFragmentShader;
         console.assert(!this._sharesVertexFragmentShader || (this._canvas.contextType === WI.Canvas.ContextType.WebGPU && this._programType === ShaderProgram.ProgramType.Render));
@@ -109,6 +111,9 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 
     get displayName()
     {
+        if (this._displayName)
+            return this._displayName;
+
         let format = null;
         switch (this._canvas.contextType) {
         case WI.Canvas.ContextType.WebGL:

@@ -34,13 +34,14 @@ async function initializeWebGPU() {
     device = await adapter.requestDevice();
     presentationFormat = navigator.gpu.getPreferredCanvasFormat();
 
-    await createComputePipeline();
-    await createRenderPipeline();
+    await createComputePipeline({label: "Labeled Compute Pipeline"});
+    await createRenderPipeline({label: "Labeled Render Pipeline"});
 }
 
-async function createComputePipeline({asynchronously = false} = {}) {
+async function createComputePipeline({asynchronously = false, label = ""} = {}) {
     let shaderModule = device.createShaderModule({code: computeShaderSource});
     let descriptor = {
+        label,
         layout: "auto",
         compute: {
             module: shaderModule,
@@ -51,10 +52,11 @@ async function createComputePipeline({asynchronously = false} = {}) {
     computePipelines.push(pipeline);
 }
 
-async function createRenderPipeline({asynchronously = false} = {}) {
+async function createRenderPipeline({asynchronously = false, label = ""} = {}) {
     let vertexShaderModule = device.createShaderModule({code: vertexShaderSource});
     let fragmentShaderModule = device.createShaderModule({code: fragmentShaderSource});
     let descriptor = {
+        label,
         layout: "auto",
         vertex: {
             module: vertexShaderModule,

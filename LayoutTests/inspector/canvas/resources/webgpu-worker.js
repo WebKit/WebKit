@@ -26,10 +26,11 @@ let offscreenContext = null;
 
 async function initialize() {
     adapter = await navigator.gpu.requestAdapter();
-    device = await adapter.requestDevice();
+    device = await adapter.requestDevice({label: "Labeled Worker WebGPU Device"});
 
     let computeShaderModule = device.createShaderModule({code: computeShaderSource});
     computePipeline = device.createComputePipeline({
+        label: "Labeled Worker Compute Pipeline",
         layout: "auto",
         compute: {
             module: computeShaderModule,
@@ -40,6 +41,7 @@ async function initialize() {
     let renderShaderModule = device.createShaderModule({code: renderShaderSource});
     let format = navigator.gpu.getPreferredCanvasFormat();
     renderPipeline = device.createRenderPipeline({
+        label: "Labeled Worker Render Pipeline",
         layout: "auto",
         vertex: {
             module: renderShaderModule,

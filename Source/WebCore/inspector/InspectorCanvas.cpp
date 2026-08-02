@@ -611,6 +611,9 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
                 features->addItem(feature);
             result->setFeatures(WTF::move(features));
 
+            if (auto label = device->label(); !label.isEmpty())
+                result->setName(label);
+
             return result;
         }
     );

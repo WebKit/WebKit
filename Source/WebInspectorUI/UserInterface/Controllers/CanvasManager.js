@@ -252,13 +252,10 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!programType)
             programType = WI.ShaderProgram.ProgramType.Render;
 
-        let options = {};
-
-        // COMPATIBILITY (iOS 13.0): `Canvas.ShaderProgram.sharesVertexFragmentShader` did not exist yet.
-        if (shaderProgramPayload.sharesVertexFragmentShader)
-            options.sharesVertexFragmentShader = true;
-
-        let program = new WI.ShaderProgram(target, shaderProgramPayload.programId, programType, canvas, options);
+        let program = new WI.ShaderProgram(target, shaderProgramPayload.programId, programType, canvas, {
+            sharesVertexFragmentShader: shaderProgramPayload.sharesVertexFragmentShader,
+            displayName: shaderProgramPayload.name,
+        });
 
         let shaderProgramForIdentifierMap = this._shaderProgramForIdentifierForTargetMap.getOrInsert(target, new Map);
         console.assert(!shaderProgramForIdentifierMap.has(program.identifier), `ShaderProgram already exists with id ${program.identifier}.`);

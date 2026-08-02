@@ -5,6 +5,7 @@ Test WebGPU Canvas instrumentation for a Worker rendering to an OffscreenCanvas.
 -- Running test case: Canvas.WebGPU.Worker.Device
 PASS: Worker target should expose the Canvas domain.
 PASS: WebGPU Canvas should belong to the Worker target.
+PASS: Worker Canvas should use the GPUDevice label as its display name.
 PASS: Payload should have type "object".
 PASS: Payload should have className "GPUDevice".
 PASS: Worker GPUDevice should have no DOM client nodes.
@@ -13,8 +14,10 @@ PASS: Worker WebGPU Canvas content should not be empty.
 -- Running test case: Canvas.WebGPU.Worker.Pipelines
 PASS: Worker GPUDevice should have two ShaderPrograms.
 PASS: Found the Worker compute ShaderProgram.
+PASS: Worker compute ShaderProgram should use the pipeline label as its display name.
 PASS: Compute ShaderProgram should expose its WGSL source.
 PASS: Found the Worker render ShaderProgram.
+PASS: Worker render ShaderProgram should use the pipeline label as its display name.
 PASS: Worker render pipeline should report its shared shader module.
 PASS: Shared Worker vertex and fragment stages should expose the same WGSL source.
 PASS: Render ShaderProgram should expose both WGSL entry points.
