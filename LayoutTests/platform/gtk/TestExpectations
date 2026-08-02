@@ -947,8 +947,6 @@ webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure 
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-004.html [ Failure ]
 
-webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
-
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
@@ -1057,8 +1055,6 @@ webgl/2.0.y/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.y/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/filtered-block-is-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-is-container.html [ ImageOnlyFailure ]
 
 [ Debug ] media/video-concurrent-playback.html [ Pass Failure ]
 
