@@ -518,9 +518,19 @@ UNIFIED_PDF_TEST(PDFHUDMultiplePluginsDoNotInterceptHitTesting)
     [webView waitForNextPresentationUpdate];
 
     // HUDs for <embed> plugins are created asynchronously after navigation, so wait for both to appear.
-    TestWebKitAPI::Util::waitFor([webView] {
-        return [webView _pdfHUDs].count >= 2;
+    bool hudsReady = TestWebKitAPI::Util::waitFor([webView] {
+        [webView waitForNextPresentationUpdate];
+        RetainPtr currentHUDs = [[webView _pdfHUDs] allObjects];
+        if ([currentHUDs count] < 2)
+            return false;
+        for (NSView *hud in currentHUDs.get()) {
+            RetainPtr bar = [[hud subviews] firstObject];
+            if (!bar || NSIsEmptyRect([bar frame]))
+                return false;
+        }
+        return true;
     });
+    EXPECT_TRUE(hudsReady);
 
     RetainPtr huds = [[webView _pdfHUDs] allObjects];
 
