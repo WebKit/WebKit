@@ -920,11 +920,6 @@
 #define ENABLE_YARR_JIT_UNICODE_EXPRESSIONS 1
 #endif
 
-/* Enables an optimiztion to advance two codepoints when we fail to match a non-BMP character */
-#if ENABLE(YARR_JIT) && CPU(ARM64)
-#define ENABLE_YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP 1
-#endif
-
 /* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
    enabled as well: */
 #if ENABLE(JIT) || ENABLE(YARR_JIT) || !ENABLE(C_LOOP)

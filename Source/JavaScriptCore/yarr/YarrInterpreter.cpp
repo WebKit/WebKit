@@ -280,9 +280,47 @@ public:
         {
         }
 
-        void NODELETE next()
+        // A complete surrogate pair starts at |p|, so CodePointAt(input, p) spans two code units.
+        // |unit| is the code unit at |p|, which every caller has already loaded; the surrogate test
+        // comes first because it rejects almost every character straight out of that register.
+        // https://tc39.es/ecma262/#sec-codepointat
+        bool NODELETE hasSurrogatePairAt(unsigned p, CharType unit)
         {
-            ++pos;
+            ASSERT(p < length);
+            ASSERT(unit == input[p]);
+            // An 8-bit subject holds no surrogate, so there is never a pair in it.
+            if constexpr (sizeof(CharType) > 1)
+                return U16_IS_LEAD(unit) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1]);
+            else {
+                UNUSED_PARAM(p);
+                UNUSED_PARAM(unit);
+                return false;
+            }
+        }
+
+        // |p| holds the trailing surrogate of a complete pair, so it is not a code point boundary
+        // and no code point can be read there. |unit| is the code unit at |p|.
+        bool NODELETE isTrailOfSurrogatePairAt(unsigned p, CharType unit)
+        {
+            ASSERT(p < length);
+            ASSERT(unit == input[p]);
+            if constexpr (sizeof(CharType) > 1)
+                return U16_IS_TRAIL(unit) && decodeSurrogatePairs && p > 0 && U16_IS_LEAD(input[p - 1]);
+            else {
+                UNUSED_PARAM(p);
+                UNUSED_PARAM(unit);
+                return false;
+            }
+        }
+
+        void NODELETE advanceStartPosition()
+        {
+            // Retry a failed match attempt at AdvanceStringIndex(input, pos, unicode),
+            // which steps over a whole code point, so that a start position is never taken between a
+            // leading and a trailing surrogate. A lone surrogate advances by a single code unit.
+            // https://tc39.es/ecma262/#sec-advancestringindex
+            ASSERT(pos < length);
+            pos += hasSurrogatePairAt(pos, input[pos]) ? 2 : 1;
         }
 
         void NODELETE rewind(unsigned amount)
@@ -305,12 +343,13 @@ public:
             unsigned p = pos - negativePositionOffest;
             ASSERT(p < length);
             auto result = input[p];
-            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1])) {
+            if (hasSurrogatePairAt(p, result)) {
                 if (atEnd())
                     return errorCodePoint;
-                next();
+                ++pos;
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
-            } else if (decodeSurrogatePairs && p > 0 && U16_IS_TRAIL(result) && U16_IS_LEAD(input[p - 1]))
+            }
+            if (isTrailOfSurrogatePairAt(p, result))
                 return errorCodePoint;
             return result;
         }
@@ -319,31 +358,25 @@ public:
         {
             RELEASE_ASSERT(pos >= negativePositionOffest);
             unsigned p = pos - negativePositionOffest;
-            ASSERT(p < length);
-            auto result = input[p];
-            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1]))
-                return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
-            if (U16_IS_TRAIL(result) && decodeSurrogatePairs && p > 0 && U16_IS_LEAD(input[p - 1]))
-                return errorCodePoint;
-            return result;
+            return reread(p);
         }
 
         // readForCharacterDump() is only for use by the DUMP_CURR_CHAR macro.
-        // We don't want any side effects like the next() in readChecked() above.
+        // We don't want any side effects like the ++pos in readChecked() above.
         char32_t NODELETE readForCharacterDump(unsigned negativePositionOffest)
         {
             RELEASE_ASSERT(pos >= negativePositionOffest);
             unsigned p = pos - negativePositionOffest;
             ASSERT(p < length);
             auto result = input[p];
-            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1])) {
+            if (hasSurrogatePairAt(p, result)) {
                 if (atEnd())
                     return errorCodePoint;
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
             }
             return result;
         }
-        
+
         char32_t NODELETE tryReadBackward(unsigned negativePositionOffest)
         {
             if (pos < negativePositionOffest)
@@ -351,7 +384,7 @@ public:
             unsigned p = pos - negativePositionOffest;
             ASSERT(p < length);
             auto result = input[p];
-            if (U16_IS_TRAIL(result) && decodeSurrogatePairs && p > 0 && U16_IS_LEAD(input[p - 1])) {
+            if (isTrailOfSurrogatePairAt(p, result)) {
                 rewind(1);
                 return U16_GET_SUPPLEMENTARY(input[p - 1], result);
             }
@@ -363,12 +396,12 @@ public:
             RELEASE_ASSERT(pos >= negativePositionOffset);
             unsigned p = pos - negativePositionOffset;
             ASSERT(p < length);
-            if (p + 1 >= length)
-                return errorCodePoint;
-            auto first = input[p];
-            auto second = input[p + 1];
-            if (U16_IS_LEAD(first) && U16_IS_TRAIL(second))
-                return U16_GET_SUPPLEMENTARY(first, second);
+            // Unlike the code point reads this does not consult decodeSurrogatePairs: it is only
+            // reached after a non-BMP code point has already been read, which implies it.
+            if constexpr (sizeof(CharType) > 1) {
+                if (p + 1 < length && U16_IS_LEAD(input[p]) && U16_IS_TRAIL(input[p + 1]))
+                    return U16_GET_SUPPLEMENTARY(input[p], input[p + 1]);
+            }
             return errorCodePoint;
         }
 
@@ -376,12 +409,10 @@ public:
         {
             ASSERT(from < length);
             auto result = input[from];
-            if (decodeSurrogatePairs) {
-                if (U16_IS_LEAD(result) && from + 1 < length && U16_IS_TRAIL(input[from + 1]))
-                    return U16_GET_SUPPLEMENTARY(result, input[from + 1]);
-                if (U16_IS_TRAIL(result) && from > 0 && U16_IS_LEAD(input[from - 1]))
-                    return errorCodePoint;
-            }
+            if (hasSurrogatePairAt(from, result))
+                return U16_GET_SUPPLEMENTARY(result, input[from + 1]);
+            if (isTrailOfSurrogatePairAt(from, result))
+                return errorCodePoint;
             return result;
         }
 
@@ -2113,7 +2144,7 @@ public:
                 return JSRegExpResult::NoMatch;
             }
 
-            input.next();
+            input.advanceStartPosition();
 
             context->matchBegin = input.getPos();
 

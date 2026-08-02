@@ -1,7 +1,7 @@
 // When a match attempt fails at a start position, /u patterns advance the start position past a whole
-// surrogate pair only if the character at the match start is a complete non-BMP surrogate pair and
-// every alternative consumes at least one character. Character reads elsewhere in the pattern must not
-// affect this. This test should pass with both --useRegExpJIT=true and --useRegExpJIT=false.
+// surrogate pair if and only if the character at the match start is a complete non-BMP surrogate pair.
+// Character reads elsewhere in the pattern must not affect this. This test should pass with both
+// --useRegExpJIT=true and --useRegExpJIT=false.
 
 function shouldBe(actual, expected, msg) {
     if (actual !== expected)
@@ -39,12 +39,12 @@ shouldBeMatch(/\u{1F600}ab|c/u, "\u{1F600}xc", [3, ["c"]]);
 shouldBeMatch(/\u{1F600}\u{1F600}xy|\u{1F600}z|q/u, "\u{1F600}\u{1F600}q", [4, ["q"]]);
 shouldBeMatch(/[a\u{10000}]{3}Z|b/u, "a\u{10000}Xb", [4, ["b"]]);
 
-// A zero minimum-size alternative can match in the middle of a surrogate pair, so the start position
-// must then advance one code unit at a time.
-shouldBeMatch(/aa|\B/u, "X\u{1F600}Z", [2, [""]]);
-shouldBeMatch(/a?\B|q/u, "X\u{1F600}Z", [2, [""]]);
-shouldBeMatch(/[\u{1F600}]X|\B/u, "X\u{1F600}Z", [2, [""]]);
-shouldBeMatch(/\B|[\u{1F600}]X/u, "X\u{1F600}Z", [2, [""]]);
+// A zero minimum-size alternative can match in the middle of a surrogate pair, but the position in
+// between is never offered to it: the advance steps over the pair as a whole.
+shouldBeMatch(/aa|\B/u, "X\u{1F600}Z", null);
+shouldBeMatch(/a?\B|q/u, "X\u{1F600}Z", null);
+shouldBeMatch(/[\u{1F600}]X|\B/u, "X\u{1F600}Z", null);
+shouldBeMatch(/\B|[\u{1F600}]X/u, "X\u{1F600}Z", null);
 shouldBeMatch(/aa|(?=Z)/u, "X\u{1F600}Z", [3, [""]]);
 shouldBeMatch(/x+|q/u, "\u{1F600}\u{1F600}q", [4, ["q"]]);
 
@@ -63,13 +63,12 @@ shouldBeMatch(/[\u{1F600}-\u{1F64F}]{2}Z|q/u, "\u{1F600}\u{1F601}Wq", [5, ["q"]]
 
     re = /\B/gu;
     input = "X\u{1F600}Z";
-    let indices = [];
-    let m;
-    while ((m = re.exec(input))) {
-        indices.push(m.index);
-        re.lastIndex++;
-    }
-    shouldBe(JSON.stringify(indices), JSON.stringify([2]), "global \\B");
+    shouldBe(JSON.stringify(input.match(re)), JSON.stringify(null), "global \\B");
+
+    // A lastIndex the caller assigns is used as given, pair interior or not.
+    re.lastIndex = 2;
+    let m = re.exec(input);
+    shouldBe(m === null ? "null" : m.index + "," + re.lastIndex, "2,2", "global \\B from an assigned lastIndex");
 }
 
 // /v (unicodeSets) shares the /u semantics.

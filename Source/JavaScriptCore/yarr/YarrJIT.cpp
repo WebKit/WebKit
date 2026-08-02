@@ -1530,33 +1530,38 @@ class YarrGenerator final : public YarrJITInfo {
         std::ranges::sort(dest.m_ranges32, [](auto& a, auto& b) { return a.begin < b.begin; });
     }
 
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    // Sets firstCharacterAdditionalReadSize to 1 iff the match start position (index - minimumSize) holds a
-    // complete non-BMP surrogate pair, so that a failed match attempt advances past the whole code point.
-    // Emitted whenever an alternative is entered as the first one attempted at a start position;
-    // |minimumSize| code units are known to be readable there.
-    void initAdvanceLatch(unsigned minimumSize)
+    // After a match attempt fails, the next start position tried is AdvanceStringIndex(input, start, true)
+    // (ES2025 22.2.7.3), which steps over a whole code point. Sets |result| to the number of code units to
+    // skip beyond the usual one: 1 when a complete surrogate pair begins at the match start position, 0
+    // otherwise (a lone lead or trail surrogate advances by a single code unit). The match start position is
+    // |startOffsetFromIndex| code units before |index|, which itself may be past the end of the input.
+    //
+    // |result| is settled by branches rather than by a compare-and-set on the loaded code units, because the
+    // caller adds it to |index| to reach the next start position and then loops. A conditional set would put
+    // the load on that loop-carried dependency; branching lets the advance issue on the predicted path, and
+    // whether a start position holds a pair is highly repetitive within one subject string.
+    void computeAdditionalReadSizeAtStartPosition(unsigned startOffsetFromIndex, MacroAssembler::RegisterID result, MacroAssembler::RegisterID scratch)
     {
-        if (!m_useFirstNonBMPCharacterOptimization)
-            return;
+        ASSERT(m_decodeSurrogatePairs);
+        ASSERT(result != scratch);
+        ASSERT(result != m_regs.index && scratch != m_regs.index);
 
-        ASSERT(minimumSize);
+        MacroAssembler::JumpList noPair;
 
-        m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.firstCharacterAdditionalReadSize);
+        m_jit.move(MacroAssembler::TrustedImm32(0), result);
 
-        // If only one unit is known readable and it is the last one, no pair can follow.
-        MacroAssembler::Jump startIsLastUnit;
-        if (minimumSize == 1)
-            startIsLastUnit = atEndOfInput();
+        // Both code units of a pair have to be within the input to form one.
+        m_jit.add32(MacroAssembler::TrustedImm32(2 - static_cast<int32_t>(startOffsetFromIndex)), m_regs.index, scratch);
+        noPair.append(m_jit.branch32(MacroAssembler::Above, scratch, m_regs.length));
 
-        m_jit.load32(negativeOffsetIndexedAddress(minimumSize, m_regs.regT0, m_regs.index), m_regs.regT0);
-        m_jit.and32(surrogateTagMask, m_regs.regT0);
-        m_jit.compare32(MacroAssembler::Equal, m_regs.regT0, surrogatePairTags, m_regs.firstCharacterAdditionalReadSize);
+        m_jit.load32(negativeOffsetIndexedAddress(startOffsetFromIndex, scratch, m_regs.index), scratch);
+        m_jit.and32(surrogateTagMask, scratch);
+        noPair.append(m_jit.branch32(MacroAssembler::NotEqual, scratch, surrogatePairTags));
 
-        if (minimumSize == 1)
-            startIsLastUnit.link(&m_jit);
+        m_jit.move(MacroAssembler::TrustedImm32(1), result);
+
+        noPair.link(&m_jit);
     }
-#endif
 #endif
 
     void readCharacter(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg)
@@ -3834,12 +3839,6 @@ class YarrGenerator final : public YarrJITInfo {
 
                 termMatchTargets.append(MatchTargets());
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                // Initialize before input check to prevent uninitialized data in arithmetic.
-                if (m_useFirstNonBMPCharacterOptimization)
-                    m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.firstCharacterAdditionalReadSize);
-#endif
-
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
@@ -4014,9 +4013,6 @@ class YarrGenerator final : public YarrJITInfo {
                 };
                 emitStartPositionPrefilters();
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                initAdvanceLatch(alternative->m_minimumSize);
-#endif
                 break;
             }
             case YarrOpCode::BodyAlternativeNext:
@@ -4655,8 +4651,18 @@ class YarrGenerator final : public YarrJITInfo {
                 }
 
                 bool onceThrough = endOp.m_nextOp == notFound;
-                
+
                 MacroAssembler::JumpList lastStickyAlternativeFailures;
+
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
+                // Retrying a failed attempt one code point further needs the extra code unit of a surrogate
+                // pair added to the one code unit the paths below already advance by. On every one of them
+                // |index| is the last alternative's minimum size past the start position being abandoned.
+                bool advanceByCodePoint = m_decodeSurrogatePairs;
+#else
+                constexpr bool advanceByCodePoint = false;
+#endif
+                const MacroAssembler::RegisterID additionalReadSize = m_regs.regT1;
 
                 // First, generate code to handle cases where we backtrack out of an attempted match
                 // of the last alternative. If this is a 'once through' set of alternatives then we
@@ -4667,7 +4673,8 @@ class YarrGenerator final : public YarrJITInfo {
                     if (m_pattern.sticky()) {
                         // It is a sticky pattern and the last alternative failed, jump to the end.
                         m_backtrackingState.takeBacktracksToJumpList(lastStickyAlternativeFailures, &m_jit);
-                    } else if (m_pattern.m_body->m_hasFixedSize
+                    } else if (!advanceByCodePoint
+                        && m_pattern.m_body->m_hasFixedSize
                         && (alternative->m_minimumSize > beginOp->m_alternative->m_minimumSize)
                         && (alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize == 1)) {
                         // If we don't need to move the input position, and the pattern has a fixed size
@@ -4683,24 +4690,27 @@ class YarrGenerator final : public YarrJITInfo {
                         // No need to advance and retry for a sticky pattern. And it is already handled before this branch.
                         ASSERT(!m_pattern.sticky());
 
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
+                        if (advanceByCodePoint)
+                            computeAdditionalReadSizeAtStartPosition(alternative->m_minimumSize, additionalReadSize, m_regs.regT0);
+#endif
+
                         // If the pattern size is not fixed, then store the start index for use if we match.
                         if (!m_pattern.m_body->m_hasFixedSize) {
-                            if (alternative->m_minimumSize == 1)
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                                if (m_useFirstNonBMPCharacterOptimization) {
-                                    m_jit.add32(m_regs.firstCharacterAdditionalReadSize, m_regs.index, m_regs.regT0);
+                            if (alternative->m_minimumSize == 1) {
+                                if (advanceByCodePoint) {
+                                    m_jit.add32(additionalReadSize, m_regs.index, m_regs.regT0);
                                     setMatchStart(m_regs.regT0);
                                 } else
-#endif
-                                setMatchStart(m_regs.index);
-                            else {
+                                    setMatchStart(m_regs.index);
+                            } else {
                                 if (alternative->m_minimumSize)
                                     m_jit.sub32(m_regs.index, MacroAssembler::Imm32(alternative->m_minimumSize - 1), m_regs.regT0);
                                 else
                                     m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index, m_regs.regT0);
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                                if (m_useFirstNonBMPCharacterOptimization)
-                                    m_jit.add32(m_regs.firstCharacterAdditionalReadSize, m_regs.regT0);
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
+                                if (advanceByCodePoint)
+                                    m_jit.add32(additionalReadSize, m_regs.regT0);
 #endif
                                 setMatchStart(m_regs.regT0);
                             }
@@ -4713,9 +4723,9 @@ class YarrGenerator final : public YarrJITInfo {
                             // already correctly incremented, if more than one then decrement as appropriate.
                             unsigned delta = alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize;
                             ASSERT(delta);
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                            if (m_useFirstNonBMPCharacterOptimization) {
-                                m_jit.add32(m_regs.firstCharacterAdditionalReadSize, m_regs.index);
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
+                            if (advanceByCodePoint) {
+                                m_jit.add32(additionalReadSize, m_regs.index);
                                 if (delta != 1)
                                     m_jit.sub32(MacroAssembler::Imm32(delta - 1), m_regs.index);
                                 checkInput().linkTo(beginOp->m_reentry, &m_jit);
@@ -4724,7 +4734,7 @@ class YarrGenerator final : public YarrJITInfo {
                                 if (delta != 1)
                                     m_jit.sub32(MacroAssembler::Imm32(delta - 1), m_regs.index);
                                 m_jit.jump(beginOp->m_reentry);
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
                             }
 #endif
                         } else {
@@ -4733,9 +4743,9 @@ class YarrGenerator final : public YarrJITInfo {
                             unsigned delta = beginOp->m_alternative->m_minimumSize - alternative->m_minimumSize;
                             if (delta != 0xFFFFFFFFu) {
                                 // We need to check input because we are incrementing the input.
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                                if (m_useFirstNonBMPCharacterOptimization)
-                                    m_jit.add32(m_regs.firstCharacterAdditionalReadSize, m_regs.index);
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
+                                if (advanceByCodePoint)
+                                    m_jit.add32(additionalReadSize, m_regs.index);
 #endif
                                 m_jit.add32(MacroAssembler::Imm32(delta + 1), m_regs.index);
                                 checkInput().linkTo(beginOp->m_reentry, &m_jit);
@@ -4773,11 +4783,6 @@ class YarrGenerator final : public YarrJITInfo {
                         unsigned delta = prevOp->m_alternative->m_minimumSize - nextOp->m_alternative->m_minimumSize;
                         m_jit.sub32(MacroAssembler::Imm32(delta), m_regs.index);
                         MacroAssembler::Jump fail = jumpIfNoAvailableInput();
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                        // The next alternative is entered as the first one attempted at this start position,
-                        // bypassing the latch setup in BodyAlternativeBegin.
-                        initAdvanceLatch(nextOp->m_alternative->m_minimumSize);
-#endif
                         m_jit.add32(MacroAssembler::Imm32(delta), m_regs.index);
                         m_jit.jump(nextOp->m_reentry);
                         fail.link(&m_jit);
@@ -4803,12 +4808,23 @@ class YarrGenerator final : public YarrJITInfo {
 
                 bool needsToUpdateMatchStart = !m_pattern.m_body->m_hasFixedSize;
 
+                // A sticky pattern fails outright instead of retrying at the next start position.
+                bool advanceByCodePointHere = advanceByCodePoint && !m_pattern.sticky();
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
+                if (advanceByCodePointHere)
+                    computeAdditionalReadSizeAtStartPosition(alternative->m_minimumSize, additionalReadSize, m_regs.regT0);
+#endif
+
                 // Check for cases where input position is already incremented by 1 for the last
                 // alternative (this is particularly useful where the minimum size of the body
                 // disjunction is 0, e.g. /a*|b/).
                 if (needsToUpdateMatchStart && alternative->m_minimumSize == 1) {
                     // index is already incremented by 1, so just store it now!
-                    setMatchStart(m_regs.index);
+                    if (advanceByCodePointHere) {
+                        m_jit.add32(additionalReadSize, m_regs.index, m_regs.regT0);
+                        setMatchStart(m_regs.regT0);
+                    } else
+                        setMatchStart(m_regs.index);
                     needsToUpdateMatchStart = false;
                 }
 
@@ -4818,13 +4834,11 @@ class YarrGenerator final : public YarrJITInfo {
                     // is no point in looping if we're just going to fail all the input checks around
                     // the next iteration.
                     ASSERT(alternative->m_minimumSize >= m_pattern.m_body->m_minimumSize);
+                    if (advanceByCodePointHere)
+                        m_jit.add32(additionalReadSize, m_regs.index);
                     if (alternative->m_minimumSize == m_pattern.m_body->m_minimumSize) {
                         // If the last alternative had the same minimum size as the disjunction,
                         // just simply increment input pos by 1, no adjustment based on minimum size.
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                        if (m_useFirstNonBMPCharacterOptimization)
-                            m_jit.add32(m_regs.firstCharacterAdditionalReadSize, m_regs.index);
-#endif
                         m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
                     } else {
                         // If the minumum for the last alternative was one greater than than that
@@ -6959,14 +6973,6 @@ public:
             return;
         }
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-        // A zero minimum-size alternative (e.g. /aa|\B/u) can match in the middle of a surrogate pair, so it must not be skipped.
-        if (m_decodeSurrogatePairs && m_executionMode != ExecutionMode::InlineTest && !m_pattern.multiline() && !m_pattern.m_containsBOL && !m_pattern.m_containsLookbehinds && !m_pattern.m_containsModifiers && m_pattern.m_body->m_minimumSize) {
-            ASSERT(m_regs.firstCharacterAdditionalReadSize != InvalidGPRReg);
-            m_useFirstNonBMPCharacterOptimization = true;
-        }
-#endif
-
         // We need to compile before generating code since we set flags based on compilation that
         // are used during generation.
         opCompileBody(m_pattern.m_body);
@@ -7536,9 +7542,6 @@ private:
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     bool m_containsNestedSubpatterns { false };
     ParenContextSizes m_parenContextSizes;
-#endif
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    bool m_useFirstNonBMPCharacterOptimization { false };
 #endif
     RegisterAtOffsetList m_calleeSaves;
     MacroAssembler::JumpList m_abortExecution;
