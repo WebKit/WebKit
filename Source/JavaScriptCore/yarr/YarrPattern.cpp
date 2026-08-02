@@ -53,7 +53,6 @@ public:
         , m_mayContainStrings(false)
         , m_invertedStrings(false)
         , m_compileMode(compileMode)
-        , m_characterWidths(CharacterClassWidths::Unknown)
         , m_canonicalMode(compileMode == CompileMode::Legacy ? CanonicalMode::UCS2 : CanonicalMode::Unicode)
     {
     }
@@ -69,7 +68,6 @@ public:
         m_anyCharacter = false;
         m_mayContainStrings = false;
         m_invertedStrings = false;
-        m_characterWidths = CharacterClassWidths::Unknown;
     }
 
     void NODELETE combiningSetOp(CharacterClassSetOp setOp)
@@ -476,12 +474,11 @@ public:
         characterClass->m_matches32.swap(m_matches32);
         characterClass->m_ranges32.swap(m_ranges32);
         characterClass->m_anyCharacter = anyCharacter();
-        characterClass->m_characterWidths = characterWidths();
+        characterClass->m_characterWidths = characterWidths(*characterClass);
 
         buildLatin1TableIfBeneficial(*characterClass);
 
         m_anyCharacter = false;
-        m_characterWidths = CharacterClassWidths::Unknown;
 
         return characterClass;
     }
@@ -540,8 +537,6 @@ private:
         unsigned pos = 0;
         unsigned range = matches.size();
 
-        m_characterWidths |= (U_IS_BMP(ch) ? CharacterClassWidths::HasBMPChars : CharacterClassWidths::HasNonBMPChars);
-
         // binary chop, find position to insert char.
         while (range) {
             unsigned index = range >> 1;
@@ -587,11 +582,6 @@ private:
 
     void addSortedRange(Vector<CharacterRange>& ranges, char32_t lo, char32_t hi)
     {
-        if (U_IS_BMP(lo))
-            m_characterWidths |= CharacterClassWidths::HasBMPChars;
-        if (!U_IS_BMP(hi))
-            m_characterWidths |= CharacterClassWidths::HasNonBMPChars;
-
         auto iter = std::lower_bound(ranges.begin(), ranges.end(), lo,
             [](const CharacterRange& range, char32_t value) {
                 return static_cast<uint64_t>(range.end) + 1 < value;
@@ -1115,14 +1105,24 @@ private:
             m_anyCharacter = true;
     }
 
-    bool hasNonBMPCharacters()
+    static CharacterClassWidths characterWidths(const CharacterClass& characterClass)
     {
-        return m_characterWidths & CharacterClassWidths::HasNonBMPChars;
-    }
-
-    CharacterClassWidths NODELETE characterWidths()
-    {
-        return m_characterWidths;
+        CharacterClassWidths widths = CharacterClassWidths::Unknown;
+        if (!characterClass.m_matches8.isEmpty() || !characterClass.m_ranges8.isEmpty())
+            widths |= CharacterClassWidths::HasBMPChars;
+        if (!characterClass.m_matches32.isEmpty()) {
+            if (U_IS_BMP(characterClass.m_matches32.first()))
+                widths |= CharacterClassWidths::HasBMPChars;
+            if (!U_IS_BMP(characterClass.m_matches32.last()))
+                widths |= CharacterClassWidths::HasNonBMPChars;
+        }
+        if (!characterClass.m_ranges32.isEmpty()) {
+            if (U_IS_BMP(characterClass.m_ranges32.first().begin))
+                widths |= CharacterClassWidths::HasBMPChars;
+            if (!U_IS_BMP(characterClass.m_ranges32.last().end))
+                widths |= CharacterClassWidths::HasNonBMPChars;
+        }
+        return widths;
     }
 
     bool NODELETE anyCharacter()
@@ -1139,8 +1139,6 @@ private:
 
     CharacterClassSetOp m_setOp { CharacterClassSetOp::Default };
     CompileMode m_compileMode;
-    CharacterClassWidths m_characterWidths;
-    
     CanonicalMode m_canonicalMode;
 
     Vector<Vector<char32_t>> m_strings;
