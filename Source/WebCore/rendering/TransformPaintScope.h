@@ -43,8 +43,15 @@ public:
         if (newRootLayer)
             m_transformedPaintingInfo.rootLayer = newRootLayer.get();
 
-        if (!m_transformedPaintingInfo.paintDirtyRect.isInfinite())
-            m_transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
+        if (!m_transformedPaintingInfo.paintDirtyRect.isInfinite()) {
+            // Map the dirty rect back through the inverse transform. For a 2D affine transform (the
+            // common SVG case, e.g. translate/rotate/scale) invert the 2x3 AffineTransform we
+            // already computed rather than doing a full 4x4 TransformationMatrix inverse per paint.
+            auto mappedDirtyRect = transform.isAffine()
+                ? valueOrDefault(m_affineTransform.inverse()).mapRect(paintingInfo.paintDirtyRect)
+                : valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect);
+            m_transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(mappedDirtyRect, deviceScaleFactor));
+        }
 
         m_transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     }
