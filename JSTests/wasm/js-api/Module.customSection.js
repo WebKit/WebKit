@@ -75,3 +75,35 @@ assert.eq(WebAssembly.Module.customSections.length, 2);
         ++seen;
     }
 }
+
+{
+    const module = new WebAssembly.Module((new Builder())
+        .Unknown("copy").Byte(0x11).Byte(0x22).Byte(0x33).End()
+        .WebAssembly().get());
+
+    const first = WebAssembly.Module.customSections(module, "copy");
+    assert.eq(first.length, 1);
+    const second = WebAssembly.Module.customSections(module, "copy");
+    assert.eq(second.length, 1);
+
+    assert.eq(first[0] === second[0], false);
+    assert.eq(first === second, false);
+
+    const firstBytes = new Uint8Array(first[0]);
+    firstBytes[0] = 0xFF;
+    firstBytes[1] = 0xEE;
+    firstBytes[2] = 0xDD;
+
+    const again = WebAssembly.Module.customSections(module, "copy");
+    assert.eq(again.length, 1);
+    assert.eq(again[0] === first[0], false);
+    const againBytes = new Uint8Array(again[0]);
+    assert.eq(againBytes[0], 0x11);
+    assert.eq(againBytes[1], 0x22);
+    assert.eq(againBytes[2], 0x33);
+
+    const secondBytes = new Uint8Array(second[0]);
+    assert.eq(secondBytes[0], 0x11);
+    assert.eq(secondBytes[1], 0x22);
+    assert.eq(secondBytes[2], 0x33);
+}
