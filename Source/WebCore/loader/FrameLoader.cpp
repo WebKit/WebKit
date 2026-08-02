@@ -3185,9 +3185,13 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
     URL originalURL;
     RefPtr initiator = m_frame->document();
     if (initiator) {
-        originalURL = initiator->firstPartyForCookies();
-        // If there is no main document URL, it means that this document is newly opened and just for download purpose.
-        // In this case, we need to set the originalURL to this document's opener's main document URL.
+        // Initial top-level documents used to have an empty URL. Preserve the empty original URL used for direct
+        // downloads now that such documents have an explicit about:blank URL.
+        if (!m_frame->isMainFrame() || !m_stateMachine.isDisplayingInitialEmptyDocument())
+            originalURL = initiator->firstPartyForCookies();
+
+        // If there is no main document URL, this document was newly opened just for the download.
+        // In this case, use the opener's main document URL when an opener is available.
         if (originalURL.isEmpty()) {
             if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_frame->opener()); localOpener && localOpener->document()) {
                 originalURL = localOpener->document()->firstPartyForCookies();
