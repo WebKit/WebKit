@@ -56,7 +56,7 @@ static uint32_t getDimension(auto& extent3D)
     });
 }
 
-GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, const GPUDevice& device)
+GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_format(descriptor.format)
     , m_width(getDimension<0>(descriptor.size))
@@ -71,6 +71,16 @@ GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescripto
 }
 
 GPUTexture::~GPUTexture() = default;
+
+bool GPUTexture::hasActiveInspectorCanvasCallTracer() const
+{
+    return m_device->hasActiveInspectorCanvasCallTracer();
+}
+
+GPUDevice* GPUTexture::device() const
+{
+    return m_device.ptr();
+}
 
 String GPUTexture::label() const
 {
@@ -99,7 +109,7 @@ ExceptionOr<Ref<GPUTextureView>> GPUTexture::createView(const std::optional<GPUT
     RefPtr view = m_backing->createView(convertToBacking(textureViewDescriptor));
     if (!view)
         return Exception { ExceptionCode::InvalidStateError, "GPUTexture.createView: Unable to create view."_s };
-    return GPUTextureView::create(view.releaseNonNull());
+    return GPUTextureView::create(view.releaseNonNull(), *this);
 }
 
 void GPUTexture::destroy()

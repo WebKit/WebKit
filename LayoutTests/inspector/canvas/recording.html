@@ -11,6 +11,15 @@ function performActionsNaN() {
     contextB.globalAlpha = NaN;
 }
 
+function performActionsWithCanvasReceiver() {
+    for (let context of [contextA, contextB]) {
+        context.canvas.width;
+        context.canvas.width = 2;
+        context.canvas.height;
+        context.canvas.height = 2;
+    }
+}
+
 function performActionsMultiple() {
     contextA.fill();
     contextB.fill();
@@ -48,6 +57,48 @@ function test() {
 
                 canvas.stopRecording();
             })
+            .catch(reject);
+
+            canvas.startRecording();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ActionReceiver",
+        description: "Check that canvas actions identify their receiver.",
+        test(resolve, reject) {
+            let canvas = Array.from(WI.canvasManager.canvasCollection)[0];
+            InspectorTest.assert(canvas, "There should be at least one canvas context.");
+
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStopped)
+            .then(async (event) => {
+                let recording = event.data.recording;
+                await Promise.all(recording.actions.map((action) => action.swizzle(recording)));
+
+                let actions = recording.frames[0].actions;
+                InspectorTest.expectEqual(actions.length, 4, "Width and height getters and setters should be recorded.");
+                InspectorTest.expectTrue(actions.every((action) => action.receiver === "canvas"), "Width and height actions should identify the canvas receiver.");
+                InspectorTest.expectTrue(actions.every((action) => action.isCanvasReceiver), "Width and height actions should be recognized as canvas receiver actions.");
+
+                let payload = recording.toJSON();
+                InspectorTest.expectTrue(payload.frames[0].actions.every((action) => Array.isArray(action[4]) && action[4][0] === 0 && action[4][1] === WI.Recording.Swizzle.Canvas), "The serialized receiver should identify the canvas.");
+
+                let legacyPayload = JSON.parse(JSON.stringify(payload));
+                legacyPayload.version = 2;
+                legacyPayload.frames = recording.frames.map((frame) => frame.toJSON(legacyPayload.version));
+
+                let legacyRecording = WI.Recording.fromPayload(legacyPayload);
+                await Promise.all(legacyRecording.actions.map((action) => action.swizzle(legacyRecording)));
+
+                let legacyActions = legacyRecording.frames[0].actions;
+                InspectorTest.expectTrue(legacyActions.every((action) => !action.receiver), "Legacy width and height actions should not have a receiver.");
+                InspectorTest.expectTrue(legacyActions.every((action) => action.isCanvasReceiver), "Legacy width and height actions should still be recognized as canvas receiver actions.");
+            })
+            .then(resolve, reject);
+
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStarted)
+            .then(() => InspectorTest.evaluateInPage(`performActionsWithCanvasReceiver()`))
+            .then(() => canvas.stopRecording())
             .catch(reject);
 
             canvas.startRecording();

@@ -32,7 +32,8 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 [
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
-    SecureContext
+    SecureContext,
+    CallTracer=InspectorCanvasCallTracer,
 ]
 interface GPUComputePassEncoder {
     undefined setPipeline(GPUComputePipeline pipeline);

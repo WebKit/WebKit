@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "GPUBindGroupLayout.h"
 #include "GPUCompilationInfo.h"
 #include "JSDOMPromiseDeferredForward.h"
@@ -37,12 +38,13 @@
 namespace WebCore {
 
 class DeferredPromise;
+class GPUDevice;
 
 class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
 public:
-    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing, String&& source)
+    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing, String&& source, GPUDevice& device)
     {
-        return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(source)));
+        return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(source), device));
     }
 
     String NODELETE label() const;
@@ -55,15 +57,16 @@ public:
     const WebGPU::ShaderModule& backing() const { return m_backing; }
     const String& source() const { return m_source; }
 
+    GPUDevice* device() const;
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing, String&& source)
-        : m_backing(WTF::move(backing))
-        , m_source(WTF::move(source))
-    {
-    }
+    GPUShaderModule(Ref<WebGPU::ShaderModule>&&, String&&, GPUDevice&);
 
     const Ref<WebGPU::ShaderModule> m_backing;
     String m_source;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 
 }

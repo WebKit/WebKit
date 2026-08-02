@@ -25,18 +25,22 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "WebGPUPipelineLayout.h"
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUPipelineLayout : public RefCounted<GPUPipelineLayout> {
+class GPUDevice;
+
+class GPUPipelineLayout : public RefCountedAndCanMakeWeakPtr<GPUPipelineLayout> {
 public:
-    static Ref<GPUPipelineLayout> create(Ref<WebGPU::PipelineLayout>&& backing)
+    static Ref<GPUPipelineLayout> create(Ref<WebGPU::PipelineLayout>&& backing, GPUDevice& device)
     {
-        return adoptRef(*new GPUPipelineLayout(WTF::move(backing)));
+        return adoptRef(*new GPUPipelineLayout(WTF::move(backing), device));
     }
 
     String NODELETE label() const;
@@ -45,13 +49,15 @@ public:
     WebGPU::PipelineLayout& backing() { return m_backing; }
     const WebGPU::PipelineLayout& backing() const { return m_backing; }
 
+    GPUDevice* device() const;
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUPipelineLayout(Ref<WebGPU::PipelineLayout>&& backing)
-        : m_backing(WTF::move(backing))
-    {
-    }
+    GPUPipelineLayout(Ref<WebGPU::PipelineLayout>&&, GPUDevice&);
 
     const Ref<WebGPU::PipelineLayout> m_backing;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 
 }

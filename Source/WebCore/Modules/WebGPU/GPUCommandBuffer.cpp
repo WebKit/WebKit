@@ -28,6 +28,16 @@
 
 namespace WebCore {
 
+bool GPUCommandBuffer::hasActiveInspectorCanvasCallTracer() const
+{
+    return m_encoder->hasActiveInspectorCanvasCallTracer();
+}
+
+GPUDevice* GPUCommandBuffer::device() const
+{
+    return m_encoder->device();
+}
+
 String GPUCommandBuffer::label() const
 {
     return m_overrideLabel ? *m_overrideLabel : m_backing->label();

@@ -28,7 +28,8 @@
 [
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
-    SecureContext
+    SecureContext,
+    CallTracer=InspectorCanvasCallTracer,
 ]
 interface GPURenderPipeline {
 };

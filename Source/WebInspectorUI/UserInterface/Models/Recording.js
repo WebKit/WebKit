@@ -92,6 +92,9 @@ WI.Recording = class Recording extends WI.Object
         case InspectorBackend.Enum.Recording.Type.OffscreenCanvasWebGL2:
             type = WI.Recording.Type.OffscreenCanvasWebGL2;
             break;
+        case InspectorBackend.Enum.Recording.Type.CanvasWebGPU:
+            type = WI.Recording.Type.CanvasWebGPU;
+            break;
         default:
             WI.Recording.synthesizeWarning(WI.UIString("unknown %s \u0022%s\u0022").format(WI.unlocalizedString("type"), payload.type));
             type = String(payload.type);
@@ -148,7 +151,7 @@ WI.Recording = class Recording extends WI.Object
         }
 
         if (!frames)
-            frames = payload.frames.map(WI.RecordingFrame.fromPayload)
+            frames = payload.frames.map((frame) => WI.RecordingFrame.fromPayload(frame, payload.version));
 
         return new WI.Recording(payload.version, type, payload.initialState, frames, payload.data);
     }
@@ -172,10 +175,84 @@ WI.Recording = class Recording extends WI.Object
             return WI.UIString("WebGL2", "Recording Type Canvas WebGL2", "A type of canvas recording in the Graphics Tab.");
         case Recording.Type.OffscreenCanvasWebGL2:
             return WI.UIString("WebGL2 (Offscreen)", "Recording Type Offscreen Canvas WebGL2", "A type of canvas recording in the Graphics Tab.");
+        case Recording.Type.CanvasWebGPU:
+            return WI.UIString("WebGPU", "Recording Type Canvas WebGPU", "A type of canvas recording in the Graphics Tab.");
         }
 
         console.assert(false, "Unknown recording type", recordingType);
         return null;
+    }
+
+    static displayNameForReceiver([identifier, swizzleType])
+    {
+        let name = null;
+        switch (swizzleType) {
+        case WI.Recording.Swizzle.Canvas:
+            name = WI.unlocalizedString("canvas");
+            break;
+        case WI.Recording.Swizzle.GPUBindGroup:
+            name = WI.unlocalizedString("bindGroup");
+            break;
+        case WI.Recording.Swizzle.GPUBindGroupLayout:
+            name = WI.unlocalizedString("bindGroupLayout");
+            break;
+        case WI.Recording.Swizzle.GPUBuffer:
+            name = WI.unlocalizedString("buffer");
+            break;
+        case WI.Recording.Swizzle.GPUCommandBuffer:
+            name = WI.unlocalizedString("commandBuffer");
+            break;
+        case WI.Recording.Swizzle.GPUCommandEncoder:
+            name = WI.unlocalizedString("commandEncoder");
+            break;
+        case WI.Recording.Swizzle.GPUComputePassEncoder:
+            name = WI.unlocalizedString("computePassEncoder");
+            break;
+        case WI.Recording.Swizzle.GPUComputePipeline:
+            name = WI.unlocalizedString("computePipeline");
+            break;
+        case WI.Recording.Swizzle.GPUExternalTexture:
+            name = WI.unlocalizedString("externalTexture");
+            break;
+        case WI.Recording.Swizzle.GPUPipelineLayout:
+            name = WI.unlocalizedString("pipelineLayout");
+            break;
+        case WI.Recording.Swizzle.GPUQuerySet:
+            name = WI.unlocalizedString("querySet");
+            break;
+        case WI.Recording.Swizzle.GPUQueue:
+            name = WI.unlocalizedString("queue");
+            break;
+        case WI.Recording.Swizzle.GPURenderBundle:
+            name = WI.unlocalizedString("renderBundle");
+            break;
+        case WI.Recording.Swizzle.GPURenderBundleEncoder:
+            name = WI.unlocalizedString("renderBundleEncoder");
+            break;
+        case WI.Recording.Swizzle.GPURenderPassEncoder:
+            name = WI.unlocalizedString("renderPassEncoder");
+            break;
+        case WI.Recording.Swizzle.GPURenderPipeline:
+            name = WI.unlocalizedString("renderPipeline");
+            break;
+        case WI.Recording.Swizzle.GPUSampler:
+            name = WI.unlocalizedString("sampler");
+            break;
+        case WI.Recording.Swizzle.GPUShaderModule:
+            name = WI.unlocalizedString("shaderModule");
+            break;
+        case WI.Recording.Swizzle.GPUTexture:
+            name = WI.unlocalizedString("texture");
+            break;
+        case WI.Recording.Swizzle.GPUTextureView:
+            name = WI.unlocalizedString("textureView");
+            break;
+        default:
+            console.assert(false, swizzleType);
+            return null;
+        }
+
+        return name + (identifier || "");
     }
 
     static displayNameForSwizzleType(swizzleType)
@@ -291,7 +368,7 @@ WI.Recording = class Recording extends WI.Object
 
     get isCanvas()
     {
-        return this.isCanvas2D || this.isCanvasBitmapRender || this.isCanvasWebGL || this.isCanvasWebGL2;
+        return this.isCanvas2D || this.isCanvasBitmapRender || this.isCanvasWebGL || this.isCanvasWebGL2 || this.isCanvasWebGPU;
     }
 
     get isCanvas2D()
@@ -312,6 +389,11 @@ WI.Recording = class Recording extends WI.Object
     get isCanvasWebGL2()
     {
         return this._type === WI.Recording.Type.CanvasWebGL2 || this._type === WI.Recording.Type.OffscreenCanvasWebGL2;
+    }
+
+    get isCanvasWebGPU()
+    {
+        return this._type === WI.Recording.Type.CanvasWebGPU;
     }
 
     startProcessing()
@@ -591,6 +673,8 @@ WI.Recording = class Recording extends WI.Object
             return createCanvasContext("webgl2");
         case WI.Recording.Type.OffscreenCanvasWebGL2:
             return createOffscreenCanvasContext("webgl2");
+        case WI.Recording.Type.CanvasWebGPU:
+            return {context: null, element: null};
         }
 
         console.error("Unknown recording type", this._type);
@@ -613,7 +697,7 @@ WI.Recording = class Recording extends WI.Object
             version: this._version,
             type: this._type,
             initialState,
-            frames: this._frames.map((frame) => frame.toJSON()),
+            frames: this._frames.map((frame) => frame.toJSON(this._version)),
             data: this._data,
         };
     }
@@ -724,9 +808,7 @@ WI.Recording = class Recording extends WI.Object
             lines.push(`    function frame${i + 1}() {`);
 
             for (let action of this._frames[i].actions) {
-                let contextString = `context`;
-                if (action.contextReplacer)
-                    contextString += `.${action.contextReplacer}`;
+                let contextString = action.isCanvasReceiver ? `canvas` : `context`;
 
                 if (!action.valid)
                     contextString = `// ` + contextString;
@@ -892,7 +974,7 @@ WI.Recording = class Recording extends WI.Object
 
     async _process()
     {
-        if (!this._processContext) {
+        if (!this._processContext && !this.isCanvasWebGPU) {
             this._processContext = this.createContext().context;
 
             if (this.isCanvas2D) {
@@ -977,7 +1059,7 @@ WI.Recording = class Recording extends WI.Object
 };
 
 // Keep this in sync with Inspector::Protocol::Recording::VERSION.
-WI.Recording.Version = 2;
+WI.Recording.Version = 3;
 
 WI.Recording.Event = {
     ProcessedAction: "recording-processed-action",
@@ -997,6 +1079,7 @@ WI.Recording.Type = {
     OffscreenCanvasWebGL: "offscreen-canvas-webgl",
     CanvasWebGL2: "canvas-webgl2",
     OffscreenCanvasWebGL2: "offscreen-canvas-webgl2",
+    CanvasWebGPU: "canvas-webgpu",
 };
 
 // Keep this in sync with WebCore::RecordingSwizzleType.
@@ -1026,6 +1109,26 @@ WI.Recording.Swizzle = {
     WebGLSync: 22,
     WebGLTransformFeedback: 23,
     WebGLVertexArrayObject: 24,
+    Canvas: 26,
+    GPUBindGroup: 27,
+    GPUBindGroupLayout: 28,
+    GPUBuffer: 29,
+    GPUCommandBuffer: 30,
+    GPUCommandEncoder: 31,
+    GPUComputePassEncoder: 32,
+    GPUComputePipeline: 33,
+    GPUExternalTexture: 34,
+    GPUPipelineLayout: 35,
+    GPUQuerySet: 36,
+    GPUQueue: 37,
+    GPURenderBundle: 38,
+    GPURenderBundleEncoder: 39,
+    GPURenderPassEncoder: 40,
+    GPURenderPipeline: 41,
+    GPUSampler: 42,
+    GPUShaderModule: 43,
+    GPUTexture: 44,
+    GPUTextureView: 45,
 
     // Special frontend-only swizzle types.
     CallStack: Symbol("CallStack"),

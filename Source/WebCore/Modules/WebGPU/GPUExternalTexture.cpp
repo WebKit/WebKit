@@ -26,7 +26,26 @@
 #include "config.h"
 #include "GPUExternalTexture.h"
 
+#include "GPUDevice.h"
+
 namespace WebCore {
+
+GPUExternalTexture::GPUExternalTexture(Ref<WebGPU::ExternalTexture>&& backing, GPUDevice& device)
+    : m_backing(WTF::move(backing))
+    , m_device(device)
+{
+}
+
+bool GPUExternalTexture::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr device = m_device;
+    return device && device->hasActiveInspectorCanvasCallTracer();
+}
+
+GPUDevice* GPUExternalTexture::device() const
+{
+    return m_device;
+}
 
 String GPUExternalTexture::label() const
 {

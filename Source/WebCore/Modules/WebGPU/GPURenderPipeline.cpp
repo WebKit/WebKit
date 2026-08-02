@@ -92,6 +92,12 @@ GPURenderPipeline::~GPURenderPipeline()
     instances().remove(this);
 }
 
+bool GPURenderPipeline::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr device = m_device;
+    return device && device->hasActiveInspectorCanvasCallTracer();
+}
+
 GPUDevice* GPURenderPipeline::device() const
 {
     return m_device;
@@ -110,7 +116,7 @@ void GPURenderPipeline::setLabel(String&& label)
 Ref<GPUBindGroupLayout> GPURenderPipeline::getBindGroupLayout(uint32_t index)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
-    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index), m_uniqueId);
+    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index), m_uniqueId, protect(m_device));
 }
 
 }

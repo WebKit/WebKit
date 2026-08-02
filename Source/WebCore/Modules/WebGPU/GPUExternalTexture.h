@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "WebGPUExternalTexture.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -33,11 +34,13 @@
 
 namespace WebCore {
 
+class GPUDevice;
+
 class GPUExternalTexture : public RefCountedAndCanMakeWeakPtr<GPUExternalTexture> {
 public:
-    static Ref<GPUExternalTexture> create(Ref<WebGPU::ExternalTexture>&& backing)
+    static Ref<GPUExternalTexture> create(Ref<WebGPU::ExternalTexture>&& backing, GPUDevice& device)
     {
-        return adoptRef(*new GPUExternalTexture(WTF::move(backing)));
+        return adoptRef(*new GPUExternalTexture(WTF::move(backing), device));
     }
 
     String NODELETE label() const;
@@ -48,13 +51,15 @@ public:
     void destroy();
     void undestroy();
 
+    GPUDevice* device() const;
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUExternalTexture(Ref<WebGPU::ExternalTexture>&& backing)
-        : m_backing(WTF::move(backing))
-    {
-    }
+    GPUExternalTexture(Ref<WebGPU::ExternalTexture>&&, GPUDevice&);
 
     const Ref<WebGPU::ExternalTexture> m_backing;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 
 }

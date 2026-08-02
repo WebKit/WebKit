@@ -34,6 +34,8 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <cstdint>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
@@ -81,11 +83,16 @@ public:
 
     void canvasChanged();
 
+    bool hasActiveInspectorCanvasCallTracer() const;
+    void setHasActiveInspectorCanvasCallTracer(bool);
+
     void resetRecordingData();
     bool NODELETE hasRecordingData() const;
     bool NODELETE currentFrameHasData() const;
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(String&&, RecordingSwizzleType, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(String&&, uintptr_t receiver, RecordingSwizzleType, InspectorCanvasProcessedArguments&& = { });
 
     Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
 
@@ -114,6 +121,7 @@ private:
     explicit InspectorCanvas(GPUDevice&);
 
     void appendActionSnapshotIfNeeded();
+    void recordAction(String&&, InspectorCanvasProcessedArguments&&, RefPtr<JSON::ArrayOf<int>> receiver);
 
     using DuplicateDataVariant = Variant<
         Ref<CanvasGradient>,
@@ -136,6 +144,7 @@ private:
     >;
 
     int indexForData(DuplicateDataVariant);
+    size_t identifierForRecordingObject(uintptr_t);
     Ref<JSON::Value> valueIndexForData(DuplicateDataVariant);
     String stringIndexForKey(const String&);
     Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
@@ -157,6 +166,9 @@ private:
     RefPtr<JSON::ArrayOf<JSON::Value>> m_lastRecordedAction;
     RefPtr<JSON::ArrayOf<JSON::Value>> m_serializedDuplicateData;
     Vector<DuplicateDataVariant> m_indexedDuplicateData;
+
+    HashMap<uintptr_t, size_t> m_recordingObjectIdentifiers;
+    size_t m_nextRecordingObjectIdentifier { 0 };
 
     String m_recordingName;
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };

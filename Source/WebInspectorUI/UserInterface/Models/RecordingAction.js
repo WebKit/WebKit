@@ -25,7 +25,7 @@
 
 WI.RecordingAction = class RecordingAction extends WI.Object
 {
-    constructor(name, parameters, swizzleTypes, stackTrace, snapshot)
+    constructor(name, parameters, swizzleTypes, stackTrace, receiver, snapshot)
     {
         super();
 
@@ -33,19 +33,19 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._payloadParameters = parameters;
         this._payloadSwizzleTypes = swizzleTypes;
         this._payloadStackTrace = stackTrace;
+        this._payloadReceiver = receiver ?? -1;
         this._payloadSnapshot = snapshot ?? -1;
 
         this._name = "";
         this._parameters = [];
         this._stackTrace = null;
         this._snapshot = "";
+        this._receiver = "";
 
         this._valid = true;
         this._isFunction = false;
         this._isGetter = false;
         this._isVisual = false;
-
-        this._contextReplacer = null;
 
         this._states = [];
         this._stateModifiers = new Set;
@@ -57,52 +57,70 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     // Static
 
-    // Payload format: (name, parameters, swizzleTypes, [stackTrace, [snapshot]])
-    static fromPayload(payload)
+    static fromPayload(payload, version)
     {
+        // Version 1: (name, parameters, swizzleTypes, [stackTrace, [snapshot]])
+        // Version 2: (name, parameters, swizzleTypes, [stackTrace, [snapshot]])
+        // Version 3: (name, parameters, swizzleTypes, [stackTrace, [receiver, [snapshot]]])
+
         if (!Array.isArray(payload))
             payload = [];
 
-        if (typeof payload[0] !== "number") {
+        let [name, parameters, swizzleTypes, stackTrace, receiver, snapshot] = payload;
+
+        if (typeof name !== "number") {
             if (payload.length > 0)
                 WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("name")));
 
-            payload[0] = -1;
+            name = -1;
         }
 
-        if (!Array.isArray(payload[1])) {
+        if (!Array.isArray(parameters)) {
             if (payload.length > 1)
                 WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("parameters")));
 
-            payload[1] = [];
+            parameters = [];
         }
 
-        if (!Array.isArray(payload[2])) {
+        if (!Array.isArray(swizzleTypes)) {
             if (payload.length > 2)
                 WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("swizzleTypes")));
 
-            payload[2] = [];
+            swizzleTypes = [];
         }
 
-        if (typeof payload[3] !== "number" || isNaN(payload[3]) || (!payload[3] && payload[3] !== 0)) {
+        if (typeof stackTrace !== "number" || isNaN(stackTrace) || (!stackTrace && stackTrace !== 0)) {
             if (payload.length > 3)
                 WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("stackTrace")));
 
-            payload[3] = [];
+            stackTrace = [];
         }
 
-        if (typeof payload[4] !== "number" || isNaN(payload[4])) {
-            if (payload.length > 4)
+        if (version < 3) {
+            snapshot = receiver;
+            receiver = -1;
+        } else if (!Array.isArray(receiver) || receiver.length !== 2 || receiver.some((item) => typeof item !== "number" || isNaN(item))) {
+            if (payload.length > 4 && receiver !== -1)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("receiver")));
+
+            receiver = -1;
+        }
+
+        if (typeof snapshot !== "number" || isNaN(snapshot)) {
+            if (payload.length > (version >= 3 ? 5 : 4))
                 WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("snapshot")));
 
-            payload[4] = -1;
+            snapshot = -1;
         }
 
-        return new WI.RecordingAction(...payload);
+        return new WI.RecordingAction(name, parameters, swizzleTypes, stackTrace, receiver, snapshot);
     }
 
     static isFunctionForType(type, name)
     {
+        if (type === WI.Recording.Type.CanvasWebGPU)
+            return !WI.RecordingAction._webGPUAttributeNames.has(name);
+
         let prototype = WI.RecordingAction._prototypeForType(type);
         if (!prototype)
             return false;
@@ -138,8 +156,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         let names = [];
 
-        if ((name === "clear" && index === 0 && (type === WI.Recording.Type.CanvasWebGL || type === WI.Recording.Type.CanvasWebGL2)) ||
-            (name === "blitFramebuffer" && index === 8 && type === WI.Recording.Type.CanvasWebGL2)) {
+        let isWebGL = type === WI.Recording.Type.CanvasWebGL || type === WI.Recording.Type.OffscreenCanvasWebGL;
+        let isWebGL2 = type === WI.Recording.Type.CanvasWebGL2 || type === WI.Recording.Type.OffscreenCanvasWebGL2;
+
+        if ((name === "clear" && index === 0 && (isWebGL || isWebGL2)) || (name === "blitFramebuffer" && index === 8 && isWebGL2)) {
             testAndClearBit("COLOR_BUFFER_BIT");
             testAndClearBit("DEPTH_BUFFER_BIT");
             testAndClearBit("STENCIL_BUFFER_BIT");
@@ -147,7 +167,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 names.push(hexString(value));
         }
 
-        if (name === "clientWaitSync" && index === 1 && type === WI.Recording.Type.CanvasWebGL2) {
+        if (name === "clientWaitSync" && index === 1 && isWebGL2) {
             testAndClearBit("SYNC_FLUSH_COMMANDS_BIT");
             if (value)
                 names.push(hexString(value));
@@ -181,7 +201,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 return null;
         }
 
-        if (value === 0 && (type === WI.Recording.Type.CanvasWebGL || type === WI.Recording.Type.CanvasWebGL2)) {
+        let isWebGL = type === WI.Recording.Type.CanvasWebGL || type === WI.Recording.Type.OffscreenCanvasWebGL;
+        let isWebGL2 = type === WI.Recording.Type.CanvasWebGL2 || type === WI.Recording.Type.OffscreenCanvasWebGL2;
+
+        if (value === 0 && (isWebGL || isWebGL2)) {
             if (name === "blendFunc" || name === "blendFuncSeparate")
                 return "ZERO";
             if (index === 0) {
@@ -228,6 +251,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             if (window.WebGL2RenderingContext)
                 return WebGL2RenderingContext.prototype;
             break;
+        case WI.Recording.Type.CanvasWebGPU:
+            return null;
         }
 
         WI.reportInternalError("Unknown recording type: " + type);
@@ -241,11 +266,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get swizzleTypes() { return this._payloadSwizzleTypes; }
     get stackTrace() { return this._stackTrace; }
     get snapshot() { return this._snapshot; }
+    get receiver() { return this._receiver; }
     get valid() { return this._valid; }
     get isFunction() { return this._isFunction; }
     get isGetter() { return this._isGetter; }
     get isVisual() { return this._isVisual; }
-    get contextReplacer() { return this._contextReplacer; }
     get states() { return this._states; }
     get stateModifiers() { return this._stateModifiers; }
     get warning() { return this._warning; }
@@ -262,7 +287,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         this._processed = true;
 
-        if (recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
+        if (recording.isCanvasWebGL || recording.isCanvasWebGL2 || recording.isCanvasWebGPU) {
             // We add each RecordingAction to the list of visualActionIndexes after it is processed.
             if (this._valid && this._isVisual) {
                 let contentBefore = recording.visualActionIndexes.length ? recording.actions[recording.visualActionIndexes.lastValue].snapshot : recording.initialState.content;
@@ -348,32 +373,25 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             return recording.swizzle(item, this._payloadSwizzleTypes[index]);
         };
 
-        let swizzlePromises = [
+        let [name, parameters, stackTrace, snapshot] = await Promise.all([
             recording.swizzle(this._payloadName, WI.Recording.Swizzle.String),
             Promise.all(this._payloadParameters.map(swizzleParameter)),
             recording.swizzle(this._payloadStackTrace, WI.Recording.Swizzle.CallStack),
-        ];
-
-        if (this._payloadSnapshot >= 0)
-            swizzlePromises.push(recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String));
-
-        let [name, parameters, stackTrace, snapshot] = await Promise.all(swizzlePromises);
+            this._payloadSnapshot >= 0 ? recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String) : "",
+        ]);
         this._name = name;
         this._parameters = parameters;
         this._stackTrace = stackTrace;
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
+        if (Array.isArray(this._payloadReceiver))
+            this._receiver = WI.Recording.displayNameForReceiver(this._payloadReceiver);
 
-        if (recording.isCanvas) {
-            if (this._name === "width" || this._name === "height") {
-                this._contextReplacer = "canvas";
-                this._isFunction = false;
-                this._isGetter = !this._parameters.length;
-                this._isVisual = !this._isGetter;
-            }
-        }
-
-        if (!this._contextReplacer) {
+        if (this.isCanvasReceiver) {
+            this._isFunction = false;
+            this._isGetter = !this._parameters.length;
+            this._isVisual = !this._isGetter;
+        } else {
             this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
             this._isGetter = !this._isFunction && !this._parameters.length;
 
@@ -414,6 +432,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._swizzled = true;
     }
 
+    get isCanvasReceiver()
+    {
+        return this._receiver === "canvas" || (!this._receiver && (this._name === "width" || this._name === "height"));
+    }
+
     apply(context, options = {})
     {
         console.assert(this._swizzled, "You must swizzle() before you can apply().");
@@ -425,8 +448,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         try {
             let name = options.nameOverride || this._name;
 
-            if (this._contextReplacer)
-                context = context[this._contextReplacer];
+            if (this.isCanvasReceiver)
+                context = context.canvas;
 
             if (this.isFunction)
                 context[name](...this._parameters);
@@ -501,9 +524,18 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         return [];
     }
 
-    toJSON()
+    toJSON(version)
     {
         let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadStackTrace];
+        if (version >= 3) {
+            if (this._payloadSnapshot >= 0) {
+                json.push(this._payloadReceiver);
+                json.push(this._payloadSnapshot);
+            } else if (Array.isArray(this._payloadReceiver))
+                json.push(this._payloadReceiver);
+            return json;
+        }
+
         if (this._payloadSnapshot >= 0)
             json.push(this._payloadSnapshot);
         return json;
@@ -690,6 +722,10 @@ WI.RecordingAction._constantIndexes = {
 WI.RecordingAction._constantIndexes[WI.Recording.Type.OffscreenCanvasWebGL] = WI.RecordingAction._constantIndexes[WI.Recording.Type.CanvasWebGL];
 WI.RecordingAction._constantIndexes[WI.Recording.Type.OffscreenCanvasWebGL2] = WI.RecordingAction._constantIndexes[WI.Recording.Type.CanvasWebGL2];
 
+WI.RecordingAction._webGPUAttributeNames = new Set([
+    "label",
+]);
+
 WI.RecordingAction._visualNames = {
     [WI.Recording.Type.Canvas2D]: new Set([
         "clearRect",
@@ -727,6 +763,11 @@ WI.RecordingAction._visualNames = {
         "drawArraysInstanced",
         "drawElements",
         "drawElementsInstanced",
+    ]),
+    [WI.Recording.Type.CanvasWebGPU]: new Set([
+        "copyExternalImageToTexture",
+        "submit",
+        "writeTexture",
     ]),
 };
 WI.RecordingAction._visualNames[WI.Recording.Type.OffscreenCanvasBitmapRenderer] = WI.RecordingAction._visualNames[WI.Recording.Type.CanvasBitmapRenderer];

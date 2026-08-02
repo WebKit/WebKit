@@ -66,7 +66,7 @@ private:
 
     const Ref<WebGPU::PresentationContext> m_backing;
     RefPtr<GPUTexture> m_currentTexture;
-    RefPtr<const GPUDevice> m_device;
+    RefPtr<GPUDevice> m_device;
     GPUTextureDescriptor m_textureDescriptor;
 };
 

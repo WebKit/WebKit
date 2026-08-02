@@ -56,6 +56,7 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMRectReadOnly.h"
 #include "JSExecState.h"
+#include "JSGPUDevice.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSImageBitmap.h"
 #include "JSImageBitmapRenderingContext.h"
@@ -337,8 +338,11 @@ void FrameConsoleClient::record(JSC::JSGlobalObject* lexicalGlobalObject, Ref<Sc
         return;
 
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (RefPtr context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+        JSC::VM& vm = lexicalGlobalObject->vm();
+        if (RefPtr context = canvasRenderingContext(vm, target))
             InspectorInstrumentation::consoleStartRecordingCanvas(*context, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
+        else if (RefPtr device = JSGPUDevice::toWrapped(vm, target))
+            InspectorInstrumentation::consoleStartRecordingCanvas(*device, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
     }
 }
 
@@ -348,8 +352,11 @@ void FrameConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Ref
         return;
 
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (RefPtr context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+        JSC::VM& vm = lexicalGlobalObject->vm();
+        if (RefPtr context = canvasRenderingContext(vm, target))
             InspectorInstrumentation::consoleStopRecordingCanvas(*context);
+        else if (RefPtr device = JSGPUDevice::toWrapped(vm, target))
+            InspectorInstrumentation::consoleStopRecordingCanvas(*device);
     }
 }
 

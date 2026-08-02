@@ -112,14 +112,12 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             let navigationBar = new WI.NavigationBar;
 
-            if (this.representedObject.supportsRecording) {
-                const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
-                const altToolTip = WI.UIString("Stop recording canvas actions");
-                this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
-                this._recordButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-                this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
-                navigationBar.addNavigationItem(this._recordButtonNavigationItem);
-            }
+            const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
+            const altToolTip = WI.UIString("Stop recording canvas actions");
+            this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+            this._recordButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+            this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
+            navigationBar.addNavigationItem(this._recordButtonNavigationItem);
 
             let canvasElementButtonNavigationItem = new WI.ButtonNavigationItem("canvas-element", WI.UIString("Canvas Element"), "Images/Markup.svg", 16, 16);
             canvasElementButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;

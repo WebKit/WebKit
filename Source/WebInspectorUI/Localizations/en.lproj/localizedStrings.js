@@ -1390,6 +1390,8 @@ localizedStrings["Recording Type Canvas WebGL"] = "WebGL";
 /* A type of canvas recording in the Graphics Tab. */
 localizedStrings["Recording Type Canvas WebGL2"] = "WebGL2";
 /* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Canvas WebGPU"] = "WebGPU";
+/* A type of canvas recording in the Graphics Tab. */
 localizedStrings["Recording Type Offscreen Canvas 2D"] = "Offscreen2D";
 /* A type of canvas recording in the Graphics Tab. */
 localizedStrings["Recording Type Offscreen Canvas Bitmap Renderer"] = "Bitmap Renderer (Offscreen)";

@@ -195,27 +195,6 @@ WI.Canvas = class Canvas extends WI.Object
     get recordingFrameCount() { return this._recordingFrames.length; }
     get recordingBufferUsed() { return this._recordingBufferUsed; }
 
-    get supportsRecording()
-    {
-        switch (this._contextType) {
-        case WI.Canvas.ContextType.Canvas2D:
-        case WI.Canvas.ContextType.OffscreenCanvas2D:
-        case WI.Canvas.ContextType.BitmapRenderer:
-        case WI.Canvas.ContextType.OffscreenBitmapRenderer:
-        case WI.Canvas.ContextType.WebGL:
-        case WI.Canvas.ContextType.OffscreenWebGL:
-        case WI.Canvas.ContextType.WebGL2:
-        case WI.Canvas.ContextType.OffscreenWebGL2:
-            return true;
-
-        case WI.Canvas.ContextType.WebGPU:
-            return false;
-        }
-
-        console.assert(false, "not reached");
-        return false;
-    }
-
     get recordingActive()
     {
         return this._recordingState !== WI.Canvas.RecordingState.Inactive;
@@ -430,7 +409,8 @@ WI.Canvas = class Canvas extends WI.Object
     {
         // Called from WI.CanvasManager.
 
-        this._recordingFrames.pushAll(framesPayload.map(WI.RecordingFrame.fromPayload));
+        let version = InspectorBackend.getVersion("Recording");
+        this._recordingFrames.pushAll(framesPayload.map((frame) => WI.RecordingFrame.fromPayload(frame, version)));
 
         this._recordingBufferUsed = bufferUsed;
 

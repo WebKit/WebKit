@@ -3,7 +3,7 @@
     "description": "General types used for recordings of actions performed in the inspected page.",
     "debuggableTypes": ["web-page"],
     "targetTypes": ["page", "worker"],
-    "version": 2,
+    "version": 3,
     "types": [
         {
             "id": "Type",
@@ -12,7 +12,8 @@
                 "canvas-2d", "offscreen-canvas-2d",
                 "canvas-bitmaprenderer", "offscreen-canvas-bitmaprenderer",
                 "canvas-webgl", "offscreen-canvas-webgl",
-                "canvas-webgl2", "offscreen-canvas-webgl2"
+                "canvas-webgl2", "offscreen-canvas-webgl2",
+                "canvas-webgpu"
             ],
             "description": "The type of the recording."
         },
@@ -37,7 +38,7 @@
             "type": "object",
             "description": "Container object for a single frame of the recording.",
             "properties": [
-                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, stackTrace, snapshot], where name is a string, parameters is an array, swizzleTypes is an array, stackTrace is a Console.StackTrace, and snapshot is a data URL image of the current contents after this action."},
+                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, stackTrace, receiver, snapshot], where name is a string, parameters is an array, swizzleTypes is an array, stackTrace is a Console.StackTrace, receiver follows the structure [identifier, swizzleType] for the object that received the action, and snapshot is a data URL image of the current contents after this action."},
                 { "name": "duration", "type": "number", "optional": true, "description": "Total execution time of all actions recorded in this frame in milliseconds. " },
                 { "name": "incomplete", "type": "boolean", "optional": true, "description": "Flag indicating if the recording was stopped before this frame ended." }
             ]

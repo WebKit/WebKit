@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "GPUCommandBufferDescriptor.h"
 #include "GPUComputePassDescriptor.h"
 #include "GPUComputePassEncoder.h"
@@ -37,22 +38,20 @@
 #include "WebGPUCommandEncoder.h"
 #include <optional>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUBuffer;
 class GPUCommandBuffer;
+class GPUDevice;
 class GPUQuerySet;
 
-namespace WebGPU {
-class Device;
-}
-
-class GPUCommandEncoder : public RefCounted<GPUCommandEncoder> {
+class GPUCommandEncoder : public RefCountedAndCanMakeWeakPtr<GPUCommandEncoder> {
 public:
-    static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing, WebGPU::Device& device)
+    static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing, GPUDevice& device)
     {
         return adoptRef(*new GPUCommandEncoder(WTF::move(backing), device));
     }
@@ -114,11 +113,15 @@ public:
     const WebGPU::CommandEncoder& backing() const { return m_backing; }
     void setBacking(WebGPU::CommandEncoder&);
 
+    GPUDevice* device() const;
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, WebGPU::Device&);
+    GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, GPUDevice&);
 
     Ref<WebGPU::CommandEncoder> m_backing;
-    WeakPtr<WebGPU::Device> m_device;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     std::optional<String> m_overrideLabel;
 };
 

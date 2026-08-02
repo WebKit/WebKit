@@ -1160,10 +1160,22 @@ void InspectorInstrumentation::consoleStartRecordingCanvasImpl(InstrumentingAgen
         canvasAgent->consoleStartRecordingCanvas(context, exec, options);
 }
 
+void InspectorInstrumentation::consoleStartRecordingCanvasImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, JSC::JSGlobalObject& exec, JSC::JSObject* options)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->consoleStartRecordingCanvas(device, exec, options);
+}
+
 void InspectorInstrumentation::consoleStopRecordingCanvasImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
 {
     if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
         canvasAgent->consoleStopRecordingCanvas(context);
+}
+
+void InspectorInstrumentation::consoleStopRecordingCanvasImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->consoleStopRecordingCanvas(device);
 }
 
 void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)

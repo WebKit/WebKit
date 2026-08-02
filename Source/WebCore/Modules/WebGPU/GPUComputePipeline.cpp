@@ -90,6 +90,12 @@ GPUComputePipeline::~GPUComputePipeline()
     instances().remove(this);
 }
 
+bool GPUComputePipeline::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr device = m_device;
+    return device && device->hasActiveInspectorCanvasCallTracer();
+}
+
 GPUDevice* GPUComputePipeline::device() const
 {
     return m_device;
@@ -108,7 +114,7 @@ void GPUComputePipeline::setLabel(String&& label)
 Ref<GPUBindGroupLayout> GPUComputePipeline::getBindGroupLayout(uint32_t index)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
-    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index), m_uniqueId);
+    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index), m_uniqueId, protect(m_device));
 }
 
 } // namespace WebCore

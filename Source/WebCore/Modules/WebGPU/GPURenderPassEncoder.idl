@@ -34,7 +34,8 @@ typedef (sequence<double> or GPUColorDict) GPUColor;
 [
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
-    SecureContext
+    SecureContext,
+    CallTracer=InspectorCanvasCallTracer,
 ]
 interface GPURenderPassEncoder {
     undefined setViewport(float x, float y,

@@ -124,11 +124,10 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         let titleFragment = document.createDocumentFragment();
 
-        let contextReplacer = recordingAction.contextReplacer;
-        if (contextReplacer) {
-            let contextReplacerContainer = titleFragment.appendChild(document.createElement("span"));
-            contextReplacerContainer.classList.add("context-replacer");
-            contextReplacerContainer.textContent = contextReplacer;
+        if (recordingAction.receiver) {
+            let receiverContainer = titleFragment.appendChild(document.createElement("span"));
+            receiverContainer.classList.add("receiver");
+            receiverContainer.textContent = recordingAction.receiver;
 
             titleFragment.appendChild(document.createTextNode("."));
         }
@@ -264,9 +263,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
     static _classNameForAction(recordingAction)
     {
-        if (recordingAction.contextReplacer)
-            return "has-context-replacer";
-
         switch (recordingAction.name) {
         case "arc":
         case "arcTo":
@@ -419,7 +415,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     populateContextMenu(contextMenu, event)
     {
         contextMenu.appendItem(WI.UIString("Copy Action"), () => {
-            InspectorFrontendHost.copyText(`context.${this.mainTitle};`);
+            InspectorFrontendHost.copyText(`${this.representedObject.receiver ? "" : this.representedObject.isCanvasReceiver ? "canvas." : "context."}${this.mainTitle};`);
         });
 
         contextMenu.appendSeparator();

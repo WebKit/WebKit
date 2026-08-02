@@ -61,6 +61,8 @@ public:
     GPUDevice* device() const;
     const String& shaderSource() const { return m_shaderSource; }
 
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
     GPUComputePipeline(Ref<WebGPU::ComputePipeline>&&, uint64_t uniqueId, GPUDevice*, const String& shaderSource);
 

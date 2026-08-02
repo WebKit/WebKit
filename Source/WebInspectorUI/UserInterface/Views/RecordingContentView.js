@@ -38,7 +38,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._generateContentThrottler = new Throttler(() => {
             if (this.representedObject.isCanvas2D)
                 this._generateContentCanvas2D(this._index);
-            else if (this.representedObject.isCanvasBitmapRenderer || this.representedObject.isCanvasWebGL || this.representedObject.isCanvasWebGL2)
+            else if (this.representedObject.isCanvasBitmapRenderer || this.representedObject.isCanvasWebGL || this.representedObject.isCanvasWebGL2 || this.representedObject.isCanvasWebGPU)
                 this._generateContentFromSnapshot(this._index);
         }, 200);
 
@@ -462,12 +462,13 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 return;
             }
 
-            if (actions[visualIndex] instanceof WI.RecordingInitialStateAction)
+            if (this._initialContent && actions[visualIndex] instanceof WI.RecordingInitialStateAction)
                 snapshot = this._snapshots[visualIndex] = {element: this._initialContent};
         }
 
+        this._previewContainer.removeChildren();
+
         if (snapshot) {
-            this._previewContainer.removeChildren();
             this._previewContainer.appendChild(snapshot.element);
 
             this._updateImageGrid();
@@ -501,7 +502,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._showGridButtonNavigationItem.activated = activated;
 
         if (this.didInitialLayout && !isNaN(this._index))
-            this._previewContainer.firstElementChild.classList.toggle("show-grid", activated);
+            this._previewContainer.firstElementChild?.classList.toggle("show-grid", activated);
     }
 
     _updateSliderValue()

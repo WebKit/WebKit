@@ -29,7 +29,8 @@
     EnabledBySetting=WebGPUEnabled,
     ActiveDOMObject,
     Exposed=(Window,Worker),
-    SecureContext
+    SecureContext,
+    CallTracer=InspectorCanvasCallTracer,
 ] interface GPUDevice : EventTarget {
     [SameObject] readonly attribute GPUSupportedFeatures features;
     [SameObject] readonly attribute GPUSupportedLimits limits;

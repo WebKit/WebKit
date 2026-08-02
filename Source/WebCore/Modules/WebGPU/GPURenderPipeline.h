@@ -63,6 +63,8 @@ public:
     const String& fragmentShaderSource() const { return m_fragmentShaderSource; }
     bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }
 
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
     GPURenderPipeline(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader);
 

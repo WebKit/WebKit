@@ -47,6 +47,17 @@ GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBuffer
         m_mappedRangeSize = m_bufferSize;
 }
 
+bool GPUBuffer::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr device = m_device;
+    return device && device->hasActiveInspectorCanvasCallTracer();
+}
+
+GPUDevice* GPUBuffer::device() const
+{
+    return m_device;
+}
+
 String GPUBuffer::label() const
 {
     return m_backing->label();

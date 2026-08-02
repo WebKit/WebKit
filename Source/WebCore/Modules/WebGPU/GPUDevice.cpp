@@ -111,7 +111,7 @@ GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU:
     : ActiveDOMObject { scriptExecutionContext }
     , m_lostPromise(makeUniqueRef<LostPromise>())
     , m_backing(WTF::move(backing))
-    , m_queue(GPUQueue::create(m_backing->queue(), this->backing()))
+    , m_queue(GPUQueue::create(m_backing->queue(), *this))
     , m_autoPipelineLayout(createAutoPipelineLayout())
     , m_features(GPUSupportedFeatures::create(m_backing->features()))
     , m_limits(GPUSupportedLimits::create(m_backing->limits()))
@@ -360,7 +360,7 @@ ExceptionOr<Ref<GPUSampler>> GPUDevice::createSampler(std::optional<GPUSamplerDe
     RefPtr sampler = m_backing->createSampler(convertToBacking(samplerDescriptor));
     if (!sampler)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createSampler: Unable to create sampler."_s };
-    return GPUSampler::create(sampler.releaseNonNull());
+    return GPUSampler::create(sampler.releaseNonNull(), *this);
 }
 
 ScriptExecutionContext* GPUDevice::scriptExecutionContext() const
@@ -473,7 +473,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
     if (!texture)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };
 
-    auto externalTexture = GPUExternalTexture::create(texture.releaseNonNull());
+    auto externalTexture = GPUExternalTexture::create(texture.releaseNonNull(), *this);
 
 #if ENABLE(VIDEO)
 #if ENABLE(WEB_CODECS)
@@ -518,7 +518,7 @@ ExceptionOr<Ref<GPUBindGroupLayout>> GPUDevice::createBindGroupLayout(GPUBindGro
     RefPtr layout = m_backing->createBindGroupLayout(bindGroupLayoutDescriptor.convertToBacking());
     if (!layout)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBindGroupLayout: Unable to create bind group layout."_s };
-    return GPUBindGroupLayout::create(layout.releaseNonNull(), 0);
+    return GPUBindGroupLayout::create(layout.releaseNonNull(), 0, this);
 }
 
 RefPtr<GPUPipelineLayout> GPUDevice::createAutoPipelineLayout()
@@ -529,7 +529,7 @@ RefPtr<GPUPipelineLayout> GPUDevice::createAutoPipelineLayout()
     });
     if (!layout)
         return nullptr;
-    return GPUPipelineLayout::create(layout.releaseNonNull());
+    return GPUPipelineLayout::create(layout.releaseNonNull(), *this);
 }
 
 ExceptionOr<Ref<GPUPipelineLayout>> GPUDevice::createPipelineLayout(GPUPipelineLayoutDescriptor&& pipelineLayoutDescriptor)
@@ -537,7 +537,7 @@ ExceptionOr<Ref<GPUPipelineLayout>> GPUDevice::createPipelineLayout(GPUPipelineL
     RefPtr pipelineLayout = m_backing->createPipelineLayout(pipelineLayoutDescriptor.convertToBacking(m_backing));
     if (!pipelineLayout)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createPipelineLayout: Unable to make pipeline layout."_s };
-    return GPUPipelineLayout::create(pipelineLayout.releaseNonNull());
+    return GPUPipelineLayout::create(pipelineLayout.releaseNonNull(), *this);
 }
 
 ExceptionOr<Ref<GPUBindGroup>> GPUDevice::createBindGroup(GPUBindGroupDescriptor&& bindGroupDescriptor)
@@ -557,7 +557,7 @@ ExceptionOr<Ref<GPUBindGroup>> GPUDevice::createBindGroup(GPUBindGroupDescriptor
     RefPtr group = m_backing->createBindGroup(bindGroupDescriptor.convertToBacking());
     if (!group)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBindGroup: Unable to make bind group."_s };
-    auto result = GPUBindGroup::create(group.releaseNonNull(), WTF::move(currentLayout));
+    auto result = GPUBindGroup::create(group.releaseNonNull(), WTF::move(currentLayout), *this);
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (hasExternalTexture) {
         m_lastCreatedExternalTextureBindGroup.first = bindGroupDescriptor.entries;
@@ -586,7 +586,7 @@ ExceptionOr<Ref<GPUShaderModule>> GPUDevice::createShaderModule(GPUShaderModuleD
     shaderModule = m_backing->createShaderModule(shaderModuleDescriptor.convertToBacking(*m_autoPipelineLayout));
     if (!shaderModule)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createShaderModule: Unable to make shader module."_s };
-    return GPUShaderModule::create(shaderModule.releaseNonNull(), WTF::move(source));
+    return GPUShaderModule::create(shaderModule.releaseNonNull(), WTF::move(source), *this);
 }
 
 ExceptionOr<Ref<GPUComputePipeline>> GPUDevice::createComputePipeline(UniquelyAnnotatedDescriptor<GPUComputePipelineDescriptor>&& computePipelineDescriptor)
@@ -698,7 +698,7 @@ ExceptionOr<Ref<GPUCommandEncoder>> GPUDevice::createCommandEncoder(std::optiona
     RefPtr encoder = m_backing->createCommandEncoder(convertToBacking(commandEncoderDescriptor));
     if (!encoder)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createCommandEncoder: Unable to make command encoder."_s };
-    return GPUCommandEncoder::create(encoder.releaseNonNull(), m_backing.get());
+    return GPUCommandEncoder::create(encoder.releaseNonNull(), *this);
 }
 
 ExceptionOr<Ref<GPURenderBundleEncoder>> GPUDevice::createRenderBundleEncoder(GPURenderBundleEncoderDescriptor&& renderBundleEncoderDescriptor)
@@ -717,7 +717,7 @@ ExceptionOr<Ref<GPURenderBundleEncoder>> GPUDevice::createRenderBundleEncoder(GP
     RefPtr encoder = m_backing->createRenderBundleEncoder(renderBundleEncoderDescriptor.convertToBacking());
     if (!encoder)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createRenderBundleEncoder: Unable to make encoder."_s };
-    return GPURenderBundleEncoder::create(encoder.releaseNonNull());
+    return GPURenderBundleEncoder::create(encoder.releaseNonNull(), *this);
 }
 
 ExceptionOr<Ref<GPUQuerySet>> GPUDevice::createQuerySet(GPUQuerySetDescriptor&& querySetDescriptor)
@@ -731,7 +731,7 @@ ExceptionOr<Ref<GPUQuerySet>> GPUDevice::createQuerySet(GPUQuerySetDescriptor&& 
     if (!querySet)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createQuerySet: Unable to make query set."_s };
 
-    return GPUQuerySet::create(querySet.releaseNonNull(), querySetDescriptor);
+    return GPUQuerySet::create(querySet.releaseNonNull(), querySetDescriptor, *this);
 }
 
 void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)

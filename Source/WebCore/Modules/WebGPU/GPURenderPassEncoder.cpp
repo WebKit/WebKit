@@ -29,18 +29,30 @@
 #include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
+#include "GPUCommandEncoder.h"
+#include "GPUDevice.h"
 #include "GPUQuerySet.h"
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
 #include "InspectorInstrumentation.h"
-#include "WebGPUDevice.h"
 
 namespace WebCore {
 
-GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device& device)
+GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, GPUCommandEncoder& commandEncoder)
     : m_backing(WTF::move(backing))
-    , m_device(&device)
+    , m_device(commandEncoder.device())
 {
+}
+
+bool GPURenderPassEncoder::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr device = m_device;
+    return device && device->hasActiveInspectorCanvasCallTracer();
+}
+
+GPUDevice* GPURenderPassEncoder::device() const
+{
+    return m_device;
 }
 
 String GPURenderPassEncoder::label() const
@@ -183,7 +195,7 @@ void GPURenderPassEncoder::end()
     m_currentPipeline = nullptr;
     if (RefPtr device = m_device) {
         m_overrideLabel = label();
-        m_backing = device->invalidRenderPassEncoder();
+        m_backing = device->backing().invalidRenderPassEncoder();
     }
 }
 

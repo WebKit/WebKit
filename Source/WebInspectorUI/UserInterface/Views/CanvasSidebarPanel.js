@@ -381,8 +381,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         const selectedByUser = false;
         canvasTreeElement.revealAndSelect(omitFocus, selectedByUser);
 
-        if (this._canvas.supportsRecording)
-            this._recordButtonNavigationItem.enabled = true;
+        this._recordButtonNavigationItem.enabled = true;
 
         this.recording = null;
     }
@@ -480,7 +479,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     _updateRecordNavigationItem()
     {
-        if (!this._canvas?.supportsRecording) {
+        if (!this._canvas) {
             this._recordButtonNavigationItem.enabled = false;
             return;
         }

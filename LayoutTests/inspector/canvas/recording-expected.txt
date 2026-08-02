@@ -8,6 +8,14 @@ PASS: The first frame should have 1 action.
 PASS: The action should have 1 parameter.
 PASS: The parameter should be null.
 
+-- Running test case: Canvas.ActionReceiver
+PASS: Width and height getters and setters should be recorded.
+PASS: Width and height actions should identify the canvas receiver.
+PASS: Width and height actions should be recognized as canvas receiver actions.
+PASS: The serialized receiver should identify the canvas.
+PASS: Legacy width and height actions should not have a receiver.
+PASS: Legacy width and height actions should still be recognized as canvas receiver actions.
+
 -- Running test case: Canvas.MultipleRecording
 Starting a recording of canvas 1...
 PASS: Recording started of canvas 1

@@ -49,7 +49,7 @@ body[dir=rtl] .item.recording-action::before {
     float: right;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected:not(.invalid, .initial-state, .name-unknown) > .icon {
     filter: invert();
     opacity: 1;
 }
@@ -212,7 +212,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
         color: var(--green-highlight-text-color);
     }
 
-    .item.recording-action:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
+    .item.recording-action:not(.invalid, .initial-state, .name-unknown) > .icon {
         filter: invert();
         opacity: 0.8;
     }

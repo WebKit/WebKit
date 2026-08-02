@@ -34,7 +34,8 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
 [
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
-    SecureContext
+    SecureContext,
+    CallTracer=InspectorCanvasCallTracer,
 ] interface GPUCommandEncoder {
     GPURenderPassEncoder beginRenderPass(GPURenderPassDescriptor descriptor);
     GPUComputePassEncoder beginComputePass(optional GPUComputePassDescriptor descriptor = {});

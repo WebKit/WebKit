@@ -694,6 +694,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedVisibleTreeElements = new Set;
         this._virtualizedAttachedTreeElements = new Set;
         this._virtualizedScrollContainer = scrollContainer;
+        this._virtualizedScrollContainer.style.setProperty("overflow-anchor", "none");
         this._virtualizedTreeItemHeight = treeItemHeight;
 
         this._virtualizedTopSpacer = document.createElement("div");

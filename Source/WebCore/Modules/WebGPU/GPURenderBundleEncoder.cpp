@@ -29,11 +29,29 @@
 #include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
+#include "GPUDevice.h"
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
 #include "InspectorInstrumentation.h"
 
 namespace WebCore {
+
+GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, GPUDevice& device)
+    : m_backing(WTF::move(backing))
+    , m_device(device)
+{
+}
+
+bool GPURenderBundleEncoder::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr device = m_device;
+    return device && device->hasActiveInspectorCanvasCallTracer();
+}
+
+GPUDevice* GPURenderBundleEncoder::device() const
+{
+    return m_device;
+}
 
 String GPURenderBundleEncoder::label() const
 {
@@ -142,7 +160,7 @@ ExceptionOr<Ref<GPURenderBundle>> GPURenderBundleEncoder::finish(const std::opti
     m_currentPipeline = nullptr;
     if (!bundle)
         return Exception { ExceptionCode::InvalidStateError, "GPURenderBundleEncoder.finish: Unable to finish."_s };
-    return GPURenderBundle::create(bundle.releaseNonNull());
+    return GPURenderBundle::create(bundle.releaseNonNull(), *this);
 }
 
 }

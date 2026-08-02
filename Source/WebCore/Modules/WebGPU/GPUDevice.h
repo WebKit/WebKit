@@ -167,6 +167,9 @@ public:
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
 #endif
 
+    bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
+    void setHasActiveInspectorCanvasCallTracer(bool active) { m_hasActiveInspectorCanvasCallTracer = active; }
+
 private:
     GPUDevice(ScriptExecutionContext*, Ref<WebGPU::Device>&&, String&& queueLabel, GPUAdapterInfo&);
 
@@ -200,6 +203,7 @@ private:
 
     bool m_waitingForDeviceLostPromise { false };
     bool m_listeningForUncapturedErrors { false };
+    bool m_hasActiveInspectorCanvasCallTracer { false };
 };
 
 } // namespace WebCore

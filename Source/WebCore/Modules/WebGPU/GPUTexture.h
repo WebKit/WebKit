@@ -48,7 +48,7 @@ template<typename> class ExceptionOr;
 
 class GPUTexture : public RefCountedAndCanMakeWeakPtr<GPUTexture> {
 public:
-    static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, const GPUDevice& device)
+    static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device)
     {
         return adoptRef(*new GPUTexture(WTF::move(backing), descriptor, device));
     }
@@ -65,6 +65,8 @@ public:
     const WebGPU::Texture& backing() const { return m_backing; }
     GPUTextureFormat format() const { return m_format; }
 
+    GPUDevice* device() const;
+
     GPUIntegerCoordinateOut NODELETE width() const;
     GPUIntegerCoordinateOut NODELETE height() const;
     GPUIntegerCoordinateOut NODELETE depthOrArrayLayers() const;
@@ -79,8 +81,11 @@ public:
     static uint32_t NODELETE texelBlockHeight(GPUTextureFormat);
 
     virtual ~GPUTexture();
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUTexture(Ref<WebGPU::Texture>&&, const GPUTextureDescriptor&, const GPUDevice&);
+    GPUTexture(Ref<WebGPU::Texture>&&, const GPUTextureDescriptor&, GPUDevice&);
 
     GPUTexture(const GPUTexture&) = delete;
     GPUTexture(GPUTexture&&) = delete;
@@ -96,7 +101,7 @@ private:
     const GPUSize32Out m_sampleCount;
     const GPUTextureDimension m_dimension;
     const GPUFlagsConstant m_usage;
-    const Ref<const GPUDevice> m_device;
+    const Ref<GPUDevice> m_device;
     bool m_isDestroyed { false };
 };
 

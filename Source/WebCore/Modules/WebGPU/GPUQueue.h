@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BufferSource.h"
+#include "EventTarget.h"
 #include "GPUCommandBuffer.h"
 #include "GPUExtent3DDict.h"
 #include "GPUImageCopyTexture.h"
@@ -35,23 +36,21 @@
 #include "WebGPUQueue.h"
 #include <optional>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUBuffer;
+class GPUDevice;
 struct GPUImageCopyExternalImage;
 
-namespace WebGPU {
-class Device;
-}
-
-class GPUQueue : public RefCounted<GPUQueue> {
+class GPUQueue : public RefCountedAndCanMakeWeakPtr<GPUQueue> {
 public:
-    static Ref<GPUQueue> create(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
+    static Ref<GPUQueue> create(Ref<WebGPU::Queue>&& backing, GPUDevice& device)
     {
         return adoptRef(*new GPUQueue(WTF::move(backing), device));
     }
@@ -86,11 +85,15 @@ public:
     WebGPU::Queue& backing() { return m_backing; }
     const WebGPU::Queue& backing() const { return m_backing; }
 
+    GPUDevice* device() const;
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUQueue(Ref<WebGPU::Queue>&&, WebGPU::Device&);
+    GPUQueue(Ref<WebGPU::Queue>&&, GPUDevice&);
 
     const Ref<WebGPU::Queue> m_backing;
-    WeakPtr<WebGPU::Device> m_device;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 
 }

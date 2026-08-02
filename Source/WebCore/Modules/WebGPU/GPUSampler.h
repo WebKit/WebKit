@@ -25,18 +25,22 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "WebGPUSampler.h"
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUSampler : public RefCounted<GPUSampler> {
+class GPUDevice;
+
+class GPUSampler : public RefCountedAndCanMakeWeakPtr<GPUSampler> {
 public:
-    static Ref<GPUSampler> create(Ref<WebGPU::Sampler>&& backing)
+    static Ref<GPUSampler> create(Ref<WebGPU::Sampler>&& backing, GPUDevice& device)
     {
-        return adoptRef(*new GPUSampler(WTF::move(backing)));
+        return adoptRef(*new GPUSampler(WTF::move(backing), device));
     }
 
     String NODELETE label() const;
@@ -45,13 +49,15 @@ public:
     WebGPU::Sampler& backing() { return m_backing; }
     const WebGPU::Sampler& backing() const { return m_backing; }
 
+    GPUDevice* device() const;
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 private:
-    GPUSampler(Ref<WebGPU::Sampler>&& backing)
-        : m_backing(WTF::move(backing))
-    {
-    }
+    GPUSampler(Ref<WebGPU::Sampler>&&, GPUDevice&);
 
     const Ref<WebGPU::Sampler> m_backing;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 
 }

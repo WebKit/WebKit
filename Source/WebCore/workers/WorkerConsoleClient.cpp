@@ -35,6 +35,7 @@
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
 #include "JSDOMGlobalObject.h"
+#include "JSGPUDevice.h"
 #include "JSImageBitmap.h"
 #include "JSImageBitmapRenderingContext.h"
 #include "JSImageData.h"
@@ -185,8 +186,11 @@ void WorkerConsoleClient::record(JSC::JSGlobalObject* lexicalGlobalObject, Ref<S
         return;
 
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (RefPtr context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+        JSC::VM& vm = lexicalGlobalObject->vm();
+        if (RefPtr context = canvasRenderingContext(vm, target))
             InspectorInstrumentation::consoleStartRecordingCanvas(*context, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
+        else if (RefPtr device = JSGPUDevice::toWrapped(vm, target))
+            InspectorInstrumentation::consoleStartRecordingCanvas(*device, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
     }
 }
 
@@ -196,8 +200,11 @@ void WorkerConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Re
         return;
 
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (RefPtr context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+        JSC::VM& vm = lexicalGlobalObject->vm();
+        if (RefPtr context = canvasRenderingContext(vm, target))
             InspectorInstrumentation::consoleStopRecordingCanvas(*context);
+        else if (RefPtr device = JSGPUDevice::toWrapped(vm, target))
+            InspectorInstrumentation::consoleStopRecordingCanvas(*device);
     }
 }
 

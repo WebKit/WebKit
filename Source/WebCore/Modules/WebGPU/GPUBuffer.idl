@@ -33,7 +33,8 @@ typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
 [
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
-    SecureContext
+    SecureContext,
+    CallTracer=InspectorCanvasCallTracer,
 ] interface GPUBuffer {
     readonly attribute GPUSize64 size;
     readonly attribute GPUBufferUsageFlags usage;
