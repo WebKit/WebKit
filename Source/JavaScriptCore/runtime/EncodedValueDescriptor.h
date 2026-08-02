@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <cstddef>
 #include <cstdint>
 #include <wtf/Platform.h>
 
@@ -37,27 +36,8 @@ typedef int64_t EncodedJSValue;
 
 union EncodedValueDescriptor {
     int64_t asInt64;
-#if USE(JSVALUE32_64)
-    double asDouble;
-#elif USE(JSVALUE64)
     JSCell* ptr;
-#endif
-
-#if CPU(BIG_ENDIAN)
-    struct {
-        int32_t tag;
-        int32_t payload;
-    } asBits;
-#else
-    struct {
-        int32_t payload;
-        int32_t tag;
-    } asBits;
-#endif
 };
-
-#define TagOffset (offsetof(EncodedValueDescriptor, asBits.tag))
-#define PayloadOffset (offsetof(EncodedValueDescriptor, asBits.payload))
 
 } // namespace JSC
 

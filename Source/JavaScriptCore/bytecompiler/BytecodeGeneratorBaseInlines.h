@@ -100,30 +100,6 @@ void BytecodeGeneratorBase<Traits>::recordOpcode(typename Traits::OpcodeID opcod
 }
 
 template<typename Traits>
-void BytecodeGeneratorBase<Traits>::alignWideOpcode16()
-{
-#if CPU(NEEDS_ALIGNED_ACCESS)
-    static_assert(Traits::OpcodeTraits::maxOpcodeIDWidth == OpcodeSize::Narrow);
-    size_t opcodeSize = 1;
-    size_t prefixAndOpcodeSize = opcodeSize + PaddingBySize<OpcodeSize::Wide16>::value;
-    while ((m_writer.position() + prefixAndOpcodeSize) % OpcodeSize::Wide16)
-        Traits::OpNop::template emit<OpcodeSize::Narrow>(this);
-#endif
-}
-
-template<typename Traits>
-void BytecodeGeneratorBase<Traits>::alignWideOpcode32()
-{
-#if CPU(NEEDS_ALIGNED_ACCESS)
-    static_assert(Traits::OpcodeTraits::maxOpcodeIDWidth == OpcodeSize::Narrow);
-    size_t opcodeSize = 1;
-    size_t prefixAndOpcodeSize = opcodeSize + PaddingBySize<OpcodeSize::Wide32>::value;
-    while ((m_writer.position() + prefixAndOpcodeSize) % OpcodeSize::Wide32)
-        Traits::OpNop::template emit<OpcodeSize::Narrow>(this);
-#endif
-}
-
-template<typename Traits>
 template<OpcodeSize size, typename... Ops>
 void BytecodeGeneratorBase<Traits>::writeOpcode(typename Traits::OpcodeTraits::OpcodeID opcodeID, Ops... ops)
 {

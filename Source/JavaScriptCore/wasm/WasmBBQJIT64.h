@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-#if USE(JSVALUE64)
 
 #include "WasmBBQJIT.h"
 #include "WasmCallingConvention.h"
@@ -673,5 +672,4 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& r
 
 } } } // namespace JSC::Wasm::BBQJITImpl
 
-#endif // USE(JSVALUE64)
 #endif // ENABLE(WEBASSEMBLY_BBQJIT)

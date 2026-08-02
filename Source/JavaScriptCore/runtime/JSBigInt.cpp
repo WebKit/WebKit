@@ -696,10 +696,10 @@ JSValue JSBigInt::exponentiate(JSGlobalObject* globalObject, int32_t base, int32
 }
 #endif
 
-#if USE(JSVALUE32_64)
-using TwoDigit = uint64_t;
-#else
+#if CPU(REGISTER64)
 using TwoDigit = UInt128;
+#else
+using TwoDigit = uint64_t;
 #endif
 
 class DigitColumnAccumulator {

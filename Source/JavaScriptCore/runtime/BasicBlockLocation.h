@@ -53,11 +53,7 @@ public:
     Vector<Gap> getExecutedRanges() const;
     JS_EXPORT_PRIVATE void dumpData() const;
 #if ENABLE(JIT)
-#if USE(JSVALUE64)
     void emitExecuteCode(CCallHelpers&) const;
-#else
-    void emitExecuteCode(CCallHelpers&, MacroAssembler::RegisterID scratch) const;
-#endif
 #endif
 
 private:

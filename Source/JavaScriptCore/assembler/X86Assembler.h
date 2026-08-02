@@ -6991,8 +6991,7 @@ private:
         //   * Three argument ModRM - a register, and a register and an offset describing a memory operand.
         //   * Five argument ModRM - a register, and a base register, an index, scale, and offset describing a memory operand.
         //
-        // For 32-bit x86 targets, the address operand may also be provided as a void*.
-        // On 64-bit targets REX prefixes will be planted as necessary, where high numbered registers are used.
+        // REX prefixes will be planted as necessary, where high numbered registers are used.
         //
         // The twoByteOp methods plant two-byte Intel instructions sequences (first opcode byte 0x0F).
 

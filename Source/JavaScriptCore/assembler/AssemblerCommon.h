@@ -665,8 +665,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALWAYS_INLINE void* memcpyAtomic(void* dst, const void* src, size_t n)
 {
     // This produces a much nicer error message for unaligned accesses.
-    if constexpr (is32Bit())
-        RELEASE_ASSERT(!(reinterpret_cast<uintptr_t>(dst) & static_cast<uintptr_t>(n - 1)));
     switch (n) {
     case 1:
         WTF::atomicStore(std::bit_cast<uint8_t*>(dst), *std::bit_cast<const uint8_t*>(src), std::memory_order_relaxed);
@@ -715,12 +713,6 @@ template<RepatchingInfo repatch>
 ALWAYS_INLINE void* machineCodeCopy(void* dst, const void* src, size_t n)
 {
     static_assert(!(*repatch).contains(RepatchingFlag::Flush));
-    if constexpr (is32Bit()) {
-        // Avoid unaligned accesses.
-        if (WTF::isAligned(dst, n))
-            return memcpyAtomicIfPossible(dst, src, n);
-        return memcpyTearing(dst, src, n);
-    }
     if constexpr ((*repatch).contains(RepatchingFlag::Memcpy) && (*repatch).contains(RepatchingFlag::Atomic))
         return memcpyAtomic(dst, src, n);
     else if constexpr ((*repatch).contains(RepatchingFlag::Memcpy))

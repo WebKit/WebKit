@@ -397,12 +397,12 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         }
 
         if (!inlineCallFrame->isVarargs())
-            jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->argumentCountIncludingThis), AssemblyHelpers::payloadFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
+            jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->argumentCountIncludingThis), AssemblyHelpers::lowWordFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
         jit.storePtr(callerFrameGPR, AssemblyHelpers::addressForByteOffset(inlineCallFrame->callerFrameOffset()));
 
         BytecodeIndex exitIndex(codeOrigin->bytecodeIndex().offset());
         uint32_t locationBits = CallSiteIndex(exitIndex).bits();
-        jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
+        jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::highWordFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
         if (!inlineCallFrame->isClosureCall)
             jit.storeCell(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->calleeConstant()), AssemblyHelpers::addressFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee)));
     }
@@ -411,7 +411,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     if (codeOrigin) {
         BytecodeIndex exitIndex(codeOrigin->bytecodeIndex().offset());
         uint32_t locationBits = CallSiteIndex(exitIndex).bits();
-        jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
     }
 }
 

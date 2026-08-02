@@ -721,7 +721,7 @@
 #define ENABLE_JIT 1
 #endif
 
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
 #undef ENABLE_JIT
 #define ENABLE_JIT 0
 #endif
@@ -751,7 +751,7 @@
 
 /* FIXME: This should be turned into an #error invariant */
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
 #undef ENABLE_FTL_JIT
 #define ENABLE_FTL_JIT 0
 #undef ENABLE_DFG_JIT
@@ -800,7 +800,7 @@
 #define ENABLE_CONCURRENT_JS 1
 #endif
 
-#if (CPU(X86_64) || CPU(ARM64)) && HAVE(FAST_TLS)
+#if ENABLE(JIT) && (CPU(X86_64) || CPU(ARM64)) && HAVE(FAST_TLS)
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 

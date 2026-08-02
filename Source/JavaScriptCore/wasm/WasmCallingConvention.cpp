@@ -48,15 +48,11 @@ const WasmCallingConvention& wasmCallingConvention()
     static LazyNeverDestroyed<WasmCallingConvention> staticWasmCallingConvention;
     static std::once_flag staticWasmCallingConventionFlag;
     std::call_once(staticWasmCallingConventionFlag, [] () {
-#if USE(JSVALUE64) // One value per GPR
+        // One value per GPR.
         constexpr unsigned numberOfArgumentJSRs = GPRInfo::numberOfArgumentRegisters;
-#endif
         Vector<JSValueRegs> jsrArgumentRegisters(numberOfArgumentJSRs);
-        for (unsigned i = 0; i < numberOfArgumentJSRs; ++i) {
-#if USE(JSVALUE64)
+        for (unsigned i = 0; i < numberOfArgumentJSRs; ++i)
             jsrArgumentRegisters[i] = JSValueRegs { GPRInfo::toArgumentRegister(i) };
-#endif
-        }
 
         Vector<FPRReg> fprArgumentRegisters(FPRInfo::numberOfArgumentRegisters);
         for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i)
@@ -76,9 +72,7 @@ const WasmCallingConvention& wasmCallingConvention()
             scratchGPRs.append(reg.gpr());
 
         // Need at least one JSValue and an additional GPR
-#if USE(JSVALUE64)
         RELEASE_ASSERT(scratchGPRs.size() >= 2);
-#endif
 
         staticWasmCallingConvention.construct(WTF::move(jsrArgumentRegisters), WTF::move(fprArgumentRegisters), WTF::move(scratchGPRs), RegisterSet::calleeSaveRegisters());
     });

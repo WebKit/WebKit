@@ -284,7 +284,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
-        size_t argumentCountIncludingThis() const { return this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload(); }
+        size_t argumentCountIncludingThis() const { return this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].lowWord(); }
         static constexpr int argumentOffset(int argument) { return (CallFrameSlot::firstArgument + argument); }
         static constexpr int argumentOffsetIncludingThis(int argument) { return (CallFrameSlot::thisArgument + argument); }
 
@@ -328,7 +328,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         bool isZombieFrame() const;
         bool isNativeCalleeFrame() const;
 
-        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload() = count; }
+        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].lowWord() = count; }
         inline void setCallee(JSObject*);
         inline void setCallee(NativeCallee*);
         inline void setCodeBlock(CodeBlock*);

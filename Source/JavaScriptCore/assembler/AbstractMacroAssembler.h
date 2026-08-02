@@ -143,7 +143,7 @@ public:
         TimesFour,
         TimesEight,
         ScalePtr = isAddress64Bit() ? TimesEight : TimesFour,
-        ScaleRegWord = isRegister64Bit() ? TimesEight : TimesFour,
+        ScaleRegWord = TimesEight,
     };
 
     enum class Extend : uint8_t {
@@ -1086,7 +1086,7 @@ public:
     void emitNops(size_t memoryToFillWithNopsInBytes)
     {
 #if CPU(ARM64) || CPU(ARM)
-        constexpr size_t nopSize = is32Bit() ? 2 : 4;
+        constexpr size_t nopSize = 4;
         RELEASE_ASSERT(memoryToFillWithNopsInBytes % nopSize == 0);
         for (unsigned i = 0; i < memoryToFillWithNopsInBytes / nopSize; ++i)
             m_assembler.nop();

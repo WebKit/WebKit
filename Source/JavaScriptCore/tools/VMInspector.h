@@ -67,9 +67,7 @@ public:
     JS_EXPORT_PRIVATE static void dumpCellMemoryToStream(JSCell*, PrintStream&);
     JS_EXPORT_PRIVATE static void dumpSubspaceHashes(VM*);
 
-#if USE(JSVALUE64)
     static bool verifyCell(VM&, JSCell*);
-#endif
 };
 
 } // namespace JSC

@@ -139,7 +139,7 @@ public:
 
     void emitStoreCallSiteIndex(CallSiteIndex callSite)
     {
-        store32(TrustedImm32(callSite.bits()), tagFor(CallFrameSlot::argumentCountIncludingThis));
+        store32(TrustedImm32(callSite.bits()), highWordFor(CallFrameSlot::argumentCountIncludingThis));
     }
 
     // Add a call out from JIT code, without an exception check.

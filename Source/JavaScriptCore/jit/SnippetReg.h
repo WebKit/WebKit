@@ -34,12 +34,8 @@
 
 namespace JSC {
 
-// It is quite unfortunate that 32 bit environment exists on DFG! This means that JSValueRegs contains 2 registers
-// in such an environment. If we use GPRReg and FPRReg in SnippetParams, SnippetParams may contain
-// different number of registers in 32bit and 64bit environments when we pass JSValueRegs, it is confusing.
-// Therefore, we introduce an abstraction that SnippetReg, which is a polymorphic register class. It can refer FPRReg,
-// GPRReg, and "JSValueRegs". Note that isGPR() will return false if the target Reg is "JSValueRegs" even if the
-// environment is 64bit.
+// SnippetReg is a polymorphic register class. It can refer to an FPRReg, a GPRReg, or a
+// "JSValueRegs". Note that isGPR() returns false when the target Reg is "JSValueRegs".
 //
 // FIXME: Eventually we should move this class into JSC and make is available for other JIT code.
 // https://bugs.webkit.org/show_bug.cgi?id=162990

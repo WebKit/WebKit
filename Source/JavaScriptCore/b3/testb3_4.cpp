@@ -2332,8 +2332,7 @@ void testComplex(unsigned numVars, unsigned numConstructs)
                 proc, BitAnd, Origin(),
                 newBodyIndex,
                 loopBody->appendNew<Const32Value>(proc, Origin(), numVars - 1));
-            if (!is32Bit())
-                andValue = loopBody->appendNew<Value>(proc, ZExt32, Origin(), andValue);
+            andValue = loopBody->appendNew<Value>(proc, ZExt32, Origin(), andValue);
             Value* newBodySum = loopBody->appendNew<Value>(
                 proc, Add, Origin(),
                 bodySum,
@@ -2666,20 +2665,6 @@ void testSimplePatchpointWithoutOuputClobbersGPArgs()
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if constexpr (is32Bit()) {
-                CHECK_EQ(params.size(), 4u);
-                CHECK(params[0].isGPR());
-                CHECK(params[1].isGPR());
-                CHECK(params[2].isGPR());
-                CHECK(params[3].isGPR());
-                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), params[0].gpr());
-                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), params[1].gpr());
-                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), params[2].gpr());
-                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), params[3].gpr());
-                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), GPRInfo::argumentGPR0);
-                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), GPRInfo::argumentGPR1);
-                return;
-            }
             CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());

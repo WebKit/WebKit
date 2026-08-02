@@ -1328,7 +1328,6 @@ private:
             }
             break;
         case Width64:
-            RELEASE_ASSERT(is64Bit());
             switch (bank) {
             case GP:
                 return Move;
@@ -1337,7 +1336,7 @@ private:
             }
             break;
         case Width128:
-            RELEASE_ASSERT(is64Bit() && Options::useWasmSIMD());
+            RELEASE_ASSERT(Options::useWasmSIMD());
             RELEASE_ASSERT(bank == FP);
             return MoveVector;
         }
@@ -6181,7 +6180,6 @@ private:
                 append(Move, cCallResult(m_code, cCall, 0), resultDst0);
                 break;
             case V128:
-                ASSERT(is64Bit());
                 append(MoveVector, cCallResult(m_code, cCall, 0), resultDst0);
                 break;
             }

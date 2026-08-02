@@ -84,22 +84,11 @@ void BasicBlockLocation::dumpData() const
 }
 
 #if ENABLE(JIT)
-#if USE(JSVALUE64)
 void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit) const
 {
     static_assert(sizeof(UCPURegister) == 8, "Assuming size_t is 64 bits on 64 bit platforms.");
     jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(&m_executionCount));
 }
-#else
-void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit, MacroAssembler::RegisterID scratch) const
-{
-    static_assert(sizeof(size_t) == 4, "Assuming size_t is 32 bits on 32 bit platforms.");
-    jit.load32(&m_executionCount, scratch);
-    CCallHelpers::Jump done = jit.branchAdd32(CCallHelpers::Zero, scratch, CCallHelpers::TrustedImm32(1), scratch);
-    jit.store32(scratch, std::bit_cast<void*>(&m_executionCount));
-    done.link(&jit);
-}
-#endif // USE(JSVALUE64)
 #endif // ENABLE(JIT)
 
 } // namespace JSC

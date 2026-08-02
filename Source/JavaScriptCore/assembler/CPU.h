@@ -114,28 +114,9 @@ constexpr bool isRISCV64()
 #endif
 }
 
-constexpr bool is64Bit()
-{
-#if USE(JSVALUE64)
-    return true;
-#else
-    return false;
-#endif
-}
-
-constexpr bool is32Bit()
-{
-    return !is64Bit();
-}
-
 constexpr bool isAddress64Bit()
 {
     return sizeof(void*) == 8;
-}
-
-constexpr bool isAddress32Bit()
-{
-    return !isAddress64Bit();
 }
 
 constexpr size_t registerSize()

@@ -262,7 +262,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             CCallHelpers::JumpList mainPathJumps;
 
             arityCheckLabel = jit.label();
-            jit.load32(CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+            jit.load32(CCallHelpers::calleeFrameLowWordSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
             mainPathJumps.append(jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::argumentGPR2, CCallHelpers::TrustedImm32(codeBlock->numParameters())));
 
             unsigned numberOfParameters = codeBlock->numParameters();

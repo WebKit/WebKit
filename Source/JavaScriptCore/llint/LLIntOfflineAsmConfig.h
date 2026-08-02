@@ -70,12 +70,6 @@
 
 #endif // ENABLE(C_LOOP)
 
-#if USE(JSVALUE64)
-#define OFFLINE_ASM_JSVALUE64 1
-#else
-#define OFFLINE_ASM_JSVALUE64 0
-#endif
-
 #if USE(BIGINT32)
 #define OFFLINE_ASM_BIGINT32 1
 #else

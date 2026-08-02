@@ -156,11 +156,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
                     out.print(text);
                     out.print("GC type: ", heap()->collectionScope(), "\n");
                     out.print("Object at: ", RawPointer(jsCell), "\n");
-#if USE(JSVALUE64)
                     out.print("Structure ID: ", structureID.bits(), " (", RawPointer(structureID.decode()), ")\n");
-#else
-                    out.print("Structure: ", RawPointer(structureID.decode()), "\n");
-#endif
                     out.print("Object contents:");
                     for (unsigned i = 0; i < 2; ++i)
                         out.print(" ", format("0x%016llx", std::bit_cast<uint64_t*>(jsCell)[i]));

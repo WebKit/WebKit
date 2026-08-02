@@ -341,35 +341,21 @@ inline bool isAbstractHeapTypeKind(TypeKind kind)
 inline TypeIndex typeIndexFromTypeKind(TypeKind kind)
 {
     RELEASE_ASSERT(isAbstractHeapTypeKind(kind));
-#if CPU(ADDRESS64)
     return TypeIndexTaggingTraits::wrap(nullptr, typeKindToTypeIndexTag(kind));
-#else
-    return static_cast<TypeIndex>(kind);
-#endif
 }
 
 inline bool isAbstractTypeIndex(TypeIndex index)
 {
-#if CPU(ADDRESS64)
     return TypeIndexTaggingTraits::unwrapTag(index) != TypeIndexTag::Concrete;
-#else
-    auto signedIndex = static_cast<std::make_signed_t<TypeIndex>>(index);
-    return (signedIndex < 0) && (signedIndex > minTypeValue);
-#endif
 }
 
 inline TypeKind typeIndexAsTypeKind(TypeIndex index)
 {
     ASSERT(isAbstractTypeIndex(index));
-#if CPU(ADDRESS64)
     return typeIndexTagToTypeKind(TypeIndexTaggingTraits::unwrapTag(index));
-#else
-    return static_cast<TypeKind>(index);
-#endif
 }
 
-// CompactPointerTuple packs pointer + uint8 kind bits on ADDRESS64 (one word);
-// on 32-bit it is a real { pointer, type } pair (same API).
+// CompactPointerTuple packs the pointer and the uint8 kind bits into one word.
 // TypeKind is a signed int8_t enum, so the tag is the uint8_t bit pattern.
 //   Bare kinds — pointer null, tag = TypeKind bits
 //   Concrete ref/ref_null — pointer = TypeIndex (RTT* / parse-time tagged ptr), tag = Ref/RefNull
@@ -420,13 +406,8 @@ struct Type {
         if (typeKind != TypeKind::Ref && typeKind != TypeKind::RefNull)
             return 0;
 
-        // ADDRESS64: data()+mask avoids bit_cast to/from pointers in constexpr.
-        // 32-bit CompactPointerTuple has no packed data(); pointer() is fine.
-#if CPU(ADDRESS64)
+        // data()+mask avoids bit_cast to/from pointers in constexpr.
         uintptr_t payload = static_cast<uintptr_t>(m_data.data() & Payload::pointerMask);
-#else
-        uintptr_t payload = std::bit_cast<uintptr_t>(m_data.pointer());
-#endif
         if (payload && payload < static_cast<uintptr_t>(TypeIndexTag::NumberOfTags))
             return typeIndexFromTypeKind(typeIndexTagToTypeKind(static_cast<TypeIndexTag>(payload)));
         return static_cast<TypeIndex>(payload);
@@ -451,9 +432,7 @@ private:
     }
 
     Payload m_data;
-#if CPU(ADDRESS64)
     static_assert(sizeof(Payload) == sizeof(void*));
-#endif
 public:
 
     bool isNullable() const
@@ -491,20 +470,14 @@ public:
     }
 };
 
-#if CPU(ADDRESS64)
 static_assert(sizeof(Type) == sizeof(void*));
-#endif
 
 namespace Types
 {
 #define CREATE_CONSTANT(name, id, ...) constexpr Type name = Type::fromBareKind(TypeKind::name);
 FOR_EACH_WASM_TYPE(CREATE_CONSTANT)
 #undef CREATE_CONSTANT
-#if USE(JSVALUE64)
 constexpr Type IPtr = I64;
-#elif USE(JSVALUE32_64)
-constexpr Type IPtr = I32;
-#endif
 } // namespace Types
 
 static_assert(Types::I32.kind() == TypeKind::I32);

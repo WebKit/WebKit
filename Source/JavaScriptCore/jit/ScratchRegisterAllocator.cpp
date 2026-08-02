@@ -60,7 +60,6 @@ void ScratchRegisterAllocator::lock(FPRReg reg)
 
 void ScratchRegisterAllocator::lock(JSValueRegs regs)
 {
-    lock(regs.tagGPR());
     lock(regs.payloadGPR());
 }
 
@@ -182,10 +181,6 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
             offset += conservativeRegisterBytesWithoutVectors(reg);
         }
     }
-#if !CPU(REGISTER64)
-    if (byteSizeOfSetRegisters > offset)
-        offset = WTF::roundUpToMultipleOf<2*bytesForWidth(pointerWidth())>(offset);
-#endif
     spooler.finalizeGPR();
 
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
@@ -226,10 +221,6 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
             offset += conservativeRegisterBytesWithoutVectors(reg);
         }
     }
-#if !CPU(REGISTER64)
-    if (byteSizeOfSetRegisters > offset)
-        offset = WTF::roundUpToMultipleOf<2*bytesForWidth(pointerWidth())>(offset);
-#endif
     spooler.finalizeGPR();
 
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {

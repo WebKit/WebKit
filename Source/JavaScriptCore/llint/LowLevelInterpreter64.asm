@@ -247,7 +247,7 @@ macro doVMEntry(makeCall)
         storeq t5, CodeBlock + (8 * 3)[sp]
     end
 
-    loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
+    loadi LowWordOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
     subi 1, t4
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t5
     subi 1, t5
@@ -364,7 +364,7 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
     loadp ProtoCallFrame::globalObject[protoCallFrame], a0
     move sp, a1
     if C_LOOP
-        storep lr, 8[sp]
+        storep lr, ReturnPC[sp]
         cloopCallNative temp1
     else
         call temp1, HostFunctionPtrTag
@@ -701,7 +701,7 @@ end
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
 macro functionArityCheck(opcodeName, doneLabel)
-    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
+    loadi LowWordOffset + ArgumentCountIncludingThis[cfr], t0
     loadi CodeBlock::m_numParameters[t1], t2
     biaeq t0, t2, doneLabel
 
@@ -744,7 +744,7 @@ macro functionArityCheck(opcodeName, doneLabel)
 .noError:
     move r1, t1 # r1 contains slotsToAdd.
     btiz t1, .continue
-    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t2
+    loadi LowWordOffset + ArgumentCountIncludingThis[cfr], t2
     addi CallFrameHeaderSlots, t2
 
     // Check if there are some unaligned slots we can use
@@ -859,7 +859,7 @@ _llint_op_enter:
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)
     get(m_index, t2)
-    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
+    loadi LowWordOffset + ArgumentCountIncludingThis[cfr], t0
     bilteq t0, t2, .opGetArgumentOutOfBounds
     loadq ThisArgumentOffset[cfr, t2, 8], t0
     return(t0)
@@ -870,7 +870,7 @@ end)
 
 
 llintOpWithReturn(op_argument_count, OpArgumentCount, macro (size, get, dispatch, return)
-    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
+    loadi LowWordOffset + ArgumentCountIncludingThis[cfr], t0
     subi 1, t0
     orq TagNumber, t0
     return(t0)
@@ -2482,7 +2482,7 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     negp t3
     addp cfr, t3
     getArgumentCountIncludingThis(t2)
-    storei t2, ArgumentCountIncludingThis + PayloadOffset[t3]
+    storei t2, ArgumentCountIncludingThis + LowWordOffset[t3]
 
     # Store location bits and |callee|, and configure sp.
     storePC()
@@ -2512,7 +2512,7 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
 .opCallSlow:
-    # 64bit:t0 32bit(t0,t1) is callee
+    # t0 is callee
     # t2 is CallLinkInfo*
     prepareCall(t2, t3, t4, t1, macro(address)
         storep 0, address
@@ -2552,12 +2552,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
     callSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
-    if JSVALUE64
-        move r1, sp
-    else
-        # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
-        subp r1, CallerFrameAndPCSize, sp
-    end
+    move r1, sp
     callCallSlowPath(
         slowPath,
         # Those parameters are r0 and r1
@@ -2591,7 +2586,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
             invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
         .opCallSlow:
-            # 64bit:t0 32bit(t0,t1) is callee
+            # t0 is callee
             # t2 is CallLinkInfo*
             prepareCall(t2, t3, t4, t1, macro(address)
                 storep 0, address

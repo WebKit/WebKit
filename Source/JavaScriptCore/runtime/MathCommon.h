@@ -352,23 +352,5 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundDouble, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(jsRoundDouble, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float));
 
-// FIXME: Remote them. These functions were only used in 32bit wasm.
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_nearest, float, (float));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double));
-
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double));
-
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_convert_s_i64, float, (int64_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_convert_s_i64, double, (int64_t));
-
 } // namespace Math
 } // namespace JSC

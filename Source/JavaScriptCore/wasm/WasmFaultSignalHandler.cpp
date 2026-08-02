@@ -165,7 +165,6 @@ void prepareSignalingMemory()
 
 ptrdiff_t maxAcceptableOffsetForNullReference()
 {
-#if CPU(ADDRESS64)
     if (!Options::useWasmFaultSignalHandler())
         return 0;
 
@@ -175,9 +174,6 @@ ptrdiff_t maxAcceptableOffsetForNullReference()
     if (address < (nullValue + accessed))
         return 0;
     return address - nullValue - accessed;
-#else
-    return 0;
-#endif
 }
 
 } } // namespace JSC::Wasm

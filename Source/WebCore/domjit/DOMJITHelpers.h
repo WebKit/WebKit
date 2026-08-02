@@ -66,7 +66,7 @@ void tryLookUpWrapperCache(CCallHelpers& jit, CCallHelpers::JumpList& failureCas
     jit.loadPtr(CCallHelpers::Address(wrapped, ScriptWrappable::offsetOfWrapper<WrappedType>()), resultGPR);
     failureCases.append(jit.branchTestPtr(CCallHelpers::Zero, resultGPR));
     failureCases.append(branchIfNotWeakIsLive(jit, resultGPR));
-    jit.loadPtr(CCallHelpers::Address(resultGPR, JSC::WeakImpl::offsetOfJSValue() + JSC::JSValue::offsetOfPayload()), resultGPR);
+    jit.loadPtr(CCallHelpers::Address(resultGPR, JSC::WeakImpl::offsetOfJSValue()), resultGPR);
 }
 
 template<typename WrappedType, typename ToJSFunction>

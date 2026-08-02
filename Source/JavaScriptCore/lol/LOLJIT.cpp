@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LOLJIT.h"
 
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 
 #include "BaselineJITPlan.h"
 #include "BaselineJITRegisters.h"
@@ -141,11 +141,6 @@ RefPtr<BaselineJITCode> LOLJIT::compileAndLinkWithoutFinalizing(JITCompilationEf
     int frameTopOffset = stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register);
     addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
     JumpList stackOverflow;
-#if !CPU(ADDRESS64)
-    unsigned maxFrameSize = -frameTopOffset;
-    if (maxFrameSize > Options::reservedZoneSize()) [[unlikely]]
-        stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
-#endif
     stackOverflow.append(branchPtr(GreaterThan, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
 
     move(regT1, stackPointerRegister);
@@ -199,7 +194,7 @@ RefPtr<BaselineJITCode> LOLJIT::compileAndLinkWithoutFinalizing(JITCompilationEf
         RELEASE_ASSERT(m_unlinkedCodeBlock->codeType() == FunctionCode);
 
         unsigned numberOfParameters = m_unlinkedCodeBlock->numParameters();
-        load32(CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+        load32(CCallHelpers::calleeFrameLowWordSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
         branch32(AboveOrEqual, GPRInfo::argumentGPR2, TrustedImm32(numberOfParameters)).linkTo(entryLabel, this);
         m_bytecodeIndex = BytecodeIndex(0);
         getArityPadding(*m_vm, numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
@@ -1926,13 +1921,9 @@ void LOLJIT::emit_op_is_boolean(const JSInstruction* currentInstruction)
     auto [ operandRegs ] = allocations.uses;
     auto [ dstRegs ] = allocations.defs;
 
-#if USE(JSVALUE64)
     move(operandRegs.gpr(), dstRegs.gpr());
     xor64(TrustedImm32(JSValue::ValueFalse), dstRegs.gpr());
     test64(Zero, dstRegs.gpr(), TrustedImm32(static_cast<int32_t>(~1)), dstRegs.gpr());
-#elif USE(JSVALUE32_64)
-    compare32(Equal, operandRegs.tagGPR(), TrustedImm32(JSValue::BooleanTag), dstRegs.gpr());
-#endif
 
     boxBoolean(dstRegs.gpr(), dstRegs);
 
@@ -1946,13 +1937,7 @@ void LOLJIT::emit_op_is_number(const JSInstruction* currentInstruction)
     auto [ operandRegs ] = allocations.uses;
     auto [ dstRegs ] = allocations.defs;
 
-#if USE(JSVALUE64)
     test64(NonZero, operandRegs.gpr(), numberTagRegister, dstRegs.gpr());
-#elif USE(JSVALUE32_64)
-    move(operandRegs.tagGPR(), dstRegs.gpr());
-    add32(TrustedImm32(1), dstRegs.gpr());
-    compare32(Below, dstRegs.gpr(), TrustedImm32(JSValue::LowestTag + 1), dstRegs.gpr());
-#endif
 
     boxBoolean(dstRegs.gpr(), dstRegs);
 
@@ -2150,7 +2135,6 @@ void LOLJIT::emit_op_jtrue(const JSInstruction* currentInstruction)
     auto [ valueRegs ] = allocations.uses;
 
     JumpList fallThrough;
-#if USE(JSVALUE64)
     // Quick fast path.
     auto isNotBoolean = branchIfNotBoolean(valueRegs, s_scratch);
     addJump(branchTest64(NonZero, valueRegs.payloadGPR(), TrustedImm32(0x1)), target);
@@ -2163,7 +2147,6 @@ void LOLJIT::emit_op_jtrue(const JSInstruction* currentInstruction)
 
     isNotInt32.link(this);
     fallThrough.append(branchIfOther(valueRegs, s_scratch));
-#endif
 
     moveValueRegs(valueRegs, BaselineJITRegisters::JTrue::valueJSR);
     nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsTruthyGenerator).retaggedCode<NoPtrTag>() });
@@ -2181,7 +2164,6 @@ void LOLJIT::emit_op_jfalse(const JSInstruction* currentInstruction)
     auto [ valueRegs ] = allocations.uses;
 
     JumpList fallThrough;
-#if USE(JSVALUE64)
     // Quick fast path.
     auto isNotBoolean = branchIfNotBoolean(valueRegs, s_scratch);
     addJump(branchTest64(Zero, valueRegs.payloadGPR(), TrustedImm32(0x1)), target);
@@ -2194,7 +2176,6 @@ void LOLJIT::emit_op_jfalse(const JSInstruction* currentInstruction)
 
     isNotInt32.link(this);
     addJump(branchIfOther(valueRegs, s_scratch), target);
-#endif
 
     moveValueRegs(valueRegs, BaselineJITRegisters::JFalse::valueJSR);
     nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsFalseyGenerator).retaggedCode<NoPtrTag>() });
@@ -2264,11 +2245,9 @@ void LOLJIT::emit_op_jundefined_or_null(const JSInstruction* currentInstruction)
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ valueRegs ] = allocations.uses;
 
-#if USE(JSVALUE64)
     moveValueRegs(valueRegs, s_scratchRegs);
     emitTurnUndefinedIntoNull(s_scratchRegs);
     addJump(branchIfNull(s_scratchRegs), target);
-#endif
 
     m_fastAllocator.releaseScratches(allocations);
 }
@@ -2280,11 +2259,9 @@ void LOLJIT::emit_op_jnundefined_or_null(const JSInstruction* currentInstruction
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ valueRegs ] = allocations.uses;
 
-#if USE(JSVALUE64)
     moveValueRegs(valueRegs, s_scratchRegs);
     emitTurnUndefinedIntoNull(s_scratchRegs);
     addJump(branchIfNotNull(s_scratchRegs), target);
-#endif
 
     m_fastAllocator.releaseScratches(allocations);
 }
@@ -2296,10 +2273,8 @@ void LOLJIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ valueRegs ] = allocations.uses;
 
-#if USE(JSVALUE64)
     loadCodeBlockConstantPayload(bytecode.m_specialPointer, s_scratch);
     addJump(branchPtr(Equal, valueRegs.payloadGPR(), s_scratch), target);
-#endif
 
     m_fastAllocator.releaseScratches(allocations);
 }
@@ -2311,15 +2286,11 @@ void LOLJIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ valueRegs ] = allocations.uses;
 
-#if USE(JSVALUE64)
     loadCodeBlockConstantPayload(bytecode.m_specialPointer, s_scratch);
     CCallHelpers::Jump equal = branchPtr(Equal, valueRegs.payloadGPR(), s_scratch);
-#endif
     store8ToMetadata(TrustedImm32(1), bytecode, OpJneqPtr::Metadata::offsetOfHasJumped());
     addJump(jump(), target);
-#if USE(JSVALUE64)
     equal.link(this);
-#endif
 
     m_fastAllocator.releaseScratches(allocations);
 }
@@ -2387,11 +2358,7 @@ void LOLJIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
     notInt32.link(this);
     JumpList failureCases;
     failureCases.append(branchIfNotNumber(scrutineeRegs, s_scratch));
-#if USE(JSVALUE64)
     unboxDoubleWithoutAssertions(scrutineeRegs.payloadGPR(), s_scratch, fpRegT0);
-#else
-    unboxDouble(scrutineeRegs.tagGPR(), scrutineeRegs.payloadGPR(), fpRegT0);
-#endif
     branchConvertDoubleToInt32(fpRegT0, scrutineeRegs.payloadGPR(), failureCases, fpRegT1, /* shouldCheckNegativeZero */ false);
     jump().linkTo(dispatch, this);
     addJump(failureCases, defaultOffset);
@@ -2975,16 +2942,12 @@ void LOLJIT::emit_op_div(const JSInstruction* currentInstruction)
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
-#if USE(JSVALUE64)
     else if (isOperandConstantDouble(op1))
         leftOperand.setConstDouble(getOperandConstantDouble(op1));
-#endif
     else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
-#if USE(JSVALUE64)
     else if (isOperandConstantDouble(op2))
         rightOperand.setConstDouble(getOperandConstantDouble(op2));
-#endif
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
@@ -3029,9 +2992,7 @@ void LOLJIT::emit_op_bitnot(const JSInstruction* currentInstruction)
 
     addSlowCase(branchIfNotInt32(operandRegs));
     not32(operandRegs.payloadGPR(), dstRegs.payloadGPR());
-#if USE(JSVALUE64)
     boxInt32(dstRegs.payloadGPR(), dstRegs);
-#endif
     m_fastAllocator.releaseScratches(allocations);
 }
 
@@ -3045,11 +3006,7 @@ void LOLJIT::emit_op_inc(const JSInstruction* currentInstruction)
 
     emitJumpSlowCaseIfNotInt(srcDstRegs);
     addSlowCase(branchAdd32(Overflow, srcDstRegs.payloadGPR(), TrustedImm32(1), s_scratch));
-#if USE(JSVALUE64)
     boxInt32(s_scratch, srcDstRegs);
-#else
-    move(s_scratch, srcDestRegs.payloadGPR());
-#endif
     m_fastAllocator.releaseScratches(allocations);
 }
 
@@ -3063,11 +3020,7 @@ void LOLJIT::emit_op_dec(const JSInstruction* currentInstruction)
 
     emitJumpSlowCaseIfNotInt(srcDstRegs);
     addSlowCase(branchSub32(Overflow, srcDstRegs.payloadGPR(), TrustedImm32(1), s_scratch));
-#if USE(JSVALUE64)
     boxInt32(s_scratch, srcDstRegs);
-#else
-    move(s_scratch, srcDestRegs.payloadGPR());
-#endif
     m_fastAllocator.releaseScratches(allocations);
 }
 
@@ -3077,7 +3030,7 @@ void LOLJIT::emit_op_argument_count(const JSInstruction* currentInstruction)
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ dstRegs ] = allocations.defs;
 
-    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), dstRegs.payloadGPR());
+    load32(lowWordFor(CallFrameSlot::argumentCountIncludingThis), dstRegs.payloadGPR());
     sub32(TrustedImm32(1), dstRegs.payloadGPR());
     boxInt32(dstRegs.payloadGPR(), dstRegs);
 
@@ -3091,7 +3044,7 @@ void LOLJIT::emit_op_get_argument(const JSInstruction* currentInstruction)
     auto [ dstRegs ] = allocations.defs;
     int index = bytecode.m_index;
 
-    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), s_scratch);
+    load32(lowWordFor(CallFrameSlot::argumentCountIncludingThis), s_scratch);
     Jump argumentOutOfBounds = branch32(LessThanOrEqual, s_scratch, TrustedImm32(index));
     loadValue(addressFor(VirtualRegister(CallFrameSlot::thisArgument + index)), dstRegs);
     Jump done = jump();
@@ -3418,7 +3371,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::slow_op_get_from_scopeGenerator(VM
 
     jit.emitCTIThunkPrologue(/* returnAddressAlreadyTagged: */ true); // Return address tagged in 'generateOpGetFromScopeThunk'
 
-    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(bytecodeOffsetGPR, highWordFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
 
     // save metadataGPR (arguments to call below are in registers on all platforms, so ok to stack this).
@@ -3667,7 +3620,6 @@ void LOLJIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
         switch (profiledResolveType) {
         case GlobalProperty: {
             // This saves a move when scopeRegs != destRegs.
-            // FIXME: This is probably not correct for 32-bit.
             GPRReg globalObjectGPR = scopeRegs == destRegs ? s_scratch : destRegs.payloadGPR();
             addSlowCase(branch32(NotEqual, resolveTypeAddress, TrustedImm32(profiledResolveType)));
             loadGlobalObject(globalObjectGPR);
@@ -3937,7 +3889,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::slow_op_resolve_scopeGenerator(VM&
     jit.emitCTIThunkPrologue(/* returnAddressAlreadyTagged: */ true); // Return address tagged in 'generateOpResolveScopeThunk'
 
     // Call slow operation
-    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(bytecodeOffsetGPR, highWordFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
     // FIXME: Maybe it's profitable to pick the order of arguments for this to match the incoming GPRs.
     jit.setupArguments<decltype(operationResolveScopeForLOL)>(bytecodeOffsetGPR, scopeGPR);
@@ -3957,5 +3909,5 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::slow_op_resolve_scopeGenerator(VM&
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(JIT) && USE(JSVALUE64)
+#endif // ENABLE(JIT)
 

@@ -151,10 +151,8 @@ private:
 
 static_assert(std::is_final_v<JSWebAssemblyArray>, "JSWebAssemblyArray is a TrailingArray-like object so must know about all members");
 // Verify v128 alignment for both MarkedBlock (cell at 0 mod 16) and PreciseAllocation (cell at 8 mod 16).
-// FIXME: Fix this check for 32-bit.
-static_assert(isAddress32Bit() || !((JSWebAssemblyArray::offsetOfData() + JSWebAssemblyArray::alignmentShift(16)) % 16), "JSWebAssemblyArray storage needs to be aligned for v128_t (MarkedBlock)");
+static_assert(!((JSWebAssemblyArray::offsetOfData() + JSWebAssemblyArray::alignmentShift(16)) % 16), "JSWebAssemblyArray storage needs to be aligned for v128_t (MarkedBlock)");
 
-#if USE(JSVALUE64)
 #if !ASSERT_ENABLED
 static_assert(JSWebAssemblyArray::alignmentShift(1) == 0);
 static_assert(JSWebAssemblyArray::alignmentShift(2) == 0);
@@ -167,7 +165,6 @@ static_assert(JSWebAssemblyArray::allocationMetadataSize(2) == sizeof(JSWebAssem
 static_assert(JSWebAssemblyArray::allocationMetadataSize(4) == sizeof(JSWebAssemblyArray));
 static_assert(JSWebAssemblyArray::allocationMetadataSize(8) == sizeof(JSWebAssemblyArray) + 4);
 static_assert(JSWebAssemblyArray::allocationMetadataSize(16) == sizeof(JSWebAssemblyArray) + 12);
-#endif
 #endif
 
 } // namespace JSC

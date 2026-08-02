@@ -31,7 +31,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmBBQJIT.h"
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-#if USE(JSVALUE64)
 
 #include "B3Common.h"
 #include "B3ValueRep.h"
@@ -3375,7 +3374,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
 
     ++m_callSiteIndex;
     if (m_profiledCallee.hasExceptionHandlers()) {
-        m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
         flushRegisters();
     }
 
@@ -3399,7 +3398,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
 
     ++m_callSiteIndex;
     if (m_profiledCallee.hasExceptionHandlers()) {
-        m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
         flushRegisters();
     }
     emitMove(this->exception(data), Location::fromGPR(GPRInfo::argumentGPR1));
@@ -5177,7 +5176,6 @@ void BBQJIT::emitMove(StorageType type, Value src, Address dst)
 
 } } } // namespace JSC::Wasm::BBQJITImpl
 
-#endif // USE(JSVALUE64)
 #endif // ENABLE(WEBASSEMBLY_BBQJIT)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

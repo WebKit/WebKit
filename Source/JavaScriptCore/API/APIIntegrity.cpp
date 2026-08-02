@@ -28,8 +28,6 @@
 
 #include "IntegrityInlines.h"
 
-#if USE(JSVALUE64)
-
 JSContextRef jsAuditJSContextRef(JSContextRef ctx)
 {
     return JSC::Integrity::doAudit(ctx);
@@ -50,4 +48,3 @@ JSValueRef jsAuditJSValueRef(JSValueRef value)
     return JSC::Integrity::doAudit(value);
 }
 
-#endif // USE(JSVALUE64)

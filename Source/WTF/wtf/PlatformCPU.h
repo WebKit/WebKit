@@ -298,10 +298,6 @@
 #define WTF_CPU_UNKNOWN 1
 #endif
 
-#if CPU(ARM) || CPU(MIPS) || CPU(RISCV64) || CPU(UNKNOWN)
-#define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
-#endif
-
 /* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
 #if __SIZEOF_POINTER__ == 8
 #define WTF_CPU_ADDRESS64 1

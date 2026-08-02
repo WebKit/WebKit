@@ -135,7 +135,7 @@ private:
     static constexpr uintptr_t s_chunkMask = s_chunkSize - 1;
 #if ASAN_ENABLED
     static_assert(s_chunkSize == sizeof(uintptr_t), "bad chunkSizeShift");
-    static constexpr size_t s_chunkSizeShift = is64Bit() ? 3 : 2;
+    static constexpr size_t s_chunkSizeShift = isAddress64Bit() ? 3 : 2;
 #else // no ASAN_ENABLED
     static constexpr size_t s_chunkSizeShift = 4;
 #endif // ASAN_ENABLED

@@ -1921,7 +1921,7 @@ private:
                 if (!checkIndexValue)
                     break;
 
-                if (!success || !is64Bit() || !m_graph.m_plan.isFTL())
+                if (!success || !m_graph.m_plan.isFTL())
                     break;
 
                 unsigned numAllocatedArgs = static_cast<unsigned>(signature->argumentCount()) + /* |this| for wasm */ 1;

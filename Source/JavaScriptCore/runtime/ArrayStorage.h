@@ -130,7 +130,9 @@ public:
     WriteBarrier<SparseArrayValueMap> m_sparseMap;
     unsigned m_indexBias;
     unsigned m_numValuesInVector;
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
+    // Keep the JSValue vector 8-byte aligned relative to the butterfly base so the
+    // m_indexBias unshift math (getStorage() - m_indexBias * sizeof(JSValue)) stays aligned.
     uintptr_t m_padding;
 #endif
     WriteBarrier<Unknown> m_vector[1];

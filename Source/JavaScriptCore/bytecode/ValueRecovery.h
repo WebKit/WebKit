@@ -42,13 +42,11 @@ namespace JSC {
 // A poison value stored into dead variables on OSR exit. This deliberately differs from
 // SCRIBBLE_WORD (0xbadbeef0), which is used to scribble over dead cells in zombie mode.
 static constexpr EncodedJSValue poisonedDeadOSRExitValue = 0xdeadbee0;
-#if USE(JSVALUE64)
 // Must look like a JSCell pointer so that property accesses on a dead variable dereference it and crash.
 static_assert(!(poisonedDeadOSRExitValue & JSValue::NotCellMask), "poisonedDeadOSRExitValue must be classified as a cell pointer");
 // Must not collide with the special empty/deleted sentinels, and must be cell-aligned.
 static_assert(poisonedDeadOSRExitValue != JSValue::ValueEmpty && poisonedDeadOSRExitValue != JSValue::ValueDeleted);
 static_assert(MarkedBlock::isAtomAligned(poisonedDeadOSRExitValue), "poisonedDeadOSRExitValue must be cell-aligned");
-#endif
 
 struct DumpContext;
 struct InlineCallFrame;
@@ -63,18 +61,12 @@ enum ValueRecoveryTechnique : uint8_t {
     UnboxedStrictInt52InGPR,
     UnboxedBooleanInGPR,
     UnboxedCellInGPR,
-#if USE(JSVALUE32_64)
-    InPair,
-#endif
     InFPR,
     UnboxedDoubleInFPR,
     // It's in the stack, but at a different location.
     DisplacedInJSStack,
     // It's in the stack, at a different location, and it's unboxed.
     Int32DisplacedInJSStack,
-#if USE(JSVALUE32_64)
-    Int32TagDisplacedInJSStack, // int32 stored in tag field
-#endif
     Int52DisplacedInJSStack,
     StrictInt52DisplacedInJSStack,
     DoubleDisplacedInJSStack,
@@ -115,9 +107,6 @@ public:
     static ValueRecovery inGPR(MacroAssembler::RegisterID gpr, DataFormat dataFormat)
     {
         ASSERT(dataFormat != DataFormatNone);
-#if USE(JSVALUE32_64)
-        ASSERT(dataFormat == DataFormatInt32 || dataFormat == DataFormatCell || dataFormat == DataFormatBoolean);
-#endif
         ValueRecovery result;
         if (dataFormat == DataFormatInt32)
             result.m_technique = UnboxedInt32InGPR;
@@ -136,19 +125,6 @@ public:
         result.m_source = WTF::move(u);
         return result;
     }
-    
-#if USE(JSVALUE32_64)
-    static ValueRecovery inPair(MacroAssembler::RegisterID tagGPR, MacroAssembler::RegisterID payloadGPR)
-    {
-        ValueRecovery result;
-        result.m_technique = InPair;
-        UnionType u;
-        u.pair.tagGPR = tagGPR;
-        u.pair.payloadGPR = payloadGPR;
-        result.m_source = WTF::move(u);
-        return result;
-    }
-#endif
 
     static ValueRecovery inFPR(MacroAssembler::FPRegisterID fpr, DataFormat dataFormat)
     {
@@ -202,18 +178,6 @@ public:
         result.m_source = WTF::move(u);
         return result;
     }
-
-#if USE(JSVALUE32_64)
-    static ValueRecovery calleeSaveGPRDisplacedInJSStack(VirtualRegister virtualReg, bool inTag)
-    {
-        ValueRecovery result;
-        UnionType u;
-        u.virtualReg = virtualReg.offset();
-        result.m_source = WTF::move(u);
-        result.m_technique = inTag ? Int32TagDisplacedInJSStack : Int32DisplacedInJSStack;
-        return result;
-    }
-#endif
 
     static ValueRecovery constant(JSValue value)
     {
@@ -285,9 +249,6 @@ public:
         switch (m_technique) {
         case DisplacedInJSStack:
         case Int32DisplacedInJSStack:
-#if USE(JSVALUE32_64)
-        case Int32TagDisplacedInJSStack:
-#endif
         case Int52DisplacedInJSStack:
         case StrictInt52DisplacedInJSStack:
         case DoubleDisplacedInJSStack:
@@ -306,15 +267,9 @@ public:
         case InFPR:
         case DisplacedInJSStack:
         case Constant:
-#if USE(JSVALUE32_64)
-        case InPair:
-#endif
             return DataFormatJS;
         case UnboxedInt32InGPR:
         case Int32DisplacedInJSStack:
-#if USE(JSVALUE32_64)
-        case Int32TagDisplacedInJSStack:
-#endif
             return DataFormatInt32;
         case UnboxedInt52InGPR:
         case Int52DisplacedInJSStack:
@@ -342,38 +297,11 @@ public:
         return m_source.get().gpr;
     }
     
-#if USE(JSVALUE32_64)
-    MacroAssembler::RegisterID tagGPR() const
-    {
-        ASSERT(m_technique == InPair);
-        return m_source.get().pair.tagGPR;
-    }
-    
-    MacroAssembler::RegisterID payloadGPR() const
-    {
-        ASSERT(m_technique == InPair);
-        return m_source.get().pair.payloadGPR;
-    }
-
-    bool isInJSValueRegs() const
-    {
-        return m_technique == InPair;
-    }
-
-#if ENABLE(JIT)
-    JSValueRegs jsValueRegs() const
-    {
-        ASSERT(isInJSValueRegs());
-        return JSValueRegs(tagGPR(), payloadGPR());
-    }
-#endif // ENABLE(JIT)
-#else
     bool isInJSValueRegs() const
     {
         return isInGPR();
     }
-#endif // USE(JSVALUE32_64)
-    
+
     MacroAssembler::FPRegisterID fpr() const
     {
         ASSERT(isInFPR());
@@ -391,9 +319,6 @@ public:
         switch (m_technique) {
         case DisplacedInJSStack:
         case Int32DisplacedInJSStack:
-#if USE(JSVALUE32_64)
-        case Int32TagDisplacedInJSStack:
-#endif
         case DoubleDisplacedInJSStack:
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:
@@ -457,12 +382,6 @@ private:
     union UnionType {
         MacroAssembler::RegisterID gpr;
         MacroAssembler::FPRegisterID fpr;
-#if USE(JSVALUE32_64)
-        struct {
-            MacroAssembler::RegisterID tagGPR;
-            MacroAssembler::RegisterID payloadGPR;
-        } pair;
-#endif
         int virtualReg;
         EncodedJSValue constant;
         unsigned nodeID;

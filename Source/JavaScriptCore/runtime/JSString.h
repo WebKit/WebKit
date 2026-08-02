@@ -355,11 +355,7 @@ public:
         static constexpr uintptr_t addressMask = (1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1;
         JSString* fiber1() const
         {
-#if CPU(LITTLE_ENDIAN)
             return std::bit_cast<JSString*>(WTF::unalignedLoad<uintptr_t>(&m_fiber1Lower) & addressMask);
-#else
-            return std::bit_cast<JSString*>(static_cast<uintptr_t>(m_fiber1Lower) | (static_cast<uintptr_t>(m_fiber1Upper) << 32));
-#endif
         }
 
         void initializeFiber1(JSString* fiber)
@@ -371,11 +367,7 @@ public:
 
         JSString* fiber2() const
         {
-#if CPU(LITTLE_ENDIAN)
             return std::bit_cast<JSString*>(WTF::unalignedLoad<uintptr_t>(&m_fiber1Upper) >> 16);
-#else
-            return std::bit_cast<JSString*>(static_cast<uintptr_t>(m_fiber2Lower) | (static_cast<uintptr_t>(m_fiber2Upper) << 16));
-#endif
         }
         void initializeFiber2(JSString* fiber)
         {

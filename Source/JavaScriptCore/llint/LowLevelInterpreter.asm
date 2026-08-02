@@ -30,8 +30,7 @@
 #   "bilt a, b, ...".
 #
 # - "b" = byte, "h" = 16-bit word, "i" = 32-bit word, "q" = 64-bit word,
-#   "f" = float, "d" = double, "p" = pointer. For 32-bit, "i" and "p" are
-#   interchangeable except when an op supports one but not the other.
+#   "f" = float, "d" = double, "p" = pointer.
 #
 # - In general, valid operands for macro invocations and instructions are
 #   registers (eg "t0"), addresses (eg "4[t0]"), base-index addresses
@@ -98,16 +97,15 @@
 #
 #  - There are callee-save registers named csr0, csr1, ... csrN.
 #  The last three csr registers are used used to store the PC base and
-#  two special tag values (on 64-bits only). Don't use them for anything else.
+#  two special tag values. Don't use them for anything else.
 #
 # Additional platform-specific details (you shouldn't rely on this remaining
 # true):
 #
-#  - For consistency with the baseline JIT, t0 is always r0 (and t1 is always
-#  r1 on 32 bits platforms). You should use the r version when you need return
-#  registers, and the t version otherwise: code using t0 (or t1) should still
-#  work if swapped with e.g. t3, while code using r0 (or r1) should not. There
-#  *may* be legacy code relying on this.
+#  - For consistency with the baseline JIT, t0 is always r0. You should use the
+#  r version when you need return registers, and the t version otherwise: code
+#  using t0 (or t1) should still work if swapped with e.g. t3, while code using
+#  r0 (or r1) should not. There *may* be legacy code relying on this.
 #
 #  - On all platforms, t0 can only be a0 and t2 can only be a2.
 #
@@ -151,12 +149,9 @@ const VectorRegisterSize = 16
 const SlotSize = constexpr (sizeof(Register))
 const SeenMultipleCalleeObjects = 1
 
-if JSVALUE64
-    const CallFrameHeaderSlots = 5
-else
-    const CallFrameHeaderSlots = 4
-    const CallFrameAlignSlots = 1
-end
+# The header slot count depends on pointer width (CallerFrameAndPC is one slot on
+# 32-bit, two on 64-bit), so derive it from C++ rather than the value representation.
+const CallFrameHeaderSlots = constexpr (CallFrame::headerSizeInRegisters)
 
 const JSLexicalEnvironment_variables = (sizeof JSLexicalEnvironment + SlotSize - 1) & ~(SlotSize - 1)
 const DirectArguments_storage = (sizeof DirectArguments + SlotSize - 1) & ~(SlotSize - 1)
@@ -183,33 +178,21 @@ const MetadataOffsetTable32Offset = constexpr UnlinkedMetadataTable::s_offset16T
 const NumberOfJSOpcodeIDs = constexpr numOpcodeIDs
 
 # Some value representation constants.
-if JSVALUE64
-    const TagOther        = constexpr JSValue::OtherTag
-    const TagBool         = constexpr JSValue::BoolTag
-    const TagUndefined    = constexpr JSValue::UndefinedTag
-    const ValueEmpty      = constexpr JSValue::ValueEmpty
-    const ValueFalse      = constexpr JSValue::ValueFalse
-    const ValueTrue       = constexpr JSValue::ValueTrue
-    const ValueUndefined  = constexpr JSValue::ValueUndefined
-    const ValueNull       = constexpr JSValue::ValueNull
-    const TagNumber       = constexpr JSValue::NumberTag
-    const NotCellMask     = constexpr JSValue::NotCellMask
-    if BIGINT32
-        const TagBigInt32 = constexpr JSValue::BigInt32Tag
-        const MaskBigInt32 = constexpr JSValue::BigInt32Mask
-    end
-    const LowestOfHighBits = constexpr JSValue::LowestOfHighBits
-else
-    const Int32Tag = constexpr JSValue::Int32Tag
-    const BooleanTag = constexpr JSValue::BooleanTag
-    const NullTag = constexpr JSValue::NullTag
-    const UndefinedTag = constexpr JSValue::UndefinedTag
-    const CellTag = constexpr JSValue::CellTag
-    const EmptyValueTag = constexpr JSValue::EmptyValueTag
-    const DeletedValueTag = constexpr JSValue::DeletedValueTag
-    const InvalidTag = constexpr JSValue::InvalidTag
-    const LowestTag = constexpr JSValue::LowestTag
+const TagOther        = constexpr JSValue::OtherTag
+const TagBool         = constexpr JSValue::BoolTag
+const TagUndefined    = constexpr JSValue::UndefinedTag
+const ValueEmpty      = constexpr JSValue::ValueEmpty
+const ValueFalse      = constexpr JSValue::ValueFalse
+const ValueTrue       = constexpr JSValue::ValueTrue
+const ValueUndefined  = constexpr JSValue::ValueUndefined
+const ValueNull       = constexpr JSValue::ValueNull
+const TagNumber       = constexpr JSValue::NumberTag
+const NotCellMask     = constexpr JSValue::NotCellMask
+if BIGINT32
+    const TagBigInt32 = constexpr JSValue::BigInt32Tag
+    const MaskBigInt32 = constexpr JSValue::BigInt32Mask
 end
+const LowestOfHighBits = constexpr JSValue::LowestOfHighBits
 
 if LARGE_TYPED_ARRAYS
     const SmallTypedArrayMaxLength = constexpr ArrayProfile::s_smallTypedArrayMaxLength
@@ -364,33 +347,22 @@ end
 # - The metadata (PM / pointer to metadata) must be stored in a callee-save register.
 # - C calls are still given the Instruction* rather than the PC index.
 #   This requires an add before the call, and a sub after.
-if JSVALUE64
-    const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
-    if ARM64 or ARM64E or RISCV64
-        const metadataTable = csr6
-        const PB = csr7
-        const numberTag = csr8
-        const notCellMask = csr9
-    elsif X86_64
-        const metadataTable = csr1
-        const PB = csr2
-        const numberTag = csr3
-        const notCellMask = csr4
-    elsif C_LOOP
-        const PB = csr0
-        const numberTag = csr1
-        const notCellMask = csr2
-        const metadataTable = csr3
-    end
-
-else
-    const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
-    if C_LOOP
-        const PB = csr0
-        const metadataTable = csr3
-    else
-        error
-    end
+const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
+if ARM64 or ARM64E or RISCV64
+    const metadataTable = csr6
+    const PB = csr7
+    const numberTag = csr8
+    const notCellMask = csr9
+elsif X86_64
+    const metadataTable = csr1
+    const PB = csr2
+    const numberTag = csr3
+    const notCellMask = csr4
+elsif C_LOOP
+    const PB = csr0
+    const numberTag = csr1
+    const notCellMask = csr2
+    const metadataTable = csr3
 end
 
 if GIGACAGE_ENABLED
@@ -627,8 +599,8 @@ macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
 end
 
 # Constants for reasoning about value representation.
-const TagOffset = constexpr TagOffset
-const PayloadOffset = constexpr PayloadOffset
+const HighWordOffset = constexpr HighWordOffset
+const LowWordOffset = constexpr LowWordOffset
 
 # Constant for reasoning about butterflies.
 const IsArray                  = constexpr IsArray
@@ -691,7 +663,7 @@ const FunctionCode = constexpr FunctionCode
 const ModuleCode = constexpr ModuleCode
 
 # The interpreter steals the tag word of the argument count.
-const CallSiteIndex = ArgumentCountIncludingThis + TagOffset
+const CallSiteIndex = ArgumentCountIncludingThis + HighWordOffset
 
 # String flags.
 const isRopeInPointer = constexpr JSString::isRopeInPointer
@@ -1227,7 +1199,7 @@ end
 macro prepareForTailCall(temp1, temp2, temp3, temp4, storeCodeBlock)
     restoreCalleeSavesUsedByLLInt()
 
-    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], temp2
+    loadi LowWordOffset + ArgumentCountIncludingThis[cfr], temp2
     loadp CodeBlock[cfr], temp1
     loadi CodeBlock::m_numParameters[temp1], temp1
     bilteq temp1, temp2, .noArityFixup
@@ -1242,7 +1214,7 @@ macro prepareForTailCall(temp1, temp2, temp3, temp4, storeCodeBlock)
     move cfr, temp1
     addp temp2, temp1
 
-    loadi PayloadOffset + ArgumentCountIncludingThis - CallerFrameAndPCSize[sp], temp2
+    loadi LowWordOffset + ArgumentCountIncludingThis - CallerFrameAndPCSize[sp], temp2
     # We assume < 2^28 arguments
     muli SlotSize, temp2
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
@@ -1489,24 +1461,18 @@ end
 
 macro getVMFromCallFrame(vm, scratch)
 if WEBASSEMBLY
-        if JSVALUE64
-            loadq Callee[cfr], vm
-            move vm, scratch
-            andq (constexpr JSValue::NativeCalleeMask), scratch
-            bqeq scratch, (constexpr JSValue::NativeCalleeTag), .isWasmCallee
-        else
-            loadi Callee + TagOffset[cfr], scratch
-            bieq scratch, (constexpr JSValue::NativeCalleeTag), .isWasmCallee
-            loadp Callee + PayloadOffset[cfr], vm
-        end
+        loadq Callee[cfr], vm
+        move vm, scratch
+        andq (constexpr JSValue::NativeCalleeMask), scratch
+        bqeq scratch, (constexpr JSValue::NativeCalleeTag), .isWasmCallee
         convertJSCalleeToVM(vm)
         jmp .loaded
     .isWasmCallee:
-        loadp CodeBlock + PayloadOffset[cfr], vm
+        loadp CodeBlock + LowWordOffset[cfr], vm
         loadp JSWebAssemblyInstance::m_vm[vm], vm
     .loaded:
 else
-    loadp Callee + PayloadOffset[cfr], vm
+    loadp Callee + LowWordOffset[cfr], vm
     convertJSCalleeToVM(vm)
 end
 end
@@ -1526,19 +1492,9 @@ macro prologue(osrSlowPath, traceSlowPath)
     if not C_LOOP
         loadp CodeBlock::m_unlinkedCode[t1], t0
         baddis 5, (UnlinkedCodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter)[t0], .continue
-        if JSVALUE64
-            move cfr, a0
-            move PC, a1
-            cCall2(osrSlowPath)
-        else
-            # We are after the function prologue, but before we have set up sp from the CodeBlock.
-            # Temporarily align stack pointer for this call.
-            subp 8, sp
-            move cfr, a0
-            move PC, a1
-            cCall2(osrSlowPath)
-            addp 8, sp
-        end
+        move cfr, a0
+        move PC, a1
+        cCall2(osrSlowPath)
         btpz r0, .recover
         move cfr, sp # restore the previous sp
         # pop the callerFrame since we will jump to a function that wants to save it
@@ -1625,10 +1581,8 @@ end
 
     loadp CodeBlock::m_metadata[t1], metadataTable
 
-    if JSVALUE64
-        move TagNumber, numberTag
-        addq TagOther, numberTag, notCellMask
-    end
+    move TagNumber, numberTag
+    addq TagOther, numberTag, notCellMask
 end
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
@@ -1652,22 +1606,9 @@ macro functionInitialization(profileArgSkip)
     addp (constexpr (ArgumentValueProfileFixedVector::Storage::offsetOfData())), t3
     addp t2, t3 # pointer to end of ValueProfile array in the value profile array.
 .argumentProfileLoop:
-    if JSVALUE64
-        loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        subp sizeof ArgumentValueProfile, t3
-        storeq t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets[t3]
-    else
-        subp sizeof ArgumentValueProfile, t3
-        loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t1
-        loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        storeJSValueConcurrent(
-            macro (val, offset)
-                storei val, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + offset[t3]
-            end,
-            t1,
-            t2
-        )
-    end
+    loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
+    subp sizeof ArgumentValueProfile, t3
+    storeq t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets[t3]
     baddpnz -8, t0, .argumentProfileLoop
 .argumentProfileDone:
 end
@@ -2281,7 +2222,6 @@ _js_trampoline_llint_function_for_construct_arity_check_tag_wide32:
 
 # Value-representation-specific code.
 
-# Shared by LowLevelInterpreter64.asm and LowLevelInterpreter32_64.asm's op_async_iterator_next.
 # yield* forwards a resume value to next() (m_hasValue -> this + value); for-await leaves
 # m_hasValue false, so next() is called with just `this`.
 macro getArgumentIncludingThisCountForAsyncIteratorNext(size, dst)
@@ -2289,11 +2229,7 @@ macro getArgumentIncludingThisCountForAsyncIteratorNext(size, dst)
     addi 1, dst
 end
 
-if JSVALUE64
-    include LowLevelInterpreter64
-else
-    include LowLevelInterpreter32_64
-end
+include LowLevelInterpreter64
 
 
 
@@ -2313,11 +2249,6 @@ slowPathOp(create_async_generator)
 slowPathOp(define_accessor_property)
 slowPathOp(define_data_property)
 slowPathOp(get_by_val_with_this)
-
-if not JSVALUE64
-    slowPathOp(get_prototype_of)
-end
-
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
 slowPathOp(new_array_buffer)
@@ -2556,21 +2487,19 @@ commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularC
 end, dispatchAfterRegularCall)
 
 commonCallOp(op_super_construct, OpSuperConstruct, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
-    if JSVALUE64
-        getu(m_argv, t1)
-        lshifti 3, t1
-        negp t1
-        addp cfr, t1
-        loadp ThisArgumentOffset + PayloadOffset[t1], t1
-        loadp OpSuperConstruct::Metadata::m_cachedCallee[t5], t2
-        bqeq t1, t2, .done
-        btqz t2, .store
-    .invalidate:
-        move SeenMultipleCalleeObjects, t1
-    .store:
-        storep t1, OpSuperConstruct::Metadata::m_cachedCallee[t5]
-    .done:
-    end
+    getu(m_argv, t1)
+    lshifti 3, t1
+    negp t1
+    addp cfr, t1
+    loadp ThisArgumentOffset + LowWordOffset[t1], t1
+    loadp OpSuperConstruct::Metadata::m_cachedCallee[t5], t2
+    bqeq t1, t2, .done
+    btqz t2, .store
+.invalidate:
+    move SeenMultipleCalleeObjects, t1
+.store:
+    storep t1, OpSuperConstruct::Metadata::m_cachedCallee[t5]
+.done:
 end, dispatchAfterRegularCall)
 
 commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForSlowTailCall, macro (getu, metadata)
@@ -2731,7 +2660,7 @@ op(llint_internal_function_construct_trampoline, macro ()
     internalFunctionCallTrampoline(InternalFunction::m_functionForConstruct)
 end)
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 macro linkFor(function)
     functionPrologue()
@@ -2747,15 +2676,11 @@ macro linkFor(function)
     jmp _llint_throw_from_slow_path_trampoline
 end
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, slowCase)
     addi 1, CallLinkInfo::m_slowPathCount[t2]
-    if JSVALUE64
-        btqnz t0, NotCellMask, slowCase
-    else
-        bineq t1, CellTag, slowCase
-    end
+    btqnz t0, NotCellMask, slowCase
     bbneq JSCell::m_type[t0], JSFunctionType, .notJSFunction
     loadp JSFunction::m_executableOrRareData[t0], t5
     btpz t5, (constexpr JSFunction::rareDataTag), .isExecutable
@@ -2775,13 +2700,13 @@ macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internal
     jmp internalFunctionTrampoline
 end
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 op(llint_default_call_trampoline, macro ()
     linkFor(_llint_default_call)
 end)
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 op(llint_virtual_call_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
@@ -2789,7 +2714,7 @@ op(llint_virtual_call_trampoline, macro ()
     linkFor(_llint_virtual_call)
 end)
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 op(llint_virtual_construct_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, FunctionExecutable::m_codeBlockForConstruct, _llint_internal_function_construct_trampoline, .slowCase)
@@ -2797,7 +2722,7 @@ op(llint_virtual_construct_trampoline, macro ()
     linkFor(_llint_virtual_call)
 end)
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 op(llint_virtual_tail_call_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
@@ -2805,12 +2730,9 @@ op(llint_virtual_tail_call_trampoline, macro ()
     linkFor(_llint_virtual_call)
 end)
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 op(llint_polymorphic_normal_call_trampoline, macro ()
-    if not JSVALUE64
-        bineq t1, CellTag, .slowCase
-    end
     loadp CallLinkInfo::m_stub[t2], t5
     addp (constexpr (PolymorphicCallStubRoutine::offsetOfTrailingData())), t5
 
@@ -2831,15 +2753,10 @@ op(llint_polymorphic_normal_call_trampoline, macro ()
     linkFor(_llint_polymorphic_call)
 end)
 
-# 64bit:t0 32bit(t0,t1) is callee
+# t0 is callee
 # t2 is CallLinkInfo*
 op(llint_polymorphic_closure_call_trampoline, macro ()
-    if JSVALUE64
-        btqnz t0, NotCellMask, .slowCase
-    else
-        bineq t1, CellTag, .slowCase
-    end
-
+    btqnz t0, NotCellMask, .slowCase
     bbneq JSCell::m_type[t0], JSFunctionType, .slowCase
     loadp JSFunction::m_executableOrRareData[t0], t6
     btpz t6, (constexpr JSFunction::rareDataTag), .isExecutable
@@ -2895,7 +2812,7 @@ else
 end
 
 op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
-    if (JSVALUE64 and not C_LOOP)
+    if not C_LOOP
         restoreStackPointerAfterCall()
 
         # Make sure we move r0 to a1 first since r0 might be the same as a0, for instance, on arm.
@@ -2923,7 +2840,7 @@ end)
 op(checkpoint_osr_exit_trampoline, macro ()
     # FIXME: We can probably dispatch to the checkpoint handler directly but this was easier 
     # and probably doesn't matter for performance.
-    if (JSVALUE64 and not C_LOOP)
+    if not C_LOOP
         restoreStackPointerAfterCall()
 
         move cfr, a0
@@ -2949,7 +2866,7 @@ op(normal_osr_exit_trampoline, macro ()
 end)
 
 op(array_sort_comparator_return_trampoline, macro ()
-    if (JSVALUE64 and not C_LOOP)
+    if not C_LOOP
         restoreStackPointerAfterCall()
 
         move cfr, a0

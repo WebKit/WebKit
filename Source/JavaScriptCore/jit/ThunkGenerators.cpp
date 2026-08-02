@@ -177,7 +177,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowAtPrologueGenerator(VM& 
         jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
 
     // In all tiers (LLInt, Baseline, DFG, and FTL), CodeOrigin(BytecodeIndex(0)) is zero, or CallSiteIndex(0) is pointint at CodeOrigin(BytecodeIndex(0)).
-    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
 
     jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
     jit.prepareCallOperation(vm);
@@ -1292,7 +1292,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     
     // Set up our call frame.
     jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::addressFor(CallFrameSlot::codeBlock));
-    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
 
     constexpr unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes();
     constexpr unsigned extraStackNeeded = stackMisalignment ? stackAlignmentBytes() - stackMisalignment : 0;
@@ -1314,7 +1314,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     
     jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
     jit.load32(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfBoundArgsLength()), GPRInfo::regT2);
-    jit.load32(CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
+    jit.load32(CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
     jit.move(GPRInfo::regT1, GPRInfo::regT3);
     jit.add32(GPRInfo::regT2, GPRInfo::regT1);
     jit.add32(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters - CallerFrameAndPC::sizeInRegisters), GPRInfo::regT1, GPRInfo::regT2);
@@ -1347,9 +1347,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
 
     // Do basic callee frame setup, including 'this'.
     
-    jit.store32(GPRInfo::regT1, CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(GPRInfo::regT1, CCallHelpers::calleeFrameLowWordSlot(CallFrameSlot::argumentCountIncludingThis));
     
-    JSValueRegs valueRegs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT4, GPRInfo::regT2);
+    JSValueRegs valueRegs { GPRInfo::regT4 };
     jit.loadValue(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfBoundThis()), valueRegs);
     jit.storeValue(valueRegs, CCallHelpers::calleeArgumentSlot(0));
 
@@ -1458,7 +1458,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 
     // Set up our call frame.
     jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::addressFor(CallFrameSlot::codeBlock));
-    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
 
     constexpr unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes();
     constexpr unsigned extraStackNeeded = stackMisalignment ? stackAlignmentBytes() - stackMisalignment : 0;
@@ -1479,7 +1479,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     VirtualRegister loopIndex = virtualRegisterForLocal(0);
 
     jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
-    jit.load32(CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
+    jit.load32(CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
 
     jit.add32(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters - CallerFrameAndPC::sizeInRegisters + numFrameLocals), GPRInfo::regT1, GPRInfo::regT2);
     jit.lshift32(CCallHelpers::TrustedImm32(3), GPRInfo::regT2);
@@ -1511,10 +1511,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 
     // Set `this` to undefined
     // NOTE: needs concensus in TC39 (https://github.com/tc39/proposal-shadowrealm/issues/328)
-    jit.store32(GPRInfo::regT1, CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(GPRInfo::regT1, CCallHelpers::calleeFrameLowWordSlot(CallFrameSlot::argumentCountIncludingThis));
     jit.storeTrustedValue(jsUndefined(), CCallHelpers::calleeArgumentSlot(0));
 
-    JSValueRegs valueRegs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT4, GPRInfo::regT2);
+    JSValueRegs valueRegs { GPRInfo::regT4 };
 
     // Before processing the arguments loop, check that we have generated JIT code for calling
     // to avoid processing the loop twice in the slow case.

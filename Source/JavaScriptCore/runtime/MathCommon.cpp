@@ -557,32 +557,5 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float value))
     return roundFloatImpl(value);
 }
 
-#if USE(JSVALUE32_64)
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_nearest, float, (float operand))
-{
-    return roundevenf(operand);
-}
-
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double operand))
-{
-    return roundeven(operand);
-}
-
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float operand)) { return roundevenf(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double operand)) { return roundeven(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float operand)) { return std::trunc(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double operand)) { return std::trunc(operand); }
-
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float operand)) { return truncateFloatToUint64(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float operand)) { return truncateFloatToInt64(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double operand)) { return truncateDoubleToUint64(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double operand)) { return truncateDoubleToInt64(operand); }
-
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t operand)) { return static_cast<float>(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_convert_s_i64, float, (int64_t operand)) { return static_cast<float>(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t operand)) { return static_cast<double>(operand); }
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_convert_s_i64, double, (int64_t operand)) { return static_cast<double>(operand); }
-#endif
-
 } // namespace Math
 } // namespace JSC

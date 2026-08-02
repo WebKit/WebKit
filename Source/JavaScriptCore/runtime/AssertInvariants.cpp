@@ -40,9 +40,9 @@ void assertInvariants()
     // Assertions to match LowLevelInterpreter.asm. If you change any of this code, be
     // prepared to change LowLevelInterpreter.asm as well!!
     {
-#if USE(JSVALUE64)
+#if CPU(REGISTER64)
         const ptrdiff_t CallFrameHeaderSlots = 5;
-#else // USE(JSVALUE64) // i.e. 32-bit version
+#else
         const ptrdiff_t CallFrameHeaderSlots = 4;
 #endif
         const ptrdiff_t MachineRegisterSize = sizeof(CPURegister);
@@ -62,17 +62,10 @@ void assertInvariants()
 
         static_assert(CallFrame::argumentOffsetIncludingThis(0) == CallFrameSlot::thisArgument);
 
-#if CPU(BIG_ENDIAN)
-        static_assert(TagOffset == 0);
-        static_assert(PayloadOffset == 4);
-#else
-        static_assert(TagOffset == 4);
-        static_assert(PayloadOffset == 0);
-#endif
+        static_assert(HighWordOffset == 4);
+        static_assert(LowWordOffset == 0);
 
 #if ENABLE(C_LOOP)
-        ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
-#elif USE(JSVALUE32_64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
 #elif CPU(X86_64) || CPU(ARM64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);

@@ -1218,12 +1218,10 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, Prope
         }
         ASSERT(object->type() != ProxyObjectType);
         Structure* structure = object->structureID().decode();
-#if USE(JSVALUE64)
         if (checkNullStructure) {
             if (!structure) [[unlikely]]
                 CRASH_WITH_INFO(object->type(), object->structureID().bits());
         }
-#endif
         if constexpr (debugLLIntGetById) {
             PrototypeChainDebugData debugData { .bottomOfChain = this, .previousInChain = previous };
             if (object->getOwnNonIndexPropertySlot<debugLLIntGetById>(vm, structure, propertyName, slot, &debugData))
@@ -1319,10 +1317,6 @@ inline int offsetRelativeToBase(PropertyOffset offset)
 inline size_t maxOffsetRelativeToBase(PropertyOffset offset)
 {
     ptrdiff_t addressOffset = offsetRelativeToBase(offset);
-#if USE(JSVALUE32_64)
-    if (addressOffset >= 0)
-        return static_cast<size_t>(addressOffset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag);
-#endif
     return static_cast<size_t>(addressOffset);
 }
 

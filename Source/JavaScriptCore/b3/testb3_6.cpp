@@ -1493,8 +1493,6 @@ void testPatchpointDoubleRegs()
 
 void testSpillDefSmallerThanUse()
 {
-    if constexpr (is32Bit())
-        return;
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -1529,8 +1527,6 @@ void testSpillDefSmallerThanUse()
 
 void testSpillUseLargerThanDef()
 {
-    if constexpr (is32Bit())
-        return;
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     BasicBlock* thenCase = proc.addBlock();

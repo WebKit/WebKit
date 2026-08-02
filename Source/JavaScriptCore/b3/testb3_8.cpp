@@ -1114,8 +1114,7 @@ void testStoreAfterClobberExitsSideways()
     auto* resultAddress = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedBaseGPR);
     root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 10), resultAddress, 0);
 
-    if (is64Bit())
-        pointer = root->appendNew<Value>(proc, Trunc, Origin(), pointer);
+    pointer = root->appendNew<Value>(proc, Trunc, Origin(), pointer);
     root->appendNew<WasmBoundsCheckValue>(proc, Origin(), pinnedSizeGPR, pointer, 0);
 
     root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 20), resultAddress, 0);
@@ -1314,8 +1313,7 @@ void testStoreAfterClobberExitsSidewaysSuccessor()
     switchValue->appendCase(SwitchCase(0, FrequentedBlock(a)));
     switchValue->appendCase(SwitchCase(1, FrequentedBlock(b)));
 
-    if (is64Bit())
-        pointer = b->appendNew<Value>(proc, Trunc, Origin(), pointer);
+    pointer = b->appendNew<Value>(proc, Trunc, Origin(), pointer);
     b->appendNew<WasmBoundsCheckValue>(proc, Origin(), pinnedSizeGPR, pointer, 0);
 
     UpsilonValue* takeA = a->appendNew<UpsilonValue>(proc, Origin(), a->appendNew<Const64Value>(proc, Origin(), 10));

@@ -143,13 +143,8 @@ IPIntStackEntry* FrameAccess::stackEnd()
 
 #define IPINT_END() WASM_RETURN_TWO(0, 0);
 
-#if CPU(ADDRESS64)
 #define IPINT_RETURN(value) \
     WASM_RETURN_TWO(std::bit_cast<void*>(value), 0);
-#else
-#define IPINT_RETURN(value) \
-    WASM_RETURN_TWO(std::bit_cast<void*>(JSValue::decode(value).payload()), std::bit_cast<void*>(JSValue::decode(value).tag()));
-#endif
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
@@ -524,11 +519,7 @@ WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, unsigned try
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
     RELEASE_ASSERT(tryDepth <= callee->rethrowSlots());
     FrameAccess frame(callFrame, callee);
-#if CPU(ADDRESS64)
     JSWebAssemblyException* exception = std::bit_cast<JSWebAssemblyException*>(frame.rethrowSlot(tryDepth - 1)->i64);
-#else
-    JSWebAssemblyException* exception = std::bit_cast<JSWebAssemblyException*>(frame.rethrowSlot(tryDepth - 1)->i32);
-#endif
     RELEASE_ASSERT(exception);
     throwException(globalObject, throwScope, exception);
 

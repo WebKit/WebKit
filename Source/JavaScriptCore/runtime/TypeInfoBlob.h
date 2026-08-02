@@ -60,11 +60,7 @@ public:
 
     static constexpr uint32_t typeInfoBlob(IndexingType indexingModeIncludingHistory, JSType type, TypeInfo::InlineTypeFlags inlineTypeFlags)
     {
-#if CPU(LITTLE_ENDIAN)
         return (static_cast<uint32_t>(indexingModeIncludingHistory) << 0) | (static_cast<uint32_t>(type) << 8) | (static_cast<uint32_t>(inlineTypeFlags) << 16) | (static_cast<uint32_t>(CellState::DefinitelyWhite) << 24);
-#else
-        return (static_cast<uint32_t>(indexingModeIncludingHistory) << 24) | (static_cast<uint32_t>(type) << 16) | (static_cast<uint32_t>(inlineTypeFlags) << 8) | (static_cast<uint32_t>(CellState::DefinitelyWhite) << 0);
-#endif
     }
 
     uint32_t blob() const { return u.word; }

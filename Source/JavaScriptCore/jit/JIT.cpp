@@ -774,11 +774,6 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
     int frameTopOffset = stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register);
     addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
     JumpList stackOverflow;
-#if !CPU(ADDRESS64)
-    unsigned maxFrameSize = -frameTopOffset;
-    if (maxFrameSize > Options::reservedZoneSize()) [[unlikely]]
-        stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
-#endif
     stackOverflow.append(branchPtr(GreaterThan, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
 
     move(regT1, stackPointerRegister);
@@ -831,7 +826,7 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
         RELEASE_ASSERT(m_unlinkedCodeBlock->codeType() == FunctionCode);
 
         unsigned numberOfParameters = m_unlinkedCodeBlock->numParameters();
-        load32(CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+        load32(CCallHelpers::calleeFrameLowWordSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
         branch32(AboveOrEqual, GPRInfo::argumentGPR2, TrustedImm32(numberOfParameters)).linkTo(entryLabel, this);
         m_bytecodeIndex = BytecodeIndex(0);
         getArityPadding(*m_vm, numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);

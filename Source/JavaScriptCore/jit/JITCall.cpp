@@ -97,7 +97,7 @@ void JIT::compileSetupFrame(const Op& bytecode)
         }
 
         // Profile the argument count.
-        load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
+        load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset), regT2);
         move(TrustedImm32(CallLinkInfo::maxProfiledArgumentCountIncludingThisForVarargs), regT0);
 #if CPU(ARM64) || CPU(X86_64)
         moveConditionally32(Above, regT2, regT0, regT0, regT2, regT2);
@@ -136,7 +136,7 @@ void JIT::compileSetupFrame(const Op& bytecode)
         }
 
         addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
-        store32(TrustedImm32(argCountIncludingThis), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+        store32(TrustedImm32(argCountIncludingThis), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset - sizeof(CallerFrameAndPC)));
     }
 }
 
@@ -242,7 +242,7 @@ void JIT::compileOpCall(const JSInstruction* instruction)
 
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex).bits();
-    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
+    store32(TrustedImm32(locationBits), highWordFor(CallFrameSlot::argumentCountIncludingThis));
 
     emitGetVirtualRegister(callee, BaselineJITRegisters::Call::calleeJSR);
     storeValue(BaselineJITRegisters::Call::calleeJSR, calleeFrameSlot(CallFrameSlot::callee));
@@ -251,7 +251,7 @@ void JIT::compileOpCall(const JSInstruction* instruction)
         compileCallDirectEval(bytecode);
         return;
     } else if constexpr (Op::opcodeID == op_super_construct || Op::opcodeID == op_super_construct_varargs) {
-        loadPtr(calleeFramePayloadSlot(CallFrameSlot::thisArgument), BaselineJITRegisters::Call::callTargetGPR);
+        loadPtr(calleeFrameLowWordSlot(CallFrameSlot::thisArgument), BaselineJITRegisters::Call::callTargetGPR);
         loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfCachedCallee(), BaselineJITRegisters::Call::callLinkInfoGPR);
         auto done = branchPtr(Equal, BaselineJITRegisters::Call::callTargetGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
         auto store = branchTestPtr(Zero, BaselineJITRegisters::Call::callLinkInfoGPR);

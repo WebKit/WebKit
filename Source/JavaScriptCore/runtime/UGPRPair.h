@@ -29,7 +29,6 @@
 
 namespace JSC {
 
-#if USE(JSVALUE64)
 // According to C++ rules, a type used for the return signature of function with C linkage (i.e.
 // 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
 // warnings, or worse, a change in the ABI used to return these types.
@@ -57,46 +56,5 @@ inline void decodeResult(UGPRPair result, size_t& a, size_t& b)
     a = static_cast<size_t>(result.first);
     b = static_cast<size_t>(result.second);
 }
-
-#else // USE(JSVALUE32_64)
-using UGPRPair = uint64_t;
-
-#if CPU(BIG_ENDIAN)
-constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return static_cast<uint64_t>(first) << 32 | second; }
-#else
-constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return static_cast<uint64_t>(second) << 32 | first; }
-#endif
-
-typedef union {
-    struct {
-        const void* a;
-        const void* b;
-    } pair;
-    uint64_t i;
-} UGPRPairEncoding;
-
-
-inline UGPRPair encodeResult(const void* a, const void* b)
-{
-    return makeUGPRPair(reinterpret_cast<UCPURegister>(a), reinterpret_cast<UCPURegister>(b));
-}
-
-inline void decodeResult(UGPRPair result, const void*& a, const void*& b)
-{
-    UGPRPairEncoding u;
-    u.i = result;
-    a = u.pair.a;
-    b = u.pair.b;
-}
-
-inline void decodeResult(UGPRPair result, size_t& a, size_t& b)
-{
-    UGPRPairEncoding u;
-    u.i = result;
-    a = std::bit_cast<size_t>(u.pair.a);
-    b = std::bit_cast<size_t>(u.pair.b);
-}
-
-#endif // USE(JSVALUE32_64)
 
 } // namespace JSC

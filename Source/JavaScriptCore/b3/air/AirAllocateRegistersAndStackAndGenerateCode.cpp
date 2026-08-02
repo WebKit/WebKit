@@ -683,11 +683,6 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     return true;
                 if (inst.kind.opcode == MoveDouble)
                     return true;
-                // on 32 bit, a Move32 doesn't have the same zero-extending
-                // semantics it does on 64-bit, so we can treat it exactly like
-                // a Move
-                if (is32Bit() && inst.kind.opcode == Move32)
-                    return true;
                 return false;
             })();
 

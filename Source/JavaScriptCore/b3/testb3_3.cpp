@@ -3910,11 +3910,7 @@ void testStoreConstantPtr(intptr_t value)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     intptr_t slot;
-#if CPU(ADDRESS64)
     slot = (static_cast<intptr_t>(0xbaadbeef) << 32) + static_cast<intptr_t>(0xbaadbeef);
-#else
-    slot = 0xbaadbeef;
-#endif
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), value),

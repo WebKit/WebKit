@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 
 #include "BaselineJITCode.h"
 #include "BytecodeUseDef.h"
@@ -470,5 +470,5 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(JIT) && USE(JSVALUE64)
+#endif // ENABLE(JIT)
 

@@ -57,23 +57,12 @@ public:
     {
     }
     
-    static constexpr JSValueRegs payloadOnly(GPRReg gpr)
-    {
-        return JSValueRegs(gpr);
-    }
-    
-    static constexpr JSValueRegs withTwoAvailableRegs(GPRReg gpr, GPRReg)
-    {
-        return JSValueRegs(gpr);
-    }
-    
     constexpr bool operator!() const { return m_gpr == InvalidGPRReg; }
     explicit constexpr operator bool() const { return m_gpr != InvalidGPRReg; }
 
     friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
 
     constexpr GPRReg gpr() const { return m_gpr; }
-    constexpr GPRReg tagGPR() const { return InvalidGPRReg; }
     constexpr GPRReg payloadGPR() const { return m_gpr; }
     
     constexpr bool uses(GPRReg gpr) const
@@ -735,9 +724,7 @@ constexpr GPRReg preferredArgumentGPR()
 }
 
 // See preferredArgumentGPR for the purpose of this function. This version returns a JSValueRegs
-// instead of a GPR, which on JSVALUE64 are equivalent, but on JSVALUE32_64 a JSValueRegs is
-// required to hold a 64-bit wide function argument, so use this in particular when passing a
-// JSValue/EncodedJSValue to be compatible with both JSVALUE64 an JSVALUE32_64 platforms, and use
+// instead of a GPR; use it when passing a JSValue/EncodedJSValue argument, and
 // preferredArgumentGPR when passing host pointers.
 template<typename OperationType, size_t ArgNum>
     requires HasNthArgument<OperationType, ArgNum>

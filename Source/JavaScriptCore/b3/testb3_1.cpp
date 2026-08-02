@@ -778,11 +778,8 @@ void run(const TestConfig* config)
     RUN(testPatchpointAnyImm(ValueRep::WarmAny));
     RUN(testPatchpointAnyImm(ValueRep::ColdAny));
     RUN(testPatchpointAnyImm(ValueRep::LateColdAny));
-    if constexpr (!is32Bit()) {
-        // Can't handle ConstDoubleValue arguments to patchpoints on 32 bits.
-        RUN(testPatchpointManyWarmAnyImms());
-        RUN(testPatchpointManyColdAnyImms());
-    }
+    RUN(testPatchpointManyWarmAnyImms());
+    RUN(testPatchpointManyColdAnyImms());
     RUN(testPatchpointWithRegisterResult());
     RUN(testPatchpointWithStackArgumentResult());
     RUN(testPatchpointWithAnyResult());
@@ -1167,10 +1164,7 @@ void run(const TestConfig* config)
 
     addAtomicTests(config, tasks);
     RUN(testDepend32());
-    if constexpr (!is32Bit()) {
-        // Test only applicable on 64-bits.
-        RUN(testDepend64());
-    }
+    RUN(testDepend64());
 
     RUN(testWasmBoundsCheck(0));
     RUN(testWasmBoundsCheck(100));

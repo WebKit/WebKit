@@ -297,12 +297,7 @@ ALWAYS_INLINE void Butterfly::clearRange(IndexingType indexingType, Butterfly* b
                 butterfly->contiguousDouble().atUnsafe(i) = PNaN;
 #endif
         } else {
-#if USE(JSVALUE64)
             memset(static_cast<void*>(butterfly->contiguous().data() + start), 0, sizeof(JSValue) * remaining);
-#else
-            for (unsigned i = start; i < end; ++i)
-                butterfly->contiguous().atUnsafe(i).clear();
-#endif
         }
     }
 }

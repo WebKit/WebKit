@@ -451,7 +451,7 @@ public:
         }
 
         case DataFormatInt32: {
-            store32(info.gpr(), JITCompiler::payloadFor(spillMe));
+            store32(info.gpr(), JITCompiler::lowWordFor(spillMe));
             info.spill(m_stream, spillMe, DataFormatInt32);
             return;
         }
@@ -474,8 +474,7 @@ public:
             RELEASE_ASSERT(spillFormat == DataFormatCell || spillFormat & DataFormatJS);
             
             GPRReg reg = info.gpr();
-            // We need to box int32 and cell values ...
-            // but on JSVALUE64 boxing a cell is a no-op!
+            // We need to box int32 and cell values, but boxing a cell is a no-op.
             if (spillFormat == DataFormatInt32)
                 or64(GPRInfo::numberTagRegister, reg);
             
@@ -2182,7 +2181,6 @@ public:
         else
             m_gpr = m_jit->allocate();
     }
-    GPRTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&, WhichValueWord);
 
     GPRTemporary(const GPRTemporary&) = delete;
 
@@ -2229,7 +2227,7 @@ public:
     JSValueRegsTemporary();
     JSValueRegsTemporary(SpeculativeJIT*);
     template<typename T>
-    JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, T& operand, WhichValueWord resultRegWord = PayloadWord);
+    JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, T& operand);
     JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&);
     ~JSValueRegsTemporary();
     
@@ -2244,7 +2242,7 @@ private:
 };
 
 template<typename T>
-JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord)
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand)
     : m_gpr(jit, Reuse, operand)
 {
 }

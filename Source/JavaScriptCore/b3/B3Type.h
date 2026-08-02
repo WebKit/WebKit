@@ -155,9 +155,7 @@ constexpr Type wasmRefType()
 
 constexpr Type registerType()
 {
-    if (isRegister64Bit())
-        return Int64;
-    return Int32;
+    return Int64;
 }
 
 inline size_t sizeofType(Type type)

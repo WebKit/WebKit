@@ -50,14 +50,14 @@ Offlineasm is a portable assembly language that is translated to native assembly
 [break](#break) | [call](#call) | [jmp](#jmp) | [ret](#ret)
 
 ### Conversions & Type Operations
-[cd2f](#cd2f) | [cf2d](#cf2d) | [ci2{d,ds,f,fs}](#ci2d-ci2ds-ci2f-ci2fs) | [cq2{d,ds,f,fs}](#cq2d-cq2ds-cq2f-cq2fs) | [fd2ii](#fd2ii) | [fd2q](#fd2q) | [ff2i](#ff2i) | [fi2f](#fi2f) | [fii2d](#fii2d) | [fq2d](#fq2d) | [sx{b,h}2{i,p,q}](#sxb2i-sxb2p-sxb2q) | [sxi2q](#sxi2q) | [td2i](#td2i) | [transfer{i,p,q}](#transferi-transferp-transferq) | [truncate{d,f}](#truncated-truncatef) | [truncate{d,f}2{i,is,q,qs}](#truncated2i-truncated2is-truncated2q-truncated2qs) | [zxi2q](#zxi2q)
+[cd2f](#cd2f) | [cf2d](#cf2d) | [ci2{d,ds,f,fs}](#ci2d-ci2ds-ci2f-ci2fs) | [cq2{d,ds,f,fs}](#cq2d-cq2ds-cq2f-cq2fs) | [fd2q](#fd2q) | [ff2i](#ff2i) | [fi2f](#fi2f) | [fq2d](#fq2d) | [sx{b,h}2{i,p,q}](#sxb2i-sxb2p-sxb2q) | [sxi2q](#sxi2q) | [td2i](#td2i) | [transfer{i,p,q}](#transferi-transferp-transferq) | [truncate{d,f}](#truncated-truncatef) | [truncate{d,f}2{i,is,q,qs}](#truncated2i-truncated2is-truncated2q-truncated2qs) | [zxi2q](#zxi2q)
 
 
 ### Floating-Point Operations
 [ceil{d,f}](#ceild-ceilf) | [floor{d,f}](#floord-floorf) | [round{d,f}](#roundd-roundf)
 
 ### Memory Operations
-[leai](#leai) | [leap](#leap) | [load2ia](#load2ia) | [load{b,bsi,bsq}](#loadb-loadbsi-loadbsq) | [load{d,f,i,is,p,q,v}](#loadd-loadf-loadi-loadis-loadp-loadq-loadv) | [load{h,hsi,hsq}](#loadh-loadhsi-loadhsq) | [store2ia](#store2ia) | [store{b,d,f,h,i,p,q,v}](#storeb-stored-storef-storeh-storei-storep-storeq-storev)
+[leai](#leai) | [leap](#leap) | [load{b,bsi,bsq}](#loadb-loadbsi-loadbsq) | [load{d,f,i,is,p,q,v}](#loadd-loadf-loadi-loadis-loadp-loadq-loadv) | [load{h,hsi,hsq}](#loadh-loadhsi-loadhsq) | [store{b,d,f,h,i,p,q,v}](#storeb-stored-storef-storeh-storei-storep-storeq-storev)
 
 
 ### Misc Operations
@@ -2619,21 +2619,6 @@ emit "nop"
 
 ---
 
-### fd2ii
-
-**Syntax:** `fd2ii <fpr>, <gpr>, <gpr>`
-
-**Description:** Convert double to two 32-bit integers (LSB and MSB).
-
-**Operands:**
-- Source: FPR
-- Dest LSB: GPR (least significant 32 bits)
-- Dest MSB: GPR (most significant 32 bits)
-
-**Effect:** Extracts the 64-bit double bit pattern into two 32-bit registers
-
----
-
 ### fd2q
 
 **Syntax:** `fd2q <fpr>, <gpr>`
@@ -2661,21 +2646,6 @@ emit "nop"
 - Destination: FPR (float)
 
 **Effect:** `dest_float = bitcast<float>(src_int32)`
-
----
-
-### fii2d
-
-**Syntax:** `fii2d <gpr>, <gpr>, <fpr>`
-
-**Description:** Combine two 32-bit integers into a double.
-
-**Operands:**
-- Source LSB: GPR (least significant 32 bits)
-- Source MSB: GPR (most significant 32 bits)
-- Dest: FPR
-
-**Effect:** Combines two 32-bit integers into a 64-bit double bit pattern
 
 ---
 
@@ -2787,21 +2757,6 @@ leap [cfr, 8], t0    # t0 = cfr + 8
 ```
 
 **ARM64 Translation:** `add x<dest>, x<base>, #<offset>`
-
----
-
-### load2ia
-
-**Syntax:** `load2ia <address>, <gpr>, <gpr>`
-
-**Description:** Load two adjacent 32-bit integers.
-
-**Operands:**
-- Source: Address
-- Dest1: GPR
-- Dest2: GPR
-
-**Effect:** Loads two consecutive 32-bit values
 
 ---
 
@@ -3313,21 +3268,6 @@ poke 0, 1            # Store 0 to [sp + 8]
 **Effect:** `dest = sqrt(src)`
 
 **ARM64 Translation:** `fsqrt` with appropriate size specifier
-
----
-
-### store2ia
-
-**Syntax:** `store2ia <gpr>, <gpr>, <address>`
-
-**Description:** Store two adjacent 32-bit integers.
-
-**Operands:**
-- Source1: GPR
-- Source2: GPR
-- Destination: Address
-
-**Effect:** Stores two consecutive 32-bit values
 
 ---
 

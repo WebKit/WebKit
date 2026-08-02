@@ -49,16 +49,7 @@ void testPatchpointManyWarmAnyImms()
     patchpoint->append(ConstrainedValue(arg5, ValueRep::WarmAny));
     patchpoint->setGenerator(
         [&] (CCallHelpers&, const StackmapGenerationParams& params) {
-            CHECK_EQ(params.size(), (is32Bit() ? 6u : 5u));
-            if constexpr (is32Bit()) {
-                CHECK_EQ(params[0], ValueRep::constant(42));
-                CHECK_EQ(params[1], ValueRep::constant(43));
-                CHECK_EQ(params[2], ValueRep::constant(43000000000000ll >> 32));
-                CHECK_EQ(params[3], ValueRep::constant(43000000000000ll & 0xffffffff));
-                CHECK_EQ(params[4], ValueRep::constantDouble(42.5));
-                CHECK_EQ(params[5], ValueRep::constantFloat(-42.5f));
-                CHECK_EQ(params[5].floatValue(), -42.5f);
-            }
+            CHECK_EQ(params.size(), 5u);
             CHECK_EQ(params[0], ValueRep::constant(42));
             CHECK_EQ(params[1], ValueRep::constant(43));
             CHECK_EQ(params[2], ValueRep::constant(43000000000000ll));
@@ -311,12 +302,10 @@ void testCheckMegaCombo()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    if (is64Bit()) {
-        index = root->appendNew<Value>(
-            proc, ZExt32, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(), index));
-    }
+    index = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), index));
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -368,10 +357,8 @@ void testCheckTrickyMegaCombo()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    if (is64Bit()) {
-        index = root->appendNew<Value>(proc, ZExt32, Origin(),
-            root->appendNew<Value>(proc, Trunc, Origin(), index));
-    }
+    index = root->appendNew<Value>(proc, ZExt32, Origin(),
+        root->appendNew<Value>(proc, Trunc, Origin(), index));
     index = root->appendNew<Value>(proc, Add, Origin(),
         index,
         root->appendNew<ConstPtrValue>(proc, Origin(), 1));
@@ -426,12 +413,10 @@ void testCheckTwoMegaCombos()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    if (is64Bit()) {
-        index = root->appendNew<Value>(
-            proc, ZExt32, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(), index));
-    }
+    index = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), index));
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -499,12 +484,10 @@ void testCheckTwoNonRedundantMegaCombos()
 
     Value* base = arguments[0];
     Value* index = arguments[1];
-    if (is64Bit()) {
-        index = root->appendNew<Value>(
-            proc, ZExt32, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(), index));
-    }
+    index = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(), index));
     Value* branchPredicate = root->appendNew<Value>(
         proc, BitAnd, Origin(),
         arguments[2],
@@ -922,11 +905,7 @@ void testCheckAddSelfOverflow64()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if constexpr (is32Bit()) {
-                jit.move(params[1].gpr(), GPRInfo::returnValueGPR);
-                jit.move(params[0].gpr(), GPRInfo::returnValueGPR2);
-            } else
-                jit.move(params[0].gpr(), GPRInfo::returnValueGPR);
+            jit.move(params[0].gpr(), GPRInfo::returnValueGPR);
             jit.emitFunctionEpilogue();
             jit.ret();
         });
@@ -2485,8 +2464,6 @@ void testChillDivTwice(int num1, int den1, int num2, int den2, int res)
 
 void testChillDiv64(int64_t num, int64_t den, int64_t res)
 {
-    if (!is64Bit())
-        return;
 
     // Test non-constant.
     {
@@ -2726,8 +2703,7 @@ void testLoopWithMultipleHeaderEdges()
         ne42,
         FrequentedBlock(innerHeader), FrequentedBlock(outerEnd));
     auto* arg32 = arg0;
-    if constexpr (!is32Bit())
-        arg32 = root->appendNew<Value>(proc, Trunc, Origin(), arg0);
+    arg32 = root->appendNew<Value>(proc, Trunc, Origin(), arg0);
     outerEnd->appendNewControlValue(
         proc, Branch, Origin(),
         arg32,

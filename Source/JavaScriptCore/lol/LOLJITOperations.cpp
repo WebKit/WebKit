@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LOLJITOperations.h"
 
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
@@ -223,4 +223,4 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScopeForLOL, void, (CallFrame* callFrame,
 
 } // namespace JSC::LOL
 
-#endif // ENABLE(JIT) && USE(JSVALUE64)
+#endif // ENABLE(JIT)

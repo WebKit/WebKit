@@ -172,7 +172,7 @@ protected:
     std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
 };
 
-#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
+#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64)
 static_assert(InlineCacheHandler::offsetOfUid() == 40, "InlineCacheHandler hot field layout drifted.");
 #endif
 

@@ -5043,7 +5043,6 @@
 		86976E5B1FA375A800E7C4E1 /* BigIntPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BigIntPrototype.cpp; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		86A054461556451B00445157 /* LowLevelInterpreter.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; name = LowLevelInterpreter.asm; path = llint/LowLevelInterpreter.asm; sourceTree = "<group>"; };
-		86A054471556451B00445157 /* LowLevelInterpreter32_64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; lineEnding = 0; name = LowLevelInterpreter32_64.asm; path = llint/LowLevelInterpreter32_64.asm; sourceTree = "<group>"; };
 		86A054481556451B00445157 /* LowLevelInterpreter64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; lineEnding = 0; name = LowLevelInterpreter64.asm; path = llint/LowLevelInterpreter64.asm; sourceTree = "<group>"; };
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileTreeNode.h; sourceTree = "<group>"; };
@@ -6885,7 +6884,6 @@
 				86A054461556451B00445157 /* LowLevelInterpreter.asm */,
 				0F4680C714BBB16900BFE272 /* LowLevelInterpreter.cpp */,
 				0F4680C814BBB16900BFE272 /* LowLevelInterpreter.h */,
-				86A054471556451B00445157 /* LowLevelInterpreter32_64.asm */,
 				86A054481556451B00445157 /* LowLevelInterpreter64.asm */,
 			);
 			name = llint;

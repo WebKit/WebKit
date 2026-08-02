@@ -2701,7 +2701,6 @@ private:
             break;
         }
 
-#if !CPU(NEEDS_ALIGNED_ACCESS) && CPU(ADDRESS64)
         case MemoryCopy: {
             if (m_value->child(2)->hasInt()) {
                 auto* memoryCopy = m_value->as<BulkMemoryValue>();
@@ -2840,7 +2839,6 @@ private:
             }
             break;
         }
-#endif
 
         case CCall: {
             // Turn this: Call(fmod, constant1, constant2)

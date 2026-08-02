@@ -1377,40 +1377,38 @@ private:
                         break;
                     }
 
-                    if (is64Bit()) {
-                        if (node->op() == GetByVal && m_graph.child(node, 1)->shouldSpeculateInt32()) {
-                            if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
-                                auto old = node->arrayMode();
-                                old.setSpeculation(Array::OutOfBounds);
-                                node->setArrayMode(old);
-                                arrayMode = node->arrayMode(); // Reload
-                            }
-
-                            ArrayModes arrayModes = 0;
-                            {
-                                CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-                                ConcurrentJSLocker locker(profiledBlock->m_lock);
-                                if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
-                                    arrayModes = arrayProfile->observedArrayModes(locker);
-                            }
-                            auto info = refineArrayModesForMultiGetByVal(node, arrayModes);
-                            if (!info)
-                                break;
-
-                            NodeFlags flags = 0;
-                            std::tie(arrayModes, flags) = info.value();
-
-                            fixEdge<CellUse>(m_graph.child(node, 0));
-                            fixEdge<Int32Use>(m_graph.child(node, 1));
-                            auto* data = m_graph.m_multiGetByValData.add(MultiGetByValData {
-                                arrayModes,
-                                arrayMode,
-                            });
-                            node->convertToMultiGetByVal(data);
-                            if (flags == NodeResultDouble)
-                                node->setResult(NodeResultDouble);
-                            break;
+                    if (node->op() == GetByVal && m_graph.child(node, 1)->shouldSpeculateInt32()) {
+                        if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
+                            auto old = node->arrayMode();
+                            old.setSpeculation(Array::OutOfBounds);
+                            node->setArrayMode(old);
+                            arrayMode = node->arrayMode(); // Reload
                         }
+
+                        ArrayModes arrayModes = 0;
+                        {
+                            CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
+                            ConcurrentJSLocker locker(profiledBlock->m_lock);
+                            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
+                                arrayModes = arrayProfile->observedArrayModes(locker);
+                        }
+                        auto info = refineArrayModesForMultiGetByVal(node, arrayModes);
+                        if (!info)
+                            break;
+
+                        NodeFlags flags = 0;
+                        std::tie(arrayModes, flags) = info.value();
+
+                        fixEdge<CellUse>(m_graph.child(node, 0));
+                        fixEdge<Int32Use>(m_graph.child(node, 1));
+                        auto* data = m_graph.m_multiGetByValData.add(MultiGetByValData {
+                            arrayModes,
+                            arrayMode,
+                        });
+                        node->convertToMultiGetByVal(data);
+                        if (flags == NodeResultDouble)
+                            node->setResult(NodeResultDouble);
+                        break;
                     }
                 }
                 break;
@@ -1577,32 +1575,30 @@ private:
                     }
 
                     // Right now, we only support the pattern MultiPutByVal(Object, Int32, Int32)
-                    if (is64Bit()) {
-                        if (node->op() == PutByVal && child2->shouldSpeculateInt32() && child3->shouldSpeculateInt32()) {
-                            ArrayModes arrayModes = 0;
-                            {
-                                CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-                                ConcurrentJSLocker locker(profiledBlock->m_lock);
-                                if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
-                                    arrayModes = arrayProfile->observedArrayModes(locker);
+                    if (node->op() == PutByVal && child2->shouldSpeculateInt32() && child3->shouldSpeculateInt32()) {
+                        ArrayModes arrayModes = 0;
+                        {
+                            CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
+                            ConcurrentJSLocker locker(profiledBlock->m_lock);
+                            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
+                                arrayModes = arrayProfile->observedArrayModes(locker);
+                        }
+                        if (auto result = refineArrayModesForMultiPutByVal(node, arrayModes)) {
+                            if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
+                                auto old = node->arrayMode();
+                                old.setSpeculation(Array::OutOfBounds);
+                                node->setArrayMode(old);
                             }
-                            if (auto result = refineArrayModesForMultiPutByVal(node, arrayModes)) {
-                                if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
-                                    auto old = node->arrayMode();
-                                    old.setSpeculation(Array::OutOfBounds);
-                                    node->setArrayMode(old);
-                                }
-                                auto arrayMode = node->arrayMode().modeForPut();
-                                fixEdge<CellUse>(m_graph.child(node, 0));
-                                fixEdge<Int32Use>(m_graph.child(node, 1));
-                                fixEdge<Int32Use>(m_graph.child(node, 2));
-                                auto* data = m_graph.m_multiPutByValData.add(MultiPutByValData {
-                                    result.value(),
-                                    arrayMode,
-                                });
-                                node->convertToMultiPutByVal(data);
-                                break;
-                            }
+                            auto arrayMode = node->arrayMode().modeForPut();
+                            fixEdge<CellUse>(m_graph.child(node, 0));
+                            fixEdge<Int32Use>(m_graph.child(node, 1));
+                            fixEdge<Int32Use>(m_graph.child(node, 2));
+                            auto* data = m_graph.m_multiPutByValData.add(MultiPutByValData {
+                                result.value(),
+                                arrayMode,
+                            });
+                            node->convertToMultiPutByVal(data);
+                            break;
                         }
                     }
 
@@ -2708,7 +2704,7 @@ private:
         }
 
         case InstanceOf: {
-            if (node->child1()->shouldSpeculateCell() && node->child2()->shouldSpeculateCell() && is64Bit()) {
+            if (node->child1()->shouldSpeculateCell() && node->child2()->shouldSpeculateCell()) {
                 fixEdge<CellUse>(node->child1());
                 fixEdge<CellUse>(node->child2());
                 break;
@@ -2717,11 +2713,9 @@ private:
         }
 
         case InstanceOfMegamorphic: {
-            if (is64Bit()) {
-                fixEdge<CellUse>(node->child1());
-                fixEdge<CellUse>(node->child2());
-                break;
-            }
+            fixEdge<CellUse>(node->child1());
+            fixEdge<CellUse>(node->child2());
+            break;
             break;
         }
 
@@ -4764,14 +4758,14 @@ private:
 
             switch (arrayMode.type()) {
             case Array::Int32:
-                if (is64Bit() && arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
+                if (arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
                     saneChainSpeculation = Array::OutOfBoundsSaneChain;
                 break;
             case Array::Contiguous:
                 // This is happens to be entirely natural. We already would have
                 // returned any JSValue, and now we'll return Undefined. We still do
                 // the check but it doesn't require taking any kind of slow path.
-                if (is64Bit() && arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
+                if (arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
                     saneChainSpeculation = Array::OutOfBoundsSaneChain;
                 else if (arrayMode.speculation() == Array::InBounds)
                     saneChainSpeculation = Array::InBoundsSaneChain;
@@ -4783,7 +4777,7 @@ private:
                     // about the difference between Undefined and NaN then we can
                     // do this.
                     saneChainSpeculation = Array::InBoundsSaneChain;
-                } else if (is64Bit() && arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
+                } else if (arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
                     saneChainSpeculation = Array::OutOfBoundsSaneChain;
                 break;
 

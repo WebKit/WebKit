@@ -169,11 +169,7 @@ public:
 
     JSValue get() const
     {
-#if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
         return JSValue::decode(m_value);
-#else
-        return JSValue::decodeConcurrent(&m_value);
-#endif
     }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
@@ -189,9 +185,6 @@ public:
     { 
         return std::bit_cast<JSValue*>(&m_value);
     }
-    
-    int32_t* tagPointer() { return &std::bit_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
-    int32_t* payloadPointer() { return &std::bit_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
     
     explicit operator bool() const { return !!get(); }
     bool operator!() const { return !get(); } 
@@ -398,10 +391,6 @@ template<typename T> struct VectorTraits<JSC::WriteBarrier<T>> : public SimpleCl
 
 template<> struct VectorTraits<JSC::WriteBarrier<JSC::Unknown>> : public SimpleClassVectorTraits {
     static_assert(std::is_trivially_destructible<JSC::WriteBarrier<JSC::Unknown>>::value);
-#if USE(JSVALUE32_64)
-    // We can memset only in JSVALUE64 since empty value is zero. On the other hand, JSVALUE32_64's empty value is not zero.
-    static constexpr bool canInitializeWithMemset = false;
-#endif
     static constexpr bool canCopyWithMemcpy = true;
 };
 

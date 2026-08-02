@@ -1674,16 +1674,6 @@ class Instruction
             countLeadingZeros(:int)
         when "lzcntq"
             countLeadingZeros(:quad)
-        when "fii2d"
-            $asm.puts "movd #{operands[0].x86Operand(:int)}, #{operands[2].x86Operand(:double)}"
-            $asm.puts "movd #{operands[1].x86Operand(:int)}, %xmm7"
-            $asm.puts "psllq $32, %xmm7"
-            $asm.puts "por %xmm7, #{operands[2].x86Operand(:double)}"
-        when "fd2ii"
-            $asm.puts "movd #{operands[0].x86Operand(:double)}, #{operands[1].x86Operand(:int)}"
-            $asm.puts "movsd #{operands[0].x86Operand(:double)}, %xmm7"
-            $asm.puts "psrlq $32, %xmm7"
-            $asm.puts "movd %xmm7, #{operands[2].x86Operand(:int)}"
         when "fq2d"
             $asm.puts "movq #{operands[0].x86Operand(:quad)}, #{operands[1].x86Operand(:double)}"
         when "fd2q"

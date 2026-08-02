@@ -85,15 +85,8 @@ void AssemblyHelpers::decrementSuperSamplerCount()
 void AssemblyHelpers::purifyNaN(FPRReg inputFPR, FPRReg resultFPR)
 {
     ASSERT(inputFPR != fpTempRegister);
-#if CPU(ADDRESS64)
     move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(PNaN)), fpTempRegister);
     moveDoubleConditionallyDouble(DoubleEqualAndOrdered, inputFPR, inputFPR, inputFPR, fpTempRegister, resultFPR);
-#else
-    moveDouble(inputFPR, resultFPR);
-    auto notNaN = branchIfNotNaN(resultFPR);
-    move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(PNaN)), resultFPR);
-    notNaN.link(this);
-#endif
 }
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -205,7 +198,7 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
 {
     if (!Options::useJITAsserts())
         return;
-    Jump ok = branch32(Below, payloadFor(CallFrameSlot::argumentCountIncludingThis), TrustedImm32(10000000));
+    Jump ok = branch32(Below, lowWordFor(CallFrameSlot::argumentCountIncludingThis), TrustedImm32(10000000));
     abortWithReason(AHInsaneArgumentCount);
     ok.link(this);
 }

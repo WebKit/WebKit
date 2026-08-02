@@ -84,7 +84,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
         MinifiedID id = recovery.nodeID();
         auto iter = alreadyAllocatedArguments.find(id);
         if (iter != alreadyAllocatedArguments.end()) {
-            JSValueRegs regs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT0, GPRInfo::regT1);
+            JSValueRegs regs { GPRInfo::regT0 };
             jit.loadValue(CCallHelpers::addressFor(iter->value), regs);
             jit.storeValue(regs, CCallHelpers::addressFor(operand));
             continue;
@@ -111,7 +111,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
 
         if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
             jit.load32(
-                AssemblyHelpers::payloadFor(VirtualRegister(stackOffset + CallFrameSlot::argumentCountIncludingThis)),
+                AssemblyHelpers::lowWordFor(VirtualRegister(stackOffset + CallFrameSlot::argumentCountIncludingThis)),
                 GPRInfo::regT1);
         } else {
             jit.move(
@@ -609,7 +609,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     jit.emitMaterializeTagCheckRegisters();
 
     if (exit.m_kind == WillThrowOutOfMemoryError) {
-        jit.store32(CCallHelpers::TrustedImm32(exit.m_exitCallSiteIndex.bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        jit.store32(CCallHelpers::TrustedImm32(exit.m_exitCallSiteIndex.bits()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
         jit.setupArguments<decltype(operationThrowOutOfMemoryError)>(CCallHelpers::TrustedImmPtr(&vm));
         jit.prepareCallOperation(vm);
         jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationThrowOutOfMemoryError)), GPRInfo::nonArgGPR0);

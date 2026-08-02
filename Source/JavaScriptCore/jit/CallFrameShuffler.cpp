@@ -377,7 +377,7 @@ void CallFrameShuffler::prepareForTailCall()
     // old frame (taking into account an argument count higher than
     // the number of parameters), then substracting to it the aligned
     // new frame size (adjusted).
-    m_jit.load32(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), m_newFrameBase);
+    m_jit.load32(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset), m_newFrameBase);
     MacroAssembler::Jump argumentCountOK =
         m_jit.branch32(MacroAssembler::BelowOrEqual, m_newFrameBase,
             MacroAssembler::TrustedImm32(m_numParameters));
@@ -694,7 +694,7 @@ void CallFrameShuffler::prepareAny()
         dataLog("   * Storing the argument count into ", VirtualRegister { CallFrameSlot::argumentCountIncludingThis }, "\n");
     RELEASE_ASSERT(m_numPassedArgs != UINT_MAX);
 
-    // Initialize CallFrameSlot::argumentCountIncludingThis's TagOffset and PayloadOffset with 0 and m_numPassedArgs.
+    // Initialize CallFrameSlot::argumentCountIncludingThis's HighWordOffset and LowWordOffset with 0 and m_numPassedArgs.
     m_jit.store64(MacroAssembler::TrustedImm32(m_numPassedArgs), addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }));
 
     if (!isSlowPath()) {

@@ -34,29 +34,6 @@ namespace WTF {
 template<typename T>
 struct FunctionTraits;
 
-#if USE(JSVALUE32_64)
-
-template<typename T>
-static constexpr unsigned slotsForCCallArgument()
-{
-    static_assert(!std::is_class<T>::value || sizeof(T) <= sizeof(void*), "This doesn't support complex structs.");
-    static_assert(sizeof(T) == 8 || sizeof(T) <= 4);
-    // This assumes that all integral values are passed on the stack.
-    if (sizeof(T) == 8)
-        return 2;
-
-    return 1;
-}
-
-template<typename T>
-static constexpr unsigned computeCCallSlots() { return slotsForCCallArgument<T>(); }
-
-template<typename T, typename... Ts>
-    requires (sizeof...(Ts) > 0)
-static constexpr unsigned computeCCallSlots() { return computeCCallSlots<Ts...>() + slotsForCCallArgument<T>(); }
-
-#endif
-
 template<typename Result, typename... Args>
 struct FunctionTraits<Result(Args...)> {
     using ResultType = Result;
@@ -70,14 +47,7 @@ struct FunctionTraits<Result(Args...)> {
     using ArgumentType = typename std::tuple_element<n, std::tuple<Args...>>::type;
     using ArgumentTypes = std::tuple<Args...>;
 
-
-#if USE(JSVALUE64)
     static constexpr unsigned cCallArity() { return arity; }
-#else
-
-    static constexpr unsigned cCallArity() { return computeCCallSlots<Args...>(); }
-#endif // USE(JSVALUE64)
-
 };
 
 #if OS(WINDOWS) && CPU(X86_64)

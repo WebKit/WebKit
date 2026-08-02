@@ -144,7 +144,7 @@ JITGetByIdGenerator::JITGetByIdGenerator(
     , m_isLengthAccess(codeBlock && propertyName.uid() == codeBlock->vm().propertyNames->length.impl())
     , m_cacheType(cacheType)
 {
-    RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
+    RELEASE_ASSERT(base.payloadGPR() != InvalidGPRReg);
     WTF::visit([&](auto* propertyCache) {
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR);
     }, propertyCache);
@@ -215,7 +215,7 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
     CacheableIdentifier propertyName, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, GPRReg propertyCacheGPR)
     : JITByIdGenerator(codeBlock, propertyCache, jitType, codeOrigin, AccessType::GetByIdWithThis, base, value)
 {
-    RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
+    RELEASE_ASSERT(thisRegs.payloadGPR() != InvalidGPRReg);
     WTF::visit([&](auto* propertyCache) {
         setUpPropertyInlineCache(*propertyCache, codeBlock, AccessType::GetByIdWithThis, CacheType::GetByIdSelf, codeOrigin, callSite, usedRegisters, propertyName, value, base, thisRegs, propertyCacheGPR);
     }, propertyCache);
@@ -389,7 +389,7 @@ JITInByIdGenerator::JITInByIdGenerator(
     CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR)
     : JITByIdGenerator(codeBlock, propertyCache, jitType, codeOrigin, AccessType::InById, base, value)
 {
-    RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
+    RELEASE_ASSERT(base.payloadGPR() != InvalidGPRReg);
     WTF::visit([&](auto* propertyCache) {
         setUpPropertyInlineCache(*propertyCache, codeBlock, AccessType::InById, CacheType::InByIdSelf, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR);
     }, propertyCache);

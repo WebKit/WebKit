@@ -967,7 +967,6 @@ void testLoadBaseIndexShift2()
 
 void testLoadBaseIndexShift32()
 {
-#if CPU(ADDRESS64)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
@@ -987,15 +986,12 @@ void testLoadBaseIndexShift32()
     char* ptr = std::bit_cast<char*>(&value);
     for (unsigned i = 0; i < 10; ++i)
         CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(32)) * i, i), 12341234);
-#endif
 }
 
 void testOptimizeMaterialization()
 {
     Procedure proc;
     if (proc.optLevel() < 2)
-        return;
-    if constexpr (is32Bit())
         return;
 
     BasicBlock* root = proc.addBlock();
@@ -1088,7 +1084,7 @@ void generateLoopNotBackwardsDominant(Procedure& proc, std::array<int, 100>& arr
                 loopHeader->appendNew<ConstPtrValue>(proc, Origin(), &array),
                 loopHeader->appendNew<Value>(
                     proc, Mul, Origin(),
-                    is32Bit() ? index : loopHeader->appendNew<Value>(proc, ZExt32, Origin(), index),
+                    loopHeader->appendNew<Value>(proc, ZExt32, Origin(), index),
                     loopHeader->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))))));
     loopHeader->setSuccessors(loopCall, loopFooter);
 
@@ -1635,8 +1631,7 @@ void testDepend32()
     Value* ptr = arguments[0];
     Value* first = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), ptr, 0);
     Value* depend = root->appendNew<Value>(proc, Depend, Origin(), first);
-    if constexpr (!is32Bit())
-        depend = root->appendNew<Value>(proc, ZExt32, Origin(), depend);
+    depend = root->appendNew<Value>(proc, ZExt32, Origin(), depend);
     Value* second = root->appendNew<MemoryValue>(
         proc, Load, Int32, Origin(),
         root->appendNew<Value>(
@@ -1758,8 +1753,7 @@ void testWasmAddress()
     // Body
     Value* pointer = body->appendNew<Value>(proc, Mul, Origin(), indexPhi,
         body->appendNew<Const32Value>(proc, Origin(), sizeof(unsigned)));
-    if (!is32Bit())
-        pointer = body->appendNew<Value>(proc, ZExt32, Origin(), pointer);
+    pointer = body->appendNew<Value>(proc, ZExt32, Origin(), pointer);
     body->appendNew<MemoryValue>(proc, Store, Origin(), valueToStore,
         body->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR), 0);
     UpsilonValue* incUpsilon = body->appendNew<UpsilonValue>(proc, Origin(),
@@ -1798,8 +1792,7 @@ void testWasmAddressWithOffset()
     Value* offset = arguments[0];
     Value* valueToStore = arguments[1];
     Value* pointer = offset;
-    if (!is32Bit())
-        pointer = root->appendNew<Value>(proc, ZExt32, Origin(), offset);
+    pointer = root->appendNew<Value>(proc, ZExt32, Origin(), offset);
     root->appendNew<MemoryValue>(proc, Store8, Origin(), valueToStore, root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR), 1);
     root->appendNewControlValue(proc, Return, Origin());
 

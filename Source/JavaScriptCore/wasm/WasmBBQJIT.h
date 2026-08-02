@@ -83,10 +83,8 @@ public:
     static constexpr GPRReg shiftRCX = InvalidGPRReg;
 #endif
 
-#if USE(JSVALUE64)
     static constexpr GPRReg wasmBaseMemoryPointer = GPRInfo::wasmBaseMemoryPointer;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = GPRInfo::wasmBoundsCheckingSizeRegister;
-#endif
 
 public:
     struct Location {
@@ -333,9 +331,7 @@ public:
 
         ALWAYS_INLINE static Value fromPointer(void* pointer)
         {
-#if USE(JSVALUE64)
             return fromI64(std::bit_cast<uintptr_t>(pointer));
-#endif
         }
 
         ALWAYS_INLINE static Value fromRef(TypeKind refType, EncodedJSValue ref)

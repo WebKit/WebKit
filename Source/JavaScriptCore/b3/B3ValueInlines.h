@@ -418,16 +418,12 @@ inline bool Value::isInt(int64_t value) const
 
 inline bool Value::hasIntPtr() const
 {
-    if (is64Bit())
-        return hasInt64();
-    return hasInt32();
+    return hasInt64();
 }
 
 inline intptr_t Value::asIntPtr() const
 {
-    if (is64Bit())
-        return asInt64();
-    return asInt32();
+    return asInt64();
 }
 
 inline bool Value::isIntPtr(intptr_t value) const

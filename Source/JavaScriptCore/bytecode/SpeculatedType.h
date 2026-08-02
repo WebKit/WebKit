@@ -132,7 +132,7 @@ static constexpr SpeculatedType SpecTypeofMightBeFunction             = SpecFunc
 // SpecCellCheck is the type set representing the values that can flow through a cell check.
 // On 64-bit platforms, the empty value passes a cell check. Also, ~SpecCellCheck is the type
 // set that representing the values that flow through when testing that something is not a cell.
-static constexpr SpeculatedType SpecCellCheck          = is64Bit() ? (SpecCell | SpecEmpty) : SpecCell;
+static constexpr SpeculatedType SpecCellCheck          = SpecCell | SpecEmpty;
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
 

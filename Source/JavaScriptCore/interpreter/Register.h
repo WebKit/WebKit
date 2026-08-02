@@ -29,10 +29,16 @@
 #pragma once
 
 #include <JavaScriptCore/EncodedValueDescriptor.h>
+#include <cstddef>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/VectorTraits.h>
 
 namespace JSC {
+
+// A Register is 64 bits wide, but a few call frame slots pack two independent 32-bit values
+// into one, such as argumentCountIncludingThis together with the CallSiteIndex.
+static constexpr ptrdiff_t LowWordOffset = 0;
+static constexpr ptrdiff_t HighWordOffset = 4;
 
     class CallFrame;
     class CodeBlock;
@@ -73,24 +79,16 @@ namespace JSC {
         int64_t asanUnsafeUnboxedStrictInt52() const;
         int64_t unboxedInt64() const;
         int64_t asanUnsafeUnboxedInt64() const;
-        bool unboxedBoolean() const;
-#if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
-        float unboxedFloat() const;
-        float asanUnsafeUnboxedFloat() const;
-#endif
         double unboxedDouble() const;
         double asanUnsafeUnboxedDouble() const;
         JSCell* unboxedCell() const;
-        JSCell* asanUnsafeUnboxedCell() const;
-        int32_t payload() const;
-        int32_t tag() const;
-        int32_t unsafePayload() const;
-        int32_t unsafeTag() const;
-        int32_t& payload();
-        int32_t& tag();
+        int32_t lowWord() const;
+        int32_t highWord() const;
+        int32_t unsafeHighWord() const;
+        int32_t& lowWord();
+        int32_t& highWord();
 
         void* pointer() const;
-        void* asanUnsafePointer() const;
 
         static inline Register withInt(int32_t); // Defined in RegisterInlines.h
 
@@ -102,6 +100,10 @@ namespace JSC {
             EncodedValueDescriptor encodedValue;
             double number;
             int64_t integer;
+            struct {
+                int32_t lowWord;
+                int32_t highWord;
+            } words;
         } u;
     };
 
@@ -111,7 +113,7 @@ namespace JSC {
 
     ALWAYS_INLINE int32_t Register::unboxedInt32() const
     {
-        return payload();
+        return lowWord();
     }
 
     ALWAYS_INLINE uint32_t Register::unboxedUInt32() const
@@ -121,7 +123,7 @@ namespace JSC {
 
     SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::asanUnsafeUnboxedInt32() const
     {
-        return unsafePayload();
+        return u.words.lowWord;
     }
 
     ALWAYS_INLINE int64_t Register::unboxedStrictInt52() const
@@ -144,23 +146,6 @@ namespace JSC {
         return u.integer;
     }
 
-    ALWAYS_INLINE bool Register::unboxedBoolean() const
-    {
-        return !!payload();
-    }
-
-#if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
-    ALWAYS_INLINE float Register::unboxedFloat() const
-    {
-        return std::bit_cast<float>(payload());
-    }
-
-    SUPPRESS_ASAN ALWAYS_INLINE float Register::asanUnsafeUnboxedFloat() const
-    {
-        return std::bit_cast<float>(payload());
-    }
-#endif
-
     ALWAYS_INLINE double Register::unboxedDouble() const
     {
         return u.number;
@@ -173,68 +158,37 @@ namespace JSC {
 
     ALWAYS_INLINE JSCell* Register::unboxedCell() const
     {
-#if USE(JSVALUE64)
         return u.encodedValue.ptr;
-#else
-        return std::bit_cast<JSCell*>(payload());
-#endif
-    }
-
-    SUPPRESS_ASAN ALWAYS_INLINE JSCell* Register::asanUnsafeUnboxedCell() const
-    {
-#if USE(JSVALUE64)
-        return u.encodedValue.ptr;
-#else
-        return std::bit_cast<JSCell*>(payload());
-#endif
     }
 
     ALWAYS_INLINE void* Register::pointer() const
     {
-#if USE(JSVALUE64)
         return u.encodedValue.ptr;
-#else
-        return std::bit_cast<void*>(payload());
-#endif
     }
 
-    SUPPRESS_ASAN ALWAYS_INLINE void* Register::asanUnsafePointer() const
+    ALWAYS_INLINE int32_t Register::lowWord() const
     {
-#if USE(JSVALUE64)
-        return u.encodedValue.ptr;
-#else
-        return std::bit_cast<void*>(unsafePayload());
-#endif
+        return u.words.lowWord;
     }
 
-    ALWAYS_INLINE int32_t Register::payload() const
+    ALWAYS_INLINE int32_t Register::highWord() const
     {
-        return u.encodedValue.asBits.payload;
+        return u.words.highWord;
     }
 
-    ALWAYS_INLINE int32_t Register::tag() const
+    SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::unsafeHighWord() const
     {
-        return u.encodedValue.asBits.tag;
+        return u.words.highWord;
     }
 
-    SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::unsafePayload() const
+    ALWAYS_INLINE int32_t& Register::lowWord()
     {
-        return u.encodedValue.asBits.payload;
+        return u.words.lowWord;
     }
 
-    SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::unsafeTag() const
+    ALWAYS_INLINE int32_t& Register::highWord()
     {
-        return u.encodedValue.asBits.tag;
-    }
-
-    ALWAYS_INLINE int32_t& Register::payload()
-    {
-        return u.encodedValue.asBits.payload;
-    }
-
-    ALWAYS_INLINE int32_t& Register::tag()
-    {
-        return u.encodedValue.asBits.tag;
+        return u.words.highWord;
     }
 
 } // namespace JSC

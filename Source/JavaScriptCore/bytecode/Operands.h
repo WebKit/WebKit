@@ -55,13 +55,8 @@ public:
     { }
 
     Operand(OperandKind kind, int operand)
-#if CPU(LITTLE_ENDIAN)
         : m_operand(operand)
         , m_kind(kind)
-#else
-        : m_kind(kind)
-        , m_operand(operand)
-#endif
     { 
         ASSERT(kind == OperandKind::Tmp || VirtualRegister(operand).isLocal() == (kind == OperandKind::Local));
     }
@@ -98,13 +93,8 @@ public:
     void dump(PrintStream&) const;
 
 private:
-#if CPU(LITTLE_ENDIAN)
     int m_operand { VirtualRegister::invalidVirtualRegister };
     OperandKind m_kind { OperandKind::Argument };
-#else
-    OperandKind m_kind { OperandKind::Argument };
-    int m_operand { VirtualRegister::invalidVirtualRegister };
-#endif
 };
 
 ALWAYS_INLINE bool Operand::operator==(const Operand& other) const

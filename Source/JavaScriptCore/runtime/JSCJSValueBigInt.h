@@ -37,11 +37,7 @@ namespace JSC {
 ALWAYS_INLINE JSBigInt* JSValue::asHeapBigInt() const
 {
     ASSERT(isHeapBigIntSlow());
-#if USE(JSVALUE32_64)
-    return reinterpret_cast<JSBigInt*>(u.asBits.payload);
-#else // !USE(JSVALUE32_64) i.e. USE(JSVALUE64)
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<JSBigInt*>(u.ptr);
-#endif // USE(JSVALUE64)
 }
 
 } // namespace JSC

@@ -613,14 +613,12 @@ def matchForms(outp, speed, forms, columnIndex, columnGetter, filter, callback)
     outp.puts "switch (#{columnGetter[columnIndex]}) {"
     groups.each_pair {
         | key, value |
-        outp.puts "#if USE(JSVALUE64)" if key == "BitImm64"
         Kind.argKinds(key).each {
             | argKind |
             outp.puts "case Arg::#{argKind}:"
         }
         matchForms(outp, speed, value, columnIndex + 1, columnGetter, filter, callback)
         outp.puts "break;"
-        outp.puts "#endif // USE(JSVALUE64)" if key == "BitImm64"
     }
     outp.puts "default:"
     outp.puts "break;"

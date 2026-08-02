@@ -814,12 +814,7 @@ public:
 
     bool m_shouldAlwaysBeInlined { true }; // Not a bitfield because the JIT wants to store to it.
 
-#if USE(JSVALUE64)
-    // 64bit environment does not need a lock for ValueProfile operations.
     NoLockingNecessaryTag valueProfileLock() { return NoLockingNecessary; }
-#else
-    ConcurrentJSLock& valueProfileLock() LIFETIME_BOUND { return m_lock; }
-#endif
 
     static constexpr ptrdiff_t offsetOfShouldAlwaysBeInlined() { return OBJECT_OFFSETOF(CodeBlock, m_shouldAlwaysBeInlined); }
 

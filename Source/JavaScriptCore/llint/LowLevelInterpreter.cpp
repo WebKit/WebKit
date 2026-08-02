@@ -137,63 +137,62 @@ class CallLinkInfo;
 // It defines the policy of how ints smaller than intptr_t are packed into the
 // pseudo register, as well as hides endianness differences.
 
+// The emulated register is always 64 bits wide so it can hold an EncodedJSValue,
+// even on 32-bit targets where pointers occupy only the low half.
 class CLoopRegister {
 public:
-    ALWAYS_INLINE intptr_t i() const { return m_value; };
-    ALWAYS_INLINE uintptr_t u() const { return m_value; }
-    ALWAYS_INLINE int32_t i32() const { return m_value; }
-    ALWAYS_INLINE uint32_t u32() const { return m_value; }
-    ALWAYS_INLINE int16_t i16() const { return m_value; }
-    ALWAYS_INLINE uint16_t u16() const { return m_value; }
-    ALWAYS_INLINE int8_t i8() const { return m_value; }
-    ALWAYS_INLINE uint8_t u8() const { return m_value; }
+    ALWAYS_INLINE intptr_t i() const { return static_cast<intptr_t>(m_value); };
+    ALWAYS_INLINE uintptr_t u() const { return static_cast<uintptr_t>(m_value); }
+    ALWAYS_INLINE int32_t i32() const { return static_cast<int32_t>(m_value); }
+    ALWAYS_INLINE uint32_t u32() const { return static_cast<uint32_t>(m_value); }
+    ALWAYS_INLINE int16_t i16() const { return static_cast<int16_t>(m_value); }
+    ALWAYS_INLINE uint16_t u16() const { return static_cast<uint16_t>(m_value); }
+    ALWAYS_INLINE int8_t i8() const { return static_cast<int8_t>(m_value); }
+    ALWAYS_INLINE uint8_t u8() const { return static_cast<uint8_t>(m_value); }
 
-    ALWAYS_INLINE intptr_t* ip() const { return std::bit_cast<intptr_t*>(m_value); }
-    ALWAYS_INLINE int8_t* i8p() const { return std::bit_cast<int8_t*>(m_value); }
-    ALWAYS_INLINE void* vp() const { return std::bit_cast<void*>(m_value); }
-    ALWAYS_INLINE const void* cvp() const { return std::bit_cast<const void*>(m_value); }
-    ALWAYS_INLINE CallFrame* callFrame() const { return std::bit_cast<CallFrame*>(m_value); }
-    ALWAYS_INLINE const void* instruction() const { return std::bit_cast<const void*>(m_value); }
-    ALWAYS_INLINE VM* vm() const { return std::bit_cast<VM*>(m_value); }
-    ALWAYS_INLINE JSCell* cell() const { return std::bit_cast<JSCell*>(m_value); }
-    ALWAYS_INLINE ProtoCallFrame* protoCallFrame() const { return std::bit_cast<ProtoCallFrame*>(m_value); }
-    ALWAYS_INLINE NativeFunction nativeFunc() const { return std::bit_cast<NativeFunction>(m_value); }
-#if USE(JSVALUE64)
-    ALWAYS_INLINE int64_t i64() const { return m_value; }
+    ALWAYS_INLINE intptr_t* ip() const { return std::bit_cast<intptr_t*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE int8_t* i8p() const { return std::bit_cast<int8_t*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE void* vp() const { return std::bit_cast<void*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE const void* cvp() const { return std::bit_cast<const void*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE CallFrame* callFrame() const { return std::bit_cast<CallFrame*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE const void* instruction() const { return std::bit_cast<const void*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE VM* vm() const { return std::bit_cast<VM*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE JSCell* cell() const { return std::bit_cast<JSCell*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE ProtoCallFrame* protoCallFrame() const { return std::bit_cast<ProtoCallFrame*>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE NativeFunction nativeFunc() const { return std::bit_cast<NativeFunction>(static_cast<uintptr_t>(m_value)); }
+    ALWAYS_INLINE int64_t i64() const { return static_cast<int64_t>(m_value); }
     ALWAYS_INLINE uint64_t u64() const { return m_value; }
     ALWAYS_INLINE EncodedJSValue encodedJSValue() const { return std::bit_cast<EncodedJSValue>(m_value); }
-#endif
-    ALWAYS_INLINE Opcode opcode() const { return std::bit_cast<Opcode>(m_value); }
+    ALWAYS_INLINE Opcode opcode() const { return std::bit_cast<Opcode>(static_cast<uintptr_t>(m_value)); }
 
-    operator CallFrame*() { return std::bit_cast<CallFrame*>(m_value); }
-    operator const JSInstruction*() { return std::bit_cast<const JSInstruction*>(m_value); }
-    operator JSCell*() { return std::bit_cast<JSCell*>(m_value); }
-    operator ProtoCallFrame*() { return std::bit_cast<ProtoCallFrame*>(m_value); }
-    operator Register*() { return std::bit_cast<Register*>(m_value); }
-    operator VM*() { return std::bit_cast<VM*>(m_value); }
-    operator CallLinkInfo*() { return std::bit_cast<CallLinkInfo*>(m_value); }
-    operator void*() { return reinterpret_cast<void*>(m_value); }
+    operator CallFrame*() { return std::bit_cast<CallFrame*>(static_cast<uintptr_t>(m_value)); }
+    operator const JSInstruction*() { return std::bit_cast<const JSInstruction*>(static_cast<uintptr_t>(m_value)); }
+    operator JSCell*() { return std::bit_cast<JSCell*>(static_cast<uintptr_t>(m_value)); }
+    operator ProtoCallFrame*() { return std::bit_cast<ProtoCallFrame*>(static_cast<uintptr_t>(m_value)); }
+    operator Register*() { return std::bit_cast<Register*>(static_cast<uintptr_t>(m_value)); }
+    operator VM*() { return std::bit_cast<VM*>(static_cast<uintptr_t>(m_value)); }
+    operator CallLinkInfo*() { return std::bit_cast<CallLinkInfo*>(static_cast<uintptr_t>(m_value)); }
+    operator void*() { return std::bit_cast<void*>(static_cast<uintptr_t>(m_value)); }
+
+    // Assignment must stay templated: intptr_t is a distinct type from every
+    // int<N>_t on 32-bit Darwin, so a fixed-width overload set is ambiguous for it.
+    template<typename T>
+        requires (std::is_pointer_v<T>)
+    ALWAYS_INLINE void operator=(T value) { m_value = std::bit_cast<uintptr_t>(value); }
 
     template<typename T>
-        requires (sizeof(T) == sizeof(uintptr_t))
-    ALWAYS_INLINE void operator=(T value) { m_value = std::bit_cast<uintptr_t>(value); }
-#if USE(JSVALUE64)
-    ALWAYS_INLINE void operator=(int32_t value) { m_value = static_cast<intptr_t>(value); }
-    ALWAYS_INLINE void operator=(uint32_t value) { m_value = static_cast<uintptr_t>(value); }
-#endif
-    ALWAYS_INLINE void operator=(int16_t value) { m_value = static_cast<intptr_t>(value); }
-    ALWAYS_INLINE void operator=(uint16_t value) { m_value = static_cast<uintptr_t>(value); }
-    ALWAYS_INLINE void operator=(int8_t value) { m_value = static_cast<intptr_t>(value); }
-    ALWAYS_INLINE void operator=(uint8_t value) { m_value = static_cast<uintptr_t>(value); }
-    ALWAYS_INLINE void operator=(bool value) { m_value = static_cast<uintptr_t>(value); }
+        requires (std::is_integral_v<T> && std::is_signed_v<T>)
+    ALWAYS_INLINE void operator=(T value) { m_value = static_cast<uint64_t>(static_cast<int64_t>(value)); }
 
-#if USE(JSVALUE64)
+    template<typename T>
+        requires (std::is_integral_v<T> && !std::is_signed_v<T>)
+    ALWAYS_INLINE void operator=(T value) { m_value = static_cast<uint64_t>(value); }
+
     ALWAYS_INLINE double bitsAsDouble() const { return std::bit_cast<double>(m_value); }
     ALWAYS_INLINE int64_t bitsAsInt64() const { return std::bit_cast<int64_t>(m_value); }
-#endif
 
 private:
-    uintptr_t m_value { static_cast<uintptr_t>(0xbadbeef0baddbeef) };
+    uint64_t m_value { 0xbadbeef0baddbeefull };
 };
 
 class CLoopDoubleRegister {
@@ -219,21 +218,6 @@ private:
 //
 
 namespace LLInt {
-
-#if USE(JSVALUE32_64)
-static double ints2Double(uint32_t lo, uint32_t hi)
-{
-    uint64_t value = (static_cast<uint64_t>(hi) << 32) | lo;
-    return std::bit_cast<double>(value);
-}
-
-static void double2Ints(double val, CLoopRegister& lo, CLoopRegister& hi)
-{
-    uint64_t value = std::bit_cast<uint64_t>(val);
-    hi = static_cast<uint32_t>(value >> 32);
-    lo = static_cast<uint32_t>(value);
-}
-#endif // USE(JSVALUE32_64)
 
 static void decodeResult(UGPRPair result, CLoopRegister& t0, CLoopRegister& t1)
 {
@@ -305,35 +289,18 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         return JSValue();
     }
 
-    // Define the pseudo registers used by the LLINT C Loop backend:
-    static_assert(sizeof(CLoopRegister) == sizeof(intptr_t));
+    // Define the pseudo registers used by the LLINT C Loop backend. Each is 64 bits
+    // wide so it can hold an EncodedJSValue.
+    static_assert(sizeof(CLoopRegister) == sizeof(EncodedJSValue));
 
-    // The CLoop llint backend generates portable C++ from the offlineasm sources,
-    // with a few instructions modeled on the x86 backend to support building for
-    // X64 targets.
-    //
-    // For example, on a 32-bit build:
-    // 1. Outgoing args will be set up as follows:
-    //    arg1 in t0 (r0 on ARM)
-    //    arg2 in t1 (r1 on ARM)
-    // 2. 32 bit return values will be in t0 (r0 on ARM).
-    // 3. 64 bit return values (e.g. doubles) will be in t0,t1 (r0,r1 on ARM).
-    //
-    // But instead of naming these simulator registers based on their ARM
-    // counterparts, we'll name them based on their original llint asm names.
-    // This will make it easier to correlate the generated code with the
-    // original llint asm code.
-    //
-    // On a 64-bit build, it more like x64 in that the registers are 64 bit.
-    // Hence:
-    // 1. Outgoing args are still the same: arg1 in t0, arg2 in t1, etc.
-    // 2. 32 bit result values will be in the low 32-bit of t0.
-    // 3. 64 bit result values will be in t0.
+    // The registers are named after their original llint asm names to make it easier
+    // to correlate the generated code with the llint asm. The calling convention:
+    // 1. Outgoing args are arg1 in t0, arg2 in t1, etc.
+    // 2. 32 bit result values are in the low 32-bit of t0.
+    // 3. 64 bit result values are in t0.
 
     CLoopRegister t0, t1, t2, t3, t5, t6, t7, sp, cfr, lr, pc;
-#if USE(JSVALUE64)
     CLoopRegister numberTag, notCellMask;
-#endif
     CLoopRegister pcBase;
     CLoopRegister metadataTable;
     CLoopDoubleRegister d0, d1;
@@ -378,12 +345,10 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     t1 = vm;
     t2 = protoCallFrame;
 
-#if USE(JSVALUE64)
     // For the ASM llint, JITStubs takes care of this initialization. We do
     // it explicitly here for the C loop:
     numberTag = JSValue::NumberTag;
     notCellMask = JSValue::NotCellMask;
-#endif // USE(JSVALUE64)
 
     // Interpreter variables for value passing between opcodes and/or helpers:
     NativeFunction nativeFunc = nullptr;
@@ -454,11 +419,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         {
             ASSERT(startSP == sp.vp());
             ASSERT(startCFR == cfr.callFrame());
-#if USE(JSVALUE32_64)
-            return JSValue(t1.i(), t0.i()); // returning JSValue(tag, payload);
-#else
             return JSValue::decode(t0.encodedJSValue());
-#endif
         }
 
 #if !ENABLE(COMPUTED_GOTO_OPCODES)

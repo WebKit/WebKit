@@ -57,7 +57,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     jit.emitCTIThunkPrologue();
 
     // Call slow operation
-    jit.store32(bytecodeOffsetGPR, CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(bytecodeOffsetGPR, CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
 
     constexpr GPRReg callFrameArgGPR = GPRInfo::argumentGPR0;

@@ -97,12 +97,6 @@ void ValueRep::dump(PrintStream& out) const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-// We use `B3::ValueRep` for bookkeeping in the BBQ wasm backend, including on
-// 32-bit platforms, but not for code generation (yet!), so we don't actually
-// want to provide these symbols until they are properly supported on those
-// platforms.
-
-
 void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
 {
     if (reg.isGPR()) {

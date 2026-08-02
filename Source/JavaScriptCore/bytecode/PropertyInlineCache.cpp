@@ -719,14 +719,12 @@ void PropertyInlineCache::initializePredefinedRegisters()
         m_propertyCacheGPR = BaselineJITRegisters::GetByIdWithThis::propertyCacheGPR;
         break;
     case AccessType::GetByValWithThis:
-#if USE(JSVALUE64)
         m_baseGPR = BaselineJITRegisters::GetByValWithThis::baseJSR.payloadGPR();
         m_valueGPR = BaselineJITRegisters::GetByValWithThis::resultJSR.payloadGPR();
         m_extraGPR = BaselineJITRegisters::GetByValWithThis::thisJSR.payloadGPR();
         m_extra2GPR = BaselineJITRegisters::GetByValWithThis::propertyJSR.payloadGPR();
         m_propertyCacheGPR = BaselineJITRegisters::GetByValWithThis::propertyCacheGPR;
         m_arrayProfileGPR = BaselineJITRegisters::GetByValWithThis::profileGPR;
-#endif
         break;
     case AccessType::PutByIdStrict:
     case AccessType::PutByIdSloppy:

@@ -107,14 +107,7 @@ public:
 
     inline size_t byteSizeOfSetRegisters() const
     {
-#if CPU(REGISTER64)
         return (m_bits.count() + m_upperBits.count()) * sizeof(CPURegister);
-#else
-        auto effectiveGPRCount = numberOfSetFPRs()
-            ? WTF::roundUpToMultipleOf<2>(numberOfSetGPRs())
-            : numberOfSetGPRs();
-        return effectiveGPRCount * bytesForWidth(pointerWidth()) + numberOfSetFPRs() * sizeof(double);
-#endif
     }
 
     inline constexpr bool isEmpty() const
@@ -202,8 +195,6 @@ public:
 
     inline constexpr RegisterSet& add(JSValueRegs regs, IgnoreVectorsTag = IgnoreVectors)
     {
-        if (regs.tagGPR() != InvalidGPRReg)
-            add(regs.tagGPR());
         add(regs.payloadGPR());
         return *this;
     }
@@ -218,8 +209,6 @@ public:
 
     inline constexpr RegisterSet& remove(JSValueRegs regs)
     {
-        if (regs.tagGPR() != InvalidGPRReg)
-            remove(regs.tagGPR());
         remove(regs.payloadGPR());
         return *this;
     }
@@ -355,8 +344,6 @@ public:
 
     inline constexpr void add(JSValueRegs regs, IgnoreVectorsTag = IgnoreVectors)
     {
-        if (regs.tagGPR() != InvalidGPRReg)
-            add(regs.tagGPR());
         add(regs.payloadGPR());
     }
 

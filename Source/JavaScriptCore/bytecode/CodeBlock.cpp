@@ -3055,10 +3055,6 @@ void CodeBlock::updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker
 
 void CodeBlock::updateAllLazyValueProfilePredictions(const ConcurrentJSLocker& locker)
 {
-#if USE(JSVALUE32_64)
-    // JSVALUE64 does not need a lock.
-    ASSERT(m_lock.isLocked());
-#endif
 #if ENABLE(DFG_JIT)
     lazyValueProfiles().computeUpdatedPredictions(locker, this);
 #else

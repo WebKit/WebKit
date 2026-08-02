@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 
 #include "BaselineJITRegisters.h"
 #include "BytecodeStructs.h"

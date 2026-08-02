@@ -46,7 +46,6 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);
 
-#if USE(JSVALUE64)
     auto slowPathForwardMemcpy = [&] {
         size_t count = bytes / 8;
         for (unsigned i = 0; i < count; ++i)
@@ -125,9 +124,6 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
 #else
     slowPathForwardMemcpy();
 #endif
-#else
-    memcpy(dst, src, bytes);
-#endif // USE(JSVALUE64)
 }
 
 template <typename T>
@@ -135,7 +131,6 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
 {
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);
-#if USE(JSVALUE64)
     if (std::bit_cast<uintptr_t>(src) >= std::bit_cast<uintptr_t>(dst)) {
         // This is written to do a forwards loop, so calling it is ok.
         gcSafeMemcpy(dst, src, bytes);
@@ -230,9 +225,6 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
 #else
     slowPathBackwardsMemmove();
 #endif // CPU(X86_64) || CPU(ARM64)
-#else
-    memmove(dst, src, bytes);
-#endif // USE(JSVALUE64)
 }
 
 template <typename T>
@@ -240,7 +232,6 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
 {
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);
-#if USE(JSVALUE64)
 #if CPU(X86_64)
     size_t alignedBytes = (bytes / 64) * 64;
     size_t offset = 0;
@@ -313,9 +304,6 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
     for (size_t i = 0; i < count; ++i)
         std::bit_cast<volatile uint64_t*>(dst)[i] = 0;
 #endif
-#else
-    memset(reinterpret_cast<char*>(dst), 0, bytes);
-#endif // USE(JSVALUE64)
 }
 
 } // namespace JSC

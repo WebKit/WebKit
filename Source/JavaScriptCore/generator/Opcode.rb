@@ -253,10 +253,6 @@ private:
     static bool emitImpl(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
         #{!@checkpoints.nil? ? "gen->setUsesCheckpoints();" : ""}
-        if (__size == OpcodeSize::Wide16)
-            gen->alignWideOpcode16();
-        else if (__size == OpcodeSize::Wide32)
-            gen->alignWideOpcode32();
         if (checkImpl<__size>(gen#{untyped_args}#{metadata_arg})) {
             if (recordOpcode)
                 gen->recordOpcode(opcodeID);

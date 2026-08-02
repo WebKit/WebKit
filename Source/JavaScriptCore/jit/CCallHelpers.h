@@ -548,11 +548,9 @@ private:
             static_assert(!sizeof...(Args), "Basic sanity check");
             setupArgumentsImpl<OperationType>(argSourceRegs);
         } else if constexpr (std::same_as<typename FunctionTraits<OperationType>::template ArgumentType<0>, CallFrame*>) {
-            // This only really works for 64-bit since jsvalue regs mess things up for 32-bit...
             static_assert(FunctionTraits<OperationType>::cCallArity() == sizeof...(Args) + 1, "Basic sanity check; Did you explicitly pass callFrameRegister for the first argument?");
             setupArgumentsImpl<OperationType>(argSourceRegs, GPRInfo::callFrameRegister, args...);
         } else {
-            // This only really works for 64-bit since jsvalue regs mess things up for 32-bit...
             static_assert(FunctionTraits<OperationType>::cCallArity() == sizeof...(Args), "Basic sanity check");
             setupArgumentsImpl<OperationType>(argSourceRegs, args...);
         }
@@ -663,7 +661,7 @@ public:
             GPRReg oldFrameSizeGPR = temp2;
             {
                 GPRReg argCountGPR = oldFrameSizeGPR;
-                load32(Address(framePointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), argCountGPR);
+                load32(Address(framePointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset), argCountGPR);
 
                 {
                     GPRReg numParametersGPR = temp1;
@@ -691,7 +689,7 @@ public:
             // The new frame size is just the number of arguments plus the
             // frame header size, aligned
             ASSERT(newFrameSizeGPR != newFramePointer);
-            load32(Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)),
+            load32(Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset - sizeof(CallerFrameAndPC)),
                 newFrameSizeGPR);
             add32(TrustedImm32(stackAlignmentRegisters() + CallFrame::headerSizeInRegisters - 1), newFrameSizeGPR);
             and32(TrustedImm32(-stackAlignmentRegisters()), newFrameSizeGPR);
@@ -738,7 +736,7 @@ public:
         return calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register)))
             // calleeFrame is from the caller's perspective
             .withOffset(-safeCast<int>(sizeof(CallerFrameAndPC)))
-            .withOffset(PayloadOffset)
+            .withOffset(LowWordOffset)
             .withOffset(offset);
     }
 

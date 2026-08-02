@@ -52,7 +52,7 @@ static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*));
 struct WeakMapBucketDataKeyValue {
     static const HashTableType Type = HashTableType::KeyValue;
     WriteBarrier<JSCell> key;
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
     uint32_t padding;
 #endif
     WriteBarrier<Unknown> value;

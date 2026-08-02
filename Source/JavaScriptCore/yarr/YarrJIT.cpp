@@ -911,7 +911,6 @@ class YarrGenerator final : public YarrJITInfo {
         }
         if (shouldRecordSubpatterns()) {
             for (unsigned subpattern = firstSubpattern; subpattern <= lastSubpattern; subpattern++) {
-                static_assert(is64Bit());
                 m_jit.transfer64(subpatternStartAddress(subpattern), MacroAssembler::Address(parenContextReg, ParenContext::subpatternOffset(subpattern)));
                 if (hasNamedCaptures) {
                     unsigned duplicateNamedGroup = m_pattern.m_duplicateNamedGroupForSubpatternId[subpattern];
@@ -952,7 +951,6 @@ class YarrGenerator final : public YarrJITInfo {
         }
         if (shouldRecordSubpatterns()) {
             for (unsigned subpattern = firstSubpattern; subpattern <= lastSubpattern; subpattern++) {
-                static_assert(is64Bit());
                 m_jit.transfer64(MacroAssembler::Address(parenContextReg, ParenContext::subpatternOffset(subpattern)), subpatternStartAddress(subpattern));
                 if (hasNamedCaptures) {
                     unsigned duplicateNamedGroup = m_pattern.m_duplicateNamedGroupForSubpatternId[subpattern];
@@ -1018,17 +1016,10 @@ class YarrGenerator final : public YarrJITInfo {
             break;
         default: {
             // Otherwise, actually perform the bit test.
-#if CPU(REGISTER64)
             m_jit.sub32(character, MacroAssembler::Imm32(static_cast<unsigned>(min)), scratch);
             MacroAssembler::Jump notInVector = m_jit.branch32(MacroAssembler::Above, scratch, MacroAssembler::TrustedImm32(max - min));
             m_jit.lshift64(MacroAssembler::TrustedImm32(1), scratch, scratch);
             matchDest.append(m_jit.branchTest64(MacroAssembler::NonZero, scratch, MacroAssembler::TrustedImm64(mask.storage()[0])));
-#else
-            m_jit.sub32(character, MacroAssembler::Imm32(static_cast<unsigned>(min)), scratch);
-            MacroAssembler::Jump notInVector = m_jit.branch32(MacroAssembler::Above, scratch, MacroAssembler::TrustedImm32(max - min));
-            m_jit.lshift32(MacroAssembler::TrustedImm32(1), scratch, scratch);
-            matchDest.append(m_jit.branchTest32(MacroAssembler::NonZero, scratch, MacroAssembler::TrustedImm32(mask.storage()[0])));
-#endif
             notInVector.link(&m_jit);
         }
         }

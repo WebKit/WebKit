@@ -47,11 +47,7 @@ JSValue ValueRecovery::recover(CallFrame* callFrame) const
     case CellDisplacedInJSStack:
         return callFrame->r(virtualRegister()).unboxedCell();
     case BooleanDisplacedInJSStack:
-#if USE(JSVALUE64)
         return callFrame->r(virtualRegister()).jsValue();
-#else
-        return jsBoolean(callFrame->r(virtualRegister()).unboxedBoolean());
-#endif
     case Constant:
         return constant();
     default:

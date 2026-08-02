@@ -73,7 +73,7 @@ enum class JITType : uint8_t {
 static constexpr unsigned widthOfJITType = 3;
 static_assert(WTF::getMSBSet(static_cast<std::underlying_type_t<JITType>>(JITType::FTLJIT)) + 1 == widthOfJITType);
 
-#if CPU(ADDRESS64)
+#if ENABLE(JIT)
 template<typename ByteSizedEnumType>
 class JITConstant {
     static_assert(sizeof(ByteSizedEnumType) == 1);
@@ -108,37 +108,7 @@ public:
 
     friend bool operator==(const JITConstant&, const JITConstant&) = default;
 };
-#else
-template<typename ByteSizedEnumType>
-class JITConstant {
-    void* m_pointer;
-    ByteSizedEnumType m_type;
-public:
-    inline JITConstant()
-        : m_pointer(nullptr)
-    { }
-
-    inline JITConstant(void* pointer, ByteSizedEnumType type)
-        : m_pointer(pointer)
-        , m_type(type)
-    { }
-
-    template<typename OtherPointerType>
-    JITConstant(CompactPointerTuple<OtherPointerType, ByteSizedEnumType> other)
-        : m_pointer(other.pointer())
-        , m_type(other.type())
-    { }
-
-    inline uint32_t hash() const { return computeHash(m_pointer) * 31 + computeHash((unsigned)m_type); }
-    inline void* pointer() const { return m_pointer; }
-    void setPointer(void* pointer) { m_pointer = pointer; }
-    inline ByteSizedEnumType type() const { return m_type; }
-    void setType(ByteSizedEnumType type) { m_type = type; }
-
-    friend bool operator==(const JITConstant&, const JITConstant&) = default;
-};
-#endif
-
+#endif // ENABLE(JIT)
 
 class JITCode : public ThreadSafeRefCounted<JSC::JITCode> {
 public:

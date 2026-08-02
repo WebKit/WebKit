@@ -45,7 +45,7 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static constexpr unsigned numberOfRegisters = 15;
-    static constexpr unsigned numberOfArgumentRegisters = is64Bit() ? 8 : 0;
+    static constexpr unsigned numberOfArgumentRegisters = 8;
 
     // Temporary registers.
     // xmm15 is use by the MacroAssembler as fpTempRegister.

@@ -229,9 +229,9 @@ MacroAssembler::Jump WasmBoundsCheckCustom::generate(Inst& inst, CCallHelpers& j
 
     MacroAssembler::Jump overflowOOB { };
     if (inst.args().size() > 2)
-        overflowOOB = Inst((is32Bit() ? Air::Branch32 : Air::Branch64), value, Arg::relCond(MacroAssembler::Below), inst.args()[0], inst.args()[2]).generate(jit, context);
+        overflowOOB = Inst(Air::Branch64, value, Arg::relCond(MacroAssembler::Below), inst.args()[0], inst.args()[2]).generate(jit, context);
 
-    MacroAssembler::Jump outOfBounds = Inst((is32Bit() ? Air::Branch32 : Air::Branch64), value, Arg::relCond(MacroAssembler::AboveOrEqual), inst.args()[0], inst.args()[1]).generate(jit, context);
+    MacroAssembler::Jump outOfBounds = Inst(Air::Branch64, value, Arg::relCond(MacroAssembler::AboveOrEqual), inst.args()[0], inst.args()[1]).generate(jit, context);
 
     context.latePaths.append(std::tuple {
         value->origin(),

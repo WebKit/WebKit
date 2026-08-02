@@ -190,9 +190,7 @@ end
 
 # Get IPIntCallee object at startup
 macro unboxWasmCallee(calleeBits, scratch)
-if JSVALUE64
     andp ~(constexpr JSValue::NativeCalleeTag), calleeBits
-end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, scratch
     loadp [scratch], scratch
     addp scratch, calleeBits
@@ -461,7 +459,7 @@ macro operationCallMayThrowImpl(fn, sizeOfExtraRegistersPreserved)
     fn()
     bpneq r1, (constexpr JSC::IPInt::SlowPathExceptionTag), .continuation
 
-    storei r0, ArgumentCountIncludingThis + PayloadOffset[cfr]
+    storei r0, ArgumentCountIncludingThis + LowWordOffset[cfr]
     if ARM64 or ARM64E
         move cfr, a1
         move sp, a2
@@ -493,7 +491,7 @@ end
 #
 # debugger-aware trap. 2 instructions; heavy logic in _wasm_ipint_check_debugger_hook_and_throw_trap due to fixed-size IPInt dispatch slots.
 macro handleDebuggerTrapIfNeededAndThrowWasmTrap(exception)
-    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
+    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + LowWordOffset[cfr]
 if ADDRESS64 and (ARM64 or ARM64E)
    # Currently, only ARM64 and ARM64E with ADDRESS64 platforms support the WasmDebugger.
     jmp _wasm_ipint_check_debugger_hook_and_throw_trap
@@ -601,20 +599,16 @@ macro uintAlign(instrname)
     _uint%instrname%:
 end
 
-# On JSVALUE64, each 64-bit argument GPR holds one whole Wasm value.
 macro forEachWasmArgumentGPR(fn)
     if ARM64 or ARM64E
         fn(0, wa0, wa1)
         fn(2, wa2, wa3)
         fn(4, wa4, wa5)
         fn(6, wa6, wa7)
-    elsif JSVALUE64
-        fn(0, wa0, wa1)
-        fn(2, wa2, wa3)
-        fn(4, wa4, wa5)
     else
         fn(0, wa0, wa1)
         fn(2, wa2, wa3)
+        fn(4, wa4, wa5)
     end
 end
 
@@ -629,11 +623,9 @@ macro preserveWasmGPRArgumentRegistersImpl()
     forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
         if ARM64 or ARM64E
             storepairq gpr1, gpr2, index * MachineRegisterSize[sp]
-        elsif JSVALUE64
+        else
             storeq gpr1, (index + 0) * MachineRegisterSize[sp]
             storeq gpr2, (index + 1) * MachineRegisterSize[sp]
-        else
-            store2ia gpr1, gpr2, index * MachineRegisterSize[sp]
         end
     end)
 end
@@ -642,11 +634,9 @@ macro restoreWasmGPRArgumentRegistersImpl()
     forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
         if ARM64 or ARM64E
             loadpairq index * MachineRegisterSize[sp], gpr1, gpr2
-        elsif JSVALUE64
+        else
             loadq (index + 0) * MachineRegisterSize[sp], gpr1
             loadq (index + 1) * MachineRegisterSize[sp], gpr2
-        else
-            load2ia index * MachineRegisterSize[sp], gpr1, gpr2
         end
     end)
 end
@@ -730,7 +720,7 @@ macro reloadMemoryRegistersFromInstance(instance, scratch1)
 end
 
 macro throwException(exception)
-    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
+    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + LowWordOffset[cfr]
     jmp _wasm_throw_from_slow_path_trampoline
 end
 
@@ -829,10 +819,6 @@ op(js_to_wasm_wrapper_entry, macro ()
         # Replace the WebAssemblyFunction Callee with our JSToWasm NativeCallee
         loadp WebAssemblyFunction::m_boxedJSToWasmCallee[webAssemblyFunctionOut], scratch
         storep scratch, Callee[cfr] # JSToWasmCallee
-        if not JSVALUE64
-            move constexpr JSValue::NativeCalleeTag, scratch
-            storep scratch, TagOffset + Callee[cfr]
-        end
         storep wasmInstance, CodeBlock[cfr]
     end
 
@@ -874,16 +860,8 @@ end
     # Save wasmInstance and put the correct Callee into the stack for building the frame
     storep wasmInstance, CodeBlock[cfr]
 
-if JSVALUE64
     loadp Callee[cfr], memoryBase
     transferp WebAssemblyFunction::m_boxedJSToWasmCallee[ws0], Callee[cfr]
-else
-    # Store old Callee to the stack temporarily
-    loadp Callee[cfr], ws1
-    push ws1, ws1
-    loadp WebAssemblyFunction::m_boxedJSToWasmCallee[ws0], ws1
-    storep ws1, Callee[cfr]
-end
 
     # Prepare frame
     move ws0, a2
@@ -891,13 +869,7 @@ end
     cCall3(_operationJSToWasmEntryWrapperBuildFrame)
 
     # Restore Callee slot
-if JSVALUE64
     storep memoryBase, Callee[cfr]
-else
-    loadp [sp], ws0
-    addp 2 * SlotSize, sp
-    storep ws0, Callee[cfr]
-end
 
     btpnz r1, .buildEntryFrameThrew
     move r0, ws0
@@ -916,11 +888,9 @@ end
     forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
         if ARM64 or ARM64E
             loadpairq index * MachineRegisterSize[sp], gpr1, gpr2
-        elsif JSVALUE64
+        else
             loadq (index + 0) * MachineRegisterSize[sp], gpr1
             loadq (index + 1) * MachineRegisterSize[sp], gpr2
-        else
-            load2ia index * MachineRegisterSize[sp], gpr1, gpr2
         end
     end)
     forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
@@ -949,12 +919,7 @@ end
     loadp [ws0], ws0
 
     # Set the callee's interpreter Wasm::Callee
-if JSVALUE64
     transferp WebAssemblyFunction::m_importableFunction + Wasm::WasmOrJSImportableFunction::boxedCallee[ws1], constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
-else
-    transferp WebAssemblyFunction::m_importableFunction + Wasm::WasmOrJSImportableFunction::boxedCallee + PayloadOffset[ws1], constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset[sp]
-    transferp WebAssemblyFunction::m_importableFunction + Wasm::WasmOrJSImportableFunction::boxedCallee + TagOffset[ws1], constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset[sp]
-end
 
     call ws0, WasmEntryPtrTag
 
@@ -978,11 +943,9 @@ end
     forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
         if ARM64 or ARM64E
             storepairq gpr1, gpr2, index * MachineRegisterSize[sp]
-        elsif JSVALUE64
+        else
             storeq gpr1, (index + 0) * MachineRegisterSize[sp]
             storeq gpr2, (index + 1) * MachineRegisterSize[sp]
-        else
-            store2ia gpr1, gpr2, index * MachineRegisterSize[sp]
         end
     end)
     forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
@@ -1086,11 +1049,9 @@ op(wasm_to_js_wrapper_entry, macro()
     forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
         if ARM64 or ARM64E
             storepairq gpr1, gpr2, index * MachineRegisterSize[sp]
-        elsif JSVALUE64
+        else
             storeq gpr1, (index + 0) * MachineRegisterSize[sp]
             storeq gpr2, (index + 1) * MachineRegisterSize[sp]
-        else
-            store2ia gpr1, gpr2, index * MachineRegisterSize[sp]
         end
     end)
     forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
@@ -1121,9 +1082,6 @@ end
 
     loadp WasmToJSCallableFunctionSlot[cfr], t2
     loadp JSC::Wasm::WasmOrJSImportableFunctionCallLinkInfo::importFunction[t2], t0
-if not JSVALUE64
-    move (constexpr JSValue::CellTag), t1
-end
     loadp JSC::Wasm::WasmOrJSImportableFunctionCallLinkInfo::callLinkInfo[t2], t2
 
     # calleeGPR = t0
@@ -1150,9 +1108,6 @@ end
 
 .postcall:
     storep r0, [sp]
-if not JSVALUE64
-    storep r1, TagOffset[sp]
-end
 
     move sp, a0
     move cfr, a1
@@ -1166,11 +1121,9 @@ end
     forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
         if ARM64 or ARM64E
             loadpairq index * MachineRegisterSize[sp], gpr1, gpr2
-        elsif JSVALUE64
+        else
             loadq (index + 0) * MachineRegisterSize[sp], gpr1
             loadq (index + 1) * MachineRegisterSize[sp], gpr2
-        else
-            load2ia index * MachineRegisterSize[sp], gpr1, gpr2
         end
     end)
     forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
@@ -1241,7 +1194,7 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     move cfr, a0
     move wasmInstance, a1
     # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
-    loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a2
+    loadi ArgumentCountIncludingThis + LowWordOffset[cfr], a2
     storei 0, CallSiteIndex[cfr]
     cCall3(_slow_path_wasm_throw_exception)
     jumpToException()
@@ -1267,7 +1220,7 @@ op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
     # the machine PC, so IPInt registers (PC, MC, ws0, cfr) are still live.
     # Exception type comes from instance->m_exception; copy to CFR slot for handle_debugger_trap_if_needed.
     loadi JSWebAssemblyInstance::m_exception[wasmInstance], t0
-    storei t0, ArgumentCountIncludingThis + PayloadOffset[cfr]
+    storei t0, ArgumentCountIncludingThis + LowWordOffset[cfr]
     handleDebuggerTrapIfNeeded()
 
     move wasmInstance, a2
@@ -1596,11 +1549,9 @@ macro storeAllArgumentRegisters(base)
     forEachWasmArgumentGPR(macro(index, reg1, reg2)
         if ARM64 or ARM64E
             storepairq reg1, reg2, index * MachineRegisterSize[base]
-        elsif JSVALUE64
+        else
             storeq reg1, (index + 0) * MachineRegisterSize[base]
             storeq reg2, (index + 1) * MachineRegisterSize[base]
-        else
-            store2ia reg1, reg2, index * MachineRegisterSize[base]
         end
     end)
     forEachWasmArgumentFPR(macro(index, reg1, reg2)
@@ -1617,11 +1568,9 @@ macro loadAllArgumentRegisters(base)
     forEachWasmArgumentGPR(macro(index, gpr1, gpr2)
         if ARM64 or ARM64E
             loadpairq index * MachineRegisterSize[base], gpr1, gpr2
-        elsif JSVALUE64
+        else
             loadq (index + 0) * MachineRegisterSize[base], gpr1
             loadq (index + 1) * MachineRegisterSize[base], gpr2
-        else
-            load2ia index * MachineRegisterSize[base], gpr1, gpr2
         end
     end)
     forEachWasmArgumentFPR(macro(index, fpr1, fpr2)
@@ -2018,7 +1967,7 @@ _pinballHandlerRejectFunction:
 # 5. Instruction implementation #
 #################################
 
-if JSVALUE64 and (ARM64 or ARM64E or X86_64)
+if ARM64 or ARM64E or X86_64
     include InPlaceInterpreter64
 else
 # For unimplemented architectures: make sure that the assertions can still find the labels

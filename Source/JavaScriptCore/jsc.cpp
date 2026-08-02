@@ -3037,7 +3037,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryDeadCount, (JSGlobalObject*
 
 JSC_DEFINE_HOST_FUNCTION(functionIs32BitPlatform, (JSGlobalObject*, CallFrame*))
 {
-#if USE(JSVALUE64)
+#if CPU(ADDRESS64)
     return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 #else
     return JSValue::encode(JSValue(JSC::JSValue::JSTrue));

@@ -134,7 +134,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
     }
 
     case DataFormatCell:
-        // No retag required on JSVALUE64!
+        // No retag required for a cell.
     case DataFormatJS:
     case DataFormatJSInt32:
     case DataFormatJSDouble:
@@ -876,7 +876,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 shuffleData.registers[callTargetGPR] = ValueRecovery::inGPR(callTargetGPR, DataFormatJS);
             shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
         } else {
-            store32(TrustedImm32(numPassedArgs), calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
+            store32(TrustedImm32(numPassedArgs), calleeFrameLowWordSlot(CallFrameSlot::argumentCountIncludingThis));
 
             for (unsigned i = 0; i < numPassedArgs; i++) {
                 Edge argEdge = m_graph.m_varArgChildren[node->firstChild() + 1 + i];
@@ -3429,7 +3429,7 @@ void SpeculativeJIT::compile(Node* node)
         
         case FlushedInt32: {
             GPRTemporary result(this);
-            load32(payloadFor(node->machineLocal()), result.gpr());
+            load32(lowWordFor(node->machineLocal()), result.gpr());
             
             // Like strictInt32Result, but don't useChildren - our children are phi nodes,
             // and don't represent values within this dataflow with virtual registers.
@@ -3499,7 +3499,7 @@ void SpeculativeJIT::compile(Node* node)
             
         case FlushedInt32: {
             SpeculateInt32Operand value(this, node->child1());
-            store32(value.gpr(), payloadFor(node->machineLocal()));
+            store32(value.gpr(), lowWordFor(node->machineLocal()));
             noResult(node);
             recordSetLocal(DataFormatInt32);
             break;
@@ -7398,7 +7398,7 @@ void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
     case CellUse: {
         SpeculateCellOperand base(this, node->child1());
 
-        JSValueRegs baseRegs = JSValueRegs::payloadOnly(base.gpr());
+        JSValueRegs baseRegs { base.gpr() };
 
         flushRegisters();
         JSValueRegsFlushedCallResult result(this);
@@ -7983,7 +7983,7 @@ void SpeculativeJIT::compileGetPrivateNameById(Node* node)
     case CellUse: {
         SpeculateCellOperand base(this, m_graph.child(node, 0));
 
-        JSValueRegs baseRegs = JSValueRegs::payloadOnly(base.gpr());
+        JSValueRegs baseRegs { base.gpr() };
 
         flushRegisters();
         JSValueRegsFlushedCallResult result(this);
@@ -8757,10 +8757,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
         }
 
         if (!recoverGenericCase.empty()) {
-            if (baseRegs.tagGPR() == InvalidGPRReg)
-                addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndPutByVal, NoResult, LinkableConstant::globalObject(*this, node), CellValue(baseRegs.payloadGPR()), valueRegs, TrustedImm32(ecmaMode.isStrict()), indexGPR, enumeratorGPR));
-            else
-                addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndPutByVal, NoResult, LinkableConstant::globalObject(*this, node), baseRegs, valueRegs, TrustedImm32(ecmaMode.isStrict()), indexGPR, enumeratorGPR));
+            addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndPutByVal, NoResult, LinkableConstant::globalObject(*this, node), CellValue(baseRegs.payloadGPR()), valueRegs, TrustedImm32(ecmaMode.isStrict()), indexGPR, enumeratorGPR));
         }
 
         doneCases.link(this);
@@ -8770,7 +8767,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
         // Use manual operand speculation since Fixup may have picked a UseKind more restrictive than CellUse.
         SpeculateCellOperand base(this, baseEdge, ManualOperandSpeculation);
         speculate(node, baseEdge);
-        generate(JSValueRegs::payloadOnly(base.gpr()));
+        generate(JSValueRegs(base.gpr()));
     } else {
         JSValueOperand base(this, baseEdge);
         generate(base.regs());
@@ -9196,9 +9193,7 @@ void SpeculativeJIT::compileStringIteratorNext(Node* node)
     strictInt32TupleResultWithoutUsingChildren(resultPositionGPR, node, 1);
 }
 
-// JSPromise inline allocation. The packed-pointer-and-flags layout assumed
-// here (flags in the high 16 bits of the 64-bit slot) only holds on
-// CPU(ADDRESS64) builds with CompactPointerTuple's 48-bit pointer encoding.
+// JSPromise inline allocation puts the flags in the high 16 bits of the 64-bit slot.
 static_assert(CompactPointerTuple<JSCell*, uint16_t>::maxNumberOfBitsInPointer == 48,
     "JSPromise JIT initialization assumes a 48-bit pointer / 16-bit type packing");
 

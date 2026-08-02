@@ -69,8 +69,6 @@ public:
 
     void emitLabel(GenericLabel<Traits>&);
     void recordOpcode(typename Traits::OpcodeID);
-    void alignWideOpcode16();
-    void alignWideOpcode32();
 
     template<typename... Args>
         requires (sizeof...(Args) > 0 && (... && std::integral<Args>))

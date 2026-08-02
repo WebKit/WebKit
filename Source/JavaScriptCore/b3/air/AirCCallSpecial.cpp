@@ -74,12 +74,9 @@ bool CCallSpecial::isValid(Inst& inst)
             return false;
         switch (arg.kind()) {
         case Arg::Imm:
-            if (is32Bit())
-                break;
             return false;
         case Arg::BigImm:
-            if (is64Bit())
-                break;
+            break;
             return false;
         case Arg::Tmp:
         case Arg::Addr:

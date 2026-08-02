@@ -658,7 +658,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
 #endif
 
     // Call slow operation
-    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(bytecodeOffsetGPR, highWordFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
     loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<decltype(operationThrow)>(globalObjectGPR, thrownValueJSR);
@@ -1499,7 +1499,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     auto noTrap = jit.branchTest32(Zero, AbsoluteAddress(vm.traps().trapBitsAddress()), TrustedImm32(VMTraps::AsyncEvents));
     {
         // Call slow operation
-        jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
+        jit.store32(TrustedImm32(0), highWordFor(CallFrameSlot::argumentCountIncludingThis));
         jit.prepareCallOperation(vm);
         loadGlobalObject(jit, argumentGPR1);
         jit.setupArguments<decltype(operationHandleTraps)>(argumentGPR1);
@@ -1513,7 +1513,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     auto ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
     {
         // op_enter is always at bytecodeOffset 0.
-        jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
+        jit.store32(TrustedImm32(0), highWordFor(CallFrameSlot::argumentCountIncludingThis));
         jit.prepareCallOperation(vm);
 
         jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(TrustedImmPtr(&vm), argumentGPR1);
@@ -1774,7 +1774,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& v
     jit.emitCTIThunkPrologue();
 
     // Call slow operation
-    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+    jit.store32(bytecodeOffsetGPR, highWordFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
     loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<decltype(operationHandleTraps)>(globalObjectGPR);
@@ -2084,9 +2084,9 @@ void JIT::emit_op_argument_count(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpArgumentCount>();
     VirtualRegister dst = bytecode.m_dst;
-    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT0);
+    load32(lowWordFor(CallFrameSlot::argumentCountIncludingThis), regT0);
     sub32(TrustedImm32(1), regT0);
-    JSValueRegs result = JSValueRegs::withTwoAvailableRegs(regT0, regT1);
+    JSValueRegs result { regT0 };
     boxInt32(regT0, result);
     emitPutVirtualRegister(dst, result);
 }
@@ -2097,7 +2097,7 @@ void JIT::emit_op_get_argument(const JSInstruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     int index = bytecode.m_index;
 
-    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT2);
+    load32(lowWordFor(CallFrameSlot::argumentCountIncludingThis), regT2);
     Jump argumentOutOfBounds = branch32(LessThanOrEqual, regT2, TrustedImm32(index));
     loadValue(addressFor(VirtualRegister(CallFrameSlot::thisArgument + index)), jsRegT10);
     Jump done = jump();

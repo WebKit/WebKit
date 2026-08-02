@@ -156,18 +156,6 @@ public:
             });
         }
 
-        void align(size_t congruent = 0)
-        {
-            UNUSED_PARAM(congruent);
-#if CPU(NEEDS_ALIGNED_ACCESS)
-            congruent = congruent % OpcodeSize::Wide32;
-            m_bytecodeGenerator.withWriter(m_writer, [&] {
-                while (m_bytecodeGenerator.instructions().size() % OpcodeSize::Wide32 != congruent)
-                    OpNop::emit<OpcodeSize::Narrow>(&m_bytecodeGenerator);
-            });
-#endif
-        }
-
     private:
         BytecodeGenerator& m_bytecodeGenerator;
         JSInstructionStreamWriter& m_writer;
@@ -189,27 +177,24 @@ public:
         JSInstructionStreamWriter writer;
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
-        fragment.align();
         insertImpl(InsertionPoint(instruction.offset(), Position::Before), includeBranch, WTF::move(writer));
     }
 
     template<class Function>
-    void insertFragmentAfter(const JSInstructionStream::Ref& instruction, Function function, size_t alignCongruent = 0)
+    void insertFragmentAfter(const JSInstructionStream::Ref& instruction, Function function)
     {
         IncludeBranch includeBranch = IncludeBranch::No;
         JSInstructionStreamWriter writer;
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
-        fragment.align(alignCongruent);
         insertImpl(InsertionPoint(instruction.offset(), Position::After), includeBranch, WTF::move(writer));
     }
 
     template<class Function>
     void replaceBytecodeWithFragment(const JSInstructionStream::Ref& instruction, Function function)
     {
-        // Note: This function preserves the alignment of the subsequent bytecode (on targets where this matters)
         m_insertions.append(Insertion { InsertionPoint(instruction.offset(), Position::OriginalBytecodePoint), Insertion::Type::Remove, IncludeBranch::No, instruction->size(), { } });
-        insertFragmentAfter(instruction, function, instruction->size());
+        insertFragmentAfter(instruction, function);
     }
 
     void execute();

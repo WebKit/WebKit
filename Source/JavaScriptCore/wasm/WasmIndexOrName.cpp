@@ -33,7 +33,6 @@ namespace JSC { namespace Wasm {
 
 IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>>&& name)
 {
-#if USE(JSVALUE64)
     static_assert(sizeof(m_indexName.index) == sizeof(m_indexName.name), "bit-tagging depends on sizes being equal");
     ASSERT(!(index & allTags));
     ASSERT(!(std::bit_cast<Index>(name.first) & allTags));
@@ -41,15 +40,6 @@ IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>
         m_indexName.name = name.first;
     else
         m_indexName.index = indexTag | index;
-#elif USE(JSVALUE32_64)
-    if (name.first) {
-        m_indexName.name = name.first;
-        m_kind = Kind::Name;
-    } else {
-        m_indexName.index = index;
-        m_kind = Kind::Index;
-    }
-#endif
     m_nameSection = WTF::move(name.second);
 }
 

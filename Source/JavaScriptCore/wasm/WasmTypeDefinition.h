@@ -844,14 +844,10 @@ public:
     uint64_t fieldHeapKey(StructFieldCount fieldIndex) const
     {
         uint64_t ptr = std::bit_cast<uintptr_t>(this);
-#if CPU(ADDRESS64)
         static_assert(maxStructFieldCount <= (1U << 20));
         constexpr uint32_t fieldIndexMask = (1 << 20) - 1;
         uint32_t maskedFieldIndex = fieldIndex & fieldIndexMask; // mod 20-bits.
         return static_cast<uint64_t>(ptr | (maskedFieldIndex & 0b1111) | (static_cast<uint64_t>(maskedFieldIndex >> 4) << 48));
-#else
-        return static_cast<uint64_t>(ptr | (static_cast<uint64_t>(fieldIndex) << 32));
-#endif
     }
 
     bool NODELETE isSubRTT(const RTT& other) const;

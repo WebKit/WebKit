@@ -235,7 +235,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> callPolymorphicCalleeGenerator(const Abstr
 }
 #endif
 
-#if USE(JSVALUE64)
 MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLocker&)
 {
     CCallHelpers jit;
@@ -284,7 +283,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "catchInWasmThunk"_s, "Wasm catch runway");
 }
-#endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 

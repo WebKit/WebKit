@@ -38,21 +38,13 @@ class CalleeBits {
 public:
     constexpr CalleeBits() = default;
     CalleeBits(int64_t value)
-#if USE(JSVALUE64)
         : m_ptr { reinterpret_cast<void*>(value) }
-#elif USE(JSVALUE32_64)
-        : m_ptr { reinterpret_cast<void*>(JSValue::decode(value).payload()) }
-        , m_tag { JSValue::decode(value).tag() }
-#endif
     { }
     CalleeBits(NativeCallee* nativeCallee) { *this = nativeCallee; }
 
     CalleeBits& operator=(JSCell* cell)
     {
         m_ptr = cell;
-#if USE(JSVALUE32_64)
-        m_tag = JSValue::CellTag;
-#endif
         ASSERT(isCell());
         return *this;
     }
@@ -60,47 +52,10 @@ public:
     CalleeBits& operator=(NativeCallee* nativeCallee)
     {
         m_ptr = boxNativeCalleeIfExists(nativeCallee);
-#if USE(JSVALUE32_64)
-        m_tag = JSValue::NativeCalleeTag;
-#endif
         ASSERT_IMPLIES(nativeCallee, isNativeCallee());
         return *this;
     }
 
-#if USE(JSVALUE32_64)
-    static constexpr CalleeBits nullCallee()
-    {
-        CalleeBits result;
-        result.m_tag = JSValue::NullTag;
-        return result;
-    }
-
-    static EncodedJSValue encodeJSCallee(const JSCell* cell)
-    {
-        if (!cell)
-            return nullCallee().encodedBits();
-        return JSValue::encode(JSValue(cell));
-    }
-
-    static EncodedJSValue encodeBoxedNativeCallee(void* boxedCallee)
-    {
-        if (!boxedCallee)
-            return nullCallee().encodedBits();
-        EncodedValueDescriptor ret;
-        ret.asBits.tag = JSValue::NativeCalleeTag;
-        ret.asBits.payload = reinterpret_cast<intptr_t>(boxedCallee);
-        return std::bit_cast<EncodedJSValue>(ret);
-    }
-
-    EncodedJSValue encodedBits() const
-    {
-        EncodedValueDescriptor result;
-        result.asBits.tag = m_tag;
-        result.asBits.payload = reinterpret_cast<intptr_t>(m_ptr);
-        return std::bit_cast<EncodedJSValue>(result);
-    }
-
-#elif USE(JSVALUE64)
     static constexpr CalleeBits nullCallee()
     {
         return CalleeBits();
@@ -119,9 +74,6 @@ public:
     }
 
     EncodedJSValue encodedBits() const { return reinterpret_cast<EncodedJSValue>(m_ptr); }
-#else
-#error "Unsupported configuration"
-#endif
 
     static EncodedJSValue encodeNativeCallee(NativeCallee* callee)
     {
@@ -139,23 +91,15 @@ public:
 
     static void* boxNativeCallee(NativeCallee* callee)
     {
-#if USE(JSVALUE64)
         auto bits = std::bit_cast<uintptr_t>(callee);
         CalleeBits result { static_cast<int64_t>((bits - lowestAccessibleAddress()) | JSValue::NativeCalleeTag) };
         ASSERT(result.isNativeCallee());
         return result.rawPtr();
-#elif USE(JSVALUE32_64)
-        return std::bit_cast<void*>(std::bit_cast<uintptr_t>(callee) - lowestAccessibleAddress());
-#endif
     }
 
     bool isNativeCallee() const
     {
-#if USE(JSVALUE64)
         return (reinterpret_cast<uintptr_t>(m_ptr) & JSValue::NativeCalleeMask) == JSValue::NativeCalleeTag;
-#elif USE(JSVALUE32_64)
-        return m_tag == JSValue::NativeCalleeTag;
-#endif
     }
     bool isCell() const { return !isNativeCallee(); }
 
@@ -168,11 +112,7 @@ public:
     NativeCallee* asNativeCallee() const
     {
         ASSERT(isNativeCallee());
-#if USE(JSVALUE64)
         return std::bit_cast<NativeCallee*>(static_cast<uintptr_t>(std::bit_cast<uintptr_t>(m_ptr) & ~JSValue::NativeCalleeTag) + lowestAccessibleAddress());
-#elif USE(JSVALUE32_64)
-        return std::bit_cast<NativeCallee*>(std::bit_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
-#endif
     }
 
     void* rawPtr() const { return m_ptr; }
@@ -182,9 +122,6 @@ public:
 
 private:
     void* m_ptr { nullptr };
-#if USE(JSVALUE32_64)
-    uint32_t m_tag { JSValue::EmptyValueTag };
-#endif
 };
 
 } // namespace JSC

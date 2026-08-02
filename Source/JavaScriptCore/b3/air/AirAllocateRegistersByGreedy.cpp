@@ -3525,7 +3525,7 @@ private:
         // We can coalesce a Move32 so long as either of the following holds:
         // - The input is already zero-filled.
         // - The output only cares about the low 32 bits.
-        if (inst.kind.opcode == Move32 && !is32Bit() && m_tmpWidth.defWidth(inst.args()[0].tmp()) > Width32)
+        if (inst.kind.opcode == Move32 && m_tmpWidth.defWidth(inst.args()[0].tmp()) > Width32)
             return false;
         return true;
     }

@@ -3012,16 +3012,10 @@ RegisterID* BytecodeGenerator::emitPutByValWithECMAMode(RegisterID* base, Regist
 
 RegisterID* BytecodeGenerator::emitEnumeratorPutByVal(ForInContext& context, RegisterID* base, RegisterID* property, RegisterID* value)
 {
-#if USE(JSVALUE64)
     // FIXME: We should have a better bytecode rewriter that can resize chunks.
     OpEnumeratorPutByVal::emit<OpcodeSize::Wide32>(this, base, context.mode(), property, context.propertyOffset(), context.enumerator(), value, ecmaMode());
     context.addPutInst(m_lastInstruction.offset(), property->index());
     return value;
-#else
-    UNUSED_PARAM(context);
-    OpPutByVal::emit(this, base, property, value, ecmaMode());
-    return value;
-#endif
 }
 
 RegisterID* BytecodeGenerator::emitGetPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property)
@@ -5359,12 +5353,6 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::A
     m_tryContextStack.swap(savedTryContextStack);
 
 
-#if CPU(NEEDS_ALIGNED_ACCESS)
-    // conservatively align for the bytecode rewriter: it will delete this yield and
-    // append a fragment, so we make sure that the start of the fragments is aligned
-    while (m_writer.position() % OpcodeSize::Wide32)
-        OpNop::emit<OpcodeSize::Narrow>(this);
-#endif
     OpYield::emit(this, yieldPointIndex, argument);
 
     // Restore the try contexts, which start offset is updated to the merge point.

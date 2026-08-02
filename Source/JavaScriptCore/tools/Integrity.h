@@ -35,13 +35,9 @@
 #include <mach/vm_param.h>
 #endif
 
-#if USE(JSVALUE32)
-#define ENABLE_EXTRA_INTEGRITY_CHECKS 0 // Not supported.
-#else
 // Force ENABLE_EXTRA_INTEGRITY_CHECKS to 1 for your local build if you want
 // more prolific audits to be enabled.
 #define ENABLE_EXTRA_INTEGRITY_CHECKS 0
-#endif
 
 // From API/JSBase.h
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
@@ -121,8 +117,6 @@ ALWAYS_INLINE bool isSanePointer(const T* pointer)
     return isSanePointer(static_cast<const void*>(pointer)) && !(std::bit_cast<uintptr_t>(pointer) & (alignof(T) - 1));
 }
 
-#if USE(JSVALUE64)
-
 class Analyzer {
 public:
     enum Action { LogOnly, LogAndCrash };
@@ -148,8 +142,6 @@ VM* doAudit(VM*); // see IntegrityInlines.h
 // These are used for debugging queries, and will not crash.
 JS_EXPORT_PRIVATE bool verifyCell(JSCell*);
 JS_EXPORT_PRIVATE bool verifyCell(VM&, JSCell*);
-
-#endif // USE(JSVALUE64)
 
 ALWAYS_INLINE void auditCellRandomly(VM&, JSCell*);
 ALWAYS_INLINE void auditCellMinimally(VM&, JSCell*);
@@ -181,7 +173,7 @@ ALWAYS_INLINE void auditCell(VM&, JSValue);
 
 ALWAYS_INLINE void auditStructureID(StructureID);
 
-#if ENABLE(EXTRA_INTEGRITY_CHECKS) && USE(JSVALUE64)
+#if ENABLE(EXTRA_INTEGRITY_CHECKS)
 template<typename T> ALWAYS_INLINE T audit(T value) { return std::bit_cast<T>(doAudit(value)); }
 
 template<>

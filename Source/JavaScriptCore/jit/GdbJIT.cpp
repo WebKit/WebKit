@@ -1275,7 +1275,7 @@ void UnwindInfoSection::writeFDEState(Ref<Writer> writer)
     writer->writeULEB128(RegisterFP);
     writer->writeSLEB128(0);
     writer->write<uint8_t>(AdvanceLoc1);
-    writer->write<uint8_t>(is32Bit() ? 2 : 4);
+    writer->write<uint8_t>(4);
     writer->write<uint8_t>(DefCFASF);
     writer->writeULEB128(RegisterFP);
     writer->writeSLEB128(static_cast<int32_t>(sizeof(CallerFrameAndPC)));
@@ -1320,7 +1320,7 @@ static JITCodeEntry* createELFObject(Ref<CodeDescription> desc)
         desc->codeSize(), ELFSection::FlagAlloc | ELFSection::FlagExec));
 
     createSymbolsTable(desc, &elf, textSectionIndex);
-    if constexpr (isARM64() || is32Bit())
+    if constexpr (isARM64())
         elf.addSection(WTF::makeUnique<UnwindInfoSection>(desc));
 
     elf.write(writer);
