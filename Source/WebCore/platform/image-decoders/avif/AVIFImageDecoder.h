@@ -44,7 +44,7 @@ public:
 
     // ScalableImageDecoder
     String filenameExtension() const final { return "avif"_s; }
-    size_t frameCount() const final { return m_frameCount; };
+    size_t decodeIfNeededAndGetFrameCount() const final { return m_frameCount; };
     RepetitionCount repetitionCount() const final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final WTF_REQUIRES_LOCK(m_lock);
     bool setFailed() final;

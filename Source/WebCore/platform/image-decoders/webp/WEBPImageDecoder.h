@@ -48,8 +48,8 @@ public:
     void setData(const FragmentedSharedBuffer&, bool) final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
     RepetitionCount repetitionCount() const override;
-    size_t frameCount() const override { return m_frameCount; }
-    void clearFrameBufferCache(size_t) override;
+    size_t decodeIfNeededAndGetFrameCount() const override { return m_frameCount; }
+    void clearDecodedPixelDataIfNeeded(size_t) override;
 
 private:
     WEBPImageDecoder(AlphaOption, GammaAndColorProfileOption);

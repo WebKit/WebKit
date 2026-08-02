@@ -70,7 +70,8 @@ RepetitionCount WEBPImageDecoder::repetitionCount() const
 
 ScalableImageDecoderFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index >= frameCount())
+    assertIsHeld(m_lock);
+    if (index >= decodeIfNeededAndGetFrameCount())
         return 0;
 
     // The size of m_frameBufferCache may be smaller than the index requested. This can happen
@@ -86,6 +87,7 @@ ScalableImageDecoderFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 
 size_t WEBPImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex, WebPDemuxer* demuxer)
 {
+    assertIsHeld(m_lock);
     // The first frame doesn't depend on any other.
     if (!frameIndex)
         return 0;
@@ -124,6 +126,7 @@ size_t WEBPImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex, WebPD
 
 void WEBPImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 
@@ -157,6 +160,7 @@ void WEBPImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 
 void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 
@@ -219,7 +223,8 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
 
 bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* webpFrame)
 {
-    if (frameIndex >= frameCount())
+    assertIsHeld(m_lock);
+    if (frameIndex >= decodeIfNeededAndGetFrameCount())
         return false;
 
     auto& buffer = m_frameBufferCache[frameIndex];
@@ -258,6 +263,7 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
 
 void WEBPImageDecoder::applyPostProcessing(size_t frameIndex, WebPIDecoder* decoder, WebPDecBuffer& decoderBuffer, bool blend)
 {
+    assertIsHeld(m_lock);
     auto& buffer = m_frameBufferCache[frameIndex];
     int decodedWidth = 0;
     int decodedHeight = 0;
@@ -337,8 +343,9 @@ void WEBPImageDecoder::parseHeader()
     WebPDemuxDelete(demuxer);
 }
 
-void WEBPImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
+void WEBPImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return;
 

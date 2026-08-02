@@ -67,8 +67,12 @@ void ScrollingTreeStickyNodeCoordinated::applyLayerPositions()
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNodeCoordinated " << scrollingNodeID() << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
 
     // Match the behavior of ScrollingTreeFrameScrollingNodeCoordinated::repositionScrollingLayers().
-    CoordinatedPlatformLayer::ForcePositionSync forceSync = ScrollingThread::isCurrentThread() && !scrollingTree()->isScrollingSynchronizedWithMainThread() ?
-        CoordinatedPlatformLayer::ForcePositionSync::Yes : CoordinatedPlatformLayer::ForcePositionSync::No;
+    CoordinatedPlatformLayer::ForcePositionSync forceSync;
+    {
+        Locker lock { scrollingTree()->treeLock() };
+        forceSync = ScrollingThread::isCurrentThread() && !scrollingTree()->isScrollingSynchronizedWithMainThread() ?
+            CoordinatedPlatformLayer::ForcePositionSync::Yes : CoordinatedPlatformLayer::ForcePositionSync::No;
+    }
 
     m_layer->setTopLeftPositionForScrolling(layerPosition - m_constraints.alignmentOffset(), forceSync);
 }

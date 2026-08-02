@@ -50,8 +50,8 @@ private:
     bool isActive() final;
     void invalidate() final;
 
-    void addCallbackIfNeeded();
-    void removeCallbackIfNeeded();
+    void addCallbackIfNeeded() WTF_REQUIRES_LOCK(m_lock);
+    void removeCallbackIfNeeded() WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
     GRefPtr<WPEScreenSyncObserver> m_observer WTF_GUARDED_BY_LOCK(m_lock);

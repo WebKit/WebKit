@@ -81,6 +81,7 @@ Ref<ScrollingTreeNode> ScrollingTreeCoordinated::createScrollingTreeNode(Scrolli
 
 void ScrollingTreeCoordinated::applyLayerPositionsInternal()
 {
+    assertIsHeld(m_treeLock);
     auto* rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return;
@@ -113,6 +114,7 @@ void ScrollingTreeCoordinated::didCompletePlatformRenderingUpdate()
 
 static bool collectDescendantLayersAtPoint(Vector<Ref<CoordinatedPlatformLayer>>& layersAtPoint, const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point)
 {
+    assertIsHeld(parent->lock());
     bool existsOnDescendent = false;
     bool existsOnLayer = !!parent->scrollingNodeID() && parent->bounds().contains(point) && parent->eventRegion().contains(roundedIntPoint(point));
     for (auto& child : parent->children()) {

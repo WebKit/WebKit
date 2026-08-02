@@ -43,6 +43,7 @@ void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(std::uniq
 
 bool GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatformLayer& layer, std::optional<Damage>&& dirtyRegion)
 {
+    assertIsHeld(layer.lock());
     if (!m_displayBuffer)
         return false;
 

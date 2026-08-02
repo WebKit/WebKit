@@ -235,4 +235,16 @@ PlatformImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, Sub
     return buffer->backingStore()->image();
 }
 
+size_t ScalableImageDecoder::frameCount() const
+{
+    Locker locker { m_lock };
+    return decodeIfNeededAndGetFrameCount();
 }
+
+void ScalableImageDecoder::clearFrameBufferCache(size_t index)
+{
+    Locker locker { m_lock };
+    clearDecodedPixelDataIfNeeded(index);
+}
+
+} // namespace WebCore

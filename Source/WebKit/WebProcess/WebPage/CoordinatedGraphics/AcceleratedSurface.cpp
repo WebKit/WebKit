@@ -789,8 +789,10 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::SwapChain:
     switch (m_type) {
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
 #if USE(GBM) || OS(ANDROID)
-    case Type::EGLImage:
+    case Type::EGLImage: {
+        Locker locker { m_bufferFormatLock };
         return RenderTargetEGLImage::create(m_surfaceID, m_size, m_bufferFormat);
+    }
 #endif
     case Type::Texture:
         return RenderTargetTexture::create(m_surfaceID, m_size);

@@ -145,7 +145,7 @@ void ThreadedCompositor::invalidate()
 
 void ThreadedCompositor::startRenderTimer()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     ASSERT(!m_state.isRenderTimerActive);
     m_state.isRenderTimerActive = true;
     m_renderTimer.startOneShot(0_s);
@@ -153,14 +153,14 @@ void ThreadedCompositor::startRenderTimer()
 
 void ThreadedCompositor::stopRenderTimer()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     m_state.isRenderTimerActive = false;
     m_renderTimer.stop();
 }
 
 bool ThreadedCompositor::isOnlyRenderingUpdatePendingAndWaitingForTiles() const
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     return m_state.reasons.containsOnly({ CompositionReason::RenderingUpdate }) && m_state.isWaitingForTiles;
 }
 
@@ -463,7 +463,7 @@ ASCIILiteral ThreadedCompositor::stateToString(ThreadedCompositor::State state)
 
 void ThreadedCompositor::scheduleUpdateLocked()
 {
-    ASSERT(m_state.lock.isHeld());
+    assertIsHeld(m_state.lock);
     WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", reasonsToString(m_state.reasons).ascii().data(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
 
     switch (m_state.state) {

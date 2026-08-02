@@ -202,8 +202,11 @@ VideoFrameMetadata webkitGstBufferGetVideoFrameMetadata(GstBuffer* buffer)
         return videoFrameMetadata;
 
     auto processingDuration = MediaTime::zeroTime();
-    for (auto& [startTime, stopTime] : meta->priv->processingTimes.values())
-        processingDuration += fromGstClockTime(GST_CLOCK_DIFF(startTime, stopTime));
+    {
+        Locker locker { meta->priv->lock };
+        for (auto& [startTime, stopTime] : meta->priv->processingTimes.values())
+            processingDuration += fromGstClockTime(GST_CLOCK_DIFF(startTime, stopTime));
+    }
 
     if (processingDuration != MediaTime::zeroTime())
         videoFrameMetadata.processingDuration = processingDuration.toDouble();
@@ -253,6 +256,7 @@ MediaTime webkitGstBufferGetProcessingTime(GstBuffer* buffer, GstElement* elemen
     if (!meta)
         return MediaTime::invalidTime();
 
+    Locker locker { meta->priv->lock };
     auto [startTime, stopTime] = meta->priv->processingTimes.get(element);
     return fromGstClockTime(GST_CLOCK_DIFF(startTime, stopTime));
 }
