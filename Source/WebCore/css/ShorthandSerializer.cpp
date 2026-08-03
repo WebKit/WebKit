@@ -1623,24 +1623,38 @@ String ShorthandSerializer::serializeWhiteSpace() const
 {
     auto whiteSpaceCollapse = longhandValueID(0);
     auto textWrapMode = longhandValueID(1);
+    auto hasInitialWhiteSpaceTrim = isLonghandValueNone(2);
 
-    // Convert to backwards-compatible keywords if possible.
-    if (whiteSpaceCollapse == CSSValueCollapse && textWrapMode == CSSValueWrap)
-        return nameString(CSSValueNormal);
-    if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueNowrap)
-        return nameString(CSSValuePre);
-    if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueWrap)
-        return nameString(CSSValuePreWrap);
-    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrapMode == CSSValueWrap)
-        return nameString(CSSValuePreLine);
+    if (hasInitialWhiteSpaceTrim) {
+        // Convert to backwards-compatible keywords if possible.
+        if (whiteSpaceCollapse == CSSValueCollapse && textWrapMode == CSSValueWrap)
+            return nameString(CSSValueNormal);
+        if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueNowrap)
+            return nameString(CSSValuePre);
+        if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueWrap)
+            return nameString(CSSValuePreWrap);
+        if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrapMode == CSSValueWrap)
+            return nameString(CSSValuePreLine);
 
+        // Omit default longhand values.
+        if (whiteSpaceCollapse == CSSValueCollapse)
+            return nameString(textWrapMode);
+        if (textWrapMode == CSSValueWrap)
+            return nameString(whiteSpaceCollapse);
+
+        return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrapMode));
+    }
+
+    // white-space-trim has a non-initial value, so the backwards-compatible keywords don't apply.
     // Omit default longhand values.
+    if (whiteSpaceCollapse == CSSValueCollapse && textWrapMode == CSSValueWrap)
+        return serializeLonghandValue(2);
     if (whiteSpaceCollapse == CSSValueCollapse)
-        return nameString(textWrapMode);
+        return makeString(nameLiteral(textWrapMode), ' ', serializeLonghandValue(2));
     if (textWrapMode == CSSValueWrap)
-        return nameString(whiteSpaceCollapse);
+        return makeString(nameLiteral(whiteSpaceCollapse), ' ', serializeLonghandValue(2));
 
-    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrapMode));
+    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrapMode), ' ', serializeLonghandValue(2));
 }
 
 String serializeShorthandValue(const CSS::SerializationContext& context, const StyleProperties& properties, CSSPropertyID shorthand)

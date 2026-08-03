@@ -2023,6 +2023,7 @@ inline bool PropertyParserCustom::consumeWhiteSpaceShorthand(CSSParserTokenRange
 {
     RefPtr<CSSValue> whiteSpaceCollapse;
     RefPtr<CSSValue> textWrapMode;
+    RefPtr<CSSValue> whiteSpaceTrim;
 
     // Single value syntax.
     auto singleValueKeyword = consumeIdentRaw<
@@ -2054,12 +2055,15 @@ inline bool PropertyParserCustom::consumeWhiteSpaceShorthand(CSSParserTokenRange
             ASSERT_NOT_REACHED();
             return false;
         }
+        whiteSpaceTrim = CSSKeywordValue::create(CSSValueNone);
     } else {
         // Multi-value syntax.
-        for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !range.atEnd(); ++propertiesParsed) {
+        for (unsigned propertiesParsed = 0; propertiesParsed < 3 && !range.atEnd(); ++propertiesParsed) {
             if (!whiteSpaceCollapse && (whiteSpaceCollapse = CSSPropertyParsing::consumeWhiteSpaceCollapse(range)))
                 continue;
             if (!textWrapMode && (textWrapMode = CSSPropertyParsing::consumeTextWrapMode(range)))
+                continue;
+            if (!whiteSpaceTrim && state.context.propertySettings.cssWhiteSpaceTrimEnabled && (whiteSpaceTrim = CSSPropertyParsing::consumeWhiteSpaceTrim(range)))
                 continue;
             // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
             return false;
@@ -2074,9 +2078,12 @@ inline bool PropertyParserCustom::consumeWhiteSpaceShorthand(CSSParserTokenRange
         whiteSpaceCollapse = CSSKeywordValue::create(CSSValueCollapse);
     if (!textWrapMode)
         textWrapMode = CSSKeywordValue::create(CSSValueWrap);
+    if (!whiteSpaceTrim)
+        whiteSpaceTrim = CSSKeywordValue::create(CSSValueNone);
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyWhiteSpaceCollapse, WTF::move(whiteSpaceCollapse));
     result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapMode, WTF::move(textWrapMode));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyWhiteSpaceTrim, WTF::move(whiteSpaceTrim));
     return true;
 }
 

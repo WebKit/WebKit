@@ -9051,10 +9051,11 @@
             "codegen-properties": {
                 "longhands": [
                     "white-space-collapse",
-                    "text-wrap-mode"
+                    "text-wrap-mode",
+                    "white-space-trim"
                 ],
                 "parser-function": "consumeWhiteSpaceShorthand",
-                "parser-grammar-unused": "normal | pre | pre-wrap | pre-line | [ <'white-space-collapse'> || <'text-wrap-mode'> ]",
+                "parser-grammar-unused": "normal | pre | pre-wrap | pre-line | [ <'white-space-collapse'> || <'text-wrap-mode'> || <'white-space-trim'> ]",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },
             "specification": {

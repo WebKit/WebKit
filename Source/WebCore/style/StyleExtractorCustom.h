@@ -1298,24 +1298,38 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyWhiteSpace> {
     {
         auto whiteSpaceCollapse = state.style.whiteSpaceCollapse();
         auto textWrapMode = state.style.textWrapMode();
+        auto whiteSpaceTrim = state.style.whiteSpaceTrim();
 
-        // Convert to backwards-compatible keywords if possible.
-        if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrapMode == TextWrapMode::Wrap)
-            return functor(CSS::Keyword::Normal { });
-        if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::NoWrap)
-            return functor(CSS::Keyword::Pre { });
-        if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::Wrap)
-            return functor(CSS::Keyword::PreWrap { });
-        if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrapMode == TextWrapMode::Wrap)
-            return functor(CSS::Keyword::PreLine { });
+        if (whiteSpaceTrim.isNone()) {
+            // Convert to backwards-compatible keywords if possible.
+            if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrapMode == TextWrapMode::Wrap)
+                return functor(CSS::Keyword::Normal { });
+            if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::NoWrap)
+                return functor(CSS::Keyword::Pre { });
+            if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::Wrap)
+                return functor(CSS::Keyword::PreWrap { });
+            if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrapMode == TextWrapMode::Wrap)
+                return functor(CSS::Keyword::PreLine { });
 
+            // Omit default longhand values.
+            if (whiteSpaceCollapse == ComputedStyle::initialWhiteSpaceCollapse())
+                return functor(textWrapMode);
+            if (textWrapMode == ComputedStyle::initialTextWrapMode())
+                return functor(whiteSpaceCollapse);
+
+            return functor(SpaceSeparatedTuple { whiteSpaceCollapse, textWrapMode });
+        }
+
+        // white-space-trim has a non-initial value, so the backwards-compatible keywords don't apply.
         // Omit default longhand values.
+        if (whiteSpaceCollapse == ComputedStyle::initialWhiteSpaceCollapse() && textWrapMode == ComputedStyle::initialTextWrapMode())
+            return functor(whiteSpaceTrim);
         if (whiteSpaceCollapse == ComputedStyle::initialWhiteSpaceCollapse())
-            return functor(textWrapMode);
+            return functor(SpaceSeparatedTuple { textWrapMode, whiteSpaceTrim });
         if (textWrapMode == ComputedStyle::initialTextWrapMode())
-            return functor(whiteSpaceCollapse);
+            return functor(SpaceSeparatedTuple { whiteSpaceCollapse, whiteSpaceTrim });
 
-        return functor(SpaceSeparatedTuple { whiteSpaceCollapse, textWrapMode });
+        return functor(SpaceSeparatedTuple { whiteSpaceCollapse, textWrapMode, whiteSpaceTrim });
     }
 };
 
