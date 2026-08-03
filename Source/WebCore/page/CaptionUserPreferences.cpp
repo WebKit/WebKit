@@ -440,6 +440,21 @@ int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack& track, co
     return (preferredLanguages.size() + bonus - languageMatchIndex) * 10;
 }
 
+RefPtr<TextTrack> CaptionUserPreferences::bestTextTrackToEnable(const TextTrackList& trackList) const
+{
+    RefPtr<TextTrack> best;
+    int bestScore = 0;
+    for (unsigned i = 0, length = trackList.length(); i < length; ++i) {
+        Ref track = *trackList.item(i);
+        int score = textTrackSelectionScore(track, CaptionDisplayMode::AlwaysOn);
+        if (score > bestScore) {
+            bestScore = score;
+            best = track.ptr();
+        }
+    }
+    return best;
+}
+
 void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& override)
 {
     if (override == m_captionsStyleSheetOverride)

@@ -75,6 +75,26 @@
             testExpected('internals.captionDisplayMode', 'alwayson');
 
             consoleWrite('--');
+            consoleWrite('Test On re-enables a track when nothing is showing and the mode is already AlwaysOn');
+
+            run('for (const track of video.textTracks) track.mode = "disabled"');
+            testExpected('video.textTracks[0].mode', 'disabled');
+            testExpected('video.textTracks[1].mode', 'disabled');
+            testExpected('video.textTracks[2].mode', 'disabled');
+            testExpected('video.textTracks[3].mode', 'disabled');
+            testExpected('internals.captionDisplayMode', 'alwayson');
+
+            // The checked language is the most-preferred track, and pressing On must enable exactly that one.
+            contextMenu = getContextMenuItems();
+            testExpected('contextMenu[4].children[0].checked', true);
+            testExpected('contextMenu[4].children[1].checked', false);
+            testExpected('contextMenu[4].children[2].checked', false);
+            testExpected('contextMenu[4].children[3].checked', false);
+
+            run('controlsHost.setSelectedTextTrack(onItem)');
+            await testExpectedEventually('video.textTracks[0].mode', 'showing', '==', 100);
+
+            consoleWrite('--');
             consoleWrite('Test Off menu item behavior');
 
             run('controlsHost.setSelectedTextTrack(offItem)');

@@ -644,16 +644,8 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 // captions are "Off" which track would be chosen if
                 // captions are turned on.
                 RefPtr<TextTrack> bestTrackToEnable;
-                if (allTracksDisabled) {
-                    int bestScore = 0;
-                    for (auto& track : sortedTextTracks) {
-                        auto score = captionPreferences->textTrackSelectionScore(track, CaptionUserPreferences::CaptionDisplayMode::AlwaysOn);
-                        if (score <= bestScore)
-                            continue;
-                        bestTrackToEnable = track.ptr();
-                        bestScore = score;
-                    }
-                }
+                if (allTracksDisabled)
+                    bestTrackToEnable = captionPreferences->bestTextTrackToEnable(*textTracks);
 
                 Vector<MenuItem> subtitleMenuItems;
                 subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOnItemSingleton(), captionPreferences->displayNameForTrack(TextTrack::captionMenuOnItemSingleton()), !allTracksDisabled));
@@ -822,9 +814,11 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
             },
             [&] (Ref<TextTrack>& selectedTextTrack) {
                 protectedThis->savePreviouslySelectedTextTrackIfNecessary();
-                for (auto& track : idMap.values()) {
-                    if (auto* textTrack = std::get_if<Ref<TextTrack>>(&track))
-                        (*textTrack)->setMode(TextTrack::Mode::Disabled);
+                if (selectedTextTrack.ptr() != &TextTrack::captionMenuOnItemSingleton()) {
+                    for (auto& track : idMap.values()) {
+                        if (auto* textTrack = std::get_if<Ref<TextTrack>>(&track))
+                            (*textTrack)->setMode(TextTrack::Mode::Disabled);
+                    }
                 }
                 mediaElement->setSelectedTextTrack(selectedTextTrack.ptr());
             },

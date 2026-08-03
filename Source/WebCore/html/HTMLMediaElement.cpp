@@ -5813,6 +5813,22 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         if (captionDisplayMode() != CaptionUserPreferences::CaptionDisplayMode::ForcedOnly && !trackList->isChangeEventScheduled())
             m_textTracks->scheduleChangeEvent();
     } else if (trackToSelect == &TextTrack::captionMenuOnItemSingleton()) {
+        bool hasShowingTrack = false;
+        for (int i = 0, length = trackList->length(); i < length; ++i) {
+            if (RefPtr { trackList->item(i) }->mode() == TextTrack::Mode::Showing) {
+                hasShowingTrack = true;
+                break;
+            }
+        }
+
+        if (!hasShowingTrack) {
+            if (RefPtr page = document().page()) {
+                Ref captionPreferences = protect(page->group())->ensureCaptionPreferences();
+                if (RefPtr trackToEnable = captionPreferences->bestTextTrackToEnable(*trackList))
+                    trackToEnable->setMode(TextTrack::Mode::Showing);
+            }
+        }
+
         if (captionDisplayMode() != CaptionUserPreferences::CaptionDisplayMode::AlwaysOn)
             m_textTracks->scheduleChangeEvent();
     } else {

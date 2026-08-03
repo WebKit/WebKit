@@ -32,6 +32,20 @@ EXPECTED (contextMenu[1].checked == 'true') OK
 EXPECTED (contextMenu[2].checked == 'false') OK
 EXPECTED (internals.captionDisplayMode == 'alwayson') OK
 --
+Test On re-enables a track when nothing is showing and the mode is already AlwaysOn
+RUN(for (const track of video.textTracks) track.mode = "disabled")
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (video.textTracks[1].mode == 'disabled') OK
+EXPECTED (video.textTracks[2].mode == 'disabled') OK
+EXPECTED (video.textTracks[3].mode == 'disabled') OK
+EXPECTED (internals.captionDisplayMode == 'alwayson') OK
+EXPECTED (contextMenu[4].children[0].checked == 'true') OK
+EXPECTED (contextMenu[4].children[1].checked == 'false') OK
+EXPECTED (contextMenu[4].children[2].checked == 'false') OK
+EXPECTED (contextMenu[4].children[3].checked == 'false') OK
+RUN(controlsHost.setSelectedTextTrack(onItem))
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+--
 Test Off menu item behavior
 RUN(controlsHost.setSelectedTextTrack(offItem))
 EXPECTED (video.textTracks[0].mode == 'disabled') OK
