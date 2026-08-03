@@ -27,6 +27,7 @@ import AppKit
 public import Foundation
 import WebKit_Internal
 @_weakLinked @_spi(Private) import SwiftUI
+private import wtf.Core.cocoa.RuntimeApplicationChecksCocoa
 
 private struct Controls: View {
     private static let autoHideDelay: Duration = .seconds(3)
@@ -104,7 +105,7 @@ extension WKAlternatePDFHUDView {
 
         super.init(frame: frame)
 
-        let controls = Controls(showSystemActions: !isInRecoveryOS(), action: actionHandler)
+        let controls = Controls(showSystemActions: !WTF.isInBaseSystem(), action: actionHandler)
 
         let hostingView = NSHostingView(rootView: controls)
         hostingView.translatesAutoresizingMaskIntoConstraints = false
