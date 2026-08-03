@@ -2546,4 +2546,59 @@ TEST(WKBackForwardList, ForgedFileURLItemIsRejected)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS: forged file:// back-forward item was rejected by MESSAGE_CHECK");
 }
 
+// A process that hosts no frame in a page must not be able to read that page's FrameState by naming
+// one of its own frames, which would otherwise satisfy the main-frame allowance.
+TEST(WKBackForwardList, FrameStateRequestFromForeignPageProcessIsRejected)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/target-first"_s, { "<!DOCTYPE html><body>first</body>"_s } },
+        { "/target-second"_s, { "<!DOCTYPE html><body>second</body>"_s } },
+        { "/attacker"_s, { "<!DOCTYPE html><body>attacker</body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr pool = adoptNS([[WKProcessPool alloc] init]);
+
+    RetainPtr targetConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [targetConfiguration setProcessPool:pool.get()];
+    enableIPCTestingAPI(targetConfiguration.get());
+    RetainPtr targetWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:targetConfiguration.get()]);
+    [targetWebView synchronouslyLoadRequest:server.request("/target-first"_s)];
+    [targetWebView synchronouslyLoadRequest:server.request("/target-second"_s)];
+
+    RetainPtr attackerConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [attackerConfiguration setProcessPool:pool.get()];
+    enableIPCTestingAPI(attackerConfiguration.get());
+    RetainPtr attackerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:attackerConfiguration.get()]);
+    [attackerWebView synchronouslyLoadRequest:server.request("/attacker"_s)];
+
+    // The two pages must be in different processes for this to test anything.
+    EXPECT_NE([targetWebView _webProcessIdentifier], [attackerWebView _webProcessIdentifier]);
+
+    RetainPtr targetPageID = [targetWebView stringByEvaluatingJavaScript:@"String(IPC.webPageProxyID)"];
+    EXPECT_GT([targetPageID length], 0u);
+
+    // The attacker names its own main frame, which is a main frame, and addresses the target's list.
+    RetainPtr probe = [NSString stringWithFormat:
+        @"(function() {"
+        "    var reply = IPC.sendSyncMessage('UI', BigInt('%@'),"
+        "        IPC.messages.WebBackForwardList_BackForwardItemAtIndexForWebContent.name, 1000,"
+        "        [{ type: 'int32_t', value: -1 }, { type: 'FrameID', value: IPC.frameID }]);"
+        "    if (!reply || !reply.buffer)"
+        "        return 'no-reply';"
+        "    var bytes = new Uint8Array(reply.buffer);"
+        "    var needle = 'target-first';"
+        "    for (var i = 0; i + needle.length <= bytes.length; i++) {"
+        "        var found = true;"
+        "        for (var j = 0; j < needle.length; j++) {"
+        "            if (bytes[i + j] !== needle.charCodeAt(j)) { found = false; break; }"
+        "        }"
+        "        if (found) return 'leaked';"
+        "    }"
+        "    return 'rejected';"
+        "})()", targetPageID.get()];
+
+    RetainPtr result = [attackerWebView stringByEvaluatingJavaScript:probe.get()];
+    EXPECT_WK_STREQ(result.get(), "rejected");
+}
+
 #endif // ENABLE(IPC_TESTING_API)
