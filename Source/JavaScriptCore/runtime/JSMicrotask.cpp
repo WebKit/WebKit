@@ -303,27 +303,13 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
     case JSPromise::Status::Rejected: {
         JSValue syncIterator = contextObject->getDirect(vm, vm.propertyNames->builtinNames().syncIteratorPrivateName());
         if (syncIterator.isObject()) {
-            JSValue returnMethod;
-            JSValue error;
-            {
-                auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                returnMethod = asObject(syncIterator)->get(globalObject, vm.propertyNames->returnKeyword);
-                if (catchScope.exception()) [[unlikely]] {
-                    error = catchScope.exception()->value();
-                    if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-                        scope.release();
-                        return;
-                    }
-                }
-            }
-            if (error) [[unlikely]] {
-                promise->reject(vm, error);
-                return;
-            }
-            if (returnMethod.isCallable()) {
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+            JSValue returnMethod = asObject(syncIterator)->get(globalObject, vm.propertyNames->returnKeyword);
+            if (!catchScope.exception() && returnMethod.isCallable())
                 callMicrotask(globalObject, returnMethod, syncIterator, dynamicCastToCell(returnMethod), "return is not a function"_s, nullptr);
-                if (scope.exception()) [[unlikely]]
-                    return;
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                scope.release();
+                return;
             }
         }
         scope.release();
