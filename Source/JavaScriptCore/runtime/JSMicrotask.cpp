@@ -627,6 +627,18 @@ void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator*
         asyncGeneratorResume(globalObject, iterator);
 }
 
+JSValue asyncIteratorNextWithDriver(JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver)
+{
+    VM& vm = globalObject->vm();
+    auto* generator = uncheckedDowncast<JSAsyncGenerator>(iterator);
+
+    if (globalObject->promiseSpeciesWatchpointSet().state() != IsWatched) [[unlikely]]
+        return asyncGeneratorNext(globalObject, generator, jsUndefined());
+
+    enqueueAsyncGeneratorDriver(globalObject, generator, driver);
+    return vm.fastAsyncGeneratorSentinel();
+}
+
 // https://tc39.es/ecma262/#sec-asyncgeneratoryield
 static void asyncGeneratorYield(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue value, MicrotaskCallCache* microtaskCallCache)
 {

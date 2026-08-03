@@ -43,6 +43,8 @@ void asyncGeneratorAwaitReturn(JSGlobalObject*, JSAsyncGenerator*);
 
 void enqueueAsyncGeneratorDriver(JSGlobalObject*, JSAsyncGenerator* iterator, JSObject* driver);
 
+JSValue asyncIteratorNextWithDriver(JSGlobalObject*, JSObject* iterator, JSObject* driver);
+
 JSC_DECLARE_HOST_FUNCTION(asyncFunctionDrive);
 
 } // namespace JSC

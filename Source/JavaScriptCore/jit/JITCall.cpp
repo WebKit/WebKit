@@ -615,16 +615,15 @@ void JIT::emit_op_async_iterator_next(const JSInstruction* instruction)
     or32(TrustedImm32(static_cast<uint16_t>(IterationMode::FastAsyncGenerator)), regT0);
     store16ToMetadata(regT0, bytecode, OpAsyncIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
 
-    using SlowOperation = decltype(operationEnqueueAsyncGeneratorDriver);
+    using SlowOperation = decltype(operationAsyncIteratorNextWithDriver);
     constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
     constexpr GPRReg iteratorGPR = preferredArgumentGPR<SlowOperation, 1>();
     constexpr GPRReg driverGPR = preferredArgumentGPR<SlowOperation, 2>();
     emitGetVirtualRegisterPayload(bytecode.m_iterator, iteratorGPR);
     emitGetVirtualRegisterPayload(bytecode.m_driver, driverGPR);
     loadGlobalObject(globalObjectGPR);
-    callOperation(operationEnqueueAsyncGeneratorDriver, globalObjectGPR, iteratorGPR, driverGPR);
-    moveTrustedValue(JSValue(vm().fastAsyncGeneratorSentinel()), resultJSR);
-    emitPutVirtualRegister(bytecode.m_dst, resultJSR);
+    callOperation(operationAsyncIteratorNextWithDriver, globalObjectGPR, iteratorGPR, driverGPR);
+    emitPutVirtualRegister(bytecode.m_dst, returnValueJSR);
     Jump doneCase = jump();
 
     genericCases.link(this);

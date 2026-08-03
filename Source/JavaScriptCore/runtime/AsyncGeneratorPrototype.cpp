@@ -55,18 +55,10 @@ const ClassInfo AsyncGeneratorPrototype::s_info = { "AsyncGenerator"_s, &Base::s
 */
 
 // https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next
-JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSValue asyncGeneratorNext(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue argument)
 {
     VM& vm = globalObject->vm();
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-
-    // 3. Let result be Completion(AsyncGeneratorValidate(gen, empty)).
-    // 4. IfAbruptRejectPromise(result, promiseCapability).
-    auto* generator = dynamicDowncast<JSAsyncGenerator>(callFrame->thisValue());
-    if (!generator) [[unlikely]] {
-        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_s));
-        return JSValue::encode(promise);
-    }
 
     // 5. Let state be gen.[[AsyncGeneratorState]].
     int32_t state = generator->state();
@@ -76,12 +68,12 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeNext, (JSGlobalObject* globalObj
         // 6.b. Perform ! Call(promiseCapability.[[Resolve]], undefined, « iteratorResult »).
         auto* iteratorResult = createIteratorResultObject(globalObject, jsUndefined(), /* done */ true);
         promise->resolve(globalObject, vm, iteratorResult);
-        return JSValue::encode(promise);
+        return promise;
     }
 
     // 7. Let completion be NormalCompletion(value).
     // 8. Perform AsyncGeneratorEnqueue(gen, completion, promiseCapability).
-    generator->enqueue(vm, callFrame->argument(0), static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode), promise);
+    generator->enqueue(vm, argument, static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode), promise);
 
     // 9. If state is either suspended-start or suspended-yield, then
     if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Init) || JSAsyncGenerator::isSuspendedYieldState(state)) {
@@ -94,7 +86,23 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeNext, (JSGlobalObject* globalObj
     }
 
     // 11. Return promiseCapability.[[Promise]].
-    return JSValue::encode(promise);
+    return promise;
+}
+
+JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+
+    // 3. Let result be Completion(AsyncGeneratorValidate(gen, empty)).
+    // 4. IfAbruptRejectPromise(result, promiseCapability).
+    auto* generator = dynamicDowncast<JSAsyncGenerator>(callFrame->thisValue());
+    if (!generator) [[unlikely]] {
+        auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_s));
+        return JSValue::encode(promise);
+    }
+
+    return JSValue::encode(asyncGeneratorNext(globalObject, generator, callFrame->argument(0)));
 }
 
 // https://tc39.es/ecma262/#sec-asyncgenerator-prototype-return
