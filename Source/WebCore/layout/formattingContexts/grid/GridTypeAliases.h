@@ -36,6 +36,7 @@ class LayoutUnit;
 
 namespace Layout {
 
+class ElementBox;
 class PlacedGridItem;
 class UnplacedGridItem;
 
@@ -54,6 +55,7 @@ using GridAreas = HashMap<UnplacedGridItem, GridAreaLines>;
 using GridCell = Vector<UnplacedGridItem, 1>;
 using GridItemRects = Vector<GridItemRect>;
 using GridMatrix = Vector<Vector<GridCell>>;
+using LogicalGridItems = Vector<WTF::CheckedRef<const ElementBox>>;
 using PlacedGridItems = Vector<PlacedGridItem>;
 using PlacedGridItemSpanList = Vector<WTF::Range<size_t>>;
 using TrackSizes = Vector<LayoutUnit>;

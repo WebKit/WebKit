@@ -67,6 +67,16 @@ struct GridLayoutResult {
     GridItemRects gridItemRects;
 };
 
+// The number of implicit tracks generated before the start of the explicit grid, per axis, because
+// an item is placed with a negative line that resolves before line 1. Every item's resolved line is
+// shifted forward by these counts when the UnplacedGridItems are constructed so that matrix indices
+// are non-negative, and layout uses them to include the leading tracks in the grid's initial
+// dimensions and track sizing functions.
+struct LeadingImplicitTracks {
+    size_t columnsCount { 0 };
+    size_t rowsCount { 0 };
+};
+
 // https://drafts.csswg.org/css-grid-1/#grid-definition
 struct GridDefinition {
     Style::GridTemplateList gridTemplateColumns;
@@ -130,7 +140,7 @@ public:
     }
 
 private:
-    UnplacedGridItems constructUnplacedGridItems() const;
+    UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems&, LeadingImplicitTracks) const;
 
     IntrinsicWidthSizingPath classifyIntrinsicWidthSizingPath() const;
 

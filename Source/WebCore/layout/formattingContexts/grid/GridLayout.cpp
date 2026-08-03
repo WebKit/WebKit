@@ -61,10 +61,17 @@ GridLayout::GridLayout(const GridFormattingContext& gridFormattingContext)
 {
 }
 
-GridDimensions GridLayout::calculateInitialImplicitGridDimensions(const UnplacedGridItems& unplacedGridItems, size_t explicitColumnsCount, size_t explicitRowsCount)
+// FIXME: Try moving this to GridFormattingContext to simplify the layout code. The initial implicit
+// grid dimensions depend only on the resolved definite item placements (from constructUnplacedGridItems),
+// the explicit track counts (from style), and the leading implicit track counts, which are all
+// available before layout, so it may be possible to compute them there instead of on GridLayout.
+GridDimensions GridLayout::calculateInitialImplicitGridDimensions(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
 {
-    size_t maximumColumnIndex = explicitColumnsCount;
-    size_t maximumRowIndex = explicitRowsCount;
+    // The explicit grid is preceded by any leading implicit tracks generated for items placed with
+    // a negative line that resolves before the grid start. Every item's line has already been
+    // shifted forward by this amount, so include the leading tracks in the initial bounds.
+    size_t maximumColumnIndex = explicitColumnsCount + leadingImplicitTracks.columnsCount;
+    size_t maximumRowIndex = explicitRowsCount + leadingImplicitTracks.rowsCount;
 
     auto updateGridBounds = [&](const UnplacedGridItem& item) {
         if (item.hasDefiniteRowPosition()) {
@@ -95,10 +102,10 @@ GridDimensions GridLayout::calculateInitialImplicitGridDimensions(const Unplaced
     };
 }
 
-ImplicitGrid GridLayout::constructInitialImplicitGrid(const UnplacedGridItems& unplacedGridItems, size_t explicitColumnsCount, size_t explicitRowsCount)
+ImplicitGrid GridLayout::constructInitialImplicitGrid(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
 {
     auto initialDimensions = calculateInitialImplicitGridDimensions(
-        unplacedGridItems, explicitColumnsCount, explicitRowsCount);
+        unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
 
     ImplicitGrid implicitGrid(initialDimensions.totalColumns, initialDimensions.totalRows);
     // 3. Determine the columns in the implicit grid.
@@ -112,7 +119,7 @@ ImplicitGrid GridLayout::constructInitialImplicitGrid(const UnplacedGridItems& u
 
 // 8.5. Grid Item Placement Algorithm.
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
-auto GridLayout::placeGridItems(UnplacedGridItems& unplacedGridItems, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
+auto GridLayout::placeGridItems(UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
     const Vector<Style::GridTrackSize>& gridTemplateRowsTrackSizes, GridAutoFlowOptions autoFlowOptions)
 {
     struct Result {
@@ -121,7 +128,7 @@ auto GridLayout::placeGridItems(UnplacedGridItems& unplacedGridItems, const Vect
         size_t rowsCount;
     };
 
-    auto implicitGrid = constructInitialImplicitGrid(unplacedGridItems, gridTemplateColumnsTrackSizes.size(), gridTemplateRowsTrackSizes.size());
+    auto implicitGrid = constructInitialImplicitGrid(unplacedGridItems, leadingImplicitTracks, gridTemplateColumnsTrackSizes.size(), gridTemplateRowsTrackSizes.size());
 
     // 1. Position anything that's not auto-positioned.
     for (auto& nonAutoPositionedItem : unplacedGridItems.nonAutoPositionedItems)
@@ -183,7 +190,7 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
 }
 
 // https://drafts.csswg.org/css-grid-1/#layout-algorithm
-GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
+GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
 {
     auto& gridDefinition = gridLayoutState.gridDefinition;
     auto& gridTemplateColumnsTrackSizes = gridDefinition.gridTemplateColumns.sizes;
@@ -191,11 +198,11 @@ GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, const 
 
     auto& formattingContext = this->formattingContext();
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
-    auto [ gridAreas, columnsCount, rowsCount ] = placeGridItems(unplacedGridItems, gridTemplateColumnsTrackSizes, gridTemplateRowsTrackSizes, gridDefinition.autoFlowOptions);
+    auto [ gridAreas, columnsCount, rowsCount ] = placeGridItems(unplacedGridItems, leadingImplicitTracks, gridTemplateColumnsTrackSizes, gridTemplateRowsTrackSizes, gridDefinition.autoFlowOptions);
     auto placedGridItems = formattingContext.constructPlacedGridItems(gridAreas);
 
-    auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
-    auto rowTrackSizingFunctionsList = trackSizingFunctions(rowsCount, gridTemplateRowsTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
+    auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, leadingImplicitTracks.columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
+    auto rowTrackSizingFunctionsList = trackSizingFunctions(rowsCount, leadingImplicitTracks.rowsCount, gridTemplateRowsTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
 
     // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing
     // Fast path: the caller only needs the column sizes resolved by step 1 of the grid sizing
@@ -328,13 +335,16 @@ TrackSizingFunctions GridLayout::convertGridTrackSizeToTrackSizingFunctions(cons
     return TrackSizingFunctions { minTrackSizingFunction(), maxTrackSizingFunction(), zoom };
 }
 
-// Generates track sizing functions for implicit tracks using grid-auto-{columns,rows}
-// FIXME: This function only supports appended tracks but not prepended tracks.
-TrackSizingFunctionsList GridLayout::generateImplicitTrackSizingFunctions(size_t explicitTracksCount, size_t totalTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
+// Generates track sizing functions for implicitTracksCount implicit tracks using
+// grid-auto-{columns,rows}, cycling forwards through the provided sizes starting from the first.
+// FIXME: This produces the correct sizes for trailing implicit tracks (after the explicit grid) and
+// for any single-value grid-auto-{columns,rows}, but not for leading implicit tracks (before the
+// explicit grid) when grid-auto-{columns,rows} lists multiple track sizes. Per spec the leading
+// tracks cycle backwards -- "the last implicit grid track before the explicit grid receives the
+// last specified size, and so on backwards" -- whereas this always cycles forwards from the first
+// size. https://drafts.csswg.org/css-grid-1/#auto-tracks
+TrackSizingFunctionsList GridLayout::generateImplicitTrackSizingFunctions(size_t implicitTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
 {
-    // https://drafts.csswg.org/css-grid-1/#auto-tracks
-    size_t implicitTracksCount = totalTracksCount - explicitTracksCount;
-
     TrackSizingFunctionsList trackSizingFunctionsForImplicitGrid;
     trackSizingFunctionsForImplicitGrid.reserveInitialCapacity(implicitTracksCount);
 
@@ -347,25 +357,29 @@ TrackSizingFunctionsList GridLayout::generateImplicitTrackSizingFunctions(size_t
     return trackSizingFunctionsForImplicitGrid;
 }
 
-TrackSizingFunctionsList GridLayout::trackSizingFunctions(size_t totalTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
+TrackSizingFunctionsList GridLayout::trackSizingFunctions(size_t totalTracksCount, size_t leadingImplicitTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
 {
-    // FIXME: This function only supports appended tracks but not prepended tracks.
-    // Per spec, we should support both forward and backward implicit tracks.
-    ASSERT_WITH_MESSAGE(totalTracksCount >= gridTemplateTrackSizes.size(), "Total tracks should be at least as many as explicit tracks");
+    auto explicitTracksCount = gridTemplateTrackSizes.size();
+    ASSERT_WITH_MESSAGE(totalTracksCount >= leadingImplicitTracksCount + explicitTracksCount, "Total tracks should be at least as many as the leading implicit tracks plus the explicit tracks");
 
     TrackSizingFunctionsList trackSizingFunctions;
     trackSizingFunctions.reserveInitialCapacity(totalTracksCount);
+
+    // https://drafts.csswg.org/css-grid-1/#auto-tracks
+    // Leading implicit tracks are generated before the start of the explicit grid (for items placed
+    // with a negative line that resolves before line 1) and are sized by grid-auto-{columns,rows}.
+    trackSizingFunctions.appendVector(generateImplicitTrackSizingFunctions(leadingImplicitTracksCount, gridAutoTrackSizes, zoom));
 
     // https://drafts.csswg.org/css-grid-1/#algo-terms
     // Map explicit tracks from grid-template-{columns,rows}
     for (auto& gridTrackSize : gridTemplateTrackSizes)
         trackSizingFunctions.append(convertGridTrackSizeToTrackSizingFunctions(gridTrackSize, zoom));
 
-    // Generate implicit tracks using grid-auto-{columns,rows}
+    // Generate trailing implicit tracks using grid-auto-{columns,rows}
     // https://drafts.csswg.org/css-grid-1/#auto-tracks
     // "The first track after the last explicitly-sized track receives the first specified size, and so on forwards"
-    auto implicitTrackSizingFunctions = generateImplicitTrackSizingFunctions(gridTemplateTrackSizes.size(), totalTracksCount, gridAutoTrackSizes, zoom);
-    trackSizingFunctions.appendVector(implicitTrackSizingFunctions);
+    auto trailingImplicitTracksCount = totalTracksCount - leadingImplicitTracksCount - explicitTracksCount;
+    trackSizingFunctions.appendVector(generateImplicitTrackSizingFunctions(trailingImplicitTracksCount, gridAutoTrackSizes, zoom));
 
     ASSERT(trackSizingFunctions.size() == totalTracksCount);
     return trackSizingFunctions;

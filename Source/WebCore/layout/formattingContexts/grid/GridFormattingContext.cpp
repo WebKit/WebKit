@@ -53,27 +53,35 @@ GridFormattingContext::GridFormattingContext(const ElementBox& gridBox, LayoutSt
 {
 }
 
-UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
+static LogicalGridItems constructLogicalGridItems(const ElementBox& gridBox)
 {
-    struct GridItem {
-        CheckedRef<const ElementBox> layoutBox;
-        int order;
-    };
+    LogicalGridItems logicalGridItems;
+    for (CheckedRef gridItem : childrenOfType<ElementBox>(gridBox)) {
+        if (gridItem->isOutOfFlowPositioned())
+            continue;
 
+        logicalGridItems.append(gridItem);
+    }
+
+    std::ranges::stable_sort(logicalGridItems, { }, [](auto& gridItem) {
+        return gridItem->style().order().value;
+    });
+    return logicalGridItems;
+}
+
+static LeadingImplicitTracks computeLeadingImplicitTracks(const ElementBox& gridBox, const LogicalGridItems& logicalGridItems)
+{
     // Negative line placements are resolved against the explicit grid track count, which can still
     // produce a negative line when the placement counts past the start edge of the explicit grid.
     // Those are normalized by shifting every line forward by the magnitude of the most-negative
     // resolved line, so e.g. with 3 explicit columns a column-start of -5 resolves to line -1,
-    // which shifts all column lines forward by 1 and maps to matrix column 0.
-    auto explicitColumnCount = m_gridBox->style().gridTemplateColumns().sizes.size();
-    auto explicitRowCount = m_gridBox->style().gridTemplateRows().sizes.size();
+    // which shifts all column lines forward by 1 and maps to matrix column 0. That magnitude is
+    // also the number of leading implicit tracks the grid needs to generate.
+    auto explicitColumnCount = gridBox.style().gridTemplateColumns().sizes.size();
+    auto explicitRowCount = gridBox.style().gridTemplateRows().sizes.size();
     int minimumColumnLine = 0;
     int minimumRowLine = 0;
-    Vector<GridItem> gridItems;
-    for (CheckedRef gridItem : childrenOfType<ElementBox>(m_gridBox)) {
-        if (gridItem->isOutOfFlowPositioned())
-            continue;
-
+    for (auto& gridItem : logicalGridItems) {
         CheckedRef gridItemStyle = gridItem->style();
         if (auto columnRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), explicitColumnCount)) {
             auto [startLine, endLine] = *columnRange;
@@ -83,18 +91,22 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
             auto [startLine, endLine] = *rowRange;
             minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
         }
-
-        gridItems.append({ gridItem, gridItemStyle->order().value });
     }
 
-    std::ranges::stable_sort(gridItems, { }, &GridItem::order);
+    return {
+        minimumColumnLine < 0 ? static_cast<size_t>(-minimumColumnLine) : 0,
+        minimumRowLine < 0 ? static_cast<size_t>(-minimumRowLine) : 0
+    };
+}
 
-    size_t columnNegativeLineOffset = minimumColumnLine < 0 ? static_cast<size_t>(-minimumColumnLine) : 0;
-    size_t rowNegativeLineOffset = minimumRowLine < 0 ? static_cast<size_t>(-minimumRowLine) : 0;
+UnplacedGridItems GridFormattingContext::constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks) const
+{
+    auto explicitColumnCount = m_gridBox->style().gridTemplateColumns().sizes.size();
+    auto explicitRowCount = m_gridBox->style().gridTemplateRows().sizes.size();
 
     UnplacedGridItems unplacedGridItems;
-    for (auto& gridItem : gridItems) {
-        CheckedRef gridItemStyle = gridItem.layoutBox->style();
+    for (auto& gridItem : logicalGridItems) {
+        CheckedRef gridItemStyle = gridItem->style();
 
         auto gridItemColumnStart = gridItemStyle->gridItemColumnStart();
         auto gridItemColumnEnd = gridItemStyle->gridItemColumnEnd();
@@ -102,15 +114,15 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
         auto gridItemRowEnd = gridItemStyle->gridItemRowEnd();
 
         UnplacedGridItem unplacedGridItem {
-            gridItem.layoutBox,
+            gridItem,
             gridItemColumnStart,
             gridItemColumnEnd,
             gridItemRowStart,
             gridItemRowEnd,
             explicitColumnCount,
             explicitRowCount,
-            columnNegativeLineOffset,
-            rowNegativeLineOffset
+            leadingImplicitTracks.columnsCount,
+            leadingImplicitTracks.rowsCount
         };
 
         // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
@@ -185,7 +197,9 @@ static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(co
 
 GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
-    auto unplacedGridItems = constructUnplacedGridItems();
+    auto logicalGridItems = constructLogicalGridItems(root());
+    auto leadingImplicitTracks = computeLeadingImplicitTracks(root(), logicalGridItems);
+    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks);
     CheckedRef gridStyle = root().style();
 
     GridAutoFlowOptions autoFlowOptions {
@@ -213,7 +227,7 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
     GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap(), gridStyle), usedGapValue(gridStyle->rowGap(), gridStyle) };
 
-    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, layoutState);
+    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, leadingImplicitTracks, layoutState);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
@@ -323,7 +337,9 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     auto usedColumnGap = usedGapValue(gridStyle->columnGap(), gridStyle);
     auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
 
-    auto unplacedGridItems = constructUnplacedGridItems();
+    auto logicalGridItems = constructLogicalGridItems(root());
+    auto leadingImplicitTracks = computeLeadingImplicitTracks(root(), logicalGridItems);
+    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks);
 
     auto columnSizesForConstraint = [&](AxisConstraint intrinsicConstraint) -> TrackSizes {
         GridLayoutConstraints layoutConstraints {
@@ -341,7 +357,7 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
             ? GridLayoutScope::ColumnSizingOnly
             : GridLayoutScope::Full;
 
-        return GridLayout { *this }.layout(unplacedGridItemsForScenario, layoutState, scope).usedTrackSizes.columnSizes;
+        return GridLayout { *this }.layout(unplacedGridItemsForScenario, leadingImplicitTracks, layoutState, scope).usedTrackSizes.columnSizes;
     };
 
     TrackSizes minContentColumnSizes = columnSizesForConstraint(AxisConstraint::minContent());

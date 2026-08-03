@@ -42,8 +42,8 @@ namespace Layout {
 // index. For example, with 3 explicit columns (lines 0..3):
 //     -1 -> 3 (last line), -4 -> 0 (first line), -5 -> -1, -6 -> -2 (two lines before the start).
 // A negative index is not a valid matrix position on its own; GridFormattingContext computes the
-// most-negative line across all items and shifts every line forward by that magnitude (the
-// negative-line offset) so, e.g., -2 above maps to matrix column 0. See GridPosition::create().
+// most-negative line across all items and shifts every line forward by that magnitude (the number
+// of leading implicit tracks) so, e.g., -2 above maps to matrix column 0. See GridPosition::create().
 static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
 {
     ASSERT(position.isExplicit());
@@ -53,7 +53,7 @@ static int explicitLineToIndex(const Style::GridPosition& position, size_t expli
     return line > 0 ? line - 1 : static_cast<int>(explicitTrackCount) + 1 + line;
 }
 
-UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t negativeLineOffset)
+UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount)
 {
     auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount);
     if (!explicitRange) {
@@ -67,12 +67,12 @@ UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Styl
         return AutoPosition { span };
     }
 
-    // Shift the resolved range forward by the negative-line offset. The offset is the magnitude of
-    // the most-negative line across all items, so applying it maps every line to a non-negative
-    // matrix index.
+    // Shift the resolved range forward by the number of leading implicit tracks. That count is the
+    // magnitude of the most-negative line across all items, so applying it maps every line to a
+    // non-negative matrix index.
     auto [rawStartLine, rawEndLine] = *explicitRange;
-    int startLine = rawStartLine + static_cast<int>(negativeLineOffset);
-    int endLine = rawEndLine + static_cast<int>(negativeLineOffset);
+    int startLine = rawStartLine + static_cast<int>(leadingImplicitTracksCount);
+    int endLine = rawEndLine + static_cast<int>(leadingImplicitTracksCount);
 
     ASSERT(startLine >= 0 && endLine >= 0);
     // The range is always forward. The span/auto branches derive endLine from startLine, and the
@@ -122,10 +122,10 @@ size_t UnplacedGridItem::GridPosition::span() const
 
 UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition columnStart, Style::GridPosition columnEnd,
     Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount,
-    size_t columnNegativeLineOffset, size_t rowNegativeLineOffset)
+    size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount)
     : m_layoutBox(layoutBox)
-    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, columnNegativeLineOffset))
-    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, rowNegativeLineOffset))
+    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, leadingImplicitColumnsCount))
+    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, leadingImplicitRowsCount))
 {
 }
 

@@ -60,19 +60,19 @@ class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    GridLayoutResult layout(UnplacedGridItems&, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
+    GridLayoutResult layout(UnplacedGridItems&, LeadingImplicitTracks, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
 
 private:
 
-    auto placeGridItems(UnplacedGridItems&, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
+    auto placeGridItems(UnplacedGridItems&, LeadingImplicitTracks, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
         const Vector<Style::GridTrackSize>& gridTemplateRowsTrackSizes, GridAutoFlowOptions);
 
-    static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridItems&, size_t explicitColumnsCount, size_t explicitRowsCount);
-    ImplicitGrid constructInitialImplicitGrid(const UnplacedGridItems&, size_t explicitColumnsCount, size_t explicitRowsCount);
+    static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
+    ImplicitGrid constructInitialImplicitGrid(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
 
     static TrackSizingFunctions convertGridTrackSizeToTrackSizingFunctions(const Style::GridTrackSize&, const Style::ZoomFactor&);
-    static TrackSizingFunctionsList generateImplicitTrackSizingFunctions(size_t explicitTracksCount, size_t totalTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor&);
-    static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor&);
+    static TrackSizingFunctionsList generateImplicitTrackSizingFunctions(size_t implicitTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor&);
+    static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, size_t leadingImplicitTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor&);
 
     UsedTrackSizes performGridSizingAlgorithm(const GridLayoutState&, const PlacedGridItems&, const TrackSizingFunctionsList&, const TrackSizingFunctionsList&) const;
     TrackSizes sizeColumnTracks(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions, const GridLayoutState&) const;
