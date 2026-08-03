@@ -1,7 +1,7 @@
 // Verify the anchored (^, non-multiline) RegExp.test first-character fast-fail filter: a filtered
 // no-match must equal the operation's result, non-anchored patterns must never be wrongly filtered,
 // case-insensitive folds must be reflected in the bitmap, and a .compile() that changes the pattern
-// must be handled (the runtime identity guard falls back).
+// must be handled (the recompile watchpoint jettisons the code holding the stale bitmap).
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
@@ -51,8 +51,9 @@ function step() {
 for (var i = 0; i < testLoopCount; ++i)
     step();
 
-// A .compile() that changes the pattern must be handled by the identity guard: the filter for the
-// old pattern must not produce wrong answers for the new one.
+// A .compile() that changes the pattern fires the realm's RegExp-recompiled watchpoint, jettisoning
+// the code that baked the old bitmap: the old filter must not produce wrong answers for the new
+// pattern.
 (function () {
     var re = /^a+/;
     function check(a, b) { shouldBe(re.test(a), b); }

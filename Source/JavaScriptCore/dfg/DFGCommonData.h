@@ -45,7 +45,6 @@
 #include "RecordedStatuses.h"
 #include "YarrJIT.h"
 #include <wtf/Bag.h>
-#include <wtf/BitSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringSearch.h>
 
@@ -139,7 +138,6 @@ public:
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     Bag<DirectCallLinkInfo> m_directCallLinkInfos;
     Yarr::YarrBoyerMooreData m_boyerMooreData;
-    Bag<WTF::BitSet<256>> m_regExpFirstCharacterBitmaps;
 
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;
