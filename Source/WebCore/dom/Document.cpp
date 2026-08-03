@@ -8462,8 +8462,12 @@ void Document::initSecurityContext()
         return;
     }
 
-    if (initialDocumentCreator)
+    if (initialDocumentCreator) {
         inheritPolicyContainerFrom(initialDocumentCreator->policyContainer());
+        // Unlike WebCore's PolicyContainer, an HTML policy container does not include the opener policy.
+        // The initial document's opener policy is initialized separately below.
+        setCrossOriginOpenerPolicy({ });
+    }
     CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
     if (!initialDocumentCreator)
         contentSecurityPolicy->copyStateFrom(protect(ownerDocument->contentSecurityPolicy()).get());
