@@ -39,11 +39,13 @@ bool WebExtensionContext::isAlarmsMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::alarms());
 }
 
-void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)
+void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void()>&& completionHandler)
 {
     m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [this, protectedThis = Ref { *this }](const WebExtensionAlarm& alarm) {
         fireAlarmsEventIfNeeded(alarm);
     }));
+
+    completionHandler();
 }
 
 void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
@@ -54,11 +56,11 @@ void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(s
         completionHandler(std::nullopt);
 }
 
-void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void()>&& completionHandler)
+void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_alarmMap.remove(name);
+    bool success = m_alarmMap.remove(name);
 
-    completionHandler();
+    completionHandler(success);
 }
 
 void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&& completionHandler)
@@ -70,11 +72,14 @@ void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensio
     completionHandler(WTF::move(alarms));
 }
 
-void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionHandler)
+void WebExtensionContext::alarmsClearAll(CompletionHandler<void(bool)>&& completionHandler)
 {
+    // Per MDN, only return true if there are alarms to clear.
+    bool success = !m_alarmMap.isEmpty();
+
     m_alarmMap.clear();
 
-    completionHandler();
+    completionHandler(success);
 }
 
 void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)

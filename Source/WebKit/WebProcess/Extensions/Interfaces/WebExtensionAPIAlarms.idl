@@ -29,7 +29,7 @@
     ReturnsPromiseWhenCallbackIsOmitted,
     UseCPPAPI
 ] interface WebExtensionAPIAlarms {
-    [RaisesStringException, ImplementedAs=createAlarm] void create([Optional] DOMString name, [JSONValue] any info);
+    [RaisesStringException, ImplementedAs=createAlarm] void create([Optional] DOMString name, [JSONValue] any info, [Optional, CallbackHandler] function callback);
 
     void get([Optional] DOMString name, [Optional, CallbackHandler] function callback);
     void getAll([Optional, CallbackHandler] function callback);

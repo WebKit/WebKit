@@ -47,11 +47,11 @@ messages -> WebExtensionContext {
     [Validator=isActionMessageAllowed] ActionSetEnabled(std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, bool enabled) -> (Expected<void, WebKit::WebExtensionError> result)
 
     // Alarms APIs
-    [Validator=isAlarmsMessageAllowed] AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval)
+    [Validator=isAlarmsMessageAllowed] AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval) -> ()
     [Validator=isAlarmsMessageAllowed] AlarmsGet(String name) -> (struct std::optional<WebKit::WebExtensionAlarmParameters> alarmInfo)
-    [Validator=isAlarmsMessageAllowed] AlarmsClear(String name) -> ()
+    [Validator=isAlarmsMessageAllowed] AlarmsClear(String name) -> (bool success)
     [Validator=isAlarmsMessageAllowed] AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms)
-    [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> ()
+    [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> (bool success)
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     // Bookmarks APIs

@@ -57,11 +57,12 @@ static inline JSValueRef toWebAPI(JSContextRef context, const WebExtensionAlarmP
     return result;
 }
 
-void WebExtensionAPIAlarms::createAlarm(const String& name, RefPtr<JSON::Value> alarmInfo, String& outExceptionString)
+void WebExtensionAPIAlarms::createAlarm(const String& name, RefPtr<JSON::Value> alarmInfo, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/create
 
     if (!validateDictionary(alarmInfo, "info"_s, { }, {
+        { nameKey, JSON::Value::Type::String },
         { whenKey, JSON::Value::Type::Double },
         { delayInMinutesKey, JSON::Value::Type::Double },
         { periodInMinutesKey, JSON::Value::Type::Double },
@@ -71,6 +72,13 @@ void WebExtensionAPIAlarms::createAlarm(const String& name, RefPtr<JSON::Value> 
     auto alarmObject = alarmInfo->asObject();
     if (!alarmObject)
         return;
+
+    auto infoName = alarmObject->getString(nameKey);
+
+    if (!name.isEmpty() && !infoName.isNull()) {
+        callback->reportError(toErrorString("alarms.create()"_s, "info"_s, "it cannot specify 'name' when a name is also passed as an argument"_s));
+        return;
+    }
 
     auto whenNumber = alarmObject->getDouble(whenKey);
     auto delayNumber = alarmObject->getDouble(delayInMinutesKey);
@@ -107,7 +115,11 @@ void WebExtensionAPIAlarms::createAlarm(const String& name, RefPtr<JSON::Value> 
         repeatInterval = repeatInterval ? std::max(repeatInterval, webExtensionMinimumAlarmInterval) : 0_s;
     }
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::AlarmsCreate(!name.isEmpty() ? name : emptyAlarmName, initialInterval, repeatInterval), extensionContext().identifier());
+    String alarmName = !name.isEmpty() ? name : infoName;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsCreate(!alarmName.isEmpty() ? alarmName : emptyAlarmName, initialInterval, repeatInterval), [protectedThis = Ref { *this }, callback = WTF::move(callback)]() {
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIAlarms::get(const String& name, Ref<WebExtensionCallbackHandler>&& callback)
@@ -115,7 +127,7 @@ void WebExtensionAPIAlarms::get(const String& name, Ref<WebExtensionCallbackHand
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/get
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGet(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::optional<WebExtensionAlarmParameters>&& alarm) {
-        callback->call(toWebAPI(callback->globalContext(), alarm));
+        callback->call(toWebAPI(callback->globalContext(), alarm, UseNullValue::No));
     }, extensionContext().identifier());
 }
 
@@ -132,8 +144,8 @@ void WebExtensionAPIAlarms::clear(const String& name, Ref<WebExtensionCallbackHa
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/clear
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClear(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)]() {
-        callback->call();
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClear(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)](bool success) {
+        callback->call(JSValueMakeBoolean(callback->globalContext(), success));
     }, extensionContext().identifier());
 }
 
@@ -141,8 +153,8 @@ void WebExtensionAPIAlarms::clearAll(Ref<WebExtensionCallbackHandler>&& callback
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/clearAll
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClearAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)]() {
-        callback->call();
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClearAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](bool success) {
+        callback->call(JSValueMakeBoolean(callback->globalContext(), success));
     }, extensionContext().identifier());
 }
 

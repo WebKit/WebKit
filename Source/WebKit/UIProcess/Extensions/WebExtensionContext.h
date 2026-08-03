@@ -823,11 +823,11 @@ private:
 
     // Alarms APIs
     bool isAlarmsMessageAllowed(IPC::Decoder&);
-    void alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval);
+    void alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void()>&&);
     void alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&&);
-    void alarmsClear(const String& name, CompletionHandler<void()>&&);
+    void alarmsClear(const String& name, CompletionHandler<void(bool)>&&);
     void alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&&);
-    void alarmsClearAll(CompletionHandler<void()>&&);
+    void alarmsClearAll(CompletionHandler<void(bool)>&&);
     void fireAlarmsEventIfNeeded(const WebExtensionAlarm&);
 
     // Bookmarks APIs

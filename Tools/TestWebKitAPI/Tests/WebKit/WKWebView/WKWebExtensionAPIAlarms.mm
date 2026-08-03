@@ -71,6 +71,8 @@ TEST(WKWebExtensionAPIAlarms, Errors)
 
         @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: 1, when: Date.now() + 60000 }), /cannot specify both 'delayInMinutes' and 'when'/i)",
 
+        @"await browser.test.assertRejects(browser.alarms.create('one', { name: 'one', delayInMinutes: 1 }), /cannot specify 'name' when a name is also passed as an argument/i)",
+
         @"browser.test.notifyPass()",
     ]);
 
@@ -259,7 +261,9 @@ TEST(WKWebExtensionAPIAlarms, ClearSingleAlarm)
         @"browser.alarms.create('one', { delayInMinutes: 0.01 })",
         @"browser.alarms.create('two', { delayInMinutes: 0.1 })",
 
-        @"browser.alarms.clear('one')",
+        @"browser.test.assertTrue(await browser.alarms.clear('one'), 'Should return true when an alarm was cleared.')",
+        @"browser.test.assertFalse(await browser.alarms.clear('one'), 'Should return false when no alarm matched.')",
+        @"browser.test.assertFalse(await browser.alarms.clear('missing'), 'Should return false for an unknown alarm.')",
 
         // The listener firing will indicate that the test passed.
     ]);
@@ -287,6 +291,9 @@ TEST(WKWebExtensionAPIAlarms, GetSingleAlarm)
         @"browser.test.assertEq(typeof result.periodInMinutes, 'number')",
         @"browser.test.assertEq(result.periodInMinutes, 1)",
 
+        @"result = await browser.alarms.get('missing')",
+        @"browser.test.assertEq(result, undefined, 'Should be undefined for an unknown alarm.')",
+
         @"browser.test.notifyPass()",
     ]);
 
@@ -304,10 +311,13 @@ TEST(WKWebExtensionAPIAlarms, ClearAllAlarms)
         // Test
         @"browser.alarms.onAlarm.addListener(listener)",
 
+        @"browser.test.assertFalse(await browser.alarms.clearAll(), 'Should return false when there are no alarms.')",
+
         @"browser.alarms.create('one', { delayInMinutes: 0.01 })",
         @"browser.alarms.create('two', { delayInMinutes: 0.1 })",
 
-        @"await browser.alarms.clearAll()",
+        @"browser.test.assertTrue(await browser.alarms.clearAll(), 'Should return true when alarms were cleared.')",
+        @"browser.test.assertFalse(await browser.alarms.clearAll(), 'Should return false once all alarms are gone.')",
 
         @"setTimeout(() => {",
         @"  browser.test.notifyPass()",
@@ -363,6 +373,27 @@ TEST(WKWebExtensionAPIAlarms, UnnamedAlarm)
         @"browser.alarms.create({ delayInMinutes: 0.01 })",
 
         // The listener firing will indicate that the test passed.
+    ]);
+
+    Util::loadAndRunExtension(alarmsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIAlarms, CreateAlarms)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.alarms.create({ name: 'one', periodInMinutes: 1 })",
+        @"let result = await browser.alarms.get('one')",
+        @"browser.test.assertEq(result.name, 'one', 'Should create the alarm with the name from the info object')",
+        @"browser.test.assertEq(result.periodInMinutes, 1)",
+        @"browser.test.assertEq(result.delayInMinutes, undefined)",
+
+        @"browser.alarms.create('two', { periodInMinutes: 1 })",
+        @"result = await browser.alarms.get('two')",
+        @"browser.test.assertEq(result.name, 'two', 'Should create the alarm with the name passed as an argument.')",
+        @"browser.test.assertEq(result.periodInMinutes, 1)",
+        @"browser.test.assertEq(result.delayInMinutes, undefined)",
+
+        @"browser.test.notifyPass()",
     ]);
 
     Util::loadAndRunExtension(alarmsManifest, @{ @"background.js": backgroundScript });
