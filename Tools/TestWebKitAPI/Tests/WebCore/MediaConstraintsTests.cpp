@@ -109,6 +109,138 @@ TEST(MediaConstraintsTest, ValueForCapabilityRangeMinMaxIdealIsUnaffected)
     EXPECT_EQ(constraint.valueForCapabilityRange(1280, 0, 4096), 1024);
 }
 
+// The discrete sample rates supported by CoreAudioCaptureSource, the only capability
+// that currently resolves through valueForDiscreteCapabilityValues().
+static Vector<int> discreteSampleRates()
+{
+    return { 8000, 16000, 32000, 44100, 48000, 96000 };
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesExact)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setExact(32000);
+
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(48000, discreteSampleRates()), 32000);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMinOnlySelectsSmallestSupportedValue)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(32000);
+
+    // Current value doesn't satisfy min, so the smallest supported value that does is used.
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(8000, discreteSampleRates()), 32000);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMinOnlyPreservesValidCurrent)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(16000);
+
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(48000, discreteSampleRates()), 48000);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMaxOnlyClampsToLargestSupportedValue)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMax(44100);
+
+    // Current value doesn't satisfy max, so the largest supported value that does is used.
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(96000, discreteSampleRates()), 44100);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMaxOnlyPreservesValidCurrent)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMax(48000);
+
+    // Current value already satisfies max and there is no ideal, so it should be
+    // left unchanged rather than jumping to the largest allowed value.
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(44100, discreteSampleRates()), 44100);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMaxOnlyIgnoresUnsupportedCurrent)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMax(48000);
+
+    // Current value is not one of the supported values, so it is not a valid current
+    // value and must not be preserved.
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(22050, discreteSampleRates()), 48000);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMinMaxPreservesValidCurrent)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(16000);
+    constraint.setMax(48000);
+
+    // Current value already satisfies [min, max] and there is no ideal, so it
+    // should be left unchanged rather than jumping to max.
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(44100, discreteSampleRates()), 44100);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMinMaxClampsAboveMax)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(16000);
+    constraint.setMax(44100);
+
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(96000, discreteSampleRates()), 44100);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesMinMaxClampsBelowMin)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(32000);
+    constraint.setMax(48000);
+
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(8000, discreteSampleRates()), 32000);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesIdealIsClampedToMax)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(16000);
+    constraint.setMax(44100);
+    constraint.setIdeal(96000);
+
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(32000, discreteSampleRates()), 44100);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesIdealIsUsedWhenSupported)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setIdeal(32000);
+
+    EXPECT_EQ(constraint.valueForDiscreteCapabilityValues(48000, discreteSampleRates()), 32000);
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesUnsatisfiableMaxLeavesSettingAlone)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMax(4000);
+
+    EXPECT_FALSE(constraint.valueForDiscreteCapabilityValues(48000, discreteSampleRates()));
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesUnsatisfiableMinLeavesSettingAlone)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMin(192000);
+
+    EXPECT_FALSE(constraint.valueForDiscreteCapabilityValues(48000, discreteSampleRates()));
+}
+
+TEST(MediaConstraintsTest, ValueForDiscreteCapabilityValuesEmptyCapabilityValuesLeavesSettingAlone)
+{
+    WebCore::IntConstraint constraint;
+    constraint.setMax(48000);
+
+    EXPECT_FALSE(constraint.valueForDiscreteCapabilityValues(48000, { }));
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)
