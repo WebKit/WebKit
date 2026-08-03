@@ -16,6 +16,9 @@ accessibility/ios-simulator [ Skip ]
 accessibility/gtk [ Skip ]
 accessibility/mac [ Skip ]
 accessibility/win [ Skip ]
+# The isolated tree only ships in Safari on macOS, so these run there alone
+# (re-enabled in platform/mac/TestExpectations).
+accessibility/isolated-tree [ Skip ]
 http/tests/site-isolation/accessibility/client [ Skip ]
 # Exercises iOS-specific remote-frame accessibility search behavior; enabled only on iOS (see platform/ios/TestExpectations).
 http/tests/site-isolation/accessibility/heading-search-returns-remote-frame.html [ Skip ]
@@ -392,9 +395,6 @@ media/deactivate-audio-session.html [ Skip ]
 
 # Skip the test which hits a debug assertion for now.
 [ Debug ] media/track/webvtt-parser-does-not-leak.html [ Skip ]
-
-# Skip isolated-tree specific tests.
-accessibility/isolated-tree [ Skip ]
 
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 fast/css/appearance-apple-pay-button.html [ Skip ]

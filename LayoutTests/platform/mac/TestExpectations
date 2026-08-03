@@ -7,6 +7,7 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/mac [ Pass ]
+accessibility/isolated-tree [ Pass ]
 compositing/scrolling/async-overflow-scrolling/mac [ Pass ]
 editing/execCommand/mac [ Pass ]
 editing/mac [ Pass ]
