@@ -4141,7 +4141,7 @@ ImageControlsEnabled:
 
 ImportDeferEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "Import Defer"
   humanReadableDescription: "Enable deferred module import."
@@ -4150,7 +4150,7 @@ ImportDeferEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 InactiveMediaCaptureStreamRepromptIntervalInMinutes:
   type: double
