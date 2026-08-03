@@ -154,15 +154,22 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
     }
 
     auto shouldBuildAnonymousBlock = [&] {
-        constexpr auto parentRequiresAnonymousBlock = EnumSet {
-            Style::DisplayType::BlockFlex,
-            Style::DisplayType::InlineFlex,
-            Style::DisplayType::BlockDeprecatedFlex,
-            Style::DisplayType::InlineDeprecatedFlex,
-            Style::DisplayType::BlockGrid,
-            Style::DisplayType::InlineGrid
-        };
-        return m_buildsSimpleAnonymousBlocks || parentRequiresAnonymousBlock.contains(parent.style().display().value);
+        if (m_buildsSimpleAnonymousBlocks)
+            return true;
+        // Skipping anonymous block generation is only supported for block formatting contexts.
+        // Flexbox, grid and MathML lay out their children themselves and rely on them being wrapped
+        // in anonymous blocks rather than being mixed into an inline formatting context.
+        if (parent.style().display().isFlexibleBoxIncludingDeprecatedOrGridFormattingContextBox() || parent.isRenderMathMLBlock())
+            return true;
+        // A fieldset excludes its legend from normal layout and positions it in the block-start border
+        // (see RenderBlock::layoutExcludedChildren). That only happens when the fieldset lays out block
+        // children, so it needs its content wrapped in anonymous blocks too.
+        if (parent.isFieldset())
+            return true;
+        // A multi-column flow fragments its content into column sets and takes column spanners out of
+        // the flow via RenderMultiColumnSpannerPlaceholder. Both rely on block level children, so mixing
+        // the content into an inline formatting context breaks fragmentation.
+        return parent.isRenderMultiColumnFlow();
     };
 
     if (!shouldBuildAnonymousBlock()) {

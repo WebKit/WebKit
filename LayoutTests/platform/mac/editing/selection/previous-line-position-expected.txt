@@ -28,8 +28,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 13x18
             text run at (0,0) width 13: "hi"
           RenderInline {SPAN} at (12,0) size 0x18
-        RenderBlock (anonymous) at (1,19) size 782x36
-          RenderBR {BR} at (0,0) size 0x18
-          RenderText {#text} at (0,18) size 23x18
-            text run at (0,18) width 23: "test"
+        RenderBR {BR} at (1,19) size 0x18
+        RenderText {#text} at (1,37) size 23x18
+          text run at (1,37) width 23: "test"
 caret: position 0 of child 2 {BR} of child 3 {DIV} of body

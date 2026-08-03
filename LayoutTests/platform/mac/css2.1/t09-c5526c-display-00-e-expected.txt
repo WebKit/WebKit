@@ -16,20 +16,19 @@ layer at (0,0) size 800x420
               RenderBlock {P} at (10,10) size 140x10
                 RenderText {#text} at (0,-2) size 75x14
                   text run at (0,-1) width 75: "the world ends"
-              RenderBlock (anonymous) at (10,20) size 140x38
-                RenderInline {FORM} at (0,0) size 140x38
-                  RenderText {#text} at (0,0) size 0x0
-                  RenderBlock {P} at (0,0) size 140x19
-                    RenderText {#text} at (0,3) size 29x13
-                      text run at (0,3) width 29: "bang "
-                    RenderBlock {INPUT} at (30,3) size 13x13 [color=#000000]
-                    RenderText {#text} at (0,0) size 0x0
-                  RenderBlock {P} at (0,19) size 140x19
-                    RenderText {#text} at (0,3) size 47x13
-                      text run at (0,3) width 47: "whimper "
-                    RenderBlock {INPUT} at (48,3) size 13x13 [color=#000000]
-                    RenderText {#text} at (0,0) size 0x0
+              RenderInline {FORM} at (10,20) size 140x38
                 RenderText {#text} at (0,0) size 0x0
+                RenderBlock {P} at (10,20) size 140x19
+                  RenderText {#text} at (0,3) size 29x13
+                    text run at (0,3) width 29: "bang "
+                  RenderBlock {INPUT} at (30,3) size 13x13 [color=#000000]
+                  RenderText {#text} at (0,0) size 0x0
+                RenderBlock {P} at (10,39) size 140x19
+                  RenderText {#text} at (0,3) size 47x13
+                    text run at (0,3) width 47: "whimper "
+                  RenderBlock {INPUT} at (48,3) size 13x13 [color=#000000]
+                  RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
             RenderBlock (floating) {LI} at (259,0) size 81x120 [color=#000000] [bgcolor=#FFCC00] [border: (5px solid #000000)]
               RenderText {#text} at (15,13) size 50x14
                 text run at (15,13) width 50: "i grow old"

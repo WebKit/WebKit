@@ -34,8 +34,7 @@ layer at (0,0) size 800x600
               text run at (0,50) width 98: "For this test: "
           RenderText {#text} at (97,50) size 388x22
             text run at (97,50) width 388: "Select and delete a list and some surrounding content."
-        RenderBlock (anonymous) at (20,92) size 744x22
-          RenderBR {BR} at (0,0) size 0x22
+        RenderBR {BR} at (20,92) size 0x22
         RenderBlock {DIV} at (20,114) size 744x116
           RenderText {#text} at (0,0) size 184x28
             text run at (0,0) width 184: "Expected Results:"

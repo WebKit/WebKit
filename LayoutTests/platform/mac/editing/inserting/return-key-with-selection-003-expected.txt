@@ -28,14 +28,13 @@ layer at (0,0) size 800x600
             text run at (256,56) width 479: " Hitting return key with full line selected does not"
             text run at (0,84) width 252: "add blank line as it should"
         RenderBlock {DIV} at (14,142) size 756x224
-          RenderBlock (anonymous) at (0,0) size 756x112
-            RenderText {#text} at (0,0) size 184x28
-              text run at (0,0) width 184: "Expected Results:"
-            RenderBR {BR} at (183,0) size 1x28
-            RenderText {#text} at (0,28) size 740x84
-              text run at (0,28) width 718: "Should see this content in the red box below (note that there should be two"
-              text run at (0,56) width 740: "blank lines between \"foo\" and \"baz\"; also note that the insertion point should"
-              text run at (0,84) width 422: "be at the start of the third line, a blank line):"
+          RenderText {#text} at (0,0) size 184x28
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x28
+          RenderText {#text} at (0,28) size 740x84
+            text run at (0,28) width 718: "Should see this content in the red box below (note that there should be two"
+            text run at (0,56) width 740: "blank lines between \"foo\" and \"baz\"; also note that the insertion point should"
+            text run at (0,84) width 422: "be at the start of the third line, a blank line):"
           RenderBlock {DIV} at (0,112) size 756x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"

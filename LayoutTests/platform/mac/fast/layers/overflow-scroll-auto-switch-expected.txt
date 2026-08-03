@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 149x18
-          text run at (0,0) width 149: "Scrollbars should work"
+      RenderText {#text} at (0,0) size 149x18
+        text run at (0,0) width 149: "Scrollbars should work"
 layer at (8,26) size 100x100 clip at (8,26) size 85x85 scrollWidth 241 scrollHeight 180
   RenderBlock (relative positioned) {DIV} at (0,18) size 100x100
     RenderText {#text} at (0,0) size 242x18

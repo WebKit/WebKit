@@ -14,9 +14,8 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 24x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 22x18
                   text run at (1,1) width 22: "foo"
-        RenderBlock (anonymous) at (0,26) size 784x18
-          RenderText {#text} at (0,0) size 21x18
-            text run at (0,0) width 21: "bar"
+        RenderText {#text} at (0,26) size 21x18
+          text run at (0,26) width 21: "bar"
       RenderBlock {P} at (0,112) size 784x18
         RenderText {#text} at (0,0) size 574x18
           text run at (0,0) width 574: "In the above editable region, you should see 'foo' in the bordered table and 'bar' outside it."

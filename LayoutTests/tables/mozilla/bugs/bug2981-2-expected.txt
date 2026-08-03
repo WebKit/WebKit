@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600 [bgcolor=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 800x102
-        RenderImage {IMG} at (0,0) size 102x102 [border: (1px solid #000000)]
-        RenderText {#text} at (0,0) size 0x0
+      RenderImage {IMG} at (0,0) size 102x102 [border: (1px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,102) size 800x128 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 796x124
           RenderTableRow {TR} at (0,0) size 796x0

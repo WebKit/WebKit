@@ -9,8 +9,7 @@ layer at (0,0) size 800x600
           text run at (440,0) width 335: "text box with the submit button. (And, removing the"
           text run at (0,18) width 156: "font tag that is wrapped "
           text run at (155,18) width 239: "around the text box clears up layout)."
-      RenderBlock (anonymous) at (0,52) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,52) size 0x18
       RenderBlock {FORM} at (0,70) size 784x136
         RenderBlock {CENTER} at (0,0) size 784x136
           RenderTable {TABLE} at (92,0) size 600x136 [bgcolor=#EEEEEE] [border: (1px outset #000000)]

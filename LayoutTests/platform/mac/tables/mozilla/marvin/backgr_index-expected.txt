@@ -80,10 +80,9 @@ layer at (0,0) size 785x1716
           text run at (0,0) width 199: "Table of Contents"
       RenderBlock {OL} at (0,1231) size 769x455
         RenderListItem {LI} at (40,0) size 729x105
-          RenderBlock (anonymous) at (0,0) size 729x15
-            RenderListMarker at (-24,0) size 24x15: "A"
-            RenderText {#text} at (0,0) size 118x15
-              text run at (0,0) width 118: "Background Area"
+          RenderListMarker at (-24,0) size 24x15: "A"
+          RenderText {#text} at (0,0) size 118x15
+            text run at (0,0) width 118: "Background Area"
           RenderBlock {OL} at (0,15) size 729x90
             RenderListItem {LI} at (40,0) size 689x15
               RenderListMarker at (-24,0) size 24x15: "1"
@@ -122,10 +121,9 @@ layer at (0,0) size 785x1716
                   text run at (0,0) width 203: "Background on 'table-cell'"
               RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,105) size 729x105
-          RenderBlock (anonymous) at (0,0) size 729x15
-            RenderListMarker at (-24,0) size 24x15: "B"
-            RenderText {#text} at (0,0) size 149x15
-              text run at (0,0) width 149: "Background Position"
+          RenderListMarker at (-24,0) size 24x15: "B"
+          RenderText {#text} at (0,0) size 149x15
+            text run at (0,0) width 149: "Background Position"
           RenderBlock {OL} at (0,15) size 729x90
             RenderListItem {LI} at (40,0) size 689x15
               RenderListMarker at (-24,0) size 24x15: "1"
@@ -164,10 +162,9 @@ layer at (0,0) size 785x1716
                   text run at (0,0) width 203: "Background on 'table-cell'"
               RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,210) size 729x45
-          RenderBlock (anonymous) at (0,0) size 729x15
-            RenderListMarker at (-24,0) size 24x15: "C"
-            RenderText {#text} at (0,0) size 133x15
-              text run at (0,0) width 133: "Background Layers"
+          RenderListMarker at (-24,0) size 24x15: "C"
+          RenderText {#text} at (0,0) size 133x15
+            text run at (0,0) width 133: "Background Layers"
           RenderBlock {OL} at (0,15) size 729x30
             RenderListItem {LI} at (40,0) size 689x15
               RenderListMarker at (-24,0) size 24x15: "1"
@@ -182,10 +179,9 @@ layer at (0,0) size 785x1716
                   text run at (0,0) width 133: "empty-cells: hide"
               RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,255) size 729x200
-          RenderBlock (anonymous) at (0,0) size 729x15
-            RenderListMarker at (-24,0) size 24x15: "D"
-            RenderText {#text} at (0,0) size 180x15
-              text run at (0,0) width 180: "Background with Borders"
+          RenderListMarker at (-24,0) size 24x15: "D"
+          RenderText {#text} at (0,0) size 180x15
+            text run at (0,0) width 180: "Background with Borders"
           RenderBlock {OL} at (0,15) size 729x135
             RenderListItem {LI} at (40,0) size 689x15
               RenderListMarker at (-24,0) size 24x15: "1"
@@ -224,10 +220,9 @@ layer at (0,0) size 785x1716
                   text run at (0,0) width 203: "Background on 'table-cell'"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,90) size 689x45
-              RenderBlock (anonymous) at (0,0) size 689x15
-                RenderListMarker at (-24,0) size 24x15: "7"
-                RenderText {#text} at (0,0) size 102x15
-                  text run at (0,0) width 102: "Special Tests"
+              RenderListMarker at (-24,0) size 24x15: "7"
+              RenderText {#text} at (0,0) size 102x15
+                text run at (0,0) width 102: "Special Tests"
               RenderBlock {OL} at (0,15) size 689x30
                 RenderListItem {LI} at (40,0) size 649x15
                   RenderListMarker at (-24,0) size 24x15: "1"

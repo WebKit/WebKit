@@ -8,10 +8,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 778: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that the focus ring color for an <area>"
           text run at (0,18) width 782: "can be explicitly inherited from <map>. This test PASSED if a green-colored focus ring is drawn around the <area> in the"
           text run at (0,36) width 125: "imagemap (below)."
-      RenderBlock (anonymous) at (0,70) size 784x128
-        RenderInline {MAP} at (0,114) size 0x18
-          RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
+      RenderInline {MAP} at (0,184) size 0x18
         RenderText {#text} at (0,0) size 0x0
-        RenderImage {IMG} at (0,0) size 128x128
         RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderImage {IMG} at (0,70) size 128x128
+      RenderText {#text} at (0,0) size 0x0

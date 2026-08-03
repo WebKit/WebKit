@@ -86,9 +86,8 @@ layer at (0,0) size 785x887
           RenderText {#text} at (0,0) size 46x22
             text run at (0,0) width 46: "Box 1"
         RenderBlock {P} at (26,85) size 717x37
-          RenderBlock (anonymous) at (0,0) size 717x18
-            RenderText {#text} at (0,0) size 661x18
-              text run at (0,0) width 661: "This box should contain the text \"generated content\" in CSS2-compliant browsers (but won't in Safari)."
+          RenderText {#text} at (0,0) size 661x18
+            text run at (0,0) width 661: "This box should contain the text \"generated content\" in CSS2-compliant browsers (but won't in Safari)."
           RenderBlock (generated) at (0,18) size 717x18 [color=#008000]
             RenderText at (0,0) size 114x18
               text run at (0,0) width 114: "generated content"
@@ -97,9 +96,8 @@ layer at (0,0) size 785x887
           RenderText {#text} at (0,0) size 46x22
             text run at (0,0) width 46: "Box 2"
         RenderBlock {P} at (26,85) size 717x37
-          RenderBlock (anonymous) at (0,0) size 717x18
-            RenderText {#text} at (0,0) size 639x18
-              text run at (0,0) width 639: "This box should contain the text \"generated content\" in CSS2-compliant browsers, including Safari."
+          RenderText {#text} at (0,0) size 639x18
+            text run at (0,0) width 639: "This box should contain the text \"generated content\" in CSS2-compliant browsers, including Safari."
           RenderBlock (generated) at (0,18) size 717x18 [color=#008000]
             RenderText at (0,0) size 114x18
               text run at (0,0) width 114: "generated content"

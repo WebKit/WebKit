@@ -3,9 +3,8 @@ layer at (0,0) size 785x7165
 layer at (0,0) size 785x7165
   RenderBlock {HTML} at (0,0) size 785x7165
     RenderBody {BODY} at (8,8) size 769x7141
-      RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 352x18
-          text run at (0,0) width 352: "This tests font choices and metrics for the cursive font."
+      RenderText {#text} at (0,0) size 352x18
+        text run at (0,0) width 352: "This tests font choices and metrics for the cursive font."
       RenderBlock {P} at (0,34) size 769x2375
         RenderInline {FONT} at (0,-1) size 64x2377
           RenderText {#text} at (0,-1) size 46x27

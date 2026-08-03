@@ -14,10 +14,9 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 44x18
               text run at (0,0) width 44: "quoted"
           RenderBlock {DIV} at (12,18) size 772x0
-        RenderBlock (anonymous) at (0,18) size 784x18
-          RenderText {#text} at (0,0) size 60x18
-            text run at (0,0) width 60: "unquoted"
-          RenderBR {BR} at (59,0) size 1x18
+        RenderText {#text} at (0,18) size 60x18
+          text run at (0,18) width 60: "unquoted"
+        RenderBR {BR} at (59,18) size 1x18
         RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x18
             RenderText {#text} at (0,0) size 44x18

@@ -4,8 +4,7 @@ layer at (0,0) size 785x1840
   RenderBlock {HTML} at (0,0) size 785x1840
     RenderBody {BODY} at (0,0) size 785x1840 [bgcolor=#53799F]
       RenderBlock {CENTER} at (0,0) size 785x1840
-        RenderBlock (anonymous) at (0,0) size 785x18
-          RenderBR {BR} at (392,0) size 1x18
+        RenderBR {BR} at (392,0) size 1x18
         RenderTable {TABLE} at (19,18) size 747x1804 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 744x1802
             RenderTableRow {TR} at (0,0) size 744x20
@@ -345,5 +344,4 @@ layer at (0,0) size 785x1840
               RenderTableCell {TD} at (0,1782) size 744x20 [border: (1px inset #000000)] [r=28 c=0 rs=1 cs=1]
                 RenderText {#text} at (369,1) size 5x18
                   text run at (369,1) width 5: " "
-        RenderBlock (anonymous) at (0,1822) size 785x18
-          RenderBR {BR} at (392,0) size 1x18
+        RenderBR {BR} at (392,1822) size 1x18

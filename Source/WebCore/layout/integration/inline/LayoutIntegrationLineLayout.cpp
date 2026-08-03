@@ -936,9 +936,13 @@ std::optional<LayoutUnit> LineLayout::firstLineBaseline() const
             return { };
 
         if (auto* blockLevelBox = m_inlineContent->blockLevelBoxForLine(line)) {
-            // For block-in-inline look for the baseline of the child box.
+            // For block-in-inline look for the baseline of the child box. Note that the baseline is
+            // relative to the block box, while callers expect it relative to this container (see
+            // RenderBlock::firstLineBaseline).
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
-            return blockRenderer->firstLineBaseline();
+            if (auto baseline = blockRenderer->firstLineBaseline())
+                return blockRenderer->logicalTop() + *baseline;
+            return { };
         }
         return LayoutUnit { baselineForLine(line) };
     };
@@ -964,9 +968,13 @@ std::optional<LayoutUnit> LineLayout::lastLineBaseline() const
             return { };
 
         if (auto* blockLevelBox = m_inlineContent->blockLevelBoxForLine(line)) {
-            // For block-in-inline look for the baseline of the child box.
+            // For block-in-inline look for the baseline of the child box. Note that the baseline is
+            // relative to the block box, while callers expect it relative to this container (see
+            // RenderBlock::lastLineBaseline).
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
-            return blockRenderer->lastLineBaseline();
+            if (auto baseline = blockRenderer->lastLineBaseline())
+                return blockRenderer->logicalTop() + *baseline;
+            return { };
         }
         return LayoutUnit { baselineForLine(line) };
     };

@@ -16,9 +16,8 @@ layer at (0,0) size 800x312
             text run at (366,0) width 382: "Selection is not completely erased when a replaced element"
             text run at (0,18) width 40: "moves"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,52) size 784x236
-        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
 layer at (8,68) size 214x232
-  RenderImage {IMG} at (0,0) size 214x232
+  RenderImage {IMG} at (0,52) size 214x232
 selection start: position 0 of child 3 {IMG} of body
 selection end:   position 1 of child 3 {IMG} of body

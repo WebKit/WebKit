@@ -40,7 +40,6 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,90) size 600x35
               RenderTableCell {TD} at (0,90) size 601x35 [r=1 c=0 rs=1 cs=3]
-                RenderBlock (anonymous) at (0,0) size 601x1
-                  RenderImage {IMG} at (0,0) size 600x1
+                RenderImage {IMG} at (0,0) size 600x1
                 RenderBlock {P} at (0,17) size 601x18
                   RenderBR {BR} at (300,0) size 1x18

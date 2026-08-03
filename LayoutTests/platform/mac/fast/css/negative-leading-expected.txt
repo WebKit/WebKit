@@ -12,8 +12,7 @@ layer at (0,0) size 800x198
           RenderText {#text} at (0,-18) size 398x74
             text run at (0,-17) width 398: "Lorem ipsum dolor"
             text run at (0,1) width 169: "sit amet"
-      RenderBlock (anonymous) at (0,104) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,104) size 0x18
       RenderBlock {DIV} at (0,122) size 424x53 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (12,12) size 400x39
           RenderText {#text} at (0,-18) size 398x74

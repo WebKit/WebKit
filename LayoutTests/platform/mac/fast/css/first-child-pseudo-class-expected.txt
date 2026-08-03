@@ -92,10 +92,9 @@ layer at (0,0) size 785x2270
               text run at (0,36) width 308: "considered when determining the first child."
         RenderListItem {LI} at (40,921) size 616x291 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x42 [bgcolor=#990000]
-            RenderBlock (anonymous) at (0,0) size 584x18
-              RenderListMarker at (-34,0) size 18x18: "4"
-              RenderText {#text} at (0,0) size 5x18
-                text run at (0,0) width 5: "."
+            RenderListMarker at (-34,0) size 18x18: "4"
+            RenderText {#text} at (0,0) size 5x18
+              text run at (0,0) width 5: "."
             RenderBlock {DIV} at (0,18) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,71) size 584x118 [bgcolor=#FFFFFF]
             RenderText {#text} at (6,6) size 219x106

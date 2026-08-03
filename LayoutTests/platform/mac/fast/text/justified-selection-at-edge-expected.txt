@@ -17,8 +17,7 @@ layer at (0,0) size 800x600
             text run at (192,3) width 61: "t amet,"
         RenderText {#text} at (3,21) size 179x18
           text run at (3,21) width 179: "consectetuer adipiscing elit."
-      RenderBlock (anonymous) at (0,110) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,110) size 0x18
       RenderBlock {P} at (0,144) size 256x42 [border: (3px solid #0000FF)]
         RenderText {#text} at (3,3) size 250x36
           text run at (3,3) width 250: "Lorem ipsum dolor sit amet,"

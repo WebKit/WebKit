@@ -3,8 +3,7 @@ layer at (0,0) size 1012x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock (anonymous) at (0,12) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,12) size 0x18
       RenderTable {TABLE} at (0,30) size 642x217
         RenderTableSection {TBODY} at (0,0) size 642x217
           RenderTableRow {TR} at (0,0) size 642x27

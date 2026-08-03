@@ -3,20 +3,19 @@ layer at (0,0) size 785x1205
 layer at (0,0) size 785x1205
   RenderBlock {HTML} at (0,0) size 785x1206
     RenderBody {BODY} at (8,8) size 769x1190
-      RenderBlock (anonymous) at (0,0) size 769x90
-        RenderText {#text} at (0,0) size 352x18
-          text run at (0,0) width 352: "This test was provided by open-source contributors on "
-        RenderInline {A} at (351,0) size 56x18 [color=#0000EE]
-          RenderText {#text} at (351,0) size 56x18
-            text run at (351,0) width 56: "Bugzilla"
-        RenderText {#text} at (0,0) size 757x72
-          text run at (406,0) width 327: ". Currently, the \"Browser rendering\" results are not"
-          text run at (0,18) width 757: "expected to match the \"Correct output sample\" results. In fact, I do not entirely agree with all of the given test cases in"
-          text run at (0,36) width 744: "terms of their expected results, nor do I think that the browser should yet be expected to match all of the cases in the"
-          text run at (0,54) width 189: "different languages, but I am "
-          text run at (188,54) width 289: "(at least temporarily) adding the test anyway."
-        RenderBR {BR} at (476,54) size 1x18
-        RenderBR {BR} at (0,72) size 0x18
+      RenderText {#text} at (0,0) size 352x18
+        text run at (0,0) width 352: "This test was provided by open-source contributors on "
+      RenderInline {A} at (351,0) size 56x18 [color=#0000EE]
+        RenderText {#text} at (351,0) size 56x18
+          text run at (351,0) width 56: "Bugzilla"
+      RenderText {#text} at (0,0) size 757x72
+        text run at (406,0) width 327: ". Currently, the \"Browser rendering\" results are not"
+        text run at (0,18) width 757: "expected to match the \"Correct output sample\" results. In fact, I do not entirely agree with all of the given test cases in"
+        text run at (0,36) width 744: "terms of their expected results, nor do I think that the browser should yet be expected to match all of the cases in the"
+        text run at (0,54) width 189: "different languages, but I am "
+        text run at (188,54) width 289: "(at least temporarily) adding the test anyway."
+      RenderBR {BR} at (476,54) size 1x18
+      RenderBR {BR} at (0,72) size 0x18
       RenderTable {TABLE} at (0,90) size 769x367
         RenderBlock {CAPTION} at (0,0) size 769x18
           RenderText {#text} at (344,0) size 81x18

@@ -26,10 +26,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 777x18
           text run at (0,0) width 777: "You should see 'a' on the first line below, and 'zz a' on the second line. 'zz' (and only 'zz') should be marked as misspelled."
       RenderBlock {DIV} at (0,18) size 784x84 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x28
-          RenderInline {SPAN} at (0,0) size 11x28
-            RenderText {#text} at (0,0) size 11x28
-              text run at (0,0) width 11: "a"
+        RenderInline {SPAN} at (14,14) size 11x28
+          RenderText {#text} at (14,14) size 11x28
+            text run at (14,14) width 11: "a"
         RenderBlock {DIV} at (14,42) size 756x28
           RenderInline {SPAN} at (0,0) size 38x28
             RenderText {#text} at (0,0) size 38x28

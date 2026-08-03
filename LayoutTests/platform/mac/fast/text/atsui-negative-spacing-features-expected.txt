@@ -6,9 +6,8 @@ layer at (0,0) size 800x246
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 378x18
           text run at (0,0) width 378: "Test for negative spacing values in complex text rendering."
-      RenderBlock (anonymous) at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 517x18
-          text run at (0,0) width 517: "Each green box should be identical to the blue box it follows, except for accents."
+      RenderText {#text} at (0,34) size 517x18
+        text run at (0,34) width 517: "Each green box should be identical to the blue box it follows, except for accents."
       RenderTable {TABLE} at (0,70) size 414x152
         RenderTableSection {TBODY} at (0,0) size 414x152
           RenderTableRow {TR} at (0,2) size 414x20

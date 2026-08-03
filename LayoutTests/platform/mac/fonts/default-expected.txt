@@ -3,9 +3,8 @@ layer at (0,0) size 785x5166
 layer at (0,0) size 785x5166
   RenderBlock {HTML} at (0,0) size 785x5166
     RenderBody {BODY} at (8,8) size 769x5142
-      RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 350x18
-          text run at (0,0) width 350: "This tests font choices and metrics for the default font."
+      RenderText {#text} at (0,0) size 350x18
+        text run at (0,0) width 350: "This tests font choices and metrics for the default font."
       RenderBlock {P} at (0,34) size 769x1692
         RenderText {#text} at (0,0) size 16x18
           text run at (0,0) width 16: "    "

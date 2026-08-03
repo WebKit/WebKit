@@ -583,7 +583,7 @@ AnimationTriggersEnabled:
 
 AnonymousBlockGenerationDisabled:
   type: bool
-  status: unstable
+  status: preview
   category: css
   humanReadableName: "Disable anonymous block generation"
   humanReadableDescription: "Disable anonymous block generation for mixed blocks"

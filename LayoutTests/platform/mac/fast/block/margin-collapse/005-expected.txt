@@ -43,9 +43,8 @@ layer at (11,212) size 36x59
   RenderBlock (relative positioned) {DIV} at (0,109) size 37x59 [bgcolor=#FF0000]
 layer at (11,212) size 36x59
   RenderBlock (relative positioned) {DIV} at (0,0) size 37x59 [bgcolor=#00FF00]
-    RenderBlock (anonymous) at (0,0) size 37x59
-      RenderText {#text} at (0,0) size 34x59
-        text run at (0,0) width 34: "B"
+    RenderText {#text} at (0,0) size 34x59
+      text run at (0,0) width 34: "B"
 layer at (11,321) size 36x59
   RenderBlock (relative positioned) {DIV} at (0,218) size 37x59 [bgcolor=#00FFFF]
     RenderText {#text} at (0,0) size 34x59

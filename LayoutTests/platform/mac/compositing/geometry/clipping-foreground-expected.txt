@@ -6,10 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 526x18
           text run at (0,0) width 526: "The layering and positions of the boxes should not be affected by oveflow:hidden."
-      RenderBlock (anonymous) at (0,34) size 784x479
-        RenderText {#text} at (320,306) size 4x18
-          text run at (320,306) width 4: " "
-        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (320,340) size 4x18
+        text run at (320,340) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
 layer at (68,261) size 200x200 layerType: background only
 layer at (28,221) size 150x150
   RenderBlock (positioned) zI: -1 {DIV} at (-40,-40) size 150x150 [color=#808080] [bgcolor=#C86464] [border: (2px solid #000000)]
@@ -22,7 +21,7 @@ layer at (50,303) size 100x100
       text run at (22,21) width 54: "Behind"
       text run at (22,41) width 52: "behind"
 layer at (68,261) size 200x200 layerType: foreground only
-  RenderBlock (relative positioned) {DIV} at (60,218) size 200x201 [color=#0000FF] [bgcolor=#FFFFFFCC] [border: (10px solid #000000)]
+  RenderBlock (relative positioned) {DIV} at (60,252) size 200x201 [color=#0000FF] [bgcolor=#FFFFFFCC] [border: (10px solid #000000)]
     RenderText {#text} at (30,29) size 126x82
       text run at (30,29) width 59: "Box"
       text run at (30,69) width 126: "contents"
@@ -45,7 +44,7 @@ layer at (374,144) size 100x100 backgroundClip at (402,112) size 180x180 clip at
       text run at (22,21) width 54: "Behind"
       text run at (22,41) width 52: "behind"
 layer at (392,102) size 200x200 clip at (402,112) size 180x180 scrollWidth 230 scrollHeight 230 layerType: foreground only
-  RenderBlock (relative positioned) {DIV} at (384,60) size 200x200 [color=#0000FF] [bgcolor=#FFFFFFCC] [border: (10px solid #000000)]
+  RenderBlock (relative positioned) {DIV} at (384,94) size 200x200 [color=#0000FF] [bgcolor=#FFFFFFCC] [border: (10px solid #000000)]
     RenderText {#text} at (30,29) size 126x82
       text run at (30,29) width 59: "Box"
       text run at (30,69) width 126: "contents"

@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 245x18
-          text run at (0,0) width 245: "The tables left position should be 250."
+      RenderText {#text} at (0,0) size 245x18
+        text run at (0,0) width 245: "The tables left position should be 250."
       RenderBlock {P} at (0,34) size 784x20
         RenderText {#text} at (0,0) size 36x18
           text run at (0,0) width 36: "Left: "
@@ -19,6 +18,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (8,2) size 29x13
             RenderText at (0,0) size 29x13
               text run at (0,0) width 29: "Move"
+      RenderText {#text} at (0,0) size 0x0
 layer at (46,45) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
     RenderText {#text} at (0,0) size 32x13

@@ -3,9 +3,8 @@ layer at (0,0) size 785x964
 layer at (0,0) size 785x964
   RenderBlock {HTML} at (0,0) size 785x964
     RenderBody {BODY} at (8,8) size 769x948
-      RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 320x18
-          text run at (0,0) width 320: "fixed table - percentage width cell honored to min"
+      RenderText {#text} at (0,0) size 320x18
+        text run at (0,0) width 320: "fixed table - percentage width cell honored to min"
       RenderTable {TABLE} at (0,18) size 300x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x26
           RenderTableRow {TR} at (0,2) size 298x22
@@ -15,10 +14,9 @@ layer at (0,0) size 785x964
             RenderTableCell {TD} at (29,2) size 267x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x18
                 text run at (2,2) width 22: "foo"
-      RenderBlock (anonymous) at (0,46) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 350x18
-          text run at (0,18) width 350: "fixed table - percentage cells allocated left to rigth first"
+      RenderBR {BR} at (0,46) size 0x18
+      RenderText {#text} at (0,64) size 350x18
+        text run at (0,64) width 350: "fixed table - percentage cells allocated left to rigth first"
       RenderTable {TABLE} at (0,82) size 300x46 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x44
           RenderTableRow {TR} at (0,2) size 298x40
@@ -32,10 +30,9 @@ layer at (0,0) size 785x964
             RenderTableCell {TD} at (173,11) size 123x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,11) size 30x18
                 text run at (2,2) width 30: "50%"
-      RenderBlock (anonymous) at (0,128) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 523x18
-          text run at (0,18) width 523: "fixed table - percentage cells allocated left to rigth first allocated from left to right"
+      RenderBR {BR} at (0,128) size 0x18
+      RenderText {#text} at (0,146) size 523x18
+        text run at (0,146) width 523: "fixed table - percentage cells allocated left to rigth first allocated from left to right"
       RenderTable {TABLE} at (0,164) size 300x46 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x44
           RenderTableRow {TR} at (0,2) size 298x40
@@ -49,10 +46,9 @@ layer at (0,0) size 785x964
             RenderTableCell {TD} at (262,11) size 34x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,11) size 30x18
                 text run at (2,2) width 30: "95%"
-      RenderBlock (anonymous) at (0,210) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 350x18
-          text run at (0,18) width 350: "fixed table - percentage cells allocated left to rigth first"
+      RenderBR {BR} at (0,210) size 0x18
+      RenderText {#text} at (0,228) size 350x18
+        text run at (0,228) width 350: "fixed table - percentage cells allocated left to rigth first"
       RenderTable {TABLE} at (0,246) size 200x62 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 198x60
           RenderTableRow {TR} at (0,10) size 198x40
@@ -63,10 +59,9 @@ layer at (0,0) size 785x964
             RenderTableCell {TD} at (104,19) size 84x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,11) size 30x18
                 text run at (2,2) width 30: "50%"
-      RenderBlock (anonymous) at (0,308) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 350x18
-          text run at (0,18) width 350: "fixed table - percentage cells allocated left to right first"
+      RenderBR {BR} at (0,308) size 0x18
+      RenderText {#text} at (0,326) size 350x18
+        text run at (0,326) width 350: "fixed table - percentage cells allocated left to right first"
       RenderTable {TABLE} at (0,344) size 200x80 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 198x78
           RenderTableRow {TR} at (0,10) size 198x58
@@ -84,10 +79,9 @@ layer at (0,0) size 785x964
                 text run at (2,2) width 30: "50%"
                 text run at (2,20) width 30: "50%"
                 text run at (2,38) width 30: "50%"
-      RenderBlock (anonymous) at (0,424) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 350x18
-          text run at (0,18) width 350: "fixed table - percentage cells allocated left to right first"
+      RenderBR {BR} at (0,424) size 0x18
+      RenderText {#text} at (0,442) size 350x18
+        text run at (0,442) width 350: "fixed table - percentage cells allocated left to right first"
       RenderTable {TABLE} at (0,460) size 400x62 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 398x60
           RenderTableRow {TR} at (0,10) size 398x40
@@ -105,10 +99,9 @@ layer at (0,0) size 785x964
             RenderTableCell {TD} at (258,19) size 130x22 [border: (1px inset #000000)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,11) size 96x18
                 text run at (2,2) width 96: "50% 50% 50%"
-      RenderBlock (anonymous) at (0,522) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 350x18
-          text run at (0,18) width 350: "fixed table - percentage cells allocated left to right first"
+      RenderBR {BR} at (0,522) size 0x18
+      RenderText {#text} at (0,540) size 350x18
+        text run at (0,540) width 350: "fixed table - percentage cells allocated left to right first"
       RenderTable {TABLE} at (0,558) size 400x80 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 398x78
           RenderTableRow {TR} at (0,10) size 398x58
@@ -131,8 +124,7 @@ layer at (0,0) size 785x964
                 text run at (2,2) width 30: "50%"
                 text run at (2,20) width 30: "50%"
                 text run at (2,38) width 30: "50%"
-      RenderBlock (anonymous) at (0,638) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,638) size 0x18
       RenderTable {TABLE} at (0,656) size 200x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 198x26
           RenderTableRow {TR} at (0,2) size 198x22
@@ -145,10 +137,9 @@ layer at (0,0) size 785x964
             RenderTableCell {TD} at (113,2) size 84x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x18
                 text run at (2,2) width 23: "zap"
-      RenderBlock (anonymous) at (0,684) size 769x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 224x18
-          text run at (0,18) width 224: "PERCENTAGE WIDTH TABLES"
+      RenderBR {BR} at (0,684) size 0x18
+      RenderText {#text} at (0,702) size 224x18
+        text run at (0,702) width 224: "PERCENTAGE WIDTH TABLES"
       RenderTable {TABLE} at (0,720) size 769x82 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x80
           RenderTableRow {TR} at (0,2) size 767x76
@@ -167,8 +158,7 @@ layer at (0,0) size 785x964
                 text run at (2,20) width 22: "foo"
                 text run at (2,38) width 22: "foo"
                 text run at (2,56) width 22: "foo"
-      RenderBlock (anonymous) at (0,802) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,802) size 0x18
       RenderTable {TABLE} at (0,820) size 769x82 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x80
           RenderTableRow {TR} at (0,2) size 767x76
@@ -193,8 +183,7 @@ layer at (0,0) size 785x964
                 text run at (2,20) width 22: "foo"
                 text run at (2,38) width 22: "foo"
                 text run at (2,56) width 22: "foo"
-      RenderBlock (anonymous) at (0,902) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,902) size 0x18
       RenderTable {TABLE} at (0,920) size 769x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x26
           RenderTableRow {TR} at (0,2) size 767x22

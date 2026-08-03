@@ -6,9 +6,8 @@ layer at (0,0) size 800x514
       RenderBlock (floating) {DIV} at (0,0) size 124x506
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 124x64
-          RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
-          RenderText {#text} at (0,0) size 0x0
+        RenderHTMLCanvas {CANVAS} at (10,350) size 40x40 [bgcolor=#FFFF77]
+        RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
@@ -26,9 +25,8 @@ layer at (0,0) size 800x514
       RenderBlock (floating) {DIV} at (133,0) size 125x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 124x64
-          RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
-          RenderText {#text} at (0,0) size 0x0
+        RenderHTMLCanvas {CANVAS} at (10,350) size 40x40 [bgcolor=#FFFF77]
+        RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
@@ -40,9 +38,8 @@ layer at (0,0) size 800x514
       RenderBlock (floating) {DIV} at (267,0) size 124x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 124x64
-          RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
-          RenderText {#text} at (0,0) size 0x0
+        RenderHTMLCanvas {CANVAS} at (10,350) size 40x40 [bgcolor=#FFFF77]
+        RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
@@ -54,9 +51,8 @@ layer at (0,0) size 800x514
       RenderBlock (floating) {DIV} at (400,0) size 125x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 124x64
-          RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
-          RenderText {#text} at (0,0) size 0x0
+        RenderHTMLCanvas {CANVAS} at (10,350) size 40x40 [bgcolor=#FFFF77]
+        RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
@@ -68,9 +64,8 @@ layer at (0,0) size 800x514
       RenderBlock (floating) {DIV} at (534,0) size 124x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 124x64
-          RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
-          RenderText {#text} at (0,0) size 0x0
+        RenderHTMLCanvas {CANVAS} at (10,350) size 40x40 [bgcolor=#FFFF77]
+        RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "

@@ -56,8 +56,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (55,50) size 51x22 [border: (1px inset #000000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 42x18
                 text run at (2,2) width 42: "Purple"
-      RenderBlock (anonymous) at (0,260) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,260) size 0x18
       RenderTable {TABLE} at (0,278) size 130x94 [border: (1px outset #000000)]
         RenderBlock {CAPTION} at (0,0) size 130x18
           RenderInline {B} at (27,0) size 75x18

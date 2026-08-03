@@ -7,10 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 778x36
           text run at (0,0) width 778: "The image below has a width of 459px. When the table below it has a width of 459px or greater, the bottom row overlaps"
           text run at (0,18) width 73: "the top row"
-      RenderBlock (anonymous) at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 142x18
-          text run at (0,0) width 142: "Table with width=459"
-        RenderBR {BR} at (141,0) size 1x18
+      RenderText {#text} at (0,52) size 142x18
+        text run at (0,52) width 142: "Table with width=459"
+      RenderBR {BR} at (141,52) size 1x18
       RenderTable {TABLE} at (0,70) size 784x254 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x252
           RenderTableRow {TR} at (0,2) size 782x152
@@ -18,9 +17,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,115) size 47x18
                 text run at (2,2) width 47: "sidebar"
             RenderTableCell {TD} at (54,2) size 726x152 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 722x120
-                RenderImage {IMG} at (0,0) size 459x120
-                RenderText {#text} at (0,0) size 0x0
+              RenderImage {IMG} at (2,2) size 459x120
+              RenderText {#text} at (0,0) size 0x0
               RenderTable {TABLE} at (2,122) size 459x28 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 457x26
                   RenderTableRow {TR} at (0,2) size 457x22
