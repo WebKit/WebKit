@@ -1569,11 +1569,20 @@ end
         # We need to start zeroing from sp as it has been adjusted after saving callee saves.
         move sp, t2
         move t0, sp
-.zeroStackLoop:
-        bpeq sp, t2, .zeroStackDone
-        subp PtrSize, t2
-        storep 0, [t2]
-        jmp .zeroStackLoop
+        bpeq t0, t2, .zeroStackDone
+        if ARM64 or ARM64E
+        .zeroStackLoop:
+            subp 2 * PtrSize, t2
+            storepairq zr, zr, [t2]
+            bpa t2, t0, .zeroStackLoop
+        else
+            move 0, t3
+        .zeroStackLoop:
+            subp 2 * PtrSize, t2
+            storeq t3, [t2]
+            storeq t3, PtrSize[t2]
+            bpa t2, t0, .zeroStackLoop
+        end
 .zeroStackDone:
     else
         move t0, sp
