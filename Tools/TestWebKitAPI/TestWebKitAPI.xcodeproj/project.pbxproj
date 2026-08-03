@@ -687,6 +687,7 @@
 				JavaScriptCore/JSRunLoopTimer.mm,
 				JavaScriptCore/MarkedVector.cpp,
 				JavaScriptCore/PropertySlot.cpp,
+				JavaScriptCore/StrongBlock.cpp,
 				Misc/TestRunnerTests.cpp,
 				TestWebKitAPIAdditionsHook.mm,
 				WebCore/AffineTransform.cpp,

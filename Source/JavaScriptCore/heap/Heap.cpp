@@ -353,7 +353,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_mutatorMarkStack(makeUnique<MarkStackArray>())
     , m_raceMarkStack(makeUnique<MarkStackArray>())
     , m_constraintSet(makeUnique<MarkingConstraintSet>(*this))
-    , m_handleSet(vm)
+    , m_strongSet(vm)
     , m_codeBlocks(makeUnique<CodeBlockSet>())
     , m_jitStubRoutines(makeUnique<JITStubRoutineSet>())
     // We seed with 10ms so that GCActivityCallback::didAllocate doesn't continuously
@@ -3149,7 +3149,7 @@ void Heap::addCoreConstraints()
         "Sh", "Strong Handles",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongHandles);
-            m_handleSet.visitStrongHandles(visitor);
+            m_strongSet.visitAggregate(visitor);
             vm().visitAggregate(visitor);
         })),
         ConstraintVolatility::GreyedByExecution);

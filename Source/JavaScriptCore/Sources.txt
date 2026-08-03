@@ -534,7 +534,6 @@ heap/GCOwnedDataScope.cpp
 heap/GCRequest.cpp
 heap/GCSegmentedArray.cpp
 heap/GigacageAlignedMemoryAllocator.cpp
-heap/HandleSet.cpp
 heap/Heap.cpp
 heap/HeapCell.cpp
 heap/HeapCellType.cpp
@@ -567,6 +566,7 @@ heap/SlotVisitor.cpp
 heap/SpaceTimeMutatorScheduler.cpp
 heap/StochasticSpaceTimeMutatorScheduler.cpp
 heap/StopIfNecessaryTimer.cpp
+heap/StrongSet.cpp
 heap/StructureAlignedMemoryAllocator.cpp
 heap/Subspace.cpp
 heap/SynchronousStopTheWorldMutatorScheduler.cpp

@@ -30,10 +30,10 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include <JavaScriptCore/Handle.h>
-#include <JavaScriptCore/HandleSet.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/StrongForward.h>
+#include <JavaScriptCore/StrongSet.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/RefTrackerMixin.h>
 
@@ -68,7 +68,7 @@ public:
     {
         if (!other.slot())
             return;
-        setSlot(HandleSet::heapFor(other.slot())->allocate());
+        setSlot(StrongSet::setFor(other.slot())->allocate());
         set(other.get());
     }
 
@@ -77,7 +77,7 @@ public:
     {
         if (!other.slot())
             return;
-        setSlot(HandleSet::heapFor(other.slot())->allocate());
+        setSlot(StrongSet::setFor(other.slot())->allocate());
         set(other.get());
     }
 
@@ -122,15 +122,12 @@ public:
         if (!slot())
             return;
 
-        auto* heap = HandleSet::heapFor(slot());
-        if (shouldStrongDestructorGrabLock == ShouldStrongDestructorGrabLock::Yes) {
-            JSLockHolder holder(heap->vm());
-            heap->deallocate(slot());
-            setSlot(nullptr);
-        } else {
-            heap->deallocate(slot());
-            setSlot(nullptr);
-        }
+        if constexpr (shouldStrongDestructorGrabLock == ShouldStrongDestructorGrabLock::Yes) {
+            JSLockHolder holder(StrongSet::setFor(slot())->vm());
+            StrongSet::deallocate(slot());
+        } else
+            StrongSet::deallocate(slot());
+        setSlot(nullptr);
     }
 
 private:
@@ -140,9 +137,9 @@ private:
     void set(ExternalType externalType)
     {
         ASSERT(slot());
-        JSValue value = HandleTypes<T>::toJSValue(externalType);
-        HandleSet::heapFor(slot())->template writeBarrier<std::is_base_of_v<JSCell, T>>(slot(), value);
-        *slot() = value;
+        // No write barrier: marking scans every slot, so there is no cell-only
+        // index to keep up to date.
+        *slot() = HandleTypes<T>::toJSValue(externalType);
     }
 
     REFTRACKER_MEMBERS(StrongRefTracker);

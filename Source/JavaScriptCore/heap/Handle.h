@@ -44,7 +44,6 @@ template <> class Handle<JSValue>;
 class HandleBase {
     template <typename T> friend class Weak;
     template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock> friend class Strong;
-    friend class HandleSet;
     friend struct JSCallbackObjectData;
 
 public:
@@ -126,7 +125,6 @@ protected:
     }
 
 private:
-    friend class HandleSet;
     friend class WeakBlock;
 
     static Handle<T> wrapSlot(HandleSlot slot)

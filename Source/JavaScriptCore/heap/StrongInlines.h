@@ -36,14 +36,14 @@ namespace JSC {
 
 template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock>
 inline Strong<T, shouldStrongDestructorGrabLock>::Strong(VM& vm, ExternalType value)
-    : Handle<T>(vm.heap.handleSet()->allocate())
+    : Handle<T>(vm.heap.strongSet()->allocate())
 {
     set(value);
 }
 
 template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock>
 inline Strong<T, shouldStrongDestructorGrabLock>::Strong(VM& vm, Handle<T> handle)
-    : Handle<T>(vm.heap.handleSet()->allocate())
+    : Handle<T>(vm.heap.strongSet()->allocate())
 {
     set(handle.get());
 }
@@ -52,7 +52,7 @@ template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabL
 inline void Strong<T, shouldStrongDestructorGrabLock>::set(VM& vm, ExternalType value)
 {
     if (!slot())
-        setSlot(vm.heap.handleSet()->allocate());
+        setSlot(vm.heap.strongSet()->allocate());
     set(value);
 }
 
@@ -64,7 +64,7 @@ template <typename U> Strong<T, shouldStrongDestructorGrabLock>& Strong<T, shoul
         return *this;
     }
 
-    set(*HandleSet::heapFor(other.slot())->vm(), other.get());
+    set(StrongSet::setFor(other.slot())->vm(), other.get());
     return *this;
 }
 
@@ -76,7 +76,7 @@ Strong<T, shouldStrongDestructorGrabLock>& Strong<T, shouldStrongDestructorGrabL
         return *this;
     }
 
-    set(HandleSet::heapFor(other.slot())->vm(), other.get());
+    set(StrongSet::setFor(other.slot())->vm(), other.get());
     return *this;
 }
 

@@ -144,7 +144,7 @@ template<typename Functor> inline void Heap::forEachProtectedCell(const Functor&
 {
     for (auto& pair : m_protectedValues)
         functor(pair.key);
-    m_handleSet.forEachStrongHandle(functor, m_protectedValues);
+    m_strongSet.forEachStrongHandle(functor, m_protectedValues);
 }
 
 #if USE(FOUNDATION)

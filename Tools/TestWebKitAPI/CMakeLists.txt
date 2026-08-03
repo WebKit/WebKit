@@ -186,6 +186,7 @@ if (ENABLE_JAVASCRIPTCORE)
         Tests/JavaScriptCore/MarkedVector.cpp
         Tests/JavaScriptCore/PropertySlot.cpp
         Tests/JavaScriptCore/RegularExpression.cpp
+        Tests/JavaScriptCore/StrongBlock.cpp
     )
 
     set(TestJavaScriptCore_LIBRARIES

@@ -715,8 +715,9 @@
 		142D6F0913539A2800B02E86 /* MarkedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0713539A2800B02E86 /* MarkedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142D6F1213539A4100B02E86 /* MarkStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0F13539A4100B02E86 /* MarkStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3134134FF0A600AFADB5 /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312B134FF0A600AFADB5 /* Handle.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		142E3136134FF0A600AFADB5 /* HandleSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312D134FF0A600AFADB5 /* HandleSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E313B134FF0A600AFADB5 /* Strong.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E3132134FF0A600AFADB5 /* Strong.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD16AD2C6E7B43659889B209 /* StrongBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = EE70FD9E0D7D4754A8CFBB0D /* StrongBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C47885A907114CD1B4B772C9 /* StrongSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 66952A5FB039485397A8C92D /* StrongSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E313C134FF0A600AFADB5 /* Weak.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E3133134FF0A600AFADB5 /* Weak.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142F16E021558802003D49C9 /* MetadataTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 142F16DF215585C8003D49C9 /* MetadataTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1435952122A521CD00E8086D /* BytecodeCacheError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1435951F22A521CA00E8086D /* BytecodeCacheError.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1915,8 +1916,6 @@
 		C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F77008E1402FDD60078EB39 /* SamplingCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C25D709C16DE99F400FCA6BC /* JSManagedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = C25D709A16DE99F400FCA6BC /* JSManagedValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */ = {isa = PBXBuildFile; fileRef = C25F8BCC157544A900245B71 /* IncrementalSweeper.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C28318FF16FE4B7D00157BFD /* HandleBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C283190216FE533E00157BFD /* HandleBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C283190116FE533E00157BFD /* HandleBlockInlines.h */; };
 		C288B2DE18A54D3E007BE40B /* DateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C288B2DD18A54D3E007BE40B /* DateTests.mm */; };
 		C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */; };
 		C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */; };
@@ -3883,9 +3882,10 @@
 		142D6F0E13539A4100B02E86 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
 		142D6F0F13539A4100B02E86 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
 		142E312B134FF0A600AFADB5 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
-		142E312C134FF0A600AFADB5 /* HandleSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandleSet.cpp; sourceTree = "<group>"; };
-		142E312D134FF0A600AFADB5 /* HandleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleSet.h; sourceTree = "<group>"; };
 		142E3132134FF0A600AFADB5 /* Strong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Strong.h; sourceTree = "<group>"; };
+		EE70FD9E0D7D4754A8CFBB0D /* StrongBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StrongBlock.h; sourceTree = "<group>"; };
+		66952A5FB039485397A8C92D /* StrongSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StrongSet.h; sourceTree = "<group>"; };
+		401DFDD7C039414AB8125A26 /* StrongSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StrongSet.cpp; sourceTree = "<group>"; };
 		142E3133134FF0A600AFADB5 /* Weak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Weak.h; sourceTree = "<group>"; };
 		142F16DF215585C8003D49C9 /* MetadataTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetadataTable.h; sourceTree = "<group>"; };
 		142F16E921583B5E003D49C9 /* CodeBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockInlines.h; sourceTree = "<group>"; };
@@ -5795,8 +5795,6 @@
 		C25D709A16DE99F400FCA6BC /* JSManagedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSManagedValue.h; sourceTree = "<group>"; };
 		C25F8BCB157544A900245B71 /* IncrementalSweeper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IncrementalSweeper.cpp; sourceTree = "<group>"; };
 		C25F8BCC157544A900245B71 /* IncrementalSweeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncrementalSweeper.h; sourceTree = "<group>"; };
-		C28318FF16FE4B7D00157BFD /* HandleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleBlock.h; sourceTree = "<group>"; };
-		C283190116FE533E00157BFD /* HandleBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleBlockInlines.h; sourceTree = "<group>"; };
 		C288B2DC18A54D3E007BE40B /* DateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DateTests.h; path = API/tests/DateTests.h; sourceTree = "<group>"; };
 		C288B2DD18A54D3E007BE40B /* DateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DateTests.mm; path = API/tests/DateTests.mm; sourceTree = "<group>"; };
 		C2981FD617BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWeakReferences.cpp; path = dfg/DFGDesiredWeakReferences.cpp; sourceTree = "<group>"; };
@@ -7660,11 +7658,7 @@
 				0FEC3C581F33A48900F59B6C /* GigacageAlignedMemoryAllocator.cpp */,
 				0FEC3C591F33A48900F59B6C /* GigacageAlignedMemoryAllocator.h */,
 				142E312B134FF0A600AFADB5 /* Handle.h */,
-				C28318FF16FE4B7D00157BFD /* HandleBlock.h */,
-				C283190116FE533E00157BFD /* HandleBlockInlines.h */,
 				CD1F9B48270CFDCC00617EB6 /* HandleForward.h */,
-				142E312C134FF0A600AFADB5 /* HandleSet.cpp */,
-				142E312D134FF0A600AFADB5 /* HandleSet.h */,
 				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
 				14BA7A9513AADFF8005B7C2C /* Heap.cpp */,
 				14BA7A9613AADFF8005B7C2C /* Heap.h */,
@@ -7755,8 +7749,11 @@
 				0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */,
 				0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
+				EE70FD9E0D7D4754A8CFBB0D /* StrongBlock.h */,
 				CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
+				401DFDD7C039414AB8125A26 /* StrongSet.cpp */,
+				66952A5FB039485397A8C92D /* StrongSet.h */,
 				537FEECB2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.cpp */,
 				537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */,
 				0F7DF1311E2970D50095951B /* Subspace.cpp */,
@@ -11858,11 +11855,8 @@
 				93BFC6D929B344C90030D7BE /* GlobalObjectMethodTable.h in Headers */,
 				0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */,
 				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
-				C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */,
-				C283190216FE533E00157BFD /* HandleBlockInlines.h in Headers */,
 				CD1F9B49270CFDCC00617EB6 /* HandleForward.h in Headers */,
 				0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */,
-				142E3136134FF0A600AFADB5 /* HandleSet.h in Headers */,
 				1478297B1379E8A800A7C2A3 /* HandleTypes.h in Headers */,
 				FEF5B4232628A0EE0016E776 /* HashMapHelper.h in Headers */,
 				79DFCBDB1D88C59600527D03 /* HasOwnPropertyCache.h in Headers */,
@@ -12680,8 +12674,10 @@
 				E367062B2A2705DB00CF892F /* StringSplitCache.h in Headers */,
 				E367062A2A2705DB00CF892F /* StringSplitCacheInlines.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
+				CD16AD2C6E7B43659889B209 /* StrongBlock.h in Headers */,
 				CD1F9B4B270CFE0F00617EB6 /* StrongForward.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
+				C47885A907114CD1B4B772C9 /* StrongSet.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				537FEED02742BDE100C9EFEE /* StructureAlignedMemoryAllocator.h in Headers */,
 				0FD2C92816D01EE900C7803F /* StructureArrayStorageInlines.h in Headers */,

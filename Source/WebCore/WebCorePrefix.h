@@ -350,8 +350,6 @@
 #include <JavaScriptCore/GenericOffset.h>
 #include <JavaScriptCore/GetVM.h>
 #include <JavaScriptCore/Handle.h>
-#include <JavaScriptCore/HandleBlock.h>
-#include <JavaScriptCore/HandleSet.h>
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/HeapCell.h>
@@ -433,6 +431,8 @@
 #include <JavaScriptCore/StringReplaceCache.h>
 #include <JavaScriptCore/StringSplitCache.h>
 #include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongBlock.h>
+#include <JavaScriptCore/StrongSet.h>
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/StructureID.h>
 #include <JavaScriptCore/StructureRareData.h>
