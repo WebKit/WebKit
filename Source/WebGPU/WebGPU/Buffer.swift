@@ -44,10 +44,20 @@ func bufferGetMappedRange(_ buffer: WebGPU.Buffer, offset: Int, size: Int) -> We
     unsafe buffer.getMappedRange(offset: offset, size: size)
 }
 
+extension WebGPU.SpanUInt8 {
+    /// A default-constructed, zero-length span: a null base pointer that's never read through.
+    ///
+    /// Marked `@safe` because the empty case carries no risk.
+    @safe
+    fileprivate static var empty: WebGPU.SpanUInt8 {
+        unsafe WebGPU.SpanUInt8()
+    }
+}
+
 extension WebGPU.Buffer {
     func getMappedRange(offset: Int, size: Int) -> WebGPU.SpanUInt8 {
         if !isValid() {
-            return unsafe WebGPU.SpanUInt8()
+            return .empty
         }
 
         var rangeSize = size
@@ -56,14 +66,14 @@ extension WebGPU.Buffer {
         }
 
         if !validateGetMappedRange(offset, rangeSize) {
-            return unsafe WebGPU.SpanUInt8()
+            return .empty
         }
 
         m_mappedRanges.add(.init(UInt(offset), UInt(offset + rangeSize)))
         m_mappedRanges.compact()
 
         if m_buffer.storageMode == .private || m_buffer.storageMode == .memoryless || m_buffer.length == 0 {
-            return unsafe WebGPU.SpanUInt8()
+            return .empty
         }
 
         return unsafe getBufferContents().subspan(offset, rangeSize)
