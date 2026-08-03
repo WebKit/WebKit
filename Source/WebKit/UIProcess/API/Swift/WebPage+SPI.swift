@@ -37,14 +37,6 @@ extension WebPage {
     public func setMenuBuilder(_ menuBuilder: ((WKContextMenuElementInfoAdapter) -> NSMenu)?) {
         backingUIDelegate.menuBuilder = menuBuilder
     }
-
-    // SPI for testing.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    @_spi(Testing)
-    public var smartListsEnabled: Bool {
-        get { backingWebView._isSmartListsEnabled() }
-        set { backingWebView._setSmartListsEnabled(newValue) }
-    }
     #endif // os(macOS)
 
     // SPI for the cross-import overlay.
@@ -150,6 +142,37 @@ extension WebPage {
 
         editorStateSnapshotsContinuations[id] = continuation
         return stream
+    }
+
+    #if WTF_PLATFORM_MAC
+    // SPI for testing.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @_spi(Testing)
+    public var smartListsEnabled: Bool {
+        get { backingWebView._isSmartListsEnabled() }
+        set { backingWebView._setSmartListsEnabled(newValue) }
+    }
+    #endif // WTF_PLATFORM_MAC
+
+    // SPI for testing.
+    // FIXME: This should probably just use the SwiftUI `MagnifyGesture` API.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @_spi(Testing)
+    public var magnification: CGFloat {
+        get {
+            #if WTF_PLATFORM_MAC
+            backingWebView.magnification
+            #else
+            backingWebView.scrollView.zoomScale
+            #endif
+        }
+        set {
+            #if WTF_PLATFORM_MAC
+            backingWebView.magnification = newValue
+            #else
+            backingWebView.scrollView.zoomScale = newValue
+            #endif
+        }
     }
 }
 

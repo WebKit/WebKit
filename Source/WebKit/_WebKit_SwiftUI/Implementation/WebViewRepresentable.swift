@@ -141,6 +141,13 @@ struct WebViewRepresentable {
 
         webView._isEditable = environment.webViewContentEnvironment.storage == .editable
 
+        #if WTF_PLATFORM_IOS_FAMILY
+        // FIXME: It's a bit silly to serialize this to a dictionary only to later deserialize it back to a typed value.
+        if let viewportArguments = environment.webViewViewportConfiguration?.dictionaryRepresentation {
+            webView._overrideViewport(withArguments: viewportArguments.isEmpty ? nil : viewportArguments)
+        }
+        #endif // WTF_PLATFORM_IOS_FAMILY
+
         platformView.onScrollGeometryChange = environment.webViewOnScrollGeometryChange
 
         #if ENABLE_MODEL_ELEMENT_IMMERSIVE

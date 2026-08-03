@@ -149,6 +149,7 @@
 		0715310F2F3037C100B56C0E /* WebPageProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0715310E2F3037C100B56C0E /* WebPageProxy.swift */; };
 		07187E0B2F2DC28E005FC058 /* GestureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 07187E092F2DC276005FC058 /* GestureTypes.h */; };
 		071BC59023CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 071BC58D23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h */; };
+		071E14BC301EEFEC001BF5DA /* WebView+ViewportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071E14BB301EEFEC001BF5DA /* WebView+ViewportConfiguration.swift */; };
 		07275C612D00CD24002315A5 /* CrossImportOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07275C602D00CD24002315A5 /* CrossImportOverlay.swift */; };
 		07275C632D00D32D002315A5 /* WebPage+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07275C622D00D32D002315A5 /* WebPage+SwiftUI.swift */; };
 		07275C682D00E3D6002315A5 /* SwiftUI.swiftoverlay in Install SwiftUI Cross Import Overlay */ = {isa = PBXBuildFile; fileRef = 07275C662D00E3CA002315A5 /* SwiftUI.swiftoverlay */; };
@@ -3443,6 +3444,7 @@
 		071BC58B23CDFE7500680D7C /* RemoteMediaPlayerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaPlayerProxy.messages.in; sourceTree = "<group>"; };
 		071BC58C23CE1EA900680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		071BC58D23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerProxyMessages.h; sourceTree = "<group>"; };
+		071E14BB301EEFEC001BF5DA /* WebView+ViewportConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebView+ViewportConfiguration.swift"; sourceTree = "<group>"; };
 		0725EFAB239AE38400A538A9 /* RemoteMediaPlayerManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaPlayerManagerProxy.messages.in; sourceTree = "<group>"; };
 		0725EFAC239AE38500A538A9 /* RemoteMediaPlayerManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerProxy.h; sourceTree = "<group>"; };
 		0725EFAD239B024500A538A9 /* RemoteMediaPlayerManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerManagerProxy.cpp; sourceTree = "<group>"; };
@@ -9724,6 +9726,7 @@
 				078B04B52CF2B4D300B453A6 /* View+WebViewModifiers.swift */,
 				07275C622D00D32D002315A5 /* WebPage+SwiftUI.swift */,
 				07A4CEC62D0933E700764F5E /* WebPageNavigationAction+SwiftUI.swift */,
+				071E14BB301EEFEC001BF5DA /* WebView+ViewportConfiguration.swift */,
 				076867F62D4C26A8004DA801 /* WebView.swift */,
 				BFD28341B551FAD199FFF404 /* WebViewImmersiveEnvironmentView.swift */,
 			);
@@ -17246,7 +17249,6 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				7D2F27C3301C10470043C2CE /* JSWebExtensionAPIUnified.cpp */,
 				38DE371D763C9F8323F87E41 /* IPC */,
 				2D7DEBE221269E4B00B9F73C /* unified-sources */,
 				9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */,
@@ -17319,6 +17321,7 @@
 				1C5ACFA92A96F8D400C041C0 /* JSWebExtensionAPITabs.mm */,
 				1C15497E2926C05A001B9E5B /* JSWebExtensionAPITest.cpp */,
 				1C15497D2926C05A001B9E5B /* JSWebExtensionAPITest.h */,
+				7D2F27C3301C10470043C2CE /* JSWebExtensionAPIUnified.cpp */,
 				1C0F05BD2CFA5D2E007D1F62 /* JSWebExtensionAPIUnified.mm */,
 				3399E14F2B59EFD6008BFB60 /* JSWebExtensionAPIWebNavigation.h */,
 				3375A3762942A19C0028536D /* JSWebExtensionAPIWebNavigation.mm */,
@@ -21885,6 +21888,7 @@
 				07AF79D02D68E210004E8D3A /* ViewModifierContexts.swift in Sources */,
 				07275C632D00D32D002315A5 /* WebPage+SwiftUI.swift in Sources */,
 				07A4CEC72D0933E700764F5E /* WebPageNavigationAction+SwiftUI.swift in Sources */,
+				071E14BC301EEFEC001BF5DA /* WebView+ViewportConfiguration.swift in Sources */,
 				076868022D4C285B004DA801 /* WebView.swift in Sources */,
 				B6B64F30272BA2A17EF9AD14 /* WebViewImmersiveEnvironmentView.swift in Sources */,
 				076867FF2D4C283E004DA801 /* WebViewRepresentable.swift in Sources */,
@@ -22160,6 +22164,7 @@
 				074D6A652F385435006089F6 /* IntRectCG.swift in Sources */,
 				5CF250AF2EE06491006A7172 /* IPCTesterReceiver.swift in Sources */,
 				5C448C662EE06E11008931C7 /* IPCTesterReceiverMessageReceiver.swift in Sources */,
+				7D2F27C4301C2EF50043C2CE /* JSWebExtensionAPIUnified.cpp in Sources */,
 				1C0F05BE2CFA5D2E007D1F62 /* JSWebExtensionAPIUnified.mm in Sources */,
 				E385F3672E86D6C900461B0C /* LaunchLogHook.mm in Sources */,
 				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,
@@ -22190,7 +22195,6 @@
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */,
 				0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */,
-				7D2F27C4301C2EF50043C2CE /* JSWebExtensionAPIUnified.cpp in Sources */,
 				1AF572302D690813008266F2 /* RemoteScrollingTreeCocoa.mm in Sources */,
 				7BCF70DE2615D06E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm in Sources */,
 				E3D0A9422D62B1C90094538A /* ServiceWorkerDebuggableFrontendChannel.cpp in Sources */,

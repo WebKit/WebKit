@@ -226,6 +226,45 @@ extension View {
     public nonisolated func webViewContentEnvironmentV0(_ value: WebView.ContentEnvironment_v0) -> some View {
         environment(\.webViewContentEnvironment, value)
     }
+
+    /// Configures the viewport of the web view, overriding any attributes the web content may set itself.
+    ///
+    /// These values correspond to those of the CSS [Viewport `<meta>` element](https://drafts.csswg.org/css-viewport/#viewport-meta).
+    ///
+    /// - Parameters:
+    ///   - width: The pixel width of the viewport, establishing the value of the `vw` unit. This can be set to a positive whole number of pixels between `[10, 10000]`, or the special `deviceWidth` value.
+    ///   - height: The pixel height of the viewport, establishing the value of the `vh` unit. This can be set to a positive whole number of pixels between `[10, 10000]`, or the special `deviceHeight` value.
+    ///   - initialScale: The ratio between the device width and the viewport size.
+    ///   - minimumScale: The minimum zoom level.
+    ///   - maximumScale: The maximum amount to zoom in.
+    ///   - userScalable: If `true`, the user can zoom the web view..
+    ///   - interactiveWidget: The effect that interactive UI widgets, such as virtual keyboards, have on a page's viewport.
+    ///   - viewportFit: The viewable portions of the web page.
+    /// - Returns: A view with the specified viewport configuration.
+    @_spi(Experimental)
+    public nonisolated func webViewViewportConfigurationV0(
+        width: WebView.ViewportConfiguration_v0.Width? = nil,
+        height: WebView.ViewportConfiguration_v0.Height? = nil,
+        initialScale: Float? = nil,
+        minimumScale: Float? = nil,
+        maximumScale: Float? = nil,
+        userScalable: Bool? = nil,
+        interactiveWidget: WebView.ViewportConfiguration_v0.InteractiveWidget? = nil,
+        viewportFit: WebView.ViewportConfiguration_v0.ViewportFit? = nil,
+    ) -> some View {
+        let configuration = WebView.ViewportConfiguration_v0(
+            width: width,
+            height: height,
+            initialScale: initialScale,
+            minimumScale: minimumScale,
+            maximumScale: maximumScale,
+            userScalable: userScalable,
+            interactiveWidget: interactiveWidget,
+            viewportFit: viewportFit
+        )
+
+        return environment(\.webViewViewportConfiguration, configuration)
+    }
 }
 
 #endif

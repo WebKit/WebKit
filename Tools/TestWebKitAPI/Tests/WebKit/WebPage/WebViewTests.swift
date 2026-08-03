@@ -26,7 +26,7 @@
 import Observation
 import SwiftUI
 import Testing
-import WebKit
+@_spi(Testing) import WebKit
 @_spi(Experimental) import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
 import struct _Concurrency.Task
@@ -42,22 +42,31 @@ private final class ViewModel {
     let page = WebPage()
 
     var isEditable: Bool = false
+
+    // The `_WebKit_SwiftUI` qualifier is needed to disambiguate from WebKitLegacy's WebView.
+    // FIXME: Consider alternative designs to avoid this requirement.
+    var viewportWidth: _WebKit_SwiftUI.WebView.ViewportConfiguration_v0.Width? = nil
+    var viewportInitialScale: Float? = nil
+}
+
+private struct TestView: View {
+    @Environment(ViewModel.self)
+    var model
+
+    var body: some View {
+        WebView(model.page)
+            .webViewContentEnvironmentV0(model.isEditable ? .editable : .standard)
+            .webViewViewportConfigurationV0(
+                width: model.viewportWidth,
+                initialScale: model.viewportInitialScale
+            )
+    }
 }
 
 @MainActor
 struct WebViewTests {
     @Test
     func applyingContentEnvironmentAffectsPageSemantics() async throws {
-        struct TestView: View {
-            @Environment(ViewModel.self)
-            var model
-
-            var body: some View {
-                WebView(model.page)
-                    .webViewContentEnvironmentV0(model.isEditable ? .editable : .standard)
-            }
-        }
-
         func isContentEditable() async throws -> Bool {
             try await model.page.callJavaScript(returning: Bool.self) {
                 """
@@ -69,9 +78,11 @@ struct WebViewTests {
 
         let model = ViewModel()
 
-        render(observing: model) {
+        render {
             TestView()
                 .environment(model)
+        } observing: {
+            model.isEditable
         }
 
         model.isEditable = true
@@ -87,26 +98,73 @@ struct WebViewTests {
 
         #expect(!(try await isContentEditable()))
     }
-}
 
-@MainActor
-func render(
-    observing observable: @escaping @isolated(any) @autoclosure @Sendable () -> some Observable & Sendable,
-    @ViewBuilder rootView: () -> some View
-) {
-    let resolvedView = rootView()
+    #if WTF_PLATFORM_IOS_FAMILY
+    @Test
+    func overrideViewportArgumentsAffectsPageViewport() async throws {
+        func bodyWidth() async throws -> Int {
+            await model.page.waitForNextPresentationUpdate()
 
-    #if WTF_PLATFORM_MAC
-    let viewController = NSHostingController(rootView: resolvedView)
-    #else
-    let viewController = UIHostingController(rootView: resolvedView)
-    #endif
-
-    Task.immediate {
-        for await _ in Observations(observable) {
-            viewController._render(seconds: 1.0 / 60.0)
+            return try await model.page.callJavaScript(returning: Int.self) {
+                """
+                return document.body.clientWidth;
+                """
+            }
         }
+
+        let model = ViewModel()
+
+        render {
+            TestView()
+                .frame(width: 20, height: 20)
+                .environment(model)
+        } observing: {
+            (model.viewportWidth, model.viewportInitialScale)
+        }
+
+        let htmlWithInitialScale = """
+            <meta name='viewport' content='initial-scale=1'>
+            <div id='divWithViewportUnits' style='width: 100vw;'></div>
+            """
+
+        try await model.page.load(html: htmlWithInitialScale).wait()
+
+        try await #expect(bodyWidth() == 20)
+
+        model.viewportWidth = 1000
+        try await #expect(bodyWidth() == 1000)
+
+        model.viewportInitialScale = 1
+        try await #expect(bodyWidth() == 1000)
+        #expect(model.page.magnification == 1)
+
+        model.viewportInitialScale = 5
+        try await #expect(bodyWidth() == 1000)
+        #expect(model.page.magnification == 5)
+
+        model.viewportWidth = nil
+        model.viewportInitialScale = nil
+
+        try await #expect(bodyWidth() == 20)
+
+        let htmlWithWidth = """
+            <meta name='viewport' content='width=10'>
+            <div id='divWithViewportUnits' style='width: 100vw;'></div>
+            """
+
+        try await model.page.load(html: htmlWithWidth).wait()
+
+        try await #expect(bodyWidth() == 10)
+
+        model.viewportWidth = 1000
+        model.viewportInitialScale = 1
+        try await #expect(bodyWidth() == 1000)
+
+        model.viewportWidth = .deviceWidth
+        model.viewportInitialScale = 1
+        try await #expect(bodyWidth() == 20)
     }
+    #endif // WTF_PLATFORM_IOS_FAMILY
 }
 
 #endif // ENABLE_SWIFTUI && !os(watchOS) && !os(tvOS)

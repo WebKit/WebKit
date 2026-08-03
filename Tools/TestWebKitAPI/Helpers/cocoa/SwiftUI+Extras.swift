@@ -22,6 +22,69 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 public import SwiftUI
+#if WTF_PLATFORM_MAC
+private import AppKit
+#else
+private import UIKit
+#endif
+
+#if ENABLE_SWIFTUI && !os(watchOS)
+
+/// Renders a SwiftUI view, updating whenever its observable state changes.
+///
+/// For example, to render a view whose state depends on an `isEditable` property of some model:
+///
+/// ```swift
+/// let model = ViewModel()
+///
+/// render {
+///     TestView().environment(model)
+/// } observing: {
+///     model.isEditable
+/// }
+///
+/// model.isEditable = true // -> updates TestView
+/// model.isEditable = false // -> updates TestView
+/// ```
+///
+/// - Parameters:
+///   - rootView: The view to render.
+///   - observable: A closure that contains properties to track. The properties that `rootView` depends on must be captured within the `observable` closure.
+#if hasAttribute(diagnose)
+@diagnose(DeprecatedDeclaration, as: ignored, reason: "rdar://183894032")
+#endif
+@MainActor
+public func render(
+    @ViewBuilder rootView: () -> some View,
+    @_inheritActorContext observing observable: @escaping @isolated(any) @Sendable () -> some Sendable
+) {
+    let resolvedView = rootView()
+
+    #if WTF_PLATFORM_MAC
+    let viewController = NSHostingController(rootView: resolvedView)
+    #else
+    let viewController = UIHostingController(rootView: resolvedView)
+
+    // The hosting controller must be installed in a window for a layout pass to run,
+    // otherwise the web view's constraints are never resolved and it stays zero-sized.
+
+    let window = UIWindow(frame: .init(x: 0, y: 0, width: 800, height: 600))
+    window.rootViewController = viewController
+    window.isHidden = false
+    window.layoutIfNeeded()
+    viewController.view.layoutIfNeeded()
+    #endif
+
+    viewController._render(seconds: 1.0 / 60.0)
+
+    Task.immediate {
+        for await _ in Observations(observable) {
+            viewController._render(seconds: 1.0 / 60.0)
+        }
+    }
+}
+
+#endif // ENABLE_SWIFTUI && !os(watchOS)
 
 extension Font {
     #if canImport(UIKit)
