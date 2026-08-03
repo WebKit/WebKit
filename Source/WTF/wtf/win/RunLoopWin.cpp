@@ -61,8 +61,12 @@ LRESULT RunLoop::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return 0;
     case FireTimerMessage:
         RunLoop::TimerBase* timer = nullptr;
-        timer = std::bit_cast<RunLoop::TimerBase*>(wParam);
-        if (timer != nullptr)
+        {
+            Locker locker { m_loopLock };
+            if (!m_timersToFire.isEmpty())
+                timer = m_timersToFire.takeFirst();
+        }
+        if (timer)
             timer->timerFired();
         return 0;
     }
@@ -119,7 +123,8 @@ void RunLoop::fireTimers()
         auto timer = m_timers.last();
         if (timer->m_nextFireDate > now)
             return;
-        ::PostMessage(m_runLoopMessageWindow, FireTimerMessage, std::bit_cast<uintptr_t>(timer), 0LL);
+        m_timersToFire.append(timer);
+        ::PostMessage(m_runLoopMessageWindow, FireTimerMessage, 0, 0LL);
         m_timers.removeLast();
     }
 }
@@ -271,6 +276,9 @@ void RunLoop::TimerBase::stop()
     m_nextFireDate = MonotonicTime::infinity();
 
     m_runLoop->m_timers.removeFirstMatching([&] (TimerBase* t) -> bool {
+        return this == t;
+    });
+    m_runLoop->m_timersToFire.removeAllMatching([&] (TimerBase* t) -> bool {
         return this == t;
     });
 }

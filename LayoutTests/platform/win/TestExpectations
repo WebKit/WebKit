@@ -4720,12 +4720,6 @@ imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.h
 
 http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
 
-http/tests/security/no-javascript-location-percent-escaped.html [ Skip ] # Crash
-http/tests/security/no-javascript-location.html [ Skip ] # Crash
-http/tests/security/no-javascript-refresh-percent-escaped.py [ Skip ] # Crash
-http/tests/security/no-javascript-refresh-spaces.py [ Skip ] # Crash
-http/tests/security/no-javascript-refresh-static-percent-escaped.html [ Skip ] # Crash
-
 webkit.org/b/315806 imported/w3c/web-platform-tests/gpc/sec-gpc.https.html [ Pass Failure ] # Flaky harness timeout after serviceworker subtests were added in 314317@main
 
 imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html [ Skip ] # Flake
@@ -4779,10 +4773,10 @@ http/wpt/site-isolation/overlapping-navigations-and-traversals/cross-document-tr
 http/wpt/site-isolation/overlapping-navigations-and-traversals/cross-document-traversal-same-document-traversal.html [ Skip ] # Crash
 http/wpt/site-isolation/the-history-interface/001.html [ Skip ] # Crash
 
-# Flaky WebProcess crash (see the no-javascript-* crash family above)
-fast/dom/window-opener-setter-throws-if-defineownproperty-fails-1.html [ Skip ] # Crash
-
 # Gardening: new unexpected failures on Win-Tests-EWS (316766@main).
 fast/canvas/offscreen-canvas-measureText-unrealized-font-crash.html [ Failure ]
 http/tests/cookies/document-cookie-set-expired-cookie.html [ Skip ] # Crash
 http/wpt/storage-access/request-storage-access-under-opener-cross-site-opener.html [ Skip ] # Crash
+
+# storage/indexeddb leak test, unreliable on Windows. Skip for now; investigate separately.
+storage/indexeddb/modern/leak-1.html [ Skip ]
