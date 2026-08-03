@@ -379,7 +379,7 @@ public:
     void clipRectChanged() final;
 
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
-    Scrollbar* scrollbarAtPoint(const IntPoint& windowPoint);
+    Scrollbar* scrollbarAtPoint(const IntPoint& windowPoint, ScrollbarHitTestTolerance = ScrollbarHitTestTolerance::None);
 
     IntPoint convertChildToSelf(const Widget*, IntPoint) const;
     FloatPoint convertChildToSelf(const Widget*, FloatPoint) const;

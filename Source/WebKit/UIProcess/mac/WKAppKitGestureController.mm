@@ -698,15 +698,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return NO;
 
     NSPoint locationInView = [webView convertPoint:[event locationInWindow] fromView:nil];
-    if (viewImpl->isTextSelectedAtPoint(locationInView)) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { _page.get() }->logIdentifier(), "deferral: not deferring; text already selected at %@", NSStringFromPoint(locationInView));
+
+    const auto isInScrollbar = [self _isPointInScrollbar:locationInView];
+
+    if (!isInScrollbar && viewImpl->isTextSelectedAtPoint(locationInView)) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "deferral: not deferring; text already selected at %@", NSStringFromPoint(locationInView));
         return NO;
     }
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { _page.get() }->logIdentifier(), "deferral: deferring; awaiting position info at %@", NSStringFromPoint(locationInView));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "deferral: deferring; awaiting position info at %@", NSStringFromPoint(locationInView));
 
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInView } };
-    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer)](const auto &info) {
+    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer), isInScrollbar](const auto &info) {
         RetainPtr strongSelf = weakSelf.get();
         RetainPtr strongDeferring = weakDeferring.get();
         if (!strongSelf || !strongDeferring)
@@ -714,21 +717,28 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
         auto deferralState = [strongDeferring state];
         if (deferralState != NSGestureRecognizerStatePossible) {
-            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { strongSelf->_page.get() }->logIdentifier(),
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(),
                 "deferral: position info arrived after deferring gesture exited Possible (state=%ld); skipping resolution", static_cast<long>(deferralState));
             return;
         }
 
         auto shouldPreventGestures = [&] {
+            // An event over a scrollbar should drive the scrollbar, not select text; prevent the deferred
+            // text-selection gestures so the mouse-tracking -> `Scrollbar::mouseDown` path wins.
+            if (isInScrollbar) {
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "deferral resolved: over scrollbar; preventing text-selection gestures");
+                return true;
+            }
+
             if (strongDeferring == strongSelf->_dragDeferringGestureRecognizer) {
                 auto isDraggable = representsDraggableElement(info);
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "deferral resolved: isDraggable=%d (link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d)", isDraggable, info.isLink, info.isImage, info.isAttachment, info.isDHTMLDraggable, info.isColorInput, info.prefersDraggingOverTextSelection);
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "deferral resolved: isDraggable=%d (link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d)", isDraggable, info.isLink, info.isImage, info.isAttachment, info.isDHTMLDraggable, info.isColorInput, info.prefersDraggingOverTextSelection);
                 return isDraggable;
             }
 
             if (strongDeferring == strongSelf->_secondaryClickDeferringGestureRecognizer) {
                 bool isSelectable = info.isSelectable();
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "Resolved deferral: isSelectable=%d", isSelectable);
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "Resolved deferral: isSelectable=%d", isSelectable);
                 return !isSelectable;
             }
 
@@ -857,6 +867,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _hasValidPositionInformation = _positionInformation.canBeValid;
 
     [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
+}
+
+- (BOOL)_isPointInScrollbar:(NSPoint)locationInViewCoordinates
+{
+    CheckedPtr viewImpl = _viewImpl.get();
+    return viewImpl && viewImpl->isPointInScrollbar(locationInViewCoordinates);
 }
 
 - (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
@@ -1507,6 +1523,14 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
             return YES;
         if (gestureRecognizer != _panGestureRecognizer)
             return NO;
+    }
+
+    // An event over a scrollbar is a scrollbar interaction; only the mouse-tracking gesture (which drives
+    // `Scrollbar::mouseDown` -> thumb drag) should handle it. The AppKit text-selection/context-menu gestures
+    // are handled separately in the deferral delegate.
+    if ([self _isPointInScrollbar:locationInViewCoordinates] && gestureRecognizer != _mouseTrackingGestureRecognizer) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Denying gesture over scrollbar: %@", gestureLogDescription(gestureRecognizer));
+        return NO;
     }
 
     if (gestureRecognizer == _doubleClickGestureRecognizer)

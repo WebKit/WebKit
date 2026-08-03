@@ -307,6 +307,11 @@ enum class ScrollbarStyle : uint8_t {
     Overlay
 };
 
+enum class ScrollbarHitTestTolerance : uint8_t {
+    None,
+    Expanded
+};
+
 enum class ScrollbarOverlayStyle : uint8_t {
     Default,
     Dark,

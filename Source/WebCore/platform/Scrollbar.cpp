@@ -420,7 +420,8 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
 
 bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
 {
-    ScrollbarPart pressedPart = theme().hitTest(*this, flooredIntPoint(evt.position()));
+    const auto tolerance = evt.inputSource() == MouseEventInputSource::Automation ? ScrollbarHitTestTolerance::Expanded : ScrollbarHitTestTolerance::None;
+    ScrollbarPart pressedPart = theme().hitTest(*this, flooredIntPoint(evt.position()), tolerance);
     auto action = theme().handleMousePressEvent(*this, evt, pressedPart);
     if (action == ScrollbarButtonPressAction::None)
         return true;
@@ -464,6 +465,16 @@ void Scrollbar::setEnabled(bool e)
 bool Scrollbar::isOverlayScrollbar() const
 {
     return theme().usesOverlayScrollbars();
+}
+
+int Scrollbar::expandedHitTestToleranceThreshold() const
+{
+#if PLATFORM(MAC)
+    // Match AppKit.
+    return isOverlayScrollbar() ? 20 : 10;
+#else
+    return 0;
+#endif
 }
 
 bool Scrollbar::isMockScrollbar() const

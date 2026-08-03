@@ -109,7 +109,7 @@ bool ScrollbarThemeComposite::paint(Scrollbar& scrollbar, GraphicsContext& graph
     return true;
 }
 
-ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar& scrollbar, const IntPoint& position)
+ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar& scrollbar, const IntPoint& position, ScrollbarHitTestTolerance tolerance)
 {
     ScrollbarPart result = NoPart;
     if (!scrollbar.enabled())
@@ -117,7 +117,20 @@ ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar& scrollbar, const IntPo
 
     IntPoint testPosition = scrollbar.convertFromContainingWindow(position);
     testPosition.move(scrollbar.x(), scrollbar.y());
-    
+
+    if (tolerance == ScrollbarHitTestTolerance::Expanded) {
+        // With expanded granularity, a point can land just off the scrollbar and miss it entirely.
+        // In this case, it therefore needs to have its cross-axis be mapped to an eligible location on the scrollbar.
+        //
+        // Note that since maxX()/maxY() are exclusive (frameRect().contains() treats them as outside),
+        // the -1 is needed to land on the last position still inside the bar.
+        const auto bar = scrollbar.frameRect();
+        if (scrollbar.orientation() == ScrollbarOrientation::Vertical)
+            testPosition.setX(std::clamp(testPosition.x(), bar.x(), bar.maxX() - 1));
+        else
+            testPosition.setY(std::clamp(testPosition.y(), bar.y(), bar.maxY() - 1));
+    }
+
     if (!scrollbar.frameRect().contains(testPosition))
         return NoPart;
 
