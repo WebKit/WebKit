@@ -125,6 +125,7 @@
 #include "SideDataRepository.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
+#include "StringSplitCache.h"
 #include "StrongInlines.h"
 #include "StructureChainInlines.h"
 #include "StructureInlines.h"
@@ -289,6 +290,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
         m_megamorphicCache.initLater([](VM&, auto& ref) {
             ref.set(makeUniqueRef<MegamorphicCache>());
+        });
+
+        m_stringSplitCache.initLater([](VM&, auto& ref) {
+            ref.set(makeUniqueRef<StringSplitCache>());
         });
 
         m_shadowChicken.initLater([](VM&, auto& ref) {

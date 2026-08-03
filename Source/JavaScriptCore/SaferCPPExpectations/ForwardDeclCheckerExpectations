@@ -56,7 +56,6 @@ runtime/NumericStrings.h
 runtime/PropertySlot.h
 runtime/SmallStrings.h
 runtime/StringReplaceCache.h
-runtime/StringSplitCache.h
 runtime/Structure.h
 runtime/VM.h
 runtime/WriteBarrier.h
