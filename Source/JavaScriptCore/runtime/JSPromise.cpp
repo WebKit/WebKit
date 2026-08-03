@@ -39,6 +39,7 @@
 #include "JSPromisePrototype.h"
 #include "JSPromiseReaction.h"
 #include "Microtask.h"
+#include "MicrotaskQueueInlines.h"
 #include "ObjectConstructor.h"
 #include "TopExceptionScope.h"
 #include "VMInlines.h"
