@@ -147,6 +147,7 @@ void CoordinatedPlatformLayer::invalidateTarget()
         m_imageBackingStore.committed = nullptr;
         if (shouldReleaseBuffer(m_contentsBuffer.committed.get()))
             m_contentsBuffer.committed = nullptr;
+        m_contentsBuffer.hasCommitted = false;
     }
     m_target = nullptr;
 #if USE(SKIA)
@@ -494,21 +495,10 @@ float CoordinatedPlatformLayer::contentsScale() const
     return m_contentsScale;
 }
 
-bool CoordinatedPlatformLayer::hasCommittedContentsBuffer() const
-{
-    assertIsHeld(m_lock);
-#if USE(SKIA)
-    if (m_skiaTarget)
-        return !!m_skiaTarget->contentsBuffer();
-#endif
-
-    return !!m_contentsBuffer.committed;
-}
-
 void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
 {
     assertIsHeld(m_lock);
-    if (!buffer && !m_contentsBuffer.pending && !hasCommittedContentsBuffer())
+    if (!buffer && !m_contentsBuffer.pending && !m_contentsBuffer.hasCommitted)
         return;
 
     m_contentsBuffer.pending = WTF::move(buffer);
@@ -529,7 +519,7 @@ void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlat
 void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
 {
     Locker locker { m_lock };
-    if (!hasCommittedContentsBuffer())
+    if (!m_contentsBuffer.hasCommitted)
         return;
 
     m_contentsBuffer.pending = nullptr;
@@ -539,6 +529,7 @@ void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
         if (auto* buffer = m_skiaTarget->contentsBuffer()) {
             if (is<CoordinatedPlatformLayerBufferVideo>(*buffer))
                 m_contentsBuffer.pending = downcast<CoordinatedPlatformLayerBufferVideo>(*buffer).copyBuffer();
+            m_contentsBuffer.hasCommitted = !!m_contentsBuffer.pending;
             m_skiaTarget->setContentsBuffer(WTF::move(m_contentsBuffer.pending));
         }
         return;
@@ -547,6 +538,7 @@ void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
     if (is<CoordinatedPlatformLayerBufferVideo>(*m_contentsBuffer.committed))
         m_contentsBuffer.pending = downcast<CoordinatedPlatformLayerBufferVideo>(*m_contentsBuffer.committed).copyBuffer();
     m_contentsBuffer.committed = WTF::move(m_contentsBuffer.pending);
+    m_contentsBuffer.hasCommitted = !!m_contentsBuffer.committed;
     ensureTarget().setContentsLayer(m_contentsBuffer.committed.get());
 }
 #endif
@@ -1283,6 +1275,7 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
     if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame, CompositionReason::AsyncScrolling })) {
         if (m_pendingChanges.contains(Change::ContentsBuffer)) {
             m_contentsBuffer.committed = WTF::move(m_contentsBuffer.pending);
+            m_contentsBuffer.hasCommitted = !!m_contentsBuffer.committed;
             m_pendingChanges.remove(Change::ContentsBuffer);
         }
 
@@ -1478,6 +1471,7 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
         }
 #endif
         if (m_pendingChanges.contains(Change::ContentsBuffer)) {
+            m_contentsBuffer.hasCommitted = !!m_contentsBuffer.pending;
             layer.setContentsBuffer(WTF::move(m_contentsBuffer.pending));
             m_pendingChanges.remove(Change::ContentsBuffer);
         }

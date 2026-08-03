@@ -230,8 +230,6 @@ private:
     bool needsBackingStore() const;
     void purgeBackingStores();
 
-    bool hasCommittedContentsBuffer() const WTF_REQUIRES_LOCK(m_lock);
-
 #if ENABLE(DAMAGE_TRACKING)
     void addDamage(Damage&&) WTF_REQUIRES_LOCK(m_lock);
 #endif
@@ -332,6 +330,7 @@ private:
     struct {
         std::unique_ptr<CoordinatedPlatformLayerBuffer> pending;
         std::unique_ptr<CoordinatedPlatformLayerBuffer> committed;
+        bool hasCommitted { false };
     } m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
     struct {
         Path path;
