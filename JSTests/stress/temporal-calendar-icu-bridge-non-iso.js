@@ -440,3 +440,19 @@ for (const [calendar, startFields, endFields, expectedMonths] of [
     shouldBe(reverse.toString(), `-P${expectedMonths}M`, `${calendar} wide reverse month difference`);
     shouldBe(start.until(end, {largestUnit:"years"}).toString(), "P500000Y", `${calendar} wide year difference`);
 }
+
+// Extreme .add({years}) that fits int32 but drives ucal_add(UCAL_EXTENDED_YEAR) far enough that
+// epochMs can exceed int64_t's range; must throw RangeError, not crash or produce a wrong date.
+for (const calendar of ["chinese", "dangi", "hebrew"]) {
+    const start = calendar === "hebrew"
+        ? Temporal.PlainDate.from({year:5760, monthCode:"M01", day:1, calendar})
+        : Temporal.PlainDate.from({year:2000, monthCode:"M01", day:1, calendar});
+    shouldThrow(() => start.add({years: 2147483637}), RangeError, `${calendar} add extreme years (just under INT32_MAX)`);
+    shouldThrow(() => start.add({years: 2147483647}), RangeError, `${calendar} add extreme years (exactly INT32_MAX)`);
+    shouldThrow(() => start.subtract({years: 2147483637}), RangeError, `${calendar} subtract extreme years`);
+}
+
+// Hebrew has no extreme-year ISO-fallback (unlike chinese/dangi), so a huge year reaches
+// construction directly.
+shouldThrow(() => Temporal.PlainDate.from({year: 2147483637, monthCode: "M01", day: 1, calendar: "hebrew"}), RangeError, "hebrew extreme positive year construction");
+shouldThrow(() => Temporal.PlainDate.from({year: -2147483637, monthCode: "M01", day: 1, calendar: "hebrew"}), RangeError, "hebrew extreme negative year construction");

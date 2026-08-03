@@ -303,8 +303,6 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWith, (JSGlobalObject
             partialDate.eraYear = clampTo<int32_t>(ey);
             anyFieldSet = true;
         }
-        if (partialDate.era.has_value() != partialDate.eraYear.has_value()) [[unlikely]]
-            return throwVMTypeError(globalObject, scope, "era and eraYear must both be present or both absent"_s);
     }
 
     // hour, microsecond, millisecond, minute
@@ -844,13 +842,10 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDayOfYear, (JSGloba
     if (!plainDateTime) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.dayOfYear called on value that's not a PlainDateTime"_s);
 
-    if (!TemporalCore::calendarIsISO(plainDateTime->calendarID())) {
-        auto result = TemporalCore::calendarDayOfYear(plainDateTime->calendarID(), plainDateTime->plainDate());
-        if (!result) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, result.error().message);
-        return JSValue::encode(jsNumber(*result));
-    }
-    return JSValue::encode(jsNumber(plainDateTime->dayOfYear()));
+    auto result = TemporalCore::calendarDayOfYear(plainDateTime->calendarID(), plainDateTime->plainDate());
+    if (!result) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, String(result.error().message));
+    return JSValue::encode(jsNumber(*result));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.plaindatetime.prototype.weekofyear

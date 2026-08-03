@@ -159,11 +159,6 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
             }
             fields.eraYear = clampTo<int32_t>(ey);
         }
-        // era and eraYear must be provided together or not at all.
-        if (fields.era.has_value() != fields.eraYear.has_value()) [[unlikely]] {
-            throwTypeError(globalObject, scope, "era and eraYear must both be present or both absent"_s);
-            return fields;
-        }
     }
 
     // month
@@ -279,11 +274,6 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
             }
             result.dateFields.eraYear = clampTo<int32_t>(ey);
             result.anyFieldSet = true;
-        }
-        // CalendarResolveFields requires era and eraYear to be present together or both absent.
-        if (result.dateFields.era.has_value() != result.dateFields.eraYear.has_value()) [[unlikely]] {
-            throwTypeError(globalObject, scope, "era and eraYear must both be present or both absent"_s);
-            return result;
         }
     }
 
@@ -459,9 +449,7 @@ ISO8601::PlainDate isoDateFromFields(JSGlobalObject* globalObject, TemporalDateF
     ASSERT(day > 0);
 
     if (calendarId != iso8601CalendarID()) {
-        auto result = TemporalCore::calendarDateFromFields(
-            calendarId, std::optional<int32_t>(year), static_cast<uint8_t>(month), static_cast<uint8_t>(day),
-            std::nullopt, std::nullopt, monthCode, overflow);
+        auto result = TemporalCore::nonISOCalendarDateToISO(calendarId, std::optional<int32_t>(year), static_cast<uint8_t>(month), static_cast<uint8_t>(day), monthCode, overflow);
         if (!result) [[unlikely]] {
             throwRangeError(globalObject, scope, String(result.error().message));
             return { };

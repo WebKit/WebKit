@@ -129,9 +129,7 @@ inline CalendarID iso8601CalendarID()
     macro(gregory, "gregory"_s) \
     macro(hebrew, "hebrew"_s) \
     macro(indian, "indian"_s) \
-    macro(islamic, "islamic"_s) \
     macro(islamicCivil, "islamic-civil"_s) \
-    macro(islamicRgsa, "islamic-rgsa"_s) \
     macro(islamicTbla, "islamic-tbla"_s) \
     macro(islamicUmalqura, "islamic-umalqura"_s) \
     macro(japanese, "japanese"_s) \

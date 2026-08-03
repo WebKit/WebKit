@@ -2705,90 +2705,98 @@ static void testCalendarFieldsFunctions()
     TCHECK_TRUE(!rDW6.has_value() && rDW6.error().kind == TemporalErrorKind::RangeError, "plainDateWith: inconsistent year+era+eraYear -> RangeError");
 }
 
-static void testCalendarDateFromFields()
+static void testNonISOCalendarDateToISO()
 {
     using MC = ParsedMonthCode;
     auto id = calendarIDFromString;
 
-    // --- Non-lunisolar: year + month + day ---
-    // Gregory year->ISO
-    auto r = calendarDateFromFields(id("gregory"_s), 2024, 3, 15, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    auto fromEra = [&](CalendarID calendarId, StringView era, int32_t eraYear, uint8_t month, uint8_t day, std::optional<MC> monthCode, TemporalOverflow overflow) {
+        CalendarFieldsIn fields;
+        fields.era = era.toString();
+        fields.eraYear = eraYear;
+        fields.month = month;
+        fields.day = day;
+        fields.monthCode = monthCode;
+        return dateFromFields(calendarId, fields, overflow);
+    };
+
+    // --- Non-lunisolar: year + month + day (direct call) ---
+    auto r = nonISOCalendarDateToISO(id("gregory"_s), 2024, 3, 15, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(r.has_value() && r->year() == 2024 && r->month() == 3 && r->day() == 15, "gregory: year+month+day");
 
-    // --- Era + eraYear ---
-    // Gregory ce era — year=nullopt: no user-provided year, consistency check skipped
-    auto rEra = calendarDateFromFields(id("gregory"_s), std::nullopt, 3, 15, StringView("ce"_s), 2024, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rEra.has_value() && rEra->year() == 2024 && rEra->month() == 3 && rEra->day() == 15, "gregory: ce+eraYear");
+    // --- Era + eraYear (via dateFromFields — nonISOResolveFields collapses era into year) ---
+    auto rEra = fromEra(id("gregory"_s), "ce"_s, 2024, 3, 15, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rEra.has_value() && rEra->isoDate.year() == 2024 && rEra->isoDate.month() == 3 && rEra->isoDate.day() == 15, "gregory: ce+eraYear");
 
-    // Gregory bce era: eraYear 1 = ISO year 0 — year=nullopt (user didn't provide year)
-    auto rBce = calendarDateFromFields(id("gregory"_s), std::nullopt, 1, 1, StringView("bce"_s), 1, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rBce.has_value() && !rBce->year(), "gregory: bce eraYear 1 = ISO 0");
+    // Gregory bce era: eraYear 1 = ISO year 0.
+    auto rBce = fromEra(id("gregory"_s), "bce"_s, 1, 1, 1, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rBce.has_value() && !rBce->isoDate.year(), "gregory: bce eraYear 1 = ISO 0");
 
-    // Japanese: modern era (reiwa year 6 = 2024) — year=nullopt
-    auto rJp = calendarDateFromFields(id("japanese"_s), std::nullopt, 1, 1, StringView("reiwa"_s), 6, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rJp.has_value() && rJp->year() == 2024, "japanese: reiwa 6 = 2024");
+    // Japanese: modern era (reiwa year 6 = 2024).
+    auto rJp = fromEra(id("japanese"_s), "reiwa"_s, 6, 1, 1, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rJp.has_value() && rJp->isoDate.year() == 2024, "japanese: reiwa 6 = 2024");
 
-    // Japanese: pre-1868 "ce" era bypasses ICU — year=nullopt
-    auto rJpCe = calendarDateFromFields(id("japanese"_s), std::nullopt, 6, 15, StringView("ce"_s), 1600, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rJpCe.has_value() && rJpCe->year() == 1600 && rJpCe->month() == 6 && rJpCe->day() == 15, "japanese: ce 1600 bypass");
+    // Japanese: pre-1868 "ce" era bypasses ICU.
+    auto rJpCe = fromEra(id("japanese"_s), "ce"_s, 1600, 6, 15, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rJpCe.has_value() && rJpCe->isoDate.year() == 1600 && rJpCe->isoDate.month() == 6 && rJpCe->isoDate.day() == 15, "japanese: ce 1600 bypass");
 
-    // ROC: positive year (roc era)
-    auto rRoc = calendarDateFromFields(id("roc"_s), 113, 1, 1, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    // ROC: positive year (roc era).
+    auto rRoc = nonISOCalendarDateToISO(id("roc"_s), 113, 1, 1, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rRoc.has_value() && rRoc->year() == 2024, "roc: year 113 = 2024");
 
-    // ROC: year 0 -> broc era (ISO 1911)
-    auto rRocBroc = calendarDateFromFields(id("roc"_s), 0, 1, 1, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    // ROC: year 0 -> broc era (ISO 1911).
+    auto rRocBroc = nonISOCalendarDateToISO(id("roc"_s), 0, 1, 1, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rRocBroc.has_value() && rRocBroc->year() == 1911, "roc: year 0 = ISO 1911");
 
     // --- Month code: non-lunisolar ---
-    // Gregory M03 = March
-    auto rMc = calendarDateFromFields(id("gregory"_s), 2024, 0, 15, std::nullopt, std::nullopt, MC { 3, false }, TemporalOverflow::Reject);
+    // Gregory M03 = March.
+    auto rMc = nonISOCalendarDateToISO(id("gregory"_s), 2024, 0, 15, MC { 3, false }, TemporalOverflow::Reject);
     TCHECK_TRUE(rMc.has_value() && rMc->month() == 3 && rMc->day() == 15, "gregory: monthCode M03");
 
     // --- Month code: Hebrew leap month ---
-    // Hebrew 5784 is a leap year; M05L = Adar I
-    auto rHebLeap = calendarDateFromFields(id("hebrew"_s), 5784, 0, 1, std::nullopt, std::nullopt, MC { 5, true }, TemporalOverflow::Reject);
+    // Hebrew 5784 is a leap year; M05L = Adar I.
+    auto rHebLeap = nonISOCalendarDateToISO(id("hebrew"_s), 5784, 0, 1, MC { 5, true }, TemporalOverflow::Reject);
     TCHECK_TRUE(rHebLeap.has_value(), "hebrew: M05L in leap year 5784");
 
-    // Hebrew 5783 is NOT a leap year; M05L constrain -> same month
-    auto rHebConstrain = calendarDateFromFields(id("hebrew"_s), 5783, 0, 1, std::nullopt, std::nullopt, MC { 5, true }, TemporalOverflow::Constrain);
+    // Hebrew 5783 is NOT a leap year; M05L constrain -> same month.
+    auto rHebConstrain = nonISOCalendarDateToISO(id("hebrew"_s), 5783, 0, 1, MC { 5, true }, TemporalOverflow::Constrain);
     TCHECK_TRUE(rHebConstrain.has_value(), "hebrew: M05L constrain in non-leap year 5783");
 
-    // Hebrew 5783 non-leap + M05L reject -> error
-    auto rHebReject = calendarDateFromFields(id("hebrew"_s), 5783, 0, 1, std::nullopt, std::nullopt, MC { 5, true }, TemporalOverflow::Reject);
+    // Hebrew 5783 non-leap + M05L reject -> error.
+    auto rHebReject = nonISOCalendarDateToISO(id("hebrew"_s), 5783, 0, 1, MC { 5, true }, TemporalOverflow::Reject);
     TCHECK_TRUE(!rHebReject.has_value(), "hebrew: M05L reject in non-leap year");
 
     // --- Overflow: constrain ---
-    // Gregory: day 32 in January -> day 31
-    auto rConstrain = calendarDateFromFields(id("gregory"_s), 2024, 1, 32, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Constrain);
+    // Gregory: day 32 in January -> day 31.
+    auto rConstrain = nonISOCalendarDateToISO(id("gregory"_s), 2024, 1, 32, std::nullopt, TemporalOverflow::Constrain);
     TCHECK_TRUE(rConstrain.has_value() && rConstrain->day() == 31, "gregory: day 32 constrain -> 31");
 
-    // Gregory: day 32 in January reject -> error
-    auto rReject = calendarDateFromFields(id("gregory"_s), 2024, 1, 32, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    // Gregory: day 32 in January reject -> error.
+    auto rReject = nonISOCalendarDateToISO(id("gregory"_s), 2024, 1, 32, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(!rReject.has_value(), "gregory: day 32 reject -> error");
 
-    // --- Invalid era ---
-    auto rBadEra = calendarDateFromFields(id("gregory"_s), 0, 1, 1, StringView("invalid"_s), 2024, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(!rBadEra.has_value(), "gregory: invalid era -> error");
+    // --- Invalid era (via dateFromFields — era validity is enforced in nonISOResolveFields) ---
+    auto rBadEra = fromEra(id("gregory"_s), "invalid"_s, 2024, 1, 1, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(!rBadEra.has_value() && rBadEra.error().kind == TemporalErrorKind::RangeError, "gregory: invalid era -> RangeError");
 
     // Buddhist: user's `year` is BE (= Gregorian + 543).
-    auto rBud = calendarDateFromFields(id("buddhist"_s), 2567, 1, 1, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    auto rBud = nonISOCalendarDateToISO(id("buddhist"_s), 2567, 1, 1, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rBud.has_value() && rBud->year() == 2024, "buddhist: BE 2567 -> ISO 2024");
-    auto rBudEra = calendarDateFromFields(id("buddhist"_s), std::nullopt, 1, 1, StringView("be"_s), 2567, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rBudEra.has_value() && rBudEra->year() == 2024, "buddhist: era be, eraYear=2567 -> ISO 2024");
+    auto rBudEra = fromEra(id("buddhist"_s), "be"_s, 2567, 1, 1, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rBudEra.has_value() && rBudEra->isoDate.year() == 2024, "buddhist: era be, eraYear=2567 -> ISO 2024");
     // Reference-year path: BE 2515 = Gregorian 1972 leap; Feb 29 must succeed.
-    auto rBudRef = calendarDateFromFields(id("buddhist"_s), 2515, 2, 29, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    auto rBudRef = nonISOCalendarDateToISO(id("buddhist"_s), 2515, 2, 29, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rBudRef.has_value() && rBudRef->year() == 1972 && rBudRef->day() == 29u, "buddhist: BE 2515 Feb 29 -> ISO 1972-02-29");
 
-    // Coptic am era: era 1 (AM), not era 0. AM 1740 M01 D01 = ISO 2023-09-12.
-    auto rCop = calendarDateFromFields(id("coptic"_s), std::nullopt, 1, 1, StringView("am"_s), 1740, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rCop.has_value() && rCop->year() == 2023 && rCop->month() == 9u && rCop->day() == 12u, "coptic: am 1740 M01 D01 -> ISO 2023-09-12");
-    auto rCopY = calendarDateFromFields(id("coptic"_s), 1740, 1, 1, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    // Coptic am era: AM 1740 M01 D01 = ISO 2023-09-12.
+    auto rCop = fromEra(id("coptic"_s), "am"_s, 1740, 1, 1, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rCop.has_value() && rCop->isoDate.year() == 2023 && rCop->isoDate.month() == 9u && rCop->isoDate.day() == 12u, "coptic: am 1740 M01 D01 -> ISO 2023-09-12");
+    auto rCopY = nonISOCalendarDateToISO(id("coptic"_s), 1740, 1, 1, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rCopY.has_value() && rCopY->year() == 2023, "coptic: year=1740 -> ISO 2023 (era-free)");
 
     // Ethiopic am era: same fix as Coptic. AM 2016 M01 D01 = ISO 2023-09-12.
-    auto rEth = calendarDateFromFields(id("ethiopic"_s), std::nullopt, 1, 1, StringView("am"_s), 2016, std::nullopt, TemporalOverflow::Reject);
-    TCHECK_TRUE(rEth.has_value() && rEth->year() == 2023, "ethiopic: am 2016 -> ISO 2023");
+    auto rEth = fromEra(id("ethiopic"_s), "am"_s, 2016, 1, 1, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rEth.has_value() && rEth->isoDate.year() == 2023, "ethiopic: am 2016 -> ISO 2023");
 }
 
 static void testIsBuiltinCalendar()
@@ -2885,7 +2893,7 @@ static void testCalendarICUNonISO()
     TCHECK_EQ(*rPY, 1399, "persian: Nowruz 1399");
 
     // Islamic calendar: 2020-04-24 = 1 Ramadan 1441
-    auto rIM = calendarMonth(calendarIDFromString("islamic"_s), { 2020, 4, 24 });
+    auto rIM = calendarMonth(calendarIDFromString("islamic-tbla"_s), { 2020, 4, 24 });
     TCHECK_TRUE(rIM.has_value(), "islamic: month ok");
     TCHECK_EQ(*rIM, 9u, "islamic: Ramadan = month 9");
 
@@ -3834,7 +3842,7 @@ static void runStressTests()
     testCalendarInLeapYearISO(); // ISO leap year
     testCalendarISO8601Fields(); // ISO field accessors
     testCalendarICUNonISO(); // Non-ISO calendars (hebrew, chinese, japanese, persian)
-    testCalendarDateFromFields(); // calendarDateFromFields: era, monthCode, overflow, ROC, Japanese, Buddhist, Coptic, Ethiopic
+    testNonISOCalendarDateToISO(); // nonISOCalendarDateToISO: era, monthCode, overflow, ROC, Japanese, Buddhist, Coptic, Ethiopic
     testIsBuiltinCalendar(); // Canonical Temporal calendar set + legacy aliases
     testCalendarFieldsFunctions(); // yearMonthFromFields, monthDayFromFields, differenceYearMonth, plainYearMonthAdd, etc.
 

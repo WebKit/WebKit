@@ -4,7 +4,6 @@ flags:
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
   Temporal: useTemporal
-  Intl.Era-monthcode: useIntlEraMonthcode
   ShadowRealm: useShadowRealm
   json-parse-with-source: useJSONSourceTextAccess
   iterator-sequencing: useIteratorSequencing
@@ -17,7 +16,6 @@ skip:
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - source-phase-imports
-    - Intl.Era-monthcode
     - await-dictionary
     - import-bytes
     - immutable-arraybuffer

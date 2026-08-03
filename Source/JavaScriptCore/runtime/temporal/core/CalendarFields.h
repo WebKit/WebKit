@@ -68,6 +68,9 @@ struct ResolvedCalendarDate {
     CalendarID calendarId { 0 };
 };
 
+enum class ResolveType : uint8_t { Date, YearMonth, MonthDay };
+JS_EXPORT_PRIVATE TemporalResult<void> nonISOResolveFields(CalendarID, CalendarFieldsIn&, ResolveType);
+
 JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
 
 JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);

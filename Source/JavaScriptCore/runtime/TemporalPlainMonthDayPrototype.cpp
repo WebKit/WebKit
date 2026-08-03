@@ -329,8 +329,6 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
                 return throwVMRangeError(globalObject, scope, "eraYear must be finite"_s);
             merged.eraYear = clampTo<int32_t>(ey);
         }
-        if (merged.era.has_value() != merged.eraYear.has_value()) [[unlikely]]
-            return throwVMTypeError(globalObject, scope, "era and eraYear must both be present or both absent"_s);
     }
     JSValue yearProp = item->get(globalObject, vm.propertyNames->year);
     RETURN_IF_EXCEPTION(scope, { });

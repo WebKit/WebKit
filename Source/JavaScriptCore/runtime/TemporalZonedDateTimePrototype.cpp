@@ -1423,13 +1423,10 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGloba
     auto [date, time] = zdt->getLocalDateTime(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     // Step 4: Return 𝔽(CalendarISOToDate(calendar, isoDateTime.[[ISODate]]).[[DayOfYear]]).
-    if (!TemporalCore::calendarIsISO(zdt->calendarID())) {
-        auto result = TemporalCore::calendarDayOfYear(zdt->calendarID(), date);
-        if (!result) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, result.error().message);
-        return JSValue::encode(jsNumber(*result));
-    }
-    return JSValue::encode(jsNumber(ISO8601::dayOfYear(date)));
+    auto result = TemporalCore::calendarDayOfYear(zdt->calendarID(), date);
+    if (!result) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, String(result.error().message));
+    return JSValue::encode(jsNumber(*result));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.weekofyear

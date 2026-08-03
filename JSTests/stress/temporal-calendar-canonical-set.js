@@ -1,4 +1,4 @@
-//@ requireOptions("--useTemporal=1", "--useIntlEraMonthcode=1")
+//@ requireOptions("--useTemporal=1")
 
 // Regression for proposal-intl-era-monthcode Phase 0.
 

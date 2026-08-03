@@ -819,13 +819,15 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             // Handling "islamicc" candidate for backward compatibility.
             if (calendar == "islamicc"_s)
                 calendar = "islamic-civil"_s;
-            if (Options::useIntlEraMonthcode()) {
-                // https://tc39.es/proposal-intl-era-monthcode/#sec-createdatetimeformat step 9
-                if (calendar == "islamic"_s)
-                    calendar = "islamic-tbla"_s;
-                if (!intlAvailableCalendarIndex().contains(calendar))
-                    calendar = defaultCalendarForLocale(resolved.dataLocale);
-            }
+            // https://tc39.es/proposal-intl-era-monthcode/#sec-createdatetimeformat step 9
+            if (calendar == "islamic"_s)
+                calendar = "islamic-tbla"_s;
+            // Not a numbered CreateDateTimeFormat step; the spec's [[ca]] slot still permits
+            // calendars outside AvailableCalendars() here. Per TG2's resolution closing
+            // AvailableCalendars() and ignoring unsupported "ca" values like "islamic-rgsa"
+            // (https://github.com/tc39/ecma402/blob/main/meetings/notes-2026-01-08.md#intl-era-month-code-99), fall back instead.
+            if (!intlAvailableCalendarIndex().contains(calendar))
+                calendar = defaultCalendarForLocale(resolved.dataLocale);
         }
         impl->m_calendar = WTF::move(calendar);
     }
@@ -1392,6 +1394,80 @@ static void NODELETE replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Contain
     }
 }
 
+// ICU4C-WORKAROUND: rdar://182953351 - Islamic calendars never expose a second era
+// (architecturally locked to one); Coptic has a second era but never selects it.
+// Substitute CLDR's "Before Hijra"/"Anno Martyrum" text ourselves. islamic-tbla's
+// epoch differs from civil/umalqura's by a day, hence the separate branch.
+// FIXME: doesn't cover formatRange()/formatRangeToParts(); wait for ICU
+// to fix era selection natively rather than extending this further.
+static ASCIILiteral proposalEraOverrideString(const String& calendar, double epochMs)
+{
+    if (calendar == "islamic-civil"_s || calendar == "islamic-umalqura"_s) {
+        constexpr double islamicEpoch = -42521558822000.0; // ISO 622-07-19T07:52:58.000Z
+        if (epochMs < islamicEpoch)
+            return "Before Hijra"_s;
+        return { };
+    }
+    if (calendar == "islamic-tbla"_s) {
+        constexpr double islamicTblaEpoch = -42521645222000.0; // ISO 622-07-18T07:52:58.000Z
+        if (epochMs < islamicTblaEpoch)
+            return "Before Hijra"_s;
+        return { };
+    }
+    if (calendar == "coptic"_s) {
+        constexpr double copticEpoch = -53184182822000.0; // ISO 284-08-29T07:52:58.000Z
+        if (epochMs < copticEpoch)
+            return "Anno Martyrum"_s;
+        return { };
+    }
+    return { };
+}
+
+// ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString. Shared by both format() overloads.
+static JSValue formatWithEraOverride(JSGlobalObject* globalObject, UDateFormat* format, double value, ASCIILiteral eraOverride)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    UErrorCode fieldsStatus = U_ZERO_ERROR;
+    auto fields = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&fieldsStatus));
+    if (U_FAILURE(fieldsStatus)) [[unlikely]]
+        return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
+    Vector<char16_t, 32> result;
+    fieldsStatus = callBufferProducingFunction(udat_formatForFields, format, value, result, fields.get());
+    if (U_FAILURE(fieldsStatus)) [[unlikely]]
+        return throwTypeError(globalObject, scope, "failed to format date value"_s);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
+    // Splice: replace the era field's substring with override, or append if missing.
+    int32_t eraBegin = -1, eraEnd = -1;
+    int32_t beginIndex = 0, endIndex = 0;
+    while (true) {
+        auto fieldType = ufieldpositer_next(fields.get(), &beginIndex, &endIndex);
+        if (fieldType < 0)
+            break;
+        if (fieldType == UDAT_ERA_FIELD) {
+            eraBegin = beginIndex;
+            eraEnd = endIndex;
+            break;
+        }
+    }
+    StringBuilder builder;
+    if (eraBegin >= 0) {
+        builder.append(StringView(result.span()).substring(0, eraBegin));
+        builder.append(String(eraOverride));
+        builder.append(StringView(result.span()).substring(eraEnd, result.size() - eraEnd));
+    } else {
+        // ICU can already leave a trailing space where the empty era slot would go;
+        // only add our own separator if one isn't already there.
+        StringView resultView(result.span());
+        builder.append(resultView);
+        if (resultView.isEmpty() || !WTF::isUnicodeWhitespace(resultView[resultView.length() - 1]))
+            builder.append(' ');
+        builder.append(String(eraOverride));
+    }
+    return jsString(vm, builder.toString());
+}
+
 // https://tc39.es/proposal-temporal/#sec-formatdatetime
 JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) const
 {
@@ -1403,9 +1479,14 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     if (!std::isfinite(value))
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
 
+    // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
+    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, value) : ASCIILiteral { };
+    if (!eraOverride.isNull())
+        RELEASE_AND_RETURN(scope, formatWithEraOverride(globalObject, m_impl->m_dateFormat.get(), value, eraOverride));
+
     Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(udat_format, m_impl->m_dateFormat.get(), value, result, nullptr);
-    if (U_FAILURE(status))
+    if (U_FAILURE(status)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
 
@@ -1475,7 +1556,7 @@ static ASCIILiteral partTypeString(UDateFormatField field)
     return "unknown"_s;
 }
 
-static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFormat* format, double value, JSString* sourceType)
+static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFormat* format, double value, JSString* sourceType, ASCIILiteral eraOverride = { })
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1505,6 +1586,7 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
     int32_t previousEndIndex = 0;
     int32_t beginIndex = 0;
     int32_t endIndex = 0;
+    bool sawEra = false;
     while (previousEndIndex < resultLength) {
         auto fieldType = ufieldpositer_next(fields.get(), &beginIndex, &endIndex);
         if (fieldType < 0)
@@ -1522,10 +1604,31 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
 
         if (fieldType >= 0) {
             auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
-            auto value = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
+            JSString* valueStr;
+            {
+                // ICU4C-WORKAROUND: rdar://182953351 - replace era field text with override for islamic-* pre-Hijra / coptic pre-AM.
+                if (!eraOverride.isNull() && fieldType == UDAT_ERA_FIELD) {
+                    valueStr = jsNontrivialString(vm, String(eraOverride));
+                    sawEra = true;
+                } else
+                    valueStr = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
+            }
             JSObject* part = sourceType
-                ? createIntlPartObjectWithSource(globalObject, type, value, sourceType)
-                : createIntlPartObject(globalObject, type, value);
+                ? createIntlPartObjectWithSource(globalObject, type, valueStr, sourceType)
+                : createIntlPartObject(globalObject, type, valueStr);
+            parts->putDirectIndex(globalObject, parts->length(), part);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
+
+    {
+        // ICU4C-WORKAROUND: rdar://182953351 - append era override as a distinct part when ICU emitted no era field (coptic pre-AM).
+        if (!eraOverride.isNull() && !sawEra) {
+            auto type = jsNontrivialString(vm, "era"_s);
+            auto valueStr = jsNontrivialString(vm, String(eraOverride));
+            JSObject* part = sourceType
+                ? createIntlPartObjectWithSource(globalObject, type, valueStr, sourceType)
+                : createIntlPartObject(globalObject, type, valueStr);
             parts->putDirectIndex(globalObject, parts->length(), part);
             RETURN_IF_EXCEPTION(scope, { });
         }
@@ -2402,9 +2505,14 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, JSValue x) cons
     if (!tempFormat) [[unlikely]]
         return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
 
+    // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
+    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, record.value) : ASCIILiteral { };
+    if (!eraOverride.isNull())
+        RELEASE_AND_RETURN(scope, formatWithEraOverride(globalObject, tempFormat, record.value, eraOverride));
+
     Vector<char16_t, 32> result;
     auto fmtStatus = callBufferProducingFunction(udat_format, tempFormat, record.value, result, nullptr);
-    if (U_FAILURE(fmtStatus))
+    if (U_FAILURE(fmtStatus)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
     return jsString(vm, String(WTF::move(result)));
@@ -2431,7 +2539,9 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, JSValue 
             return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
     }
 
-    RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, fmt, record.value, nullptr));
+    // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
+    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, record.value) : ASCIILiteral { };
+    RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, fmt, record.value, nullptr, eraOverride));
 }
 
 std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>

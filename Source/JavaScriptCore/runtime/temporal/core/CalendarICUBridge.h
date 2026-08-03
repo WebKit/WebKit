@@ -59,13 +59,13 @@ inline StringView calendarIDToString(CalendarID id) { return intlAvailableCalend
 inline bool calendarIsISO(CalendarID id) { return id == iso8601CalendarID(); }
 
 // calendarHasEras — true for calendars that expose era/eraYear fields in Temporal.
-// Covers the 15 spec-defined era-bearing calendars; unknown future calendars default to false.
+// Covers the 13 spec-defined era-bearing calendars; unknown future calendars default to false.
 inline bool calendarHasEras(CalendarID id)
 {
     return id == buddhistCalendarID() || id == copticCalendarID() || id == ethioaaCalendarID()
         || id == ethiopicCalendarID() || id == gregoryCalendarID() || id == hebrewCalendarID()
-        || id == indianCalendarID() || id == islamicCalendarID() || id == islamicCivilCalendarID()
-        || id == islamicRgsaCalendarID() || id == islamicTblaCalendarID() || id == islamicUmalquraCalendarID()
+        || id == indianCalendarID() || id == islamicCivilCalendarID()
+        || id == islamicTblaCalendarID() || id == islamicUmalquraCalendarID()
         || id == japaneseCalendarID() || id == persianCalendarID() || id == rocCalendarID();
 }
 
@@ -74,13 +74,6 @@ inline bool calendarHasEras(CalendarID id)
 inline bool calendarIsLunisolar(CalendarID id)
 {
     return id == chineseCalendarID() || id == dangiCalendarID() || id == hebrewCalendarID();
-}
-
-// Returns true for any Islamic calendar variant.
-inline bool calendarIsIslamic(CalendarID id)
-{
-    return id == islamicCalendarID() || id == islamicCivilCalendarID() || id == islamicRgsaCalendarID()
-        || id == islamicTblaCalendarID() || id == islamicUmalquraCalendarID();
 }
 
 TemporalResult<CalendarFields> isoToCalendarFields(CalendarID, const ISO8601::PlainDate& isoDate);
@@ -93,7 +86,15 @@ JS_EXPORT_PRIVATE TemporalResult<String> calendarMonthCode(CalendarID, const ISO
 
 JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarDay(CalendarID, const ISO8601::PlainDate& isoDate);
 
-JS_EXPORT_PRIVATE TemporalResult<uint16_t> calendarDayOfYear(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarDayOfYear(CalendarID, const ISO8601::PlainDate& isoDate);
+
+JS_EXPORT_PRIVATE bool isValidMonthCodeForCalendar(CalendarID, ParsedMonthCode);
+
+JS_EXPORT_PRIVATE bool yearContainsMonthCode(CalendarID, int32_t year, ParsedMonthCode);
+
+JS_EXPORT_PRIVATE TemporalResult<ParsedMonthCode> constrainMonthCode(CalendarID, int32_t year, ParsedMonthCode, TemporalOverflow);
+
+JS_EXPORT_PRIVATE int32_t monthCodeOrdinalInYear(CalendarID, ParsedMonthCode, int32_t year);
 
 JS_EXPORT_PRIVATE TemporalResult<std::optional<String>> calendarEra(CalendarID, const ISO8601::PlainDate& isoDate);
 
@@ -126,7 +127,13 @@ Expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID, uint8_t 
 
 JS_EXPORT_PRIVATE int32_t lunarCalendarExtendedYearFor1972(CalendarID);
 
-JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID, std::optional<int32_t> year, uint8_t month, uint8_t day, std::optional<StringView> era, std::optional<int32_t> eraYear, std::optional<ParsedMonthCode>, TemporalOverflow);
+JS_EXPORT_PRIVATE std::optional<ASCIILiteral> canonicalizeEraInCalendar(CalendarID, StringView era);
+
+JS_EXPORT_PRIVATE std::optional<std::pair<ASCIILiteral, int32_t>> remapNonPositiveEraYear(CalendarID, StringView era, int32_t eraYear);
+
+JS_EXPORT_PRIVATE std::optional<int32_t> calendarDateArithmeticYearForEraYear(CalendarID, StringView era, int32_t eraYear);
+
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID, std::optional<int32_t> year, uint8_t month, uint8_t day, std::optional<ParsedMonthCode>, TemporalOverflow);
 
 } // namespace TemporalCore
 } // namespace JSC
