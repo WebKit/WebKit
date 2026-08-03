@@ -31,6 +31,6 @@ namespace WebCore {
 
 WEBCORE_EXPORT const String& mousePointerEventType();
 WEBCORE_EXPORT const String& penPointerEventType();
-const String& touchPointerEventType();
+WEBCORE_EXPORT const String& touchPointerEventType();
 
 } // namespace WebCore

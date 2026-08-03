@@ -262,6 +262,24 @@ static std::optional<TouchInteraction> touchInteractionForMouseInteraction(Mouse
 }
 #endif
 
+static const String& pointerTypeForInputSource(SimulatedInputSourceType type)
+{
+    switch (type) {
+    case SimulatedInputSourceType::Mouse:
+        return WebCore::mousePointerEventType();
+    case SimulatedInputSourceType::Touch:
+        return WebCore::touchPointerEventType();
+    case SimulatedInputSourceType::Pen:
+        return WebCore::penPointerEventType();
+    case SimulatedInputSourceType::Null:
+    case SimulatedInputSourceType::Keyboard:
+    case SimulatedInputSourceType::Wheel:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
+
 void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource& inputSource, SimulatedInputSourceState& newState, AutomationCompletionHandler&& completionHandler)
 {
     // Make cases and conditionals more readable by aliasing pre/post states as 'a' and 'b'.
@@ -292,50 +310,18 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         eventDispatchFinished(std::nullopt);
         break;
     case SimulatedInputSourceType::Mouse:
+    case SimulatedInputSourceType::Touch:
     case SimulatedInputSourceType::Pen: {
+        bool isTouch = inputSource.type == SimulatedInputSourceType::Touch;
+#if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+        RELEASE_ASSERT_NOT_REACHED();
+#else
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-        RELEASE_ASSERT_NOT_REACHED();
-#else
-        resolveLocation(valueOrDefault(a.location), b.location, b.origin.value_or(MouseMoveOrigin::Pointer), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, inputSource = inputSource.type, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
-            if (error) {
-                eventDispatchFinished(error);
-                return;
-            }
-
-            if (!location) {
-                eventDispatchFinished(AUTOMATION_COMMAND_ERROR_WITH_NAME(ElementNotInteractable));
-                return;
-            }
-
-            const String& pointerType = inputSource == SimulatedInputSourceType::Mouse ? WebCore::mousePointerEventType() : WebCore::penPointerEventType();
-
-            b.location = location;
-            // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
-            if (b.mouseInteraction) {
-                const auto stateTransitionIsNoop = [&a, &b] {
-                    return std::tie(a.location, a.mouseInteraction, a.pressedMouseButton) == std::tie(b.location, b.mouseInteraction, b.pressedMouseButton);
-                }();
-
-                if (!stateTransitionIsNoop) {
-#if !LOG_DISABLED
-                    String interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
-                    String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value_or(MouseButton::None));
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating %s[button=%s] @ (%d, %d) for transition to %d.%d", this, interactionName.utf8().data(), mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+        RELEASE_ASSERT(isTouch);
+#elif !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+        RELEASE_ASSERT(!isTouch);
 #endif
-                    m_client.simulateMouseInteraction(protect(m_page), b.mouseInteraction.value(), b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
-                } else
-                    eventDispatchFinished({ });
-            } else
-                eventDispatchFinished(std::nullopt);
-        });
-#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-        break;
-    }
-    case SimulatedInputSourceType::Touch: {
-#if !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
-        RELEASE_ASSERT_NOT_REACHED();
-#else
-        resolveLocation(valueOrDefault(a.location), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+        resolveLocation(valueOrDefault(a.location), b.location, b.origin.value_or(isTouch ? MouseMoveOrigin::Viewport : MouseMoveOrigin::Pointer), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, pointerType = pointerTypeForInputSource(inputSource.type), isTouch, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
             if (error) {
                 eventDispatchFinished(error);
                 return;
@@ -354,24 +340,41 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 }();
 
                 if (!stateTransitionIsNoop) {
-                    auto touchInteraction = touchInteractionForMouseInteraction(b.mouseInteraction.value());
-                    if (!touchInteraction || (touchInteraction == TouchInteraction::MoveTo && a.location == b.location)) {
+                    if (isTouch && b.mouseInteraction == MouseInteraction::Move && a.location == b.location) {
                         eventDispatchFinished(std::nullopt);
                         return;
                     }
 
-                    std::optional<Seconds> duration = touchInteraction == TouchInteraction::MoveTo ? std::optional<Seconds>(a.duration.value_or(0_s)) : std::nullopt;
 #if !LOG_DISABLED
                     String interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating touch %s @ (%d, %d) for transition to %d.%d", this, interactionName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+                    String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value_or(MouseButton::None));
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating %s %s[button=%s] @ (%d, %d) for transition to %d.%d", this, pointerType.utf8().data(), interactionName.utf8().data(), mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateTouchInteraction(protect(m_page), touchInteraction.value(), b.location.value(), duration, WTF::move(eventDispatchFinished));
+
+                    if (isTouch) {
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+                        auto touchInteraction = touchInteractionForMouseInteraction(b.mouseInteraction.value());
+                        if (!touchInteraction) {
+                            eventDispatchFinished(std::nullopt);
+                            return;
+                        }
+
+                        std::optional<Seconds> duration = touchInteraction == TouchInteraction::MoveTo ? std::optional<Seconds>(a.duration.value_or(0_s)) : std::nullopt;
+                        m_client.simulateTouchInteraction(protect(m_page), touchInteraction.value(), b.location.value(), duration, WTF::move(eventDispatchFinished));
+#endif
+                    } else {
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+                        m_client.simulateMouseInteraction(protect(m_page), b.mouseInteraction.value(), b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
+#else
+                        UNUSED_VARIABLE(pointerType);
+#endif
+                    }
                 } else
                     eventDispatchFinished({ });
             } else
                 eventDispatchFinished(std::nullopt);
         });
-#endif // !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+#endif // !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         break;
     }
     case SimulatedInputSourceType::Keyboard: {
