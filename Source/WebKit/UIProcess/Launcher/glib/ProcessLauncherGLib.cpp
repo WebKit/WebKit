@@ -48,6 +48,10 @@
 #include "ProcessProviderLibWPE.h"
 #endif
 
+#if OS(ANDROID)
+#include <wpe/wpe-platform.h>
+#endif
+
 #if USE(SYSPROF_CAPTURE)
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
@@ -104,6 +108,43 @@ void ProcessLauncher::launchProcess()
     IPC::SocketPair webkitSocketPair = IPC::createPlatformConnection(SOCK_SEQPACKET, connectionOptions());
     GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", webkitSocketPair.client.value()));
 
+#if OS(ANDROID)
+    if (auto* processManager = wpe_process_manager_get_default()) {
+        WPEProcessType processType;
+        switch (m_launchOptions.processType) {
+        case ProcessLauncher::ProcessType::Web:
+            processType = WPE_PROCESS_TYPE_WEB;
+            break;
+        case ProcessLauncher::ProcessType::Network:
+            processType = WPE_PROCESS_TYPE_NETWORK;
+            break;
+#if ENABLE(GPU_PROCESS)
+        case ProcessLauncher::ProcessType::GPU:
+            processType = WPE_PROCESS_TYPE_GPU;
+            break;
+#endif
+        default:
+            ASSERT_NOT_REACHED();
+            processType = WPE_PROCESS_TYPE_WEB;
+            break;
+        }
+
+        WPEProcessLaunchOptions* options = wpe_process_launch_options_new(processType,
+            static_cast<guint64>(m_launchOptions.processIdentifier.toUInt64()), webkitSocketPair.client.value());
+        GUniqueOutPtr<GError> error;
+        m_processID = wpe_process_manager_launch(processManager, options, &error.outPtr());
+        wpe_process_launch_options_free(options);
+        if (!m_processID)
+            g_error("Unable to spawn a new child process: %s", error ? error->message : "unknown error");
+
+        // We've finished launching the process, message back to the main run loop.
+        RunLoop::mainSingleton().dispatch([protectedThis = protect(*this), this, serverSocket = WTF::move(webkitSocketPair.server)] mutable {
+            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTF::move(serverSocket) });
+        });
+
+        return;
+    }
+#endif
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
         std::array<char*, 3> argv = {
@@ -274,6 +315,14 @@ void ProcessLauncher::terminateProcess()
 
     if (!m_processID)
         return;
+
+#if OS(ANDROID)
+    if (auto* processManager = wpe_process_manager_get_default()) {
+        wpe_process_manager_terminate(processManager, m_processID);
+        m_processID = 0;
+        return;
+    }
+#endif
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled())
