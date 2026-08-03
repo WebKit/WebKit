@@ -814,22 +814,114 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.loadPair32(parenContextGPR, MacroAssembler::TrustedImm32(ParenContext::beginOffset()), beginGPR, matchAmountGPR);
     }
 
-    void saveParenContext(MacroAssembler::RegisterID parenContextReg, MacroAssembler::RegisterID matchAmountReg, unsigned firstSubpattern, unsigned lastSubpattern, unsigned subpatternBaseFrameLocation, bool savesReturnAddress)
+    // Frame slots are copied to/from the ParenContext save area by unrolling (small
+    // counts) or by walking a pointer (large counts, to bound generated code size).
+    static constexpr unsigned directCopySlotThreshold = 5;
+
+#if CPU(ARM64)
+    // Walking copies 16-byte ldp/stp pairs, emitting a runtime loop only once there are
+    // enough pairs to amortize its setup; smaller counts are unrolled.
+    static constexpr unsigned pairsPerLoopIteration = 4;
+    static constexpr unsigned minLoopIterations = 2;
+#endif
+
+    enum class FrameSlotTransfer : bool { Save, Restore };
+
+    // Copy frame slots [firstSlot, lastSlot) between the frame and the ParenContext save area.
+    // contextGPR is preserved. framePointerGPR and scratchGPR are clobbered in the walking path.
+    void emitFrameSlotsTransfer(FrameSlotTransfer direction, MacroAssembler::RegisterID contextGPR, MacroAssembler::RegisterID framePointerGPR, MacroAssembler::RegisterID scratchGPR, unsigned firstSlot, unsigned lastSlot)
     {
+        ASSERT(noOverlap(contextGPR, framePointerGPR, scratchGPR, GPRInfo::callFrameRegister));
+
+        if (firstSlot >= lastSlot)
+            return;
+
+        bool isSave = direction == FrameSlotTransfer::Save;
+        unsigned count = lastSlot - firstSlot;
+        const ptrdiff_t contextSaveAreaOffset = ParenContext::savedFrameOffset(m_parenContextSizes);
+
+        // Copy each slot directly if count is less than the threshold.
+        if (count < directCopySlotThreshold) {
+            for (unsigned slot = firstSlot; slot < lastSlot; ++slot) {
+                MacroAssembler::Address frameSlot = frameAddress().withOffset(slot * sizeof(uintptr_t));
+                MacroAssembler::Address contextSlot(contextGPR, contextSaveAreaOffset + slot * sizeof(uintptr_t));
+                if (isSave)
+                    m_jit.transferPtr(frameSlot, contextSlot);
+                else
+                    m_jit.transferPtr(contextSlot, frameSlot);
+            }
+            return;
+        }
+
+        const intptr_t framePointerBias = frameAddress().offset + static_cast<intptr_t>(firstSlot) * static_cast<intptr_t>(sizeof(uintptr_t));
+        const intptr_t contextPointerBias = contextSaveAreaOffset + static_cast<intptr_t>(firstSlot) * static_cast<intptr_t>(sizeof(uintptr_t));
+
+        m_jit.addPtr(MacroAssembler::TrustedImmPtr(framePointerBias), GPRInfo::callFrameRegister, framePointerGPR);
+        m_jit.addPtr(MacroAssembler::TrustedImmPtr(contextPointerBias), contextGPR);
+
+#if CPU(ARM64)
+        auto emitCopy = [&](unsigned slots) {
+            MacroAssembler::PostIndexAddress frame(framePointerGPR, slots * sizeof(uintptr_t));
+            MacroAssembler::PostIndexAddress context(contextGPR, slots * sizeof(uintptr_t));
+            auto src = isSave ? frame : context;
+            auto dst = isSave ? context : frame;
+            if (slots == 2)
+                m_jit.transferPair64(src, dst);
+            else
+                m_jit.transfer64(src, dst);
+        };
+
+        unsigned pairCount = count / 2;
+        bool hasOddSlot = count & 1;
+
+        unsigned loopIterations = 0;
+        unsigned tailPairs = pairCount;
+        if (pairCount >= pairsPerLoopIteration * minLoopIterations) {
+            loopIterations = pairCount / pairsPerLoopIteration;
+            tailPairs = pairCount % pairsPerLoopIteration;
+        }
+
+        if (loopIterations) {
+            m_jit.move(MacroAssembler::TrustedImm32(loopIterations), scratchGPR);
+            MacroAssembler::Label loopHead(&m_jit);
+            for (unsigned i = 0; i < pairsPerLoopIteration; ++i)
+                emitCopy(2);
+            m_jit.branchSub32(MacroAssembler::NonZero, MacroAssembler::TrustedImm32(1), scratchGPR).linkTo(loopHead, &m_jit);
+        }
+        for (unsigned i = 0; i < tailPairs; ++i)
+            emitCopy(2);
+        if (hasOddSlot)
+            emitCopy(1);
+#else
+        m_jit.move(MacroAssembler::TrustedImm32(count), scratchGPR);
+        MacroAssembler::Label loopHead(&m_jit);
+        if (isSave)
+            m_jit.transferPtr(MacroAssembler::Address(framePointerGPR), MacroAssembler::Address(contextGPR));
+        else
+            m_jit.transferPtr(MacroAssembler::Address(contextGPR), MacroAssembler::Address(framePointerGPR));
+        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(uintptr_t)), framePointerGPR);
+        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(uintptr_t)), contextGPR);
+        m_jit.branchSub32(MacroAssembler::NonZero, MacroAssembler::TrustedImm32(1), scratchGPR).linkTo(loopHead, &m_jit);
+#endif
+
+        // Wind contextGPR back to its incoming value.
+        m_jit.subPtr(MacroAssembler::TrustedImmPtr(contextPointerBias + static_cast<intptr_t>(count) * static_cast<intptr_t>(sizeof(uintptr_t))), contextGPR);
+    }
+
+    // On return matchAmountGPR holds the pre-iteration matchAmount for the caller to increment.
+    void saveParenContext(MacroAssembler::RegisterID parenContextReg, MacroAssembler::RegisterID matchAmountGPR, MacroAssembler::RegisterID scratchGPR, unsigned firstSubpattern, unsigned lastSubpattern, unsigned subpatternBaseFrameLocation, bool savesReturnAddress)
+    {
+        ASSERT(noOverlap(parenContextReg, matchAmountGPR, scratchGPR, m_regs.index, GPRInfo::callFrameRegister));
+
         BitVector duplicateNamedCaptureGroups;
         bool hasNamedCaptures = m_pattern.hasDuplicateNamedCaptureGroups();
 
-        // Save-at-BEGIN: snapshot the machine state as it is before this iteration
-        // runs (current index as the iteration's begin, plus the current match count),
-        // so that on backtrack we can restore it and either accept fewer iterations or
-        // re-drive an earlier iteration's content. Used uniformly for FixedCount,
-        // Greedy and NonGreedy (FixedCount is simply min == max).
-        //
-        // matchAmountReg is pre-loaded by the caller and survives this call.
-        storeBeginAndMatchAmountToParenContext(m_regs.index, matchAmountReg, parenContextReg);
-        // returnAddress is only written by NestedAlternativeNext/End during the
-        // forward pass (multi-alt parens). For single-alt parens nothing ever
-        // writes or reads it, so the save/restore round-trip is pure overhead.
+        emitFrameSlotsTransfer(FrameSlotTransfer::Save, parenContextReg, matchAmountGPR, scratchGPR, subpatternBaseFrameLocation + YarrStackSpaceForBackTrackInfoParentheses, m_parenContextSizes.frameSlots());
+
+        // Save-at-BEGIN: snapshot the pre-iteration index and matchAmount.
+        loadFromFrame(subpatternBaseFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), matchAmountGPR);
+        storeBeginAndMatchAmountToParenContext(m_regs.index, matchAmountGPR, parenContextReg);
+        // returnAddress is only written by multi-alt parens; skip the round-trip otherwise.
         if (savesReturnAddress) {
             m_jit.transferPtr(
                 frameAddress().withOffset((subpatternBaseFrameLocation + BackTrackInfoParentheses::returnAddressIndex()) * sizeof(uintptr_t)),
@@ -844,8 +936,7 @@ class YarrGenerator final : public YarrJITInfo {
                     if (duplicateNamedGroup)
                         duplicateNamedCaptureGroups.set(duplicateNamedGroup);
                 }
-                // Clear captures after saving, so each iteration starts with the nested
-                // capture groups reset to undefined (ECMAScript spec requirement).
+                // Reset nested captures per ECMAScript spec.
                 clearSubpattern(subpattern);
             }
             for (unsigned duplicateNamedGroupId : duplicateNamedCaptureGroups) {
@@ -855,22 +946,23 @@ class YarrGenerator final : public YarrJITInfo {
                 storeDuplicateNamedGroupSubpatternId(duplicateNamedGroupId, 0);
             }
         }
-        subpatternBaseFrameLocation += YarrStackSpaceForBackTrackInfoParentheses;
-        for (unsigned frameLocation = subpatternBaseFrameLocation; frameLocation < m_parenContextSizes.frameSlots(); frameLocation++) {
-            m_jit.transferPtr(
-                frameAddress().withOffset(frameLocation * sizeof(uintptr_t)),
-                MacroAssembler::Address(parenContextReg, ParenContext::savedFrameOffset(m_parenContextSizes) + frameLocation * sizeof(uintptr_t)));
-        }
     }
 
-    void restoreParenContext(MacroAssembler::RegisterID parenContextReg, MacroAssembler::RegisterID tempReg, unsigned firstSubpattern, unsigned lastSubpattern, unsigned subpatternBaseFrameLocation, bool savesReturnAddress)
+    // On return matchAmountGPR holds the restored matchAmount, so the caller can use it without reloading from the frame.
+    void restoreParenContext(MacroAssembler::RegisterID parenContextReg, MacroAssembler::RegisterID matchAmountGPR, MacroAssembler::RegisterID scratchGPR, unsigned firstSubpattern, unsigned lastSubpattern, unsigned subpatternBaseFrameLocation, bool savesReturnAddress)
     {
+        ASSERT(noOverlap(parenContextReg, matchAmountGPR, scratchGPR, m_regs.index, GPRInfo::callFrameRegister));
+
         BitVector duplicateNamedCaptureGroups;
         bool hasNamedCaptures = m_pattern.hasDuplicateNamedCaptureGroups();
 
-        loadBeginAndMatchAmountFromParenContext(parenContextReg, m_regs.index, tempReg);
+        // Copy the saved frame slots back first (this clobbers matchAmountGPR), then load
+        // matchAmount into matchAmountGPR so it stays live for the caller.
+        emitFrameSlotsTransfer(FrameSlotTransfer::Restore, parenContextReg, matchAmountGPR, scratchGPR, subpatternBaseFrameLocation + YarrStackSpaceForBackTrackInfoParentheses, m_parenContextSizes.frameSlots());
+
+        loadBeginAndMatchAmountFromParenContext(parenContextReg, m_regs.index, matchAmountGPR);
         storeToFrame(m_regs.index, subpatternBaseFrameLocation + BackTrackInfoParentheses::beginIndex());
-        storeToFrame(tempReg, subpatternBaseFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
+        storeToFrame(matchAmountGPR, subpatternBaseFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
         if (savesReturnAddress) {
             m_jit.transferPtr(
                 MacroAssembler::Address(parenContextReg, ParenContext::returnAddressOffset()),
@@ -891,12 +983,6 @@ class YarrGenerator final : public YarrJITInfo {
                     MacroAssembler::Address(parenContextReg, ParenContext::duplicateNamedCaptureOffset(m_parenContextSizes, duplicateNamedGroupId)),
                     duplicateNamedGroupAddress(duplicateNamedGroupId));
             }
-        }
-        subpatternBaseFrameLocation += YarrStackSpaceForBackTrackInfoParentheses;
-        for (unsigned frameLocation = subpatternBaseFrameLocation; frameLocation < m_parenContextSizes.frameSlots(); frameLocation++) {
-            m_jit.transferPtr(
-                MacroAssembler::Address(parenContextReg, ParenContext::savedFrameOffset(m_parenContextSizes) + frameLocation * sizeof(uintptr_t)),
-                frameAddress().withOffset(frameLocation * sizeof(void*)));
         }
     }
 #endif
@@ -4408,17 +4494,12 @@ class YarrGenerator final : public YarrJITInfo {
                 m_jit.storePtr(currParenContextReg, MacroAssembler::Address(newParenContextReg, ParenContext::nextOffset()));
                 storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
-                loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
-
-                // Save the pre-iteration state (save-at-BEGIN) and clear nested captures
-                // so this iteration starts fresh. We only persist returnAddress for multi-alt parens (single-alt never writes it).
+                // Save-at-BEGIN. saveParenContext leaves the pre-iteration matchAmount
+                // in regT2 (countTemporary) for the increment below.
                 bool savesReturnAddress = term->parentheses.disjunction->m_alternatives.size() > 1;
-                saveParenContext(newParenContextReg, countTemporary, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation, savesReturnAddress);
+                saveParenContext(newParenContextReg, /* matchAmountGPR */ countTemporary, /* scratchGPR */ m_regs.regT3, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation, savesReturnAddress);
 
-                // This iteration's context is now on the stack: bump matchAmount. The
-                // save above captured the pre-increment count, so the popped context
-                // restores exactly this value on backtrack. (The NonGreedy min==0 skip
-                // path jumps over this push, leaving matchAmount == 0.)
+                // Bump matchAmount: the just-pushed context captured the pre-increment value.
                 m_jit.add32(MacroAssembler::TrustedImm32(1), countTemporary);
                 storeToFrame(countTemporary, parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
                 storeToFrame(m_regs.index, parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
@@ -5115,36 +5196,29 @@ class YarrGenerator final : public YarrJITInfo {
 
                 MacroAssembler::RegisterID currParenContextReg = m_regs.regT0;
                 MacroAssembler::RegisterID newParenContextReg = m_regs.regT1;
+                MacroAssembler::RegisterID countTemporary = m_regs.regT2;
 
                 loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), currParenContextReg);
 
-                // Pop the most recent iteration's context and decide how to continue
-                // backtracking based on the quantifier direction. This is the single,
-                // unified flow for FixedCount, Greedy and NonGreedy:
-                //   - restoreParenContext brings back the pre-iteration state: it leaves
-                //     m_regs.index at the end of the previous iteration AND restores
-                //     matchAmount to the popped context's saved (pre-push) value. That
-                //     restore IS the pop's decrement — the count now equals the number of
-                //     contexts still on the stack. No explicit decrement is needed.
-                //   - We then free the popped context and either accept fewer iterations
-                //     (Greedy at/above min) or re-drive the now-topmost iteration's content
-                //     (FixedCount / below min / NonGreedy). FixedCount has min == max, so
-                //     it never accepts fewer.
+                // restoreParenContext pops the most recent iteration: it restores m_regs.index
+                // and matchAmount to the popped context's pre-push values (that restore is the
+                // pop's decrement). We then free the context and either accept fewer iterations
+                // (Greedy at/above min) or re-drive the topmost one (FixedCount / below min /
+                // NonGreedy; FixedCount has min == max so it never accepts fewer). It returns
+                // matchAmount in regT2, which survives freeParenContext below, so we skip
+                // reloading it from the frame.
                 bool savesReturnAddress = term->parentheses.disjunction->m_alternatives.size() > 1;
-                restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation, savesReturnAddress);
+                restoreParenContext(currParenContextReg, /* matchAmountGPR */ countTemporary, /* scratchGPR */ m_regs.regT3, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation, savesReturnAddress);
 
                 m_jit.loadPtr(MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()), newParenContextReg);
                 freeParenContext(currParenContextReg);
                 storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
-                const MacroAssembler::RegisterID countTemporary = m_regs.regT0;
-                loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
-
                 YarrOp& endOp = m_ops[op.m_nextOp];
 
                 auto noPreviousIteration = m_jit.branchTest32(MacroAssembler::Zero, countTemporary);
-                m_jit.load32(MacroAssembler::Address(newParenContextReg, ParenContext::beginOffset()), m_regs.regT2);
-                storeToFrame(m_regs.regT2, parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
+                m_jit.load32(MacroAssembler::Address(newParenContextReg, ParenContext::beginOffset()), m_regs.regT3);
+                storeToFrame(m_regs.regT3, parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
 
                 switch (term->quantityType) {
                 case QuantifierType::NonGreedy: {
@@ -5175,7 +5249,7 @@ class YarrGenerator final : public YarrJITInfo {
                     // FixedCount is min == max: the surviving count after a pop is always
                     // < min, so the accept-fewer test below is never satisfied and it always
                     // re-drives the previous iteration's content (jumping to the content
-                    // backtrack entry) — exactly the desired "match exactly N" behavior.
+                    // backtrack entry), exactly the desired "match exactly N" behavior.
                     // A count of 0 (no previous iteration) is a complete failure.
                     if (term->quantityMinCount) {
                         // Accept the surviving iterations when there are still at least min
