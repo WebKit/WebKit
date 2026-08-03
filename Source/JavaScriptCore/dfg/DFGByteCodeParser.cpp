@@ -11657,9 +11657,8 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
 
         addToGraph(Jump, OpInfo(continuation));
         generatedCase = true;
+        m_currentIndex = startIndex;
     }
-
-    m_currentIndex = startIndex;
 
     auto emitFastArrayIteratorOpen = [&](IterationKind kind, JSSentinel* sentinelCell) {
         m_graph.watchpoints().addLazily(globalObject->arrayIteratorProtocolWatchpointSet());
@@ -11975,9 +11974,8 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
 
         addToGraph(Jump, OpInfo(continuation));
         generatedCase = true;
+        m_currentIndex = startIndex;
     }
-
-    m_currentIndex = startIndex;
 
     if (seenModes & IterationMode::FastMapKeys) {
         emitFastMapIteratorReuseOpen(IterationKind::Keys, m_vm->fastMapKeysSentinel());
@@ -12048,9 +12046,8 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
 
         addToGraph(Jump, OpInfo(continuation));
         generatedCase = true;
+        m_currentIndex = startIndex;
     }
-
-    m_currentIndex = startIndex;
 
     if (seenModes & IterationMode::FastSetValues) {
         emitFastSetIteratorReuseOpen(IterationKind::Values, m_vm->fastSetValuesSentinel());
@@ -12113,9 +12110,8 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
 
         addToGraph(Jump, OpInfo(continuation));
         generatedCase = true;
+        m_currentIndex = startIndex;
     }
-
-    m_currentIndex = startIndex;
 
     if (seenModes & IterationMode::Generic) {
         ASSERT(numberOfRemainingModes);
@@ -12169,6 +12165,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             addToGraph(Jump, OpInfo(continuation));
         }
         generatedCase = true;
+        m_currentIndex = startIndex;
     }
 
     ASSERT(!failedBlock);
@@ -12185,9 +12182,9 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
         processSetLocalQueue();
 
         addToGraph(Jump, OpInfo(continuation));
+        m_currentIndex = startIndex;
     }
 
-    m_currentIndex = startIndex;
     m_currentBlock = continuation;
     clearCaches();
 }
@@ -12840,6 +12837,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             addToGraph(Jump, OpInfo(continuation));
         }
 
+        m_currentIndex = startIndex;
         generatedCase = true;
     }
 
@@ -12859,25 +12857,43 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         processSetLocalQueue();
 
         addToGraph(Jump, OpInfo(continuation));
+        m_currentIndex = startIndex;
     }
 
-    m_currentIndex = startIndex;
     m_currentBlock = continuation;
     clearCaches();
 }
 
 void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruction, BytecodeIndex osrExitIndex)
 {
+    CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     auto bytecode = currentInstruction->as<OpAsyncIteratorOpen>();
     auto& metadata = bytecode.metadata(m_inlineStackTop->m_codeBlock);
-    uint32_t seenModes = metadata.m_iterationMetadata.seenModes;
-    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin());
+    uint32_t seenModes = metadata.m_iterationMetadata.seenModes & (static_cast<uint32_t>(IterationMode::FastAsyncGenerator) | static_cast<uint32_t>(IterationMode::Generic));
 
-    bool fastEligible = seenModes & static_cast<uint32_t>(IterationMode::FastAsyncGenerator);
-    bool genericSeen = seenModes & static_cast<uint32_t>(IterationMode::Generic);
+    JSGlobalObject* globalObject = codeBlock->globalObjectFor(currentCodeOrigin());
+
+    if (!globalObject->promiseSpeciesWatchpointSet().isStillValid())
+        seenModes &= ~static_cast<uint32_t>(IterationMode::FastAsyncGenerator);
+
+    unsigned numberOfRemainingModes = std::popcount(seenModes);
+    ASSERT(numberOfRemainingModes <= numberOfIterationModes);
+    bool generatedCase = false;
+
+    BasicBlock* failedBlock = nullptr;
+    auto connectFailedBlock = [&] {
+        if (failedBlock) {
+            ASSERT(generatedCase);
+            m_currentBlock = failedBlock;
+            clearCaches();
+            keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+            failedBlock = nullptr;
+        }
+    };
+
     // getPrediction() ForceOSRExits on an empty profile, so only use it for generic-only sites: a fast
     // site skips the symbolCall/getNext, leaving their value profiles empty. Predict conservatively there.
-    bool genericOnly = genericSeen && !fastEligible;
+    bool genericOnly = seenModes == static_cast<uint32_t>(IterationMode::Generic);
     auto predict = [&] () -> SpeculatedType {
         if (genericOnly)
             return getPrediction();
@@ -12889,8 +12905,8 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
 
     JSCell* primordialNext = globalObject->linkTimeConstant(LinkTimeConstant::asyncGeneratorPrototypeNext);
 
-    BytecodeIndex startIndex = m_currentIndex;
     BasicBlock* continuation = allocateUntargetableBlock();
+    BytecodeIndex startIndex = m_currentIndex;
 
     // getNext checkpoint: inline-cached get_by_id of iterator.next, then (reclassify) overwrite with the
     // driver sentinel if it is still the primordial %AsyncGeneratorPrototype%.next. Shared by the fast
@@ -12974,55 +12990,56 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
         }
     };
 
-    BasicBlock* failedBlock = nullptr;
-
     // Fast path. A genuine async generator is its own iterator, so when the fetched @@asyncIterator is the
     // primordial method, skip the symbolCall and set iterator = iterable.
-    if (fastEligible) {
+    if (seenModes & IterationMode::FastAsyncGenerator) {
+        m_graph.watchpoints().addLazily(globalObject->promiseSpeciesWatchpointSet());
         FrozenValue* primordialIter = m_graph.freeze(globalObject->linkTimeConstant(LinkTimeConstant::asyncIteratorPrototypeSymbolAsyncIterator));
-        Node* isAsyncGenerator = addToGraph(IsCellWithType, OpInfo(JSAsyncGeneratorType), get(bytecode.m_iterable));
-        Node* isprimordialIter = addToGraph(CompareEqPtr, OpInfo(primordialIter), get(bytecode.m_symbolIterator));
-        Node* eligible = addToGraph(ArithBitAnd, isAsyncGenerator, isprimordialIter);
-        emitExitOK();
+        numberOfRemainingModes--;
 
-        BasicBlock* fastBlock = allocateUntargetableBlock();
-        failedBlock = allocateUntargetableBlock();
-        BranchData* branchData = m_graph.m_branchData.add();
-        branchData->taken = BranchTarget(fastBlock);
-        branchData->notTaken = BranchTarget(failedBlock);
-        addToGraph(Branch, OpInfo(branchData), eligible);
-        flushForTerminal();
+        connectFailedBlock();
 
-        m_currentBlock = fastBlock;
-        clearCaches();
-        keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
-        emitExitOK();
+        Node* symbolAsyncIterator = get(bytecode.m_symbolIterator);
+
+        if (!numberOfRemainingModes) {
+            addToGraph(CheckJSCast, OpInfo(JSAsyncGenerator::info()), get(bytecode.m_iterable));
+            addToGraph(CheckIsConstant, OpInfo(primordialIter), symbolAsyncIterator);
+        } else {
+            Node* isAsyncGenerator = addToGraph(IsCellWithType, OpInfo(JSAsyncGeneratorType), get(bytecode.m_iterable));
+            Node* isprimordialIter = addToGraph(CompareEqPtr, OpInfo(primordialIter), symbolAsyncIterator);
+            Node* eligible = addToGraph(ArithBitAnd, isAsyncGenerator, isprimordialIter);
+            emitExitOK();
+
+            BasicBlock* fastBlock = allocateUntargetableBlock();
+            failedBlock = allocateUntargetableBlock();
+            BranchData* branchData = m_graph.m_branchData.add();
+            branchData->taken = BranchTarget(fastBlock);
+            branchData->notTaken = BranchTarget(failedBlock);
+            addToGraph(Branch, OpInfo(branchData), eligible);
+            flushForTerminal();
+
+            m_currentBlock = fastBlock;
+            clearCaches();
+            keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+            emitExitOK();
+        }
+
         // iterator = iterable (symbolCall's def, produced without a call). Set at the symbolCall checkpoint.
         set(bytecode.m_iterator, get(bytecode.m_iterable));
         // Advance symbolCall (0) -> getNext (1). m_iterator is now defined and flushed, so an OSR exit at
         // getNext lands in handleAsyncIteratorOpenCheckpoint, which reads R[m_iterator].next into m_next.
         progressToNextCheckpoint();
-        // Sentinel only while the species is primordial; the watchpoint deopts us on later tamper.
-        if (globalObject->promiseSpeciesWatchpointSet().state() == IsWatched) {
-            m_graph.watchpoints().addLazily(globalObject->promiseSpeciesWatchpointSet());
-            emitGetNext(/* reclassify */ true);
-        } else
-            emitGetNext(/* reclassify */ false);
-
+        emitGetNext(/* reclassify */ true);
+        generatedCase = true;
         m_currentIndex = startIndex;
     }
 
     // Generic path. iterator = symbolIterator.@call(iterable), then getNext.
     // Reached when the site went generic, or as the fast path's fallthrough
     // (@@asyncIterator was not the primordial method at runtime).
-    if (genericSeen || failedBlock) {
-        if (failedBlock) {
-            m_currentBlock = failedBlock;
-            clearCaches();
-            keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
-            emitExitOK();
-            failedBlock = nullptr;
-        }
+    if (seenModes & IterationMode::Generic) {
+        ASSERT(numberOfRemainingModes);
+        connectFailedBlock();
 
         {
             Node* callTarget = get(calleeFor(bytecode, m_currentIndex.checkpoint()));
@@ -13067,8 +13084,12 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
             emitGetNext(/* reclassify */ false);
         }
 
+        generatedCase = true;
         m_currentIndex = startIndex;
-    } else if (!fastEligible) {
+    }
+
+    ASSERT(!failedBlock);
+    if (!generatedCase) {
         // Bail to the baseline, like handleIteratorOpen's !generatedCase path.
         emitExitOK();
         addToGraph(ForceOSRExit);
@@ -13090,18 +13111,23 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
 void ByteCodeParser::handleAsyncIteratorNext(const JSInstruction* currentInstruction, BytecodeIndex osrExitIndex)
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
+    JSGlobalObject* globalObject = codeBlock->globalObjectFor(currentCodeOrigin());
+
     auto bytecode = currentInstruction->as<OpAsyncIteratorNext>();
     auto& metadata = bytecode.metadata(codeBlock);
     // Gate on the observed modes (fast-enqueue vs generic real-call) like handleIteratorNext, so a
     // monomorphic site emits only the branch it needs, guarded by a speculation that OSR-exits on mismatch.
-    uint32_t seenModes = metadata.m_iterationMetadata.seenModes
-        & (static_cast<uint32_t>(IterationMode::FastAsyncGenerator) | static_cast<uint32_t>(IterationMode::Generic));
+    uint32_t seenModes = metadata.m_iterationMetadata.seenModes & (static_cast<uint32_t>(IterationMode::FastAsyncGenerator) | static_cast<uint32_t>(IterationMode::Generic));
+
+    if (!globalObject->promiseSpeciesWatchpointSet().isStillValid())
+        seenModes &= ~static_cast<uint32_t>(IterationMode::FastAsyncGenerator);
+
+    unsigned numberOfRemainingModes = std::popcount(seenModes);
+    ASSERT(numberOfRemainingModes <= numberOfIterationModes);
+    bool generatedCase = false;
 
     BytecodeIndex startIndex = m_currentIndex;
     BasicBlock* continuation = allocateUntargetableBlock();
-
-    unsigned numberOfRemainingModes = std::popcount(seenModes);
-    bool generatedCase = false;
 
     BasicBlock* failedBlock = nullptr;
     auto connectFailedBlock = [&] {
@@ -13117,6 +13143,7 @@ void ByteCodeParser::handleAsyncIteratorNext(const JSInstruction* currentInstruc
     // Fast path. `next` is the fast async generator driver sentinel, so enqueue onto the producer's
     // queue instead of calling. Guard with a sentinel identity check that OSR-exits on a mismatch.
     if (seenModes & static_cast<uint32_t>(IterationMode::FastAsyncGenerator)) {
+        m_graph.watchpoints().addLazily(globalObject->promiseSpeciesWatchpointSet());
         numberOfRemainingModes--;
         connectFailedBlock();
 
