@@ -224,6 +224,42 @@ TEST(WTF_StringCommon, EqualIgnoringASCIICase)
     // EXPECT_TRUE(WTF::equalIgnoringASCIICase(u8"test"_span, "test"_span8)); // This should not compile.
 }
 
+template<typename UnsignedType, typename FindFunction>
+static void testFindBoundaryLengths(FindFunction findFunction)
+{
+    // Boundary lengths around the new intermediate SIMD tier find16()/find32() gained for
+    // the [stride, threshold) gap (stride 8 for uint16_t / 4 for uint32_t on 128-bit SIMD;
+    // threshold is 32). Place the target character at every position for each length.
+    for (size_t length : { 1, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64 }) {
+        Vector<UnsignedType> buffer(length, [](size_t i) {
+            return static_cast<UnsignedType>(0x1000 + (i % 100));
+        });
+
+        EXPECT_EQ(findFunction(buffer.span().data(), static_cast<UnsignedType>(0xBEEF), length), nullptr) << "length=" << length;
+
+        for (size_t position = 0; position < length; ++position) {
+            auto withTarget = buffer;
+            withTarget[position] = 0xBEEF;
+            EXPECT_EQ(findFunction(withTarget.span().data(), static_cast<UnsignedType>(0xBEEF), length), withTarget.span().data() + position)
+                << "length=" << length << " position=" << position;
+        }
+    }
+}
+
+TEST(WTF_StringCommon, Find16BoundaryLengths)
+{
+    testFindBoundaryLengths<uint16_t>([](const uint16_t* pointer, uint16_t character, size_t length) {
+        return WTF::find16(pointer, character, length);
+    });
+}
+
+TEST(WTF_StringCommon, Find32BoundaryLengths)
+{
+    testFindBoundaryLengths<uint32_t>([](const uint32_t* pointer, uint32_t character, size_t length) {
+        return WTF::find32(pointer, character, length);
+    });
+}
+
 TEST(WTF_StringCommon, StartsWith)
 {
     EXPECT_TRUE(WTF::startsWith(u8"Water🍉Melon"_span, "Water"_s));
