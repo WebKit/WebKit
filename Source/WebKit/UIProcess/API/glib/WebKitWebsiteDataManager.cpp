@@ -22,6 +22,7 @@
 
 #include "ITPThirdPartyData.h"
 #include "ITPThirdPartyDataForSpecificFirstParty.h"
+#include "NetworkStorageManager.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitMemoryPressureSettings.h"
@@ -1152,7 +1153,7 @@ WebKitFaviconDatabase* webkit_website_data_manager_get_favicon_database(WebKitWe
 }
 #endif
 
-static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
+static constexpr OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
 {
     OptionSet<WebsiteDataType> returnValue;
     if (types & WEBKIT_WEBSITE_DATA_MEMORY_CACHE)
@@ -1185,6 +1186,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::FileSystem);
     return returnValue;
 }
+
+static_assert(toWebsiteDataTypes(WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES) == NetworkStorageManager::allManagedTypes());
 
 /**
  * webkit_website_data_manager_fetch:

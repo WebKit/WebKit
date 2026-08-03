@@ -47,9 +47,21 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS: Service worker registrations.
  * @WEBKIT_WEBSITE_DATA_DOM_CACHE: DOM (CacheStorage) cache.
  * @WEBKIT_WEBSITE_DATA_FILE_SYSTEM: File system storage. Since 2.56
+ * @WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES: All per-origin storage types. Since 2.56
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
+ *
+ * @WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES is a subset of types that WebKit manages
+ * as the storage of an origin: session and local storage, IndexedDB databases,
+ * service worker registrations, the DOM cache and file system storage. It excludes
+ * data that is not tied to a single origin in the same way, such as cookies, the
+ * memory and disk caches, and the HSTS cache.
+ *
+ * Removing every type in this set for an origin also drops the persistent
+ * storage the origin was granted. Note that types may be added to this set in
+ * future versions, so an application built against an older version can pass a
+ * value that no longer covers all of them.
  *
  * Since: 2.16
  */
@@ -67,6 +79,12 @@ typedef enum {
     WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS = 1 << 10,
     WEBKIT_WEBSITE_DATA_DOM_CACHE                    = 1 << 11,
     WEBKIT_WEBSITE_DATA_FILE_SYSTEM                  = 1 << 12,
+    WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES            = WEBKIT_WEBSITE_DATA_SESSION_STORAGE
+                                                     | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
+                                                     | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES
+                                                     | WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS
+                                                     | WEBKIT_WEBSITE_DATA_DOM_CACHE
+                                                     | WEBKIT_WEBSITE_DATA_FILE_SYSTEM,
     WEBKIT_WEBSITE_DATA_ALL                          = (1 << 13) - 1
 } WebKitWebsiteDataTypes;
 #else
@@ -87,9 +105,21 @@ typedef enum {
  * @WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS: Service worker registrations. Since 2.30
  * @WEBKIT_WEBSITE_DATA_DOM_CACHE: DOM (CacheStorage) cache. Since 2.30
  * @WEBKIT_WEBSITE_DATA_FILE_SYSTEM: File system storage. Since 2.56
+ * @WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES: All per-origin storage types. Since 2.56
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
+ *
+ * @WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES is a subset of types that WebKit manages
+ * as the storage of an origin: session and local storage, IndexedDB databases,
+ * service worker registrations, the DOM cache and file system storage. It excludes
+ * data that is not tied to a single origin in the same way, such as cookies, the
+ * memory and disk caches, and the HSTS cache.
+ *
+ * Removing every type in this set for an origin also drops the persistent
+ * storage the origin was granted. Note that types may be added to this set in
+ * future versions, so an application built against an older version can pass a
+ * value that no longer covers all of them.
  *
  * Since: 2.16
  */
@@ -109,6 +139,12 @@ typedef enum {
     WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS = 1 << 12,
     WEBKIT_WEBSITE_DATA_DOM_CACHE                    = 1 << 13,
     WEBKIT_WEBSITE_DATA_FILE_SYSTEM                  = 1 << 14,
+    WEBKIT_WEBSITE_DATA_ALL_MANAGED_TYPES            = WEBKIT_WEBSITE_DATA_SESSION_STORAGE
+                                                     | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
+                                                     | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES
+                                                     | WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS
+                                                     | WEBKIT_WEBSITE_DATA_DOM_CACHE
+                                                     | WEBKIT_WEBSITE_DATA_FILE_SYSTEM,
     WEBKIT_WEBSITE_DATA_ALL                          = (1 << 15) - 1
 } WebKitWebsiteDataTypes;
 #endif

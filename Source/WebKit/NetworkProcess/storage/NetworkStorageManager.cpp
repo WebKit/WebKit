@@ -260,18 +260,6 @@ bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)
     return allManagedTypes().containsAny(types);
 }
 
-OptionSet<WebsiteDataType> NetworkStorageManager::allManagedTypes()
-{
-    return {
-        WebsiteDataType::LocalStorage,
-        WebsiteDataType::SessionStorage,
-        WebsiteDataType::FileSystem,
-        WebsiteDataType::IndexedDBDatabases,
-        WebsiteDataType::DOMCache,
-        WebsiteDataType::ServiceWorkerRegistrations
-    };
-}
-
 void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

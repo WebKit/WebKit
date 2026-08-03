@@ -113,7 +113,17 @@ class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver<WTF::De
 public:
     static Ref<NetworkStorageManager> create(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, std::optional<IPC::Connection::UniqueID>, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled, TimeBasedEvictionMode, Seconds timeBasedEvictionThreshold, std::optional<Seconds> lastModificationTimeUpdateIntervalOverride, std::optional<Seconds> timeBasedEvictionIntervalOverride);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
-    static OptionSet<WebsiteDataType> allManagedTypes();
+    static constexpr OptionSet<WebsiteDataType> allManagedTypes()
+    {
+        return {
+            WebsiteDataType::LocalStorage,
+            WebsiteDataType::SessionStorage,
+            WebsiteDataType::FileSystem,
+            WebsiteDataType::IndexedDBDatabases,
+            WebsiteDataType::DOMCache,
+            WebsiteDataType::ServiceWorkerRegistrations
+        };
+    }
 
     void startReceivingMessageFromConnection(IPC::Connection&, std::optional<HashSet<WebCore::RegistrableDomain>>&&, const SharedPreferencesForWebProcess&);
     void stopReceivingMessageFromConnection(IPC::Connection&);
