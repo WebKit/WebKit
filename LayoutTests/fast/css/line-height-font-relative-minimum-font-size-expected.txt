@@ -1,0 +1,15 @@
+x
+x
+x
+x
+x
+x
+x
+
+PASS Setup: the minimum font size clamps the children but not the parent
+PASS line-height: 1lh equals the parent line-height, unscaled by the minimum font size
+PASS line-height: 1lh is unscaled for a font size closer to the minimum
+PASS line-height: 1rlh equals the root line-height, unscaled by the minimum font size
+PASS A font-relative line-height tracks the minimum font size exactly once
+PASS Number and percentage line-heights track the clamped font size
+
