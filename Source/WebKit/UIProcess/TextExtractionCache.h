@@ -34,7 +34,7 @@ namespace WebKit {
 
 class TextExtractionCache {
 public:
-    static constexpr auto maxEntries = 6;
+    static constexpr auto maxEntries = 20;
     static constexpr auto contextLineCount = 3;
 
     enum class NodeResolution : uint8_t {

@@ -62,7 +62,7 @@ Vector<String> TextExtractionCache::contextWindowBefore(const Vector<TextExtract
         if (offset > targetIndex)
             window.append(emptyString());
         else
-            window.append(lines[targetIndex - offset].contentWithoutIdentifier);
+            window.append(lines[targetIndex - offset].cachedRepresentation);
     }
     return window;
 }
@@ -77,7 +77,7 @@ Vector<String> TextExtractionCache::contextWindowAfter(const Vector<TextExtracti
         if (index >= lineCount)
             window.append(emptyString());
         else
-            window.append(lines[index].contentWithoutIdentifier);
+            window.append(lines[index].cachedRepresentation);
     }
     return window;
 }
@@ -113,12 +113,12 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
 
             auto& source = m_entries[sourceIndex];
             auto sourceLineIndex = source.lineIndexForUID.get(identifier);
-            auto sourceLineContent = source.lines[sourceLineIndex].contentWithoutIdentifier;
+            auto sourceLineContent = source.lines[sourceLineIndex].cachedRepresentation;
             auto sourceContextBefore = contextWindowBefore(source.lines, sourceLineIndex);
             auto sourceContextAfter = contextWindowAfter(source.lines, sourceLineIndex);
 
             for (unsigned candidate = 0; candidate < target.lines.size(); ++candidate) {
-                if (target.lines[candidate].contentWithoutIdentifier != sourceLineContent)
+                if (target.lines[candidate].cachedRepresentation != sourceLineContent)
                     continue;
 
                 bool contextBeforeMatches = contextWindowBefore(target.lines, candidate) == sourceContextBefore;

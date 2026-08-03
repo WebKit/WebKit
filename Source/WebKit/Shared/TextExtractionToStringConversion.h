@@ -113,6 +113,7 @@ struct TextExtractionOptions {
 
 struct TextExtractionLineContent {
     String contentWithoutIdentifier;
+    String cachedRepresentation;
     std::optional<String> nodeIdentifier;
 };
 
