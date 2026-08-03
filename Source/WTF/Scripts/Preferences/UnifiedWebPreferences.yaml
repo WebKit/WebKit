@@ -4858,7 +4858,7 @@ JavaScriptRuntimeFlags:
 
 JointIterationEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "Joint Iteration"
   humanReadableDescription: "Expose the Iterator.zip and Iterator.zipKeyed methods"
@@ -4866,12 +4866,8 @@ JointIterationEnabled:
   jscOptionName: useJointIteration
   sharedPreferenceForWebProcess: true
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
-      default: false
-    WebCore:
-      default: false
+      default: true
 
 KeyboardDismissalGestureEnabled:
   type: bool
