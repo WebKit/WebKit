@@ -90,30 +90,26 @@ void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSObject* se
     } else {
         JSValue last = queue();
         if (last.isNull()) {
-            auto* item = JSFullPromiseReaction::create(
+            auto* item = JSSlimPromiseReaction::createAsyncGeneratorRequest(
                 vm,
                 settlementTarget,
                 value,
-                jsNumber(mode),
-                jsUndefined(), // Will be set to self (prev)
+                static_cast<uint8_t>(mode),
                 nullptr // Will be set to self (next)
             );
             item->setNext(vm, item);
-            item->setContext(vm, item);
             setQueue(vm, item);
         } else {
-            auto* tail = uncheckedDowncast<JSFullPromiseReaction>(last);
-            auto* head = uncheckedDowncast<JSFullPromiseReaction>(tail->next());
-            auto* item = JSFullPromiseReaction::create(
+            auto* tail = uncheckedDowncast<JSSlimPromiseReaction>(last);
+            auto* head = uncheckedDowncast<JSSlimPromiseReaction>(tail->next());
+            auto* item = JSSlimPromiseReaction::createAsyncGeneratorRequest(
                 vm,
                 settlementTarget,
                 value,
-                jsNumber(mode),
-                tail, // prev = old tail
+                static_cast<uint8_t>(mode),
                 head // next = head (to maintain circular)
             );
             tail->setNext(vm, item);
-            head->setContext(vm, item);
             setQueue(vm, item);
         }
     }
@@ -131,18 +127,17 @@ JSObject* JSAsyncGenerator::dequeue(VM& vm)
         setResumeValue(vm, jsUndefined());
         setResumePromise(vm, jsUndefined());
     } else {
-        auto* tail = uncheckedDowncast<JSFullPromiseReaction>(last);
-        auto* head = uncheckedDowncast<JSFullPromiseReaction>(tail->next());
+        auto* tail = uncheckedDowncast<JSSlimPromiseReaction>(last);
+        auto* head = uncheckedDowncast<JSSlimPromiseReaction>(tail->next());
 
         setResumePromise(vm, head->promise());
-        setResumeValue(vm, head->onFulfilled());
-        setResumeMode(head->onRejected().asInt32());
+        setResumeValue(vm, head->handlerOrContext());
+        setResumeMode(head->asyncGeneratorResumeMode());
 
         if (head == tail)
             setQueue(vm, jsNull());
         else {
-            auto* newHead = uncheckedDowncast<JSFullPromiseReaction>(head->next());
-            newHead->setContext(vm, tail); // newHead.prev = tail
+            auto* newHead = uncheckedDowncast<JSSlimPromiseReaction>(head->next());
             tail->setNext(vm, newHead);
         }
     }
