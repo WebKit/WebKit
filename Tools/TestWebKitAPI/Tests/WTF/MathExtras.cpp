@@ -679,4 +679,79 @@ TEST(WTF, negate)
     EXPECT_EQ(WTF::negate<long long>(0LL), 0LL);
 }
 
+template<typename T>
+static void testHasZeroByte()
+{
+    constexpr size_t byteCount = sizeof(T);
+
+    // No zero byte anywhere.
+    EXPECT_FALSE(hasZeroByte<T>(static_cast<T>(~static_cast<T>(0))));
+
+    // A zero byte at every position, rest set to a clean nonzero byte (0x78).
+    auto wordWithByteAt = [](size_t position, uint8_t byteValue) {
+        T word = 0;
+        for (size_t i = 0; i < byteCount; ++i)
+            word |= static_cast<T>(i == position ? byteValue : 0x78) << (i * 8);
+        return word;
+    };
+    for (size_t position = 0; position < byteCount; ++position)
+        EXPECT_TRUE(hasZeroByte<T>(wordWithByteAt(position, 0x00)));
+
+    // Exhaustive: every byte value at every position must match a plain per-byte reference
+    // check, including values right at the 0x00/0x80/0xFF boundaries where the underlying
+    // subtract-and-mask trick is easiest to get wrong.
+    for (size_t position = 0; position < byteCount; ++position) {
+        for (unsigned byteValue = 0; byteValue <= 0xFF; ++byteValue) {
+            bool expected = !byteValue;
+            EXPECT_EQ(hasZeroByte<T>(wordWithByteAt(position, static_cast<uint8_t>(byteValue))), expected);
+        }
+    }
+
+    // Two zero bytes simultaneously, at every pair of positions, must not miscount or cancel out.
+    if (byteCount >= 2) {
+        for (size_t p1 = 0; p1 < byteCount; ++p1) {
+            for (size_t p2 = 0; p2 < byteCount; ++p2) {
+                if (p1 == p2)
+                    continue;
+                T word = wordWithByteAt(p1, 0x00);
+                word &= ~(static_cast<T>(0xFF) << (p2 * 8));
+                EXPECT_TRUE(hasZeroByte<T>(word));
+            }
+        }
+    }
+}
+
+TEST(WTF, hasZeroByte)
+{
+    testHasZeroByte<uint8_t>();
+    testHasZeroByte<uint16_t>();
+    testHasZeroByte<uint32_t>();
+    testHasZeroByte<uint64_t>();
+}
+
+TEST(WTF, divideRoundedUp)
+{
+    // Basic rounding behavior.
+    EXPECT_EQ(divideRoundedUp<unsigned>(0, 3), 0U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(1, 3), 1U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(3, 3), 1U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(4, 3), 2U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(6, 3), 2U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(7, 3), 3U);
+
+    // Divisor of 1 returns the dividend unchanged, even at the maximum.
+    EXPECT_EQ(divideRoundedUp<uint8_t>(std::numeric_limits<uint8_t>::max(), 1), std::numeric_limits<uint8_t>::max());
+    EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max(), 1), std::numeric_limits<size_t>::max());
+
+    // Dividends near the maximum must not overflow the (a + b - 1) intermediate.
+    EXPECT_EQ(divideRoundedUp<uint8_t>(std::numeric_limits<uint8_t>::max(), 2), 128U);
+    EXPECT_EQ(divideRoundedUp<uint16_t>(std::numeric_limits<uint16_t>::max(), 2), 32768U);
+    EXPECT_EQ(divideRoundedUp<uint32_t>(std::numeric_limits<uint32_t>::max(), 2), 2147483648U);
+    EXPECT_EQ(divideRoundedUp<uint64_t>(std::numeric_limits<uint64_t>::max(), 2), 9223372036854775808ULL);
+
+    EXPECT_EQ(divideRoundedUp<uint8_t>(std::numeric_limits<uint8_t>::max(), std::numeric_limits<uint8_t>::max()), 1U);
+    EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()), 1U);
+    EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max() - 1, std::numeric_limits<size_t>::max()), 1U);
+}
+
 } // namespace TestWebKitAPI
