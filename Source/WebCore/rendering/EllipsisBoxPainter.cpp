@@ -50,8 +50,9 @@ void EllipsisBoxPainter::paint()
 {
     // FIXME: Transition it to TextPainter.
     auto& context = m_paintInfo.context();
-    CheckedRef style = m_lineBox.style();
-    auto textColor = style->visitedDependentTextFillColorApplyingColorFilter();
+    CheckedRef lineStyle = m_lineBox.style();
+    CheckedRef rootStyle = m_lineBox.formattingContextRoot().style();
+    auto textColor = rootStyle->visitedDependentTextFillColorApplyingColorFilter();
 
     if (m_paintInfo.forceTextColor())
         textColor = m_paintInfo.forcedTextColor();
@@ -68,14 +69,14 @@ void EllipsisBoxPainter::paint()
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
 
-    bool setShadow = WTF::switchOn(style->textShadow(),
+    bool setShadow = WTF::switchOn(rootStyle->textShadow(),
         [&](const CSS::Keyword::None&) {
             return false;
         },
         [&](const auto& shadows) {
-            const auto& zoomFactor = style->usedZoomForLength();
+            const auto& zoomFactor = rootStyle->usedZoomForLength();
 
-            Style::ColorResolver colorResolver { style };
+            Style::ColorResolver colorResolver { rootStyle };
 
             context.setDropShadow({
                 LayoutSize {
@@ -92,15 +93,16 @@ void EllipsisBoxPainter::paint()
 
     auto visualRect = m_lineBox.ellipsisVisualRect();
     auto textOrigin = visualRect.location();
-    auto ascent = LayoutUnit(style->metricsOfPrimaryFont().ascent());
+    // Use lineStyle to align with possible baseline adjustment by :first-line/:first-letter.
+    auto ascent = LayoutUnit(lineStyle->metricsOfPrimaryFont().ascent());
     textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
 
-    if (style->writingMode().isHorizontal())
+    if (rootStyle->writingMode().isHorizontal())
         textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor()));
     else
         textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor()));
 
-    context.drawBidiText(style->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+    context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
 
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
