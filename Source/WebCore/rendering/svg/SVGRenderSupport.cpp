@@ -69,7 +69,7 @@
 
 namespace WebCore {
 
-LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, VisibleRectContext context)
+LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context)
 {
     // Return early for any cases where we don't actually paint
     if (renderer.isInsideEntirelyHiddenLayer())
@@ -80,7 +80,7 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
     return enclosingLayoutRect(renderer.computeFloatRectForRepaint(renderer.repaintRectInLocalCoordinates(context.repaintRectCalculation()), repaintContainer));
 }
 
-std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context)
+std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state)
 {
     // Ensure our parent is an SVG object.
     ASSERT(renderer.parent());
@@ -96,7 +96,7 @@ std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(co
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);
 
-    return parent.computeFloatVisibleRectInContainer(adjustedRect, container, context);
+    return parent.computeFloatVisibleRectInContainer(adjustedRect, container, context, state);
 }
 
 const RenderElement& SVGRenderSupport::localToParentTransform(const RenderElement& renderer, AffineTransform &transform)

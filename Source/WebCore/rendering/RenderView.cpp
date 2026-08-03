@@ -629,7 +629,7 @@ void RenderView::repaintViewAndCompositedLayers()
         compositor.repaintCompositedLayers();
 }
 
-auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     // If a container was specified, and was not nullptr or the RenderView,
     // then we should have found it by now.
@@ -645,7 +645,7 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
         adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), writingMode().isHorizontal());
     }
 
-    if (context.hasPositionFixedDescendant)
+    if (state.hasPositionFixedDescendant)
         adjustedRects.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
 
     // Apply our transform if we have one (because of full page zooming).

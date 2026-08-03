@@ -49,11 +49,11 @@ class LegacyRenderSVGModelObject : public RenderElement {
 public:
     virtual ~LegacyRenderSVGModelObject();
 
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
 
-    std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
-    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, VisibleRectContext) const override;
+    std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const final;
+    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
     LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* = nullptr) const final;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;

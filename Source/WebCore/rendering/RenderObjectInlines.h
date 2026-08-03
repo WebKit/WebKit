@@ -114,9 +114,6 @@ inline bool RenderObject::isNonReplacedAtomicInlineLevelBox() const
 inline auto RenderObject::visibleRectContextForRepaint() -> VisibleRectContext
 {
     return {
-        .hasPositionFixedDescendant = false,
-        .dirtyRectIsFlipped = false,
-        .descendantNeedsEnclosingIntRect = false,
         .options = {
             VisibleRectContext::Option::ApplyContainerClip,
             VisibleRectContext::Option::ApplyCompositedContainerScrolls
@@ -128,9 +125,6 @@ inline auto RenderObject::visibleRectContextForRepaint() -> VisibleRectContext
 inline auto RenderObject::visibleRectContextForSpatialNavigation() -> VisibleRectContext
 {
     return {
-        .hasPositionFixedDescendant = false,
-        .dirtyRectIsFlipped = false,
-        .descendantNeedsEnclosingIntRect = false,
         .options = {
             VisibleRectContext::Option::ApplyContainerClip,
             VisibleRectContext::Option::ApplyCompositedContainerScrolls,
@@ -143,9 +137,6 @@ inline auto RenderObject::visibleRectContextForSpatialNavigation() -> VisibleRec
 inline auto RenderObject::visibleRectContextForRenderTreeAsText() -> VisibleRectContext
 {
     return {
-        .hasPositionFixedDescendant = false,
-        .dirtyRectIsFlipped = false,
-        .descendantNeedsEnclosingIntRect = false,
         .options = {
             VisibleRectContext::Option::ApplyContainerClip,
             VisibleRectContext::Option::ApplyCompositedContainerScrolls,

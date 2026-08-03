@@ -90,6 +90,7 @@ struct PaintInfo;
 struct ScrollRectToVisibleOptions;
 struct SimpleRange;
 struct VisibleRectContext;
+struct VisibleRectState;
 
 namespace Layout {
 class Box;
@@ -985,14 +986,14 @@ public:
 
     WEBCORE_EXPORT IntRect pixelSnappedAbsoluteClippedOverflowRect() const;
 
-    virtual LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+    virtual LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const;
     inline LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const;
     virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const;
     virtual LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap* = nullptr) const { return { }; }
 
     // Given a rect in the object's coordinate space, compute a rect  in the coordinate space
     // of repaintContainer suitable for the given VisibleRectContext.
-    RepaintRects computeRects(const RepaintRects&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+    RepaintRects computeRects(const RepaintRects&, const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const;
 
     inline LayoutRect computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const;
     FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer) const;
@@ -1002,8 +1003,8 @@ public:
     // Given a rect in the object's coordinate space, compute the location in container space where this rect is visible,
     // when clipping and scrolling as specified by the context. When using edge-inclusive intersection, return std::nullopt
     // rather than an empty rect if the rect is completely clipped out in container space.
-    virtual std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
-    virtual std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+    virtual std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* repaintContainer, const VisibleRectContext&, VisibleRectState) const;
+    virtual std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, const VisibleRectContext&, VisibleRectState) const;
 
     WEBCORE_EXPORT bool hasEmptyVisibleRectRespectingParentFrames() const;
 

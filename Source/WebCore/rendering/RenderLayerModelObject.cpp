@@ -264,7 +264,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
     }
 }
 
-bool RenderLayerModelObject::applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject*, VisibleRectContext) const
+bool RenderLayerModelObject::applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject*, const VisibleRectContext&) const
 {
     return false;
 }
@@ -363,7 +363,7 @@ bool RenderLayerModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo, 
     return true;
 }
 
-auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
     ASSERT(!style().hasInFlowPosition());
@@ -417,7 +417,7 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
         }
     }
 
-    return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context);
+    return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
 void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const

@@ -2133,15 +2133,13 @@ std::optional<LayoutRect> LocalFrameView::visibleRectOfChild(const Frame& child)
         { childOwnerRenderer->borderBoxRect() },
         &childOwnerRenderer->view(),
         {
-            .hasPositionFixedDescendant = false,
-            .dirtyRectIsFlipped = false,
-            .descendantNeedsEnclosingIntRect = false,
             .options = {
                 VisibleRectContext::Option::UseEdgeInclusiveIntersection,
                 VisibleRectContext::Option::ApplyCompositedClips,
                 VisibleRectContext::Option::ApplyCompositedContainerScrolls
             },
-        }
+        },
+        { }
     );
 
     return rects.transform([] (const auto& repaintRects) { return repaintRects.clippedOverflowRect; });

@@ -93,7 +93,7 @@ private:
     bool paintingAffectedByExternalOffset() const;
 
     // To prevent certain legacy code paths to hit assertions in debug builds, when switching off LBSE (during the teardown of the LBSE tree).
-    std::optional<FloatRect> NODELETE computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const final;
+    std::optional<FloatRect> NODELETE computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const final;
 
     LayoutUnit computeReplacedLogicalWidth(IsComputingIntrinsicSize  = IsComputingIntrinsicSize::No) const final;
     LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const final;

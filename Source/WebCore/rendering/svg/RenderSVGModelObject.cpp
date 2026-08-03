@@ -136,9 +136,9 @@ auto RenderSVGModelObject::localRectsForRepaint(RepaintOutlineBounds repaintOutl
     return rects;
 }
 
-auto RenderSVGModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto RenderSVGModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
-    return computeVisibleRectsInSVGContainer(rects, container, context);
+    return computeVisibleRectsInSVGContainer(rects, container, context, state);
 }
 
 const RenderElement* RenderSVGModelObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -347,7 +347,7 @@ LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const
     return currentSVGLayoutRect().size();
 }
 
-bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const
+bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context) const
 {
     // Based on RenderBox::applyCachedClipAndScrollPosition -- unused options removed.
     if (!context.options.contains(VisibleRectContext::Option::ApplyContainerClip) && this == container)

@@ -43,8 +43,8 @@ private:
 
     void paint(PaintInfo&, const LayoutPoint&) final { }
 
-    LayoutRect NODELETE clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final;
-    std::optional<RepaintRects> NODELETE computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject*, VisibleRectContext) const final;
+    LayoutRect NODELETE clippedOverflowRect(const RenderLayerModelObject*, const VisibleRectContext&) const final;
+    std::optional<RepaintRects> NODELETE computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const final;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint&) const final { }
     void absoluteQuads(Vector<FloatQuad>&, bool*) const final { }

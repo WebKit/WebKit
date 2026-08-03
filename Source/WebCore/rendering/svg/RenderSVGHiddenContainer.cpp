@@ -47,12 +47,12 @@ void RenderSVGHiddenContainer::layout()
     clearNeedsLayout();    
 }
 
-LayoutRect RenderSVGHiddenContainer::clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const
+LayoutRect RenderSVGHiddenContainer::clippedOverflowRect(const RenderLayerModelObject*, const VisibleRectContext&) const
 {
     return { };
 }
 
-std::optional<RenderObject::RepaintRects> RenderSVGHiddenContainer::computeVisibleRectsInContainer(const RenderObject::RepaintRects& rects, const RenderLayerModelObject*, VisibleRectContext) const
+std::optional<RenderObject::RepaintRects> RenderSVGHiddenContainer::computeVisibleRectsInContainer(const RenderObject::RepaintRects& rects, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const
 {
     return rects;
 }

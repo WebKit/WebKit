@@ -398,16 +398,14 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
                 { rect },
                 &renderer->view(),
                 {
-                    .hasPositionFixedDescendant = false,
-                    .dirtyRectIsFlipped = false,
-                    .descendantNeedsEnclosingIntRect = false,
                     .options = {
                         VisibleRectContext::Option::UseEdgeInclusiveIntersection,
                         VisibleRectContext::Option::ApplyCompositedClips,
                         VisibleRectContext::Option::ApplyCompositedContainerScrolls
                     },
                     .scrollMargin = scrollMargin
-                }
+                },
+                { }
             );
 
             return visibleRects.transform([] (auto&& repaintRects) { return repaintRects.clippedOverflowRect; } );
@@ -642,16 +640,14 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
                 { localTargetBounds },
                 rootRenderer,
                 {
-                    .hasPositionFixedDescendant = false,
-                    .dirtyRectIsFlipped = false,
-                    .descendantNeedsEnclosingIntRect = false,
                     .options = {
                         VisibleRectContext::Option::UseEdgeInclusiveIntersection,
                         VisibleRectContext::Option::ApplyCompositedClips,
                         VisibleRectContext::Option::ApplyCompositedContainerScrolls
                     },
                     .scrollMargin = { }
-                }
+                },
+                { }
             );
             if (!result)
                 return std::nullopt;

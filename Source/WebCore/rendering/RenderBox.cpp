@@ -1410,7 +1410,7 @@ LayoutSize RenderBox::cachedSizeForOverflowClip() const
     return layer()->size();
 }
 
-bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const
+bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context) const
 {
     flipForWritingMode(rects);
 
@@ -2719,7 +2719,7 @@ auto RenderBox::computeVisibleRectsUsingPaintOffset(const RepaintRects& rects) c
     return adjustedRects;
 }
 
-auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
@@ -2743,7 +2743,7 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
     if (container == this) {
         if (container->writingMode().isBlockFlipped())
             flipForWritingMode(adjustedRects);
-        if (context.descendantNeedsEnclosingIntRect)
+        if (state.descendantNeedsEnclosingIntRect)
             adjustedRects.encloseToIntRects();
         return adjustedRects;
     }
@@ -2754,9 +2754,9 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
         return adjustedRects;
 
     if (isWritingModeRoot()) {
-        if (!isOutOfFlowPositioned() || !context.dirtyRectIsFlipped) {
+        if (!isOutOfFlowPositioned() || !state.dirtyRectIsFlipped) {
             flipForWritingMode(adjustedRects);
-            context.dirtyRectIsFlipped = true;
+            state.dirtyRectIsFlipped = true;
         }
     }
 
@@ -2768,7 +2768,7 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
         LayoutSize flooredLocationOffset = flooredIntSize(locationOffset);
         adjustedRects.expand(locationOffset - flooredLocationOffset);
         locationOffset = flooredLocationOffset;
-        context.descendantNeedsEnclosingIntRect = true;
+        state.descendantNeedsEnclosingIntRect = true;
     } else if (auto* columnFlow = dynamicDowncast<RenderMultiColumnFlow>(*this)) {
         // We won't normally run this code. Only when the container is null (i.e., we're trying
         // to get the rect in view coordinates) will we come in here, since normally container
@@ -2778,7 +2778,7 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
         LayoutPoint physicalPoint(flipForWritingMode(adjustedRects.clippedOverflowRect.location()));
         if (auto* fragment = columnFlow->physicalTranslationFromFlowToFragment((physicalPoint))) {
             adjustedRects.clippedOverflowRect.setLocation(fragment->flipForWritingMode(physicalPoint));
-            return fragment->computeVisibleRectsInContainer(adjustedRects, container, context);
+            return fragment->computeVisibleRectsInContainer(adjustedRects, container, context, state);
         }
     }
 
@@ -2786,10 +2786,10 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
     // in the parent's coordinate space that encloses us.
     auto position = styleToUse.position();
     if (hasLayer() && layer()->isTransformed()) {
-        context.hasPositionFixedDescendant = position == PositionType::Fixed;
+        state.hasPositionFixedDescendant = position == PositionType::Fixed;
         adjustedRects.transform(layer()->currentTransform(), protect(document())->deviceScaleFactor());
     } else if (position == PositionType::Fixed)
-        context.hasPositionFixedDescendant = true;
+        state.hasPositionFixedDescendant = true;
 
     adjustedRects.move(locationOffset);
 
@@ -2820,7 +2820,7 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
         adjustedRects.move(-containerOffset);
         return adjustedRects;
     }
-    return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context);
+    return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
 void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)

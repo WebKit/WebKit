@@ -140,7 +140,7 @@ void RenderSVGBlock::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Com
     addVisualOverflow(snappedIntRect(borderRect));
 }
 
-LayoutRect RenderSVGBlock::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect RenderSVGBlock::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context) const
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return RenderBlockFlow::clippedOverflowRect(repaintContainer, context);
@@ -159,23 +159,23 @@ auto RenderSVGBlock::rectsForRepaintingAfterLayout(const RenderLayerModelObject*
     return rects;
 }
 
-auto RenderSVGBlock::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto RenderSVGBlock::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return computeVisibleRectsInSVGContainer(rects, container, context);
+        return computeVisibleRectsInSVGContainer(rects, container, context, state);
 
     // FIXME: computeFloatVisibleRectInContainer() needs to be merged with computeVisibleRectsInContainer().
-    auto adjustedRect = computeFloatVisibleRectInContainer(rects.clippedOverflowRect, container, context);
+    auto adjustedRect = computeFloatVisibleRectInContainer(rects.clippedOverflowRect, container, context, state);
     if (adjustedRect)
         return RepaintRects { enclosingLayoutRect(*adjustedRect) };
 
     return std::nullopt;
 }
 
-std::optional<FloatRect> RenderSVGBlock::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<FloatRect> RenderSVGBlock::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const
 {
     ASSERT(!document().settings().layerBasedSVGEngineEnabled());
-    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
+    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context, state);
 }
 
 void RenderSVGBlock::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const

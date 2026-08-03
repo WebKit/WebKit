@@ -605,13 +605,13 @@ LayoutUnit RenderTableCell::containingBlockLogicalWidthForContent() const
     return totalWidth;
 }
 
-auto RenderTableCell::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto RenderTableCell::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     if (container == this)
         return rects;
 
     auto adjustedRects = rects;
-    return RenderBlockFlow::computeVisibleRectsInContainer(adjustedRects, container, context);
+    return RenderBlockFlow::computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
 LayoutUnit RenderTableCell::cellBaselinePosition() const

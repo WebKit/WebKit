@@ -292,14 +292,13 @@ FloatRect LargestContentfulPaintData::computeViewportIntersectionRect(Element& e
         { localTargetBounds },
         &protect(targetRenderer->view()).get(),
         {
-            .hasPositionFixedDescendant = false,
-            .dirtyRectIsFlipped = false,
             .options = {
                 VisibleRectContext::Option::UseEdgeInclusiveIntersection,
                 VisibleRectContext::Option::ApplyCompositedClips,
                 VisibleRectContext::Option::ApplyCompositedContainerScrolls
             },
-        }
+        },
+        { }
     );
 
     if (!absoluteRects)

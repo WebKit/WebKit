@@ -41,7 +41,7 @@ private:
 
     void NODELETE paint(PaintInfo&, const LayoutPoint&) final;
 
-    LayoutRect NODELETE clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final;
+    LayoutRect NODELETE clippedOverflowRect(const RenderLayerModelObject*, const VisibleRectContext&) const final;
     void NODELETE absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;

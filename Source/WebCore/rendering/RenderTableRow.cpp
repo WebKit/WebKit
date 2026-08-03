@@ -183,7 +183,7 @@ void RenderTableRow::layout()
     // lays out out-of-flow descendants and calls clearNeedsLayout().
 }
 
-LayoutRect RenderTableRow::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect RenderTableRow::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context) const
 {
     ASSERT(parent());
     // Cells are in the row's coordinate space. We need to both compute our overflow rect (which

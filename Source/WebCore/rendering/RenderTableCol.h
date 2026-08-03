@@ -80,7 +80,7 @@ private:
     bool canHaveChildren() const override;
     bool requiresLayer() const override { return false; }
 
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;

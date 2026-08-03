@@ -61,7 +61,7 @@ LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& el
 
 LegacyRenderSVGModelObject::~LegacyRenderSVGModelObject() = default;
 
-LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
@@ -75,14 +75,14 @@ auto LegacyRenderSVGModelObject::rectsForRepaintingAfterLayout(const RenderLayer
     return rects;
 }
 
-std::optional<FloatRect> LegacyRenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<FloatRect> LegacyRenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const
 {
-    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
+    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context, state);
 }
 
-auto LegacyRenderSVGModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+auto LegacyRenderSVGModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
-    auto floatRect = computeFloatVisibleRectInContainer(rects.clippedOverflowRect, container, context);
+    auto floatRect = computeFloatVisibleRectInContainer(rects.clippedOverflowRect, container, context, state);
     if (!floatRect)
         return std::nullopt;
     return RepaintRects { enclosingLayoutRect(*floatRect) };

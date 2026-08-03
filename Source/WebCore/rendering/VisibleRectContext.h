@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+// Configuration for a visible rect computation. Constant for the duration of a traversal,
+// so it is passed by const reference.
 struct VisibleRectContext {
     enum class Option : uint8_t {
         UseEdgeInclusiveIntersection        = 1 << 0,
@@ -40,9 +42,6 @@ struct VisibleRectContext {
         CalculateAccurateRepaintRect        = 1 << 4,
     };
 
-    bool hasPositionFixedDescendant { false };
-    bool dirtyRectIsFlipped { false };
-    bool descendantNeedsEnclosingIntRect { false };
     OptionSet<Option> options { };
     std::optional<IntersectionObserverMarginBox> scrollMargin { };
 
@@ -50,6 +49,14 @@ struct VisibleRectContext {
     {
         return options.contains(Option::CalculateAccurateRepaintRect) ? RepaintRectCalculation::Accurate : RepaintRectCalculation::Fast;
     }
+};
+
+// State accumulated while walking from a renderer towards its container. Passed by value so
+// that each step's changes are seen by the steps above it, but not by its own caller.
+struct VisibleRectState {
+    bool hasPositionFixedDescendant { false };
+    bool dirtyRectIsFlipped { false };
+    bool descendantNeedsEnclosingIntRect { false };
 };
 
 } // namespace WebCore

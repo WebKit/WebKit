@@ -46,7 +46,7 @@ void LegacyRenderSVGHiddenContainer::paint(PaintInfo&, const LayoutPoint&)
     // This subtree does not paint.
 }
 
-LayoutRect LegacyRenderSVGHiddenContainer::clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const
+LayoutRect LegacyRenderSVGHiddenContainer::clippedOverflowRect(const RenderLayerModelObject*, const VisibleRectContext&) const
 {
     return { };
 }

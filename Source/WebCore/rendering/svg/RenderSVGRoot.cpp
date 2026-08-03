@@ -481,7 +481,7 @@ bool RenderSVGRoot::paintingAffectedByExternalOffset() const
     return false;
 }
 
-std::optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const
+std::optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const
 {
     return { };
 }

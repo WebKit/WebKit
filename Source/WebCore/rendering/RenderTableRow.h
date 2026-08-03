@@ -80,7 +80,7 @@ private:
     void willBeRemovedFromTree() override;
     void layout() override;
 
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { return { }; }
 

@@ -17,6 +17,4 @@ page/text-extraction/TextExtraction.cpp
 rendering/RenderGeometryMap.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextDecorationPainter.cpp
-rendering/svg/RenderSVGHiddenContainer.cpp
-rendering/svg/legacy/LegacyRenderSVGHiddenContainer.cpp
 testing/Internals.cpp

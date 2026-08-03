@@ -96,7 +96,7 @@ public:
     void setTextAutosizingState(TextAutosizingState state) { m_textAutosizingState = state; }
 #endif
 
-    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, VisibleRectContext) const override;
+    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
     void repaintRootContents();
     void repaintViewRectangle(const LayoutRect&);
     void repaintViewAndCompositedLayers();

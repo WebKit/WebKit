@@ -436,7 +436,7 @@ LayoutRect LegacyRenderSVGRoot::localClippedOverflowRect(RepaintRectCalculation 
     return enclosingIntRect(repaintRect);
 }
 
-LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context) const
 {
     if (isInsideEntirelyHiddenLayer())
         return { };
@@ -457,7 +457,7 @@ auto LegacyRenderSVGRoot::rectsForRepaintingAfterLayout(const RenderLayerModelOb
     return RenderReplaced::computeRects(rects, repaintContainer, visibleRectContextForRepaint());
 }
 
-std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const
 {
     // Apply our local transforms (except for x/y translation) and then call
     // RenderBox's method to handle all the normal CSS Box model bits
@@ -480,7 +480,7 @@ std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer
     }
 
     auto rects = RepaintRects { LayoutRect(enclosingIntRect(adjustedRect)) };
-    auto rectsInContainer = RenderReplaced::computeVisibleRectsInContainer(rects, container, context);
+    auto rectsInContainer = RenderReplaced::computeVisibleRectsInContainer(rects, container, context, state);
     if (!rectsInContainer)
         return std::nullopt;
 

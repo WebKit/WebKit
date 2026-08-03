@@ -100,7 +100,7 @@ FloatRect RenderSVGInline::decoratedBoundingBox() const
     return { };
 }
 
-LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context) const
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return RenderInline::clippedOverflowRect(repaintContainer, context);
@@ -119,13 +119,13 @@ auto RenderSVGInline::rectsForRepaintingAfterLayout(const RenderLayerModelObject
     return rects;
 }
 
-std::optional<FloatRect> RenderSVGInline::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<FloatRect> RenderSVGInline::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
-    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
+    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context, state);
 }
 
 void RenderSVGInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
