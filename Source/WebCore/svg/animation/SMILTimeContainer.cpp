@@ -267,15 +267,23 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     // Don't mutate the DOM while updating the animations.
     EventQueueScope scope;
 
-    processScheduledAnimations([](auto& animation) {
-        if (!animation.hasConditionsConnected())
-            animation.connectConditions();
-    });
+    // One snapshot for the whole frame: progressing an animation can run script, which may
+    // schedule() or unschedule() and invalidate m_scheduledAnimations. See webkit.org/b/212192.
+    auto scheduledAnimations = copyToVector(m_scheduledAnimations.values());
+
+    // Connect every animation before progressing any of them; connectConditions() can add instance
+    // times to another animation, but cannot run script, so the snapshot stays valid.
+    for (auto& animations : scheduledAnimations) {
+        for (Ref animation : animations) {
+            if (!animation->hasConditionsConnected())
+                animation->connectConditions();
+        }
+    }
 
     Vector<Ref<SVGSMILElement>> animationsToApply;
     SMILTime earliestFireTime = SMILTime::unresolved();
 
-    for (auto& animations : copyToVector(m_scheduledAnimations.values())) {
+    for (auto& animations : scheduledAnimations) {
         // Advance every animation's current interval to `elapsed` before sorting. An animation
         // whose interval only restarts at (or before) the current time -- e.g. a sync-base
         // dependent that just gained a new, later begin time -- must be sorted using that new
