@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/preload/META.yml
@@ -23,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/preload/avoid-prefetching-on-text-plain-inner.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/avoid-prefetching-on-text-plain-inner.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/preload/avoid-prefetching-on-text-plain.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/cross-origin-link-header-on-subresource.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/delaying-onload-link-preload-after-discovery.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/download-resources.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/dynamic-adding-preload-imagesrcset.html
@@ -39,7 +38,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-already-in-module-map.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-as.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-consumed-by-script.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-fires-before-dependencies.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-json.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload-sri-importmap.html
@@ -65,6 +67,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/preload/preload-dynamic-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/preload-error.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/preload-font-crossorigin.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-imagesrcset-in-markup.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/preload-imagesrcset-no-href.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/preload-in-data-doc-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/preload/preload-in-data-doc-ref.html

@@ -1,0 +1,7 @@
+
+PASS already-fetched module fires load
+PASS already-fetched module with a syntax error fires load
+PASS already-fetched module that failed to fetch fires error
+PASS module still fetching that succeeds fires load
+PASS module still fetching that fails fires error
+

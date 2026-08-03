@@ -1,0 +1,4 @@
+
+FAIL Preload in markup with href and imagesrcset (w descriptors) does not fetch href assert_equals: resources/square.png?markup-w-href expected 0 but got 1
+FAIL Preload in markup with href and imagesrcset (x descriptors) does not fetch href assert_equals: resources/square.png?markup-x-href expected 0 but got 1
+

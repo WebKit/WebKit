@@ -5528,6 +5528,15 @@
     "imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/preload/modulepreload-already-in-module-map.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/preload/modulepreload-consumed-by-script.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/preload/modulepreload-fires-before-dependencies.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/preload/modulepreload.html": [
         "slow"
     ],
@@ -5553,6 +5562,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/preload/preload-error.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/preload/preload-imagesrcset-in-markup.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/preload/preload-imagesrcset-no-href.html": [

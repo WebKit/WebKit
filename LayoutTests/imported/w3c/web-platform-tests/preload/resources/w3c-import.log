@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/A4.ogv.sub.headers
@@ -51,6 +49,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/prefetch-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/prefetch-info.py
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/preload-count.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/preload-module-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/preload-module.py
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/preload_helper.js
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/slow-exec.js
 /LayoutTests/imported/w3c/web-platform-tests/preload/resources/sound_5.oga
