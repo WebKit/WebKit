@@ -96,6 +96,12 @@ public:
     WEBCORE_EXPORT FontCustomPlatformSerializedData NODELETE serializedData() const;
     WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool);
 
+#if USE(SKIA)
+    sk_sp<SkTypeface> retrieveOrAddCachedTypeface(const Vector<SkFontArguments::VariationPosition::Coordinate>&);
+    void clearVariationTypefacesCache() const;
+    void clearUnusedVariationTypefacesCacheEntries() const;
+#endif
+
     static bool supportsFormat(const String&);
     static bool NODELETE supportsTechnology(const FontTechnology&);
 
@@ -107,6 +113,7 @@ public:
     RefPtr<cairo_font_face_t> m_fontFace;
 #elif USE(SKIA)
     sk_sp<SkTypeface> m_typeface;
+    mutable HashMap<unsigned, sk_sp<SkTypeface>> m_variationTypefacesCache;
 #endif
     FontPlatformData::CreationData creationData;
 

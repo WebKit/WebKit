@@ -27,6 +27,7 @@
 #include "FontCache.h"
 
 #include "Font.h"
+#include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "StyleFontSizeFunctions.h"
 #include <wtf/Assertions.h>
@@ -431,6 +432,16 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 ASCIILiteral FontCache::platformAlternateFamilyName(const String&)
 {
     return { };
+}
+
+void FontCache::platformReleaseNoncriticalMemory()
+{
+    for (auto& entry : m_fontCascadeCache.m_entries.values()) {
+        entry->fonts->forEachRealizedFont([](const Font& font) {
+            if (const auto* customPlatformData = font.platformData().customPlatformData())
+                customPlatformData->clearVariationTypefacesCache();
+        });
+    }
 }
 
 void FontCache::platformInvalidate()
