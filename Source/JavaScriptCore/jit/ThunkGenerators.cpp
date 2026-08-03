@@ -322,7 +322,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM& vm)
 }
 
 enum class ClosureMode : uint8_t { No, Yes };
-static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMode closureMode, bool isTopTier)
+static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(ClosureMode closureMode, bool isTopTier)
 {
     // The callee is in regT0.
     // The return address is on the stack, or in the link register. We will hence
@@ -407,28 +407,28 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMod
         isClosureCall ? "closure" : "normal");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk()
 {
     constexpr bool isTopTier = false;
-    return polymorphicThunkFor(vm, ClosureMode::No, isTopTier);
+    return polymorphicThunkFor(ClosureMode::No, isTopTier);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure()
 {
     constexpr bool isTopTier = false;
-    return polymorphicThunkFor(vm, ClosureMode::Yes, isTopTier);
+    return polymorphicThunkFor(ClosureMode::Yes, isTopTier);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk()
 {
     constexpr bool isTopTier = true;
-    return polymorphicThunkFor(vm, ClosureMode::No, isTopTier);
+    return polymorphicThunkFor(ClosureMode::No, isTopTier);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure()
 {
     constexpr bool isTopTier = true;
-    return polymorphicThunkFor(vm, ClosureMode::Yes, isTopTier);
+    return polymorphicThunkFor(ClosureMode::Yes, isTopTier);
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };
@@ -1653,7 +1653,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "remote"_s, "Specialized thunk for remote function calls");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&)
+MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator()
 {
     CCallHelpers jit;
 

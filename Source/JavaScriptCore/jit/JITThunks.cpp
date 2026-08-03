@@ -37,6 +37,9 @@
 #include "ThunkGenerators.h"
 #include "VM.h"
 #include "YarrJIT.h"
+#include <array>
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -49,12 +52,29 @@ JITThunks::JITThunks() = default;
 
 JITThunks::~JITThunks() = default;
 
+using SharedCommonThunks = std::array<MacroAssemblerCodeRef<JITThunkPtrTag>, numberOfVMIndependentCommonThunkIDs>;
+
+static const SharedCommonThunks& sharedCommonThunks()
+{
+    static LazyNeverDestroyed<SharedCommonThunks> thunks;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        thunks.construct();
+        unsigned index = 0;
+#define JSC_DEFINE_SHARED_JIT_THUNK(name, func) thunks.get()[index++] = func();
+JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(JSC_DEFINE_SHARED_JIT_THUNK)
+#undef JSC_DEFINE_SHARED_JIT_THUNK
+    });
+    return thunks.get();
+}
+
 void JITThunks::initialize(VM& vm)
 {
     ASSERT(!isCompilationThread());
+    sharedCommonThunks();
 #define JSC_DEFINE_COMMON_JIT_THUNK(name, func) \
-    m_commonThunks[static_cast<unsigned>(CommonJITThunkID::name)] = func(vm);
-JSC_FOR_EACH_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK)
+    m_commonThunks[static_cast<unsigned>(CommonJITThunkID::name) - numberOfVMIndependentCommonThunkIDs] = func(vm);
+JSC_FOR_EACH_VM_DEPENDENT_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK)
 #undef JSC_DEFINE_COMMON_JIT_THUNK
 }
 
@@ -197,7 +217,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator 
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(CommonJITThunkID thunkID)
 {
-    auto result = m_commonThunks[static_cast<unsigned>(thunkID)];
+    unsigned index = static_cast<unsigned>(thunkID);
+    if (index < numberOfVMIndependentCommonThunkIDs)
+        return sharedCommonThunks()[index];
+    auto result = m_commonThunks[index - numberOfVMIndependentCommonThunkIDs];
     ASSERT(result);
     return result;
 }

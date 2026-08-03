@@ -49,12 +49,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowAtPrologueGenerator(VM&)
 MacroAssemblerCodeRef<JITThunkPtrTag> throwOutOfMemoryErrorGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM&);
-MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator();
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk(VM&);
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM&);
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk(VM&);
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk();
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure();
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk();
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure();
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM&);
