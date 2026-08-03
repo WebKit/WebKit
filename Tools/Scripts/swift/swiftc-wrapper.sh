@@ -69,6 +69,9 @@ for arg in "$@"; do
             fi
             ;;
         "-include") skip_next=1 ;;
+        "-flto" | "-flto="*)
+            args+=("-Xcc" "$arg")
+            ;;
         "-fuse-ld="*)
             args+=("-Xcc" "$arg")
             ;;
