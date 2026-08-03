@@ -1572,7 +1572,8 @@ public:
 
         if (numBOLAnchoredAlts) {
             m_alternative->m_containsBOL = true;
-            // If all the alternatives in parens start with BOL, then so does this one
+            // If all the alternatives in parens start with BOL, then so does this one. Optimistic:
+            // recomputeStartsWithBOL() redoes this once the terms are final.
             if (numBOLAnchoredAlts == numParenAlternatives)
                 m_alternative->m_startsWithBOL = true;
         }
@@ -1683,9 +1684,9 @@ public:
             m_forwardReferencesInLookbehind.append(UnresolvedForwardReference(m_alternative, m_alternative->lastTermIndex(), subpatternName));
         }
     }
-    
+
     // deep copy the argument disjunction.  If filterStartsWithBOL is true,
-    // skip alternatives with m_startsWithBOL set true.
+    // skip alternatives with m_startsWithBOL set true, and those left impossible by that filtering.
     PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL)
     {
         if (!isSafeToRecurse()) [[unlikely]] {
@@ -1696,21 +1697,22 @@ public:
         std::unique_ptr<PatternDisjunction> newDisjunction;
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
-            if (!filterStartsWithBOL || !alternative->m_startsWithBOL || alternative->m_direction == Backward) {
-                if (!newDisjunction) {
-                    newDisjunction = makeUnique<PatternDisjunction>();
-                    newDisjunction->m_parent = disjunction->m_parent;
-                }
-                PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->m_firstSubpatternId, alternative->matchDirection());
-                newAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
-                newAlternative->m_terms.reserveCapacity(alternative->m_terms.size());
-                for (auto& term : alternative->m_terms) {
-                    if (auto copied = copyTerm(term, filterStartsWithBOL))
-                        newAlternative->m_terms.append(WTF::move(*copied));
-                }
+            if (filterStartsWithBOL && alternative->m_startsWithBOL && alternative->matchDirection() != Backward)
+                continue;
+
+            auto copiedTerms = copyTerms(alternative, filterStartsWithBOL);
+            if (!copiedTerms)
+                continue;
+
+            if (!newDisjunction) {
+                newDisjunction = makeUnique<PatternDisjunction>();
+                newDisjunction->m_parent = disjunction->m_parent;
             }
+            PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->m_firstSubpatternId, alternative->matchDirection());
+            newAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
+            newAlternative->m_terms = WTF::move(*copiedTerms);
         }
-        
+
         if (hasError(error())) {
             newDisjunction = nullptr;
             return nullptr;
@@ -1724,6 +1726,33 @@ public:
         return copiedDisjunction;
     }
     
+    // True when this parenthesis has to participate in every match of its alternative. An optional
+    // one can be skipped, and a negative assertion succeeds when its content cannot match.
+    static bool parenthesesMustMatch(const PatternTerm& term)
+    {
+        ASSERT(term.type == PatternTerm::Type::ParenthesesSubpattern || term.type == PatternTerm::Type::ParentheticalAssertion);
+        return term.quantityMinCount && !term.invert();
+    }
+
+    // Copy the terms of `alternative`, dropping the parentheses copyTerm() filtered out. Returns
+    // std::nullopt when one of those has to be matched, i.e. this alternative cannot match at all.
+    std::optional<Vector<PatternTerm>> copyTerms(PatternAlternative* alternative, bool filterStartsWithBOL)
+    {
+        Vector<PatternTerm> copiedTerms;
+        copiedTerms.reserveInitialCapacity(alternative->m_terms.size());
+        for (auto& term : alternative->m_terms) {
+            if (auto copied = copyTerm(term, filterStartsWithBOL)) {
+                copiedTerms.append(WTF::move(*copied));
+                continue;
+            }
+            // Every alternative inside this parenthesis was filtered out, so it can only match at
+            // the start of the input.
+            if (parenthesesMustMatch(term))
+                return std::nullopt;
+        }
+        return copiedTerms;
+    }
+
     std::optional<PatternTerm> copyTerm(PatternTerm& term, bool filterStartsWithBOL)
     {
         if (!isSafeToRecurse()) [[unlikely]] {
@@ -2311,12 +2340,66 @@ public:
         }
     }
 
+    // m_startsWithBOL means "every match of this alternative begins at the start of the input", which
+    // is what optimizeBOL() turns into onceThrough. This pass is the authoritative source of the flag,
+    // so it runs before any consumer of it. Returns true when every alternative of `disjunction` must
+    // begin at the start of the input.
+    bool recomputeStartsWithBOL(PatternDisjunction* disjunction)
+    {
+        if (!isSafeToRecurse()) [[unlikely]] {
+            m_error = ErrorCode::PatternTooLarge;
+            return false;
+        }
+
+        bool allAlternativesStartWithBOL = true;
+        for (auto& alternativeRef : disjunction->m_alternatives) {
+            PatternAlternative* alternative = alternativeRef.get();
+            bool startsWithBOL = false;
+            for (unsigned index = 0; index < alternative->m_terms.size(); ++index) {
+                PatternTerm& term = alternative->m_terms[index];
+                bool termStartsWithBOL = false;
+                switch (term.type) {
+                case PatternTerm::Type::AssertionBOL:
+                    termStartsWithBOL = term.matchDirection() == Forward;
+                    break;
+                case PatternTerm::Type::ParenthesesSubpattern:
+                case PatternTerm::Type::ParentheticalAssertion:
+                    // Recurse even for a non-leading term, whose result goes unused: nested
+                    // alternatives carry their own flag and copyTerms() filters on it at every
+                    // nesting depth, so all of them have to be recomputed. Only bubble the flag out
+                    // of a parenthesis that copyTerms() would let kill its alternative.
+                    termStartsWithBOL = recomputeStartsWithBOL(term.parentheses.disjunction)
+                        && term.matchDirection() == Forward
+                        && parenthesesMustMatch(term);
+                    break;
+                default:
+                    break;
+                }
+                // Only the leading term can anchor the alternative. Conservative for cases like
+                // /\b^a/, matching what the parser already did.
+                if (!index)
+                    startsWithBOL = termStartsWithBOL;
+            }
+            alternative->m_startsWithBOL = startsWithBOL;
+            if (!startsWithBOL)
+                allAlternativesStartWithBOL = false;
+        }
+        return allAlternativesStartWithBOL;
+    }
+
+    void recomputeStartsWithBOL()
+    {
+        // No leading `^` anywhere means the parser never set the flag.
+        if (m_pattern.m_containsBOL)
+            recomputeStartsWithBOL(m_pattern.m_body);
+    }
+
     void optimizeBOL()
     {
         // Look for expressions containing beginning of line (^) anchoring and unroll them.
         // e.g. /^a|^b|c/ becomes /^a|^b|c/ which is executed once followed by /c/ which loops
-        // This code relies on the parsing code tagging alternatives with m_containsBOL and
-        // m_startsWithBOL and rolling those up to containing alternatives.
+        // This code relies on recomputeStartsWithBOL() having tagged the alternatives with
+        // m_startsWithBOL, and on m_containsBOL from the parsing code.
         // At this point, this is only valid for non-multiline expressions.
         PatternDisjunction* disjunction = m_pattern.m_body;
         
@@ -2427,7 +2510,9 @@ public:
                     terms.removeAt(termIndex - 1);
 
                 terms.append(PatternTerm(startsWithBOL, endsWithEOL, m_flags));
-                
+
+                // The enclosure now carries the anchoring, so the alternative no longer starts with ^.
+                alternative->m_startsWithBOL = false;
                 m_pattern.m_containsBOL = false;
             }
         }
@@ -2927,6 +3012,7 @@ ErrorCode YarrPattern::compile(StringView patternString)
             return error;
     }
 
+    constructor.recomputeStartsWithBOL();
     constructor.checkForTerminalParentheses();
     constructor.optimizeDotStarWrappedExpressions();
     constructor.optimizeBOL();
