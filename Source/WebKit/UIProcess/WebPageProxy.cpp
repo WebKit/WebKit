@@ -3664,12 +3664,13 @@ void WebPageProxy::dispatchActivityStateChange()
     auto activityStateChangeID = m_activityStateChangeWantsSynchronousReply ? takeNextActivityStateChangeID() : static_cast<ActivityStateChangeID>(ActivityStateChangeAsynchronous);
 
     if (changed || activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty()) {
+        auto activityStateChangeSequence = ++internals().activityStateChangeSequence;
         auto callbackAggregator = CallbackAggregator::create([callbacks = std::exchange(m_nextActivityStateChangeCallbacks, { })] () mutable {
             for (auto& callback : callbacks)
                 callback();
         });
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-            webProcess.sendWithAsyncReply(Messages::WebPage::SetActivityState(internals().activityState, activityStateChangeID), [callbackAggregator] { }, pageID);
+            webProcess.sendWithAsyncReply(Messages::WebPage::SetActivityState(internals().activityState, activityStateChangeID, activityStateChangeSequence), [callbackAggregator] { }, pageID);
         });
     }
 
@@ -14112,6 +14113,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.windowFeatures = m_configuration->windowFeatures();
     parameters.viewSize = pageClient ? pageClient->viewSize() : WebCore::IntSize { };
     parameters.activityState = internals().activityState;
+    parameters.activityStateChangeSequence = internals().activityStateChangeSequence;
 #if ENABLE(TILED_CA_DRAWING_AREA)
     parameters.drawingAreaType = drawingArea.type();
 #endif

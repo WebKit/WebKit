@@ -719,6 +719,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters, 
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)
+    , m_activityStateChangeSequence(parameters.activityStateChangeSequence)
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { WTF::move(parameters.overrideContentSecurityPolicy) }
     , m_cpuLimit(parameters.cpuLimit)
@@ -1692,7 +1693,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
 
     if (m_activityState != parameters.activityState)
-        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });
+        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, parameters.activityStateChangeSequence, [] { });
+    else
+        m_activityStateChangeSequence = std::max(m_activityStateChangeSequence, parameters.activityStateChangeSequence);
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
@@ -4746,9 +4749,15 @@ void WebPage::windowActivityDidChange()
 #endif
 }
 
-void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)
+void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityStateChangeID activityStateChangeID, uint64_t activityStateChangeSequence, CompletionHandler<void()>&& callback)
 {
     LOG_WITH_STREAM(ActivityState, stream << "WebPage " << identifier().toUInt64() << " setActivityState to " << activityState);
+
+    if (activityStateChangeSequence < m_activityStateChangeSequence) {
+        protect(drawingArea())->activityStateDidChange({ }, activityStateChangeID, WTF::move(callback));
+        return;
+    }
+    m_activityStateChangeSequence = activityStateChangeSequence;
 
     auto changed = m_activityState ^ activityState;
     m_activityState = activityState;

@@ -27,7 +27,7 @@
 ]
 messages -> WebPage WantsAsyncDispatchMessage {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, std::optional<WebKit::WebKeyboardEvent> event) -> ()
-    SetActivityState(OptionSet<WebCore::ActivityState> activityState, WebKit::ActivityStateChangeID activityStateChangeID) -> ()
+    SetActivityState(OptionSet<WebCore::ActivityState> activityState, WebKit::ActivityStateChangeID activityStateChangeID, uint64_t activityStateChangeSequence) -> ()
 
     SetBackgroundColor(std::optional<WebCore::Color> color)
 
