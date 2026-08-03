@@ -4780,3 +4780,20 @@ http/wpt/storage-access/request-storage-access-under-opener-cross-site-opener.ht
 
 # storage/indexeddb leak test, unreliable on Windows. Skip for now; investigate separately.
 storage/indexeddb/modern/leak-1.html [ Skip ]
+
+# Gardening: unexpected results on the last 20 Win-Tests-EWS runs (96326-96350, around 318398@main).
+
+# Consistent failures, in every run (leak-1.html, the other every-run failure, is skipped above)
+http/wpt/streams/readablestream-cancel-exception.html [ Skip ] # Crash
+
+# Flaky crashes
+fast/dom/Window/window-open-self-disallow-close.html [ Skip ] # Flaky Crash
+fast/dom/window-opener-setter-throws-if-defineownproperty-fails-2.html [ Skip ] # Flaky Crash, like -fails-1 above
+http/tests/security/no-javascript-refresh-static-spaces.html [ Skip ] # Flaky Crash, in over half of the runs; rest of the no-javascript-* family is already skipped above
+http/tests/security/window-onerror-exception-in-iframe.html [ Skip ] # Flaky Crash
+http/wpt/web-locks/back-forward-cache-suspend-test.https.html [ Skip ] # Flaky Crash
+
+# Flaky text failures (see the other flaky largest-contentful-paint entries above)
+imported/w3c/web-platform-tests/largest-contentful-paint/contracted-image.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/observe-image.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/repeated-image.html [ Pass Failure ]
