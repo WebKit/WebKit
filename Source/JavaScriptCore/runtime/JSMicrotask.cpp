@@ -661,9 +661,16 @@ void asyncGeneratorResume(JSGlobalObject* globalObject, JSAsyncGenerator* genera
     asyncGeneratorUnwrapYieldResumption(globalObject, generator, generator->resumeValue(), generator->resumeMode(), microtaskCallCache);
 }
 
-void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator* iterator, JSObject* driver, MicrotaskCallCache* microtaskCallCache)
+static JSValue resumeValueOrUndefined(JSValue resumeValue)
+{
+    return resumeValue.isEmpty() ? jsUndefined() : resumeValue;
+}
+
+void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator* iterator, JSObject* driver, JSValue resumeValue, MicrotaskCallCache* microtaskCallCache)
 {
     VM& vm = globalObject->vm();
+
+    resumeValue = resumeValueOrUndefined(resumeValue);
 
     // Mirror AsyncGeneratorEnqueue's completed-state fast path: settle { undefined, true } without enqueuing.
     int32_t state = iterator->state();
@@ -672,7 +679,7 @@ void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator*
         return;
     }
 
-    iterator->enqueue(vm, jsUndefined(), static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode), driver);
+    iterator->enqueue(vm, resumeValue, static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode), driver);
 
     // https://tc39.es/ecma262/#sec-asyncgeneratorenqueue step 6: a non-busy generator resumes immediately.
     if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Init) || JSAsyncGenerator::isSuspendedYieldState(state))
@@ -681,21 +688,21 @@ void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator*
 
 // If the Promise species is tampered after the fused open, fall back to the real next() so the consumer's Await
 // still performs the observable PromiseResolve (Promise.prototype.constructor lookup) the fused driver would skip.
-JSValue asyncIteratorNextWithDriver(JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver, MicrotaskCallCache* microtaskCallCache)
+JSValue asyncIteratorNextWithDriver(JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver, JSValue resumeValue, MicrotaskCallCache* microtaskCallCache)
 {
     VM& vm = globalObject->vm();
     auto* generator = dynamicDowncast<JSAsyncGenerator>(iterator);
 
     if (globalObject->promiseSpeciesWatchpointSet().state() != IsWatched) [[unlikely]] {
         if (generator)
-            return asyncGeneratorNext(globalObject, generator, jsUndefined(), microtaskCallCache);
-        return asyncFromSyncIteratorNext(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), JSValue());
+            return asyncGeneratorNext(globalObject, generator, resumeValueOrUndefined(resumeValue), microtaskCallCache);
+        return asyncFromSyncIteratorNext(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), resumeValue);
     }
 
     if (generator)
-        enqueueAsyncGeneratorDriver(globalObject, generator, driver, microtaskCallCache);
+        enqueueAsyncGeneratorDriver(globalObject, generator, driver, resumeValue, microtaskCallCache);
     else
-        driveAsyncFromSyncIteratorWithDriver(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), driver);
+        driveAsyncFromSyncIteratorWithDriver(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), driver, resumeValue);
     return vm.fastAsyncGeneratorSentinel();
 }
 

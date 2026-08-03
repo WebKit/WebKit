@@ -273,7 +273,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncFromSyncIteratorPrototypeFuncThrow, (JSGlobalObjec
     return JSValue::encode(promise);
 }
 
-void driveAsyncFromSyncIteratorWithDriver(JSGlobalObject* globalObject, JSAsyncFromSyncIterator* iterator, JSObject* driver)
+void driveAsyncFromSyncIteratorWithDriver(JSGlobalObject* globalObject, JSAsyncFromSyncIterator* iterator, JSObject* driver, JSValue resumeValue)
 {
     VM& vm = globalObject->vm();
 
@@ -282,7 +282,7 @@ void driveAsyncFromSyncIteratorWithDriver(JSGlobalObject* globalObject, JSAsyncF
 
     {
         auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-        done = driveSyncIterator(globalObject, vm, iterator, JSValue(), value);
+        done = driveSyncIterator(globalObject, vm, iterator, resumeValue, value);
 
         if (catchScope.exception()) [[unlikely]] {
             JSValue error = catchScope.exception()->value();

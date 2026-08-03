@@ -786,7 +786,8 @@ namespace JSC {
         void emitSetFunctionName(RegisterID* value, const Identifier&);
 
         void emitAsyncIteratorOpen(RegisterID* iterator, RegisterID* next, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData* node);
-        RegisterID* emitAsyncIteratorNext(RegisterID* dst, RegisterID* next, RegisterID* iterator, const ThrowableExpressionData* node);
+        void emitGetGenericAsyncIterator(RegisterID* iterator, RegisterID* next, RegisterID* subject, const ThrowableExpressionData* node);
+        RegisterID* emitAsyncIteratorNext(RegisterID* dst, RegisterID* next, RegisterID* iterator, RegisterID* value, const ThrowableExpressionData* node);
 
         RegisterID* moveLinkTimeConstant(RegisterID* dst, LinkTimeConstant);
         RegisterID* moveEmptyValue(RegisterID* dst);
@@ -978,7 +979,6 @@ namespace JSC {
         void emitIteratorNext(RegisterID* done, RegisterID* value, RegisterID* iterable, RegisterID* nextOrIndex, CallArguments& iterator, const ThrowableExpressionData*);
 
         RegisterID* emitGetGenericIterator(RegisterID*, ThrowableExpressionData*);
-        RegisterID* emitGetAsyncIterator(RegisterID*, ThrowableExpressionData*);
 
         RegisterID* emitIteratorGenericNext(RegisterID* dst, RegisterID* nextMethod, RegisterID* iterator, const ThrowableExpressionData* node, JSC::EmitAwait = JSC::EmitAwait::No);
         RegisterID* emitIteratorGenericNextWithValue(RegisterID* dst, RegisterID* nextMethod, RegisterID* iterator, RegisterID* value, const ThrowableExpressionData* node);

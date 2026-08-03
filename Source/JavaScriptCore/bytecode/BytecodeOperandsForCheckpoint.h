@@ -137,7 +137,8 @@ unsigned argumentCountIncludingThisFor(const Bytecode& bytecode, unsigned checkp
         ASSERT(checkpointIndex == OpIteratorNext::computeNext);
         return 1;
     } else if constexpr (Bytecode::opcodeID == op_async_iterator_next) {
-        return 1;
+        // yield* forwards a resume value to next() (m_hasValue); for-await calls next() with just `this`.
+        return bytecode.m_hasValue ? 2 : 1;
     } else
         return bytecode.m_argc;
 }
@@ -166,6 +167,14 @@ CallLinkInfo& callLinkInfoFor(BytecodeMetadata& metadata, unsigned checkpointInd
 {
     UNUSED_PARAM(checkpointIndex);
     return metadata.m_callLinkInfo;
+}
+
+// op_async_iterator_next has no stored VirtualRegister for its optional resume value: like op_call's
+// argc/argv model, it's call argument index 1, addressed via m_stackOffset. Only valid when m_hasValue.
+inline VirtualRegister resumeValueOperandFor(const OpAsyncIteratorNext& bytecode)
+{
+    ASSERT(bytecode.m_hasValue);
+    return virtualRegisterForArgumentIncludingThis(1, -static_cast<int>(bytecode.m_stackOffset));
 }
 
 } // namespace JSC

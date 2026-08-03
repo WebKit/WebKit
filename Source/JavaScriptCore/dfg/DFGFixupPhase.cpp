@@ -3163,6 +3163,7 @@ private:
         case EnqueueAsyncGeneratorDriver: {
             fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
+            fixEdge<UntypedUse>(node->child3());
             break;
         }
 
