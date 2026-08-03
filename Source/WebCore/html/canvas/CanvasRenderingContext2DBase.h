@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "AffineTransform.h"
 #include "CanvasDirection.h"
+#include "CanvasElementImage.h"
 #include "CanvasFillRule.h"
 #include "CanvasLineCap.h"
 #include "CanvasLineJoin.h"
@@ -215,6 +216,11 @@ public:
     ExceptionOr<void> drawImage(CanvasImageSource&&, float dx, float dy);
     ExceptionOr<void> drawImage(CanvasImageSource&&, float dx, float dy, float dw, float dh);
     ExceptionOr<void> drawImage(CanvasImageSource&&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
+
+    ExceptionOr<Ref<DOMMatrix>> drawElementImage(CanvasElementImageSource&&, float dx, float dy);
+    ExceptionOr<Ref<DOMMatrix>> drawElementImage(CanvasElementImageSource&&, float dx, float dy, float dw, float dh);
+    ExceptionOr<Ref<DOMMatrix>> drawElementImage(CanvasElementImageSource&&, float sx, float sy, float sw, float sh, float dx, float dy);
+    ExceptionOr<Ref<DOMMatrix>> drawElementImage(CanvasElementImageSource&&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
 
     void clearCanvas();
 

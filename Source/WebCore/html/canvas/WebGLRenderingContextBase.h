@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "CanvasElementImage.h"
 #include "EventLoop.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
@@ -37,6 +38,7 @@
 #include "WebGLAny.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
+#include "WebGLCopyElementImageConfig.h"
 #include "WebGLExtension.h"
 #include "WebGLExtensionAny.h"
 #include "WebGLFramebuffer.h"
@@ -336,6 +338,8 @@ public:
     // These must be virtual so more validation can be added in WebGL 2.0.
     virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
     virtual ExceptionOr<void> texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, std::optional<TexImageSource>&&);
+
+    virtual ExceptionOr<void> texElementImage2D(GCGLenum target, GCGLenum internalformat, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>);
 
     template<typename TypedArray, typename DataType>
     class TypedList {

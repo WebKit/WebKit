@@ -2985,6 +2985,7 @@
 		71EFCEDC202B38A900D7C411 /* AnimationEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71EFCED7202B388D00D7C411 /* AnimationEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71F0B1DB2CCBEA660030E30B /* AcceleratedTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71F0B1DA2CCBEA660030E30B /* AcceleratedTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71FCB17027BAB3FE00E0631C /* FrameRateAligner.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FCB16D27BAB3DF00E0631C /* FrameRateAligner.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		721292A3301BA12F009DA7C9 /* CanvasElementImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7224293B301ABB3600856621 /* CanvasElementImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72144333223EC8B000F12FF7 /* SVGProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EE5363223B2A2400FBA944 /* SVGProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72144334223EC91600F12FF7 /* SVGPropertyOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EE5360223B2A2100FBA944 /* SVGPropertyOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3E9629679E38004F5FF6 /* InnerSpinButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3E9529679E38004F5FF6 /* InnerSpinButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14428,6 +14429,10 @@
 		7209C47E2931C86400633C0D /* TransparencyLayerContextSwitcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransparencyLayerContextSwitcher.cpp; sourceTree = "<group>"; };
 		7209C47F2931C86400633C0D /* TransparencyLayerContextSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparencyLayerContextSwitcher.h; sourceTree = "<group>"; };
 		7211B5D6276536820076FEF8 /* FilterResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterResults.h; sourceTree = "<group>"; };
+		721292A1301AE64C009DA7C9 /* CanvasPaintEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CanvasPaintEvent.h; sourceTree = "<group>"; };
+		721292A2301AE64C009DA7C9 /* CanvasPaintEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPaintEvent.cpp; sourceTree = "<group>"; };
+		721292A4301BAE1A009DA7C9 /* GPUCopyElementImageSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCopyElementImageSource.h; sourceTree = "<group>"; };
+		721292A5301BAE31009DA7C9 /* GPUCopyElementImageDestination.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCopyElementImageDestination.h; sourceTree = "<group>"; };
 		721443452240C8BA00F12FF7 /* SVGAnimatedValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedValueProperty.h; sourceTree = "<group>"; };
 		721443462240CAD200F12FF7 /* SVGValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGValueProperty.h; sourceTree = "<group>"; };
 		7214B9B7274458FA003BE6DF /* FilterEffectVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectVector.h; sourceTree = "<group>"; };
@@ -14440,6 +14445,15 @@
 		721B3EF22968F45D004F5FF6 /* MenuListButtonMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MenuListButtonMac.h; sourceTree = "<group>"; };
 		721B3EF32968F45E004F5FF6 /* MenuListButtonMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuListButtonMac.mm; sourceTree = "<group>"; };
 		721B3EF42968F47D004F5FF6 /* MenuListButtonPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuListButtonPart.h; sourceTree = "<group>"; };
+		72242937301AA86900856621 /* CanvasElementImage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasElementImage.idl; sourceTree = "<group>"; };
+		72242938301AAC3E00856621 /* CanvasDrawElementImage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasDrawElementImage.idl; sourceTree = "<group>"; };
+		72242939301AAF1F00856621 /* CanvasPaintEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasPaintEvent.idl; sourceTree = "<group>"; };
+		7224293A301AB8B700856621 /* WebGLCopyElementImageConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLCopyElementImageConfig.idl; sourceTree = "<group>"; };
+		7224293B301ABB3600856621 /* CanvasElementImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasElementImage.h; sourceTree = "<group>"; };
+		7224293C301ABB3600856621 /* CanvasElementImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasElementImage.cpp; sourceTree = "<group>"; };
+		7224293D301ACFD400856621 /* GPUCopyElementImageDestination.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCopyElementImageDestination.idl; sourceTree = "<group>"; };
+		7224293E301ACFD400856621 /* GPUCopyElementImageSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCopyElementImageSource.idl; sourceTree = "<group>"; };
+		72242943301ADA9800856621 /* WebGLCopyElementImageConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLCopyElementImageConfig.h; sourceTree = "<group>"; };
 		7224ABCF2C0174EE00D85362 /* BitmapImageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapImageDescriptor.h; sourceTree = "<group>"; };
 		7225E8062A3E298C00947EBF /* RotationDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RotationDirection.cpp; sourceTree = "<group>"; };
 		722623BF29486B28006DCCF1 /* ControlFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFactory.cpp; sourceTree = "<group>"; };
@@ -25905,6 +25919,10 @@
 				1C66A7A32A4F784E0086DB6F /* GPUComputePipeline.idl */,
 				1C66A6F82A4F78160086DB6F /* GPUComputePipelineDescriptor.h */,
 				1C66A71A2A4F78200086DB6F /* GPUComputePipelineDescriptor.idl */,
+				721292A5301BAE31009DA7C9 /* GPUCopyElementImageDestination.h */,
+				7224293D301ACFD400856621 /* GPUCopyElementImageDestination.idl */,
+				721292A4301BAE1A009DA7C9 /* GPUCopyElementImageSource.h */,
+				7224293E301ACFD400856621 /* GPUCopyElementImageSource.idl */,
 				1C66A6DB2A4F780D0086DB6F /* GPUCullMode.h */,
 				1C66A73C2A4F782A0086DB6F /* GPUCullMode.idl */,
 				1C66A8152A4F78700086DB6F /* GPUDebugCommandsMixin.idl */,
@@ -28274,8 +28292,12 @@
 				7C193BAA1F5E0EB10088F3E6 /* CanvasCompositing.idl */,
 				7C193BB61F5E0EB90088F3E6 /* CanvasDirection.h */,
 				7C193BAC1F5E0EB20088F3E6 /* CanvasDirection.idl */,
+				72242938301AAC3E00856621 /* CanvasDrawElementImage.idl */,
 				7C193B9A1F5E0EA70088F3E6 /* CanvasDrawImage.idl */,
 				7C193BA61F5E0EAE0088F3E6 /* CanvasDrawPath.idl */,
+				7224293C301ABB3600856621 /* CanvasElementImage.cpp */,
+				7224293B301ABB3600856621 /* CanvasElementImage.h */,
+				72242937301AA86900856621 /* CanvasElementImage.idl */,
 				7C193BA11F5E0EAB0088F3E6 /* CanvasFillRule.h */,
 				7C193BA51F5E0EAE0088F3E6 /* CanvasFillRule.idl */,
 				7C193BA01F5E0EAA0088F3E6 /* CanvasFillStrokeStyles.idl */,
@@ -28294,6 +28316,9 @@
 				7C193BB11F5E0EB50088F3E6 /* CanvasLineCap.idl */,
 				7C193B9F1F5E0EAA0088F3E6 /* CanvasLineJoin.h */,
 				7C193B9C1F5E0EA80088F3E6 /* CanvasLineJoin.idl */,
+				721292A2301AE64C009DA7C9 /* CanvasPaintEvent.cpp */,
+				721292A1301AE64C009DA7C9 /* CanvasPaintEvent.h */,
+				72242939301AAF1F00856621 /* CanvasPaintEvent.idl */,
 				4671E0631D67A57B00C6B497 /* CanvasPath.cpp */,
 				4671E0641D67A57B00C6B497 /* CanvasPath.h */,
 				936B21F41DBBF8300052E117 /* CanvasPath.idl */,
@@ -28488,6 +28513,8 @@
 				93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */,
 				93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */,
 				93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */,
+				72242943301ADA9800856621 /* WebGLCopyElementImageConfig.h */,
+				7224293A301AB8B700856621 /* WebGLCopyElementImageConfig.idl */,
 				A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */,
 				A0EE0DF2144F825500F80B0D /* WebGLDebugRendererInfo.h */,
 				A0EE0DF0144F824300F80B0D /* WebGLDebugRendererInfo.idl */,
@@ -44473,6 +44500,7 @@
 				313171561FB079E5008D91FC /* CanvasBase.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
 				7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */,
+				721292A3301BA12F009DA7C9 /* CanvasElementImage.h in Headers */,
 				7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				7C193BBD1F5E0EED0088F3E6 /* CanvasLineCap.h in Headers */,

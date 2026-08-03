@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2017 Apple Inc. All rights reserved.
+* Copyright (C) 2017-2026 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -55,3 +55,4 @@ OffscreenCanvasRenderingContext2D includes CanvasImageData;
 OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles;
 OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles;
 OffscreenCanvasRenderingContext2D includes CanvasPath;
+OffscreenCanvasRenderingContext2D includes CanvasDrawElementImage;

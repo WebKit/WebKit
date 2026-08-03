@@ -99,6 +99,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUComputePassTimestampWrites.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
+	$(WebCore)/Modules/WebGPU/GPUCopyElementImageDestination.idl \
+	$(WebCore)/Modules/WebGPU/GPUCopyElementImageSource.idl \
     $(WebCore)/Modules/WebGPU/GPUCullMode.idl \
     $(WebCore)/Modules/WebGPU/GPUDebugCommandsMixin.idl \
     $(WebCore)/Modules/WebGPU/GPUDepthStencilState.idl \
@@ -1416,8 +1418,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
     $(WebCore)/html/canvas/CanvasCompositing.idl \
     $(WebCore)/html/canvas/CanvasDirection.idl \
+	$(WebCore)/html/canvas/CanvasDrawElementImage.idl \
     $(WebCore)/html/canvas/CanvasDrawImage.idl \
     $(WebCore)/html/canvas/CanvasDrawPath.idl \
+	$(WebCore)/html/canvas/CanvasElementImage.idl \
     $(WebCore)/html/canvas/CanvasFillRule.idl \
     $(WebCore)/html/canvas/CanvasFillStrokeStyles.idl \
     $(WebCore)/html/canvas/CanvasFilters.idl \
@@ -1427,6 +1431,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasLayers.idl \
     $(WebCore)/html/canvas/CanvasLineCap.idl \
     $(WebCore)/html/canvas/CanvasLineJoin.idl \
+	$(WebCore)/html/canvas/CanvasPaintEvent.idl \
     $(WebCore)/html/canvas/CanvasPath.idl \
     $(WebCore)/html/canvas/CanvasPathDrawingStyles.idl \
     $(WebCore)/html/canvas/CanvasPattern.idl \
@@ -1495,6 +1500,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLCompressedTextureS3TCsRGB.idl \
     $(WebCore)/html/canvas/WebGLContextAttributes.idl \
     $(WebCore)/html/canvas/WebGLContextEvent.idl \
+	$(WebCore)/html/canvas/WebGLCopyElementImageConfig.idl \
     $(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \
     $(WebCore)/html/canvas/WebGLDebugShaders.idl \
     $(WebCore)/html/canvas/WebGLDepthTexture.idl \

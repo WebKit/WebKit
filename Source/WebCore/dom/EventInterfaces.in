@@ -111,3 +111,4 @@ XRSessionEvent conditional=WEBXR
 NotificationEvent conditional=NOTIFICATION_EVENT
 ContentVisibilityAutoStateChangeEvent
 GPUUncapturedErrorEvent
+CanvasPaintEvent

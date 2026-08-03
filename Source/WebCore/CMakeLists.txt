@@ -1358,10 +1358,12 @@ set(WebCore_NON_SVG_IDL_FILES
     html/VoidCallback.idl
 
     html/canvas/CanvasDirection.idl
+    html/canvas/CanvasElementImage.idl
     html/canvas/CanvasFillRule.idl
     html/canvas/CanvasGradient.idl
     html/canvas/CanvasLineCap.idl
     html/canvas/CanvasLineJoin.idl
+    html/canvas/CanvasPaintEvent.idl
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasRenderingContext2D.idl
     html/canvas/CanvasRenderingContext2DSettings.idl
@@ -1832,6 +1834,8 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUComputePassTimestampWrites.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
+    Modules/WebGPU/GPUCopyElementImageDestination.idl
+    Modules/WebGPU/GPUCopyElementImageSource.idl
     Modules/WebGPU/GPUCullMode.idl
     Modules/WebGPU/GPUDepthStencilState.idl
     Modules/WebGPU/GPUDevice.idl
@@ -2095,6 +2099,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     html/PopoverInvokerElement.idl
 
     html/canvas/CanvasCompositing.idl
+    html/canvas/CanvasDrawElementImage.idl
     html/canvas/CanvasDrawImage.idl
     html/canvas/CanvasDrawPath.idl
     html/canvas/CanvasFillStrokeStyles.idl
@@ -2470,6 +2475,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLCompressedTextureS3TCsRGB.idl
     html/canvas/WebGLContextAttributes.idl
     html/canvas/WebGLContextEvent.idl
+    html/canvas/WebGLCopyElementImageConfig.idl
     html/canvas/WebGLDebugRendererInfo.idl
     html/canvas/WebGLDebugShaders.idl
     html/canvas/WebGLDepthTexture.idl

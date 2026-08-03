@@ -1676,6 +1676,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/VideoFrameRequestCallback.h
     html/VoidCallback.h
 
+    html/canvas/CanvasElementImage.h
     html/canvas/PredefinedColorSpace.h
     html/canvas/WebGLAny.h
     html/canvas/WebGLBuffer.h

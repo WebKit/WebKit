@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +60,12 @@ auto InspectorCanvasArgumentProcessor<IDLDictionary<DOMMatrix2DInit>>::operator(
 }
 
 auto InspectorCanvasArgumentProcessor<IDLDictionary<ImageDataSettings>>::operator()(InspectorCanvas&, const ImageDataSettings&) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    // FIXME: Implement.
+    return std::nullopt;
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<WebGLCopyElementImageConfig>>::operator()(InspectorCanvas&, const WebGLCopyElementImageConfig&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     // FIXME: Implement.
     return std::nullopt;
@@ -158,6 +165,11 @@ auto InspectorCanvasArgumentProcessor<IDLInterface<ImageBitmap>>::operator()(Ins
 auto InspectorCanvasArgumentProcessor<IDLInterface<ImageData>>::operator()(InspectorCanvas& context, const Ref<ImageData>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::ImageData }};
+}
+
+auto InspectorCanvasArgumentProcessor<IDLInterface<CanvasElementImage>>::operator()(InspectorCanvas& context, const Ref<CanvasElementImage>&) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return {{ context.valueIndexForData("CanvasElementImage"_s), RecordingSwizzleType::None }};
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -283,6 +295,15 @@ auto InspectorCanvasArgumentProcessor<IDLCanvasPathRadiusUnion>::operator()(Insp
         },
         [](double radius) -> std::optional<InspectorCanvasProcessedArgument> {
             return {{ JSON::Value::create(radius), RecordingSwizzleType::Number }};
+        }
+    );
+}
+
+auto InspectorCanvasArgumentProcessor<IDLCanvasElementImageSourceUnion>::operator()(InspectorCanvas& context, const CanvasElementImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return WTF::switchOn(argument,
+        [&]<typename T>(const Ref<T>& value) {
+            return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
         }
     );
 }

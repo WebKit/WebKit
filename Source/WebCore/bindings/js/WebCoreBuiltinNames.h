@@ -196,6 +196,7 @@ namespace WebCore {
     macro(DigitalCredential) \
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \
+    macro(ElementImage) \
     macro(ElementInternals) \
     macro(EncodedAudioChunk) \
     macro(EncodedVideoChunk) \
@@ -355,6 +356,7 @@ namespace WebCore {
     macro(OffscreenCanvasRenderingContext2D) \
     macro(Origin) \
     macro(OscillatorNode) \
+    macro(PaintEvent) \
     macro(PaintRenderingContext2D) \
     macro(PannerNode) \
     macro(PaymentAddress) \

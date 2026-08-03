@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,7 @@
 #pragma once
 
 #include "CSSStyleImageValue.h"
+#include "CanvasElementImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2DBase.h"
@@ -44,6 +46,7 @@
 #include "JSDOMConvertBufferSource.h"
 #include "SVGImageElement.h"
 #include "WebGL2RenderingContext.h"
+#include "WebGLCopyElementImageConfig.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/TypedArrays.h>
@@ -138,6 +141,10 @@ template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<ImageDataSettin
     std::optional<InspectorCanvasProcessedArgument> NODELETE operator()(InspectorCanvas&, const ImageDataSettings&);
 };
 
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<WebGLCopyElementImageConfig>> {
+    std::optional<InspectorCanvasProcessedArgument> NODELETE operator()(InspectorCanvas&, const WebGLCopyElementImageConfig&);
+};
+
 // MARK: - Strings
 
 template<> struct InspectorCanvasArgumentProcessor<IDLDOMString> {
@@ -221,6 +228,10 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<ImageBitmap>> {
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<ImageData>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<ImageData>&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLInterface<CanvasElementImage>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<CanvasElementImage>&);
 };
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -329,6 +340,11 @@ using IDLCanvasPathRadiusUnion = IDLUnion<
     IDLDictionary<DOMPointInit>
 >;
 
+using IDLCanvasElementImageSourceUnion = IDLUnion<
+    IDLInterface<Element>,
+    IDLInterface<CanvasElementImage>
+>;
+
 template<> struct InspectorCanvasArgumentProcessor<IDLCanvasImageSourceUnion> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasImageSource&);
 };
@@ -339,6 +355,10 @@ template<> struct InspectorCanvasArgumentProcessor<IDLCanvasStyleVariantUnion> {
 
 template<> struct InspectorCanvasArgumentProcessor<IDLCanvasPathRadiusUnion> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasPath::RadiusVariant&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLCanvasElementImageSourceUnion> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasElementImageSource&);
 };
 
 #if ENABLE(WEBGL)

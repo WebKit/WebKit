@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,8 @@ typedef (HTMLCanvasElement or OffscreenCanvas) WebGLCanvas;
 #else
 typedef (HTMLCanvasElement) WebGLCanvas;
 #endif
+
+typedef (Element or CanvasElementImage) CanvasElementImageSource;
 
 [
     Conditional=WEBGL,
@@ -513,6 +515,8 @@ typedef (HTMLCanvasElement) WebGLCanvas;
 
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, TexImageSource source);
+
+    [EnabledBySetting=HTMLInCanvasEnabled] undefined texElementImage2D(GLenum target, GLenum internalformat, CanvasElementImageSource source, optional WebGLCopyElementImageConfig options = {});
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView data);
     undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView data);

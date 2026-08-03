@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -36,6 +36,7 @@
 #include "CanvasRenderingContext2D.h"
 #include "CanvasRenderingContext2DSettings.h"
 #include "ContainerNodeInlines.h"
+#include "DOMMatrix.h"
 #include "DocumentQuirks.h"
 #include "DocumentView.h"
 #include "ElementInlines.h"
@@ -210,6 +211,30 @@ ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
         return Exception { ExceptionCode::InvalidStateError };
     setAttributeWithoutSynchronization(widthAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
     return { };
+}
+
+void HTMLCanvasElement::setLayoutSubtree(bool layoutSubtree)
+{
+    setBooleanAttribute(layoutsubtreeAttr, layoutSubtree);
+}
+
+bool HTMLCanvasElement::layoutSubtree() const
+{
+    return hasAttributeWithoutSynchronization(layoutsubtreeAttr);
+}
+
+void HTMLCanvasElement::requestPaint()
+{
+}
+
+ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const CanvasElementImageSource&, DOMMatrix&)
+{
+    return Exception { ExceptionCode::InvalidStateError };
+}
+
+ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element&)
+{
+    return Exception { ExceptionCode::InvalidStateError };
 }
 
 void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)

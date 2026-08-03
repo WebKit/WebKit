@@ -30,6 +30,7 @@
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/CanvasBase.h>
+#include <WebCore/CanvasElementImage.h>
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInterfaces.h>
@@ -52,6 +53,7 @@
 namespace WebCore {
 
 class CanvasRenderingContext;
+class DOMMatrix;
 class DeferredPromise;
 class GPU;
 class GPUCanvasContext;
@@ -129,6 +131,8 @@ public:
     void setWidth(unsigned);
     void setHeight(unsigned);
     void setSizeForControllingContext(IntSize) final;
+
+    ExceptionOr<Ref<DOMMatrix>> getElementTransform(const CanvasElementImageSource&, DOMMatrix& drawTransform);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 

@@ -33,6 +33,7 @@
 #include "CanvasRenderingContext.h"
 #include "ContextDestructionObserverInlines.h"
 #include "Chrome.h"
+#include "DOMMatrix.h"
 #include "Document.h"
 #include "EventDispatcher.h"
 #include "EventNames.h"
@@ -176,6 +177,11 @@ void OffscreenCanvas::didUpdateSizeProperties(bool sizeChanged)
         m_context->didUpdateCanvasSizeProperties(sizeChanged);
     notifyObserversCanvasResized();
     scheduleCommitToPlaceholderCanvas();
+}
+
+ExceptionOr<Ref<DOMMatrix>> OffscreenCanvas::getElementTransform(const CanvasElementImageSource&, DOMMatrix&)
+{
+    return Exception { ExceptionCode::InvalidStateError };
 }
 
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)

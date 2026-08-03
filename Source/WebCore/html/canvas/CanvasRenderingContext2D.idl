@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,3 +85,4 @@ CanvasRenderingContext2D includes CanvasImageData;
 CanvasRenderingContext2D includes CanvasPathDrawingStyles;
 CanvasRenderingContext2D includes CanvasTextDrawingStyles;
 CanvasRenderingContext2D includes CanvasPath;
+CanvasRenderingContext2D includes CanvasDrawElementImage;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,8 @@ namespace WebCore {
 class GPUBuffer;
 class GPUDevice;
 struct GPUImageCopyExternalImage;
+struct GPUCopyElementImageDestination;
+struct GPUCopyElementImageSource;
 
 class GPUQueue : public RefCountedAndCanMakeWeakPtr<GPUQueue> {
 public:
@@ -81,6 +83,10 @@ public:
         const GPUImageCopyExternalImage& source,
         const GPUImageCopyTextureTagged& destination,
         const GPUExtent3D& copySize);
+
+    ExceptionOr<void> copyElementImageToTexture(
+        const GPUCopyElementImageSource&,
+        const GPUCopyElementImageDestination&);
 
     WebGPU::Queue& backing() { return m_backing; }
     const WebGPU::Queue& backing() const { return m_backing; }

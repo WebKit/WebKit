@@ -48,6 +48,8 @@ enum OffscreenRenderingContextType {
    "webgpu"
 };
 
+typedef (Element or CanvasElementImage) CanvasElementImageSource;
+
 // https://html.spec.whatwg.org/multipage/canvas.html#offscreencanvas
 [
     ActiveDOMObject,
@@ -63,6 +65,8 @@ enum OffscreenRenderingContextType {
 
     [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long width;
     [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long height;
+
+    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] DOMMatrix getElementTransform(CanvasElementImageSource source, DOMMatrix drawTransform);
 
     [CallWith=CurrentGlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
     // FIXME: `transferToImageBitmap` should not return a nullable type.

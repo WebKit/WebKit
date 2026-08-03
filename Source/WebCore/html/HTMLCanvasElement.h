@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/CanvasBase.h>
+#include <WebCore/CanvasElementImage.h>
 #include <WebCore/Document.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsTypes.h>
@@ -47,6 +48,7 @@ namespace WebCore {
 class BlobCallback;
 class CanvasRenderingContext;
 class CanvasRenderingContext2D;
+class DOMMatrix;
 class GPU;
 class GPUCanvasContext;
 class GraphicsContext;
@@ -73,9 +75,21 @@ public:
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
 
-
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
+
+    // `layoutSubtree` attribute opts in canvas descendants to layout and participate in hit testing.
+    // It causes the direct children of the <canvas> to have a stacking context, become a containing
+    // block for all descendants, and create RenderElements. These RenderElements behave as if they
+    // are visible, but their drawing is not visible to the user. They are recorded in DisplayLists
+    // and these DisplayLists are replayed back into the canvas only via calls to drawElementImage().
+    void setLayoutSubtree(bool);
+    bool layoutSubtree() const;
+
+    void requestPaint();
+
+    ExceptionOr<Ref<DOMMatrix>> getElementTransform(const CanvasElementImageSource&, DOMMatrix& drawTransform);
+    ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);

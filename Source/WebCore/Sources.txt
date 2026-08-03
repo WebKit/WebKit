@@ -1746,9 +1746,11 @@ html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp @header:RenderStyleGetters @cost:5
 html/WeekInputType.cpp
 html/canvas/ANGLEInstancedArrays.cpp
+html/canvas/CanvasElementImage.cpp
 html/canvas/CanvasFilterContextSwitcher.cpp
 html/canvas/CanvasGradient.cpp
 html/canvas/CanvasLayerContextSwitcher.cpp
+html/canvas/CanvasPaintEvent.cpp
 html/canvas/CanvasPath.cpp
 html/canvas/CanvasPattern.cpp
 html/canvas/CanvasRenderingContext.cpp
@@ -4009,8 +4011,10 @@ JSCacheQueryOptions.cpp
 JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasCompositing.cpp
 JSCanvasDirection.cpp
+JSCanvasDrawElementImage.cpp
 JSCanvasDrawImage.cpp
 JSCanvasDrawPath.cpp
+JSCanvasElementImage.cpp
 JSCanvasFillRule.cpp
 JSCanvasFillStrokeStyles.cpp
 JSCanvasFilters.cpp
@@ -4019,6 +4023,7 @@ JSCanvasImageData.cpp
 JSCanvasImageSmoothing.cpp
 JSCanvasLineCap.cpp
 JSCanvasLineJoin.cpp
+JSCanvasPaintEvent.cpp
 JSCanvasPath.cpp
 JSCanvasPathDrawingStyles.cpp
 JSCanvasPattern.cpp
@@ -4309,6 +4314,8 @@ JSGPUComputePassEncoder.cpp
 JSGPUComputePassTimestampWrites.cpp
 JSGPUComputePipeline.cpp
 JSGPUComputePipelineDescriptor.cpp
+JSGPUCopyElementImageDestination.cpp
+JSGPUCopyElementImageSource.cpp
 JSGPUCullMode.cpp
 JSGPUDebugCommandsMixin.cpp
 JSGPUDepthStencilState.cpp
@@ -5250,6 +5257,7 @@ JSWebGLCompressedTextureS3TC.cpp
 JSWebGLCompressedTextureS3TCsRGB.cpp
 JSWebGLContextAttributes.cpp
 JSWebGLContextEvent.cpp
+JSWebGLCopyElementImageConfig.cpp
 JSWebGLDebugRendererInfo.cpp
 JSWebGLDebugShaders.cpp
 JSWebGLDepthTexture.cpp
