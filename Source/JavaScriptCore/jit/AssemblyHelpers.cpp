@@ -1498,9 +1498,6 @@ void AssemblyHelpers::storeWasmContextInstance(GPRReg src)
 void AssemblyHelpers::prepareWasmCallOperation(GPRReg instanceGPR)
 {
     UNUSED_PARAM(instanceGPR);
-#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
-    storePtr(GPRInfo::callFrameRegister, Address(instanceGPR, JSWebAssemblyInstance::offsetOfTemporaryCallFrame()));
-#endif
 }
 
 #endif // ENABLE(WEBASSEMBLY)

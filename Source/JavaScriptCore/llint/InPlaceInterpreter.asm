@@ -985,11 +985,6 @@ end
     loadp JSWebAssemblyInstance::m_vm[wasmInstance], a0
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(a0, a1)
 
-# Should be (not USE_BUILTIN_FRAME_ADDRESS) but need to keep down the size of LLIntAssembly.h
-if ASSERT_ENABLED
-    storep cfr, JSWebAssemblyInstance::m_temporaryCallFrame[wasmInstance]
-end
-
     move wasmInstance, a0
     call _operationWasmUnwind
     jumpToException()
@@ -1063,10 +1058,6 @@ op(wasm_to_js_wrapper_entry, macro()
             stored fpr2, base + (index + 1) * FPRRegisterSize[sp]
         end
     end)
-
-if ASSERT_ENABLED
-    storep cfr, JSWebAssemblyInstance::m_temporaryCallFrame[wasmInstance]
-end
 
     move wasmInstance, a0
     move ws0, a1
@@ -1143,10 +1134,6 @@ end
 .handleException:
     loadp JSWebAssemblyInstance::m_vm[wasmInstance], a0
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(a0, a1)
-
-if ASSERT_ENABLED
-    storep cfr, JSWebAssemblyInstance::m_temporaryCallFrame[wasmInstance]
-end
 
     move wasmInstance, a0
     call _operationWasmUnwind

@@ -26801,7 +26801,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.store32(
             m_out.constInt32(callSiteIndex.bits()),
             highWordFor(CallFrameSlot::argumentCountIncludingThis));
-#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
+#if ASSERT_ENABLED
         m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
 #endif
     }
@@ -26865,7 +26865,7 @@ IGNORE_CLANG_WARNINGS_END
             exception = m_out.load64(m_vmValue, m_heaps.VM_exception);
 
         if (Options::useExceptionFuzz()) {
-#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
+#if ASSERT_ENABLED
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
 #endif
             m_out.call(Void, m_out.operation(operationExceptionFuzz), weakPointer(globalObject));

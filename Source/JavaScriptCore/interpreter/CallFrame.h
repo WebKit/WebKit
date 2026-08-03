@@ -376,7 +376,6 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
 JS_EXPORT_PRIVATE bool NODELETE isFromJSCode(void* returnAddress);
 
-#if USE(BUILTIN_FRAME_ADDRESS)
 #if OS(WINDOWS) && CPU(X86_64)
 // On Windows x86_64, __builtin_frame_address(1) doesn't work, it returns __builtin_frame_address(0)
 // We can't use __builtin_frame_address(0) either, as on Windows it points at the space after
@@ -403,15 +402,8 @@ JS_EXPORT_PRIVATE bool NODELETE isFromJSCode(void* returnAddress);
         std::bit_cast<JSC::CallFrame*>(__builtin_frame_address(1)); \
     })
 #endif // !OS(WINDOWS) || !CPU(X86_64)
-#else
-#define DECLARE_CALL_FRAME(vm) ((vm).topCallFrame)
-#endif
 
-#if USE(BUILTIN_FRAME_ADDRESS)
 #define DECLARE_WASM_CALL_FRAME(instance) DECLARE_CALL_FRAME(instance->vm())
-#else
-#define DECLARE_WASM_CALL_FRAME(instance) ((instance)->temporaryCallFrame())
-#endif
 
 // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
 // sometimes gives us a signed pointer, and sometimes does not.

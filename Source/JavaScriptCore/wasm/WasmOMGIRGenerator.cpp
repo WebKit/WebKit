@@ -909,14 +909,8 @@ public:
     }
 
 private:
-    void NODELETE emitPrepareWasmOperation(BasicBlock* block)
+    void NODELETE emitPrepareWasmOperation(BasicBlock*)
     {
-#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
-        // Prepare wasm operation calls.
-        block->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), framePointer(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTemporaryCallFrame()));
-#else
-        UNUSED_PARAM(block);
-#endif
     }
 
     template<typename OperationType, typename ...Args>
