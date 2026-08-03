@@ -3417,7 +3417,8 @@ void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentC
     RefPtr page = WebPageProxy::fromIdentifier(pageID);
     if (!page)
         return completionHandler(makeUnexpected(String()));
-    MESSAGE_CHECK_COMPLETION(isAssociatedWithPage(pageID), completionHandler(makeUnexpected(String())));
+    if (!isAssociatedWithPage(pageID))
+        return completionHandler(makeUnexpected(String()));
     RefPtr controller = WebUserContentControllerProxy::get(identifier);
     if (!controller)
         return completionHandler(makeUnexpected(String()));
