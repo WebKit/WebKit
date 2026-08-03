@@ -3376,6 +3376,153 @@ std::optional<char16_t> CharacterClass::hasSharedLeadSurrogate() const
     return commonLeadSurrogate;
 }
 
+class FirstCharacterBitmapBuilder {
+public:
+    explicit FirstCharacterBitmapBuilder(WTF::BitSet<256>& bitmap)
+        : m_bitmap(bitmap)
+    {
+    }
+
+    bool build(PatternDisjunction* body)
+    {
+        addDisjunction(body, 0);
+        return !m_gaveUp;
+    }
+
+private:
+    void setBit(char32_t c)
+    {
+        if (c <= 0xff)
+            m_bitmap.set(c);
+    }
+
+    void addCharacterClass(const CharacterClass* cc)
+    {
+        if (cc->m_anyCharacter || !cc->m_strings.isEmpty()) {
+            m_gaveUp = true;
+            return;
+        }
+        for (char32_t c : cc->m_matches8)
+            setBit(c);
+        for (auto& range : cc->m_ranges8) {
+            char32_t end = std::min<char32_t>(range.end, 0xff);
+            for (char32_t c = range.begin; c <= end; ++c)
+                setBit(c);
+        }
+    }
+
+    // Sets `consumes` when the term definitely consumes >= 1 character, so it fully determines the
+    // first character and scanning can stop.
+    void addTerm(const PatternTerm& term, bool& consumes, unsigned depth)
+    {
+        using Type = PatternTerm::Type;
+        consumes = false;
+        if (m_gaveUp)
+            return;
+        if (term.m_matchDirection == Backward) {
+            m_gaveUp = true;
+            return;
+        }
+
+        switch (term.type) {
+        case Type::AssertionBOL:
+        case Type::AssertionEOL:
+        case Type::AssertionWordBoundary:
+        case Type::ParentheticalAssertion:
+            return;
+        case Type::PatternCharacter:
+            // A case-insensitive literal is always ASCII-alpha here (non-ASCII case-folding characters become character classes).
+            if (term.ignoreCase() && isASCIIAlpha(term.patternCharacter)) {
+                setBit(toASCIIUpper(term.patternCharacter));
+                setBit(toASCIILower(term.patternCharacter));
+            } else
+                setBit(term.patternCharacter);
+            consumes = term.quantityMinCount > 0;
+            return;
+        case Type::CharacterClass:
+            // Classes are already case-folded at construction. An inverted class is not a useful filter.
+            if (term.invert()) {
+                m_gaveUp = true;
+                return;
+            }
+            addCharacterClass(term.characterClass);
+            consumes = term.quantityMinCount > 0;
+            return;
+        case Type::ParenthesesSubpattern: {
+            if (depth > 8) {
+                m_gaveUp = true;
+                return;
+            }
+            addDisjunction(term.parentheses.disjunction, depth + 1);
+            consumes = term.quantityMinCount > 0 && term.parentheses.disjunction->m_minimumSize >= 1;
+            return;
+        }
+        default:
+            m_gaveUp = true;
+            return;
+        }
+    }
+
+    void addAlternative(PatternAlternative* alternative, unsigned depth)
+    {
+        for (auto& term : alternative->m_terms) {
+            bool consumes = false;
+            addTerm(term, consumes, depth);
+            if (m_gaveUp)
+                return;
+            if (consumes)
+                return;
+        }
+    }
+
+    void addDisjunction(PatternDisjunction* disjunction, unsigned depth)
+    {
+        for (auto& alternative : disjunction->m_alternatives) {
+            addAlternative(alternative.get(), depth);
+            if (m_gaveUp)
+                return;
+        }
+    }
+
+    WTF::BitSet<256>& m_bitmap;
+    bool m_gaveUp { false };
+};
+
+std::optional<WTF::BitSet<256>> computeStickyFirstCharacterBitmap(StringView patternString, OptionSet<Flags> flags)
+{
+    ErrorCode errorCode = ErrorCode::NoError;
+    YarrPattern pattern(patternString, flags, errorCode);
+    if (hasError(errorCode) || !pattern.m_body || pattern.m_body->m_minimumSize < 1)
+        return std::nullopt;
+    WTF::BitSet<256> bitmap;
+    FirstCharacterBitmapBuilder builder(bitmap);
+    if (!builder.build(pattern.m_body))
+        return std::nullopt;
+    return bitmap;
+}
+
+std::optional<WTF::BitSet<256>> computeAnchoredFirstCharacterBitmap(StringView patternString, OptionSet<Flags> flags)
+{
+    ErrorCode errorCode = ErrorCode::NoError;
+    YarrPattern pattern(patternString, flags, errorCode);
+    if (hasError(errorCode) || !pattern.m_body || pattern.m_body->m_minimumSize < 1)
+        return std::nullopt;
+    // The bitmap describes position 0, so it is only sound when every match must begin there:
+    // ^-anchored at the start of every alternative, and neither multiline nor a modifier group can
+    // make that ^ match after a newline.
+    if (pattern.multiline() || pattern.m_containsModifiers)
+        return std::nullopt;
+    for (auto& alternative : pattern.m_body->m_alternatives) {
+        if (!alternative->m_startsWithBOL)
+            return std::nullopt;
+    }
+    WTF::BitSet<256> bitmap;
+    FirstCharacterBitmapBuilder builder(bitmap);
+    if (!builder.build(pattern.m_body))
+        return std::nullopt;
+    return bitmap;
+}
+
 } } // namespace JSC::Yarr
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
