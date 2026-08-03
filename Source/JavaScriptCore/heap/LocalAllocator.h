@@ -57,6 +57,9 @@ public:
 
     BlockDirectory& directory() const { return *m_directory; }
 
+    // Intended for diagnostics only (rdar://157153895)
+    bool isFreeListedCell(const void*) const;
+
 private:
     friend class BlockDirectory;
     

@@ -309,6 +309,7 @@ public:
 
     // Object operations, with the toObject operation included.
     inline JSValue get(JSGlobalObject*, PropertyName) const; // Defined in JSCJSValuePropertyInlines.h
+    template<bool debugLLIntGetById = false>
     inline JSValue get(JSGlobalObject*, PropertyName, PropertySlot&) const; // Defined in JSCJSValuePropertyInlines.h
     inline JSValue get(JSGlobalObject*, unsigned propertyName) const; // Defined in JSCJSValuePropertyInlines.h
     inline JSValue get(JSGlobalObject*, unsigned propertyName, PropertySlot&) const; // Defined in JSCJSValuePropertyInlines.h
@@ -317,6 +318,7 @@ public:
     template<typename T, typename PropertyNameType>
     inline T getAs(JSGlobalObject*, PropertyNameType) const; // Defined in JSCJSValuePropertyInlines.h
 
+    template<bool debugLLIntGetById = false>
     inline bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const; // Defined in JSCJSValuePropertyInlines.h
     template<typename CallbackWhenNoException> inline typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const; // Defined in JSCJSValuePropertyInlines.h
     template<typename CallbackWhenNoException> inline typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const; // Defined in JSCJSValuePropertyInlines.h
