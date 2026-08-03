@@ -35,7 +35,7 @@ from ..manifest.sourcefile import SourceFile, js_meta_re, python_meta_re, space_
 from ..metadata.yaml.load import load_data_to_dict
 from ..metadata.meta.schema import META_YML_FILENAME, MetaFile
 from ..metadata.webfeatures.schema import (WEB_FEATURES_YML_FILENAME, WebFeaturesFile,
-                                          FileMatchingMode)
+                                          FeatureFile)
 
 # The Ignorelist is a two level dictionary. The top level is indexed by
 # error names (e.g. 'TRAILING WHITESPACE'). Each of those then has a map of
@@ -714,7 +714,7 @@ def check_script_metadata(repo_root: Text, path: Text, f: IO[bytes]) -> List[rul
                     errors.append(rules.MultipleTestharness.error(path, line_no=line_no))
                 elif value == b"/resources/testharnessreport.js":
                     errors.append(rules.MultipleTestharnessReport.error(path, line_no=line_no))
-            elif key not in (b"title", b"quic"):
+            elif key not in (b"title", b"quic", b"spec"):
                 errors.append(rules.UnknownMetadata.error(path, line_no=line_no))
         else:
             done = True
@@ -781,31 +781,22 @@ def check_web_features_file(repo_root: Text, path: Text, f: IO[bytes]) -> List[r
     base_dir = os.path.join(repo_root, os.path.dirname(path))
     files_in_directory = [
         f for f in os.listdir(base_dir) if os.path.isfile(os.path.join(base_dir, f))]
-    for feature in web_features_file.features:
-        if isinstance(feature.files, list):
-            # Resolve inclusion patterns to files, then subtract exclusions.
-            included: Set[str] = set()
-            dir_path = os.path.dirname(path)
-            for file in feature.files:
-                matched = file.match_files(files_in_directory)
-                if file.matching_mode == FileMatchingMode.INCLUDE:
-                    if not matched:
-                        errors.append(rules.MissingTestInWebFeaturesFile.error(path, (file)))
-                    included.update(matched)
-                    # Only check explicitly named files (no wildcards).
-                    if "*" not in str(file):
-                        for filename in matched:
-                            rel_path = os.path.join(dir_path, filename)
-                            source_file = SourceFile(repo_root, rel_path, "/")
-                            if source_file.possible_types == {"support"}:
-                                errors.append(rules.NonTestFileInWebFeaturesFile.error(path, (
-                                    filename, feature.name)))
-                elif file.matching_mode == FileMatchingMode.EXCLUDE:
-                    excluded = set(matched) & included
-                    if not excluded:
-                        errors.append(rules.UnnecessaryExclusionInWebFeaturesFile.error(path, (
-                            f"'{file}' in feature '{feature.name}'",)))
-                    included -= excluded
+    for rule in web_features_file.rules:
+        if not isinstance(rule.file, FeatureFile):
+            continue
+        # Resolve inclusion patterns to files, then subtract exclusions.
+        dir_path = os.path.dirname(path)
+        matched = rule.file.match_files(files_in_directory)
+        if not matched:
+            errors.append(rules.MissingTestInWebFeaturesFile.error(path, (rule.file,)))
+        # Only check explicitly named files (no wildcards).
+        if "*" not in str(rule):
+            for filename in matched:
+                rel_path = os.path.join(dir_path, filename)
+                source_file = SourceFile(repo_root, rel_path, "/")
+                if source_file.possible_types == {"support"}:
+                    errors.append(rules.NonTestFileInWebFeaturesFile.error(path, (
+                        filename, rule)))
 
     return errors
 
@@ -1018,7 +1009,8 @@ def main(venv: Any = None, **kwargs: Any) -> int:
 
     jobs = kwargs.get("jobs", 0)
 
-    return lint(repo_root, paths, output_format, ignore_glob, github_checks_outputter, jobs)
+    error_count = lint(repo_root, paths, output_format, ignore_glob, github_checks_outputter, jobs)
+    return 1 if error_count > 0 else 0
 
 
 # best experimental guess at a decent cut-off for using the parallel path
@@ -1149,14 +1141,12 @@ def all_paths_lints() -> Any:
 
 def _run_main(argv: List[Text]) -> None:
     try:
-        error_count = main(**vars(create_parser().parse_args(argv)))
+        sys.exit(main(**vars(create_parser().parse_args(argv))))
     except SystemExit:
         raise
     except Exception:
         traceback.print_exc()
-        sys.exit(3)
-    if error_count > 0:
-        sys.exit(1)
+        sys.exit(getattr(os, "EX_SOFTWARE", 70))
 
 
 if __name__ == "__main__":
