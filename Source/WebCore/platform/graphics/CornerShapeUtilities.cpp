@@ -311,7 +311,7 @@ struct SuperellipseBezierHandles {
 };
 static SuperellipseBezierHandles superellipseBezierHandles(double parameter)
 {
-    static constexpr double fitCoefficients[7] = {
+    static constexpr std::array<double, 7> fitCoefficients {
         1.2430920942724248, 2.010479023614843, 0.32922901179443753,
         0.2823023142212073, 1.3473704261055421, 2.9149468637949814, 0.9106507102917086
     };
