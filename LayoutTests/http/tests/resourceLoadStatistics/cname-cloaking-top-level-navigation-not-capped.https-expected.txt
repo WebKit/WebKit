@@ -1,0 +1,10 @@
+No cookie expiry capping for a cookie set by the top-level navigation's own response.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cookie set by the top-level navigation response was not capped.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
