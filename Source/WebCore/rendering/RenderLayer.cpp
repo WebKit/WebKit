@@ -3758,12 +3758,61 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         LayerPaintingInfo localPaintingInfo(paintingInfo);
-        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, columnAwareOffsetFromRoot, backgroundRect);
+
+        // Position the filter buffer and composite its result at the element's
+        // nominalSVGLayoutLocation, independent of intermediate force-layers that perturb offsetFromRoot.
+        auto svgFilterOffset = columnAwareOffsetFromRoot;
+        if (renderer().isSVGLayerAwareRenderer() && shouldHaveFiltersForPainting(context, paintFlags, paintBehavior)) {
+            if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(renderer()))
+                svgFilterOffset = toLayoutSize(svgModel->nominalSVGLayoutLocation());
+            else if (auto* svgBlock = dynamicDowncast<RenderSVGBlock>(renderer()))
+                svgFilterOffset = toLayoutSize(svgBlock->nominalSVGLayoutLocation());
+        }
+
+        auto* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, svgFilterOffset, backgroundRect);
+
+        // Non-layer content drawn into the buffer uses a distinct offset. The buffer coordinate
+        // system is the filter region (transform-aware objectBoundingBox), whereas svgFilterOffset is
+        // based on objectBoundingBoxWithoutTransformations. The two differ by the child-transform delta
+        // only when the filtered element has a transformed child (e.g. a layered <use> with x/y), and
+        // are equal otherwise. This positions non-layer fragment collection only. A layer child already
+        // carries its transform in its CTM, so it uses svgFilterOffset (the buffer origin). Adding the
+        // delta there would double-count the transform (svg/filters/filter-refresh.svg).
+        auto svgFilterContentOffset = svgFilterOffset;
+        if (filterContext && renderer().isSVGLayerAwareRenderer())
+            svgFilterContentOffset += renderer().objectBoundingBoxLocation() - renderer().nominalSVGLayoutLocation();
+
+        // Layer children reset their CTM via offsetFromAncestor(rootLayer) and miss the buffer origin
+        // that non-layer children pick up through containerBaseOffset, so translate them by
+        // svgFilterOffset to match. Needed when rootLayer == this, and when this filter is nested
+        // inside another filter whose buffer was coordinate-origin shifted (our buffer inherits the
+        // shift but the layer child does not, svg/filters/filter-refresh.svg). The nested case is read
+        // from rootLayer directly: a descendant painting inside a shifted buffer always has that
+        // shifting ancestor (transformed, hence rootLayer-establishing, and filtered) as its rootLayer.
+        // A failed filter does not paint its descendants, so a rootLayer with hasFilter() set up a buffer.
+        CheckedPtr currentRootLayer = localPaintingInfo.rootLayer;
+        bool rootLayerShiftedFilterBuffer = currentRootLayer && currentRootLayer != this
+            && currentRootLayer->hasFilter() && currentRootLayer->renderer().isSVGLayerAwareRenderer();
+        bool appliesFilterChildCorrection = filterContext && renderer().isSVGLayerAwareRenderer()
+            && (currentRootLayer == this || rootLayerShiftedFilterBuffer);
+
+        // This applies to this layer's immediate child layers only, and a nested filter re-derives its own.
+        auto svgFilterChildLayerCorrection = appliesFilterChildCorrection ? svgFilterOffset : LayoutSize();
+
+        // Per the SVG spec a referenced but unappliable filter (missing reference, empty filter)
+        // produces transparent black, so the element is not rendered. CSS Filter Effects instead
+        // treats a failed filter as no effect (painted normally), so SVG renderers follow the SVG
+        // rule here.
+        bool shouldFailedFilterProduceTransparentBlackForSVG = !!m_svgData;
+        bool hasFailedFilterForSVG = shouldFailedFilterProduceTransparentBlackForSVG && !filterContext && shouldHaveFiltersForPainting(context, localPaintFlags, localPaintingInfo.paintBehavior);
+        if (hasFailedFilterForSVG)
+            hasFailedFilterForSVG = this->hasFailedFilterForSVG();
+
         GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
         if (filterContext)
             localPaintingInfo.paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
-        else if (m_svgData && hasFailedFilterForSVG()) {
+        else if (hasFailedFilterForSVG) {
             shouldPaintContent = false;
             isPaintingCompositedForeground = false;
         }
@@ -3812,8 +3861,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             auto clipRectOptions = isPaintingOverflowContents ? clipRectOptionsForPaintingOverflowContents : clipRectDefaultOptions;
             if (localPaintFlags & PaintLayerFlag::TemporaryClipRects)
                 clipRectOptions.add(ClipRectsOption::Temporary);
-            collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, offsetFromRoot);
-            updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
+            // Inside a filter buffer, collect fragments at svgFilterContentOffset (computed above) so
+            // in-buffer content matches the buffer's transform-aware coordinate system.
+            auto fragmentOffset = filterContext ? svgFilterContentOffset : offsetFromRoot;
+            collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, fragmentOffset);
+            updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, fragmentOffset);
         }
         
         if (isPaintingCompositedBackground) {
@@ -3847,7 +3899,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (isPaintingCompositedForeground) {
             if (m_svgData)
-                paintForegroundChildrenForSVG(currentContext, paintingInfo, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer, svgPaintOrderItemRange);
+                paintForegroundChildrenForSVG(currentContext, paintingInfo, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer, svgPaintOrderItemRange, svgFilterChildLayerCorrection);
             else {
                 // Paint any child layers that have overflow.
                 paintList(normalFlowLayers(), currentContext, paintingInfo, localPaintFlags);
@@ -3863,6 +3915,19 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         if (filterContext) {
+            // The filter buffer sits at the nominal SVG position (svgFilterOffset), but its result
+            // must composite where the unfiltered content lands, at the offset from rootLayer, so
+            // translate by the delta. This is nonzero only when the position is baked into the CTM (the
+            // element is its own rootLayer, or a force-created ancestor layer baked it in). In the plain
+            // non-layer case offsetFromRoot equals the nominal position and isZero() skips.
+            GraphicsContextStateSaver filterCompensationSaver(context, false);
+            if (renderer().isSVGLayerAwareRenderer()) {
+                auto svgFilterCompensation = columnAwareOffsetFromRoot - svgFilterOffset;
+                if (!svgFilterCompensation.isZero()) {
+                    filterCompensationSaver.save();
+                    context.translate(svgFilterCompensation);
+                }
+            }
             applyFilters(context, paintingInfo, paintBehavior, backgroundRect);
             // Painting a snapshot might have temporarily overriden the filter painting strategy,
             // make sure it gets reset.

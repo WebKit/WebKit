@@ -68,7 +68,8 @@ private:
     RefPtr<FilterFunction> buildFilterFunction(RenderElement&, const Style::FilterValue&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext);
     bool buildFilterFunctions(RenderElement&, const Style::Filter&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext);
 
-    void computeEnclosingFilterRegion();
+    void computeEnclosingFilterRegion(OptionSet<FilterRenderingOption>);
+    void expandFilterRegionForSVGReferences();
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
 

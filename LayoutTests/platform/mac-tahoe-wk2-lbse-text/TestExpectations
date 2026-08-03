@@ -58,25 +58,8 @@ svg/filters/filter-specified-on-svg-root.html                                   
 
 # Regressed by conditional layer creation (bugs.webkit.org/b/308565). Filter and resource-buffer
 # painting for non-layered SVG renderers is corrected by a follow-up PR, which restores these.
-svg/W3C-SVG-1.1/filters-felem-01-b.svg                                                 [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/filters-gauss-01-b.svg                                                 [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/filters-turb-02-f.svg                                                  [ ImageOnlyFailure ]
-svg/css/path-gradient-stroke-shadow.svg                                                [ ImageOnlyFailure ]
-svg/css/rect-gradient-stroke-shadow.svg                                                [ ImageOnlyFailure ]
-svg/custom/image-with-transform-clip-filter.svg                                        [ ImageOnlyFailure ]
-svg/custom/recursive-filter.svg                                                        [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr.html                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call.html                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop.html                       [ ImageOnlyFailure ]
-svg/filters/big-sized-filter-2.svg                                                     [ ImageOnlyFailure ]
-svg/filters/feColorMatrix-offset.svg                                                   [ ImageOnlyFailure ]
-svg/filters/feDisplacementMap.svg                                                      [ ImageOnlyFailure ]
 svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg                 [ ImageOnlyFailure ]
 svg/filters/feImage-target-attribute-change-with-use-indirection.svg                   [ ImageOnlyFailure ]
-svg/filters/feMorphology-radius-cases.svg                                              [ ImageOnlyFailure ]
-svg/filters/feOffset.svg                                                               [ ImageOnlyFailure ]
-svg/filters/parent-children-with-same-filter.svg                                       [ ImageOnlyFailure ]
-svg/foreignObject/filter.html                                                          [ ImageOnlyFailure ]
 
 # SVGImage support incomplete
 svg/as-image/image-respects-pageScaleFactor-change.html                   [ ImageOnlyFailure ]

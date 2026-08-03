@@ -55,6 +55,11 @@ RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, con
         return nullptr;
     }
 
+    if (renderingOptions.contains(FilterRenderingOption::ApplyToSVGRenderer)) {
+        filterRenderer->expandFilterRegionForSVGReferences();
+        filterRenderer->computeEnclosingFilterRegion(renderingOptions);
+    }
+
     filterRenderer->setFilterRenderingModes(preferredRenderingModes);
 
     LOG_WITH_STREAM(Filters, stream << "CSSFilterRenderer::create built filter " << filterRenderer.get() << " for " << filter << " supported rendering mode(s) " << filterRenderer->filterRenderingModes());
@@ -68,6 +73,8 @@ Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& f
     // Setting filter rendering modes cannot be moved to the constructor because it ends up
     // calling supportedFilterRenderingModes() which is a virtual function.
     filter->setFilterRenderingModes(preferredRenderingModes);
+    if (renderingOptions.contains(FilterRenderingOption::ApplyToSVGRenderer))
+        filter->computeEnclosingFilterRegion(renderingOptions);
     return filter;
 }
 
@@ -130,6 +137,9 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& 
     geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), filter.referenceBox());
     if (geometry.filterRegion.isEmpty())
         return nullptr;
+
+    if (renderingOptions.contains(FilterRenderingOption::ApplyToSVGRenderer))
+        ImageBuffer::sizeNeedsClamping(geometry.filterRegion.size(), geometry.scale);
 
     return SVGFilterRenderer::create(contextElement.get(), *filterElement, geometry, preferredRenderingModes, renderingOptions, destinationContext);
 }
@@ -201,7 +211,34 @@ OptionSet<FilterRenderingMode> CSSFilterRenderer::supportedFilterRenderingModes(
     return modes;
 }
 
-void CSSFilterRenderer::computeEnclosingFilterRegion()
+void CSSFilterRenderer::expandFilterRegionForSVGReferences()
+{
+    auto expandedRegion = filterRegion();
+    auto minScale = filterScale();
+
+    for (auto& function : m_functions) {
+        RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(function);
+        if (!svgFilter)
+            continue;
+
+        expandedRegion.unite(svgFilter->filterRegion());
+
+        auto candidateScale = svgFilter->filterScale();
+        minScale = { std::min(minScale.width(), candidateScale.width()), std::min(minScale.height(), candidateScale.height()) };
+    }
+
+    Filter::setFilterRegion(expandedRegion);
+    setFilterScale(minScale);
+
+    for (auto& function : m_functions) {
+        if (RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(function))
+            svgFilter->setFilterScale(minScale);
+    }
+
+    clampFilterRegionIfNeeded();
+}
+
+void CSSFilterRenderer::computeEnclosingFilterRegion(OptionSet<FilterRenderingOption> renderingOptions)
 {
 #if USE(CORE_IMAGE)
     auto enclosingFilterRegion = filterRegion();
@@ -210,6 +247,16 @@ void CSSFilterRenderer::computeEnclosingFilterRegion()
             enclosingFilterRegion.unite(filter->filterRegion());
     }
     setEnclosingFilterRegion(enclosingFilterRegion);
+
+    if (renderingOptions.contains(FilterRenderingOption::ApplyToSVGRenderer)) {
+        // Propagate to inner filters so CoreImage coordinate spaces stay consistent across the chain.
+        for (auto& function : m_functions) {
+            if (RefPtr filter = dynamicDowncast<Filter>(function))
+                filter->setEnclosingFilterRegion(enclosingFilterRegion);
+        }
+    }
+#else
+    UNUSED_PARAM(renderingOptions);
 #endif
 }
 

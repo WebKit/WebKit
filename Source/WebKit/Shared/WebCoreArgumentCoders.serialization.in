@@ -6520,7 +6520,8 @@ header: <WebCore/FilterRenderingMode.h>
 header: <WebCore/Filter.h>
 [OptionSet] enum class WebCore::FilterRenderingOption : uint8_t {
     ShowDebugOverlay,
-    FastAndLowQuality
+    FastAndLowQuality,
+    ApplyToSVGRenderer
 };
 
 header: <WebCore/FEComponentTransfer.h>

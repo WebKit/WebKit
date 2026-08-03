@@ -367,7 +367,6 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
 {
     ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
     ASSERT(!style().hasInFlowPosition());
-    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
     if (container == this)
         return rects;
