@@ -120,8 +120,8 @@
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
+#include <wtf/spi/darwin/OSVariantSPI.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -2555,6 +2555,11 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) -> ContextMenuItemTag
     return isKnownContextMenuItemTag ? static_cast<ContextMenuItemTag>(tagValue) : ContextMenuItemTag::Unknown;
 }
 
+static bool isInRecoveryOS()
+{
+    return os_variant_is_basesystem("WebKit");
+}
+
 std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouseEvent& contextMenuEvent) const
 {
     ASSERT(isContextMenuEvent(contextMenuEvent));
@@ -2576,13 +2581,13 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     };
 
     if ([m_pdfDocument allowsCopying] && hasSelection()) {
-        bool shouldPresentLookupAndSearchOptions = !isInBaseSystem();
+        bool shouldPresentLookupAndSearchOptions = !isInRecoveryOS();
         menuItems.appendVector(selectionContextMenuItems(contextMenuEventRootViewPoint, shouldPresentLookupAndSearchOptions));
         addSeparator();
     }
 
     std::optional<int> openInDefaultViewerTag;
-    bool shouldPresentOpenWithDefaultViewerOption = !isInBaseSystem();
+    bool shouldPresentOpenWithDefaultViewerOption = !isInRecoveryOS();
     if (shouldPresentOpenWithDefaultViewerOption) {
         menuItems.append(contextMenuItem(ContextMenuItemTag::OpenWithDefaultViewer));
         openInDefaultViewerTag = std::to_underlying(ContextMenuItemTag::OpenWithDefaultViewer);

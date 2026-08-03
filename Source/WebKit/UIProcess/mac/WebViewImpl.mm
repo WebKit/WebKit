@@ -184,10 +184,10 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
-#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 #import <wtf/text/MakeString.h>
 
 #if ENABLE(WEB_AUTHN)
@@ -1349,7 +1349,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelectionSingleton() returnTypes:PasteboardTypes::forEditingSingleton()];
 
     // Occlusion notifications are not always sent in the base system, and stale occlusion state can result in various misbehaviors.
-    if (isInBaseSystem())
+    if (os_variant_is_basesystem("WebKit"))
         setWindowOcclusionDetectionEnabled(false);
 
 #if ENABLE(TILED_CA_DRAWING_AREA)

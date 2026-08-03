@@ -36,7 +36,7 @@
 
 #if PLATFORM(COCOA)
 #include <sys/sysctl.h>
-#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#include <wtf/spi/darwin/OSVariantSPI.h>
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -47,6 +47,18 @@
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebModelPlayerProvider);
+
+#if PLATFORM(COCOA)
+static bool isRunningInRecoveryOS()
+{
+#if PLATFORM(MAC)
+    static bool isBaseSystem = os_variant_is_basesystem("WebKit");
+    return isBaseSystem;
+#else
+    return false;
+#endif
+}
+#endif
 
 Ref<WebModelPlayerProvider> WebModelPlayerProvider::create(WebPage& webPage)
 {
@@ -65,7 +77,7 @@ WebModelPlayerProvider::~WebModelPlayerProvider() = default;
 bool WebModelPlayerProvider::isAvailable() const
 {
 #if PLATFORM(COCOA)
-    return !isInBaseSystem();
+    return !isRunningInRecoveryOS();
 #else
     return true;
 #endif
