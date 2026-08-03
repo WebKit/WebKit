@@ -789,9 +789,13 @@ void XMLHttpRequest::abortError()
 
 size_t XMLHttpRequest::memoryCost() const
 {
-    if (readyState() == DONE)
-        return m_responseBuilder.length() * 2;
-    return 0;
+    if (readyState() != DONE)
+        return 0;
+
+    // Text responses are decoded into m_responseBuilder, binary ones (arraybuffer / blob) are
+    // accumulated in m_binaryResponseBuilder. Only one of the two is populated for a given
+    // response type.
+    return m_responseBuilder.length() * 2 + m_binaryResponseBuilder.size();
 }
 
 ExceptionOr<void> XMLHttpRequest::overrideMimeType(const String& mimeType)
