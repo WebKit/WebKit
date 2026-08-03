@@ -85,6 +85,7 @@ public:
         return *m_cachedVisualOverflowRect;
     }
 
+    std::optional<LayoutRect> cachedVisualOverflowRectIfAvailable() const { return m_cachedVisualOverflowRect; }
     void updateCachedVisualOverflowRect() { m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
     LayoutSize locationOffsetEquivalent() const { return toLayoutSize(currentSVGLayoutLocation()); }
 
