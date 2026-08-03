@@ -183,6 +183,7 @@ private:
     ExceptionOr<void> send(Ref<DOMFormData>&&);
     ExceptionOr<void> send(Ref<JSC::ArrayBuffer>&&);
     ExceptionOr<void> send(Ref<JSC::ArrayBufferView>&&);
+    ExceptionOr<void> sendStringData(String&&, const String& defaultContentType);
     ExceptionOr<void> sendBytesData(std::span<const uint8_t>);
 
     void changeState(State);

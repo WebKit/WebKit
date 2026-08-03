@@ -498,22 +498,10 @@ ExceptionOr<void> XMLHttpRequest::send(String&& body)
     if (auto result = prepareToSend())
         return WTF::move(result.value());
 
-    if (!body.isNull() && m_method != "GET"_s && m_method != "HEAD"_s) {
-        String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
-        if (contentType.isNull()) {
-            m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::textPlainContentType());
-        } else {
-            replaceCharsetInMediaTypeIfNeeded(contentType);
-            m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
-        }
+    if (body.isNull())
+        return createRequest();
 
-        m_requestEntityBody = FormData::create(PAL::TextCodecUTF8::encodeUTF8(body));
-        Locker locker { m_gcLock };
-        if (m_upload)
-            m_requestEntityBody->setAlwaysStream(true);
-    }
-
-    return createRequest();
+    return sendStringData(WTF::move(body), HTTPHeaderValues::textPlainContentType());
 }
 
 ExceptionOr<void> XMLHttpRequest::send(Ref<Blob>&& body)
@@ -547,9 +535,31 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Blob>&& body)
 
 ExceptionOr<void> XMLHttpRequest::send(Ref<URLSearchParams>&& params)
 {
-    if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
-        m_requestHeaders.set(HTTPHeaderName::ContentType, "application/x-www-form-urlencoded;charset=UTF-8"_s);
-    return send(params->toString());
+    if (auto result = prepareToSend())
+        return WTF::move(result.value());
+
+    return sendStringData(params->toString(), HTTPHeaderValues::formURLEncodedContentType());
+}
+
+// https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send steps 3 and 4, for bodies that are serialized to a UTF-8 string.
+ExceptionOr<void> XMLHttpRequest::sendStringData(String&& body, const String& defaultContentType)
+{
+    if (m_method != "GET"_s && m_method != "HEAD"_s) {
+        String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
+        if (contentType.isNull())
+            m_requestHeaders.set(HTTPHeaderName::ContentType, defaultContentType);
+        else {
+            replaceCharsetInMediaTypeIfNeeded(contentType);
+            m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
+        }
+
+        m_requestEntityBody = FormData::create(PAL::TextCodecUTF8::encodeUTF8(body));
+        Locker locker { m_gcLock };
+        if (m_upload)
+            m_requestEntityBody->setAlwaysStream(true);
+    }
+
+    return createRequest();
 }
 
 ExceptionOr<void> XMLHttpRequest::send(Ref<DOMFormData>&& body)

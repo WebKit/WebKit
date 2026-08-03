@@ -128,4 +128,10 @@ PASS XMLHttpRequest.send(URLSearchParams) (124)
 PASS XMLHttpRequest.send(URLSearchParams) (125)
 PASS XMLHttpRequest.send(URLSearchParams) (126)
 PASS XMLHttpRequest.send(URLSearchParams) (127)
+PASS XMLHttpRequest.send(URLSearchParams): POST uses the URLSearchParams MIME type when no Content-Type was set
+PASS XMLHttpRequest.send(URLSearchParams): POST keeps an author-set Content-Type
+PASS XMLHttpRequest.send(URLSearchParams): POST replaces the charset parameter of an author-set Content-Type
+PASS XMLHttpRequest.send(URLSearchParams): GET sends neither a body nor a Content-Type
+PASS XMLHttpRequest.send(URLSearchParams): HEAD sends neither a body nor a Content-Type
+PASS XMLHttpRequest.send(URLSearchParams): GET keeps an author-set Content-Type
 
