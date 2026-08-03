@@ -2461,6 +2461,12 @@ public:
         if (alternatives.size() != 1)
             return;
 
+        // A sticky pattern must begin its match exactly at lastIndex, but the enclosure reports the
+        // position of the wrapped expression rather than of the leading `.*` it absorbs, so
+        // /^.*a.*$/y would fail on "xa" instead of matching the whole string at 0.
+        if (m_pattern.sticky())
+            return;
+
         CharacterClass* dotCharacterClass = dotAll() ? m_pattern.anyCharacterClass() : m_pattern.newlineCharacterClass();
         PatternAlternative* alternative = alternatives[0].get();
         Vector<PatternTerm>& terms = alternative->m_terms;
