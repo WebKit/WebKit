@@ -79,13 +79,13 @@ struct WebViewTests {
         try await model.page.load(html: #"<div id="div">hello</div>"#).wait()
         await model.page.waitForNextPresentationUpdate()
 
-        try await #expect(isContentEditable())
+        #expect(try await isContentEditable())
 
         model.isEditable = false
 
         await model.page.waitForNextPresentationUpdate()
 
-        try await #expect(!isContentEditable())
+        #expect(!(try await isContentEditable()))
     }
 }
 
