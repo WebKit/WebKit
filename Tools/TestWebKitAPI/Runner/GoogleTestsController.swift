@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+
 import struct Swift.String
 
 @MainActor
@@ -70,6 +71,13 @@ extension GoogleTestsController {
 
         if let repetitions = configuration.repetitions {
             result.append("--gtest_repeat=\(repetitions)")
+        }
+
+        // Forward gtest-native flags used by the "threadsafe" death-test protocol
+        // which re-executes this binary with extra flags.
+        let gtestPassthroughPrefixes = ["--gtest_internal_run_death_test=", "--gtest_filter="]
+        for argument in CommandLine.arguments where gtestPassthroughPrefixes.contains(where: argument.hasPrefix) {
+            result.append(argument)
         }
 
         return result
