@@ -1,0 +1,4 @@
+x
+
+PASS MathML 'a' element with :visited selector must return the unvisited (:any-link) style to JavaScript API.
+

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/character-level-mirroring.html
@@ -84,6 +82,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-dynamic-mozilla-347348-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-dynamic-mozilla-347348-ref.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-dynamic-mozilla-347348.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-fallback-font-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-fallback-font-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-fallback-font.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002-ref.html
@@ -202,6 +203,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-arabic-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-arabic-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-arabic-002.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-default.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-empty-and-three-chars-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-empty-and-three-chars-ref.html
@@ -218,6 +220,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-multi-char.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003.html

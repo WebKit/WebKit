@@ -10,13 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/absolutely-positioned-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/absolutely-positioned-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/absolutely-positioned-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/absolutely-positioned-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/all-mathml-containers.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/fixed-positioned-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/out-of-flow/fixed-positioned-001-ref.html

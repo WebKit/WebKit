@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/children-with-negative-block-sizes.html
@@ -26,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mmultiscripts-with-two-prescripts.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mspace-mpadded-negative-dimensions.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mtd-as-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mtd-blockify-children.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/multicol-inside-ms.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/multicol-on-token-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/operator-and-first-letter.html
