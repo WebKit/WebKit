@@ -401,7 +401,13 @@ static bool shouldSnapshotWebGLAction(const String& name)
 {
     return name == "clear"_s
         || name == "drawArrays"_s
-        || name == "drawElements"_s;
+        || name == "drawArraysInstancedANGLE"_s
+        || name == "drawElements"_s
+        || name == "drawElementsInstancedANGLE"_s
+        || name == "multiDrawArraysWEBGL"_s
+        || name == "multiDrawArraysInstancedWEBGL"_s
+        || name == "multiDrawElementsWEBGL"_s
+        || name == "multiDrawElementsInstancedWEBGL"_s;
 }
 
 static bool shouldSnapshotWebGL2Action(const String& name)
@@ -409,8 +415,16 @@ static bool shouldSnapshotWebGL2Action(const String& name)
     return name == "clear"_s
         || name == "drawArrays"_s
         || name == "drawArraysInstanced"_s
+        || name == "drawArraysInstancedBaseInstanceWEBGL"_s
         || name == "drawElements"_s
-        || name == "drawElementsInstanced"_s;
+        || name == "drawElementsInstanced"_s
+        || name == "drawElementsInstancedBaseVertexBaseInstanceWEBGL"_s
+        || name == "multiDrawArraysWEBGL"_s
+        || name == "multiDrawArraysInstancedBaseInstanceWEBGL"_s
+        || name == "multiDrawArraysInstancedWEBGL"_s
+        || name == "multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL"_s
+        || name == "multiDrawElementsInstancedWEBGL"_s
+        || name == "multiDrawElementsWEBGL"_s;
 }
 #endif
 
@@ -475,30 +489,22 @@ void InspectorCanvas::recordAction(String&& name, InspectorCanvasProcessedArgume
     protect(m_currentActions)->addItem(*m_lastRecordedAction);
 }
 
-static Ref<JSON::ArrayOf<int>> buildActionReceiver(size_t identifier, RecordingSwizzleType swizzleType)
+static Ref<JSON::ArrayOf<int>> buildActionReceiver(int identifier, RecordingSwizzleType swizzleType)
 {
-    RELEASE_ASSERT(identifier <= static_cast<size_t>(std::numeric_limits<int>::max()));
-
     auto receiver = JSON::ArrayOf<int>::create();
-    receiver->addItem(static_cast<int>(identifier));
+    receiver->addItem(identifier);
     receiver->addItem(static_cast<int>(swizzleType));
     return receiver;
 }
 
-void InspectorCanvas::recordAction(String&& name, RecordingSwizzleType receiverSwizzleType, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvas::recordAction(String&& name, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& arguments)
 {
-    ASSERT(receiverSwizzleType == RecordingSwizzleType::Canvas);
+    auto identifier = receiver.value->asInteger();
+    RELEASE_ASSERT(identifier);
 
-    recordAction(WTF::move(name), WTF::move(arguments), buildActionReceiver(0, receiverSwizzleType));
-}
+    bool shouldSnapshot = shouldSnapshotWebGPUAction(receiver.swizzleType, name);
 
-void InspectorCanvas::recordAction(String&& name, uintptr_t receiver, RecordingSwizzleType receiverSwizzleType, InspectorCanvasProcessedArguments&& arguments)
-{
-    ASSERT(deviceContext());
-
-    bool shouldSnapshot = shouldSnapshotWebGPUAction(receiverSwizzleType, name);
-
-    recordAction(WTF::move(name), WTF::move(arguments), buildActionReceiver(identifierForRecordingObject(receiver), receiverSwizzleType));
+    recordAction(WTF::move(name), WTF::move(arguments), buildActionReceiver(*identifier, receiver.swizzleType));
 
     if (shouldSnapshot)
         m_contentChanged = true;

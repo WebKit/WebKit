@@ -26,7 +26,8 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable
+    GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLColorBufferFloat {
     const unsigned long RGBA32F_EXT = 0x8814;
     const unsigned long FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT = 0x8211;

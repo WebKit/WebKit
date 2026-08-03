@@ -27,6 +27,7 @@
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface OESShaderMultisampleInterpolation {
     const unsigned long MIN_FRAGMENT_INTERPOLATION_OFFSET_OES  = 0x8E5B;
     const unsigned long MAX_FRAGMENT_INTERPOLATION_OFFSET_OES  = 0x8E5C;

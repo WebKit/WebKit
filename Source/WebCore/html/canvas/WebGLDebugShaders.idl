@@ -27,6 +27,7 @@
     Conditional=WEBGL,
     GenerateIsReachable,
     LegacyNoInterfaceObject,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLDebugShaders {
     DOMString getTranslatedShaderSource(WebGLShader shader);
 };

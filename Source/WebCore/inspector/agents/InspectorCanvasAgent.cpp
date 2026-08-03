@@ -733,15 +733,15 @@ void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingC
         didFinishRecordingCanvasFrame(canvasRenderingContext, true);
 }
 
-void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, RecordingSwizzleType receiverSwizzleType, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, InspectorCanvasProcessedArgument&& receiver, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasRenderingContext.hasActiveInspectorCanvasCallTracer());
 
-    auto inspectorCanvas = findInspectorCanvas(canvasRenderingContext);
+    RefPtr inspectorCanvas = findInspectorCanvas(canvasRenderingContext);
     ASSERT(inspectorCanvas);
 
     scheduleRecordingCanvasFrame(*inspectorCanvas);
-    inspectorCanvas->recordAction(WTF::move(name), receiverSwizzleType, WTF::move(arguments));
+    inspectorCanvas->recordAction(WTF::move(name), WTF::move(receiver), WTF::move(arguments));
 
     if (!inspectorCanvas->hasBufferSpace())
         didFinishRecordingCanvasFrame(canvasRenderingContext, true);
@@ -763,7 +763,7 @@ void InspectorCanvasAgent::recordAction(GPUDevice& device, String&& name, Inspec
         didFinishRecordingCanvasFrame(device, true);
 }
 
-void InspectorCanvasAgent::recordAction(GPUDevice& device, uintptr_t receiver, RecordingSwizzleType receiverSwizzleType, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasAgent::recordAction(GPUDevice& device, InspectorCanvasProcessedArgument&& receiver, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(device.hasActiveInspectorCanvasCallTracer());
 
@@ -773,7 +773,7 @@ void InspectorCanvasAgent::recordAction(GPUDevice& device, uintptr_t receiver, R
         return;
 
     scheduleRecordingCanvasFrame(*inspectorCanvas);
-    inspectorCanvas->recordAction(WTF::move(name), receiver, receiverSwizzleType, WTF::move(arguments));
+    inspectorCanvas->recordAction(WTF::move(name), WTF::move(receiver), WTF::move(arguments));
 
     if (!inspectorCanvas->hasBufferSpace())
         didFinishRecordingCanvasFrame(device, true);

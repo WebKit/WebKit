@@ -29,6 +29,7 @@
     Conditional=WEBGL,
     GenerateIsReachable,
     LegacyNoInterfaceObject,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLCompressedTextureETC {
     /* Compressed Texture Format */
     const unsigned long COMPRESSED_R11_EAC                        = 0x9270;

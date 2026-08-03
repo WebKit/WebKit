@@ -27,6 +27,7 @@
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLBlendFuncExtended {
     const unsigned long SRC1_COLOR_WEBGL           = 0x88F9;
     const unsigned long SRC1_ALPHA_WEBGL           = 0x8589;

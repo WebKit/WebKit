@@ -32,7 +32,8 @@ typedef (Int32Array or sequence<GLint>) Int32List;
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable
+    GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLMultiDraw {
     undefined multiDrawArraysWEBGL(
         GLenum mode,

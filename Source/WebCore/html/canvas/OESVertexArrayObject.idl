@@ -27,6 +27,7 @@
     Conditional=WEBGL, 
     GenerateIsReachable,
     LegacyNoInterfaceObject,
+    CallTracer=InspectorCanvasCallTracer
 ] interface OESVertexArrayObject {
     const unsigned long VERTEX_ARRAY_BINDING_OES = 0x85B5;
 

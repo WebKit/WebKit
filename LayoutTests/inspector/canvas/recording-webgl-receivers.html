@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+let webGLContext = null;
+let offscreenWebGL2Context = null;
+let webGLLoseContextExtension = null;
+let offscreenWebGL2LoseContextExtension = null;
+let webGLAdditionalExtensionAction = null;
+
+function performActions() {
+    let contextsAndExtensions = [
+        [webGLContext, webGLLoseContextExtension],
+        [offscreenWebGL2Context, offscreenWebGL2LoseContextExtension],
+    ];
+    for (let [context, extension] of contextsAndExtensions) {
+        context.clearColor(1, 0, 0, 1);
+        context.clear(context.COLOR_BUFFER_BIT);
+        extension.restoreContext();
+        extension.restoreContext();
+        if (context === webGLContext) {
+            webGLAdditionalExtensionAction();
+            webGLAdditionalExtensionAction();
+        }
+        context.canvas.width = 4;
+        void context.canvas.width;
+    }
+
+    setTimeout(() => TestPage.dispatchEventToFrontend("LastFrame"), 0);
+}
+
+function cancelActions() {
+    // This function is expected by "resources/recording-utilities.js".
+}
+
+function load() {
+    webGLContext = document.querySelector("canvas").getContext("webgl");
+    offscreenWebGL2Context = new OffscreenCanvas(4, 4).getContext("webgl2");
+    webGLLoseContextExtension = webGLContext.getExtension("WEBGL_lose_context");
+    offscreenWebGL2LoseContextExtension = offscreenWebGL2Context.getExtension("WEBGL_lose_context");
+    let extension = webGLContext.getExtension("EXT_disjoint_timer_query");
+    if (extension)
+        webGLAdditionalExtensionAction = () => extension.createQueryEXT();
+    else if (extension = webGLContext.getExtension("OES_vertex_array_object"))
+        webGLAdditionalExtensionAction = () => extension.createVertexArrayOES();
+    else if (extension = webGLContext.getExtension("ANGLE_instanced_arrays"))
+        webGLAdditionalExtensionAction = () => extension.vertexAttribDivisorANGLE(0, 0);
+    console.assert(webGLAdditionalExtensionAction);
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGLReceivers");
+
+    function addTestCase({name, contextType}) {
+        suite.addTestCase({
+            name,
+            description: "Check that WebGL recording actions identify their receiver.",
+            test(resolve, reject) {
+                async function checkRecording(recording) {
+                    let actions = recording.frames.flatMap((frame) => frame.actions);
+                    let extensionActions = actions.filter((action) => action.name === "restoreContext");
+                    let extensionReceiver = extensionActions[0]?.receiver;
+                    let widthActions = actions.filter((action) => action.name === "width");
+                    let contextActions = actions.filter((action) => !action.receiver && action.name !== "width");
+                    InspectorTest.expectTrue(contextActions.every((action) => !action.receiver && !action.isCanvasReceiver), "Context actions should use the implicit context receiver.");
+                    InspectorTest.expectEqual(extensionActions.length, 2, "The recording should contain both extension actions.");
+                    InspectorTest.expectTrue(/^loseContext\d+$/.test(extensionReceiver), "Extension actions should identify a WEBGL_lose_context instance as their receiver.");
+                    InspectorTest.expectTrue(extensionActions.every((action) => action.receiver === extensionReceiver), "Actions on the same extension should use the same receiver.");
+                    InspectorTest.expectTrue(extensionActions.every((action) => action.isFunction), "Extension actions should be functions.");
+                    InspectorTest.expectTrue(extensionActions.every((action) => action.valid), "Extension actions should be valid.");
+                    if (contextType === WI.Canvas.ContextType.WebGL) {
+                        let additionalExtensionActions = actions.filter((action) => ["createQueryEXT", "createVertexArrayOES", "vertexAttribDivisorANGLE"].includes(action.name));
+                        let additionalExtensionReceiver = additionalExtensionActions[0]?.receiver;
+                        InspectorTest.expectEqual(additionalExtensionActions.length, 2, "The recording should contain both non-WebGL-named extension actions.");
+                        InspectorTest.expectTrue(/^(angleInstancedArrays|extDisjointTimerQuery|oesVertexArrayObject)\d+$/.test(additionalExtensionReceiver), "Non-WebGL-named extension actions should identify their receiver.");
+                        InspectorTest.expectTrue(additionalExtensionActions.every((action) => action.receiver === additionalExtensionReceiver), "Actions on the same non-WebGL-named extension should use the same receiver.");
+                    }
+                    InspectorTest.expectEqual(widthActions.length, 2, "The recording should contain the canvas width setter and getter.");
+                    InspectorTest.expectTrue(widthActions.every((action) => action.receiver === "canvas" && action.isCanvasReceiver), "Canvas width actions should use the implicit canvas receiver.");
+                }
+
+                startRecording(contextType, resolve, reject, {frameCount: 1, callback: checkRecording});
+            },
+            timeout: -1,
+        });
+    }
+
+    addTestCase({
+        name: "Canvas.recordingWebGLReceivers.WebGL",
+        contextType: WI.Canvas.ContextType.WebGL,
+    });
+
+    addTestCase({
+        name: "Canvas.recordingWebGLReceivers.OffscreenWebGL2",
+        contextType: WI.Canvas.ContextType.OffscreenWebGL2,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <canvas width="4" height="4"></canvas>
+    <p>Test that CanvasManager records the receiver of WebGL actions.</p>
+</body>
+</html>

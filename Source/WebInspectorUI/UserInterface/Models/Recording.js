@@ -187,6 +187,48 @@ WI.Recording = class Recording extends WI.Object
     {
         let name = null;
         switch (swizzleType) {
+        case WI.Recording.Swizzle.WebGLBuffer:
+            name = WI.unlocalizedString("buffer");
+            break;
+        case WI.Recording.Swizzle.WebGLFramebuffer:
+            name = WI.unlocalizedString("framebuffer");
+            break;
+        case WI.Recording.Swizzle.WebGLRenderbuffer:
+            name = WI.unlocalizedString("renderbuffer");
+            break;
+        case WI.Recording.Swizzle.WebGLTexture:
+            name = WI.unlocalizedString("texture");
+            break;
+        case WI.Recording.Swizzle.WebGLShader:
+            name = WI.unlocalizedString("shader");
+            break;
+        case WI.Recording.Swizzle.WebGLProgram:
+            name = WI.unlocalizedString("program");
+            break;
+        case WI.Recording.Swizzle.WebGLUniformLocation:
+            name = WI.unlocalizedString("uniformLocation");
+            break;
+        case WI.Recording.Swizzle.WebGLQuery:
+            name = WI.unlocalizedString("query");
+            break;
+        case WI.Recording.Swizzle.WebGLSampler:
+            name = WI.unlocalizedString("sampler");
+            break;
+        case WI.Recording.Swizzle.WebGLSync:
+            name = WI.unlocalizedString("sync");
+            break;
+        case WI.Recording.Swizzle.WebGLTimerQueryEXT:
+            name = WI.unlocalizedString("timerQueryEXT");
+            break;
+        case WI.Recording.Swizzle.WebGLTransformFeedback:
+            name = WI.unlocalizedString("transformFeedback");
+            break;
+        case WI.Recording.Swizzle.WebGLVertexArrayObject:
+            name = WI.unlocalizedString("vertexArrayObject");
+            break;
+        case WI.Recording.Swizzle.WebGLVertexArrayObjectOES:
+            name = WI.unlocalizedString("vertexArrayObjectOES");
+            break;
         case WI.Recording.Swizzle.Canvas:
             name = WI.unlocalizedString("canvas");
             break;
@@ -247,6 +289,168 @@ WI.Recording = class Recording extends WI.Object
         case WI.Recording.Swizzle.GPUTextureView:
             name = WI.unlocalizedString("textureView");
             break;
+        case WI.Recording.Swizzle.WebGLBlendFuncExtended:
+            name = WI.unlocalizedString("blendFuncExtended");
+            break;
+        case WI.Recording.Swizzle.WebGLClipCullDistance:
+            name = WI.unlocalizedString("clipCullDistance");
+            break;
+        case WI.Recording.Swizzle.WebGLColorBufferFloat:
+            name = WI.unlocalizedString("colorBufferFloat");
+            break;
+        case WI.Recording.Swizzle.WebGLCompressedTextureASTC:
+            name = WI.unlocalizedString("compressedTextureASTC");
+            break;
+        case WI.Recording.Swizzle.WebGLCompressedTextureETC:
+            name = WI.unlocalizedString("compressedTextureETC");
+            break;
+        case WI.Recording.Swizzle.WebGLCompressedTextureETC1:
+            name = WI.unlocalizedString("compressedTextureETC1");
+            break;
+        case WI.Recording.Swizzle.WebGLCompressedTexturePVRTC:
+            name = WI.unlocalizedString("compressedTexturePVRTC");
+            break;
+        case WI.Recording.Swizzle.WebGLCompressedTextureS3TC:
+            name = WI.unlocalizedString("compressedTextureS3TC");
+            break;
+        case WI.Recording.Swizzle.WebGLCompressedTextureS3TCsRGB:
+            name = WI.unlocalizedString("compressedTextureS3TCsRGB");
+            break;
+        case WI.Recording.Swizzle.WebGLDebugRendererInfo:
+            name = WI.unlocalizedString("debugRendererInfo");
+            break;
+        case WI.Recording.Swizzle.WebGLDebugShaders:
+            name = WI.unlocalizedString("debugShaders");
+            break;
+        case WI.Recording.Swizzle.WebGLDepthTexture:
+            name = WI.unlocalizedString("depthTexture");
+            break;
+        case WI.Recording.Swizzle.WebGLDrawBuffers:
+            name = WI.unlocalizedString("drawBuffers");
+            break;
+        case WI.Recording.Swizzle.WebGLDrawInstancedBaseVertexBaseInstance:
+            name = WI.unlocalizedString("drawInstancedBaseVertexBaseInstance");
+            break;
+        case WI.Recording.Swizzle.WebGLLoseContext:
+            name = WI.unlocalizedString("loseContext");
+            break;
+        case WI.Recording.Swizzle.WebGLMultiDraw:
+            name = WI.unlocalizedString("multiDraw");
+            break;
+        case WI.Recording.Swizzle.WebGLMultiDrawInstancedBaseVertexBaseInstance:
+            name = WI.unlocalizedString("multiDrawInstancedBaseVertexBaseInstance");
+            break;
+        case WI.Recording.Swizzle.WebGLPolygonMode:
+            name = WI.unlocalizedString("polygonMode");
+            break;
+        case WI.Recording.Swizzle.WebGLProvokingVertex:
+            name = WI.unlocalizedString("provokingVertex");
+            break;
+        case WI.Recording.Swizzle.WebGLRenderSharedExponent:
+            name = WI.unlocalizedString("renderSharedExponent");
+            break;
+        case WI.Recording.Swizzle.WebGLStencilTexturing:
+            name = WI.unlocalizedString("stencilTexturing");
+            break;
+        case WI.Recording.Swizzle.ANGLEInstancedArrays:
+            name = WI.unlocalizedString("angleInstancedArrays");
+            break;
+        case WI.Recording.Swizzle.EXTBlendMinMax:
+            name = WI.unlocalizedString("extBlendMinMax");
+            break;
+        case WI.Recording.Swizzle.EXTClipControl:
+            name = WI.unlocalizedString("extClipControl");
+            break;
+        case WI.Recording.Swizzle.EXTColorBufferFloat:
+            name = WI.unlocalizedString("extColorBufferFloat");
+            break;
+        case WI.Recording.Swizzle.EXTColorBufferHalfFloat:
+            name = WI.unlocalizedString("extColorBufferHalfFloat");
+            break;
+        case WI.Recording.Swizzle.EXTConservativeDepth:
+            name = WI.unlocalizedString("extConservativeDepth");
+            break;
+        case WI.Recording.Swizzle.EXTDepthClamp:
+            name = WI.unlocalizedString("extDepthClamp");
+            break;
+        case WI.Recording.Swizzle.EXTDisjointTimerQuery:
+            name = WI.unlocalizedString("extDisjointTimerQuery");
+            break;
+        case WI.Recording.Swizzle.EXTDisjointTimerQueryWebGL2:
+            name = WI.unlocalizedString("extDisjointTimerQueryWebGL2");
+            break;
+        case WI.Recording.Swizzle.EXTFloatBlend:
+            name = WI.unlocalizedString("extFloatBlend");
+            break;
+        case WI.Recording.Swizzle.EXTFragDepth:
+            name = WI.unlocalizedString("extFragDepth");
+            break;
+        case WI.Recording.Swizzle.EXTPolygonOffsetClamp:
+            name = WI.unlocalizedString("extPolygonOffsetClamp");
+            break;
+        case WI.Recording.Swizzle.EXTRenderSnorm:
+            name = WI.unlocalizedString("extRenderSnorm");
+            break;
+        case WI.Recording.Swizzle.EXTShaderTextureLOD:
+            name = WI.unlocalizedString("extShaderTextureLOD");
+            break;
+        case WI.Recording.Swizzle.EXTTextureCompressionBPTC:
+            name = WI.unlocalizedString("extTextureCompressionBPTC");
+            break;
+        case WI.Recording.Swizzle.EXTTextureCompressionRGTC:
+            name = WI.unlocalizedString("extTextureCompressionRGTC");
+            break;
+        case WI.Recording.Swizzle.EXTTextureFilterAnisotropic:
+            name = WI.unlocalizedString("extTextureFilterAnisotropic");
+            break;
+        case WI.Recording.Swizzle.EXTTextureMirrorClampToEdge:
+            name = WI.unlocalizedString("extTextureMirrorClampToEdge");
+            break;
+        case WI.Recording.Swizzle.EXTTextureNorm16:
+            name = WI.unlocalizedString("extTextureNorm16");
+            break;
+        case WI.Recording.Swizzle.EXTsRGB:
+            name = WI.unlocalizedString("extsRGB");
+            break;
+        case WI.Recording.Swizzle.KHRParallelShaderCompile:
+            name = WI.unlocalizedString("khrParallelShaderCompile");
+            break;
+        case WI.Recording.Swizzle.NVShaderNoperspectiveInterpolation:
+            name = WI.unlocalizedString("nvShaderNoperspectiveInterpolation");
+            break;
+        case WI.Recording.Swizzle.OESDrawBuffersIndexed:
+            name = WI.unlocalizedString("oesDrawBuffersIndexed");
+            break;
+        case WI.Recording.Swizzle.OESElementIndexUint:
+            name = WI.unlocalizedString("oesElementIndexUint");
+            break;
+        case WI.Recording.Swizzle.OESFBORenderMipmap:
+            name = WI.unlocalizedString("oesFBORenderMipmap");
+            break;
+        case WI.Recording.Swizzle.OESSampleVariables:
+            name = WI.unlocalizedString("oesSampleVariables");
+            break;
+        case WI.Recording.Swizzle.OESShaderMultisampleInterpolation:
+            name = WI.unlocalizedString("oesShaderMultisampleInterpolation");
+            break;
+        case WI.Recording.Swizzle.OESStandardDerivatives:
+            name = WI.unlocalizedString("oesStandardDerivatives");
+            break;
+        case WI.Recording.Swizzle.OESTextureFloat:
+            name = WI.unlocalizedString("oesTextureFloat");
+            break;
+        case WI.Recording.Swizzle.OESTextureFloatLinear:
+            name = WI.unlocalizedString("oesTextureFloatLinear");
+            break;
+        case WI.Recording.Swizzle.OESTextureHalfFloat:
+            name = WI.unlocalizedString("oesTextureHalfFloat");
+            break;
+        case WI.Recording.Swizzle.OESTextureHalfFloatLinear:
+            name = WI.unlocalizedString("oesTextureHalfFloatLinear");
+            break;
+        case WI.Recording.Swizzle.OESVertexArrayObject:
+            name = WI.unlocalizedString("oesVertexArrayObject");
+            break;
         default:
             console.assert(false, swizzleType);
             return null;
@@ -304,10 +508,14 @@ WI.Recording = class Recording extends WI.Object
             return WI.unlocalizedString("WebGLSampler");
         case WI.Recording.Swizzle.WebGLSync:
             return WI.unlocalizedString("WebGLSync");
+        case WI.Recording.Swizzle.WebGLTimerQueryEXT:
+            return WI.unlocalizedString("WebGLTimerQueryEXT");
         case WI.Recording.Swizzle.WebGLTransformFeedback:
             return WI.unlocalizedString("WebGLTransformFeedback");
         case WI.Recording.Swizzle.WebGLVertexArrayObject:
             return WI.unlocalizedString("WebGLVertexArrayObject");
+        case WI.Recording.Swizzle.WebGLVertexArrayObjectOES:
+            return WI.unlocalizedString("WebGLVertexArrayObjectOES");
         case WI.Recording.Swizzle.DOMPointInit:
             return WI.unlocalizedString("DOMPointInit");
         default:
@@ -482,8 +690,10 @@ WI.Recording = class Recording extends WI.Object
             || type === WI.Recording.Swizzle.WebGLQuery
             || type === WI.Recording.Swizzle.WebGLSampler
             || type === WI.Recording.Swizzle.WebGLSync
+            || type === WI.Recording.Swizzle.WebGLTimerQueryEXT
             || type === WI.Recording.Swizzle.WebGLTransformFeedback
-            || type === WI.Recording.Swizzle.WebGLVertexArrayObject) {
+            || type === WI.Recording.Swizzle.WebGLVertexArrayObject
+            || type === WI.Recording.Swizzle.WebGLVertexArrayObjectOES) {
             return index;
         }
 
@@ -1129,6 +1339,62 @@ WI.Recording.Swizzle = {
     GPUShaderModule: 43,
     GPUTexture: 44,
     GPUTextureView: 45,
+    WebGLBlendFuncExtended: 46,
+    WebGLClipCullDistance: 47,
+    WebGLColorBufferFloat: 48,
+    WebGLCompressedTextureASTC: 49,
+    WebGLCompressedTextureETC: 50,
+    WebGLCompressedTextureETC1: 51,
+    WebGLCompressedTexturePVRTC: 52,
+    WebGLCompressedTextureS3TC: 53,
+    WebGLCompressedTextureS3TCsRGB: 54,
+    WebGLDebugRendererInfo: 55,
+    WebGLDebugShaders: 56,
+    WebGLDepthTexture: 57,
+    WebGLDrawBuffers: 58,
+    WebGLDrawInstancedBaseVertexBaseInstance: 59,
+    WebGLLoseContext: 60,
+    WebGLMultiDraw: 61,
+    WebGLMultiDrawInstancedBaseVertexBaseInstance: 62,
+    WebGLPolygonMode: 63,
+    WebGLProvokingVertex: 64,
+    WebGLRenderSharedExponent: 65,
+    WebGLStencilTexturing: 66,
+    WebGLTimerQueryEXT: 67,
+    WebGLVertexArrayObjectOES: 68,
+    ANGLEInstancedArrays: 69,
+    EXTBlendMinMax: 70,
+    EXTClipControl: 71,
+    EXTColorBufferFloat: 72,
+    EXTColorBufferHalfFloat: 73,
+    EXTConservativeDepth: 74,
+    EXTDepthClamp: 75,
+    EXTDisjointTimerQuery: 76,
+    EXTDisjointTimerQueryWebGL2: 77,
+    EXTFloatBlend: 78,
+    EXTFragDepth: 79,
+    EXTPolygonOffsetClamp: 80,
+    EXTRenderSnorm: 81,
+    EXTShaderTextureLOD: 82,
+    EXTTextureCompressionBPTC: 83,
+    EXTTextureCompressionRGTC: 84,
+    EXTTextureFilterAnisotropic: 85,
+    EXTTextureMirrorClampToEdge: 86,
+    EXTTextureNorm16: 87,
+    EXTsRGB: 88,
+    KHRParallelShaderCompile: 89,
+    NVShaderNoperspectiveInterpolation: 90,
+    OESDrawBuffersIndexed: 91,
+    OESElementIndexUint: 92,
+    OESFBORenderMipmap: 93,
+    OESSampleVariables: 94,
+    OESShaderMultisampleInterpolation: 95,
+    OESStandardDerivatives: 96,
+    OESTextureFloat: 97,
+    OESTextureFloatLinear: 98,
+    OESTextureHalfFloat: 99,
+    OESTextureHalfFloatLinear: 100,
+    OESVertexArrayObject: 101,
 
     // Special frontend-only swizzle types.
     CallStack: Symbol("CallStack"),

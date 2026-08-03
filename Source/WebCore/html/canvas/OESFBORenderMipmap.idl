@@ -27,5 +27,6 @@
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface OESFBORenderMipmap {
 };

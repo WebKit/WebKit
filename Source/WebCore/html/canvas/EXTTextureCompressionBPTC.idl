@@ -27,6 +27,7 @@
     Conditional=WEBGL,
     GenerateIsReachable,
     LegacyNoInterfaceObject,
+    CallTracer=InspectorCanvasCallTracer
 ] interface EXTTextureCompressionBPTC {
     const unsigned long COMPRESSED_RGBA_BPTC_UNORM_EXT = 0x8E8C;
     const unsigned long COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT = 0x8E8D;

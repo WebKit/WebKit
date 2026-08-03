@@ -27,6 +27,7 @@
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface OESDrawBuffersIndexed {
     undefined enableiOES(unsigned long target, unsigned long index);
     undefined disableiOES(unsigned long target, unsigned long index);

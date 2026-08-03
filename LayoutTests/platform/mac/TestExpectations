@@ -899,6 +899,7 @@ webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-frameCount.html 
 webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-full.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-memoryLimit.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-snapshots.html [ Pass Failure Timeout ]
+webkit.org/b/174066 inspector/canvas/recording-webgl-receivers.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-frameCount.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-full.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-memoryLimit.html [ Pass Failure Timeout ]

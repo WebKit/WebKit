@@ -100,18 +100,18 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case WI.Recording.Swizzle.WebGLQuery:
             case WI.Recording.Swizzle.WebGLSampler:
             case WI.Recording.Swizzle.WebGLSync:
+            case WI.Recording.Swizzle.WebGLTimerQueryEXT:
             case WI.Recording.Swizzle.WebGLTransformFeedback:
-            case WI.Recording.Swizzle.WebGLVertexArrayObject: {
-                let parameterTypeText = WI.Recording.displayNameForSwizzleType(swizzleType);
+            case WI.Recording.Swizzle.WebGLVertexArrayObject:
+            case WI.Recording.Swizzle.WebGLVertexArrayObjectOES:
                 if (!isNaN(parameter)) {
                     parameterElement.classList.add("object-handle");
-                    parameterElement.textContent = `${parameterTypeText}${parameter + 1}`;
+                    parameterElement.textContent = WI.Recording.displayNameForReceiver([parameter, swizzleType]);
                 } else {
                     parameterElement.classList.add("swizzled");
-                    parameterElement.textContent = parameterTypeText;
+                    parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
                 }
                 break;
-            }
             }
 
             if (!parameterElement.textContent) {

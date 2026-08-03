@@ -28,6 +28,7 @@
     EnabledBySetting=WebGLEnabled,
     GenerateIsReachable=Impl,
     SkipVTableValidation,
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLTexture {
 };

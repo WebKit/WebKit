@@ -47,9 +47,12 @@
 #include "SVGImageElement.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLCopyElementImageConfig.h"
+#include "WebGLExtension.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <limits>
+#include <type_traits>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -60,6 +63,26 @@
 #endif
 
 namespace WebCore {
+
+class GPUBindGroup;
+class GPUBindGroupLayout;
+class GPUBuffer;
+class GPUCommandBuffer;
+class GPUCommandEncoder;
+class GPUComputePassEncoder;
+class GPUComputePipeline;
+class GPUExternalTexture;
+class GPUPipelineLayout;
+class GPUQuerySet;
+class GPUQueue;
+class GPURenderBundle;
+class GPURenderBundleEncoder;
+class GPURenderPassEncoder;
+class GPURenderPipeline;
+class GPUSampler;
+class GPUShaderModule;
+class GPUTexture;
+class GPUTextureView;
 
 template<typename> struct InspectorCanvasArgumentProcessor;
 
@@ -258,7 +281,83 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebCodecsVideoFr
 
 #endif // ENABLE(WEB_CODECS)
 
+template<typename Receiver>
+constexpr RecordingSwizzleType recordingSwizzleTypeForWebGPUReceiver()
+{
+    using ReceiverType = std::remove_cvref_t<Receiver>;
+    if constexpr (std::is_same_v<ReceiverType, GPUBindGroup>)
+        return RecordingSwizzleType::GPUBindGroup;
+    if constexpr (std::is_same_v<ReceiverType, GPUBindGroupLayout>)
+        return RecordingSwizzleType::GPUBindGroupLayout;
+    if constexpr (std::is_same_v<ReceiverType, GPUBuffer>)
+        return RecordingSwizzleType::GPUBuffer;
+    if constexpr (std::is_same_v<ReceiverType, GPUCommandBuffer>)
+        return RecordingSwizzleType::GPUCommandBuffer;
+    if constexpr (std::is_same_v<ReceiverType, GPUCommandEncoder>)
+        return RecordingSwizzleType::GPUCommandEncoder;
+    if constexpr (std::is_same_v<ReceiverType, GPUComputePassEncoder>)
+        return RecordingSwizzleType::GPUComputePassEncoder;
+    if constexpr (std::is_same_v<ReceiverType, GPUComputePipeline>)
+        return RecordingSwizzleType::GPUComputePipeline;
+    if constexpr (std::is_same_v<ReceiverType, GPUExternalTexture>)
+        return RecordingSwizzleType::GPUExternalTexture;
+    if constexpr (std::is_same_v<ReceiverType, GPUPipelineLayout>)
+        return RecordingSwizzleType::GPUPipelineLayout;
+    if constexpr (std::is_same_v<ReceiverType, GPUQuerySet>)
+        return RecordingSwizzleType::GPUQuerySet;
+    if constexpr (std::is_same_v<ReceiverType, GPUQueue>)
+        return RecordingSwizzleType::GPUQueue;
+    if constexpr (std::is_same_v<ReceiverType, GPURenderBundle>)
+        return RecordingSwizzleType::GPURenderBundle;
+    if constexpr (std::is_same_v<ReceiverType, GPURenderBundleEncoder>)
+        return RecordingSwizzleType::GPURenderBundleEncoder;
+    if constexpr (std::is_same_v<ReceiverType, GPURenderPassEncoder>)
+        return RecordingSwizzleType::GPURenderPassEncoder;
+    if constexpr (std::is_same_v<ReceiverType, GPURenderPipeline>)
+        return RecordingSwizzleType::GPURenderPipeline;
+    if constexpr (std::is_same_v<ReceiverType, GPUSampler>)
+        return RecordingSwizzleType::GPUSampler;
+    if constexpr (std::is_same_v<ReceiverType, GPUShaderModule>)
+        return RecordingSwizzleType::GPUShaderModule;
+    if constexpr (std::is_same_v<ReceiverType, GPUTexture>)
+        return RecordingSwizzleType::GPUTexture;
+    if constexpr (std::is_same_v<ReceiverType, GPUTextureView>)
+        return RecordingSwizzleType::GPUTextureView;
+    return RecordingSwizzleType::None;
+}
+
+template<typename IDLType>
+    requires (requires (IDLType& object) { object.device(); })
+struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const IDLType& argument)
+    {
+        constexpr auto swizzleType = recordingSwizzleTypeForWebGPUReceiver<IDLType>();
+        static_assert(swizzleType != RecordingSwizzleType::None);
+
+        size_t identifier = context.identifierForRecordingObject(reinterpret_cast<uintptr_t>(&argument));
+        RELEASE_ASSERT(identifier <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        return { { JSON::Value::create(static_cast<int>(identifier)), swizzleType } };
+    }
+};
+
 #if ENABLE(WEBGL)
+
+class WebGLTimerQueryEXT;
+class WebGLVertexArrayObjectOES;
+
+RecordingSwizzleType recordingSwizzleTypeForWebGLExtension(WebGLExtensionName);
+
+template<typename IDLType>
+    requires (std::is_base_of_v<WebGLExtensionBase, IDLType>)
+struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const Ref<IDLType>& argument)
+    {
+        auto swizzleType = recordingSwizzleTypeForWebGLExtension(argument->name());
+        size_t identifier = context.identifierForRecordingObject(reinterpret_cast<uintptr_t>(argument.ptr()));
+        RELEASE_ASSERT(identifier <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        return { { JSON::Value::create(static_cast<int>(identifier)), swizzleType } };
+    }
+};
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLBuffer>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLBuffer>&);
@@ -292,6 +391,10 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLSync>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLSync>&);
 };
 
+template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTimerQueryEXT>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTimerQueryEXT>&);
+};
+
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTexture>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTexture>&);
 };
@@ -302,6 +405,10 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLUniformLoca
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObject>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLVertexArrayObject>&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObjectOES>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLVertexArrayObjectOES>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTransformFeedback>> {
@@ -418,6 +525,9 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInt32ListUnion> {
 template<> struct InspectorCanvasArgumentProcessor<IDLUint32ListUnion> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGL2RenderingContext::Uint32List::VariantType&);
 };
+
+template<> struct InspectorCanvasArgumentProcessor<IDLUnion<IDLInt32Array, IDLSequence<IDLLong>>> : InspectorCanvasArgumentProcessor<IDLInt32ListUnion> { };
+template<> struct InspectorCanvasArgumentProcessor<IDLUnion<IDLUint32Array, IDLSequence<IDLUnsignedLong>>> : InspectorCanvasArgumentProcessor<IDLUint32ListUnion> { };
 
 #endif // ENABLE(WEBGL)
 

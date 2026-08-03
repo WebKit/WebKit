@@ -88,8 +88,13 @@ void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, Strin
 {
     ASSERT(canvasBase.renderingContext());
     Ref context = *canvasBase.renderingContext();
-    if (CheckedPtr canvasAgent = enabledCanvasAgent(context))
-        canvasAgent->recordAction(context, RecordingSwizzleType::Canvas, WTF::move(name), WTF::move(arguments));
+    recordAction(context, ProcessedArgument { JSON::Value::create(0), RecordingSwizzleType::Canvas }, WTF::move(name), WTF::move(arguments));
+}
+
+void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, ProcessedArgument&& receiver, String&& name, ProcessedArguments&& arguments)
+{
+    if (CheckedPtr canvasAgent = enabledCanvasAgent(canvasRenderingContext))
+        canvasAgent->recordAction(canvasRenderingContext, WTF::move(receiver), WTF::move(name), WTF::move(arguments));
 }
 
 void InspectorCanvasCallTracer::recordAction(GPUDevice& device, String&& name, InspectorCanvasProcessedArguments&& arguments)
@@ -98,10 +103,10 @@ void InspectorCanvasCallTracer::recordAction(GPUDevice& device, String&& name, I
         canvasAgent->recordAction(device, WTF::move(name), WTF::move(arguments));
 }
 
-void InspectorCanvasCallTracer::recordAction(GPUDevice& device, uintptr_t receiver, RecordingSwizzleType receiverSwizzleType, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(GPUDevice& device, ProcessedArgument&& receiver, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     if (CheckedPtr canvasAgent = enabledCanvasAgent(device))
-        canvasAgent->recordAction(device, receiver, receiverSwizzleType, WTF::move(name), WTF::move(arguments));
+        canvasAgent->recordAction(device, WTF::move(receiver), WTF::move(name), WTF::move(arguments));
 }
 
 } // namespace WebCore

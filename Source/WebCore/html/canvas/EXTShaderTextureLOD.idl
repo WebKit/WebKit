@@ -26,6 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable
+    GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface EXTShaderTextureLOD {
 };

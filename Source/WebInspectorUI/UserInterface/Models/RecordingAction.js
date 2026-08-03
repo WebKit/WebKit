@@ -392,7 +392,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             this._isGetter = !this._parameters.length;
             this._isVisual = !this._isGetter;
         } else {
-            this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
+            let isWebGLObjectAction = this._receiver && (recording.isCanvasWebGL || recording.isCanvasWebGL2);
+            this._isFunction = isWebGLObjectAction || WI.RecordingAction.isFunctionForType(recording.type, this._name);
             this._isGetter = !this._isFunction && !this._parameters.length;
 
             if (this._snapshot)
@@ -402,7 +403,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 this._isVisual = visualNames ? visualNames.has(this._name) : false;
             }
 
-            if (this._valid) {
+            if (this._valid && !isWebGLObjectAction) {
                 let prototype = WI.RecordingAction._prototypeForType(recording.type);
                 if (prototype && !(name in prototype)) {
                     this.markInvalid();
@@ -755,14 +756,28 @@ WI.RecordingAction._visualNames = {
     [WI.Recording.Type.CanvasWebGL]: new Set([
         "clear",
         "drawArrays",
+        "drawArraysInstancedANGLE",
         "drawElements",
+        "drawElementsInstancedANGLE",
+        "multiDrawArraysWEBGL",
+        "multiDrawArraysInstancedWEBGL",
+        "multiDrawElementsWEBGL",
+        "multiDrawElementsInstancedWEBGL",
     ]),
     [WI.Recording.Type.CanvasWebGL2]: new Set([
         "clear",
         "drawArrays",
         "drawArraysInstanced",
+        "drawArraysInstancedBaseInstanceWEBGL",
         "drawElements",
         "drawElementsInstanced",
+        "drawElementsInstancedBaseVertexBaseInstanceWEBGL",
+        "multiDrawArraysWEBGL",
+        "multiDrawArraysInstancedBaseInstanceWEBGL",
+        "multiDrawArraysInstancedWEBGL",
+        "multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL",
+        "multiDrawElementsInstancedWEBGL",
+        "multiDrawElementsWEBGL",
     ]),
     [WI.Recording.Type.CanvasWebGPU]: new Set([
         "copyExternalImageToTexture",

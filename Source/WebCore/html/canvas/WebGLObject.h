@@ -126,6 +126,8 @@ public:
 
     Lock& NODELETE objectGraphLockForContext();
 
+    bool hasActiveInspectorCanvasCallTracer() const;
+
 protected:
     WebGLObject(WebGLRenderingContextBase&, PlatformGLObject);
     WebGLObject() = default;

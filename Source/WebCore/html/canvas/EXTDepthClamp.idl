@@ -27,6 +27,7 @@
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface EXTDepthClamp {
     const unsigned long DEPTH_CLAMP_EXT = 0x864F;
 };

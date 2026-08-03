@@ -95,8 +95,7 @@ public:
     bool NODELETE currentFrameHasData() const;
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(String&&, RecordingSwizzleType, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(String&&, uintptr_t receiver, RecordingSwizzleType, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(String&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
 
     Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
 

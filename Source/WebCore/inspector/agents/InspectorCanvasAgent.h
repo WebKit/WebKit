@@ -33,7 +33,6 @@
 #include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
-#include <cstdint>
 #include <initializer_list>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
@@ -127,9 +126,9 @@ public:
     void didFinishRecordingCanvasFrame(GPUDevice&, bool forceDispatch = false);
 
     void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(CanvasRenderingContext&, RecordingSwizzleType, String&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(CanvasRenderingContext&, InspectorCanvasProcessedArgument&& receiver, String&&, InspectorCanvasProcessedArguments&& = { });
     void recordAction(GPUDevice&, String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(GPUDevice&, uintptr_t receiver, RecordingSwizzleType, String&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(GPUDevice&, InspectorCanvasProcessedArgument&& receiver, String&&, InspectorCanvasProcessedArguments&& = { });
 
     RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
     RefPtr<InspectorCanvas> findInspectorCanvas(const CanvasRenderingContext&);

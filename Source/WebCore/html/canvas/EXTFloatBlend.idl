@@ -27,5 +27,6 @@
     Conditional=WEBGL,
     GenerateIsReachable,
     LegacyNoInterfaceObject,
+    CallTracer=InspectorCanvasCallTracer
 ] interface EXTFloatBlend {
 };

@@ -28,6 +28,7 @@
     Conditional=WEBGL,
     EnabledBySetting=WebGLEnabled,
     GenerateIsReachable=Impl,
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLTimerQueryEXT {
 };

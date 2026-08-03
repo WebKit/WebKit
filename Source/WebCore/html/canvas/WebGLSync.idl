@@ -26,6 +26,7 @@
 [
     Conditional=WEBGL,
     EnabledBySetting=WebGLEnabled,
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLSync {
 };

@@ -111,6 +111,12 @@ bool WebGLObject::validate(const WebGLRenderingContextBase& context) const
     return &context == m_context;
 }
 
+bool WebGLObject::hasActiveInspectorCanvasCallTracer() const
+{
+    RefPtr context = m_context.get();
+    return context && context->hasActiveInspectorCanvasCallTracer();
+}
+
 WebCoreOpaqueRoot root(WebGLObject* object)
 {
     return WebCoreOpaqueRoot { object };

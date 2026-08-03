@@ -27,6 +27,7 @@
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLPolygonMode {
     const unsigned long POLYGON_MODE_WEBGL = 0x0B40;
 

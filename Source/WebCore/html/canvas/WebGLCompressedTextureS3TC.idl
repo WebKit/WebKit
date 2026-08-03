@@ -27,6 +27,7 @@
     Conditional=WEBGL,
     GenerateIsReachable,
     LegacyNoInterfaceObject,
+    CallTracer=InspectorCanvasCallTracer
 ] interface WebGLCompressedTextureS3TC {
     const unsigned long COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0;
     const unsigned long COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1;

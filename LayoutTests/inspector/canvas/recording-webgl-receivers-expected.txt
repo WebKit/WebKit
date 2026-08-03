@@ -1,0 +1,27 @@
+Test that CanvasManager records the receiver of WebGL actions.
+
+
+== Running test suite: Canvas.recordingWebGLReceivers
+-- Running test case: Canvas.recordingWebGLReceivers.WebGL
+PASS: Context actions should use the implicit context receiver.
+PASS: The recording should contain both extension actions.
+PASS: Extension actions should identify a WEBGL_lose_context instance as their receiver.
+PASS: Actions on the same extension should use the same receiver.
+PASS: Extension actions should be functions.
+PASS: Extension actions should be valid.
+PASS: The recording should contain both non-WebGL-named extension actions.
+PASS: Non-WebGL-named extension actions should identify their receiver.
+PASS: Actions on the same non-WebGL-named extension should use the same receiver.
+PASS: The recording should contain the canvas width setter and getter.
+PASS: Canvas width actions should use the implicit canvas receiver.
+
+-- Running test case: Canvas.recordingWebGLReceivers.OffscreenWebGL2
+PASS: Context actions should use the implicit context receiver.
+PASS: The recording should contain both extension actions.
+PASS: Extension actions should identify a WEBGL_lose_context instance as their receiver.
+PASS: Actions on the same extension should use the same receiver.
+PASS: Extension actions should be functions.
+PASS: Extension actions should be valid.
+PASS: The recording should contain the canvas width setter and getter.
+PASS: Canvas width actions should use the implicit canvas receiver.
+
