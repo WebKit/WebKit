@@ -118,6 +118,7 @@ public:
 #endif // ENABLE(WEBGL)
     void didCreateWebGPUDevice(GPUDevice&);
     void willDestroyWebGPUDevice(GPUDevice&);
+    virtual void didChangeGPUDeviceClientNodes(GPUDevice&);
     void didCreateWebGPUComputePipeline(GPUDevice&, GPUComputePipeline&);
     void willDestroyWebGPUComputePipeline(GPUComputePipeline&);
     void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
@@ -143,6 +144,7 @@ protected:
     void reset();
     void unbindCanvas(InspectorCanvas&);
 
+    virtual Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(InspectorCanvas&, bool captureBacktrace);
     virtual bool matchesCurrentContext(ScriptExecutionContext*) const = 0;
 
     const UniqueRef<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
@@ -165,6 +167,7 @@ private:
 
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
     InspectorCanvas& bindCanvas(GPUDevice&, bool captureBacktrace);
+    void dispatchCanvasSizeChanged(InspectorCanvas&);
 
     void unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, const String& programId);

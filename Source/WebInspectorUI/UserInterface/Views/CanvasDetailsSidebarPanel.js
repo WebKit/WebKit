@@ -32,7 +32,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this.element.classList.add("canvas");
 
         this._canvas = null;
-        this._node = null;
+        this._nodeRequestPromise = null;
 
         this._sections = [];
         this._emptyContentPlaceholder = null;
@@ -68,17 +68,13 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (canvas === this._canvas)
             return;
 
-        if (this._node) {
-            this._node.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
-            this._node.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
-
-            this._node = null;
-        }
+        this._nodeRequestPromise = null;
 
         if (this._canvas) {
             this._canvas.removeEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
             this._canvas.removeEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
-            this._canvas.removeEventListener(WI.Canvas.Event.ClientNodesChanged, this._refreshClientsSection, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.SizeChanged, this._refreshSourceSection, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.ClientNodesChanged, this._handleClientNodesChanged, this);
         }
 
         this._canvas = canvas || null;
@@ -86,7 +82,8 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (this._canvas) {
             this._canvas.addEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
             this._canvas.addEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
-            this._canvas.addEventListener(WI.Canvas.Event.ClientNodesChanged, this._refreshClientsSection, this);
+            this._canvas.addEventListener(WI.Canvas.Event.SizeChanged, this._refreshSourceSection, this);
+            this._canvas.addEventListener(WI.Canvas.Event.ClientNodesChanged, this._handleClientNodesChanged, this);
         }
 
         this.needsLayout();
@@ -199,72 +196,34 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (!this.didInitialLayout)
             return;
 
-        let hideNode = this._canvas.cssCanvasName || this._canvas.contextType === WI.Canvas.ContextType.WebGPU;
-
-        this._nodeRow.value = hideNode ? null : emDash;
-        this._cssCanvasRow.value = this._canvas.cssCanvasName || null;
-        this._widthRow.value = emDash;
-        this._heightRow.value = emDash;
         this._detachedRow.value = null;
 
-        this._canvas.requestNode().then((node) => {
-            if (!node) {
-                this._nodeRow.value = null;
-                return;
-            }
+        if (this._canvas.cssCanvasNames.length)
+            this._nodeRow.value = null;
+        else {
+            let nodeRequestPromise = this._canvas.requestNode();
+            this._nodeRequestPromise = nodeRequestPromise;
+            this._nodeRequestPromise.then((node) => {
+                if (this._nodeRequestPromise !== nodeRequestPromise)
+                    return;
 
-            if (node !== this._node) {
-                if (this._node) {
-                    this._node.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
-                    this._node.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
-
-                    this._node = null;
+                if (!node) {
+                    this._nodeRow.value = null;
+                    return;
                 }
 
-                this._node = node;
+                this._nodeRow.value = WI.linkifyNodeReference(node);
+                this._detachedRow.value = node.parentNode ? null : WI.UIString("Yes");
+            });
+        }
 
-                this._node.addEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
-                this._node.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
-            }
+        this._cssCanvasRow.value = this._canvas.cssCanvasNames.join(", ") || null;
 
-            if (!hideNode) {
-                this._nodeRow.value = WI.linkifyNodeReference(this._node);
+        this._widthRow.value = this._canvas.sizes.length > 1 ? WI.UIString("(multiple)") : (this._canvas.sizes[0]?.width ?? emDash);
+        this._widthRow.element.classList.toggle("multiple", this._canvas.sizes.length > 1);
 
-                if (!this._node.parentNode)
-                    this._detachedRow.value = WI.UIString("Yes");
-            }
-
-            let setRowValueIfValidAttributeValue = (row, attribute) => {
-                let value = Number(this._node.getAttribute(attribute));
-                if (!Number.isInteger(value) || value < 0)
-                    return false;
-
-                row.value = value;
-                return true;
-            };
-
-            let validWidth = setRowValueIfValidAttributeValue(this._widthRow, "width");
-            let validHeight = setRowValueIfValidAttributeValue(this._heightRow, "height");
-            if (!validWidth || !validHeight) {
-                // Since the "width" and "height" properties of canvas elements are more than just
-                // attributes, we need to invoke the getter for each to get the actual value.
-                //  - https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-width
-                //  - https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-height
-                WI.RemoteObject.resolveNode(node).then((remoteObject) => {
-                    function setRowValueToPropertyValue(row, property) {
-                        remoteObject.getProperty(property, (error, result, wasThrown) => {
-                            if (!error && result.type === "number")
-                                row.value = `${result.value}px`;
-                        });
-                    }
-
-                    setRowValueToPropertyValue(this._widthRow, "width");
-                    setRowValueToPropertyValue(this._heightRow, "height");
-
-                    remoteObject.release();
-                });
-            }
-        });
+        this._heightRow.value = this._canvas.sizes.length > 1 ? WI.UIString("(multiple)") : (this._canvas.sizes[0]?.height ?? emDash);
+        this._heightRow.element.classList.toggle("multiple", this._canvas.sizes.length > 1);
     }
 
     _refreshAttributesSection()
@@ -328,7 +287,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (!this.didInitialLayout)
             return;
 
-        if (!this._canvas.cssCanvasName && this._canvas.contextType !== WI.Canvas.ContextType.WebGPU) {
+        if (!this._canvas.cssCanvasNames.length && this._canvas.contextType !== WI.Canvas.ContextType.WebGPU) {
             this._clientsSection.element.hidden = true;
             return;
         }
@@ -338,6 +297,8 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._clientsSection.element.hidden = false;
 
         this._canvas.requestClientNodes((clientNodes) => {
+            this._refreshSourceSection();
+
             if (!clientNodes.length)
                 return;
 
@@ -371,5 +332,13 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
     _canvasMemoryChanged(event)
     {
         this._formatMemoryRow();
+    }
+
+    _handleClientNodesChanged(event)
+    {
+        if (!this.didInitialLayout)
+            return;
+
+        this._refreshClientsSection();
     }
 };

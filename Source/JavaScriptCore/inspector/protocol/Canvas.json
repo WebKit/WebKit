@@ -66,10 +66,9 @@
             "properties": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
                 { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
-                { "name": "width", "type": "number", "optional": true, "description": "Width of the canvas in pixels." },
-                { "name": "height", "type": "number", "optional": true, "description": "Height of the canvas in pixels." },
+                { "name": "sizes", "type": "array", "items": { "$ref": "GenericTypes.Size" }, "optional": true },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
-                { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." },
+                { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." },
                 { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
                 { "name": "features", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Enabled WebGPU device features." },
                 { "name": "memoryCost", "type": "number", "optional": true, "description": "Memory usage of the canvas in bytes." },
@@ -128,7 +127,8 @@
                 { "name": "canvasId", "$ref": "CanvasId" }
             ],
             "returns": [
-                { "name": "clientNodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" } }
+                { "name": "clientNodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" } },
+                { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." }
             ]
         },
         {
@@ -221,8 +221,7 @@
             "name": "canvasSizeChanged",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
-                { "name": "width", "type": "number", "description": "Width of the canvas in pixels." },
-                { "name": "height", "type": "number", "description": "Height of the canvas in pixels." }
+                { "name": "sizes", "type": "array", "items": { "$ref": "GenericTypes.Size" }, "optional": true }
             ]
         },
         {

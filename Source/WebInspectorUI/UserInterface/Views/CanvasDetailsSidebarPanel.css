@@ -27,6 +27,10 @@
     display: block;
 }
 
+.sidebar > .panel.details.canvas .details-section > .content .row.simple.multiple > .value {
+    color: var(--text-color-gray-medium);
+}
+
 .sidebar > .panel.details.canvas .details-section.canvas-extensions .content > ul {
     margin: 4px 0;
     padding-inline-start: 22.5px;

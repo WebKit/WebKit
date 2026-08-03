@@ -28,6 +28,7 @@
 
 #include "CanvasRenderingContext2DBase.h"
 #include "InspectorCanvasProcessedArguments.h"
+#include "IntSize.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/AsyncStackTrace.h>
@@ -73,6 +74,9 @@ public:
     GPUDevice* deviceContext() const;
 
     HTMLCanvasElement* canvasElement() const;
+
+    Vector<IntSize> sizes() const;
+    Vector<String> cssCanvasNames() const;
 
     ScriptExecutionContext* scriptExecutionContext() const;
 

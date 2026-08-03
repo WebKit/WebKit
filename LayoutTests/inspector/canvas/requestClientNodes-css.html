@@ -42,8 +42,8 @@ function test() {
         test(resolve, reject) {
             WI.Canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged)
             .then((event) => {
-                InspectorTest.expectEqual(event.target.cssCanvasName, "css-canvas", `Canvas with created client should have CSS name "css-canvas".`);
                 event.target.requestClientNodes((clientNodes) => {
+                    InspectorTest.expectShallowEqual(event.target.cssCanvasNames, ["css-canvas"], `Canvas with created client should have CSS name "css-canvas".`);
                     InspectorTest.expectEqual(clientNodes.length, 1, "There should be one client node.");
                     logClientNodes(clientNodes);
                     resolve();
@@ -60,8 +60,8 @@ function test() {
         test(resolve, reject) {
             WI.Canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged)
             .then((event) => {
-                InspectorTest.expectEqual(event.target.cssCanvasName, "css-canvas", `Canvas with destroyed client should have CSS name "css-canvas".`);
                 event.target.requestClientNodes((clientNodes) => {
+                    InspectorTest.expectShallowEqual(event.target.cssCanvasNames, ["css-canvas"], `Canvas with destroyed client should have CSS name "css-canvas".`);
                     InspectorTest.expectEqual(clientNodes.length, 0, "There should be no client nodes.");
                     logClientNodes(clientNodes);
                     resolve();

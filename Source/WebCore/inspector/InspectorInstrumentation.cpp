@@ -45,6 +45,7 @@
 #include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
 #include "FrameRuntimeAgent.h"
+#include "GPUCanvasContext.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -1253,7 +1254,22 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
 
 void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents& instrumentingAgents, CanvasBase& canvasBase)
 {
-    if (CheckedPtr pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent())
+    CheckedPtr<PageCanvasAgent> pageCanvasAgent;
+
+    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(canvasBase.renderingContext())) {
+        RefPtr device = gpuCanvasContext->device();
+        if (!device)
+            return;
+
+        RefPtr agents = InspectorInstrumentation::instrumentingAgents(protect(device->scriptExecutionContext()));
+        if (!agents)
+            return;
+
+        pageCanvasAgent = agents->enabledPageCanvasAgent();
+    } else
+        pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent();
+
+    if (pageCanvasAgent)
         pageCanvasAgent->didChangeCSSCanvasClientNodes(canvasBase);
 }
 
@@ -1265,7 +1281,22 @@ void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(Instrumenting
 
 void InspectorInstrumentation::didChangeCanvasSizeImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
 {
-    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+    CheckedPtr<InspectorCanvasAgent> canvasAgent;
+
+    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(context)) {
+        RefPtr device = gpuCanvasContext->device();
+        if (!device)
+            return;
+
+        RefPtr agents = InspectorInstrumentation::instrumentingAgents(protect(device->scriptExecutionContext()));
+        if (!agents)
+            return;
+
+        canvasAgent = agents->enabledCanvasAgent();
+    } else
+        canvasAgent = instrumentingAgents.enabledCanvasAgent();
+
+    if (canvasAgent)
         canvasAgent->didChangeCanvasSize(context);
 }
 
@@ -1336,8 +1367,8 @@ void InspectorInstrumentation::willDestroyWebGPUDeviceImpl(InstrumentingAgents& 
 
 void InspectorInstrumentation::didChangeGPUDeviceClientNodesImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device)
 {
-    if (CheckedPtr pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent())
-        pageCanvasAgent->didChangeGPUDeviceClientNodes(device);
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didChangeGPUDeviceClientNodes(device);
 }
 
 void InspectorInstrumentation::didCreateWebGPUComputePipelineImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, GPUComputePipeline& pipeline)

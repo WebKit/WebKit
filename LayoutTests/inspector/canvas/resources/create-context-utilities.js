@@ -157,7 +157,7 @@ TestPage.registerInitializer(() => {
             test(resolve, reject) {
                 awaitCanvasAdded(contextType)
                 .then((canvas) => {
-                    InspectorTest.expectEqual(canvas.cssCanvasName, "css-canvas", "Canvas name should equal the identifier passed to -webkit-canvas.");
+                    InspectorTest.expectShallowEqual(canvas.cssCanvasNames, ["css-canvas"], "Canvas name should equal the identifier passed to -webkit-canvas.");
                 })
                 .then(resolve, reject);
 

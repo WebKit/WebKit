@@ -37,9 +37,13 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
         WI.canvasManager.canvasRemoved(this._target, canvasId);
     }
 
-    canvasSizeChanged(canvasId, width, height)
+    canvasSizeChanged(canvasId, sizes)
     {
-        WI.canvasManager.canvasSizeChanged(this._target, canvasId, width, height);
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): `width` and `height` were replaced by `sizes`.
+        if (!Array.isArray(sizes))
+            sizes = Number.isFinite(sizes) && Number.isFinite(arguments[2]) ? [{width: sizes, height: arguments[2]}] : [];
+
+        WI.canvasManager.canvasSizeChanged(this._target, canvasId, sizes);
     }
 
     canvasMemoryChanged(canvasId, memoryCost)

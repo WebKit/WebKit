@@ -75,6 +75,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <ranges>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -164,10 +165,87 @@ HTMLCanvasElement* InspectorCanvas::canvasElement() const
             Ref context = weakContext;
             return dynamicDowncast<HTMLCanvasElement>(context->canvasBase());
         },
-        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>&) -> HTMLCanvasElement* {
-            return nullptr;
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+
+            RefPtr<HTMLCanvasElement> canvasElement;
+            Locker locker { CanvasRenderingContext::instancesLock() };
+            for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
+                if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
+                    continue;
+
+                RefPtr currentCanvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase());
+                if (!currentCanvasElement)
+                    continue;
+
+                if (canvasElement) {
+                    canvasElement = nullptr;
+                    break;
+                }
+                canvasElement = currentCanvasElement;
+            }
+            return canvasElement.unsafeGet();
         }
     );
+}
+
+Vector<IntSize> InspectorCanvas::sizes() const
+{
+    return WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) -> Vector<IntSize> {
+            Ref context = weakContext;
+            return { context->canvasBase().size() };
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+
+            Vector<IntSize> sizes;
+            Locker locker { CanvasRenderingContext::instancesLock() };
+            for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
+                if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
+                    continue;
+
+                sizes.appendIfNotContains(context->canvasBase().size());
+            }
+            return sizes;
+        }
+    );
+}
+
+Vector<String> InspectorCanvas::cssCanvasNames() const
+{
+    auto cssCanvasNames = WTF::switchOn(m_context,
+        [](const WeakRef<CanvasRenderingContext>& weakContext) {
+            Ref context = weakContext;
+
+            Vector<String> cssCanvasNames;
+            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
+                if (String cssCanvasName = canvasElement->document().nameForCSSCanvasElement(*canvasElement); !cssCanvasName.isEmpty())
+                    cssCanvasNames.append(cssCanvasName);
+            }
+            return cssCanvasNames;
+        },
+        [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
+            Ref device = weakDevice;
+
+            Vector<String> cssCanvasNames;
+            Locker locker { CanvasRenderingContext::instancesLock() };
+            for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
+                if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
+                    continue;
+
+                if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
+                    if (String cssCanvasName = canvasElement->document().nameForCSSCanvasElement(*canvasElement); !cssCanvasName.isEmpty())
+                        cssCanvasNames.appendIfNotContains(cssCanvasName);
+                }
+
+            }
+            return cssCanvasNames;
+        }
+    );
+
+    std::ranges::sort(cssCanvasNames, codePointCompareLessThan);
+    return cssCanvasNames;
 }
 
 ScriptExecutionContext* InspectorCanvas::scriptExecutionContext() const
@@ -229,8 +307,15 @@ HashSet<Element*> InspectorCanvas::clientNodes() const
             for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
                 if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
                     continue;
-                if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase()))
-                    clientNodes.add(canvasElement);
+
+                if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
+                    if (canvasElement->document().nameForCSSCanvasElement(*canvasElement).isEmpty())
+                        clientNodes.add(canvasElement);
+                    else {
+                        for (auto& clientNode : context->canvasBase().cssCanvasClients())
+                            clientNodes.add(clientNode);
+                    }
+                }
             }
             return clientNodes;
         }
@@ -581,17 +666,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
                 .setContextType(contextType)
                 .release();
 
-            const auto& size = context->canvasBase().size();
-            result->setWidth(size.width());
-            result->setHeight(size.height());
-
-            if (RefPtr node = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
-                String cssCanvasName = node->document().nameForCSSCanvasElement(*node);
-                if (!cssCanvasName.isEmpty())
-                    result->setCssCanvasName(cssCanvasName);
-
-                // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
-            }
+            // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
 
             if (auto attributes = buildObjectForCanvasContextAttributes(context))
                 result->setContextAttributes(attributes.releaseNonNull());
@@ -617,6 +692,24 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
             return result;
         }
     );
+
+    if (auto sizes = this->sizes(); !sizes.isEmpty()) {
+        auto sizesPayload = JSON::ArrayOf<Inspector::Protocol::GenericTypes::Size>::create();
+        for (auto& size : sizes) {
+            sizesPayload->addItem(Inspector::Protocol::GenericTypes::Size::create()
+                .setWidth(size.width())
+                .setHeight(size.height())
+                .release());
+        }
+        canvas->setSizes(WTF::move(sizesPayload));
+    }
+
+    if (auto cssCanvasNames = this->cssCanvasNames(); !cssCanvasNames.isEmpty()) {
+        auto cssCanvasNamesPayload = JSON::ArrayOf<String>::create();
+        for (auto& cssCanvasName : cssCanvasNames)
+            cssCanvasNamesPayload->addItem(cssCanvasName);
+        canvas->setCssCanvasNames(WTF::move(cssCanvasNamesPayload));
+    }
 
     if (size_t memoryCost = this->memoryCost())
         canvas->setMemoryCost(memoryCost);

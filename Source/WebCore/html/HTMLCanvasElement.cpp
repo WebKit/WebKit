@@ -381,8 +381,12 @@ RefPtr<CanvasRenderingContext> HTMLCanvasElement::getContext(const String& type)
         return getContextWebGL(HTMLCanvasElement::toWebGLVersion(type));
 #endif
 
-    if (HTMLCanvasElement::isWebGPUType(type))
-        return getContextWebGPU(type, nullptr);
+    if (HTMLCanvasElement::isWebGPUType(type)) {
+        RefPtr<GPU> gpu;
+        if (RefPtr window = document().window())
+            gpu = protect(window->navigator())->gpu();
+        return getContextWebGPU(type, gpu);
+    }
 
     return nullptr;
 }

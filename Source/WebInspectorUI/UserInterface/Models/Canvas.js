@@ -25,23 +25,23 @@
 
 WI.Canvas = class Canvas extends WI.Object
 {
-    constructor(target, identifier, contextType, size, {domNode, cssCanvasName, contextAttributes, features, memoryCost, stackTrace, displayName} = {})
+    constructor(target, identifier, contextType, sizes, {domNode, cssCanvasNames, contextAttributes, features, memoryCost, stackTrace, displayName} = {})
     {
         super();
 
         console.assert(target instanceof WI.Target, target);
         console.assert(identifier);
         console.assert(contextType);
-        console.assert(!size || size instanceof WI.Size, size);
+        console.assert(Array.isArray(sizes) && sizes.every((size) => size instanceof WI.Size), sizes);
         console.assert(!stackTrace || stackTrace instanceof WI.StackTrace, stackTrace);
         console.assert(!displayName || typeof displayName === "string", displayName);
 
         this._target = target;
         this._identifier = identifier;
         this._contextType = contextType;
-        this._size = size || null;
+        this._sizes = sizes;
         this._domNode = domNode || null;
-        this._cssCanvasName = cssCanvasName || "";
+        this._cssCanvasNames = cssCanvasNames || [];
         this._contextAttributes = contextAttributes || {};
         this._features = features || [];
         this._extensions = new Set;
@@ -50,12 +50,14 @@ WI.Canvas = class Canvas extends WI.Object
         this._displayName = displayName || "";
 
         this._clientNodes = null;
+        this._requestClientNodesCallbacks = [];
+
         this._shaderProgramCollection = new WI.ShaderProgramCollection;
         this._recordingCollection = new WI.RecordingCollection;
 
         this._nextShaderProgramDisplayNumber = null;
 
-        this._requestNodePromise = null;
+        this._requestNodePromise = this._domNode ? Promise.resolve(this._domNode) : null;
 
         this._recordingState = WI.Canvas.RecordingState.Inactive;
         this._recordingFrames = [];
@@ -63,7 +65,7 @@ WI.Canvas = class Canvas extends WI.Object
 
         // COMPATIBILITY (macOS 14.0, iOS 17.0): `Canvas.canvasSizeChanged` did not exist yet.
         if (!InspectorBackend.hasEvent("Canvas.canvasSizeChanged")) {
-            console.assert(!size);
+            console.assert(!sizes.length);
 
             this.requestNode().then((node) => {
                 if (node) {
@@ -112,23 +114,37 @@ WI.Canvas = class Canvas extends WI.Object
             console.error("Invalid canvas context type", payload.contextType);
         }
 
-        // COMPATIBILITY (macOS 14.0, iOS 17.0): `width` and `height` did not exist yet.
-        let size = ("width" in payload && "height" in payload) ? new WI.Size(payload.width, payload.height) : null;
+        let sizes = payload.sizes?.map(WI.Size.fromJSON) || [];
+
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): `width` and `height` were replaced by `sizes`.
+        if (!payload.sizes && "width" in payload && "height" in payload)
+            sizes.push(new WI.Size(payload.width, payload.height));
+
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): `cssCanvasName` was renamed to `cssCanvasNames`.
+        let cssCanvasNames = payload.cssCanvasNames || (payload.cssCanvasName ? [payload.cssCanvasName] : []);
 
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `backtrace` was renamed to `stackTrace`.
         if (payload.backtrace)
             payload.stackTrace = {callFrames: payload.backtrace};
 
-        return new WI.Canvas(target, payload.canvasId, contextType, size, {
-            height: payload.height,
-            domNode: payload.nodeId ? WI.domManager.nodeForId(payload.nodeId) : null,
-            cssCanvasName: payload.cssCanvasName,
+        return new WI.Canvas(target, payload.canvasId, contextType, sizes, {
+            domNode: WI.Canvas._domNodeForId(target, payload.nodeId),
+            cssCanvasNames,
             contextAttributes: payload.contextAttributes,
             features: payload.features,
             memoryCost: payload.memoryCost,
             stackTrace: WI.StackTrace.fromPayload(target, payload.stackTrace),
             displayName: payload.name,
         });
+    }
+
+    static _domNodeForId(target, nodeId)
+    {
+        if (!nodeId)
+            return null;
+        if (target instanceof WI.FrameTarget)
+            return WI.domManager.nodeForIdInFrameTarget(nodeId, target);
+        return WI.domManager.nodeForId(nodeId);
     }
 
     static displayNameForContextType(contextType)
@@ -186,9 +202,9 @@ WI.Canvas = class Canvas extends WI.Object
     get target() { return this._target; }
     get identifier() { return this._identifier; }
     get contextType() { return this._contextType; }
-    get size() { return this._size; }
+    get sizes() { return this._sizes; }
     get memoryCost() { return this._memoryCost; }
-    get cssCanvasName() { return this._cssCanvasName; }
+    get cssCanvasNames() { return this._cssCanvasNames; }
     get contextAttributes() { return this._contextAttributes; }
     get features() { return this._features; }
     get extensions() { return this._extensions; }
@@ -208,19 +224,19 @@ WI.Canvas = class Canvas extends WI.Object
         if (this._displayName)
             return this._displayName;
 
-        if (this._cssCanvasName)
-            return WI.UIString("CSS canvas \u201C%s\u201D").format(this._cssCanvasName);
+        if (this._contextType === Canvas.ContextType.WebGPU) {
+            if (!this._uniqueDisplayNameNumber)
+                this._uniqueDisplayNameNumber = Canvas._nextDeviceUniqueDisplayNameNumber++;
+            return WI.UIString("Device %d").format(this._uniqueDisplayNameNumber);
+        }
+
+        if (this._cssCanvasNames.length === 1)
+            return WI.UIString("CSS canvas \u201C%s\u201D").format(this._cssCanvasNames[0]);
 
         if (this._domNode) {
             let idSelector = this._domNode.escapedIdSelector;
             if (idSelector)
                 return WI.UIString("Canvas %s").format(idSelector);
-        }
-
-        if (this._contextType === Canvas.ContextType.WebGPU) {
-            if (!this._uniqueDisplayNameNumber)
-                this._uniqueDisplayNameNumber = Canvas._nextDeviceUniqueDisplayNameNumber++;
-            return WI.UIString("Device %d").format(this._uniqueDisplayNameNumber);
         }
 
         if (!this._uniqueDisplayNameNumber)
@@ -251,7 +267,7 @@ WI.Canvas = class Canvas extends WI.Object
     requestNode()
     {
         if (!this._requestNodePromise) {
-            this._requestNodePromise = new Promise((resolve, reject) => {
+            let promise = new Promise((resolve, reject) => {
                 WI.domManager.ensureDocument();
 
                 if (!this._target.hasCommand("Canvas.requestNode")) {
@@ -260,12 +276,17 @@ WI.Canvas = class Canvas extends WI.Object
                 }
 
                 this._target.CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
+                    if (promise !== this._requestNodePromise) {
+                        resolve(this._domNode);
+                        return;
+                    }
+
                     if (error) {
                         resolve(null);
                         return;
                     }
 
-                    this._domNode = WI.domManager.nodeForId(nodeId);
+                    this._domNode = WI.Canvas._domNodeForId(this._target, nodeId);
                     if (!this._domNode) {
                         resolve(null);
                         return;
@@ -274,6 +295,7 @@ WI.Canvas = class Canvas extends WI.Object
                     resolve(this._domNode);
                 });
             });
+            this._requestNodePromise = promise;
         }
         return this._requestNodePromise;
     }
@@ -290,17 +312,25 @@ WI.Canvas = class Canvas extends WI.Object
             return;
         }
 
+        this._requestClientNodesCallbacks.push(callback);
+        if (this._requestClientNodesCallbacks.length > 1)
+            return;
+
         WI.domManager.ensureDocument();
 
-        let wrappedCallback = (error, clientNodeIds) => {
-            if (error) {
-                callback([]);
-                return;
+        let wrappedCallback = (error, clientNodeIds, cssCanvasNames) => {
+            let clientNodes = [];
+            if (!error) {
+                if (cssCanvasNames)
+                    this._cssCanvasNames = cssCanvasNames;
+
+                this._clientNodes = clientNodes = clientNodeIds.map((clientNodeId) => WI.Canvas._domNodeForId(this._target, clientNodeId));
             }
 
-            clientNodeIds = Array.isArray(clientNodeIds) ? clientNodeIds : [];
-            this._clientNodes = clientNodeIds.map((clientNodeId) => WI.domManager.nodeForId(clientNodeId));
-            callback(this._clientNodes);
+            let callbacks = this._requestClientNodesCallbacks;
+            this._requestClientNodesCallbacks = [];
+            for (let callback of callbacks)
+                callback(clientNodes);
         };
 
         if (this._target.hasCommand("Canvas.requestClientNodes")) {
@@ -342,22 +372,24 @@ WI.Canvas = class Canvas extends WI.Object
 
     saveIdentityToCookie(cookie)
     {
-        if (this._cssCanvasName)
-            cookie[WI.Canvas.CSSCanvasNameCookieKey] = this._cssCanvasName;
+        if (this._cssCanvasNames.length)
+            cookie[WI.Canvas.CSSCanvasNameCookieKey] = this._cssCanvasNames.join(",");
         else if (this._domNode)
             cookie[WI.Canvas.NodePathCookieKey] = this._domNode.path;
 
     }
 
-    sizeChanged(size)
+    sizeChanged(sizes)
     {
         // Called from WI.CanvasManager.
 
-        // COMPATIBILITY (macOS 14.0, iOS 17.0): `width` and `height` did not exist yet.
-        if (this._size?.equals(size))
+        console.assert(Array.isArray(sizes), sizes);
+        console.assert(sizes.every((size) => size instanceof WI.Size), sizes);
+
+        if (Array.shallowEqual(this._sizes, sizes))
             return;
 
-        this._size = size;
+        this._sizes = sizes;
 
         this.dispatchEventToListeners(WI.Canvas.Event.SizeChanged);
     }
@@ -386,6 +418,9 @@ WI.Canvas = class Canvas extends WI.Object
     clientNodesChanged()
     {
         // Called from WI.CanvasManager.
+
+        if (this._contextType === Canvas.ContextType.WebGPU)
+            this._requestNodePromise = null;
 
         this._clientNodes = null;
 
@@ -472,7 +507,7 @@ WI.Canvas = class Canvas extends WI.Object
         let size = await remoteObject.callFunctionJSON(inspectedPage_context_getCanvasSize);
         remoteObject.release();
 
-        this.sizeChanged(WI.Size.fromJSON(size));
+        this.sizeChanged([WI.Size.fromJSON(size)]);
     }
 };
 

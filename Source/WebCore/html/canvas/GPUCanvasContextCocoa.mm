@@ -345,8 +345,6 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
 
     auto configuration = WTF::move(m_configuration);
     m_configuration.reset();
-    if (configuration)
-        InspectorInstrumentation::didChangeGPUDeviceClientNodes(configuration->device);
     unconfigure();
     if (configuration) {
         GPUCanvasConfiguration canvasConfiguration {
@@ -358,7 +356,8 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
             configuration->toneMapping,
             configuration->compositingAlphaMode,
         };
-        configure(WTF::move(canvasConfiguration), true);
+        if (configure(WTF::move(canvasConfiguration), true).hasException())
+            InspectorInstrumentation::didChangeGPUDeviceClientNodes(configuration->device);
     }
 }
 
@@ -542,7 +541,8 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         0,
         std::nullopt,
     };
-    InspectorInstrumentation::didChangeGPUDeviceClientNodes(m_configuration->device);
+    if (!dueToReshape)
+        InspectorInstrumentation::didChangeGPUDeviceClientNodes(m_configuration->device);
     return { };
 }
 

@@ -34,6 +34,9 @@ async function test() {
         name: "Canvas.WebGPU.Worker.Device",
         description: "Check that a GPUDevice created in a Worker is discovered on the Worker target and can be resolved.",
         async test() {
+            if (!canvas.sizes.length)
+                await canvas.awaitEvent(WI.Canvas.Event.SizeChanged);
+
             InspectorTest.expectTrue(workerTarget.hasDomain("Canvas"), "Worker target should expose the Canvas domain.");
             InspectorTest.expectEqual(canvas.target, workerTarget, "WebGPU Canvas should belong to the Worker target.");
             InspectorTest.expectEqual(canvas.displayName, "Labeled Worker WebGPU Device", "Worker Canvas should use the GPUDevice label as its display name.");
@@ -45,6 +48,7 @@ async function test() {
 
             let clientNodes = await new Promise((resolve) => canvas.requestClientNodes(resolve));
             InspectorTest.expectEqual(clientNodes.length, 0, "Worker GPUDevice should have no DOM client nodes.");
+            InspectorTest.expectTrue(canvas.sizes.length === 1 && canvas.sizes[0].equals(new WI.Size(4, 4)), "Worker GPUDevice should have the size of its OffscreenCanvas.");
 
             let content = await canvas.requestContent();
             InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Worker WebGPU Canvas content should not be empty.");

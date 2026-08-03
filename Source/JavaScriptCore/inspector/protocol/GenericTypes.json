@@ -10,6 +10,15 @@
                 { "name": "lineNumber", "type": "number", "description": "Line number in resource content." },
                 { "name": "lineContent", "type": "string", "description": "Line with match content." }
             ]
+        },
+        {
+            "id": "Size",
+            "type": "object",
+            "description": "A two-dimensional size.",
+            "properties": [
+                { "name": "width", "type": "number" },
+                { "name": "height", "type": "number" }
+            ]
         }
     ]
 }

@@ -114,7 +114,7 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
     _handleMouseOver(event)
     {
-        if (this.representedObject.cssCanvasName || this.representedObject.contextType === WI.Canvas.ContextType.WebGPU) {
+        if (this.representedObject.cssCanvasNames.length || this.representedObject.contextType === WI.Canvas.ContextType.WebGPU) {
             this.representedObject.requestClientNodes((clientNodes) => {
                 WI.domManager.highlightDOMNodeList(clientNodes);
             });

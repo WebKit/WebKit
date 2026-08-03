@@ -178,13 +178,13 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         canvas.shaderProgramCollection.clear();
     }
 
-    canvasSizeChanged(target, canvasIdentifier, width, height)
+    canvasSizeChanged(target, canvasIdentifier, sizes)
     {
         let canvas = this._canvasForIdentifier(target, canvasIdentifier);
         if (!canvas)
             return;
 
-        canvas.sizeChanged(new WI.Size(width, height));
+        canvas.sizeChanged(sizes.map(WI.Size.fromJSON));
     }
 
     canvasMemoryChanged(target, canvasIdentifier, memoryCost)

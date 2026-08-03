@@ -34,6 +34,8 @@
 #include "DocumentPage.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
+#include "GPUCanvasContext.h"
+#include "GPUDevice.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -104,7 +106,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> PageCanvasA
     return agents->persistentDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, node);
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> PageCanvasAgent::requestClientNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>, Ref<JSON::ArrayOf<String>>>> PageCanvasAgent::requestClientNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -122,7 +124,14 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::N
         if (auto documentNodeId = domAgent->boundNodeId(protect(clientNode->document()).ptr()))
             clientNodeIds->addItem(domAgent->pushNodeToFrontend(errorString, documentNodeId, clientNode));
     }
-    return clientNodeIds;
+
+    Ref cssCanvasNamesPayload = JSON::ArrayOf<String>::create();
+    for (auto& cssCanvasName : inspectorCanvas->cssCanvasNames())
+        cssCanvasNamesPayload->addItem(cssCanvasName);
+
+    m_inspectorCanvasesWithPendingClientNodesChange.remove(*inspectorCanvas);
+
+    return { { WTF::move(clientNodeIds), WTF::move(cssCanvasNamesPayload) } };
 }
 
 void PageCanvasAgent::frameNavigated(LocalFrame& frame)
@@ -134,6 +143,8 @@ void PageCanvasAgent::frameNavigated(LocalFrame& frame)
 
     Vector<InspectorCanvas*> inspectorCanvases;
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
+        if (!inspectorCanvas->canvasContext())
+            continue;
         if (RefPtr canvasElement = inspectorCanvas->canvasElement()) {
             if (canvasElement->document().frame() == &frame)
                 inspectorCanvases.append(inspectorCanvas.ptr());
@@ -151,21 +162,65 @@ void PageCanvasAgent::didChangeCSSCanvasClientNodes(CanvasBase& canvasBase)
         return;
     }
 
-    auto inspectorCanvas = findInspectorCanvas(*context);
+    RefPtr<InspectorCanvas> inspectorCanvas;
+    if (WeakPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context)) {
+        WeakPtr device = gpuCanvasContext->device();
+        if (!device)
+            return;
+        inspectorCanvas = findInspectorCanvas(*device);
+    } else
+        inspectorCanvas = findInspectorCanvas(*context);
+
     ASSERT(inspectorCanvas);
     if (!inspectorCanvas)
         return;
 
-    m_frontendDispatcher->clientNodesChanged(inspectorCanvas->identifier());
+    dispatchClientNodesChanged(*inspectorCanvas);
 }
 
 void PageCanvasAgent::didChangeGPUDeviceClientNodes(GPUDevice& device)
 {
+    InspectorCanvasAgent::didChangeGPUDeviceClientNodes(device);
+
     RefPtr inspectorCanvas = findInspectorCanvas(device);
     if (!inspectorCanvas)
         return;
 
-    m_frontendDispatcher->clientNodesChanged(inspectorCanvas->identifier());
+    dispatchClientNodesChanged(*inspectorCanvas);
+}
+
+Ref<Inspector::Protocol::Canvas::Canvas> PageCanvasAgent::buildObjectForCanvas(InspectorCanvas& inspectorCanvas, bool captureBacktrace)
+{
+    Ref result = InspectorCanvasAgent::buildObjectForCanvas(inspectorCanvas, captureBacktrace);
+
+    RefPtr canvasElement = inspectorCanvas.canvasElement();
+    if (auto nodeId = nodeIdForCanvas(canvasElement))
+        result->setNodeId(*nodeId);
+
+    return result;
+}
+
+std::optional<Inspector::Protocol::DOM::NodeId> PageCanvasAgent::nodeIdForCanvas(HTMLCanvasElement* canvasElement)
+{
+    if (!canvasElement)
+        return std::nullopt;
+
+    CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    if (!domAgent)
+        return std::nullopt;
+
+    auto nodeId = domAgent->pushNodeToFrontend(canvasElement);
+    if (!nodeId)
+        return std::nullopt;
+    return nodeId;
+}
+
+void PageCanvasAgent::dispatchClientNodesChanged(InspectorCanvas& inspectorCanvas)
+{
+    if (!m_inspectorCanvasesWithPendingClientNodesChange.add(inspectorCanvas).isNewEntry)
+        return;
+
+    m_frontendDispatcher->clientNodesChanged(inspectorCanvas.identifier());
 }
 
 bool PageCanvasAgent::matchesCurrentContext(ScriptExecutionContext* scriptExecutionContext) const

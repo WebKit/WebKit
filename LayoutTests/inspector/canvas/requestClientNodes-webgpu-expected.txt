@@ -4,30 +4,81 @@ Test that CanvasAgent tracks GPUCanvasContext client nodes for WebGPU devices.
 == Running test suite: Canvas.requestClientNodes.WebGPU
 -- Running test case: Canvas.requestClientNodes.WebGPU.Initial
 PASS: GPUDevice should initially have no client nodes.
+PASS: GPUDevice should initially have no CSS canvas names.
+PASS: GPUDevice should not have a size.
+PASS: GPUDevice should initially have no canvas node.
 
 -- Running test case: Canvas.requestClientNodes.WebGPU.Configure
 PASS: Client nodes changed for the expected Canvas.
 PASS: GPUDevice should have one client node.
 PASS: Client node should be the configured canvas element.
+PASS: GPUDevice should resolve its only canvas node.
+PASS: GPUDevice should not have multiple canvas sizes.
+PASS: GPUDevice width should be 10.
+PASS: GPUDevice height should be 20.
 PASS: GPUCanvasContext should not create a separate Canvas.
 
--- Running test case: Canvas.requestClientNodes.WebGPU.MultipleCanvases
+-- Running test case: Canvas.requestClientNodes.WebGPU.MultipleCanvasesSameSize
 PASS: Client nodes changed for the expected Canvas.
 PASS: GPUDevice should have two client nodes.
 PASS: GPUDevice should include the original canvas element.
 PASS: GPUDevice should include the additional canvas element.
+PASS: GPUDevice should not resolve a canvas node when multiple canvases are bound.
+PASS: GPUDevice should not have multiple canvas sizes.
+PASS: GPUDevice width should be 10.
+PASS: GPUDevice height should be 20.
 PASS: Two GPUCanvasContexts should still create only one Canvas.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.CoalesceChangesUntilRequest
+PASS: Client nodes changed for the expected Canvas.
+PASS: Client node changes should only be reported once before requestClientNodes.
+PASS: GPUDevice should report its final client nodes.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.MultipleCanvasesDifferentSizes
+PASS: Size changed for the expected Canvas.
+PASS: GPUDevice should have multiple canvas sizes.
+PASS: GPUDevice should expose all canvas sizes.
+PASS: GPUDevice should not resolve a canvas node when multiple canvases are bound.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.ReturnToUniqueCanvas
 PASS: Client nodes changed after unconfiguring one canvas.
 PASS: GPUDevice should retain one client node.
 PASS: Remaining client node should be the original canvas element.
+PASS: GPUDevice should again resolve its only canvas node.
+PASS: GPUDevice should not have multiple canvas sizes.
+PASS: GPUDevice width should be 10.
+PASS: GPUDevice height should be 20.
 PASS: Unconfiguring one client should preserve the single GPUDevice Canvas.
 
 -- Running test case: Canvas.requestClientNodes.WebGPU.Unconfigure
 PASS: Client nodes changed for the expected Canvas.
 PASS: GPUDevice should again have no client nodes.
+PASS: GPUDevice should not have a size.
+PASS: GPUDevice should again have no canvas node.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.CSSCanvas
+PASS: Client nodes changed for the expected Canvas.
+PASS: GPUDevice should not update its CSS canvas names before requestClientNodes.
+PASS: GPUDevice should include its CSS canvas name.
+PASS: GPUDevice should have one CSS canvas client node.
+PASS: Client node should be the CSS canvas consumer.
+PASS: GPUDevice should not have multiple canvas sizes.
+PASS: GPUDevice width should be 30.
+PASS: GPUDevice height should be 40.
+
+-- Running test case: Canvas.requestClientNodes.WebGPU.CSSCanvasUnconfigure
+PASS: Client nodes changed for the expected Canvas.
+PASS: GPUDevice should preserve its CSS canvas names before requestClientNodes.
+PASS: GPUDevice should no longer have CSS canvas names.
+PASS: GPUDevice should no longer have CSS canvas client nodes.
+PASS: GPUDevice should not have a size.
 
 -- Running test case: Canvas.requestClientNodes.WebGPU.OffscreenCanvas
 PASS: Client nodes changed for the expected Canvas.
 PASS: OffscreenCanvas should not create a DOM client node.
+PASS: GPUDevice should not have multiple canvas sizes.
+PASS: GPUDevice width should be 4.
+PASS: GPUDevice height should be 4.
+PASS: OffscreenCanvas should not create a canvas node.
 PASS: OffscreenCanvas GPUCanvasContext should not create a separate Canvas.
 
