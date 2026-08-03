@@ -72,6 +72,12 @@ JS_EXPORT_PRIVATE IterationRecord iteratorDirect(JSGlobalObject*, JSValue);
 IterationRecord getAsyncIterator(JSGlobalObject&, JSValue);
 JS_EXPORT_PRIVATE IterationRecord getAsyncIteratorExported(JSGlobalObject&, JSValue);
 
+class JSAsyncFromSyncIterator;
+JSAsyncFromSyncIterator* createAsyncFromSyncIterator(JSGlobalObject*, JSObject* syncIterator, std::optional<IterationMode> knownMode = std::nullopt);
+JSAsyncFromSyncIterator* createAsyncFromSyncIteratorForIterable(JSGlobalObject*, JSValue iterable);
+IterationRecord createAsyncFromSyncIteratorRecord(JSGlobalObject&, JSValue iterable);
+JSC_DECLARE_HOST_FUNCTION(asyncFromSyncIteratorCreatePrivate);
+
 JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
 JS_EXPORT_PRIVATE bool hasIteratorMethod(JSGlobalObject*, JSValue);
 

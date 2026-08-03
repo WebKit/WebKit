@@ -1402,6 +1402,10 @@ private:
             setPrediction(SpecPromiseObject);
             break;
 
+        case OpenAsyncFromSyncIterator:
+            setPrediction(SpecObjectOther);
+            break;
+
         case NewResolvedPromise:
         case NewRejectedPromise:
             setPrediction(SpecPromiseObject);

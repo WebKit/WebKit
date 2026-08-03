@@ -856,6 +856,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case ToObject:
+    case OpenAsyncFromSyncIterator:
     case GetPropertyEnumerator:
     case InstanceOfCustom:
     case ToNumeric:

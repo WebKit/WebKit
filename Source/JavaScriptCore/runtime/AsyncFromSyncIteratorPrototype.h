@@ -32,7 +32,7 @@ namespace JSC {
 class AsyncFromSyncIteratorPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -49,7 +49,9 @@ public:
 
 private:
     AsyncFromSyncIteratorPrototype(VM&, Structure*);
-    DECLARE_DEFAULT_FINISH_CREATION;
+    void finishCreation(VM&, JSGlobalObject*);
 };
-    
+
+JSC_DECLARE_HOST_FUNCTION(asyncFromSyncIteratorPrototypeFuncNext);
+
 } // namespace JSC

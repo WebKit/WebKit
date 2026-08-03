@@ -707,6 +707,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToNumber:
     case ToNumeric:
     case ToObject:
+    case OpenAsyncFromSyncIterator:
     case CallNumberConstructor:
     case NumberToStringWithRadix:
     case SetFunctionName:

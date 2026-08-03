@@ -517,6 +517,7 @@ namespace JSC { namespace DFG {
     macro(ToIntegerOrInfinity, NodeResultJS | NodeMustGenerate) \
     macro(ToLength, NodeResultJS | NodeMustGenerate) \
     macro(CallObjectConstructor, NodeResultJS) \
+    macro(OpenAsyncFromSyncIterator, NodeResultJS | NodeMustGenerate) \
     macro(CallStringConstructor, NodeResultJS | NodeMustGenerate) \
     macro(CallNumberConstructor, NodeResultJS | NodeMustGenerate) \
     macro(NumberToStringWithRadix, NodeResultJS | NodeMustGenerate) \

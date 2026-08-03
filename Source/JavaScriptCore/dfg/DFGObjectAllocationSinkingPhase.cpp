@@ -1146,9 +1146,6 @@ private:
             case JSWrapForValidIteratorType:
                 target = handleInternalFieldClass<JSWrapForValidIterator>(node, writes);
                 break;
-            case JSAsyncFromSyncIteratorType:
-                target = handleInternalFieldClass<JSAsyncFromSyncIterator>(node, writes);
-                break;
             case JSRegExpStringIteratorType:
                 target = handleInternalFieldClass<JSRegExpStringIterator>(node, writes);
                 break;
