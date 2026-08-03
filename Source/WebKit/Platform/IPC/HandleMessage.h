@@ -451,7 +451,7 @@ void handleMessage(C& connection, Decoder& decoder, T* object, MF U::* function)
             callMemberFunctionCoroutine(object, function, WTF::move(*arguments));
     } else {
         if constexpr (ValidationType::expectsConnectionArgument)
-            callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments));
+            SUPPRESS_UNCOUNTED_ARG callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments));
         else
             callMemberFunction(object, function, WTF::move(*arguments));
     }
@@ -495,7 +495,7 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
         SUPPRESS_UNCOUNTED_ARG callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments),
             ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     } else {
-        callMemberFunction(object, function, WTF::move(*arguments),
+        SUPPRESS_UNCOUNTED_ARG callMemberFunction(object, function, WTF::move(*arguments),
             ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     }
 }
