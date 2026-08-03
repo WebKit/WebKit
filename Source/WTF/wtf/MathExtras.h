@@ -368,6 +368,15 @@ constexpr bool hasZeroByte(T value)
     return (value - lowBits) & ~value & highBits;
 }
 
+// "Interleave bits by Binary Magic Numbers" at https://graphics.stanford.edu/~seander/bithacks.html.
+constexpr uint64_t zeroExtendBytesToHalfwords(uint32_t value)
+{
+    uint64_t result = value;
+    result = (result | (result << 16)) & 0x0000FFFF0000FFFFULL;
+    result = (result | (result << 8)) & 0x00FF00FF00FF00FFULL;
+    return result;
+}
+
 template<typename T>
 constexpr T divideRoundedUp(T a, T b)
 {

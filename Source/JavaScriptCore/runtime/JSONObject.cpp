@@ -41,6 +41,7 @@
 #include "VMInlines.h"
 #include <charconv>
 #include <wtf/MathExtras.h>
+#include <wtf/UnalignedAccess.h>
 #include <wtf/dragonbox/dragonbox_to_chars.h>
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/MakeString.h>
@@ -1161,9 +1162,18 @@ static ALWAYS_INLINE bool eightByteRangeNeedsJSONEscape(uint64_t word)
 template<typename CharType>
 static ALWAYS_INLINE uint64_t copyEightBytesAndLoad(const CharType* source, CharType* destination)
 {
-    uint64_t word;
-    memcpySpan(std::span<uint8_t, 8> { std::bit_cast<uint8_t*>(&word), 8 }, std::span<const CharType, 8> { source, 8 });
-    memcpySpan(std::span<CharType, 8> { destination, 8 }, std::span<const uint8_t, 8> { std::bit_cast<const uint8_t*>(&word), 8 });
+    uint64_t word = WTF::unalignedLoad<uint64_t>(source);
+    WTF::unalignedStore<uint64_t>(destination, word);
+    return word;
+}
+
+static ALWAYS_INLINE uint64_t upconvertEightBytesAndLoad(const Latin1Character* source, char16_t* destination)
+{
+    uint64_t word = WTF::unalignedLoad<uint64_t>(source);
+    uint64_t low = zeroExtendBytesToHalfwords(static_cast<uint32_t>(word));
+    uint64_t high = zeroExtendBytesToHalfwords(static_cast<uint32_t>(word >> 32));
+    WTF::unalignedStore<uint64_t>(destination, low);
+    WTF::unalignedStore<uint64_t>(destination + 4, high);
     return word;
 }
 
@@ -1271,6 +1281,17 @@ static ALWAYS_INLINE bool stringCopyUpconvert(std::span<const Latin1Character> s
         return SIMD::isNonZero(accumulated);
     }
 #endif
+    if (span.size() >= 8) {
+        const auto* ptr = span.data();
+        const auto* end = ptr + span.size();
+        auto* cursorEnd = cursor + span.size();
+        uint64_t accumulated = 0;
+        for (; ptr + 8 <= end; ptr += 8, cursor += 8)
+            accumulated |= eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(ptr, cursor));
+        if (ptr < end)
+            accumulated |= eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(end - 8, cursorEnd - 8));
+        return accumulated;
+    }
     for (auto character : span) {
         if (WTF::escapedFormsForJSON[character]) [[unlikely]]
             return true;
