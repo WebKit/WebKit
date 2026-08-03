@@ -4699,7 +4699,7 @@ IsThirdPartyCookieBlockingDisabled:
 
 IteratorChunkingEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "Iterator Chunking"
   humanReadableDescription: "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."
@@ -4708,7 +4708,7 @@ IteratorChunkingEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 IteratorIncludesEnabled:
   type: bool

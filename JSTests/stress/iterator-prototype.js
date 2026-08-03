@@ -22,6 +22,8 @@ shouldBe(JSON.stringify(Object.getOwnPropertyNames(iteratorPrototype)), '[' + [
     'take',
     'drop',
     'flatMap',
+    'chunks',
+    'windows',
     'includes',
 ].map((val) => `"${val}"`).join(',') + ']');
 
