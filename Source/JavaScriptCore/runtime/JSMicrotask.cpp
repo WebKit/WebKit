@@ -608,7 +608,7 @@ void asyncGeneratorResume(JSGlobalObject* globalObject, JSAsyncGenerator* genera
     asyncGeneratorUnwrapYieldResumption(globalObject, generator, generator->resumeValue(), generator->resumeMode(), microtaskCallCache);
 }
 
-void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator* iterator, JSObject* driver)
+void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator* iterator, JSObject* driver, MicrotaskCallCache* microtaskCallCache)
 {
     VM& vm = globalObject->vm();
 
@@ -624,18 +624,18 @@ void enqueueAsyncGeneratorDriver(JSGlobalObject* globalObject, JSAsyncGenerator*
 
     // https://tc39.es/ecma262/#sec-asyncgeneratorenqueue step 6: a non-busy generator resumes immediately.
     if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Init) || JSAsyncGenerator::isSuspendedYieldState(state))
-        asyncGeneratorResume(globalObject, iterator);
+        asyncGeneratorResume(globalObject, iterator, microtaskCallCache);
 }
 
-JSValue asyncIteratorNextWithDriver(JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver)
+JSValue asyncIteratorNextWithDriver(JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver, MicrotaskCallCache* microtaskCallCache)
 {
     VM& vm = globalObject->vm();
     auto* generator = uncheckedDowncast<JSAsyncGenerator>(iterator);
 
     if (globalObject->promiseSpeciesWatchpointSet().state() != IsWatched) [[unlikely]]
-        return asyncGeneratorNext(globalObject, generator, jsUndefined());
+        return asyncGeneratorNext(globalObject, generator, jsUndefined(), microtaskCallCache);
 
-    enqueueAsyncGeneratorDriver(globalObject, generator, driver);
+    enqueueAsyncGeneratorDriver(globalObject, generator, driver, microtaskCallCache);
     return vm.fastAsyncGeneratorSentinel();
 }
 
