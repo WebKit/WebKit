@@ -2167,10 +2167,8 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
     if (frame->selection().isNone())
         return;
 
-    Ref editor = frame->editor();
-
-    if (editor->hasComposition()) {
-        editor->setComposition(newText, { }, { }, { }, newText.length(), newText.length());
+    if (frame->selection().isRange()) {
+        protect(frame->editor())->deleteSelectionWithSmartDelete(false);
         return;
     }
 
@@ -2181,13 +2179,7 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
     IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
     protect(frame->selection())->setSelectedRange(*range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
-    editor->deleteSelectionWithSmartDelete(false);
-
-    // Avoid dispatching a spurious compositionend by calling setComposition with empty text.
-    if (newText.isEmpty())
-        return;
-
-    editor->setComposition(newText, { }, { }, { }, newText.length(), newText.length());
+    protect(frame->editor())->insertText(newText, 0);
 }
 
 void WebPage::willInsertFinalDictationResult()
