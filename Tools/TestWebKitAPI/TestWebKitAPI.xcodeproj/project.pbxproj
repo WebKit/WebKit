@@ -600,6 +600,7 @@
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
+				WebKit/WKWebView/SiteIsolationBackForwardFrameStateTests.swift,
 				WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,

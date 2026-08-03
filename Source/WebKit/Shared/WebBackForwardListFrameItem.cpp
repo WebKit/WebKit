@@ -29,6 +29,9 @@
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
+#include "WebProcessProxy.h"
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
@@ -238,6 +241,21 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateForReplacingDocument(
     // These describe the entry rather than its document, so HistoryItem::reset() keeps them.
     frameState->wasCreatedByJSWithoutUserInteraction = m_frameState->wasCreatedByJSWithoutUserInteraction;
     frameState->wasRestoredFromSession = m_frameState->wasRestoredFromSession;
+    return frameState;
+}
+
+// When the UI process drives back/forward loads it sends each frame its own state, so other processes only need identifiers.
+Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildrenForProcess(WebPageProxy& page, WebProcessProxy& process)
+{
+    if (!protect(page.preferences())->shouldUseUIProcessForBackForwardItemLoading())
+        return copyFrameStateWithChildren();
+
+    RefPtr frame = m_parent ? WebFrameProxy::webFrame(frameID()) : page.mainFrame();
+    bool processHostsFrame = frame && frame->page() == &page && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+
+    Ref frameState = processHostsFrame ? copyFrameState() : m_frameState->copyIdentifiersOnly();
+    for (auto& child : borrow(m_children))
+        frameState->children.append(child->copyFrameStateWithChildrenForProcess(page, process));
     return frameState;
 }
 
