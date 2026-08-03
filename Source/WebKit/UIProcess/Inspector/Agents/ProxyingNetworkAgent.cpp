@@ -41,10 +41,14 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
+#include <optional>
 #include <tuple>
 #include <utility>
 #include <wtf/Expected.h>
+#include <wtf/MonotonicTime.h>
 
 namespace Inspector {
 
@@ -88,21 +92,12 @@ static Protocol::Page::ResourceType toProtocolResourceType(ResourceType type)
     return Protocol::Page::ResourceType::Other;
 }
 
-static Ref<Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
-{
-    auto headersValue = Protocol::Network::Headers::create().release();
-    auto headersObject = headersValue->asObject();
-    for (const auto& header : headers)
-        headersObject->setString(header.key, header.value);
-    return headersValue;
-}
-
 static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
 {
     auto requestObject = Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
-        .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
         .release();
 
     if (RefPtr body = request.httpBody()) {
@@ -139,19 +134,38 @@ static Protocol::Network::Response::Source toProtocolResponseSource(ResourceResp
     return Protocol::Network::Response::Source::Unknown;
 }
 
-static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse& response)
+// Raw monotonic seconds, not seconds elapsed on an InspectorEnvironment stopwatch: timestamps here
+// come from several WebContent processes and have to share an epoch to land on one waterfall. See
+// ResourceUtilities::buildObjectForTiming.
+// FIXME: While a Timeline recording is active the frontend converts these through the recording's
+// stopwatch-based epoch, which will skew the Network waterfall.
+static double monotonicTimeToProtocolSeconds(MonotonicTime time)
+{
+    return time.secondsSinceEpoch().value();
+}
+
+static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse& response, std::optional<MonotonicTime> resourceLoadStartTime)
 {
     if (response.isNull())
         return nullptr;
 
-    return Protocol::Network::Response::create()
+    auto responseObject = Protocol::Network::Response::create()
         .setUrl(response.url().string())
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildObjectForHeaders(response.httpHeaderFields()))
         .setMimeType(response.mimeType())
         .setSource(toProtocolResponseSource(response.source()))
         .release();
+
+    // No start time means there was no ResourceLoader, so there is no phase breakdown to report --
+    // the case for redirects and memory-cache hits. Matches the in-process agent.
+    if (resourceLoadStartTime) {
+        auto* metrics = response.deprecatedNetworkLoadMetricsOrNull();
+        responseObject->setTiming(ResourceUtilities::buildObjectForTiming(metrics ? *metrics : NetworkLoadMetrics::emptyMetrics(), *resourceLoadStartTime, monotonicTimeToProtocolSeconds));
+    }
+
+    return responseObject;
 }
 
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
@@ -560,19 +574,19 @@ void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID fram
 
     RefPtr<Protocol::Network::Response> redirectResponseObject;
     if (redirectResponse)
-        redirectResponseObject = buildObjectForResourceResponse(*redirectResponse);
+        redirectResponseObject = buildObjectForResourceResponse(*redirectResponse, std::nullopt);
 
     m_frontendDispatcher->requestWillBeSent(requestId, frameIdString, loaderId, documentURL, WTF::move(requestObject), timestamp, walltime, WTF::move(initiatorObject), WTF::move(redirectResponseObject), toProtocolResourceType(resourceType), targetID);
 }
 
-void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frameID, const String& loaderId, const ResourceResponse& response, ResourceType resourceType, double timestamp)
+void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frameID, const String& loaderId, const ResourceResponse& response, ResourceType resourceType, double timestamp, std::optional<MonotonicTime>&& resourceLoadStartTime)
 {
     if (!m_enabled)
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
     auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
-    auto responseObject = buildObjectForResourceResponse(response);
+    auto responseObject = buildObjectForResourceResponse(response, resourceLoadStartTime);
 
     if (responseObject)
         m_frontendDispatcher->responseReceived(requestId, frameIdString, loaderId, timestamp, toProtocolResourceType(resourceType), responseObject.releaseNonNull());
@@ -587,14 +601,13 @@ void ProxyingNetworkAgent::dataReceived(ResourceID resourceID, int dataLength, i
     m_frontendDispatcher->dataReceived(requestId, timestamp, dataLength, encodedDataLength);
 }
 
-void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, const String& sourceMapURL)
+void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, const String& sourceMapURL, NetworkLoadMetrics&& metrics)
 {
     if (!m_enabled)
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    // FIXME: Add metrics parameter once we have NetworkLoadMetrics IPC.
-    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, nullptr);
+    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics));
 }
 
 void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp, const String& errorText, bool canceled)
@@ -619,7 +632,8 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
         .setBodySize(bodySize)
         .release();
 
-    if (auto responseObject = buildObjectForResourceResponse(response))
+    // A memory-cached resource never went to the network, so there is no load timing to report.
+    if (auto responseObject = buildObjectForResourceResponse(response, std::nullopt))
         cachedResourceObject->setResponse(responseObject.releaseNonNull());
 
     if (!sourceMapURL.isEmpty())

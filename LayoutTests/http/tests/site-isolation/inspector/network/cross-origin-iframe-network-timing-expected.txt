@@ -1,0 +1,14 @@
+Test that Network.ResourceTiming is populated under Site Isolation and that timestamps from different WebContent processes share one timebase.
+
+
+
+== Running test suite: SiteIsolation.Network.Timing
+-- Running test case: SiteIsolation.Network.Timing.CrossOriginIFrame.PhasesAreOrdered
+PASS: Timing should have a start time.
+PASS: responseEnd should not precede startTime.
+PASS: responseEnd should not precede responseStart.
+PASS: responseStart should not precede requestStart.
+
+-- Running test case: SiteIsolation.Network.Timing.CrossOriginIFrame.SharesTimebaseWithMainFrame
+PASS: The later main frame load should not appear to start before the earlier cross-origin iframe load.
+

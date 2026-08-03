@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.Metrics");
+
+    // Drives a fetch inside the cross-origin iframe and resolves once the resource has finished
+    // loading, so Network.loadingFinished (which carries the metrics) has certainly been handled.
+    async function finishedResourceFromCrossOriginIFrame() {
+        let frameTarget = await frameTargetForURLContaining("iframe-with-fetch.html");
+        InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin fetch iframe frame target should exist.");
+        await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+        let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+        let resource = (await resourceAddedPromise).data.resource;
+
+        if (!resource.finished)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+        return resource;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Metrics.CrossOriginIFrame.ConnectionInfo",
+        description: "Network.loadingFinished from a cross-origin iframe should carry the NetworkLoadMetrics connection info (rdar://171758328).",
+        async test() {
+            let resource = await finishedResourceFromCrossOriginIFrame();
+
+            // Only assert presence, never the values: protocol string, IP address and connection
+            // identifier all vary by machine and by run.
+            InspectorTest.expectThat(!!resource.protocol, "Resource should have a network protocol.");
+            InspectorTest.expectThat(!!resource.remoteAddress, "Resource should have a remote address.");
+            InspectorTest.expectNotEqual(resource.priority, WI.Resource.NetworkPriority.Unknown, "Resource should have a known network priority.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Metrics.CrossOriginIFrame.TransferSizes",
+        description: "The transfer sizes prove AdditionalNetworkLoadMetricsForWebInspector survived IPC, since WI.Resource only reads them when requestHeaderBytesSent is present.",
+        async test() {
+            let resource = await finishedResourceFromCrossOriginIFrame();
+
+            // WI.Resource.updateWithMetrics only populates these when the payload carried
+            // requestHeaderBytesSent, which in turn only arrives when the NetworkProcess captured
+            // the inspector-only metrics for this iframe's process. They default to NaN, so a
+            // nonzero value here means the whole additional-metrics path worked.
+            InspectorTest.expectGreaterThan(resource.requestHeadersTransferSize, 0, "Request headers transfer size should be nonzero.");
+            InspectorTest.expectGreaterThan(resource.responseBodyTransferSize, 0, "Response body transfer size should be nonzero.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Metrics.MainFrame.ConnectionInfo",
+        description: "The main frame goes through the same FrameNetworkAgentProxy -> ProxyingNetworkAgent path under Site Isolation, so it must report metrics too.",
+        async test() {
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            InspectorTest.evaluateInPage("triggerMainFrameFetch()");
+            let resource = (await resourceAddedPromise).data.resource;
+
+            if (!resource.finished)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            InspectorTest.expectThat(!!resource.protocol, "Main frame resource should have a network protocol.");
+            InspectorTest.expectGreaterThan(resource.requestHeadersTransferSize, 0, "Main frame request headers transfer size should be nonzero.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+function triggerMainFrameFetch() {
+    fetch("resources/data.json?" + Math.random());
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that NetworkLoadMetrics reach the frontend for loads in a cross-origin iframe and in the main frame under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>
