@@ -443,6 +443,44 @@ Rebased 'eng/pr-branch' on 'main!'
 Running pre-PR checks...
 No pre-PR checks to run""")
 
+    def _pull_request_with_mismatched_committer(self, response):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            repo.modified['modified.txt'] = 'diff'
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch', '-v'),
+                path=self.path,
+            ))
+            repo.head.committer = Contributor('test', ['test@test'])
+            with MockTerminal.input(response):
+                self.assertEqual(1, program.main(
+                    args=('pull-request', '-v'),
+                    path=self.path,
+                ))
+
+        self.assertIn(
+            "was authored by 'Tim Apple <tapple@webkit.org>' but committed by 'test <test@test>'",
+            captured.root.log.getvalue(),
+        )
+        self.assertIn('1 commit in this pull request has a committer which differs from the author', captured.stdout.getvalue())
+        return captured
+
+    def test_committer_mismatch_decline(self):
+        captured = self._pull_request_with_mismatched_committer('n')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'{}' doesn't have a recognized remote\n"
+            'User declined to create a pull request with mismatched author and committer\n'
+            '`git commit --amend --no-edit` refreshes the committer of the current commit from your git configuration\n'.format(self.path),
+        )
+
+    def test_committer_mismatch_accept(self):
+        captured = self._pull_request_with_mismatched_committer('y')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'{path}' doesn't have a recognized remote\n"
+            "'{path}' doesn't have a recognized remote\n".format(path=self.path),
+        )
+
     def test_github(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),

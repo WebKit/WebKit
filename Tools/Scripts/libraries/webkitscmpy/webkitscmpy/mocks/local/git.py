@@ -372,12 +372,13 @@ nothing to commit, working tree clean
                         'commit {hash}\n'
                         'Author:     {author} <{email}>\n'
                         'AuthorDate: {date}\n'
-                        'Commit:     {author} <{email}>\n'
+                        'Commit:     {committer}\n'
                         'CommitDate: {date}\n'
                         '\n{log}\n'.format(
                             hash=commit.hash,
                             author=commit.author.name,
                             email=commit.author.email,
+                            committer=getattr(commit, 'committer', None) or commit.author,
                             date=commit.timestamp,
                             log='\n'.join(
                                 [

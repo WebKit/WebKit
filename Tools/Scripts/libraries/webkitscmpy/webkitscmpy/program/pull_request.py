@@ -480,6 +480,30 @@ class PullRequest(Command):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
             return 1
 
+        # Check identities before rebasing, a rebase resets the committer of every commit it rewrites
+        mismatched = [
+            commit for commit in repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch))
+            if commit.author and commit.committer and commit.author.email != commit.committer.email
+        ]
+        if mismatched:
+            for commit in mismatched:
+                log.warning("Commit {} was authored by '{}' but committed by '{}'".format(commit.hash[:12], commit.author, commit.committer))
+            if not args.defaults:
+                try:
+                    response = Terminal.choose(
+                        '{} in this pull request {} a committer which differs from the author\nDo you want to continue?'.format(
+                            string_utils.pluralize(len(mismatched), 'commit'),
+                            'has' if len(mismatched) == 1 else 'have',
+                        ), default='Yes', options=('Yes', 'No'),
+                    )
+                except EOFError:
+                    log.warning('Prompting is impossible, continuing despite the committer mismatch')
+                    response = 'Yes'
+                if response == 'No':
+                    sys.stderr.write('User declined to create a pull request with mismatched author and committer\n')
+                    sys.stderr.write('`git commit --amend --no-edit` refreshes the committer of the current commit from your git configuration\n')
+                    return 1
+
         rebasing = args.rebase if args.rebase is not None else repository.config().get(
             'webkitscmpy.auto-rebase-branch',
             repository.config().get('pull.rebase', 'true'),

@@ -179,7 +179,7 @@ class Commit(object):
         hash=None,
         revision=None,
         identifier=None, branch=None, branch_point=None,
-        timestamp=None, author=None, message=None, order=None, repository_id=None
+        timestamp=None, author=None, message=None, order=None, repository_id=None, committer=None
     ):
         self.hash = self._parse_hash(hash, do_assert=True)
         self.revision = self._parse_revision(revision, do_assert=True)
@@ -235,6 +235,18 @@ class Commit(object):
             raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
         else:
             self.author = author
+
+        if committer and isinstance(committer, dict) and committer.get('name'):
+            emails = committer.get('emails', [])
+            if committer.get('email'):
+                emails.append(committer.get('email'))
+            self.committer = Contributor(committer.get('name'), emails)
+        elif committer and isinstance(committer, string_utils.basestring) and '@' in committer:
+            self.committer = Contributor(committer, [committer])
+        elif committer and not isinstance(committer, Contributor):
+            raise TypeError("Expected 'committer' to be of type {}, got '{}'".format(Contributor, committer))
+        else:
+            self.committer = committer
 
         if message and not isinstance(message, string_utils.basestring):
             raise ValueError("Expected 'message' to be a string, got '{}'".format(message))

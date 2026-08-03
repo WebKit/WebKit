@@ -952,10 +952,13 @@ class Git(Scm):
         # Parse git log output, handling both normal and merge commits (which have an extra 'Merge:' line)
         log_lines = log.stdout.splitlines()
         author_line = None
+        committer_line = None
         message_start_index = None
         for i, line in enumerate(log_lines):
             if line.startswith('Author:'):
                 author_line = line
+            if line.startswith('Commit:'):
+                committer_line = line
             # The message starts after the first blank line following the header
             if message_start_index is None and not line.strip() and i > 0:
                 message_start_index = i + 1
@@ -1005,11 +1008,13 @@ class Git(Scm):
             timestamp=timestamp,
             order=order,
             author=Contributor.from_scm_log(author_line, self.contributors),
+            committer=Contributor.from_scm_log(committer_line.replace('Commit:', 'Author:', 1), self.contributors) if committer_line else None,
             message=logcontent if include_log else None,
         )
 
     def _args_from_content(self, content, include_log=True):
         author = None
+        committer = None
         timestamp = None
 
         # Parse header lines dynamically to handle merge commits (which have an extra 'Merge:' line)
@@ -1019,6 +1024,8 @@ class Git(Scm):
             split = line.split(': ')
             if split[0] == 'Author':
                 author = Contributor.from_scm_log(line.lstrip(), self.contributors)
+            elif split[0] == 'Commit':
+                committer = Contributor.from_scm_log(line.replace('Commit:', 'Author:', 1).lstrip(), self.contributors)
             elif split[0] == 'CommitDate':
                 timestamp = int(line.split(' ')[-1])
             # The message starts after the first blank line following the header
@@ -1037,6 +1044,7 @@ class Git(Scm):
         return dict(
             revision=int(matches[-1].split('@')[0]) if matches else None,
             author=author,
+            committer=committer,
             timestamp=timestamp,
             message=message.rstrip() if include_log else None,
         )
