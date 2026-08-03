@@ -58,7 +58,7 @@ enum ParserState : uint8_t {
 
 enum TokenType : uint8_t {
     TokLBracket, TokRBracket, TokLBrace, TokRBrace,
-    TokString, TokIdentifier, TokNumber, TokColon,
+    TokString, TokIdentifier, TokNumber, TokNumberInt32, TokColon,
     TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
     TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError, TokErrorSpace };
 
@@ -117,6 +117,7 @@ template<typename CharacterType> struct LiteralParserToken {
     unsigned stringOrIdentifierLength : 31;
     union {
         double numberToken; // Only used for TokNumber.
+        int32_t int32Token; // Only used for TokNumberInt32.
         const CharacterType* identifierStart;
         const Latin1Character* stringStart8;
         const char16_t* stringStart16;
