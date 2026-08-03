@@ -56,7 +56,10 @@ FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheti
 {
 }
 
+#if !USE(SKIA)
 FontPlatformData::~FontPlatformData() = default;
+#endif
+
 FontPlatformData::FontPlatformData(const FontPlatformData&) = default;
 FontPlatformData& FontPlatformData::operator=(const FontPlatformData&) = default;
 

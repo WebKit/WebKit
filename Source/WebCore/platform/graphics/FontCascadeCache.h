@@ -250,6 +250,9 @@ struct FontCascadeCacheKeyHashTraits : HashTraits<FontCascadeCacheKey> {
 class FontCascadeCache {
     WTF_MAKE_TZONE_ALLOCATED(FontCascadeCache);
     WTF_MAKE_NONCOPYABLE(FontCascadeCache);
+#if USE(SKIA)
+    friend class FontCache;
+#endif
 public:
     FontCascadeCache() = default;
 

@@ -59,6 +59,16 @@ FontPlatformData::FontPlatformData(float size, FontOrientation&& orientation, Fo
     platformDataInit();
 }
 
+FontPlatformData::~FontPlatformData()
+{
+    if (m_customPlatformData) {
+        // Dereference sk_sp<SkTypeface> used by font.
+        m_font = { };
+        // Clear sk_sp<SkTypeface> objects from cache if refcount is 1.
+        m_customPlatformData->clearUnusedVariationTypefacesCacheEntries();
+    }
+}
+
 bool FontPlatformData::skiaTypefaceHasAnySupportedColorTable(const SkTypeface& typeface)
 {
     const int tablesCount = typeface.countTables();

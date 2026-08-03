@@ -28,6 +28,7 @@
 #include <WebCore/WidthCache.h>
 #include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
@@ -80,6 +81,9 @@ public:
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
+
+    // Only visits fonts that have already been realized; never triggers realization/loading.
+    void forEachRealizedFont(NOESCAPE const Function<void(const Font&)>&) const;
 
 private:
     FontCascadeFonts();
