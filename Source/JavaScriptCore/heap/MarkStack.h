@@ -39,6 +39,14 @@ public:
     size_t transferTo(MarkStackArray&, size_t limit); // Optimized for when `limit` is small.
     void donateSomeCellsTo(MarkStackArray&);
     void stealSomeCellsFrom(MarkStackArray&, size_t idleThreadCount);
+    const JSCell* popAndPrefetch();
 };
+
+inline const JSCell* MarkStackArray::popAndPrefetch()
+{
+    const JSCell* cell = removeLast();
+    __builtin_prefetch(cell);
+    return cell;
+}
 
 } // namespace JSC
