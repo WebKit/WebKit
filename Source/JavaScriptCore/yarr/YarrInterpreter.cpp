@@ -2360,10 +2360,12 @@ public:
 
     void atomPatternCharacter(char32_t ch, MatchDirection matchDirection, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType, OptionSet<Flags> flags)
     {
-        if (flags.contains(Flags::IgnoreCase)) {
-            char32_t lo = u_tolower(ch);
-            char32_t hi = u_toupper(ch);
-
+        // For case-insesitive compares, non-ascii characters that have different
+        // upper & lower case representations are converted to a character class.
+        ASSERT(!flags.contains(Flags::IgnoreCase) || isASCIIAlpha(ch) || isCanonicallyUnique(ch, m_pattern.eitherUnicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2));
+        if (flags.contains(Flags::IgnoreCase) && isASCIIAlpha(ch)) {
+            auto lo = toASCIILower(static_cast<Latin1Character>(ch));
+            auto hi = toASCIIUpper(static_cast<Latin1Character>(ch));
             if (lo != hi) {
                 m_bodyDisjunction->terms.append(ByteTerm(lo, hi, inputPosition, frameLocation, quantityMaxCount, quantityType, flags));
                 m_bodyDisjunction->terms.last().m_matchDirection = matchDirection;
@@ -2780,6 +2782,7 @@ public:
                     auto currentInputPosition = currentCountAlreadyChecked - term.inputPosition;
                     if (currentInputPosition.hasOverflowed())
                         return ErrorCode::OffsetTooLarge;
+
                     atomPatternCharacter(term.patternCharacter, matchDirection, currentInputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType, term.m_currentFlags);
                     break;
                 }
