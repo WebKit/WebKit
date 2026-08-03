@@ -4372,8 +4372,8 @@ JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObje
     VM& vm = globalObject->vm();
 
     JSValue arg = callFrame->argument(0);
-    if (arg.isObject())
-        asObject(arg)->ensureArrayStorage(vm);
+    if (auto* object = dynamicDowncast<JSObjectWithButterfly>(arg))
+        object->ensureArrayStorage(vm);
     return JSValue::encode(jsUndefined());
 }
 

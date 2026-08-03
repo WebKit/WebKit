@@ -680,6 +680,45 @@ function testPropertyEnumeration() {
     verifyStructIntact(m, obj);
 }
 
+// https://bugs.webkit.org/show_bug.cgi?id=319087
+function testEnsureArrayStorage() {
+    const ms = makeStruct();
+    const s = ms.exports.make();
+    ensureArrayStorage(s);
+    verifyStructIntact(ms, s);
+
+    const ma = makeArray();
+    const a = ma.exports.make();
+    ensureArrayStorage(a);
+    verifyArrayIntact(ma, a);
+}
+
+function testEnsureArrayStorageViaWasmImport() {
+    const m = instantiate(`
+        (module
+            (type $s (struct (field i32)))
+            (import "imports" "ensure" (func $ensure (param (ref $s)) (result i32)))
+            (func (export "make") (result (ref $s))
+                (struct.new $s (i32.const 42)))
+            (func (export "run") (param (ref $s)) (result i32)
+                (call $ensure (local.get 0)))
+            (func (export "get") (param (ref $s)) (result i32)
+                (struct.get $s 0 (local.get 0)))
+        )
+    `, {
+        imports: {
+            ensure(obj) {
+                ensureArrayStorage(obj);
+                return 1;
+            }
+        }
+    });
+
+    const obj = m.exports.make();
+    assert.eq(m.exports.run(obj), 1);
+    assert.eq(m.exports.get(obj), 42);
+}
+
 // Run all tests
 testPropertyAdditionNamed();
 testPropertyAdditionIndexed();
@@ -714,3 +753,5 @@ testPrototypeReplacement();
 testDeepPrototypeChain();
 testIsExtensible();
 testPropertyEnumeration();
+testEnsureArrayStorage();
+testEnsureArrayStorageViaWasmImport();
