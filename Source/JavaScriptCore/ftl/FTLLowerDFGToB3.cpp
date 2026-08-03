@@ -1927,10 +1927,8 @@ private:
             compileUnreachable();
             break;
         case StringSlice:
-            compileStringSlice();
-            break;
         case StringSubstring:
-            compileStringSubstring();
+            compileStringSliceOrSubstring();
             break;
         case StringSubstr:
             compileStringSubstr();
@@ -8457,6 +8455,25 @@ IGNORE_CLANG_WARNINGS_END
             endBoundary = pickIndex(end);
         LValue startIndex = pickIndex(start);
         return std::make_pair(startIndex, endBoundary);
+    }
+
+    std::pair<LValue, LValue> populateSubstringRange(LValue start, LValue end, LValue length)
+    {
+        // end can be nullptr.
+        ASSERT(start);
+        ASSERT(length);
+
+        auto clampIndex = [&] (LValue index) {
+            return m_out.select(m_out.lessThan(index, m_out.int32Zero), m_out.int32Zero,
+                m_out.select(m_out.greaterThan(index, length), length, index));
+        };
+
+        if (!end)
+            return std::make_pair(clampIndex(start), length);
+
+        // Clamping is monotonic, so the indices can be ordered before it.
+        LValue isReversed = m_out.greaterThan(start, end);
+        return std::make_pair(clampIndex(m_out.select(isReversed, end, start)), clampIndex(m_out.select(isReversed, start, end)));
     }
 
     void compileArraySlice()
@@ -20776,7 +20793,7 @@ IGNORE_CLANG_WARNINGS_END
         genericJSValueCompare(intFunctor, fallbackFunction);
     }
 
-    void compileStringSlice()
+    void compileStringSliceOrSubstring()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LBasicBlock lengthCheckCase = m_out.newBlock();
@@ -20808,7 +20825,7 @@ IGNORE_CLANG_WARNINGS_END
             length = m_out.constInt32(*stringLength);
         else
             length = m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length);
-        auto range = populateSliceRange(start, end, length);
+        auto range = m_node->op() == StringSubstring ? populateSubstringRange(start, end, length) : populateSliceRange(start, end, length);
         LValue from = range.first;
         LValue to = range.second;
         LValue span = m_out.sub(to, from);
@@ -20878,23 +20895,26 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(ropeSlowCase, continuation);
-        if (end)
-            results.append(m_out.anchor(vmCall(pointerType(), operationStringSliceWithEnd, weakPointer(globalObject), string, start, end)));
-        else
-            results.append(m_out.anchor(vmCall(pointerType(), operationStringSlice, weakPointer(globalObject), string, start)));
+        switch (m_node->op()) {
+        case StringSlice:
+            if (end)
+                results.append(m_out.anchor(vmCall(pointerType(), operationStringSliceWithEnd, weakPointer(globalObject), string, start, end)));
+            else
+                results.append(m_out.anchor(vmCall(pointerType(), operationStringSlice, weakPointer(globalObject), string, start)));
+            break;
+        case StringSubstring:
+            if (end)
+                results.append(m_out.anchor(vmCall(pointerType(), operationStringSubstringWithEnd, weakPointer(globalObject), string, start, end)));
+            else
+                results.append(m_out.anchor(vmCall(pointerType(), operationStringSubstring, weakPointer(globalObject), string, start)));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(pointerType(), results));
-    }
-
-    void compileStringSubstring()
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        if (m_node->child3())
-            setJSValue(vmCall(pointerType(), operationStringSubstringWithEnd, weakPointer(globalObject), lowString(m_node->child1()), lowInt32(m_node->child2()), lowInt32(m_node->child3())));
-        else
-            setJSValue(vmCall(pointerType(), operationStringSubstring, weakPointer(globalObject), lowString(m_node->child1()), lowInt32(m_node->child2())));
     }
 
     void compileStringSubstr()

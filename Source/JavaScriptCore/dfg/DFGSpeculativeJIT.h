@@ -1626,8 +1626,7 @@ public:
     void compileDefineAccessorProperty(Node*);
     void compileObjectDefineProperty(Node*);
     void compileObjectDefinePropertyFromFields(Node*);
-    void compileStringSlice(Node*);
-    void compileStringSubstring(Node*);
+    void compileStringSliceOrSubstring(Node*);
     void compileStringSubstr(Node*);
     void compileToUpperCase(Node*);
     void compileToLowerCase(Node*);
@@ -1788,6 +1787,7 @@ public:
     void emitGetCallee(CodeOrigin, GPRReg calleeGPR);
     void emitGetArgumentStart(CodeOrigin, GPRReg startGPR);
     void emitPopulateSliceIndex(Edge&, std::optional<GPRReg> indexGPR, GPRReg lengthGPR, GPRReg resultGPR);
+    void emitPopulateSubstringIndex(Edge&, GPRReg indexGPR, GPRReg lengthGPR, GPRReg resultGPR);
     
     // Generate an OSR exit fuzz check. Returns Jump() if OSR exit fuzz is not enabled, or if
     // it's in training mode.

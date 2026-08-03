@@ -1547,7 +1547,7 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
     jump(notTaken);
 }
 
-void SpeculativeJIT::compileStringSlice(Node* node)
+void SpeculativeJIT::compileStringSliceOrSubstring(Node* node)
 {
     SpeculateCellOperand string(this, node->child1());
 
@@ -1580,12 +1580,25 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     {
         load32(Address(tempGPR, StringImpl::lengthMemoryOffset()), temp2GPR);
 
-        emitPopulateSliceIndex(node->child2(), startGPR, temp2GPR, startIndexGPR);
+        if (node->op() == StringSubstring) {
+            emitPopulateSubstringIndex(node->child2(), startGPR, temp2GPR, startIndexGPR);
 
-        if (node->child3())
-            emitPopulateSliceIndex(node->child3(), endGPR.value(), temp2GPR, tempGPR);
-        else
-            move(temp2GPR, tempGPR);
+            if (node->child3()) {
+                emitPopulateSubstringIndex(node->child3(), endGPR.value(), temp2GPR, tempGPR);
+
+                move(startIndexGPR, temp2GPR);
+                moveConditionally32(Above, startIndexGPR, tempGPR, tempGPR, startIndexGPR, startIndexGPR);
+                moveConditionally32(Above, temp2GPR, tempGPR, temp2GPR, tempGPR, tempGPR);
+            } else
+                move(temp2GPR, tempGPR);
+        } else {
+            emitPopulateSliceIndex(node->child2(), startGPR, temp2GPR, startIndexGPR);
+
+            if (node->child3())
+                emitPopulateSliceIndex(node->child3(), endGPR.value(), temp2GPR, tempGPR);
+            else
+                move(temp2GPR, tempGPR);
+        }
     }
 
     JumpList doneCases;
@@ -1628,48 +1641,26 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     addSlowPathGenerator(slowPathCall(slowCases, this, operationStringSubstr, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startIndexGPR, tempGPR));
 
     if (isRope.isSet()) {
-        if (endGPR)
-            addSlowPathGenerator(slowPathCall(isRope, this, operationStringSliceWithEnd, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, *endGPR));
-        else
-            addSlowPathGenerator(slowPathCall(isRope, this, operationStringSlice, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR));
+        switch (node->op()) {
+        case StringSlice:
+            if (endGPR)
+                addSlowPathGenerator(slowPathCall(isRope, this, operationStringSliceWithEnd, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, *endGPR));
+            else
+                addSlowPathGenerator(slowPathCall(isRope, this, operationStringSlice, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR));
+            break;
+        case StringSubstring:
+            if (endGPR)
+                addSlowPathGenerator(slowPathCall(isRope, this, operationStringSubstringWithEnd, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, *endGPR));
+            else
+                addSlowPathGenerator(slowPathCall(isRope, this, operationStringSubstring, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     doneCases.link(this);
     cellResult(tempGPR, node);
-}
-
-void SpeculativeJIT::compileStringSubstring(Node* node)
-{
-    SpeculateCellOperand string(this, node->child1());
-
-    SpeculateInt32Operand start(this, node->child2());
-    if (node->child3()) {
-        SpeculateInt32Operand end(this, node->child3());
-
-        GPRReg stringGPR = string.gpr();
-        GPRReg startGPR = start.gpr();
-        GPRReg endGPR = end.gpr();
-
-        speculateString(node->child1(), stringGPR);
-
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        callOperation(operationStringSubstringWithEnd, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, endGPR);
-        cellResult(resultGPR, node);
-        return;
-    }
-
-    GPRReg stringGPR = string.gpr();
-    GPRReg startGPR = start.gpr();
-
-    speculateString(node->child1(), stringGPR);
-
-    flushRegisters();
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
-    callOperation(operationStringSubstring, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR);
-    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileStringSubstr(Node* node)
@@ -9528,6 +9519,24 @@ void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, std::optional<GPRReg> 
     move(lengthGPR, resultGPR);
 
     done.link(this);
+}
+
+void SpeculativeJIT::emitPopulateSubstringIndex(Edge& target, GPRReg indexGPR, GPRReg lengthGPR, GPRReg resultGPR)
+{
+    if (target->isInt32Constant()) {
+        int32_t value = target->asInt32();
+        if (value <= 0) {
+            move(TrustedImm32(0), resultGPR);
+            return;
+        }
+
+        move(TrustedImm32(value), resultGPR);
+        moveConditionally32(Above, resultGPR, lengthGPR, lengthGPR, resultGPR, resultGPR);
+        return;
+    }
+
+    moveConditionally32(GreaterThan, indexGPR, lengthGPR, lengthGPR, indexGPR, resultGPR);
+    moveConditionally32(LessThan, resultGPR, TrustedImm32(0), TrustedImm32(0), resultGPR, resultGPR);
 }
 
 void SpeculativeJIT::compileArraySlice(Node* node)
