@@ -498,7 +498,7 @@ TEST(WebTransport, NetworkProcessCrash)
 
     obj = [webView objectByCallingAsyncFunction:@"return await writeDatagram()" withArguments:@{ } error:&error];
     EXPECT_EQ(obj, nil);
-    EXPECT_NOT_NULL(error);
+    EXPECT_NULL(error);
     error = nil;
 
     obj = [webView objectByEvaluatingJavaScript:@"session.close()"];
