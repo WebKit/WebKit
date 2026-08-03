@@ -86,7 +86,7 @@ public:
     const URL& url() const LIFETIME_BOUND { return m_url; }
     String statusText() const;
     int status() const;
-    State readyState() const { return static_cast<State>(m_readyState); }
+    State readyState() const { return m_readyState; }
     bool withCredentials() const { return m_includeCredentials; }
     ExceptionOr<void> setWithCredentials(bool);
     ExceptionOr<void> open(const String& method, const String& url);
@@ -125,7 +125,7 @@ public:
         Text = 5,
     };
     ExceptionOr<void> setResponseType(ResponseType);
-    ResponseType responseType() const { return static_cast<ResponseType>(m_responseType); }
+    ResponseType responseType() const { return m_responseType; }
 
     String responseURL() const;
 
@@ -209,16 +209,16 @@ private:
 
     Ref<TextResourceDecoder> createDecoder() const;
 
-    unsigned m_async : 1;
-    unsigned m_includeCredentials : 1;
-    unsigned m_sendFlag : 1;
-    unsigned m_createdDocument : 1;
-    unsigned m_error : 1;
-    unsigned m_uploadListenerFlag : 1;
-    unsigned m_uploadComplete : 1;
-    unsigned m_responseCacheIsValid : 1;
-    unsigned m_readyState : 3; // State
-    unsigned m_responseType : 3; // ResponseType
+    bool m_async : 1 { true };
+    bool m_includeCredentials : 1 { false };
+    bool m_sendFlag : 1 { false };
+    bool m_createdDocument : 1 { false };
+    bool m_error : 1 { false };
+    bool m_uploadListenerFlag : 1 { false };
+    bool m_uploadComplete : 1 { false };
+    bool m_responseCacheIsValid : 1 { false };
+    State m_readyState : 3 { UNSENT };
+    ResponseType m_responseType : 3 { ResponseType::EmptyString };
 
     unsigned m_timeoutMilliseconds { 0 };
 

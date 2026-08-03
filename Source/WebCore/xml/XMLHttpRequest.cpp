@@ -112,16 +112,6 @@ Ref<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext& context)
 
 XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_async(true)
-    , m_includeCredentials(false)
-    , m_sendFlag(false)
-    , m_createdDocument(false)
-    , m_error(false)
-    , m_uploadListenerFlag(false)
-    , m_uploadComplete(false)
-    , m_responseCacheIsValid(false)
-    , m_readyState(static_cast<unsigned>(UNSENT))
-    , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
     , m_progressEventThrottle(makeUniqueRef<XMLHttpRequestProgressEventThrottle>(*this))
     , m_timeoutTimer(*this, &XMLHttpRequest::timeoutTimerFired)
 {
@@ -262,7 +252,7 @@ ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
         return Exception { ExceptionCode::InvalidAccessError };
     }
 
-    m_responseType = static_cast<unsigned>(type);
+    m_responseType = type;
     return { };
 }
 
@@ -290,7 +280,7 @@ void XMLHttpRequest::changeState(State newState)
         // of this scope.
         auto eventFiringActivity = makePendingActivity(*this);
 
-        m_readyState = static_cast<State>(newState);
+        m_readyState = newState;
         if (readyState() == DONE) {
             // The XHR object itself holds on to the responseText, and
             // thus has extra cost even independent of any
@@ -716,7 +706,7 @@ void XMLHttpRequest::abort()
         dispatchErrorEvents(eventNames().abortEvent);
     }
     if (readyState() == DONE)
-        m_readyState = static_cast<State>(UNSENT);
+        m_readyState = UNSENT;
 }
 
 bool XMLHttpRequest::internalAbort()
@@ -1186,7 +1176,7 @@ void XMLHttpRequest::didReachTimeout()
     m_exceptionCode = ExceptionCode::TimeoutError;
 
     if (!m_async) {
-        m_readyState = static_cast<State>(DONE);
+        m_readyState = DONE;
         m_exceptionCode = ExceptionCode::TimeoutError;
         return;
     }
