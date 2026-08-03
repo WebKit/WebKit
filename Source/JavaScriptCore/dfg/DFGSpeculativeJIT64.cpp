@@ -2159,11 +2159,15 @@ void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
         SpeculateDoubleOperand value(this, node->child1());
         FPRTemporary scratch(this);
         GPRTemporary result(this);
-        move(invert ? TrustedImm32(JSValue::ValueFalse) : TrustedImm32(JSValue::ValueTrue), result.gpr());
-        Jump nonZero = branchDoubleNonZero(value.fpr(), scratch.fpr());
-        move(invert ? TrustedImm32(JSValue::ValueTrue) : TrustedImm32(JSValue::ValueFalse), result.gpr());
-        nonZero.link(this);
-        jsValueResult(result.gpr(), node, DataFormatJSBoolean);
+
+        FPRReg valueFPR = value.fpr();
+        FPRReg scratchFPR = scratch.fpr();
+        GPRReg resultGPR = result.gpr();
+
+        moveZeroToDouble(scratchFPR);
+        compareDouble(invert ? DoubleEqualOrUnordered : DoubleNotEqualAndOrdered, valueFPR, scratchFPR, resultGPR);
+        or32(TrustedImm32(JSValue::ValueFalse), resultGPR);
+        jsValueResult(resultGPR, node, DataFormatJSBoolean);
         return;
     }
     
