@@ -63,18 +63,15 @@ static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, Stri
         tokenizeSpaceSplitString(tokenProcessor, string.span16());
 }
 
-bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
+bool SpaceSplitStringData::containsAll(const SpaceSplitStringData& other) const
 {
     if (this == &other)
         return true;
 
-    unsigned otherSize = other.m_size;
-    unsigned i = 0;
-    do {
-        if (!contains(other[i]))
+    for (auto& token : other) {
+        if (!contains(token))
             return false;
-        ++i;
-    } while (i < otherSize);
+    }
     return true;
 }
 
@@ -224,8 +221,12 @@ RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyS
     tokenizeSpaceSplitString(tokenCounter, keyString);
     unsigned tokenCount = tokenCounter.tokenCount();
 
-    if (!tokenCount)
+    if (!tokenCount) {
+        // The input was whitespace-only, so there is nothing to cache. Remove the entry we just
+        // added, otherwise the table would retain the key string for the lifetime of the process.
+        spaceSplitStringTable().remove(addResult.iterator);
         return nullptr;
+    }
 
     RefPtr<SpaceSplitStringData> spaceSplitStringData = create(keyString, tokenCount);
     addResult.iterator->value = spaceSplitStringData.get();

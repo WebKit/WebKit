@@ -39,13 +39,13 @@ public:
     auto begin() LIFETIME_BOUND { return std::to_address(tokenArray().begin()); }
     auto end() LIFETIME_BOUND { return std::to_address(tokenArray().end()); }
 
-    bool contains(const AtomString& string)
+    bool contains(const AtomString& string) const
     {
         auto tokens = tokenArray();
         return std::ranges::find(tokens, string) != tokens.end();
     }
 
-    bool NODELETE containsAll(SpaceSplitStringData&);
+    bool NODELETE containsAll(const SpaceSplitStringData&) const;
 
     unsigned size() const { return m_size; }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
