@@ -910,8 +910,7 @@ void SVGSMILElement::resolveFirstInterval()
     resolveInterval(true, begin, end);
     ASSERT(!begin.isIndefinite());
 
-    // Compare raw SMILTime values to avoids treating open-ended intervals as "new" on every call.
-    if (!begin.isUnresolved() && (begin.value() != m_intervalBegin.value() || end.value() != m_intervalEnd.value())) {
+    if (!begin.isUnresolved() && (begin != m_intervalBegin || end != m_intervalEnd)) {
         m_intervalBegin = begin;
         m_intervalEnd = end;
         notifyDependentsIntervalChanged();
