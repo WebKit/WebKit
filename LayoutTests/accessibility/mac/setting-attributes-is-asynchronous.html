@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <input type="text" id="textfield" onfocus="debug('This line should be printed second.');  finishJSTest(); ">
 
@@ -21,6 +21,5 @@ if (window.testRunner && window.accessibilityController) {
    debug((window.testRunner ? "window.testRunner" : "window.accessibilityController") + " is not present");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
