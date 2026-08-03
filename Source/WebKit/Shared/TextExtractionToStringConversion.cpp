@@ -1425,6 +1425,11 @@ static String quoteValue(const String& value, bool conditionalQuoting)
     return value;
 }
 
+static bool shouldEmitClickableToken(const TextExtraction::Item& item)
+{
+    return item.isVisuallyClickable && item.accessibilityRole != "button"_s && item.accessibilityRole != "link"_s;
+}
+
 enum class IncludeRectForParentItem : bool { No, Yes };
 
 static String lineWithoutNodeIdentifier(const String& line, const std::optional<String>& identifier)
@@ -1647,7 +1652,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
-                if (isGenericContainer && item.isVisuallyClickable)
+                if (isGenericContainer && shouldEmitClickableToken(item))
                     parts.append("clickable"_s);
             }
             aggregator.addResult(line, WTF::move(parts));
@@ -1987,7 +1992,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 if (!imageData.altText.isEmpty())
                     parts.append(makeString("alt="_s, quoteValue(escapeString(imageData.altText), streamlined)));
 
-                if (item.isVisuallyClickable)
+                if (shouldEmitClickableToken(item))
                     parts.append("clickable"_s);
             }
 

@@ -945,14 +945,59 @@ static bool isVisuallyDistinctContainer(const Style::ComputedStyle& style, const
     return rect.width() >= minimumWidth && rect.height() >= minimumHeight;
 }
 
+static bool containsInteractiveDescendant(const Element& element)
+{
+    for (Ref descendant : descendantsOfType<Element>(element)) {
+        if (descendant->isLink())
+            return true;
+
+        if (is<HTMLButtonElement>(descendant) || is<HTMLTextFormControlElement>(descendant) || is<HTMLSelectElement>(descendant))
+            return true;
+
+        auto role = descendant->attributeWithoutSynchronization(HTMLNames::roleAttr);
+        if (equalLettersIgnoringASCIICase(role, "button"_s) || equalLettersIgnoringASCIICase(role, "link"_s))
+            return true;
+    }
+    return false;
+}
+
+static bool looksLikeButton(const RenderObject& renderer)
+{
+    CheckedRef style = renderer.style();
+    if (!hasVisuallyDistinctStyling(protect(style)))
+        return false;
+
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box)
+        return false;
+
+    static constexpr auto minButtonHeight = 16;
+    static constexpr auto maxButtonHeight = 64;
+    auto height = box->borderBoxHeight().toFloat();
+    if (height < minButtonHeight || height > maxButtonHeight)
+        return false;
+
+    RefPtr element = dynamicDowncast<Element>(renderer.node());
+    if (!element)
+        return false;
+
+    static constexpr auto maxButtonLabelLength = 64;
+    auto text = element->textContent();
+    if (text.isEmpty() || text.length() > maxButtonLabelLength || text.containsOnly<isASCIIWhitespace>())
+        return false;
+
+    return !containsInteractiveDescendant(*element);
+}
+
 static bool looksVisuallyClickable(const RenderObject& renderer)
 {
     CheckedRef style = renderer.style();
-    if (style->cursorType() != CursorType::Pointer)
-        return false;
 
     if (style->pointerEvents() == PointerEvents::None)
         return false;
+
+    if (style->cursorType() != CursorType::Pointer)
+        return looksLikeButton(renderer);
 
     if (!hasVisuallyDistinctStyling(protect(style)) && !renderer.isRenderReplaced())
         return false;
