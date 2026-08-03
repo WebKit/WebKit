@@ -186,24 +186,6 @@ inline HandleSlot StrongBlock::slotAtIndex(unsigned index) const
     return payload() + index;
 }
 
-#if USE(JSVALUE32_64)
-
-// A pointer fits exactly in an int32 JSValue's payload, and Int32Tag != CellTag
-// gives the same non-cell property as the 64-bit encoding above.
-inline JSValue StrongBlock::encodeFreeListEntry(HandleSlot next)
-{
-    static_assert(sizeof(HandleSlot) == sizeof(uint32_t));
-    return jsNumber(static_cast<int32_t>(std::bit_cast<uintptr_t>(next)));
-}
-
-inline HandleSlot StrongBlock::decodeFreeListEntry(JSValue value)
-{
-    ASSERT(value.isInt32());
-    return std::bit_cast<HandleSlot>(static_cast<uintptr_t>(static_cast<uint32_t>(value.asInt32())));
-}
-
-#else
-
 // A slot address is at most 48 significant bits on every supported 64-bit
 // target and NumberTag occupies bits 49 through 63, so the tag strips back off
 // exactly. isCell() is !(bits & NotCellMask) and NotCellMask includes NumberTag,
@@ -220,8 +202,6 @@ inline HandleSlot StrongBlock::decodeFreeListEntry(JSValue value)
     uint64_t bits = static_cast<uint64_t>(JSValue::encode(value)) & ~static_cast<uint64_t>(JSValue::NumberTag);
     return std::bit_cast<HandleSlot>(static_cast<uintptr_t>(bits));
 }
-
-#endif
 
 inline void StrongBlock::setFreeListHead(HandleSlot freeListHead)
 {
