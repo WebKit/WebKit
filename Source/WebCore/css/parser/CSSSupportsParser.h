@@ -72,6 +72,9 @@ private:
     // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-tech-fn
     SupportsResult consumeSupportsFontTechFunction(CSSParserTokenRange&);
 
+    // https://drafts.csswg.org/css-conditional-5/#typedef-supports-at-rule-fn
+    SupportsResult consumeSupportsAtRuleFunction(CSSParserTokenRange&);
+
     SupportsResult consumeConditionInParenthesis(CSSParserTokenRange&, CSSParserTokenType);
 
     CSSParser& m_parser;

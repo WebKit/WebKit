@@ -1797,9 +1797,11 @@ words
 // https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
 // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-format-fn
 // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-tech-fn
+// https://drafts.csswg.org/css-conditional-5/#typedef-supports-at-rule-fn
 selector
 font-format
 font-tech
+at-rule
 
 // math-depth
 auto-add

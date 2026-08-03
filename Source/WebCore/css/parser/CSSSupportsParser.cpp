@@ -30,8 +30,10 @@
 #include "config.h"
 #include "CSSSupportsParser.h"
 
+#include "CSSAtRuleID.h"
 #include "CSSParser.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSelectorParser.h"
 #include "CSSTokenizer.h"
@@ -148,6 +150,8 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSS
         return consumeSupportsFontFormatFunction(range);
     case CSSValueFontTech:
         return consumeSupportsFontTechFunction(range);
+    case CSSValueAtRule:
+        return consumeSupportsAtRuleFunction(range);
     default: // Unknown functions should parse as unsupported.
         range.consumeComponentValue();
         return Unsupported;
@@ -199,6 +203,24 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontTechFunc
         return Unsupported;
     ASSERT(technologies.size() == 1);
     return FontCustomPlatformData::supportsTechnology(technologies[0]) ? Supported : Unsupported;
+}
+
+// <supports-at-rule-fn> = at-rule( <at-keyword-token> )
+CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsAtRuleFunction(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueAtRule);
+
+    auto function = CSSPropertyParserHelpers::consumeFunction(range);
+    auto atKeywordToken = function.consumeIncludingWhitespace();
+    if (atKeywordToken.type() != AtKeywordToken)
+        return Invalid;
+    if (!function.atEnd())
+        return Invalid;
+
+    auto atRuleID = cssAtRuleID(atKeywordToken.value());
+
+    // Per spec, @charset is not an at-rule.
+    return ((atRuleID != CSSAtRuleInvalid) && (atRuleID != CSSAtRuleCharset)) ? Supported : Unsupported;
 }
 
 // <supports-in-parens> = ( <supports-condition> ) | <supports-feature> | <general-enclosed>
