@@ -3155,6 +3155,12 @@ private:
             break;
         }
 
+        case EnqueueAsyncGeneratorDriver: {
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownCellUse>(node->child2());
+            break;
+        }
+
         case CreateRest: {
             watchHavingABadTime(node);
             break;

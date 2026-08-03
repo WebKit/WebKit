@@ -36,6 +36,7 @@
 #include "CodeBlock.h"
 #include "JITInlines.h"
 #include "JITThunks.h"
+#include "JSSentinel.h"
 #include "ScratchRegisterAllocator.h"
 #include "SetupVarargsFrame.h"
 #include "SlowPathCall.h"
@@ -289,7 +290,7 @@ void JIT::compileOpCall(const JSInstruction* instruction)
             CallLinkInfo::emitFastPath(*this, callLinkInfo);
             auto doneLocation = label();
             m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
-            if constexpr (Op::opcodeID != op_iterator_open && Op::opcodeID != op_iterator_next)
+            if constexpr (Op::opcodeID != op_iterator_open && Op::opcodeID != op_iterator_next && Op::opcodeID != op_async_iterator_open)
                 setFastPathResumePoint();
             resetSP();
             if constexpr (Op::opcodeID != op_call_ignore_result)
@@ -353,15 +354,25 @@ void JIT::emitSlow_op_call_direct_eval(const JSInstruction* currentInstruction, 
     compileCallDirectEvalSlowCase(currentInstruction, iter);
 }
 
-void JIT::emit_op_iterator_open(const JSInstruction* instruction)
+template<typename Op>
+void JIT::emitIteratorOpenGeneric(const JSInstruction* instruction)
 {
-    auto bytecode = instruction->as<OpIteratorOpen>();
+    auto bytecode = instruction->as<Op>();
     auto* tryFastFunction = ([&] () {
-        switch (instruction->width()) {
-        case Narrow: return iterator_open_try_fast_narrow;
-        case Wide16: return iterator_open_try_fast_wide16;
-        case Wide32: return iterator_open_try_fast_wide32;
-        default: RELEASE_ASSERT_NOT_REACHED();
+        if constexpr (std::is_same_v<Op, OpIteratorOpen>) {
+            switch (instruction->width()) {
+            case Narrow: return iterator_open_try_fast_narrow;
+            case Wide16: return iterator_open_try_fast_wide16;
+            case Wide32: return iterator_open_try_fast_wide32;
+            default: RELEASE_ASSERT_NOT_REACHED();
+            }
+        } else {
+            switch (instruction->width()) {
+            case Narrow: return async_iterator_open_try_fast_narrow;
+            case Wide16: return async_iterator_open_try_fast_wide16;
+            case Wide32: return async_iterator_open_try_fast_wide32;
+            default: RELEASE_ASSERT_NOT_REACHED();
+            }
         }
     })();
     GetByIdModeMetadata modeMetadata = bytecode.metadata(m_profiledCodeBlock).m_modeMetadata;
@@ -374,7 +385,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     slowPathCall.call();
     Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
 
-    compileOpCall<OpIteratorOpen>(instruction);
+    compileOpCall<Op>(instruction);
     advanceToNextCheckpoint();
 
     // call result (iterator) is in returnValueJSR
@@ -411,9 +422,15 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     fastCase.link(this);
 }
 
-void JIT::emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emit_op_iterator_open(const JSInstruction* instruction)
 {
-    linkAllSlowCasesUpToBytecodeIndex(m_slowCases, iter, m_bytecodeIndex.withCheckpoint(OpIteratorOpen::numberOfCheckpoints));
+    emitIteratorOpenGeneric<OpIteratorOpen>(instruction);
+}
+
+template<typename Op>
+void JIT::emitSlowIteratorOpenGeneric(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCasesUpToBytecodeIndex(m_slowCases, iter, m_bytecodeIndex.withCheckpoint(Op::numberOfCheckpoints));
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
@@ -431,6 +448,21 @@ void JIT::emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>:
     notObject.link(this);
     loadGlobalObject(argumentGPR0);
     callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
+}
+
+void JIT::emitSlow_op_iterator_open(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitSlowIteratorOpenGeneric<OpIteratorOpen>(instruction, iter);
+}
+
+void JIT::emit_op_async_iterator_open(const JSInstruction* instruction)
+{
+    emitIteratorOpenGeneric<OpAsyncIteratorOpen>(instruction);
+}
+
+void JIT::emitSlow_op_async_iterator_open(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitSlowIteratorOpenGeneric<OpAsyncIteratorOpen>(instruction, iter);
 }
 
 void JIT::emit_op_iterator_next(const JSInstruction* instruction)
@@ -563,6 +595,45 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>:
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
         static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
     }
+}
+
+// dst = next.call(iterator), or -- when next is the fast async generator driver sentinel --
+// enqueue onto the producer instead. See op_async_iterator_next in BytecodeList.rb.
+void JIT::emit_op_async_iterator_next(const JSInstruction* instruction)
+{
+    auto bytecode = instruction->as<OpAsyncIteratorNext>();
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::resultJSR;
+
+    constexpr JSValueRegs nextJSR = baseJSR; // Used as temporary register
+    emitGetVirtualRegister(bytecode.m_next, nextJSR);
+    JumpList genericCases;
+    genericCases.append(branchIfNotCell(nextJSR));
+    genericCases.append(branchIfNotType(nextJSR.payloadGPR(), SentinelType));
+
+    load16FromMetadata(bytecode, OpAsyncIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
+    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::FastAsyncGenerator)), regT0);
+    store16ToMetadata(regT0, bytecode, OpAsyncIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+
+    using SlowOperation = decltype(operationEnqueueAsyncGeneratorDriver);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
+    constexpr GPRReg iteratorGPR = preferredArgumentGPR<SlowOperation, 1>();
+    constexpr GPRReg driverGPR = preferredArgumentGPR<SlowOperation, 2>();
+    emitGetVirtualRegisterPayload(bytecode.m_iterator, iteratorGPR);
+    emitGetVirtualRegisterPayload(bytecode.m_driver, driverGPR);
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationEnqueueAsyncGeneratorDriver, globalObjectGPR, iteratorGPR, driverGPR);
+    moveTrustedValue(JSValue(vm().fastAsyncGeneratorSentinel()), resultJSR);
+    emitPutVirtualRegister(bytecode.m_dst, resultJSR);
+    Jump doneCase = jump();
+
+    genericCases.link(this);
+    load16FromMetadata(bytecode, OpAsyncIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
+    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::Generic)), regT0);
+    store16ToMetadata(regT0, bytecode, OpAsyncIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+    compileOpCall<OpAsyncIteratorNext>(instruction);
+
+    doneCase.link(this);
 }
 
 void JIT::emit_op_instanceof(const JSInstruction* instruction)

@@ -337,5 +337,8 @@ JSC_DECLARE_COMMON_SLOW_PATH(iterator_open_try_fast_wide32);
 JSC_DECLARE_COMMON_SLOW_PATH(iterator_next_try_fast_narrow);
 JSC_DECLARE_COMMON_SLOW_PATH(iterator_next_try_fast_wide16);
 JSC_DECLARE_COMMON_SLOW_PATH(iterator_next_try_fast_wide32);
+JSC_DECLARE_COMMON_SLOW_PATH(async_iterator_open_try_fast_narrow);
+JSC_DECLARE_COMMON_SLOW_PATH(async_iterator_open_try_fast_wide16);
+JSC_DECLARE_COMMON_SLOW_PATH(async_iterator_open_try_fast_wide32);
 
 } // namespace JSC

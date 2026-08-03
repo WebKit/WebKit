@@ -4204,6 +4204,10 @@ void SpeculativeJIT::compile(Node* node)
         compileSetFunctionName(node);
         break;
 
+    case EnqueueAsyncGeneratorDriver:
+        compileEnqueueAsyncGeneratorDriver(node);
+        break;
+
     case InById:
         compileInById(node);
         break;

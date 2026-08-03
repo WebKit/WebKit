@@ -592,6 +592,7 @@ public:
     WriteBarrier<JSSentinel> m_fastSetValuesSentinel;
     WriteBarrier<JSSentinel> m_fastSetEntriesSentinel;
     WriteBarrier<JSSentinel> m_fastStringValuesSentinel;
+    WriteBarrier<JSSentinel> m_fastAsyncGeneratorSentinel;
 
     WriteBarrier<JSCell> m_cachedSortScratch;
     WriteBarrier<JSCell> m_sortScratchSentinel;
@@ -661,6 +662,7 @@ public:
     JSSentinel* fastSetValuesSentinel() { return m_fastSetValuesSentinel.get(); }
     JSSentinel* fastSetEntriesSentinel() { return m_fastSetEntriesSentinel.get(); }
     JSSentinel* fastStringValuesSentinel() { return m_fastStringValuesSentinel.get(); }
+    JSSentinel* fastAsyncGeneratorSentinel() { return m_fastAsyncGeneratorSentinel.get(); }
 
     inline JSPropertyNameEnumerator* emptyPropertyNameEnumerator();
 
