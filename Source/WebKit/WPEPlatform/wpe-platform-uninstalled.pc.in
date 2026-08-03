@@ -2,6 +2,7 @@ prefix=@CMAKE_BINARY_DIR@
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}
+moduledir=@WPE_PLATFORM_MODULE_DIR@
 
 Name: WPE Platform
 Description: Platform implementation for WPE WebKit
