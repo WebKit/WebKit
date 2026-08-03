@@ -422,6 +422,9 @@ void AudioSourceProviderAVFObjC::unprepare()
     m_outputDescription = nullptr;
     m_ringBuffer = nullptr;
     m_list = nullptr;
+    m_startTimeAtLastProcess = MediaTime::invalidTime();
+    m_endTimeAtLastProcess = MediaTime::invalidTime();
+    m_paused = true;
 }
 
 void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCount numberOfFrames, MTAudioProcessingTapFlags flags, AudioBufferList* bufferListInOut, CMItemCount* numberFramesOut, MTAudioProcessingTapFlags* flagsOut)
