@@ -33,6 +33,7 @@
 #include "WebFoundTextRange.h"
 #include "WebMouseEvent.h"
 #include <WebCore/AffineTransform.h>
+#include <WebCore/CharacterRange.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
@@ -53,6 +54,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSData;
@@ -111,6 +113,17 @@ concept CanMakeFloatRect = requires(T t)
 struct PDFPluginPasteboardItem {
     RetainPtr<NSData> data;
     RetainPtr<NSString> type;
+};
+
+struct PDFPluginTextExtractionLink {
+    URL url;
+    WebCore::CharacterRange rangeInText;
+    WebCore::FloatRect rectInRootView;
+};
+
+struct PDFPluginTextExtractionContent {
+    String text;
+    Vector<PDFPluginTextExtractionLink> links;
 };
 
 class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase, WTF::DestructionThread::Main>, public CanMakeThreadSafeCheckedPtr<PDFPluginBase>, public WebCore::ScrollableArea, public Identified<PDFPluginIdentifier> {
@@ -189,6 +202,7 @@ public:
     virtual bool isEditingCommandEnabled(const String& commandName) = 0;
 
     virtual String fullDocumentString() const { return { }; }
+    virtual PDFPluginTextExtractionContent textExtractionContent() const { return { }; }
     virtual String selectionString() const = 0;
     virtual std::pair<String, String> stringsBeforeAndAfterSelection(int /* characterCount */) const { return { }; }
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;

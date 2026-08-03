@@ -396,18 +396,6 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
             WTF::move(maxWordsPerParagraph),
             WTF::move(topHostName),
         };
-        if (result->pdfMarkdownContent) {
-            RELEASE_LOG(TextExtraction, "<%@: %p> PDF extraction complete (%.0f ms)", [strongSelf class], strongSelf.get(), (MonotonicTime::now() - startTime).milliseconds());
-            auto formattedText = WebKit::formatPDFMarkdownForOutput(*result->pdfMarkdownContent, outputFormat);
-            completionHandler(adoptNS([[_WKTextExtractionResult alloc]
-                initWithWebView:strongSelf
-                origin:wrapper(API::SecurityOrigin::create(origin))
-                textContent:formattedText.createNSString()
-                filteredOutAnyText:NO
-                shortenedURLs:@{ }
-                textToContainerMap:{ }]));
-            return;
-        }
 
         WebKit::convertToText(WTF::move(result->rootItem), WTF::move(options), [weakSelf, startTime, urlCache, origin = WTF::move(origin), completionHandler = WTF::move(completionHandler), endTextExtractionScope = WTF::move(endTextExtractionScope)](auto&& result) {
             RetainPtr strongSelf = weakSelf.get();

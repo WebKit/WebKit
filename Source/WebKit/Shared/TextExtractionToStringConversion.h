@@ -126,8 +126,6 @@ struct TextExtractionResult {
 
 void convertToText(WebCore::TextExtraction::Item&&, TextExtractionOptions&&, CompletionHandler<void(TextExtractionResult&&)>&&);
 
-String formatPDFMarkdownForOutput(const String& pdfText, TextExtractionOutputFormat);
-
 std::optional<ExtractedNodeInfo> parseExtractedNodeInfo(StringView);
 
 String foldTextForReplacement(const String& source);

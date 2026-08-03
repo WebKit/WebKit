@@ -685,6 +685,14 @@ String PluginView::fullDocumentString() const
     return m_plugin->fullDocumentString();
 }
 
+PDFPluginTextExtractionContent PluginView::textExtractionContent() const
+{
+    if (!m_isInitialized)
+        return { };
+
+    return m_plugin->textExtractionContent();
+}
+
 String PluginView::selectionString() const
 {
     if (!m_isInitialized)

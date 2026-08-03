@@ -147,6 +147,10 @@
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
+#if ENABLE(PDF_PLUGIN)
+#include "PDFPluginBase.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1807,6 +1811,52 @@ void WebFrame::sendMessageToInspectorTarget(const String& message)
     ensureInspectorTarget()->sendMessageToTargetBackend(message);
 }
 
+#if ENABLE(PDF_PLUGIN)
+
+static Vector<TextExtraction::Item> itemsForPDFTextAndLinks(String&& text, Vector<PDFPluginTextExtractionLink>&& links)
+{
+    std::ranges::sort(links, [](auto& a, auto& b) {
+        return a.rangeInText.location < b.rangeInText.location;
+    });
+
+    Vector<TextExtraction::Item> items;
+    unsigned cursor = 0;
+    for (auto& link : links) {
+        auto linkLocation = static_cast<unsigned>(link.rangeInText.location);
+        auto linkLength = static_cast<unsigned>(link.rangeInText.length);
+        if (linkLocation < cursor)
+            continue;
+
+        if (linkLocation > cursor) {
+            TextExtraction::Item textItem;
+            textItem.data = TextExtraction::TextItemData { { }, { }, text.substring(cursor, linkLocation - cursor), { } };
+            items.append(WTF::move(textItem));
+        }
+
+        TextExtraction::Item linkTextItem;
+        linkTextItem.data = TextExtraction::TextItemData { { }, { }, text.substring(linkLocation, linkLength), { } };
+
+        TextExtraction::Item linkItem;
+        linkItem.data = TextExtraction::LinkItemData { { }, link.url, TextExtraction::shortenedURLString(link.url), false, { } };
+        linkItem.rectInRootView = link.rectInRootView;
+        linkItem.nodeName = "a"_s;
+        linkItem.children = { WTF::move(linkTextItem) };
+        items.append(WTF::move(linkItem));
+
+        cursor = linkLocation + linkLength;
+    }
+
+    if (cursor < text.length()) {
+        TextExtraction::Item textItem;
+        textItem.data = TextExtraction::TextItemData { { }, { }, text.substring(cursor), { } };
+        items.append(WTF::move(textItem));
+    }
+
+    return items;
+}
+
+#endif // ENABLE(PDF_PLUGIN)
+
 void WebFrame::requestTextExtraction(TextExtraction::Request&& request, CompletionHandler<void(TextExtraction::Result&&)>&& completion)
 {
     RefPtr frame = coreLocalFrame();
@@ -1815,7 +1865,7 @@ void WebFrame::requestTextExtraction(TextExtraction::Request&& request, Completi
 
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = WebPage::pluginViewForFrame(frame.get())) {
-        if (auto pdfText = pluginView->fullDocumentString(); !pdfText.isEmpty()) {
+        if (auto pdfContent = pluginView->textExtractionContent(); !pdfContent.text.isEmpty()) {
             TextExtraction::Result result;
             TextExtraction::ScrollableItemData scrollableData;
             if (RefPtr view = frame->view()) {
@@ -1825,8 +1875,8 @@ void WebFrame::requestTextExtraction(TextExtraction::Request&& request, Completi
             scrollableData.isRoot = true;
             result.rootItem.data = WTF::move(scrollableData);
             result.rootItem.frameIdentifier = frame->frameID();
-            result.visibleTextLength = pdfText.length();
-            result.pdfMarkdownContent = WTF::move(pdfText);
+            result.visibleTextLength = pdfContent.text.length();
+            result.rootItem.children = itemsForPDFTextAndLinks(WTF::move(pdfContent.text), WTF::move(pdfContent.links));
             return completion(WTF::move(result));
         }
     }

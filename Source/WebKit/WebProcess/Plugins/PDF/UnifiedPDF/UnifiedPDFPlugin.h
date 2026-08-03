@@ -432,6 +432,7 @@ private:
     void showOrHideSelectionLayerAsNecessary();
 
     String fullDocumentString() const override;
+    PDFPluginTextExtractionContent textExtractionContent() const override;
     String selectionString() const override;
     std::pair<String, String> stringsBeforeAndAfterSelection(int characterCount) const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;

@@ -225,7 +225,7 @@ static String NODELETE stringOnlyIfHumanReadable(const String& string)
     return { };
 }
 
-static String shortenedURLString(const URL& url)
+String shortenedURLString(const URL& url)
 {
     auto shortenedURL = StringEntropyHelpers::removeHighEntropyComponents(url);
     if (shortenedURL.protocolIsFile()) {
@@ -1273,7 +1273,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         if (RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(node); iframe && item) {
             if (RefPtr frame = dynamicDowncast<LocalFrame>(iframe->contentFrame())) {
                 if (RefPtr document = frame->document(); document && areSameOrigin(*document, protect(node.document()))) {
-                    auto [rootItem, textLength, pdfContent] = extractItem([&] {
+                    auto [rootItem, textLength] = extractItem([&] {
                         auto request = context.originalRequest;
                         request.targetNodeHandleIdentifier = { };
                         return request;
@@ -1461,7 +1461,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
 
     RefPtr document = frame.document();
     if (!document)
-        return { root, 0, { } };
+        return { root, 0 };
 
     RefPtr bodyOrDocumentElement = [&] -> RefPtr<Element> {
         if (RefPtr bodyElement = document->body())
@@ -1471,7 +1471,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
     }();
 
     if (!bodyOrDocumentElement)
-        return { root, 0, { } };
+        return { root, 0 };
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -1494,11 +1494,11 @@ Result extractItem(Request&& request, LocalFrame& frame)
         addBoxShadowIfNeeded(*extractionRootNode, extractingWithDataDetectors ? "#0088FF"_s : "#ff8d28"_s);
 
     if (!extractionRootNode)
-        return { root, 0, { } };
+        return { root, 0 };
 
     RefPtr view = frame.view();
     if (!view)
-        return { root, 0, { } };
+        return { root, 0 };
 
     root.data = { ScrollableItemData {
         .contentSize = view->contentsSize(),
@@ -1509,7 +1509,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
 
     root.rectInRootView = view->contentsToRootView(IntRect { IntPoint::zero(), view->contentsSize() });
     if (root.rectInRootView.isEmpty())
-        return { root, 0, { } };
+        return { root, 0 };
 
     unsigned visibleTextLength = 0;
     {
@@ -1595,7 +1595,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
     pruneWhitespaceRecursive(root);
     pruneEmptyContainersRecursive(root);
 
-    return { WTF::move(root), visibleTextLength, { } };
+    return { WTF::move(root), visibleTextLength };
 }
 
 using Token = Variant<String, IntSize>;

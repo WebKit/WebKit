@@ -2760,6 +2760,76 @@ TEST(TextExtractionTests, ExtractFromPDFAsPlainText)
     EXPECT_TRUE([text containsString:@"555-555-1234"]);
 }
 
+static RetainPtr<TestWKWebView> loadPDFWithLinkInWebView()
+{
+    RetainPtr configuration = configurationForWebViewTestingUnifiedPDF();
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView loadData:testPDFDataWithLink() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.example.com/test-with-link.pdf"]];
+    [webView _test_waitForDidFinishNavigation];
+    return webView;
+}
+
+TEST(TextExtractionTests, ExtractFromPDFLink)
+{
+    RetainPtr webView = loadPDFWithLinkInWebView();
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([text containsString:@"[our website](https://www.example.com/)"]);
+    }
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatHTML];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([text containsString:@"<a href='https://www.example.com/'>our website</a>"]);
+    }
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatJSON];
+            return configuration.autorelease();
+        }()];
+
+        NSError *error = nil;
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+        EXPECT_NULL(error);
+
+        NSDictionary *linkNode = nil;
+        for (NSDictionary *child in [json objectForKey:@"children"]) {
+            if ([[child objectForKey:@"type"] isEqualToString:@"link"]) {
+                linkNode = child;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(linkNode);
+        EXPECT_WK_STREQ("https://www.example.com/", [linkNode objectForKey:@"url"]);
+        NSArray *linkChildren = [linkNode objectForKey:@"children"];
+        EXPECT_EQ([linkChildren count], 1u);
+        EXPECT_WK_STREQ("our website", [[linkChildren firstObject] objectForKey:@"content"]);
+    }
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([text containsString:@"link"]);
+        EXPECT_TRUE([text containsString:@"url=https://www.example.com/"]);
+        EXPECT_TRUE([text containsString:@"our website"]);
+    }
+}
+
 #endif // ENABLE(UNIFIED_PDF)
 
 } // namespace TestWebKitAPI

@@ -66,6 +66,7 @@ struct DocumentEditingContextRequest;
 struct DocumentEditingContext;
 struct EditorState;
 struct FrameInfoData;
+struct PDFPluginTextExtractionContent;
 struct WebHitTestResultData;
 
 class PluginView final : public WebCore::PluginViewBase {
@@ -135,6 +136,7 @@ public:
     void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
 
     String fullDocumentString() const;
+    PDFPluginTextExtractionContent textExtractionContent() const;
     String selectionString() const;
     std::pair<String, String> stringsBeforeAndAfterSelection(int characterCount) const;
 

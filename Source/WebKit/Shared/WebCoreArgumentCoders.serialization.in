@@ -4920,7 +4920,6 @@ header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::Result {
     WebCore::TextExtraction::Item rootItem;
     unsigned visibleTextLength;
-    std::optional<String> pdfMarkdownContent;
 };
 
 header: <WebCore/TextExtractionTypes.h>

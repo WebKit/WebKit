@@ -62,6 +62,8 @@ RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPDF(bool 
 
 RetainPtr<NSData> testPDFData();
 
+RetainPtr<NSData> testPDFDataWithLink();
+
 }
 
 #endif // __cplusplus

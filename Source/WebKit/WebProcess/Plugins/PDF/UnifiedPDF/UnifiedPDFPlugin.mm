@@ -123,6 +123,7 @@
 #include <wtf/cocoa/TypeCastsCocoa.h>
 #include <wtf/spi/darwin/OSVariantSPI.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
 
@@ -3221,6 +3222,68 @@ void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
 String UnifiedPDFPlugin::fullDocumentString() const
 {
     return [pdfDocument() string];
+}
+
+PDFPluginTextExtractionContent UnifiedPDFPlugin::textExtractionContent() const
+{
+    if (!m_pdfDocument)
+        return { };
+
+    StringBuilder textBuilder;
+    Vector<PDFPluginTextExtractionLink> links;
+
+    for (PDFDocumentLayout::PageIndex pageIndex = 0; pageIndex < m_documentLayout.pageCount(); ++pageIndex) {
+        RetainPtr page = m_documentLayout.pageAtIndex(pageIndex);
+        if (!page)
+            continue;
+
+        String pageText = [page string];
+        if (pageText.isEmpty())
+            continue;
+
+        if (textBuilder.length())
+            textBuilder.append("\n\n"_s);
+
+        auto pageTextStart = textBuilder.length();
+        textBuilder.append(pageText);
+
+        RetainPtr annotationsInReadingOrder = [[page annotations] sortedArrayUsingComparator:^NSComparisonResult(PDFAnnotation *first, PDFAnnotation *second) {
+            auto firstBounds = [first bounds];
+            auto secondBounds = [second bounds];
+            if (firstBounds.origin.y != secondBounds.origin.y)
+                return firstBounds.origin.y > secondBounds.origin.y ? NSOrderedAscending : NSOrderedDescending;
+            if (firstBounds.origin.x != secondBounds.origin.x)
+                return firstBounds.origin.x < secondBounds.origin.x ? NSOrderedAscending : NSOrderedDescending;
+            return NSOrderedSame;
+        }];
+
+        size_t searchOffset = 0;
+        for (PDFAnnotation *annotation in annotationsInReadingOrder.get()) {
+            if (!annotationIsExternalLink(annotation))
+                continue;
+
+            URL url { [annotation URL] };
+            if (url.isEmpty())
+                continue;
+
+            RetainPtr linkSelection = [page selectionForRect:[annotation bounds]];
+            String linkText = linkSelection ? String { [linkSelection string] } : nullString();
+            if (linkText.isEmpty())
+                continue;
+
+            auto offset = pageText.find(linkText, searchOffset);
+            if (offset == notFound)
+                offset = pageText.find(linkText);
+            if (offset == notFound)
+                continue;
+
+            searchOffset = offset + linkText.length();
+
+            links.append(PDFPluginTextExtractionLink { WTF::move(url), CharacterRange { pageTextStart + offset, linkText.length() }, pageToRootView([annotation bounds], page) });
+        }
+    }
+
+    return { textBuilder.toString(), WTF::move(links) };
 }
 
 String UnifiedPDFPlugin::selectionString() const

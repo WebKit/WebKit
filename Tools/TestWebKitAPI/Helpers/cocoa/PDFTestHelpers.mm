@@ -29,6 +29,7 @@
 #import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <CoreText/CoreText.h>
 #import <Foundation/Foundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
@@ -85,6 +86,53 @@ RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPDF(bool 
 RetainPtr<NSData> testPDFData()
 {
     return [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+}
+
+static size_t appendPDFBytes(void* info, const void* buffer, size_t count)
+{
+    [(NSMutableData *)info appendBytes:buffer length:count];
+    return count;
+}
+
+RetainPtr<NSData> testPDFDataWithLink()
+{
+    RetainPtr pdfData = adoptNS([[NSMutableData alloc] init]);
+
+    CGDataConsumerCallbacks callbacks { appendPDFBytes, nullptr };
+    RetainPtr consumer = adoptCF(CGDataConsumerCreate(pdfData, &callbacks));
+
+    CGRect mediaBox = CGRectMake(0, 0, 400, 200);
+    RetainPtr pdfContext = adoptCF(CGPDFContextCreate(consumer, &mediaBox, nullptr));
+
+    CGPDFContextBeginPage(pdfContext, nullptr);
+
+    RetainPtr font = adoptCF(CTFontCreateWithName((CFStringRef)@"Helvetica", 24, nullptr));
+    RetainPtr attributedString = adoptNS([[NSAttributedString alloc] initWithString:@"Visit our website for details" attributes:@{ (id)kCTFontAttributeName: (id)font.get() }]);
+    RetainPtr line = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedString.get()));
+
+    CGFloat baselineX = 20;
+    CGFloat baselineY = 100;
+    CGContextSetTextPosition(pdfContext, baselineX, baselineY);
+    CTLineDraw(line, pdfContext);
+
+    // "Visit our website for details"
+    //  0123456789...
+    // "our website" spans [6, 17).
+    CGFloat linkStartX = baselineX + CTLineGetOffsetForStringIndex(line, 6, nullptr);
+    CGFloat linkEndX = baselineX + CTLineGetOffsetForStringIndex(line, 17, nullptr);
+
+    CGFloat ascent = 0;
+    CGFloat descent = 0;
+    CGFloat leading = 0;
+    CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+
+    CGRect linkRect = CGRectMake(linkStartX, baselineY - descent, linkEndX - linkStartX, ascent + descent);
+    CGPDFContextSetURLForRect(pdfContext, (CFURLRef)[NSURL URLWithString:@"https://www.example.com/"], linkRect);
+
+    CGPDFContextEndPage(pdfContext);
+    CGPDFContextClose(pdfContext);
+
+    return pdfData;
 }
 
 }
