@@ -29,6 +29,7 @@
 #include <WebKit/WKDeclarationSpecifiers.h>
 #include <array>
 #include <atomic>
+#include <utility>
 #include <wtf/ExportMacros.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
@@ -43,22 +44,33 @@ class MessageLog {
     static_assert(hasOneBitSet(Capacity), "Capacity must be a power of two to handle size_t overflow correctly");
 public:
     constexpr MessageLog()
+        : MessageLog(std::make_index_sequence<Capacity> { })
     {
-        m_buffer.fill(MessageName::Invalid);
     }
 
     void add(MessageName messageName)
     {
         size_t index = m_index.fetch_add(1, std::memory_order_relaxed);
-        m_buffer[index % Capacity] = messageName;
+        m_buffer[index % Capacity].store(messageName, std::memory_order_relaxed);
     }
 
+    constexpr size_t bufferSize() const { return sizeof(m_buffer); }
+    constexpr size_t capacity() const { return bufferSize() / elementSize(); }
+    constexpr size_t elementSize() const { return sizeof(m_buffer[0]); }
+
+    MessageName atForTesting(size_t index) const { return m_buffer[index % Capacity].load(std::memory_order_relaxed); }
     size_t indexForTesting() const { return m_index.load(std::memory_order_relaxed); }
-    const std::array<MessageName, Capacity>& bufferForTesting() const LIFETIME_BOUND { return m_buffer; }
 
 private:
+    // std::atomic is not constexpr-assignable, so expand the initializer over an index sequence.
+    template<size_t... Indices>
+    constexpr MessageLog(std::index_sequence<Indices...>)
+        : m_buffer { (static_cast<void>(Indices), MessageName::Invalid)... }
+    {
+    }
+
     std::atomic<size_t> m_index { 0 };
-    std::array<MessageName, Capacity> m_buffer;
+    std::array<std::atomic<MessageName>, Capacity> m_buffer;
 };
 
 // Exported information to help a debugger read the data

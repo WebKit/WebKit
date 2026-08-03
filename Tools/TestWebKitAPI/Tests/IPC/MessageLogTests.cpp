@@ -39,7 +39,7 @@ TEST(MessageLogTests, InitialState)
     // Verify buffer is initialized with Invalid message names
     EXPECT_EQ(buffer.indexForTesting(), 0u);
     for (size_t i = 0; i < 8; ++i)
-        EXPECT_EQ(buffer.bufferForTesting()[i], IPC::MessageName::Invalid);
+        EXPECT_EQ(buffer.atForTesting(i), IPC::MessageName::Invalid);
 }
 
 TEST(MessageLogTests, AddSingleMessage)
@@ -49,11 +49,11 @@ TEST(MessageLogTests, AddSingleMessage)
     buffer.add(IPC::MessageName::IPCTester_EmptyMessage);
 
     EXPECT_EQ(buffer.indexForTesting(), 1u);
-    EXPECT_EQ(buffer.bufferForTesting()[0], IPC::MessageName::IPCTester_EmptyMessage);
+    EXPECT_EQ(buffer.atForTesting(0), IPC::MessageName::IPCTester_EmptyMessage);
 
     // Rest should still be Invalid
     for (size_t i = 1; i < 8; ++i)
-        EXPECT_EQ(buffer.bufferForTesting()[i], IPC::MessageName::Invalid);
+        EXPECT_EQ(buffer.atForTesting(i), IPC::MessageName::Invalid);
 }
 
 TEST(MessageLogTests, AddMultipleMessages)
@@ -65,9 +65,9 @@ TEST(MessageLogTests, AddMultipleMessages)
     buffer.add(IPC::MessageName::IPCTester_AsyncPing);
 
     EXPECT_EQ(buffer.indexForTesting(), 3u);
-    EXPECT_EQ(buffer.bufferForTesting()[0], IPC::MessageName::IPCTester_EmptyMessage);
-    EXPECT_EQ(buffer.bufferForTesting()[1], IPC::MessageName::IPCStreamTester_AsyncPing);
-    EXPECT_EQ(buffer.bufferForTesting()[2], IPC::MessageName::IPCTester_AsyncPing);
+    EXPECT_EQ(buffer.atForTesting(0), IPC::MessageName::IPCTester_EmptyMessage);
+    EXPECT_EQ(buffer.atForTesting(1), IPC::MessageName::IPCStreamTester_AsyncPing);
+    EXPECT_EQ(buffer.atForTesting(2), IPC::MessageName::IPCTester_AsyncPing);
 }
 
 TEST(MessageLogTests, WrapAroundAtCapacity)
@@ -81,17 +81,17 @@ TEST(MessageLogTests, WrapAroundAtCapacity)
     buffer.add(IPC::MessageName::IPCStreamTester_EmptyMessage);
 
     EXPECT_EQ(buffer.indexForTesting(), 4u); // Free-running index
-    EXPECT_EQ(buffer.bufferForTesting()[0], IPC::MessageName::IPCTester_EmptyMessage);
-    EXPECT_EQ(buffer.bufferForTesting()[1], IPC::MessageName::IPCStreamTester_AsyncPing);
-    EXPECT_EQ(buffer.bufferForTesting()[2], IPC::MessageName::IPCTester_AsyncPing);
-    EXPECT_EQ(buffer.bufferForTesting()[3], IPC::MessageName::IPCStreamTester_EmptyMessage);
+    EXPECT_EQ(buffer.atForTesting(0), IPC::MessageName::IPCTester_EmptyMessage);
+    EXPECT_EQ(buffer.atForTesting(1), IPC::MessageName::IPCStreamTester_AsyncPing);
+    EXPECT_EQ(buffer.atForTesting(2), IPC::MessageName::IPCTester_AsyncPing);
+    EXPECT_EQ(buffer.atForTesting(3), IPC::MessageName::IPCStreamTester_EmptyMessage);
 
     // Add one more, should overwrite index 0
     buffer.add(IPC::MessageName::IPCTester_CreateStreamTester);
 
     EXPECT_EQ(buffer.indexForTesting(), 5u); // Free-running index
-    EXPECT_EQ(buffer.bufferForTesting()[0], IPC::MessageName::IPCTester_CreateStreamTester);
-    EXPECT_EQ(buffer.bufferForTesting()[1], IPC::MessageName::IPCStreamTester_AsyncPing);
+    EXPECT_EQ(buffer.atForTesting(0), IPC::MessageName::IPCTester_CreateStreamTester);
+    EXPECT_EQ(buffer.atForTesting(1), IPC::MessageName::IPCStreamTester_AsyncPing);
 }
 
 TEST(MessageLogTests, MultipleWraps)
@@ -107,7 +107,7 @@ TEST(MessageLogTests, MultipleWraps)
 
     // All entries should have the test message
     for (size_t i = 0; i < 4; ++i)
-        EXPECT_EQ(buffer.bufferForTesting()[i], IPC::MessageName::IPCTester_EmptyMessage);
+        EXPECT_EQ(buffer.atForTesting(i), IPC::MessageName::IPCTester_EmptyMessage);
 }
 
 TEST(MessageLogTests, ConcurrentAddFromTwoThreads)
@@ -143,9 +143,9 @@ TEST(MessageLogTests, ConcurrentAddFromTwoThreads)
     size_t thread2Count = 0;
 
     for (size_t i = 0; i < bufferSize; ++i) {
-        if (buffer.bufferForTesting()[i] == thread1Message)
+        if (buffer.atForTesting(i) == thread1Message)
             thread1Count++;
-        else if (buffer.bufferForTesting()[i] == thread2Message)
+        else if (buffer.atForTesting(i) == thread2Message)
             thread2Count++;
         else
             FAIL() << "Unexpected message name at index " << i << ": expected either thread1 or thread2 message";
@@ -200,7 +200,7 @@ TEST(MessageLogTests, ConcurrentAddFromMultipleThreads)
     for (size_t i = 0; i < bufferSize; ++i) {
         bool found = false;
         for (size_t t = 0; t < numThreads; ++t) {
-            if (buffer.bufferForTesting()[i] == messageNames[t]) {
+            if (buffer.atForTesting(i) == messageNames[t]) {
                 messageCounts[t]++;
                 found = true;
                 break;
@@ -249,7 +249,7 @@ TEST(MessageLogTests, ConcurrentAddWithWrapping)
     for (size_t i = 0; i < bufferSize; ++i) {
         bool found = false;
         for (size_t t = 0; t < numThreads; ++t) {
-            if (buffer.bufferForTesting()[i] == messageNames[t]) {
+            if (buffer.atForTesting(i) == messageNames[t]) {
                 found = true;
                 break;
             }

@@ -97,13 +97,11 @@ protected:
 
     bool messageLogContains(IPC::MessageName messageName, size_t startIndex = 0) const
     {
-        const auto& buffer = IPC::messageLog().bufferForTesting();
         size_t currentIndex = IPC::messageLog().indexForTesting();
-        size_t capacity = buffer.size();
 
         // Search from startIndex to currentIndex
         for (size_t i = startIndex; i < currentIndex; ++i) {
-            if (buffer[i % capacity] == messageName)
+            if (IPC::messageLog().atForTesting(i) == messageName)
                 return true;
         }
         return false;
@@ -111,13 +109,12 @@ protected:
 
     size_t countMessagesInLog(IPC::MessageName messageName) const
     {
-        const auto& buffer = IPC::messageLog().bufferForTesting();
-        size_t capacity = buffer.size();
+        size_t capacity = IPC::messageLog().capacity();
         size_t count = 0;
 
         // Count in the entire buffer (for wrap-around tests)
         for (size_t i = 0; i < capacity; ++i) {
-            if (buffer[i] == messageName)
+            if (IPC::messageLog().atForTesting(i) == messageName)
                 count++;
         }
         return count;
@@ -572,11 +569,9 @@ protected:
 
     bool messageLogContains(IPC::MessageName messageName) const
     {
-        const auto& buffer = IPC::messageLog().bufferForTesting();
         size_t currentIndex = IPC::messageLog().indexForTesting();
-        size_t capacity = buffer.size();
         for (size_t i = m_initialLogIndex; i < currentIndex; ++i) {
-            if (buffer[i % capacity] == messageName)
+            if (IPC::messageLog().atForTesting(i) == messageName)
                 return true;
         }
         return false;

@@ -32,9 +32,9 @@ constinit MessageLog<messageLogCapacity> gMessageLog;
 
 const MessageLogMetadata gMessageLogMetadata = {
     .version = 0,
-    .capacity = std::tuple_size_v<std::remove_reference_t<decltype(gMessageLog.bufferForTesting())>>,
-    .elementSize = sizeof(std::remove_reference_t<decltype(gMessageLog.bufferForTesting())>::value_type),
-    .size = sizeof(std::remove_reference_t<decltype(gMessageLog.bufferForTesting())>),
+    .capacity = gMessageLog.capacity(),
+    .elementSize = gMessageLog.elementSize(),
+    .size = gMessageLog.bufferSize(),
     .initialValue = MessageName::Invalid
 };
 
