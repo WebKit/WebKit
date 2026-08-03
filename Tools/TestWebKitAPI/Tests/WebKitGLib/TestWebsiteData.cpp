@@ -502,9 +502,9 @@ static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, storageTypes);
-    // Storage sizes are unknown.
+    // Session storage is only kept in memory, so its size is unknown.
     g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_SESSION_STORAGE), ==, 0);
-    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE), ==, 0);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE), >, 0);
 
     // Get also cached data, and clear it.
     static const WebKitWebsiteDataTypes cacheAndStorageTypes = static_cast<WebKitWebsiteDataTypes>(storageTypes | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
@@ -548,8 +548,10 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
-    test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
+    test->runJavaScriptAndWaitUntilFinished("let idbOpened = false; window.indexedDB.open('TestDatabase').onsuccess = () => { idbOpened = true; };", nullptr);
 
+    // Wait for the database to be created on disk, so that its size can be computed.
+    test->assertJavaScriptBecomesTrue("idbOpened");
     test->wait(1);
 
     dataList = test->fetch(databaseTypes);
@@ -561,8 +563,7 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES);
-    // Database sizes are unknown.
-    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), ==, 0);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), >, 0);
 
     test->runJavaScriptAndWaitUntilFinished("db = openDatabase(\"TestDatabase\", \"1.0\", \"TestDatabase\", 1);", nullptr);
     dataList = test->fetch(databaseTypes);
@@ -571,8 +572,7 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
     data = static_cast<WebKitWebsiteData*>(dataList->data);
     g_assert_nonnull(data);
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, databaseTypes);
-    // Database sizes are unknown.
-    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), ==, 0);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), >, 0);
 
     // Remove all databases at once.
     GList removeList = { data, nullptr, nullptr };
@@ -834,7 +834,7 @@ static void testWebsiteDataDOMCache(WebsiteDataTest* test, gconstpointer)
     g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     auto* data = static_cast<WebKitWebsiteData*>(dataList->data);
-g_assert_nonnull(data);
+    g_assert_nonnull(data);
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
@@ -849,6 +849,66 @@ g_assert_nonnull(data);
     static const WebKitWebsiteDataTypes caches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DOM_CACHE | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(caches, 0);
     dataList = test->fetch(caches);
+    g_assert_null(dataList);
+}
+
+static void testWebsiteDataSizes(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes sizeTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_LOCAL_STORAGE | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_DOM_CACHE);
+
+    test->clear(sizeTypes, 0);
+    GList* dataList = test->fetch(sizeTypes);
+    g_assert_null(dataList);
+
+    test->loadURI(kServer->getURIForPath("/localstorage").data());
+    test->waitUntilLoadFinished();
+
+    // Local storage uses a 1 second timer to update the database.
+    test->wait(1);
+
+    dataList = test->fetch(sizeTypes);
+    g_assert_nonnull(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    auto* data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert_nonnull(data);
+    g_assert_cmpuint(webkit_website_data_get_types(data), ==, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE), >, 0);
+
+    // Only the types actually present in the record contribute to the size, so the size of a
+    // type that has no data must never be reported as the size of a different type.
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), ==, 0);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_DOM_CACHE), ==, 0);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_DISK_CACHE), ==, 0);
+
+    // Now add IndexedDB and DOM cache data for the same origin.
+    test->runJavaScriptAndWaitUntilFinished("let idbOpened = false; window.indexedDB.open('TestDatabase').onsuccess = () => { idbOpened = true; };", nullptr);
+    test->assertJavaScriptBecomesTrue("idbOpened");
+
+    test->runJavaScriptAndWaitUntilFinished("let domCacheFilled = false; window.caches.open('TestDOMCache').then(cache => cache.put('/domcache-entry', new Response('x'.repeat(1024)))).then(() => { domCacheFilled = true; });", nullptr);
+    test->assertJavaScriptBecomesTrue("domCacheFilled");
+
+    dataList = test->fetch(sizeTypes);
+    g_assert_nonnull(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert_nonnull(data);
+    g_assert_cmpuint(webkit_website_data_get_types(data), ==, sizeTypes);
+
+    auto localStorageSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
+    auto indexedDBSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES);
+    auto domCacheSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_DOM_CACHE);
+    g_assert_cmpuint(localStorageSize, >, 0);
+    g_assert_cmpuint(indexedDBSize, >, 0);
+    g_assert_cmpuint(domCacheSize, >, 0);
+
+    // Querying several types at once returns the sum of the individual sizes.
+    g_assert_cmpuint(webkit_website_data_get_size(data, sizeTypes), ==, localStorageSize + indexedDBSize + domCacheSize);
+
+    // Session storage is only kept in memory, so it never reports a size.
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_SESSION_STORAGE), ==, 0);
+
+    test->clear(sizeTypes, 0);
+    dataList = test->fetch(sizeTypes);
     g_assert_null(dataList);
 }
 
@@ -907,6 +967,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "itp", testWebsiteDataITP);
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
     WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
+    WebsiteDataTest::add("WebKitWebsiteData", "sizes", testWebsiteDataSizes);
     WebsiteDataTest::add("WebKitWebsiteData", "handle-corrupted-local-storage", testWebViewHandleCorruptedLocalStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "origin-and-total-storage-ratio", testWebsiteDataOriginAndTotalStorageRatio);
 }
