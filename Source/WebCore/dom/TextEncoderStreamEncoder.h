@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,8 @@ class TextEncoderStreamEncoder : public RefCounted<TextEncoderStreamEncoder> {
 public:
     static Ref<TextEncoderStreamEncoder> create() { return adoptRef(*new TextEncoderStreamEncoder); }
 
-    RefPtr<Uint8Array> encode(const String&);
-    RefPtr<Uint8Array> flush();
+    WEBCORE_EXPORT RefPtr<Uint8Array> encode(const String&);
+    WEBCORE_EXPORT RefPtr<Uint8Array> flush();
 
 private:
     TextEncoderStreamEncoder() = default;

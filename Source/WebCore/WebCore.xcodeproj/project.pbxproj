@@ -1300,6 +1300,7 @@
 		3227A93028BD744C00BC2697 /* NodeName.h in Headers */ = {isa = PBXBuildFile; fileRef = 3227A92A28BD744B00BC2697 /* NodeName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3227A93128BD744C00BC2697 /* Namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 3227A92B28BD744B00BC2697 /* Namespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		322B61152C50C26300FB5440 /* ImageBufferResourceLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = 322B61142C50C22D00FB5440 /* ImageBufferResourceLimits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		323A5DA8F5694FE4BFEC193E /* TextEncoderStreamEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 410A8EF924F8F47B004F9070 /* TextEncoderStreamEncoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		325905DC274DE1D8007B7B65 /* FontDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 325905DA274DE1D7007B7B65 /* FontDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3294ECFA274EFA57006BE8C8 /* FontFamilySpecificationCoreTextCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3294ECF9274EFA57006BE8C8 /* FontFamilySpecificationCoreTextCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		329C0C2328BD96D600F187D2 /* TagName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3227A92628BD744A00BC2697 /* TagName.cpp */; };
@@ -49587,6 +49588,7 @@
 				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
 				97BC84841236FD93000C6161 /* TextDocumentParser.h in Headers */,
 				448DF9DC2F60EFA700F068C3 /* TextEffectController.h in Headers */,
+				323A5DA8F5694FE4BFEC193E /* TextEncoderStreamEncoder.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
 				A77B41A012E675A90054343D /* TextEventInputType.h in Headers */,
 				F457F4C32F156C5D00E97771 /* TextExtraction.h in Headers */,

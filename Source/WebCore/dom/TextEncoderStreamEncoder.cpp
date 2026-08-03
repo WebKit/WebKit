@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
 
 RefPtr<Uint8Array> TextEncoderStreamEncoder::flush()
 {
-    if (!m_pendingLeadSurrogate)
+    if (!std::exchange(m_pendingLeadSurrogate, std::nullopt))
         return nullptr;
 
     constexpr std::array<uint8_t, 3> byteSequence { 0xEF, 0xBF, 0xBD };
