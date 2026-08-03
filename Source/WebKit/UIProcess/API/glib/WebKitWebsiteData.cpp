@@ -79,7 +79,8 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
         WebsiteDataType::DeviceIdHashSalt,
         WebsiteDataType::ResourceLoadStatistics,
         WebsiteDataType::ServiceWorkerRegistrations,
-        WebsiteDataType::DOMCache
+        WebsiteDataType::DOMCache,
+        WebsiteDataType::FileSystem
     });
 }
 
@@ -112,6 +113,8 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS;
     if (types.contains(WebsiteDataType::DOMCache))
         returnValue |= WEBKIT_WEBSITE_DATA_DOM_CACHE;
+    if (types.contains(WebsiteDataType::FileSystem))
+        returnValue |= WEBKIT_WEBSITE_DATA_FILE_SYSTEM;
     return static_cast<WebKitWebsiteDataTypes>(returnValue);
 }
 
@@ -228,8 +231,9 @@ WebKitWebsiteDataTypes webkit_website_data_get_types(WebKitWebsiteData* websiteD
  * Gets the size of the data of types @types in a #WebKitWebsiteData.
  *
  * Note that currently the data size is only known for the %WEBKIT_WEBSITE_DATA_DISK_CACHE,
- * %WEBKIT_WEBSITE_DATA_LOCAL_STORAGE, %WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES and
- * %WEBKIT_WEBSITE_DATA_DOM_CACHE data types, so for all other types 0 will be returned.
+ * %WEBKIT_WEBSITE_DATA_LOCAL_STORAGE, %WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES,
+ * %WEBKIT_WEBSITE_DATA_DOM_CACHE, and %WEBKIT_WEBSITE_DATA_FILE_SYSTEM data types,
+ * so for all other types 0 will be returned.
  *
  * Returns: the size of @website_data for the given @types.
  *

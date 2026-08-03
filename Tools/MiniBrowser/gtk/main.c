@@ -561,6 +561,7 @@ static void gotWebsiteDataCallback(WebKitWebsiteDataManager *manager, GAsyncResu
     aboutDataFillTable(result, dataRequest, dataList, "ITP data", WEBKIT_WEBSITE_DATA_ITP, pageID);
     aboutDataFillTable(result, dataRequest, dataList, "Service Worker Registratations", WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS, pageID);
     aboutDataFillTable(result, dataRequest, dataList, "DOM Cache", WEBKIT_WEBSITE_DATA_DOM_CACHE, pageID);
+    aboutDataFillTable(result, dataRequest, dataList, "File System", WEBKIT_WEBSITE_DATA_FILE_SYSTEM, pageID);
 
     result = g_string_append(result, "</body></html>");
     gsize streamLength = result->len;

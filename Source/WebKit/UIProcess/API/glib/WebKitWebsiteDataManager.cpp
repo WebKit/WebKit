@@ -1181,6 +1181,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::ServiceWorkerRegistrations);
     if (types & WEBKIT_WEBSITE_DATA_DOM_CACHE)
         returnValue.add(WebsiteDataType::DOMCache);
+    if (types & WEBKIT_WEBSITE_DATA_FILE_SYSTEM)
+        returnValue.add(WebsiteDataType::FileSystem);
     return returnValue;
 }
 

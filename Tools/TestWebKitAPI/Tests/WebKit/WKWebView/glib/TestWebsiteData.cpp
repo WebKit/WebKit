@@ -854,7 +854,7 @@ static void testWebsiteDataDOMCache(WebsiteDataTest* test, gconstpointer)
 
 static void testWebsiteDataSizes(WebsiteDataTest* test, gconstpointer)
 {
-    static const WebKitWebsiteDataTypes sizeTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_LOCAL_STORAGE | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_DOM_CACHE);
+    static const WebKitWebsiteDataTypes sizeTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_LOCAL_STORAGE | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_DOM_CACHE | WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
 
     test->clear(sizeTypes, 0);
     GList* dataList = test->fetch(sizeTypes);
@@ -878,14 +878,25 @@ static void testWebsiteDataSizes(WebsiteDataTest* test, gconstpointer)
     // type that has no data must never be reported as the size of a different type.
     g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), ==, 0);
     g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_DOM_CACHE), ==, 0);
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_FILE_SYSTEM), ==, 0);
     g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_DISK_CACHE), ==, 0);
 
-    // Now add IndexedDB and DOM cache data for the same origin.
+    // Now add IndexedDB, DOM cache, and file system data for the same origin.
     test->runJavaScriptAndWaitUntilFinished("let idbOpened = false; window.indexedDB.open('TestDatabase').onsuccess = () => { idbOpened = true; };", nullptr);
     test->assertJavaScriptBecomesTrue("idbOpened");
 
     test->runJavaScriptAndWaitUntilFinished("let domCacheFilled = false; window.caches.open('TestDOMCache').then(cache => cache.put('/domcache-entry', new Response('x'.repeat(1024)))).then(() => { domCacheFilled = true; });", nullptr);
     test->assertJavaScriptBecomesTrue("domCacheFilled");
+
+    // The file needs contents written to disk.
+    GUniqueOutPtr<GError> error;
+    test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(
+        "const root = await navigator.storage.getDirectory();"
+        "const handle = await root.getFileHandle('TestFile', { create: true });"
+        "const writable = await handle.createWritable();"
+        "await writable.write('x'.repeat(1024));"
+        "await writable.close();", nullptr, nullptr, &error.outPtr());
+    g_assert_no_error(error.get());
 
     dataList = test->fetch(sizeTypes);
     g_assert_nonnull(dataList);
@@ -897,18 +908,51 @@ static void testWebsiteDataSizes(WebsiteDataTest* test, gconstpointer)
     auto localStorageSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
     auto indexedDBSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES);
     auto domCacheSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_DOM_CACHE);
+    auto fileSystemSize = webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
     g_assert_cmpuint(localStorageSize, >, 0);
     g_assert_cmpuint(indexedDBSize, >, 0);
     g_assert_cmpuint(domCacheSize, >, 0);
+    g_assert_cmpuint(fileSystemSize, >=, 1024);
 
     // Querying several types at once returns the sum of the individual sizes.
-    g_assert_cmpuint(webkit_website_data_get_size(data, sizeTypes), ==, localStorageSize + indexedDBSize + domCacheSize);
+    g_assert_cmpuint(webkit_website_data_get_size(data, sizeTypes), ==, localStorageSize + indexedDBSize + domCacheSize + fileSystemSize);
 
     // Session storage is only kept in memory, so it never reports a size.
     g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_SESSION_STORAGE), ==, 0);
 
     test->clear(sizeTypes, 0);
     dataList = test->fetch(sizeTypes);
+    g_assert_null(dataList);
+}
+
+static void testWebsiteDataFileSystem(WebsiteDataTest* test, gconstpointer)
+{
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
+    g_assert_null(dataList);
+
+    WebKitTestServer server(WebKitTestServer::ServerHTTPS);
+    server.run(serverCallback);
+    WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    test->loadURI(server.getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    GUniqueOutPtr<GError> error;
+    test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("const root = await navigator.storage.getDirectory(); await root.getFileHandle('test', { create: true }); const estimate = await navigator.storage.estimate(); if (typeof estimate.usage !== 'number' || typeof estimate.quota !== 'number') throw new Error('Invalid storage estimate');", nullptr, nullptr, &error.outPtr());
+    g_assert_no_error(error.get());
+
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
+    g_assert_nonnull(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    auto* data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert_nonnull(data);
+    g_assert_true(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
+    g_assert_true(WEBKIT_WEBSITE_DATA_ALL & WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
+    WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(server.getURIForPath("/").data());
+    g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
+    webkit_security_origin_unref(origin);
+
+    GList removeList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_FILE_SYSTEM, &removeList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_FILE_SYSTEM);
     g_assert_null(dataList);
 }
 
@@ -968,6 +1012,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
     WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
     WebsiteDataTest::add("WebKitWebsiteData", "sizes", testWebsiteDataSizes);
+    WebsiteDataTest::add("WebKitWebsiteData", "file-system", testWebsiteDataFileSystem);
     WebsiteDataTest::add("WebKitWebsiteData", "handle-corrupted-local-storage", testWebViewHandleCorruptedLocalStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "origin-and-total-storage-ratio", testWebsiteDataOriginAndTotalStorageRatio);
 }
