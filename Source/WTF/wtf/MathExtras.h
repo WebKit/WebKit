@@ -357,6 +357,17 @@ constexpr bool hasTwoOrMoreBitsSet(T value)
     return !hasZeroOrOneBitsSet(value);
 }
 
+// "Determine if a word has a zero byte" at https://graphics.stanford.edu/~seander/bithacks.html
+// (formula credited there to Alan Mycroft, comp.lang.c, April 27 1987).
+template<typename T>
+constexpr bool hasZeroByte(T value)
+{
+    static_assert(std::is_unsigned_v<T>);
+    constexpr T lowBits = static_cast<T>(static_cast<T>(~static_cast<T>(0)) / 0xFF);
+    constexpr T highBits = static_cast<T>(lowBits * 0x80);
+    return (value - lowBits) & ~value & highBits;
+}
+
 template<typename T>
 constexpr T divideRoundedUp(T a, T b)
 {
