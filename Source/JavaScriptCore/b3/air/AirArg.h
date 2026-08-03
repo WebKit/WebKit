@@ -492,8 +492,8 @@ public:
 
     Arg(Air::Tmp tmp)
         : m_kind(Tmp)
-        , m_base(tmp)
     {
+        m_tmps.base = tmp;
     }
 
     Arg(Reg reg)
@@ -523,7 +523,7 @@ public:
             RELEASE_ASSERT((Fits<int64_t, Wide32>::check(value) || Fits<uint64_t, Wide32>::check(value)));
         Arg result;
         result.m_kind = Imm;
-        result.m_offset = value;
+        result.m_value = value;
         return result;
     }
 
@@ -533,7 +533,7 @@ public:
             RELEASE_ASSERT((Fits<int64_t, Wide32>::check(value) || Fits<uint64_t, Wide32>::check(value)));
         Arg result;
         result.m_kind = BigImm;
-        result.m_offset = value;
+        result.m_value = value;
         return result;
     }
 
@@ -553,7 +553,7 @@ public:
             RELEASE_ASSERT((Fits<int64_t, Wide32>::check(value)));
         Arg result;
         result.m_kind = BitImm;
-        result.m_offset = value;
+        result.m_value = value;
         return result;
     }
 
@@ -563,7 +563,7 @@ public:
             UNREACHABLE_FOR_PLATFORM();
         Arg result;
         result.m_kind = BitImm64;
-        result.m_offset = value;
+        result.m_value = value;
         return result;
     }
 
@@ -573,7 +573,7 @@ public:
             RELEASE_ASSERT((Fits<int64_t, Wide32>::check(value)));
         Arg result;
         result.m_kind = FPImm32;
-        result.m_offset = value;
+        result.m_value = value;
         return result;
     }
 
@@ -583,7 +583,7 @@ public:
             UNREACHABLE_FOR_PLATFORM();
         Arg result;
         result.m_kind = FPImm64;
-        result.m_offset = value;
+        result.m_value = value;
         return result;
     }
 
@@ -593,7 +593,7 @@ public:
             UNREACHABLE_FOR_PLATFORM();
         Arg result;
         result.m_kind = FPImm128;
-        result.m_offset = value.u64x2[0];
+        result.m_value = value.u64x2[0];
         ASSERT(bitEquals(value, result.asV128()));
         return result;
     }
@@ -608,7 +608,7 @@ public:
         ASSERT(ptr.isGP());
         Arg result;
         result.m_kind = SimpleAddr;
-        result.m_base = ptr;
+        result.m_tmps.base = ptr;
         return result;
     }
 
@@ -618,7 +618,7 @@ public:
         ASSERT(base.isGP());
         Arg result;
         result.m_kind = Addr;
-        result.m_base = base;
+        result.m_tmps.base = base;
         result.m_offset = offset;
         return result;
     }
@@ -628,7 +628,7 @@ public:
     {
         Arg result;
         result.m_kind = ExtendedOffsetAddr;
-        result.m_base = Air::Tmp(MacroAssembler::framePointerRegister);
+        result.m_tmps.base = Air::Tmp(MacroAssembler::framePointerRegister);
         result.m_offset = offsetFromFP;
         return result;
     }
@@ -643,8 +643,8 @@ public:
     {
         Arg result;
         result.m_kind = Stack;
-        result.m_offset = std::bit_cast<intptr_t>(value);
-        result.m_scale = offset; // I know, yuck.
+        result.m_value = std::bit_cast<intptr_t>(value);
+        result.m_offset = offset;
         return result;
     }
 
@@ -713,9 +713,9 @@ public:
         ASSERT(isValidScale(scale));
         Arg result;
         result.m_kind = Index;
-        result.m_base = base;
-        result.m_index = index;
-        result.m_scale = static_cast<int32_t>(scale);
+        result.m_tmps.base = base;
+        result.m_tmps.index = index;
+        result.m_logScale = static_cast<uint8_t>(logScale(scale));
         result.m_offset = offset;
         result.m_extend = extend;
         return result;
@@ -733,7 +733,7 @@ public:
         ASSERT(isInt9(index));
         Arg result;
         result.m_kind = PreIndex;
-        result.m_base = base;
+        result.m_tmps.base = base;
         result.m_offset = index;
         return result;
     }
@@ -745,7 +745,7 @@ public:
         ASSERT(isInt9(index));
         Arg result;
         result.m_kind = PostIndex;
-        result.m_base = base;
+        result.m_tmps.base = base;
         result.m_offset = index;
         return result;
     }
@@ -754,7 +754,7 @@ public:
     {
         Arg result;
         result.m_kind = RelCond;
-        result.m_offset = condition;
+        result.m_value = condition;
         return result;
     }
 
@@ -762,7 +762,7 @@ public:
     {
         Arg result;
         result.m_kind = ResCond;
-        result.m_offset = condition;
+        result.m_value = condition;
         return result;
     }
 
@@ -770,7 +770,7 @@ public:
     {
         Arg result;
         result.m_kind = DoubleCond;
-        result.m_offset = condition;
+        result.m_value = condition;
         return result;
     }
 
@@ -778,7 +778,7 @@ public:
     {
         Arg result;
         result.m_kind = StatusCond;
-        result.m_offset = condition;
+        result.m_value = condition;
         return result;
     }
 
@@ -786,7 +786,7 @@ public:
     {
         Arg result;
         result.m_kind = Special;
-        result.m_offset = std::bit_cast<intptr_t>(special);
+        result.m_value = std::bit_cast<intptr_t>(special);
         return result;
     }
 
@@ -794,7 +794,7 @@ public:
     {
         Arg result;
         result.m_kind = WidthArg;
-        result.m_offset = bytesForWidth(width);
+        result.m_value = bytesForWidth(width);
         return result;
     }
 
@@ -802,17 +802,19 @@ public:
     {
         Arg result;
         result.m_kind = ZeroReg;
-        result.m_offset = 0;
+        result.m_value = 0;
         return result;
     }
 
     bool operator==(const Arg& other) const
     {
-        return m_offset == other.m_offset
+        // m_value aliases the base+index Tmp pair, so comparing it covers both those and the
+        // 64-bit immediate/pointer payload.
+        return m_value == other.m_value
             && m_kind == other.m_kind
-            && m_base == other.m_base
-            && m_index == other.m_index
-            && m_scale == other.m_scale;
+            && m_offset == other.m_offset
+            && m_logScale == other.m_logScale
+            && m_extend == other.m_extend;
     }
 
     explicit operator bool() const { return *this != Arg(); }
@@ -1019,13 +1021,13 @@ public:
     Air::Tmp tmp() const
     {
         ASSERT(kind() == Tmp);
-        return m_base;
+        return m_tmps.base;
     }
 
     int64_t value() const
     {
         ASSERT(isSomeImm());
-        return m_offset;
+        return m_value;
     }
 
     template<typename T>
@@ -1113,52 +1115,51 @@ public:
     void* pointerValue() const
     {
         ASSERT(kind() == BigImm);
-        return std::bit_cast<void*>(static_cast<intptr_t>(m_offset));
+        return std::bit_cast<void*>(static_cast<intptr_t>(m_value));
     }
     
     Air::Tmp ptr() const
     {
         ASSERT(kind() == SimpleAddr);
-        return m_base;
+        return m_tmps.base;
     }
 
     Air::Tmp base() const
     {
         ASSERT(kind() == SimpleAddr || kind() == Addr || kind() == ExtendedOffsetAddr || kind() == Index || kind() == PreIndex || kind() == PostIndex);
-        return m_base;
+        return m_tmps.base;
     }
 
     bool hasOffset() const { return isMemory(); }
     
     Value::OffsetType offset() const
     {
-        if (kind() == Stack)
-            return static_cast<Value::OffsetType>(m_scale);
-        ASSERT(kind() == Addr || kind() == ExtendedOffsetAddr || kind() == CallArg || kind() == Index || kind() == PreIndex || kind() == PostIndex);
+        ASSERT(kind() == Stack || kind() == Addr || kind() == ExtendedOffsetAddr || kind() == CallArg || kind() == Index || kind() == PreIndex || kind() == PostIndex);
         return static_cast<Value::OffsetType>(m_offset);
     }
 
     StackSlot* stackSlot() const
     {
         ASSERT(kind() == Stack);
-        return std::bit_cast<StackSlot*>(static_cast<uintptr_t>(m_offset));
+        return std::bit_cast<StackSlot*>(static_cast<uintptr_t>(m_value));
     }
 
     Air::Tmp index() const
     {
         ASSERT(kind() == Index);
-        return m_index;
+        return m_tmps.index;
     }
 
     unsigned scale() const
     {
         ASSERT(kind() == Index);
-        return m_scale;
+        return 1u << m_logScale;
     }
 
     unsigned logScale() const
     {
-        return logScale(scale());
+        ASSERT(kind() == Index);
+        return m_logScale;
     }
 
     MacroAssembler::Extend extend() const
@@ -1169,13 +1170,13 @@ public:
     Air::Special* special() const
     {
         ASSERT(kind() == Special);
-        return std::bit_cast<Air::Special*>(static_cast<uintptr_t>(m_offset));
+        return std::bit_cast<Air::Special*>(static_cast<uintptr_t>(m_value));
     }
 
     Width width() const
     {
         ASSERT(kind() == WidthArg);
-        return widthForBytes(m_offset);
+        return widthForBytes(m_value);
     }
 
     bool isGPTmp() const
@@ -1654,11 +1655,11 @@ public:
         case ExtendedOffsetAddr:
         case PreIndex:
         case PostIndex:
-            functor(m_base);
+            functor(m_tmps.base);
             break;
         case Index:
-            functor(m_base);
-            functor(m_index);
+            functor(m_tmps.base);
+            functor(m_tmps.index);
             break;
         default:
             break;
@@ -1691,20 +1692,20 @@ public:
         switch (m_kind) {
         case Tmp:
             ASSERT(isAnyUse(argRole) || isAnyDef(argRole));
-            functor(m_base, argRole, argBank, argWidth);
+            functor(m_tmps.base, argRole, argBank, argWidth);
             break;
         case SimpleAddr:
         case Addr:
         case ExtendedOffsetAddr:
-            functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
+            functor(m_tmps.base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         case PreIndex:
         case PostIndex:
-            functor(m_base, UseDef, GP, argRole == UseAddr ? argWidth : pointerWidth());
+            functor(m_tmps.base, UseDef, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         case Index:
-            functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
-            functor(m_index, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
+            functor(m_tmps.base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
+            functor(m_tmps.index, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         default:
             break;
@@ -1714,7 +1715,7 @@ public:
     MacroAssembler::TrustedImm32 asTrustedImm32() const
     {
         ASSERT(isImm() || isBitImm() || isFPImm32());
-        return MacroAssembler::TrustedImm32(static_cast<Value::OffsetType>(m_offset));
+        return MacroAssembler::TrustedImm32(static_cast<Value::OffsetType>(m_value));
     }
 
     MacroAssembler::TrustedImm64 asTrustedImm64() const
@@ -1730,7 +1731,7 @@ public:
         if constexpr (is32Bit())
             UNREACHABLE_FOR_PLATFORM();
         ASSERT(isFPImm128());
-        return v128_t(m_offset, m_offset);
+        return v128_t(m_value, m_value);
     }
 
     decltype(auto) asTrustedBigImm() const
@@ -1761,53 +1762,53 @@ public:
     MacroAssembler::Address asAddress() const
     {
         if (isSimpleAddr())
-            return MacroAssembler::Address(m_base.gpr());
+            return MacroAssembler::Address(m_tmps.base.gpr());
         ASSERT(isAddr() || isExtendedOffsetAddr());
-        return MacroAssembler::Address(m_base.gpr(), static_cast<Value::OffsetType>(m_offset));
+        return MacroAssembler::Address(m_tmps.base.gpr(), static_cast<Value::OffsetType>(m_offset));
     }
 
     MacroAssembler::BaseIndex asBaseIndex() const
     {
         ASSERT(isIndex());
         return MacroAssembler::BaseIndex(
-            m_base.gpr(), m_index.gpr(), static_cast<MacroAssembler::Scale>(logScale()),
+            m_tmps.base.gpr(), m_tmps.index.gpr(), static_cast<MacroAssembler::Scale>(logScale()),
             static_cast<Value::OffsetType>(m_offset), m_extend);
     }
 
     MacroAssembler::PreIndexAddress asPreIndexAddress() const
     {
         ASSERT(isPreIndex());
-        return MacroAssembler::PreIndexAddress(m_base.gpr(), offset());
+        return MacroAssembler::PreIndexAddress(m_tmps.base.gpr(), offset());
     }
 
     MacroAssembler::PostIndexAddress asPostIndexAddress() const
     {
         ASSERT(isPostIndex());
-        return MacroAssembler::PostIndexAddress(m_base.gpr(), offset());
+        return MacroAssembler::PostIndexAddress(m_tmps.base.gpr(), offset());
     }
 
     MacroAssembler::RelationalCondition asRelationalCondition() const
     {
         ASSERT(isRelCond());
-        return static_cast<MacroAssembler::RelationalCondition>(m_offset);
+        return static_cast<MacroAssembler::RelationalCondition>(m_value);
     }
 
     MacroAssembler::ResultCondition asResultCondition() const
     {
         ASSERT(isResCond());
-        return static_cast<MacroAssembler::ResultCondition>(m_offset);
+        return static_cast<MacroAssembler::ResultCondition>(m_value);
     }
 
     MacroAssembler::DoubleCondition asDoubleCondition() const
     {
         ASSERT(isDoubleCond());
-        return static_cast<MacroAssembler::DoubleCondition>(m_offset);
+        return static_cast<MacroAssembler::DoubleCondition>(m_value);
     }
     
     MacroAssembler::StatusCondition asStatusCondition() const
     {
         ASSERT(isStatusCond());
-        return static_cast<MacroAssembler::StatusCondition>(m_offset);
+        return static_cast<MacroAssembler::StatusCondition>(m_value);
     }
     
     ::JSC::SIMDInfo simdInfo() const
@@ -1881,8 +1882,8 @@ public:
     void dump(PrintStream&) const;
 
     Arg(WTF::HashTableDeletedValueType)
-        : m_base(WTF::HashTableDeletedValue)
     {
+        m_tmps.base = Air::Tmp(WTF::HashTableDeletedValue);
     }
 
     bool isHashTableDeletedValue() const
@@ -1895,24 +1896,34 @@ public:
     unsigned hash() const
     {
         // This really doesn't have to be that great.
-        return WTF::IntHash<int64_t>::hash(m_offset) + m_kind + m_scale + m_base.hash() +
-            m_index.hash();
+        return WTF::IntHash<int64_t>::hash(m_value) + m_kind + static_cast<unsigned>(m_offset)
+            + m_logScale + static_cast<unsigned>(m_extend);
     }
 
 private:
-    int64_t m_offset { 0 };
+    union {
+        int64_t m_value { 0 };
+        struct {
+            Air::Tmp base;
+            Air::Tmp index;
+        } m_tmps;
+    };
+    union {
+        int32_t m_offset { 0 };
+        JSC::SIMDInfo m_simdInfo;
+    };
     Kind m_kind { Invalid };
+    uint8_t m_logScale { 0 }; // Only meaningful for Index: scale() == 1u << m_logScale.
     MacroAssembler::Extend m_extend { MacroAssembler::Extend::None };
-    JSC::SIMDInfo m_simdInfo;
-    int32_t m_scale { 1 };
-    Air::Tmp m_base;
-    Air::Tmp m_index;
 #if USE(JSVALUE32_64)
-    // XXX: stick in union with m_base?
     Air::Tmp m_baseHi;
     Air::Tmp m_baseLo;
 #endif
 };
+
+#if USE(JSVALUE64) && !OS(WINDOWS)
+static_assert(sizeof(Arg) == 16, "Arg is expected to stay 16 bytes on JSVALUE64.");
+#endif
 
 } } } // namespace JSC::B3::Air
 
@@ -1927,7 +1938,7 @@ JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Signedness
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::B3::Air::Arg> : SimpleClassHashTraits<JSC::B3::Air::Arg> {
-    // Because m_scale is 1 in the empty value.
+    // Because m_extend is None (== 2), not zero, in the empty value.
     static constexpr bool emptyValueIsZero = false;
 };
 

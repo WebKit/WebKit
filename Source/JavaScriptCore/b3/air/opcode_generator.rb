@@ -562,7 +562,7 @@ writeH("Opcode") {
     outp.puts "#undef MemoryFence"
     
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
-    outp.puts "enum Opcode : int16_t {"
+    outp.puts "enum Opcode : uint16_t {"
     $opcodes.keys.each {
         | opcode |
         outp.puts "    #{opcode},"
