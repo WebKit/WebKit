@@ -107,6 +107,7 @@
 #include <wtf/Scope.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"
@@ -2263,6 +2264,20 @@ static String wrapWithDoubleQuotes(StringView text)
     return makeString(u"“", text, u"”");
 }
 
+static String shortenedHREFAttributeForDescription(const String& hrefAttribute)
+{
+    static constexpr unsigned maximumLength = 80;
+
+    auto result = hrefAttribute;
+    if (auto queryIndex = result.find('?'); queryIndex != notFound)
+        result = makeString(StringView(result).left(queryIndex + 1), horizontalEllipsis);
+
+    if (result.length() > maximumLength)
+        result = makeString(StringView(result).left(maximumLength - 1), horizontalEllipsis);
+
+    return result;
+}
+
 struct ScrollableContainer {
     RefPtr<Element> element;
     WeakPtr<ScrollableArea> scrollableArea;
@@ -2350,8 +2365,9 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
 
     if (element.isLink()) {
         if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)); !text.isEmpty()) {
-            description.append(makeString(" with href "_s, wrapWithDoubleQuotes(WTF::move(text))));
-            stringsToValidate.append(WTF::move(text));
+            auto shortenedHREF = shortenedHREFAttributeForDescription(text);
+            description.append(makeString(" with href "_s, wrapWithDoubleQuotes(shortenedHREF)));
+            stringsToValidate.append(WTF::move(shortenedHREF));
             needsParentContext = false;
             hasAccessibleName = true;
         }
