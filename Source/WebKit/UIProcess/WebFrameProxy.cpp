@@ -1230,50 +1230,39 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator, ForInit
     m_documentSecurityOrigin = SecurityOrigin::create(url());
 }
 
-void WebFrameProxy::waitForCertificateInfoFromNetworkProcess(const String& hostAndPort)
+WebCore::CertificateInfo WebFrameProxy::certificateInfoFromNetworkProcess(const URL& url) const
 {
+    String hostAndPort = url.hostAndPort();
+    if (!decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
+        return { };
+
+    if (!url.protocolIsSecure())
+        return { };
+
+    if (CertificateInfo certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort); !certificateInfo.isEmpty())
+        return certificateInfo;
+
     RefPtr page = m_page.get();
     if (!page)
-        return;
+        return { };
     RefPtr networkProcess = page->websiteDataStore().networkProcessIfExists();
     if (!networkProcess)
-        return;
+        return { };
     RefPtr connection = networkProcess->connection();
     if (!connection)
-        return;
+        return { };
 
-    // waitForAndDispatchImmediately dispatches messages besides the one being waited for.
-    // If another Messages::WebPageProxy::DidCommitLoadForFrame is received, we can get Error::MultipleWaitingClients.
-    // To prevent this, only be in one waitForAndDispatchImmediately call at a time per connection for this.
-    // If the next frame commit is also missing certificate info after this, then it will wait too.
-    if (networkProcess->isWaitingForCertificateInfo())
-        return;
-    networkProcess->setIsWaitingForCertificateInfo(true);
-    if (connection->waitForAndDispatchImmediately<Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo>(frameID(), 0_s) != IPC::Error::NoError) {
-        RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info from IPC");
-    }
-    networkProcess->setIsWaitingForCertificateInfo(false);
+    connection->waitForAndDispatchImmediately<Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo>(frameID(), 0_s);
+
+    CertificateInfo certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
+    if (certificateInfo.isEmpty())
+        RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info");
+    return certificateInfo;
 }
 
 void WebFrameProxy::commitCertificateInfo(const URL& url)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
-
-    String hostAndPort = url.hostAndPort();
-    CertificateInfo certificateInfo;
-    if (decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort)) {
-        certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
-        if (certificateInfo.isEmpty() && url.protocolIsSecure()) {
-            waitForCertificateInfoFromNetworkProcess(hostAndPort);
-            certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
-            if (certificateInfo.isEmpty())
-                RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info");
-        }
-    }
-
-    m_certificateInfo = WTF::move(certificateInfo);
+    m_certificateInfo = certificateInfoFromNetworkProcess(url);
 }
 
 void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
@@ -1283,6 +1272,15 @@ void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hos
     // multiple hosts, this would only affect iframes that navigate to many hosts.
     if (decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
         m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
+}
+
+void WebFrameProxy::copyCertificateInfoForProcessSwapOnNavigationResponse(const URL& url, const WebFrameProxy& oldMainFrame)
+{
+    ASSERT(isMainFrame());
+    ASSERT(oldMainFrame.isMainFrame());
+    ASSERT(m_hostAndPortToCertificateInfo.isEmpty());
+
+    m_hostAndPortToCertificateInfo.set(url.hostAndPort(), oldMainFrame.certificateInfoFromNetworkProcess(url));
 }
 
 } // namespace WebKit

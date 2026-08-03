@@ -142,6 +142,9 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
         previousMainFrame->transferNavigationCallbackToFrame(mainFrame);
     }
 
+    if (isProcessSwappingOnNavigationResponse && previousMainFrame)
+        protect(m_mainFrame)->copyCertificateInfoForProcessSwapOnNavigationResponse(m_provisionalLoadURL, *previousMainFrame);
+
     // Normally, notification of a server redirect comes from the WebContent process.
     // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
     // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.

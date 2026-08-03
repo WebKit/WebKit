@@ -30,6 +30,7 @@
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import <wtf/RetainPtr.h>
 
 @interface TrustObserver : NSObject
@@ -91,4 +92,39 @@ TEST(WKWebView, ServerTrustKVC)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     [observer waitUntilServerTrustChanged];
     EXPECT_NULL([webView serverTrust]);
+}
+
+TEST(WKWebView, ServerTrustKVCWithCOOP)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/path1"_s, { "hi"_s } },
+        { "/path2"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    webView.get().UIDelegate = uiDelegate.get();
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    RetainPtr observer = adoptNS([TrustObserver new]);
+    __block RetainPtr<WKWebView> opened;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        opened = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = navigationDelegate.get();
+        [opened addObserver:observer.get() forKeyPath:@"serverTrust" options:NSKeyValueObservingOptionNew context:nil];
+        return opened.get();
+    };
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/path1"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView evaluateJavaScript:@"window.open('https://webkit.org/path2')" completionHandler:nil];
+    [observer waitUntilServerTrustChanged];
+
+    // FIXME: This should be null. The web process should say whether to include a cert,
+    // it just shouldn't provide the cert.
+    [webView loadHTMLString:@"<script>alert('loaded')</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/path1"]];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
+    EXPECT_NOT_NULL(webView.get().serverTrust);
 }

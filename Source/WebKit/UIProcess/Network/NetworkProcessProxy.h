@@ -370,9 +370,6 @@ public:
 
     void flushNetworkProcessIPC(CompletionHandler<void()>&&);
 
-    bool isWaitingForCertificateInfo() const { return m_isWaitingForCertificateInfo; }
-    void setIsWaitingForCertificateInfo(bool waiting) { m_isWaitingForCertificateInfo = waiting; }
-
 private:
     explicit NetworkProcessProxy();
 
@@ -507,7 +504,6 @@ private:
     RetainPtr<id> m_backgroundObserver;
     RetainPtr<id> m_foregroundObserver;
 #endif
-    bool m_isWaitingForCertificateInfo { false };
 };
 
 } // namespace WebKit
