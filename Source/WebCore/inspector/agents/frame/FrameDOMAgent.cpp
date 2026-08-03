@@ -37,6 +37,7 @@
 #include "DOMPatchSupport.h"
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "ElementInlines.h"
@@ -53,6 +54,7 @@
 #include "HTMLTemplateElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
+#include "InspectorIdentifierRegistry.h"
 #include "InspectorNodeFinder.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
@@ -63,6 +65,8 @@
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "NodeList.h"
+#include "Page.h"
+#include "PageInspectorController.h"
 #include "PseudoElement.h"
 #include "RegisteredEventListener.h"
 #include "ScriptController.h"
@@ -79,6 +83,7 @@
 #include <JavaScriptCore/TopExceptionScope.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -382,8 +387,10 @@ Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node
                 value->setPseudoElements(pseudoElements.releaseNonNull());
         }
     } else if (RefPtr document = dynamicDowncast<Document>(*node)) {
+        // The frame target alone does not tell the frontend which frame this document belongs to.
+        if (RefPtr page = m_inspectedFrame->page())
+            value->setFrameId(page->inspectorController().identifierRegistry().frameId(protect(document->frame())));
         value->setDocumentURL(InspectorDOMAgent::documentURLString(document.get()));
-        // FIXME: <https://webkit.org/b/298980> Set frameId for frame targets to enable frontend frame-to-target association.
     } else if (RefPtr doctype = dynamicDowncast<DocumentType>(*node)) {
         value->setPublicId(doctype->publicId());
         value->setSystemId(doctype->systemId());
