@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSRunLoopTimer.h>
+#include <wtf/ApproximateTime.h>
 
 namespace JSC {
 
@@ -39,14 +40,14 @@ public:
 
     JS_EXPORT_PRIVATE void startSweeping(Heap&);
 
-    void doWorkUntil(VM&, MonotonicTime deadline);
+    void doWorkUntil(VM&, ApproximateTime deadline);
     void doWork(VM&) final;
     void stopSweeping();
 
 private:
     enum class SweepTrigger : bool { Timer, OpportunisticTask };
     bool sweepNextBlock(VM&, SweepTrigger);
-    void doSweep(VM&, MonotonicTime startTime, SweepTrigger);
+    void doSweep(VM&, ApproximateTime deadline, SweepTrigger);
     void scheduleTimer();
     
     BlockDirectory* m_currentDirectory;

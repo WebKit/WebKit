@@ -49,7 +49,7 @@ IncrementalSweeper::IncrementalSweeper(JSC::Heap* heap)
 {
 }
 
-void IncrementalSweeper::doWorkUntil(VM& vm, MonotonicTime deadline)
+void IncrementalSweeper::doWorkUntil(VM& vm, ApproximateTime deadline)
 {
     if (!m_currentDirectory)
         m_currentDirectory = vm.heap.objectSpace().firstDirectory();
@@ -65,10 +65,10 @@ void IncrementalSweeper::doWork(VM& vm)
         scheduleTimer();
         return;
     }
-    doSweep(vm, MonotonicTime::now() + sweepTimeSlice, SweepTrigger::Timer);
+    doSweep(vm, ApproximateTime::now() + sweepTimeSlice, SweepTrigger::Timer);
 }
 
-void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger trigger)
+void IncrementalSweeper::doSweep(VM& vm, ApproximateTime deadline, SweepTrigger trigger)
 {
     std::optional<TraceScope> traceScope;
     if (Options::useTracePoints()) [[unlikely]]
@@ -77,7 +77,7 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger tr
     vm.heap.clearConcurrentRetainedDataIfPossible();
 
     while (sweepNextBlock(vm, trigger)) {
-        if (MonotonicTime::now() < deadline)
+        if (ApproximateTime::now() < deadline)
             continue;
 
         if (trigger == SweepTrigger::Timer)

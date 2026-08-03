@@ -51,6 +51,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/VMThreadContext.h>
 #include <JavaScriptCore/WeakGCMap.h>
 #include <JavaScriptCore/WriteBarrier.h>
+#include <wtf/ApproximateTime.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
@@ -373,7 +374,7 @@ public:
     enum class SchedulerOptions : uint8_t {
         HasImminentlyScheduledWork = 1 << 0,
     };
-    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
+    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(ApproximateTime deadline, OptionSet<SchedulerOptions>);
 
     Structure* cellButterflyStructure(IndexingType indexingType) { return rawImmutableButterflyStructure(indexingType).get(); }
 
