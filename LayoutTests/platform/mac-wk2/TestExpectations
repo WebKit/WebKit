@@ -2439,3 +2439,7 @@ webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html 
 webkit.org/b/319798 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Pass Failure ]
 
 webkit.org/b/320245 [ Release x86_64 ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Crash ]
+
+# webkit.org/b/320253 2x fast/canvas/webgl/* (layout-tests) are constant text failures.
+[ Sequoia Release x86_64 ] fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html [ Failure ]
+[ Sequoia Release x86_64 ] fast/canvas/webgl/tex-input-validation.html [ Failure ]
