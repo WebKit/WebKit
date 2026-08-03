@@ -206,9 +206,9 @@ function testUniformOptimizationIssues(test) {
         gl.uniform4fv(locations[ii], [ii + 4, ii + 2, ii + 3, ii + 1]);
     }
 
-    var kEpsilon = 0.01;
+    var kEpsilon = Math.pow(2, -10);
     var isSame = function(v1, v2) {
-        return Math.abs(v1 - v2) < kEpsilon;
+        return Math.abs(v1 - v2) < Math.abs(v1) * kEpsilon;
     };
 
     for (var ii = 0; ii < test.maxUniformVectors; ++ii) {

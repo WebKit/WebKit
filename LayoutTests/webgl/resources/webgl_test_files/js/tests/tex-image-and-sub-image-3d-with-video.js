@@ -166,7 +166,7 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
               topColor: greenColor, bottomColor: greenColor },
         ];
 
-        function runTexImageTest(bindingTarget) {
+        async function runTexImageTest(bindingTarget) {
             var program;
             if (bindingTarget == gl.TEXTURE_3D) {
                 program = tiu.setupTexturedQuadWith3D(gl, internalFormat);
@@ -174,68 +174,69 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
                 program = tiu.setupTexturedQuadWith2DArray(gl, internalFormat);
             }
 
-            return new Promise(function(resolve, reject) {
-                var videoNdx = 0;
-                var video;
-                function runNextVideo() {
-                    if (video) {
-                        video.pause();
-                    }
+            for (const info of videos) {
+                debug("");
+                debug("testing: " + JSON.stringify({
+                    type: info.type,
+                    bindingTarget: wtu.glEnumToString(gl, bindingTarget),
+                }));
 
-                    if (videoNdx == videos.length) {
-                        resolve("SUCCESS");
-                        return;
-                    }
+                const video = await loadVideo(info);
+                if (!video) continue;
 
-                    var info = videos[videoNdx++];
-                    debug("");
-                    debug("testing: " + info.type);
-                    video = document.createElement("video");
-                    video.muted = true;
-                    var canPlay = true;
-                    if (!video.canPlayType) {
-                      testFailed("video.canPlayType required method missing");
-                      runNextVideo();
-                      return;
-                    }
-
-                    if(!video.canPlayType(info.type).replace(/no/, '')) {
-                      debug(info.type + " unsupported");
-                      runNextVideo();
-                      return;
-                    };
-
+                try {
                     document.body.appendChild(video);
                     video.type = info.type;
                     video.src = info.src;
-                    wtu.startPlayingAndWaitForVideo(video, runTest);
+
+                    await wtu.waitVideoUploadable(video);
+
+                    await testVideo(video);
+                } finally {
+                    video.pause();
                 }
-                function runTest() {
-                    for (var i in cases) {
-                        runOneIteration(video, cases[i].flipY, false,
-                                        cases[i].topColor, cases[i].bottomColor,
-                                        program, bindingTarget, cases[i].depth,
-                                        cases[i].sourceSubRectangle,
-                                        cases[i].unpackImageHeight,
-                                        cases[i].rTextureCoord);
-                        runOneIteration(video, cases[i].flipY, true,
-                                        cases[i].topColor, cases[i].bottomColor,
-                                        program, bindingTarget, cases[i].depth,
-                                        cases[i].sourceSubRectangle,
-                                        cases[i].unpackImageHeight,
-                                        cases[i].rTextureCoord);
-                    }
-                    runNextVideo();
+            }
+
+            async function loadVideo(info) {
+                const video = document.createElement("video");
+                video.muted = true;
+                if (!video.canPlayType) {
+                    testFailed("video.canPlayType required method missing");
+                    return null;
                 }
-                runNextVideo();
-            });
+
+                if(!video.canPlayType(info.type).replace(/no/, '')) {
+                    debug(info.type + " unsupported");
+                    return null;
+                }
+
+                return video;
+            }
+
+            async function testVideo(video) {
+                await wtu.dispatchPromise();
+                for (var i in cases) {
+                    runOneIteration(video, cases[i].flipY, false,
+                                    cases[i].topColor, cases[i].bottomColor,
+                                    program, bindingTarget, cases[i].depth,
+                                    cases[i].sourceSubRectangle,
+                                    cases[i].unpackImageHeight,
+                                    cases[i].rTextureCoord);
+                    runOneIteration(video, cases[i].flipY, true,
+                                    cases[i].topColor, cases[i].bottomColor,
+                                    program, bindingTarget, cases[i].depth,
+                                    cases[i].sourceSubRectangle,
+                                    cases[i].unpackImageHeight,
+                                    cases[i].rTextureCoord);
+                }
+            }
         }
 
-        runTexImageTest(gl.TEXTURE_3D).then(function(val) {
-            runTexImageTest(gl.TEXTURE_2D_ARRAY).then(function(val) {
-                wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
-                finishTest();
-            });
+        call(async () => {
+            await runTexImageTest(gl.TEXTURE_3D);
+            await runTexImageTest(gl.TEXTURE_2D_ARRAY);
+            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
+            finishTest();
         });
     }
 

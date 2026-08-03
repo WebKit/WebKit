@@ -842,8 +842,10 @@ function doTest(ext, instanced) {
     runPixelTests(bufferUsage, false);
   }
 
-  // FIXME: Run a subset of the pixel tests with SharedArrayBuffer if supported.
-  // This requires adding [AllowShared] to Int32List in WebGLMultiDraw.idl.
+  // Run a subset of the pixel tests with SharedArrayBuffer if supported.
+  if (window.SharedArrayBuffer) {
+    runPixelTests(bufferUsageSet[0], true);
+  }
 }
 
 function waitForComposite() {

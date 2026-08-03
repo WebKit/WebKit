@@ -11,6 +11,8 @@ found in the LICENSE.txt file.
 "use strict";
 description("This test ensures WebGL implementations vertexAttrib can be set and read.");
 
+const DRNG = getDrng();
+
 debug("");
 debug("Canvas.getContext");
 
@@ -21,10 +23,12 @@ if (!gl) {
 } else {
   testPassed("context exists");
 
-  debug("");
-  debug("Checking gl.vertexAttrib.");
+  // -
 
-  var numVertexAttribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+  debug("");
+  debug("# Checking round-tripping of easy values through gl.vertexAttrib[1-4]*");
+
+  let numVertexAttribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
   for (var ii = 0; ii < numVertexAttribs; ++ii) {
     gl.vertexAttrib1fv(ii, [1]);
     shouldBeType('gl.getVertexAttrib(' + ii + ', gl.CURRENT_VERTEX_ATTRIB)', 'Float32Array');
@@ -157,7 +161,7 @@ if (!gl) {
   wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
   debug("");
-  debug("Checking out-of-range vertexAttrib index");
+  debug("# Checking out-of-range vertexAttrib index");
   gl.getVertexAttrib(numVertexAttribs, gl.CURRENT_VERTEX_ATTRIB);
   wtu.glErrorShouldBe(gl, gl.INVALID_VALUE);
 
@@ -257,6 +261,77 @@ if (!gl) {
     gl.vertexAttribI4uiv(numVertexAttribs, new Uint32Array([0, 2, 1]));
     wtu.glErrorShouldBe(gl, gl.INVALID_VALUE);
   }
+
+  // -
+
+  debug("");
+  debug("# Checking round-tripping of valid random values through gl.vertexAttrib[1-4]*");
+  {
+    const MAX_VERTEX_ATTRIBS = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+
+    let FUNCS = [
+      { func_name: 'vertexAttrib1f' , val_count: 1, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib2f' , val_count: 2, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib3f' , val_count: 3, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib4f' , val_count: 4, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib1fv', val_count: 1, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib2fv', val_count: 2, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib3fv', val_count: 3, array_ctor: Float32Array },
+      { func_name: 'vertexAttrib4fv', val_count: 4, array_ctor: Float32Array },
+    ];
+    if (contextVersion >= 2) {
+      FUNCS.push(
+        { func_name: 'vertexAttribI4i'  , val_count: 4, array_ctor: Int32Array },
+        { func_name: 'vertexAttribI4iv' , val_count: 4, array_ctor: Int32Array },
+        { func_name: 'vertexAttribI4ui' , val_count: 4, array_ctor: Uint32Array },
+        { func_name: 'vertexAttribI4uiv', val_count: 4, array_ctor: Uint32Array },
+      );
+    }
+
+    const TESTS = crossCombine(
+      range(MAX_VERTEX_ATTRIBS).map(attrib_id => ({attrib_id})),
+      FUNCS
+    );
+    debug(`TESTS.length: ${TESTS.length}`);
+
+    TESTS.map((test, i) => {
+      debug(``);
+      debug(`## TESTS[${i}]`);
+      //debug(`test: ${JSON.stringify(test)}`);
+
+      const out_vals = new test.array_ctor(4);
+      if (test.array_ctor == Float32Array) {
+        // Nothing too hard: [-1.0M, +1.0M)
+        for (const i in out_vals) {
+          const f01 = DRNG.next_unorm();
+          out_vals[i] = (2*f01 - 1) * 1_000_000;
+        }
+      } else {
+        // Anything goes!
+        for (const i in out_vals) {
+          out_vals[i] = DRNG.next_u32();
+        }
+      }
+      const in_vals = out_vals.slice(0, test.val_count);
+      const DEFAULT_VALUES = [0, 0, 0, 1];
+      for (const i in out_vals) {
+        if (in_vals[i] === undefined) {
+          out_vals[i] = DEFAULT_VALUES[i];
+        }
+      }
+
+      let args = [test.attrib_id, ...in_vals];
+      if (test.func_name.endsWith('v')) {
+        args = [test.attrib_id, in_vals];
+      }
+      debug(`gl.${test.func_name}(${args.join(', ')})`);
+      gl[test.func_name](...args);
+
+      shouldBeType(`gl.getVertexAttrib(${test.attrib_id}, gl.CURRENT_VERTEX_ATTRIB)`, test.array_ctor.name);
+      shouldBeString(`gl.getVertexAttrib(${test.attrib_id}, gl.CURRENT_VERTEX_ATTRIB)`, out_vals.toString());
+    });
+  }
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 }
 
 debug("");

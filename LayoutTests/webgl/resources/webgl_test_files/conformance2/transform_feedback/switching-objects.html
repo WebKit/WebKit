@@ -195,6 +195,44 @@ wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "already paused");
 gl.endTransformFeedback();
 wtu.glErrorShouldBe(gl, gl.NO_ERROR, "end while paused");
 
+debug("<h3>Verify buffer is bound for transform feedback even when its active TF object is unbound (and paused)</h3>");
+
+// 1. Create a buffer B and two transform feedback objects.
+const bufB = createBuffer(gl, new Float32Array([0, 0]));
+const local_tf1 = gl.createTransformFeedback();
+const local_tf2 = gl.createTransformFeedback();
+
+// 2. Bind local_tf1 and attach bufB to target index 0.
+gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, local_tf1);
+gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufB);
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "attach bufB to local_tf1");
+
+// 3. Begin transform feedback, then pause it. local_tf1 is now active+paused.
+gl.beginTransformFeedback(gl.POINTS);
+gl.pauseTransformFeedback();
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "local_tf1 is now active+paused");
+
+// 4. Bind local_tf2. This unbinds local_tf1, but local_tf1 remains active+paused.
+gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, local_tf2);
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "switch binding to local_tf2; local_tf1 is unbound but still active+paused");
+
+// 5. Try to modify bufB's data store (e.g., via gl.bufferData on another target like COPY_WRITE_BUFFER).
+// Since bufB is still bound to the active local_tf1 (even though unbound and paused),
+// modifying its data store is prohibited and MUST generate INVALID_OPERATION.
+gl.bindBuffer(gl.COPY_WRITE_BUFFER, bufB);
+gl.bufferData(gl.COPY_WRITE_BUFFER, 1024, gl.STATIC_DRAW);
+wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "bufferData on a buffer currently bound to an active (but unbound and paused) transform feedback object must fail with INVALID_OPERATION");
+
+// 6. Clean up: restore bindings, end transform feedback, and delete objects.
+gl.bindBuffer(gl.COPY_WRITE_BUFFER, null);
+gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, local_tf1);
+gl.endTransformFeedback();
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "end transform feedback on local_tf1");
+gl.deleteTransformFeedback(local_tf1);
+gl.deleteTransformFeedback(local_tf2);
+gl.deleteBuffer(bufB);
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "clean up");
+
 finishTest();
 
 // Helper functions

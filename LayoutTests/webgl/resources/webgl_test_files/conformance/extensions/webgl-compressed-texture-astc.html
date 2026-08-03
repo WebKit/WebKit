@@ -2163,26 +2163,44 @@ function testASTCTexture(test, useES3) {
     }
 
     function uploadSubData(target) {
-        function checkResult(target, expectations, dim) {
-            switch (target) {
-                case gl.TEXTURE_2D:
-                    wtu.glErrorShouldBe(gl, expectations[0], "uploading compressed 2D texture data via compressedTexSubImage" + dim);
-                    break;
-                case gl.TEXTURE_2D_ARRAY:
-                    wtu.glErrorShouldBe(gl, expectations[1], "uploading compressed 2D array texture data via compressedTexSubImage" + dim);
-                    break;
-                case gl.TEXTURE_3D:
-                    wtu.glErrorShouldBe(gl, expectations[2], "uploading compressed 3D texture data via compressedTexSubImage" + dim);
-                    break;
-            }
-        }
-
         gl.compressedTexSubImage2D(target, 0, 0, 0, width, height, format, data);
         checkResult(target, [gl.NO_ERROR, gl.INVALID_ENUM, gl.INVALID_ENUM ], "2D");
 
         if (useES3) {
             gl.compressedTexSubImage3D(target, 0, 0, 0, 0, width, height, 1, format, data);
             checkResult(target, [gl.INVALID_ENUM, gl.NO_ERROR, gl.NO_ERROR], "3D");
+        }
+    }
+
+    function uploadSubDataOffset(target) {
+        const blockSize = getBlockDimensions(format);
+        if ((width % blockSize.width) || (height % blockSize.height)) {
+            // Skip test for unaligned blocks
+            return;
+        }
+
+        const x = blockSize.width;
+        const y = blockSize.height;
+        const blitWidth = width - x;
+        const blitHeight = height - y;
+
+        // Offset the update by one horizontal and one vertical rows.
+        // ASTC block size is always 16 bytes (128 bits)
+        const offset = (width / blockSize.width + height / blockSize.height - 1) * 16;
+
+        gl.compressedTexSubImage2D(target, 0, x, y, blitWidth, blitHeight, format, data, offset);
+        checkResult(target, [gl.NO_ERROR, gl.INVALID_ENUM, gl.INVALID_ENUM ], "2D", true);
+
+        const srcLengthOverride = data.length - offset;
+        gl.compressedTexSubImage2D(target, 0, x, y, blitWidth, blitHeight, format, data, 0, srcLengthOverride);
+        checkResult(target, [gl.NO_ERROR, gl.INVALID_ENUM, gl.INVALID_ENUM ], "2D", true);
+
+        if (useES3) {
+            gl.compressedTexSubImage3D(target, 0, x, y, 0, blitWidth, blitHeight, 1, format, data, offset);
+            checkResult(target, [gl.INVALID_ENUM, gl.NO_ERROR, gl.NO_ERROR], "3D", true);
+
+            gl.compressedTexSubImage3D(target, 0, x, y, 0, blitWidth, blitHeight, 1, format, data, 0, srcLengthOverride);
+            checkResult(target, [gl.INVALID_ENUM, gl.NO_ERROR, gl.NO_ERROR], "3D", true);
         }
     }
 
@@ -2277,6 +2295,12 @@ function testASTCTexture(test, useES3) {
             checkSampling(gl.TEXTURE_2D)
             gl.deleteTexture(tex);
 
+            // Upload with offsets
+            tex = setupEmptyTexture(gl.TEXTURE_2D, false);
+            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "allocating empty compressed texture via compressedTexImage2D");
+            uploadSubDataOffset(gl.TEXTURE_2D);
+            gl.deleteTexture(tex);
+
             // mutable filled
             tex = setupFilledTexture(gl.TEXTURE_2D);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "allocating filled compressed texture via compressedTexImage2D");
@@ -2302,6 +2326,12 @@ function testASTCTexture(test, useES3) {
             checkErrorColor();
             uploadSubData(gl.TEXTURE_2D_ARRAY);
             checkSampling(gl.TEXTURE_2D_ARRAY)
+            gl.deleteTexture(tex);
+
+            // Upload with offsets
+            tex = setupEmptyTexture(gl.TEXTURE_2D_ARRAY, false);
+            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "allocating empty compressed texture array via compressedTexImage3D");
+            uploadSubDataOffset(gl.TEXTURE_2D_ARRAY);
             gl.deleteTexture(tex);
 
             // mutable filled
@@ -2333,6 +2363,17 @@ function testASTCTexture(test, useES3) {
                 checkErrorColor();
                 uploadSubData(gl.TEXTURE_3D);
                 checkSampling(gl.TEXTURE_3D)
+            } else {
+                wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "allocating empty compressed sliced 3D texture via compressedTexImage3D");
+            }
+            gl.deleteTexture(tex);
+
+            // Upload with offsets
+            tex = setupEmptyTexture(gl.TEXTURE_3D, false);
+            if (hasHdr) {
+                wtu.glErrorShouldBe(gl, gl.NO_ERROR, "allocating empty compressed sliced 3D texture via compressedTexImage3D");
+                checkErrorColor();
+                uploadSubDataOffset(gl.TEXTURE_3D);
             } else {
                 wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "allocating empty compressed sliced 3D texture via compressedTexImage3D");
             }
@@ -2420,6 +2461,21 @@ function compareRect(
     }
 }
 
+function checkResult(target, expectations, dim, offsets = false) {
+    const offsetStr = offsets ? " with x/y offsets" : "";
+    switch (target) {
+        case gl.TEXTURE_2D:
+            wtu.glErrorShouldBe(gl, expectations[0], "uploading compressed 2D texture data via compressedTexSubImage" + dim + offsetStr);
+            break;
+        case gl.TEXTURE_2D_ARRAY:
+            wtu.glErrorShouldBe(gl, expectations[1], "uploading compressed 2D array texture data via compressedTexSubImage" + dim + offsetStr);
+            break;
+        case gl.TEXTURE_3D:
+            wtu.glErrorShouldBe(gl, expectations[2], "uploading compressed 3D texture data via compressedTexSubImage" + dim + offsetStr);
+            break;
+    }
+}
+
 // Builds several tests from two arrays
 // data gives each Uint8Array encoded data to use
 // formats the associate format to decode the data
@@ -2484,7 +2540,7 @@ function getBlockDimensions(format) {
             return {
               width: parseInt(match[1], 10),
               height: parseInt(match[2], 10)
-              };
+            };
         }
     }
     testFailed('Could not find block dimensions for format ' + ctu.formatToString(ext, format));

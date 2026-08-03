@@ -65,6 +65,7 @@ async function runTest() {
   }
   checkDependencyExtensionsEnabled(true);
 
+  checkEnums();
   checkImplementationDependentLimits();
   checkInitialValues();
   checkWebGLNonNormativeBehavior();
@@ -81,13 +82,10 @@ function checkExtensionNotSupportedWhenDisabled() {
   shouldBeNull("gl.getParameter(0x96E0 /*MAX_PIXEL_LOCAL_STORAGE_PLANES_WEBGL*/)");
   wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "parameter unknown without enabling the extension");
   shouldBeNull(
-    "gl.getParameter(0x96E1 /*MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_WEBGL*/)");
+    "gl.getParameter(0x96E1 /*MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_WEBGL*/)");
   wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "parameter unknown without enabling the extension");
   shouldBeNull(
-    "gl.getParameter(0x96E2 /*MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_WEBGL*/)");
-  wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "parameter unknown without enabling the extension");
-  shouldBeNull(
-    "gl.getParameter(0x96E3 /*PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_WEBGL*/)");
+    "gl.getParameter(0x96E2 /*PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_WEBGL*/)");
   wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "parameter unknown without enabling the extension");
   wtu.glErrorShouldBe(gl, gl.NONE);
 }
@@ -100,28 +98,44 @@ function checkDependencyExtensionsEnabled(enabled) {
     wtu.glErrorShouldBe(gl, enabled ? gl.NONE : gl.INVALID_ENUM,
                         "OES_draw_buffers_indexed not enabled or disabled as expected");
   }
-  if (wtu.getSupportedExtensionWithKnownPrefixes(gl, "EXT_color_buffer_float") !== undefined) {
+  {
     gl.bindRenderbuffer(gl.RENDERBUFFER, gl.createRenderbuffer());
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.R32F, 1, 1);
-    wtu.glErrorShouldBe(gl, enabled ? gl.NONE : gl.INVALID_ENUM,
-                        "EXT_color_buffer_float not enabled or disabled as expected");
+    wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "EXT_color_buffer_float not disabled as expected");
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
   }
-  if (wtu.getSupportedExtensionWithKnownPrefixes(gl, "EXT_color_buffer_half_float") !== undefined) {
+  {
     gl.bindRenderbuffer(gl.RENDERBUFFER, gl.createRenderbuffer());
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.RG16F, 1, 1);
-    wtu.glErrorShouldBe(gl, enabled ? gl.NONE : gl.INVALID_ENUM,
-                        "EXT_color_buffer_half_float not enabled or disabled as expected");
+    wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "EXT_color_buffer_half_float not disabled as expected");
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
   }
+}
+
+function checkEnums() {
+  debug("\nVerify the extension's enum values, since they changed during the extension's development.");
+  shouldBe("pls.MAX_PIXEL_LOCAL_STORAGE_PLANES_WEBGL", "0x96E0");
+  shouldBe("pls.MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_WEBGL", "0x96E1");
+  shouldBe("pls.PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_WEBGL", "0x96E2");
+  shouldBe("pls.LOAD_OP_ZERO_WEBGL", "0x96E3");
+  shouldBe("pls.LOAD_OP_CLEAR_WEBGL", "0x96E4");
+  shouldBe("pls.LOAD_OP_LOAD_WEBGL", "0x96E5");
+  shouldBe("pls.STORE_OP_STORE_WEBGL", "0x96E6");
+  shouldBe("pls.PIXEL_LOCAL_INTERNAL_FORMAT_WEBGL", "0x96E7");
+  shouldBe("pls.PIXEL_LOCAL_TEXTURE_NAME_WEBGL", "0x96E8");
+  shouldBe("pls.PIXEL_LOCAL_TEXTURE_LEVEL_WEBGL", "0x96E9");
+  shouldBe("pls.PIXEL_LOCAL_TEXTURE_LAYER_WEBGL", "0x96EA");
+  shouldBe("pls.PIXEL_LOCAL_USAGE_WEBGL", "0x96EB");
+  shouldBe("pls.PIXEL_LOCAL_CLEAR_VALUE_FLOAT_WEBGL", "0x96EC");
+  shouldBe("pls.PIXEL_LOCAL_CLEAR_VALUE_INT_WEBGL", "0x96ED");
+  shouldBe("pls.PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_WEBGL", "0x96EE");
+  shouldBe("pls.PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_WEBGL", "0x1");
 }
 
 function checkImplementationDependentLimits() {
   debug("\nVerify conformant implementation-dependent PLS limits.");
   window.MAX_PIXEL_LOCAL_STORAGE_PLANES =
     gl.getParameter(pls.MAX_PIXEL_LOCAL_STORAGE_PLANES_WEBGL);
-  window.MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE =
-    gl.getParameter(pls.MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_WEBGL);
   window.MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES =
     gl.getParameter(pls.MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_WEBGL);
   wtu.glErrorShouldBe(gl, gl.NONE, "Pixel local storage queries should be supported.");
@@ -131,14 +145,11 @@ function checkImplementationDependentLimits() {
 
   // Table 6.X: Impementation Dependent Pixel Local Storage Limits.
   shouldBeTrue("MAX_PIXEL_LOCAL_STORAGE_PLANES >= 4");
-  shouldBeTrue("MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE >= 0");
   shouldBeTrue("MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES >= 4");
 
   // Logical deductions based on 6.X.
   shouldBeTrue(`MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES >=
                MAX_PIXEL_LOCAL_STORAGE_PLANES`);
-  shouldBeTrue(`MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES >=
-               MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE`);
   shouldBeTrue(`MAX_COLOR_ATTACHMENTS + MAX_PIXEL_LOCAL_STORAGE_PLANES >=
                MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES`);
   shouldBeTrue(`MAX_DRAW_BUFFERS + MAX_PIXEL_LOCAL_STORAGE_PLANES >=
@@ -161,13 +172,15 @@ function checkInitialValues() {
   for (let i = 0; i < MAX_PIXEL_LOCAL_STORAGE_PLANES; ++i)
   {
     expectTrue(pls.getFramebufferPixelLocalStorageParameterWEBGL(
-        i, pls.PIXEL_LOCAL_FORMAT_WEBGL) == gl.NONE);
+        i, pls.PIXEL_LOCAL_INTERNAL_FORMAT_WEBGL) == gl.NONE);
     expectTrue(pls.getFramebufferPixelLocalStorageParameterWEBGL(
         i, pls.PIXEL_LOCAL_TEXTURE_NAME_WEBGL) == null);
     expectTrue(pls.getFramebufferPixelLocalStorageParameterWEBGL(
         i, pls.PIXEL_LOCAL_TEXTURE_LEVEL_WEBGL) == 0);
     expectTrue(pls.getFramebufferPixelLocalStorageParameterWEBGL(
         i, pls.PIXEL_LOCAL_TEXTURE_LAYER_WEBGL) == 0);
+    expectTrue(pls.getFramebufferPixelLocalStorageParameterWEBGL(
+        i, pls.PIXEL_LOCAL_USAGE_WEBGL) == 0);
     expectTrue(arraysEqual(
         pls.getFramebufferPixelLocalStorageParameterWEBGL(
             i, pls.PIXEL_LOCAL_CLEAR_VALUE_FLOAT_WEBGL),
@@ -197,7 +210,7 @@ function checkWebGLNonNormativeBehavior() {
   gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, 1, 1);
   wtu.glErrorShouldBe(gl, gl.NONE);
   gl.deleteTexture(tex);
-  pls.framebufferTexturePixelLocalStorageWEBGL(0, tex, 0, 0);
+  pls.framebufferTexturePixelLocalStorageWEBGL(0, tex, 0, 0, 0);
   wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION);
 
   debug("\nIf 'texture' was generated by a different WebGL2RenderingContext than this one, " +
@@ -206,7 +219,7 @@ function checkWebGLNonNormativeBehavior() {
   const tex2 = gl2.createTexture();
   gl2.bindTexture(gl2.TEXTURE_2D, tex2);
   gl2.texStorage2D(gl2.TEXTURE_2D, 1, gl2.RGBA8, 1, 1);
-  pls.framebufferTexturePixelLocalStorageWEBGL(0, tex2, 0, 0);
+  pls.framebufferTexturePixelLocalStorageWEBGL(0, tex2, 0, 0, 0);
   wtu.glErrorShouldBe(gl2, gl2.NONE);
   wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION);
 
@@ -280,10 +293,10 @@ function checkWebGLNonNormativeBehavior() {
   gl.bindTexture(gl.TEXTURE_2D, validTex);
   gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, 1, 1);
   wtu.glErrorShouldBe(gl, gl.NONE);
-  pls.framebufferTexturePixelLocalStorageWEBGL(0, validTex, 0, 0);
+  pls.framebufferTexturePixelLocalStorageWEBGL(0, validTex, 0, 0, 0);
   shouldBeTrue(`pls.getFramebufferPixelLocalStorageParameterWEBGL(
                     0, pls.PIXEL_LOCAL_TEXTURE_NAME_WEBGL) === validTex`);
-  pls.framebufferTexturePixelLocalStorageWEBGL(0, null, 0, 0);
+  pls.framebufferTexturePixelLocalStorageWEBGL(0, null, 0, 0, 0);
   shouldBeTrue(`pls.getFramebufferPixelLocalStorageParameterWEBGL(
                     0, pls.PIXEL_LOCAL_TEXTURE_NAME_WEBGL) === null`);
 
@@ -309,7 +322,7 @@ async function checkRendering(localGL) {
 
   const plsFBO = localGL.createFramebuffer();
   localGL.bindFramebuffer(localGL.FRAMEBUFFER, plsFBO);
-  localPLS.framebufferTexturePixelLocalStorageWEBGL(0, tex, 0, 0);
+  localPLS.framebufferTexturePixelLocalStorageWEBGL(0, tex, 0, 0, 0);
   wtu.glErrorShouldBe(localGL, localGL.NONE);
 
   localGL.viewport(0, 0, localCanvas.width, localCanvas.height);

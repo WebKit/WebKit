@@ -13,6 +13,8 @@ let height;
 let format;
 let hasDrawingBufferStorage;
 let maxRenderbufferSize;
+let currentWidth;
+let currentHeight;
 
 function runTest(contextVersion) {
   description();
@@ -185,19 +187,25 @@ function runTest(contextVersion) {
       return;
     }
 
+    // https://registry.khronos.org/webgl/specs/latest/1.0/#2.2 does
+    // not guarantee that a drawing buffer of a given width and height
+    // can be allocated at exactly that size.
+
     debug('Testing maximum size');
     gl.drawingBufferStorage(gl.RGBA8, maxRenderbufferSize, maxRenderbufferSize);
     shouldBe('gl.getError()', 'gl.NONE');
-    shouldBe('gl.drawingBufferWidth', 'maxRenderbufferSize');
-    shouldBe('gl.drawingBufferHeight', 'maxRenderbufferSize');
+    shouldBeTrue('gl.drawingBufferWidth <= maxRenderbufferSize');
+    shouldBeTrue('gl.drawingBufferHeight <= maxRenderbufferSize');
+    currentWidth = gl.drawingBufferWidth;
+    currentHeight = gl.drawingBufferHeight;
 
-    debug('Testing over-maximum width and ehgith');
+    debug('Testing over-maximum width and height');
     gl.drawingBufferStorage(gl.RGBA8, maxRenderbufferSize+1, 16);
     shouldBe('gl.getError()', 'gl.INVALID_VALUE');
     gl.drawingBufferStorage(gl.RGBA8, 16, maxRenderbufferSize+1);
     shouldBe('gl.getError()', 'gl.INVALID_VALUE');
-    shouldBe('gl.drawingBufferWidth', 'maxRenderbufferSize');
-    shouldBe('gl.drawingBufferHeight', 'maxRenderbufferSize');
+    shouldBe('gl.drawingBufferWidth', 'currentWidth');
+    shouldBe('gl.drawingBufferHeight', 'currentHeight');
   }
 
   function testDrawToCanvas() {
