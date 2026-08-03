@@ -237,14 +237,18 @@ void WebModelPlayer::load(WebCore::NodeIdentifier nodeID, WebCore::Model& modelS
     bool standardDynamicRange = false;
 #endif
 
+#if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     m_lastSentContentsHeadroom = -1.f;
+#endif
     m_currentModel = static_cast<RemoteGPUProxy&>(gpu->backing()).createModelBacking(m_currentPixelSize.width(), m_currentPixelSize.height(), WTF::move(diffuseTexture), WTF::move(specularTexture), standardDynamicRange, [protectedThis = protect(*this)] (Vector<MachSendRight>&& surfaceHandles) {
         if (surfaceHandles.size()) {
             protectedThis->m_displayBuffers = WTF::move(surfaceHandles);
             protectedThis->m_renderTextureIndex = 0;
             protectedThis->m_displayTextureIndex = 0;
             protectedThis->m_hasRenderedFrame = false;
+#if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
             protectedThis->updateScreenHeadroomFromPage();
+#endif
         }
     });
     if (!m_currentModel)
@@ -686,7 +690,9 @@ bool WebModelPlayer::render()
                 delegate->setContentsFormat(contentsFormatForDynamicRange(protectedThis->m_usingStandardDynamicRange));
 #endif
                 delegate->setDisplayBuffer(*machSendRight);
+#if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
                 protectedThis->updateScreenHeadroomFromPage();
+#endif
             }
 
             protectedThis->notifyClientDidFinishLoading();

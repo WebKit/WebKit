@@ -37,7 +37,9 @@ struct CanvasRenderingContext2DSettings {
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     enum class ColorType : bool {
         Unorm8,
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
         Float16,
+#endif
     };
     ColorType colorType { ColorType::Unorm8 };
     enum class RenderingMode {

@@ -32,7 +32,9 @@ namespace WebCore {
 
 enum class ImageDataPixelFormat : bool {
     RgbaUnorm8,
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     RgbaFloat16,
+#endif
 };
 
 constexpr PixelFormat toPixelFormat(ImageDataPixelFormat pixelFormat)
@@ -40,11 +42,9 @@ constexpr PixelFormat toPixelFormat(ImageDataPixelFormat pixelFormat)
     switch (pixelFormat) {
     case ImageDataPixelFormat::RgbaUnorm8:
         break;
-    case ImageDataPixelFormat::RgbaFloat16:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case ImageDataPixelFormat::RgbaFloat16:
         return PixelFormat::RGBA16F;
-#else
-        break;
 #endif
     }
     return PixelFormat::RGBA8;
@@ -54,7 +54,9 @@ constexpr std::optional<ImageDataPixelFormat> toImageDataPixelFormat(JSC::TypedA
 {
     switch (typedArrayType) {
     case JSC::TypeUint8Clamped: return ImageDataPixelFormat::RgbaUnorm8;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case JSC::TypeFloat16: return ImageDataPixelFormat::RgbaFloat16;
+#endif
     default: return std::nullopt;
     }
 }

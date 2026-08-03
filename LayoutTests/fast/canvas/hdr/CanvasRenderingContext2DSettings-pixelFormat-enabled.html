@@ -1,6 +1,6 @@
 <!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
 <html>
-<script src="../../resources/js-test.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -8,23 +8,18 @@
 
     function testColorType(settings, expectedColorType, allowedException = "") {
         let canvas = document.createElement("canvas");
-        if (!allowedException) {
+        try {
             let context = canvas.getContext("2d", settings);
             window.testSettings = context.getContextAttributes();
             shouldBeEqualToString("testSettings.colorType", expectedColorType);
-        } else {
-            try {
-                let context = canvas.getContext("2d", settings);
-                if (context.getContextAttributes().colorType == expectedColorType)
-                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) set colorType == ${expectedColorType} or threw ${allowedException} as expected`);
-                else
-                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) set colorType to "${context.getContextAttributes().colorType}" instead of ${expectedColorType}`);
-            } catch ({ name, message }) {
+        } catch ({ name, message }) {
+            if (allowedException) {
                 if (name == allowedException)
-                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) set colorType == ${expectedColorType} or threw ${allowedException} as expected`);
+                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name} as allowed`);
                 else
                     testFailed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name} instead of ${allowedException}`);
-            }
+            } else
+                testFailed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name}`);
         }
     }
 

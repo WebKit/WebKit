@@ -3178,13 +3178,12 @@ PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
     switch (m_settings.colorType) {
     case CanvasRenderingContext2DSettings::ColorType::Unorm8:
         return PixelFormat::BGRA8;
-    case CanvasRenderingContext2DSettings::ColorType::Float16:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case CanvasRenderingContext2DSettings::ColorType::Float16:
         return PixelFormat::RGBA16F;
-#else
-        return PixelFormat::BGRA8;
 #endif
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const

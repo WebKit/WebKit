@@ -274,7 +274,11 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
 #if ENABLE(GPU_PROCESS_MODEL)
 Vector<UniqueRef<WebCore::IOSurface>> RemoteGPU::createRenderBuffers(unsigned width, unsigned height, const WebCore::ProcessIdentity& processIdentity, bool standardDynamicRange)
 {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     const auto colorFormat = standardDynamicRange ? WebCore::IOSurface::Format::BGRA : WebCore::IOSurface::Format::RGBA16F;
+#else
+    const auto colorFormat = WebCore::IOSurface::Format::BGRA;
+#endif
     const auto colorSpace = standardDynamicRange ? WebCore::DestinationColorSpace::LinearDisplayP3() : WebCore::DestinationColorSpace::ExtendedLinearDisplayP3();
 
     Vector<UniqueRef<WebCore::IOSurface>> ioSurfaces;

@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS testSettings.colorType is "unorm8"
 PASS testSettings.colorType is "unorm8"
-PASS getContext("2d", {"colorType":"float16"}) set colorType == float16 or threw TypeError as expected
+PASS testSettings.colorType is "float16"
 PASS document.createElement("canvas").getContext("2d", { colorType: "foo" }) threw exception TypeError: Type error.
 PASS successfullyParsed is true
 

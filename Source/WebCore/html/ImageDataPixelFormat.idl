@@ -26,5 +26,7 @@
 // https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagedatapixelformat
 enum ImageDataPixelFormat {
     "rgba-unorm8",
+#if defined(ENABLE_PIXEL_FORMAT_RGBA16F) && ENABLE_PIXEL_FORMAT_RGBA16F
     "rgba-float16",
+#endif
 };

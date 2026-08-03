@@ -189,11 +189,9 @@ Ref<PixelBuffer> ImageData::pixelBuffer() const
     switch (m_data.pixelFormat()) {
     case ImageDataPixelFormat::RgbaUnorm8:
         return byteArrayPixelBuffer();
-    case ImageDataPixelFormat::RgbaFloat16:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case ImageDataPixelFormat::RgbaFloat16:
         return float16ArrayPixelBuffer();
-#else
-        RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataPixelFormat::RgbaFloat16");
 #endif
     }
     RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataPixelFormat value");

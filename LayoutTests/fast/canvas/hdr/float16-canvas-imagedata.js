@@ -45,7 +45,6 @@ function verifyImageData(variable, constructor, bytesPerElement, red, green, blu
 
 function areEqualImageData(imageDataActual, imageDataExpected, tolerance)
 {
-    tolerance = 0;
     shouldBe(imageDataActual + '.width', imageDataExpected + '.width');
     shouldBe(imageDataActual + '.height', imageDataExpected + '.height');
     shouldBe(imageDataActual + '.data.constructor', imageDataExpected + '.data.constructor');
