@@ -122,10 +122,13 @@ void ShufflePair::dump(PrintStream& out) const
 
 Inst createShuffle(Value* origin, std::span<const ShufflePair> pairs)
 {
-    Inst result(Shuffle, origin);
-    for (const ShufflePair& pair : pairs)
-        result.append(pair.src(), pair.dst(), Arg::widthArg(pair.width()));
-    return result;
+    Vector<Arg, 8> args;
+    for (const ShufflePair& pair : pairs) {
+        args.append(pair.src());
+        args.append(pair.dst());
+        args.append(Arg::widthArg(pair.width()));
+    }
+    return Inst(Shuffle, origin, WTF::move(args));
 }
 
 Vector<Inst> emitShuffle(

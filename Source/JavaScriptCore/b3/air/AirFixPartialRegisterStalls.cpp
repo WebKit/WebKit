@@ -76,7 +76,7 @@ bool NODELETE isDependencyBreaking(const Inst& inst)
     case MoveFloat:
     case MoveDouble:
     case MoveVector:
-        return inst.args[0].isFPImmZero();
+        return inst.args()[0].isFPImmZero();
     default:
         return false;
     }
@@ -128,7 +128,7 @@ void updateDistances(Inst& inst, FPDefDistance& localDistance, unsigned& distanc
 
     if (isDependencyBreaking(inst)) {
         // MoveFloat/MoveDouble/MoveVector with FPImm zero: fpImm is args[0], dest tmp is args[1]
-        localDistance.reset(inst.args[1].tmp().fpr());
+        localDistance.reset(inst.args()[1].tmp().fpr());
         return;
     }
 

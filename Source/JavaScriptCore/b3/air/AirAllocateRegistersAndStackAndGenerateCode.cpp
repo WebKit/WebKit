@@ -696,9 +696,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 if (!isOrdinaryMove)
                     return true;
 
-                ASSERT(inst.args.size() >= 2);
-                Arg source = inst.args[0];
-                Arg dest = inst.args[1];
+                ASSERT(inst.args().size() >= 2);
+                Arg source = inst.args()[0];
+                Arg dest = inst.args()[1];
                 if (!source.isTmp() || !dest.isTmp())
                     return true;
 

@@ -107,24 +107,24 @@ void TmpWidth::recompute(Code& code)
     std::array<Vector<Inst*>, numBanks> moves;
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
-            if (inst.kind.opcode == Move && inst.args[1].isTmp()) {
-                Bank dstBank = Arg(inst.args[1]).bank();
+            if (inst.kind.opcode == Move && inst.args()[1].isTmp()) {
+                Bank dstBank = Arg(inst.args()[1]).bank();
                 if (!shouldProcess(dstBank))
                     continue;
 
-                if (inst.args[0].isTmp()) {
+                if (inst.args()[0].isTmp()) {
                     moves[dstBank].append(&inst);
                     continue;
                 }
 
-                if (inst.args[0].isImm() && inst.args[0].value() >= 0) {
-                    Widths& tmpWidths = widths(inst.args[1].tmp());
+                if (inst.args()[0].isImm() && inst.args()[0].value() >= 0) {
+                    Widths& tmpWidths = widths(inst.args()[1].tmp());
                     Width maxWidth = Width64;
-                    if (inst.args[0].value() <= std::numeric_limits<int8_t>::max())
+                    if (inst.args()[0].value() <= std::numeric_limits<int8_t>::max())
                         maxWidth = Width8;
-                    else if (inst.args[0].value() <= std::numeric_limits<int16_t>::max())
+                    else if (inst.args()[0].value() <= std::numeric_limits<int16_t>::max())
                         maxWidth = Width16;
-                    else if (inst.args[0].value() <= std::numeric_limits<int32_t>::max())
+                    else if (inst.args()[0].value() <= std::numeric_limits<int32_t>::max())
                         maxWidth = Width32;
 
                     tmpWidths.def = std::max(tmpWidths.def, maxWidth);
@@ -155,11 +155,11 @@ void TmpWidth::recompute(Code& code)
             changed = false;
             for (Inst* move : moves) {
                 ASSERT(move->kind.opcode == Move);
-                ASSERT(move->args[0].isTmp());
-                ASSERT(move->args[1].isTmp());
+                ASSERT(move->args()[0].isTmp());
+                ASSERT(move->args()[1].isTmp());
 
-                Widths& srcWidths = widths(move->args[0].tmp());
-                Widths& dstWidths = widths(move->args[1].tmp());
+                Widths& srcWidths = widths(move->args()[0].tmp());
+                Widths& dstWidths = widths(move->args()[1].tmp());
 
                 // Legend:
                 //

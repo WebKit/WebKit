@@ -71,7 +71,7 @@ public:
             
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
-                for (Arg& arg : inst.args) {
+                for (Arg& arg : inst.args()) {
                     switch (arg.kind()) {
                     case Arg::Stack:
                         VALIDATE(validSlots.contains(arg.stackSlot()), ("At ", inst, " in ", *block));
@@ -92,8 +92,8 @@ public:
                 // forEachArg must return Arg&'s that point into the args array.
                 inst.forEachArg(
                     [&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                        VALIDATE(&arg >= &inst.args[0], ("At ", arg, " in ", inst, " in ", *block));
-                        VALIDATE(&arg <= &inst.args.last(), ("At ", arg, " in ", inst, " in ", *block));
+                        VALIDATE(&arg >= &inst.args()[0], ("At ", arg, " in ", inst, " in ", *block));
+                        VALIDATE(&arg <= &inst.args().back(), ("At ", arg, " in ", inst, " in ", *block));
 
                         // FIXME: replace with a check for wasm simd instructions.
                         VALIDATE(Options::useWasmSIMD()
@@ -113,16 +113,16 @@ public:
                     break;
                 case VectorExtendLow:
                 case VectorExtendHigh:
-                    VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) <= 8, ("At ", inst, " in ", *block));
-                    VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) >= 2, ("At ", inst, " in ", *block));
+                    VALIDATE(elementByteSize(inst.args()[0].simdInfo().lane) <= 8, ("At ", inst, " in ", *block));
+                    VALIDATE(elementByteSize(inst.args()[0].simdInfo().lane) >= 2, ("At ", inst, " in ", *block));
                     break;
                 case ExtractRegister64:
-                    VALIDATE(inst.args[2].isImm(), ("At ", inst, " in ", *block));
-                    VALIDATE(inst.args[2].asTrustedImm32().m_value < 64, ("At ", inst, " in ", *block));
+                    VALIDATE(inst.args()[2].isImm(), ("At ", inst, " in ", *block));
+                    VALIDATE(inst.args()[2].asTrustedImm32().m_value < 64, ("At ", inst, " in ", *block));
                     break;
                 case ExtractRegister32:
-                    VALIDATE(inst.args[2].isImm(), ("At ", inst, " in ", *block));
-                    VALIDATE(inst.args[2].asTrustedImm32().m_value < 32, ("At ", inst, " in ", *block));
+                    VALIDATE(inst.args()[2].isImm(), ("At ", inst, " in ", *block));
+                    VALIDATE(inst.args()[2].asTrustedImm32().m_value < 32, ("At ", inst, " in ", *block));
                     break;
                 default:
                     break;

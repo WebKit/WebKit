@@ -649,7 +649,8 @@ def matchInstOverload(outp, speed, inst)
             yield opcode, nil
         else
             needOverloadSwitch = ((opcode.overloads.size != 1) or speed == :safe)
-            outp.puts "switch (#{inst}->args.size()) {" if needOverloadSwitch
+            argsExpr = inst == "this" ? "args" : "#{inst}->args()"
+            outp.puts "switch (#{argsExpr}.size()) {" if needOverloadSwitch
             opcode.overloads.each {
                 | overload |
                 outp.puts "case #{overload.signature.length}:" if needOverloadSwitch
@@ -677,7 +678,8 @@ def matchInstOverloadForm(outp, speed, inst)
         else
             columnGetter = proc {
                 | columnIndex |
-                "#{inst}->args[#{columnIndex}].kind()"
+                argsExpr = inst == "this" ? "args" : "#{inst}->args()"
+                "#{argsExpr}[#{columnIndex}].kind()"
             }
             filter = proc { false }
             callback = proc {
@@ -797,6 +799,7 @@ writeH("OpcodeUtils") {
     outp.puts "template<typename Func>"
     outp.puts "ALWAYS_INLINE void Inst::forEachArgSimple(const Func& func)"
     outp.puts "{"
+    outp.puts "    auto args = this->args();"
     outp.puts "    size_t numOperands = args.size();"
     outp.puts "    size_t formOffset = (numOperands - 1) * numOperands / 2;"
     outp.puts "    const uint8_t* formBase = g_formTable + kind.opcode * #{formTableWidth} + formOffset;"
@@ -1005,6 +1008,7 @@ writeH("OpcodeGenerated") {
     
     outp.puts "bool Inst::isValidForm()"
     outp.puts "{"
+    outp.puts "auto args = this->args();"
     matchInstOverloadForm(outp, :safe, "this") {
         | opcode, overload, form |
         if opcode.custom
@@ -1089,6 +1093,7 @@ writeH("OpcodeGenerated") {
 
     outp.puts "bool Inst::admitsStack(unsigned argIndex)"
     outp.puts "{"
+    outp.puts "auto args = this->args();"
     outp.puts "switch (kind.opcode) {"
     $opcodes.values.each {
         | opcode |
@@ -1331,6 +1336,7 @@ writeH("OpcodeGenerated") {
     
     outp.puts "CCallHelpers::Jump Inst::generate(CCallHelpers& jit, GenerationContext& context)"
     outp.puts "{"
+    outp.puts "auto args = this->args();"
     outp.puts "UNUSED_PARAM(jit);"
     outp.puts "UNUSED_PARAM(context);"
     outp.puts "CCallHelpers::Jump result;"
