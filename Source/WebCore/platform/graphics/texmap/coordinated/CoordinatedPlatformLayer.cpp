@@ -75,7 +75,7 @@ CoordinatedPlatformLayer::~CoordinatedPlatformLayer() = default;
 
 void CoordinatedPlatformLayer::setOwner(GraphicsLayerCoordinated* owner)
 {
-    ASSERT(isMainThread());
+    assertIsMainThread();
     if (m_owner == owner)
         return;
 
@@ -93,7 +93,7 @@ void CoordinatedPlatformLayer::setOwner(GraphicsLayerCoordinated* owner)
 
 GraphicsLayerCoordinated* CoordinatedPlatformLayer::owner() const
 {
-    ASSERT(isMainThread());
+    assertIsMainThread();
     return m_owner;
 }
 
@@ -303,27 +303,22 @@ const TransformationMatrix& CoordinatedPlatformLayer::childrenTransform() const
 
 void CoordinatedPlatformLayer::didUpdateLayerTransform()
 {
+    assertIsMainThread();
     m_needsTilesUpdate = true;
 }
 
 void CoordinatedPlatformLayer::setVisibleRect(const FloatRect& visibleRect)
 {
-    assertIsHeld(m_lock);
+    assertIsMainThread();
     if (m_visibleRect == visibleRect)
         return;
 
     m_visibleRect = visibleRect;
 }
 
-const FloatRect& CoordinatedPlatformLayer::visibleRect() const
-{
-    assertIsHeld(m_lock);
-    return m_visibleRect;
-}
-
 void CoordinatedPlatformLayer::setTransformedVisibleRect(IntRect&& transformedVisibleRect)
 {
-    assertIsHeld(m_lock);
+    assertIsMainThread();
     if (m_transformedVisibleRect == transformedVisibleRect)
         return;
 
@@ -347,7 +342,7 @@ const Markable<ScrollingNodeID>& CoordinatedPlatformLayer::scrollingNodeID() con
 
 void CoordinatedPlatformLayer::setDrawsContent(bool drawsContent)
 {
-    assertIsHeld(m_lock);
+    assertIsMainThread();
     m_drawsContent = drawsContent;
 }
 
@@ -483,6 +478,7 @@ void CoordinatedPlatformLayer::setContentsClippingRect(const FloatRoundedRect& c
 
 void CoordinatedPlatformLayer::setContentsScale(float contentsScale)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     if (m_contentsScale == contentsScale)
         return;
@@ -602,6 +598,7 @@ void CoordinatedPlatformLayer::setContentsTilePhase(const FloatSize& contentsTil
 
 void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     auto dirtyRegion = damage.rects();
     if (m_dirtyRegion != dirtyRegion) {
@@ -814,6 +811,7 @@ void CoordinatedPlatformLayer::setDebugBorder(Color&& borderColor, float borderW
 
 void CoordinatedPlatformLayer::setShowRepaintCounter(bool showRepaintCounter)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     if ((m_repaintCount != -1 && showRepaintCounter) || (m_repaintCount == -1 && !showRepaintCounter))
         return;
@@ -825,6 +823,7 @@ void CoordinatedPlatformLayer::setShowRepaintCounter(bool showRepaintCounter)
 
 bool CoordinatedPlatformLayer::needsBackingStore() const
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     if (!m_owner)
         return false;
@@ -846,6 +845,7 @@ bool CoordinatedPlatformLayer::needsBackingStore() const
 
 void CoordinatedPlatformLayer::updateBackingStore()
 {
+    assertIsMainThread();
     Locker locker { m_lock };
     if (!m_backingStoreProxy)
         return;
@@ -855,7 +855,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
 
     Damage damage(m_size, Damage::Mode::Rectangles);
     IntRect contentsRect(IntPoint::zero(), IntSize(m_size));
-    auto updateResult = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, contentsRect, m_contentsScale, m_pendingTilesCreation || m_needsTilesUpdate, m_dirtyRegion, damage, *this);
+    auto updateResult = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, contentsRect, enclosingIntRect(m_visibleRect).size(), m_contentsScale, m_pendingTilesCreation || m_needsTilesUpdate, m_dirtyRegion, damage, *this);
     m_needsTilesUpdate = false;
 #if ENABLE(DAMAGE_TRACKING)
     addDamage(WTF::move(damage));
@@ -877,6 +877,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
 
 void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
 
     if (needsBackingStore()) {
@@ -964,6 +965,7 @@ void CoordinatedPlatformLayer::didPaintTile()
 
 Ref<CoordinatedTileBuffer> CoordinatedPlatformLayer::paint(const IntRect& dirtyRect)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     ASSERT(m_client);
     ASSERT(m_owner);
@@ -991,6 +993,7 @@ sk_sp<GrContextThreadSafeProxy> CoordinatedPlatformLayer::threadSafeGrContext() 
 
 Ref<SkiaRecordingResult> CoordinatedPlatformLayer::record(const IntRect& recordRect, unsigned dirtyTilesCount)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     ASSERT(m_client);
     ASSERT(m_owner);
@@ -999,6 +1002,7 @@ Ref<SkiaRecordingResult> CoordinatedPlatformLayer::record(const IntRect& recordR
 
 Ref<CoordinatedTileBuffer> CoordinatedPlatformLayer::replay(Ref<SkiaRecordingResult>&& recording, const IntRect& tileRect, const IntRect& dirtyRect)
 {
+    assertIsMainThread();
     assertIsHeld(m_lock);
     ASSERT(m_client);
     ASSERT(m_owner);
