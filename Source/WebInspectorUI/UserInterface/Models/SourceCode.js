@@ -201,6 +201,18 @@ WI.SourceCode = class SourceCode extends WI.Object
         return new WI.SourceCodeTextRange(this, textRange);
     }
 
+    createSourceMapSourceCodeLocation(lineNumber, columnNumber)
+    {
+        // Overridden by subclasses if needed.
+        return this.createSourceCodeLocation(lineNumber, columnNumber);
+    }
+
+    createSourceMapPosition(lineNumber, columnNumber)
+    {
+        // Overridden by subclasses if needed.
+        return new WI.SourceCodePosition(lineNumber, columnNumber);
+    }
+
     // Protected
 
     revisionContentDidChange(revision)

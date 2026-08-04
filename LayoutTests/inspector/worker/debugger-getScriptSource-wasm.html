@@ -72,6 +72,28 @@ async function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssembly.SourceMap",
+        description: "A WebAssembly module created in a Worker should map module byte offsets to original source.",
+        async test() {
+            let ignoredScripts = new Set(WI.debuggerManager.dataForTarget(workerTarget).scripts);
+            let [script] = await Promise.all([
+                awaitWasmScript(workerTarget, ignoredScripts),
+                InspectorTest.evaluateInPage("worker.postMessage('instantiate-source-map')"),
+            ]);
+            InspectorTest.assert(script.target === workerTarget, "Should belong to the Worker target.");
+            InspectorTest.assert(script.sourceType === WI.Script.SourceType.WebAssembly, "Should be WebAssembly.");
+            InspectorTest.log(JSON.stringify(sanitizeWasmURL(script.url)));
+
+            if (!script.sourceMaps.length)
+                await script.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+
+            let location = script.createSourceCodeLocationForBytecodeOffset(53);
+            InspectorTest.expectTrue(location.hasMappedLocation(), "The add instruction should have an original location.");
+            InspectorTest.expectEqual(location.displayLineNumber, 4, "Offset 53 should map to line 5.");
+            InspectorTest.expectEqual(location.displaySourceCode.displayName, "add.wat", "The original source should be add.wat.");
+        },
+    });
     suite.runTestCasesAndFinish();
 }
 </script>

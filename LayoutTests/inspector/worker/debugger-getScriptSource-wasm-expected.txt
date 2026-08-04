@@ -13,3 +13,9 @@ PASS: WebAssembly scripts should not expose source content.
 "inspector/worker/resources/<identifier>.wasm"
 PASS: WebAssembly scripts should not expose source content.
 
+-- Running test case: Worker.Debugger.WebAssembly.SourceMap
+"inspector/worker/resources/<identifier>.wasm"
+PASS: The add instruction should have an original location.
+PASS: Offset 53 should map to line 5.
+PASS: The original source should be add.wat.
+

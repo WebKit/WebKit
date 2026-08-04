@@ -1,0 +1,34 @@
+Tests mapping WebAssembly module byte offsets to original source with source maps.
+
+
+== Running test suite: WI.Script.WebAssemblySourceMap
+-- Running test case: WI.Script.WebAssemblySourceMap.External
+PASS: The source map should be loaded.
+PASS: Original source locations should use the canonical WebAssembly line.
+PASS: Original source locations should preserve module byte offsets as columns.
+PASS: Canonical WebAssembly positions should map back to module byte offsets.
+PASS: The first parameter instruction should have an original location.
+PASS: Offset 49 should map to line 3.
+PASS: The original source should be add.wat.
+PASS: The add instruction should have an original location.
+PASS: Offset 53 should map to line 5.
+PASS: An instruction after a mapping should use the preceding mapping.
+PASS: Offset 54 should map to line 5.
+PASS: An uncovered module byte offset should remain in the generated source.
+
+-- Running test case: WI.Script.WebAssemblySourceMap.ContentLoad
+PASS: The location should use the canonical WebAssembly line.
+PASS: The location should preserve the module byte offset.
+PASS: The location should retain its original source.
+PASS: The location should retain its original line.
+PASS: Loading content should preserve the canonical WebAssembly line.
+PASS: Loading content should preserve the module byte offset.
+PASS: The canonical location should map to original source.
+PASS: Offset 53 should map to line 5.
+PASS: The original source should be add.wat.
+
+-- Running test case: WI.Script.WebAssemblySourceMap.Partial
+PASS: An instruction before the first mapping should remain in the generated source.
+PASS: A covered instruction should have an original location.
+PASS: Offset 53 should map to line 5.
+

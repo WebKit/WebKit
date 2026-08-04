@@ -43,6 +43,22 @@ PASS: The WebAssembly script should belong to the main frame.
 PASS: The associated Resource should belong to the main frame.
 PASS: The resource-backed WebAssembly script should not be an extra script.
 
+-- Running test case: WI.Script.URL.WebAssembly.StreamingSourceMap
+PASS: Should preserve the WebAssembly module's real URL.
+PASS: Should not expose the resource URL as a `sourceURL` directive.
+PASS: Should use the WebAssembly module's name section as the display name.
+PASS: Should associate the WebAssembly script with a Resource.
+PASS: Should associate the WebAssembly script with the resource for the module URL.
+PASS: The associated Resource should use the WebAssembly module's name section as its display name.
+PASS: The Resource should be associated with the WebAssembly script.
+PASS: The associated Resource should be treated as a script.
+PASS: The WebAssembly script should belong to the main frame.
+PASS: The associated Resource should belong to the main frame.
+PASS: The resource-backed WebAssembly script should not be an extra script.
+PASS: The WebAssembly script should own its source map.
+PASS: The associated Resource should expose the WebAssembly source map.
+PASS: The source map should retain the WebAssembly script as its generated source.
+
 -- Running test case: WI.Script.URL.WebAssembly.WorkerStreaming
 PASS: Should create a Worker target.
 PASS: The Worker's WebAssembly script should associate with a Resource.

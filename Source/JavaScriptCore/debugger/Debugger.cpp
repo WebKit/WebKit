@@ -456,6 +456,7 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, JSWebAssemblyModule* m
     script.url = sourceProvider->sourceURL();
     script.displayName = Wasm::makeString(info->nameSection().moduleName);
     script.requestIdentifier = info->requestIdentifier;
+    script.sourceMappingURL = Wasm::makeString(info->sourceMappingURL);
     script.sourceProvider = WTF::move(sourceProvider);
     script.isContentScript = isContentScript(globalObject);
 

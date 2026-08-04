@@ -310,8 +310,9 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         if (!this._sourceCode)
             return;
 
+        let sourceMapPosition = this._sourceCode.createSourceMapPosition(this._lineNumber, this._columnNumber);
         for (let sourceMap of this._sourceCode.sourceMaps) {
-            let originalPosition = sourceMap.findOriginalPosition(this._lineNumber, this._columnNumber);
+            let originalPosition = sourceMap.findOriginalPosition(sourceMapPosition.lineNumber, sourceMapPosition.columnNumber);
             if (originalPosition) {
                 [this._mappedResource, this._mappedLineNumber, this._mappedColumnNumber] = originalPosition;
                 break;

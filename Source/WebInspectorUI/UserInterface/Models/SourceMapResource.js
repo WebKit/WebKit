@@ -192,7 +192,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         }
 
         // Create the SourceCodeLocation and since we already know the the mapped location set it directly.
-        let location = originalSourceCode.createSourceCodeLocation(generatedLine, generatedColumn);
+        let location = originalSourceCode.createSourceMapSourceCodeLocation(generatedLine, generatedColumn);
         location._setMappedLocation(this, lineNumber, columnNumber);
         return location;
     }

@@ -163,7 +163,14 @@ function test()
             functionName: "importWasmURL",
             query: "module-loader",
         },
-    ].forEach(function({name, description, functionName, query, redirect, scriptCount}) {
+        {
+            name: "StreamingSourceMap",
+            description: "A streamed WebAssembly module should keep its source map owned by the Script and exposed through the associated Resource.",
+            functionName: "instantiateWasmURL",
+            query: "source-map",
+            sourceMap: true,
+        },
+    ].forEach(function({name, description, functionName, query, redirect, scriptCount, sourceMap}) {
         suite.addTestCase({
             name: "WI.Script.URL.WebAssembly." + name,
             description,
@@ -190,6 +197,13 @@ function test()
                     let additionalScript = scripts[1];
                     InspectorTest.expectNull(additionalScript.resource, "Only one WebAssembly script should associate with a cloned Response's Resource.");
                     InspectorTest.expectTrue(WI.networkManager.mainFrame.extraScriptCollection.has(additionalScript), "The additional clone should remain visible as an extra script.");
+                }
+
+                if (sourceMap) {
+                    await retryUntil(() => script.sourceMaps.length);
+                    InspectorTest.expectEqual(script.sourceMaps.length, 1, "The WebAssembly script should own its source map.");
+                    InspectorTest.expectTrue(script.resource.sourceMaps.includes(script.sourceMaps[0]), "The associated Resource should expose the WebAssembly source map.");
+                    InspectorTest.expectEqual(script.sourceMaps[0].originalSourceCode, script, "The source map should retain the WebAssembly script as its generated source.");
                 }
 
                 if (name === "Streaming")

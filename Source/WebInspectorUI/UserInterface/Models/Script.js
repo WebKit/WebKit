@@ -86,7 +86,7 @@ WI.Script = class Script extends WI.SourceCode
         if (sourceCode instanceof WI.Script)
             return sourceCode.sourceType === WI.Script.SourceType.WebAssembly;
 
-        return sourceCode instanceof WI.Resource && (sourceCode.mimeTypeComponents.type === "application/wasm" || sourceCode.scripts.some((script) => WI.Script.isWebAssembly(script)));
+        return sourceCode instanceof WI.Resource && (sourceCode.mimeTypeComponents.type === "application/wasm" || sourceCode.scripts.some((script) => script.sourceType === WI.Script.SourceType.WebAssembly));
     }
 
     // Public
@@ -262,6 +262,35 @@ WI.Script = class Script extends WI.SourceCode
         }
 
         return this._target.DebuggerAgent.getScriptSource(this._id);
+    }
+
+    createSourceCodeLocationForBytecodeOffset(bytecodeOffset)
+    {
+        return this.createSourceCodeLocation(0, bytecodeOffset);
+    }
+
+    createSourceMapSourceCodeLocation(lineNumber, columnNumber)
+    {
+        if (this._sourceType === WI.Script.SourceType.WebAssembly) {
+            console.assert(!lineNumber);
+            return this.createSourceCodeLocationForBytecodeOffset(columnNumber);
+        }
+
+        return super.createSourceMapSourceCodeLocation(lineNumber, columnNumber);
+    }
+
+    bytecodeOffsetForPosition(lineNumber, columnNumber)
+    {
+        console.assert(!lineNumber, lineNumber, columnNumber);
+        return columnNumber;
+    }
+
+    createSourceMapPosition(lineNumber, columnNumber)
+    {
+        if (this._sourceType === WI.Script.SourceType.WebAssembly)
+            return new WI.SourceCodePosition(0, this.bytecodeOffsetForPosition(lineNumber, columnNumber));
+
+        return super.createSourceMapPosition(lineNumber, columnNumber);
     }
 
     saveIdentityToCookie(cookie)
