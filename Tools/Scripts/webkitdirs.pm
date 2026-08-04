@@ -2952,6 +2952,20 @@ sub generateBuildSystemFromCMakeProject
     my $cmakeSourceDir = isCygwin() ? windowsSourceDir() : sourceDir();
     push @args, '"' . $cmakeSourceDir . '"';
 
+    # The GTK and WPE bots build and test with -DENABLE_ASSERTS=ON (both on Release and Debug).
+    # Warn when the local build differs from the CI configuration.
+    if (isGtk() || isWPE()) {
+        if (configuration() eq "Release") {
+            my $assertsOn = grep { /^-DENABLE_ASSERTS=ON\b/i } @args;
+            print STDERR "WARNING: Building Release without assertions. Pass --asserts to match the CI build.\n" unless $assertsOn;
+        } elsif (configuration() eq "Debug") {
+            my $assertsOff = grep { /^-DENABLE_ASSERTS=OFF\b/i } @args;
+            print STDERR "WARNING: Building Debug with assertions disabled. Drop --no-asserts to match the CI build.\n" if $assertsOff;
+        } else {
+            print STDERR "WARNING: Building " . configuration() . ". This is not tested on the CI.\n";
+        }
+    }
+
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
