@@ -28,6 +28,7 @@
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
+#include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -305,6 +306,16 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     auto& fragmentedFlow = *newFragmentedFlow;
     m_builder.blockBuilder().attach(flow, WTF::move(newFragmentedFlow), nullptr);
 
+    // An excluded marker takes no part in multi-column layout, and the list item positions it against its first
+    // formatted line afterwards, which it can only do while the marker is still its own child.
+    CheckedPtr<RenderListMarker> excludedMarker;
+    for (auto& marker : childrenOfType<RenderListMarker>(flow)) {
+        if (marker.isExcludedMarker()) {
+            excludedMarker = &marker;
+            break;
+        }
+    }
+
     // Reparent children preceding the fragmented flow into the fragmented flow.
     m_builder.moveChildren(flow, fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     if (flow.isFieldset()) {
@@ -313,6 +324,11 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
             if (box.isLegend())
                 m_builder.move(fragmentedFlow, flow, box, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         }
+    }
+    if (excludedMarker) {
+        // moveChildren() may have wrapped the marker in an anonymous block inside the flow thread, so move it back out from wherever it actually landed.
+        if (CheckedPtr markerParent = dynamicDowncast<RenderBoxModelObject>(excludedMarker->parent()))
+            m_builder.move(*markerParent, flow, *excludedMarker, &fragmentedFlow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     }
 
     flow.setMultiColumnFlow(fragmentedFlow);

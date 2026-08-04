@@ -15,8 +15,8 @@ layer at (0,0) size 800x503
           RenderText {#text} at (33,1) size 40x18
             text run at (33,1) width 40: "Item 1"
         RenderListItem {DIV} at (33,21) size 726x138 [border: (1px solid #000000)]
+          RenderListMarker at (-16,1) size 16x18: "2"
           RenderBlock (anonymous) at (33,1) size 692x18
-            RenderListMarker at (-49,0) size 16x18: "2"
             RenderText {#text} at (0,0) size 40x18
               text run at (0,0) width 40: "Item 2"
           RenderListItem {DIV} at (33,19) size 692x38 [border: (1px solid #000000)]
@@ -68,13 +68,12 @@ layer at (0,0) size 800x503
           RenderText {#text} at (33,1) size 40x18
             text run at (33,1) width 40: "Item 4"
         RenderListItem {DIV} at (33,297) size 726x76 [border: (1px solid #000000)]
+          RenderListMarker at (-16,1) size 16x18: "5"
           RenderBlock (anonymous) at (33,1) size 692x18
-            RenderListMarker at (-49,0) size 16x18: "5"
             RenderText {#text} at (0,0) size 40x18
               text run at (0,0) width 40: "Item 5"
           RenderListItem {TABLE} at (33,19) size 692x28 [border: (1px dashed #000000)]
-            RenderBlock (anonymous) at (1,1) size 690x0
-              RenderListMarker at (-16,0) size 15x18: "a"
+            RenderListMarker at (-15,1) size 15x17: "a"
             RenderTable at (1,1) size 191x26
               RenderTableSection {TBODY} at (0,0) size 191x26
                 RenderTableRow {TR} at (0,2) size 191x22
@@ -85,8 +84,7 @@ layer at (0,0) size 800x503
                     RenderText {#text} at (2,2) size 88x18
                       text run at (2,2) width 88: "Table Cell B1"
           RenderListItem {TABLE} at (33,47) size 692x28 [border: (1px dashed #000000)]
-            RenderBlock (anonymous) at (1,1) size 690x0
-              RenderListMarker at (-17,0) size 16x18: "b"
+            RenderListMarker at (-16,1) size 16x17: "b"
             RenderTable at (1,1) size 215x26
               RenderTableSection {TBODY} at (0,0) size 215x26
                 RenderTableRow {TR} at (0,2) size 215x22

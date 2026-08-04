@@ -41,9 +41,11 @@
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
+#include "RenderTable.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -577,9 +579,31 @@ bool RenderListMarker::isDisclosureMarker() const
         || system == CSSCounterStyleDescriptors::System::DisclosureOpen;
 }
 
-const RenderListItem* RenderListMarker::listItem() const
+RenderListItem* RenderListMarker::listItem() const
 {
     return m_listItem.get();
+}
+
+void RenderListMarker::setExcludedPosition(ExcludedPosition excludedPosition)
+{
+    ASSERT(excludedPosition.firstFormattedLineRoot);
+
+    m_excludedPosition = excludedPosition;
+}
+
+void RenderListMarker::invalidateExcludedMarkerContainer()
+{
+    ASSERT(m_excludedPosition);
+
+    if (!m_excludedPosition || !m_excludedPosition->firstFormattedLineRoot) {
+        m_excludedPosition = { };
+        return;
+    }
+
+    if (m_excludedPosition->firstFormattedLineRoot->isDescendantOf(m_listItem.get()))
+        return m_excludedPosition->firstFormattedLineRoot->setNeedsLayout();
+
+    m_excludedPosition = { };
 }
 
 Node* RenderListMarker::nodeForHitTest() const

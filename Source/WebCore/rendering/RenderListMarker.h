@@ -77,9 +77,19 @@ public:
     RenderBlockFlow* contentContainer() const;
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
-    const RenderListItem* NODELETE listItem() const;
+    RenderListItem* NODELETE listItem() const;
 
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
+
+    struct ExcludedPosition {
+        SingleThreadWeakPtr<RenderBlockFlow> firstFormattedLineRoot;
+        FloatPoint topLeft;
+        float lineStartInset { 0 };
+    };
+    void setExcludedPosition(ExcludedPosition);
+    std::optional<ExcludedPosition> excludedPosition() const { return m_excludedPosition; }
+
+    void invalidateExcludedMarkerContainer();
 
     bool shouldCollapseAnonymousBlockParent() const { return m_shouldCollapseAnonymousBlockParent; }
     void setShouldCollapseAnonymousBlockParent(bool value)
@@ -130,6 +140,7 @@ private:
     LayoutUnit m_lineOffsetForListItem;
     LayoutUnit m_lineLogicalOffsetForListItem;
     std::pair<float, float> m_layoutBounds;
+    std::optional<ExcludedPosition> m_excludedPosition;
     bool m_shouldCollapseAnonymousBlockParent { false };
 };
 

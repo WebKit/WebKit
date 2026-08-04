@@ -55,10 +55,26 @@ public:
 
     bool isInReversedOrderedList() const;
 
+    struct FirstFormattedLineCandidate {
+        CheckedPtr<RenderBlock> parent;
+        CheckedPtr<RenderBlock> fallbackParent;
+        // FIXME: handle all block level children, not just replaced elements that got blockified.
+        bool stoppedAtTableRubyOrReplaced { false };
+    };
+    static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderListMarker&);
+    static Vector<CheckedPtr<RenderListMarker>> excludedMarkersForContainer(const RenderBlockFlow& lineContainer, const Vector<SingleThreadWeakPtr<RenderListMarker>>&);
+
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
-    
+
     void paint(PaintInfo&, const LayoutPoint&) final;
+    void paintObject(PaintInfo&, const LayoutPoint&) final;
+
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
+    void layoutExcludedChildren(RelayoutChildren) final;
+
+    void placeExcludedMarker(RenderListMarker&);
+    RenderListMarker* excludedMarker() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 

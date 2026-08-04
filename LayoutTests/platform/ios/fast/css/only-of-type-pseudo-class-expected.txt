@@ -24,10 +24,10 @@ layer at (0,0) size 800x1493
       RenderBlock {DIV} at (0,34) size 784x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 784x1395
         RenderListItem {LI} at (40,0) size 628x213 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "1"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x76 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "1"
             RenderText {#text} at (6,9) size 274x61
               text run at (6,9) width 141: "div:only-of-type {"
               text run at (146,9) width 1: " "
@@ -40,11 +40,11 @@ layer at (0,0) size 800x1493
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 139: "element of this type"
         RenderListItem {LI} at (40,261) size 628x228 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "2"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 596x0 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x91 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "2"
             RenderText {#text} at (6,9) size 274x76
               text run at (6,9) width 141: "div:only-of-type {"
               text run at (146,9) width 1: " "
@@ -59,12 +59,12 @@ layer at (0,0) size 800x1493
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 139: "element of this type"
         RenderListItem {LI} at (40,537) size 628x258 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "3"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 596x0 [bgcolor=#009900]
               RenderBlock {DIV} at (0,0) size 596x0
           RenderBlock {PRE} at (16,53) size 596x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "3"
             RenderText {#text} at (6,9) size 274x106
               text run at (6,9) width 141: "div:only-of-type {"
               text run at (146,9) width 1: " "
@@ -83,11 +83,11 @@ layer at (0,0) size 800x1493
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 233: "element of this type in this scope"
         RenderListItem {LI} at (40,843) size 628x228 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "4"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {DIV} at (0,24) size 596x0
           RenderBlock {PRE} at (16,53) size 596x91 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "4"
             RenderText {#text} at (6,9) size 274x76
               text run at (6,9) width 141: "div:only-of-type {"
               text run at (146,9) width 1: " "
@@ -102,11 +102,11 @@ layer at (0,0) size 800x1493
               text run at (0,0) width 574: "The CSS selector should not match the marked div element, because it is not the"
               text run at (0,18) width 173: "only element of this type"
         RenderListItem {LI} at (40,1119) size 628x276 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "5"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {DIV} at (0,24) size 596x0
           RenderBlock {PRE} at (16,53) size 596x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "5"
             RenderText {#text} at (6,9) size 469x106
               text run at (6,9) width 141: "div:only-of-type {"
               text run at (146,9) width 1: " "

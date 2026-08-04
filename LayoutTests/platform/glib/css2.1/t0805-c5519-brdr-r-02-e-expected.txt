@@ -9,8 +9,8 @@ layer at (0,0) size 800x336
           text run at (362,0) width 385: "having three segments each of a different colour as indicated."
       RenderBlock {UL} at (0,34) size 588x270
         RenderListItem {LI} at (40,0) size 548x72 [border: none (3px solid #FFA500) none]
+          RenderListMarker at (-17,0) size 7x18: bullet
           RenderBlock (anonymous) at (0,0) size 545x18
-            RenderListMarker at (-17,0) size 7x18: bullet
             RenderText {#text} at (0,0) size 106x18
               text run at (0,0) width 106: "Orange orange..."
           RenderBlock {UL} at (0,18) size 409x54

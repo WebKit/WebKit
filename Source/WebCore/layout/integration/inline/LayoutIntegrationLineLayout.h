@@ -50,6 +50,7 @@ class RenderBlockFlow;
 class RenderBox;
 class RenderBoxModelObject;
 class RenderInline;
+class RenderListMarker;
 struct PaintInfo;
 
 namespace Layout {
@@ -171,6 +172,10 @@ private:
     LayoutUnit NODELETE baselineForLine(const InlineDisplay::Line&) const;
 
     bool NODELETE isContentConsideredStale() const;
+
+    using ExcludedMarkerList = Vector<CheckedPtr<RenderListMarker>>;
+    ExcludedMarkerList excludedMarkersForFirstFormattedLine(Layout::InlineLayoutState&);
+    void setExcludedMarkerPositions(const ExcludedMarkerList&);
 
 private:
     CheckedPtr<Layout::ElementBox> m_rootLayoutBox;

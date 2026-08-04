@@ -689,6 +689,7 @@ public:
     bool isExcludedFromNormalLayout() const { return m_stateBitfields.hasFlag(StateFlag::IsExcludedFromNormalLayout); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_stateBitfields.setFlag(StateFlag::IsExcludedFromNormalLayout, excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
+    bool isExcludedMarker() const;
 
     bool isYouTubeReplacement() const { return hasRareData() && rareData().isYouTubeReplacement; }
     void markIsYouTubeReplacement();

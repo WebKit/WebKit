@@ -24,10 +24,10 @@ layer at (0,0) size 785x2917
       RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 769x2819
         RenderListItem {LI} at (40,0) size 616x214 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "1"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x77 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "1"
             RenderText {#text} at (6,10) size 281x60
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -40,11 +40,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,261) size 616x229 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "2"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "2"
             RenderText {#text} at (6,10) size 281x75
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -59,11 +59,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 546: "The CSS selector should match the marked div element, because it is the last"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,538) size 616x229 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "3"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "3"
             RenderText {#text} at (6,10) size 281x75
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -78,12 +78,12 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 546: "The CSS selector should match the marked div element, because it is the last"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,814) size 616x259 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "4"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {BLOCKQUOTE} at (0,0) size 584x24 [bgcolor=#009900]
               RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "4"
             RenderText {#text} at (6,10) size 305x105
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -102,11 +102,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 546: "The CSS selector should match the marked div element, because it is the last"
               text run at (0,18) width 230: "element of this type in this scope"
         RenderListItem {LI} at (40,1121) size 616x244 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "5"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
               RenderBlock {DIV} at (0,0) size 584x24
           RenderBlock {PRE} at (16,53) size 584x107 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "5"
             RenderText {#text} at (6,10) size 305x90
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -123,12 +123,12 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 546: "The CSS selector should match the marked div element, because it is the last"
               text run at (0,18) width 280: "element of this type in the current scope"
         RenderListItem {LI} at (40,1412) size 616x259 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "6"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#009900]
               RenderBlock {DIV} at (0,0) size 584x0
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "6"
             RenderText {#text} at (6,10) size 281x105
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -147,11 +147,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 546: "The CSS selector should match the marked div element, because it is the last"
               text run at (0,18) width 280: "element of this type in the current scope"
         RenderListItem {LI} at (40,1719) size 616x229 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "7"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "7"
             RenderText {#text} at (6,10) size 281x75
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -166,11 +166,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 572: "The CSS selector should not match the marked div element, because it is the first"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,1995) size 616x229 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "8"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "8"
             RenderText {#text} at (6,10) size 281x75
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -185,11 +185,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 572: "The CSS selector should not match the marked div element, because it is the first"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,2272) size 616x259 [bgcolor=#AAAAAA]
+          RenderListMarker at (-17,60) size 17x17: "9"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "9"
             RenderText {#text} at (6,10) size 481x105
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "
@@ -207,11 +207,11 @@ layer at (0,0) size 785x2917
               text run at (0,0) width 567: "The CSS selector should match the div element that is inserted by the Javascript"
               text run at (0,18) width 39: "code."
         RenderListItem {LI} at (40,2578) size 616x241 [bgcolor=#AAAAAA]
+          RenderListMarker at (-26,60) size 26x17: "10"
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-42,7) size 26x17: "10"
             RenderText {#text} at (6,10) size 481x105
               text run at (6,10) width 145: "div:last-of-type {"
               text run at (150,10) width 1: " "

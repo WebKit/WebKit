@@ -35,8 +35,8 @@ layer at (0,0) size 800x790
           RenderText {#text} at (0,0) size 194x18
             text run at (0,0) width 194: "This list item should be blue..."
         RenderListItem {LI} at (40,18) size 744x72 [color=#0000FF]
+          RenderListMarker at (-17,0) size 7x18: bullet
           RenderBlock (anonymous) at (0,0) size 744x18
-            RenderListMarker at (-17,0) size 7x18: bullet
             RenderText {#text} at (0,0) size 295x18
               text run at (0,0) width 295: "...and so should this; neither should be purple."
           RenderBlock {UL} at (0,18) size 744x54
@@ -96,8 +96,8 @@ layer at (0,0) size 800x790
                   RenderText {#text} at (0,0) size 194x18
                     text run at (0,0) width 194: "This list item should be blue..."
                 RenderListItem {LI} at (40,18) size 657x72 [color=#0000FF]
+                  RenderListMarker at (-17,0) size 7x18: bullet
                   RenderBlock (anonymous) at (0,0) size 657x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
                     RenderText {#text} at (0,0) size 295x18
                       text run at (0,0) width 295: "...and so should this; neither should be purple."
                   RenderBlock {UL} at (0,18) size 657x54

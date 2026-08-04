@@ -51,6 +51,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerModelObject.h"
 #include "RenderLayoutState.h"
+#include "RenderListItem.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGText.h"
 #include "RenderObjectInlines.h"
@@ -1187,6 +1188,20 @@ RenderView* LocalFrameViewLayoutContext::renderView() const
 Document* LocalFrameViewLayoutContext::document() const
 {
     return frame().document();
+}
+
+ListItemExcludedMarkerScope::ListItemExcludedMarkerScope(LocalFrameViewLayoutContext& layoutContext, RenderListMarker& excludedMarker)
+    : m_layoutContext(layoutContext)
+{
+    // Nested list items lay out inside their ancestor's layout, so this is a stack: an ancestor stays in it while
+    // its descendant list item lays out, because the line that descendant produces may well be the ancestor's
+    // first formatted line too, and then it has to align both markers.
+    layoutContext.m_excludedMarkers.append(excludedMarker);
+}
+
+ListItemExcludedMarkerScope::~ListItemExcludedMarkerScope()
+{
+    m_layoutContext->m_excludedMarkers.removeLast();
 }
 
 } // namespace WebCore

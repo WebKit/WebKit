@@ -24,10 +24,10 @@ layer at (0,0) size 800x1613
       RenderBlock {DIV} at (0,34) size 784x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 784x1515
         RenderListItem {LI} at (40,0) size 628x243 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "1"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x106 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "1"
             RenderText {#text} at (6,9) size 134x91
               text run at (6,9) width 134: "div :only-child {"
               text run at (139,9) width 1: " "
@@ -44,10 +44,10 @@ layer at (0,0) size 800x1613
               text run at (0,0) width 592: "The CSS selector should match the inner div element, because it is the only child of"
               text run at (0,18) width 150: "the outer div element"
         RenderListItem {LI} at (40,291) size 628x258 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "2"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "2"
             RenderText {#text} at (6,9) size 204x106
               text run at (6,9) width 134: "div :only-child {"
               text run at (139,9) width 1: " "
@@ -66,10 +66,10 @@ layer at (0,0) size 800x1613
               text run at (0,0) width 592: "The CSS selector should match the inner div element, because it is the only child of"
               text run at (0,18) width 150: "the outer div element"
         RenderListItem {LI} at (40,597) size 628x273 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,40) size 18x18: "3"
           RenderBlock {DIV} at (16,16) size 596x42 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
             RenderBlock (anonymous) at (0,24) size 596x18
-              RenderListMarker at (-34,0) size 18x18: "3"
               RenderText {#text} at (0,0) size 5x18
                 text run at (0,0) width 5: "."
           RenderBlock {PRE} at (16,71) size 596x118 [bgcolor=#FFFFFF]
@@ -91,11 +91,11 @@ layer at (0,0) size 800x1613
               text run at (0,0) width 592: "The CSS selector should match the inner div element, because it is the only child of"
               text run at (0,18) width 150: "the outer div element"
         RenderListItem {LI} at (40,918) size 628x261 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,62) size 18x18: "4"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {BLOCKQUOTE} at (40,40) size 516x0
           RenderBlock {PRE} at (16,56) size 596x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "4"
             RenderText {#text} at (6,9) size 219x106
               text run at (6,9) width 134: "div :only-child {"
               text run at (139,9) width 1: " "
@@ -114,11 +114,11 @@ layer at (0,0) size 800x1613
               text run at (0,0) width 574: "The CSS selector should not match the inner div element, because it not the only"
               text run at (0,18) width 33: "child"
         RenderListItem {LI} at (40,1227) size 628x288 [bgcolor=#AAAAAA]
+          RenderListMarker at (-18,59) size 18x18: "5"
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {DIV} at (0,24) size 596x0
           RenderBlock {PRE} at (16,53) size 596x151 [bgcolor=#FFFFFF]
-            RenderListMarker at (-34,6) size 18x18: "5"
             RenderText {#text} at (6,9) size 469x136
               text run at (6,9) width 134: "div :only-child {"
               text run at (139,9) width 1: " "

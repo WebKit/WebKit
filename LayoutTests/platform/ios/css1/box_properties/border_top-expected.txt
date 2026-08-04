@@ -51,8 +51,8 @@ layer at (0,0) size 800x959
                         text run at (2,3) width 156: "Nested single-cell table!"
       RenderBlock {UL} at (0,382) size 784x117
         RenderListItem {LI} at (40,0) size 744x75 [border: (3px solid #000000) none]
+          RenderListMarker at (-17,3) size 7x18: bullet
           RenderBlock (anonymous) at (0,3) size 744x18
-            RenderListMarker at (-17,0) size 7x18: bullet
             RenderText {#text} at (0,0) size 123x18
               text run at (0,0) width 123: "This is a list item..."
           RenderBlock {UL} at (0,21) size 744x54
@@ -123,8 +123,8 @@ layer at (0,0) size 800x959
                                 text run at (2,3) width 156: "Nested single-cell table!"
               RenderBlock {UL} at (4,262) size 762x117
                 RenderListItem {LI} at (40,0) size 722x75 [border: (3px solid #000000) none]
+                  RenderListMarker at (-17,3) size 7x18: bullet
                   RenderBlock (anonymous) at (0,3) size 722x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
                     RenderText {#text} at (0,0) size 123x18
                       text run at (0,0) width 123: "This is a list item..."
                   RenderBlock {UL} at (0,21) size 722x54

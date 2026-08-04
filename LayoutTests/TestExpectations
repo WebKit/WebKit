@@ -5312,8 +5312,6 @@ imported/w3c/web-platform-tests/css/css-images/repeating-conic-gradient.html [ S
 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Skip ]
 
 # Untriaged counter failures
-webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/change-list-descendant-display.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/change-list-style-position-002.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list-marker.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-list.html [ ImageOnlyFailure ]
@@ -5403,7 +5401,6 @@ imported/w3c/web-platform-tests/css/css-lists/marker-counter.html [ ImageOnlyFai
 # list-style
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-vertical-lr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-vertical-rl.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html [ ImageOnlyFailure ]
 
 # list-style bidi support
 webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005a.html [ ImageOnlyFailure ]

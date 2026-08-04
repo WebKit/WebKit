@@ -48,6 +48,7 @@ class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
 class RenderLayoutState;
+class RenderListMarker;
 class RenderView;
 namespace Layout {
 class LayoutState;
@@ -197,7 +198,11 @@ public:
 
     bool repaintsBlocked() const { return m_repaintsBlocked; }
 
+    using ExcludedMarkerList = Vector<SingleThreadWeakPtr<RenderListMarker>>;
+    const ExcludedMarkerList& excludedMarkers() const LIFETIME_BOUND { return m_excludedMarkers; }
+
 private:
+    friend class ListItemExcludedMarkerScope;
     friend class LayoutFrameScope;
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
@@ -279,6 +284,7 @@ private:
     bool m_revealedWhenFoundIgnored { false };
     bool m_updateCompositingLayersIsPending { false };
     bool m_repaintsBlocked { false };
+    ExcludedMarkerList m_excludedMarkers;
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
@@ -348,6 +354,15 @@ public:
 
 private:
     const Ref<Document> m_document;
+};
+
+class ListItemExcludedMarkerScope {
+public:
+    ListItemExcludedMarkerScope(LocalFrameViewLayoutContext&, RenderListMarker&);
+    ~ListItemExcludedMarkerScope();
+
+private:
+    const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
 };
 
 } // namespace WebCore

@@ -150,7 +150,7 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObje
     auto* curr = start;
     bool sawInline;
     do {
-        while (curr && !(curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()))
+        while (curr && (!(curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()) || curr->isExcludedMarker()))
             curr = curr->nextSibling();
 
         inlineRunStart = inlineRunEnd = curr;
@@ -161,7 +161,7 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObje
         sawInline = curr->isInline();
 
         curr = curr->nextSibling();
-        while (curr && (curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()) && (curr != boundary)) {
+        while (curr && (curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()) && !curr->isExcludedMarker() && (curr != boundary)) {
             inlineRunEnd = curr;
             if (curr->isInline())
                 sawInline = true;
@@ -770,7 +770,7 @@ void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& par
     }
 #ifndef NDEBUG
     for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
-        ASSERT(!c->isInline());
+        ASSERT(!c->isInline() || c->isExcludedMarker());
 #endif
     parent.repaint();
 }

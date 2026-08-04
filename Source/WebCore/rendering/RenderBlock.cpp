@@ -1107,6 +1107,9 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
     if (child.isExcludedAndPlacedInBorder())
         return true;
 
+    if (child.isExcludedMarker())
+        return true;
+
     if (child.isSkippedContent()) {
         ASSERT(child.isColumnSpanner());
         return true;
@@ -2459,7 +2462,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 
     auto firstInFlowBaseline = [&] -> std::optional<LayoutUnit> {
         for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-            if (child->isLegend() && child->isExcludedFromNormalLayout())
+            if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isExcludedMarker())
                 continue;
             if (auto baseline = child->firstLineBaseline())
                 return child->logicalTop() + *baseline;
@@ -2479,7 +2482,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
 
     auto lastInFlowBaseline = [&] -> std::optional<LayoutUnit> {
         for (CheckedPtr child = lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
-            if (child->isLegend() && child->isExcludedFromNormalLayout())
+            if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isExcludedMarker())
                 continue;
             if (auto baseline = child->lastLineBaseline())
                 return child->logicalTop() + *baseline;

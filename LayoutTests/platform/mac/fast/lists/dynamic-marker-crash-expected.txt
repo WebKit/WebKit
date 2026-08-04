@@ -5,9 +5,9 @@ layer at (0,0) size 800x85
     RenderBody {BODY} at (8,16) size 784x53
       RenderBlock {UL} at (0,0) size 784x53
         RenderListItem {LI} at (40,0) size 744x53
+          RenderListMarker at (-17,0) size 7x18: bullet
           RenderBlock {FORM} at (0,0) size 744x19
             RenderBlock {P} at (0,0) size 744x19
-              RenderListMarker at (-17,0) size 7x18: bullet
               RenderTextControl {INPUT} at (0,0) size 288x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
               RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,35) size 744x18

@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock {OL} at (0,0) size 36x584
         RenderListItem {LI} at (0,40) size 36x544
+          RenderListMarker at (0,-16) size 18x16: "1"
           RenderBlock (anonymous) at (0,0) size 18x544
-            RenderListMarker at (0,-16) size 18x16: "1"
             RenderInline {I} at (0,0) size 18x77
               RenderInline {U} at (0,0) size 18x77
                 RenderText {#text} at (0,0) size 18x77

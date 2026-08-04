@@ -5173,6 +5173,20 @@ LinkSanitizerEnabled:
     WebCore:
       default: false
 
+ListMarkerPositionedPostLayoutEnabled:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "Position outside list markers after layout"
+  humanReadableDescription: "Keep an outside list marker as the list item's first child and position it after layout, instead of reparenting it into the descendant that holds the first line box"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 LoadDeferringEnabled:
   type: bool
   status: embedder

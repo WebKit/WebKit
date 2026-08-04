@@ -34,8 +34,8 @@ layer at (0,0) size 800x297
                         text run at (1,4) width 60: "HERE \x{21E7}"
       RenderBlock {UL} at (0,148) size 784x117
         RenderListItem {LI} at (40,0) size 744x75 [border: (2px solid #0000FF) none]
+          RenderListMarker at (-17,3) size 7x17: bullet
           RenderBlock (anonymous) at (0,2) size 744x19
-            RenderListMarker at (-17,1) size 7x17: bullet
             RenderText {#text} at (0,1) size 60x17
               text run at (0,1) width 60: "HERE \x{21E7}"
           RenderBlock {UL} at (0,21) size 744x54
