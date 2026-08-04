@@ -192,6 +192,8 @@ void AudioContext::stop()
     if (RefPtr document = this->document())
         document->removeAudioProducer(*this);
     BaseAudioContext::stop();
+
+    m_mediaSession->setActive(false);
 }
 
 double AudioContext::baseLatency()
