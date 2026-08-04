@@ -7,10 +7,6 @@
 //    Implements the class methods for TextureMtl.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/TextureMtl.h"
 
 #include <algorithm>
@@ -20,6 +16,7 @@
 #include "common/MemoryBuffer.h"
 #include "common/debug.h"
 #include "common/mathutil.h"
+#include "common/unsafe_buffers.h"
 #include "image_util/imageformats.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/ErrorStrings.h"
@@ -177,9 +174,11 @@ void CopyTextureData(const MTLSize &regionSize,
         {
             for (NSUInteger r = 0; r < regionSize.height; ++r)
             {
-                const uint8_t *pCopySrc = psrc + d * src2DImageSize + r * srcRowPitch;
-                uint8_t *pCopyDst       = pdst + d * dest2DImageSize + r * destRowPitch;
-                memcpy(pCopyDst, pCopySrc, rowCopySize);
+                const uint8_t *pCopySrc =
+                    ANGLE_UNSAFE_TODO(psrc + d * src2DImageSize + r * srcRowPitch);
+                uint8_t *pCopyDst =
+                    ANGLE_UNSAFE_TODO(pdst + d * dest2DImageSize + r * destRowPitch);
+                ANGLE_UNSAFE_TODO(memcpy(pCopyDst, pCopySrc, rowCopySize));
             }
         }
     }
@@ -203,9 +202,11 @@ void ConvertDepthStencilData(const MTLSize &regionSize,
         {
             for (NSUInteger r = 0; r < regionSize.height; ++r)
             {
-                const uint8_t *pCopySrc = psrc + d * src2DImageSize + r * srcRowPitch;
-                uint8_t *pCopyDst       = pdst + d * dest2DImageSize + r * destRowPitch;
-                memcpy(pCopyDst, pCopySrc, rowCopySize);
+                const uint8_t *pCopySrc =
+                    ANGLE_UNSAFE_TODO(psrc + d * src2DImageSize + r * srcRowPitch);
+                uint8_t *pCopyDst =
+                    ANGLE_UNSAFE_TODO(pdst + d * dest2DImageSize + r * destRowPitch);
+                ANGLE_UNSAFE_TODO(memcpy(pCopyDst, pCopySrc, rowCopySize));
             }
         }
     }
@@ -230,10 +231,12 @@ void ConvertDepthStencilData(const MTLSize &regionSize,
                 for (NSUInteger c = 0; c < regionSize.width; ++c)
                 {
                     const uint8_t *sourcePixelData =
-                        psrc + d * src2DImageSize + r * srcRowPitch + c * srcAngleFormat.pixelBytes;
+                        ANGLE_UNSAFE_TODO(psrc + d * src2DImageSize + r * srcRowPitch +
+                                          c * srcAngleFormat.pixelBytes);
 
-                    uint8_t *destPixelData = pdst + d * dest2DImageSize + r * destRowPitch +
-                                             c * dstAngleFormat.pixelBytes;
+                    uint8_t *destPixelData =
+                        ANGLE_UNSAFE_TODO(pdst + d * dest2DImageSize + r * destRowPitch +
+                                          c * dstAngleFormat.pixelBytes);
 
                     srcAngleFormat.pixelReadFunction(sourcePixelData, sourcePixelReadData);
                     pixelWriteFunction(sourcePixelReadData, destPixelData);
@@ -2227,7 +2230,7 @@ angle::Result TextureMtl::setSubImageImpl(const gl::Context *context,
     }
     const angle::Format &srcAngleFormat = angle::Format::Get(srcAngleFormatId);
 
-    const uint8_t *usablePixels = oriPixels + sourceSkipBytes;
+    const uint8_t *usablePixels = ANGLE_UNSAFE_TODO(oriPixels + sourceSkipBytes);
 
     // Upload to texture
     if (index.getType() == gl::TextureType::_2DArray)
@@ -2240,7 +2243,7 @@ angle::Result TextureMtl::setSubImageImpl(const gl::Context *context,
         for (int slice = 0; slice < area.depth; ++slice)
         {
             int sliceIndex           = slice + area.z;
-            const uint8_t *srcPixels = usablePixels + slice * sourceDepthPitch;
+            const uint8_t *srcPixels = ANGLE_UNSAFE_TODO(usablePixels + slice * sourceDepthPitch);
             ANGLE_TRY(setPerSliceSubImage(context, sliceIndex, mtlRegion, formatInfo, type,
                                           srcAngleFormat, sourceRowPitch, sourceDepthPitch,
                                           unpackBuffer, srcPixels, imageDef));
@@ -2538,7 +2541,8 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                 mtlRow.origin.z = mtlArea.origin.z + d;
                 for (NSUInteger r = 0; r < mtlArea.size.height; ++r)
                 {
-                    const uint8_t *psrc = pixels + d * pixelsDepthPitch + r * pixelsRowPitch;
+                    const uint8_t *psrc =
+                        ANGLE_UNSAFE_TODO(pixels + d * pixelsDepthPitch + r * pixelsRowPitch);
                     mtlRow.origin.y     = mtlArea.origin.y + r;
 
                     // Convert pixels

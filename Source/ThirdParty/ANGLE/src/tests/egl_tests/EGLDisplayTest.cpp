@@ -214,7 +214,6 @@ TEST_P(EGLDisplayTestES3, GetPlatformDisplayAndroidValidation)
 }
 
 ANGLE_INSTANTIATE_TEST(EGLDisplayTest,
-                       WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
                        WithNoFixture(ES2_METAL()),
                        WithNoFixture(ES2_OPENGL()),

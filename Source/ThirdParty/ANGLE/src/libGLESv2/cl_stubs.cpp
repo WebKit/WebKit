@@ -6,10 +6,7 @@
 // cl_stubs.cpp: Stubs for CL entry points.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "libANGLE/cl_utils.h"
 #include "libGLESv2/cl_stubs_autogen.h"
 
@@ -766,11 +763,11 @@ cl_int EnqueueReadBufferRect(cl_command_queue command_queue,
                              const cl_event *event_wait_list,
                              cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueReadBufferRect(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueReadBufferRect(
         buffer, blocking_read, cl::Offset{buffer_origin[0], buffer_origin[1], buffer_origin[2]},
         cl::Offset{host_origin[0], host_origin[1], host_origin[2]},
         cl::Extents{region[0], region[1], region[2]}, buffer_row_pitch, buffer_slice_pitch,
-        host_row_pitch, host_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event));
+        host_row_pitch, host_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event)));
 }
 
 cl_int EnqueueWriteBuffer(cl_command_queue command_queue,
@@ -803,11 +800,11 @@ cl_int EnqueueWriteBufferRect(cl_command_queue command_queue,
                               const cl_event *event_wait_list,
                               cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueWriteBufferRect(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueWriteBufferRect(
         buffer, blocking_write, cl::Offset{buffer_origin[0], buffer_origin[1], buffer_origin[2]},
         cl::Offset{host_origin[0], host_origin[1], host_origin[2]},
         cl::Extents{region[0], region[1], region[2]}, buffer_row_pitch, buffer_slice_pitch,
-        host_row_pitch, host_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event));
+        host_row_pitch, host_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event)));
 }
 
 cl_int EnqueueFillBuffer(cl_command_queue command_queue,
@@ -854,11 +851,11 @@ cl_int EnqueueCopyBufferRect(cl_command_queue command_queue,
                              const cl_event *event_wait_list,
                              cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyBufferRect(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueCopyBufferRect(
         src_buffer, dst_buffer, cl::Offset{src_origin[0], src_origin[1], src_origin[2]},
         cl::Offset{dst_origin[0], dst_origin[1], dst_origin[2]},
         cl::Extents{region[0], region[1], region[2]}, src_row_pitch, src_slice_pitch, dst_row_pitch,
-        dst_slice_pitch, num_events_in_wait_list, event_wait_list, event));
+        dst_slice_pitch, num_events_in_wait_list, event_wait_list, event)));
 }
 
 cl_int EnqueueReadImage(cl_command_queue command_queue,
@@ -873,10 +870,10 @@ cl_int EnqueueReadImage(cl_command_queue command_queue,
                         const cl_event *event_wait_list,
                         cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueReadImage(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueReadImage(
         image, blocking_read, cl::Offset{origin[0], origin[1], origin[2]},
         cl::Extents{region[0], region[1], region[2]}, row_pitch, slice_pitch, ptr,
-        num_events_in_wait_list, event_wait_list, event));
+        num_events_in_wait_list, event_wait_list, event)));
 }
 
 cl_int EnqueueWriteImage(cl_command_queue command_queue,
@@ -891,10 +888,10 @@ cl_int EnqueueWriteImage(cl_command_queue command_queue,
                          const cl_event *event_wait_list,
                          cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueWriteImage(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueWriteImage(
         image, blocking_write, cl::Offset{origin[0], origin[1], origin[2]},
         cl::Extents{region[0], region[1], region[2]}, input_row_pitch, input_slice_pitch, ptr,
-        num_events_in_wait_list, event_wait_list, event));
+        num_events_in_wait_list, event_wait_list, event)));
 }
 
 cl_int EnqueueFillImage(cl_command_queue command_queue,
@@ -906,10 +903,10 @@ cl_int EnqueueFillImage(cl_command_queue command_queue,
                         const cl_event *event_wait_list,
                         cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueFillImage(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueFillImage(
         image, fill_color, cl::Offset{origin[0], origin[1], origin[2]},
         cl::Extents{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
-        event));
+        event)));
 }
 
 cl_int EnqueueCopyImage(cl_command_queue command_queue,
@@ -922,11 +919,11 @@ cl_int EnqueueCopyImage(cl_command_queue command_queue,
                         const cl_event *event_wait_list,
                         cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyImage(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueCopyImage(
         src_image, dst_image, cl::Offset{src_origin[0], src_origin[1], src_origin[2]},
         cl::Offset{dst_origin[0], dst_origin[1], dst_origin[2]},
         cl::Extents{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
-        event));
+        event)));
 }
 
 cl_int EnqueueCopyImageToBuffer(cl_command_queue command_queue,
@@ -939,10 +936,10 @@ cl_int EnqueueCopyImageToBuffer(cl_command_queue command_queue,
                                 const cl_event *event_wait_list,
                                 cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyImageToBuffer(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueCopyImageToBuffer(
         src_image, dst_buffer, cl::Offset{src_origin[0], src_origin[1], src_origin[2]},
         cl::Extents{region[0], region[1], region[2]}, dst_offset, num_events_in_wait_list,
-        event_wait_list, event));
+        event_wait_list, event)));
 }
 
 cl_int EnqueueCopyBufferToImage(cl_command_queue command_queue,
@@ -955,10 +952,10 @@ cl_int EnqueueCopyBufferToImage(cl_command_queue command_queue,
                                 const cl_event *event_wait_list,
                                 cl_event *event)
 {
-    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyBufferToImage(
+    CL_RETURN_ERROR(ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueCopyBufferToImage(
         src_buffer, dst_image, src_offset, cl::Offset{dst_origin[0], dst_origin[1], dst_origin[2]},
         cl::Extents{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
-        event));
+        event)));
 }
 
 void *EnqueueMapBuffer(cl_command_queue command_queue,
@@ -989,10 +986,10 @@ void *EnqueueMapImage(cl_command_queue command_queue,
                       cl_event *event)
 {
     CL_RETURN_PTR(ptrOut,
-                  command_queue->cast<CommandQueue>().enqueueMapImage(
+                  ANGLE_UNSAFE_TODO(command_queue->cast<CommandQueue>().enqueueMapImage(
                       image, blocking_map, map_flags, cl::Offset{origin[0], origin[1], origin[2]},
                       cl::Extents{region[0], region[1], region[2]}, image_row_pitch,
-                      image_slice_pitch, num_events_in_wait_list, event_wait_list, event, ptrOut));
+                      image_slice_pitch, num_events_in_wait_list, event_wait_list, event, ptrOut)));
 }
 
 cl_int EnqueueUnmapMemObject(cl_command_queue command_queue,

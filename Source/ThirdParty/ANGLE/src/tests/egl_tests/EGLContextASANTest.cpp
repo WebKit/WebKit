@@ -205,7 +205,6 @@ TEST_P(EGLContextASANTest, DestroyContextInUse)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextASANTest);
 ANGLE_INSTANTIATE_TEST(EGLContextASANTest,
-                       ES2_D3D9(),
                        ES2_D3D11(),
                        ES3_D3D11(),
                        ES2_OPENGL(),

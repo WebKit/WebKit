@@ -12,6 +12,11 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/FramebufferImpl.h"
 
+namespace gl
+{
+class FramebufferAttachment;
+}
+
 namespace rx
 {
 
@@ -148,6 +153,9 @@ class FramebufferGL : public FramebufferImpl
     bool mHasEmulatedAlphaAttachment;
     gl::DrawBufferMask mAppliedEnabledDrawBuffers;
 };
+
+bool IsEmulatedAlphaChannelTextureAttachment(const gl::FramebufferAttachment *attachment);
+
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_GL_FRAMEBUFFERGL_H_

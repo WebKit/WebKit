@@ -14,13 +14,10 @@
 #ifndef COMMON_MATRIX_UTILS_H_
 #define COMMON_MATRIX_UTILS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <array>
 #include <utility>
 #include <vector>
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/mathutil.h"
@@ -495,7 +492,7 @@ class Mat4
         Mat4 result = coft;
         for (int i = 0; i < 16; i++)
         {
-            result.data()[i] /= det;
+            ANGLE_UNSAFE_TODO(result.data()[i]) /= det;
         }
 
         return result;

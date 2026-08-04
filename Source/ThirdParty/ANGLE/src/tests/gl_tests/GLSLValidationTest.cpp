@@ -4072,8 +4072,7 @@ TEST_P(GLSLValidationTest, ConstantStatementInForLoop)
     validateSuccess(GL_VERTEX_SHADER, kVS);
 }
 
-// Tests that using a constant declaration as a loop init expression doesn't crash. Note that this
-// test doesn't work on D3D9 due to looping limitations, so it is only run on ES3.
+// Tests that using a constant declaration as a loop init expression doesn't crash.
 TEST_P(GLSLValidationTest_ES3, ConstantStatementAsLoopInit)
 {
     constexpr char kVS[] = R"(void main()

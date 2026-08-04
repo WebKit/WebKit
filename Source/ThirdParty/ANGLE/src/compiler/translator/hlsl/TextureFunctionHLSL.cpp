@@ -9,11 +9,8 @@
 // behavior.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/hlsl/TextureFunctionHLSL.h"
+#include "common/unsafe_buffers.h"
 
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/hlsl/UtilsHLSL.h"
@@ -581,11 +578,11 @@ void OutputTextureSizeFunctionBody(TInfoSinkBase &out,
     }
 
     const char *returnType = textureFunction.getReturnType();
-    if (strcmp(returnType, "int3") == 0)
+    if (ANGLE_UNSAFE_TODO(strcmp(returnType, "int3")) == 0)
     {
         out << "    return int3(width, height, depth);\n";
     }
-    else if (strcmp(returnType, "int2") == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(returnType, "int2")) == 0)
     {
         out << "    return int2(width, height);\n";
     }

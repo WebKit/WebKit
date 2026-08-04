@@ -7,11 +7,8 @@
 //  Methods for GL variable types (varyings, uniforms, etc)
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <GLSLANG/ShaderLang.h>
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/utilities.h"
@@ -606,9 +603,12 @@ bool WorkGroupSize::isWorkGroupSizeMatching(const WorkGroupSize &right) const
 {
     for (size_t i = 0u; i < size(); ++i)
     {
-        bool result = (localSizeQualifiers[i] == right.localSizeQualifiers[i] ||
-                       (localSizeQualifiers[i] == 1 && right.localSizeQualifiers[i] == -1) ||
-                       (localSizeQualifiers[i] == -1 && right.localSizeQualifiers[i] == 1));
+        bool result = (ANGLE_UNSAFE_TODO(localSizeQualifiers[i]) ==
+                           ANGLE_UNSAFE_TODO(right.localSizeQualifiers[i]) ||
+                       (ANGLE_UNSAFE_TODO(localSizeQualifiers[i]) == 1 &&
+                        ANGLE_UNSAFE_TODO(right.localSizeQualifiers[i]) == -1) ||
+                       (ANGLE_UNSAFE_TODO(localSizeQualifiers[i]) == -1 &&
+                        ANGLE_UNSAFE_TODO(right.localSizeQualifiers[i]) == 1));
         if (!result)
         {
             return false;
@@ -620,13 +620,13 @@ bool WorkGroupSize::isWorkGroupSizeMatching(const WorkGroupSize &right) const
 int &WorkGroupSize::operator[](size_t index)
 {
     ASSERT(index < size());
-    return localSizeQualifiers[index];
+    return ANGLE_UNSAFE_TODO(localSizeQualifiers[index]);
 }
 
 int WorkGroupSize::operator[](size_t index) const
 {
     ASSERT(index < size());
-    return localSizeQualifiers[index];
+    return ANGLE_UNSAFE_TODO(localSizeQualifiers[index]);
 }
 
 size_t WorkGroupSize::size() const

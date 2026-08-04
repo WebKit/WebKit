@@ -7,10 +7,7 @@
 // FramebufferD3D.cpp: Implements the DefaultAttachmentD3D and FramebufferD3D classes.
 
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
-
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
+#include "common/unsafe_buffers.h"
 
 #include "common/bitset_utils.h"
 #include "libANGLE/Context.h"
@@ -37,7 +34,7 @@ namespace
 ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
 {
     ClearParameters clearParams;
-    memset(&clearParams, 0, sizeof(ClearParameters));
+    ANGLE_UNSAFE_TODO(memset(&clearParams, 0, sizeof(ClearParameters)));
 
     clearParams.colorF           = state.getColorClearValue();
     clearParams.colorType        = GL_FLOAT;
@@ -128,7 +125,8 @@ angle::Result FramebufferD3D::clearBufferfv(const gl::Context *context,
         {
             clearParams.clearColor[i] = (drawbuffer == static_cast<int>(i));
         }
-        clearParams.colorF    = gl::ColorF(values[0], values[1], values[2], values[3]);
+        clearParams.colorF =
+            ANGLE_UNSAFE_TODO(gl::ColorF(values[0], values[1], values[2], values[3]));
         clearParams.colorType = GL_FLOAT;
     }
 
@@ -152,7 +150,8 @@ angle::Result FramebufferD3D::clearBufferuiv(const gl::Context *context,
     {
         clearParams.clearColor[i] = (drawbuffer == static_cast<int>(i));
     }
-    clearParams.colorUI   = gl::ColorUI(values[0], values[1], values[2], values[3]);
+    clearParams.colorUI =
+        ANGLE_UNSAFE_TODO(gl::ColorUI(values[0], values[1], values[2], values[3]));
     clearParams.colorType = GL_UNSIGNED_INT;
 
     return clearImpl(context, clearParams);
@@ -172,7 +171,8 @@ angle::Result FramebufferD3D::clearBufferiv(const gl::Context *context,
         {
             clearParams.clearColor[i] = (drawbuffer == static_cast<int>(i));
         }
-        clearParams.colorI    = gl::ColorI(values[0], values[1], values[2], values[3]);
+        clearParams.colorI =
+            ANGLE_UNSAFE_TODO(gl::ColorI(values[0], values[1], values[2], values[3]));
         clearParams.colorType = GL_INT;
     }
 
@@ -232,7 +232,7 @@ angle::Result FramebufferD3D::readPixels(const gl::Context *context,
                        (clippedArea.y - area.y) * outputPitch;
 
     return readPixelsImpl(context, clippedArea, format, type, outputPitch, pack, packBuffer,
-                          static_cast<uint8_t *>(pixels) + outputSkipBytes);
+                          ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(pixels) + outputSkipBytes));
 }
 
 angle::Result FramebufferD3D::blit(const gl::Context *context,

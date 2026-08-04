@@ -141,10 +141,6 @@
 #ifndef COMMON_TRACE_EVENT_H_
 #define COMMON_TRACE_EVENT_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <string>
 
 #include "common/event_tracer.h"

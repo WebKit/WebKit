@@ -135,8 +135,6 @@ const char *GetRendererName(EGLint renderer)
     {
         case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
             return "Default";
-        case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
-            return "D3D9";
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
             return "D3D11";
         case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
@@ -286,24 +284,6 @@ EGLPlatformParameters DEFAULT_NULL()
 {
     return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE, EGL_DONT_CARE,
                                  EGL_DONT_CARE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE);
-}
-
-EGLPlatformParameters D3D9()
-{
-    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE, EGL_DONT_CARE, EGL_DONT_CARE,
-                                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
-}
-
-EGLPlatformParameters D3D9_NULL()
-{
-    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE, EGL_DONT_CARE, EGL_DONT_CARE,
-                                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE);
-}
-
-EGLPlatformParameters D3D9_REFERENCE()
-{
-    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE, EGL_DONT_CARE, EGL_DONT_CARE,
-                                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_D3D_REFERENCE_ANGLE);
 }
 
 EGLPlatformParameters D3D11()
@@ -477,16 +457,6 @@ EGLPlatformParameters WEBGPU()
 }  // namespace egl_platform
 
 // ANGLE tests platforms
-PlatformParameters ES1_D3D9()
-{
-    return PlatformParameters(1, 0, egl_platform::D3D9());
-}
-
-PlatformParameters ES2_D3D9()
-{
-    return PlatformParameters(2, 0, egl_platform::D3D9());
-}
-
 PlatformParameters ES1_D3D11()
 {
     return PlatformParameters(1, 0, egl_platform::D3D11());

@@ -7,11 +7,8 @@
 #ifndef LIBANGLE_RENDERER_WGPU_WGPU_COMMAND_BUFFER_H_
 #define LIBANGLE_RENDERER_WGPU_WGPU_COMMAND_BUFFER_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 #include <webgpu/webgpu.h>
@@ -289,7 +286,7 @@ class CommandBuffer
         template <typename T>
         T *getDataAtCurrentPositionAndReserveSpace(size_t space)
         {
-            T *data = reinterpret_cast<T *>(&mData[mCurrentPosition]);
+            T *data = reinterpret_cast<T *>(&ANGLE_UNSAFE_TODO(mData[mCurrentPosition]));
 
             ASSERT(mRemainingSize >= space);
             mCurrentPosition += space;
@@ -347,8 +344,8 @@ class CommandBuffer
         CommandID *id = reinterpret_cast<CommandID *>(idAndCommandStorage);
         *id           = Command;
 
-        CommandType *commandStruct =
-            reinterpret_cast<CommandType *>(idAndCommandStorage + sizeof(CommandID));
+        CommandType *commandStruct = reinterpret_cast<CommandType *>(
+            ANGLE_UNSAFE_TODO(idAndCommandStorage + sizeof(CommandID)));
 
         mState.commandCount++;
 

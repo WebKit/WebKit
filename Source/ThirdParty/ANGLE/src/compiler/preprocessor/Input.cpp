@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/preprocessor/Input.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 #include <cstring>
@@ -31,8 +28,8 @@ Input::Input(size_t count, const char *const string[], const int length[])
     mLength.reserve(mCount);
     for (size_t i = 0; i < mCount; ++i)
     {
-        int len = length ? length[i] : -1;
-        mLength.push_back(len < 0 ? std::strlen(mString[i]) : len);
+        int len = length ? ANGLE_UNSAFE_TODO(length[i]) : -1;
+        mLength.push_back(len < 0 ? std::strlen(ANGLE_UNSAFE_TODO(mString[i])) : len);
     }
 }
 
@@ -50,7 +47,7 @@ const char *Input::skipChar()
     {
         return nullptr;
     }
-    return mString[mReadLoc.sIndex] + mReadLoc.cIndex;
+    return ANGLE_UNSAFE_TODO(mString[mReadLoc.sIndex] + mReadLoc.cIndex);
 }
 
 size_t Input::read(char *buf, size_t maxSize, int *lineNo)
@@ -60,7 +57,7 @@ size_t Input::read(char *buf, size_t maxSize, int *lineNo)
     // continuation. Check for this possibility first.
     if (mReadLoc.sIndex < mCount && maxSize > 0)
     {
-        const char *c = mString[mReadLoc.sIndex] + mReadLoc.cIndex;
+        const char *c = ANGLE_UNSAFE_TODO(mString[mReadLoc.sIndex] + mReadLoc.cIndex);
         if ((*c) == '\\')
         {
             c = skipChar();
@@ -109,13 +106,14 @@ size_t Input::read(char *buf, size_t maxSize, int *lineNo)
             // Stop if a possible line continuation is encountered.
             // It will be processed on the next call on input, which skips it
             // and increments line number if necessary.
-            if (*(mString[mReadLoc.sIndex] + mReadLoc.cIndex + i) == '\\')
+            if (*(ANGLE_UNSAFE_TODO(mString[mReadLoc.sIndex] + mReadLoc.cIndex + i)) == '\\')
             {
                 size    = i;
                 maxRead = nRead + size;  // Stop reading right before the backslash.
             }
         }
-        std::memcpy(buf + nRead, mString[mReadLoc.sIndex] + mReadLoc.cIndex, size);
+        ANGLE_UNSAFE_TODO(
+            std::memcpy(buf + nRead, mString[mReadLoc.sIndex] + mReadLoc.cIndex, size));
         nRead += size;
         mReadLoc.cIndex += size;
 

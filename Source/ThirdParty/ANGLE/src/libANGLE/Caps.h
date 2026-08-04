@@ -121,9 +121,6 @@ struct Limitations
     // Renderer always clamps constant blend color.
     bool noUnclampedBlendColor = false;
 
-    // D3D9 does not support flexible varying register packing.
-    bool noFlexibleVaryingPacking = false;
-
     // D3D does not support having multiple transform feedback outputs go to the same buffer.
     bool noDoubleBoundTransformFeedbackBuffers = false;
 
@@ -164,9 +161,9 @@ struct Limitations
     size_t maxBufferBytes = std::numeric_limits<GLsizeiptr>::max();
 
     // Maximum texture allocation size. Calculated by multiplying texture dimensions by
-    // bytes-per-pixel. 1Gb is chosen as a conservative limit to allow for backends to expand
-    // textures formats up to 4x and still stay within 32-bit sizes.
-    size_t maxTextureBytes = 1 * 1024 * 1024 * 1024;
+    // bytes-per-pixel. 1.25Gb is chosen as a conservative limit to allow for backends to expand
+    // textures formats up to 3x and still stay within 32-bit sizes.
+    size_t maxTextureBytes = 1280 * 1024 * 1024;
 };
 
 struct TypePrecision
@@ -742,9 +739,6 @@ struct DeviceExtensions
 
     // EGL_ANGLE_device_d3d
     bool deviceD3D = false;
-
-    // EGL_ANGLE_device_d3d9
-    bool deviceD3D9 = false;
 
     // EGL_ANGLE_device_d3d11
     bool deviceD3D11 = false;

@@ -51,7 +51,6 @@ New Tokens
 
     Accepted as values for the EGL_PLATFORM_ANGLE_TYPE_ANGLE attribute:
 
-        EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE                 0x3207
         EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE                0x3208
 
     Accepted as an attribute name in the <attrib_list> argument of
@@ -73,7 +72,6 @@ New Behavior
 
     To request a display that is backed by Direct3D resources, the value of
     EGL_PLATFORM_ANGLE_TYPE_ANGLE should be:
-      - EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE for a D3D9 display,
       - EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE for a D3D11 display.
 
     To request a specific maximum feature level to be used by the D3D11
@@ -81,9 +79,6 @@ New Behavior
     EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE can be used.  Only feature
     levels that are capable of supporting all available client APIs will be
     used unless explicitly requested.
-    EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE and
-    EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE have no effect when requesting
-    a D3D9 display.
 
     If no <attrib_list> is specified to eglGetPlatformDisplayEXT, the value of
     EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE is implicitly set to
@@ -139,3 +134,5 @@ Revision History
       - Remove the USE_WARP bool and replace it with a DEVICE_TYPE enum.
     Version 4, 2015-03-11 (Geoff Lang)
       - Add the ENABLE_AUTOMATIC_TRIM enum.
+    Version 5, 2026-06-29 (Rafael Cintron)
+      - Remove the EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE enum.

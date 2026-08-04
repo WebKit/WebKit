@@ -58,8 +58,6 @@ egl::Error Device::CreateDevice(EGLint deviceType, void *nativeDevice, Device **
     }
 #endif
 
-    // Note that creating an EGL device from inputted D3D9 parameters isn't currently supported
-
     if (newDeviceImpl == nullptr)
     {
         return egl::Error(EGL_BAD_ATTRIBUTE);

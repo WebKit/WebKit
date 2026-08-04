@@ -6,11 +6,8 @@
 
 // Blit11.cpp: Texture copy utility class.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/d3d11/Blit11.h"
+#include "common/unsafe_buffers.h"
 
 #include <float.h>
 
@@ -79,9 +76,10 @@ void StretchedBlitNearest_RowByRow(const gl::Box &sourceArea,
             gl::clamp(sourceArea.y + floor(yPerc * srcHeightSubOne + 0.5f), 0, srcHeightSubOne));
         unsigned int writeRow = y;
 
-        const uint8_t *sourceRow = sourceData + readRow * sourceRowPitch + srcOffset;
-        uint8_t *destRow         = destData + writeRow * destRowPitch + destOffset;
-        memcpy(destRow, sourceRow, copySize);
+        const uint8_t *sourceRow =
+            ANGLE_UNSAFE_TODO(sourceData + readRow * sourceRowPitch + srcOffset);
+        uint8_t *destRow = ANGLE_UNSAFE_TODO(destData + writeRow * destRowPitch + destOffset);
+        ANGLE_UNSAFE_TODO(memcpy(destRow, sourceRow, copySize));
     }
 }
 
@@ -120,13 +118,13 @@ void StretchedBlitNearest_PixelByPixel(const gl::Box &sourceArea,
             unsigned int readColumn = static_cast<unsigned int>(
                 gl::clamp(sourceArea.x + xRounded, 0, sourceSize.width - 1));
 
-            const uint8_t *sourcePixel =
-                sourceData + readRow * sourceRowPitch + readColumn * srcPixelStride + readOffset;
+            const uint8_t *sourcePixel = ANGLE_UNSAFE_TODO(
+                sourceData + readRow * sourceRowPitch + readColumn * srcPixelStride + readOffset);
 
-            uint8_t *destPixel =
-                destData + writeRow * destRowPitch + writeColumn * destPixelStride + writeOffset;
+            uint8_t *destPixel = ANGLE_UNSAFE_TODO(destData + writeRow * destRowPitch +
+                                                   writeColumn * destPixelStride + writeOffset);
 
-            memcpy(destPixel, sourcePixel, copySize);
+            ANGLE_UNSAFE_TODO(memcpy(destPixel, sourcePixel, copySize));
         }
     }
 }
@@ -175,19 +173,20 @@ using DepthStencilLoader = void(const float *, uint8_t *);
 void LoadDepth16(const float *source, uint8_t *dest)
 {
     uint32_t convertedDepth = gl::floatToNormalized<16, uint32_t>(source[0]);
-    memcpy(dest, &convertedDepth, 2u);
+    ANGLE_UNSAFE_TODO(memcpy(dest, &convertedDepth, 2u));
 }
 
 void LoadDepth24(const float *source, uint8_t *dest)
 {
     uint32_t convertedDepth = gl::floatToNormalized<24, uint32_t>(source[0]);
-    memcpy(dest, &convertedDepth, 3u);
+    ANGLE_UNSAFE_TODO(memcpy(dest, &convertedDepth, 3u));
 }
 
 void LoadStencilHelper(const float *source, uint8_t *dest)
 {
-    uint32_t convertedStencil = gl::getShiftedData<8, 0>(static_cast<uint32_t>(source[1]));
-    memcpy(dest, &convertedStencil, 1u);
+    uint32_t convertedStencil =
+        gl::getShiftedData<8, 0>(static_cast<uint32_t>(ANGLE_UNSAFE_TODO(source[1])));
+    ANGLE_UNSAFE_TODO(memcpy(dest, &convertedStencil, 1u));
 }
 
 void LoadStencil8(const float *source, uint8_t *dest)
@@ -195,24 +194,24 @@ void LoadStencil8(const float *source, uint8_t *dest)
     // STENCIL_INDEX8 is implemented with D24S8, with the depth bits unused. Writes zero for safety.
     float zero = 0.0f;
     LoadDepth24(&zero, &dest[0]);
-    LoadStencilHelper(source, &dest[3]);
+    LoadStencilHelper(source, &ANGLE_UNSAFE_TODO(dest[3]));
 }
 
 void LoadDepth24Stencil8(const float *source, uint8_t *dest)
 {
     LoadDepth24(source, &dest[0]);
-    LoadStencilHelper(source, &dest[3]);
+    LoadStencilHelper(source, &ANGLE_UNSAFE_TODO(dest[3]));
 }
 
 void LoadDepth32F(const float *source, uint8_t *dest)
 {
-    memcpy(dest, source, sizeof(float));
+    ANGLE_UNSAFE_TODO(memcpy(dest, source, sizeof(float)));
 }
 
 void LoadDepth32FStencil8(const float *source, uint8_t *dest)
 {
     LoadDepth32F(source, &dest[0]);
-    LoadStencilHelper(source, &dest[4]);
+    LoadStencilHelper(source, &ANGLE_UNSAFE_TODO(dest[4]));
 }
 
 template <DepthStencilLoader loader>
@@ -244,9 +243,11 @@ void CopyDepthStencil(const gl::Box &sourceArea,
         for (int column = 0; column < destArea.width; ++column)
         {
             ptrdiff_t offset         = row * sourceRowPitch + column * srcPixelStride;
-            const float *sourcePixel = reinterpret_cast<const float *>(sourceData + offset);
+            const float *sourcePixel =
+                reinterpret_cast<const float *>(ANGLE_UNSAFE_TODO(sourceData + offset));
 
-            uint8_t *destPixel = destData + row * destRowPitch + column * destPixelStride;
+            uint8_t *destPixel =
+                ANGLE_UNSAFE_TODO(destData + row * destRowPitch + column * destPixelStride);
 
             loader(sourcePixel, destPixel);
         }
@@ -293,10 +294,11 @@ void BlitD24S8ToD32F(const gl::Box &sourceArea,
         for (int column = 0; column < destArea.width; ++column)
         {
             ptrdiff_t offset            = row * sourceRowPitch + column * srcPixelStride;
-            const uint32_t *sourcePixel = reinterpret_cast<const uint32_t *>(sourceData + offset);
+            const uint32_t *sourcePixel =
+                reinterpret_cast<const uint32_t *>(ANGLE_UNSAFE_TODO(sourceData + offset));
 
-            float *destPixel =
-                reinterpret_cast<float *>(destData + row * destRowPitch + column * destPixelStride);
+            float *destPixel = reinterpret_cast<float *>(
+                ANGLE_UNSAFE_TODO(destData + row * destRowPitch + column * destPixelStride));
 
             Depth24Stencil8ToDepth32F(sourcePixel, destPixel);
         }
@@ -331,9 +333,10 @@ void BlitD32FS8ToD32F(const gl::Box &sourceArea,
         for (int column = 0; column < destArea.width; ++column)
         {
             ptrdiff_t offset         = row * sourceRowPitch + column * srcPixelStride;
-            const float *sourcePixel = reinterpret_cast<const float *>(sourceData + offset);
-            float *destPixel =
-                reinterpret_cast<float *>(destData + row * destRowPitch + column * destPixelStride);
+            const float *sourcePixel =
+                reinterpret_cast<const float *>(ANGLE_UNSAFE_TODO(sourceData + offset));
+            float *destPixel = reinterpret_cast<float *>(
+                ANGLE_UNSAFE_TODO(destData + row * destRowPitch + column * destPixelStride));
 
             Depth32FStencil8ToDepth32F(sourcePixel, destPixel);
         }
@@ -403,9 +406,9 @@ void Write2DVertices(const gl::Box &sourceArea,
         static_cast<d3d11::PositionTexCoordVertex *>(outVertices);
 
     d3d11::SetPositionTexCoordVertex(&vertices[0], x1, y1, u1, v2);
-    d3d11::SetPositionTexCoordVertex(&vertices[1], x1, y2, u1, v1);
-    d3d11::SetPositionTexCoordVertex(&vertices[2], x2, y1, u2, v2);
-    d3d11::SetPositionTexCoordVertex(&vertices[3], x2, y2, u2, v1);
+    d3d11::SetPositionTexCoordVertex(&ANGLE_UNSAFE_TODO(vertices[1]), x1, y2, u1, v1);
+    d3d11::SetPositionTexCoordVertex(&ANGLE_UNSAFE_TODO(vertices[2]), x2, y1, u2, v2);
+    d3d11::SetPositionTexCoordVertex(&ANGLE_UNSAFE_TODO(vertices[3]), x2, y2, u2, v1);
 
     *outStride      = sizeof(d3d11::PositionTexCoordVertex);
     *outVertexCount = 4;
@@ -434,13 +437,19 @@ void Write3DVertices(const gl::Box &sourceArea,
     {
         float readDepth = (float)i / std::max(destSize.depth - 1, 1);
 
-        d3d11::SetPositionLayerTexCoord3DVertex(&vertices[i * 6 + 0], x1, y1, i, u1, v2, readDepth);
-        d3d11::SetPositionLayerTexCoord3DVertex(&vertices[i * 6 + 1], x1, y2, i, u1, v1, readDepth);
-        d3d11::SetPositionLayerTexCoord3DVertex(&vertices[i * 6 + 2], x2, y1, i, u2, v2, readDepth);
+        d3d11::SetPositionLayerTexCoord3DVertex(&ANGLE_UNSAFE_TODO(vertices[i * 6 + 0]), x1, y1, i,
+                                                u1, v2, readDepth);
+        d3d11::SetPositionLayerTexCoord3DVertex(&ANGLE_UNSAFE_TODO(vertices[i * 6 + 1]), x1, y2, i,
+                                                u1, v1, readDepth);
+        d3d11::SetPositionLayerTexCoord3DVertex(&ANGLE_UNSAFE_TODO(vertices[i * 6 + 2]), x2, y1, i,
+                                                u2, v2, readDepth);
 
-        d3d11::SetPositionLayerTexCoord3DVertex(&vertices[i * 6 + 3], x1, y2, i, u1, v1, readDepth);
-        d3d11::SetPositionLayerTexCoord3DVertex(&vertices[i * 6 + 4], x2, y2, i, u2, v1, readDepth);
-        d3d11::SetPositionLayerTexCoord3DVertex(&vertices[i * 6 + 5], x2, y1, i, u2, v2, readDepth);
+        d3d11::SetPositionLayerTexCoord3DVertex(&ANGLE_UNSAFE_TODO(vertices[i * 6 + 3]), x1, y2, i,
+                                                u1, v1, readDepth);
+        d3d11::SetPositionLayerTexCoord3DVertex(&ANGLE_UNSAFE_TODO(vertices[i * 6 + 4]), x2, y2, i,
+                                                u2, v1, readDepth);
+        d3d11::SetPositionLayerTexCoord3DVertex(&ANGLE_UNSAFE_TODO(vertices[i * 6 + 5]), x2, y1, i,
+                                                u2, v2, readDepth);
     }
 
     *outStride      = sizeof(d3d11::PositionLayerTexCoord3DVertex);
@@ -872,9 +881,9 @@ angle::Result Blit11::swizzleTexture(const gl::Context *context,
 
     unsigned int *swizzleIndices = static_cast<unsigned int *>(mappedResource.pData);
     swizzleIndices[0]            = GetSwizzleIndex(swizzleTarget.swizzleRed);
-    swizzleIndices[1]            = GetSwizzleIndex(swizzleTarget.swizzleGreen);
-    swizzleIndices[2]            = GetSwizzleIndex(swizzleTarget.swizzleBlue);
-    swizzleIndices[3]            = GetSwizzleIndex(swizzleTarget.swizzleAlpha);
+    ANGLE_UNSAFE_TODO(swizzleIndices[1]) = GetSwizzleIndex(swizzleTarget.swizzleGreen);
+    ANGLE_UNSAFE_TODO(swizzleIndices[2]) = GetSwizzleIndex(swizzleTarget.swizzleBlue);
+    ANGLE_UNSAFE_TODO(swizzleIndices[3]) = GetSwizzleIndex(swizzleTarget.swizzleAlpha);
 
     deviceContext->Unmap(mSwizzleCB.get(), 0);
 

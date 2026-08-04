@@ -6,11 +6,8 @@
 
 // TextureD3D.cpp: Implementations of the Texture interfaces shared betweeen the D3D backends.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/TextureD3D.h"
+#include "common/unsafe_buffers.h"
 
 #include <memory>
 
@@ -59,7 +56,7 @@ angle::Result GetUnpackPointer(const gl::Context *context,
         ASSERT(bufferD3D);
         const uint8_t *bufferData = nullptr;
         ANGLE_TRY(bufferD3D->getData(context, &bufferData));
-        *pointerOut = bufferData + offset;
+        *pointerOut = ANGLE_UNSAFE_TODO(bufferData + offset);
     }
     else
     {
@@ -69,7 +66,7 @@ angle::Result GetUnpackPointer(const gl::Context *context,
     // Offset the pointer for 2D array layer (if it's valid)
     if (*pointerOut != nullptr)
     {
-        *pointerOut += layerOffset;
+        ANGLE_UNSAFE_TODO(*pointerOut += layerOffset);
     }
 
     return angle::Result::Continue;
@@ -3288,8 +3285,8 @@ TextureD3D_2DArray::TextureD3D_2DArray(const gl::TextureState &state, RendererD3
 {
     for (int level = 0; level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; ++level)
     {
-        mLayerCounts[level] = 0;
-        mImageArray[level]  = nullptr;
+        ANGLE_UNSAFE_TODO(mLayerCounts[level]) = 0;
+        ANGLE_UNSAFE_TODO(mImageArray[level])  = nullptr;
     }
 }
 
@@ -3307,47 +3304,52 @@ TextureD3D_2DArray::~TextureD3D_2DArray() {}
 ImageD3D *TextureD3D_2DArray::getImage(int level, int layer) const
 {
     ASSERT(level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
-    ASSERT((layer == 0 && mLayerCounts[level] == 0) || layer < mLayerCounts[level]);
-    return (mImageArray[level] ? mImageArray[level][layer] : nullptr);
+    ANGLE_UNSAFE_TODO(
+        ASSERT((layer == 0 && mLayerCounts[level] == 0) || layer < mLayerCounts[level]));
+    return ANGLE_UNSAFE_TODO(mImageArray[level] ? mImageArray[level][layer] : nullptr);
 }
 
 ImageD3D *TextureD3D_2DArray::getImage(const gl::ImageIndex &index) const
 {
     ASSERT(index.getLevelIndex() < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
     ASSERT(index.hasLayer());
-    ASSERT((index.getLayerIndex() == 0 && mLayerCounts[index.getLevelIndex()] == 0) ||
-           index.getLayerIndex() < mLayerCounts[index.getLevelIndex()]);
+    ANGLE_UNSAFE_TODO(
+        ASSERT((index.getLayerIndex() == 0 && mLayerCounts[index.getLevelIndex()] == 0) ||
+               index.getLayerIndex() < mLayerCounts[index.getLevelIndex()]));
     ASSERT(index.getType() == gl::TextureType::_2DArray);
-    return (mImageArray[index.getLevelIndex()]
-                ? mImageArray[index.getLevelIndex()][index.getLayerIndex()]
-                : nullptr);
+    return ANGLE_UNSAFE_TODO(mImageArray[index.getLevelIndex()]
+                                 ? mImageArray[index.getLevelIndex()][index.getLayerIndex()]
+                                 : nullptr);
 }
 
 GLsizei TextureD3D_2DArray::getLayerCount(int level) const
 {
     ASSERT(level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
-    return mLayerCounts[level];
+    return ANGLE_UNSAFE_TODO(mLayerCounts[level]);
 }
 
 GLsizei TextureD3D_2DArray::getWidth(GLint level) const
 {
-    return (level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS && mLayerCounts[level] > 0)
-               ? mImageArray[level][0]->getWidth()
-               : 0;
+    return ANGLE_UNSAFE_TODO(
+        (level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS && mLayerCounts[level] > 0)
+            ? mImageArray[level][0]->getWidth()
+            : 0);
 }
 
 GLsizei TextureD3D_2DArray::getHeight(GLint level) const
 {
-    return (level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS && mLayerCounts[level] > 0)
-               ? mImageArray[level][0]->getHeight()
-               : 0;
+    return ANGLE_UNSAFE_TODO(
+        (level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS && mLayerCounts[level] > 0)
+            ? mImageArray[level][0]->getHeight()
+            : 0);
 }
 
 GLenum TextureD3D_2DArray::getInternalFormat(GLint level) const
 {
-    return (level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS && mLayerCounts[level] > 0)
-               ? mImageArray[level][0]->getInternalFormat()
-               : GL_NONE;
+    return ANGLE_UNSAFE_TODO(
+        (level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS && mLayerCounts[level] > 0)
+            ? mImageArray[level][0]->getInternalFormat()
+            : GL_NONE);
 }
 
 bool TextureD3D_2DArray::isDepth(GLint level) const
@@ -3546,8 +3548,8 @@ angle::Result TextureD3D_2DArray::copySubImage(const gl::Context *context,
     if (!canCreateRenderTargetForImage(index))
     {
         gl::Offset destLayerOffset(clippedDestOffset.x, clippedDestOffset.y, 0);
-        ANGLE_TRY(mImageArray[index.getLevelIndex()][clippedDestOffset.z]->copyFromFramebuffer(
-            context, destLayerOffset, clippedSourceArea, source));
+        ANGLE_TRY(ANGLE_UNSAFE_TODO(mImageArray[index.getLevelIndex()][clippedDestOffset.z])
+                      ->copyFromFramebuffer(context, destLayerOffset, clippedSourceArea, source));
         mDirtyImages = true;
         onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
     }
@@ -3724,18 +3726,20 @@ angle::Result TextureD3D_2DArray::setStorage(const gl::Context *context,
         gl::Extents levelLayerSize(std::max(1, size.width >> level),
                                    std::max(1, size.height >> level), 1);
 
-        mLayerCounts[level] = (level < levels ? size.depth : 0);
+        ANGLE_UNSAFE_TODO(mLayerCounts[level]) = (level < levels ? size.depth : 0);
 
-        if (mLayerCounts[level] > 0)
+        if (ANGLE_UNSAFE_TODO(mLayerCounts[level]) > 0)
         {
             // Create new images for this level
-            mImageArray[level] = new ImageD3D *[mLayerCounts[level]];
+            ANGLE_UNSAFE_TODO(mImageArray[level] = new ImageD3D *[mLayerCounts[level]]);
 
-            for (int layer = 0; layer < mLayerCounts[level]; layer++)
+            for (int layer = 0; layer < ANGLE_UNSAFE_TODO(mLayerCounts[level]); layer++)
             {
-                mImageArray[level][layer] = mRenderer->createImage();
-                mImageArray[level][layer]->redefine(gl::TextureType::_2DArray, internalFormat,
-                                                    levelLayerSize, true);
+                ANGLE_UNSAFE_TODO({
+                    mImageArray[level][layer] = mRenderer->createImage();
+                    mImageArray[level][layer]->redefine(gl::TextureType::_2DArray, internalFormat,
+                                                        levelLayerSize, true);
+                })
             }
         }
     }
@@ -3965,10 +3969,11 @@ angle::Result TextureD3D_2DArray::updateStorageLevel(const gl::Context *context,
     ASSERT(level >= 0 && level < static_cast<int>(ArraySize(mLayerCounts)));
     ASSERT(isLevelComplete(level));
 
-    for (int layer = 0; layer < mLayerCounts[level]; layer++)
+    for (int layer = 0; layer < ANGLE_UNSAFE_TODO(mLayerCounts[level]); layer++)
     {
-        ASSERT(mImageArray[level] != nullptr && mImageArray[level][layer] != nullptr);
-        if (mImageArray[level][layer]->isDirty())
+        ANGLE_UNSAFE_TODO(
+            ASSERT(mImageArray[level] != nullptr && mImageArray[level][layer] != nullptr));
+        if (ANGLE_UNSAFE_TODO(mImageArray[level][layer]->isDirty()))
         {
             gl::ImageIndex index = gl::ImageIndex::Make2DArray(level, layer);
             gl::Box region(0, 0, 0, getWidth(level), getHeight(level), 1);
@@ -3983,13 +3988,15 @@ void TextureD3D_2DArray::deleteImages()
 {
     for (int level = 0; level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; ++level)
     {
-        for (int layer = 0; layer < mLayerCounts[level]; ++layer)
+        for (int layer = 0; layer < ANGLE_UNSAFE_TODO(mLayerCounts[level]); ++layer)
         {
-            delete mImageArray[level][layer];
+            ANGLE_UNSAFE_TODO(delete mImageArray[level][layer]);
         }
-        delete[] mImageArray[level];
-        mImageArray[level]  = nullptr;
-        mLayerCounts[level] = 0;
+        ANGLE_UNSAFE_TODO({
+            delete[] mImageArray[level];
+            mImageArray[level]  = nullptr;
+            mLayerCounts[level] = 0;
+        })
     }
 }
 
@@ -4012,21 +4019,23 @@ angle::Result TextureD3D_2DArray::redefineImage(const gl::Context *context,
     }
 
     // Only reallocate the layers if the size doesn't match
-    if (size.depth != mLayerCounts[level])
+    if (size.depth != ANGLE_UNSAFE_TODO(mLayerCounts[level]))
     {
-        for (int layer = 0; layer < mLayerCounts[level]; layer++)
+        for (int layer = 0; layer < ANGLE_UNSAFE_TODO(mLayerCounts[level]); layer++)
         {
-            SafeDelete(mImageArray[level][layer]);
+            ANGLE_UNSAFE_TODO(SafeDelete(mImageArray[level][layer]));
         }
-        SafeDeleteArray(mImageArray[level]);
-        mLayerCounts[level] = size.depth;
+        ANGLE_UNSAFE_TODO({
+            SafeDeleteArray(mImageArray[level]);
+            mLayerCounts[level] = size.depth;
+        })
 
         if (size.depth > 0)
         {
-            mImageArray[level] = new ImageD3D *[size.depth];
-            for (int layer = 0; layer < mLayerCounts[level]; layer++)
+            ANGLE_UNSAFE_TODO(mImageArray[level] = new ImageD3D *[size.depth]);
+            for (int layer = 0; layer < ANGLE_UNSAFE_TODO(mLayerCounts[level]); layer++)
             {
-                mImageArray[level][layer] = mRenderer->createImage();
+                ANGLE_UNSAFE_TODO(mImageArray[level][layer] = mRenderer->createImage());
             }
         }
     }
@@ -4051,12 +4060,12 @@ angle::Result TextureD3D_2DArray::redefineImage(const gl::Context *context,
 
     if (size.depth > 0)
     {
-        for (int layer = 0; layer < mLayerCounts[level]; layer++)
+        for (int layer = 0; layer < ANGLE_UNSAFE_TODO(mLayerCounts[level]); layer++)
         {
-            mImageArray[level][layer]->redefine(gl::TextureType::_2DArray, internalformat,
-                                                gl::Extents(size.width, size.height, 1),
-                                                forceRelease);
-            mDirtyImages = mDirtyImages || mImageArray[level][layer]->isDirty();
+            ANGLE_UNSAFE_TODO(mImageArray[level][layer])
+                ->redefine(gl::TextureType::_2DArray, internalformat,
+                           gl::Extents(size.width, size.height, 1), forceRelease);
+            mDirtyImages = mDirtyImages || ANGLE_UNSAFE_TODO(mImageArray[level][layer])->isDirty();
         }
     }
 
@@ -4088,17 +4097,19 @@ bool TextureD3D_2DArray::isValidIndex(const gl::ImageIndex &index) const
     }
 
     // Check the layer index
-    return (!index.hasLayer() || (index.getLayerIndex() >= 0 &&
-                                  index.getLayerIndex() < mLayerCounts[index.getLevelIndex()]));
+    return ANGLE_UNSAFE_TODO(!index.hasLayer() ||
+                             (index.getLayerIndex() >= 0 &&
+                              index.getLayerIndex() < mLayerCounts[index.getLevelIndex()]));
 }
 
 void TextureD3D_2DArray::markAllImagesDirty()
 {
     for (int dirtyLevel = 0; dirtyLevel < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; dirtyLevel++)
     {
-        for (int dirtyLayer = 0; dirtyLayer < mLayerCounts[dirtyLevel]; dirtyLayer++)
+        for (int dirtyLayer = 0; dirtyLayer < ANGLE_UNSAFE_TODO(mLayerCounts[dirtyLevel]);
+             dirtyLayer++)
         {
-            mImageArray[dirtyLevel][dirtyLayer]->markDirty();
+            ANGLE_UNSAFE_TODO(mImageArray[dirtyLevel][dirtyLayer]->markDirty());
         }
     }
     mDirtyImages = true;

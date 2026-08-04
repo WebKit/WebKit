@@ -104,7 +104,7 @@ Many other tests can be found that have documentation in their classes.
 Trace tests take command line arguments that pick the run configuration:
 
 * `--use-gl=native`: Runs the tests against the default system GLES implementation instad of your local ANGLE.
-* `--use-angle=backend`: Picks an ANGLE back-end. e.g. vulkan, d3d11, d3d9, gl, gles, metal, or swiftshader. Vulkan is the default.
+* `--use-angle=backend`: Picks an ANGLE back-end. e.g. vulkan, d3d11, gl, gles, metal, or swiftshader. Vulkan is the default.
 * `--offscreen`: Run with an offscreen surface instead of swapping every frame.
 * `--vsync`: Run with vsync enabled, and measure CPU and GPU work instead of wall clock time.
 * `--minimize-gpu-work`: Modify API calls so that GPU work is reduced to minimum.

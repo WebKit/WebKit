@@ -4,13 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // copyimage.cpp: Defines image copying functions
 
 #include "image_util/copyimage.h"
+#include "common/unsafe_buffers.h"
 
 namespace angle
 {
@@ -33,12 +30,14 @@ void CopyBGRA8ToRGBA8Fast(const uint8_t *source,
 {
     for (int y = 0; y < destHeight; ++y)
     {
-        const uint32_t *src32 = reinterpret_cast<const uint32_t *>(source + y * srcYAxisPitch);
-        uint32_t *dest32      = reinterpret_cast<uint32_t *>(dest + y * destYAxisPitch);
-        const uint32_t *end32 = src32 + destWidth;
+        const uint32_t *src32 =
+            reinterpret_cast<const uint32_t *>(ANGLE_UNSAFE_TODO(source + y * srcYAxisPitch));
+        uint32_t *dest32 =
+            reinterpret_cast<uint32_t *>(ANGLE_UNSAFE_TODO(dest + y * destYAxisPitch));
+        const uint32_t *end32 = ANGLE_UNSAFE_TODO(src32 + destWidth);
         while (src32 != end32)
         {
-            *dest32++ = SwizzleBGRAToRGBA(*src32++);
+            ANGLE_UNSAFE_TODO(*dest32++ = SwizzleBGRAToRGBA(*src32++));
         }
     }
 }
@@ -55,7 +54,7 @@ void CopyRGBA8ToRGBA8Fast(const uint8_t *source,
     if (destYAxisPitch == destWidth * 4 && srcYAxisPitch == destWidth * 4)
     {
         size_t totalSize = destHeight * destWidth * 4;
-        memcpy(dest, source, totalSize);
+        ANGLE_UNSAFE_TODO(memcpy(dest, source, totalSize));
         return;
     }
 
@@ -63,9 +62,9 @@ void CopyRGBA8ToRGBA8Fast(const uint8_t *source,
     // line.
     for (int y = 0; y < destHeight; ++y)
     {
-        const uint8_t *src = source + y * srcYAxisPitch;
-        uint8_t *dst       = dest + y * destYAxisPitch;
-        memcpy(dst, src, destWidth * 4);
+        const uint8_t *src = ANGLE_UNSAFE_TODO(source + y * srcYAxisPitch);
+        uint8_t *dst       = ANGLE_UNSAFE_TODO(dest + y * destYAxisPitch);
+        ANGLE_UNSAFE_TODO(memcpy(dst, src, destWidth * 4));
     }
 }
 }  // namespace
@@ -87,16 +86,18 @@ void CopyBGRA8ToRGBA8(const uint8_t *source,
 
     for (int y = 0; y < destHeight; ++y)
     {
-        uint8_t *dst       = dest + y * destYAxisPitch;
-        const uint8_t *src = source + y * srcYAxisPitch;
-        const uint8_t *end = src + destWidth * srcXAxisPitch;
+        uint8_t *dst       = ANGLE_UNSAFE_TODO(dest + y * destYAxisPitch);
+        const uint8_t *src = ANGLE_UNSAFE_TODO(source + y * srcYAxisPitch);
+        const uint8_t *end = ANGLE_UNSAFE_TODO(src + destWidth * srcXAxisPitch);
 
         while (src != end)
         {
             *reinterpret_cast<uint32_t *>(dst) =
                 SwizzleBGRAToRGBA(*reinterpret_cast<const uint32_t *>(src));
-            src += srcXAxisPitch;
-            dst += destXAxisPitch;
+            ANGLE_UNSAFE_TODO({
+                src += srcXAxisPitch;
+                dst += destXAxisPitch;
+            })
         }
     }
 }
@@ -118,15 +119,17 @@ void CopyRGBA8ToRGBA8(const uint8_t *source,
 
     for (int y = 0; y < destHeight; ++y)
     {
-        uint8_t *dst       = dest + y * destYAxisPitch;
-        const uint8_t *src = source + y * srcYAxisPitch;
-        const uint8_t *end = src + destWidth * srcXAxisPitch;
+        uint8_t *dst       = ANGLE_UNSAFE_TODO(dest + y * destYAxisPitch);
+        const uint8_t *src = ANGLE_UNSAFE_TODO(source + y * srcYAxisPitch);
+        const uint8_t *end = ANGLE_UNSAFE_TODO(src + destWidth * srcXAxisPitch);
 
         while (src != end)
         {
             *reinterpret_cast<uint32_t *>(dst) = *reinterpret_cast<const uint32_t *>(src);
-            src += srcXAxisPitch;
-            dst += destXAxisPitch;
+            ANGLE_UNSAFE_TODO({
+                src += srcXAxisPitch;
+                dst += destXAxisPitch;
+            })
         }
     }
 }

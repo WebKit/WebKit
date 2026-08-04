@@ -131,11 +131,17 @@ ALIASING_EXCEPTIONS = [
     'renderbufferStorageMultisampleEXT',
     # Other entry points where the extension behavior is not identical to core
     # behavior.
-    'drawArraysInstancedBaseInstanceANGLE',
-    'drawElementsInstancedBaseVertexBaseInstanceANGLE',
     'logicOpANGLE',
     'shadingRateEXT',
     'shadingRateQCOM',
+    # Fence objects do not exist in any core spec version.
+    'deleteFencesNV',
+    'finishFenceNV',
+    'genFencesNV',
+    'getFenceivNV',
+    'isFenceNV',
+    'setFenceNV',
+    'testFenceNV',
 ]
 
 # These are the entry points which potentially are used first by an application
@@ -3262,7 +3268,7 @@ def format_replay_params(api, command_name, param_text_list, packed_enums, resou
         capture_type = get_capture_param_type_name(param_type)
         union_name = get_param_type_union_name(capture_type)
         param_access = 'captures[%d].value.%s' % (i, union_name)
-        cmd_no_suffix = strip_suffix(api, command_name)
+        cmd_no_suffix = strip_suffix_always(api, command_name)
         if cmd_no_suffix in packed_enums and param_name in packed_enums[cmd_no_suffix]:
             packed_type = remove_id_suffix(packed_enums[cmd_no_suffix][param_name])
             if packed_type == 'Sync':

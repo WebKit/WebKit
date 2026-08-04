@@ -222,7 +222,6 @@ declare_args() {
   # True if we are building inside an ANGLE checkout.
   angle_standalone = !build_with_chromium
 
-  angle_enable_d3d9 = is_win && !angle_is_winuwp
   angle_enable_d3d11 = is_win
   angle_enable_gl =
       (ozone_platform_drm || ozone_platform_wayland || !is_linux ||
@@ -333,7 +332,7 @@ declare_args() {
   angle_enable_swiftshader = angle_enable_vulkan && !is_android && is_clang
 
   # Translator backend support:
-  angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
+  angle_enable_hlsl = angle_enable_d3d11
   angle_enable_essl = angle_enable_gl || use_ozone
   angle_enable_glsl = angle_enable_gl || use_ozone
   angle_enable_msl = angle_enable_metal

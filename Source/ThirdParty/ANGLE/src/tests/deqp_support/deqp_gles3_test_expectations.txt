@@ -84,8 +84,6 @@
 42262706 WIN7 D3D11 NVIDIA : dEQP-GLES3.functional.rasterization.flatshading.triangles = FAIL
 
 // Vertex attribute aliasing is not supported on D3D
-42262131 D3D9 : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = FAIL
-42262131 D3D9 : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = FAIL
 42262131 D3D11 : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = FAIL
 42262131 D3D11 : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = FAIL
 

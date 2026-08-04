@@ -4,10 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/IntermNode.h"
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
 
 #include "compiler/translator/util.h"
 
@@ -290,25 +288,26 @@ GLenum GLVariableType(const TType &type)
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() >= 1 && type.getSecondarySize() <= 4);
 
-            return kFloatGLType[type.getNominalSize() - 1][type.getSecondarySize() - 1];
+            return ANGLE_UNSAFE_TODO(
+                kFloatGLType[type.getNominalSize() - 1][type.getSecondarySize() - 1]);
 
         case EbtInt:
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() == 1);
 
-            return kIntGLType[type.getNominalSize() - 1];
+            return ANGLE_UNSAFE_TODO(kIntGLType[type.getNominalSize() - 1]);
 
         case EbtUInt:
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() == 1);
 
-            return kUIntGLType[type.getNominalSize() - 1];
+            return ANGLE_UNSAFE_TODO(kUIntGLType[type.getNominalSize() - 1]);
 
         case EbtBool:
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() == 1);
 
-            return kBoolGLType[type.getNominalSize() - 1];
+            return ANGLE_UNSAFE_TODO(kBoolGLType[type.getNominalSize() - 1]);
 
         case EbtYuvCscStandardEXT:
             return GL_UNSIGNED_INT;
@@ -975,7 +974,7 @@ size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)
 {
     for (size_t fieldIndex = 0; fieldIndex < fieldList.size(); ++fieldIndex)
     {
-        if (strcmp(fieldList[fieldIndex]->name().data(), fieldName) == 0)
+        if (ANGLE_UNSAFE_TODO(strcmp(fieldList[fieldIndex]->name().data(), fieldName)) == 0)
         {
             return fieldIndex;
         }

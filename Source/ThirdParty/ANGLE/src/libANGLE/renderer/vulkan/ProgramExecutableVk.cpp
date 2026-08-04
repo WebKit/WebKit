@@ -7,11 +7,8 @@
 // ProgramPipelineVks in order to execute/draw with either.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/ProgramExecutableVk.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/string_utils.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
@@ -264,7 +261,7 @@ angle::Result UpdateFullTexturesDescriptorSet(vk::ErrorContext *context,
     {
         ASSERT(writeDescriptorDescs[writeIndex].descriptorCount > 0);
 
-        VkWriteDescriptorSet &writeSet = writeDescriptorSets[writeIndex];
+        VkWriteDescriptorSet &writeSet = ANGLE_UNSAFE_TODO(writeDescriptorSets[writeIndex]);
         writeSet.descriptorCount       = writeDescriptorDescs[writeIndex].descriptorCount;
         writeSet.descriptorType =
             static_cast<VkDescriptorType>(writeDescriptorDescs[writeIndex].descriptorType);
@@ -298,7 +295,7 @@ angle::Result UpdateFullTexturesDescriptorSet(vk::ErrorContext *context,
         const gl::SamplerBinding &samplerBinding = samplerBindings[samplerIndex];
         uint32_t arraySize = static_cast<uint32_t>(samplerBinding.textureUnitsCount);
 
-        VkWriteDescriptorSet &writeSet = writeDescriptorSets[info.binding];
+        VkWriteDescriptorSet &writeSet = ANGLE_UNSAFE_TODO(writeDescriptorSets[info.binding]);
         // Now fill pImageInfo or pTexelBufferView for writeSet
         for (uint32_t arrayElement = 0; arrayElement < arraySize; ++arrayElement)
         {
@@ -335,8 +332,9 @@ angle::Result UpdateFullTexturesDescriptorSet(vk::ErrorContext *context,
                     samplerState.getSRGBDecode(), samplerUniform.isTexelFetchStaticUse(),
                     isSamplerExternalY2Y);
 
-                VkDescriptorImageInfo *imageInfo = const_cast<VkDescriptorImageInfo *>(
-                    &writeSet.pImageInfo[arrayElement + samplerUniform.getOuterArrayOffset()]);
+                VkDescriptorImageInfo *imageInfo =
+                    const_cast<VkDescriptorImageInfo *>(&ANGLE_UNSAFE_TODO(
+                        writeSet.pImageInfo[arrayElement + samplerUniform.getOuterArrayOffset()]));
                 imageInfo->imageLayout = renderer->getVkImageLayout(imageAccess);
                 imageInfo->imageView   = imageView.getHandle();
                 imageInfo->sampler     = samplerHelper.get().getHandle();
@@ -2464,7 +2462,8 @@ angle::Result ProgramExecutableVk::updateUniforms(vk::Context *context,
         if (mDefaultUniformBlocksDirty[shaderType])
         {
             const angle::MemoryBuffer &uniformData = mDefaultUniformBlocks[shaderType]->uniformData;
-            memcpy(&bufferData[offsets[shaderType]], uniformData.data(), uniformData.size());
+            ANGLE_UNSAFE_TODO(
+                memcpy(&bufferData[offsets[shaderType]], uniformData.data(), uniformData.size()));
             mDefaultUniformDynamicDescriptorOffsets[offsetIndex] =
                 static_cast<uint32_t>(bufferOffset + offsets[shaderType]);
             mDefaultUniformBlocksDirty.reset(shaderType);

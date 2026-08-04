@@ -6,11 +6,8 @@
 // CLEventVk.cpp: Implements the class methods for CLEventVk.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLCommandQueue.h"
 
@@ -105,7 +102,7 @@ angle::Result CLEventVk::getProfilingInfo(cl::ProfilingInfo name,
 
     if ((value != nullptr) && (copyValue != nullptr))
     {
-        memcpy(value, copyValue, std::min(valueSize, copySize));
+        ANGLE_UNSAFE_TODO(memcpy(value, copyValue, std::min(valueSize, copySize)));
     }
 
     if (valueSizeRet != nullptr)

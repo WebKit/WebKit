@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/glsl/OutputGLSLBase.h"
+#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/debug.h"
@@ -440,7 +437,7 @@ const char *TOutputGLSLBase::getIndentPrefix(int extraIndentation)
 {
     int indentDepth = std::min(kMaxIndentLevel, getCurrentBlockDepth() + extraIndentation);
     ASSERT(indentDepth >= 0);
-    return kIndent + (kMaxIndentLevel - indentDepth) * kIndentWidth;
+    return ANGLE_UNSAFE_TODO(kIndent + (kMaxIndentLevel - indentDepth) * kIndentWidth);
 }
 
 void TOutputGLSLBase::writeVariableType(const TType &type,
@@ -561,7 +558,7 @@ const TConstantUnion *TOutputGLSLBase::writeConstantUnion(const TType &type,
         bool writeType = size > 1;
         if (writeType)
             out << getTypeName(type) << "(";
-        for (size_t i = 0; i < size; ++i, ++pConstUnion)
+        for (size_t i = 0; i < size; ++i, ANGLE_UNSAFE_TODO(++pConstUnion))
         {
             switch (pConstUnion->getType())
             {

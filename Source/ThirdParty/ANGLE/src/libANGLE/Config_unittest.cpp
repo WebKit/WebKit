@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -147,12 +144,12 @@ TEST(ConfigSetTest, FilteringBitSizes)
             // Set all the other tested members of this config to 0
             for (size_t k = 0; k < ArraySize(testMembers); k++)
             {
-                config.*(testMembers[k].ConfigMember) = 0;
+                config.*(ANGLE_UNSAFE_TODO(testMembers[k]).ConfigMember) = 0;
             }
 
             // Set the tested member of this config to i so it ranges from
             // [1, configsPerType]
-            config.*(testMembers[i].ConfigMember) = static_cast<EGLint>(j) + 1;
+            config.*(ANGLE_UNSAFE_TODO(testMembers[i]).ConfigMember) = static_cast<EGLint>(j) + 1;
 
             set.add(config);
         }
@@ -166,7 +163,7 @@ TEST(ConfigSetTest, FilteringBitSizes)
         for (EGLint j = 0; j < static_cast<EGLint>(configsPerType); j++)
         {
             egl::AttributeMap filter;
-            filter.insert(testMembers[i].Name, j + 1);
+            filter.insert(ANGLE_UNSAFE_TODO(testMembers[i]).Name, j + 1);
 
             std::vector<const egl::Config *> filteredConfigs = set.filter(filter);
 

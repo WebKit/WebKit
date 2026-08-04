@@ -7,11 +7,8 @@
 // ProgramPipelines in order to execute/draw with either.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/ProgramExecutable.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/string_utils.h"
 #include "libANGLE/Context.h"
@@ -365,8 +362,8 @@ void CopyStringToBuffer(GLchar *buffer,
 {
     ASSERT(bufSize > 0);
     size_t length = std::min<size_t>(bufSize - 1, string.length());
-    memcpy(buffer, string.c_str(), length);
-    buffer[length] = '\0';
+    ANGLE_UNSAFE_TODO(memcpy(buffer, string.c_str(), length));
+    ANGLE_UNSAFE_TODO(buffer[length]) = '\0';
 
     if (lengthOut)
     {
@@ -680,8 +677,9 @@ void UniformStateQueryCastLoop(DestT *dataOut, const uint8_t *srcPointer, int co
         // We only work with strides of 4 bytes for uniform components. (GLfloat/GLint)
         // Don't use SrcT stride directly since GLboolean has a stride of 1 byte.
         size_t offset               = comp * 4;
-        const SrcT *typedSrcPointer = reinterpret_cast<const SrcT *>(&srcPointer[offset]);
-        dataOut[comp]               = UniformStateQueryCast<DestT>(*typedSrcPointer);
+        const SrcT *typedSrcPointer =
+            reinterpret_cast<const SrcT *>(&ANGLE_UNSAFE_TODO(srcPointer[offset]));
+        ANGLE_UNSAFE_TODO(dataOut[comp]) = UniformStateQueryCast<DestT>(*typedSrcPointer);
     }
 }
 }  // anonymous namespace
@@ -757,7 +755,7 @@ ProgramExecutable::ProgramExecutable(rx::GLImplFactory *factory, InfoLog *infoLo
       mIsPPO(false),
       mBinaryRetrieveableHint(false)
 {
-    memset(&mPod, 0, sizeof(mPod));
+    ANGLE_UNSAFE_TODO(memset(&mPod, 0, sizeof(mPod)));
     reset();
 }
 
@@ -1302,12 +1300,7 @@ bool ProgramExecutable::linkMergedVaryings(const Caps &caps,
     // Map the varyings to the register file
     // In WebGL, we use a slightly different handling for packing variables.
     gl::PackMode packMode = PackMode::ANGLE_RELAXED;
-    if (limitations.noFlexibleVaryingPacking)
-    {
-        // D3D9 pack mode is strictly more strict than WebGL, so takes priority.
-        packMode = PackMode::ANGLE_NON_CONFORMANT_D3D9;
-    }
-    else if (webglCompatibility)
+    if (webglCompatibility)
     {
         packMode = PackMode::WEBGL_STRICT;
     }
@@ -3076,7 +3069,7 @@ void ProgramExecutable::updateSamplerUniform(Context *context,
     {
         GLint oldTextureUnit =
             samplerBinding.getTextureUnit(boundTextureUnits, arrayIndex + locationInfo.arrayIndex);
-        GLint newTextureUnit = v[arrayIndex];
+        GLint newTextureUnit = ANGLE_UNSAFE_TODO(v[arrayIndex]);
 
         if (oldTextureUnit == newTextureUnit)
         {

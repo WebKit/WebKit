@@ -46,8 +46,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Vertex attribute aliasing is not supported on D3D
-42262131 D3D9 : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = FAIL
-42262131 D3D9 : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond* = FAIL
 42262131 D3D11 : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = FAIL
 
 // The fragment_ops.depth_stencil.random tests all seem to fail on D3D11.

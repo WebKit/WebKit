@@ -7,12 +7,9 @@
 //   always have to be re-compiled. Can be used in conjunction with the platform
 //   layer to warm up the cache from disk.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 // Include zlib first, otherwise FAR gets defined elsewhere.
 #define USE_SYSTEM_ZLIB
+#include "common/unsafe_buffers.h"
 #include "compression_utils_portable.h"
 
 #include "libANGLE/MemoryProgramCache.h"
@@ -117,7 +114,7 @@ void MemoryProgramCache::ComputeHash(const Context *context,
     // Get the hash
     ASSERT(hashOut);
     hasher.Final();
-    memcpy(hashOut->data(), hasher.Digest(), angle::kBlobCacheKeyLength);
+    ANGLE_UNSAFE_TODO(memcpy(hashOut->data(), hasher.Digest(), angle::kBlobCacheKeyLength));
 }
 
 angle::Result MemoryProgramCache::getProgram(const Context *context,
@@ -224,7 +221,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
         // this still causes a test failure.
         auto *platform = ANGLEPlatformCurrent();
         angle::ProgramKeyType key = {};
-        memcpy(key.data(), programHash.data(), angle::kBlobCacheKeyLength);
+        ANGLE_UNSAFE_TODO(memcpy(key.data(), programHash.data(), angle::kBlobCacheKeyLength));
         platform->cacheProgram(platform, key, compressedData.size(), compressedData.data());
     }
 
@@ -249,7 +246,7 @@ bool MemoryProgramCache::putBinary(const egl::BlobCache::Key &programHash,
     {
         return false;
     }
-    memcpy(newEntry.data(), binary, length);
+    ANGLE_UNSAFE_TODO(memcpy(newEntry.data(), binary, length));
 
     // Store the binary.
     mBlobCache.populate(programHash, std::move(newEntry));

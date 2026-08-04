@@ -7,11 +7,8 @@
 // Image11.h: Implements the rx::Image11 class, which acts as the interface to
 // the actual underlying resources of a Texture
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/d3d11/Image11.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/utilities.h"
 #include "image_util/loadimage.h"
@@ -109,11 +106,12 @@ angle::Result Image11::CopyImage(const gl::Context *context,
         gl::GetSizedInternalFormatInfo(destFormat.fboImplementationInternalFormat);
     GLuint destPixelBytes = destFormatInfo.pixelBytes;
 
-    const uint8_t *sourceData = static_cast<const uint8_t *>(srcMapped.pData) +
-                                sourceBox.x * sourcePixelBytes + sourceBox.y * srcMapped.RowPitch +
-                                sourceBox.z * srcMapped.DepthPitch;
-    uint8_t *destData = static_cast<uint8_t *>(destMapped.pData) + destOffset.x * destPixelBytes +
-                        destOffset.y * destMapped.RowPitch + destOffset.z * destMapped.DepthPitch;
+    const uint8_t *sourceData = ANGLE_UNSAFE_TODO(
+        static_cast<const uint8_t *>(srcMapped.pData) + sourceBox.x * sourcePixelBytes +
+        sourceBox.y * srcMapped.RowPitch + sourceBox.z * srcMapped.DepthPitch);
+    uint8_t *destData = ANGLE_UNSAFE_TODO(
+        static_cast<uint8_t *>(destMapped.pData) + destOffset.x * destPixelBytes +
+        destOffset.y * destMapped.RowPitch + destOffset.z * destMapped.DepthPitch);
 
     CopyImageCHROMIUM(sourceData, srcMapped.RowPitch, sourcePixelBytes, srcMapped.DepthPitch,
                       sourceFormat.pixelReadFunction, destData, destMapped.RowPitch, destPixelBytes,
@@ -303,12 +301,14 @@ angle::Result Image11::loadData(const gl::Context *context,
     D3D11_MAPPED_SUBRESOURCE mappedImage;
     ANGLE_TRY(map(context, D3D11_MAP_WRITE, &mappedImage));
 
-    uint8_t *offsetMappedData = (static_cast<uint8_t *>(mappedImage.pData) +
-                                 (area.y * mappedImage.RowPitch + area.x * outputPixelSize +
-                                  area.z * mappedImage.DepthPitch));
+    uint8_t *offsetMappedData =
+        (ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mappedImage.pData) +
+                           (area.y * mappedImage.RowPitch + area.x * outputPixelSize +
+                            area.z * mappedImage.DepthPitch)));
     loadFunction(context11->getImageLoadContext(), area.width, area.height, area.depth,
-                 static_cast<const uint8_t *>(input) + inputSkipBytes, inputRowPitch,
-                 inputDepthPitch, offsetMappedData, mappedImage.RowPitch, mappedImage.DepthPitch);
+                 ANGLE_UNSAFE_TODO(static_cast<const uint8_t *>(input) + inputSkipBytes),
+                 inputRowPitch, inputDepthPitch, offsetMappedData, mappedImage.RowPitch,
+                 mappedImage.DepthPitch);
 
     unmap();
 
@@ -345,10 +345,10 @@ angle::Result Image11::loadCompressedData(const gl::Context *context,
     D3D11_MAPPED_SUBRESOURCE mappedImage;
     ANGLE_TRY(map(context, D3D11_MAP_WRITE, &mappedImage));
 
-    uint8_t *offsetMappedData =
+    uint8_t *offsetMappedData = ANGLE_UNSAFE_TODO(
         static_cast<uint8_t *>(mappedImage.pData) +
         ((area.y / outputBlockHeight) * mappedImage.RowPitch +
-         (area.x / outputBlockWidth) * outputPixelSize + area.z * mappedImage.DepthPitch);
+         (area.x / outputBlockWidth) * outputPixelSize + area.z * mappedImage.DepthPitch));
 
     loadFunction(context11->getImageLoadContext(), area.width, area.height, area.depth,
                  static_cast<const uint8_t *>(input), inputRowPitch, inputDepthPitch,
@@ -415,9 +415,9 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
     const auto &dxgiFormatInfo = d3d11::GetDXGIFormatSizeInfo(mDXGIFormat);
     GLsizei rowOffset          = dxgiFormatInfo.pixelBytes * destOffset.x;
 
-    uint8_t *dataOffset = static_cast<uint8_t *>(mappedImage.pData) +
-                          mappedImage.RowPitch * destOffset.y + rowOffset +
-                          destOffset.z * mappedImage.DepthPitch;
+    uint8_t *dataOffset = ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mappedImage.pData) +
+                                            mappedImage.RowPitch * destOffset.y + rowOffset +
+                                            destOffset.z * mappedImage.DepthPitch);
 
     const gl::InternalFormat &destFormatInfo = gl::GetSizedInternalFormatInfo(mInternalFormat);
     const auto &destD3D11Format =

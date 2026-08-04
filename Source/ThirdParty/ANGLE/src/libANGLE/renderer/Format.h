@@ -12,10 +12,7 @@
 #ifndef LIBANGLE_RENDERER_FORMAT_H_
 #define LIBANGLE_RENDERER_FORMAT_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/FormatID_autogen.h"
 #include "libANGLE/renderer/renderer_utils.h"
@@ -52,7 +49,10 @@ struct Format final : private angle::NonCopyable
                             bool isYUV,
                             gl::VertexAttribType vertexAttribType);
 
-    static const Format &Get(FormatID id) { return gFormatInfoTable[static_cast<int>(id)]; }
+    static const Format &Get(FormatID id)
+    {
+        return ANGLE_UNSAFE_TODO(gFormatInfoTable[static_cast<int>(id)]);
+    }
 
     static FormatID InternalFormatToID(GLenum internalFormat);
 

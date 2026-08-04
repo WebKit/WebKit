@@ -427,11 +427,11 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // If an image is in use by the GPU but is overwritten completely, a new VkImage can be created
     // instead to avoid creating an unnecessary dependency.
     angle::Result ghostOnOverwrite(ContextVk *contextVk,
-                                   const gl::ImageIndex &index,
+                                   const gl::SourceImageIndex &index,
                                    const gl::Box &area);
 
     angle::Result setImageImpl(const gl::Context *context,
-                               const gl::ImageIndex &index,
+                               const gl::OwnImageIndex &index,
                                const gl::InternalFormat &formatInfo,
                                const gl::Extents &size,
                                GLenum type,
@@ -439,7 +439,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                gl::Buffer *unpackBuffer,
                                const uint8_t *pixels);
     angle::Result setSubImageImpl(const gl::Context *context,
-                                  const gl::ImageIndex &index,
+                                  const gl::SourceImageIndex &index,
                                   const gl::Box &area,
                                   const gl::InternalFormat &formatInfo,
                                   GLenum type,
@@ -458,7 +458,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                     const uint8_t *data);
 
     angle::Result ensureImageInitializedIfUpdatesNeedStageOrFlush(ContextVk *contextVk,
-                                                                  gl::LevelIndex level,
+                                                                  gl::SourceLevel level,
                                                                   const vk::Format &vkFormat,
                                                                   vk::ApplyImageUpdate applyUpdate,
                                                                   bool usesBufferForUpdate);
@@ -473,7 +473,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result copyBufferDataToImage(ContextVk *contextVk,
                                         vk::BufferHelper *srcBuffer,
-                                        const gl::ImageIndex index,
+                                        const gl::SourceImageIndex index,
                                         uint32_t rowLength,
                                         uint32_t imageHeight,
                                         const gl::Box &sourceArea,
@@ -640,7 +640,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result convertBufferToRGBA(ContextVk *contextVk, size_t &conversionBufferSize);
     bool isCompressedFormatEmulated(const gl::Context *context,
                                     const gl::TextureTarget target,
-                                    GLint level);
+                                    gl::OwnLevel level);
 
     angle::Result setStorageImpl(ContextVk *contextVk,
                                  gl::TextureType type,

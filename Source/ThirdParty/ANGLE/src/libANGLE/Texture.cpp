@@ -6,11 +6,8 @@
 
 // Texture.cpp: Implements the gl::Texture class. [OpenGL ES 2.0.24] section 3.7 page 63.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/Texture.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/mathutil.h"
 #include "common/utilities.h"
@@ -1917,7 +1914,7 @@ angle::Result Texture::setStorageAttribs(Context *context,
 
     if (nullptr != attribList && GL_SURFACE_COMPRESSION_EXT == *attribList)
     {
-        attribList++;
+        ANGLE_UNSAFE_TODO(attribList++);
         if (nullptr != attribList && GL_NONE != *attribList)
         {
             mState.mCompressionFixedRate = *attribList;

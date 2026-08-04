@@ -7,7 +7,7 @@
 import("../../../../gni/angle.gni")
 import("d3d_backend.gni")
 
-assert(angle_enable_d3d11 || angle_enable_d3d9)
+assert(angle_enable_d3d11)
 
 config("angle_d3d_shared_config") {
   defines = [ "ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ " + "\"d3dcompiler_47.dll\", \"d3dcompiler_46.dll\", \"d3dcompiler_43.dll\" }" ]
@@ -22,23 +22,6 @@ angle_source_set("angle_d3d_shared") {
     "$angle_root:libANGLE_headers",
   ]
   public_configs = [ ":angle_d3d_shared_config" ]
-}
-
-if (angle_enable_d3d9) {
-  config("angle_d3d9_backend_config") {
-    defines = [ "ANGLE_ENABLE_D3D9" ]
-    ldflags = [ "/DELAYLOAD:d3d9.dll" ]
-  }
-
-  angle_source_set("angle_d3d9_backend") {
-    sources = d3d9_backend_sources
-    libs = [
-      "d3d9.lib",
-      "delayimp.lib",
-    ]
-    public_deps = [ ":angle_d3d_shared" ]
-    public_configs = [ ":angle_d3d9_backend_config" ]
-  }
 }
 
 if (angle_enable_d3d11) {

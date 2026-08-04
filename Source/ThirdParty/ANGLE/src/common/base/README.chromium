@@ -8,7 +8,7 @@ Update Mechanism: Static.HardFork (https://crbug.com/419410757)
 Security Critical: no
 Shipped: yes
 License: BSD-3-Clause
-License File: LICENSE in Chromium/src
+License File: //LICENSE
 
 Description:
 base::numerics is a library for doing some simple safe math and conversions.

@@ -10,16 +10,13 @@
 #ifndef UTIL_CAPTURE_FRAME_CAPTURE_TEST_UTILS_H_
 #define UTIL_CAPTURE_FRAME_CAPTURE_TEST_UTILS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include <iostream>
 #include <map>
 #include <memory>
 #include <sstream>
 #include <type_traits>
 #include <vector>
+#include "common/unsafe_buffers.h"
 
 #include "common/angleutils.h"
 #include "common/debug.h"
@@ -108,7 +105,7 @@ class TraceLibrary : angle::NonCopyable, angle::TraceCallbacks
         void *untypedFunc = mTraceLibrary->getSymbol(funcName);
         if (!untypedFunc)
         {
-            fprintf(stderr, "Error loading function: %s\n", funcName);
+            ANGLE_UNSAFE_TODO(fprintf(stderr, "Error loading function: %s\n", funcName));
             ASSERT(untypedFunc);
         }
         auto typedFunc = reinterpret_cast<FuncT>(untypedFunc);

@@ -292,11 +292,6 @@
                 <enum name="EGL_CGL_PIXEL_FORMAT_ANGLE"/>
             </require>
         </extension>
-        <extension name="EGL_ANGLE_device_d3d9" supported="egl">
-            <require>
-                <enum name="EGL_D3D9_DEVICE_ANGLE"/>
-            </require>
-        </extension>
         <extension name="EGL_ANGLE_device_d3d11" supported="egl">
             <require>
                 <enum name="EGL_D3D11_DEVICE_ANGLE"/>
@@ -389,7 +384,6 @@
         </extension>
         <extension name="EGL_ANGLE_platform_angle_d3d" supported="egl">
             <require>
-                <enum name="EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE"/>
                 <enum name="EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE"/>
                 <enum name="EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE"/>
                 <enum name="EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE"/>
@@ -545,7 +539,6 @@
         <enum value="0x3204" name="EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE"/>
         <enum value="0x3205" name="EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE"/>
         <enum value="0x3206" name="EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE"/>
-        <enum value="0x3207" name="EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE"/>
         <enum value="0x3208" name="EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE"/>
         <enum value="0x3209" name="EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE"/>
         <enum value="0x320A" name="EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE"/>

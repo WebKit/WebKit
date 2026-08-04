@@ -6,11 +6,8 @@
 // ProgramExecutableWgpu.cpp: Implementation of ProgramExecutableWgpu.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/wgpu/ProgramExecutableWgpu.h"
+#include "common/unsafe_buffers.h"
 
 #include <iterator>
 
@@ -82,7 +79,8 @@ angle::Result ProgramExecutableWgpu::updateUniformsAndGetBindGroup(
         for (gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
         {
             const angle::MemoryBuffer &uniformData = mDefaultUniformBlocks[shaderType]->uniformData;
-            memcpy(&bufferData[offsets[shaderType]], uniformData.data(), uniformData.size());
+            ANGLE_UNSAFE_TODO(
+                memcpy(&bufferData[offsets[shaderType]], uniformData.data(), uniformData.size()));
             mDefaultUniformBlocksDirty.reset(shaderType);
         }
         ANGLE_TRY(defaultUniformBuffer.unmap());

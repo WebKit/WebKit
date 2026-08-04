@@ -7,11 +7,8 @@
 //    Implements the class methods for ContextWgpu.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/PackedEnums.h"
 #include "common/debug.h"
@@ -124,7 +121,7 @@ angle::Result ContextWgpu::initialize(const angle::ImageLoadContext &imageLoadCo
         wgpu->deviceCreateBindGroupLayout(getDevice().get(), &driverUniformsBindGroupLayoutDesc));
 
     // Driver uniforms should be set to 0 for later memcmp.
-    memset(&mDriverUniforms, 0, sizeof(mDriverUniforms));
+    ANGLE_UNSAFE_TODO(memset(&mDriverUniforms, 0, sizeof(mDriverUniforms)));
 
     return angle::Result::Continue;
 }
@@ -1606,13 +1603,14 @@ angle::Result ContextWgpu::handleDirtyDriverUniforms(DirtyBits::Iterator *dirtyB
         (alphaToCoverage << sh::vk::kDriverUniformsMiscAlphaToCoverageOffset);
 
     // If no change to driver uniforms, return early.
-    if (memcmp(&newDriverUniforms, &mDriverUniforms, sizeof(DriverUniforms)) == 0)
+    if (ANGLE_UNSAFE_TODO(memcmp(&newDriverUniforms, &mDriverUniforms, sizeof(DriverUniforms))) ==
+        0)
     {
         return angle::Result::Continue;
     }
 
     // Cache the uniforms so we can check for changes later.
-    memcpy(&mDriverUniforms, &newDriverUniforms, sizeof(DriverUniforms));
+    ANGLE_UNSAFE_TODO(memcpy(&mDriverUniforms, &newDriverUniforms, sizeof(DriverUniforms)));
 
     // Upload the new driver uniforms to a new GPU buffer.
     webgpu::BufferHelper driverUniformBuffer;
@@ -1624,7 +1622,7 @@ angle::Result ContextWgpu::handleDirtyDriverUniforms(DirtyBits::Iterator *dirtyB
     ASSERT(driverUniformBuffer.valid());
 
     uint8_t *bufferData = driverUniformBuffer.getMapWritePointer(0, sizeof(DriverUniforms));
-    memcpy(bufferData, &mDriverUniforms, sizeof(DriverUniforms));
+    ANGLE_UNSAFE_TODO(memcpy(bufferData, &mDriverUniforms, sizeof(DriverUniforms)));
 
     ANGLE_TRY(driverUniformBuffer.unmap());
 

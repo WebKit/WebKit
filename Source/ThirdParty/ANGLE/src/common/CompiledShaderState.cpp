@@ -8,11 +8,8 @@
 //   shader variables.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/CompiledShaderState.h"
+#include "common/unsafe_buffers.h"
 
 #include <cstring>
 
@@ -208,13 +205,13 @@ std::string JoinShaderSources(GLsizei count, const char *const *string, const GL
     // First pass, calculate the total length of the joined string
     for (GLsizei i = 0; i < count; ++i)
     {
-        if (length == nullptr || length[i] < 0)
+        if (length == nullptr || ANGLE_UNSAFE_TODO(length[i]) < 0)
         {
-            totalLength += std::strlen(string[i]);
+            totalLength += std::strlen(ANGLE_UNSAFE_TODO(string[i]));
         }
         else
         {
-            totalLength += static_cast<size_t>(length[i]);
+            totalLength += static_cast<size_t>(ANGLE_UNSAFE_TODO(length[i]));
         }
     }
 
@@ -224,13 +221,14 @@ std::string JoinShaderSources(GLsizei count, const char *const *string, const GL
     joinedString.reserve(totalLength);
     for (GLsizei i = 0; i < count; ++i)
     {
-        if (length == nullptr || length[i] < 0)
+        if (length == nullptr || ANGLE_UNSAFE_TODO(length[i]) < 0)
         {
-            joinedString.append(string[i]);
+            joinedString.append(ANGLE_UNSAFE_TODO(string[i]));
         }
         else
         {
-            joinedString.append(string[i], static_cast<size_t>(length[i]));
+            joinedString.append(ANGLE_UNSAFE_TODO(string[i]),
+                                static_cast<size_t>(ANGLE_UNSAFE_TODO(length[i])));
         }
     }
 

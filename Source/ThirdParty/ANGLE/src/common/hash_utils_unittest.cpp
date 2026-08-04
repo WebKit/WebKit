@@ -5,11 +5,8 @@
 //
 // hash_utils_unittest: Hashing helper functions tests.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "common/hash_utils.h"
 #include "common/span.h"
@@ -62,31 +59,31 @@ TEST(HashUtilsTest, StreamingHasher)
 
     // Feed in the header and get intermediate hash
     hasher.Update(header.data(), header.size());
-    memcpy(intermediateHash.data(), hasher.Digest(), kHashSize);
+    ANGLE_UNSAFE_TODO(memcpy(intermediateHash.data(), hasher.Digest(), kHashSize));
     EXPECT_NE(hash, intermediateHash);
     hash = intermediateHash;
 
     // Feed in the body and get intermediate hash
     hasher.Update(body.data(), body.size());
-    memcpy(intermediateHash.data(), hasher.Digest(), kHashSize);
+    ANGLE_UNSAFE_TODO(memcpy(intermediateHash.data(), hasher.Digest(), kHashSize));
     EXPECT_NE(hash, intermediateHash);
     hash = intermediateHash;
 
     // Feed in the footer and get intermediate hash
     hasher.Update(footer.data(), footer.size());
-    memcpy(intermediateHash.data(), hasher.Digest(), kHashSize);
+    ANGLE_UNSAFE_TODO(memcpy(intermediateHash.data(), hasher.Digest(), kHashSize));
     EXPECT_NE(hash, intermediateHash);
     hash = intermediateHash;
 
     // Feed in the chunkIndex and get intermediate hash
     angle::UpdateHashWithValue(hasher, chunkIndex);
-    memcpy(intermediateHash.data(), hasher.Digest(), kHashSize);
+    ANGLE_UNSAFE_TODO(memcpy(intermediateHash.data(), hasher.Digest(), kHashSize));
     EXPECT_NE(hash, intermediateHash);
     hash = intermediateHash;
 
     // Feed in the version and get final hash
     angle::UpdateHashWithValue(hasher, version);
-    memcpy(intermediateHash.data(), hasher.Digest(), kHashSize);
+    ANGLE_UNSAFE_TODO(memcpy(intermediateHash.data(), hasher.Digest(), kHashSize));
     EXPECT_NE(hash, intermediateHash);
     hash = intermediateHash;
 }

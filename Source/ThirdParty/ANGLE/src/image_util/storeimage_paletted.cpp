@@ -4,13 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // storeimage_paletted.cpp: Encodes GL_PALETTE_* textures.
 
 #include <unordered_map>
+#include "common/unsafe_buffers.h"
 
 #include "image_util/storeimage.h"
 
@@ -28,7 +25,7 @@ namespace
 template <typename T>
 inline T *OffsetDataPointer(uint8_t *data, size_t y, size_t z, size_t rowPitch, size_t depthPitch)
 {
-    return reinterpret_cast<T *>(data + (y * rowPitch) + (z * depthPitch));
+    return reinterpret_cast<T *>(ANGLE_UNSAFE_TODO(data + (y * rowPitch) + (z * depthPitch)));
 }
 
 template <typename T>
@@ -38,7 +35,7 @@ inline const T *OffsetDataPointer(const uint8_t *data,
                                   size_t rowPitch,
                                   size_t depthPitch)
 {
-    return reinterpret_cast<const T *>(data + (y * rowPitch) + (z * depthPitch));
+    return reinterpret_cast<const T *>(ANGLE_UNSAFE_TODO(data + (y * rowPitch) + (z * depthPitch)));
 }
 
 void EncodeColor(R8G8B8A8 rgba,
@@ -95,7 +92,7 @@ uint32_t R8G8B8A8Key(R8G8B8A8 rgba)
 {
     uint32_t key;
     static_assert(sizeof(key) == sizeof(rgba));
-    memcpy(&key, &rgba, sizeof(key));
+    ANGLE_UNSAFE_TODO(memcpy(&key, &rgba, sizeof(key)));
     return key;
 }
 
@@ -126,9 +123,10 @@ void StoreRGBA8ToPalettedImpl(size_t width,
     uint8_t *palette = output;
 
     // We might not fill-out the entire palette.
-    memset(palette, 0xab, paletteBytes);
+    ANGLE_UNSAFE_TODO(memset(palette, 0xab, paletteBytes));
 
-    uint8_t *texels = output + paletteBytes;  // + TODO(http://anglebug.com/42266155): mip levels
+    uint8_t *texels = ANGLE_UNSAFE_TODO(
+        output + paletteBytes);  // + TODO(http://anglebug.com/42266155): mip levels
 
     for (size_t z = 0; z < depth; z++)
     {
@@ -141,14 +139,16 @@ void StoreRGBA8ToPalettedImpl(size_t width,
 
             for (size_t x = 0; x < width; x++)
             {
-                auto inversePaletteEntry = invPalette.insert(
-                    std::pair<uint32_t, size_t>(R8G8B8A8Key(srcRow[x]), invPalette.size()));
+                auto inversePaletteEntry = invPalette.insert(std::pair<uint32_t, size_t>(
+                    R8G8B8A8Key(ANGLE_UNSAFE_TODO(srcRow[x])), invPalette.size()));
                 size_t paletteIndex = inversePaletteEntry.first->second;
                 ASSERT(paletteIndex < paletteSize);
                 if (inversePaletteEntry.second)
                 {
-                    EncodeColor(srcRow[x], redBlueBits, greenBits, alphaBits,
-                                palette + paletteIndex * colorBytes);
+                    ANGLE_UNSAFE_TODO({
+                        EncodeColor(srcRow[x], redBlueBits, greenBits, alphaBits,
+                                    palette + paletteIndex * colorBytes);
+                    })
                 }
 
                 switch (indexBits)
@@ -158,13 +158,14 @@ void StoreRGBA8ToPalettedImpl(size_t width,
                         // bits, on odd (which always follows even) store the low
                         // bits.
                         if (x % 2 == 0)
-                            dstRow[x / 2] = static_cast<uint8_t>(paletteIndex) << 4;
+                            ANGLE_UNSAFE_TODO(dstRow[x / 2]) = static_cast<uint8_t>(paletteIndex)
+                                                               << 4;
                         else
-                            dstRow[x / 2] |= static_cast<uint8_t>(paletteIndex);
+                            ANGLE_UNSAFE_TODO(dstRow[x / 2]) |= static_cast<uint8_t>(paletteIndex);
                         break;
 
                     case 8:
-                        dstRow[x] = static_cast<uint8_t>(paletteIndex);
+                        ANGLE_UNSAFE_TODO(dstRow[x]) = static_cast<uint8_t>(paletteIndex);
                         break;
 
                     default:

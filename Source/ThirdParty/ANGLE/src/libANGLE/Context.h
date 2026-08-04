@@ -11,13 +11,10 @@
 #ifndef LIBANGLE_CONTEXT_H_
 #define LIBANGLE_CONTEXT_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include <mutex>
 #include <set>
 #include <string>
+#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
@@ -808,8 +805,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     bool nameStartsWithReservedPrefix(const GLchar *name) const
     {
-        return (strncmp(name, "gl_", 3) == 0) ||
-               (isWebGL() && (strncmp(name, "webgl_", 6) == 0 || strncmp(name, "_webgl_", 7) == 0));
+        return (ANGLE_UNSAFE_TODO(strncmp(name, "gl_", 3)) == 0) ||
+               (isWebGL() && (ANGLE_UNSAFE_TODO(strncmp(name, "webgl_", 6)) == 0 ||
+                              ANGLE_UNSAFE_TODO(strncmp(name, "_webgl_", 7)) == 0));
     }
 
     ANGLE_INLINE bool isTextureGenerated(TextureID texture) const

@@ -4,13 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // driver_utils.h : provides more information about current driver.
 
 #include <algorithm>
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/driver_utils.h"
 
@@ -321,19 +318,19 @@ bool ParseLinuxOSVersion(const char *version, int *major, int *minor, int *patch
 {
     errno = 0;  // reset global error flag.
     char *next;
-    *major = static_cast<int>(strtol(version, &next, 10));
+    *major = static_cast<int>(ANGLE_UNSAFE_TODO(strtol(version, &next, 10)));
     if (next == nullptr || *next != '.' || errno != 0)
     {
         return false;
     }
 
-    *minor = static_cast<int>(strtol(next + 1, &next, 10));
+    *minor = static_cast<int>(ANGLE_UNSAFE_TODO(strtol(next + 1, &next, 10)));
     if (next == nullptr || *next != '.' || errno != 0)
     {
         return false;
     }
 
-    *patch = static_cast<int>(strtol(next + 1, &next, 10));
+    *patch = static_cast<int>(ANGLE_UNSAFE_TODO(strtol(next + 1, &next, 10)));
     if (errno != 0)
     {
         return false;

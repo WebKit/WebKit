@@ -157,26 +157,6 @@ enum D3D11InitError
     NUM_D3D11_INIT_ERRORS
 };
 
-enum D3D9InitError
-{
-    D3D9_INIT_SUCCESS = 0,
-    // Failed to load the D3D or ANGLE compiler
-    D3D9_INIT_COMPILER_ERROR,
-    // Failed to load a necessary DLL
-    D3D9_INIT_MISSING_DEP,
-    // Device creation error
-    D3D9_INIT_CREATE_DEVICE_ERROR,
-    // System does not meet minimum shader spec
-    D3D9_INIT_UNSUPPORTED_VERSION,
-    // System does not support stretchrect from textures
-    D3D9_INIT_UNSUPPORTED_STRETCHRECT,
-    // A call returned out of memory or device lost
-    D3D9_INIT_OUT_OF_MEMORY,
-    // Other unspecified error
-    D3D9_INIT_OTHER_ERROR,
-    NUM_D3D9_INIT_ERRORS
-};
-
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_D3D_DISPLAYD3D_H_

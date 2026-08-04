@@ -44,7 +44,6 @@ class GPUTestConfigTest : public ANGLETest<>
                            const GPUTestConfig::API &api,
                            uint32_t preRotation)
     {
-        bool D3D9      = false;
         bool D3D11     = false;
         bool GLDesktop = false;
         bool GLES      = false;
@@ -53,9 +52,6 @@ class GPUTestConfigTest : public ANGLETest<>
         bool Wgpu      = false;
         switch (api)
         {
-            case GPUTestConfig::kAPID3D9:
-                D3D9 = true;
-                break;
             case GPUTestConfig::kAPID3D11:
                 D3D11 = true;
                 break;
@@ -78,7 +74,6 @@ class GPUTestConfigTest : public ANGLETest<>
             default:
                 break;
         }
-        EXPECT_EQ(D3D9, config.getConditions()[GPUTestConfig::kConditionD3D9]);
         EXPECT_EQ(D3D11, config.getConditions()[GPUTestConfig::kConditionD3D11]);
         EXPECT_EQ(GLDesktop, config.getConditions()[GPUTestConfig::kConditionGLDesktop]);
         EXPECT_EQ(GLES, config.getConditions()[GPUTestConfig::kConditionGLES]);
@@ -126,12 +121,6 @@ TEST_P(GPUTestConfigTest, GPUTestConfigConditions)
 
 // Create a new GPUTestConfig with each backend specified and validate the
 // condition flags are set correctly.
-TEST_P(GPUTestConfigTest, GPUTestConfigConditions_D3D9)
-{
-    GPUTestConfig config(GPUTestConfig::kAPID3D9, 0);
-    validateConfigAPI(config, GPUTestConfig::kAPID3D9, 0);
-}
-
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_D3D11)
 {
     GPUTestConfig config(GPUTestConfig::kAPID3D11, 0);

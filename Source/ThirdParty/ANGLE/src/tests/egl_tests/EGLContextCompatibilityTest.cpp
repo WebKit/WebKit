@@ -484,7 +484,6 @@ void RegisterContextCompatibilityTests()
     }
 
     std::vector<EGLint> renderers = {{
-        EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE,
