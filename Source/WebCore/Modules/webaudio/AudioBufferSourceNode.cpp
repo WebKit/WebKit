@@ -618,10 +618,9 @@ void AudioBufferSourceNode::adjustGrainParameters()
     // at a sub-sample position since it will degrade the quality.
     // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
     // Since playbackRate == 1 is very common, it's worth considering quality.
-    if (playbackRate().value() < 0)
-        m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, m_buffer->sampleRate()) - 1;
-    else
-        m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, m_buffer->sampleRate());
+    // Playback starts at the requested offset regardless of the sign of the playback rate; for a
+    // negative rate we then play backwards from there.
+    m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, m_buffer->sampleRate());
 }
 
 double AudioBufferSourceNode::totalPitchRate()
