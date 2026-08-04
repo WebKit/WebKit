@@ -25,11 +25,11 @@ PASS HighlightRegistry interface: existence and properties of interface prototyp
 PASS HighlightRegistry interface: existence and properties of interface prototype object's "constructor" property
 PASS HighlightRegistry interface: existence and properties of interface prototype object's @@unscopables property
 PASS HighlightRegistry interface: maplike<DOMString, Highlight>
-FAIL HighlightRegistry interface: operation highlightsFromPoint(float, float, optional HighlightsFromPointOptions) assert_own_property: interface prototype object missing non-static operation expected property "highlightsFromPoint" missing
+PASS HighlightRegistry interface: operation highlightsFromPoint(float, float, optional HighlightsFromPointOptions)
 PASS HighlightRegistry must be primary interface of CSS.highlights
 PASS Stringification of CSS.highlights
-FAIL HighlightRegistry interface: CSS.highlights must inherit property "highlightsFromPoint(float, float, optional HighlightsFromPointOptions)" with the proper type assert_inherits: property "highlightsFromPoint" not found in prototype chain
-FAIL HighlightRegistry interface: calling highlightsFromPoint(float, float, optional HighlightsFromPointOptions) on CSS.highlights with too few arguments must throw TypeError assert_inherits: property "highlightsFromPoint" not found in prototype chain
+PASS HighlightRegistry interface: CSS.highlights must inherit property "highlightsFromPoint(float, float, optional HighlightsFromPointOptions)" with the proper type
+PASS HighlightRegistry interface: calling highlightsFromPoint(float, float, optional HighlightsFromPointOptions) on CSS.highlights with too few arguments must throw TypeError
 PASS CSS namespace: operation escape(CSSOMString)
 PASS CSS namespace: attribute highlights
 

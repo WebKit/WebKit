@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://drafts.csswg.org/css-highlight-api/#highlightregistry
+#pragma once
 
-[
-    Exposed=Window
-] interface HighlightRegistry {
-    maplike<[AtomString] DOMString, Highlight>;
+#include "ShadowRoot.h"
+#include <wtf/Ref.h>
+#include <wtf/Vector.h>
 
-    [CallWith=CurrentDocument, EnabledBySetting=HighlightsFromPointEnabled] sequence<HighlightHitResult> highlightsFromPoint(float x, float y, optional HighlightsFromPointOptions options = {});
+namespace WebCore {
+
+struct HighlightsFromPointOptions {
+    Vector<Ref<ShadowRoot>> shadowRoots;
 };
+
+} // namespace WebCore

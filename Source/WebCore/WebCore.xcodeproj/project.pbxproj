@@ -1702,6 +1702,8 @@
 		441A6BE32B6C281D002A2B27 /* FragmentDirectiveGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 441A6BE22B6A0D17002A2B27 /* FragmentDirectiveGenerator.h */; };
 		4425070925829A2700C09368 /* AppHighlightStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4425070725829A1400C09368 /* AppHighlightStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4430D00B2575A83E0046D401 /* Highlight.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E88E51236A5C8D009B4847 /* Highlight.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		44E88E61236A56AC009B48A2 /* HighlightHitResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E88E60236A56AC009B48A1 /* HighlightHitResult.h */; };
+		44E88E63236A56AC009B48A4 /* HighlightsFromPointOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E88E62236A56AC009B48A3 /* HighlightsFromPointOptions.h */; };
 		4430D00D2575A8A50046D401 /* HighlightRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E88E50236A56AC009B4847 /* HighlightRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4431EABA2AB9D54300E92FFA /* LegacyRenderSVGResourceContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4431EAB92AB9D54300E92FFA /* LegacyRenderSVGResourceContainer.h */; };
 		44355FDA2AF29A0C001ED218 /* RenderSVGResourceMarkerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 44355FD72AF29A0B001ED218 /* RenderSVGResourceMarkerInlines.h */; };
@@ -11856,8 +11858,12 @@
 		44E72D312B445D92009CA525 /* RenderSVGResourcePatternInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourcePatternInlines.h; sourceTree = "<group>"; };
 		44E88E4C2369128A009B4847 /* HighlightRegistry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightRegistry.idl; sourceTree = "<group>"; };
 		44E88E4D2369128B009B4847 /* Highlight.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Highlight.idl; sourceTree = "<group>"; };
+		44E88E64236A56AC009B48A5 /* HighlightHitResult.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightHitResult.idl; sourceTree = "<group>"; };
+		44E88E65236A56AC009B48A6 /* HighlightsFromPointOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightsFromPointOptions.idl; sourceTree = "<group>"; };
 		44E88E50236A56AC009B4847 /* HighlightRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightRegistry.h; sourceTree = "<group>"; };
 		44E88E51236A5C8D009B4847 /* Highlight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Highlight.h; sourceTree = "<group>"; };
+		44E88E60236A56AC009B48A1 /* HighlightHitResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightHitResult.h; sourceTree = "<group>"; };
+		44E88E62236A56AC009B48A3 /* HighlightsFromPointOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightsFromPointOptions.h; sourceTree = "<group>"; };
 		44E88E52236A667F009B4847 /* HighlightRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HighlightRegistry.cpp; sourceTree = "<group>"; };
 		44E88E54236A66A1009B4847 /* Highlight.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Highlight.cpp; sourceTree = "<group>"; };
 		44E8AB4E2AB6014D00F443A8 /* SVGSubpathData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGSubpathData.h; sourceTree = "<group>"; };
@@ -28174,9 +28180,13 @@
 				44E88E54236A66A1009B4847 /* Highlight.cpp */,
 				44E88E51236A5C8D009B4847 /* Highlight.h */,
 				44E88E4D2369128B009B4847 /* Highlight.idl */,
+				44E88E60236A56AC009B48A1 /* HighlightHitResult.h */,
+				44E88E64236A56AC009B48A5 /* HighlightHitResult.idl */,
 				44E88E52236A667F009B4847 /* HighlightRegistry.cpp */,
 				44E88E50236A56AC009B4847 /* HighlightRegistry.h */,
 				44E88E4C2369128A009B4847 /* HighlightRegistry.idl */,
+				44E88E62236A56AC009B48A3 /* HighlightsFromPointOptions.h */,
+				44E88E65236A56AC009B48A6 /* HighlightsFromPointOptions.idl */,
 				449D864D2640C9B9000122DE /* HighlightVisibility.h */,
 			);
 			path = highlight;
@@ -45824,7 +45834,9 @@
 				510A91DA24CF3D8C00BFD89C /* HIDGamepadElement.h in Headers */,
 				515BE19E1D54F6C100DD7C68 /* HIDGamepadProvider.h in Headers */,
 				4430D00B2575A83E0046D401 /* Highlight.h in Headers */,
+				44E88E61236A56AC009B48A2 /* HighlightHitResult.h in Headers */,
 				4430D00D2575A8A50046D401 /* HighlightRegistry.h in Headers */,
+				44E88E63236A56AC009B48A4 /* HighlightsFromPointOptions.h in Headers */,
 				449D864F2640C9C5000122DE /* HighlightVisibility.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,

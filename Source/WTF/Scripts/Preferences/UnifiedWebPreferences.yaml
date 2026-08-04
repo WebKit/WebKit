@@ -3919,6 +3919,20 @@ HiddenUntilFoundEnabled:
      WebCore:
        default: true
 
+HighlightsFromPointEnabled:
+   type: bool
+   status: testable
+   category: css
+   humanReadableName: "CSS Custom Highlight API: highlightsFromPoint()"
+   humanReadableDescription: "Enable the CSS Custom Highlight API highlightsFromPoint() method"
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
+
 HorizontalBannerViewOverlaysEnabled:
   type: bool
   status: internal

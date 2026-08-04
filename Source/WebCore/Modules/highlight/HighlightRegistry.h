@@ -34,9 +34,13 @@
 namespace WebCore {
 
 class DOMMapAdapter;
+class Document;
 class DOMString;
 class Highlight;
 class StaticRange;
+
+struct HighlightHitResult;
+struct HighlightsFromPointOptions;
 
 class HighlightRegistry : public RefCounted<HighlightRegistry> {
 public:
@@ -56,6 +60,8 @@ public:
     WEBCORE_EXPORT void addAnnotationHighlightWithRange(Ref<StaticRange>&&);
     const HashMap<AtomString, Ref<Highlight>>& map() const LIFETIME_BOUND { return m_map; }
     const Vector<AtomString>& highlightNames() const LIFETIME_BOUND { return m_highlightNames; }
+
+    Vector<HighlightHitResult> highlightsFromPoint(Document&, float x, float y, HighlightsFromPointOptions&&);
     
 private:
     HighlightRegistry() = default;

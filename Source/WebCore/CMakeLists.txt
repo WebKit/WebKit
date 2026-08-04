@@ -447,7 +447,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/geolocation/PositionOptions.idl
 
     Modules/highlight/Highlight.idl
+    Modules/highlight/HighlightHitResult.idl
     Modules/highlight/HighlightRegistry.idl
+    Modules/highlight/HighlightsFromPointOptions.idl
 
     Modules/identity/DigitalCredential.idl
     Modules/identity/DigitalCredentialGetRequest.idl

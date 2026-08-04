@@ -1,11 +1,11 @@
 0123456789 temporary
 
 PASS CSS.highlights.highlightsFromPoint() should throw when called with incorrect parameters.
-FAIL CSS.highlights.highlightsFromPoint() should return an empty array when called with a point outside the document. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(-1,-1)', 'CSS.highlights.highlightsFromPoint' is undefined)
-FAIL CSS.highlights.highlightsFromPoint() returns the Highlights with their corresponding ranges present at the given point in the right order. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(x, y)', 'CSS.highlights.highlightsFromPoint' is undefined)
-FAIL CSS.highlights.highlightsFromPoint() returns empty array when called on a display:none iframe document. iframeWindow.CSS.highlights.highlightsFromPoint is not a function. (In 'iframeWindow.CSS.highlights.highlightsFromPoint(5, 5)', 'iframeWindow.CSS.highlights.highlightsFromPoint' is undefined)
-FAIL CSS.highlights.highlightsFromPoint() returns empty array for coordinates outside the viewport. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(viewportWidth + 1, 5)', 'CSS.highlights.highlightsFromPoint' is undefined)
-FAIL CSS.highlights.highlightsFromPoint() does not return highlights with only collapsed ranges. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(x, y)', 'CSS.highlights.highlightsFromPoint' is undefined)
-FAIL CSS.highlights.highlightsFromPoint() skips invalid StaticRanges. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(x, y)', 'CSS.highlights.highlightsFromPoint' is undefined)
-FAIL CSS.highlights.highlightsFromPoint() returns all overlapping ranges within the same highlight. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(x, y)', 'CSS.highlights.highlightsFromPoint' is undefined)
+PASS CSS.highlights.highlightsFromPoint() should return an empty array when called with a point outside the document.
+FAIL CSS.highlights.highlightsFromPoint() returns the Highlights with their corresponding ranges present at the given point in the right order. assert_equals: CSS.highlights.highlightsFromPoint() returns exactly one HighlightHitResult when the coordinates provided point at one Highlight expected 1 but got 0
+PASS CSS.highlights.highlightsFromPoint() returns empty array when called on a display:none iframe document.
+FAIL CSS.highlights.highlightsFromPoint() returns empty array for coordinates outside the viewport. assert_equals: highlightsFromPoint() returns the highlight at valid coordinates inside the viewport expected 1 but got 0
+PASS CSS.highlights.highlightsFromPoint() does not return highlights with only collapsed ranges.
+FAIL CSS.highlights.highlightsFromPoint() skips invalid StaticRanges. assert_equals: highlightsFromPoint() returns highlight before StaticRange is invalidated expected 1 but got 0
+FAIL CSS.highlights.highlightsFromPoint() returns all overlapping ranges within the same highlight. assert_equals: highlightsFromPoint() returns exactly one HighlightHitResult for a single highlight expected 1 but got 0
 

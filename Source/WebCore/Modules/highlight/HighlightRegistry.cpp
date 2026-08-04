@@ -26,6 +26,9 @@
 #include "config.h"
 #include "HighlightRegistry.h"
 
+#include "Document.h"
+#include "HighlightHitResult.h"
+#include "HighlightsFromPointOptions.h"
 #include "IDLTypes.h"
 #include "JSDOMMapLike.h"
 #include "JSHighlight.h"
@@ -36,6 +39,11 @@ void HighlightRegistry::initializeMapLike(DOMMapAdapter& map)
 {
     for (auto& keyValue : m_map)
         map.set<IDLDOMString, IDLInterface<Highlight>>(keyValue.key, keyValue.value);
+}
+
+Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document&, float, float, HighlightsFromPointOptions&&)
+{
+    return { };
 }
 
 void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
