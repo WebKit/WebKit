@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -75,8 +75,15 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
     // after zooming. The font size must either be relative to the user default or the original size
     // must have been acceptable. In other words, we only apply the smart minimum whenever we're positive
     // doing so won't disrupt the layout.
-    if (minimumSizeRule == MinimumFontSizeRule::AbsoluteAndRelative && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
-        zoomedSize = std::max(zoomedSize, static_cast<float>(minLogicalSize));
+    if (minimumSizeRule == MinimumFontSizeRule::AbsoluteAndRelative && (specifiedSize >= minLogicalSize || !isAbsoluteSize)) {
+        // The smart minimum is a logical (pre-zoom) readability floor, not a device-space floor. When
+        // zooming the page out, scale it by the zoom factor so small text still shrinks proportionally
+        // with the page (as other engines do) instead of being pinned to a minLogicalSize device floor
+        // that overflows a fixed-px width cap. At zoomFactor >= 1 this is unchanged, preserving the
+        // readability floor and the device-space minimum for zoom-in.
+        float smartMinimum = zoomFactor < 1 ? static_cast<float>(minLogicalSize) * zoomFactor : static_cast<float>(minLogicalSize);
+        zoomedSize = std::max(zoomedSize, smartMinimum);
+    }
 
     // Also clamp to a reasonable maximum to prevent insane font sizes from causing crashes on various
     // platforms. (I'm looking at you, Windows.)

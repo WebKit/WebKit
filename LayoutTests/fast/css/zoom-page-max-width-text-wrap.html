@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>rdar://66569768: a width-capped inline label must not wrap under native page zoom (weight-independent)</title>
+<style>
+  body { margin: 8px; font-family: Arial, "Helvetica Neue", sans-serif; }
+  .stname { max-width: 100px; font-family: Lato, Arial, "Helvetica Neue", sans-serif; }
+  .stname strong { font-size: 10px; }
+  #bold strong { font-weight: 700; }
+  #normal strong { font-weight: 400; }
+</style>
+</head>
+<body>
+<div class="stname" id="bold"><strong>NIFTY Midcap 100</strong></div>
+<div class="stname" id="normal"><strong>NIFTY Midcap 100</strong></div>
+<pre id="result">running</pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    internals.setPageZoomFactor(0.5);
+
+function lineCount(id) {
+    return document.querySelector('#' + id + ' strong').getClientRects().length;
+}
+
+function check() {
+    var bold = lineCount('bold');
+    var normal = lineCount('normal');
+    var pass = bold === 1 && normal === 1;
+    var weightIndependent = bold === normal;
+    var text = (pass ? 'PASS' : 'FAIL') +
+        ' bold lines=' + bold + ' (expected 1), normal lines=' + normal + ' (expected 1)' +
+        (weightIndependent ? ' PASS weight-independent' : ' FAIL weight-dependent (bold != normal)');
+    // Replace the sample markup with only the result so dumpAsText output is stable.
+    document.body.textContent = text;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Let layout settle after the zoom change (and after any web font loads).
+if (document.fonts && document.fonts.ready)
+    document.fonts.ready.then(function () { requestAnimationFrame(check); });
+else
+    requestAnimationFrame(check);
+</script>
+</body>
+</html>
