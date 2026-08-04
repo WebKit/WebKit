@@ -4754,10 +4754,13 @@ void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityS
     LOG_WITH_STREAM(ActivityState, stream << "WebPage " << identifier().toUInt64() << " setActivityState to " << activityState);
 
     if (activityStateChangeSequence < m_activityStateChangeSequence) {
-        protect(drawingArea())->activityStateDidChange({ }, activityStateChangeID, WTF::move(callback));
-        return;
-    }
-    m_activityStateChangeSequence = activityStateChangeSequence;
+        // Synchronous page creation can overtake previously sent asynchronous activity state messages. Replaying
+        // their visibility state would temporarily hide the new page, but other changes can represent observable
+        // transitions, such as focus events, and still need to be applied.
+        static constexpr OptionSet visibilityState { ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded, ActivityState::IsVisuallyIdle };
+        activityState = (activityState - visibilityState) | (m_activityState & visibilityState);
+    } else
+        m_activityStateChangeSequence = activityStateChangeSequence;
 
     auto changed = m_activityState ^ activityState;
     m_activityState = activityState;
