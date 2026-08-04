@@ -58,7 +58,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     static bool isValidLength(uint32_t length) { return Wasm::Table::isValidLength(length); }
-    std::optional<uint32_t> maximum() const { return m_table->maximum(); }
+    std::optional<uint64_t> maximum() const { return m_table->maximum(); }
     uint32_t length() const { return m_table->length(); }
     uint32_t allocatedLength() const { return m_table->allocatedLength(length()); }
     [[nodiscard]] std::optional<uint32_t> grow(JSGlobalObject*, uint32_t delta, JSValue defaultValue);

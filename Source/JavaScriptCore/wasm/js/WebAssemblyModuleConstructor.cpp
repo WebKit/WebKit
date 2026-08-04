@@ -171,10 +171,10 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
             throwException(globalObject, throwScope, createTypeError(globalObject, errorMessage));
             return nullptr;
         }
-        std::optional<uint32_t> maximum = table.maximum();
+        std::optional<uint64_t> maximum = table.maximum();
         if (maximum) {
             typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-            typeObj->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(maximum.value()));
+            typeObj->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(static_cast<double>(maximum.value())));
         } else
             typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
         typeObj->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(table.initial()));

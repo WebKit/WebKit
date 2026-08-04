@@ -163,10 +163,10 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     }
 
     JSObject* result;
-    auto numberOrBigInt = [&](uint32_t value) {
+    auto numberOrBigInt = [&](uint64_t value) {
         return m_table->addressType().is64Bit()
             ? JSBigInt::createFrom(globalObject, value)
-            : jsNumber(value);
+            : jsNumber(static_cast<double>(value));
     };
 
     auto maximum = m_table->maximum();

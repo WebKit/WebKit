@@ -71,6 +71,15 @@ import * as assert from "../assert.js";
 }
 
 {
+    // A maximum above 2^32 must be reflected in full, not truncated.
+    const table = new WebAssembly.Table({initial: 1n, maximum: 4294967301n, element: "funcref", address: "i64"});
+    assert.eq(table.type().maximum, 4294967301n);
+
+    const wide = new WebAssembly.Table({initial: 1n, maximum: BigInt(2**64) - 1n, element: "funcref", address: "i64"});
+    assert.eq(wide.type().maximum, 18446744073709551615n);
+}
+
+{
     const table = new WebAssembly.Table({element: "funcref", initial: 20n, maximum: 30n, address: "i64"});
     assert.eq(20n, table.grow(0n));
     assert.eq(20, table.length);

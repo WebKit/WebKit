@@ -444,8 +444,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (actualInitial < expectedInitial)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "provided an 'initial' that is too small"_s)));
 
-            if (std::optional<uint32_t> expectedMaximum = moduleInformation.tables[import.kindIndex].maximum()) {
-                std::optional<uint32_t> actualMaximum = table->maximum();
+            if (std::optional<uint64_t> expectedMaximum = moduleInformation.tables[import.kindIndex].maximum()) {
+                std::optional<uint64_t> actualMaximum = table->maximum();
                 if (!actualMaximum)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "does not have a 'maximum' but the module requires that it does"_s)));
                 if (*actualMaximum > *expectedMaximum)

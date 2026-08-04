@@ -794,7 +794,7 @@ public:
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type, Type wasmType, InitializationType initType, uint64_t initialBitsOrImportNumber, bool isTable64)
+    TableInformation(uint32_t initial, std::optional<uint64_t> maximum, bool isImport, TableElementType type, Type wasmType, InitializationType initType, uint64_t initialBitsOrImportNumber, bool isTable64)
         : m_wasmType(wasmType)
         , m_maximum(maximum)
         , m_initialBitsOrImportNumber(initialBitsOrImportNumber)
@@ -811,7 +811,7 @@ public:
     explicit operator bool() const { return m_isValid; }
     bool isImport() const { return m_isImport; }
     uint32_t initial() const { return m_initial; }
-    std::optional<uint32_t> maximum() const { return m_maximum; }
+    std::optional<uint64_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
     Type wasmType() const { return m_wasmType; }
     InitializationType initType() const { return m_initType; }
@@ -820,7 +820,7 @@ public:
 
 private:
     Type m_wasmType;
-    std::optional<uint32_t> m_maximum;
+    std::optional<uint64_t> m_maximum;
     uint64_t m_initialBitsOrImportNumber;
     uint32_t m_initial;
     TableElementType m_type;
