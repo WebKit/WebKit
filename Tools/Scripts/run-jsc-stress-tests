@@ -2999,6 +2999,14 @@ def runAndMonitorTestRunnerCommand(cmd, options={})
        didFail = {}
        blankLine = true
        prevStringLength = 0
+       printAboveProgressMeter = Proc.new {
+           | line |
+           unless blankLine
+               print("\r" + " " * prevStringLength + "\r")
+           end
+           puts line
+           blankLine = true
+       }
        IO.popen(cmd.join(' '), mode="r") {
            | inp |
            inp.each_line {
@@ -3008,15 +3016,12 @@ def runAndMonitorTestRunnerCommand(cmd, options={})
                    running[$~.post_match] = true
                elsif line =~ /^PASS: /
                    didRun[$~.post_match] = true
+                   printAboveProgressMeter.call(line) if $reportExecutionTime
                elsif line =~ /^FAIL: /
                    didRun[$~.post_match] = true
                    didFail[$~.post_match] = true
                else
-                   unless blankLine
-                       print("\r" + " " * prevStringLength + "\r")
-                   end
-                   puts line
-                   blankLine = true
+                   printAboveProgressMeter.call(line)
                end
 
                def lpad(str, chars)
