@@ -10010,7 +10010,8 @@ void SpeculativeJIT::emitRegExpAnchoredFirstCharacterFilterGuards(const uint8_t*
 
 void SpeculativeJIT::emitRegExpStickyFirstCharacterFilterGuards(const uint8_t* bitmap, GPRReg baseGPR, GPRReg argumentGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, JumpList& slowCases)
 {
-    ASSERT(noOverlap(baseGPR, argumentGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+    ASSERT(noOverlap(baseGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+    ASSERT(noOverlap(argumentGPR, scratch1GPR, scratch2GPR, scratch3GPR));
 
     // The string must be a resolved 8-bit string.
     loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);

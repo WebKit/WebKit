@@ -19356,11 +19356,29 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.testNonZero32(bitmapByte, bit);
     }
 
+    // For an untyped argument, send everything that is not a JSString to the operation: it has to run
+    // ToString, which the filter cannot do.
+    void emitFirstCharacterGuardStringCheck(LValue argument, Edge argumentEdge, LBasicBlock isCellCase, LBasicBlock isStringCase, LBasicBlock nextBlock, LBasicBlock operationCase)
+    {
+        m_out.branch(isCell(argument, provenType(argumentEdge)), usually(isCellCase), rarely(operationCase));
+
+        m_out.appendTo(isCellCase, isStringCase);
+        m_out.branch(isString(argument, provenType(argumentEdge)), usually(isStringCase), rarely(operationCase));
+
+        m_out.appendTo(isStringCase, nextBlock);
+    }
+
     void emitAnchoredFirstCharacterGuardChain(LValue argument, Edge argumentEdge, const uint8_t* bitmap, LBasicBlock operationCase, LBasicBlock noMatchCase)
     {
+        bool knownString = argumentEdge.useKind() == StringUse || argumentEdge.useKind() == KnownStringUse;
+        LBasicBlock isCellCase = knownString ? nullptr : m_out.newBlock();
+        LBasicBlock isStringCase = knownString ? nullptr : m_out.newBlock();
         LBasicBlock check8Bit = m_out.newBlock();
         LBasicBlock checkLength = m_out.newBlock();
         LBasicBlock filterCase = m_out.newBlock();
+
+        if (!knownString)
+            emitFirstCharacterGuardStringCheck(argument, argumentEdge, isCellCase, isStringCase, check8Bit, operationCase);
 
         m_out.branch(isRopeString(argument, argumentEdge), rarely(operationCase), usually(check8Bit));
 
@@ -19428,11 +19446,17 @@ IGNORE_CLANG_WARNINGS_END
 
     void emitStickyFirstCharacterGuardChain(LValue base, LValue argument, Edge argumentEdge, const uint8_t* bitmap, LBasicBlock operationCase, LBasicBlock noMatchCase)
     {
+        bool knownString = argumentEdge.useKind() == StringUse || argumentEdge.useKind() == KnownStringUse;
+        LBasicBlock isCellCase = knownString ? nullptr : m_out.newBlock();
+        LBasicBlock isStringCase = knownString ? nullptr : m_out.newBlock();
         LBasicBlock check8Bit = m_out.newBlock();
         LBasicBlock checkWritable = m_out.newBlock();
         LBasicBlock checkInt32 = m_out.newBlock();
         LBasicBlock checkInBounds = m_out.newBlock();
         LBasicBlock filterCase = m_out.newBlock();
+
+        if (!knownString)
+            emitFirstCharacterGuardStringCheck(argument, argumentEdge, isCellCase, isStringCase, check8Bit, operationCase);
 
         m_out.branch(isRopeString(argument, argumentEdge), rarely(operationCase), usually(check8Bit));
 
@@ -19536,9 +19560,9 @@ IGNORE_CLANG_WARNINGS_END
 
             if (m_node->child3().useKind() == StringUse) {
                 LValue argument = lowString(m_node->child3());
-                if (compileRegExpTestAnchoredFilter(globalObject, base, argument))
+                if (compileRegExpTestAnchoredFilter(globalObject, base, argument, m_node->child2(), m_node->child3()))
                     return;
-                if (compileRegExpTestStickyFilter(globalObject, base, argument))
+                if (compileRegExpTestStickyFilter(globalObject, base, argument, m_node->child2(), m_node->child3()))
                     return;
                 LValue result = vmCall(Int32, operationRegExpTestString, globalObject, base, argument);
                 setBoolean(result);
@@ -19546,6 +19570,10 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             LValue argument = lowJSValue(m_node->child3());
+            if (compileRegExpTestAnchoredFilter(globalObject, base, argument, m_node->child2(), m_node->child3()))
+                return;
+            if (compileRegExpTestStickyFilter(globalObject, base, argument, m_node->child2(), m_node->child3()))
+                return;
             LValue result = vmCall(Int32, operationRegExpTest, globalObject, base, argument);
             setBoolean(result);
             return;
@@ -19557,10 +19585,18 @@ IGNORE_CLANG_WARNINGS_END
         setBoolean(result);
     }
 
-    // Anchored RegExp.test(string) fast-fail on a constant RegExpObject; tests input[0].
-    bool compileRegExpTestAnchoredFilter(LValue globalObject, LValue base, LValue argument)
+    LValue emitRegExpTestOperationCall(LValue globalObject, LValue base, LValue argument, Edge argumentEdge)
     {
-        auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(m_node->child2().node(), FirstCharacterFilterPosition::AtStart);
+        bool knownString = argumentEdge.useKind() == StringUse || argumentEdge.useKind() == KnownStringUse;
+        if (knownString)
+            return vmCall(Int32, operationRegExpTestString, globalObject, base, argument);
+        return vmCall(Int32, operationRegExpTest, globalObject, base, argument);
+    }
+
+    // Anchored RegExp.test(input) fast-fail on a constant RegExpObject; tests input[0].
+    bool compileRegExpTestAnchoredFilter(LValue globalObject, LValue base, LValue argument, Edge baseEdge, Edge argumentEdge)
+    {
+        auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(baseEdge.node(), FirstCharacterFilterPosition::AtStart);
         if (!localBitmap)
             return false;
         const uint8_t* bitmap = localBitmap->storageBytes().data();
@@ -19570,14 +19606,14 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock continuation = m_out.newBlock();
 
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(falseCase);
-        emitAnchoredFirstCharacterGuardChain(argument, m_node->child3(), bitmap, operationCase, falseCase);
+        emitAnchoredFirstCharacterGuardChain(argument, argumentEdge, bitmap, operationCase, falseCase);
 
         m_out.appendTo(falseCase, operationCase);
         ValueFromBlock falseResult = m_out.anchor(m_out.int32Zero);
         m_out.jump(continuation);
 
         m_out.appendTo(operationCase, continuation);
-        ValueFromBlock operationResult = m_out.anchor(vmCall(Int32, operationRegExpTestString, globalObject, base, argument));
+        ValueFromBlock operationResult = m_out.anchor(emitRegExpTestOperationCall(globalObject, base, argument, argumentEdge));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -19585,11 +19621,11 @@ IGNORE_CLANG_WARNINGS_END
         return true;
     }
 
-    // Sticky RegExp.test(string) fast-fail on a constant RegExpObject; tests input[lastIndex]. `gy`
+    // Sticky RegExp.test(input) fast-fail on a constant RegExpObject; tests input[lastIndex]. `gy`
     // qualifies too: on a failed match RegExpBuiltinExec resets lastIndex to 0 for global as well as sticky.
-    bool compileRegExpTestStickyFilter(LValue globalObject, LValue base, LValue argument)
+    bool compileRegExpTestStickyFilter(LValue globalObject, LValue base, LValue argument, Edge baseEdge, Edge argumentEdge)
     {
-        auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(m_node->child2().node(), FirstCharacterFilterPosition::AtLastIndex);
+        auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(baseEdge.node(), FirstCharacterFilterPosition::AtLastIndex);
         if (!localBitmap)
             return false;
         const uint8_t* bitmap = localBitmap->storageBytes().data();
@@ -19599,7 +19635,7 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock continuation = m_out.newBlock();
 
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(falseCase);
-        emitStickyFirstCharacterGuardChain(base, argument, m_node->child3(), bitmap, operationCase, falseCase);
+        emitStickyFirstCharacterGuardChain(base, argument, argumentEdge, bitmap, operationCase, falseCase);
 
         m_out.appendTo(falseCase, operationCase);
         m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(0))), base, m_heaps.RegExpObject_lastIndex);
@@ -19607,7 +19643,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(operationCase, continuation);
-        ValueFromBlock operationResult = m_out.anchor(vmCall(Int32, operationRegExpTestString, globalObject, base, argument));
+        ValueFromBlock operationResult = m_out.anchor(emitRegExpTestOperationCall(globalObject, base, argument, argumentEdge));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
