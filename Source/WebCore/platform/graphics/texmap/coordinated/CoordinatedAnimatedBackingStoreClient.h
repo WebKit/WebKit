@@ -30,6 +30,8 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "FloatRect.h"
+#include <wtf/Lock.h>
+#include <wtf/MainThread.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -43,16 +45,17 @@ public:
 
     void invalidate();
     void update(GraphicsLayer*, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize&, float contentsScale);
-    void requestBackingStoreUpdateIfNeeded(const TransformationMatrix&);
+    void requestBackingStoreUpdateIfNeeded(const TransformationMatrix&) const;
 
 private:
     CoordinatedAnimatedBackingStoreClient() = default;
 
-    GraphicsLayer* m_layer { nullptr };
-    FloatRect m_visibleRect;
-    FloatRect m_coverRect;
-    FloatSize m_size;
-    float m_contentsScale { 1 };
+    GraphicsLayer* m_layer WTF_GUARDED_BY_CAPABILITY(mainThread) { nullptr };
+    mutable Lock m_lock;
+    FloatRect m_visibleRect WTF_GUARDED_BY_LOCK(m_lock);
+    FloatRect m_coverRect WTF_GUARDED_BY_LOCK(m_lock);
+    FloatSize m_size WTF_GUARDED_BY_LOCK(m_lock);
+    float m_contentsScale WTF_GUARDED_BY_LOCK(m_lock) { 1 };
 };
 
 } // namespace WebCore
