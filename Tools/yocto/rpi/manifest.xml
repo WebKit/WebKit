@@ -2,7 +2,7 @@
 <manifest>
   <default sync-j="4"/>
 
-  <remote fetch="https://git.yoctoproject.org/git/" name="yocto"/>
+  <remote fetch="https://git.yoctoproject.org/" name="yocto"/>
   <remote fetch="https://github.com" name="github"/>
 
   <!-- Yocto version: scarthgap -->
