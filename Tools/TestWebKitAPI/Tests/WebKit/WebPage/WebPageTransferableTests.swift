@@ -89,13 +89,13 @@ struct WebPageTransferableTests {
     @Test
     func exportToPDFWithoutLoadingAnyWebContentFails() async throws {
         // FIXME: Either make both macOS and iOS throw an error, or have neither throw an error.
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let webPage = WebPage()
 
         await #expect(throws: (any Error).self) {
             let _ = try await webPage.exported(as: .pdf)
         }
-        #endif // os(macOS)
+        #endif // WTF_PLATFORM_MAC
     }
 
     @Test
@@ -116,7 +116,7 @@ struct WebPageTransferableTests {
     func exportToImage(type: UTType) async throws {
         let defaultFrame = CGRect(x: 0, y: 0, width: 1024, height: 768)
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let scaleFactor: CGFloat = 2
         #else
         let scaleFactor: CGFloat = 3
@@ -127,7 +127,7 @@ struct WebPageTransferableTests {
 
         let imageData = try await webPage.exported(as: type)
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let image = try await NSImage(importing: imageData, contentType: .image)
         #else
         let image = try #require(UIImage(data: imageData))
@@ -168,7 +168,7 @@ struct WebPageTransferableTests {
 
         let context = EnvironmentValues().fontResolutionContext
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let expectedFontSize: CGFloat = 16
         #else
         let expectedFontSize: CGFloat = 23

@@ -138,7 +138,7 @@ extension WebPage {
             set { backingShowsSystemScreenTimeBlockingView = newValue }
         }
 
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         /// The types of data detectors to apply to the webpage's content.
         ///
         /// Data detectors add interactivity to web content by creating links for specially formatted text.
@@ -160,7 +160,7 @@ extension WebPage {
         public var mediaPlaybackBehavior: MediaPlaybackBehavior = .automatic
         #endif
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         /// The directionality of user interface elements.
         ///
         /// The default value of this property is `.content`.
@@ -195,7 +195,7 @@ extension WebPage {
         @_spi(Testing)
         public var processPool: WKProcessPool? = nil
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         /// If `false`, the editor state is always forced to update.
         @_spi(Testing)
         public var requiresUserActionForEditingControlsManager: Bool = false

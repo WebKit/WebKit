@@ -59,7 +59,7 @@ extension WebPage {
         /// Indicates whether the web content provided an attribute that indicates a download.
         public var shouldPerformDownload: Bool { wrapped.shouldPerformDownload }
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         /// The number of the mouse button that caused the navigation request.
         public var buttonNumber: UIEvent.ButtonMask { wrapped.buttonNumber }
         #else

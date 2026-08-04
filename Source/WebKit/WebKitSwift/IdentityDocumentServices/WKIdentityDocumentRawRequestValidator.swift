@@ -26,7 +26,7 @@
 import IdentityDocumentServices
 import os
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 import UIKit
 #else
 import AppKit

@@ -27,7 +27,7 @@ import SwiftUI
 @_spi(Private) @_spi(CrossImportOverlay) import WebKit
 import WebKit_Private
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 typealias CocoaView = UIView
 #else
 typealias CocoaView = NSView
@@ -35,7 +35,7 @@ typealias CocoaView = NSView
 
 @MainActor
 class CocoaWebViewAdapter: CocoaView {
-    #if os(iOS)
+    #if WTF_PLATFORM_IOS_FAMILY
     var extrinsicSafeAreaInsets: EdgeInsets? = nil {
         didSet {
             guard oldValue != extrinsicSafeAreaInsets else {
@@ -78,7 +78,7 @@ class CocoaWebViewAdapter: CocoaView {
     #endif
 
     var isFindNavigatorVisible: Bool {
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         isFindBarVisible
         #else
         webView?.findInteraction?.isFindNavigatorVisible ?? false
@@ -86,7 +86,7 @@ class CocoaWebViewAdapter: CocoaView {
     }
 
     lazy var findInteraction: FindInteraction? = {
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let interaction = NSTextFinder()
         interaction.isIncrementalSearchingEnabled = true
         interaction.incrementalSearchingShouldDimContentView = false
@@ -139,7 +139,7 @@ class CocoaWebViewAdapter: CocoaView {
 
     var scrollPosition: ScrollPositionContext?
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     // This is called by the Find menu items in the Menu Bar
     @objc(performFindPanelAction:)
     func performFindPanelAction(_ sender: Any!) {
@@ -275,7 +275,7 @@ class CocoaWebViewAdapter: CocoaView {
             activateConstraints()
 
             webView.delegate = self
-            #if os(macOS)
+            #if WTF_PLATFORM_MAC
             // Safety: rdar://163268246 working on proving safety here.
             unsafe findInteraction?.wrapped.client = webView
             #endif
@@ -283,7 +283,7 @@ class CocoaWebViewAdapter: CocoaView {
     }
 }
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 extension CocoaWebViewAdapter: @preconcurrency NSTextFinderBarContainer {
     func contentView() -> CocoaView? {
         webView
@@ -295,7 +295,7 @@ extension CocoaWebViewAdapter: @preconcurrency NSTextFinderBarContainer {
 #endif
 
 extension CocoaWebViewAdapter: WebPageWebView.Delegate {
-    #if os(iOS)
+    #if WTF_PLATFORM_IOS || WTF_PLATFORM_MACCATALYST
     func findInteraction(_ interaction: UIFindInteraction, didBegin session: UIFindSession) {
         #if canImport(SwiftUI, _version: "7.0.57")
         if let isPresented = findContext?.isPresented {
@@ -319,7 +319,7 @@ extension CocoaWebViewAdapter: WebPageWebView.Delegate {
         false
         #endif
     }
-    #endif // os(iOS)
+    #endif // WTF_PLATFORM_IOS || WTF_PLATFORM_MACCATALYST
 
     func geometryDidChange(_ geometry: WKScrollGeometryAdapter) {
         let newScrollGeometry = ScrollGeometry(geometry)

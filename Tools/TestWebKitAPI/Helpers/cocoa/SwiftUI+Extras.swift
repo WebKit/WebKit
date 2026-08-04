@@ -28,7 +28,7 @@ private import AppKit
 private import UIKit
 #endif
 
-#if ENABLE_SWIFTUI && !os(watchOS)
+#if ENABLE_SWIFTUI && !WTF_PLATFORM_WATCHOS
 
 /// Renders a SwiftUI view, updating whenever its observable state changes.
 ///
@@ -84,10 +84,10 @@ public func render(
     }
 }
 
-#endif // ENABLE_SWIFTUI && !os(watchOS)
+#endif // ENABLE_SWIFTUI && !WTF_PLATFORM_WATCHOS
 
 extension Font {
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     /// The attributes corresponding to the Cocoa-equivalent type.
     public typealias CocoaAttributes = AttributeScopes.UIKitAttributes
     #else

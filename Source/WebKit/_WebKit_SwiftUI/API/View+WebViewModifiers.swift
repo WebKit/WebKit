@@ -79,7 +79,7 @@ extension View {
     public nonisolated func webViewContextMenu(
         @ViewBuilder menu: @MainActor @escaping (WebView.ActivatedElementInfo) -> some View
     ) -> some View {
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let context = ContextMenuContext { info in
             let menuView = menu(info)
             return NSHostingMenu(rootView: menuView)

@@ -155,6 +155,11 @@ _PATH_RULES_SPECIFIER = [
     # API and therefore do not follow the same header including
     # discipline as WebCore.
 
+    ([
+        # SwiftBrowser does not generate the platform args response file.
+        os.path.join('Tools', 'SwiftBrowser')],
+     ["-webkit/wtf_platform"]),
+
     ([  # Ignore use of RetainPtr<NSObject *> for tests that ensure its compatibility with ReteainPtr<NSObject>.
       os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WTF', 'ns', 'RetainPtr.mm')],
      ["-runtime/retainptr"]),
@@ -692,6 +697,7 @@ def _all_categories():
     categories = categories.union(FeatureDefinesChecker.categories)
     categories = categories.union(BaseXcconfigChecker.categories)
     categories = categories.union(XcodeSchemeChecker.categories)
+    categories = categories.union(SwiftChecker.categories)
     categories = categories.union(SwiftAssociationChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they

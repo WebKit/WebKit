@@ -132,7 +132,7 @@ final class WebBackForwardList {
     }
 
     private static let shouldSkipItemsWithoutUserGestureForWebKitAPI: Bool = {
-        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS) || os(visionOS)
+        #if WTF_PLATFORM_COCOA
         return WTF.linkedOnOrAfterSDKWithBehavior(WTF.SDKAlignedBehavior.AllBackForwardItemsWithoutUserGestureInvisibleToUI)
         #else
         return false
@@ -741,7 +741,7 @@ final class WebBackForwardList {
         page.get()!.backForwardRemovedItem(item.mainFrameItem().identifier())
 
         // rdar://168139870 to clean up use of BUILDING_GTK__ here.
-        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS) || os(visionOS) || BUILDING_GTK__
+        #if WTF_PLATFORM_COCOA || BUILDING_GTK__
         item.setSnapshot(consuming: WebKit.RefPtrViewSnapshot())
         #endif
     }
@@ -770,7 +770,7 @@ final class WebBackForwardList {
 
         let maybeItem = itemAtIndexWithoutSkipping(index: itemIndex)
 
-        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS) || os(visionOS)
+        #if WTF_PLATFORM_COCOA
         if !WTF.linkedOnOrAfterSDKWithBehavior(WTF.SDKAlignedBehavior.UIBackForwardSkipsHistoryItemsWithoutUserGesture) {
             return maybeItem
         }
@@ -976,8 +976,8 @@ final class WebBackForwardList {
         let itemURL = unsafe WTF.URL(frameState.ptr().urlString, nil)
         let itemOriginalURL = unsafe WTF.URL(frameState.ptr().originalURLString, nil)
 
-        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS) || os(visionOS)
-        #if os(macOS)
+        #if WTF_PLATFORM_COCOA
+        #if WTF_PLATFORM_MAC
         let doMessageChecks =
             WTF.linkedOnOrAfterSDKWithBehavior(WTF.SDKAlignedBehavior.PushStateFilePathRestriction)
             && !WTF.MacApplication.isMimeoPhotoProject()

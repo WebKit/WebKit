@@ -27,13 +27,13 @@ import IdentityDocumentServices
 import IdentityDocumentServicesUI
 import os
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 import UIKit
 #else
 import AppKit
 #endif
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 private typealias IdentityDocumentPresentationAnchor = UIWindow
 #else
 private typealias IdentityDocumentPresentationAnchor = NSWindow

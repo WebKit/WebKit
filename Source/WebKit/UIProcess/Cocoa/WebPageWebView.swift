@@ -35,7 +35,7 @@ public final class WebPageWebView: WKWebView {
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public weak var delegate: (any Delegate)? = nil
 
-    #if os(iOS)
+    #if WTF_PLATFORM_IOS || WTF_PLATFORM_MACCATALYST
     override func findInteraction(_ interaction: UIFindInteraction, didBegin session: UIFindSession) {
         super.findInteraction(interaction, didBegin: session)
         delegate?.findInteraction(interaction, didBegin: session)
@@ -63,7 +63,7 @@ public final class WebPageWebView: WKWebView {
         return super.supportsTextReplacement && delegate.supportsTextReplacement()
     }
     #endif // USE_APPLE_INTERNAL_SDK
-    #endif
+    #endif // WTF_PLATFORM_IOS || WTF_PLATFORM_MACCATALYST
 
     func geometryDidChange(_ geometry: WKScrollGeometryAdapter) {
         delegate?.geometryDidChange(geometry)
@@ -75,7 +75,7 @@ extension WebPageWebView {
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @MainActor
     public protocol Delegate: AnyObject {
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS || WTF_PLATFORM_MACCATALYST
         func findInteraction(_ interaction: UIFindInteraction, didBegin session: UIFindSession)
 
         func findInteraction(_ interaction: UIFindInteraction, didEnd session: UIFindSession)
@@ -90,7 +90,7 @@ extension WebPageWebView {
 extension WebPageWebView {
     // MARK: Platform-agnostic scrolling capabilities
 
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
 
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation

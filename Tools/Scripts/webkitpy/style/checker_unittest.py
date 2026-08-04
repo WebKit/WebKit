@@ -265,6 +265,12 @@ class GlobalVariablesTest(unittest.TestCase):
         assertNoCheck(os.path.join(wpt_base, 'css', 'foo-expected.png'), 'wpt/lint')
         assertNoCheck(os.path.join(wpt_base, 'css', 'foo-expected-mismatch.html'), 'wpt/lint')
 
+        # Test if the exception for SwiftBrowser is in place.
+        assertNoCheck(os.path.join('Tools', 'SwiftBrowser', 'Source', 'SwiftBrowser.swift'),
+                      "webkit/wtf_platform")
+        assertCheck(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'Swift', 'WebPage.swift'),
+                    "webkit/wtf_platform")
+
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()

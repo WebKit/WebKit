@@ -41,7 +41,7 @@ protocol PlatformFindInteraction {
     func dismissFindNavigator()
 }
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 
 @MainActor
 struct NSTextFinderAdapter: PlatformFindInteraction {

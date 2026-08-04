@@ -26,7 +26,7 @@
 import WebKit_Internal
 
 #if USE_APPLE_INTERNAL_SDK
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 @_weakLinked @_spi(Private) @_spi(ForUIKitOnly) import SwiftUI
 #else
 @_weakLinked @_spi(Private) @_spi(ForAppKitOnly) import SwiftUI
@@ -35,7 +35,7 @@ import WebKit_Internal
 import SwiftUI_SPI
 #endif
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 
 private struct MaterialHostingContentViewWrapper: UIViewRepresentable {
     let contentView: UIView
@@ -67,7 +67,7 @@ private struct LayerBackedMaterialHostingProvider: MaterialHostingProvider {
     }
 }
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 
 private struct ViewBackedMaterialHostingProvider: MaterialHostingProvider {
     static func view(for source: UIView) -> some View {
@@ -83,7 +83,7 @@ private struct MaterialHostingView<P: MaterialHostingProvider>: View {
     private let colorScheme: WKHostedMaterialColorScheme
     private let cornerRadius: CGFloat
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     @State
     private var shouldIncreaseContrast = false
 
@@ -122,7 +122,7 @@ private struct MaterialHostingView<P: MaterialHostingProvider>: View {
         self.cornerRadius = cornerRadius
     }
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     private func updateAccessibilityState() {
         shouldIncreaseContrast =
             NSWorkspace.shared
@@ -137,7 +137,7 @@ private struct MaterialHostingView<P: MaterialHostingProvider>: View {
         if let effect = MaterialHostingView<P>.resolvedMaterialEffect(for: materialEffectType) {
             AnyView(view.materialEffect(effect, in: .rect(cornerRadius: cornerRadius)))
                 .environment(\.colorScheme, colorScheme == .light ? .light : .dark)
-                #if os(macOS)
+                #if WTF_PLATFORM_MAC
             .environment(\._accessibilityReduceTransparency, shouldReduceTransparency)
             .environment(\._colorSchemeContrast, shouldIncreaseContrast ? .increased : .standard)
             .onAppear {
@@ -216,7 +216,7 @@ extension WKMaterialHostingSupport {
         layer.materialHostingContentLayer
     }
 
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
 
     class func hostingView(_ contentView: UIView) -> UIView {
         _UIHostingView(rootView: MaterialHostingView<ViewBackedMaterialHostingProvider>(content: contentView))

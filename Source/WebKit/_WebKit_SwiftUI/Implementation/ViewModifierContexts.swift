@@ -27,7 +27,7 @@ import SwiftUI
 @_spi(Private) import WebKit
 
 struct ContextMenuContext {
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     let menu: @MainActor (WebView.ActivatedElementInfo) -> NSMenu
     #endif
 }

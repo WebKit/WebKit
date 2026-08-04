@@ -27,7 +27,7 @@ import SwiftUI
 @_spi(CrossImportOverlay) import WebKit
 
 extension EdgeInsets {
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     init(_ edgeInsets: UIEdgeInsets) {
         self = EdgeInsets(top: edgeInsets.top, leading: edgeInsets.left, bottom: edgeInsets.bottom, trailing: edgeInsets.right)
     }
@@ -38,7 +38,7 @@ extension EdgeInsets {
     #endif
 }
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 extension NSEdgeInsets {
     init(_ edgeInsets: EdgeInsets, layoutDirection: LayoutDirection) {
         let left = layoutDirection == .rightToLeft ? edgeInsets.trailing : edgeInsets.leading
@@ -66,7 +66,7 @@ extension Transaction {
 }
 
 extension EventModifiers {
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     init(_ wrapped: UIKeyModifierFlags) {
         self =
             switch wrapped {

@@ -241,7 +241,7 @@ extension WebPage {
         let configuration = WKSnapshotConfiguration()
         configuration.rect = region.rect ?? .null
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         // FIXME: This should not be limited to macOS.
         configuration._usesContentsRect = region.usesContentsRect
         #endif
@@ -258,7 +258,7 @@ extension WebPage {
             throw WKError(.unknown)
         }
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         let image = Image(nsImage: snapshot)
         #else
         let image = Image(uiImage: snapshot)

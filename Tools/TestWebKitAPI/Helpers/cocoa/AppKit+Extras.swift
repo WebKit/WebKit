@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 
 public import AppKit
 import Foundation
@@ -61,4 +61,4 @@ extension NSApplication {
     }
 }
 
-#endif // os(macOS)
+#endif // WTF_PLATFORM_MAC

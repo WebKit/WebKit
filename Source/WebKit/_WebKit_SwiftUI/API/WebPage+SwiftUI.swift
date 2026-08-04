@@ -35,7 +35,7 @@ extension WebPage {
     public var themeColor: Color? {
         self.backingProperty(\.themeColor, backedBy: \.themeColor) { backingValue in
             // The themeColor property is a UIColor/NSColor in WKWebView.
-            #if canImport(UIKit)
+            #if WTF_PLATFORM_IOS_FAMILY
             return backingValue.map(Color.init(uiColor:))
             #else
             return backingValue.map(Color.init(nsColor:))

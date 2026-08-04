@@ -64,7 +64,7 @@ where
 
         let effectView = PlatformIntelligenceTextEffectView(source: source)
 
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         effectView.isUserInteractionEnabled = false
         effectView.frame = contentView.frame
         contentView.superview?.addSubview(effectView)

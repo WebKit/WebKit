@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if os(macOS) && ENABLE_SWIFTUI
+#if WTF_PLATFORM_MAC && ENABLE_SWIFTUI
 
 import AppKit
 import SwiftUI
@@ -60,4 +60,4 @@ struct WebPageMouseEventsTests {
     }
 }
 
-#endif // os(macOS) && ENABLE_SWIFTUI
+#endif // WTF_PLATFORM_MAC && ENABLE_SWIFTUI

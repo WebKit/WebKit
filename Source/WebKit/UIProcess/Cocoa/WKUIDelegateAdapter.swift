@@ -27,7 +27,7 @@ import Foundation
 import WebKit_Private
 import WebKit_Internal
 
-#if os(macOS) && !targetEnvironment(macCatalyst)
+#if WTF_PLATFORM_MAC
 @_spiOnly import WebKit_Private._WKContextMenuElementInfo
 @_spiOnly import WebKit_Private._WKHitTestResult
 #endif
@@ -43,7 +43,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
 
     weak var owner: WebPage? = nil
 
-    #if os(macOS) && !targetEnvironment(macCatalyst)
+    #if WTF_PLATFORM_MAC
     var menuBuilder: ((WKContextMenuElementInfoAdapter) -> NSMenu)? = nil
     #endif
 
@@ -124,7 +124,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
 
     // MARK: Context menu support
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     // swift-format-ignore: NoLeadingUnderscores
     @objc(_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:)
     func _webView(

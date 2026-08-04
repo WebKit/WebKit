@@ -25,7 +25,7 @@ import Foundation
 
 #if ENABLE_WRITING_TOOLS
 
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+#if WTF_PLATFORM_MAC
 
 import AppKit
 // WritingToolsUI is not present in the base system, but WebKit is, so it must be weak-linked.
@@ -46,7 +46,7 @@ import AppKit
 import UIKit_SPI
 #endif // USE_APPLE_INTERNAL_SDK
 
-#endif // canImport(AppKit) && !targetEnvironment(macCatalyst)
+#endif // WTF_PLATFORM_MAC
 
 // Work around rdar://145157171 by manually importing the cross-import module.
 #if canImport(_WebKit_SwiftUI)
@@ -56,7 +56,7 @@ import SwiftUI
 
 // MARK: Platform abstraction type aliases
 
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+#if WTF_PLATFORM_MAC
 typealias CocoaView = NSView
 typealias PlatformBounds = NSRect
 typealias PlatformTextPreview = [_WTTextPreview]
@@ -126,7 +126,7 @@ protocol PlatformIntelligenceTextEffectViewSource: AnyObject {
 
 // MARK: Platform type adapters.
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 
 @MainActor
 private final class UITextEffectViewSourceAdapter<Wrapped>: NSObject, @preconcurrency UITextEffectViewSource
@@ -306,7 +306,7 @@ struct PlatformIntelligenceTextEffectID: Hashable {
 /// A platform-agnostic view to control intelligence text effects given a particular source.
 @MainActor
 final class PlatformIntelligenceTextEffectView<Source>: CocoaView where Source: PlatformIntelligenceTextEffectViewSource {
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     fileprivate typealias SourceAdapter = UITextEffectViewSourceAdapter<Source>
     fileprivate typealias Wrapped = UITextEffectView
     #else
@@ -319,7 +319,7 @@ final class PlatformIntelligenceTextEffectView<Source>: CocoaView where Source: 
 
     private let viewSource: SourceAdapter
 
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     fileprivate var wrappedEffectIDToPlatformEffects: [UITextEffectView.EffectID: any PlatformIntelligenceTextEffect] = [:]
     fileprivate var platformEffectIDToWrappedEffectIDs: [PlatformIntelligenceTextEffectID: UITextEffectView.EffectID] = [:]
     #else
@@ -336,7 +336,7 @@ final class PlatformIntelligenceTextEffectView<Source>: CocoaView where Source: 
         self.source = source
         self.viewSource = SourceAdapter(wrapping: self.source)
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         self.wrapped = Wrapped(source: self.viewSource)
         #else
         self.wrapped = Wrapped(asyncSource: self.viewSource)
@@ -365,7 +365,7 @@ final class PlatformIntelligenceTextEffectView<Source>: CocoaView where Source: 
             return
         }
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         self.wrappedEffectIDToPlatformEffects[wrappedEffectIDs] = nil
         self.wrapped.removeEffect(wrappedEffectIDs)
         #else
@@ -433,7 +433,7 @@ where Chunk: PlatformIntelligenceTextEffectChunk {
     }
 
     private func heightDelta() -> Double {
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         let sourceRect = previews.source?.size ?? .zero
         let destRect = previews.destination.size
 
@@ -470,7 +470,7 @@ where Chunk: PlatformIntelligenceTextEffectChunk {
 
         let remainderRect = previews.remainder.presentationFrame
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         let remainderViewSourceFrameY = remainderRect.origin.y
         #else
         // origin-y-coordinate is flipped in AppKit
@@ -484,7 +484,7 @@ where Chunk: PlatformIntelligenceTextEffectChunk {
             height: remainderRect.size.height
         )
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         // shift down if the replaced text is taller than the source text
         let remainderViewDestFrameY = remainderViewSourceFrame.origin.y + delta
         #else
@@ -504,7 +504,7 @@ where Chunk: PlatformIntelligenceTextEffectChunk {
 
         let remainderView = CocoaView(frame: remainderViewSourceFrame)
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         remainderView.layer.contents = remainderPreviewImage
         #else
         remainderView.wantsLayer = true
@@ -525,7 +525,7 @@ where Chunk: PlatformIntelligenceTextEffectChunk {
             remainderView.frame = remainderViewDestinationFrame
         }
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         UIView.animate(animation, changes: changes)
         #else
         NSAnimationContext.animate(animation, changes: changes)
@@ -548,7 +548,7 @@ class PlatformIntelligenceReplacementTextEffect<Chunk>: PlatformIntelligenceText
         self.chunk = chunk
     }
 
-    #if canImport(AppKit) && !targetEnvironment(macCatalyst)
+    #if WTF_PLATFORM_MAC
     private func didCompletePartialWrappedEffect<Source>(for source: Source)
     where Source: PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
         if self.hasCompletedPartialWrappedEffect {
@@ -582,7 +582,7 @@ class PlatformIntelligenceReplacementTextEffect<Chunk>: PlatformIntelligenceText
             return
         }
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         let chunkAdapter = UIReplacementTextEffectTextChunkAdapter(
             wrapping: self.chunk,
             source: sourcePreview,
@@ -655,7 +655,7 @@ class PlatformIntelligenceReplacementTextEffect<Chunk>: PlatformIntelligenceText
 
 /// An effect which adds a shimmer animation to some text, intended to indicate that some operation is pending.
 class PlatformIntelligencePonderingTextEffect<Chunk>: PlatformIntelligenceTextEffect where Chunk: PlatformIntelligenceTextEffectChunk {
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     private typealias ChunkAdapter = UIPonderingTextEffectTextChunkAdapter
     #else
     private typealias ChunkAdapter = WTTextChunkAdapter
@@ -676,7 +676,7 @@ class PlatformIntelligencePonderingTextEffect<Chunk>: PlatformIntelligenceTextEf
 
         let chunkAdapter = ChunkAdapter(wrapping: self.chunk, preview: preview)
 
-        #if canImport(UIKit)
+        #if WTF_PLATFORM_IOS_FAMILY
         let wrappedEffect = UITextEffectView.PonderingEffect(chunk: chunkAdapter, view: view.wrapped)
         view.wrapped.addEffect(wrappedEffect)
 

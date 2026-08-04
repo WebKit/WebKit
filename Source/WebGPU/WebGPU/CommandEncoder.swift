@@ -242,7 +242,7 @@ extension WebGPU.CommandEncoder {
 
         commandBuffer?.label = CxxBridging.convertWTFStringToNSString(descriptor.label)
 
-        #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
+        #if arch(x86_64) && (WTF_PLATFORM_MAC || WTF_PLATFORM_MACCATALYST)
         if (m_managedBuffers?.count ?? 0) != 0 || (m_managedTextures?.count ?? 0) != 0 {
             let blitCommandEncoder = commandBuffer?.makeBlitCommandEncoder()
 
@@ -268,7 +268,7 @@ extension WebGPU.CommandEncoder {
 
             blitCommandEncoder?.endEncoding()
         }
-        #endif // arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
+        #endif // arch(x86_64) && (WTF_PLATFORM_MAC || WTF_PLATFORM_MACCATALYST)
 
         let result = createCommandBuffer(commandBuffer, m_device.ptr(), m_sharedEvent, m_sharedEventSignalValue)
         m_sharedEvent = nil

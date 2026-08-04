@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if os(visionOS)
+#if WTF_PLATFORM_VISION
 
 import AVFoundation
 public import Combine
@@ -422,15 +422,15 @@ extension WKSLinearMediaPlayer {
     }
 }
 
-#endif // os(visionOS)
+#endif // WTF_PLATFORM_VISION
 
-#if os(visionOS)
+#if WTF_PLATFORM_VISION
 @_spi(Internal)
 extension WKSLinearMediaPlayer: @preconcurrency Playable {
 }
 #endif
 
-#if os(visionOS)
+#if WTF_PLATFORM_VISION
 
 @_spi(Internal)
 extension WKSLinearMediaPlayer {
@@ -1165,4 +1165,4 @@ extension WKSLinearMediaPlayer {
     #endif
 }
 
-#endif // os(visionOS)
+#endif // WTF_PLATFORM_VISION

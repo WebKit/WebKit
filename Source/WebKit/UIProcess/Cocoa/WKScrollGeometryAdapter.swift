@@ -34,7 +34,7 @@ public struct WKScrollGeometryAdapter {
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let containerSize: CGSize
 
-    #if canImport(UIKit)
+    #if WTF_PLATFORM_IOS_FAMILY
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     #if compiler(>=6.2.3)

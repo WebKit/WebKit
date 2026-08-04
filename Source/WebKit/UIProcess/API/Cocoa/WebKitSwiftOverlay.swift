@@ -29,7 +29,7 @@
 import WebKit_Private.WKWebExtensionPrivate
 #endif
 
-#if !os(watchOS) && !os(tvOS)
+#if !WTF_PLATFORM_WATCHOS && !WTF_PLATFORM_APPLETV
 
 @available(anyAppleOSAndDownlevels 14.0, *)
 @available(watchOS, unavailable)
@@ -54,7 +54,7 @@ extension WKPDFConfiguration {
 
 #endif
 
-#if !os(watchOS) && !os(tvOS)
+#if !WTF_PLATFORM_WATCHOS && !WTF_PLATFORM_APPLETV
 
 @available(anyAppleOSAndDownlevels 14.0, *)
 @available(watchOS, unavailable)
@@ -175,7 +175,7 @@ extension WKWebView {
 
 #endif
 
-#if !os(watchOS) && !os(tvOS)
+#if !WTF_PLATFORM_WATCHOS && !WTF_PLATFORM_APPLETV
 
 @available(anyAppleOSAndDownlevels 15.0, *)
 @available(watchOS, unavailable)

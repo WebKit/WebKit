@@ -31,7 +31,7 @@ import WebKit_Private.WKPreferencesPrivate
 #if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
 import WebKit_Private.WKWebViewPrivate
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 import AppKit.NSRefreshController
 typealias PlatformRefreshControl = NSRefreshController
 #else
@@ -57,7 +57,7 @@ struct WebViewRepresentable {
 
         let parent = CocoaWebViewAdapter()
         parent.webView = page.backingWebView
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         parent.extrinsicSafeAreaInsets = safeAreaInsets
         #endif
         page.isBoundToWebView = true
@@ -73,7 +73,7 @@ struct WebViewRepresentable {
         setupRefreshControl(context: context)
         #endif
 
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         platformView.extrinsicSafeAreaInsets = safeAreaInsets
         #endif
         platformView.webView = webView
@@ -84,7 +84,7 @@ struct WebViewRepresentable {
 
         let isOpaque = environment.webViewContentBackground != .hidden
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         if webView._drawsBackground != isOpaque {
             webView._drawsBackground = isOpaque
         }
@@ -94,7 +94,7 @@ struct WebViewRepresentable {
         }
         #endif
 
-        #if os(visionOS)
+        #if WTF_PLATFORM_VISION
         if let scrollInputBehavior = environment.webViewScrollInputBehaviorContext {
             if scrollInputBehavior.input == .look {
                 webView.configuration.preferences._overlayRegionsEnabled = scrollInputBehavior.behavior != .disabled
@@ -104,7 +104,7 @@ struct WebViewRepresentable {
         }
         #endif
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         if let scrollEdgeEffectStyle = environment.webViewScrollEdgeEffectStyleContext {
             webView._usesAutomaticContentInsetBackgroundFill = scrollEdgeEffectStyle.style != .hard
             webView.obscuredContentInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
@@ -156,7 +156,7 @@ struct WebViewRepresentable {
 
         context.coordinator.update(platformView, configuration: self, context: context)
 
-        #if os(macOS) && !targetEnvironment(macCatalyst)
+        #if WTF_PLATFORM_MAC
         if let menu = environment.webViewContextMenuContext?.menu {
             page.setMenuBuilder {
                 menu(.init(linkURL: $0.linkURL))
@@ -185,7 +185,7 @@ struct WebViewRepresentable {
     }
 
     static func dismantlePlatformView(_ platformView: CocoaWebViewAdapter, coordinator: WebViewCoordinator) {
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         // This is needed to avoid a crash when dismissing a WebView with a find navigator still active,
         // since NSTextFinder deallocation engages AutoLayout on an invalidated view hierarchy.
         platformView.findInteraction = nil
@@ -275,7 +275,7 @@ final class WebViewCoordinator {
         let findContext = environment.findContext
         view.findContext = findContext
 
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         webView.isFindInteractionEnabled = findContext != nil
         #endif
 
@@ -311,7 +311,7 @@ extension WebViewRepresentable {
         if environment.refresh != nil {
             if webView._platformRefreshControl == nil {
                 let control = PlatformRefreshControl()
-                #if os(macOS)
+                #if WTF_PLATFORM_MAC
                 control.target = target
                 control.action = action
                 #else
@@ -340,7 +340,7 @@ extension WebViewCoordinator {
 }
 #endif // ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
 
-#if canImport(UIKit)
+#if WTF_PLATFORM_IOS_FAMILY
 extension WebViewRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> CocoaWebViewAdapter {
         makePlatformView(context: context)

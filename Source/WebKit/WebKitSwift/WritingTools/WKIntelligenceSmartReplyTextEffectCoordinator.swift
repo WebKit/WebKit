@@ -33,13 +33,13 @@ import WebKit
 @_spiOnly import WritingTools_SPI
 #endif
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 #if USE_APPLE_INTERNAL_SDK
 @_weakLinked import WritingToolsUI_Private._WTTextEffectView
 #else
 @_weakLinked import WritingToolsUI_Private_SPI
 #endif // USE_APPLE_INTERNAL_SDK
-#endif // os(macOS)
+#endif // WTF_PLATFORM_MAC
 
 // MARK: Implementation
 

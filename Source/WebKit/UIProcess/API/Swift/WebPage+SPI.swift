@@ -30,14 +30,14 @@ import WebKit_Internal
 // MARK: CrossImportOverlay SPI
 
 extension WebPage {
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @_spi(CrossImportOverlay)
     public func setMenuBuilder(_ menuBuilder: ((WKContextMenuElementInfoAdapter) -> NSMenu)?) {
         backingUIDelegate.menuBuilder = menuBuilder
     }
-    #endif // os(macOS)
+    #endif // WTF_PLATFORM_MAC
 
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation

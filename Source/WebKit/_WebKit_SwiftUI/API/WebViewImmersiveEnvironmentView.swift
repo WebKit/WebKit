@@ -53,12 +53,12 @@ public struct WebViewImmersiveEnvironmentView: View {
 
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var body: some View {
-        #if os(visionOS)
+        #if WTF_PLATFORM_VISION
         Representable(environment: environment)
         #endif
     }
 
-    #if os(visionOS)
+    #if WTF_PLATFORM_VISION
     @MainActor
     private struct Representable: UIViewRepresentable {
         let environment: WKImmersiveEnvironment

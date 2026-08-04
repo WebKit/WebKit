@@ -32,7 +32,7 @@ public import WebKit_Private._WKFrameTreeNode
 public import struct Swift.String
 private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 
-#if os(macOS)
+#if WTF_PLATFORM_MAC
 private import Carbon
 #endif
 
@@ -86,7 +86,7 @@ extension WebPage {
     ///
     /// - Parameter text: The text to insert.
     public func insertText(_ text: String) async {
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         backingWebView.insertText(text)
         #else
         backingWebView.textInputContentView.insertText(text)
@@ -111,7 +111,7 @@ extension WebPage {
         assert(success)
     }
 
-    #if os(macOS)
+    #if WTF_PLATFORM_MAC
 
     /// Determines if the specified point is located above a visible scrollbar.
     ///
@@ -284,7 +284,7 @@ extension WebPage {
 
         return event
     }
-    #endif // os(macOS)
+    #endif // WTF_PLATFORM_MAC
 }
 
 #endif // ENABLE_SWIFTUI

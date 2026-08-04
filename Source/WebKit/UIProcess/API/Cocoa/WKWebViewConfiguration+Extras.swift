@@ -44,11 +44,11 @@ extension WKWebViewConfiguration {
         self.supportsAdaptiveImageGlyph = wrapped.supportsAdaptiveImageGlyph
         self._loadsSubresources = wrapped.loadsSubresources
 
-        #if !os(visionOS)
+        #if !WTF_PLATFORM_VISION
         self.showsSystemScreenTimeBlockingView = wrapped.showsSystemScreenTimeBlockingView
         #endif
 
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         self.dataDetectorTypes = wrapped.dataDetectorTypes
         self.ignoresViewportScaleLimits = wrapped.ignoresViewportScaleLimits
 
@@ -57,7 +57,7 @@ extension WKWebViewConfiguration {
         }
         #endif
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         self.userInterfaceDirectionPolicy = wrapped.userInterfaceDirectionPolicy
         #endif
 
@@ -74,13 +74,13 @@ extension WKWebViewConfiguration {
             self.processPool = processPool
         }
 
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         self._requiresUserActionForEditingControlsManager = wrapped.requiresUserActionForEditingControlsManager
         #endif
 
         self._isControlledByAutomation = wrapped.isControlledByAutomation
 
-        #if !os(watchOS) && !os(tvOS)
+        #if !WTF_PLATFORM_WATCHOS && !WTF_PLATFORM_APPLETV
         self._attachmentElementEnabled = wrapped.attachmentElementEnabled
         #endif
 

@@ -73,7 +73,7 @@ public struct WebView: View {
 
     @ViewBuilder
     private var representable: some View {
-        #if os(iOS)
+        #if WTF_PLATFORM_IOS_FAMILY
         GeometryReader { proxy in
             WebViewRepresentable(page: storage.webPage, safeAreaInsets: proxy.safeAreaInsets)
                 .ignoresSafeArea()

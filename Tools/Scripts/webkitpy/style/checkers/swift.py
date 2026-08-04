@@ -27,6 +27,21 @@ import subprocess
 
 
 class SwiftChecker(object):
+    categories = set(['webkit/unsafe', 'webkit/wtf_platform'])
+
+    _PLATFORM_CONDITIONS = [
+        (re.compile(r'\bos\(macOS\)'), 'os(macOS)', 'WTF_PLATFORM_MAC'),
+        (re.compile(r'\bos\(iOS\)'), 'os(iOS)', 'WTF_PLATFORM_IOS_FAMILY'),
+        (re.compile(r'\bos\(watchOS\)'), 'os(watchOS)', 'WTF_PLATFORM_WATCHOS'),
+        (re.compile(r'\bos\(tvOS\)'), 'os(tvOS)', 'WTF_PLATFORM_APPLETV'),
+        (re.compile(r'\bos\(visionOS\)'), 'os(visionOS)', 'WTF_PLATFORM_VISION'),
+        (re.compile(r'\btargetEnvironment\(macCatalyst\)'), 'targetEnvironment(macCatalyst)', 'WTF_PLATFORM_MACCATALYST'),
+        (re.compile(r'\bcanImport\(UIKit\)'), 'canImport(UIKit)', 'WTF_PLATFORM_IOS_FAMILY'),
+        (re.compile(r'\bcanImport\(AppKit\)'), 'canImport(AppKit)', 'WTF_PLATFORM_MAC'),
+    ]
+
+    _CONDITIONAL_DIRECTIVE_RE = re.compile(r'^\s*#(if|elseif)\b')
+
     def __init__(self, file_path, handle_style_error):
         self.file_path = file_path
         self.handle_style_error = handle_style_error
@@ -84,6 +99,16 @@ class SwiftChecker(object):
             if re.search(r'@safe\b', line) and not re.search(r'@unsafe\b', line):
                 self.handle_style_error(index + 1, 'webkit/unsafe', 5, "Please avoid new use of '@safe' in WebKit. See https://github.com/WebKit/WebKit/wiki/Safer-Swift-Guidelines.")
 
+    def _check_platform_conditions(self, lines):
+        for index, line in enumerate(lines):
+            if not self._CONDITIONAL_DIRECTIVE_RE.match(line):
+                continue
+
+            for pattern, condition, replacement in self._PLATFORM_CONDITIONS:
+                for _ in pattern.finditer(line):
+                    self.handle_style_error(index + 1, 'webkit/wtf_platform', 5, "Use '%s' instead of '%s' in conditional compilation, so that Swift and C++ platform checks agree." % (replacement, condition))
+
     def check(self, lines, line_numbers=None):
         self._swift_format(self.file_path, lines, self.handle_style_error)
         self._check_unsafe(lines)
+        self._check_platform_conditions(lines)

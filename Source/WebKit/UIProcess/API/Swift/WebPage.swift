@@ -383,7 +383,7 @@ final public class WebPage {
         let webView = WebPageWebView(frame: Self.defaultFrame, configuration: WKWebViewConfiguration(configuration))
         webView.navigationDelegate = backingNavigationDelegate
         webView.uiDelegate = backingUIDelegate
-        #if os(macOS)
+        #if WTF_PLATFORM_MAC
         webView._usePlatformFindUI = false
         #endif
         return webView
