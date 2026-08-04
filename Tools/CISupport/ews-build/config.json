@@ -484,8 +484,8 @@
       "workernames": ["igalia23-wpe-ews", "igalia24-wpe-ews", "igalia25-wpe-ews", "igalia26-wpe-ews"]
     },
     {
-      "name": "GTK-GTK3-LibWebRTC-Build-EWS", "shortname": "gtk3-libwebrtc", "icon": "buildOnly",
-      "factory": "GTK3LibWebRTCBuildFactory", "platform": "gtk",
+      "name": "GTK-GTK3-GCC-Build-EWS", "shortname": "gtk3-gcc", "icon": "buildOnly",
+      "factory": "GTK3GCCBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["igalia16-wpe-ews", "igalia17-wpe-ews", "igalia18-wpe-ews", "igalia19-wpe-ews"]
     },
@@ -581,7 +581,7 @@
             "macOS-Tahoe-Debug-Build-EWS", "macOS-Sequoia-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS", "Apple-iOS-26-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
             "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
-            "GTK-GTK3-LibWebRTC-Build-EWS"
+            "GTK-GTK3-GCC-Build-EWS"
       ]
     },
     {
@@ -595,7 +595,7 @@
             "macOS-Tahoe-Debug-Build-EWS", "macOS-Sequoia-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS", "Apple-iOS-26-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
             "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
-            "GTK-GTK3-LibWebRTC-Build-EWS"
+            "GTK-GTK3-GCC-Build-EWS"
       ]
     },
     {

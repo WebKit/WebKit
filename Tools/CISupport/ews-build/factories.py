@@ -356,7 +356,7 @@ class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
 
-class GTK3LibWebRTCBuildFactory(GTKBuildFactory):
+class GTK3GCCBuildFactory(GTKBuildFactory):
     skipUpload = True
 
 

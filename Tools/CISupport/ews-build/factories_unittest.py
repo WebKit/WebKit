@@ -639,7 +639,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'clean-derived-sources',
             'compile-webkit'
         ],
-        'GTK-GTK3-LibWebRTC-Build-EWS': [
+        'GTK-GTK3-GCC-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',

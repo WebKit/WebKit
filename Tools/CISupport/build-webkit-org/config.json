@@ -267,7 +267,6 @@
                   { "name": "wpe-linux-bot-32", "platform": "wpe-rpi4-64bits-mesa" },
                   { "name": "wpe-linux-bot-33", "platform": "wpe-rpi4-64bits-mesa" },
                   { "name": "wpe-linux-bot-34", "platform": "wpe-rpi4-64bits-mesa" },
-                  { "name": "wpe-linux-bot-35", "platform": "wpe" },
                   { "name": "wpe-linux-bot-36", "platform": "wpe" },
                   { "name": "wpe-linux-bot-37", "platform": "wpe" },
                   { "name": "wpe-linux-bot-38", "platform": "wpe" },
@@ -580,7 +579,7 @@
                     "workernames": ["gtk-linux-bot-18"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-GCC-Build", "factory": "BuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["gtk-linux-bot-20"]
                   },
@@ -667,7 +666,7 @@
                     "workernames": ["wpe-linux-bot-11"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-GCC-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-12"]
                   },
@@ -713,11 +712,6 @@
                     "workernames": ["wpe-linux-bot-21", "wpe-linux-bot-22", "wpe-linux-bot-23", "wpe-linux-bot-24", "wpe-linux-bot-25", "wpe-linux-bot-26", "wpe-linux-bot-27", "wpe-linux-bot-28", "wpe-linux-bot-29", "wpe-linux-bot-30", "wpe-linux-bot-31", "wpe-linux-bot-32", "wpe-linux-bot-33", "wpe-linux-bot-34"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-LibWebRTC-Build", "factory": "BuildFactory",
-                    "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                    "workernames": ["wpe-linux-bot-35"]
-                  },
-                  {
                     "name": "WPE-Linux-64-bit-Release-MVT-Tests", "factory": "TestMVTFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-36"]
@@ -758,7 +752,7 @@
 
   "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
                     "builderNames": ["GTK-Linux-64-bit-Release-Build",
-                                     "GTK-Linux-64-bit-Release-Clang-Build",
+                                     "GTK-Linux-64-bit-Release-GCC-Build",
                                      "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
@@ -772,8 +766,7 @@
                                      "PlayStation-Release-Build", "PlayStation-Debug-Build",
                                      "Windows-64-bit-Release-Build", "Windows-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build",
-                                     "WPE-Linux-64-bit-Release-Clang-Build",
-                                     "WPE-Linux-64-bit-Release-LibWebRTC-Build",
+                                     "WPE-Linux-64-bit-Release-GCC-Build",
                                      "WPE-Linux-64-bit-Release-Non-Unified-Build",
                                      "WPE-Linux-ARM64-bit-Release-Build"]
                   },
