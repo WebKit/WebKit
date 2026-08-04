@@ -618,8 +618,11 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
             m_totalVideoFrames += numberOfSamples;
 
             if (!result) {
-                if (result.error() == kVTInvalidSessionErr) {
-                    ALWAYS_LOG(LOGIDENTIFIER, "VTDecompressionSession got invalidated, requesting flush");
+                // Invalidating a session while a sample is in flight is reported either as an
+                // invalid session or as a decoder malfunction, depending on how far that sample
+                // had got. Both mean the session is gone and a flush is what resumes decoding.
+                if (result.error() == kVTInvalidSessionErr || result.error() == kVTVideoDecoderMalfunctionErr) {
+                    ALWAYS_LOG(LOGIDENTIFIER, "VTDecompressionSession got invalidated (", result.error(), "), requesting flush");
                     invalidateDecompressionSession();
                     return;
                 }
