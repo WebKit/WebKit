@@ -463,6 +463,12 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 */
 - (void)createWebArchiveDataWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData * _Nullable, NSError * _Nullable))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+/*! @abstract Fetch data representing the main resource of the current web content in the WKWebView.
+ @param completionHandler A block to invoke when the main resource data is ready.
+ @discussion Main resource data represents the raw response data of the main frame's resource.
+ */
+- (void)fetchMainResourceDataWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData * _Nullable mainResourceData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
  @discussion The default value is NO.

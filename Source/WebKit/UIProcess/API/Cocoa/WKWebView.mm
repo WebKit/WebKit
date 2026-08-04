@@ -2325,6 +2325,14 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     });
 }
 
+- (void)fetchMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->getMainResourceDataOfFrame(protect(_page->mainFrame()), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
+        completionHandler(protect(wrapper(data)).get(), nil);
+    });
+}
+
 static RetainPtr<NSDictionary> dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
 {
     if (!state.hasPostLayoutData())
@@ -6003,9 +6011,7 @@ static inline OptionSet<WebCore::LayoutMilestone> NODELETE layoutMilestones(_WKR
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->getMainResourceDataOfFrame(protect(_page->mainFrame()), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
-        completionHandler(protect(wrapper(data)).get(), nil);
-    });
+    [self fetchMainResourceDataWithCompletionHandler:completionHandler];
 }
 
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler

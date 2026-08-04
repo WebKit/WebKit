@@ -363,7 +363,7 @@ for this property.
 
 - (void)_saveResources:(NSURL *)directory suggestedFileName:(NSString *)name completionHandler:(void (^)(NSError *error))completionHandler WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 - (void)_archiveWithConfiguration:(_WKArchiveConfiguration*)configuration completionHandler:(void (^)(NSError *error))completionHandler WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
-- (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
+- (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("fetchMainResourceDataWithCompletionHandler:", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
 - (void)_createWebArchiveForFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 - (void)_createWebArchiveForFrames:(NSArray<WKFrameInfo *> *)frames rootFrame:(WKFrameInfo *)rootFrame completionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
