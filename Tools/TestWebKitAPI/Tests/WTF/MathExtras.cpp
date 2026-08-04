@@ -729,6 +729,38 @@ TEST(WTF, hasZeroByte)
     testHasZeroByte<uint64_t>();
 }
 
+TEST(WTF, zeroExtendBytesToHalfwords)
+{
+    auto referenceWiden = [](uint32_t value) -> uint64_t {
+        uint64_t result = 0;
+        for (unsigned i = 0; i < 4; ++i) {
+            uint8_t byte = static_cast<uint8_t>(value >> (i * 8));
+            result |= static_cast<uint64_t>(byte) << (i * 16);
+        }
+        return result;
+    };
+
+    EXPECT_EQ(zeroExtendBytesToHalfwords(0), 0ULL);
+    EXPECT_EQ(zeroExtendBytesToHalfwords(0xFFFFFFFFU), 0x00FF00FF00FF00FFULL);
+    EXPECT_EQ(zeroExtendBytesToHalfwords(0xDDCCBBAAU), 0x00DD00CC00BB00AAULL);
+
+    // Exhaustive per byte value at every position, with the other three bytes held to a
+    // clean nonzero pattern, matching testHasZeroByte's style above.
+    for (size_t position = 0; position < 4; ++position) {
+        for (unsigned byteValue = 0; byteValue <= 0xFF; ++byteValue) {
+            uint32_t word = 0;
+            for (size_t i = 0; i < 4; ++i)
+                word |= (i == position ? byteValue : 0x78) << (i * 8);
+            EXPECT_EQ(zeroExtendBytesToHalfwords(word), referenceWiden(word));
+        }
+    }
+
+    // A handful of full-width sampled values, cross-checked against the same reference.
+    static constexpr uint32_t samples[] = { 0x00000000, 0xFFFFFFFF, 0x01020304, 0x80808080, 0x7F7F7F7F, 0xA5A5A5A5, 0x12345678, 0xFF00FF00, 0x00FF00FF };
+    for (uint32_t sample : samples)
+        EXPECT_EQ(zeroExtendBytesToHalfwords(sample), referenceWiden(sample));
+}
+
 TEST(WTF, divideRoundedUp)
 {
     // Basic rounding behavior.
