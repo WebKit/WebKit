@@ -42,6 +42,12 @@
 
 namespace WebCore {
 
+UINT customDataClipboardFormat()
+{
+    static UINT format = ::RegisterClipboardFormat(L"WebKit Custom Data Format");
+    return format;
+}
+
 FORMATETC* cfHDropFormat()
 {
     static FORMATETC urlFormat = {CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};

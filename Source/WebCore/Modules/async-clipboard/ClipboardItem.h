@@ -62,7 +62,7 @@ public:
 
     Vector<String> types() const;
     void getType(const String&, Ref<DeferredPromise>&&);
-    static bool supports(const String& type);
+    static bool supports(ScriptExecutionContext&, const String& type);
 
     void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&);
 

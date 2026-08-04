@@ -427,13 +427,6 @@ void WebPlatformStrategies::clearClipboard(const String& pasteboardName)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::ClearClipboard(pasteboardName), 0);
 }
 
-int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
-{
-    auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPasteboardProxy::GetPasteboardChangeCount(pasteboardName), 0);
-    auto [changeCount] = sendResult.takeReplyOr(0);
-    return changeCount;
-}
-
 #elif USE(LIBWPE)
 // PasteboardStrategy
 
@@ -455,6 +448,17 @@ void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, cons
 }
 
 #endif // USE(LIBWPE)
+
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+
+int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
+{
+    auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPasteboardProxy::GetPasteboardChangeCount(pasteboardName), 0);
+    auto [changeCount] = sendResult.takeReplyOr(0);
+    return changeCount;
+}
+
+#endif // PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
 
 Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, const PasteboardContext* context)
 {

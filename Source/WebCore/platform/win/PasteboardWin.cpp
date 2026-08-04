@@ -45,6 +45,8 @@
 #include "ImageAdapter.h"
 #include "LocalFrameInlines.h"
 #include "NotImplemented.h"
+#include "PasteboardStrategy.h"
+#include "PlatformStrategies.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "SharedBuffer.h"
@@ -69,7 +71,6 @@ namespace WebCore {
 static UINT HTMLClipboardFormat = 0;
 static UINT BookmarkClipboardFormat = 0;
 static UINT WebSmartPasteFormat = 0;
-static UINT CustomDataClipboardFormat = 0;
 
 static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -141,13 +142,14 @@ void Pasteboard::finishCreatingPasteboard()
     HTMLClipboardFormat = ::RegisterClipboardFormat(L"HTML Format");
     BookmarkClipboardFormat = ::RegisterClipboardFormat(L"UniformResourceLocatorW");
     WebSmartPasteFormat = ::RegisterClipboardFormat(L"WebKit Smart Paste Format");
-    CustomDataClipboardFormat = ::RegisterClipboardFormat(L"WebKit Custom Data Format");
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
     : m_context(WTF::move(context))
     , m_dataObject(0)
     , m_writableDataObject(0)
+    , m_forCopyAndPaste(true)
+    , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(name()))
 {
     finishCreatingPasteboard();
 }
@@ -253,8 +255,8 @@ static void addMIMETypesForFormat(OrderedHashSet<String>& results, const FORMATE
 
 std::optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
 {
-    if (::IsClipboardFormatAvailable(CustomDataClipboardFormat) && ::OpenClipboard(m_owner)) {
-        if (HANDLE cbData = ::GetClipboardData(CustomDataClipboardFormat)) {
+    if (::IsClipboardFormatAvailable(customDataClipboardFormat()) && ::OpenClipboard(m_owner)) {
+        if (HANDLE cbData = ::GetClipboardData(customDataClipboardFormat())) {
             size_t size = GlobalSize(cbData);
             auto data = static_cast<uint8_t*>(GlobalLock(cbData));
             auto customData = PasteboardCustomData::fromPersistenceDecoder({{ data, size }});
@@ -268,6 +270,14 @@ std::optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
     }
 
     return std::nullopt;
+}
+
+int64_t Pasteboard::changeCount() const
+{
+    if (!m_forCopyAndPaste)
+        return 0;
+
+    return platformStrategies()->pasteboardStrategy()->changeCount(name());
 }
 
 Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
@@ -834,8 +844,13 @@ bool Pasteboard::canSmartReplace()
     return ::IsClipboardFormatAvailable(WebSmartPasteFormat);
 }
 
-void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t> index)
 {
+    if (index) {
+        text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(index.value_or(0), textPlainContentTypeAtom(), name(), context());
+        return;
+    }
+
     if (::IsClipboardFormatAvailable(CF_UNICODETEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT)) {
             text.text = static_cast<wchar_t*>(GlobalLock(cbData));
@@ -1137,10 +1152,15 @@ void Pasteboard::write(const PasteboardBuffer&)
 {
 }
 
-void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
+void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data, PasteboardWriteType type)
 {
     if (data.isEmpty() || data.size() > 1) {
         // We don't support more than one custom item in the clipboard.
+        return;
+    }
+
+    if (type == PasteboardWriteType::AsyncClipboard) {
+        m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, name(), context());
         return;
     }
 
@@ -1149,30 +1169,30 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
     if (::OpenClipboard(m_owner)) {
         const auto& customData = data.first();
         customData.forEachPlatformStringOrBuffer([](auto& type, auto& stringOrBuffer) {
-            if (std::holds_alternative<String>(stringOrBuffer)) {
-                ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
+            if (!std::holds_alternative<String>(stringOrBuffer))
+                return;
 
-                String str = std::get<String>(stringOrBuffer);
-                replaceNewlinesWithWindowsStyleNewlines(str);
-                HGLOBAL cbData = createGlobalData(str);
+            ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
+            String str = std::get<String>(stringOrBuffer);
+            replaceNewlinesWithWindowsStyleNewlines(str);
+            HGLOBAL cbData = createGlobalData(str);
 
-                if (dataType == ClipboardDataTypeText) {
-                    if (cbData && !::SetClipboardData(CF_UNICODETEXT, cbData))
-                        ::GlobalFree(cbData);
-                } else if (dataType == ClipboardDataTypeURL) {
-                    if (cbData && !::SetClipboardData(BookmarkClipboardFormat, cbData))
-                        ::GlobalFree(cbData);
-                } else if (dataType == ClipboardDataTypeTextHTML) {
-                    if (cbData && !::SetClipboardData(HTMLClipboardFormat, cbData))
-                        ::GlobalFree(cbData);
-                }
+            if (dataType == ClipboardDataTypeText) {
+                if (cbData && !::SetClipboardData(CF_UNICODETEXT, cbData))
+                    ::GlobalFree(cbData);
+            } else if (dataType == ClipboardDataTypeURL) {
+                if (cbData && !::SetClipboardData(BookmarkClipboardFormat, cbData))
+                    ::GlobalFree(cbData);
+            } else if (dataType == ClipboardDataTypeTextHTML) {
+                if (cbData && !::SetClipboardData(HTMLClipboardFormat, cbData))
+                    ::GlobalFree(cbData);
             }
         });
 
         if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty()) {
             auto sharedBuffer = customData.createSharedBuffer();
             HGLOBAL cbData = createGlobalData(sharedBuffer->span());
-            if (cbData && !::SetClipboardData(CustomDataClipboardFormat, cbData))
+            if (cbData && !::SetClipboardData(customDataClipboardFormat(), cbData))
                 ::GlobalFree(cbData);
         }
 

@@ -35,6 +35,8 @@ namespace WebCore {
 class Document;
 class DocumentFragment;
 
+UINT customDataClipboardFormat();
+
 HGLOBAL createGlobalData(const String&);
 HGLOBAL createGlobalData(const Vector<char>&);
 HGLOBAL createGlobalData(const URL& url, const String& title);

@@ -127,11 +127,13 @@ public:
     RefPtr<SharedBuffer> readBufferFromClipboard(const String&, const String&) final { return nullptr; }
     void writeToClipboard(const String&, SelectionData&&) final { }
     void clearClipboard(const String&) final { }
-    int64_t changeCount(const String&) final { return 0; }
 #elif USE(LIBWPE)
     void getTypes(Vector<String>&) final { }
     void writeToPasteboard(const PasteboardWebContent&) final { }
     void writeToPasteboard(const String&, const String&) final { }
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+    int64_t changeCount(const String&) final { return 0; }
 #endif
 };
 

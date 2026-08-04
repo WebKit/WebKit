@@ -94,11 +94,14 @@ private:
     RefPtr<WebCore::SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&) override;
     void clearClipboard(const String& pasteboardName) override;
-    int64_t changeCount(const String& pasteboardName) override;
 #elif USE(LIBWPE)
     void getTypes(Vector<String>& types) override;
     void writeToPasteboard(const WebCore::PasteboardWebContent&) override;
     void writeToPasteboard(const String& pasteboardType, const String&) override;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+    int64_t changeCount(const String& pasteboardName) override;
 #endif
 
     String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;

@@ -78,12 +78,15 @@ messages -> WebPasteboardProxy {
     ReadBuffer(String pasteboardName, String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
     WriteToClipboard(String pasteboardName, WebCore::SelectionData pasteboardContent)
     ClearClipboard(String pasteboardName)
-    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
 #endif
 
 #if USE(LIBWPE) && !PLATFORM(WPE)
     GetPasteboardTypes() -> (Vector<String> types) Synchronous
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
     WriteStringToPasteboard(String pasteboardType, String text)
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
 #endif
 }

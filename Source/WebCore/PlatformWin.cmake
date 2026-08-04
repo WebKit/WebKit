@@ -101,6 +101,7 @@ list(APPEND WebCore_SOURCES
     platform/win/MainThreadSharedTimerWin.cpp
     platform/win/PasteboardWin.cpp
     platform/win/PlatformMouseEventWin.cpp
+    platform/win/PlatformPasteboardWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/SearchPopupMenuDB.cpp
     platform/win/SharedMemoryWin.cpp

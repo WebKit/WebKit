@@ -80,6 +80,7 @@ static constexpr auto pasteboardExpirationDelay = 8_min;
 
 enum class PlainTextURLReadingPolicy : bool { IgnoreURL, AllowURL };
 enum class WebContentReadingPolicy : bool { AnyType, OnlyRichTextTypes };
+enum class PasteboardWriteType : bool { General, AsyncClipboard };
 enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, IncludeImageAltTextForDataTransfer };
 
 // For writing to the pasteboard. Generally sorted with the richest formats on top.
@@ -246,7 +247,7 @@ public:
     virtual WEBCORE_EXPORT void write(const PasteboardBuffer&);
     virtual WEBCORE_EXPORT void write(const PasteboardWebContent&);
 
-    virtual WEBCORE_EXPORT void writeCustomData(const Vector<PasteboardCustomData>&);
+    virtual WEBCORE_EXPORT void writeCustomData(const Vector<PasteboardCustomData>&, PasteboardWriteType = PasteboardWriteType::General);
 
     enum class FileContentState : uint8_t { NoFileOrImageData, InMemoryImage, MayContainFilePaths };
     virtual WEBCORE_EXPORT FileContentState fileContentState();
@@ -298,7 +299,7 @@ public:
     const PasteboardCustomData& readCustomData();
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
     int64_t changeCount() const;
 #else
     int64_t changeCount() const { return 0; }
@@ -393,6 +394,9 @@ private:
     COMPtr<IDataObject> m_dataObject;
     COMPtr<WCDataObject> m_writableDataObject;
     DragDataMap m_dragDataMap;
+    // Drag and drop pasteboards use their own data object, so only the copy and paste pasteboard is backed by the clipboard.
+    bool m_forCopyAndPaste { false };
+    int64_t m_changeCount { 0 };
 #endif
 };
 

@@ -58,6 +58,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/win/PageClientImpl.cpp
     UIProcess/win/WebContextMenuProxyWin.cpp
     UIProcess/win/WebPageProxyWin.cpp
+    UIProcess/win/WebPasteboardProxyWin.cpp
     UIProcess/win/WebPopupMenuProxyWin.cpp
     UIProcess/win/WebProcessPoolWin.cpp
     UIProcess/win/WebView.cpp

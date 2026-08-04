@@ -96,11 +96,14 @@ public:
     virtual RefPtr<SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) = 0;
     virtual void writeToClipboard(const String& pasteboardName, SelectionData&&) = 0;
     virtual void clearClipboard(const String& pasteboardName) = 0;
-    virtual int64_t changeCount(const String& pasteboardName) = 0;
 #elif USE(LIBWPE)
     virtual void getTypes(Vector<String>& types) = 0;
     virtual void writeToPasteboard(const PasteboardWebContent&) = 0;
     virtual void writeToPasteboard(const String& pasteboardType, const String&) = 0;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+    virtual int64_t changeCount(const String& pasteboardName) = 0;
 #endif
 
 protected:

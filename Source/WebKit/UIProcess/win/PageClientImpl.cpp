@@ -38,6 +38,8 @@
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PasteboardCustomData.h>
+#include <WebCore/PlatformPasteboard.h>
 
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaProxyWC.h"
@@ -439,8 +441,18 @@ HWND PageClientImpl::viewWidget()
     return m_view.window();
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
+    // Reading back what the same origin just wrote needs no permission.
+    if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No) {
+        auto customData = WebCore::PlatformPasteboard(emptyString()).readCustomData();
+        if (customData && customData->origin() == originIdentifier) {
+            completionHandler(WebCore::DOMPasteAccessResponse::GrantedForGesture);
+            return;
+        }
+    }
+
+    // FIXME: Ask the embedder for permission rather than denying outright.
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 

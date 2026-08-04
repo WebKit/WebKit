@@ -1416,6 +1416,14 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 
 webkit.org/b/203100 editing/async-clipboard [ Skip ]
 
+# Run the basic API and plain text coverage now that the async clipboard API is implemented.
+editing/async-clipboard/clipboard-item-basic.html [ Pass ]
+editing/async-clipboard/clipboard-read-text-same-origin.html [ Pass ]
+editing/async-clipboard/clipboard-read-text.html [ Pass ]
+editing/async-clipboard/clipboard-write-text.html [ Pass ]
+editing/async-clipboard/clipboard-wrapper-stays-alive.html [ Pass ]
+editing/async-clipboard/clipboard-write-text-requires-user-gesture.html [ Pass ]
+
 ###### Selection
 editing/selection/context-menu-text-selection-lookup.html [ Failure ]
 editing/selection/extend-selection-word.html [ Failure ]

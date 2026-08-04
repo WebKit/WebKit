@@ -294,7 +294,7 @@ const PasteboardCustomData& Pasteboard::readCustomData()
     return *m_customDataCache; 
 }
 
-void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
+void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data, PasteboardWriteType)
 {
     m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, name(), context());
 }

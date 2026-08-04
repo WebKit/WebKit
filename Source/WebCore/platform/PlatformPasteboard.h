@@ -109,6 +109,10 @@ public:
     WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
     WEBCORE_EXPORT bool containsStringSafeForDOMToReadForType(const String&) const;
 
+#if PLATFORM(WIN)
+    WEBCORE_EXPORT std::optional<PasteboardCustomData> readCustomData() const;
+#endif
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT bool containsURLStringSuitableForLoading();
     WEBCORE_EXPORT String urlStringSuitableForLoading(String& title);

@@ -186,7 +186,7 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
     PasteboardCustomData customData;
     customData.writeString(textPlainContentTypeAtom(), data);
     customData.setOrigin(document->originIdentifierForPasteboard());
-    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()))->writeCustomData({ WTF::move(customData) });
+    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()))->writeCustomData({ WTF::move(customData) }, PasteboardWriteType::AsyncClipboard);
     promise->resolve();
 }
 
@@ -420,6 +420,18 @@ void Clipboard::ItemWriter::didSetAllData()
     }
 
     auto dataToWrite = std::exchange(m_dataToWrite, { });
+    RefPtr context = m_clipboard ? m_clipboard->scriptExecutionContext() : nullptr;
+    if (!context) {
+        reject();
+        return;
+    }
+
+    bool supportsRichContent = context->settingsValues().asyncClipboardRichContentEnabled;
+    if (!supportsRichContent && dataToWrite.size() != 1) {
+        reject();
+        return;
+    }
+
     Vector<PasteboardCustomData> customData;
     customData.reserveInitialCapacity(dataToWrite.size());
     for (auto data : dataToWrite) {
@@ -427,10 +439,27 @@ void Clipboard::ItemWriter::didSetAllData()
             reject();
             return;
         }
+
+        if (!supportsRichContent) {
+            bool hasPlainText = false;
+            bool hasUnsupportedData = false;
+            data->forEachPlatformStringOrBuffer([&](auto& type, auto& value) {
+                if (type != textPlainContentTypeAtom() || !std::holds_alternative<String>(value)) {
+                    hasUnsupportedData = true;
+                    return;
+                }
+                hasPlainText = true;
+            });
+            if (!hasPlainText || hasUnsupportedData) {
+                reject();
+                return;
+            }
+        }
+
         customData.append(*data);
     }
 
-    m_pasteboard->writeCustomData(WTF::move(customData));
+    m_pasteboard->writeCustomData(WTF::move(customData), PasteboardWriteType::AsyncClipboard);
     promise->resolve();
     m_promise = nullptr;
 

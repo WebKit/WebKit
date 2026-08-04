@@ -63,7 +63,7 @@ Vector<String> Pasteboard::readAllStrings(const String& type)
 
 std::optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() const
 {
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
     if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->allPasteboardItemInfo(name(), m_changeCount, context());
 #endif
@@ -72,7 +72,7 @@ std::optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() co
 
 std::optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 {
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
     if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->informationForItemAtIndex(index, name(), m_changeCount, context());
 #else
