@@ -57,6 +57,8 @@ root
             button uid=… class=user-menu-btn 'MN' […]
             button uid=… 'Sign In' […]
             button uid=… label=Profile 'YZ' […]
+            uid=… role=button class=account-btn
+                image uid=… […]
             input uid=… […] placeholder=Username
     'Footer content with' […]
     role=img label='copyright symbol' '©' […]
