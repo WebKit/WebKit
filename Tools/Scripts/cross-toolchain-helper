@@ -60,9 +60,9 @@ def configure_logging(selected_log_level='info'):
     elif selected_log_level == 'info':
         log_level = logging.INFO
     elif selected_log_level == 'quiet':
-        log_level = logging.NOTSET
+        log_level = logging.CRITICAL + 1
     elif selected_log_level == 'minimal':
-        log_level = logging.getLevelName(LOG_MESSAGE)
+        log_level = LOG_MESSAGE
 
     handler = LogHandler(sys.stdout)
     logger = logging.getLogger()
@@ -655,7 +655,7 @@ class YoctoCrossBuilder():
             fw.write('echo "${COMPNAME} version: $($CC -dumpversion)"\n')
             fw.write('echo "${COMPNAME} target: $($CC -dumpmachine)"\n')
             fw.write('echo -e "\\nCall the cross compiler/debugger"\n')
-            fw.write('echo "with env vars: \$CC / \$CXX / \$GDB"\n')
+            fw.write('echo "with env vars: \\$CC / \\$CXX / \\$GDB"\n')
             fw.write('echo "##################################"\n')
             fw.write('export PS1="(WKCrossDevShell:{target}) ${{PS1}}"\n'.format(target=self._target))
         assert (os.path.isfile(custom_rc_file))
