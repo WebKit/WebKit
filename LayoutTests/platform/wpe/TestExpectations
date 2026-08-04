@@ -159,7 +159,6 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
 
 # Mediastream
-webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/235885 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
 
@@ -183,7 +182,6 @@ svg/hixie/viewbox/002.xml [ Failure ]
 webkit.org/b/254519 media/media-continues-playing-after-replace-source.html [ Failure Pass ]
 [ Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout ]
 
-webkit.org/b/264680 media/video-background-tab-playback.html [ Failure ]
 webkit.org/b/264680 [ Release ] media/no-fullscreen-when-hidden.html [ Pass Failure ]
 webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 
@@ -196,7 +194,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.https.sub.
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/hidden_document.html [ Failure ]
 imported/w3c/web-platform-tests/storage/storagemanager-estimate.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/storage/storagemanager-estimate.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-existing-session.htm [ Failure ]
@@ -662,12 +659,6 @@ webkit.org/b/173419 fast/events/wheel/continuous-platform-wheelevent-in-scrollin
 webkit.org/b/173419 fast/events/autoscroll-main-document.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Failure ]
 webkit.org/b/173419 fast/events/option-tab.html [ Failure ]
-webkit.org/b/173419 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
-webkit.org/b/173419 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
-webkit.org/b/173419 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
-webkit.org/b/173419 fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
-webkit.org/b/173419 fast/events/page-visibility-resize-event-order.html [ Timeout ]
-webkit.org/b/173419 fast/events/page-visibility-transition-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
 webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
@@ -813,7 +804,6 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
 
-Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-006.html [ ImageOnlyFailure ]
@@ -890,7 +880,6 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-constru
 webkit.org/b/266577 webgl/2.0.y/conformance2/textures/video/tex-2d-rgb16f-rgb-half_float.html [ Failure Timeout Pass ]
 
 # [WPE] Missing implementation of TestController::setHidden()
-webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
 
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
 
@@ -987,7 +976,6 @@ webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mo
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
-webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-closest-farthest-corner.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-transforms/transform-percent-008.html [ ImageOnlyFailure ]

@@ -1326,3 +1326,5 @@ webkit.org/b/319319 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/co
 webkit.org/b/319323 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard-snap-interruption.html [ Failure Pass ]
 webkit.org/b/319324 inspector/canvas/create-context-webgl.html [ Failure Pass ]
 webkit.org/b/319325 fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]

@@ -602,7 +602,6 @@ media/media-source/media-source-inband-cea608-track.html [ Pass ]
 media/media-source/media-source-video-seek-pause.html [ Failure Pass ]
 
 # GStreamer seeks to the wrong frame
-webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ ImageOnlyFailure ]
 
 # GStreamer incorrectly demux the webm and creates gaps.
 webkit.org/b/266195 media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Failure ]
@@ -1483,7 +1482,7 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.h
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
-webkit.org/b/319525 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ ImageOnlyFailure ]
+webkit.org/b/319525 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013a.html [ Pass ]
@@ -4338,7 +4337,6 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 webkit.org/b/282165 http/tests/media/video-webm-stall-seek.html [ Failure ]
 
-webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout ]
@@ -5486,6 +5484,17 @@ imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
 webkit.org/b/320057 imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-old-image.html [ ImageOnlyFailure Pass ]
 webkit.org/b/320056 [ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure Pass ]
+
+# These tests are expected to fail cross-port in LayoutTests/TestExpectations, but have
+# passed 100% of runs on all three GLib Release bots at wktesthunter depth 500 and 250.
+# Overridden here rather than removed upstream, since the Apple/Win ports were not checked.
+imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-shape-arc-direction-agnostic-radius.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/marker-content-024.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-009.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-014.html [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference.svg [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/reftests/pattern-external-reference.svg [ Pass ]
 
 # End: Common failures between GTK and WPE.
 
