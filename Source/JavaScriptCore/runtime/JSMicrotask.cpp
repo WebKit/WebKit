@@ -303,7 +303,7 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
     }
     case JSPromise::Status::Rejected: {
         JSValue syncIterator = contextObject->getDirect(vm, vm.propertyNames->builtinNames().syncIteratorPrivateName());
-        if (syncIterator.isObject()) {
+        if (!done && syncIterator.isObject()) {
             auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             JSValue returnMethod = asObject(syncIterator)->get(globalObject, vm.propertyNames->returnKeyword);
             if (!catchScope.exception() && returnMethod.isCallable())
