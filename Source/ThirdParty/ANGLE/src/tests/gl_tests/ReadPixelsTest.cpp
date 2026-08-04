@@ -1768,6 +1768,106 @@ TEST_P(ReadPixelsWebGLErrorTest, FormatIsDepthComponent)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
+class ReadPixelsPBOMetalTest : public ReadPixelsTest
+{};
+
+// Reading into a PBO from a colour attachment whose texture was re-specified after being
+// attached. The Metal render target's texture is null in that state, so the texture-to-buffer
+// compute path has no shader texture type to select and must reject the read rather than index
+// its shader cache with -1. Regression test for rdar://183915520.
+TEST_P(ReadPixelsPBOMetalTest, ReadPixelsToPBOWithRespecifiedReadAttachment)
+{
+    GLTexture firstTexture;
+    glBindTexture(GL_TEXTURE_2D, firstTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, 2, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    GLBuffer unpackBuffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, 210, nullptr, GL_STATIC_READ);
+
+    GLTexture secondTexture;
+    glBindTexture(GL_TEXTURE_2D, secondTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLBuffer packBuffer;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, packBuffer);
+    glBufferData(GL_PIXEL_PACK_BUFFER, 28568, nullptr, GL_DYNAMIC_DRAW);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, secondTexture,
+                           0);
+    const GLfloat clearColor[4] = {1.0f, 0.6f, 1.0f, 0.79f};
+    glClearBufferfv(GL_COLOR, 0, clearColor);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, firstTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, secondTexture, 0);
+    glReadBuffer(GL_COLOR_ATTACHMENT4);
+    ASSERT_GL_NO_ERROR();
+
+    // Re-specify the read attachment. This is what leaves the render target without a texture.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 1, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // The read format differs from the attachment format, so this takes the compute path.
+    glReadPixels(-822, 0, 1052, 1, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    // The read must be rejected. GL_NO_ERROR here means the compute path was not reached and
+    // this test has stopped covering the shader-texture-type check.
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// As above, but the read format matches the attachment format, which selects the blit path
+// instead of the texture-to-buffer compute path. The null render target texture is then
+// dereferenced while evaluating the branch condition itself, before any shader texture type is
+// looked up, so the shader-texture-type check cannot reject this read.
+TEST_P(ReadPixelsPBOMetalTest, ReadPixelsToPBOWithRespecifiedReadAttachmentMatchingFormat)
+{
+    GLTexture firstTexture;
+    glBindTexture(GL_TEXTURE_2D, firstTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, 2, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    GLBuffer unpackBuffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, 210, nullptr, GL_STATIC_READ);
+
+    // RGBA8 resolves to the same angle::Format as a GL_RGBA/GL_UNSIGNED_BYTE read, which is what
+    // makes this test take the other branch.
+    GLTexture secondTexture;
+    glBindTexture(GL_TEXTURE_2D, secondTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLBuffer packBuffer;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, packBuffer);
+    glBufferData(GL_PIXEL_PACK_BUFFER, 28568, nullptr, GL_DYNAMIC_DRAW);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, secondTexture,
+                           0);
+    const GLfloat clearColor[4] = {1.0f, 0.6f, 1.0f, 0.79f};
+    glClearBufferfv(GL_COLOR, 0, clearColor);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, firstTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, secondTexture, 0);
+    glReadBuffer(GL_COLOR_ATTACHMENT4);
+    ASSERT_GL_NO_ERROR();
+
+    // Re-specify the read attachment with the same internal format and size, so the redefinition
+    // discards the image definition without reallocating storage. This is what leaves the render
+    // target without a texture.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Read the whole attachment so nothing is clipped away, with a format that matches it.
+    glReadPixels(0, 0, 2, 1, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    // The read must be rejected. Without the render target texture check this dereferences a null
+    // texture while choosing between the blit and compute paths, before any shader texture type
+    // is looked up.
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 }  // anonymous namespace
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
@@ -1801,3 +1901,6 @@ ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsErrorTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsWebGLErrorTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsWebGLErrorTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBOMetalTest);
+ANGLE_INSTANTIATE_TEST(ReadPixelsPBOMetalTest, ES3_METAL());

@@ -1855,7 +1855,11 @@ angle::Result FramebufferMtl::readPixelsToBuffer(const gl::Context *context,
     const mtl::Format &readFormat        = renderTarget->getFormat();
     const angle::Format &readAngleFormat = readFormat.actualAngleFormat();
 
+    // The render target holds a weak reference to its texture, so the texture can be gone if the
+    // attachment was re-specified after being attached. readPixelsImpl performs the same check on
+    // the path that reads into client memory.
     mtl::TextureRef texture = renderTarget->getTexture();
+    ANGLE_CHECK(contextMtl, texture, gl::err::kInternalError, GL_INVALID_OPERATION);
 
     const mtl::BufferRef &dstBuffer = *pDstBuffer;
 
