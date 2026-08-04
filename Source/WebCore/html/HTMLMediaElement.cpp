@@ -1627,6 +1627,8 @@ void HTMLMediaElement::prepareForLoad(IsExplicitLoad isExplicitLoad)
     m_havePreparedToPlay = false;
     m_currentIdentifier = MediaUniqueIdentifier::generate();
 
+    setCaptionFindMatchTimes({ });
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_failedToPlayToWirelessTarget = false;
 #endif
@@ -9288,6 +9290,25 @@ void HTMLMediaElement::updateUsesLTRUserInterfaceLayoutDirectionJSProperty()
 
     bool usesLTRUserInterfaceLayoutDirectionProperty = page->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
     setControllerJSProperty("usesLTRUserInterfaceLayoutDirection"_s, JSC::jsBoolean(usesLTRUserInterfaceLayoutDirectionProperty));
+}
+
+void HTMLMediaElement::setCaptionFindMatchTimes(Vector<MediaTime>&& times)
+{
+    if (m_captionFindMatchTimes.isEmpty() && times.isEmpty() && !m_captionFindMatchSelectedIndex)
+        return;
+
+    m_captionFindMatchTimes = WTF::move(times);
+    m_captionFindMatchSelectedIndex = std::nullopt;
+    setControllerJSProperty("captionFindMatchStateGeneration"_s, JSC::jsNumber(++m_captionFindMatchStateGeneration));
+}
+
+void HTMLMediaElement::setCaptionFindMatchSelectedIndex(std::optional<unsigned> index)
+{
+    if (m_captionFindMatchSelectedIndex == index)
+        return;
+
+    m_captionFindMatchSelectedIndex = index;
+    setControllerJSProperty("captionFindMatchStateGeneration"_s, JSC::jsNumber(++m_captionFindMatchStateGeneration));
 }
 
 void HTMLMediaElement::setControllerJSProperty(ASCIILiteral propertyName, JSC::JSValue propertyValue)

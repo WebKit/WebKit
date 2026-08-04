@@ -3409,6 +3409,11 @@ void Internals::clearFindCaptionTracks()
     if (RefPtr document = contextDocument(); document && document->page())
         document->page()->clearFindCaptionTracks();
 }
+
+std::optional<unsigned> Internals::selectedCaptionFindMatchIndex(const HTMLMediaElement& media)
+{
+    return media.captionFindMatchSelectedIndex();
+}
 #endif
 
 unsigned Internals::numberOfIDBTransactions() const

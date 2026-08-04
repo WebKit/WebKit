@@ -75,6 +75,9 @@ enum DeviceType {
     readonly attribute DOMString externalDeviceRouteName;
     readonly attribute DeviceType externalDeviceType;
 
+    readonly attribute sequence<unrestricted double> captionFindMatchTimes;
+    readonly attribute unsigned long? captionFindMatchSelectedIndex;
+
     attribute boolean controlsDependOnPageScaleFactor;
 
     undefined updateTextTrackContainer();

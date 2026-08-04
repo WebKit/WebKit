@@ -40,6 +40,10 @@ class Slider extends SliderBase
 
         this.appearanceContainer.children = [fillContainer];
 
+        this._cueMarkers = [];
+        this._cueMarkersContainer = new LayoutNode(`<div class="cue-markers"></div>`);
+        this.children = [...this.children, this._cueMarkersContainer];
+
         this.height = 16;
         this._knobStyle = knobStyle;
     }
@@ -65,7 +69,50 @@ class Slider extends SliderBase
         this.needsLayout = true;
     }
 
+    get cueMarkers()
+    {
+        return this._cueMarkers;
+    }
+
+    set cueMarkers(cueMarkers)
+    {
+        this._cueMarkers = cueMarkers || [];
+        this._cueMarkersContainer.children = this._cueMarkers.map(({ fraction, time, selected, index }) => {
+            const clampedFraction = Math.max(0, Math.min(1, fraction));
+            const marker = new LayoutNode(`<div class="cue-marker"><div class="cue-marker-diamond"></div><div class="cue-marker-line"></div></div>`);
+
+            marker.cueFraction = clampedFraction;
+            marker.element.classList.toggle("selected", !!selected);
+            marker.element.dataset.findCueIndex = index;
+            marker.element.style.left = `${100 * clampedFraction}%`;
+            marker.element.title = utils.formattedStringForDuration(time);
+            marker.element.addEventListener("pointerdown", event => {
+                event.stopPropagation();
+                event.preventDefault();
+                this._seekToCueMarker(clampedFraction, time);
+            });
+            return marker;
+        });
+        this._updateCueMarkerColors();
+    }
+
     // Protected
+
+    _seekToCueMarker(fraction, time)
+    {
+        this.value = fraction;
+        if (!this.uiDelegate)
+            return;
+
+        if (typeof this.uiDelegate.seekToTime === "function")
+            this.uiDelegate.seekToTime(time);
+    }
+
+    _updateCueMarkerColors()
+    {
+        for (const marker of this._cueMarkersContainer.children)
+            marker.element.classList.toggle("played", marker.cueFraction <= this.value);
+    }
 
     commit()
     {
@@ -73,6 +120,7 @@ class Slider extends SliderBase
 
         this._primaryFill.element.style.flexGrow = 100 * this.value;
         this._trackFill.element.style.flexGrow = 100 * (1 - this.value);
+        this._updateCueMarkerColors();
     }
 
 }

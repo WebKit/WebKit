@@ -58,6 +58,8 @@ class TimeControl extends LayoutItem
         this._currentTime = 0;
         this._loading = false;
         this._supportsSeeking = true;
+        this._captionFindMatchTimes = [];
+        this._captionFindMatchSelectedIndex = null;
 
         if (this._shouldShowDurationTimeLabel) {
             this.element.classList.add("duration");
@@ -76,7 +78,20 @@ class TimeControl extends LayoutItem
             return;
 
         this._duration = duration;
+        this._updateCueMarkers();
         this.needsLayout = true;
+    }
+
+    set captionFindMatchTimes(times)
+    {
+        this._captionFindMatchTimes = times || [];
+        this._updateCueMarkers();
+    }
+
+    set captionFindMatchSelectedIndex(index)
+    {
+        this._captionFindMatchSelectedIndex = index;
+        this._updateCueMarkers();
     }
 
     set currentTime(currentTime)
@@ -207,6 +222,22 @@ class TimeControl extends LayoutItem
 
         this.element.classList.toggle("duration");
         this.element.classList.toggle("remaining");
+    }
+
+    _updateCueMarkers()
+    {
+        const duration = this._duration;
+        const hasValidDuration = duration > 0 && isFinite(duration);
+        const selectedIndex = this._captionFindMatchSelectedIndex;
+
+        const markers = [];
+        if (hasValidDuration) {
+            for (const [index, time] of this._captionFindMatchTimes.entries()) {
+                if (isFinite(time))
+                    markers.push({ fraction: time / duration, time, selected: index === selectedIndex, index });
+            }
+        }
+        this.scrubber.cueMarkers = markers;
     }
 }
 

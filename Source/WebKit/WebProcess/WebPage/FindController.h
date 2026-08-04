@@ -120,6 +120,12 @@ private:
 
     std::optional<WebCore::FrameIdentifier> applyFindMatch(const FindMatch&, OptionSet<FindOptions>);
 
+#if ENABLE(VIDEO)
+    void updateCaptionFindMatchIndicators(const Vector<WebCore::CueMatch>&);
+    void updateSelectedCaptionFindMatch();
+    void selectClickedCaptionMatch(WebCore::HTMLMediaElement&, unsigned cueIndex);
+#endif
+
 #if ENABLE(PDF_PLUGIN)
     PluginView* mainFramePlugIn();
 #endif
@@ -131,6 +137,12 @@ private:
     std::optional<FindMatch> m_lastFoundRange;
     bool m_lastFoundRangeDidWrap { false };
     std::unique_ptr<FindIndicator> m_findIndicator;
+#if ENABLE(VIDEO)
+    WeakPtr<WebCore::HTMLMediaElement> m_selectedCaptionMatchElement;
+    String m_lastFindString;
+    OptionSet<FindOptions> m_lastFindOptions;
+    unsigned m_lastFindMaxMatchCount { 0 };
+#endif
 };
 
 } // namespace WebKit

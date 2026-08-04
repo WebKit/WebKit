@@ -592,6 +592,7 @@ public:
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT Vector<CueMatch> findCueMatches(const String&, FindOptions);
     WEBCORE_EXPORT void clearFindCaptionTracks();
+    WEBCORE_EXPORT void clearCaptionFindMatchIndicators();
 #endif
 
 #if PLATFORM(COCOA)

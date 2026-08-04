@@ -1711,6 +1711,7 @@ public:
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
     void didGetImageForFindMatch(WebCore::ImageBufferParameters&&, WebCore::ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
+    void didUpdateFoundMatchIndex(const String&, uint32_t matchCount, int32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);

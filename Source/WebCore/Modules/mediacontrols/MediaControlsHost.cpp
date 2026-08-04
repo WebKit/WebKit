@@ -439,6 +439,18 @@ Vector<String, 2> MediaControlsHost::shadowRootStyleSheets() const
     return RenderTheme::singleton().mediaControlsStyleSheets(protect(m_mediaElement));
 }
 
+Vector<double> MediaControlsHost::captionFindMatchTimes() const
+{
+    return protect(m_mediaElement)->captionFindMatchTimes().map([](const auto& time) {
+        return time.toDouble();
+    });
+}
+
+std::optional<unsigned> MediaControlsHost::captionFindMatchSelectedIndex() const
+{
+    return protect(m_mediaElement)->captionFindMatchSelectedIndex();
+}
+
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
     return RenderTheme::singleton().mediaControlsBase64StringForIconNameAndType(iconName, iconType);
