@@ -42,10 +42,6 @@ SET_AND_EXPOSE_TO_BUILD(USE_LIBEPOXY TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_THEME_ADWAITA TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_XDGMIME TRUE)
 
-if (WTF_CPU_ARM OR WTF_CPU_MIPS)
-    SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE ${DEVELOPER_MODE})
-endif ()
-
 # Public options specific to the GTK port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to other WebKit ports.

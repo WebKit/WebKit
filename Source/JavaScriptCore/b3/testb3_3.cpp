@@ -4633,9 +4633,7 @@ void addShrTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testZShrArgImm32(0xffffffff, 0));
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
-#if !CPU(ARM)
     RUN(testCSEStoreWithLoop());
-#endif
     RUN(testCSELoadAfterStoreDiamond(true));
     RUN(testCSELoadAfterStoreDiamond(false));
     RUN(testCSELoadAcrossLoopBackEdge(0));

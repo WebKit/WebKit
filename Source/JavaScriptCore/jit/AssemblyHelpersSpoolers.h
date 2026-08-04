@@ -179,7 +179,7 @@ public:
     ALWAYS_INLINE void loadVector(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width128); Base::executeVector<FPRReg>(entry); }
 
 private:
-#if CPU(ARM64) || CPU(ARM)
+#if CPU(ARM64)
     ALWAYS_INLINE void executePair(ptrdiff_t offset, GPRReg reg1, GPRReg reg2)
     {
         m_jit.loadPair64(m_baseGPR, TrustedImm32(offset), reg1, reg2);
@@ -226,7 +226,7 @@ public:
     ALWAYS_INLINE void storeVector(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width128); Base::executeVector<FPRReg>(entry); }
 
 private:
-#if CPU(ARM64) || CPU(ARM)
+#if CPU(ARM64)
     ALWAYS_INLINE void executePair(ptrdiff_t offset, GPRReg reg1, GPRReg reg2)
     {
         m_jit.storePair64(reg1, reg2, m_baseGPR, TrustedImm32(offset));
@@ -539,7 +539,7 @@ protected:
         m_jit.storeDouble(src, Address(m_dstBufferGPR, offset));
     }
 
-#if CPU(ARM64) || CPU(ARM)
+#if CPU(ARM64)
     ALWAYS_INLINE void loadPair(int offset, GPRReg dest1, GPRReg dest2)
     {
         m_jit.loadPair64(m_srcBufferGPR, TrustedImm32(offset), dest1, dest2);

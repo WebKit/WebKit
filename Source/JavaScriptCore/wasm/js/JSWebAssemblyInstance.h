@@ -218,11 +218,7 @@ public:
                     continue;
                 cachedMemoryBaseSizePairs()[i] = {
                     m_memories[i]->basePointer(),
-#if CPU(ARM)
-                    m_memories[i]->size();
-#else
                     m_memories[i]->mappedCapacity()
-#endif
                 };
             }
             m_cachedMemory0Size = m_memories[0]->memory().size();

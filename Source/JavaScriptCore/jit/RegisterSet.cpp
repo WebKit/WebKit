@@ -425,9 +425,6 @@ RegisterSet RegisterSet::ipintCalleeSaveRegisters()
 #elif CPU(ARM64) || CPU(RISCV64)
     registers.add(GPRInfo::regCS6); // MC
     registers.add(GPRInfo::regCS7); // PB
-#elif CPU(ARM)
-    registers.add(GPRInfo::regCS0); // MC
-    registers.add(GPRInfo::regCS1); // PB
 #else
 #error Unsupported architecture.
 #endif

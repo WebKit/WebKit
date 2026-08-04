@@ -1085,7 +1085,7 @@ public:
 
     void emitNops(size_t memoryToFillWithNopsInBytes)
     {
-#if CPU(ARM64) || CPU(ARM)
+#if CPU(ARM64)
         constexpr size_t nopSize = 4;
         RELEASE_ASSERT(memoryToFillWithNopsInBytes % nopSize == 0);
         for (unsigned i = 0; i < memoryToFillWithNopsInBytes / nopSize; ++i)

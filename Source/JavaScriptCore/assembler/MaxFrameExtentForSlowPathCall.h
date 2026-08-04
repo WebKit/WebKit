@@ -46,10 +46,6 @@ static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 // All args in registers.
 static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 
-#elif CPU(ARM)
-// First four args in registers, remaining 4 args on stack.
-static constexpr size_t maxFrameExtentForSlowPathCall = 24;
-
 #else
 #error "Unsupported CPU: need value for maxFrameExtentForSlowPathCall"
 

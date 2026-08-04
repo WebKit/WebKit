@@ -2716,7 +2716,6 @@ private:
             fixEdge<CellUse>(node->child1());
             fixEdge<CellUse>(node->child2());
             break;
-            break;
         }
 
         case InstanceOfCustom:

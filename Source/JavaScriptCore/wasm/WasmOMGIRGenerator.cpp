@@ -5623,7 +5623,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     {
         ShuffleEntry entry;
         entry.src = ShuffleLocation::fromStack(fpOffsetToSPOffset(CallFrame::returnPCOffset()));
-#if CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(RISCV64)
         ASSERT(!calleeSaves.find(MacroAssembler::linkRegister));
         entry.dst = ShuffleLocation::fromGPR(MacroAssembler::linkRegister);
 #else
@@ -5829,7 +5829,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
     auto newSPAtPrologueOffsetFromSP = newFPOffsetFromSP + prologueStackPointerDelta();
 
-#if CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(RISCV64)
     // the return PC should already be in the linkRegister from the shuffle above.
     if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
         jit.probeDebug([] (Probe::Context& context) {

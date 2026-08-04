@@ -566,7 +566,6 @@ const RegisterAtOffsetList* JSToWasmCallee::calleeSaveRegistersImpl()
     // So, we must store the same callee save registers at the same location to the JIT version.
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     ASSERT(RegisterAtOffsetList::wasmPinnedRegisters().registerCount() == 3);
-#elif CPU(ARM)
 #else
 #error Unsupported architecture.
 #endif

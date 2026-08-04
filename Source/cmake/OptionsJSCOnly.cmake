@@ -49,10 +49,6 @@ else ()
     set(ENABLE_API_TESTS ON)
 endif ()
 
-if (WTF_CPU_ARM OR WTF_CPU_MIPS)
-    SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE TRUE)
-endif ()
-
 if (NOT ENABLE_STATIC_JSC)
     set(JavaScriptCore_LIBRARY_TYPE SHARED)
     set(bmalloc_LIBRARY_TYPE OBJECT)

@@ -1085,14 +1085,6 @@ void testStoreAfterClobberExitsSideways()
     RegisterSet csrs;
     csrs.merge(RegisterSet::calleeSaveRegisters());
     csrs.exclude(RegisterSet::stackRegisters());
-#if CPU(ARM)
-    csrs.remove(MacroAssembler::fpTempRegister);
-    // FIXME We should allow this to be used. See the note
-    // in https://commits.webkit.org/257808@main for more
-    // info about why masm is using scratch registers on
-    // ARM-only.
-    csrs.remove(MacroAssembler::addressTempRegister);
-#endif
     csrs.forEach(
         [&] (Reg reg) {
             CHECK(reg != pinnedBaseGPR);
@@ -1274,14 +1266,6 @@ void testStoreAfterClobberExitsSidewaysSuccessor()
     RegisterSet csrs;
     csrs.merge(RegisterSet::calleeSaveRegisters());
     csrs.exclude(RegisterSet::stackRegisters());
-#if CPU(ARM)
-    csrs.remove(MacroAssembler::fpTempRegister);
-    // FIXME We should allow this to be used. See the note
-    // in https://commits.webkit.org/257808@main for more
-    // info about why masm is using scratch registers on
-    // ARM-only.
-    csrs.remove(MacroAssembler::addressTempRegister);
-#endif
     csrs.forEach(
         [&] (Reg reg) {
             CHECK(reg != pinnedBaseGPR);

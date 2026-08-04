@@ -1412,7 +1412,7 @@ arm64: StoreCond64 U:G:64, D:G:64, EZD:G:8 /effects
 arm64: StoreCondRel64 U:G:64, D:G:64, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
 
-arm64 arm64: Depend32 U:G:32, ZD:G:32
+arm64: Depend32 U:G:32, ZD:G:32
     Tmp, Tmp
 
 arm64: Depend64 U:G:64, ZD:G:64

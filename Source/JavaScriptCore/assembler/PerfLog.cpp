@@ -89,8 +89,6 @@ static constexpr uint32_t elfMachine = 0x03;
 static constexpr uint32_t elfMachine = 0x3E;
 #elif CPU(ARM64)
 static constexpr uint32_t elfMachine = 0xB7;
-#elif CPU(ARM)
-static constexpr uint32_t elfMachine = 0x28;
 #elif CPU(RISCV64)
 static constexpr uint32_t elfMachine = 0xF3;
 #endif

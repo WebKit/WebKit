@@ -115,11 +115,7 @@ static constexpr size_t islandSizeInBytes = 4;
 static_assert(fixedExecutableMemoryPoolSize <= MacroAssembler::nearJumpRange, "Executable pool size is too large for near jump/call without JUMP_ISLANDS");
 #endif
 
-#if CPU(ARM)
-static constexpr double executablePoolReservationFraction = 0.15;
-#else
 static constexpr double executablePoolReservationFraction = 0.25;
-#endif
 
 #if ENABLE(LIBPAS_JIT_HEAP)
 // This size is derived from jit_config's medium table size.

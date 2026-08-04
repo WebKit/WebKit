@@ -71,9 +71,7 @@ def canonicalizeBackendNames(backendNames)
     backendNames.each {
         | backendName |
         backendName = backendName.upcase
-        if backendName =~ /ARM.*/
-            backendName = "ARM64" if backendName == "ARM64_32"
-        end
+        backendName = "ARM64" if backendName == "ARM64_32"
         newBackendNames << backendName
     }
     newBackendNames.uniq

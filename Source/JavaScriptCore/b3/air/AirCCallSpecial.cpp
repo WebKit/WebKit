@@ -76,8 +76,6 @@ bool CCallSpecial::isValid(Inst& inst)
         case Arg::Imm:
             return false;
         case Arg::BigImm:
-            break;
-            return false;
         case Arg::Tmp:
         case Arg::Addr:
         case Arg::ExtendedOffsetAddr:

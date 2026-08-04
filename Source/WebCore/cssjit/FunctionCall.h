@@ -76,7 +76,7 @@ public:
     {
 #if CPU(X86_64)
         return callAndBranchOnCondition(condition, JSC::MacroAssembler::TrustedImm32(0xff));
-#elif CPU(ARM64) || CPU(ARM)
+#elif CPU(ARM64)
         return callAndBranchOnCondition(condition, JSC::MacroAssembler::TrustedImm32(-1));
 #else
 #error Missing implementationg for matching boolean return values.
