@@ -1714,6 +1714,20 @@ CSSTextWrapPrettyEnabled:
      WebCore:
        default: true
 
+CSSToggleFunctionEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS toggle() function"
+  humanReadableDescription: "Enable CSS Values 5 toggle() function"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTransformStyleSeparatedEnabled:
   type: bool
   status: testable
