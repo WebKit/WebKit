@@ -25,14 +25,14 @@
             await UIHelper.activateElement(textField);
             await UIHelper.waitForKeyboardToShow();
 
-            window.scrollTo(40, 1048);
-            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+            window.targetScrollTop = Math.floor((document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight) / 2);
+            window.scrollTo(40, window.targetScrollTop);
 
             await UIHelper.ensureVisibleContentRectUpdate();
 
             window.keyboardTopInView = (await UIHelper.inputViewBoundsInWebView()).top;
 
-            shouldBeTrue('document.scrollingElement.scrollTop == 1048');
+            shouldBeTrue('document.scrollingElement.scrollTop == window.targetScrollTop');
             shouldBeTrue('document.scrollingElement.scrollLeft == 40');
             shouldBeTrue('window.visualViewport.pageTop != 0');
             shouldBeTrue('window.visualViewport.scale == 1');

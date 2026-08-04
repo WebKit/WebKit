@@ -1,5 +1,4 @@
-Scrolled to 40, 1048
-PASS document.scrollingElement.scrollTop == 1048 is true
+PASS document.scrollingElement.scrollTop == window.targetScrollTop is true
 PASS document.scrollingElement.scrollLeft == 40 is true
 PASS window.visualViewport.pageTop != 0 is true
 PASS window.visualViewport.scale == 1 is true
