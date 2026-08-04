@@ -137,6 +137,17 @@ void ModelProcessModelPlayer::didUpdateEntityTransform(WebCore::NodeIdentifier n
     protect(client())->didUpdateEntityTransform(*this, nodeID, transform);
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+
+void ModelProcessModelPlayer::didUpdatePortalTransform(const WebCore::TransformationMatrix& transform)
+{
+    RELEASE_ASSERT(modelProcessEnabled());
+
+    protect(client())->didUpdatePortalTransform(*this, transform);
+}
+
+#endif
+
 void ModelProcessModelPlayer::didUpdateAnimationPlaybackState(WebCore::NodeIdentifier, bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
 {
     RELEASE_ASSERT(modelProcessEnabled());
@@ -443,6 +454,19 @@ void ModelProcessModelPlayer::setHasPortal(bool hasPortal)
     m_hasPortal = hasPortal;
     send(Messages::ModelProcessModelPlayerProxy::SetHasPortal(m_hasPortal));
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+
+void ModelProcessModelPlayer::setPortalTransform(WebCore::PortalTransformKind kind)
+{
+    if (m_portalTransform == kind)
+        return;
+
+    m_portalTransform = kind;
+    send(Messages::ModelProcessModelPlayerProxy::SetPortalTransform(m_portalTransform));
+}
+
+#endif
 
 void ModelProcessModelPlayer::setStageMode(WebCore::StageModeOperation stagemodeOp)
 {

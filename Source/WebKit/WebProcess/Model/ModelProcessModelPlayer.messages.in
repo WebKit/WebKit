@@ -33,6 +33,9 @@ messages -> ModelProcessModelPlayer {
     DidConvertModelData(Ref<WebCore::SharedBuffer> convertedData, String convertedMIMEType)
     DidFailLoading(WebCore::NodeIdentifier nodeID)
     DidUpdateEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
+#if ENABLE(SPATIAL_PORTAL)
+    [EnabledBy=SpatialPortalEnabled] DidUpdatePortalTransform(WebCore::TransformationMatrix transform)
+#endif
     DidUpdateAnimationPlaybackState(WebCore::NodeIdentifier nodeID, bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
     DidFinishEnvironmentMapLoading(bool succeeded)
     DidUnload()

@@ -8779,6 +8779,25 @@ bool Internals::establishesSpatialPortal(Element& element)
 {
     return element.establishesSpatialPortal();
 }
+
+// Returned as column-major values.
+std::optional<Vector<double>> Internals::spatialPortalResolvedTransform(Element& element)
+{
+    CheckedPtr controller = element.spatialPortalController();
+    if (!controller)
+        return std::nullopt;
+
+    auto& transform = controller->resolvedPortalTransform();
+    if (!transform)
+        return std::nullopt;
+
+    return Vector<double> {
+        transform->m11(), transform->m12(), transform->m13(), transform->m14(),
+        transform->m21(), transform->m22(), transform->m23(), transform->m24(),
+        transform->m31(), transform->m32(), transform->m33(), transform->m34(),
+        transform->m41(), transform->m42(), transform->m43(), transform->m44()
+    };
+}
 #endif
 
 // FIXME: Implement this method for iOS.

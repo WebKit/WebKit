@@ -29,6 +29,8 @@
 
 #include "LayoutSize.h"
 #include <WebCore/NodeIdentifier.h>
+#include <WebCore/PortalTransform.h>
+#include <WebCore/TransformationMatrix.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -70,6 +72,9 @@ public:
     void configureGraphicsLayer(GraphicsLayer&, const Color& backgroundColor);
     void sizeMayHaveChanged();
 
+    void setPortalTransform(PortalTransformKind);
+    const std::optional<TransformationMatrix>& resolvedPortalTransform() const { return m_resolvedPortalTransform; }
+
     bool isPortalVisible() const;
 
 private:
@@ -77,6 +82,7 @@ private:
     void modelDidFailLoading(ModelPlayer&, NodeIdentifier, const ResourceError&);
     void modelDidUnload(ModelPlayer&);
     void modelDidUpdate(ModelPlayer&);
+    void modelDidUpdatePortalTransform(ModelPlayer&, const TransformationMatrix&);
     void logWarning(ModelPlayer&, const String&);
     RefPtr<GraphicsLayer> portalGraphicsLayer() const;
     void viewportIntersectionChanged(bool isIntersecting);
@@ -103,6 +109,9 @@ private:
     RefPtr<ModelPlayer> m_modelPlayer;
     const RefPtr<PortalModelPlayerClient> m_playerClient;
     RefPtr<IntersectionObserver> m_intersectionObserver;
+    std::optional<LayoutSize> m_lastPushedContentSize;
+    std::optional<TransformationMatrix> m_resolvedPortalTransform;
+    PortalTransformKind m_portalTransform { PortalTransformKind::Auto };
     bool m_isIntersectingViewport { false };
 };
 

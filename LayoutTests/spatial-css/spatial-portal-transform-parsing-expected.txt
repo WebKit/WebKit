@@ -1,0 +1,7 @@
+
+PASS portal-transform initial value is auto, whether or not the element establishes a portal
+PASS portal-transform accepts none and auto
+PASS portal-transform is a supported property
+PASS portal-transform ignores invalid values
+PASS portal-transform ignores not yet supported values
+

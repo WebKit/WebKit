@@ -272,6 +272,9 @@ private:
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
     void didUpdateEntityTransform(ModelPlayer&, NodeIdentifier, const TransformationMatrix&) final;
 #endif
+#if ENABLE(SPATIAL_PORTAL)
+    void didUpdatePortalTransform(ModelPlayer&, const TransformationMatrix&) final { }
+#endif
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
     void didUpdateBoundingBox(ModelPlayer&, NodeIdentifier, const FloatPoint3D&, const FloatPoint3D&) final;
 #endif

@@ -78,6 +78,9 @@ private:
     void didConvertModelData(Ref<WebCore::SharedBuffer>&&, const String& convertedMIMEType);
     void didFailLoading(WebCore::NodeIdentifier);
     void didUpdateEntityTransform(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
+#if ENABLE(SPATIAL_PORTAL)
+    void didUpdatePortalTransform(const WebCore::TransformationMatrix&);
+#endif
     void didUpdateAnimationPlaybackState(WebCore::NodeIdentifier, bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp);
     void didFinishEnvironmentMapLoading(bool succeeded);
 
@@ -120,6 +123,9 @@ private:
     void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
     void setHasPortal(bool) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void setPortalTransform(WebCore::PortalTransformKind) final;
+#endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
     void updateStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -142,6 +148,9 @@ private:
     std::optional<WebCore::FloatPoint3D> m_boundingBoxCenter;
     std::optional<WebCore::FloatPoint3D> m_boundingBoxExtents;
     bool m_hasPortal { true };
+#if ENABLE(SPATIAL_PORTAL)
+    WebCore::PortalTransformKind m_portalTransform { WebCore::PortalTransformKind::Auto };
+#endif
     WebCore::StageModeOperation m_stageModeOperation { WebCore::StageModeOperation::None };
     double m_requestedPlaybackRate { 1.0 };
     std::optional<Seconds> m_pendingCurrentTime;

@@ -1554,6 +1554,7 @@ enum ContentsFormat {
     [Conditional=SPATIAL_PORTAL] unsigned long numberOfHostedModelsInSpatialPortal(Element element);
     [Conditional=SPATIAL_PORTAL] unsigned long numberOfLoadedModelsInSpatialPortal(Element element);
     [Conditional=SPATIAL_PORTAL] boolean establishesSpatialPortal(Element element);
+    [Conditional=SPATIAL_PORTAL] sequence<unrestricted double>? spatialPortalResolvedTransform(Element element);
 
     undefined copyImageAtLocation(long x, long y);
 

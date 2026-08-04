@@ -61,6 +61,9 @@ public:
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
     virtual void didUpdateEntityTransform(ModelPlayer&, NodeIdentifier, const TransformationMatrix&) = 0;
 #endif
+#if ENABLE(SPATIAL_PORTAL)
+    virtual void didUpdatePortalTransform(ModelPlayer&, const TransformationMatrix&) = 0;
+#endif
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
     virtual void didUpdateBoundingBox(ModelPlayer&, NodeIdentifier, const FloatPoint3D&, const FloatPoint3D&) = 0;
 #endif

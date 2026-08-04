@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+function makeElement(t, establishesPortal) {
+    const element = document.createElement("div");
+    if (establishesPortal)
+        element.style.spatial = "portal";
+    document.body.appendChild(element);
+    t.add_cleanup(() => element.remove());
+    return element;
+}
+
+test(t => {
+    assert_equals(getComputedStyle(makeElement(t, true)).portalTransform, "auto", "on a portal");
+    assert_equals(getComputedStyle(makeElement(t, false)).portalTransform, "auto", "on a non-portal");
+}, "portal-transform initial value is auto, whether or not the element establishes a portal");
+
+test(t => {
+    for (const value of ["auto", "none"]) {
+        const element = makeElement(t, true);
+        element.style.portalTransform = value;
+        assert_equals(element.style.portalTransform, value, `specified value of "${value}"`);
+        assert_equals(getComputedStyle(element).portalTransform, value, `computed value of "${value}"`);
+    }
+}, "portal-transform accepts none and auto");
+
+test(() => {
+    assert_true(CSS.supports("portal-transform", "auto"), "auto");
+    assert_true(CSS.supports("portal-transform", "none"), "none");
+}, "portal-transform is a supported property");
+
+const alwaysInvalid = ["3px", "10", "red", "auto auto", "none none", "auto none", "none auto", "auto, none"];
+
+// FIXME: rdar://182292652
+const notYetSupported = ["rotateY(45deg)", "translateZ(10px)", "scale3d(2, 2, 2)", "auto rotateY(45deg)", "rotateY(45deg) auto", "none rotateY(45deg)"];
+
+for (const [description, values] of [["invalid", alwaysInvalid], ["not yet supported", notYetSupported]]) {
+    test(t => {
+        for (const value of values) {
+            const element = makeElement(t, true);
+            element.style.portalTransform = value;
+            assert_equals(element.style.portalTransform, "", `"${value}" is not accepted`);
+            assert_equals(getComputedStyle(element).portalTransform, "auto", `"${value}" leaves the initial value in place`);
+        }
+    }, `portal-transform ignores ${description} values`);
+}
+
+</script>
+</body>
+</html>

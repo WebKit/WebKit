@@ -315,6 +315,7 @@ struct OverflowClipMargin;
 struct PaddingEdge;
 struct PageSize;
 struct Perspective;
+struct PortalTransform;
 struct Position;
 struct PositionAnchor;
 struct PositionArea;

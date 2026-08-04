@@ -53,6 +53,7 @@
 #include <WebCore/StylePageSize.h>
 #include <WebCore/StylePerspective.h>
 #include <WebCore/StylePerspectiveOrigin.h>
+#include <WebCore/StylePortalTransform.h>
 #include <WebCore/StylePositionAnchor.h>
 #include <WebCore/StylePositionArea.h>
 #include <WebCore/StylePositionTryFallbacks.h>
@@ -168,6 +169,7 @@ public:
     Rotate rotate;
     Scale scale;
     Translate translate;
+    PortalTransform portalTransform;
 
     ContainerNames containerNames;
 

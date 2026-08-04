@@ -1859,6 +1859,13 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     if (is<RenderModel>(renderer()))
         downcast<HTMLModelElement>(renderer().element())->sizeMayHaveChanged();
 #endif
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (RefPtr element = renderer().element()) {
+        if (CheckedPtr controller = element->spatialPortalController())
+            controller->sizeMayHaveChanged();
+    }
+#endif
 }
 
 void RenderLayerBacking::adjustOverflowControlsPositionRelativeToAncestor(const RenderLayer& ancestorLayer)

@@ -68,6 +68,11 @@ NonInheritedRareData::NonInheritedRareData()
     , rotate(ComputedStyle::initialRotate())
     , scale(ComputedStyle::initialScale())
     , translate(ComputedStyle::initialTranslate())
+#if ENABLE(SPATIAL_PORTAL)
+    , portalTransform(ComputedStyle::initialPortalTransform())
+#else
+    , portalTransform(CSS::Keyword::Auto { })
+#endif
     , containerNames(ComputedStyle::initialContainerNames())
     , viewTransitionClasses(ComputedStyle::initialViewTransitionClasses())
     , viewTransitionName(ComputedStyle::initialViewTransitionName())
@@ -180,6 +185,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , rotate(o.rotate)
     , scale(o.scale)
     , translate(o.translate)
+    , portalTransform(o.portalTransform)
     , containerNames(o.containerNames)
     , viewTransitionClasses(o.viewTransitionClasses)
     , viewTransitionName(o.viewTransitionName)
@@ -300,6 +306,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && rotate == o.rotate
         && scale == o.scale
         && translate == o.translate
+        && portalTransform == o.portalTransform
         && containerNames == o.containerNames
         && columnGap == o.columnGap
         && rowGap == o.rowGap
@@ -440,6 +447,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(rotate);
     LOG_IF_DIFFERENT(scale);
     LOG_IF_DIFFERENT(translate);
+    LOG_IF_DIFFERENT(portalTransform);
 
     LOG_IF_DIFFERENT(containerNames);
 

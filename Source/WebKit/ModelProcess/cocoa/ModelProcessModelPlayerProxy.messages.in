@@ -46,6 +46,9 @@ messages -> ModelProcessModelPlayerProxy {
     SetCurrentTime(WebCore::NodeIdentifier nodeID, Seconds currentTime) -> () Async
     SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
     SetHasPortal(bool hasPortal)
+#if ENABLE(SPATIAL_PORTAL)
+    [EnabledBy=SpatialPortalEnabled] SetPortalTransform(enum:uint8_t WebCore::PortalTransformKind kind)
+#endif
     SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)
     BeginStageModeTransform(WebCore::TransformationMatrix transform)
     UpdateStageModeTransform(WebCore::TransformationMatrix transform)

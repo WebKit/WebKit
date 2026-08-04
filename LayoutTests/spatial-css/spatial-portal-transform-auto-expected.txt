@@ -1,0 +1,3 @@
+
+PASS portal-transform: auto scales the portal's content to fit the portal box
+

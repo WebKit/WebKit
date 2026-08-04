@@ -1697,6 +1697,7 @@ public:
     unsigned NODELETE numberOfHostedModelsInSpatialPortal(Element&);
     unsigned NODELETE numberOfLoadedModelsInSpatialPortal(Element&);
     bool NODELETE establishesSpatialPortal(Element&);
+    std::optional<Vector<double>> NODELETE spatialPortalResolvedTransform(Element&);
 #endif
 
     ExceptionOr<void> copyImageAtLocation(int x, int y);

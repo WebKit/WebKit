@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const flatRectangle = "flat-rectangle.usdz";
+const offsetCube = "2x2x2-at-100x50x200.usdz";
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const centered = appendModel(portal, "2x2x2-center.usdz");
+
+    await centered.ready;
+    const before = await waitForPortalTransform(portal, portalTransformIsResolved, "transform with one model");
+
+    const offset = appendModel(portal, offsetCube);
+    await offset.ready;
+    const after = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, before), "transform with both models");
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the portal hosts both models");
+    assert_true(after.m11 < before.m11, `the merged bounds are larger, so the fit scale shrinks (${after.m11} < ${before.m11})`);
+}, `portal-transform: auto is recomputed against the merged bounds when a model is added`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, flatRectangle);
+
+    await model.ready;
+    const before = await waitForPortalTransform(portal, portalTransformIsResolved, "initial transform");
+
+    portal.style.width = "80cm"; // Double the width.
+    const after = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, before), "transform after resize");
+
+    assert_3d_matrix_approx_equals(before.scale3d(2), after);
+}, `portal-transform: auto is recomputed when the portal is resized`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, flatRectangle);
+
+    await model.ready;
+    const autoTransform = await waitForPortalTransform(portal, portalTransformIsResolved, "initial auto transform");
+
+    portal.style.portalTransform = "none";
+    const noneTransform = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, autoTransform), "transform after switching to none");
+    assert_true(portalTransformScaleIsUnit(noneTransform), "none yields a 1:1 CSS unit mapping");
+
+    portal.style.portalTransform = "auto";
+    const restoredTransform = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, noneTransform), "transform after switching back to auto");
+    assert_3d_matrix_approx_equals(restoredTransform, autoTransform);
+}, `portal-transform is recomputed when the property changes between auto and none`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, flatRectangle);
+
+    await model.ready;
+    await waitForPortalTransform(portal, portalTransformIsResolved, "transform before removal");
+
+    model.remove();
+    await waitForPortalTransform(portal, portalTransformIsCleared, "transform after removal");
+
+    const reinsertedModel = appendModel(portal, flatRectangle);
+    await reinsertedModel.ready;
+    await waitForPortalTransform(portal, portalTransformIsResolved, "transform after reinsertion");
+}, `portal-transform is dropped when the model is removed and recomputed when it is reinserted`);
+
+</script>
+</body>
+</html>

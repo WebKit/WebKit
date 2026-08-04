@@ -6997,6 +6997,14 @@ header: <WebCore/StageModeOperations.h>
 enum class WebCore::StageModeOperation : bool;
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+header: <WebCore/PortalTransform.h>
+enum class WebCore::PortalTransformKind : uint8_t {
+    None,
+    Auto
+};
+#endif
+
 header: <WebCore/FixedContainerEdges.h>
 enum class WebCore::PredominantColorType : uint8_t {
     None,

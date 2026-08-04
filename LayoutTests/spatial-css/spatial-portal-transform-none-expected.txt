@@ -1,0 +1,4 @@
+
+PASS portal-transform: none is independent of the portal's size
+PASS portal-transform: none still centers the portal's content
+

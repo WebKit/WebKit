@@ -486,6 +486,8 @@ void ModelProcessModelPlayerProxy::unloadModelTimerFired()
 
 // MARK: - RE stuff
 
+constexpr float defaultScaleFactor = 0.36f;
+
 static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat pointsPerMeter)
 {
     return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
@@ -550,6 +552,24 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
     return srt;
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+static RESRT computeUnfittedSRT(simd_float3 originalBoundingBoxExtents, simd_float3 originalBoundingBoxCenter, simd_quatf currentModelRotation)
+{
+    constexpr float cssUnitScale = 1.0f / defaultScaleFactor;
+
+    RESRT srt;
+    srt.scale = simd_make_float3(cssUnitScale, cssUnitScale, cssUnitScale);
+    srt.rotation = currentModelRotation;
+
+    simd_float3 boundingBoxCenter = cssUnitScale * originalBoundingBoxCenter;
+    float boundingBoxDepth = cssUnitScale * originalBoundingBoxExtents.z;
+
+    srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingBoxDepth / 2.0f);
+
+    return srt;
+}
+#endif
+
 static CGFloat effectivePointsPerMeter(CALayer *caLayer)
 {
     constexpr CGFloat defaultPointsPerMeter = 1360;
@@ -571,8 +591,6 @@ RESRT ModelProcessModelPlayerProxy::modelStandardizedTransformSRT(RESRT original
         return originalSRT;
 #endif
 
-    constexpr float defaultScaleFactor = 0.36f;
-
     originalSRT.scale *= defaultScaleFactor;
     originalSRT.translation *= defaultScaleFactor;
 
@@ -586,8 +604,6 @@ RESRT ModelProcessModelPlayerProxy::modelLocalizedTransformSRT(RESRT originalSRT
         return originalSRT;
 #endif
 
-    constexpr float defaultScaleFactor = 0.36f;
-
     originalSRT.scale /= defaultScaleFactor;
     originalSRT.translation /= defaultScaleFactor;
 
@@ -599,10 +615,7 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     if (m_hostedEntities.isEmpty() || !m_layer)
         return;
 
-    // The portal is fitted to every model it hosts, so the union of their bounding boxes drives the
-    // container transform.
-    // FIXME: rdar://182292321 - Models are all placed at the container origin until portal-transform
-    // and spatial positioning land, so the union is centred on that origin.
+    // TODO: Once we have spatial positioninig the union won't be centered on the origin anymore.
     simd_float3 minBound = simd_make_float3(0, 0, 0);
     simd_float3 maxBound = simd_make_float3(0, 0, 0);
     bool hasBounds = false;
@@ -626,6 +639,17 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     simd_float3 boundingBoxExtents = maxBound - minBound;
     simd_float3 boundingBoxCenter = (maxBound + minBound) / 2;
 
+    simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
+
+#if ENABLE(SPATIAL_PORTAL)
+    bool skipAutoFit = m_portalTransform == WebCore::PortalTransformKind::None;
+    if (skipAutoFit) {
+        m_transformSRT = computeUnfittedSRT(boundingBoxExtents, boundingBoxCenter, currentModelRotation);
+        notifyModelPlayerOfTransformChange();
+        return;
+    }
+#endif
+
     // Each model's bounding sphere has to be reached from the merged centre, not from its own, so
     // an off-centre sibling widens the radius by its distance rather than being swallowed by it.
     float boundingRadius = 0;
@@ -637,8 +661,6 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
         boundingRadius = std::max(boundingRadius, simd_length(hostedEntity.originalBoundingBoxCenter - boundingBoxCenter) + entityRadius);
     }
 
-    // FIXME: Use the value of the 'object-fit' property here to compute an appropriate SRT.
-    simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_stageModeOperation, currentModelRotation, m_immersivePresentation);
 #else
@@ -646,17 +668,22 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
 #endif
     m_transformSRT = newSRT;
 
-    notifyModelPlayerOfEntityTransformChange();
+    notifyModelPlayerOfTransformChange();
 }
 
-void ModelProcessModelPlayerProxy::notifyModelPlayerOfEntityTransformChange()
+void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 {
-    if (!m_nodeID)
-        return;
-
     RESRT newSRT = modelStandardizedTransformSRT(m_transformSRT);
     simd_float4x4 matrix = RESRTMatrix(newSRT);
     WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
+
+#if ENABLE(SPATIAL_PORTAL)
+    send(Messages::ModelProcessModelPlayer::DidUpdatePortalTransform(transform));
+#endif
+
+    if (!m_nodeID)
+        return;
+
     send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(*m_nodeID, transform));
 }
 
@@ -793,7 +820,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 
     if (m_entityTransformToRestore) {
         setEntityTransform(nodeID, *m_entityTransformToRestore);
-        notifyModelPlayerOfEntityTransformChange();
+        notifyModelPlayerOfTransformChange();
         m_entityTransformToRestore = std::nullopt;
     } else {
         computeTransform(true);
@@ -1319,6 +1346,21 @@ void ModelProcessModelPlayerProxy::setHasPortal(bool hasPortal)
     updateTransform();
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+
+void ModelProcessModelPlayerProxy::setPortalTransform(WebCore::PortalTransformKind kind)
+{
+    if (m_portalTransform == kind)
+        return;
+
+    m_portalTransform = kind;
+
+    computeTransform(m_stageModeOperation == WebCore::StageModeOperation::None);
+    updateTransform();
+}
+
+#endif
+
 void ModelProcessModelPlayerProxy::updateForCurrentStageMode()
 {
     if (m_stageModeOperation != WebCore::StageModeOperation::None) {
@@ -1373,7 +1415,7 @@ void ModelProcessModelPlayerProxy::updateTransformSRT()
     };
 #endif
 
-    notifyModelPlayerOfEntityTransformChange();
+    notifyModelPlayerOfTransformChange();
 }
 
 #if HAVE(CORE_RE)

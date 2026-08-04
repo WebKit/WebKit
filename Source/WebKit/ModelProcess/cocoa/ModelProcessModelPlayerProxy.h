@@ -167,6 +167,9 @@ public:
     void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
     void setHasPortal(bool) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void setPortalTransform(WebCore::PortalTransformKind) final;
+#endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
     void updateStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -205,7 +208,7 @@ private:
     void applyStageModeOperationToDriver();
     bool stageModeInteractionInProgress() const;
     void updateTransformSRT();
-    void notifyModelPlayerOfEntityTransformChange();
+    void notifyModelPlayerOfTransformChange();
     void applyDefaultIBL();
     void updateForCurrentStageMode();
     void setUpLoadedEntity(WKRKEntity *);
@@ -254,6 +257,9 @@ private:
 
     RefPtr<WebCore::SharedBuffer> m_transientEnvironmentMapData;
     bool m_hasPortal { true };
+#if ENABLE(SPATIAL_PORTAL)
+    WebCore::PortalTransformKind m_portalTransform { WebCore::PortalTransformKind::Auto };
+#endif
 
     // For interactions
     RetainPtr<WKStageModeInteractionDriver> m_stageModeInteractionDriver;
