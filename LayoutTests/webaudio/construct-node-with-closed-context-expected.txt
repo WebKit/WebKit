@@ -42,7 +42,7 @@ PASS context.createWaveShaper() did not throw exception.
 PASS context.createScriptProcessor() did not throw exception.
 PASS context.suspend() rejected promise  with InvalidStateError: Context is closed.
 PASS context.resume() rejected promise  with InvalidStateError: Context is closed.
-PASS context.close() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS context.close() rejected promise  with InvalidStateError: Context is closed.
 PASS successfullyParsed is true
 
 TEST COMPLETE

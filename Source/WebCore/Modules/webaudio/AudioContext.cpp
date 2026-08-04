@@ -233,13 +233,8 @@ AudioTimestamp AudioContext::getOutputTimestamp()
 
 void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
-    if (isStopped()) {
-        promise.reject(ExceptionCode::InvalidStateError);
-        return;
-    }
-
-    if (isClosed()) {
-        promise.resolve();
+    if (isStopped() || isClosed()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
     }
 
