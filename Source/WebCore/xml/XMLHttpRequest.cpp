@@ -1177,7 +1177,6 @@ void XMLHttpRequest::didReachTimeout()
 
     if (!m_async) {
         m_readyState = DONE;
-        m_exceptionCode = ExceptionCode::TimeoutError;
         return;
     }
 
