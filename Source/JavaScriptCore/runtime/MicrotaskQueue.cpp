@@ -55,9 +55,9 @@ bool QueuedTask::isRunnable() const
     return uncheckedDowncast<JSGlobalObject>(dispatcher())->microtaskRunnability() == QueuedTaskResult::Executed;
 }
 
-static bool runMicrotask(JSGlobalObject* globalObject, TopExceptionScope& catchScope, VM& vm, QueuedTask& task, MicrotaskCall* microtaskCall)
+static bool runMicrotask(JSGlobalObject* globalObject, TopExceptionScope& catchScope, VM& vm, QueuedTask& task, MicrotaskCallCache* microtaskCallCache)
 {
-    runInternalMicrotask(globalObject, vm, task.job(), task.payload(), task.arguments(), microtaskCall);
+    runInternalMicrotask(globalObject, vm, task.job(), task.payload(), task.arguments(), microtaskCallCache);
     if (auto* exception = catchScope.exception()) [[unlikely]] {
         if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
             return false;
@@ -170,7 +170,7 @@ DEFINE_VISIT_AGGREGATE(MarkedMicrotaskDeque);
 template<bool useCallOnEachMicrotask>
 ALWAYS_INLINE std::pair<JSGlobalObject*, bool> MicrotaskQueue::drainImpl(JSGlobalObject* currentGlobalObject, VM& vm, TopExceptionScope& catchScope)
 {
-    MicrotaskCall microtaskCall(vm);
+    MicrotaskCallCache microtaskCallCache;
 
     while (!m_queue.isEmpty()) {
         auto& front = m_queue.front();
@@ -189,7 +189,7 @@ ALWAYS_INLINE std::pair<JSGlobalObject*, bool> MicrotaskQueue::drainImpl(JSGloba
                 return { globalObject, false };
 
             auto task = m_queue.dequeue();
-            if (!runMicrotask(globalObject, catchScope, vm, task, &microtaskCall)) [[unlikely]] {
+            if (!runMicrotask(globalObject, catchScope, vm, task, &microtaskCallCache)) [[unlikely]] {
                 clear();
                 return { nullptr, true };
             }
