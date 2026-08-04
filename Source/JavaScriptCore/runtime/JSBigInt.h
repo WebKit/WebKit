@@ -617,6 +617,8 @@ private:
     template<size_t N, size_t ASize>
     static void cachedModFoldFixed(std::span<Digit, N> r, std::span<const Digit, ASize>, std::span<const Digit, N> b, Digit c);
     static void cachedModFold(std::span<Digit> r, std::span<const Digit>, std::span<const Digit> b, Digit c);
+    template<typename RSpan, typename BSpan>
+    static Digit reduceOnce(RSpan r, BSpan b, Digit high);
     static bool NODELETE greaterThanOrEqual(std::span<const Digit>, std::span<const Digit>);
 
     static std::span<Digit> rightShift(std::span<Digit> z, std::span<const Digit> x, unsigned);

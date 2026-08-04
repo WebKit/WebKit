@@ -2155,6 +2155,31 @@ JSBigInt::Digit JSBigInt::cachedModFoldFactor(std::span<const Digit> b)
     return rSpan[0];
 }
 
+// Subtract b from the value high * 2^(n * digitBits) + r once, if that value is at least b, and
+// return the new high digit. The difference is always formed and then selected in or discarded, so
+// no branch depends on the comparison; the borrow out of the low n digits answers it, since a borrow
+// is covered exactly when high is non-zero.
+template<typename RSpan, typename BSpan>
+ALWAYS_INLINE JSBigInt::Digit JSBigInt::reduceOnce(RSpan r, BSpan b, Digit high)
+{
+    constexpr size_t capacity = BSpan::extent == std::dynamic_extent ? maxCachedModDivisorSize : BSpan::extent;
+    size_t n = b.size();
+    ASSERT(n <= capacity && r.size() >= n);
+
+    std::array<Digit, capacity> difference;
+    Digit borrow = 0;
+    for (size_t i = 0; i < n; ++i) {
+        Digit borrowOut = 0;
+        difference[i] = digitSub2(r[i], b[i], borrow, borrowOut);
+        borrow = borrowOut;
+    }
+
+    bool subtract = high || !borrow;
+    for (size_t i = 0; i < n; ++i)
+        r[i] = subtract ? difference[i] : r[i];
+    return subtract ? high - borrow : high;
+}
+
 // This is Crandall reduction implementation. When factor is not appropriate for efficiency, we use
 // Barrett reduction instead.
 //
@@ -2215,6 +2240,16 @@ ALWAYS_INLINE void JSBigInt::cachedModFoldImpl(RSpan r, ASpan a, BSpan b, Digit 
         carry = propagate;
     }
 
+    // Peel the first corrective subtraction off as a branch-free one. With q at least two the loop
+    // below runs zero or one time in a near-even split, so its branch mispredicts about half the
+    // time; with q one no subtraction is ever needed, the branch always predicts, and the select
+    // would be pure overhead. q is one exactly when b is more than half of 2^(n * digitBits), that
+    // is when b's top bit is set. Static extents only: the select unrolls and costs a fixed amount
+    // there, whereas for a large dynamic n it costs more than the branch it replaces.
+    if constexpr (BSpan::extent != std::dynamic_extent) {
+        if (!(b.back() >> (digitBits - 1)))
+            carry = reduceOnce(r, b, carry);
+    }
     while (carry || greaterThanOrEqual(r, b))
         carry -= inplaceSub(r, b);
 }
