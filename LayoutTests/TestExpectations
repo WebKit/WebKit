@@ -1078,7 +1078,6 @@ webkit.org/b/279748 imported/w3c/web-platform-tests/html/dom/elements/global-att
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-39.html [ ImageOnlyFailure ]
 
 # csp tests which fail stress test mode.
-imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/content-security-policy/font-src/font-match-allowed.sub.html [ Failure Pass ]
 
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Slow ]
@@ -1189,6 +1188,12 @@ imported/w3c/web-platform-tests/content-security-policy/svg/including.sub.svg [ 
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/dedicated-worker-correct-url-in-report.html [ Skip ]
 
 # Skip Content Security Policy tests that time out
+imported/w3c/web-platform-tests/content-security-policy/sandbox/autoplay-disabled-by-csp.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_DedicatedWorker.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-dedicated-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-service-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-shared-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/child-src/child-src-cross-origin-load.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-text-import-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-allowed.sub.https.html [ Skip ]
@@ -1264,6 +1269,7 @@ webkit.org/b/246440 imported/w3c/web-platform-tests/content-security-policy/wasm
 webkit.org/b/246440 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.worker.html [ Skip ]
 
 # FIXME: Skip Content Security Policy tests whose output is non-deterministic
+imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html [ Skip ]
 
@@ -1272,6 +1278,8 @@ imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
 
 # Test is timing out.
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-shared-worker.html
+
+imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-for-loading-main-image.tentative.html [ ImageOnlyFailure ]
 
 # Only relevant on macOS
 css3/color-filters/punch-out-white-backgrounds.html [ Skip ]

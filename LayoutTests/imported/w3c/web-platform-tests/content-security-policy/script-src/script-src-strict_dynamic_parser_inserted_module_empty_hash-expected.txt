@@ -1,5 +1,0 @@
-Parser-inserted external module scripts do not match the empty-string hash with `strict-dynamic` in the script-src directive.
-
-
-PASS Parser-inserted external module script in markup does not match the empty-string hash with `strict-dynamic`.
-

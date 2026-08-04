@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/change-scripthash-before-execute.js
@@ -20,6 +18,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/inject-script.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/inline-script-should-be-blocked.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/post-message.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/script-src-trusted_types_eval_with_report_only_require_trusted_types_eval_DedicatedWorker.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/script-src-trusted_types_eval_with_report_only_require_trusted_types_eval_DedicatedWorker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/script-src-trusted_types_eval_with_require_trusted_types_eval_DedicatedWorker.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/script-src-trusted_types_eval_with_require_trusted_types_eval_DedicatedWorker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/script-src-trusted_types_eval_without_require_trusted_types_eval_DedicatedWorker.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/script-src-trusted_types_eval_without_require_trusted_types_eval_DedicatedWorker.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-function-function.js
@@ -28,3 +32,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-importscripts.js.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-set-timeout.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-set-timeout.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worklet-eval.js

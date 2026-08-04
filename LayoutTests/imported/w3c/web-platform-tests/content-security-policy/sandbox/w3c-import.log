@@ -10,16 +10,21 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/autoplay-disabled-by-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-inside-csp.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-self-after-redirect.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-self-all-directives.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-self-allows-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-self-blocks-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-self-via-header.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/meta-element.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-allow-scripts-subframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-allow-scripts.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-empty-subframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-empty.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/sandbox-last-directive-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/service-worker-sandbox.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/shared-worker-sandbox.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/window-reuse-sandboxed.html

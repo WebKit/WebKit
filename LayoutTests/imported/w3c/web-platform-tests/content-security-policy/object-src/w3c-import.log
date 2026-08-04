@@ -10,16 +10,21 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-allowed.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-embed-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-empty-source-list-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-empty-source-list-embed-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-allowed-img-src-none.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-allowed-img-src-none.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-allowed.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-allowed-img-src-none.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-allowed-img-src-none.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-allowed.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-blocked.html

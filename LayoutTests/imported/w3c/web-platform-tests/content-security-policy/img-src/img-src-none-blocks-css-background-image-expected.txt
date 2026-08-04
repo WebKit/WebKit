@@ -1,0 +1,5 @@
+This text should NOT have a red background.
+
+
+PASS Test that spv event is fired
+

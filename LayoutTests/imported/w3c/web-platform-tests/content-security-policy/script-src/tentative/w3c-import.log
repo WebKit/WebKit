@@ -10,9 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-allowed-by-hash.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-dedicated-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-shared-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/url-hash-in-header-and-meta.https.html

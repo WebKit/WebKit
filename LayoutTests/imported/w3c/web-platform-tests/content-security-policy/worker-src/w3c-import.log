@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/dedicated-child.sub.html
@@ -34,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-default-fallback.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-script-fallback.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-self-fallback.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-static-import-blocked.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-child.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-fallback.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-list.sub.html

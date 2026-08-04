@@ -8,3 +8,15 @@
 </head>
 <body>
 <script nonce="abc">
+  setup({ single_test: true});
+
+  document.addEventListener("securitypolicyviolation", e => {
+    assert_equals(e.lineNumber, 18);
+    done();
+  });
+
+  location.href = "javascript: causeViolation()";
+</script
+</body>
+</html>
+

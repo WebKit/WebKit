@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/including.sub.svg
@@ -20,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/scripted.svg
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/scripted.svg.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/svg-from-guid.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/svg-inline-without-scripting-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/svg-inline-without-scripting.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/svg-inline.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/svg-policy-resource-doc-includes.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/svg/svg-policy-with-resource.html

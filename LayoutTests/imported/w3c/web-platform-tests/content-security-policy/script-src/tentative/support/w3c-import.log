@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/support/add_dynamic_script.js
@@ -22,3 +20,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/support/iframe_meta.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/support/iframe_meta_multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/support/util.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/support/worker-report-hash.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/support/worker-report-hash.js.headers

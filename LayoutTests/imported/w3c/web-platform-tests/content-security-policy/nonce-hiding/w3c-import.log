@@ -10,13 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/#nonces-css-selector.html#
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/dangling-html-or-body.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/dangling-html-or-body.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonce-hiding-move-document.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces-css-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces-css-selector.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden-meta.sub.html

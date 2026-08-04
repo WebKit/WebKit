@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html
@@ -35,9 +33,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_8.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_8_1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_9.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-applies-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-for-loading-main-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-for-loading-main-image.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-for-loading-main-image.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/invalid-characters-in-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/negativeTests.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/no-default-src.sub.html
@@ -48,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/positiveTest.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/source-list-wildcard-host-and-port.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.js.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/test-case.sub.js

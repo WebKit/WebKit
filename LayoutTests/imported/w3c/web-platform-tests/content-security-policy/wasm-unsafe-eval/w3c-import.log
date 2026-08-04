@@ -10,10 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm-streaming.any.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm-streaming.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm.any.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-unsafe-eval-allows-wasm.any.js
@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/postMessage-wasm-module.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm-streaming.any.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm-streaming.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.js

@@ -10,16 +10,28 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/autoplay.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/autoplay.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/csp-multi-directive.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/csp-self-and-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/csp-self-redirect-target.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/csp-self.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/empty.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/iframe-cross-pass.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/iframe-self-pass.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/iframe-self-style.css
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/iframe-with-csp-header-self.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/iframe-with-csp-header-self.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/post-origin-on-load-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-data-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-data-iframe.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-eval.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-eval.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-last-directive-csp.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-last-directive-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-message-to-parent.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-message-to-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-property-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-property-to-opener.html.sub.headers

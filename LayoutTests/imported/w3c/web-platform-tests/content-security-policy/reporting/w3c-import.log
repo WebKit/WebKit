@@ -10,10 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/link-preload-from-header-report-only-nonce.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/link-preload-from-header-report-only-nonce.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/link-preload-report-only-nonce.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/link-preload-report-only-nonce.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html
@@ -50,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-strips-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-strips-username-password.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-effective-directive.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-effective-directive.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-from-child-frame.html

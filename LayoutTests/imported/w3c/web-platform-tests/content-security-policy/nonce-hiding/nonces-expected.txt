@@ -2,25 +2,45 @@
 PASS Basic nonce tests for meh in HTML namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for meh in HTML namespace
 PASS Test empty nonces for meh in HTML namespace
+PASS Ensure that cloned node retains nonce for meh in HTML namespace
 PASS Basic nonce tests for div in HTML namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for div in HTML namespace
 PASS Test empty nonces for div in HTML namespace
+PASS Ensure that cloned node retains nonce for div in HTML namespace
 PASS Basic nonce tests for script in HTML namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for script in HTML namespace
 PASS Test empty nonces for script in HTML namespace
+PASS Ensure that cloned node retains nonce for script in HTML namespace
 PASS Basic nonce tests for meh in SVG namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for meh in SVG namespace
 PASS Test empty nonces for meh in SVG namespace
+PASS Ensure that cloned node retains nonce for meh in SVG namespace
 PASS Basic nonce tests for svg in SVG namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for svg in SVG namespace
 PASS Test empty nonces for svg in SVG namespace
+PASS Ensure that cloned node retains nonce for svg in SVG namespace
 PASS Basic nonce tests for script in SVG namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for script in SVG namespace
 PASS Test empty nonces for script in SVG namespace
+PASS Ensure that cloned node retains nonce for script in SVG namespace
 PASS Basic nonce tests for style in HTML namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for style in HTML namespace
 PASS Test empty nonces for style in HTML namespace
+PASS Ensure that cloned node retains nonce for style in HTML namespace
 PASS Basic nonce tests for link in HTML namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for link in HTML namespace
 PASS Test empty nonces for link in HTML namespace
+PASS Ensure that cloned node retains nonce for link in HTML namespace
+PASS Basic nonce tests for math in MathML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for math in MathML namespace
+PASS Test empty nonces for math in MathML namespace
+PASS Ensure that cloned node retains nonce for math in MathML namespace
+PASS Basic nonce tests for mrow in MathML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for mrow in MathML namespace
+PASS Test empty nonces for mrow in MathML namespace
+PASS Ensure that cloned node retains nonce for mrow in MathML namespace
+PASS Basic nonce tests for mtext in MathML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for mtext in MathML namespace
+PASS Test empty nonces for mtext in MathML namespace
+PASS Ensure that cloned node retains nonce for mtext in MathML namespace
 

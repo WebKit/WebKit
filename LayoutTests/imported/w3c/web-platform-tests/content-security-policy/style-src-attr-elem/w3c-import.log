@@ -10,13 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-attr-allowed-src-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-attr-blocked-src-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-allowed-attr-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-allowed-src-blocked-link.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-allowed-src-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-blocked-attr-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-blocked-src-allowed.html

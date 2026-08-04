@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/css-filter-blocked.tentative.html
@@ -20,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-4_1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-full-host-wildcard-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-host-partial-wildcard-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-none-blocks-css-background-image.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-none-blocks-data-uri.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-none-blocks.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub.html

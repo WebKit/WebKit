@@ -10,13 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/10_1_support_1.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/10_1_support_2.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/addInlineTestsWithDOMManipulation.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/audioworklet-eval-blocked.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/audioworklet-trusted-types-eval-blocked.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/buildInlineWorker.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/crossoriginScript.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/crossoriginScript.js.headers
@@ -31,7 +31,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/inlineTests.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/javascript-window-open-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/javascript-window-open-blocked.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/non-nonceable-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/nonce-enforce-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/nonce-with-trailing-characters-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-1_1.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-1_10.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-1_10_1.html
@@ -81,12 +83,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted_incorrect_nonce.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted_incorrect_nonce.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted_module.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted_module.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_correct_nonce.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_correct_nonce.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_module.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_module.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker-importScripts.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_DedicatedWorker.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_report_only_require_trusted_types_eval.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_report_only_require_trusted_types_eval.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_require_trusted_types_eval.html
@@ -113,6 +120,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-redirect.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-specified-source.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-specified-source.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/simpleSourcedModule.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/simpleSourcedScript.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/srcdoc-doesnt-bypass-script-src.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/worker-data-set-timeout.sub.html
