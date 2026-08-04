@@ -1,0 +1,90 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+#scratch > * {
+    width: 220px;
+    margin: 8px;
+}
+
+.pill {
+    background-color: rgb(212, 212, 212);
+    border-radius: 9999px;
+    height: 48px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.tall {
+    height: 120px;
+}
+
+.plain {
+    height: 48px;
+    box-sizing: border-box;
+}
+
+.pointer-cursor {
+    cursor: pointer;
+}
+
+.inert {
+    pointer-events: none;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="scratch">
+    <div class="pill">ContinueButton</div>
+    <div class="pill tall">TallDistinctBox</div>
+    <div class="plain">PlainUnstyledBox</div>
+    <div class="pill inert">NoPointerEventsBox</div>
+    <div class="pill">WrapsInteractiveBox<a href="https://webkit.org/">InnerLink</a></div>
+    <div class="pill pointer-cursor">PointerCursorBox</div>
+</div>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    const debugText = await UIHelper.requestDebugText({
+        nodeIdentifierInclusion: "interactive",
+    });
+
+    const hasUID = label => UIHelper.nodeIdentifierFromDebugText(debugText, label) !== null;
+    const isClickable = label => debugText.split("\n").some(line => line.includes(label) && line.includes("clickable"));
+
+    continueHasUID = hasUID("ContinueButton");
+    continueIsClickable = isClickable("ContinueButton");
+
+    tallHasUID = hasUID("TallDistinctBox");
+    plainHasUID = hasUID("PlainUnstyledBox");
+    inertHasUID = hasUID("NoPointerEventsBox");
+    wrapperHasUID = hasUID("WrapsInteractiveBox");
+
+    linkHasUID = hasUID("InnerLink");
+
+    pointerHasUID = hasUID("PointerCursorBox");
+
+    shouldBeTrue("continueHasUID");
+    shouldBeTrue("continueIsClickable");
+    shouldBeFalse("tallHasUID");
+    shouldBeFalse("plainHasUID");
+    shouldBeFalse("inertHasUID");
+    shouldBeFalse("wrapperHasUID");
+    shouldBeTrue("linkHasUID");
+    shouldBeTrue("pointerHasUID");
+
+    document.getElementById("scratch").remove();
+    finishJSTest();
+});
+</script>
+</body>
+</html>

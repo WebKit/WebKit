@@ -1,0 +1,12 @@
+PASS continueHasUID is true
+PASS continueIsClickable is true
+PASS tallHasUID is false
+PASS plainHasUID is false
+PASS inertHasUID is false
+PASS wrapperHasUID is false
+PASS linkHasUID is true
+PASS pointerHasUID is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
