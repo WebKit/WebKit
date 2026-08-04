@@ -1309,6 +1309,7 @@
 		32EAFB8D274C5EA600650557 /* FontCascadeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EAFB8B274C5EA500650557 /* FontCascadeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3320B8F03AA379B81B48F469 /* UnifiedSource24-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 675EA032FFAF2A4098F106D8 /* UnifiedSource24-header-RenderStyleGetters.cpp */; };
 		334408C433F8CA4C10044234 /* SVGLayerTransformUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 3344077412D9BC4A00044234 /* SVGLayerTransformUpdater.h */; };
+		334408C433F8CA4C10044777 /* SVGImageIntrinsicSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 3344077412D9BC4A00044777 /* SVGImageIntrinsicSizing.h */; };
 		334408C433F8CA4C10044551 /* SVGTransformComputation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3344077412D9BC4A00044551 /* SVGTransformComputation.h */; };
 		334408C433F8CA4C10A328F4 /* SVGVisitedRendererTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3344077412D9BC4A00A328F4 /* SVGVisitedRendererTracking.h */; };
 		334B59922E86ACA40067471D /* FocusControllerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 334B59912E86AC970067471D /* FocusControllerTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10808,6 +10809,8 @@
 		333F704E0FB49CA2008E12A6 /* Notification.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Notification.idl; sourceTree = "<group>"; };
 		333F704F0FB49CA2008E12A6 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Notification.h; sourceTree = "<group>"; };
 		3344077412D9BC4A00044234 /* SVGLayerTransformUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGLayerTransformUpdater.h; sourceTree = "<group>"; };
+		3344077412D9BC4A00044777 /* SVGImageIntrinsicSizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageIntrinsicSizing.h; sourceTree = "<group>"; };
+		3344077412D9BC4A00044778 /* SVGImageIntrinsicSizing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageIntrinsicSizing.cpp; sourceTree = "<group>"; };
 		3344077412D9BC4A00044551 /* SVGTransformComputation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTransformComputation.h; sourceTree = "<group>"; };
 		3344077412D9BC4A00A328F4 /* SVGVisitedRendererTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGVisitedRendererTracking.h; sourceTree = "<group>"; };
 		334A78952B5B3F2B00F7A761 /* EventNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = EventNames.json; sourceTree = "<group>"; };
@@ -24879,6 +24882,8 @@
 				0844B01D1255E4E600B9CDD0 /* SVGBoundingBoxComputation.h */,
 				0834B00C1244E5A610B8AFD1 /* SVGContainerLayout.cpp */,
 				0844B01D1255E5A610B8AFD1 /* SVGContainerLayout.h */,
+				3344077412D9BC4A00044778 /* SVGImageIntrinsicSizing.cpp */,
+				3344077412D9BC4A00044777 /* SVGImageIntrinsicSizing.h */,
 				0854B00C1255E4E600B9CDD0 /* SVGInlineFlowBox.cpp */,
 				0854B00D1255E4E600B9CDD0 /* SVGInlineFlowBox.h */,
 				0854B00E1255E4E600B9CDD0 /* SVGInlineTextBox.cpp */,
@@ -49435,6 +49440,7 @@
 				08F859D51463F9CD0067D933 /* SVGImageCache.h in Headers */,
 				B2227A2D0D00BF220071B782 /* SVGImageElement.h in Headers */,
 				08F859D51463F9CD0067D934 /* SVGImageForContainer.h in Headers */,
+				334408C433F8CA4C10044777 /* SVGImageIntrinsicSizing.h in Headers */,
 				B28C6A2A0D00C44800334AA4 /* SVGImageLoader.h in Headers */,
 				0854B01F1255E4E600B9CDD0 /* SVGInlineFlowBox.h in Headers */,
 				0854B0211255E4E600B9CDD0 /* SVGInlineTextBox.h in Headers */,

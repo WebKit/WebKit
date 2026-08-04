@@ -3138,6 +3138,7 @@ rendering/svg/RenderSVGTransformableContainer.cpp
 rendering/svg/RenderSVGViewportContainer.cpp @header:RenderStyleGetters
 rendering/svg/SVGBoundingBoxComputation.cpp @header:RenderStyleGetters
 rendering/svg/SVGContainerLayout.cpp @header:RenderStyleGetters
+rendering/svg/SVGImageIntrinsicSizing.cpp @header:RenderStyleGetters
 rendering/svg/SVGInlineFlowBox.cpp
 rendering/svg/SVGInlineTextBox.cpp @header:RenderStyleGetters
 rendering/svg/SVGPathFromElement.cpp @header:RenderStyleGetters

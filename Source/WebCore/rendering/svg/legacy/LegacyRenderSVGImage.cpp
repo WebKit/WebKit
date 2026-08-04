@@ -39,6 +39,7 @@
 #include "RenderLayer.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
+#include "SVGImageIntrinsicSizing.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -84,35 +85,7 @@ SVGImageElement& LegacyRenderSVGImage::imageElement() const
 
 FloatRect LegacyRenderSVGImage::calculateObjectBoundingBox() const
 {
-    LayoutSize intrinsicSize;
-    if (RefPtr cachedImage = imageResource().cachedImage())
-        intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
-
-    Ref imageElement = this->imageElement();
-    SVGLengthContext lengthContext(imageElement.ptr());
-
-    CheckedRef style = this->style();
-    auto& width = style->width();
-    auto& height = style->height();
-    auto usedZoom = style->usedZoomForLength();
-
-    float concreteWidth;
-    if (!width.isAuto())
-        concreteWidth = lengthContext.valueForLength(width, usedZoom, SVGLengthMode::Width);
-    else if (!height.isAuto() && !intrinsicSize.isEmpty())
-        concreteWidth = lengthContext.valueForLength(height, usedZoom, SVGLengthMode::Height) * intrinsicSize.width() / intrinsicSize.height();
-    else
-        concreteWidth = intrinsicSize.width();
-
-    float concreteHeight;
-    if (!height.isAuto())
-        concreteHeight = lengthContext.valueForLength(height, usedZoom, SVGLengthMode::Height);
-    else if (!width.isAuto() && !intrinsicSize.isEmpty())
-        concreteHeight = lengthContext.valueForLength(width, usedZoom, SVGLengthMode::Width) * intrinsicSize.height() / intrinsicSize.width();
-    else
-        concreteHeight = intrinsicSize.height();
-
-    return { imageElement->x().value(lengthContext), imageElement->y().value(lengthContext), concreteWidth, concreteHeight };
+    return calculateSVGImageObjectBoundingBox(imageElement(), style(), imageResource().cachedImage());
 }
 
 bool LegacyRenderSVGImage::updateImageViewport()
