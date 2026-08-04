@@ -962,8 +962,8 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, Value dstOffset, Value srcOffset, Value length)
 {
-    ASSERT(dstOffset.type() == m_info.table(srcTableIndex).addressType().asWasmTypeKind());
-    ASSERT(srcOffset.type() == m_info.table(dstTableIndex).addressType().asWasmTypeKind());
+    ASSERT(dstOffset.type() == m_info.table(dstTableIndex).addressType().asWasmTypeKind());
+    ASSERT(srcOffset.type() == m_info.table(srcTableIndex).addressType().asWasmTypeKind());
     ASSERT(m_info.table(dstTableIndex).addressType().is64Bit() && m_info.table(srcTableIndex).addressType().is64Bit() ? length.type() == TypeKind::I64 : length.type() == TypeKind::I32);
 
     Vector<Value, 8> arguments = {
