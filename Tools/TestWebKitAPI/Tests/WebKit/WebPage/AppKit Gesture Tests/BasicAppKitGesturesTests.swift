@@ -842,6 +842,63 @@ extension AppKitGesturesTests.Basic {
         #expect(clickCount == 1)
     }
 
+    @Test
+    func clickingOtherContentDismissesDataListDropdown() async throws {
+        let html = """
+            <div id="other" style="height: 200px; font-size: 30px;">other content</div>
+            <input id="input" list="pets" style="font-size: 30px;">
+            <datalist id="pets">
+                <option value="Dog">
+                <option value="Cat">
+                <option value="Goose">
+            </datalist>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript {
+            """
+            window.blurCount = 0;
+            document.getElementById("input").addEventListener("blur", () => window.blurCount++);
+            """
+        }
+
+        let inputBounds = try await screenBounds(ofElementWithID: "input")
+        let otherBounds = try await screenBounds(ofElementWithID: "other")
+
+        await recap.play { composer in
+            composer._wk_click(at: inputBounds.center, for: .seconds(0.1))
+        }
+
+        func isDataListDropdownShowing() -> Bool {
+            guard let childWindows = window.childWindows else {
+                return false
+            }
+
+            return childWindows.contains { NSStringFromClass(type(of: $0)) == "WKDataListSuggestionWindow" }
+        }
+
+        await page.waitForNextPresentationUpdate()
+        #expect(isDataListDropdownShowing())
+
+        await recap.play { composer in
+            composer._wk_click(at: otherBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+        #expect(!isDataListDropdownShowing())
+
+        let (activeElementID, blurCount) = try await page.callJavaScript(returning: (String, Int).self) {
+            """
+            return [document.activeElement?.id ?? "", window.blurCount];
+            """
+        }
+
+        #expect(activeElementID != "input")
+        #expect(blurCount == 1)
+    }
+
     // MARK: - Drag Press Disambiguation Tests
 
     @Test(arguments: [true, false])

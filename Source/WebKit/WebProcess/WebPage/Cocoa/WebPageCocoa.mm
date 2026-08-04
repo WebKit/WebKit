@@ -3167,6 +3167,19 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
 
     RefPtr localRootFrame = this->localRootFrame(frameID);
 
+    auto reportFailedTap = [&] {
+#if ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
+        if (localRootFrame) {
+            m_page->focusController().setFocusedElement(nullptr, localRootFrame.get(), { .trigger = FocusTrigger::Click });
+
+            // Clearing the focused element can run script that closes the page.
+            if (m_isClosed)
+                return;
+        }
+#endif // ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
+        commitPotentialTapFailed();
+    };
+
     if (invalidTargetForSingleClick) {
 #if PLATFORM(IOS_FAMILY)
         if (localRootFrame) {
@@ -3177,7 +3190,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
         }
 #endif
 
-        commitPotentialTapFailed();
+        reportFailedTap();
         co_return std::nullopt;
     }
 
@@ -3191,7 +3204,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
     RefPtr frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
 
     if (!frameRespondingToClick) {
-        commitPotentialTapFailed();
+        reportFailedTap();
         co_return std::nullopt;
     }
 
