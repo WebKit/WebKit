@@ -38,7 +38,7 @@ void runInternalMicrotask(JSGlobalObject*, VM&, InternalMicrotask, uint8_t, std:
 
 // https://tc39.es/ecma262/#sec-asyncgeneratorresume and #sec-asyncgeneratorawaitreturn — used by the C++
 // %AsyncGeneratorPrototype%.return / .throw host functions to drive a non-busy generator.
-void asyncGeneratorResume(JSGlobalObject*, JSAsyncGenerator*);
+void asyncGeneratorResume(JSGlobalObject*, JSAsyncGenerator*, MicrotaskCallCache* = nullptr);
 void asyncGeneratorAwaitReturn(JSGlobalObject*, JSAsyncGenerator*);
 
 void enqueueAsyncGeneratorDriver(JSGlobalObject*, JSAsyncGenerator* iterator, JSObject* driver);
