@@ -846,16 +846,23 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
             // We could also evaluate the vector of expressions here, but we have nowhere safe to
             // store the resulting references so we defer that until table init.
             const auto& offset = *element.offsetIfActive;
-            uint32_t elementIndex = 0;
-            if (offset.isGlobalImport())
-                elementIndex = static_cast<uint32_t>(m_instance->loadI32Global(offset.globalImportIndex()));
-            else if (offset.isConst())
-                elementIndex = offset.constValue();
-            else {
+            const bool isTable64 = moduleInformation.table(*element.tableIndexIfActive).addressType().is64Bit();
+            uint64_t elementIndex = 0;
+            if (offset.isGlobalImport()) {
+                if (isTable64)
+                    elementIndex = static_cast<uint64_t>(m_instance->loadI64Global(offset.globalImportIndex()));
+                else
+                    elementIndex = static_cast<uint32_t>(m_instance->loadI32Global(offset.globalImportIndex()));
+            } else if (offset.isConst()) {
+                if (isTable64)
+                    elementIndex = offset.constValue();
+                else
+                    elementIndex = static_cast<uint32_t>(offset.constValue());
+            } else {
                 uint64_t result;
-                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[offset.constantExpressionIndex()], moduleInformation, Wasm::Types::I32, result);
+                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[offset.constantExpressionIndex()], moduleInformation, isTable64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
                 RETURN_IF_EXCEPTION(scope, void());
-                elementIndex = static_cast<uint32_t>(result);
+                elementIndex = isTable64 ? result : static_cast<uint32_t>(result);
             }
 
             if (fn(element, *element.tableIndexIfActive, elementIndex) == IterationStatus::Done)
@@ -903,14 +910,15 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     };
 
     // Validation of all element ranges comes before all Table and Memory initialization.
-    forEachActiveElement([&](const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
-        int64_t lastWrittenIndex = static_cast<int64_t>(elementIndex) + static_cast<int64_t>(element.initTypes.size()) - 1;
-        if (lastWrittenIndex >= m_instance->table(tableIndex)->length()) [[unlikely]] {
+    forEachActiveElement([&](const Wasm::Element& element, uint32_t tableIndex, uint64_t elementIndex) {
+        uint64_t tableLength = m_instance->table(tableIndex)->length();
+        uint64_t segmentLength = element.initTypes.size();
+        if (elementIndex > tableLength || segmentLength > tableLength - elementIndex) [[unlikely]] {
             exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
             return IterationStatus::Done;
         }
 
-        m_instance->initElementSegment(tableIndex, element, elementIndex, 0U, element.length());
+        m_instance->initElementSegment(tableIndex, element, static_cast<uint32_t>(elementIndex), 0U, element.length());
         return IterationStatus::Continue;
     });
 
