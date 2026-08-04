@@ -818,9 +818,8 @@ public:
                     }
 
                     ASSERT(numParametersGPR != argCountGPR);
-                    Jump argumentCountWasNotFixedUp = branch32(BelowOrEqual, numParametersGPR, argCountGPR);
-                    move(numParametersGPR, argCountGPR);
-                    argumentCountWasNotFixedUp.link(this);
+                    // argCountGPR = max(numParametersGPR, argCountGPR)
+                    moveConditionally32(Above, numParametersGPR, argCountGPR, numParametersGPR, argCountGPR, argCountGPR);
                 }
 
                 add32(TrustedImm32(stackAlignmentRegisters() + CallFrame::headerSizeInRegisters - 1), argCountGPR, oldFrameSizeGPR);
