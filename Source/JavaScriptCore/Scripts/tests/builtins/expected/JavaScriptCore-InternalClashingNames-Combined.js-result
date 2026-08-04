@@ -153,6 +153,12 @@ constinit const char* const s_internalClashingNamesIsReadableStreamLockedCode =
 s_JSCCombinedCode + 71
 ;
 
+constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {
+    /* internalClashingNamesIsReadableStreamLockedCode */ { 71, 10, 1, 6, 0, 70, 68, 3, false, true },
+    /* internalClashingNamesIsReadableStreamLockedCode */ { 71, 10, 1, 6, 0, 70, 68, 3, false, true },
+};
+static_assert(2 == JSC::numberOfBuiltinCodes);
+
 
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \

@@ -31,6 +31,7 @@ import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator
+from builtins_generator import compute_builtin_source_metadata
 from builtins_model import Framework, Frameworks
 from builtins_templates import BuiltinsGeneratorTemplates as Templates
 
@@ -78,12 +79,25 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
             sections.append(self.generate_embedded_code_string_section_for_data(data))
 
         if self.model().framework is Frameworks.JavaScriptCore:
+            sections.append(self.generate_source_metadata_table(function_data))
             sections.append(Template(Templates.CombinedJSCImplementationStaticMacros).substitute(args))
         elif self.model().framework is Frameworks.WebCore:
             sections.append(Template(Templates.CombinedWebCoreImplementationStaticMacros).substitute(args))
         sections.append(Template(Templates.NamespaceBottom).substitute(args))
 
         return "\n\n".join(sections)
+
+    # Indexed by BuiltinCodeIndex. This table and the generated JSC_FOREACH_BUILTIN_CODE that the enum is
+    # built from both iterate model().all_functions(), so the two orders agree by construction.
+    def generate_source_metadata_table(self, function_data):
+        lines = []
+        lines.append("constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {")
+        for data in function_data:
+            entry = dict(compute_builtin_source_metadata(data['originalSource']), codeName=data['codeName'])
+            lines.append("    /* %(codeName)s */ { %(sourceLength)d, %(parametersStart)d, %(parameterCount)d, %(lineCount)d, %(endColumn)d, %(offsetOfLastNewline)d, %(positionBeforeLastNewlineLineStartOffset)d, %(closeBraceOffsetFromEnd)d, %(isAsyncFunction)s, %(isInStrictContext)s }," % entry)
+        lines.append("};")
+        lines.append("static_assert(%d == JSC::numberOfBuiltinCodes);" % len(function_data))
+        return '\n'.join(lines)
 
     def generate_secondary_header_includes(self):
         header_includes = [

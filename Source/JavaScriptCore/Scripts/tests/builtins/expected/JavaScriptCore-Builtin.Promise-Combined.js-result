@@ -154,6 +154,12 @@ constinit const char* const s_builtinPromiseRejectPromiseCode =
 s_JSCCombinedCode + 336
 ;
 
+constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {
+    /* builtinPromiseFulfillPromiseCode */ { 336, 10, 2, 12, 0, 335, 333, 3, false, true },
+    /* builtinPromiseRejectPromiseCode */ { 337, 10, 2, 12, 0, 336, 334, 3, false, true },
+};
+static_assert(2 == JSC::numberOfBuiltinCodes);
+
 
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
