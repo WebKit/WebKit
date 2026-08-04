@@ -932,6 +932,14 @@ imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-fill.h
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square-notch-mixed.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square-notch-superellipse.html [ Pass ]
 
+# Passing since 317560@main.
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=2.3&border-radius=40% [ Pass ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=3&border-top-right-radius=33 [ Pass ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=squircle&border-radius=50% [ Pass ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-top-left-shape=-4&border-radius=40 [ Pass ]
+
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
 imported/w3c/web-platform-tests/storage/ [ Pass ]
