@@ -126,7 +126,8 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
     if (RefPtr axRoot = axObjectCache.document() ? axObjectCache.getOrCreate(axObjectCache.document()->view()) : nullptr) {
         tree->updatingSubtree(axRoot.get());
         tree->createEmptyContent(*axRoot);
-    }
+    } else
+        tree->m_emptyContentCreatedWithoutRoot = true;
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
     tree->m_processingProgress = 0;
@@ -164,6 +165,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     });
     if (!axWebArea) {
         // FIXME: Can hit this almost 100% of the time on google.com with ENABLE(ACCESSIBILITY_LOCAL_FRAME).
+        m_webAreaMissingAtCreation = true;
         AX_BROKEN_ASSERT_NOT_REACHED();
         return;
     }
@@ -211,6 +213,8 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     RefPtr axRoot = axObjectCache.getOrCreate(document->view());
     if (axRoot)
         tree->generateSubtree(*axRoot);
+    else
+        tree->m_fullTreeCreatedWithoutRoot = true;
 
     if (RefPtr axFocus = axObjectCache.focusedObjectForPage(document->page()))
         tree->setFocusedNodeID(axFocus->objectID());
