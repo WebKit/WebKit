@@ -577,9 +577,13 @@ sub determineArchitecture
             # This gets called from argumentsForConfiguration() which needs to resolve the target architecture
             # before entering into the cross-toolchain-env, so to achieve that we call the cross-target cmake.
             if (shouldBuildForCrossTarget()) {
-                $prefix = sprintf("%s --cross-target=%s --cross-toolchain-run-cmd",
-                            File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper"),
-                            getCrossTargetName());
+                my $helper = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper");
+                my $target = getCrossTargetName();
+                # Pre-build the toolchain so its (potentially multi-hour) bitbake output reaches
+                # the terminal instead of being swallowed by the pipe opened below.
+                system($helper, "--cross-target=$target", "--build-toolchain") == 0
+                    or die "cross-toolchain-helper --build-toolchain failed for $target\n";
+                $prefix = "$helper --cross-target=$target --cross-toolchain-run-cmd";
             }
             if (open my $cmake_sysinfo, "$prefix cmake --system-information |") {
                 while (<$cmake_sysinfo>) {
