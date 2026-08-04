@@ -38,9 +38,11 @@
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakHandleOwner.h>
 #include <tuple>
+#include <wtf/Atomics.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
+#include <wtf/Lock.h>
 #include <wtf/PackedRefPtr.h>
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/TZoneMalloc.h>
@@ -122,9 +124,11 @@ class NativeExecutable;
     macro(PutByValWithTrueKeyReplaceHandler, putByValWithTrueKeyReplaceHandler) \
     macro(PutByValWithFalseKeyReplaceHandler, putByValWithFalseKeyReplaceHandler) \
 
-// Thunks that bake VM state (topEntryFrame, topCallFrame, the VM pointer passed to operations)
-// into the generated code, so every VM needs its own copy.
-#define JSC_FOR_EACH_VM_DEPENDENT_COMMON_THUNK(macro) \
+// VM-dependent thunks that must exist before any code runs, because they are requested from
+// contexts that cannot take a lock. In particular CallLinkInfo::visitWeak runs during GC with the
+// JIT worklist threads suspended, and reaches getCTIVirtualCall; if a suspended compiler thread held
+// the lock, taking it here would deadlock.
+#define JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(macro) \
     macro(HandleException, handleExceptionGenerator) \
     macro(CheckException, checkExceptionGenerator) \
     macro(NativeCall, nativeCallGenerator) \
@@ -140,6 +144,11 @@ class NativeExecutable;
     macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
     macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
     macro(VirtualThunkForConstruct, virtualThunkForConstruct) \
+
+// VM-dependent thunks generated on first use. These are only ever requested while compiling an
+// inline cache, where taking a lock is safe, and a short-lived VM never pays for the ones it does
+// not use.
+#define JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(macro) \
     macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
     macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
     macro(GetByIdMegamorphicGetterHandler, getByIdMegamorphicGetterHandler) \
@@ -182,6 +191,10 @@ class NativeExecutable;
     macro(PutByValWithFalseKeyTransitionReallocatingHandler, putByValWithFalseKeyTransitionReallocatingHandler) \
     macro(PutByValWithFalseKeyTransitionReallocatingOutOfLineHandler, putByValWithFalseKeyTransitionReallocatingOutOfLineHandler) \
 
+#define JSC_FOR_EACH_VM_DEPENDENT_COMMON_THUNK(macro) \
+    JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(macro) \
+    JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(macro)
+
 // List up super common stubs so that we initialize them eagerly.
 #define JSC_FOR_EACH_COMMON_THUNK(macro) \
     JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(macro) \
@@ -195,12 +208,14 @@ JSC_FOR_EACH_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK_ID)
 
 #define JSC_COUNT_COMMON_JIT_THUNK_ID(name, func) + 1
 // The VM-independent thunks come first, so a CommonJITThunkID below this bound indexes the shared
-// table and one at or above it indexes a VM's own table.
+// table and one at or above it indexes a VM's own table. Within a VM's own table the eager thunks
+// come first, so an index below numberOfVMDependentEagerCommonThunkIDs is already generated and one
+// at or above it is generated on demand.
 static constexpr unsigned numberOfVMIndependentCommonThunkIDs = 0 JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+static constexpr unsigned numberOfVMDependentEagerCommonThunkIDs = 0 JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+static constexpr unsigned numberOfVMDependentLazyCommonThunkIDs = 0 JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
 static constexpr unsigned numberOfCommonThunkIDs = 0 JSC_FOR_EACH_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
 #undef JSC_COUNT_COMMON_JIT_THUNK_ID
-
-static constexpr unsigned numberOfVMDependentCommonThunkIDs = numberOfCommonThunkIDs - numberOfVMIndependentCommonThunkIDs;
 
 class JITThunks final : private WeakHandleOwner {
     WTF_MAKE_TZONE_ALLOCATED(JITThunks);
@@ -217,7 +232,7 @@ public:
     CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
     CodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
 
-    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(CommonJITThunkID);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, CommonJITThunkID);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
 
@@ -231,8 +246,10 @@ private:
     template <typename GenerateThunk>
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStubImpl(ThunkGenerator key, GenerateThunk);
 
+    MacroAssemblerCodeRef<JITThunkPtrTag> lazyCommonThunk(VM&, CommonJITThunkID);
+
     void finalize(Handle<Unknown>, void* context) final;
-    
+
     struct Entry {
         PackedRefPtr<ExecutableMemoryHandle> handle;
         bool needsCrossModifyingCodeFence;
@@ -273,7 +290,21 @@ private:
 
     using WeakNativeExecutableSet = UncheckedKeyHashSet<Weak<NativeExecutable>, WeakNativeExecutableHash>;
 
-    MacroAssemblerCodeRef<JITThunkPtrTag> m_commonThunks[numberOfVMDependentCommonThunkIDs] { };
+    // A lazy thunk is published with a release store to its state, so a request that finds it
+    // generated reads its code with an acquire load and no lock, and each thunk's own lock keeps
+    // generating one from blocking requests for the others. GeneratedOnCompilationThread records
+    // that a thread about to run the code still owes it a crossModifyingCodeFence.
+    enum class LazyThunkState : uint8_t { NotGenerated, GeneratedOnCompilationThread, Generated };
+
+    struct LazyThunk {
+        MacroAssemblerCodeRef<JITThunkPtrTag> codeRef;
+        Atomic<LazyThunkState> state { LazyThunkState::NotGenerated };
+        Lock lock;
+    };
+
+    // Filled by initialize() before any other thread can run, so reading it needs no lock.
+    MacroAssemblerCodeRef<JITThunkPtrTag> m_eagerCommonThunks[numberOfVMDependentEagerCommonThunkIDs] { };
+    LazyThunk m_lazyCommonThunks[numberOfVMDependentLazyCommonThunkIDs];
     CTIStubMap m_ctiStubMap;
     WeakNativeExecutableSet m_nativeExecutableSet;
     WTF::RecursiveLock m_lock;

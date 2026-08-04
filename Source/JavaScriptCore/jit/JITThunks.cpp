@@ -68,13 +68,26 @@ JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(JSC_DEFINE_SHARED_JIT_THUNK)
     return thunks.get();
 }
 
+static ThunkGenerator generatorForLazyCommonThunk(CommonJITThunkID thunkID)
+{
+    switch (thunkID) {
+#define JSC_CASE_COMMON_JIT_THUNK(name, func) \
+    case CommonJITThunkID::name: return func;
+JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(JSC_CASE_COMMON_JIT_THUNK)
+#undef JSC_CASE_COMMON_JIT_THUNK
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void JITThunks::initialize(VM& vm)
 {
     ASSERT(!isCompilationThread());
     sharedCommonThunks();
 #define JSC_DEFINE_COMMON_JIT_THUNK(name, func) \
-    m_commonThunks[static_cast<unsigned>(CommonJITThunkID::name) - numberOfVMIndependentCommonThunkIDs] = func(vm);
-JSC_FOR_EACH_VM_DEPENDENT_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK)
+    m_eagerCommonThunks[static_cast<unsigned>(CommonJITThunkID::name) - numberOfVMIndependentCommonThunkIDs] = func(vm);
+JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK)
 #undef JSC_DEFINE_COMMON_JIT_THUNK
 }
 
@@ -125,10 +138,10 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutab
     return aExecutable.function() == std::get<0>(b) && aExecutable.constructor() == std::get<1>(b) && aExecutable.implementationVisibility() == std::get<2>(b) && aExecutable.length() == std::get<3>(b) && aExecutable.name() == std::get<4>(b);
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM&)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(CommonJITThunkID::NativeCall).code();
+    return ctiStub(vm, CommonJITThunkID::NativeCall).code();
 }
 
 CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCallWithDebuggerHook(VM& vm)
@@ -137,10 +150,10 @@ CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCallWithDebuggerHook(VM& vm)
     return ctiStub(vm, nativeCallWithDebuggerHookGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM&)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(CommonJITThunkID::NativeConstruct).code();
+    return ctiStub(vm, CommonJITThunkID::NativeConstruct).code();
 }
 
 CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstructWithDebuggerHook(VM& vm)
@@ -149,28 +162,28 @@ CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstructWithDebuggerHook(VM& vm)
     return ctiStub(vm, nativeConstructWithDebuggerHookGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM&)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(CommonJITThunkID::NativeTailCall).code();
+    return ctiStub(vm, CommonJITThunkID::NativeTailCall).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM&)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(CommonJITThunkID::NativeTailCallWithoutSavedTags).code();
+    return ctiStub(vm, CommonJITThunkID::NativeTailCallWithoutSavedTags).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM&)
+CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(CommonJITThunkID::InternalFunctionCall).code();
+    return ctiStub(vm, CommonJITThunkID::InternalFunctionCall).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM&)
+CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(CommonJITThunkID::InternalFunctionConstruct).code();
+    return ctiStub(vm, CommonJITThunkID::InternalFunctionConstruct).code();
 }
 
 template <typename GenerateThunk>
@@ -215,14 +228,48 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator 
     });
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(CommonJITThunkID thunkID)
+MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, CommonJITThunkID thunkID)
 {
     unsigned index = static_cast<unsigned>(thunkID);
     if (index < numberOfVMIndependentCommonThunkIDs)
         return sharedCommonThunks()[index];
-    auto result = m_commonThunks[index - numberOfVMIndependentCommonThunkIDs];
-    ASSERT(result);
-    return result;
+    unsigned vmDependentIndex = index - numberOfVMIndependentCommonThunkIDs;
+    if (vmDependentIndex < numberOfVMDependentEagerCommonThunkIDs) {
+        auto result = m_eagerCommonThunks[vmDependentIndex];
+        ASSERT(result);
+        return result;
+    }
+    return lazyCommonThunk(vm, thunkID);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::lazyCommonThunk(VM& vm, CommonJITThunkID thunkID)
+{
+    auto& thunk = m_lazyCommonThunks[static_cast<unsigned>(thunkID) - numberOfVMIndependentCommonThunkIDs - numberOfVMDependentEagerCommonThunkIDs];
+
+    auto state = thunk.state.load(std::memory_order_acquire);
+    if (state == LazyThunkState::NotGenerated) {
+        Locker locker { thunk.lock };
+        state = thunk.state.loadRelaxed();
+        if (state == LazyThunkState::NotGenerated) {
+            thunk.codeRef = generatorForLazyCommonThunk(thunkID)(vm);
+            ASSERT(thunk.codeRef);
+            state = isCompilationThread() ? LazyThunkState::GeneratedOnCompilationThread : LazyThunkState::Generated;
+            thunk.state.store(state, std::memory_order_release);
+        }
+    }
+
+    if (state == LazyThunkState::GeneratedOnCompilationThread && !isCompilationThread()) {
+        // The main thread will issue a crossModifyingCodeFence before running
+        // any code the compiler thread generates, including any thunks that they
+        // generate. However, the main thread may grab the thunk a compiler thread
+        // generated before we've issued that crossModifyingCodeFence. Hence, we
+        // conservatively say that when the main thread grabs a thunk generated
+        // from a compiler thread for the first time, it issues a crossModifyingCodeFence.
+        WTF::crossModifyingCodeFence();
+        thunk.state.store(LazyThunkState::Generated, std::memory_order_release);
+    }
+
+    return thunk.codeRef;
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiSlowPathFunctionStub(VM& vm, SlowPathFunction slowPathFunction)
