@@ -5627,8 +5627,20 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         const RenderLayer* clippingRootLayer = flags & UseLocalClipRectExcludingCompositingIfPossible ? this : clippingRootForPainting();
         LayoutSize offsetFromRoot = offsetFromAncestor(clippingRootLayer);
         LayoutRect clipRect = clipRectRelativeToAncestor(clippingRootLayer, offsetFromRoot, infiniteRect);
-        if (clipRect == infiniteRect)
+        if (clipRect.isInfinite())
             return infiniteRect;
+
+        auto renderableInfiniteRect = LayoutRect::renderableInfiniteRect();
+        if (clipRect.width() > renderableInfiniteRect.width() || clipRect.height() > renderableInfiniteRect.height()) {
+            // When ancestor clips only one axis, leaving the other one unbounded, clip again passing
+            // document rectangle as constraining rectangle to clipRectRelativeToAncestor(),
+            // like selfClipRect() does, to ensure we return a finite rectangle. Checking either width or
+            // height matches LayoutRect::infiniteRect doesn't work either because clipRectRelativeToAncestor()
+            // returns a rectangle that has been moved and intersected, so it's close to infinite but not exactly
+            // infinite. So, comparing to LayoutRect::renderableInfiniteRect() we make sure that we don't return
+            // a rectangle that can't be handled as layer bounds.
+            clipRect = clipRectRelativeToAncestor(clippingRootLayer, offsetFromRoot, renderer().view().documentRect());
+        }
 
         if (renderer().hasClip()) {
             if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer())) {

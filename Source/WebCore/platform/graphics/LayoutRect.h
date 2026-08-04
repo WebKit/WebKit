@@ -217,10 +217,16 @@ public:
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
     bool isInfinite() const;
 
-    static LayoutRect infiniteRect()
+    static constexpr LayoutRect infiniteRect()
     {
         // Return a rect that is slightly smaller than the true max rect to allow pixelSnapping to round up to the nearest IntRect without overflowing.
         return LayoutRect(LayoutUnit::nearlyMin() / 2, LayoutUnit::nearlyMin() / 2, LayoutUnit::nearlyMax(), LayoutUnit::nearlyMax());
+    }
+
+    static constexpr LayoutRect renderableInfiniteRect()
+    {
+        // Return a infinite-like rect whose values are such that, when converted to float pixel values, they can reasonably represent device pixels.
+        return LayoutRect(LayoutUnit::nearlyMin() / 32, LayoutUnit::nearlyMin() / 32, LayoutUnit::nearlyMax() / 16, LayoutUnit::nearlyMax() / 16);
     }
 
     operator FloatRect() const { return FloatRect(m_location, m_size); }
