@@ -581,9 +581,10 @@ sub determineArchitecture
                 my $target = getCrossTargetName();
                 # Pre-build the toolchain if needed so its (potentially multi-hour) bitbake output reaches
                 # the terminal instead of being swallowed by the pipe opened below.
-                # Pass --log-level=quiet here to avoid repeated info messages from the tool, those info messages
-                # would be printed later when the build is started later at runInCrossTargetEnvironment()
-                system($helper, "--log-level=quiet", "--cross-target=$target", "--build-toolchain") == 0
+                # The build-toolchain call runs with info log level (the default) because it is the first
+                # one to happen, so those messages are printed at the start. Next calls to cross-toolchain-helper
+                # should pass --log-level=quiet to avoid repeated messages.
+                system($helper, "--cross-target=$target", "--build-toolchain") == 0
                     or die "cross-toolchain-helper --build-toolchain failed for $target\n";
                 $prefix = "$helper --log-level=quiet --cross-target=$target --cross-toolchain-run-cmd";
             }
@@ -2537,8 +2538,10 @@ sub inFlatpakSandbox()
 sub runInCrossTargetEnvironment(@)
 {
     return if not shouldBuildForCrossTarget();
+    # Run with quiet log level to avoid repeated messages, the first run at determineArchitecture()
+    # to build the toolchain happens with log level info (the default)
     my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper"),
-                  "--cross-target", getCrossTargetName(), "--cross-toolchain-run-cmd");
+                  "--log-level=quiet", "--cross-target", getCrossTargetName(), "--cross-toolchain-run-cmd");
     my @command = @_;
     exec @prefix, @command, argumentsForConfiguration(), @ARGV or die;
 }
