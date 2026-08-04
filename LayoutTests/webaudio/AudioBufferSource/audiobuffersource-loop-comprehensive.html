@@ -154,12 +154,12 @@
         },
 
         {
-          description: 'illegal loop: loopStartFrame < 0',
+          description: 'illegal loop: loopStartFrame < 0 (clamps to 0)',
           loopStartFrame: -8,
           loopEndFrame: 3,
           renderFrames: 16,
           playbackRate: 1,
-          expected: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
+          expected: [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0]
         },
 
         {
