@@ -9538,7 +9538,7 @@ Document::RegionFixedPair Document::absoluteEventRegionForNode(Node& node)
     if (!rootRelativeBounds.isEmpty())
         region.unite(Region(enclosingIntRect(rootRelativeBounds)));
 
-    return RegionFixedPair(region, insideFixedPosition);
+    return RegionFixedPair(WTF::move(region), insideFixedPosition);
 }
 
 auto Document::absoluteRegionForWheelEventTargets() -> RegionFixedPair
@@ -9555,7 +9555,7 @@ auto Document::absoluteRegionForWheelEventTargets() -> RegionFixedPair
         insideFixedPosition |= targetRegionFixedPair.second;
     }
 
-    return RegionFixedPair(targetRegion, insideFixedPosition);
+    return RegionFixedPair(WTF::move(targetRegion), insideFixedPosition);
 }
 
 void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
