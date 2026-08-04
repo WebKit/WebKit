@@ -194,6 +194,62 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     content: url(../Images/StepInto.svg);
 }
 
+.item.recording-action.bind > .icon {
+    content: url(../Images/Bind.svg);
+}
+
+.item.recording-action.copy > .icon {
+    content: url(../Images/Copy.svg);
+}
+
+.item.recording-action.object > .icon {
+    content: url(../Images/Object.svg);
+}
+
+.item.recording-action.draw > .icon {
+    content: url(../Images/Paint.svg);
+}
+
+.item.recording-action.execute > .icon {
+    content: url(../Images/Execute.svg);
+}
+
+.item.recording-action.query > .icon {
+    content: url(../Images/Search.svg);
+}
+
+.item.recording-action.read > .icon {
+    content: url(../Images/Read.svg);
+}
+
+.item.recording-action.show > .icon {
+    content: url(../Images/Show.svg);
+}
+
+.item.recording-action.source > .icon {
+    content: url(../Images/Markup.svg);
+}
+
+.item.recording-action.uniform > .icon {
+    content: url(../Images/Pencil.svg);
+}
+
+.item.recording-action.begin > .icon {
+    content: url(../Images/Begin.svg);
+}
+
+.item.recording-action.end > .icon {
+    content: url(../Images/End.svg);
+}
+
+.item.recording-action.viewport > .icon {
+    content: url(../Images/Viewport.svg);
+}
+
+.item.recording-action.write > .icon {
+    content: url(../Images/Write.svg);
+}
+
 .item.recording-action.invalid > .icon {
     top: 2px;
     width: 16px;
