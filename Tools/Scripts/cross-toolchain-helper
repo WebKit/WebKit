@@ -30,7 +30,10 @@ import stat
 import logging
 import hashlib
 import shutil
+import shlex
+import subprocess
 import re
+import tempfile
 
 top_level_directory = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts', 'webkitpy'))
@@ -80,7 +83,7 @@ class YoctoTargetsConfig():
         # Don't automatically convert to lowercase the keys, return it literally.
         self._config_parser.optionxform = lambda option: option
         self._config_parser.read(config_file)
-        self._directory_config_file = os.path.realpath(os.path.dirname(config_file))
+        self._config_dir = os.path.realpath(os.path.dirname(config_file))
         self._available_targets = []
         self._source_files_for_hash = source_files_for_hash
         required_keys = ['repo_manifest_path', 'conf_bblayers_path', 'conf_local_path', 'image_basename', 'image_types']
@@ -102,7 +105,7 @@ class YoctoTargetsConfig():
     def _get_path(self, path):
         if os.path.isabs(path):
             return path
-        return os.path.join(self._directory_config_file, path)
+        return os.path.join(self._config_dir, path)
 
     def _get_value(self, target, key):
         if target not in self.list_target_configs_available():
@@ -141,7 +144,19 @@ class YoctoTargetsConfig():
                 environment_dic[env_key] = key_value
         return environment_dic
 
-    def get_hash_for_target(self, target):
+    def get_extra_images_fragment_file_paths(self, image_extras_file):
+        list_of_image_extras_fragments_paths = []
+        if not os.path.isfile(image_extras_file):
+            return list_of_image_extras_fragments_paths
+        with open(image_extras_file, 'r') as f:
+            image_extras_str = f.read().strip()
+        if not image_extras_str:
+            return list_of_image_extras_fragments_paths
+        for extra_image_feature in image_extras_str.strip('+').split('+'):
+            list_of_image_extras_fragments_paths.append(os.path.join(self._config_dir, 'image_extras', f'{extra_image_feature}.conf'))
+        return list_of_image_extras_fragments_paths
+
+    def get_hash_for_target(self, target, image_extras_file):
         hash_for_target = hashlib.md5()
         for key in self._config_parser[target]:
             key_value = self._get_value(target, key)
@@ -155,12 +170,16 @@ class YoctoTargetsConfig():
         for source_file in self._source_files_for_hash:
             with open(source_file, 'r', encoding='utf-8') as f:
                 hash_for_target.update(f.read().encode('utf-8', errors='ignore'))
+        # And finally add the contents of the image_extras enabled (read those from file)
+        for extra_image_fragment_file in self.get_extra_images_fragment_file_paths(image_extras_file):
+            with open(extra_image_fragment_file, 'r', encoding='utf-8') as f:
+                hash_for_target.update(f.read().encode('utf-8', errors='ignore'))
         return hash_for_target.hexdigest()
 
-    def generate_and_export_hash_version_identifier(self, target):
-        hash_version = self.get_hash_for_target(target)
-        # We use this env variable to pass the version info to a few bitbake/Yocto recipes
-        set_env_var('WEBKIT_CROSS_VERSION', '{hash_version}'.format(hash_version=hash_version))
+    def generate_and_export_hash_version_identifier(self, target, image_extras_file):
+        hash_version = self.get_hash_for_target(target, image_extras_file)
+        # We use this env var to set the version at ${meta-webkit}/conf/distro/webkitdevci.conf
+        set_env_var('WEBKIT_CROSS_VERSION', f'{hash_version}')
         return '{target_name} {hash_version}'.format(target_name=target, hash_version=hash_version)
 
     def list_target_configs_available(self):
@@ -169,8 +188,9 @@ class YoctoTargetsConfig():
 
 class YoctoCrossBuilder():
 
-    def __init__(self, targets_config, target, no_wipe, no_export_environment, skip_init):
+    def __init__(self, targets_config, target, image_extras_list, no_wipe, no_export_environment, skip_init):
         self._running_image_info_version_full_path = '/usr/share/cross-target-info-version'
+        self._running_image_info_image_extras_full_path = '/usr/share/cross-target-info-image-extras'
         self._targets_config = targets_config
         self._target = target
         self._webkit_dir = top_level_directory
@@ -180,24 +200,61 @@ class YoctoCrossBuilder():
             return
         self._workdir = os.path.join(self._webkitbuild_dir, 'CrossToolChains', target)
         self._workdir_version_file = os.path.join(self._workdir, '.target-info-version')
+        self._workdir_image_extras_file = os.path.join(self._workdir, '.image-extras')
         self._workdir_path_file = os.path.join(self._workdir, '.path')
         self._workdir_build_yoctodir = os.path.join(self._workdir, 'build')
         self._workdir_info_last_image_deployed = os.path.join(self._workdir, '.last-image-deployed-info-version')
+        self._workdir_info_last_image_extras_deployed = os.path.join(self._workdir, '.last-image-deployed-extras-info')
         self._image_directory = os.path.join(self._workdir_build_yoctodir, 'image')
         self._image_basename = targets_config.get_image_basename(self._target)
         self._image_types = targets_config.get_image_types(self._target)
         self._toolchain_directory = os.path.join(self._workdir, 'build', 'toolchain')
         self._initialize_environment_for_target(no_export_environment)
-        self._hash_version_for_current_target = targets_config.generate_and_export_hash_version_identifier(self._target)
         if skip_init:
-            _log.debug('skipping initializing the build environment because skip_init was passed.')
+            _log.debug('Skipping initializing the build environment because skip_init was passed.')
             return
+        # Track whether the workdir pre-existed, before _check_or_init_image_extras_file creates it for the .image-extras file on a fresh first run
+        self._workdir_existed = os.path.isdir(self._workdir)
+        # image_extras can affect the hash, check or initialize it before computing the hash
+        self._check_or_init_image_extras_file(image_extras_list, no_wipe)
+        # This hash can't be used when skip_init, if there a NameError then fix the caller
+        self._hash_version_for_current_target = targets_config.generate_and_export_hash_version_identifier(self._target, self._workdir_image_extras_file)
         # Initialize the workdir at __init__() time, but only when is not previously built or is built with an old configuration.
         if not self._is_workdir_initialized_at_current_version():
             if not self._initialize_workdir(no_wipe):
                 raise RuntimeError('Unable to initialize working dir for target {target}'.format(target=target))
             # Clean the build CMakeCaches.txt (if any) when the config changes as well
             self._maybe_clean_webkit_build_caches(no_wipe)
+
+    def _check_or_init_image_extras_file(self, image_extras_list, no_wipe):
+        def log_image_extras(image_extras_str):
+            if image_extras_str:
+                _log.info(f'Enabled the following image extras: {image_extras_str}')
+            else:
+                _log.info('No image extras enabled.')
+        image_extras_str = '+'.join(sorted(set(image_extras_list)))
+        if not os.path.isfile(self._workdir_image_extras_file):
+            os.makedirs(self._workdir, exist_ok=True)
+            with open(self._workdir_image_extras_file, 'w') as f:
+                f.write(image_extras_str)
+            log_image_extras(image_extras_str)
+            return
+        with open(self._workdir_image_extras_file, 'r') as f:
+            previous_image_extras_content = f.read().strip()
+        if previous_image_extras_content == image_extras_str:
+            log_image_extras(image_extras_str)
+            return
+        if not image_extras_list:
+            # This corner case is to make using this easier, as doesn't force the user to pass --image-extras every time. Passing it once is enough.
+            _log.warning(f'Reusing previously enabled image extras: "{previous_image_extras_content}" because no extras passed. To reset: rm -fr "{self._workdir}"')
+            return
+        if no_wipe:
+            _log.info(f'Image extras configuration has changed. But no-wipe has been passed, so keeping the original image extras "{previous_image_extras_content}" at "{self._workdir}"')
+            return
+        _log.warning(f'Image extras configuration has changed. Before: "{previous_image_extras_content}" Now: "{image_extras_str}". Wiping and resetting config at "{self._workdir}"')
+        shutil.rmtree(self._workdir)
+        self._workdir_existed = False
+        return self._check_or_init_image_extras_file(image_extras_list, no_wipe)
 
     def _maybe_clean_webkit_build_caches(self, no_wipe):
         target_suffix = '_' + self._target
@@ -266,19 +323,18 @@ class YoctoCrossBuilder():
             signumber = os.WTERMSIG(sys_retcode)
             _log.error('The process "{cmd}" was terminated with signal: {signal}'.format(cmd=cmd, signal=signumber))
             return abs(signumber)
-        if os.WIFSTOPPED(status):
+        if os.WIFSTOPPED(sys_retcode):
             signumber = os.WSTOPSIG(sys_retcode)
             _log.error('The process "{cmd}" was stopped with signal: {signal}'.format(cmd=cmd, signal=signumber))
             return abs(signumber)
         return max(sys_retcode, 1)
 
-
     def _add_recipe_to_include_version_file_into_image(self, local_conf_path):
         poky_meta_dir = os.path.join(self._workdir, 'sources', 'poky', 'meta')
         if not os.path.isdir(poky_meta_dir):
-            raise RuntimeError('Can not find poky meta directory at {poky_dir}'.format(poky_dir=poky_dir))
+            raise RuntimeError(f"Can't find poky meta directory at {poky_meta_dir}")
         if not os.path.isfile(local_conf_path):
-            raise RuntimeError('Can not find local.conf file at {local_conf_path}'.format(local_conf_path=local_conf_path))
+            raise RuntimeError(f"Can't find local.conf file at {local_conf_path}")
         with open(local_conf_path, 'a') as f:
             f.write('\n# This has been added automatically by cross-toolchain-helper script:\n')
             f.write('IMAGE_INSTALL:append = " wk-target-info-ver"\n')
@@ -291,12 +347,13 @@ class YoctoCrossBuilder():
             f.write('LICENSE = "MIT"\n')
             f.write('LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"\n')
             f.write('S = "${WORKDIR}"\n')
-            f.write('SRC_URI = "file://${TOPDIR}/../.target-info-version"\n')
+            f.write('SRC_URI = "file://${TOPDIR}/../.target-info-version file://${TOPDIR}/../.image-extras"\n')
             f.write('do_install() {\n')
             f.write('    mkdir -p "${D}/${datadir}"\n')
             f.write('    cp "${TOPDIR}/../.target-info-version" "${D}/' + self._running_image_info_version_full_path + '"\n')
+            f.write('    cp "${TOPDIR}/../.image-extras" "${D}/' + self._running_image_info_image_extras_full_path + '"\n')
             f.write('}\n')
-            f.write('FILES:${PN} = "' + self._running_image_info_version_full_path + '"\n')
+            f.write('FILES:${PN} = "' + self._running_image_info_version_full_path + ' ' + self._running_image_info_image_extras_full_path + '"\n')
             f.write('BBCLASSEXTEND = "native nativesdk"\n')
 
     # This is only meant to be executed once on the first run or when the configuration changes.
@@ -304,7 +361,7 @@ class YoctoCrossBuilder():
     def _initialize_workdir(self, no_wipe):
         initial_directory = os.path.realpath(os.curdir)
         try:
-            if os.path.isdir(self._workdir):
+            if self._workdir_existed and os.path.isdir(self._workdir):
                 if os.path.isfile(self._workdir_version_file) and os.path.isfile(self._workdir_path_file):
                     if no_wipe:
                         _log.info('Configuration has changed. But no-wipe has been passed, so keeping old cross builder environment at: {workdir}'.format(workdir=self._workdir))
@@ -312,14 +369,28 @@ class YoctoCrossBuilder():
                     _log.info('Configuration has changed. Deleting old cross builder environment at: {workdir}'.format(workdir=self._workdir))
                 else:
                     _log.info('Previous initialization try failed to complete. Deleting old cross builder environment at: {workdir}'.format(workdir=self._workdir))
+                # Save the extra-images file before wiping.
+                previous_image_extras_content = ""
+                if os.path.isfile(self._workdir_image_extras_file):
+                    with open(self._workdir_image_extras_file, 'r') as f:
+                        previous_image_extras_content = f.read().strip()
                 shutil.rmtree(self._workdir)
+                os.makedirs(self._workdir)
+                with open(self._workdir_image_extras_file, 'w') as f:
+                    f.write(previous_image_extras_content)
             _log.info('Initializing cross builder environment at: {workdir}'.format(workdir=self._workdir))
-            os.makedirs(self._workdir)
+            os.makedirs(self._workdir, exist_ok=True)
             # call repo clone into workdir
             conf_dir = os.path.join(self._workdir_build_yoctodir, 'conf')
             # Create confdir and copy config files
             os.makedirs(conf_dir)
-            shutil.copy2(self._targets_config.get_conf_local(self._target), os.path.join(conf_dir, 'local.conf'))
+            local_conf_path = os.path.join(conf_dir, 'local.conf')
+            shutil.copy2(self._targets_config.get_conf_local(self._target), local_conf_path)
+            # Append the extra image file fragments if specified
+            for extra_image_fragment_file in self._targets_config.get_extra_images_fragment_file_paths(self._workdir_image_extras_file):
+                with open(extra_image_fragment_file, 'rb') as src, open(local_conf_path, 'ab') as dst:
+                    dst.write(b'\n')
+                    dst.write(src.read())
             # For bblayers.conf we need to resolve the BSPDIR variable to the workdir where it is deployed
             with open(self._targets_config.get_conf_bblayers(self._target), 'r') as f:
                 bblayers_template = f.read()
@@ -376,8 +447,6 @@ class YoctoCrossBuilder():
             os.chdir(poky_dir)
             if not os.path.isfile('oe-init-build-env'):
                 raise RuntimeError('Can not find oe-init-build-env script in poky directory at {poky_dir}'.format(poky_dir=poky_dir))
-            if not os.path.isfile('oe-init-build-env'):
-                raise RuntimeError('Can not find poky init env script at: {poky_init_env_file}'.format(poky_init_env_file=poky_init_env_file))
             _log.info('Running: {command}'.format(command=command))
             if self._run_cmd('/bin/bash -c \'. oe-init-build-env "{build_directory}" ; {command}\''.format(build_directory=self._workdir_build_yoctodir, command=command)) != 0:
                 _log.error('Error running bitbake')
@@ -479,28 +548,50 @@ class YoctoCrossBuilder():
             # This does the following:
             # 1. Remove any line that exports CFLAGS/CXXFLAGS/LDFLAGS/CPPFLAGS
             # 2. On the line that exports the compiler variables (export CC, export CXX and export CPP)
-            #    remove any compiler flag that is not machine related (-m*) or is '-E' (for cpp) or is for the sysroot.
+            #    remove any compiler flag that is not machine related (-m*) or is '-E' (for cpp) or is for the sysroot/target.
+            # 3. Do not override CC/CXX with the cross-compiled GCC compiler if the user wants to use Clang, instead
+            #    set CC/CXX pointing to the cross-compiled Clang (assuming the support was built in the toolchain).
             patched_setup_env_path = original_setup_env_path + "-no-opt-flags"
-            flags_regex = re.compile('export +(C|CXX|LD|CPP)FLAGS')
-            compiler_regex = re.compile('export +C(C|XX|PP)( +)?=')
+            flags_regex = re.compile(r'export\s+(C|CXX|LD|CPP)FLAGS=')
+            gcc_compiler_regex = re.compile(r'export\s+C(C|XX|PP)=')
+            clang_compiler_regex = re.compile(r'export\s+CLANGC(C|XX|PP)=')
+            gcc_lines = []
+            clang_lines = []
             with open(original_setup_env_path, 'r') as fr:
                 with open(patched_setup_env_path, 'w') as fw:
                     for line in fr.readlines():
                         if not flags_regex.match(line):
-                            if compiler_regex.match(line):
+                            if gcc_compiler_regex.match(line) or clang_compiler_regex.match(line):
                                 newline = ""
                                 for word in line.strip().split():
                                     if word.startswith('-'):
-                                        if word.startswith('-m') or word == '-E' or word.startswith('--sysroot'):
+                                        if word == '-E' or any(word.startswith(p) for p in ['-m', '--sysroot=', '--target=']):
                                             newline += " " + word
                                     else:
                                         newline += " " + word
                                 if '="' in newline and not newline.endswith('"'):
                                     newline += '"'
                                 newline = newline.strip() + '\n'
-                                fw.write(newline)
+                                (clang_lines if clang_compiler_regex.match(line) else gcc_lines).append(newline)
                             else:
                                 fw.write(line)
+                    # The script should check the CC/CXX env var from the user, if is set to clang then export
+                    # the CLANGCC and CLANGCXX as CC/CXX, otherwise keep the default (GCC)
+                    if len(gcc_lines) != 3:
+                        raise RuntimeError('Unexpected CC/CXX/CPP parameters in setup-environment script')
+                    if clang_lines:
+                        fw.write('\nif echo "${CC} ${CXX}" | grep -qi clang; then\n')
+                        for line in clang_lines:
+                            # Remove the CLANG prefix, so for example CLANGCXX becomes CXX
+                            line = re.sub(r'(export\s+)CLANG(CC|CXX|CPP)(=)', r'\1\2\3', line)
+                            fw.write(f'    {line}')
+                        fw.write('else\n')
+                        for line in gcc_lines:
+                            fw.write(f'    {line}')
+                        fw.write('fi\n')
+                    else:
+                        for line in gcc_lines:
+                            fw.write(line)
                     # When building cog, meson tries to load the wpe headers that are on the repo from the sysroot path.
                     # That is not really a bug on meson as system libraries should be loaded from the sysroot when cross-building.
                     # Workaround the issue by creating a symlink that also resolves this WebKit repository path inside the sysroot.
@@ -559,9 +650,13 @@ class YoctoCrossBuilder():
             fw.write('echo "  Welcome to the cross dev shell"\n')
             fw.write('echo -e "Your environment is now configured\\n"\n')
             fw.write('echo "Machine target: {target}"\n'.format(target=self._target))
-            fw.write('echo "GCC version: $($CC -dumpfullversion)"\n')
-            fw.write('echo "GCC target: $($CC -dumpmachine)"\n')
-            fw.write('echo -e "##################################"\n')
+            fw.write('COMPNAME=GCC; echo "${CC} ${CXX}" | grep -qi clang && COMPNAME=Clang\n')
+            fw.write('echo "Compiler selected: ${COMPNAME}"\n')
+            fw.write('echo "${COMPNAME} version: $($CC -dumpversion)"\n')
+            fw.write('echo "${COMPNAME} target: $($CC -dumpmachine)"\n')
+            fw.write('echo -e "\\nCall the cross compiler/debugger"\n')
+            fw.write('echo "with env vars: \$CC / \$CXX / \$GDB"\n')
+            fw.write('echo "##################################"\n')
             fw.write('export PS1="(WKCrossDevShell:{target}) ${{PS1}}"\n'.format(target=self._target))
         assert (os.path.isfile(custom_rc_file))
         _log.info('Entering into cross dev shell')
@@ -577,7 +672,8 @@ class YoctoCrossBuilder():
             _log.error('Error getting the "environment-setup" script from toolchain directory')
             return 1
         _log.info('Running inside cross-toolchain env: {command}'.format(command=command))
-        return self._run_cmd('/bin/bash -c \'. {cross_setup_env_path} ; {command}\''.format(cross_setup_env_path=cross_setup_env_path, command=command))
+        inner = '. {env} ; {cmd}'.format(env=shlex.quote(cross_setup_env_path), cmd=command)
+        return self._run_cmd('/bin/bash -c {inner}'.format(inner=shlex.quote(inner)))
 
     def execute_deploy_script(self, script_path):
         if os.path.isdir(script_path) or not os.access(script_path, os.R_OK | os.X_OK):
@@ -594,6 +690,7 @@ class YoctoCrossBuilder():
             _log.info('Deploy script ended with SUCESSS. Storing current image as correctly deployed')
             with open(self._workdir_info_last_image_deployed, 'w') as f:
                 f.write('{target_ver}\n'.format(target_ver=self._hash_version_for_current_target))
+            shutil.copy2(self._workdir_image_extras_file, self._workdir_info_last_image_extras_deployed)
         else:
             _log.error('Deploy script ended with return code {retcode}'.format(retcode=retcode))
         return retcode
@@ -610,10 +707,12 @@ class YoctoCrossBuilder():
 
         if image_type == 'running':
             image_info_hash_path = self._running_image_info_version_full_path
+            image_extras_info_path = self._running_image_info_image_extras_full_path
         elif image_type == 'deployed':
             image_info_hash_path = self._workdir_info_last_image_deployed
+            image_extras_info_path = self._workdir_info_last_image_extras_deployed
         else:
-            raise NotImplementedError('Unkown image type {image_type}'.format(image_type=image_type))
+            raise NotImplementedError(f'Unknown image type {image_type}')
 
 
         _log.info('Checking if {image_type} image is updated from info file "{info}"'.format(image_type=image_type, info=image_info_hash_path))
@@ -647,7 +746,7 @@ class YoctoCrossBuilder():
         image_target = line_info_arr[0]
         image_hash = line_info_arr[1]
         if image_type == 'deployed' and image_target != self._target:
-            _log.error('The target "{target}" obtained from file at {info} does not match the passed target fron the command line {argument_target}'.format(
+            _log.error('The target "{target}" obtained from file at {info} does not match the passed target from the command line {argument_target}'.format(
                         target=image_target, info=image_info_hash_path, argument_target=self._target))
             return RETCODE_IMAGE_NOT_VALID
         if image_target not in targets_available:
@@ -655,7 +754,7 @@ class YoctoCrossBuilder():
                         target=image_target, info=image_info_hash_path, targets=', '.join(targets_available)))
             return RETCODE_IMAGE_NOT_VALID
 
-        current_hash_for_target = self._targets_config.get_hash_for_target(image_target)
+        current_hash_for_target = self._targets_config.get_hash_for_target(image_target, image_extras_info_path)
         _log.info('The current {image_type} image is valid for target: {target}'.format(image_type=image_type, target=image_target))
         _log.info('Hash obtained for current image: {hash}'.format(hash=image_hash))
         _log.info('Hash for the last image version: {hash}'.format(hash=current_hash_for_target))
@@ -667,6 +766,71 @@ class YoctoCrossBuilder():
         _log.info('Hashes match: {image_type} image is updated'.format(image_type=image_type))
         return RETCODE_IMAGE_VALID_AND_UPDATED
 
+    def check_layer_updates(self, layer_name):
+        layer_dir = os.path.join(self._workdir, 'sources', layer_name)
+        if not os.path.isdir(layer_dir):
+            raise ValueError(f'Can not find the layer directory at {layer_dir}')
+        # Get yocto version codename
+        yocto_version_codename = None
+        with tempfile.NamedTemporaryFile(mode='r', delete=True, encoding='utf-8') as ftemp:
+            if not self._do_bitbake(f'bitbake -e | grep DISTRO_CODENAME > {ftemp.name}'):
+                _log.error('Unable to get DISTRO_CODENAME from bitbake -e')
+                return 1
+            ftemp.seek(0)
+            for line in ftemp.readlines():
+                if line.startswith('DISTRO_CODENAME='):
+                    yocto_version_codename = line.strip().split('=', 1)[1].strip('\'"')
+                    break
+        if not yocto_version_codename:
+            _log.error('Could not find Yocto version codename')
+            return 1
+        initial_directory = os.path.realpath(os.curdir)
+        try:
+            os.chdir(layer_dir)
+            current_head_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+            if self._run_cmd('git fetch') != 0:
+                _log.error(f'Unable to run "git fetch" in the layer directory at "{layer_dir}"')
+                return 1
+            branch_found = None
+            git_branch_output = subprocess.check_output(['git', 'branch', '-r', '--contains', 'HEAD'], text=True)
+            for line in git_branch_output.splitlines():
+                line = line.strip()
+                # Skip 'm/*' refs (created by the 'repo' tool to track the manifest):
+                if not line or line.startswith('m/'):
+                    continue
+                if '/' in line and line.split('/', 1)[1].startswith(yocto_version_codename):
+                    branch_found = line
+                    break
+            if not branch_found:
+                _log.warning(f'Unable to find a specific branch for yocto codename {yocto_version_codename}. Trying with main/master')
+                for line in git_branch_output.splitlines():
+                    line = line.strip()
+                    if not line or line.startswith('m/'):
+                        continue
+                    if line.endswith('/main') or line.endswith('/master'):
+                        branch_found = line
+                        break
+            if not branch_found:
+                _log.error('Could not find any branch on the remote to check.')
+                return 1
+            remote_head_sha = subprocess.check_output(['git', 'rev-parse', branch_found], text=True).strip()
+            if current_head_sha == remote_head_sha:
+                _log.info(f'"{layer_name}" is at the tip of "{branch_found}" ({current_head_sha}). No update needed.')
+                return 0
+            commits_behind = subprocess.check_output(
+                ['git', 'rev-list', '--count', f'{current_head_sha}..{remote_head_sha}'],
+                text=True).strip()
+            current_committer_date = subprocess.check_output(
+                ['git', 'show', '-s', '--format=%ci', current_head_sha], text=True).strip()
+            remote_committer_date = subprocess.check_output(
+                ['git', 'show', '-s', '--format=%ci', remote_head_sha], text=True).strip()
+        finally:
+            os.chdir(initial_directory)
+        _log.info(f'"{layer_name}" is not at the tip of "{branch_found}":')
+        _log.info(f'  Current HEAD     : {current_head_sha} (committer date: {current_committer_date})')
+        _log.info(f'  Latest on remote : {remote_head_sha} (committer date: {remote_committer_date})')
+        _log.info(f'  Commits behind   : {commits_behind}')
+        return 1
 
 
 # argparse has issues parsing strings like '--'
@@ -731,6 +895,9 @@ def main(args):
                         help='Print the available targets (one per line)')
     action.add_argument('--build-image', action='store_true', dest='generate_image',
                         help='Build the image (rootfs+kernel) for the specified target.')
+    parser.add_argument('--image-extras', type=str, dest='image_extras',
+                        help='Image extra features to enable, separate the extras with a "+". '
+                             'The environment variable WEBKIT_CROSS_IMAGE_EXTRAS can be used as well to specify those.' )
     action.add_argument('--build-toolchain', action='store_true', dest='generate_toolchain',
                         help='Build the cross-toolchain for the specified target.')
     action.add_argument('--bitbake-dev-shell', action='store_true', dest='bitbake_dev_shell',
@@ -744,6 +911,8 @@ def main(args):
                         help='Pass value "running" on the board, to check if the running image is valid and updated. '
                              'Pass value "deployed" on the builder, to check if the deployed image is valid and updated. '
                              'It will return: true (zero) if the image is valid and updated, false (1) if is valid but not updated or false (2) if is not valid.')
+    action.add_argument('--check-if-layer-is-updated', type=str, dest='check_if_layer_is_updated', action='append',
+                        help='Check if a specific layer has new updates. For example: meta-browser. Parameter can be passed multiple times.')
     action.add_argument(run_cmd_key, action='store', dest='execute_inside_cross_toolchain_environment_cmd', nargs=argparse.REMAINDER,
                         help='Build the cross toolchain (only if still not built) and then execute \"command\" inside cross environment. '
                              '\033[91mIMPORTANT\033[0m: This argument is the last one, any strings after it, even if separated by spaces or quotes will be considered part of the command to be executed. '
@@ -760,9 +929,21 @@ def main(args):
         print('\n'.join(targets_config.list_target_configs_available()))
         return 0
 
+    image_extras_list = []
+    wanted_image_extras = options.image_extras if options.image_extras else os.environ.get('WEBKIT_CROSS_IMAGE_EXTRAS')
+    if wanted_image_extras:
+        image_extras_abs_path = os.path.join(top_level_directory, conf_sub_dir, 'image_extras')
+        avail_image_extras = [f[:-5] for f in os.listdir(image_extras_abs_path) if f.endswith('.conf')] if os.path.isdir(image_extras_abs_path) else []
+        for extra_feature in wanted_image_extras.strip('+').split('+'):
+            if extra_feature in avail_image_extras:
+                image_extras_list.append(extra_feature)
+            else:
+                parser.error(f'Image extra feature "{extra_feature}" not available. Available extras are: {" ".join(avail_image_extras)}')
+
     if not options.bitbake_dev_shell and not options.cross_dev_shell and not options.generate_toolchain \
        and not options.generate_image and options.execute_inside_cross_toolchain_environment_cmd is None \
-       and options.script_path is None and not options.check_if_image_is_updated:
+       and options.script_path is None and not options.check_if_image_is_updated  \
+       and options.check_if_layer_is_updated is None:
         parser.error('Need to specify an action')
 
     if options.check_if_image_is_updated == 'running':
@@ -787,7 +968,7 @@ def main(args):
     no_wipe = (options.no_wipe) or (os.environ.get('WEBKIT_CROSS_WIPE_ON_CHANGE', '1') == '0')
     no_export_environment = (options.no_export_environment) or (os.environ.get('WEBKIT_CROSS_EXPORT_ENV', '1') == '0')
     skip_init = options.check_if_image_is_updated in ['running', 'deployed']
-    builder = YoctoCrossBuilder(targets_config, options.target, no_wipe, no_export_environment, skip_init)
+    builder = YoctoCrossBuilder(targets_config, options.target, image_extras_list, no_wipe, no_export_environment, skip_init)
 
     if options.check_if_image_is_updated in ['running', 'deployed']:
         if options.bitbake_dev_shell or options.cross_dev_shell or options.generate_toolchain \
@@ -820,6 +1001,10 @@ def main(args):
 
     if options.script_path:
         retcode += builder.execute_deploy_script(options.script_path)
+
+    if options.check_if_layer_is_updated:
+        for update_layer_name in options.check_if_layer_is_updated:
+            retcode += builder.check_layer_updates(update_layer_name)
 
     return retcode
 
