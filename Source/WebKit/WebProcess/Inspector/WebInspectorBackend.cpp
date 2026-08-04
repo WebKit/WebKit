@@ -27,6 +27,7 @@
 #include "WebInspectorBackend.h"
 
 #include "FrameNetworkAgentProxy.h"
+#include "NetworkInterceptionSink.h"
 #include "PageAgentProxy.h"
 #include "WebFrame.h"
 #include "WebInspectorBackendMessages.h"
@@ -654,6 +655,14 @@ void WebInspectorBackend::setResourceCachingDisabled(bool disabled)
     RefPtr page = m_page.get();
     if (RefPtr corePage = page ? page->corePage() : nullptr)
         corePage->setResourceCachingDisabledByWebInspector(disabled);
+}
+
+void WebInspectorBackend::setNetworkInterception(Inspector::NetworkInterception&& interception)
+{
+    // The UI process is the authority; this process just stores what it is told, both on
+    // the initial broadcast and when the configuration is replayed after joining the page.
+    if (RefPtr page = m_page.get())
+        page->networkInterceptionSink().setConfiguration(WTF::move(interception));
 }
 
 void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)

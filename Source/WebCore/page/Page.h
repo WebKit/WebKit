@@ -34,6 +34,7 @@
 #include <WebCore/IntRectHash.h>
 #include <WebCore/LoadSchedulingMode.h>
 #include <WebCore/MediaSessionGroupIdentifier.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/NetworkLoadPolicy.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
@@ -1157,6 +1158,12 @@ public:
     bool isResourceCachingDisabledByWebInspector() const { return m_resourceCachingDisabledByWebInspector; }
     void setResourceCachingDisabledByWebInspector(bool disabled) { m_resourceCachingDisabledByWebInspector = disabled; }
 
+    // The network interception configuration active in this process for this page. Under Site
+    // Isolation the authoritative copy lives in the UI process, which pushes it down to every
+    // process hosting one of the page's frames.
+    const Inspector::NetworkInterception& networkInterceptionByWebInspector() const { return m_networkInterceptionByWebInspector; }
+    void setNetworkInterceptionByWebInspector(Inspector::NetworkInterception&& interception) { m_networkInterceptionByWebInspector = WTF::move(interception); }
+
     std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
     void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
 
@@ -1757,6 +1764,7 @@ private:
     bool m_showAllPlugins { false };
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabledByWebInspector { false };
+    Inspector::NetworkInterception m_networkInterceptionByWebInspector;
     bool m_isUtilityPage;
     bool m_shouldEnableICECandidateFilteringByDefault { true };
     bool m_mediaPlaybackIsSuspended { false };

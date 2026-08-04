@@ -64,6 +64,7 @@
 #include "MediaPlaybackState.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkInterceptionSink.h"
 #include "NetworkProcessConnection.h"
 #include "NodeHitTestResult.h"
 #include "NotificationPermissionRequestManager.h"
@@ -1846,6 +1847,13 @@ bool WebPage::isThrottleable() const
     bool isVisuallyIdle = m_activityState.contains(ActivityState::IsVisuallyIdle);
 
     return m_isAppNapEnabled && !isActive && isVisuallyIdle;
+}
+
+NetworkInterceptionSink& WebPage::networkInterceptionSink()
+{
+    if (!m_networkInterceptionSink)
+        m_networkInterceptionSink = makeUnique<NetworkInterceptionSink>(*this);
+    return *m_networkInterceptionSink;
 }
 
 WebPage::~WebPage()

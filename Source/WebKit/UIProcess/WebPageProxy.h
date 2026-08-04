@@ -3036,6 +3036,15 @@ public:
 
     void forEachWebContentProcess(NOESCAPE const Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&);
 
+    // Network interception authority. This page owns the one true copy of the interception
+    // configuration; each WebContent process hosting one of its frames holds a replica that
+    // is refreshed on every write here and replayed when a process joins the page later.
+    const Inspector::NetworkInterception& networkInterception() const;
+    void setNetworkInterceptionEnabled(bool);
+    void addNetworkInterceptPattern(Inspector::InterceptPattern&&);
+    void removeNetworkInterceptPattern(const Inspector::InterceptPattern&);
+    void sendNetworkInterceptionToProcess(WebProcessProxy&, WebCore::PageIdentifier);
+
     void hitTestAtPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, API::ContentWorld&, CompletionHandler<void(std::expected<std::optional<JSHandleInfo>, HitTestAtPointError>&&, WebHitTestResultData&&)>&&);
     void convertRectToMainFrameCoordinates(WebCore::FloatRect, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);
 
