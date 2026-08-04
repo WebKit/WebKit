@@ -188,7 +188,7 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
         return { };
     CheckedRef selection = frame->selection();
     if (selection->isNone())
-        return Exception { ExceptionCode::InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError, "collapseToEnd() requires a Range to be associated with Selection"_s };
     selection->disassociateLiveRange();
     selection->moveTo(selection->selection().uncanonicalizedEnd(), Affinity::Downstream);
     return { };
@@ -201,7 +201,7 @@ ExceptionOr<void> DOMSelection::collapseToStart()
         return { };
     CheckedRef selection = frame->selection();
     if (selection->isNone())
-        return Exception { ExceptionCode::InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError, "collapseToStart() requires a Range to be associated with Selection"_s };
     selection->disassociateLiveRange();
     selection->moveTo(selection->selection().uncanonicalizedStart(), Affinity::Downstream);
     return { };
