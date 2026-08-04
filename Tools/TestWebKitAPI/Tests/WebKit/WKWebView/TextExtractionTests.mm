@@ -363,6 +363,23 @@ TEST(TextExtractionTests, InteractionDebugDescription)
         EXPECT_WK_STREQ("Click on img labeled “Checkmark icon” under button labeled “Submit form” with id “submit-with-icon”", description);
         EXPECT_NULL(error);
     }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Open menu")];
+
+        [webView stringByEvaluatingJavaScript:@"document.getElementById('menu-link').setAttribute('href', '/search?q=webkit&lang=en')"];
+        description = [interaction debugDescriptionInWebView:webView error:&error];
+        EXPECT_WK_STREQ("Click on img labeled “Open menu” under link with href “/search?…” with id “menu-link”", description);
+        EXPECT_NULL(error);
+
+        RetainPtr longPathComponent = [@"" stringByPaddingToLength:99 withString:@"a" startingAtIndex:0];
+        [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"document.getElementById('menu-link').setAttribute('href', '/%@')", longPathComponent.get()]];
+        description = [interaction debugDescriptionInWebView:webView error:&error];
+        RetainPtr expectedHref = [NSString stringWithFormat:@"/%@…", [longPathComponent.get() substringToIndex:78]];
+        RetainPtr expectedString = [NSString stringWithFormat:@"Click on img labeled “Open menu” under link with href “%@” with id “menu-link”", expectedHref.get()];
+        EXPECT_WK_STREQ(expectedString.get(), description);
+        EXPECT_NULL(error);
+    }
 }
 
 TEST(TextExtractionTests, InteractionDescriptionUsesAdjacentTextForUnlabeledIcon)
