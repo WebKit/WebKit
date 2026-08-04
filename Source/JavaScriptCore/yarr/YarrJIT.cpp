@@ -457,16 +457,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MaskedAlternativeInfo);
 
 static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfc00fc00);
 static constexpr MacroAssembler::TrustedImm32 surrogatePairTags = MacroAssembler::TrustedImm32(0xdc00d800);
-static constexpr MacroAssembler::TrustedImm32 firstCharacterNonBMPBit = MacroAssembler::TrustedImm32(0x8000);
-static constexpr MacroAssembler::TrustedImm32 firstCharacterSurrogateTagMask = MacroAssembler::TrustedImm32(0xf800);
-static constexpr MacroAssembler::TrustedImm32 firstCharacterSurrogateTag = MacroAssembler::TrustedImm32(0xd800);
+static constexpr MacroAssembler::TrustedImm32 surrogateTagShiftedRight11 = MacroAssembler::TrustedImm32(0xd800 >> 11);
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
 template<TryReadUnicodeCharGenFirstNonBMPOptimization useNonBMPOptimization>
 void tryReadUnicodeCharImpl(VM& vm, CCallHelpers& jit, MacroAssembler::RegisterID resultReg)
 {
     MacroAssembler::JumpList slowCases;
-    MacroAssembler::JumpList isBMP;
     MacroAssembler::JumpList done;
 
     YarrJITDefaultRegisters regs;
@@ -474,16 +471,19 @@ void tryReadUnicodeCharImpl(VM& vm, CCallHelpers& jit, MacroAssembler::RegisterI
     if (resultReg != regs.regT0)
         jit.swap(regs.regT0, resultReg);
 
-    // Check if we can read two UTF-16 characters at once.
+    // A code unit that is not a surrogate is a BMP code point on its own.
+    jit.load16Unaligned(MacroAssembler::Address(regs.regUnicodeInputAndTrail), resultReg);
+    jit.urshift32(resultReg, MacroAssembler::TrustedImm32(11), regs.unicodeAndSubpatternIdTemp);
+    done.append(jit.branch32(MacroAssembler::NotEqual, regs.unicodeAndSubpatternIdTemp, surrogateTagShiftedRight11));
+
+    // The first character is a surrogate. Check if we can read the trailing code unit as well.
     jit.add64(MacroAssembler::TrustedImm32(4), regs.regUnicodeInputAndTrail, regs.unicodeAndSubpatternIdTemp);
     slowCases.append(jit.branchPtr(MacroAssembler::Above, regs.unicodeAndSubpatternIdTemp, regs.endOfStringAddress));
 
-    // Load and try to process two UTF-16 characters.
-    // If they are a proper surrogate pair, compute the non-BMP codepoint.
+    // Load the pair. If it is a proper surrogate pair, compute the non-BMP codepoint.
     jit.load32(MacroAssembler::Address(regs.regUnicodeInputAndTrail), resultReg);
-    isBMP.append(jit.branchTest32(MacroAssembler::Zero, resultReg, firstCharacterNonBMPBit));
     jit.and32(surrogateTagMask, resultReg, regs.unicodeAndSubpatternIdTemp);
-    MacroAssembler::Jump notSurrogatePair = jit.branch32(MacroAssembler::NotEqual, regs.unicodeAndSubpatternIdTemp, surrogatePairTags);
+    slowCases.append(jit.branch32(MacroAssembler::NotEqual, regs.unicodeAndSubpatternIdTemp, surrogatePairTags));
 
     // Create the UTF32 character from the surrogate pair.
 #if CPU(ARM64)
@@ -501,15 +501,6 @@ void tryReadUnicodeCharImpl(VM& vm, CCallHelpers& jit, MacroAssembler::RegisterI
     if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization)
         jit.move(MacroAssembler::TrustedImm32(1), regs.firstCharacterAdditionalReadSize);
 #endif
-    done.append(jit.jump());
-
-    notSurrogatePair.link(&jit);
-    jit.and32(firstCharacterSurrogateTagMask, regs.unicodeAndSubpatternIdTemp, regs.unicodeAndSubpatternIdTemp);
-    slowCases.append(jit.branch32(MacroAssembler::Equal, regs.unicodeAndSubpatternIdTemp, firstCharacterSurrogateTag));
-
-    isBMP.link(jit);
-    jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg);
-
     done.append(jit.jump());
 
     slowCases.link(&jit);
