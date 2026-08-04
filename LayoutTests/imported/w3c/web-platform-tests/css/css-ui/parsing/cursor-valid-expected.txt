@@ -37,8 +37,6 @@ PASS e.style['cursor'] = "zoom-in" should set the property value
 PASS e.style['cursor'] = "zoom-out" should set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\"), alias" should set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\") 1 calc(2 + 0), copy" should set the property value
-PASS e.style['cursor'] = "url(\"https://example.com/\") 1 calc(10 + (sign(2cqw - 10px) * 5)), copy" should set the property value
-PASS e.style['cursor'] = "url(\"https://example.com/\") 1 calc(-3), copy" should set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\"), url(\"https://example.com/\") 3 -4, move" should set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\") 5 6, grab" should set the property value
 PASS e.style['cursor'] = "image-set(\"https://example.com/\" 1x) 5 6, grab" should set the property value
@@ -46,4 +44,5 @@ PASS e.style['cursor'] = "image-set(\"https://example.com/\" 1x, \"https://examp
 PASS e.style['cursor'] = "light-dark(url(\"https://example.com/light\"), url(\"https://example.com/dark\")), pointer" should set the property value
 PASS e.style['cursor'] = "light-dark(url(\"https://example.com/light\"), url(\"https://example.com/dark\")) 5 6, grab" should set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\"), light-dark(url(\"https://example.com/light\"), url(\"https://example.com/dark\")) 3 4, move" should set the property value
+PASS e.style['cursor'] = "light-dark(image-set(\"https://example.com/\" 1x), url(\"https://example.com/\")) 5 6, grab" should set the property value
 

@@ -3747,6 +3747,15 @@ webkit.org/b/236904 imported/mozilla/svg/path-02.svg [ ImageOnlyFailure ]
 # Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
 css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 
+# New failure after import of css/css-ui (2026-07):
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/caret-eol-001.html [ ImageOnlyFailure ]
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/caret-eol-002.html [ ImageOnlyFailure ]
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/inert-attribute-overriding.html [ Failure ]
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/resize-iframe-3d-transform.tentative.html [ Failure ]
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/resize-textarea-rtl-001.tentative.html [ Failure ]
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/resize-textarea-rtl-002.tentative.html [ Failure ]
+webkit.org/b/320474 imported/w3c/web-platform-tests/css/css-ui/user-select-button.html [ Failure ]
+
 # Passing only on iOS
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ Pass ]

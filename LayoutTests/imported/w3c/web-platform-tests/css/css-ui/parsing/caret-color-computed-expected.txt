@@ -2,4 +2,13 @@
 PASS Property caret-color value 'auto'
 PASS Property caret-color value 'currentColor'
 PASS Property caret-color value 'red'
+PASS Property caret-color value 'transparent'
+FAIL Property caret-color value 'red rgb(0, 255, 0)' assert_true: 'red rgb(0, 255, 0)' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'auto rgb(0, 255, 0)' assert_true: 'auto rgb(0, 255, 0)' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'currentcolor red' assert_true: 'currentcolor red' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'auto auto' assert_true: 'auto auto' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'rgb(0, 255, 0) auto' assert_true: 'rgb(0, 255, 0) auto' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'currentcolor currentcolor' assert_true: 'currentcolor currentcolor' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'auto currentcolor' assert_true: 'auto currentcolor' is a supported value for caret-color. expected true got false
+FAIL Property caret-color value 'red transparent' assert_true: 'red transparent' is a supported value for caret-color. expected true got false
 

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/WEB_FEATURES.yml
@@ -28,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/interactivity-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/interactivity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid.html
@@ -49,7 +49,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-computed-contain.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-valid-contain.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/webkit-appearance-alias.html

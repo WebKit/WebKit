@@ -1,0 +1,15 @@
+
+FAIL e.style['caret-shape'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "bar" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['caret-shape'] = "underscore" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['caret-shape'] = "none" should not set the property value
+PASS e.style['caret-shape'] = "ba" should not set the property value
+PASS e.style['caret-shape'] = "underline" should not set the property value
+PASS e.style['caret-shape'] = "vertical" should not set the property value
+PASS e.style['caret-shape'] = "rect" should not set the property value
+

@@ -5,4 +5,8 @@ PASS e.style['cursor'] = "1 2 url(\"https://example.com/\"), copy" should not se
 PASS e.style['cursor'] = "url(\"https://example.com/\"), url(\"https://example.com/\") 3, move" should not set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\") 1px 2px, copy" should not set the property value
 PASS e.style['cursor'] = "url(\"https://example.com/\"), url(\"https://example.com/\") 3% 4%, move" should not set the property value
+PASS e.style['cursor'] = "linear-gradient(red), pointer" should not set the property value
+PASS e.style['cursor'] = "light-dark(linear-gradient(red), none), pointer" should not set the property value
+PASS e.style['cursor'] = "light-dark(url(\"https://example.com/\"), linear-gradient(red)), pointer" should not set the property value
+PASS e.style['cursor'] = "light-dark(radial-gradient(red), url(\"https://example.com/\")), pointer" should not set the property value
 

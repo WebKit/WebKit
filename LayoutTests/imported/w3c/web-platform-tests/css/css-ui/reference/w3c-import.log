@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/box-sizing-001-ref.html
@@ -24,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/box-sizing-020-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/box-sizing-022-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/box-sizing-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/caret-eol-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/native-appearance-disabled-for-value-unset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/outline-006-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/outline-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/outline-020-ref.html
@@ -56,5 +56,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-030-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-change-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-ellipsis-indent-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-ellipsis-multiline-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/text-overflow-string-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/transparent-accent-color-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/reference/transparent-accent-color-002-ref.html

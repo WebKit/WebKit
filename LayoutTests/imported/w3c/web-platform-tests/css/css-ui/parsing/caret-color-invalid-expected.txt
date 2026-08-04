@@ -2,5 +2,13 @@
 PASS e.style['caret-color'] = "none" should not set the property value
 PASS e.style['caret-color'] = "invert" should not set the property value
 PASS e.style['caret-color'] = "50%" should not set the property value
-PASS e.style['caret-color'] = "red green" should not set the property value
+PASS e.style['caret-color'] = "red green blue" should not set the property value
+PASS e.style['caret-color'] = "red, green" should not set the property value
+PASS e.style['caret-color'] = "red  none" should not set the property value
+PASS e.style['caret-color'] = "red  invert" should not set the property value
+PASS e.style['caret-color'] = "red  50%" should not set the property value
+PASS e.style['caret-color'] = "auto auto auto" should not set the property value
+PASS e.style['caret-color'] = "red green blue yellow" should not set the property value
+PASS e.style['caret-color'] = "red /" should not set the property value
+PASS e.style['caret-color'] = "auto !" should not set the property value
 

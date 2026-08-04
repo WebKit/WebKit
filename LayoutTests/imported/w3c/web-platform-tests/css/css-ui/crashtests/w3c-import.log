@@ -10,8 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/crashtests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/crashtests/chrome-bug-467732064.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/crashtests/cursor-light-dark-generated-image-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/crashtests/input-range-content-url.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/crashtests/outline-scrollIntoView-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/crashtests/text-overflow-ellipsis-multiline-crash.html
