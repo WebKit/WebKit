@@ -134,7 +134,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 };
 
 [Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
-    WebKit::PlaybackSessionContextIdentifier playerIdentifier;
+    WebCore::MediaPlayerClientIdentifier playerIdentifier;
     WebCore::FloatSize initialSize;
     WebCore::FloatSize naturalSize;
 };

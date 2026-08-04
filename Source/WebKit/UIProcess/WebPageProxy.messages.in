@@ -419,7 +419,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
-    [EnabledBy=TextRecognitionInVideosEnabled] BeginTextRecognitionForVideoInElementFullScreen(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::ShareableBitmapHandle bitmapHandle, WebCore::FloatRect videoBounds)
+    [EnabledBy=TextRecognitionInVideosEnabled] BeginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerClientIdentifier mediaElementIdentifier, WebCore::ShareableBitmapHandle bitmapHandle, WebCore::FloatRect videoBounds)
     [EnabledBy=TextRecognitionInVideosEnabled] CancelTextRecognitionForVideoInElementFullScreen()
 #endif
 

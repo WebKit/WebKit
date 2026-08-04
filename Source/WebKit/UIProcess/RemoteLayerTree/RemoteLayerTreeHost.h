@@ -107,8 +107,8 @@ public:
 
 private:
 
-    void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
-    RefPtr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    void createLayer(const IPC::Connection&, const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    RefPtr<RemoteLayerTreeNode> makeNode(const IPC::Connection&, const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
     bool updateBannerLayers(const std::optional<MainFrameData>&);
 

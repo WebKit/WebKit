@@ -89,7 +89,7 @@ public:
             bool preservesFlip { false };
         };
         struct VideoElementData {
-            PlaybackSessionContextIdentifier playerIdentifier;
+            WebCore::HTMLMediaElementIdentifier playerIdentifier;
             WebCore::FloatSize initialSize;
             WebCore::FloatSize naturalSize;
         };

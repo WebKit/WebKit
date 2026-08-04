@@ -10197,7 +10197,7 @@ void WebPage::beginTextRecognitionForVideoInElementFullScreen(const HTMLVideoEle
         if (!protectedThis || protectedThis->m_elementIsPerformingTextRecognitionInElementFullScreen != identifier)
             return;
         if (auto handle = (*result)->createHandle())
-            protectedThis->send(Messages::WebPageProxy::BeginTextRecognitionForVideoInElementFullScreen(processQualify(identifier), WTF::move(*handle), rectInRootView));
+            protectedThis->send(Messages::WebPageProxy::BeginTextRecognitionForVideoInElementFullScreen(identifier, WTF::move(*handle), rectInRootView));
         protectedThis->m_elementIsPerformingTextRecognitionInElementFullScreen.reset();
     });
 }

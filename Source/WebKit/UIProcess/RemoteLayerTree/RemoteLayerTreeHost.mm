@@ -157,7 +157,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
     auto processIdentifier = sender->coreProcessIdentifier();
 
     for (const auto& createdLayer : transaction.createdLayers())
-        createLayer(createdLayer);
+        createLayer(connection, createdLayer);
 
     bool rootLayerChanged = false;
     RefPtr rootNode = nodeForID(transaction.rootLayerID());
@@ -397,11 +397,11 @@ RetainPtr<CALayer> RemoteLayerTreeHost::rootLayer() const
     return rootNode ? rootNode->layer() : nil;
 }
 
-void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+void RemoteLayerTreeHost::createLayer(const IPC::Connection& connection, const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     ASSERT(!m_nodes.contains(*properties.layerID));
 
-    auto node = makeNode(properties);
+    auto node = makeNode(connection, properties);
     RetainPtr layer = node->layer();
     if ([layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
         [layer setUsesWebKitBehavior:YES];
@@ -421,7 +421,7 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
 }
 
 #if !PLATFORM(IOS_FAMILY)
-RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection& connection, const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithLayer = [&] (RetainPtr<CALayer>&& layer) {
         return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTF::move(layer));
@@ -480,8 +480,9 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
         if (properties.videoElementData) {
             RefPtr page = drawingArea().page();
             if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr) {
-                m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
-                return makeWithLayer(videoManager->createLayerWithID(properties.videoElementData->playerIdentifier, { properties.hostingContextID() }, properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
+                auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };
+                m_videoLayers.add(*properties.layerID, playerIdentifier);
+                return makeWithLayer(videoManager->createLayerWithID(playerIdentifier, { properties.hostingContextID() }, properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }
         }
 #endif

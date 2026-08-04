@@ -135,7 +135,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
     layer.populateCreationProperties(creationProperties, *this, type);
     ASSERT(!creationProperties.videoElementData);
     creationProperties.videoElementData = RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
-        processQualify(videoElement.identifier()),
+        videoElement.identifier(),
         videoElement.videoLayerSize(),
         videoElement.naturalSize()
     };

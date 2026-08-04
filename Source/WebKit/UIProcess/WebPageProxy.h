@@ -2699,7 +2699,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
-    void beginTextRecognitionForVideoInElementFullScreen(PlaybackSessionContextIdentifier, WebCore::ShareableBitmapHandle&&, WebCore::FloatRect);
+    void beginTextRecognitionForVideoInElementFullScreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::ShareableBitmapHandle&&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullScreen();
 #endif
 

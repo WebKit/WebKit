@@ -18447,8 +18447,10 @@ void WebPageProxy::clearAppPrivacyReportTestingData(CompletionHandler<void()>&& 
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
-void WebPageProxy::beginTextRecognitionForVideoInElementFullScreen(PlaybackSessionContextIdentifier identifier, ShareableBitmap::Handle&& bitmapHandle, FloatRect bounds)
+void WebPageProxy::beginTextRecognitionForVideoInElementFullScreen(IPC::Connection& connection, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, ShareableBitmap::Handle&& bitmapHandle, FloatRect bounds)
 {
+    auto identifier = PlaybackSessionContextIdentifier { mediaElementIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };
+
     RefPtr pageClient = this->pageClient();
     if (!pageClient || !pageClient->isTextRecognitionInFullscreenVideoEnabled())
         return;
