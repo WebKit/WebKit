@@ -151,7 +151,9 @@ private:
     bool transactionBlocksPendingTransactions(UniqueIDBDatabaseTransaction&);
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
-    void transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&&);
+
+    enum class ShouldStartRunnableWork : bool { No, Yes };
+    void transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&&, ShouldStartRunnableWork = ShouldStartRunnableWork::Yes);
 
     void connectionClosedFromServer(UniqueIDBDatabaseConnection&);
     void deleteBackingStore();
@@ -187,6 +189,7 @@ private:
     // These sets help to decide which transactions can be started and which must be deferred.
     HashCountedSet<IDBObjectStoreIdentifier> m_objectStoreTransactionCounts;
     HashSet<IDBObjectStoreIdentifier> m_objectStoreWriteTransactions;
+    unsigned m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth { 0 };
 };
 
 } // namespace IDBServer
