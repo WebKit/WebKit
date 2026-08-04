@@ -49,39 +49,47 @@ function runTest()
           testRunner.notifyDone();
         }
       }
-      w.history.pushState('', '');
-      
-      cached_doc = w.document;
-      setTimeout(() => {
-        w.location = 'about:blank';
-        interval_id = setInterval(() => {
-          if (cached_doc == w.document)
-            return;
-          
-          clearInterval(interval_id);
+      initial_doc = w.document;
+      w.location = 'about:blank';
+      interval_id = setInterval(() => {
+        if (initial_doc == w.document)
+          return;
 
-          if (w.internals)
-            w.internals.preventDocumentFromEnteringBackForwardCache();
+        clearInterval(interval_id);
+        w.history.pushState('', '');
 
-          child_frame = w.document.body.appendChild(document.createElement('iframe'));
-          child_frame.contentWindow.onunload = () => {
-            child_frame.contentWindow.onunload = null;
-            
-            a = w.document.createElement('a');
-            a.href = '${victim_url}';
-            a.click();
+        cached_doc = w.document;
+        setTimeout(() => {
+          w.location = 'about:blank';
+          interval_id = setInterval(() => {
+            if (cached_doc == w.document)
+              return;
 
-            showModalDialog(createURL('<script>timeout = 100; setInterval(() => { if (!--timeout || opener.child_loaded) { close(); if (window.testRunner) testRunner.abortModal(); } }, 1)</sc' + 'ript>'));
+            clearInterval(interval_id);
 
-            if (!window.child_loaded && window.testRunner) {
-              testRunner.abortModal();
-              testRunner.notifyDone();
+            if (w.internals)
+              w.internals.preventDocumentFromEnteringBackForwardCache();
+
+            child_frame = w.document.body.appendChild(document.createElement('iframe'));
+            child_frame.contentWindow.onunload = () => {
+              child_frame.contentWindow.onunload = null;
+
+              a = w.document.createElement('a');
+              a.href = '${victim_url}';
+              a.click();
+
+              showModalDialog(createURL('<script>timeout = 100; setInterval(() => { if (!--timeout || opener.child_loaded) { close(); if (window.testRunner) testRunner.abortModal(); } }, 1)</sc' + 'ript>'));
+
+              if (!window.child_loaded && window.testRunner) {
+                testRunner.abortModal();
+                testRunner.notifyDone();
+              }
             }
-          }
-          
-          w.history.back();
+
+            w.history.back();
+          }, 0);
         }, 0);
-      }, 0); 
+      }, 0);
     </scr` + `ipt>`));
 }
 
