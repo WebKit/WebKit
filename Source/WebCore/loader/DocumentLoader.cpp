@@ -1821,10 +1821,12 @@ RefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
 {
     if (!isCommitted())
         return nullptr;
-    
-    RefPtr resource = m_cachedResourceLoader->cachedResource(url);
+
+    auto resourceURL = MemoryCache::removeFragmentIdentifierIfNeeded(url);
+
+    RefPtr resource = m_cachedResourceLoader->cachedResource(resourceURL);
     if (!resource || !resource->isLoaded())
-        return archiveResourceForURL(url);
+        return archiveResourceForURL(resourceURL);
 
     if (resource->type() == CachedResource::Type::MainResource)
         return nullptr;
@@ -1833,7 +1835,7 @@ RefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
     if (!data)
         return nullptr;
 
-    return ArchiveResource::create(data.get(), url, resource->response());
+    return ArchiveResource::create(data.get(), resourceURL, resource->response());
 }
 
 Vector<Ref<ArchiveResource>> DocumentLoader::subresources() const
