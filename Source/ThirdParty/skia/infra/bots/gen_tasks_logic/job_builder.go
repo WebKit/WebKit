@@ -143,12 +143,6 @@ func (b *jobBuilder) genTasksForJob() {
 		return
 	}
 
-	// BuildStats bots. This computes things like binary size.
-	if b.Role("BuildStats") {
-		b.buildstats()
-		return
-	}
-
 	if b.Role("CodeSize") {
 		b.codesize()
 		return
@@ -179,12 +173,6 @@ func (b *jobBuilder) genTasksForJob() {
 			b.canary("skia-flutter-autoroll", "Canary-Flutter-PR", "https://github.com/flutter/engine/pull/")
 			return
 		}
-	}
-
-	if b.ExtraConfig("Puppeteer") {
-		// TODO(kjlubick) make this a new role
-		b.puppeteer()
-		return
 	}
 
 	// Perf bots.

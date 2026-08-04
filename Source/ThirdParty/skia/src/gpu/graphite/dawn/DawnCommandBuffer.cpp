@@ -326,18 +326,20 @@ bool DawnCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
     SkASSERT(!fActiveRenderPassEncoder);
     SkASSERT(!fActiveComputePassEncoder);
 
-    constexpr static wgpu::LoadOp wgpuLoadActionMap[]{
+    const wgpu::LoadOp wgpuLoadActionMap[]{
             wgpu::LoadOp::Load,
             wgpu::LoadOp::Clear,
-            wgpu::LoadOp::Clear  // Don't care
+            fSharedContext->dawnCaps()->discardLoadOp()
     };
     static_assert((int)LoadOp::kLoad == 0);
     static_assert((int)LoadOp::kClear == 1);
     static_assert((int)LoadOp::kDiscard == 2);
     static_assert(std::size(wgpuLoadActionMap) == kLoadOpCount);
 
-    constexpr static wgpu::StoreOp wgpuStoreActionMap[]{wgpu::StoreOp::Store,
-                                                        wgpu::StoreOp::Discard};
+    const wgpu::StoreOp wgpuStoreActionMap[]{
+            wgpu::StoreOp::Store,
+            fSharedContext->dawnCaps()->discardStoreOp()
+    };
     static_assert((int)StoreOp::kStore == 0);
     static_assert((int)StoreOp::kDiscard == 1);
     static_assert(std::size(wgpuStoreActionMap) == kStoreOpCount);
@@ -418,7 +420,8 @@ bool DawnCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
 
             // Inclusion of a resolve texture implies the client wants to finish the
             // renderpass with a resolve.
-            SkASSERT(wgpuColorAttachment.storeOp == wgpu::StoreOp::Discard);
+            SkASSERT(wgpuColorAttachment.storeOp ==
+                     fSharedContext->dawnCaps()->discardStoreOp());
             // But it also means we might have to load the resolve texture into the MSAA color attachment
 
             if (fSharedContext->dawnCaps()->emulateLoadStoreResolve()) {
@@ -663,7 +666,7 @@ bool DawnCommandBuffer::addDrawPass(DrawPass* drawPass) {
     // If there is gradient data to bind, it must be done prior to draws.
     if (drawPass->storageBufferManager()->hasData()) {
         this->bindUniformBuffer(drawPass->storageBufferManager()->getBufferInfo(),
-                                UniformSlot::kGradient);
+                                UniformSlot::kStorage);
     }
 
     if (!drawPass->addResourceRefs(fResourceProvider, this)) SK_UNLIKELY {
@@ -816,8 +819,8 @@ void DawnCommandBuffer::bindUniformBuffer(const BindBufferInfo& info, UniformSlo
         case UniformSlot::kCombinedUniforms:
             bufferIndex = DawnGraphicsPipeline::kCombinedUniformIndex;
             break;
-        case UniformSlot::kGradient:
-            bufferIndex = DawnGraphicsPipeline::kGradientBufferIndex;
+        case UniformSlot::kStorage:
+            bufferIndex = DawnGraphicsPipeline::kStorageBufferIndex;
             break;
     }
 
@@ -969,7 +972,7 @@ void DawnCommandBuffer::syncUniformBuffers() {
     std::array<uint32_t, kMaxUniformsInGroup> dynamicOffsets {0};
     // Check if we can use an optimized route for single-uniform buffer bind groups:
     if (usePushConstants &&
-        !fActiveGraphicsPipeline->hasGradientBuffer() &&
+        !fActiveGraphicsPipeline->usesStorageBuffer() &&
         fActiveGraphicsPipeline->hasCombinedUniforms()) {
         const BindBufferInfo& bufferInfo =
                 fBoundUniforms[DawnGraphicsPipeline::kCombinedUniformIndex];
@@ -979,12 +982,12 @@ void DawnCommandBuffer::syncUniformBuffers() {
         std::array<bool, kMaxUniformsInGroup> enabled = {
                 !usePushConstants,                              // intrinsic uniforms
                 fActiveGraphicsPipeline->hasCombinedUniforms(), // paint AND renderstep uniforms!
-                fActiveGraphicsPipeline->hasGradientBuffer(),   // gradient SSBO
+                fActiveGraphicsPipeline->usesStorageBuffer(),   // storage SSBO
         };
         constexpr uint32_t kBindingIndices[] = {
             DawnGraphicsPipeline::kIntrinsicUniformBufferIndex,
             DawnGraphicsPipeline::kCombinedUniformIndex,
-            DawnGraphicsPipeline::kGradientBufferIndex,
+            DawnGraphicsPipeline::kStorageBufferIndex,
         };
 
         std::array<wgpu::BindGroupEntry, kMaxUniformsInGroup> bindGroupEntries {};

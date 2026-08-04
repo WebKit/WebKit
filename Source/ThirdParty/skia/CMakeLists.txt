@@ -786,6 +786,7 @@ add_library(Skia STATIC
     src/utils/SkDashPath.cpp
     src/utils/SkFloatToDecimal.cpp
     src/utils/SkJSONWriter.cpp
+    src/utils/SkLogHandler.cpp
     src/utils/SkMatrix22.cpp
     src/utils/SkNWayCanvas.cpp
     src/utils/SkParse.cpp

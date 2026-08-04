@@ -160,11 +160,15 @@ struct BindingList {
     const RenderStep* fStep;
     const LayerKey fKey;
 
+    // If this is true, it means that a draw was added to it without having been tested against
+    // the earlier BindingLists so they are not eligible for being moved forward to a new layer.
+    bool fBlockForwardMerges = false;
+
     uint32_t fDrawCount = 0; // SkTInternalLList doesn't maintain a count for us :/
 
     SK_DECLARE_INTERNAL_LLIST_INTERFACE(BindingList);
 
-    SK_ALWAYS_INLINE bool intersects(const Rect& drawBounds) const {
+    SK_ALWAYS_INLINE bool intersects(const Rect::ComplementRect drawBounds) const {
         if (!fBounds.intersects(drawBounds)) {
             return false;
         }
@@ -231,18 +235,29 @@ struct Layer {
     SK_DECLARE_INTERNAL_LLIST_INTERFACE(Layer);
 
     // Performs no bounds checks, so can only be used when checks have already confirmed the Layer
-    // is valid for adding a new draw into. This searches backwards from `startList` (inclusive) or
+    // is valid for adding a new draw into. This searches backwards from `startList` (exclusive) or
     // the tail BindingList if null.
+    //
+    // Return a BindingList matching `key` if one exists in the layer (or exists in the layer
+    // at or before `startList`). If an exact match is not found, it attempts to return a
+    // BindingList that has the same pipeline index.
     SK_ALWAYS_INLINE BindingList* searchBinding(const LayerKey& key,
-                                                BindingList* startList=nullptr) {
-        if (!startList) {
-            startList = fBindings.tail();
-        }
+                                                BindingList* startList=nullptr,
+                                                bool forForwardMerge=false) {
+        // `startList` is exclusive, so if it's non-null the loop starts with fPrev.
+        BindingList* pipelineMatch = nullptr;
+        for (BindingList* list = startList ? startList->fPrev : fBindings.tail();
+                list != nullptr; list = list->fPrev) {
+            if (forForwardMerge && list->fBlockForwardMerges) {
+                break;
+            }
 
-        // Advancement is evaluated at compile time
-        for (BindingList* list = startList; list != nullptr; list = list->fPrev) {
             if (list->fKey.isEqual(key)) {
                 return list;
+            } else if (list->fKey.fPipelineIndex == key.fPipelineIndex) {
+                // Save pipeline while continuing to search for an exact match
+                SkASSERT(list->fKey.fFlags == key.fFlags);
+                pipelineMatch = list;
             } else if (key.performsShading() && !list->fKey.performsShading()) {
                 // The BindingLists are split in two sections: a latter half with color (that is
                 // check first because we start at the tail) and then anything else that is
@@ -252,7 +267,10 @@ struct Layer {
                 break;
             }
         }
-        return nullptr;
+
+        // Even though an exact match wasn't found, any non-null pipelineMatch can be used to place
+        // a new binding list, which helps shift from a pipeline switch to just a dynamic state.
+        return pipelineMatch;
     }
 
     // Test the draw with the given bounds and LayerKey against the draws already collected in
@@ -261,7 +279,7 @@ struct Layer {
     // Any BindingList that the draw can be appended to directly, or pulled forward with the draw
     // is also returned.
     SK_ALWAYS_INLINE std::pair<SkEnumBitMask<BoundsTestResult>, BindingList*> test(
-            const Rect& drawBounds,
+            const Rect::ComplementRect drawBounds,
             const LayerKey& key,
             SkEnumBitMask<BoundsFlags> testMask) {
         // If the test mask is kNone, the caller should just use searchBinding() directly since it
@@ -297,8 +315,7 @@ struct Layer {
         //    that `Layer::fOrder` strictly increases with the physical list order; this invariant
         //    necessary to ensure that a draw is inserted after *ALL* depth-only clip draws that
         //    affect it.
-
-        const bool layerIsForwardMergeEligible = !fNext;
+        bool layerIsForwardMergeEligible = !fNext && key.isSimpleShading();
         const bool overlapInMatchesAllowed = key.isSimpleShading() || key.isDepthOnly();
 
         // Always iterate backwards from the tail, we do this because most draws (including depth-
@@ -349,16 +366,47 @@ struct Layer {
                             /*match=*/nullptr};
                 }
 
-                // If we haven't found a good insertion point before this intersection, the
-                // draw must go in a new layer (aspectOverlap is kColor).
+                // At this point, it's just a color overlap, so the draw cannot go before this
+                // layer. We try to put it in the layer or in the new layer with a binding match
+                // to improve batching.
                 SkASSERT(aspectOverlap == BoundsFlags::kColor);
-                return {BoundsTestResult::kBlocked, nullptr};
+                if (!match) {
+                    // If we haven't found a good insertion point before this intersection, the
+                    // draw must go in a new layer (aspectOverlap is kColor), however, if it's
+                    // forward-merge eligible we can search for a compatible match to pull
+                    // forward with it.
+                    if (key.isSimpleShading() && layerIsForwardMergeEligible) {
+                        match = this->searchBinding(key, list, /*forForwardMerge=*/true);
+                    }
+                    return {BoundsTestResult::kBlocked, match};
+                } else if (!key.usesStencil()) {
+                    // We have a good insertion point in the layer that will be drawn after this
+                    // conflicting BindingList, so put the new draw there. Because we haven't fully
+                    // checked all the previous BindingLists, we need to block forward merges as the
+                    // new draw could now be overlapping with early lists in the layer.
+                    list->fBlockForwardMerges = true;
+                    return {BoundsTestResult::kAllowedInLayer, match};
+                } else {
+                    // This comes up in a rare case where the current draw is stencil+shading and
+                    // we'd found a previous match, but had to continue searching to ensure there is
+                    // no stencil overlap. If we got here, aspectOverlap didn't have stencil so
+                    // it's just overlapping with a regular shading draw. We *could* continue
+                    // going through the BindingLists to confirm no stencil overlap and then
+                    // return {kAllowedInLayer, match} at the end of the loop, but we'd have to
+                    // track the result modifications over time and prevent updates to `match`.
+                    // Pushing it to a new layer seems to work well in practice and let's the
+                    // outer if (intersect) block always return early.
+                    return {BoundsTestResult::kBlocked, /*match=*/nullptr};
+                }
             }
+
+            layerIsForwardMergeEligible &= !list->fBlockForwardMerges;
 
             // NOTE: It's possible for the same key to be in a layer multiple times due to
             // some of the early-out rules. If we get here, the draw hasn't overlapped any later
             // drawn BindingList, so update the match to be the best, earliest match found so far.
-            if (exactMatch) {
+            if (exactMatch || (list->fKey.fPipelineIndex == key.fPipelineIndex &&
+                               (!match || !match->fKey.isEqual(key)))) {
                 match = list;
             }
 

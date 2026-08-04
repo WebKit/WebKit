@@ -84,12 +84,6 @@ const (
 	OUTPUT_NONE          = "output_ignored" // This will result in outputs not being isolated.
 	OUTPUT_BUILD         = "build"
 	OUTPUT_BUILD_NOPATCH = "build_nopatch"
-	OUTPUT_TEST          = "test"
-	OUTPUT_PERF          = "perf"
-	OUTPUT_BAZEL         = "bazel_output"
-
-	// Name prefix for upload jobs.
-	PREFIX_UPLOAD = "Upload"
 
 	// This will have to kept in sync with the kMin_Version in
 	// src/core/SkPicturePriv.h
@@ -700,7 +694,7 @@ func (b *TaskBuilder) kitchenTaskNoBundle(recipe string, outputDir string) {
 	}
 
 	// Attempts.
-	if !b.Role("Build", "Upload") && b.ExtraConfig("ASAN", "HWASAN", "MSAN", "TSAN") {
+	if !b.Role("Build") && b.ExtraConfig("ASAN", "HWASAN", "MSAN", "TSAN") {
 		// Sanitizers often find non-deterministic issues that retries would hide.
 		b.attempts(1)
 	} else {
@@ -822,8 +816,6 @@ func (b *jobBuilder) deriveCompileTaskName() string {
 			log.Fatal(err)
 		}
 		return name
-	} else if b.Role("BuildStats") {
-		return strings.Replace(b.Name, "BuildStats", "Build", 1)
 	} else if b.Role("CodeSize") {
 		return codesizeTaskNameRegexp.ReplaceAllString(b.Name, "Build-")
 	} else {
@@ -1137,7 +1129,7 @@ func (b *TaskBuilder) defaultSwarmDimensions() {
 	} else {
 		d["gpu"] = "none"
 		if d["os"] == DEFAULT_OS_LINUX_GCE {
-			if b.ExtraConfig("CanvasKit", "CMake", "Docker") || b.Role("BuildStats", "CodeSize") {
+			if b.ExtraConfig("CanvasKit", "CMake", "Docker") || b.Role("CodeSize") {
 				b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
 			} else {
 				// Use many-core machines for Build tasks.
@@ -1528,36 +1520,24 @@ func (b *jobBuilder) infra() {
 // statistics about the build.
 func (b *jobBuilder) buildstats() {
 	compileTaskName := b.compile()
+
+	// Upload release results (for tracking in perf)
+	// We have some jobs that are FYI (e.g. Debug-CanvasKit, tree-map generator)
+	doUpload := b.Release() && !b.Arch("x86_64")
+
 	b.addTask(b.Name, func(b *TaskBuilder) {
 		b.recipeProps(EXTRA_PROPS)
-		b.kitchenTask("compute_buildstats", OUTPUT_PERF)
+		b.kitchenTask("compute_buildstats", OUTPUT_NONE)
 		b.dep(compileTaskName)
 		b.asset("bloaty")
 		b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
 		b.usesDocker()
 		b.usesGit()
 		b.cache(CACHES_WORKDIR...)
+		if doUpload {
+			b.uploadsResults(b.cfg.GsBucketNano, b.cfg.ServiceAccountUploadNano)
+		}
 	})
-	// Upload release results (for tracking in perf)
-	// We have some jobs that are FYI (e.g. Debug-CanvasKit, tree-map generator)
-	if b.Release() && !b.Arch("x86_64") {
-		uploadName := fmt.Sprintf("%s%s%s", PREFIX_UPLOAD, b.jobNameSchema.Sep, b.Name)
-		depName := b.Name
-		b.addTask(uploadName, func(b *TaskBuilder) {
-			b.recipeProp("gs_bucket", b.cfg.GsBucketNano)
-			b.recipeProps(EXTRA_PROPS)
-			// TODO(borenet): I'm not sure why the upload task is
-			// using the BuildStats task name, but I've done this
-			// to maintain existing behavior.
-			b.Name = depName
-			b.kitchenTask("upload_buildstats_results", OUTPUT_NONE)
-			b.Name = uploadName
-			b.serviceAccount(b.cfg.ServiceAccountUploadNano)
-			b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-			b.usesGCloud()
-			b.dep(depName)
-		})
-	}
 }
 
 // codesize generates a codesize task, which takes binary produced by a
@@ -1686,8 +1666,8 @@ func (b *TaskBuilder) commonTestPerfAssets() {
 	}
 }
 
-// directUpload adds prerequisites for uploading to GCS.
-func (b *TaskBuilder) directUpload(gsBucket, serviceAccount string) {
+// uploadsResults adds prerequisites for uploading to GCS.
+func (b *TaskBuilder) uploadsResults(gsBucket, serviceAccount string) {
 	b.recipeProp("gs_bucket", gsBucket)
 	b.serviceAccount(serviceAccount)
 	b.usesGCloud()
@@ -1700,17 +1680,12 @@ func (b *jobBuilder) dm() {
 	if !b.ExtraConfig("LottieWeb") {
 		compileTaskName = b.compile()
 	}
-	directUpload := false
 	b.addTask(b.Name, func(b *TaskBuilder) {
 		cas := CAS_TEST
 		recipe := "test"
 		if b.ExtraConfig("CanvasKit") {
 			cas = CAS_CANVASKIT
 			recipe = "test_canvaskit"
-			if b.doUpload() {
-				b.directUpload(b.cfg.GsBucketGm, b.cfg.ServiceAccountUploadGM)
-				directUpload = true
-			}
 		} else if b.ExtraConfig("LottieWeb") {
 			// CAS_LOTTIE_CI differs from CAS_LOTTIE_WEB in that it includes
 			// more of the files, especially those brought in via DEPS in the
@@ -1720,24 +1695,14 @@ func (b *jobBuilder) dm() {
 			// ToT.
 			cas = CAS_LOTTIE_CI
 			recipe = "test_lottie_web"
-			if b.doUpload() {
-				b.directUpload(b.cfg.GsBucketGm, b.cfg.ServiceAccountUploadGM)
-				directUpload = true
-			}
-		} else {
-			// Default recipe supports direct upload.
-			// TODO(skbug.com/40042855): Windows jobs are unable to extract gsutil.
-			// https://bugs.chromium.org/p/chromium/issues/detail?id=1192611
-			if b.doUpload() && !b.MatchOs("Win") {
-				b.directUpload(b.cfg.GsBucketGm, b.cfg.ServiceAccountUploadGM)
-				directUpload = true
-			}
-			if b.MatchOs("iOS") {
-				b.Spec.Caches = append(b.Spec.Caches, &specs.Cache{
-					Name: "xcode",
-					Path: "cache/Xcode.app",
-				})
-			}
+		} else if b.MatchOs("iOS") {
+			b.Spec.Caches = append(b.Spec.Caches, &specs.Cache{
+				Name: "xcode",
+				Path: "cache/Xcode.app",
+			})
+		}
+		if b.doUpload() {
+			b.uploadsResults(b.cfg.GsBucketGm, b.cfg.ServiceAccountUploadGM)
 		}
 		b.recipeProp("gold_hashes_url", b.cfg.GoldHashesURL)
 		b.recipeProps(EXTRA_PROPS)
@@ -1750,7 +1715,7 @@ func (b *jobBuilder) dm() {
 		if recipe == "test" {
 			b.dmFlags(iidStr)
 		}
-		b.kitchenTask(recipe, OUTPUT_TEST)
+		b.kitchenTask(recipe, OUTPUT_NONE)
 		b.cas(cas)
 		b.swarmDimensions()
 		if b.ExtraConfig("CanvasKit", "Docker", "LottieWeb") {
@@ -1789,22 +1754,6 @@ func (b *jobBuilder) dm() {
 		}
 		b.maybeAddIosDevImage()
 	})
-
-	// Upload results if necessary. TODO(kjlubick): If we do coverage analysis at the same
-	// time as normal tests (which would be nice), cfg.json needs to have Coverage removed.
-	if b.doUpload() && !directUpload {
-		uploadName := fmt.Sprintf("%s%s%s", PREFIX_UPLOAD, b.jobNameSchema.Sep, b.Name)
-		depName := b.Name
-		b.addTask(uploadName, func(b *TaskBuilder) {
-			b.recipeProp("gs_bucket", b.cfg.GsBucketGm)
-			b.recipeProps(EXTRA_PROPS)
-			b.kitchenTask("upload_dm_results", OUTPUT_NONE)
-			b.serviceAccount(b.cfg.ServiceAccountUploadGM)
-			b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-			b.usesGCloud()
-			b.dep(depName)
-		})
-	}
 }
 
 // canary generates a task that uses TaskDrivers to trigger canary manual rolls on autorollers.
@@ -1835,105 +1784,6 @@ func (b *jobBuilder) canary(rollerName, canaryCQKeyword, targetProjectBaseURL st
 	})
 }
 
-// puppeteer generates a task that uses TaskDrivers combined with a node script and puppeteer to
-// benchmark something using Chromium (e.g. CanvasKit, LottieWeb).
-func (b *jobBuilder) puppeteer() {
-	compileTaskName := b.compile()
-	b.addTask(b.Name, func(b *TaskBuilder) {
-		b.defaultSwarmDimensions()
-		b.usesNode()
-		b.usesLUCIAuth()
-		b.dep(compileTaskName)
-		b.output(OUTPUT_PERF)
-		b.timeout(60 * time.Minute)
-		b.cas(CAS_PUPPETEER)
-		b.serviceAccount(b.cfg.ServiceAccountCompile)
-
-		webglversion := "2"
-		if b.ExtraConfig("WebGL1") {
-			webglversion = "1"
-		}
-
-		if b.ExtraConfig("SkottieFrames") {
-			b.cmd(
-				b.taskDriver("perf_puppeteer_skottie_frames", false),
-				"--project_id", "skia-swarming-bots",
-				"--git_hash", specs.PLACEHOLDER_REVISION,
-				"--task_id", specs.PLACEHOLDER_TASK_ID,
-				"--task_name", b.Name,
-				"--canvaskit_bin_path", "./build",
-				"--lotties_path", "./lotties_with_assets",
-				"--node_bin_path", "./node/node/bin",
-				"--benchmark_path", "./tools/perf-canvaskit-puppeteer",
-				"--output_path", OUTPUT_PERF,
-				"--os_trace", b.Parts["os"],
-				"--model_trace", b.Parts["model"],
-				"--cpu_or_gpu_trace", b.Parts["cpu_or_gpu"],
-				"--cpu_or_gpu_value_trace", b.Parts["cpu_or_gpu_value"],
-				"--webgl_version", webglversion, // ignore when running with cpu backend
-			)
-			b.needsLottiesWithAssets()
-		} else if b.ExtraConfig("RenderSKP") {
-			b.cmd(
-				b.taskDriver("perf_puppeteer_render_skps", false),
-				"--project_id", "skia-swarming-bots",
-				"--git_hash", specs.PLACEHOLDER_REVISION,
-				"--task_id", specs.PLACEHOLDER_TASK_ID,
-				"--task_name", b.Name,
-				"--canvaskit_bin_path", "./build",
-				"--skps_path", "./skp",
-				"--node_bin_path", "./node/node/bin",
-				"--benchmark_path", "./tools/perf-canvaskit-puppeteer",
-				"--output_path", OUTPUT_PERF,
-				"--os_trace", b.Parts["os"],
-				"--model_trace", b.Parts["model"],
-				"--cpu_or_gpu_trace", b.Parts["cpu_or_gpu"],
-				"--cpu_or_gpu_value_trace", b.Parts["cpu_or_gpu_value"],
-				"--webgl_version", webglversion,
-			)
-			b.asset("skp")
-		} else if b.ExtraConfig("CanvasPerf") { // refers to the canvas_perf.js test suite
-			b.cmd(
-				b.taskDriver("perf_puppeteer_canvas", false),
-				"--project_id", "skia-swarming-bots",
-				"--git_hash", specs.PLACEHOLDER_REVISION,
-				"--task_id", specs.PLACEHOLDER_TASK_ID,
-				"--task_name", b.Name,
-				"--canvaskit_bin_path", "./build",
-				"--node_bin_path", "./node/node/bin",
-				"--benchmark_path", "./tools/perf-canvaskit-puppeteer",
-				"--output_path", OUTPUT_PERF,
-				"--os_trace", b.Parts["os"],
-				"--model_trace", b.Parts["model"],
-				"--cpu_or_gpu_trace", b.Parts["cpu_or_gpu"],
-				"--cpu_or_gpu_value_trace", b.Parts["cpu_or_gpu_value"],
-				"--webgl_version", webglversion,
-			)
-			b.asset("skp")
-		}
-
-	})
-
-	// Upload results to Perf after.
-	// TODO(kjlubick,borenet) deduplicate this with the logic in perf().
-	uploadName := fmt.Sprintf("%s%s%s", PREFIX_UPLOAD, b.jobNameSchema.Sep, b.Name)
-	depName := b.Name
-	b.addTask(uploadName, func(b *TaskBuilder) {
-		b.recipeProp("gs_bucket", b.cfg.GsBucketNano)
-		b.recipeProps(EXTRA_PROPS)
-		// TODO(borenet): I'm not sure why the upload task is
-		// using the Perf task name, but I've done this to
-		// maintain existing behavior.
-		b.Name = depName
-		b.kitchenTask("upload_nano_results", OUTPUT_NONE)
-		b.Name = uploadName
-		b.serviceAccount(b.cfg.ServiceAccountUploadNano)
-		b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-		b.usesGCloud()
-		b.dep(depName)
-	})
-}
-
 // perf generates a Perf task.
 func (b *jobBuilder) perf() {
 	compileTaskName := ""
@@ -1943,6 +1793,9 @@ func (b *jobBuilder) perf() {
 	}
 	doUpload := !b.Debug() && b.doUpload()
 	b.addTask(b.Name, func(b *TaskBuilder) {
+		if doUpload {
+			b.uploadsResults(b.cfg.GsBucketNano, b.cfg.ServiceAccountUploadNano)
+		}
 		recipe := "perf"
 		cas := CAS_PERF
 		if b.ExtraConfig("CanvasKit") {
@@ -1973,7 +1826,7 @@ func (b *jobBuilder) perf() {
 		if iid != nil {
 			b.recipeProp("internal_hardware_label", strconv.Itoa(*iid))
 		}
-		b.kitchenTask(recipe, OUTPUT_PERF)
+		b.kitchenTask(recipe, OUTPUT_NONE)
 		b.cas(cas)
 		b.swarmDimensions()
 		if b.ExtraConfig("Docker") {
@@ -2008,26 +1861,6 @@ func (b *jobBuilder) perf() {
 		}
 		b.maybeAddIosDevImage()
 	})
-
-	// Upload results if necessary.
-	if doUpload {
-		uploadName := fmt.Sprintf("%s%s%s", PREFIX_UPLOAD, b.jobNameSchema.Sep, b.Name)
-		depName := b.Name
-		b.addTask(uploadName, func(b *TaskBuilder) {
-			b.recipeProp("gs_bucket", b.cfg.GsBucketNano)
-			b.recipeProps(EXTRA_PROPS)
-			// TODO(borenet): I'm not sure why the upload task is
-			// using the Perf task name, but I've done this to
-			// maintain existing behavior.
-			b.Name = depName
-			b.kitchenTask("upload_nano_results", OUTPUT_NONE)
-			b.Name = uploadName
-			b.serviceAccount(b.cfg.ServiceAccountUploadNano)
-			b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-			b.usesGCloud()
-			b.dep(depName)
-		})
-	}
 }
 
 // presubmit generates a task which runs the presubmit for this repo.

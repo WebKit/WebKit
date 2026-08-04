@@ -252,6 +252,30 @@ DEF_TEST(SkSLRasterPipelineCodeGeneratorComparisonIntrinsicTest, r) {
          /*expectedResult=*/SkColor4f{0.0, 1.0, 0.0, 1.0});
 }
 
+DEF_TEST(SkSLRasterPipelineCodeGeneratorReturnComplexityKeyMismatchTest, r) {
+    test(r,
+         R"__SkSL__(
+             noinline half callee() {
+                 return 1.0;
+             }
+
+             noinline half4 caller(half value) {
+                 half c = callee();
+                 if (value > 2.0) {
+                     return half4(0.0, 1.0, 0.0, 1.0); // green
+                 }
+                 return half4(1.0, 0.0, 0.0, 1.0); // red
+             }
+
+             half4 main(half4 coords) {
+                 return caller(3.0);
+             }
+         )__SkSL__",
+         /*uniforms=*/{},
+         /*startingColor=*/SkColor4f{0.0, 0.0, 0.0, 0.0},
+         /*expectedResult=*/SkColor4f{0.0f, 1.0f, 0.0f, 1.0f});
+}
+
 DEF_TEST(SkSLRasterPipelineSlotOverflow_355465305, r) {
     constexpr int kStructMembers1 = 6200;
     constexpr int kStructMembers2 = 433;
@@ -327,4 +351,32 @@ DEF_TEST(SkSLRasterPipelineSlotOverflow_355465305, r) {
     // Append the SkSL program to the raster pipeline.
     bool success = rasterProg->appendStages(&pipeline, &alloc, /*callbacks=*/nullptr, {});
     REPORTER_ASSERT(r, !success, "appendStages should fail for very large program");
+}
+
+DEF_TEST(SkSLRasterPipeline_ConvertProgram_b540157141, r) {
+    const char* src = R"__SkSL__(
+        uniform shader c0;
+        uniform shader c1;
+        uniform shader c2;
+        // The noinline is important for reproduction. It is also important that
+        // one of the args be an "EffectChild" to cause fChildEffectMap to grow.
+        noinline half4 f(shader s, float2 p) {
+            return s.eval(p);
+        }
+        half4 main(float2 p) {
+            return c0.eval(float2(f(c1, p).xy) + p);
+        }
+    )__SkSL__";
+
+    SkSL::Compiler compiler;
+    SkSL::ProgramSettings settings;
+    std::unique_ptr<SkSL::Program> program = compiler.convertProgram(
+            SkSL::ProgramKind::kPrivateRuntimeShader, std::string(src), settings);
+    SkASSERTF_RELEASE(program, "Unexpected error compiling %s", compiler.errorText().c_str());
+    const SkSL::FunctionDeclaration* main = program->getFunction("main");
+    SkASSERTF_RELEASE(main, "main is missing!?");
+    // With the buggy code, this triggered a UAF
+    std::unique_ptr<SkSL::RP::Program> rasterProg =
+            SkSL::MakeRasterPipelineProgram(*program, *main->definition());
+    REPORTER_ASSERT(r, rasterProg);
 }

@@ -1,0 +1,154 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]\\tmp"
+    ],
+    "infra_step": true,
+    "name": "makedirs tmp_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]\\[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "rmtree [SWARM_OUT_DIR]"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]\\[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs [SWARM_OUT_DIR]"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]\\resources\\get_env_var.py",
+      "SWARMING_BOT_ID"
+    ],
+    "name": "get swarming bot id"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]\\resources\\get_env_var.py",
+      "SWARMING_TASK_ID"
+    ],
+    "name": "get swarming task id"
+  },
+  {
+    "cmd": [
+      "powershell",
+      "-ExecutionPolicy",
+      "Unrestricted",
+      "-File",
+      "RECIPE_MODULE[skia::flavor]\\resources\\win_run_and_check_log.ps1",
+      "[START_DIR]\\build\\nanobench",
+      "--example",
+      "--flags",
+      "--properties",
+      "bot",
+      "skia-bot-123",
+      "key1",
+      "value1",
+      "task",
+      "123456",
+      "-i",
+      "[START_DIR]\\skia\\resources",
+      "--skps",
+      "[START_DIR]\\skp",
+      "--svgs",
+      "[START_DIR]\\svg",
+      "--outResultsFile",
+      "[START_DIR]\\[SWARM_OUT_DIR]\\nanobench_abc123_1337000001.json"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>;RECIPE_REPO[depot_tools]"
+    },
+    "name": "nanobench"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]\\[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs perf_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[START_DIR]\\[SWARM_OUT_DIR]",
+      "*.json"
+    ],
+    "infra_step": true,
+    "name": "find results",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@glob@[START_DIR]\\[SWARM_OUT_DIR]\\nanobench_abc123.json@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account"
+  },
+  {
+    "cmd": [
+      "gcloud.cmd",
+      "storage",
+      "cp",
+      "[START_DIR]\\[SWARM_OUT_DIR]\\nanobench_abc123.json",
+      "gs://skia-perf/trybot/nano-json-v1/2012/05/14/12/Perf-Win10-Clang-Golo-GPU-QuadroP400-x86_64-Release-All-ANGLE/456789/12/nanobench_abc123.json"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload upload nanobench_abc123.json"
+  },
+  {
+    "name": "$result"
+  }
+]

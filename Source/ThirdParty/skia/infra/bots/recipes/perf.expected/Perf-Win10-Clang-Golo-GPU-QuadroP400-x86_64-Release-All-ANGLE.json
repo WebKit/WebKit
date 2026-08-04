@@ -106,6 +106,49 @@
     "name": "makedirs perf_dir"
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[START_DIR]\\[SWARM_OUT_DIR]",
+      "*.json"
+    ],
+    "infra_step": true,
+    "name": "find results",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@glob@[START_DIR]\\[SWARM_OUT_DIR]\\nanobench_abc123.json@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account"
+  },
+  {
+    "cmd": [
+      "gcloud.cmd",
+      "storage",
+      "cp",
+      "[START_DIR]\\[SWARM_OUT_DIR]\\nanobench_abc123.json",
+      "gs://skia-perf/nano-json-v1/2012/05/14/12/Perf-Win10-Clang-Golo-GPU-QuadroP400-x86_64-Release-All-ANGLE/nanobench_abc123.json"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload upload nanobench_abc123.json"
+  },
+  {
     "name": "$result"
   }
 ]
