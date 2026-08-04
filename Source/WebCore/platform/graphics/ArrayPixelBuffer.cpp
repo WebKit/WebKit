@@ -26,11 +26,30 @@
 #include "config.h"
 #include "ArrayPixelBuffer.h"
 
+#include "TypedArrayPixelBuffer.h"
+
 namespace WebCore {
 
 ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBufferView>&& data)
     : PixelBuffer(format, size, data->mutableSpan())
     , m_data(WTF::move(data))
 { }
+
+RefPtr<ArrayPixelBuffer> ArrayPixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
+{
+    switch (format.pixelFormat) {
+    case PixelFormat::BGRA8:
+    case PixelFormat::RGBA8:
+        return ByteArrayPixelBuffer::tryCreate(format, size);
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        return Float16ArrayPixelBuffer::tryCreate(format, size);
+#endif
+
+    default:
+        return nullptr;
+    }
+}
 
 } // namespace WebCore

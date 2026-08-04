@@ -2543,13 +2543,13 @@ void CanvasRenderingContext2DBase::evictCachedImageData()
     m_cachedContents.emplace<CachedContentsUnknown>();
 }
 
-CanvasRenderingContext2DBase::CachedContentsImageData::CachedContentsImageData(CanvasRenderingContext2DBase& context, Ref<ByteArrayPixelBuffer> imageData)
+CanvasRenderingContext2DBase::CachedContentsImageData::CachedContentsImageData(CanvasRenderingContext2DBase& context, Ref<ArrayPixelBuffer> imageData)
     : imageData(WTF::move(imageData))
     , evictionTimer(context, &CanvasRenderingContext2DBase::evictCachedImageData, 5_s)
 {
 }
 
-RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destinationPosition)
+RefPtr<ArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destinationPosition)
 {
     if (!destinationPosition.isZero() || !sourceRect.location().isZero() || sourceRect.size() != imageData.size() || sourceRect.size() != canvasBase().size())
         return nullptr;
@@ -2561,9 +2561,6 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     if (imageData.colorSpace() != m_settings.colorSpace)
         return nullptr;
 
-    if (imageData.pixelFormat() != ImageDataPixelFormat::RgbaUnorm8)
-        return nullptr;
-
     // Consider:
     //   * Real putImageData needs premultiply step.
     //   * Retrieve from cache needs to ensure premultiply + unpremultiply was made to simulate the real putImageData.
@@ -2573,16 +2570,16 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     // We're not doing RGBA -> BGRA swizzle here, as that is not needed for cache retrieval and
     // the swizzle copy can be made at the putImageData copy site.
     auto colorSpace = toDestinationColorSpace(imageData.colorSpace());
-    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
-    PixelBufferFormat cachedFormat { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace };
-    auto cachedBuffer = ByteArrayPixelBuffer::tryCreate(cachedFormat, size);
+    auto pixelFormat = toPixelFormat(imageData.pixelFormat());
+    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * PixelBuffer::bytesPerPixel(pixelFormat);
+    PixelBufferFormat cachedFormat { AlphaPremultiplication::Premultiplied, pixelFormat, colorSpace };
+    auto cachedBuffer = ArrayPixelBuffer::tryCreate(cachedFormat, size);
     if (!cachedBuffer)
         return nullptr;
-    RefPtr dataAsUint8ClampedArray = imageData.data().asUint8ClampedArray();
     ConstPixelBufferConversionView source {
-        .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace },
+        .format = { AlphaPremultiplication::Unpremultiplied, pixelFormat, colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = dataAsUint8ClampedArray->span(),
+        .rows = imageData.data().arrayBufferView().span(),
     };
     Ref cachedData = cachedBuffer->data();
     PixelBufferConversionView destination {
@@ -2595,7 +2592,7 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     return cachedBuffer;
 }
 
-RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
+RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PixelFormat pixelFormat, PredefinedColorSpace colorSpace) const
 {
     if (std::holds_alternative<CachedContentsTransparent>(m_cachedContents))
         return ImageData::create(sourceRect.size(), colorSpace);
@@ -2612,20 +2609,23 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
     if (canvasBase().size() != pixelBuffer->size())
         return nullptr;
 
+    if (pixelFormat != pixelBuffer->format().pixelFormat)
+        return nullptr;
+
     if (colorSpace != m_settings.colorSpace)
         return nullptr;
 
     auto size = pixelBuffer->size();
     auto format = pixelBuffer->format();
     auto data = WTF::move(pixelBuffer.get()).takeData();
-    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
+    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * PixelBuffer::bytesPerPixel(pixelFormat);
     ConstPixelBufferConversionView source {
         .format = format,
         .bytesPerRow = bytesPerRow,
         .rows = data->span(),
     };
     PixelBufferConversionView destination {
-        .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, pixelBuffer->format().colorSpace },
+        .format = { AlphaPremultiplication::Unpremultiplied, pixelFormat, pixelBuffer->format().colorSpace },
         .bytesPerRow = bytesPerRow,
         .rows = data->mutableSpan(),
     };
@@ -2674,7 +2674,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
     if (outputImageDataPixelFormat == ImageDataPixelFormat::RgbaUnorm8) {
-        if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace))
+        if (auto imageData = makeImageDataIfContentsCached(imageDataRect, outputPixelFormat, computedColorSpace))
             return imageData.releaseNonNull();
     }
 

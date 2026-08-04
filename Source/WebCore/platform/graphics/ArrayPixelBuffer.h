@@ -37,6 +37,8 @@ public:
     Ref<JSC::ArrayBufferView> takeData() && { return WTF::move(m_data); }
     std::span<const uint8_t> span() const LIFETIME_BOUND { return bytes(); }
 
+    static RefPtr<ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+
 protected:
     ArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBufferView>&&);
 
