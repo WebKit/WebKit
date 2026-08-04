@@ -4089,13 +4089,15 @@ void AXObjectCache::stopCachingComputedObjectAttributes()
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData& textMarkerData)
 {
     RefPtr node = nodeForID(textMarkerData.axObjectID());
-    if (!node)
+    if (!node || node->isPseudoElement())
         return { };
 
-    if (node->isPseudoElement())
-        return { };
-
-    auto visiblePosition = VisiblePosition({ node.get(), textMarkerData.offset, textMarkerData.anchorType }, textMarkerData.affinity);
+    Position position;
+    if (textMarkerData.anchorType == Position::PositionIsOffsetInAnchor)
+        position = Position(node.get(), textMarkerData.offset, textMarkerData.anchorType);
+    else
+        position = Position(node.get(), textMarkerData.anchorType);
+    auto visiblePosition = VisiblePosition(position, textMarkerData.affinity);
     auto deepPosition = visiblePosition.deepEquivalent();
     if (deepPosition.isNull())
         return { };
@@ -4108,7 +4110,6 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarker
     // Return an empty position if the object associated with the text marker has been destroyed.
     if (!cache || !cache->objectForID(*textMarkerData.axObjectID()))
         return { };
-
     return visiblePosition;
 }
 
