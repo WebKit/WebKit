@@ -72,6 +72,9 @@ canvas {
         <input type="text" class="focusable" placeholder="Enter text here" onfocus="this.style.backgroundColor='yellow'" onblur="this.style.backgroundColor=''" aria-required="true" aria-invalid="false" />
         <div class="interactive" tabindex="0"  role="button" onclick="this.textContent = 'Clicked!'" onkeydown="if(event.key==='Enter') this.click()" aria-pressed="false">Clickable Div</div>
         <div class="clickable">Clickable Div 2</div>
+        <svg style="cursor: pointer;" width="16" height="16" onclick="console.log('svg clicked')">
+            <path d="M3 13 L11 5 L13 7 L5 15 Z" fill="black"></path>
+        </svg>
     </section>
     <section id="section2" aria-label="ARIA Labeling Examples">
         <div id="label1">Name Field</div>

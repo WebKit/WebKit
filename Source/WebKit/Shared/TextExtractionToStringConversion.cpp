@@ -1635,10 +1635,14 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     parts.append("-"_s);
                 }
             } else {
+                bool isGenericContainer = containerString.isEmpty();
                 if (!containerString.isEmpty())
                     parts.append(WTF::move(containerString));
 
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
+
+                if (isGenericContainer && item.isVisuallyClickable)
+                    parts.append("clickable"_s);
             }
             aggregator.addResult(line, WTF::move(parts));
         },
@@ -1976,6 +1980,9 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
                 if (!imageData.altText.isEmpty())
                     parts.append(makeString("alt="_s, quoteValue(escapeString(imageData.altText), streamlined)));
+
+                if (item.isVisuallyClickable)
+                    parts.append("clickable"_s);
             }
 
             aggregator.addResult(line, WTF::move(parts));

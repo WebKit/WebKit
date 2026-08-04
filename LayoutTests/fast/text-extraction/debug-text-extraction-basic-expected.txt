@@ -11,7 +11,8 @@ root
             'This button does nothing' […]
             input uid=… […] placeholder='Enter text here'
             uid=… role=button 'Clickable Div' […]
-            uid=… 'Clickable Div 2' […]
+            uid=… clickable 'Clickable Div 2' […]
+            image uid=… […] clickable
         section label='ARIA Labeling Examples'
             'Name Field' […]
             'Description' […]
