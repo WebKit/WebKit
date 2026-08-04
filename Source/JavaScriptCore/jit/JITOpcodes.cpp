@@ -56,7 +56,7 @@ void JIT::emit_op_mov(const JSInstruction* currentInstruction)
 
     if (src.isConstant()) {
         if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src)) {
-            storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst), jsRegT10);
+            storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst));
         } else {
             loadCodeBlockConstant(src, jsRegT10);
             storeValue(jsRegT10, addressFor(dst));
@@ -336,7 +336,7 @@ void JIT::emit_op_to_property_key_or_number(const JSInstruction* currentInstruct
 
     JumpList done;
 
-    done.append(branchIfNumber(jsRegT10, regT2));
+    done.append(branchIfNumber(jsRegT10));
     addSlowCase(branchIfNotCell(jsRegT10));
     done.append(branchIfSymbol(jsRegT10.payloadGPR()));
     addSlowCase(branchIfNotString(jsRegT10.payloadGPR()));
@@ -1075,7 +1075,7 @@ void JIT::emit_op_to_number(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(srcVReg, jsRegT10);
 
     auto isInt32 = branchIfInt32(jsRegT10);
-    addSlowCase(branchIfNotNumber(jsRegT10, regT2));
+    addSlowCase(branchIfNotNumber(jsRegT10));
     if (arithProfile && shouldEmitProfiling())
         arithProfile->emitUnconditionalSet(*this, UnaryArithProfile::observedNumberBits());
     isInt32.link(this);
@@ -1101,7 +1101,7 @@ void JIT::emit_op_to_numeric(const JSInstruction* currentInstruction)
     Jump isBigInt = jump();
 
     isNotCell.link(this);
-    addSlowCase(branchIfNotNumber(jsRegT10, regT2));
+    addSlowCase(branchIfNotNumber(jsRegT10));
     if (arithProfile && shouldEmitProfiling())
         move(TrustedImm32(UnaryArithProfile::observedNumberBits()), regT5);
     isBigInt.link(this);
@@ -1250,7 +1250,7 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
 
     notInt32.link(this);
     JumpList failureCases;
-    failureCases.append(branchIfNotNumber(jsRegT10, regT2));
+    failureCases.append(branchIfNotNumber(jsRegT10));
     unboxDoubleWithoutAssertions(jsRegT10.payloadGPR(), regT2, fpRegT0);
     branchConvertDoubleToInt32(fpRegT0, jsRegT10.payloadGPR(), failureCases, fpRegT1, /* shouldCheckNegativeZero */ false);
     jump().linkTo(dispatch, this);
@@ -1997,7 +1997,7 @@ void JIT::emit_op_profile_type(const JSInstruction* currentInstruction)
     else if (cachedTypeLocation->m_lastSeenType == TypeAnyInt)
         jumpToEnd.append(branchIfInt32(jsRegT10));
     else if (cachedTypeLocation->m_lastSeenType == TypeNumber)
-        jumpToEnd.append(branchIfNumber(jsRegT10, regT2));
+        jumpToEnd.append(branchIfNumber(jsRegT10));
     else if (cachedTypeLocation->m_lastSeenType == TypeString) {
         Jump isNotCell = branchIfNotCell(jsRegT10);
         jumpToEnd.append(branchIfString(jsRegT10.payloadGPR()));

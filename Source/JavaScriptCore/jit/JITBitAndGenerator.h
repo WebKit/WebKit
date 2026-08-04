@@ -33,12 +33,18 @@ namespace JSC {
 
 class JITBitAndGenerator : public JITBitBinaryOpGenerator {
 public:
+    static constexpr bool needsScratchGPR = true;
+
     JITBitAndGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right, GPRReg scratchGPR)
-        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right, scratchGPR)
+        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right)
+        , m_scratchGPR(scratchGPR)
     { }
 
     void generateFastPath(CCallHelpers&);
+
+private:
+    GPRReg m_scratchGPR;
 };
 
 } // namespace JSC

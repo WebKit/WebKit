@@ -403,7 +403,7 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
             return false;
         linkAllSlowCases(iter);
 
-        Jump fail1 = branchIfNotNumber(jsReg2, regT4);
+        Jump fail1 = branchIfNotNumber(jsReg2);
         unboxDouble(jsReg2, fpReg2);
 
         move(Imm32(getConstantOperand(op).asInt32()), jsReg1.payloadGPR());
@@ -429,8 +429,8 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
 
     linkSlowCase(iter); // LHS is not Int.
 
-    Jump fail1 = branchIfNotNumber(jsRegT10, regT4);
-    Jump fail2 = branchIfNotNumber(jsRegT32, regT4);
+    Jump fail1 = branchIfNotNumber(jsRegT10);
+    Jump fail2 = branchIfNotNumber(jsRegT32);
     Jump fail3 = branchIfInt32(jsRegT32);
     unboxDouble(jsRegT10, fpRegT0);
     unboxDouble(jsRegT32, fpRegT1);
@@ -607,7 +607,7 @@ void JIT::emit_op_pow(const JSInstruction* currentInstruction)
     convertInt32ToDouble(leftRegs.payloadGPR(), fpRegT0);
     Jump lhsReady = jump();
     lhsNotInt.link(this);
-    addSlowCase(branchIfNotNumber(leftRegs, scratchGPR));
+    addSlowCase(branchIfNotNumber(leftRegs));
     unboxDouble(leftRegs.payloadGPR(), scratchGPR, fpRegT0);
     lhsReady.link(this);
 
@@ -685,7 +685,14 @@ void JIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction)
     if (!rightOperand.isConst())
         emitGetVirtualRegister(op2, rightRegs);
 
-    SnippetGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, scratchGPR);
+    SnippetGenerator gen = [&] {
+        if constexpr (SnippetGenerator::needsScratchGPR)
+            return SnippetGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, scratchGPR);
+        else {
+            UNUSED_VARIABLE(scratchGPR);
+            return SnippetGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs);
+        }
+    }();
 
     gen.generateFastPath(*this);
 

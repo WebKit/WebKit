@@ -35,10 +35,6 @@ namespace JSC {
 
 JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state, const UnaryArithProfile* arithProfile)
 {
-    ASSERT(m_scratchGPR != InvalidGPRReg);
-    ASSERT(m_scratchGPR != m_src.payloadGPR());
-    ASSERT(m_scratchGPR != m_result.payloadGPR());
-
     // We default to speculating int32.
     ObservedType observedTypes = ObservedType().withInt32();
     if (arithProfile)
@@ -59,7 +55,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     }
     if (observedTypes.isOnlyNumber()) {
         state.slowPathJumps.append(jit.branchIfInt32(m_src));
-        state.slowPathJumps.append(jit.branchIfNotNumber(m_src, m_scratchGPR));
+        state.slowPathJumps.append(jit.branchIfNotNumber(m_src));
         jit.xor64(CCallHelpers::TrustedImm64(static_cast<int64_t>(1ull << 63)), m_src.payloadGPR(), m_result.payloadGPR());
         return JITMathICInlineResult::GeneratedFastPath;
     }
@@ -84,7 +80,7 @@ bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     endJumpList.append(jit.jump());
 
     srcNotInt.link(&jit);
-    slowPathJumpList.append(jit.branchIfNotNumber(m_src, m_scratchGPR));
+    slowPathJumpList.append(jit.branchIfNotNumber(m_src));
 
     // For a double, all we need to do is to invert the sign bit.
     jit.xor64(CCallHelpers::TrustedImm64((int64_t)(1ull << 63)), m_result.payloadGPR());

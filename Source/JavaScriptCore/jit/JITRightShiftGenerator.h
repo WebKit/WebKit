@@ -41,9 +41,10 @@ public:
     JITRightShiftGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
         FPRReg leftFPR, GPRReg scratchGPR, ShiftType type = SignedShift)
-        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right, scratchGPR)
+        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right)
         , m_shiftType(type)
         , m_leftFPR(leftFPR)
+        , m_scratchGPR(scratchGPR)
     { }
 
     void generateFastPath(CCallHelpers&);
@@ -51,6 +52,7 @@ public:
 private:
     ShiftType m_shiftType;
     FPRReg m_leftFPR;
+    GPRReg m_scratchGPR;
 };
 
 } // namespace JSC

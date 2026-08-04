@@ -1135,7 +1135,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> numberConstructorCallThunkGenerator(VM& vm
 {
     SpecializedThunkJIT jit(vm, 1);
     jit.loadJSArgument(0, JSRInfo::jsRegT10);
-    jit.appendFailure(jit.branchIfNotNumber(JSRInfo::jsRegT10, JSRInfo::jsRegT32.payloadGPR()));
+    jit.appendFailure(jit.branchIfNotNumber(JSRInfo::jsRegT10));
     jit.returnJSValue(JSRInfo::jsRegT10);
     return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "Number");
 }

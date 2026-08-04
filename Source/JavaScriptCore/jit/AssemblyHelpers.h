@@ -234,9 +234,8 @@ public:
         move(TrustedImm64(JSValue::encode(value)), regs.gpr());
     }
 
-    void storeValue(JSValue value, Address address, JSValueRegs tmpJSR)
+    void storeValue(JSValue value, Address address)
     {
-        UNUSED_PARAM(tmpJSR);
         store64(Imm64(JSValue::encode(value)), address);
     }
 
@@ -583,25 +582,16 @@ public:
         return branchIfNotInt32(regs.gpr(), mode);
     }
 
-    // Note that the tempGPR is not used in 64-bit mode.
-    Jump branchIfNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
-    {
-        UNUSED_PARAM(tempGPR);
-        return branchIfNumber(regs.gpr(), mode);
-    }
-
     Jump branchIfNumber(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {
         if (mode == HaveTagRegisters)
             return branchTest64(NonZero, gpr, GPRInfo::numberTagRegister);
         return branchTest64(NonZero, gpr, TrustedImm64(JSValue::NumberTag));
     }
-    
-    // Note that the tempGPR is not used in 64-bit mode.
-    Jump branchIfNotNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+
+    Jump branchIfNumber(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
-        UNUSED_PARAM(tempGPR);
-        return branchIfNotNumber(regs.gpr(), mode);
+        return branchIfNumber(regs.gpr(), mode);
     }
 
     Jump branchIfNotNumber(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
@@ -609,6 +599,11 @@ public:
         if (mode == HaveTagRegisters)
             return branchTest64(Zero, gpr, GPRInfo::numberTagRegister);
         return branchTest64(Zero, gpr, TrustedImm64(JSValue::NumberTag));
+    }
+
+    Jump branchIfNotNumber(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
+    {
+        return branchIfNotNumber(regs.gpr(), mode);
     }
 
     Jump branchIfNotDoubleKnownNotInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
@@ -1574,7 +1569,7 @@ public:
         
         notCell.link(this);
 
-        Jump notNumber = branchIfNotNumber(regs, tempGPR);
+        Jump notNumber = branchIfNotNumber(regs);
         functor(TypeofType::Number, false);
         notNumber.link(this);
         

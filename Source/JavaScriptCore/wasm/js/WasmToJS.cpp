@@ -309,8 +309,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
         }
     }
 
-    // jsArg10 might overlap with regT0, so store 'this' argument first
-    jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))), jsArg10);
+    jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))));
     ASSERT(!wasmCC.calleeSaveRegisters.contains(importJSCellGPRReg, IgnoreVectors));
     materializeImportJSCell(jit, info, importIndex, importJSCellGPRReg);
     jit.storeCell(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
@@ -343,7 +342,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             CCallHelpers::JumpList slowPath;
             JSValueRegs destJSR = wasmCallInfo.results[0].location.jsr();
 
-            slowPath.append(jit.branchIfNotNumber(JSRInfo::returnValueJSR, jit.scratchRegister(), DoNotHaveTagRegisters));
+            slowPath.append(jit.branchIfNotNumber(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
             slowPath.append(jit.branchIfNotInt32(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
             jit.zeroExtend32ToWord(JSRInfo::returnValueJSR.payloadGPR(), destJSR.payloadGPR());
             done.append(jit.jump());
@@ -362,7 +361,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             FPRReg dest = wasmCallInfo.results[0].location.fpr();
 
             CCallHelpers::JumpList done;
-            auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, jit.scratchRegister(), DoNotHaveTagRegisters);
+            auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, DoNotHaveTagRegisters);
             auto isDouble = jit.branchIfNotInt32(JSRInfo::returnValueJSR, DoNotHaveTagRegisters);
             // We're an int32
             jit.convertInt32ToFloat(GPRInfo::returnValueGPR, dest);
@@ -387,7 +386,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             FPRReg dest = wasmCallInfo.results[0].location.fpr();
             CCallHelpers::JumpList done;
 
-            auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, jit.scratchRegister(), DoNotHaveTagRegisters);
+            auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, DoNotHaveTagRegisters);
             auto isDouble = jit.branchIfNotInt32(JSValueRegs(JSRInfo::returnValueJSR), DoNotHaveTagRegisters);
             // We're an int32
             jit.convertInt32ToDouble(GPRInfo::returnValueGPR, dest);

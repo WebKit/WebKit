@@ -628,7 +628,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 scratchFPR = wasmCallInfo.params[i].location.fpr();
 
             jit.loadValue(jsParam, scratchJSR);
-            slowPath.append(jit.branchIfNotNumber(scratchJSR, InvalidGPRReg));
+            slowPath.append(jit.branchIfNotNumber(scratchJSR));
             auto isInt32 = jit.branchIfInt32(scratchJSR);
             jit.unboxDouble(scratchJSR.payloadGPR(), scratchJSR.payloadGPR(), scratchFPR);
             if (argumentType(i).isF32())

@@ -1046,7 +1046,7 @@ void LOLJIT::emitCompareSlowImpl(const auto& allocations, VirtualRegister lhs, J
             return false;
         linkAllSlowCases(iter);
 
-        Jump fail1 = branchIfNotNumber(nonConstantRegs, s_scratch);
+        Jump fail1 = branchIfNotNumber(nonConstantRegs);
         unboxDouble(nonConstantRegs.payloadGPR(), s_scratch, nonConstantFPR);
 
         convertInt32ToDouble(constantRegs.payloadGPR(), constantFPR);
@@ -1076,8 +1076,8 @@ void LOLJIT::emitCompareSlowImpl(const auto& allocations, VirtualRegister lhs, J
 
     JumpList slows;
     JIT_COMMENT(*this, "checking for both doubles");
-    slows.append(branchIfNotNumber(lhsRegs, s_scratch));
-    slows.append(branchIfNotNumber(rhsRegs, s_scratch));
+    slows.append(branchIfNotNumber(lhsRegs));
+    slows.append(branchIfNotNumber(rhsRegs));
     // We only have to check if rhs is an Int32 as we already must have failed the isInt32(lhs) from the fast path.
     slows.append(branchIfInt32(rhsRegs));
     unboxDouble(lhsRegs, s_scratch, lhsFPR);
@@ -1362,7 +1362,7 @@ void LOLJIT::emit_op_to_number(const JSInstruction* currentInstruction)
     UnaryArithProfile* arithProfile = &m_unlinkedCodeBlock->unaryArithProfile(bytecode.m_profileIndex);
 
     auto isInt32 = branchIfInt32(operand);
-    addSlowCase(branchIfNotNumber(operand, InvalidGPRReg));
+    addSlowCase(branchIfNotNumber(operand));
     if (arithProfile && shouldEmitProfiling())
         arithProfile->emitUnconditionalSet(*this, UnaryArithProfile::observedNumberBits());
     isInt32.link(this);
@@ -1403,7 +1403,7 @@ void LOLJIT::emit_op_to_numeric(const JSInstruction* currentInstruction)
     Jump isBigInt = jump();
 
     isNotCell.link(this);
-    addSlowCase(branchIfNotNumber(operandRegs, s_scratch));
+    addSlowCase(branchIfNotNumber(operandRegs));
     if (arithProfile && shouldEmitProfiling())
         move(TrustedImm32(UnaryArithProfile::observedNumberBits()), s_scratch);
     isBigInt.link(this);
@@ -1459,7 +1459,7 @@ void LOLJIT::emit_op_to_property_key_or_number(const JSInstruction* currentInstr
 
     JumpList done;
 
-    done.append(branchIfNumber(srcRegs, s_scratch));
+    done.append(branchIfNumber(srcRegs));
     addSlowCase(branchIfNotCell(srcRegs));
     done.append(branchIfSymbol(srcRegs.payloadGPR()));
     addSlowCase(branchIfNotString(srcRegs.payloadGPR()));
@@ -2357,7 +2357,7 @@ void LOLJIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
 
     notInt32.link(this);
     JumpList failureCases;
-    failureCases.append(branchIfNotNumber(scrutineeRegs, s_scratch));
+    failureCases.append(branchIfNotNumber(scrutineeRegs));
     unboxDoubleWithoutAssertions(scrutineeRegs.payloadGPR(), s_scratch, fpRegT0);
     branchConvertDoubleToInt32(fpRegT0, scrutineeRegs.payloadGPR(), failureCases, fpRegT1, /* shouldCheckNegativeZero */ false);
     jump().linkTo(dispatch, this);
@@ -2518,7 +2518,7 @@ void LOLJIT::emit_op_lshift(const JSInstruction* currentInstruction)
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    JITLeftShiftGenerator gen(leftOperand, rightOperand, destRegs, leftRegs, rightRegs, s_scratch);
+    JITLeftShiftGenerator gen(leftOperand, rightOperand, destRegs, leftRegs, rightRegs);
 
     gen.generateFastPath(*this);
 
@@ -2556,7 +2556,12 @@ void LOLJIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction)
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    SnippetGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, s_scratch);
+    SnippetGenerator gen = [&] {
+        if constexpr (SnippetGenerator::needsScratchGPR)
+            return SnippetGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, s_scratch);
+        else
+            return SnippetGenerator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs);
+    }();
 
     gen.generateFastPath(*this);
 

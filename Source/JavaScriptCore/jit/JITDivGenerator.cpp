@@ -48,7 +48,7 @@ void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, JSValu
         jit.move64ToDouble(m_scratchGPR, destFPR);
     } else {
         if (!opr.definitelyIsNumber())
-            m_slowPathJumpList.append(jit.branchIfNotNumber(oprRegs, m_scratchGPR));
+            m_slowPathJumpList.append(jit.branchIfNotNumber(oprRegs));
         CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(oprRegs);
         jit.convertInt32ToDouble(oprRegs.payloadGPR(), destFPR);
         CCallHelpers::Jump oprIsLoaded = jit.jump();

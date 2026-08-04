@@ -22692,7 +22692,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
-        patchpoint->numGPScratchRegisters = 1;
+        patchpoint->numGPScratchRegisters = BinaryBitOpGenerator::needsScratchGPR ? 1 : 0;
         patchpoint->clobber(RegisterSet::macroClobberedGPRs());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
@@ -22704,9 +22704,17 @@ IGNORE_CLANG_WARNINGS_END
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
-                auto generator = Box<BinaryBitOpGenerator>::create(
-                    leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.gpScratch(0));
+                auto generator = [&] {
+                    if constexpr (BinaryBitOpGenerator::needsScratchGPR) {
+                        return Box<BinaryBitOpGenerator>::create(
+                            leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
+                            JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.gpScratch(0));
+                    } else {
+                        return Box<BinaryBitOpGenerator>::create(
+                            leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
+                            JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()));
+                    }
+                }();
 
                 generator->generateFastPath(jit);
                 generator->endJumpList().link(&jit);
