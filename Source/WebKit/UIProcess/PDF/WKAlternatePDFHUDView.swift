@@ -29,6 +29,7 @@ import WebKit_Internal
 @_weakLinked @_spi(Private) import SwiftUI
 
 private struct Controls: View {
+    static let hoverMargin: CGFloat = 24
     private static let autoHideDelay: Duration = .seconds(3)
 
     let showSystemActions: Bool
@@ -76,6 +77,8 @@ private struct Controls: View {
         #if USE_APPLE_INTERNAL_SDK && HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE
         .controlGroupStyle(.toolbar)
         #endif
+        .padding(Self.hoverMargin)
+        .contentShape(.rect)
         .onHover {
             isHovered = $0
         }
@@ -111,7 +114,7 @@ extension WKAlternatePDFHUDView {
 
         addSubview(hostingView)
         hostingView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        hostingView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.barVerticalOffset).isActive = true
+        hostingView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.barVerticalOffset + Controls.hoverMargin).isActive = true
     }
 
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
