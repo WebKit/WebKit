@@ -4275,6 +4275,63 @@ template <typename TreeBuilder> bool Parser<LexerType>::isSimpleAssignmentTarget
 }
 
 template <typename LexerType>
+template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseDestructuringAssignment(TreeBuilder& context, SavePoint& savePoint, const JSTokenLocation& location, bool isPossiblePattern)
+{
+    SavePointWithError expressionErrorLocation = swapSavePointForError(context, savePoint);
+    auto pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
+
+    // The reason why we use restoreSavePointWithError only when isPossiblePattern = true is that
+    // this can produce better error message.
+    if (isPossiblePattern && (!pattern || !match(EQUAL))) {
+        restoreSavePointWithError(context, expressionErrorLocation);
+        propagateError();
+    }
+    failIfFalse(pattern, "Cannot parse assignment pattern");
+    consumeOrFail(EQUAL, "Expected '=' following assignment pattern");
+    auto rhs = parseAssignmentExpression(context);
+    if (!rhs)
+        propagateError();
+    return context.createDestructuringAssignment(location, pattern, rhs);
+}
+
+template <typename LexerType>
+template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseArrowFunctionCandidate(TreeBuilder& context, SavePoint& savePoint, const JSTokenLocation& location, bool isArrowFunctionToken, bool wasOpenParen, size_t usedVariablesSize, bool& shouldReturnResult)
+{
+    SavePointWithError errorRestorationSavePoint = swapSavePointForError(context, savePoint);
+    bool isAsync = false;
+    if (matchContextualKeyword(m_vm.propertyNames->async)) {
+        next();
+        if (!m_lexer->hasLineTerminatorBeforeToken() && (match(OPENPAREN) || matchSpecIdentifier()))
+            isAsync = true;
+        else {
+            // This is async => ... case. So this "async" is not a contextual keyword, it is parameter name.
+            restoreSavePoint(context, savePoint);
+        }
+    }
+
+    if (isArrowFunctionParameters(context)) {
+        if (wasOpenParen)
+            currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
+        shouldReturnResult = true;
+        return parseArrowFunctionExpression(context, isAsync, location);
+    }
+
+    // The reason why we use propagateError only when isArrowFunctionToken = true is that
+    // this can produce better error message than restoring it to errorRestorationSavePoint.
+    if (isArrowFunctionToken && hasError()) [[unlikely]] {
+        shouldReturnResult = true;
+        return 0;
+    }
+
+    restoreSavePointWithError(context, errorRestorationSavePoint);
+    if (isArrowFunctionToken) [[unlikely]] {
+        shouldReturnResult = true;
+        failDueToUnexpectedToken();
+    }
+    return 0;
+}
+
+template <typename LexerType>
 template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context)
 {
     ASSERT(!hasError());
@@ -4325,56 +4382,18 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     if (maybeValidArrowFunctionStart && !match(EOFTOK)) {
         bool isArrowFunctionToken = match(ARROWFUNCTION);
         if (!lhs || isArrowFunctionToken) {
-            SavePointWithError errorRestorationSavePoint = swapSavePointForError(context, *savePoint);
-            bool isAsync = false;
-            if (matchContextualKeyword(m_vm.propertyNames->async)) {
-                next();
-                if (!m_lexer->hasLineTerminatorBeforeToken() && (match(OPENPAREN) || matchSpecIdentifier()))
-                    isAsync = true;
-                else {
-                    // This is async => ... case. So this "async" is not a contextual keyword, it is parameter name.
-                    restoreSavePoint(context, *savePoint);
-                }
-            }
-
-            if (isArrowFunctionParameters(context)) {
-                if (wasOpenParen)
-                    currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
-                return parseArrowFunctionExpression(context, isAsync, location);
-            }
-
-            // The reason why we use propagateError only when isArrowFunctionToken = true is that
-            // this can produce better error message than restoring it to errorRestorationSavePoint.
-            if (isArrowFunctionToken)
-                propagateError();
-
-            restoreSavePointWithError(context, errorRestorationSavePoint);
-            if (isArrowFunctionToken) [[unlikely]]
-                failDueToUnexpectedToken();
+            bool shouldReturnResult = false;
+            TreeExpression result = parseArrowFunctionCandidate(context, *savePoint, location, isArrowFunctionToken, wasOpenParen, usedVariablesSize, shouldReturnResult);
+            if (shouldReturnResult)
+                return result;
         }
     }
 
     if (!lhs && !maybeAssignmentPattern)
         propagateError();
 
-    if (maybeAssignmentPattern && (!lhs || (match(EQUAL) && context.isObjectOrArrayLiteral(lhs)))) {
-        bool isPossiblePattern = !lhs;
-        SavePointWithError expressionErrorLocation = swapSavePointForError(context, *savePoint);
-        auto pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
-
-        // The reason why we use restoreSavePointWithError only when isPossiblePattern = true is that
-        // this can produce better error message.
-        if (isPossiblePattern && (!pattern || !match(EQUAL))) {
-            restoreSavePointWithError(context, expressionErrorLocation);
-            propagateError();
-        }
-        failIfFalse(pattern, "Cannot parse assignment pattern");
-        consumeOrFail(EQUAL, "Expected '=' following assignment pattern");
-        auto rhs = parseAssignmentExpression(context);
-        if (!rhs)
-            propagateError();
-        return context.createDestructuringAssignment(location, pattern, rhs);
-    }
+    if (maybeAssignmentPattern && (!lhs || (match(EQUAL) && context.isObjectOrArrayLiteral(lhs))))
+        return parseDestructuringAssignment(context, *savePoint, location, !lhs);
 
     failIfFalse(lhs, "Cannot parse expression");
     if (initialNonLHSCount != m_parserState.nonLHSCount) {
