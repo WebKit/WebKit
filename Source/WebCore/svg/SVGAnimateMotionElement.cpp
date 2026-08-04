@@ -111,7 +111,8 @@ void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const 
     SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
     
-SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
+// https://w3c.github.io/svgwg/specs/animations/#RotateAttribute
+Variant<SVGAnimateMotionElement::RotateMode, float> SVGAnimateMotionElement::rotate() const
 {
     static MainThreadNeverDestroyed<const AtomString> autoReverse("auto-reverse"_s);
     auto& rotate = getAttribute(SVGNames::rotateAttr);
@@ -119,7 +120,7 @@ SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
         return RotateMode::Auto;
     if (rotate == autoReverse)
         return RotateMode::AutoReverse;
-    return RotateMode::Angle;
+    return valueOrDefault(parseNumber(rotate));
 }
 
 void SVGAnimateMotionElement::updateAnimationPath()
@@ -244,16 +245,15 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
         angle = traversalState.normalAngle();
     }
 
-    switch (rotateMode()) {
-    case RotateMode::Auto:
-        break;
-    case RotateMode::AutoReverse:
-        angle += 180;
-        break;
-    case RotateMode::Angle:
-        angle = 0;
-        break;
-    }
+    WTF::switchOn(rotate(),
+        [&](RotateMode mode) {
+            if (mode == RotateMode::AutoReverse)
+                angle += 180.0f;
+        },
+        [&](float value) {
+            angle = value;
+        }
+    );
 
     transform->rotate(angle);
 }

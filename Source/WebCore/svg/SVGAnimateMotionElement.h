@@ -22,6 +22,7 @@
 
 #include "Path.h"
 #include "SVGAnimationElement.h"
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -51,12 +52,11 @@ private:
     void applyResultsToTarget() override;
     std::optional<float> calculateDistance(const String& fromString, const String& toString) override;
 
-    enum class RotateMode : uint8_t {
-        Angle,
+    enum class RotateMode : bool {
         Auto,
         AutoReverse
     };
-    RotateMode rotateMode() const;
+    Variant<RotateMode, float> rotate() const;
     void buildTransformForProgress(AffineTransform*, float percentage);
 
     void updateAnimationMode() override;

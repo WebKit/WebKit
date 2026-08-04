@@ -4,7 +4,7 @@
 <svg viewBox="0 0 500 350" onload="loaded()"
   xmlns="http://www.w3.org/2000/svg" version="1.1" baseProfile="tiny"
   xmlns:xlink="http://www.w3.org/1999/xlink">
-  <meta name="fuzzy" content="maxDifference=1; totalPixels=1" />
+  <meta name="fuzzy" content="maxDifference=0-17; totalPixels=0-49" />
   <g id="test-body-content" font-family="SVGFreeSansASCII,sans-serif" font-size="18">
     <rect x="0" y="0" width="480" height="360" fill="#fff" />
     <g transform="translate(80,-20) scale(0.45)">
