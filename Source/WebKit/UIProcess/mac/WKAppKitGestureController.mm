@@ -1433,6 +1433,10 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
         && [otherGestureRecognizer.view isKindOfClass:NSScrollView.class])
         return YES;
 
+    // Don't prevent the scrollbar from scrolling even if the window resize recognizer is active.
+    if (gestureRecognizer == _mouseTrackingGestureRecognizer && isSystemWindowResizeGestureRecognizer(otherGestureRecognizer))
+        return YES;
+
     CheckedPtr viewImpl = _viewImpl.get();
     if (!viewImpl)
         return NO;
