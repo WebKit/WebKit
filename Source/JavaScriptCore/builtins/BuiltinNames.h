@@ -86,10 +86,9 @@ namespace JSC {
     macro(newResolvedPromise) \
     macro(newRejectedPromise) \
     macro(resolveWithInternalMicrotaskForAsyncAwait) \
-    macro(asyncGeneratorNextQueueEnqueue) \
-    macro(asyncGeneratorCompleteAndDrain) \
-    macro(asyncGeneratorSuspend) \
-    macro(driveAsyncFunction) \
+    macro(asyncGeneratorPrototypeNext) \
+    macro(asyncIteratorPrototypeSymbolAsyncIterator) \
+    macro(asyncFunctionDrive) \
     macro(newHandledRejectedPromise) \
     macro(promiseReturnUndefinedOnFulfilled) \
     macro(promiseResolve) \

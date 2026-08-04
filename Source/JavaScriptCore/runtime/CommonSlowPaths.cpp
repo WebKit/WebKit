@@ -913,6 +913,13 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastString)));
     }
 
+    case IterationMode::FastAsyncGenerator: {
+        // Only produced by asyncIteratorOpenTryFastImpl (op_async_iterator_open), never by
+        // op_iterator_open's getIterationMode.
+        RELEASE_ASSERT_NOT_REACHED();
+        return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic)));
+    }
+
     case IterationMode::Generic: {
         auto validationResult = validateIterable(vm, iterable, symbolIterator);
         if (validationResult != IterableValidationResult::Valid) [[unlikely]] {
@@ -946,6 +953,64 @@ JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_wide32)
 {
     BEGIN();
     return iteratorOpenTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+template<OpcodeSize width>
+ALWAYS_INLINE UGPRPair asyncIteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, ThrowScope& throwScope, const JSInstruction* pc)
+{
+    auto bytecode = pc->asKnownWidth<OpAsyncIteratorOpen, width>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue iterable = GET_C(bytecode.m_iterable).jsValue();
+    PROFILE_VALUE_IN(iterable, m_iterableValueProfile);
+    JSValue symbolIterator = GET_C(bytecode.m_symbolIterator).jsValue();
+
+    // When the iterator is a genuine async generator and @@asyncIterator is primordial, plus its `next` method is primordial %AsyncGeneratorPrototype%.next,
+    // for-of-await is guaranteed to drive async generator in a normal way. We set FastAsyncGenerator
+    // and propagate a sentinel to tell it to op_async_iterator_next.
+    IterationMode iterationMode = IterationMode::Generic;
+    if (iterable.isCell() && iterable.asCell()->type() == JSAsyncGeneratorType
+        && symbolIterator == globalObject->linkTimeConstant(LinkTimeConstant::asyncIteratorPrototypeSymbolAsyncIterator)) {
+        JSObject* iterableObject = asObject(iterable);
+        PropertySlot slot(iterableObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
+        bool found = iterableObject->getPropertySlot(globalObject, vm.propertyNames->next, slot);
+        RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic))));
+
+        if (found && slot.isValue() && slot.getValue(globalObject, vm.propertyNames->next) == globalObject->linkTimeConstant(LinkTimeConstant::asyncGeneratorPrototypeNext))
+            iterationMode = IterationMode::FastAsyncGenerator;
+        RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic))));
+    }
+
+    if (iterationMode != IterationMode::Generic && !canUseFastIterationMode(metadata.m_iterationMetadata.seenModes, iterationMode)) [[unlikely]]
+        iterationMode = IterationMode::Generic;
+
+    if (iterationMode == IterationMode::FastAsyncGenerator) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastAsyncGenerator;
+        GET(bytecode.m_iterator) = iterable;
+        PROFILE_VALUE_IN(iterable, m_iteratorValueProfile);
+        GET(bytecode.m_next) = vm.fastAsyncGeneratorSentinel();
+        return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastAsyncGenerator)));
+    }
+
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::Generic;
+    return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic)));
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(async_iterator_open_try_fast_narrow)
+{
+    BEGIN();
+    return asyncIteratorOpenTryFastImpl<Narrow>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(async_iterator_open_try_fast_wide16)
+{
+    BEGIN();
+    return asyncIteratorOpenTryFastImpl<Wide16>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(async_iterator_open_try_fast_wide32)
+{
+    BEGIN();
+    return asyncIteratorOpenTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
 }
 
 template<OpcodeSize width>

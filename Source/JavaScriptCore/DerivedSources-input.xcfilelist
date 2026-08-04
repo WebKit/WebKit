@@ -46,7 +46,6 @@ $(PROJECT_DIR)/builtins/ArrayIteratorPrototype.js
 $(PROJECT_DIR)/builtins/ArrayPrototype.js
 $(PROJECT_DIR)/builtins/AsyncDisposableStackPrototype.js
 $(PROJECT_DIR)/builtins/AsyncFromSyncIteratorPrototype.js
-$(PROJECT_DIR)/builtins/AsyncGeneratorPrototype.js
 $(PROJECT_DIR)/builtins/AsyncIteratorPrototype.js
 $(PROJECT_DIR)/builtins/DisposableStackPrototype.js
 $(PROJECT_DIR)/builtins/FunctionPrototype.js

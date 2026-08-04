@@ -33,14 +33,11 @@ namespace JSC {
 
 const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
 
-static JSC_DECLARE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator);
-
 void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSFunction* asyncIteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.asyncIterator]"_s, asyncIteratorProtoFuncAsyncIterator, ImplementationVisibility::Public, AsyncIteratorIntrinsic);
-    putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, globalObject->asyncIteratorPrototypeSymbolAsyncIteratorFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (Options::useExplicitResourceManagement())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->asyncDisposeSymbol, asyncIteratorPrototypeAsyncDisposeCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));

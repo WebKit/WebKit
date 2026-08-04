@@ -95,19 +95,8 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_arrayIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Index)));
     m_arrayIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Kind)));
 
-    m_asyncGeneratorFieldQueue.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::Queue)));
-    m_asyncGeneratorFieldResumeValue.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::ResumeValue)));
-    m_asyncGeneratorFieldResumeMode.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::ResumeMode)));
-    m_asyncGeneratorFieldResumePromise.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::ResumePromise)));
-    m_AsyncGeneratorResumeModeEmpty.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorResumeMode::Empty)));
-    m_AsyncGeneratorStateCompleted.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)));
-    m_AsyncGeneratorStateExecuting.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Executing)));
-    m_AsyncGeneratorStateInit.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Init)));
-    m_AsyncGeneratorStateDrainingQueue.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::DrainingQueue)));
-    m_AsyncGeneratorSuspendReasonShift.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::reasonShift)));
     m_asyncFromSyncIteratorFieldSyncIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncFromSyncIterator::Field::SyncIterator)));
     m_asyncFromSyncIteratorFieldNextMethod.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncFromSyncIterator::Field::NextMethod)));
-    m_abstractModuleRecordFieldState.set(m_vm, jsNumber(static_cast<int32_t>(AbstractModuleRecord::Field::State)));
     m_wrapForValidIteratorFieldIteratedIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedIterator)));
     m_wrapForValidIteratorFieldIteratedNextMethod.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedNextMethod)));
     m_iteratorHelperFieldGenerator.set(m_vm, jsNumber(static_cast<int32_t>(JSIteratorHelper::Field::Generator)));

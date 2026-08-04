@@ -93,6 +93,10 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
         clearLLIntGetByIdCache(instruction->as<OpIteratorOpen>().metadata(m_owner.get()).m_modeMetadata);
         break;
 
+    case op_async_iterator_open:
+        clearLLIntGetByIdCache(instruction->as<OpAsyncIteratorOpen>().metadata(m_owner.get()).m_modeMetadata);
+        break;
+
     case op_iterator_next: {
         auto& metadata = instruction->as<OpIteratorNext>().metadata(m_owner.get());
         switch (m_bytecodeIndex.get().checkpoint()) {

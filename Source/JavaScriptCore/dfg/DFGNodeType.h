@@ -534,6 +534,7 @@ namespace JSC { namespace DFG {
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
     macro(SetFunctionName, NodeMustGenerate) \
+    macro(EnqueueAsyncGeneratorDriver, NodeMustGenerate) \
     macro(HasOwnProperty, NodeMustGenerate | NodeResultBoolean) \
     \
     macro(GetInternalField, NodeResultJS) \

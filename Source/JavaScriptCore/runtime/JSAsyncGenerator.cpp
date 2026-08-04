@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSAsyncGenerator.h"
 
+#include "JSAsyncFunctionGenerator.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 #include "JSPromise.h"
@@ -79,18 +80,19 @@ void JSAsyncGenerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSAsyncGenerator);
 
-void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSPromise* promise)
+void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSObject* settlementTarget)
 {
+    ASSERT(settlementTarget->inherits<JSPromise>() || settlementTarget->inherits<JSAsyncGenerator>() || settlementTarget->inherits<JSAsyncFunctionGenerator>());
     if (isQueueEmpty()) {
         setResumeValue(vm, value);
         setResumeMode(mode);
-        setResumePromise(vm, promise);
+        setResumePromise(vm, settlementTarget);
     } else {
         JSValue last = queue();
         if (last.isNull()) {
             auto* item = JSFullPromiseReaction::create(
                 vm,
-                promise,
+                settlementTarget,
                 value,
                 jsNumber(mode),
                 jsUndefined(), // Will be set to self (prev)
@@ -104,7 +106,7 @@ void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSPromise* p
             auto* head = uncheckedDowncast<JSFullPromiseReaction>(tail->next());
             auto* item = JSFullPromiseReaction::create(
                 vm,
-                promise,
+                settlementTarget,
                 value,
                 jsNumber(mode),
                 tail, // prev = old tail
@@ -117,13 +119,11 @@ void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSPromise* p
     }
 }
 
-std::tuple<JSValue, int32_t, JSPromise*> JSAsyncGenerator::dequeue(VM& vm)
+JSObject* JSAsyncGenerator::dequeue(VM& vm)
 {
     ASSERT(!isQueueEmpty());
 
-    JSValue value = resumeValue();
-    int32_t mode = resumeMode();
-    JSPromise* promise = uncheckedDowncast<JSPromise>(resumePromise());
+    JSValue settlementTarget = resumePromise();
 
     JSValue last = queue();
     if (last.isNull()) {
@@ -147,7 +147,7 @@ std::tuple<JSValue, int32_t, JSPromise*> JSAsyncGenerator::dequeue(VM& vm)
         }
     }
 
-    return { value, mode, promise };
+    return asObject(settlementTarget);
 }
 
 } // namespace JSC

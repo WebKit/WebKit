@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+JSC_DECLARE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator);
+
 class AsyncIteratorPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;

@@ -58,6 +58,8 @@ namespace JSC {
     v(op_super_construct, JSEntryPtrTag) \
     v(op_iterator_next, JSEntryPtrTag) \
     v(op_iterator_open, JSEntryPtrTag) \
+    v(op_async_iterator_open, JSEntryPtrTag) \
+    v(op_async_iterator_next, JSEntryPtrTag) \
     v(op_call_varargs, JSEntryPtrTag) \
     v(op_construct_varargs, JSEntryPtrTag) \
     v(op_super_construct_varargs, JSEntryPtrTag) \

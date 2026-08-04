@@ -52,8 +52,6 @@ enum class LinkTimeConstant : int32_t;
     macro(getIteratorHelperInternalField) \
     macro(getAsyncDisposableStackInternalField) \
     macro(getAsyncFromSyncIteratorInternalField) \
-    macro(getAsyncGeneratorInternalField) \
-    macro(getAbstractModuleRecordInternalField) \
     macro(getArrayIteratorInternalField) \
     macro(getProxyInternalField) \
     macro(getWrapForValidIteratorInternalField) \
@@ -69,7 +67,6 @@ enum class LinkTimeConstant : int32_t;
     macro(isDerivedArray) \
     macro(isGenerator) \
     macro(isIteratorHelper) \
-    macro(isAsyncGenerator) \
     macro(isPromise) \
     macro(isRegExpObject) \
     macro(isMap) \
@@ -89,7 +86,6 @@ enum class LinkTimeConstant : int32_t;
     macro(putByValWithThisStrict) \
     macro(putGeneratorInternalField) \
     macro(putAsyncDisposableStackInternalField) \
-    macro(putAsyncGeneratorInternalField) \
     macro(putArrayIteratorInternalField) \
     macro(putDisposableStackInternalField) \
     macro(superSamplerBegin) \
@@ -145,19 +141,8 @@ enum class LinkTimeConstant : int32_t;
     macro(arrayIteratorFieldIndex) \
     macro(arrayIteratorFieldIteratedObject) \
     macro(arrayIteratorFieldKind) \
-    macro(asyncGeneratorFieldQueue) \
-    macro(asyncGeneratorFieldResumeValue) \
-    macro(asyncGeneratorFieldResumeMode) \
-    macro(asyncGeneratorFieldResumePromise) \
-    macro(AsyncGeneratorResumeModeEmpty) \
-    macro(AsyncGeneratorStateCompleted) \
-    macro(AsyncGeneratorStateExecuting) \
-    macro(AsyncGeneratorStateDrainingQueue) \
-    macro(AsyncGeneratorStateInit) \
-    macro(AsyncGeneratorSuspendReasonShift) \
     macro(asyncFromSyncIteratorFieldSyncIterator) \
     macro(asyncFromSyncIteratorFieldNextMethod) \
-    macro(abstractModuleRecordFieldState) \
     macro(wrapForValidIteratorFieldIteratedIterator) \
     macro(wrapForValidIteratorFieldIteratedNextMethod) \
     macro(disposableStackFieldState) \

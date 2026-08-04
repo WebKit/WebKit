@@ -1702,6 +1702,7 @@ public:
     template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
     void compileSetFunctionName(Node*);
+    void compileEnqueueAsyncGeneratorDriver(Node*);
     void compileNewBoundFunction(Node*);
     void compileNewRegExp(Node*);
     void compileForwardVarargs(Node*);

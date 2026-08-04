@@ -55,6 +55,8 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
     case op_call_direct_eval:
     case op_iterator_open:
     case op_iterator_next:
+    case op_async_iterator_open:
+    case op_async_iterator_next:
         return Call;
 
     case op_call_varargs:

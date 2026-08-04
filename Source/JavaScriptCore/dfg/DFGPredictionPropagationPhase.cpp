@@ -1811,6 +1811,7 @@ private:
         case SetArgumentDefinitely:
         case SetArgumentMaybe:
         case SetFunctionName:
+        case EnqueueAsyncGeneratorDriver:
         case CheckStructure:
         case CheckIsConstant:
         case CheckNotEmpty:

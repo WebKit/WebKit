@@ -686,6 +686,16 @@ inline JSCell* JSGlobalObject::linkTimeConstant(LinkTimeConstant value) const
     return result;
 }
 
+inline JSObject* JSGlobalObject::asyncGeneratorPrototypeNextFunction() const
+{
+    return uncheckedDowncast<JSObject>(linkTimeConstant(LinkTimeConstant::asyncGeneratorPrototypeNext));
+}
+
+inline JSObject* JSGlobalObject::asyncIteratorPrototypeSymbolAsyncIteratorFunction() const
+{
+    return uncheckedDowncast<JSObject>(linkTimeConstant(LinkTimeConstant::asyncIteratorPrototypeSymbolAsyncIterator));
+}
+
 template<typename Type> inline Type JSGlobalObject::linkTimeConstantConcurrently(LinkTimeConstant value) const
 {
     JSCell* result = m_linkTimeConstants[static_cast<unsigned>(value)].getConcurrently();

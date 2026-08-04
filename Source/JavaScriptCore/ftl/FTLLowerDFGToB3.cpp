@@ -1883,6 +1883,9 @@ private:
         case SetFunctionName:
             compileSetFunctionName();
             break;
+        case EnqueueAsyncGeneratorDriver:
+            compileEnqueueAsyncGeneratorDriver();
+            break;
         case StringReplace:
         case StringReplaceAll:
         case StringReplaceRegExp:
@@ -19793,6 +19796,13 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         vmCall(Void, operationSetFunctionName, weakPointer(globalObject),
             lowCell(m_node->child1()), lowJSValue(m_node->child2()));
+    }
+
+    void compileEnqueueAsyncGeneratorDriver()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        vmCall(Void, operationEnqueueAsyncGeneratorDriver, weakPointer(globalObject),
+            lowCell(m_node->child1()), lowCell(m_node->child2()));
     }
 
     void compileStringReplace()

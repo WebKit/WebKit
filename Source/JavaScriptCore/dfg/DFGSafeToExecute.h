@@ -710,6 +710,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallNumberConstructor:
     case NumberToStringWithRadix:
     case SetFunctionName:
+    case EnqueueAsyncGeneratorDriver:
     case NewStringObject:
     case NewRegExpUntyped:
     case InByVal:

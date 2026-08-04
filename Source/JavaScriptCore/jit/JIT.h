@@ -522,6 +522,8 @@ namespace JSC {
         void emit_op_ret(const JSInstruction*);
         void emit_op_rshift(const JSInstruction*);
         void emit_op_set_function_name(const JSInstruction*);
+        void emit_op_async_iterator_open(const JSInstruction*);
+        void emitSlow_op_async_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_stricteq(const JSInstruction*);
         void emit_op_sub(const JSInstruction*);
         void emit_op_switch_char(const JSInstruction*);
@@ -625,8 +627,11 @@ namespace JSC {
 
         void emit_op_iterator_open(const JSInstruction*);
         void emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        template<typename Op> void emitIteratorOpenGeneric(const JSInstruction*);
+        template<typename Op> void emitSlowIteratorOpenGeneric(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_iterator_next(const JSInstruction*);
         void emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_async_iterator_next(const JSInstruction*);
 
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
         void emitHasPrivateSlow(AccessType, Vector<SlowCaseEntry>::iterator&);

@@ -461,6 +461,7 @@ bool doesGC(Graph& graph, Node* node)
     case MaterializeNewInternalFieldObject:
     case MaterializeCreateActivation:
     case SetFunctionName:
+    case EnqueueAsyncGeneratorDriver:
     case StrCat:
     case StringReplace:
     case StringReplaceAll:

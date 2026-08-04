@@ -403,7 +403,7 @@ private:
                 considerBarrier(m_node->child1(), m_node->child2());
                 break;
             }
-                
+
             case NukeStructureAndSetButterfly: {
                 considerBarrier(m_node->child1());
                 break;

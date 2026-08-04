@@ -357,6 +357,7 @@ JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWa
 JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject*, JSCell*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationEnqueueAsyncGeneratorDriver, void, (JSGlobalObject*, JSAsyncGenerator*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationNewObject, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewPromise, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewGenerator, JSCell*, (VM*, Structure*));

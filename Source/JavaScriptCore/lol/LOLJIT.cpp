@@ -493,12 +493,14 @@ void LOLJIT::privateCompileMainPass()
 
         DEFINE_OP(op_iterator_open)
         DEFINE_OP(op_iterator_next)
+        DEFINE_OP(op_async_iterator_next)
 
         DEFINE_OP(op_ret)
         DEFINE_OP(op_rshift)
         DEFINE_OP(op_unsigned)
         DEFINE_OP(op_urshift)
         DEFINE_OP(op_set_function_name)
+        DEFINE_OP(op_async_iterator_open)
         DEFINE_OP(op_stricteq)
         DEFINE_OP(op_sub)
         DEFINE_OP(op_switch_char)
@@ -684,6 +686,7 @@ void LOLJIT::privateCompileSlowCases()
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
         DEFINE_SLOWCASE_OP(op_iterator_next)
+        DEFINE_SLOWCASE_OP(op_async_iterator_open)
 
         DEFINE_SLOWCASE_SLOW_OP(unsigned, OpUnsigned)
         DEFINE_SLOWCASE_SLOW_OP(inc, OpInc)
