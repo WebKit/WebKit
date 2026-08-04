@@ -183,6 +183,24 @@ float dotProduct(std::span<const float> inputVector1, std::span<const float> inp
     return result;
 }
 
+void filterBiquad(std::span<const double> source, std::span<const double, 5> coefficients, std::span<double> destination, size_t framesToProcess)
+{
+    // vDSP_deq22D reads source[0 .. framesToProcess + 1] and reads/writes destination[0 .. framesToProcess + 1]
+    // (two elements of filter history plus framesToProcess samples).
+    RELEASE_ASSERT(source.size() >= framesToProcess + 2);
+    RELEASE_ASSERT(destination.size() >= framesToProcess + 2);
+    vDSP_deq22D(source.data(), 1, coefficients.data(), destination.data(), 1, framesToProcess);
+}
+
+void convolve(std::span<const float> signal, std::span<const float> filter, std::span<float> output)
+{
+    RELEASE_ASSERT(!filter.empty());
+    RELEASE_ASSERT(signal.size() >= output.size() + filter.size() - 1);
+    // Read the filter backwards (stride -1) starting at its last element so that
+    // output[n] == sum(signal[n + k] * filter[filter.size() - 1 - k]).
+    vDSP_conv(signal.data(), 1, filter.subspan(filter.size() - 1).data(), -1, output.data(), 1, output.size(), filter.size());
+}
+
 #else
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
@@ -947,6 +965,283 @@ float dotProduct(std::span<const float> inputVector1, std::span<const float> inp
     for (size_t i = 0; i < inputVector1.size(); ++i)
         result += inputVector1[i] * inputVector2[i];
     return result;
+}
+
+void convolve(std::span<const float> signal, std::span<const float> filter, std::span<float> output)
+{
+    RELEASE_ASSERT(!filter.empty());
+    RELEASE_ASSERT(signal.size() >= output.size() + filter.size() - 1);
+
+    size_t filterSize = filter.size();
+
+    // output[n] = sum(signal[n + k] * filter[filterSize - 1 - k], 0 <= k < filterSize).
+    // FIXME: The macro can be further optimized to avoid pipeline stalls. One possibility is to maintain 4 separate sums and change the macro to CONVOLVE_FOUR_SAMPLES.
+#define CONVOLVE_ONE_SAMPLE                            \
+    sum += signal[i + filterSize - 1 - j] * filter[j]; \
+    j++;
+
+    for (size_t i = 0; i < output.size(); ++i) {
+        size_t j = 0;
+        float sum = 0;
+
+        // FIXME: SSE optimization may be applied here.
+        if (filterSize == 32) {
+            CONVOLVE_ONE_SAMPLE // 1
+            CONVOLVE_ONE_SAMPLE // 2
+            CONVOLVE_ONE_SAMPLE // 3
+            CONVOLVE_ONE_SAMPLE // 4
+            CONVOLVE_ONE_SAMPLE // 5
+            CONVOLVE_ONE_SAMPLE // 6
+            CONVOLVE_ONE_SAMPLE // 7
+            CONVOLVE_ONE_SAMPLE // 8
+            CONVOLVE_ONE_SAMPLE // 9
+            CONVOLVE_ONE_SAMPLE // 10
+
+            CONVOLVE_ONE_SAMPLE // 11
+            CONVOLVE_ONE_SAMPLE // 12
+            CONVOLVE_ONE_SAMPLE // 13
+            CONVOLVE_ONE_SAMPLE // 14
+            CONVOLVE_ONE_SAMPLE // 15
+            CONVOLVE_ONE_SAMPLE // 16
+            CONVOLVE_ONE_SAMPLE // 17
+            CONVOLVE_ONE_SAMPLE // 18
+            CONVOLVE_ONE_SAMPLE // 19
+            CONVOLVE_ONE_SAMPLE // 20
+
+            CONVOLVE_ONE_SAMPLE // 21
+            CONVOLVE_ONE_SAMPLE // 22
+            CONVOLVE_ONE_SAMPLE // 23
+            CONVOLVE_ONE_SAMPLE // 24
+            CONVOLVE_ONE_SAMPLE // 25
+            CONVOLVE_ONE_SAMPLE // 26
+            CONVOLVE_ONE_SAMPLE // 27
+            CONVOLVE_ONE_SAMPLE // 28
+            CONVOLVE_ONE_SAMPLE // 29
+            CONVOLVE_ONE_SAMPLE // 30
+
+            CONVOLVE_ONE_SAMPLE // 31
+            CONVOLVE_ONE_SAMPLE // 32
+        } else if (filterSize == 64) {
+            CONVOLVE_ONE_SAMPLE // 1
+            CONVOLVE_ONE_SAMPLE // 2
+            CONVOLVE_ONE_SAMPLE // 3
+            CONVOLVE_ONE_SAMPLE // 4
+            CONVOLVE_ONE_SAMPLE // 5
+            CONVOLVE_ONE_SAMPLE // 6
+            CONVOLVE_ONE_SAMPLE // 7
+            CONVOLVE_ONE_SAMPLE // 8
+            CONVOLVE_ONE_SAMPLE // 9
+            CONVOLVE_ONE_SAMPLE // 10
+
+            CONVOLVE_ONE_SAMPLE // 11
+            CONVOLVE_ONE_SAMPLE // 12
+            CONVOLVE_ONE_SAMPLE // 13
+            CONVOLVE_ONE_SAMPLE // 14
+            CONVOLVE_ONE_SAMPLE // 15
+            CONVOLVE_ONE_SAMPLE // 16
+            CONVOLVE_ONE_SAMPLE // 17
+            CONVOLVE_ONE_SAMPLE // 18
+            CONVOLVE_ONE_SAMPLE // 19
+            CONVOLVE_ONE_SAMPLE // 20
+
+            CONVOLVE_ONE_SAMPLE // 21
+            CONVOLVE_ONE_SAMPLE // 22
+            CONVOLVE_ONE_SAMPLE // 23
+            CONVOLVE_ONE_SAMPLE // 24
+            CONVOLVE_ONE_SAMPLE // 25
+            CONVOLVE_ONE_SAMPLE // 26
+            CONVOLVE_ONE_SAMPLE // 27
+            CONVOLVE_ONE_SAMPLE // 28
+            CONVOLVE_ONE_SAMPLE // 29
+            CONVOLVE_ONE_SAMPLE // 30
+
+            CONVOLVE_ONE_SAMPLE // 31
+            CONVOLVE_ONE_SAMPLE // 32
+            CONVOLVE_ONE_SAMPLE // 33
+            CONVOLVE_ONE_SAMPLE // 34
+            CONVOLVE_ONE_SAMPLE // 35
+            CONVOLVE_ONE_SAMPLE // 36
+            CONVOLVE_ONE_SAMPLE // 37
+            CONVOLVE_ONE_SAMPLE // 38
+            CONVOLVE_ONE_SAMPLE // 39
+            CONVOLVE_ONE_SAMPLE // 40
+
+            CONVOLVE_ONE_SAMPLE // 41
+            CONVOLVE_ONE_SAMPLE // 42
+            CONVOLVE_ONE_SAMPLE // 43
+            CONVOLVE_ONE_SAMPLE // 44
+            CONVOLVE_ONE_SAMPLE // 45
+            CONVOLVE_ONE_SAMPLE // 46
+            CONVOLVE_ONE_SAMPLE // 47
+            CONVOLVE_ONE_SAMPLE // 48
+            CONVOLVE_ONE_SAMPLE // 49
+            CONVOLVE_ONE_SAMPLE // 50
+
+            CONVOLVE_ONE_SAMPLE // 51
+            CONVOLVE_ONE_SAMPLE // 52
+            CONVOLVE_ONE_SAMPLE // 53
+            CONVOLVE_ONE_SAMPLE // 54
+            CONVOLVE_ONE_SAMPLE // 55
+            CONVOLVE_ONE_SAMPLE // 56
+            CONVOLVE_ONE_SAMPLE // 57
+            CONVOLVE_ONE_SAMPLE // 58
+            CONVOLVE_ONE_SAMPLE // 59
+            CONVOLVE_ONE_SAMPLE // 60
+
+            CONVOLVE_ONE_SAMPLE // 61
+            CONVOLVE_ONE_SAMPLE // 62
+            CONVOLVE_ONE_SAMPLE // 63
+            CONVOLVE_ONE_SAMPLE // 64
+        } else if (filterSize == 128) {
+            CONVOLVE_ONE_SAMPLE // 1
+            CONVOLVE_ONE_SAMPLE // 2
+            CONVOLVE_ONE_SAMPLE // 3
+            CONVOLVE_ONE_SAMPLE // 4
+            CONVOLVE_ONE_SAMPLE // 5
+            CONVOLVE_ONE_SAMPLE // 6
+            CONVOLVE_ONE_SAMPLE // 7
+            CONVOLVE_ONE_SAMPLE // 8
+            CONVOLVE_ONE_SAMPLE // 9
+            CONVOLVE_ONE_SAMPLE // 10
+
+            CONVOLVE_ONE_SAMPLE // 11
+            CONVOLVE_ONE_SAMPLE // 12
+            CONVOLVE_ONE_SAMPLE // 13
+            CONVOLVE_ONE_SAMPLE // 14
+            CONVOLVE_ONE_SAMPLE // 15
+            CONVOLVE_ONE_SAMPLE // 16
+            CONVOLVE_ONE_SAMPLE // 17
+            CONVOLVE_ONE_SAMPLE // 18
+            CONVOLVE_ONE_SAMPLE // 19
+            CONVOLVE_ONE_SAMPLE // 20
+
+            CONVOLVE_ONE_SAMPLE // 21
+            CONVOLVE_ONE_SAMPLE // 22
+            CONVOLVE_ONE_SAMPLE // 23
+            CONVOLVE_ONE_SAMPLE // 24
+            CONVOLVE_ONE_SAMPLE // 25
+            CONVOLVE_ONE_SAMPLE // 26
+            CONVOLVE_ONE_SAMPLE // 27
+            CONVOLVE_ONE_SAMPLE // 28
+            CONVOLVE_ONE_SAMPLE // 29
+            CONVOLVE_ONE_SAMPLE // 30
+
+            CONVOLVE_ONE_SAMPLE // 31
+            CONVOLVE_ONE_SAMPLE // 32
+            CONVOLVE_ONE_SAMPLE // 33
+            CONVOLVE_ONE_SAMPLE // 34
+            CONVOLVE_ONE_SAMPLE // 35
+            CONVOLVE_ONE_SAMPLE // 36
+            CONVOLVE_ONE_SAMPLE // 37
+            CONVOLVE_ONE_SAMPLE // 38
+            CONVOLVE_ONE_SAMPLE // 39
+            CONVOLVE_ONE_SAMPLE // 40
+
+            CONVOLVE_ONE_SAMPLE // 41
+            CONVOLVE_ONE_SAMPLE // 42
+            CONVOLVE_ONE_SAMPLE // 43
+            CONVOLVE_ONE_SAMPLE // 44
+            CONVOLVE_ONE_SAMPLE // 45
+            CONVOLVE_ONE_SAMPLE // 46
+            CONVOLVE_ONE_SAMPLE // 47
+            CONVOLVE_ONE_SAMPLE // 48
+            CONVOLVE_ONE_SAMPLE // 49
+            CONVOLVE_ONE_SAMPLE // 50
+
+            CONVOLVE_ONE_SAMPLE // 51
+            CONVOLVE_ONE_SAMPLE // 52
+            CONVOLVE_ONE_SAMPLE // 53
+            CONVOLVE_ONE_SAMPLE // 54
+            CONVOLVE_ONE_SAMPLE // 55
+            CONVOLVE_ONE_SAMPLE // 56
+            CONVOLVE_ONE_SAMPLE // 57
+            CONVOLVE_ONE_SAMPLE // 58
+            CONVOLVE_ONE_SAMPLE // 59
+            CONVOLVE_ONE_SAMPLE // 60
+
+            CONVOLVE_ONE_SAMPLE // 61
+            CONVOLVE_ONE_SAMPLE // 62
+            CONVOLVE_ONE_SAMPLE // 63
+            CONVOLVE_ONE_SAMPLE // 64
+            CONVOLVE_ONE_SAMPLE // 65
+            CONVOLVE_ONE_SAMPLE // 66
+            CONVOLVE_ONE_SAMPLE // 67
+            CONVOLVE_ONE_SAMPLE // 68
+            CONVOLVE_ONE_SAMPLE // 69
+            CONVOLVE_ONE_SAMPLE // 70
+
+            CONVOLVE_ONE_SAMPLE // 71
+            CONVOLVE_ONE_SAMPLE // 72
+            CONVOLVE_ONE_SAMPLE // 73
+            CONVOLVE_ONE_SAMPLE // 74
+            CONVOLVE_ONE_SAMPLE // 75
+            CONVOLVE_ONE_SAMPLE // 76
+            CONVOLVE_ONE_SAMPLE // 77
+            CONVOLVE_ONE_SAMPLE // 78
+            CONVOLVE_ONE_SAMPLE // 79
+            CONVOLVE_ONE_SAMPLE // 80
+
+            CONVOLVE_ONE_SAMPLE // 81
+            CONVOLVE_ONE_SAMPLE // 82
+            CONVOLVE_ONE_SAMPLE // 83
+            CONVOLVE_ONE_SAMPLE // 84
+            CONVOLVE_ONE_SAMPLE // 85
+            CONVOLVE_ONE_SAMPLE // 86
+            CONVOLVE_ONE_SAMPLE // 87
+            CONVOLVE_ONE_SAMPLE // 88
+            CONVOLVE_ONE_SAMPLE // 89
+            CONVOLVE_ONE_SAMPLE // 90
+
+            CONVOLVE_ONE_SAMPLE // 91
+            CONVOLVE_ONE_SAMPLE // 92
+            CONVOLVE_ONE_SAMPLE // 93
+            CONVOLVE_ONE_SAMPLE // 94
+            CONVOLVE_ONE_SAMPLE // 95
+            CONVOLVE_ONE_SAMPLE // 96
+            CONVOLVE_ONE_SAMPLE // 97
+            CONVOLVE_ONE_SAMPLE // 98
+            CONVOLVE_ONE_SAMPLE // 99
+            CONVOLVE_ONE_SAMPLE // 100
+
+            CONVOLVE_ONE_SAMPLE // 101
+            CONVOLVE_ONE_SAMPLE // 102
+            CONVOLVE_ONE_SAMPLE // 103
+            CONVOLVE_ONE_SAMPLE // 104
+            CONVOLVE_ONE_SAMPLE // 105
+            CONVOLVE_ONE_SAMPLE // 106
+            CONVOLVE_ONE_SAMPLE // 107
+            CONVOLVE_ONE_SAMPLE // 108
+            CONVOLVE_ONE_SAMPLE // 109
+            CONVOLVE_ONE_SAMPLE // 110
+
+            CONVOLVE_ONE_SAMPLE // 111
+            CONVOLVE_ONE_SAMPLE // 112
+            CONVOLVE_ONE_SAMPLE // 113
+            CONVOLVE_ONE_SAMPLE // 114
+            CONVOLVE_ONE_SAMPLE // 115
+            CONVOLVE_ONE_SAMPLE // 116
+            CONVOLVE_ONE_SAMPLE // 117
+            CONVOLVE_ONE_SAMPLE // 118
+            CONVOLVE_ONE_SAMPLE // 119
+            CONVOLVE_ONE_SAMPLE // 120
+
+            CONVOLVE_ONE_SAMPLE // 121
+            CONVOLVE_ONE_SAMPLE // 122
+            CONVOLVE_ONE_SAMPLE // 123
+            CONVOLVE_ONE_SAMPLE // 124
+            CONVOLVE_ONE_SAMPLE // 125
+            CONVOLVE_ONE_SAMPLE // 126
+            CONVOLVE_ONE_SAMPLE // 127
+            CONVOLVE_ONE_SAMPLE // 128
+        } else {
+            while (j < filterSize) {
+                // Non-optimized using actual while loop.
+                CONVOLVE_ONE_SAMPLE
+            }
+        }
+        output[i] = sum;
+    }
+#undef CONVOLVE_ONE_SAMPLE
 }
 
 #endif // USE(ACCELERATE)

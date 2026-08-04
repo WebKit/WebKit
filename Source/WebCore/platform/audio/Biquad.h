@@ -92,7 +92,7 @@ private:
 
 #if USE(ACCELERATE)
     void processFast(std::span<const float> source, std::span<float> destination);
-    void processSliceFast(std::span<double> source, std::span<double> destination, std::span<double> coefficients, size_t framesToProcess);
+    void processSliceFast(std::span<double> source, std::span<double> destination, std::span<const double, 5> coefficients, size_t framesToProcess);
     AudioDoubleArray m_inputBuffer;
     AudioDoubleArray m_outputBuffer;
 #endif

@@ -78,6 +78,20 @@ void linearToDecibels(std::span<const float> inputVector, std::span<float> outpu
 // NOTE: Internal implementation may modify inputVector2.
 void interpolate(std::span<const float> inputVector1, std::span<float> inputVector2, float interpolationFactor, std::span<float> outputVector);
 
+#if USE(ACCELERATE)
+// Applies a two-pole, two-zero recursive (biquad) filter (vDSP_deq22D).
+// coefficients holds { b0, b1, b2, a1, a2 }. source and destination both hold
+// two samples of filter history followed by framesToProcess samples, so each must
+// contain at least framesToProcess + 2 elements.
+void filterBiquad(std::span<const double> source, std::span<const double, 5> coefficients, std::span<double> destination, size_t framesToProcess);
+#endif
+
+// Convolves signal with filter:
+// output[n] = sum(signal[n + k] * filter[filter.size() - 1 - k], 0 <= k < filter.size())
+// Reads signal[0 .. output.size() + filter.size() - 2], so signal must contain
+// at least output.size() + filter.size() - 1 elements.
+void convolve(std::span<const float> signal, std::span<const float> filter, std::span<float> output);
+
 } // namespace VectorMath
 
 } // namespace WebCore

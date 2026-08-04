@@ -34,17 +34,12 @@
 
 #include "AudioUtilities.h"
 #include "DenormalDisabler.h"
+#include "VectorMath.h"
 #include <algorithm>
 #include <numbers>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
-
-#if USE(ACCELERATE)
-// Work around a bug where VForce.h forward declares std::complex in a way that's incompatible with libc++ complex.
-#define __VFORCE_H
-#include <Accelerate/Accelerate.h>
-#endif
 
 namespace WebCore {
 
@@ -226,7 +221,7 @@ void Biquad::processFast(std::span<const float> source, std::span<float> destina
         for (int i = 0; i < framesThisTime; ++i)
             input2P[i] = source[sourceIndex++];
 
-        processSliceFast(inputP, outputP, std::span { filterCoefficients }, framesThisTime);
+        processSliceFast(inputP, outputP, filterCoefficients, framesThisTime);
 
         // Copy output buffer to output (converts float -> double).
         for (int i = 0; i < framesThisTime; ++i)
@@ -236,10 +231,10 @@ void Biquad::processFast(std::span<const float> source, std::span<float> destina
     }
 }
 
-void Biquad::processSliceFast(std::span<double> source, std::span<double> destination, std::span<double> coefficients, size_t framesToProcess)
+void Biquad::processSliceFast(std::span<double> source, std::span<double> destination, std::span<const double, 5> coefficients, size_t framesToProcess)
 {
     // Use double-precision for filter stability
-    vDSP_deq22D(source.data(), 1, coefficients.data(), destination.data(), 1, framesToProcess);
+    VectorMath::filterBiquad(source, coefficients, destination, framesToProcess);
 
     // Save history. Note that source and destination reference m_inputBuffer and m_outputBuffer respectively.
     // These buffers are allocated (in the constructor) with space for two extra samples so it's OK to access
