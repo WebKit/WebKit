@@ -71,9 +71,9 @@ protected:
         return number;
     }
 
-    CalcMode m_calcMode;
-    bool m_isAccumulated;
-    bool m_isAdditive;
+    CalcMode m_calcMode { CalcMode::Linear };
+    bool m_isAccumulated { false };
+    bool m_isAdditive { false };
 };
 
 } // namespace WebCore

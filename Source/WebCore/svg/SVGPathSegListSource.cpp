@@ -29,9 +29,8 @@ namespace WebCore {
 
 SVGPathSegListSource::SVGPathSegListSource(const SVGPathSegList& pathSegList)
     : m_pathSegList(pathSegList)
+    , m_itemEnd(pathSegList.size())
 {
-    m_itemCurrent = 0;
-    m_itemEnd = m_pathSegList->size();
 }
 
 bool SVGPathSegListSource::hasMoreData() const

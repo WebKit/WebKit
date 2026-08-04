@@ -48,7 +48,7 @@ private:
 
     template<typename Function> decltype(auto) NODELETE parse(Function&&);
 
-    bool m_is8BitSource;
+    bool m_is8BitSource { false };
     union {
         StringParsingBuffer<Latin1Character> m_buffer8;
         StringParsingBuffer<char16_t> m_buffer16;

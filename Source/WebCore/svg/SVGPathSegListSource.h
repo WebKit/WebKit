@@ -52,8 +52,8 @@ private:
 
     SingleThreadWeakRef<const SVGPathSegList> m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;
-    size_t m_itemCurrent;
-    size_t m_itemEnd;
+    size_t m_itemCurrent { 0 };
+    size_t m_itemEnd { 0 };
 };
 
 } // namespace WebCore

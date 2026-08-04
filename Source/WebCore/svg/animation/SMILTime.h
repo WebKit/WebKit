@@ -33,7 +33,7 @@ namespace WebCore {
 
 class SMILTime {
 public:
-    SMILTime() : m_time(0) { }
+    SMILTime() = default;
     SMILTime(double time) : m_time(time) { ASSERT(!std::isnan(time)); }
     SMILTime(Seconds time) : m_time(time.value()) { ASSERT(!std::isnan(time.value())); }
     SMILTime(const SMILTime& o) : m_time(o.m_time) { }
@@ -52,7 +52,7 @@ private:
     static const double unresolvedValue;
     static const double indefiniteValue;
 
-    double m_time;
+    double m_time { 0 };
 };
 
 class SMILTimeWithOrigin {

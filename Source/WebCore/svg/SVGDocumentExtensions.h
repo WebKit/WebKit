@@ -93,7 +93,7 @@ private:
     const UniqueRef<SVGResourcesCache> m_resourcesCache;
 
     Vector<Ref<SVGElement>> m_rebuildElements;
-    bool m_areAnimationsPaused;
+    bool m_areAnimationsPaused { false };
 
     HashMap<URL, Ref<IsolatedSVGDocumentContext>> m_externalSVGDocuments;
 };
