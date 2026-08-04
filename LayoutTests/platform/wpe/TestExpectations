@@ -1130,7 +1130,6 @@ webkit.org/b/309369 [ arm64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failur
 
 webkit.org/b/309369 [ arm64 ] imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]

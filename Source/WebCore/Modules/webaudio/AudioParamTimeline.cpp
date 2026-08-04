@@ -553,10 +553,15 @@ void AudioParamTimeline::processLinearRamp(const AutomationState& currentState, 
     if (writeIndex >= 1)
         value = values[writeIndex - 1];
 
-    // Serially process remaining values.
+    // Serially process remaining values. Compute (currentFrame / sampleRate - time1) * k first so
+    // the product stays bounded even when 1 / deltaTime is huge (very close event times), then
+    // apply valueDelta and value1 as separate statements. Splitting the multiply and add prevents
+    // fused multiply-add contraction, which would otherwise make single-value k-rate reads (which
+    // land here) diverge from the vectorized VectorMath multi-value path whenever valueDelta != 1.
     for (; writeIndex < currentState.fillToFrame; ++writeIndex) {
         float x = (currentFrame * currentState.samplingPeriod - currentState.time1.value()) * k;
-        value = currentState.value1 + valueDelta * x;
+        float scaledDelta = valueDelta * x;
+        value = currentState.value1 + scaledDelta;
         values[writeIndex] = value;
         ++currentFrame;
     }

@@ -1,4 +1,0 @@
-
-PASS Verify k-rate AudioParam input works correctly for playbackRate
-PASS Verify k-rate AudioParam input works correctly for detune
-
