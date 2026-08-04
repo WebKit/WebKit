@@ -580,6 +580,16 @@ void FontCascadeFonts::addSystemFallbackFont(Ref<Font>&& font)
     m_systemFallbackFontSet.add(WTF::move(font));
 }
 
+void FontCascadeFonts::forEachRealizedFont(NOESCAPE const Function<void(const Font&)>& function) const
+{
+    for (auto& ranges : m_realizedFallbackRanges) {
+        for (unsigned i = 0; i < ranges.size(); ++i) {
+            if (RefPtr font = ranges.rangeAt(i).font(ExternalResourceDownloadPolicy::Forbid))
+                function(*font);
+        }
+    }
+}
+
 TextShapingResultAndDisplayList* FontCascadeFonts::getOrCreateCachedShapedText(const TextRun& run, const FontCascade& fontCascade, unsigned from, std::optional<unsigned> to, ForTextEmphasis forTextEmphasis)
 {
     auto isCacheable = [&] {

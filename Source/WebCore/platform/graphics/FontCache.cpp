@@ -497,9 +497,11 @@ RefPtr<Font> FontCache::similarFont(const FontDescription&, const String&)
     return nullptr;
 }
 
+#if !USE(SKIA)
 void FontCache::platformReleaseNoncriticalMemory()
 {
 }
+#endif
 #endif
 
 } // namespace WebCore

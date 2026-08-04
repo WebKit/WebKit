@@ -87,12 +87,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
         for (auto& variation : variations)
             applyVariation(variation.tag(), variation.value());
 
-        if (!variationsToBeApplied.isEmpty()) {
-            SkFontArguments fontArgs;
-            fontArgs.setVariationDesignPosition({ variationsToBeApplied.span().data(), static_cast<int>(variationsToBeApplied.size()) });
-            if (auto variationTypeface = typeface->makeClone(fontArgs))
-                typeface = WTF::move(variationTypeface);
-        }
+        if (!variationsToBeApplied.isEmpty())
+            typeface = retrieveOrAddCachedTypeface(variationsToBeApplied);
     }
 
     auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
@@ -174,6 +170,40 @@ std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSe
 FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
 {
     return FontCustomPlatformSerializedData { creationData.fontFaceData, creationData.itemInCollection, m_renderingResourceIdentifier };
+}
+
+sk_sp<SkTypeface> FontCustomPlatformData::retrieveOrAddCachedTypeface(const Vector<SkFontArguments::VariationPosition::Coordinate>& variationsToBeApplied)
+{
+    WTF::Hasher variationHasher;
+    for (auto& coordinate : variationsToBeApplied) {
+        WTF::add(variationHasher, coordinate.axis);
+        WTF::add(variationHasher, coordinate.value);
+    }
+    constexpr size_t variationTypefacesCacheMaximumSize = 8;
+    if (m_variationTypefacesCache.size() >= variationTypefacesCacheMaximumSize)
+        m_variationTypefacesCache.remove(m_variationTypefacesCache.random());
+    auto addResult = m_variationTypefacesCache.ensure(variationHasher.hash(), [&]() -> sk_sp<SkTypeface> {
+        SkFontArguments fontArgs;
+        fontArgs.setVariationDesignPosition({ variationsToBeApplied.span().data(), static_cast<int>(variationsToBeApplied.size()) });
+        if (auto variationTypeface = m_typeface->makeClone(fontArgs))
+            return variationTypeface;
+        return m_typeface;
+    });
+    if (addResult.iterator->value)
+        return addResult.iterator->value;
+    return m_typeface;
+}
+
+void FontCustomPlatformData::clearVariationTypefacesCache() const
+{
+    m_variationTypefacesCache.clear();
+}
+
+void FontCustomPlatformData::clearUnusedVariationTypefacesCacheEntries() const
+{
+    m_variationTypefacesCache.removeIf([](const auto& entry) {
+        return entry.value->unique();
+    });
 }
 
 }
