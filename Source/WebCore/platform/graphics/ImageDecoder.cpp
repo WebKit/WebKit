@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageDecoder.h"
 
+#include "AsyncImageDecoder.h"
 #include "ImageFrame.h"
 #include "ScalableImageDecoder.h"
 #include <wtf/NeverDestroyed.h>
@@ -55,9 +56,22 @@ static RefPtr<ImageDecoder> createInProcessImageDecoderAVFObjC(FragmentedSharedB
     return ImageDecoderAVFObjC::create(buffer, mimeType, alphaOption, gammaOption, ProcessIdentity { ProcessIdentity::CurrentProcess });
 }
 
+static RefPtr<AsyncImageDecoder> createInProcessAsyncImageDecoderAVFObjC(FragmentedSharedBuffer& buffer, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaOption, ImageDecoderClient& client)
+{
+    RefPtr decoder = createInProcessImageDecoderAVFObjC(buffer, mimeType, alphaOption, gammaOption);
+    if (!decoder)
+        return nullptr;
+    return AsyncImageDecoder::create(decoder.releaseNonNull(), client);
+}
+
 static void platformRegisterFactories(FactoryVector& factories)
 {
-    factories.append({ ImageDecoderAVFObjC::supportsMediaType, ImageDecoderAVFObjC::canDecodeType, createInProcessImageDecoderAVFObjC });
+    factories.append({
+        ImageDecoderAVFObjC::supportsMediaType,
+        ImageDecoderAVFObjC::canDecodeType,
+        createInProcessImageDecoderAVFObjC,
+        createInProcessAsyncImageDecoderAVFObjC
+    });
 }
 
 static FactoryVector& installedFactories()

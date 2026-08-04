@@ -42,22 +42,45 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFManager);
 
-RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+std::optional<ImageDecoderIdentifier> RemoteImageDecoderAVFManager::createRemoteImageDecoder(FragmentedSharedBuffer& data, const String& mimeType)
 {
     ASSERT(RemoteImageDecoderAVF::canDecodeType(mimeType));
 
     if (!WebProcess::singleton().mediaPlaybackEnabled())
-        return nullptr;
+        return std::nullopt;
 
     auto sendResult = ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), 0);
+
     auto [imageDecoderIdentifier] = sendResult.takeReplyOr(std::nullopt);
+    return imageDecoderIdentifier;
+}
+
+RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+{
+    auto imageDecoderIdentifier = createRemoteImageDecoder(data, mimeType);
     if (!imageDecoderIdentifier)
         return nullptr;
 
-    auto remoteImageDecoder = RemoteImageDecoderAVF::create(*this, *imageDecoderIdentifier, data, mimeType);
-    m_remoteImageDecoders.add(*imageDecoderIdentifier, remoteImageDecoder);
+    RefPtr remoteImageDecoder = RemoteImageDecoderAVF::create(*this, *imageDecoderIdentifier, data, mimeType);
+    if (!remoteImageDecoder)
+        return nullptr;
 
+    m_remoteImageDecoders.add(*imageDecoderIdentifier, remoteImageDecoder);
     return remoteImageDecoder;
+}
+
+RefPtr<AsyncImageDecoder> RemoteImageDecoderAVFManager::createAsyncImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ImageDecoderClient& client)
+{
+    auto imageDecoderIdentifier = createRemoteImageDecoder(data, mimeType);
+    if (!imageDecoderIdentifier)
+        return nullptr;
+
+    RefPtr remoteImageDecoder = RemoteImageDecoderAVF::create(*this, *imageDecoderIdentifier, data, mimeType);
+    if (!remoteImageDecoder)
+        return nullptr;
+
+    m_remoteImageDecoders.add(*imageDecoderIdentifier, remoteImageDecoder.get());
+    return AsyncImageDecoder::create(remoteImageDecoder.releaseNonNull(), client);
 }
 
 void RemoteImageDecoderAVFManager::deleteRemoteImageDecoder(const ImageDecoderIdentifier& identifier)
@@ -115,6 +138,10 @@ void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)
         [weakThis = ThreadSafeWeakPtr { *this }](FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
             RefPtr protectedThis = weakThis.get();
             return protectedThis ? protectedThis->createImageDecoder(data, mimeType, alphaOption, gammaAndColorProfileOption) : nullptr;
+        },
+        [weakThis = ThreadSafeWeakPtr { *this }](FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ImageDecoderClient& client) {
+            RefPtr protectedThis = weakThis.get();
+            return protectedThis ? protectedThis->createAsyncImageDecoder(data, mimeType, alphaOption, gammaAndColorProfileOption, client) : nullptr;
         }
     });
 }
@@ -131,6 +158,6 @@ void RemoteImageDecoderAVFManager::encodedDataStatusChanged(const ImageDecoderId
     remoteImageDecoder->encodedDataStatusChanged(frameCount, size, hasTrack);
 }
 
-}
+} // namespace WebKit
 
 #endif

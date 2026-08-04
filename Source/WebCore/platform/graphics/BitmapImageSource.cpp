@@ -26,11 +26,11 @@
 #include "config.h"
 #include "BitmapImageSource.h"
 
+#include "AsyncImageDecoder.h"
 #include "BitmapImage.h"
 #include "BitmapImageDescriptor.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "ImageDecoder.h"
 #include "ImageFrameAnimator.h"
 #include "ImageObserver.h"
 #include "Logging.h"
@@ -52,7 +52,7 @@ BitmapImageSource::BitmapImageSource(BitmapImage& bitmapImage, AlphaOption alpha
 
 BitmapImageSource::~BitmapImageSource() = default;
 
-ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
+AsyncImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
 {
     if (m_decoder)
         return m_decoder.get();
@@ -60,7 +60,7 @@ ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
     if (!data)
         return nullptr;
 
-    m_decoder = ImageDecoder::create(*data, mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
+    m_decoder = AsyncImageDecoder::create(*data, mimeType(), m_alphaOption, m_gammaAndColorProfileOption, const_cast<BitmapImageSource&>(*this));
     if (!m_decoder)
         return nullptr;
 
@@ -89,13 +89,6 @@ ImageFrameAnimator* BitmapImageSource::frameAnimator() const
 
     lazyInitialize(m_frameAnimator, makeUniqueWithoutRefCountedCheck<ImageFrameAnimator>(const_cast<BitmapImageSource&>(*this)));
     return m_frameAnimator.get();
-}
-
-ImageFrameWorkQueue& BitmapImageSource::workQueue() const
-{
-    if (!m_workQueue)
-        m_workQueue = ImageFrameWorkQueue::create(const_cast<BitmapImageSource&>(*this));
-    return *m_workQueue;
 }
 
 void BitmapImageSource::encodedDataStatusChanged(EncodedDataStatus status)
@@ -150,7 +143,7 @@ void BitmapImageSource::destroyDecodedData(bool destroyAll)
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (destroyAll && isDecodingWorkQueueIdle())
+    if (destroyAll && isDecoderWorkQueueIdle())
         resetData();
     else
         clearFrameBufferCache();
@@ -212,7 +205,7 @@ void BitmapImageSource::destroyNativeImageAtIndex(unsigned index, std::optional<
 bool BitmapImageSource::canDestroyDecodedData() const
 {
     // Animated images should preserve the current frame till the next one finishes decoding.
-    if (!isDecodingWorkQueueIdle())
+    if (!isDecoderWorkQueueIdle())
         return false;
 
     // Small image should be decoded synchronously. Deleting its decoded frame is fine.
@@ -297,7 +290,7 @@ void BitmapImageSource::stopAnimation()
         return;
 
     m_frameAnimator->stopAnimation();
-    stopDecodingWorkQueue();
+    stopDecoderWorkQueue();
 }
 
 void BitmapImageSource::resetAnimation()
@@ -352,27 +345,27 @@ bool BitmapImageSource::isLargeForDecoding() const
     return sizeInBytes > (isAnimated() ? 100 * KB : 500 * KB);
 }
 
-bool BitmapImageSource::isDecodingWorkQueueIdle() const
+bool BitmapImageSource::isDecoderWorkQueueIdle() const
 {
-    return !m_workQueue || m_workQueue->isIdle();
+    return !m_decoder || m_decoder->isWorkQueueIdle();
 }
 
-void BitmapImageSource::stopDecodingWorkQueue()
+void BitmapImageSource::stopDecoderWorkQueue()
 {
     LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoding work queue will be stopped.", __FUNCTION__, this, sourceUTF8().data());
 
-    if (!m_workQueue || !m_workQueue->isIdle())
+    if (!m_decoder || !m_decoder->isWorkQueueIdle())
         return;
 
-    protect(m_workQueue)->stop();
+    protect(m_decoder)->stopWorkQueue();
 }
 
 bool BitmapImageSource::isPendingDecodingAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
 {
-    if (!m_workQueue)
+    if (!m_decoder)
         return false;
 
-    return protect(m_workQueue)->isPendingDecodingAtIndex(index, subsamplingLevel, options);
+    return protect(m_decoder)->isPendingDecodingAtIndex(index, subsamplingLevel, options);
 }
 
 std::optional<DecodingDestination> BitmapImageSource::compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
@@ -469,7 +462,7 @@ void BitmapImageSource::imageFrameDecodeAtIndexHasFinished(unsigned index, Subsa
 
     // Do not leave any decoding work queue idle for static images.
     if (animatingState == ImageAnimatingState::No)
-        stopDecodingWorkQueue();
+        stopDecoderWorkQueue();
 }
 
 unsigned BitmapImageSource::currentFrameIndex() const
@@ -540,7 +533,7 @@ const ImageFrame& BitmapImageSource::frameAtIndexCacheIfNeeded(unsigned index, c
 
     destroyNativeImageAtIndex(index);
 
-    // Retrieve the metadata from ImageDecoder if the ImageFrame isn't complete.
+    // Retrieve the metadata from AsyncImageDecoder if the ImageFrame isn't complete.
     cacheMetadataAtIndex(index, subsamplingLevelValue, { });
     return frame;
 }
@@ -550,9 +543,12 @@ DecodingStatus BitmapImageSource::requestNativeImageAtIndex(unsigned index, Subs
     if (index >= m_frames.size())
         return DecodingStatus::Invalid;
 
+    if (!m_decoder)
+        return DecodingStatus::Invalid;
+
     LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8().data(), index);
 
-    protect(workQueue())->dispatch({ index, subsamplingLevel, animatingState, options });
+    protect(m_decoder)->requestNativeImageAtIndex(index, subsamplingLevel, animatingState, options);
 
     if (m_clearDecoderAfterAsyncFrameRequestForTesting)
         resetData();
@@ -747,15 +743,16 @@ CString BitmapImageSource::sourceUTF8() const
 
 void BitmapImageSource::setMinimumDecodingDurationForTesting(Seconds duration)
 {
-    workQueue().setMinimumDecodingDurationForTesting(duration);
+    if (m_decoder)
+        m_decoder->setMinimumDecodingDurationForTesting(duration);
 }
 
 void BitmapImageSource::dump(TextStream& ts) const
 {
     ts.dumpProperty("source-utf8"_s, sourceUTF8());
 
-    if (m_workQueue)
-        protect(m_workQueue)->dump(ts);
+    if (m_decoder)
+        protect(m_decoder)->dump(ts);
 
     if (m_frameAnimator)
         m_frameAnimator->dump(ts);

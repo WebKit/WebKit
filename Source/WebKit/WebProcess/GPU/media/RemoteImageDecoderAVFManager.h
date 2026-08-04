@@ -30,6 +30,8 @@
 #include "Connection.h"
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
+#include <WebCore/AsyncImageDecoder.h>
+#include <WebCore/ImageDecoder.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/IntSize.h>
@@ -60,7 +62,10 @@ public:
 
 private:
     RemoteImageDecoderAVFManager();
+
+    std::optional<WebCore::ImageDecoderIdentifier> createRemoteImageDecoder(WebCore::FragmentedSharedBuffer&, const String& mimeType);
     RefPtr<RemoteImageDecoderAVF> createImageDecoder(WebCore::FragmentedSharedBuffer& data, const String& mimeType, WebCore::AlphaOption, WebCore::GammaAndColorProfileOption);
+    RefPtr<WebCore::AsyncImageDecoder> createAsyncImageDecoder(WebCore::FragmentedSharedBuffer& data, const String& mimeType, WebCore::AlphaOption, WebCore::GammaAndColorProfileOption, WebCore::ImageDecoderClient&);
 
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;

@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
+class AsyncImageDecoder;
 class BitmapImageSource;
 class GraphicsContext;
-class ImageDecoder;
 class ImageFrame;
 class NativeImage;
 
@@ -105,7 +105,7 @@ private:
     };
 
     template<typename MetadataType>
-    MetadataType imageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (ImageDecoder::*functor)() const) const;
+    MetadataType imageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (AsyncImageDecoder::*functor)() const) const;
 
     template<typename MetadataType>
     MetadataType primaryImageFrameMetadata(MetadataType& cachedValue, CachedFlag, MetadataType (ImageFrame::*functor)() const, const std::optional<SubsamplingLevel>& = std::nullopt) const;
