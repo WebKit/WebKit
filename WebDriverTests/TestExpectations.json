@@ -786,6 +786,36 @@
 
     "imported/w3c/webdriver/tests/classic/perform_actions/invalid.py": {
         "subtests": {
+            "test_input_source_action_sequence_pointer_parameters_pointer_type_invalid_type[None]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
+            },
+            "test_input_source_action_sequence_pointer_parameters_pointer_type_invalid_type[True]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
+            },
+            "test_input_source_action_sequence_pointer_parameters_pointer_type_invalid_type[42]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
+            },
+            "test_input_source_action_sequence_pointer_parameters_pointer_type_invalid_type[value3]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
+            },
+            "test_input_source_action_sequence_pointer_parameters_pointer_type_invalid_type[value4]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
+            },
+            "test_key_action_invalid_value[fa-keyUp]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_key_action_invalid_value[\\u0ba8\\u0bbfb-keyUp]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_key_action_invalid_value[\\u0ba8\\u0bbf\\u0ba8-keyUp]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_key_action_invalid_value[\\u1100\\u1161\\u11a8c-keyUp]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_wheel_action_scroll_origin_pointer_not_supported": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
             "test_pointer_action_common_properties_dimensions_invalid_type[None-width-pointerDown]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
             },
