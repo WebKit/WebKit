@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/attr-style-media-dynamic.html
@@ -40,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-quirk.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/cx-sibling-index-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/font-size-number-calc-crash.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/glyph-orientation-horizontal.historical.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/image-sizing-min-content-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/image-sizing-min-content.tentative-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/image-sizing-min-content.tentative.svg

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-embed-intrinsic-size-min-size-expected.html
@@ -37,6 +35,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-width-2-print.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-width-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-width-print.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-precent-dimensions-relayout-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-precent-dimensions-relayout-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-precent-dimensions-relayout.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-percent-dimensions-relayout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-percent-dimensions-relayout-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-percent-dimensions-relayout.html

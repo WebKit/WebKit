@@ -22,6 +22,8 @@ async_test(t => {
     const composite = document.getElementById("composite");
 
     window.addEventListener('load', t.step_func(() => {
+        // Pause before seeking so the timeline can't advance past 2s.
+        svg.pauseAnimations();
         svg.setCurrentTime(2);
 
         requestAnimationFrame(t.step_func_done(() => {

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedAngle-initial-values.html
@@ -72,6 +70,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-cap.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-ch.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-convertToSpecifiedUnits-font-change.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-convertToSpecifiedUnits-non-px-source.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-convertToSpecifiedUnits-percentage-directionality.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-convertToSpecifiedUnits-readonly.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-convertToSpecifiedUnits-reserialization.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-ic.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-lh.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px-with-context.html

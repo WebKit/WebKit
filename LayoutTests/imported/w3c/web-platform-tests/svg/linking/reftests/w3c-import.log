@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/WEB_FEATURES.yml
@@ -62,8 +60,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-full.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-img-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-img-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-no-natural-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-no-natural-size.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-nonsquare-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-nonsquare.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-viewbox-no-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-viewbox-no-size.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-zero-size.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-pixel-explicit-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-pixel-explicit.html

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/SVGAnimatedPathData-removed.svg
@@ -24,3 +22,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathData-malformed-d.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathData-normalize.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathData-segments.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-css-d.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-during-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-malformed.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-mutation-observer.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-overrides-d.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-plain-object.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-segment-types.html

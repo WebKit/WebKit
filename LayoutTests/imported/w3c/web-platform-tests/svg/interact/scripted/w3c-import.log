@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/WEB_FEATURES.yml
@@ -26,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/ellipse-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-events.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-tabindex-default-value.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-tabindex-invalid-value.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/log.py
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/module-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/module-02.html

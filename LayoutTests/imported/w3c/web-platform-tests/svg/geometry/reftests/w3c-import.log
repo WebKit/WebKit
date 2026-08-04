@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-001-expected.svg
@@ -24,6 +22,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-004.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-005-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-006-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-006-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-006.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-calc-dynamic-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-calc-dynamic-viewport-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-calc-dynamic-viewport.html
@@ -40,10 +41,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-005.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-006-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-006.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-007-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-007-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-007.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-calc-dynamic-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-calc-dynamic-viewport-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-calc-dynamic-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/not-rendered-200-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-expected.svg
@@ -57,6 +62,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-003.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-004-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-004.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-005-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-005-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-006-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-006-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-006.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-007-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-007-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-007-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-007.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-calc-dynamic-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-calc-dynamic-viewport-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-calc-dynamic-viewport.html

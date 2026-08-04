@@ -30,16 +30,6 @@ if (propertiesAreSupported(["x", "y", "width", "height"])) {
   }
 }
 
-if (propertiesAreSupported(["x", "y"])) {
-  for (let e of ["svg", "symbol", "use"]) {
-    test(function() {
-      for (let p of ["x", "y"]) {
-        assertPresentationAttributeIsSupported(e, p, "1", p);
-      }
-    }, `x and y presentation attributes supported on ${e} element`);
-  }
-}
-
 if (CSS.supports("r", "initial")) {
   test(function() {
     assertPresentationAttributeIsSupported("circle", "r", "1", "r");
@@ -101,16 +91,6 @@ if (CSS.supports("d", "initial")) {
   test(function() {
     assertPresentationAttributeIsNotSupported("g", "d", "M0,0 L1,1", "d");
   }, `d presentation attribute not supported on other elements`);
-}
-
-if (propertiesAreSupported(["width", "height"])) {
-  for (let e of ["symbol", "use"]) {
-    test(function() {
-      for (let p of ["width", "height"]) {
-        assertPresentationAttributeIsNotSupported(e, p, "1", p);
-      }
-    }, `width and height presentation attributes not supported on ${e} element`);
-  }
 }
 
 

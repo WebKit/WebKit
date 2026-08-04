@@ -10,10 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/SVGTransformList.consolidate-01.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/SVGTransformList.list-01.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/SVGTransformList.list-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/abspos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/abspos.html
@@ -38,8 +39,32 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-baseVal-change-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-change-repaint-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-change-repaint-001.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-invalid-attribute-baseval.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-scaling-text-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-scaling-text-001.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-synthesized-in-img-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-002-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-002-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-003-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-003-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-contexts-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-contexts-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-contexts.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-marker-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-marker-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-marker-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-marker.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-pattern-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-pattern-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-pattern.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-symbol-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-symbol-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-zero-disables-rendering-symbol.svg

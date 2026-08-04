@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/green-100x100.svg
@@ -19,6 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/green-red-200x200.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-200x100.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-200x200.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-no-natural-size.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-viewbox-no-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-viewbox-only.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-viewbox-width.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-zero-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/squares.svg

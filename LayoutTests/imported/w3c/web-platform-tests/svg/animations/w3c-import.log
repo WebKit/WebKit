@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/WEB_FEATURES.yml
@@ -233,6 +231,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svginteger-animation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svginteger-animation-invalid-value-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgintegeroptionalinteger-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgintegeroptionalinteger-animation-invalid-value-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglength-additive-by-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglength-additive-by-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglength-additive-by-3.html
@@ -272,26 +271,36 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-4.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-5.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-invalid-value-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-invalid-value-3.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-unitType.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-3.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-4.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-animation-invalid-value-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumber-to-animation-valid-value-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberlist-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberlist-animation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberlist-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberlist-animation-invalid-value-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberlist-animation-invalid-value-3.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberoptionalnumber-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberoptionalnumber-animation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberoptionalnumber-animation-3.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberoptionalnumber-animation-4.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberoptionalnumber-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgnumberoptionalnumber-animation-invalid-value-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpath-animation-1.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpath-animation-2.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpath-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpath-animation-invalid-value-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpointlist-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpointlist-animation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpointlist-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpointlist-animation-invalid-value-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgpointlist-animation-invalid-value-3.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgrect-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgrect-animation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgrect-animation-invalid-value-1.html
@@ -299,6 +308,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgstring-animation-fallback-to-discrete.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransform-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransform-animation-discrete.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransformlist-animation-invalid-value-1.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransformlist-animation-invalid-value-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransformlist-animation-invalid-value-3.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-01.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-02-expected.html
@@ -306,6 +318,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switching-animated-target-to-unknown-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-escaped-dots.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-remove-add-while-running.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbases-with-tangled-dependencies.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-expected.html

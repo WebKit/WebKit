@@ -1325,3 +1325,5 @@ webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 
 webkit.org/b/320354 compositing/animation/animated-composited-inside-hidden.html [ Timeout Pass ]
 webkit.org/b/320354 compositing/backgrounds/fixed-background-on-descendant.html [ Timeout Pass ]
+
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]

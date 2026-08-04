@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/OWNERS
@@ -40,6 +38,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/foreignObject-overflow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/foreignObject-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/inheritance.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/inline-svg-resize-viewport-dependent-mask-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/inline-svg-resize-viewport-dependent-mask-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/inline-svg-resize-viewport-dependent-mask.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/inner-outer-svg-overflow-auto-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/inner-outer-svg-overflow-auto-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/inner-outer-svg-overflow-auto.html

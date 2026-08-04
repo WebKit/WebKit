@@ -4,9 +4,6 @@ PASS cx and cy presentation attributes supported on ellipse element
 PASS x, y, width, and height presentation attributes supported on foreignObject element
 PASS x, y, width, and height presentation attributes supported on image element
 PASS x, y, width, and height presentation attributes supported on rect element
-PASS x and y presentation attributes supported on svg element
-PASS x and y presentation attributes supported on symbol element
-PASS x and y presentation attributes supported on use element
 PASS r presentation attribute supported on circle element
 PASS rx and ry presentation attributes supported on ellipse element
 PASS rx and ry presentation attributes supported on rect element
@@ -16,8 +13,6 @@ PASS x, y, width, and height presentation attributes not supported on other elem
 PASS r presentation attribute not supported on other elements
 PASS rx and ry presentation attributes not supported on other elements
 PASS d presentation attribute not supported on other elements
-PASS width and height presentation attributes not supported on symbol element
-PASS width and height presentation attributes not supported on use element
 PASS fill presentation attribute not supported on animate
 PASS fill presentation attribute not supported on animateMotion
 PASS fill presentation attribute not supported on animateTransform

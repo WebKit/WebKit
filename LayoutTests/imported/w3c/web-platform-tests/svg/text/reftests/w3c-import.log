@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/WEB_FEATURES.yml
@@ -151,6 +149,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textLength-list-y-spacingAndGlyphs-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textLength-list-y-spacingAndGlyphs-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textLength-list-y-spacingAndGlyphs.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-combining-marks-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-combining-marks-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-combining-marks.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-letter-spacing-01-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-letter-spacing-01-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-letter-spacing-01.svg

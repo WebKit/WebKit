@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/WEB_FEATURES.yml
@@ -21,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/currentScale.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/gradient-in-symbol-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/gradient-in-symbol.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/image-symbol-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/image-symbol.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-css-transform-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-css-transform.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-rotate-transform-expected.svg
@@ -79,6 +79,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-with-revalidation.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-svg-resource-no-fragment-id-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-svg-resource-no-fragment-id.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-use-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-use.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.svg

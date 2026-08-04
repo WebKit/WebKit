@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/green-100x100.html
@@ -20,3 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/inner-svg-transform-and-viewbox-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/inner-svg-transform-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/outer-svg-transform-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/symbol-not-rendered.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/use-external-use-ref.svg
