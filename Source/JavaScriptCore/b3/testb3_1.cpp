@@ -1495,6 +1495,7 @@ void run(const TestConfig* config)
         RUN(testVectorXor3());
         RUN(testVectorShlImmediate());
         RUN(testVectorShrImmediate());
+        RUN(testVectorZipWithZeroIsZeroExtend());
         RUN(testVectorUnzipEven());
         RUN(testVectorUnzipOdd());
         RUN(testVectorZipLower());

@@ -1567,6 +1567,7 @@ void testVectorShlByOne();
 // SIMD vector shift by immediate
 void testVectorShlImmediate();
 void testVectorShrImmediate();
+void testVectorZipWithZeroIsZeroExtend();
 
 // SIMD shuffle → canonical instruction strength reduction
 void testVectorSwizzleToUnzipEven();
