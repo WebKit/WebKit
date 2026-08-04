@@ -39,6 +39,11 @@
 #include "SkiaRecordingResult.h"
 #endif
 
+#if USE(CAIRO)
+#include "CairoPaintingContext.h"
+#include "CairoPaintingEngine.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CoordinatedBackingStoreProxy);
@@ -119,9 +124,10 @@ void CoordinatedBackingStoreProxy::setAffectedByTransformAnimation(bool affected
     }
 }
 
-OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
 {
-    assertIsHeld(layer.lock());
+    assertIsMainThread();
+    ASSERT(layer.owner());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
@@ -152,9 +158,11 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     if (dirtyTilesCount) {
         WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %u", dirtyTilesCount);
 
+        auto& paintingEngine = layer.client().paintingEngine();
+
 #if USE(SKIA)
         // Record only once the whole layer.
-        auto recording = layer.record(tileDirtyRectUnion, dirtyTilesCount);
+        auto recording = paintingEngine.record(*layer.owner(), tileDirtyRectUnion, contentsOpaque, contentsScale, dirtyTilesCount);
 #endif
 
         unsigned dirtyTileIndex = 0;
@@ -166,9 +174,13 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
                 tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
 #if USE(SKIA)
-            auto buffer = layer.replay(recording.copyRef(), tile.rect, tile.dirtyRect);
+            auto buffer = paintingEngine.replay(*layer.owner(), recording.copyRef(), tile.rect, tile.dirtyRect);
 #else
-            auto buffer = layer.paint(tile.dirtyRect);
+            FloatRect scaledDirtyRect(tile.dirtyRect);
+            scaledDirtyRect.scale(1 / contentsScale);
+
+            auto buffer = CoordinatedUnacceleratedTileBuffer::create(tile.dirtyRect.size(), contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
+            paintingEngine.paint(*layer.owner(), buffer.get(), tile.dirtyRect, enclosingIntRect(scaledDirtyRect), IntRect { { }, tile.dirtyRect.size() }, contentsScale);
 #endif
 
             IntRect updateRect(tile.dirtyRect);
