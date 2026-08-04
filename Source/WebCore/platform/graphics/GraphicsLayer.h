@@ -436,8 +436,9 @@ public:
     virtual void setShowRepaintCounter(bool show) { m_showRepaintCounter = show; }
     bool isShowingRepaintCounter() const { return m_showRepaintCounter; }
 
-    virtual void setShowFrameProcessBorders(bool show) { m_showFrameProcessBorders = show; }
+    virtual void setShowFrameProcessBorders(bool show, unsigned frameDepth = 0) { m_showFrameProcessBorders = show; m_frameProcessIndicatorDepth = frameDepth; }
     bool isShowingFrameProcessBorders() const { return m_showFrameProcessBorders; }
+    unsigned frameProcessIndicatorDepth() const { return m_frameProcessIndicatorDepth; }
 
     // FIXME: this is really a paint count.
     int repaintCount() const { return m_repaintCount; }
@@ -672,7 +673,7 @@ protected:
 #endif
 
     int m_repaintCount { 0 };
-
+    unsigned m_frameProcessIndicatorDepth { 0 };
     Vector<Ref<GraphicsLayer>> m_children;
     WeakPtr<GraphicsLayer> m_parent;
 

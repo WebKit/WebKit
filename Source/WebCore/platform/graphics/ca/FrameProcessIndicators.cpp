@@ -36,19 +36,21 @@
 #include "TextRun.h"
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 static constexpr float padding = 3;
 static constexpr float fontSize = 12;
 static constexpr float borderWidth = 4;
+static constexpr float depthStaggerStep = 12;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameProcessIndicators);
 
 FrameProcessIndicators::FrameProcessIndicators(GraphicsLayerCA& graphicsLayer)
     : m_graphicsLayer(graphicsLayer)
     , m_backgroundColor(borderColor())
-    , m_text(String::number(getCurrentProcessID()))
+    , m_text(makeString("pid="_s, getCurrentProcessID()))
     , m_borderLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_indicatorLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeWebLayer, this))
 {
@@ -84,7 +86,11 @@ void FrameProcessIndicators::updateGeometry(const FloatRect& bounds)
     auto location = bounds.location();
     m_borderLayer->setPosition(location);
     m_borderLayer->setBounds({ { }, bounds.size() });
-    m_indicatorLayer->setPosition({ bounds.maxX() - m_indicatorLayer->bounds().width(), location.y(), 1 });
+
+    // Stagger indicators by frame nesting depth so co-located frames (e.g. a mainframe and an
+    // iframe both anchored at the page origin) don't draw their labels directly on top of each other.
+    float stagger = m_graphicsLayer ? m_graphicsLayer->frameProcessIndicatorDepth() * depthStaggerStep : 0;
+    m_indicatorLayer->setPosition({ location.x() + stagger, location.y() + stagger, 1 });
 }
 
 void FrameProcessIndicators::updateContentsScale(float contentsScale)
