@@ -265,6 +265,9 @@ protected:
     RefPtr<MediaSessionManagerInterface> mediaSessionManagerIfExists() const;
     RefPtr<MediaSessionManagerInterface> mediaSessionManager() const;
 
+    // ActiveDOMObject.
+    void stop() override;
+
 protected:
     // Only accessed when the graph lock is held.
     const Vector<AudioConnectionRef<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
@@ -283,9 +286,6 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
-
-    // ActiveDOMObject.
-    void stop() override;
 
     // When the context goes away, there might still be some sources which haven't finished playing.
     // Make sure to dereference them here.
