@@ -29,7 +29,10 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 
@@ -81,6 +84,36 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, CSS::PropertyPar
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
     return consumeTextEdge(range);
+}
+
+RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'initial-letter'> = normal | <number [1,∞]> <integer [1,∞]> | <number [1,∞]> && [ drop | raise ]?
+    // https://drafts.csswg.org/css-inline-3/#propdef-initial-letter
+
+    if (range.peek().id() == CSSValueNormal)
+        return consumeIdent(range);
+
+    // The `drop`/`raise` keyword may precede the size (e.g. `drop 3`).
+    if (auto keyword = consumeIdent<CSSValueDrop, CSSValueRaise>(range)) {
+        auto size = CSSPrimitiveValueResolver<CSS::Number<CSS::Positive>>::consumeAndResolve(range, state);
+        if (!size)
+            return nullptr;
+        return CSSValuePair::create(size.releaseNonNull(), keyword.releaseNonNull());
+    }
+
+    auto size = CSSPrimitiveValueResolver<CSS::Number<CSS::Positive>>::consumeAndResolve(range, state);
+    if (!size)
+        return nullptr;
+
+    // The size may be followed by either a `drop`/`raise` keyword or an integer sink.
+    if (auto keyword = consumeIdent<CSSValueDrop, CSSValueRaise>(range))
+        return CSSValuePair::create(size.releaseNonNull(), keyword.releaseNonNull());
+
+    if (auto sink = CSSPrimitiveValueResolver<CSS::Integer<CSS::Positive>>::consumeAndResolve(range, state))
+        return CSSValuePair::create(size.releaseNonNull(), sink.releaseNonNull());
+
+    return size;
 }
 
 } // namespace CSSPropertyParserHelpers

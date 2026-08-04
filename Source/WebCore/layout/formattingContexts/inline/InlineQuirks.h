@@ -42,6 +42,9 @@ public:
     bool inlineBoxAffectsLineBox(const InlineLevelBox&) const;
     static bool NODELETE lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const Style::ComputedStyle& lineBoxStyle) const;
+    // Additional block-axis offset for an initial letter caused by the first line's over-annotations
+    // (e.g. over ruby), beyond the half-leading already accounted for by initialLetterAlignmentOffset().
+    std::optional<LayoutUnit> initialLetterAnnotationOffset(const LineBox&, const Box& floatBox, const Style::ComputedStyle& lineBoxStyle, InlineLayoutUnit rootInlineBoxTrimShift) const;
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
     std::optional<InlineLayoutUnit> adjustmentForLineGridLineSnap(const LineBox&) const;
     bool shouldCollapseLineBoxHeight(const Line::RunList&, size_t numberOfOutsideListMarkers) const;

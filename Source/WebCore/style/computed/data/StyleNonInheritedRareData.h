@@ -40,6 +40,7 @@
 #include <WebCore/StyleCounterReset.h>
 #include <WebCore/StyleCounterSet.h>
 #include <WebCore/StyleGapGutter.h>
+#include <WebCore/StyleInitialLetter.h>
 #include <WebCore/StyleMarginTrim.h>
 #include <WebCore/StyleMaskBorder.h>
 #include <WebCore/StyleMaximumLines.h>
@@ -129,7 +130,8 @@ public:
 
     TouchAction touchAction;
 
-    WebkitInitialLetter initialLetter;
+    InitialLetter initialLetter;
+    WebkitInitialLetter webkitInitialLetter;
 
     DataRef<MarqueeData> marquee;
     DataRef<BackdropFilterData> backdropFilter;

@@ -47,7 +47,7 @@ public:
     static InlineLayoutUnit applyRubyAlignOnAnnotationBox(Line&, InlineLayoutUnit spaceToDistribute, InlineFormattingContext&);
 
     // Line box building
-    static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&);
+    static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&, bool isLastLine, InlineLayoutUnit spaceAboveFirstLine);
 
     // Display content building
     static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const InlineDisplay::Box& baseDisplayBox, InlineLayoutUnit baseContentWidth, InlineFormattingContext&);
@@ -65,7 +65,7 @@ public:
 
 private:
     using MaximumLayoutBoundsStretchMap = HashMap<const InlineLevelBox*, InlineLevelBox::AscentAndDescent>;
-    static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, MaximumLayoutBoundsStretchMap&, const InlineFormattingContext&);
+    static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, MaximumLayoutBoundsStretchMap&, const InlineFormattingContext&, bool isLastLine, InlineLayoutUnit spaceAboveFirstLine);
 
     static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line&, HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineFormattingContext&);
     static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, std::span<InlineDisplay::Box>, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext&);

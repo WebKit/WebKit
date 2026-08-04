@@ -2369,7 +2369,9 @@ LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutU
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, childLogicalHeight))
             return logicalOffset;
         auto result = logicalOffset + remainingLogicalHeight;
-        bool isInitialLetter = child.isFloating() && child.style().pseudoElementType() == PseudoElementType::FirstLetter && child.style().initialLetter().drop() > 0;
+        auto& childStyle = child.style();
+        auto initialLetterDrop = childStyle.usedInitialLetterDrop();
+        bool isInitialLetter = child.isFloating() && childStyle.pseudoElementType() == PseudoElementType::FirstLetter && initialLetterDrop > 0;
         if (isInitialLetter) {
             // Increase our logical height to ensure that lines all get pushed along with the letter.
             setLogicalHeight(logicalOffset + remainingLogicalHeight);
@@ -2853,7 +2855,8 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
     LayoutUnit floatLogicalLeft;
 
     bool insideFragmentedFlow = enclosingFragmentedFlow();
-    bool isInitialLetter = childBox.style().pseudoElementType() == PseudoElementType::FirstLetter && childBox.style().initialLetter().drop() > 0;
+    auto initialLetterDrop = childBox.style().usedInitialLetterDrop();
+    bool isInitialLetter = childBox.style().pseudoElementType() == PseudoElementType::FirstLetter && initialLetterDrop > 0;
 
     if (isInitialLetter) {
         if (auto lowestInitialLetterLogicalBottom = this->lowestInitialLetterLogicalBottom()) {
@@ -2931,7 +2934,7 @@ void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUni
 
     // For sunken and raised caps, we have to make some adjustments. Test if we're sunken or raised (dropHeightDelta will be
     // positive for raised and negative for sunken).
-    int dropHeightDelta = childBox.style().initialLetter().height() - childBox.style().initialLetter().drop();
+    int dropHeightDelta = childBox.style().usedInitialLetterHeight() - childBox.style().usedInitialLetterDrop();
 
     // If we're sunken, the float needs to shift down but lines still need to avoid it. In order to do that we increase the float's margin.
     if (dropHeightDelta < 0)
@@ -3130,7 +3133,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     for (auto& floatingObject : m_floatingObjects->set()) {
         if (!floatingObject->renderer())
             continue;
-        if (floatingObject->isPlaced() && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter && floatingObject->renderer()->style().initialLetter().drop() > 0)
+        if (floatingObject->isPlaced() && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter && floatingObject->renderer()->style().usedInitialLetterDrop() > 0)
             lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), logicalBottomForFloat(*floatingObject));
     }
     return lowestFloatBottom;

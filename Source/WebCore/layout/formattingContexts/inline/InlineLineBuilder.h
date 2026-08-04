@@ -108,6 +108,7 @@ private:
     Vector<InlineItem, 1> m_lineSpanningInlineBoxes;
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
+    InlineLayoutUnit m_initialLetterStandardExtraClearGap { 0.f };
     TextSpacingContext m_textSpacingContext { };
 };
 

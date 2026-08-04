@@ -121,7 +121,41 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
     };
     auto& floatBoxGeometry = formattingContext().geometryForBox(floatBox);
     auto fontHeight = primaryFontMetrics.ascent() + primaryFontMetrics.descent();
-    return LayoutUnit { primaryFontMetrics.ascent(FontBaseline::Alphabetic) + (lineHeight() - fontHeight) / 2 - primaryFontMetrics.capHeight().value_or(0.f) - floatBoxGeometry.marginBorderAndPaddingBefore() };
+    // Subtract only border+padding (not margin): the offset aligns the letter's cap below its own
+    // border/padding, while the margin-before is applied separately when the float is positioned.
+    // Subtracting the margin here would cancel that and drop margin-top on the floor.
+    auto alignmentOffset = primaryFontMetrics.ascent(FontBaseline::Alphabetic) + (lineHeight() - fontHeight) / 2 - primaryFontMetrics.capHeight().value_or(0.f) - floatBoxGeometry.borderAndPaddingBefore();
+    // In vertical typographic modes the base glyphs are centered on the central (ideographic) baseline
+    // rather than sitting on the alphabetic baseline, so align the initial letter there too by shifting
+    // the cap-alignment offset by the alphabetic-to-central baseline delta.
+    if (lineBoxStyle.writingMode().isVerticalTypographic()) {
+        alignmentOffset += primaryFontMetrics.ascent(FontBaseline::Alphabetic)
+            - primaryFontMetrics.ascent(FontBaseline::Ideographic);
+    }
+    return LayoutUnit { alignmentOffset };
+}
+
+std::optional<LayoutUnit> InlineQuirks::initialLetterAnnotationOffset(const LineBox& lineBox, const Box& floatBox, const Style::ComputedStyle& lineBoxStyle, InlineLayoutUnit rootInlineBoxTrimShift) const
+{
+    ASSERT(floatBox.isFloatingPositioned());
+    if (!floatBox.style().lineBoxContain().contains(Style::WebkitLineBoxContainValue::InitialLetter))
+        return { };
+    // initialLetterAlignmentOffset() aligns the initial letter to the first line's cap using the
+    // primary font metrics, which already include the normal half-leading. When the first line has
+    // over-annotations (e.g. over ruby), the base content (root inline box) is pushed further down;
+    // return that extra amount so the initial letter tracks the base content.
+    auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
+    auto lineHeight = [&]() -> InlineLayoutUnit {
+        if (lineBoxStyle.lineHeight().isNormal())
+            return primaryFontMetrics.ascent(FontBaseline::Alphabetic) + primaryFontMetrics.descent(FontBaseline::Alphabetic);
+        return lineBoxStyle.computedLineHeight();
+    };
+    auto fontHeight = primaryFontMetrics.ascent() + primaryFontMetrics.descent();
+    auto halfLeading = (lineHeight() - fontHeight) / 2;
+    // text-box-trim moves the root inline box up by rootInlineBoxTrimShift; add it back so this measures
+    // only the over-annotation ascent and does not double-count the trim (which is applied separately).
+    auto rootInlineBoxTop = lineBox.logicalRectForRootInlineBox().top() + rootInlineBoxTrimShift;
+    return LayoutUnit { rootInlineBoxTop - halfLeading };
 }
 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const

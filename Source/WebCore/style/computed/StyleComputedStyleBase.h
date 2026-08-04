@@ -279,6 +279,7 @@ struct HyphenateCharacter;
 struct HyphenateLimitEdge;
 struct HyphenateLimitLines;
 struct ImageOrNone;
+struct InitialLetter;
 struct InsetEdge;
 struct JustifyContent;
 struct JustifyItems;

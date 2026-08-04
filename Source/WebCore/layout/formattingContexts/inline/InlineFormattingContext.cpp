@@ -325,7 +325,9 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
         auto lineBox = canUseSimplifiedDisplayContentBuild ? LineBoxBuilder { *this, lineLayoutResult }.buildForRootInlineBoxOnly(lineIndex) : LineBoxBuilder { *this, lineLayoutResult }.build(lineIndex);
         auto lineLogicalRect = createDisplayContentForInlineContent(lineBox, lineLayoutResult, constraints, layoutResult->displayContent, canUseSimplifiedDisplayContentBuild);
         if (!canUseSimplifiedDisplayContentBuild) {
-            updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
+            // The root inline box was shifted up by the full text-box-trim amount, which is the float's
+            // firstLineStartTrim plus the standard initial-letter's content-only extra clear-gap line.
+            updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats, lineBox, lineLayoutResult.firstLineRootInlineBoxTrimShift);
             updateLayoutStateWithLineLayoutResult(lineLayoutResult, lineLogicalRect, floatingContext);
         }
         if (hasContentfulInFlowContent) {
@@ -411,7 +413,7 @@ void InlineFormattingContext::updateLayoutStateWithLineLayoutResult(const LineLa
     layoutState.setFirstLineStartTrimForInitialLetter(lineLayoutResult.firstLineStartTrim);
 }
 
-void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats)
+void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats, const LineBox& lineBox, InlineLayoutUnit rootInlineBoxTrimShift)
 {
     for (auto& floatItem : placedFloats) {
         if (!floatItem.layoutBox()) {
@@ -419,9 +421,25 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
             // We should not be placing intrusive floats coming from parent BFC.
             continue;
         }
-        auto& boxGeometry = geometryForBox(*floatItem.layoutBox());
+
+        CheckedRef floatBox = *floatItem.layoutBox();
+        auto& boxGeometry = geometryForBox(floatBox);
         auto usedGeometry = floatItem.boxGeometry();
-        boxGeometry.setTopLeft(BoxGeometry::borderBoxTopLeft(usedGeometry));
+        auto borderBoxTopLeft = BoxGeometry::borderBoxTopLeft(usedGeometry);
+
+        // An initial letter's block position was computed before the line box's vertical geometry was
+        // known. Now that it is, shift the letter down by the first line's over-annotation ascent (e.g.
+        // over ruby) so it tracks the base content.
+        auto isInitialLetter = floatBox->style().pseudoElementType() == PseudoElementType::FirstLetter && floatBox->style().usedInitialLetterDrop() > 0;
+        if (isInitialLetter) {
+            if (auto annotationOffset = quirks().initialLetterAnnotationOffset(lineBox, floatBox, root().style(), rootInlineBoxTrimShift)) {
+                borderBoxTopLeft.setY(borderBoxTopLeft.y() + *annotationOffset);
+                // The float was placed (and later lines wrapped) before this offset was known. Shift the
+                // float's exclusion by the same amount so subsequent lines wrap against its final position.
+                layoutState().placedFloats().moveFloatVertically(floatBox, *annotationOffset);
+            }
+        }
+        boxGeometry.setTopLeft(borderBoxTopLeft);
         // Adopt trimmed inline direction margin.
         boxGeometry.setHorizontalMargin(usedGeometry.horizontalMargin());
     }
