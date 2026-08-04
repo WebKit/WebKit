@@ -409,7 +409,11 @@ bool JSBoundFunction::canSkipNameAndLengthMaterialization(JSGlobalObject* global
         return true;
     if (structure == globalObject->strictFunctionStructure(true) || structure == globalObject->strictFunctionStructure(false))
         return true;
+    if (structure == globalObject->strictMethodStructure(true) || structure == globalObject->strictMethodStructure(false))
+        return true;
     if (structure == globalObject->sloppyFunctionStructure(true) || structure == globalObject->sloppyFunctionStructure(false))
+        return true;
+    if (structure == globalObject->sloppyMethodStructure(true) || structure == globalObject->sloppyMethodStructure(false))
         return true;
     // Plain host functions now use the lazy reify path for length/name (mirroring JS function and
     // builtin behavior), so an untransitioned hostFunctionStructure means length/name are still
