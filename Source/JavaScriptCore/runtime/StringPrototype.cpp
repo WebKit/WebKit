@@ -1791,6 +1791,8 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLocaleCompare, (JSGlobalObject* globalOb
     IntlCollator* collator = nullptr;
     if (locales.isUndefined() && options.isUndefined())
         collator = globalObject->defaultCollator();
+    else if (locales.isString() && options.isUndefined())
+        collator = globalObject->cachedLocaleCompareCollator(asString(locales));
     else {
         collator = IntlCollator::create(vm, globalObject->collatorStructure());
         collator->initializeCollator(globalObject, locales, options);
