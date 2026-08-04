@@ -572,15 +572,25 @@ sub determineArchitecture
             $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
             my @compiler_machine = split('-', `$compiler -dumpmachine`);
             $architecture = $compiler_machine[0];
-        } elsif (open my $cmake_sysinfo, "cmake --system-information |") {
-            while (<$cmake_sysinfo>) {
-                next unless index($_, 'CMAKE_SYSTEM_PROCESSOR') == 0;
-                if (/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
-                    $architecture = $1;
-                    last;
-                }
+        } else {
+            my $prefix = "";
+            # This gets called from argumentsForConfiguration() which needs to resolve the target architecture
+            # before entering into the cross-toolchain-env, so to achieve that we call the cross-target cmake.
+            if (shouldBuildForCrossTarget()) {
+                $prefix = sprintf("%s --cross-target=%s --cross-toolchain-run-cmd",
+                            File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper"),
+                            getCrossTargetName());
             }
-            close $cmake_sysinfo;
+            if (open my $cmake_sysinfo, "$prefix cmake --system-information |") {
+                while (<$cmake_sysinfo>) {
+                    next unless index($_, 'CMAKE_SYSTEM_PROCESSOR') == 0;
+                    if (/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
+                        $architecture = $1;
+                        last;
+                    }
+                }
+                close $cmake_sysinfo;
+            }
         }
     }
 
