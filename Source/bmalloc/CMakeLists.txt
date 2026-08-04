@@ -578,6 +578,7 @@ set(bmalloc_PUBLIC_HEADERS
 set(bmalloc_PRIVATE_HEADERS
     bmalloc/ProcessCheck.h
     bmalloc/ScopeExit.h
+    bmalloc/SpinBackoff.h
 
     libpas/src/libpas/hotbit_heap_inlines.h
     libpas/src/libpas/iso_heap_inlines.h

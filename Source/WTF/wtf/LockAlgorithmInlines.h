@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +30,8 @@
 #include <wtf/LockAlgorithm.h>
 #include <wtf/ParkingLot.h>
 #include <wtf/Platform.h>
+#include <wtf/SpinBackoff.h>
 #include <wtf/Threading.h>
-#include <wtf/simde/simde.h>
 
 // It's a good idea to avoid including this header in too many places, so that it's possible to change
 // the lock algorithm slow path without recompiling the world. Right now this should be included in two
@@ -41,78 +42,7 @@ namespace WTF {
 template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
 void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<LockType>& lock)
 {
-    // These values were selected empirically.
-    // The balancing act here lies in speeding up the "semi-contended" case
-    // without too strongly disadvantaging the "heavily-contended" case
-    // (the uncontended case of course never hits the spinloop).
-    // There are a few variables to consider:
-    //
-    //   * Time-to-park: the total CPU time of a full spinloop
-    //     ~= spinLimit * (nopCount + 1/yieldInterval)
-    //     Increases with spinLimit, nopCount; decreases with yieldInterval.
-    //     Higher is better (to a point) for semi-contended,
-    //     but significantly worse for heavily-contended, as we pay
-    //     the full cost of the spinloop on ~every attempt to acquire.
-    //
-    //   * Niceness: (vaguely) how often we yield vs. run on core
-    //     ~= 1 / (yieldInterval * nopCount)
-    //     Higher is better for heavily-contended, as it means that high-
-    //     priority threads will 'make room' for other threads as they
-    //     spin, rather than taking up high-priority CPU time on a spinloop.
-    //     However, it's worse for the semi-contended case, as when we
-    //     do acquire the spinlock the priority depression can last
-    //     for some time, meaning it could take a few quanta to get
-    //     back to 'full speed'.
-    //
-    //   * Poll-rate: the rate at which we read the atomic lock bit
-    //     ~= 1 / (nopCount + 1/yieldInterval)
-    //     This affects performance in two different ways.
-    //     The first is that, if the lock does become available, we
-    //     may be in the middle of a nop-spin, and therefore have to
-    //     execute the remaining nops before we check again.
-    //     Therefore, in the semi-contended case we want a higher frequency.
-    //     However, the higher the frequency, the more often we hammer the
-    //     lock's cache line. In sparse contention regimes this is relatively
-    //     OK: e.g. if there's only a single waiter, then the cache-line
-    //     stays local. With multiple waiters, however, then the line
-    //     can ping between cores, hurting performance.
-    //     Therefore, in the heavily-contended case it's better for this
-    //     to be lower.
-    //
-    // In general, the gains for the semi-contended case are modest, but
-    // show up across the board. On the flipside, hits to the heavily-
-    // contended case tend to be localized to a few scenarios, but have
-    // a very large effect-size; heavy contention is very rare
-    // (by design, from how WebKit uses locks), but very sensitive
-    // because spinlocks are poorly-adapted for that regime. E.g.
-    // omitting sched-yield entirely can more than double the runtime
-    // of certain benchmarks!
-    //
-    // N.b.: there are of course more considerations than just the above three.
-    // Fairness suffers as time-to-park increases, while all three can have
-    // deleterious effects on the rest of the system (e.g. scheduler churn,
-    // wasting memory bandwidth, etc.) depending on the details. But since
-    // those factors are harder to frame neatly I'm leaving them to this
-    // appendix.
-#if CPU(ARM64) && OS(MACOS)
-    static constexpr unsigned spinLimit = 80;
-    static constexpr unsigned nopCount = 8;
-    static constexpr unsigned yieldInterval = 16;
-#elif CPU(ARM64) && OS(IOS_FAMILY)
-    static constexpr unsigned spinLimit = 40;
-    static constexpr unsigned nopCount = 16;
-    static constexpr unsigned yieldInterval = 4;
-#else
-    static constexpr unsigned spinLimit = 40;
-    // The tuning necessary to determine the optimal values
-    // for other platforms has not yet been done, so we
-    // retain the old sched-yield loop to avoid
-    // possible regressions.
-    static constexpr unsigned nopCount = 0;
-    static constexpr unsigned yieldInterval = 1;
-#endif
-    
-    unsigned spinCount = 0;
+    SpinBackoff backoff;
     
     for (;;) {
         LockType currentValue = lock.load();
@@ -125,18 +55,8 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<Lo
         }
 
         // If there is nobody parked and we haven't spun too much, we can just try to spin around.
-        if (!(currentValue & hasParkedBit) && spinCount < spinLimit) {
-            spinCount++;
-            // It's important that we check this after incrementing,
-            // as we want to avoid yielding for the first few spins.
-            // This makes it more likely that we can acquire the lock
-            // without having depressed our own priority beforehand.
-            if (!(spinCount % yieldInterval))
-                Thread::yield();
-            for (unsigned i = 0; i < nopCount; i++)
-                simde_mm_pause();
+        if (!(currentValue & hasParkedBit) && !backoff.shouldParkAfterSpinOnce())
             continue;
-        }
 
         // Need to park. We do this by setting the parked bit first, and then parking. We spin around
         // if the parked bit wasn't set and we failed at setting it.
