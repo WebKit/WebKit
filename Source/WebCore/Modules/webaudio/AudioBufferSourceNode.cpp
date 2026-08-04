@@ -219,8 +219,11 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
 
     // Avoid converting from time to sample-frames twice by computing
     // the grain end time first before computing the sample frame.
+    // When looping, playback is bounded by the loop points below (and stopped
+    // via m_endTime for a grain), so the grain duration must not clamp maxFrame
+    // here; otherwise a loopStart past the grain end collapses the loop range.
     unsigned maxFrame;
-    if (m_isGrain)
+    if (m_isGrain && !m_isLooping)
         maxFrame = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, bufferSampleRate);
     else
         maxFrame = bufferLength;
