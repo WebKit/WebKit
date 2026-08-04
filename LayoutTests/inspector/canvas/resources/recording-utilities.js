@@ -172,7 +172,7 @@ TestPage.registerInitializer(() => {
         CanvasAgent.startRecording(canvas.identifier, frameCount, memoryLimit).catch(reject);
     };
 
-    window.consoleRecord = function(type, resolve, reject) {
+    window.consoleRecord = function(type, resolve, reject, {actionCount = 1} = {}) {
         let canvas = getCanvas(type);
         if (!canvas) {
             reject(`Missing canvas with type "${type}".`);
@@ -188,7 +188,10 @@ TestPage.registerInitializer(() => {
 
             InspectorTest.expectEqual(recording.displayName, "TEST", "The recording should have the name \"TEST\".");
             InspectorTest.expectEqual(recording.frames.length, 1, "The recording should have one frame.");
-            InspectorTest.expectEqual(recording.frames[0].actions.length, 1, "The first frame should have one action.");
+            if (actionCount === 1)
+                InspectorTest.expectEqual(recording.frames[0].actions.length, 1, "The first frame should have one action.");
+            else
+                InspectorTest.expectEqual(recording.frames[0].actions.length, actionCount, `The first frame should have ${actionCount} actions.`);
         }).then(resolve, reject);
 
         InspectorTest.evaluateInPage(`performConsoleActions()`);

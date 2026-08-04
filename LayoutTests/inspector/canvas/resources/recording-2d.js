@@ -413,10 +413,11 @@ function performConsoleActions() {
     console.record(ctx, {name: "TEST"});
 
     ctx.fill();
+    ctx.stroke();
 
     console.recordEnd(ctx);
 
-    ctx.stroke();
+    ctx.clip();
 }
 
 function performSavePreActions() {

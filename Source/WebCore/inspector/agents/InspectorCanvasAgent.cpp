@@ -553,13 +553,13 @@ void InspectorCanvasAgent::consoleStartRecordingCanvas(InspectorCanvas& inspecto
     RecordingOptions recordingOptions;
     if (options) {
         JSC::VM& vm = exec.vm();
-        if (JSC::JSValue optionSingleFrame = options->get(&exec, JSC::Identifier::fromString(vm, "singleFrame"_s)))
+        if (JSC::JSValue optionSingleFrame = options->get(&exec, JSC::Identifier::fromString(vm, "singleFrame"_s)); !optionSingleFrame.isUndefined())
             recordingOptions.frameCount = optionSingleFrame.toBoolean(&exec) ? 1 : 0;
-        if (JSC::JSValue optionFrameCount = options->get(&exec, JSC::Identifier::fromString(vm, "frameCount"_s)))
+        if (JSC::JSValue optionFrameCount = options->get(&exec, JSC::Identifier::fromString(vm, "frameCount"_s)); !optionFrameCount.isUndefined())
             recordingOptions.frameCount = optionFrameCount.toNumber(&exec);
-        if (JSC::JSValue optionMemoryLimit = options->get(&exec, JSC::Identifier::fromString(vm, "memoryLimit"_s)))
+        if (JSC::JSValue optionMemoryLimit = options->get(&exec, JSC::Identifier::fromString(vm, "memoryLimit"_s)); !optionMemoryLimit.isUndefined())
             recordingOptions.memoryLimit = optionMemoryLimit.toNumber(&exec);
-        if (JSC::JSValue optionName = options->get(&exec, JSC::Identifier::fromString(vm, "name"_s)))
+        if (JSC::JSValue optionName = options->get(&exec, JSC::Identifier::fromString(vm, "name"_s)); !optionName.isUndefined())
             recordingOptions.name = optionName.toWTFString(&exec);
     }
     startRecording(inspectorCanvas, Inspector::Protocol::Recording::Initiator::Console, WTF::move(recordingOptions));

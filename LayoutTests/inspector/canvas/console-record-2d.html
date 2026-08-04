@@ -12,7 +12,7 @@ function test() {
         name: "Canvas.recording2D.Console",
         description: "Check that a recording can be triggered by console.record().",
         test(resolve, reject) {
-            consoleRecord(WI.Canvas.ContextType.Canvas2D, resolve, reject);
+            consoleRecord(WI.Canvas.ContextType.Canvas2D, resolve, reject, {actionCount: 2});
         },
     });
 
