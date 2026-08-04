@@ -138,11 +138,7 @@ header: <WebCore/GraphicsContextGLAttributes.h>
 
 struct WebCore::GraphicsContextGLAttributes {
     bool alpha;
-    bool depth;
-    bool stencil;
-    bool antialias;
     bool premultipliedAlpha;
-    bool preserveDrawingBuffer;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
     bool isWebGL2;
     bool supportWebGLDraftExtensions;

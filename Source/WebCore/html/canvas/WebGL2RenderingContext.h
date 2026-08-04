@@ -283,6 +283,8 @@ private:
     std::optional<std::span<const T>> validateClearBuffer(ASCIILiteral functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);
     bool validateFramebufferTarget(GCGLenum target) final;
     WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
+    [[nodiscard]] std::optional<ScopedWebGLRestoreFramebuffer> prepareDefaultFramebufferForReadIfBound(std::optional<IntRect> = std::nullopt) final;
+    void rebindFramebuffers() final;
     bool validateNonDefaultFramebufferAttachment(ASCIILiteral functionName, GCGLenum attachment);
     enum ActiveQueryKey { SamplesPassed = 0, PrimitivesWritten = 1, TimeElapsed = 2, NumKeys = 3 };
     std::optional<ActiveQueryKey> validateQueryTarget(ASCIILiteral functionName, GCGLenum target);

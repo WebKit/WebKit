@@ -132,7 +132,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         auto knownActiveExtensions = context->knownActiveExtensions();
         auto requestableExtensions = context->requestableExtensions();
         RemoteGraphicsContextGLInitializationState initializationState {
-            .attributes = context->contextAttributes(),
+            .attributes = contextAttributes,
             .knownActiveExtensions = knownActiveExtensions.toRaw(),
             .requestableExtensions = requestableExtensions.toRaw(),
             .maxCombinedTextureImageUnits = context->maxCombinedTextureImageUnits(),
@@ -142,8 +142,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
             .maxRenderbufferSize = context->maxRenderbufferSize(),
             .maxViewportDims = context->maxViewportDims(),
         };
-        if (contextAttributes.isWebGL2 || contextAttributes.antialias)
-            initializationState.maxSamples = context->maxSamples();
+        initializationState.maxSamples = context->maxSamples();
         if (contextAttributes.isWebGL2) {
             initializationState.maxTransformFeedbackSeparateAttribs = context->maxTransformFeedbackSeparateAttribs();
             initializationState.maxUniformBufferBindings = context->maxUniformBufferBindings();

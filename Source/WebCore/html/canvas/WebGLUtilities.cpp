@@ -29,6 +29,7 @@
 #include "WebGLUtilities.h"
 
 #include "InspectorInstrumentation.h"
+#include "WebGLDefaultFramebuffer.h"
 
 namespace WebCore {
 
