@@ -495,6 +495,17 @@ class GitTest(SCMTest):
         self.assertIn(b'-foo', lines)
         self.assertIn(b'+bar', lines)
 
+    def test_create_patch_with_changed_files(self):
+        write_into_file_at_path('one_file', 'one')
+        write_into_file_at_path('two_file', 'two')
+        run_command(['git', 'add', 'one_file', 'two_file'])
+        scm = self.tracking_scm
+        scm.commit_locally_with_message('a new commit')
+
+        patch = scm.create_patch(changed_files=['one_file'], commit_message=False)
+        self.assertIn(b'one_file', patch)
+        self.assertNotIn(b'two_file', patch)
+
     def test_orderfile(self):
         os.mkdir("Tools")
         os.mkdir("Source")

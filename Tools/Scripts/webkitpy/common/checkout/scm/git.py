@@ -313,6 +313,9 @@ class Git(SCM):
         else:
             command += ['HEAD']
 
+        if changed_files:
+            command += ['--'] + changed_files
+
         return self.run(command, decode_output=False, cwd=self.checkout_root)
 
     def _run_git_svn_find_rev(self, revision_or_treeish, branch=None):
