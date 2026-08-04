@@ -31,7 +31,16 @@ promise_test(async test => {
     const source = audioContext.createMediaStreamSource(stream);
     source.connect(audioContext.destination);
 
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // Wait until the AudioContext is actually rendering audible audio from the
+    // capture source; the audio session category only stays PlayAndRecord while an
+    // audible AudioContext is running (see MediaSessionManagerCocoa::updateSessionState).
+    let audibleTries = 0;
+    while (++audibleTries < 300) {
+        if (internals.pageMediaState().includes("IsPlayingAudio"))
+            break;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert_less_than(audibleTries, 300, "AudioContext became audible");
 
     const audioTrack = stream.getAudioTracks()[0];
     audioTrack.stop();

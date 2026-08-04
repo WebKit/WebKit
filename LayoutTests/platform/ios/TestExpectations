@@ -8532,7 +8532,6 @@ fast/forms/datalist/data-list-search-input-with-appearance-none.html [ Timeout ]
 fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Pass Timeout ]
 fast/forms/ios/select-option-update-1000.html [ Failure Timeout ] # rdar://178168662
 fast/images/imageDocument-title.html [ Pass Crash ] # rdar://178675308
-fast/mediastream/audio-session-category-capture-audio-context.html [ Pass Timeout ]
 fast/mediastream/media-stream-video-track-interrupted.html [ Pass Failure ] # rdar://178673961
 fast/mediastream/mediastreamtrack-clone-muted.html [ Pass Timeout ] # rdar://178215298
 fast/screen-orientation/orientation-in-resize-event.html [ Pass Failure Timeout ] # rdar://177741597
