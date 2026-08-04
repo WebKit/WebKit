@@ -1348,6 +1348,7 @@ public:
     void registerRemoteFrameAccessibilityTokens(pid_t, WebCore::AccessibilityRemoteToken, WebCore::FrameIdentifier);
     WKAccessibilityWebPageObject* NODELETE accessibilityRemoteObject();
     WebCore::IntPoint remoteFrameOffsetInMainFrame();
+    WebCore::IntPoint mainFrameCoordinatesToRootView(WebCore::IntPoint) const;
     void createMockAccessibilityElement(pid_t);
     void sendAccessibilityTokenIfNeeded();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

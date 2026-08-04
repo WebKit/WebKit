@@ -462,23 +462,26 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     }
 
     // When the selection is in a cross-origin subframe, the rects above are in this frame's local
-    // root-view coordinates. Offset them by the frame's origin within the top-level page (pushed from
-    // the parent process) so they're in main-frame coordinates, and UIKit reads the correct location
-    // synchronously without a UI-process round-trip.
-    if (auto& remoteFrameOffset = m_remoteFrameOffsetInMainFrame; !remoteFrameOffset.isZero()) {
-        auto offset = toIntSize(remoteFrameOffset);
-        auto moveGeometries = [&](Vector<SelectionGeometry>& geometries) {
-            for (auto& geometry : geometries)
-                geometry.move(offset.width(), offset.height());
+    // root-view coordinates. Map them to main-frame coordinates -- applying the frame's offset within
+    // the top-level page as well as any CSS transforms on the remote ancestor frames -- so UIKit reads
+    // the correct location synchronously without a UI-process round-trip. A plain translation offset
+    // could not represent a scale on an ancestor iframe.
+    if (!frame.localMainFrame()) {
+        auto convertRect = [&](IntRect& rect) {
+            rect = roundedIntRect(view->convertToRootViewAcrossIsolatedFrames(FloatRect { rect }));
         };
-        visualData.caretRectAtStart.move(offset);
-        visualData.caretRectAtEnd.move(offset);
-        visualData.selectionClipRect.move(offset);
-        visualData.editableRootBounds.move(offset);
-        visualData.markedTextCaretRectAtStart.move(offset);
-        visualData.markedTextCaretRectAtEnd.move(offset);
-        moveGeometries(visualData.selectionGeometries);
-        moveGeometries(visualData.markedTextRects);
+        auto convertGeometries = [&](Vector<SelectionGeometry>& geometries) {
+            for (auto& geometry : geometries)
+                geometry.setQuad(view->convertToRootViewAcrossIsolatedFrames(geometry.quad()));
+        };
+        convertRect(visualData.caretRectAtStart);
+        convertRect(visualData.caretRectAtEnd);
+        convertRect(visualData.selectionClipRect);
+        convertRect(visualData.editableRootBounds);
+        convertRect(visualData.markedTextCaretRectAtStart);
+        convertRect(visualData.markedTextCaretRectAtEnd);
+        convertGeometries(visualData.selectionGeometries);
+        convertGeometries(visualData.markedTextRects);
     }
 }
 
@@ -1283,11 +1286,20 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
     VisibleSelection existingSelection = frame.selection().selection();
     VisiblePosition selectionStart = existingSelection.visibleStart();
     VisiblePosition selectionEnd = existingSelection.visibleEnd();
+
     RefPtr localMainFrame = frame.localMainFrame();
-    if (!localMainFrame)
+    RefPtr frameView = frame.view();
+    if (!frameView)
         return { std::nullopt, SelectionWasFlipped::No };
 
-    auto pointInDocument = protect(frame.view())->rootViewToContents(pointInRootViewCoordinates.constrainedWithin(protect(localMainFrame->view())->unobscuredContentRect()));
+    // Constrain the drag point (in this frame's root-view coordinates) to the visible viewport so the
+    // selection can't be extended outside it. For the main frame its unobscured content rect is used
+    // directly (root-view and contents coincide there). For a cross-origin subframe -- whose main
+    // frame is remote -- use this frame's own unobscured content rect converted to root-view
+    // coordinates; clamping against the contents-space rect directly would fold the frame's scroll
+    // offset into the point, which rootViewToContents would then apply a second time.
+    auto viewportToConstrainWithin = localMainFrame ? protect(localMainFrame->view())->unobscuredContentRect() : frameView->contentsToRootView(frameView->unobscuredContentRect());
+    auto pointInDocument = frameView->rootViewToContents(pointInRootViewCoordinates.constrainedWithin(viewportToConstrainWithin));
 
     if (!selectionFlippingEnabled) {
         RefPtr node = selectionStart.deepEquivalent().containerNode();
@@ -1596,13 +1608,15 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
     if (selectionTouch == SelectionTouch::Started)
         addTextInteractionSources(TextInteractionSource::Touch);
 
-    IntPoint pointInDocument = RefPtr(frame->view())->rootViewToContents(point);
+    auto localPoint = mainFrameCoordinatesToRootView(point);
+
+    IntPoint pointInDocument = RefPtr(frame->view())->rootViewToContents(localPoint);
     VisiblePosition position = frame->visiblePositionForPoint(pointInDocument);
     if (position.isNull())
         return completionHandler(point, selectionTouch, { });
 
     if (shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
-        dispatchSyntheticMouseEventsForSelectionGesture(selectionTouch, point);
+        dispatchSyntheticMouseEventsForSelectionGesture(selectionTouch, localPoint);
 
     std::optional<SimpleRange> range;
     OptionSet<SelectionFlags> flags;
@@ -1617,7 +1631,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         if (frame->selection().selection().isContentEditable())
             range = makeSimpleRange(closestWordBoundaryForPosition(position));
         else
-            std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, point, baseIsStart, selectionFlippingEnabled());
+            std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, localPoint, baseIsStart, selectionFlippingEnabled());
         break;
 
     case SelectionTouch::EndedMovingForward:
@@ -1626,7 +1640,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         break;
 
     case SelectionTouch::Moved:
-        std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, point, baseIsStart, selectionFlippingEnabled());
+        std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, localPoint, baseIsStart, selectionFlippingEnabled());
         break;
     }
 

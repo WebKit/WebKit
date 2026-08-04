@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Selecting and adjusting a selection inside a CSS-transformed cross-origin iframe should map coordinates through the transform, not treat the iframe's position as a plain translation offset.");
+jsTestIsAsync = true;
+
+// The iframe is at (50, 100) with transform: scale(0.5) and transform-origin: 0 0, so a point at
+// iframe-local (lx, ly) appears at main-frame (50 + lx/2, 100 + ly/2). To hit "token3" (contents
+// (30, 140)) the long-press must be at (65, 170). A translation-only mapping -- subtracting just the
+// iframe's (50, 100) offset and ignoring the scale -- would instead land at iframe (15, 70), i.e.
+// "token1".
+let reportedSelection = "";
+let initialSelection = "";
+let extendedSelection = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+});
+
+async function selectWord() {
+    for (let attempt = 0; attempt < 20 && !reportedSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(65, 170);
+        for (let frame = 0; frame < 10 && !reportedSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+}
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await selectWord();
+    await UIHelper.waitForSelectionToAppear();
+    initialSelection = reportedSelection;
+    shouldBeEqualToString("initialSelection", "token3");
+
+    // Drag the end grabber down. Through the 0.5 scale, a 60px main-frame drag moves the endpoint
+    // ~120px (3 lines) inside the iframe, so the selection should reach a few lines lower...
+    for (let attempt = 0; attempt < 20 && reportedSelection === initialSelection; ++attempt) {
+        const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+        await UIHelper.dragFromPointToPoint(grabber.x, grabber.y, grabber.x, grabber.y + 60, 0.5);
+        for (let frame = 0; frame < 10 && reportedSelection === initialSelection; ++frame)
+            await UIHelper.animationFrame();
+    }
+
+    extendedSelection = reportedSelection;
+    shouldBeTrue("extendedSelection.includes('token3')");
+    shouldBeTrue("extendedSelection.includes('token4')");
+    // ...but must not run many lines too far.
+    shouldBeFalse("extendedSelection.includes('token10')");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 50px; top: 100px; width: 400px; height: 300px; border: none; transform: scale(0.5); transform-origin: 0 0;" src="http://localhost:8000/site-isolation/resources/multiline-selectable-text-frame.html"></iframe>

@@ -1,0 +1,17 @@
+<body style="margin: 0; font: 20px/40px monospace;">
+<div id="content"></div>
+<script>
+// Each line is 40px tall and starts with a unique token, so the word returned by a selection
+// reveals which content line was hit. This frame does not scroll internally.
+let markup = "";
+for (let i = 0; i < 30; i++)
+    markup += `<div style="height: 40px;">token${i} selectable line</div>`;
+document.getElementById("content").innerHTML = markup;
+
+document.addEventListener("selectionchange", () => {
+    window.top.postMessage("selection:" + getSelection().toString(), "*");
+});
+
+window.top.postMessage("ready", "*");
+</script>
+</body>

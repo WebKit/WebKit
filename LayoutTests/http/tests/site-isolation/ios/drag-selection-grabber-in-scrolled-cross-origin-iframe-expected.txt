@@ -1,0 +1,13 @@
+Dragging a selection end grabber should extend the selection correctly inside a cross-origin iframe scrolled past its own height, accounting for both the iframe's offset in the main frame and the subframe's scroll offset.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialSelection is "token10"
+PASS extendedSelection.includes('token10') is true
+PASS extendedSelection.includes('token11') is true
+PASS extendedSelection.includes('token15') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

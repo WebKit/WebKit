@@ -398,7 +398,8 @@ void WebPageProxy::updateSelectionWithTouches(IntPoint point, SelectionTouch tou
     if (!hasRunningProcess())
         return callback(WebCore::IntPoint(), SelectionTouch::Started, { });
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart), WTF::move(callback), webPageIDInMainFrameProcess());
+    RefPtr focusedFrame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(focusedFrame ? std::optional(focusedFrame->frameID()) : std::nullopt, Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart), Messages::WebPage::UpdateSelectionWithTouches::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::willInsertFinalDictationResult()
