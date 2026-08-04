@@ -714,16 +714,19 @@ diff --git a/sources/meta-webkit/conf/distro/webkitdevci.conf b/sources/meta-web
 index 1f952c2..d299d1f 100644
 --- a/sources/meta-webkit/conf/distro/webkitdevci.conf
 +++ b/sources/meta-webkit/conf/distro/webkitdevci.conf
-@@ -48,5 +48,14 @@ PACKAGECONFIG:append:pn-php = " apache2"
+@@ -47,6 +47,17 @@ PACKAGECONFIG:append:pn-weston-init = " no-idle-timeout"
+ PACKAGECONFIG:append:pn-php = " apache2"
  # Disable mysql support as we don't need to build mysql/mariadb
  PACKAGECONFIG:remove:pn-php = "mysql"
- 
++# Do not kill detached screen(1)/tmux(1) sessions on logout
++PACKAGECONFIG:remove:pn-systemd-conf = "kill-user-processes"
++
 +# Disable the following services by default
 +# - Apache2: the service is not needed for the tests, the
 +#   layout test runner takes care of starting/stopping it.
 +INHERIT += "systemd-auto-enable-policy"
 +SYSTEMD_AUTOSTART_DISABLE = "apache2"
-+
+ 
  # Whitelist license from some deps.
  LICENSE_FLAGS_ACCEPTED:append = " commercial synaptics-killswitch"
 +
@@ -799,3 +802,36 @@ index bdd7fea..7005240 100644
      rm -rf ${D}${nonarch_libdir}/clang/${MAJOR_VER}/include/orc/
  }
  
+diff --git a/sources/poky/meta/recipes-core/systemd/systemd-conf/logind.conf b/sources/poky/meta/recipes-core/systemd/systemd-conf/logind.conf
+index bf7f692..25f01f3 100644
+--- a/sources/poky/meta/recipes-core/systemd/systemd-conf/logind.conf
++++ b/sources/poky/meta/recipes-core/systemd/systemd-conf/logind.conf
+@@ -1,2 +1,2 @@
+ [Login]
+-KillUserProcesses=yes
++KillUserProcesses=@KILL_USER_PROCESSES@
+diff --git a/sources/poky/meta/recipes-core/systemd/systemd-conf_1.0.bb b/sources/poky/meta/recipes-core/systemd/systemd-conf_1.0.bb
+index 2355936..0820dd9 100644
+--- a/sources/poky/meta/recipes-core/systemd/systemd-conf_1.0.bb
++++ b/sources/poky/meta/recipes-core/systemd/systemd-conf_1.0.bb
+@@ -10,8 +10,9 @@ REQUIRED_DISTRO_FEATURES += "usrmerge"
+ 
+ PE = "1"
+ 
+-PACKAGECONFIG ??= "dhcp-ethernet"
++PACKAGECONFIG ??= "dhcp-ethernet kill-user-processes"
+ PACKAGECONFIG[dhcp-ethernet] = ""
++PACKAGECONFIG[kill-user-processes] = ""
+ 
+ SRC_URI = "\
+     file://journald.conf \
+@@ -26,6 +27,9 @@ do_install() {
+        install -D -m0644 ${WORKDIR}/logind.conf ${D}${systemd_unitdir}/logind.conf.d/00-${PN}.conf
+        install -D -m0644 ${WORKDIR}/system.conf ${D}${systemd_unitdir}/system.conf.d/00-${PN}.conf
+ 
++        KILL_USER_PROCESSES="${@bb.utils.contains('PACKAGECONFIG', 'kill-user-processes', 'yes', 'no', d)}"
++        sed -i "s/@KILL_USER_PROCESSES@/${KILL_USER_PROCESSES}/" ${D}${systemd_unitdir}/logind.conf.d/00-${PN}.conf
++
+         if ${@bb.utils.contains('PACKAGECONFIG', 'dhcp-ethernet', 'true', 'false', d)}; then
+                install -D -m0644 ${WORKDIR}/wired.network ${D}${systemd_unitdir}/network/80-wired.network
+         fi
