@@ -19,8 +19,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 288x18
           text run at (0,0) width 288: "There should be only one blue square below:"
       RenderBlock {DIV} at (0,68) size 784x140
-        RenderBlock (anonymous) at (0,0) size 784x120
-          RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
-          RenderBlock {DIV} at (100,0) size 50x120
-          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
+        RenderBlock {DIV} at (100,0) size 50x120
+        RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (0,120) size 784x20

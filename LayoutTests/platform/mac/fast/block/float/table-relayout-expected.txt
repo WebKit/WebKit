@@ -28,8 +28,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 182: "Lorem ipsum dolor sit amet,"
                   text run at (1,19) width 179: "consectetuer adipiscing elit."
                   text run at (1,37) width 81: "Nunc neque."
-      RenderBlock (anonymous) at (0,156) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,156) size 0x18
       RenderBlock {DIV} at (0,174) size 200x60 [bgcolor=#C0C0C0]
         RenderTable {TABLE} at (0,0) size 200x60
           RenderTableSection {TBODY} at (0,0) size 200x60

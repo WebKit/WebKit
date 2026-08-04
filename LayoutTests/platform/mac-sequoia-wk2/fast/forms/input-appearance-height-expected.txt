@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 781x18
-          text run at (0,0) width 781: "This tests the height attribute of form elements. The only element that should honour this value is the Image type of input."
+      RenderText {#text} at (0,0) size 781x18
+        text run at (0,0) width 781: "This tests the height attribute of form elements. The only element that should honour this value is the Image type of input."
       RenderBlock {FORM} at (0,18) size 784x234
         RenderText {#text} at (0,0) size 37x18
           text run at (0,0) width 37: "input "

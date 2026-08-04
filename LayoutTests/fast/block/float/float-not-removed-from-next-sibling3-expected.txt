@@ -4,17 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 15x200
-        RenderBlock (anonymous) at (0,200) size 15x0
-          RenderInline {A} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,200) size 784x0
-        RenderInline {A} at (0,0) size 0x0
+        RenderInline {A} at (0,200) size 0x0
           RenderText {#text} at (0,0) size 0x0
+      RenderInline {A} at (0,200) size 0x0
+        RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 15x200
   RenderBlock (relative positioned) {DIV} at (0,0) size 15x200
-    RenderBlock (anonymous) at (0,200) size 15x0
-      RenderInline {A} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+    RenderInline {A} at (0,200) size 0x0
+      RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 15x200
   RenderBlock {DIV} at (0,0) size 15x200
     RenderImage {IMG} at (0,0) size 15x200 [bgcolor=#C0C0C0]

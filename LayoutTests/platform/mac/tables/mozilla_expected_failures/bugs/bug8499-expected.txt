@@ -10,8 +10,7 @@ layer at (0,0) size 800x600
           text run at (637,18) width 133: "increases. (I couldn't"
           text run at (0,36) width 348: "really simplify this further without losing some of the "
           text run at (347,36) width 115: "original 'flavour'.)"
-      RenderBlock (anonymous) at (0,70) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,70) size 0x18
       RenderTable {TABLE} at (0,88) size 786x140 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 784x138
           RenderTableRow {TR} at (0,2) size 784x134
@@ -62,14 +61,12 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (673,9) size 91x30 [border: (1px inset #000000)] [r=0 c=4 rs=1 cs=1]
                               RenderText {#text} at (6,15) size 79x18
                                 text run at (6,6) width 79: "17/07 - 27/8"
-      RenderBlock (anonymous) at (0,228) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,228) size 0x18
       RenderBlock {P} at (0,262) size 784x18
         RenderText {#text} at (0,0) size 546x18
           text run at (0,0) width 425: "This table repeats the previous table, but removes the 'bad applet'. "
           text run at (424,0) width 122: "Table lays out OK."
-      RenderBlock (anonymous) at (0,296) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,296) size 0x18
       RenderTable {TABLE} at (0,314) size 786x158 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 784x156
           RenderTableRow {TR} at (0,2) size 784x152

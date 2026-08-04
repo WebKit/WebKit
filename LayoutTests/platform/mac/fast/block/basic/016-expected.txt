@@ -3,9 +3,8 @@ layer at (0,0) size 785x7588
 layer at (0,0) size 785x7588
   RenderBlock {HTML} at (0,0) size 785x7588
     RenderBody {BODY} at (8,8) size 769x7572
-      RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 452x18
-          text run at (0,0) width 452: "This is a test of all the various HTML alignments using LTR direction."
+      RenderText {#text} at (0,0) size 452x18
+        text run at (0,0) width 452: "This is a test of all the various HTML alignments using LTR direction."
       RenderBlock {DIV} at (0,18) size 769x226 [border: (4px solid #008000)]
         RenderBlock {DIV} at (6,6) size 757x26 [border: (2px solid #0000FF)]
           RenderText {#text} at (4,4) size 190x18
@@ -586,10 +585,9 @@ layer at (0,0) size 785x7588
                       RenderText {#text} at (1,1) size 184x18
                         text run at (1,1) width 184: "Center table (fixed margins)."
       RenderBlock {DIV} at (0,3836) size 769x3736
-        RenderBlock (anonymous) at (2,2) size 765x18
-          RenderText {#text} at (313,0) size 452x18
-            text run at (313,0) width 5 RTL: "."
-            text run at (317,0) width 448: "This is a test of all the various HTML alignments using RTL direction"
+        RenderText {#text} at (315,2) size 452x18
+          text run at (315,2) width 5 RTL: "."
+          text run at (319,2) width 448: "This is a test of all the various HTML alignments using RTL direction"
         RenderBlock {DIV} at (2,20) size 765x226 [border: (4px solid #008000)]
           RenderBlock {DIV} at (6,6) size 753x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (559,4) size 190x18

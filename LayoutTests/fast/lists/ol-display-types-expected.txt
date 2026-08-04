@@ -23,11 +23,10 @@ layer at (0,0) size 800x600
           RenderListMarker at (-16,0) size 16x18: "5"
           RenderText {#text} at (0,0) size 77x18
             text run at (0,0) width 77: "Should be 5"
-        RenderBlock (anonymous) at (40,72) size 744x18
-          RenderInline {LI} at (0,0) size 168x18
-            RenderText {#text} at (0,0) size 168x18
-              text run at (0,0) width 168: "Should not have a number"
-          RenderText {#text} at (0,0) size 0x0
+        RenderInline {LI} at (40,72) size 168x18
+          RenderText {#text} at (40,72) size 168x18
+            text run at (40,72) width 168: "Should not have a number"
+        RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,90) size 744x18
           RenderListMarker at (-16,0) size 16x18: "6"
           RenderText {#text} at (0,0) size 77x18

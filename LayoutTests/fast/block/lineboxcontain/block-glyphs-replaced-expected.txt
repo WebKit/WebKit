@@ -3,10 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x270
   RenderBlock {HTML} at (0,0) size 800x271
     RenderBody {BODY} at (8,8) size 784x247
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 651x18
-          text run at (0,0) width 261: "You should see a green rectangle below. "
-          text run at (260,0) width 391: "If you see any red other than anti-aliasing, the test has failed."
+      RenderText {#text} at (0,0) size 651x18
+        text run at (0,0) width 261: "You should see a green rectangle below. "
+        text run at (260,0) width 391: "If you see any red other than anti-aliasing, the test has failed."
       RenderBlock {P} at (0,226) size 784x21 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 189x18
           text run at (1,1) width 189: "This line should look normal."

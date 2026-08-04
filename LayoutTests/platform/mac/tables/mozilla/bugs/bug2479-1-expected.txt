@@ -247,9 +247,8 @@ layer at (0,0) size 785x946
               RenderBlock {SPAN} at (0,18) size 246x18
                 RenderText {#text} at (0,0) size 174x18
                   text run at (0,0) width 174: "also Table 2, Row 2, Cell 3"
-              RenderBlock (anonymous) at (0,36) size 246x18
-                RenderText {#text} at (0,0) size 174x18
-                  text run at (0,0) width 174: "also Table 2, Row 2, Cell 3"
+              RenderText {#text} at (0,36) size 174x18
+                text run at (0,36) width 174: "also Table 2, Row 2, Cell 3"
             RenderTableCell {SPAN} at (534,18) size 145x18 [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (0,0) size 145x18
                 text run at (0,0) width 145: "Table 2, Row 2, Cell 4"

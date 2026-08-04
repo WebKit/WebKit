@@ -1381,8 +1381,16 @@ void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& inlineBox, Lay
     }
 
     auto borderBoxRect = Rect { toLayoutPoint(logicalRect.topLeft()), borderBoxSize };
-    if (!isFirstInlineBoxFragment)
-        borderBoxRect.expandToContain(BoxGeometry::borderBoxRect(boxGeometry));
+    if (!isFirstInlineBoxFragment) {
+        auto existingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
+        // An empty fragment has no area and paints nothing, so it must not drag the inline box's border
+        // box towards the origin. This happens for the empty fragment in front of a block-in-inline: it
+        // sits above the block's collapsed margin before, while the block's own fragment starts below it.
+        if (borderBoxRect.isEmpty())
+            borderBoxRect = existingBorderBoxRect;
+        else if (!existingBorderBoxRect.isEmpty())
+            borderBoxRect.expandToContain(existingBorderBoxRect);
+    }
 
     boxGeometry.setTopLeft(borderBoxRect.topLeft());
     boxGeometry.setContentBoxWidth(borderBoxRect.width() - boxGeometry.horizontalBorderAndPadding());

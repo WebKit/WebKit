@@ -5,9 +5,8 @@ layer at (0,0) size 800x600
     RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
       RenderBlock {html} at (0,0) size 800x180
         RenderBlock {div} at (0,0) size 800x180
-          RenderBlock (anonymous) at (0,0) size 800x18
-            RenderText {#text} at (0,0) size 541x18
-              text run at (0,0) width 541: "This tests assures dynamic SVGDocument creation via DOMParser interface works."
+          RenderText {#text} at (0,0) size 541x18
+            text run at (0,0) width 541: "This tests assures dynamic SVGDocument creation via DOMParser interface works."
           RenderBlock {div} at (0,18) size 800x18
             RenderText {#text} at (0,0) size 637x18
               text run at (0,0) width 637: "DOMParser.parseFromString returned: [object XMLDocument] should be: [object SVGDocument]"

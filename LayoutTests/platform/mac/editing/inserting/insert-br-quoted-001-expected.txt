@@ -30,9 +30,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,64) size 318x18
             text run at (0,64) width 318: "The second blockquote is a single non-blank line."
       RenderBlock {DIV} at (0,110) size 784x224 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x28
-          RenderText {#text} at (0,0) size 118x28
-            text run at (0,0) width 118: "My citation:"
+        RenderText {#text} at (14,14) size 118x28
+          text run at (14,14) width 118: "My citation:"
         RenderBlock {DIV} at (14,66) size 756x144
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x60 [border: (2px solid #0000FF)]
             RenderBlock {DIV} at (2,2) size 672x28
@@ -40,8 +39,7 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 35: "one"
             RenderBlock {DIV} at (2,30) size 672x28
               RenderBR {BR} at (0,0) size 0x28
-          RenderBlock (anonymous) at (0,60) size 756x28
-            RenderBR {BR} at (0,0) size 0x28
+          RenderBR {BR} at (0,60) size 0x28
           RenderBlock {BLOCKQUOTE} at (40,112) size 676x32 [border: (2px solid #0000FF)]
             RenderBlock {DIV} at (2,2) size 672x28
               RenderText {#text} at (0,0) size 36x28

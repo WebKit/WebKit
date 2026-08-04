@@ -23,8 +23,7 @@ layer at (0,0) size 800x600
             text run at (60,0) width 218: "this next inline formatting context"
             text run at (40,18) width 204: "has 3 floats. 2 out of those 3 are"
             text run at (20,36) width 59: "intruding"
-      RenderBlock (anonymous) at (0,108) size 784x18
-        RenderInline {SPAN} at (0,0) size 430x18
-          RenderText {#text} at (0,0) size 430x18
-            text run at (0,0) width 430: "and now we are back to the left edge. no intrudings at this position."
-        RenderText {#text} at (0,0) size 0x0
+      RenderInline {SPAN} at (0,108) size 430x18
+        RenderText {#text} at (0,108) size 430x18
+          text run at (0,108) width 430: "and now we are back to the left edge. no intrudings at this position."
+      RenderText {#text} at (0,0) size 0x0

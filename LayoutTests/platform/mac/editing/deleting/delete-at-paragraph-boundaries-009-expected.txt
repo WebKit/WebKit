@@ -35,9 +35,8 @@ layer at (0,0) size 800x600
             text run at (0,84) width 282: "at the start of the second line."
       RenderBlock {DIV} at (0,264) size 784x88
         RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (2,2) size 780x28
-            RenderText {#text} at (0,0) size 35x28
-              text run at (0,0) width 35: "one"
+          RenderText {#text} at (2,2) size 35x28
+            text run at (2,2) width 35: "one"
           RenderBlock {P} at (2,30) size 780x28
             RenderText {#text} at (0,0) size 22x28
               text run at (0,0) width 22: "ee"

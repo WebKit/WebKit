@@ -40,9 +40,8 @@ layer at (0,0) size 800x600
                                               RenderText {#text} at (2,2) size 24x18
                                                 text run at (2,2) width 24: "frip"
                                             RenderTableCell {TD} at (116,2) size 462x114 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                                              RenderBlock (anonymous) at (2,2) size 457x18
-                                                RenderText {#text} at (158,0) size 140x18
-                                                  text run at (158,0) width 140: "Feel free to browse ..."
+                                              RenderText {#text} at (160,2) size 140x18
+                                                text run at (160,2) width 140: "Feel free to browse ..."
                                               RenderBlock {P} at (2,36) size 457x0
                                               RenderBlock {CENTER} at (2,36) size 457x76
                                                 RenderTable {TABLE} at (91,0) size 274x76 [border: (1px outset #000000)]
@@ -74,8 +73,7 @@ layer at (0,0) size 800x600
                                                         RenderInline {A} at (2,2) size 58x18 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 58x18
                                                             text run at (2,2) width 58: "Cartoons"
-      RenderBlock (anonymous) at (0,233) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,233) size 0x18
       RenderBlock {P} at (0,267) size 784x54
         RenderText {#text} at (0,0) size 560x18
           text run at (0,0) width 560: "The second (nested) table below has fixed widths 300px, 500px, 200px (outer to inner)."
@@ -101,8 +99,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 294x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 177x18
                 text run at (2,2) width 177: "300px wide for comparison"
-      RenderBlock (anonymous) at (0,365) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,365) size 0x18
       RenderTable {TABLE} at (0,383) size 510x48 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 508x46
           RenderTableRow {TR} at (0,2) size 508x42

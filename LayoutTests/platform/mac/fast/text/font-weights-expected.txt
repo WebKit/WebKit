@@ -3,18 +3,17 @@ layer at (0,0) size 785x6747
 layer at (0,0) size 785x6747
   RenderBlock {HTML} at (0,0) size 785x6747
     RenderBody {BODY} at (8,8) size 769x6731
-      RenderBlock (anonymous) at (0,0) size 769x144
-        RenderText {#text} at (0,0) size 769x72
-          text run at (0,0) width 746: "This test is designed to test the interaction between font-family and font-weight. In particular, our implementation of"
-          text run at (0,18) width 759: "font-family accepts PostScript names, which may name a font with a particular weight. However, there is another CSS"
-          text run at (0,36) width 769: "property, font-weight, in which the author may also name a particular weight. Our font selection algorithm takes both of"
-          text run at (0,54) width 305: "these signals into account when choosing fonts."
-        RenderBR {BR} at (304,54) size 1x18
-        RenderBR {BR} at (0,72) size 0x18
-        RenderText {#text} at (0,90) size 767x54
-          text run at (0,90) width 767: "There is currently no good way in JavaScript to find the actual font chosen for some text. Therefore, the best way to test"
-          text run at (0,108) width 732: "this aspect of the font selection algorithm is to dump the render tree, therefore testing glyph advances (which are a"
-          text run at (0,126) width 159: "property of font weight)."
+      RenderText {#text} at (0,0) size 769x72
+        text run at (0,0) width 746: "This test is designed to test the interaction between font-family and font-weight. In particular, our implementation of"
+        text run at (0,18) width 759: "font-family accepts PostScript names, which may name a font with a particular weight. However, there is another CSS"
+        text run at (0,36) width 769: "property, font-weight, in which the author may also name a particular weight. Our font selection algorithm takes both of"
+        text run at (0,54) width 305: "these signals into account when choosing fonts."
+      RenderBR {BR} at (304,54) size 1x18
+      RenderBR {BR} at (0,72) size 0x18
+      RenderText {#text} at (0,90) size 767x54
+        text run at (0,90) width 767: "There is currently no good way in JavaScript to find the actual font chosen for some text. Therefore, the best way to test"
+        text run at (0,108) width 732: "this aspect of the font selection algorithm is to dump the render tree, therefore testing glyph advances (which are a"
+        text run at (0,126) width 159: "property of font weight)."
       RenderBlock {DIV} at (0,144) size 769x18
         RenderText {#text} at (0,-1) size 303x20
           text run at (0,0) width 303: "Font: Helvetica Neue Weight: 100 Style: normal"

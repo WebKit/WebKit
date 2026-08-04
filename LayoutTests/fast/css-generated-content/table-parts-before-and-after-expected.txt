@@ -10,9 +10,8 @@ layer at (0,0) size 785x736
               RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 40x40
                   text run at (0,0) width 40: "1"
-        RenderBlock (anonymous) at (0,40) size 769x40
-          RenderText {#text} at (0,0) size 80x40
-            text run at (0,0) width 80: "22"
+        RenderText {#text} at (0,40) size 80x40
+          text run at (0,40) width 80: "22"
         RenderTable at (0,80) size 120x40
           RenderTableSection (anonymous) at (0,0) size 120x40
             RenderTableRow (anonymous) at (0,0) size 120x40
@@ -26,9 +25,8 @@ layer at (0,0) size 785x736
               RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 40x40
                   text run at (0,0) width 40: "1"
-        RenderBlock (anonymous) at (0,40) size 769x40
-          RenderText {#text} at (0,0) size 80x40
-            text run at (0,0) width 80: "22"
+        RenderText {#text} at (0,40) size 80x40
+          text run at (0,40) width 80: "22"
         RenderTable at (0,80) size 120x40
           RenderTableSection (anonymous) at (0,0) size 120x40
             RenderTableRow (anonymous) at (0,0) size 120x40
@@ -42,9 +40,8 @@ layer at (0,0) size 785x736
               RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 40x40
                   text run at (0,0) width 40: "1"
-        RenderBlock (anonymous) at (0,40) size 769x40
-          RenderText {#text} at (0,0) size 80x40
-            text run at (0,0) width 80: "22"
+        RenderText {#text} at (0,40) size 80x40
+          text run at (0,40) width 80: "22"
         RenderTable at (0,80) size 120x40
           RenderTableSection (anonymous) at (0,0) size 120x40
             RenderTableRow (anonymous) at (0,0) size 120x40
@@ -58,9 +55,8 @@ layer at (0,0) size 785x736
               RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 40x40
                   text run at (0,0) width 40: "1"
-        RenderBlock (anonymous) at (0,40) size 769x40
-          RenderText {#text} at (0,0) size 80x40
-            text run at (0,0) width 80: "22"
+        RenderText {#text} at (0,40) size 80x40
+          text run at (0,40) width 80: "22"
         RenderTable at (0,80) size 120x40
           RenderTableSection (anonymous) at (0,0) size 120x40
             RenderTableRow (anonymous) at (0,0) size 120x40
@@ -74,9 +70,8 @@ layer at (0,0) size 785x736
               RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 40x40
                   text run at (0,0) width 40: "1"
-        RenderBlock (anonymous) at (0,40) size 769x40
-          RenderText {#text} at (0,0) size 80x40
-            text run at (0,0) width 80: "22"
+        RenderText {#text} at (0,40) size 80x40
+          text run at (0,40) width 80: "22"
         RenderTable at (0,80) size 120x40
           RenderTableSection (anonymous) at (0,0) size 120x40
             RenderTableRow (anonymous) at (0,0) size 120x40
@@ -90,9 +85,8 @@ layer at (0,0) size 785x736
               RenderTableCell (anonymous) at (0,0) size 40x40 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 40x40
                   text run at (0,0) width 40: "1"
-        RenderBlock (anonymous) at (0,40) size 769x40
-          RenderText {#text} at (0,0) size 80x40
-            text run at (0,0) width 80: "22"
+        RenderText {#text} at (0,40) size 80x40
+          text run at (0,40) width 80: "22"
         RenderTable at (0,80) size 120x40
           RenderTableSection (anonymous) at (0,0) size 120x40
             RenderTableRow (anonymous) at (0,0) size 120x40

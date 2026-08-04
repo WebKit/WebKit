@@ -18,9 +18,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 377x18
           text run at (0,0) width 377: "This tests the rendering of list markers inside the selection."
-      RenderBlock (anonymous) at (0,68) size 784x0
-        RenderInline {A} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+      RenderInline {A} at (0,68) size 0x0
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {UL} at (0,86) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
@@ -59,9 +58,8 @@ layer at (0,0) size 800x600
           RenderListMarker at (0,0) size 16x18: "2"
           RenderText {#text} at (16,0) size 103x18
             text run at (16,0) width 103: "and another one"
-      RenderBlock (anonymous) at (0,336) size 784x0
-        RenderInline {A} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+      RenderInline {A} at (0,336) size 0x0
+      RenderText {#text} at (0,0) size 0x0
 layer at (8,76) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,68) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,334) size 784x2 clip at (0,0) size 0x0

@@ -26,5 +26,4 @@ layer at (0,0) size 800x600
         RenderBlock (floating) {DIV} at (0,0) size 267x28
           RenderText {#text} at (0,0) size 267x28
             text run at (0,0) width 267: "Lorem ipsum dolor sit amet"
-      RenderBlock (anonymous) at (0,114) size 784x28
-        RenderBR {BR} at (266,0) size 1x18
+      RenderBR {BR} at (266,114) size 1x18

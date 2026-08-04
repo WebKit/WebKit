@@ -13,17 +13,15 @@ layer at (0,0) size 800x600
           RenderText {#text} at (96,0) size 321x18
             text run at (96,0) width 9: ". "
             text run at (104,0) width 313: "Hightlight for Selection should fit the target line."
-        RenderBlock (anonymous) at (0,34) size 784x18
-          RenderInline {SPAN} at (0,0) size 8x18
-            RenderText {#text} at (0,0) size 8x18
-              text run at (0,0) width 8: "a"
+        RenderInline {SPAN} at (0,34) size 8x18
+          RenderText {#text} at (0,34) size 8x18
+            text run at (0,34) width 8: "a"
         RenderBlock {DIV} at (0,52) size 784x18
           RenderText {#text} at (0,0) size 134x18
             text run at (0,0) width 134: "should just select me"
-        RenderBlock (anonymous) at (0,70) size 784x18
-          RenderInline {SPAN} at (0,0) size 8x18
-            RenderText {#text} at (0,0) size 8x18
-              text run at (0,0) width 8: "c"
-          RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,70) size 8x18
+          RenderText {#text} at (0,70) size 8x18
+            text run at (0,70) width 8: "c"
+        RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of body
 selection end:   position 0 of child 5 {SPAN} of child 1 {DIV} of body

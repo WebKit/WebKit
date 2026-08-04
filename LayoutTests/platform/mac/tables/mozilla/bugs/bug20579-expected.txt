@@ -21,10 +21,9 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 784x52
             RenderTableCell {TD} at (0,0) size 49x52 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (0,0) size 49x36
-                RenderBlock (anonymous) at (0,0) size 49x36
-                  RenderText {#text} at (0,0) size 49x36
-                    text run at (0,0) width 49: "Weekly"
-                    text run at (0,18) width 26: "Poll"
+                RenderText {#text} at (0,0) size 49x36
+                  text run at (0,0) width 49: "Weekly"
+                  text run at (0,18) width 26: "Poll"
                 RenderBlock {P} at (0,52) size 49x0
             RenderTableCell {TD} at (48,1) size 2x50 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,1) size 1x50

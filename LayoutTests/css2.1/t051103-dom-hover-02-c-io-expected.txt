@@ -4,9 +4,8 @@ layer at (0,0) size 800x70
   RenderBlock {HTML} at (0,0) size 800x70
     RenderBody {BODY} at (8,8) size 784x54
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 173x18
-            text run at (0,0) width 173: "Dummy text. Dummy text."
+        RenderText {#text} at (0,0) size 173x18
+          text run at (0,0) width 173: "Dummy text. Dummy text."
         RenderBlock {DIV} at (0,18) size 784x18
           RenderInline {SPAN} at (0,0) size 508x18
             RenderText {#text} at (0,0) size 508x18

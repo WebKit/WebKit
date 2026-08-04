@@ -9,8 +9,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,2) size 769x2 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (768,0) size 7x6 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 4x4
-      RenderBlock (anonymous) at (0,8) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,8) size 0x18
       RenderTable {TABLE} at (0,26) size 353x25
         RenderTableSection {TBODY} at (0,0) size 353x25
           RenderTableRow {TR} at (0,0) size 353x21
@@ -27,8 +26,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 1x4
             RenderTableCell {TD} at (348,21) size 5x4 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x4
-      RenderBlock (anonymous) at (0,51) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,51) size 0x18
       RenderTable {TABLE} at (0,69) size 353x39
         RenderTableSection {TBODY} at (0,0) size 353x39
           RenderTableRow {TR} at (0,0) size 353x21
