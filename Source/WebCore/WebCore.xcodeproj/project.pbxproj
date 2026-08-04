@@ -4045,6 +4045,7 @@
 		98F9D66925FDE02200BD842D /* CSSCounterStyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 98F9D66825FDDFE800BD842D /* CSSCounterStyleRule.h */; };
 		9910B40A2F556998008E8CD9 /* UncachedLoadType.h in Headers */ = {isa = PBXBuildFile; fileRef = 9910B4092F556998008E8CD9 /* UncachedLoadType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9940EAFB2E8DBD6E007F64DD /* InspectorResourceType.h in Headers */ = {isa = PBXBuildFile; fileRef = 9940EAFA2E8DBD6E007F64DD /* InspectorResourceType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99AA17022F1A00010001AAAA /* NetworkInterception.h in Headers */ = {isa = PBXBuildFile; fileRef = 99AA17012F1A00010001AAAA /* NetworkInterception.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		994C603A253A277300BDF060 /* InspectorFrontendAPIDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 994C6037253A277200BDF060 /* InspectorFrontendAPIDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 996E59DC1DF00D90006612B9 /* NavigatorWebDriver.h */; };
 		996E59E01DF0128D006612B9 /* NavigatorWebDriverActivePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 996E59DE1DF00D90006612B9 /* NavigatorWebDriverActivePolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16848,6 +16849,7 @@
 		9908B0FF1BCAD07D00ED0F65 /* ReadableStreamDefaultReaderBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamDefaultReaderBuiltins.h; sourceTree = "<group>"; };
 		9910B4092F556998008E8CD9 /* UncachedLoadType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UncachedLoadType.h; sourceTree = "<group>"; };
 		9940EAFA2E8DBD6E007F64DD /* InspectorResourceType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorResourceType.h; sourceTree = "<group>"; };
+		99AA17012F1A00010001AAAA /* NetworkInterception.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkInterception.h; sourceTree = "<group>"; };
 		994C6037253A277200BDF060 /* InspectorFrontendAPIDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendAPIDispatcher.h; sourceTree = "<group>"; };
 		994C6039253A277300BDF060 /* InspectorFrontendAPIDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontendAPIDispatcher.cpp; sourceTree = "<group>"; };
 		996E59DB1DF00D90006612B9 /* NavigatorWebDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorWebDriver.cpp; sourceTree = "<group>"; };
@@ -26409,6 +26411,7 @@
 				2EDDAF4527920EC3005D18E4 /* InspectorOverlayLabel.cpp */,
 				2EDDAF4327920EB4005D18E4 /* InspectorOverlayLabel.h */,
 				9940EAFA2E8DBD6E007F64DD /* InspectorResourceType.h */,
+				99AA17012F1A00010001AAAA /* NetworkInterception.h */,
 				99C2CC9D2E8DFD890008FCDF /* InspectorResourceUtilities.cpp */,
 				99C2CC9C2E8DFD890008FCDF /* InspectorResourceUtilities.h */,
 				6A7279891F16C29B003F39B8 /* InspectorShaderProgram.cpp */,
@@ -46373,6 +46376,7 @@
 				2EDDAF4427920EB4005D18E4 /* InspectorOverlayLabel.h in Headers */,
 				A5B81CB21FAA44620037D1E6 /* InspectorPageAgent.h in Headers */,
 				9940EAFB2E8DBD6E007F64DD /* InspectorResourceType.h in Headers */,
+				99AA17022F1A00010001AAAA /* NetworkInterception.h in Headers */,
 				99C2CC9F2E8DFD890008FCDF /* InspectorResourceUtilities.h in Headers */,
 				6A72798B1F16C29C003F39B8 /* InspectorShaderProgram.h in Headers */,
 				82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */,

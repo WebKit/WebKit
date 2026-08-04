@@ -9817,6 +9817,49 @@ void WebPageProxy::forEachWebContentProcess(NOESCAPE const Function<void(WebProc
     function(protect(legacyMainFrameProcess()), webPageIDInMainFrameProcess());
 }
 
+const Inspector::NetworkInterception& WebPageProxy::networkInterception() const
+{
+    return internals().networkInterception;
+}
+
+void WebPageProxy::sendNetworkInterceptionToProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
+{
+    webProcess.send(Messages::WebInspectorBackend::SetNetworkInterception { internals().networkInterception }, pageID);
+}
+
+void WebPageProxy::setNetworkInterceptionEnabled(bool enabled)
+{
+    if (internals().networkInterception.enabled == enabled)
+        return;
+
+    internals().networkInterception.enabled = enabled;
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        sendNetworkInterceptionToProcess(webProcess, pageID);
+    });
+}
+
+void WebPageProxy::addNetworkInterceptPattern(Inspector::InterceptPattern&& pattern)
+{
+    // Union-additive: re-adding a pattern that is already configured changes nothing,
+    // so there is no need to re-broadcast.
+    if (!internals().networkInterception.add(WTF::move(pattern)))
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        sendNetworkInterceptionToProcess(webProcess, pageID);
+    });
+}
+
+void WebPageProxy::removeNetworkInterceptPattern(const Inspector::InterceptPattern& pattern)
+{
+    if (!internals().networkInterception.remove(pattern))
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        sendNetworkInterceptionToProcess(webProcess, pageID);
+    });
+}
+
 void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
 {
     if (!protect(preferences())->siteIsolationEnabled())
