@@ -253,8 +253,8 @@ std::optional<size_t> JSString::tryFindLastOneChar(JSGlobalObject*, char16_t cha
     }
 
     const JSRopeString* rope = static_cast<const JSRopeString*>(this);
-    unsigned fiberLengths[JSRopeString::s_maxInternalRopeLength] { };
-    JSString* fibers[JSRopeString::s_maxInternalRopeLength] { };
+    std::array<unsigned, JSRopeString::s_maxInternalRopeLength> fiberLengths;
+    std::array<JSString*, JSRopeString::s_maxInternalRopeLength> fibers;
     unsigned fiberCount = 0;
     for (unsigned i = 0; i < JSRopeString::s_maxInternalRopeLength; ++i) {
         JSString* fiber = rope->fiber(i);
