@@ -150,7 +150,8 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"_s))
         return CachedResource::Type::RawResource;
-    auto destination = parseEnumerationFromString<FetchRequestDestination>(as);
+    // `as` is an enumerated attribute, so its keywords are matched ASCII case-insensitively.
+    auto destination = parseEnumerationFromString<FetchRequestDestination>(as.convertToASCIILowercase());
     if (!destination) {
         if (shouldLogError == ShouldLog::Yes)
             document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
