@@ -581,10 +581,49 @@
         }
     },
 
+    "imported/w3c/webdriver/tests/classic/perform_actions/pointer_mouse.py": {
+        "subtests": {
+            "test_click_element_in_shadow_tree[inner-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            },
+            "test_click_element_in_shadow_tree[outer-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            }
+        }
+    },
+
+    "imported/w3c/webdriver/tests/classic/perform_actions/pointer_pen.py": {
+        "subtests": {
+            "test_pen_pointer_in_shadow_tree[inner-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            },
+            "test_pen_pointer_in_shadow_tree[outer-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            }
+        }
+    },
+
+    "imported/w3c/webdriver/tests/classic/perform_actions/pointer_touch.py": {
+        "subtests": {
+            "test_touch_pointer_in_shadow_tree[inner-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            },
+            "test_touch_pointer_in_shadow_tree[outer-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/classic/perform_actions/key.py": {
         "subtests": {
             "test_no_top_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_element_in_shadow_tree[inner-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            },
+            "test_element_in_shadow_tree[outer-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
             }
         }
     },
@@ -737,6 +776,12 @@
             },
             "test_no_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_scroll_shadow_tree[inner-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            },
+            "test_scroll_shadow_tree[outer-closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
             }
         }
     },
@@ -2643,19 +2688,22 @@
             }
         ,
             "test_find_elements[closed-css selector-#linkText]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/230612", "webkit.org/b/320461"]}}
             },
             "test_find_elements[closed-link text-full link text]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/230612", "webkit.org/b/320461"]}}
             },
             "test_find_elements[closed-partial link text-link text]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/230612", "webkit.org/b/320461"]}}
             },
             "test_find_elements[closed-tag name-a]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/230612", "webkit.org/b/320461"]}}
             },
             "test_find_elements[closed-xpath-//a]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/230612", "webkit.org/b/320461"]}}
+            },
+            "test_find_elements_in_nested_shadow_root[closed]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
             },
             "test_invalid_shadow_root_id_argument[1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
