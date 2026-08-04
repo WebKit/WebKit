@@ -1,0 +1,5 @@
+
+PASS Reaching the end of the media resource by playing fires timeupdate, pause, then ended
+PASS Reaching the end of the media resource by seeking to the duration fires timeupdate, pause, then ended
+PASS ended is false while a seek to the duration is still pending
+
