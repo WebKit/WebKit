@@ -31,6 +31,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
+class CoordinatedAnimatedBackingStoreClient;
 class CoordinatedPlatformLayer;
 class CoordinatedTileBuffer;
 class Damage;
@@ -40,11 +41,14 @@ class CoordinatedBackingStoreProxy final : public ThreadSafeRefCounted<Coordinat
     WTF_MAKE_TZONE_ALLOCATED(CoordinatedBackingStoreProxy);
 public:
     static Ref<CoordinatedBackingStoreProxy> create();
-    ~CoordinatedBackingStoreProxy() = default;
+    ~CoordinatedBackingStoreProxy();
 
     static constexpr int s_defaultCPUTileSize = 256;
 
-    const IntRect& coverRect() const LIFETIME_BOUND { return m_coverRect; }
+    void setAffectedByTransformAnimation(bool);
+    CoordinatedAnimatedBackingStoreClient* animatedBackingStoreClient() const { return m_animatedBackingStoreClient.get(); }
+
+    void invalidate();
 
     class Update {
         WTF_MAKE_NONCOPYABLE(Update);
@@ -81,7 +85,7 @@ public:
         TilesPending = 1 << 1,
         TilesChanged = 1 << 2
     };
-    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
+    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
     Update takePendingUpdate();
 
     void waitUntilPaintingComplete();
@@ -151,6 +155,7 @@ private:
     IntRect m_coverRect;
     IntRect m_keepRect;
     HashMap<IntPoint, Tile> m_tiles;
+    RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
     struct {
         Lock lock;
         Update pending WTF_GUARDED_BY_LOCK(lock);

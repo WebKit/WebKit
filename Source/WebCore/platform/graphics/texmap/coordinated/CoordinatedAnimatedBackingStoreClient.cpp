@@ -37,14 +37,9 @@
 
 namespace WebCore {
 
-Ref<CoordinatedAnimatedBackingStoreClient> CoordinatedAnimatedBackingStoreClient::create(GraphicsLayer& layer)
+Ref<CoordinatedAnimatedBackingStoreClient> CoordinatedAnimatedBackingStoreClient::create()
 {
-    return adoptRef(*new CoordinatedAnimatedBackingStoreClient(layer));
-}
-
-CoordinatedAnimatedBackingStoreClient::CoordinatedAnimatedBackingStoreClient(GraphicsLayer& layer)
-    : m_layer(&layer)
-{
+    return adoptRef(*new CoordinatedAnimatedBackingStoreClient());
 }
 
 void CoordinatedAnimatedBackingStoreClient::invalidate()
@@ -53,9 +48,11 @@ void CoordinatedAnimatedBackingStoreClient::invalidate()
     m_layer = nullptr;
 }
 
-void CoordinatedAnimatedBackingStoreClient::update(const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize& size, float contentsScale)
+void CoordinatedAnimatedBackingStoreClient::update(GraphicsLayer* layer, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize& size, float contentsScale)
 {
     ASSERT(isMainThread());
+    ASSERT(layer);
+    m_layer = layer;
     m_visibleRect = visibleRect;
     m_coverRect = coverRect;
     m_size = size;
