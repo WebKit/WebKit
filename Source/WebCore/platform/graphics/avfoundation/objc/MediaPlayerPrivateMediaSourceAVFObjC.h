@@ -210,6 +210,7 @@ private:
     void setPageIsVisible(bool) final;
     void setViewportVisibility(ViewportVisibility) final;
     void updateRendererVisibility();
+    bool shouldTeardownOnVisibilityChange() const;
 
     MediaTime duration() const override;
     MediaTime startTime() const override;

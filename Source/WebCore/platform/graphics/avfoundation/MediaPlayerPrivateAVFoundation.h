@@ -168,6 +168,7 @@ protected:
 
     // MediaPlayerPrivatePrivateInterface overrides.
     void load(const String& url) override;
+    void load(const URL&, const LoadOptions&) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #endif
@@ -380,6 +381,7 @@ protected:
     bool m_seeking;
     bool m_needsRenderingModeChanged { false };
     ViewportVisibility m_viewportVisibility { ViewportVisibility::NotVisible };
+    bool m_disableTeardownOnVisibilityChange { false };
 
 private:
     void seekInternal(const SeekTarget&);
