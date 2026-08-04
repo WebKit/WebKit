@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+/* Positioned off-screen rather than display:none, which would stop the inner
+   document from being laid out at all in some engines and leave nothing to measure. */
+#host { position: absolute; top: -20000px; left: 0; width: 800px; height: 600px; border: 0; }
+</style>
+</head>
+<body>
+<script>
+const ELEMENT_COUNT = 15000;
+const FONT_URL = "resources/Ahem.woff";
+
+const iframe = document.createElement("iframe");
+iframe.id = "host";
+document.body.appendChild(iframe);
+
+const frameDocument = iframe.contentDocument;
+frameDocument.write(
+    "<!DOCTYPE html><style>"
+    + "body { font-family: monospace; }"
+    + ".row { padding: 1px; }"
+    + ".tag::before { content: '#'; }"
+    + ".tag::after { content: ';'; }"
+    + ".b { font-weight: bold; }"
+    + ".i { font-style: italic; }"
+    + "</style><body></body>");
+frameDocument.close();
+
+function buildTree(target) {
+    const fragment = frameDocument.createDocumentFragment();
+    let created = 0;
+    let groupIndex = 0;
+    while (created < ELEMENT_COUNT) {
+        const group = frameDocument.createElement("div");
+        group.className = "row";
+        created++;
+        for (let childIndex = 0; childIndex < 6 && created < ELEMENT_COUNT; childIndex++) {
+            const child = frameDocument.createElement("span");
+            child.className = childIndex % 3 === 0 ? "tag" : (childIndex % 3 === 1 ? "b" : "i");
+            child.textContent = "item " + groupIndex + "-" + childIndex;
+            group.appendChild(child);
+            created++;
+        }
+        fragment.appendChild(group);
+        groupIndex++;
+    }
+    target.appendChild(fragment);
+}
+
+buildTree(frameDocument.body);
+
+const FrameFontFace = iframe.contentWindow.FontFace;
+const residentFont = new FrameFontFace("ResidentFont", "url(" + FONT_URL + ")");
+const probeFont = new FrameFontFace("ProbeFont", "url(" + FONT_URL + ")");
+
+function assertTreeIsLaidOut() {
+    if (!frameDocument.body.offsetHeight || !frameDocument.querySelector(".b").offsetWidth)
+        throw new Error("The tree was not laid out, so there is nothing to measure.");
+}
+
+Promise.all([residentFont.load(), probeFont.load()]).then(function () {
+    frameDocument.fonts.add(residentFont);
+    frameDocument.fonts.add(probeFont);
+    frameDocument.body.offsetHeight;
+    assertTreeIsLaidOut();
+
+    PerfTestRunner.measureTime({
+        description: "Measures invalidating a large DOM when a web font that no element references becomes available. Nothing can change appearance, so the ideal cost is near zero and whatever is measured is invalidation overhead. This is the background-tab case: a page loading font variants it never uses.",
+        setup: function () {
+            frameDocument.fonts.delete(probeFont);
+            frameDocument.body.offsetHeight;
+        },
+        run: function () {
+            frameDocument.fonts.add(probeFont);
+            frameDocument.body.offsetHeight;
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="reftest-wait">
   <head>
     <title>Spacing of non-BMP operators</title>
     <meta charset="utf-8"/>
@@ -14,6 +14,7 @@
     </style>
   </head>
   <body>
+<script>document.fonts.ready.then(() => document.documentElement.classList.remove("reftest-wait"));</script>
 
     <p>
       This test verifies the spacing of some non-BMP operators. It is assumed

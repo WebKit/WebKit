@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+#host { position: absolute; top: -20000px; left: 0; width: 800px; height: 600px; border: 0; }
+</style>
+</head>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const asNumber = (name, fallback) => {
+    const value = parseInt(params.get(name), 10);
+    return Number.isFinite(value) ? value : fallback;
+};
+
+const ELEMENT_COUNT = asNumber("elements", 15000);
+const RULE_COUNT = asNumber("rules", 8000);
+const SHADOW_ROOT_COUNT = asNumber("shadowRoots", 300);
+const NESTING_DEPTH = asNumber("depth", 8);
+const ITERATION_COUNT = asNumber("iterations", 0);
+
+const FONT_URL = "resources/Ahem.woff";
+
+function buildStyleSheet() {
+    const rules = [];
+    for (let index = 0; index < RULE_COUNT; index++) {
+        const scope = "s" + (index % 97);
+        switch (index % 5) {
+        case 0: rules.push("." + scope + " .target { letter-spacing: 0px; }"); break;
+        case 1: rules.push("." + scope + " > .row .target { word-spacing: 0px; }"); break;
+        case 2: rules.push("." + scope + ":not(.absent) .target { text-indent: 0px; }"); break;
+        case 3: rules.push("[data-k=\"" + index + "\"] .target { outline-offset: 0px; }"); break;
+        default: rules.push(".row." + scope + " .target::after { content: \"\"; }"); break;
+        }
+    }
+    rules.push(".row .target { padding: 0 1px; }");
+    rules.push(".deep .target { margin: 0; }");
+    return rules.join("\n");
+}
+
+const iframe = document.createElement("iframe");
+iframe.id = "host";
+document.body.appendChild(iframe);
+
+const frameDocument = iframe.contentDocument;
+frameDocument.write("<!DOCTYPE html><style id=\"sheet\"></style><body></body>");
+frameDocument.close();
+frameDocument.getElementById("sheet").textContent =
+    "body { font-family: ProbeFont, monospace; }\n.target { display: inline-block; }\n" + buildStyleSheet();
+
+function buildTree() {
+    let created = 0;
+    let groupIndex = 0;
+    let shadowRootsCreated = 0;
+
+    while (created < ELEMENT_COUNT) {
+        let parent = frameDocument.body;
+        for (let depth = 0; depth < NESTING_DEPTH && created < ELEMENT_COUNT; depth++) {
+            const wrapper = frameDocument.createElement("div");
+            wrapper.className = "row deep s" + (groupIndex % 97);
+            wrapper.setAttribute("data-k", String(groupIndex));
+            parent.appendChild(wrapper);
+            parent = wrapper;
+            created++;
+        }
+
+        if (shadowRootsCreated < SHADOW_ROOT_COUNT) {
+            const shadowHost = frameDocument.createElement("div");
+            parent.appendChild(shadowHost);
+            created++;
+            const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+            shadowRoot.innerHTML = "<span class=\"target\">shadow " + shadowRootsCreated + "</span>";
+            shadowRootsCreated++;
+        }
+
+        for (let childIndex = 0; childIndex < 4 && created < ELEMENT_COUNT; childIndex++) {
+            const child = frameDocument.createElement("span");
+            child.className = "target";
+            child.textContent = "item " + groupIndex + "-" + childIndex;
+            parent.appendChild(child);
+            created++;
+        }
+        groupIndex++;
+    }
+    return shadowRootsCreated;
+}
+
+const shadowRootsCreated = buildTree();
+
+const FrameFontFace = iframe.contentWindow.FontFace;
+const residentFont = new FrameFontFace("ResidentFont", "url(" + FONT_URL + ")");
+const probeFont = new FrameFontFace("ProbeFont", "url(" + FONT_URL + ")");
+
+Promise.all([residentFont.load(), probeFont.load()]).then(function () {
+    frameDocument.fonts.add(residentFont);
+    frameDocument.fonts.add(probeFont);
+    frameDocument.body.offsetHeight;
+
+    if (!frameDocument.body.offsetHeight || !frameDocument.querySelector(".target").offsetWidth)
+        throw new Error("The tree was not laid out, so there is nothing to measure.");
+
+    const probeElement = frameDocument.querySelector(".target");
+    frameDocument.fonts.delete(probeFont);
+    frameDocument.body.offsetHeight;
+    const widthWithoutProbeFont = probeElement.offsetWidth;
+    frameDocument.fonts.add(probeFont);
+    frameDocument.body.offsetHeight;
+    if (probeElement.offsetWidth === widthWithoutProbeFont)
+        throw new Error("Adding the font did not change layout within the measured region.");
+
+    const test = {
+        description: "Measures invalidating a large, style-heavy DOM when a web font the page uses becomes available. The 8,000 rules all end in the same class so they land in one RuleSet bucket, which makes selector matching, and therefore style resolution, dominate rather than layout. That is the ratio reported on the page this work came from: style recalc 97% of the freeze, layout 3%. Parameterised via the query string so the size can be calibrated.",
+        setup: function () {
+            frameDocument.fonts.delete(probeFont);
+            frameDocument.body.offsetHeight;
+        },
+        run: function () {
+            frameDocument.fonts.add(probeFont);
+            frameDocument.body.offsetHeight;
+        }
+    };
+    if (ITERATION_COUNT)
+        test.customIterationCount = ITERATION_COUNT;
+
+    PerfTestRunner.logInfo("elements=" + ELEMENT_COUNT + " rules=" + RULE_COUNT
+        + " shadowRoots=" + shadowRootsCreated + " depth=" + NESTING_DEPTH);
+    PerfTestRunner.measureTime(test);
+});
+</script>
+</body>
+</html>

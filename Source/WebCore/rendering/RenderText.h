@@ -164,6 +164,7 @@ public:
     bool shouldUseSimpleGlyphOverflowCodePath() const { return fontCodePath() == FontCascade::CodePath::SimpleWithGlyphOverflow; }
 
     virtual void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle);
+    void fontsDidChange() override;
 
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }

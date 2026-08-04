@@ -220,6 +220,15 @@ void MatchedDeclarationsCache::clearEntriesAffectedByViewportUnits()
     });
 }
 
+void MatchedDeclarationsCache::clearEntriesAffectedByFontMetrics()
+{
+    Ref protectedThis { *this };
+
+    removeAllMatching([&] (const Entry& entry) -> bool {
+        return entry.renderStyle->dependsOnFontMetrics();
+    });
+}
+
 void MatchedDeclarationsCache::sweep()
 {
     Ref protectedThis { *this };

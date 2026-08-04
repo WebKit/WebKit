@@ -38,6 +38,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Platform.h>
 #include <wtf/TriState.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -117,6 +118,11 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
+    bool isValid() const { return m_isValid; }
+    void invalidate() { m_isValid = false; }
+
+    void registerWithFontSelectorIfNeeded(FontSelector*);
+
     GlyphData glyphDataForCharacter(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy);
 
     bool isFixedPitch(const FontCascadeDescription&, FontSelector*);
@@ -128,7 +134,6 @@ public:
     }
 
     bool isLoadingCustomFonts() const;
-
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned generation() const { return m_generation; }
 
@@ -208,7 +213,9 @@ private:
     unsigned short m_generation { 0 };
     PitchType m_pitch { PitchType::Unknown };
     bool m_isForPlatformFont { false };
+    bool m_isValid { true };
     TriState m_canTakeFixedPitchFastContentMeasuring : 2 { TriState::Indeterminate };
+    WeakHashSet<FontSelector> m_registeredFontSelectors;
 #if ASSERT_ENABLED
     std::optional<uint32_t> m_creationThreadID;
 #endif

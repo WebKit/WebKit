@@ -508,6 +508,13 @@ void CanvasRenderingContext2DBase::FontProxy::initialize(FontSelector& fontSelec
     protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
 }
 
+#if ASSERT_ENABLED
+bool CanvasRenderingContext2DBase::FontProxy::isPopulated() const
+{
+    return m_font.ensureFonts();
+}
+#endif
+
 const FontMetrics& CanvasRenderingContext2DBase::FontProxy::metricsOfPrimaryFont() const
 {
     return m_font.metricsOfPrimaryFont();
@@ -2916,7 +2923,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     auto* cachedShapedText = [&]() -> TextShapingResultAndDisplayList* {
         if (!canUseCachedShapedText(textRun))
             return nullptr;
-        RefPtr fonts = fontCascade.fonts();
+        RefPtr fonts = fontCascade.ensureFonts();
         ASSERT(fonts);
         return fonts->getOrCreateCachedShapedText(textRun, fontCascade, 0, std::nullopt, ForTextEmphasis::No);
     }();

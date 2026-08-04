@@ -1,0 +1,6 @@
+sync
+async
+
+PASS Class change in the same task as a font becoming available is not dropped
+PASS Class change from document.fonts.ready is not dropped
+

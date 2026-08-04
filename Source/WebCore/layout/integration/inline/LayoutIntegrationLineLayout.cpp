@@ -28,6 +28,7 @@
 
 #include "BlockFormattingState.h"
 #include "BlockLayoutState.h"
+#include "CSSFontSelector.h"
 #include "EventRegion.h"
 #include "FloatingObjects.h"
 #include "FontCascadeInlines.h"
@@ -36,12 +37,13 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineContentCache.h"
-#include "InlineDisplayBoxInlines.h"
 #include "InlineDamage.h"
+#include "InlineDisplayBoxInlines.h"
 #include "InlineFormattingContext.h"
 #include "InlineInvalidation.h"
 #include "InlineItemsBuilder.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutInlineTextBox.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
 #include "LayoutIntegrationInlineContentPainter.h"
@@ -205,6 +207,8 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
     , m_inlineContentCache(layoutState().inlineContentCache(rootLayoutBox()))
     , m_boxGeometryUpdater(flow.view().layoutState(), rootLayoutBox())
 {
+    if (auto* fontSelector = m_document->fontSelectorIfExists())
+        m_fontSelectorVersion = fontSelector->version();
 }
 
 LineLayout::~LineLayout()
@@ -356,6 +360,11 @@ void LineLayout::updateStyle(const RenderObject& renderer)
     BoxTreeUpdater::updateStyle(renderer);
 }
 
+void LineLayout::updateFontDependentContentCharacteristic(const RenderText& renderText)
+{
+    BoxTreeUpdater::updateFontDependentContentCharacteristic(renderText);
+}
+
 bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const Style::ComputedStyle& newStyle)
 {
     if (!root.layoutBox() || !root.layoutBox()->isElementBox()) {
@@ -397,6 +406,8 @@ void LineLayout::updateOverflow()
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
+    invalidateCachesIfFontChanged();
+
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.placedFloats(), { } };
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
     if (m_lineDamage)
@@ -469,6 +480,8 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
 
 std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& marginInfo, ForceFullLayout forcedFullLayout)
 {
+    invalidateCachesIfFontChanged();
+
     if (forcedFullLayout == ForceFullLayout::Yes && m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
 
@@ -1498,6 +1511,23 @@ void LineLayout::releaseCachesAndResetDamage()
         m_inlineContent->releaseCaches();
     if (m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
+}
+
+void LineLayout::fontsNeedUpdate()
+{
+    m_inlineContentCache.resetMinimumMaximumContentSizes();
+    releaseCachesAndResetDamage();
+}
+
+void LineLayout::invalidateCachesIfFontChanged()
+{
+    if (auto* fontSelector = m_document ? m_document->fontSelectorIfExists() : nullptr) {
+        auto currentVersion = fontSelector->version();
+        if (m_fontSelectorVersion != currentVersion) {
+            m_fontSelectorVersion = currentVersion;
+            fontsNeedUpdate();
+        }
+    }
 }
 
 void LineLayout::clearInlineContent()

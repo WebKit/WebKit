@@ -470,6 +470,13 @@ public:
     inline bool usesViewportUnits() const;
     inline void setUsesViewportUnits();
 
+    inline bool dependsOnFontMetrics() const;
+    inline bool usesFontRelativeLength() const;
+    inline void setUsesFontRelativeLength();
+
+    inline bool usesFontSizeMath() const;
+    inline void setUsesFontSizeMath();
+
     inline bool isContainerDependent() const;
     inline void setIsContainerDependent();
 
@@ -756,6 +763,8 @@ public:
         PREFERRED_TYPE(Float) unsigned floating : 3;
 
         PREFERRED_TYPE(bool) unsigned usesViewportUnits : 1;
+        PREFERRED_TYPE(bool) unsigned usesFontRelativeLength : 1;
+        PREFERRED_TYPE(bool) unsigned usesFontSizeMath : 1;
         PREFERRED_TYPE(bool) unsigned isContainerDependent : 1;
         PREFERRED_TYPE(bool) unsigned useTreeCountingFunctions : 1;
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.

@@ -148,6 +148,8 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
         return false;
     if (element.document().hasPendingFullStyleRebuild())
         return false;
+    if (element.document().needsFontInvalidation())
+        return false;
     if (!element.document().childNeedsStyleRecalc())
         return true;
 

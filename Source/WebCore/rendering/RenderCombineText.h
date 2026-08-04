@@ -48,6 +48,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderCombineText"_s; }
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void fontsDidChange() override;
     void setRenderedText(const String&) override;
 
     std::unique_ptr<Style::ComputedStyle> m_combineFontStyle;

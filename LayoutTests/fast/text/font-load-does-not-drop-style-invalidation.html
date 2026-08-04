@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+#sync, #async { color: rgb(0, 0, 0); }
+.loaded #sync, .loaded #async { color: rgb(0, 128, 0); }
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="sync">sync</div>
+    <div id="async">async</div>
+</div>
+<script>
+function colorOf(id) {
+    return getComputedStyle(document.getElementById(id)).color;
+}
+
+promise_test(async () => {
+    const face = new FontFace("SyncProbeFont", "url(../../resources/Ahem.woff)");
+    await face.load();
+
+    assert_equals(colorOf("sync"), "rgb(0, 0, 0)", "color before the class is added");
+
+    document.fonts.add(face);
+    document.getElementById("container").className = "loaded";
+
+    assert_equals(colorOf("sync"), "rgb(0, 128, 0)",
+        "a class change made while a font invalidation is pending must still be applied");
+}, "Class change in the same task as a font becoming available is not dropped");
+
+promise_test(async () => {
+    const face = new FontFace("AsyncProbeFont", "url(../../resources/Ahem.woff)");
+    document.fonts.add(face);
+    face.load();
+
+    await document.fonts.ready;
+    document.getElementById("container").className = "loaded";
+
+    assert_equals(colorOf("async"), "rgb(0, 128, 0)",
+        "a class change made from document.fonts.ready must still be applied");
+}, "Class change from document.fonts.ready is not dropped");
+</script>
+</body>
+</html>

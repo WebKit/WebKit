@@ -27,6 +27,7 @@
 #include "GlyphDisplayListCache.h"
 
 #include "DisplayListItems.h"
+#include "FontCascadeInlines.h"
 #include "InlineDisplayBox.h"
 #include "LegacyInlineTextBox.h"
 #include "PaintInfo.h"
@@ -105,7 +106,7 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getDisplayList(con
         return nullptr;
     }
 
-    if (font.isLoadingCustomFonts() || !font.fonts())
+    if (font.isLoadingCustomFonts() || !font.ensureFonts())
         return nullptr;
 
     if (RefPtr result = getIfExists(run))

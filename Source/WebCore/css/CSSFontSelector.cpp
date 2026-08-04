@@ -287,9 +287,11 @@ void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient& cli
     m_clients.remove(&client);
 }
 
-void CSSFontSelector::dispatchInvalidationCallbacks()
+void CSSFontSelector::dispatchInvalidationCallbacks(FontInvalidationReason reason)
 {
     ++m_version;
+
+    invalidateAssociatedFontCascadeFonts(reason);
 
     for (auto& client : copyToVector(m_clients)) {
         if (m_clients.contains(client))
@@ -315,7 +317,7 @@ void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascade
 
 void CSSFontSelector::fontLoaded(CSSFontFace&)
 {
-    dispatchInvalidationCallbacks();
+    dispatchInvalidationCallbacks(FontInvalidationReason::FontLoaded);
 }
 
 void CSSFontSelector::fontModified()

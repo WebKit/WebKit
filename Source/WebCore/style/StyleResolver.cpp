@@ -684,6 +684,11 @@ void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
     m_matchedDeclarationsCache.clearEntriesAffectedByViewportUnits();
 }
 
+void Resolver::clearCachedDeclarationsAffectedByFontMetrics()
+{
+    m_matchedDeclarationsCache.clearEntriesAffectedByFontMetrics();
+}
+
 void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties)
 {
     auto& style = *state.style();

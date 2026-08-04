@@ -115,6 +115,10 @@ public:
     WEBCORE_EXPORT void update(RefPtr<FontSelector>&& = nullptr) const;
     unsigned fontSelectorVersion() const;
 
+    // Out-of-line slow path for ensureFonts(), only reached when m_fonts is
+    // actually stale, so the common case stays a cheap inline check.
+    WEBCORE_EXPORT void refreshFonts() const;
+
     using CustomFontNotReadyAction = FontCascadeCustomFontNotReadyAction;
     WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
     static void drawGlyphs(GraphicsContext&, const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
@@ -269,7 +273,8 @@ public:
     static String normalizeSpaces(StringView);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
-    FontCascadeFonts* fonts() const { return m_fonts.get(); }
+    inline FontCascadeFonts* ensureFonts() const; // Defined in FontCascadeInlines.h
+    FontCascadeFonts* existingFonts() const { return m_fonts.get(); }
     bool isLoadingCustomFonts() const;
 
     static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);

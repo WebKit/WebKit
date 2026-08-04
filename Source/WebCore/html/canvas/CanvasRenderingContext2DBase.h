@@ -282,7 +282,7 @@ public:
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
 
 #if ASSERT_ENABLED
-        bool isPopulated() const { return m_font.fonts(); }
+        bool isPopulated() const;
 #endif
 
         const FontCascade& fontCascade() const LIFETIME_BOUND { return m_font; }

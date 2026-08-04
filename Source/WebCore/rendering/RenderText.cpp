@@ -520,6 +520,17 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     }
 }
 
+void RenderText::fontsDidChange()
+{
+    setNeedsLayoutAndInvalidateContentLogicalWidths();
+    m_knownToHaveNoOverflowAndNoFallbackFonts = false;
+    m_canUseSimplifiedTextMeasuring = { };
+    m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
+
+    if (layoutBox())
+        LayoutIntegration::LineLayout::updateFontDependentContentCharacteristic(*this);
+}
+
 void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     // There is no need to ever schedule repaints from a style change of a text run, since

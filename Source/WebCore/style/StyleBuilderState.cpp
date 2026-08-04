@@ -51,6 +51,7 @@
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "FontCache.h"
+#include "FontCascadeInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
@@ -169,7 +170,7 @@ void BuilderState::updateFont()
     Ref fontSelector = const_cast<Document&>(document()).fontSelector();
 
     auto needsUpdate = [&] {
-        return m_fontDirty || !m_style.fontCascade().fonts();
+        return m_fontDirty || !m_style.fontCascade().ensureFonts();
     };
 
     if (!needsUpdate())
@@ -313,6 +314,16 @@ void BuilderState::setUsesViewportUnits()
 void BuilderState::setIsContainerDependent()
 {
     m_style.setIsContainerDependent();
+}
+
+void BuilderState::setUsesFontRelativeLength()
+{
+    m_style.setUsesFontRelativeLength();
+}
+
+void BuilderState::setUsesFontSizeMath()
+{
+    m_style.setUsesFontSizeMath();
 }
 
 double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const

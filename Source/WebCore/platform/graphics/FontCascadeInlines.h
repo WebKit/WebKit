@@ -41,31 +41,42 @@
 
 namespace WebCore {
 
+inline FontCascadeFonts* FontCascade::ensureFonts() const
+{
+    if (m_fonts && !m_fonts->isValid())
+        refreshFonts();
+    return m_fonts.get();
+}
+
 inline const Font& FontCascade::primaryFont() const
 {
-    if (m_fonts->cachedPrimaryFont())
-        return *m_fonts->cachedPrimaryFont();
-    WeakRef font = protect(m_fonts)->primaryFont(m_fontDescription, protect(fontSelector()).get());
+    RefPtr fonts = ensureFonts();
+    if (fonts->cachedPrimaryFont())
+        return *fonts->cachedPrimaryFont();
+    WeakRef font = fonts->primaryFont(m_fontDescription, protect(fontSelector()).get());
     m_fontDescription.resolveFontSizeAdjustFromFontIfNeeded(font);
     return font;
 }
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
-    return protect(m_fonts)->realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
+    RefPtr fonts = ensureFonts();
+    return fonts->realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
 }
 
 inline bool FontCascade::isFixedPitch() const
 {
-    return protect(m_fonts)->isFixedPitch(m_fontDescription, protect(fontSelector()).get());
+    RefPtr fonts = ensureFonts();
+    return fonts->isFixedPitch(m_fontDescription, protect(fontSelector()).get());
 }
 
 inline bool FontCascade::canTakeFixedPitchFastContentMeasuring() const
 {
-    auto cachedCanTakeFixedPitch = m_fonts->cachedCanTakeFixedPitchFastContentMeasuring();
+    RefPtr fonts = ensureFonts();
+    auto cachedCanTakeFixedPitch = fonts->cachedCanTakeFixedPitchFastContentMeasuring();
     if (cachedCanTakeFixedPitch != TriState::Indeterminate)
         return cachedCanTakeFixedPitch == TriState::True;
-    return protect(m_fonts)->canTakeFixedPitchFastContentMeasuring(m_fontDescription, protect(fontSelector()).get());
+    return fonts->canTakeFixedPitchFastContentMeasuring(m_fontDescription, protect(fontSelector()).get());
 }
 
 inline FontSelector* FontCascade::fontSelector() const
@@ -98,7 +109,7 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
     if (text.isEmpty())
         return 0;
     ASSERT(codePath(TextRun(text)) != CodePath::Complex);
-    auto* cacheEntry = fonts()->glyphGeometryCache().add(text, { });
+    auto* cacheEntry = ensureFonts()->glyphGeometryCache().add(text, { });
     if (cacheEntry && cacheEntry->width)
         return *cacheEntry->width;
 
@@ -107,7 +118,8 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
 
 inline bool FontCascade::isPlatformFont() const
 {
-    return m_fonts->isForPlatformFont();
+    RefPtr fonts = ensureFonts();
+    return fonts->isForPlatformFont();
 }
 
 inline const FontMetrics& FontCascade::metricsOfPrimaryFont() const

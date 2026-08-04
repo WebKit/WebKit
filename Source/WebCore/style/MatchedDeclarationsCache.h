@@ -68,6 +68,7 @@ public:
     // the last reference to a style declaration are garbage collected.
     void invalidate();
     void clearEntriesAffectedByViewportUnits();
+    void clearEntriesAffectedByFontMetrics();
 
     void NODELETE ref() const;
     void deref() const;

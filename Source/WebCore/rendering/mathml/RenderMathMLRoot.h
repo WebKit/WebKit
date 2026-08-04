@@ -57,6 +57,7 @@ private:
     RootType NODELETE rootType() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void fontsDidChange() final;
 
     void computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
