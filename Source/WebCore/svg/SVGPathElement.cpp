@@ -36,6 +36,7 @@
 #include "SVGPoint.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -280,7 +281,7 @@ void SVGPathElement::collectExtraStyleForPresentationalHints(MutableStylePropert
 {
     if (!document().settings().cssDPropertyEnabled())
         return;
-    if (style.findPropertyIndex(CSSPropertyD) == -1)
+    if (!style.hasProperty(CSSPropertyD))
         collectDPresentationalHint(style);
 }
 

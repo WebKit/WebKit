@@ -72,6 +72,11 @@ inline void StyleProperties::deref() const
         RELEASE_ASSERT_NOT_REACHED();
 }
 
+inline bool StyleProperties::hasProperty(CSSPropertyID propertyID) const
+{
+    return findPropertyIndex(propertyID) != -1;
+}
+
 inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
 {
     if (m_isMutable)

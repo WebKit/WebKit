@@ -144,6 +144,7 @@ public:
 
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
+    inline bool hasProperty(CSSPropertyID) const;
     inline int findPropertyIndex(CSSPropertyID) const;
     inline int findCustomPropertyIndex(StringView propertyName) const;
 
