@@ -174,7 +174,7 @@ enum class TapHandlingResult : uint8_t;
 - (NSString *)_contentSizeCategory;
 - (void)_dispatchSetDeviceOrientation:(WebCore::IntDegrees)deviceOrientation;
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds;
-- (WebCore::InteractiveWidget)_viewportMetaTagInteractiveWidget;
+- (WebCore::InteractiveWidgetValue)_viewportMetaTagInteractiveWidget;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
 - (void)_resetScrollViewInsetAdjustmentBehavior;
 

@@ -440,7 +440,7 @@ enum class WebCore::ViewportFit : uint8_t {
     Cover,
 };
 
-enum class WebCore::InteractiveWidget : uint8_t {
+enum class WebCore::InteractiveWidgetValue : uint8_t {
     ResizesVisual,
     ResizesContent,
     OverlaysContent
@@ -1098,7 +1098,7 @@ struct WebCore::ViewportArguments {
     WebCore::ViewportArguments::Type type;
     WebCore::ViewportFit viewportFit;
     bool widthWasExplicit;
-    WebCore::InteractiveWidget interactiveWidget;
+    WebCore::InteractiveWidgetValue interactiveWidgetValue;
 };
 #endif // ENABLE(META_VIEWPORT)
 

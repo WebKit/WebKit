@@ -48,7 +48,7 @@ enum class ViewportFit : uint8_t {
     Cover
 };
 
-enum class InteractiveWidget : uint8_t {
+enum class InteractiveWidgetValue : uint8_t {
     ResizesVisual,
     ResizesContent,
     OverlaysContent
@@ -67,7 +67,7 @@ struct ViewportAttributes {
 
     ViewportFit viewportFit;
 
-    InteractiveWidget interactiveWidget;
+    InteractiveWidgetValue interactiveWidgetValue;
 };
 
 struct ViewportArguments {
@@ -93,7 +93,7 @@ struct ViewportArguments {
     {
     }
 
-    ViewportArguments(float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, Type type, ViewportFit viewportFit, bool widthWasExplicit, InteractiveWidget interactiveWidget)
+    ViewportArguments(float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, Type type, ViewportFit viewportFit, bool widthWasExplicit, InteractiveWidgetValue interactiveWidgetValue)
         : width(width)
         , height(height)
         , zoom(zoom)
@@ -105,7 +105,7 @@ struct ViewportArguments {
         , type(type)
         , viewportFit(viewportFit)
         , widthWasExplicit(widthWasExplicit)
-        , interactiveWidget(interactiveWidget)
+        , interactiveWidgetValue(interactiveWidgetValue)
     {
     }
 
@@ -123,7 +123,7 @@ struct ViewportArguments {
     Type type { Type::Implicit };
     ViewportFit viewportFit { ViewportFit::Auto };
     bool widthWasExplicit { false };
-    InteractiveWidget interactiveWidget { InteractiveWidget::ResizesVisual };
+    InteractiveWidgetValue interactiveWidgetValue { InteractiveWidgetValue::ResizesVisual };
 
     bool operator==(const ViewportArguments& other) const
     {
@@ -139,7 +139,7 @@ struct ViewportArguments {
             && shrinkToFit == other.shrinkToFit
             && viewportFit == other.viewportFit
             && widthWasExplicit == other.widthWasExplicit
-            && interactiveWidget == other.interactiveWidget;
+            && interactiveWidgetValue == other.interactiveWidgetValue;
     }
 
 #if PLATFORM(GTK)

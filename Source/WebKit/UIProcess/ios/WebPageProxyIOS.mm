@@ -260,7 +260,7 @@ WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unob
         constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
     }
 
-    bool resizesContent = pageClient->viewportMetaTagInteractiveWidget() == WebCore::InteractiveWidget::ResizesContent;
+    bool resizesContent = pageClient->viewportMetaTagInteractiveWidget() == WebCore::InteractiveWidgetValue::ResizesContent;
     FloatRect sizeSourceRect = resizesContent ? unobscuredContentRectRespectingInputViewBounds : unobscuredContentRect;
     FloatSize constrainedSize = isBelowMinimumScale ? constrainedUnobscuredRect.size() : sizeSourceRect.size();
     FloatRect unobscuredContentRectForViewport = isBelowMinimumScale ? constrainedUnobscuredRect : unobscuredContentRectRespectingInputViewBounds;

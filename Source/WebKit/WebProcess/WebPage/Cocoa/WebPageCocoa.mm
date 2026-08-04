@@ -2378,7 +2378,7 @@ void WebPage::willCommitMainFrameData(MainFrameData& data, const TransactionID& 
     data.minimumScaleFactor = m_viewportConfiguration.minimumScale();
     data.maximumScaleFactor = m_viewportConfiguration.maximumScale();
     data.initialScaleFactor = m_viewportConfiguration.initialScale();
-    data.viewportMetaTagInteractiveWidget = m_viewportConfiguration.viewportArguments().interactiveWidget;
+    data.viewportMetaTagInteractiveWidget = m_viewportConfiguration.viewportArguments().interactiveWidgetValue;
     data.viewportMetaTagWidth = m_viewportConfiguration.viewportArguments().width;
     data.viewportMetaTagWidthWasExplicit = m_viewportConfiguration.viewportArguments().widthWasExplicit;
     data.viewportMetaTagCameFromImageDocument = m_viewportConfiguration.viewportArguments().type == ViewportArguments::Type::ImageDocument;

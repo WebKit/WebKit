@@ -165,7 +165,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     result.orientation = orientation;
     result.shrinkToFit = shrinkToFit;
     result.viewportFit = viewportFit;
-    result.interactiveWidget = interactiveWidget;
+    result.interactiveWidgetValue = interactiveWidgetValue;
 
     return result;
 }
@@ -312,18 +312,18 @@ static ViewportFit parseViewportFitValue(StringView key, StringView value, NOESC
     return ViewportFit::Auto;
 }
 
-static InteractiveWidget parseInteractiveWidgetValue(StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
+static InteractiveWidgetValue parseInteractiveWidgetValue(StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
 {
     if (equalLettersIgnoringASCIICase(value, "resizes-visual"_s))
-        return InteractiveWidget::ResizesVisual;
+        return InteractiveWidgetValue::ResizesVisual;
     if (equalLettersIgnoringASCIICase(value, "resizes-content"_s))
-        return InteractiveWidget::ResizesContent;
+        return InteractiveWidgetValue::ResizesContent;
     if (equalLettersIgnoringASCIICase(value, "overlays-content"_s))
-        return InteractiveWidget::OverlaysContent;
+        return InteractiveWidgetValue::OverlaysContent;
 
     errorHandler(ViewportErrorCode::UnrecognizedViewportArgumentValue, value, key);
 
-    return InteractiveWidget::ResizesVisual;
+    return InteractiveWidgetValue::ResizesVisual;
 }
 
 static ASCIILiteral viewportErrorMessageTemplate(ViewportErrorCode errorCode)
@@ -411,7 +411,7 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
     else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s))
         arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler);
     else if (metaViewportInteractiveWidgetEnabled && equalLettersIgnoringASCIICase(key, "interactive-widget"_s))
-        arguments.interactiveWidget = parseInteractiveWidgetValue(key, value, internalErrorHandler);
+        arguments.interactiveWidgetValue = parseInteractiveWidgetValue(key, value, internalErrorHandler);
     else
         internalErrorHandler(ViewportErrorCode::UnrecognizedViewportArgumentKey, key, { });
 }

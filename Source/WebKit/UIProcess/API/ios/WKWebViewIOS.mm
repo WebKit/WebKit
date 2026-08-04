@@ -2556,7 +2556,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!_page)
         return;
 
-    if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::ResizesContent) {
+    if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidgetValue::ResizesContent) {
         CGRect keyboardInView = [self convertRect:[self _inputViewBoundsForViewportCalculations] fromView:nil];
         if (!CGRectIsEmpty(keyboardInView)) {
             CGFloat contentTop = [self _computedObscuredInset].top;
@@ -2930,12 +2930,12 @@ static CGFloat liveResizeMinimumWidthDifference()
 
 - (CGRect)_inputViewBoundsForViewportCalculations
 {
-    if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent)
+    if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidgetValue::OverlaysContent)
         return CGRectZero;
     return _inputViewBoundsInWindow;
 }
 
-- (WebCore::InteractiveWidget)_viewportMetaTagInteractiveWidget
+- (WebCore::InteractiveWidgetValue)_viewportMetaTagInteractiveWidget
 {
     return _perProcessState.viewportMetaTagInteractiveWidget;
 }
@@ -3553,8 +3553,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
         return [self.window convertRect:keyboardFrameInScreen fromCoordinateSpace:self.window.screen.coordinateSpace];
     })();
 
-    BOOL keyboardShouldOverlayContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent;
-    BOOL keyboardShouldResizeContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::ResizesContent;
+    BOOL keyboardShouldOverlayContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidgetValue::OverlaysContent;
+    BOOL keyboardShouldResizeContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidgetValue::ResizesContent;
 
     if (adjustScrollView && !keyboardShouldOverlayContent) {
         CGFloat bottomInsetBeforeAdjustment = [_scrollView contentInset].bottom;

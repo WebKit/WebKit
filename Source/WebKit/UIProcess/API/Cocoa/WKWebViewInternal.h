@@ -267,7 +267,7 @@ struct PerWebProcessState {
 
     WebKit::DynamicViewportUpdateMode dynamicViewportUpdateMode { WebKit::DynamicViewportUpdateMode::NotResizing };
 
-    WebCore::InteractiveWidget viewportMetaTagInteractiveWidget { WebCore::InteractiveWidget::ResizesVisual };
+    WebCore::InteractiveWidgetValue viewportMetaTagInteractiveWidget { WebCore::InteractiveWidgetValue::ResizesVisual };
 
     BOOL waitingForEndAnimatedResize { NO };
     BOOL waitingForCommitAfterAnimatedResize { NO };

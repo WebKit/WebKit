@@ -418,7 +418,7 @@ WebCore::FloatRect PageClientImpl::documentRect() const
     return [contentView() bounds];
 }
 
-WebCore::InteractiveWidget PageClientImpl::viewportMetaTagInteractiveWidget() const
+WebCore::InteractiveWidgetValue PageClientImpl::viewportMetaTagInteractiveWidget() const
 {
     return [webView() _viewportMetaTagInteractiveWidget];
 }
