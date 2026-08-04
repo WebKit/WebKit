@@ -63,9 +63,9 @@ struct PatchCustom {
     {
         // This is basically bogus, but it works for analyses that model Special as an
         // immediate.
-        lambda(inst.args[0], Arg::Use, GP, pointerWidth());
+        lambda(inst.args()[0], Arg::Use, GP, pointerWidth());
         
-        inst.args[0].special()->forEachArg(inst, lambda);
+        inst.args()[0].special()->forEachArg(inst, lambda);
     }
 
     template<typename... Arguments>
@@ -80,40 +80,40 @@ struct PatchCustom {
     {
         if (!argIndex)
             return false;
-        return inst.args[0].special()->admitsStack(inst, argIndex);
+        return inst.args()[0].special()->admitsStack(inst, argIndex);
     }
 
     static bool admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
     {
         if (!argIndex)
             return false;
-        return inst.args[0].special()->admitsExtendedOffsetAddr(inst, argIndex);
+        return inst.args()[0].special()->admitsExtendedOffsetAddr(inst, argIndex);
     }
 
     static std::optional<unsigned> shouldTryAliasingDef(Inst& inst)
     {
-        return inst.args[0].special()->shouldTryAliasingDef(inst);
+        return inst.args()[0].special()->shouldTryAliasingDef(inst);
     }
     
     static bool isTerminal(Inst& inst)
     {
-        return inst.args[0].special()->isTerminal(inst);
+        return inst.args()[0].special()->isTerminal(inst);
     }
 
     static bool hasNonArgEffects(Inst& inst)
     {
-        return inst.args[0].special()->hasNonArgEffects(inst);
+        return inst.args()[0].special()->hasNonArgEffects(inst);
     }
 
     static bool hasNonArgNonControlEffects(Inst& inst)
     {
-        return inst.args[0].special()->hasNonArgNonControlEffects(inst);
+        return inst.args()[0].special()->hasNonArgNonControlEffects(inst);
     }
 
     static MacroAssembler::Jump generate(
         Inst& inst, CCallHelpers& jit, GenerationContext& context)
     {
-        return inst.args[0].special()->generate(inst, jit, context);
+        return inst.args()[0].special()->generate(inst, jit, context);
     }
 };
 
@@ -134,13 +134,13 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
     {
         CCallValue* value = inst.origin->as<CCallValue>();
 
-        Code& code = inst.args[0].special()->code();
+        Code& code = inst.args()[0].special()->code();
 
         // Skip the CCallSpecial Arg.
         unsigned index = 1;
 
         auto next = [&](Arg::Role role, Bank bank, Width width) {
-            functor(inst.args[index++], role, bank, width);
+            functor(inst.args()[index++], role, bank, width);
         };
 
         next(Arg::Use, GP, pointerWidth()); // callee
@@ -165,7 +165,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
                 );
             }
         }
-        ASSERT(index == inst.args.size());
+        ASSERT(index == inst.args().size());
     }
 
     template<typename... Arguments>
@@ -217,11 +217,11 @@ struct ShuffleCustom : public CommonCustomBase<ShuffleCustom> {
     template<typename Functor>
     static void forEachArg(Inst& inst, const Functor& functor)
     {
-        unsigned limit = inst.args.size() / 3 * 3;
+        unsigned limit = inst.args().size() / 3 * 3;
         for (unsigned i = 0; i < limit; i += 3) {
-            Arg& src = inst.args[i + 0];
-            Arg& dst = inst.args[i + 1];
-            Arg& widthArg = inst.args[i + 2];
+            Arg& src = inst.args()[i + 0];
+            Arg& dst = inst.args()[i + 1];
+            Arg& widthArg = inst.args()[i + 2];
             Width width = widthArg.width();
             Bank bank = src.isGP() && dst.isGP() ? GP : FP;
             functor(src, Arg::Use, bank, width);
@@ -281,7 +281,7 @@ struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
     
     static bool isValidForm(Inst& inst)
     {
-        return inst.args.isEmpty();
+        return inst.args().empty();
     }
     
     static bool admitsStack(Inst&, unsigned)
@@ -317,10 +317,10 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
     template<typename Func>
     static void forEachArg(Inst& inst, const Func& functor)
     {
-        functor(inst.args[0], Arg::Use, GP, pointerWidth());
-        functor(inst.args[1], Arg::Use, GP, pointerWidth());
-        if (inst.args.size() > 2)
-            functor(inst.args[2], Arg::Use, GP, pointerWidth());
+        functor(inst.args()[0], Arg::Use, GP, pointerWidth());
+        functor(inst.args()[1], Arg::Use, GP, pointerWidth());
+        if (inst.args().size() > 2)
+            functor(inst.args()[2], Arg::Use, GP, pointerWidth());
     }
 
     template<typename... Arguments>

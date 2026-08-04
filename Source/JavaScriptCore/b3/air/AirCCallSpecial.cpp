@@ -49,27 +49,27 @@ CCallSpecial::~CCallSpecial() = default;
 void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     for (unsigned i = 0; i < numCalleeArgs; ++i)
-        callback(inst.args[calleeArgOffset + i], Arg::Use, GP, pointerWidth());
+        callback(inst.args()[calleeArgOffset + i], Arg::Use, GP, pointerWidth());
     for (unsigned i = 0; i < numReturnGPArgs; ++i)
-        callback(inst.args[returnGPArgOffset + i], Arg::Def, GP, pointerWidth());
+        callback(inst.args()[returnGPArgOffset + i], Arg::Def, GP, pointerWidth());
     for (unsigned i = 0; i < numReturnFPArgs; ++i)
-        callback(inst.args[returnFPArgOffset + i], Arg::Def, FP, m_isSIMDContext ? conservativeWidth(FP) : conservativeWidthWithoutVectors(FP));
+        callback(inst.args()[returnFPArgOffset + i], Arg::Def, FP, m_isSIMDContext ? conservativeWidth(FP) : conservativeWidthWithoutVectors(FP));
     
-    for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
+    for (unsigned i = argArgOffset; i < inst.args().size(); ++i) {
         // For the type, we can just query the arg's bank. The arg will have a bank, because we
         // require these args to be argument registers.
-        Bank bank = inst.args[i].bank();
-        callback(inst.args[i], Arg::Use, bank, m_isSIMDContext ? conservativeWidth(bank) : conservativeWidthWithoutVectors(bank));
+        Bank bank = inst.args()[i].bank();
+        callback(inst.args()[i], Arg::Use, bank, m_isSIMDContext ? conservativeWidth(bank) : conservativeWidthWithoutVectors(bank));
     }
 }
 
 bool CCallSpecial::isValid(Inst& inst)
 {
-    if (inst.args.size() < argArgOffset)
+    if (inst.args().size() < argArgOffset)
         return false;
 
     for (unsigned i = 0; i < numCalleeArgs; ++i) {
-        Arg& arg = inst.args[i + calleeArgOffset];
+        Arg& arg = inst.args()[i + calleeArgOffset];
         if (!arg.isGP())
             return false;
         switch (arg.kind()) {
@@ -93,18 +93,18 @@ bool CCallSpecial::isValid(Inst& inst)
     }
 
     // Return args need to be exact.
-    if (inst.args[returnGPArgOffset + 0] != Tmp(GPRInfo::returnValueGPR))
+    if (inst.args()[returnGPArgOffset + 0] != Tmp(GPRInfo::returnValueGPR))
         return false;
-    if (inst.args[returnGPArgOffset + 1] != Tmp(GPRInfo::returnValueGPR2))
+    if (inst.args()[returnGPArgOffset + 1] != Tmp(GPRInfo::returnValueGPR2))
         return false;
-    if (inst.args[returnFPArgOffset + 0] != Tmp(FPRInfo::returnValueFPR))
+    if (inst.args()[returnFPArgOffset + 0] != Tmp(FPRInfo::returnValueFPR))
         return false;
 
-    for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
-        if (!inst.args[i].isReg())
+    for (unsigned i = argArgOffset; i < inst.args().size(); ++i) {
+        if (!inst.args()[i].isReg())
             return false;
 
-        if (inst.args[i] == Tmp(scratchRegister))
+        if (inst.args()[i] == Tmp(scratchRegister))
             return false;
     }
     return true;
@@ -131,18 +131,18 @@ void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 
 CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext&)
 {
-    switch (inst.args[calleeArgOffset].kind()) {
+    switch (inst.args()[calleeArgOffset].kind()) {
     case Arg::Imm:
     case Arg::BigImm:
-        jit.move(inst.args[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
+        jit.move(inst.args()[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
         jit.call(scratchRegister, OperationPtrTag);
         break;
     case Arg::Tmp:
-        jit.call(inst.args[calleeArgOffset].gpr(), OperationPtrTag);
+        jit.call(inst.args()[calleeArgOffset].gpr(), OperationPtrTag);
         break;
     case Arg::Addr:
     case Arg::ExtendedOffsetAddr:
-        jit.call(inst.args[calleeArgOffset].asAddress(), OperationPtrTag);
+        jit.call(inst.args()[calleeArgOffset].asAddress(), OperationPtrTag);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

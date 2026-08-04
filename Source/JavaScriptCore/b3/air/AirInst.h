@@ -30,7 +30,11 @@
 #include "AirArg.h"
 #include "AirKind.h"
 #include "MacroAssembler.h"
+#include <new>
+#include <span>
+#include <wtf/FastMalloc.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -46,51 +50,94 @@ namespace Air {
 struct GenerationContext;
 
 struct Inst {
-    typedef Vector<Arg, 3> ArgList;
+    static constexpr unsigned inlineCapacity = 3;
 
-    Inst()
-        : origin(nullptr)
-    {
-    }
-    
+    Inst() = default;
+
     Inst(Kind kind, Value* origin)
-        : origin(origin)
-        , kind(kind)
+        : kind(kind)
+        , origin(origin)
     {
     }
-    
+
     template<typename... Arguments>
     Inst(Kind kind, Value* origin, Arg arg, Arguments... arguments)
-        : args{ arg, arguments... }
+        : kind(kind)
         , origin(origin)
-        , kind(kind)
     {
+        Arg temp[] { arg, arguments... };
+        initializeArgsFrom(std::span<const Arg> { temp, 1 + sizeof...(Arguments) });
     }
 
-    Inst(Kind kind, Value* origin, const ArgList& arguments)
-        : args(arguments)
+    Inst(Kind kind, Value* origin, std::span<const Arg> arguments)
+        : kind(kind)
         , origin(origin)
-        , kind(kind)
     {
+        initializeArgsFrom(arguments);
     }
 
-    Inst(Kind kind, Value* origin, ArgList&& arguments)
-        : args(WTF::move(arguments))
+    template<size_t passedInlineCapacity>
+    Inst(Kind kind, Value* origin, Vector<Arg, passedInlineCapacity>&& arguments)
+        : kind(kind)
         , origin(origin)
-        , kind(kind)
     {
+        if (arguments.size() > inlineCapacity) {
+            m_size = static_cast<unsigned>(arguments.size());
+            m_storage.outOfLineArgs = arguments.releaseBuffer().leakSpan().data();
+        } else
+            initializeArgsFrom(arguments.span());
     }
 
-    explicit operator bool() const { return origin || kind || args.size(); }
+    Inst(const Inst& other)
+        : kind(other.kind)
+        , origin(other.origin)
+    {
+        initializeArgsFrom(other.args());
+    }
 
-    void append() { }
-    
+    Inst(Inst&& other)
+        : kind(other.kind)
+        , origin(other.origin)
+    {
+        moveArgsFrom(other);
+    }
+
+    Inst& operator=(const Inst& other)
+    {
+        if (this != &other) {
+            destroyArgs();
+            origin = other.origin;
+            kind = other.kind;
+            initializeArgsFrom(other.args());
+        }
+        return *this;
+    }
+
+    Inst& operator=(Inst&& other)
+    {
+        if (this != &other) {
+            destroyArgs();
+            origin = other.origin;
+            kind = other.kind;
+            moveArgsFrom(other);
+        }
+        return *this;
+    }
+
+    ~Inst() { destroyArgs(); }
+
+    std::span<Arg> args() LIFETIME_BOUND { return unsafeMakeSpan(argsData(), m_size); }
+    std::span<const Arg> args() const LIFETIME_BOUND { return unsafeMakeSpan(argsData(), m_size); }
+
     template<typename... Arguments>
-    void append(Arg arg, Arguments... arguments)
+        requires (sizeof...(Arguments) > 0 && (std::is_convertible_v<Arguments, Arg> && ...))
+    void setArgs(Arguments... arguments)
     {
-        args.append(arg);
-        append(arguments...);
+        Arg temp[] { arguments... };
+        setArgs(std::span<const Arg> { temp, sizeof...(Arguments) });
     }
+
+    explicit operator bool() const { return origin || kind || m_size; }
 
     // Note that these functors all avoid using "const" because we want to use them for things that
     // edit IR. IR is meant to be edited; if you're carrying around a "const Inst&" then you're
@@ -101,7 +148,7 @@ struct Inst {
     template<typename Functor>
     void forEachTmpFast(const Functor& functor)
     {
-        for (Arg& arg : args)
+        for (Arg& arg : args())
             arg.forEachTmpFast(functor);
     }
 
@@ -210,15 +257,71 @@ struct Inst {
 
     void dump(PrintStream&) const;
 
-    ArgList args;
-    Value* origin; // The B3::Value that this originated from.
-    Kind kind;
-
 private:
     template<typename Func>
     void forEachArgSimple(const Func&);
     void forEachArgCustom(ScopedLambda<EachArgCallback>);
+
+    Arg* argsData() { return m_size > inlineCapacity ? m_storage.outOfLineArgs : m_storage.inlineArgs.data(); }
+    const Arg* argsData() const { return m_size > inlineCapacity ? m_storage.outOfLineArgs : m_storage.inlineArgs.data(); }
+
+    // Air::Inst owns its out-of-line argument buffer using the same allocator as Vector, so that a
+    // Vector<Arg>'s heap buffer can be adopted directly (see the Vector<Arg>&& constructor).
+    using ArgMalloc = WTF::VectorBufferMalloc;
+
+    void setArgs(std::span<const Arg> arguments)
+    {
+        ASSERT(arguments.empty() || !m_size
+            || reinterpret_cast<uintptr_t>(arguments.data()) + arguments.size_bytes() <= reinterpret_cast<uintptr_t>(argsData())
+            || reinterpret_cast<uintptr_t>(argsData()) + m_size * sizeof(Arg) <= reinterpret_cast<uintptr_t>(arguments.data()));
+        destroyArgs();
+        initializeArgsFrom(arguments);
+    }
+
+    void initializeArgsFrom(std::span<const Arg> source)
+    {
+        static_assert(std::is_trivially_copyable_v<Arg> && std::is_trivially_destructible_v<Arg>);
+        m_size = static_cast<unsigned>(source.size());
+        if (m_size > inlineCapacity)
+            m_storage.outOfLineArgs = static_cast<Arg*>(ArgMalloc::malloc(m_size * sizeof(Arg)));
+        if (!source.empty())
+            memcpySpan(args(), source);
+    }
+
+    void moveArgsFrom(Inst& other)
+    {
+        m_size = other.m_size;
+        if (other.m_size > inlineCapacity)
+            m_storage.outOfLineArgs = std::exchange(other.m_storage.outOfLineArgs, nullptr);
+        else if (other.m_size)
+            memcpySpan(args(), other.args());
+        other.m_size = 0;
+    }
+
+    void destroyArgs()
+    {
+        if (m_size > inlineCapacity)
+            ArgMalloc::free(std::exchange(m_storage.outOfLineArgs, nullptr));
+        m_size = 0;
+    }
+
+public:
+    Kind kind;
+private:
+    unsigned m_size { 0 };
+public:
+    Value* origin { nullptr }; // The B3::Value that this originated from.
+private:
+    union {
+        std::array<Arg, inlineCapacity> inlineArgs { };
+        Arg* outOfLineArgs;
+    } m_storage;
 };
+
+#if USE(JSVALUE64) && !OS(WINDOWS)
+static_assert(sizeof(Inst) == 64, "Air::Inst is expected to stay 64 bytes on JSVALUE64.");
+#endif
+static_assert(std::is_trivially_destructible_v<Arg>);
 
 } } } // namespace JSC::B3::Air
 

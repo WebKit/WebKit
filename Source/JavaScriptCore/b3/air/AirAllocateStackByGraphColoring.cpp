@@ -84,11 +84,11 @@ protected:
             return false;
         }
 
-        if (inst.args.size() != 3)
+        if (inst.args().size() != 3)
             return false;
 
         for (unsigned i = 0; i < 2; ++i) {
-            Arg arg = inst.args[i];
+            Arg arg = inst.args()[i];
             if (!arg.isStack())
                 return false;
             StackSlot* slot = arg.stackSlot();
@@ -103,7 +103,7 @@ protected:
 
     bool NODELETE isUselessMove(Inst& inst) const
     {
-        return isCoalescableMove(inst) && inst.args[0] == inst.args[1];
+        return isCoalescableMove(inst) && inst.args()[0] == inst.args()[1];
     }
 
     unsigned NODELETE remap(unsigned slotIndex) const
@@ -169,7 +169,7 @@ private:
                 Inst* prevInst = block->get(instIndex);
                 Inst* nextInst = block->get(instIndex + 1);
                 if (prevInst && isCoalescableMove(*prevInst)) {
-                    CoalescableMove move(prevInst->args[0].stackSlot()->index(), prevInst->args[1].stackSlot()->index(), block->frequency());
+                    CoalescableMove move(prevInst->args()[0].stackSlot()->index(), prevInst->args()[1].stackSlot()->index(), block->frequency());
 
                     m_coalescableMoves.append(move);
 
@@ -291,7 +291,7 @@ private:
 
         for (BasicBlock* block : m_code) {
             for (Inst& inst : *block) {
-                for (Arg& arg : inst.args) {
+                for (Arg& arg : inst.args()) {
                     if (arg.isStack())
                         arg = Arg::stack(remapStackSlot(arg.stackSlot()), arg.offset());
                 }

@@ -1417,7 +1417,7 @@ public:
 
     bool NODELETE isUselessMove(const Inst& inst) const
     {
-        return mayBeCoalescableImpl(inst, nullptr) && inst.args[0].tmp() == inst.args[1].tmp();
+        return mayBeCoalescableImpl(inst, nullptr) && inst.args()[0].tmp() == inst.args()[1].tmp();
     }
 
     Tmp NODELETE getAliasWhenSpilling(Tmp tmp) const
@@ -1636,7 +1636,7 @@ protected:
             unsigned newIndexInWorklist = m_worklistMoves.addMove();
             ASSERT_UNUSED(newIndexInWorklist, newIndexInWorklist == nextMoveIndex);
 
-            for (const Arg& arg : prevInst->args) {
+            for (const Arg& arg : prevInst->args()) {
                 auto& list = m_moveList[TmpMapper::absoluteIndex(arg.tmp())];
                 list.add(nextMoveIndex);
             }
@@ -1670,9 +1670,9 @@ protected:
         for (BasicBlock* block : m_code) {
             for (Inst& inst : *block) {
                 if (std::optional<unsigned> defArgIndex = inst.shouldTryAliasingDef()) {
-                    Arg op1 = inst.args[*defArgIndex - 2];
-                    Arg op2 = inst.args[*defArgIndex - 1];
-                    Arg dest = inst.args[*defArgIndex];
+                    Arg op1 = inst.args()[*defArgIndex - 2];
+                    Arg op2 = inst.args()[*defArgIndex - 1];
+                    Arg dest = inst.args()[*defArgIndex];
 
                     if (op1 == dest || op2 == dest)
                         continue;
@@ -1747,14 +1747,14 @@ protected:
         }
 
         // Avoid the three-argument coalescable spill moves.
-        if (inst.args.size() != 2)
+        if (inst.args().size() != 2)
             return false;
 
-        if (!inst.args[0].isTmp() || !inst.args[1].isTmp())
+        if (!inst.args()[0].isTmp() || !inst.args()[1].isTmp())
             return false;
 
-        ASSERT(inst.args[0].bank() == bank);
-        ASSERT(inst.args[1].bank() == bank);
+        ASSERT(inst.args()[0].bank() == bank);
+        ASSERT(inst.args()[1].bank() == bank);
 
         // We can coalesce a Move32 so long as either of the following holds:
         // - The input is already zero-filled.
@@ -1767,7 +1767,7 @@ protected:
             if (!tmpWidth)
                 return false;
 
-            if (tmpWidth->defWidth(inst.args[0].tmp()) > Width32)
+            if (tmpWidth->defWidth(inst.args()[0].tmp()) > Width32)
                 return false;
         }
         
@@ -1982,8 +1982,8 @@ private:
                     // Move32 is cheaper if we know that it's equivalent to a Move in x86_64. It's
                     // equivalent if the destination's high bits are not observable or if the source's high
                     // bits are all zero.
-                    if (bank == GP && inst.kind.opcode == Move && inst.args[0].isTmp() && inst.args[1].isTmp()) {
-                        if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Width32 || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Width32)
+                    if (bank == GP && inst.kind.opcode == Move && inst.args()[0].isTmp() && inst.args()[1].isTmp()) {
+                        if (m_tmpWidth.useWidth(inst.args()[1].tmp()) <= Width32 || m_tmpWidth.defWidth(inst.args()[0].tmp()) <= Width32)
                             inst.kind.opcode = Move32;
                     }
                 }
@@ -1991,8 +1991,8 @@ private:
                     // On the other hand, on ARM64, Move is cheaper than Move32. We would like to use Move instead of Move32.
                     // Move32 on ARM64 is explicitly selected in B3LowerToAir for ZExt32 for example. But using ZDef information
                     // here can optimize it from Move32 to Move.
-                    if (bank == GP && inst.kind.opcode == Move32 && inst.args[0].isTmp() && inst.args[1].isTmp()) {
-                        if (m_tmpWidth.defWidth(inst.args[0].tmp()) <= Width32)
+                    if (bank == GP && inst.kind.opcode == Move32 && inst.args()[0].isTmp() && inst.args()[1].isTmp()) {
+                        if (m_tmpWidth.defWidth(inst.args()[0].tmp()) <= Width32)
                             inst.kind.opcode = Move;
                     }
                 }
@@ -2014,8 +2014,8 @@ private:
                     tmp = assignedTmp;
                 });
 
-                if (mayBeCoalescable && inst.args[0].isTmp() && inst.args[1].isTmp()
-                    && inst.args[0].tmp() == inst.args[1].tmp())
+                if (mayBeCoalescable && inst.args()[0].isTmp() && inst.args()[1].isTmp()
+                    && inst.args()[0].tmp() == inst.args()[1].tmp())
                     inst = Inst();
             }
 
@@ -2070,8 +2070,8 @@ private:
                 bool didSpill = false;
                 bool needScratch = false;
                 if (bank == GP && inst.kind.opcode == Move) {
-                    if ((inst.args[0].isTmp() && m_tmpWidth.width(inst.args[0].tmp()) <= Width32)
-                        || (inst.args[1].isTmp() && m_tmpWidth.width(inst.args[1].tmp()) <= Width32))
+                    if ((inst.args()[0].isTmp() && m_tmpWidth.width(inst.args()[0].tmp()) <= Width32)
+                        || (inst.args()[1].isTmp() && m_tmpWidth.width(inst.args()[1].tmp()) <= Width32))
                         canUseMove32IfDidSpill = true;
                 }
 
@@ -2097,10 +2097,10 @@ private:
                             case MoveDouble:
                             case MoveFloat:
                             case Move32: {
-                                unsigned argIndex = &arg - &inst.args[0];
+                                unsigned argIndex = &arg - &inst.args()[0];
                                 unsigned otherArgIndex = argIndex ^ 1;
-                                Arg otherArg = inst.args[otherArgIndex];
-                                if (inst.args.size() == 2
+                                Arg otherArg = inst.args()[otherArgIndex];
+                                if (inst.args().size() == 2
                                     && otherArg.isStack()
                                     && otherArg.stackSlot()->isSpill()) {
                                     needScratchIfSpilledInPlace = true;
@@ -2174,8 +2174,9 @@ private:
                     m_stats[bank].numSpillTmps++;
                     dataLogLnIf(traceDebug, "Add unspillable tmp (scratch) since we introduce it during spill: ", tmp);
                     unspillableTmps.set(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
-                    inst.args.append(tmp);
-                    RELEASE_ASSERT(inst.args.size() == 3);
+                    ASSERT(inst.args().size() == 2);
+                    inst.setArgs(inst.args()[0], inst.args()[1], tmp);
+                    RELEASE_ASSERT(inst.args().size() == 3);
                     
                     // Without this, a chain of spill moves would need two registers, not one, because
                     // the scratch registers of successive moves would appear to interfere with each

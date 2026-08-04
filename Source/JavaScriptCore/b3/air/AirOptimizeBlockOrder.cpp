@@ -437,9 +437,9 @@ void optimizeBlockOrder(Code& code)
         case BranchAtomicStrongCAS16:
         case BranchAtomicStrongCAS32:
         case BranchAtomicStrongCAS64:
-            if (code.findNextBlock(block) == block->successorBlock(0) && branch.args[0].isInvertible()) {
+            if (code.findNextBlock(block) == block->successorBlock(0) && branch.args()[0].isInvertible()) {
                 std::swap(block->successor(0), block->successor(1));
-                branch.args[0] = branch.args[0].inverted();
+                branch.args()[0] = branch.args()[0].inverted();
             }
             break;
 

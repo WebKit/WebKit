@@ -79,7 +79,7 @@ bool eliminateDeadCode(Code& code)
     };
 
     auto markArgsLive = [&] (Inst& inst) {
-        for (Arg& arg : inst.args) {
+        for (Arg& arg : inst.args()) {
             if (arg.isStack() && !arg.stackSlot()->isLocked())
                 changed |= liveStackSlots.add(arg.stackSlot());
             arg.forEachTmpFast(

@@ -90,13 +90,13 @@ public:
                 switch (inst.kind.opcode) {
                 case Move:
                 case Move32: {
-                    if (inst.args[0].isSomeImm() && inst.args[1].is<Tmp>()) {
-                        Tmp tmp = inst.args[1].as<Tmp>();
+                    if (inst.args()[0].isSomeImm() && inst.args()[1].is<Tmp>()) {
+                        Tmp tmp = inst.args()[1].as<Tmp>();
                         if (tmp.bank() == GP) {
                             auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
                             if (!m_gpConstDefs.quickGet(index)) {
                                 m_gpConstDefs.quickSet(index);
-                                m_gpConstants[index] = extractGPConstant(inst.kind.opcode, inst.args[0]);
+                                m_gpConstants[index] = extractGPConstant(inst.kind.opcode, inst.args()[0]);
                             } else
                                 gpNonConstDefs.quickSet(index);
                             m_gpNumWarmUsesAndDefs[index] += frequency;
@@ -108,13 +108,13 @@ public:
                 case MoveFloat:
                 case MoveDouble:
                 case MoveVector: {
-                    if (inst.args[0].isSomeImm() && inst.args[1].is<Tmp>()) {
-                        Tmp tmp = inst.args[1].as<Tmp>();
+                    if (inst.args()[0].isSomeImm() && inst.args()[1].is<Tmp>()) {
+                        Tmp tmp = inst.args()[1].as<Tmp>();
                         if (tmp.bank() == FP) {
                             auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
                             if (!m_fpConstDefs.quickGet(index)) {
                                 m_fpConstDefs.quickSet(index);
-                                m_fpConstants[index] = extractFPConstant(inst.kind.opcode, inst.args[0]);
+                                m_fpConstants[index] = extractFPConstant(inst.kind.opcode, inst.args()[0]);
                                 switch (inst.kind.opcode) {
                                 case MoveFloat:
                                     m_fpConstantWidths[index] = Width32;
