@@ -338,6 +338,11 @@ constexpr bool isYearWithinLimits(int32_t year)
     return year >= minYear && year <= maxYear;
 }
 
+constexpr bool isYearWithinLimits(int64_t year)
+{
+    return year >= minYear && year <= maxYear;
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-isoyearmonthwithinlimits
 constexpr bool isYearMonthWithinLimits(int32_t year, int32_t month)
 {
@@ -367,7 +372,21 @@ public:
         , m_month(month)
         , m_day(day)
     {
-        ASSERT(isYearWithinLimits(year) || year == outOfRangeYear);
+        // month/day are kept as-is even when year is out of range; use sentinel() if
+        // month/day might be garbage too (e.g. computed alongside year).
+        if (!isYearWithinLimits(year)) [[unlikely]]
+            m_year = outOfRangeYear;
+    }
+
+    constexpr PlainDate(int64_t year, unsigned month, unsigned day)
+        : PlainDate(isYearWithinLimits(year) ? static_cast<int32_t>(year) : outOfRangeYear, month, day)
+    {
+    }
+
+    // Placeholder for "no valid date": year is outOfRangeYear, month/day are 1, 1.
+    static constexpr PlainDate sentinel()
+    {
+        return PlainDate(outOfRangeYear, 1, 1);
     }
 
     friend bool operator==(const PlainDate&, const PlainDate&) = default;
@@ -539,7 +558,6 @@ String monthCode(uint32_t);
 
 bool NODELETE isValidDuration(const Duration&);
 bool NODELETE isValidISODate(double, double, double);
-PlainDate NODELETE createISODateRecord(double, double, double);
 
 std::optional<ParsedMonthCode> NODELETE parseMonthCode(StringView);
 std::optional<TimeZone> JS_EXPORT_PRIVATE parseTemporalTimeZoneIdentifier(StringView);

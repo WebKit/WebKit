@@ -45,8 +45,6 @@ CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject*, JSObject
 
 std::optional<ParsedMonthCode> parseMonthCode(JSGlobalObject*, JSValue argument);
 
-ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, TemporalDateFormat, int32_t, uint32_t, uint32_t, std::optional<ParsedMonthCode>, TemporalOverflow, CalendarID = iso8601CalendarID());
-
 ISO8601::PlainDateTime interpretTemporalDateTimeFields(JSGlobalObject*, CalendarID, const TemporalCore::CalendarFieldsIn&, const TemporalCore::TimeFieldsIn&, TemporalOverflow);
 
 ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);

@@ -2539,8 +2539,6 @@ static TemporalResult<void> validateRejectMode(UCalendar* cal, CalendarID calend
 TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId, std::optional<int32_t> year, uint8_t month, uint8_t day, std::optional<ParsedMonthCode> monthCode, TemporalOverflow overflow)
 {
     if (year && calendarUsesISOFallbackForExtremeYear(calendarId, *year)) {
-        if (*year < ISO8601::minYear || *year > ISO8601::maxYear) [[unlikely]]
-            return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
         int32_t isoYear = *year;
         if (month > 12) {
             if (overflow == TemporalOverflow::Reject) [[unlikely]]
@@ -2597,8 +2595,6 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                 return makeUnexpected(rangeError("month is out of range"_s));
             ASSERT(year);
             int32_t isoYear = gregorianStructuredCalendarISOYear(calendarId, *year);
-            if (!ISO8601::isYearWithinLimits(isoYear)) [[unlikely]]
-                return makeUnexpected(rangeError("Resolved calendar date is outside representable range"_s));
             uint8_t resolvedMonth = month;
             if (month > 12) {
                 if (overflow == TemporalOverflow::Reject) [[unlikely]]

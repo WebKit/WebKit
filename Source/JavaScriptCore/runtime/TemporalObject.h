@@ -122,12 +122,6 @@ CalendarID toTemporalCalendarIdentifier(JSGlobalObject*, JSValue);
 TemporalDisambiguation toTemporalDisambiguation(JSGlobalObject*, JSObject*);
 TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject*, JSObject*, TemporalOffsetDisambiguation fallback);
 
-enum class TemporalDateFormat : uint8_t {
-    Date,
-    YearMonth,
-    MonthDay
-};
-
 enum class TemporalAnyProperties : bool {
     None,
     Some,

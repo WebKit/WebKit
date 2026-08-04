@@ -51,21 +51,17 @@ ISO8601::PlainYearMonth balanceISOYearMonth(int64_t year, int64_t month)
     // 2. Set month to ((month - 1) modulo 12) + 1.
     month = newM0 + 1;
     // 3. Return ISO Year-Month Record { [[Year]]: year, [[Month]]: month }.
-    // NOTE: clamp year to representable range (outOfRangeYear sentinel); callers check.
-    if (year < ISO8601::minYear || year > ISO8601::maxYear) [[unlikely]]
-        year = ISO8601::outOfRangeYear;
-    return ISO8601::PlainYearMonth(static_cast<int32_t>(year), static_cast<unsigned>(month));
+    return ISO8601::PlainYearMonth(ISO8601::PlainDate(year, static_cast<unsigned>(month), 1));
 }
 
 // AddDaysToISODate — temporal_rs: IsoDate::balance (with implicit day fold-in)
 // https://tc39.es/proposal-temporal/#sec-temporal-adddaystoisodate
-// NOTE: Returns { outOfRangeYear, 1, 1 } for out-of-bounds dates instead of throwing (callers check).
 ISO8601::PlainDate addDaysToISODate(const ISO8601::PlainDate& date, int64_t days)
 {
     int32_t year = date.year();
     int32_t month = static_cast<int32_t>(date.month());
     if (year == ISO8601::outOfRangeYear) [[unlikely]]
-        return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
+        return ISO8601::PlainDate::sentinel();
 
     // PlainDate's month invariant (set by regulateISODate / balanceISOYearMonth at every
     // construction site reachable from public Temporal entry points) is [1, 12]. We rely
@@ -86,11 +82,11 @@ ISO8601::PlainDate addDaysToISODate(const ISO8601::PlainDate& date, int64_t days
     double ms = makeDate(epochDays, 0);
     double daysToUse = msToDays(ms);
     if (!isInBounds<int32_t>(daysToUse)) [[unlikely]]
-        return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
+        return ISO8601::PlainDate::sentinel();
     // 3. Return CreateISODateRecord(EpochTimeToEpochYear(ms), EpochTimeToMonthInYear(ms) + 1, EpochTimeToDate(ms)).
     auto [y, m, d] = WTF::yearMonthDayFromDays(static_cast<int32_t>(daysToUse));
     if (!ISO8601::isYearWithinLimits(y)) [[unlikely]]
-        return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
+        return ISO8601::PlainDate::sentinel();
     return ISO8601::PlainDate { y, static_cast<unsigned>(m + 1), static_cast<unsigned>(d) };
 }
 

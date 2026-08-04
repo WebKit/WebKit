@@ -39,6 +39,8 @@
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
 #include "TemporalPlainYearMonth.h"
+#include <wtf/MathExtras.h>
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncAdd);
@@ -415,10 +417,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
             return throwVMRangeError(globalObject, scope, "day property must be finite"_s);
         if (doubleDay <= 0) [[unlikely]]
             return throwVMRangeError(globalObject, scope, "day property must be a positive integer"_s);
-        if (!isInBounds<int32_t>(doubleDay)) [[unlikely]]
-            itemDay = ISO8601::outOfRangeYear; // Later resolve step will report the range error.
-        else
-            itemDay = static_cast<int32_t>(doubleDay);
+        itemDay = clampTo<int32_t>(doubleDay);
     }
     if (!itemDay) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toPlainDate: item does not have a day field"_s);

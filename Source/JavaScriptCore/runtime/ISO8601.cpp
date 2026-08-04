@@ -987,10 +987,7 @@ static std::optional<PlainDate> NODELETE parseDate(StringParsingBuffer<Character
     auto day = parseDateDay(buffer, *year, *month);
     if (!day)
         return std::nullopt;
-    int32_t y = *year;
-    if (!isYearWithinLimits(y)) [[unlikely]]
-        y = outOfRangeYear;
-    return PlainDate(y, *month, *day);
+    return PlainDate(*year, *month, *day);
 }
 
 // DateSpecYearMonth ::: DateYear DateSeparator[?Extended] DateMonth   (YYYY-MM or YYYYMM)
@@ -1005,10 +1002,7 @@ static std::optional<PlainDate> NODELETE parseDateSpecYearMonth(StringParsingBuf
     auto month = parseDateMonth(buffer);
     if (!month)
         return std::nullopt;
-    int32_t y = *year;
-    if (!isYearWithinLimits(y)) [[unlikely]]
-        y = outOfRangeYear;
-    return PlainDate(y, *month, 1);
+    return PlainDate(*year, *month, 1);
 }
 
 // DateSpecMonthDay :::
@@ -2077,13 +2071,6 @@ bool isValidISODate(double year, double month, double day)
     if (day < 1 || day > daysInMonth1)
         return false;
     return true;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-create-iso-date-record
-PlainDate createISODateRecord(double year, double month, double day)
-{
-    ASSERT(isValidISODate(year, month, day));
-    return PlainDate(year, month, day);
 }
 
 // temporal_rs: TimeZone::try_from_str (src/builtins/core/time_zone.rs)

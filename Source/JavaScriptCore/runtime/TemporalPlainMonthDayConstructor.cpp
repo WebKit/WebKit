@@ -31,6 +31,7 @@
 #include "TemporalCalendar.h"
 #include "TemporalPlainMonthDay.h"
 #include "TemporalPlainMonthDayPrototype.h"
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 
@@ -133,7 +134,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
         return throwVMRangeError(globalObject, scope, "PlainMonthDay: date out of range of ECMAScript representation"_s);
 
     // Step 11: Return ? CreateTemporalMonthDay(isoDate, calendar).
-    auto* result = TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(ISO8601::PlainDate(referenceYear, isoMonth, isoDay)));
+    auto* result = TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(ISO8601::PlainDate(clampTo<int32_t>(referenceYear), isoMonth, isoDay)));
     if (result && calId != iso8601CalendarID())
         result->setCalendarID(calId);
     return JSValue::encode(result);

@@ -29,6 +29,7 @@
 #include "CalendarArithmetic.h"
 #include "CalendarICUBridge.h"
 #include "ISO8601.h"
+#include "ISOArithmetic.h"
 #include "IntlObject.h"
 #include "JSCInlines.h"
 #include "TemporalCalendar.h"
@@ -84,73 +85,38 @@ struct ResolvedISOFields {
     uint8_t day;
 };
 
-// resolveISOFields — internal helper; implements the ISO path of three spec AOs, parameterized by ISOResolveType:
-//   Date -> ISODateFromFields (#sec-temporal-isodatefromfields)
-//   YearMonth -> ISOYearMonthFromFields (#sec-temporal-isoyearmonthfromfields)
-//   MonthDay -> ISOMonthDayFromFields (#sec-temporal-isomonthdayfromfields)
-// temporal_rs: types.rs ResolvedIsoFields::try_from_fields
-static TemporalResult<ResolvedISOFields> resolveISOFields(const CalendarFieldsIn& fields, TemporalOverflow overflow, ISOResolveType type)
+// https://tc39.es/proposal-temporal/#sec-temporal-calendarresolvefields
+static TemporalResult<void> calendarResolveFields(CalendarID calendarId, CalendarFieldsIn& fields, ResolveType type)
 {
-    auto rangeCheck = checkYearRange(fields);
-    if (!rangeCheck)
-        return makeUnexpected(rangeCheck.error());
-
-    // Resolve year: MonthDay uses reference year; others require explicit year field.
-    int32_t year;
-    if (type == ISOResolveType::MonthDay)
-        year = isoMonthDayReferenceLeapYear;
-    else {
-        if (!fields.year)
+    if (calendarIsISO(calendarId)) {
+        // Steps 1.a-1.d: needsYear/needsDay.
+        bool needsYear = type == ResolveType::Date || type == ResolveType::YearMonth;
+        bool needsDay = type == ResolveType::Date || type == ResolveType::MonthDay;
+        // Step 1.e: needsYear + year unset.
+        if (needsYear && !fields.year)
             return makeUnexpected(typeError("year property must be present"_s));
-        year = *fields.year;
-    }
-
-    // Resolve day: YearMonth uses day=1; others require explicit day field.
-    uint8_t day;
-    if (type == ISOResolveType::YearMonth)
-        day = 1;
-    else {
-        if (!fields.day)
+        // Step 1.f: needsDay + day unset.
+        if (needsDay && !fields.day)
             return makeUnexpected(typeError("day property must be present"_s));
-        day = *fields.day;
+        // Step 1.g: month and monthCode both unset.
+        if (!fields.month && !fields.monthCode)
+            return makeUnexpected(typeError("month or monthCode property must be present"_s));
+        // Step 1.h: monthCode validation + consistency with month.
+        if (fields.monthCode) {
+            auto& mc = *fields.monthCode;
+            if (mc.isLeapMonth)
+                return makeUnexpected(rangeError("iso8601 calendar does not have leap months"_s));
+            if (mc.monthNumber < 1 || mc.monthNumber > 12)
+                return makeUnexpected(rangeError("month must be 1-12 for iso8601 calendar"_s));
+            uint8_t codeMonth = static_cast<uint8_t>(mc.monthNumber);
+            if (fields.month && *fields.month != codeMonth)
+                return makeUnexpected(rangeError("month does not match monthCode"_s));
+            fields.month = codeMonth;
+        }
+        return { };
     }
-
-    // Resolve month: prefer month over monthCode; validate consistency if both present.
-    uint32_t month;
-    if (fields.month && !fields.monthCode) {
-        month = clampTo<uint8_t>(*fields.month);
-    } else if (fields.monthCode) {
-        auto& mc = *fields.monthCode;
-        if (mc.isLeapMonth)
-            return makeUnexpected(rangeError("iso8601 calendar does not have leap months"_s));
-        if (mc.monthNumber < 1 || mc.monthNumber > 12)
-            return makeUnexpected(rangeError("month must be 1-12 for iso8601 calendar"_s));
-        uint8_t codeMonth = static_cast<uint8_t>(mc.monthNumber);
-        if (fields.month && *fields.month != codeMonth)
-            return makeUnexpected(rangeError("month does not match monthCode"_s));
-        month = codeMonth;
-    } else if (!fields.month)
-        return makeUnexpected(typeError("month or monthCode property must be present"_s));
-    else
-        month = clampTo<uint8_t>(*fields.month);
-
-    // Constrain or reject month and day per overflow.
-    if (month < 1 || month > 12) {
-        if (overflow == TemporalOverflow::Constrain)
-            month = clampTo<uint8_t>(month, 1, 12);
-        else
-            return makeUnexpected(rangeError("month is out of range"_s));
-    }
-
-    uint8_t maxDay = ISO8601::daysInMonth(year, month);
-    if (day < 1 || day > maxDay) {
-        if (overflow == TemporalOverflow::Constrain)
-            day = clampTo<uint8_t>(day, 1, maxDay);
-        else
-            return makeUnexpected(rangeError("day is out of range"_s));
-    }
-
-    return ResolvedISOFields { year, static_cast<uint8_t>(month), day };
+    // Step 2: NonISOResolveFields.
+    return nonISOResolveFields(calendarId, fields, type);
 }
 
 // https://tc39.es/proposal-intl-era-monthcode/#sup-temporal-nonisoresolvefields
@@ -256,6 +222,39 @@ TemporalResult<void> nonISOResolveFields(CalendarID calendarId, CalendarFieldsIn
     return { };
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-calendardatetoiso
+static TemporalResult<ResolvedISOFields> calendarDateToISO(CalendarID calendarId, const CalendarFieldsIn& fields, TemporalOverflow overflow, ISOResolveType type)
+{
+    // Step 1: If calendar is "iso8601", then
+    if (calendarIsISO(calendarId)) {
+        // Step 1.a: Assert: fields.[[Year]], fields.[[Month]], and fields.[[Day]] are not unset.
+        ASSERT(fields.year.has_value());
+        ASSERT(fields.month.has_value());
+        ASSERT(type == ISOResolveType::YearMonth || fields.day.has_value());
+        int32_t year = *fields.year;
+        uint8_t day = type == ISOResolveType::YearMonth ? 1 : *fields.day;
+        uint32_t month = *fields.month;
+
+        // Step 1.b: Return ? RegulateISODate(fields.[[Year]], fields.[[Month]], fields.[[Day]], overflow).
+        auto regulated = regulateISODate(year, clampTo<int32_t>(month), day, overflow);
+        if (!regulated)
+            return makeUnexpected(regulated.error());
+        return ResolvedISOFields { regulated->year(), regulated->month(), regulated->day() };
+    }
+
+    // Step 2: Return ? NonISOCalendarDateToISO(calendar, fields, overflow).
+    uint8_t month = 1;
+    if (fields.month)
+        month = clampTo<uint8_t>(*fields.month);
+    else if (fields.monthCode)
+        month = static_cast<uint8_t>(fields.monthCode->monthNumber);
+    uint8_t day = type == ISOResolveType::YearMonth ? 1 : *fields.day;
+    auto result = nonISOCalendarDateToISO(calendarId, fields.year, month, day, fields.monthCode, overflow);
+    if (!result)
+        return makeUnexpected(result.error());
+    return ResolvedISOFields { result->year(), result->month(), result->day() };
+}
+
 // CalendarDateFromFields — temporal_rs: Calendar::date_from_fields (src/builtins/core/calendar.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardatefromfields
 // Implements steps 1-4; PrepareCalendarFields done by JS-layer caller.
@@ -263,47 +262,30 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
 {
     bool isISO = calendarIsISO(calendarId);
 
-    if (isISO) {
-        // Step 1 (ISO): CalendarResolveFields + Step 2 CalendarDateToISO — fused into resolveISOFields.
-        auto resolved = resolveISOFields(fields, overflow, ISOResolveType::Date);
-        if (!resolved)
-            return makeUnexpected(resolved.error());
-
-        // Step 3: If ISODateWithinLimits(result) is false, throw RangeError.
-        if (!ISO8601::isDateTimeWithinLimits(resolved->year, resolved->month, resolved->day, 12, 0, 0, 0, 0, 0))
-            return makeUnexpected(rangeError("Date is not within representable range"_s));
-
-        // Step 4: Return result.
-        auto isoDate = ISO8601::PlainDate(resolved->year, resolved->month, resolved->day);
-        return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
-    }
-
-    // Step 1 (non-ISO): CalendarResolveFields → nonISOResolveFields.
     CalendarFieldsIn resolved = fields;
-    if (auto validated = nonISOResolveFields(calendarId, resolved, ResolveType::Date); !validated)
+    if (isISO) {
+        auto rangeCheck = checkYearRange(resolved);
+        if (!rangeCheck)
+            return makeUnexpected(rangeCheck.error());
+    }
+    // Step 1: CalendarResolveFields.
+    if (auto validated = calendarResolveFields(calendarId, resolved, ResolveType::Date); !validated)
         return makeUnexpected(validated.error());
 
-    // Resolve month from month/monthCode
-    uint8_t month = 1;
-    if (resolved.month)
-        month = clampTo<uint8_t>(*resolved.month);
-    else if (resolved.monthCode)
-        month = static_cast<uint8_t>(resolved.monthCode->monthNumber);
-
-    // nonISOResolveFields has already derived the arithmetic year and erased era/eraYear.
-    // Step 2 (non-ISO): CalendarDateToISO → nonISOCalendarDateToISO.
-    auto result = nonISOCalendarDateToISO(calendarId, resolved.year, month, *resolved.day, resolved.monthCode, overflow);
-    if (!result)
-        return makeUnexpected(result.error());
-    if (auto consistencyCheck = checkLunisolarMonthConsistency(calendarId, fields, *result); !consistencyCheck)
+    // Step 2: CalendarDateToISO.
+    auto resolvedIso = calendarDateToISO(calendarId, resolved, overflow, ISOResolveType::Date);
+    if (!resolvedIso)
+        return makeUnexpected(resolvedIso.error());
+    auto isoDate = ISO8601::PlainDate(resolvedIso->year, resolvedIso->month, resolvedIso->day);
+    if (auto consistencyCheck = checkLunisolarMonthConsistency(calendarId, fields, isoDate); !consistencyCheck)
         return makeUnexpected(consistencyCheck.error());
 
     // Step 3: If ISODateWithinLimits(result) is false, throw RangeError.
-    if (!ISO8601::isDateTimeWithinLimits(result->year(), result->month(), result->day(), 12, 0, 0, 0, 0, 0))
+    if (!ISO8601::isDateTimeWithinLimits(resolvedIso->year, resolvedIso->month, resolvedIso->day, 12, 0, 0, 0, 0, 0))
         return makeUnexpected(rangeError("Date is not within representable range"_s));
 
     // Step 4: Return result.
-    return ResolvedCalendarDate { *result, calendarId };
+    return ResolvedCalendarDate { isoDate, isISO ? iso8601CalendarID() : calendarId };
 }
 
 // CalendarYearMonthFromFields — temporal_rs: Calendar::year_month_from_fields (src/builtins/core/calendar.rs)
@@ -312,83 +294,69 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
 {
     bool isISO = calendarIsISO(calendarId);
 
-    // Steps 1-2 (ISO): set [[Day]]=1 + CalendarResolveFields + Step 3 CalendarDateToISO — fused into resolveISOFields.
+    // Step 1: Set fields.[[Day]] to 1.
+    CalendarFieldsIn resolved = fields;
+    resolved.day = 1;
+
     if (isISO) {
-        auto resolved = resolveISOFields(fields, overflow, ISOResolveType::YearMonth);
-        if (!resolved)
-            return makeUnexpected(resolved.error());
-
-        // Step 4: If ISOYearMonthWithinLimits(result) is false, throw RangeError.
-        if (!ISO8601::isYearMonthWithinLimits(resolved->year, resolved->month))
-            return makeUnexpected(rangeError("YearMonth is not within representable range"_s));
-
-        // Step 5: Return result.
-        auto isoDate = ISO8601::PlainDate(resolved->year, resolved->month, resolved->day);
-        return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
+        auto rangeCheck = checkYearRange(resolved);
+        if (!rangeCheck)
+            return makeUnexpected(rangeCheck.error());
     }
 
-    // Steps 1-2 (non-ISO): set [[Day]]=1 + CalendarResolveFields → nonISOResolveFields.
-    CalendarFieldsIn resolved = fields;
-    if (auto validated = nonISOResolveFields(calendarId, resolved, ResolveType::YearMonth); !validated)
+    // Step 2: CalendarResolveFields. (non-ISO: nonISOResolveFields does its own checkYearRange
+    // interleaved with its presence/consistency checks — do not range-check again here.)
+    if (auto validated = calendarResolveFields(calendarId, resolved, ResolveType::YearMonth); !validated)
         return makeUnexpected(validated.error());
 
-    uint8_t month = 1;
-    if (resolved.month)
-        month = clampTo<uint8_t>(*resolved.month);
-    else if (resolved.monthCode)
-        month = static_cast<uint8_t>(resolved.monthCode->monthNumber);
-
-    // nonISOResolveFields has already derived the arithmetic year and erased era/eraYear.
-    // Step 3 (non-ISO): CalendarDateToISO → nonISOCalendarDateToISO.
-    auto result = nonISOCalendarDateToISO(calendarId, resolved.year, month, 1, resolved.monthCode, overflow);
-    if (!result)
-        return makeUnexpected(result.error());
-    if (auto consistencyCheck = checkLunisolarMonthConsistency(calendarId, fields, *result); !consistencyCheck)
+    // Step 3: CalendarDateToISO.
+    auto resolvedIso = calendarDateToISO(calendarId, resolved, overflow, ISOResolveType::YearMonth);
+    if (!resolvedIso)
+        return makeUnexpected(resolvedIso.error());
+    auto isoDate = ISO8601::PlainDate(resolvedIso->year, resolvedIso->month, resolvedIso->day);
+    if (auto consistencyCheck = checkLunisolarMonthConsistency(calendarId, fields, isoDate); !consistencyCheck)
         return makeUnexpected(consistencyCheck.error());
 
     // Step 4: If ISOYearMonthWithinLimits(result) is false, throw RangeError.
-    if (!ISO8601::isYearMonthWithinLimits(result->year(), result->month()))
+    if (!ISO8601::isYearMonthWithinLimits(resolvedIso->year, resolvedIso->month))
         return makeUnexpected(rangeError("YearMonth is not within representable range"_s));
 
     // Step 5: Return result.
-    return ResolvedCalendarDate { *result, calendarId };
+    return ResolvedCalendarDate { isoDate, isISO ? iso8601CalendarID() : calendarId };
 }
 
 // CalendarMonthDayFromFields — temporal_rs: Calendar::month_day_from_fields (src/builtins/core/calendar.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-calendarmonthdayfromfields
+// calendarDateToISO is not reused here: it stores whatever year it's given, but this always
+// stores the fixed reference year isoMonthDayReferenceLeapYear instead.
 TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, const CalendarFieldsIn& fields, TemporalOverflow overflow)
 {
     bool isISO = calendarIsISO(calendarId);
 
-    // Steps 1-2: CalendarResolveFields + CalendarMonthDayToISOReferenceDate — fused inline (ISO path).
+    // Steps 1-2: CalendarResolveFields + CalendarMonthDayToISOReferenceDate (ISO path).
     if (isISO) {
         // temporal_rs: if year is provided, validate day against that year first,
         // then use reference year 1972 for the stored date.
         // Per spec: the year is ONLY used for overflow (leap year check), NOT for range validation.
+        int32_t yearForOverflow = isoMonthDayReferenceLeapYear;
         if (fields.year) {
             // Substitute a proxy year with the same leap-year property to avoid range errors.
             // This matches the spec requirement that year is not range-checked for PlainMonthDay.
-            CalendarFieldsIn fieldsForOverflow = fields;
             int32_t yr = *fields.year;
             // Determine leap year status: divisible by 4, except centuries unless also by 400.
             bool isLeap = !(yr % 400) || (!(yr % 4) && yr % 100);
-            fieldsForOverflow.year = isLeap ? isoMonthDayReferenceLeapYear : isoMonthDayReferenceNonLeapYear;
-            auto resolved = resolveISOFields(fieldsForOverflow, overflow, ISOResolveType::Date);
-            if (!resolved)
-                return makeUnexpected(resolved.error());
-            // Step 3: Assert: ISODateWithinLimits(result) — always holds for reference year 1972.
-            ASSERT(ISO8601::isDateTimeWithinLimits(isoMonthDayReferenceLeapYear, resolved->month, resolved->day, 12, 0, 0, 0, 0, 0));
-            auto isoDate = ISO8601::PlainDate(isoMonthDayReferenceLeapYear, resolved->month, resolved->day);
-            // Step 4: Return result.
-            return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
+            yearForOverflow = isLeap ? isoMonthDayReferenceLeapYear : isoMonthDayReferenceNonLeapYear;
         }
-        auto resolved = resolveISOFields(fields, overflow, ISOResolveType::MonthDay);
-        if (!resolved)
-            return makeUnexpected(resolved.error());
-
-        auto isoDate = ISO8601::PlainDate(isoMonthDayReferenceLeapYear, resolved->month, resolved->day);
+        CalendarFieldsIn resolvedFields = fields;
+        resolvedFields.year = yearForOverflow;
+        if (auto validated = calendarResolveFields(calendarId, resolvedFields, ResolveType::MonthDay); !validated)
+            return makeUnexpected(validated.error());
+        auto regulated = regulateISODate(yearForOverflow, clampTo<int32_t>(*resolvedFields.month), *resolvedFields.day, overflow);
+        if (!regulated)
+            return makeUnexpected(regulated.error());
         // Step 3: Assert: ISODateWithinLimits(result) — always holds for reference year 1972.
-        ASSERT(ISO8601::isDateTimeWithinLimits(isoMonthDayReferenceLeapYear, resolved->month, resolved->day, 12, 0, 0, 0, 0, 0));
+        ASSERT(ISO8601::isDateTimeWithinLimits(isoMonthDayReferenceLeapYear, regulated->month(), regulated->day(), 12, 0, 0, 0, 0, 0));
+        auto isoDate = ISO8601::PlainDate(isoMonthDayReferenceLeapYear, regulated->month(), regulated->day());
         // Step 4: Return result.
         return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
     }
