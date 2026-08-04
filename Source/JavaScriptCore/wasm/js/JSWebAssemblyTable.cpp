@@ -75,7 +75,7 @@ void JSWebAssemblyTable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyTable);
 
-std::optional<uint32_t> JSWebAssemblyTable::grow(JSGlobalObject* globalObject, uint32_t delta, JSValue defaultValue)
+std::optional<uint32_t> JSWebAssemblyTable::grow(JSGlobalObject* globalObject, uint64_t delta, JSValue defaultValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

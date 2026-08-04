@@ -81,6 +81,8 @@ JSC_DEFINE_CUSTOM_GETTER(webAssemblyTableProtoGetterLength, (JSGlobalObject* glo
 
     JSWebAssemblyTable* table = getTable(globalObject, vm, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (table->table()->addressType().is64Bit())
+        RELEASE_AND_RETURN(throwScope, JSValue::encode(JSBigInt::createFrom(globalObject, table->length())));
     return JSValue::encode(jsNumber(table->length()));
 }
 
@@ -93,11 +95,6 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     uint64_t delta64 = addressValueToUint64(globalObject, callFrame->argument(0), table->table()->addressType());
-    if (delta64 > std::numeric_limits<uint32_t>::max())
-        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow requires first argument to be greater than 0 and less than 2^32"_s);
-
-    uint32_t delta = delta64;
-
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue defaultValue = jsNull();
@@ -109,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
         defaultValue = callFrame->uncheckedArgument(1);
 
     uint32_t oldLength = table->length();
-    bool didGrow = !!table->grow(globalObject, delta, defaultValue);
+    bool didGrow = !!table->grow(globalObject, delta64, defaultValue);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (!didGrow)

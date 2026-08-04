@@ -82,9 +82,9 @@ import * as assert from "../assert.js";
 {
     const table = new WebAssembly.Table({element: "funcref", initial: 20n, maximum: 30n, address: "i64"});
     assert.eq(20n, table.grow(0n));
-    assert.eq(20, table.length);
+    assert.eq(20n, table.length);
     assert.eq(20n, table.grow(1n));
-    assert.eq(21, table.length);
+    assert.eq(21n, table.length);
 }
 
 {
@@ -99,7 +99,7 @@ import * as assert from "../assert.js";
     let called = false;
     table.grow({valueOf() { called = true; return 42n; }});
     assert.truthy(called);
-    assert.eq(62, table.length);
+    assert.eq(62n, table.length);
 }
 
 {
@@ -116,3 +116,20 @@ import * as assert from "../assert.js";
         table.set(BigInt(i), null);
 }
 
+{
+    // A delta no table could ever satisfy is a failure to grow, not a bad argument.
+    const table = new WebAssembly.Table({element: "funcref", initial: 1n, maximum: BigInt(2**64) - 1n, address: "i64"});
+    assert.throws(() => table.grow(4294967296n), RangeError, "WebAssembly.Table.prototype.grow could not grow the table");
+    assert.throws(() => table.grow(BigInt(2**64) - 1n), RangeError, "WebAssembly.Table.prototype.grow could not grow the table");
+}
+
+{
+    // length reports the same kind of value that grow() and type() do.
+    const table = new WebAssembly.Table({element: "funcref", initial: 3n, address: "i64"});
+    assert.eq(table.length, 3n);
+    assert.eq(typeof table.length, typeof table.grow(0n));
+
+    const table32 = new WebAssembly.Table({element: "funcref", initial: 3, address: "i32"});
+    assert.eq(table32.length, 3);
+    assert.eq(typeof table32.length, typeof table32.grow(0));
+}

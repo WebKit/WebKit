@@ -50,5 +50,5 @@ for (const maximum of ["4294967296", "4294967301", "18446744073709551615"]) {
     }
 
     assert.throws(() => instance.exports.table.grow(9999999n), RangeError, "WebAssembly.Table.prototype.grow could not grow the table");
-    assert.eq(instance.exports.table.length, 1);
+    assert.eq(instance.exports.table.length, 1n);
 }
