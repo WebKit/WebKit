@@ -134,7 +134,7 @@ private:
         return m_bound <= m_origin;
     }
 
-    static StackBounds currentThreadStackBoundsInternal();
+    WTF_EXPORT_PRIVATE static StackBounds currentThreadStackBoundsInternal();
 
     // Obtaining stack bounds from the OS may be slow; only Thread class should do it.
     // Other callers should use the cached bounds via Thread::currentSingleton().stack()
