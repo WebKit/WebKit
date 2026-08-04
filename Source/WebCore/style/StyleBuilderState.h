@@ -167,6 +167,9 @@ public:
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
     bool hasRevertRuleOrLayerInKeyframeStyle() const { return m_hasRevertRuleOrLayerInKeyframeStyle; }
 
+    void setIsResolvingContainerQueries() { m_isResolvingContainerQueries = true; }
+    bool isResolvingContainerQueries() const { return m_isResolvingContainerQueries; }
+
     bool isAuthorOrigin() const
     {
         return m_currentProperty && m_currentProperty->origin == PropertyCascade::Origin::Author;
@@ -276,6 +279,7 @@ private:
 
     bool m_isBuildingKeyframeStyle { false };
     bool m_hasRevertRuleOrLayerInKeyframeStyle { false };
+    bool m_isResolvingContainerQueries { false };
 };
 
 } // namespace Style

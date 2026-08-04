@@ -1,0 +1,6 @@
+
+PASS Query condition should be valid but unknown: (width: random-item(--foo, 10px, 30px))
+PASS random-item() is disallowed in a @container style() query
+PASS random-item() is disallowed in a @container style() range query (custom property = random-item())
+PASS random-item() is disallowed in a @container style() range query (random-item() = random-item())
+

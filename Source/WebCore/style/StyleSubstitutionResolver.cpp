@@ -823,6 +823,12 @@ bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange rang
 {
     // https://drafts.csswg.org/css-values-5/#funcdef-random-item
 
+    // Reject random-item() when resolving a @container style() query value: random functions are
+    // disallowed outside an element context. (random() is rejected via a separate parse-time guard.)
+    // Whether they should be allowed here is an open question: https://github.com/w3c/csswg-drafts/issues/10982
+    if (m_styleBuilder.state().isResolvingContainerQueries())
+        return false;
+
     // <random-item-args> = random-item( <declaration-value>, [ <declaration-value>? ]# )
     auto randomItemArgs = substituteRandomItemArgumentGrammar(range, context);
     if (!randomItemArgs)

@@ -621,6 +621,8 @@ Ref<CSSValue> Builder::resolveSubstitutionFunctions(CSSPropertyID propertyID, CS
 
 RefPtr<const CustomProperty> Builder::resolveCustomPropertyForContainerQueries(const CSSCustomPropertyValue& value)
 {
+    m_state->setIsResolvingContainerQueries();
+
     auto resolvedValue = resolveCustomPropertyValue(const_cast<CSSCustomPropertyValue&>(value));
     if (!resolvedValue)
         return CustomProperty::createForGuaranteedInvalid(value.name());
