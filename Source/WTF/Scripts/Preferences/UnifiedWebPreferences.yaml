@@ -3242,18 +3242,18 @@ FullScreenEnabled:
 
 FullScreenKeyboardLock:
   type: bool
-  status: stable
+  status: unstable
   category: dom
   humanReadableName: "Fullscreen API based Keyboard Lock"
   humanReadableDescription: "Fullscreen API based Keyboard Lock"
   condition: ENABLE(FULLSCREEN_API)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 FullscreenRequirementForScreenOrientationLockingEnabled:
   type: bool
