@@ -54,7 +54,7 @@ public:
     // r7 is fp.
     static constexpr GPRReg regT2 = ARMRegisters::r8;
     // r9 is sb in EABI.
-    static constexpr GPRReg initialStart = ARMRegisters::r10; // r10 is SL, but no longer a special register.
+    static constexpr GPRReg regT3 = ARMRegisters::r10; // r10 is SL, but no longer a special register.
 
     static constexpr GPRReg returnRegister = ARMRegisters::r0;
     static constexpr GPRReg returnRegister2 = ARMRegisters::r1;
@@ -65,6 +65,7 @@ public:
     static constexpr GPRReg index = ARM64Registers::x1;
     static constexpr GPRReg length = ARM64Registers::x2;
     static constexpr GPRReg output = ARM64Registers::x3;
+
     static constexpr GPRReg matchingContext = ARM64Registers::x4;
     static constexpr GPRReg freelistRegister = ARM64Registers::x13;
 
@@ -72,10 +73,10 @@ public:
     static constexpr GPRReg regT0 = ARM64Registers::x6;
     static constexpr GPRReg regT1 = ARM64Registers::x7;
     static constexpr GPRReg regT2 = ARM64Registers::x8;
+    static constexpr GPRReg regT3 = ARM64Registers::x14;
     static constexpr GPRReg remainingMatchCount = ARM64Registers::x9;
     static constexpr GPRReg regUnicodeInputAndTrail = ARM64Registers::x10;
     static constexpr GPRReg unicodeAndSubpatternIdTemp = ARM64Registers::x5;
-    static constexpr GPRReg initialStart = ARM64Registers::x11;
 
     static constexpr GPRReg firstCharacterAdditionalReadSize { ARM64Registers::x12 };
     static constexpr GPRReg endOfStringAddress = ARM64Registers::x15;
@@ -104,15 +105,16 @@ public:
     static constexpr GPRReg index = X86Registers::esi;
     static constexpr GPRReg length = X86Registers::edx;
     static constexpr GPRReg output = X86Registers::ecx;
-    static constexpr GPRReg matchingContext = X86Registers::r8;
+
+    static constexpr GPRReg matchingContext = X86Registers::ebx;
     static constexpr GPRReg freelistRegister = InvalidGPRReg;
 
     // Scratch registers
     static constexpr GPRReg regT0 = X86Registers::eax;
     static constexpr GPRReg regT1 = X86Registers::r9;
     static constexpr GPRReg regT2 = X86Registers::r10;
+    static constexpr GPRReg regT3 = X86Registers::r8;
 
-    static constexpr GPRReg initialStart = X86Registers::ebx;
     static constexpr GPRReg remainingMatchCount = X86Registers::r12;
     static constexpr GPRReg regUnicodeInputAndTrail = X86Registers::r13;
     static constexpr GPRReg unicodeAndSubpatternIdTemp = X86Registers::r14;
@@ -149,10 +151,10 @@ public:
     static constexpr GPRReg regT0 = RISCV64Registers::x16;
     static constexpr GPRReg regT1 = RISCV64Registers::x17;
     static constexpr GPRReg regT2 = RISCV64Registers::x5;
+    static constexpr GPRReg regT3 = RISCV64Registers::x28;
     static constexpr GPRReg remainingMatchCount = RISCV64Registers::x6;
     static constexpr GPRReg regUnicodeInputAndTrail = RISCV64Registers::x7;
     static constexpr GPRReg unicodeAndSubpatternIdTemp = RISCV64Registers::x15;
-    static constexpr GPRReg initialStart = RISCV64Registers::x28;
     static constexpr GPRReg endOfStringAddress = RISCV64Registers::x29;
 
     static constexpr GPRReg returnRegister = RISCV64Registers::x10;
@@ -201,9 +203,7 @@ public:
     GPRReg regT0 { InvalidGPRReg };
     GPRReg regT1 { InvalidGPRReg };
     GPRReg regT2 { InvalidGPRReg };
-
-    // DotStarEnclosure
-    GPRReg initialStart { InvalidGPRReg };
+    GPRReg regT3 { InvalidGPRReg };
 
     // Unicode character processing
     GPRReg remainingMatchCount { InvalidGPRReg };
