@@ -63,6 +63,7 @@
 #include "Quirks.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
 #include "Settings.h"
 #include "WebAudioSourceProvider.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -548,9 +549,10 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
         return;
 
     bool muted = m_private->muted();
+    Ref categoryApplied = GenericPromise::createAndResolve();
     if (isAudio() && isCaptureTrack()) {
         if (RefPtr manager = mediaSessionManager())
-            manager->audioCaptureSourceStateChanged(muted ? MediaSessionManagerInterface::IsCaptureStarting::No : MediaSessionManagerInterface::IsCaptureStarting::Yes);
+            categoryApplied = manager->audioCaptureSourceStateChanged(muted ? MediaSessionManagerInterface::IsCaptureStarting::No : MediaSessionManagerInterface::IsCaptureStarting::Yes);
     }
 
     Function<void()> updateMuted = [this, protectedThis = Ref { *this }, muted] {
@@ -574,7 +576,11 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     if (m_shouldFireMuteEventImmediately)
         updateMuted();
     else {
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [updateMuted = WTF::move(updateMuted)](auto&) {
+        // Under site isolation the audio session category is applied to this process asynchronously
+        // (via IPC reply). Delay the mute/unmute event until it has been applied so listeners observe
+        // the up-to-date category. In the non-isolated case categoryApplied is already resolved, so
+        // this is equivalent to queueing the event on the event loop as before.
+        context->enqueueTaskWhenSettled(WTF::move(categoryApplied), TaskSource::Networking, [updateMuted = WTF::move(updateMuted)](auto&&) mutable {
             updateMuted();
         });
     }

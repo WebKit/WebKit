@@ -142,7 +142,7 @@ void RemoteMediaSessionManager::resetRestrictions()
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::resetRestrictions();
 }
 
-void RemoteMediaSessionManager::updateSessionState()
+Ref<GenericPromise> RemoteMediaSessionManager::updateSessionState()
 {
     auto liveSessions = copySessionsToVector();
     Vector<RemoteMediaSessionState> sessions(liveSessions.size(), [&](size_t i) -> std::optional<RemoteMediaSessionState> {
@@ -152,15 +152,15 @@ void RemoteMediaSessionManager::updateSessionState()
         return currentSessionState(*session);
     });
 
-    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(m_webPageID, WTF::move(sessions), countActiveAudioCaptureSources()),
-        [](WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy) {
+    return sendWithPromisedReply(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(m_webPageID, WTF::move(sessions), countActiveAudioCaptureSources()))->whenSettled(RunLoop::mainSingleton(),
+        [](auto&& result) -> Ref<GenericPromise> {
+            if (!result)
+                return GenericPromise::createAndReject();
 #if USE(AUDIO_SESSION)
+            auto [category, mode, policy] = WTF::move(*result);
             WebCore::AudioSession::singleton().setCategory(category, mode, policy);
-#else
-            UNUSED_PARAM(category);
-            UNUSED_PARAM(mode);
-            UNUSED_PARAM(policy);
 #endif
+            return GenericPromise::createAndResolve();
         });
 }
 

@@ -98,7 +98,7 @@ private:
     void removeSession(WebCore::PlatformMediaSessionInterface&) final;
     void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
     void sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) final;
-    void updateSessionState() final;
+    Ref<GenericPromise> updateSessionState() final;
     void sessionStateChanged(WebCore::PlatformMediaSessionInterface&) final;
 
     void addRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;

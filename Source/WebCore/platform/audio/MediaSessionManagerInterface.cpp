@@ -698,10 +698,15 @@ void MediaSessionManagerInterface::removeAudioCaptureSource(AudioCaptureSource& 
     scheduleUpdateSessionState();
 }
 
-void MediaSessionManagerInterface::audioCaptureSourceStateChanged(IsCaptureStarting isCaptureStarting)
+Ref<GenericPromise> MediaSessionManagerInterface::audioCaptureSourceStateChanged(IsCaptureStarting isCaptureStarting)
 {
-    updateSessionState();
+    Ref categoryApplied = updateSessionState();
 #if USE(AUDIO_SESSION)
+    // Activate and deactivate synchronously: the returned promise reports when the category has been
+    // applied, and callers observe AudioSession::isActive() as soon as this returns without waiting for
+    // it. navigator.mediaSession.setMicrophoneActive() for instance resolves its promise from the
+    // UIProcess ValidateCaptureStateUpdate reply, which does not wait for the UpdateMediaSessionStates
+    // round-trip that applies the category under site isolation.
     if (isCaptureStarting == IsCaptureStarting::Yes)
         maybeActivateAudioSession();
     else
@@ -709,6 +714,7 @@ void MediaSessionManagerInterface::audioCaptureSourceStateChanged(IsCaptureStart
 #else
     UNUSED_PARAM(isCaptureStarting);
 #endif
+    return categoryApplied;
 }
 
 int MediaSessionManagerInterface::countActiveAudioCaptureSources()
@@ -920,6 +926,11 @@ void MediaSessionManagerInterface::scheduleUpdateSessionState()
         updateSessionState();
         m_hasScheduledSessionStateUpdate = false;
     });
+}
+
+Ref<GenericPromise> MediaSessionManagerInterface::updateSessionState()
+{
+    return GenericPromise::createAndResolve();
 }
 
 #if !RELEASE_LOG_DISABLED

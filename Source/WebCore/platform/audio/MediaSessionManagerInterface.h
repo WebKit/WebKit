@@ -151,7 +151,12 @@ public:
     virtual void addAudioCaptureSource(AudioCaptureSource&);
     virtual void removeAudioCaptureSource(AudioCaptureSource&);
     enum class IsCaptureStarting : bool { No, Yes };
-    virtual void audioCaptureSourceStateChanged(IsCaptureStarting);
+    // The returned promise settles once the audio session category resulting from this state change has
+    // been applied to AudioSession::singleton() in this process. Ordering-sensitive callers (e.g.
+    // getUserMedia resolution) await it so they observe the up-to-date category; other callers may
+    // ignore the result. The base implementation applies the category synchronously and returns an
+    // already-resolved promise; RemoteMediaSessionManager settles it from its async IPC reply.
+    virtual Ref<GenericPromise> audioCaptureSourceStateChanged(IsCaptureStarting);
     virtual size_t audioCaptureSourceCount() const { return m_audioCaptureSources.computeSize(); }
 
     virtual void processDidReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&);
@@ -202,7 +207,12 @@ protected:
     bool computeSupportsSeeking() const;
 
     void scheduleUpdateSessionState();
-    virtual void updateSessionState() { }
+    // Applies the computed audio session category for the current set of sessions/capture sources.
+    // The returned promise settles once the category has been applied to AudioSession::singleton() in
+    // this process — synchronously for in-process managers (already-resolved promise), asynchronously
+    // for RemoteMediaSessionManager which applies it from an IPC reply. Callers that don't need to
+    // observe completion may ignore the result.
+    virtual Ref<GenericPromise> updateSessionState();
 
     std::optional<PageIdentifier> pageIdentifier() const { return m_pageIdentifier; }
 

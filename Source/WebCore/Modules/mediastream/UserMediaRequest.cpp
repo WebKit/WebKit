@@ -53,6 +53,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "RTCController.h"
 #include "RealtimeMediaSourceCenter.h"
+#include "ScriptExecutionContextInlines.h"
 #include "Settings.h"
 #include "UserMediaController.h"
 #include "WindowEventLoop.h"
@@ -204,11 +205,12 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
                 return;
             }
 
+            Ref categoryApplied = GenericPromise::createAndResolve();
             if (RefPtr audioTrack = stream->getFirstAudioTrack()) {
 #if USE(AUDIO_SESSION)
                 if (RefPtr page = document.page()) {
                     if (RefPtr manager = page->mediaSessionManager())
-                        manager->audioCaptureSourceStateChanged(MediaSessionManagerInterface::IsCaptureStarting::Yes);
+                        categoryApplied = manager->audioCaptureSourceStateChanged(MediaSessionManagerInterface::IsCaptureStarting::Yes);
                 }
 #endif
                 if (std::holds_alternative<MediaTrackConstraints>(protectedThis->m_audioConstraints))
@@ -221,7 +223,15 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 
             ASSERT(document.isCapturing());
             document.setHasCaptureMediaStreamTrack();
-            protectedThis->m_promise->resolve(WTF::move(stream));
+
+            // Under site isolation the audio session category is applied to this process asynchronously
+            // (via IPC reply). Delay resolving the getUserMedia promise until it has been applied, so
+            // callers observe the up-to-date category (e.g. "PlayAndRecord"). In the non-isolated case
+            // (or without an audio track) categoryApplied is already resolved.
+            RefPtr context = protectedThis->scriptExecutionContext();
+            context->enqueueTaskWhenSettled(WTF::move(categoryApplied), TaskSource::UserInteraction, [protectedThis, stream = WTF::move(stream)](auto&&) mutable {
+                protectedThis->m_promise->resolve(WTF::move(stream));
+            });
         };
 
         auto& document = downcast<Document>(*request.scriptExecutionContext());

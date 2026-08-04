@@ -1699,6 +1699,22 @@ TEST(WebKit2, DoNotUnmuteWhenTakingAThumbnail)
 #endif
 
 #if WK_HAVE_C_SPI
+// media-session-capture.html records MediaSession action handler calls, track mute/unmute events and
+// setXXXActive() promise resolutions into a single list. Those are delivered asynchronously, so a test
+// that triggers several operations at once has no guaranteed interleaving between them — arm a wait
+// before triggering an operation and await it before triggering the next.
+static void armActionState(TestWKWebView *webView, NSString *state)
+{
+    [webView objectByCallingAsyncFunction:@"return armActionState(state)" withArguments:@{ @"state": state }];
+}
+
+static void waitForActionState(TestWKWebView *webView, NSString *state)
+{
+    NSError *error = nil;
+    [webView objectByCallingAsyncFunction:@"return awaitActionState(state)" withArguments:@{ @"state": state } error:&error];
+    EXPECT_NULL(error);
+}
+
 TEST(WebKit2, WebRTCAndRemoteCommands)
 {
     [TestProtocol registerWithScheme:@"https"];
@@ -1821,23 +1837,31 @@ TEST(WebKit2, ToggleCameraCaptureWhenRestarting)
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
 
-    // Mute capture.
+    // Mute capture, one device at a time: the mute event is dispatched asynchronously, so muting both
+    // and then expecting a particular interleaving of the two would be assuming an ordering that isn't
+    // guaranteed.
     cameraCaptureStateChange = false;
     microphoneCaptureStateChange = false;
 
+    armActionState(webView.get(), @"muting camera");
     [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+    waitForActionState(webView.get(), @"muting camera");
+
+    armActionState(webView.get(), @"muting microphone");
+    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+    waitForActionState(webView.get(), @"muting microphone");
 
     // Unmute via MediaSession.
     cameraCaptureStateChange = false;
     done = false;
+    armActionState(webView.get(), @"unmuting camera");
     [webView stringByEvaluatingJavaScript:@"setCameraActive(true)"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+    waitForActionState(webView.get(), @"unmuting camera");
 
     // Validate handlers/events order.
     done = false;
@@ -1887,25 +1911,35 @@ TEST(WebKit2, ToggleMicrophoneCaptureWhenRestarting)
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
 
-    // Mute capture.
+    // Mute capture, one device at a time: the mute event is dispatched asynchronously, so muting both
+    // and then expecting a particular interleaving of the two would be assuming an ordering that isn't
+    // guaranteed.
     cameraCaptureStateChange = false;
     microphoneCaptureStateChange = false;
 
+    armActionState(webView.get(), @"muting camera");
     [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+    waitForActionState(webView.get(), @"muting camera");
+
+    armActionState(webView.get(), @"muting microphone");
+    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+    waitForActionState(webView.get(), @"muting microphone");
 
     // Unmute via MediaSession.
     cameraCaptureStateChange = false;
     microphoneCaptureStateChange = false;
     done = false;
+    armActionState(webView.get(), @"unmuting microphone");
     [webView stringByEvaluatingJavaScript:@"setMicrophoneActive(true)"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
+    waitForActionState(webView.get(), @"unmuting microphone");
 
+    // The camera must stay muted. There is no event for "nothing happened", so give any stray unmute a
+    // chance to arrive before checking.
     sleep(0.5_s);
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
 

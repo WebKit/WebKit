@@ -172,9 +172,36 @@ function setScreenshareActive(shouldActivate, expectSuccess)
     });
 }
 
+// Awaiting a specific recorded entry lets a test drive one operation to completion before starting the
+// next, instead of firing several and assuming they interleave in a particular way. Muting is applied
+// asynchronously, and under site isolation the audio session state it depends on is applied from a UI
+// process reply, so an un-awaited operation has no guaranteed position in actionState.
+const pendingActionStates = new Map();
+
+function armActionState(state)
+{
+    if (pendingActionStates.has(state))
+        return;
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+    pendingActionStates.set(state, { promise, resolve });
+}
+
+function awaitActionState(state)
+{
+    const pending = pendingActionStates.get(state);
+    if (!pending)
+        throw "no wait was armed for '" + state + "'";
+    return pending.promise.then(() => pendingActionStates.delete(state));
+}
+
 function addToActionState(state)
 {
     window.actionState += state + ", ";
+
+    const pending = pendingActionStates.get(state);
+    if (pending)
+        pending.resolve();
 }
 
 function validateActionState(state)
@@ -183,6 +210,7 @@ function validateActionState(state)
     if (window.webkit)
         window.webkit.messageHandlers.gum.postMessage(state === actionState ? "PASS" : "FAIL, got " + window.actionState);
     window.actionState = "";
+    pendingActionStates.clear();
 }
     </script>
 </body>
