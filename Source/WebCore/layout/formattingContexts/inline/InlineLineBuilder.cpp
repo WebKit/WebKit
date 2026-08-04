@@ -690,7 +690,9 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                 // Text is justified according to the method specified by the text-justify property,
                 // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
                 // the last line before a forced break or the end of the block is start-aligned.
-                auto hasTextAlignJustify = (isLastInlineContent || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == Style::TextAlignLast::Justify : rootStyle.textAlign() == Style::TextAlign::Justify;
+                // A block level box inside an inline box starts a block, which is a forced line break too.
+                auto lineEndsWithForcedLineBreak = lineContent->lineBreakReason == LineContent::LineBreakReason::ForcedLineBreakByBlockContent || Line::hasTrailingForcedLineBreak(m_line.runs());
+                auto hasTextAlignJustify = (isLastInlineContent || lineEndsWithForcedLineBreak) ? rootStyle.textAlignLast() == Style::TextAlignLast::Justify : rootStyle.textAlign() == Style::TextAlign::Justify;
                 if (hasTextAlignJustify) {
                     // Detach trailing hanging whitespace into its own run so the text
                     // shaper applies expansion only to inter-word spaces in the content run.
