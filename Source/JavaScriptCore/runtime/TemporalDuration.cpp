@@ -270,200 +270,26 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
 
         // Step 5.e: fields = ? PrepareCalendarFields(calendar, value,
         //   «year,month,month-code,day», «hour,...,nanosecond,offset,time-zone», «»).
-        //   requiredFieldNames = «» → no field is required during PrepareCalendarFields.
-        //   All fields read in alphabetical order.
-
-        // day (~to-positive-integer-with-truncation~)
-        // NOTE: not in requiredFieldNames; CalendarResolveFields enforces presence later.
-        JSValue dayProperty = obj->get(globalObject, vm.propertyNames->day);
-        RETURN_IF_EXCEPTION(scope, { });
-        double day = 0;
-        if (!dayProperty.isUndefined()) {
-            day = dayProperty.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!(day > 0 && std::isfinite(day))) [[unlikely]] {
-                throwRangeError(globalObject, scope, "day property must be positive and finite"_s);
-                return { };
-            }
-        }
-
-        // era, eraYear (alphabetical, only read for calendars with eras)
-        std::optional<String> era;
-        std::optional<double> eraYear;
-        bool calHasEras = TemporalCore::calendarHasEras(calendarId);
-        if (calHasEras) {
-            JSValue eraProperty = obj->get(globalObject, Identifier::fromString(vm, "era"_s));
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!eraProperty.isUndefined()) {
-                era = eraProperty.toWTFString(globalObject);
-                RETURN_IF_EXCEPTION(scope, { });
-            }
-            JSValue eraYearProperty = obj->get(globalObject, Identifier::fromString(vm, "eraYear"_s));
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!eraYearProperty.isUndefined()) {
-                double ey = eraYearProperty.toIntegerWithTruncation(globalObject);
-                RETURN_IF_EXCEPTION(scope, { });
-                if (!std::isfinite(ey)) [[unlikely]] {
-                    throwRangeError(globalObject, scope, "eraYear property must be finite"_s);
-                    return { };
-                }
-                eraYear = ey;
-            }
-        }
-
-        // hour, microsecond, millisecond, minute — read and validate (Infinity check)
-        auto readTimeField = [&](const Identifier& name) -> double {
-            JSValue val = obj->get(globalObject, name);
-            RETURN_IF_EXCEPTION(scope, 0);
-            if (val.isUndefined())
-                return 0;
-            double d = val.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, 0);
-            if (!std::isfinite(d)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
-                return 0;
-            }
-            return d;
-        };
-
-        double hour = readTimeField(vm.propertyNames->hour);
-        RETURN_IF_EXCEPTION(scope, { });
-        double microsecond = readTimeField(Identifier::fromString(vm, "microsecond"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-        double millisecond = readTimeField(Identifier::fromString(vm, "millisecond"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-        double minute = readTimeField(Identifier::fromString(vm, "minute"_s));
+        auto fields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::RelativeToDuration>(globalObject, obj, calendarId);
         RETURN_IF_EXCEPTION(scope, { });
 
-        // month
-        JSValue monthProperty = obj->get(globalObject, vm.propertyNames->month);
-        RETURN_IF_EXCEPTION(scope, { });
-        double month = 0;
-        if (!monthProperty.isUndefined()) {
-            month = monthProperty.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
+        TemporalCore::TimeFieldsIn timeFields { fields.hour, fields.minute, fields.second, fields.millisecond, fields.microsecond, fields.nanosecond };
 
-        // monthCode
-        JSValue monthCodeProperty = obj->get(globalObject, vm.propertyNames->monthCode);
-        RETURN_IF_EXCEPTION(scope, { });
-        std::optional<ParsedMonthCode> otherMonth;
-        if (!monthCodeProperty.isUndefined()) {
-            otherMonth = parseMonthCode(globalObject, monthCodeProperty);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
-
-        // nanosecond (~to-integer-with-truncation~)
-        double nanosecond = readTimeField(Identifier::fromString(vm, "nanosecond"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // offset (~to-offset-string~: ToPrimitive then String check then ParseDateTimeUTCOffset)
-        JSValue offsetProperty = obj->get(globalObject, Identifier::fromString(vm, "offset"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-        std::optional<int64_t> givenOffsetNs;
-        if (!offsetProperty.isUndefined()) {
-            JSValue offsetPrimitive = offsetProperty.toPrimitive(globalObject, PreferString);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!offsetPrimitive.isString()) [[unlikely]] {
-                throwTypeError(globalObject, scope, "offset property must be a string"_s);
-                return { };
-            }
-            auto offsetStr = asString(offsetPrimitive)->value(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            auto offsetNs = ISO8601::parseUTCOffset(offsetStr);
-            if (!offsetNs) [[unlikely]] {
-                throwRangeError(globalObject, scope, "offset property is not a valid UTC offset string"_s);
-                return { };
-            }
-            givenOffsetNs = *offsetNs;
-        }
-
-        // second (~to-integer-with-truncation~)
-        double second = readTimeField(Identifier::fromString(vm, "second"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // timeZone (~to-temporal-time-zone-identifier~; read but only used if present)
-        JSValue timeZoneValue = obj->get(globalObject, vm.propertyNames->timeZone);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // year (~to-integer-with-truncation~)
-        JSValue yearProperty = obj->get(globalObject, vm.propertyNames->year);
-        RETURN_IF_EXCEPTION(scope, { });
-        double year = 0;
-        if (!yearProperty.isUndefined()) {
-            year = yearProperty.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!std::isfinite(year)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "year property must be finite"_s);
-                return { };
-            }
-        }
-
-        // Step 5.f: result = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
-        // Step 5.g: timeZone = fields.[[TimeZone]].
-        // Step 5.h: offsetString = fields.[[OffsetString]].
-        // Step 5.i: If offsetString is ~unset~, set offsetBehaviour = ~wall~.
-        // Steps 5.j-5.k: isoDate = result.[[ISODate]]; time = result.[[Time]].
-        //
-        // CalendarResolveFields (inside InterpretTemporalDateTimeFields) requires day, year,
-        // and month|monthCode. We throw TypeError here rather than letting CalendarDateFromFields
-        // produce a RangeError from a zero default.
-        if (dayProperty.isUndefined()) [[unlikely]] {
-            throwTypeError(globalObject, scope, "day property must be present"_s);
-            return { };
-        }
-        if (yearProperty.isUndefined() && !(era && eraYear)) [[unlikely]] {
-            throwTypeError(globalObject, scope, "year property must be present"_s);
-            return { };
-        }
-
-        // Resolve month from month or monthCode; require at least one (step 5.f: CalendarResolveFields).
-        if (monthProperty.isUndefined() && !otherMonth) [[unlikely]] {
-            throwTypeError(globalObject, scope, "Either month or monthCode property must be provided"_s);
-            return { };
-        }
-        if (monthProperty.isUndefined()) {
-            ASSERT(otherMonth);
-            month = otherMonth->monthNumber;
-        } else {
-            if (!(month > 0 && std::isfinite(month))) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
-                return { };
-            }
-        }
-
-        // Step 5.f: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
-        TemporalCore::CalendarFieldsIn dateFields;
-        if (!yearProperty.isUndefined())
-            dateFields.year = clampTo<int32_t>(year);
-        if (!monthProperty.isUndefined())
-            dateFields.month = clampTo<uint32_t>(month);
-        if (otherMonth)
-            dateFields.monthCode = otherMonth;
-        dateFields.day = clampTo<uint8_t>(day);
-        if (era)
-            dateFields.era = *era;
-        if (eraYear)
-            dateFields.eraYear = clampTo<int32_t>(*eraYear);
-        TemporalCore::TimeFieldsIn timeFields { hour, minute, second, millisecond, microsecond, nanosecond };
-
-        // Both paths (object step 5.g, string step 6.e/6.f) set timeZone before reaching here.
-        if (!timeZoneValue.isUndefined()) {
+        // Step 5.g: timeZone = fields.[[TimeZone]]. Step 5.h-i: offsetBehaviour from offsetString.
+        if (fields.timeZonePresent) {
             // Steps 8-9: compute offsetNs based on offsetBehaviour.
             // Steps 10-12: epochNs = InterpretISODateTimeOffset(...); return ZonedRelativeTo.
-            auto timeZoneOpt = toTemporalTimeZoneIdentifier(globalObject, timeZoneValue);
-            RETURN_IF_EXCEPTION(scope, { });
-            ASSERT(timeZoneOpt);
-            TimeZone timeZone = *timeZoneOpt;
+            TimeZone timeZone = fields.timeZone;
 
-            auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, dateFields, timeFields, TemporalOverflow::Constrain);
+            // Step 5.f: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
+            auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, fields.dateFields, timeFields, TemporalOverflow::Constrain);
             RETURN_IF_EXCEPTION(scope, { });
             auto plainDate = pdt.date;
             auto plainTime = pdt.time;
 
             // offsetBehaviour = ~option~: find the candidate whose UTC offset exactly equals givenOffsetNs
             // (offsetOption = ~reject~, matchBehaviour = ~match-exactly~ → steps 10-12).
-            if (givenOffsetNs) {
+            if (fields.offsetNs) {
                 auto possible = TemporalCore::getPossibleEpochNanosecondsFor(timeZone, plainDate, plainTime);
                 if (!possible) [[unlikely]] {
                     throwRangeError(globalObject, scope, possible.error().message);
@@ -473,7 +299,7 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
                 ISO8601::ExactTime matchedEpoch;
                 for (auto& candidate : TemporalCore::epochCandidates(*possible)) {
                     auto offsetResult = TemporalCore::getOffsetNanosecondsFor(timeZone, candidate);
-                    if (offsetResult && *offsetResult == *givenOffsetNs) {
+                    if (offsetResult && *offsetResult == *fields.offsetNs) {
                         matchedEpoch = candidate;
                         found = true;
                         break;
@@ -498,7 +324,7 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
 
         // Step 7: timeZone is ~unset~ → return { [[PlainRelativeTo]]: CreateTemporalDate(isoDate, calendar) }.
         // Time fields were read for Proxy observability; we discard the regulated time here.
-        auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, dateFields, timeFields, TemporalOverflow::Constrain);
+        auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, fields.dateFields, timeFields, TemporalOverflow::Constrain);
         RETURN_IF_EXCEPTION(scope, { });
         return RelativeToRecord { nullptr, pdt.date, true, calendarId };
     }

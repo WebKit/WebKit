@@ -285,59 +285,32 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncWith, (JSGlobalObject* gl
 
     // Step 4: calendar = plainDate.[[Calendar]] — held on the receiver.
     CalendarID calendarId = plainDate->calendarID();
-    bool isNonISO = !TemporalCore::calendarIsISO(calendarId);
 
-    ISO8601::PlainDate result;
-    if (isNonISO) {
-        // Step 6: partialDate = ? PrepareCalendarFields(calendar, temporalDateLike, «year,month,monthCode,day», «», ~partial~).
-        // Calendar comes from the receiver — step 3 already rejected a `calendar` property.
-        auto partialFields = readCalendarFieldsFromObject(globalObject, like, calendarId);
-        RETURN_IF_EXCEPTION(scope, { });
-        // ~partial~ throws TypeError if none of the requested fields are present with a non-undefined value.
-        if (!partialFields.day && !partialFields.era && !partialFields.eraYear && !partialFields.month && !partialFields.monthCode && !partialFields.year) [[unlikely]]
-            return throwVMTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
+    // Step 6: partialDate = ? PrepareCalendarFields(calendar, temporalDateLike, «year,month,monthCode,day», «», ~partial~).
+    // Calendar comes from the receiver — step 3 already rejected a `calendar` property.
+    auto partialFields = readCalendarFieldsFromObject(globalObject, like, calendarId);
+    RETURN_IF_EXCEPTION(scope, { });
+    // ~partial~ throws TypeError if none of the requested fields are present with a non-undefined value.
+    if (!partialFields.day && !partialFields.era && !partialFields.eraYear && !partialFields.month && !partialFields.monthCode && !partialFields.year) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
 
-        // Steps 8-9: resolvedOptions = ? GetOptionsObject(options); overflow = ? GetTemporalOverflowOption(resolvedOptions).
-        TemporalOverflow overflow = toTemporalOverflow(globalObject, callFrame->argument(1));
-        RETURN_IF_EXCEPTION(scope, { });
+    // Steps 8-9: resolvedOptions = ? GetOptionsObject(options); overflow = ? GetTemporalOverflowOption(resolvedOptions).
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
 
-        // Steps 5+7+10: ISODateToFields + CalendarMergeFields + CalendarDateFromFields — fused into plainDateWith.
-        auto resolved = TemporalCore::plainDateWith(calendarId, plainDate->plainDate(), partialFields, overflow);
-        if (!resolved) [[unlikely]] {
-            if (resolved.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(resolved.error().message));
-            else
-                throwRangeError(globalObject, scope, String(resolved.error().message));
-            return { };
-        }
-        result = resolved->isoDate;
-    } else {
-        // ISO path: use existing mergeDateFields helper — reads partial fields, merges with the receiver's own
-        // year/month/day, resolves overflow, and returns the merged tuple. (Fuses steps 5 ISODateToFields + 6 PrepareCalendarFields + 7 CalendarMergeFields + 8-9 overflow.)
-        auto [y, m, d, optionalMonthCode, overflow, any] = TemporalPlainDate::mergeDateFields(globalObject, like, callFrame->argument(1), plainDate->year(), plainDate->month(), plainDate->day());
-        RETURN_IF_EXCEPTION(scope, { });
-        if (any == TemporalAnyProperties::None) [[unlikely]]
-            return throwVMTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
-
-        // Step 10: isoDate = ? CalendarDateFromFields(calendar, fields, overflow).
-        TemporalCore::CalendarFieldsIn fields;
-        fields.year = y;
-        fields.month = m;
-        fields.monthCode = optionalMonthCode;
-        fields.day = static_cast<uint8_t>(d);
-        auto resolved = TemporalCore::dateFromFields(calendarId, fields, overflow);
-        if (!resolved) [[unlikely]] {
-            if (resolved.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(resolved.error().message));
-            else
-                throwRangeError(globalObject, scope, String(resolved.error().message));
-            return { };
-        }
-        result = resolved->isoDate;
+    // Steps 5+7+10: ISODateToFields + CalendarMergeFields + CalendarDateFromFields — fused into
+    // plainDateWith (which has its own ISO fast path, so this is calendar-agnostic here).
+    auto resolved = TemporalCore::plainDateWith(calendarId, plainDate->plainDate(), partialFields, overflow);
+    if (!resolved) [[unlikely]] {
+        if (resolved.error().kind == TemporalErrorKind::TypeError)
+            throwTypeError(globalObject, scope, String(resolved.error().message));
+        else
+            throwRangeError(globalObject, scope, String(resolved.error().message));
+        return { };
     }
 
     // Step 11: Return ! CreateTemporalDate(isoDate, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(result), calendarId)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(resolved->isoDate), calendarId)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.until

@@ -79,10 +79,10 @@ TemporalPlainDateTime* TemporalPlainDateTime::tryCreateIfValid(JSGlobalObject* g
     return TemporalPlainDateTime::create(vm, structure, WTF::move(plainDate), WTF::move(plainTime), calendarID);
 }
 
-static TemporalPlainDateTime* fromImpl(JSGlobalObject*, JSValue, JSObject*);
+static TemporalPlainDateTime* fromImpl(JSGlobalObject*, JSValue, JSValue);
 
 // Property-bag + string tail of ToTemporalDateTime (steps 2.d-2.h + 3+); TPDT/PD/ZDT cases handled by the caller.
-static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue itemValue, JSObject* options)
+static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue itemValue, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -96,156 +96,15 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
 
         // Step 2.e: PrepareCalendarFields(calendar, item, {year,month,monthCode,day},
         //           {hour,minute,second,millisecond,microsecond,nanosecond}, {}) — alphabetical.
-
-        // day
-        JSValue dayProperty = item->get(globalObject, vm.propertyNames->day);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (dayProperty.isUndefined()) [[unlikely]] {
-            throwTypeError(globalObject, scope, "day property must be present"_s);
-            return { };
-        }
-        // Spec uses ToPositiveIntegerWithTruncation: rejects NaN/±Inf and any value ≤ 0.
-        double day = dayProperty.toIntegerWithTruncation(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!(day > 0 && std::isfinite(day))) [[unlikely]] {
-            throwRangeError(globalObject, scope, "day property must be positive and finite"_s);
-            return { };
-        }
-
-        // era, eraYear (between day and hour, alphabetical)
-        bool calIsNonISO = extractedCalendarId != iso8601CalendarID();
-        bool calUsesEras = calIsNonISO && extractedCalendarId != chineseCalendarID() && extractedCalendarId != dangiCalendarID();
-        std::optional<String> extractedEra;
-        std::optional<int32_t> extractedEraYear;
-        if (calUsesEras) {
-            JSValue eraProperty = item->get(globalObject, Identifier::fromString(vm, "era"_s));
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!eraProperty.isUndefined()) {
-                auto eraStr = eraProperty.toWTFString(globalObject);
-                RETURN_IF_EXCEPTION(scope, { });
-                extractedEra = WTF::move(eraStr);
-            }
-            JSValue eraYearProperty = item->get(globalObject, Identifier::fromString(vm, "eraYear"_s));
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!eraYearProperty.isUndefined()) {
-                double ey = eraYearProperty.toIntegerWithTruncation(globalObject);
-                RETURN_IF_EXCEPTION(scope, { });
-                if (!std::isfinite(ey)) [[unlikely]] {
-                    throwRangeError(globalObject, scope, "eraYear property must be finite"_s);
-                    return { };
-                }
-                extractedEraYear = clampTo<int32_t>(ey);
-            }
-        }
-
-        // hour, microsecond, millisecond, minute (time fields interleaved before month)
         TemporalCore::TimeFieldsIn timeFields;
-        auto readTimeField = [&](JSValue val, std::optional<double>& target) {
-            if (val.isUndefined())
-                return;
-            double d = val.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, void());
-            if (!std::isfinite(d)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
-                return;
-            }
-            target = d;
-        };
-
-        JSValue hourProperty = item->get(globalObject, vm.propertyNames->hour);
+        TemporalCore::CalendarFieldsIn dateFields = readCalendarFieldsFromObject<FieldSetType::DateTime>(globalObject, item, extractedCalendarId, &timeFields);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(hourProperty, timeFields.hour);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        JSValue microsecondProperty = item->get(globalObject, vm.propertyNames->microsecond);
-        RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(microsecondProperty, timeFields.microsecond);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        JSValue millisecondProperty = item->get(globalObject, vm.propertyNames->millisecond);
-        RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(millisecondProperty, timeFields.millisecond);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        JSValue minuteProperty = item->get(globalObject, vm.propertyNames->minute);
-        RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(minuteProperty, timeFields.minute);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // month
-        JSValue monthProperty = item->get(globalObject, vm.propertyNames->month);
-        RETURN_IF_EXCEPTION(scope, { });
-        double month = 0;
-        if (!monthProperty.isUndefined()) {
-            month = monthProperty.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            // Spec uses ToPositiveIntegerWithTruncation: rejects NaN/±Inf and any value ≤ 0.
-            if (!(month > 0 && std::isfinite(month))) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
-                return { };
-            }
-        }
-
-        // monthCode
-        JSValue monthCodeProperty = item->get(globalObject, vm.propertyNames->monthCode);
-        RETURN_IF_EXCEPTION(scope, { });
-        std::optional<ParsedMonthCode> otherMonth;
-        if (!monthCodeProperty.isUndefined()) {
-            otherMonth = parseMonthCode(globalObject, monthCodeProperty);
-            RETURN_IF_EXCEPTION(scope, { });
-            // Note: suitability (monthNumber 1-12, no leap month) is checked after year.
-        }
-        if (monthProperty.isUndefined() && !otherMonth) [[unlikely]] {
-            throwTypeError(globalObject, scope, "Either month or monthCode property must be provided"_s);
-            return { };
-        }
-
-        // nanosecond
-        JSValue nanosecondProperty = item->get(globalObject, vm.propertyNames->nanosecond);
-        RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(nanosecondProperty, timeFields.nanosecond);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // second
-        JSValue secondProperty = item->get(globalObject, vm.propertyNames->second);
-        RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(secondProperty, timeFields.second);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // year
-        JSValue yearProperty = item->get(globalObject, vm.propertyNames->year);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (yearProperty.isUndefined() && !(extractedEra && extractedEraYear)) [[unlikely]] {
-            throwTypeError(globalObject, scope, "year property must be present"_s);
-            return { };
-        }
-        double year = yearProperty.isUndefined() ? 0 : yearProperty.toIntegerWithTruncation(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!std::isfinite(year)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "year property must be finite"_s);
-            return { };
-        }
 
         // Steps 2.f-g: GetOptionsObject + GetTemporalOverflowOption (after all fields per spec).
-        TemporalOverflow overflow = TemporalOverflow::Constrain;
-        if (options) {
-            overflow = toTemporalOverflow(globalObject, options);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
+        TemporalOverflow overflow = toTemporalOverflow(globalObject, optionsValue);
+        RETURN_IF_EXCEPTION(scope, { });
 
         // Step 2.h: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, overflow).
-        TemporalCore::CalendarFieldsIn dateFields;
-        if (!yearProperty.isUndefined())
-            dateFields.year = clampTo<int32_t>(year);
-        if (!monthProperty.isUndefined())
-            dateFields.month = clampTo<uint32_t>(month);
-        if (otherMonth)
-            dateFields.monthCode = otherMonth;
-        dateFields.day = clampTo<uint8_t>(day);
-        if (extractedEra)
-            dateFields.era = *extractedEra;
-        if (extractedEraYear)
-            dateFields.eraYear = *extractedEraYear;
         auto pdt = interpretTemporalDateTimeFields(globalObject, extractedCalendarId, dateFields, timeFields, overflow);
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -282,10 +141,8 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
             calendarId = *canonicalized;
         }
         // Step 8: GetOptionsObject + GetTemporalOverflowOption (after parse, per spec).
-        if (options) {
-            toTemporalOverflow(globalObject, options);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
+        toTemporalOverflow(globalObject, optionsValue);
+        RETURN_IF_EXCEPTION(scope, { });
         // Steps 9-13: CreateISODateRecord + CombineISODateAndTimeRecord + CreateTemporalDateTime.
         auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(plainDate), plainTimeOptional.value_or(ISO8601::PlainTime()), calendarId);
         RETURN_IF_EXCEPTION(scope, { });
@@ -333,27 +190,12 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
             return TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), WTF::move(date), WTF::move(time), zdt->calendarID());
         }
         // Steps 2.d-2.h: property bag — read all fields before options (ToTemporalDateTime step order).
-        // Do NOT call intlGetOptionsObject here — it throws for null before fields are read.
-        if (optionsValue.isUndefined())
-            RELEASE_AND_RETURN(scope, fromImpl(globalObject, itemValue, nullptr));
-        if (!optionsValue.isObject()) {
-            // Read all fields first (spec order: PrepareCalendarFields before GetTemporalOverflowOption).
-            fromImpl(globalObject, itemValue, nullptr);
-            RETURN_IF_EXCEPTION(scope, { });
-            throwTypeError(globalObject, scope, "options must be an object"_s);
-            return { };
-        }
-        RELEASE_AND_RETURN(scope, fromImpl(globalObject, itemValue, asObject(optionsValue)));
+        RELEASE_AND_RETURN(scope, fromImpl(globalObject, itemValue, optionsValue));
     }
 
-    // String: parse first, then validate options.
-    if (itemValue.isString()) {
-        auto* result = fromImpl(globalObject, itemValue, nullptr);
-        RETURN_IF_EXCEPTION(scope, { });
-        toTemporalOverflow(globalObject, optionsValue);
-        RETURN_IF_EXCEPTION(scope, { });
-        return result;
-    }
+    // String: fromImpl parses first, then validates options internally (Step 8).
+    if (itemValue.isString())
+        RELEASE_AND_RETURN(scope, fromImpl(globalObject, itemValue, optionsValue));
 
     throwTypeError(globalObject, scope, "can only convert to PlainDateTime from object or string values"_s);
     return { };

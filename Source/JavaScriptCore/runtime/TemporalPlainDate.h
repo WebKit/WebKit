@@ -52,8 +52,6 @@ public:
     DECLARE_INFO;
 
     static ISO8601::PlainDate validateAndCreateISODateRecord(JSGlobalObject*, const ISO8601::Duration&);
-    static std::tuple<int32_t, unsigned, unsigned, std::optional<ParsedMonthCode>, TemporalOverflow, TemporalAnyProperties>
-    mergeDateFields(JSGlobalObject*, JSObject*, JSValue, int32_t, uint32_t, uint32_t);
     static TemporalPlainDate* from(JSGlobalObject*, JSValue item, JSValue options);
 
     ISO8601::PlainDate plainDate() const { return m_plainDate; }

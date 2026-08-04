@@ -540,6 +540,20 @@ TemporalResult<ResolvedCalendarDate> plainYearMonthWith(CalendarID calendarId, c
 // Steps 6, 8-9 (PrepareCalendarFields, overflow) done by PlainDate::with(); step 11 (CreateTemporalDate) by prototype caller.
 TemporalResult<ResolvedCalendarDate> plainDateWith(CalendarID calendarId, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow overflow)
 {
+    // ISO fast path — mirrors plainYearMonthWith's ISO branch (plus day). Avoids isoToCalendarFields,
+    // which for a non-ROC/Buddhist/extreme-year calendar falls through to ICU calendar construction;
+    // iso8601 never needs that.
+    if (calendarIsISO(calendarId)) {
+        CalendarFieldsIn merged;
+        merged.year = partialFields.year.has_value() ? partialFields.year : std::optional<int32_t>(currentISODate.year());
+        merged.month = partialFields.month;
+        merged.monthCode = partialFields.monthCode;
+        if (!partialFields.month.has_value() && !partialFields.monthCode)
+            merged.monthCode = ISO8601::parseMonthCode(ISO8601::monthCode(currentISODate.month()));
+        merged.day = partialFields.day.has_value() ? *partialFields.day : currentISODate.day();
+        return dateFromFields(calendarId, merged, overflow);
+    }
+
     // Step 5: fields = ISODateToFields(calendar, plainDate.[[ISODate]], ~date~).
     auto calFields = isoToCalendarFields(calendarId, currentISODate);
     if (!calFields)

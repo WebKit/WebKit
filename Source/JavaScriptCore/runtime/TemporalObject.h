@@ -122,11 +122,6 @@ CalendarID toTemporalCalendarIdentifier(JSGlobalObject*, JSValue);
 TemporalDisambiguation toTemporalDisambiguation(JSGlobalObject*, JSObject*);
 TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject*, JSObject*, TemporalOffsetDisambiguation fallback);
 
-enum class TemporalAnyProperties : bool {
-    None,
-    Some,
-};
-
 void throwTemporalError(JSGlobalObject*, ThrowScope&, const TemporalError&);
 
 std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);

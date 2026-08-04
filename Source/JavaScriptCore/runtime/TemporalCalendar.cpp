@@ -87,11 +87,23 @@ CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject* globalObj
 // temporal_rs: CalendarFields::from_prop_bag
 // https://tc39.es/proposal-temporal/#sec-temporal-preparecalendarfields
 template<FieldSetType type>
-TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* globalObject, JSObject* bag, CalendarID calendarId)
+TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* globalObject, JSObject* bag, CalendarID calendarId, TemporalCore::TimeFieldsIn* timeFieldsOut)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     TemporalCore::CalendarFieldsIn fields;
+
+    auto readTimeField = [&](JSValue val, std::optional<double>& target) {
+        if (val.isUndefined())
+            return;
+        double d = val.toIntegerWithTruncation(globalObject);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!std::isfinite(d)) [[unlikely]] {
+            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
+            return;
+        }
+        target = d;
+    };
 
     // day (not read for YearMonth per spec)
     if constexpr (type != FieldSetType::YearMonth) {
@@ -129,6 +141,30 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
         }
     }
 
+    // hour, microsecond, millisecond, minute (DateTime only; alphabetically before month)
+    if constexpr (type == FieldSetType::DateTime) {
+        ASSERT(timeFieldsOut);
+        JSValue hourProp = bag->get(globalObject, vm.propertyNames->hour);
+        RETURN_IF_EXCEPTION(scope, fields);
+        readTimeField(hourProp, timeFieldsOut->hour);
+        RETURN_IF_EXCEPTION(scope, fields);
+
+        JSValue microsecondProp = bag->get(globalObject, vm.propertyNames->microsecond);
+        RETURN_IF_EXCEPTION(scope, fields);
+        readTimeField(microsecondProp, timeFieldsOut->microsecond);
+        RETURN_IF_EXCEPTION(scope, fields);
+
+        JSValue millisecondProp = bag->get(globalObject, vm.propertyNames->millisecond);
+        RETURN_IF_EXCEPTION(scope, fields);
+        readTimeField(millisecondProp, timeFieldsOut->millisecond);
+        RETURN_IF_EXCEPTION(scope, fields);
+
+        JSValue minuteProp = bag->get(globalObject, vm.propertyNames->minute);
+        RETURN_IF_EXCEPTION(scope, fields);
+        readTimeField(minuteProp, timeFieldsOut->minute);
+        RETURN_IF_EXCEPTION(scope, fields);
+    }
+
     // month
     {
         JSValue monthProp = bag->get(globalObject, vm.propertyNames->month);
@@ -144,23 +180,27 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
         }
     }
 
-    // monthCode
+    // monthCode (~to-month-code~: ParseMonthCode)
     {
         JSValue mcProp = bag->get(globalObject, vm.propertyNames->monthCode);
         RETURN_IF_EXCEPTION(scope, fields);
         if (!mcProp.isUndefined()) {
-            auto mcPrimitive = mcProp.toPrimitive(globalObject, PreferString);
+            fields.monthCode = parseMonthCode(globalObject, mcProp);
             RETURN_IF_EXCEPTION(scope, fields);
-            if (mcPrimitive.isString()) {
-                auto mcStr = asString(mcPrimitive)->value(globalObject);
-                RETURN_IF_EXCEPTION(scope, fields);
-                fields.monthCode = ISO8601::parseMonthCode(mcStr);
-                if (!fields.monthCode) [[unlikely]] {
-                    throwRangeError(globalObject, scope, "Invalid monthCode"_s);
-                    return fields;
-                }
-            }
         }
+    }
+
+    // nanosecond, second (DateTime only; alphabetically before year)
+    if constexpr (type == FieldSetType::DateTime) {
+        JSValue nanosecondProp = bag->get(globalObject, vm.propertyNames->nanosecond);
+        RETURN_IF_EXCEPTION(scope, fields);
+        readTimeField(nanosecondProp, timeFieldsOut->nanosecond);
+        RETURN_IF_EXCEPTION(scope, fields);
+
+        JSValue secondProp = bag->get(globalObject, vm.propertyNames->second);
+        RETURN_IF_EXCEPTION(scope, fields);
+        readTimeField(secondProp, timeFieldsOut->second);
+        RETURN_IF_EXCEPTION(scope, fields);
     }
 
     // year
@@ -332,19 +372,25 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
     readTimeField(vm.propertyNames->second, result.second);
     RETURN_IF_EXCEPTION(scope, result);
 
-    // timeZone (~to-temporal-time-zone-identifier~; Full mode only — step 9.d required field)
+    // timeZone (~to-temporal-time-zone-identifier~): required only for Full (step 9.d); read but
+    // optional for RelativeToDuration; not read at all for Partial (with() has no timeZone field).
     if constexpr (mode != ZonedDateTimeFieldMode::Partial) {
         JSValue v = bag->get(globalObject, vm.propertyNames->timeZone);
         RETURN_IF_EXCEPTION(scope, result);
-        if (v.isUndefined()) [[unlikely]] {
-            throwTypeError(globalObject, scope, "Temporal.ZonedDateTime.from: timeZone property is required"_s);
-            return result;
+        if constexpr (mode == ZonedDateTimeFieldMode::Full) {
+            if (v.isUndefined()) [[unlikely]] {
+                throwTypeError(globalObject, scope, "Temporal.ZonedDateTime.from: timeZone property is required"_s);
+                return result;
+            }
         }
-        // ToTemporalTimeZoneIdentifier: accepts ZonedDateTime or String.
-        auto timeZone = toTemporalTimeZoneIdentifier(globalObject, v);
-        RETURN_IF_EXCEPTION(scope, result);
-        ASSERT(timeZone);
-        result.timeZone = *timeZone;
+        if (!v.isUndefined()) {
+            // ToTemporalTimeZoneIdentifier: accepts ZonedDateTime or String.
+            auto timeZone = toTemporalTimeZoneIdentifier(globalObject, v);
+            RETURN_IF_EXCEPTION(scope, result);
+            ASSERT(timeZone);
+            result.timeZone = *timeZone;
+            result.timeZonePresent = true;
+        }
     }
 
     // year (~to-integer-with-truncation~)
@@ -474,11 +520,13 @@ ISO8601::Duration calendarDateUntil(CalendarID calendarId, const ISO8601::PlainD
     return *result;
 }
 
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::Date>(JSGlobalObject*, JSObject*, CalendarID);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::YearMonth>(JSGlobalObject*, JSObject*, CalendarID);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::MonthDay>(JSGlobalObject*, JSObject*, CalendarID);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::Date>(JSGlobalObject*, JSObject*, CalendarID, TemporalCore::TimeFieldsIn*);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::YearMonth>(JSGlobalObject*, JSObject*, CalendarID, TemporalCore::TimeFieldsIn*);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::MonthDay>(JSGlobalObject*, JSObject*, CalendarID, TemporalCore::TimeFieldsIn*);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::DateTime>(JSGlobalObject*, JSObject*, CalendarID, TemporalCore::TimeFieldsIn*);
 
 template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Full>(JSGlobalObject*, JSObject*, CalendarID);
 template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial>(JSGlobalObject*, JSObject*, CalendarID);
+template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::RelativeToDuration>(JSGlobalObject*, JSObject*, CalendarID);
 
 } // namespace JSC

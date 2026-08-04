@@ -247,122 +247,16 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWith, (JSGlobalObject
 
     // Step 4: calendar = plainDateTime.[[Calendar]].
     CalendarID calendarId = plainDateTime->calendarID();
-    bool calHasEras = TemporalCore::calendarHasEras(calendarId);
 
-    // Step 12: PrepareCalendarFields — all fields in one alphabetical pass:
-    //   calendar/timeZone (above), day, [era, eraYear,] hour, microsecond, millisecond,
-    //   minute, month, monthCode, nanosecond, second, year.
-    TemporalCore::CalendarFieldsIn partialDate;
-    bool anyFieldSet = false;
-
-    auto readTimeField = [&](PropertyName name) -> double {
-        JSValue v = fields->get(globalObject, name);
-        RETURN_IF_EXCEPTION(scope, 0.0);
-        if (v.isUndefined())
-            return std::numeric_limits<double>::quiet_NaN();
-        double dv = v.toIntegerWithTruncation(globalObject);
-        RETURN_IF_EXCEPTION(scope, 0.0);
-        if (!std::isfinite(dv)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "field value must be finite"_s);
-            return 0.0;
-        }
-        anyFieldSet = true;
-        return dv;
-    };
-
-    // day
-    {
-        JSValue v = fields->get(globalObject, vm.propertyNames->day);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!v.isUndefined()) {
-            double d = v.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!(d > 0 && std::isfinite(d))) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "day must be a positive finite integer"_s);
-            partialDate.day = clampTo<uint8_t>(d);
-            anyFieldSet = true;
-        }
-    }
-
-    // era, eraYear (only for era-based calendars)
-    if (calHasEras) {
-        JSValue eraVal = fields->get(globalObject, Identifier::fromString(vm, "era"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!eraVal.isUndefined()) {
-            partialDate.era = eraVal.toWTFString(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            anyFieldSet = true;
-        }
-        JSValue eraYearVal = fields->get(globalObject, Identifier::fromString(vm, "eraYear"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!eraYearVal.isUndefined()) {
-            double ey = eraYearVal.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!std::isfinite(ey)) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "eraYear must be finite"_s);
-            partialDate.eraYear = clampTo<int32_t>(ey);
-            anyFieldSet = true;
-        }
-    }
-
-    // hour, microsecond, millisecond, minute
-    double partialHour = readTimeField(vm.propertyNames->hour);
-    RETURN_IF_EXCEPTION(scope, { });
-    double partialMicrosecond = readTimeField(Identifier::fromString(vm, "microsecond"_s));
-    RETURN_IF_EXCEPTION(scope, { });
-    double partialMillisecond = readTimeField(Identifier::fromString(vm, "millisecond"_s));
-    RETURN_IF_EXCEPTION(scope, { });
-    double partialMinute = readTimeField(Identifier::fromString(vm, "minute"_s));
+    // Step 12: PrepareCalendarFields — all fields in one alphabetical pass (day, [era, eraYear,]
+    // hour, microsecond, millisecond, minute, month, monthCode, nanosecond, second, year).
+    TemporalCore::TimeFieldsIn partialTime;
+    auto partialDate = readCalendarFieldsFromObject<FieldSetType::DateTime>(globalObject, fields, calendarId, &partialTime);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // month
-    {
-        JSValue v = fields->get(globalObject, vm.propertyNames->month);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!v.isUndefined()) {
-            double m = v.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!(m > 0 && std::isfinite(m))) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "month must be a positive finite integer"_s);
-            partialDate.month = clampTo<uint32_t>(m);
-            anyFieldSet = true;
-        }
-    }
-
-    // monthCode
-    {
-        JSValue v = fields->get(globalObject, Identifier::fromString(vm, "monthCode"_s));
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!v.isUndefined()) {
-            String mcStr = v.toWTFString(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            partialDate.monthCode = ISO8601::parseMonthCode(mcStr);
-            if (!partialDate.monthCode) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "Invalid monthCode"_s);
-            anyFieldSet = true;
-        }
-    }
-
-    // nanosecond, second
-    double partialNanosecond = readTimeField(Identifier::fromString(vm, "nanosecond"_s));
-    RETURN_IF_EXCEPTION(scope, { });
-    double partialSecond = readTimeField(Identifier::fromString(vm, "second"_s));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    // year
-    {
-        JSValue v = fields->get(globalObject, vm.propertyNames->year);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!v.isUndefined()) {
-            double y = v.toIntegerWithTruncation(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!std::isfinite(y)) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "year must be finite"_s);
-            partialDate.year = clampTo<int32_t>(y);
-            anyFieldSet = true;
-        }
-    }
-
+    bool anyFieldSet = partialDate.day || partialDate.era || partialDate.eraYear || partialDate.month
+        || partialDate.monthCode || partialDate.year || partialTime.hour || partialTime.minute
+        || partialTime.second || partialTime.millisecond || partialTime.microsecond || partialTime.nanosecond;
     if (!anyFieldSet) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "at least one field must be provided"_s);
 
@@ -385,16 +279,13 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWith, (JSGlobalObject
 
     // Steps 6-11, 16: time fields merged with this's current values, then RegulateTime.
     auto curTime = plainDateTime->plainTime();
-    auto useTime = [](double partial, unsigned cur) {
-        return std::isnan(partial) ? static_cast<double>(cur) : partial;
-    };
     ISO8601::Duration timeDur { };
-    timeDur.setField(TemporalUnit::Hour, useTime(partialHour, curTime.hour()));
-    timeDur.setField(TemporalUnit::Minute, useTime(partialMinute, curTime.minute()));
-    timeDur.setField(TemporalUnit::Second, useTime(partialSecond, curTime.second()));
-    timeDur.setField(TemporalUnit::Millisecond, useTime(partialMillisecond, curTime.millisecond()));
-    timeDur.setField(TemporalUnit::Microsecond, useTime(partialMicrosecond, curTime.microsecond()));
-    timeDur.setField(TemporalUnit::Nanosecond, useTime(partialNanosecond, curTime.nanosecond()));
+    timeDur.setField(TemporalUnit::Hour, partialTime.hour.value_or(curTime.hour()));
+    timeDur.setField(TemporalUnit::Minute, partialTime.minute.value_or(curTime.minute()));
+    timeDur.setField(TemporalUnit::Second, partialTime.second.value_or(curTime.second()));
+    timeDur.setField(TemporalUnit::Millisecond, partialTime.millisecond.value_or(curTime.millisecond()));
+    timeDur.setField(TemporalUnit::Microsecond, partialTime.microsecond.value_or(curTime.microsecond()));
+    timeDur.setField(TemporalUnit::Nanosecond, partialTime.nanosecond.value_or(curTime.nanosecond()));
     auto newTime = TemporalPlainTime::regulateTime(globalObject, WTF::move(timeDur), overflow);
     RETURN_IF_EXCEPTION(scope, { });
 

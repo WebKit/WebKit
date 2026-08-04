@@ -51,9 +51,9 @@ ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const 
 ISO8601::PlainDate calendarDateAdd(JSGlobalObject*, CalendarID, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 ISO8601::Duration calendarDateUntil(CalendarID, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
 
-enum class FieldSetType { Date, YearMonth, MonthDay };
+enum class FieldSetType { Date, YearMonth, MonthDay, DateTime };
 template<FieldSetType type = FieldSetType::Date>
-TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject*, JSObject*, CalendarID);
+TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject*, JSObject*, CalendarID, TemporalCore::TimeFieldsIn* = nullptr);
 
 // Fields read from a ZonedDateTime property bag (from() or with()).
 struct ZonedDateTimeFields {
@@ -69,7 +69,8 @@ struct ZonedDateTimeFields {
     std::optional<double> nanosecond;
     // ZDT-specific fields — resolved in readZonedDateTimeFieldsFromObject per spec.
     std::optional<int64_t> offsetNs; // parsed from the "offset" string property
-    TimeZone timeZone; // resolved TimeZone handle (Full mode only)
+    TimeZone timeZone; // resolved TimeZone handle, valid iff timeZonePresent
+    bool timeZonePresent { false }; // true if a timeZone property was actually given (RelativeToDuration)
     // Presence flags (needed for with() partial validation).
     bool dayPresent { false };
     bool monthPresent { false };
@@ -81,6 +82,7 @@ struct ZonedDateTimeFields {
 enum class ZonedDateTimeFieldMode {
     Full, // from(): timeZone is the only required field (spec requiredFieldNames = «time-zone»)
     Partial, // with(): all fields optional, anyFieldSet is tracked (~partial~ mode)
+    RelativeToDuration, // Duration.relativeTo: timeZone optional; day/year/month(-or-monthCode) requirement enforced downstream by CalendarResolveFields, not here.
 };
 
 template<ZonedDateTimeFieldMode mode = ZonedDateTimeFieldMode::Full>
