@@ -214,6 +214,8 @@ public:
 
             // reload all of the cached base and size pointers
             for (unsigned i = 0; i < m_moduleInformation->memoryCount(); i++) {
+                if (!m_memories[i])
+                    continue;
                 cachedMemoryBaseSizePairs()[i] = {
                     m_memories[i]->basePointer(),
 #if CPU(ARM)
