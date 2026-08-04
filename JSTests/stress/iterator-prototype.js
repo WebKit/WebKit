@@ -25,6 +25,7 @@ shouldBe(JSON.stringify(Object.getOwnPropertyNames(iteratorPrototype)), '[' + [
     'chunks',
     'windows',
     'includes',
+    'join',
 ].map((val) => `"${val}"`).join(',') + ']');
 
 shouldBe(Object.getOwnPropertySymbols(iteratorPrototype).length, 3);

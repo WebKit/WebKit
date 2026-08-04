@@ -4725,7 +4725,7 @@ IteratorIncludesEnabled:
 
 IteratorJoinEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "Iterator Join"
   humanReadableDescription: "Expose the Iterator.prototype.join method."
@@ -4734,7 +4734,7 @@ IteratorJoinEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 IteratorSequencingEnabled:
   type: bool
