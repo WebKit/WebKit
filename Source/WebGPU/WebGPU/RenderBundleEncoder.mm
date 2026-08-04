@@ -42,6 +42,7 @@
 @implementation RenderBundleICBWithResources {
     Vector<WebGPU::BindableResources> _resources;
     HashMap<uint64_t, WebGPU::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> _minVertexCountForDrawCommand;
+    WebGPU::IndirectDrawForSlotContainer _indirectDrawsForSlot;
 }
 
 static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
@@ -50,7 +51,7 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
     return !!renderPassEncoder->renderCommandEncoder();
 }
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline minVertexCounts:(WebGPU::RenderBundle::MinVertexCountsContainer*)minVertexCounts outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline minVertexCounts:(WebGPU::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag
 {
     if (!(self = [super init]))
         return nil;
@@ -69,6 +70,7 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
     _fragmentDynamicOffsetsBuffer = fragmentDynamicOffsetsBuffer;
     _pipeline = pipeline;
     _minVertexCountForDrawCommand = WTF::move(*minVertexCounts);
+    _indirectDrawsForSlot = WTF::move(*indirectDraws);
 
     return self;
 }
@@ -81,6 +83,11 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
 - (WebGPU::RenderBundle::MinVertexCountsContainer*)minVertexCountForDrawCommand
 {
     return &_minVertexCountForDrawCommand;
+}
+
+- (WebGPU::IndirectDrawForSlotContainer*)indirectDrawsForSlot
+{
+    return &_indirectDrawsForSlot;
 }
 
 @end
@@ -109,7 +116,7 @@ if (returnIfEncodingIsFinished([NSString stringWithFormat:@"%s: failed as encodi
 if (returnIfEncodingIsFinished([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]) || !m_icbDescriptor) \
     return finalizeRenderCommand();
 
-static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer, const RenderPipeline* pipeline, Device& device, RenderBundle::MinVertexCountsContainer& vertexCountContainer)
+static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer, const RenderPipeline* pipeline, Device& device, RenderBundle::MinVertexCountsContainer& vertexCountContainer, IndirectDrawForSlotContainer& indirectDrawContainer)
 {
     id<MTLArgumentEncoder> argumentEncoder =
         [device.icbCommandClampFunction(MTLIndexTypeUInt32) newArgumentEncoderWithBufferIndex:device.bufferIndexForICBContainer()];
@@ -121,9 +128,10 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
     [argumentEncoder setBuffer:outOfBoundsRead offset:0 atIndex:0];
     [argumentEncoder setIndirectCommandBuffer:icb atIndex:1];
 
-    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb containerBuffer:container pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer pipeline:pipeline minVertexCounts:&vertexCountContainer outOfBoundsReadFlag:outOfBoundsRead];
+    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb containerBuffer:container pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer pipeline:pipeline minVertexCounts:&vertexCountContainer indirectDraws:&indirectDrawContainer outOfBoundsReadFlag:outOfBoundsRead];
 
     vertexCountContainer.clear();
+    indirectDrawContainer.clear();
 
     return renderBundle;
 }
@@ -747,7 +755,6 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
 
-    m_requiresCommandReplay = true;
     id<MTLBuffer> mtlIndirectBuffer = nil;
     uint64_t modifiedIndirectOffset = 0;
     bool splitPass = false;
@@ -771,8 +778,25 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
                 return finalizeRenderCommand();
             if (!indirectBuffer.isDestroyed() && indexBuffer.length && mtlIndirectBuffer && !m_makeSubmitInvalid)
                 [renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
-        } else {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264219
+        } else if (indexBuffer.length) {
+            // Record the command; its draw is encoded into this ICB slot on the GPU at executeBundles() time.
+            bool unusedWorkaround = false;
+            auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(unusedWorkaround);
+            m_indirectDrawsForSlot.set(m_currentCommandIndex, IndirectDrawData {
+                .renderCommand = m_currentCommandIndex,
+                .indirectBuffer = &indirectBuffer,
+                .indirectOffset = indirectOffset,
+                .minVertexCount = minVertexCount,
+                .minInstanceCount = minInstanceCount,
+                .indexBuffer = m_indexBuffer,
+                .indexType = m_indexType,
+                .indexBufferOffset = m_indexBufferOffset,
+                .primitiveType = m_primitiveType,
+                .isIndexed = true,
+            });
+            addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
+            if (m_indexBuffer)
+                addResource(m_resources, indexBuffer, MTLRenderStageVertex, m_indexBuffer.get());
         }
     } else {
         if (!indexBuffer.length)
@@ -807,7 +831,6 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
 
-    m_requiresCommandReplay = true;
     id<MTLBuffer> clampedIndirectBuffer = nil;
     bool splitPass = false;
     RefPtr renderPassEncoder = m_renderPassEncoder.get();
@@ -830,7 +853,20 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
             if (!indirectBuffer.isDestroyed() && clampedIndirectBuffer && !m_makeSubmitInvalid)
                 [renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:indirectOffset];
         } else {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264219
+            // Record the command; its draw is encoded into this ICB slot on the GPU at executeBundles() time.
+            bool unusedWorkaround = false;
+            auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(unusedWorkaround);
+            m_indirectDrawsForSlot.set(m_currentCommandIndex, IndirectDrawData {
+                .renderCommand = m_currentCommandIndex,
+                .indirectBuffer = &indirectBuffer,
+                .indirectOffset = indirectOffset,
+                .minVertexCount = minVertexCount,
+                .minInstanceCount = minInstanceCount,
+                .indexBuffer = nullptr,
+                .primitiveType = m_primitiveType,
+                .isIndexed = false,
+            });
+            addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
         }
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
@@ -879,6 +915,7 @@ void RenderBundleEncoder::cleanup(bool resetPipeline)
     m_currentCommand = nil;
     m_currentPipelineState = nil;
     m_minVertexCountForDrawCommand.clear();
+    m_indirectDrawsForSlot.clear();
     m_depthStencilState = nil;
     m_cullMode = MTLCullModeNone;
     m_frontFace = static_cast<MTLWinding>(0);
@@ -1298,7 +1335,7 @@ void RenderBundleEncoder::splitICB(bool needsPipelineReset)
     m_currentCommandIndex = 0;
 
     if (m_indirectCommandBuffer.size)
-        [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand)];
+        [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand, m_indirectDrawsForSlot)];
 
     if (m_previousCommandCount)
         m_indirectCommandBuffer = makeICB(m_previousCommandCount);

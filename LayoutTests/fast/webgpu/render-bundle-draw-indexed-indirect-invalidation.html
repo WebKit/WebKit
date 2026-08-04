@@ -1,0 +1,109 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for bugs.webkit.org/show_bug.cgi?id=264219: exercises the render bundle " +
+           "indirect-draw skip cache's invalidation path. executeBundles GPU-encodes a drawIndexedIndirect " +
+           "into the bundle's persistent ICB slot only when the indirect buffer's contents generation changed " +
+           "since the last encode (data.lastIndirectGeneration); otherwise the previously baked slot is reused. " +
+           "The draw count (indexCount) is baked into the ICB slot at encode time, so rewriting the indirect " +
+           "args buffer between two executeBundles() calls on the same bundle MUST force a re-encode. A real " +
+           "vertex-step-mode @location buffer is bound so the re-encode also re-runs the batched min-count " +
+           "clamp path. frame0 draws the triangle (green); after rewriting indexCount to 0 the re-encoded slot " +
+           "draws nothing, so frame1 is the red clear. A stale (non-invalidated) cache would leave frame1 green.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // The vertex shader reads a real @location(0) attribute, so the pipeline has a required vertex-step-mode
+    // buffer and IndirectEncodeWork::clamps is true: the re-encode re-runs the batched clamp path too.
+    let module = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) p: vec2f) -> @builtin(position) vec4f {
+            return vec4f(p, 0, 1);
+        }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(0, 1, 0, 1); }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 8, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    let vertexData = new Float32Array([-1, -3, -1, 1, 3, 1]);
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    let indexData = new Uint16Array([0, 1, 2, 0]); // 4 => 8 bytes (uint16 index buffer must be > 4 bytes)
+    let indexBuffer = device.createBuffer({ size: indexData.byteLength, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(indexBuffer, 0, indexData);
+
+    // MTLDrawIndexedPrimitivesIndirectArguments layout: indexCount, instanceCount, firstIndex, baseVertex, firstInstance.
+    let argsBuffer = device.createBuffer({ size: 20, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(argsBuffer, 0, new Uint32Array([3, 1, 0, 0, 0]));
+
+    let enc = device.createRenderBundleEncoder({ colorFormats: [format] });
+    enc.setPipeline(pipeline);
+    enc.setVertexBuffer(0, vertexBuffer);
+    enc.setIndexBuffer(indexBuffer, 'uint16');
+    enc.drawIndexedIndirect(argsBuffer, 0);
+    let bundle = enc.finish();
+
+    let texture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    function drawAndReadback() {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+        });
+        pass.executeBundles([bundle]);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+    }
+
+    // Frame 0: first executeBundles encodes the slot (indexCount 3) -> triangle -> green.
+    drawAndReadback();
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let frame0 = [...new Uint8Array(readback.getMappedRange(0, 4))];
+    readback.unmap();
+
+    // Rewrite the same indirect args buffer: indexCount 3 -> 0. This bumps the buffer's contents generation,
+    // which must invalidate the skip cache and force the second executeBundles to re-encode the slot.
+    device.queue.writeBuffer(argsBuffer, 0, new Uint32Array([0, 1, 0, 0, 0]));
+
+    // Frame 1: same bundle. If the cache invalidates, the slot is re-encoded with indexCount 0 -> nothing
+    // drawn -> red clear. If it did not invalidate, the stale slot would still draw green.
+    drawAndReadback();
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let frame1 = [...new Uint8Array(readback.getMappedRange(0, 4))];
+    readback.unmap();
+
+    window.frame0 = frame0;
+    window.frame1 = frame1;
+    shouldBeEqualToString('frame0.join()', '0,255,0,255');
+    shouldBeEqualToString('frame1.join()', '255,0,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

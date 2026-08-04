@@ -105,6 +105,26 @@ struct IndexBufferAndIndexData {
     IndexData indexData;
 };
 
+// Records an indirect draw so its call can be GPU-encoded into the bundle's ICB slot at executeBundles() time.
+struct IndirectDrawData {
+    uint64_t renderCommand { 0 };
+    RefPtr<Buffer> indirectBuffer;
+    uint64_t indirectOffset { 0 };
+    uint32_t minVertexCount { UINT32_MAX };
+    uint32_t minInstanceCount { UINT32_MAX };
+    RefPtr<Buffer> indexBuffer; // nullptr for non-indexed
+    MTLIndexType indexType { MTLIndexTypeUInt16 };
+    NSUInteger indexBufferOffset { 0 };
+    MTLPrimitiveType primitiveType { MTLPrimitiveTypeTriangle };
+    bool isIndexed { false };
+    // Skip re-encoding while the source buffers' generations are unchanged.
+    bool encodedAtLeastOnce { false };
+    uint64_t lastIndirectGeneration { 0 };
+    uint64_t lastIndexGeneration { 0 };
+};
+
+using IndirectDrawForSlotContainer = HashMap<uint64_t, IndirectDrawData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+
 using DrawIndexCacheContainerKey = std::array<uint32_t, 5>;
 inline void add(Hasher& hasher, const DrawIndexCacheContainerKey& input)
 {
@@ -136,7 +156,12 @@ struct DrawIndexCacheContainerValue {
     MTLIndexType indexType() { return static_cast<MTLIndexType>(primitiveOffsetWithIndexType & 0x2); }
 };
 
-using DrawIndexCacheContainer = HashMap<GenericHashKey<DrawIndexCacheContainerKey>, uint32_t>;
+struct DrawIndexValidationCacheEntry {
+    uint32_t vertexCount { 0 };
+    uint64_t indexContentsGeneration { 0 };
+};
+
+using DrawIndexCacheContainer = HashMap<GenericHashKey<DrawIndexCacheContainerKey>, DrawIndexValidationCacheEntry>;
 using DrawIndexCacheContainerIterator = DrawIndexCacheContainer::const_iterator;
 
 using TrackedResourceContainer = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;

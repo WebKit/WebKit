@@ -1,0 +1,11 @@
+Regression test for bugs.webkit.org/show_bug.cgi?id=264219: a render bundle containing drawIndexedIndirect whose pipeline consumes a real vertex-step-mode @location buffer, so the draw must go through the batched two-dispatch index clamp path (clampIndirectIndexBufferDispatch1Batched + clampIndirectIndexBufferDispatch2Batched + the anyIndexedClamp barrier, where the offset/length overflow guard lives) at executeBundles time rather than reading the app's raw args. Renders a full-target triangle via a bundle of drawIndexedIndirect into a 1x1 texture, reads the pixel back, and executes the bundle twice.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame0.join() is "0,255,0,255"
+PASS frame1.join() is "0,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

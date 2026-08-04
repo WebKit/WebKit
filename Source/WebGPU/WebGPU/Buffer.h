@@ -117,7 +117,7 @@ public:
     void NODELETE indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
 
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
-    void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil);
+    void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
     void skippedDrawIndirectIndexedValidation(CommandEncoder&, Buffer*, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType);
     void skippedDrawIndirectValidation(CommandEncoder&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
@@ -127,6 +127,19 @@ public:
 
     void indirectBufferInvalidated(CommandEncoder* = nullptr);
     void indirectBufferInvalidated(CommandEncoder&);
+    // Bumped whenever the contents change in a way that invalidates a previously GPU-encoded indirect draw.
+    uint64_t contentsGeneration() const { return m_contentsGeneration; }
+    uint64_t indexContentsGeneration() const { return m_indexContentsGeneration; }
+    void indexBufferContentsModified(uint32_t maxUintValue, uint16_t maxUshortValue)
+    {
+        ++m_indexContentsGeneration;
+        m_indexValueUpperBoundUint = std::max(m_indexValueUpperBoundUint, maxUintValue);
+        m_indexValueUpperBoundUshort = std::max<uint32_t>(m_indexValueUpperBoundUshort, maxUshortValue);
+    }
+    bool allIndexValuesBelow(MTLIndexType indexType, uint32_t vertexCount) const
+    {
+        return (indexType == MTLIndexTypeUInt16 ? m_indexValueUpperBoundUshort : m_indexValueUpperBoundUint) < vertexCount;
+    }
     void removeSkippedValidationCommandEncoder(uint64_t);
     bool mustTakeSlowIndexValidationPath() const { return m_mustTakeSlowIndexValidationPath; }
     void clearMustTakeSlowIndexValidationPath();
@@ -182,6 +195,10 @@ private:
     mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
     bool m_mustTakeSlowIndexValidationPath { false };
+    uint64_t m_contentsGeneration { 0 }; // NOLINT
+    uint64_t m_indexContentsGeneration { 0 }; // NOLINT
+    uint32_t m_indexValueUpperBoundUint { 0 }; // NOLINT
+    uint16_t m_indexValueUpperBoundUshort { 0 }; // NOLINT
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     bool m_mappedAtCreation { false };
 #endif
