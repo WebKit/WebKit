@@ -46,12 +46,24 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
     if (newValue == oldValue)
         return;
 
+    auto attributeNameForLookups = attributeName.localNameLowercase();
+
+    // An element that is not part of any shadow tree can only have its style affected
+    // by an attribute change if some rule in its scope references that attribute name.
+    if (!m_element->shadowRoot() && !m_element->isInShadowTree() && !m_element->assignedSlot()) {
+        auto& ruleSets = m_element->styleResolver().ruleSets();
+        auto& features = ruleSets.features();
+        bool nameMayAffectStyle = features.attributesAffectingHost.contains(attributeNameForLookups)
+            || features.substitutionAttributeNamesInRules.contains(attributeNameForLookups)
+            || ruleSets.attributeInvalidationRuleSets(attributeNameForLookups);
+        if (!nameMayAffectStyle)
+            return;
+    }
+
     bool isHTML = m_element->isHTMLElement() && m_element->document().isHTMLDocument();
 
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
-
-    auto attributeNameForLookups = attributeName.localNameLowercase();
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
         if (mayAffectShadowTree && mayBeAffectedByAttributeChange(features, isHTML, attributeName))
