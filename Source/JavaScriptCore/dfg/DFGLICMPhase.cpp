@@ -238,13 +238,6 @@ private:
         Node* node = nodeRef;
         LoopData& data = m_data[loop->index()];
 
-        // Currently safeToExecute does not support children having a tuple, and ExtractFromTuple is the only one node which
-        // does it (and guaranteed since we need to extract a value from a tuple).
-        if (node->op() == ExtractFromTuple) {
-            dataLogLnIf(verbose, "    Not hoisting ", node, " because its children are tuples.");
-            return false;
-        }
-
         if (!data.preHeader) {
             dataLogLnIf(verbose, "    Not hoisting ", node, " because the pre-header is invalid.");
             return false;
