@@ -34,6 +34,8 @@ async function performActions() {
     device.label;
     let bindGroup = device.createBindGroup({layout: device.createBindGroupLayout({entries: []}), entries: []});
     bindGroup.label = "bindGroup";
+    let buffer = device.createBuffer({size: 4, usage: GPUBufferUsage.COPY_DST});
+    device.queue.writeBuffer(buffer, 0, new Uint8Array(4));
     await Promise.all([
         render({r: 0, g: 1, b: 0, a: 1}),
         render({r: 0, g: 0, b: 1, a: 1}),
@@ -85,6 +87,9 @@ function test() {
 
                 let bindGroupLabelAction = actions.find((action) => action.name === "label" && action.receiver === "bindGroup1");
                 InspectorTest.expectTrue(bindGroupLabelAction, "The recording should create a concise name for a WebGPU receiver.");
+
+                let writeBufferAction = actions.find((action) => action.name === "writeBuffer");
+                InspectorTest.expectEqual(typeof writeBufferAction?.parameters[0], "number", "WebGPU object arguments should be swizzled as identifiers.");
 
                 let receiverTypes = Array.from(new Set(actions.filter((action) => action.receiver).map((action) => action.receiver.replace(/\d+$/, "")))).sort();
                 InspectorTest.expectEqual(receiverTypes.join(", "), "bindGroup, commandEncoder, queue, renderPassEncoder, texture", "The recording should identify each explicit receiver type.");

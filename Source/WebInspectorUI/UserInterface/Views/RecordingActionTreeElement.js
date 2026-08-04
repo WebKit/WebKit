@@ -104,6 +104,25 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case WI.Recording.Swizzle.WebGLTransformFeedback:
             case WI.Recording.Swizzle.WebGLVertexArrayObject:
             case WI.Recording.Swizzle.WebGLVertexArrayObjectOES:
+            case WI.Recording.Swizzle.GPUBindGroup:
+            case WI.Recording.Swizzle.GPUBindGroupLayout:
+            case WI.Recording.Swizzle.GPUBuffer:
+            case WI.Recording.Swizzle.GPUCommandBuffer:
+            case WI.Recording.Swizzle.GPUCommandEncoder:
+            case WI.Recording.Swizzle.GPUComputePassEncoder:
+            case WI.Recording.Swizzle.GPUComputePipeline:
+            case WI.Recording.Swizzle.GPUExternalTexture:
+            case WI.Recording.Swizzle.GPUPipelineLayout:
+            case WI.Recording.Swizzle.GPUQuerySet:
+            case WI.Recording.Swizzle.GPUQueue:
+            case WI.Recording.Swizzle.GPURenderBundle:
+            case WI.Recording.Swizzle.GPURenderBundleEncoder:
+            case WI.Recording.Swizzle.GPURenderPassEncoder:
+            case WI.Recording.Swizzle.GPURenderPipeline:
+            case WI.Recording.Swizzle.GPUSampler:
+            case WI.Recording.Swizzle.GPUShaderModule:
+            case WI.Recording.Swizzle.GPUTexture:
+            case WI.Recording.Swizzle.GPUTextureView:
                 if (!isNaN(parameter)) {
                     parameterElement.classList.add("object-handle");
                     parameterElement.textContent = WI.Recording.displayNameForReceiver([parameter, swizzleType]);
@@ -136,8 +155,11 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         nameContainer.classList.add("name");
         nameContainer.textContent = recordingAction.name;
 
-        if (!parameterCount)
+        if (!parameterCount) {
+            if (recordingAction.isFunction)
+                titleFragment.appendChild(document.createTextNode("()"));
             return titleFragment;
+        }
 
         titleFragment.appendChild(document.createTextNode(recordingAction.isFunction ? "(" : " = "));
 

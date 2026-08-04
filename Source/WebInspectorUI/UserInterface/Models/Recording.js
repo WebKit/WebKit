@@ -516,6 +516,44 @@ WI.Recording = class Recording extends WI.Object
             return WI.unlocalizedString("WebGLVertexArrayObject");
         case WI.Recording.Swizzle.WebGLVertexArrayObjectOES:
             return WI.unlocalizedString("WebGLVertexArrayObjectOES");
+        case WI.Recording.Swizzle.GPUBindGroup:
+            return WI.unlocalizedString("GPUBindGroup");
+        case WI.Recording.Swizzle.GPUBindGroupLayout:
+            return WI.unlocalizedString("GPUBindGroupLayout");
+        case WI.Recording.Swizzle.GPUBuffer:
+            return WI.unlocalizedString("GPUBuffer");
+        case WI.Recording.Swizzle.GPUCommandBuffer:
+            return WI.unlocalizedString("GPUCommandBuffer");
+        case WI.Recording.Swizzle.GPUCommandEncoder:
+            return WI.unlocalizedString("GPUCommandEncoder");
+        case WI.Recording.Swizzle.GPUComputePassEncoder:
+            return WI.unlocalizedString("GPUComputePassEncoder");
+        case WI.Recording.Swizzle.GPUComputePipeline:
+            return WI.unlocalizedString("GPUComputePipeline");
+        case WI.Recording.Swizzle.GPUExternalTexture:
+            return WI.unlocalizedString("GPUExternalTexture");
+        case WI.Recording.Swizzle.GPUPipelineLayout:
+            return WI.unlocalizedString("GPUPipelineLayout");
+        case WI.Recording.Swizzle.GPUQuerySet:
+            return WI.unlocalizedString("GPUQuerySet");
+        case WI.Recording.Swizzle.GPUQueue:
+            return WI.unlocalizedString("GPUQueue");
+        case WI.Recording.Swizzle.GPURenderBundle:
+            return WI.unlocalizedString("GPURenderBundle");
+        case WI.Recording.Swizzle.GPURenderBundleEncoder:
+            return WI.unlocalizedString("GPURenderBundleEncoder");
+        case WI.Recording.Swizzle.GPURenderPassEncoder:
+            return WI.unlocalizedString("GPURenderPassEncoder");
+        case WI.Recording.Swizzle.GPURenderPipeline:
+            return WI.unlocalizedString("GPURenderPipeline");
+        case WI.Recording.Swizzle.GPUSampler:
+            return WI.unlocalizedString("GPUSampler");
+        case WI.Recording.Swizzle.GPUShaderModule:
+            return WI.unlocalizedString("GPUShaderModule");
+        case WI.Recording.Swizzle.GPUTexture:
+            return WI.unlocalizedString("GPUTexture");
+        case WI.Recording.Swizzle.GPUTextureView:
+            return WI.unlocalizedString("GPUTextureView");
         case WI.Recording.Swizzle.DOMPointInit:
             return WI.unlocalizedString("DOMPointInit");
         default:
@@ -693,7 +731,26 @@ WI.Recording = class Recording extends WI.Object
             || type === WI.Recording.Swizzle.WebGLTimerQueryEXT
             || type === WI.Recording.Swizzle.WebGLTransformFeedback
             || type === WI.Recording.Swizzle.WebGLVertexArrayObject
-            || type === WI.Recording.Swizzle.WebGLVertexArrayObjectOES) {
+            || type === WI.Recording.Swizzle.WebGLVertexArrayObjectOES
+            || type === WI.Recording.Swizzle.GPUBindGroup
+            || type === WI.Recording.Swizzle.GPUBindGroupLayout
+            || type === WI.Recording.Swizzle.GPUBuffer
+            || type === WI.Recording.Swizzle.GPUCommandBuffer
+            || type === WI.Recording.Swizzle.GPUCommandEncoder
+            || type === WI.Recording.Swizzle.GPUComputePassEncoder
+            || type === WI.Recording.Swizzle.GPUComputePipeline
+            || type === WI.Recording.Swizzle.GPUExternalTexture
+            || type === WI.Recording.Swizzle.GPUPipelineLayout
+            || type === WI.Recording.Swizzle.GPUQuerySet
+            || type === WI.Recording.Swizzle.GPUQueue
+            || type === WI.Recording.Swizzle.GPURenderBundle
+            || type === WI.Recording.Swizzle.GPURenderBundleEncoder
+            || type === WI.Recording.Swizzle.GPURenderPassEncoder
+            || type === WI.Recording.Swizzle.GPURenderPipeline
+            || type === WI.Recording.Swizzle.GPUSampler
+            || type === WI.Recording.Swizzle.GPUShaderModule
+            || type === WI.Recording.Swizzle.GPUTexture
+            || type === WI.Recording.Swizzle.GPUTextureView) {
             return index;
         }
 
@@ -1319,6 +1376,7 @@ WI.Recording.Swizzle = {
     WebGLSync: 22,
     WebGLTransformFeedback: 23,
     WebGLVertexArrayObject: 24,
+    DOMPointInit: 25,
     Canvas: 26,
     GPUBindGroup: 27,
     GPUBindGroupLayout: 28,
