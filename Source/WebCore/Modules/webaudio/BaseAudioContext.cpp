@@ -40,6 +40,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioParamDescriptor.h"
+#include "AudioScheduledSourceNode.h"
 #include "AudioSession.h"
 #include "AudioWorklet.h"
 #include "BiquadFilterNode.h"
@@ -231,6 +232,12 @@ void BaseAudioContext::uninitialize()
         // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
         // before the BaseAudioContext gets destroyed.
         derefFinishedSourceNodes();
+        // Any still-playing scheduled source nodes were registered as automatic pull nodes; remove
+        // them before their references are dropped so m_automaticPullNodes ends up empty.
+        for (auto& node : m_referencedSourceNodes) {
+            if (is<AudioScheduledSourceNode>(node.get()))
+                removeAutomaticPullNode(node.get());
+        }
         m_renderingAutomaticPullNodes.clear();
     }
 
@@ -555,7 +562,17 @@ void BaseAudioContext::derefFinishedSourceNodes()
     if (!m_hasFinishedAudioSourceNodes)
         return;
 
-    m_referencedSourceNodes.removeAllMatching([](auto& node) { return node->isFinishedSourceNode(); });
+    // Removing a node from the automatic pull node set may reallocate the underlying hash table.
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    m_referencedSourceNodes.removeAllMatching([&](auto& node) {
+        if (!node->isFinishedSourceNode())
+            return false;
+        if (is<AudioScheduledSourceNode>(node.get()))
+            removeAutomaticPullNode(Ref { node.get() });
+        return true;
+    });
     m_hasFinishedAudioSourceNodes = false;
 }
 
@@ -1003,6 +1020,11 @@ void BaseAudioContext::sourceNodeWillBeginPlayback(AudioNode& node)
     ASSERT(!m_referencedSourceNodes.contains(&node));
     // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
     m_referencedSourceNodes.append(node);
+
+    // Scheduled source nodes must be processed on every render quantum even when they are not
+    // connected to the destination, so that they reach their stop time and fire the ended event.
+    if (is<AudioScheduledSourceNode>(node))
+        addAutomaticPullNode(node);
 }
 
 void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)

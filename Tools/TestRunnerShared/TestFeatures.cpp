@@ -149,7 +149,8 @@ static bool shouldUseBackForwardCache(const std::string& pathOrURL)
 {
     return pathContains(pathOrURL, "navigation-api/")
         || pathContains(pathOrURL, "websockets/back-forward-cache")
-        || pathContains(pathOrURL, "webtransport/back-forward-cache");
+        || pathContains(pathOrURL, "webtransport/back-forward-cache")
+        || pathContains(pathOrURL, "the-audiocontext-interface/suspend-with-navigation");
 }
 
 static bool shouldDisableMutationEvents(const std::string& pathOrURL)
