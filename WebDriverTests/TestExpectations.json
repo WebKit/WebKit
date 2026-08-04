@@ -1935,6 +1935,54 @@
 
     "imported/w3c/webdriver/tests/classic/element_clear/clear.py": {
         "subtests": {
+            "test_contenteditable": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[date-2017-12-26-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[datetime-2017-12-26T19:48-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[datetime-local-2017-12-26T19:48-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[email-foo@example.com-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[month-2017-11-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[number-42-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[password-password-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[range-42-50]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[search-search-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[tel-999-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[text-text-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[time-19:48-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[url-https://example.com/-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_input[week-2017-W52-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
+            "test_textarea": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/175181"}}
+            },
             "test_input[color-#ff0000-#000000]": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/180645"}}
             },
