@@ -79,6 +79,14 @@ extension WKWebViewConfiguration {
         #endif
 
         self._isControlledByAutomation = wrapped.isControlledByAutomation
+
+        #if !os(watchOS) && !os(tvOS)
+        self._attachmentElementEnabled = wrapped.attachmentElementEnabled
+        #endif
+
+        #if WTF_PLATFORM_MAC
+        self._imageControlsEnabled = wrapped.imageControlsEnabled
+        #endif
     }
 }
 

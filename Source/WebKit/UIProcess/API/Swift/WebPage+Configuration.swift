@@ -167,6 +167,30 @@ extension WebPage {
         public var userInterfaceDirectionPolicy: WKUserInterfaceDirectionPolicy = .content
         #endif
 
+        private var backingAttachmentElementEnabled = false
+
+        /// Determines if the non-standard `<attachment>` element may be used in web content.
+        @_spi(Experimental)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var attachmentElementEnabled: Bool {
+            get { backingAttachmentElementEnabled }
+            set { backingAttachmentElementEnabled = newValue }
+        }
+
+        private var backingImageControlsEnabled = false
+
+        /// Indicates if the service controls UI appears in web content over images.
+        @_spi(Experimental)
+        @available(iOS, unavailable)
+        @available(visionOS, unavailable)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var imageControlsEnabled: Bool {
+            get { backingImageControlsEnabled }
+            set { backingImageControlsEnabled = newValue }
+        }
+
         /// The process pool to use for the page, used for testing.
         @_spi(Testing)
         public var processPool: WKProcessPool? = nil
