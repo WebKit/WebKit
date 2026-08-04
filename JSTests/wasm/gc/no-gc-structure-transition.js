@@ -719,6 +719,24 @@ function testEnsureArrayStorageViaWasmImport() {
     assert.eq(m.exports.get(obj), 42);
 }
 
+// https://bugs.webkit.org/show_bug.cgi?id=320759
+function testDollarVMDictionaryHelpers() {
+    if (typeof $vm === "undefined")
+        return;
+
+    const ms = makeStruct();
+    const s = ms.exports.make();
+    $vm.toCacheableDictionary(s);
+    $vm.toUncacheableDictionary(s);
+    verifyStructIntact(ms, s);
+
+    const ma = makeArray();
+    const a = ma.exports.make();
+    $vm.toCacheableDictionary(a);
+    $vm.toUncacheableDictionary(a);
+    verifyArrayIntact(ma, a);
+}
+
 // Run all tests
 testPropertyAdditionNamed();
 testPropertyAdditionIndexed();
@@ -755,3 +773,4 @@ testIsExtensible();
 testPropertyEnumeration();
 testEnsureArrayStorage();
 testEnsureArrayStorageViaWasmImport();
+testDollarVMDictionaryHelpers();
