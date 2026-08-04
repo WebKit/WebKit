@@ -1,0 +1,8 @@
+
+PASS element with px line-height
+PASS element with percentage line-height
+PASS parent with px line-height
+PASS parent with percentage line-height
+PASS root with px line-height
+PASS root with percentage line-height
+

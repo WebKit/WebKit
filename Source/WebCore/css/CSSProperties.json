@@ -5485,6 +5485,7 @@
                 {
                     "enable-if": "ENABLE_TEXT_AUTOSIZING",
                     "animation-wrapper-requires-getter": "specifiedLineHeight",
+                    "animation-wrapper-requires-setter": "setSpecifiedLineHeightFromAnimation",
                     "style-builder-custom": "All",
                     "style-extractor-custom": true,
                     "computed-style-storage-path": ["m_inheritedData"],

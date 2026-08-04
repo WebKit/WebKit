@@ -424,27 +424,27 @@ PASS font-weight font-weight(keyword) / events
 PASS font-weight font-weight(numeric) / values
 PASS font-weight font-weight(numeric) / events
 PASS line-height number(integer) / values
-FAIL line-height number(integer) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height number(integer) / events
 PASS line-height number(decimal) / values
-FAIL line-height number(decimal) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height number(decimal) / events
 PASS line-height length(pt) / values
-FAIL line-height length(pt) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(pt) / events
 PASS line-height length(pc) / values
-FAIL line-height length(pc) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(pc) / events
 PASS line-height length(px) / values
-FAIL line-height length(px) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(px) / events
 PASS line-height length(em) / values
-FAIL line-height length(em) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(em) / events
 PASS line-height length(ex) / values
-FAIL line-height length(ex) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(ex) / events
 PASS line-height length(mm) / values
-FAIL line-height length(mm) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(mm) / events
 PASS line-height length(cm) / values
-FAIL line-height length(cm) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(cm) / events
 PASS line-height length(in) / values
-FAIL line-height length(in) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height length(in) / events
 PASS line-height percentage(%) / values
-FAIL line-height percentage(%) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "line-height:2s"
+PASS line-height percentage(%) / events
 PASS letter-spacing length(pt) / values
 PASS letter-spacing length(pt) / events
 PASS letter-spacing length(pc) / values

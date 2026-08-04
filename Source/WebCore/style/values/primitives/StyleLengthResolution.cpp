@@ -152,64 +152,39 @@ static double resolveIc(CSSPropertyID, const FontCascade& fontCascadeForUnit)
     return unzoomFontMetric(ideogramWidth.value(), fontDescription);
 }
 
-// Resolve the "lh" unit.
-// https://drafts.csswg.org/css-values-4/#lh
-static double resolveLh(const CSSToLengthConversionData& conversionData)
-{
-    if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
-        // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
-        if (auto* parentStyle = conversionData.parentStyle()) {
-            return evaluate<float>(
-                parentStyle->lineHeight(),
-                LineHeightEvaluationContext {
-                    parentStyle->computedFontSize(),
-                    parentStyle->metricsOfPrimaryFont().lineSpacing()
-                },
-                parentStyle->usedZoomForLength()
-            );
-        }
-        return conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
-    }
 
-    auto* style = conversionData.style();
-    return evaluate<float>(
-        style->lineHeight(),
-        LineHeightEvaluationContext {
-            style->fontDescription().unzoomedComputedSize(),
-            style->metricsOfPrimaryFont().lineSpacing()
-        },
-        ZoomFactor::none()
-    );
+static const ComputedStyle* styleForLineHeightUnits(const CSSToLengthConversionData& conversionData)
+{
+    if (conversionData.computingLineHeight() || conversionData.computingFontSize())
+        return conversionData.parentStyle();
+    return conversionData.style();
 }
 
-// Resolve the "rlh" unit.
-// FIXME: Share this implementation with resolveLh (as we do with other root relative units), passing in the root style.
-// https://drafts.csswg.org/css-values-4/#rlh
-static double resolveRlh(const CSSToLengthConversionData& conversionData)
+static const ComputedStyle* styleForRootLineHeightUnits(const CSSToLengthConversionData& conversionData)
 {
-    auto* rootStyle = conversionData.rootStyle();
-    if (!rootStyle)
-        return 1.0;
+    return conversionData.rootStyle();
+}
 
-    if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
+// Resolve the "lh" and "rlh" units.
+// https://drafts.csswg.org/css-values-4/#lh
+// https://drafts.csswg.org/css-values-4/#rlh
+static double resolveLh(const ComputedStyle* style, const FontCascade& fallbackFontCascadeForUnit)
+{
+    if (style) {
+        auto& fontCascade = style->fontCascade();
+        auto& fontDescription = fontCascade.fontDescription();
+
         return evaluate<float>(
-            rootStyle->specifiedLineHeight(),
+            style->specifiedLineHeight(),
             LineHeightEvaluationContext {
-                rootStyle->computedFontSize(),
-                rootStyle->metricsOfPrimaryFont().lineSpacing()
+                fontDescription.specifiedSize(),
+                static_cast<float>(unzoomFontMetric(fontCascade.metricsOfPrimaryFont().lineSpacing(), fontDescription)),
             },
-            rootStyle->usedZoomForLength()
+            ZoomFactor::none()
         );
     }
 
-    return evaluate<float>(
-        rootStyle->lineHeight(),
-        LineHeightEvaluationContext {
-            rootStyle->fontDescription().unzoomedComputedSize(),
-            rootStyle->metricsOfPrimaryFont().lineSpacing()
-        },
-        ZoomFactor::none()
-    );
+    return unzoomFontMetric(fallbackFontCascadeForUnit.metricsOfPrimaryFont().lineSpacing(), fallbackFontCascadeForUnit.fontDescription());
 }
 
 // MARK: - "viewport-percentage" resolution functions
@@ -504,7 +479,7 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
         return value * applyTextZoom(resolveIc(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
 
     case Lh:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveLh(conversionData), conversionData);
+        return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveLh(styleForLineHeightUnits(conversionData), conversionData.fontCascadeForFontUnits()), conversionData);
 
     // MARK: "root font dependent" resolution
 
@@ -520,7 +495,7 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
         return value * applyTextZoom(resolveIc(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
 
     case Rlh:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveRlh(conversionData), conversionData);
+        return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveLh(styleForRootLineHeightUnits(conversionData), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
 
     // MARK: "viewport-percentage" resolution
 

@@ -276,6 +276,23 @@ void ComputedStyleBase::setSpecifiedLineHeight(LineHeight&& lineHeight)
 
 #endif
 
+void ComputedStyleBase::setSpecifiedLineHeightFromAnimation(LineHeight&& lineHeight)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    bool specifiedLineHeightChanged = m_inheritedData->specifiedLineHeight != lineHeight;
+    bool lineHeightChanged = m_inheritedData->lineHeight != lineHeight;
+    if (specifiedLineHeightChanged || lineHeightChanged) {
+        auto& access = m_inheritedData.access();
+        if (specifiedLineHeightChanged)
+            access.specifiedLineHeight = lineHeight;
+        if (lineHeightChanged)
+            access.lineHeight = WTF::move(lineHeight);
+    }
+#else
+    SET_VAR(m_inheritedData, lineHeight, WTF::move(lineHeight));
+#endif
+}
+
 void ComputedStyleBase::setLetterSpacingFromAnimation(LetterSpacing&& value)
 {
     if (value != m_inheritedData->fontData->letterSpacing) {

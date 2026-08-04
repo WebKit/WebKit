@@ -55,6 +55,7 @@ style/StyleBuilderCustom.h
 style/StyleDocumentScope.cpp
 style/StyleInvalidationFunctions.h
 style/UserAgentStyle.cpp
+style/computed/StyleComputedStyleBase.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
 style/values/primitives/StyleLengthResolution.cpp

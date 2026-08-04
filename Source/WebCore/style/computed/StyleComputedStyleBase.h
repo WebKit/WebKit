@@ -647,6 +647,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(LineHeight&&);
 #endif
+    void setSpecifiedLineHeightFromAnimation(LineHeight&&);
 
     void setLetterSpacingFromAnimation(LetterSpacing&&);
     void setWordSpacingFromAnimation(WordSpacing&&);
