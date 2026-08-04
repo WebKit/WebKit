@@ -85,7 +85,7 @@ function test() {
                 InspectorTest.expectFalse(deviceLabelActions[0].isGetter, "Setting a label should be recorded as an attribute setter.");
                 InspectorTest.expectTrue(deviceLabelActions[1].isGetter, "Getting a label should be recorded as an attribute getter.");
 
-                let bindGroupLabelAction = actions.find((action) => action.name === "label" && action.receiver === "bindGroup1");
+                let bindGroupLabelAction = actions.find((action) => action.name === "label" && action.receiver === "bindGroup");
                 InspectorTest.expectTrue(bindGroupLabelAction, "The recording should create a concise name for a WebGPU receiver.");
 
                 let writeBufferAction = actions.find((action) => action.name === "writeBuffer");
@@ -98,6 +98,7 @@ function test() {
                 let finishActions = actions.filter((action) => action.name === "finish");
                 InspectorTest.expectEqual(beginRenderPassActions[0].receiver, finishActions[0].receiver, "Command encoder actions should have the same receiver.");
                 InspectorTest.expectNotEqual(beginRenderPassActions[0].receiver, beginRenderPassActions[1].receiver, "Different command encoders should have different receivers.");
+                InspectorTest.expectTrue(beginRenderPassActions.every((action) => /^commandEncoder\d+$/.test(action.receiver)), "Receivers should include identifiers when multiple objects have the same type.");
 
                 let setViewportAction = actions.find((action) => action.name === "setViewport");
                 let endAction = actions.find((action) => action.name === "end");

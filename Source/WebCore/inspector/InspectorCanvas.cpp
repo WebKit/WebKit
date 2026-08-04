@@ -369,8 +369,8 @@ void InspectorCanvas::resetRecordingData()
     m_currentActions = nullptr;
     m_serializedDuplicateData = nullptr;
     m_indexedDuplicateData.clear();
-    m_recordingObjectIdentifiers.clear();
-    m_nextRecordingObjectIdentifier = 0;
+    m_boundRecordingObjectIdentifiers.clear();
+    m_nextRecordingObjectIdentifiers.clear();
     m_recordingName = { };
     m_bufferLimit = 100 * 1024 * 1024;
     m_bufferUsed = 0;
@@ -977,10 +977,12 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
     return static_cast<int>(index);
 }
 
-size_t InspectorCanvas::identifierForRecordingObject(uintptr_t object)
+size_t InspectorCanvas::identifierForRecordingObject(RecordingSwizzleType swizzleType, uintptr_t object)
 {
-    return m_recordingObjectIdentifiers.ensure(object, [&] {
-        return ++m_nextRecordingObjectIdentifier;
+    return m_boundRecordingObjectIdentifiers.ensure(object, [&] {
+        return m_nextRecordingObjectIdentifiers.ensure(swizzleType, [] {
+            return 1;
+        }).iterator->value++;
     }).iterator->value;
 }
 

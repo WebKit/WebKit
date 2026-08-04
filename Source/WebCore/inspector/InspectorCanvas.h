@@ -147,7 +147,7 @@ private:
     >;
 
     int indexForData(DuplicateDataVariant);
-    size_t identifierForRecordingObject(uintptr_t);
+    size_t identifierForRecordingObject(RecordingSwizzleType, uintptr_t);
     Ref<JSON::Value> valueIndexForData(DuplicateDataVariant);
     String stringIndexForKey(const String&);
     Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
@@ -170,8 +170,8 @@ private:
     RefPtr<JSON::ArrayOf<JSON::Value>> m_serializedDuplicateData;
     Vector<DuplicateDataVariant> m_indexedDuplicateData;
 
-    HashMap<uintptr_t, size_t> m_recordingObjectIdentifiers;
-    size_t m_nextRecordingObjectIdentifier { 0 };
+    HashMap<uintptr_t, size_t> m_boundRecordingObjectIdentifiers;
+    HashMap<RecordingSwizzleType, size_t> m_nextRecordingObjectIdentifiers;
 
     String m_recordingName;
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };

@@ -451,7 +451,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         let initialStateAction = this._recording.actions[0];
         if (initialStateAction.ready && !this._recordingTreeOutline.getCachedTreeElement(initialStateAction)) {
-            this._recordingTreeOutline.appendChild(new WI.RecordingActionTreeElement(initialStateAction, 0, this._recording.type));
+            this._recordingTreeOutline.appendChild(new WI.RecordingActionTreeElement(initialStateAction, 0, this._recording));
 
             if (!this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
                 this.action = initialStateAction;
@@ -556,7 +556,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     _createRecordingActionTreeElement(action, index, parent)
     {
-        let treeElement = new WI.RecordingActionTreeElement(action, index, this._recording.type);
+        let treeElement = new WI.RecordingActionTreeElement(action, index, this._recording);
 
         parent.appendChild(treeElement);
 

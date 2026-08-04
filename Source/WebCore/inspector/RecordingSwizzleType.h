@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/HashTraits.h>
+
 namespace WebCore {
 
 // Keep this in sync with WI.Recording.Swizzle.
@@ -134,3 +136,10 @@ enum class RecordingSwizzleType : int {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct DefaultHash<WebCore::RecordingSwizzleType> : IntHash<WebCore::RecordingSwizzleType> { };
+template<> struct HashTraits<WebCore::RecordingSwizzleType> : StrongEnumHashTraits<WebCore::RecordingSwizzleType> { };
+
+} // namespace WTF

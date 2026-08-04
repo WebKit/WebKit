@@ -70,7 +70,7 @@ function test() {
                     let contextActions = actions.filter((action) => !action.receiver && action.name !== "width");
                     InspectorTest.expectTrue(contextActions.every((action) => !action.receiver && !action.isCanvasReceiver), "Context actions should use the implicit context receiver.");
                     InspectorTest.expectEqual(extensionActions.length, 2, "The recording should contain both extension actions.");
-                    InspectorTest.expectTrue(/^loseContext\d+$/.test(extensionReceiver), "Extension actions should identify a WEBGL_lose_context instance as their receiver.");
+                    InspectorTest.expectEqual(extensionReceiver, "loseContext", "Extension actions should identify a WEBGL_lose_context instance as their receiver.");
                     InspectorTest.expectTrue(extensionActions.every((action) => action.receiver === extensionReceiver), "Actions on the same extension should use the same receiver.");
                     InspectorTest.expectTrue(extensionActions.every((action) => action.isFunction), "Extension actions should be functions.");
                     InspectorTest.expectTrue(extensionActions.every((action) => action.valid), "Extension actions should be valid.");
@@ -78,7 +78,7 @@ function test() {
                         let additionalExtensionActions = actions.filter((action) => ["createQueryEXT", "createVertexArrayOES", "vertexAttribDivisorANGLE"].includes(action.name));
                         let additionalExtensionReceiver = additionalExtensionActions[0]?.receiver;
                         InspectorTest.expectEqual(additionalExtensionActions.length, 2, "The recording should contain both non-WebGL-named extension actions.");
-                        InspectorTest.expectTrue(/^(angleInstancedArrays|extDisjointTimerQuery|oesVertexArrayObject)\d+$/.test(additionalExtensionReceiver), "Non-WebGL-named extension actions should identify their receiver.");
+                        InspectorTest.expectTrue(/^(angleInstancedArrays|extDisjointTimerQuery|oesVertexArrayObject)$/.test(additionalExtensionReceiver), "Non-WebGL-named extension actions should identify their receiver.");
                         InspectorTest.expectTrue(additionalExtensionActions.every((action) => action.receiver === additionalExtensionReceiver), "Actions on the same non-WebGL-named extension should use the same receiver.");
                     }
                     InspectorTest.expectEqual(widthActions.length, 2, "The recording should contain the canvas width setter and getter.");

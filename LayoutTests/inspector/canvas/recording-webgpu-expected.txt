@@ -13,6 +13,7 @@ PASS: WebGPU object arguments should be swizzled as identifiers.
 PASS: The recording should identify each explicit receiver type.
 PASS: Command encoder actions should have the same receiver.
 PASS: Different command encoders should have different receivers.
+PASS: Receivers should include identifiers when multiple objects have the same type.
 PASS: Render pass actions should have the same receiver.
 PASS: Queue actions should have the same receiver.
 PASS: Submitting work should capture a snapshot.

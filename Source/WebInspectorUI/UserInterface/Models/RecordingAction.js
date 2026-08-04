@@ -264,6 +264,23 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get name() { return this._name; }
     get parameters() { return this._parameters; }
     get swizzleTypes() { return this._payloadSwizzleTypes; }
+
+    get recordingObjectIdentifiers()
+    {
+        let result = [];
+        if (Array.isArray(this._payloadReceiver))
+            result.push(this._payloadReceiver);
+
+        for (let index = 0; index < this._payloadSwizzleTypes.length; ++index) {
+            let swizzleType = this._payloadSwizzleTypes[index];
+            let identifier = this._payloadParameters[index];
+            if (WI.Recording.isObjectSwizzleType(swizzleType) && !isNaN(identifier))
+                result.push([identifier, swizzleType]);
+        }
+
+        return result;
+    }
+
     get stackTrace() { return this._stackTrace; }
     get snapshot() { return this._snapshot; }
     get receiver() { return this._receiver; }
@@ -385,7 +402,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
         if (Array.isArray(this._payloadReceiver))
-            this._receiver = WI.Recording.displayNameForReceiver(this._payloadReceiver);
+            this._receiver = recording.displayNameForReceiver(this._payloadReceiver);
 
         if (this.isCanvasReceiver) {
             this._isFunction = false;

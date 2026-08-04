@@ -38,6 +38,19 @@ WI.Recording = class Recording extends WI.Object
 
         this._swizzle = null;
         this._actions = [new WI.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
+        this._recordingObjectIdentifiersBySwizzleType = new Map;
+        for (let frame of this._frames) {
+            for (let action of frame.actions) {
+                for (let [identifier, swizzleType] of action.recordingObjectIdentifiers) {
+                    let identifiers = this._recordingObjectIdentifiersBySwizzleType.get(swizzleType);
+                    if (!identifiers) {
+                        identifiers = new Set;
+                        this._recordingObjectIdentifiersBySwizzleType.set(swizzleType, identifiers);
+                    }
+                    identifiers.add(identifier);
+                }
+            }
+        }
         this._visualActionIndexes = [];
         this._source = null;
 
@@ -459,6 +472,48 @@ WI.Recording = class Recording extends WI.Object
         return name + (identifier || "");
     }
 
+    static isObjectSwizzleType(swizzleType)
+    {
+        switch (swizzleType) {
+        case WI.Recording.Swizzle.WebGLBuffer:
+        case WI.Recording.Swizzle.WebGLFramebuffer:
+        case WI.Recording.Swizzle.WebGLRenderbuffer:
+        case WI.Recording.Swizzle.WebGLTexture:
+        case WI.Recording.Swizzle.WebGLShader:
+        case WI.Recording.Swizzle.WebGLProgram:
+        case WI.Recording.Swizzle.WebGLUniformLocation:
+        case WI.Recording.Swizzle.WebGLQuery:
+        case WI.Recording.Swizzle.WebGLSampler:
+        case WI.Recording.Swizzle.WebGLSync:
+        case WI.Recording.Swizzle.WebGLTimerQueryEXT:
+        case WI.Recording.Swizzle.WebGLTransformFeedback:
+        case WI.Recording.Swizzle.WebGLVertexArrayObject:
+        case WI.Recording.Swizzle.WebGLVertexArrayObjectOES:
+        case WI.Recording.Swizzle.GPUBindGroup:
+        case WI.Recording.Swizzle.GPUBindGroupLayout:
+        case WI.Recording.Swizzle.GPUBuffer:
+        case WI.Recording.Swizzle.GPUCommandBuffer:
+        case WI.Recording.Swizzle.GPUCommandEncoder:
+        case WI.Recording.Swizzle.GPUComputePassEncoder:
+        case WI.Recording.Swizzle.GPUComputePipeline:
+        case WI.Recording.Swizzle.GPUExternalTexture:
+        case WI.Recording.Swizzle.GPUPipelineLayout:
+        case WI.Recording.Swizzle.GPUQuerySet:
+        case WI.Recording.Swizzle.GPUQueue:
+        case WI.Recording.Swizzle.GPURenderBundle:
+        case WI.Recording.Swizzle.GPURenderBundleEncoder:
+        case WI.Recording.Swizzle.GPURenderPassEncoder:
+        case WI.Recording.Swizzle.GPURenderPipeline:
+        case WI.Recording.Swizzle.GPUSampler:
+        case WI.Recording.Swizzle.GPUShaderModule:
+        case WI.Recording.Swizzle.GPUTexture:
+        case WI.Recording.Swizzle.GPUTextureView:
+            return true;
+        }
+
+        return false;
+    }
+
     static displayNameForSwizzleType(swizzleType)
     {
         switch (swizzleType) {
@@ -694,6 +749,13 @@ WI.Recording = class Recording extends WI.Object
     is2D()
     {
         return WI.Recording.is2D(this._type);
+    }
+
+    displayNameForReceiver([identifier, swizzleType])
+    {
+        if (this._recordingObjectIdentifiersBySwizzleType.get(swizzleType)?.size === 1)
+            identifier = null;
+        return WI.Recording.displayNameForReceiver([identifier, swizzleType]);
     }
 
     async swizzle(index, type)

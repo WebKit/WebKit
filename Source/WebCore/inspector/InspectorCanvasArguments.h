@@ -334,7 +334,7 @@ struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
         constexpr auto swizzleType = recordingSwizzleTypeForWebGPUReceiver<IDLType>();
         static_assert(swizzleType != RecordingSwizzleType::None);
 
-        size_t identifier = context.identifierForRecordingObject(reinterpret_cast<uintptr_t>(&argument));
+        size_t identifier = context.identifierForRecordingObject(swizzleType, reinterpret_cast<uintptr_t>(&argument));
         RELEASE_ASSERT(identifier <= static_cast<size_t>(std::numeric_limits<int>::max()));
         return { { JSON::Value::create(static_cast<int>(identifier)), swizzleType } };
     }
@@ -345,6 +345,55 @@ struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
 class WebGLTimerQueryEXT;
 class WebGLVertexArrayObjectOES;
 
+template<typename Receiver>
+constexpr RecordingSwizzleType recordingSwizzleTypeForWebGLReceiver()
+{
+    using ReceiverType = std::remove_cvref_t<Receiver>;
+    if constexpr (std::is_same_v<ReceiverType, WebGLBuffer>)
+        return RecordingSwizzleType::WebGLBuffer;
+    if constexpr (std::is_same_v<ReceiverType, WebGLFramebuffer>)
+        return RecordingSwizzleType::WebGLFramebuffer;
+    if constexpr (std::is_same_v<ReceiverType, WebGLProgram>)
+        return RecordingSwizzleType::WebGLProgram;
+    if constexpr (std::is_same_v<ReceiverType, WebGLQuery>)
+        return RecordingSwizzleType::WebGLQuery;
+    if constexpr (std::is_same_v<ReceiverType, WebGLRenderbuffer>)
+        return RecordingSwizzleType::WebGLRenderbuffer;
+    if constexpr (std::is_same_v<ReceiverType, WebGLSampler>)
+        return RecordingSwizzleType::WebGLSampler;
+    if constexpr (std::is_same_v<ReceiverType, WebGLShader>)
+        return RecordingSwizzleType::WebGLShader;
+    if constexpr (std::is_same_v<ReceiverType, WebGLSync>)
+        return RecordingSwizzleType::WebGLSync;
+    if constexpr (std::is_same_v<ReceiverType, WebGLTimerQueryEXT>)
+        return RecordingSwizzleType::WebGLTimerQueryEXT;
+    if constexpr (std::is_same_v<ReceiverType, WebGLTexture>)
+        return RecordingSwizzleType::WebGLTexture;
+    if constexpr (std::is_same_v<ReceiverType, WebGLUniformLocation>)
+        return RecordingSwizzleType::WebGLUniformLocation;
+    if constexpr (std::is_same_v<ReceiverType, WebGLVertexArrayObject>)
+        return RecordingSwizzleType::WebGLVertexArrayObject;
+    if constexpr (std::is_same_v<ReceiverType, WebGLVertexArrayObjectOES>)
+        return RecordingSwizzleType::WebGLVertexArrayObjectOES;
+    if constexpr (std::is_same_v<ReceiverType, WebGLTransformFeedback>)
+        return RecordingSwizzleType::WebGLTransformFeedback;
+    return RecordingSwizzleType::None;
+}
+
+template<typename IDLType>
+    requires (recordingSwizzleTypeForWebGLReceiver<IDLType>() != RecordingSwizzleType::None)
+struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const Ref<IDLType>& argument)
+    {
+        constexpr auto swizzleType = recordingSwizzleTypeForWebGLReceiver<IDLType>();
+        static_assert(swizzleType != RecordingSwizzleType::None);
+
+        size_t identifier = context.identifierForRecordingObject(swizzleType, reinterpret_cast<uintptr_t>(argument.ptr()));
+        RELEASE_ASSERT(identifier <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        return { { JSON::Value::create(static_cast<int>(identifier)), swizzleType } };
+    }
+};
+
 RecordingSwizzleType recordingSwizzleTypeForWebGLExtension(WebGLExtensionName);
 
 template<typename IDLType>
@@ -353,66 +402,10 @@ struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const Ref<IDLType>& argument)
     {
         auto swizzleType = recordingSwizzleTypeForWebGLExtension(argument->name());
-        size_t identifier = context.identifierForRecordingObject(reinterpret_cast<uintptr_t>(argument.ptr()));
+        size_t identifier = context.identifierForRecordingObject(swizzleType, reinterpret_cast<uintptr_t>(argument.ptr()));
         RELEASE_ASSERT(identifier <= static_cast<size_t>(std::numeric_limits<int>::max()));
         return { { JSON::Value::create(static_cast<int>(identifier)), swizzleType } };
     }
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLBuffer>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLBuffer>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLFramebuffer>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLFramebuffer>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLProgram>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLProgram>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLQuery>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLQuery>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLRenderbuffer>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLRenderbuffer>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLSampler>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLSampler>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLShader>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLShader>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLSync>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLSync>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTimerQueryEXT>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTimerQueryEXT>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTexture>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTexture>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLUniformLocation>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLUniformLocation>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObject>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLVertexArrayObject>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObjectOES>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLVertexArrayObjectOES>&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTransformFeedback>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTransformFeedback>&);
 };
 
 #endif // ENABLE(WEBGL)
