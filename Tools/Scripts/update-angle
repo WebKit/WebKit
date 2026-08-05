@@ -469,8 +469,8 @@ def phase_codegen_a(ctx):
         res = run([sys.executable, "scripts/run_code_generation.py"],
                   cwd=merge, check=False)
         if res.returncode != 0:
-            warn("run_code_generation.py returned %d; continuing with "
-                 "merged outputs." % res.returncode)
+            fail("run_code_generation.py returned %d; refusing to export "
+                 "stale or conflicted generated outputs." % res.returncode)
     finally:
         # Remove the overlay symlinks so they never reach bookkeep/export.
         for rel in links:

@@ -107,12 +107,6 @@ if (WIN32)
         "src/libANGLE/renderer/dxgi_support_table.h"
         "src/libANGLE/renderer/dxgi_support_table_autogen.cpp"
     )
-    if (NOT angle_is_winuwp)
-        list(APPEND ANGLE_SOURCES
-            "src/libANGLE/renderer/d3d_format.cpp"
-            "src/libANGLE/renderer/d3d_format.h"
-        )
-    endif()
 endif ()
 
 set(ANGLEGLESv2_LIBRARIES
