@@ -236,6 +236,9 @@ class Color;
 @property (nonatomic, readonly) CGRect caretViewRectInContentCoordinates;
 @property (nonatomic, readonly) NSArray<NSValue *> *selectionViewRectsInContentCoordinates;
 @property (nonatomic, readonly) NSString *textForSpeakSelection;
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+@property (nonatomic, readonly) UIView *selectionHighlightView;
+#endif
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script;
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(WKFrameInfo *)frame;

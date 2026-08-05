@@ -98,6 +98,7 @@
 #import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEvent.h"
 #import "WebFoundTextRange.h"
+#import "WebFrameProxy.h"
 #import "WebIOSEventFactory.h"
 #import "WebMouseEvent.h"
 #import "WebPageMessages.h"
@@ -14509,6 +14510,18 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
         Ref page = *_page;
         if (!page->editorState().hasVisualData())
             return self;
+
+        // When the selection is in a cross-origin (site-isolated) subframe, WebKit reports the
+        // selection rects in main-frame coordinates, so the selection must be contained by self (the
+        // WKContentView) rather than the subframe's overflow-scroll layer. That container's
+        // coordinate space assumes a same-process scroller, which doesn't hold across the process
+        // boundary -- using it would present the selection/loupe relative to the subframe's scrolled
+        // layer and make the loupe animate in from the iframe's edge.
+        if (auto rootFrameID = page->editorState().visualData->rootFrameID) {
+            RefPtr mainFrame = page->mainFrame();
+            if (mainFrame && mainFrame->frameID() != *rootFrameID)
+                return self;
+        }
 
         RetainPtr enclosingView = [self _viewForLayerID:page->editorState().visualData->enclosingLayerID];
         if (![enclosingView window])

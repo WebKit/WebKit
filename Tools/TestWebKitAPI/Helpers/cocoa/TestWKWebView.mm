@@ -1583,6 +1583,11 @@ static UIWindowScene *windowScene()
     return dynamic_objc_cast<UITextSelectionDisplayInteraction>([self.textInputContentView valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
 }
 
+- (UIView *)selectionHighlightView
+{
+    return self.textSelectionDisplayInteraction.highlightView;
+}
+
 #endif
 
 static WKContentView *recursiveFindWKContentView(UIView *view)

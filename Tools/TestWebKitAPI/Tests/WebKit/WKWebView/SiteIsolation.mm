@@ -9874,6 +9874,52 @@ TEST(SiteIsolation, SelectionBoundingRectInMainFrameIsNotOffset)
     EXPECT_LT(CGRectGetMinY(rect), 50);
 }
 
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+TEST(SiteIsolation, SelectionInCrossOriginIframeIsContainedByContentView)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // The selection container is only ever the enclosing overflow-scroll layer when
+    // SelectionHonorsOverflowScrolling is enabled, so enable it to exercise the code path this test
+    // guards.
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"SelectionHonorsOverflowScrolling"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    // The container is the enclosing layer only when that layer is in a window, so host the view.
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrame.get()])
+        Util::spinRunLoop();
+    [webView waitForNextPresentationUpdate];
+
+    // The selection lives in a cross-origin subframe, whose rects are reported in main-frame
+    // coordinates, so it must be contained by the WKContentView itself -- not the subframe's
+    // overflow-scroll layer (which is offset by the subframe's position and scroll). Otherwise the
+    // selection loupe/handles are positioned in the wrong coordinate space.
+    EXPECT_EQ(webView.get().selectionHighlightView.superview, webView.get().textInputContentView);
+}
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IMAGE_ANALYSIS)
