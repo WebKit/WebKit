@@ -257,7 +257,7 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 14 at (162.38,26.76) startOffset 13 endOffset 14 height 13.29: " "
               chunk 1 (vertical) text run 15 at (173.37,34.17) startOffset 14 endOffset 15 height 13.29: "o"
               chunk 1 (vertical) text run 16 at (186.28,35.56) startOffset 15 endOffset 16 height 13.29: "n"
-              chunk 1 (vertical) text run 17 at (197.01,27.99) startOffset 16 endOffset 17 height 13.29: " "
+              chunk 1 (vertical) text run 17 at (197.01,28.00) startOffset 16 endOffset 17 height 13.29: " "
               chunk 1 (vertical) text run 18 at (206.66,18.86) startOffset 17 endOffset 18 height 13.29: "a"
               chunk 1 (vertical) text run 19 at (217.51,11.25) startOffset 18 endOffset 19 height 13.29: " "
               chunk 1 (vertical) text run 20 at (230.36,9.20) startOffset 19 endOffset 20 height 13.29: "P"

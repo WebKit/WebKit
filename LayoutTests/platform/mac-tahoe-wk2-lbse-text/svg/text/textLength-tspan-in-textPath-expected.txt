@@ -40,7 +40,7 @@ layer at (8,8) size 575x575
           RenderSVGInlineText {#text} at (503,332) size 31x21
             chunk 1 text run 1 at (644.39,428.43) startOffset 0 endOffset 1 width 13.35: "F"
         RenderSVGInlineText {#text} at (475,398) size 27x20
-          chunk 1 text run 1 at (606.91,510.26) startOffset 0 endOffset 1 width 6.00: " "
+          chunk 1 text run 1 at (606.90,510.26) startOffset 0 endOffset 1 width 6.00: " "
         RenderSVGTSpan {tspan} at (424,448) size 32x33
           RenderSVGInlineText {#text} at (424,448) size 32x33
             chunk 1 text run 1 at (546.61,579.73) startOffset 0 endOffset 1 width 17.33: "G"

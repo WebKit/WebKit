@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -32,55 +32,34 @@
 
 namespace WebCore {
 
-class PathTraversalState {
+// Precomputes a path's arc-length table so repeated point-at-length queries cost
+// O(log n) each rather than re-walking the path per call.
+class PathArcLengthMapper {
 public:
-    enum class Action {
-        TotalLength,
-        VectorAtLength,
-        SegmentAtLength,
+    struct Position {
+        FloatPoint point;
+        float angleInDegrees { 0 };
     };
 
-    PathTraversalState(Action, float desiredLength = 0);
+    void appendPathElement(const PathElement& element) { appendPathElement(element.type, element.points); }
 
-public:
-    bool processPathElement(PathElement::Type, std::span<const FloatPoint>);
-    bool processPathElement(const PathElement& element) { return processPathElement(element.type, element.points); }
-
-    Action action() const { return m_action; }
-    void setAction(Action action) { m_action = action; }
-    float desiredLength() const { return m_desiredLength; }
-    void setDesiredLength(float desiredLength) { m_desiredLength = desiredLength; }
-
-    // Traversing output -- should be read only
-    bool success() const { return m_success; }
     float totalLength() const { return m_totalLength; }
-    FloatPoint current() const { return m_current; }
-    float normalAngle() const { return m_normalAngle; }
+
+    // Point and tangent at `length` along the path; `length` is clamped to [0, totalLength()].
+    Position positionAtLength(float length) const;
 
 private:
-    void NODELETE closeSubpath();
-    void NODELETE moveTo(const FloatPoint&);
-    void NODELETE lineTo(const FloatPoint&);
-    void quadraticBezierTo(const FloatPoint&, const FloatPoint&);
-    void cubicBezierTo(const FloatPoint&, const FloatPoint&, const FloatPoint&);
+    void appendPathElement(PathElement::Type, std::span<const FloatPoint>);
+    void addVertex(const FloatPoint&, float segmentLength);
 
-    bool finalizeAppendPathElement();
-    bool appendPathElement(PathElement::Type, std::span<const FloatPoint>);
-
-private:
-    Action m_action;
-    bool m_success { false };
-
+    struct Vertex {
+        FloatPoint point;
+        float accumulatedLength { 0 };
+    };
+    Vector<Vertex> m_vertices;
     FloatPoint m_current;
-    FloatPoint m_start;
-
+    FloatPoint m_subpathStart;
     float m_totalLength { 0 };
-    float m_desiredLength { 0 };
-
-    // For normal calculations
-    FloatPoint m_previous;
-    float m_normalAngle { 0 }; // degrees
-    bool m_isZeroVector { false };
 };
 
 } // namespace WebCore

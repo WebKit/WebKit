@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGTextLayoutEngine.h"
 
-#include "PathTraversalState.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElement.h"
@@ -166,8 +165,11 @@ void SVGTextLayoutEngine::beginTextPathLayout(const RenderSVGTextPath& textPath,
     if (m_textPath.isEmpty())
         return;
 
+    // Precompute the arc-length table once so per-glyph queries are O(log n), not a full re-walk each (webkit.org/b/318396).
+    m_textPathMapper = m_textPath.arcLengthMapper();
+
     const auto& startOffset = textPath.startOffset();
-    m_textPathLength = m_textPath.length();
+    m_textPathLength = m_textPathMapper.totalLength();
     
     if (textPath.startOffset().lengthType() == SVGLengthType::Percentage)
         m_textPathStartOffset = startOffset.valueAsPercentage() * m_textPathLength;
@@ -602,15 +604,13 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
             if (textPathOffset > m_textPathLength)
                 break;
 
-            auto traversalState(m_textPath.traversalStateAtLength(textPathOffset));
-            ASSERT(traversalState.success());
+            auto position = m_textPathMapper.positionAtLength(textPathOffset);
 
-            FloatPoint point = traversalState.current();
-            x = point.x();
-            y = point.y();
+            x = position.point.x();
+            y = position.point.y();
 
             // Compose with rotate attribute per SVG 2 §11.2.1.
-            angle += traversalState.normalAngle();
+            angle += position.angleInDegrees;
 
             // For vertical text on path, the actual angle has to be rotated 90 degrees anti-clockwise, not the orientation angle!
             if (m_isVerticalText)

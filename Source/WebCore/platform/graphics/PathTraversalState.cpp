@@ -21,143 +21,26 @@
 #include "config.h"
 #include "PathTraversalState.h"
 
-#include "GeometryUtilities.h"
+#include "PathCurveSubdivision.h"
 #include <wtf/MathExtras.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-static const float kPathSegmentLengthTolerance = 0.00001f;
-
-static inline float NODELETE distanceLine(const FloatPoint& start, const FloatPoint& end)
-{
-    return std::hypot(end.x() - start.x(), end.y() - start.y());
-}
-
-struct QuadraticBezier {
-    QuadraticBezier() = default;
-    QuadraticBezier(const FloatPoint& s, const FloatPoint& c, const FloatPoint& e)
-        : start(s)
-        , control(c)
-        , end(e)
-    {
-    }
-
-    friend bool NODELETE operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
-    
-    float NODELETE approximateDistance() const
-    {
-        return distanceLine(start, control) + distanceLine(control, end);
-    }
-    
-    bool NODELETE split(QuadraticBezier& left, QuadraticBezier& right) const
-    {
-        left.control = midPoint(start, control);
-        right.control = midPoint(control, end);
-        
-        FloatPoint leftControlToRightControl = midPoint(left.control, right.control);
-        left.end = leftControlToRightControl;
-        right.start = leftControlToRightControl;
-
-        left.start = start;
-        right.end = end;
-
-        return !(left == *this) && !(right == *this);
-    }
-    
-    FloatPoint start;
-    FloatPoint control;
-    FloatPoint end;
-};
-
-struct CubicBezier {
-    CubicBezier() = default;
-    CubicBezier(const FloatPoint& s, const FloatPoint& c1, const FloatPoint& c2, const FloatPoint& e)
-        : start(s)
-        , control1(c1)
-        , control2(c2)
-        , end(e)
-    {
-    }
-
-    friend bool NODELETE operator==(const CubicBezier&, const CubicBezier&) = default;
-
-    float NODELETE approximateDistance() const
-    {
-        return distanceLine(start, control1) + distanceLine(control1, control2) + distanceLine(control2, end);
-    }
-        
-    bool NODELETE split(CubicBezier& left, CubicBezier& right) const
-    {    
-        FloatPoint startToControl1 = midPoint(control1, control2);
-        
-        left.start = start;
-        left.control1 = midPoint(start, control1);
-        left.control2 = midPoint(left.control1, startToControl1);
-        
-        right.control2 = midPoint(control2, end);
-        right.control1 = midPoint(right.control2, startToControl1);
-        right.end = end;
-        
-        FloatPoint leftControl2ToRightControl1 = midPoint(left.control2, right.control1);
-        left.end = leftControl2ToRightControl1;
-        right.start = leftControl2ToRightControl1;
-
-        return !(left == *this) && !(right == *this);
-    }
-    
-    FloatPoint start;
-    FloatPoint control1;
-    FloatPoint control2;
-    FloatPoint end;
-};
-
-// FIXME: This function is possibly very slow due to the ifs required for proper path measuring
-// A simple speed-up would be to use an additional boolean template parameter to control whether
-// to use the "fast" version of this function with no PathTraversalState updating, vs. the slow
-// version which does update the PathTraversalState.  We'll have to shark it to see if that's necessary.
-// Another check which is possible up-front (to send us down the fast path) would be to check if
-// approximateDistance() + current total distance > desired distance
+// FIXME: A possible speed-up would be to check up front whether approximateDistance() plus the
+// current total distance already exceeds the desired distance, and skip subdividing when it does not.
 template<class CurveType>
 static float curveLength(const PathTraversalState& traversalState, const CurveType& originalCurve, FloatPoint& previous, FloatPoint& current)
 {
-    static const unsigned curveStackDepthLimit = 20;
-    CurveType curve = originalCurve;
-    Vector<CurveType, curveStackDepthLimit> curveStack;
+    bool isVectorAtLength = traversalState.action() == PathTraversalState::Action::VectorAtLength;
     float totalLength = 0;
 
-    while (true) {
-        float length = curve.approximateDistance();
-
-        CurveType leftCurve;
-        CurveType rightCurve;
-
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit && curve.split(leftCurve, rightCurve)) {
-            curve = leftCurve;
-            curveStack.append(rightCurve);
-            continue;
-        }
-
+    forEachFlattenedCurveLeaf(originalCurve, [&](const CurveType& curve, float length, bool isLastLeaf) {
         totalLength += length;
-        if (traversalState.action() == PathTraversalState::Action::VectorAtLength) {
-            previous = curve.start;
-            current = curve.end;
-            if (traversalState.totalLength() + totalLength > traversalState.desiredLength())
-                break;
-        }
-
-        if (curveStack.isEmpty())
-            break;
-
-        curve = curveStack.last();
-        curveStack.removeLast();
-    }
-
-    if (traversalState.action() != PathTraversalState::Action::VectorAtLength) {
-        ASSERT(curve.end == originalCurve.end);
         previous = curve.start;
         current = curve.end;
-    }
+        ASSERT_UNUSED(isLastLeaf, !isLastLeaf || curve.end == originalCurve.end);
+        return !isVectorAtLength || traversalState.totalLength() + totalLength <= traversalState.desiredLength();
+    });
 
     return totalLength;
 }

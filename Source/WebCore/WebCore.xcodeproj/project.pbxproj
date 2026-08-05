@@ -3009,6 +3009,8 @@
 		7246F02C2A1541B200FD74F1 /* PathSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7246F0262A1540F200FD74F1 /* PathSegment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7246F02D2A1541B200FD74F1 /* PathStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7246F0202A1540ED00FD74F1 /* PathStream.h */; };
 		7246F0302A15508000FD74F1 /* PathImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7246F0222A1540F000FD74F1 /* PathImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0318396A0000000000000011 /* PathArcLengthMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0318396A0000000000000001 /* PathArcLengthMapper.h */; };
+		0318396A0000000000000013 /* PathCurveSubdivision.h in Headers */ = {isa = PBXBuildFile; fileRef = 0318396A0000000000000003 /* PathCurveSubdivision.h */; };
 		7246F0312A15519800FD74F1 /* PlatformPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 7246F0272A15415900FD74F1 /* PlatformPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		724DCF2328486C9B0026ACF4 /* ImageBufferAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 724DCF1C284853650026ACF4 /* ImageBufferAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */ = {isa = PBXBuildFile; fileRef = 724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */; };
@@ -14508,6 +14510,9 @@
 		7246F0222A1540F000FD74F1 /* PathImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathImpl.h; sourceTree = "<group>"; };
 		7246F0232A1540F000FD74F1 /* PathElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathElement.h; sourceTree = "<group>"; };
 		7246F0242A1540F100FD74F1 /* PathImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathImpl.cpp; sourceTree = "<group>"; };
+		0318396A0000000000000001 /* PathArcLengthMapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathArcLengthMapper.h; sourceTree = "<group>"; };
+		0318396A0000000000000002 /* PathArcLengthMapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathArcLengthMapper.cpp; sourceTree = "<group>"; };
+		0318396A0000000000000003 /* PathCurveSubdivision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathCurveSubdivision.h; sourceTree = "<group>"; };
 		7246F0252A1540F100FD74F1 /* PathSegment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathSegment.cpp; sourceTree = "<group>"; };
 		7246F0262A1540F200FD74F1 /* PathSegment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSegment.h; sourceTree = "<group>"; };
 		7246F0272A15415900FD74F1 /* PlatformPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPath.h; sourceTree = "<group>"; };
@@ -37026,6 +37031,9 @@
 				7B0E6DC82AB463E4005189E8 /* NullImageBufferBackend.h */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
+				0318396A0000000000000002 /* PathArcLengthMapper.cpp */,
+				0318396A0000000000000001 /* PathArcLengthMapper.h */,
+				0318396A0000000000000003 /* PathCurveSubdivision.h */,
 				7246F0232A1540F000FD74F1 /* PathElement.h */,
 				7246F0242A1540F100FD74F1 /* PathImpl.cpp */,
 				7246F0222A1540F000FD74F1 /* PathImpl.h */,
@@ -47876,7 +47884,9 @@
 				1AF5E4D51E56735B004A1F01 /* PasteboardWriterData.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
 				7C193BC21F5E0EED0088F3E6 /* Path2D.h in Headers */,
+				0318396A0000000000000011 /* PathArcLengthMapper.h in Headers */,
 				07257B5D2E506CBF00AD0DF1 /* PathCG.h in Headers */,
+				0318396A0000000000000013 /* PathCurveSubdivision.h in Headers */,
 				7246F02B2A1541A000FD74F1 /* PathElement.h in Headers */,
 				7246F0302A15508000FD74F1 /* PathImpl.h in Headers */,
 				FB92DF4B15FED08700994433 /* PathOperation.h in Headers */,

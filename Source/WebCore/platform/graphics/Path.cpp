@@ -29,6 +29,7 @@
 #include "Path.h"
 
 #include "AffineTransform.h"
+#include "PathArcLengthMapper.h"
 #include "PathStream.h"
 #include "PathTraversalState.h"
 #include "PlatformPathImpl.h"
@@ -388,6 +389,15 @@ PathTraversalState Path::traversalStateAtLength(float length) const
 FloatPoint Path::pointAtLength(float length) const
 {
     return traversalStateAtLength(length).current();
+}
+
+PathArcLengthMapper Path::arcLengthMapper() const
+{
+    PathArcLengthMapper mapper;
+    applyElements([&mapper](const PathElement& element) {
+        mapper.appendPathElement(element);
+    });
+    return mapper;
 }
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const

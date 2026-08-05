@@ -40,6 +40,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class LayoutRoundedRect;
+class PathArcLengthMapper;
 class PathTraversalState;
 
 class Path {
@@ -97,6 +98,9 @@ public:
     FloatPoint currentPoint() const;
     PathTraversalState traversalStateAtLength(float length) const;
     FloatPoint pointAtLength(float length) const;
+
+    // Precomputes an arc-length table for O(log n) repeated point-at-length queries (e.g. SVG <textPath>).
+    PathArcLengthMapper arcLengthMapper() const;
 
     WEBCORE_EXPORT bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
     WEBCORE_EXPORT bool strokeContains(const FloatPoint&, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
