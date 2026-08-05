@@ -445,6 +445,18 @@ bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLi
         return false;
     }
 
+    auto precedingLineHasBlockLevelBox = [&] {
+        for (size_t index = 0; index < invalidatedLine.index; ++index) {
+            if (m_displayContent.lines[index].hasBlockLevelBox())
+                return true;
+        }
+        return false;
+    };
+    if (precedingLineHasBlockLevelBox()) {
+        m_inlineDamage.resetLayoutPosition();
+        return false;
+    }
+
     auto partialContentTop = LayoutUnit { invalidatedLine.index ? m_displayContent.lines[invalidatedLine.index - 1].lineBoxLogicalRect().maxY() : 0 } + pageTopAdjustment;
 
     auto layoutStartPosition = InlineDamage::LayoutPosition {
