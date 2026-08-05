@@ -148,15 +148,10 @@ struct SelectedOverload {
 std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments);
 
 template<typename T>
-static AbstractType allocateAbstractType(const T& type)
-{
-    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(type));
-}
-
-template<typename T>
 static AbstractType allocateAbstractType(T&& type)
 {
-    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(WTF::move(type)));
+    // Perfect forward so an lvalue argument is copied rather than moved.
+    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(std::forward<T>(type)));
 }
 
 } // namespace WGSL
