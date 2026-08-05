@@ -45,7 +45,7 @@ Ref<CSSImageSetValue> CSSImageSetValue::create(CSSValueListBuilder builder)
 }
 
 CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(ClassType::ImageSet, CommaSeparator, WTF::move(builder))
+    : CSSValueContainingVector(ClassType::ImageSet, ValueSeparator::Comma, WTF::move(builder))
 {
 }
 

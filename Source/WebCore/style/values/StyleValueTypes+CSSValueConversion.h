@@ -46,7 +46,7 @@ struct CSSValueConversion<StyleType> {
 template<typename T> struct CSSValueConversion<SpaceSeparatedEnumSet<T>> {
     template<typename... Rest> SpaceSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::SpaceSeparator) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::ValueSeparator::Space) {
             return SpaceSeparatedEnumSet<T>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<T>(state, element, rest...);
             });
@@ -59,7 +59,7 @@ template<typename T> struct CSSValueConversion<SpaceSeparatedEnumSet<T>> {
 template<typename T> struct CSSValueConversion<CommaSeparatedEnumSet<T>> {
     template<typename... Rest> CommaSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::ValueSeparator::Comma) {
             return CommaSeparatedEnumSet<T>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<T>(state, element, rest...);
             });
@@ -98,7 +98,7 @@ template<typename T> struct CSSValueConversion<CommaSeparatedOrderedHashSet<T>> 
 template<typename StyleType> struct CSSValueConversion<SpaceSeparatedFixedVector<StyleType>> {
     template<typename... Rest> SpaceSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::SpaceSeparator) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::ValueSeparator::Space) {
             return SpaceSeparatedFixedVector<StyleType>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<StyleType>(state, element, rest...);
             });
@@ -111,7 +111,7 @@ template<typename StyleType> struct CSSValueConversion<SpaceSeparatedFixedVector
 template<typename StyleType> struct CSSValueConversion<CommaSeparatedFixedVector<StyleType>> {
     template<typename... Rest> CommaSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::ValueSeparator::Comma) {
             return CommaSeparatedFixedVector<StyleType>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<StyleType>(state, element, rest...);
             });

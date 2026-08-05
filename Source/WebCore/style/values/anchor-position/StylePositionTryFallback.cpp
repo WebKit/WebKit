@@ -80,7 +80,7 @@ bool PositionTryFallback::operator==(const PositionTryFallback& other) const
 auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, const CSSValue& value) -> PositionTryFallback
 {
     if (RefPtr valueList = dynamicDowncast<CSSValueList>(value)) {
-        if (valueList->separator() != CSSValueList::SpaceSeparator) {
+        if (valueList->separator() != CSSValueList::ValueSeparator::Space) {
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return { };
         }

@@ -51,17 +51,17 @@ Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(CSSValueID value, CS
 
 template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationSeparatorType::Space>(DeprecatedCSSOMValueListBuilder&& builder, CSSStyleDeclaration& owner)
 {
-    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::SpaceSeparator, owner);
+    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::Space, owner);
 }
 
 template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationSeparatorType::Comma>(DeprecatedCSSOMValueListBuilder&& builder, CSSStyleDeclaration& owner)
 {
-    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::CommaSeparator, owner);
+    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::Comma, owner);
 }
 
 template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationSeparatorType::Slash>(DeprecatedCSSOMValueListBuilder&& builder, CSSStyleDeclaration& owner)
 {
-    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::SlashSeparator, owner);
+    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::Slash, owner);
 }
 
 } // namespace CSS

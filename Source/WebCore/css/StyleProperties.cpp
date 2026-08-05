@@ -68,7 +68,7 @@ String serializeLonghandValue(const CSS::SerializationContext& context, CSSPrope
     // We need to serialize those lists with the actual values, not as "initial".
     // Doing this for all CSSValueList with comma separators is better than checking the property is one of those longhands.
     // Serializing this way is harmless for other properties; those won't have any implicit initial values.
-    if (auto* list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
+    if (auto* list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::ValueSeparator::Comma) {
         StringBuilder result;
         auto separator = ""_s;
         for (Ref individualValue : *list)

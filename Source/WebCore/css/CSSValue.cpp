@@ -384,11 +384,11 @@ String CSSValue::cssText(const CSS::SerializationContext& context) const
 ASCIILiteral CSSValue::separatorCSSText(ValueSeparator separator)
 {
     switch (separator) {
-    case SpaceSeparator:
+        case ValueSeparator::Space:
         return " "_s;
-    case CommaSeparator:
+        case ValueSeparator::Comma:
         return ", "_s;
-    case SlashSeparator:
+        case ValueSeparator::Slash:
         return " / "_s;
     }
     ASSERT_NOT_REACHED();

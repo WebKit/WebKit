@@ -43,17 +43,17 @@ CSSValuePair::CSSValuePair(ValueSeparator separator, Ref<CSSValue> first, Ref<CS
 
 Ref<CSSValuePair> CSSValuePair::create(Ref<CSSValue> first, Ref<CSSValue> second)
 {
-    return adoptRef(*new CSSValuePair(SpaceSeparator, WTF::move(first), WTF::move(second), IdenticalValueSerialization::Coalesce));
+    return adoptRef(*new CSSValuePair(ValueSeparator::Space, WTF::move(first), WTF::move(second), IdenticalValueSerialization::Coalesce));
 }
 
 Ref<CSSValuePair> CSSValuePair::createSlashSeparated(Ref<CSSValue> first, Ref<CSSValue> second)
 {
-    return adoptRef(*new CSSValuePair(SlashSeparator, WTF::move(first), WTF::move(second), IdenticalValueSerialization::DoNotCoalesce));
+    return adoptRef(*new CSSValuePair(ValueSeparator::Slash, WTF::move(first), WTF::move(second), IdenticalValueSerialization::DoNotCoalesce));
 }
 
 Ref<CSSValuePair> CSSValuePair::createNoncoalescing(Ref<CSSValue> first, Ref<CSSValue> second)
 {
-    return adoptRef(*new CSSValuePair(SpaceSeparator, WTF::move(first), WTF::move(second), IdenticalValueSerialization::DoNotCoalesce));
+    return adoptRef(*new CSSValuePair(ValueSeparator::Space, WTF::move(first), WTF::move(second), IdenticalValueSerialization::DoNotCoalesce));
 }
 
 bool CSSValuePair::canBeCoalesced() const

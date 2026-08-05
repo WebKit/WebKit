@@ -34,37 +34,37 @@
 namespace WebCore {
     
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, CSSValueListBuilder arguments)
-    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTF::move(arguments))
+    : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma, WTF::move(arguments))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name)
-    : CSSValueContainingVector(ClassType::Function, CommaSeparator)
+    : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma)
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue>&& argument)
-    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTF::move(argument))
+    : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma, WTF::move(argument))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue>&& argument1, Ref<CSSValue>&& argument2)
-    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTF::move(argument1), WTF::move(argument2))
+    : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma, WTF::move(argument1), WTF::move(argument2))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue>&& argument1, Ref<CSSValue>&& argument2, Ref<CSSValue>&& argument3)
-    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTF::move(argument1), WTF::move(argument2), WTF::move(argument3))
+    : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma, WTF::move(argument1), WTF::move(argument2), WTF::move(argument3))
     , m_name(name)
 {
 }
 
 CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue>&& argument1, Ref<CSSValue>&& argument2, Ref<CSSValue>&& argument3, Ref<CSSValue>&& argument4)
-    : CSSValueContainingVector(ClassType::Function, CommaSeparator, WTF::move(argument1), WTF::move(argument2), WTF::move(argument3), WTF::move(argument4))
+    : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma, WTF::move(argument1), WTF::move(argument2), WTF::move(argument3), WTF::move(argument4))
     , m_name(name)
 {
 }

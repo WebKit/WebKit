@@ -124,57 +124,57 @@ CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<C
 
 Ref<CSSValueList> CSSValueList::createCommaSeparated(CSSValueListBuilder values)
 {
-    return adoptRef(*new CSSValueList(CommaSeparator, WTF::move(values)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Comma, WTF::move(values)));
 }
 
 Ref<CSSValueList> CSSValueList::createCommaSeparated(Ref<CSSValue> value)
 {
-    return adoptRef(*new CSSValueList(CommaSeparator, WTF::move(value)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Comma, WTF::move(value)));
 }
 
 Ref<CSSValueList> CSSValueList::createSlashSeparated(CSSValueListBuilder values)
 {
-    return adoptRef(*new CSSValueList(SlashSeparator, WTF::move(values)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Slash, WTF::move(values)));
 }
 
 Ref<CSSValueList> CSSValueList::createSlashSeparated(Ref<CSSValue> value)
 {
-    return adoptRef(*new CSSValueList(SlashSeparator, WTF::move(value)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Slash, WTF::move(value)));
 }
 
 Ref<CSSValueList> CSSValueList::createSlashSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2)
 {
-    return adoptRef(*new CSSValueList(SlashSeparator, WTF::move(value1), WTF::move(value2)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Slash, WTF::move(value1), WTF::move(value2)));
 }
 
 Ref<CSSValueList> CSSValueList::createSpaceSeparated()
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator));
+    return adoptRef(*new CSSValueList(ValueSeparator::Space));
 }
 
 Ref<CSSValueList> CSSValueList::createSpaceSeparated(CSSValueListBuilder values)
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator, WTF::move(values)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Space, WTF::move(values)));
 }
 
 Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value)
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator, WTF::move(value)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Space, WTF::move(value)));
 }
 
 Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2)
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator, WTF::move(value1), WTF::move(value2)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Space, WTF::move(value1), WTF::move(value2)));
 }
 
 Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3)
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator, WTF::move(value1), WTF::move(value2), WTF::move(value3)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Space, WTF::move(value1), WTF::move(value2), WTF::move(value3)));
 }
 
 Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3, Ref<CSSValue> value4)
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator, WTF::move(value1), WTF::move(value2), WTF::move(value3), WTF::move(value4)));
+    return adoptRef(*new CSSValueList(ValueSeparator::Space, WTF::move(value1), WTF::move(value2), WTF::move(value3), WTF::move(value4)));
 }
 
 Ref<CSSValueList> CSSValueList::create(char16_t separator, CSSValueListBuilder builder)

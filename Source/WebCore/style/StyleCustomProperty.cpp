@@ -97,11 +97,11 @@ Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const Style::Com
             for (auto& value : valueList.values)
                 builder.append(convertValue(value));
             switch (valueList.separator) {
-            case CSSValue::SpaceSeparator:
+            case CSSValue::ValueSeparator::Space:
                 return CSSValueList::createSpaceSeparated(WTF::move(builder));
-            case CSSValue::CommaSeparator:
+                case CSSValue::ValueSeparator::Comma:
                 return CSSValueList::createCommaSeparated(WTF::move(builder));
-            case CSSValue::SlashSeparator:
+                case CSSValue::ValueSeparator::Slash:
                 return CSSValueList::createSlashSeparated(WTF::move(builder));
             }
             RELEASE_ASSERT_NOT_REACHED();

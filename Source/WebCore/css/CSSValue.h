@@ -181,7 +181,7 @@ public:
     enum StaticCSSValueTag { StaticCSSValue };
 
     static constexpr size_t ValueSeparatorBits = 2;
-    enum ValueSeparator : uint8_t { SpaceSeparator, CommaSeparator, SlashSeparator };
+    enum class ValueSeparator : uint8_t { Space, Comma, Slash };
 
     inline const CSSValue& first() const; // CSSValuePair
     inline const CSSValue& second() const; // CSSValuePair
@@ -294,7 +294,7 @@ protected:
 
     WEBCORE_EXPORT void operator delete(CSSValue*, std::destroying_delete_t);
 
-    ValueSeparator separator() const { return static_cast<ValueSeparator>(m_valueSeparator); }
+    ValueSeparator separator() const { return m_valueSeparator; }
     ASCIILiteral separatorCSSText() const { return separatorCSSText(separator()); };
 
 private:
@@ -315,7 +315,7 @@ protected:
     uint8_t m_isImplicitInitialValue : 1 { false };
 
     // CSSValueList and CSSValuePair:
-    uint8_t m_valueSeparator : ValueSeparatorBits { 0 };
+    ValueSeparator m_valueSeparator : ValueSeparatorBits { ValueSeparator::Space };
 
 private:
     ClassType m_classType : ClassTypeBits;
