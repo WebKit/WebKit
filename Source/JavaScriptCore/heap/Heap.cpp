@@ -607,7 +607,6 @@ void Heap::lastChanceToFinalize()
         dumpHeapStatisticsAtVMDestruction();
     
     m_arrayBuffers.lastChanceToFinalize();
-    m_objectSpace.stopAllocatingForGood();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
 

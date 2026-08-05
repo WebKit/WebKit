@@ -47,7 +47,7 @@ public:
     
     unsigned cellSize() const { return m_freeList.cellSize(); }
 
-    void stopAllocating();
+    void stopAllocating(MarkedBlock::Handle::StopAllocatingMode = MarkedBlock::Handle::StopAllocatingMode::Resumable);
     void prepareForAllocation();
     void resumeAllocating();
     void stopAllocatingForGood();

@@ -208,6 +208,14 @@ void MarkedSpace::freeMemory()
 
 void MarkedSpace::lastChanceToFinalize()
 {
+    // Must call stopAllocatingForGood first.
+    ASSERT(!isIterating());
+    forEachDirectory(
+        [&] (BlockDirectory& directory) -> IterationStatus {
+            directory.stopAllocatingForGood();
+            return IterationStatus::Continue;
+        });
+
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
             directory.lastChanceToFinalize();
@@ -312,16 +320,6 @@ void MarkedSpace::stopAllocating()
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
             directory.stopAllocating();
-            return IterationStatus::Continue;
-        });
-}
-
-void MarkedSpace::stopAllocatingForGood()
-{
-    ASSERT(!isIterating());
-    forEachDirectory(
-        [&] (BlockDirectory& directory) -> IterationStatus {
-            directory.stopAllocatingForGood();
             return IterationStatus::Continue;
         });
 }

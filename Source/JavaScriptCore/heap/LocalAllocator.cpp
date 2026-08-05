@@ -89,7 +89,7 @@ LocalAllocator::~LocalAllocator()
     RELEASE_ASSERT(ok);
 }
 
-void LocalAllocator::stopAllocating()
+void LocalAllocator::stopAllocating(MarkedBlock::Handle::StopAllocatingMode mode)
 {
     ASSERT(!m_lastActiveBlock);
     if (!m_currentBlock) {
@@ -97,7 +97,7 @@ void LocalAllocator::stopAllocating()
         return;
     }
     
-    m_currentBlock->stopAllocating(m_freeList);
+    m_currentBlock->stopAllocating(m_freeList, mode);
     m_lastActiveBlock = m_currentBlock;
     m_currentBlock = nullptr;
     m_freeList.clear();
@@ -120,7 +120,7 @@ void LocalAllocator::prepareForAllocation()
 
 void LocalAllocator::stopAllocatingForGood()
 {
-    stopAllocating();
+    stopAllocating(MarkedBlock::Handle::StopAllocatingMode::ForGood);
     reset();
 }
 
