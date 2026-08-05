@@ -511,7 +511,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
         RefPtr page = document->page();
         if (!page)
             continue;
-        page->cookieJar().setRawCookie(*document, cookie.value(), shouldPartitionCookie);
+
+        page->cookieJar().setRawCookie(*document, document->cookieURL(), cookie.value(), shouldPartitionCookie);
     }
 
     return { };

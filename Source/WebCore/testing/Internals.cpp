@@ -7560,16 +7560,29 @@ void Internals::setCookie(CookieData&& cookieData)
     if (!page)
         return;
 
-    page->cookieJar().setRawCookie(*document, CookieData::toCookie(WTF::move(cookieData)), ShouldPartitionCookie::No);
+    page->cookieJar().setRawCookie(*document, document->cookieURL(), CookieData::toCookie(WTF::move(cookieData)), ShouldPartitionCookie::No);
+}
+
+void Internals::deleteCookie(const String& cookieName)
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return;
+
+    RefPtr page = document->page();
+    if (!page)
+        return;
+
+    page->cookieJar().deleteCookie(*document, document->cookieURL(), cookieName, [] { });
 }
 
 auto Internals::getCookies() const -> Vector<CookieData>
 {
-    auto* document = contextDocument();
+    RefPtr document = contextDocument();
     if (!document)
         return { };
 
-    auto* page = document->page();
+    RefPtr page = document->page();
     if (!page)
         return { };
 
