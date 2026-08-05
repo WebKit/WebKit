@@ -3223,12 +3223,12 @@ public:
         // However, we only emit such an add if both inputs can be Int52, and Int32
         // can trivially become Int52.
         //
-        return enableInt52() && isInt32OrInt52Speculation(prediction());
+        return isInt32OrInt52Speculation(prediction());
     }
 
     bool shouldSpeculateInt52OrOther()
     {
-        return enableInt52() && isInt32OrInt52OrOtherSpeculation(prediction());
+        return isInt32OrInt52OrOtherSpeculation(prediction());
     }
 
     bool shouldSpeculateDouble()
@@ -3532,7 +3532,7 @@ public:
     
     static bool shouldSpeculateInt52(Node* op1, Node* op2)
     {
-        return enableInt52() && op1->shouldSpeculateInt52() && op2->shouldSpeculateInt52();
+        return op1->shouldSpeculateInt52() && op2->shouldSpeculateInt52();
     }
     
     static bool shouldSpeculateNumber(Node* op1, Node* op2)

@@ -2895,19 +2895,10 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 void SpeculativeJIT::compileUInt32ToNumber(Node* node)
 {
     if (doesOverflow(node->arithMode())) {
-        if (enableInt52()) {
-            SpeculateInt32Operand op1(this, node->child1());
-            GPRTemporary result(this, Reuse, op1);
-            zeroExtend32ToWord(op1.gpr(), result.gpr());
-            strictInt52Result(result.gpr(), node);
-            return;
-        }
         SpeculateInt32Operand op1(this, node->child1());
-        FPRTemporary result(this);
-        GPRReg inputGPR = op1.gpr();
-        FPRReg outputFPR = result.fpr();
-        convertUInt32ToDouble(inputGPR, outputFPR);
-        doubleResult(outputFPR, node);
+        GPRTemporary result(this, Reuse, op1);
+        zeroExtend32ToWord(op1.gpr(), result.gpr());
+        strictInt52Result(result.gpr(), node);
         return;
     }
     
@@ -3267,7 +3258,6 @@ void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRe
     }
     
     if (node->shouldSpeculateInt52()) {
-        ASSERT(enableInt52());
         zeroExtend32ToWord(resultReg, resultReg);
         strictInt52Result(resultReg, node);
         return;

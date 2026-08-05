@@ -170,10 +170,6 @@ bool VariableAccessData::couldRepresentInt52()
 
 bool VariableAccessData::couldRepresentInt52Impl()
 {
-    // The hardware has to support it.
-    if (!enableInt52())
-        return false;
-    
     // We punt for machine arguments.
     if (operand().isArgument())
         return false;

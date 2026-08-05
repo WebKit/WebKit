@@ -489,7 +489,7 @@ private:
                 node->setArithMode(Arith::CheckOverflow);
             else {
                 node->setArithMode(Arith::DoOverflow);
-                node->setResult(enableInt52() ? NodeResultInt52 : NodeResultDouble);
+                node->setResult(NodeResultInt52);
             }
             break;
         }
@@ -2817,7 +2817,6 @@ private:
         }
 
         case FiatInt52: {
-            RELEASE_ASSERT(enableInt52());
             node->convertToIdentity();
             fixEdge<Int52RepUse>(node->child1());
             node->setResult(NodeResultInt52);
@@ -3114,13 +3113,9 @@ private:
                     break;
                 }
 
-                if (enableInt52()) {
-                    fixEdge<AnyIntUse>(node->child1());
-                    node->remove(m_graph);
-                    break;
-                }
-
-                // Must not perform fixEdge<NumberUse> here since the type set only includes TypeAnyInt. Double values should be logged.
+                fixEdge<AnyIntUse>(node->child1());
+                node->remove(m_graph);
+                break;
             }
 
             if (typeSet->doesTypeConformTo(TypeNumber | TypeAnyInt)) {

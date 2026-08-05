@@ -380,9 +380,6 @@ public:
     
     bool addShouldSpeculateInt52(Node* add)
     {
-        if (!enableInt52())
-            return false;
-        
         Node* left = add->child1().node();
         Node* right = add->child2().node();
 
@@ -426,9 +423,6 @@ public:
     {
         // This is much more relaxed compared to addShouldSpeculateInt52.
         // The reason is double mod is so costly, so it is worth trying with much more aggressively compared to addShouldSpeculateInt52.
-        if (!enableInt52())
-            return false;
-
         Node* left = node->child1().node();
         Node* right = node->child2().node();
 
@@ -463,9 +457,6 @@ public:
     
     bool binaryArithShouldSpeculateInt52(Node* node, PredictionPass pass)
     {
-        if (!enableInt52())
-            return false;
-        
         Node* left = node->child1().node();
         Node* right = node->child2().node();
 
@@ -482,8 +473,6 @@ public:
     
     bool unaryArithShouldSpeculateInt52(Node* node, PredictionPass pass)
     {
-        if (!enableInt52())
-            return false;
         return node->child1()->shouldSpeculateInt52()
             && node->canSpeculateInt52(pass)
             && !hasExitSite(node, Int52Overflow);
