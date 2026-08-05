@@ -385,51 +385,9 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
     return oldPageCount;
 }
 
-bool Memory::fill(uint64_t offset, uint8_t targetValue, uint64_t count)
-{
-    bool offsetAndCountOverflows = addressType().is64Bit()
-        ? sumOverflows<uint64_t>(offset, count)
-        : sumOverflows<uint32_t>(offset, count);
-
-    if (offsetAndCountOverflows)
-        return false;
-
-    if (offset + count > m_handle->size())
-        return false;
-
-    memset(static_cast<uint8_t*>(basePointer()) + offset, targetValue, count);
-    return true;
-}
-
-bool Memory::copy(uint64_t dstAddress, uint64_t srcAddress, uint64_t count)
-{
-    bool dstAndCountOverflows = addressType().is64Bit()
-        ? sumOverflows<uint64_t>(dstAddress, count)
-        : sumOverflows<uint32_t>(dstAddress, count);
-    bool srcAndCountOverflows = addressType().is64Bit()
-        ? sumOverflows<uint64_t>(srcAddress, count)
-        : sumOverflows<uint32_t>(srcAddress, count);
-    if (dstAndCountOverflows || srcAndCountOverflows)
-        return false;
-
-    const uint64_t lastDstAddress = dstAddress + count;
-    const uint64_t lastSrcAddress = srcAddress + count;
-
-    if (lastDstAddress > size() || lastSrcAddress > size())
-        return false;
-
-    if (!count)
-        return true;
-
-    uint8_t* base = static_cast<uint8_t*>(basePointer());
-    // Source and destination areas might overlap, so using memmove.
-    memmove(base + dstAddress, base + srcAddress, count);
-    return true;
-}
-
 bool Memory::init(uint64_t offset, const uint8_t* data, uint32_t length)
 {
-    if (sumOverflows<uint32_t>(offset, length))
+    if (sumOverflows<uint64_t>(offset, length))
         return false;
 
     if (offset + length > m_handle->size())

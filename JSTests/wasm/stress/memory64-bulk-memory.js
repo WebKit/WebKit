@@ -1,5 +1,5 @@
 //@ skip if $addressBits <= 32
-import { instantiate } from "../wabt-wrapper.js";
+import { compile, instantiate } from "../wabt-wrapper.js";
 import * as assert from "../assert.js";
 
 let wat = `
@@ -129,3 +129,43 @@ function testI32CopyOOB() {
 
 for (let i = 0; i < wasmTestLoopCount; i++)
     testI32CopyOOB();
+
+// memory.init is typed [at i32 i32]: only the destination takes the memory's address type. The
+// source offset and length index into a data segment, and a segment's size is capped at 32 bits by
+// the module encoding, so they stay i32 no matter how wide the memory is. Contrast memory.fill and
+// memory.copy above, whose lengths are memory lengths and so do widen to i64.
+async function testInitOperandTypes() {
+    const validationError = (detail) =>
+        `WebAssembly.Module doesn't validate: memory.init ${detail}, in function at index 0`;
+
+    await compile(`
+    (module (memory i64 1) (data "hello")
+        (func (memory.init 0 (i64.const 0) (i32.const 0) (i32.const 5))))
+    `, { memory64: true });
+
+    await assert.throwsAsync(compile(`
+    (module (memory i64 1) (data "hello")
+        (func (memory.init 0 (i64.const 0) (i64.const 0) (i32.const 5))))
+    `, { memory64: true }), WebAssembly.CompileError,
+        validationError("src address to type I64 expected I32"));
+
+    await assert.throwsAsync(compile(`
+    (module (memory i64 1) (data "hello")
+        (func (memory.init 0 (i64.const 0) (i32.const 0) (i64.const 5))))
+    `, { memory64: true }), WebAssembly.CompileError,
+        validationError("length to type I64 expected I32"));
+
+    await assert.throwsAsync(compile(`
+    (module (memory i64 1) (data "hello")
+        (func (memory.init 0 (i32.const 0) (i32.const 0) (i32.const 5))))
+    `, { memory64: true }), WebAssembly.CompileError,
+        validationError("dst address to type I32 expected I64"));
+
+    await assert.throwsAsync(compile(`
+    (module (memory 1) (data "hello")
+        (func (memory.init 0 (i64.const 0) (i32.const 0) (i32.const 5))))
+    `, { memory64: true }), WebAssembly.CompileError,
+        validationError("dst address to type I64 expected I32"));
+}
+
+await testInitOperandTypes();
