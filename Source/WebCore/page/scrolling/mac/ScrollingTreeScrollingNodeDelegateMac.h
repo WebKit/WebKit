@@ -34,6 +34,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 
+OBJC_CLASS CALayer;
 OBJC_CLASS NSScrollerImp;
 
 namespace WebCore {
@@ -75,6 +76,8 @@ public:
     void viewSizeDidChange() final;
     void initScrollbars() final;
     String scrollbarStateForOrientation(ScrollbarOrientation) const final;
+
+    bool isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const;
 
 private:
     void updateFromStateNode(const ScrollingStateScrollingNode&) final;

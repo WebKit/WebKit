@@ -153,6 +153,10 @@
 #endif
 }
 
+- (BOOL)isPointInScrollbar:(NSPoint)locationInView
+{
+    return _impl->isPointInScrollbar(locationInView);
+}
 
 @end
 

@@ -57,6 +57,7 @@ public:
 private:
     void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
     RefPtr<WebCore::ScrollingTreeNode> scrollingNodeForPoint(WebCore::FloatPoint) override;
+    bool isPointInScrollbar(WebCore::FloatPoint locationInViewCoordinates) override;
 #if ENABLE(WHEEL_EVENT_REGIONS)
     OptionSet<WebCore::EventListenerRegionType> eventListenerRegionTypesForPoint(WebCore::FloatPoint) const override;
 #endif
