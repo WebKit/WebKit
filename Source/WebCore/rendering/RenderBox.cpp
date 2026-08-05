@@ -2035,6 +2035,8 @@ static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
         return false;
     if (!childStyle.shapeOutside().isNone())
         return false;
+    if (childBox.hasClip())
+        return false;
     if (!childBox.borderBoxWidth() || !childBox.borderBoxHeight())
         return false;
     if (CheckedPtr childLayer = childBox.layer()) {
