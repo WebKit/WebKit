@@ -462,7 +462,11 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
         auto& marginState = blockLayoutState().marginState();
         // If the previous line had no contentful in-flow content (float-only or empty), the same pending margin
         // is already baked into its top via this advance. Re-applying would double-count.
-        if (!marginState.atBeforeSideOfBlock && previousLine && previousLine->hasContentfulInFlowContent)
+        // A margin still at the before side of the block is only skipped when it can actually collapse out
+        // through that edge. When the root has a border or padding it cannot, so a self collapsing block on a
+        // previous line has already committed the margin and the line has to move down by it.
+        auto marginCollapsesThroughBeforeSide = marginState.atBeforeSideOfBlock && marginState.canCollapseMarginBeforeWithChildren;
+        if (!marginCollapsesThroughBeforeSide && previousLine && previousLine->hasContentfulInFlowContent)
             lineLogicalRect.moveVertically(marginState.margin());
         auto constraints = floatAvoidingRect(lineLogicalRect, { });
         m_lineIsConstrainedByFloat = constraints.constrainedSideSet;
