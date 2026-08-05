@@ -1,3 +1,0 @@
-requires 'perl', '== 5.8.8';
-requires 'YAML', '1.24';
-requires 'Parallel::ForkManager', '1.19';

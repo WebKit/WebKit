@@ -2643,7 +2643,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         log_environ=True,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
         )
@@ -2658,7 +2658,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         log_environ=True,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --debug 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --debug 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .log('stdio', stdout='''! NEW FAIL: test/built-ins/Array/prototype/at/index-non-numeric.js
 ! NEW FAIL: test/built-ins/Array/prototype/at/index-out-of-range.js
@@ -2678,7 +2678,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         log_environ=True,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
         )
@@ -2694,7 +2694,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         log_environ=True,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
         )
@@ -2710,7 +2710,7 @@ class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         log_environ=True,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --debug --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test262-runner --verbose --debug --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
                         )
             .exit(0),
         )

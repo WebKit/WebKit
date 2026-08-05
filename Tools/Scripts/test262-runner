@@ -1,6 +1,7 @@
-#!/usr/bin/env perl
+#!/usr/bin/env python3
 
 # Copyright (C) 2018 Bocoup LLC. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,29 +28,17 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-use strict;
-use warnings;
-use 5.8.8;
+import os
+import sys
 
-use FindBin;
-use Config;
-use lib "$FindBin::Bin";
-use webkitdirs;
+from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk, maybe_use_container_sdk_root_dir
+maybe_enter_webkit_container_sdk()
+maybe_use_container_sdk_root_dir()
 
-maybeEnterWebKitContainerSDK();
+script_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, os.path.join(script_dir, "test262"))
 
-BEGIN {
-    $ENV{DBIC_OVERWRITE_HELPER_METHODS_OK} = 1;
-    $ENV{T262_EXEC_BIN} = "$FindBin::Bin/test262";
-    unshift @INC, "$FindBin::Bin/test262";
+from runner import main
 
-    $ENV{LOAD_ROUTES} = 1;
-}
-
-use Runner;
-
-if (isLinux()) {
-    portName();
-}
-
-Test262::Runner::main();
+if __name__ == "__main__":
+    main()

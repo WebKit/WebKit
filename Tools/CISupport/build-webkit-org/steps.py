@@ -830,7 +830,7 @@ class RunTest262Tests(TestWithFailureCount, CustomFlagsMixin, ShellMixin):
     description = ["test262-tests running"]
     descriptionDone = ["test262-tests"]
     failedTestsFormatString = "%d Test262 test%s failed"
-    command = ["perl", "Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
+    command = ["Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
     test_summary_re = re.compile(r'^\! NEW FAIL')
 
     def __init__(self, *args, **kwargs):

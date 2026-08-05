@@ -82,7 +82,7 @@ FILTERS = {
         'start_printing': lambda line: 'tests ran as expected' in line,
     },
     'test262': {
-        'start_printing': lambda line: 'TESTS SUMMARY---' in line,
+        'start_printing': lambda line: 'TESTS SUMMARY---' in line or 'tests run' in line,
         'always_print': lambda line: line.startswith('! NEW FAIL'),
     },
     'minibrowser': {
