@@ -34,6 +34,12 @@ class BenchmarkRunner(object):
         if timeout_override:
             self._plan['timeout'] = timeout_override
         self._subtests = self.validate_subtests(subtests) if subtests else None
+        if not self._subtests and self._plan.get('default_subtests'):
+            default = self._plan['default_subtests']
+            if default is True:
+                default = self._plan.get('subtests', {})
+            self._subtests = self.validate_subtests(
+                BenchmarkRunner.format_subtests(default))
         self._browser_driver = BrowserDriverFactory.create(platform, browser, browser_args)
         self._browser_path = browser_path
         self._build_dir = os.path.abspath(build_dir) if build_dir else None

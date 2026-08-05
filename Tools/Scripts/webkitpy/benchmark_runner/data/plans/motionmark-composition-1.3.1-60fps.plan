@@ -1,0 +1,23 @@
+{
+    "import_plan_file": "motionmark1.3.1.plan",
+    "output_file": "motionmark-composition-1.3.1-60fps.result",
+    "extra_patches": [
+        "data/patches/extra/MotionMark1.3.1-60FPS.patch",
+        "data/patches/extra/MotionMark-Composition.patch"
+    ],
+    "subtests": {
+        "CompositionSuite": [
+            "TransformsWithFilters",
+            "TransformsNoFilters",
+            "DOMParticles",
+            "BouncingCircles",
+            "BouncingClippedRects",
+            "BouncingBlendCircles",
+            "BouncingFilterCircles",
+            "LeavesTranslate",
+            "LeavesTranslateScale",
+            "LeavesTranslateOpacity"
+        ]
+    },
+    "default_subtests": true
+}
