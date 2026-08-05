@@ -30,7 +30,6 @@
 
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUCompositorIntegrationImpl.h"
-#include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebGPUPresentationContextDescriptor.h"
 #include "WebGPUPresentationContextImpl.h"
 #include <WebCore/GraphicsContext.h>
