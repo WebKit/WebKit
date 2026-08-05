@@ -1650,19 +1650,13 @@ void RenderBox::markMarginAsTrimmed(Style::MarginTrimSide newTrimmedMargin)
     rareData.trimmedMargins = rareData.trimmedMargins | newTrimmedMargin;
 }
 
-void RenderBox::clearTrimmedMarginsMarkings()
-{
-    ASSERT(hasRareData());
-    ensureRareData().trimmedMargins = { };
-}
-
-bool RenderBox::hasTrimmedMargin(std::optional<Style::MarginTrimSide> marginTrimType) const
+bool RenderBox::hasTrimmedMargin(Style::MarginTrimSide marginTrimSide) const
 {
     if (!isInFlow())
         return false;
     if (!hasRareData())
         return false;
-    return marginTrimType ? rareData().trimmedMargins.contains(*marginTrimType) : !rareData().trimmedMargins.isEmpty();
+    return rareData().trimmedMargins.contains(marginTrimSide);
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeLayoutUnitClamped, float>& logicalWidth) const

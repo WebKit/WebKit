@@ -85,8 +85,6 @@ public:
 
     LayoutUnit resolveMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
     LayoutUnit usedMainAxisMarginExtentForFlexItem(const FlexLayoutItem&) const;
-    static LayoutUnit mainAxisMarginEndForFlexItem(const RenderFlexibleBox&, const FlexLayoutItem&);
-    LayoutUnit mainAxisMarginEndForFlexItem(const FlexLayoutItem&) const;
     LayoutUnit crossAxisMarginExtentForFlexItem(const FlexLayoutItem&) const;
 
     LayoutUnit crossAxisScrollbarExtent() const;
@@ -141,11 +139,6 @@ public:
     bool hasDefiniteCrossSizeForFlexItem(const FlexLayoutItem&) const;
     static bool hasDefiniteLogicalWidthForAspectRatioCrossSize(const RenderFlexibleBox&);
     static std::optional<TextDirection> leftRightAxisDirectionFromStyle(const Style::ComputedStyle&);
-
-    bool shouldTrimMainAxisMarginStart() const;
-    bool shouldTrimMainAxisMarginEnd() const;
-    bool shouldTrimCrossAxisMarginStart() const;
-    bool shouldTrimCrossAxisMarginEnd() const;
 
     static const StyleContentAlignmentData& contentAlignmentNormalBehavior();
     static ContentPosition resolveLeftRightAlignment(ContentPosition, const StyleContentAlignmentData&, const Style::ComputedStyle&, bool isReversed);

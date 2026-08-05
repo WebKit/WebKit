@@ -27,7 +27,6 @@
 
 #include <cstdint>
 #include <optional>
-#include <wtf/StdLibExtras.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -50,24 +49,10 @@ enum class LayoutPhase : uint8_t {
 
 class FlexLayoutState {
 public:
-    struct MarginTrimItems {
-        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineStart;
-        SingleThreadWeakHashSet<const RenderBox> itemsAtFlexLineEnd;
-        SingleThreadWeakHashSet<const RenderBox> itemsOnFirstFlexLine;
-        SingleThreadWeakHashSet<const RenderBox> itemsOnLastFlexLine;
-    };
-
-    FlexLayoutState(MarginTrimItems&& marginTrimItems, bool isFlexBoxBlockSizeDefinite)
-        : m_marginTrimItems(WTF::move(marginTrimItems))
-        , m_isFlexBoxBlockSizeDefinite(isFlexBoxBlockSizeDefinite)
+    explicit FlexLayoutState(bool isFlexBoxBlockSizeDefinite)
+        : m_isFlexBoxBlockSizeDefinite(isFlexBoxBlockSizeDefinite)
     {
     }
-
-    const MarginTrimItems& marginTrimItems() const LIFETIME_BOUND { return m_marginTrimItems; }
-    void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineStart.add(flexItem); }
-    void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.itemsAtFlexLineEnd.add(flexItem); }
-    void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnFirstFlexLine.add(flexItem); }
-    void addItemOnLastFlexLine(const RenderBox& flexItem) { m_marginTrimItems.itemsOnLastFlexLine.add(flexItem); }
 
     LayoutPhase phase() const { return m_phase; }
     void setPhase(LayoutPhase phase)
@@ -82,7 +67,6 @@ public:
     bool isFlexBoxBlockSizeDefinite() const { return m_isFlexBoxBlockSizeDefinite; }
 
 private:
-    MarginTrimItems m_marginTrimItems;
     LayoutPhase m_phase { LayoutPhase::PreparingFlexItems };
     SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
     bool m_isFlexBoxBlockSizeDefinite { false };

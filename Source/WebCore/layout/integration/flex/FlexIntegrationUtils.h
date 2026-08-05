@@ -36,7 +36,6 @@ namespace WebCore {
 enum class LogicalBoxAxis : uint8_t;
 
 namespace Style {
-enum class MarginTrimSide : uint8_t;
 struct FlexBasis;
 struct MaximumSize;
 struct MinimumSize;
@@ -66,10 +65,6 @@ public:
     bool updateAutoMarginsInCrossAxis(const FlexLayoutItem&, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace);
     void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
 
-    void trimMainAxisMarginStart(FlexLayoutItem&);
-    void trimMainAxisMarginEnd(FlexLayoutItem&);
-    void trimCrossAxisMarginStart(const FlexLayoutItem&);
-    void trimCrossAxisMarginEnd(const FlexLayoutItem&);
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const;
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
@@ -106,7 +101,6 @@ private:
     RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
     FlexLayoutState& flexLayoutState() const LIFETIME_BOUND;
 
-    void setTrimmedMarginForChild(const FlexLayoutItem&, Style::MarginTrimSide);
     void invalidateFlexItemContentLogicalWidthsIfNeeded(const FlexLayoutItem&);
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);

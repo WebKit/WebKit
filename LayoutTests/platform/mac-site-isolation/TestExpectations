@@ -197,7 +197,6 @@ imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-179.xht 
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-198.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-body.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-box/margin-trim/flex-column-shrink.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/block-in-inline-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/flexbox/multi-line-column-flex-fragmentation-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/flexbox/single-line-row-flex-fragmentation-014.html [ ImageOnlyFailure ]

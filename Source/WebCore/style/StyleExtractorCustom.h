@@ -426,9 +426,9 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
             // A renderer will have a specific margin marked as trimmed by setting its rare data bit if:
             // 1.) The layout system the box is in has this logic (setting the rare data bit for this
             // specific margin) implemented
-            // 2.) The block container/flexbox/grid has this margin specified in its margin-trim style
+            // 2.) The block container/grid has this margin specified in its margin-trim style
             // If marginTrimSide is empty we will check if any of the supported margins are in the style
-            if (renderer.isFlexItem() || renderer.isGridItem())
+            if (renderer.isGridItem())
                 return renderer.parent()->style().marginTrim().contains(marginTrimSide());
 
             // Even though margin-trim is not inherited, it is possible for nested block level boxes
@@ -447,7 +447,7 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
 
         auto toMarginTrimSide = [](const RenderBox& renderer) -> MarginTrimSide {
             auto formattingContextRootStyle = [](const RenderBox& renderer) -> const ComputedStyle& {
-                if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
+                if (auto* ancestorToUse = renderer.isGridItem() ? renderer.parent() : renderer.containingBlock())
                     return ancestorToUse->style();
                 ASSERT_NOT_REACHED();
                 return renderer.style();

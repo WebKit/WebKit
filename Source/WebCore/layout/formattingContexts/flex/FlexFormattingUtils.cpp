@@ -244,19 +244,6 @@ LayoutUnit FlexFormattingUtils::usedMainAxisMarginExtentForFlexItem(const FlexLa
     return usedMainAxisMarginExtentForFlexItem(flexLayoutItem.renderer.get());
 }
 
-// The item's margin at the main-axis end, in the flex container's writing mode.
-LayoutUnit FlexFormattingUtils::mainAxisMarginEndForFlexItem(const RenderFlexibleBox& flexBox, const FlexLayoutItem& flexLayoutItem)
-{
-    CheckedRef flexItem = flexLayoutItem.renderer;
-    auto containerWritingMode = flexBox.style().writingMode();
-    return isHorizontalFlow(flexBox) ? flexItem->marginEnd(containerWritingMode) : flexItem->marginAfter(containerWritingMode);
-}
-
-LayoutUnit FlexFormattingUtils::mainAxisMarginEndForFlexItem(const FlexLayoutItem& flexLayoutItem) const
-{
-    return mainAxisMarginEndForFlexItem(flexBox(), flexLayoutItem);
-}
-
 LayoutUnit FlexFormattingUtils::crossAxisMarginExtentForFlexItem(const RenderBox& flexItem)
 {
     CheckedRef flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
@@ -580,34 +567,6 @@ std::optional<TextDirection> FlexFormattingUtils::leftRightAxisDirectionFromStyl
     }
 
     return std::nullopt;
-}
-
-bool FlexFormattingUtils::shouldTrimMainAxisMarginStart() const
-{
-    if (isHorizontalFlow(flexBox()))
-        return flexBox().style().marginTrim().contains(Style::MarginTrimSide::InlineStart);
-    return flexBox().style().marginTrim().contains(Style::MarginTrimSide::BlockStart);
-}
-
-bool FlexFormattingUtils::shouldTrimMainAxisMarginEnd() const
-{
-    if (isHorizontalFlow(flexBox()))
-        return flexBox().style().marginTrim().contains(Style::MarginTrimSide::InlineEnd);
-    return flexBox().style().marginTrim().contains(Style::MarginTrimSide::BlockEnd);
-}
-
-bool FlexFormattingUtils::shouldTrimCrossAxisMarginStart() const
-{
-    if (isHorizontalFlow(flexBox()))
-        return flexBox().style().marginTrim().contains(Style::MarginTrimSide::BlockStart);
-    return flexBox().style().marginTrim().contains(Style::MarginTrimSide::InlineStart);
-}
-
-bool FlexFormattingUtils::shouldTrimCrossAxisMarginEnd() const
-{
-    if (isHorizontalFlow(flexBox()))
-        return flexBox().style().marginTrim().contains(Style::MarginTrimSide::BlockEnd);
-    return flexBox().style().marginTrim().contains(Style::MarginTrimSide::InlineEnd);
 }
 
 FlowDirection FlexFormattingUtils::transformedBlockFlowDirection() const

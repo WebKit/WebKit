@@ -37,7 +37,6 @@
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StyleMarginTrim.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -140,87 +139,12 @@ FlexLayoutItems FlexLayout::buildFlexLayoutItems(RelayoutChildren relayoutChildr
         }
 
         auto everHadLayout = flexItem->everHadLayout();
-        if (everHadLayout && flexItem->hasTrimmedMargin(std::optional<Style::MarginTrimSide> { }))
-            flexItem->clearTrimmedMarginsMarkings();
         if (flexItem->shouldInvalidateContentWidths())
             flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
         flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *flexItem);
         flexLayoutItems.append({ *flexItem, constraints.isHorizontalFlow, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
     return flexLayoutItems;
-}
-
-// RenderFlexibleBox trims the first and last in-flow child's inline margins before the flex algorithm runs, so
-// that they stay out of the container's intrinsic widths. Recompute that from style each layout rather than
-// carrying it in a member the renderer has to remember to seed and clear.
-FlexLayoutState::MarginTrimItems FlexLayout::marginTrimItemsBeforeFlexLayout() const
-{
-    auto marginTrim = flexBox().style().marginTrim();
-    if (marginTrim.isNone())
-        return { };
-
-    auto trimsInlineStart = marginTrim.contains(Style::MarginTrimSide::InlineStart);
-    auto trimsInlineEnd = marginTrim.contains(Style::MarginTrimSide::InlineEnd);
-    if (!trimsInlineStart && !trimsInlineEnd)
-        return { };
-
-    // The items at the start and end of the container's single line of items, in the order the flex algorithm will
-    // use: the lowest and highest used 'order' value, document order breaking ties. Scanning for them keeps this in
-    // step with buildFlexItemList without having to build the sorted list before the container has been sized.
-    CheckedPtr<RenderBox> firstFlexItem;
-    CheckedPtr<RenderBox> lastFlexItem;
-    for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
-        if (child->isOutOfFlowPositioned() || child->isExcludedFromNormalLayout())
-            continue;
-        auto order = child->style().order().value;
-        if (!firstFlexItem || order < firstFlexItem->style().order().value)
-            firstFlexItem = child.ptr();
-        if (!lastFlexItem || order >= lastFlexItem->style().order().value)
-            lastFlexItem = child.ptr();
-    }
-    if (!firstFlexItem)
-        return { };
-
-    auto marginTrimItems = FlexLayoutState::MarginTrimItems { };
-    auto isRowsFlexbox = FlexFormattingUtils::isHorizontalFlow(flexBox());
-    if (trimsInlineStart)
-        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineStart.add(*firstFlexItem) : marginTrimItems.itemsOnFirstFlexLine.add(*firstFlexItem);
-    if (trimsInlineEnd)
-        isRowsFlexbox ? marginTrimItems.itemsAtFlexLineEnd.add(*lastFlexItem) : marginTrimItems.itemsOnLastFlexLine.add(*lastFlexItem);
-    return marginTrimItems;
-}
-
-bool FlexLayout::isFlexItemEligibleForMarginTrim(Style::MarginTrimSide marginTrimSide, const RenderBox& flexItem) const
-{
-    ASSERT(flexBox().style().marginTrim().contains(marginTrimSide));
-
-    auto isTrimmed = [&](const FlexLayoutState::MarginTrimItems& marginTrimItems) {
-        auto isMarginParallelWithMainAxis = FlexFormattingUtils::isHorizontalFlow(flexBox())
-            ? marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::BlockEnd
-            : marginTrimSide == Style::MarginTrimSide::InlineStart || marginTrimSide == Style::MarginTrimSide::InlineEnd;
-        auto isStartSide = marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::InlineStart;
-        if (isMarginParallelWithMainAxis)
-            return isStartSide ? marginTrimItems.itemsOnFirstFlexLine.contains(flexItem) : marginTrimItems.itemsOnLastFlexLine.contains(flexItem);
-        return isStartSide ? marginTrimItems.itemsAtFlexLineStart.contains(flexItem) : marginTrimItems.itemsAtFlexLineEnd.contains(flexItem);
-    };
-
-    // The flex algorithm owns the sets while it runs and is still filling them in -- an item asks this as it lays
-    // out, which is mid-algorithm.
-    if (m_flexLayoutState)
-        return isTrimmed(m_flexLayoutState->marginTrimItems());
-
-    // Between a style change and the layout that follows, all that holds is what the container trims up front,
-    // which is also what keeps those margins out of the intrinsic widths computed in between.
-    if (flexBox().needsLayout())
-        return isTrimmed(marginTrimItemsBeforeFlexLayout());
-
-    // Otherwise the last run of the algorithm has the answer, for the queries that arrive once it is done: the
-    // scrollbar reconciliation relayout, and any later layout of an item on its own.
-    if (!m_flexLayoutResult) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    return isTrimmed(m_flexLayoutResult->marginTrimItems);
 }
 
 void FlexLayout::buildFlexItemList()
@@ -323,7 +247,7 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     auto constraints = flexLayoutConstraints();
     auto flexLayoutItems = buildFlexLayoutItems(relayoutChildren, constraints);
 
-    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { marginTrimItemsBeforeFlexLayout(), flexBox().hasDefiniteLogicalHeight() } };
+    auto flexLayoutStateScope = SetForScope { m_flexLayoutState, FlexLayoutState { flexBox().hasDefiniteLogicalHeight() } };
     auto integrationUtils = FlexIntegrationUtils { flexBox(), *m_flexLayoutState, m_flexItemContentCache };
     m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), integrationUtils, constraints, *m_flexLayoutState).layout(flexLayoutItems);
 }

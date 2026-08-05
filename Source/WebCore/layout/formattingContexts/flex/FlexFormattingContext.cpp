@@ -62,7 +62,6 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     if (flexItems.isEmpty()) {
         // No items to lay out, but the container still resolves its own height (it may establish a line even when empty).
         integrationUtils().updateFlexContainerLogicalHeight(0_lu);
-        m_result.marginTrimItems = layoutState().marginTrimItems();
         return m_result;
     }
 
@@ -80,7 +79,6 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
         flexLines = computeFlexLines(flexItems, flexBaseAndHypotheticalMainSizeList.span());
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
         flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span());
-        trimCrossAxisMarginsForFlexItems(flexItems, flexLines);
         layoutFlexItems(flexItems, flexItemsMainSizeList.span());
         // 9.4. (#7) Determine the hypothetical cross size of each item.
         auto flexItemsHypotheticalCrossSizeList = hypotheticalCrossSizeForFlexItems(flexItems);
@@ -128,7 +126,6 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     performContentAlignment();
 
     computeFlexItemRects(flexLines, flexItems, flexItemsPositionList, flexLinesCrossPositionList, flexLinesCrossSizeList, flexItemsCrossSizeList, crossAxisStartEdge, flexContainerUsedExtents.crossContentBox, flexContainerUsedExtents.crossBorderBox, flexContainerUsedExtents.blockBorderBox);
-    m_result.marginTrimItems = layoutState().marginTrimItems();
     return m_result;
 }
 
@@ -150,7 +147,7 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
     return flexBaseAndHypotheticalMainSizeList;
 }
 
-FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
+FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(const FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
 {
     layoutState().setPhase(LayoutPhase::CollectingLines);
     // 9.3. (#5) Collect flex items into flex lines: a single-line container collects all items into one line; a
@@ -162,30 +159,17 @@ FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(FlexLay
     size_t nextIndex = 0;
     while (nextIndex < flexItems.size()) {
         auto lineStartIndex = nextIndex;
-        LayoutUnit sumFlexBaseSize;
         LayoutUnit sumHypotheticalMainSize;
-        // Trim the main-axis margin of the item at the start of the flex line.
-        if (flexFormattingUtils().shouldTrimMainAxisMarginStart())
-            integrationUtils().trimMainAxisMarginStart(flexItems[nextIndex]);
         for (; nextIndex < flexItems.size(); ++nextIndex) {
             const auto& flexLayoutItem = flexItems[nextIndex];
-            if (m_constraints.isMultiline && (sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(flexBaseAndHypotheticalMainSizeList[nextIndex].hypotheticalMainSize) > mainAxisAvailableSpace && !canFitItemWithTrimmedMarginEnd(flexLayoutItem, flexBaseAndHypotheticalMainSizeList[nextIndex].hypotheticalMainSize, sumHypotheticalMainSize, mainAxisAvailableSpace)) && nextIndex > lineStartIndex)
+            if (m_constraints.isMultiline && sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(flexBaseAndHypotheticalMainSizeList[nextIndex].hypotheticalMainSize) > mainAxisAvailableSpace && nextIndex > lineStartIndex)
                 break;
-            sumFlexBaseSize += flexLayoutItem.flexBaseMarginBoxSize(flexBaseAndHypotheticalMainSizeList[nextIndex].flexBase) + gapBetweenItems;
             sumHypotheticalMainSize += flexLayoutItem.hypotheticalMainAxisMarginBoxSize(flexBaseAndHypotheticalMainSizeList[nextIndex].hypotheticalMainSize) + gapBetweenItems;
         }
 
         // We added a gap after every item but there shouldn't be one after the last item, so subtract it here. Note
-        // that sums might be negative here due to negative margins in flex items.
+        // that the sum might be negative here due to negative margins in flex items.
         sumHypotheticalMainSize -= gapBetweenItems;
-        sumFlexBaseSize -= gapBetweenItems;
-
-        // Trim the main-axis margin of the item at the end of the flex line.
-        if (flexFormattingUtils().shouldTrimMainAxisMarginEnd()) {
-            auto& lastItem = flexItems[nextIndex - 1];
-            removeMarginEndFromFlexSizes(lastItem, sumFlexBaseSize, sumHypotheticalMainSize);
-            integrationUtils().trimMainAxisMarginEnd(lastItem);
-        }
 
         flexLines.ranges.append({ lineStartIndex, nextIndex });
         flexLines.hypotheticalMainSizes.append(sumHypotheticalMainSize);
@@ -379,30 +363,6 @@ void FlexFormattingContext::distributeMainAxisFreeSpaceForMultilineColumnIfNeede
 
         layoutFlexItemsWithMainSizes(lineItems, lineFlexItemsMainSizeList);
         placeFlexItems(flexLinesCrossPositionList[lineIndex], lineItems, linePositions, remainingFreeSpace);
-    }
-}
-
-void FlexFormattingContext::trimCrossAxisMarginsForFlexItems(FlexLayoutItems& flexItems, const FlexLines& flexLines)
-{
-    // Cross axis margins are only trimmed on the first and last flex line.
-    auto shouldTrimStart = flexFormattingUtils().shouldTrimCrossAxisMarginStart();
-    auto shouldTrimEnd = flexFormattingUtils().shouldTrimCrossAxisMarginEnd();
-    if (!shouldTrimStart && !shouldTrimEnd)
-        return;
-
-    for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
-        auto shouldTrimCrossAxisStart = shouldTrimStart && !lineIndex;
-        auto shouldTrimCrossAxisEnd = shouldTrimEnd && lineIndex == flexLines.ranges.size() - 1;
-        if (!shouldTrimCrossAxisStart && !shouldTrimCrossAxisEnd)
-            continue;
-
-        auto lineRange = flexLines.ranges[lineIndex];
-        for (auto& flexLayoutItem : flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance())) {
-            if (shouldTrimCrossAxisStart)
-                integrationUtils().trimCrossAxisMarginStart(flexLayoutItem);
-            if (shouldTrimCrossAxisEnd)
-                integrationUtils().trimCrossAxisMarginEnd(flexLayoutItem);
-        }
     }
 }
 
@@ -1091,21 +1051,6 @@ bool FlexFormattingContext::flexItemHasComputableAspectRatioAndCrossSizeIsConsid
         && (flexItemCrossSizeIsDefinite(flexLayoutItem, flexFormattingUtils().preferredCrossSizeLengthForFlexItem(flexLayoutItem)) || flexFormattingUtils().hasDefiniteCrossSizeForFlexItem(flexLayoutItem));
 }
 
-bool FlexFormattingContext::canFitItemWithTrimmedMarginEnd(const FlexLayoutItem& flexLayoutItem, LayoutUnit hypotheticalMainContentSize, LayoutUnit sumHypotheticalMainSize, LayoutUnit mainAxisAvailableSpace) const
-{
-    auto marginTrim = m_constraints.style->marginTrim();
-    if ((m_constraints.isHorizontalFlow && marginTrim.contains(Style::MarginTrimSide::InlineEnd)) || (m_constraints.isColumnFlow && marginTrim.contains(Style::MarginTrimSide::BlockEnd)))
-        return sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(hypotheticalMainContentSize) - flexFormattingUtils().flowAwareMarginEndForFlexItem(flexLayoutItem) <= mainAxisAvailableSpace;
-    return false;
-}
-
-void FlexFormattingContext::removeMarginEndFromFlexSizes(FlexLayoutItem& flexLayoutItem, LayoutUnit& sumFlexBaseSize, LayoutUnit& sumHypotheticalMainSize) const
-{
-    auto margin = flexFormattingUtils().mainAxisMarginEndForFlexItem(flexLayoutItem);
-    sumFlexBaseSize -= margin;
-    sumHypotheticalMainSize -= margin;
-}
-
 LayoutUnit FlexFormattingContext::autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem> flexLayoutItems, LayoutUnit& availableFreeSpace)
 {
     // 9.5. (#12) If the remaining free space is positive and at least one main-axis margin on the line is auto,
@@ -1264,11 +1209,6 @@ FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizont
 LayoutUnit FlexLayoutItem::hypotheticalMainAxisMarginBoxSize(LayoutUnit hypotheticalMainContentSize) const
 {
     return hypotheticalMainContentSize + mainAxisBorderAndPadding + mainAxisMargin;
-}
-
-LayoutUnit FlexLayoutItem::flexBaseMarginBoxSize(LayoutUnit flexBaseContentSize) const
-{
-    return flexBaseContentSize + mainAxisBorderAndPadding + mainAxisMargin;
 }
 
 LayoutUnit FlexLayoutItem::flexedMarginBoxSize(LayoutUnit mainSize) const

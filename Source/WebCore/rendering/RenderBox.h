@@ -191,8 +191,7 @@ public:
     void computeAndSetBlockDirectionMargins(const RenderBlock& containingBlock);
 
     void markMarginAsTrimmed(Style::MarginTrimSide);
-    void clearTrimmedMarginsMarkings();
-    bool NODELETE hasTrimmedMargin(std::optional<Style::MarginTrimSide>) const;
+    bool NODELETE hasTrimmedMargin(Style::MarginTrimSide) const;
 
     enum class VisualEffectOverflowOption : uint8_t {
         ExcludeFilterOutsets,

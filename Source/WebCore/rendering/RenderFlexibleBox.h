@@ -93,8 +93,6 @@ private:
     friend class LayoutIntegration::FlexLayout;
     friend class LayoutIntegration::FlexItemIntrinsicWidthComputationScope;
 
-    bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;
-
     void clearFlexItemOverridingSizes();
 
     // The flex items' border box rects as they were before the flex algorithm ran, so layoutBlock can repaint the

@@ -1,6 +1,0 @@
-
-PASS min-content width of a wrapping flex container trims the inline margins of every item
-PASS min-content width does not depend on how many items the container holds
-PASS max-content width still trims only the items at the ends of the single line
-PASS min-content width of a nowrap flex container trims only the items at the ends of the line
-

@@ -75,18 +75,11 @@ public:
     // resolved against it meaningful.
     bool hasDefiniteSizeForPercentResolution(const RenderBox& flexItem);
 
-    // Whether the given side of the item's margin has been trimmed, for RenderFlexibleBox::isChildEligibleForMarginTrim.
-    // Answered from the running flex algorithm while it is running, and from what it last produced otherwise --
-    // the container is sized before layout, and its items can be laid out on their own after.
-    bool isFlexItemEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox& flexItem) const;
-
     void setFlexItemContentLogicalHeightFromLayout(const RenderBox& flexItem, LayoutUnit);
     void invalidateBlockAxisSizeForFlexItem(const RenderBox& flexItem);
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
 private:
-    FlexLayoutState::MarginTrimItems marginTrimItemsBeforeFlexLayout() const;
-
     void buildFlexItemList();
     FlexLayoutItems buildFlexLayoutItems(RelayoutChildren, const FlexLayoutConstraints&);
     FlexLayoutConstraints flexLayoutConstraints() const;

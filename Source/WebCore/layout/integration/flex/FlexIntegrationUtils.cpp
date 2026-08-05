@@ -35,7 +35,6 @@
 #include "RenderReplaced.h"
 #include "RenderTable.h"
 #include "RenderView.h"
-#include "StyleMarginTrim.h"
 #include "StyleMaximumSize.h"
 #include "StyleMinimumSize.h"
 #include "StylePreferredSize.h"
@@ -274,52 +273,6 @@ void FlexIntegrationUtils::invalidateFlexItemContentLogicalWidthsIfNeeded(const 
     CheckedRef flexItem = flexLayoutItem.renderer;
     if (flexItem->shouldInvalidateContentWidths())
         flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
-}
-
-void FlexIntegrationUtils::setTrimmedMarginForChild(const FlexLayoutItem& flexLayoutItem, Style::MarginTrimSide side)
-{
-    flexBox().setTrimmedMarginForChild(flexLayoutItem.renderer.get(), side);
-}
-
-void FlexIntegrationUtils::trimMainAxisMarginStart(FlexLayoutItem& flexLayoutItem)
-{
-    CheckedRef renderer = flexLayoutItem.renderer;
-    auto horizontalFlow = FlexFormattingUtils::isHorizontalFlow(flexBox());
-    auto containerWritingMode = flexBox().style().writingMode();
-    flexLayoutItem.mainAxisMargin -= horizontalFlow ? renderer->marginStart(containerWritingMode) : renderer->marginBefore(containerWritingMode);
-    if (horizontalFlow)
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
-    else
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockStart);
-    flexLayoutState().addItemAtFlexLineStart(flexLayoutItem.renderer.get());
-}
-
-void FlexIntegrationUtils::trimMainAxisMarginEnd(FlexLayoutItem& flexLayoutItem)
-{
-    flexLayoutItem.mainAxisMargin -= FlexFormattingUtils::mainAxisMarginEndForFlexItem(flexBox(), flexLayoutItem);
-    if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
-    else
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);
-    flexLayoutState().addItemAtFlexLineEnd(flexLayoutItem.renderer.get());
-}
-
-void FlexIntegrationUtils::trimCrossAxisMarginStart(const FlexLayoutItem& flexLayoutItem)
-{
-    if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockStart);
-    else
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineStart);
-    flexLayoutState().addItemOnFirstFlexLine(flexLayoutItem.renderer.get());
-}
-
-void FlexIntegrationUtils::trimCrossAxisMarginEnd(const FlexLayoutItem& flexLayoutItem)
-{
-    if (FlexFormattingUtils::isHorizontalFlow(flexBox()))
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::BlockEnd);
-    else
-        setTrimmedMarginForChild(flexLayoutItem, Style::MarginTrimSide::InlineEnd);
-    flexLayoutState().addItemOnLastFlexLine(flexLayoutItem.renderer.get());
 }
 
 LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const
