@@ -86,6 +86,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-name-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-nearest-dirty.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-nearest-with-absolute-positioned-element.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-on-pseudo-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-on-pseudo-002.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-on-pseudo-like-part.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-on-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-paused-animations.html
@@ -121,6 +123,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-name-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-name-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-paused-animations.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-pseudo-on-scroller-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-pseudo-on-scroller-002.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-pseudo-on-scroller.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update-reversed-animation.html

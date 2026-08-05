@@ -1,6 +1,6 @@
 
-PASS Outer animation can see scroll timeline defined by :host
-PASS Outer animation can see scroll timeline defined by ::slotted
+FAIL Outer animation can not see scroll timeline defined by :host assert_equals: expected "x" but got "y"
+FAIL Outer animation can not see scroll timeline defined by ::slotted assert_equals: expected "x" but got "y"
 PASS Inner animation can see scroll timeline defined by ::part
-PASS Slotted element can see scroll timeline within the shadow
+PASS Animation inside shadow DOM can see the scroll timeline defined by the ancestor DOM
 
