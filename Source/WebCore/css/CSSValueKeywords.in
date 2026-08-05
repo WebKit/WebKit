@@ -998,6 +998,11 @@ if
 -internal-auto-base
 
 //
+// Whole-value functions
+//
+cycle
+
+//
 // CSS_PROP_BREAK_BEFORE/AFTER/INSIDE
 //
 avoid-column

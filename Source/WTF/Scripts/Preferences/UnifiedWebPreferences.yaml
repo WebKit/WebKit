@@ -1216,6 +1216,20 @@ CSSCounterStyleAtRuleImageSymbolsEnabled:
     WebCore:
       default: false
 
+CSSCycleFunctionEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS cycle() function"
+  humanReadableDescription: "Enable CSS Values 5 cycle() function"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSDPropertyEnabled:
   type: bool
   status: preview
@@ -1727,20 +1741,6 @@ CSSTextWrapPrettyEnabled:
        default: true
      WebCore:
        default: true
-
-CSSToggleFunctionEnabled:
-  type: bool
-  status: testable
-  category: css
-  humanReadableName: "CSS toggle() function"
-  humanReadableDescription: "Enable CSS Values 5 toggle() function"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 CSSTransformStyleSeparatedEnabled:
   type: bool

@@ -132,6 +132,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssCalcMixEnabled { settings.cssCalcMixEnabled() }
     , cssIdentFunctionEnabled { settings.cssIdentFunctionEnabled() }
     , cssIfFunctionEnabled { settings.cssIfFunctionEnabled() }
+    , cssCycleFunctionEnabled { settings.cssCycleFunctionEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
 }
@@ -183,6 +184,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssCalcMixEnabled,
         context.cssIdentFunctionEnabled,
         context.cssIfFunctionEnabled,
+        context.cssCycleFunctionEnabled,
         context.legacyFontFaceAttributeMode
     );
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, context.enclosingRuleType, bits);

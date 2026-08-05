@@ -31,9 +31,11 @@
 #include "config.h"
 #include "CSSPropertyParser.h"
 
+#include "CSSCalcTree+Parser.h"
 #include "CSSCustomIdentValue.h"
 #include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSFunctionValue.h"
 #include "CSSKeywordValueInlines.h"
 #include "CSSMarkup.h"
 #include "CSSParserContext.h"
@@ -41,6 +43,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
@@ -122,6 +125,16 @@ static bool consumePositionTryDescriptor(CSSParserTokenRange&, const CSSParserCo
 
 // @function descriptors.
 static bool consumeFunctionDescriptor(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, CSS::PropertyParserResult&);
+
+enum class CycleFunctionParseResult : uint8_t {
+    Parsed,
+    PendingSubstitution,
+    Invalid,
+    NotACycle,
+};
+
+// https://drafts.csswg.org/css-values-5/#toggle-notation
+static CycleFunctionParseResult consumeCycleFunctionValue(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, CSS::PropertyParserState&, IsImportant, CSS::PropertyParserResult&);
 
 // MARK: - CSSPropertyID parsing
 
@@ -617,16 +630,33 @@ bool consumeStyleProperty(CSSParserTokenRange& range, const CSSParserContext& co
         .important = important,
     };
 
-    if (WebCore::isShorthand(property)) {
-        auto rangeCopy = range;
-        if (RefPtr keywordValue = consumeCSSWideKeywordValue(rangeCopy)) {
+    auto rangeCopy = range;
+    if (RefPtr keywordValue = consumeCSSWideKeywordValue(rangeCopy)) {
+        if (WebCore::isShorthand(property))
             result.addPropertyForAllLonghandsOfCurrentShorthand(state, WTF::move(keywordValue));
-            range = rangeCopy;
-            return true;
-        }
+        else
+            result.addProperty(state, property, CSSPropertyInvalid, WTF::move(keywordValue), important);
+        range = rangeCopy;
+        return true;
+    }
 
-        auto originalRange = range;
+    auto originalRange = range;
 
+    switch (consumeCycleFunctionValue(range, context, property, state, important, result)) {
+    case CycleFunctionParseResult::NotACycle:
+        break;
+    case CycleFunctionParseResult::Parsed:
+        return true;
+    case CycleFunctionParseResult::Invalid:
+        return false;
+    case CycleFunctionParseResult::PendingSubstitution:
+        // consumeCycleFunctionValue() bails out for shorthands, so this is always a longhand.
+        ASSERT(!WebCore::isShorthand(property));
+        result.addProperty(state, property, CSSPropertyInvalid, CSSSubstitutionValue::create(originalRange, namespaceMap, context), important);
+        return true;
+    }
+
+    if (WebCore::isShorthand(property)) {
         if (CSSPropertyParsing::parseStylePropertyShorthand(range, property, state, result))
             return true;
 
@@ -634,26 +664,19 @@ bool consumeStyleProperty(CSSParserTokenRange& range, const CSSParserContext& co
             result.addPropertyForAllLonghandsOfCurrentShorthand(state, CSSShorthandSubstitutionValue::create(property, CSSSubstitutionValue::create(originalRange, namespaceMap, context)));
             return true;
         }
-    } else {
-        auto rangeCopy = range;
-        if (RefPtr keywordValue = consumeCSSWideKeywordValue(rangeCopy)) {
-            result.addProperty(state, property, CSSPropertyInvalid, WTF::move(keywordValue), important);
-            range = rangeCopy;
-            return true;
-        }
 
-        auto originalRange = range;
+        return false;
+    }
 
-        RefPtr parsedValue = CSSPropertyParsing::parseStylePropertyLonghand(range, property, state);
-        if (parsedValue && range.atEnd()) {
-            result.addProperty(state, property, CSSPropertyInvalid, WTF::move(parsedValue), important);
-            return true;
-        }
+    RefPtr parsedValue = CSSPropertyParsing::parseStylePropertyLonghand(range, property, state);
+    if (parsedValue && range.atEnd()) {
+        result.addProperty(state, property, CSSPropertyInvalid, WTF::move(parsedValue), important);
+        return true;
+    }
 
-        if (CSSSubstitutionParser::containsSubstitutionFunctions(originalRange, context)) {
-            result.addProperty(state, property, CSSPropertyInvalid, CSSSubstitutionValue::create(originalRange, namespaceMap, context), important);
-            return true;
-        }
+    if (CSSSubstitutionParser::containsSubstitutionFunctions(originalRange, context)) {
+        result.addProperty(state, property, CSSPropertyInvalid, CSSSubstitutionValue::create(originalRange, namespaceMap, context), important);
+        return true;
     }
 
     return false;
@@ -840,6 +863,81 @@ bool consumeFunctionDescriptor(CSSParserTokenRange& range, const CSSParserContex
 
     result.addProperty(state, property, CSSPropertyInvalid, WTF::move(parsedValue), IsImportant::No);
     return true;
+}
+
+// Each cycle() argument is a <whole-value>: a complete value for the property. Nested cycle()
+// is not allowed, and neither is attr() or calc().
+static bool cycleArgumentContainsDisallowedFunctions(CSSParserTokenRange cycleArgumentRange)
+{
+    Vector<CSSParserTokenRange> stack { cycleArgumentRange };
+    while (!stack.isEmpty()) {
+        auto current = stack.takeLast();
+        while (!current.atEnd()) {
+            if (current.peek().getBlockType() == CSSParserToken::BlockStart) {
+                auto functionId = current.peek().functionId();
+                if (functionId == CSSValueCycle || functionId == CSSValueAttr || CSSCalc::isCalcFunction(functionId))
+                    return true;
+                stack.append(current.consumeBlock());
+                continue;
+            }
+            current.consume();
+        }
+    }
+
+    return false;
+}
+
+CycleFunctionParseResult consumeCycleFunctionValue(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, CSS::PropertyParserState& state, IsImportant important, CSS::PropertyParserResult& result)
+{
+    if (!context.cssCycleFunctionEnabled)
+        return CycleFunctionParseResult::NotACycle;
+    if (range.peek().functionId() != CSSValueCycle)
+        return CycleFunctionParseResult::NotACycle;
+
+    // FIXME: Support cycle() on shorthands, which distributes each argument across the
+    // shorthand's longhands. https://drafts.csswg.org/css-values-5/#cycle-notation
+    if (WebCore::isShorthand(property))
+        return CycleFunctionParseResult::NotACycle;
+
+    auto rangeCopy = range;
+    auto function = CSSPropertyParserHelpers::consumeFunction(rangeCopy);
+
+    // cycle() is a whole-value function, so it must make up the entire declaration value.
+    if (!rangeCopy.atEnd())
+        return CycleFunctionParseResult::Invalid;
+
+    CSSValueListBuilder argumentListBuilder;
+    bool isPendingSubstitution = false;
+    unsigned index = 0;
+    while (auto argument = CSSPropertyParserHelpers::consumeArgument(function, index)) {
+        auto argumentRange = *argument;
+        if (cycleArgumentContainsDisallowedFunctions(argumentRange))
+            return CycleFunctionParseResult::Invalid;
+
+        if (CSSSubstitutionParser::containsSubstitutionFunctions(argumentRange, context)) {
+            isPendingSubstitution = true;
+            ++index;
+            continue;
+        }
+
+        auto value = CSSPropertyParsing::parseStylePropertyLonghand(argumentRange, property, state);
+        if (!value)
+            return CycleFunctionParseResult::Invalid;
+        if (!argumentRange.atEnd())
+            return CycleFunctionParseResult::Invalid;
+        argumentListBuilder.append(value.releaseNonNull());
+        ++index;
+    }
+
+    if (isPendingSubstitution)
+        return CycleFunctionParseResult::PendingSubstitution;
+
+    if (argumentListBuilder.isEmpty())
+        return CycleFunctionParseResult::Invalid;
+
+    range = rangeCopy;
+    result.addProperty(state, property, CSSPropertyInvalid, CSSFunctionValue::create(CSSValueCycle, WTF::move(argumentListBuilder)), important);
+    return CycleFunctionParseResult::Parsed;
 }
 
 } // namespace WebCore
