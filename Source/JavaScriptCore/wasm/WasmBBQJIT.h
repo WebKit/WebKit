@@ -1143,7 +1143,8 @@ public:
     {
         if (WTF::sumOverflows<uint64_t>(static_cast<uint64_t>(sizeOfOperation), uoffset)) {
             recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
-            return Location::fromGPR(wasmBaseMemoryPointer);
+            consume(pointer);
+            return Location::fromGPR(wasmScratchGPR);
         }
 
         ScratchScope<1, 0> scratches(*this);
@@ -1173,7 +1174,8 @@ public:
 
             if (sumOverflows<uint64_t>(constantPointer, boundary)) {
                 recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
-                return Location::fromGPR(wasmBaseMemoryPointer);
+                consume(pointer);
+                return Location::fromGPR(wasmScratchGPR);
             }
 
             pointerLocation = Location::fromGPR(scratches.gpr(0));
@@ -1298,7 +1300,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    Address materializePointer(Location pointerLocation, uint32_t uoffset);
+    Address materializePointer(Location pointerLocation, uint64_t uoffset);
 
     constexpr static const char* LOAD_OP_NAMES[14] = {
         "I32Load", "I64Load", "F32Load", "F64Load",

@@ -88,6 +88,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
                     break;
                 }
                 case MemoryMode::Signaling: {
+                    RELEASE_ASSERT(!m_info.memory(memoryIndex).isMemory64());
                     // FIXME: it seems like this check is covered by the constantPointer + boundary >= maximum check below?
                     if (uoffset >= Memory::fastMappedRedzoneBytes()) {
                         uint64_t maximum = m_info.memory(memoryIndex).maximum() ? m_info.memory(memoryIndex).maximum().bytes() : std::numeric_limits<uint32_t>::max();
