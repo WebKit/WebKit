@@ -168,7 +168,10 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
     }
 
     auto shouldBuildAnonymousBlock = [&] {
-        constexpr auto parentRequiresAnonymousBlock = EnumSet {
+        if (m_buildsSimpleAnonymousBlocks)
+            return true;
+
+        constexpr auto parentRequiresAnonymousBlockByDisplayValue = EnumSet {
             Style::DisplayType::BlockFlex,
             Style::DisplayType::InlineFlex,
             Style::DisplayType::BlockDeprecatedFlex,
@@ -176,7 +179,9 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
             Style::DisplayType::BlockGrid,
             Style::DisplayType::InlineGrid
         };
-        return m_buildsSimpleAnonymousBlocks || parentRequiresAnonymousBlock.contains(parent.style().display().value);
+        if (parentRequiresAnonymousBlockByDisplayValue.contains(parent.style().display().value))
+            return true;
+        return parent.isRenderMathMLBlock() || parent.isFieldset() || parent.isRenderMultiColumnFlow();
     };
 
     if (!shouldBuildAnonymousBlock()) {
