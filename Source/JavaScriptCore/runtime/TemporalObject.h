@@ -126,4 +126,11 @@ void throwTemporalError(JSGlobalObject*, ThrowScope&, const TemporalError&);
 
 std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
 
+enum class TemporalConstructTarget : bool { Intrinsic, NewTarget };
+
+struct TemporalNewTarget {
+    JSObject* newTarget { nullptr };
+    JSObject* constructor { nullptr };
+};
+
 } // namespace JSC

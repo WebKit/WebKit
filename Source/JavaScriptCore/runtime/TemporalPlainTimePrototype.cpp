@@ -191,7 +191,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncUntil, (JSGlobalObject* g
     auto result = plainTime->until(globalObject, other, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.since
@@ -212,7 +212,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncSince, (JSGlobalObject* g
     auto result = plainTime->since(globalObject, other, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.round

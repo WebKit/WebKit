@@ -87,9 +87,6 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainTime, (JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Step 1: NewTarget undefined -> TypeError (handled by JSC dispatch).
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainTimeStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
 
     // Steps 2-7: If each arg is undefined set to 0; else ?ToIntegerWithTruncation(arg).
     ISO8601::Duration duration { };
@@ -109,8 +106,14 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainTime, (JSGlobalObject* globalObje
             return throwVMRangeError(globalObject, scope, "Temporal.PlainTime properties must be finite"_s);
         duration.setField(durationIndex, std::trunc(v));
     }
-    // Steps 8-10: IsValidTime -> CreateTimeRecord -> CreateTemporalTime.
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::tryCreateIfValid(globalObject, structure, WTF::move(duration))));
+    // Steps 8-9: IsValidTime + CreateTimeRecord. Ahead of Step 10 so the observable
+    // Get(NewTarget, "prototype") inside CreateTemporalTime cannot run before validation.
+    auto plainTime = TemporalPlainTime::validateAndCreateTimeRecord(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Step 10: Return ? CreateTemporalTime(time, NewTarget).
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalTime(globalObject, WTF::move(plainTime),
+        { asObject(callFrame->newTarget()), callFrame->jsCallee() })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainTime, (JSGlobalObject* globalObject, CallFrame*))

@@ -28,6 +28,7 @@
 #include "TemporalPlainTime.h"
 
 #include "DurationArithmetic.h"
+#include "InternalFunction.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "Rounding.h"
@@ -115,18 +116,19 @@ ISO8601::PlainTime TemporalPlainTime::validateAndCreateTimeRecord(JSGlobalObject
     };
 }
 
-// CreateTemporalTime ( time [ , newTarget ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporaltime
-TemporalPlainTime* TemporalPlainTime::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::Duration&& duration)
+TemporalPlainTime* createTemporalTime(JSGlobalObject* globalObject, ISO8601::PlainTime&& plainTime, TemporalNewTarget newTarget)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // IsValidTime + materialize the Time Record.
-    auto plainTime = validateAndCreateTimeRecord(globalObject, duration);
+    // Step 1: If newTarget is not present, set newTarget to %Temporal.PlainTime%.
+    // Step 2: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.PlainTime.prototype%", « ... »).
+    ASSERT(newTarget.newTarget && newTarget.constructor);
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainTimeStructure, newTarget.newTarget, newTarget.constructor);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Steps 1-4: OrdinaryCreateFromConstructor + set [[Time]].
+    // Step 3: set [[Time]]. Step 4: Return object.
     return TemporalPlainTime::create(vm, structure, WTF::move(plainTime));
 }
 

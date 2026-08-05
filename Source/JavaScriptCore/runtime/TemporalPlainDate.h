@@ -44,9 +44,6 @@ public:
     static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&);
     static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, String&&);
     static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, CalendarID);
-    static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&);
-    static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, String&& calendarId);
-    static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, CalendarID);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -87,5 +84,10 @@ private:
     ISO8601::PlainDate m_plainDate;
     CalendarID m_calendarID { 0 };
 };
+
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, String&& calendarId);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID, TemporalNewTarget);
 
 } // namespace JSC

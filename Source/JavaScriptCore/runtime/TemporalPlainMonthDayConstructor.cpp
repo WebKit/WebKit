@@ -86,9 +86,6 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Step 1: NewTarget check done by JSC engine (callFrame->newTarget() is never undefined here).
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainMonthDayStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
 
     // Step 3: m = ? ToIntegerWithTruncation(isoMonth).
     double isoMonth = callFrame->argument(0).toIntegerWithTruncation(globalObject);
@@ -127,16 +124,17 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
     }
 
     // Step 9: If IsValidISODate(y, m, d) is false, throw RangeError.
-    // Step 10: If ISODateWithinLimits(CreateISODateRecord(y, m, d)) is false, throw RangeError.
     if (!ISO8601::isYearWithinLimits(referenceYear)
         || !ISO8601::isValidISODate(referenceYear, isoMonth, isoDay)
         || !ISO8601::isDateTimeWithinLimits(referenceYear, isoMonth, isoDay, 12, 0, 0, 0, 0, 0)) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "PlainMonthDay: date out of range of ECMAScript representation"_s);
 
-    // Step 11: Return ? CreateTemporalMonthDay(isoDate, calendar).
-    auto* result = TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(ISO8601::PlainDate(clampTo<int32_t>(referenceYear), isoMonth, isoDay)));
-    if (result && calId != iso8601CalendarID())
-        result->setCalendarID(calId);
+    // Step 10: If ISODateWithinLimits(CreateISODateRecord(y, m, d)) is false, throw RangeError.
+    // Step 11: Return ? CreateTemporalMonthDay(isoDate, calendar, NewTarget).
+    auto* result = createTemporalMonthDay(globalObject,
+        ISO8601::PlainDate(clampTo<int32_t>(referenceYear), isoMonth, isoDay), calId,
+        { asObject(callFrame->newTarget()), callFrame->jsCallee() });
+    RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);
 }
 

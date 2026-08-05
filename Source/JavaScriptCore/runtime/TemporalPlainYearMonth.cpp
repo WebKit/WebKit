@@ -29,6 +29,7 @@
 
 #include "CalendarFields.h"
 #include "CalendarICUBridge.h"
+#include "InternalFunction.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "Rounding.h"
@@ -60,20 +61,45 @@ TemporalPlainYearMonth::TemporalPlainYearMonth(VM& vm, Structure* structure, ISO
 {
 }
 
-
-// CreateTemporalYearMonth ( isoDate, calendar [, newTarget ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalyearmonth
-TemporalPlainYearMonth* TemporalPlainYearMonth::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate)
+template<TemporalConstructTarget target>
+static TemporalPlainYearMonth* createTemporalYearMonthImpl(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID, TemporalNewTarget newTarget = { })
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: If ISOYearMonthWithinLimits(isoDate) is false, throw a RangeError exception.
     if (!ISO8601::isYearMonthWithinLimits(plainDate.year(), plainDate.month())) [[unlikely]] {
         throwRangeError(globalObject, scope, "PlainYearMonth is out of range of ECMAScript representation"_s);
         return { };
     }
 
-    return TemporalPlainYearMonth::create(vm, structure, ISO8601::PlainYearMonth(WTF::move(plainDate)));
+    // Step 2: If newTarget is not present, set newTarget to %Temporal.PlainYearMonth%.
+    // Step 3: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.PlainYearMonth.prototype%", « ... »).
+    Structure* structure;
+    if constexpr (target == TemporalConstructTarget::Intrinsic)
+        structure = globalObject->plainYearMonthStructure();
+    else {
+        ASSERT(newTarget.newTarget && newTarget.constructor);
+        structure = JSC_GET_DERIVED_STRUCTURE(vm, plainYearMonthStructure, newTarget.newTarget, newTarget.constructor);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // Steps 4-5: set [[ISODate]] and [[Calendar]]. Step 6: Return object.
+    auto* object = TemporalPlainYearMonth::create(vm, structure, ISO8601::PlainYearMonth(WTF::move(plainDate)));
+    if (calendarID != iso8601CalendarID())
+        object->setCalendarID(calendarID);
+    return object;
+}
+
+TemporalPlainYearMonth* createTemporalYearMonth(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID)
+{
+    return createTemporalYearMonthImpl<TemporalConstructTarget::Intrinsic>(globalObject, WTF::move(plainDate), calendarID);
+}
+
+TemporalPlainYearMonth* createTemporalYearMonth(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID, TemporalNewTarget newTarget)
+{
+    return createTemporalYearMonthImpl<TemporalConstructTarget::NewTarget>(globalObject, WTF::move(plainDate), calendarID, newTarget);
 }
 
 String TemporalPlainYearMonth::toString() const
@@ -145,22 +171,18 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         }
 
         // Step 10: isoDate = CreateISODateRecord(year, month, day) — short form gives day=1 from the parser.
-        // Step 11: If ISOYearMonthWithinLimits(isoDate) is false, throw. (Enforced inside tryCreateIfValid.)
+        // Step 11: If ISOYearMonthWithinLimits(isoDate) is false, throw.
         // Steps 12+14+15: fields = ISODateToFields; isoDate = ? CalendarYearMonthFromFields; ! CreateTemporalYearMonth.
-        //                 Fused into plainYearMonthFromISODate + tryCreateIfValid for non-ISO; direct for ISO.
+        //                 Fused into plainYearMonthFromISODate + createTemporalYearMonth for non-ISO; direct for ISO.
         if (calendarId == iso8601CalendarID())
-            RELEASE_AND_RETURN(scope, TemporalPlainYearMonth::tryCreateIfValid(globalObject, globalObject->plainYearMonthStructure(), ISO8601::PlainDate(plainDate.year(), plainDate.month(), 1)));
+            RELEASE_AND_RETURN(scope, createTemporalYearMonth(globalObject, ISO8601::PlainDate(plainDate.year(), plainDate.month(), 1)));
 
         auto resolved = TemporalCore::plainYearMonthFromISODate(calendarId, plainDate);
         if (!resolved) [[unlikely]] {
             throwRangeError(globalObject, scope, String(resolved.error().message));
             return { };
         }
-        auto* result = TemporalPlainYearMonth::tryCreateIfValid(globalObject, globalObject->plainYearMonthStructure(), WTF::move(resolved->isoDate));
-        RETURN_IF_EXCEPTION(scope, { });
-        if (result)
-            result->setCalendarID(resolved->calendarId);
-        RELEASE_AND_RETURN(scope, result);
+        RELEASE_AND_RETURN(scope, createTemporalYearMonth(globalObject, WTF::move(resolved->isoDate), resolved->calendarId));
     }
 
     // Step 2: If item is an Object, then …

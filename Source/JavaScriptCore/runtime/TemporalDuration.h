@@ -45,7 +45,6 @@ public:
     }
 
     static TemporalDuration* create(VM&, Structure*, ISO8601::Duration&&);
-    static TemporalDuration* tryCreateIfValid(JSGlobalObject*, ISO8601::Duration&&, Structure* = nullptr);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -87,5 +86,8 @@ private:
 
     ISO8601::Duration m_duration;
 };
+
+TemporalDuration* createTemporalDuration(JSGlobalObject*, ISO8601::Duration&&);
+TemporalDuration* createTemporalDuration(JSGlobalObject*, ISO8601::Duration&&, TemporalNewTarget);
 
 } // namespace JSC

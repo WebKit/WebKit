@@ -90,9 +90,6 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Step 1: If NewTarget is *undefined*, throw *TypeError* — handled by callTemporalZonedDateTime.
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, zonedDateTimeStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
 
     // Step 2: Set _epochNanoseconds_ to ? ToBigInt(_epochNanoseconds_).
     JSValue bigIntValue = callFrame->argument(0).toBigInt(globalObject);
@@ -137,8 +134,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
     }
 
     // Step 11: Return ? CreateTemporalZonedDateTime(_epochNanoseconds_, _timeZone_, _calendar_, NewTarget).
-    // tryCreate re-validates isValid() as a safety net (primarily for subclasses).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreate(globalObject, structure, exactTime, *parsedTZ, calendarID)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, exactTime, *parsedTZ, calendarID, { asObject(callFrame->newTarget()), callFrame->jsCallee() })));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime

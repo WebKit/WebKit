@@ -31,6 +31,7 @@
 #include "CalendarICUBridge.h"
 #include "DateConstructor.h"
 #include "DurationArithmetic.h"
+#include "InternalFunction.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "Rounding.h"
@@ -130,9 +131,8 @@ ISO8601::PlainDate TemporalPlainDate::validateAndCreateISODateRecord(JSGlobalObj
     return ISO8601::PlainDate(year, month, day);
 }
 
-static bool isValidPlainDateOrThrow(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate)
+static bool isValidPlainDateOrThrow(JSGlobalObject* globalObject, ThrowScope& scope, const ISO8601::PlainDate& plainDate)
 {
-    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
         throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
         return false;
@@ -141,26 +141,59 @@ static bool isValidPlainDateOrThrow(JSGlobalObject* globalObject, const ISO8601:
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporaldate
-TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate)
+template<TemporalConstructTarget target>
+static TemporalPlainDate* createTemporalDateImpl(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID, TemporalNewTarget newTarget = { })
 {
-    if (!isValidPlainDateOrThrow(globalObject, plainDate))
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Step 1: If ISODateWithinLimits(isoDate) is false, throw a RangeError exception.
+    if (!isValidPlainDateOrThrow(globalObject, scope, plainDate))
         return { };
-    // Steps 2-6: OrdinaryCreateFromConstructor + [[ISODate]] + [[Calendar]].
-    return TemporalPlainDate::create(globalObject->vm(), structure, WTF::move(plainDate));
+
+    // Step 2: If newTarget is not present, set newTarget to %Temporal.PlainDate%.
+    // Step 3: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.PlainDate.prototype%", « ... »).
+    Structure* structure;
+    if constexpr (target == TemporalConstructTarget::Intrinsic)
+        structure = globalObject->plainDateStructure();
+    else {
+        ASSERT(newTarget.newTarget && newTarget.constructor);
+        structure = JSC_GET_DERIVED_STRUCTURE(vm, plainDateStructure, newTarget.newTarget, newTarget.constructor);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // Steps 4-5: set [[ISODate]] and [[Calendar]]. Step 6: Return object.
+    return TemporalPlainDate::create(vm, structure, WTF::move(plainDate), calendarID);
 }
 
-TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate, String&& calendarId)
+TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate)
 {
-    if (!isValidPlainDateOrThrow(globalObject, plainDate))
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!isValidPlainDateOrThrow(globalObject, scope, plainDate))
         return { };
-    return TemporalPlainDate::create(globalObject->vm(), structure, WTF::move(plainDate), WTF::move(calendarId));
+    return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(plainDate));
 }
 
-TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate, CalendarID calendarID)
+TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, String&& calendarId)
 {
-    if (!isValidPlainDateOrThrow(globalObject, plainDate))
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!isValidPlainDateOrThrow(globalObject, scope, plainDate))
         return { };
-    return TemporalPlainDate::create(globalObject->vm(), structure, WTF::move(plainDate), calendarID);
+    return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(plainDate), WTF::move(calendarId));
+}
+
+TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID)
+{
+    return createTemporalDateImpl<TemporalConstructTarget::Intrinsic>(globalObject, WTF::move(plainDate), calendarID);
+}
+
+TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID, TemporalNewTarget newTarget)
+{
+    return createTemporalDateImpl<TemporalConstructTarget::NewTarget>(globalObject, WTF::move(plainDate), calendarID, newTarget);
 }
 
 static TemporalPlainDate* fromImpl(JSGlobalObject*, JSValue, Variant<JSObject*, TemporalOverflow>);
@@ -226,8 +259,7 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
         }
 
         // Step 2.i: Return ! CreateTemporalDate(isoDate, calendar).
-        RELEASE_AND_RETURN(scope, TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(),
-            WTF::move(result->isoDate), result->calendarId));
+        RELEASE_AND_RETURN(scope, createTemporalDate(globalObject, WTF::move(result->isoDate), result->calendarId));
     }
 
     // String path (spec steps 3-11).
@@ -262,8 +294,8 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
         //   spec calls are no-ops on undefined and the overflow value is unused for strings.
         // Steps 10-11: isoDate = CreateISODateRecord(...); Return ? CreateTemporalDate(isoDate, calendar).
         if (calendarId == iso8601CalendarID())
-            RELEASE_AND_RETURN(scope, TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(plainDate)));
-        RELEASE_AND_RETURN(scope, TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(plainDate), WTF::move(calendarId)));
+            RELEASE_AND_RETURN(scope, createTemporalDate(globalObject, WTF::move(plainDate)));
+        RELEASE_AND_RETURN(scope, createTemporalDate(globalObject, WTF::move(plainDate), WTF::move(calendarId)));
     }
 
     throwRangeError(globalObject, scope, "invalid date string"_s);
@@ -363,8 +395,8 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
 
         // Steps 10-11: isoDate = CreateISODateRecord(...); Return ? CreateTemporalDate(isoDate, calendar).
         if (calendarId == iso8601CalendarID())
-            RELEASE_AND_RETURN(scope, TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(plainDate)));
-        RELEASE_AND_RETURN(scope, TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(plainDate), WTF::move(calendarId)));
+            RELEASE_AND_RETURN(scope, createTemporalDate(globalObject, WTF::move(plainDate)));
+        RELEASE_AND_RETURN(scope, createTemporalDate(globalObject, WTF::move(plainDate), WTF::move(calendarId)));
     }
 
     // Step 4: ParseISODateTime failed → throw RangeError.

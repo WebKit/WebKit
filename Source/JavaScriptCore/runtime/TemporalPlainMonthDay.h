@@ -41,7 +41,6 @@ public:
     }
 
     static TemporalPlainMonthDay* create(VM&, Structure*, ISO8601::PlainMonthDay&&);
-    static TemporalPlainMonthDay* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -77,5 +76,8 @@ private:
     ISO8601::PlainMonthDay m_plainMonthDay;
     CalendarID m_calendarID { 0 };
 };
+
+TemporalPlainMonthDay* createTemporalMonthDay(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID = iso8601CalendarID());
+TemporalPlainMonthDay* createTemporalMonthDay(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID, TemporalNewTarget);
 
 } // namespace JSC

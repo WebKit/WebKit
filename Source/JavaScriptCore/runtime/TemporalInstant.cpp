@@ -29,6 +29,7 @@
 
 #include "Error.h"
 #include "ISO8601.h"
+#include "InternalFunction.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
@@ -41,6 +42,25 @@
 namespace JSC {
 
 const ClassInfo TemporalInstant::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalInstant) };
+
+// https://tc39.es/proposal-temporal/#sec-temporal-createtemporalinstant
+TemporalInstant* createTemporalInstant(JSGlobalObject* globalObject, ISO8601::ExactTime exactTime, TemporalNewTarget newTarget)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Step 1: Assert: IsValidEpochNanoseconds(epochNanoseconds) is true.
+    ASSERT(exactTime.isValid());
+
+    // Step 2: If newTarget is not present, set newTarget to %Temporal.Instant%.
+    // Step 3: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.Instant.prototype%", « ... »).
+    ASSERT(newTarget.newTarget && newTarget.constructor);
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, instantStructure, newTarget.newTarget, newTarget.constructor);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Step 4: set [[EpochNanoseconds]]. Step 5: Return object.
+    return TemporalInstant::create(vm, structure, exactTime);
+}
 
 Structure* TemporalInstant::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

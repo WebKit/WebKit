@@ -85,10 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: If NewTarget is undefined, throw TypeError. (Enforced by callTemporalPlainYearMonth dispatch.)
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainYearMonthStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
+    // Step 1: If NewTarget is undefined, throw TypeError.
 
     // Step 3: Let y be ? ToIntegerWithTruncation(isoYear).
     //         Spec ToIntegerWithTruncation throws RangeError on non-finite (NaN/±Inf); JSC's helper
@@ -144,10 +141,10 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
 
     // Step 10: Let isoDate be CreateISODateRecord(y, m, ref).
     // Step 11: Return ? CreateTemporalYearMonth(isoDate, calendar, NewTarget).
-    auto* result = TemporalPlainYearMonth::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(static_cast<int32_t>(isoYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(referenceDay)));
+    auto* result = createTemporalYearMonth(globalObject,
+        ISO8601::PlainDate(static_cast<int32_t>(isoYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(referenceDay)), calId,
+        { asObject(callFrame->newTarget()), callFrame->jsCallee() });
     RETURN_IF_EXCEPTION(scope, { });
-    if (result && calId != iso8601CalendarID())
-        result->setCalendarID(calId);
     return JSValue::encode(result);
 }
 

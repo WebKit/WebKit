@@ -213,7 +213,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncStartOfDay, (JSGlobal
     }
 
     // Step 7: Return ! CreateTemporalZonedDateTime(epochNanoseconds, timeZone, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, *sodResult)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, *sodResult, zdt->timeZone(), zdt->calendarID())));
 }
 
 // temporal_rs: ZonedDateTime::with_plain_time_and_provider
@@ -261,7 +261,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithPlainTime, (JSGlo
     }
 
     // Step 8: Return ! CreateTemporalZonedDateTime(epochNs, timeZone, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, resultEpochNs)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, resultEpochNs, zdt->timeZone(), zdt->calendarID())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-adddurationtozoneddatetime
@@ -278,7 +278,7 @@ static EncodedJSValue addDurationToZonedDateTime(JSGlobalObject* globalObject, T
         return { };
     }
     // Step 9: Return ! CreateTemporalZonedDateTime(epochNanoseconds, timeZone, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, *addResult)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, *addResult, zdt->timeZone(), zdt->calendarID())));
 }
 
 // temporal_rs: ZonedDateTime::add_with_provider
@@ -383,7 +383,7 @@ static EncodedJSValue differenceTemporalZonedDateTime(JSGlobalObject* globalObje
         result = -result;
 
     // Step 12: Return result.
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // temporal_rs: ZonedDateTime::until_with_provider
@@ -471,7 +471,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncRound, (JSGlobalObjec
     // Step 14: If smallestUnit is ~nanosecond~ and roundingIncrement = 1, return new ZDT.
     // Spec requires a new object even when no rounding occurs (result !== input).
     if (smallestUnit == TemporalUnit::Nanosecond && roundingIncrement == 1)
-        RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, zdt->exactTime())));
+        RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, zdt->exactTime(), zdt->timeZone(), zdt->calendarID())));
 
     // Steps 15-17: thisNs, timeZone, calendar.
     // Step 18: isoDateTime = GetISODateTimeFor(timeZone, thisNs).
@@ -550,7 +550,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncRound, (JSGlobalObjec
     }
 
     // Step 21: Return ! CreateTemporalZonedDateTime(epochNanoseconds, timeZone, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, ISO8601::ExactTime(resultNs))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, ISO8601::ExactTime(resultNs), zdt->timeZone(), zdt->calendarID())));
 }
 
 // temporal_rs: ZonedDateTime::get_time_zone_transition_with_provider
@@ -609,7 +609,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncGetTimeZoneTransition
         return JSValue::encode(jsNull());
 
     // Step 12: Return ! CreateTemporalZonedDateTime(transition, timeZone, zonedDateTime.[[Calendar]]).
-    RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, (*transResult).value())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, (*transResult).value(), zdt->timeZone(), zdt->calendarID())));
 }
 
 // temporal_rs: ZonedDateTime::with_with_provider
@@ -714,49 +714,22 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
     ISO8601::PlainDate newDate = pdt.date;
     ISO8601::PlainTime newTime = pdt.time;
 
-    // Steps 24-25: InterpretISODateTimeOffset — resolve epoch nanoseconds.
-    // Step 24: newOffsetNanoseconds — use provided offset OR current offset.
-    // temporal_rs: ZonedDateTime::with_with_provider — offset always Some (either explicit or current).
+    // Step 24: newOffsetNanoseconds — the offset from the property bag, else the current one.
+    // temporal_rs: with_with_provider — offset is always Some (explicit or current).
     int64_t givenOffsetNs = pf.offsetNs.value_or(curOffsetNs);
 
-    // Steps 24-25: InterpretISODateTimeOffset.
-    // temporal_rs: ZonedDateTime::with_with_provider — is_exact=true when offset option is 'use'.
-    // offset_nanos = Some(givenOffsetNs) always.
-    if (offsetOpt == TemporalOffsetDisambiguation::Use) {
-        Int128 naiveNs = TemporalCore::getUTCEpochNanoseconds(newDate, newTime);
-        auto resultNs = naiveNs - Int128(givenOffsetNs);
-        RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, ISO8601::ExactTime(resultNs))));
+    // Step 25: epochNanoseconds = ? InterpretISODateTimeOffset(dateTimeResult.[[ISODate]],
+    //   dateTimeResult.[[Time]], ~option~, newOffsetNanoseconds, timeZone, disambiguation, offset,
+    //   ~match-exactly~).
+    auto epochNsResult = TemporalCore::interpretISODateTimeOffset(newDate, newTime, /* useStartOfDay */ false,
+        OffsetBehaviour::Option, offsetOpt, givenOffsetNs, /* offsetHasSubMinutePrecision */ true, zdt->timeZone(), disambiguation);
+    if (!epochNsResult) [[unlikely]] {
+        throwTemporalError(globalObject, scope, epochNsResult.error());
+        return { };
     }
 
-    if (offsetOpt == TemporalOffsetDisambiguation::Prefer || offsetOpt == TemporalOffsetDisambiguation::Reject) {
-        // InterpretISODateTimeOffset step 7: CheckISODaysRange(isoDate).
-        // The local date from with() may be outside ±10^8 days even if the UTC epoch is valid.
-        if (std::abs(dateToDaysFrom1970(newDate.year(), static_cast<int>(newDate.month()) - 1, static_cast<int>(newDate.day()))) > 1e8) {
-            throwRangeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.with result is outside the supported range"_s);
-            return { };
-        }
-        // Try to find a possible instant matching the given offset (exact match).
-        auto possible = TemporalCore::getPossibleEpochNanosecondsFor(zdt->timeZone(), newDate, newTime);
-        if (!possible) [[unlikely]] {
-            throwRangeError(globalObject, scope, possible.error().message);
-            return { };
-        }
-        for (auto& candidate : TemporalCore::epochCandidates(*possible)) {
-            auto offsetResult = TemporalCore::getOffsetNanosecondsFor(zdt->timeZone(), candidate);
-            if (offsetResult && *offsetResult == givenOffsetNs)
-                RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, candidate)));
-        }
-        if (offsetOpt == TemporalOffsetDisambiguation::Reject) {
-            throwRangeError(globalObject, scope, "ZonedDateTime.with: given offset does not match any possible instant"_s);
-            return { };
-        }
-        // Prefer: no match found, fall through to disambiguation.
-    }
-
-    auto epochNs = TemporalZonedDateTime::getEpochNanosecondsFor(globalObject, zdt->timeZone(), newDate, newTime, disambiguation);
-    RETURN_IF_EXCEPTION(scope, { });
     // Step 26: Return ! CreateTemporalZonedDateTime(epochNanoseconds, timeZone, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(zdt->withExactTime(globalObject, *epochNs)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalZonedDateTime(globalObject, *epochNsResult, zdt->timeZone(), zdt->calendarID())));
 }
 
 // temporal_rs: ZonedDateTime::with_calendar

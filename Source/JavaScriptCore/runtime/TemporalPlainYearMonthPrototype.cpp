@@ -234,10 +234,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncWith, (JSGlobalObjec
     }
 
     // Step 11: Return ! CreateTemporalYearMonth(isoDate, calendar).
-    auto* withResult = TemporalPlainYearMonth::tryCreateIfValid(globalObject, globalObject->plainYearMonthStructure(), WTF::move(result->isoDate));
+    auto* withResult = createTemporalYearMonth(globalObject, WTF::move(result->isoDate), yearMonth->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
-    if (withResult && yearMonth->calendarID() != iso8601CalendarID())
-        withResult->setCalendarID(yearMonth->calendarID());
     return JSValue::encode(withResult);
 }
 
@@ -289,7 +287,7 @@ static JSC::EncodedJSValue differenceTemporalPlainYearMonth(JSGlobalObject* glob
 
     // Step 6: If CompareISODate(yearMonth.[[ISODate]], other.[[ISODate]]) = 0, return zero-duration.
     if (!TemporalCore::isoDateCompare(thisIsoDate, otherIsoDate))
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, ISO8601::Duration(), globalObject->durationStructure())));
+        RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, ISO8601::Duration())));
 
     // Defensive: both endpoints must be within the representable date-time range before we hand
     // them to calendar arithmetic (icu4x/temporal_rs assume in-range inputs).
@@ -342,7 +340,7 @@ static JSC::EncodedJSValue differenceTemporalPlainYearMonth(JSGlobalObject* glob
         result = -result;
 
     // Step 19: Return result.
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.until
@@ -434,7 +432,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
             return { };
         }
         auto calIdCopy = resolved->calendarId;
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(resolved->isoDate), WTF::move(calIdCopy))));
+        RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDate(globalObject, WTF::move(resolved->isoDate), WTF::move(calIdCopy))));
     }
 
     auto thisYear = yearMonth->year();
@@ -445,7 +443,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
         return { };
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(*plainDateResult), yearMonth->calendarID())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDate(globalObject, WTF::move(*plainDateResult), yearMonth->calendarID())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.tostring

@@ -40,7 +40,6 @@ public:
     }
 
     static TemporalPlainTime* create(VM&, Structure*, ISO8601::PlainTime&&);
-    static TemporalPlainTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::Duration&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -81,5 +80,7 @@ private:
 
     ISO8601::PlainTime m_plainTime;
 };
+
+TemporalPlainTime* createTemporalTime(JSGlobalObject*, ISO8601::PlainTime&&, TemporalNewTarget);
 
 } // namespace JSC

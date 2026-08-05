@@ -138,8 +138,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncWith, (JSGlobalObject* glo
     auto result = duration->with(globalObject, asObject(durationLike));
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Step 24: Return ! CreateTemporalDuration(...). tryCreateIfValid runs IsValidDuration.
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result))));
+    // Step 24: Return ! CreateTemporalDuration(...).
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.negated
@@ -154,7 +154,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncNegated, (JSGlobalObject* 
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.negated called on value that's not a Duration"_s);
 
     // Step 3: Return CreateNegatedTemporalDuration(duration).
-    //   Negation preserves IsValidDuration → skip tryCreateIfValid.
+    //   Negation preserves IsValidDuration → skip createTemporalDuration.
     return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), TemporalCore::negateDuration(duration->duration())));
 }
 
@@ -170,7 +170,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncAbs, (JSGlobalObject* glob
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.abs called on value that's not a Duration"_s);
 
     // Step 3: Return ! CreateTemporalDuration(abs(years), ..., abs(nanoseconds)).
-    //   Per-field non-negative is stricter than IsValidDuration → skip tryCreateIfValid.
+    //   Per-field non-negative is stricter than IsValidDuration → skip createTemporalDuration.
     return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), TemporalCore::absDuration(duration->duration())));
 }
 
@@ -189,7 +189,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncAdd, (JSGlobalObject* glob
     auto result = duration->addDurations<AddOrSubtract::Add>(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.subtract
@@ -207,7 +207,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncSubtract, (JSGlobalObject*
     auto result = duration->addDurations<AddOrSubtract::Subtract>(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.round
@@ -230,7 +230,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncRound, (JSGlobalObject* gl
     auto result = duration->round(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.total

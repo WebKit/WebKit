@@ -187,7 +187,7 @@ static EncodedJSValue addDurationToPlainDateTime(JSGlobalObject* globalObject, T
     RETURN_IF_EXCEPTION(scope, { });
 
     // Steps 9-10: CombineISODateAndTimeRecord + CreateTemporalDateTime.
-    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(plainDate), WTF::move(plainTime), plainDateTime->calendarID());
+    auto* result = createTemporalDateTime(globalObject, WTF::move(plainDate), WTF::move(plainTime), plainDateTime->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);
 }
@@ -290,7 +290,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWith, (JSGlobalObject
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 17: CreateTemporalDateTime.
-    auto* withResult = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), ISO8601::PlainDate(dateResult->isoDate), WTF::move(newTime), calendarId);
+    auto* withResult = createTemporalDateTime(globalObject, ISO8601::PlainDate(dateResult->isoDate), WTF::move(newTime), calendarId);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(withResult);
 }
@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWithPlainTime, (JSGlo
     }
 
     // Steps 4-5: CombineISODateAndTimeRecord + CreateTemporalDateTime.
-    auto* wptResult = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDateTime->plainDate(), plainTime ? plainTime->plainTime() : ISO8601::PlainTime(), plainDateTime->calendarID());
+    auto* wptResult = createTemporalDateTime(globalObject, plainDateTime->plainDate(), plainTime ? plainTime->plainTime() : ISO8601::PlainTime(), plainDateTime->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(wptResult);
 }
@@ -398,7 +398,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncRound, (JSGlobalObjec
     auto [roundedDate, roundedTime] = TemporalCore::roundISODateTime(plainDateTime->plainDate(), plainDateTime->plainTime(), incrementNs, smallestUnit, roundingMode);
 
     // Step 16: Return ? CreateTemporalDateTime(result, plainDateTime.[[Calendar]]).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(roundedDate), WTF::move(roundedTime), plainDateTime->calendarID())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDateTime(globalObject, WTF::move(roundedDate), WTF::move(roundedTime), plainDateTime->calendarID())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.equals
@@ -861,7 +861,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncUntil, (JSGlobalObjec
     auto result = plainDateTime->differenceTemporalPlainDateTime<DifferenceOperation::Until>(globalObject, other, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.since
@@ -882,7 +882,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncSince, (JSGlobalObjec
     auto result = plainDateTime->differenceTemporalPlainDateTime<DifferenceOperation::Since>(globalObject, other, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.withcalendar

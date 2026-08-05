@@ -31,6 +31,7 @@
 #include "DurationArithmetic.h"
 #include "FractionToDouble.h"
 #include "ISOArithmetic.h"
+#include "InternalFunction.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "PlainDateTimeCore.h"
@@ -69,19 +70,42 @@ TemporalDuration::TemporalDuration(VM& vm, Structure* structure, ISO8601::Durati
 {
 }
 
-// CreateTemporalDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds [ , newTarget ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalduration
-TemporalDuration* TemporalDuration::tryCreateIfValid(JSGlobalObject* globalObject, ISO8601::Duration&& duration, Structure* structure)
+template<TemporalConstructTarget target>
+static TemporalDuration* createTemporalDurationImpl(JSGlobalObject* globalObject, ISO8601::Duration&& duration, TemporalNewTarget newTarget = { })
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: If IsValidDuration(...) is false, throw a RangeError exception.
     if (!ISO8601::isValidDuration(duration)) [[unlikely]] {
         throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
         return { };
     }
 
-    return TemporalDuration::create(vm, structure ? structure : globalObject->durationStructure(), WTF::move(duration));
+    // Step 2: If newTarget is not present, set newTarget to %Temporal.Duration%.
+    // Step 3: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.Duration.prototype%", « ... »).
+    Structure* structure;
+    if constexpr (target == TemporalConstructTarget::Intrinsic)
+        structure = globalObject->durationStructure();
+    else {
+        ASSERT(newTarget.newTarget && newTarget.constructor);
+        structure = JSC_GET_DERIVED_STRUCTURE(vm, durationStructure, newTarget.newTarget, newTarget.constructor);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // Steps 4-13: set [[Years]]…[[Nanoseconds]]. Step 14: Return object.
+    return TemporalDuration::create(vm, structure, WTF::move(duration));
+}
+
+TemporalDuration* createTemporalDuration(JSGlobalObject* globalObject, ISO8601::Duration&& duration)
+{
+    return createTemporalDurationImpl<TemporalConstructTarget::Intrinsic>(globalObject, WTF::move(duration));
+}
+
+TemporalDuration* createTemporalDuration(JSGlobalObject* globalObject, ISO8601::Duration&& duration, TemporalNewTarget newTarget)
+{
+    return createTemporalDurationImpl<TemporalConstructTarget::NewTarget>(globalObject, WTF::move(duration), newTarget);
 }
 
 // ToTemporalPartialDurationRecord ( temporalDurationLike )
@@ -485,7 +509,7 @@ ISO8601::Duration TemporalDuration::with(JSGlobalObject* globalObject, JSObject*
     for (size_t i = 0; i < numberOfTemporalUnits; ++i)
         result.setField(i, (*partial)[i].value_or(m_duration[i]));
 
-    // Step 24: Return ! CreateTemporalDuration(...). (Caller wraps in tryCreateIfValid.)
+    // Step 24: Return ! CreateTemporalDuration(...).
     return result;
 }
 

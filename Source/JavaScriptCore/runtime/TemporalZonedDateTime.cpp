@@ -29,6 +29,7 @@
 #include "CalendarFields.h"
 #include "CalendarICUBridge.h"
 #include "ISO8601.h"
+#include "InternalFunction.h"
 #include "IntlObject.h"
 #include "JSCInlines.h"
 #include "TemporalCalendar.h"
@@ -54,31 +55,44 @@ TemporalZonedDateTime* TemporalZonedDateTime::create(VM& vm, Structure* structur
     return object;
 }
 
-// temporal_rs: ZonedDateTime::try_new (validates epochNanoseconds range)
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalzoneddatetime
-TemporalZonedDateTime* TemporalZonedDateTime::tryCreate(JSGlobalObject* globalObject, Structure* structure, ISO8601::ExactTime exactTime, TimeZone timeZone, CalendarID calendarID)
+template<TemporalConstructTarget target>
+static TemporalZonedDateTime* createTemporalZonedDateTimeImpl(JSGlobalObject* globalObject, ISO8601::ExactTime exactTime, TimeZone timeZone, CalendarID calendarID, TemporalNewTarget newTarget = { })
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: If IsValidEpochNanoseconds(epochNanoseconds) is false, throw RangeError.
-    if (!exactTime.isValid()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "epochNanoseconds is outside of the supported range for Temporal.ZonedDateTime"_s);
-        return nullptr;
+    // Step 1: Assert: IsValidEpochNanoseconds(epochNanoseconds) is true.
+    ASSERT(exactTime.isValid());
+
+    // Step 2: If newTarget is not present, set newTarget to %Temporal.ZonedDateTime%.
+    // Step 3: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.ZonedDateTime.prototype%", « ... »).
+    Structure* structure;
+    if constexpr (target == TemporalConstructTarget::Intrinsic)
+        structure = globalObject->zonedDateTimeStructure();
+    else {
+        ASSERT(newTarget.newTarget && newTarget.constructor);
+        structure = JSC_GET_DERIVED_STRUCTURE(vm, zonedDateTimeStructure, newTarget.newTarget, newTarget.constructor);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
-    // Steps 2-5: Allocate object, set [[EpochNanoseconds]], [[TimeZone]], [[Calendar]], return.
-    return create(vm, structure, exactTime, timeZone, calendarID);
+    // Steps 4-6: set [[EpochNanoseconds]], [[TimeZone]], [[Calendar]]. Step 7: Return object.
+    return TemporalZonedDateTime::create(vm, structure, exactTime, timeZone, calendarID);
+}
+
+TemporalZonedDateTime* createTemporalZonedDateTime(JSGlobalObject* globalObject, ISO8601::ExactTime exactTime, TimeZone timeZone, CalendarID calendarID)
+{
+    return createTemporalZonedDateTimeImpl<TemporalConstructTarget::Intrinsic>(globalObject, exactTime, timeZone, calendarID);
+}
+
+TemporalZonedDateTime* createTemporalZonedDateTime(JSGlobalObject* globalObject, ISO8601::ExactTime exactTime, TimeZone timeZone, CalendarID calendarID, TemporalNewTarget newTarget)
+{
+    return createTemporalZonedDateTimeImpl<TemporalConstructTarget::NewTarget>(globalObject, exactTime, timeZone, calendarID, newTarget);
 }
 
 Structure* TemporalZonedDateTime::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-}
-
-TemporalZonedDateTime* TemporalZonedDateTime::withExactTime(JSGlobalObject* globalObject, ISO8601::ExactTime epochNs) const
-{
-    return tryCreate(globalObject, globalObject->zonedDateTimeStructure(), epochNs, m_timeZone, m_calendarID);
 }
 
 TemporalZonedDateTime::TemporalZonedDateTime(VM& vm, Structure* structure, ISO8601::ExactTime exactTime, TimeZone timeZone, CalendarID calendarID)
@@ -408,9 +422,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
     }
 
     // Step 12: Return ! CreateTemporalZonedDateTime(epochNanoseconds, timeZone, calendar).
-    // interpretISODateTimeOffset guarantees a valid ExactTime, so create() suffices; tryCreate()
-    // adds a redundant isValid() check that acts as defense-in-depth against a buggy ICU backend.
-    RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreate(globalObject, globalObject->zonedDateTimeStructure(), *exactTimeResult, args->timeZone, args->calendarID));
+    RELEASE_AND_RETURN(scope, createTemporalZonedDateTime(globalObject, *exactTimeResult, args->timeZone, args->calendarID));
 }
 
 // temporal_rs: ZonedDateTime::epoch_ns (via get_epoch_nanoseconds_for)

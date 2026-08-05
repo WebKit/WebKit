@@ -90,9 +90,6 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalInstant, (JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Step 1: NewTarget check done by JSC dispatch.
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, instantStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
 
     // Step 2: Set epochNanoseconds to ? ToBigInt(epochNanoseconds).
     JSValue bigIntValue = callFrame->argument(0).toBigInt(globalObject);
@@ -103,8 +100,8 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalInstant, (JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
     ASSERT(exactTimeOpt);
 
-    // Step 4: Return ! CreateTemporalInstant(epochNanoseconds, NewTarget).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalInstant::create(vm, structure, *exactTimeOpt)));
+    // Step 4: Return ? CreateTemporalInstant(epochNanoseconds, NewTarget).
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalInstant(globalObject, *exactTimeOpt, { asObject(callFrame->newTarget()), callFrame->jsCallee() })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalInstant, (JSGlobalObject* globalObject, CallFrame*))

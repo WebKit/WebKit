@@ -28,6 +28,7 @@
 
 #include "CalendarFields.h"
 #include "CalendarICUBridge.h"
+#include "InternalFunction.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "TemporalCalendar.h"
@@ -57,11 +58,14 @@ TemporalPlainMonthDay::TemporalPlainMonthDay(VM& vm, Structure* structure, ISO86
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalmonthday
-TemporalPlainMonthDay* TemporalPlainMonthDay::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate)
+template<TemporalConstructTarget target>
+static TemporalPlainMonthDay* createTemporalMonthDayImpl(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID, TemporalNewTarget newTarget = { })
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Not a step of this AO: ISO8601::PlainDate does not validate month/day, and daysInMonth()
+    // indexes a 12-entry table by month - 1 with no bounds check.
     if (!ISO8601::isValidISODate(plainDate.year(), plainDate.month(), plainDate.day())) [[unlikely]] {
         throwRangeError(globalObject, scope, "PlainMonthDay: invalid date"_s);
         return { };
@@ -73,8 +77,32 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::tryCreateIfValid(JSGlobalObject* g
         return { };
     }
 
-    // Steps 2-6: OrdinaryCreateFromConstructor + set internal slots.
-    return TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(WTF::move(plainDate)));
+    // Step 2: If newTarget is not present, set newTarget to %Temporal.PlainMonthDay%.
+    // Step 3: Let object be ? OrdinaryCreateFromConstructor(newTarget, "%Temporal.PlainMonthDay.prototype%", « ... »).
+    Structure* structure;
+    if constexpr (target == TemporalConstructTarget::Intrinsic)
+        structure = globalObject->plainMonthDayStructure();
+    else {
+        ASSERT(newTarget.newTarget && newTarget.constructor);
+        structure = JSC_GET_DERIVED_STRUCTURE(vm, plainMonthDayStructure, newTarget.newTarget, newTarget.constructor);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // Steps 4-5: set [[ISODate]] and [[Calendar]]. Step 6: Return object.
+    auto* object = TemporalPlainMonthDay::create(vm, structure, ISO8601::PlainMonthDay(WTF::move(plainDate)));
+    if (calendarID != iso8601CalendarID())
+        object->setCalendarID(calendarID);
+    return object;
+}
+
+TemporalPlainMonthDay* createTemporalMonthDay(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID)
+{
+    return createTemporalMonthDayImpl<TemporalConstructTarget::Intrinsic>(globalObject, WTF::move(plainDate), calendarID);
+}
+
+TemporalPlainMonthDay* createTemporalMonthDay(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, CalendarID calendarID, TemporalNewTarget newTarget)
+{
+    return createTemporalMonthDayImpl<TemporalConstructTarget::NewTarget>(globalObject, WTF::move(plainDate), calendarID, newTarget);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalmonthday
@@ -128,7 +156,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         // Step 10 (ISO path): referenceISOYear=1972 → CreateTemporalMonthDay({1972,month,day}, iso8601).
         if (calendarId == iso8601CalendarID()) {
             auto dateWithoutYear = ISO8601::PlainDate(1972, plainDate.month(), plainDate.day());
-            RELEASE_AND_RETURN(scope, TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTF::move(dateWithoutYear)));
+            RELEASE_AND_RETURN(scope, createTemporalMonthDay(globalObject, WTF::move(dateWithoutYear)));
         }
 
         // Steps 11-12 (non-ISO path): isoDate = {year,month,day}; ISODateWithinLimits check.

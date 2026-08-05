@@ -165,15 +165,14 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainMonthDay, (JSGloba
             throwRangeError(globalObject, scope, String(resolved.error().message));
             return { };
         }
-        auto* result = TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTF::move(resolved->isoDate));
+        auto* result = createTemporalMonthDay(globalObject, WTF::move(resolved->isoDate), resolved->calendarId);
         RETURN_IF_EXCEPTION(scope, { });
-        result->setCalendarID(resolved->calendarId);
         return JSValue::encode(result);
     }
 
     // ISO: encode month-day with reference year 1972 (leap year, so Feb 29 fits).
     ISO8601::PlainDate dateToUse(1972, temporalDate->plainDate().month(), temporalDate->plainDate().day());
-    auto* mdResult = TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTF::move(dateToUse));
+    auto* mdResult = createTemporalMonthDay(globalObject, WTF::move(dateToUse));
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(mdResult);
 }
@@ -203,7 +202,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainYearMonth, (JSGlob
 
     // ISO: encode year-month with day=1.
     ISO8601::PlainDate dateToUse(temporalDate->plainDate().year(), temporalDate->plainDate().month(), 1);
-    auto* ymResult = TemporalPlainYearMonth::tryCreateIfValid(globalObject, globalObject->plainYearMonthStructure(), WTF::move(dateToUse));
+    auto* ymResult = createTemporalYearMonth(globalObject, WTF::move(dateToUse));
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(ymResult);
 }
@@ -226,7 +225,7 @@ static EncodedJSValue addDurationToPlainDate(JSGlobalObject* globalObject, Throw
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 8: Return ! CreateTemporalDate(result, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(result), plainDate->calendarID())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDate(globalObject, WTF::move(result), plainDate->calendarID())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.add
@@ -310,7 +309,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncWith, (JSGlobalObject* gl
     }
 
     // Step 11: Return ! CreateTemporalDate(isoDate, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(resolved->isoDate), calendarId)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDate(globalObject, WTF::move(resolved->isoDate), calendarId)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.until
@@ -332,7 +331,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncUntil, (JSGlobalObject* g
     auto result = plainDate->until(globalObject, other, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.since
@@ -353,7 +352,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSince, (JSGlobalObject* g
     auto result = plainDate->since(globalObject, other, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), globalObject->durationStructure())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDuration(globalObject, WTF::move(result))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.equals
@@ -483,7 +482,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainDateTime, (JSGloba
     }
 
     // Steps 5-6: CombineISODateAndTimeRecord + CreateTemporalDateTime.
-    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), WTF::move(plainTime), plainDate->calendarID());
+    auto* result = createTemporalDateTime(globalObject, plainDate->plainDate(), WTF::move(plainTime), plainDate->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);
 }

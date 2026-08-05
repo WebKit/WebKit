@@ -90,9 +90,6 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Step 1: If NewTarget is undefined, throw a TypeError. (Enforced by JSC engine.)
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainDateTimeStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
 
     // Steps 2-4: Set isoYear/isoMonth/isoDay to ? ToIntegerWithTruncation(arg).
     // Steps 5-10: For each of hour/minute/second/millisecond/microsecond/nanosecond:
@@ -136,8 +133,9 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* global
     auto plainTime = TemporalPlainTime::validateAndCreateTimeRecord(globalObject, duration);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Steps 18-19: CombineISODateAndTimeRecord + ? CreateTemporalDateTime.
-    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(plainDate), WTF::move(plainTime), calId);
+    // Steps 18-19: CombineISODateAndTimeRecord + ? CreateTemporalDateTime(isoDateTime, calendar, NewTarget).
+    auto* result = createTemporalDateTime(globalObject, WTF::move(plainDate), WTF::move(plainTime), calId,
+        { asObject(callFrame->newTarget()), callFrame->jsCallee() });
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);
 }

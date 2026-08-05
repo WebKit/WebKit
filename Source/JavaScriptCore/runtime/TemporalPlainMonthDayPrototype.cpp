@@ -254,10 +254,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject
     }
 
     // Step 11: Return ! CreateTemporalMonthDay(isoDate, calendar).
-    auto* withResult = TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTF::move(resolved->isoDate));
+    auto* withResult = createTemporalMonthDay(globalObject, WTF::move(resolved->isoDate), calendarId);
     RETURN_IF_EXCEPTION(scope, { });
-    if (withResult && calendarId != iso8601CalendarID())
-        withResult->setCalendarID(calendarId);
     return JSValue::encode(withResult);
 }
 
@@ -377,7 +375,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
     }
 
     // Step 9: Return ! CreateTemporalDate(isoDate, calendar).
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTF::move(resolved->isoDate), resolved->calendarId)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(createTemporalDate(globalObject, WTF::move(resolved->isoDate), resolved->calendarId)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.valueof
