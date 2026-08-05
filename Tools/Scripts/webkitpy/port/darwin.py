@@ -191,6 +191,18 @@ class DarwinPort(ApplePort):
         return directories
 
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
+        def already_collected(process_name, pid):
+            # A crash report's parsed procName may be an alias of the reported crash-process
+            # name (e.g. a ServiceWorkerProcess crash is recorded under a WebContent procName).
+            # Match those the way CrashLogs._find_newest_log_darwin does, so an aliased crash
+            # already collected in the first pass is not appended again as a "new" crash.
+            for _, reported_name, reported_pid in crashed_processes:
+                if reported_pid != pid:
+                    continue
+                if process_name == reported_name or process_name in CrashLogs.PROCESS_NAME_ALIASES.get(reported_name, ()):
+                    return True
+            return False
+
         for test, crash_log in new_logs.items():
             try:
                 if test.split('-')[0] == 'Sandbox':
@@ -201,7 +213,7 @@ class DarwinPort(ApplePort):
                     pid = int(test.split('-')[1])
             except (IndexError, ValueError):
                 continue
-            if not any(entry[1] == process_name and entry[2] == pid for entry in crashed_processes):
+            if not already_collected(process_name, pid):
                 # if this is a new crash, then append the logs
                 logs[test] = crash_log
         return logs

@@ -298,3 +298,30 @@ class MacTest(darwin_testcase.DarwinTest):
             list(port.expectations_dict().keys())[-1],
             '/mock-checkout/LayoutTests/platform/mac/TestExpectationsRosetta',
         )
+
+    def test_merge_crash_logs_service_worker_process(self):
+        # A ServiceWorkerProcess crash is recorded on disk under a WebContent procName, so
+        # look_for_new_crash_logs() collects it in its first pass keyed by the layout-test
+        # name, while find_all_logs() re-keys the same report as
+        # "com.apple.WebKit.WebContent[.Development]-<pid>".  _merge_crash_logs() must treat
+        # that WebContent procName as the same ServiceWorkerProcess crash (via
+        # CrashLogs.PROCESS_NAME_ALIASES) and not append it a second time.
+        port = self.make_port()
+        crashed_processes = [('http/tests/workers/service/basic.https', 'ServiceWorkerProcess', 4242)]
+        for procname in ('com.apple.WebKit.WebContent', 'com.apple.WebKit.WebContent.Development'):
+            merged = port._merge_crash_logs(
+                {'http/tests/workers/service/basic.https': 'first-pass-log'},
+                {'{}-4242'.format(procname): 'all-logs-log', 'FooProcess-4243': 'unrelated-log'},
+                crashed_processes,
+            )
+            # The aliased WebContent crash duplicates the ServiceWorkerProcess crash: not re-added.
+            self.assertNotIn('{}-4242'.format(procname), merged)
+            # The first-pass ServiceWorkerProcess log is preserved.
+            self.assertEqual('first-pass-log', merged['http/tests/workers/service/basic.https'])
+            # An unrelated crash is still appended.
+            self.assertEqual('unrelated-log', merged['FooProcess-4243'])
+
+        # A WebContent crash whose PID does not match the ServiceWorkerProcess PID is a
+        # genuinely new crash and is still appended.
+        merged = port._merge_crash_logs({}, {'com.apple.WebKit.WebContent-9999': 'other-pid-log'}, crashed_processes)
+        self.assertEqual('other-pid-log', merged['com.apple.WebKit.WebContent-9999'])

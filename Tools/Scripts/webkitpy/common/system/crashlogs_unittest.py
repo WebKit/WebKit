@@ -383,6 +383,73 @@ class CrashLogsTest(unittest.TestCase):
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, include_errors=True)
         self.assertIn('OSError: No such file or directory', log)
 
+    def test_find_log_darwin_service_worker_process(self):
+        # A service worker runs inside a WebContent process, so WebKitTestRunner reports its
+        # crash as "ServiceWorkerProcess" while the on-disk report's procName is
+        # com.apple.WebKit.WebContent[.Development].  find_newest_log() must match such a
+        # report to "ServiceWorkerProcess" when the PID also matches.
+        if not SystemHost.get_default().platform.is_mac():
+            return
+
+        def crash_logs_for(files):
+            files = {key: string_utils.encode(value) for key, value in files.items()}
+            return CrashLogs(MockSystemHost(filesystem=MockFileSystem(files)), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
+
+        # A WebContent report matches a same-PID ServiceWorkerProcess query; a different PID does not.
+        web_content_report = make_mock_ips_crash_report_darwin('com.apple.WebKit.WebContent.Development', 4242)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContent.Development-2026-08-04-085156.ips': web_content_report,
+        })
+        self.assertMultiLineEqual(crash_logs.find_newest_log('ServiceWorkerProcess', 4242), web_content_report)
+        self.assertIsNone(crash_logs.find_newest_log('ServiceWorkerProcess', 4243))
+
+        # The ".Development" suffix is optional (absent on device/release builds).
+        web_content_report_release = make_mock_ips_crash_report_darwin('com.apple.WebKit.WebContent', 4242)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContent-2026-08-04-085156.ips': web_content_report_release,
+        })
+        self.assertMultiLineEqual(crash_logs.find_newest_log('ServiceWorkerProcess', 4242), web_content_report_release)
+
+        # A prefix-similar but non-WebContent procName is not matched (exact names only, not a prefix).
+        imposter_report = make_mock_ips_crash_report_darwin('com.apple.WebKit.WebContentImposter', 4242)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContentImposter-2026-08-04-085156.ips': imposter_report,
+        })
+        self.assertIsNone(crash_logs.find_newest_log('ServiceWorkerProcess', 4242))
+
+        # With multiple WebContent reports, the one whose PID matches is chosen.
+        report_4243 = make_mock_ips_crash_report_darwin('com.apple.WebKit.WebContent.Development', 4243)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContent.Development-2026-08-04-085156.ips': web_content_report,
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContent.Development-2026-08-04-085200.ips': report_4243,
+        })
+        self.assertMultiLineEqual(crash_logs.find_newest_log('ServiceWorkerProcess', 4242), web_content_report)
+        self.assertMultiLineEqual(crash_logs.find_newest_log('ServiceWorkerProcess', 4243), report_4243)
+
+        # Legacy .crash reports are matched by filename prefix (procName + '_'), so an aliased
+        # WebContent .crash report must also be found for a same-PID ServiceWorkerProcess query.
+        crash_report = make_mock_crash_report_darwin('com.apple.WebKit.WebContent.Development', 4242)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContent.Development_2026-08-04-085156_host.crash': crash_report,
+        })
+        self.assertMultiLineEqual(crash_logs.find_newest_log('ServiceWorkerProcess', 4242), crash_report)
+        self.assertIsNone(crash_logs.find_newest_log('ServiceWorkerProcess', 4243))
+
+        # The ".Development" suffix is optional (absent on device/release builds).
+        crash_report_release = make_mock_crash_report_darwin('com.apple.WebKit.WebContent', 4242)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContent_2026-08-04-085156_host.crash': crash_report_release,
+        })
+        self.assertMultiLineEqual(crash_logs.find_newest_log('ServiceWorkerProcess', 4242), crash_report_release)
+
+        # A prefix-similar but non-WebContent procName is not matched in .crash files either:
+        # the alias filter anchors on procName + '_', so "...WebContentImposter_" is rejected.
+        imposter_crash_report = make_mock_crash_report_darwin('com.apple.WebKit.WebContentImposter', 4242)
+        crash_logs = crash_logs_for({
+            '/Users/mock/Library/Logs/DiagnosticReports/com.apple.WebKit.WebContentImposter_2026-08-04-085156_host.crash': imposter_crash_report,
+        })
+        self.assertIsNone(crash_logs.find_newest_log('ServiceWorkerProcess', 4242))
+
     def test_find_log_win(self):
         if not SystemHost.get_default().platform.is_win():
             return
