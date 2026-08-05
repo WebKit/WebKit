@@ -9,20 +9,19 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,47) size 784x19
         RenderText {#text} at (0,0) size 682x18
           text run at (0,0) width 682: "The table below is 350 pixels wide. The columns are assigned proportional widths using COLs as follows:"
-      RenderBlock (anonymous) at (0,81) size 784x61
-        RenderInline {TT} at (0,0) size 110x60
-          RenderText {#text} at (0,0) size 110x15
-            text run at (0,0) width 110: "<col width=50>"
-          RenderBR {BR} at (109,0) size 1x15
-          RenderText {#text} at (0,15) size 110x15
-            text run at (0,15) width 110: "<col width=2*>"
-          RenderBR {BR} at (109,15) size 1x15
-          RenderText {#text} at (0,30) size 110x15
-            text run at (0,30) width 110: "<col width=1*>"
-          RenderBR {BR} at (109,30) size 1x15
-          RenderText {#text} at (0,45) size 110x15
-            text run at (0,45) width 110: "<col width=3*>"
-        RenderText {#text} at (0,0) size 0x0
+      RenderInline {TT} at (0,81) size 110x61
+        RenderText {#text} at (0,81) size 110x16
+          text run at (0,81) width 110: "<col width=50>"
+        RenderBR {BR} at (109,81) size 1x16
+        RenderText {#text} at (0,96) size 110x16
+          text run at (0,96) width 110: "<col width=2*>"
+        RenderBR {BR} at (109,96) size 1x16
+        RenderText {#text} at (0,111) size 110x16
+          text run at (0,111) width 110: "<col width=1*>"
+        RenderBR {BR} at (109,111) size 1x16
+        RenderText {#text} at (0,126) size 110x16
+          text run at (0,126) width 110: "<col width=3*>"
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,157) size 784x73
         RenderText {#text} at (0,0) size 781x72
           text run at (0,0) width 777: "This means the first column should be 50 pixels wide. The remaining width should be divided among the three remaining"

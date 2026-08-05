@@ -20,13 +20,12 @@ layer at (0,0) size 785x600
             text run at (0,36) width 677: "illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent"
             text run at (0,54) width 407: "luptatum zzril delenit augue duis dolore te feugait nulla facilisi."
         RenderBlock {DIV} at (22,204) size 705x1292 [border: (2px solid #000000)]
-          RenderBlock (anonymous) at (12,12) size 681x36
-            RenderInline {B} at (0,0) size 108x18
-              RenderText {#text} at (0,0) size 108x18
-                text run at (0,0) width 108: "Still should not."
-            RenderText {#text} at (0,0) size 638x36
-              text run at (107,0) width 531: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh"
-              text run at (0,18) width 415: "euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
+          RenderInline {B} at (12,12) size 108x18
+            RenderText {#text} at (12,12) size 108x18
+              text run at (12,12) width 108: "Still should not."
+          RenderText {#text} at (12,12) size 638x36
+            text run at (119,12) width 531: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh"
+            text run at (12,30) width 415: "euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
           RenderBlock {P} at (12,64) size 681x72
             RenderText {#text} at (0,0) size 668x72
               text run at (0,0) width 668: "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex"
@@ -34,13 +33,12 @@ layer at (0,0) size 785x600
               text run at (0,36) width 667: "consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui"
               text run at (0,54) width 512: "blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi."
           RenderBlock {DIV} at (22,152) size 661x1118 [border: (2px solid #000000)]
-            RenderBlock (anonymous) at (12,12) size 637x36
-              RenderInline {B} at (0,0) size 108x18
-                RenderText {#text} at (0,0) size 108x18
-                  text run at (0,0) width 108: "Still should not."
-              RenderText {#text} at (0,0) size 606x36
-                text run at (107,0) width 499: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy"
-                text run at (0,18) width 447: "nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
+            RenderInline {B} at (12,12) size 108x18
+              RenderText {#text} at (12,12) size 108x18
+                text run at (12,12) width 108: "Still should not."
+            RenderText {#text} at (12,12) size 606x36
+              text run at (119,12) width 499: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy"
+              text run at (12,30) width 447: "nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
             RenderBlock {P} at (12,64) size 637x72
               RenderText {#text} at (0,0) size 635x72
                 text run at (0,0) width 600: "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut"
@@ -70,15 +68,14 @@ layer at (0,0) size 785x600
                   text run at (0,186) width 577: "luptatum zzril delenit augue duis dolore te feugait nulla"
                   text run at (0,217) width 78: "facilisi."
               RenderBlock {DIV} at (22,494) size 573x428 [border: (2px solid #000000)]
-                RenderBlock (anonymous) at (12,12) size 549x124
-                  RenderInline {B} at (0,0) size 166x31
-                    RenderText {#text} at (0,0) size 166x31
-                      text run at (0,0) width 166: "Should as well."
-                  RenderText {#text} at (0,0) size 502x124
-                    text run at (165,0) width 303: " Lorem ipsum dolor sit amet,"
-                    text run at (0,31) width 502: "consectetuer adipiscing elit, sed diam nonummy"
-                    text run at (0,62) width 493: "nibh euismod tincidunt ut laoreet dolore magna"
-                    text run at (0,93) width 228: "aliquam erat volutpat."
+                RenderInline {B} at (12,12) size 166x31
+                  RenderText {#text} at (12,12) size 166x31
+                    text run at (12,12) width 166: "Should as well."
+                RenderText {#text} at (12,12) size 502x124
+                  text run at (177,12) width 303: " Lorem ipsum dolor sit amet,"
+                  text run at (12,43) width 502: "consectetuer adipiscing elit, sed diam nonummy"
+                  text run at (12,74) width 493: "nibh euismod tincidunt ut laoreet dolore magna"
+                  text run at (12,105) width 228: "aliquam erat volutpat."
                 RenderBlock {P} at (12,152) size 549x248
                   RenderText {#text} at (0,0) size 544x248
                     text run at (0,0) width 534: "Ut wisi enim ad minim veniam, quis nostrud exerci"

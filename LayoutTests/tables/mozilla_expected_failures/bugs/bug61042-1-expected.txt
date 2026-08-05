@@ -8,9 +8,8 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 626x132
             RenderTableRow {TR} at (0,2) size 626x128
               RenderTableCell {TD} at (2,2) size 622x128 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderBlock (anonymous) at (2,2) size 618x18
-                  RenderText {#text} at (0,0) size 41x18
-                    text run at (0,0) width 41: "before"
+                RenderText {#text} at (2,2) size 41x18
+                  text run at (2,2) width 41: "before"
                 RenderTable {TABLE} at (2,20) size 618x88 [bgcolor=#FF0000] [border: (1px outset #000000)]
                   RenderTableSection {TBODY} at (1,1) size 616x86
                     RenderTableRow {TR} at (0,2) size 616x22
@@ -26,6 +25,5 @@ layer at (0,0) size 800x600
                           text run at (2,2) width 581: "This is some text. This is some text. This is some text. This is some text. This is some text."
                           text run at (2,20) width 581: "This is some text. This is some text. This is some text. This is some text. This is some text."
                           text run at (2,38) width 464: "This is some text. This is some text. This is some text. This is some text."
-                RenderBlock (anonymous) at (2,108) size 618x18
-                  RenderText {#text} at (0,0) size 30x18
-                    text run at (0,0) width 30: "after"
+                RenderText {#text} at (2,108) size 30x18
+                  text run at (2,108) width 30: "after"

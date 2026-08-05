@@ -225,21 +225,20 @@ layer at (0,0) size 785x669
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (4,64) size 167x1
             RenderTableCell {TD} at (451,24) size 183x521 [bgcolor=#CCCC99] [border: (1px inset #333333)] [r=1 c=3 rs=6 cs=1]
-              RenderBlock (anonymous) at (4,4) size 175x26
-                RenderInline {FONT} at (19,-1) size 137x13
-                  RenderInline {FONT} at (19,-1) size 137x13
-                    RenderInline {SPAN} at (19,-1) size 137x13
-                      RenderText {#text} at (19,-1) size 137x13
-                        text run at (19,0) width 137: "Tue, 27 Jul 1999, 2:47pm EDT"
-                      RenderBR {BR} at (155,-1) size 1x13
-                RenderText {#text} at (0,0) size 0x0
-                RenderInline {FONT} at (35,11) size 105x15 [color=#000000]
-                  RenderInline {B} at (35,11) size 105x15
-                    RenderInline {SPAN} at (35,11) size 105x15
-                      RenderText {#text} at (35,11) size 105x15
-                        text run at (35,11) width 105: "Market Snapshot"
-                      RenderBR {BR} at (139,11) size 1x15
-                RenderText {#text} at (0,0) size 0x0
+              RenderInline {FONT} at (23,3) size 137x13
+                RenderInline {FONT} at (23,3) size 137x13
+                  RenderInline {SPAN} at (23,3) size 137x13
+                    RenderText {#text} at (23,3) size 137x13
+                      text run at (23,3) width 137: "Tue, 27 Jul 1999, 2:47pm EDT"
+                    RenderBR {BR} at (159,3) size 1x13
+              RenderText {#text} at (0,0) size 0x0
+              RenderInline {FONT} at (39,15) size 105x15 [color=#000000]
+                RenderInline {B} at (39,15) size 105x15
+                  RenderInline {SPAN} at (39,15) size 105x15
+                    RenderText {#text} at (39,15) size 105x15
+                      text run at (39,15) width 105: "Market Snapshot"
+                    RenderBR {BR} at (143,15) size 1x15
+              RenderText {#text} at (0,0) size 0x0
               RenderBlock {CENTER} at (4,30) size 175x487
                 RenderInline {A} at (0,256) size 175x18
                   RenderImage {IMG} at (0,0) size 175x270

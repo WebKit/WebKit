@@ -16,9 +16,8 @@ layer at (0,0) size 800x504
             text run at (33,1) width 42: "Item 1"
         RenderListItem {DIV} at (33,21) size 726x138 [border: (1px solid #000000)]
           RenderListMarker at (-16,1) size 16x18: "2"
-          RenderBlock (anonymous) at (33,1) size 692x18
-            RenderText {#text} at (0,0) size 42x18
-              text run at (0,0) width 42: "Item 2"
+          RenderText {#text} at (33,1) size 42x18
+            text run at (33,1) width 42: "Item 2"
           RenderListItem {DIV} at (33,19) size 692x38 [border: (1px solid #000000)]
             RenderListMarker at (-16,1) size 16x18: "a"
             RenderText {#text} at (33,1) size 41x18
@@ -46,9 +45,8 @@ layer at (0,0) size 800x504
           RenderText {#text} at (33,1) size 42x18
             text run at (33,1) width 42: "Item 3"
         RenderBlock {DIV} at (33,179) size 726x98 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (33,1) size 692x18
-            RenderText {#text} at (0,0) size 92x18
-              text run at (0,0) width 92: "Not a list item"
+          RenderText {#text} at (33,1) size 92x18
+            text run at (33,1) width 92: "Not a list item"
           RenderListItem {DIV} at (33,19) size 692x38 [border: (1px solid #000000)]
             RenderListMarker at (-16,1) size 16x18: "a"
             RenderText {#text} at (33,1) size 41x18
@@ -69,9 +67,8 @@ layer at (0,0) size 800x504
             text run at (33,1) width 42: "Item 4"
         RenderListItem {DIV} at (33,297) size 726x76 [border: (1px solid #000000)]
           RenderListMarker at (-16,1) size 16x18: "5"
-          RenderBlock (anonymous) at (33,1) size 692x18
-            RenderText {#text} at (0,0) size 42x18
-              text run at (0,0) width 42: "Item 5"
+          RenderText {#text} at (33,1) size 42x18
+            text run at (33,1) width 42: "Item 5"
           RenderListItem {TABLE} at (33,19) size 692x28 [border: (1px dashed #000000)]
             RenderListMarker at (-16,1) size 16x18: "a"
             RenderTable at (1,1) size 193x26

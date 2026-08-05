@@ -4,7 +4,7 @@ Repaint rects on hover (outline added):
 (repaint rects
   (rect 50 50 100 100)
   (rect 35 35 130 130)
-  (rect 0 0 800 204)
+  (rect 0 0 800 232)
 )
 
 Repaint rects on un-hover (outline removed):
@@ -12,6 +12,6 @@ Repaint rects on un-hover (outline removed):
   (rect 35 35 130 130)
   (rect 35 35 130 130)
   (rect 35 35 130 130)
-  (rect 0 0 800 204)
+  (rect 0 0 800 232)
 )
 

@@ -95,8 +95,7 @@ layer at (0,0) size 785x896
             RenderTableCell {TD} at (367,70) size 182x32 [border: (6px double #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (7,7) size 8x18
                 text run at (7,7) width 8: "9"
-      RenderBlock (anonymous) at (0,568) size 769x19
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,568) size 0x19
       RenderTable {TABLE} at (96,586) size 577x99 [border: (6px double #FFFF00)]
         RenderTableSection {TBODY} at (6,6) size 564x85
           RenderTableRow {TR} at (0,0) size 564x30

@@ -3,47 +3,36 @@ layer at (0,0) size 785x740
 layer at (0,0) size 785x740
   RenderBlock {HTML} at (0,0) size 785x740
     RenderBody {BODY} at (8,8) size 769x712
-      RenderBlock (anonymous) at (0,0) size 769x90
-        RenderText {#text} at (0,0) size 572x18
-          text run at (0,0) width 572: "This tests checks that the text-overflow:ellipsis property is handled correctly for bidi text."
-        RenderBR {BR} at (571,0) size 1x18
-        RenderBR {BR} at (0,18) size 0x18
-        RenderText {#text} at (0,36) size 756x18
-          text run at (0,36) width 756: "Pass if the ellipsis do not overlap the text and the underlines for the links are placed under the text and not the ellipsis."
-        RenderBR {BR} at (755,36) size 1x18
-        RenderBR {BR} at (0,54) size 0x18
-        RenderText {#text} at (0,72) size 34x18
-          text run at (0,72) width 34: "RTL:"
-      RenderBlock (anonymous) at (0,132) size 769x18
-        RenderText {#text} at (0,0) size 94x18
-          text run at (0,0) width 94: "RTL Override:"
-      RenderBlock (anonymous) at (0,192) size 769x18
-        RenderText {#text} at (0,0) size 63x18
-          text run at (0,0) width 63: "RTL link:"
-      RenderBlock (anonymous) at (0,252) size 769x18
-        RenderText {#text} at (0,0) size 135x18
-          text run at (0,0) width 135: "RTL with ltr content:"
-      RenderBlock (anonymous) at (0,312) size 769x18
-        RenderText {#text} at (0,0) size 164x18
-          text run at (0,0) width 164: "RTL link with ltr content:"
-      RenderBlock (anonymous) at (0,372) size 769x18
-        RenderText {#text} at (0,0) size 63x18
-          text run at (0,0) width 63: "LTR link:"
-      RenderBlock (anonymous) at (0,432) size 769x18
-        RenderText {#text} at (0,0) size 34x18
-          text run at (0,0) width 34: "LTR:"
-      RenderBlock (anonymous) at (0,492) size 769x18
-        RenderText {#text} at (0,0) size 135x18
-          text run at (0,0) width 135: "LTR with rtl content:"
-      RenderBlock (anonymous) at (0,552) size 769x18
-        RenderText {#text} at (0,0) size 180x18
-          text run at (0,0) width 180: "LTR with forced rtl content:"
-      RenderBlock (anonymous) at (0,612) size 769x18
-        RenderText {#text} at (0,0) size 164x18
-          text run at (0,0) width 164: "LTR link with rtl content:"
-      RenderBlock (anonymous) at (0,672) size 769x18
-        RenderText {#text} at (0,0) size 209x18
-          text run at (0,0) width 209: "LTR link with forced rtl content:"
+      RenderText {#text} at (0,0) size 572x18
+        text run at (0,0) width 572: "This tests checks that the text-overflow:ellipsis property is handled correctly for bidi text."
+      RenderBR {BR} at (571,0) size 1x18
+      RenderBR {BR} at (0,18) size 0x18
+      RenderText {#text} at (0,36) size 756x18
+        text run at (0,36) width 756: "Pass if the ellipsis do not overlap the text and the underlines for the links are placed under the text and not the ellipsis."
+      RenderBR {BR} at (755,36) size 1x18
+      RenderBR {BR} at (0,54) size 0x18
+      RenderText {#text} at (0,72) size 34x18
+        text run at (0,72) width 34: "RTL:"
+      RenderText {#text} at (0,132) size 94x18
+        text run at (0,132) width 94: "RTL Override:"
+      RenderText {#text} at (0,192) size 63x18
+        text run at (0,192) width 63: "RTL link:"
+      RenderText {#text} at (0,252) size 135x18
+        text run at (0,252) width 135: "RTL with ltr content:"
+      RenderText {#text} at (0,312) size 164x18
+        text run at (0,312) width 164: "RTL link with ltr content:"
+      RenderText {#text} at (0,372) size 63x18
+        text run at (0,372) width 63: "LTR link:"
+      RenderText {#text} at (0,432) size 34x18
+        text run at (0,432) width 34: "LTR:"
+      RenderText {#text} at (0,492) size 135x18
+        text run at (0,492) width 135: "LTR with rtl content:"
+      RenderText {#text} at (0,552) size 180x18
+        text run at (0,552) width 180: "LTR with forced rtl content:"
+      RenderText {#text} at (0,612) size 164x18
+        text run at (0,612) width 164: "LTR link with rtl content:"
+      RenderText {#text} at (0,672) size 209x18
+        text run at (0,672) width 209: "LTR link with forced rtl content:"
 layer at (8,98) size 182x22 clip at (9,99) size 180x20 scrollX 115 scrollWidth 295
   RenderBlock {DIV} at (0,90) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (-114,1) size 295x19

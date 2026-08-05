@@ -25,29 +25,27 @@ layer at (0,0) size 785x765
             text run at (0,16) width 720: "should support CSS1 and the CSS2 table model,"
             text run at (0,32) width 336: "and multiple classes."
       RenderBlock {P} at (0,181) size 769x126 [border: (5px double #FF0000)]
-        RenderBlock (anonymous) at (13,13) size 743x16
-          RenderText {#text} at (0,0) size 624x16
-            text run at (0,0) width 624: "If this paragraph breaks the line here:"
+        RenderText {#text} at (13,13) size 624x16
+          text run at (13,13) width 624: "If this paragraph breaks the line here:"
         RenderTable {SPAN} at (13,29) size 144x16
           RenderTableSection (anonymous) at (0,0) size 144x16
             RenderTableRow (anonymous) at (0,0) size 144x16
               RenderTableCell (anonymous) at (0,0) size 144x16 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 144x16
                   text run at (0,0) width 144: "and here:"
-        RenderBlock (anonymous) at (13,45) size 743x67
-          RenderText {#text} at (0,0) size 288x16
-            text run at (0,0) width 288: "then your browser "
-          RenderInline {EM} at (288,0) size 192x16
-            RenderText {#text} at (288,0) size 192x16
-              text run at (288,0) width 192: "does support"
-          RenderText {#text} at (0,0) size 736x35
-            text run at (480,0) width 256: " table values on"
-            text run at (0,18) width 164: "'display'. "
-          RenderInline {STRONG} at (0,18) size 708x49
-            RenderText {#text} at (0,18) size 708x49
-              text run at (163,18) width 527: "If this paragraphs flows without"
-              text run at (0,35) width 708: "any undue breaks, then you should mark your"
-              text run at (0,51) width 642: "browser as not supporting table values!"
+        RenderText {#text} at (13,45) size 288x16
+          text run at (13,45) width 288: "then your browser "
+        RenderInline {EM} at (301,45) size 192x16
+          RenderText {#text} at (301,45) size 192x16
+            text run at (301,45) width 192: "does support"
+        RenderText {#text} at (13,45) size 736x35
+          text run at (493,45) width 256: " table values on"
+          text run at (13,63) width 164: "'display'. "
+        RenderInline {STRONG} at (13,63) size 708x49
+          RenderText {#text} at (13,63) size 708x49
+            text run at (176,63) width 527: "If this paragraphs flows without"
+            text run at (13,80) width 708: "any undue breaks, then you should mark your"
+            text run at (13,96) width 642: "browser as not supporting table values!"
       RenderBlock {H2} at (0,326) size 769x25
         RenderText {#text} at (0,0) size 543x24
           text run at (0,0) width 543: "1. Table -> Table Cell"

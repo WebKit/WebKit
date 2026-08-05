@@ -14,6 +14,5 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 662x18
           text run at (0,0) width 662: "If the test fails, the image below will be the 20x20 error image instead of the larger actual PDF content."
-      RenderBlock (anonymous) at (0,68) size 784x93
-        RenderImage {IMG} at (0,0) size 93x93
-        RenderText {#text} at (0,0) size 0x0
+      RenderImage {IMG} at (0,68) size 93x93
+      RenderText {#text} at (0,0) size 0x0

@@ -23,9 +23,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "Test"
-      RenderBlock (anonymous) at (0,98) size 784x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderBR {BR} at (0,18) size 0x18
+      RenderBR {BR} at (0,98) size 0x18
+      RenderBR {BR} at (0,116) size 0x18
       RenderBlock {P} at (0,150) size 784x36
         RenderText {#text} at (0,0) size 773x36
           text run at (0,0) width 773: "(2) Table with 1 column. Relative width value for column is \"0*\" with table width of 100%. The column should span the"
@@ -41,9 +40,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 778x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "Test"
-      RenderBlock (anonymous) at (0,230) size 784x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderBR {BR} at (0,18) size 0x18
+      RenderBR {BR} at (0,230) size 0x18
+      RenderBR {BR} at (0,248) size 0x18
       RenderBlock {P} at (0,282) size 784x54
         RenderText {#text} at (0,0) size 758x54
           text run at (0,0) width 758: "(3) Table with 2 columns. Relative width value for first column is \"0*\" and for column 2 is \"3*\". Table width is 100%."

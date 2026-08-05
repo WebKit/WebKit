@@ -3,11 +3,10 @@ layer at (0,0) size 785x638
 layer at (0,0) size 785x638
   RenderBlock {HTML} at (0,0) size 785x638
     RenderBody {BODY} at (8,8) size 769x622
-      RenderBlock (anonymous) at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 758x36
-          text run at (0,0) width 732: "In the test below, the column rules should not be visible, since a negative z-index child is painting on top of them. "
-          text run at (731,0) width 27: "You"
-          text run at (0,18) width 158: "should see no red below."
+      RenderText {#text} at (0,0) size 758x36
+        text run at (0,0) width 732: "In the test below, the column rules should not be visible, since a negative z-index child is painting on top of them. "
+        text run at (731,0) width 27: "You"
+        text run at (0,18) width 158: "should see no red below."
 layer at (8,44) size 769x586 layerType: background only
 layer at (13,49) size 759x576
   RenderBlock (positioned) zI: -1 {DIV} at (5,5) size 759x576 [bgcolor=#EEEEEE]

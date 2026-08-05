@@ -28,13 +28,12 @@ layer at (0,0) size 800x600
             text run at (367,28) width 375: " REGRESSION (Mail): Crash copying"
             text run at (0,56) width 285: "and pasting end of paragraph."
         RenderBlock {DIV} at (14,114) size 756x140
-          RenderBlock (anonymous) at (0,0) size 756x84
-            RenderText {#text} at (0,0) size 184x28
-              text run at (0,0) width 184: "Expected Results:"
-            RenderBR {BR} at (183,0) size 1x28
-            RenderText {#text} at (0,28) size 726x56
-              text run at (0,28) width 726: "Should see this content in the red box below (insertion point must be on the"
-              text run at (0,56) width 305: "second line, right before \"bar\"):"
+          RenderText {#text} at (0,0) size 184x28
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x28
+          RenderText {#text} at (0,28) size 726x56
+            text run at (0,28) width 726: "Should see this content in the red box below (insertion point must be on the"
+            text run at (0,56) width 305: "second line, right before \"bar\"):"
           RenderBlock {DIV} at (0,84) size 756x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"

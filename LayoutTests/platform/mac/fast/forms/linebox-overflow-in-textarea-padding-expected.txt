@@ -3,10 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (300,36) size 4x18
-          text run at (300,36) width 4: " "
-        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (300,36) size 4x18
+        text run at (300,36) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,70) size 784x36
         RenderText {#text} at (0,0) size 770x36
           text run at (0,0) width 770: "This is a pixel test that tests the linebox overflow in the padding on textareas. The div on the right is styled to look like a"

@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 780x18
-          text run at (0,0) width 780: "This page shows a difference between IE and Netscape 6 rendering of tables / cells with heights expressed in percentages."
+      RenderText {#text} at (0,0) size 780x18
+        text run at (0,0) width 780: "This page shows a difference between IE and Netscape 6 rendering of tables / cells with heights expressed in percentages."
       RenderBlock {P} at (0,34) size 784x36
         RenderText {#text} at (0,0) size 749x36
           text run at (0,0) width 213: "The table A below has two cells. "

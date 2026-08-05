@@ -31,9 +31,8 @@ layer at (0,0) size 800x326
           RenderListMarker at (-16,0) size 16x18: "6"
           RenderText {#text} at (0,0) size 151x18
             text run at (0,0) width 151: "a TFOOT with one row"
-      RenderBlock (anonymous) at (0,158) size 784x36
-        RenderBR {br} at (0,0) size 0x18
-        RenderBR {br} at (0,18) size 0x18
+      RenderBR {br} at (0,158) size 0x18
+      RenderBR {br} at (0,176) size 0x18
       RenderTable {table} at (0,194) size 185x108
         RenderBlock {caption} at (0,0) size 185x18
           RenderText {#text} at (67,0) size 51x18

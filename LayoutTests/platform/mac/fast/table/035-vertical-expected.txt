@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (686,0) size 114x600
   RenderBlock {HTML} at (0,0) size 114x600
     RenderBody {BODY} at (8,8) size 98x584
-      RenderBlock (anonymous) at (0,0) size 18x584
-        RenderText {#text} at (0,0) size 18x411
-          text run at (0,0) width 411: "This test should have two centered tables and two centered divs."
+      RenderText {#text} at (0,0) size 18x411
+        text run at (0,0) width 411: "This test should have two centered tables and two centered divs."
       RenderTable {TABLE} at (18,197) size 22x190 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 20x188
           RenderTableRow {TR} at (0,0) size 20x188

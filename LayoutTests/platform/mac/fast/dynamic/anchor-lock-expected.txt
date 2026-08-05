@@ -18,11 +18,10 @@ layer at (0,0) size 785x2122
         RenderImage {IMG} at (0,0) size 200x200
       RenderBlock {P} at (0,758) size 769x201
         RenderImage {IMG} at (0,0) size 200x200
-      RenderBlock (anonymous) at (0,974) size 769x19
-        RenderInline {A} at (0,0) size 313x18
-          RenderText {#text} at (0,0) size 313x18
-            text run at (0,0) width 313: "Anchor text - this should be the only visible text."
-        RenderText {#text} at (0,0) size 0x0
+      RenderInline {A} at (0,974) size 313x19
+        RenderText {#text} at (0,974) size 313x19
+          text run at (0,974) width 313: "Anchor text - this should be the only visible text."
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1008) size 769x201
         RenderImage {IMG} at (0,0) size 200x200
       RenderBlock {P} at (0,1224) size 769x201
@@ -33,7 +32,6 @@ layer at (0,0) size 785x2122
         RenderImage {IMG} at (0,0) size 200x200
       RenderBlock {P} at (0,1872) size 769x201
         RenderImage {IMG} at (0,0) size 200x200
-      RenderBlock (anonymous) at (0,2088) size 769x19
-        RenderText {#text} at (0,0) size 60x18
-          text run at (0,0) width 60: "#anchor1"
+      RenderText {#text} at (0,2088) size 60x19
+        text run at (0,2088) width 60: "#anchor1"
 scrolled to 0,982

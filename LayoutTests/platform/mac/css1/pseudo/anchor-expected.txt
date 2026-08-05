@@ -25,9 +25,8 @@ layer at (0,0) size 785x683
       RenderBlock {UL} at (0,189) size 769x144
         RenderListItem {LI} at (40,0) size 729x108
           RenderListMarker at (-17,0) size 7x18: bullet
-          RenderBlock (anonymous) at (0,0) size 729x18
-            RenderText {#text} at (0,0) size 583x18
-              text run at (0,0) width 583: "Purple unvisited, lime (light green) visited, maroon (dark red) while active (being clicked):"
+          RenderText {#text} at (0,0) size 583x18
+            text run at (0,0) width 583: "Purple unvisited, lime (light green) visited, maroon (dark red) while active (being clicked):"
           RenderBlock {UL} at (0,18) size 729x90
             RenderListItem {LI} at (40,0) size 689x18
               RenderListMarker at (-17,0) size 7x18: white bullet
@@ -62,9 +61,8 @@ layer at (0,0) size 785x683
                 text run at (57,0) width 225: " (don't click on it, it goes nowhere)"
         RenderListItem {LI} at (40,108) size 729x36
           RenderListMarker at (-17,0) size 7x18: bullet
-          RenderBlock (anonymous) at (0,0) size 729x18
-            RenderText {#text} at (0,0) size 208x18
-              text run at (0,0) width 208: "Dark green in any circumstance:"
+          RenderText {#text} at (0,0) size 208x18
+            text run at (0,0) width 208: "Dark green in any circumstance:"
           RenderBlock {UL} at (0,18) size 729x18
             RenderListItem {LI} at (40,0) size 689x18
               RenderListMarker at (-17,0) size 7x18: white bullet
@@ -101,9 +99,8 @@ layer at (0,0) size 785x683
               RenderBlock {UL} at (4,38) size 747x144
                 RenderListItem {LI} at (40,0) size 707x108
                   RenderListMarker at (-17,0) size 7x18: bullet
-                  RenderBlock (anonymous) at (0,0) size 707x18
-                    RenderText {#text} at (0,0) size 583x18
-                      text run at (0,0) width 583: "Purple unvisited, lime (light green) visited, maroon (dark red) while active (being clicked):"
+                  RenderText {#text} at (0,0) size 583x18
+                    text run at (0,0) width 583: "Purple unvisited, lime (light green) visited, maroon (dark red) while active (being clicked):"
                   RenderBlock {UL} at (0,18) size 707x90
                     RenderListItem {LI} at (40,0) size 667x18
                       RenderListMarker at (-17,0) size 7x18: white bullet
@@ -138,9 +135,8 @@ layer at (0,0) size 785x683
                         text run at (57,0) width 225: " (don't click on it, it goes nowhere)"
                 RenderListItem {LI} at (40,108) size 707x36
                   RenderListMarker at (-17,0) size 7x18: bullet
-                  RenderBlock (anonymous) at (0,0) size 707x18
-                    RenderText {#text} at (0,0) size 208x18
-                      text run at (0,0) width 208: "Dark green in any circumstance:"
+                  RenderText {#text} at (0,0) size 208x18
+                    text run at (0,0) width 208: "Dark green in any circumstance:"
                   RenderBlock {UL} at (0,18) size 707x18
                     RenderListItem {LI} at (40,0) size 667x18
                       RenderListMarker at (-17,0) size 7x18: white bullet

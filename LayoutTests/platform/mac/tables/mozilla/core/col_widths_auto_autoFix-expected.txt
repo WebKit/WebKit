@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 63x18
-          text run at (0,0) width 63: "auto table"
+      RenderText {#text} at (0,0) size 63x18
+        text run at (0,0) width 63: "auto table"
       RenderTable {TABLE} at (0,18) size 88x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 86x26
           RenderTableRow {TR} at (0,2) size 86x22
@@ -15,10 +14,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (52,2) size 32x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x18
                 text run at (2,2) width 28: "auto"
-      RenderBlock (anonymous) at (0,46) size 784x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 198x18
-          text run at (0,18) width 198: "auto table - fixed cells honored"
+      RenderBR {BR} at (0,46) size 0x18
+      RenderText {#text} at (0,64) size 198x18
+        text run at (0,64) width 198: "auto table - fixed cells honored"
       RenderTable {TABLE} at (0,82) size 144x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 142x26
           RenderTableRow {TR} at (0,2) size 142x22
@@ -28,11 +26,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (108,2) size 32x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x18
                 text run at (2,2) width 28: "auto"
-      RenderBlock (anonymous) at (0,110) size 784x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 81x18
-          text run at (0,18) width 81: "COLSPANS"
-        RenderBR {BR} at (80,18) size 1x18
+      RenderBR {BR} at (0,110) size 0x18
+      RenderText {#text} at (0,128) size 81x18
+        text run at (0,128) width 81: "COLSPANS"
+      RenderBR {BR} at (80,128) size 1x18
       RenderTable {TABLE} at (0,146) size 638x134 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 636x132
           RenderTableRow {TR} at (0,2) size 636x104
@@ -54,8 +51,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (608,108) size 26x22 [border: (1px inset #000000)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "bar"
-      RenderBlock (anonymous) at (0,280) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,280) size 0x18
       RenderTable {TABLE} at (0,298) size 534x61 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 532x59
           RenderTableRow {TR} at (0,5) size 532x22

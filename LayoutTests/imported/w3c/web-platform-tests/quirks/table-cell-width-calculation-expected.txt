@@ -5,8 +5,8 @@ PASS The table cell width calculation quirk, inline-block
 PASS The table cell width calculation quirk, img in span
 PASS The table cell width calculation quirk, the don't-wrap rule is only for the purpose of calculating the width of the cell
 PASS The table cell width calculation quirk, the quirk only applies when the cell is the containing block
-PASS The table cell width calculation quirk, the quirk shouldn't apply for generated content
-PASS The table cell width calculation quirk, the quirk shouldn't apply for <input>
+FAIL The table cell width calculation quirk, the quirk shouldn't apply for generated content assert_equals: cell width, quirks mode expected "2px" but got "3px"
+FAIL The table cell width calculation quirk, the quirk shouldn't apply for <input> assert_equals: cell width, quirks mode expected "2px" but got "3px"
 PASS The table cell width calculation quirk, the quirk shouldn't apply for <object>
 PASS The table cell width calculation quirk, the quirk shouldn't apply for <embed>
 PASS The table cell width calculation quirk, the quirk shouldn't apply for <video poster>

@@ -10,5 +10,4 @@ layer at (0,0) size 800x600
           text run at (0,18) width 44: "height."
       RenderBlock {DIV} at (0,52) size 100x50 [bgcolor=#0000FF]
         RenderBlock {DIV} at (0,0) size 100x0
-        RenderBlock (anonymous) at (0,0) size 100x0
-          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

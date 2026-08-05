@@ -27,8 +27,7 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (26,5) size 99x12
                       text run at (26,4) width 99: " Remember this location"
                   RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,37) size 784x18
-          RenderBR {BR} at (392,0) size 0x18
+        RenderBR {BR} at (392,37) size 0x18
 layer at (207,12) size 282x13 backgroundClip at (207,12) size 281x13 clip at (207,12) size 281x13
   RenderBlock {DIV} at (7,4) size 282x13
 caret: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

@@ -7,9 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 624x18
           text run at (0,0) width 624: "This tests for a bug where style would not be applied to a selection that ended just after an image."
       RenderBlock {DIV} at (0,34) size 784x125
-        RenderBlock (anonymous) at (0,0) size 784x18
-          RenderInline {B} at (0,0) size 0x18
-            RenderBR {BR} at (0,0) size 0x18
+        RenderInline {B} at (0,0) size 0x18
+          RenderBR {BR} at (0,0) size 0x18
         RenderBlock {DIV} at (0,18) size 784x107
           RenderInline {B} at (0,89) size 244x18
             RenderText {#text} at (0,89) size 168x18

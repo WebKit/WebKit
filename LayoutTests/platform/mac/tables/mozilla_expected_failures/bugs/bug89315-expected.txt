@@ -4,9 +4,8 @@ layer at (0,0) size 785x4680
   RenderBlock {HTML} at (0,0) size 785x4680
     RenderBody {BODY} at (8,8) size 769x4664
       RenderBlock {DIV} at (0,0) size 769x4648
-        RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 4x18
-            text run at (0,0) width 4: " "
+        RenderText {#text} at (0,0) size 4x18
+          text run at (0,0) width 4: " "
         RenderTable {TABLE} at (67,18) size 474x4582 [border: none]
           RenderTableSection {TBODY} at (0,0) size 472x4581
             RenderTableRow {TR} at (0,0) size 472x22
@@ -188,12 +187,11 @@ layer at (0,0) size 785x4680
                   RenderText {#text} at (32,0) size 20x16
                     text run at (32,0) width 20: "Yes"
               RenderTableCell {TD} at (366,159) size 107x33 [border: (1px none #000000) none (1px none #000000)] [r=6 c=3 rs=1 cs=1]
-                RenderBlock (anonymous) at (8,1) size 90x16
-                  RenderInline {SPAN} at (36,-2) size 17x19
-                    RenderInline {FONT} at (36,0) size 17x16
-                      RenderText {#text} at (36,0) size 17x16
-                        text run at (36,0) width 17: "No"
-                  RenderText {#text} at (0,0) size 0x0
+                RenderInline {SPAN} at (45,-1) size 16x19
+                  RenderInline {FONT} at (45,1) size 16x16
+                    RenderText {#text} at (45,1) size 16x16
+                      text run at (45,1) width 16: "No"
+                RenderText {#text} at (0,0) size 0x0
                 RenderBlock {P} at (8,17) size 90x16
                   RenderText {#text} at (35,0) size 20x16
                     text run at (35,0) width 20: "Yes"

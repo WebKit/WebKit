@@ -5,9 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {CENTER} at (0,0) size 784x0
         RenderBlock {CENTER} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderInline {FONT} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
+      RenderInline {FONT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,0) size 6x8
         RenderTableSection {TBODY} at (0,0) size 6x8
           RenderTableRow {TR} at (0,2) size 6x2
@@ -16,13 +15,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,8) size 4x4
         RenderTableSection {TBODY} at (0,0) size 4x4
           RenderTableRow {TR} at (0,2) size 4x0
-      RenderBlock (anonymous) at (0,28) size 784x18
-        RenderInline {FONT} at (0,0) size 0x18
-          RenderText {#text} at (0,0) size 0x0
-          RenderBlock {P} at (0,0) size 784x0
-          RenderInline {A} at (0,0) size 0x18
-        RenderInline {A} at (0,0) size 0x18
-          RenderInline {FONT} at (0,0) size 0x18
-        RenderInline {FONT} at (0,0) size 373x18
-          RenderText {#text} at (0,0) size 373x18
-            text run at (0,0) width 373: "This page contains an insanely badly-nested tag sequence."
+      RenderInline {FONT} at (0,12) size 0x34
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {P} at (0,28) size 784x0
+        RenderInline {A} at (0,28) size 0x18
+      RenderInline {A} at (0,28) size 0x18
+        RenderInline {FONT} at (0,28) size 0x18
+      RenderInline {FONT} at (0,28) size 373x18
+        RenderText {#text} at (0,28) size 373x18
+          text run at (0,28) width 373: "This page contains an insanely badly-nested tag sequence."
