@@ -60,19 +60,21 @@ enum class ReceiverName : uint8_t {
     , TestWithStreamBuffer = 16
     , TestWithStreamServerConnectionHandle = 17
     , TestWithStreamSwift = 18
-    , TestWithSuperclass = 19
-    , TestWithSuperclassAndWantsAsyncDispatch = 20
-    , TestWithSuperclassAndWantsDispatch = 21
-    , TestWithSwift = 22
-    , TestWithSwiftConditionally = 23
-    , TestWithValidator = 24
-    , TestWithWantsAsyncDispatch = 25
-    , TestWithWantsDispatch = 26
-    , TestWithWantsDispatchNoSyncMessages = 27
-    , TestWithoutAttributes = 28
-    , TestWithoutUsingIPCConnection = 29
-    , IPC = 30
-    , Invalid = 31
+    , TestWithStreamSwiftEnabledBy = 19
+    , TestWithSuperclass = 20
+    , TestWithSuperclassAndWantsAsyncDispatch = 21
+    , TestWithSuperclassAndWantsDispatch = 22
+    , TestWithSwift = 23
+    , TestWithSwiftConditionally = 24
+    , TestWithSwiftConditionallyAndEnabledBy = 25
+    , TestWithValidator = 26
+    , TestWithWantsAsyncDispatch = 27
+    , TestWithWantsDispatch = 28
+    , TestWithWantsDispatchNoSyncMessages = 29
+    , TestWithoutAttributes = 30
+    , TestWithoutUsingIPCConnection = 31
+    , IPC = 32
+    , Invalid = 33
 };
 
 enum class MessageName : uint16_t {
@@ -148,6 +150,7 @@ enum class MessageName : uint16_t {
     TestWithStreamBatched_SendString,
     TestWithStreamBuffer_SendStreamBuffer,
     TestWithStreamServerConnectionHandle_SendStreamServerConnection,
+    TestWithStreamSwiftEnabledBy_SendString,
     TestWithStreamSwift_SendString,
     TestWithStream_CallWithIdentifier,
     TestWithStream_CallWithIdentifierReply,
@@ -172,6 +175,8 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_TestAsyncMessageWithNoArguments,
     TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply,
 #endif
+    TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage,
+    TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply,
     TestWithSwiftConditionally_TestAsyncMessage,
     TestWithSwiftConditionally_TestAsyncMessageReply,
     TestWithSwift_TestAsyncMessage,
@@ -256,6 +261,7 @@ enum class MessageName : uint16_t {
     TestWithSuperclassAndWantsDispatch_TestSyncMessage,
     TestWithSuperclass_TestSyncMessage,
     TestWithSuperclass_TestSynchronousMessage,
+    TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage,
     TestWithSwiftConditionally_TestSyncMessage,
     TestWithSwift_TestSyncMessage,
     TestWithWantsAsyncDispatch_TestSyncMessage,

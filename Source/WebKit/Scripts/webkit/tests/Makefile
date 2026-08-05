@@ -19,11 +19,13 @@ TESTS = \
     TestWithStreamBuffer \
     TestWithStreamServerConnectionHandle \
     TestWithStreamSwift \
+    TestWithStreamSwiftEnabledBy \
     TestWithSuperclass \
     TestWithSuperclassAndWantsAsyncDispatch \
     TestWithSuperclassAndWantsDispatch \
     TestWithSwift \
     TestWithSwiftConditionally \
+    TestWithSwiftConditionallyAndEnabledBy \
     TestWithValidator \
     TestWithWantsAsyncDispatch \
     TestWithWantsDispatch \

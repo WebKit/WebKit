@@ -293,6 +293,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithStreamSwift_SendString>(globalObject, decoder);
     case MessageName::TestWithStreamSwift_SendStringSync:
         return jsValueForDecodedMessage<MessageName::TestWithStreamSwift_SendStringSync>(globalObject, decoder);
+    case MessageName::TestWithStreamSwiftEnabledBy_SendString:
+        return jsValueForDecodedMessage<MessageName::TestWithStreamSwiftEnabledBy_SendString>(globalObject, decoder);
     case MessageName::TestWithSuperclass_LoadURL:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_LoadURL>(globalObject, decoder);
 #if ENABLE(TEST_FEATURE)
@@ -343,6 +345,12 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionally_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithSwiftConditionally_TestAsyncMessageReply:
         return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionally_TestAsyncMessageReply>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply:
+        return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply>(globalObject, decoder);
     case MessageName::TestWithValidator_AlwaysEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithValidator_AlwaysEnabled>(globalObject, decoder);
     case MessageName::TestWithValidator_EnabledIfPassValidation:
@@ -466,6 +474,10 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionally_TestAsyncMessage>(globalObject, decoder);
     case MessageName::TestWithSwiftConditionally_TestSyncMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionally_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithValidator_MessageWithReply:
         return jsValueForDecodedMessageReply<MessageName::TestWithValidator_MessageWithReply>(globalObject, decoder);
     case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
@@ -1085,6 +1097,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
         };
+    case MessageName::TestWithStreamSwiftEnabledBy_SendString:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s },
+        };
     case MessageName::TestWithSuperclass_LoadURL:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
@@ -1173,6 +1189,18 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
             { "param"_s, "uint32_t"_s },
         };
     case MessageName::TestWithSwiftConditionally_TestAsyncMessageReply:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply:
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s },
         };
@@ -1382,6 +1410,14 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
             { "reply"_s, "uint8_t"_s },
         };
     case MessageName::TestWithSwiftConditionally_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage:
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s },
         };
