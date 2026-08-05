@@ -63,6 +63,7 @@ NonInheritedMiscData::NonInheritedMiscData()
     , tableLayout(static_cast<unsigned>(ComputedStyle::initialTableLayout()))
     , appearance(static_cast<unsigned>(ComputedStyle::initialAppearance()))
     , usedAppearance(static_cast<unsigned>(ComputedStyle::initialAppearance()))
+    , userSelect(static_cast<unsigned>(ComputedStyle::initialUserSelect()))
     , textOverflow(static_cast<unsigned>(ComputedStyle::initialTextOverflow()))
     , userDrag(static_cast<unsigned>(ComputedStyle::initialUserDrag()))
     , objectFit(static_cast<unsigned>(ComputedStyle::initialObjectFit()))
@@ -104,6 +105,7 @@ NonInheritedMiscData::NonInheritedMiscData(const NonInheritedMiscData& o)
     , tableLayout(o.tableLayout)
     , appearance(o.appearance)
     , usedAppearance(o.usedAppearance)
+    , userSelect(o.userSelect)
     , textOverflow(o.textOverflow)
     , userDrag(o.userDrag)
     , objectFit(o.objectFit)
@@ -152,6 +154,7 @@ bool NonInheritedMiscData::operator==(const NonInheritedMiscData& o) const
         && tableLayout == o.tableLayout
         && appearance == o.appearance
         && usedAppearance == o.usedAppearance
+        && userSelect == o.userSelect
         && textOverflow == o.textOverflow
         && userDrag == o.userDrag
         && objectFit == o.objectFit
@@ -209,6 +212,8 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
     LOG_IF_DIFFERENT_WITH_CAST(TableLayoutType, tableLayout);
     LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, appearance);
     LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, usedAppearance);
+
+    LOG_IF_DIFFERENT_WITH_CAST(UserSelect, userSelect);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, textOverflow);
 

@@ -638,12 +638,13 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 #if ENABLE(IMAGE_ANALYSIS)
         // Don't allow selecting individual glyphs on text recognized inside an image:
         if (m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
-            switch (style.userSelect()) {
+            switch (style.webkitUserSelect()) {
             case UserSelect::All:
             case UserSelect::None:
                 break;
+            case UserSelect::Auto:
             case UserSelect::Text:
-                style.setUserSelect(UserSelect::All);
+                style.setWebkitUserSelect(UserSelect::All);
                 break;
             }
         }
@@ -1089,7 +1090,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     if (documentQuirks.needsPrimeVideoUserSelectNoneQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("webPlayerSDKUiContainer"_s);
         if (m_element->hasClassName(className))
-            style.setUserSelect(UserSelect::None);
+            style.setWebkitUserSelect(UserSelect::None);
     }
 
     if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {

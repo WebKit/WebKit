@@ -494,7 +494,8 @@ enum class UserDrag : uint8_t {
 enum class UserSelect : uint8_t {
     None,
     Text,
-    All
+    All,
+    Auto
 };
 
 // CSS3 Image Values
