@@ -31,6 +31,7 @@
 #include <JavaScriptCore/YarrFlags.h>
 #include <JavaScriptCore/YarrUnicodeProperties.h>
 #include <array>
+#include <wtf/BitSet.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
@@ -43,6 +44,12 @@ namespace JSC { namespace Yarr {
 
 struct YarrPattern;
 struct PatternDisjunction;
+
+// Superset of the Latin-1 bytes that can begin a match (a clear bit guarantees no match begins
+// there), or nullopt when not useful. computeAnchored additionally requires the pattern be
+// ^-anchored at position 0 (not multiline). Safe to call on a compiler thread.
+std::optional<WTF::BitSet<256>> computeStickyFirstCharacterBitmap(StringView, OptionSet<Flags>);
+std::optional<WTF::BitSet<256>> computeAnchoredFirstCharacterBitmap(StringView, OptionSet<Flags>);
 
 enum class CompileMode : uint8_t {
     Legacy,
