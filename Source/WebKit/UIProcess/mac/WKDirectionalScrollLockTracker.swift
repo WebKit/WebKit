@@ -25,7 +25,6 @@
 
 import Foundation
 import WebKit_Internal
-private import Spatial
 
 // A type to track directional scroll lock state. Drags within 20° of an axis lock to it; the ambiguous
 // 20°-70° band stays unlocked so both axes flow (free diagonal).
