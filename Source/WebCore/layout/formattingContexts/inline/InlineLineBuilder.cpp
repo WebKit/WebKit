@@ -1938,6 +1938,9 @@ bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, si
     }
     // Look ahead to see if there's more inline type of inline items.
     for (auto i = lineContent.range.endIndex(); i < needsLayoutEnd && i < m_inlineItemList.size(); ++i) {
+        // A block level box (block-in-inline) closes the inline content: whatever follows it starts after the block and can't extend this line, so this is the line's last inline content.
+        if (m_inlineItemList[i].isBlock())
+            return true;
         if (isContentfulOrHasDecoration(m_inlineItemList[i], formattingContext))
             return false;
     }
