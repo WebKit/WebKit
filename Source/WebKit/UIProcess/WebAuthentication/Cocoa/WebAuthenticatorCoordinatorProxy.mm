@@ -1408,12 +1408,14 @@ void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(const WebCore::Se
 
 #if USE(APPLE_INTERNAL_SDK)
     [getCredentialUpdaterShimClassSingleton() signalUnknownCredentialWithRelyingPartyIdentifier:options.rpId.createNSString().get() credentialID:WTF::toNSData(*decodedCredentialId).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(WebAuthn, "Error signaling unknown credential: %@.", error.localizedDescription);
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling unknown credential."_s });
-            return;
-        }
-        completionHandler(std::nullopt);
+        ensureOnMainRunLoop([error = protect(error), completionHandler = WTF::move(completionHandler)] mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(WebAuthn, "Error signaling unknown credential: %@.", error.get().localizedDescription);
+                completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling unknown credential."_s });
+                return;
+            }
+            completionHandler(std::nullopt);
+        });
     }).get()];
 #endif
 }
@@ -1439,12 +1441,14 @@ void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(const WebCor
 
 #if USE(APPLE_INTERNAL_SDK)
     [getCredentialUpdaterShimClassSingleton() signalAllAcceptedCredentialsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() acceptedCredentialIDs:credentialIds.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(WebAuthn, "Error signaling all accepted credentials: %@.", error.localizedDescription);
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling all accepted credentials"_s });
-            return;
-        }
-        completionHandler(std::nullopt);
+        ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), error = retainPtr(error)]() mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(WebAuthn, "Error signaling all accepted credentials: %@.", error.get().localizedDescription);
+                completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling all accepted credentials"_s });
+                return;
+            }
+            completionHandler(std::nullopt);
+        });
     }).get()];
 #endif
 }
@@ -1460,12 +1464,14 @@ void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(const WebCore::S
 
 #if USE(APPLE_INTERNAL_SDK)
     [getCredentialUpdaterShimClassSingleton() signalCurrentUserDetailsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() newName:options.name.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(WebAuthn, "Error signaling current user details: %@.", error.localizedDescription);
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling current user details."_s });
-            return;
-        }
-        completionHandler(std::nullopt);
+        ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), error = retainPtr(error)]() mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(WebAuthn, "Error signaling current user details: %@.", error.get().localizedDescription);
+                completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling current user details."_s });
+                return;
+            }
+            completionHandler(std::nullopt);
+        });
     }).get()];
 #endif
 }

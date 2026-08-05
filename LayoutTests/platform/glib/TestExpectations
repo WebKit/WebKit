@@ -3370,6 +3370,7 @@ ipc/videoEncode.html [ Skip ]
 
 # WebAuthn not enabled
 ipc/web-authenticator-get-assertion.html [ Skip ]
+ipc/web-authenticator-signal-main-thread.html [ Skip ]
 
 # These tests require UseGPUProcessForMediaEnabled
 ipc/restrictedendpoints/allow-access-testOnlyIPC.html [ Skip ]
