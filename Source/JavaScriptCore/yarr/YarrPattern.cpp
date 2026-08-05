@@ -587,41 +587,40 @@ private:
 
     void addSortedRange(Vector<CharacterRange>& ranges, char32_t lo, char32_t hi)
     {
-        size_t end = ranges.size();
-
         if (U_IS_BMP(lo))
             m_characterWidths |= CharacterClassWidths::HasBMPChars;
         if (!U_IS_BMP(hi))
             m_characterWidths |= CharacterClassWidths::HasNonBMPChars;
 
-        // Simple linear scan - I doubt there are that many ranges anyway...
-        // feel free to fix this with something faster (eg binary chop).
-        for (size_t i = 0; i < end; ++i) {
-            // does the new range fall before the current position in the array
-            if (hi < ranges[i].begin) {
-                // Concatenate appending ranges.
-                if (hi == (ranges[i].begin - 1)) {
-                    ranges[i].begin = lo;
-                    return;
-                }
-                ranges.insert(i, CharacterRange(lo, hi));
-                return;
-            }
-            // Okay, since we didn't hit the last case, the end of the new range is definitely at or after the begining
-            // If the new range start at or before the end of the last range, then the overlap (if it starts one after the
-            // end of the last range they concatenate, which is just as good.
-            if (lo <= (ranges[i].end + 1)) {
-                // found an intersect! we'll replace this entry in the array.
-                ranges[i].begin = std::min(ranges[i].begin, lo);
-                ranges[i].end = std::max(ranges[i].end, hi);
-
-                mergeRangesFrom(ranges, i);
-                return;
-            }
+        auto iter = std::lower_bound(ranges.begin(), ranges.end(), lo,
+            [](const CharacterRange& range, char32_t value) {
+                return static_cast<uint64_t>(range.end) + 1 < value;
+            });
+        if (iter == ranges.end()) {
+            // CharacterRange comes after all existing ranges.
+            ranges.append(CharacterRange(lo, hi));
+            return;
         }
 
-        // CharacterRange comes after all existing ranges.
-        ranges.append(CharacterRange(lo, hi));
+        ASSERT(lo <= (iter->end + 1));
+
+        // does the new range fall before the current position in the array
+        if (hi < iter->begin) {
+            // Concatenate appending ranges.
+            if (hi == (iter->begin - 1)) {
+                iter->begin = lo;
+                return;
+            }
+            ranges.insert(iter - ranges.begin(), CharacterRange(lo, hi));
+            return;
+        }
+
+        // If the new range start at or before the end of the last range, then the overlap (if it starts one after the
+        // end of the last range they concatenate, which is just as good.
+        // found an intersect! we'll replace this entry in the array.
+        iter->begin = std::min(iter->begin, lo);
+        iter->end = std::max(iter->end, hi);
+        mergeRangesFrom(ranges, iter - ranges.begin());
     }
 
 
