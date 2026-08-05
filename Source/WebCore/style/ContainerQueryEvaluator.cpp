@@ -184,7 +184,7 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequ
 
         // ::part() selectors query the composed tree
         if (selectionMode == SelectionMode::PartPseudoElement)
-            return element.assignedSlot();
+            return element;
 
         // ::slotted() selectors can query containers inside the shadow tree, including the slot itself.
         if (scopeOrdinal >= ScopeOrdinal::FirstSlot && scopeOrdinal <= ScopeOrdinal::SlotLimit)
