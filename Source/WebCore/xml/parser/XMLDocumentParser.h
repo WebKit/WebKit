@@ -157,7 +157,7 @@ private:
     void createLeafTextNode();
     bool updateLeafTextNode();
 
-    void doWrite(const String&);
+    void doWrite(String&&);
     void doEnd();
 
     xmlParserCtxtPtr context() const { return m_context ? m_context->context() : nullptr; };

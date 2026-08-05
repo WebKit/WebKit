@@ -128,7 +128,7 @@ void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
         return;
     }
 
-    doWrite(source);
+    doWrite(WTF::move(source));
 }
 
 void XMLDocumentParser::handleError(XMLErrors::Type type, const char* m, TextPosition position)
