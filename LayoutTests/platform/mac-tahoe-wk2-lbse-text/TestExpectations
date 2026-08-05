@@ -50,6 +50,7 @@ svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
 svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
 svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
+svg/filters/filter-image-ref-root.html                                                 [ ImageOnlyFailure ]
 svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
 svg/filters/filter-placement-issue.svg                                                 [ ImageOnlyFailure ]
@@ -63,6 +64,7 @@ svg/filters/feImage-target-attribute-change-with-use-indirection.svg            
 
 # SVGImage support incomplete
 svg/as-image/image-respects-pageScaleFactor-change.html                   [ ImageOnlyFailure ]
+svg/as-image/img-preserveAspectRatio-support-1.html                       [ ImageOnlyFailure ]
 svg/as-image/same-image-two-instances.html                                [ ImageOnlyFailure ]
 svg/as-image/svg-as-image-with-relative-size.html                         [ ImageOnlyFailure ]
 svg/as-image/svg-image-no-viewbox-preserve-aspect-ratio-none.html         [ ImageOnlyFailure ]
