@@ -416,8 +416,8 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
 
         // FIXME(wasm-memory64): for now IPInt checks m_cachedIsMemory64 (flag if memory 0 is 64-bit)
         // no matter which memory is being accessed
-        if (isMemory64)
-            WASM_PARSER_FAIL_IF(m_info->memoryCount(), "if using memory64 then multiple memories are illegal for now");
+        if (m_info->memoryCount())
+            WASM_PARSER_FAIL_IF(isMemory64 || m_info->memory(0).isMemory64(), "if using memory64 then multiple memories are illegal for now");
 
         initialPageCount = PageCount(initial);
 
