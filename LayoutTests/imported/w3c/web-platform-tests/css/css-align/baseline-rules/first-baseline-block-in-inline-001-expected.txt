@@ -1,0 +1,12 @@
+X
+X
+X
+X
+tail
+X	
+X
+
+PASS Flex item first baseline includes the offset of a block-level box nested in an inline box
+PASS Flex item first baseline includes the offset of a block-level box that is a sibling of inline content
+PASS Table cell baseline includes the offset of a block-level box nested in an inline box
+

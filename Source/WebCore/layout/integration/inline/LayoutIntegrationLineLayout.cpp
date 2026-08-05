@@ -1003,7 +1003,9 @@ std::optional<LayoutUnit> LineLayout::firstLineBaseline() const
         if (auto* blockLevelBox = m_inlineContent->blockLevelBoxForLine(line)) {
             // For block-in-inline look for the baseline of the child box.
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
-            return blockRenderer->firstLineBaseline();
+            if (auto baseline = blockRenderer->firstLineBaseline())
+                return blockRenderer->logicalTop() + *baseline;
+            return { };
         }
         return LayoutUnit { baselineForLine(line) };
     };
