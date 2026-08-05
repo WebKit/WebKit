@@ -1934,6 +1934,9 @@ const Style::ComputedStyle* RenderElement::lazyPseudoElementStyle(const Style::P
 
 std::unique_ptr<Style::ComputedStyle> RenderElement::resolvePseudoElementStyle(const Style::PseudoElementRequest& pseudoElementRequest, const Style::ComputedStyle* parentStyle, const Style::ComputedStyle* ownStyle) const
 {
+    if (pseudoElementRequest.type() == PseudoElementType::Highlight && !ownStyle && !isAnonymous() && element())
+        return resolveHighlightPseudoElementStyleWithInheritance(pseudoElementRequest, parentStyle ? *parentStyle : style());
+
     if (allPublicPseudoElementTypes.contains(pseudoElementRequest.type()) && !ownStyle && !style().hasPseudoStyle(pseudoElementRequest.type()))
         return nullptr;
 
@@ -1955,6 +1958,33 @@ std::unique_ptr<Style::ComputedStyle> RenderElement::resolvePseudoElementStyle(c
     Style::loadPendingResources(*resolvedStyle->style, protect(document()), element.ptr());
 
     return WTF::move(resolvedStyle->style);
+}
+
+std::unique_ptr<Style::ComputedStyle> RenderElement::resolveHighlightPseudoElementStyleWithInheritance(const Style::PseudoElementRequest& pseudoElementRequest, const Style::ComputedStyle& rootParentStyle) const
+{
+    if (isAnonymous() || !element())
+        return nullptr;
+
+    Ref element = *this->element();
+    Ref styleResolver = element->styleResolver();
+
+    if (auto resolvedStyle = styleResolver->styleForPseudoElement(element, pseudoElementRequest, { &rootParentStyle })) {
+        Style::loadPendingResources(*resolvedStyle->style, protect(document()), element.ptr());
+        return WTF::move(resolvedStyle->style);
+    }
+
+    RefPtr parentElement = element->parentElement();
+    if (!parentElement)
+        return nullptr;
+    CheckedPtr parentRenderer = parentElement->renderer();
+    if (!parentRenderer)
+        return nullptr;
+
+    auto parentHighlightStyle = parentRenderer->resolveHighlightPseudoElementStyleWithInheritance(pseudoElementRequest, parentRenderer->style());
+    if (!parentHighlightStyle)
+        return nullptr;
+
+    return Style::ComputedStyle::clonePtr(*parentHighlightStyle);
 }
 
 RenderElement* RenderElement::rendererForPseudoStyleAcrossShadowBoundary() const

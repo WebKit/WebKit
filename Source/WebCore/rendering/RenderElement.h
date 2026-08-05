@@ -93,6 +93,7 @@ public:
     // Resolves and caches the style for a lazily-resolved pseudo-element.
     const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
     std::unique_ptr<Style::ComputedStyle> resolvePseudoElementStyle(const Style::PseudoElementRequest&, const Style::ComputedStyle* parentStyle = nullptr, const Style::ComputedStyle* ownStyle = nullptr) const;
+    std::unique_ptr<Style::ComputedStyle> resolveHighlightPseudoElementStyleWithInheritance(const Style::PseudoElementRequest&, const Style::ComputedStyle& rootParentStyle) const;
 
     // This is null for anonymous renderers.
     inline Element* element() const; // Defined in RenderElementInlines.h
