@@ -77,6 +77,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_javascript_uri.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_meta_tag.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_meta_tag.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_modulepreload_parser_inserted_module.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_modulepreload_parser_inserted_module.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_new_function.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_new_function.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted.html
@@ -91,6 +93,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_correct_nonce.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_module.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_module.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_module_empty_hash.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_module_empty_hash.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker-importScripts.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_DedicatedWorker.html
