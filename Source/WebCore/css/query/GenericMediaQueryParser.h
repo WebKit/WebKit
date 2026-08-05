@@ -146,7 +146,7 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
             if (!validationRange.consumeAnyValue())
                 return { };
 
-            return GeneralEnclosed { name.toString(), functionRange.serialize() };
+            return GeneralEnclosed { name.toString(), functionRange.serialize(CSSParserToken::SerializationMode::CustomProperty) };
         }
     }
 
@@ -181,7 +181,7 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
     if (!validationRange.consumeAnyValue())
         return { };
 
-    return GeneralEnclosed { functionId ? nameString(*functionId) : nullAtom(), originalBlockRange.serialize() };
+    return GeneralEnclosed { functionId ? nameString(*functionId) : nullAtom(), originalBlockRange.serialize(CSSParserToken::SerializationMode::CustomProperty) };
 }
 
 template<typename ConcreteParser>
