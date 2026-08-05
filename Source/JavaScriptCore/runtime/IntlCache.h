@@ -79,6 +79,7 @@ public:
     }
 
     void clearForTimeZoneChange() { clearDateTimeFormatImplCache(); }
+    uint64_t languagesEpoch() const { return m_lastSeenLanguagesEpoch; }
     bool hasLanguageChange() const { return m_lastSeenLanguagesEpoch != s_languagesEpoch.load(std::memory_order_acquire); }
     void clearForLanguageChange()
     {

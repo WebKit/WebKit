@@ -302,6 +302,7 @@ public:
     // Cached collator object for String#localeCompare
     WriteBarrier<IntlCollator> m_cachedLocaleCompareCollator;
     String m_cachedLocaleCompareCollatorLocale;
+    uint64_t m_cachedLocaleCompareCollatorLanguagesEpoch { 0 };
 
     LazyClassStructure m_durationStructure;
     LazyClassStructure m_instantStructure;

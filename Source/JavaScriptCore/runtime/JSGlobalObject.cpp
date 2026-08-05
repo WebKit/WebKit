@@ -88,6 +88,7 @@
 #include "GlobalObjectMethodTable.h"
 #include "HeapIterationScope.h"
 #include "ImportMap.h"
+#include "IntlCache.h"
 #include "IntlCollator.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormat.h"
@@ -3163,7 +3164,7 @@ IntlCollator* JSGlobalObject::cachedLocaleCompareCollator(JSString* locale)
     String localeString = locale->value(this);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (m_cachedLocaleCompareCollator && m_cachedLocaleCompareCollatorLocale == localeString)
+    if (m_cachedLocaleCompareCollator && m_cachedLocaleCompareCollatorLanguagesEpoch == vm.intlCache().languagesEpoch() && m_cachedLocaleCompareCollatorLocale == localeString)
         return m_cachedLocaleCompareCollator.get();
 
     IntlCollator* collator = IntlCollator::create(vm, collatorStructure());
@@ -3171,6 +3172,7 @@ IntlCollator* JSGlobalObject::cachedLocaleCompareCollator(JSString* locale)
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     m_cachedLocaleCompareCollatorLocale = WTF::move(localeString);
+    m_cachedLocaleCompareCollatorLanguagesEpoch = vm.intlCache().languagesEpoch();
     m_cachedLocaleCompareCollator.set(vm, this, collator);
     return collator;
 }
