@@ -162,6 +162,9 @@ AudioWorkletNode::~AudioWorkletNode()
             }
         }
     }
+    // The node is destroyed on the main thread, so release the rendering-thread assertion to avoid
+    // tripping its destructor check.
+    m_renderingThread = anyThreadLike;
     uninitialize();
 }
 
@@ -195,6 +198,7 @@ void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
         Locker locker { m_processLock };
         m_processor = WTF::move(processor);
         m_workletThread = Thread::currentSingleton();
+        m_renderingThread.reset();
     } else
         fireProcessorErrorOnMainThread(ProcessorError::ConstructorError);
 }
@@ -218,12 +222,28 @@ void AudioWorkletNode::process(size_t framesToProcess)
         zeroOutput();
         return;
     }
+    assertIsCurrent(m_renderingThread);
 
-    // If the input is not connected, pass nullptr to the processor.
+    // If the input is not connected, pass nullptr to the processor. An input is considered active
+    // as long as it is connected to a node that is still producing audio (i.e. its bus is not
+    // silent); once a source finishes playback it outputs silence.
+    bool hasActiveInputs = false;
     for (unsigned i = 0; i < numberOfInputs(); ++i) {
         CheckedPtr currentInput = input(i);
-        m_inputs[i] = currentInput->isConnected() ? &currentInput->bus() : nullptr;
+        bool connected = currentInput->isConnected();
+        m_inputs[i] = connected ? &currentInput->bus() : nullptr;
+        if (connected && !hasActiveInputs && !currentInput->bus().isSilent())
+            hasActiveInputs = true;
     }
+
+    // Once process() has returned false and the node no longer has any active inputs, the processor
+    // is done and we stop calling process().
+    if (!m_isActiveSource && !hasActiveInputs) {
+        didFinishProcessingOnRenderingThread(false);
+        zeroOutput();
+        return;
+    }
+
     for (unsigned i = 0; i < numberOfOutputs(); ++i)
         m_outputs[i] = output(i)->bus();
 
@@ -249,7 +269,8 @@ void AudioWorkletNode::process(size_t framesToProcess)
     }
 
     bool threwException = false;
-    if (!m_processor->process(m_inputs, m_outputs, m_paramValuesMap, threwException))
+    m_isActiveSource = m_processor->process(m_inputs, m_outputs, m_paramValuesMap, threwException);
+    if ((!m_isActiveSource && !hasActiveInputs) || threwException)
         didFinishProcessingOnRenderingThread(threwException);
 }
 

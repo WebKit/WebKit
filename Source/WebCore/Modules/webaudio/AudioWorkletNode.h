@@ -34,6 +34,7 @@
 #include "AudioNode.h"
 #include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/ThreadAssertions.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -94,17 +95,27 @@ private:
     const Ref<AudioParamMap> m_parameters;
     const Ref<MessagePort> m_port;
     Lock m_processLock;
+
+    // Bound to the rendering (worklet) thread the first time a processor is installed; guards the
+    // members below that must only be touched while rendering. Reset to anyThreadLike in the
+    // destructor since the node is destroyed on the main thread.
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_renderingThread { noneThreadLike };
+
     RefPtr<AudioWorkletProcessor> m_processor; // Should only be used on the rendering thread.
     MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
     RefPtr<WTF::Thread> m_workletThread;
 
     // Keeps the reference of AudioBus objects from AudioNodeInput and AudioNodeOutput in order
     // to pass them to AudioWorkletProcessor.
-    Vector<RefPtr<AudioBus>> m_inputs;
-    Vector<Ref<AudioBus>> m_outputs;
+    Vector<RefPtr<AudioBus>> m_inputs WTF_GUARDED_BY_CAPABILITY(m_renderingThread);
+    Vector<Ref<AudioBus>> m_outputs WTF_GUARDED_BY_CAPABILITY(m_renderingThread);
 
     double m_tailTime { std::numeric_limits<double>::infinity() };
     bool m_wasOutputChannelCountGiven { false };
+
+    // The processor's process() method acts as an active source as long as it returns true. Once
+    // it returns false, the processor's lifetime is governed by its active inputs.
+    bool m_isActiveSource WTF_GUARDED_BY_CAPABILITY(m_renderingThread) { true };
 };
 
 } // namespace WebCore
