@@ -36,6 +36,7 @@
 #include "CornerShapeUtilities.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
+#include "HitTestLocation.h"
 #include "LayoutRect.h"
 #include "LayoutRoundedRect.h"
 #include "Path.h"
@@ -222,6 +223,19 @@ bool BorderShape::innerShapeContains(const LayoutRect& rect) const
 bool BorderShape::outerShapeContains(const LayoutRect& rect) const
 {
     return m_borderRect.contains(rect);
+}
+
+bool BorderShape::shapeIntersectsHitTestLocation(const HitTestLocation& hitTestLocation, float deviceScaleFactor) const
+{
+    // FIXME: This needs to handle area hit-testing
+    if (!hasNonRoundCornerShape())
+        return hitTestLocation.intersects(m_borderRect);
+
+    if (!hitTestLocation.intersects(snappedOuterRect(deviceScaleFactor)))
+        return false;
+
+    // Non-zero winding, so overlapping concave corners read as covered rather than punching a hole.
+    return pathForOuterShape(deviceScaleFactor).contains(hitTestLocation.point());
 }
 
 bool BorderShape::allCornersClippedOut(const LayoutRect& rect) const

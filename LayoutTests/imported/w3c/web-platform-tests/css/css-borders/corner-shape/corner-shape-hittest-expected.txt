@@ -1,7 +1,3 @@
 
-FAIL CSS Borders and Box Decorations 4 Test: Hit testing 'corner-shape' assert_equals: expected Element node <body><div id="target"></div>
-
-<script>
-    test(t => {
- ... but got Element node <div id="target"></div>
+PASS CSS Borders and Box Decorations 4 Test: Hit testing 'corner-shape'
 

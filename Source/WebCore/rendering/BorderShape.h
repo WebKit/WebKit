@@ -41,6 +41,7 @@ namespace WebCore {
 class Color;
 class GraphicsContext;
 class FloatRect;
+class HitTestLocation;
 class Path;
 
 namespace Style {
@@ -86,6 +87,8 @@ public:
     // Returns true if the given rect is entirely inside the inner/outer shape.
     bool innerShapeContains(const LayoutRect&) const;
     bool outerShapeContains(const LayoutRect&) const;
+
+    bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
 
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.
