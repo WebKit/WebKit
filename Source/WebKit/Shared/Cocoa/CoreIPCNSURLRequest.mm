@@ -143,7 +143,12 @@ static void populateAppProperties(NSDictionary *protocolPropertiesDict, Protocol
         if (!key)
             continue;
 
-        if (isReservedProtocolPropertyKeyPrefix(key.get()) || isTypedAllowlistKey(key.get())) {
+        // Keys represented in the typed fields are handled elsewhere.
+        // Encountering them here is expected, and skipping them prevents errant logging.
+        if (isTypedAllowlistKey(key.get()))
+            continue;
+
+        if (isReservedProtocolPropertyKeyPrefix(key.get())) {
             RELEASE_LOG_INFO_FORWARDABLE(API, CoreIpcNsurlRequestPropertyKeyNotAllowed, String(key.get()).utf8().data());
             continue;
         }
