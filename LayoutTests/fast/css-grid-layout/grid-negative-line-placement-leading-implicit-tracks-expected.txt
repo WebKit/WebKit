@@ -1,0 +1,5 @@
+This test checks that a negative grid line which counts past the start edge of the explicit grid generates leading implicit tracks, sized by grid-auto-columns and grid-auto-rows, and that every other item shifts forward by those tracks. The first grid needs one leading track per axis, the second needs two, and the third also has gutters, which apply between a leading implicit track and the explicit grid just as they do between explicit tracks.
+
+PASS
+PASS
+PASS

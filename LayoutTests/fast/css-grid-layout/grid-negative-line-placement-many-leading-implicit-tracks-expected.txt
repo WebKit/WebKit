@@ -1,0 +1,4 @@
+This test checks placements which need many leading implicit columns. GFC only takes on a bounded number of them, because its implicit grid is a dense matrix, so the second grid here falls back to the legacy path. Both paths have to agree: with three explicit columns, a column start of -14 resolves ten lines before the explicit grid and a start of -15 resolves eleven, so the explicit grid begins at 200px and 220px respectively.
+
+PASS
+PASS

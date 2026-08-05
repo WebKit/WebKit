@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<style>
+.grid {
+    display: grid;
+    position: relative;
+}
+
+.oneLeadingTrack {
+    grid-template-columns: 50px 50px;
+    grid-template-rows: 40px;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 20px;
+}
+
+.twoLeadingTracks {
+    grid-template-columns: 50px;
+    grid-template-rows: 40px;
+    grid-auto-columns: 20px;
+    grid-auto-rows: 10px;
+}
+
+.leadingTracksWithGaps {
+    grid-template-columns: 50px 50px;
+    grid-template-rows: 40px;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 20px;
+    column-gap: 10px;
+    row-gap: 5px;
+}
+
+.item {
+    background-color: green;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>This test checks that a negative grid line which counts past the start edge of the explicit grid generates leading implicit tracks, sized by grid-auto-columns and grid-auto-rows, and that every other item shifts forward by those tracks. The first grid needs one leading track per axis, the second needs two, and the third also has gutters, which apply between a leading implicit track and the explicit grid just as they do between explicit tracks.</p>
+
+<div class="grid oneLeadingTrack">
+    <div class="item" style="grid-column: -4 / -3; grid-row: -3 / -2;" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20"></div>
+    <div class="item" style="grid-column: -3 / -2; grid-row: -2 / -1;" data-offset-x="30" data-offset-y="20" data-expected-width="50" data-expected-height="40"></div>
+    <div class="item" style="grid-column: 2 / 3; grid-row: 1 / 2;" data-offset-x="80" data-offset-y="20" data-expected-width="50" data-expected-height="40"></div>
+</div>
+
+<div class="grid twoLeadingTracks">
+    <div class="item" style="grid-column: -4 / -3; grid-row: -4 / -3;" data-offset-x="0" data-offset-y="0" data-expected-width="20" data-expected-height="10"></div>
+    <div class="item" style="grid-column: -3 / -2; grid-row: -3 / -2;" data-offset-x="20" data-offset-y="10" data-expected-width="20" data-expected-height="10"></div>
+    <div class="item" style="grid-column: -2 / -1; grid-row: -2 / -1;" data-offset-x="40" data-offset-y="20" data-expected-width="50" data-expected-height="40"></div>
+</div>
+
+<div class="grid leadingTracksWithGaps">
+    <div class="item" style="grid-column: -4 / -3; grid-row: -3 / -2;" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20"></div>
+    <div class="item" style="grid-column: -3 / -2; grid-row: -2 / -1;" data-offset-x="40" data-offset-y="25" data-expected-width="50" data-expected-height="40"></div>
+    <div class="item" style="grid-column: 2 / 3; grid-row: 1 / 2;" data-offset-x="100" data-offset-y="25" data-expected-width="50" data-expected-height="40"></div>
+</div>
+
+</body>
+</html>

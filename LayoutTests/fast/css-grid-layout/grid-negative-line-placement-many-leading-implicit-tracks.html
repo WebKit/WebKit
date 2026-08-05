@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<style>
+.grid {
+    display: grid;
+    position: relative;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 40px;
+    grid-auto-columns: 20px;
+}
+
+.item {
+    background-color: green;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>This test checks placements which need many leading implicit columns. GFC only takes on a bounded number of them, because its implicit grid is a dense matrix, so the second grid here falls back to the legacy path. Both paths have to agree: with three explicit columns, a column start of -14 resolves ten lines before the explicit grid and a start of -15 resolves eleven, so the explicit grid begins at 200px and 220px respectively.</p>
+
+<div class="grid">
+    <div class="item" style="grid-column: -14 / -13; grid-row: 1 / 2;" data-offset-x="0" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+    <div class="item" style="grid-column: -4 / -3; grid-row: 1 / 2;" data-offset-x="200" data-offset-y="0" data-expected-width="50" data-expected-height="40"></div>
+</div>
+
+<div class="grid">
+    <div class="item" style="grid-column: -15 / -14; grid-row: 1 / 2;" data-offset-x="0" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+    <div class="item" style="grid-column: -4 / -3; grid-row: 1 / 2;" data-offset-x="220" data-offset-y="0" data-expected-width="50" data-expected-height="40"></div>
+</div>
+
+</body>
+</html>

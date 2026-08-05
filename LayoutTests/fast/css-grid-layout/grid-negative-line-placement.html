@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<style>
+.grid {
+    display: grid;
+    position: relative;
+}
+
+.threeColumnsTwoRows {
+    grid-template-columns: 50px 100px 50px;
+    grid-template-rows: 40px 60px;
+}
+
+.mixedSignGrid {
+    grid-template-columns: 60px 40px 80px;
+    grid-template-rows: 30px 50px;
+}
+
+.item {
+    background-color: green;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>This test checks that grid items placed with negative grid line numbers, which count backwards from the end of the explicit grid, are positioned in the correct grid area. It also covers placements which name one edge with a positive line and the other with a negative line.</p>
+
+<div class="grid threeColumnsTwoRows">
+    <div class="item" style="grid-column: -4 / -3; grid-row: -3 / -2;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="40"></div>
+    <div class="item" style="grid-column: -3 / -2; grid-row: -3 / -2;" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="40"></div>
+    <div class="item" style="grid-column: -2 / -1; grid-row: -3 / -2;" data-offset-x="150" data-offset-y="0" data-expected-width="50" data-expected-height="40"></div>
+    <div class="item" style="grid-column: -4 / -3; grid-row: -2 / -1;" data-offset-x="0" data-offset-y="40" data-expected-width="50" data-expected-height="60"></div>
+    <div class="item" style="grid-column: -3 / -2; grid-row: -2 / -1;" data-offset-x="50" data-offset-y="40" data-expected-width="100" data-expected-height="60"></div>
+    <div class="item" style="grid-column: -2 / -1; grid-row: -2 / -1;" data-offset-x="150" data-offset-y="40" data-expected-width="50" data-expected-height="60"></div>
+</div>
+
+<div class="grid mixedSignGrid">
+    <div class="item" style="grid-column: 1 / -3; grid-row: 1 / -2;" data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="30"></div>
+    <div class="item" style="grid-column: -3 / 3; grid-row: -3 / 2;" data-offset-x="60" data-offset-y="0" data-expected-width="40" data-expected-height="30"></div>
+    <div class="item" style="grid-column: -2 / 4; grid-row: 2 / -1;" data-offset-x="100" data-offset-y="30" data-expected-width="80" data-expected-height="50"></div>
+</div>
+
+</body>
+</html>
