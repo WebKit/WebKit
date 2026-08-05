@@ -35,6 +35,7 @@
 #include "InstanceOfAccessCase.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "LLIntData.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PropertyInlineCache.h"
 #include "SharedJITStubSet.h"
@@ -43,6 +44,55 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineCacheHandler);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineCacheHandlerWithJSCall);
+
+// Milestone 1: choose the static offlineasm handler that LLInt's op_get_by_id dispatches to for a
+// given node. Only GetByIdSelf / GetByIdPrototype are interpreted inline in LLInt; every other
+// non-terminal node is skipped, so the LLInt walk stays in LLInt-owned code for the whole chain.
+//
+// Crucially, LLInt must NOT tail-jump into a *non-terminal* compiled thunk. A compiled thunk that
+// fails its structure check falls through to emitDataICJumpNextHandler, which continues the walk via
+// the COMPILED m_jumpTarget of each subsequent node -- LLInt's m_llintJumpTarget routing (and hence
+// the skip-the-JS-callers rule below) is bypassed from that point on. If any node further down the
+// chain makesJSCalls, its compiled thunk then runs with LLInt register state and recomputes
+// sp = cfr + [jitDataRegister + BaselineJITData::offsetOfStackOffset()], but jitDataRegister is PB
+// under LLInt, so that loads a bytecode word as the stack offset and SP becomes garbage -- the
+// `ldp fp, lr, [sp], #16` in emitDataICRestoreAfterCall then faults. Skipping is always semantically
+// safe: a skipped node simply behaves as a cache miss, and the walk ends at the terminal slow-path
+// node, which calls operationGetByIdOptimize and computes the correct result.
+static CodePtr<JITStubRoutinePtrTag> llintCallTargetForHandler(CacheType cacheType, bool makesJSCalls)
+{
+    // makesJSCalls() nodes (getter/setter/custom/proxy/megamorphic-getter) MUST NOT be entered from
+    // LLInt, for the jitDataRegister reason above. This branch MUST come first so a WithJSCall node
+    // with CacheType::Unset is skipped rather than falling into the switch.
+    if (makesJSCalls)
+        return LLInt::getCodePtr<JITStubRoutinePtrTag>(llint_get_by_id_skip_handler);
+    switch (cacheType) {
+    case CacheType::GetByIdSelf:
+        return LLInt::getCodePtr<JITStubRoutinePtrTag>(llint_get_by_id_self_handler);
+    case CacheType::GetByIdPrototype:
+        return LLInt::getCodePtr<JITStubRoutinePtrTag>(llint_get_by_id_prototype_handler);
+    default:
+        // Unset (the Miss node), ArrayLength, StringLength, Stub, etc. LLInt cannot interpret these
+        // yet, and handing off to their compiled thunks would surrender the walk to the compiled
+        // chain (see above), so skip to the next node instead. Only the terminal slow-path node is
+        // entered via the generic handler; those nodes set m_llintCallTarget explicitly in
+        // createSlowPath()/createNonHandlerSlowPath() and never reach this function.
+        // FIXME: give Miss its own CacheType so llint_get_by_id_miss_handler can serve it inline,
+        // and add LLInt handlers for ArrayLength/StringLength, to recover the fast path here.
+        ASSERT(!makesJSCalls);
+        return LLInt::getCodePtr<JITStubRoutinePtrTag>(llint_get_by_id_skip_handler);
+    }
+}
+
+// Chain-walk entry for an LLInt handler: skip the DataIC prologue that the call entry runs, mirroring
+// m_jumpTarget = m_callTarget + prologueSizeInBytesDataIC. Every LLInt get_by_id handler emits the
+// same prologue as emitDataICPrologue (pacibsp on ARM64E, push cfr on x86_64, nothing elsewhere), so
+// the prologue runs exactly once per chain (at the head, via the call entry) and each subsequent node
+// is entered here, skipping it.
+static CodePtr<JITStubRoutinePtrTag> llintJumpTargetForCallTarget(CodePtr<JITStubRoutinePtrTag> callTarget)
+{
+    return CodePtr<NoPtrTag> { callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>();
+}
 
 void InlineCacheHandler::dump(PrintStream& out) const
 {
@@ -65,6 +115,8 @@ InlineCacheHandler::InlineCacheHandler(bool makesJSCalls, Ref<InlineCacheHandler
     , m_makesJSCalls(makesJSCalls)
     , m_stubRoutine(WTF::move(stubRoutine))
     , m_watchpoint(WTF::move(watchpoint))
+    , m_llintCallTarget(llintCallTargetForHandler(cacheType, makesJSCalls))
+    , m_llintJumpTarget(llintJumpTargetForCallTarget(m_llintCallTarget))
 {
     disableThreadingChecks();
 }
@@ -191,6 +243,8 @@ Ref<InlineCacheHandler> InlineCacheHandler::createNonHandlerSlowPath(CodePtr<JIT
     auto result = adoptRef(*new InlineCacheHandler);
     result->m_callTarget = slowPath;
     result->m_jumpTarget = slowPath;
+    result->m_llintCallTarget = LLInt::getCodePtr<JITStubRoutinePtrTag>(llint_get_by_id_generic_handler);
+    result->m_llintJumpTarget = llintJumpTargetForCallTarget(result->m_llintCallTarget);
     return result;
 }
 
@@ -201,6 +255,12 @@ Ref<InlineCacheHandler> InlineCacheHandler::createSlowPath(VM& vm, AccessType ac
     auto codeRef = InlineCacheCompiler::generateSlowPathCode(vm, accessType);
     result->m_callTarget = codeRef.code().template retagged<JITStubRoutinePtrTag>();
     result->m_jumpTarget = CodePtr<NoPtrTag> { codeRef.retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>();
+    // Milestone 1: this VM-shared terminal node is reached by LLInt op_get_by_id via the generic
+    // handler tail-jump. Only op_get_by_id reads m_llintCallTarget today, so stamping the get_by_id
+    // generic handler onto every access type's shared node is safe. A future milestone that lets
+    // other opcodes LLInt-dispatch through here must make this per-AccessType.
+    result->m_llintCallTarget = LLInt::getCodePtr<JITStubRoutinePtrTag>(llint_get_by_id_generic_handler);
+    result->m_llintJumpTarget = llintJumpTargetForCallTarget(result->m_llintCallTarget);
     return result;
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

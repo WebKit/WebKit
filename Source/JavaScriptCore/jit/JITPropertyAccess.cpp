@@ -564,11 +564,6 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
     VirtualRegister resultVReg = bytecode.m_dst;
     VirtualRegister baseVReg = bytecode.m_base;
     const Identifier* ident = &(m_unlinkedCodeBlock->identifier(bytecode.m_property));
-    GetByIdModeMetadata modeMetadata = bytecode.metadata(m_profiledCodeBlock).m_modeMetadata;
-
-    CacheType cacheType = CacheType::GetByIdSelf;
-    if (modeMetadata.mode == GetByIdMode::ProtoLoad)
-        cacheType = CacheType::GetByIdPrototype;
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
@@ -576,14 +571,19 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    // Milestone 1: dispatch on the shared metadata-resident PIC (created at CodeBlock::finishCreation,
+    // LLInt link time). Baseline no longer allocates its own get_by_id PIC in BaselineJITData. Load it
+    // for runtime dispatch, and also hand it to the generator so JIT::link stamps this PIC's
+    // doneLocation/slowPathStartLocation (read by compiled getter/setter handlers).
+    auto* metadataPropertyCache = std::bit_cast<PropertyInlineCache*>(bytecode.metadata(m_profiledCodeBlock).m_propertyInlineCache);
+    loadPtrFromMetadata(bytecode, OpGetById::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
+    // CacheType::Unset -> plain per-node chain dispatch (no inline structure check), exactly like get_by_val.
     JITGetByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetById, cacheType);
+        nullptr, metadataPropertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetById, CacheType::Unset);
 
     gen.generateDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
@@ -635,7 +635,10 @@ void JIT::emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-    gen.generateDataICSlowPath(*this);
+    // Milestone 1: the fast path is plain chain dispatch (CacheType::Unset), so there is no inline
+    // structure check and thus no m_dataICHandlerCases to relink. Do NOT call generateDataICSlowPath
+    // (it asserts !m_dataICHandlerCases.empty()); just link the not-a-cell slow cases and call the
+    // slow-path thunk, mirroring generateGetByValSlowCase.
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });

@@ -269,6 +269,7 @@ const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const YarrEntryPtrTag = constexpr YarrEntryPtrTag
 const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
 const LLIntToWasmEntryPtrTag = constexpr LLIntToWasmEntryPtrTag
+const JITStubRoutinePtrTag = constexpr JITStubRoutinePtrTag
 const NoPtrTag = constexpr NoPtrTag
  
 # VMTraps data

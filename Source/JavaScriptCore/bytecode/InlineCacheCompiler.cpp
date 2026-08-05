@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "InlineCacheCompiler.h"
+#include "GPRInfo.h"
 
 #if ENABLE(JIT)
 
@@ -95,7 +96,7 @@ static void NODELETE traceHandler(CCallHelpers& jit, ICEvent::Kind kind, Args&&.
     }
     if constexpr (InlineCacheCompilerInternal::traceHandlerStats) {
         if (Options::useICStats()) {
-            jit.probeDebug([=] (Probe::Context&) {
+            jit.probeDebug([=](Probe::Context&) {
                 auto& stats = ICStats::singleton();
                 stats.add(ICEvent(kind));
                 if constexpr (ICStatsInternal::traceHandlerChains)
@@ -831,7 +832,6 @@ bool NODELETE doesJSCalls(AccessCase::AccessType type)
     return false;
 }
 
-
 static bool NODELETE isMegamorphic(AccessCase::AccessType type)
 {
     switch (type) {
@@ -1482,8 +1482,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerato
     using SlowOperation = decltype(operationGetByIdWithThisOptimize);
 
     using BaselineJITRegisters::GetByIdWithThis::baseJSR;
-    using BaselineJITRegisters::GetByIdWithThis::thisJSR;
     using BaselineJITRegisters::GetByIdWithThis::propertyCacheGPR;
+    using BaselineJITRegisters::GetByIdWithThis::thisJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByIdWithThisSlowPath);
@@ -1513,9 +1513,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& v
     using SlowOperation = decltype(operationGetByValOptimize);
 
     using BaselineJITRegisters::GetByVal::baseJSR;
-    using BaselineJITRegisters::GetByVal::propertyJSR;
-    using BaselineJITRegisters::GetByVal::propertyCacheGPR;
     using BaselineJITRegisters::GetByVal::profileGPR;
+    using BaselineJITRegisters::GetByVal::propertyCacheGPR;
+    using BaselineJITRegisters::GetByVal::propertyJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByValSlowPath);
@@ -1545,8 +1545,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator
     using SlowOperation = decltype(operationGetPrivateNameOptimize);
 
     using BaselineJITRegisters::PrivateBrand::baseJSR;
-    using BaselineJITRegisters::PrivateBrand::propertyJSR;
     using BaselineJITRegisters::PrivateBrand::propertyCacheGPR;
+    using BaselineJITRegisters::PrivateBrand::propertyJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetPrivateNameSlowPath);
@@ -1577,10 +1577,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerat
     using SlowOperation = decltype(operationGetByValWithThisOptimize);
 
     using BaselineJITRegisters::GetByValWithThis::baseJSR;
+    using BaselineJITRegisters::GetByValWithThis::profileGPR;
+    using BaselineJITRegisters::GetByValWithThis::propertyCacheGPR;
     using BaselineJITRegisters::GetByValWithThis::propertyJSR;
     using BaselineJITRegisters::GetByValWithThis::thisJSR;
-    using BaselineJITRegisters::GetByValWithThis::propertyCacheGPR;
-    using BaselineJITRegisters::GetByValWithThis::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByValWithThisSlowPath);
@@ -1611,8 +1611,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSlowPathCodeGenerator(VM& vm
     using SlowOperation = decltype(operationPutByIdStrictOptimize);
 
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByIdSlowPath);
@@ -1642,10 +1642,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& v
     using SlowOperatoin = decltype(operationPutByValStrictOptimize);
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValSlowPath);
@@ -1677,9 +1677,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM&
 
     using SlowOperation = decltype(operationInstanceOfOptimize);
 
-    using BaselineJITRegisters::Instanceof::valueJSR;
-    using BaselineJITRegisters::Instanceof::protoJSR;
     using BaselineJITRegisters::Instanceof::propertyCacheGPR;
+    using BaselineJITRegisters::Instanceof::protoJSR;
+    using BaselineJITRegisters::Instanceof::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::InstanceOfSlowPath);
@@ -1739,8 +1739,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& v
     using SlowOperation = decltype(operationDeleteByValStrictOptimize);
 
     using BaselineJITRegisters::DelByVal::baseJSR;
-    using BaselineJITRegisters::DelByVal::propertyJSR;
     using BaselineJITRegisters::DelByVal::propertyCacheGPR;
+    using BaselineJITRegisters::DelByVal::propertyJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::DeleteByValSlowPath);
@@ -1792,7 +1792,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
         return vm.getCTIStub(getByValWithThisSlowPathCodeGenerator);
 #else
         RELEASE_ASSERT_NOT_REACHED();
-        return { };
+        return {};
 #endif
     }
 
@@ -1858,7 +1858,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-    return { };
+    return {};
 }
 
 void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCase, CCallHelpers::JumpList& fallThrough)
@@ -1886,7 +1886,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         fallThrough.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(accessCase.uid())));
     }
 
-    auto emitDefaultGuard = [&] () {
+    auto emitDefaultGuard = [&]() {
         if (accessCase.polyProtoAccessChain()) {
             ASSERT(!accessCase.viaGlobalProxy());
             GPRReg baseForAccessGPR = m_scratchGPR;
@@ -2738,7 +2738,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             jit.add32(CCallHelpers::TrustedImm32(1), propertyGPR, scratch2GPR);
             jit.store32(scratch2GPR, CCallHelpers::Address(scratchGPR, Butterfly::offsetOfPublicLength()));
             jit.jump().linkTo(storeResult, &jit);
-
         }
 
         if (allocator.didReuseRegisters()) {
@@ -3111,7 +3110,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             jit.reclaimSpaceOnStackForCCall();
             if (m_propertyCache.isHandlerIC())
                 InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
-            restoreLiveRegistersFromStackForCall(spillState, { });
+            restoreLiveRegistersFromStackForCall(spillState, {});
             jit.jump().linkTo(doneLabel, &jit);
         }
 #endif
@@ -3231,7 +3230,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             jit.reclaimSpaceOnStackForCCall();
             if (m_propertyCache.isHandlerIC())
                 InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
-            restoreLiveRegistersFromStackForCall(spillState, { });
+            restoreLiveRegistersFromStackForCall(spillState, {});
             jit.jump().linkTo(doneLabel, &jit);
         }
 #endif
@@ -3737,8 +3736,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
                 valueRegs,
                 CCallHelpers::Address(
                     base,
-                    JSObject::offsetOfInlineStorage() +
-                    offsetInInlineStorage(accessCase.m_offset) * sizeof(JSValue)));
+                    JSObject::offsetOfInlineStorage() + offsetInInlineStorage(accessCase.m_offset) * sizeof(JSValue)));
         } else {
             jit.loadPtr(CCallHelpers::Address(base, JSObject::butterflyOffset()), scratchGPR);
             jit.storeValue(
@@ -3799,8 +3797,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             scratchGPR3 = allocator.allocateScratchGPR();
         }
 
-        ScratchRegisterAllocator::PreservedState preservedState =
-            allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
         CCallHelpers::JumpList slowPath;
 
@@ -3894,8 +3891,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
                 valueRegs,
                 CCallHelpers::Address(
                     baseGPR,
-                    JSObject::offsetOfInlineStorage() +
-                    offsetInInlineStorage(accessCase.m_offset) * sizeof(JSValue)));
+                    JSObject::offsetOfInlineStorage() + offsetInInlineStorage(accessCase.m_offset) * sizeof(JSValue)));
         } else {
             if (!allocating)
                 jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
@@ -4188,8 +4184,7 @@ void InlineCacheCompiler::emitDOMJITGetter(JSGlobalObject* globalObjectForDOMJIT
         fpScratch.append(allocator.allocateScratchFPR());
 
     // Let's store the reused registers to the stack. After that, we can use allocated scratch registers.
-    ScratchRegisterAllocator::PreservedState preservedState =
-        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+    ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
     if (InlineCacheCompilerInternal::verbose) {
         dataLog("baseGPR = ", baseGPR, "\n");
@@ -4442,7 +4437,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
 
     if (accessCase.m_type != AccessCase::ProxyObjectStore && accessCase.m_type != AccessCase::IndexedProxyObjectStore)
         jit.setupResults(valueRegs);
-
 
     if (m_propertyCache.isHandlerIC()) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
@@ -4724,15 +4718,34 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
 
         Yarr::Flags flag;
         switch (accessCase.intrinsic()) {
-        case RegExpHasIndicesIntrinsic: flag = Yarr::Flags::HasIndices; break;
-        case RegExpGlobalIntrinsic: flag = Yarr::Flags::Global; break;
-        case RegExpIgnoreCaseIntrinsic: flag = Yarr::Flags::IgnoreCase; break;
-        case RegExpMultilineIntrinsic: flag = Yarr::Flags::Multiline; break;
-        case RegExpDotAllIntrinsic: flag = Yarr::Flags::DotAll; break;
-        case RegExpUnicodeIntrinsic: flag = Yarr::Flags::Unicode; break;
-        case RegExpUnicodeSetsIntrinsic: flag = Yarr::Flags::UnicodeSets; break;
-        case RegExpStickyIntrinsic: flag = Yarr::Flags::Sticky; break;
-        default: RELEASE_ASSERT_NOT_REACHED(); flag = Yarr::Flags::Global; break;
+        case RegExpHasIndicesIntrinsic:
+            flag = Yarr::Flags::HasIndices;
+            break;
+        case RegExpGlobalIntrinsic:
+            flag = Yarr::Flags::Global;
+            break;
+        case RegExpIgnoreCaseIntrinsic:
+            flag = Yarr::Flags::IgnoreCase;
+            break;
+        case RegExpMultilineIntrinsic:
+            flag = Yarr::Flags::Multiline;
+            break;
+        case RegExpDotAllIntrinsic:
+            flag = Yarr::Flags::DotAll;
+            break;
+        case RegExpUnicodeIntrinsic:
+            flag = Yarr::Flags::Unicode;
+            break;
+        case RegExpUnicodeSetsIntrinsic:
+            flag = Yarr::Flags::UnicodeSets;
+            break;
+        case RegExpStickyIntrinsic:
+            flag = Yarr::Flags::Sticky;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            flag = Yarr::Flags::Global;
+            break;
         }
 
         // Load RegExp* from RegExpObject (mask off low 2 flag bits).
@@ -4771,8 +4784,8 @@ static inline ASCIILiteral categoryName(AccessType type)
 {
     switch (type) {
 #define JSC_DEFINE_ACCESS_TYPE_CASE(name) \
-    case AccessType::name: \
-        return #name ""_s; \
+    case AccessType::name:                \
+        return #name ""_s;
 
         JSC_FOR_EACH_PROPERTY_INLINE_CACHE_ACCESS_TYPE(JSC_DEFINE_ACCESS_TYPE_CASE)
 
@@ -4798,7 +4811,7 @@ static Vector<WatchpointSet*, 3> collectAdditionalWatchpoints(VM& vm, AccessCase
             result.append(vm.ensureWatchpointSetForImpureProperty(accessCase.identifier().uid()));
     }
 
-    if (WatchpointSet* set  = accessCase.additionalSet())
+    if (WatchpointSet* set = accessCase.additionalSet())
         result.append(set);
 
     if (structure
@@ -5059,7 +5072,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     cases.reserveInitialCapacity(poly.m_list.size());
     unsigned srcIndex = 0;
     for (auto& someCase : poly.m_list) {
-        [&] () {
+        [&]() {
             if (!someCase->couldStillSucceed())
                 return;
 
@@ -5385,7 +5398,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
         jit.jumpThunk(oldHandler.nativeCode);
         DisposableCallSiteIndex newExceptionHandlingCallSite = this->callSiteIndexForExceptionHandling();
         jit.addLinkTask(
-            [=] (LinkBuffer& linkBuffer) {
+            [=](LinkBuffer& linkBuffer) {
                 HandlerInfo handlerToRegister = oldHandler;
                 handlerToRegister.nativeCode = linkBuffer.locationOf<ExceptionHandlerPtrTag>(makeshiftCatchHandler);
                 handlerToRegister.start = newExceptionHandlingCallSite.bits();
@@ -5415,7 +5428,6 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Did fail to allocate.");
         return AccessGenerationResult::GaveUp;
     }
-
 
     if (m_propertyCache.isHandlerIC())
         ASSERT(m_success.empty());
@@ -5465,9 +5477,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::scratch2GPR;
-    using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ownProperty ? ICEvent::GetByIdLoadOwnPropertyHandler : ICEvent::GetByIdLoadPrototypePropertyHandler);
@@ -5505,9 +5517,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::scratch2GPR;
-    using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByIdMissHandler);
@@ -5569,11 +5581,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomHandlerImpl(VM& vm)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::scratch2GPR;
     using BaselineJITRegisters::GetById::scratch3GPR;
     using BaselineJITRegisters::GetById::scratch4GPR;
-    using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, isAccessor ? ICEvent::GetByIdCustomAccessorHandler : ICEvent::GetByIdCustomValueHandler);
@@ -5637,6 +5649,17 @@ static void getterCallFromGetterSetterImpl(CCallHelpers& jit, JSValueRegs baseJS
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandlerWithJSCall::offsetOfCallLinkInfo()), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     }
     // FIXME: Maybe this can tail call on ARM64
+#if 0
+    // Debugging aid for the DataIC frame convention: dumps the state this thunk depends on right
+    // before the getter call. Useful when a caller enters this thunk with the wrong register state --
+    // e.g. an LLInt tier reaching it with GPRInfo::jitDataRegister holding PB instead of a
+    // BaselineJITData*, which makes the sp recomputation below load a bytecode word as the stack
+    // offset, so the ldp in emitDataICRestoreAfterCall faults on a garbage sp.
+    jit.println(  "getter entry fp: ", CCallHelpers::framePointerRegister,
+                "\n             sp: ", CCallHelpers::stackPointerRegister,
+                "\n             lr: ", CCallHelpers::linkRegister,
+                "\n    handler gpr: ", GPRInfo::handlerGPR);
+#endif
     CallLinkInfo::emitDataICFastPath(jit);
     jit.setupResults(resultJSR);
 
@@ -5661,9 +5684,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM& vm)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::scratch2GPR;
-    using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByIdGetterHandler);
@@ -5689,12 +5712,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMegamorphicGetterHandler(VM& vm)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::scratch2GPR;
     using BaselineJITRegisters::GetById::scratch3GPR;
     using BaselineJITRegisters::GetById::scratch4GPR;
     using BaselineJITRegisters::GetById::scratch5GPR;
-    using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByIdMegamorphicGetterHandler);
@@ -5724,8 +5747,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
-    using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::resultJSR;
+    using BaselineJITRegisters::GetById::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByIdProxyObjectLoadHandler);
@@ -5802,9 +5825,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::scratch1GPR;
     using BaselineJITRegisters::GetById::scratch2GPR;
-    using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByIdModuleNamespaceLoadHandler);
@@ -5838,10 +5861,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&)
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
     using BaselineJITRegisters::PutById::scratch2GPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByIdReplaceHandler);
@@ -5935,12 +5958,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerImpl(VM& vm
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
     using BaselineJITRegisters::PutById::scratch2GPR;
     using BaselineJITRegisters::PutById::scratch3GPR;
     using BaselineJITRegisters::PutById::scratch4GPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByIdTransitionHandler);
@@ -6002,9 +6025,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingOutOfLineHand
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByIdTransitionReallocatingOutOfLineHandler);
@@ -6072,11 +6095,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
     using BaselineJITRegisters::PutById::scratch2GPR;
     using BaselineJITRegisters::PutById::scratch3GPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, isAccessor ? ICEvent::PutByIdCustomAccessorHandler : ICEvent::PutByIdCustomValueHandler);
@@ -6181,10 +6204,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSetterHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
     using BaselineJITRegisters::PutById::scratch2GPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, isStrict ? ICEvent::PutByIdStrictSetterHandler : ICEvent::PutByIdSloppySetterHandler);
@@ -6223,8 +6246,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> inByIdInHandlerImpl(VM&)
     CCallHelpers jit;
 
     using BaselineJITRegisters::InById::baseJSR;
-    using BaselineJITRegisters::InById::scratch1GPR;
     using BaselineJITRegisters::InById::resultJSR;
+    using BaselineJITRegisters::InById::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, hit ? ICEvent::InByIdHitHandler : ICEvent::InByIdMissHandler);
@@ -6261,10 +6284,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteHandler(VM&)
     CCallHelpers jit;
 
     using BaselineJITRegisters::DelById::baseJSR;
+    using BaselineJITRegisters::DelById::resultJSR;
     using BaselineJITRegisters::DelById::scratch1GPR;
     using BaselineJITRegisters::DelById::scratch2GPR;
     using BaselineJITRegisters::DelById::scratch3GPR;
-    using BaselineJITRegisters::DelById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::DeleteByIdDeleteHandler);
@@ -6295,8 +6318,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdIgnoreHandlerImpl(VM&)
     CCallHelpers jit;
 
     using BaselineJITRegisters::DelById::baseJSR;
-    using BaselineJITRegisters::DelById::scratch1GPR;
     using BaselineJITRegisters::DelById::resultJSR;
+    using BaselineJITRegisters::DelById::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, returnValue ? ICEvent::DeleteByIdMissHandler : ICEvent::DeleteByIdNonConfigurableHandler);
@@ -6334,10 +6357,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHandlerImpl(VM&)
 {
     CCallHelpers jit;
 
-    using BaselineJITRegisters::Instanceof::valueJSR;
     using BaselineJITRegisters::Instanceof::protoJSR;
     using BaselineJITRegisters::Instanceof::resultJSR;
     using BaselineJITRegisters::Instanceof::scratch1GPR;
+    using BaselineJITRegisters::Instanceof::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, hit ? ICEvent::InstanceOfHitHandler : ICEvent::InstanceOfMissHandler);
@@ -6378,9 +6401,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValLoadHandlerImpl(VM& vm)
 
     using BaselineJITRegisters::GetByVal::baseJSR;
     using BaselineJITRegisters::GetByVal::propertyJSR;
+    using BaselineJITRegisters::GetByVal::resultJSR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
     using BaselineJITRegisters::GetByVal::scratch2GPR;
-    using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ownProperty ? ICEvent::GetByValLoadOwnPropertyHandler : ICEvent::GetByValLoadPrototypePropertyHandler, isSymbol ? " Symbol" : " String");
@@ -6435,10 +6458,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValMissHandlerImpl(VM&)
     CCallHelpers jit;
 
     using BaselineJITRegisters::GetByVal::baseJSR;
-    using BaselineJITRegisters::GetByVal::propertyJSR;
-    using BaselineJITRegisters::GetByVal::scratch1GPR;
-    using BaselineJITRegisters::GetByVal::resultJSR;
     using BaselineJITRegisters::GetByVal::profileGPR;
+    using BaselineJITRegisters::GetByVal::propertyJSR;
+    using BaselineJITRegisters::GetByVal::resultJSR;
+    using BaselineJITRegisters::GetByVal::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByValMissHandler, isSymbol ? " Symbol" : " String");
@@ -6473,7 +6496,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandler(VM& vm)
 
 // NonStringPrimitiveKey (undefined/null/true/false) handler IC helpers.
 
-enum class NonStringPrimitiveKeyType : uint8_t { Undefined, Null, True, False };
+enum class NonStringPrimitiveKeyType : uint8_t { Undefined,
+    Null,
+    True,
+    False };
 
 template<NonStringPrimitiveKeyType keyType>
 static CCallHelpers::JumpList emitNonStringPrimitiveKeyCheck(CCallHelpers& jit, JSValueRegs propertyJSR)
@@ -6511,9 +6537,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValNonStringPrimitiveKeyLoadHa
 
     using BaselineJITRegisters::GetByVal::baseJSR;
     using BaselineJITRegisters::GetByVal::propertyJSR;
+    using BaselineJITRegisters::GetByVal::resultJSR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
     using BaselineJITRegisters::GetByVal::scratch2GPR;
-    using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ownProperty ? ICEvent::GetByValLoadOwnPropertyHandler : ICEvent::GetByValLoadPrototypePropertyHandler, " NonStringPrimitiveKey");
@@ -6541,8 +6567,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValNonStringPrimitiveKeyMissHa
 
     using BaselineJITRegisters::GetByVal::baseJSR;
     using BaselineJITRegisters::GetByVal::propertyJSR;
-    using BaselineJITRegisters::GetByVal::scratch1GPR;
     using BaselineJITRegisters::GetByVal::resultJSR;
+    using BaselineJITRegisters::GetByVal::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByValMissHandler, " NonStringPrimitiveKey");
@@ -6563,13 +6589,19 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValNonStringPrimitiveKeyMissHa
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetByVal NonStringPrimitiveKey Miss handler"_s, "GetByVal NonStringPrimitiveKey Miss handler");
 }
 
-#define DEFINE_CONSTANT_KEY_GETBYVAL_HANDLERS(KeyName, keyType) \
-    MacroAssemblerCodeRef<JITThunkPtrTag> getByValWith##KeyName##KeyLoadOwnPropertyHandler(VM& vm) \
-    { return getByValNonStringPrimitiveKeyLoadHandlerImpl<true, NonStringPrimitiveKeyType::keyType>(vm); } \
-    MacroAssemblerCodeRef<JITThunkPtrTag> getByValWith##KeyName##KeyLoadPrototypePropertyHandler(VM& vm) \
-    { return getByValNonStringPrimitiveKeyLoadHandlerImpl<false, NonStringPrimitiveKeyType::keyType>(vm); } \
-    MacroAssemblerCodeRef<JITThunkPtrTag> getByValWith##KeyName##KeyMissHandler(VM& vm) \
-    { return getByValNonStringPrimitiveKeyMissHandlerImpl<NonStringPrimitiveKeyType::keyType>(vm); }
+#define DEFINE_CONSTANT_KEY_GETBYVAL_HANDLERS(KeyName, keyType)                                             \
+    MacroAssemblerCodeRef<JITThunkPtrTag> getByValWith##KeyName##KeyLoadOwnPropertyHandler(VM& vm)          \
+    {                                                                                                       \
+        return getByValNonStringPrimitiveKeyLoadHandlerImpl<true, NonStringPrimitiveKeyType::keyType>(vm);  \
+    }                                                                                                       \
+    MacroAssemblerCodeRef<JITThunkPtrTag> getByValWith##KeyName##KeyLoadPrototypePropertyHandler(VM& vm)    \
+    {                                                                                                       \
+        return getByValNonStringPrimitiveKeyLoadHandlerImpl<false, NonStringPrimitiveKeyType::keyType>(vm); \
+    }                                                                                                       \
+    MacroAssemblerCodeRef<JITThunkPtrTag> getByValWith##KeyName##KeyMissHandler(VM& vm)                     \
+    {                                                                                                       \
+        return getByValNonStringPrimitiveKeyMissHandlerImpl<NonStringPrimitiveKeyType::keyType>(vm);        \
+    }
 
 DEFINE_CONSTANT_KEY_GETBYVAL_HANDLERS(Undefined, Undefined)
 DEFINE_CONSTANT_KEY_GETBYVAL_HANDLERS(Null, Null)
@@ -6585,9 +6617,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyReplac
 
     using BaselineJITRegisters::PutByVal::baseJSR;
     using BaselineJITRegisters::PutByVal::propertyJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
     using BaselineJITRegisters::PutByVal::scratch2GPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValReplaceHandler, " NonStringPrimitiveKey");
@@ -6615,12 +6647,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyTransi
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
+    using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
     using BaselineJITRegisters::PutByVal::scratch2GPR;
-    using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValTransitionHandler, " NonStringPrimitiveKey");
@@ -6663,10 +6695,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyTransi
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValTransitionOutOfLineHandler, " NonStringPrimitiveKey");
@@ -6694,17 +6726,27 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyTransi
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PutByVal NonStringPrimitiveKey Transition OOL handler"_s, "PutByVal NonStringPrimitiveKey Transition OOL handler");
 }
 
-#define DEFINE_CONSTANT_KEY_PUTBYVAL_HANDLERS(KeyName, keyType) \
-    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyReplaceHandler(VM& vm) \
-    { return putByValNonStringPrimitiveKeyReplaceHandlerImpl<NonStringPrimitiveKeyType::keyType>(vm); } \
-    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionNonAllocatingHandler(VM& vm) \
-    { return putByValNonStringPrimitiveKeyTransitionHandlerImpl<false, false, NonStringPrimitiveKeyType::keyType>(vm); } \
-    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionNewlyAllocatingHandler(VM& vm) \
-    { return putByValNonStringPrimitiveKeyTransitionHandlerImpl<true, false, NonStringPrimitiveKeyType::keyType>(vm); } \
-    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionReallocatingHandler(VM& vm) \
-    { return putByValNonStringPrimitiveKeyTransitionHandlerImpl<true, true, NonStringPrimitiveKeyType::keyType>(vm); } \
-    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionReallocatingOutOfLineHandler(VM& vm) \
-    { return putByValNonStringPrimitiveKeyTransitionOutOfLineHandlerImpl<NonStringPrimitiveKeyType::keyType>(vm); }
+#define DEFINE_CONSTANT_KEY_PUTBYVAL_HANDLERS(KeyName, keyType)                                                          \
+    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyReplaceHandler(VM& vm)                               \
+    {                                                                                                                    \
+        return putByValNonStringPrimitiveKeyReplaceHandlerImpl<NonStringPrimitiveKeyType::keyType>(vm);                  \
+    }                                                                                                                    \
+    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionNonAllocatingHandler(VM& vm)               \
+    {                                                                                                                    \
+        return putByValNonStringPrimitiveKeyTransitionHandlerImpl<false, false, NonStringPrimitiveKeyType::keyType>(vm); \
+    }                                                                                                                    \
+    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionNewlyAllocatingHandler(VM& vm)             \
+    {                                                                                                                    \
+        return putByValNonStringPrimitiveKeyTransitionHandlerImpl<true, false, NonStringPrimitiveKeyType::keyType>(vm);  \
+    }                                                                                                                    \
+    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionReallocatingHandler(VM& vm)                \
+    {                                                                                                                    \
+        return putByValNonStringPrimitiveKeyTransitionHandlerImpl<true, true, NonStringPrimitiveKeyType::keyType>(vm);   \
+    }                                                                                                                    \
+    MacroAssemblerCodeRef<JITThunkPtrTag> putByValWith##KeyName##KeyTransitionReallocatingOutOfLineHandler(VM& vm)       \
+    {                                                                                                                    \
+        return putByValNonStringPrimitiveKeyTransitionOutOfLineHandlerImpl<NonStringPrimitiveKeyType::keyType>(vm);      \
+    }
 
 DEFINE_CONSTANT_KEY_PUTBYVAL_HANDLERS(Undefined, Undefined)
 DEFINE_CONSTANT_KEY_PUTBYVAL_HANDLERS(Null, Null)
@@ -6719,12 +6761,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValCustomHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::GetByVal::baseJSR;
-    using BaselineJITRegisters::GetByVal::propertyJSR;
     using BaselineJITRegisters::GetByVal::propertyCacheGPR;
+    using BaselineJITRegisters::GetByVal::propertyJSR;
+    using BaselineJITRegisters::GetByVal::resultJSR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
     using BaselineJITRegisters::GetByVal::scratch2GPR;
     using BaselineJITRegisters::GetByVal::scratch3GPR;
-    using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, isAccessor ? ICEvent::GetByValCustomAccessorHandler : ICEvent::GetByValCustomValueHandler, isSymbol ? " Symbol" : " String");
@@ -6779,11 +6821,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValGetterHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::GetByVal::baseJSR;
-    using BaselineJITRegisters::GetByVal::propertyJSR;
     using BaselineJITRegisters::GetByVal::propertyCacheGPR;
+    using BaselineJITRegisters::GetByVal::propertyJSR;
+    using BaselineJITRegisters::GetByVal::resultJSR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
     using BaselineJITRegisters::GetByVal::scratch2GPR;
-    using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::GetByValGetterHandler, isSymbol ? " Symbol" : " String");
@@ -6822,11 +6864,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValReplaceHandlerImpl(VM&)
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
     using BaselineJITRegisters::PutByVal::scratch2GPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValReplaceHandler, isSymbol ? " Symbol" : " String");
@@ -6866,12 +6908,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerImpl(VM& v
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
+    using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
     using BaselineJITRegisters::PutByVal::scratch2GPR;
-    using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValTransitionHandler, isSymbol ? " Symbol" : " String");
@@ -6964,10 +7006,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionOutOfLineHandlerI
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::PutByValTransitionOutOfLineHandler, isSymbol ? " Symbol" : " String");
@@ -7013,12 +7055,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValCustomHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
+    using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
     using BaselineJITRegisters::PutByVal::scratch2GPR;
-    using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, isAccessor ? ICEvent::PutByValCustomAccessorHandler : ICEvent::PutByValCustomValueHandler, isSymbol ? " Symbol" : " String");
@@ -7075,12 +7117,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSetterHandlerImpl(VM& vm)
     CCallHelpers jit;
 
     using BaselineJITRegisters::PutByVal::baseJSR;
-    using BaselineJITRegisters::PutByVal::propertyJSR;
-    using BaselineJITRegisters::PutByVal::valueJSR;
+    using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
     using BaselineJITRegisters::PutByVal::scratch2GPR;
-    using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, isStrict ? ICEvent::PutByValStrictSetterHandler : ICEvent::PutByValSloppySetterHandler, isSymbol ? " Symbol" : " String");
@@ -7136,8 +7178,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> inByValInHandlerImpl(VM&)
 
     using BaselineJITRegisters::InByVal::baseJSR;
     using BaselineJITRegisters::InByVal::propertyJSR;
-    using BaselineJITRegisters::InByVal::scratch1GPR;
     using BaselineJITRegisters::InByVal::resultJSR;
+    using BaselineJITRegisters::InByVal::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, hit ? ICEvent::InByValHitHandler : ICEvent::InByValMissHandler, isSymbol ? " Symbol" : " String");
@@ -7193,10 +7235,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValDeleteHandlerImpl(VM&)
 
     using BaselineJITRegisters::DelByVal::baseJSR;
     using BaselineJITRegisters::DelByVal::propertyJSR;
+    using BaselineJITRegisters::DelByVal::resultJSR;
     using BaselineJITRegisters::DelByVal::scratch1GPR;
     using BaselineJITRegisters::DelByVal::scratch2GPR;
     using BaselineJITRegisters::DelByVal::scratch3GPR;
-    using BaselineJITRegisters::DelByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, ICEvent::DeleteByValDeleteHandler, isSymbol ? " Symbol" : " String");
@@ -7229,8 +7271,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValIgnoreHandlerImpl(VM&)
 
     using BaselineJITRegisters::DelByVal::baseJSR;
     using BaselineJITRegisters::DelByVal::propertyJSR;
-    using BaselineJITRegisters::DelByVal::scratch1GPR;
     using BaselineJITRegisters::DelByVal::resultJSR;
+    using BaselineJITRegisters::DelByVal::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
     traceHandler(jit, returnValue ? ICEvent::DeleteByValMissHandler : ICEvent::DeleteByValNonConfigurableHandler, isSymbol ? " Symbol" : " String");
@@ -7371,7 +7413,7 @@ AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurren
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Generate with m_list: ", poly.size(), " elements");
     if constexpr (InlineCacheCompilerInternal::verbose) {
         for (unsigned i = 0; i < poly.size(); ++i)
-            dataLogLn("  m_list[", i , "] = ", *poly[i]);
+            dataLogLn("  m_list[", i, "] = ", *poly[i]);
     }
 
     Vector<WatchpointSet*, 8> additionalWatchpointSets;
@@ -7567,7 +7609,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     // No watchpoints: the getter cache is (structure, uid)-keyed and epoch-validated.
                     auto code = vm.getCTIStub(CommonJITThunkID::GetByIdMegamorphicGetterHandler).retagged<JITStubRoutinePtrTag>();
                     auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                     return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 case AccessCase::ProxyObjectLoad: {
@@ -7575,7 +7617,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     ASSERT(accessCase.conditionSet().isEmpty());
                     auto code = vm.getCTIStub(CommonJITThunkID::GetByIdProxyObjectLoadHandler).retagged<JITStubRoutinePtrTag>();
                     auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                     return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 case AccessCase::IntrinsicGetter:
@@ -7585,7 +7627,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     ASSERT(accessCase.conditionSet().isEmpty());
                     auto code = vm.getCTIStub(CommonJITThunkID::GetByIdModuleNamespaceLoadHandler).retagged<JITStubRoutinePtrTag>();
                     auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                     return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 default:
@@ -7608,7 +7650,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     if (!accessCase.viaGlobalProxy()) {
                         auto code = vm.getCTIStub(CommonJITThunkID::PutByIdReplaceHandler).retagged<JITStubRoutinePtrTag>();
                         auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                        connectWatchpointSets(stub.get(), { }, { });
+                        connectWatchpointSets(stub.get(), {}, {});
                         return finishPreCompiledCodeGeneration(WTF::move(stub), CacheType::PutByIdReplace);
                     }
                     break;
@@ -7733,7 +7775,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     }
                     auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
                     auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                     return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 default:
@@ -7975,7 +8017,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                             RELEASE_ASSERT_NOT_REACHED();
                         }
                         auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                        connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                        connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                         return finishPreCompiledCodeGeneration(WTF::move(stub));
                     }
                     break;
@@ -8140,7 +8182,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     }
                     auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
                     auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                     return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 default:
@@ -8169,7 +8211,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     }
                     auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
                     auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
-                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    connectWatchpointSets(stub.get(), {}, WTF::move(additionalWatchpointSets));
                     return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 default:
@@ -8303,7 +8345,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
     }
 
     FixedVector<StructureID> weakStructures(WTF::move(m_weakStructures));
-    auto stub = createICJITStubRoutine(WTF::move(code), WTF::move(keys), WTF::move(weakStructures), vm, nullptr, doesCalls, cellsToMark, { }, nullptr, { });
+    auto stub = createICJITStubRoutine(WTF::move(code), WTF::move(keys), WTF::move(weakStructures), vm, nullptr, doesCalls, cellsToMark, {}, nullptr, {});
     connectWatchpointSets(stub.get(), WTF::move(m_conditions), WTF::move(additionalWatchpointSets));
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Installing ", m_propertyCache.accessType, " / ", listDump(stub->cases()));
@@ -8367,7 +8409,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> InlineCacheCompiler::compileGetByDOM
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Did fail to allocate.");
-        return { };
+        return {};
     }
 
     auto code = FINALIZE_THUNK(patchBuffer, JITStubRoutinePtrTag, "GetById DOMJIT handler"_s, "GetById DOMJIT handler");
@@ -8376,105 +8418,105 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> InlineCacheCompiler::compileGetByDOM
 }
 
 #else
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomAccessorHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomValueHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdStrictSetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSloppySetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> inByIdHitHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> inByIdMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteNonConfigurableHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHitHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringCustomAccessorHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringCustomValueHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringGetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolCustomAccessorHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolCustomValueHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolGetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithUndefinedKeyLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithUndefinedKeyLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithUndefinedKeyMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithNullKeyLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithNullKeyLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithNullKeyMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithTrueKeyLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithTrueKeyLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithTrueKeyMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithFalseKeyLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithFalseKeyLoadPrototypePropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithFalseKeyMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringCustomAccessorHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringCustomValueHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringStrictSetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringSloppySetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolCustomAccessorHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolCustomValueHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolStrictSetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolSloppySetterHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyReplaceHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionNonAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionNewlyAllocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionReallocatingHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionReallocatingOutOfLineHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringHitHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolHitHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteNonConfigurableHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurableHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&) { return { }; }
-AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, Vector<AccessCase*, 16>&&, CodeBlock*, AccessCase&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomAccessorHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomValueHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdStrictSetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSloppySetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> inByIdHitHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> inByIdMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteNonConfigurableHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHitHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringCustomAccessorHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringCustomValueHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringGetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolCustomAccessorHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolCustomValueHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolGetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithUndefinedKeyLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithUndefinedKeyLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithUndefinedKeyMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithNullKeyLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithNullKeyLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithNullKeyMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithTrueKeyLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithTrueKeyLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithTrueKeyMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithFalseKeyLoadOwnPropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithFalseKeyLoadPrototypePropertyHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithFalseKeyMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringCustomAccessorHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringCustomValueHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringStrictSetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringSloppySetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolCustomAccessorHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolCustomValueHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolStrictSetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolSloppySetterHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithUndefinedKeyTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithNullKeyTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithTrueKeyTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyReplaceHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionNonAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionNewlyAllocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionReallocatingHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithFalseKeyTransitionReallocatingOutOfLineHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringHitHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolHitHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteNonConfigurableHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurableHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&) { return {}; }
+MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&) { return {}; }
+AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, Vector<AccessCase*, 16>&&, CodeBlock*, AccessCase&) { return {}; }
 #endif
 
 PolymorphicAccess::PolymorphicAccess() = default;
@@ -8520,7 +8562,7 @@ AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocke
     if (propertyCache.accessType != AccessType::InstanceOf) {
         bool shouldReset = false;
         AccessGenerationResult resetResult(AccessGenerationResult::ResetStubAndFireWatchpoints);
-        auto considerPolyProtoReset = [&] (Structure* a, Structure* b) {
+        auto considerPolyProtoReset = [&](Structure* a, Structure* b) {
             if (Structure::shouldConvertToPolyProto(a, b)) {
                 // For now, we only reset if this is our first time invalidating this watchpoint.
                 // The reason we don't immediately fire this watchpoint is that we may be already
@@ -8640,8 +8682,8 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
 {
     switch (type) {
 #define JSC_DEFINE_ACCESS_TYPE_CASE(name) \
-    case AccessCase::name: \
-        out.print(#name); \
+    case AccessCase::name:                \
+        out.print(#name);                 \
         return;
 
         JSC_FOR_EACH_ACCESS_TYPE(JSC_DEFINE_ACCESS_TYPE_CASE)

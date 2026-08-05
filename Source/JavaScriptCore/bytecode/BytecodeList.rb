@@ -415,7 +415,8 @@ op :get_by_id,
         valueProfile: unsigned,
     },
     metadata: {
-        modeMetadata: GetByIdModeMetadata,
+        modeMetadata: GetByIdModeMetadata,   # kept for the !ENABLE(JIT)/C_LOOP LLInt path and GetByStatus::computeFromLLInt
+        propertyInlineCache: uintptr_t,      # ENABLE(JIT): bit_cast<uintptr_t>(HandlerPropertyInlineCache*); 0 when unseeded (e.g. !useJIT())
     }
 
 op :get_length,
@@ -1466,6 +1467,11 @@ op :array_sort_comparator_return_trampoline
 op :fuzzer_return_early_from_loop_hint
 op :loop_osr_entry_gate
 op :llint_get_host_call_return_value
+op :llint_get_by_id_self_handler
+op :llint_get_by_id_prototype_handler
+op :llint_get_by_id_miss_handler
+op :llint_get_by_id_generic_handler
+op :llint_get_by_id_skip_handler
 op :llint_handle_uncaught_exception
 op :op_call_return_location
 op :op_call_ignore_result_return_location

@@ -104,6 +104,8 @@ public:
 
     static constexpr ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
     static constexpr ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
+    static constexpr ptrdiff_t offsetOfLLIntCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_llintCallTarget); }
+    static constexpr ptrdiff_t offsetOfLLIntJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_llintJumpTarget); }
     static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
     static constexpr ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
     static constexpr ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, m_structureID); }
@@ -168,6 +170,15 @@ protected:
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
+    // LLInt Handler-IC entries: runtime addresses of a static offlineasm handler chosen from
+    // m_cacheType / makesJSCalls (see llintCallTargetForHandler in InlineCacheHandler.cpp).
+    // m_llintCallTarget is the call entry (runs the DataIC prologue); m_llintJumpTarget is the
+    // chain-walk entry (== callTarget + prologueSizeInBytesDataIC, skipping the prologue) so the
+    // prologue runs exactly once per chain traversal, exactly like m_callTarget/m_jumpTarget.
+    // Tagged JITStubRoutinePtrTag with no address diversity, like m_callTarget. Set at node creation.
+    // Placed after m_watchpoint so the hot region ending at m_uid is undisturbed.
+    CodePtr<JITStubRoutinePtrTag> m_llintCallTarget;
+    CodePtr<JITStubRoutinePtrTag> m_llintJumpTarget;
 };
 
 #if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)

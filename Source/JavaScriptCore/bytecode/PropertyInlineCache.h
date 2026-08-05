@@ -602,6 +602,11 @@ public:
     void initializeFromUnlinkedPropertyInlineCache(VM&, CodeBlock*, const BaselineUnlinkedPropertyInlineCache&);
     void initializeFromDFGUnlinkedPropertyInlineCache(CodeBlock*, const DFG::UnlinkedPropertyInlineCache&);
 
+    // Milestone 1: seed a metadata-resident get_by_id PIC at CodeBlock link (LLInt) time with just
+    // a terminal slow-path handler. Kept hint-free (preconfiguredCacheType == Unset) so it is never
+    // promoted to an inlined handler.
+    void initializeForMetadataResidentGetById(VM&, CodeBlock*, CacheableIdentifier, BytecodeIndex);
+
     void setInlinedHandler(CodeBlock*, Ref<InlineCacheHandler>&&);
     void clearInlinedHandler(CodeBlock*);
 

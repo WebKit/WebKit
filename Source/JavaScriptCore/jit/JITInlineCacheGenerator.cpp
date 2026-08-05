@@ -146,7 +146,14 @@ JITGetByIdGenerator::JITGetByIdGenerator(
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
     WTF::visit([&](auto* propertyCache) {
-        setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR);
+        // Milestone 1: emit_op_get_by_id passes the shared metadata-resident HandlerPropertyInlineCache
+        // with CacheType::Unset. We keep it in m_propertyCache (so JIT::link can stamp its resume
+        // locations) but MUST NOT run setUpPropertyInlineCache on it: that path calls setUsedRegisters,
+        // which asserts is<RepatchingPropertyInlineCache>. For Unset the dispatch is a plain chain call
+        // that needs none of that setup. generateDataICFastPath early-returns for Unset without
+        // dereferencing m_propertyCache; finalize/generateFastPath are RepatchingIC-only and unreached.
+        if (propertyCache && cacheType != CacheType::Unset)
+            setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR);
     }, propertyCache);
 }
 
@@ -195,9 +202,17 @@ void JITGetByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     m_start = jit.label();
 
+    using BaselineJITRegisters::GetById::propertyCacheGPR;
+    if (m_cacheType == CacheType::Unset) {
+        // Milestone 1: plain per-node chain dispatch (no inline structure check). Used by
+        // emit_op_get_by_id, which reads a shared metadata-resident PIC into propertyCacheGPR.
+        emitDataICHandlerDispatch(jit, propertyCacheGPR);
+        m_done = jit.label();
+        return;
+    }
+
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
-    using BaselineJITRegisters::GetById::propertyCacheGPR;
     using BaselineJITRegisters::GetById::scratch1GPR;
 
     generateGetByIdInlineAccessBaselineDataIC(jit, propertyCacheGPR, baseJSR, scratch1GPR, resultJSR, m_cacheType, m_dataICHandlerCases);

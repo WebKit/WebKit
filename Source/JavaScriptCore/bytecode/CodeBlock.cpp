@@ -40,6 +40,7 @@
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeOperandsForCheckpoint.h"
 #include "BytecodeStructs.h"
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlockInlines.h"
 #include "CodeBlockSet.h"
 #include "ControlFlowProfiler.h"
@@ -333,6 +334,11 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     vm.heap.codeBlockSet().add(this);
     checker().set(CrashChecker::This, checker().hash(this));
     checker().set(CrashChecker::Metadata, checker().hash(this, m_metadata.get()));
+#if ENABLE(JIT)
+    // DFG/FTL blocks share m_metadata but never run the finishCreation LINK loop, so they own no
+    // metadata-resident PICs; they keep the baseline's PICs alive transitively via m_alternative.
+    ASSERT(m_metadataPropertyInlineCaches.isEmpty());
+#endif
 }
 
 void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
@@ -473,6 +479,21 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), CodeOrigin { instruction.index() });
     };
 
+#if ENABLE(JIT)
+    // Milestone 1: seed a metadata-resident get_by_id PIC at link time so LLInt can dispatch through
+    // the shared handler chain (the same PIC Baseline reads). Note: the local must NOT be named
+    // "identifier" (shadows CodeBlock::identifier(int)).
+    auto link_propertyInlineCache = [&](const auto& instruction, auto bytecode, auto& metadata) {
+        if (Options::useJIT()) {
+            auto* pic = m_metadataPropertyInlineCaches.add();
+            auto cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
+            pic->initializeForMetadataResidentGetById(vm, this, cacheableIdentifier, BytecodeIndex(instruction.index()));
+            metadata.m_propertyInlineCache = std::bit_cast<uintptr_t>(pic);
+        } else
+            metadata.m_propertyInlineCache = 0;
+    };
+#endif
+
 #define LINK_FIELD(__field) \
     WTF_LAZY_JOIN(link_, __field)(instruction, bytecode, metadata);
 
@@ -508,7 +529,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpGetByValWithThis)
         LINK(OpToThis)
 
+#if ENABLE(JIT)
+        LINK(OpGetById, propertyInlineCache)
+#else
         LINK(OpGetById)
+#endif
         LINK(OpGetLength)
 
         LINK(OpEnumeratorNext)
@@ -1185,6 +1210,12 @@ inline void CodeBlock::forEachPropertyInlineCache(Func func)
             }
         }
     }
+    // Metadata-resident get_by_id PICs (Milestone 1). Non-empty only for the owning LLInt/Baseline
+    // block; DFG/FTL blocks iterate an empty Bag (they reach these PICs via m_alternative instead).
+    for (auto* propertyCache : m_metadataPropertyInlineCaches) {
+        if (func(*propertyCache) == IterationStatus::Done)
+            return;
+    }
 #endif // ENABLE(JIT)
 }
 
@@ -1527,9 +1558,14 @@ void CodeBlock::finalizeLLIntInlineCaches()
             clearIfNeeded(metadata.m_prototypeModeMetadata, "instanceof"_s);
         });
 
+#if !ENABLE(JIT)
+        // Under ENABLE(JIT), op_get_by_id's cached LLInt path never warms m_modeMetadata (it uses the
+        // shared metadata-resident PIC, whose staleness is handled by PropertyInlineCache::visitWeak via
+        // forEachPropertyInlineCache). Only the non-JIT LLInt path warms m_modeMetadata.
         m_metadata->forEach<OpGetById>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });
+#endif
 
         m_metadata->forEach<OpGetLength>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get length"_s);
@@ -1691,11 +1727,13 @@ void CodeBlock::finalizeLLIntInlineCaches()
             auto& instruction = instructions().at(bytecodeIndex.offset());
             OpcodeID opcode = instruction->opcodeID();
             switch (opcode) {
+#if !ENABLE(JIT)
             case op_get_by_id: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(this).m_modeMetadata);
                 break;
             }
+#endif
             case op_get_length: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetLength>().metadata(this).m_modeMetadata);

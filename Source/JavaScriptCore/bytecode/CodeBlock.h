@@ -39,6 +39,7 @@
 #include <JavaScriptCore/Printer.h>
 #include <JavaScriptCore/ScriptExecutable.h>
 #include <JavaScriptCore/UnlinkedCodeBlock.h>
+#include <wtf/Bag.h>
 
 #if ENABLE(DFG_JIT)
 #include <JavaScriptCore/DFGCodeOriginPool.h>
@@ -61,6 +62,7 @@ class BinaryArithProfile;
 class BytecodeLivenessAnalysis;
 class CallLinkInfoBase;
 class CodeBlockSet;
+class HandlerPropertyInlineCache;
 class JITCodeMap;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
@@ -1002,7 +1004,18 @@ public:
     void* m_jitData { nullptr };
 private:
 #endif
+    // m_jitData must be immediately followed by m_metadata: emitMaterializeMetadataAndConstantPoolRegisters
+    // loads the pair with a single loadPairPtr and JIT.cpp asserts their adjacency. Do NOT insert members
+    // between them.
     RefPtr<MetadataTable> m_metadata;
+#if ENABLE(JIT)
+    // Metadata-resident get_by_id inline caches (Milestone 1). Owned and GC-visited only by the
+    // LLInt/Baseline CodeBlock that ran the finishCreation LINK loop; DFG/FTL blocks share
+    // m_metadata but leave this Bag empty (they keep these PICs alive transitively via
+    // m_alternative). Bag gives stable addresses, required because
+    // PropertyInlineCacheClearingWatchpoint holds a PropertyInlineCache&.
+    Bag<HandlerPropertyInlineCache> m_metadataPropertyInlineCaches;
+#endif
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
@@ -1034,7 +1047,13 @@ private:
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
 #if !ASSERT_ENABLED
+#if ENABLE(JIT)
+// Milestone 1 adds a JIT-only Bag<HandlerPropertyInlineCache> m_metadataPropertyInlineCaches (one
+// pointer) for metadata-resident get_by_id inline caches, so the JIT-build budget grows by 8 bytes.
+static_assert(sizeof(CodeBlock) <= 232, "Keep it small for memory saving");
+#else
 static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
+#endif
 #endif
 
 template <typename ExecutableType>

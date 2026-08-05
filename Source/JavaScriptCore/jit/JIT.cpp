@@ -929,8 +929,16 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
 
     auto finalizeICs = [&] (auto& generators) {
         for (auto& gen : generators) {
-            gen.m_unlinkedPropertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
-            gen.m_unlinkedPropertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
+            // get_by_id (Milestone 1) dispatches on a shared metadata-resident PIC and carries no
+            // unlinked cache; stamp the resume locations into that PIC directly. All other IC kinds
+            // stamp their per-site BaselineUnlinkedPropertyInlineCache (materialized later).
+            if (gen.m_unlinkedPropertyCache) {
+                gen.m_unlinkedPropertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
+                gen.m_unlinkedPropertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
+            } else if (auto* propertyCache = gen.propertyCache()) {
+                propertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
+                propertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
+            }
         }
     };
 
