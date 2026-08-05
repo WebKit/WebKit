@@ -1234,8 +1234,11 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
         RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendantFrame);
         if (!localFrame)
             continue;
-        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(localFrame->document()->url()) || registrableDomain.matches(localFrame->document()->url()))
-            localFrame->protectedDocument()->setSiteForCookies(url);
+        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(localFrame->document()->url())) {
+            if (RefPtr parent = dynamicDowncast<LocalFrame>(localFrame->tree().parent()))
+                protect(localFrame->document())->setSiteForCookies(parent->document()->siteForCookies());
+        } else if (registrableDomain.matches(localFrame->document()->url()))
+            protect(localFrame->document())->setSiteForCookies(url);
     }
 }
 
