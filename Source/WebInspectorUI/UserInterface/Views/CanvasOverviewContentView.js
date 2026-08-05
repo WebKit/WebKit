@@ -117,6 +117,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         WI.settings.canvasRecordingAutoCaptureFrameCount.addEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureFrameCountChanged, this);
 
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingSaved, this._handleRecordingSaved, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingRemoved, this._handleRecordingRemoved, this);
 
         if (this._savedRecordingsTreeOutline)
             this._savedRecordingsTreeOutline.removeChildren();
@@ -133,6 +134,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     {
         WI.domManager.hideDOMNodeHighlight();
 
+        WI.canvasManager.removeEventListener(WI.CanvasManager.Event.RecordingRemoved, this._handleRecordingRemoved, this);
         WI.canvasManager.removeEventListener(WI.CanvasManager.Event.RecordingSaved, this._handleRecordingSaved, this);
 
         WI.settings.canvasRecordingAutoCaptureFrameCount.removeEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureFrameCountChanged, this);
@@ -216,7 +218,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this._savedRecordingsContentView.element.appendChild(this._savedRecordingsTreeOutline.element);
         }
 
-        let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, WI.Recording.displayNameForRecordingType(recording.type), recording);
+        let recordingTreeElement = new WI.SavedRecordingTreeElement(recording, WI.Recording.displayNameForRecordingType(recording.type));
         recordingTreeElement.selectable = false;
         this._savedRecordingsTreeOutline.appendChild(recordingTreeElement);
     }
@@ -258,6 +260,27 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     _handleRecordingSaved(event)
     {
         this._addSavedRecording(event.data.recording);
+    }
+
+    _handleRecordingRemoved(event)
+    {
+        if (!this._savedRecordingsTreeOutline)
+            return;
+
+        let treeElement = this._savedRecordingsTreeOutline.findTreeElement(event.data.recording);
+        if (!treeElement)
+            return;
+
+        this._savedRecordingsTreeOutline.removeChild(treeElement);
+        if (this._savedRecordingsTreeOutline.children.length)
+            return;
+
+        this.removeSubview(this._savedRecordingsContentView);
+        this._savedRecordingsContentView = null;
+        this._savedRecordingsTreeOutline = null;
+
+        if (!this.representedObject.size)
+            this.showContentPlaceholder();
     }
 
     _handleSavedRecordingClicked(event)

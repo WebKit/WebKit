@@ -210,6 +210,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this.representedObject.addEventListener(WI.Canvas.Event.RecordingStarted, this.needsLayout, this);
         this.representedObject.addEventListener(WI.Canvas.Event.RecordingProgress, this.needsLayout, this);
         this.representedObject.addEventListener(WI.Canvas.Event.RecordingStopped, this.needsLayout, this);
+        this.representedObject.recordingCollection.addEventListener(WI.Collection.Event.ItemAdded, this.needsLayout, this);
+        this.representedObject.recordingCollection.addEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
         this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this.needsLayout, this);
         this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
 
@@ -228,6 +230,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this.representedObject.removeEventListener(WI.Canvas.Event.RecordingStarted, this.needsLayout, this);
         this.representedObject.removeEventListener(WI.Canvas.Event.RecordingProgress, this.needsLayout, this);
         this.representedObject.removeEventListener(WI.Canvas.Event.RecordingStopped, this.needsLayout, this);
+        this.representedObject.recordingCollection.removeEventListener(WI.Collection.Event.ItemAdded, this.needsLayout, this);
+        this.representedObject.recordingCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
         this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, this.needsLayout, this);
         this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
 
@@ -438,5 +442,11 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
                 WI.showRepresentedObject(recording);
             });
         }
+
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WI.UIString("Clear Recordings"), () => {
+            this.representedObject.recordingCollection.clear();
+        });
     }
 };

@@ -52,7 +52,7 @@ WI.Recording = class Recording extends WI.Object
             }
         }
         this._visualActionIndexes = [];
-        this._source = null;
+        this._weakSource = null;
 
         this._processContext = null;
         this._processStates = [];
@@ -657,8 +657,8 @@ WI.Recording = class Recording extends WI.Object
     get actions() { return this._actions; }
     get visualActionIndexes() { return this._visualActionIndexes; }
 
-    get source() { return this._source; }
-    set source(source) { this._source = source; }
+    get source() { return this._weakSource?.deref() || null; }
+    set source(source) { this._weakSource = source ? new WeakRef(source) : null; }
 
     get processing() { return this._processing; }
 
@@ -721,13 +721,8 @@ WI.Recording = class Recording extends WI.Object
 
     createDisplayName(suggestedName)
     {
-        let recordingNameSet;
-        if (this._source) {
-            recordingNameSet = this._source[WI.Recording.CanvasRecordingNamesSymbol];
-            if (!recordingNameSet)
-                this._source[WI.Recording.CanvasRecordingNamesSymbol] = recordingNameSet = new Set;
-        } else
-            recordingNameSet = WI.Recording._importedRecordingNameSet;
+        let source = this.source;
+        let recordingNameSet = source ? (source[WI.Recording.CanvasRecordingNamesSymbol] ||= new Set) : WI.Recording._importedRecordingNameSet;
 
         let name;
         if (suggestedName) {

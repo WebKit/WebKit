@@ -162,6 +162,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
 
         WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, this._handleCanvasAdded, this);
         WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._handleCanvasRemoved, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingRemoved, this._handleRecordingRemoved, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingSaved, this._handleRecordingSavedOrStopped, this);
         WI.Canvas.addEventListener(WI.Canvas.Event.RecordingStopped, this._handleRecordingSavedOrStopped, this);
 
@@ -192,6 +193,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
 
         WI.Canvas.removeEventListener(WI.Canvas.Event.RecordingStopped, this._handleRecordingSavedOrStopped, this);
         WI.canvasManager.removeEventListener(WI.CanvasManager.Event.RecordingSaved, this._handleRecordingSavedOrStopped, this);
+        WI.canvasManager.removeEventListener(WI.CanvasManager.Event.RecordingRemoved, this._handleRecordingRemoved, this);
         WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._handleCanvasAdded, this);
         WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._handleCanvasRemoved, this);
 
@@ -257,7 +259,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
     {
         if (!recording.source) {
             const subtitle = null;
-            let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
+            let recordingTreeElement = new WI.SavedRecordingTreeElement(recording, subtitle);
             this._savedCanvasRecordingsTreeElement.hidden = false;
             this._savedCanvasRecordingsTreeElement.appendChild(recordingTreeElement);
         }
@@ -296,6 +298,31 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
         }
 
         this.showRepresentedObject(representedObject);
+    }
+
+    _handleRecordingRemoved(event)
+    {
+        let {recording} = event.data;
+
+        let treeElement = this._canvasesTreeOutline.findTreeElement(recording);
+        if (treeElement?.parent === this._savedCanvasRecordingsTreeElement) {
+            this._savedCanvasRecordingsTreeElement.removeChild(treeElement);
+            this._savedCanvasRecordingsTreeElement.hidden = !this._savedCanvasRecordingsTreeElement.children.length;
+        }
+
+        const onlyExisting = true;
+        let contentView = this.contentBrowser.contentViewForRepresentedObject(recording, onlyExisting);
+        if (contentView)
+            this.contentBrowser.contentViewContainer.closeContentView(contentView);
+
+        if (!this.contentBrowser.currentContentView && this._overviewContentView)
+            this.contentBrowser.showContentView(this._overviewContentView);
+
+        let navigationSidebarPanel = this.navigationSidebarPanel;
+        if (navigationSidebarPanel instanceof WI.CanvasSidebarPanel && navigationSidebarPanel.visible)
+            navigationSidebarPanel.updateRepresentedObjects();
+
+        this.showDetailsSidebarPanels();
     }
 
     _handleRecordingSavedOrStopped(event)

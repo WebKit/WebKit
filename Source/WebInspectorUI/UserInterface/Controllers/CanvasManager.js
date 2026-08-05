@@ -140,6 +140,16 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         WI.settings.canvasRecordingAutoCaptureFrameCount.value = count;
     }
 
+    removeSavedRecording(recording)
+    {
+        console.assert(recording instanceof WI.Recording, recording);
+
+        let removed = this._savedRecordings.delete(recording);
+        console.assert(removed, recording);
+
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingRemoved, {recording});
+    }
+
     // CanvasObserver
 
     canvasAdded(target, canvasPayload)
@@ -349,5 +359,6 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 };
 
 WI.CanvasManager.Event = {
+    RecordingRemoved: "canvas-manager-recording-removed",
     RecordingSaved: "canvas-manager-recording-saved",
 };
