@@ -256,7 +256,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
             // Wildcard hosts and keyword sources ('self', 'unsafe-inline',
             // etc.) aren't stored in m_list, but as attributes on the source
             // list itself.
-            if (source->scheme.isEmpty() && source->host.value.isEmpty())
+            if (source->scheme.isEmpty() && source->host.value.isEmpty() && !source->port.value && source->path.isEmpty())
                 continue;
             if (isCSPDirectiveName(source->host.value))
                 m_policy->reportDirectiveAsSourceExpression(m_directiveName, source->host.value);

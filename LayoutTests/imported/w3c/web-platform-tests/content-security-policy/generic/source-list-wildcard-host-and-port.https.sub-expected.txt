@@ -1,6 +1,6 @@
 
-FAIL "*:*" with a path allows the path on the document's own origin assert_unreached: SecurityPolicyViolation event fired for https://web-platform.test:9443/content-security-policy/support/resource.py?same-origin Reached unreachable code
-FAIL "*:*" with a path allows the path on a different port assert_unreached: SecurityPolicyViolation event fired for https://web-platform.test:9444/content-security-policy/support/resource.py?other-port Reached unreachable code
-FAIL "*:*" with a path allows the path on a different host assert_unreached: SecurityPolicyViolation event fired for https://not-web-platform.test:9443/content-security-policy/support/resource.py?other-host Reached unreachable code
+PASS "*:*" with a path allows the path on the document's own origin
+PASS "*:*" with a path allows the path on a different port
+PASS "*:*" with a path allows the path on a different host
 PASS "*:*" with a path does not allow other paths
 
