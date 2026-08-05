@@ -125,7 +125,7 @@ public:
     static void setNotifyOptions();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    static String getHomeDirectory();
+    static std::optional<String> getHomeDirectory();
 #endif
 
 protected:

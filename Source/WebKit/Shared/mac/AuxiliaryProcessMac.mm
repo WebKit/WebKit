@@ -626,7 +626,7 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
     return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
 }
 
-String AuxiliaryProcess::getHomeDirectory()
+std::optional<String> AuxiliaryProcess::getHomeDirectory()
 {
     // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
     // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
@@ -634,8 +634,8 @@ String AuxiliaryProcess::getHomeDirectory()
     passwd pwd;
     passwd* result = nullptr;
     if (getpwuid_r(getuid(), &pwd, buffer, sizeof(buffer), &result) || !result) {
-        WTFLogAlways("%s: Couldn't find home directory", getprogname());
-        RELEASE_ASSERT_NOT_REACHED();
+        RELEASE_LOG_ERROR(Process, "Couldn't find home directory, errno=%d", errno);
+        return std::nullopt;
     }
     return String::fromUTF8(pwd.pw_dir);
 }
@@ -678,10 +678,11 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 
-    auto homeDirectory = AuxiliaryProcess::getHomeDirectory();
+    std::optional<String> homeDirectory = AuxiliaryProcess::getHomeDirectory();
+    RELEASE_ASSERT(homeDirectory);
     
-    sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory.utf8().data());
-    String path = FileSystem::pathByAppendingComponents(homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Preferences"_s }));
+    sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory->utf8().data());
+    String path = FileSystem::pathByAppendingComponents(*homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Preferences"_s }));
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR"_s, FileSystem::fileSystemRepresentation(path).data());
 
 #if CPU(X86_64)
