@@ -111,20 +111,20 @@ void RemoteProgressBasedTimelineRegistry::update(const RemoteScrollingTree& scro
         ASSERT_NOT_REACHED();
     });
 
-    HashSet<WebCore::ScrollingNodeID> emptySources;
     for (auto& destroyedTimelineIdentifier : timelinesUpdate.destroyed) {
         TimelineID destroyedTimelineID { destroyedTimelineIdentifier, processIdentifier };
-        for (auto& [source, existingTimelines] : processTimelines) {
+        for (auto& existingTimelines : processTimelines.values()) {
             existingTimelines.removeIf([destroyedTimelineID](auto& existingTimeline) {
                 return existingTimeline->identifier() == destroyedTimelineID;
             });
-            if (existingTimelines.isEmpty())
-                emptySources.add(source);
         }
     }
 
-    for (auto& emptySource : emptySources)
-        processTimelines.remove(emptySource);
+    // A timeline that moves to a different source leaves its former source's set empty, so every
+    // empty source must be swept here, not only while processing destroyed timelines.
+    processTimelines.removeIf([](auto& entry) {
+        return entry.value.isEmpty();
+    });
 
     if (processTimelines.isEmpty())
         m_timelines.remove(processIdentifier);
