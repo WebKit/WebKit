@@ -539,7 +539,9 @@ static inline bool compositingLogEnabled()
 {
     return LogCompositing.state == WTFLogChannelState::On;
 }
+#endif
 
+#if ENABLE(TREE_DEBUGGING)
 static inline bool layersLogEnabled()
 {
     return LogLayers.state == WTFLogChannelState::On;
