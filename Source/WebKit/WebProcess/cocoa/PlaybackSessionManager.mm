@@ -308,7 +308,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
                 && previousElement->fullscreenMode() != HTMLMediaElement::VideoFullscreenModeNone) {
                 protect(page->videoPresentationManager())->swapFullscreenModes(*videoElement, *previousElement);
 
-                page->send(Messages::PlaybackSessionManagerProxy::SwapFullscreenModes(processQualify(contextId), processQualify(*previousContextId)));
+                page->send(Messages::PlaybackSessionManagerProxy::SwapFullscreenModes(contextId, *previousContextId));
 
                 ensureModel(*previousContextId)->updateAll();
                 ensureModel(contextId)->updateAll();
@@ -320,7 +320,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
     addClientForContext(*m_controlsManagerContextId);
 
     page->videoControlsManagerDidChange();
-    page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(processQualify(*m_controlsManagerContextId), mediaElement.isVideo()));
+    page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(*m_controlsManagerContextId, mediaElement.isVideo()));
 #if HAVE(PIP_SKIP_PREROLL)
     setMediaSessionAndRegisterAsObserver();
 #endif
@@ -344,7 +344,7 @@ void PlaybackSessionManager::mediaEngineChanged(HTMLMediaElement& mediaElement)
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     RefPtr player = mediaElement.player();
     bool supportsLinearMediaPlayer = player && player->supportsLinearMediaPlayer();
-    Ref { *m_page }->send(Messages::PlaybackSessionManagerProxy::SupportsLinearMediaPlayerChanged(processQualify(mediaElement.identifier()), supportsLinearMediaPlayer));
+    Ref { *m_page }->send(Messages::PlaybackSessionManagerProxy::SupportsLinearMediaPlayerChanged(mediaElement.identifier(), supportsLinearMediaPlayer));
 #else
     UNUSED_PARAM(mediaElement);
 #endif
@@ -392,12 +392,12 @@ WebCore::HTMLMediaElement* PlaybackSessionManager::currentPlaybackControlsElemen
 
 void PlaybackSessionManager::durationChanged(WebCore::HTMLMediaElementIdentifier contextId, double duration)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::DurationChanged(processQualify(contextId), duration));
+    m_page->send(Messages::PlaybackSessionManagerProxy::DurationChanged(contextId, duration));
 }
 
 void PlaybackSessionManager::currentTimeChanged(WebCore::HTMLMediaElementIdentifier contextId, double currentTime, double anchorTime)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::CurrentTimeChanged(processQualify(contextId), currentTime, anchorTime));
+    m_page->send(Messages::PlaybackSessionManagerProxy::CurrentTimeChanged(contextId, currentTime, anchorTime));
 #if ENABLE(IMAGE_ANALYSIS)
     m_textRecognitionRequest->requestTextRecognitionFor(contextId);
 #endif
@@ -405,17 +405,17 @@ void PlaybackSessionManager::currentTimeChanged(WebCore::HTMLMediaElementIdentif
 
 void PlaybackSessionManager::bufferedTimeChanged(WebCore::HTMLMediaElementIdentifier contextId, double bufferedTime)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::BufferedTimeChanged(processQualify(contextId), bufferedTime));
+    m_page->send(Messages::PlaybackSessionManagerProxy::BufferedTimeChanged(contextId, bufferedTime));
 }
 
 void PlaybackSessionManager::playbackStartedTimeChanged(WebCore::HTMLMediaElementIdentifier contextId, double playbackStartedTime)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::PlaybackStartedTimeChanged(processQualify(contextId), playbackStartedTime));
+    m_page->send(Messages::PlaybackSessionManagerProxy::PlaybackStartedTimeChanged(contextId, playbackStartedTime));
 }
 
 void PlaybackSessionManager::rateChanged(WebCore::HTMLMediaElementIdentifier contextId, OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(processQualify(contextId), playbackState, playbackRate, defaultPlaybackRate));
+    m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(contextId, playbackState, playbackRate, defaultPlaybackRate));
 #if ENABLE(IMAGE_ANALYSIS)
     m_textRecognitionRequest->requestTextRecognitionFor(contextId);
 #endif
@@ -430,67 +430,67 @@ void PlaybackSessionManager::cancelTextRecognition()
 
 void PlaybackSessionManager::seekableRangesChanged(WebCore::HTMLMediaElementIdentifier contextId, const WebCore::PlatformTimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::SeekableRangesVectorChanged(processQualify(contextId), timeRanges, lastModifiedTime, liveUpdateInterval));
+    m_page->send(Messages::PlaybackSessionManagerProxy::SeekableRangesVectorChanged(contextId, timeRanges, lastModifiedTime, liveUpdateInterval));
 }
 
 void PlaybackSessionManager::canPlayFastReverseChanged(WebCore::HTMLMediaElementIdentifier contextId, bool value)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::CanPlayFastReverseChanged(processQualify(contextId), value));
+    m_page->send(Messages::PlaybackSessionManagerProxy::CanPlayFastReverseChanged(contextId, value));
 }
 
 void PlaybackSessionManager::audioMediaSelectionOptionsChanged(WebCore::HTMLMediaElementIdentifier contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionOptionsChanged(processQualify(contextId), options, selectedIndex));
+    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
 void PlaybackSessionManager::legibleMediaSelectionOptionsChanged(WebCore::HTMLMediaElementIdentifier contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(processQualify(contextId), options, selectedIndex));
+    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
 void PlaybackSessionManager::externalPlaybackChanged(WebCore::HTMLMediaElementIdentifier contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(processQualify(contextId), enabled, targetType, localizedDeviceName));
+    m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, targetType, localizedDeviceName));
 }
 
 void PlaybackSessionManager::audioMediaSelectionIndexChanged(WebCore::HTMLMediaElementIdentifier contextId, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionIndexChanged(processQualify(contextId), selectedIndex));
+    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionIndexChanged(contextId, selectedIndex));
 }
 
 void PlaybackSessionManager::legibleMediaSelectionIndexChanged(WebCore::HTMLMediaElementIdentifier contextId, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionIndexChanged(processQualify(contextId), selectedIndex));
+    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionIndexChanged(contextId, selectedIndex));
 }
 
 void PlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(WebCore::HTMLMediaElementIdentifier contextId, bool disabled)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::WirelessVideoPlaybackDisabledChanged(processQualify(contextId), disabled));
+    m_page->send(Messages::PlaybackSessionManagerProxy::WirelessVideoPlaybackDisabledChanged(contextId, disabled));
 }
 
 void PlaybackSessionManager::mutedChanged(WebCore::HTMLMediaElementIdentifier contextId, bool muted)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::MutedChanged(processQualify(contextId), muted));
+    m_page->send(Messages::PlaybackSessionManagerProxy::MutedChanged(contextId, muted));
 }
 
 void PlaybackSessionManager::volumeChanged(WebCore::HTMLMediaElementIdentifier contextId, double volume)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::VolumeChanged(processQualify(contextId), volume));
+    m_page->send(Messages::PlaybackSessionManagerProxy::VolumeChanged(contextId, volume));
 }
 
 void PlaybackSessionManager::isPictureInPictureSupportedChanged(WebCore::HTMLMediaElementIdentifier contextId, bool supported)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::PictureInPictureSupportedChanged(processQualify(contextId), supported));
+    m_page->send(Messages::PlaybackSessionManagerProxy::PictureInPictureSupportedChanged(contextId, supported));
 }
 
 void PlaybackSessionManager::isInWindowFullscreenActiveChanged(WebCore::HTMLMediaElementIdentifier contextId, bool inWindow)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(processQualify(contextId), inWindow));
+    m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(contextId, inWindow));
 }
 
 void PlaybackSessionManager::immersiveVideoMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::ImmersiveVideoMetadataChanged(processQualify(contextId), metadata));
+    m_page->send(Messages::PlaybackSessionManagerProxy::ImmersiveVideoMetadataChanged(contextId, metadata));
 }
 
 #pragma mark Messages from PlaybackSessionManagerProxy:
@@ -632,7 +632,7 @@ void PlaybackSessionManager::actionHandlersChanged()
         skipAdIsDisabledQuirk = true;
 
     if (RefPtr page = m_page.get(); page && !skipAdIsDisabledQuirk)
-        page->send(Messages::PlaybackSessionManagerProxy::CanSkipAdChanged(processQualify(*m_controlsManagerContextId), skipAdHasHandler));
+        page->send(Messages::PlaybackSessionManagerProxy::CanSkipAdChanged(*m_controlsManagerContextId, skipAdHasHandler));
 }
 
 void PlaybackSessionManager::skipAd(WebCore::HTMLMediaElementIdentifier contextId)
@@ -647,7 +647,7 @@ void PlaybackSessionManager::skipAd(WebCore::HTMLMediaElementIdentifier contextI
 void PlaybackSessionManager::handleControlledElementIDRequest(WebCore::HTMLMediaElementIdentifier contextId)
 {
     if (RefPtr element = ensureModel(contextId)->mediaElement())
-        m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(processQualify(contextId), element->getIdAttribute()));
+        m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 
 void PlaybackSessionManager::togglePictureInPicture(WebCore::HTMLMediaElementIdentifier contextId)
@@ -741,7 +741,7 @@ void PlaybackSessionManager::forEachModel(Function<void(PlaybackSessionModel&)>&
 void PlaybackSessionManager::sendLogIdentifierForMediaElement(HTMLMediaElement& mediaElement)
 {
     auto contextId = contextIdForMediaElement(mediaElement);
-    m_page->send(Messages::PlaybackSessionManagerProxy::SetLogIdentifier(processQualify(contextId), reinterpret_cast<uint64_t>(mediaElement.logIdentifier())));
+    m_page->send(Messages::PlaybackSessionManagerProxy::SetLogIdentifier(contextId, reinterpret_cast<uint64_t>(mediaElement.logIdentifier())));
 }
 
 WTFLogChannel& PlaybackSessionManager::logChannel() const

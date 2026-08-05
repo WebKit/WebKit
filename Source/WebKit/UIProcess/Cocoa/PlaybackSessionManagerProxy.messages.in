@@ -28,39 +28,39 @@
     DispatchedTo=UI
 ]
 messages -> PlaybackSessionManagerProxy {
-    CurrentTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double currentTime, double hostTime)
-    BufferedTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double bufferedTime)
-    SeekableRangesVectorChanged(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::PlatformTimeRanges ranges, double lastModifiedTime, double liveUpdateInterval)
-    CanPlayFastReverseChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool value)
-    AudioMediaSelectionOptionsChanged(WebKit::PlaybackSessionContextIdentifier contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
-    LegibleMediaSelectionOptionsChanged(WebKit::PlaybackSessionContextIdentifier contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
-    AudioMediaSelectionIndexChanged(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
-    LegibleMediaSelectionIndexChanged(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
-    ExternalPlaybackPropertiesChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool enabled, enum:uint8_t WebCore::PlaybackSessionModelExternalPlaybackTargetType targetType, String localizedDeviceName)
-    WirelessVideoPlaybackDisabledChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool disabled)
-    DurationChanged(WebKit::PlaybackSessionContextIdentifier contextId, double duration)
-    PlaybackStartedTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double playbackStartedTime)
-    RateChanged(WebKit::PlaybackSessionContextIdentifier contextId, OptionSet<WebCore::PlaybackSessionModelPlaybackState> playbackState, double rate, double defaultPlaybackRate)
-    MutedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool muted);
-    VolumeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double volume);
-    PictureInPictureSupportedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool pictureInPictureSupported)
-    IsInWindowFullscreenActiveChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isInWindow)
+    CurrentTimeChanged(WebCore::MediaPlayerClientIdentifier identifier, double currentTime, double hostTime)
+    BufferedTimeChanged(WebCore::MediaPlayerClientIdentifier identifier, double bufferedTime)
+    SeekableRangesVectorChanged(WebCore::MediaPlayerClientIdentifier identifier, WebCore::PlatformTimeRanges ranges, double lastModifiedTime, double liveUpdateInterval)
+    CanPlayFastReverseChanged(WebCore::MediaPlayerClientIdentifier identifier, bool value)
+    AudioMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier identifier, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
+    LegibleMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier identifier, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
+    AudioMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier identifier, uint64_t selectedIndex)
+    LegibleMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier identifier, uint64_t selectedIndex)
+    ExternalPlaybackPropertiesChanged(WebCore::MediaPlayerClientIdentifier identifier, bool enabled, enum:uint8_t WebCore::PlaybackSessionModelExternalPlaybackTargetType targetType, String localizedDeviceName)
+    WirelessVideoPlaybackDisabledChanged(WebCore::MediaPlayerClientIdentifier identifier, bool disabled)
+    DurationChanged(WebCore::MediaPlayerClientIdentifier identifier, double duration)
+    PlaybackStartedTimeChanged(WebCore::MediaPlayerClientIdentifier identifier, double playbackStartedTime)
+    RateChanged(WebCore::MediaPlayerClientIdentifier identifier, OptionSet<WebCore::PlaybackSessionModelPlaybackState> playbackState, double rate, double defaultPlaybackRate)
+    MutedChanged(WebCore::MediaPlayerClientIdentifier identifier, bool muted);
+    VolumeChanged(WebCore::MediaPlayerClientIdentifier identifier, double volume);
+    PictureInPictureSupportedChanged(WebCore::MediaPlayerClientIdentifier identifier, bool pictureInPictureSupported)
+    IsInWindowFullscreenActiveChanged(WebCore::MediaPlayerClientIdentifier identifier, bool isInWindow)
 #if HAVE(PIP_SKIP_PREROLL)
-    CanSkipAdChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool value)
+    CanSkipAdChanged(WebCore::MediaPlayerClientIdentifier identifier, bool value)
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    SupportsLinearMediaPlayerChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
+    SupportsLinearMediaPlayerChanged(WebCore::MediaPlayerClientIdentifier identifier, bool supportsLinearMediaPlayer)
 #endif
-    ImmersiveVideoMetadataChanged(WebKit::PlaybackSessionContextIdentifier contextId, struct std::optional<WebCore::ImmersiveVideoMetadata> metadata);
-    SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId, bool isVideo)
+    ImmersiveVideoMetadataChanged(WebCore::MediaPlayerClientIdentifier identifier, struct std::optional<WebCore::ImmersiveVideoMetadata> metadata);
+    SetUpPlaybackControlsManagerWithID(WebCore::MediaPlayerClientIdentifier identifier, bool isVideo)
     ClearPlaybackControlsManager()
 
-    SwapFullscreenModes(WebKit::PlaybackSessionContextIdentifier firstContextId, WebKit::PlaybackSessionContextIdentifier secondContextId)
+    SwapFullscreenModes(WebCore::MediaPlayerClientIdentifier firstIdentifier, WebCore::MediaPlayerClientIdentifier secondIdentifier)
 
-    HandleControlledElementIDResponse(WebKit::PlaybackSessionContextIdentifier contextId, String id)
+    HandleControlledElementIDResponse(WebCore::MediaPlayerClientIdentifier identifier, String id)
 
 #if !RELEASE_LOG_DISABLED
-    SetLogIdentifier(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t logIdentifier)
+    SetLogIdentifier(WebCore::MediaPlayerClientIdentifier identifier, uint64_t logIdentifier)
 #endif
 }
 #endif

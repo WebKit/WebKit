@@ -232,6 +232,11 @@ private:
     const ModelInterfacePair* NODELETE findModelAndInterface(PlaybackSessionContextIdentifier) const;
     Ref<VideoPresentationModelContext> ensureModel(PlaybackSessionContextIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(PlaybackSessionContextIdentifier);
+
+    // Qualifies an identifier from IPC with the sending process rather than trusting the sender.
+    PlaybackSessionContextIdentifier contextIdForConnection(IPC::Connection&, WebCore::HTMLMediaElementIdentifier) const;
+    Ref<VideoPresentationModelContext> ensureModel(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
+    Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
     RefPtr<WebCore::PlatformVideoPresentationInterface> NODELETE findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
@@ -247,28 +252,31 @@ private:
 #endif
 
     // Messages from VideoPresentationManager
-    void setupFullscreenWithID(PlaybackSessionContextIdentifier, const WebCore::HostingContext&, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
-    void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
-    void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
-    void setHasVideo(PlaybackSessionContextIdentifier, bool);
-    void setDocumentVisibility(PlaybackSessionContextIdentifier, bool);
-    void setIsChildOfElementFullscreen(PlaybackSessionContextIdentifier, bool);
-    void audioSessionCategoryChanged(PlaybackSessionContextIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
-    void routingContextUIDChanged(PlaybackSessionContextIdentifier, const String&);
-    void hasBeenInteractedWith(PlaybackSessionContextIdentifier);
-    void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
-    void enterFullscreen(PlaybackSessionContextIdentifier);
-    void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&&);
-    void cleanupFullscreen(PlaybackSessionContextIdentifier);
-    void preparedToReturnToInline(PlaybackSessionContextIdentifier, bool visible, WebCore::FloatRect inlineRect);
-    void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
-    void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void setVideoFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void clearVideoFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
-    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, WebCore::ShareableBitmap::Handle&& textTrack);
-    void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
-    void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
+    void setupFullscreenWithID(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::HostingContext&, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
+    void setInlineRect(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
+    void setHasVideoContentLayer(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool value);
+    void setHasVideo(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
+    void setDocumentVisibility(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
+    void setIsChildOfElementFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
+    void audioSessionCategoryChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
+    void routingContextUIDChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const String&);
+    void hasBeenInteractedWith(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
+    void setVideoDimensions(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::FloatSize&);
+#if !PLATFORM(IOS_FAMILY)
+    void enterFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
+#endif
+    void enterFullscreenForContext(PlaybackSessionContextIdentifier);
+    void exitFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&&);
+    void cleanupFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
+    void preparedToReturnToInline(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool visible, WebCore::FloatRect inlineRect);
+    void preparedToExitFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
+    void exitFullscreenWithoutAnimationToMode(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void setVideoFullscreenMode(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void clearVideoFullscreenMode(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void setPlayerIdentifier(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
+    void textTrackRepresentationUpdate(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, WebCore::ShareableBitmap::Handle&& textTrack);
+    void textTrackRepresentationSetContentsScale(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, float scale);
+    void textTrackRepresentationSetHidden(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool hidden);
     void setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier, bool);
     void setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier, const WebCore::IntRect&);
 

@@ -675,7 +675,7 @@ void WebFullScreenManager::willExitFullScreen(CompletionHandler<void()>&& comple
 #endif
     // FIXME: The order of these frames is switched, but that is kept for historical reasons.
     // It should probably be fixed to be consistent at some point.
-    m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(*m_elementFrameIdentifier, m_finalFrameInRootViewCoordinates, m_initialFrameInRootViewCoordinates), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] mutable {
+    m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(m_finalFrameInRootViewCoordinates, m_initialFrameInRootViewCoordinates), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] mutable {
         didExitFullScreen(WTF::move(completionHandler));
     });
 }
