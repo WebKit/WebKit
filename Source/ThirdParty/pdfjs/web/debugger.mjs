@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-const { OPS } = globalThis.pdfjsLib || (await import("pdfjs-lib"));
+const { makeSet, OPS } = globalThis.pdfjsLib || (await import("pdfjs-lib"));
 
 const opMap = Object.create(null);
 for (const key in OPS) {
@@ -460,7 +460,7 @@ class Stepper {
     for (const [dependentIdx, { dependencies: ownDependencies }] of metadata) {
       for (const dependencyIdx of ownDependencies) {
         dependents
-          .getOrInsertComputed(dependencyIdx, () => new Set())
+          .getOrInsertComputed(dependencyIdx, makeSet)
           .add(dependentIdx);
       }
     }
@@ -517,8 +517,7 @@ class Stepper {
       return 0;
     });
 
-    for (let i = 0; i < operatorsGroupsByZindex.length; i++) {
-      const group = operatorsGroupsByZindex[i];
+    for (const group of operatorsGroupsByZindex) {
       if (group.minX !== null) {
         const el = this.#c("div");
         el.style.left = `${group.minX * 100}%`;
