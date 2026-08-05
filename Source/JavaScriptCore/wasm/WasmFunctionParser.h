@@ -1757,6 +1757,8 @@ auto FunctionParser<Context>::parseMemoryIndexForBulkOp(uint8_t& result) -> Part
 
 template<typename Context>
 auto FunctionParser<Context>::parseMemoryIndexAndFixupAlignment(uint32_t& alignment, uint8_t& result) -> PartialResult {
+    // memarg ::= a:u32 o:u64 (if a < 2^6) | a:u32 x:memidx o:u64 (if 2^6 <= a < 2^7)
+    WASM_PARSER_FAIL_IF(alignment >= (1 << 7), "byte alignment immediate "_s, alignment, " is too large"_s);
     bool hasMemoryIndex = alignment & (1 << 6);
     alignment = alignment & 0b111111;
     result = 0;
@@ -4566,9 +4568,9 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     case GrowMemory:
     case CurrentMemory: {
-        uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for grow_memory/current_memory"_s);
-        WASM_PARSER_FAIL_IF(reserved, "reserved byte for grow_memory/current_memory must be zero"_s);
+        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory/current_memory is only valid if a memory is defined or imported"_s);
+        uint8_t memoryIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexForBulkOp(memoryIndex));
         return { };
     }
 
@@ -4595,10 +4597,17 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         {
             WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
             uint32_t alignment;
-            uint32_t unused;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+            uint8_t memoryIndex;
+            WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
             WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for atomic "_s, static_cast<unsigned>(op), " in unreachable context"_s);
+            if (m_info.memory(memoryIndex).isMemory64()) {
+                uint64_t unused64;
+                WASM_PARSER_FAIL_IF(!parseVarUInt64(unused64), "can't get first immediate for atomic "_s, static_cast<unsigned>(op), " in unreachable context"_s);
+            } else {
+                uint32_t unused32;
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(unused32), "can't get first immediate for atomic "_s, static_cast<unsigned>(op), " in unreachable context"_s);
+            }
             break;
         }
         case ExtAtomicOpType::AtomicFence: {
