@@ -66,6 +66,7 @@ RefPtr<AudioWorkletGlobalScope> AudioWorkletGlobalScope::tryCreate(AudioWorkletT
 
 AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
     : WorkletGlobalScope(thread, WTF::move(vm), parameters)
+    , m_currentFrame(parameters.currentFrame)
     , m_sampleRate(parameters.sampleRate)
 {
     ASSERT(!isMainThread());
