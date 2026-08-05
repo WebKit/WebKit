@@ -272,7 +272,7 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
     if (m_videoAssetWriterInput && videoSamples.size()) {
         GenericPromise::Producer producer;
         promises.append(producer.promise());
-        [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTF::move(producer), samples = WTF::move(audioSamples), writerInput = m_videoAssetWriterInput, hasAddedVideoFrame = m_hasAddedVideoFrame, endTime]() mutable {
+        [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTF::move(producer), samples = WTF::move(videoSamples), writerInput = m_videoAssetWriterInput, hasAddedVideoFrame = m_hasAddedVideoFrame, endTime]() mutable {
             while ([writerInput isReadyForMoreMediaData]) {
                 if (samples.size()) {
                     [writerInput appendSampleBuffer:samples.takeFirst().get()];
