@@ -986,6 +986,10 @@ css3/masking/reference-clip-path-animate-transform-repaint.html [ Failure Pass ]
 editing/pasteboard/paste-rtl-paragraph-with-leading-ltr-text.html [ ImageOnlyFailure ]
 
 webkit.org/b/308631 fast/flexbox/001.html [ Failure Pass ]
+
+webkit.org/b/321073 inspector/canvas/console-record-offscreen-canvas-2d.html [ Failure ]
+webkit.org/b/321074 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1095,7 +1099,7 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-ma
 
 webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/touch-target.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Timeout ]
 
 webkit.org/b/278719 fast/events/touch/basic-single-touch-events.html [ Timeout ]

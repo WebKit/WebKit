@@ -889,7 +889,6 @@ webkit.org/b/278719 fast/events/touch/frame-hover-update.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure  ]
 webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Pass ]
 webkit.org/b/278719 fast/events/touch/touch-event-pageXY.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/zoomed-touch-event-pageXY.html [ Failure ]
 
 # The assertion failure occurs to WPE only.
 webkit.org/b/279178 fast/scrolling/scroll-into-view-on-composited-scrollable-overflow-layer-crash.html [ Skip ]
