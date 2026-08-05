@@ -89,8 +89,6 @@ public:
 
     bool hasSubframeInProcess(WebCore::ProcessIdentifier) const;
 
-    static unsigned remotePagesWithNetworkActivityCountForTesting();
-
     std::optional<WebCore::BackForwardFrameItemIdentifier> suspendedFrameItemID() const { return m_suspendedFrameItemID; }
     HashSet<Ref<WebProcessProxy>> iframeProcesses() const;
 

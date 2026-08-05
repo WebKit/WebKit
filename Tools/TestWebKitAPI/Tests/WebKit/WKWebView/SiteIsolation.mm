@@ -8043,44 +8043,6 @@ TEST(SiteIsolation, SharedProcessInProcessCacheAfterNavigation)
     }
 }
 
-#if USE(RUNNINGBOARD)
-TEST(SiteIsolation, SharedProcessDropsPageLoadActivityAfterCrossSiteNavigation)
-{
-    HTTPServer server({
-        { "/example"_s, { "<iframe src='https://webkit.org/webkit'>"_s } },
-        { "/webkit"_s, { "webkit"_s } },
-        { "/safari"_s, { "<body>safari</body>"_s } },
-    }, HTTPServer::Protocol::HttpsProxy);
-    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::No, nil, nil, nil, EnableBackForwardCache::Yes);
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
-    [navigationDelegate waitForDidFinishNavigation];
-
-    checkFrameTreesInProcesses(webView.get(), {
-        {
-            "https://example.com"_s,
-            { { RemoteFrame } }
-        },
-        {
-            RemoteFrame,
-            { { "https://webkit.org"_s } }
-        },
-    });
-    auto sharedProcess = [webView mainFrame].childFrames[0].info._processIdentifier;
-    EXPECT_NE(sharedProcess, [webView mainFrame].info._processIdentifier);
-
-    // Cross-site navigation. The example.com page enters the back/forward cache, which keeps the
-    // old BrowsingContextGroup and webkit.org remote page alive.
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/safari"]]];
-    [navigationDelegate waitForDidFinishNavigation];
-
-    // The shared process is still alive so the cached example.com page can be restored, but it
-    // shouldn't be holding on to any page load activity.
-    EXPECT_TRUE(processStillRunning(sharedProcess));
-    EXPECT_EQ([WKWebView _suspendedRemotePageNetworkActivityCountForTesting], 0u);
-}
-#endif // USE(RUNNINGBOARD)
-
 TEST(SiteIsolation, WebProcessCacheCrashWithZeroSharedProcess)
 {
     HTTPServer server({

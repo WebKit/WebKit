@@ -175,8 +175,6 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 @property (nonatomic, readonly) BOOL _hasAccessibilityActivityForTesting;
 
-+ (NSUInteger)_suspendedRemotePageNetworkActivityCountForTesting;
-
 - (void)_setMediaVolumeForTesting:(float)volume;
 
 - (void)_textFragmentRangesWithCompletionHandlerForTesting:(void(^)(NSArray<NSValue *> *fragmentRanges))completionHandler WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));

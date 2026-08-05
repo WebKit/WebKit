@@ -43,7 +43,6 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
-#include "WebProcessActivityState.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include <wtf/CallbackAggregator.h>
@@ -65,21 +64,6 @@ static WeakHashSet<SuspendedPageProxy>& NODELETE allSuspendedPages()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
-
-unsigned SuspendedPageProxy::remotePagesWithNetworkActivityCountForTesting()
-{
-    unsigned count = 0;
-    for (Ref suspendedPage : allSuspendedPages()) {
-        RefPtr page = suspendedPage->page();
-        if (!page)
-            continue;
-        suspendedPage->m_browsingContextGroup->forEachRemotePage(*page, [&count](auto& remotePage) {
-            if (remotePage.processActivityState().hasValidNetworkActivity())
-                ++count;
-        });
-    }
-    return count;
-}
 
 RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
 {
