@@ -1,5 +1,3 @@
-//@ skip if not $jitTests
-//@ $skipModes << :lockdown
 // Verify the anchored (^, non-multiline) RegExp.test first-character fast-fail filter: a filtered
 // no-match must equal the operation's result, non-anchored patterns must never be wrongly filtered,
 // case-insensitive folds must be reflected in the bitmap, and a .compile() that changes the pattern
