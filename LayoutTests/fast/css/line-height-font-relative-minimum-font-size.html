@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ MinimumFontSize=18 ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>The minimum font size setting must not scale a font-relative or line-height-relative line-height</title>
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#lh">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+/* The minimum font size is 18px for this test. The root and the parent use a font size above
+   that minimum, so neither is clamped and their line-heights are predictable. */
+:root { font-size: 20px; line-height: 30px; }
+
+#parent { font-size: 20px; line-height: 1.3; }              /* 26px, not clamped */
+
+/* All of these children have a font size below the minimum, so their font size is clamped to 18px. */
+#lhChild { font-size: 6px; line-height: 1lh; }              /* parent's line-height: 26px */
+#lhChild12 { font-size: 12px; line-height: 1lh; }           /* parent's line-height: 26px */
+#rlhChild { font-size: 6px; line-height: 1rlh; }            /* root's line-height: 30px */
+#emChild { font-size: 6px; line-height: 1.2em; }            /* 1.2 * clamped 18px */
+#numberChild { font-size: 6px; line-height: 1.3; }          /* 1.3 * clamped 18px */
+#percentChild { font-size: 6px; line-height: 130%; }        /* 130% of clamped 18px */
+#pxChild { font-size: 6px; line-height: 20px; }             /* absolute: boosted by 18/6 */
+</style>
+
+<div id="parent">
+    <div id="lhChild">x</div>
+    <div id="lhChild12">x</div>
+    <div id="rlhChild">x</div>
+    <div id="emChild">x</div>
+    <div id="numberChild">x</div>
+    <div id="percentChild">x</div>
+    <div id="pxChild">x</div>
+</div>
+
+<div id="log"></div>
+
+<script>
+// Computed lengths are quantised to LayoutUnit (1/64px).
+var EPS = 1 / 64;
+
+function lineHeight(id) { return parseFloat(getComputedStyle(document.getElementById(id)).lineHeight); }
+function fontSize(id) { return parseFloat(getComputedStyle(document.getElementById(id)).fontSize); }
+
+test(function() {
+    assert_equals(fontSize('lhChild'), 18, 'child font size is clamped to the minimum font size');
+    assert_equals(fontSize('parent'), 20, 'parent font size is above the minimum and is not clamped');
+    assert_approx_equals(lineHeight('parent'), 26, EPS, 'parent line-height');
+}, 'Setup: the minimum font size clamps the children but not the parent');
+
+test(function() {
+    assert_approx_equals(lineHeight('lhChild'), 26, EPS);
+}, 'line-height: 1lh equals the parent line-height, unscaled by the minimum font size');
+
+test(function() {
+    assert_approx_equals(lineHeight('lhChild12'), 26, EPS);
+}, 'line-height: 1lh is unscaled for a font size closer to the minimum');
+
+test(function() {
+    assert_approx_equals(lineHeight('rlhChild'), 30, EPS);
+}, 'line-height: 1rlh equals the root line-height, unscaled by the minimum font size');
+
+test(function() {
+    // 1.2em resolves against the specified 6px font size, and the minimum font size adjustment then
+    // scales the result by 18/6, so the used line-height is 1.2 times the used font size.
+    assert_approx_equals(lineHeight('emChild'), 21.6, EPS);
+}, 'A font-relative line-height tracks the minimum font size exactly once');
+
+test(function() {
+    assert_approx_equals(lineHeight('numberChild'), 23.4, EPS, 'number');
+    assert_approx_equals(lineHeight('percentChild'), 23.4, EPS, 'percentage');
+}, 'Number and percentage line-heights track the clamped font size');
+</script>

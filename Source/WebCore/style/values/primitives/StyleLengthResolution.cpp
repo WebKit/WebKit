@@ -86,38 +86,49 @@ static double unzoomFontMetric(double metric, const FontDescription& fontDescrip
     return metric;
 }
 
+// MARK: - Minimum Font Size
+
+// The minimum font size setting is a user restriction on the used font size. It must be applied to used
+// values only, and in particular must not affect the resolution of font-relative lengths, so those
+// resolve against the specified size rather than the clamped computed size.
+// https://drafts.csswg.org/css-values-4/#font-relative-lengths
+static double unclampedFontSize(const FontCascadeDescription& fontDescription)
+{
+    return fontDescription.specifiedSize();
+}
+
+// Font metrics are measured at the used font size, which the minimum font size setting may have boosted
+// above the specified size. Scale them back down so the boost does not leak into font-relative lengths.
+static double unclampFontMetric(double metric, const FontCascadeDescription& fontDescription)
+{
+    auto unzoomedComputedSize = fontDescription.unzoomedComputedSize();
+    if (unzoomedComputedSize <= 0)
+        return metric;
+    return metric * unclampedFontSize(fontDescription) / unzoomedComputedSize;
+}
+
 
 // MARK: - "font dependent" and "root font dependent" resolution functions
 
 // Resolve the "em", "rem" and "quirky-em" units.
 // https://drafts.csswg.org/css-values-4/#em
 // https://drafts.csswg.org/css-values-4/#rem
-static double resolveEm(CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit)
+static double resolveEm(CSSPropertyID, const FontCascade& fontCascadeForUnit)
 {
-    auto& fontDescription = fontCascadeForUnit.fontDescription();
-
-    // FIXME: Should probably use specifiedSize for every property.
-    if (propertyToCompute == CSSPropertyFontSize)
-        return fontDescription.specifiedSize();
-
-    return fontDescription.unzoomedComputedSize();
+    return unclampedFontSize(fontCascadeForUnit.fontDescription());
 }
 
 // Resolve the "ex" and "rex" units.
 // https://drafts.csswg.org/css-values-4/#ex
 // https://drafts.csswg.org/css-values-4/#rex
-static double resolveEx(CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit)
+static double resolveEx(CSSPropertyID, const FontCascade& fontCascadeForUnit)
 {
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto& fontMetrics = fontCascadeForUnit.metricsOfPrimaryFont();
     if (fontMetrics.xHeight())
-        return unzoomFontMetric(fontMetrics.xHeight().value(), fontDescription);
+        return unclampFontMetric(unzoomFontMetric(fontMetrics.xHeight().value(), fontDescription), fontDescription);
 
-    // FIXME: Should probably use specifiedSize for every property.
-    if (propertyToCompute == CSSPropertyFontSize)
-        return fontDescription.specifiedSize() / 2.0;
-
-    return fontDescription.unzoomedComputedSize() / 2.0;
+    return unclampedFontSize(fontDescription) / 2.0;
 }
 
 // Resolve the "cap" and "rcap" units.
@@ -128,8 +139,8 @@ static double resolveCap(CSSPropertyID, const FontCascade& fontCascadeForUnit)
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto& fontMetrics = fontCascadeForUnit.metricsOfPrimaryFont();
     if (fontMetrics.capHeight())
-        return unzoomFontMetric(fontMetrics.capHeight().value(), fontDescription);
-    return unzoomFontMetric(fontMetrics.intAscent(), fontDescription);
+        return unclampFontMetric(unzoomFontMetric(fontMetrics.capHeight().value(), fontDescription), fontDescription);
+    return unclampFontMetric(unzoomFontMetric(fontMetrics.intAscent(), fontDescription), fontDescription);
 }
 
 // Resolve the "ch" and "rch" units.
@@ -137,7 +148,8 @@ static double resolveCap(CSSPropertyID, const FontCascade& fontCascadeForUnit)
 // https://drafts.csswg.org/css-values-4/#rch
 static double resolveCh(CSSPropertyID, const FontCascade& fontCascadeForUnit)
 {
-    return unzoomFontMetric(fontCascadeForUnit.zeroWidth(), fontCascadeForUnit.fontDescription());
+    auto& fontDescription = fontCascadeForUnit.fontDescription();
+    return unclampFontMetric(unzoomFontMetric(fontCascadeForUnit.zeroWidth(), fontDescription), fontDescription);
 }
 
 // Resolve the "ic" and "ric" units.
@@ -148,8 +160,8 @@ static double resolveIc(CSSPropertyID, const FontCascade& fontCascadeForUnit)
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto ideogramWidth = fontCascadeForUnit.metricsOfPrimaryFont().ideogramWidth();
     if (!ideogramWidth)
-        return fontDescription.unzoomedComputedSize();
-    return unzoomFontMetric(ideogramWidth.value(), fontDescription);
+        return unclampedFontSize(fontDescription);
+    return unclampFontMetric(unzoomFontMetric(ideogramWidth.value(), fontDescription), fontDescription);
 }
 
 

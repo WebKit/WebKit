@@ -334,7 +334,11 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
 {
     bool percentageAutosizingEnabled = document.settings().textAutosizingEnabled() && style.textSizeAdjust().isPercentage();
 
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value); primitiveValue && primitiveValue->isLength()) {
+    // This adjustment keeps a length line-height proportional to the boosted font size, so it applies to
+    // lengths that resolve against this element's font size, including font-relative ones like em and ch.
+    // It must not apply to lh and rlh, which resolve against another element's line-height and so do not
+    // scale with this element's font size. Numbers and percentages are handled by CSSValueConversion.
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value); primitiveValue && primitiveValue->isLength() && !primitiveValue->isLineHeightRelativeLength()) {
         auto minimumFontSize = document.settings().minimumFontSize();
         if (minimumFontSize > 0) {
             auto specifiedFontSize = computeBaseSpecifiedFontSize(document, style, percentageAutosizingEnabled);

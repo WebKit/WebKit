@@ -47,6 +47,7 @@ public:
     bool isParentFontRelativeLength() const { return isParentFontRelativeLength(primitiveUnitType()); }
     bool isPercentageOrParentFontRelativeLength() const { return isPercentage() || isParentFontRelativeLength(); }
     bool isRootFontRelativeLength() const { return isRootFontRelativeLength(primitiveUnitType()); }
+    bool isLineHeightRelativeLength() const { return isLineHeightRelativeLength(primitiveUnitType()); }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
     bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }
     bool isInteger() const { return primitiveType() == CSSUnitType::CSS_INTEGER; }
@@ -116,6 +117,7 @@ private:
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isParentFontRelativeLength(CSSUnitType);
     static constexpr bool isRootFontRelativeLength(CSSUnitType);
+    static constexpr bool isLineHeightRelativeLength(CSSUnitType);
     static constexpr bool isContainerPercentageLength(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
 
@@ -162,6 +164,12 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {
     return isParentFontRelativeLength(type)
         || isRootFontRelativeLength(type);
+}
+
+constexpr bool CSSPrimitiveValue::isLineHeightRelativeLength(CSSUnitType type)
+{
+    return type == CSSUnitType::CSS_LH
+        || type == CSSUnitType::CSS_RLH;
 }
 
 constexpr bool CSSPrimitiveValue::isContainerPercentageLength(CSSUnitType type)
