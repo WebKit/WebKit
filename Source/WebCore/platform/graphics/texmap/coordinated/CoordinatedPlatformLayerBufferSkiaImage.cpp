@@ -34,12 +34,15 @@ namespace WebCore {
 
 std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLayerBufferSkiaImage::create(const sk_sp<SkImage>& image, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
+    OptionSet<TextureMapperFlags> flags;
+    if (!image->isOpaque())
+        flags.add(TextureMapperFlags::ShouldBlend);
     sk_sp<SkImage> skiaImage = image->isTextureBacked() ? SkiaUtilities::createPromiseImageIfNeeded(image, threadSafeGrContext) : image;
-    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage));
+    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), flags);
 }
 
-CoordinatedPlatformLayerBufferSkiaImage::CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&& image)
-    : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { image->width(), image->height() }, { }, nullptr)
+CoordinatedPlatformLayerBufferSkiaImage::CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&& image, OptionSet<TextureMapperFlags> flags)
+    : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { image->width(), image->height() }, flags, nullptr)
     , m_image(WTF::move(image))
 {
 }
