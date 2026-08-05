@@ -33,4 +33,4 @@ async function test2() {
 }
 test2();
 assert(error instanceof TypeError);
-assert(error.message === "undefined is not a function (near '...x of p2...')");
+assert(error.message === "iterable should have an iterator symbol");

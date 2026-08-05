@@ -38,6 +38,7 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JSArrayIterator.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunctionGenerator.h"
 #include "JSAsyncGenerator.h"
 #include "JSBoundFunction.h"
@@ -913,9 +914,8 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastString)));
     }
 
-    case IterationMode::FastAsyncGenerator: {
-        // Only produced by asyncIteratorOpenTryFastImpl (op_async_iterator_open), never by
-        // op_iterator_open's getIterationMode.
+    case IterationMode::FastAsyncGenerator:
+    case IterationMode::AsyncFromSync: {
         RELEASE_ASSERT_NOT_REACHED();
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic)));
     }
@@ -963,6 +963,21 @@ ALWAYS_INLINE UGPRPair asyncIteratorOpenTryFastImpl(VM& vm, JSGlobalObject* glob
     JSValue iterable = GET_C(bytecode.m_iterable).jsValue();
     PROFILE_VALUE_IN(iterable, m_iterableValueProfile);
     JSValue symbolIterator = GET_C(bytecode.m_symbolIterator).jsValue();
+
+    // When @@asyncIterator is absent, wrap the sync iterator in %AsyncFromSyncIteratorPrototype% here. The sentinel
+    // fuses the consumer's Await, which elides an observable PromiseResolve; only sound while the species is primordial.
+    if (symbolIterator.isUndefinedOrNull()) {
+        JSAsyncFromSyncIterator* wrapper = createAsyncFromSyncIteratorForIterable(globalObject, iterable);
+        RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic))));
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::AsyncFromSync;
+        GET(bytecode.m_iterator) = wrapper;
+        PROFILE_VALUE_IN(JSValue(wrapper), m_iteratorValueProfile);
+        if (globalObject->promiseSpeciesWatchpointSet().state() == IsWatched) [[likely]]
+            GET(bytecode.m_next) = vm.fastAsyncGeneratorSentinel();
+        else
+            GET(bytecode.m_next) = globalObject->asyncFromSyncIteratorPrototypeNextFunction();
+        return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::AsyncFromSync)));
+    }
 
     // When the iterator is a genuine async generator and @@asyncIterator is primordial, plus its `next` method is primordial %AsyncGeneratorPrototype%.next,
     // for-of-await is guaranteed to drive async generator in a normal way. We set FastAsyncGenerator

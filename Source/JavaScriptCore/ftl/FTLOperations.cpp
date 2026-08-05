@@ -233,9 +233,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
         case JSWrapForValidIteratorType:
             materialize(uncheckedDowncast<JSWrapForValidIterator>(target));
             break;
-        case JSAsyncFromSyncIteratorType:
-            materialize(uncheckedDowncast<JSAsyncFromSyncIterator>(target));
-            break;
         case JSRegExpStringIteratorType:
             materialize(uncheckedDowncast<JSRegExpStringIterator>(target));
             break;
@@ -548,8 +545,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             return create.operator()<JSIteratorHelper>();
         case JSWrapForValidIteratorType:
             return create.operator()<JSWrapForValidIterator>();
-        case JSAsyncFromSyncIteratorType:
-            return create.operator()<JSAsyncFromSyncIterator>();
         case JSRegExpStringIteratorType:
             return create.operator()<JSRegExpStringIterator>();
         case JSGeneratorType:

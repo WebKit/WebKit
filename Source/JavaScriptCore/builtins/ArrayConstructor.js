@@ -186,7 +186,7 @@ function fromAsync(asyncItems  /*, mapFn, thisArg */)
 
         if (!@isUndefinedOrNull(usingSyncIterator)) {
             var iterator = usingSyncIterator.@call(asyncItems);
-            return @defaultAsyncFromAsyncIterator.@call(this, @createAsyncFromSyncIterator(iterator, iterator.next), mapFn, thisArg);
+            return @defaultAsyncFromAsyncIterator.@call(this, @asyncFromSyncIteratorCreate(iterator), mapFn, thisArg);
         }
 
         return @defaultAsyncFromAsyncArrayLike.@call(this, asyncItems, mapFn, thisArg);

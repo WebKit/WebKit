@@ -70,6 +70,7 @@
 #include "JSLexicalEnvironmentInlines.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
+#include "JSMicrotask.h"
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromiseReaction.h"
@@ -524,6 +525,30 @@ JSC_DEFINE_JIT_OPERATION(operationCallObjectConstructor, JSCell*, (JSGlobalObjec
     if (value.isUndefinedOrNull())
         OPERATION_RETURN(scope, constructEmptyObject(globalObject, globalObject->objectPrototype()));
     OPERATION_RETURN(scope, value.toObject(globalObject));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationOpenAsyncFromSyncIterator, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue encodedIterable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    OPERATION_RETURN(scope, createAsyncFromSyncIteratorForIterable(globalObject, JSValue::decode(encodedIterable)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationEnqueueAsyncGeneratorDriver, void, (JSGlobalObject* globalObject, JSObject* iterator, JSObject* driver, MicrotaskCallCache* microtaskCallCache))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (auto* generator = dynamicDowncast<JSAsyncGenerator>(iterator))
+        enqueueAsyncGeneratorDriver(globalObject, generator, driver, microtaskCallCache);
+    else
+        driveAsyncFromSyncIteratorWithDriver(globalObject, uncheckedDowncast<JSAsyncFromSyncIterator>(iterator), driver);
+    OPERATION_RETURN(scope);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationToObject, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue encodedTarget, UniquedStringImpl* errorMessage))
@@ -2903,16 +2928,6 @@ JSC_DEFINE_JIT_OPERATION(operationNewWrapForValidIterator, JSCell*, (VM* vmPoint
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     OPERATION_RETURN(scope, JSWrapForValidIterator::createWithInitialValues(vm, structure));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationNewAsyncFromSyncIterator, JSCell*, (VM* vmPointer, Structure* structure))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    OPERATION_RETURN(scope, JSAsyncFromSyncIterator::createWithInitialValues(vm, structure));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewRegExpStringIterator, JSCell*, (VM* vmPointer, Structure* structure))

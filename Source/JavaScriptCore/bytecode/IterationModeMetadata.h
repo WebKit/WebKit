@@ -46,9 +46,10 @@ enum class IterationMode : uint16_t {
     FastSetValues = 1 << 11,
     FastSetEntries = 1 << 12,
     FastAsyncGenerator = 1 << 13,
+    AsyncFromSync = 1 << 14,
 };
 
-constexpr unsigned numberOfIterationModes = 14;
+constexpr unsigned numberOfIterationModes = 15;
 
 // To keep the amount of code emitted for one iteration site reasonable, we only allow this many
 // distinct fast iteration modes per site. Once the limit is reached, newly observed iterable

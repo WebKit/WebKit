@@ -3359,6 +3359,11 @@ void SpeculativeJIT::compile(Node* node)
         compileToObjectOrCallObjectConstructor(node);
         break;
     }
+
+    case OpenAsyncFromSyncIterator: {
+        compileOpenAsyncFromSyncIterator(node);
+        break;
+    }
         
     case ToThis: {
         compileToThis(node);

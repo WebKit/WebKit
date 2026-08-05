@@ -2304,6 +2304,11 @@ private:
             break;
         }
 
+        case OpenAsyncFromSyncIterator: {
+            fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case ToThis: {
             fixupToThis(node);
             break;

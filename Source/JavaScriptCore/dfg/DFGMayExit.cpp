@@ -217,6 +217,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ToNumber:
     case ToNumeric:
     case ToObject:
+    case OpenAsyncFromSyncIterator:
     case RegExpExecNonGlobalOrSticky:
     case RegExpExecSticky:
     case RegExpMatchFastGlobal:

@@ -969,7 +969,6 @@ namespace JSC {
         RegisterID* emitIsUndefinedOrNull(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }
-        RegisterID* emitIsAsyncFromSyncIterator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSAsyncFromSyncIteratorType); }
         RegisterID* emitIsDisposableStack(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DisposableStackType); }
         RegisterID* emitIsAsyncDisposableStack(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, AsyncDisposableStackType); }
         void emitRequireObjectCoercible(RegisterID* value, ASCIILiteral error);

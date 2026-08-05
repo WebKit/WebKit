@@ -36,6 +36,7 @@
 #include "JSMapIterator.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
+#include "JSStringIterator.h"
 #include "ObjectConstructor.h"
 #include "VMEntryScopeInlines.h"
 
@@ -306,68 +307,126 @@ IterationRecord iteratorDirect(JSGlobalObject* globalObject, JSValue object)
     return { object, object.get(globalObject, globalObject->vm().propertyNames->next) };
 }
 
+JSAsyncFromSyncIterator* createAsyncFromSyncIterator(JSGlobalObject* globalObject, JSObject* syncIterator, std::optional<IterationMode> knownMode)
+{
+    auto& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    IterationMode iterationMode = knownMode ? *knownMode : getIterationMode(vm, globalObject, syncIterator, globalObject->iteratorProtoSymbolIteratorFunction());
+
+    // Fast* modes drive the iterator directly, never calling its `next`, so only fetch `next` for Generic mode.
+    JSValue nextMethod = jsUndefined();
+    if (iterationMode == IterationMode::Generic) {
+        nextMethod = syncIterator->get(globalObject, vm.propertyNames->next);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+
+    return JSAsyncFromSyncIterator::create(vm, globalObject->asyncFromSyncIteratorStructure(), syncIterator, nextMethod, iterationMode);
+}
+
+static JSObject* fastSyncIteratorForIterable(VM& vm, JSGlobalObject* globalObject, JSValue iterable, JSValue symbolIterator, std::optional<IterationMode>& reuseMode)
+{
+    IterationMode mode = getIterationMode(vm, globalObject, iterable, symbolIterator);
+    switch (mode) {
+    // Containers: @@iterator allocates a fresh primordial iterator; construct it directly.
+    case IterationMode::FastArray:
+        return JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), uncheckedDowncast<JSObject>(iterable.asCell()), IterationKind::Values);
+    case IterationMode::FastMap:
+        return JSMapIterator::create(vm, globalObject->mapIteratorStructure(), uncheckedDowncast<JSMap>(iterable.asCell()), IterationKind::Entries);
+    case IterationMode::FastSet:
+        return JSSetIterator::create(vm, globalObject->setIteratorStructure(), uncheckedDowncast<JSSet>(iterable.asCell()), IterationKind::Values);
+    case IterationMode::FastString:
+        // A primitive string container: @@iterator allocates a fresh primordial JSStringIterator.
+        return JSStringIterator::create(vm, globalObject->stringIteratorStructure(), asString(iterable));
+    // Iterators: @@iterator returns the iterator itself; reuse it.
+    case IterationMode::FastArrayValues:
+    case IterationMode::FastArrayKeys:
+    case IterationMode::FastArrayEntries:
+    case IterationMode::FastMapKeys:
+    case IterationMode::FastMapValues:
+    case IterationMode::FastMapEntries:
+    case IterationMode::FastSetValues:
+    case IterationMode::FastSetEntries:
+        reuseMode = mode;
+        return uncheckedDowncast<JSObject>(iterable.asCell());
+    case IterationMode::FastAsyncGenerator:
+    case IterationMode::AsyncFromSync:
+    case IterationMode::Generic:
+        break;
+    }
+    return nullptr;
+}
+
+JSAsyncFromSyncIterator* createAsyncFromSyncIteratorForIterable(JSGlobalObject* globalObject, JSValue iterable)
+{
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // iterable may be a primitive (e.g. a string); get()/call() box it per spec.
+    JSValue syncMethod = iterable.get(globalObject, vm.propertyNames->iteratorSymbol);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    std::optional<IterationMode> reuseMode;
+    if (JSObject* fastIterator = fastSyncIteratorForIterable(vm, globalObject, iterable, syncMethod, reuseMode)) [[likely]]
+        RELEASE_AND_RETURN(scope, createAsyncFromSyncIterator(globalObject, fastIterator, reuseMode));
+
+    auto callData = getCallData(syncMethod);
+    if (callData.type == CallData::Type::None) [[unlikely]] {
+        throwTypeError(globalObject, scope, "iterable should have an iterator symbol"_s);
+        return { };
+    }
+
+    auto iterator = call(globalObject, syncMethod, callData, iterable, { });
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto* iteratorObject = iterator.getObject();
+    if (!iteratorObject) [[unlikely]] {
+        throwTypeError(globalObject, scope, "iterator method should return an object"_s);
+        return { };
+    }
+
+    RELEASE_AND_RETURN(scope, createAsyncFromSyncIterator(globalObject, iteratorObject));
+}
+
+// The wrapper is never exposed to user code, so its `next` is invariantly %AsyncFromSyncIteratorPrototype%.next.
+IterationRecord createAsyncFromSyncIteratorRecord(JSGlobalObject& globalObject, JSValue iterable)
+{
+    auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
+    auto* asyncFromSyncIterator = createAsyncFromSyncIteratorForIterable(&globalObject, iterable);
+    RETURN_IF_EXCEPTION(scope, { });
+    return { asyncFromSyncIterator, globalObject.asyncFromSyncIteratorPrototypeNextFunction() };
+}
+
 // https://tc39.es/ecma262/multipage/abstract-operations.html#sec-getiterator, ASYNC kind
 static IterationRecord getAsyncIteratorImpl(JSGlobalObject& globalObject, JSValue iterable)
 {
     auto& vm = globalObject.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* iterableObject = iterable.getObject();
     if (!iterableObject) [[unlikely]] {
-        throwTypeError(&globalObject, throwScope, "iterable should be an object"_s);
+        throwTypeError(&globalObject, scope, "iterable should be an object"_s);
         return { };
     }
 
     CallData callData;
     auto method = iterableObject->getMethod(&globalObject, callData, vm.propertyNames->asyncIteratorSymbol, "asyncIteratorSymbol property should be callable"_s);
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(scope, { });
 
-    if (method.isUndefined()) {
-        auto syncMethod = iteratorMethod(&globalObject, iterableObject);
-        RETURN_IF_EXCEPTION(throwScope, { });
-
-        if (syncMethod.isUndefined()) [[unlikely]] {
-            throwTypeError(&globalObject, throwScope, "iterable should have an iterator symbol"_s);
-            return { };
-        }
-
-        callData = getCallData(syncMethod);
-        auto iterator = call(&globalObject, syncMethod, callData, iterableObject, { });
-        RETURN_IF_EXCEPTION(throwScope, { });
-
-        auto* iteratorObject = iterator.getObject();
-        if (!iteratorObject) [[unlikely]] {
-            throwTypeError(&globalObject, throwScope, "iterator method should return an object"_s);
-            return { };
-        }
-
-        auto syncIteratorRecord = iteratorDirect(&globalObject, iterator);
-        RETURN_IF_EXCEPTION(throwScope, { });
-
-        auto* asyncFromSyncIterator = JSAsyncFromSyncIterator::create(vm, globalObject.asyncFromSyncIteratorStructure(), syncIteratorRecord.iterator, syncIteratorRecord.nextMethod);
-        RETURN_IF_EXCEPTION(throwScope, { });
-
-        auto record = iteratorDirect(&globalObject, asyncFromSyncIterator);
-        RETURN_IF_EXCEPTION(throwScope, { });
-        return record;
-    }
-
-    if (method.isUndefined()) [[unlikely]] {
-        throwTypeError(&globalObject, throwScope, "iterable should have an iterator symbol"_s);
-        return { };
-    }
+    if (method.isUndefined())
+        RELEASE_AND_RETURN(scope, createAsyncFromSyncIteratorRecord(globalObject, iterable));
 
     callData = getCallData(method);
     auto iterator = call(&globalObject, method, callData, iterableObject, { });
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto* iteratorObject = iterator.getObject();
     if (!iteratorObject) [[unlikely]] {
-        throwTypeError(&globalObject, throwScope, "iterator method should return an object"_s);
+        throwTypeError(&globalObject, scope, "iterator method should return an object"_s);
         return { };
     }
 
-    RELEASE_AND_RETURN(throwScope, iteratorDirect(&globalObject, iterator));
+    RELEASE_AND_RETURN(scope, iteratorDirect(&globalObject, iterator));
 }
 
 IterationRecord getAsyncIterator(JSGlobalObject& globalObject, JSValue iterable)
@@ -378,6 +437,16 @@ IterationRecord getAsyncIterator(JSGlobalObject& globalObject, JSValue iterable)
 IterationRecord getAsyncIteratorExported(JSGlobalObject& globalObject, JSValue iterable)
 {
     return getAsyncIteratorImpl(globalObject, iterable);
+}
+
+JSC_DEFINE_HOST_FUNCTION(asyncFromSyncIteratorCreatePrivate, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* syncIterator = callFrame->argument(0).getObject();
+    if (!syncIterator) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Only objects can be wrapped by async-from-sync wrapper"_s);
+    RELEASE_AND_RETURN(scope, JSValue::encode(createAsyncFromSyncIterator(globalObject, syncIterator)));
 }
 
 IterableValidationResult validateIterable(VM&, JSValue iterable, JSValue symbolIterator)

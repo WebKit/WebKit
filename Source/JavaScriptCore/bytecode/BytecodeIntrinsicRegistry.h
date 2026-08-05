@@ -51,14 +51,12 @@ enum class LinkTimeConstant : int32_t;
     macro(getGeneratorInternalField) \
     macro(getIteratorHelperInternalField) \
     macro(getAsyncDisposableStackInternalField) \
-    macro(getAsyncFromSyncIteratorInternalField) \
     macro(getArrayIteratorInternalField) \
     macro(getProxyInternalField) \
     macro(getWrapForValidIteratorInternalField) \
     macro(getDisposableStackInternalField) \
     macro(idWithProfile) \
     macro(isAsyncDisposableStack) \
-    macro(isAsyncFromSyncIterator) \
     macro(isObject) \
     macro(isCallable) \
     macro(isConstructor) \
@@ -141,8 +139,6 @@ enum class LinkTimeConstant : int32_t;
     macro(arrayIteratorFieldIndex) \
     macro(arrayIteratorFieldIteratedObject) \
     macro(arrayIteratorFieldKind) \
-    macro(asyncFromSyncIteratorFieldSyncIterator) \
-    macro(asyncFromSyncIteratorFieldNextMethod) \
     macro(wrapForValidIteratorFieldIteratedIterator) \
     macro(wrapForValidIteratorFieldIteratedNextMethod) \
     macro(disposableStackFieldState) \
