@@ -25,8 +25,12 @@
 
 #pragma once
 
+#include "WebGPURenderPipeline.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <cstdint>
 #include <wtf/CompletionHandler.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
@@ -36,6 +40,7 @@ namespace WebCore {
 class GPUComputePipeline;
 class GPURenderPipeline;
 class InspectorCanvas;
+class InspectorCanvasAgent;
 
 #if ENABLE(WEBGL)
 class WebGLProgram;
@@ -65,17 +70,23 @@ public:
     bool setDisabled(bool);
 
     bool highlighted() const { return m_highlighted; }
-    void setHighlighted(bool value) { m_highlighted = value; }
+    bool setHighlighted(bool);
 
     Ref<Inspector::Protocol::Canvas::ShaderProgram> buildObjectForShaderProgram();
 
 private:
+    friend class InspectorCanvasAgent;
 
 #if ENABLE(WEBGL)
     InspectorShaderProgram(WebGLProgram&, InspectorCanvas&);
 #endif // ENABLE(WEBGL)
     InspectorShaderProgram(GPUComputePipeline&, InspectorCanvas&);
     InspectorShaderProgram(GPURenderPipeline&, InspectorCanvas&);
+
+    void invalidateRenderPipelinesForHighlighting();
+    void prepareRenderPipelinesForHighlighting(CompletionHandler<void()>&&);
+    void requestRenderPipelineForHighlighting(unsigned canvasColorAttachmentMask, CompletionHandler<void()>&&);
+    RefPtr<WebGPU::RenderPipeline> renderPipelineForHighlighting(unsigned canvasColorAttachmentMask);
 
     String m_identifier;
     WeakRef<InspectorCanvas> m_canvas;
@@ -86,6 +97,12 @@ private:
         WeakRef<GPUComputePipeline>,
         WeakRef<GPURenderPipeline>
     > m_program;
+
+    HashSet<unsigned> m_canvasColorAttachmentMasks;
+    HashMap<unsigned, Ref<WebGPU::RenderPipeline>> m_renderPipelinesForHighlighting;
+    HashMap<unsigned, uint64_t> m_renderPipelineHighlightRequestGenerations;
+    uint64_t m_renderPipelineHighlightGeneration { 0 };
+
     bool m_disabled { false };
     bool m_highlighted { false };
 };

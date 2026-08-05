@@ -29,6 +29,9 @@
 #include "GPUBindGroupLayout.h"
 #include "GPUDevice.h"
 #include "InspectorInstrumentation.h"
+#include "WebGPUBlendFactor.h"
+#include "WebGPUBlendOperation.h"
+#include "WebGPUBlendState.h"
 #include <wtf/Locker.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -129,6 +132,94 @@ void GPURenderPipeline::updateVertexShader(const String& source, CompletionHandl
 void GPURenderPipeline::updateFragmentShader(const String& source, CompletionHandler<void(bool)>&& completionHandler)
 {
     updateShader(source, false, WTF::move(completionHandler));
+}
+
+static bool isInspectorHighlightableCanvasFormat(WebGPU::TextureFormat format)
+{
+    switch (format) {
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+    case WebGPU::TextureFormat::Rgba16float:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool usesBlendConstant(const WebGPU::BlendComponent& component)
+{
+    return component.srcFactor == WebGPU::BlendFactor::Constant
+        || component.srcFactor == WebGPU::BlendFactor::OneMinusConstant
+        || component.dstFactor == WebGPU::BlendFactor::Constant
+        || component.dstFactor == WebGPU::BlendFactor::OneMinusConstant;
+}
+
+static bool usesBlendConstant(const std::optional<WebGPU::BlendState>& blendState)
+{
+    return blendState && (usesBlendConstant(blendState->color) || usesBlendConstant(blendState->alpha));
+}
+
+void GPURenderPipeline::createPipelineForInspectorHighlight(unsigned canvasColorAttachmentMask, CompletionHandler<void(RefPtr<WebGPU::RenderPipeline>&&)>&& completionHandler) const
+{
+    RefPtr device = m_device.get();
+    if (!device || !canvasColorAttachmentMask || !m_descriptor.fragment || !m_fragmentShaderModuleDescriptor) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    RefPtr vertexShaderModule = device->backing().createShaderModule(m_vertexShaderModuleDescriptor);
+    if (!vertexShaderModule) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    RefPtr<WebGPU::ShaderModule> fragmentShaderModule;
+    if (m_sharesVertexFragmentShader)
+        fragmentShaderModule = vertexShaderModule;
+    else
+        fragmentShaderModule = device->backing().createShaderModule(*m_fragmentShaderModuleDescriptor);
+    if (!fragmentShaderModule) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    auto descriptor = m_descriptor;
+    descriptor.vertex.module = *vertexShaderModule;
+    descriptor.fragment->module = *fragmentShaderModule;
+    bool changedBlendState = false;
+    for (size_t i = 0; i < descriptor.fragment->targets.size() && i < 8; ++i) {
+        auto& target = descriptor.fragment->targets[i];
+        if (!(canvasColorAttachmentMask & (1 << i))) {
+            // The blend constant is shared by every color attachment in a render pass, so changing it for highlighting must not affect a non-canvas target.
+            if (target && usesBlendConstant(target->blend)) {
+                completionHandler(nullptr);
+                return;
+            }
+            continue;
+        }
+
+        if (!target || !isInspectorHighlightableCanvasFormat(target->format)) {
+            completionHandler(nullptr);
+            return;
+        }
+
+        WebGPU::BlendComponent blendComponent {
+            WebGPU::BlendOperation::Add,
+            WebGPU::BlendFactor::Constant,
+            WebGPU::BlendFactor::OneMinusSrcAlpha,
+        };
+        target->blend = WebGPU::BlendState { blendComponent, blendComponent };
+        changedBlendState = true;
+    }
+
+    if (!changedBlendState) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    device->backing().createRenderPipelineWithPipelineLayoutFromPipelineAsync(descriptor, m_backing, WTF::move(completionHandler));
 }
 
 void GPURenderPipeline::updateShader(const String& source, bool updateVertexShader, CompletionHandler<void(bool)>&& completionHandler)

@@ -7,10 +7,12 @@ PASS: Found the existing compute ShaderProgram.
 PASS: Compute ShaderProgram should have the WebGPU Canvas as its parent.
 PASS: Compute ShaderProgram should use the pipeline label as its display name.
 PASS: Compute ShaderProgram should not support disabling.
+PASS: Compute ShaderProgram should not support highlighting.
 PASS: Found the existing render ShaderProgram.
 PASS: Render ShaderProgram should have the WebGPU Canvas as its parent.
 PASS: Render ShaderProgram should use the pipeline label as its display name.
 PASS: Render ShaderProgram should support disabling.
+PASS: Render ShaderProgram should support highlighting.
 PASS: Canvas should initially have two ShaderPrograms.
 
 -- Running test case: Canvas.ShaderProgram.WebGPU.OffscreenCanvas
@@ -34,6 +36,7 @@ PASS: ShaderProgram should have the expected type.
 PASS: ShaderProgram should have the WebGPU Canvas as its parent.
 PASS: Fragmentless render ShaderProgram should not report vertex and fragment shader module sharing.
 PASS: Fragmentless render ShaderProgram should support disabling.
+PASS: Fragmentless render ShaderProgram should not support highlighting.
 PASS: Fragmentless render ShaderProgram should expose its vertex WGSL source.
 
 -- Running test case: Canvas.ShaderProgram.WebGPU.CreateComputePipelineAsync

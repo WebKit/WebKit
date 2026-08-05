@@ -1402,6 +1402,13 @@ bool InspectorInstrumentation::isWebGPURenderPipelineDisabledImpl(InstrumentingA
     return false;
 }
 
+RefPtr<WebGPU::RenderPipeline> InspectorInstrumentation::renderPipelineForWebGPUHighlightingImpl(InstrumentingAgents& instrumentingAgents, GPURenderPipeline& pipeline, unsigned canvasColorAttachmentMask)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        return canvasAgent->renderPipelineForWebGPUHighlighting(pipeline, canvasColorAttachmentMask);
+    return nullptr;
+}
+
 void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {
     if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())

@@ -48,9 +48,9 @@ template<typename> class ExceptionOr;
 
 class GPUTexture : public RefCountedAndCanMakeWeakPtr<GPUTexture> {
 public:
-    static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device)
+    static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device, bool isCanvasBacking = false)
     {
-        return adoptRef(*new GPUTexture(WTF::move(backing), descriptor, device));
+        return adoptRef(*new GPUTexture(WTF::move(backing), descriptor, device, isCanvasBacking));
     }
 
     String NODELETE label() const;
@@ -64,6 +64,7 @@ public:
     WebGPU::Texture& backing() { return m_backing; }
     const WebGPU::Texture& backing() const { return m_backing; }
     GPUTextureFormat format() const { return m_format; }
+    bool isCanvasBacking() const { return m_isCanvasBacking; }
 
     GPUDevice* device() const;
 
@@ -85,7 +86,7 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUTexture(Ref<WebGPU::Texture>&&, const GPUTextureDescriptor&, GPUDevice&);
+    GPUTexture(Ref<WebGPU::Texture>&&, const GPUTextureDescriptor&, GPUDevice&, bool isCanvasBacking);
 
     GPUTexture(const GPUTexture&) = delete;
     GPUTexture(GPUTexture&&) = delete;
@@ -102,6 +103,7 @@ private:
     const GPUTextureDimension m_dimension;
     const GPUFlagsConstant m_usage;
     const Ref<GPUDevice> m_device;
+    const bool m_isCanvasBacking;
     bool m_isDestroyed { false };
 };
 

@@ -56,7 +56,7 @@ static uint32_t getDimension(auto& extent3D)
     });
 }
 
-GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device)
+GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device, bool isCanvasBacking)
     : m_backing(WTF::move(backing))
     , m_format(descriptor.format)
     , m_width(getDimension<0>(descriptor.size))
@@ -67,6 +67,7 @@ GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescripto
     , m_dimension(descriptor.dimension)
     , m_usage(descriptor.usage)
     , m_device(device)
+    , m_isCanvasBacking(isCanvasBacking)
 {
 }
 

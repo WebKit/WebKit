@@ -49,8 +49,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         if (this.representedObject.supportsDisabling)
             this.representedObject.addEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
 
-        // FIXME: add support for highlighting WebGPU shader pipelines.
-        if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2) {
+        if (this.representedObject.supportsHighlighting) {
             this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
             this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
         }

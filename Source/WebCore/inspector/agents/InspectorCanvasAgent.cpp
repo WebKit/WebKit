@@ -380,22 +380,30 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramD
     return { };
 }
 
-#if ENABLE(WEBGL)
-
-Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId& programId, bool highlighted)
+void InspectorCanvasAgent::setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId& programId, bool highlighted, Ref<SetShaderProgramHighlightedCallback>&& callback)
 {
     Inspector::Protocol::ErrorString errorString;
 
     auto inspectorProgram = assertInspectorProgram(errorString, programId);
-    if (!inspectorProgram)
-        return makeUnexpected(errorString);
+    if (!inspectorProgram) {
+        callback->sendFailure(errorString);
+        return;
+    }
 
-    inspectorProgram->setHighlighted(highlighted);
+    if (!inspectorProgram->setHighlighted(highlighted)) {
+        callback->sendFailure("Shader program does not support highlighting"_s);
+        return;
+    }
 
-    return { };
+    if (!highlighted) {
+        callback->sendSuccess();
+        return;
+    }
+
+    inspectorProgram->prepareRenderPipelinesForHighlighting([callback = WTF::move(callback)]() mutable {
+        callback->sendSuccess();
+    });
 }
-
-#endif // ENABLE(WEBGL)
 
 void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContext& context)
 {
@@ -718,6 +726,15 @@ bool InspectorCanvasAgent::isWebGPURenderPipelineDisabled(GPURenderPipeline& pip
         return false;
 
     return inspectorProgram->disabled();
+}
+
+RefPtr<WebGPU::RenderPipeline> InspectorCanvasAgent::renderPipelineForWebGPUHighlighting(GPURenderPipeline& pipeline, unsigned canvasColorAttachmentMask)
+{
+    RefPtr inspectorProgram = findInspectorProgram(pipeline);
+    ASSERT(inspectorProgram);
+    if (!inspectorProgram)
+        return nullptr;
+    return inspectorProgram->renderPipelineForHighlighting(canvasColorAttachmentMask);
 }
 
 void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)

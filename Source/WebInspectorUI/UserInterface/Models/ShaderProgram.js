@@ -109,6 +109,21 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         return false;
     }
 
+    get supportsHighlighting()
+    {
+        switch (this._canvas.contextType) {
+        case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.OffscreenWebGL:
+        case WI.Canvas.ContextType.WebGL2:
+        case WI.Canvas.ContextType.OffscreenWebGL2:
+            return true;
+        case WI.Canvas.ContextType.WebGPU:
+            return this._programType === ShaderProgram.ProgramType.Render;
+        }
+        console.assert(false, this._canvas.contextType, this._programType);
+        return false;
+    }
+
     get displayName()
     {
         if (this._displayName)
@@ -188,16 +203,14 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 
     showHighlight()
     {
-        console.assert(this._programType === ShaderProgram.ProgramType.Render);
-        console.assert(this._canvas.isWebGL || this._canvas.isWebGL2);
+        console.assert(this.supportsHighlighting);
 
         this._target.CanvasAgent.setShaderProgramHighlighted(this._identifier, true);
     }
 
     hideHighlight()
     {
-        console.assert(this._programType === ShaderProgram.ProgramType.Render);
-        console.assert(this._canvas.isWebGL || this._canvas.isWebGL2);
+        console.assert(this.supportsHighlighting);
 
         this._target.CanvasAgent.setShaderProgramHighlighted(this._identifier, false);
     }

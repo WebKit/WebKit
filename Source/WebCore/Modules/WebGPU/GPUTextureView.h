@@ -49,6 +49,7 @@ public:
 
     WebGPU::TextureView& backing() { return m_backing; }
     const WebGPU::TextureView& backing() const { return m_backing; }
+    bool isCanvasBacking() const { return m_isCanvasBacking; }
 
     GPUDevice* device() const;
 
@@ -59,6 +60,7 @@ private:
 
     const Ref<WebGPU::TextureView> m_backing;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
+    const bool m_isCanvasBacking;
 };
 
 }

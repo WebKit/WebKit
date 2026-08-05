@@ -197,7 +197,7 @@
         {
             "name": "setShaderProgramHighlighted",
             "description": "Enable/disable highlighting of the given shader program.",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
+            "async": true,
             "parameters": [
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "highlighted", "type": "boolean" }

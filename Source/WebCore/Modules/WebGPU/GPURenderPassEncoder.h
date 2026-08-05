@@ -31,6 +31,7 @@
 #include "GPUIntegralTypes.h"
 #include "WebGPURenderPassEncoder.h"
 #include <JavaScriptCore/Uint32Array.h>
+#include <cstdint>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -52,9 +53,9 @@ template<typename> class ExceptionOr;
 
 class GPURenderPassEncoder : public RefCountedAndCanMakeWeakPtr<GPURenderPassEncoder> {
 public:
-    static Ref<GPURenderPassEncoder> create(Ref<WebGPU::RenderPassEncoder>&& backing, GPUCommandEncoder& commandEncoder)
+    static Ref<GPURenderPassEncoder> create(Ref<WebGPU::RenderPassEncoder>&& backing, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
     {
-        return adoptRef(*new GPURenderPassEncoder(WTF::move(backing), commandEncoder));
+        return adoptRef(*new GPURenderPassEncoder(WTF::move(backing), commandEncoder, canvasColorAttachmentMask));
     }
 
     String NODELETE label() const;
@@ -111,11 +112,15 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&&, GPUCommandEncoder&);
+    GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&&, GPUCommandEncoder&, uint8_t canvasColorAttachmentMask);
 
     Ref<WebGPU::RenderPassEncoder> m_backing;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     WeakPtr<GPURenderPipeline> m_currentPipeline;
+
+    GPUColor m_blendConstant { GPUColorDict { } };
+    const uint8_t m_canvasColorAttachmentMask;
+
     std::optional<String> m_overrideLabel;
 };
 

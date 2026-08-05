@@ -34,6 +34,7 @@ namespace WebCore {
 GPUTextureView::GPUTextureView(Ref<WebGPU::TextureView>&& backing, const GPUTexture& texture)
     : m_backing(WTF::move(backing))
     , m_device(texture.device())
+    , m_isCanvasBacking(texture.isCanvasBacking())
 {
 }
 

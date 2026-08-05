@@ -95,6 +95,7 @@ let renderPipelines = [];
 let boundComputePipelineState = null;
 let boundRenderPipelineStates = [];
 let reusableSharedRenderShaderModule = null;
+let webGPUCanvasContext = null;
 let offscreenWebGPUCanvas = null;
 let offscreenWebGPUCanvasContext = null;
 let garbageCollectionInterval = null;
@@ -276,13 +277,16 @@ function renderToContext(context) {
     device.queue.submit([commandEncoder.finish()]);
 }
 
-async function renderAndReadPixel(encodeRenderPass) {
+async function renderAndReadPixel(texture, encodeRenderPass) {
     const bytesPerRow = 256;
-    let texture = device.createTexture({
-        size: [1, 1],
-        format: presentationFormat,
-        usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
-    });
+    let shouldDestroyTexture = !texture;
+    if (!texture) {
+        texture = device.createTexture({
+            size: [1, 1],
+            format: presentationFormat,
+            usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+    }
     let readbackBuffer = device.createBuffer({
         size: bytesPerRow,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
@@ -306,12 +310,23 @@ async function renderAndReadPixel(encodeRenderPass) {
     let pixel = new Uint8Array(readbackBuffer.getMappedRange()).slice(0, 4).join(",");
     readbackBuffer.unmap();
     readbackBuffer.destroy();
-    texture.destroy();
+    if (shouldDestroyTexture)
+        texture.destroy();
     return pixel;
 }
 
 async function renderWithPipeline(eventName) {
-    let content = await renderAndReadPixel((renderPassEncoder) => {
+    if (!webGPUCanvasContext) {
+        webGPUCanvasContext = document.getElementById("webgpu-canvas").getContext("webgpu");
+        webGPUCanvasContext.configure({
+            device,
+            format: presentationFormat,
+            usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+            alphaMode: "opaque",
+        });
+    }
+
+    let content = await renderAndReadPixel(webGPUCanvasContext.getCurrentTexture(), (renderPassEncoder) => {
         renderPassEncoder.setPipeline(renderPipelines[0]);
         renderPassEncoder.draw(3);
     });
@@ -324,7 +339,7 @@ async function renderWithRenderBundle(eventName) {
     renderBundleEncoder.draw(3);
     let renderBundle = renderBundleEncoder.finish();
 
-    let content = await renderAndReadPixel((renderPassEncoder) => {
+    let content = await renderAndReadPixel(null, (renderPassEncoder) => {
         renderPassEncoder.executeBundles([renderBundle]);
     });
     TestPage.dispatchEventToFrontend(eventName, {content});
@@ -334,7 +349,7 @@ async function renderWithBoundPipeline(eventName, index) {
     device.pushErrorScope("validation");
 
     let state = boundRenderPipelineStates[index];
-    await renderAndReadPixel((renderPassEncoder) => {
+    await renderAndReadPixel(null, (renderPassEncoder) => {
         renderPassEncoder.setPipeline(state.pipeline);
         renderPassEncoder.setBindGroup(0, state.bindGroup);
         renderPassEncoder.draw(3);
@@ -381,6 +396,10 @@ function releaseLastRenderPipeline() {
 }
 
 function releaseDeviceKeepingPipelines() {
+    if (webGPUCanvasContext)
+        webGPUCanvasContext.unconfigure();
+    webGPUCanvasContext = null;
+
     if (offscreenWebGPUCanvasContext)
         offscreenWebGPUCanvasContext.unconfigure();
     offscreenWebGPUCanvasContext = null;

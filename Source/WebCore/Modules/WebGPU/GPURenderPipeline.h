@@ -36,6 +36,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,10 +70,13 @@ public:
     void updateVertexShader(const String&, CompletionHandler<void(bool)>&&);
     void updateFragmentShader(const String&, CompletionHandler<void(bool)>&&);
 
+    void createPipelineForInspectorHighlight(unsigned canvasColorAttachmentMask, CompletionHandler<void(RefPtr<WebGPU::RenderPipeline>&&)>&&) const;
+
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
     GPURenderPipeline(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPU::RenderPipelineDescriptor&&, const WebGPU::ShaderModuleDescriptor&, std::optional<WebGPU::ShaderModuleDescriptor>&&, bool sharesVertexFragmentShader);
+
     void updateShader(const String&, bool updateVertexShader, CompletionHandler<void(bool)>&&);
 
     static Lock s_instancesLock;

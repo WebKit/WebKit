@@ -66,7 +66,7 @@ RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture(uint32_t index)
 {
     if ((!m_currentTexture || m_currentTexture->isDestroyed()) && m_device) {
         if (auto currentTexture = m_backing->getCurrentTexture(index))
-            m_currentTexture = GPUTexture::create(*currentTexture, m_textureDescriptor, *protect(m_device)).ptr();
+            m_currentTexture = GPUTexture::create(*currentTexture, m_textureDescriptor, *protect(m_device), true).ptr();
     }
 
     return m_currentTexture;

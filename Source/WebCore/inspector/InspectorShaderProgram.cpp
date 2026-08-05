@@ -39,6 +39,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -218,15 +219,31 @@ void InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
         }
         , [&](const WeakRef<GPURenderPipeline>& weakPipeline) {
             Ref pipeline = weakPipeline.get();
+            auto didUpdateShader = [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](bool updated) mutable {
+                if (!updated) {
+                    completionHandler(false);
+                    return;
+                }
+
+                protectedThis->invalidateRenderPipelinesForHighlighting();
+                if (!protectedThis->m_highlighted) {
+                    completionHandler(true);
+                    return;
+                }
+
+                protectedThis->prepareRenderPipelinesForHighlighting([completionHandler = WTF::move(completionHandler)]() mutable {
+                    completionHandler(true);
+                });
+            };
             switch (shaderType) {
             case Inspector::Protocol::Canvas::ShaderType::Vertex:
-                pipeline->updateVertexShader(source, WTF::move(completionHandler));
+                pipeline->updateVertexShader(source, WTF::move(didUpdateShader));
                 return;
             case Inspector::Protocol::Canvas::ShaderType::Fragment:
-                pipeline->updateFragmentShader(source, WTF::move(completionHandler));
+                pipeline->updateFragmentShader(source, WTF::move(didUpdateShader));
                 return;
             case Inspector::Protocol::Canvas::ShaderType::Compute:
-                completionHandler(false);
+                didUpdateShader(false);
                 return;
             }
 
@@ -250,6 +267,85 @@ bool InspectorShaderProgram::setDisabled(bool disabled)
             return true;
         }
     );
+}
+
+bool InspectorShaderProgram::setHighlighted(bool highlighted)
+{
+    bool supported = WTF::switchOn(m_program
+#if ENABLE(WEBGL)
+        , [](const WeakRef<WebGLProgram>&) { return true; }
+#endif // ENABLE(WEBGL)
+        , [](const WeakRef<GPUComputePipeline>&) { return false; }
+        , [](const WeakRef<GPURenderPipeline>& weakPipeline) {
+            return !weakPipeline->fragmentShaderSource().isNull();
+        }
+    );
+    if (!supported)
+        return false;
+
+    m_highlighted = highlighted;
+    if (!highlighted)
+        invalidateRenderPipelinesForHighlighting();
+    return true;
+}
+
+void InspectorShaderProgram::invalidateRenderPipelinesForHighlighting()
+{
+    ++m_renderPipelineHighlightGeneration;
+    m_renderPipelinesForHighlighting.clear();
+    m_renderPipelineHighlightRequestGenerations.clear();
+}
+
+void InspectorShaderProgram::prepareRenderPipelinesForHighlighting(CompletionHandler<void()>&& completionHandler)
+{
+    Ref callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    for (auto canvasColorAttachmentMask : m_canvasColorAttachmentMasks)
+        requestRenderPipelineForHighlighting(canvasColorAttachmentMask, [callbackAggregator = callbackAggregator.copyRef()] { });
+}
+
+void InspectorShaderProgram::requestRenderPipelineForHighlighting(unsigned canvasColorAttachmentMask, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_highlighted || m_renderPipelinesForHighlighting.contains(canvasColorAttachmentMask) || m_renderPipelineHighlightRequestGenerations.contains(canvasColorAttachmentMask)) {
+        completionHandler();
+        return;
+    }
+
+    RefPtr pipeline = renderPipeline();
+    if (!pipeline) {
+        completionHandler();
+        return;
+    }
+
+    auto generation = m_renderPipelineHighlightGeneration;
+    m_renderPipelineHighlightRequestGenerations.add(canvasColorAttachmentMask, generation);
+    pipeline->createPipelineForInspectorHighlight(canvasColorAttachmentMask, [protectedThis = Ref { *this }, canvasColorAttachmentMask, generation, completionHandler = WTF::move(completionHandler)](RefPtr<WebGPU::RenderPipeline>&& pipeline) mutable {
+        auto request = protectedThis->m_renderPipelineHighlightRequestGenerations.find(canvasColorAttachmentMask);
+        if (request != protectedThis->m_renderPipelineHighlightRequestGenerations.end() && request->value == generation) {
+            protectedThis->m_renderPipelineHighlightRequestGenerations.remove(request);
+            if (pipeline && protectedThis->m_highlighted && protectedThis->m_renderPipelineHighlightGeneration == generation)
+                protectedThis->m_renderPipelinesForHighlighting.add(canvasColorAttachmentMask, pipeline.releaseNonNull());
+        }
+        completionHandler();
+    });
+}
+
+RefPtr<WebGPU::RenderPipeline> InspectorShaderProgram::renderPipelineForHighlighting(unsigned canvasColorAttachmentMask)
+{
+    if (!canvasColorAttachmentMask)
+        return nullptr;
+
+    m_canvasColorAttachmentMasks.add(canvasColorAttachmentMask);
+    if (!m_highlighted)
+        return nullptr;
+
+    if (auto it = m_renderPipelinesForHighlighting.find(canvasColorAttachmentMask); it != m_renderPipelinesForHighlighting.end())
+        return it->value.ptr();
+
+    requestRenderPipelineForHighlighting(canvasColorAttachmentMask, [] { });
+
+    if (auto it = m_renderPipelinesForHighlighting.find(canvasColorAttachmentMask); it != m_renderPipelinesForHighlighting.end())
+        return it->value.ptr();
+    return nullptr;
 }
 
 Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObjectForShaderProgram()

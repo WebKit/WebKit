@@ -39,12 +39,14 @@ function test() {
             InspectorTest.expectEqual(computeProgram.canvas, canvas, "Compute ShaderProgram should have the WebGPU Canvas as its parent.");
             InspectorTest.expectEqual(computeProgram.displayName, "Labeled Compute Pipeline", "Compute ShaderProgram should use the pipeline label as its display name.");
             InspectorTest.expectFalse(computeProgram.supportsDisabling, "Compute ShaderProgram should not support disabling.");
+            InspectorTest.expectFalse(computeProgram.supportsHighlighting, "Compute ShaderProgram should not support highlighting.");
 
             let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
             InspectorTest.expectThat(renderProgram instanceof WI.ShaderProgram, "Found the existing render ShaderProgram.");
             InspectorTest.expectEqual(renderProgram.canvas, canvas, "Render ShaderProgram should have the WebGPU Canvas as its parent.");
             InspectorTest.expectEqual(renderProgram.displayName, "Labeled Render Pipeline", "Render ShaderProgram should use the pipeline label as its display name.");
             InspectorTest.expectTrue(renderProgram.supportsDisabling, "Render ShaderProgram should support disabling.");
+            InspectorTest.expectTrue(renderProgram.supportsHighlighting, "Render ShaderProgram should support highlighting.");
             InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "Canvas should initially have two ShaderPrograms.");
         },
     });
@@ -86,6 +88,7 @@ function test() {
             let shaderProgram = await createAndAwaitProgram(WI.ShaderProgram.ProgramType.Vertex, `void createFragmentlessRenderPipeline()`);
             InspectorTest.expectFalse(shaderProgram.sharesVertexFragmentShader, "Fragmentless render ShaderProgram should not report vertex and fragment shader module sharing.");
             InspectorTest.expectTrue(shaderProgram.supportsDisabling, "Fragmentless render ShaderProgram should support disabling.");
+            InspectorTest.expectFalse(shaderProgram.supportsHighlighting, "Fragmentless render ShaderProgram should not support highlighting.");
             let {source} = await shaderProgram.target.CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
             InspectorTest.expectTrue(source.includes("@vertex") && source.includes("vertexMain"), "Fragmentless render ShaderProgram should expose its vertex WGSL source.");
         },
