@@ -65,7 +65,7 @@ void GPUComputePassEncoder::setLabel(String&& label)
 
 void GPUComputePassEncoder::setPipeline(const GPUComputePipeline& computePipeline)
 {
-    protect(backing())->setPipeline(computePipeline.backing());
+    protect(backing())->setPipeline(protect(computePipeline.backing()));
 }
 
 void GPUComputePassEncoder::dispatchWorkgroups(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ)

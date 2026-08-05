@@ -1,0 +1,224 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+async function load() {
+    await initializeWebGPU();
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.updateShader.WebGPU");
+    let canvas = InspectorTest.WebGPU.canvas();
+    InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
+
+    let computeProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
+    InspectorTest.assert(computeProgram, "There should be a compute ShaderProgram.");
+    let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
+    InspectorTest.assert(renderProgram, "There should be a render ShaderProgram.");
+
+    async function requestSource(shaderProgram, shaderType) {
+        let {source} = await shaderProgram.target.CanvasAgent.requestShaderSource(shaderProgram.identifier, shaderType);
+        return source;
+    }
+
+    async function renderContent() {
+        const eventName = "WebGPUCanvasSnapshot";
+        let snapshotPromise = InspectorTest.awaitEvent(eventName);
+        InspectorTest.evaluateInPage(`void renderWithPipeline("${eventName}")`);
+        let event = await snapshotPromise;
+        return event.data.content;
+    }
+
+    async function createSharedRenderProgram() {
+        let shaderProgram = await createProgram(`void createRenderPipeline({sharedShaderModule: true, reuseSharedShaderModule: true})`, WI.ShaderProgram.ProgramType.Render);
+        InspectorTest.expectTrue(shaderProgram.sharesVertexFragmentShader, "Render pipeline should report its shared vertex and fragment shader module.");
+        return shaderProgram;
+    }
+
+    async function createProgram(expression, programType) {
+        let programAddedPromise = canvas.shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+        InspectorTest.evaluateInPage(expression);
+        let event = await programAddedPromise;
+        let shaderProgram = event.data.item;
+        InspectorTest.assert(shaderProgram.programType === programType, "Added ShaderProgram should have the expected type.");
+        return shaderProgram;
+    }
+
+    async function executeAndGetValidationError(expression, eventName) {
+        let resultPromise = InspectorTest.awaitEvent(eventName);
+        InspectorTest.evaluateInPage(expression);
+        let event = await resultPromise;
+        return event.data.error;
+    }
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.Compute",
+        description: "Check that updating a compute pipeline replaces its WGSL source.",
+        async test() {
+            await InspectorTest.evaluateInPage(`GCController.collect()`);
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedComputeShaderSource`);
+            await computeProgram.target.CanvasAgent.updateShader(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute, updatedSource);
+            let source = await requestSource(computeProgram, WI.ShaderProgram.ShaderType.Compute);
+            InspectorTest.expectEqual(source, updatedSource, "Compute WGSL source should be updated.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.Vertex",
+        description: "Check that updating a render pipeline vertex stage leaves its separate fragment stage unchanged.",
+        async test() {
+            let originalFragmentSource = await requestSource(renderProgram, WI.ShaderProgram.ShaderType.Fragment);
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedVertexShaderSource`);
+            await renderProgram.target.CanvasAgent.updateShader(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex, updatedSource);
+
+            let vertexSource = await requestSource(renderProgram, WI.ShaderProgram.ShaderType.Vertex);
+            let fragmentSource = await requestSource(renderProgram, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(vertexSource, updatedSource, "Vertex WGSL source should be updated.");
+            InspectorTest.expectEqual(fragmentSource, originalFragmentSource, "Separate fragment WGSL source should be unchanged.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.Fragment",
+        description: "Check that updating a render pipeline fragment stage changes subsequent page rendering and leaves its separate vertex stage unchanged.",
+        async test() {
+            let originalVertexSource = await requestSource(renderProgram, WI.ShaderProgram.ShaderType.Vertex);
+            let originalContent = await renderContent();
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedFragmentShaderSource`);
+            await renderProgram.target.CanvasAgent.updateShader(renderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment, updatedSource);
+
+            let fragmentSource = await requestSource(renderProgram, WI.ShaderProgram.ShaderType.Fragment);
+            let vertexSource = await requestSource(renderProgram, WI.ShaderProgram.ShaderType.Vertex);
+            let updatedContent = await renderContent();
+            InspectorTest.expectEqual(fragmentSource, updatedSource, "Fragment WGSL source should be updated.");
+            InspectorTest.expectEqual(vertexSource, originalVertexSource, "Separate vertex WGSL source should be unchanged.");
+            InspectorTest.expectNotEqual(updatedContent, originalContent, "Updating the fragment shader should change page rendering.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.SharedVertexFragment",
+        description: "Check that updating either stage of a shared shader module replaces both stages for only that pipeline.",
+        async test() {
+            let firstProgram = await createSharedRenderProgram();
+            let secondProgram = await createSharedRenderProgram();
+            let originalSource = await InspectorTest.evaluateInPage(`sharedRenderShaderSource`);
+
+            let firstVertexSource = await requestSource(firstProgram, WI.ShaderProgram.ShaderType.Vertex);
+            let firstFragmentSource = await requestSource(firstProgram, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(firstVertexSource, originalSource, "Shared vertex WGSL source should match the original module.");
+            InspectorTest.expectEqual(firstFragmentSource, originalSource, "Shared fragment WGSL source should match the original module.");
+
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedSharedRenderShaderSource`);
+            await firstProgram.target.CanvasAgent.updateShader(firstProgram.identifier, WI.ShaderProgram.ShaderType.Vertex, updatedSource);
+            firstVertexSource = await requestSource(firstProgram, WI.ShaderProgram.ShaderType.Vertex);
+            firstFragmentSource = await requestSource(firstProgram, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(firstVertexSource, updatedSource, "Updating the shared vertex stage should replace the vertex source.");
+            InspectorTest.expectEqual(firstFragmentSource, updatedSource, "Updating the shared vertex stage should also replace the fragment source.");
+
+            let secondVertexSource = await requestSource(secondProgram, WI.ShaderProgram.ShaderType.Vertex);
+            let secondFragmentSource = await requestSource(secondProgram, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(secondVertexSource, originalSource, "Another pipeline sharing the original module should keep its vertex source.");
+            InspectorTest.expectEqual(secondFragmentSource, originalSource, "Another pipeline sharing the original module should keep its fragment source.");
+
+            let updatedAgainSource = await InspectorTest.evaluateInPage(`updatedAgainSharedRenderShaderSource`);
+            await firstProgram.target.CanvasAgent.updateShader(firstProgram.identifier, WI.ShaderProgram.ShaderType.Fragment, updatedAgainSource);
+            firstVertexSource = await requestSource(firstProgram, WI.ShaderProgram.ShaderType.Vertex);
+            firstFragmentSource = await requestSource(firstProgram, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(firstVertexSource, updatedAgainSource, "Updating the shared fragment stage should also replace the vertex source.");
+            InspectorTest.expectEqual(firstFragmentSource, updatedAgainSource, "Updating the shared fragment stage should replace the fragment source.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.AutoComputePipelineLayout",
+        description: "Check that updating a compute pipeline preserves its automatically generated pipeline layout and last valid executable.",
+        async test() {
+            let program = await createProgram(`createBoundComputePipeline()`, WI.ShaderProgram.ProgramType.Compute);
+            await InspectorTest.evaluateInPage(`pushValidationErrorScope()`);
+            let invalidSource = await InspectorTest.evaluateInPage(`invalidShaderSource`);
+            await program.target.CanvasAgent.updateShader(program.identifier, WI.ShaderProgram.ShaderType.Compute, invalidSource);
+            let source = await requestSource(program, WI.ShaderProgram.ShaderType.Compute);
+            InspectorTest.expectEqual(source, invalidSource, "Compute WGSL source should preserve an invalid editor update.");
+
+            const errorScopeEventName = "WebGPUComputeErrorScopePoppedAfterInvalidUpdate";
+            let error = await executeAndGetValidationError(`void popValidationErrorScope("${errorScopeEventName}")`, errorScopeEventName);
+            InspectorTest.expectNull(error, "An invalid compute shader editor update should not affect the page's validation error scope.");
+
+            const invalidEventName = "WebGPUBoundComputePipelineDispatchedAfterInvalidUpdate";
+            error = await executeAndGetValidationError(`void dispatchBoundComputePipeline("${invalidEventName}")`, invalidEventName);
+            InspectorTest.expectNull(error, "An invalid compute shader update should keep the last valid executable.");
+
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedBoundComputeShaderSource`);
+            await program.target.CanvasAgent.updateShader(program.identifier, WI.ShaderProgram.ShaderType.Compute, updatedSource);
+
+            const eventName = "WebGPUBoundComputePipelineDispatched";
+            error = await executeAndGetValidationError(`void dispatchBoundComputePipeline("${eventName}")`, eventName);
+            InspectorTest.expectNull(error, "An existing bind group should remain compatible after updating an auto-layout compute pipeline.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.AutoRenderPipelineLayout",
+        description: "Check that updating a render pipeline preserves its automatically generated pipeline layout and last valid executable.",
+        async test() {
+            let program = await createProgram(`createBoundRenderPipeline()`, WI.ShaderProgram.ProgramType.Render);
+            await InspectorTest.evaluateInPage(`pushValidationErrorScope()`);
+            let invalidSource = await InspectorTest.evaluateInPage(`invalidShaderSource`);
+            await program.target.CanvasAgent.updateShader(program.identifier, WI.ShaderProgram.ShaderType.Vertex, invalidSource);
+            let source = await requestSource(program, WI.ShaderProgram.ShaderType.Vertex);
+            InspectorTest.expectEqual(source, invalidSource, "Render WGSL source should preserve an invalid editor update.");
+
+            const errorScopeEventName = "WebGPURenderErrorScopePoppedAfterInvalidUpdate";
+            let error = await executeAndGetValidationError(`void popValidationErrorScope("${errorScopeEventName}")`, errorScopeEventName);
+            InspectorTest.expectNull(error, "An invalid render shader editor update should not affect the page's validation error scope.");
+
+            const invalidEventName = "WebGPUBoundAutoRenderPipelineRenderedAfterInvalidUpdate";
+            error = await executeAndGetValidationError(`void renderWithBoundPipeline("${invalidEventName}", 0)`, invalidEventName);
+            InspectorTest.expectNull(error, "An invalid render shader update should keep the last valid executable.");
+
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedBoundRenderShaderSource`);
+            await program.target.CanvasAgent.updateShader(program.identifier, WI.ShaderProgram.ShaderType.Vertex, updatedSource);
+
+            const eventName = "WebGPUBoundAutoRenderPipelineRendered";
+            error = await executeAndGetValidationError(`void renderWithBoundPipeline("${eventName}", 0)`, eventName);
+            InspectorTest.expectNull(error, "An existing bind group should remain compatible after updating an auto-layout render pipeline.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.ExplicitRenderPipelineLayout",
+        description: "Check that updating a render pipeline preserves its explicit pipeline layout after its JavaScript wrappers are collected.",
+        async test() {
+            let program = await createProgram(`createBoundRenderPipeline({explicitLayout: true})`, WI.ShaderProgram.ProgramType.Render);
+            await InspectorTest.evaluateInPage(`GCController.collect()`);
+
+            let updatedSource = await InspectorTest.evaluateInPage(`updatedBoundRenderShaderSource`);
+            await program.target.CanvasAgent.updateShader(program.identifier, WI.ShaderProgram.ShaderType.Fragment, updatedSource);
+
+            const firstEventName = "WebGPUBoundExplicitRenderPipelineRenderedFirst";
+            let error = await executeAndGetValidationError(`void renderWithBoundPipeline("${firstEventName}", 1)`, firstEventName);
+            InspectorTest.expectNull(error, "An existing bind group should remain compatible after the first explicit-layout pipeline update.");
+
+            let updatedAgainSource = await InspectorTest.evaluateInPage(`updatedAgainBoundRenderShaderSource`);
+            await program.target.CanvasAgent.updateShader(program.identifier, WI.ShaderProgram.ShaderType.Vertex, updatedAgainSource);
+
+            const secondEventName = "WebGPUBoundExplicitRenderPipelineRenderedSecond";
+            error = await executeAndGetValidationError(`void renderWithBoundPipeline("${secondEventName}", 1)`, secondEventName);
+            InspectorTest.expectNull(error, "An existing bind group should remain compatible after the second explicit-layout pipeline update.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests Canvas.updateShader for WebGPU pipelines.</p>
+    <canvas id="webgpu-canvas" width="4" height="4"></canvas>
+</body>
+</html>

@@ -66,7 +66,7 @@ void GPURenderBundleEncoder::setLabel(String&& label)
 void GPURenderBundleEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
 {
     m_currentPipeline = renderPipeline;
-    m_backing->setPipeline(renderPipeline.backing());
+    m_backing->setPipeline(protect(renderPipeline.backing()));
 }
 
 void GPURenderBundleEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)

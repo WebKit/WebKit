@@ -47,9 +47,9 @@ std::optional<ComputePipelineDescriptor> ConvertToBackingContext::convertToBacki
     return { { WTF::move(*base), WTF::move(*compute) } };
 }
 
-std::optional<WebCore::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePipelineDescriptor& computePipelineDescriptor)
+std::optional<WebCore::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePipelineDescriptor& computePipelineDescriptor, bool allowMissingPipelineLayout)
 {
-    auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(computePipelineDescriptor));
+    auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(computePipelineDescriptor), allowMissingPipelineLayout);
     if (!base)
         return std::nullopt;
 

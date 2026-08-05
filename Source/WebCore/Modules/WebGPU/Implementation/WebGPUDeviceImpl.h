@@ -84,6 +84,8 @@ private:
     RefPtr<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) final;
     void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<ComputePipeline>&&, String&&)>&&) final;
     void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<RenderPipeline>&&, String&&)>&&) final;
+    void createComputePipelineWithPipelineLayoutFromPipelineAsync(const ComputePipelineDescriptor&, const ComputePipeline&, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&&) final;
+    void createRenderPipelineWithPipelineLayoutFromPipelineAsync(const RenderPipelineDescriptor&, const RenderPipeline&, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&&) final;
 
     RefPtr<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) final;
     RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) final;

@@ -1182,9 +1182,9 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     return indexType == MTLIndexTypeUInt16 ? functionUshort : function;
 }
 
-void Device::pauseErrorReporting(bool pauseReporting)
+bool Device::pauseErrorReporting(bool pauseReporting)
 {
-    m_supressAllErrors = pauseReporting;
+    return std::exchange(m_supressAllErrors, pauseReporting);
 }
 
 uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
@@ -1264,6 +1264,14 @@ WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGP
     return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(device))->createComputePipeline(*descriptor).first);
 }
 
+void wgpuDeviceCreateComputePipelineWithPipelineLayoutFromPipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUComputePipeline pipelineToReplace, WGPUCreateComputePipelineAsyncCallback callback, void* userdata)
+{
+    Ref protectedPipelineToReplace = WebGPU::fromAPI(pipelineToReplace);
+    protect(WebGPU::fromAPI(device))->createComputePipelineWithPipelineLayoutFromPipelineAsync(*descriptor, protectedPipelineToReplace, [callback, userdata](WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::ComputePipeline>&& pipeline, String&& message) {
+        callback(status, status == WGPUCreatePipelineAsyncStatus_Success ? WebGPU::releaseToAPI(WTF::move(pipeline)) : nullptr, WTF::move(message), userdata);
+    });
+}
+
 void wgpuDevicePauseErrorReporting(WGPUDevice device, WGPUBool pauseErrors)
 {
     WebGPU::fromAPI(device).pauseErrorReporting(!!pauseErrors);
@@ -1301,6 +1309,14 @@ WGPURenderBundleEncoder wgpuDeviceCreateRenderBundleEncoder(WGPUDevice device, c
 WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(device))->createRenderPipeline(*descriptor).first);
+}
+
+void wgpuDeviceCreateRenderPipelineWithPipelineLayoutFromPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor, WGPURenderPipeline pipelineToReplace, WGPUCreateRenderPipelineAsyncCallback callback, void* userdata)
+{
+    Ref protectedPipelineToReplace = WebGPU::fromAPI(pipelineToReplace);
+    protect(WebGPU::fromAPI(device))->createRenderPipelineWithPipelineLayoutFromPipelineAsync(*descriptor, protectedPipelineToReplace, [callback, userdata](WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::RenderPipeline>&& pipeline, String&& message) {
+        callback(status, status == WGPUCreatePipelineAsyncStatus_Success ? WebGPU::releaseToAPI(WTF::move(pipeline)) : nullptr, WTF::move(message), userdata);
+    });
 }
 
 void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor, WGPUCreateRenderPipelineAsyncCallback callback, void* userdata)

@@ -77,9 +77,9 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
     return { { WTF::move(*base), WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
 }
 
-std::optional<WebCore::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor)
+std::optional<WebCore::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor, bool allowMissingPipelineLayout)
 {
-    auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(renderPipelineDescriptor));
+    auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(renderPipelineDescriptor), allowMissingPipelineLayout);
     if (!base)
         return std::nullopt;
 

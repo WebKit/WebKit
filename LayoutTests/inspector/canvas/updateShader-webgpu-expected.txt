@@ -1,0 +1,44 @@
+Tests Canvas.updateShader for WebGPU pipelines.
+
+
+== Running test suite: Canvas.updateShader.WebGPU
+-- Running test case: Canvas.updateShader.WebGPU.Compute
+PASS: Compute WGSL source should be updated.
+
+-- Running test case: Canvas.updateShader.WebGPU.Vertex
+PASS: Vertex WGSL source should be updated.
+PASS: Separate fragment WGSL source should be unchanged.
+
+-- Running test case: Canvas.updateShader.WebGPU.Fragment
+PASS: Fragment WGSL source should be updated.
+PASS: Separate vertex WGSL source should be unchanged.
+PASS: Updating the fragment shader should change page rendering.
+
+-- Running test case: Canvas.updateShader.WebGPU.SharedVertexFragment
+PASS: Render pipeline should report its shared vertex and fragment shader module.
+PASS: Render pipeline should report its shared vertex and fragment shader module.
+PASS: Shared vertex WGSL source should match the original module.
+PASS: Shared fragment WGSL source should match the original module.
+PASS: Updating the shared vertex stage should replace the vertex source.
+PASS: Updating the shared vertex stage should also replace the fragment source.
+PASS: Another pipeline sharing the original module should keep its vertex source.
+PASS: Another pipeline sharing the original module should keep its fragment source.
+PASS: Updating the shared fragment stage should also replace the vertex source.
+PASS: Updating the shared fragment stage should replace the fragment source.
+
+-- Running test case: Canvas.updateShader.WebGPU.AutoComputePipelineLayout
+PASS: Compute WGSL source should preserve an invalid editor update.
+PASS: An invalid compute shader editor update should not affect the page's validation error scope.
+PASS: An invalid compute shader update should keep the last valid executable.
+PASS: An existing bind group should remain compatible after updating an auto-layout compute pipeline.
+
+-- Running test case: Canvas.updateShader.WebGPU.AutoRenderPipelineLayout
+PASS: Render WGSL source should preserve an invalid editor update.
+PASS: An invalid render shader editor update should not affect the page's validation error scope.
+PASS: An invalid render shader update should keep the last valid executable.
+PASS: An existing bind group should remain compatible after updating an auto-layout render pipeline.
+
+-- Running test case: Canvas.updateShader.WebGPU.ExplicitRenderPipelineLayout
+PASS: An existing bind group should remain compatible after the first explicit-layout pipeline update.
+PASS: An existing bind group should remain compatible after the second explicit-layout pipeline update.
+

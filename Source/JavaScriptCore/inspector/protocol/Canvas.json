@@ -179,7 +179,7 @@
         {
             "name": "updateShader",
             "description": "Compiles and links the shader with identifier and type with the given source code.",
-            "condition": "defined(ENABLE_WEBGL) && ENABLE_WEBGL",
+            "async": true,
             "parameters": [
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "shaderType", "$ref": "ShaderType" },

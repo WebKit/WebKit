@@ -590,6 +590,32 @@ void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descr
     });
 }
 
+void DeviceImpl::createComputePipelineWithPipelineLayoutFromPipelineAsync(const ComputePipelineDescriptor& descriptor, const ComputePipeline& pipelineToReplace, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&& callback)
+{
+    convertToBacking(descriptor, m_convertToBackingContext, [backing = m_backing.copyRef(), &convertToBackingContext = m_convertToBackingContext.get(), pipelineToReplace = m_convertToBackingContext->convertToBacking(pipelineToReplace), callback = WTF::move(callback)](const WGPUComputePipelineDescriptor& backingDescriptor) mutable {
+        auto blockPtr = makeBlockPtr([convertToBackingContext = protect(convertToBackingContext), callback = WTF::move(callback)](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, String&&) mutable {
+            if (status == WGPUCreatePipelineAsyncStatus_Success)
+                callback(ComputePipelineImpl::create(adoptWebGPU(pipeline), convertToBackingContext));
+            else
+                callback(nullptr);
+        });
+        wgpuDeviceCreateComputePipelineWithPipelineLayoutFromPipelineAsync(backing.get(), &backingDescriptor, pipelineToReplace, &createComputePipelineAsyncCallback, Block_copy(blockPtr.get()));
+    });
+}
+
+void DeviceImpl::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const RenderPipelineDescriptor& descriptor, const RenderPipeline& pipelineToReplace, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&& callback)
+{
+    convertToBacking(descriptor, m_convertToBackingContext, [backing = m_backing.copyRef(), convertToBackingContext = m_convertToBackingContext.copyRef(), pipelineToReplace = m_convertToBackingContext->convertToBacking(pipelineToReplace), callback = WTF::move(callback)](const WGPURenderPipelineDescriptor& backingDescriptor) mutable {
+        auto blockPtr = makeBlockPtr([convertToBackingContext = convertToBackingContext.copyRef(), callback = WTF::move(callback)](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, String&&) mutable {
+            if (status == WGPUCreatePipelineAsyncStatus_Success)
+                callback(RenderPipelineImpl::create(adoptWebGPU(pipeline), convertToBackingContext));
+            else
+                callback(nullptr);
+        });
+        wgpuDeviceCreateRenderPipelineWithPipelineLayoutFromPipelineAsync(backing.get(), &backingDescriptor, pipelineToReplace, &createRenderPipelineAsyncCallback, Block_copy(blockPtr.get()));
+    });
+}
+
 RefPtr<CommandEncoder> DeviceImpl::createCommandEncoder(const std::optional<CommandEncoderDescriptor>& descriptor)
 {
     CString label = descriptor ? descriptor->label.utf8() : CString(""_s);

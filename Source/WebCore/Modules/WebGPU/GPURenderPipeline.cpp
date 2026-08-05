@@ -36,9 +36,9 @@ namespace WebCore {
 
 Lock GPURenderPipeline::s_instancesLock;
 
-Ref<GPURenderPipeline> GPURenderPipeline::create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId, GPUDevice* device, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader)
+Ref<GPURenderPipeline> GPURenderPipeline::create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId, GPUDevice* device, WebGPU::RenderPipelineDescriptor&& descriptor, const WebGPU::ShaderModuleDescriptor& vertexShaderModuleDescriptor, std::optional<WebGPU::ShaderModuleDescriptor>&& fragmentShaderModuleDescriptor, bool sharesVertexFragmentShader)
 {
-    Ref result = adoptRef(*new GPURenderPipeline(WTF::move(backing), uniqueId, device, vertexShaderSource, fragmentShaderSource, sharesVertexFragmentShader));
+    Ref result = adoptRef(*new GPURenderPipeline(WTF::move(backing), uniqueId, device, WTF::move(descriptor), vertexShaderModuleDescriptor, WTF::move(fragmentShaderModuleDescriptor), sharesVertexFragmentShader));
 
     if (device)
         InspectorInstrumentation::didCreateWebGPURenderPipeline(*device, result);
@@ -69,11 +69,12 @@ void GPURenderPipeline::willDestroyDevice(GPUDevice& device)
     }
 }
 
-GPURenderPipeline::GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId, GPUDevice* device, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader)
+GPURenderPipeline::GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId, GPUDevice* device, WebGPU::RenderPipelineDescriptor&& descriptor, const WebGPU::ShaderModuleDescriptor& vertexShaderModuleDescriptor, std::optional<WebGPU::ShaderModuleDescriptor>&& fragmentShaderModuleDescriptor, bool sharesVertexFragmentShader)
     : m_backing(WTF::move(backing))
     , m_uniqueId(uniqueId)
-    , m_vertexShaderSource(vertexShaderSource)
-    , m_fragmentShaderSource(fragmentShaderSource)
+    , m_descriptor(WTF::move(descriptor))
+    , m_vertexShaderModuleDescriptor(vertexShaderModuleDescriptor)
+    , m_fragmentShaderModuleDescriptor(WTF::move(fragmentShaderModuleDescriptor))
     , m_sharesVertexFragmentShader(sharesVertexFragmentShader)
 {
     if (device) {
@@ -110,13 +111,97 @@ String GPURenderPipeline::label() const
 
 void GPURenderPipeline::setLabel(String&& label)
 {
-    m_backing->setLabel(WTF::move(label));
+    m_descriptor.label = label;
+    protect(backing())->setLabel(WTF::move(label));
 }
 
 Ref<GPUBindGroupLayout> GPURenderPipeline::getBindGroupLayout(uint32_t index)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
-    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index), m_uniqueId, protect(m_device));
+    return GPUBindGroupLayout::create(protect(backing())->getBindGroupLayout(index), m_uniqueId, protect(m_device));
+}
+
+void GPURenderPipeline::updateVertexShader(const String& source, CompletionHandler<void(bool)>&& completionHandler)
+{
+    updateShader(source, true, WTF::move(completionHandler));
+}
+
+void GPURenderPipeline::updateFragmentShader(const String& source, CompletionHandler<void(bool)>&& completionHandler)
+{
+    updateShader(source, false, WTF::move(completionHandler));
+}
+
+void GPURenderPipeline::updateShader(const String& source, bool updateVertexShader, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr device = m_device.get();
+    if (!device) {
+        completionHandler(false);
+        return;
+    }
+
+    auto vertexShaderModuleDescriptor = m_vertexShaderModuleDescriptor;
+    auto fragmentShaderModuleDescriptor = m_fragmentShaderModuleDescriptor;
+    if (updateVertexShader)
+        vertexShaderModuleDescriptor.code = source;
+    else {
+        if (!fragmentShaderModuleDescriptor) {
+            completionHandler(false);
+            return;
+        }
+        fragmentShaderModuleDescriptor->code = source;
+    }
+
+    if (m_sharesVertexFragmentShader) {
+        vertexShaderModuleDescriptor.code = source;
+        fragmentShaderModuleDescriptor->code = source;
+    }
+
+    device->backing().pauseAllErrorReporting(true);
+    RefPtr vertexShaderModule = device->backing().createShaderModule(vertexShaderModuleDescriptor);
+    if (!vertexShaderModule) {
+        device->backing().pauseAllErrorReporting(false);
+        completionHandler(false);
+        return;
+    }
+
+    RefPtr<WebGPU::ShaderModule> fragmentShaderModule;
+    if (fragmentShaderModuleDescriptor) {
+        if (m_sharesVertexFragmentShader)
+            fragmentShaderModule = vertexShaderModule;
+        else
+            fragmentShaderModule = device->backing().createShaderModule(*fragmentShaderModuleDescriptor);
+        if (!fragmentShaderModule) {
+            device->backing().pauseAllErrorReporting(false);
+            completionHandler(false);
+            return;
+        }
+    }
+    device->backing().pauseAllErrorReporting(false);
+
+    auto descriptor = m_descriptor;
+    descriptor.vertex.module = *vertexShaderModule;
+    if (descriptor.fragment) {
+        if (!fragmentShaderModule) {
+            completionHandler(false);
+            return;
+        }
+        descriptor.fragment->module = *fragmentShaderModule;
+    }
+
+    device->backing().createRenderPipelineWithPipelineLayoutFromPipelineAsync(descriptor, m_backing, [weakThis = WeakPtr { *this }, descriptor, vertexShaderModuleDescriptor = WTF::move(vertexShaderModuleDescriptor), fragmentShaderModuleDescriptor = WTF::move(fragmentShaderModuleDescriptor), completionHandler = WTF::move(completionHandler)](RefPtr<WebGPU::RenderPipeline>&& pipeline) mutable {
+        RefPtr protectedThis { weakThis };
+        if (!protectedThis) {
+            completionHandler(false);
+            return;
+        }
+
+        if (pipeline)
+            protectedThis->m_backing = pipeline.releaseNonNull();
+        protectedThis->m_descriptor = WTF::move(descriptor);
+        protectedThis->m_vertexShaderModuleDescriptor = WTF::move(vertexShaderModuleDescriptor);
+        protectedThis->m_fragmentShaderModuleDescriptor = WTF::move(fragmentShaderModuleDescriptor);
+        completionHandler(true);
+    });
 }
 
 }

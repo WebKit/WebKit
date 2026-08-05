@@ -353,6 +353,52 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const WebCore::WebGPU::RenderP
     UNUSED_PARAM(sendResult);
 }
 
+void RemoteDeviceProxy::createComputePipelineWithPipelineLayoutFromPipelineAsync(const WebCore::WebGPU::ComputePipelineDescriptor& descriptor, const WebCore::WebGPU::ComputePipeline& pipelineToReplace, CompletionHandler<void(RefPtr<WebCore::WebGPU::ComputePipeline>&&)>&& callback)
+{
+    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    if (!convertedDescriptor) {
+        callback(nullptr);
+        return;
+    }
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto pipelineToReplaceIdentifier = m_convertToBackingContext->convertToBacking(pipelineToReplace);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineWithPipelineLayoutFromPipeline(*convertedDescriptor, identifier, pipelineToReplaceIdentifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](bool success) mutable {
+        if (!success) {
+            callback(nullptr);
+            return;
+        }
+
+        auto result = RemoteComputePipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
+        result->setLabel(WTF::move(label));
+        callback(WTF::move(result));
+    });
+    UNUSED_PARAM(sendResult);
+}
+
+void RemoteDeviceProxy::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor& descriptor, const WebCore::WebGPU::RenderPipeline& pipelineToReplace, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&)>&& callback)
+{
+    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    if (!convertedDescriptor) {
+        callback(nullptr);
+        return;
+    }
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto pipelineToReplaceIdentifier = m_convertToBackingContext->convertToBacking(pipelineToReplace);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineWithPipelineLayoutFromPipeline(*convertedDescriptor, identifier, pipelineToReplaceIdentifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](bool success) mutable {
+        if (!success) {
+            callback(nullptr);
+            return;
+        }
+
+        auto result = RemoteRenderPipelineProxy::create(protectedThis, protectedThis->m_convertToBackingContext, identifier);
+        result->setLabel(WTF::move(label));
+        callback(WTF::move(result));
+    });
+    UNUSED_PARAM(sendResult);
+}
+
 RefPtr<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const std::optional<WebCore::WebGPU::CommandEncoderDescriptor>& descriptor)
 {
     std::optional<CommandEncoderDescriptor> convertedDescriptor;

@@ -30,6 +30,7 @@
 #include "GPUCompilationInfo.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "WebGPUShaderModule.h"
+#include "WebGPUShaderModuleDescriptor.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -42,9 +43,9 @@ class GPUDevice;
 
 class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
 public:
-    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing, String&& source, GPUDevice& device)
+    static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing, WebGPU::ShaderModuleDescriptor&& descriptor, GPUDevice& device)
     {
-        return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(source), device));
+        return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(descriptor), device));
     }
 
     String NODELETE label() const;
@@ -55,17 +56,17 @@ public:
 
     WebGPU::ShaderModule& backing() { return m_backing; }
     const WebGPU::ShaderModule& backing() const { return m_backing; }
-    const String& source() const { return m_source; }
+    const WebGPU::ShaderModuleDescriptor& descriptor() const { return m_descriptor; }
 
     GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUShaderModule(Ref<WebGPU::ShaderModule>&&, String&&, GPUDevice&);
+    GPUShaderModule(Ref<WebGPU::ShaderModule>&&, WebGPU::ShaderModuleDescriptor&&, GPUDevice&);
 
     const Ref<WebGPU::ShaderModule> m_backing;
-    String m_source;
+    WebGPU::ShaderModuleDescriptor m_descriptor;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

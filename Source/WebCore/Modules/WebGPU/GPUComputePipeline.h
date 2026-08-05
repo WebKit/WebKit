@@ -27,7 +27,10 @@
 
 #include "GPUBindGroupLayout.h"
 #include "WebGPUComputePipeline.h"
+#include "WebGPUComputePipelineDescriptor.h"
+#include "WebGPUShaderModuleDescriptor.h"
 #include <cstdint>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
@@ -42,7 +45,7 @@ class WeakPtrImplWithEventTargetData;
 
 class GPUComputePipeline : public RefCountedAndCanMakeWeakPtr<GPUComputePipeline> {
 public:
-    static Ref<GPUComputePipeline> create(Ref<WebGPU::ComputePipeline>&&, uint64_t uniqueId, GPUDevice*, const String& shaderSource);
+    static Ref<GPUComputePipeline> create(Ref<WebGPU::ComputePipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPU::ComputePipelineDescriptor&&, const WebGPU::ShaderModuleDescriptor&);
 
     ~GPUComputePipeline();
 
@@ -59,19 +62,21 @@ public:
     const WebGPU::ComputePipeline& backing() const { return m_backing; }
 
     GPUDevice* device() const;
-    const String& shaderSource() const { return m_shaderSource; }
+    const String& shaderSource() const { return m_shaderModuleDescriptor.code; }
+    void updateShader(const String&, CompletionHandler<void(bool)>&&);
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUComputePipeline(Ref<WebGPU::ComputePipeline>&&, uint64_t uniqueId, GPUDevice*, const String& shaderSource);
+    GPUComputePipeline(Ref<WebGPU::ComputePipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPU::ComputePipelineDescriptor&&, const WebGPU::ShaderModuleDescriptor&);
 
     static Lock s_instancesLock;
 
-    const Ref<WebGPU::ComputePipeline> m_backing;
+    Ref<WebGPU::ComputePipeline> m_backing;
     const uint64_t m_uniqueId;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
-    String m_shaderSource;
+    WebGPU::ComputePipelineDescriptor m_descriptor;
+    WebGPU::ShaderModuleDescriptor m_shaderModuleDescriptor;
 };
 
 }

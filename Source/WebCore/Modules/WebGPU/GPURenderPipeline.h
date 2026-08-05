@@ -27,7 +27,11 @@
 
 #include "GPUBindGroupLayout.h"
 #include "WebGPURenderPipeline.h"
+#include "WebGPURenderPipelineDescriptor.h"
+#include "WebGPUShaderModuleDescriptor.h"
 #include <cstdint>
+#include <optional>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
@@ -42,7 +46,7 @@ class WeakPtrImplWithEventTargetData;
 
 class GPURenderPipeline : public RefCountedAndCanMakeWeakPtr<GPURenderPipeline> {
 public:
-    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader);
+    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPU::RenderPipelineDescriptor&&, const WebGPU::ShaderModuleDescriptor&, std::optional<WebGPU::ShaderModuleDescriptor>&&, bool sharesVertexFragmentShader);
 
     ~GPURenderPipeline();
 
@@ -59,22 +63,26 @@ public:
     const WebGPU::RenderPipeline& backing() const { return m_backing; }
 
     GPUDevice* device() const;
-    const String& vertexShaderSource() const { return m_vertexShaderSource; }
-    const String& fragmentShaderSource() const { return m_fragmentShaderSource; }
+    const String& vertexShaderSource() const { return m_vertexShaderModuleDescriptor.code; }
+    const String& fragmentShaderSource() const { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
     bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }
+    void updateVertexShader(const String&, CompletionHandler<void(bool)>&&);
+    void updateFragmentShader(const String&, CompletionHandler<void(bool)>&&);
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, const String& vertexShaderSource, const String& fragmentShaderSource, bool sharesVertexFragmentShader);
+    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPU::RenderPipelineDescriptor&&, const WebGPU::ShaderModuleDescriptor&, std::optional<WebGPU::ShaderModuleDescriptor>&&, bool sharesVertexFragmentShader);
+    void updateShader(const String&, bool updateVertexShader, CompletionHandler<void(bool)>&&);
 
     static Lock s_instancesLock;
 
-    const Ref<WebGPU::RenderPipeline> m_backing;
+    Ref<WebGPU::RenderPipeline> m_backing;
     const uint64_t m_uniqueId;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
-    String m_vertexShaderSource;
-    String m_fragmentShaderSource;
+    WebGPU::RenderPipelineDescriptor m_descriptor;
+    WebGPU::ShaderModuleDescriptor m_vertexShaderModuleDescriptor;
+    std::optional<WebGPU::ShaderModuleDescriptor> m_fragmentShaderModuleDescriptor;
     const bool m_sharesVertexFragmentShader;
 };
 

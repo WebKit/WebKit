@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
@@ -58,7 +59,7 @@ public:
     GPURenderPipeline* renderPipeline() const;
 
     String requestShaderSource(Inspector::Protocol::Canvas::ShaderType);
-    bool updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source);
+    void updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source, CompletionHandler<void(bool)>&&);
 
     bool disabled() const { return m_disabled; }
     bool setDisabled(bool);

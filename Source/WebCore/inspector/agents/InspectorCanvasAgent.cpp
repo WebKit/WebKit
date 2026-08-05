@@ -347,23 +347,24 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestShaderSo
     return source;
 }
 
-#if ENABLE(WEBGL)
-
-Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::updateShader(const Inspector::Protocol::Canvas::ProgramId& programId, Inspector::Protocol::Canvas::ShaderType shaderType, const String& source)
+void InspectorCanvasAgent::updateShader(const Inspector::Protocol::Canvas::ProgramId& programId, Inspector::Protocol::Canvas::ShaderType shaderType, const String& source, Ref<UpdateShaderCallback>&& callback)
 {
     Inspector::Protocol::ErrorString errorString;
 
     auto inspectorProgram = assertInspectorProgram(errorString, programId);
-    if (!inspectorProgram)
-        return makeUnexpected(errorString);
+    if (!inspectorProgram) {
+        callback->sendFailure(errorString);
+        return;
+    }
 
-    if (!inspectorProgram->updateShader(shaderType, source))
-        return makeUnexpected("Failed to update shader of given shaderType for given programId"_s);
-
-    return { };
+    inspectorProgram->updateShader(shaderType, source, [callback = WTF::move(callback)](bool success) mutable {
+        if (!success) {
+            callback->sendFailure("Failed to update shader of given shaderType for given programId"_s);
+            return;
+        }
+        callback->sendSuccess();
+    });
 }
-
-#endif // ENABLE(WEBGL)
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId& programId, bool disabled)
 {

@@ -230,7 +230,7 @@ public:
     RefPtr<WebCore::WebGPU::CompilationMessage> convertFromBacking(const CompilationMessage&);
     std::optional<WebCore::WebGPU::ComputePassDescriptor> convertFromBacking(const ComputePassDescriptor&);
     std::optional<WebCore::WebGPU::ComputePassTimestampWrites> convertFromBacking(const ComputePassTimestampWrites&);
-    std::optional<WebCore::WebGPU::ComputePipelineDescriptor> convertFromBacking(const ComputePipelineDescriptor&);
+    std::optional<WebCore::WebGPU::ComputePipelineDescriptor> convertFromBacking(const ComputePipelineDescriptor&, bool allowMissingPipelineLayout = false);
     std::optional<WebCore::WebGPU::DepthStencilState> convertFromBacking(const DepthStencilState&);
     std::optional<WebCore::WebGPU::DeviceDescriptor> convertFromBacking(const DeviceDescriptor&);
     std::optional<WebCore::WebGPU::Error> convertFromBacking(const Error&);
@@ -258,7 +258,7 @@ public:
     std::optional<WebCore::WebGPU::Origin3D> convertFromBacking(const Origin3D&);
     std::optional<WebCore::WebGPU::Origin3DDict> NODELETE convertFromBacking(const Origin3DDict&);
     RefPtr<WebCore::WebGPU::OutOfMemoryError> NODELETE convertFromBacking(const OutOfMemoryError&);
-    std::optional<WebCore::WebGPU::PipelineDescriptorBase> convertFromBacking(const PipelineDescriptorBase&);
+    std::optional<WebCore::WebGPU::PipelineDescriptorBase> convertFromBacking(const PipelineDescriptorBase&, bool allowMissingPipelineLayout = false);
     std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> convertFromBacking(const PipelineLayoutDescriptor&);
     std::optional<WebCore::WebGPU::PresentationContextDescriptor> convertFromBacking(const PresentationContextDescriptor&);
     std::optional<WebCore::WebGPU::PrimitiveState> NODELETE convertFromBacking(const PrimitiveState&);
@@ -271,7 +271,7 @@ public:
     std::optional<WebCore::WebGPU::RenderPassDescriptor> convertFromBacking(const RenderPassDescriptor&);
     std::optional<WebCore::WebGPU::RenderPassLayout> convertFromBacking(const RenderPassLayout&);
     std::optional<WebCore::WebGPU::RenderPassTimestampWrites> convertFromBacking(const RenderPassTimestampWrites&);
-    std::optional<WebCore::WebGPU::RenderPipelineDescriptor> convertFromBacking(const RenderPipelineDescriptor&);
+    std::optional<WebCore::WebGPU::RenderPipelineDescriptor> convertFromBacking(const RenderPipelineDescriptor&, bool allowMissingPipelineLayout = false);
     std::optional<WebCore::WebGPU::RequestAdapterOptions> NODELETE convertFromBacking(const RequestAdapterOptions&);
     std::optional<WebCore::WebGPU::SamplerBindingLayout> NODELETE convertFromBacking(const SamplerBindingLayout&);
     std::optional<WebCore::WebGPU::SamplerDescriptor> convertFromBacking(const SamplerDescriptor&);

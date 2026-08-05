@@ -68,7 +68,7 @@ void GPURenderPassEncoder::setLabel(String&& label)
 void GPURenderPassEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
 {
     m_currentPipeline = renderPipeline;
-    protect(backing())->setPipeline(renderPipeline.backing());
+    protect(backing())->setPipeline(protect(renderPipeline.backing()));
 }
 
 void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)

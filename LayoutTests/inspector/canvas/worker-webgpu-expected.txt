@@ -23,6 +23,11 @@ PASS: Worker render pipeline should report its shared shader module.
 PASS: Shared Worker vertex and fragment stages should expose the same WGSL source.
 PASS: Render ShaderProgram should expose both WGSL entry points.
 
+-- Running test case: Canvas.WebGPU.Worker.UpdateShaders
+PASS: Worker compute WGSL source should be updated.
+PASS: Worker render vertex WGSL source should be updated.
+PASS: Worker shared fragment WGSL source should be updated with its vertex source.
+
 -- Running test case: Canvas.WebGPU.Worker.Terminate
 PASS: Removed the expected Worker target.
 PASS: Removed the Worker GPUDevice Canvas.

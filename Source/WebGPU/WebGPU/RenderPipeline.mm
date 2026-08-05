@@ -1486,7 +1486,7 @@ static NSString* errorValidatingVertexStageIn(const ShaderModule::VertexStageIn*
     return nil;
 }
 
-std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync)
+std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync, const RenderPipeline* pipelineToReplace)
 {
     if (!validateRenderPipeline(descriptor) || !isValid())
         return returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_s);
@@ -1501,7 +1501,11 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
 
     RefPtr<PipelineLayout> pipelineLayout;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
-    if (descriptor.layout) {
+    if (pipelineToReplace) {
+        pipelineLayout = &pipelineToReplace->pipelineLayout();
+        if (!isValidToUseWithDevice(*pipelineLayout, *this))
+            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s);
+    } else if (descriptor.layout) {
         Ref layout = WebGPU::fromAPI(descriptor.layout);
         if (!isValidToUseWithDevice(layout.get(), *this))
             return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s);
@@ -1775,6 +1779,19 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
     auto pipelineAndError = createRenderPipeline(descriptor, true);
+    if (auto inst = instance(); inst.get()) {
+        inst->scheduleWork([protectedThis = protect(*this), pipeline = WTF::move(pipelineAndError.first), callback = WTF::move(callback), error = WTF::move(pipelineAndError.second)]() mutable {
+            callback((protectedThis->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipeline), WTF::move(error));
+        });
+    } else
+        callback(WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipelineAndError.first), WTF::move(pipelineAndError.second));
+}
+
+void Device::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, const RenderPipeline& pipelineToReplace, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
+{
+    bool wasErrorReportingPaused = pauseErrorReporting(true);
+    auto pipelineAndError = createRenderPipeline(descriptor, true, &pipelineToReplace);
+    pauseErrorReporting(wasErrorReportingPaused);
     if (auto inst = instance(); inst.get()) {
         inst->scheduleWork([protectedThis = protect(*this), pipeline = WTF::move(pipelineAndError.first), callback = WTF::move(callback), error = WTF::move(pipelineAndError.second)]() mutable {
             callback((protectedThis->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipeline), WTF::move(error));

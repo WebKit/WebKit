@@ -163,25 +163,32 @@ String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::
     );
 }
 
-bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, const String& source)
+void InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, const String& source, CompletionHandler<void(bool)>&& completionHandler)
 {
-    UNUSED_PARAM(shaderType);
-    UNUSED_PARAM(source);
-    return WTF::switchOn(m_program
+    WTF::switchOn(m_program
 #if ENABLE(WEBGL)
         , [&](const WeakRef<WebGLProgram>& weakProgram) {
             Ref program = weakProgram.get();
             RefPtr shader = shaderForType(program.get(), shaderType);
-            if (!shader)
-                return false;
+            if (!shader) {
+                completionHandler(false);
+                return;
+            }
+
             RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_canvas->canvasContext());
-            if (!context)
-                return false;
+            if (!context) {
+                completionHandler(false);
+                return;
+            }
+
             context->shaderSource(*shader, source);
             context->compileShader(*shader);
             auto compileStatus = context->getShaderParameter(*shader, GraphicsContextGL::COMPILE_STATUS);
-            if (!std::holds_alternative<bool>(compileStatus))
-                return false;
+            if (!std::holds_alternative<bool>(compileStatus)) {
+                completionHandler(false);
+                return;
+            }
+
             if (std::get<bool>(compileStatus))
                 context->linkProgramWithoutInvalidatingAttribLocations(program.get());
             else {
@@ -192,11 +199,39 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
                     scriptContext->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, message));
                 }
             }
-            return true;
+            completionHandler(true);
         }
 #endif // ENABLE(WEBGL)
-        , [](const WeakRef<GPUComputePipeline>&) { return false; }
-        , [](const WeakRef<GPURenderPipeline>&) { return false; }
+        , [&](const WeakRef<GPUComputePipeline>& weakPipeline) {
+            Ref pipeline = weakPipeline.get();
+            switch (shaderType) {
+            case Inspector::Protocol::Canvas::ShaderType::Vertex:
+            case Inspector::Protocol::Canvas::ShaderType::Fragment:
+                completionHandler(false);
+                return;
+            case Inspector::Protocol::Canvas::ShaderType::Compute:
+                pipeline->updateShader(source, WTF::move(completionHandler));
+                return;
+            }
+
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        , [&](const WeakRef<GPURenderPipeline>& weakPipeline) {
+            Ref pipeline = weakPipeline.get();
+            switch (shaderType) {
+            case Inspector::Protocol::Canvas::ShaderType::Vertex:
+                pipeline->updateVertexShader(source, WTF::move(completionHandler));
+                return;
+            case Inspector::Protocol::Canvas::ShaderType::Fragment:
+                pipeline->updateFragmentShader(source, WTF::move(completionHandler));
+                return;
+            case Inspector::Protocol::Canvas::ShaderType::Compute:
+                completionHandler(false);
+                return;
+            }
+
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     );
 }
 

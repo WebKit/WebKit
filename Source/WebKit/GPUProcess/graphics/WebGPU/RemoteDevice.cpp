@@ -87,6 +87,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_streamConnection, completion)
 
 namespace WebKit {
 
@@ -298,6 +299,27 @@ void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor
     objectHeap->addObject(identifier, remoteComputePipeline);
 }
 
+void RemoteDevice::createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref objectHeap = m_objectHeap.get();
+    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, true);
+    MESSAGE_CHECK_COMPLETION(convertedDescriptor, completionHandler(false));
+
+    WeakPtr<WebCore::WebGPU::ComputePipeline> pipelineToReplace = objectHeap->convertComputePipelineFromBacking(pipelineToReplaceIdentifier);
+    MESSAGE_CHECK_COMPLETION(pipelineToReplace, completionHandler(false));
+
+    m_backing->createComputePipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, *pipelineToReplace, [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline) mutable {
+        if (!computePipeline) {
+            completionHandler(false);
+            return;
+        }
+
+        auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline.releaseNonNull(), objectHeap, WTF::move(streamConnection), gpu, identifier);
+        objectHeap->addObject(identifier, remoteComputePipeline);
+        completionHandler(true);
+    });
+}
+
 void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
@@ -308,6 +330,27 @@ void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& 
     MESSAGE_CHECK(renderPipeline);
     auto remoteRenderPipeline = RemoteRenderPipeline::create(*renderPipeline, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
     objectHeap->addObject(identifier, remoteRenderPipeline);
+}
+
+void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref objectHeap = m_objectHeap.get();
+    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, true);
+    MESSAGE_CHECK_COMPLETION(convertedDescriptor, completionHandler(false));
+
+    WeakPtr<WebCore::WebGPU::RenderPipeline> pipelineToReplace = objectHeap->convertRenderPipelineFromBacking(pipelineToReplaceIdentifier);
+    MESSAGE_CHECK_COMPLETION(pipelineToReplace, completionHandler(false));
+
+    m_backing->createRenderPipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, *pipelineToReplace, [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+        if (!renderPipeline) {
+            completionHandler(false);
+            return;
+        }
+
+        auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline.releaseNonNull(), objectHeap, WTF::move(streamConnection), gpu, identifier);
+        objectHeap->addObject(identifier, remoteRenderPipeline);
+        completionHandler(true);
+    });
 }
 
 void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
@@ -445,5 +488,6 @@ void RemoteDevice::setLabel(String&& label)
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_COMPLETION
 
 #endif // ENABLE(GPU_PROCESS)

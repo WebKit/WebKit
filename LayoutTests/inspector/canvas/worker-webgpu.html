@@ -83,6 +83,28 @@ async function test() {
     });
 
     suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.UpdateShaders",
+        description: "Check that WGSL shaders can be edited through a Worker CanvasAgent.",
+        async test() {
+            let computeProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Compute);
+            let computeSourceResult = await computeProgram.target.CanvasAgent.requestShaderSource(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute);
+            let updatedComputeSource = `// Updated in Worker.\n${computeSourceResult.source}`;
+            await computeProgram.target.CanvasAgent.updateShader(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute, updatedComputeSource);
+            let actualComputeSourceResult = await computeProgram.target.CanvasAgent.requestShaderSource(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute);
+            InspectorTest.expectEqual(actualComputeSourceResult.source, updatedComputeSource, "Worker compute WGSL source should be updated.");
+
+            let renderProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Render);
+            let renderSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
+            let updatedRenderSource = `// Updated in Worker.\n${renderSourceResult.source}`;
+            await renderProgram.target.CanvasAgent.updateShader(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex, updatedRenderSource);
+            let actualVertexSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
+            let actualFragmentSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(actualVertexSourceResult.source, updatedRenderSource, "Worker render vertex WGSL source should be updated.");
+            InspectorTest.expectEqual(actualFragmentSourceResult.source, updatedRenderSource, "Worker shared fragment WGSL source should be updated with its vertex source.");
+        },
+    });
+
+    suite.addTestCase({
         name: "Canvas.WebGPU.Worker.Terminate",
         description: "Check that terminating a Worker removes its WebGPU Canvas and ShaderPrograms.",
         async test() {
