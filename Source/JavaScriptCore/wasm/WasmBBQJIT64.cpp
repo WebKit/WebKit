@@ -166,6 +166,8 @@ Value BBQJIT::instanceValue()
     TypeKind returnType = table.wasmType().kind();
     ASSERT(typeKindSizeInBytes(returnType) == 8);
 
+    emitZeroExtendAddressOperand(table.addressType().is64Bit(), index);
+
     Vector<Value, 8> arguments = {
         instanceValue(),
         Value::fromI32(tableIndex),

@@ -485,6 +485,16 @@ public:
         return m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), value);
     }
 
+    // A runtime operation takes an address operand -- an index, offset, count, delta or length -- as
+    // 64 bits, so that a 64-bit address memory or table can pass one whole, and it bounds checks all
+    // 64 bits. The upper half of an i32 operand is don't-care everywhere else, so zero it here.
+    Value* addressOperand(bool is64Bit, ExpressionType operand)
+    {
+        if (is64Bit)
+            return get(operand);
+        return pointerOfInt32(get(operand));
+    }
+
     // SIMD
     void NODELETE notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
     [[nodiscard]] PartialResult addSIMDLoad(ExpressionType pointer, uint64_t offset, ExpressionType& result, uint8_t memoryIndex);
@@ -1697,7 +1707,7 @@ auto OMGIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Externref), operationGetWasmTableElement,
-        instanceValue(), constant(Int32, tableIndex), get(index));
+        instanceValue(), constant(Int32, tableIndex), addressOperand(m_info.table(tableIndex).addressType().is64Bit(), index));
     {
         result = push(resultValue);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -1715,7 +1725,7 @@ auto OMGIRGenerator::addTableSet(unsigned tableIndex, ExpressionType index, Expr
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     auto shouldThrow = callWasmOperation(m_currentBlock, B3::Int32, operationSetWasmTableElement,
-        instanceValue(), constant(Int32, tableIndex), get(index), get(value));
+        instanceValue(), constant(Int32, tableIndex), addressOperand(m_info.table(tableIndex).addressType().is64Bit(), index), get(value));
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), shouldThrow, constant(Int32, 0)));
@@ -1757,7 +1767,7 @@ auto OMGIRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, Ex
         instanceValue(),
         constant(Int32, elementIndex),
         constant(Int32, tableIndex),
-        get(dstOffset), get(srcOffset), get(length));
+        addressOperand(m_info.table(tableIndex).addressType().is64Bit(), dstOffset), get(srcOffset), get(length));
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -1792,15 +1802,16 @@ auto OMGIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -
 auto OMGIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     result = push(callWasmOperation(m_currentBlock, toB3Type(m_info.table(tableIndex).addressType().asWasmType()), operationWasmTableGrow,
-        instanceValue(), constant(Int32, tableIndex), get(fill), get(delta)));
+        instanceValue(), constant(Int32, tableIndex), get(fill), addressOperand(m_info.table(tableIndex).addressType().is64Bit(), delta)));
 
     return { };
 }
 
 auto OMGIRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, ExpressionType fill, ExpressionType count) -> PartialResult
 {
+    bool isTable64 = m_info.table(tableIndex).addressType().is64Bit();
     Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmTableFill,
-        instanceValue(), constant(Int32, tableIndex), get(offset), get(fill), get(count));
+        instanceValue(), constant(Int32, tableIndex), addressOperand(isTable64, offset), get(fill), addressOperand(isTable64, count));
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -1816,12 +1827,14 @@ auto OMGIRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, Ex
 
 auto OMGIRGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
 {
+    bool dstIsTable64 = m_info.table(dstTableIndex).addressType().is64Bit();
+    bool srcIsTable64 = m_info.table(srcTableIndex).addressType().is64Bit();
     Value* resultValue = callWasmOperation(
         m_currentBlock, toB3Type(Types::I32), operationWasmTableCopy,
         instanceValue(),
         constant(Int32, dstTableIndex),
         constant(Int32, srcTableIndex),
-        get(dstOffset), get(srcOffset), get(length));
+        addressOperand(dstIsTable64, dstOffset), addressOperand(srcIsTable64, srcOffset), addressOperand(dstIsTable64 && srcIsTable64, length));
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -2067,7 +2080,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 auto OMGIRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result, uint8_t memoryIndex) -> PartialResult
 {
     result = push(callWasmOperation(m_currentBlock, m_info.memory(memoryIndex).addressType().asB3TypeKind(), operationGrowMemory,
-        instanceValue(), get(delta), constant(Int32, memoryIndex)));
+        instanceValue(), addressOperand(m_info.memory(memoryIndex).isMemory64(), delta), constant(Int32, memoryIndex)));
 
     restoreWebAssemblyGlobalState(m_info.memories, instanceValue(), m_currentBlock);
 
@@ -2101,13 +2114,9 @@ auto OMGIRGenerator::addCurrentMemory(ExpressionType& result, uint8_t memoryInde
 
 auto OMGIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType target, ExpressionType count, uint8_t memoryIndex) -> PartialResult
 {
-    auto* dstAddressValue = m_info.memory(memoryIndex).isMemory64()
-        ? get(dstAddress)
-        : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(dstAddress));
+    auto* dstAddressValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
     auto* targetValue = get(target);
-    auto* countValue = m_info.memory(memoryIndex).isMemory64()
-        ? get(count)
-        : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(count));
+    auto* countValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), count);
 
     if (!memoryIndex) {
         auto* memorySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
@@ -2145,16 +2154,12 @@ auto OMGIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType tar
 
 auto OMGIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length, uint8_t memoryIndex) -> PartialResult
 {
-    auto dstAddressValue = m_info.memory(memoryIndex).isMemory64()
-        ? get(dstAddress)
-        : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(dstAddress));
-
-    auto srcAddressValue = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(srcAddress));
+    auto dstAddressValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
 
     Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmMemoryInit,
         instanceValue(),
         constant(Int32, dataSegmentIndex),
-        dstAddressValue, srcAddressValue, get(length), constant(Int32, memoryIndex));
+        dstAddressValue, get(srcAddress), get(length), constant(Int32, memoryIndex));
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -2170,15 +2175,9 @@ auto OMGIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dst
 
 auto OMGIRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex) -> PartialResult
 {
-    auto* dstAddressValue = m_info.memory(dstMemoryIndex).isMemory64()
-        ? get(dstAddress)
-        : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(dstAddress));
-    auto* srcAddressValue = m_info.memory(srcMemoryIndex).isMemory64()
-        ? get(srcAddress)
-        : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(srcAddress));
-    auto* countValue = m_info.memory(srcMemoryIndex).isMemory64() && m_info.memory(dstMemoryIndex).isMemory64()
-        ? get(count)
-        : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(count));
+    auto* dstAddressValue = addressOperand(m_info.memory(dstMemoryIndex).isMemory64(), dstAddress);
+    auto* srcAddressValue = addressOperand(m_info.memory(srcMemoryIndex).isMemory64(), srcAddress);
+    auto* countValue = addressOperand(m_info.memory(srcMemoryIndex).isMemory64() && m_info.memory(dstMemoryIndex).isMemory64(), count);
 
     if (!dstMemoryIndex && !srcMemoryIndex) {
         auto* memorySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
@@ -3214,7 +3213,7 @@ auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, E
 
 auto OMGIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointerVar, ExpressionType valueVar, ExpressionType timeoutVar, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
-    Value* pointer = get(pointerVar);
+    Value* pointer = addressOperand(m_info.memory(memoryIndex).isMemory64(), pointerVar);
     Value* value = get(valueVar);
     Value* timeout = get(timeoutVar);
     Value* resultValue = nullptr;
@@ -3242,7 +3241,7 @@ auto OMGIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointerVar, E
 auto OMGIRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
     Value* resultValue = callWasmOperation(m_currentBlock, Int32, operationMemoryAtomicNotify,
-        instanceValue(), get(pointer), constant(Int64, offset), get(count), constant(Int32, memoryIndex));
+        instanceValue(), addressOperand(m_info.memory(memoryIndex).isMemory64(), pointer), constant(Int64, offset), get(count), constant(Int32, memoryIndex));
     {
         result = push(resultValue);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),

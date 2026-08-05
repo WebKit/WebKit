@@ -1135,6 +1135,8 @@ public:
 
     [[nodiscard]] PartialResult setGlobal(uint32_t index, Value value);
 
+    void emitZeroExtendAddressOperand(bool is64Bit, Value operand);
+
     // Memory
 
     inline Location emitCheckAndPreparePointer(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex)

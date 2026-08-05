@@ -841,12 +841,25 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
     return { };
 }
 
+// A runtime operation takes an address operand -- an index, offset, count, delta or length -- as 64
+// bits, so that a 64-bit address memory or table can pass one whole, and it bounds checks all 64
+// bits. The upper half of an i32 operand is don't-care everywhere else, so zero it here.
+void BBQJIT::emitZeroExtendAddressOperand(bool is64Bit, Value operand)
+{
+    if (is64Bit || operand.isConst())
+        return;
+    Location location = loadIfNecessary(operand);
+    m_jit.zeroExtend32ToWord(location.asGPR(), location.asGPR());
+}
+
 // Tables
 
 [[nodiscard]] PartialResult BBQJIT::addTableSet(unsigned tableIndex, Value index, Value value)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     ASSERT(index.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
+
+    emitZeroExtendAddressOperand(m_info.table(tableIndex).addressType().is64Bit(), index);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -873,6 +886,8 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
     ASSERT(dstOffset.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
     ASSERT(srcOffset.type() == TypeKind::I32);
     ASSERT(length.type() == TypeKind::I32);
+
+    emitZeroExtendAddressOperand(m_info.table(tableIndex).addressType().is64Bit(), dstOffset);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -925,6 +940,8 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
     auto tableAddressTypeKind = m_info.table(tableIndex).addressType().asWasmTypeKind();
     ASSERT(delta.type() == tableAddressTypeKind);
 
+    emitZeroExtendAddressOperand(m_info.table(tableIndex).addressType().is64Bit(), delta);
+
     Vector<Value, 8> arguments = {
         instanceValue(),
         Value::fromI32(tableIndex),
@@ -939,8 +956,12 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableFill(unsigned tableIndex, Value offset, Value fill, Value count)
 {
+    bool isTable64 = m_info.table(tableIndex).addressType().is64Bit();
     ASSERT(offset.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
     ASSERT(count.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
+
+    emitZeroExtendAddressOperand(isTable64, offset);
+    emitZeroExtendAddressOperand(isTable64, count);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -962,9 +983,15 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 [[nodiscard]] PartialResult BBQJIT::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, Value dstOffset, Value srcOffset, Value length)
 {
+    bool dstIsTable64 = m_info.table(dstTableIndex).addressType().is64Bit();
+    bool srcIsTable64 = m_info.table(srcTableIndex).addressType().is64Bit();
     ASSERT(dstOffset.type() == m_info.table(dstTableIndex).addressType().asWasmTypeKind());
     ASSERT(srcOffset.type() == m_info.table(srcTableIndex).addressType().asWasmTypeKind());
-    ASSERT(m_info.table(dstTableIndex).addressType().is64Bit() && m_info.table(srcTableIndex).addressType().is64Bit() ? length.type() == TypeKind::I64 : length.type() == TypeKind::I32);
+    ASSERT(dstIsTable64 && srcIsTable64 ? length.type() == TypeKind::I64 : length.type() == TypeKind::I32);
+
+    emitZeroExtendAddressOperand(dstIsTable64, dstOffset);
+    emitZeroExtendAddressOperand(srcIsTable64, srcOffset);
+    emitZeroExtendAddressOperand(dstIsTable64 && srcIsTable64, length);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -1106,6 +1133,8 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
 
 [[nodiscard]] PartialResult BBQJIT::addGrowMemory(Value delta, Value& result, uint8_t memoryIndex)
 {
+    emitZeroExtendAddressOperand(m_info.memory(memoryIndex).isMemory64(), delta);
+
     Vector<Value, 8> arguments = { instanceValue(), delta, Value::fromI32(memoryIndex) };
     result = topValue(m_info.memory(memoryIndex).addressType().asWasmTypeKind());
     emitCCall(&operationGrowMemory, arguments, result);
@@ -1144,17 +1173,9 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     ASSERT(count.type() == m_info.memory(memoryIndex).addressType());
     ASSERT(targetValue.type() == TypeKind::I32);
 
-    if (!m_info.memory(memoryIndex).isMemory64()) {
-        if (!dstAddress.isConst()) {
-            Location dstLoc = loadIfNecessary(dstAddress);
-            m_jit.zeroExtend32ToWord(dstLoc.asGPR(), dstLoc.asGPR());
-        }
-
-        if (!count.isConst()) {
-            Location countLoc = loadIfNecessary(count);
-            m_jit.zeroExtend32ToWord(countLoc.asGPR(), countLoc.asGPR());
-        }
-    }
+    bool isMemory64 = m_info.memory(memoryIndex).isMemory64();
+    emitZeroExtendAddressOperand(isMemory64, dstAddress);
+    emitZeroExtendAddressOperand(isMemory64, count);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -1182,26 +1203,11 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     else
         ASSERT(count.type() == TypeKind::I32);
 
-    if (!m_info.memory(dstMemoryIndex).isMemory64()) {
-        if (!dstAddress.isConst()) {
-            Location dstLoc = loadIfNecessary(dstAddress);
-            m_jit.zeroExtend32ToWord(dstLoc.asGPR(), dstLoc.asGPR());
-        }
-    }
-
-    if (!m_info.memory(srcMemoryIndex).isMemory64()) {
-        if (!srcAddress.isConst()) {
-            Location srcLoc = loadIfNecessary(srcAddress);
-            m_jit.zeroExtend32ToWord(srcLoc.asGPR(), srcLoc.asGPR());
-        }
-    }
-
-    if (!m_info.memory(srcMemoryIndex).isMemory64() || !m_info.memory(dstMemoryIndex).isMemory64()) {
-        if (!count.isConst()) {
-            Location countLoc = loadIfNecessary(count);
-            m_jit.zeroExtend32ToWord(countLoc.asGPR(), countLoc.asGPR());
-        }
-    }
+    bool dstIsMemory64 = m_info.memory(dstMemoryIndex).isMemory64();
+    bool srcIsMemory64 = m_info.memory(srcMemoryIndex).isMemory64();
+    emitZeroExtendAddressOperand(dstIsMemory64, dstAddress);
+    emitZeroExtendAddressOperand(srcIsMemory64, srcAddress);
+    emitZeroExtendAddressOperand(dstIsMemory64 && srcIsMemory64, count);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -1226,12 +1232,7 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     ASSERT(srcAddress.type() == TypeKind::I32);
     ASSERT(length.type() == TypeKind::I32);
 
-    if (!m_info.memory(memoryIndex).isMemory64()) {
-        if (!dstAddress.isConst()) {
-            Location dstLoc = loadIfNecessary(dstAddress);
-            m_jit.zeroExtend32ToWord(dstLoc.asGPR(), dstLoc.asGPR());
-        }
-    }
+    emitZeroExtendAddressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -1344,6 +1345,8 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
 
 [[nodiscard]] PartialResult BBQJIT::atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex)
 {
+    emitZeroExtendAddressOperand(m_info.memory(memoryIndex).isMemory64(), pointer);
+
     Vector<Value, 8> arguments = {
         instanceValue(),
         pointer,
@@ -1368,6 +1371,8 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
 
 [[nodiscard]] PartialResult BBQJIT::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex)
 {
+    emitZeroExtendAddressOperand(m_info.memory(memoryIndex).isMemory64(), pointer);
+
     Vector<Value, 8> arguments = {
         instanceValue(),
         pointer,
