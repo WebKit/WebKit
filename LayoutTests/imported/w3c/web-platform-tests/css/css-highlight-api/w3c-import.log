@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-invalid-static-range-crash.html
@@ -29,8 +27,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/HighlightRegistry-maplike.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-fallback-not-tinted-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-fallback-not-tinted-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-fallback-not-tinted.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-currentcolor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-currentcolor-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-currentcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-stacked-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-stacked-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-stacked.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-priority-painting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-priority-painting-ref.html

@@ -9,9 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
-Property values requiring vendor prefixes:
-None
+user-select
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/WEB_FEATURES.yml
@@ -237,6 +235,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-text-shadow-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-text-shadow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-text-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-user-select-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-user-select-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-user-select-none.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-vertical-writing-mode-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-vertical-writing-mode-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-vertical-writing-mode-001.html
