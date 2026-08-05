@@ -489,9 +489,7 @@ static void distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionT
     ASSERT(accommodatedItemsIndexes.size() == sizeContributions.size());
 
     // 1. Maintain separately for each affected track a planned increase, initially set to 0. The
-    // vector is keyed by track index (sized to all tracks); non-affected slots stay unused.
-    // Note that tracks beyond affectedTrackIndexes may be resized in step 2.3,
-    // where space is distributed to non-affected tracks.
+    // vector is keyed by track index.
     Vector<LayoutUnit> plannedIncreases(unsizedTracks.size());
 
     // 2. For each accommodated item...
@@ -499,13 +497,15 @@ static void distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionT
         // considering only tracks the item spans:
         auto itemSpan = gridItemSpanList[gridItemIndex];
 
-        ASSERT(itemSpan.distance() == 1);
-
-        // Gather the affected tracks the item spans; they receive space up to their limits.
+        // Partition the spanned tracks into the affected tracks, which receive space in 2.2, and
+        // the non-affected tracks, which never receive space but reduce spaceToDistribute in 2.3.
         Vector<size_t> spannedAffectedTracks;
+        Vector<size_t> spannedNonAffectedTracks;
         for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex) {
             if (affectedTracksIndexes.contains(trackIndex))
                 spannedAffectedTracks.append(trackIndex);
+            else
+                spannedNonAffectedTracks.append(trackIndex);
         }
 
         // https://drafts.csswg.org/css-grid-1/#extra-space
@@ -529,19 +529,26 @@ static void distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionT
         Vector<LayoutUnit> itemIncurredIncreases(unsizedTracks.size());
         distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedAffectedTracks, unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
 
-        // 2.3. Distribute space to non-affected tracks: if extra space remains and the item spans
-        // both affected and non-affected tracks, distribute it into the non-affected tracks.
-        auto distributeSpaceToNonAffectedTracks = [] {
-            notImplemented();
-        };
-        UNUSED_VARIABLE(distributeSpaceToNonAffectedTracks);
+        // https://drafts.csswg.org/css-grid-1/#extra-space
+        // 2.3. "Distribute space to non-affected tracks: If extra space remains at this point, and
+        // the item spans both affected tracks and non-affected tracks, distribute space as for the
+        // previous step, but into the non-affected tracks instead."
+        if (spaceToDistribute > 0 && !spannedAffectedTracks.isEmpty() && !spannedNonAffectedTracks.isEmpty()) {
+            // These tracks are not affected, so we don't need to track their item-incurred increases for later.
+            // The purpose of this step is to reduce spaceToDistribute, so we can just use a throwaway vector.
+            Vector<LayoutUnit> unappliedIncreases(unsizedTracks.size());
+            // In step 2.1. we subtracted the size of non-affected tracks from the item's size contribution.
+            // In this step, we are subtracting extra space up to the growth limit of the non-affected tracks.
+            distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedNonAffectedTracks, unsizedTracks, unappliedIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+        }
 
         // 2.4. Distribute space beyond limits: if extra space still remains, unfreeze and continue
         // distributing it to the item-incurred increases.
         auto distributeSpaceBeyondLimits = [] {
             notImplemented();
         };
-        UNUSED_VARIABLE(distributeSpaceBeyondLimits);
+        if (spaceToDistribute > 0)
+            distributeSpaceBeyondLimits();
 
         // 2.5. For each affected track, if its item-incurred increase is larger than its planned
         // increase, set the planned increase to that value.
