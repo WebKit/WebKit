@@ -59,6 +59,8 @@ public:
 
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*, JSValue sentValue, JSValue resumeMode);
 
+    bool isTopLevelExecutionFinished() const;
+
     void execute(JSGlobalObject*, JSPromise* = nullptr);
     void executeAsync(JSGlobalObject*);
 
