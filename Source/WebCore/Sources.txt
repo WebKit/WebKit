@@ -490,6 +490,9 @@ Modules/webcodecs/WebCodecsAudioEncoder.cpp
 Modules/webcodecs/WebCodecsBase.cpp
 Modules/webcodecs/WebCodecsEncodedAudioChunk.cpp
 Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp
+Modules/webcodecs/WebCodecsImageDecoder.cpp
+Modules/webcodecs/WebCodecsImageTrack.cpp
+Modules/webcodecs/WebCodecsImageTrackList.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
 Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webcodecs/WebCodecsVideoFrame.cpp
@@ -800,6 +803,7 @@ bindings/js/JSUndoItemCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebCodecsAudioDecoderCustom.cpp
 bindings/js/JSWebCodecsAudioEncoderCustom.cpp
+bindings/js/JSWebCodecsImageDecoderCustom.cpp
 bindings/js/JSWebCodecsVideoDecoderCustom.cpp
 bindings/js/JSWebCodecsVideoEncoderCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
@@ -5237,6 +5241,10 @@ JSWebCodecsEncodedVideoChunkMetadata.cpp
 JSWebCodecsEncodedVideoChunkOutputCallback.cpp
 JSWebCodecsEncodedVideoChunkType.cpp
 JSWebCodecsErrorCallback.cpp
+JSWebCodecsImageDecoder.cpp
+JSWebCodecsImageDecodeResult.cpp
+JSWebCodecsImageTrack.cpp
+JSWebCodecsImageTrackList.cpp
 JSWebCodecsSvcOutputMetadata.cpp
 JSWebCodecsVideoDecoder.cpp
 JSWebCodecsVideoDecoderConfig.cpp

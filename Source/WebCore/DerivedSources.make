@@ -818,6 +818,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
+	$(WebCore)/Modules/webcodecs/WebCodecsImageDecodeResult.idl \
+	$(WebCore)/Modules/webcodecs/WebCodecsImageDecoder.idl \
+	$(WebCore)/Modules/webcodecs/WebCodecsImageTrack.idl \
+	$(WebCore)/Modules/webcodecs/WebCodecsImageTrackList.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsSvcOutputMetadata.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \

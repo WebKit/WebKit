@@ -294,6 +294,9 @@ namespace WebCore {
     macro(ImageBitmap) \
     macro(ImageBitmapRenderingContext) \
     macro(ImageCapture) \
+    macro(ImageDecoder) \
+    macro(ImageTrack) \
+    macro(ImageTrackList) \
     macro(IdleDeadline) \
     macro(InputDeviceInfo) \
     macro(InputEvent) \

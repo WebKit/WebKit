@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,36 @@
 
 #pragma once
 
-#include <WebCore/EventTarget.h>
-#include <WebCore/WebSocketFrame.h>
-#include <wtf/Forward.h>
-#include <wtf/ObjectIdentifier.h>
+#if ENABLE(WEB_CODECS)
+
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Document;
-class WeakPtrImplWithEventTargetData;
-class ResourceRequest;
-class ResourceResponse;
-class WebSocketChannel;
-class WebSocketChannelInspector;
-
-using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
-
-class WEBCORE_EXPORT WebSocketChannelInspector {
+class WebCodecsImageTrack final : public RefCounted<WebCodecsImageTrack> {
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsImageTrack);
 public:
-    explicit WebSocketChannelInspector(Document&);
-    ~WebSocketChannelInspector();
+    static Ref<WebCodecsImageTrack> create();
+    static Ref<WebCodecsImageTrack> create(float repetitionCount, size_t frameCount, bool animated, bool selected);
 
-    void didCreateWebSocket(const URL&) const;
-    void willSendWebSocketHandshakeRequest(ResourceRequest&) const;
-    void didSendWebSocketHandshakeRequest(const ResourceRequest&) const;
-    void didReceiveWebSocketHandshakeResponse(const ResourceResponse&) const;
-    void didCloseWebSocket() const;
-    void didReceiveWebSocketFrame(const WebSocketFrame&) const;
-    void didSendWebSocketFrame(const WebSocketFrame&) const;
-    void didReceiveWebSocketFrameError(const String& errorMessage) const;
-    
-    WebSocketChannelIdentifier progressIdentifier() const { return m_progressIdentifier; }
+    float repetitionCount() const { return m_repetitionCount; }
+    size_t frameCount() const { return m_frameCount; }
+    bool animated() const { return m_animated; }
 
-    static WebSocketFrame createFrame(std::span<const uint8_t> data, WebSocketFrame::OpCode);
+    bool selected() const { return m_selected; }
+    void setSelected(bool selected) { m_selected = selected; }
 
 private:
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    WebSocketChannelIdentifier m_progressIdentifier;
+    WebCodecsImageTrack() = default;
+    WebCodecsImageTrack(float repetitionCount, size_t frameCount, bool animated, bool selected);
+
+    float m_repetitionCount { 1 };
+    size_t m_frameCount { 0 };
+    bool m_animated { false };
+    bool m_selected { false };
 };
 
 } // namespace WebCore
+
+#endif

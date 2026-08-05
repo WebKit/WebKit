@@ -14706,6 +14706,18 @@
 		72E417621A2E8D2F004C562A /* JSEXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTsRGB.h; sourceTree = "<group>"; };
 		72E5023029B669ED00E5B8E7 /* RenderingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderingResource.h; sourceTree = "<group>"; };
 		72E5768A281B292600A75432 /* CopyImageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyImageOptions.h; sourceTree = "<group>"; };
+		72EB157E302167B500E59EAD /* WebCodecsImageDecoder.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCodecsImageDecoder.idl; sourceTree = "<group>"; };
+		72EB157F302167B500E59EAD /* WebCodecsImageDecodeResult.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCodecsImageDecodeResult.idl; sourceTree = "<group>"; };
+		72EB1580302167B500E59EAD /* WebCodecsImageTrack.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCodecsImageTrack.idl; sourceTree = "<group>"; };
+		72EB1581302167B500E59EAD /* WebCodecsImageTrackList.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCodecsImageTrackList.idl; sourceTree = "<group>"; };
+		72EB158230216B2600E59EAD /* WebCodecsImageDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsImageDecoder.h; sourceTree = "<group>"; };
+		72EB158330216B2600E59EAD /* WebCodecsImageDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsImageDecoder.cpp; sourceTree = "<group>"; };
+		72EB158430216CF900E59EAD /* WebCodecsImageDecodeResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsImageDecodeResult.h; sourceTree = "<group>"; };
+		72EB158530216D5C00E59EAD /* WebCodecsImageTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsImageTrack.h; sourceTree = "<group>"; };
+		72EB158630216D5C00E59EAD /* WebCodecsImageTrack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsImageTrack.cpp; sourceTree = "<group>"; };
+		72EB158730216E1700E59EAD /* WebCodecsImageTrackList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WebCodecsImageTrackList.h; sourceTree = "<group>"; };
+		72EB158830216E1700E59EAD /* WebCodecsImageTrackList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsImageTrackList.cpp; sourceTree = "<group>"; };
+		72EB15893021754500E59EAD /* JSWebCodecsImageDecoderCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCodecsImageDecoderCustom.cpp; sourceTree = "<group>"; };
 		72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAdapter.cpp; sourceTree = "<group>"; };
 		72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageAdapter.h; sourceTree = "<group>"; };
 		72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTFragDepth.cpp; sourceTree = "<group>"; };
@@ -32502,6 +32514,7 @@
 				715DA5D3201BB902002EF2B0 /* JSWebAnimationCustom.cpp */,
 				45B6A3EA2C3C4FBE0062CB8A /* JSWebCodecsAudioDecoderCustom.cpp */,
 				45BA2FCA2C3C77870042DA4F /* JSWebCodecsAudioEncoderCustom.cpp */,
+				72EB15893021754500E59EAD /* JSWebCodecsImageDecoderCustom.cpp */,
 				45F4864B2C38CCE9008B9897 /* JSWebCodecsVideoDecoderCustom.cpp */,
 				45BA2FCB2C3C77870042DA4F /* JSWebCodecsVideoEncoderCustom.cpp */,
 				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
@@ -40041,6 +40054,17 @@
 				4110A1CD28DE5B3200321D09 /* WebCodecsEncodedVideoChunkType.idl */,
 				4110A21428E3440D00321D09 /* WebCodecsErrorCallback.h */,
 				4110A20D28E3440B00321D09 /* WebCodecsErrorCallback.idl */,
+				72EB158330216B2600E59EAD /* WebCodecsImageDecoder.cpp */,
+				72EB158230216B2600E59EAD /* WebCodecsImageDecoder.h */,
+				72EB157E302167B500E59EAD /* WebCodecsImageDecoder.idl */,
+				72EB158430216CF900E59EAD /* WebCodecsImageDecodeResult.h */,
+				72EB157F302167B500E59EAD /* WebCodecsImageDecodeResult.idl */,
+				72EB158630216D5C00E59EAD /* WebCodecsImageTrack.cpp */,
+				72EB158530216D5C00E59EAD /* WebCodecsImageTrack.h */,
+				72EB1580302167B500E59EAD /* WebCodecsImageTrack.idl */,
+				72EB158830216E1700E59EAD /* WebCodecsImageTrackList.cpp */,
+				72EB158730216E1700E59EAD /* WebCodecsImageTrackList.h */,
+				72EB1581302167B500E59EAD /* WebCodecsImageTrackList.idl */,
 				419F0FCF2A39A8BF002F5972 /* WebCodecsSvcOutputMetadata.h */,
 				419F0FCE2A39A8BF002F5972 /* WebCodecsSvcOutputMetadata.idl */,
 				412524672C876E3F00A73A14 /* WebCodecsUtilities.h */,

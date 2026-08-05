@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,40 @@
 
 #pragma once
 
-#include <WebCore/EventTarget.h>
-#include <WebCore/WebSocketFrame.h>
-#include <wtf/Forward.h>
-#include <wtf/ObjectIdentifier.h>
+#if ENABLE(WEB_CODECS)
+
+#include "DOMPromiseProxy.h"
+#include "IDLTypes.h"
+#include "JSDOMPromiseDeferredForward.h"
+#include "WebCodecsImageTrack.h"
+#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Document;
-class WeakPtrImplWithEventTargetData;
-class ResourceRequest;
-class ResourceResponse;
-class WebSocketChannel;
-class WebSocketChannelInspector;
-
-using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
-
-class WEBCORE_EXPORT WebSocketChannelInspector {
+class WebCodecsImageTrackList final : public RefCounted<WebCodecsImageTrackList> {
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsImageTrackList);
 public:
-    explicit WebSocketChannelInspector(Document&);
-    ~WebSocketChannelInspector();
+    static Ref<WebCodecsImageTrackList> create(Vector<Ref<WebCodecsImageTrack>>&&);
 
-    void didCreateWebSocket(const URL&) const;
-    void willSendWebSocketHandshakeRequest(ResourceRequest&) const;
-    void didSendWebSocketHandshakeRequest(const ResourceRequest&) const;
-    void didReceiveWebSocketHandshakeResponse(const ResourceResponse&) const;
-    void didCloseWebSocket() const;
-    void didReceiveWebSocketFrame(const WebSocketFrame&) const;
-    void didSendWebSocketFrame(const WebSocketFrame&) const;
-    void didReceiveWebSocketFrameError(const String& errorMessage) const;
-    
-    WebSocketChannelIdentifier progressIdentifier() const { return m_progressIdentifier; }
+    using ReadyPromise = DOMPromiseProxy<IDLUndefined>;
+    ReadyPromise& ready() { return m_readyPromise.get(); }
 
-    static WebSocketFrame createFrame(std::span<const uint8_t> data, WebSocketFrame::OpCode);
+    size_t length() const { return m_list.size(); };
+    int selectedIndex() const { return m_selectedIndex; }
+    RefPtr<WebCodecsImageTrack> selectedTrack() const;
+
+    RefPtr<WebCodecsImageTrack> item(unsigned index) const;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
 
 private:
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    WebSocketChannelIdentifier m_progressIdentifier;
+    WebCodecsImageTrackList(Vector<Ref<WebCodecsImageTrack>>&&);
+
+    UniqueRef<ReadyPromise> m_readyPromise;
+    int m_selectedIndex { -1 };
+    Vector<Ref<WebCodecsImageTrack>> m_list;
 };
 
 } // namespace WebCore
+
+#endif
