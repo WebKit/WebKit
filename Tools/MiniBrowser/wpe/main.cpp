@@ -58,6 +58,8 @@ static const char* profileDirectory;
 static gboolean automationMode;
 static gboolean ignoreTLSErrors;
 static const char* contentFilter;
+static const char** userScriptsAtDocumentStart;
+static const char** userScriptsAtDocumentEnd;
 static const char* cookiesFile;
 static const char* cookiesPolicy;
 static const char* proxy;
@@ -128,6 +130,8 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", nullptr },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
+    { "user-script-at-start", 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &userScriptsAtDocumentStart, "Inject one or more user scripts at document start.", "PATH" },
+    { "user-script-at-end", 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &userScriptsAtDocumentEnd, "Inject one or more user scripts at document end.", "PATH" },
     { "bg-color", 0, 0, G_OPTION_ARG_STRING, &bgColor, "Window background color. Default: white", "COLOR" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", nullptr },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
@@ -439,6 +443,19 @@ static void automationStartedCallback(WebKitWebContext*, WebKitAutomationSession
     g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), view);
 }
 
+static void addUserScript(WebKitUserContentManager* userContentManager, const char* userScriptPath, WebKitUserScriptInjectionTime injectionTime)
+{
+    g_autoptr(GFile) file = g_file_new_for_commandline_arg(userScriptPath);
+    g_autofree char* source = nullptr;
+    g_autoptr(GError) error = nullptr;
+
+    if (g_file_load_contents(file, nullptr, &source, nullptr, nullptr, &error)) {
+        webkit_user_content_manager_add_script(userContentManager, webkit_user_script_new(source,
+            WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, injectionTime, nullptr, nullptr));
+    } else
+        g_printerr("Failed to load user script at path '%s': %s\n", userScriptPath, error->message);
+}
+
 static void loadConfigFile(WebKitSettings* webkitSettings
 #if ENABLE_WPE_PLATFORM
     , WPESettings* wpeSettings
@@ -577,6 +594,20 @@ static void activate(GApplication* application, gpointer)
         g_clear_pointer(&saveData.error, g_error_free);
         g_clear_pointer(&saveData.filter, webkit_user_content_filter_unref);
         g_main_loop_unref(saveData.mainLoop);
+    }
+
+    if (userScriptsAtDocumentStart || userScriptsAtDocumentEnd) {
+        if (!userContentManager)
+            userContentManager = webkit_user_content_manager_new();
+
+        if (userScriptsAtDocumentStart) {
+            for (int i = 0; userScriptsAtDocumentStart[i]; i++)
+                addUserScript(userContentManager, userScriptsAtDocumentStart[i], WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START);
+        }
+        if (userScriptsAtDocumentEnd) {
+            for (int i = 0; userScriptsAtDocumentEnd[i]; i++)
+                addUserScript(userContentManager, userScriptsAtDocumentEnd[i], WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END);
+        }
     }
 
     auto* settings = webkit_settings_new_with_settings(
