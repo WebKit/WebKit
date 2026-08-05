@@ -87,6 +87,7 @@
 #include "SpaceTimeMutatorScheduler.h"
 #include "StochasticSpaceTimeMutatorScheduler.h"
 #include "StopIfNecessaryTimer.h"
+#include "StringSplitCache.h"
 #include "StructureAlignedMemoryAllocator.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
@@ -2368,7 +2369,8 @@ void Heap::finalize()
         vm().stringReplaceCache.clear();
     }
     vm().keyAtomStringCache.clear();
-    vm().stringSplitCache.clear();
+    if (auto* cache = vm().stringSplitCache())
+        cache->clear();
     vm().jsonAtomStringCache.clearJSStrings();
 
     m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.removeAllMatching([&](const auto& iter) {

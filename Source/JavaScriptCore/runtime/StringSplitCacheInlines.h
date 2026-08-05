@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-inline JSCellButterfly* StringSplitCache::get(const String& subject, const String& separator)
+inline JSCellButterfly* StringSplitCache::getForString(const String& subject, const String& separator)
 {
     AssertNoGC assertNoGC;
     if (!subject.impl() || !subject.impl()->isAtom())
@@ -41,21 +41,21 @@ inline JSCellButterfly* StringSplitCache::get(const String& subject, const Strin
 
     auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
     auto* separatorImpl = static_cast<AtomStringImpl*>(separator.impl());
-    unsigned index = subjectImpl->hash() & (cacheSize - 1);
+    size_t index = subjectImpl->hash() & (m_stringEntries.size() - 1);
     {
-        auto& entry = m_entries[index];
+        auto& entry = m_stringEntries[index];
         if (entry.m_subject == subjectImpl && entry.m_separator == separatorImpl)
             return entry.m_butterfly;
     }
     {
-        auto& entry = m_entries[(index + 1) & (cacheSize - 1)];
+        auto& entry = m_stringEntries[(index + 1) & (m_stringEntries.size() - 1)];
         if (entry.m_subject == subjectImpl && entry.m_separator == separatorImpl)
             return entry.m_butterfly;
     }
     return nullptr;
 }
 
-inline void StringSplitCache::set(const String& subject, const String& separator, JSCellButterfly* butterfly)
+inline void StringSplitCache::setForString(const String& subject, const String& separator, JSCellButterfly* butterfly)
 {
     AssertNoGC assertNoGC;
     if (!subject.impl() || !subject.impl()->isAtom())
@@ -65,15 +65,15 @@ inline void StringSplitCache::set(const String& subject, const String& separator
 
     auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
     auto* separatorImpl = static_cast<AtomStringImpl*>(separator.impl());
-    unsigned index = subjectImpl->hash() & (cacheSize - 1);
+    size_t index = subjectImpl->hash() & (m_stringEntries.size() - 1);
     {
-        auto& entry1 = m_entries[index];
+        auto& entry1 = m_stringEntries[index];
         if (!entry1.m_subject) {
             entry1.m_subject = subjectImpl;
             entry1.m_separator = separatorImpl;
             entry1.m_butterfly = butterfly;
         } else {
-            auto& entry2 = m_entries[(index + 1) & (cacheSize - 1)];
+            auto& entry2 = m_stringEntries[(index + 1) & (m_stringEntries.size() - 1)];
             if (!entry2.m_subject) {
                 entry2.m_subject = subjectImpl;
                 entry2.m_separator = separatorImpl;
@@ -87,6 +87,63 @@ inline void StringSplitCache::set(const String& subject, const String& separator
             }
         }
     }
+}
+
+inline JSCellButterfly* StringSplitCache::getForRegExp(const String& subject, RegExp* regExp, MatchResult& lastMatch)
+{
+    AssertNoGC assertNoGC;
+    if (!subject.impl() || !subject.impl()->isAtom())
+        return nullptr;
+    if (!regExp)
+        return nullptr;
+
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
+    size_t index = regExpEntryIndex(subjectImpl, regExp);
+    {
+        auto& entry = m_regExpEntries[index];
+        if (entry.m_subject == subjectImpl && entry.m_regExp == regExp) {
+            lastMatch = entry.m_lastMatch;
+            return entry.m_butterfly;
+        }
+    }
+    {
+        auto& entry = m_regExpEntries[(index + 1) & (m_regExpEntries.size() - 1)];
+        if (entry.m_subject == subjectImpl && entry.m_regExp == regExp) {
+            lastMatch = entry.m_lastMatch;
+            return entry.m_butterfly;
+        }
+    }
+    return nullptr;
+}
+
+inline void StringSplitCache::setForRegExp(const String& subject, RegExp* regExp, JSCellButterfly* butterfly, MatchResult lastMatch)
+{
+    AssertNoGC assertNoGC;
+    if (!subject.impl() || !subject.impl()->isAtom())
+        return;
+    if (!regExp)
+        return;
+
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
+    size_t index = regExpEntryIndex(subjectImpl, regExp);
+    auto store = [&](RegExpEntry& entry) {
+        entry.m_subject = subjectImpl;
+        entry.m_regExp = regExp;
+        entry.m_butterfly = butterfly;
+        entry.m_lastMatch = lastMatch;
+    };
+    auto& entry1 = m_regExpEntries[index];
+    if (!entry1.m_subject) {
+        store(entry1);
+        return;
+    }
+    auto& entry2 = m_regExpEntries[(index + 1) & (m_regExpEntries.size() - 1)];
+    if (!entry2.m_subject) {
+        store(entry2);
+        return;
+    }
+    entry2 = RegExpEntry { };
+    store(entry1);
 }
 
 } // namespace JSC

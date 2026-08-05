@@ -1053,11 +1053,6 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(Indice& result, StringIm
     return false;
 }
 
-static bool NODELETE isASCIIIdentifierStart(char16_t ch)
-{
-    return isASCIIAlpha(ch) || ch == '_' || ch == '$';
-}
-
 JSCell* stringSplitFast(JSGlobalObject* globalObject, JSString* thisString, JSString* separatorString, unsigned limit)
 {
     VM& vm = globalObject->vm();
@@ -1076,7 +1071,8 @@ JSCell* stringSplitFast(JSGlobalObject* globalObject, JSString* thisString, JSSt
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
 
     if (limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime()) [[likely]] {
-        if (auto* immutableButterfly = vm.stringSplitCache.get(input, separator)) {
+        auto* cache = vm.stringSplitCache();
+        if (auto* immutableButterfly = cache ? cache->getForString(input, separator) : nullptr) {
             Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
             return JSArray::createWithButterfly(vm, nullptr, arrayStructure, immutableButterfly->toButterfly());
         }
@@ -1130,7 +1126,7 @@ JSCell* stringSplitFast(JSGlobalObject* globalObject, JSString* thisString, JSSt
                 Structure* replacementStructure = vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous);
                 newButterfly->setStructure(vm, replacementStructure);
             }
-            vm.stringSplitCache.set(input, separator, newButterfly);
+            vm.ensureStringSplitCache().setForString(input, separator, newButterfly);
             Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
             return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
         }
@@ -1190,7 +1186,7 @@ JSCell* stringSplitFast(JSGlobalObject* globalObject, JSString* thisString, JSSt
                 }
                 newButterfly->setIndex(vm, i, string);
             }
-            vm.stringSplitCache.set(input, separator, newButterfly);
+            vm.ensureStringSplitCache().setForString(input, separator, newButterfly);
             Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
             return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
         }
