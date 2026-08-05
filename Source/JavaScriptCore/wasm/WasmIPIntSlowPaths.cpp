@@ -562,6 +562,8 @@ static ALWAYS_INLINE std::optional<uint32_t> checkedTableOperand(uint64_t value,
 
 WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, uint64_t index)
 {
+    // FuncRefTable::get materializes the funcref's JS wrapper on demand.
+    WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
     const auto& info = instance->module().moduleInformation();
     auto checkedIndex = checkedTableOperand(index, info.table(tableIndex).addressType().is64Bit());
     if (!checkedIndex)
@@ -1053,6 +1055,8 @@ WASM_IPINT_EXTERN_CPP_DECL(array_init_data, uint32_t dataIndex, IPIntStackEntry*
 
 WASM_IPINT_EXTERN_CPP_DECL(array_init_elem, uint32_t elemIndex, IPIntStackEntry* sp)
 {
+    WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
+
     // sp[0] = size
     // sp[1] = src_offset
     // sp[2] = dst_offset
@@ -1398,6 +1402,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, IPIntStackEntry* args)
 
 WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)
 {
+    WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
     IPINT_RETURN(Wasm::refFunc(instance, index));
 }
 

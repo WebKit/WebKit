@@ -1500,6 +1500,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (JSW
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (JSWebAssemblyInstance* instance, unsigned tableIndex, uint64_t index))
 {
+    // FuncRefTable::get materializes the funcref's JS wrapper on demand.
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    assertCalleeIsReferenced(callFrame, instance);
+    VM& vm = instance->vm();
+    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     return tableGet(instance, tableIndex, index);
 }
 
@@ -1539,6 +1544,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTableCopy, UCPUStrictInt32, (JSWe
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t index))
 {
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    assertCalleeIsReferenced(callFrame, instance);
+    VM& vm = instance->vm();
+    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     return refFunc(instance, index);
 }
 
@@ -1769,6 +1778,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (JSWe
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (JSWebAssemblyInstance* instance, EncodedJSValue dst, uint32_t dstOffset, uint32_t srcElementIndex, uint32_t srcOffset, uint32_t size))
 {
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    assertCalleeIsReferenced(callFrame, instance);
+    VM& vm = instance->vm();
+    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     return toUCPUStrictInt32(arrayInitElem(instance, dst, dstOffset, srcElementIndex, srcOffset, size));
 }
 
