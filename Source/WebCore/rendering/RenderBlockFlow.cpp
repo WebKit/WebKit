@@ -1048,7 +1048,7 @@ RenderBlockFlow::BlockPositionAndMargin RenderBlockFlow::layoutBlockChildFromInl
     if (previousMarginTrimBlockStart)
         layoutState->setMarginTrimBlockStart(*previousMarginTrimBlockStart);
 
-    return { child.logicalTop(), logicalHeight(), marginInfo };
+    return { logicalTopForChild(child), logicalHeight(), marginInfo };
 }
 
 void RenderBlockFlow::trimBlockEndChildrenMargins()
