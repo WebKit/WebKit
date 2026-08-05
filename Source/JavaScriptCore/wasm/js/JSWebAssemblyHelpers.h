@@ -100,6 +100,18 @@ ALWAYS_INLINE uint64_t addressValueToUint64(JSGlobalObject* globalObject, JSValu
     return static_cast<uint64_t>(toNonWrappingUint32(globalObject, value, errorType));
 }
 
+ALWAYS_INLINE JSValue addressValueFromUint64(JSGlobalObject* globalObject, uint64_t value, Wasm::AddressType addressType)
+{
+    if (addressType.is64Bit())
+        return JSBigInt::createFrom(globalObject, value);
+    return jsNumber(static_cast<double>(value));
+}
+
+ALWAYS_INLINE JSString* addressTypeString(VM& vm, Wasm::AddressType addressType)
+{
+    return addressType.is64Bit() ? jsNontrivialString(vm, "i64"_s) : jsNontrivialString(vm, "i32"_s);
+}
+
 ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value, const SourceProviderBufferGuard&)
 {
     VM& vm = getVM(globalObject);

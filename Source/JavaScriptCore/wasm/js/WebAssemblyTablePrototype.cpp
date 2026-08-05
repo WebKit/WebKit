@@ -81,9 +81,7 @@ JSC_DEFINE_CUSTOM_GETTER(webAssemblyTableProtoGetterLength, (JSGlobalObject* glo
 
     JSWebAssemblyTable* table = getTable(globalObject, vm, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (table->table()->addressType().is64Bit())
-        RELEASE_AND_RETURN(throwScope, JSValue::encode(JSBigInt::createFrom(globalObject, table->length())));
-    return JSValue::encode(jsNumber(table->length()));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(addressValueFromUint64(globalObject, table->length(), table->table()->addressType())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -112,10 +110,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     if (!didGrow)
         return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow could not grow the table"_s);
 
-    if (table->table()->addressType().is64Bit())
-        RELEASE_AND_RETURN(throwScope, JSValue::encode(JSBigInt::createFrom(globalObject, oldLength)));
-
-    return JSValue::encode(jsNumber(oldLength));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(addressValueFromUint64(globalObject, oldLength, table->table()->addressType())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGet, (JSGlobalObject* globalObject, CallFrame* callFrame))

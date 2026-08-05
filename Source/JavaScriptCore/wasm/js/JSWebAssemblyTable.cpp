@@ -163,31 +163,22 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     }
 
     JSObject* result;
-    auto numberOrBigInt = [&](uint64_t value) {
-        return m_table->addressType().is64Bit()
-            ? JSBigInt::createFrom(globalObject, value)
-            : jsNumber(static_cast<double>(value));
-    };
+    auto addressType = m_table->addressType();
 
     auto maximum = m_table->maximum();
     if (maximum) {
-        result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-        auto maxValue = numberOrBigInt(*maximum);
+        result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 4);
+        auto maxValue = addressValueFromUint64(globalObject, *maximum, addressType);
         RETURN_IF_EXCEPTION(scope, nullptr);
         result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), maxValue);
     } else
-        result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
+        result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
 
-    uint64_t minimum = m_table->length();
-    auto minValue = numberOrBigInt(minimum);
+    auto minValue = addressValueFromUint64(globalObject, m_table->length(), addressType);
     RETURN_IF_EXCEPTION(scope, nullptr);
     result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), minValue);
     result->putDirect(vm, Identifier::fromString(vm, "element"_s), elementString);
-
-    JSString* address = m_table->addressType().is64Bit()
-        ? jsNontrivialString(vm, "i64"_s)
-        : jsNontrivialString(vm, "i32"_s);
-    result->putDirect(vm, Identifier::fromString(vm, "address"_s), address);
+    result->putDirect(vm, Identifier::fromString(vm, "address"_s), addressTypeString(vm, addressType));
 
     return result;
 }

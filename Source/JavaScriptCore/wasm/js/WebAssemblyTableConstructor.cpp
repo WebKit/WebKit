@@ -78,6 +78,11 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
             throwTypeError(globalObject, throwScope, "WebAssembly.Table 'address' must be a string of value 'i32' or 'i64'"_s);
             return { };
         }
+
+        if (addressType.is64Bit() && !Options::useWasmMemory64()) {
+            throwTypeError(globalObject, throwScope, "WebAssembly.Table 'address' of 'i64' requires Memory64 to be enabled"_s);
+            return { };
+        }
     }
 
     Wasm::TableElementType type;

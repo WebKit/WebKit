@@ -154,14 +154,20 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
     }
     case Wasm::ExternalKind::Memory: {
         const auto& memory = module->moduleInformation().memory(impOrExp.kindIndex);
+        auto addressType = memory.addressType();
         PageCount maximum = memory.maximum();
-        if (maximum.isValid()) {
-            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-            typeObj->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(maximum.pageCount()));
+        if (maximum) {
+            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 4);
+            JSValue maxValue = addressValueFromUint64(globalObject, maximum.pageCount(), addressType);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            typeObj->putDirect(vm, Identifier::fromString(vm, "maximum"_s), maxValue);
         } else
-            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
-        typeObj->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(memory.initial().pageCount()));
+            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
+        JSValue minValue = addressValueFromUint64(globalObject, memory.initial().pageCount(), addressType);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        typeObj->putDirect(vm, Identifier::fromString(vm, "minimum"_s), minValue);
         typeObj->putDirect(vm, Identifier::fromString(vm, "shared"_s), jsBoolean(memory.isShared()));
+        typeObj->putDirect(vm, Identifier::fromString(vm, "address"_s), addressTypeString(vm, addressType));
         break;
     }
     case Wasm::ExternalKind::Table: {
@@ -171,14 +177,20 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
             throwException(globalObject, throwScope, createTypeError(globalObject, errorMessage));
             return nullptr;
         }
+        auto addressType = table.addressType();
         std::optional<uint64_t> maximum = table.maximum();
         if (maximum) {
-            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-            typeObj->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(static_cast<double>(maximum.value())));
+            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 4);
+            JSValue maxValue = addressValueFromUint64(globalObject, maximum.value(), addressType);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            typeObj->putDirect(vm, Identifier::fromString(vm, "maximum"_s), maxValue);
         } else
-            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
-        typeObj->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(table.initial()));
+            typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
+        JSValue minValue = addressValueFromUint64(globalObject, table.initial(), addressType);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        typeObj->putDirect(vm, Identifier::fromString(vm, "minimum"_s), minValue);
         typeObj->putDirect(vm, Identifier::fromString(vm, "element"_s), typeString);
+        typeObj->putDirect(vm, Identifier::fromString(vm, "address"_s), addressTypeString(vm, addressType));
         break;
     }
     case Wasm::ExternalKind::Global: {
