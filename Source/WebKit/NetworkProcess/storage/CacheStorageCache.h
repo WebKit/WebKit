@@ -38,6 +38,10 @@ namespace IPC {
 class Connection;
 }
 
+namespace WebCore {
+struct ClientOrigin;
+}
+
 namespace WebKit {
 class CacheStorageCache;
 }
@@ -55,6 +59,7 @@ public:
     const String& name() const { return m_name; }
     const String& uniqueName() const { return m_uniqueName; }
     CacheStorageManager* manager();
+    std::optional<WebCore::ClientOrigin> origin() const;
 
     void getSize(CompletionHandler<void(uint64_t)>&&);
     void open(WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
