@@ -199,12 +199,20 @@ def main(user=None):
         builddir_bin = "WebKitBuild/Release/bin" if os.path.isdir("WebKitBuild/Release/bin") else "WebKitBuild/Debug/bin"
         for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
             os.system("killall -9 -v " + task)
-        os.system("ps aux | grep -P '.+/python3? .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs -r kill")
+        # Match on the executable name (comm) rather than the command line, so that wrappers
+        # that merely mention the script (podman run ..., bash -c '... | ...') are not killed.
+        os.system(r"ps -eo pid=,comm=,args= | grep -P '^\s*\d+\s+python3?\s' | grep -P '(run_webkit_tests|run-webkit-tests|mod_pywebsocket|run-webdriver-tests)' | grep -v grep | awk '{print $1}' | xargs -r kill")
         removeOrphanShmSegments()
 
         # Filter Xvfb instances likely spawned by our harness, skipping ones run with xvfb-run like
         # the one  used for dbus activation on the bots
         os.system("ps aux | grep -P 'Xvfb -displayfd [0-9]' | awk '{print $2}' | xargs -r kill")
+
+        # Finally, kill any SDK containers from previous jobs still running. The label is set
+        # by webkitpy/port/linux_container_sdk_utils.py on every auto-entered container.
+        if os.getenv('WEBKIT_CONTAINER_SDK_ENABLE_AUTOENTER') == '1':
+            os.system("podman ps --filter label=io.webkit.container=wkdev-build -q | xargs -r podman kill")
+
     else:
         sys.exit()
         # FIXME: Should we return an exit code based on how the kills went?
