@@ -201,10 +201,10 @@ bool CookieJar::getRawCookies(Document& document, const URL& url, Vector<Cookie>
     return false;
 }
 
-void CookieJar::setRawCookie(const Document&, const Cookie& cookie, ShouldPartitionCookie)
+void CookieJar::setRawCookie(const Document& document, const URL& url, const Cookie& cookie, ShouldPartitionCookie)
 {
     if (CheckedPtr session = m_storageSessionProvider->storageSession())
-        session->setCookie(cookie);
+        session->setCookie(cookie, url, document.firstPartyForCookies());
     else
         ASSERT_NOT_REACHED();
 }

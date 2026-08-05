@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that setRawCookie is blocked by ITP when called from a third-party context.");
+    jsTestIsAsync = true;
+
+    const thirdPartyOrigin = "http://localhost:8000";
+    const cookieName = "crossSiteCookie";
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler)
+            element.onload = onLoadHandler;
+        document.body.appendChild(element);
+    }
+
+    function runTest() {
+        // Step 1: iframe from localhost calls internals.setCookie({domain: "localhost", ...}).
+        // IPC: firstParty=127.0.0.1, url=localhost → shouldBlockCookies should block it.
+        openIframe(thirdPartyOrigin + "/resourceLoadStatistics/resources/set-raw-cookie.html", function() {
+            // Step 2: disable ITP before verifying so cookies are not blocked on the read side.
+            // If the cookie was stored despite the fix, it will be visible here.
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                testRunner.dumpChildFramesAsText();
+                openIframe(thirdPartyOrigin + "/resourceLoadStatistics/resources/get-cookies.py?name1=" + cookieName + "&message=Cross-site cookie result:", function() {
+                    setEnableFeature(false, finishJSTest);
+                });
+            });
+        });
+    }
+
+    setEnableFeature(true, function() {
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest);
+    });
+</script>
+</body>
+</html>
