@@ -269,6 +269,7 @@ private:
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty() const;
     HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccess() const;
+    void updateObservedDomainsList(ASCIILiteral updateClause, const HashSet<RegistrableDomain>&, ASCIILiteral logContext);
 
     struct DomainData {
         unsigned domainID;
@@ -333,7 +334,7 @@ private:
     Seconds getMostRecentlyUpdatedTimestamp(const RegistrableDomain&, const TopFrameDomain&) const;
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     std::span<const ASCIILiteral> sortedTables() final;
-    String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
+    Vector<RegistrableDomain> ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
     std::optional<WallTime> NODELETE mostRecentUserInteractionTime(const DomainData&);
     void grandfatherDataForDomains(const HashSet<RegistrableDomain>&);
     bool areAllUnpartitionedThirdPartyCookiesBlockedUnder(const TopFrameDomain&);
