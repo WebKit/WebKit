@@ -46,10 +46,10 @@ struct YarrPattern;
 struct PatternDisjunction;
 
 // Superset of the Latin-1 bytes that can begin a match (a clear bit guarantees no match begins
-// there), or nullopt when not useful. computeAnchored additionally requires the pattern be
-// ^-anchored at position 0 (not multiline). Safe to call on a compiler thread.
-std::optional<WTF::BitSet<256>> computeStickyFirstCharacterBitmap(StringView, OptionSet<Flags>);
-std::optional<WTF::BitSet<256>> computeAnchoredFirstCharacterBitmap(StringView, OptionSet<Flags>);
+// there), or nullopt when no sound filter exists. The filter position is selected from the flags:
+// sticky filters at lastIndex; a non-global non-sticky pattern filters at position 0 (only when
+// ^-anchored and not multiline); any other pattern has no filter. Safe to call on a compiler thread.
+std::optional<WTF::BitSet<256>> computeFirstCharacterBitmap(StringView, OptionSet<Flags>);
 
 enum class CompileMode : uint8_t {
     Legacy,

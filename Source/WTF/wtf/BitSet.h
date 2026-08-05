@@ -141,7 +141,7 @@ public:
     std::span<WordType> storage() LIFETIME_BOUND { return bits; }
     std::span<const WordType> storage() const LIFETIME_BOUND { return bits; }
 
-    constexpr size_t storageLengthInBytes() { return sizeof(bits); }
+    constexpr size_t storageLengthInBytes() const { return sizeof(bits); }
 
     std::span<uint8_t> storageBytes() LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(bits.data()), storageLengthInBytes()); }
     std::span<const uint8_t> storageBytes() const LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(bits.data()), storageLengthInBytes()); }
