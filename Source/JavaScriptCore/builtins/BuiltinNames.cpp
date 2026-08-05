@@ -82,6 +82,11 @@ BuiltinNames::BuiltinNames(VM& vm, CommonIdentifiers* commonIdentifiers)
     , m_polyProtoPrivateName(Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::polyProtoPrivateName)))
     , m_stackPrivateName(Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::stackPrivateName)))
 {
+    // Pre-size so the set does not rehash repeatedly while it fills. It holds JSC's own private
+    // names and well-known symbols, plus whatever the embedder appends through appendExternalName -
+    // WebCore adds about 750 of them, which is what dominates the final size.
+    m_privateNameSet.reserveInitialCapacity(1024);
+
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_WELL_KNOWN_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY)

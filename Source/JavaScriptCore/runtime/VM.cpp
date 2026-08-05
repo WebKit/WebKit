@@ -323,6 +323,16 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
+
+    // A VM interns on the order of two thousand identifiers while starting up: CommonIdentifiers,
+    // BuiltinNames, SmallStrings, and whatever the embedder adds on top. On a fresh thread the table
+    // starts empty and rehashes its way up to that size, so size it once up front instead. Only when
+    // it is still empty, so a thread that already has atoms keeps whatever it has grown to.
+    if (m_atomStringTable->table().isEmpty()) {
+        m_atomStringTable->table().clear();
+        m_atomStringTable->table().reserveInitialCapacity(2048);
+    }
+
     AtomStringTable* existingEntryAtomStringTable = Thread::currentSingleton().setCurrentAtomStringTable(m_atomStringTable);
     structureStructure.setWithoutWriteBarrier(Structure::createStructure(*this));
     structureRareDataStructure.setWithoutWriteBarrier(StructureRareData::createStructure(*this, nullptr, jsNull()));
