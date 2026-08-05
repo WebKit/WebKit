@@ -4678,6 +4678,12 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
             newColumnHeight = std::max<LayoutUnit>(computedValues.extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
                 relayoutChildren = RelayoutChildren::Yes;
+        } else if (enclosingFragmentedFlow()) {
+            if (LayoutUnit outerColumnHeight = pageLogicalHeightForOffset(logicalTop())) {
+                newColumnHeight = std::max<LayoutUnit>(outerColumnHeight - borderAndPaddingLogicalHeight(), 0);
+                if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
+                    relayoutChildren = RelayoutChildren::Yes;
+            }
         }
         fragmentedFlow->setColumnHeightAvailable(newColumnHeight);
     } else if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this)) {
