@@ -12481,11 +12481,33 @@
             "status": "non-standard"
         },
         "-webkit-user-select": {
-            "animation-type": "not animatable (needs triage)",
-            "animation-type-comment": "Current spec for standard 'user-select' animation type is 'discrete'",
+            "animation-type": "not animatable (legacy)",
             "inherited": true,
             "initial": "text",
-            "initial-comment": "Current spec for standard 'user-select' initial is 'auto'",
+            "initial-comment": "Legacy behavior - 'auto' is folded into 'text'",
+            "values": [
+                "auto",
+                "text",
+                "none",
+                "all"
+            ],
+            "codegen-properties": {
+                "computed-style-has-explicitly-set-policy": "value-only",
+                "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData"],
+                "computed-style-name-for-methods": "WebkitUserSelect",
+                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "UserSelect",
+                "parser-grammar": "<<values>>",
+                "comment": "Not an alias of 'user-select': this property is inherited, it overrides 'user-select' whenever it has been specified (hence the has-explicitly-set flag)."
+            },
+            "status": "non-standard"
+        },
+        "user-select": {
+            "animation-type": "not animatable (needs triage)",
+            "animation-type-comment": "Current spec animation type is 'discrete'",
+            "inherited": false,
+            "initial": "auto",
             "values": [
                 "auto",
                 "text",
@@ -12497,10 +12519,11 @@
                 "all"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_nonInheritedData", "miscData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "settings-flag": "cssUnprefixedUserSelectEnabled"
             },
             "status": {
                 "status": "experimental"

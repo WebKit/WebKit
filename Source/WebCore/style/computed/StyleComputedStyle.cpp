@@ -528,7 +528,7 @@ UserSelect ComputedStyle::usedUserSelect() const
     if (effectiveInert())
         return UserSelect::None;
 
-    auto value = userSelect();
+    auto value = webkitUserSelect();
     if (userModify() != UserModify::ReadOnly && userDrag() != UserDrag::Element)
         return value == UserSelect::None ? UserSelect::Text : value;
 
