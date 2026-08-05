@@ -25,39 +25,51 @@
 
 #pragma once
 
+#include <WebCore/CharacterRange.h>
 #include <WebCore/FindOptions.h>
+#include <span>
 #include <unicode/usearch.h>
+#include <wtf/Function.h>
+#include <wtf/IterationStatus.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class ICUSearcher {
+class TextMatcher {
+    WTF_MAKE_NONCOPYABLE(TextMatcher);
 public:
-    explicit ICUSearcher(const String& foldedTarget, FindOptions&);
-    ~ICUSearcher();
-    void setCollationStrength(UCollationStrength);
-    void setAttribute(USearchAttribute, USearchAttributeValue);
-    void setPattern(std::span<const char16_t>);
-    void setText(std::span<const char16_t>);
-    void setOffset(size_t);
-    std::optional<size_t> next();
-#if !PLATFORM(PLAYSTATION)
-    std::optional<size_t> previous();
-#endif
-    size_t matchedLength();
+    WEBCORE_EXPORT TextMatcher(const String& target, FindOptions);
+    WEBCORE_EXPORT ~TextMatcher();
+
+    FindOptions options() const { return m_options; }
+
+    WEBCORE_EXPORT void forEachMatch(StringView, size_t startOffset, NOESCAPE const Function<IterationStatus(CharacterRange)>&) const;
+    WEBCORE_EXPORT void forEachCandidate(std::span<const char16_t>, size_t startOffset, NOESCAPE const Function<IterationStatus(CharacterRange)>&) const;
+    WEBCORE_EXPORT bool isAcceptableMatch(std::span<const char16_t>, CharacterRange) const;
+
 private:
-    UStringSearch* searcher();
-    void reset();
-    void NODELETE lock();
-    void NODELETE unlock();
+    void setText(std::span<const char16_t>) const;
+    void clearText() const;
+    void setOffset(size_t) const;
+    std::optional<CharacterRange> next() const;
+    std::optional<CharacterRange> nextInDirection(bool backwards) const;
+#if !PLATFORM(PLAYSTATION)
+    std::optional<CharacterRange> previous() const;
+#endif
+
+    const String m_target;
+    const StringView::UpconvertedCharacters m_targetCharacters;
+    const FindOptions m_options;
+    bool m_requiresKanaWorkaround { false };
+    Vector<char16_t> m_normalizedTarget;
+    mutable Vector<char16_t> m_normalizedMatch;
+    UStringSearch* m_searcher { nullptr };
 };
 
-bool isBadMatch(std::span<const char16_t> match, std::span<const char16_t> normalizedTarget, Vector<char16_t>& scratchBuffer);
-bool isWordStartMatch(std::span<const char16_t> buffer, size_t matchStart, size_t matchLength, FindOptions);
-bool isWordEndMatch(std::span<const char16_t> buffer, size_t matchStart, size_t matchLength, FindOptions);
-void normalizeCharacters(const char16_t* characters, unsigned length, Vector<char16_t>& buffer);
 char16_t foldQuoteMarkAndReplaceNoBreakSpace(char16_t);
-bool containsKanaLetters(const String& pattern);
-bool isSeparator(char32_t character);
 WEBCORE_EXPORT String foldQuoteMarks(const String&);
 
 } // namespace WebCore

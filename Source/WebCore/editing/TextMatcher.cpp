@@ -24,172 +24,232 @@
  */
 
 #include "config.h"
-#include "ICUSearcher.h"
+#include "TextMatcher.h"
 
 #include "FontCascade.h"
 #include "TextBoundaries.h"
 #include <limits>
+#include <ranges>
 #include <wtf/ASCIICType.h>
 #include <wtf/Compiler.h>
+#include <wtf/Scope.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WebCore {
 
-static bool searcherInUse;
+static bool isKanaLetter(char16_t);
+static bool isSmallKanaLetter(char16_t);
+enum class VoicedSoundMarkType { NoVoicedSoundMark, VoicedSoundMark, SemiVoicedSoundMark };
+static VoicedSoundMarkType composedVoicedSoundMark(char16_t);
+static bool isCombiningVoicedSoundMark(char16_t);
+static bool isNonLatin1Separator(char32_t);
+static bool isSeparator(char32_t);
+static bool containsKanaLetters(const String&);
+static void normalizeCharacters(const char16_t*, unsigned length, Vector<char16_t>&);
+static bool isBadMatch(std::span<const char16_t> match, std::span<const char16_t> normalizedTarget, Vector<char16_t>& scratchBuffer);
+static bool isWordStartMatch(std::span<const char16_t>, size_t matchStart, size_t matchLength, FindOptions);
+static bool isWordEndMatch(std::span<const char16_t>, size_t matchStart, size_t matchLength, FindOptions);
 
-static UStringSearch* createSearcher()
+// Characters in the separator category never really occur at the beginning of a word,
+// so if the target begins with such a character, we just ignore the AtWordStart option.
+static FindOptions effectiveOptions(const String& foldedTarget, FindOptions options)
 {
-    // Provide a non-empty pattern and non-empty text so usearch_open will not fail,
-    // but it doesn't matter exactly what it is, since we don't perform any searches
-    // without setting both the pattern and the text.
-    UErrorCode status = U_ZERO_ERROR;
-    auto searchCollatorName = makeString(unsafeSpan(currentSearchLocaleID()), "@collation=search"_s);
-    SUPPRESS_FORWARD_DECL_ARG UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8().data(), 0, &status);
-    ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
-    return searcher;
-}
-
-static UStringSearch* globalSearcher()
-{
-    SUPPRESS_FORWARD_DECL_ARG static UStringSearch* searcher = createSearcher();
-    return searcher;
-}
-
-ICUSearcher::ICUSearcher(const String& foldedTarget, FindOptions& options)
-{
-    lock();
-    // Characters in the separator category never really occur at the beginning of a word,
-    // so if the target begins with such a character, we just ignore the AtWordStart option.
     if (options.contains(FindOption::AtWordStarts) && foldedTarget.length()) {
         char32_t targetFirstCharacter;
         U16_GET(foldedTarget, 0, 0u, foldedTarget.length(), targetFirstCharacter);
         if (isSeparator(targetFirstCharacter))
             options.remove(FindOption::AtWordStarts);
     }
-
-    UCollationStrength strength = options.contains(FindOption::CaseInsensitive) ? UCOL_SECONDARY : UCOL_TERTIARY;
-    USearchAttributeValue comparator = options.contains(FindOption::CaseInsensitive)
-        ? USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD
-        : USEARCH_STANDARD_ELEMENT_COMPARISON;
-
-    setCollationStrength(strength);
-    setAttribute(USEARCH_ELEMENT_COMPARISON, comparator);
+    return options;
 }
 
-ICUSearcher::~ICUSearcher()
+static UStringSearch* createSearcher(std::span<const char16_t> pattern, FindOptions options)
 {
-    reset();
-    unlock();
-}
+    ASSERT(!pattern.empty());
 
-// Grab the single global searcher.
-// If we ever have a reason to do more than once search buffer at once, we'll have
-// to move to multiple searchers.
-void ICUSearcher::lock()
-{
-    RELEASE_ASSERT(!searcherInUse);
-    searcherInUse = true;
-}
-
-void ICUSearcher::unlock()
-{
-    RELEASE_ASSERT(searcherInUse);
-    searcherInUse = false;
-}
-
-void ICUSearcher::reset()
-{
-    // Leave the static object pointing to a valid string.
+    // Provide a non-empty text so usearch_open will not fail, but it doesn't matter
+    // exactly what it is, since we don't perform any searches without setting the text.
     UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG usearch_setPattern(globalSearcher(), &newlineCharacter, 1, &status);
-    ASSERT(U_SUCCESS(status));
-    SUPPRESS_FORWARD_DECL_ARG usearch_setText(globalSearcher(), &newlineCharacter, 1, &status);
-    ASSERT(U_SUCCESS(status));
-}
+    auto searchCollatorName = makeString(unsafeSpan(currentSearchLocaleID()), "@collation=search"_s);
+    SUPPRESS_FORWARD_DECL_ARG UStringSearch* searcher = usearch_open(pattern.data(), static_cast<int32_t>(pattern.size()), &newlineCharacter, 1, searchCollatorName.utf8().data(), 0, &status);
+    ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
+    if (!searcher)
+        return nullptr;
 
-UStringSearch* ICUSearcher::searcher()
-{
-    return globalSearcher();
-}
+    bool caseInsensitive = options.contains(FindOption::CaseInsensitive);
 
-void ICUSearcher::setCollationStrength(UCollationStrength strength)
-{
-    SUPPRESS_FORWARD_DECL_ARG auto* s = searcher();
-    SUPPRESS_FORWARD_DECL_ARG auto* collator = usearch_getCollator(s);
+    SUPPRESS_FORWARD_DECL_ARG auto* collator = usearch_getCollator(searcher);
+    auto strength = caseInsensitive ? UCOL_SECONDARY : UCOL_TERTIARY;
     if (ucol_getStrength(collator) != strength) {
         ucol_setStrength(collator, strength);
-        SUPPRESS_FORWARD_DECL_ARG usearch_reset(s);
+        SUPPRESS_FORWARD_DECL_ARG usearch_reset(searcher);
     }
+
+    status = U_ZERO_ERROR;
+    auto comparator = caseInsensitive ? USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD : USEARCH_STANDARD_ELEMENT_COMPARISON;
+    SUPPRESS_FORWARD_DECL_ARG usearch_setAttribute(searcher, USEARCH_ELEMENT_COMPARISON, comparator, &status);
+    ASSERT(U_SUCCESS(status));
+
+    return searcher;
 }
 
-void ICUSearcher::setAttribute(USearchAttribute attribute, USearchAttributeValue value)
+TextMatcher::TextMatcher(const String& target, FindOptions options)
+    : m_target(foldQuoteMarks(target))
+    , m_targetCharacters(StringView(m_target).upconvertedCharacters())
+    , m_options(effectiveOptions(m_target, options))
+{
+    if (m_target.isEmpty())
+        return;
+
+    // The kana workaround requires a normalized copy of the target string.
+    m_requiresKanaWorkaround = containsKanaLetters(m_target);
+    if (m_requiresKanaWorkaround)
+        normalizeCharacters(m_targetCharacters, m_target.length(), m_normalizedTarget);
+
+    m_searcher = createSearcher(m_targetCharacters.span(), m_options);
+}
+
+TextMatcher::~TextMatcher()
+{
+    if (m_searcher)
+        SUPPRESS_FORWARD_DECL_ARG usearch_close(m_searcher);
+}
+
+void TextMatcher::setText(std::span<const char16_t> text) const
 {
     UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG usearch_setAttribute(searcher(), attribute, value, &status);
+    SUPPRESS_FORWARD_DECL_ARG usearch_setText(m_searcher, text.data(), static_cast<int32_t>(text.size()), &status);
     ASSERT(U_SUCCESS(status));
 }
 
-void ICUSearcher::setPattern(std::span<const char16_t> pattern)
+void TextMatcher::clearText() const
+{
+    setText({ &newlineCharacter, 1 });
+}
+
+void TextMatcher::setOffset(size_t offset) const
 {
     UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG usearch_setPattern(searcher(), pattern.data(), static_cast<int32_t>(pattern.size()), &status);
+    SUPPRESS_FORWARD_DECL_ARG usearch_setOffset(m_searcher, static_cast<int32_t>(offset), &status);
     ASSERT(U_SUCCESS(status));
 }
 
-void ICUSearcher::setText(std::span<const char16_t> text)
+std::optional<CharacterRange> TextMatcher::next() const
 {
     UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG usearch_setText(searcher(), text.data(), static_cast<int32_t>(text.size()), &status);
-    ASSERT(U_SUCCESS(status));
-}
-
-void ICUSearcher::setOffset(size_t offset)
-{
-    UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG usearch_setOffset(searcher(), static_cast<int32_t>(offset), &status);
-    ASSERT(U_SUCCESS(status));
-}
-
-std::optional<size_t> ICUSearcher::next()
-{
-    UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG int32_t result = usearch_next(searcher(), &status);
+    SUPPRESS_FORWARD_DECL_ARG int32_t result = usearch_next(m_searcher, &status);
     ASSERT(U_SUCCESS(status));
     if (result == USEARCH_DONE)
         return std::nullopt;
-    return static_cast<size_t>(result);
+    SUPPRESS_FORWARD_DECL_ARG int32_t length = usearch_getMatchedLength(m_searcher);
+    return CharacterRange { static_cast<uint64_t>(result), static_cast<uint64_t>(length) };
 }
 
 #if !PLATFORM(PLAYSTATION)
-std::optional<size_t> ICUSearcher::previous()
+std::optional<CharacterRange> TextMatcher::previous() const
 {
     UErrorCode status = U_ZERO_ERROR;
-    SUPPRESS_FORWARD_DECL_ARG int32_t result = usearch_previous(searcher(), &status);
+    SUPPRESS_FORWARD_DECL_ARG int32_t result = usearch_previous(m_searcher, &status);
     ASSERT(U_SUCCESS(status));
     if (result == USEARCH_DONE)
         return std::nullopt;
-    return static_cast<size_t>(result);
+    SUPPRESS_FORWARD_DECL_ARG int32_t length = usearch_getMatchedLength(m_searcher);
+    return CharacterRange { static_cast<uint64_t>(result), static_cast<uint64_t>(length) };
 }
 #endif
 
-size_t ICUSearcher::matchedLength()
+std::optional<CharacterRange> TextMatcher::nextInDirection(bool backwards) const
 {
-    SUPPRESS_FORWARD_DECL_ARG int32_t result = usearch_getMatchedLength(searcher());
-    return static_cast<size_t>(result);
+#if !PLATFORM(PLAYSTATION)
+    return backwards ? previous() : next();
+#else
+    ASSERT(!backwards);
+    UNUSED_PARAM(backwards);
+    return next();
+#endif
 }
 
-static bool isKanaLetter(char16_t character);
-static bool isSmallKanaLetter(char16_t character);
-enum class VoicedSoundMarkType { NoVoicedSoundMark, VoicedSoundMark, SemiVoicedSoundMark };
-static VoicedSoundMarkType composedVoicedSoundMark(char16_t character);
-static bool isCombiningVoicedSoundMark(char16_t character);
-static bool isNonLatin1Separator(char32_t character);
+bool TextMatcher::isAcceptableMatch(std::span<const char16_t> text, CharacterRange match) const
+{
+    auto start = static_cast<size_t>(match.location);
+    auto length = static_cast<size_t>(match.length);
 
-bool isBadMatch(std::span<const char16_t> match, std::span<const char16_t> normalizedTarget, Vector<char16_t>& scratchBuffer)
+    if (m_requiresKanaWorkaround && isBadMatch(text.subspan(start, length), m_normalizedTarget.span(), m_normalizedMatch))
+        return false;
+    if (m_options.contains(FindOption::AtWordStarts) && !isWordStartMatch(text, start, length, m_options))
+        return false;
+    if (m_options.contains(FindOption::AtWordEnds) && !isWordEndMatch(text, start, length, m_options))
+        return false;
+    return true;
+}
+
+void TextMatcher::forEachCandidate(std::span<const char16_t> text, size_t startOffset, NOESCAPE const Function<IterationStatus(CharacterRange)>& callback) const
+{
+    if (!m_searcher || text.empty())
+        return;
+
+    setText(text);
+    auto restoreText = makeScopeExit([&] {
+        clearText();
+    });
+
+    setOffset(startOffset);
+    while (auto candidate = next()) {
+        if (callback(*candidate) == IterationStatus::Done)
+            return;
+    }
+}
+
+void TextMatcher::forEachMatch(StringView text, size_t startOffset, NOESCAPE const Function<IterationStatus(CharacterRange)>& callback) const
+{
+    if (!m_searcher || text.isEmpty())
+        return;
+
+    StringView::UpconvertedCharacters upconverted(text);
+    auto span = upconverted.span();
+
+    setText(span);
+    auto restoreText = makeScopeExit([&] {
+        clearText();
+    });
+
+    bool backwards = m_options.contains(FindOption::Backwards);
+
+#if PLATFORM(PLAYSTATION)
+    if (backwards) {
+        setOffset(0);
+        Vector<CharacterRange> matches;
+        while (auto candidate = next()) {
+            if (candidate->location >= startOffset || !candidate->length)
+                break;
+            if (isAcceptableMatch(span, *candidate))
+                matches.append(*candidate);
+        }
+        for (auto& match : matches | std::views::reverse) {
+            if (callback(match) == IterationStatus::Done)
+                return;
+        }
+        return;
+    }
+#endif
+
+    setOffset(startOffset);
+    while (auto candidate = nextInDirection(backwards)) {
+        if (!candidate->length)
+            break;
+        if (!isAcceptableMatch(span, *candidate))
+            continue;
+        if (callback(*candidate) == IterationStatus::Done)
+            return;
+    }
+}
+
+static bool isBadMatch(std::span<const char16_t> match, std::span<const char16_t> normalizedTarget, Vector<char16_t>& scratchBuffer)
 {
     // Normalize into a match buffer. We reuse a single buffer rather than
     // creating a new one each time.
@@ -319,7 +379,7 @@ static std::pair<std::span<const char16_t>, size_t> wordBreakContext(std::span<c
     return boundedWordContextForNonComplexText(buffer, start, length);
 }
 
-bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t length, FindOptions options)
+static bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t length, FindOptions options)
 {
     ASSERT(options.contains(FindOption::AtWordStarts));
 
@@ -377,7 +437,7 @@ bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t len
     return wordBreakSearchStart == adjustedStart;
 }
 
-bool isWordEndMatch(std::span<const char16_t> buffer, size_t start, size_t length, FindOptions options)
+static bool isWordEndMatch(std::span<const char16_t> buffer, size_t start, size_t length, FindOptions options)
 {
     ASSERT(length);
     ASSERT(options.contains(FindOption::AtWordEnds));
@@ -397,7 +457,7 @@ bool isWordEndMatch(std::span<const char16_t> buffer, size_t start, size_t lengt
     return static_cast<size_t>(endWord) == adjustedStart + length;
 }
 
-void normalizeCharacters(const char16_t* characters, unsigned length, Vector<char16_t>& buffer)
+static void normalizeCharacters(const char16_t* characters, unsigned length, Vector<char16_t>& buffer)
 {
     UErrorCode status = U_ZERO_ERROR;
     auto* normalizer = unorm2_getNFCInstance(&status);
@@ -451,7 +511,7 @@ char16_t NODELETE foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
     }
 }
 
-bool isSeparator(char32_t character)
+static bool isSeparator(char32_t character)
 {
     static constexpr std::array<bool, 256> latin1SeparatorTable {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -478,7 +538,7 @@ bool isSeparator(char32_t character)
     return isNonLatin1Separator(character);
 }
 
-bool NODELETE containsKanaLetters(const String& pattern)
+static bool NODELETE containsKanaLetters(const String& pattern)
 {
     if (pattern.is8Bit())
         return false;

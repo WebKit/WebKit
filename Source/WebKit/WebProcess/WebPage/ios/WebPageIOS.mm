@@ -134,7 +134,6 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HitTestSource.h>
-#import <WebCore/ICUSearcher.h>
 #import <WebCore/Image.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/InputMode.h>
@@ -186,6 +185,7 @@
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
+#import <WebCore/TextMatcher.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/ViewportArguments.h>
