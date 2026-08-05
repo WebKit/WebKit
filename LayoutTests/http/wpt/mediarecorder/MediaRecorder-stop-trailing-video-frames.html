@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder trailing video frames</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="divplayer"></div>
+<div id="canvasreference"></div>
+<div id="canvascopy"></div>
+<script>
+    function waitForEvent(object, eventName, testName) {
+        return new Promise((resolve, reject) => {
+            object.addEventListener(eventName, (e) => resolve(e), { once: true });
+            setTimeout(() => reject("waitForEvent " + (testName ? (testName + " ") : "") + "timed out for " + eventName), 2500);
+        });
+    }
+
+    async function runTest(mimeType) {
+        let context;
+        let drawStartTime;
+        // Needs to be a globabl variable to avoid being GCed (webkit.org/b/271227)
+        let oscillator;
+
+        const width = 200;
+        const height = 200;
+
+        function createVideoStream() {
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            canvasreference.appendChild(canvas);
+            context = canvas.getContext('2d');
+            return canvas.captureStream();
+        }
+        const ac = new AudioContext();
+        oscillator = ac.createOscillator();
+        const dest = ac.createMediaStreamDestination();
+        const audio = dest.stream;
+        oscillator.connect(dest);
+        oscillator.start();
+
+        const video = createVideoStream();
+        video.addTrack(audio.getAudioTracks()[0]);
+        assert_true(MediaRecorder.isTypeSupported(mimeType));
+        const recorder = new MediaRecorder(video, { mimeType });
+
+        function drawColor(fillStyle) {
+            context.fillStyle = fillStyle;
+            context.fillRect(0, 0, width, height);
+        }
+
+        function doRedImageDraw() {
+            drawColor("#ff0000");
+            if (Date.now() - drawStartTime < 300)
+                window.requestAnimationFrame(doRedImageDraw);
+            else {
+                drawStartTime = Date.now();
+                doGreenImageDraw();
+            }
+        }
+
+        function doGreenImageDraw() {
+            drawColor("#00ff00");
+            if (Date.now() - drawStartTime < 300)
+                window.requestAnimationFrame(doGreenImageDraw);
+            else {
+                drawStartTime = Date.now();
+                doBlueImageDraw();
+            }
+        }
+
+        let blueFrameCount = 0;
+        function doBlueImageDraw() {
+            drawColor("#0000ff");
+            blueFrameCount++;
+            if (blueFrameCount < 5 || Date.now() - drawStartTime < 300)
+                window.requestAnimationFrame(doBlueImageDraw);
+            else if (recorder.state == 'recording')
+                recorder.stop();
+        }
+
+        drawStartTime = Date.now();
+        doRedImageDraw();
+        recorder.start();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+
+        const blobEvent = await waitForEvent(recorder, 'dataavailable');
+        assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+        assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
+
+        const player = document.createElement("video");
+        divplayer.appendChild(player);
+        player.disableRemotePlayback = true;
+        player.src = URL.createObjectURL(blobEvent.data);
+        await waitForEvent(player, 'canplay');
+
+        const resFrame = document.createElement("canvas");
+        resFrame.width = width;
+        resFrame.height = height;
+        canvascopy.appendChild(resFrame);
+        const resContext = resFrame.getContext('2d');
+
+        assert_greater_than(player.duration, 0.3, 'the duration should be greater than .3s');
+
+        const seenColors = new Set();
+        let samplesAfterEnded = 10;
+        const samplingDone = new Promise(resolve => {
+            function sampleFrame() {
+                resContext.drawImage(player, 0, 0);
+                const [r, g, b] = resContext.getImageData(20, 20, 1, 1).data;
+                if (r > 200 && g < 80 && b < 80)
+                    seenColors.add('red');
+                else if (g > 200 && r < 80 && b < 80)
+                    seenColors.add('green');
+                else if (b > 200 && r < 80 && g < 80)
+                    seenColors.add('blue');
+                if (player.ended && --samplesAfterEnded < 0)
+                    return resolve();
+                requestAnimationFrame(sampleFrame);
+            }
+            requestAnimationFrame(sampleFrame);
+        });
+
+        await player.play();
+        await waitForEvent(player, 'ended');
+        await samplingDone;
+        assert_true(seenColors.has('red'), 'red frames should have been played');
+        assert_true(seenColors.has('blue'), 'the trailing blue frames should have been played');
+    }
+
+    promise_test(async (test) => {
+        const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm; codecs=vp8,opus';
+        return runTest(mimeType);
+    }, 'Video frames drawn right before stop() are present in the recording');
+</script>
+</body>
+</html>

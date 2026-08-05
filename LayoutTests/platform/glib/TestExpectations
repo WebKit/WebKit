@@ -1794,6 +1794,7 @@ webkit.org/b/307032 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 # No support for Matroska container in GStreamer port.
 http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html
 
+webkit.org/b/293119 http/wpt/mediarecorder/MediaRecorder-stop-trailing-video-frames.html [ Failure ]
 webkit.org/b/293119 http/wpt/mediarecorder/MediaRecorder-webm-AV-audio-video-dataavailable.html [ Failure ]
 
 # The "Pausing and resuming the recording should impact the video duration" test fails.

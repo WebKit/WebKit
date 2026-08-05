@@ -1,0 +1,4 @@
+
+
+PASS Video frames drawn right before stop() are present in the recording
+
