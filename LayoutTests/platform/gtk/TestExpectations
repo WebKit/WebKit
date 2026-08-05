@@ -987,7 +987,6 @@ editing/pasteboard/paste-rtl-paragraph-with-leading-ltr-text.html [ ImageOnlyFai
 
 webkit.org/b/308631 fast/flexbox/001.html [ Failure Pass ]
 
-webkit.org/b/321073 inspector/canvas/console-record-offscreen-canvas-2d.html [ Failure ]
 webkit.org/b/321074 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
