@@ -2498,6 +2498,48 @@ TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
     runJSCheck("!!self.LockManager"_s); // WebLockManager API.
 }
 
+TEST(ServiceWorkers, SharedWorkerReusesProcessAfterCOOPProcessSwap)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/no-coop.html"_s, { "<body>Hello world!</body>"_s } },
+        { "/coop.html"_s, { {{ "Cross-Origin-Opener-Policy"_s, "same-origin"_s }}, "<script>const worker = new SharedWorker('sharedWorker.js'); worker.port.start();</script>"_s } },
+        { "/sharedWorker.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, "onconnect = e => { e.ports[0].start(); };"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // First page is loaded without COOP.
+    [webView loadRequest:server.request("/no-coop.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto sourcePID = [webView _webProcessIdentifier];
+
+    // Second page is loaded with COOP, which triggers a BCG switch. This page also creates a
+    // SharedWorker.
+    [webView loadRequest:server.request("/coop.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto coopPID = [webView _webProcessIdentifier];
+
+    // The BCG switch should result in a new process.
+    EXPECT_NE(sourcePID, coopPID);
+
+    // The SharedWorker should run in the same process as the second page.
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&]() -> bool {
+        bool foundSharedWorkerProcess = false;
+        bool sharedWorkerInPageProcess = false;
+        for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfoForTesting]) {
+            if (!info.runningSharedWorkers)
+                continue;
+            foundSharedWorkerProcess = true;
+            if (info.pid == coopPID)
+                sharedWorkerInPageProcess = true;
+        }
+        return foundSharedWorkerProcess && sharedWorkerInPageProcess;
+    }));
+}
+
 enum class UseSeparateServiceWorkerProcess : bool { No, Yes };
 void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess useSeparateServiceWorkerProcess)
 {

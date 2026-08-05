@@ -199,6 +199,7 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 + (_WKProcessInfo *)_gpuProcessInfo WK_API_AVAILABLE(macos(14.5));
 + (NSArray<_WKProcessInfo *> *)_networkingProcessInfo WK_API_AVAILABLE(macos(14.5));
 + (NSArray<_WKProcessInfo *> *)_webContentProcessInfo WK_API_AVAILABLE(macos(14.5));
++ (NSArray<_WKProcessInfo *> *)_webContentProcessInfoForTesting;
 @end
 
 @interface WKProcessPool (WKPrivateMac)

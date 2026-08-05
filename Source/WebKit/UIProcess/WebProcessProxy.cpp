@@ -2470,6 +2470,30 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     RELEASE_ASSERT(!isInProcessCache());
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "didStartProvisionalLoadForMainFrame:");
 
+    updateSiteForMainFrameNavigation(url);
+}
+
+void WebProcessProxy::didCommitMainFrameLoadWithoutSiteIsolation(const URL& url)
+{
+    RELEASE_ASSERT(!isInProcessCache());
+
+    // We need to update site state both in didStartProvisionalLoad and didCommitMainFrameLoad when
+    // Site Isolation is disabled. For instance:
+    //
+    // - Process A starts a provisional load
+    // - Response forces a BCG switch (e.g. due to COOP response header)
+    // - Process B commits the load after the BCG switch
+    //
+    // Now both process A and B have to update the sites associated with their WebProcessProxy. This
+    // code takes care of updating the state for process B.
+    //
+    // This is not necessary when site isolation is enabled, since that goes down a different site
+    // update path even in the case of a BCG switch (didStartUsingProcessForSiteIsolation).
+    updateSiteForMainFrameNavigation(url);
+}
+
+void WebProcessProxy::updateSiteForMainFrameNavigation(const URL& url)
+{
     // This process has been used for several registrable domains already.
     if (!m_site && m_site.error() == SiteState::MultipleSites)
         return;
