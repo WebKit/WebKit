@@ -5246,7 +5246,7 @@ TrackingType WebPageProxy::touchEventTrackingType(const WebTouchEvent& touchStar
 #if ENABLE(MAC_GESTURE_EVENTS)
 void WebPageProxy::sendGestureEvent(FrameIdentifier frameID, const NativeWebGestureEvent& event)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::GestureEvent(frameID, webPageIDInProcess(processContainingFrame(frameID)), event), [protectedThis = Ref { *this }, event] (IPC::Connection* connection, std::optional<WebEventType>&& eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData>&& remoteUserInputEventData) {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::GestureEvent(frameID, webPageIDInProcess(processContainingFrame(frameID)), event), [protectedThis = Ref { *this }](IPC::Connection* connection, std::optional<WebEventType>&& eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData>&& remoteUserInputEventData) {
         if (!protectedThis->m_pageClient)
             return;
         if (!eventType)
