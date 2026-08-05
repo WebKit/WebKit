@@ -831,6 +831,8 @@ void Heap::finalizeUnconditionalFinalizers()
     if (m_webAssemblyInstanceSpace)
         finalizeMarkedUnconditionalFinalizers<JSWebAssemblyInstance>(*m_webAssemblyInstanceSpace, collectionScope);
 #endif
+
+    vm().finalizeUnconditionally();
 }
 
 void Heap::willStartIterating()

@@ -27,11 +27,14 @@
 #include "MicrotaskCall.h"
 
 #include "CodeBlock.h"
+#include "HeapInlines.h"
 #include "Interpreter.h"
 #include "JSFunctionInlines.h"
 #include "ThrowScope.h"
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MicrotaskCallCache);
 
 void MicrotaskCall::initialize(VM& vm, JSFunction* function)
 {
@@ -68,6 +71,18 @@ void MicrotaskCall::unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock*
         return;
     }
     m_addressForCall = nullptr;
+}
+
+void MicrotaskCall::visitWeak(VM& vm)
+{
+    if ((m_functionExecutable && !vm.heap.isMarked(m_functionExecutable)) || (m_codeBlock && !vm.heap.isMarked(m_codeBlock))) {
+        if (isOnList())
+            remove();
+        m_addressForCall = nullptr;
+        m_codeBlock = nullptr;
+        m_functionExecutable = nullptr;
+        m_numParameters = 0;
+    }
 }
 
 } // namespace JSC
