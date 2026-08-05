@@ -307,6 +307,14 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
 - (void)requestContainerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
 - (void)requestContainerHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
+/*!
+ Asynchronously map a node identifier string to the frame whose content the node belongs to.
+ @param nodeIdentifier  The unique ID of an `iframe` (or other frame owner element), in which case
+                        the frame hosted by that element is returned; otherwise, the frame
+                        containing the node corresponding to this ID is returned.
+ */
+- (void)requestFrameInfoForNodeIdentifier:(NSString *)nodeIdentifier completionHandler:(void (^)(WKFrameInfo * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {

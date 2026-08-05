@@ -1995,6 +1995,11 @@ void WebFrame::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTex
     completion({ WTF::move(handleAndInfo->second) });
 }
 
+void WebFrame::requestContentFrameIdentifierForNode(NodeIdentifier nodeIdentifier, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>&&)>&& completion)
+{
+    completion(TextExtraction::contentFrameIdentifierForNode(nodeIdentifier));
+}
+
 void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)
 {
     RefPtr node = nodeFromJSHandleIdentifier(handle.identifier);

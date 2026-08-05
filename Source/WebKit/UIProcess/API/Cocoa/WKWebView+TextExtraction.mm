@@ -1200,4 +1200,28 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
     });
 }
 
+- (void)_requestFrameInfoForNodeIdentifier:(NSString *)nodeIdentifierString completionHandler:(void (^)(WKFrameInfo *))completion
+{
+    auto identifiers = WebKit::parseExtractedNodeInfo(String { nodeIdentifierString });
+    if (!identifiers)
+        return completion(nil);
+
+    RefPtr enclosingFrame = _page->mainFrame();
+    if (identifiers->frameIdentifier)
+        enclosingFrame = WebKit::WebFrameProxy::webFrame(identifiers->frameIdentifier);
+
+    if (!enclosingFrame)
+        return completion(nil);
+
+    enclosingFrame->requestContentFrameIdentifierForNode(identifiers->nodeIdentifier, [completion = makeBlockPtr(completion), enclosingFrame](auto&& contentFrameIdentifier) mutable {
+        RefPtr targetFrame = WebKit::WebFrameProxy::webFrame(contentFrameIdentifier);
+        if (!targetFrame)
+            targetFrame = WTF::move(enclosingFrame);
+
+        targetFrame->getFrameInfo([completion = WTF::move(completion)](auto&& info) {
+            completion(info ? wrapper(API::FrameInfo::create(WTF::move(*info))) : nil);
+        });
+    });
+}
+
 @end

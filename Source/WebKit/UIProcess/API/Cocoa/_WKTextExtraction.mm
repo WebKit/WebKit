@@ -280,6 +280,15 @@
     }];
 }
 
+- (void)requestFrameInfoForNodeIdentifier:(NSString *)nodeIdentifier completionHandler:(void (^)(WKFrameInfo *))completionHandler
+{
+    RetainPtr webView = _webView;
+    if (!webView)
+        return completionHandler(nil);
+
+    [webView _requestFrameInfoForNodeIdentifier:nodeIdentifier completionHandler:completionHandler];
+}
+
 @end
 
 @implementation _WKTextExtractionInteraction {

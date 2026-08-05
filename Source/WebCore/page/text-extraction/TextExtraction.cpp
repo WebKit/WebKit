@@ -3151,6 +3151,19 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
     return { description.toString(), WTF::move(stringsToValidate), didFindTargetNode };
 }
 
+std::optional<FrameIdentifier> contentFrameIdentifierForNode(NodeIdentifier identifier)
+{
+    RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(Node::fromIdentifier(identifier));
+    if (!frameOwner)
+        return { };
+
+    RefPtr contentFrame = frameOwner->contentFrame();
+    if (!contentFrame)
+        return { };
+
+    return contentFrame->frameID();
+}
+
 RefPtr<Element> elementForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)
 {
     auto nodeIdentifier = extractedText.nodeIdentifier;

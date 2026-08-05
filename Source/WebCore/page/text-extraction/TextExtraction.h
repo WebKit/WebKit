@@ -54,6 +54,7 @@ WEBCORE_EXPORT std::optional<SimpleRange> rangeForExtractedText(const LocalFrame
 WEBCORE_EXPORT RefPtr<Element> elementForExtractedText(const LocalFrame&, ExtractedText&&);
 WEBCORE_EXPORT RefPtr<Element> containerElementForExtractedText(const LocalFrame&, ExtractedText&&);
 WEBCORE_EXPORT RefPtr<Element> containerElementForSearchTexts(const LocalFrame&, Vector<String>&&, std::optional<NodeIdentifier>&&);
+WEBCORE_EXPORT std::optional<FrameIdentifier> contentFrameIdentifierForNode(NodeIdentifier);
 
 WEBCORE_EXPORT Vector<FilterRule> extractRules(Vector<FilterRuleData>&&);
 

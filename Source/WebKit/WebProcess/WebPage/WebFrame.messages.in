@@ -45,6 +45,7 @@ messages -> WebFrame {
     RequestJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
     RequestContainerJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
     RequestContainerJSHandleForSearchTexts(Vector<String> texts, std::optional<WebCore::NodeIdentifier> fallbackNodeIdentifier) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    RequestContentFrameIdentifierForNode(WebCore::NodeIdentifier nodeIdentifier) -> (std::optional<WebCore::FrameIdentifier> frameIdentifier)
 
     # Element targeting support
     GetSelectorPathsForNode(struct WebKit::JSHandleInfo handle) -> (Vector<HashSet<String>> selectors)

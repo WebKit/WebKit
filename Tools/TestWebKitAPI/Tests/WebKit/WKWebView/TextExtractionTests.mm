@@ -91,6 +91,7 @@ SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
 - (_WKJSHandle *)jsHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText;
 - (_WKJSHandle *)containerJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText;
 - (_WKJSHandle *)containerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(NSString *)nodeIdentifier;
+- (WKFrameInfo *)frameInfoForNodeIdentifier:(NSString *)nodeIdentifier;
 @end
 
 @implementation WKWebView (TextExtractionTests)
@@ -206,6 +207,18 @@ SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
     __block RetainPtr<_WKJSHandle> result;
     [self requestContainerJSHandleForSearchTexts:searchTexts nodeIdentifier:nodeIdentifier completionHandler:^(_WKJSHandle *handle) {
         result = handle;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (WKFrameInfo *)frameInfoForNodeIdentifier:(NSString *)nodeIdentifier
+{
+    __block bool done = false;
+    __block RetainPtr<WKFrameInfo> result;
+    [self requestFrameInfoForNodeIdentifier:nodeIdentifier completionHandler:^(WKFrameInfo *frameInfo) {
+        result = frameInfo;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1944,6 +1957,67 @@ TEST(TextExtractionTests, SubframeOriginInDebugText)
     EXPECT_TRUE([debugText containsString:crossOriginExpected.createNSString()]);
     EXPECT_FALSE([debugText containsString:@"origin=http://localhost"]);
     EXPECT_FALSE([debugText containsString:@"origin=127.0.0.1"]);
+}
+
+TEST(TextExtractionTests, RequestFrameInfoForNodeIdentifier)
+{
+    HTTPServer server { {
+        { "/subframe-cross.html"_s, { subFrameMarkup("Cross origin: click here"_s) } },
+        { "/subframe-same.html"_s, { subFrameMarkup("Same origin: click here"_s) } },
+    }, HTTPServer::Protocol::Http };
+
+    server.addResponse("/"_s, { mainFrameMarkup(server.port()) });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    __block RetainPtr subframes = adoptNS([NSMutableArray new]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidCommitLoadWithRequestInFrame:^(WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
+        if (!frame.mainFrame && ![frame.request.URL.scheme isEqualToString:@"about"])
+            [subframes addObject:frame];
+    }];
+    [webView setNavigationDelegate:navigationDelegate];
+    [webView loadRequest:server.request()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView objectByEvaluatingJavaScript:@"subframeLoadedCount"] intValue] == 2;
+    }, 2, @"Expected subframes to finish loading.");
+
+    RetainPtr result = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setAdditionalFrames:subframes];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText = [result textContent];
+    auto crossOriginToken = makeString("origin=localhost:"_s, server.port());
+
+    RetainPtr crossOriginFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, crossOriginToken.createNSString())];
+    EXPECT_NOT_NULL(crossOriginFrameInfo);
+    EXPECT_FALSE([crossOriginFrameInfo isMainFrame]);
+    EXPECT_WK_STREQ("/subframe-cross.html", [[crossOriginFrameInfo request].URL path]);
+
+    RetainPtr crossOriginButtonFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, @"Cross origin: click here")];
+    EXPECT_NOT_NULL(crossOriginButtonFrameInfo);
+    EXPECT_FALSE([crossOriginButtonFrameInfo isMainFrame]);
+    EXPECT_WK_STREQ("/subframe-cross.html", [[crossOriginButtonFrameInfo request].URL path]);
+
+    RetainPtr sameOriginButtonFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, @"Same origin: click here")];
+    EXPECT_NOT_NULL(sameOriginButtonFrameInfo);
+    EXPECT_FALSE([sameOriginButtonFrameInfo isMainFrame]);
+    EXPECT_WK_STREQ("/subframe-same.html", [[sameOriginButtonFrameInfo request].URL path]);
+
+    RetainPtr mainFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, @"Link to WebKit home page")];
+    EXPECT_NOT_NULL(mainFrameInfo);
+    EXPECT_TRUE([mainFrameInfo isMainFrame]);
+
+    EXPECT_NULL([result frameInfoForNodeIdentifier:@"not-a-node-identifier"]);
 }
 
 TEST(TextExtractionTests, ClickInteractionWithTextOnly)
