@@ -45,9 +45,17 @@ template<class JSClass>
 JSClass* castThisValue(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue thisValue)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    if constexpr (std::is_base_of_v<JSDOMGlobalObject, JSClass>)
+    if constexpr (std::is_base_of_v<JSDOMGlobalObject, JSClass>) {
+        // FIXME: Remove this normalization once FunctionCallResolveNode stops passing the resolved scope as the |this|
+        // value. https://bugs.webkit.org/show_bug.cgi?id=225397
+        // A function resolved from the global lexical environment and called as a bare call is handed the environment
+        // object itself as |this|; treat that as undefined so it substitutes to the global object below. We must not use
+        // JSValue::toThis() here because a global object (Window / RemoteDOMWindow) is itself a JSScope, and toThis()
+        // would map a legitimate cross-origin window |this| to undefined, defeating the security check below.
+        if (auto* object = thisValue.getObject(); object && object->inherits<JSC::JSScope>() && !object->inherits<JSC::JSGlobalObject>())
+            thisValue = JSC::jsUndefined();
         return toJSDOMGlobalObject<JSClass>(vm, thisValue.isUndefinedOrNull() ? JSC::JSValue(&lexicalGlobalObject) : thisValue);
-    else
+    } else
         return dynamicDowncast<JSClass>(thisValue);
 }
 
