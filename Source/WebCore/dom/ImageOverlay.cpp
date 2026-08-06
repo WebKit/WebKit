@@ -62,6 +62,7 @@
 #include "TextIterator.h"
 #include "TextRecognitionResult.h"
 #include "TreeScopeInlines.h"
+#include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
 #include "VisibleSelection.h"
 #include <numeric>
@@ -404,6 +405,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 auto& child = line.children[childIndex];
                 Ref textContainer = HTMLDivElement::create(document.get());
                 protect(textContainer)->classList().add(imageOverlayTextClass());
+                protect(textContainer)->setUserAgentPart(UserAgentParts::internalImageOverlayText());
                 lineContainer->appendChild(textContainer);
                 textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : String { child.text }));
                 lineElements.children.append(WTF::move(textContainer));
@@ -507,11 +509,6 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         renderer->setHasImageOverlay();
     }
 
-    bool applyUserSelectAll = [&] {
-        auto* renderer = dynamicDowncast<RenderImage>(element.renderer());
-        return document->isImageDocument() || (renderer && renderer->style().userSelect() != UserSelect::None);
-    }();
-
     for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
         auto& lineElements = elements.lines[lineIndex];
         auto& lineContainer = lineElements.line;
@@ -584,8 +581,6 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
                 (targetSize.height() - sizeBeforeTransform.height()) / 2, "px) "_s,
                 "scale("_s, targetSize.width() / sizeBeforeTransform.width(), ", "_s, targetSize.height() / sizeBeforeTransform.height(), ") "_s
             ));
-
-            textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, applyUserSelectAll ? CSSValueAll : CSSValueNone);
 
             if (line.isVertical)
                 textContainer->setInlineStyleProperty(CSSPropertyWritingMode, CSSValueVerticalRl);

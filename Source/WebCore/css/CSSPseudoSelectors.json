@@ -553,6 +553,11 @@
             "status": "non-standard",
             "user-agent-part": true
         },
+        "-internal-image-overlay-text": {
+            "conditional": "ENABLE(IMAGE_ANALYSIS)",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
         "file-selector-button": {
             "aliases": [
                 "-webkit-file-upload-button"

@@ -1,0 +1,12 @@
+Recognized text inside an image overlay should not be editable, even when the image is inside a contenteditable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS editor.isContentEditable is true
+PASS overlayText(image).isContentEditable is false
+PASS getComputedStyle(overlayText(image)).webkitUserModify is "read-only"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

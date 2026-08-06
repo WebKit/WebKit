@@ -635,6 +635,20 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if (m_document->settings().detailsAutoExpandEnabled() && m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::detailsContent())
             style.setAutoRevealsWhenFound();
 
+#if ENABLE(IMAGE_ANALYSIS)
+        // Don't allow selecting individual glyphs on text recognized inside an image:
+        if (m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
+            switch (style.userSelect()) {
+            case UserSelect::All:
+            case UserSelect::None:
+                break;
+            case UserSelect::Text:
+                style.setUserSelect(UserSelect::All);
+                break;
+            }
+        }
+#endif
+
         if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element); htmlElement && htmlElement->isHiddenUntilFound())
             style.setAutoRevealsWhenFound();
     }

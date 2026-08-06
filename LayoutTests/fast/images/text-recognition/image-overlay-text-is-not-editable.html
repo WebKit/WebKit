@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<div id="editor" contenteditable>
+    <img id="image" src="../resources/green-400x400.png">
+</div>
+<script>
+description('Recognized text inside an image overlay should not be editable, even when the image is inside a contenteditable.');
+
+jsTestIsAsync = true;
+
+function overlayText(image) {
+    return internals.shadowRoot(image).querySelector(".image-overlay-text");
+}
+
+addEventListener("load", () => {
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+            children: [
+                {
+                    text : "Hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0, 1),
+                }
+            ],
+        }
+    ]);
+
+    shouldBeTrue("editor.isContentEditable");
+    shouldBeFalse("overlayText(image).isContentEditable");
+    shouldBeEqualToString("getComputedStyle(overlayText(image)).webkitUserModify", "read-only");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
