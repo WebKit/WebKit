@@ -28,6 +28,8 @@
 #include "TestController.h"
 
 #include "PlatformWebView.h"
+#include "TestCommand.h"
+#include "WPTFunctions.h"
 #include <WebKit/WKTextCheckerGLib.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
@@ -149,9 +151,17 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions&)
     return true;
 }
 
-TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
+static bool shouldEnableAsyncOverflowScrolling(const std::string& pathOrURL)
 {
-    return { };
+    return isWebPlatformTestURL({ { }, String::fromUTF8(pathOrURL.c_str()) });
+}
+
+TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand& command) const
+{
+    TestFeatures features;
+    if (shouldEnableAsyncOverflowScrolling(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "AsyncOverflowScrollingEnabled", true });
+    return features;
 }
 
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()

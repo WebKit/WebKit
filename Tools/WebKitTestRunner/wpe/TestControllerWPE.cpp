@@ -27,6 +27,8 @@
 #include "TestController.h"
 
 #include "PlatformWebView.h"
+#include "TestCommand.h"
+#include "WPTFunctions.h"
 #include <WebKit/WKTextCheckerGLib.h>
 #include <glib.h>
 #include <wtf/RunLoop.h>
@@ -161,10 +163,16 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions&)
     return true;
 }
 
-TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
+static bool shouldEnableAsyncOverflowScrolling(const std::string& pathOrURL)
+{
+    return isWebPlatformTestURL({ { }, String::fromUTF8(pathOrURL.c_str()) });
+}
+
+TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand& command) const
 {
     TestFeatures features;
-    features.boolWebPreferenceFeatures.insert({ "AsyncOverflowScrollingEnabled", true });
+    if (shouldEnableAsyncOverflowScrolling(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "AsyncOverflowScrollingEnabled", true });
     return features;
 }
 

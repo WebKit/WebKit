@@ -23,10 +23,8 @@ webkit.org/b/279747 [ Release ] editing/input/scroll-viewport-page-up-down.html 
 fast/scrolling/gtk [ Pass ]
 swipe [ Pass ]
 
-imported/w3c/web-platform-tests/css/CSS2/normal-flow/overflow-scroll-paint-order.html [ Pass ]
 webkit.org/b/254521 [ Release ] imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Pass Failure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/CSS2/floats/overflow-scroll-float-paint-order.html [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/linebox/vertical-align-baseline-009.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
@@ -35,8 +33,6 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/root_selector.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-002.html [ Pass ]
-
-webkit.org/b/289926 imported/w3c/web-platform-tests/css/css-position/position-absolute-under-non-containing-stacking-context.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ Pass ]
 
@@ -880,10 +876,6 @@ webkit.org/b/159143 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
-webkit.org/b/250610 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Skip ]
-webkit.org/b/250610 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
-webkit.org/b/250610 fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ]
-
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg [ Failure ]
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg [ Failure ]
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ Failure ]
@@ -1101,7 +1093,6 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ F
 
 webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Failure ]
 
-compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
 fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Pass Timeout ]
 compositing/repaint/copy-forward-dirty-region.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
