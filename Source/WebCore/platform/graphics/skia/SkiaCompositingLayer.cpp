@@ -189,6 +189,11 @@ void SkiaCompositingLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatform
     m_contentsBuffer = WTF::move(contentsBuffer);
 }
 
+std::unique_ptr<CoordinatedPlatformLayerBuffer> SkiaCompositingLayer::takeContentsBuffer()
+{
+    return WTF::move(m_contentsBuffer);
+}
+
 void SkiaCompositingLayer::setContentsSolidColor(const Color& color)
 {
     if (m_contentsSolidColor == color)

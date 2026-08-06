@@ -126,13 +126,12 @@ SkiaCompositingLayer& CoordinatedPlatformLayer::ensureSkiaTarget()
 
 static bool shouldReleaseBuffer(CoordinatedPlatformLayerBuffer* buffer)
 {
-    if (!buffer)
-        return false;
-
 #if ENABLE(VIDEO)
     // Do not release hole punch buffers early. See https://bugs.webkit.org/show_bug.cgi?id=267322.
-    if (is<CoordinatedPlatformLayerBufferHolePunch>(*buffer))
+    if (is<CoordinatedPlatformLayerBufferHolePunch>(buffer))
         return false;
+#else
+    UNUSED_PARAM(buffer);
 #endif
 
     return true;
@@ -145,8 +144,12 @@ void CoordinatedPlatformLayer::invalidateTarget()
         Locker locker { m_lock };
         m_backingStore = nullptr;
         m_imageBackingStore.committed = nullptr;
-        if (shouldReleaseBuffer(m_contentsBuffer.committed.get()))
+        if (m_target && shouldReleaseBuffer(m_contentsBuffer.committed.get()))
             m_contentsBuffer.committed = nullptr;
+#if USE(SKIA)
+        if (m_skiaTarget && !shouldReleaseBuffer(m_skiaTarget->contentsBuffer()))
+            m_contentsBuffer.committed = m_skiaTarget->takeContentsBuffer();
+#endif
         m_contentsBuffer.hasCommitted = false;
     }
     m_target = nullptr;

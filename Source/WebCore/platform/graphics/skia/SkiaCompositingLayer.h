@@ -108,6 +108,7 @@ public:
     void processPendingTileUpdates();
     void setImageBackingStore(CoordinatedImageBackingStore*);
     void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> takeContentsBuffer();
     CoordinatedPlatformLayerBuffer* contentsBuffer() const { return m_contentsBuffer.get(); }
     void setContentsSolidColor(const Color&);
 
