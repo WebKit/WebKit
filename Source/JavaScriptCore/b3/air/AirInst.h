@@ -197,8 +197,7 @@ struct Inst {
     // Some summaries about all arguments. These are useful for needsPadding().
     bool hasEarlyDef();
     bool hasLateUseOrDef();
-    
-    // Check if there needs to be a padding Nop between these two instructions.
+
     static bool needsPadding(Inst* prevInst, Inst* nextInst);
     
     // Use this to report which registers are live. This should be done just before codegen. Note

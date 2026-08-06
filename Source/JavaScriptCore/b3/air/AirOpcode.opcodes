@@ -100,6 +100,10 @@
 # Note that the opcodes here have a leading capital (Add32) but must correspond to MacroAssembler
 # API that has a leading lower-case (add32).
 
+# The default Kind, so a deleted Inst becomes Padding, and it is also what padInterference() inserts
+# where two instructions must not be adjacent for liveness analysis to be sound.
+Padding /nocode
+
 Nop
 
 Add32 U:G:32, U:G:32, ZD:G:32

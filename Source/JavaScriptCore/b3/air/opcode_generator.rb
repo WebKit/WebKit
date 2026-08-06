@@ -427,10 +427,20 @@ class Parser
                     when "return"
                         opcode.attributes[:return] = true
                         opcode.attributes[:terminal] = true
+                    when "nocode"
+                        opcode.attributes[:nocode] = true
                     else
                         parseError("Bad / directive")
                     end
                     advance
+                end
+
+                # Attributes are shared by every overload of an opcode, so this has to reject an
+                # unsupported signature on any of them, not just the one carrying /nocode.
+                if opcode.attributes[:nocode]
+                    parseError("/nocode opcode cannot take arguments") unless signature.empty?
+                    parseError("/nocode opcode cannot be a terminal") if opcode.attributes[:terminal]
+                    parseError("/nocode opcode cannot be restricted to an architecture") if opcodeArchs
                 end
 
                 parseArchs
@@ -1335,6 +1345,8 @@ writeH("OpcodeGenerated") {
         | opcode, overload, form |
         if opcode.custom
             outp.puts "OPGEN_RETURN(#{opcode.name}Custom::generate(*this, jit, context));"
+        elsif opcode.attributes[:nocode]
+            outp.puts "OPGEN_RETURN(result);"
         else
             beginArchs(outp, form.archs)
             if form.altName

@@ -2094,7 +2094,7 @@ private:
     }
 
     // Phase 3: Replace member Tmps with representative in all instructions.
-    // Nop self-Moves and adjust useDefCost for removed moves.
+    // Delete self-Moves and adjust useDefCost for removed moves.
     template<Bank bank>
     void rewriteCoalescedTmps(const Vector<AffinityGroup<bank>>& groups, const TmpGroupMap<bank>& tmpToGroup)
     {
@@ -3175,11 +3175,12 @@ private:
                     // WTF::Liveness and Air::LivenessAdapter do not handle a late-def/use followed by early-def
                     // correctly. While this register allocator does handle it correctly (since it models distinct
                     // late and early points between instructions (i.e. intervalForSpill() won't overlap for different
-                    // scratch Tmps)), insert a Nop so that subsequent liveness analysis correctly compute lifetime interference
-                    // when there are back-to-back Move spill-spill-scratch instructions (scratch is early-def, late-use).
+                    // scratch Tmps)), insert a Padding inst so that subsequent liveness analysis correctly computes
+                    // lifetime interference when there are back-to-back Move spill-spill-scratch instructions
+                    // (scratch is early-def, late-use).
                     // See https://bugs.webkit.org/show_bug.cgi?id=163548#c2 for more info.
                     // FIXME: reconsider this, https://bugs.webkit.org/show_bug.cgi?id=288122
-                    m_insertionSets[block].insert(instIndex, SpillMoveFrom, Nop, inst.origin);
+                    m_insertionSets[block].insert(instIndex, SpillMoveFrom, Padding, inst.origin);
                     continue;
                 }
 

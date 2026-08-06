@@ -135,16 +135,16 @@ void prepareForGeneration(Code& code)
     // phase.
     simplifyCFG(code);
 
-    // This is needed to satisfy a requirement of B3::StackmapValue. This also removes dead
-    // code. We can avoid running this when certain optimizations are disabled.
+    // Not worth a whole-graph liveness scan just for the dead assignments it also kills, so this runs
+    // only for the used-register set that B3::StackmapValue reports to a patchpoint's generator.
     bool cfgMayHaveChanged = false;
-    if (code.optLevel() >= 2 || code.needsUsedRegisters())
+    if (code.needsUsedRegisters())
         cfgMayHaveChanged |= reportUsedRegisters(code);
 
     // Attempt to remove false dependencies between instructions created by partial register changes.
     // This must be executed as late as possible as it depends on the instructions order and register
-    // use. We _must_ run this after reportUsedRegisters(), since that kills variable assignments
-    // that seem dead. Luckily, this phase does not change register liveness, so that's OK.
+    // use, and it must follow reportUsedRegisters() when that runs, since that kills variable
+    // assignments that seem dead. Luckily, this phase does not change register liveness, so that's OK.
     fixPartialRegisterStalls(code);
 
     // Actually create entrypoints.

@@ -42,6 +42,8 @@ bool reportUsedRegisters(Code& code)
 
     static constexpr bool verbose = false;
 
+    // The RegLiveness below reasons about interference at instruction boundaries, so it is only
+    // correct once padding separates a late use or def from a following early def.
     padInterference(code);
 
     if (verbose)

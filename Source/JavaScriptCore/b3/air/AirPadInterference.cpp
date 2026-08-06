@@ -40,7 +40,7 @@ void padInterference(Code& code)
         for (unsigned instIndex = 1; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
             if (Inst::needsPadding(&block->at(instIndex - 1), &inst))
-                insertionSet.insert(instIndex, Nop, inst.origin);
+                insertionSet.insert(instIndex, Padding, inst.origin);
         }
         insertionSet.execute(block);
     }

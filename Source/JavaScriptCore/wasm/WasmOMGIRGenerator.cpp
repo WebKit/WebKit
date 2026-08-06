@@ -6715,10 +6715,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Compilati
     if (ionGraphPasses) [[unlikely]]
         procedure.setIonGraphPasses(*ionGraphPasses);
 
-    // This means we cannot use either StackmapGenerationParams::usedRegisters() or
-    // StackmapGenerationParams::unavailableRegisters(). In exchange for this concession, we
-    // don't strictly need to run Air::reportUsedRegisters(), which saves a bit of CPU time at
-    // optLevel=1.
+    // Skipping Air::reportUsedRegisters() costs us StackmapGenerationParams::usedRegisters() and
+    // StackmapGenerationParams::unavailableRegisters(), which OMG does not use.
     procedure.setNeedsUsedRegisters(false);
     
     procedure.setOptLevel(Options::wasmOMGOptimizationLevel());

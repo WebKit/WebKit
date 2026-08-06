@@ -75,7 +75,7 @@ struct Kind {
         return kind;
     }
 
-    Opcode opcode : 14 { Nop };
+    Opcode opcode : 14 { Padding };
 
     // This is an opcode-agnostic flag that indicates that we expect that this instruction will do
     // any of the following:
