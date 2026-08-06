@@ -1,0 +1,3 @@
+
+PASS Scroll timeline progress at 1/6 of the scroll range is computed in double precision
+

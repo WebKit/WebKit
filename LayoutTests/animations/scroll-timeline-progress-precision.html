@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Scroll timeline progress is computed in double precision</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+#scroller {
+    overflow-y: scroll;
+    width: 100px;
+    height: 200px;
+}
+#content {
+    height: 500px;
+}
+</style>
+</head>
+<body>
+<div id="scroller"><div id="content"></div></div>
+<script>
+// The scroll range is 500 - 200 = 300, so scrolling to 50 puts the timeline at exactly 1/6
+// of its range. 1/6 is not representable in binary floating point, so the progress is only
+// correct to the precision it is computed at: in float that is 16.666667938232422%, versus
+// 16.666666666666664% in double. The timing model consumes this percentage in double, so a
+// float division here shows up as a ~1e-7 relative error in every animated value.
+//
+// The tolerance below is far tighter than the half-a-pixel tolerance the scroll-animations
+// WPTs use, which is why they do not catch this.
+promise_test(async () => {
+    const timeline = new ScrollTimeline({ source: scroller });
+    scroller.scrollTop = 50;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    assert_equals(scroller.scrollTop, 50, "scroll offset");
+    assert_equals(timeline.currentTime.unit, "percent", "currentTime unit");
+    assert_approx_equals(timeline.currentTime.value, 50 / 300 * 100, 1e-9, "timeline progress");
+}, "Scroll timeline progress at 1/6 of the scroll range is computed in double precision");
+</script>
+</body>
+</html>

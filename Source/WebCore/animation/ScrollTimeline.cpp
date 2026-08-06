@@ -392,12 +392,18 @@ std::optional<WebAnimationTime> ScrollTimeline::currentTime(UseCachedCurrentTime
     // Progress (the current time) for a scroll progress timeline is calculated as:
     // scroll offset ÷ (scrollable overflow size − scroll container size)
     auto data = computeTimelineData(useCachedCurrentTime);
-    auto range = data.rangeEnd - data.rangeStart;
+    // Data holds pixel geometry as float, but the timing model does its arithmetic on the
+    // resulting percentage in double precision. Compute the progress in double so the two
+    // agree: dividing here in float would round the percentage to about seven significant
+    // digits, which is then indistinguishable from a genuine sub-pixel scroll offset.
+    auto range = static_cast<double>(data.rangeEnd) - data.rangeStart;
     if (!range)
         return { };
 
     auto scrollDirection = resolvedScrollDirection();
-    auto distance = scrollDirection.isReversed ? data.rangeEnd - data.scrollOffset : data.scrollOffset - data.rangeStart;
+    auto distance = scrollDirection.isReversed
+        ? static_cast<double>(data.rangeEnd) - data.scrollOffset
+        : static_cast<double>(data.scrollOffset) - data.rangeStart;
     auto progress = distance / range;
     return WebAnimationTime::fromPercentage(progress * 100);
 }
