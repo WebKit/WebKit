@@ -50,6 +50,7 @@ int32_t LibWebRTCAudioModule::RegisterAudioCallback(webrtc::AudioTransport* audi
 {
     RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::RegisterAudioCallback %d", !!audioTransport);
 
+    Locker locker { m_audioTransportLock };
     m_audioTransport = audioTransport;
     return 0;
 }
@@ -130,15 +131,17 @@ void LibWebRTCAudioModule::pollAudioData()
 
 void LibWebRTCAudioModule::pollFromSource()
 {
-    auto* audioTransport = m_audioTransport.load();
-    if (!audioTransport)
+    ASSERT(m_queue->isCurrent());
+
+    Locker locker { m_audioTransportLock };
+    if (!m_audioTransport)
         return;
 
     for (unsigned i = 0; i < PollSamplesCount; i++) {
         int64_t elapsedTime = -1;
         int64_t ntpTime = -1;
         char data[LibWebRTCAudioFormat::sampleByteSize * channels * LibWebRTCAudioFormat::chunkSampleCount];
-        audioTransport->PullRenderData(LibWebRTCAudioFormat::sampleByteSize * 8, LibWebRTCAudioFormat::sampleRate, channels, LibWebRTCAudioFormat::chunkSampleCount, data, &elapsedTime, &ntpTime);
+        m_audioTransport->PullRenderData(LibWebRTCAudioFormat::sampleByteSize * 8, LibWebRTCAudioFormat::sampleRate, channels, LibWebRTCAudioFormat::chunkSampleCount, data, &elapsedTime, &ntpTime);
 #if PLATFORM(COCOA)
         if (m_isRenderingIncomingAudioCounter)
             m_incomingAudioMediaStreamTrackRendererUnit->newAudioChunkPushed(m_currentAudioSampleCount);
