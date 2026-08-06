@@ -1305,3 +1305,7 @@ webkit.org/b/320649 webrtc/disable-encryption.html [ Crash Pass ]
 webkit.org/b/320650 [ Debug ] editing/execCommand/insert-unordered-list-after-DOMNodeRemoved.html [ Timeout Pass ]
 webkit.org/b/320651 [ Debug ] svg/animations/animate-to-low-prio-frozen.html [ Failure Pass ]
 webkit.org/b/320652 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/is-pseudo-containing-sibling-relationship-in-has.html [ Failure Pass ]
+
+webkit.org/b/321167 accessibility/aria-role-on-label.html [ Crash ]
+webkit.org/b/321167 accessibility/roles-exposed.html [ Crash ]
+webkit.org/b/321167 accessibility/text-alternative-calculation-from-unrendered-table.html [ Crash ]
