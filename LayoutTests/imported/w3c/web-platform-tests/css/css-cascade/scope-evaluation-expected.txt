@@ -12,6 +12,9 @@ PASS Multiple scopes from same @scope-rule, both limited
 PASS Nested scopes
 PASS Nested scopes, reverse
 PASS Nested scopes, with to-selector
+PASS Nested scopes, :has(:scope ...) in inner from-selector
+PASS Nested scopes, inner scoping root must be in the outer scope
+PASS Nested scopes, inner scoping root may be the outer scoping root
 PASS :scope selecting itself
 PASS The scoping limit is not in scope
 PASS Simulated inclusive scoping limit

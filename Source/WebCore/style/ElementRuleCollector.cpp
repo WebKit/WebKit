@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -752,8 +752,11 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
                 }
                 for (const auto& selector : selectorList) {
                     auto appendIfMatch = [&] (std::optional<ScopingRootWithDistance> previousScopingRoot = { }) {
-                        if (previousScopingRoot)
+                        if (previousScopingRoot) {
+                            if (distance > previousScopingRoot->distance)
+                                return;
                             subContext.scope = previousScopingRoot->scopingRoot;
+                        }
                         // Reset visited flag for each scoping root evaluation
                         subContext.scopingRootMatchesVisited = false;
                         subContext.isEvaluatingScopingRoot = true;
