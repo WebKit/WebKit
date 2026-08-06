@@ -394,7 +394,12 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     if (!pixelBuffer)
         return nullptr;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
+    // The currently bound read framebuffer always has its color buffer attached at COLOR_ATTACHMENT0.
+    // Force GL_READ_BUFFER back to COLOR_ATTACHMENT0 for the duration of the read so content cannot
+    // make the read fail by setting glReadBuffer(GL_NONE) on the emulated default framebuffer (m_fbo).
+    ScopedReadBuffer scopedReadBuffer(GL_COLOR_ATTACHMENT0, m_isForWebGL2);
     setPackParameters(1, 0, false);
+    updateErrors();
     GL_ReadPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->bytes().size(), nullptr, nullptr, nullptr, pixelBuffer->bytes().data());
     // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
     // the alpha in the IOSurface in incorrect state. Also ANGLE GL_ReadPixels will in some
@@ -404,6 +409,9 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     if (!contextAttributes().alpha)
         wipeAlphaChannelFromPixels(pixelBuffer->bytes());
 #endif
+    // The pixel buffer is uninitialized; never return it if the read was rejected for any reason.
+    if (updateErrors())
+        return nullptr;
     return pixelBuffer;
 }
 
