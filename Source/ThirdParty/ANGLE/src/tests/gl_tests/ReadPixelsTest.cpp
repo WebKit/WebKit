@@ -786,6 +786,49 @@ TEST_P(ReadPixelsPBOTest, SmallRowLength)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that reading into a PBO does not crash when the read attachment's texture was redefined
+// and reattached after rendering. (Regression test for a stale-render-target crash on Metal.)
+TEST_P(ReadPixelsPBOTest, ReadToPBOFromRedefinedColorAttachment)
+{
+    // RGBA4 storage so the RGBA/UNSIGNED_BYTE read below is a format-converting read.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // Render into the texture so the framebuffer has been used before the redefine below.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glClearBufferfv(GL_COLOR, 0, GLColor::red.toNormalizedVector().data());
+
+    // Reattach the texture at a different attachment and read from there.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture, 0);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+
+    // Redefine the read attachment's texture storage (intentionally the same call as above).
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, 2 * sizeof(GLColor), nullptr, GL_STREAM_READ);
+
+    // Used to crash; contents are undefined after the redefine, so the bytes are not checked.
+    glReadPixels(0, 0, 2, 1, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify the context still works: clear a known color and read it back into client memory.
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearBufferfv(GL_COLOR, 0, GLColor::green.toNormalizedVector().data());
+    GLColor pixel;
+    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GLColor::green, pixel);
+}
+
 class ReadPixelsPBODrawTest : public ReadPixelsPBOTest
 {
   protected:

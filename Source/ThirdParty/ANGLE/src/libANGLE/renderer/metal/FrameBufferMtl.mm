@@ -383,7 +383,15 @@ angle::Result FramebufferMtl::readPixels(const gl::Context *context,
         params.reverseRowOrder = !params.reverseRowOrder;
     }
 
-    ANGLE_TRY(readPixelsImpl(context, flippedArea, params, getColorReadRenderTarget(context),
+    RenderTargetMtl *readRenderTarget = getColorReadRenderTarget(context);
+    // The cached render target holds only a weak reference to its texture, so getTexture() may be
+    // null. Re-derive it from the attachment to get the current texture, or null if none exists.
+    if (readRenderTarget && !readRenderTarget->getTexture())
+    {
+        readRenderTarget = getColorReadRenderTargetNoCache(context);
+    }
+
+    ANGLE_TRY(readPixelsImpl(context, flippedArea, params, readRenderTarget,
                              static_cast<uint8_t *>(pixels) + outputSkipBytes));
 
     return angle::Result::Continue;
