@@ -1148,6 +1148,37 @@ Node::NeedsPostConnectionSteps HTMLMediaElement::insertionSteps(InsertionType in
     return NeedsPostConnectionSteps::Yes;
 }
 
+static DocumentMediaElement::JSSetupFunction callGlobalWithMediaElement(HTMLMediaElement& element, ASCIILiteral functionName)
+{
+    return [protectedElement = Ref { element }, functionName](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
+        auto& vm = globalObject.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, functionName));
+        if (scope.exception()) [[unlikely]]
+            return false;
+        if (functionValue.isUndefinedOrNull())
+            return false;
+
+        auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, protectedElement.get());
+
+        JSC::MarkedArgumentBuffer argList;
+        argList.append(mediaJSWrapper);
+        ASSERT(!argList.hasOverflowed());
+
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, false);
+        auto callData = JSC::getCallData(function);
+        if (callData.type == JSC::CallData::Type::None)
+            return false;
+
+        JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
+
+        RETURN_IF_EXCEPTION(scope, false);
+        return true;
+    };
+}
+
 void HTMLMediaElement::postConnectionSteps()
 {
     Ref protectedThis { *this }; // prepareForLoad may result in a 'beforeload' event, which can make arbitrary DOM mutations.
@@ -1167,64 +1198,22 @@ void HTMLMediaElement::postConnectionSteps()
 
     configureMediaControls();
 
-    if (protect(document())->quirks().needsYouTubeCaptionsQuirk()) {
-        DocumentMediaElement::from(protect(document())).setupAndCallYouTubeQuirkJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
-            auto& vm = globalObject.vm();
-            auto scope = DECLARE_THROW_SCOPE(vm);
+    Ref document = this->document();
+    auto& quirks = document->quirks();
+    bool findInVideo = document->settings().findInVideoEnabled();
 
-            auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "setupCaptionMirroring"_s));
-            if (scope.exception()) [[unlikely]]
-                return false;
-            if (functionValue.isUndefinedOrNull())
-                return false;
+    bool needsYouTubeCaptions = quirks.needsYouTubeCaptionsQuirk();
+    bool needsCNN = quirks.needsCNNCaptionQuirk();
+    bool needsNetflixFetch = findInVideo && quirks.needsNetflixCaptionFetchQuirk();
 
-            auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *this);
-
-            JSC::MarkedArgumentBuffer argList;
-            argList.append(mediaJSWrapper);
-            ASSERT(!argList.hasOverflowed());
-
-            auto* function = functionValue.toObject(&lexicalGlobalObject);
-            RETURN_IF_EXCEPTION(scope, false);
-            auto callData = JSC::getCallData(function);
-            if (callData.type == JSC::CallData::Type::None)
-                return false;
-
-            JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
-
-            RETURN_IF_EXCEPTION(scope, false);
-            return true;
-        });
-    }
-
-    if (protect(document())->quirks().needsCNNCaptionQuirk()) {
-        DocumentMediaElement::from(protect(document())).setupAndCallCNNQuirkJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
-            auto& vm = globalObject.vm();
-            auto scope = DECLARE_THROW_SCOPE(vm);
-
-            auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "setupCaptionMirroring"_s));
-            if (scope.exception()) [[unlikely]]
-                return false;
-            if (functionValue.isUndefinedOrNull())
-                return false;
-
-            auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *this);
-
-            JSC::MarkedArgumentBuffer argList;
-            argList.append(mediaJSWrapper);
-            ASSERT(!argList.hasOverflowed());
-
-            auto* function = functionValue.toObject(&lexicalGlobalObject);
-            RETURN_IF_EXCEPTION(scope, false);
-            auto callData = JSC::getCallData(function);
-            if (callData.type == JSC::CallData::Type::None)
-                return false;
-
-            JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
-
-            RETURN_IF_EXCEPTION(scope, false);
-            return true;
-        });
+    if (needsYouTubeCaptions || needsCNN || needsNetflixFetch) {
+        auto& documentMediaElement = DocumentMediaElement::from(document);
+        if (needsYouTubeCaptions)
+            documentMediaElement.setupAndCallYouTubeQuirkJS(callGlobalWithMediaElement(*this, "setupCaptionMirroring"_s));
+        if (needsCNN)
+            documentMediaElement.setupAndCallCNNQuirkJS(callGlobalWithMediaElement(*this, "setupCaptionMirroring"_s));
+        if (needsNetflixFetch)
+            documentMediaElement.setupAndCallNetflixCaptionFetchJS(callGlobalWithMediaElement(*this, "__setupFindInVideoCaptionFetch"_s));
     }
 }
 
@@ -6000,9 +5989,15 @@ RefPtr<TextTrack> HTMLMediaElement::bestFindCaptionTrack() const
     return defaultTrack;
 }
 
+bool HTMLMediaElement::hasSiteRenderedCaptions() const
+{
+    Ref document = this->document();
+    return document->quirks().needsYouTubeCaptionFetchQuirk() || document->quirks().needsNetflixCaptionFetchQuirk();
+}
+
 void HTMLMediaElement::updateFindCaptionTrack()
 {
-    RefPtr best = hasShowingFindSearchableTextTrackExcept(m_findCaptionTrack.get()) ? nullptr : bestFindCaptionTrack();
+    RefPtr best = (hasSiteRenderedCaptions() || hasShowingFindSearchableTextTrackExcept(m_findCaptionTrack.get())) ? nullptr : bestFindCaptionTrack();
     if (m_findCaptionTrack == best)
         return;
 
@@ -6034,10 +6029,14 @@ Vector<MediaTime> HTMLMediaElement::findCueMatches(const String& target, FindOpt
 
     Vector<MediaTime> matches;
     if (RefPtr tracks = m_textTracks) {
+        bool searchSiteRenderedCaptions = hasSiteRenderedCaptions();
         MediaTime duration = durationMediaTime();
         for (unsigned i = 0; i < tracks->length(); ++i) {
             RefPtr track = tracks->item(i);
-            if (!track || track->mode() != TextTrack::Mode::Showing)
+            if (!track)
+                continue;
+            bool searchable = track->mode() == TextTrack::Mode::Showing || (searchSiteRenderedCaptions && track->trackType() == TextTrack::AddTrack && track->label() == "WebKitFindInVideo"_s);
+            if (!searchable)
                 continue;
             if (!isSubtitleOrCaptionTrackKind(track->kind()))
                 continue;

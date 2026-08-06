@@ -769,6 +769,8 @@ $(PROJECT_DIR)/Modules/modern-media-controls/gesture-recognizers/pinch.js
 $(PROJECT_DIR)/Modules/modern-media-controls/gesture-recognizers/tap.js
 $(PROJECT_DIR)/Modules/modern-media-controls/main.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/CNNCaptionQuirk.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/NetflixCaptionFetchQuirk.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/YouTubeCaptionFetchQuirk.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/YouTubeCaptionQuirk.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/airplay-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/audio-support.js

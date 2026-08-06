@@ -1576,6 +1576,8 @@ set(WebCore_USER_AGENT_SCRIPTS
     ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     ${WEBCORE_DIR}/Modules/modern-media-controls/media/YouTubeCaptionQuirk.js
     ${WEBCORE_DIR}/Modules/modern-media-controls/media/CNNCaptionQuirk.js
+    ${WEBCORE_DIR}/Modules/modern-media-controls/media/YouTubeCaptionFetchQuirk.js
+    ${WEBCORE_DIR}/Modules/modern-media-controls/media/NetflixCaptionFetchQuirk.js
 )
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)

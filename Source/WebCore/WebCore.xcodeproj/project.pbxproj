@@ -23208,6 +23208,8 @@
 		EBE095E3277D14C700804D61 /* PushSubscriptionIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PushSubscriptionIdentifier.h; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
 		EBE5B227245A29CF003A5A88 /* SQLiteStatementAutoResetScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteStatementAutoResetScope.cpp; sourceTree = "<group>"; };
+		EBEEF8F9301F34CE00DB3007 /* NetflixCaptionFetchQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = NetflixCaptionFetchQuirk.js; sourceTree = "<group>"; };
+		EBEEF8FA301F34CE00DB3007 /* YouTubeCaptionFetchQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = YouTubeCaptionFetchQuirk.js; sourceTree = "<group>"; };
 		EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypeConversions.cpp; sourceTree = "<group>"; };
 		EBF5121B1696496C0056BD25 /* JSTypeConversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeConversions.h; sourceTree = "<group>"; };
 		ECA680C61E67724500731D20 /* StringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtilities.h; sourceTree = "<group>"; };
@@ -31918,6 +31920,7 @@
 				9551959225FA9E4C00F58CF0 /* media-document-controller.js */,
 				A1603D052C614198007D150C /* metadata-support.js */,
 				7177E2471DB80D2F00919A0B /* mute-support.js */,
+				EBEEF8F9301F34CE00DB3007 /* NetflixCaptionFetchQuirk.js */,
 				950C484925D6774200AB3D9C /* overflow-support.js */,
 				7130141D1DC9C08600CA3A88 /* pip-support.js */,
 				711FB0751DC7688F00C4C708 /* placard-support.js */,
@@ -31934,6 +31937,7 @@
 				71F936F71DD4F99B00922CC7 /* tracks-support.js */,
 				717F90571DC40ED60006F520 /* volume-support.js */,
 				9551959025FA9E3D00F58CF0 /* watchos-media-controls-support.js */,
+				EBEEF8FA301F34CE00DB3007 /* YouTubeCaptionFetchQuirk.js */,
 				CDBA1F352F8D9EB300D30314 /* YouTubeCaptionQuirk.js */,
 			);
 			path = media;

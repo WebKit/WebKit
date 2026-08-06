@@ -137,6 +137,8 @@ struct QuirksData {
         NeedsWebKitMediaTextTrackDisplayQuirk,
 #if PLATFORM(COCOA)
         NeedsYouTubeCaptionQuirk,
+        NeedsYouTubeCaptionFetchQuirk,
+        NeedsNetflixCaptionFetchQuirk,
 #endif
 #if PLATFORM(IOS_FAMILY)
         NeedsYouTubeEmbedAutoplayQuirk,

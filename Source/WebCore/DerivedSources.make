@@ -2338,6 +2338,8 @@ USER_AGENT_SCRIPTS = \
     ModernMediaControls.js \
 	$(WebCore)/Modules/modern-media-controls/media/YouTubeCaptionQuirk.js \
 	$(WebCore)/Modules/modern-media-controls/media/CNNCaptionQuirk.js \
+	$(WebCore)/Modules/modern-media-controls/media/YouTubeCaptionFetchQuirk.js \
+	$(WebCore)/Modules/modern-media-controls/media/NetflixCaptionFetchQuirk.js \
 #
 
 USER_AGENT_SCRIPTS_FILES = \

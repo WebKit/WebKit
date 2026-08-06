@@ -449,6 +449,7 @@ public:
 
     void updateFindCaptionTrack();
     bool hasShowingFindSearchableTextTrackExcept(const TextTrack*) const;
+    bool hasSiteRenderedCaptions() const;
     RefPtr<TextTrack> bestFindCaptionTrack() const;
 
     void setSelectedTextTrack(TextTrack*);

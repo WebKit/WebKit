@@ -1625,6 +1625,29 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }
 
+bool Quirks::needsYouTubeCaptionFetchQuirk() const
+{
+#if PLATFORM(COCOA)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsYouTubeCaptionFetchQuirk);
+#else
+    return false;
+#endif
+}
+
+bool Quirks::needsNetflixCaptionFetchQuirk() const
+{
+#if PLATFORM(COCOA)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsNetflixCaptionFetchQuirk);
+#else
+    return false;
+#endif
+}
+
+
 // facebook.com: rdar://67273166
 // forbes.com:
 // reddit.com: rdar://80550715
@@ -3789,6 +3812,10 @@ static void handleNetflixQuirks(QuirksData& quirksData, const URL& /* quirksURL 
     quirksData.enableQuirks({
         // netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
         QuirksData::SiteSpecificQuirk::NeedsSeekingSupportDisabledQuirk,
+#if PLATFORM(COCOA)
+        // netflix.com: expose subtitles to find-in-video
+        QuirksData::SiteSpecificQuirk::NeedsNetflixCaptionFetchQuirk,
+#endif
 #if PLATFORM(VISION)
         QuirksData::SiteSpecificQuirk::NeedsNowPlayingFullscreenSwapQuirk,
 #endif
@@ -4027,6 +4054,8 @@ static void handleYouTubeQuirks(QuirksData& quirksData, const URL& quirksURL, co
         QuirksData::SiteSpecificQuirk::NeedsScrollbarWidthThinDisabledQuirk,
 #if PLATFORM(COCOA)
         QuirksData::SiteSpecificQuirk::NeedsYouTubeCaptionQuirk,
+        // youtube.com: expose captions to find-in-video
+        QuirksData::SiteSpecificQuirk::NeedsYouTubeCaptionFetchQuirk,
 #endif
 #if PLATFORM(IOS) || PLATFORM(VISION)
         // youtube.com: rdar://110097836

@@ -90,6 +90,8 @@ public:
     String mediaControlsFormattedStringForDuration(double) final;
     String youTubeQuirkScript() final;
     String cnnQuirkScript() final;
+    String youTubeCaptionFetchScript() final;
+    String netflixCaptionFetchScript() final;
 #endif
 
 #if ENABLE(FORM_CONTROL_REFRESH)
@@ -307,6 +309,8 @@ private:
     RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
     String m_youTubeCaptionQuirkScript;
     String m_cnnCaptionQuirkScript;
+    String m_youTubeCaptionFetchScript;
+    String m_netflixCaptionFetchScript;
 #endif // ENABLE(VIDEO)
 };
 
