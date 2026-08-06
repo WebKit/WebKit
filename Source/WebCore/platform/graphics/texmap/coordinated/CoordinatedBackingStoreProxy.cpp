@@ -97,13 +97,13 @@ Ref<CoordinatedBackingStoreProxy> CoordinatedBackingStoreProxy::create()
     return adoptRef(*new CoordinatedBackingStoreProxy());
 }
 
-OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
 {
     assertIsHeld(layer.lock());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(unscaledVisibleRect, unscaledContentsRect, enclosingIntRect(layer.visibleRect()).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(unscaledVisibleRect, unscaledContentsRect, unscaledViewportSize, contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
 
     if (!m_tiles.isEmpty())
         invalidateRegion(dirtyRegion);

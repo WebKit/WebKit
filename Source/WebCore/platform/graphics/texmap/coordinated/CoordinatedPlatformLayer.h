@@ -36,6 +36,7 @@
 #include "TransformationMatrix.h"
 #include <wtf/EnumSet.h>
 #include <wtf/Lock.h>
+#include <wtf/MainThread.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(SKIA)
@@ -135,16 +136,15 @@ public:
     const TransformationMatrix& childrenTransform() const WTF_REQUIRES_LOCK(m_lock);
     void didUpdateLayerTransform();
 
-    void setVisibleRect(const FloatRect&) WTF_REQUIRES_LOCK(m_lock);
-    const FloatRect& visibleRect() const WTF_REQUIRES_LOCK(m_lock);
-    void setTransformedVisibleRect(IntRect&&) WTF_REQUIRES_LOCK(m_lock);
+    void setVisibleRect(const FloatRect&);
+    void setTransformedVisibleRect(IntRect&&);
 
 #if ENABLE(SCROLLING_THREAD)
     void setScrollingNodeID(std::optional<ScrollingNodeID>) WTF_REQUIRES_LOCK(m_lock);
     const Markable<ScrollingNodeID>& scrollingNodeID() const WTF_REQUIRES_LOCK(m_lock);
 #endif
 
-    void setDrawsContent(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setDrawsContent(bool);
     void setMasksToBounds(bool) WTF_REQUIRES_LOCK(m_lock);
     void setPreserves3D(bool) WTF_REQUIRES_LOCK(m_lock);
     void setBackfaceVisibility(bool) WTF_REQUIRES_LOCK(m_lock);
@@ -198,7 +198,7 @@ public:
     void flushPositionChanges(const OptionSet<CompositionReason>&, bool = false);
     void flushCompositingState(const OptionSet<CompositionReason>&, bool = false);
 
-    bool hasPendingTilesCreation() const { return m_pendingTilesCreation; }
+    bool hasPendingTilesCreation() const { assertIsMainThread(); return m_pendingTilesCreation; }
     bool hasPendingBackingStoreTileUpdates() const;
     void processPendingBackingStoreTileUpdates();
     bool isCompositionRequiredOrOngoing() const;
@@ -275,13 +275,19 @@ private:
 
     const PlatformLayerIdentifier m_id;
 
-    GraphicsLayerCoordinated* m_owner { nullptr };
+    GraphicsLayerCoordinated* m_owner WTF_GUARDED_BY_CAPABILITY(mainThread) { nullptr };
     std::unique_ptr<TextureMapperLayer> m_target;
 #if USE(SKIA)
     RefPtr<SkiaCompositingLayer> m_skiaTarget;
 #endif
-    bool m_pendingTilesCreation { false };
-    bool m_needsTilesUpdate { false };
+
+    // Accessed only from the main thread.
+    bool m_drawsContent WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    bool m_pendingTilesCreation WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    bool m_needsTilesUpdate WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    FloatRect m_visibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
+    IntRect m_transformedVisibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_CAPABILITY(mainThread);
 
 #if ENABLE(DAMAGE_TRACKING)
     bool m_damagePropagationEnabled { false };
@@ -296,9 +302,6 @@ private:
     FloatPoint m_boundsOrigin WTF_GUARDED_BY_LOCK(m_lock);
     TransformationMatrix m_transform WTF_GUARDED_BY_LOCK(m_lock);
     TransformationMatrix m_childrenTransform WTF_GUARDED_BY_LOCK(m_lock);
-    FloatRect m_visibleRect WTF_GUARDED_BY_LOCK(m_lock);
-    IntRect m_transformedVisibleRect WTF_GUARDED_BY_LOCK(m_lock);
-    bool m_drawsContent WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_masksToBounds WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_preserves3D WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_backfaceVisibility WTF_GUARDED_BY_LOCK(m_lock) { true };
@@ -329,7 +332,6 @@ private:
         Path path;
         WindRule windRule;
     } m_clipPath WTF_GUARDED_BY_LOCK(m_lock);
-    Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_LOCK(m_lock);
     FilterOperations m_filters WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<CoordinatedPlatformLayer> m_mask WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_LOCK(m_lock);
