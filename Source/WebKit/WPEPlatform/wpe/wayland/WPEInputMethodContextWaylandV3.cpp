@@ -139,6 +139,7 @@ static uint32_t toTextInputV3Purpose(WPEInputPurpose purpose)
 {
     switch (purpose) {
     case WPE_INPUT_PURPOSE_FREE_FORM:
+    case WPE_INPUT_PURPOSE_SEARCH:
         return ZWP_TEXT_INPUT_V3_CONTENT_PURPOSE_NORMAL;
     case WPE_INPUT_PURPOSE_ALPHA:
         return ZWP_TEXT_INPUT_V3_CONTENT_PURPOSE_ALPHA;
