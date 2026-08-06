@@ -912,7 +912,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#TextRenderingProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#TextRenderingProperty"
             }
         },
         "font-feature-settings": {
@@ -4260,7 +4260,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#ColorInterpolationProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#ColorInterpolationProperty"
             }
         },
         "color-interpolation-filters": {
@@ -4281,7 +4281,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#ColorInterpolationFiltersProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#ColorInterpolationFiltersProperty"
             }
         },
         "content": {
@@ -4918,7 +4918,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#SpecifyingFillPaint"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#SpecifyingFillPaint"
             }
         },
         "fill-opacity": {
@@ -5153,11 +5153,11 @@
                 "crisp-edges",
                 {
                     "value": "optimizeSpeed",
-                    "url": "https://svgwg.org/svg2-draft/painting.html#ImageRenderingProperty"
+                    "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#ImageRenderingProperty"
                 },
                 {
                     "value": "optimizeQuality",
-                    "url": "https://svgwg.org/svg2-draft/painting.html#ImageRenderingProperty"
+                    "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#ImageRenderingProperty"
                 },
                 {
                     "value": "-webkit-crisp-edges",
@@ -7926,7 +7926,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/interact.html#PointerEventsProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/interact.html#PointerEventsProperty"
             }
         },
         "portal-transform": {
@@ -8009,7 +8009,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/geometry.html#R"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/geometry.html#R"
             }
         },
         "resize": {
@@ -8120,7 +8120,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/geometry.html#RX"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/geometry.html#RX"
             }
         },
         "ry": {
@@ -8137,7 +8137,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/geometry.html#RY"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/geometry.html#RY"
             }
         },
         "shape-rendering": {
@@ -8159,7 +8159,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#ShapeRenderingProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#ShapeRenderingProperty"
             }
         },
         "stop-color": {
@@ -8174,7 +8174,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/pservers.html#StopColorProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/pservers.html#StopColorProperty"
             }
         },
         "stop-opacity": {
@@ -8189,7 +8189,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/pservers.html#StopOpacityProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/pservers.html#StopOpacityProperty"
             }
         },
         "stroke": {
@@ -8222,7 +8222,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#SpecifyingStrokePaint"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#SpecifyingStrokePaint"
             }
         },
         "stroke-dasharray": {
@@ -8246,7 +8246,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#StrokeDashing"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeDashing"
             }
         },
         "stroke-dashoffset": {
@@ -8262,7 +8262,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#StrokeDashoffsetProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeDashoffsetProperty"
             }
         },
         "stroke-linecap": {
@@ -8286,7 +8286,7 @@
                 "category": "css-text-fill-and-stroke",
                 "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-linecap",
                 "obsolete-category": "svg",
-                "obsolete-url": "https://svgwg.org/svg2-draft/painting.html#LineCaps"
+                "obsolete-url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#LineCaps"
             }
         },
         "stroke-linejoin": {
@@ -8311,7 +8311,7 @@
                 "category": "css-text-fill-and-stroke",
                 "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-linejoin",
                 "obsolete-category": "svg",
-                "obsolete-url": "https://svgwg.org/svg2-draft/painting.html#StrokeLinejoinProperty"
+                "obsolete-url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeLinejoinProperty"
             }
         },
         "stroke-miterlimit": {
@@ -8332,7 +8332,7 @@
                 "category": "css-text-fill-and-stroke",
                 "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-miterlimit",
                 "obsolete-category": "svg",
-                "obsolete-url": "https://svgwg.org/svg2-draft/painting.html#StrokeMiterlimitProperty"
+                "obsolete-url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeMiterlimitProperty"
             }
         },
         "stroke-opacity": {
@@ -8348,7 +8348,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/painting.html#StrokeOpacityProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeOpacityProperty"
             }
         },
         "stroke-color": {
@@ -8392,7 +8392,7 @@
                 "category": "css-text-fill-and-stroke",
                 "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-width",
                 "obsolete-category": "svg",
-                "obsolete-url": "https://svgwg.org/svg2-draft/painting.html#StrokeWidthProperty"
+                "obsolete-url": "https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeWidthProperty"
             }
         },
         "speak-as": {
@@ -8572,7 +8572,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/text.html#TextAnchorProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/text.html#TextAnchorProperty"
             }
         },
         "text-group-align": {
@@ -9008,7 +9008,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/coords.html#VectorEffectProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/coords.html#VectorEffectProperty"
             }
         },
         "vertical-align": {
@@ -9321,7 +9321,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/geometry.html#X"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/geometry.html#X"
             }
         },
         "y": {
@@ -9335,7 +9335,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://svgwg.org/svg2-draft/geometry.html#Y"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/geometry.html#Y"
             }
         },
         "z-index": {
