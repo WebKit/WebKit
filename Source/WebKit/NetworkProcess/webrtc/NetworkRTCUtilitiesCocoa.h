@@ -25,11 +25,12 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
 
 #include <optional>
 #include <pal/spi/cocoa/NetworkSPI.h>
+#if USE(LIBWEBRTC)
 #include <webrtc/rtc_base/dscp.h>
+#endif
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,10 +40,12 @@ class RegistrableDomain;
 namespace WebKit {
 
 void setNWParametersApplicationIdentifiers(nw_parameters_t, const char* sourceApplicationBundleIdentifier, std::optional<audit_token_t>, const String& attributedBundleIdentifier);
-void setNWParametersTrackerOptions(nw_parameters_t, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker);
+enum class IsRTC : bool { No, Yes };
+void setNWParametersTrackerOptions(nw_parameters_t, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker, IsRTC = IsRTC::Yes);
 bool isKnownTracker(const WebCore::RegistrableDomain&);
+#if USE(LIBWEBRTC)
 std::optional<uint32_t> trafficClassFromDSCP(webrtc::DiffServCodePoint, bool enableServiceClass);
+#endif
 
 } // namespace WebKit
 
-#endif // USE(LIBWEBRTC)
