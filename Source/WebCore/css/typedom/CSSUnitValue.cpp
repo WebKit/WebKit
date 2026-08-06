@@ -330,73 +330,73 @@ static CSS::Category NODELETE calculationCategoryForProperty(CSSPropertyID, CSSU
         return CSS::Category::Number;
     case CSSUnitType::Em:
     case CSSUnitType::Ex:
-    case CSSUnitType::Px:
-    case CSSUnitType::Cm:
-    case CSSUnitType::Mm:
-    case CSSUnitType::In:
-    case CSSUnitType::Pt:
-    case CSSUnitType::Pc:
-    case CSSUnitType::Q:
-    case CSSUnitType::Lh:
+    case CSSUnitType::Pixel:
+    case CSSUnitType::Centimeter:
+    case CSSUnitType::Millimeter:
+    case CSSUnitType::Inch:
+    case CSSUnitType::Point:
+    case CSSUnitType::Pica:
+    case CSSUnitType::QuarterMillimeter:
+    case CSSUnitType::LineHeight:
     case CSSUnitType::Cap:
     case CSSUnitType::Ch:
     case CSSUnitType::Ic:
-    case CSSUnitType::Rcap:
-    case CSSUnitType::Rch:
-    case CSSUnitType::Rem:
-    case CSSUnitType::Rex:
-    case CSSUnitType::Ric:
-    case CSSUnitType::Rlh:
-    case CSSUnitType::Vw:
-    case CSSUnitType::Vh:
-    case CSSUnitType::Vmin:
-    case CSSUnitType::Vmax:
-    case CSSUnitType::Vb:
-    case CSSUnitType::Vi:
-    case CSSUnitType::Svw:
-    case CSSUnitType::Svh:
-    case CSSUnitType::Svmin:
-    case CSSUnitType::Svmax:
-    case CSSUnitType::Svb:
-    case CSSUnitType::Svi:
-    case CSSUnitType::Lvw:
-    case CSSUnitType::Lvh:
-    case CSSUnitType::Lvmin:
-    case CSSUnitType::Lvmax:
-    case CSSUnitType::Lvb:
-    case CSSUnitType::Lvi:
-    case CSSUnitType::Dvw:
-    case CSSUnitType::Dvh:
-    case CSSUnitType::Dvmin:
-    case CSSUnitType::Dvmax:
-    case CSSUnitType::Dvb:
-    case CSSUnitType::Dvi:
-    case CSSUnitType::Cqw:
-    case CSSUnitType::Cqh:
-    case CSSUnitType::Cqi:
-    case CSSUnitType::Cqb:
-    case CSSUnitType::Cqmin:
-    case CSSUnitType::Cqmax:
+    case CSSUnitType::RootCap:
+    case CSSUnitType::RootCh:
+    case CSSUnitType::RootEm:
+    case CSSUnitType::RootEx:
+    case CSSUnitType::RootIc:
+    case CSSUnitType::RootLineHeight:
+    case CSSUnitType::ViewportWidth:
+    case CSSUnitType::ViewportHeight:
+    case CSSUnitType::ViewportMin:
+    case CSSUnitType::ViewportMax:
+    case CSSUnitType::ViewportBlock:
+    case CSSUnitType::ViewportInline:
+    case CSSUnitType::SmallViewportWidth:
+    case CSSUnitType::SmallViewportHeight:
+    case CSSUnitType::SmallViewportMin:
+    case CSSUnitType::SmallViewportMax:
+    case CSSUnitType::SmallViewportBlock:
+    case CSSUnitType::SmallViewportInline:
+    case CSSUnitType::LargeViewportWidth:
+    case CSSUnitType::LargeViewportHeight:
+    case CSSUnitType::LargeViewportMin:
+    case CSSUnitType::LargeViewportMax:
+    case CSSUnitType::LargeViewportBlock:
+    case CSSUnitType::LargeViewportInline:
+    case CSSUnitType::DynamicViewportWidth:
+    case CSSUnitType::DynamicViewportHeight:
+    case CSSUnitType::DynamicViewportMin:
+    case CSSUnitType::DynamicViewportMax:
+    case CSSUnitType::DynamicViewportBlock:
+    case CSSUnitType::DynamicViewportInline:
+    case CSSUnitType::ContainerQueryWidth:
+    case CSSUnitType::ContainerQueryHeight:
+    case CSSUnitType::ContainerQueryInline:
+    case CSSUnitType::ContainerQueryBlock:
+    case CSSUnitType::ContainerQueryMin:
+    case CSSUnitType::ContainerQueryMax:
         return CSS::Category::Length;
     case CSSUnitType::Percentage:
         return CSS::Category::Percentage;
-    case CSSUnitType::Deg:
-    case CSSUnitType::Rad:
-    case CSSUnitType::Grad:
+    case CSSUnitType::Degree:
+    case CSSUnitType::Radian:
+    case CSSUnitType::Gradian:
     case CSSUnitType::Turn:
         return CSS::Category::Angle;
-    case CSSUnitType::Ms:
-    case CSSUnitType::S:
+    case CSSUnitType::Millisecond:
+    case CSSUnitType::Second:
         return CSS::Category::Time;
-    case CSSUnitType::Hz:
-    case CSSUnitType::Khz:
+    case CSSUnitType::Hertz:
+    case CSSUnitType::Kilohertz:
         return CSS::Category::Frequency;
-    case CSSUnitType::Dppx:
+    case CSSUnitType::DotsPerPixel:
     case CSSUnitType::X:
-    case CSSUnitType::Dpi:
-    case CSSUnitType::Dpcm:
+    case CSSUnitType::DotsPerInch:
+    case CSSUnitType::DotsPerCentimeter:
         return CSS::Category::Resolution;
-    case CSSUnitType::Fr:
+    case CSSUnitType::Fraction:
         return CSS::Category::Flex;
     default:
         break;

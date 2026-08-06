@@ -122,8 +122,8 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
     if (!ax || !ay)
         return Exception { ExceptionCode::TypeError };
 
-    auto x = ax->convertTo(CSSUnitType::Deg);
-    auto y = ay->convertTo(CSSUnitType::Deg);
+    auto x = ax->convertTo(CSSUnitType::Degree);
+    auto y = ay->convertTo(CSSUnitType::Degree);
 
     if (!x || !y)
         return Exception { ExceptionCode::TypeError };

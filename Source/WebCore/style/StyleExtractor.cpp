@@ -114,7 +114,7 @@ RefPtr<CSSValue> Extractor::getFontSizeCSSValuePreferringKeyword() const
     if (auto sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier())
         return CSSKeywordValue::create(sizeIdentifier);
 
-    return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(style->fontDescription().computedSize(), *style), CSSUnitType::Px);
+    return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(style->fontDescription().computedSize(), *style), CSSUnitType::Pixel);
 }
 
 bool Extractor::useFixedFontDefaultSize() const

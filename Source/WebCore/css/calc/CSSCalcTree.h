@@ -989,16 +989,16 @@ std::optional<Type> toType(const CalcMix&);
 constexpr CSSUnitType toCSSUnit(const CanonicalDimension::Dimension& dimension)
 {
     switch (dimension) {
-    case CanonicalDimension::Dimension::Length:         return CSSUnitType::Px;
-    case CanonicalDimension::Dimension::Angle:          return CSSUnitType::Deg;
-    case CanonicalDimension::Dimension::Time:           return CSSUnitType::S;
-    case CanonicalDimension::Dimension::Frequency:      return CSSUnitType::Hz;
-    case CanonicalDimension::Dimension::Resolution:     return CSSUnitType::Dppx;
-    case CanonicalDimension::Dimension::Flex:           return CSSUnitType::Fr;
+    case CanonicalDimension::Dimension::Length:         return CSSUnitType::Pixel;
+    case CanonicalDimension::Dimension::Angle:          return CSSUnitType::Degree;
+    case CanonicalDimension::Dimension::Time:           return CSSUnitType::Second;
+    case CanonicalDimension::Dimension::Frequency:      return CSSUnitType::Hertz;
+    case CanonicalDimension::Dimension::Resolution:     return CSSUnitType::DotsPerPixel;
+    case CanonicalDimension::Dimension::Flex:           return CSSUnitType::Fraction;
     }
 
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSUnitType::Px;
+    return CSSUnitType::Pixel;
 }
 
 // Maps Numeric type to its CSSUnitType counterpart.

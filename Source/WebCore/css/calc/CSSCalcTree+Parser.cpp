@@ -1026,7 +1026,7 @@ static std::optional<TypedChild> consumeAnchorFallback(CSSParserTokenRange& toke
         if (!number || number->value)
             return { };
 
-        return TypedChild { makeNumeric(0, CSSUnitType::Px), Type::makeLength() };
+        return TypedChild { makeNumeric(0, CSSUnitType::Pixel), Type::makeLength() };
     }
 
     default:

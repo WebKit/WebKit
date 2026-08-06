@@ -197,80 +197,80 @@ Child makeNumeric(double value, CSSUnitType unit)
         return makeChild(Percentage { .value = value, .hint = { } });
 
     // Canonical Dimension
-    case CSSUnitType::Px:
+    case CSSUnitType::Pixel:
         return makeChild(CanonicalDimension { .value = value, .dimension = CanonicalDimension::Dimension::Length });
-    case CSSUnitType::Deg:
+    case CSSUnitType::Degree:
         return makeChild(CanonicalDimension { .value = value, .dimension = CanonicalDimension::Dimension::Angle });
-    case CSSUnitType::S:
+    case CSSUnitType::Second:
         return makeChild(CanonicalDimension { .value = value, .dimension = CanonicalDimension::Dimension::Time });
-    case CSSUnitType::Hz:
+    case CSSUnitType::Hertz:
         return makeChild(CanonicalDimension { .value = value, .dimension = CanonicalDimension::Dimension::Frequency });
-    case CSSUnitType::Dppx:
+    case CSSUnitType::DotsPerPixel:
         return makeChild(CanonicalDimension { .value = value, .dimension = CanonicalDimension::Dimension::Resolution });
-    case CSSUnitType::Fr:
+    case CSSUnitType::Fraction:
         return makeChild(CanonicalDimension { .value = value, .dimension = CanonicalDimension::Dimension::Flex });
 
     // <length>
-    case CSSUnitType::Cm:
-    case CSSUnitType::Mm:
-    case CSSUnitType::Q:
-    case CSSUnitType::In:
-    case CSSUnitType::Pt:
-    case CSSUnitType::Pc:
+    case CSSUnitType::Centimeter:
+    case CSSUnitType::Millimeter:
+    case CSSUnitType::QuarterMillimeter:
+    case CSSUnitType::Inch:
+    case CSSUnitType::Point:
+    case CSSUnitType::Pica:
     case CSSUnitType::Em:
     case CSSUnitType::Ex:
-    case CSSUnitType::Lh:
+    case CSSUnitType::LineHeight:
     case CSSUnitType::Cap:
     case CSSUnitType::Ch:
     case CSSUnitType::Ic:
-    case CSSUnitType::Rcap:
-    case CSSUnitType::Rch:
-    case CSSUnitType::Rem:
-    case CSSUnitType::Rex:
-    case CSSUnitType::Ric:
-    case CSSUnitType::Rlh:
-    case CSSUnitType::Vw:
-    case CSSUnitType::Vh:
-    case CSSUnitType::Vmin:
-    case CSSUnitType::Vmax:
-    case CSSUnitType::Vb:
-    case CSSUnitType::Vi:
-    case CSSUnitType::Svw:
-    case CSSUnitType::Svh:
-    case CSSUnitType::Svmin:
-    case CSSUnitType::Svmax:
-    case CSSUnitType::Svb:
-    case CSSUnitType::Svi:
-    case CSSUnitType::Lvw:
-    case CSSUnitType::Lvh:
-    case CSSUnitType::Lvmin:
-    case CSSUnitType::Lvmax:
-    case CSSUnitType::Lvb:
-    case CSSUnitType::Lvi:
-    case CSSUnitType::Dvw:
-    case CSSUnitType::Dvh:
-    case CSSUnitType::Dvmin:
-    case CSSUnitType::Dvmax:
-    case CSSUnitType::Dvb:
-    case CSSUnitType::Dvi:
-    case CSSUnitType::Cqw:
-    case CSSUnitType::Cqh:
-    case CSSUnitType::Cqi:
-    case CSSUnitType::Cqb:
-    case CSSUnitType::Cqmin:
-    case CSSUnitType::Cqmax:
+    case CSSUnitType::RootCap:
+    case CSSUnitType::RootCh:
+    case CSSUnitType::RootEm:
+    case CSSUnitType::RootEx:
+    case CSSUnitType::RootIc:
+    case CSSUnitType::RootLineHeight:
+    case CSSUnitType::ViewportWidth:
+    case CSSUnitType::ViewportHeight:
+    case CSSUnitType::ViewportMin:
+    case CSSUnitType::ViewportMax:
+    case CSSUnitType::ViewportBlock:
+    case CSSUnitType::ViewportInline:
+    case CSSUnitType::SmallViewportWidth:
+    case CSSUnitType::SmallViewportHeight:
+    case CSSUnitType::SmallViewportMin:
+    case CSSUnitType::SmallViewportMax:
+    case CSSUnitType::SmallViewportBlock:
+    case CSSUnitType::SmallViewportInline:
+    case CSSUnitType::LargeViewportWidth:
+    case CSSUnitType::LargeViewportHeight:
+    case CSSUnitType::LargeViewportMin:
+    case CSSUnitType::LargeViewportMax:
+    case CSSUnitType::LargeViewportBlock:
+    case CSSUnitType::LargeViewportInline:
+    case CSSUnitType::DynamicViewportWidth:
+    case CSSUnitType::DynamicViewportHeight:
+    case CSSUnitType::DynamicViewportMin:
+    case CSSUnitType::DynamicViewportMax:
+    case CSSUnitType::DynamicViewportBlock:
+    case CSSUnitType::DynamicViewportInline:
+    case CSSUnitType::ContainerQueryWidth:
+    case CSSUnitType::ContainerQueryHeight:
+    case CSSUnitType::ContainerQueryInline:
+    case CSSUnitType::ContainerQueryBlock:
+    case CSSUnitType::ContainerQueryMin:
+    case CSSUnitType::ContainerQueryMax:
     // <angle>
-    case CSSUnitType::Rad:
-    case CSSUnitType::Grad:
+    case CSSUnitType::Radian:
+    case CSSUnitType::Gradian:
     case CSSUnitType::Turn:
     // <time>
-    case CSSUnitType::Ms:
+    case CSSUnitType::Millisecond:
     // <frequency>
-    case CSSUnitType::Khz:
+    case CSSUnitType::Kilohertz:
     // <resolution>
     case CSSUnitType::X:
-    case CSSUnitType::Dpi:
-    case CSSUnitType::Dpcm:
+    case CSSUnitType::DotsPerInch:
+    case CSSUnitType::DotsPerCentimeter:
         return makeChild(NonCanonicalDimension { .value = value, .unit = unit });
 
     // Non-numeric types are not supported.

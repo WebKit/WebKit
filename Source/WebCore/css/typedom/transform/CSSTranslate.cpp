@@ -49,7 +49,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<CSSNumericValue> x, Ref<
 {
     auto is2D = z ? CSSTransformComponent::Is2D::No : CSSTransformComponent::Is2D::Yes;
     if (!z)
-        z = CSSUnitValue::create(0.0, CSSUnitType::Px);
+        z = CSSUnitValue::create(0.0, CSSUnitType::Pixel);
 
     if (!x->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
         || !y->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
@@ -151,9 +151,9 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
     if (!xUnitValue || !yUnitValue || !zUnitValue)
         return Exception { ExceptionCode::TypeError };
 
-    auto xPx = xUnitValue->convertTo(CSSUnitType::Px);
-    auto yPx = yUnitValue->convertTo(CSSUnitType::Px);
-    auto zPx = zUnitValue->convertTo(CSSUnitType::Px);
+    auto xPx = xUnitValue->convertTo(CSSUnitType::Pixel);
+    auto yPx = yUnitValue->convertTo(CSSUnitType::Pixel);
+    auto zPx = zUnitValue->convertTo(CSSUnitType::Pixel);
 
     if (!xPx || !yPx || !zPx)
         return Exception { ExceptionCode::TypeError };

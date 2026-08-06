@@ -106,7 +106,7 @@ void PDFPluginTextAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     Ref styledElement = downcast<StyledElement>(*element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, protect(annotation()).get().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::Px);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, protect(annotation()).get().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::Pixel);
 }
 
 void PDFPluginTextAnnotation::commit()

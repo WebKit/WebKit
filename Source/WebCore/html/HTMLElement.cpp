@@ -176,7 +176,7 @@ unsigned HTMLElement::parseBorderWidthAttribute(const AtomString& value) const
 
 void HTMLElement::applyBorderAttributeToStyle(const AtomString& value, MutableStyleProperties& style)
 {
-    addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::Px);
+    addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::Pixel);
     addPropertyToPresentationalHintStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
@@ -806,7 +806,7 @@ void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropert
         return;
     }
     if (useCSSPX == UseCSSPXAsUnitType::Yes)
-        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::Px);
+        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::Pixel);
     else
         addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::Number);
 }
@@ -836,7 +836,7 @@ void HTMLElement::addHTMLPixelLengthToStyle(MutableStyleProperties& style, CSSPr
     auto result = parseHTMLNonNegativeInteger(value);
     if (!result)
         return;
-    addPropertyToPresentationalHintStyle(style, propertyID, result.value(), CSSUnitType::Px);
+    addPropertyToPresentationalHintStyle(style, propertyID, result.value(), CSSUnitType::Pixel);
 }
 
 // This is specific to <marquee> attributes, including pixel and CSS_NUMBER values.

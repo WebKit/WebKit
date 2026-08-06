@@ -634,7 +634,7 @@ inline bool PropertyParserCustom::consumeFlexShorthand(CSSParserTokenRange& rang
                 else if (!flexShrink)
                     flexShrink = WTF::move(number);
                 else if (number->isZero() == true) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
-                    flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::Px);
+                    flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::Pixel);
                 else
                     return false;
             } else if (!flexBasis) {

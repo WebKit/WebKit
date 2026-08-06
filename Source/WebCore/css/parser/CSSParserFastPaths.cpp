@@ -123,7 +123,7 @@ static inline bool parseSimpleLength(std::span<const CharacterType> characters, 
 {
     if (characters.size() > 2 && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'p') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'x')) {
         dropLast(characters, 2);
-        unit = CSSUnitType::Px;
+        unit = CSSUnitType::Pixel;
     } else if (!characters.empty() && characters.back() == '%') {
         dropLast(characters);
         unit = CSSUnitType::Percentage;
@@ -202,7 +202,7 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
     if (unit == CSSUnitType::Number) {
         if (number && cssParserMode != SVGAttributeMode)
             return nullptr;
-        unit = CSSUnitType::Px;
+        unit = CSSUnitType::Pixel;
     }
 
     if (number < valueRange.min || number > valueRange.max)
@@ -781,7 +781,7 @@ static bool parseTransformTranslateArguments(StringParsingBuffer<CharType>& buff
         if (!parseSimpleLength(buffer.span().first(argumentLength), unit, number))
             return false;
         if (!number && unit == CSSUnitType::Number)
-            unit = CSSUnitType::Px;
+            unit = CSSUnitType::Pixel;
         if (unit == CSSUnitType::Number || (unit == CSSUnitType::Percentage && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
             return false;
         arguments.append(CSSPrimitiveValue::create(number, unit));
