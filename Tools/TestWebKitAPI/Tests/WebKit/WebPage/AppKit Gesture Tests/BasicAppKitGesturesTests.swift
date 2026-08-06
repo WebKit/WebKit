@@ -667,7 +667,7 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == expected)
     }
 
-    @Test(.disabled(), arguments: [6, 8], [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
+    @Test(arguments: [6, 8], [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
     func scrollingOnScrollBarChangesScrollPosition(inset: Int, pressAndWait: Duration) async throws {
         let html = """
             <body style="width: 100%; height: 2000px; margin: 0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
