@@ -78,7 +78,7 @@ JITWorklistThread::JITWorklistThread(const AbstractLocker& locker, JITWorklist& 
 }
 #else
 JITWorklistThread::JITWorklistThread(const AbstractLocker& locker, JITWorklist& worklist)
-    : AutomaticThread(locker, worklist.m_lock, worklist.m_planEnqueued.copyRef(), ThreadType::Compiler)
+    : AutomaticThread(locker, worklist.m_lock, worklist.m_planEnqueued.copyRef(), ThreadType::Compiler, ThreadQOS::Utility)
     , m_worklist(worklist)
 {
 }

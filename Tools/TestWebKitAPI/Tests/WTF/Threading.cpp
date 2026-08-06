@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,14 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/threads/BinarySemaphore.h>
+
+#if OS(LINUX)
+#include <linux/sched/types.h>
+#include <sched.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <wtf/linux/HighPriorityThreads.h>
+#endif
 
 namespace TestWebKitAPI {
 
@@ -120,5 +129,114 @@ TEST(WTF_Thread, ThreadSafetyAnalysisAssertIsCurrentWorks)
     for (auto& holder : holders)
         EXPECT_EQ(2u, holder.result);
 }
+
+
+#if OS(LINUX)
+namespace {
+
+struct ObservedAttributes {
+    int policy;
+    int niceLevel;
+    uint32_t minUtil;
+};
+
+static std::optional<ObservedAttributes> observeSchedulingAttributes(pid_t threadID)
+{
+    struct sched_attr attributes { };
+    attributes.size = sizeof(attributes);
+    if (syscall(SYS_sched_getattr, threadID, &attributes, sizeof(attributes), 0))
+        return std::nullopt;
+    return ObservedAttributes { static_cast<int>(attributes.sched_policy), attributes.sched_nice, attributes.sched_util_min };
+}
+
+// Runs a thread at the given QOS and reports the attributes the kernel gave it. The thread waits
+// before exiting so that its identifier stays valid while we read them.
+static std::optional<ObservedAttributes> attributesForQOS(Thread::QOS qos)
+{
+    BinarySemaphore running;
+    BinarySemaphore mayExit;
+    Ref thread = Thread::create("QOSProbe"_s, [&] {
+        running.signal();
+        mayExit.wait();
+    }, ThreadType::Unknown, qos);
+
+    running.wait();
+    auto observed = observeSchedulingAttributes(thread->id());
+    mayExit.signal();
+    thread->waitForCompletion();
+    return observed;
+}
+
+// The sysctl is only registered when the kernel was built with CONFIG_UCLAMP_TASK.
+static bool kernelSupportsUtilizationClamp()
+{
+    return !access("/proc/sys/kernel/sched_util_clamp_min", R_OK);
+}
+
+} // namespace
+
+TEST(WTF_Thread, SchedulingAttributesFollowQOS)
+{
+    struct Expectation {
+        Thread::QOS qos;
+        int policy;
+        int niceLevel;
+        uint32_t minUtil;
+    };
+
+    // UserInteractive is left out: HighPriorityThreads asks rtkit to lower its nice level
+    // asynchronously, so its nice level is not ours to predict.
+    static constexpr Expectation expectations[] = {
+        { Thread::QOS::UserInitiated, SCHED_OTHER, 0, 1024 },
+        { Thread::QOS::Default, SCHED_OTHER, 0, 204 },
+        { Thread::QOS::Utility, SCHED_BATCH, 10, 0 },
+        { Thread::QOS::Background, SCHED_IDLE, 19, 0 },
+    };
+
+    for (auto& expectation : expectations) {
+        auto observed = attributesForQOS(expectation.qos);
+        ASSERT_TRUE(observed.has_value());
+        EXPECT_EQ(expectation.policy, observed->policy);
+        // The kernel only applies sched_nice under SCHED_OTHER and SCHED_BATCH, so a SCHED_IDLE
+        // thread keeps whatever nice level it had.
+        if (expectation.policy != SCHED_IDLE)
+            EXPECT_EQ(expectation.niceLevel, observed->niceLevel);
+        if (kernelSupportsUtilizationClamp())
+            EXPECT_EQ(expectation.minUtil, observed->minUtil);
+    }
+}
+
+// A UserInteractive thread is registered with HighPriorityThreads, which drops its boost while no
+// page is visible. Re-enabling has to put the utilization clamp back, which it can only do by
+// applying the nice level and the clamp separately: rtkit owns the nice level, and asking for both
+// at once fails as a unit when we lack the privilege for the nice level.
+TEST(WTF_Thread, HighPriorityThreadsRestoresClampWhenReenabled)
+{
+    if (!kernelSupportsUtilizationClamp())
+        return;
+
+    BinarySemaphore running;
+    BinarySemaphore mayExit;
+    Ref thread = Thread::create("ClampProbe"_s, [&] {
+        running.signal();
+        mayExit.wait();
+    }, ThreadType::Unknown, Thread::QOS::UserInteractive);
+    running.wait();
+
+    auto& highPriorityThreads = HighPriorityThreads::singleton();
+    highPriorityThreads.setEnabled(false);
+    auto demoted = observeSchedulingAttributes(thread->id());
+    highPriorityThreads.setEnabled(true);
+    auto restored = observeSchedulingAttributes(thread->id());
+
+    mayExit.signal();
+    thread->waitForCompletion();
+
+    ASSERT_TRUE(demoted.has_value());
+    ASSERT_TRUE(restored.has_value());
+    EXPECT_EQ(1024u * 20 / 100, demoted->minUtil);
+    EXPECT_EQ(1024u, restored->minUtil);
+}
+#endif // OS(LINUX)
 
 } // namespace TestWebKitAPI

@@ -35,6 +35,7 @@
 #if USE(PTHREADS)
 
 #include <errno.h>
+#include <wtf/Logging.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SafeStrerror.h>
@@ -49,8 +50,25 @@
 #if OS(LINUX)
 #include <sched.h>
 #include <sys/prctl.h>
+#include <sys/resource.h>
 #include <sys/syscall.h>
-#include <wtf/linux/RealTimeThreads.h>
+#include <wtf/linux/HighPriorityThreads.h>
+
+// See the NOTES section of
+// https://man7.org/linux/man-pages/man2/sched_setattr.2.html
+#if defined(SYS_sched_setattr) && __has_include(<linux/sched/types.h>)
+#include <linux/sched/types.h>
+#ifdef SCHED_ATTR_SIZE_VER1
+#define HAVE_SCHED_SETATTR 1
+#endif // SCHED_ATTR_SIZE_VER1
+#endif
+
+#ifndef SCHED_FLAG_RESET_ON_FORK
+#define SCHED_FLAG_RESET_ON_FORK 0x01
+#endif
+#ifndef SCHED_FLAG_UTIL_CLAMP_MIN
+#define SCHED_FLAG_UTIL_CLAMP_MIN 0x20
+#endif
 #ifndef SCHED_RESET_ON_FORK
 #define SCHED_RESET_ON_FORK 0x40000000
 #endif
@@ -263,7 +281,7 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 }
 #endif
 
-#if HAVE(SCHEDULING_POLICIES) || OS(LINUX)
+#if HAVE(SCHEDULING_POLICIES)
 static int NODELETE schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
 {
     switch (schedulingPolicy) {
@@ -280,25 +298,38 @@ static int NODELETE schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
 #endif
 
 #if OS(LINUX)
-static int schedPolicy(Thread::QOS qos, Thread::SchedulingPolicy schedulingPolicy)
-{
-    // A specific scheduling policy can override the implied policy from QOS
-    auto policy = schedPolicy(schedulingPolicy);
-    if (policy != SCHED_OTHER)
-        return policy;
+struct SchedulingAttributes {
+    int policy;
+    int niceLevel;
+    // DVFS floor, see s_utilizationScale
+    uint32_t minUtil;
+};
 
+// The kernel's utilization scale, on which 1024 means a fully utilized CPU.
+static constexpr uint32_t s_utilizationScale = 1024;
+
+static SchedulingAttributes schedulingAttributesForQOS(Thread::QOS qos)
+{
     switch (qos) {
     case Thread::QOS::UserInteractive:
-        return SCHED_RR;
     case Thread::QOS::UserInitiated:
+        return { SCHED_OTHER, 0, s_utilizationScale };
     case Thread::QOS::Default:
-        return SCHED_OTHER;
+        return { SCHED_OTHER, 0, s_utilizationScale * 20 / 100 };
     case Thread::QOS::Utility:
-        return SCHED_BATCH;
+        return { SCHED_BATCH, 10, 0 };
     case Thread::QOS::Background:
-        return SCHED_IDLE;
+        return { SCHED_IDLE, 19, 0 };
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+static void logSchedulingAttributesFailure(ThreadIdentifier id)
+{
+    // A thread that exited before its attributes were applied is expected, not a failure.
+    if (errno != ESRCH)
+        RELEASE_LOG_ERROR(Threading, "Failed to apply scheduling attributes to thread %d: %s", id, safeStrerror(errno).data());
+    UNUSED_PARAM(id);
 }
 #endif
 
@@ -338,27 +369,79 @@ bool Thread::establishHandle(NewThreadContext& context, StackAllocationSpecifica
         return false;
     }
 
-#if OS(LINUX)
-    int policy = schedPolicy(qos, schedulingPolicy);
-    if (policy == SCHED_RR)
-        RealTimeThreads::singleton().registerThread(*this);
-    else {
-        struct sched_param param = { };
-        error = pthread_setschedparam(threadHandle, policy | SCHED_RESET_ON_FORK, &param);
-        if (error)
-            LOG_ERROR("Failed to set sched policy %d for thread %ld: %s", policy, threadHandle, safeStrerror(error).data());
-    }
-#else
 #if !HAVE(QOS_CLASSES)
     UNUSED_PARAM(qos);
 #endif
 #if !HAVE(SCHEDULING_POLICIES)
     UNUSED_PARAM(schedulingPolicy);
 #endif
-#endif
 
     establishPlatformSpecificHandle(threadHandle);
     return true;
+}
+
+void Thread::updateSchedulingAttributes(SchedulingState state) const
+{
+#if OS(LINUX)
+    ASSERT(m_schedulingPolicy == SchedulingPolicy::Other);
+
+    const auto attributes = schedulingAttributesForQOS(state == SchedulingState::Demoted ? QOS::Default : m_qos);
+
+#if HAVE(SCHED_SETATTR)
+    static std::atomic<bool> utilizationClampSupported { true };
+
+    struct sched_attr schedAttr { };
+    schedAttr.size = sizeof(struct sched_attr);
+    schedAttr.sched_policy = attributes.policy;
+    schedAttr.sched_flags = SCHED_FLAG_RESET_ON_FORK;
+    schedAttr.sched_nice = attributes.niceLevel;
+
+    auto setAttributes = [&] {
+        return !syscall(SYS_sched_setattr, m_id, &schedAttr, 0);
+    };
+
+    if (utilizationClampSupported.load(std::memory_order_relaxed)) {
+        schedAttr.sched_flags |= SCHED_FLAG_UTIL_CLAMP_MIN;
+        schedAttr.sched_util_min = attributes.minUtil;
+        if (setAttributes())
+            return;
+
+        // Did we fail because uclamp was rejected?
+        schedAttr.sched_flags = SCHED_FLAG_RESET_ON_FORK;
+        schedAttr.sched_util_min = 0;
+        if (!setAttributes()) {
+            // No
+            logSchedulingAttributesFailure(m_id);
+            return;
+        }
+
+        // Yes, don't try uclamp again.
+        if (utilizationClampSupported.exchange(false, std::memory_order_relaxed))
+            RELEASE_LOG_WITH_LEVEL(Threading, WTFLogLevel::Info, "Utilization clamping is unavailable, scheduling every thread without it: %s", safeStrerror(errno).data());
+        return;
+    }
+
+    if (!setAttributes())
+        logSchedulingAttributesFailure(m_id);
+#else
+    struct sched_param param = { };
+    if (sched_setscheduler(m_id, attributes.policy | SCHED_RESET_ON_FORK, &param)
+        || setpriority(PRIO_PROCESS, m_id, attributes.niceLevel))
+        logSchedulingAttributesFailure(m_id);
+#endif // HAVE(SCHED_SETATTR)
+#else
+    UNUSED_PARAM(state);
+#endif // OS(LINUX)
+}
+
+void Thread::initializeSchedulingAttributes()
+{
+    updateSchedulingAttributes(SchedulingState::Full);
+
+#if OS(LINUX)
+    if (m_qos == QOS::UserInteractive)
+        HighPriorityThreads::singleton().registerThread(*this);
+#endif
 }
 
 void Thread::initializeCurrentThreadInternal(const char* threadName)
@@ -453,11 +536,11 @@ Thread& Thread::initializeCurrentTLS()
     // Not a WTF-created thread, Thread is not established yet.
     WTF::initialize();
 #if PLATFORM(COCOA)
-    Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other, pthread_main_np() ? IsMain::Yes : IsMain::No));
+    Ref thread = adoptRef(*new Thread(defaultQOS, SchedulingPolicy::Other, pthread_main_np() ? IsMain::Yes : IsMain::No));
 #elif OS(LINUX)
-    Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other, getpid() == static_cast<pid_t>(syscall(SYS_gettid)) ? IsMain::Yes : IsMain::No));
+    Ref thread = adoptRef(*new Thread(defaultQOS, SchedulingPolicy::Other, getpid() == static_cast<pid_t>(syscall(SYS_gettid)) ? IsMain::Yes : IsMain::No));
 #else
-    Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other));
+    Ref thread = adoptRef(*new Thread(defaultQOS, SchedulingPolicy::Other));
 #endif
     thread->establishPlatformSpecificHandle(pthread_self());
     thread->initializeInThread();

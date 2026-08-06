@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,11 +59,16 @@ enum class ThreadQOS {
     Background
 };
 
+enum class ThreadSchedulingState : bool { Demoted, Full };
+
 enum class ThreadSchedulingPolicy : uint8_t {
     Other = 0,
     FIFO,
     Realtime,
 };
+
+constexpr ThreadQOS defaultThreadQOS = ThreadQOS::UserInitiated;
+constexpr ThreadSchedulingPolicy defaultThreadSchedulingPolicy = ThreadSchedulingPolicy::Other;
 
 } // namespace WTF
 
@@ -71,3 +77,5 @@ using WTF::GCThreadType;
 using WTF::ThreadQOS;
 using WTF::ThreadSchedulingPolicy;
 using WTF::ThreadType;
+using WTF::defaultThreadQOS;
+using WTF::defaultThreadSchedulingPolicy;
