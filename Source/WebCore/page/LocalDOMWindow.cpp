@@ -1104,15 +1104,7 @@ HTMLFrameOwnerElement* LocalDOMWindow::frameElement() const
 
 void LocalDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
-    RefPtr frame = this->frame();
-    RefPtr openerFrame = frame ? frame->opener() : nullptr;
-    focus([&] {
-        if (!openerFrame || openerFrame == frame || incumbentWindow.frame() != openerFrame)
-            return false;
-
-        auto* page = openerFrame->page();
-        return page && page->isVisibleAndActive();
-    }());
+    focus(isWindowFocusAllowed(incumbentWindow));
 }
 
 void LocalDOMWindow::focus(bool allowFocus)
