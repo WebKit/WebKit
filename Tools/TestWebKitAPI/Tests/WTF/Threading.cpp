@@ -31,11 +31,11 @@
 #include <wtf/threads/BinarySemaphore.h>
 
 #if OS(LINUX)
-#include <linux/sched/types.h>
 #include <sched.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <wtf/linux/HighPriorityThreads.h>
+#include <wtf/linux/SchedAttr.h>
 #endif
 
 namespace TestWebKitAPI {
@@ -142,7 +142,7 @@ struct ObservedAttributes {
 
 static std::optional<ObservedAttributes> observeSchedulingAttributes(pid_t threadID)
 {
-    struct sched_attr attributes { };
+    SchedAttr attributes { };
     attributes.size = sizeof(attributes);
     if (syscall(SYS_sched_getattr, threadID, &attributes, sizeof(attributes), 0))
         return std::nullopt;

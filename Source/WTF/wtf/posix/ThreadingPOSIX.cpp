@@ -53,14 +53,12 @@
 #include <sys/resource.h>
 #include <sys/syscall.h>
 #include <wtf/linux/HighPriorityThreads.h>
+#include <wtf/linux/SchedAttr.h>
 
 // See the NOTES section of
 // https://man7.org/linux/man-pages/man2/sched_setattr.2.html
-#if defined(SYS_sched_setattr) && __has_include(<linux/sched/types.h>)
-#include <linux/sched/types.h>
-#ifdef SCHED_ATTR_SIZE_VER1
+#if defined(SYS_sched_setattr)
 #define HAVE_SCHED_SETATTR 1
-#endif // SCHED_ATTR_SIZE_VER1
 #endif
 
 #ifndef SCHED_FLAG_RESET_ON_FORK
@@ -390,8 +388,8 @@ void Thread::updateSchedulingAttributes(SchedulingState state) const
 #if HAVE(SCHED_SETATTR)
     static std::atomic<bool> utilizationClampSupported { true };
 
-    struct sched_attr schedAttr { };
-    schedAttr.size = sizeof(struct sched_attr);
+    SchedAttr schedAttr { };
+    schedAttr.size = sizeof(schedAttr);
     schedAttr.sched_policy = attributes.policy;
     schedAttr.sched_flags = SCHED_FLAG_RESET_ON_FORK;
     schedAttr.sched_nice = attributes.niceLevel;

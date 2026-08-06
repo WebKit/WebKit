@@ -244,6 +244,11 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming/underscores"]),
 
     ([
+     # Mirrors the kernel's struct sched_attr, whose member names use underscores.
+     os.path.join('Source', 'WTF', 'wtf', 'linux', 'SchedAttr.h')],
+     ["-readability/naming/underscores"]),
+
+    ([
      # MALLOC_HEAP_BREAKDOWN framework for non-apple ports exposes C-style header.
      os.path.join('Source', 'WTF', 'wtf', 'malloc_heap_breakdown', 'malloc', 'malloc.h')],
      ["-readability/naming/underscores", "-readability/parameter_name", "-readability/null"]),
