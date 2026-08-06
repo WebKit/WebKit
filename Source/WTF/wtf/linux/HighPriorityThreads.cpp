@@ -41,8 +41,10 @@
 
 namespace WTF {
 
+#if USE(GLIB)
 // Requested nice value. rtkit clamps this to its own MinNiceLevel.
 static constexpr int s_highPriorityNiceLevel = -20;
+#endif
 
 HighPriorityThreads& HighPriorityThreads::singleton()
 {
