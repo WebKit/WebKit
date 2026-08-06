@@ -1658,6 +1658,8 @@ imported/w3c/web-platform-tests/dom/events/scrolling/scrollIntoView-in-onscroll-
 imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-composed.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-no-scroll-after-prevent-default.html [ Skip ]
 
+fast/forms/color/display-none-input-color-chooser-shown.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

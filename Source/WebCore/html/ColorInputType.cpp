@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Google Inc. All rights reserved.
  * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -250,7 +250,7 @@ void ColorInputType::attributeChanged(const QualifiedName& name)
 void ColorInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());
-    if (element()->isDisabledFormControl() || !element()->renderer())
+    if (element()->isDisabledFormControl())
         return;
 
     if (!UserGestureIndicator::processingUserGesture())

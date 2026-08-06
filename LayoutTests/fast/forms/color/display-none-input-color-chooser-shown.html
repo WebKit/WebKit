@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="colorPick" type="color" />
+<label for="colorPick" id="labelPick">Pick a color</label>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function runTest() {
+        const result = document.getElementById("result");
+        if (!window.testRunner || !window.eventSender) {
+            result.textContent = "This test requires testRunner and eventSender.";
+            return;
+        }
+
+        const colorInput = document.getElementById("colorPick");
+        colorInput.style.display = "none";
+        await UIHelper.ensurePresentationUpdate();
+
+        await UIHelper.activateElement(document.getElementById("labelPick"));
+
+        // ColorInputType::showPicker() makes the input match :open, so this checks that the
+        // color chooser was opened. Whether the platform picker stays on screen is not
+        // checked here: on macOS it is a transient NSPopover anchored to the input's rect,
+        // which is empty for a display:none input, so it can be dismissed at any time.
+        const opened = colorInput.matches(":open");
+
+        // End the chooser, so that it is not left up for subsequent tests. The input needs
+        // to be focusable for ColorInputType::elementDidBlur() to run, hence restoring
+        // display before focusing it.
+        colorInput.style.display = "";
+        await UIHelper.ensurePresentationUpdate();
+        colorInput.focus();
+        colorInput.blur();
+        const closed = !colorInput.matches(":open");
+        colorInput.style.display = "none";
+
+        result.textContent = (opened
+            ? "PASS: Color chooser was opened by activating the label of a display:none color input\n"
+            : "FAIL: Color chooser was not opened\n")
+            + (closed
+            ? "PASS: Color chooser was closed after blurring the input"
+            : "FAIL: Color chooser was still open after blurring the input");
+
+        testRunner.notifyDone();
+    }
+
+    window.addEventListener("load", runTest, false);
+</script>
+<pre id="result"></pre>
+</body>
+</html>
