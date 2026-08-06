@@ -35,7 +35,6 @@
 #include "Logging.h"
 #include "NodeDocument.h"
 #include <WebCore/ExceptionOr.h>
-#include <limits>
 #include <wtf/TZoneMallocInlines.h>
 namespace WebCore {
 
