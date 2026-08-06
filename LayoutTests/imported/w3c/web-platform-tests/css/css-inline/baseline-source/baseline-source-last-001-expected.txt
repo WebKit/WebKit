@@ -37,9 +37,7 @@ FAIL .target > * 7 assert_equals:
 <span data-offset-y="65"></span>
 offsetTop expected 65 but got 125
 PASS .target > * 8
-FAIL .target > * 9 assert_equals:
-<span data-offset-y="95"></span>
-offsetTop expected 95 but got 110
+PASS .target > * 9
 PASS .target > * 10
 FAIL .target > * 11 assert_equals:
 <span data-offset-y="65"></span>

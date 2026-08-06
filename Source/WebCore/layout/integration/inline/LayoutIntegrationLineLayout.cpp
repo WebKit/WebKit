@@ -1033,12 +1033,18 @@ std::optional<LayoutUnit> LineLayout::lastLineBaseline() const
         if (auto* blockLevelBox = m_inlineContent->blockLevelBoxForLine(line)) {
             // For block-in-inline look for the baseline of the child box.
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
-            return blockRenderer->lastLineBaseline();
+            if (auto baseline = blockRenderer->lastLineBaseline())
+                return blockRenderer->logicalTop() + *baseline;
+            return { };
         }
         return LayoutUnit { baselineForLine(line) };
     };
 
     for (auto& line : m_inlineContent->displayContent().lines | std::views::reverse) {
+        // A line clamped away in the block direction holds no visible content and so is not the last line with content.
+        // A line holding a block level box is the exception: what is visible there is decided inside that block, which runs this same look-up on its own lines.
+        if (line.isFullyTruncatedInBlockDirection() && !line.hasBlockLevelBox())
+            continue;
         if (auto baseline = baselineForLineOrBlock(line))
             return baseline;
     }

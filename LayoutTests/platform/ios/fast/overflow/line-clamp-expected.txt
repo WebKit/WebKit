@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (208,237) size 4x18
         text run at (208,237) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,57) size 102x74 clip at (9,58) size 100x72 scrollHeight 144
-  RenderDeprecatedFlexibleBox {DIV} at (0,49) size 102x75 [border: (1px solid #808080)]
+layer at (8,62) size 102x74 clip at (9,63) size 100x72 scrollHeight 144
+  RenderDeprecatedFlexibleBox {DIV} at (0,54) size 102x74 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x72
       RenderText {#text} at (0,0) size 83x144
         text run at (0,0) width 30: "50%"
@@ -41,8 +41,8 @@ layer at (8,57) size 102x74 clip at (9,58) size 100x72 scrollHeight 144
         RenderText {#text} at (61,54) size 36x18
           text run at (61,54) width 36: "More"
       RenderText {#text} at (0,0) size 0x0
-layer at (114,111) size 102x20 clip at (115,112) size 100x18 scrollHeight 108
-  RenderDeprecatedFlexibleBox {DIV} at (106,103) size 102x21 [border: (1px solid #808080)]
+layer at (114,116) size 102x20 clip at (115,117) size 100x18 scrollHeight 108
+  RenderDeprecatedFlexibleBox {DIV} at (106,108) size 102x20 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x18
       RenderText {#text} at (0,0) size 100x108
         text run at (0,0) width 95: "0% truncation."
@@ -55,8 +55,8 @@ layer at (114,111) size 102x20 clip at (115,112) size 100x18 scrollHeight 108
         RenderText {#text} at (62,0) size 35x18
           text run at (62,0) width 35: "More"
       RenderText {#text} at (0,0) size 0x0
-layer at (220,93) size 102x38 clip at (221,94) size 100x36 scrollHeight 108
-  RenderDeprecatedFlexibleBox {DIV} at (212,85) size 102x39 [border: (1px solid #808080)]
+layer at (220,98) size 102x38 clip at (221,99) size 100x36 scrollHeight 108
+  RenderDeprecatedFlexibleBox {DIV} at (212,90) size 102x38 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x36
       RenderText {#text} at (0,0) size 94x108
         text run at (0,0) width 51: "2 lines. "
@@ -70,8 +70,8 @@ layer at (220,93) size 102x38 clip at (221,94) size 100x36 scrollHeight 108
         RenderText {#text} at (60,18) size 35x18
           text run at (60,18) width 35: "More"
       RenderText {#text} at (0,0) size 0x0
-layer at (326,75) size 102x56 clip at (327,76) size 100x54 scrollHeight 162
-  RenderDeprecatedFlexibleBox {DIV} at (318,67) size 102x57 [border: (1px solid #808080)]
+layer at (326,80) size 102x56 clip at (327,81) size 100x54 scrollHeight 162
+  RenderDeprecatedFlexibleBox {DIV} at (318,72) size 102x56 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x54
       RenderText {#text} at (0,0) size 85x162
         text run at (0,0) width 72: "Backwards"
@@ -89,8 +89,8 @@ layer at (326,75) size 102x56 clip at (327,76) size 100x54 scrollHeight 162
         RenderText {#text} at (63,36) size 36x18
           text run at (63,36) width 36: "More"
       RenderText {#text} at (0,0) size 0x0
-layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
-  RenderDeprecatedFlexibleBox {DIV} at (424,85) size 102x39 [border: (1px solid #808080)]
+layer at (432,98) size 102x38 clip at (433,99) size 100x36 scrollHeight 144
+  RenderDeprecatedFlexibleBox {DIV} at (424,90) size 102x38 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x36
       RenderText {#text} at (0,0) size 96x144
         text run at (0,0) width 30: "30%"
@@ -102,8 +102,8 @@ layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
         text run at (0,90) width 51: "ellipsis-"
         text run at (0,108) width 83: "truncation of"
         text run at (0,126) width 96: "multi-line text."
-layer at (538,75) size 102x56 clip at (539,76) size 100x54 scrollHeight 108
-  RenderDeprecatedFlexibleBox {DIV} at (530,67) size 102x57 [border: (1px solid #808080)]
+layer at (538,80) size 102x56 clip at (539,81) size 100x54 scrollHeight 108
+  RenderDeprecatedFlexibleBox {DIV} at (530,72) size 102x56 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x54
       RenderText {#text} at (0,0) size 99x108
         text run at (0,0) width 51: "3 lines. "
