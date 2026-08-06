@@ -139,15 +139,10 @@ let failures = [
     "2007-01-09T03:24:30+01:00[Hey/Hello",
     "2007-01-09T03:24:30+01:00[]",
     "2007-01-09T03:24:30+01:00[Hey/]",
-    "2007-01-09T03:24:30+01:00[..]",
-    "2007-01-09T03:24:30+01:00[.]",
-    "2007-01-09T03:24:30+01:00[./.]",
-    "2007-01-09T03:24:30+01:00[../..]",
     "2007-01-09T03:24:30+01:00[-Hey/Hello]",
     "2007-01-09T03:24:30+01:00[-]",
     "2007-01-09T03:24:30+01:00[-/_]",
     "2007-01-09T03:24:30+01:00[_/-]",
-    "2007-01-09T03:24:30+01:00[CocoaCappuccinoMatcha]",
     "2007-01-09T03:24:30+10:20:30.0123456789",
     "2007-01-09 03:24:30+01:00[Etc/GMT\u221201]",
     "2007-01-09 03:24:30+01:00[+02:00:00.0123456789]",
@@ -436,4 +431,17 @@ shouldBe(Temporal.PlainDate.prototype.toPlainYearMonth.length, 0);
 
     shouldBe(date.toPlainMonthDay().toString(), '02-28');
     shouldBe(date.toPlainYearMonth().toString(), '2020-02');
+}
+
+// proposal-temporal a8f6b0d3 ("Editorial: Align time zone name syntax with IXDTF") dropped
+// TimeZoneIANANameComponent's 14-character limit and its exclusion of "." and "..", so these
+// annotations are valid now. Do not move them back to `failures`.
+for (let text of [
+    "2007-01-09T03:24:30+01:00[..]",
+    "2007-01-09T03:24:30+01:00[.]",
+    "2007-01-09T03:24:30+01:00[./.]",
+    "2007-01-09T03:24:30+01:00[../..]",
+    "2007-01-09T03:24:30+01:00[CocoaCappuccinoMatcha]",
+]) {
+    Temporal.PlainDate.from(text);
 }

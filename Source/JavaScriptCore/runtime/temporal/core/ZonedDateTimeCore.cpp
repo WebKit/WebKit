@@ -44,16 +44,16 @@ namespace TemporalCore {
 TemporalResult<ISO8601::ExactTime> interpretISODateTimeOffset(
     const ISO8601::PlainDate& date,
     const ISO8601::PlainTime& time,
-    bool useStartOfDay,
+    UseStartOfDay useStartOfDay,
     OffsetBehaviour offsetBehaviour,
     TemporalOffsetDisambiguation offsetOpt,
     int64_t inlineOffsetNs,
-    bool offsetHasSubMinutePrecision,
+    MatchBehaviour matchBehaviour,
     const TimeZone& timeZone,
     TemporalDisambiguation disambiguation)
 {
     // Step 1: If time is start-of-day, then
-    if (useStartOfDay) {
+    if (useStartOfDay == UseStartOfDay::Yes) {
         ASSERT(offsetBehaviour == OffsetBehaviour::Wall); // 1.a
         ASSERT(!inlineOffsetNs); // 1.b
         return getStartOfDay(timeZone, date); // 1.c
@@ -94,7 +94,7 @@ TemporalResult<ISO8601::ExactTime> interpretISODateTimeOffset(
         return makeUnexpected(possible.error());
 
     // Step 10: For each element candidate of possibleEpochNs.
-    bool matchMinutes = !offsetHasSubMinutePrecision;
+    bool matchMinutes = matchBehaviour == MatchBehaviour::MatchMinutes;
     for (auto& candidate : epochCandidates(*possible)) {
         // Step 10a: candidateOffset = utcEpochNanoseconds - candidate.
         Int128 candidateOffset = utcEpochNs - candidate.epochNanoseconds();

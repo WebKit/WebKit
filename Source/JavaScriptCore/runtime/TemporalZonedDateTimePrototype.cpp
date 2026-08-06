@@ -538,9 +538,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncRound, (JSGlobalObjec
         // Step 20.b: offsetNanoseconds = GetOffsetNanosecondsFor(timeZone, thisNs).
         // Step 20.c: epochNanoseconds = ? InterpretISODateTimeOffset(...).
         auto epochNsResult = TemporalCore::interpretISODateTimeOffset(
-            roundedDate, roundedTime, /* useStartOfDay */ false,
+            roundedDate, roundedTime, TemporalCore::UseStartOfDay::No,
             OffsetBehaviour::Option, TemporalOffsetDisambiguation::Prefer,
-            *curOffsetResult, /* offsetHasSubMinutePrecision */ false,
+            *curOffsetResult, TemporalCore::MatchBehaviour::MatchMinutes,
             zdt->timeZone(), TemporalDisambiguation::Compatible);
         if (!epochNsResult) [[unlikely]] {
             throwTemporalError(globalObject, scope, epochNsResult.error());
@@ -721,8 +721,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
     // Step 25: epochNanoseconds = ? InterpretISODateTimeOffset(dateTimeResult.[[ISODate]],
     //   dateTimeResult.[[Time]], ~option~, newOffsetNanoseconds, timeZone, disambiguation, offset,
     //   ~match-exactly~).
-    auto epochNsResult = TemporalCore::interpretISODateTimeOffset(newDate, newTime, /* useStartOfDay */ false,
-        OffsetBehaviour::Option, offsetOpt, givenOffsetNs, /* offsetHasSubMinutePrecision */ true, zdt->timeZone(), disambiguation);
+    auto epochNsResult = TemporalCore::interpretISODateTimeOffset(newDate, newTime, TemporalCore::UseStartOfDay::No,
+        OffsetBehaviour::Option, offsetOpt, givenOffsetNs,
+        TemporalCore::MatchBehaviour::MatchExactly, zdt->timeZone(), disambiguation);
     if (!epochNsResult) [[unlikely]] {
         throwTemporalError(globalObject, scope, epochNsResult.error());
         return { };

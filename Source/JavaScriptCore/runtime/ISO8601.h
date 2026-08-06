@@ -484,11 +484,12 @@ private:
 };
 static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
-// Record { [[Z]], [[OffsetString]], [[Name]] }
+// https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records
+// ISO String Time Zone Parse Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }.
 struct TimeZoneRecord {
     bool m_z { false };
     std::optional<int64_t> m_offset;
+    // [[TimeZoneAnnotation]]; an empty Vector is ~empty~.
     Variant<Vector<Latin1Character>, int64_t> m_nameOrOffset;
     bool m_offsetHasSubMinutePrecision { false };
 };
@@ -504,8 +505,8 @@ struct RFC9557Annotation {
     RFC9557Value m_value;
 };
 
-// https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
-std::optional<TimeZoneID> parseTimeZoneName(StringView);
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+JS_EXPORT_PRIVATE std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<Duration> parseDuration(StringView);
 std::optional<int64_t> parseUTCOffset(StringView, bool parseSubMinutePrecision = true);
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
@@ -538,9 +539,13 @@ struct ParsedISODateTime {
 
 JS_EXPORT_PRIVATE std::optional<ParsedISODateTime> parseISODateTime(StringView, TemporalProductionSet);
 
-std::optional<TimeZone> JS_EXPORT_PRIVATE parseTemporalTimeZoneIdentifier(StringView);
-// Strict variant: accepts only a bare UTC offset or bare IANA name — no embedded datetime strings.
-std::optional<TimeZone> parseTimeZoneIdentifierStrict(StringView);
+// https://tc39.es/proposal-temporal/#sec-temporal-time-zone-identifier-parse-records
+struct TimeZoneIdentifierParseRecord {
+    Vector<Latin1Character> name; // [[Name]]; an empty Vector is ~empty~.
+    std::optional<int64_t> offsetMinutes; // [[OffsetMinutes]]; std::nullopt means ~empty~.
+};
+
+std::optional<TimeZoneIdentifierParseRecord> parseTimeZoneIdentifier(StringView);
 uint8_t dayOfWeek(PlainDate);
 uint16_t NODELETE dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
@@ -560,7 +565,7 @@ bool NODELETE isValidDuration(const Duration&);
 bool NODELETE isValidISODate(double, double, double);
 
 std::optional<ParsedMonthCode> NODELETE parseMonthCode(StringView);
-std::optional<TimeZone> JS_EXPORT_PRIVATE parseTemporalTimeZoneIdentifier(StringView);
+std::optional<TimeZoneIdentifierParseRecord> JS_EXPORT_PRIVATE parseTemporalTimeZoneString(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 

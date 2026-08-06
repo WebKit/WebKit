@@ -29,6 +29,10 @@
 
 namespace JSC {
 
+namespace ISO8601 {
+struct TimeZoneIdentifierParseRecord;
+}
+
 class TemporalObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -125,6 +129,8 @@ TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject*, JSObject*, Tempor
 void throwTemporalError(JSGlobalObject*, ThrowScope&, const TemporalError&);
 
 std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
+
+std::optional<TimeZone> timeZoneFromIdentifierParseRecord(const ISO8601::TimeZoneIdentifierParseRecord&);
 
 enum class TemporalConstructTarget : bool { Intrinsic, NewTarget };
 

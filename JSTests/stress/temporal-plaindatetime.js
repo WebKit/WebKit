@@ -163,15 +163,10 @@ const badStrings = [
     "2007-01-09T03:24:30+01:00[Hey/Hello",
     "2007-01-09T03:24:30+01:00[]",
     "2007-01-09T03:24:30+01:00[Hey/]",
-    "2007-01-09T03:24:30+01:00[..]",
-    "2007-01-09T03:24:30+01:00[.]",
-    "2007-01-09T03:24:30+01:00[./.]",
-    "2007-01-09T03:24:30+01:00[../..]",
     "2007-01-09T03:24:30+01:00[-Hey/Hello]",
     "2007-01-09T03:24:30+01:00[-]",
     "2007-01-09T03:24:30+01:00[-/_]",
     "2007-01-09T03:24:30+01:00[_/-]",
-    "2007-01-09T03:24:30+01:00[CocoaCappuccinoMatcha]",
     "2007-01-09T03:24:30+10:20:30.0123456789",
     "2007-01-09 03:24:30+01:00[Etc/GMT\u221201]",
     "2007-01-09 03:24:30+01:00[+02:00:00.0123456789]",
@@ -302,3 +297,16 @@ shouldThrow(() => { pdt.round({}); }, RangeError);
 shouldThrow(() => { pdt.round({ smallestUnit: 'bogus' }); }, RangeError);
 shouldThrow(() => { pdt.round({ smallestUnit: 'minute', roundingIncrement: 24 }); }, RangeError);
 shouldThrow(() => { pdt.round({ smallestUnit: 'minute', roundingMode: 'bogus' }); }, RangeError);
+
+// proposal-temporal a8f6b0d3 ("Editorial: Align time zone name syntax with IXDTF") dropped
+// TimeZoneIANANameComponent's 14-character limit and its exclusion of "." and "..", so these
+// annotations are valid now. Do not move them back to `failures`.
+for (let text of [
+    "2007-01-09T03:24:30+01:00[..]",
+    "2007-01-09T03:24:30+01:00[.]",
+    "2007-01-09T03:24:30+01:00[./.]",
+    "2007-01-09T03:24:30+01:00[../..]",
+    "2007-01-09T03:24:30+01:00[CocoaCappuccinoMatcha]",
+]) {
+    Temporal.PlainDateTime.from(text);
+}

@@ -626,15 +626,105 @@ static bool NODELETE canBeTimeZone(const StringParsingBuffer<CharacterType>& buf
     }
 }
 
+static bool isTZLeadingChar(char16_t character)
+{
+    // https://tc39.es/proposal-temporal/#prod-TZLeadingChar
+    // TZLeadingChar :::
+    //     Alpha
+    //     .
+    //     _
+    return isASCIIAlpha(character) || character == '.' || character == '_';
+}
+
+static bool isTZChar(char16_t character)
+{
+    // https://tc39.es/proposal-temporal/#prod-TZChar
+    // TZChar :::
+    //     TZLeadingChar
+    //     DecimalDigit
+    //     -
+    //     +
+    return isTZLeadingChar(character) || isASCIIDigit(character) || character == '-' || character == '+';
+}
+
+template<typename CharacterType>
+static std::optional<std::span<const CharacterType>> parseTimeZoneIANAName(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneIANAName
+    // TimeZoneIANAName :::
+    //     TimeZoneIANANameComponent
+    //     TimeZoneIANAName / TimeZoneIANANameComponent
+    // TimeZoneIANANameComponent :::
+    //     TZLeadingChar
+    //     TimeZoneIANANameComponent TZChar
+    //
+    //  Both left recursions flatten: '/'-separated components, each a TZLeadingChar then any number
+    //  of TZChars. atComponentStart still set at the end means empty or trailing '/'.
+    size_t length = 0;
+    bool atComponentStart = true;
+    while (length < buffer.lengthRemaining()) {
+        auto character = buffer[length];
+        if (character == '/') {
+            if (atComponentStart)
+                break;
+            atComponentStart = true;
+        } else if (atComponentStart ? isTZLeadingChar(character) : isTZChar(character))
+            atComponentStart = false;
+        else
+            break;
+        ++length;
+    }
+    if (atComponentStart)
+        return std::nullopt;
+    return buffer.consume(length);
+}
+
+// https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
+template<typename CharacterType>
+static std::optional<TimeZoneIdentifierParseRecord> parseTimeZoneIdentifier(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
+    // TimeZoneIdentifier :::
+    //     UTCOffset[~SubMinutePrecision]
+    //     TimeZoneIANAName
+    //
+    // Step 1: the two alternatives are the attempts below. They are disjoint, and
+    // parseTimeZoneIANAName consumes nothing on failure, so either order gives the same answer.
+
+    // Step 3: If parseResult contains a |TimeZoneIANAName| Parse Node, then
+    if (auto name = parseTimeZoneIANAName(buffer)) {
+        // Steps 3.a-3.c: per 3.b's NOTE the name need not be available, so nothing is resolved here.
+        return TimeZoneIdentifierParseRecord { Vector<Latin1Character>(*name), std::nullopt };
+    }
+
+    // Steps 4-6: parseUTCOffset matches |UTCOffset[~SubMinutePrecision]| and converts it in one call.
+    auto offsetNanoseconds = parseUTCOffset(buffer, /* parseSubMinutePrecision */ false);
+
+    // Step 2: If parseResult is a List of errors, throw a RangeError exception.
+    if (!offsetNanoseconds)
+        return std::nullopt;
+
+    // Step 7: offsetMinutes = offsetNanoseconds / (60 × 10**9); exact under ~SubMinutePrecision.
+    // Step 8: Return the Record with [[Name]] ~empty~.
+    return TimeZoneIdentifierParseRecord { { }, *offsetNanoseconds / nsPerMinute };
+}
+
+std::optional<TimeZoneIdentifierParseRecord> parseTimeZoneIdentifier(StringView identifier)
+{
+    return readCharactersForParsing(identifier, [](auto buffer) -> std::optional<TimeZoneIdentifierParseRecord> {
+        auto result = parseTimeZoneIdentifier(buffer);
+        if (!result || !buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
 template<typename CharacterType>
 static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
-    // TimeZoneAnnotation :
+    // TimeZoneAnnotation :::
     //     [ AnnotationCriticalFlag_opt TimeZoneIdentifier ]
-    // TimeZoneIdentifier :
-    //     UTCOffset_[~SubMinutePrecision]
-    //     TimeZoneIANAName
 
     if (buffer.lengthRemaining() < 3)
         return std::nullopt;
@@ -646,105 +736,20 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
     if (*buffer == '!')
         buffer.advance();
 
-    switch (static_cast<char16_t>(*buffer)) {
-    case '+':
-    case '-': {
-        auto offset = parseUTCOffset(buffer, false);
-        if (!offset)
-            return std::nullopt;
-        if (buffer.atEnd())
-            return std::nullopt;
-        if (*buffer != ']')
-            return std::nullopt;
-        buffer.advance();
-        return offset.value();
-    }
-    default: {
-        // TZLeadingChar :
-        //     Alpha
-        //     .
-        //     _
-        //
-        // TZChar :
-        //     TZLeadingChar
-        //     DecimalDigit
-        //     -
-        //     +
-        //
-        // TimeZoneIANANameComponent :
-        //     TZLeadingChar
-        //     TimeZoneIANANameComponent TZChar
-        //
-        // TimeZoneIANAName :
-        //     TimeZoneIANANameComponent
-        //     TimeZoneIANAName / TimeZoneIANANameComponent
+    // |TimeZoneIdentifier| stops at ']' on its own: ']' is neither a |TZChar| nor part of a
+    // |UTCOffset|, so the follow-set check below is all this production adds.
+    auto identifier = parseTimeZoneIdentifier(buffer);
+    if (!identifier)
+        return std::nullopt;
 
-        unsigned nameLength = 0;
-        {
-            unsigned index = 0;
-            for (; index < buffer.lengthRemaining(); ++index) {
-                auto character = buffer[index];
-                if (character == ']')
-                    break;
-                if (!isASCIIAlpha(character) && !isASCIIDigit(character) && character != '.' && character != '_' && character != '-' && character != '+' && character != '/')
-                    return std::nullopt;
-            }
-            if (!index)
-                return std::nullopt;
-            nameLength = index;
-        }
+    if (buffer.atEnd() || *buffer != ']')
+        return std::nullopt;
+    buffer.advance();
 
-        auto isValidComponent = [&](unsigned start, unsigned end) {
-            unsigned componentLength = end - start;
-            if (!componentLength)
-                return false;
-            if (componentLength > 14)
-                return false;
-            if (componentLength == 1 && buffer[start] == '.')
-                return false;
-            if (componentLength == 2 && buffer[start] == '.' && buffer[start + 1] == '.')
-                return false;
-            return true;
-        };
-
-        unsigned currentNameComponentStartIndex = 0;
-        bool isLeadingCharacterInNameComponent = true;
-        for (unsigned index = 0; index < nameLength; ++index) {
-            auto character = buffer[index];
-            if (isLeadingCharacterInNameComponent) {
-                if (!(isASCIIAlpha(character) || character == '.' || character == '_'))
-                    return std::nullopt;
-
-                currentNameComponentStartIndex = index;
-                isLeadingCharacterInNameComponent = false;
-                continue;
-            }
-
-            if (character == '/') {
-                if (!isValidComponent(currentNameComponentStartIndex, index))
-                    return std::nullopt;
-                isLeadingCharacterInNameComponent = true;
-                continue;
-            }
-
-            if (!(isASCIIAlpha(character) || isASCIIDigit(character) || character == '.' || character == '_' || character == '-' || character == '+'))
-                return std::nullopt;
-        }
-        if (isLeadingCharacterInNameComponent)
-            return std::nullopt;
-        if (!isValidComponent(currentNameComponentStartIndex, nameLength))
-            return std::nullopt;
-
-        Vector<Latin1Character> result(buffer.consume(nameLength));
-
-        if (buffer.atEnd())
-            return std::nullopt;
-        if (*buffer != ']')
-            return std::nullopt;
-        buffer.advance();
-        return result;
-    }
-    }
+    // [[OffsetMinutes]] is minutes; m_nameOrOffset stores the offset in nanoseconds.
+    if (identifier->offsetMinutes)
+        return *identifier->offsetMinutes * nsPerMinute;
+    return WTF::move(identifier->name);
 }
 
 template<typename CharacterType>
@@ -1430,18 +1435,6 @@ std::optional<ParsedISODateTime> parseISODateTime(StringView string, TemporalPro
     };
 }
 
-// https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
-// Strict version: accepts only a bare UTC offset or a bare IANA timezone name.
-// Does NOT accept full datetime strings with embedded timezone identifiers.
-std::optional<TimeZone> parseTimeZoneIdentifierStrict(StringView string)
-{
-    if (auto offset = parseUTCOffset(string, false))
-        return TimeZone::fromUTCOffset(*offset);
-    if (auto tzId = parseTimeZoneName(string))
-        return TimeZone::fromID(*tzId);
-    return std::nullopt;
-}
-
 uint8_t dayOfWeek(PlainDate plainDate)
 {
     Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(plainDate.year(), plainDate.month() - 1, plainDate.day()));
@@ -2073,49 +2066,50 @@ bool isValidISODate(double year, double month, double day)
     return true;
 }
 
-// temporal_rs: TimeZone::try_from_str (src/builtins/core/time_zone.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
-std::optional<TimeZone> parseTemporalTimeZoneIdentifier(StringView string)
+std::optional<TimeZoneIdentifierParseRecord> parseTemporalTimeZoneString(StringView string)
 {
     // 1. Let parseResult be ParseText(StringToCodePoints(timeZoneString), TimeZoneIdentifier).
     // 2. If parseResult is a Parse Node, return ! ParseTimeZoneIdentifier(timeZoneString).
-    if (auto offset = parseUTCOffset(string, false))
-        return TimeZone::fromUTCOffset(*offset);
-    if (auto tzId = parseTimeZoneName(string))
-        return TimeZone::fromID(*tzId);
+    if (auto parse = parseTimeZoneIdentifier(string))
+        return parse;
 
     // 3. Let result be ? ParseISODateTime(timeZoneString,
-    //      « TemporalDateTimeString[+Zoned], TemporalInstantString »).
-    auto parsed = parseISODateTime(string, { TemporalProduction::DateTimeZoned, TemporalProduction::Instant });
+    //      « TemporalDateTimeString[+Zoned], TemporalDateTimeString[~Zoned], TemporalInstantString,
+    //        TemporalTimeString, TemporalMonthDayString, TemporalYearMonthString »).
+    auto parsed = parseISODateTime(string, {
+        TemporalProduction::DateTimeZoned,
+        TemporalProduction::DateTimeUnzoned,
+        TemporalProduction::Instant,
+        TemporalProduction::Time,
+        TemporalProduction::MonthDay,
+        TemporalProduction::YearMonth,
+    });
     if (!parsed || !parsed->timeZone)
         return std::nullopt;
 
     // 4. Let timeZoneResult be result.[[TimeZone]].
     const auto& tz = *parsed->timeZone;
 
-    // 5. If timeZoneResult.[[TimeZoneAnnotation]] is not ~empty~, return ! ParseTimeZoneIdentifier(...).
-    if (std::holds_alternative<int64_t>(tz.m_nameOrOffset))
-        return TimeZone::fromUTCOffset(std::get<int64_t>(tz.m_nameOrOffset));
-    const auto& name = std::get<Vector<Latin1Character>>(tz.m_nameOrOffset);
-    if (!name.isEmpty()) {
-        if (auto tzId = parseTimeZoneName(StringView(name.span())))
-            return TimeZone::fromID(*tzId);
-        return std::nullopt;
-    }
+    // 5. If timeZoneResult.[[TimeZoneAnnotation]] is not ~empty~, return ! ParseTimeZoneIdentifier(timeZoneResult.[[TimeZoneAnnotation]]).
+    if (auto* offsetNanoseconds = std::get_if<int64_t>(&tz.m_nameOrOffset))
+        return TimeZoneIdentifierParseRecord { { }, *offsetNanoseconds / nsPerMinute };
+    auto& annotationName = std::get<Vector<Latin1Character>>(tz.m_nameOrOffset);
+    if (!annotationName.isEmpty())
+        return TimeZoneIdentifierParseRecord { annotationName, std::nullopt };
 
     // 6. If timeZoneResult.[[Z]] is true, return ! ParseTimeZoneIdentifier("UTC").
     if (tz.m_z)
-        return TimeZone::fromID(utcTimeZoneID());
+        return TimeZoneIdentifierParseRecord { Vector<Latin1Character>("UTC"_span8), std::nullopt };
 
-    // 7-8. Let offsetString be timeZoneResult.[[OffsetString]]; return ? ParseTimeZoneIdentifier(offsetString).
-    //   ParseTimeZoneIdentifier uses UTCOffset[~SubMinutePrecision], so reject sub-minute offsets.
+    // 7. If timeZoneResult.[[OffsetString]] is not ~empty~, return ? ParseTimeZoneIdentifier(timeZoneResult.[[OffsetString]]).
     if (tz.m_offset) {
         if (tz.m_offsetHasSubMinutePrecision)
             return std::nullopt;
-        return TimeZone::fromUTCOffset(*tz.m_offset);
+        return TimeZoneIdentifierParseRecord { { }, *tz.m_offset / nsPerMinute };
     }
 
-    // 9. Throw a RangeError exception.
+    // 8. Throw a RangeError exception.
     return std::nullopt;
 }
 

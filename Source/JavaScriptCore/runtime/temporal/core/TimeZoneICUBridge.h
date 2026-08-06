@@ -72,13 +72,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 JS_EXPORT_PRIVATE ISO8601::PlainDateTime exactTimeToLocalDateAndTime(ISO8601::ExactTime, int64_t offsetNs);
 
-// https://tc39.es/proposal-canonical-tz/#sec-temporal-timezoneequals
-// Fast path: both operands are already Time Zone Identifier Records. No parsing,
-// no string comparison — at most one array lookup per side to resolve aliases.
 JS_EXPORT_PRIVATE bool timeZoneEquals(const TimeZone&, const TimeZone&);
-// String form: parses each side to a TimeZone, then delegates. Returns false if
-// either input is not a syntactically valid identifier.
-JS_EXPORT_PRIVATE bool timeZoneEquals(StringView id1, StringView id2);
 
 JS_EXPORT_PRIVATE TemporalResult<int64_t> getOffsetNanosecondsFor(const TimeZone&, ISO8601::ExactTime);
 

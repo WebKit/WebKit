@@ -2945,10 +2945,24 @@ static void testExactTimeToLocalDateAndTime()
     TCHECK_EQ(time3.hour(), 19u, "localDT: UTC-5 epoch hour");
 }
 
+// Resolves an identifier to a TimeZone the way ToTemporalTimeZoneIdentifier steps 3-9 do:
+// parseTemporalTimeZoneString returns the Time Zone Identifier Parse Record, not a resolved zone.
+static std::optional<TimeZone> timeZoneFromIdentifier(StringView identifier)
+{
+    auto parse = ISO8601::parseTemporalTimeZoneString(identifier);
+    if (!parse)
+        return std::nullopt;
+    if (parse->offsetMinutes)
+        return TimeZone::fromUTCOffset(*parse->offsetMinutes * static_cast<int64_t>(ISO8601::ExactTime::nsPerMinute));
+    if (auto tzId = ISO8601::parseTimeZoneName(parse->name.span()))
+        return TimeZone::fromID(*tzId);
+    return std::nullopt;
+}
+
 static void testInterpretISODateTimeOffset()
 {
     // temporal_rs: interpret_isodatetime_offset tested via zdt_from_partial, zdt_offset_match_minutes
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [interpretISODateTimeOffset]: UTC not available\n");
         return;
@@ -2959,16 +2973,16 @@ static void testInterpretISODateTimeOffset()
 
     // Step 1: start-of-day -> getStartOfDay
     {
-        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { }, true, OffsetBehaviour::Wall,
-            TemporalOffsetDisambiguation::Ignore, 0, false, utc, TemporalDisambiguation::Compatible);
+        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { }, UseStartOfDay::Yes, OffsetBehaviour::Wall,
+            TemporalOffsetDisambiguation::Ignore, 0, MatchBehaviour::MatchMinutes, utc, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(r.has_value(), "interpretISO: start-of-day ok");
         TCHECK_EQ(r->epochNanoseconds(), Int128(1577836800000000000LL), "interpretISO: start-of-day = midnight UTC");
     }
 
     // Step 3: Wall -> GetEpochNanosecondsFor (ignore offset entirely)
     {
-        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, false,
-            OffsetBehaviour::Wall, TemporalOffsetDisambiguation::Ignore, 3600000000000LL, false,
+        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, UseStartOfDay::No,
+            OffsetBehaviour::Wall, TemporalOffsetDisambiguation::Ignore, 3600000000000LL, MatchBehaviour::MatchMinutes,
             utc, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(r.has_value(), "interpretISO: Wall ok");
         TCHECK_EQ(r->epochNanoseconds(), epoch2020Jan1Noon, "interpretISO: Wall = noon UTC (offset ignored)");
@@ -2978,8 +2992,8 @@ static void testInterpretISODateTimeOffset()
     // 2020-01-01T12:00:00+01:00 -> epoch = noon_UTC - 1h = 11:00 UTC
     {
         constexpr Int128 epoch2020Jan1_11UTC { 1577876400000000000LL };
-        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, false,
-            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Use, 3600000000000LL, false,
+        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, UseStartOfDay::No,
+            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Use, 3600000000000LL, MatchBehaviour::MatchMinutes,
             utc, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(r.has_value(), "interpretISO: Use ok");
         TCHECK_EQ(r->epochNanoseconds(), epoch2020Jan1_11UTC, "interpretISO: Use = noon - 1h offset");
@@ -2987,8 +3001,8 @@ static void testInterpretISODateTimeOffset()
 
     // Step 10b: Prefer — offset matches UTC (0), returns the UTC candidate
     {
-        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, false,
-            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Prefer, 0, false,
+        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, UseStartOfDay::No,
+            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Prefer, 0, MatchBehaviour::MatchMinutes,
             utc, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(r.has_value(), "interpretISO: Prefer UTC=0 ok");
         TCHECK_EQ(r->epochNanoseconds(), epoch2020Jan1Noon, "interpretISO: Prefer UTC=0 = noon UTC");
@@ -2996,26 +3010,26 @@ static void testInterpretISODateTimeOffset()
 
     // Step 11: Reject — offset (+1h) doesn't match UTC (0) -> error
     {
-        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, false,
-            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Reject, 3600000000000LL, false,
+        auto r = interpretISODateTimeOffset({ 2020, 1, 1 }, { 12, 0, 0, 0, 0, 0 }, UseStartOfDay::No,
+            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Reject, 3600000000000LL, MatchBehaviour::MatchMinutes,
             utc, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(!r.has_value(), "interpretISO: Reject mismatch -> error");
     }
 
     // Step 10c: match-minutes — Africa/Monrovia has offset -44:30 in 1970; -45:00 (rounded) is accepted
     // temporal_rs: zdt_offset_match_minutes test
-    auto monroviaOpt = ISO8601::parseTemporalTimeZoneIdentifier("Africa/Monrovia"_s);
+    auto monroviaOpt = timeZoneFromIdentifier("Africa/Monrovia"_s);
     if (monroviaOpt) {
         constexpr int64_t minus44m30s = -(44 * 60 + 30) * 1000000000LL; // -44min 30sec in ns
         constexpr int64_t minus45m = -(45 * 60) * 1000000000LL; // -45min in ns
-        // Exact match (-44:30) accepted — has sub-minute precision -> matchMinutes=false (exact match only)
-        auto rExact = interpretISODateTimeOffset({ 1970, 1, 1 }, { 0, 0, 0, 0, 0, 0 }, false,
-            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Reject, minus44m30s, true,
+        // Exact match (-44:30) accepted — a sub-minute offset string means ~match-exactly~.
+        auto rExact = interpretISODateTimeOffset({ 1970, 1, 1 }, { 0, 0, 0, 0, 0, 0 }, UseStartOfDay::No,
+            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Reject, minus44m30s, MatchBehaviour::MatchExactly,
             *monroviaOpt, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(rExact.has_value(), "interpretISO: Monrovia exact -44:30 accepted");
-        // Rounded match (-45:00) accepted with matchMinutes=true — no sub-minute precision -> matchMinutes=true
-        auto rRounded = interpretISODateTimeOffset({ 1970, 1, 1 }, { 0, 0, 0, 0, 0, 0 }, false,
-            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Reject, minus45m, false,
+        // Rounded match (-45:00) accepted under ~match-minutes~ — minute-precision offset string.
+        auto rRounded = interpretISODateTimeOffset({ 1970, 1, 1 }, { 0, 0, 0, 0, 0, 0 }, UseStartOfDay::No,
+            OffsetBehaviour::Option, TemporalOffsetDisambiguation::Reject, minus45m, MatchBehaviour::MatchMinutes,
             *monroviaOpt, TemporalDisambiguation::Compatible);
         TCHECK_TRUE(rRounded.has_value(), "interpretISO: Monrovia rounded -45:00 accepted (match-minutes)");
     }
@@ -3038,7 +3052,7 @@ static void testTimeZoneICUWithIANA()
 {
     // America/New_York — standard time offset: -5h = -18000000000000 ns
     // Test with a winter date (no DST): 2020-01-15T12:00:00 UTC = 1579089600000000000 ns
-    auto nytzOpt = ISO8601::parseTemporalTimeZoneIdentifier("America/New_York"_s);
+    auto nytzOpt = timeZoneFromIdentifier("America/New_York"_s);
     if (!nytzOpt) {
         fprintf(stderr, "SKIP [IANA tests]: America/New_York not available\n");
         return;
@@ -3295,7 +3309,7 @@ static void testToZonedDateTime()
 {
     // temporal_rs: plain_date.rs::to_zoned_date_time
     // PlainDate 2020-01-01 -> ZDT with UTC -> epoch = 2020-01-01T00:00:00Z
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [toZDT]: UTC not available\n");
         return;
@@ -3323,7 +3337,7 @@ static void testToZonedDateTimeError()
 {
     // temporal_rs: to_zoned_date_time_error — min date -271821-04-19 start-of-day is at or before min epoch.
 
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [toZDTErr]: UTC not available\n");
         return;
@@ -3335,7 +3349,7 @@ static void testToZonedDateTimeError()
 static void testAddZonedDateTime()
 {
     // temporal_rs: basic_zdt_add (src/builtins/core/zoned_date_time/tests.rs)
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [addZonedDateTime]: UTC not available\n");
         return;
@@ -3379,7 +3393,7 @@ static void testGetTimeZoneTransition()
     // temporal_rs: get_time_zone_transition (src/builtins/core/zoned_date_time/tests.rs)
 
     // 1. UTC-offset timezones have no transitions -> nullopt
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [getTimeZoneTransition]: UTC not available\n");
         return;
@@ -3389,7 +3403,7 @@ static void testGetTimeZoneTransition()
     auto r2 = getTimeZoneTransition(*utcOpt, ISO8601::ExactTime(Int128(0)), TransitionDirection::Previous);
     TCHECK_TRUE(r2.has_value() && !r2->has_value(), "transition: UTC no previous");
     // UTC-offset +05:30 also has no transitions
-    auto plusOpt = ISO8601::parseTemporalTimeZoneIdentifier("+05:30"_s);
+    auto plusOpt = timeZoneFromIdentifier("+05:30"_s);
     if (plusOpt) {
         auto r3 = getTimeZoneTransition(*plusOpt, ISO8601::ExactTime(Int128(0)), TransitionDirection::Next);
         TCHECK_TRUE(r3.has_value() && !r3->has_value(), "transition: +05:30 no transitions");
@@ -3397,7 +3411,7 @@ static void testGetTimeZoneTransition()
 
     // 2. America/New_York DST transitions from a summer 2020 date
     // summer epoch: 2020-07-15T12:00:00Z = 1594814400000000000 ns
-    auto nyOpt = ISO8601::parseTemporalTimeZoneIdentifier("America/New_York"_s);
+    auto nyOpt = timeZoneFromIdentifier("America/New_York"_s);
     if (!nyOpt) {
         fprintf(stderr, "SKIP [getTimeZoneTransition]: America/New_York not available\n");
         return;
@@ -3422,7 +3436,7 @@ static void testGetTimeZoneTransition()
     // From temporal_rs test262 case: at 1970-01-01T00:00:00Z (epoch=0), London was on BST (+01:00).
     // TZDB has intermediate fake entries around 1968-1971 that don't change the UTC offset —
     // our 20-iteration skip loop must bypass them to find the real pre-BST transition.
-    auto londonOpt = ISO8601::parseTemporalTimeZoneIdentifier("Europe/London"_s);
+    auto londonOpt = timeZoneFromIdentifier("Europe/London"_s);
     if (!londonOpt) {
         fprintf(stderr, "SKIP [getTimeZoneTransition London]: Europe/London not available\n");
         return;
@@ -3446,20 +3460,28 @@ static void testGetTimeZoneTransition()
 static void testTimeZoneEquals()
 {
     // temporal_rs: canonicalize_equals (src/builtins/core/time_zone.rs)
+    // timeZoneEquals takes resolved identifiers, so each side goes through
+    // ToTemporalTimeZoneIdentifier first; an unresolvable identifier compares as unequal.
+    auto tzEquals = [](StringView id1, StringView id2) {
+        auto a = timeZoneFromIdentifier(id1);
+        auto b = timeZoneFromIdentifier(id2);
+        return a && b && timeZoneEquals(*a, *b);
+    };
+
     // 1. Identical string -> true
-    TCHECK_TRUE(timeZoneEquals("UTC"_s, "UTC"_s), "tzEquals: UTC=UTC");
-    TCHECK_TRUE(timeZoneEquals("+05:30"_s, "+05:30"_s), "tzEquals: +05:30=+05:30");
+    TCHECK_TRUE(tzEquals("UTC"_s, "UTC"_s), "tzEquals: UTC=UTC");
+    TCHECK_TRUE(tzEquals("+05:30"_s, "+05:30"_s), "tzEquals: +05:30=+05:30");
 
     // 2. Different strings -> false
-    TCHECK_TRUE(!timeZoneEquals("UTC"_s, "America/New_York"_s), "tzEquals: UTC!=NY");
-    TCHECK_TRUE(!timeZoneEquals("+05:30"_s, "+05:00"_s), "tzEquals: offset diff");
+    TCHECK_TRUE(!tzEquals("UTC"_s, "America/New_York"_s), "tzEquals: UTC!=NY");
+    TCHECK_TRUE(!tzEquals("+05:30"_s, "+05:00"_s), "tzEquals: offset diff");
 
     // 3. Offset vs named -> false
-    TCHECK_TRUE(!timeZoneEquals("+00:00"_s, "UTC"_s), "tzEquals: +00:00 != UTC (offset vs named)");
+    TCHECK_TRUE(!tzEquals("+00:00"_s, "UTC"_s), "tzEquals: +00:00 != UTC (offset vs named)");
 
     // 4. IANA aliases: Asia/Calcutta = Asia/Kolkata (canonicalized to same primary)
     // temporal_rs: canonicalize_equals test
-    TCHECK_TRUE(timeZoneEquals("Asia/Calcutta"_s, "Asia/Kolkata"_s), "tzEquals: Calcutta=Kolkata");
+    TCHECK_TRUE(tzEquals("Asia/Calcutta"_s, "Asia/Kolkata"_s), "tzEquals: Calcutta=Kolkata");
 }
 
 static void testPossibleEpochNsAtLimits()
@@ -3467,7 +3489,7 @@ static void testPossibleEpochNsAtLimits()
     // temporal_rs: test_possible_epoch_ns_at_limits (src/builtins/core/time_zone.rs)
     // At the min/max Temporal boundaries, getPossibleEpochNanosecondsFor must return exactly 1 candidate.
     // Just outside those boundaries, it must return empty (range error).
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [epochNsLimits]: UTC not available\n");
         return;
@@ -3495,7 +3517,7 @@ static void testPossibleEpochNsAtLimits()
     TCHECK_TRUE(!rTooLate.has_value() || isGap(*rTooLate), "epochNsLimits: too-late = error/gap");
 
     // UTC offset timezone: +05:30 — same bounds should hold
-    auto plusOpt = ISO8601::parseTemporalTimeZoneIdentifier("+05:30"_s);
+    auto plusOpt = timeZoneFromIdentifier("+05:30"_s);
     if (plusOpt) {
         auto rPlusMin = getPossibleEpochNanosecondsFor(*plusOpt, { -271821, 4, 20 }, { 5, 30, 0, 0, 0, 0 });
         TCHECK_TRUE(rPlusMin.has_value() && std::holds_alternative<ISO8601::ExactTime>(*rPlusMin), "epochNsLimits: +05:30 min ok");
@@ -3567,7 +3589,7 @@ static void testNudgeFunctions()
     }
 
     // --- nudgeToZonedTime: UTC+0 timezone, P25H rounded to Hour ---
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (utcOpt) {
         ISO8601::PlainDate date { 2020, 1, 1 };
         ISO8601::PlainTime time;
@@ -3586,7 +3608,7 @@ static void testRoundRelativeToZonedDateTime()
     // round to largestUnit=Day -> expected: 1 day 1 hour
 
     // +04:30 = 4.5h = 16200s = 16200000000000 ns
-    auto tzOpt = ISO8601::parseTemporalTimeZoneIdentifier("+04:30"_s);
+    auto tzOpt = timeZoneFromIdentifier("+04:30"_s);
     if (!tzOpt) {
         fprintf(stderr, "SKIP [roundRelZDT]: +04:30 not available\n");
         return;
@@ -3611,7 +3633,7 @@ static void testDurationTotalZDT()
 {
     // temporal_rs: test_duration_total (ZDT path) — P2756H in months with DST differs from PlainDate path.
 
-    auto romeOpt = ISO8601::parseTemporalTimeZoneIdentifier("Europe/Rome"_s);
+    auto romeOpt = timeZoneFromIdentifier("Europe/Rome"_s);
     if (!romeOpt) {
         fprintf(stderr, "SKIP [totalZDT]: Europe/Rome not available\n");
         return;
@@ -3649,7 +3671,7 @@ static void testNudgePastEnd()
     // Zero duration, ZDT at max epoch (8.64e21 ns = 1e8 days * nsPerDay), round to Day/Minute
     // Rounding constructs end date = max + 1 day -> error
 
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [nudgePast]: UTC not available\n");
         return;
@@ -3680,7 +3702,7 @@ static void testRoundZeroDurationZDT()
 {
     // temporal_rs: round_zero_duration with ZDT relativeTo
     // P0 duration, ZDT at UTC epoch=0, round to Day/Hour -> result is still zero
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [roundZeroZDT]: UTC not available\n");
         return;
@@ -3700,7 +3722,7 @@ static void testRoundIncrementRegressionZDT()
     // temporal_rs: round_increment_regression_test ZDT path
     // P48H, round to Day, increment=2, with ZDT UTC at epoch=0
     // Expected: 2 days (same result as without relativeTo)
-    auto utcOpt = ISO8601::parseTemporalTimeZoneIdentifier("UTC"_s);
+    auto utcOpt = timeZoneFromIdentifier("UTC"_s);
     if (!utcOpt) {
         fprintf(stderr, "SKIP [roundIncZDT]: UTC not available\n");
         return;

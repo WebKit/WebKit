@@ -233,15 +233,10 @@ let failures = [
     "1995-12-07T03:24:30+01:00[Hey/Hello",
     "1995-12-07T03:24:30+01:00[]",
     "1995-12-07T03:24:30+01:00[Hey/]",
-    "1995-12-07T03:24:30+01:00[..]",
-    "1995-12-07T03:24:30+01:00[.]",
-    "1995-12-07T03:24:30+01:00[./.]",
-    "1995-12-07T03:24:30+01:00[../..]",
     "1995-12-07T03:24:30+01:00[-Hey/Hello]",
     "1995-12-07T03:24:30+01:00[-]",
     "1995-12-07T03:24:30+01:00[-/_]",
     "1995-12-07T03:24:30+01:00[_/-]",
-    "1995-12-07T03:24:30+01:00[CocoaCappuccinoMatcha]",
     "1995-12-07T03:24:30+10:20:30.0123456789",
     "1995-12-07 03:24:30+01:00[Etc/GMT\u221201]",
     "1995-12-07 03:24:30+01:00[+02:00:00.0123456789]",
@@ -369,4 +364,17 @@ shouldThrow(() => {
     let time = Temporal.PlainTime.from('20:13:20.971398099');
     shouldBe(String(time.since(Temporal.PlainTime.from('19:39:09.068346205'))), `PT34M11.903051894S`);
     shouldBe(String(time.since(Temporal.PlainTime.from('22:39:09.068346205'))), `-PT2H25M48.096948106S`);
+}
+
+// proposal-temporal a8f6b0d3 ("Editorial: Align time zone name syntax with IXDTF") dropped
+// TimeZoneIANANameComponent's 14-character limit and its exclusion of "." and "..", so these
+// annotations are valid now. Do not move them back to `failures`.
+for (let text of [
+    "1995-12-07T03:24:30+01:00[..]",
+    "1995-12-07T03:24:30+01:00[.]",
+    "1995-12-07T03:24:30+01:00[./.]",
+    "1995-12-07T03:24:30+01:00[../..]",
+    "1995-12-07T03:24:30+01:00[CocoaCappuccinoMatcha]",
+]) {
+    Temporal.PlainTime.from(text);
 }

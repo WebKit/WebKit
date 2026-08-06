@@ -24,6 +24,7 @@
 
 #include "FractionToDouble.h"
 #include "FunctionPrototype.h"
+#include "ISO8601.h"
 #include "IntlObjectInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
@@ -712,6 +713,19 @@ bool isPartialTemporalObject(JSGlobalObject* globalObject, JSValue value)
     return true;
 }
 
+std::optional<TimeZone> timeZoneFromIdentifierParseRecord(const ISO8601::TimeZoneIdentifierParseRecord& parseRecord)
+{
+    // If [[OffsetMinutes]] is not ~empty~, FormatOffsetTimeZoneIdentifier(offsetMinutes).
+    if (parseRecord.offsetMinutes)
+        return TimeZone::fromUTCOffset(*parseRecord.offsetMinutes * static_cast<int64_t>(ISO8601::ExactTime::nsPerMinute));
+
+    // Otherwise GetAvailableNamedTimeZoneIdentifier([[Name]]); ~empty~ is the caller's RangeError.
+    auto identifierRecord = ISO8601::parseTimeZoneName(parseRecord.name.span());
+    if (!identifierRecord) [[unlikely]]
+        return std::nullopt;
+    return TimeZone::fromID(*identifierRecord);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaltimezoneidentifier
 std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject* globalObject, JSValue item)
 {
@@ -730,15 +744,22 @@ std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject* globalObjec
     String tzString = asString(item)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
-    // Steps 3-5: ParseTimeZoneIdentifier; the resulting TimeZone already carries the
-    // case-normalized, alias-preserving identifier (named) or canonical offset.
-    auto parsed = ISO8601::parseTemporalTimeZoneIdentifier(tzString);
-    if (!parsed) [[unlikely]] {
+    auto throwInvalidTimeZoneIdentifier = [&] {
         throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(100, tzString), "' is not a valid time zone identifier"_s));
         return std::nullopt;
-    }
+    };
 
-    return *parsed;
+    // Step 3: Let parseResult be ? ParseTemporalTimeZoneString(temporalTimeZoneLike).
+    auto parseResult = ISO8601::parseTemporalTimeZoneString(tzString);
+    if (!parseResult) [[unlikely]]
+        return throwInvalidTimeZoneIdentifier();
+
+    // Steps 4-9: offsetMinutes → FormatOffsetTimeZoneIdentifier; otherwise resolve [[Name]], with
+    //   step 8's RangeError for an unavailable one.
+    auto timeZone = timeZoneFromIdentifierParseRecord(*parseResult);
+    if (!timeZone) [[unlikely]]
+        return throwInvalidTimeZoneIdentifier();
+    return timeZone;
 }
 
 void throwTemporalError(JSGlobalObject* globalObject, ThrowScope& scope, const TemporalError& error)

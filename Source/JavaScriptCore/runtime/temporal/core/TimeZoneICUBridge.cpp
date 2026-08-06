@@ -518,32 +518,21 @@ TemporalResult<ISO8601::ExactTime> addZonedDateTime(ISO8601::ExactTime startEpoc
 }
 
 // timeZoneEquals — temporal_rs: TimeZone::time_zone_equals_with_provider (src/builtins/core/time_zone.rs)
-// https://tc39.es/proposal-canonical-tz/#sec-temporal-timezoneequals
-// Spec operates on Time Zone Identifier records. Step 1 (Object identity) and steps 2-4
-// (canonicalization + SameValue on the canonical strings) are subsumed by JSC's TimeZone
-// representation: identical TimeZone values mean both sides resolved to the same record.
-// Step 7 (both named) reduces to primary-identifier comparison via intlPrimaryTimeZoneID.
-// Step 8 (both offset) reduces to numeric offset comparison — already covered by
-// TimeZone::operator== since offset records share m_id == offsetTimeZoneID.
-// Mixed kinds fall through to step 9 (false).
+// https://tc39.es/proposal-temporal/#sec-temporal-timezoneequals
 bool timeZoneEquals(const TimeZone& a, const TimeZone& b)
 {
+    // 1. If one is two, return true.
     if (a == b)
         return true;
-    if (a.isUTCOffset() || b.isUTCOffset())
-        return false;
-    return intlPrimaryTimeZoneID(a.id()) == intlPrimaryTimeZoneID(b.id());
-}
 
-bool timeZoneEquals(StringView id1, StringView id2)
-{
-    if (id1 == id2)
-        return true;
-    auto a = ISO8601::parseTemporalTimeZoneIdentifier(id1);
-    auto b = ISO8601::parseTemporalTimeZoneIdentifier(id2);
-    if (!a || !b)
-        return false;
-    return timeZoneEquals(*a, *b);
+    // 2. If neither one nor two is an offset time zone identifier, then
+    if (a.isUTCOffset() || b.isUTCOffset())
+        return false; // 4. Return false.
+
+    // 2.a-2.d. recordOne/recordTwo = GetAvailableNamedTimeZoneIdentifier(...); both are non-empty.
+    // 2.e. If recordOne.[[PrimaryIdentifier]] is recordTwo.[[PrimaryIdentifier]], return true.
+    // 4. Return false.
+    return intlPrimaryTimeZoneID(a.id()) == intlPrimaryTimeZoneID(b.id());
 }
 
 } // namespace TemporalCore

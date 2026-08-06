@@ -246,161 +246,173 @@ static ISO8601::PlainDate calendarAwareDateAdd(JSGlobalObject* globalObject, Cal
     return calendarDateAdd(globalObject, calendarId, date, duration, overflow);
 }
 
-struct RelativeToRecord {
-    TemporalZonedDateTime* zonedRelativeTo { nullptr };
-    ISO8601::PlainDate plainDate;
-    bool hasPlainRelativeTo { false };
+struct PlainRelativeTo {
+    ISO8601::PlainDate date;
     CalendarID calendarId { iso8601CalendarID() };
 };
 
+struct RelativeToRecord {
+    TemporalZonedDateTime* zonedRelativeTo { nullptr }; // [[ZonedRelativeTo]]; nullptr is undefined.
+    std::optional<PlainRelativeTo> plainRelativeTo; // [[PlainRelativeTo]].
+};
+
+struct RelativeToParts {
+    ISO8601::PlainDate isoDate;
+    std::optional<ISO8601::PlainTime> time; // std::nullopt is ~start-of-day~.
+    CalendarID calendarId { iso8601CalendarID() };
+    std::optional<TimeZone> timeZone; // std::nullopt is ~unset~.
+    int64_t offsetStringNs { 0 };
+    OffsetBehaviour offsetBehaviour { OffsetBehaviour::Option };
+    TemporalCore::MatchBehaviour matchBehaviour { TemporalCore::MatchBehaviour::MatchExactly };
+};
+
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporalrelativetooption
-static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, JSObject* options)
+static RelativeToRecord getTemporalRelativeToOption(JSGlobalObject* globalObject, JSObject* options)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: Let value be ?Get(options, "relativeTo").
+    // Step 1: Let value be ? Get(options, "relativeTo").
     JSValue relativeToValue = options->get(globalObject, Identifier::fromString(vm, "relativeTo"_s));
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Step 2: If value is undefined, return {[[PlainRelativeTo]]: undefined, [[ZonedRelativeTo]]: undefined}.
+    // Step 2: If value is undefined, return the Record with both fields undefined.
     if (relativeToValue.isUndefined())
         return { };
 
-    // Steps 3-4: offsetBehaviour = ~option~, matchBehaviour = ~match-exactly~ (initial defaults).
+    // Steps 3-4: offsetBehaviour = ~option~; matchBehaviour = ~match-exactly~.
+    RelativeToParts parts;
+    String string; // Set by step 6 only; used for its error messages.
 
-    // Step 5: If value is an Object:
+    // Step 5: If value is an Object, then
     if (relativeToValue.isObject()) {
         JSObject* obj = asObject(relativeToValue);
         // Step 5.a: [[InitializedTemporalZonedDateTime]] → return { [[ZonedRelativeTo]]: value }.
-        if (obj->inherits<TemporalZonedDateTime>()) {
-            auto* zdt = uncheckedDowncast<TemporalZonedDateTime>(obj);
-            return RelativeToRecord { zdt, { }, false };
-        }
+        if (obj->inherits<TemporalZonedDateTime>())
+            return RelativeToRecord { uncheckedDowncast<TemporalZonedDateTime>(obj), std::nullopt };
 
         // Step 5.b: [[InitializedTemporalDate]] → return { [[PlainRelativeTo]]: value }.
         if (obj->inherits<TemporalPlainDate>()) {
             auto* pd = uncheckedDowncast<TemporalPlainDate>(obj);
-            return RelativeToRecord { nullptr, pd->plainDate(), true, pd->calendarID() };
+            return RelativeToRecord { nullptr, PlainRelativeTo { pd->plainDate(), pd->calendarID() } };
         }
-        // Step 5.c: [[InitializedTemporalDateTime]] → return { [[PlainRelativeTo]]: CreateTemporalDate(isoDate, calendar) }.
+
+        // Step 5.c: [[InitializedTemporalDateTime]] → return { [[PlainRelativeTo]]: CreateTemporalDate(...) }.
         if (obj->inherits<TemporalPlainDateTime>()) {
             auto* pdt = uncheckedDowncast<TemporalPlainDateTime>(obj);
-            return RelativeToRecord { nullptr, pdt->plainDate(), true, pdt->calendarID() };
+            return RelativeToRecord { nullptr, PlainRelativeTo { pdt->plainDate(), pdt->calendarID() } };
         }
+
         // Step 5.d: calendar = ? GetTemporalCalendarIdentifierWithISODefault(value).
-        CalendarID calendarId = getTemporalCalendarIdentifierWithISODefault(globalObject, obj);
+        parts.calendarId = getTemporalCalendarIdentifierWithISODefault(globalObject, obj);
         RETURN_IF_EXCEPTION(scope, { });
 
-        // Step 5.e: fields = ? PrepareCalendarFields(calendar, value,
-        //   «year,month,month-code,day», «hour,...,nanosecond,offset,time-zone», «»).
-        auto fields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::RelativeToDuration>(globalObject, obj, calendarId);
+        // Step 5.e: fields = ? PrepareCalendarFields(calendar, value, «year,month,month-code,day», «hour,...,nanosecond,offset,time-zone», «»).
+        auto fields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::RelativeToDuration>(globalObject, obj, parts.calendarId);
         RETURN_IF_EXCEPTION(scope, { });
 
+        // Step 5.f: result = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
         TemporalCore::TimeFieldsIn timeFields { fields.hour, fields.minute, fields.second, fields.millisecond, fields.microsecond, fields.nanosecond };
-
-        // Step 5.g: timeZone = fields.[[TimeZone]]. Step 5.h-i: offsetBehaviour from offsetString.
-        if (fields.timeZonePresent) {
-            // Steps 8-9: compute offsetNs based on offsetBehaviour.
-            // Steps 10-12: epochNs = InterpretISODateTimeOffset(...); return ZonedRelativeTo.
-            TimeZone timeZone = fields.timeZone;
-
-            // Step 5.f: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
-            auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, fields.dateFields, timeFields, TemporalOverflow::Constrain);
-            RETURN_IF_EXCEPTION(scope, { });
-            auto plainDate = pdt.date;
-            auto plainTime = pdt.time;
-
-            // offsetBehaviour = ~option~: find the candidate whose UTC offset exactly equals givenOffsetNs
-            // (offsetOption = ~reject~, matchBehaviour = ~match-exactly~ → steps 10-12).
-            if (fields.offsetNs) {
-                auto possible = TemporalCore::getPossibleEpochNanosecondsFor(timeZone, plainDate, plainTime);
-                if (!possible) [[unlikely]] {
-                    throwRangeError(globalObject, scope, possible.error().message);
-                    return { };
-                }
-                bool found = false;
-                ISO8601::ExactTime matchedEpoch;
-                for (auto& candidate : TemporalCore::epochCandidates(*possible)) {
-                    auto offsetResult = TemporalCore::getOffsetNanosecondsFor(timeZone, candidate);
-                    if (offsetResult && *offsetResult == *fields.offsetNs) {
-                        matchedEpoch = candidate;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) [[unlikely]] {
-                    throwRangeError(globalObject, scope, "offset does not agree with timezone for the given date/time"_s);
-                    return { };
-                }
-                auto* zdt = TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), matchedEpoch, WTF::move(timeZone), calendarId);
-                return RelativeToRecord { zdt, { }, false };
-            }
-
-            // offsetBehaviour = ~wall~ (step 9: offsetNs = 0): use ~compatible~ disambiguation.
-            auto epochNs = TemporalZonedDateTime::getEpochNanosecondsFor(globalObject, timeZone, plainDate, plainTime, TemporalDisambiguation::Compatible);
-            RETURN_IF_EXCEPTION(scope, { });
-
-            // Steps 11-12: zonedRelativeTo = CreateTemporalZonedDateTime; return.
-            auto* zdt = TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), *epochNs, WTF::move(timeZone), calendarId);
-            return RelativeToRecord { zdt, { }, false };
-        }
-
-        // Step 7: timeZone is ~unset~ → return { [[PlainRelativeTo]]: CreateTemporalDate(isoDate, calendar) }.
-        // Time fields were read for Proxy observability; we discard the regulated time here.
-        auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, fields.dateFields, timeFields, TemporalOverflow::Constrain);
+        auto pdt = interpretTemporalDateTimeFields(globalObject, parts.calendarId, fields.dateFields, timeFields, TemporalOverflow::Constrain);
         RETURN_IF_EXCEPTION(scope, { });
-        return RelativeToRecord { nullptr, pdt.date, true, calendarId };
-    }
 
-    // Step 6: If value is not a String, throw TypeError.
-    if (!relativeToValue.isString()) [[unlikely]] {
-        throwTypeError(globalObject, scope, "relativeTo must be a string or Temporal object"_s);
-        return { };
-    }
+        // Step 5.g: Let timeZone be fields.[[TimeZone]].
+        if (fields.timeZonePresent)
+            parts.timeZone = fields.timeZone;
 
-    // Step 7: Let result be ? ParseISODateTime(value, « TemporalDateTimeString[+Zoned], TemporalDateTimeString[~Zoned] »).
-    String string = relativeToValue.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
+        // Steps 5.h-i: offsetString = fields.[[OffsetString]]; if ~unset~, offsetBehaviour = ~wall~.
+        if (fields.offsetNs)
+            parts.offsetStringNs = *fields.offsetNs;
+        else
+            parts.offsetBehaviour = OffsetBehaviour::Wall;
 
-    auto parsed = ISO8601::parseISODateTime(string, { ISO8601::TemporalProduction::DateTimeZoned, ISO8601::TemporalProduction::DateTimeUnzoned });
-    if (!parsed) [[unlikely]] {
-        throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(200, string), "' is not a valid date or ZonedDateTime string"_s));
-        return { };
-    }
-    auto& [parsedDateOpt, parsedTimeOpt, parsedTzOpt, parsedCalOpt, matched, isShortForm] = *parsed;
-    ASSERT(parsedDateOpt);
-    const auto& parsedDate = *parsedDateOpt;
-
-    // Step 8: Let timeZone be result.[[TimeZone]].
-    // Steps 13-17 (ZDT path) vs step 12 (PlainDate path): DateTimeZoned matched → bracket present.
-    if (matched == ISO8601::TemporalProduction::DateTimeZoned) {
-        // Delegate to TemporalZonedDateTime::from which implements ToTemporalTimeZoneIdentifier
-        // + InterpretISODateTimeOffset.
-        auto* zdt = TemporalZonedDateTime::from(globalObject, relativeToValue, jsUndefined());
-        RETURN_IF_EXCEPTION(scope, { });
-        return RelativeToRecord { zdt, { }, false };
-    }
-    // DateTimeUnzoned matched → no Z, no bracket required → PlainDate path.
-
-    // Steps 9-11: calendar = result.[[Calendar]]; if ~empty~ → "iso8601"; CanonicalizeCalendar.
-    CalendarID calendarId = iso8601CalendarID();
-    if (parsedCalOpt) {
-        auto rawCal = StringView(*parsedCalOpt).convertToASCIILowercase();
-        auto canonicalized = isBuiltinCalendar(rawCal);
-        if (!canonicalized) [[unlikely]] {
-            throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
+        // Steps 5.j-k: isoDate = result.[[ISODate]]; time = result.[[Time]], never ~start-of-day~.
+        parts.isoDate = pdt.date;
+        parts.time = pdt.time;
+    } else {
+        // Step 6.a: If value is not a String, throw a TypeError exception.
+        if (!relativeToValue.isString()) [[unlikely]] {
+            throwTypeError(globalObject, scope, "relativeTo must be a string or Temporal object"_s);
             return { };
         }
-        calendarId = *canonicalized;
+
+        // Step 6.b: result = ? ParseISODateTime(value, « TemporalDateTimeString[+Zoned], TemporalDateTimeString[~Zoned] »).
+        string = relativeToValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto parsed = ISO8601::parseISODateTime(string, { ISO8601::TemporalProduction::DateTimeZoned, ISO8601::TemporalProduction::DateTimeUnzoned });
+        if (!parsed) [[unlikely]] {
+            throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(200, string), "' is not a valid date or ZonedDateTime string"_s));
+            return { };
+        }
+        auto& [parsedDateOpt, parsedTimeOpt, parsedTzOpt, parsedCalOpt, matched, isShortForm] = *parsed;
+        ASSERT(parsedDateOpt);
+
+        // Steps 6.c-6.f: the annotation is ~empty~ — so timeZone stays ~unset~ — exactly when the ~Zoned production matched, since only [+Zoned] accepts a bracket.
+        if (matched == ISO8601::TemporalProduction::DateTimeZoned) {
+            ASSERT(parsedTzOpt);
+            auto& tzRecord = *parsedTzOpt;
+            // Step 6.f.i: timeZone = ? ToTemporalTimeZoneIdentifier(annotation).
+            auto timeZoneOpt = timeZoneFromRecord(tzRecord);
+            if (!timeZoneOpt) [[unlikely]] {
+                throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(200, string), "' contains an invalid time zone identifier"_s));
+                return { };
+            }
+            parts.timeZone = *timeZoneOpt;
+
+            // Steps 6.f.ii-iii: Z → ~exact~; no offsetString → ~wall~.
+            if (tzRecord.m_z)
+                parts.offsetBehaviour = OffsetBehaviour::Exact;
+            else if (!tzRecord.m_offset)
+                parts.offsetBehaviour = OffsetBehaviour::Wall;
+            parts.offsetStringNs = tzRecord.m_offset.value_or(0);
+
+            // Steps 6.f.iv-v: ~match-minutes~, unless the offset has sub-minute precision.
+            parts.matchBehaviour = tzRecord.m_offsetHasSubMinutePrecision ? TemporalCore::MatchBehaviour::MatchExactly : TemporalCore::MatchBehaviour::MatchMinutes;
+        }
+
+        // Steps 6.g-i: calendar = result.[[Calendar]]; if ~empty~ → "iso8601"; CanonicalizeCalendar.
+        if (parsedCalOpt) {
+            auto rawCal = StringView(*parsedCalOpt).convertToASCIILowercase();
+            auto canonicalized = isBuiltinCalendar(rawCal);
+            if (!canonicalized) [[unlikely]] {
+                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
+                return { };
+            }
+            parts.calendarId = *canonicalized;
+        }
+
+        // Steps 6.j-k: isoDate = CreateISODateRecord(...); time = result.[[Time]], which is ~start-of-day~ when the string had no time part.
+        parts.isoDate = *parsedDateOpt;
+        parts.time = parsedTimeOpt;
     }
 
-    // Step 12: timeZone is ~unset~ → return { [[PlainRelativeTo]]: CreateTemporalDate(isoDate, calendar) }.
-    if (!ISO8601::isDateTimeWithinLimits(parsedDate.year(), parsedDate.month(), parsedDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(200, string), "' is outside the representable range for a relativeTo parameter"_s));
+    // Step 7: If timeZone is ~unset~, plainDate = ? CreateTemporalDate(isoDate, calendar); return.
+    if (!parts.timeZone) {
+        // CreateTemporalDate Step 1. Step 5.f already made the identical check via CalendarDateFromFields Step 3, so only a step 6 string can reach the throw.
+        if (!ISO8601::isDateTimeWithinLimits(parts.isoDate.year(), parts.isoDate.month(), parts.isoDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
+            ASSERT(!string.isNull());
+            throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(200, string), "' is outside the representable range for a relativeTo parameter"_s));
+            return { };
+        }
+        return RelativeToRecord { nullptr, PlainRelativeTo { parts.isoDate, parts.calendarId } };
+    }
+
+    // Steps 8-9: offsetNs = offsetBehaviour is ~option~ ? ParseDateTimeUTCOffset(offsetString) : 0.
+    int64_t offsetNs = parts.offsetBehaviour == OffsetBehaviour::Option ? parts.offsetStringNs : 0;
+
+    // Step 10: epochNanoseconds = ? InterpretISODateTimeOffset(isoDate, time, offsetBehaviour, offsetNs, timeZone, ~compatible~, ~reject~, matchBehaviour).
+    auto useStartOfDay = parts.time ? TemporalCore::UseStartOfDay::No : TemporalCore::UseStartOfDay::Yes;
+    auto epochNsResult = TemporalCore::interpretISODateTimeOffset(parts.isoDate, parts.time.value_or(ISO8601::PlainTime()),
+        useStartOfDay, parts.offsetBehaviour, TemporalOffsetDisambiguation::Reject, offsetNs,
+        parts.matchBehaviour, *parts.timeZone, TemporalDisambiguation::Compatible);
+    if (!epochNsResult) [[unlikely]] {
+        throwRangeError(globalObject, scope, epochNsResult.error().message);
         return { };
     }
-    return RelativeToRecord { nullptr, parsedDate, true, calendarId };
+
+    // Steps 11-12: zonedRelativeTo = ! CreateTemporalZonedDateTime(...); return.
+    auto* zdt = TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), *epochNsResult, WTF::move(*parts.timeZone), parts.calendarId);
+    return RelativeToRecord { zdt, std::nullopt };
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration.compare
@@ -423,7 +435,7 @@ JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne
     // Parse relativeTo — must happen before identity check per spec ordering.
     RelativeToRecord relativeTo;
     if (options) {
-        relativeTo = toRelativeTemporalObject(globalObject, options);
+        relativeTo = getTemporalRelativeToOption(globalObject, options);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
@@ -469,23 +481,24 @@ JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne
         return jsNumber(timeDuration1 > timeDuration2 ? 1 : timeDuration1 < timeDuration2 ? -1 : 0);
     }
 
-    if (!relativeTo.hasPlainRelativeTo) [[unlikely]] {
+    if (!relativeTo.plainRelativeTo) [[unlikely]] {
         throwRangeError(globalObject, scope, "Cannot compare a duration of years, months, or weeks without a relativeTo option"_s);
         return { };
     }
 
     // PlainDate relativeTo: DateDurationDays(dateDuration, plainDate).
-    auto& plainDate = relativeTo.plainDate;
+    auto& plainDate = relativeTo.plainRelativeTo->date;
+    auto calendarId = relativeTo.plainRelativeTo->calendarId;
 
     ISO8601::Duration dateDuration1(one.years(), one.months(), one.weeks(), one.days(), 0LL, 0LL, 0LL, 0LL, Int128(0), Int128(0));
-    auto endDate1 = calendarAwareDateAdd(globalObject, relativeTo.calendarId, plainDate, dateDuration1, TemporalOverflow::Constrain);
+    auto endDate1 = calendarAwareDateAdd(globalObject, calendarId, plainDate, dateDuration1, TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
     auto daysDiff1 = TemporalCore::diffISODate(plainDate, endDate1, TemporalUnit::Day);
     auto timeDuration1 = add24HourDaysToTimeDuration(globalObject, TemporalCore::toInternalDuration(one).time(), daysDiff1.days());
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::Duration dateDuration2(two.years(), two.months(), two.weeks(), two.days(), 0LL, 0LL, 0LL, 0LL, Int128(0), Int128(0));
-    auto endDate2 = calendarAwareDateAdd(globalObject, relativeTo.calendarId, plainDate, dateDuration2, TemporalOverflow::Constrain);
+    auto endDate2 = calendarAwareDateAdd(globalObject, calendarId, plainDate, dateDuration2, TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
     auto daysDiff2 = TemporalCore::diffISODate(plainDate, endDate2, TemporalUnit::Day);
     auto timeDuration2 = add24HourDaysToTimeDuration(globalObject, TemporalCore::toInternalDuration(two).time(), daysDiff2.days());
@@ -791,7 +804,7 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
     // Steps 10-12: Let relativeToRecord = ? GetTemporalRelativeToOption(roundTo).
     RelativeToRecord relativeTo;
     if (options) {
-        relativeTo = toRelativeTemporalObject(globalObject, options);
+        relativeTo = getTemporalRelativeToOption(globalObject, options);
         RETURN_IF_EXCEPTION(scope, { });
     }
     // Step 13: Let roundingIncrement be ? GetRoundingIncrementOption(roundTo).
@@ -904,8 +917,9 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
     }
 
     // Step 28: If plainRelativeTo is not undefined:
-    if (relativeTo.hasPlainRelativeTo) {
-        auto& plainDate = relativeTo.plainDate;
+    if (relativeTo.plainRelativeTo) {
+        auto& plainDate = relativeTo.plainRelativeTo->date;
+        auto calendarId = relativeTo.plainRelativeTo->calendarId;
         ISO8601::PlainTime midnight;
 
         // Step 28.a: internalDuration = ToInternalDurationRecordWith24HourDays(duration).
@@ -913,14 +927,14 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
         RETURN_IF_EXCEPTION(scope, { });
 
         // Steps 28.b-e: AddTime + AdjustDateDurationRecord + CalendarDateAdd → {targetDate, targetTime}.
-        auto target = computePlainRelativeTarget(globalObject, relativeTo.calendarId, plainDate, internalDuration);
+        auto target = computePlainRelativeTarget(globalObject, calendarId, plainDate, internalDuration);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(target);
 
         // Steps 28.f-g: isoDateTime = (plainDate, midnight); targetDateTime = (targetDate, targetTime).
         // Step 28.h: internalDuration = ? DifferencePlainDateTimeWithRounding(...).
         auto diffResult = TemporalCore::differencePlainDateTimeWithRounding(plainDate, midnight, target->targetDate, target->targetTime,
-            relativeTo.calendarId, largestUnit, smallestUnit, roundingMode, static_cast<double>(roundingIncrement));
+            calendarId, largestUnit, smallestUnit, roundingMode, static_cast<double>(roundingIncrement));
         if (!diffResult) [[unlikely]] {
             throwTemporalError(globalObject, scope, diffResult.error());
             return { };
@@ -980,7 +994,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     // Steps 8-10: relativeTo. Spec NOTE: "relativeTo" parsed before "unit" (alphabetical).
     RelativeToRecord relativeTo;
     if (options) {
-        relativeTo = toRelativeTemporalObject(globalObject, options);
+        relativeTo = getTemporalRelativeToOption(globalObject, options);
         RETURN_IF_EXCEPTION(scope, 0);
         // Step 11: unit = ? GetTemporalUnitValuedOption(totalOf, "unit", unset).
         unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, { }, { });
@@ -995,7 +1009,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     }
     TemporalUnit unit = unitType.value();
 
-    bool hasRelativeTo = relativeTo.zonedRelativeTo || relativeTo.hasPlainRelativeTo;
+    bool hasRelativeTo = relativeTo.zonedRelativeTo || relativeTo.plainRelativeTo;
 
     // Step 13: no relativeTo.
     if (!hasRelativeTo) {
@@ -1023,16 +1037,17 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
 
     // Step 15: plainRelativeTo path → DifferencePlainDateTimeWithTotal.
     {
-        auto& plainDate = relativeTo.plainDate;
+        auto& plainDate = relativeTo.plainRelativeTo->date;
+        auto calendarId = relativeTo.plainRelativeTo->calendarId;
         // Step 15.a: ToInternalDurationRecordWith24HourDays.
         auto internalDuration = toInternalDurationRecordWith24HourDays(globalObject, m_duration);
         RETURN_IF_EXCEPTION(scope, 0);
         // Steps 15.b-e: target {date, time}.
-        auto target = computePlainRelativeTarget(globalObject, relativeTo.calendarId, plainDate, internalDuration);
+        auto target = computePlainRelativeTarget(globalObject, calendarId, plainDate, internalDuration);
         RETURN_IF_EXCEPTION(scope, 0);
         ASSERT(target);
         // Steps 15.f-h: DifferencePlainDateTimeWithTotal.
-        auto result = differencePlainDateTimeWithTotal(globalObject, relativeTo.calendarId, plainDate, *target, unit);
+        auto result = differencePlainDateTimeWithTotal(globalObject, calendarId, plainDate, *target, unit);
         RETURN_IF_EXCEPTION(scope, 0);
         ASSERT(result);
         return *result;
