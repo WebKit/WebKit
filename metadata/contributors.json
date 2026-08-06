@@ -4434,6 +4434,14 @@
    },
    {
       "emails" : [
+         "jespinal23@apple.com"
+      ],
+      "github" : "JEspinal01",
+      "name" : "Jetzel Espinal",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "jiapu.mail@gmail.com",
          "jpu@apple.com"
       ],
