@@ -77,7 +77,11 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     if (!element || !element->inRenderedDocument())
         return nullptr;
 
-    return dynamicDowncast<AccessibilityMenuListOption>(protect(document())->axObjectCache()->getOrCreate(*element));
+    CheckedPtr cache = protect(document())->axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    return dynamicDowncast<AccessibilityMenuListOption>(cache->getOrCreate(*element));
 }
 
 bool AccessibilityMenuListPopup::press()
