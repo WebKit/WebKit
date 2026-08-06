@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+// This iframe is cross-site to the top page. Open a blank popup (inherits this process so this
+// iframe stays a local opener), then navigate it cross-site to the top page's site.
+const popupURL = get_host_info().HTTP_ORIGIN + "/WebKit/storage-access/resources/popup.html";
+const popup = window.open("");
+setTimeout(() => { if (popup) popup.location.assign(popupURL); }, 200);
+</script>
