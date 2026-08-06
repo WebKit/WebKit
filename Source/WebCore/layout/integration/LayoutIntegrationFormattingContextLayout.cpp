@@ -233,7 +233,8 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), borderBoxTop });
 
         updateIFCLineClamp(inlineLayoutState, renderTreeLayoutState);
-        populateIFCWithNewlyPlacedFloats(blockRenderer.get(), placedFloats, blockLineLogicalTopLeft);
+        // Floats are positioned relative to their containing block's border box, which sits at borderBoxTop within the line (see setTopLeft above) and not at the line's top left.
+        populateIFCWithNewlyPlacedFloats(blockRenderer.get(), placedFloats, blockLineLogicalTopLeft + LayoutSize { blockGeometry.marginStart(), borderBoxTop });
         parentBlockLayoutState.marginState() = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);
     };
     updateIFCAfterLayout();
