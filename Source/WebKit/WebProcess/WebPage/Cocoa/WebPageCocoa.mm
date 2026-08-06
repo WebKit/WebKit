@@ -3251,6 +3251,13 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
     RefPtr localRootFrame = this->localRootFrame(frameID);
 
     auto reportFailedTap = [&] {
+        if (localRootFrame) {
+            if (RefPtr focusedFrame = m_page->focusController().focusedFrame(); focusedFrame && focusedFrame->frameType() == WebCore::Frame::FrameType::Remote) {
+                m_page->focusController().setFocusedFrame(localRootFrame.get());
+                if (m_isClosed)
+                    return;
+            }
+        }
 #if ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
         if (localRootFrame) {
             m_page->focusController().setFocusedElement(nullptr, localRootFrame.get(), { .trigger = FocusTrigger::Click });

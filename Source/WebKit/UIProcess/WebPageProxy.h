@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "TextExtractionAssertionScope.h"
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <wtf/ApproximateTime.h>
@@ -3436,7 +3437,7 @@ private:
     void restorePageCenterAndScale(IPC::Connection&, std::optional<WebCore::FloatPoint>, double scale);
 
     void elementDidFocus(IPC::Connection&, const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData&);
-    void elementDidBlur();
+    void elementDidBlur(IPC::Connection&);
     void convertFocusedElementInformationRectsToMainFrameCoordinates(FocusedElementInformation, CompletionHandler<void(FocusedElementInformation)>&&);
     void updateInputContextAfterBlurringAndRefocusingElement();
     void didProgrammaticallyClearFocusedElement(WebCore::ElementContext&&);
@@ -3823,6 +3824,8 @@ private:
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebCore::DocumentSyncData> m_topDocumentSyncData;
     RefPtr<WebFrameProxy> m_focusedFrame;
+
+    std::optional<WebCore::ProcessIdentifier> m_focusedElementProcessID;
 
     String m_userAgent;
     String m_applicationNameForUserAgent;

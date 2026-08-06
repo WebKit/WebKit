@@ -9972,6 +9972,85 @@ TEST(SiteIsolation, SelectionInCrossOriginIframeIsContainedByContentView)
 }
 #endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 
+} // namespace TestWebKitAPI
+
+@interface SiteIsolationInputSessionWebView : TestWKWebView
+@property (nonatomic, readonly) BOOL hasActiveInputSession;
+@end
+
+@implementation SiteIsolationInputSessionWebView {
+    BOOL _hasActiveInputSession;
+}
+
+- (BOOL)hasActiveInputSession
+{
+    return _hasActiveInputSession;
+}
+
+- (void)didStartFormControlInteraction
+{
+    _hasActiveInputSession = YES;
+    [super didStartFormControlInteraction];
+}
+
+- (void)didEndFormControlInteraction
+{
+    _hasActiveInputSession = NO;
+    [super didEndFormControlInteraction];
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+TEST(SiteIsolation, FocusingMainFrameFieldKeepsFocusAfterCrossOriginIframeField)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><input id='mainInput'><iframe id='iframe' style='display: block; width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><input id='iframeInput'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[SiteIsolationInputSessionWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focusInWindow];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    // Focus the text field in the cross-origin iframe and wait (via the didStartFormControlInteraction
+    // hook) for its input session to begin. A cross-origin frame needs a user gesture to take focus, so
+    // this can't use -evaluateJavaScriptAndWaitForInputSessionToChange, which evaluates without one.
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('iframeInput').focus()" inFrame:childFrame.get()];
+    while (![webView hasActiveInputSession])
+        Util::spinRunLoop();
+
+    // Focus the text field in the main frame.
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('mainInput').focus()"];
+
+    // Once the main frame takes focus, the subframe process blurs its now-defocused field and sends an
+    // ElementDidBlur that can arrive afterwards. Round-trip through the subframe process so that blur has
+    // been delivered to and processed by the UI process (messages from a process are ordered) before we
+    // assert. The main frame's input session must remain active -- previously the stale blur cleared it.
+    [webView objectByEvaluatingJavaScript:@"0" inFrame:childFrame.get()];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE([webView hasActiveInputSession]);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IMAGE_ANALYSIS)
