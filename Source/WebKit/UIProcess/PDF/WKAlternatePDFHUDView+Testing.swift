@@ -53,7 +53,7 @@ extension WKAlternatePDFHUDView {
 
     @objc(_hideForTesting)
     private func hideForTesting() {
-        // FIXME: Implement `WKAlternatePDFHUDView.hide`.
+        model.isAutoHidden = true
     }
 }
 

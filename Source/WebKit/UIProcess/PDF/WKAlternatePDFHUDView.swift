@@ -27,6 +27,24 @@ import AppKit
 public import Foundation
 import WebKit_Internal
 @_weakLinked @_spi(Private) import SwiftUI
+private import Observation
+
+@Observable
+@MainActor
+final class PDFHUDControlsModel {
+    var isAutoHidden = false
+    var isHovered = false
+    private(set) var resetSeed: UInt32 = 0
+
+    var isVisible: Bool {
+        !isAutoHidden || isHovered
+    }
+
+    func show() {
+        isAutoHidden = false
+        resetSeed &+= 1
+    }
+}
 
 struct PDFHUDControls: View {
     static let hoverMargin: CGFloat = 24
@@ -35,15 +53,8 @@ struct PDFHUDControls: View {
     let showSystemActions: Bool
     let action: (WKPDFHUDViewControlAction) -> Void
 
-    @State
-    private var initialHideTimerFired = false
-
-    @State
-    private var isHovered = false
-
-    private var isVisible: Bool {
-        !initialHideTimerFired || isHovered
-    }
+    @Environment(PDFHUDControlsModel.self)
+    private var model
 
     var body: some View {
         ControlGroup {
@@ -72,20 +83,20 @@ struct PDFHUDControls: View {
             }
         }
         .labelStyle(.iconOnly)
-        .opacity(isVisible ? 1 : 0)
-        .animation(.easeInOut, value: isVisible)
+        .opacity(model.isVisible ? 1 : 0)
+        .animation(.easeInOut, value: model.isVisible)
         #if USE_APPLE_INTERNAL_SDK && HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE
         .controlGroupStyle(.toolbar)
         #endif
         .padding(Self.hoverMargin)
         .contentShape(.rect)
         .onHover {
-            isHovered = $0
+            model.isHovered = $0
         }
-        .task {
+        .task(id: model.resetSeed) {
             try? await Task.sleep(for: Self.autoHideDelay)
             guard !Task.isCancelled else { return }
-            initialHideTimerFired = true
+            model.isAutoHidden = true
         }
     }
 }
@@ -96,6 +107,9 @@ extension WKAlternatePDFHUDView {
     private static let barVerticalOffset: CGFloat = 40
 
     let frameIdentifier: UInt64
+
+    @nonobjc
+    final let model = PDFHUDControlsModel()
 
     init(
         frame: NSRect,
@@ -108,6 +122,7 @@ extension WKAlternatePDFHUDView {
         super.init(frame: frame)
 
         let controls = PDFHUDControls(showSystemActions: !isInRecoveryOS(), action: actionHandler)
+            .environment(model)
 
         let hostingView = NSHostingView(rootView: controls)
         hostingView.translatesAutoresizingMaskIntoConstraints = false
@@ -130,7 +145,7 @@ extension WKAlternatePDFHUDView {
     }
 
     func show() {
-        // FIXME: Implement `WKAlternatePDFHUDView.show`.
+        model.show()
     }
 }
 

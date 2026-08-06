@@ -557,7 +557,7 @@ extension AppKitGesturesTests.Basic {
         #expect(scaleAfterZooming > scaleBeforeZooming)
     }
 
-    @Test(arguments: [false])
+    @Test(arguments: [true, false])
     func clickingOnPDFShowsHUD(useAlternatePDFHUD: Bool) async throws {
         page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
 

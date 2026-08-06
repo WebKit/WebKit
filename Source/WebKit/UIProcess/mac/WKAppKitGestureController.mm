@@ -535,17 +535,19 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
         return;
     }
 
-    // Clicks aren't delivered to NSButton's built-in click gesture
-    // recognizer when a parent view's GR recognizes first, so we
-    // forward the click manually.
-    if (gesture.state == NSGestureRecognizerStateBegan) {
-        WebCore::FloatPoint location { [gesture locationInView:webView.get()] };
-        CheckedPtr impl = [webView _impl];
-        if (RetainPtr hitView = impl->hitTestPDFHUD(location); hitView && impl->isViewVisible(hitView.get())) {
-            if (RetainPtr hudButton = dynamic_objc_cast<NSButton>(hitView))
-                [hudButton performClick:nil];
-            gesture.state = NSGestureRecognizerStateCancelled;
-            return;
+    if (!protect([webView _protectedPage]->preferences())->useAlternatePDFHUD()) {
+        // Clicks aren't delivered to NSButton's built-in click gesture
+        // recognizer when a parent view's GR recognizes first, so we
+        // forward the click manually.
+        if (gesture.state == NSGestureRecognizerStateBegan) {
+            WebCore::FloatPoint location { [gesture locationInView:webView.get()] };
+            CheckedPtr impl = [webView _impl];
+            if (RetainPtr hitView = impl->hitTestPDFHUD(location); hitView && impl->isViewVisible(hitView.get())) {
+                if (RetainPtr hudButton = dynamic_objc_cast<NSButton>(hitView))
+                    [hudButton performClick:nil];
+                gesture.state = NSGestureRecognizerStateCancelled;
+                return;
+            }
         }
     }
 
