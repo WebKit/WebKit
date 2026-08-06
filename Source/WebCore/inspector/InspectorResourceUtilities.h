@@ -32,16 +32,21 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <tuple>
+#include <wtf/Compiler.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class DocumentLoader;
 class FragmentedSharedBuffer;
+class HTTPHeaderMap;
 class LocalFrame;
+class NetworkLoadMetrics;
 class Page;
 class ScriptExecutionContext;
 class TextResourceDecoder;
@@ -126,6 +131,16 @@ WEBCORE_EXPORT bool shouldTreatAsText(const String& mimeType);
 WEBCORE_EXPORT Ref<WebCore::TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
 WEBCORE_EXPORT std::optional<String> textContentForCachedResource(WebCore::CachedResource&);
 WEBCORE_EXPORT bool cachedResourceContent(WebCore::CachedResource&, String* result, bool* base64Encoded);
+
+WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const WebCore::HTTPHeaderMap&);
+
+// Timebase-independent: every field is either a plain scalar or relative to the load itself.
+WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const WebCore::NetworkLoadMetrics&);
+
+// ResourceTiming's first four fields are absolute protocol timestamps, so the caller supplies
+// monotonicToProtocolSeconds to express them in whichever timebase its target reports on. The
+// remaining fields are milliseconds relative to fetchStart and need no conversion.
+WEBCORE_EXPORT Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const WebCore::NetworkLoadMetrics&, MonotonicTime loadStartTime, NOESCAPE const Function<double(MonotonicTime)>& monotonicToProtocolSeconds);
 
 // Loads url in the given context on behalf of the inspector, bypassing cross-origin checks (Network.loadResource).
 WEBCORE_EXPORT void loadResource(WebCore::ScriptExecutionContext&, const String& url, LoadResourceCompletionHandler&&);
