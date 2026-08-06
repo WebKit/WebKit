@@ -6,8 +6,11 @@
 
 // DisplayEGL.cpp: Common across EGL parts of platform specific egl::Display implementations
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/gl/egl/DisplayEGL.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/system_utils.h"
@@ -786,9 +789,8 @@ egl::Error DisplayEGL::makeCurrent(egl::Display *display,
         }
         else if (context)
         {
-            // For external contexts, the underlying native EGLContext might have been destroyed
-            // and recreated by the OS without ANGLE being told to unbind.
-            currentContext.context = newContext;
+            // Switch surface but not context.
+            ASSERT(currentContext.context == newContext);
             ASSERT(newSurface == EGL_NO_SURFACE);
             ASSERT(newContext != EGL_NO_CONTEXT);
             // We only support using external surface with external context.
@@ -1103,7 +1105,7 @@ egl::Error DisplayEGL::queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EG
     {
         // Do not copy data beyond the limits of the vector
         maxFormats = std::min(maxFormats, formatsSize);
-        ANGLE_UNSAFE_TODO(std::memcpy(formats, mDrmFormats.data(), maxFormats * sizeof(EGLint)));
+        std::memcpy(formats, mDrmFormats.data(), maxFormats * sizeof(EGLint));
     }
 
     return egl::NoError();

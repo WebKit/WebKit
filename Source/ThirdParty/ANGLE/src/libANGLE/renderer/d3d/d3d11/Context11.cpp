@@ -7,8 +7,11 @@
 //   D3D11-specific functionality associated with a GL Context.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/Context11.h"
-#include "common/unsafe_buffers.h"
 
 #include <utility>
 
@@ -109,8 +112,7 @@ angle::Result ReadbackIndirectBuffer(const gl::Context *context,
     ANGLE_TRY(storage->getData(context, &bufferData));
     ASSERT(bufferData);
 
-    *bufferPtrOut =
-        reinterpret_cast<const IndirectBufferT *>(ANGLE_UNSAFE_TODO(bufferData + offset));
+    *bufferPtrOut = reinterpret_cast<const IndirectBufferT *>(bufferData + offset);
     return angle::Result::Continue;
 }
 
@@ -572,11 +574,11 @@ angle::Result Context11::multiDrawArrays(const gl::Context *context,
     const bool hasDrawID              = executable->hasDrawIDUniform();
     if (hasDrawID)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0));
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0);
     }
     else
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0));
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -593,11 +595,11 @@ angle::Result Context11::multiDrawArraysInstanced(const gl::Context *context,
     const bool hasDrawID              = executable->hasDrawIDUniform();
     if (hasDrawID)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0));
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0);
     }
     else
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0));
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -623,11 +625,11 @@ angle::Result Context11::multiDrawElements(const gl::Context *context,
     const bool hasDrawID              = executable->hasDrawIDUniform();
     if (hasDrawID)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0));
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0);
     }
     else
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0));
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -645,11 +647,11 @@ angle::Result Context11::multiDrawElementsInstanced(const gl::Context *context,
     const bool hasDrawID              = executable->hasDrawIDUniform();
     if (hasDrawID)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0));
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0);
     }
     else
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0));
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -681,19 +683,19 @@ angle::Result Context11::multiDrawArraysInstancedBaseInstance(const gl::Context 
 
     if (hasDrawID && hasBaseInstance)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1));
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1);
     }
     else if (hasDrawID)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0));
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0);
     }
     else if (hasBaseInstance)
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1));
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1);
     }
     else
     {
-        ANGLE_UNSAFE_TODO(MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0));
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -722,26 +724,22 @@ angle::Result Context11::multiDrawElementsInstancedBaseVertexBaseInstance(
         {
             if (hasBaseInstance)
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1);
             }
             else
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0);
             }
         }
         else
         {
             if (hasBaseInstance)
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1);
             }
             else
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0);
             }
         }
     }
@@ -751,26 +749,22 @@ angle::Result Context11::multiDrawElementsInstancedBaseVertexBaseInstance(
         {
             if (hasBaseInstance)
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1);
             }
             else
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0);
             }
         }
         else
         {
             if (hasBaseInstance)
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1);
             }
             else
             {
-                ANGLE_UNSAFE_TODO(
-                    MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0));
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0);
             }
         }
     }

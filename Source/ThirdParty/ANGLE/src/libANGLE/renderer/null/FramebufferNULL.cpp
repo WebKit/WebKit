@@ -7,8 +7,11 @@
 //    Implements the class methods for FramebufferNULL.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/null/FramebufferNULL.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"
@@ -97,7 +100,7 @@ angle::Result FramebufferNULL::readPixels(const gl::Context *context,
     {
         BufferNULL *packBufferGL = GetImplAs<BufferNULL>(packBuffer);
         pixels                   = reinterpret_cast<GLubyte *>(packBufferGL->getDataPtr());
-        ANGLE_UNSAFE_TODO(pixels += reinterpret_cast<intptr_t>(ptrOrOffset));
+        pixels += reinterpret_cast<intptr_t>(ptrOrOffset);
     }
     else
     {
@@ -123,18 +126,18 @@ angle::Result FramebufferNULL::readPixels(const gl::Context *context,
     GLuint skipBytes = 0;
     ANGLE_CHECK_GL_MATH(contextNull, glFormat.computeRowSkipBytes(type, origArea.width, pack,
                                                                   &rowBytes, &skipBytes));
-    ANGLE_UNSAFE_TODO(pixels += skipBytes);
+    pixels += skipBytes;
 
     // Skip OOB region up to first in bounds pixel
     int leftClip = area.x - origArea.x;
     int topClip  = area.y - origArea.y;
-    ANGLE_UNSAFE_TODO(pixels += leftClip * glFormat.pixelBytes + topClip * rowBytes);
+    pixels += leftClip * glFormat.pixelBytes + topClip * rowBytes;
 
     // Write the in-bounds readpixels data with non-zero values
     for (GLint y = area.y; y < area.y + area.height; ++y)
     {
-        ANGLE_UNSAFE_TODO(memset(pixels, 42, glFormat.pixelBytes * area.width));
-        ANGLE_UNSAFE_TODO(pixels += rowBytes);
+        memset(pixels, 42, glFormat.pixelBytes * area.width);
+        pixels += rowBytes;
     }
 
     return angle::Result::Continue;

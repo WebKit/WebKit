@@ -4,7 +4,10 @@
 // found in the LICENSE file.
 //
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -601,13 +604,11 @@ void TOutputTraverser::visitConstantUnion(TIntermConstantUnion *node)
     for (size_t i = 0; i < size; i++)
     {
         OutputTreeText(mOut, node, getCurrentIndentDepth());
-        switch (ANGLE_UNSAFE_TODO(node->getConstantValue()[i]).getType())
+        switch (node->getConstantValue()[i].getType())
         {
             case EbtBool:
-                if (ANGLE_UNSAFE_TODO(node->getConstantValue()[i]).getBConst())
-                {
+                if (node->getConstantValue()[i].getBConst())
                     mOut << "true";
-                }
                 else
                     mOut << "false";
 
@@ -615,20 +616,20 @@ void TOutputTraverser::visitConstantUnion(TIntermConstantUnion *node)
                 mOut << "\n";
                 break;
             case EbtFloat:
-                mOut << ANGLE_UNSAFE_TODO(node->getConstantValue()[i]).getFConst();
+                mOut << node->getConstantValue()[i].getFConst();
                 mOut << " (const float)\n";
                 break;
             case EbtInt:
-                mOut << ANGLE_UNSAFE_TODO(node->getConstantValue()[i]).getIConst();
+                mOut << node->getConstantValue()[i].getIConst();
                 mOut << " (const int)\n";
                 break;
             case EbtUInt:
-                mOut << ANGLE_UNSAFE_TODO(node->getConstantValue()[i]).getUConst();
+                mOut << node->getConstantValue()[i].getUConst();
                 mOut << " (const uint)\n";
                 break;
             case EbtYuvCscStandardEXT:
                 mOut << getYuvCscStandardEXTString(
-                    ANGLE_UNSAFE_TODO(node->getConstantValue()[i]).getYuvCscStandardEXTConst());
+                    node->getConstantValue()[i].getYuvCscStandardEXTConst());
                 mOut << " (const yuvCscStandardEXT)\n";
                 break;
             default:

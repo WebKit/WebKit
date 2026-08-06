@@ -5906,12 +5906,6 @@ bool ValidateTexStorage3DEXT(const Context *context,
                              GLsizei height,
                              GLsizei depth)
 {
-    if (context->getClientVersion() < ES_3_0 && !context->getExtensions().texture3DOES)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-
     return ValidateTexStorage3D(context, entryPoint, type, levels, internalformat, width, height,
                                 depth);
 }
@@ -5951,7 +5945,13 @@ bool ValidateVertexAttribDivisorEXT(const PrivateState &privateState,
                                     GLuint index,
                                     GLuint divisor)
 {
-    return ValidateVertexAttribDivisor(privateState, errors, entryPoint, index, divisor);
+    if (index >= static_cast<GLuint>(privateState.getCaps().maxVertexAttributes))
+    {
+        errors->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateTexImage3DOES(const Context *context,

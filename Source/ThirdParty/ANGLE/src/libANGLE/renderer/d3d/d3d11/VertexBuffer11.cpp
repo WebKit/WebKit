@@ -6,8 +6,11 @@
 
 // VertexBuffer11.cpp: Defines the D3D11 VertexBuffer implementation.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/VertexBuffer11.h"
-#include "common/unsafe_buffers.h"
 
 #include <cstddef>
 
@@ -119,8 +122,7 @@ angle::Result VertexBuffer11::storeVertexAttributes(const gl::Context *context,
     angle::CheckedNumeric<ptrdiff_t> checkedOffset(static_cast<ptrdiff_t>(offset));
     ANGLE_CHECK_GL_MATH(GetImplAs<Context11>(context), checkedOffset.IsValid());
 
-    uint8_t *output =
-        ANGLE_UNSAFE_TODO(mMappedResourceData + static_cast<ptrdiff_t>(checkedOffset.ValueOrDie()));
+    uint8_t *output = mMappedResourceData + static_cast<ptrdiff_t>(checkedOffset.ValueOrDie());
 
     const uint8_t *input = sourceData;
 
@@ -129,7 +131,7 @@ angle::Result VertexBuffer11::storeVertexAttributes(const gl::Context *context,
         angle::CheckedNumeric<ptrdiff_t> checkedInputOffset(static_cast<ptrdiff_t>(start));
         checkedInputOffset *= static_cast<ptrdiff_t>(inputStride);
         ANGLE_CHECK_GL_MATH(GetImplAs<Context11>(context), checkedInputOffset.IsValid());
-        ANGLE_UNSAFE_TODO(input += static_cast<ptrdiff_t>(checkedInputOffset.ValueOrDie()));
+        input += static_cast<ptrdiff_t>(checkedInputOffset.ValueOrDie());
     }
 
     angle::FormatID vertexFormatID       = gl::GetVertexFormatID(attrib, currentValueType);

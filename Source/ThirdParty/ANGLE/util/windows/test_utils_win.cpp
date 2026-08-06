@@ -6,7 +6,10 @@
 
 // test_utils_win.cpp: Implementation of OS-specific functions for Windows
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/test_utils.h"
 
 #include <aclapi.h>
@@ -149,8 +152,7 @@ class WindowsProcess : public Process
                 {
                     commandLineString.push_back(' ');
                 }
-                commandLineString.insert(commandLineString.end(), arg,
-                                         ANGLE_UNSAFE_TODO(arg + strlen(arg)));
+                commandLineString.insert(commandLineString.end(), arg, arg + strlen(arg));
             }
         }
         commandLineString.push_back('\0');
@@ -424,12 +426,12 @@ void WriteDebugMessage(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    int size = ANGLE_UNSAFE_TODO(vsnprintf(nullptr, 0, format, args));
+    int size = vsnprintf(nullptr, 0, format, args);
     va_end(args);
 
     std::vector<char> buffer(size + 2);
     va_start(args, format);
-    ANGLE_UNSAFE_TODO(vsnprintf(buffer.data(), size + 1, format, args));
+    vsnprintf(buffer.data(), size + 1, format, args);
     va_end(args);
 
     OutputDebugStringA(buffer.data());

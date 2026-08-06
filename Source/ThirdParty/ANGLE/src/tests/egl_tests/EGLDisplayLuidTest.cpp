@@ -50,7 +50,14 @@ class EGLDisplayLuidTest : public ANGLETest<>
     EGLDisplay mDisplay;
 };
 
-// EGL_ANGLE_platform_angle_d3d_luid is only supported on D3D11.
+// EGL_ANGLE_platform_angle_d3d_luid is only supported on D3D11. Verify failure
+// if D3D9 is specified in the attributes.
+TEST_P(EGLDisplayLuidTest, D3D9Failure)
+{
+    EGLAttrib displayAttribs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE,
+                                  EGL_PLATFORM_ANGLE_D3D_LUID_HIGH_ANGLE, 1, EGL_NONE};
+    testInvalidAttribs(displayAttribs);
+}
 
 // Verify failure if the specified LUID is zero.
 TEST_P(EGLDisplayLuidTest, ZeroLuidFailure)
@@ -73,4 +80,4 @@ TEST_P(EGLDisplayLuidTest, D3D11)
     testValidAttribs(displayAttribs);
 }
 
-ANGLE_INSTANTIATE_TEST(EGLDisplayLuidTest, WithNoFixture(ES2_D3D11()));
+ANGLE_INSTANTIATE_TEST(EGLDisplayLuidTest, WithNoFixture(ES2_D3D9()), WithNoFixture(ES2_D3D11()));

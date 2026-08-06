@@ -7,12 +7,15 @@
 // the header file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #if defined(_MSC_VER)
 #    pragma warning(disable : 4718)
 #endif
 
 #include "compiler/translator/SymbolTable.h"
-#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "compiler/translator/ImmutableString.h"
@@ -55,7 +58,7 @@ bool CheckShaderType(Shader expected, GLenum actual)
 bool CheckExtension(uint32_t extensionIndex, const ShBuiltInResources &resources)
 {
     const int *resourcePtr = reinterpret_cast<const int *>(&resources);
-    return ANGLE_UNSAFE_TODO(resourcePtr[extensionIndex]) > 0;
+    return resourcePtr[extensionIndex] > 0;
 }
 }  // namespace
 
@@ -526,8 +529,7 @@ const TSymbol *FindMangledBuiltIn(ShShaderSpec shaderSpec,
     for (uint32_t ruleIndex = startIndex; ruleIndex < endIndex; ++ruleIndex)
     {
         const TSymbol *symbol =
-            ANGLE_UNSAFE_TODO(rules[ruleIndex])
-                .get(shaderSpec, shaderVersion, shaderType, resources, symbolTable);
+            rules[ruleIndex].get(shaderSpec, shaderVersion, shaderType, resources, symbolTable);
         if (symbol)
         {
             return symbol;

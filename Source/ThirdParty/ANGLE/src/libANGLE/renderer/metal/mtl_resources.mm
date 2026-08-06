@@ -7,6 +7,10 @@
 //    Implements wrapper classes for Metal's MTLTexture and MTLBuffer.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_resources.h"
 
 #include <TargetConditionals.h>

@@ -5,7 +5,10 @@
 
 // system_utils_unittest.cpp: Unit tests for ANGLE's system utility functions
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -45,8 +48,7 @@ TEST(SystemUtils, ExecutableDir)
 
     std::string executablePath = GetExecutablePath();
     EXPECT_LT(executableDir.size(), executablePath.size());
-    ANGLE_UNSAFE_TODO(
-        EXPECT_EQ(0, strncmp(executableDir.c_str(), executablePath.c_str(), executableDir.size())));
+    EXPECT_EQ(0, strncmp(executableDir.c_str(), executablePath.c_str(), executableDir.size()));
 #endif
 }
 
@@ -93,7 +95,7 @@ TEST(SystemUtils, CpuTimeHeavyOp)
     constexpr size_t bufferSize = 1048576;
     std::vector<uint8_t> buffer(bufferSize, 1);
     double cpuTimeStart = GetCurrentProcessCpuTime();
-    ANGLE_UNSAFE_TODO(memset(buffer.data(), 0, bufferSize));
+    memset(buffer.data(), 0, bufferSize);
     double cpuTimeEnd = GetCurrentProcessCpuTime();
     EXPECT_GE(cpuTimeEnd, cpuTimeStart);
 }

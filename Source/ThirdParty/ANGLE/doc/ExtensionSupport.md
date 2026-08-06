@@ -1,4 +1,4 @@
-#ANGLE Supported Extensions
+# ANGLE Supported Extensions
 
 This is a list of all extensions currently supported by ANGLE's front-end, and
 support listed for some of the tested targets for ANGLE's Vulkan back-end. To

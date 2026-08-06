@@ -10,10 +10,13 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_UTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <atomic>
 #include <limits>
 #include <queue>
-#include "common/unsafe_buffers.h"
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/FixedVector.h"
@@ -544,18 +547,18 @@ class MemoryProperties final : angle::NonCopyable
         }
 
         ASSERT(memoryType < getMemoryTypeCount());
-        return ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[memoryType]).heapIndex;
+        return mMemoryProperties.memoryTypes[memoryType].heapIndex;
     }
 
     VkDeviceSize getHeapSizeForMemoryType(uint32_t memoryType) const
     {
-        uint32_t heapIndex = ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[memoryType]).heapIndex;
-        return ANGLE_UNSAFE_TODO(mMemoryProperties.memoryHeaps[heapIndex]).size;
+        uint32_t heapIndex = mMemoryProperties.memoryTypes[memoryType].heapIndex;
+        return mMemoryProperties.memoryHeaps[heapIndex].size;
     }
 
     const VkMemoryType &getMemoryType(uint32_t memoryTypeIndex) const
     {
-        return ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[memoryTypeIndex]);
+        return mMemoryProperties.memoryTypes[memoryTypeIndex];
     }
 
     uint32_t getMemoryHeapCount() const { return mMemoryProperties.memoryHeapCount; }

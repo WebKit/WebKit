@@ -6,7 +6,10 @@
 
 // validationES3.cpp: Validation functions for OpenGL ES 3.0 entry point parameters
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/validationES3_autogen.h"
 
 #include "anglebase/numerics/safe_conversions.h"
@@ -217,8 +220,9 @@ bool ValidateColorMaskForSharedExponentColorBuffer(const Context *context,
     const FramebufferAttachment *attachment = state.getDrawFramebuffer()->getDrawBuffer(drawbuffer);
     if (attachment && attachment->getFormat().info->internalFormat == GL_RGB9_E5)
     {
-        const uint8_t mask = state.getBlendStateExt().getColorMaskIndexed(drawbuffer);
-        if (ANGLE_UNLIKELY(((mask + 1) & 0xE) != 0))  // Valid masks are 0 (none) and 15 (all).
+        bool r, g, b, a;
+        state.getBlendStateExt().getColorMaskIndexed(drawbuffer, &r, &g, &b, &a);
+        if (r != g || g != b)
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
                                    kUnsupportedColorMaskForSharedExponentColorBuffer);
@@ -795,7 +799,7 @@ static bool QueryEffectiveFormatList(const InternalFormat &srcFormat,
 {
     for (size_t curFormat = 0; curFormat < size; ++curFormat)
     {
-        const EffectiveInternalFormatInfo &formatInfo = ANGLE_UNSAFE_TODO(list[curFormat]);
+        const EffectiveInternalFormatInfo &formatInfo = list[curFormat];
         if ((formatInfo.destFormat == targetFormat) &&
             (formatInfo.minRedBits <= srcFormat.redBits &&
              formatInfo.maxRedBits >= srcFormat.redBits) &&
@@ -2514,7 +2518,7 @@ bool ValidateDeleteTransformFeedbacks(const Context *context,
     }
     for (GLint i = 0; i < n; ++i)
     {
-        auto *transformFeedback = context->getTransformFeedback(ANGLE_UNSAFE_TODO(ids[i]));
+        auto *transformFeedback = context->getTransformFeedback(ids[i]);
         if (transformFeedback != nullptr && transformFeedback->isActive())
         {
             // ES 3.0.4 section 2.15.1 page 86
@@ -3215,9 +3219,8 @@ bool ValidateMultiDrawArraysInstancedANGLE(const Context *context,
     }
     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
     {
-        if (ANGLE_UNSAFE_TODO(!ValidateDrawArraysInstancedBase(context, entryPoint, mode,
-                                                               firsts[drawID], counts[drawID],
-                                                               instanceCounts[drawID], 0)))
+        if (!ValidateDrawArraysInstancedBase(context, entryPoint, mode, firsts[drawID],
+                                             counts[drawID], instanceCounts[drawID], 0))
         {
             return false;
         }
@@ -3260,9 +3263,8 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
     }
     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
     {
-        if (ANGLE_UNSAFE_TODO(
-                !ValidateDrawElementsInstancedBase(context, entryPoint, mode, counts[drawID], type,
-                                                   indices[drawID], instanceCounts[drawID], 0)))
+        if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, counts[drawID], type,
+                                               indices[drawID], instanceCounts[drawID], 0))
         {
             return false;
         }
@@ -3328,9 +3330,9 @@ bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(const Context *context,
     }
     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
     {
-        if (!ANGLE_UNSAFE_TODO(ValidateDrawArraysInstancedBase(
-                context, entryPoint, modePacked, firsts[drawID], counts[drawID],
-                instanceCounts[drawID], baseInstances[drawID])))
+        if (!ValidateDrawArraysInstancedBase(context, entryPoint, modePacked, firsts[drawID],
+                                             counts[drawID], instanceCounts[drawID],
+                                             baseInstances[drawID]))
         {
             return false;
         }
@@ -3368,9 +3370,9 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
     }
     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
     {
-        if (!ANGLE_UNSAFE_TODO(ValidateDrawElementsInstancedBase(
-                context, entryPoint, modePacked, counts[drawID], typePacked, indices[drawID],
-                instanceCounts[drawID], baseInstances[drawID])))
+        if (!ValidateDrawElementsInstancedBase(context, entryPoint, modePacked, counts[drawID],
+                                               typePacked, indices[drawID], instanceCounts[drawID],
+                                               baseInstances[drawID]))
         {
             return false;
         }
@@ -4016,7 +4018,7 @@ bool ValidateGetActiveUniformsiv(const Context *context,
 
     for (int uniformId = 0; uniformId < uniformCount; uniformId++)
     {
-        const GLuint index = ANGLE_UNSAFE_TODO(uniformIndices[uniformId]);
+        const GLuint index = uniformIndices[uniformId];
 
         if (index >= programUniformCount)
         {

@@ -6,8 +6,11 @@
 // vk_helpers:
 //   Helper utility classes that manage Vulkan resources.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/aligned_memory.h"
 #include "common/utilities.h"
@@ -86,7 +89,7 @@ bool IsClearValueEqual(VkImageAspectFlags aspect, const VkClearValue &a, const V
 {
     if (aspect & VK_IMAGE_ASPECT_COLOR_BIT)
     {
-        return ANGLE_UNSAFE_TODO(memcmp(&a.color, &b.color, sizeof(VkClearColorValue))) == 0;
+        return memcmp(&a.color, &b.color, sizeof(VkClearColorValue)) == 0;
     }
 
     bool depthEqual   = true;
@@ -429,7 +432,7 @@ angle::Result InitDynamicDescriptorPool(ErrorContext *context,
 
 bool IsAnyLayout(VkImageLayout needle, const VkImageLayout *haystack, uint32_t haystackCount)
 {
-    const VkImageLayout *haystackEnd = ANGLE_UNSAFE_TODO(haystack + haystackCount);
+    const VkImageLayout *haystackEnd = haystack + haystackCount;
     return std::find(haystack, haystackEnd, needle) != haystackEnd;
 }
 
@@ -530,7 +533,7 @@ void GetVkClearDepthStencilValueFromBytes(uint8_t *intendedData,
     double depthValue  = 0;
 
     intendedFormat.pixelReadFunction(intendedData, reinterpret_cast<uint8_t *>(dsData));
-    ANGLE_UNSAFE_TODO(memcpy(&depthValue, &dsData[0], sizeof(double)));
+    memcpy(&depthValue, &dsData[0], sizeof(double));
     clearValueOut->depthStencil.depth   = static_cast<float>(depthValue);
     clearValueOut->depthStencil.stencil = dsData[2];
 }
@@ -629,8 +632,7 @@ void DeriveImageViewFormatsFromExternalCreateInfo(const void *externalCreateInfo
 
         for (uint32_t i = 0; i < imageFormatListCreateInfo->viewFormatCount; i++)
         {
-            imageFormats->push_back(
-                *(ANGLE_UNSAFE_TODO(imageFormatListCreateInfo->pViewFormats + i)));
+            imageFormats->push_back(*(imageFormatListCreateInfo->pViewFormats + i));
         }
     }
 }
@@ -2451,9 +2453,8 @@ void RenderPassCommandBufferHelper::beginTransformFeedback(size_t validBufferCou
 
     for (size_t index = 0; index < validBufferCount; index++)
     {
-        mTransformFeedbackCounterBuffers[index] = ANGLE_UNSAFE_TODO(counterBuffers[index]);
-        mTransformFeedbackCounterBufferOffsets[index] =
-            ANGLE_UNSAFE_TODO(counterBufferOffsets[index]);
+        mTransformFeedbackCounterBuffers[index]       = counterBuffers[index];
+        mTransformFeedbackCounterBufferOffsets[index] = counterBufferOffsets[index];
     }
 }
 
@@ -3770,7 +3771,7 @@ angle::Result DynamicDescriptorPool::init(ErrorContext *context,
     ASSERT(mDescriptorPools.empty());
     ASSERT(mCachedDescriptorSetLayout == VK_NULL_HANDLE);
     mPoolSizes.reserve(setSizeCount);
-    mPoolSizes.assign(setSizes, ANGLE_UNSAFE_TODO(setSizes + setSizeCount));
+    mPoolSizes.assign(setSizes, setSizes + setSizeCount);
     mCachedDescriptorSetLayout = descriptorSetLayout.getHandle();
 
     DescriptorPoolPointer newPool = DescriptorPoolPointer::MakeShared(context->getDevice());
@@ -4341,8 +4342,7 @@ void QueryResult::setResults(uint64_t *results, uint32_t queryCount)
     {
         for (uint32_t perQueryIndex = 0; perQueryIndex < mIntsPerResult; ++perQueryIndex)
         {
-            mResults[perQueryIndex] +=
-                ANGLE_UNSAFE_TODO(results[query * mIntsPerResult + perQueryIndex]);
+            mResults[perQueryIndex] += results[query * mIntsPerResult + perQueryIndex];
         }
     }
 }
@@ -5044,7 +5044,7 @@ angle::Result BufferHelper::initializeMemoryWithValueImpl(ErrorContext *context,
     {
         // Can map the memory to initialize non-zero memory for sanitization.
         uint8_t *mapPointer             = mSuballocation.getMappedMemory();
-        ANGLE_UNSAFE_TODO(memset(mapPointer, value, static_cast<size_t>(size)));
+        memset(mapPointer, value, static_cast<size_t>(size));
         if (!isCoherent())
         {
             mSuballocation.flush(renderer);
@@ -5212,7 +5212,7 @@ angle::Result BufferHelper::mapWithOffset(ErrorContext *context, uint8_t **ptrOu
 {
     uint8_t *mapBufPointer;
     ANGLE_TRY(map(context, &mapBufPointer));
-    *ptrOut = ANGLE_UNSAFE_TODO(mapBufPointer + offset);
+    *ptrOut = mapBufPointer + offset;
     return angle::Result::Continue;
 }
 
@@ -5562,16 +5562,16 @@ void BufferHelper::fillWithPattern(const void *pattern,
     ASSERT((size % patternSize) == 0);
     ASSERT((offset % patternSize) == 0);
 
-    uint8_t *buffer = ANGLE_UNSAFE_TODO(getMappedMemory() + offset);
-    ANGLE_UNSAFE_TODO(std::memcpy(buffer, pattern, patternSize));
+    uint8_t *buffer = getMappedMemory() + offset;
+    std::memcpy(buffer, pattern, patternSize);
     size_t remaining = size - patternSize;
     while (remaining > patternSize)
     {
-        ANGLE_UNSAFE_TODO(std::memcpy(buffer + patternSize, buffer, patternSize));
+        std::memcpy(buffer + patternSize, buffer, patternSize);
         remaining -= patternSize;
         patternSize *= 2;
     }
-    ANGLE_UNSAFE_TODO(std::memcpy(buffer + patternSize, buffer, remaining));
+    std::memcpy(buffer + patternSize, buffer, remaining);
     return;
 }
 
@@ -5601,7 +5601,7 @@ angle::Result InitMappableDeviceMemory(ErrorContext *context,
 
     uint8_t *mapPointer;
     ANGLE_VK_TRY(context, deviceMemory->map(device, 0, VK_WHOLE_SIZE, 0, &mapPointer));
-    ANGLE_UNSAFE_TODO(memset(mapPointer, value, static_cast<size_t>(size)));
+    memset(mapPointer, value, static_cast<size_t>(size));
 
     // if the memory type is not host coherent, we perform an explicit flush.
     if ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
@@ -6560,13 +6560,12 @@ angle::Result ImageHelper::initExternalMemory(ErrorContext *context,
 
     for (uint32_t memoryPlane = 0; memoryPlane < extraAllocationInfoCount; ++memoryPlane)
     {
-        bindImagePlaneMemoryInfo.planeAspect = ANGLE_UNSAFE_TODO(kMemoryPlaneAspects[memoryPlane]);
+        bindImagePlaneMemoryInfo.planeAspect = kMemoryPlaneAspects[memoryPlane];
 
-        ANGLE_UNSAFE_TODO(
-            ANGLE_VK_TRY(context, AllocateImageMemoryWithRequirements(
-                                      context, mMemoryAllocationType, flags, memoryRequirements,
-                                      extraAllocationInfo[memoryPlane], bindImagePlaneMemoryInfoPtr,
-                                      &mImage, &mMemoryTypeIndex, &mDeviceMemory)));
+        ANGLE_VK_TRY(context, AllocateImageMemoryWithRequirements(
+                                  context, mMemoryAllocationType, flags, memoryRequirements,
+                                  extraAllocationInfo[memoryPlane], bindImagePlaneMemoryInfoPtr,
+                                  &mImage, &mMemoryTypeIndex, &mDeviceMemory));
     }
     mCurrentDeviceQueueIndex = currentDeviceQueueIndex;
     mIsReleasedToExternal    = false;
@@ -7219,13 +7218,6 @@ bool ImageHelper::isReadSubresourceBarrierNecessary(ImageAccess newAccess,
         return true;
     }
 
-    // Updates are tracked by layer, which are always [0, 1) for 3D images.
-    if (mImageType == VK_IMAGE_TYPE_3D)
-    {
-        layerStart = 0;
-        layerCount = 1;
-    }
-
     ImageLayerWriteMask layerMask = GetImageLayerWriteMask(layerStart, layerCount);
     for (uint32_t levelOffset = 0; levelOffset < levelCount; levelOffset++)
     {
@@ -7254,13 +7246,6 @@ bool ImageHelper::isWriteBarrierNecessary(ImageAccess newAccess,
     if (layerCount >= kMaxParallelLayerWrites)
     {
         return true;
-    }
-
-    // Updates are tracked by layer, which are always [0, 1) for 3D images.
-    if (mImageType == VK_IMAGE_TYPE_3D)
-    {
-        layerStart = 0;
-        layerCount = 1;
     }
 
     // If we are writing to the same parts of the image (level/layer), we need a barrier. Otherwise,
@@ -7559,13 +7544,6 @@ void ImageHelper::setSubresourcesWrittenSinceBarrier(gl::LevelIndex levelStart,
                                                      uint32_t layerStart,
                                                      uint32_t layerCount)
 {
-    // Updates are tracked by layer, which are always [0, 1) for 3D images.
-    if (mImageType == VK_IMAGE_TYPE_3D)
-    {
-        layerStart = 0;
-        layerCount = 1;
-    }
-
     for (uint32_t levelOffset = 0; levelOffset < levelCount; levelOffset++)
     {
         uint32_t level = levelStart.get() + levelOffset;
@@ -8690,7 +8668,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
         }
     }
 
-    const uint8_t *source = ANGLE_UNSAFE_TODO(pixels + static_cast<ptrdiff_t>(inputSkipBytes));
+    const uint8_t *source = pixels + static_cast<ptrdiff_t>(inputSkipBytes);
 
     // If possible, copy the buffer to the image directly on the host, to avoid having to use a temp
     // image (and do a double copy).
@@ -8754,7 +8732,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
             gl_vk::GetOffset(planeOffset, &copy.imageOffset);
             gl_vk::GetExtent(yuvInfo.planeExtent[plane], &copy.imageExtent);
             copy.imageSubresource.baseArrayLayer = 0;
-            copy.imageSubresource.aspectMask     = ANGLE_UNSAFE_TODO(kPlaneAspectFlags[plane]);
+            copy.imageSubresource.aspectMask     = kPlaneAspectFlags[plane];
             appendSubresourceUpdate(
                 gl::LevelIndex(0),
                 SubresourceUpdate(stagingBuffer.get(), currentBuffer, copy, storageFormatID));
@@ -8773,21 +8751,20 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
 
     gl::LevelIndex updateLevelGL(index.getLevelIndex());
     copy.imageSubresource.mipLevel   = updateLevelGL.get();
-    copy.imageSubresource.baseArrayLayer = index.hasLayer() ? index.getLayerIndex() : offset.z;
     copy.imageSubresource.layerCount = index.getLayerCount();
 
     gl_vk::GetOffset(offset, &copy.imageOffset);
     gl_vk::GetExtent(glExtents, &copy.imageExtent);
 
-    if (index.getType() == gl::TextureType::_3D)
+    if (gl::IsArrayTextureType(index.getType()))
     {
-        copy.imageSubresource.baseArrayLayer = 0;
-        copy.imageSubresource.layerCount     = 1;
+        copy.imageSubresource.baseArrayLayer = offset.z;
+        copy.imageOffset.z                   = 0;
+        copy.imageExtent.depth               = 1;
     }
     else
     {
-        copy.imageOffset.z     = 0;
-        copy.imageExtent.depth = 1;
+        copy.imageSubresource.baseArrayLayer = index.hasLayer() ? index.getLayerIndex() : 0;
     }
 
     if (stencilAllocationSize > 0)
@@ -8796,7 +8773,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
         ASSERT((aspectFlags & VK_IMAGE_ASPECT_STENCIL_BIT) != 0);
 
         // Skip over depth data.
-        ANGLE_UNSAFE_TODO(stagingPointer += outputDepthPitch * glExtents.depth);
+        stagingPointer += outputDepthPitch * glExtents.depth;
         stagingOffset += outputDepthPitch * glExtents.depth;
 
         // recompute pitch for stencil data
@@ -9054,8 +9031,7 @@ angle::Result ImageHelper::reformatStagedBufferUpdates(ContextVk *contextVk,
                 ASSERT(srcBuffer->isMapped());
                 // The bufferOffset is relative to the buffer block. We have to use the buffer
                 // block's memory pointer to get the source data pointer.
-                uint8_t *srcData =
-                    ANGLE_UNSAFE_TODO(srcBuffer->getBlockMemory() + copy.bufferOffset);
+                uint8_t *srcData = srcBuffer->getBlockMemory() + copy.bufferOffset;
 
                 // Allocate memory with dstFormat
                 std::unique_ptr<RefCounted<BufferHelper>> stagingBuffer =
@@ -9211,9 +9187,9 @@ void ImageHelper::invalidateSubresourceContent(ContextVk *contextVk,
     if (layerLimitReached)
     {
         const char *aspectName = (aspect == VK_IMAGE_ASPECT_DEPTH_BIT ? "depth" : "color");
-        ANGLE_UNSAFE_TODO(ANGLE_VK_PERF_WARNING(
+        ANGLE_VK_PERF_WARNING(
             contextVk, GL_DEBUG_SEVERITY_LOW,
-            "glInvalidateFramebuffer (%s) ineffective on attachments with layer >= 8", aspectName));
+            "glInvalidateFramebuffer (%s) ineffective on attachments with layer >= 8", aspectName);
     }
 }
 
@@ -9432,7 +9408,7 @@ angle::Result ImageHelper::stagePartialClear(ContextVk *contextVk,
     uint8_t intendedData[16] = {0};
     if (data != nullptr)
     {
-        ANGLE_UNSAFE_TODO(memcpy(intendedData, data, intendedPixelSize));
+        memcpy(intendedData, data, intendedPixelSize);
     }
 
     // The appropriate loading function is used to take the original value as a single pixel and
@@ -9786,7 +9762,7 @@ angle::Result ImageHelper::stageResourceClearWithFormat(ContextVk *contextVk,
         ANGLE_TRY(contextVk->initBufferForImageCopy(
             currentBuffer, totalSize, MemoryCoherency::CachedNonCoherent, imageFormat.id,
             &stagingOffset, &stagingPointer));
-        ANGLE_UNSAFE_TODO(memset(stagingPointer, 0, totalSize));
+        memset(stagingPointer, 0, totalSize);
 
         VkBufferImageCopy copyRegion               = {};
         copyRegion.bufferOffset                    = stagingOffset;
@@ -11234,9 +11210,8 @@ angle::Result ImageHelper::readPixelsForGetImage(ContextVk *contextVk,
         // Depth > 1 means this is a 3D texture and we need to copy all layers
         for (uint32_t mipLayer = 0; mipLayer < lastLayer; mipLayer++)
         {
-            ANGLE_UNSAFE_TODO(
-                ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, mipLayer,
-                                     static_cast<uint8_t *>(pixels) + outputSkipBytes)));
+            ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, mipLayer,
+                                 static_cast<uint8_t *>(pixels) + outputSkipBytes));
 
             outputSkipBytes += mipExtents.width * mipExtents.height *
                                gl::GetInternalFormatInfo(format, type).pixelBytes;
@@ -11244,8 +11219,8 @@ angle::Result ImageHelper::readPixelsForGetImage(ContextVk *contextVk,
     }
     else
     {
-        ANGLE_UNSAFE_TODO(ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, layer,
-                                               static_cast<uint8_t *>(pixels) + outputSkipBytes)));
+        ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, layer,
+                             static_cast<uint8_t *>(pixels) + outputSkipBytes));
     }
 
     return angle::Result::Continue;
@@ -11293,16 +11268,15 @@ angle::Result ImageHelper::readPixelsForCompressedGetImage(ContextVk *contextVk,
         // Depth > 1 means this is a 3D texture and we need to copy all layers
         for (uint32_t mipLayer = 0; mipLayer < lastLayer; mipLayer++)
         {
-            ANGLE_UNSAFE_TODO(
-                ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, mipLayer,
-                                     static_cast<uint8_t *>(pixels) + outputSkipBytes)));
+            ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, mipLayer,
+                                 static_cast<uint8_t *>(pixels) + outputSkipBytes));
             outputSkipBytes += layerSize;
         }
     }
     else
     {
-        ANGLE_UNSAFE_TODO(ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, layer,
-                                               static_cast<uint8_t *>(pixels) + outputSkipBytes)));
+        ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, layer,
+                             static_cast<uint8_t *>(pixels) + outputSkipBytes));
     }
 
     return angle::Result::Continue;
@@ -11485,15 +11459,11 @@ angle::Result ImageHelper::readPixels(ContextVk *contextVk,
         readPixelBuffer.fill(0);
         for (size_t i = 0; i < readPixelArea; i++)
         {
-            uint8_t *readPixel =
-                ANGLE_UNSAFE_TODO(readPixelBuffer.data() + i * readFormat.pixelBytes);
-            ANGLE_UNSAFE_TODO({
-                memcpy(readPixel + depthOffset, depthBuffer.data() + i * depthFormat.pixelBytes,
-                       depthFormat.depthBits / 8);
-                memcpy(readPixel + stencilOffset,
-                       stencilBuffer.data() + i * stencilFormat.pixelBytes,
-                       stencilFormat.stencilBits / 8);
-            })
+            uint8_t *readPixel = readPixelBuffer.data() + i * readFormat.pixelBytes;
+            memcpy(readPixel + depthOffset, depthBuffer.data() + i * depthFormat.pixelBytes,
+                   depthFormat.depthBits / 8);
+            memcpy(readPixel + stencilOffset, stencilBuffer.data() + i * stencilFormat.pixelBytes,
+                   stencilFormat.stencilBits / 8);
         }
 
         // Pack the interleaved depth and stencil into user-provided
@@ -11802,7 +11772,7 @@ angle::Result ImageHelper::packReadPixelBuffer(ContextVk *contextVk,
         GLuint layerSize;
         ANGLE_VK_CHECK_MATH(contextVk,
                             storageFormatInfo.computeCompressedImageSize(levelExtents, &layerSize));
-        ANGLE_UNSAFE_TODO(memcpy(pixels, readPixelBuffer, layerSize));
+        memcpy(pixels, readPixelBuffer, layerSize);
     }
     else if (packPixelsParams.packBuffer)
     {
@@ -11814,8 +11784,7 @@ angle::Result ImageHelper::packReadPixelBuffer(ContextVk *contextVk,
         BufferFeedback feedback;
         ANGLE_TRY(packBufferVk->mapImpl(contextVk, GL_MAP_WRITE_BIT, &mapPtr, &feedback));
         ASSERT(!feedback.hasFeedback());
-        uint8_t *dst =
-            ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mapPtr) + reinterpret_cast<ptrdiff_t>(pixels));
+        uint8_t *dst = static_cast<uint8_t *>(mapPtr) + reinterpret_cast<ptrdiff_t>(pixels);
         PackPixels(packPixelsParams, aspectFormat, area.width * aspectFormat.pixelBytes,
                    readPixelBuffer, dst);
         ANGLE_TRY(packBufferVk->unmapImpl(contextVk, &feedback));
@@ -12000,11 +11969,9 @@ ImageHelper::SubresourceUpdate &ImageHelper::SubresourceUpdate::operator=(Subres
     // It's much simpler to just swap the memory instead.
 
     SubresourceUpdate oldThis;
-    ANGLE_UNSAFE_TODO({
-        memcpy(&oldThis, this, sizeof(*this));
-        memcpy(this, &other, sizeof(*this));
-        memcpy(&other, &oldThis, sizeof(*this));
-    })
+    memcpy(&oldThis, this, sizeof(*this));
+    memcpy(this, &other, sizeof(*this));
+    memcpy(&other, &oldThis, sizeof(*this));
 
     return *this;
 }

@@ -7,8 +7,11 @@
 // Note that for binary blob data only a checksum is stored so that
 // a lossless  deserialization is not supported.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "JsonSerializer.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 
@@ -65,7 +68,7 @@ void JsonSerializer::addBlobWithMax(const std::string &name,
     static constexpr char kASCII[] = "0123456789ABCDEF";
     for (size_t i = 0; i < angle::base::kSHA1Length; ++i)
     {
-        ANGLE_UNSAFE_TODO(os << kASCII[hash[i] & 0xf] << kASCII[hash[i] >> 4]);
+        os << kASCII[hash[i] & 0xf] << kASCII[hash[i] >> 4];
     }
 
     std::ostringstream hashName;

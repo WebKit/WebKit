@@ -6,8 +6,11 @@
 // Unit tests for HandleAllocator.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <unordered_set>
-#include "common/unsafe_buffers.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -137,7 +140,7 @@ TEST(HandleAllocatorTest, SortedOrderHandle)
     GLuint allocatedList[5];
     for (GLuint count = 0; count < 5; count++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_TRUE(allocator.allocate(&allocatedList[count])));
+        EXPECT_TRUE(allocator.allocate(&allocatedList[count]));
     }
 
     EXPECT_EQ(1u, allocatedList[0]);
@@ -301,7 +304,7 @@ TEST(HandleAllocatorTest, ReleaseThenReuseInFIFO)
     GLuint handles[11];
     for (int i = 0; i < 11; i++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_TRUE(allocator.allocate(&handles[i])));
+        EXPECT_TRUE(allocator.allocate(&handles[i]));
     }
 
     // Release handles in a non-sorted order. None is adjacent to 12, so all go into mReleasedList

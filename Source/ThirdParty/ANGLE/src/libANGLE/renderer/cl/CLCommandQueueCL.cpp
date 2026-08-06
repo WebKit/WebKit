@@ -6,8 +6,11 @@
 // CLCommandQueueCL.cpp: Implements the class methods for CLCommandQueueCL.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/cl/CLCommandQueueCL.h"
-#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/cl/CLContextCL.h"
 #include "libANGLE/renderer/cl/CLEventCL.h"
@@ -575,7 +578,7 @@ angle::Result CLCommandQueueCL::enqueueNativeKernel(cl::UserFunc userFunc,
     {
         // If argument memory block contains buffers, make a copy.
         funcArgs.resize(cbArgs);
-        ANGLE_UNSAFE_TODO(std::memcpy(funcArgs.data(), args, cbArgs));
+        std::memcpy(funcArgs.data(), args, cbArgs);
 
         locs.reserve(bufferPtrOffsets.size());
         for (size_t offset : bufferPtrOffsets)

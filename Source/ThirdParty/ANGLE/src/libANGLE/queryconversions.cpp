@@ -6,8 +6,11 @@
 
 // queryconversions.cpp: Implementation of state query cast conversions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/queryconversions.h"
-#include "common/unsafe_buffers.h"
 
 #include <vector>
 
@@ -200,7 +203,7 @@ void CastStateValues(const Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) = CastFromStateValue<QueryT>(pname, intParams[i]);
+            outParams[i] = CastFromStateValue<QueryT>(pname, intParams[i]);
         }
     }
     else if (nativeType == GL_BOOL)
@@ -210,7 +213,7 @@ void CastStateValues(const Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) =
+            outParams[i] =
                 (boolParams[i] == GL_FALSE ? static_cast<QueryT>(0) : static_cast<QueryT>(1));
         }
     }
@@ -221,7 +224,7 @@ void CastStateValues(const Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) = CastFromStateValue<QueryT>(pname, floatParams[i]);
+            outParams[i] = CastFromStateValue<QueryT>(pname, floatParams[i]);
         }
     }
     else if (nativeType == GL_INT64)
@@ -231,7 +234,7 @@ void CastStateValues(const Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) = CastFromStateValue<QueryT>(pname, int64Params[i]);
+            outParams[i] = CastFromStateValue<QueryT>(pname, int64Params[i]);
         }
     }
     else
@@ -269,7 +272,7 @@ void CastIndexedStateValues(Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) = CastFromStateValue<QueryT>(pname, intParams[i]);
+            outParams[i] = CastFromStateValue<QueryT>(pname, intParams[i]);
         }
     }
     else if (nativeType == GL_BOOL)
@@ -279,7 +282,7 @@ void CastIndexedStateValues(Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) =
+            outParams[i] =
                 (boolParams[i] == GL_FALSE ? static_cast<QueryT>(0) : static_cast<QueryT>(1));
         }
     }
@@ -290,7 +293,7 @@ void CastIndexedStateValues(Context *context,
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
-            ANGLE_UNSAFE_TODO(outParams[i]) = CastFromStateValue<QueryT>(pname, int64Params[i]);
+            outParams[i] = CastFromStateValue<QueryT>(pname, int64Params[i]);
         }
     }
     else

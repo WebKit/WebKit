@@ -462,6 +462,7 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
             case GLESDriverType::AngleEGL:
                 switch (param.getRenderer())
                 {
+                    case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
                     case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
                         return true;
                     case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
@@ -680,10 +681,12 @@ bool IsConfigSupported(const PlatformParameters &param)
 
 bool IsPlatformAvailable(const PlatformParameters &param)
 {
-    // Disable "null" device when not on ANGLE.
+    // Disable "null" device when not on ANGLE or in D3D9.
     if (param.getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
     {
         if (!IsANGLE(param.driver))
+            return false;
+        if (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE)
             return false;
     }
 
@@ -691,6 +694,13 @@ bool IsPlatformAvailable(const PlatformParameters &param)
     {
         case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
             break;
+
+        case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
+#if !defined(ANGLE_ENABLE_D3D9)
+            return false;
+#else
+            break;
+#endif
 
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
 #if !defined(ANGLE_ENABLE_D3D11)

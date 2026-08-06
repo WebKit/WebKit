@@ -4,8 +4,11 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/wgpu/wgpu_command_buffer.h"
-#include "common/unsafe_buffers.h"
 
 namespace rx
 {
@@ -35,8 +38,8 @@ const CommandType &GetCommandAndIterate(const uint8_t **commandData)
 {
     constexpr size_t commandAndIdSize = sizeof(CommandID) + sizeof(CommandType);
     const CommandType *command =
-        reinterpret_cast<const CommandType *>(ANGLE_UNSAFE_TODO(*commandData + sizeof(CommandID)));
-    ANGLE_UNSAFE_TODO(*commandData += commandAndIdSize);
+        reinterpret_cast<const CommandType *>(*commandData + sizeof(CommandID));
+    *commandData += commandAndIdSize;
     return *command;
 }
 

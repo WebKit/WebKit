@@ -6,8 +6,11 @@
 
 // StateManager11.cpp: Defines a class for caching D3D11 state
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/StateManager11.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/angleutils.h"
 #include "common/bitset_utils.h"
@@ -218,8 +221,7 @@ void StateManager11::ViewCache<ViewType, DescType>::clear()
         return;
     }
 
-    ANGLE_UNSAFE_TODO(
-        memset(&mCurrentViews[0], 0, sizeof(ViewRecord<DescType>) * mCurrentViews.size()));
+    memset(&mCurrentViews[0], 0, sizeof(ViewRecord<DescType>) * mCurrentViews.size());
     mHighestUsedView = 0;
 }
 
@@ -337,11 +339,9 @@ bool ShaderConstants11::updateSamplerMetadata(SamplerMetadata *data,
 
     ASSERT(static_cast<const void *>(borderColor.colorI.data()) ==
            static_cast<const void *>(borderColor.colorUI.data()));
-    if (ANGLE_UNSAFE_TODO(memcmp(data->intBorderColor, borderColor.colorI.data(),
-                                 sizeof(data->intBorderColor))) != 0)
+    if (memcmp(data->intBorderColor, borderColor.colorI.data(), sizeof(data->intBorderColor)) != 0)
     {
-        ANGLE_UNSAFE_TODO(
-            memcpy(data->intBorderColor, borderColor.colorI.data(), sizeof(data->intBorderColor)));
+        memcpy(data->intBorderColor, borderColor.colorI.data(), sizeof(data->intBorderColor));
         dirty = true;
     }
 
@@ -509,9 +509,8 @@ angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
     ANGLE_TRY(renderer->mapResource(context, driverConstantBuffer.get(), 0, D3D11_MAP_WRITE_DISCARD,
                                     0, &mapping));
 
-    ANGLE_UNSAFE_TODO(memcpy(mapping.pData, data, dataSize));
-    ANGLE_UNSAFE_TODO(
-        memcpy(static_cast<uint8_t *>(mapping.pData) + dataSize, samplerData, samplerDataSize));
+    memcpy(mapping.pData, data, dataSize);
+    memcpy(static_cast<uint8_t *>(mapping.pData) + dataSize, samplerData, samplerDataSize);
 
     renderer->getDeviceContext()->Unmap(driverConstantBuffer.get(), 0);
 
@@ -1462,8 +1461,7 @@ void StateManager11::setRenderTargets(ID3D11RenderTargetView **rtvs,
 {
     for (UINT rtvIndex = 0; rtvIndex < numRTVs; ++rtvIndex)
     {
-        unsetConflictingView(gl::PipelineType::GraphicsPipeline, ANGLE_UNSAFE_TODO(rtvs[rtvIndex]),
-                             true);
+        unsetConflictingView(gl::PipelineType::GraphicsPipeline, rtvs[rtvIndex], true);
     }
 
     if (dsv)
@@ -1475,7 +1473,7 @@ void StateManager11::setRenderTargets(ID3D11RenderTargetView **rtvs,
     mCurRTVs.clear();
     for (UINT i = 0; i < numRTVs; i++)
     {
-        mCurRTVs.update(i, ANGLE_UNSAFE_TODO(rtvs[i]));
+        mCurRTVs.update(i, rtvs[i]);
     }
     mCurrentDSV.clear();
     mCurrentDSV.update(0, dsv);
@@ -2352,8 +2350,7 @@ angle::Result StateManager11::setSamplerState(const gl::Context *context,
     const bool usesBorderColor = samplerState.usesBorderColor();
 
     if (mForceSetShaderSamplerStates[type][index] || usesBorderColor ||
-        ANGLE_UNSAFE_TODO(memcmp(&samplerState, &mCurShaderSamplerStates[type][index],
-                                 sizeof(gl::SamplerState))) != 0)
+        memcmp(&samplerState, &mCurShaderSamplerStates[type][index], sizeof(gl::SamplerState)) != 0)
     {
         // When clamp-to-border mode is used and a floating-point border color is set, the color
         // value must be adjusted based on the texture format. Reset it to zero in all other cases

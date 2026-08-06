@@ -7,6 +7,10 @@
 //    Implements the class methods for ContextMtl.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/ContextMtl.h"
 
 #include <TargetConditionals.h>
@@ -14,7 +18,6 @@
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/debug.h"
-#include "common/unsafe_buffers.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/Query.h"
@@ -2411,8 +2414,8 @@ angle::Result ContextMtl::updateDefaultAttribute(size_t attribIndex)
 
     static_assert(kDefaultGLAttributeValueSize == mtl::kDefaultAttributeSize,
                   "Unexpected default attribute size");
-    ANGLE_UNSAFE_TODO(memcpy(mDefaultAttributes[attribIndex].values, &defaultValue.Values,
-                             mtl::kDefaultAttributeSize));
+    memcpy(mDefaultAttributes[attribIndex].values, &defaultValue.Values,
+           mtl::kDefaultAttributeSize);
 
     return angle::Result::Continue;
 }

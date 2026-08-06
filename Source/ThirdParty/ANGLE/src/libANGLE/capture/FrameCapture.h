@@ -10,8 +10,11 @@
 #ifndef LIBANGLE_FRAME_CAPTURE_H_
 #define LIBANGLE_FRAME_CAPTURE_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <fstream>
-#include "common/unsafe_buffers.h"
 #include "sys/stat.h"
 
 #include "common/PackedEnums.h"
@@ -821,7 +824,7 @@ class FrameCaptureShared final : angle::NonCopyable
         for (size_t i = 0; i < numObjs; ++i)
         {
             mResourceTrackerCL.mCLParamIDToIndexVector[paramCaptureKey->uniqueID].push_back(
-                (this->*getCLObjIndexFunc)(&ANGLE_UNSAFE_TODO(objs[i])));
+                (this->*getCLObjIndexFunc)(&objs[i]));
         }
     }
 
@@ -972,17 +975,6 @@ class FrameCaptureShared final : angle::NonCopyable
 
     angle::SimpleMutex &getFrameCaptureMutex() { return mFrameCaptureMutex; }
 
-    void markGLSyncEmitted(gl::SyncID syncID) { mEmittedGLSyncIDs.insert(syncID.value); }
-    void markEGLSyncEmitted(egl::SyncID syncID) { mEmittedEGLSyncIDs.insert(syncID.value); }
-    bool isGLSyncEmitted(gl::SyncID syncID) const
-    {
-        return mEmittedGLSyncIDs.find(syncID.value) != mEmittedGLSyncIDs.end();
-    }
-    bool isEGLSyncEmitted(egl::SyncID syncID) const
-    {
-        return mEmittedEGLSyncIDs.find(syncID.value) != mEmittedEGLSyncIDs.end();
-    }
-
     void setDeferredLinkProgram(gl::ShaderProgramID programID)
     {
         mDeferredLinkPrograms.emplace(programID);
@@ -1100,11 +1092,6 @@ class FrameCaptureShared final : angle::NonCopyable
     angle::SimpleMutex mFrameCaptureMutex;
     bool mCallCaptured           = false;
     bool mStartFrameCallCaptured = false;
-
-    // Track Sync IDs emitted in the trace to allow skipping of external sync objects
-    // to prevent corrupttion of Sync state tracking
-    std::unordered_set<GLuint> mEmittedGLSyncIDs;
-    std::unordered_set<GLuint> mEmittedEGLSyncIDs;
 
     // When true, it removes unnecessary calls going into
     // replay files that occur before mCaptureStartFrame

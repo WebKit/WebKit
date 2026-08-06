@@ -4,8 +4,11 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
-#include "common/unsafe_buffers.h"
 
 #include <limits>
 
@@ -51,14 +54,14 @@ constexpr WGPUFrontFace UnpackFrontFace(uint32_t packedFrontFace)
 
 PackedVertexAttribute::PackedVertexAttribute()
 {
-    ANGLE_UNSAFE_TODO(memset(this, 0, sizeof(PackedVertexAttribute)));
+    memset(this, 0, sizeof(PackedVertexAttribute));
 }
 
 // GraphicsPipelineDesc implementation.
 RenderPipelineDesc::RenderPipelineDesc()
 {
     (void)mPad0;
-    ANGLE_UNSAFE_TODO(memset(this, 0, sizeof(RenderPipelineDesc)));
+    memset(this, 0, sizeof(RenderPipelineDesc));
 
     mDepthStencilState.stencilReadMask =
         std::numeric_limits<decltype(mDepthStencilState.stencilReadMask)>::max();
@@ -75,7 +78,7 @@ RenderPipelineDesc::RenderPipelineDesc(const RenderPipelineDesc &other)
 
 RenderPipelineDesc &RenderPipelineDesc::operator=(const RenderPipelineDesc &other)
 {
-    ANGLE_UNSAFE_TODO(memcpy(this, &other, sizeof(*this)));
+    memcpy(this, &other, sizeof(*this));
     return *this;
 }
 
@@ -106,7 +109,7 @@ bool RenderPipelineDesc::setPrimitiveMode(gl::PrimitiveMode primitiveMode,
 
 bool RenderPipelineDesc::setBlendEnabled(size_t colorIndex, bool enabled)
 {
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
     if (colorTarget.blendEnabled == enabled)
     {
         return false;
@@ -123,7 +126,7 @@ bool RenderPipelineDesc::setBlendFuncs(size_t colorIndex,
                                        WGPUBlendFactor dstAlpha)
 {
     bool changed                        = false;
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
 
     if (colorTarget.colorBlendSrcFactor != static_cast<uint32_t>(srcRGB))
     {
@@ -157,7 +160,7 @@ bool RenderPipelineDesc::setBlendEquations(size_t colorIndex,
                                            WGPUBlendOperation alpha)
 {
     bool changed                        = false;
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
 
     if (colorTarget.colorBlendOp != static_cast<uint32_t>(rgb))
     {
@@ -186,7 +189,7 @@ void RenderPipelineDesc::setCullMode(gl::CullFaceMode cullMode, bool cullFaceEna
 
 bool RenderPipelineDesc::setColorWriteMask(size_t colorIndex, bool r, bool g, bool b, bool a)
 {
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
     uint32_t newWriteMask = static_cast<uint32_t>(gl_wgpu::GetColorWriteMask(r, g, b, a));
     if (colorTarget.writeMask == newWriteMask)
     {
@@ -199,24 +202,24 @@ bool RenderPipelineDesc::setColorWriteMask(size_t colorIndex, bool r, bool g, bo
 
 bool RenderPipelineDesc::setVertexAttribute(size_t attribIndex, PackedVertexAttribute &newAttrib)
 {
-    PackedVertexAttribute &currentAttrib = ANGLE_UNSAFE_TODO(mVertexAttributes[attribIndex]);
-    if (ANGLE_UNSAFE_TODO(memcmp(&currentAttrib, &newAttrib, sizeof(PackedVertexAttribute))) == 0)
+    PackedVertexAttribute &currentAttrib = mVertexAttributes[attribIndex];
+    if (memcmp(&currentAttrib, &newAttrib, sizeof(PackedVertexAttribute)) == 0)
     {
         return false;
     }
 
-    ANGLE_UNSAFE_TODO(memcpy(&currentAttrib, &newAttrib, sizeof(PackedVertexAttribute)));
+    memcpy(&currentAttrib, &newAttrib, sizeof(PackedVertexAttribute));
     return true;
 }
 
 bool RenderPipelineDesc::setColorAttachmentFormat(size_t colorIndex, WGPUTextureFormat format)
 {
-    if (ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]).format == static_cast<uint8_t>(format))
+    if (mColorTargetStates[colorIndex].format == static_cast<uint8_t>(format))
     {
         return false;
     }
 
-    ANGLE_UNSAFE_TODO(SetBitField(mColorTargetStates[colorIndex].format, format));
+    SetBitField(mColorTargetStates[colorIndex].format, format);
     return true;
 }
 
@@ -395,7 +398,7 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
              ++colorTargetIndex)
         {
             const webgpu::PackedColorTargetState &packedColorTarget =
-                ANGLE_UNSAFE_TODO(mColorTargetStates[colorTargetIndex]);
+                mColorTargetStates[colorTargetIndex];
             WGPUColorTargetState &outputColorTarget = colorTargets[colorTargetIndex];
             outputColorTarget                       = WGPU_COLOR_TARGET_STATE_INIT;
 
@@ -483,7 +486,7 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
 
 bool operator==(const RenderPipelineDesc &lhs, const RenderPipelineDesc &rhs)
 {
-    return ANGLE_UNSAFE_TODO(memcmp(&lhs, &rhs, sizeof(RenderPipelineDesc))) == 0;
+    return memcmp(&lhs, &rhs, sizeof(RenderPipelineDesc)) == 0;
 }
 
 // PipelineCache implementation.

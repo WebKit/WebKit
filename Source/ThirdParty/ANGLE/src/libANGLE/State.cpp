@@ -6,11 +6,14 @@
 
 // State.cpp: Implements the State class, encapsulating raw GL state.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Older clang versions have a false positive on this warning here.
 #pragma clang diagnostic ignored "-Wglobal-constructors"
 
 #include "libANGLE/State.h"
-#include "common/unsafe_buffers.h"
 
 #include <string.h>
 #include <limits>
@@ -2011,19 +2014,19 @@ void PrivateState::getFloatv(GLenum pname, GLfloat *params) const
             break;
         case GL_DEPTH_RANGE:
             params[0] = mNearZ;
-            ANGLE_UNSAFE_TODO(params[1]) = mFarZ;
+            params[1] = mFarZ;
             break;
         case GL_COLOR_CLEAR_VALUE:
             params[0] = mColorClearValue.red;
-            ANGLE_UNSAFE_TODO(params[1]) = mColorClearValue.green;
-            ANGLE_UNSAFE_TODO(params[2]) = mColorClearValue.blue;
-            ANGLE_UNSAFE_TODO(params[3]) = mColorClearValue.alpha;
+            params[1] = mColorClearValue.green;
+            params[2] = mColorClearValue.blue;
+            params[3] = mColorClearValue.alpha;
             break;
         case GL_BLEND_COLOR:
             params[0] = mBlendColor.red;
-            ANGLE_UNSAFE_TODO(params[1]) = mBlendColor.green;
-            ANGLE_UNSAFE_TODO(params[2]) = mBlendColor.blue;
-            ANGLE_UNSAFE_TODO(params[3]) = mBlendColor.alpha;
+            params[1] = mBlendColor.green;
+            params[2] = mBlendColor.blue;
+            params[3] = mBlendColor.alpha;
             break;
         case GL_MULTISAMPLE_EXT:
             *params = static_cast<GLfloat>(mMultiSampling);
@@ -2041,40 +2044,38 @@ void PrivateState::getFloatv(GLenum pname, GLfloat *params) const
         {
             const auto &color = mGLES1State.mCurrentColor;
             params[0]         = color.red;
-            ANGLE_UNSAFE_TODO(params[1]) = color.green;
-            ANGLE_UNSAFE_TODO(params[2]) = color.blue;
-            ANGLE_UNSAFE_TODO(params[3]) = color.alpha;
+            params[1]         = color.green;
+            params[2]         = color.blue;
+            params[3]         = color.alpha;
             break;
         }
         case GL_CURRENT_NORMAL:
         {
             const auto &normal = mGLES1State.mCurrentNormal;
             params[0]          = normal[0];
-            ANGLE_UNSAFE_TODO(params[1]) = normal[1];
-            ANGLE_UNSAFE_TODO(params[2]) = normal[2];
+            params[1]          = normal[1];
+            params[2]          = normal[2];
             break;
         }
         case GL_CURRENT_TEXTURE_COORDS:
         {
             const auto &texcoord = mGLES1State.mCurrentTextureCoords[mActiveSampler];
             params[0]            = texcoord.s;
-            ANGLE_UNSAFE_TODO(params[1]) = texcoord.t;
-            ANGLE_UNSAFE_TODO(params[2]) = texcoord.r;
-            ANGLE_UNSAFE_TODO(params[3]) = texcoord.q;
+            params[1]            = texcoord.t;
+            params[2]            = texcoord.r;
+            params[3]            = texcoord.q;
             break;
         }
         case GL_MODELVIEW_MATRIX:
-            ANGLE_UNSAFE_TODO(memcpy(params, mGLES1State.mModelviewMatrices.back().constData(),
-                                     16 * sizeof(GLfloat)));
+            memcpy(params, mGLES1State.mModelviewMatrices.back().constData(), 16 * sizeof(GLfloat));
             break;
         case GL_PROJECTION_MATRIX:
-            ANGLE_UNSAFE_TODO(memcpy(params, mGLES1State.mProjectionMatrices.back().constData(),
-                                     16 * sizeof(GLfloat)));
+            memcpy(params, mGLES1State.mProjectionMatrices.back().constData(),
+                   16 * sizeof(GLfloat));
             break;
         case GL_TEXTURE_MATRIX:
-            ANGLE_UNSAFE_TODO(
-                memcpy(params, mGLES1State.mTextureMatrices[mActiveSampler].back().constData(),
-                       16 * sizeof(GLfloat)));
+            memcpy(params, mGLES1State.mTextureMatrices[mActiveSampler].back().constData(),
+                   16 * sizeof(GLfloat));
             break;
         case GL_LIGHT_MODEL_AMBIENT:
             GetLightModelParameters(&mGLES1State, pname, params);
@@ -2232,15 +2233,15 @@ void PrivateState::getIntegerv(GLenum pname, GLint *params) const
             break;
         case GL_VIEWPORT:
             params[0] = mViewport.x;
-            ANGLE_UNSAFE_TODO(params[1]) = mViewport.y;
-            ANGLE_UNSAFE_TODO(params[2]) = mViewport.width;
-            ANGLE_UNSAFE_TODO(params[3]) = mViewport.height;
+            params[1] = mViewport.y;
+            params[2] = mViewport.width;
+            params[3] = mViewport.height;
             break;
         case GL_SCISSOR_BOX:
             params[0] = mScissor.x;
-            ANGLE_UNSAFE_TODO(params[1]) = mScissor.y;
-            ANGLE_UNSAFE_TODO(params[2]) = mScissor.width;
-            ANGLE_UNSAFE_TODO(params[3]) = mScissor.height;
+            params[1] = mScissor.y;
+            params[2] = mScissor.width;
+            params[3] = mScissor.height;
             break;
         case GL_POLYGON_MODE_NV:
             *params = ToGLenum(mRasterizer.polygonMode);
@@ -2400,9 +2401,9 @@ void PrivateState::getBooleani_v(GLenum target, GLuint index, GLboolean *data) c
             bool r, g, b, a;
             BlendStateExt::UnpackColorMask(colorMask, &r, &g, &b, &a);
             data[0] = r;
-            ANGLE_UNSAFE_TODO(data[1]) = g;
-            ANGLE_UNSAFE_TODO(data[2]) = b;
-            ANGLE_UNSAFE_TODO(data[3]) = a;
+            data[1] = g;
+            data[2] = b;
+            data[3] = a;
             break;
         }
         default:

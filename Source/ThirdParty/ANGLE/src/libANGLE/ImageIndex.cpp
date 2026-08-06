@@ -4,10 +4,13 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // ImageIndex.cpp: Implementation for ImageIndex methods.
 
 #include "libANGLE/ImageIndex.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/utilities.h"
 #include "libANGLE/Constants.h"
@@ -344,7 +347,7 @@ GLint ImageIndexIterator::maxLayer() const
     {
         ASSERT(mCurrentIndex.hasLayer());
         return (mCurrentIndex.getLevelIndex() < mMipRange.high())
-                   ? ANGLE_UNSAFE_TODO(mLayerCounts[mCurrentIndex.getLevelIndex()])
+                   ? mLayerCounts[mCurrentIndex.getLevelIndex()]
                    : 0;
     }
     return mLayerRange.high();

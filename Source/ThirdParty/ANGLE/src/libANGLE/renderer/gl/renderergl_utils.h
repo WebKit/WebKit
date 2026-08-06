@@ -10,7 +10,6 @@
 #ifndef LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 #define LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 
-#include "common/FixedVector.h"
 #include "common/debug.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
@@ -67,10 +66,6 @@ StateManagerGL *GetStateManagerGL(const gl::Context *context);
 BlitGL *GetBlitGL(const gl::Context *context);
 ClearMultiviewGL *GetMultiviewClearer(const gl::Context *context);
 const angle::FeaturesGL &GetFeaturesGL(const gl::Context *context);
-// Returns a 16-byte fixed vector containing the binary representation of 1.0 depth
-// (and 0 stencil) formatted for the specified OpenGL component type.
-angle::FixedVector<uint8_t, 16> GetDepthOnePixel(GLenum type);
-void FillDepthOneMemory(GLenum type, angle::Span<uint8_t> span);
 
 // Clear all errors on the stored context, emits console warnings
 void ClearErrors(const gl::Context *context,

@@ -7,8 +7,11 @@
 //    Helper functions for the Vulkan Renderer.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/vk_utils.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/span.h"
 #include "libANGLE/Context.h"
@@ -69,11 +72,10 @@ bool FindCompatibleMemory(const VkPhysicalDeviceMemoryProperties &memoryProperti
     {
         ASSERT(memoryIndex < memoryProperties.memoryTypeCount);
 
-        if ((ANGLE_UNSAFE_TODO(memoryProperties.memoryTypes[memoryIndex]).propertyFlags &
+        if ((memoryProperties.memoryTypes[memoryIndex].propertyFlags &
              requestedMemoryPropertyFlags) == requestedMemoryPropertyFlags)
         {
-            *memoryPropertyFlagsOut =
-                ANGLE_UNSAFE_TODO(memoryProperties.memoryTypes[memoryIndex]).propertyFlags;
+            *memoryPropertyFlagsOut = memoryProperties.memoryTypes[memoryIndex].propertyFlags;
             *typeIndexOut           = static_cast<uint32_t>(memoryIndex);
             return true;
         }
@@ -369,8 +371,7 @@ bool MemoryProperties::hasLazilyAllocatedMemory() const
 {
     for (uint32_t typeIndex = 0; typeIndex < mMemoryProperties.memoryTypeCount; ++typeIndex)
     {
-        const VkMemoryType &memoryType =
-            ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[typeIndex]);
+        const VkMemoryType &memoryType = mMemoryProperties.memoryTypes[typeIndex];
         if ((memoryType.propertyFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) != 0)
         {
             return true;
@@ -446,8 +447,7 @@ uint32_t MemoryProperties::findTileMemoryTypeIndex() const
     uint32_t tileMemoryHeapIndex = kInvalidMemoryHeapIndex;
     for (uint32_t heapIndex = 0; heapIndex < mMemoryProperties.memoryTypeCount; heapIndex++)
     {
-        if (ANGLE_UNSAFE_TODO(mMemoryProperties.memoryHeaps[heapIndex]).flags &
-            VK_MEMORY_HEAP_TILE_MEMORY_BIT_QCOM)
+        if (mMemoryProperties.memoryHeaps[heapIndex].flags & VK_MEMORY_HEAP_TILE_MEMORY_BIT_QCOM)
         {
             // There should be only one tile memory heap
             ASSERT(tileMemoryHeapIndex == kInvalidMemoryHeapIndex);
@@ -461,8 +461,7 @@ uint32_t MemoryProperties::findTileMemoryTypeIndex() const
         for (uint32_t memoryTypeIndex = 0; memoryTypeIndex < mMemoryProperties.memoryTypeCount;
              memoryTypeIndex++)
         {
-            if (ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[memoryTypeIndex]).heapIndex ==
-                tileMemoryHeapIndex)
+            if (mMemoryProperties.memoryTypes[memoryTypeIndex].heapIndex == tileMemoryHeapIndex)
             {
                 // There should be only one memoryTypeIndex that matches the tile memory heap
                 ASSERT(tileMemoryTypeIndex == kInvalidMemoryTypeIndex);
@@ -479,9 +478,8 @@ void MemoryProperties::log(std::ostringstream &out) const
         << std::hex;
     for (uint32_t heapIndex = 0; heapIndex < mMemoryProperties.memoryHeapCount; heapIndex++)
     {
-        out << "\t{ .size=0x" << ANGLE_UNSAFE_TODO(mMemoryProperties.memoryHeaps[heapIndex]).size;
-        out << " .flags=0x" << ANGLE_UNSAFE_TODO(mMemoryProperties.memoryHeaps[heapIndex]).flags
-            << " }";
+        out << "\t{ .size=0x" << mMemoryProperties.memoryHeaps[heapIndex].size;
+        out << " .flags=0x" << mMemoryProperties.memoryHeaps[heapIndex].flags << " }";
 
         if (heapIndex < mMemoryProperties.memoryHeapCount - 1)
         {
@@ -495,10 +493,8 @@ void MemoryProperties::log(std::ostringstream &out) const
     for (uint32_t memoryTypeIndex = 0; memoryTypeIndex < mMemoryProperties.memoryTypeCount;
          memoryTypeIndex++)
     {
-        out << "\t{ .heapIndex=0x"
-            << ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[memoryTypeIndex]).heapIndex;
-        out << " .propertyFlags=0x"
-            << ANGLE_UNSAFE_TODO(mMemoryProperties.memoryTypes[memoryTypeIndex]).propertyFlags
+        out << "\t{ .heapIndex=0x" << mMemoryProperties.memoryTypes[memoryTypeIndex].heapIndex;
+        out << " .propertyFlags=0x" << mMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags
             << " }";
 
         if (memoryTypeIndex < mMemoryProperties.memoryTypeCount - 1)
@@ -576,7 +572,7 @@ angle::Result InitMappableAllocation(ErrorContext *context,
 {
     uint8_t *mapPointer;
     ANGLE_VK_TRY(context, allocation->map(allocator, &mapPointer));
-    ANGLE_UNSAFE_TODO(memset(mapPointer, value, static_cast<size_t>(size)));
+    memset(mapPointer, value, static_cast<size_t>(size));
 
     if ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
     {
@@ -975,7 +971,7 @@ void MakeDebugUtilsLabel(GLenum source, const char *marker, VkDebugUtilsLabelEXT
     label->sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label->pNext      = nullptr;
     label->pLabelName = marker;
-    ANGLE_UNSAFE_TODO(kLabelColors[colorIndex]).writeData(label->color);
+    kLabelColors[colorIndex].writeData(label->color);
 }
 
 angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
@@ -1530,7 +1526,7 @@ bool HasRequiredGlobalPriority(const VkQueueFamilyGlobalPriorityProperties &glob
 {
     for (uint32_t i = 0; i < globalPriorityProperty.priorityCount; i++)
     {
-        if (ANGLE_UNSAFE_TODO(globalPriorityProperty.priorities[i]) == requiredGlobalPriority)
+        if (globalPriorityProperty.priorities[i] == requiredGlobalPriority)
         {
             return true;
         }

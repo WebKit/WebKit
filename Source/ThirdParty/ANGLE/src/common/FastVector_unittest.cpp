@@ -7,8 +7,11 @@
 //   Tests of the FastVector class
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
-#include "common/unsafe_buffers.h"
 
 #include "common/FastVector.h"
 
@@ -26,18 +29,18 @@ TEST(FastVector, Constructors)
 
     for (size_t i = 0; i < sizeof(vectorSizes) / sizeof(vectorSizes[0]); i++)
     {
-        FastVector<int, 5> count(ANGLE_UNSAFE_TODO(vectorSizes[i]));
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vectorSizes[i], count.size()));
+        FastVector<int, 5> count(vectorSizes[i]);
+        EXPECT_EQ(vectorSizes[i], count.size());
 
-        FastVector<int, 5> countAndValue(ANGLE_UNSAFE_TODO(vectorSizes[i]), 2);
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vectorSizes[i], countAndValue.size()));
+        FastVector<int, 5> countAndValue(vectorSizes[i], 2);
+        EXPECT_EQ(vectorSizes[i], countAndValue.size());
         EXPECT_EQ(2, countAndValue[1]);
 
         FastVector<int, 5> copy(countAndValue);
         EXPECT_EQ(copy, countAndValue);
 
         FastVector<int, 5> copyRValue(std::move(count));
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vectorSizes[i], copyRValue.size()));
+        EXPECT_EQ(vectorSizes[i], copyRValue.size());
 
         FastVector<int, 5> copyIter(countAndValue.begin(), countAndValue.end());
         EXPECT_EQ(copyIter, countAndValue);
@@ -46,10 +49,10 @@ TEST(FastVector, Constructors)
         EXPECT_TRUE(copyIterEmpty.empty());
 
         FastVector<int, 5> assignCopy(copyRValue);
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vectorSizes[i], assignCopy.size()));
+        EXPECT_EQ(vectorSizes[i], assignCopy.size());
 
         FastVector<int, 5> assignRValue(std::move(assignCopy));
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vectorSizes[i], assignRValue.size()));
+        EXPECT_EQ(vectorSizes[i], assignRValue.size());
     }
 
     FastVector<int, 5> initializerList{1, 2, 3, 4, 5};
@@ -219,14 +222,14 @@ TEST(FastVector, resetWithRawData)
     EXPECT_EQ(9u, vec.size());
     for (size_t i = 0; i < vec.size(); i++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vec[i], data[i]));
+        EXPECT_EQ(vec[i], data[i]);
     }
 
     vec.resetWithRawData(4, reinterpret_cast<uint8_t *>(&data[0]));
     EXPECT_EQ(4u, vec.size());
     for (size_t i = 0; i < vec.size(); i++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vec[i], data[i]));
+        EXPECT_EQ(vec[i], data[i]);
     }
 }
 

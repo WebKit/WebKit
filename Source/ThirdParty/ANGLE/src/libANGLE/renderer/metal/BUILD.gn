@@ -37,13 +37,7 @@ if (metal_internal_shader_compilation_supported) {
                                "metal_tool",
                              ])
       script = "shaders/metal_wrapper.py"
-      if (angle_metal_toolchain_dir != "") {
-        # Explicit Metal toolchain: run the "metal"/"metallib" binaries directly
-        # from the provided directory. This bypasses "xcrun" and the hermetic
-        # Chromium Mac SDK, which is required to prebuild the internal shaders
-        # for iOS and other cross-compilation scenarios.
-        args = [ angle_metal_toolchain_dir + "/" + metal_tool ]
-      } else if (use_system_xcode) {
+      if (use_system_xcode) {
         # System Xcode: run metal and metallib via xcrun. Since Xcode 26.0, the
         # Metal toolchain has been unbundled from Xcode, and must be installed
         # separately by running `xcodebuild -downloadComponent MetalToolchain`.

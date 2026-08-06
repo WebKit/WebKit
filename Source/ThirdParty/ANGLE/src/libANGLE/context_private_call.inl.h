@@ -7,7 +7,10 @@
 // context_private_call.inl.h:
 //   Helpers that set/get state that is entirely locally accessed by the context.
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/context_private_call_autogen.h"
 
 #include "common/debug.h"
@@ -23,7 +26,7 @@ inline angle::Mat4 FixedMatrixToMat4(const GLfixed *m)
 
     for (int i = 0; i < 16; i++)
     {
-        ANGLE_UNSAFE_TODO(floatData[i] = gl::ConvertFixedToFloat(m[i]));
+        floatData[i] = gl::ConvertFixedToFloat(m[i]);
     }
 
     return matrixAsFloat;
@@ -289,7 +292,7 @@ inline void ContextPrivateVertexAttrib2fv(PrivateState *privateState,
                                           GLuint index,
                                           const GLfloat *values)
 {
-    GLfloat vals[4] = {values[0], ANGLE_UNSAFE_TODO(values[1]), 0, 1};
+    GLfloat vals[4] = {values[0], values[1], 0, 1};
     privateState->setVertexAttribf(index, vals);
     privateStateCache->onDefaultVertexAttributeChange();
 }
@@ -311,7 +314,7 @@ inline void ContextPrivateVertexAttrib3fv(PrivateState *privateState,
                                           GLuint index,
                                           const GLfloat *values)
 {
-    ANGLE_UNSAFE_TODO(GLfloat vals[4] = {values[0], values[1], values[2], 1});
+    GLfloat vals[4] = {values[0], values[1], values[2], 1};
     privateState->setVertexAttribf(index, vals);
     privateStateCache->onDefaultVertexAttributeChange();
 }
@@ -442,6 +445,14 @@ inline void ContextPrivatePolygonMode(PrivateState *privateState,
 {
     ASSERT(face == GL_FRONT_AND_BACK);
     privateState->setPolygonMode(mode);
+}
+
+inline void ContextPrivatePolygonModeNV(PrivateState *privateState,
+                                        PrivateStateCache *privateStateCache,
+                                        GLenum face,
+                                        PolygonMode mode)
+{
+    ContextPrivatePolygonMode(privateState, privateStateCache, face, mode);
 }
 
 inline void ContextPrivateProvokingVertex(PrivateState *privateState,
@@ -824,9 +835,9 @@ inline void ContextPrivateClipPlanex(PrivateState *privateState,
 {
     const GLfloat equationf[4] = {
         ConvertFixedToFloat(equation[0]),
-        ConvertFixedToFloat(ANGLE_UNSAFE_TODO(equation[1])),
-        ConvertFixedToFloat(ANGLE_UNSAFE_TODO(equation[2])),
-        ConvertFixedToFloat(ANGLE_UNSAFE_TODO(equation[3])),
+        ConvertFixedToFloat(equation[1]),
+        ConvertFixedToFloat(equation[2]),
+        ConvertFixedToFloat(equation[3]),
     };
 
     ContextPrivateClipPlanef(privateState, privateStateCache, plane, equationf);
@@ -910,9 +921,8 @@ inline void ContextPrivateFogxv(PrivateState *privateState,
         GLfloat paramsf[4];
         for (int i = 0; i < paramCount; i++)
         {
-            ANGLE_UNSAFE_TODO(paramsf[i]) = pname == GL_FOG_MODE
-                                                ? ConvertToGLenum(ANGLE_UNSAFE_TODO(params[i]))
-                                                : ConvertFixedToFloat(ANGLE_UNSAFE_TODO(params[i]));
+            paramsf[i] =
+                pname == GL_FOG_MODE ? ConvertToGLenum(params[i]) : ConvertFixedToFloat(params[i]);
         }
         ContextPrivateFogfv(privateState, privateStateCache, pname, paramsf);
     }
@@ -967,7 +977,7 @@ inline void ContextPrivateGetClipPlanex(PrivateState *privateState,
 
     for (int i = 0; i < 4; i++)
     {
-        ANGLE_UNSAFE_TODO(equation[i] = ConvertFloatToFixed(equationf[i]));
+        equation[i] = ConvertFloatToFixed(equationf[i]);
     }
 }
 
@@ -991,7 +1001,7 @@ inline void ContextPrivateGetLightxv(PrivateState *privateState,
 
     for (unsigned int i = 0; i < GetLightParameterCount(pname); i++)
     {
-        ANGLE_UNSAFE_TODO(params[i] = ConvertFloatToFixed(paramsf[i]));
+        params[i] = ConvertFloatToFixed(paramsf[i]);
     }
 }
 
@@ -1015,7 +1025,7 @@ inline void ContextPrivateGetMaterialxv(PrivateState *privateState,
 
     for (unsigned int i = 0; i < GetMaterialParameterCount(pname); i++)
     {
-        ANGLE_UNSAFE_TODO(params[i] = ConvertFloatToFixed(paramsf[i]));
+        params[i] = ConvertFloatToFixed(paramsf[i]);
     }
 }
 
@@ -1084,7 +1094,7 @@ inline void ContextPrivateLightModelxv(PrivateState *privateState,
 
     for (unsigned int i = 0; i < GetLightModelParameterCount(pname); i++)
     {
-        ANGLE_UNSAFE_TODO(paramsf[i] = ConvertFixedToFloat(param[i]));
+        paramsf[i] = ConvertFixedToFloat(param[i]);
     }
 
     ContextPrivateLightModelfv(privateState, privateStateCache, pname, paramsf);
@@ -1127,7 +1137,7 @@ inline void ContextPrivateLightxv(PrivateState *privateState,
 
     for (unsigned int i = 0; i < GetLightParameterCount(pname); i++)
     {
-        ANGLE_UNSAFE_TODO(paramsf[i] = ConvertFixedToFloat(params[i]));
+        paramsf[i] = ConvertFixedToFloat(params[i]);
     }
 
     ContextPrivateLightfv(privateState, privateStateCache, light, pname, paramsf);
@@ -1191,7 +1201,7 @@ inline void ContextPrivateMaterialxv(PrivateState *privateState,
 
     for (unsigned int i = 0; i < GetMaterialParameterCount(pname); i++)
     {
-        ANGLE_UNSAFE_TODO(paramsf[i] = ConvertFixedToFloat(param[i]));
+        paramsf[i] = ConvertFixedToFloat(param[i]);
     }
 
     ContextPrivateMaterialfv(privateState, privateStateCache, face, pname, paramsf);
@@ -1324,7 +1334,7 @@ inline void ContextPrivatePointParameterxv(PrivateState *privateState,
     GLfloat paramsf[4] = {};
     for (unsigned int i = 0; i < GetPointParameterCount(pname); i++)
     {
-        ANGLE_UNSAFE_TODO(paramsf[i] = ConvertFixedToFloat(params[i]));
+        paramsf[i] = ConvertFixedToFloat(params[i]);
     }
     ContextPrivatePointParameterfv(privateState, privateStateCache, pname, paramsf);
 }

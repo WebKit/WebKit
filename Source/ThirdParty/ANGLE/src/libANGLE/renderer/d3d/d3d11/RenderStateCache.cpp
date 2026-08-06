@@ -7,8 +7,11 @@
 // RenderStateCache.cpp: Defines rx::RenderStateCache, a cache of Direct3D render
 // state objects.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/RenderStateCache.h"
-#include "common/unsafe_buffers.h"
 
 #include <float.h>
 
@@ -158,7 +161,7 @@ angle::Result RenderStateCache::getBlendState(const gl::Context *context,
 
     for (size_t i = 0; i < blendStateExt.getDrawBufferCount(); i++)
     {
-        D3D11_RENDER_TARGET_BLEND_DESC &rtDesc = ANGLE_UNSAFE_TODO(blendDesc.RenderTarget[i]);
+        D3D11_RENDER_TARGET_BLEND_DESC &rtDesc = blendDesc.RenderTarget[i];
 
         if (blendStateExt.getEnabledMask().test(i))
         {

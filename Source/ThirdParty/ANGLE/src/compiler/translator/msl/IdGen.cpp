@@ -4,13 +4,16 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cctype>
 #include <cstring>
 #include <limits>
 #include <unordered_map>
 #include <unordered_set>
 
-#include "common/unsafe_buffers.h"
 #include "compiler/translator/msl/IdGen.h"
 
 using namespace sh;
@@ -34,17 +37,17 @@ Name IdGen::createNewName(size_t count,
 
     for (size_t i = 0; i < count; ++i)
     {
-        const ImmutableString baseName = toImmutable(ANGLE_UNSAFE_TODO(baseNames[i]));
+        const ImmutableString baseName = toImmutable(baseNames[i]);
         if (!baseName.empty())
         {
             const char *base = baseName.data();
             if (baseName.beginsWith(kAngleInternalPrefix))
             {
                 // skip 'ANGLE' or 'ANGLE_' prefix
-                ANGLE_UNSAFE_TODO(base += sizeof(kAngleInternalPrefix) - 1);
+                base += sizeof(kAngleInternalPrefix) - 1;
                 if (*base == '_')
                 {
-                    ANGLE_UNSAFE_TODO(++base);
+                    ++base;
                 }
             }
 

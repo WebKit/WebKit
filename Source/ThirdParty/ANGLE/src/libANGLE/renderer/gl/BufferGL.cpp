@@ -4,10 +4,13 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // BufferGL.cpp: Implements the class methods for BufferGL.
 
 #include "libANGLE/renderer/gl/BufferGL.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/utilities.h"
@@ -118,7 +121,7 @@ angle::Result BufferGL::setData(const gl::Context *context,
 
         if (size > 0 && uploadData != nullptr)
         {
-            ANGLE_UNSAFE_TODO(memcpy(mShadowCopy->data(), uploadData, size));
+            memcpy(mShadowCopy->data(), uploadData, size);
             uploadData = mShadowCopy->data();
         }
     }
@@ -153,8 +156,8 @@ angle::Result BufferGL::setSubData(const gl::Context *context,
     {
         if (size > 0 && data != nullptr)
         {
-            ANGLE_UNSAFE_TODO(memcpy(mShadowCopy->data() + offset, data, size));
-            uploadData = ANGLE_UNSAFE_TODO(mShadowCopy->data() + offset);
+            memcpy(mShadowCopy->data() + offset, data, size);
+            uploadData = mShadowCopy->data() + offset;
         }
     }
 
@@ -193,8 +196,8 @@ angle::Result BufferGL::copySubData(const gl::Context *context,
         ASSERT(sourceGL->mShadowCopy.has_value());
 
         ASSERT(sourceGL->mShadowCopy->size() >= static_cast<size_t>(sourceOffset + size));
-        ANGLE_UNSAFE_TODO(memcpy(mShadowCopy->data() + destOffset,
-                                 sourceGL->mShadowCopy->data() + sourceOffset, size));
+        memcpy(mShadowCopy->data() + destOffset, sourceGL->mShadowCopy->data() + sourceOffset,
+               size);
     }
 
     contextGL->markWorkSubmitted();
@@ -259,7 +262,7 @@ angle::Result BufferGL::mapRange(const gl::Context *context,
 
     if (mShadowCopy.has_value())
     {
-        *mapPtr = ANGLE_UNSAFE_TODO(mShadowCopy->data() + offset);
+        *mapPtr = mShadowCopy->data() + offset;
     }
     else
     {
@@ -297,9 +300,9 @@ angle::Result BufferGL::unmap(const gl::Context *context,
     if (mShadowCopy.has_value())
     {
         stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        ANGLE_UNSAFE_TODO(ANGLE_GL_TRY(
-            context, functions->bufferSubData(gl::ToGLenum(DestBufferOperationTarget), mMapOffset,
-                                              mMapSize, mShadowCopy->data() + mMapOffset)));
+        ANGLE_GL_TRY(context,
+                     functions->bufferSubData(gl::ToGLenum(DestBufferOperationTarget), mMapOffset,
+                                              mMapSize, mShadowCopy->data() + mMapOffset));
         *result = GL_TRUE;
     }
     else
@@ -331,8 +334,8 @@ angle::Result BufferGL::getIndexRange(const gl::Context *context,
 
     if (mShadowCopy.has_value())
     {
-        *outRange = gl::ComputeIndexRange(type, ANGLE_UNSAFE_TODO(mShadowCopy->data() + offset),
-                                          count, primitiveRestartEnabled);
+        *outRange = gl::ComputeIndexRange(type, mShadowCopy->data() + offset, count,
+                                          primitiveRestartEnabled);
     }
     else
     {

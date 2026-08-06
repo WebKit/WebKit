@@ -11,8 +11,11 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_CACHE_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_CACHE_UTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <deque>
-#include "common/unsafe_buffers.h"
 
 #include "common/Color.h"
 #include "common/FixedVector.h"
@@ -1485,10 +1488,8 @@ ANGLE_INLINE bool GraphicsPipelineTransitionMatch(GraphicsPipelineTransitionBits
 
     for (size_t dirtyBit : bitsA)
     {
-        if (ANGLE_UNSAFE_TODO(rawPtrA[dirtyBit] != rawPtrB[dirtyBit]))
-        {
+        if (rawPtrA[dirtyBit] != rawPtrB[dirtyBit])
             return false;
-        }
     }
 
     return true;
@@ -1919,8 +1920,8 @@ class DescriptorSetDesc
     bool operator==(const DescriptorSetDesc &other) const
     {
         return mDescriptorInfos.size() == other.mDescriptorInfos.size() &&
-               ANGLE_UNSAFE_TODO(memcmp(mDescriptorInfos.data(), other.mDescriptorInfos.data(),
-                                        mDescriptorInfos.size() * sizeof(DescriptorInfoDesc))) == 0;
+               memcmp(mDescriptorInfos.data(), other.mDescriptorInfos.data(),
+                      mDescriptorInfos.size() * sizeof(DescriptorInfoDesc)) == 0;
     }
 
     DescriptorInfoDesc &getInfoDesc(uint32_t infoDescIndex)

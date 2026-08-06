@@ -9,7 +9,10 @@
 //    could respect them too, if they implement the overlay.
 //
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Overlay.h"
 #include "libANGLE/Overlay_font_autogen.h"
 
@@ -102,31 +105,28 @@ void GetWidgetCoordinates(const int32_t srcCoords[4],
                           uint32_t dstCoordsOut[4])
 {
     dstCoordsOut[0] = GetWidgetCoord(srcCoords[0], imageExtent.width);
-    ANGLE_UNSAFE_TODO(dstCoordsOut[1]) =
-        GetWidgetCoord(ANGLE_UNSAFE_TODO(srcCoords[1]), imageExtent.height);
-    ANGLE_UNSAFE_TODO(dstCoordsOut[2]) =
-        GetWidgetCoord(ANGLE_UNSAFE_TODO(srcCoords[2]), imageExtent.width);
-    ANGLE_UNSAFE_TODO(dstCoordsOut[3]) =
-        GetWidgetCoord(ANGLE_UNSAFE_TODO(srcCoords[3]), imageExtent.height);
+    dstCoordsOut[1] = GetWidgetCoord(srcCoords[1], imageExtent.height);
+    dstCoordsOut[2] = GetWidgetCoord(srcCoords[2], imageExtent.width);
+    dstCoordsOut[3] = GetWidgetCoord(srcCoords[3], imageExtent.height);
 }
 
 void GetWidgetColor(const float srcColor[4], float dstColor[4])
 {
-    ANGLE_UNSAFE_TODO(memcpy(dstColor, srcColor, 4 * sizeof(dstColor[0])));
+    memcpy(dstColor, srcColor, 4 * sizeof(dstColor[0]));
 }
 
 void GetTextFontSize(int srcFontSize, uint32_t dstFontSize[3])
 {
     // .xy contains the font glyph width/height
     dstFontSize[0] = overlay::kFontGlyphWidth >> srcFontSize;
-    ANGLE_UNSAFE_TODO(dstFontSize[1]) = overlay::kFontGlyphHeight >> srcFontSize;
+    dstFontSize[1] = overlay::kFontGlyphHeight >> srcFontSize;
     // .z contains the mip
-    ANGLE_UNSAFE_TODO(dstFontSize[2]) = srcFontSize;
+    dstFontSize[2] = srcFontSize;
 }
 
 void GetGraphValueWidth(const int32_t srcCoords[4], size_t valueCount, uint32_t *dstValueWidth)
 {
-    const int32_t graphWidth = std::abs(ANGLE_UNSAFE_TODO(srcCoords[2]) - srcCoords[0]);
+    const int32_t graphWidth = std::abs(srcCoords[2] - srcCoords[0]);
 
     // If valueCount doesn't divide graphWidth, the graph bars won't fit well in its frame.
     // Fix initOverlayWidgets() in that case.
@@ -140,7 +140,7 @@ void GetTextString(const std::string &src, uint8_t textOut[kMaxTextLength])
     for (size_t i = 0; i < src.length() && i < kMaxTextLength; ++i)
     {
         // The font image has 95 ASCII characters starting from ' '.
-        ANGLE_UNSAFE_TODO(textOut[i]) = src[i] - ' ';
+        textOut[i] = src[i] - ' ';
     }
 }
 
@@ -154,7 +154,7 @@ void GetGraphValues(const std::vector<uint64_t> srcValues,
     for (size_t i = 0; i < srcValues.size(); ++i)
     {
         size_t index = (startIndex + i) % srcValues.size();
-        ANGLE_UNSAFE_TODO(valuesOut[i]) = static_cast<uint32_t>(srcValues[index] * scale);
+        valuesOut[i] = static_cast<uint32_t>(srcValues[index] * scale);
     }
 }
 
@@ -691,8 +691,8 @@ void OverlayState::fillWidgetData(const gl::Extents &imageExtents,
     TextWidgets *textWidgets   = reinterpret_cast<TextWidgets *>(textData);
     GraphWidgets *graphWidgets = reinterpret_cast<GraphWidgets *>(graphData);
 
-    ANGLE_UNSAFE_TODO(memset(textWidgets, overlay::kFontCharacters, sizeof(*textWidgets)));
-    ANGLE_UNSAFE_TODO(memset(graphWidgets, 0, sizeof(*graphWidgets)));
+    memset(textWidgets, overlay::kFontCharacters, sizeof(*textWidgets));
+    memset(graphWidgets, 0, sizeof(*graphWidgets));
 
     OverlayWidgetCounts widgetCounts = {};
 
@@ -714,11 +714,9 @@ void OverlayState::fillWidgetData(const gl::Extents &imageExtents,
 
         AppendWidgetDataFunc appendFunc = kWidgetIdToAppendDataFuncMap[id];
         ASSERT(appendFunc);
-        appendFunc(
-            widget.get(), imageExtents,
-            &ANGLE_UNSAFE_TODO(textWidgets->widgets[widgetCounts[WidgetInternalType::Text]]),
-            &ANGLE_UNSAFE_TODO(graphWidgets->widgets[widgetCounts[WidgetInternalType::Graph]]),
-            &widgetCounts);
+        appendFunc(widget.get(), imageExtents,
+                   &textWidgets->widgets[widgetCounts[WidgetInternalType::Text]],
+                   &graphWidgets->widgets[widgetCounts[WidgetInternalType::Graph]], &widgetCounts);
     }
 
     *activeTextWidgetCountOut  = widgetCounts[WidgetInternalType::Text];

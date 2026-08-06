@@ -6,8 +6,11 @@
 
 // system_utils: Defines common utility functions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/test_utils.h"
-#include "common/unsafe_buffers.h"
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -28,7 +31,7 @@ void DeleteArg(int *argc, char **argv, int argIndex)
     // the last one always being NULL.  The following loop moves the trailing NULL element as well.
     for (int index = argIndex; index < *argc; ++index)
     {
-        ANGLE_UNSAFE_TODO(argv[index]) = ANGLE_UNSAFE_TODO(argv[index + 1]);
+        argv[index] = argv[index + 1];
     }
     (*argc)--;
 }
@@ -39,9 +42,9 @@ const char *GetSingleArg(const char *flag,
                          int argIndex,
                          ArgHandling handling)
 {
-    if (ANGLE_UNSAFE_TODO(strstr(argv[argIndex], flag)) == ANGLE_UNSAFE_TODO(argv[argIndex]))
+    if (strstr(argv[argIndex], flag) == argv[argIndex])
     {
-        const char *ptr = ANGLE_UNSAFE_TODO(argv[argIndex] + strlen(flag));
+        const char *ptr = argv[argIndex] + strlen(flag);
 
         if (*ptr == '=')
         {
@@ -49,12 +52,12 @@ const char *GetSingleArg(const char *flag,
             {
                 DeleteArg(argc, argv, argIndex);
             }
-            return ANGLE_UNSAFE_TODO(ptr + 1);
+            return ptr + 1;
         }
 
         if (*ptr == '\0' && argIndex < *argc - 1)
         {
-            ptr = ANGLE_UNSAFE_TODO(argv[argIndex + 1]);
+            ptr = argv[argIndex + 1];
             if (handling == ArgHandling::Delete)
             {
                 DeleteArg(argc, argv, argIndex);
@@ -70,6 +73,7 @@ const char *GetSingleArg(const char *flag,
 using DisplayTypeInfo = std::pair<const char *, EGLint>;
 
 const DisplayTypeInfo kDisplayTypes[] = {
+    {"d3d9", EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE},
     {"d3d11", EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE},
     {"gl", EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE},
     {"gles", EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE},
@@ -163,7 +167,7 @@ bool ParseIntArgWithHandling(const char *flag,
     }
 
     char *end            = nullptr;
-    const long longValue = ANGLE_UNSAFE_TODO(strtol(value, &end, 10));
+    const long longValue = strtol(value, &end, 10);
 
     if (*end != '\0')
     {
@@ -189,7 +193,7 @@ bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *va
 
 bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut)
 {
-    if (ANGLE_UNSAFE_TODO(strcmp(flag, argv[argIndex])) == 0)
+    if (strcmp(flag, argv[argIndex]) == 0)
     {
         *flagOut = true;
         DeleteArg(argc, argv, argIndex);
@@ -246,8 +250,8 @@ bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, con
 void AddArg(int *argc, char **argv, const char *arg)
 {
     // This unsafe const_cast is necessary to work around gtest limitations.
-    ANGLE_UNSAFE_TODO(argv[*argc])     = const_cast<char *>(arg);
-    ANGLE_UNSAFE_TODO(argv[*argc + 1]) = nullptr;
+    argv[*argc]     = const_cast<char *>(arg);
+    argv[*argc + 1] = nullptr;
     (*argc)++;
 }
 
@@ -260,7 +264,7 @@ uint32_t GetPlatformANGLETypeFromArg(const char *useANGLEArg, uint32_t defaultPl
 
     for (const DisplayTypeInfo &displayTypeInfo : kDisplayTypes)
     {
-        if (ANGLE_UNSAFE_TODO(strcmp(displayTypeInfo.first, useANGLEArg)) == 0)
+        if (strcmp(displayTypeInfo.first, useANGLEArg) == 0)
         {
             std::cout << "Using ANGLE back-end API: " << displayTypeInfo.first << std::endl;
             return displayTypeInfo.second;
@@ -275,11 +279,11 @@ uint32_t GetANGLEDeviceTypeFromArg(const char *useANGLEArg, uint32_t defaultDevi
 {
     if (useANGLEArg)
     {
-        if (ANGLE_UNSAFE_TODO(strcmp(useANGLEArg, "swiftshader")) == 0)
+        if (strcmp(useANGLEArg, "swiftshader") == 0)
         {
             return EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
         }
-        if (ANGLE_UNSAFE_TODO(strstr(useANGLEArg, "null")) != 0)
+        if (strstr(useANGLEArg, "null") != 0)
         {
             return EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE;
         }

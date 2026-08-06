@@ -20,6 +20,12 @@ struct FeaturesD3D : FeatureSetBase
     FeaturesD3D();
     ~FeaturesD3D();
 
+    FeatureInfo borderColorSrgb = {
+        "borderColorSrgb",
+        FeatureCategory::D3DWorkarounds,
+        &members,
+    };
+
     FeatureInfo mrtPerfWorkaround = {
         "mrtPerfWorkaround",
         FeatureCategory::D3DWorkarounds,
@@ -148,6 +154,12 @@ struct FeaturesD3D : FeatureSetBase
 
     FeatureInfo enableTimestampQueries = {
         "enableTimestampQueries",
+        FeatureCategory::D3DWorkarounds,
+        &members,
+    };
+
+    FeatureInfo supportsNonConstantLoopIndexing = {
+        "supportsNonConstantLoopIndexing",
         FeatureCategory::D3DWorkarounds,
         &members,
     };

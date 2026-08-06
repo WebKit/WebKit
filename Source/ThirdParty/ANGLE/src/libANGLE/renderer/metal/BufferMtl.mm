@@ -7,11 +7,14 @@
 //    Implements the class methods for BufferMtl.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/BufferMtl.h"
 
 #include "common/debug.h"
 #include "common/span.h"
-#include "common/unsafe_buffers.h"
 #include "common/utilities.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -34,10 +37,8 @@ angle::Result GetFirstLastIndices(const IndexType *indices,
 {
     IndexType first, last;
     // Use memcpy to avoid unaligned memory access crash:
-    ANGLE_UNSAFE_TODO({
-        memcpy(&first, &indices[0], sizeof(first));
-        memcpy(&last, &indices[count - 1], sizeof(last));
-    })
+    memcpy(&first, &indices[0], sizeof(first));
+    memcpy(&last, &indices[count - 1], sizeof(last));
 
     outIndices->first  = first;
     outIndices->second = last;
@@ -140,8 +141,8 @@ angle::Result BufferMtl::setData(const gl::Context *context,
     {
         return angle::Result::Continue;
     }
-    auto dataSpan = ANGLE_UNSAFE_TODO(
-        angle::Span<const uint8_t>(static_cast<const uint8_t *>(dataForImpl), intendedSize));
+    ANGLE_UNSAFE_BUFFERS(angle::Span<const uint8_t> dataSpan(
+        static_cast<const uint8_t *>(dataForImpl), intendedSize));
     return setSubDataImpl(context, dataSpan, 0, feedback);
 }
 
@@ -153,8 +154,8 @@ angle::Result BufferMtl::setSubData(const gl::Context *context,
                                     BufferFeedback *feedback)
 {
     ASSERT(data != nullptr);
-    auto dataSpan =
-        ANGLE_UNSAFE_TODO(angle::Span<const uint8_t>(static_cast<const uint8_t *>(data), size));
+    ANGLE_UNSAFE_BUFFERS(
+        angle::Span<const uint8_t> dataSpan(static_cast<const uint8_t *>(data), size));
     return setSubDataImpl(context, dataSpan, offset, feedback);
 }
 
@@ -487,13 +488,13 @@ static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const ui
     {
         if (*it == restartMarker)
         {
-            ANGLE_UNSAFE_TODO(++it);
+            ++it;
             continue;
         }
         auto rangeBegin = it;
         do
         {
-            ANGLE_UNSAFE_TODO(++it);
+            ++it;
         } while (it != end && *it != restartMarker);
         result.emplace_back(static_cast<size_t>(std::distance(begin, rangeBegin)),
                             static_cast<size_t>(std::distance(begin, it)) - 1);
@@ -533,9 +534,8 @@ const std::vector<DrawIndexRange> BufferMtl::GetDrawIndexRangesFromClientData(
     GLint count,
     const void *indices)
 {
-    auto data = ANGLE_UNSAFE_TODO(
-        angle::Span<const uint8_t>(static_cast<const uint8_t *>(indices),
-                                   static_cast<size_t>(count) * gl::GetDrawElementsTypeSize(type)));
+    angle::Span<const uint8_t> data(static_cast<const uint8_t *>(indices),
+                                    static_cast<size_t>(count) * gl::GetDrawElementsTypeSize(type));
     std::vector<DrawIndexRange> ranges;
     switch (type)
     {
@@ -733,7 +733,7 @@ angle::Result BufferMtl::updateShadowCopyThenCopyShadowToNewBuffer(ContextMtl *c
     ensureShadowCopySyncedFromGPU(contextMtl);
 
     // 2. Copy data from client to shadow copy.
-    ANGLE_UNSAFE_TODO(std::copy(data.begin(), data.end(), mShadowCopy.data() + offset));
+    std::copy(data.begin(), data.end(), mShadowCopy.data() + offset);
 
     // 3. Copy data from shadow copy to GPU.
     return commitShadowCopy(contextMtl, feedback);

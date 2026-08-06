@@ -7,8 +7,11 @@
 //    Implements the class methods for BufferNULL.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/null/BufferNULL.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/utilities.h"
@@ -59,7 +62,7 @@ angle::Result BufferNULL::setDataWithUsageFlags(const gl::Context *context,
 
     if (size > 0 && dataForImpl != nullptr)
     {
-        ANGLE_UNSAFE_TODO(memcpy(mData.data(), dataForImpl, size));
+        memcpy(mData.data(), dataForImpl, size);
     }
     return angle::Result::Continue;
 }
@@ -78,7 +81,7 @@ angle::Result BufferNULL::setData(const gl::Context *context,
     mData.resize(size, 0);
     if (size > 0 && data != nullptr)
     {
-        ANGLE_UNSAFE_TODO(memcpy(mData.data(), data, size));
+        memcpy(mData.data(), data, size);
     }
     return angle::Result::Continue;
 }
@@ -92,7 +95,7 @@ angle::Result BufferNULL::setSubData(const gl::Context *context,
 {
     if (size > 0)
     {
-        ANGLE_UNSAFE_TODO(memcpy(mData.data() + offset, data, size));
+        memcpy(mData.data() + offset, data, size);
     }
     return angle::Result::Continue;
 }
@@ -107,8 +110,7 @@ angle::Result BufferNULL::copySubData(const gl::Context *context,
     BufferNULL *sourceNULL = GetAs<BufferNULL>(source);
     if (size > 0)
     {
-        ANGLE_UNSAFE_TODO(
-            memcpy(mData.data() + destOffset, sourceNULL->mData.data() + sourceOffset, size));
+        memcpy(mData.data() + destOffset, sourceNULL->mData.data() + sourceOffset, size);
     }
     return angle::Result::Continue;
 }
@@ -129,7 +131,7 @@ angle::Result BufferNULL::mapRange(const gl::Context *context,
                                    void **mapPtr,
                                    BufferFeedback *feedback)
 {
-    *mapPtr = ANGLE_UNSAFE_TODO(mData.data() + offset);
+    *mapPtr = mData.data() + offset;
     return angle::Result::Continue;
 }
 
@@ -148,8 +150,7 @@ angle::Result BufferNULL::getIndexRange(const gl::Context *context,
                                         bool primitiveRestartEnabled,
                                         gl::IndexRange *outRange)
 {
-    *outRange = gl::ComputeIndexRange(type, ANGLE_UNSAFE_TODO(mData.data() + offset), count,
-                                      primitiveRestartEnabled);
+    *outRange = gl::ComputeIndexRange(type, mData.data() + offset, count, primitiveRestartEnabled);
     return angle::Result::Continue;
 }
 

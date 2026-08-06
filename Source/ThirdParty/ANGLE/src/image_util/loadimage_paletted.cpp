@@ -4,9 +4,12 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // loadimage_paletted.cpp: Decodes GL_PALETTE_* textures.
 
-#include "common/unsafe_buffers.h"
 #include "image_util/loadimage.h"
 
 #include <type_traits>
@@ -50,11 +53,11 @@ size_t DecodeIndexIntoPalette(const uint8_t *row, size_t i, uint32_t indexBits)
             //      ---------------
 
             bool even = i % 2 == 0;
-            return (ANGLE_UNSAFE_TODO(row[i / 2]) >> (even ? 4 : 0)) & 0x0f;
+            return (row[i / 2] >> (even ? 4 : 0)) & 0x0f;
         }
 
         case 8:
-            return ANGLE_UNSAFE_TODO(row[i]);
+            return row[i];
 
         default:
             UNREACHABLE();
@@ -135,8 +138,8 @@ void LoadPalettedToRGBA8Impl(const ImageLoadContext &context,
 
     const uint8_t *palette = input;
 
-    const uint8_t *texels = ANGLE_UNSAFE_TODO(
-        input + paletteBytes);  // + TODO(http://anglebug.com/42266155): mip levels
+    const uint8_t *texels =
+        input + paletteBytes;  // + TODO(http://anglebug.com/42266155): mip levels
 
     for (size_t z = 0; z < depth; z++)
     {
@@ -151,10 +154,8 @@ void LoadPalettedToRGBA8Impl(const ImageLoadContext &context,
             {
                 size_t indexIntoPalette = DecodeIndexIntoPalette(srcRow, x, indexBits);
 
-                ANGLE_UNSAFE_TODO({
-                    dstRow[x] = DecodeColor(palette + indexIntoPalette * colorBytes, redBlueBits,
-                                            greenBits, alphaBits);
-                })
+                dstRow[x] = DecodeColor(palette + indexIntoPalette * colorBytes, redBlueBits,
+                                        greenBits, alphaBits);
             }
         }
     }

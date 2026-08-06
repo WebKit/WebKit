@@ -89,9 +89,14 @@
     /* GL_EXT_EGL_image_storage_compression */                                                     \
     /* GL_EXT_YUV_target */                                                                        \
     /* GL_EXT_base_instance */                                                                     \
+    void drawArraysInstancedBaseInstance(PrimitiveMode modePacked, GLint first, GLsizei count,     \
+                                         GLsizei instancecount, GLuint baseinstance);              \
     void drawElementsInstancedBaseInstance(PrimitiveMode modePacked, GLsizei count,                \
                                            DrawElementsType typePacked, const void *indices,       \
                                            GLsizei instancecount, GLuint baseinstance);            \
+    void drawElementsInstancedBaseVertexBaseInstance(                                              \
+        PrimitiveMode modePacked, GLsizei count, DrawElementsType typePacked, const void *indices, \
+        GLsizei instancecount, GLint basevertex, GLuint baseinstance);                             \
     /* GL_EXT_blend_func_extended */                                                               \
     void bindFragDataLocation(ShaderProgramID programPacked, GLuint color, const GLchar *name);    \
     void bindFragDataLocationIndexed(ShaderProgramID programPacked, GLuint colorNumber,            \
@@ -257,11 +262,10 @@
     /* GL_EXT_texture_shadow_lod */                                                                \
     /* GL_EXT_texture_storage */                                                                   \
     /* GL_EXT_texture_storage_compression */                                                       \
-    void texStorageAttribs2D(TextureType targetPacked, GLsizei levels, GLenum internalformat,      \
-                             GLsizei width, GLsizei height, const GLint *attrib_list);             \
-    void texStorageAttribs3D(TextureType targetPacked, GLsizei levels, GLenum internalformat,      \
-                             GLsizei width, GLsizei height, GLsizei depth,                         \
-                             const GLint *attrib_list);                                            \
+    void texStorageAttribs2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width,  \
+                             GLsizei height, const GLint *attrib_list);                            \
+    void texStorageAttribs3D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width,  \
+                             GLsizei height, GLsizei depth, const GLint *attrib_list);             \
     /* GL_EXT_texture_type_2_10_10_10_REV */                                                       \
     /* GL_EXT_unpack_subimage */                                                                   \
     /* GL_IMG_texture_compression_pvrtc */                                                         \
@@ -290,6 +294,8 @@
     void setFenceNV(FenceNVID fencePacked, GLenum condition);                                      \
     GLboolean testFenceNV(FenceNVID fencePacked);                                                  \
     /* GL_NV_framebuffer_blit */                                                                   \
+    void blitFramebufferNV(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0,        \
+                           GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter); \
     /* GL_NV_pack_subimage */                                                                      \
     /* GL_NV_pixel_buffer_object */                                                                \
     /* GL_NV_polygon_mode */                                                                       \
@@ -389,9 +395,10 @@
     /* ANGLE Extensions */                                                                         \
                                                                                                    \
     /* GL_ANGLE_base_vertex_base_instance */                                                       \
-    void drawArraysInstancedBaseInstance(PrimitiveMode modePacked, GLint first, GLsizei count,     \
-                                         GLsizei instanceCount, GLuint baseInstance);              \
-    void drawElementsInstancedBaseVertexBaseInstance(                                              \
+    void drawArraysInstancedBaseInstanceANGLE(PrimitiveMode modePacked, GLint first,               \
+                                              GLsizei count, GLsizei instanceCount,                \
+                                              GLuint baseInstance);                                \
+    void drawElementsInstancedBaseVertexBaseInstanceANGLE(                                         \
         PrimitiveMode modePacked, GLsizei count, DrawElementsType typePacked, const void *indices, \
         GLsizei instanceCount, GLint baseVertex, GLuint baseInstance);                             \
     void multiDrawArraysInstancedBaseInstance(                                                     \

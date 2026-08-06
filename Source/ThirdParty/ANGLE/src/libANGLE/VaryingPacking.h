@@ -12,8 +12,11 @@
 #ifndef LIBANGLE_VARYINGPACKING_H_
 #define LIBANGLE_VARYINGPACKING_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <GLSLANG/ShaderVars.h>
-#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/angleutils.h"
@@ -200,6 +203,9 @@ enum class PackMode
 
     // We allow mat2 to take a 2x2 chunk.
     ANGLE_RELAXED,
+
+    // Each varying takes a separate register. No register sharing.
+    ANGLE_NON_CONFORMANT_D3D9,
 };
 
 enum class PerVertexMember
@@ -242,8 +248,8 @@ class VaryingPacking final : angle::NonCopyable
     {
         Register() { data[0] = data[1] = data[2] = data[3] = false; }
 
-        bool &operator[](unsigned int index) { return ANGLE_UNSAFE_TODO(data[index]); }
-        bool operator[](unsigned int index) const { return ANGLE_UNSAFE_TODO(data[index]); }
+        bool &operator[](unsigned int index) { return data[index]; }
+        bool operator[](unsigned int index) const { return data[index]; }
 
         bool data[4];
     };

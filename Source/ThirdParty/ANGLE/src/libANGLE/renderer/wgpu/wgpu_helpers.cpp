@@ -4,8 +4,11 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/wgpu/wgpu_helpers.h"
-#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 
@@ -58,7 +61,7 @@ uint8_t *AdjustMapPointerForOffset(uint8_t *mapPtr, size_t offset)
 {
     // Fix up a map pointer that has been adjusted for alignment
     size_t offsetChange = offset % kBufferMapOffsetAlignment;
-    return ANGLE_UNSAFE_TODO(mapPtr + offsetChange);
+    return mapPtr + offsetChange;
 }
 
 const uint8_t *AdjustMapPointerForOffset(const uint8_t *mapPtr, size_t offset)

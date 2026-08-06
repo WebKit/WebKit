@@ -4,10 +4,13 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <algorithm>
 #include <limits>
 
-#include "common/unsafe_buffers.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
@@ -274,7 +277,7 @@ void SymbolEnv::TemplateName::assign(const Name &name, size_t argCount, const Te
     templateArgs.clear();
     for (size_t i = 0; i < argCount; ++i)
     {
-        templateArgs.push_back(ANGLE_UNSAFE_TODO(args[i]));
+        templateArgs.push_back(args[i]);
     }
 }
 
@@ -346,7 +349,7 @@ const TFunction &SymbolEnv::getFunctionOverload(const Name &name,
 
     for (size_t i = 0; i < paramCount; ++i)
     {
-        mReusableSigBuffer.push_back(ANGLE_UNSAFE_TODO(*paramTypes[i]));
+        mReusableSigBuffer.push_back(*paramTypes[i]);
     }
     mReusableSigBuffer.push_back(returnType);
     mReusableTemplateNameBuffer.assign(name, templateArgCount, templateArgs);
@@ -449,7 +452,7 @@ const AddressSpace *SymbolEnv::isSpace(VarField x,
     }
     const AddressSpace space = iter->second;
     const auto index         = static_cast<std::underlying_type_t<AddressSpace>>(space);
-    return ANGLE_UNSAFE_TODO(&kAddressSpaces[index]);
+    return &kAddressSpaces[index];
 }
 
 void SymbolEnv::markAsPointer(VarField x, AddressSpace space)

@@ -6,8 +6,11 @@
 
 // VertexArrayGL.cpp: Implements the class methods for VertexArrayGL.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/gl/VertexArrayGL.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/bitset_utils.h"
 #include "common/debug.h"
@@ -546,18 +549,17 @@ angle::Result VertexArrayGL::streamAttributes(
             if (destStride == sourceStride)
             {
                 // Can copy in one go, the data is packed
-                ANGLE_UNSAFE_TODO(memcpy(bufferPointer + curBufferOffset,
-                                         inputPointer + batchMemcpyInputOffset, batchMemcpySize));
+                memcpy(bufferPointer + curBufferOffset, inputPointer + batchMemcpyInputOffset,
+                       batchMemcpySize);
             }
             else
             {
                 for (size_t vertexIdx = 0; vertexIdx < originalStreamedVertexCount; vertexIdx++)
                 {
-                    uint8_t *out      = ANGLE_UNSAFE_TODO(bufferPointer + curBufferOffset +
-                                                          (destStride * vertexIdx));
-                    const uint8_t *in = ANGLE_UNSAFE_TODO(
-                        inputPointer + sourceStride * (vertexIdx + firstIndexForSeparateCopy));
-                    ANGLE_UNSAFE_TODO(memcpy(out, in, destStride));
+                    uint8_t *out = bufferPointer + curBufferOffset + (destStride * vertexIdx);
+                    const uint8_t *in =
+                        inputPointer + sourceStride * (vertexIdx + firstIndexForSeparateCopy);
+                    memcpy(out, in, destStride);
                 }
             }
 

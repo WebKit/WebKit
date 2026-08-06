@@ -8,8 +8,11 @@
 // gl::PixelLocalStorage and gl::PixelLocalStoragePlane for
 // ANGLE_shader_pixel_local_storage.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/PixelLocalStorage.h"
-#include "common/unsafe_buffers.h"
 
 #include <numeric>
 #include "common/FixedVector.h"
@@ -766,7 +769,7 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
             DrawBuffersVector<int> pendingClears;
             for (; pendingClears.size() < maxDrawBuffers && i < n; ++i)
             {
-                GLenum loadop                       = ANGLE_UNSAFE_TODO(loadops[i]);
+                GLenum loadop                       = loadops[i];
                 const PixelLocalStoragePlane &plane = getPlane(i);
                 plane.bindToImage(context, i, !mPLSOptions.supportsNativeRGBA8ImageFormats);
                 if (loadop == GL_LOAD_OP_ZERO_ANGLE || loadop == GL_LOAD_OP_CLEAR_ANGLE)
@@ -783,9 +786,8 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
             for (size_t drawBufferIdx = 0; drawBufferIdx < pendingClears.size(); ++drawBufferIdx)
             {
                 int plsIdx = pendingClears[drawBufferIdx];
-                getPlane(plsIdx).issueClearCommand(&clearBufferCommands,
-                                                   static_cast<int>(drawBufferIdx),
-                                                   ANGLE_UNSAFE_TODO(loadops[plsIdx]));
+                getPlane(plsIdx).issueClearCommand(
+                    &clearBufferCommands, static_cast<int>(drawBufferIdx), loadops[plsIdx]);
             }
             maxClearedAttachments = std::max(maxClearedAttachments, pendingClears.size());
         }
@@ -922,7 +924,7 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
         for (GLsizei i = 0; i < n; ++i)
         {
             GLuint drawBufferIdx                = GetDrawBufferIdx(caps, i);
-            GLenum loadop                       = ANGLE_UNSAFE_TODO(loadops[i]);
+            GLenum loadop                       = loadops[i];
             const PixelLocalStoragePlane &plane = getPlane(i);
             ASSERT(!plane.isDeinitialized());
 
@@ -948,7 +950,7 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
             ClearBufferCommands clearBufferCommands(context);
             for (GLsizei i = 0; i < n; ++i)
             {
-                GLenum loadop = ANGLE_UNSAFE_TODO(loadops[i]);
+                GLenum loadop = loadops[i];
                 if (loadop != GL_LOAD_OP_LOAD_ANGLE)
                 {
                     GLuint drawBufferIdx = GetDrawBufferIdx(caps, i);
@@ -975,8 +977,7 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
             {
                 continue;
             }
-            if (ANGLE_UNSAFE_TODO(storeops[i]) != GL_STORE_OP_STORE_ANGLE ||
-                getPlane(i).isMemoryless())
+            if (storeops[i] != GL_STORE_OP_STORE_ANGLE || getPlane(i).isMemoryless())
             {
                 int drawBufferIdx = GetDrawBufferIdx(caps, i);
                 invalidateList.push_back(GL_COLOR_ATTACHMENT0 + drawBufferIdx);

@@ -7,9 +7,12 @@
 #ifndef LIBANGLE_UNIFORM_H_
 #define LIBANGLE_UNIFORM_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <string>
 #include <vector>
-#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
@@ -61,7 +64,7 @@ struct LinkedUniform;
 
 struct ActiveVariable
 {
-    ActiveVariable() { ANGLE_UNSAFE_TODO(memset(&pod, 0, sizeof(pod))); }
+    ActiveVariable() { memset(&pod, 0, sizeof(pod)); }
 
     ACTIVE_VARIABLE_COMMON_INTERFACES
 

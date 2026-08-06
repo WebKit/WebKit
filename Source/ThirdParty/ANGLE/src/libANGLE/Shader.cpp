@@ -8,8 +8,11 @@
 // VertexShader and FragmentShader. Implements GL shader objects and related
 // functionality. [OpenGL ES 2.0.24] section 2.10 page 24 and section 3.8 page 84.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Shader.h"
-#include "common/unsafe_buffers.h"
 
 #include <functional>
 #include <sstream>
@@ -71,9 +74,9 @@ void GetSourceImpl(const std::string &source, GLsizei bufSize, GLsizei *length, 
     if (bufSize > 0)
     {
         index = std::min(bufSize - 1, static_cast<GLsizei>(source.length()));
-        ANGLE_UNSAFE_TODO(memcpy(buffer, source.c_str(), index));
+        memcpy(buffer, source.c_str(), index);
 
-        ANGLE_UNSAFE_TODO(buffer[index]) = '\0';
+        buffer[index] = '\0';
     }
 
     if (length)
@@ -534,9 +537,9 @@ void Shader::getInfoLog(const Context *context, GLsizei bufSize, GLsizei *length
     if (bufSize > 0)
     {
         index = std::min(bufSize - 1, static_cast<GLsizei>(mInfoLog.length()));
-        ANGLE_UNSAFE_TODO(memcpy(infoLog, mInfoLog.c_str(), index));
+        memcpy(infoLog, mInfoLog.c_str(), index);
 
-        ANGLE_UNSAFE_TODO(infoLog[index]) = '\0';
+        infoLog[index] = '\0';
     }
 
     if (length)
@@ -912,8 +915,7 @@ bool Shader::loadBinaryImpl(const Context *context,
                             angle::JobResultExpectancy resultExpectancy,
                             bool generatedWithOfflineCompiler)
 {
-    BinaryInputStream stream(
-        ANGLE_UNSAFE_TODO(angle::Span(static_cast<const uint8_t *>(binary), length)));
+    BinaryInputStream stream(angle::Span(static_cast<const uint8_t *>(binary), length));
 
     mState.mCompiledState = std::make_shared<CompiledShaderState>(mState.getShaderType());
 
@@ -925,8 +927,8 @@ bool Shader::loadBinaryImpl(const Context *context,
         // type match
         std::vector<uint8_t> commitString(angle::GetANGLEShaderProgramVersionHashSize(), 0);
         stream.readBytes(commitString);
-        ANGLE_UNSAFE_TODO(ASSERT(memcmp(commitString.data(), angle::GetANGLEShaderProgramVersion(),
-                                        commitString.size()) == 0));
+        ASSERT(memcmp(commitString.data(), angle::GetANGLEShaderProgramVersion(),
+                      commitString.size()) == 0);
 
         gl::ShaderType shaderType;
         stream.readEnum(&shaderType);
@@ -1033,7 +1035,7 @@ void Shader::setShaderKey(const Context *context,
 
     // Get the hash.
     hasher.Final();
-    ANGLE_UNSAFE_TODO(memcpy(mShaderHash.data(), hasher.Digest(), angle::kBlobCacheKeyLength));
+    memcpy(mShaderHash.data(), hasher.Digest(), angle::kBlobCacheKeyLength);
 }
 
 bool WaitCompileJobUnlocked(const SharedCompileJob &compileJob)

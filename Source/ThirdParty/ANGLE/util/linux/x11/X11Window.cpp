@@ -6,8 +6,11 @@
 
 // X11Window.cpp: Implementation of OSWindow for X11
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/linux/x11/X11Window.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "util/Timer.h"
@@ -352,12 +355,12 @@ bool X11Window::initializeImpl(const std::string &name, int width, int height)
 
     {
         int screen  = DefaultScreen(mDisplay);
-        Window root = ANGLE_UNSAFE_TODO(RootWindow(mDisplay, screen));
+        Window root = RootWindow(mDisplay, screen);
 
         Visual *visual;
         if (mRequestedVisualId == -1)
         {
-            visual = ANGLE_UNSAFE_TODO(DefaultVisual(mDisplay, screen));
+            visual = DefaultVisual(mDisplay, screen);
         }
         else
         {
@@ -377,7 +380,7 @@ bool X11Window::initializeImpl(const std::string &name, int width, int height)
             XFree(visuals);
         }
 
-        int depth         = ANGLE_UNSAFE_TODO(DefaultDepth(mDisplay, screen));
+        int depth         = DefaultDepth(mDisplay, screen);
         Colormap colormap = XCreateColormap(mDisplay, root, visual, AllocNone);
 
         XSetWindowAttributes attributes;
@@ -759,7 +762,7 @@ void X11Window::processEvent(const XEvent &xEvent)
                 // the new parent and not what the user wants to know. Use
                 // XTranslateCoordinates to get the coordinates on the screen.
                 int screen  = DefaultScreen(mDisplay);
-                Window root = ANGLE_UNSAFE_TODO(RootWindow(mDisplay, screen));
+                Window root = RootWindow(mDisplay, screen);
 
                 int x, y;
                 Window child;

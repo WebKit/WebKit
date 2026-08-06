@@ -8,8 +8,11 @@
 // display on which graphics are drawn. Implements EGLDisplay.
 // [EGL 1.4] section 2.1.2 page 3.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Display.h"
-#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 #include <iterator>
@@ -52,7 +55,7 @@
 #    include "common/tls.h"
 #endif
 
-#if defined(ANGLE_ENABLE_D3D11)
+#if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
 #    include "libANGLE/renderer/d3d/DisplayD3D.h"
 #endif
 
@@ -160,7 +163,7 @@ size_t EGLStringArrayHash(const char **ary)
     size_t hash = 0;
     if (ary != nullptr)
     {
-        for (; *ary != nullptr; ANGLE_UNSAFE_TODO(ary++))
+        for (; *ary != nullptr; ary++)
         {
             hash ^= std::hash<std::string>{}(std::string(*ary));
         }
@@ -183,7 +186,6 @@ struct ANGLEPlatformDisplay
                          EGLAttrib deviceIdLow,
                          EGLAttrib displayKey,
                          EGLAttrib nativePlatformType,
-                         EGLAttrib x11VisualID,
                          EGLAttrib enabledFeatureOverrides,
                          EGLAttrib disabledFeatureOverrides,
                          EGLAttrib disableAllNonOverriddenFeatures)
@@ -194,7 +196,6 @@ struct ANGLEPlatformDisplay
           deviceIdLow(deviceIdLow),
           displayKey(displayKey),
           nativePlatformType(nativePlatformType),
-          x11VisualID(x11VisualID),
           disableAllNonOverriddenFeatures(static_cast<bool>(disableAllNonOverriddenFeatures))
     {
         enabledFeatureOverridesHash =
@@ -206,9 +207,8 @@ struct ANGLEPlatformDisplay
     auto tie() const
     {
         return std::tie(nativeDisplayType, powerPreference, platformANGLEType, deviceIdHigh,
-                        deviceIdLow, displayKey, nativePlatformType, x11VisualID,
-                        enabledFeatureOverridesHash, disabledFeatureOverridesHash,
-                        disableAllNonOverriddenFeatures);
+                        deviceIdLow, displayKey, nativePlatformType, enabledFeatureOverridesHash,
+                        disabledFeatureOverridesHash, disableAllNonOverriddenFeatures);
     }
 
     EGLNativeDisplayType nativeDisplayType{EGL_DEFAULT_DISPLAY};
@@ -218,7 +218,6 @@ struct ANGLEPlatformDisplay
     EGLAttrib deviceIdLow{0};
     EGLAttrib displayKey{0};
     EGLAttrib nativePlatformType{0};
-    EGLAttrib x11VisualID{0};
     size_t enabledFeatureOverridesHash;
     size_t disabledFeatureOverridesHash;
     bool disableAllNonOverriddenFeatures;
@@ -267,6 +266,19 @@ rx::DisplayImpl *CreateDisplayFromDevice(Device *eglDevice, const DisplayState &
     if (eglDevice->getExtensions().deviceD3D11)
     {
         impl = new rx::DisplayD3D(state);
+    }
+#endif
+
+#if defined(ANGLE_ENABLE_D3D9)
+    if (eglDevice->getExtensions().deviceD3D9)
+    {
+        // Currently the only way to get EGLDeviceEXT representing a D3D9 device
+        // is to retrieve one from an already-existing EGLDisplay.
+        // When eglGetPlatformDisplayEXT is called with a D3D9 EGLDeviceEXT,
+        // the already-existing display should be returned.
+        // Therefore this codepath to create a new display from the device
+        // should never be hit.
+        UNREACHABLE();
     }
 #endif
 
@@ -327,6 +339,8 @@ EGLAttrib GetDisplayTypeFromEnvironment()
 #endif
 #if defined(ANGLE_ENABLE_D3D11)
     return EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE;
+#elif defined(ANGLE_ENABLE_D3D9)
+    return EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE;
 #elif defined(ANGLE_ENABLE_VULKAN) && defined(ANGLE_PLATFORM_ANDROID)
     return EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
 #elif defined(ANGLE_ENABLE_OPENGL)
@@ -412,8 +426,9 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             UNREACHABLE();
             break;
 
+        case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
-#if defined(ANGLE_ENABLE_D3D11)
+#if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
             impl = new rx::DisplayD3D(state);
             break;
 #else
@@ -688,7 +703,7 @@ const std::vector<std::string> EGLStringArrayToStringVector(const char **ary)
     std::vector<std::string> vec;
     if (ary != nullptr)
     {
-        for (; *ary != nullptr; ANGLE_UNSAFE_TODO(ary++))
+        for (; *ary != nullptr; ary++)
         {
             vec.push_back(std::string(*ary));
         }
@@ -820,10 +835,9 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
     const EGLAttrib disableAllNonOverriddenFeatures =
         updatedAttribMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0);
     const EGLAttrib nativePlatformType = GetPlatformTypeFromAttribs(platform, updatedAttribMap);
-    const EGLAttrib x11VisualID        = updatedAttribMap.get(EGL_X11_VISUAL_ID_ANGLE, 0);
     const ANGLEPlatformDisplay combinedDisplayKey(
         nativeDisplay, powerPreference, platformANGLEType, deviceIdHigh, deviceIdLow, displayKey,
-        nativePlatformType, x11VisualID, enabledFeatureOverrides, disabledFeatureOverrides,
+        nativePlatformType, enabledFeatureOverrides, disabledFeatureOverrides,
         disableAllNonOverriddenFeatures);
 
     {
@@ -998,7 +1012,6 @@ Display::~Display()
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0),
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE, 0),
                 GetPlatformTypeFromAttribs(mPlatform, mAttributeMap),
-                mAttributeMap.get(EGL_X11_VISUAL_ID_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_OVERRIDES_ENABLED_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0)));
@@ -2190,7 +2203,7 @@ static ClientExtensions GenerateClientExtensions()
     extensions.platformBase     = true;
     extensions.platformANGLE    = true;
 
-#if defined(ANGLE_ENABLE_D3D11)
+#if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
     extensions.platformANGLED3D = true;
     extensions.platformDevice   = true;
 #endif
@@ -2402,7 +2415,8 @@ bool Display::isValidNativeDisplay(EGLNativeDisplayType display)
     }
 
 #if defined(ANGLE_PLATFORM_WINDOWS) && !defined(ANGLE_ENABLE_WINDOWS_UWP)
-    if (display == EGL_SOFTWARE_DISPLAY_ANGLE || display == EGL_D3D11_ONLY_DISPLAY_ANGLE)
+    if (display == EGL_SOFTWARE_DISPLAY_ANGLE || display == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
+        display == EGL_D3D11_ONLY_DISPLAY_ANGLE)
     {
         return true;
     }
@@ -2545,8 +2559,8 @@ Error Display::programCacheQuery(EGLint index,
     if (key)
     {
         ASSERT(*keysize == static_cast<EGLint>(angle::kProgramCacheControlKeySize));
-        ANGLE_UNSAFE_TODO(memset(key, 0, angle::kProgramCacheControlKeySize));
-        ANGLE_UNSAFE_TODO(memcpy(key, programHash->data(), BlobCache::kKeyLength));
+        memset(key, 0, angle::kProgramCacheControlKeySize);
+        memcpy(key, programHash->data(), BlobCache::kKeyLength);
     }
 
     if (binary)
@@ -2559,7 +2573,7 @@ Error Display::programCacheQuery(EGLint index,
             return egl::Error(EGL_BAD_ACCESS, "Program binary too large or changed during access.");
         }
 
-        ANGLE_UNSAFE_TODO(memcpy(binary, programBinary.data(), programBinary.size()));
+        memcpy(binary, programBinary.data(), programBinary.size());
     }
 
     *binarysize = static_cast<EGLint>(programBinary.size());
@@ -2576,7 +2590,7 @@ Error Display::programCachePopulate(const void *key,
     ASSERT(keysize == static_cast<EGLint>(angle::kProgramCacheControlKeySize));
 
     BlobCache::Key programHash;
-    ANGLE_UNSAFE_TODO(memcpy(programHash.data(), key, BlobCache::kKeyLength));
+    memcpy(programHash.data(), key, BlobCache::kKeyLength);
 
     if (!mMemoryProgramCache.putBinary(programHash, reinterpret_cast<const uint8_t *>(binary),
                                        static_cast<size_t>(binarysize)))

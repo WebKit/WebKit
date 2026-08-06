@@ -10,9 +10,9 @@ void InitReplay(void)
     // maxClientArraySize = 72
     // readBufferSize = 276
     // resourceIDBufferSize = 0
-    // contextID = 8
+    // contextID = 5
     // maxBuffer = 0
-    // maxContext = 8
+    // maxContext = 5
     // maxFenceNV = 0
     // maxFramebuffer = 2
     // maxImage = 3
@@ -29,7 +29,7 @@ void InitReplay(void)
     // maxTransformFeedback = 0
     // maxVertexArray = 0
     // maxegl_Sync = 0
-    InitializeReplay5("CapturedTest_ExternalAHB_ES3_Vulkan.angledata", 72, 276, 0, 8, 0, 8, 0, 2, 3, 0, 0, 0, 0, 0, 0, 5, 1, 0, 1, 0, 0, 0);
+    InitializeReplay5("CapturedTest_ExternalAHB_ES3_Vulkan.angledata", 72, 276, 0, 5, 0, 5, 0, 2, 3, 0, 0, 0, 0, 0, 0, 5, 1, 0, 1, 0, 0, 0);
     InitializeBinaryDataLoader();
 }
 

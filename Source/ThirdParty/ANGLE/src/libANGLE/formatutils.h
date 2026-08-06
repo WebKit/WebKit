@@ -9,10 +9,13 @@
 #ifndef LIBANGLE_FORMATUTILS_H_
 #define LIBANGLE_FORMATUTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <stdint.h>
 #include <cstddef>
 #include <ostream>
-#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/android_util.h"
@@ -433,15 +436,15 @@ ANGLE_INLINE angle::FormatID GetVertexFormatID(VertexAttribType type,
     int index = static_cast<int>(type);
     if (pureInteger)
     {
-        result = ANGLE_UNSAFE_TODO(kVertexFormatPureInteger[index][components - 1]);
+        result = kVertexFormatPureInteger[index][components - 1];
     }
     else if (normalized)
     {
-        result = ANGLE_UNSAFE_TODO(kVertexFormatNormalized[index][components - 1]);
+        result = kVertexFormatNormalized[index][components - 1];
     }
     else
     {
-        result = ANGLE_UNSAFE_TODO(kVertexFormatScaled[index][components - 1]);
+        result = kVertexFormatScaled[index][components - 1];
     }
 
     ASSERT(result != angle::FormatID::NONE);

@@ -637,11 +637,14 @@ ANGLE_INLINE bool ValidateColorMasksForSharedExponentColorBuffers(const BlendSta
 {
     // Get a mask of draw buffers that have color writemasks
     // incompatible with shared exponent color buffers.
-    // The compatible writemasks are RGBA and 0000.
+    // The compatible writemasks are RGBA, RGB0, 000A, 0000.
+    const BlendStateExt::ColorMaskStorage::Type rgbEnabledBits =
+        blendState.expandColorMaskValue(true, true, true, false);
+    const BlendStateExt::ColorMaskStorage::Type colorMaskNoAlphaBits =
+        blendState.getColorMaskBits() & rgbEnabledBits;
     const DrawBufferMask incompatibleDiffMask =
-        BlendStateExt::ColorMaskStorage::GetDiffMask(blendState.getColorMaskBits(), 0) &
-        BlendStateExt::ColorMaskStorage::GetDiffMask(blendState.getColorMaskBits(),
-                                                     blendState.getAllColorMaskBits());
+        BlendStateExt::ColorMaskStorage::GetDiffMask(colorMaskNoAlphaBits, 0) &
+        BlendStateExt::ColorMaskStorage::GetDiffMask(colorMaskNoAlphaBits, rgbEnabledBits);
 
     const DrawBufferMask sharedExponentBufferMask =
         framebuffer->getActiveSharedExponentColorAttachmentDrawBufferMask();

@@ -6,8 +6,11 @@
 
 // RendererGL.cpp: Implements the class methods for RendererGL.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/gl/RendererGL.h"
-#include "common/unsafe_buffers.h"
 
 #include <EGL/eglext.h>
 #include <thread>
@@ -99,7 +102,7 @@ static void INTERNAL_GL_APIENTRY LogGLDebugMessage(GLenum source,
     {
         for (const char *&err : kIgnoredErrors)
         {
-            if (ANGLE_UNSAFE_TODO(strncmp(err, message, length)) == 0)
+            if (strncmp(err, message, length) == 0)
             {
                 // There is only one ignored message right now and it is quite spammy, around 3MB
                 // for a complete end2end tests run, so don't print it even as a warning.
@@ -125,7 +128,7 @@ static void INTERNAL_GL_APIENTRY LogGLDebugMessage(GLenum source,
 
         for (const char *&warn : kIgnoredWarnings)
         {
-            if (ANGLE_UNSAFE_TODO(strstr(message, warn)) != nullptr)
+            if (strstr(message, warn) != nullptr)
             {
                 return;
             }

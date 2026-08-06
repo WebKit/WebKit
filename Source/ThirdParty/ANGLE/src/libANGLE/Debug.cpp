@@ -4,10 +4,13 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Debug.cpp: Defines debug state used for GL_KHR_debug
 
 #include "libANGLE/Debug.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 
@@ -250,37 +253,36 @@ size_t Debug::getMessages(GLuint count,
                 break;
             }
 
-            std::copy(m.message.begin(), m.message.end(),
-                      ANGLE_UNSAFE_TODO(messageLog + messageStringIndex));
+            std::copy(m.message.begin(), m.message.end(), messageLog + messageStringIndex);
             messageStringIndex += m.message.length();
 
-            ANGLE_UNSAFE_TODO(messageLog[messageStringIndex]) = '\0';
+            messageLog[messageStringIndex] = '\0';
             messageStringIndex += 1;
         }
 
         if (sources != nullptr)
         {
-            ANGLE_UNSAFE_TODO(sources[messageCount]) = m.source;
+            sources[messageCount] = m.source;
         }
 
         if (types != nullptr)
         {
-            ANGLE_UNSAFE_TODO(types[messageCount]) = m.type;
+            types[messageCount] = m.type;
         }
 
         if (ids != nullptr)
         {
-            ANGLE_UNSAFE_TODO(ids[messageCount]) = m.id;
+            ids[messageCount] = m.id;
         }
 
         if (severities != nullptr)
         {
-            ANGLE_UNSAFE_TODO(severities[messageCount]) = m.severity;
+            severities[messageCount] = m.severity;
         }
 
         if (lengths != nullptr)
         {
-            ANGLE_UNSAFE_TODO(lengths[messageCount]) = static_cast<GLsizei>(m.message.length()) + 1;
+            lengths[messageCount] = static_cast<GLsizei>(m.message.length()) + 1;
         }
 
         mMessages.pop_front();

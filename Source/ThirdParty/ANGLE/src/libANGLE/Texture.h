@@ -219,10 +219,6 @@ class TextureState final : private angle::NonCopyable
     {
         return mEGLImageSourceAttributes.toSourceLayer(layer);
     }
-    SourceLayer toSourceDepth(const Offset &offset) const
-    {
-        return mEGLImageSourceAttributes.toSourceDepth(offset);
-    }
 
   private:
     // Texture needs access to the ImageDesc functions.

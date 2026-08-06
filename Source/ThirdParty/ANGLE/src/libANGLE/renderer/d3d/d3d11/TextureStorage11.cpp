@@ -8,8 +8,11 @@
 // classes TextureStorage11_2D and TextureStorage11_Cube, which act as the interface to the D3D11
 // texture.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/TextureStorage11.h"
-#include "common/unsafe_buffers.h"
 
 #include <tuple>
 
@@ -855,14 +858,13 @@ angle::Result TextureStorage11::setData(const gl::Context *context,
             context11,
             context->getScratchBuffer(checkedNeededSize.ValueOrDie<size_t>(), &conversionBuffer));
         loadFunctionInfo.loadFunction(mRenderer->getDisplay()->getImageLoadContext(), width, height,
-                                      depth, ANGLE_UNSAFE_TODO(pixelData + srcSkipBytes),
-                                      srcRowPitch, srcDepthPitch, conversionBuffer->data(),
-                                      bufferRowPitch, bufferDepthPitch);
+                                      depth, pixelData + srcSkipBytes, srcRowPitch, srcDepthPitch,
+                                      conversionBuffer->data(), bufferRowPitch, bufferDepthPitch);
         data = conversionBuffer->data();
     }
     else
     {
-        data             = ANGLE_UNSAFE_TODO(pixelData + srcSkipBytes);
+        data             = pixelData + srcSkipBytes;
         bufferRowPitch   = srcRowPitch;
         bufferDepthPitch = srcDepthPitch;
     }

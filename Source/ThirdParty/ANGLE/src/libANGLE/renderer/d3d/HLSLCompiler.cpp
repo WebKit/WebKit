@@ -4,8 +4,11 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/HLSLCompiler.h"
-#include "common/unsafe_buffers.h"
 
 #include <sstream>
 
@@ -128,7 +131,7 @@ angle::Result HLSLCompiler::ensureInitialized(d3d::Context *context)
 
     for (size_t i = 0; i < ArraySize(d3dCompilerNames); ++i)
     {
-        if (GetModuleHandleExA(0, ANGLE_UNSAFE_TODO(d3dCompilerNames[i]), &mD3DCompilerModule))
+        if (GetModuleHandleExA(0, d3dCompilerNames[i], &mD3DCompilerModule))
         {
             break;
         }
@@ -308,11 +311,9 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
             (*outDebugInfo) += "// Compiler configuration: " + configs[i].name + "\n// Flags:\n";
             for (size_t fIx = 0; fIx < ArraySize(CompilerFlagInfos); ++fIx)
             {
-                if (IsCompilerFlagSet(configs[i].flags,
-                                      ANGLE_UNSAFE_TODO(CompilerFlagInfos[fIx]).mFlag))
+                if (IsCompilerFlagSet(configs[i].flags, CompilerFlagInfos[fIx].mFlag))
                 {
-                    (*outDebugInfo) +=
-                        std::string("// ") + ANGLE_UNSAFE_TODO(CompilerFlagInfos[fIx]).mName + "\n";
+                    (*outDebugInfo) += std::string("// ") + CompilerFlagInfos[fIx].mName + "\n";
                 }
             }
 
@@ -323,8 +324,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
             }
             else
             {
-                for (const D3D_SHADER_MACRO *mIt = macros; mIt->Name != nullptr;
-                     ANGLE_UNSAFE_TODO(++mIt))
+                for (const D3D_SHADER_MACRO *mIt = macros; mIt->Name != nullptr; ++mIt)
                 {
                     (*outDebugInfo) +=
                         std::string("// ") + mIt->Name + " : " + mIt->Definition + "\n";

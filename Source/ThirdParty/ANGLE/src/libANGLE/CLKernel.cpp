@@ -6,8 +6,11 @@
 // CLKernel.cpp: Implements the cl::Kernel class.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/CLKernel.h"
-#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLProgram.h"
@@ -77,7 +80,7 @@ angle::Result Kernel::getInfo(KernelInfo name,
         }
         if (copyValue != nullptr)
         {
-            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
+            std::memcpy(value, copyValue, copySize);
         }
     }
     if (valueSizeRet != nullptr)
@@ -153,7 +156,7 @@ angle::Result Kernel::getWorkGroupInfo(cl_device_id device,
         }
         if (copyValue != nullptr)
         {
-            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
+            std::memcpy(value, copyValue, copySize);
         }
     }
     if (valueSizeRet != nullptr)
@@ -249,7 +252,7 @@ angle::Result Kernel::getSubWorkGroupInfo(cl_device_id device,
     {
         // paramValue needs to be at least as big as copySize
         ASSERT(paramValueSize >= copySize);
-        ANGLE_UNSAFE_TODO(std::memcpy(paramValue, copyValue, copySize));
+        std::memcpy(paramValue, copyValue, copySize);
     }
     if (paramValueSizeRet != nullptr)
     {
@@ -305,7 +308,7 @@ angle::Result Kernel::getArgInfo(cl_uint argIndex,
         }
         if (copyValue != nullptr)
         {
-            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
+            std::memcpy(value, copyValue, copySize);
         }
     }
     if (valueSizeRet != nullptr)

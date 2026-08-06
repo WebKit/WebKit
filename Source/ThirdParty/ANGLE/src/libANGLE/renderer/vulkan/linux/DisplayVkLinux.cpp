@@ -7,8 +7,11 @@
 //    Implements the class methods for DisplayVkLinux.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/vulkan/linux/DisplayVkLinux.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/linux/dma_buf_utils.h"
 #include "libANGLE/renderer/vulkan/linux/DeviceVkLinux.h"
@@ -205,8 +208,7 @@ egl::Error DisplayVkLinux::queryDmaBufModifiers(EGLint drmFormat,
     if (maxModifiers > 0)
     {
         maxModifiers = std::min(maxModifiers, drmModifiersSize);
-        ANGLE_UNSAFE_TODO(
-            std::memcpy(modifiers, drmModifiers.data(), maxModifiers * sizeof(drmModifiers[0])));
+        std::memcpy(modifiers, drmModifiers.data(), maxModifiers * sizeof(drmModifiers[0]));
     }
 
     return egl::NoError();

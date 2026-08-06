@@ -10,6 +10,10 @@
 #ifndef COMMON_POOLALLOC_H_
 #define COMMON_POOLALLOC_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // This include MUST precede the ANGLE_WITH_ASAN / ANGLE_WITH_TSAN check below
 // to define those macros.
 #include "common/platform.h"

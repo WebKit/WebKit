@@ -9,9 +9,12 @@
 #ifndef COMMON_COLOR_H_
 #define COMMON_COLOR_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cstdint>
 #include <cstring>
-#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 
@@ -27,18 +30,13 @@ struct Color
     const T *data() const { return &red; }
     T *ptr() { return &red; }
 
-    static Color fromData(const T *data)
-    {
-        return ANGLE_UNSAFE_TODO(Color(data[0], data[1], data[2], data[3]));
-    }
+    static Color fromData(const T *data) { return Color(data[0], data[1], data[2], data[3]); }
     void writeData(T *data) const
     {
         data[0] = red;
-        ANGLE_UNSAFE_TODO({
-            data[1] = green;
-            data[2] = blue;
-            data[3] = alpha;
-        })
+        data[1] = green;
+        data[2] = blue;
+        data[3] = alpha;
     }
 
     T red;

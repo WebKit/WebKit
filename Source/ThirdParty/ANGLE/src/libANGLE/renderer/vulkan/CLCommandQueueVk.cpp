@@ -6,11 +6,14 @@
 // CLCommandQueueVk.cpp: Implements the class methods for CLCommandQueueVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/PackedCLEnums_autogen.h"
 #include "common/SimpleMutex.h"
 #include "common/log_utils.h"
 #include "common/system_utils.h"
-#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
@@ -1306,8 +1309,8 @@ angle::Result CLCommandQueueVk::enqueueNDRangeKernel(const cl::Kernel &kernel,
     const uint32_t *maxComputeWorkGroupCount =
         mContext->getRenderer()->getPhysicalDeviceProperties().limits.maxComputeWorkGroupCount;
     for (cl::NDRange &uniformRegion : enqueueNDRange.createUniformRegions(
-             {maxComputeWorkGroupCount[0], ANGLE_UNSAFE_TODO(maxComputeWorkGroupCount[1]),
-              ANGLE_UNSAFE_TODO(maxComputeWorkGroupCount[2])}))
+             {maxComputeWorkGroupCount[0], maxComputeWorkGroupCount[1],
+              maxComputeWorkGroupCount[2]}))
     {
         cl::WorkgroupCount uniformRegionWorkgroupCount = uniformRegion.getWorkgroupCount();
         const VkPushConstantRange *pushConstantRegionOffset =
@@ -1853,7 +1856,7 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
                     // for the argument declared as a pointer to global or constant memory in the
                     // kernel.
                     uint64_t null = 0;
-                    ANGLE_UNSAFE_TODO(std::memcpy(argPushConstOrigin, &null, arg.handleSize));
+                    std::memcpy(argPushConstOrigin, &null, arg.handleSize);
                 }
                 else
                 {
@@ -1864,7 +1867,7 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
 
                     uint64_t devAddr =
                         vkMem.getBuffer().getDeviceAddress(mContext) + vkMem.getOffset();
-                    ANGLE_UNSAFE_TODO(std::memcpy(argPushConstOrigin, &devAddr, arg.handleSize));
+                    std::memcpy(argPushConstOrigin, &devAddr, arg.handleSize);
                 }
 
                 mComputePassCommands->getCommandBuffer().pushConstants(
@@ -1985,7 +1988,7 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
         uint8_t *mapPointer = nullptr;
         ANGLE_TRY(vkMem.map(mapPointer, 0));
         // The spec calls out *The first 4 bytes of the buffer should be zero-initialized.*
-        ANGLE_UNSAFE_TODO(memset(mapPointer, 0, 4));
+        memset(mapPointer, 0, 4);
 
         if (kernelVk.usesPrintfBufferPointerPushConstant())
         {

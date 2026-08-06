@@ -222,6 +222,7 @@ TEST_P(ContextLostSkipValidationTest, LostNoErrorGetProgram)
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(ContextLostTest,
                        WithRobustness(ES2_NULL()),
+                       WithRobustness(ES2_D3D9()),
                        WithRobustness(ES2_D3D11()),
                        WithRobustness(ES3_D3D11()),
                        WithRobustness(ES2_VULKAN()),
@@ -231,6 +232,7 @@ ANGLE_INSTANTIATE_TEST(ContextLostTest,
 
 ANGLE_INSTANTIATE_TEST(ContextLostSkipValidationTest,
                        WithRobustness(ES2_NULL()),
+                       WithRobustness(ES2_D3D9()),
                        WithRobustness(ES2_D3D11()),
                        WithRobustness(ES3_D3D11()),
                        WithRobustness(ES2_VULKAN()),

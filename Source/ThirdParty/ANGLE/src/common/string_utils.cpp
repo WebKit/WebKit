@@ -7,8 +7,11 @@
 //   String helper functions.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/string_utils.h"
-#include "common/unsafe_buffers.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -29,8 +32,7 @@ bool EndsWithSuffix(const char *str,
                     const char *suffix,
                     const size_t suffixLen)
 {
-    return suffixLen <= strLen &&
-           ANGLE_UNSAFE_TODO(strncmp(str + strLen - suffixLen, suffix, suffixLen)) == 0;
+    return suffixLen <= strLen && strncmp(str + strLen - suffixLen, suffix, suffixLen) == 0;
 }
 
 }  // anonymous namespace
@@ -161,8 +163,7 @@ bool HexStringToUInt(const std::string_view &input, unsigned int *uintOut)
 
     std::string_view inputWithOffset = input.substr(offset);
     const auto result                = std::from_chars(
-        inputWithOffset.data(), ANGLE_UNSAFE_TODO(inputWithOffset.data() + inputWithOffset.size()),
-        *uintOut, 16);
+        inputWithOffset.data(), inputWithOffset.data() + inputWithOffset.size(), *uintOut, 16);
     if (result.ec != std::errc{})
     {
         return false;
@@ -170,7 +171,7 @@ bool HexStringToUInt(const std::string_view &input, unsigned int *uintOut)
 
     // A successful conversion should consume the entire input string view.
     // If result.ptr is not at the end, it means there were extra characters.
-    if (result.ptr != ANGLE_UNSAFE_TODO(inputWithOffset.data() + inputWithOffset.size()))
+    if (result.ptr != inputWithOffset.data() + inputWithOffset.size())
     {
         return false;
     }
@@ -197,22 +198,22 @@ bool ReadFileToString(const std::string &path, std::string *stringOut)
 
 bool BeginsWith(const std::string &str, const std::string &prefix)
 {
-    return ANGLE_UNSAFE_TODO(strncmp(str.c_str(), prefix.c_str(), prefix.length())) == 0;
+    return strncmp(str.c_str(), prefix.c_str(), prefix.length()) == 0;
 }
 
 bool BeginsWith(const std::string &str, const char *prefix)
 {
-    return ANGLE_UNSAFE_TODO(strncmp(str.c_str(), prefix, strlen(prefix))) == 0;
+    return strncmp(str.c_str(), prefix, strlen(prefix)) == 0;
 }
 
 bool BeginsWith(const char *str, const char *prefix)
 {
-    return ANGLE_UNSAFE_TODO(strncmp(str, prefix, strlen(prefix))) == 0;
+    return strncmp(str, prefix, strlen(prefix)) == 0;
 }
 
 bool BeginsWith(const std::string &str, const std::string &prefix, const size_t prefixLength)
 {
-    return ANGLE_UNSAFE_TODO(strncmp(str.c_str(), prefix.c_str(), prefixLength)) == 0;
+    return strncmp(str.c_str(), prefix.c_str(), prefixLength) == 0;
 }
 
 bool EndsWith(const std::string &str, const std::string &suffix)
@@ -341,22 +342,22 @@ std::vector<std::string> GetCachedStringsFromEnvironmentVarOrAndroidProperty(
 bool NamesMatchWithWildcard(const char *glob, const char *name)
 {
     // Find the first * in glob.
-    const char *firstWildcard = ANGLE_UNSAFE_TODO(strchr(glob, '*'));
+    const char *firstWildcard = strchr(glob, '*');
 
     // If there are no wildcards, match the strings precisely.
     if (firstWildcard == nullptr)
     {
-        return ANGLE_UNSAFE_TODO(strcmp(glob, name)) == 0;
+        return strcmp(glob, name) == 0;
     }
 
     // Otherwise, match up to the wildcard first.
     size_t preWildcardLen = firstWildcard - glob;
-    if (ANGLE_UNSAFE_TODO(strncmp(glob, name, preWildcardLen)) != 0)
+    if (strncmp(glob, name, preWildcardLen) != 0)
     {
         return false;
     }
 
-    const char *postWildcardRef = ANGLE_UNSAFE_TODO(glob + preWildcardLen + 1);
+    const char *postWildcardRef = glob + preWildcardLen + 1;
 
     // As a small optimization, if the wildcard is the last character in glob, accept the match
     // already.
@@ -366,9 +367,9 @@ bool NamesMatchWithWildcard(const char *glob, const char *name)
     }
 
     // Try to match the wildcard with a number of characters.
-    for (size_t matchSize = 0; ANGLE_UNSAFE_TODO(name[matchSize]) != '\0'; ++matchSize)
+    for (size_t matchSize = 0; name[matchSize] != '\0'; ++matchSize)
     {
-        if (NamesMatchWithWildcard(postWildcardRef, ANGLE_UNSAFE_TODO(name + matchSize)))
+        if (NamesMatchWithWildcard(postWildcardRef, name + matchSize))
         {
             return true;
         }

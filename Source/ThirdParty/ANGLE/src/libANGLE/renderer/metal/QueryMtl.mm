@@ -7,8 +7,11 @@
 //    Defines the class interface for QueryMtl, implementing QueryImpl.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/QueryMtl.h"
-#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/metal/ContextMtl.h"
 
@@ -126,7 +129,7 @@ angle::Result QueryMtl::waitAndGetResult(const gl::Context *context, T *params)
             const uint8_t *visibilityResultBytes =
                 mVisibilityResultBuffer->mapReadOnly(contextMtl).data();
             uint64_t queryResult;
-            ANGLE_UNSAFE_TODO(memcpy(&queryResult, visibilityResultBytes, sizeof(queryResult)));
+            memcpy(&queryResult, visibilityResultBytes, sizeof(queryResult));
             mVisibilityResultBuffer->unmap(contextMtl);
 
             *params = queryResult ? GL_TRUE : GL_FALSE;

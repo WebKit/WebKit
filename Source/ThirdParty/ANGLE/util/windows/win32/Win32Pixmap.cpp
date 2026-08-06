@@ -6,6 +6,10 @@
 
 // Win32Pixmap.cpp: Implementation of OSPixmap for Win32 (Windows)
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "util/windows/win32/Win32Pixmap.h"
 
 Win32Pixmap::Win32Pixmap() : mBitmap(nullptr) {}

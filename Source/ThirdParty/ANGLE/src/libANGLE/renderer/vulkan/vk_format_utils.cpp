@@ -6,8 +6,11 @@
 // vk_format_utils:
 //   Helper for Vulkan format code.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
-#include "common/unsafe_buffers.h"
 
 #include "image_util/loadimage.h"
 #include "libANGLE/Texture.h"
@@ -114,8 +117,8 @@ int FindSupportedFormat(vk::Renderer *renderer,
 
     for (int i = static_cast<int>(skip); i < numInfo; ++i)
     {
-        ANGLE_UNSAFE_TODO(ASSERT(info[i].format != angle::FormatID::NONE));
-        if (hasSupport(renderer, ANGLE_UNSAFE_TODO(info[i]).format))
+        ASSERT(info[i].format != angle::FormatID::NONE);
+        if (hasSupport(renderer, info[i].format))
         {
             return i;
         }
@@ -171,8 +174,8 @@ void Format::initImageFallback(Renderer *renderer, const ImageFormatInitInfo *in
     }
 
     int i = FindSupportedFormat(renderer, info, skip, static_cast<uint32_t>(numInfo), testFunction);
-    mActualSampleOnlyImageFormatID = ANGLE_UNSAFE_TODO(info[i]).format;
-    mImageInitializerFunction      = ANGLE_UNSAFE_TODO(info[i]).initializer;
+    mActualSampleOnlyImageFormatID = info[i].format;
+    mImageInitializerFunction      = info[i].initializer;
 
     // Set renderable format.
     if (testFunction != HasNonFilterableTextureFormatSupport &&
@@ -187,7 +190,7 @@ void Format::initImageFallback(Renderer *renderer, const ImageFormatInitInfo *in
         // Compressed textures also need to perform this check.
         testFunction = HasFullTextureFormatSupport;
         i = FindSupportedFormat(renderer, info, skip, static_cast<uint32_t>(numInfo), testFunction);
-        mActualRenderableImageFormatID = ANGLE_UNSAFE_TODO(info[i]).format;
+        mActualRenderableImageFormatID = info[i].format;
     }
 }
 
@@ -201,10 +204,10 @@ void Format::initBufferFallback(Renderer *renderer,
         int i       = FindSupportedFormat(renderer, info, skip, compressedStartIndex,
                                           HasFullBufferFormatSupport);
 
-        mActualBufferFormatID         = ANGLE_UNSAFE_TODO(info[i]).format;
-        mVkBufferFormatIsPacked       = ANGLE_UNSAFE_TODO(info[i]).vkFormatIsPacked;
-        mVertexLoadFunction           = ANGLE_UNSAFE_TODO(info[i]).vertexLoadFunction;
-        mVertexLoadRequiresConversion = ANGLE_UNSAFE_TODO(info[i]).vertexLoadRequiresConversion;
+        mActualBufferFormatID         = info[i].format;
+        mVkBufferFormatIsPacked       = info[i].vkFormatIsPacked;
+        mVertexLoadFunction           = info[i].vertexLoadFunction;
+        mVertexLoadRequiresConversion = info[i].vertexLoadRequiresConversion;
     }
 }
 
@@ -661,9 +664,8 @@ static constexpr angle::FormatID kEtcToBcFormatMapping[] = {
 angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID)
 {
     ASSERT(IsETCFormat(formatID));
-    return ANGLE_UNSAFE_TODO(
-        kEtcToBcFormatMapping)[static_cast<uint32_t>(formatID) -
-                               static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)];
+    return kEtcToBcFormatMapping[static_cast<uint32_t>(formatID) -
+                                 static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)];
 }
 
 VkFormat AdjustASTCFormatForHDR(const vk::Renderer *renderer, VkFormat vkFormat)

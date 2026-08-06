@@ -6,8 +6,11 @@
 // CLDeviceVk.cpp: Implements the class methods for CLDeviceVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
-#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
@@ -132,7 +135,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::LatestConformanceVersionPassed, std::string("FIXME")}};
     mInfoSizeT = {
         {cl::DeviceInfo::MaxWorkGroupSize, props.limits.maxComputeWorkGroupInvocations},
-        {cl::DeviceInfo::MaxGlobalVariableSize, 0},
+        {cl::DeviceInfo::MaxGlobalVariableSize, 1024 * 1024 * 1024},
         {cl::DeviceInfo::GlobalVariablePreferredTotalSize, 0},
 
         // TODO(aannestrand) Update these hardcoded platform/device queries
@@ -494,7 +497,7 @@ angle::Result CLDeviceVk::getInfoString(cl::DeviceInfo name, size_t size, char *
 {
     if (mInfoString.count(name))
     {
-        ANGLE_UNSAFE_TODO(std::strcpy(value, mInfoString.at(name).c_str()));
+        std::strcpy(value, mInfoString.at(name).c_str());
         return angle::Result::Continue;
     }
     ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);

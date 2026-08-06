@@ -8,10 +8,13 @@
 //      to respective MTLPixelFormat and MTLVertexFormat.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
 
 #include "common/debug.h"
-#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/load_functions_table.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
@@ -266,7 +269,7 @@ const VertexFormat &FormatTable::getVertexFormat(angle::FormatID angleFormatId,
                                                  bool tightlyPacked) const
 {
     auto tableIdx = tightlyPacked ? 1 : 0;
-    return ANGLE_UNSAFE_TODO(mVertexFormatTables[tableIdx][static_cast<size_t>(angleFormatId)]);
+    return mVertexFormatTables[tableIdx][static_cast<size_t>(angleFormatId)];
 }
 
 void FormatTable::setFormatCaps(MTLPixelFormat formatId, const FormatCaps &caps)

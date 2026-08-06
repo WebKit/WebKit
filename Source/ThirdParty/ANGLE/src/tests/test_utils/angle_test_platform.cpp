@@ -26,6 +26,12 @@ bool IsD3D11()
     return (rendererString.find("Direct3D11 vs_5_0") != std::string::npos);
 }
 
+bool IsD3D9()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("Direct3D9") != std::string::npos);
+}
+
 bool IsDesktopOpenGL()
 {
     return IsOpenGL() && !IsOpenGLES();
@@ -65,7 +71,7 @@ bool IsMetal()
 
 bool IsD3D()
 {
-    return IsD3D11();
+    return IsD3D9() || IsD3D11();
 }
 
 bool IsWebGPU()

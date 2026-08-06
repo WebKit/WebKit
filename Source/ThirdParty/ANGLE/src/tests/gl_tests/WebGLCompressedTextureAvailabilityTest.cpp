@@ -54,7 +54,15 @@ TEST_P(WebGLCompressedTextureAvailabilityTest, Test)
         EXPECT_TRUE(EnsureGLExtensionEnabled(kDXT5));
         EXPECT_TRUE(EnsureGLExtensionEnabled(kS3TCSRGB));
 
-        EXPECT_TRUE(EnsureGLExtensionEnabled(kRGTC));
+        if (IsD3D9())
+        {
+            EXPECT_FALSE(EnsureGLExtensionEnabled(kRGTC));
+            EXPECT_FALSE(EnsureGLExtensionEnabled(kBPTC));
+        }
+        else
+        {
+            EXPECT_TRUE(EnsureGLExtensionEnabled(kRGTC));
+        }
 
         EXPECT_FALSE(EnsureGLExtensionEnabled(kETC1));
         EXPECT_FALSE(EnsureGLExtensionEnabled(kETC1Sub));

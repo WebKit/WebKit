@@ -7,7 +7,10 @@
 //   Pointer parameter capture functions for the OpenGL ES 3.0 entry points.
 //
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/capture/capture_gles_2_0_autogen.h"
 #include "libANGLE/capture/capture_gles_3_0_autogen.h"
 
@@ -522,7 +525,7 @@ void CaptureGetUniformIndices_uniformNames(const State &glState,
 {
     for (GLsizei index = 0; index < uniformCount; ++index)
     {
-        CaptureString(ANGLE_UNSAFE_TODO(uniformNames[index]), paramCapture);
+        CaptureString(uniformNames[index], paramCapture);
     }
 }
 
@@ -682,7 +685,7 @@ void CaptureTransformFeedbackVaryings_varyings(const State &glState,
 {
     for (GLsizei index = 0; index < count; ++index)
     {
-        CaptureString(ANGLE_UNSAFE_TODO(varyings[index]), paramCapture);
+        CaptureString(varyings[index], paramCapture);
     }
 }
 

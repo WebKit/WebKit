@@ -6,8 +6,11 @@
 // CLKernelVk.cpp: Implements the class methods for CLKernelVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "common/PackedEnums.h"
-#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
@@ -256,7 +259,7 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
                 if (argSize > 0 && argValue != nullptr)
                 {
                     // Copy the contents since app is free to delete/reassign the contents after
-                    ANGLE_UNSAFE_TODO(memcpy(arg.handle, argValue, arg.handleSize));
+                    memcpy(arg.handle, argValue, arg.handleSize);
                 }
                 break;
             case NonSemanticClspvReflectionArgumentPodUniform:

@@ -7,8 +7,11 @@
 //    Implements the class methods for BufferVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/BufferVk.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/FixedVector.h"
 #include "common/debug.h"
@@ -767,26 +770,25 @@ angle::Result BufferVk::ghostMappedBuffer(ContextVk *contextVk,
     {
         if (offset != 0)
         {
-            ANGLE_UNSAFE_TODO(memcpy(dstMapPtr, srcMapPtr, static_cast<size_t>(offset)));
+            memcpy(dstMapPtr, srcMapPtr, static_cast<size_t>(offset));
         }
         size_t totalSize      = static_cast<size_t>(mState.getSize());
         size_t remainingStart = static_cast<size_t>(offset + length);
         size_t remainingSize  = totalSize - remainingStart;
         if (remainingSize != 0)
         {
-            ANGLE_UNSAFE_TODO(
-                memcpy(dstMapPtr + remainingStart, srcMapPtr + remainingStart, remainingSize));
+            memcpy(dstMapPtr + remainingStart, srcMapPtr + remainingStart, remainingSize);
         }
     }
     else
     {
-        ANGLE_UNSAFE_TODO(memcpy(dstMapPtr, srcMapPtr, static_cast<size_t>(mState.getSize())));
+        memcpy(dstMapPtr, srcMapPtr, static_cast<size_t>(mState.getSize()));
     }
 
     ANGLE_TRY(contextVk->releaseBufferAllocation(&src));
 
     // Return the already mapped pointer with the offset adjustment to avoid the call to unmap().
-    *mapPtr = ANGLE_UNSAFE_TODO(dstMapPtr + offset);
+    *mapPtr = dstMapPtr + offset;
 
     return angle::Result::Continue;
 }
@@ -961,7 +963,7 @@ angle::Result BufferVk::getSubData(const gl::Context *context,
     ContextVk *contextVk = vk::GetImpl(context);
     void *mapPtr;
     ANGLE_TRY(mapRangeForReadAccessOnly(contextVk, offset, size, &mapPtr));
-    ANGLE_UNSAFE_TODO(memcpy(outData, mapPtr, size));
+    memcpy(outData, mapPtr, size);
     return unmapReadAccessOnly(contextVk);
 }
 
@@ -1050,7 +1052,7 @@ angle::Result BufferVk::directUpdate(ContextVk *contextVk,
         srcPointer = srcPointerMapped;
     }
 
-    ANGLE_UNSAFE_TODO(memcpy(dstPointer, srcPointer, size));
+    memcpy(dstPointer, srcPointer, size);
 
     // External memory may end up with noncoherent
     if (!mBuffer.isCoherent())
@@ -1088,7 +1090,7 @@ angle::Result BufferVk::stagedUpdate(ContextVk *contextVk,
         uint8_t *mapPointer = nullptr;
         ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedNonCoherent, size,
                                      &mapPointer));
-        ANGLE_UNSAFE_TODO(memcpy(mapPointer, dataSource.data, size));
+        memcpy(mapPointer, dataSource.data, size);
         ANGLE_TRY(flushStagingBuffer(contextVk, offset, size));
         mIsStagingBufferMapped = false;
     }
@@ -1162,7 +1164,7 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
             ANGLE_TRY(prevBuffer.map(contextVk, &mapPointer));
             ASSERT(mapPointer);
             prevMapPtrBeforeSubData = mapPointer;
-            prevMapPtrAfterSubData  = ANGLE_UNSAFE_TODO(mapPointer + offsetAfterSubdata);
+            prevMapPtrAfterSubData  = mapPointer + offsetAfterSubdata;
         }
     }
 

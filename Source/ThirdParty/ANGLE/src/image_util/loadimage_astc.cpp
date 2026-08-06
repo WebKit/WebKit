@@ -4,9 +4,12 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // loadimage_astc.cpp: Decodes ASTC encoded textures.
 
-#include "common/unsafe_buffers.h"
 #include "image_util/AstcDecompressor.h"
 #include "image_util/loadimage.h"
 
@@ -53,10 +56,8 @@ void LoadASTCToRGBA8Inner(const ImageLoadContext &context,
             WARN() << "ASTC decompression failed: " << decompressor.getStatusString(result);
         }
 
-        ANGLE_UNSAFE_TODO({
-            input += inputDepthPitch;
-            output += outputDepthPitch;
-        })
+        input += inputDepthPitch;
+        output += outputDepthPitch;
     }
 }
 }  // namespace angle

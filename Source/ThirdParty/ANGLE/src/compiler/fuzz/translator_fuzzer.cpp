@@ -6,12 +6,15 @@
 
 // translator_fuzzer.cpp: A libfuzzer fuzzer for the shader translator.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "anglebase/no_destructor.h"
@@ -64,19 +67,18 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     }
 
     // Make sure the rest of data will be a valid C string so that we don't have to copy it.
-    if (ANGLE_UNSAFE_TODO(data[size - 1]) != 0)
+    if (data[size - 1] != 0)
     {
         return 0;
     }
 
-    ANGLE_UNSAFE_TODO(memcpy(&header, data, sizeof(header)));
+    memcpy(&header, data, sizeof(header));
     ShCompileOptions options{};
-    ANGLE_UNSAFE_TODO(
-        memcpy(&options, &header.basicCompileOptions, offsetof(ShCompileOptions, metal)));
-    ANGLE_UNSAFE_TODO(memcpy(&options.metal, &header.metalCompileOptions, sizeof(options.metal)));
-    ANGLE_UNSAFE_TODO(memcpy(&options.pls, &header.plsCompileOptions, sizeof(options.pls)));
+    memcpy(&options, &header.basicCompileOptions, offsetof(ShCompileOptions, metal));
+    memcpy(&options.metal, &header.metalCompileOptions, sizeof(options.metal));
+    memcpy(&options.pls, &header.plsCompileOptions, sizeof(options.pls));
     size -= sizeof(header);
-    ANGLE_UNSAFE_TODO(data += sizeof(header));
+    data += sizeof(header);
     uint32_t type = header.type;
     uint32_t spec = header.spec;
 
@@ -261,7 +263,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     // The string is written char-by-char and unwanted characters are replaced with whitespace.
     // This is because characters such as \r can hide the shader contents.
     std::cerr << "\nCompile input with unprintable characters turned to whitespace:\n";
-    for (const char *c = shaderStrings[0]; *c; ANGLE_UNSAFE_TODO(++c))
+    for (const char *c = shaderStrings[0]; *c; ++c)
     {
         if (*c < ' ' && *c != '\n')
         {

@@ -7,7 +7,10 @@
 //   ANGLE Frame capture implementation for both GL and CL.
 //
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/capture/FrameCapture.h"
 
 #define USE_SYSTEM_ZLIB
@@ -42,12 +45,10 @@ void WriteInlineData<GLchar>(const std::vector<uint8_t> &vec, std::ostream &out)
 
     for (size_t dataIndex = 0; dataIndex < count; ++dataIndex)
     {
-        if (ANGLE_UNSAFE_TODO(data[dataIndex]) == '\0')
-        {
+        if (data[dataIndex] == '\0')
             break;
-        }
 
-        out << static_cast<GLchar>(ANGLE_UNSAFE_TODO(data[dataIndex]));
+        out << static_cast<GLchar>(data[dataIndex]);
     }
 
     out << "\"";
@@ -381,11 +382,11 @@ std::string GetDefaultOutDirectory()
     char applicationId[512];
     if (cmdline)
     {
-        ANGLE_UNSAFE_TODO(fread(applicationId, 1, sizeof(applicationId), cmdline));
+        fread(applicationId, 1, sizeof(applicationId), cmdline);
         fclose(cmdline);
 
         // Some package may have application id as <app_name>:<cmd_name>
-        char *colonSep = ANGLE_UNSAFE_TODO(strchr(applicationId, ':'));
+        char *colonSep = strchr(applicationId, ':');
         if (colonSep)
         {
             *colonSep = '\0';
@@ -1158,7 +1159,7 @@ void FrameCaptureShared::getOutputDirectory()
 void CaptureMemory(const void *source, size_t size, ParamCapture *paramCapture)
 {
     std::vector<uint8_t> data(size);
-    ANGLE_UNSAFE_TODO(memcpy(data.data(), source, size));
+    memcpy(data.data(), source, size);
     paramCapture->data.emplace_back(std::move(data));
 }
 

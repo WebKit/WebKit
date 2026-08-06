@@ -4,8 +4,11 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/wgsl/TranslatorWGSL.h"
-#include "common/unsafe_buffers.h"
 
 #include <iostream>
 #include <variant>
@@ -435,7 +438,7 @@ const TConstantUnion *OutputWGSLTraverser::emitConstantUnionArray(
     const size_t size)
 {
     const TConstantUnion *constUnionIterated = constUnion;
-    for (size_t i = 0; i < size; i++, ANGLE_UNSAFE_TODO(constUnionIterated++))
+    for (size_t i = 0; i < size; i++, constUnionIterated++)
     {
         emitSingleConstant(constUnionIterated);
 
@@ -1486,8 +1489,8 @@ bool OutputWGSLTraverser::visitSwitch(Visit, TIntermSwitch *switchNode)
                  nextCaseStmt++)
             {
             }
-            auto stmtListView = ANGLE_UNSAFE_TODO(angle::Span<TIntermNode *>(
-                &stmtList.getSequence()->at(currStmt), nextCaseStmt - currStmt));
+            angle::Span<TIntermNode *> stmtListView(&stmtList.getSequence()->at(currStmt),
+                                                    nextCaseStmt - currStmt);
             emitBlock(stmtListView);
             mSink << "\n";
 
@@ -1864,8 +1867,8 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
             ASSERT(pIndex == 1);
             const uint8_t vecSize = args[pIndex]->getAsTyped()->getNominalSize();
             ASSERT(vecSize == 3 || vecSize == 4);
-            projectionDivisionSwizzle = BuildConcatenatedImmutableString(
-                '.', ANGLE_UNSAFE_TODO(kPossibleElems[vecSize - 1]));
+            projectionDivisionSwizzle =
+                BuildConcatenatedImmutableString('.', kPossibleElems[vecSize - 1]);
         }
 
         // If sampling from an array, set the swizzle that extracts the array layer number from the
@@ -1890,8 +1893,7 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
                 elemIndex = 3;
             }
 
-            depthRefSwizzle =
-                BuildConcatenatedImmutableString('.', ANGLE_UNSAFE_TODO(kPossibleElems[elemIndex]));
+            depthRefSwizzle = BuildConcatenatedImmutableString('.', kPossibleElems[elemIndex]);
         }
 
         // Finally, set the swizzle for extracting coordinates from the p vector.
@@ -2196,8 +2198,8 @@ bool OutputWGSLTraverser::emitBlock(angle::Span<TIntermNode *> nodes)
 
 bool OutputWGSLTraverser::visitBlock(Visit, TIntermBlock *blockNode)
 {
-    return emitBlock(ANGLE_UNSAFE_TODO(
-        angle::Span(blockNode->getSequence()->data(), blockNode->getSequence()->size())));
+    return emitBlock(
+        angle::Span(blockNode->getSequence()->data(), blockNode->getSequence()->size()));
 }
 
 bool OutputWGSLTraverser::visitGlobalQualifierDeclaration(Visit,

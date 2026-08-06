@@ -7,6 +7,10 @@
 #ifndef COMPILER_TRANSLATOR_COMMON_H_
 #define COMPILER_TRANSLATOR_COMMON_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <stdio.h>
 #include <limits>
 #include <map>
@@ -16,7 +20,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "common/unsafe_buffers.h"
 
 #include "common/angleutils.h"
 #include "common/debug.h"
@@ -165,7 +168,7 @@ inline TString str(T i)
     ASSERT(std::numeric_limits<T>::is_integer);
     char buffer[((8 * sizeof(T)) / 3) + 3];
     const char *formatStr = std::numeric_limits<T>::is_signed ? "%d" : "%u";
-    ANGLE_UNSAFE_TODO(snprintf(buffer, sizeof(buffer), formatStr, i));
+    snprintf(buffer, sizeof(buffer), formatStr, i);
     return buffer;
 }
 
@@ -175,8 +178,8 @@ inline const char *AllocatePoolCharArray(const char *str, size_t strLength)
 {
     size_t requiredSize = strLength + 1;
     char *buffer        = static_cast<char *>(GetGlobalPoolAllocator()->allocate(requiredSize));
-    ANGLE_UNSAFE_TODO(memcpy(buffer, str, requiredSize));
-    ANGLE_UNSAFE_TODO(ASSERT(buffer[strLength] == '\0'));
+    memcpy(buffer, str, requiredSize);
+    ASSERT(buffer[strLength] == '\0');
     return buffer;
 }
 

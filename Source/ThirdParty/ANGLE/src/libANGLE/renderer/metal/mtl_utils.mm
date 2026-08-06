@@ -8,6 +8,10 @@
 //    to Metal enums and so on.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_utils.h"
 
 #include <Availability.h>
@@ -17,7 +21,6 @@
 #include "common/MemoryBuffer.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
-#include "common/unsafe_buffers.h"
 #include "gpu_info_util/SystemInfo_internal.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -47,7 +50,7 @@ bool IsFrameCaptureEnabled()
     // environment flag is set. Otherwise, it will slow down the rendering. This allows user to
     // finely control whether they want to capture the frame for particular application or not.
     auto var                  = std::getenv("ANGLE_METAL_FRAME_CAPTURE");
-    static const bool enabled = var ? ANGLE_UNSAFE_TODO((strcmp(var, "1") == 0)) : false;
+    static const bool enabled = var ? (strcmp(var, "1") == 0) : false;
 
     return enabled;
 #endif
@@ -99,7 +102,7 @@ bool FrameCaptureDeviceScope()
     return false;
 #else
     auto var                      = std::getenv("ANGLE_METAL_FRAME_CAPTURE_SCOPE");
-    static const bool scopeDevice = var ? ANGLE_UNSAFE_TODO((strcmp(var, "device") == 0)) : false;
+    static const bool scopeDevice = var ? (strcmp(var, "device") == 0) : false;
 
     return scopeDevice;
 #endif
@@ -520,7 +523,7 @@ angle::Result InitializeTextureContents(const gl::Context *context,
             angle::MemoryBuffer srcRow;
             ANGLE_CHECK_GL_ALLOC(contextMtl, srcRow.resize(srcRowPitch));
             uint8_t fillValue = toNonZero ? 0x55 : 0;
-            ANGLE_UNSAFE_TODO(memset(srcRow.data(), fillValue, srcRowPitch));
+            memset(srcRow.data(), fillValue, srcRowPitch);
 
             CopyImageCHROMIUM(srcRow.data(), srcRowPitch, srcFormat.pixelBytes, 0,
                               srcFormat.pixelReadFunction, conversionRow.data(), dstRowPitch,

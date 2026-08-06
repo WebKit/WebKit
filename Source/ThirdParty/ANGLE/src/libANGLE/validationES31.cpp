@@ -6,7 +6,10 @@
 
 // validationES31.cpp: Validation functions for OpenGL ES 3.1 entry point parameters
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/validationES31_autogen.h"
 
 #include "libANGLE/Context.h"
@@ -1523,13 +1526,12 @@ bool ValidateGetProgramResourceiv(const Context *context,
     }
     for (GLsizei i = 0; i < propCount; i++)
     {
-        if (!ValidateProgramResourceProperty(context, entryPoint, ANGLE_UNSAFE_TODO(props[i])))
+        if (!ValidateProgramResourceProperty(context, entryPoint, props[i]))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidProgramResourceProperty);
             return false;
         }
-        if (!ValidateProgramResourcePropertyByInterface(ANGLE_UNSAFE_TODO(props[i]),
-                                                        programInterface))
+        if (!ValidateProgramResourcePropertyByInterface(props[i], programInterface))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidPropertyForProgramInterface);
             return false;

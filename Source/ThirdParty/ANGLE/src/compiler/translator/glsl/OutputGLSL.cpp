@@ -4,8 +4,11 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/glsl/OutputGLSL.h"
-#include "common/unsafe_buffers.h"
 
 #include "compiler/translator/Compiler.h"
 
@@ -113,11 +116,11 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
         "textureProjLod", "shadow2DEXT", "texture", "shadow2DProjEXT", "textureProj", nullptr,
         nullptr};
 
-    for (int i = 0; ANGLE_UNSAFE_TODO(legacyToCoreRename[i]) != nullptr; i += 2)
+    for (int i = 0; legacyToCoreRename[i] != nullptr; i += 2)
     {
-        if (name == ANGLE_UNSAFE_TODO(legacyToCoreRename[i]))
+        if (name == legacyToCoreRename[i])
         {
-            return ImmutableString(ANGLE_UNSAFE_TODO(legacyToCoreRename[i + 1]));
+            return ImmutableString(legacyToCoreRename[i + 1]);
         }
     }
 

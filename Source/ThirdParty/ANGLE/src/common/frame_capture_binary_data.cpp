@@ -7,8 +7,11 @@
 //   Common code for the ANGLE trace replay large trace binary data definition.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #define USE_SYSTEM_ZLIB
-#include "common/unsafe_buffers.h"
 #include "compression_utils_portable.h"
 
 #include "common/mathutil.h"
@@ -262,7 +265,7 @@ size_t FrameCaptureBinaryData::append(const void *data, size_t size)
         startingOffset = totalSize();
     }
 
-    ANGLE_UNSAFE_TODO(memcpy(mData.back().data() + mCurrentBlockOffset, data, size));
+    memcpy(mData.back().data() + mCurrentBlockOffset, data, size);
     mCurrentBlockOffset += sizeToIncrease;
     return startingOffset;
 }
@@ -272,7 +275,7 @@ const uint8_t *FrameCaptureBinaryData::getData(size_t offset)
     // This is the fastpath for this function, misses should be negligible
     if (offset >= mCacheBlockBeginOffset && offset < mCacheBlockEndOffset)
     {
-        return (ANGLE_UNSAFE_TODO(mCacheBlockBaseAddress + (offset - mCacheBlockBeginOffset)));
+        return (mCacheBlockBaseAddress + (offset - mCacheBlockBeginOffset));
     }
 
     // Calculate new block id for binary data to be loaded
@@ -285,7 +288,7 @@ const uint8_t *FrameCaptureBinaryData::getData(size_t offset)
     // Update the fastpath cache variables
     updateGetDataCache(newBlockId);
 
-    return (ANGLE_UNSAFE_TODO(mCacheBlockBaseAddress + (offset - mCacheBlockBeginOffset)));
+    return (mCacheBlockBaseAddress + (offset - mCacheBlockBeginOffset));
 }
 
 void FrameCaptureBinaryData::clear()
@@ -444,7 +447,7 @@ void FrameCaptureBinaryData::storeBlock()
                 mFileStream->write(compressBuffer->data(), bytesCompressed);
             } while (zStream->avail_out == 0);
 
-            ANGLE_UNSAFE_TODO(uncompressedDataPtr += bytesToCompress);
+            uncompressedDataPtr += bytesToCompress;
             remainingBytesToCompress -= bytesToCompress;
         }
     }
@@ -540,8 +543,7 @@ void FrameCaptureBinaryData::loadBlock(size_t blockId)
             {
                 int availableOutputSpace = static_cast<int>(mDataBlockSize - mCurrentBlockOffset);
                 zStream->avail_out       = availableOutputSpace;
-                zStream->next_out =
-                    ANGLE_UNSAFE_TODO(uncompressedDataBlock.data() + mCurrentBlockOffset);
+                zStream->next_out        = uncompressedDataBlock.data() + mCurrentBlockOffset;
                 inflateStatus            = inflate(zStream, Z_NO_FLUSH);
                 ASSERT(inflateStatus != Z_STREAM_ERROR);
                 if (inflateStatus == Z_NEED_DICT || inflateStatus == Z_DATA_ERROR ||
@@ -590,7 +592,7 @@ long long FileStreamTell(FILE *stream)
 
 void FileStream::write(const uint8_t *data, size_t size)
 {
-    if (ANGLE_UNSAFE_TODO(fwrite(data, 1, size, mFile)) != size)
+    if (fwrite(data, 1, size, mFile) != size)
     {
         if (ferror(mFile))
         {
@@ -605,7 +607,7 @@ void FileStream::write(const uint8_t *data, size_t size)
 
 size_t FileStream::read(uint8_t *buffer, size_t size)
 {
-    size_t readBytes = ANGLE_UNSAFE_TODO(fread(buffer, 1, size, mFile));
+    size_t readBytes = fread(buffer, 1, size, mFile);
     if (readBytes < size && ferror(mFile))
     {
         FATAL() << "Error reading from binary data file.";

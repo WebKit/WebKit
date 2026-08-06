@@ -6,8 +6,11 @@
 // span_unittests.cpp: Unit tests for the angle::Span class.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/span.h"
-#include "common/unsafe_buffers.h"
 
 #include <gtest/gtest.h>
 
@@ -43,26 +46,22 @@ TEST(SpanTest, Comparison)
                                                                  8, 9, 10, 11, 12, 13, 14, 15};
 
     // Don't use ASSERT_EQ at first because the == is more hidden
-    ANGLE_UNSAFE_TODO({
-        ASSERT_TRUE(Span<const unsigned int>() == Span(kSpanData, 0));
-        ASSERT_TRUE(Span(kSpanData + 3, 4) != Span(kSpanDataDup + 5, 4));
-    })
+    ASSERT_TRUE(Span<const unsigned int>() == Span(kSpanData, 0));
+    ASSERT_TRUE(Span(kSpanData + 3, 4) != Span(kSpanDataDup + 5, 4));
 
     // Check ASSERT_EQ and ASSERT_NE work correctly
-    ANGLE_UNSAFE_TODO({
-        ASSERT_EQ(Span(kSpanData, kSpanDataSize), Span(kSpanDataDup, kSpanDataSize));
-        ASSERT_NE(Span(kSpanData, kSpanDataSize - 1), Span(kSpanDataDup + 1, kSpanDataSize - 1));
-        ASSERT_NE(Span(kSpanData, kSpanDataSize), Span(kSpanDataDup, kSpanDataSize - 1));
-        ASSERT_NE(Span(kSpanData, kSpanDataSize - 1), Span(kSpanDataDup, kSpanDataSize));
-        ASSERT_NE(Span(kSpanData, 0), Span(kSpanDataDup, 1));
-        ASSERT_NE(Span(kSpanData, 1), Span(kSpanDataDup, 0));
-    })
+    ASSERT_EQ(Span(kSpanData, kSpanDataSize), Span(kSpanDataDup, kSpanDataSize));
+    ASSERT_NE(Span(kSpanData, kSpanDataSize - 1), Span(kSpanDataDup + 1, kSpanDataSize - 1));
+    ASSERT_NE(Span(kSpanData, kSpanDataSize), Span(kSpanDataDup, kSpanDataSize - 1));
+    ASSERT_NE(Span(kSpanData, kSpanDataSize - 1), Span(kSpanDataDup, kSpanDataSize));
+    ASSERT_NE(Span(kSpanData, 0), Span(kSpanDataDup, 1));
+    ASSERT_NE(Span(kSpanData, 1), Span(kSpanDataDup, 0));
 }
 
 // Test indexing
 TEST(SpanTest, Indexing)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
 
     for (size_t i = 0; i < kSpanDataSize; ++i)
     {
@@ -70,7 +69,7 @@ TEST(SpanTest, Indexing)
     }
 
     unsigned int storage[kSpanDataSize] = {};
-    auto writableSpan = ANGLE_UNSAFE_TODO(angle::Span<unsigned int>(storage, kSpanDataSize));
+    angle::Span<unsigned int> writableSpan(storage, kSpanDataSize);
 
     for (size_t i = 0; i < kSpanDataSize; ++i)
     {
@@ -82,7 +81,7 @@ TEST(SpanTest, Indexing)
     }
     for (size_t i = 0; i < kSpanDataSize; ++i)
     {
-        ANGLE_UNSAFE_TODO(ASSERT_EQ(storage[i], i));
+        ASSERT_EQ(storage[i], i);
     }
 }
 
@@ -99,7 +98,7 @@ TEST(SpanTest, Constructors)
 
     // Constexpr construct from pointer and size
     {
-        constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+        constexpr Span sp(kSpanData, kSpanDataSize);
         static_assert(std::is_same_v<decltype(sp), const Span<const unsigned int, dynamic_extent>>);
         ASSERT_EQ(sp.data(), kSpanData);
         ASSERT_EQ(sp.size(), kSpanDataSize);
@@ -235,19 +234,19 @@ TEST(SpanTest, Constructors)
 // Test accessing the data directly
 TEST(SpanTest, DataAccess)
 {
-    constexpr auto sp        = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
     const unsigned int *data = sp.data();
 
     for (size_t i = 0; i < kSpanDataSize; ++i)
     {
-        ANGLE_UNSAFE_TODO(ASSERT_EQ(data[i], i));
+        ASSERT_EQ(data[i], i);
     }
 }
 
 // Test front and back
 TEST(SpanTest, FrontAndBack)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
     ASSERT_TRUE(sp.front() == 0);
     ASSERT_EQ(sp.back(), kSpanDataSize - 1);
 }
@@ -255,7 +254,7 @@ TEST(SpanTest, FrontAndBack)
 // Test begin and end
 TEST(SpanTest, BeginAndEnd)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
 
     size_t currentIndex = 0;
     for (unsigned int value : sp)
@@ -268,7 +267,7 @@ TEST(SpanTest, BeginAndEnd)
 // Test reverse begin and end
 TEST(SpanTest, RbeginAndRend)
 {
-    constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
 
     size_t currentIndex = 0;
     for (auto iter = sp.rbegin(); iter != sp.rend(); ++iter)
@@ -281,7 +280,7 @@ TEST(SpanTest, RbeginAndRend)
 // Test first and last
 TEST(SpanTest, FirstAndLast)
 {
-    constexpr auto sp           = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
     constexpr size_t kSplitSize = kSpanDataSize / 4;
     {
         constexpr Span first = sp.first(kSplitSize);
@@ -289,16 +288,14 @@ TEST(SpanTest, FirstAndLast)
 
         static_assert(
             std::is_same_v<decltype(first), const Span<const unsigned int, dynamic_extent>>);
-        ANGLE_UNSAFE_TODO(ASSERT_EQ(first, Span(kSpanData, kSplitSize)));
+        ASSERT_EQ(first, Span(kSpanData, kSplitSize));
         ASSERT_EQ(first.data(), kSpanData);
         ASSERT_EQ(first.size(), kSplitSize);
 
         static_assert(
             std::is_same_v<decltype(last), const Span<const unsigned int, dynamic_extent>>);
-        ANGLE_UNSAFE_TODO({
-            ASSERT_EQ(last, Span(kSpanData + kSpanDataSize - kSplitSize, kSplitSize));
-            ASSERT_EQ(last.data(), kSpanData + kSpanDataSize - kSplitSize);
-        })
+        ASSERT_EQ(last, Span(kSpanData + kSpanDataSize - kSplitSize, kSplitSize));
+        ASSERT_EQ(last.data(), kSpanData + kSpanDataSize - kSplitSize);
         ASSERT_EQ(last.size(), kSplitSize);
     }
 
@@ -307,15 +304,13 @@ TEST(SpanTest, FirstAndLast)
         constexpr Span last  = sp.last<kSplitSize>();
 
         static_assert(std::is_same_v<decltype(first), const Span<const unsigned int, kSplitSize>>);
-        ANGLE_UNSAFE_TODO(ASSERT_EQ(first, Span(kSpanData, kSplitSize)));
+        ASSERT_EQ(first, Span(kSpanData, kSplitSize));
         ASSERT_EQ(first.data(), kSpanData);
         ASSERT_EQ(first.size(), kSplitSize);
 
         static_assert(std::is_same_v<decltype(last), const Span<const unsigned int, kSplitSize>>);
-        ANGLE_UNSAFE_TODO({
-            ASSERT_EQ(last, Span(kSpanData + kSpanDataSize - kSplitSize, kSplitSize));
-            ASSERT_EQ(last.data(), kSpanData + kSpanDataSize - kSplitSize);
-        })
+        ASSERT_EQ(last, Span(kSpanData + kSpanDataSize - kSplitSize, kSplitSize));
+        ASSERT_EQ(last.data(), kSpanData + kSpanDataSize - kSplitSize);
         ASSERT_EQ(last.size(), kSplitSize);
     }
 }
@@ -323,7 +318,7 @@ TEST(SpanTest, FirstAndLast)
 // Test subspan
 TEST(SpanTest, Subspan)
 {
-    constexpr auto sp             = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
+    constexpr Span sp(kSpanData, kSpanDataSize);
     constexpr size_t kSplitOffset = kSpanDataSize / 4;
     constexpr size_t kSplitSize   = kSpanDataSize / 2;
 
@@ -332,10 +327,8 @@ TEST(SpanTest, Subspan)
         constexpr Span subspan = sp.subspan(kSplitOffset);
         static_assert(
             std::is_same_v<decltype(subspan), const Span<const unsigned int, dynamic_extent>>);
-        ANGLE_UNSAFE_TODO({
-            ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSpanDataSize - kSplitOffset));
-            ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
-        })
+        ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSpanDataSize - kSplitOffset));
+        ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
         ASSERT_EQ(subspan.size(), kSpanDataSize - kSplitOffset);
     }
 
@@ -344,10 +337,8 @@ TEST(SpanTest, Subspan)
         constexpr Span subspan = sp.subspan(kSplitOffset, kSplitSize);
         static_assert(
             std::is_same_v<decltype(subspan), const Span<const unsigned int, dynamic_extent>>);
-        ANGLE_UNSAFE_TODO({
-            ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSplitSize));
-            ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
-        })
+        ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSplitSize));
+        ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
         ASSERT_EQ(subspan.size(), kSplitSize);
     }
 
@@ -356,10 +347,8 @@ TEST(SpanTest, Subspan)
         constexpr Span subspan = sp.subspan<kSplitOffset>();
         static_assert(
             std::is_same_v<decltype(subspan), const Span<const unsigned int, dynamic_extent>>);
-        ANGLE_UNSAFE_TODO({
-            ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSpanDataSize - kSplitOffset));
-            ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
-        })
+        ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSpanDataSize - kSplitOffset));
+        ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
         ASSERT_EQ(subspan.size(), kSpanDataSize - kSplitOffset);
     }
 
@@ -368,10 +357,8 @@ TEST(SpanTest, Subspan)
         constexpr Span subspan = sp.subspan<kSplitOffset, kSplitSize>();
         static_assert(
             std::is_same_v<decltype(subspan), const Span<const unsigned int, dynamic_extent>>);
-        ANGLE_UNSAFE_TODO({
-            ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSplitSize));
-            ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
-        })
+        ASSERT_EQ(subspan, Span(kSpanData + kSplitOffset, kSplitSize));
+        ASSERT_EQ(subspan.data(), kSpanData + kSplitOffset);
         ASSERT_EQ(subspan.size(), kSplitSize);
     }
 }
@@ -382,8 +369,8 @@ TEST(SpanTest, ConstConversions)
     const unsigned int kStorage[kSpanDataSize] = {0, 1, 2,  3,  4,  5,  6,  7,
                                                   8, 9, 10, 11, 12, 13, 14, 15};
     unsigned int storage[kSpanDataSize] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    auto readable_span = ANGLE_UNSAFE_TODO(angle::Span(kStorage, kSpanDataSize));
-    auto writable_span = ANGLE_UNSAFE_TODO(angle::Span(storage, kSpanDataSize));
+    angle::Span readable_span(kStorage, kSpanDataSize);
+    angle::Span writable_span(storage, kSpanDataSize);
 
     static_assert(
         std::is_same_v<decltype(readable_span), Span<const unsigned int, dynamic_extent>>);
@@ -512,7 +499,7 @@ TEST(SpanTest, Helpers)
         sp2.copy_from(sp1);
         for (size_t i = 0; i < 4; ++i)
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(data2[i], data1[i]));
+            EXPECT_EQ(data2[i], data1[i]);
         }
     }
 
@@ -630,7 +617,7 @@ TEST(SpanTest, Helpers)
 
         for (size_t i = 0; i < 4; ++i)
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(data2[i], data1[i]));
+            EXPECT_EQ(data2[i], data1[i]);
         }
     }
 }

@@ -10,8 +10,11 @@
 #ifndef LIBANGLE_RENDERER_RENDERER_UTILS_H_
 #define LIBANGLE_RENDERER_RENDERER_UTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cstdint>
-#include "common/unsafe_buffers.h"
 
 #include <limits>
 #include <map>
@@ -373,7 +376,7 @@ uint32_t LineLoopRestartIndexCountHelper(GLsizei indexCount, const uint8_t *srcP
     GLsizei loopStartIndex = 0;
     for (GLsizei curIndex = 0; curIndex < indexCount; curIndex++)
     {
-        In vertex = ANGLE_UNSAFE_TODO(inIndices[curIndex]);
+        In vertex = inIndices[curIndex];
         if (vertex != restartIndex)
         {
             numIndices++;
@@ -429,10 +432,10 @@ size_t CopyLineLoopIndicesWithRestart(GLsizei indexCount, const uint8_t *srcPtr,
     GLsizei loopStartIndex        = 0;
     for (GLsizei curIndex = 0; curIndex < indexCount; curIndex++)
     {
-        In vertex = ANGLE_UNSAFE_TODO(inIndices[curIndex]);
+        In vertex = inIndices[curIndex];
         if (vertex != restartIndex)
         {
-            *(ANGLE_UNSAFE_TODO(outIndices++)) = static_cast<Out>(vertex);
+            *(outIndices++) = static_cast<Out>(vertex);
         }
         else
         {
@@ -441,11 +444,10 @@ size_t CopyLineLoopIndicesWithRestart(GLsizei indexCount, const uint8_t *srcPtr,
                 if (curIndex > (loopStartIndex + 1))
                 {
                     // Emit an extra vertex only if the loop has more than one vertex.
-                    *(ANGLE_UNSAFE_TODO(outIndices++)) =
-                        ANGLE_UNSAFE_TODO(inIndices[loopStartIndex]);
+                    *(outIndices++) = inIndices[loopStartIndex];
                 }
                 // Then restart the strip.
-                *(ANGLE_UNSAFE_TODO(outIndices++)) = outRestartIndex;
+                *(outIndices++) = outRestartIndex;
             }
             loopStartIndex = curIndex + 1;
         }
@@ -453,7 +455,7 @@ size_t CopyLineLoopIndicesWithRestart(GLsizei indexCount, const uint8_t *srcPtr,
     if (indexCount > (loopStartIndex + 1))
     {
         // Close the last loop if it has more than one vertex.
-        ANGLE_UNSAFE_TODO(*(outIndices++) = inIndices[loopStartIndex]);
+        *(outIndices++) = inIndices[loopStartIndex];
     }
     return static_cast<size_t>(outIndices - reinterpret_cast<Out *>(outPtr));
 }

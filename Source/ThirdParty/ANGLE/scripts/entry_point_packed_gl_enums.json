@@ -282,7 +282,7 @@
     "glDeleteBuffers": {
         "buffers": "const BufferID *"
     },
-    "glDeleteFences": {
+    "glDeleteFencesNV": {
         "fences": "const FenceNVID *"
     },
     "glDeleteFramebuffers": {
@@ -425,7 +425,7 @@
     "glExtIsProgramBinary": {
         "program": "ShaderProgramID"
     },
-    "glFinishFence": {
+    "glFinishFenceNV": {
         "fence": "FenceNVID"
     },
     "glFlushMappedBufferRange": {
@@ -487,7 +487,7 @@
     "glGenerateTextureMipmap": {
         "texture": "TextureID"
     },
-    "glGenFences": {
+    "glGenFencesNV": {
         "fences": "FenceNVID *"
     },
     "glGenFramebuffers": {
@@ -593,7 +593,7 @@
     "glGetCompressedTextureSubImage": {
         "texture": "TextureID"
     },
-    "glGetFenceiv": {
+    "glGetFenceivNV": {
         "fence": "FenceNVID"
     },
     "glGetFragDataIndex": {
@@ -1030,7 +1030,7 @@
     "glIsBuffer": {
         "buffer": "BufferID"
     },
-    "glIsFence": {
+    "glIsFenceNV": {
         "fence": "FenceNVID"
     },
     "glIsFramebuffer": {
@@ -1278,6 +1278,9 @@
         "type": "VertexAttribType"
     },
     "glPolygonMode": {
+        "mode": "PolygonMode"
+    },
+    "glPolygonModeNV": {
         "mode": "PolygonMode"
     },
     "glProgramBinary": {
@@ -1535,7 +1538,7 @@
     "glSemaphoreParameterui64v": {
         "semaphore": "SemaphoreID"
     },
-    "glSetFence": {
+    "glSetFenceNV": {
         "fence": "FenceNVID"
     },
     "glShadeModel": {
@@ -1586,7 +1589,7 @@
     "glStencilThenCoverStrokePathInstanced": {
         "pathBase": "PathID"
     },
-    "glTestFence": {
+    "glTestFenceNV": {
         "fence": "FenceNVID"
     },
     "glTexBuffer": {
@@ -1685,12 +1688,6 @@
         "target": "TextureType"
     },
     "glTexStorage3DMultisample": {
-        "target": "TextureType"
-    },
-    "glTexStorageAttribs2D": {
-        "target": "TextureType"
-    },
-    "glTexStorageAttribs3D": {
         "target": "TextureType"
     },
     "glTexStorageMem2D": {

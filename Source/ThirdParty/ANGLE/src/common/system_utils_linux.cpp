@@ -6,8 +6,11 @@
 
 // system_utils_linux.cpp: Implementation of OS-specific functions for Linux
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/debug.h"
-#include "common/unsafe_buffers.h"
 #include "system_utils.h"
 
 #include <string.h>
@@ -32,7 +35,7 @@ std::string GetExecutablePath()
         return "";
     }
 
-    ANGLE_UNSAFE_TODO(path[result]) = '\0';
+    path[result] = '\0';
     return path;
 }
 

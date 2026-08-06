@@ -7,8 +7,11 @@
 // mapping.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
-#include "common/unsafe_buffers.h"
 
 namespace rx
 {
@@ -56,7 +59,7 @@ void ShaderInterfaceVariableInfoMap::clear()
 {
     mData.clear();
     mXFBData.clear();
-    ANGLE_UNSAFE_TODO(memset(&mPod, 0, sizeof(mPod)));
+    memset(&mPod, 0, sizeof(mPod));
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mIdToIndexMap[shaderType].clear();

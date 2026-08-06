@@ -6,7 +6,10 @@
 // CLPlatform.cpp: Implements the cl::Platform class.
 //
 
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
 
@@ -35,19 +38,18 @@ Context::PropArray ParseContextProperties(const cl_context_properties *propertie
         const cl_context_properties *propIt = properties;
         while (*propIt != 0)
         {
-            switch (*ANGLE_UNSAFE_TODO(propIt++))
+            switch (*propIt++)
             {
                 case CL_CONTEXT_PLATFORM:
-                    platform = &reinterpret_cast<cl_platform_id>(*ANGLE_UNSAFE_TODO(propIt++))
-                                    ->cast<Platform>();
+                    platform = &reinterpret_cast<cl_platform_id>(*propIt++)->cast<Platform>();
                     break;
                 case CL_CONTEXT_INTEROP_USER_SYNC:
-                    userSync = *ANGLE_UNSAFE_TODO(propIt++) != CL_FALSE;
+                    userSync = *propIt++ != CL_FALSE;
                     break;
             }
         }
         // Include the trailing zero
-        ANGLE_UNSAFE_TODO(++propIt);
+        ++propIt;
         propArray.reserve(propIt - properties);
         propArray.insert(propArray.cend(), properties, propIt);
     }
@@ -101,7 +103,7 @@ angle::Result Platform::GetPlatformIDs(cl_uint numEntries,
         auto platformIt = availPlatforms.cbegin();
         while (entry < numEntries && platformIt != availPlatforms.cend())
         {
-            ANGLE_UNSAFE_TODO(platforms[entry++]) = (*platformIt++).get();
+            platforms[entry++] = (*platformIt++).get();
         }
     }
     return angle::Result::Continue;
@@ -174,7 +176,7 @@ angle::Result Platform::getInfo(PlatformInfo name,
         }
         if (copyValue != nullptr)
         {
-            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
+            std::memcpy(value, copyValue, copySize);
         }
     }
     if (valueSizeRet != nullptr)
@@ -200,7 +202,7 @@ angle::Result Platform::getDeviceIDs(DeviceType deviceType,
         {
             if (devices != nullptr && found < numEntries)
             {
-                ANGLE_UNSAFE_TODO(devices[found]) = device.get();
+                devices[found] = device.get();
             }
             ++found;
             if (requestForDefault)
@@ -215,7 +217,7 @@ angle::Result Platform::getDeviceIDs(DeviceType deviceType,
             {
                 if (devices != nullptr && found < numEntries)
                 {
-                    ANGLE_UNSAFE_TODO(devices[found]) = device.get();
+                    devices[found] = device.get();
                 }
                 ++found;
             }
@@ -258,7 +260,7 @@ cl_context Platform::CreateContext(const cl_context_properties *properties,
     devs.reserve(numDevices);
     while (numDevices-- != 0u)
     {
-        devs.emplace_back(&(*ANGLE_UNSAFE_TODO(devices++))->cast<Device>());
+        devs.emplace_back(&(*devices++)->cast<Device>());
     }
 
     Platform *platform           = nullptr;

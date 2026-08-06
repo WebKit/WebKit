@@ -2359,17 +2359,34 @@ TEST_P(GLSLTest, MaxVaryingVec4_ThreeBuiltins)
     VaryingTestBase(0, 0, 0, 0, 0, 0, maxVaryings - 3, 0, true, true, true, true);
 }
 
-// Test that max vec2 varyings + gl_FragCoord works
+// This covers a problematic case in D3D9 - we are limited by the number of available semantics,
+// rather than total register use.
+TEST_P(GLSLTest, MaxVaryingsSpecialCases)
+{
+    ANGLE_SKIP_TEST_IF(!IsD3D9());
+
+    GLint maxVaryings = 0;
+    glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
+
+    VaryingTestBase(maxVaryings, 0, 0, 0, 0, 0, 0, 0, true, false, false, false);
+    VaryingTestBase(maxVaryings - 1, 0, 0, 0, 0, 0, 0, 0, true, true, false, false);
+    VaryingTestBase(maxVaryings - 2, 0, 0, 0, 0, 0, 0, 0, true, true, false, true);
+
+    // Special case for gl_PointSize: we get it for free on D3D9.
+    VaryingTestBase(maxVaryings - 2, 0, 0, 0, 0, 0, 0, 0, true, true, true, true);
+}
+
+// This covers a problematic case in D3D9 - we are limited by the number of available semantics,
+// rather than total register use.
 TEST_P(GLSLTest, MaxMinusTwoVaryingVec2PlusOneSpecialVariable)
 {
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
 
     // Generate shader code that uses gl_FragCoord.
-    VaryingTestBase(0, 0, maxVaryings, 0, 0, 0, 0, 0, true, false, false, true);
+    VaryingTestBase(0, 0, maxVaryings, 0, 0, 0, 0, 0, true, false, false, !IsD3D9());
 }
 
-// Test that max vec3 varyings works
 TEST_P(GLSLTest, MaxVaryingVec3)
 {
     GLint maxVaryings = 0;
@@ -2378,7 +2395,6 @@ TEST_P(GLSLTest, MaxVaryingVec3)
     VaryingTestBase(0, 0, 0, 0, maxVaryings, 0, 0, 0, false, false, false, true);
 }
 
-// Test that max vec3 array varyings works
 TEST_P(GLSLTest, MaxVaryingVec3Array)
 {
     GLint maxVaryings = 0;
@@ -2387,25 +2403,25 @@ TEST_P(GLSLTest, MaxVaryingVec3Array)
     VaryingTestBase(0, 0, 0, 0, 0, maxVaryings / 2, 0, 0, false, false, false, true);
 }
 
-// Test that max vec3 varyings + a single float works
+// Only fails on D3D9 because of packing limitations.
 TEST_P(GLSLTest, MaxVaryingVec3AndOneFloat)
 {
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
 
-    VaryingTestBase(1, 0, 0, 0, maxVaryings, 0, 0, 0, false, false, false, true);
+    VaryingTestBase(1, 0, 0, 0, maxVaryings, 0, 0, 0, false, false, false, !IsD3D9());
 }
 
-// Test that max vec3 varyings + a single float array works
+// Only fails on D3D9 because of packing limitations.
 TEST_P(GLSLTest, MaxVaryingVec3ArrayAndOneFloatArray)
 {
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
 
-    VaryingTestBase(0, 1, 0, 0, 0, maxVaryings / 2, 0, 0, false, false, false, true);
+    VaryingTestBase(0, 1, 0, 0, 0, maxVaryings / 2, 0, 0, false, false, false, !IsD3D9());
 }
 
-// Test that 2x max vec2 varyings works, as they can get packed into max vec4 varyings
+// Only fails on D3D9 because of packing limitations.
 TEST_P(GLSLTest, TwiceMaxVaryingVec2)
 {
     // TODO(geofflang): Figure out why this fails on NVIDIA's GLES driver
@@ -2419,12 +2435,14 @@ TEST_P(GLSLTest, TwiceMaxVaryingVec2)
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
 
-    VaryingTestBase(0, 0, 2 * maxVaryings, 0, 0, 0, 0, 0, false, false, false, true);
+    VaryingTestBase(0, 0, 2 * maxVaryings, 0, 0, 0, 0, 0, false, false, false, !IsD3D9());
 }
 
-// Test that max vec2 array varyings works
+// Disabled because of a failure in D3D9
 TEST_P(GLSLTest, MaxVaryingVec2Arrays)
 {
+    ANGLE_SKIP_TEST_IF(IsD3D9());
+
     // TODO(geofflang): Figure out why this fails on NVIDIA's GLES driver
     ANGLE_SKIP_TEST_IF(IsOpenGLES());
 
@@ -2731,7 +2749,35 @@ void main()
     GLint compileResult;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
 
-    EXPECT_NE(0, compileResult);
+    // If the test is configured to run on D3D9, then it is
+    // assumed that shader compilation will fail with an expected error message containing
+    // "Loop index cannot be compared with non-constant expression"
+    if (GetParam() == ES2_D3D9())
+    {
+        if (compileResult != 0)
+        {
+            FAIL() << "Shader compilation succeeded, expected failure";
+        }
+        else
+        {
+            GLint infoLogLength;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+            std::string infoLog;
+            infoLog.resize(infoLogLength);
+            glGetShaderInfoLog(shader, static_cast<GLsizei>(infoLog.size()), nullptr, &infoLog[0]);
+
+            if (infoLog.find("Loop index cannot be compared with non-constant expression") ==
+                std::string::npos)
+            {
+                FAIL() << "Shader compilation failed with unexpected error message";
+            }
+        }
+    }
+    else
+    {
+        EXPECT_NE(0, compileResult);
+    }
 
     if (shader != 0)
     {
@@ -11756,6 +11802,9 @@ foo
 // Test that clamp applied on non-literal indices is correct on es 100 shaders.
 TEST_P(GLSLTest, ValidIndexClampES100)
 {
+    // http://anglebug.com/42264558
+    ANGLE_SKIP_TEST_IF(IsD3D9());
+
     constexpr char kFS[] = R"(
 precision mediump float;
 uniform int u;
@@ -11870,120 +11919,6 @@ TEST_P(GLSLTest_ES3, InitSameNameArray)
 TEST_P(GLSLTest, FragData)
 {
     constexpr char kFS[] = R"(void main() { gl_FragData[0] = vec4(1, 0, 0, 1); })";
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-}
-
-// Tests passing gl_FragData to function.
-TEST_P(GLSLTest, FragDataPassedToFunction)
-{
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
-
-    constexpr char kFS[] = R"(#extension GL_EXT_draw_buffers : require
-precision mediump float;
-vec4 f(vec4 fragData[gl_MaxDrawBuffers])
-{
-    vec4 original = fragData[1];
-    fragData[1] = vec4(0, 1, 0, 0);
-    return original + fragData[1];
-}
-void main()
-{
-    gl_FragData[1] = vec4(1, 0, 0, 1);
-    gl_FragData[0] = f(gl_FragData);
-})";
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
-}
-
-// Tests passing gl_FragData to function without EXT_draw_buffers.
-TEST_P(GLSLTest, FragDataPassedToFunctionNoDrawBuffers)
-{
-    constexpr char kFS[] = R"(precision mediump float;
-vec4 f(vec4 fragData[gl_MaxDrawBuffers])
-{
-    return fragData[0] + vec4(0, 1, 0, 0);
-}
-void main()
-{
-    gl_FragData[0] = vec4(1, 0, 0, 1);
-    gl_FragData[0] = f(gl_FragData);
-})";
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
-}
-
-// Tests passing gl_FragData to function as out parameter.
-TEST_P(GLSLTest_ES3, FragDataPassedToFunctionOut)
-{
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
-
-    constexpr char kFS[] = R"(#extension GL_EXT_draw_buffers : require
-precision mediump float;
-void f(out vec4 fragData[gl_MaxDrawBuffers])
-{
-    fragData[0] = vec4(1, 0, 0, 1);
-    fragData[1] = vec4(0, 1, 0, 1);
-    fragData[2] = vec4(0, 0, 1, 1);
-    fragData[3] = vec4(1, 1, 0, 1);
-}
-void main()
-{
-    f(gl_FragData);
-})";
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-
-    GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-    GLTexture textures[4];
-    for (size_t texIndex = 0; texIndex < ArraySize(textures); texIndex++)
-    {
-        glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + texIndex, GL_TEXTURE_2D,
-                               textures[texIndex], 0);
-    }
-
-    GLint maxDrawBuffers;
-    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
-    ASSERT_GE(maxDrawBuffers, 4);
-
-    constexpr GLenum kAllBufs[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                                    GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
-    glDrawBuffers(ArraySize(kAllBufs), kAllBufs);
-
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
-
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-    glReadBuffer(GL_COLOR_ATTACHMENT1);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    glReadBuffer(GL_COLOR_ATTACHMENT2);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
-    glReadBuffer(GL_COLOR_ATTACHMENT3);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
-    EXPECT_GL_NO_ERROR();
-}
-
-// Tests passing gl_FragData to function as out parameter without EXT_draw_buffers.
-TEST_P(GLSLTest, FragDataPassedToFunctionOutNoDrawBuffers)
-{
-    constexpr char kFS[] = R"(precision mediump float;
-void f(out vec4 fragData[gl_MaxDrawBuffers])
-{
-    fragData[0] = vec4(1, 0, 0, 1);
-}
-void main()
-{
-    f(gl_FragData);
-})";
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
@@ -22102,10 +22037,13 @@ void main() {oColor=vec4(data.red,_data.green,1,1);})";
 // Test that underscores in array names work with out arrays.
 TEST_P(GLSLTest_ES3, UnderscoresWorkWithOutArrays)
 {
-    GLFramebuffer fbo;
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
 
-    GLTexture textures[4];
+    GLuint textures[4];
+    glGenTextures(4, textures);
+
     for (size_t texIndex = 0; texIndex < ArraySize(textures); texIndex++)
     {
         glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
@@ -22117,7 +22055,8 @@ TEST_P(GLSLTest_ES3, UnderscoresWorkWithOutArrays)
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
     ASSERT_GE(maxDrawBuffers, 4);
 
-    GLFramebuffer readFramebuffer;
+    GLuint readFramebuffer;
+    glGenFramebuffers(1, &readFramebuffer);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, readFramebuffer);
 
     constexpr char kFS[] = R"(#version 300 es
@@ -22132,8 +22071,8 @@ void main()
 }
 )";
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    constexpr GLenum kAllBufs[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                                    GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+    GLenum allBufs[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,
+                         GL_COLOR_ATTACHMENT3};
     constexpr GLuint kMaxBuffers = 4;
     // Enable all draw buffers.
     for (GLuint texIndex = 0; texIndex < kMaxBuffers; texIndex++)
@@ -22144,7 +22083,7 @@ void main()
         glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + texIndex, GL_TEXTURE_2D,
                                textures[texIndex], 0);
     }
-    glDrawBuffers(kMaxBuffers, kAllBufs);
+    glDrawBuffers(kMaxBuffers, allBufs);
 
     // Draw with simple program.
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
@@ -25415,67 +25354,6 @@ void main() {
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(229, 13, 0, 255), 1);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Test that indirect indices to gl_FragData get clamped to the right bounds when
-// gl_SecondaryFragDataEXT is used.
-TEST_P(WebGLGLSLTest, FragDataIndexClampWithSecondaryFragDataFunctionArg)
-{
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
-
-    constexpr char kFS[] = R"(#extension GL_EXT_draw_buffers : require
-#extension GL_EXT_blend_func_extended : require
-precision mediump float;
-vec4 f(vec4 fragData[gl_MaxDrawBuffers])
-{
-    vec4 original = fragData[0];
-    fragData[0] = vec4(0, 1, 0, 0);
-    return original + fragData[0];
-}
-void main() {
-    gl_FragData[0] = vec4(1, 0, 0, 1);
-    gl_FragData[0] = f(gl_FragData);
-    for (int i = 0; i < 8; i++) {
-        gl_FragData[i] += vec4(-0.1, -0.05, 0.0, 0.0);
-    }
-
-    gl_SecondaryFragDataEXT[0] = vec4(1.0, 0.0, 0.0, 1.0);
-
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
-    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(51, 153, 0, 255), 1);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Test that indirect indices to gl_FragData get clamped to the right bounds when
-// gl_SecondaryFragDataEXT is used.
-TEST_P(WebGL2GLSLTest, FragDataIndexClampWithSecondaryFragDataFunctionArgOut)
-{
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
-
-    constexpr char kFS[] = R"(#extension GL_EXT_draw_buffers : require
-#extension GL_EXT_blend_func_extended : require
-precision mediump float;
-void f(out vec4 fragData[gl_MaxDrawBuffers])
-{
-    fragData[0] = vec4(1, 1, 0, 1);
-    for (int i = 0; i < 8; i++) {
-        fragData[i] += vec4(-0.1, -0.05, 0.0, 0.0);
-    }
-}
-void main()
-{
-    f(gl_FragData);
-    gl_SecondaryFragDataEXT[0] = vec4(1.0, 0.0, 0.0, 1.0);
-})";
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
-    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(51, 153, 0, 255), 1);
     ASSERT_GL_NO_ERROR();
 }
 }  // anonymous namespace

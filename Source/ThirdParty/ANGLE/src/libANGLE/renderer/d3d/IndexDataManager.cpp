@@ -7,8 +7,11 @@
 // IndexDataManager.cpp: Defines the IndexDataManager, a class that
 // runs the Buffer translation process for index buffers.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
-#include "common/unsafe_buffers.h"
 
 #include "common/utilities.h"
 #include "libANGLE/Buffer.h"
@@ -42,15 +45,14 @@ void ConvertIndexArray(const void *input,
         DestT destRestartIndex = static_cast<DestT>(gl::GetPrimitiveRestartIndex(destinationType));
         for (GLsizei i = 0; i < count; i++)
         {
-            ANGLE_UNSAFE_TODO(
-                out[i] = (in[i] == srcRestartIndex ? destRestartIndex : static_cast<DestT>(in[i])));
+            out[i] = (in[i] == srcRestartIndex ? destRestartIndex : static_cast<DestT>(in[i]));
         }
     }
     else
     {
         for (GLsizei i = 0; i < count; i++)
         {
-            ANGLE_UNSAFE_TODO(out[i] = static_cast<DestT>(in[i]));
+            out[i] = static_cast<DestT>(in[i]);
         }
     }
 }
@@ -65,7 +67,7 @@ void ConvertIndices(gl::DrawElementsType sourceType,
     if (sourceType == destinationType)
     {
         const GLuint dstTypeSize = gl::GetDrawElementsTypeSize(destinationType);
-        ANGLE_UNSAFE_TODO(memcpy(output, input, count * dstTypeSize));
+        memcpy(output, input, count * dstTypeSize);
         return;
     }
 
@@ -206,8 +208,8 @@ angle::Result IndexDataManager::prepareIndexData(const gl::Context *context,
         ANGLE_TRY(buffer->getData(context, &bufferData));
         ASSERT(bufferData != nullptr);
 
-        ANGLE_TRY(streamIndexData(context, ANGLE_UNSAFE_TODO(bufferData + offset), count, srcType,
-                                  dstType, primitiveRestartFixedIndexEnabled, translated));
+        ANGLE_TRY(streamIndexData(context, bufferData + offset, count, srcType, dstType,
+                                  primitiveRestartFixedIndexEnabled, translated));
         BufferFeedback feedback;
         buffer->promoteStaticUsage(context, count << srcTypeShift, &feedback);
         glBuffer->applyImplFeedback(context, feedback);
