@@ -64,14 +64,14 @@ assertInvalid("i32.load align=2^63", { withMemory: true, body: [0x28, 0x3f, 0x00
 assertInvalid("i32.store align=8", { withMemory: true, body: [0x36, 0x03, 0x00] });
 assertInvalid("i32.load8_s align=2", { withMemory: true, body: [0x2c, 0x01, 0x00] });
 assertInvalid("i64.load align=16", { withMemory: true, body: [0x29, 0x04, 0x00] });
-assertValid("i32.load align=4", { withMemory: true, body: [0x28, 0x02, 0x00] });
-assertValid("i32.load align=1", { withMemory: true, body: [0x28, 0x00, 0x00] });
+assertValid("i32.load align=4", { withMemory: true, body: [0x28, 0x02, 0x00, 0x1a] });
+assertValid("i32.load align=1", { withMemory: true, body: [0x28, 0x00, 0x00, 0x1a] });
 
 // A table index must exist. Only index 0 does here.
 assertInvalid("table.get 5", { withTable: true, body: [0x25, 0x05] });
 assertInvalid("table.set 5", { withTable: true, body: [0x26, 0x05] });
 assertInvalid("table.get 0, no table section", { body: [0x25, 0x00] });
-assertValid("table.get 0", { withTable: true, body: [0x25, 0x00] });
+assertValid("table.get 0", { withTable: true, body: [0x25, 0x00, 0x1a] });
 
 // call_indirect validates both of its immediates, and needs a table at all.
 assertInvalid("call_indirect type 0 table 7", { withTable: true, body: [0x11, 0x00, 0x07] });
