@@ -768,6 +768,14 @@ public:
 private:
     ALWAYS_INLINE static Digit addCarrying(Digit a, Digit b, Digit carryIn, Digit& carryOut)
     {
+#if COMPILER(GCC) && GCC_VERSION < 150000
+        Digit sum = 0;
+        bool carry0 = __builtin_add_overflow(a, b, &sum);
+        Digit result = 0;
+        bool carry1 = __builtin_add_overflow(sum, carryIn, &result);
+        carryOut = static_cast<Digit>(carry0 | carry1);
+        return result;
+#else
         if constexpr (sizeof(Digit) == sizeof(unsigned long long)) {
             unsigned long long out = 0;
             Digit result = __builtin_addcll(a, b, carryIn, &out);
@@ -779,6 +787,7 @@ private:
             carryOut = static_cast<Digit>(out);
             return result;
         }
+#endif
     }
 
     Digit t0 { 0 };
