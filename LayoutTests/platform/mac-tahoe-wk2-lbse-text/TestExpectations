@@ -18,7 +18,6 @@
 
 # Filter issues
 svg/W3C-SVG-1.1/filters-morph-01-f.svg                                                 [ ImageOnlyFailure ]
-svg/batik/filters/filterRegions.svg                                                    [ ImageOnlyFailure ]
 svg/batik/text/smallFonts.svg                                                          [ ImageOnlyFailure ]
 svg/batik/text/textFeatures.svg                                                        [ ImageOnlyFailure ]
 svg/crash-svg-filter-empty-viewport.svg                                                [ Failure ]

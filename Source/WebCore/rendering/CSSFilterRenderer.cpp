@@ -213,13 +213,26 @@ OptionSet<FilterRenderingMode> CSSFilterRenderer::supportedFilterRenderingModes(
 
 void CSSFilterRenderer::expandFilterRegionForSVGReferences()
 {
-    auto expandedRegion = filterRegion();
+    // Each function contributes the area it paints into, and the filter region is their union.
+    // A referenced <filter> brings its own region, which alone decides where it paints. The CSS
+    // shorthand functions instead operate on the source graphic, so they contribute the region
+    // we already have, which is based on the object bounding box.
+    //
+    // Starting from that bounding box unconditionally would be wrong: an element with a very
+    // large bounding box and a small userSpaceOnUse filter region would end up with a region far
+    // bigger than the image buffer limits, and the resulting scale clamping would make the filter
+    // output vanish.
+    auto expandedRegion = FloatRect();
     auto minScale = filterScale();
 
     for (auto& function : m_functions) {
         RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(function);
-        if (!svgFilter)
+        if (!svgFilter) {
+            // SourceGraphic is the input of the chain, not a function that paints on its own.
+            if (function->filterType() != FilterEffect::Type::SourceGraphic)
+                expandedRegion.unite(filterRegion());
             continue;
+        }
 
         expandedRegion.unite(svgFilter->filterRegion());
 
