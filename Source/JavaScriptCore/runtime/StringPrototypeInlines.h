@@ -1517,6 +1517,11 @@ ALWAYS_INLINE JSString* replaceOneWithStringUsingRegExpSearch(VM& vm, JSGlobalOb
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (replacementString.isEmpty()) {
+        if (auto* result = tryTrimSpaces(vm, globalObject, source, string, regExp))
+            return result;
+    }
+
     int* ovector;
     MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, 0, &ovector);
     RETURN_IF_EXCEPTION(scope, nullptr);

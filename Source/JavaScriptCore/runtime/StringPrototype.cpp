@@ -361,25 +361,6 @@ JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSStrin
     }
 
     if (callData.type == CallData::Type::None) {
-        switch (regExp->specificPattern()) {
-        case Yarr::SpecificPattern::TrailingSpacesPlus:
-        case Yarr::SpecificPattern::LeadingSpacesPlus:
-        case Yarr::SpecificPattern::TrailingSpacesStar:
-        case Yarr::SpecificPattern::LeadingSpacesStar: {
-            if (!replacementString.isEmpty())
-                break;
-
-            if (auto* result = tryTrimSpaces(vm, globalObject, source, string, regExp))
-                return result;
-
-            break;
-        }
-        case Yarr::SpecificPattern::Atom:
-        case Yarr::SpecificPattern::Newlines:
-        case Yarr::SpecificPattern::None:
-            break;
-        }
-
         if (global) {
             JSString* replacementVal = replaceValue.isString() ? asString(replaceValue) : nullptr;
             RELEASE_AND_RETURN(scope, replaceAllWithStringUsingRegExpSearch(vm, globalObject, string, source, regExp, replacementVal, replacementString));
