@@ -12095,12 +12095,8 @@ OptionSet<NoiseInjectionPolicy> Document::noiseInjectionPolicies() const
 
 OptionSet<AdvancedPrivacyProtections> Document::advancedPrivacyProtections() const
 {
-    RefPtr mainFrameDocument = this->mainFrameDocument();
-    if (!mainFrameDocument)
-        return { };
-
-    if (auto* loader = mainFrameDocument->loader())
-        return loader->advancedPrivacyProtections();
+    if (RefPtr page = this->page())
+        return page->advancedPrivacyProtections();
 
     return { };
 }

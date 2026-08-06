@@ -190,6 +190,39 @@ void Settings::disableFeaturesForLockdownMode()
 <%- end -%>
 }
 
+void Settings::applyMainFrameWebsitePolicies(const WebsitePolicySettings& policies)
+{
+#if ENABLE(MEDIA_SOURCE)
+    setMediaSourceEnabled(policies.mediaSourcePolicy == MediaSourcePolicy::Default ? platformDefaultMediaSourceEnabled() : policies.mediaSourcePolicy == MediaSourcePolicy::Enable);
+#endif
+#if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
+    if (policies.legacyOverflowScrollingTouchPolicy == LegacyOverflowScrollingTouchPolicy::Disable)
+        setLegacyOverflowScrollingTouchEnabled(false);
+#endif
+#if ENABLE(TEXT_AUTOSIZING)
+    setIdempotentModeAutosizingOnlyHonorsPercentages(policies.idempotentModeAutosizingOnlyHonorsPercentages);
+#endif
+
+    if (policies.pushAndNotificationsEnabledPolicy != PushAndNotificationsEnabledPolicy::UseGlobalPolicy) {
+        bool enabled = policies.pushAndNotificationsEnabledPolicy == PushAndNotificationsEnabledPolicy::Yes;
+        setPushAPIEnabled(enabled);
+#if ENABLE(NOTIFICATIONS)
+        setNotificationsEnabled(enabled);
+#endif
+#if ENABLE(NOTIFICATION_EVENT)
+        setNotificationEventEnabled(enabled);
+#endif
+#if PLATFORM(IOS)
+        setAppBadgeEnabled(enabled);
+#endif
+    }
+
+    if (policies.inlineMediaPlaybackPolicy != InlineMediaPlaybackPolicy::Default)
+        setInlineMediaPlaybackRequiresPlaysInlineAttribute(policies.inlineMediaPlaybackPolicy == InlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute);
+
+    setGlobalPrivacyControlEnabled(policies.globalPrivacyControlEnabled);
+}
+
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.settingsWithComplexSettersNeedingImplementation.length != 0 -%>
 <%- if @condition.condition -%>

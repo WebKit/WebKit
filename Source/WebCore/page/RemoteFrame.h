@@ -102,6 +102,9 @@ public:
     void setAutoplayPolicy(AutoplayPolicy autoplayPolicy) { m_autoplayPolicy = autoplayPolicy; }
     AutoplayPolicy NODELETE autoplayPolicy() const final;
 
+    void setColorSchemePreference(ColorSchemePreference colorSchemePreference) { m_colorSchemePreference = colorSchemePreference; }
+    ColorSchemePreference NODELETE colorSchemePreference() const final;
+
     void updateScrollingMode() final;
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
     void addResourceTimingFromChild(ResourceTiming&&);
@@ -142,6 +145,7 @@ private:
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     bool m_allowPrivacyProxy { true };
     AutoplayPolicy m_autoplayPolicy;
+    ColorSchemePreference m_colorSchemePreference;
     bool m_preventsParentFromBeingComplete { true };
 };
 

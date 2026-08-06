@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/SettingsBase.h>
+#include <WebCore/WebsitePolicies.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -84,6 +85,7 @@ public:
     WEBCORE_EXPORT void disableUnstableFeaturesForModernWebKit();
     WEBCORE_EXPORT static void disableGlobalUnstableFeaturesForModernWebKit();
     WEBCORE_EXPORT void disableFeaturesForLockdownMode();
+    WEBCORE_EXPORT void applyMainFrameWebsitePolicies(const WebsitePolicySettings&);
 
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.condition -%>

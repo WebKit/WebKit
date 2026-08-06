@@ -340,6 +340,7 @@ public:
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
     bool allowPrivacyProxy() const final;
     AutoplayPolicy autoplayPolicy() const final;
+    ColorSchemePreference colorSchemePreference() const final;
 
     WEBCORE_EXPORT SandboxFlags NODELETE effectiveSandboxFlags() const;
     SandboxFlags sandboxFlagsFromSandboxAttributeNotCSP() { return m_sandboxFlags; }

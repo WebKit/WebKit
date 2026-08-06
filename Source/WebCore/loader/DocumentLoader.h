@@ -61,6 +61,7 @@
 #include <WebCore/StyleSheetContents.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/Timer.h>
+#include <WebCore/WebsitePolicies.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
@@ -126,22 +127,10 @@ enum class MetaViewportPolicy : uint8_t {
     Ignore,
 };
 
-enum class MediaSourcePolicy : uint8_t {
-    Default,
-    Disable,
-    Enable
-};
-
 enum class SimulatedMouseEventsDispatchPolicy : uint8_t {
     Default,
     Allow,
     Deny,
-};
-
-enum class LegacyOverflowScrollingTouchPolicy : uint8_t {
-    Default,
-    Disable,
-    Enable,
 };
 
 enum class MouseEventPolicy : uint8_t {
@@ -152,24 +141,6 @@ enum class MouseEventPolicy : uint8_t {
 };
 
 enum class ModalContainerObservationPolicy : bool { Disabled, Prompt };
-
-enum class ColorSchemePreference : uint8_t {
-    NoPreference,
-    Light,
-    Dark
-};
-
-enum class PushAndNotificationsEnabledPolicy: uint8_t {
-    UseGlobalPolicy,
-    No,
-    Yes,
-};
-
-enum class InlineMediaPlaybackPolicy : uint8_t {
-    Default,
-    RequiresPlaysInlineAttribute,
-    DoesNotRequirePlaysInlineAttribute
-};
 
 enum class ContentExtensionDefaultEnablement : bool { Disabled, Enabled };
 using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<String>>;

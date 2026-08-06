@@ -39,6 +39,79 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebsitePoliciesData);
 
+static WebCore::MediaSourcePolicy core(WebsiteMediaSourcePolicy policy)
+{
+    switch (policy) {
+    case WebsiteMediaSourcePolicy::Default:
+        return WebCore::MediaSourcePolicy::Default;
+    case WebsiteMediaSourcePolicy::Disable:
+        return WebCore::MediaSourcePolicy::Disable;
+    case WebsiteMediaSourcePolicy::Enable:
+        return WebCore::MediaSourcePolicy::Enable;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::MediaSourcePolicy::Default;
+}
+
+static WebCore::LegacyOverflowScrollingTouchPolicy core(WebsiteLegacyOverflowScrollingTouchPolicy policy)
+{
+    switch (policy) {
+    case WebsiteLegacyOverflowScrollingTouchPolicy::Default:
+        return WebCore::LegacyOverflowScrollingTouchPolicy::Default;
+    case WebsiteLegacyOverflowScrollingTouchPolicy::Disable:
+        return WebCore::LegacyOverflowScrollingTouchPolicy::Disable;
+    case WebsiteLegacyOverflowScrollingTouchPolicy::Enable:
+        return WebCore::LegacyOverflowScrollingTouchPolicy::Enable;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::LegacyOverflowScrollingTouchPolicy::Default;
+}
+
+static WebCore::PushAndNotificationsEnabledPolicy core(WebsitePushAndNotificationsEnabledPolicy policy)
+{
+    switch (policy) {
+    case WebsitePushAndNotificationsEnabledPolicy::UseGlobalPolicy:
+        return WebCore::PushAndNotificationsEnabledPolicy::UseGlobalPolicy;
+    case WebsitePushAndNotificationsEnabledPolicy::No:
+        return WebCore::PushAndNotificationsEnabledPolicy::No;
+    case WebsitePushAndNotificationsEnabledPolicy::Yes:
+        return WebCore::PushAndNotificationsEnabledPolicy::Yes;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::PushAndNotificationsEnabledPolicy::UseGlobalPolicy;
+}
+
+static WebCore::InlineMediaPlaybackPolicy core(WebsiteInlineMediaPlaybackPolicy policy)
+{
+    switch (policy) {
+    case WebsiteInlineMediaPlaybackPolicy::Default:
+        return WebCore::InlineMediaPlaybackPolicy::Default;
+    case WebsiteInlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute:
+        return WebCore::InlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute;
+    case WebsiteInlineMediaPlaybackPolicy::DoesNotRequirePlaysInlineAttribute:
+        return WebCore::InlineMediaPlaybackPolicy::DoesNotRequirePlaysInlineAttribute;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::InlineMediaPlaybackPolicy::Default;
+}
+
+void WebsitePoliciesData::applyToSettings(const WebsitePoliciesData& websitePolicies, WebCore::Settings& settings)
+{
+    settings.applyMainFrameWebsitePolicies({
+        core(websitePolicies.mediaSourcePolicy),
+        core(websitePolicies.legacyOverflowScrollingTouchPolicy),
+        core(websitePolicies.pushAndNotificationsEnabledPolicy),
+        core(websitePolicies.inlineMediaPlaybackPolicy),
+        websitePolicies.globalPrivacyControlEnabled,
+        websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages
+    });
+
+#if ENABLE(TOUCH_EVENTS)
+    if (auto overrideValue = websitePolicies.overrideTouchEventDOMAttributesEnabled)
+        settings.setTouchEventDOMAttributesEnabled(*overrideValue);
+#endif
+}
+
 void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies, WebCore::DocumentLoader& documentLoader)
 {
     documentLoader.setCustomHeaderFields(WTF::move(websitePolicies.customHeaderFields));
@@ -103,17 +176,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     }
 
-    switch (websitePolicies.mediaSourcePolicy) {
-    case WebsiteMediaSourcePolicy::Default:
-        documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Default);
-        break;
-    case WebsiteMediaSourcePolicy::Disable:
-        documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Disable);
-        break;
-    case WebsiteMediaSourcePolicy::Enable:
-        documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Enable);
-        break;
-    }
+    documentLoader.setMediaSourcePolicy(core(websitePolicies.mediaSourcePolicy));
 
     switch (websitePolicies.simulatedMouseEventsDispatchPolicy) {
     case WebsiteSimulatedMouseEventsDispatchPolicy::Default:
@@ -127,17 +190,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     }
 
-    switch (websitePolicies.legacyOverflowScrollingTouchPolicy) {
-    case WebsiteLegacyOverflowScrollingTouchPolicy::Default:
-        documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Default);
-        break;
-    case WebsiteLegacyOverflowScrollingTouchPolicy::Disable:
-        documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Disable);
-        break;
-    case WebsiteLegacyOverflowScrollingTouchPolicy::Enable:
-        documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Enable);
-        break;
-    }
+    documentLoader.setLegacyOverflowScrollingTouchPolicy(core(websitePolicies.legacyOverflowScrollingTouchPolicy));
 
     switch (websitePolicies.mouseEventPolicy) {
     case WebCore::MouseEventPolicy::Default:
@@ -159,29 +212,9 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
     documentLoader.setHTTPSByDefaultMode(websitePolicies.httpsByDefaultMode);
 
-    switch (websitePolicies.pushAndNotificationsEnabledPolicy) {
-    case WebsitePushAndNotificationsEnabledPolicy::UseGlobalPolicy:
-        documentLoader.setPushAndNotificationsEnabledPolicy(WebCore::PushAndNotificationsEnabledPolicy::UseGlobalPolicy);
-        break;
-    case WebsitePushAndNotificationsEnabledPolicy::No:
-        documentLoader.setPushAndNotificationsEnabledPolicy(WebCore::PushAndNotificationsEnabledPolicy::No);
-        break;
-    case WebsitePushAndNotificationsEnabledPolicy::Yes:
-        documentLoader.setPushAndNotificationsEnabledPolicy(WebCore::PushAndNotificationsEnabledPolicy::Yes);
-        break;
-    }
+    documentLoader.setPushAndNotificationsEnabledPolicy(core(websitePolicies.pushAndNotificationsEnabledPolicy));
 
-    switch (websitePolicies.inlineMediaPlaybackPolicy) {
-    case WebsiteInlineMediaPlaybackPolicy::Default:
-        documentLoader.setInlineMediaPlaybackPolicy(WebCore::InlineMediaPlaybackPolicy::Default);
-        break;
-    case WebsiteInlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute:
-        documentLoader.setInlineMediaPlaybackPolicy(WebCore::InlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute);
-        break;
-    case WebsiteInlineMediaPlaybackPolicy::DoesNotRequirePlaysInlineAttribute:
-        documentLoader.setInlineMediaPlaybackPolicy(WebCore::InlineMediaPlaybackPolicy::DoesNotRequirePlaysInlineAttribute);
-        break;
-    }
+    documentLoader.setInlineMediaPlaybackPolicy(core(websitePolicies.inlineMediaPlaybackPolicy));
 
     if (!websitePolicies.alternateRequest.isNull())
         documentLoader.willContinueMainResourceLoadAfterRedirect(websitePolicies.alternateRequest);

@@ -39,6 +39,7 @@
 #include "RemoteFrameView.h"
 #include "ResourceTiming.h"
 #include "SecurityOrigin.h"
+#include "WebsitePolicies.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
@@ -61,6 +62,7 @@ RemoteFrame::RemoteFrame(Page& page, ClientCreator&& clientCreator, FrameIdentif
     , m_client(clientCreator(*this))
     , m_layerHostingContextIdentifier(layerHostingContextIdentifier)
     , m_autoplayPolicy(AutoplayPolicy::Default)
+    , m_colorSchemePreference(ColorSchemePreference::NoPreference)
 {
     setView(RemoteFrameView::create(*this));
 }
@@ -239,6 +241,11 @@ const SecurityOrigin& RemoteFrame::frameDocumentSecurityOriginOrOpaque() const
 AutoplayPolicy RemoteFrame::autoplayPolicy() const
 {
     return m_autoplayPolicy;
+}
+
+ColorSchemePreference RemoteFrame::colorSchemePreference() const
+{
+    return m_colorSchemePreference;
 }
 
 float RemoteFrame::usedZoomForChild(const Frame& child) const

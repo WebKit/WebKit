@@ -45,6 +45,7 @@
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 
 namespace WebKit {
@@ -257,12 +258,16 @@ void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePol
         return;
     }
 
+    if (coreFrame->isMainFrame())
+        WebsitePoliciesData::applyToSettings(websitePolicies, coreFrame->settings());
+
     coreFrame->setCustomUserAgent(WTF::move(websitePolicies.customUserAgent));
     coreFrame->setCustomUserAgentAsSiteSpecificQuirks(WTF::move(websitePolicies.customUserAgentAsSiteSpecificQuirks));
     coreFrame->setAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
     coreFrame->setAllowPrivacyProxy(websitePolicies.allowPrivacyProxy);
     coreFrame->setCustomNavigatorPlatform(WTF::move(websitePolicies.customNavigatorPlatform));
     coreFrame->setAutoplayPolicy(core(websitePolicies.autoplayPolicy));
+    coreFrame->setColorSchemePreference(websitePolicies.colorSchemePreference);
 }
 
 void WebRemoteFrameClient::updateScrollingMode(ScrollbarMode scrollingMode)

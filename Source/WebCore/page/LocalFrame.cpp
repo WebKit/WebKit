@@ -1416,6 +1416,13 @@ AutoplayPolicy LocalFrame::autoplayPolicy() const
     return AutoplayPolicy::Default;
 }
 
+ColorSchemePreference LocalFrame::colorSchemePreference() const
+{
+    if (auto* documentLoader = loader().documentLoader())
+        return documentLoader->colorSchemePreference();
+    return ColorSchemePreference::NoPreference;
+}
+
 SandboxFlags LocalFrame::effectiveSandboxFlags() const
 {
     auto effectiveSandboxFlags = m_sandboxFlags;

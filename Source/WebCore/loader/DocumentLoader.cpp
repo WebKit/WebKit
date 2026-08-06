@@ -1506,35 +1506,14 @@ void DocumentLoader::applyPoliciesToSettings()
     if (!m_frame->isMainFrame())
         return;
 
-#if ENABLE(MEDIA_SOURCE)
-    m_frame->settings().setMediaSourceEnabled(m_mediaSourcePolicy == MediaSourcePolicy::Default ? Settings::platformDefaultMediaSourceEnabled() : m_mediaSourcePolicy == MediaSourcePolicy::Enable);
-#endif
-#if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
-    if (m_legacyOverflowScrollingTouchPolicy == LegacyOverflowScrollingTouchPolicy::Disable)
-        m_frame->settings().setLegacyOverflowScrollingTouchEnabled(false);
-#endif
-#if ENABLE(TEXT_AUTOSIZING)
-    m_frame->settings().setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-#endif
-
-    if (m_pushAndNotificationsEnabledPolicy != PushAndNotificationsEnabledPolicy::UseGlobalPolicy) {
-        bool enabled = m_pushAndNotificationsEnabledPolicy == PushAndNotificationsEnabledPolicy::Yes;
-        m_frame->settings().setPushAPIEnabled(enabled);
-#if ENABLE(NOTIFICATIONS)
-        m_frame->settings().setNotificationsEnabled(enabled);
-#endif
-#if ENABLE(NOTIFICATION_EVENT)
-        m_frame->settings().setNotificationEventEnabled(enabled);
-#endif
-#if PLATFORM(IOS)
-        m_frame->settings().setAppBadgeEnabled(enabled);
-#endif
-    }
-
-    if (m_inlineMediaPlaybackPolicy != InlineMediaPlaybackPolicy::Default)
-        m_frame->settings().setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackPolicy == InlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute);
-
-    m_frame->settings().setGlobalPrivacyControlEnabled(m_globalPrivacyControlEnabled);
+    m_frame->settings().applyMainFrameWebsitePolicies({
+        m_mediaSourcePolicy,
+        m_legacyOverflowScrollingTouchPolicy,
+        m_pushAndNotificationsEnabledPolicy,
+        m_inlineMediaPlaybackPolicy,
+        m_globalPrivacyControlEnabled,
+        m_idempotentModeAutosizingOnlyHonorsPercentages
+    });
 }
 
 ColorSchemePreference NODELETE DocumentLoader::colorSchemePreference() const

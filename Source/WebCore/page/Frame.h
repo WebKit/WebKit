@@ -61,6 +61,7 @@ struct OwnerPermissionsPolicyData;
 
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class AutoplayPolicy : uint8_t;
+enum class ColorSchemePreference : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class SandboxFlag : uint16_t;
 enum class ScrollbarMode : uint8_t;
@@ -129,6 +130,7 @@ public:
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
     virtual bool allowPrivacyProxy() const = 0;
     virtual AutoplayPolicy autoplayPolicy() const = 0;
+    virtual ColorSchemePreference colorSchemePreference() const = 0;
 
     virtual void updateSandboxFlags(SandboxFlags, NotifyUIProcess);
     virtual void updateReferrerPolicy(ReferrerPolicy) { }

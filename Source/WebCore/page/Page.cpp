@@ -4406,13 +4406,11 @@ bool Page::useDarkAppearance() const
         RefPtr view = localMainFrame->view();
         if (!view || view->mediaType() != screenAtom())
             return false;
-
-        if (auto* documentLoader = localMainFrame->loader().documentLoader()) {
-            auto colorSchemePreference = documentLoader->colorSchemePreference();
-            if (colorSchemePreference != ColorSchemePreference::NoPreference)
-                return colorSchemePreference == ColorSchemePreference::Dark;
-        }
     }
+
+    auto colorSchemePreference = protect(mainFrame())->colorSchemePreference();
+    if (colorSchemePreference != ColorSchemePreference::NoPreference)
+        return colorSchemePreference == ColorSchemePreference::Dark;
 
     return m_useDarkAppearance;
 #else
