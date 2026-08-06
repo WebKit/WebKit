@@ -181,7 +181,11 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
         };
         if (parentRequiresAnonymousBlockByDisplayValue.contains(parent.style().display().value))
             return true;
-        return parent.isRenderMathMLBlock() || parent.isFieldset() || parent.isRenderMultiColumnFlow();
+#if ENABLE(MATHML)
+        if (parent.isRenderMathMLBlock())
+            return true;
+#endif
+        return parent.isFieldset() || parent.isRenderMultiColumnFlow();
     };
 
     if (!shouldBuildAnonymousBlock()) {
