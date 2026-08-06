@@ -522,7 +522,7 @@ private:
     static void willFireObserverCallbackImpl(InstrumentingAgents&, const String&);
     static void didFireObserverCallbackImpl(InstrumentingAgents&);
 
-    static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
+    static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, Page&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
     static bool shouldWaitForDebuggerOnStartImpl(InstrumentingAgents&);
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
@@ -1378,7 +1378,7 @@ inline void InspectorInstrumentation::interceptResponse(const LocalFrame& frame,
 inline void InspectorInstrumentation::didDispatchDOMStorageEvent(Page& page, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    didDispatchDOMStorageEventImpl(protect(instrumentingAgents(page)), key, oldValue, newValue, storageType, securityOrigin);
+    didDispatchDOMStorageEventImpl(protect(instrumentingAgents(page)), page, key, oldValue, newValue, storageType, securityOrigin);
 }
 
 inline bool InspectorInstrumentation::shouldWaitForDebuggerOnStart(ScriptExecutionContext& context)

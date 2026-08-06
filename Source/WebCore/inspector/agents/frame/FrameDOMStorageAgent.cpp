@@ -29,6 +29,7 @@
 #include "DOMException.h"
 #include "Document.h"
 #include "DocumentPage.h"
+#include "InspectorDOMStorageAgent.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
@@ -152,6 +153,21 @@ Inspector::CommandResult<void> FrameDOMStorageAgent::clearDOMStorageItems(Ref<JS
     storageArea->clear(*frame);
 
     return { };
+}
+
+void FrameDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
+{
+    // Shared with the page-level agent so both emit an identical StorageId for the same event.
+    auto id = InspectorDOMStorageAgent::storageId(securityOrigin, storageType == StorageType::Local);
+
+    if (key.isNull())
+        m_frontendDispatcher->domStorageItemsCleared(WTF::move(id));
+    else if (newValue.isNull())
+        m_frontendDispatcher->domStorageItemRemoved(WTF::move(id), key);
+    else if (oldValue.isNull())
+        m_frontendDispatcher->domStorageItemAdded(WTF::move(id), key, newValue);
+    else
+        m_frontendDispatcher->domStorageItemUpdated(WTF::move(id), key, oldValue, newValue);
 }
 
 RefPtr<StorageArea> FrameDOMStorageAgent::findStorageArea(Inspector::Protocol::ErrorString& errorString, const JSON::Object& storageId, RefPtr<LocalFrame>& targetFrame)

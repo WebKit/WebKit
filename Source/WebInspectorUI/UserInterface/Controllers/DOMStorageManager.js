@@ -89,6 +89,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        WI.FrameTarget.addEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._frameTargetExecutionContextAdded, this);
     }
 
     disable()
@@ -104,6 +105,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.removeEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        WI.FrameTarget.removeEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._frameTargetExecutionContextAdded, this);
 
         this._reset();
     }
@@ -196,18 +198,33 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
         // FIXME: Consider passing the other parts of the origin along.
 
+        let target = this._frameTargetForFrame(frame);
+
         let addDOMStorage = (isLocalStorage) => {
             let identifier = {securityOrigin: frame.securityOrigin, isLocalStorage};
             if (this._domStorageForIdentifier(identifier))
                 return;
 
-            let domStorage = new WI.DOMStorageObject(identifier, frame.mainResource.urlComponents.host, identifier.isLocalStorage);
+            let domStorage = new WI.DOMStorageObject(identifier, frame.mainResource.urlComponents.host, identifier.isLocalStorage, {target});
             let domStorageObjects = identifier.isLocalStorage ? this._localStorageObjects : this._sessionStorageObjects;
             domStorageObjects.set(identifier.securityOrigin, domStorage);
             this.dispatchEventToListeners(DOMStorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
         };
         addDOMStorage(true);
         addDOMStorage(false);
+    }
+
+    _frameTargetForFrame(frame)
+    {
+        for (let target of WI.targets) {
+            if (!(target instanceof WI.FrameTarget))
+                continue;
+
+            if (target.executionContext?.frame === frame)
+                return target;
+        }
+
+        return null;
     }
 
     _addCookieStorageIfNeeded(frame)
@@ -247,6 +264,35 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         console.assert(event.target instanceof WI.Frame);
 
         this._addDOMStorageIfNeeded(event.target);
+    }
+
+    _frameTargetExecutionContextAdded(event)
+    {
+        if (!this._enabled)
+            return;
+
+        let target = event.target;
+        let frame = target.executionContext?.frame;
+        if (!frame || !frame.securityOrigin)
+            return;
+
+        this._setTargetForOrigin(frame.securityOrigin, target);
+        this._addDOMStorageIfNeeded(frame);
+    }
+
+    _setTargetForOrigin(securityOrigin, target)
+    {
+        for (let isLocalStorage of [true, false]) {
+            let domStorage = this._domStorageForIdentifier({securityOrigin, isLocalStorage});
+            if (!domStorage)
+                continue;
+
+            // Objects are keyed by origin, targets by frame; two frames in different processes
+            // sharing an origin would rebind the same object.
+            console.assert(!domStorage.target || domStorage.target === target || domStorage.target === WI.assumingMainTarget(), domStorage.target, target);
+
+            domStorage.target = target;
+        }
     }
 };
 

@@ -1,0 +1,200 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/site-isolation-storage-test-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMStorage.Events");
+
+    let frameTarget = null;
+    let frameOrigin = null;
+    let mainOrigin = null;
+
+    function evaluateInFrame(expression) {
+        return InspectorTest.SiteIsolationStorage.evaluateInFrame(frameTarget, expression);
+    }
+
+    // Not awaited: the awaited event is what orders these tests. Swallow rejections so a failure
+    // surfaces as a timeout on awaitEvent rather than an unhandled rejection.
+    function writeInFrame(expression) {
+        evaluateInFrame(expression).catch(() => { });
+    }
+
+    // A duplicate event is already queued ahead of these replies, so this orders rather than
+    // waits on a clock.
+    function flushConnections() {
+        return Promise.all([
+            evaluateInFrame("1"),
+            InspectorTest.evaluateInPage("1"),
+        ]);
+    }
+
+    function frameStorage(isLocalStorage) {
+        return InspectorTest.SiteIsolationStorage.objectForOrigin(frameOrigin, isLocalStorage);
+    }
+
+    function mainStorage(isLocalStorage) {
+        return InspectorTest.SiteIsolationStorage.objectForOrigin(mainOrigin, isLocalStorage);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and confirm it owns a distinct origin.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining("dom-storage-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression: "origin", objectGroup: "test", returnByValue: true});
+            frameOrigin = result.value;
+            mainOrigin = WI.networkManager.mainFrame.securityOrigin;
+
+            InspectorTest.expectNotEqual(frameOrigin, mainOrigin, "The iframe should be cross-origin to the main frame.");
+
+            // Empty, not seeded: a seeding write emits an ItemAdded that could satisfy the first
+            // case's awaitEvent. localStorage also persists across runs.
+            await evaluateInFrame("resetStorages()");
+            await InspectorTest.evaluateInPage("sessionStorage.clear(); localStorage.clear()");
+
+            for (let isLocalStorage of [false, true]) {
+                let label = isLocalStorage ? "localStorage" : "sessionStorage";
+                let domStorage = frameStorage(isLocalStorage);
+                InspectorTest.expectNotNull(domStorage, `Should have a DOMStorageObject for the iframe's ${label}.`);
+                if (domStorage)
+                    InspectorTest.expectEqual(domStorage.target, frameTarget, `The iframe's ${label} object should be bound to the cross-origin frame target.`);
+
+                InspectorTest.expectNotNull(mainStorage(isLocalStorage), `Should have a separate DOMStorageObject for the main frame's ${label}.`);
+            }
+        }
+    });
+
+    function addEventTestCases(isLocalStorage) {
+        let storageName = isLocalStorage ? "localStorage" : "sessionStorage";
+        let prefix = `SiteIsolation.DOMStorage.Events.${isLocalStorage ? "Local" : "Session"}`;
+
+        suite.addTestCase({
+            name: `${prefix}.ItemAdded`,
+            description: `Adding an item inside the cross-origin frame should fire domStorageItemAdded for ${storageName}.`,
+            async test() {
+                let domStorage = frameStorage(isLocalStorage);
+                let eventPromise = domStorage.awaitEvent(WI.DOMStorageObject.Event.ItemAdded);
+                writeInFrame(`addItem(${storageName})`);
+
+                let {data} = await eventPromise;
+                InspectorTest.expectEqual(data.key, "added", "Should add key 'added'.");
+                InspectorTest.expectEqual(data.value, "value1", "Should have value 'value1'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.ItemUpdated`,
+            description: `Updating an item inside the cross-origin frame should fire domStorageItemUpdated for ${storageName}.`,
+            async test() {
+                let domStorage = frameStorage(isLocalStorage);
+                let eventPromise = domStorage.awaitEvent(WI.DOMStorageObject.Event.ItemUpdated);
+                writeInFrame(`updateItem(${storageName})`);
+
+                let {data} = await eventPromise;
+                InspectorTest.expectEqual(data.key, "added", "Should update key 'added'.");
+                InspectorTest.expectEqual(data.oldValue, "value1", "Should have oldValue 'value1'.");
+                InspectorTest.expectEqual(data.newValue, "value2", "Should have newValue 'value2'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.ItemRemoved`,
+            description: `Removing an item inside the cross-origin frame should fire domStorageItemRemoved for ${storageName}.`,
+            async test() {
+                let domStorage = frameStorage(isLocalStorage);
+                let eventPromise = domStorage.awaitEvent(WI.DOMStorageObject.Event.ItemRemoved);
+                writeInFrame(`removeItem(${storageName})`);
+
+                let {data} = await eventPromise;
+                InspectorTest.expectEqual(data.key, "added", "Should remove key 'added'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.ItemsCleared`,
+            description: `Clearing the cross-origin frame's ${storageName} should fire domStorageItemsCleared.`,
+            async test() {
+                let domStorage = frameStorage(isLocalStorage);
+                let eventPromise = domStorage.awaitEvent(WI.DOMStorageObject.Event.ItemsCleared);
+                writeInFrame(`clearItems(${storageName})`);
+
+                await eventPromise;
+                InspectorTest.pass("Should fire ItemsCleared.");
+                InspectorTest.expectEqual(domStorage.entries.size, 0, "Entries should be empty after clear.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.DeliveredExactlyOnce`,
+            description: `A single ${storageName} write in the cross-origin frame should produce exactly one event, on the iframe's object only.`,
+            async test() {
+                let frameObject = frameStorage(isLocalStorage);
+                let mainObject = mainStorage(isLocalStorage);
+
+                let frameCount = 0;
+                let mainCount = 0;
+                let countFrame = () => { frameCount++; };
+                let countMain = () => { mainCount++; };
+
+                frameObject.addEventListener(WI.DOMStorageObject.Event.ItemAdded, countFrame);
+                mainObject.addEventListener(WI.DOMStorageObject.Event.ItemAdded, countMain);
+
+                let eventPromise = frameObject.awaitEvent(WI.DOMStorageObject.Event.ItemAdded);
+                writeInFrame(`${storageName}.setItem("once", "1")`);
+                await eventPromise;
+
+                await flushConnections();
+
+                frameObject.removeEventListener(WI.DOMStorageObject.Event.ItemAdded, countFrame);
+                mainObject.removeEventListener(WI.DOMStorageObject.Event.ItemAdded, countMain);
+
+                InspectorTest.expectEqual(frameCount, 1, "The iframe's object should receive exactly one ItemAdded.");
+                InspectorTest.expectEqual(mainCount, 0, "The main frame's object should receive no event for the iframe's write.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.MainFrameStillWorks`,
+            description: `A ${storageName} write in the main frame should still reach the main frame's object, not the iframe's.`,
+            async test() {
+                let frameObject = frameStorage(isLocalStorage);
+                let mainObject = mainStorage(isLocalStorage);
+
+                let strayCount = 0;
+                let countStray = () => { strayCount++; };
+                frameObject.addEventListener(WI.DOMStorageObject.Event.ItemAdded, countStray);
+
+                let eventPromise = mainObject.awaitEvent(WI.DOMStorageObject.Event.ItemAdded);
+                InspectorTest.evaluateInPage(`${storageName}.setItem("mainOnly", "1")`);
+
+                let {data} = await eventPromise;
+                InspectorTest.expectEqual(data.key, "mainOnly", "The main frame's object should receive its own write.");
+
+                await flushConnections();
+                frameObject.removeEventListener(WI.DOMStorageObject.Event.ItemAdded, countStray);
+
+                InspectorTest.expectEqual(strayCount, 0, "The iframe's object should not receive the main frame's write.");
+            }
+        });
+    }
+
+    addEventTestCases(false);
+    addEventTestCases(true);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that DOMStorage change events from a cross-origin iframe reach the frontend under Site Isolation, exactly once, and without crossing origins.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/storage/resources/dom-storage-frame.html"></iframe>
+</body>
+</html>

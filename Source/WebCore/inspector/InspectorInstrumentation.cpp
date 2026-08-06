@@ -42,6 +42,7 @@
 #include "EventTargetInlines.h"
 #include "FrameCSSAgent.h"
 #include "FrameDOMAgent.h"
+#include "FrameDOMStorageAgent.h"
 #include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
 #include "FrameRuntimeAgent.h"
@@ -79,6 +80,7 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
@@ -1179,8 +1181,27 @@ void InspectorInstrumentation::consoleStopRecordingCanvasImpl(InstrumentingAgent
         canvasAgent->consoleStopRecordingCanvas(device);
 }
 
-void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
+void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, Page& page, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
+    // Notify at most one agent: same-origin frames share a StorageArea, and the frontend keys
+    // DOMStorageObject on the StorageId alone.
+    CheckedPtr<FrameDOMStorageAgent> frameDOMStorageAgent;
+    page.forEachLocalFrame([&](LocalFrame& frame) {
+        if (frameDOMStorageAgent)
+            return;
+
+        RefPtr document = frame.document();
+        if (!document || !document->securityOrigin().equal(securityOrigin))
+            return;
+
+        frameDOMStorageAgent = frame.inspectorController().instrumentingAgents().enabledFrameDOMStorageAgent();
+    });
+
+    if (frameDOMStorageAgent) {
+        frameDOMStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin);
+        return;
+    }
+
     if (auto* domStorageAgent = instrumentingAgents.enabledDOMStorageAgent())
         domStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin);
 }

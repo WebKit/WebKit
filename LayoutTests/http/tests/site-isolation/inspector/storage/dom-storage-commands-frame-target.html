@@ -1,0 +1,144 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/site-isolation-storage-test-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMStorage.Commands");
+
+    let frameTarget = null;
+    let frameOrigin = null;
+
+    function frameStorage(isLocalStorage) {
+        return InspectorTest.SiteIsolationStorage.objectForOrigin(frameOrigin, isLocalStorage);
+    }
+
+    function readInFrame(storageName) {
+        return InspectorTest.SiteIsolationStorage.readInFrame(frameTarget, storageName);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and reset its storage to a known state.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining("dom-storage-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression: "origin", objectGroup: "test", returnByValue: true});
+            frameOrigin = result.value;
+            InspectorTest.expectNotEqual(frameOrigin, WI.networkManager.mainFrame.securityOrigin, "The iframe should be cross-origin to the main frame.");
+
+            InspectorTest.expectThat(frameTarget.hasDomain("DOMStorage"), "The frame target should expose the DOMStorage domain.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOMStorage.getDOMStorageItems"), "getDOMStorageItems should be available on a frame target.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOMStorage.setDOMStorageItem"), "setDOMStorageItem should be available on a frame target.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOMStorage.removeDOMStorageItem"), "removeDOMStorageItem should be available on a frame target.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOMStorage.clearDOMStorageItems"), "clearDOMStorageItems should be available on a frame target.");
+        }
+    });
+
+    function addCommandTestCases(isLocalStorage) {
+        let storageName = isLocalStorage ? "localStorage" : "sessionStorage";
+        let prefix = `SiteIsolation.DOMStorage.Commands.${isLocalStorage ? "Local" : "Session"}`;
+
+        // Re-seeds so no case depends on an earlier one, and repopulates the entry cache that
+        // removeItem() asserts against.
+        async function seedAndLogEntries() {
+            await InspectorTest.SiteIsolationStorage.evaluateInFrame(frameTarget, "clearStorages()");
+            let domStorage = frameStorage(isLocalStorage);
+            await InspectorTest.SiteIsolationStorage.logEntries(domStorage);
+            return domStorage;
+        }
+
+        suite.addTestCase({
+            name: `${prefix}.getDOMStorageItems`,
+            description: `getDOMStorageItems should read the cross-origin frame's ${storageName}.`,
+            async test() {
+                let domStorage = await seedAndLogEntries();
+                InspectorTest.expectNotNull(domStorage, `Should have a DOMStorageObject for the iframe's ${storageName}.`);
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.setDOMStorageItem`,
+            description: `setDOMStorageItem should write into the cross-origin frame's ${storageName}, in its own process.`,
+            async test() {
+                let domStorage = await seedAndLogEntries();
+
+                InspectorTest.log("Setting key 'asd' with value 'new'...");
+                await domStorage.setItem("asd", "new");
+
+                await InspectorTest.SiteIsolationStorage.logEntries(domStorage);
+
+                let inFrame = await readInFrame(storageName);
+                InspectorTest.expectEqual(inFrame["asd"], "new", "The value should be readable from inside the cross-origin frame itself.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.removeDOMStorageItem`,
+            description: `removeDOMStorageItem should remove from the cross-origin frame's ${storageName}.`,
+            async test() {
+                let domStorage = await seedAndLogEntries();
+
+                InspectorTest.log("Removing 'foo'...");
+                await domStorage.removeItem("foo");
+
+                await InspectorTest.SiteIsolationStorage.logEntries(domStorage);
+
+                let inFrame = await readInFrame(storageName);
+                InspectorTest.expectEqual(inFrame["foo"], undefined, "'foo' should be gone inside the cross-origin frame itself.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.clearDOMStorageItems`,
+            description: `clearDOMStorageItems should empty the cross-origin frame's ${storageName}.`,
+            async test() {
+                let domStorage = await seedAndLogEntries();
+
+                InspectorTest.log("Clearing storage...");
+                await domStorage.clear();
+
+                await InspectorTest.SiteIsolationStorage.logEntries(domStorage);
+
+                let inFrame = await readInFrame(storageName);
+                InspectorTest.expectEqual(Object.keys(inFrame).length, 0, "The cross-origin frame's storage should be empty in its own process.");
+            }
+        });
+
+        suite.addTestCase({
+            name: `${prefix}.DoesNotTouchMainFrame`,
+            description: `Writing the iframe's ${storageName} must not alter the main frame's same-named storage.`,
+            async test() {
+                // Awaited so it is ordered before the frame-target write on the other connection.
+                await InspectorTest.evaluateInPage(`${storageName}.clear(); ${storageName}.setItem("mainKey", "mainValue")`);
+
+                await frameStorage(isLocalStorage).setItem("frameKey", "frameValue");
+
+                let inFrame = await readInFrame(storageName);
+                InspectorTest.expectEqual(inFrame["frameKey"], "frameValue", "The iframe should have its own key.");
+                InspectorTest.expectEqual(inFrame["mainKey"], undefined, "The iframe should NOT see the main frame's key.");
+
+                let mainValue = await InspectorTest.evaluateInPage(`${storageName}.getItem("frameKey")`);
+                InspectorTest.expectNull(mainValue, "The main frame should NOT see the iframe's key.");
+            }
+        });
+    }
+
+    addCommandTestCases(false);
+    addCommandTestCases(true);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests DOMStorage get/set/remove/clear commands against a cross-origin iframe's storage under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/storage/resources/dom-storage-frame.html"></iframe>
+</body>
+</html>
