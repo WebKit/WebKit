@@ -2533,6 +2533,7 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
 {
     if (!site) {
         ASSERT(m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::SharedProcess);
+        m_sharedProcessDomains.clear();
         m_site = makeUnexpected(SiteState::SharedProcess);
         m_sharedProcessMainFrameSite = mainFrameSite;
         return;

@@ -8506,7 +8506,9 @@ TEST(SiteIsolation, SharedProcessWebProcessCacheSharedProcessForSiteWithUserInte
     auto childFrameProcess1C = [webView mainFrame].childFrames[0].info._processIdentifier;
     auto childFrameProcess2C = [webView mainFrame].childFrames[1].info._processIdentifier;
     EXPECT_EQ(mainFrameProcessC, mainFrameProcess);
-    EXPECT_EQ(childFrameProcess1C, childFrameProcess1);
+    // The cached shared process hosted apple.com, which is now an isolated site, so it is
+    // discarded entirely rather than reused for webkit.org.
+    EXPECT_NE(childFrameProcess1C, childFrameProcess1);
     EXPECT_NE(childFrameProcess2C, childFrameProcess2);
 }
 

@@ -93,6 +93,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
         if (RefPtr frameProcess = protectedThis->m_sharedProcess.get()) {
             ASSERT(frameProcess->isSharedProcess());
             RELEASE_ASSERT(!frameProcess->process().isInProcessCache());
+            frameProcess->process().addSharedProcessDomain(site.domain());
             return completionHandler(frameProcess.get());
         }
 
@@ -112,6 +113,8 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
     if (preferences.siteIsolationEnabled()) {
         if ((m_sharedProcess && m_sharedProcessSites.contains(site)) || process.isSharedProcess()) {
             ASSERT(&m_sharedProcess->process() == &process);
+            if (m_sharedProcessSites.add(site).isNewEntry)
+                process.addSharedProcessDomain(site.domain());
             return *m_sharedProcess;
         }
         if (RefPtr existingProcess = processForSite(site)) {
