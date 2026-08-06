@@ -182,8 +182,8 @@ void Config::initialize()
 
     [[maybe_unused]] uint8_t* reservedConfigBytes = reinterpret_cast_ptr<uint8_t*>(WebConfig::g_config);
 
-#if USE(LIBPAS) && defined(PAS_MTE_INITIALIZE_IN_WTF_CONFIG)
-    PAS_MTE_INITIALIZE_IN_WTF_CONFIG;
+#if USE(LIBPAS)
+    pas_mte_ensure_initialized();
 #endif // USE(LIBPAS)
 }
 

@@ -74,7 +74,6 @@ extern const pas_heap_config iso_heap_config;
 #endif // PAS_ENABLE_ISO
 extern const pas_heap_config pas_utility_heap_config;
 
-#if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #if PAS_ENABLE_MTE
 
 static int is_env_false(const char* var)
@@ -136,14 +135,17 @@ static void pas_mte_do_initialization(void)
 
     unsigned mode = 0;
     if (get_value_if_available(&mode, "MTE_libpasConfig")) {
-        uint8_t mode_byte = (uint8_t)(mode & 0xFF);
-        config->mode_bits.retag_on_scavenge = (mode_byte >> PAS_MTE_FEATURE_RETAG_ON_SCAVENGE) & 1;
-        config->mode_bits.log_on_tag = (mode_byte >> PAS_MTE_FEATURE_LOG_ON_TAG) & 1;
-        config->mode_bits.log_on_purify = (mode_byte >> PAS_MTE_FEATURE_LOG_ON_PURIFY) & 1;
-        config->mode_bits.log_page_alloc = (mode_byte >> PAS_MTE_FEATURE_LOG_PAGE_ALLOC) & 1;
-        config->mode_bits.zero_tag_all = (mode_byte >> PAS_MTE_FEATURE_ZERO_TAG_ALL) & 1;
-        config->mode_bits.adjacent_tag_exclusion = (mode_byte >> PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION) & 1;
-        config->mode_bits.assert_adjacent_tags_are_disjoint = (mode_byte >> PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT) & 1;
+        uint16_t mode_value = (uint16_t)(mode & 0xFFFF);
+        config->mode_bits.retag_on_free = (mode_value >> pas_mte_feature_retag_on_free) & 1;
+        config->mode_bits.log_on_tag = (mode_value >> pas_mte_feature_log_on_tag) & 1;
+        config->mode_bits.log_on_purify = (mode_value >> pas_mte_feature_log_on_purify) & 1;
+        config->mode_bits.log_page_alloc = (mode_value >> pas_mte_feature_log_page_alloc) & 1;
+        config->mode_bits.zero_tag_all = (mode_value >> pas_mte_feature_zero_tag_all) & 1;
+        config->mode_bits.adjacent_tag_exclusion = (mode_value >> pas_mte_feature_adjacent_tag_exclusion) & 1;
+        config->mode_bits.previous_tag_exclusion = (mode_value >> pas_mte_feature_previous_tag_exclusion) & 1;
+        config->mode_bits.assert_adjacent_tags_are_disjoint = (mode_value >> pas_mte_feature_assert_adjacent_tags_are_disjoint) & 1;
+        config->mode_bits.check_tag_on_dealloc = (mode_value >> pas_mte_feature_check_tag_on_dealloc) & 1;
+        config->mode_bits.large_object_delegation = (mode_value >> pas_mte_feature_large_object_delegation) & 1;
     }
 
     const char* name = getprogname();
@@ -167,12 +169,8 @@ static void pas_mte_do_initialization(void)
             pas_mte_force_nontaggable_user_allocations_into_large_heap();
         } else {
             config->is_hardened = false;
-#if !PAS_USE_MTE_IN_WEBCONTENT
             // Disable tagging in libpas by default in WebContent process
             config->enabled = false;
-#else
-            config->enabled = true;
-#endif
         }
 
 #ifndef NDEBUG
@@ -191,13 +189,13 @@ static void pas_mte_do_initialization(void)
     }
 
     PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
-    // Retag-on-scavenge functionally supports both segregated and bitfit heaps.
-    // However, true to the name, for segregated heaps the retag operation only
+    // Retag-on-free functionally supports both segregated and bitfit heaps.
+    // However, despite the name, for segregated heaps the retag operation only
     // takes place on the scavenging path.
     // For bitfit heaps, there is no such path: as such, freed bitfit objects are
     // immediately retagged. This closes the window where attackers could in
     // theory exploit a UAF.
-    // As such, when retag-on-scavenge is enabled, we prefer to allocate from
+    // As such, when retag-on-free is enabled, we prefer to allocate from
     // bitfit heaps to exploit this property -- the exception of course being
     // isoheaps, due to the intrinsic type-unsafety of bitfit heaps.
     // In practice, for privileged processes this already takes place when WebCore
@@ -206,7 +204,7 @@ static void pas_mte_do_initialization(void)
     // mini-mode because a few stray allocations there won't hurt, but for a
     // security boundary those stray allocations are more of a problem. So we force
     // this here, prior to the creation of such segregated directories.
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE))
+    if (pas_mte_use_feature(pas_mte_feature_retag_on_free))
         pas_bmalloc_force_allocations_into_bitfit_heaps_where_available();
     PAS_IGNORE_WARNINGS_END;
 }
@@ -274,7 +272,7 @@ static void pas_report_config(void)
         "%s(%d,0x%x) malloc: libpas config:"
         "\n\tDeallocation Log (Max Entries, Max Bytes): %zu, %zuB"
         "\n\tScavenger (Period, Deep-Sleep Timeout, Epoch-Delta): %.2fms, %.2fms, %llu"
-        "\n\tMTE (Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u)"
+        "\n\tMTE (Enabled/Lockdown/Hardened/ATE/PTE/RoF/ZTA/LOD): (%u, %u, %u, %u, %u, %u, %u, %u)"
 #if PAS_ENABLE_BMALLOC
         "\n\tForwarding to System Heap: %u"
         LOG_FMT_STR_FOR_HEAP_CONFIG(bmalloc)
@@ -300,7 +298,9 @@ static void pas_report_config(void)
         (size_t)PAS_DEALLOCATION_LOG_SIZE, (size_t)PAS_DEALLOCATION_LOG_MAX_BYTES,
         pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
         config->enabled, config->is_lockdown_mode, config->is_hardened,
-        config->mode_bits.adjacent_tag_exclusion, config->mode_bits.retag_on_scavenge, config->mode_bits.zero_tag_all,
+        config->mode_bits.adjacent_tag_exclusion, config->mode_bits.previous_tag_exclusion,
+        config->mode_bits.retag_on_free, config->mode_bits.zero_tag_all,
+        config->mode_bits.large_object_delegation,
 #if PAS_ENABLE_BMALLOC
         pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc),
         LOG_FMT_VARS_FOR_HEAP_CONFIG(bmalloc_heap_config),
@@ -375,10 +375,8 @@ void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void)
     // So we take the object-delegation path to be a special case and make
     // sure to re-apply after performing the above expansion.
     PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
-#if defined(PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
-    if (PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
+    if (pas_mte_use_feature(pas_mte_feature_large_object_delegation))
         pas_mte_force_nontaggable_user_allocations_into_large_heap();
-#endif // defined(PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
     PAS_IGNORE_WARNINGS_END;
 }
 
@@ -402,5 +400,4 @@ void pas_mte_force_nontaggable_user_allocations_into_large_heap(void)
     }
 #endif
 }
-#endif // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #endif // LIBPAS_ENABLED

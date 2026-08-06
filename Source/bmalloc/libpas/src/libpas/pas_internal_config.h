@@ -101,6 +101,14 @@
 #define PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE_SHIFT 15
 #define PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE ((size_t)1 << PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE_SHIFT)
 
+/* "Large Object Delegation" means that user objects above a certain size are
+   handed off to the standard-library malloc rather than allocated from libpas'
+   own pool of memory, for heap-configs with delegate_large_user_allocations set.
+   Currently, this is only enabled when MTE is on for a given process + heap.
+   But it's perfectly possible to enable it regardless, if we were to want to do so:
+   libpas runs in hosted C, so there's always a system malloc to call out to. */
+#define PAS_USE_LARGE_OBJECT_DELEGATION_WITHOUT_MTE 0
+
 #define PAS_INTRINSIC_SMALL_LOOKUP_SIZE_UPPER_BOUND 10000
 #define PAS_SMALL_LOOKUP_SIZE_UPPER_BOUND 500
 #define PAS_UTILITY_LOOKUP_SIZE_UPPER_BOUND 1400

@@ -190,11 +190,17 @@ static pas_allocation_result delegated_allocate_impl(size_t size,
 }
 
 PAS_IGNORE_WARNINGS_BEGIN("unreachable-code")
+static bool can_use_large_object_delegation(void)
+{
+    return PAS_USE_LARGE_OBJECT_DELEGATION_WITHOUT_MTE || pas_mte_use_feature(pas_mte_feature_large_object_delegation);
+}
+
+
 static bool should_delegate_user_allocation_to_system_malloc(size_t size,
                                                              pas_allocation_mode allocation_mode,
                                                              const pas_heap_config* heap_config)
 {
-    if (!PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
+    if (!can_use_large_object_delegation())
         return false;
     if (size < PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE)
         return false;
@@ -264,7 +270,7 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
     }
 
     PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
-    if (PAS_MTE_USE_LARGE_OBJECT_DELEGATION) {
+    if (can_use_large_object_delegation()) {
         if (map_entry.delegated_to_system_malloc) {
             pas_system_heap_free((void*)map_entry.begin);
             return true;

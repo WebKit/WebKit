@@ -25,7 +25,6 @@
 
 #include "pas_mte.h"
 
-#if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #if PAS_ENABLE_MTE
 void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, size_t size)
 {
@@ -41,4 +40,3 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
     return result;
 }
 #endif // PAS_ENABLE_MTE
-#endif // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
