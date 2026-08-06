@@ -124,6 +124,34 @@ void HTMLSourceElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
+void HTMLSourceElement::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(isSubtreeRoot, oldParent);
+
+    if (!isSubtreeRoot)
+        return;
+
+    RefPtr oldParentPicture = dynamicDowncast<HTMLPictureElement>(oldParent);
+    RefPtr parentPicture = dynamicDowncast<HTMLPictureElement>(parentElement());
+
+    m_shouldCallSourcesChanged = false;
+    if (parentPicture) {
+        m_shouldCallSourcesChanged = true;
+        for (const Node* node = previousSibling(); node; node = node->previousSibling()) {
+            if (is<HTMLImageElement>(*node)) {
+                m_shouldCallSourcesChanged = false;
+                break;
+            }
+        }
+    }
+
+    if (oldParentPicture)
+        oldParentPicture->sourcesChanged();
+
+    if (parentPicture && parentPicture != oldParentPicture && m_shouldCallSourcesChanged)
+        parentPicture->sourcesChanged();
+}
+
 void HTMLSourceElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);

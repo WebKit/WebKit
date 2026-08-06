@@ -1,7 +1,4 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Moving <source> out of <picture> triggers a relevant mutation on sibling <img> Test timed out
-NOTRUN Moving <img> into a <picture> triggers a relevant mutation on the <img>, loading <source>
+PASS Moving <source> out of <picture> triggers a relevant mutation on sibling <img>
+PASS Moving <img> into a <picture> triggers a relevant mutation on the <img>, loading <source>
 

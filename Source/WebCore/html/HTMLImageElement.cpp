@@ -631,6 +631,22 @@ void HTMLImageElement::removingSteps(RemovalType removalType, ContainerNode& old
     FormAssociatedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
+void HTMLImageElement::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(isSubtreeRoot, oldParent);
+
+    if (!isSubtreeRoot)
+        return;
+
+    if (RefPtr parentPicture = dynamicDowncast<HTMLPictureElement>(parentElement())) {
+        setPictureElement(parentPicture.get());
+        selectImageSource(RelevantMutation::Yes);
+    } else if (RefPtr oldParentPicture = dynamicDowncast<HTMLPictureElement>(oldParent)) {
+        setPictureElement(nullptr);
+        selectImageSource(RelevantMutation::Yes);
+    }
+}
+
 HTMLPictureElement* HTMLImageElement::pictureElement() const
 {
     return m_pictureElement.get();

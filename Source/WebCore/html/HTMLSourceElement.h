@@ -60,6 +60,7 @@ private:
     
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
+    void movingSteps(bool isSubtreeRoot, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     bool NODELETE isURLAttribute(const Attribute&) const final;
