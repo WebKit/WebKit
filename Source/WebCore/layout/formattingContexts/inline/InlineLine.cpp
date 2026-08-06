@@ -991,9 +991,14 @@ bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormatti
     if (run.isContentful())
         return true;
     if (run.isInlineBox()) {
-        if (run.logicalWidth())
-            return true;
         if (run.layoutBox().isRubyBase())
+            return true;
+        if (run.isLineSpanningInlineBoxStart()) {
+            // This inline box started on a previous line. Cloned decoration (-webkit-box-decoration-break: clone)
+            // wraps the content of the box fragment on this line and as such it can't make the line contentful by itself.
+            return false;
+        }
+        if (run.logicalWidth())
             return true;
         // Even negative horizontal margin makes the line "contentful".
         auto& inlineBoxGeometry = formattingContext.geometryForBox(run.layoutBox());
@@ -1001,11 +1006,6 @@ bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormatti
             return inlineBoxGeometry.marginStart() || inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart();
         if (run.isInlineBoxEnd())
             return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderEnd() || inlineBoxGeometry.paddingEnd();
-        if (run.isLineSpanningInlineBoxStart()) {
-            if (run.style().boxDecorationBreak() != BoxDecorationBreak::Clone)
-                return false;
-            return inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart();
-        }
     }
     return false;
 }

@@ -513,7 +513,6 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
     auto writingMode = root().style().writingMode();
     auto lineBoxLogicalRect = lineBox.logicalRect();
     auto lineBoxVisualOffset = m_displayLine.topLeft();
-    auto lineHasBlockContent = lineLayoutResult.isBlockContent();
 
     auto rootLogicalRect = lineBox.logicalRectForRootInlineBox();
     auto rootVisualRect = mapInlineRectLogicalToVisual(rootLogicalRect, lineBoxLogicalRect, writingMode);
@@ -568,13 +567,15 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 return rect;
             }
             if (lineRun.isLineSpanningInlineBoxStart()) {
-                // Ideally spanning inline boxes on block lines would not have borders and padding.
-                if (lineHasBlockContent)
+                // Cloned decoration wraps the content of the box fragment on the line, so lines without inline content
+                // don't get any. This covers both block lines and lines where the inline content is empty e.g.
+                // <span style="-webkit-box-decoration-break: clone"><div>block</div><span></span><div>block</div></span>
+                if (!lineLayoutResult.hasContentfulInlineContent())
                     return lineBox.logicalContentBoxForInlineBox(layoutBox);
                 return lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             }
             if (lineRun.isBlock()) {
-                ASSERT(lineHasBlockContent);
+                ASSERT(lineLayoutResult.isBlockContent());
                 auto borderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
                 return { borderBoxRect.top(), borderBoxRect.left(), borderBoxRect.width(), borderBoxRect.height() };
             }
