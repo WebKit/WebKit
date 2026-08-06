@@ -21,8 +21,10 @@
 #include "CoordinatedBackingStoreProxy.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedAnimatedBackingStoreClient.h"
 #include "CoordinatedPlatformLayer.h"
 #include "CoordinatedTileBuffer.h"
+#include "GraphicsLayerCoordinated.h"
 #include "PlatformDisplay.h"
 #include "ProcessCapabilities.h"
 #include <wtf/CheckedArithmetic.h>
@@ -97,13 +99,36 @@ Ref<CoordinatedBackingStoreProxy> CoordinatedBackingStoreProxy::create()
     return adoptRef(*new CoordinatedBackingStoreProxy());
 }
 
-OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
+CoordinatedBackingStoreProxy::~CoordinatedBackingStoreProxy()
+{
+    ASSERT(!m_animatedBackingStoreClient);
+}
+
+void CoordinatedBackingStoreProxy::invalidate()
+{
+    setAffectedByTransformAnimation(false);
+}
+
+void CoordinatedBackingStoreProxy::setAffectedByTransformAnimation(bool affectedByTransformAnimation)
+{
+    if (affectedByTransformAnimation && !m_animatedBackingStoreClient)
+        m_animatedBackingStoreClient = CoordinatedAnimatedBackingStoreClient::create();
+    else if (!affectedByTransformAnimation && m_animatedBackingStoreClient) {
+        m_animatedBackingStoreClient->invalidate();
+        m_animatedBackingStoreClient = nullptr;
+    }
+}
+
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
 {
     assertIsHeld(layer.lock());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(unscaledVisibleRect, unscaledContentsRect, unscaledViewportSize, contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(unscaledVisibleRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
+
+    if (m_animatedBackingStoreClient)
+        m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, contentsScale);
 
     if (!m_tiles.isEmpty())
         invalidateRegion(dirtyRegion);

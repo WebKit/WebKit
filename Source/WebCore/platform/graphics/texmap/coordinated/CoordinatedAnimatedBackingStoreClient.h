@@ -38,15 +38,15 @@ class TransformationMatrix;
 
 class CoordinatedAnimatedBackingStoreClient final : public ThreadSafeRefCounted<CoordinatedAnimatedBackingStoreClient> {
 public:
-    static Ref<CoordinatedAnimatedBackingStoreClient> create(GraphicsLayer&);
+    static Ref<CoordinatedAnimatedBackingStoreClient> create();
     ~CoordinatedAnimatedBackingStoreClient() = default;
 
     void invalidate();
-    void update(const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize&, float contentsScale);
+    void update(GraphicsLayer*, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize&, float contentsScale);
     void requestBackingStoreUpdateIfNeeded(const TransformationMatrix&);
 
 private:
-    explicit CoordinatedAnimatedBackingStoreClient(GraphicsLayer&);
+    CoordinatedAnimatedBackingStoreClient() = default;
 
     GraphicsLayer* m_layer { nullptr };
     FloatRect m_visibleRect;
