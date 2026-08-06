@@ -27,6 +27,7 @@
     EnabledBySetting=SharedWorkerEnabled,
     Global=(Worker,SharedWorker),
     Exposed=SharedWorker,
+    IsImmutablePrototypeExoticObjectOnPrototype,
     JSGenerateToNativeObject,
 ]
 interface SharedWorkerGlobalScope : WorkerGlobalScope {
